@@ -109,8 +109,8 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
 
   prototype_iterator foreign_node = ostore_.find<T>();
   if (foreign_node != ostore_.end()) {
-    auto i = foreign_node->relation_info_map_.find(foreign_node->type_index());
-    if (i != foreign_node->relation_info_map_.end()) {
+    auto i = foreign_node->relation_field_endpoint_map_.find(foreign_node->type_index());
+    if (i != foreign_node->relation_field_endpoint_map_.end()) {
       x.relation_info_ = &i->second;
     }
   }

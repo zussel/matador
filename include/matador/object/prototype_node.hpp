@@ -84,30 +84,29 @@ private:
 
 public:
   /// @cond MATADOR_DEV
-  struct relation_info
+  struct relation_field_endpoint
   {
     enum relation_type {
       BELONGS_TO, HAS_ONE, HAS_MANY
     };
 
     typedef std::function<void(object_proxy*, const std::string&, object_proxy*)> modify_value_func;
-    relation_info(const std::string &n,
+    relation_field_endpoint(const std::string &n,
                   relation_type t,
                   const modify_value_func &insert_func,
                   const modify_value_func &remove_func,
-                  prototype_node *pn,
-                  prototype_node *fn)
-      : name(n), type(t), insert_value(insert_func), remove_value(remove_func), node(pn), foreign_node(fn)
+                  prototype_node *pn)
+      : name(n), type(t), insert_value(insert_func), remove_value(remove_func), node(pn)
     {}
     std::string name;
     relation_type type;
     std::function<void(object_proxy*, const std::string&, object_proxy*)> insert_value;
     std::function<void(object_proxy*, const std::string&, object_proxy*)> remove_value;
-    prototype_node *node;
-    prototype_node *foreign_node;
+    prototype_node *node = nullptr;
+    std::shared_ptr<relation_field_endpoint> foreign_endpoint;
   };
 
-  typedef std::unordered_map<std::type_index, relation_info> relation_map;
+  typedef std::unordered_map<std::type_index, std::shared_ptr<relation_field_endpoint>> t_endpoint_map;
 
   struct relation_node_info
   {
@@ -389,31 +388,13 @@ public:
   object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
 
   /**
-   * Register relation info for a belongs_to relation part
-   * identified by the given type index.
+   * Register relation_field_endpoint identified by the given type index.
    *
    * @param tindex type index for identification.
-   * @param relation_info relation info object for belongs_to
+   * @param endpoint pointer to a relation_field_endpoint object
    */
-  void register_belongs_to(const std::type_index &tindex, const prototype_node::relation_info &relation_info);
-
-  /**
-   * Register relation info for a has_one relation part
-   * identified by the given type index.
-   *
-   * @param tindex type index for identification.
-   * @param relation_info relation info object for has_one
-   */
-  void register_has_one(const std::type_index &tindex, const prototype_node::relation_info &relation_info);
-
-  /**
-   * Register relation info for a has_many relation part
-   * identified by the given type index.
-   *
-   * @param tindex type index for identification.
-   * @param relation_info relation info object for has_many
-   */
-  void register_has_many(const std::type_index &tindex, const prototype_node::relation_info &relation_info);
+  void register_relation_field_endpoint(const std::type_index &tindex,
+                                        const std::shared_ptr<prototype_node::relation_field_endpoint> &endpoint);
 
 private:
 
@@ -567,11 +548,7 @@ private:
    */
   std::unique_ptr<basic_identifier> id_;
 
-//  relation_map belongs_to_map_;
-//  relation_map has_one_map_;
-//  relation_map has_many_map_;
-
-  relation_map relation_info_map_;
+  t_endpoint_map relation_field_endpoint_map_;
 
   bool is_relation_node_ = false;
   relation_node_info relation_node_info_;
