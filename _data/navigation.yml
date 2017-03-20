@@ -1,7 +1,7 @@
 # main links links
 main:
   - title: "Guide"
-    url: /guide/installation.html
+    url: /guide/
   - title: "Api"
     url: /api/classes.html
   - title: "Download"

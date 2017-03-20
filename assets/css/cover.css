@@ -9,6 +9,7 @@ body {
 }
 
 .site-footer {
+  margin-top: 30px;
   padding-top: 20px;
   padding-bottom: 20px;
   background-color: #404040;
@@ -17,6 +18,14 @@ body {
 /*.green-background {
   background-size: cover;
   background-image: url(../images/abstract-green-1920.jpg);
+}*/
+
+/*.guide {
+  margin-top: 70px;
+}
+
+.guide h1, .guide h2, .guide h3, .guide h4 {
+  margin-top: 50px;
 }*/
 
 .centered {
@@ -99,48 +108,69 @@ pre {
   color: #aaa;
 }
 
-.navbar-transparent {
-  color: #eee;
-  background-color:rgba(20, 20, 20, 0.4);
-  border: none;
+.fixed {
+  position: fixed;
 }
 
-.navbar-transparent a {
-  color: seashell;
+/* sidebar */
+.bs-docs-sidebar {
+    padding-left: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-.masthead-brand {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  font-weight: bolder;
+/* all links */
+.bs-docs-sidebar .nav>li>a {
+    color: #999;
+    border-left: 2px solid transparent;
+    padding: 4px 20px;
+    font-size: 13px;
+    font-weight: 400;
 }
 
-.masthead-nav > li {
-  display: inline-block;
+/* nested links */
+.bs-docs-sidebar .nav .nav>li>a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 30px;
+    font-size: 12px;
 }
-.masthead-nav > li + li {
-  margin-left: 20px;
+
+/* nested links */
+.bs-docs-sidebar .nav .nav .nav>li>a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 40px;
+    font-size: 12px;
 }
-.masthead-nav > li > a {
-  padding-right: 0;
-  padding-left: 0;
-  padding-top: 35px;
-  padding-bottom: 5px;
-  /*font-size: 16px;*/
-  /*font-weight: bold;*/
-  color: #fff; /* IE8 proofing */
-  color: rgba(255,255,255,.75);
-  border-bottom: 2px solid transparent;
+
+/* active & hover links */
+.bs-docs-sidebar .nav>.active>a, 
+.bs-docs-sidebar .nav>li>a:hover, 
+.bs-docs-sidebar .nav>li>a:focus {
+    color: #177dfe;                 
+    text-decoration: none;          
+    background-color: transparent;  
+    border-left-color: #177dfe; 
 }
-.masthead-nav > li > a:hover,
-.masthead-nav > li > a:focus {
-  background-color: transparent;
-  border-bottom-color: #a9a9a9;
-  border-bottom-color: rgba(255,255,255,.25);
+/* all active links */
+.bs-docs-sidebar .nav>.active>a, 
+.bs-docs-sidebar .nav>.active:hover>a,
+.bs-docs-sidebar .nav>.active:focus>a {
+    font-weight: 700;
 }
-.masthead-nav > .active > a,
-.masthead-nav > .active > a:hover,
-.masthead-nav > .active > a:focus {
-  color: #fff;
-  border-bottom-color: #fff;
+/* nested active links */
+.bs-docs-sidebar .nav .nav>.active>a, 
+.bs-docs-sidebar .nav .nav>.active:hover>a,
+.bs-docs-sidebar .nav .nav>.active:focus>a {
+    font-weight: 500;
+}
+
+/* hide inactive nested list */
+.bs-docs-sidebar .nav ul.nav {
+    display: none;           
+}
+/* show active nested list */
+.bs-docs-sidebar .nav>.active>ul.nav {
+    display: block;           
 }
