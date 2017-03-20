@@ -10,54 +10,6 @@ main:
     url: https://github.com/zussel/matador/
     external: true
 
-guide:
-  - title: "Getting Started"
-    children:
-      - title: "Installation"
-        url: /guide/installation.html
-      - title: "Introduction"
-        url: /guide/introduction.html
-  - title: "Object Store"
-    children:
-      - title: "Objects"
-        url: /guide/objects.html
-      - title: "Prototypes"
-        url: /guide/store.html
-      - title: "Relations"
-        url: /guide/relations.html
-      - title: "Views"
-        url: /guide/views.html
-      - title: "Expressions"
-        url: /guide/expressions.html
-      - title: "Transactions"
-        url: /guide/transactions.html
-  - title: Query Interface
-    children:
-      - title: "Databases"
-        url: /guide/databases.html
-      - title: "Queries"
-        url: /guide/queries.html
-  - title: ORM
-    children:
-      - title: "Persistence"
-        url: /guide/persistence.html
-      - title: "Sessions"
-        url: /guide/sessions.html
-  - title: Utils
-    children:
-      - title: "Time"
-        url: /guide/time.html
-      - title: "Date"
-        url: /guide/date.html
-      - title: "Varchar"
-        url: /guide/varchar.html
-  - title: Misc
-    children:
-      - title: "Old 0.2.1 Docs"
-        url: /old-docs
-      - title: "License"
-        url: /license
-
 api:
   - title: API Reference
     children:
