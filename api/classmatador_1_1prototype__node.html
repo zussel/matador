@@ -18,10 +18,10 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="classmatador_1_1prototype__node-members.html">List of all members</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#friends">Friends</a> &#124;
-<a href="classmatador_1_1prototype__node-members.html">List of all members</a>  </div>
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle">
 <div class="title">matador::prototype_node Class Reference</div>  </div>
 </div><!--header-->
@@ -93,12 +93,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1e7e4ae9e7f60933f502cac87eeb5bd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a442b98d9f3a379059b5a8e9de34a8f0e"><td class="memItemLeft" align="right" valign="top">object_proxy *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1prototype__node.html#a442b98d9f3a379059b5a8e9de34a8f0e">find_proxy</a> (const std::shared_ptr&lt; <a class="el" href="classmatador_1_1basic__identifier.html">basic_identifier</a> &gt; &amp;pk)</td></tr>
 <tr class="separator:a442b98d9f3a379059b5a8e9de34a8f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aacb5449b45f244d23a7fe44a6ed76987"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1prototype__node.html#aacb5449b45f244d23a7fe44a6ed76987">register_belongs_to</a> (const std::type_index &amp;tindex, const prototype_node::relation_info &amp;relation_info)</td></tr>
-<tr class="separator:aacb5449b45f244d23a7fe44a6ed76987"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1d171db475b0ca4006a11432337c5a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1prototype__node.html#aa1d171db475b0ca4006a11432337c5a7">register_has_one</a> (const std::type_index &amp;tindex, const prototype_node::relation_info &amp;relation_info)</td></tr>
-<tr class="separator:aa1d171db475b0ca4006a11432337c5a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40833c474deea15d71757f3e698e0a49"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1prototype__node.html#a40833c474deea15d71757f3e698e0a49">register_has_many</a> (const std::type_index &amp;tindex, const prototype_node::relation_info &amp;relation_info)</td></tr>
-<tr class="separator:a40833c474deea15d71757f3e698e0a49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f07339af5e2101291d861efa258bd97"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1prototype__node.html#a0f07339af5e2101291d861efa258bd97">register_relation_field_endpoint</a> (const std::type_index &amp;tindex, const std::shared_ptr&lt; prototype_node::relation_field_endpoint &gt; &amp;endpoint)</td></tr>
+<tr class="separator:a0f07339af5e2101291d861efa258bd97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -151,6 +147,9 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>detail::basic_node_a
 template&lt;class T , template&lt; class U=T &gt; class O&gt; </td></tr>
 <tr class="memitem:af46f3fa4e64fc04ae50f84e1392beb32"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>detail::node_analyzer</b></td></tr>
 <tr class="separator:af46f3fa4e64fc04ae50f84e1392beb32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b5f55b988adcfebfb733f42e8861d2c"><td class="memItemLeft" align="right" valign="top"><a id="a1b5f55b988adcfebfb733f42e8861d2c"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>detail::object_inserter</b></td></tr>
+<tr class="separator:a1b5f55b988adcfebfb733f42e8861d2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93e6e56207b7c172f256117cff42dbe7"><td class="memItemLeft" align="right" valign="top">MATADOR_OBJECT_API std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1prototype__node.html#a93e6e56207b7c172f256117cff42dbe7">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="classmatador_1_1prototype__node.html">prototype_node</a> &amp;pn)</td></tr>
 <tr class="separator:a93e6e56207b7c172f256117cff42dbe7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -792,14 +791,14 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="aacb5449b45f244d23a7fe44a6ed76987"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aacb5449b45f244d23a7fe44a6ed76987">&#9670;&nbsp;</a></span>register_belongs_to()</h2>
+<a id="a0f07339af5e2101291d861efa258bd97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f07339af5e2101291d861efa258bd97">&#9670;&nbsp;</a></span>register_relation_field_endpoint()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void matador::prototype_node::register_belongs_to </td>
+          <td class="memname">void matador::prototype_node::register_relation_field_endpoint </td>
           <td>(</td>
           <td class="paramtype">const std::type_index &amp;&#160;</td>
           <td class="paramname"><em>tindex</em>, </td>
@@ -807,8 +806,8 @@ template&lt;class T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const prototype_node::relation_info &amp;&#160;</td>
-          <td class="paramname"><em>relation_info</em>&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; prototype_node::relation_field_endpoint &gt; &amp;&#160;</td>
+          <td class="paramname"><em>endpoint</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -817,83 +816,11 @@ template&lt;class T &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Register relation info for a belongs_to relation part identified by the given type index.</p>
+<p>Register relation_field_endpoint identified by the given type index.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tindex</td><td>type index for identification. </td></tr>
-    <tr><td class="paramname">relation_info</td><td>relation info object for belongs_to </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a40833c474deea15d71757f3e698e0a49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40833c474deea15d71757f3e698e0a49">&#9670;&nbsp;</a></span>register_has_many()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void matador::prototype_node::register_has_many </td>
-          <td>(</td>
-          <td class="paramtype">const std::type_index &amp;&#160;</td>
-          <td class="paramname"><em>tindex</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const prototype_node::relation_info &amp;&#160;</td>
-          <td class="paramname"><em>relation_info</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Register relation info for a has_many relation part identified by the given type index.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">tindex</td><td>type index for identification. </td></tr>
-    <tr><td class="paramname">relation_info</td><td>relation info object for has_many </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="aa1d171db475b0ca4006a11432337c5a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1d171db475b0ca4006a11432337c5a7">&#9670;&nbsp;</a></span>register_has_one()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void matador::prototype_node::register_has_one </td>
-          <td>(</td>
-          <td class="paramtype">const std::type_index &amp;&#160;</td>
-          <td class="paramname"><em>tindex</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const prototype_node::relation_info &amp;&#160;</td>
-          <td class="paramname"><em>relation_info</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Register relation info for a has_one relation part identified by the given type index.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">tindex</td><td>type index for identification. </td></tr>
-    <tr><td class="paramname">relation_info</td><td>relation info object for has_one </td></tr>
+    <tr><td class="paramname">endpoint</td><td>pointer to a relation_field_endpoint object </td></tr>
   </table>
   </dd>
 </dl>

@@ -18,9 +18,9 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="classmatador_1_1session-members.html">List of all members</a> &#124;
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="classmatador_1_1session-members.html">List of all members</a>  </div>
+<a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">matador::session Class Reference</div>  </div>
 </div><!--header-->
@@ -68,6 +68,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aae0fedd283220c8d3e6b2e4ec0af2490"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1session.html#aae0fedd283220c8d3e6b2e4ec0af2490">erase</a> (has_many&lt; T, CONT &gt; &amp;container, const typename has_many&lt; T, CONT &gt;::iterator &amp;first, const typename has_many&lt; T, CONT &gt;::iterator &amp;last)</td></tr>
 <tr class="memdesc:aae0fedd283220c8d3e6b2e4ec0af2490"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes a range of objects from a container.  <a href="#aae0fedd283220c8d3e6b2e4ec0af2490">More...</a><br /></td></tr>
 <tr class="separator:aae0fedd283220c8d3e6b2e4ec0af2490"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57eb2837c24c6a257886ff6128c2ccae"><td class="memTemplParams" colspan="2">template&lt;template&lt; class ... &gt; class CONT, class T &gt; </td></tr>
+<tr class="memitem:a57eb2837c24c6a257886ff6128c2ccae"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1session.html#a57eb2837c24c6a257886ff6128c2ccae">clear</a> (has_many&lt; T, CONT &gt; &amp;container)</td></tr>
+<tr class="memdesc:a57eb2837c24c6a257886ff6128c2ccae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the complete container.  <a href="#a57eb2837c24c6a257886ff6128c2ccae">More...</a><br /></td></tr>
+<tr class="separator:a57eb2837c24c6a257886ff6128c2ccae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a280ddc2969eca29e97fbc34faefa9728"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1session.html#a280ddc2969eca29e97fbc34faefa9728">load</a> ()</td></tr>
 <tr class="memdesc:a280ddc2969eca29e97fbc34faefa9728"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads all tables from database.  <a href="#a280ddc2969eca29e97fbc34faefa9728">More...</a><br /></td></tr>
 <tr class="separator:a280ddc2969eca29e97fbc34faefa9728"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,6 +143,50 @@ Public Member Functions</h2></td></tr>
 
 <p>Starts a transaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The started transaction object </dd></dl>
+
+</div>
+</div>
+<a id="a57eb2837c24c6a257886ff6128c2ccae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57eb2837c24c6a257886ff6128c2ccae">&#9670;&nbsp;</a></span>clear()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;template&lt; class ... &gt; class CONT, class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::session::clear </td>
+          <td>(</td>
+          <td class="paramtype">has_many&lt; T, CONT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>container</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clears the complete container. </p>
+<p>Deletes all elements from the given container. The same changes are made to the underlying <a class="el" href="classmatador_1_1object__store.html" title="A class that stores all kind of objects. ">object_store</a> as well.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">CONT</td><td>The type of the container </td></tr>
+    <tr><td class="paramname">T</td><td>The type of the object </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">container</td><td>The container to be cleared </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -250,7 +298,7 @@ template&lt;template&lt; class ... &gt; class CONT, class T &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">container</td><td>The container the objects shoulb be removed from </td></tr>
+    <tr><td class="paramname">container</td><td>The container the objects should be removed from </td></tr>
     <tr><td class="paramname">first</td><td>The iterator representing the first object </td></tr>
     <tr><td class="paramname">last</td><td>The iterator representing the last object </td></tr>
   </table>
