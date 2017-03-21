@@ -813,9 +813,9 @@ public:
 
   void on_remove_relation_owner(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
 
-  void on_append_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value);
+  void on_append_relation_item(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
 
-  void on_remove_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value);
+  void on_remove_relation_item(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
   /// @endcond
 
   /**

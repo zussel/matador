@@ -175,7 +175,7 @@ protected:
 
   container_type container_;
 
-  prototype_node::relation_field_endpoint *relation_info_ = nullptr;
+  std::shared_ptr<prototype_node::relation_field_endpoint> relation_info_;
   /// @endcond
 
 };

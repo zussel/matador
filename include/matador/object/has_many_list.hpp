@@ -468,14 +468,16 @@ public:
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
   typedef typename basic_has_many<T, std::list>::mark_modified_owner_func mark_modified_owner_func;
 
-  void insert(prototype_node::relation_field_endpoint *info, object_store &store,
+  void insert(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_store &store,
               const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
   {
     if (info != nullptr) {
       if (info->type == prototype_node::relation_field_endpoint::BELONGS_TO) {
-        store.on_update_relation_owner(*info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+//        store.on_update_relation_owner(*info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+        store.on_update_relation_owner(info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
       } else if (info->type == prototype_node::relation_field_endpoint::HAS_MANY) {
-        store.on_append_relation_item(*info->foreign_node, rtype->value().proxy_, &owner);
+//        store.on_append_relation_item(*info->foreign_node, rtype->value().proxy_, &owner);
+        store.on_append_relation_item(info, rtype->value().proxy_, &owner);
         store.insert(rtype);
       }
     } else {
@@ -517,7 +519,7 @@ public:
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
   typedef typename basic_has_many<T, std::list>::mark_modified_owner_func mark_modified_owner_func;
 
-  void insert(prototype_node::relation_field_endpoint *, object_store &store,
+  void insert(const std::shared_ptr<prototype_node::relation_field_endpoint> &, object_store &store,
               const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
   {
     store.insert(rtype);
@@ -532,13 +534,15 @@ public:
   typedef T value_type;
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
 
-  void remove(prototype_node::relation_field_endpoint *info, object_store &store, relation_type &rtype, object_proxy &owner)
+  void remove(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_store &store, relation_type &rtype, object_proxy &owner)
   {
     if (info != nullptr) {
       if (info->type == prototype_node::relation_field_endpoint::BELONGS_TO) {
-        store.on_remove_relation_owner(*info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+//        store.on_remove_relation_owner(*info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+        store.on_remove_relation_owner(info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
       } else if (info->type == prototype_node::relation_field_endpoint::HAS_MANY) {
-        store.on_remove_relation_item(*info->foreign_node, rtype->value().proxy_, &owner);
+//        store.on_remove_relation_item(*info->foreign_node, rtype->value().proxy_, &owner);
+        store.on_remove_relation_item(info, rtype->value().proxy_, &owner);
         store.remove(rtype);
       }
     } else {
@@ -579,7 +583,7 @@ public:
   typedef T value_type;
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
 
-  void remove(prototype_node::relation_field_endpoint *, object_store &store, relation_type &rtype, object_proxy &)
+  void remove(const std::shared_ptr<prototype_node::relation_field_endpoint> &, object_store &store, relation_type &rtype, object_proxy &)
   {
     store.remove(rtype);
   }

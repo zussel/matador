@@ -23,6 +23,7 @@
 #include "matador/utils/identifiable_holder.hpp"
 
 #include "matador/object/object_holder_type.hpp"
+#include "matador/object/prototype_node.hpp"
 
 #include <memory>
 
@@ -305,7 +306,8 @@ private:
   // Todo: replace private access of proxy with call to reset
   friend class table_reader;
 
-  template < class T, object_holder_type OPT > friend class object_pointer;
+  template < class T, object_holder_type OPT >
+  friend class object_pointer;
 
   object_proxy *proxy_ = nullptr;
   object_proxy *owner_ = nullptr; // only set if holder type is BELONGS_TO or HAS_MANY
@@ -313,6 +315,8 @@ private:
   object_holder_type type_;
   bool is_inserted_ = false;
   unsigned long oid_ = 0;
+
+  std::shared_ptr<prototype_node::relation_field_endpoint> relation_info_;
 };
 
 }

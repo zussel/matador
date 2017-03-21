@@ -308,22 +308,29 @@ void object_store::on_remove_relation_owner(const std::shared_ptr<prototype_node
   enable_relation_notification();
 }
 
-void object_store::on_append_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
+//void object_store::on_append_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
+void object_store::on_append_relation_item(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value)
 {
-  auto i = node.relation_field_endpoint_map_.find(node.type_index());
-  if (i == node.relation_field_endpoint_map_.end()) {
-    return;
+//  auto i = node.relation_field_endpoint_map_.find(node.type_index());
+//  if (i == node.relation_field_endpoint_map_.end()) {
+//    return;
+//  }
+  if (info && info->foreign_endpoint) {
+    on_update_relation_owner(info->foreign_endpoint, owner, value);
   }
-  on_update_relation_owner(i->second, owner, value);
+//  on_update_relation_owner(i->second, owner, value);
 }
 
-void object_store::on_remove_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
+//void object_store::on_remove_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
+void object_store::on_remove_relation_item(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value)
 {
-  auto i = node.relation_field_endpoint_map_.find(node.type_index());
-  if (i == node.relation_field_endpoint_map_.end()) {
-    return;
+//  auto i = node.relation_field_endpoint_map_.find(node.type_index());
+//  if (i == node.relation_field_endpoint_map_.end()) {
+//    return;
+//  }
+  if (info && info->foreign_endpoint) {
+    on_remove_relation_owner(info->foreign_endpoint, owner, value);
   }
-  on_remove_relation_owner(i->second, owner, value);
 }
 
 prototype_node* object_store::find_prototype_node(const char *type) const {
