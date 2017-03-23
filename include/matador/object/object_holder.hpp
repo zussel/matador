@@ -29,6 +29,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 namespace detail {
 class object_inserter;
 class object_deleter;
@@ -38,6 +40,8 @@ class has_many_inserter;
 template<class T, template <class ...> class C, class Enabled>
 class has_many_deleter;
 }
+
+/// @endcond
 
 class basic_identifier;
 class object_proxy;
