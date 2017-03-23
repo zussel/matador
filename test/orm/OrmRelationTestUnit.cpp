@@ -116,6 +116,8 @@ void OrmRelationTestUnit::test_belongs_to()
 
 void OrmRelationTestUnit::test_many_to_many()
 {
+  std::cout << "\n";
+
   matador::persistence p(dns_);
 
   p.attach<person>("person");

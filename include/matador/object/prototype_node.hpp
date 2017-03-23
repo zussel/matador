@@ -36,6 +36,7 @@
 
 #include "matador/object/identifier_proxy_map.hpp"
 #include "matador/object/object_store_observer.hpp"
+#include "matador/object/relation_field_endpoint.hpp"
 
 #include <map>
 #include <list>
@@ -84,29 +85,8 @@ private:
 
 public:
   /// @cond MATADOR_DEV
-  struct relation_field_endpoint
-  {
-    enum relation_type {
-      BELONGS_TO, HAS_ONE, HAS_MANY
-    };
 
-    typedef std::function<void(object_proxy*, const std::string&, object_proxy*)> modify_value_func;
-    relation_field_endpoint(const std::string &n,
-                  relation_type t,
-                  const modify_value_func &insert_func,
-                  const modify_value_func &remove_func,
-                  prototype_node *pn)
-      : name(n), type(t), insert_value(insert_func), remove_value(remove_func), node(pn)
-    {}
-    std::string name;
-    relation_type type;
-    std::function<void(object_proxy*, const std::string&, object_proxy*)> insert_value;
-    std::function<void(object_proxy*, const std::string&, object_proxy*)> remove_value;
-    prototype_node *node = nullptr;
-    std::shared_ptr<relation_field_endpoint> foreign_endpoint;
-  };
-
-  typedef std::unordered_map<std::type_index, std::shared_ptr<relation_field_endpoint>> t_endpoint_map;
+  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_field_endpoint>> t_endpoint_map;
 
   struct relation_node_info
   {
@@ -394,7 +374,7 @@ public:
    * @param endpoint pointer to a relation_field_endpoint object
    */
   void register_relation_field_endpoint(const std::type_index &tindex,
-                                        const std::shared_ptr<prototype_node::relation_field_endpoint> &endpoint);
+                                        const std::shared_ptr<detail::relation_field_endpoint> &endpoint);
 
 private:
 

@@ -809,13 +809,13 @@ public:
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
   /// @cond MATADOR_DEV
-  void on_update_relation_owner(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
+  void on_update_relation_owner(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
 
-  void on_remove_relation_owner(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
+  void on_remove_relation_owner(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
 
-  void on_append_relation_item(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
+  void on_append_relation_item(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
 
-  void on_remove_relation_item(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
+  void on_remove_relation_item(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
   /// @endcond
 
   /**

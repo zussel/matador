@@ -316,7 +316,7 @@ private:
   bool is_inserted_ = false;
   unsigned long oid_ = 0;
 
-  std::shared_ptr<prototype_node::relation_field_endpoint> relation_info_;
+  std::shared_ptr<detail::relation_field_endpoint> relation_info_;
 };
 
 }

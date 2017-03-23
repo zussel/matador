@@ -31,6 +31,13 @@ prototype_node::prototype_node()
 
 prototype_node::~prototype_node()
 {
+  if (prototype) {
+    std::cout << "node: " << type_ << " (" << type_id() << ") relation field endpoints: " << relation_field_endpoint_map_.size() << "\n";
+    for (auto i : relation_field_endpoint_map_) {
+      std::cout << "relation field endpoint " << i.second.get() << "(count " << i.second.use_count() << ")\n";
+    }
+  }
+  relation_field_endpoint_map_.clear();
   if (deleter_) {
     deleter_(prototype, observer_list);
   }
@@ -373,7 +380,7 @@ object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier>
 }
 
 void prototype_node::register_relation_field_endpoint(const std::type_index &tindex,
-                                                      const std::shared_ptr<prototype_node::relation_field_endpoint> &endpoint)
+                                                      const std::shared_ptr<detail::relation_field_endpoint> &endpoint)
 {
   relation_field_endpoint_map_.insert(std::make_pair(tindex, endpoint));
 }
