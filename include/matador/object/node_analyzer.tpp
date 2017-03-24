@@ -14,9 +14,9 @@ void basic_node_analyzer::process_belongs_to(const char *id, belongs_to <V> &x)
 
   object_store &store = store_;
 
-  auto endpoint = std::make_shared<prototype_node::relation_field_endpoint>(
+  auto endpoint = std::make_shared<detail::relation_field_endpoint>(
       id,
-      prototype_node::relation_field_endpoint::BELONGS_TO,
+    detail::relation_field_endpoint::BELONGS_TO,
       [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *owner) {
         store.mark_modified<T>(proxy);
         matador::set(proxy->obj<T>(), field, object_ptr<V>(owner));
@@ -33,14 +33,14 @@ void basic_node_analyzer::process_belongs_to(const char *id, belongs_to <V> &x)
      */
     auto i = node->relation_field_endpoint_map_.find(node->type_index());
     if (i != node->relation_field_endpoint_map_.end()) {
-      if (i->second->type == prototype_node::relation_field_endpoint::HAS_MANY) {
+      if (i->second->type == detail::relation_field_endpoint::HAS_MANY) {
         // yes, node was created from has_many!
         // detach current node (has_many_item == relation table)
         if (i->second->node != nullptr) {
           store_.detach(i->second->node);
         }
         i->second->node = nullptr;
-      } else if (i->second->type == prototype_node::relation_field_endpoint::HAS_ONE) {
+      } else if (i->second->type == detail::relation_field_endpoint::HAS_ONE) {
         // node was created from has_one
         // check if node is set
         if (i->second->node == nullptr) {
@@ -50,6 +50,7 @@ void basic_node_analyzer::process_belongs_to(const char *id, belongs_to <V> &x)
         }
       }
       endpoint->foreign_endpoint = i->second;
+      i->second->foreign_endpoint = endpoint;
     }
   }
 
@@ -59,19 +60,27 @@ void basic_node_analyzer::process_belongs_to(const char *id, belongs_to <V> &x)
 template<class V, class T>
 void basic_node_analyzer::process_has_one(const char *id, has_one <V> &x)
 {
-  prototype_iterator node = store_.find(x.type());
+  prototype_iterator foreign_node = store_.find(x.type());
   object_store &store = store_;
 
-  auto endpoint = std::make_shared<prototype_node::relation_field_endpoint>(
+  auto endpoint = std::make_shared<detail::relation_field_endpoint>(
     id,
-    prototype_node::relation_field_endpoint::HAS_ONE,
+    detail::relation_field_endpoint::HAS_ONE,
     [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *owner) {
       store.mark_modified<T>(proxy);
       matador::set(proxy->obj<T>(), field, object_ptr<V>(owner));
     }, [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *) {
       store.mark_modified<T>(proxy);
       matador::set(proxy->obj<T>(), field, object_ptr<V>());
-    }, node.get());
+    }, foreign_node.get());
+
+  if (foreign_node != store_.end()) {
+    auto i = foreign_node->relation_field_endpoint_map_.find(foreign_node->type_index());
+    if (i != foreign_node->relation_field_endpoint_map_.end()) {
+      endpoint->foreign_endpoint = i->second;
+      i->second->foreign_endpoint = endpoint;
+    }
+  }
 
   node_.register_relation_field_endpoint(node_.type_index(), endpoint);
 }
@@ -89,7 +98,7 @@ void basic_node_analyzer::process_has_many(const prototype_iterator &pi, const c
     if (j == pi->relation_field_endpoint_map_.end()) {
       // check for has many item
       throw_object_exception("prototype already inserted: " << pi->type());
-    } else if (j->second->type == prototype_node::relation_field_endpoint::BELONGS_TO) {
+    } else if (j->second->type == detail::relation_field_endpoint::BELONGS_TO) {
       // set missing node
       j->second->node = &node_;
       j->second->foreign_endpoint = j->second;
@@ -103,8 +112,8 @@ void basic_node_analyzer::register_has_many(const std::type_index &typeindex, co
 {
   object_store &store = store_;
 
-  auto endpoint = std::make_shared<prototype_node::relation_field_endpoint>(id,
-    prototype_node::relation_field_endpoint::HAS_MANY,
+  auto endpoint = std::make_shared<detail::relation_field_endpoint>(id,
+    detail::relation_field_endpoint::HAS_MANY,
     [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *owner) {
       store.mark_modified<T>(proxy);
       matador::append(proxy->obj<T>(), field, object_ptr<V>(owner));
@@ -112,6 +121,18 @@ void basic_node_analyzer::register_has_many(const std::type_index &typeindex, co
       store.mark_modified<T>(proxy);
       matador::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
     }, node);
+
+  // find counterpart node
+  prototype_iterator foreign_node = store_.find<V>();
+  if (foreign_node != store_.end()) {
+    auto i = foreign_node->relation_field_endpoint_map_.find(foreign_node->type_index());
+    if (i != foreign_node->relation_field_endpoint_map_.end()) {
+      endpoint->foreign_endpoint = i->second;
+      i->second->foreign_endpoint = endpoint;
+      std::cout << "basic_node_analyzer::register_has_many: endpoint " << endpoint->name << "(" << endpoint.get() << ") -> foreign " << endpoint->foreign_endpoint->name << "\n";
+      std::cout << "basic_node_analyzer::register_has_many: endpoint " << i->second->name << "(" << i->second.get() << ") -> foreign " << i->second->foreign_endpoint->name << "\n";
+    }
+  }
 
   node_.register_relation_field_endpoint(typeindex, endpoint);
 }

@@ -16,7 +16,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_result_info.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_types.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_dialect.hpp
-)
+        ../../../include/matador/object/relation_field_endpoint.hpp)
 
 ADD_LIBRARY(matador-mysql SHARED ${SOURCES} ${HEADER})
 

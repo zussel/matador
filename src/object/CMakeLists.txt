@@ -16,7 +16,7 @@ SET(SOURCES
   object_proxy_accessor.cpp
   object_deleter.cpp
   object_inserter.cpp
-)
+        relation_field_endpoint.cpp)
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/object/action.hpp

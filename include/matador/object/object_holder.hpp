@@ -29,6 +29,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 namespace detail {
 class object_inserter;
 class object_deleter;
@@ -38,6 +40,8 @@ class has_many_inserter;
 template<class T, template <class ...> class C, class Enabled>
 class has_many_deleter;
 }
+
+/// @endcond
 
 class basic_identifier;
 class object_proxy;
@@ -316,7 +320,7 @@ private:
   bool is_inserted_ = false;
   unsigned long oid_ = 0;
 
-  std::shared_ptr<prototype_node::relation_field_endpoint> relation_info_;
+  std::shared_ptr<detail::relation_field_endpoint> relation_info_;
 };
 
 }

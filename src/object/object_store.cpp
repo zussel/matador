@@ -288,48 +288,43 @@ sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &se
   return seq_.exchange_sequencer(seq);
 }
 
-void object_store::on_update_relation_owner(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value)
+void object_store::on_update_relation_owner(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value)
 {
   if (!is_relation_notification_enabled()) {
     return;
   }
+
   disable_relation_notification();
-  info->insert_value(owner, info->name, value);
+//  info->insert_value(owner, info->name, value);
+//  std::cout << "object_store::on_update_relation_owner: " << info->name << " (is insert in progress: " << info->is_insert_in_progress << ")\n";
+  info->insert(owner, info->name, value);
   enable_relation_notification();
 }
 
-void object_store::on_remove_relation_owner(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value)
+void object_store::on_remove_relation_owner(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value)
 {
   if (!is_relation_notification_enabled()) {
     return;
   }
+
   disable_relation_notification();
-  info->remove_value(owner, info->name, value);
+//  info->remove_value(owner, info->name, value);
+//  std::cout << "object_store::on_remove_relation_owner: " << info->name << " (is remove in progress: " << info->is_remove_in_progress << ")\n";
+  info->remove(owner, info->name, value);
   enable_relation_notification();
 }
 
-//void object_store::on_append_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
-void object_store::on_append_relation_item(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value)
+void object_store::on_append_relation_item(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value)
 {
-//  auto i = node.relation_field_endpoint_map_.find(node.type_index());
-//  if (i == node.relation_field_endpoint_map_.end()) {
-//    return;
-//  }
   if (info && info->foreign_endpoint) {
-    on_update_relation_owner(info->foreign_endpoint, owner, value);
+    on_update_relation_owner(info, owner, value);
   }
-//  on_update_relation_owner(i->second, owner, value);
 }
 
-//void object_store::on_remove_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
-void object_store::on_remove_relation_item(const std::shared_ptr<prototype_node::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value)
+void object_store::on_remove_relation_item(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value)
 {
-//  auto i = node.relation_field_endpoint_map_.find(node.type_index());
-//  if (i == node.relation_field_endpoint_map_.end()) {
-//    return;
-//  }
   if (info && info->foreign_endpoint) {
-    on_remove_relation_owner(info->foreign_endpoint, owner, value);
+    on_remove_relation_owner(info, owner, value);
   }
 }
 
