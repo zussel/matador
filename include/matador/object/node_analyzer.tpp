@@ -12,18 +12,7 @@ void basic_node_analyzer::process_belongs_to(const char *id, belongs_to <V> &x)
   // find node of belongs to type
   prototype_iterator node = store_.find(x.type());
 
-  object_store &store = store_;
-
-  auto endpoint = std::make_shared<detail::relation_field_endpoint>(
-      id,
-    detail::relation_field_endpoint::BELONGS_TO,
-      [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *owner) {
-        store.mark_modified<T>(proxy);
-        matador::set(proxy->obj<T>(), field, object_ptr<V>(owner));
-      }, [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *) {
-        store.mark_modified<T>(proxy);
-        matador::set(proxy->obj<T>(), field, object_ptr<V>());
-      }, node.get());
+  auto endpoint = std::make_shared<detail::relation_field_endpoint>(id, detail::relation_field_endpoint::BELONGS_TO, node.get());
 
   if (node != store_.end()) {
     /*
@@ -61,18 +50,8 @@ template<class V, class T>
 void basic_node_analyzer::process_has_one(const char *id, has_one <V> &x)
 {
   prototype_iterator foreign_node = store_.find(x.type());
-  object_store &store = store_;
 
-  auto endpoint = std::make_shared<detail::relation_field_endpoint>(
-    id,
-    detail::relation_field_endpoint::HAS_ONE,
-    [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *owner) {
-      store.mark_modified<T>(proxy);
-      matador::set(proxy->obj<T>(), field, object_ptr<V>(owner));
-    }, [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *) {
-      store.mark_modified<T>(proxy);
-      matador::set(proxy->obj<T>(), field, object_ptr<V>());
-    }, foreign_node.get());
+  auto endpoint = std::make_shared<detail::relation_field_endpoint>(id, detail::relation_field_endpoint::HAS_ONE, foreign_node.get());
 
   if (foreign_node != store_.end()) {
     auto i = foreign_node->relation_field_endpoint_map_.find(foreign_node->type_index());
@@ -110,17 +89,7 @@ void basic_node_analyzer::process_has_many(const prototype_iterator &pi, const c
 template<class V, class T>
 void basic_node_analyzer::register_has_many(const std::type_index &typeindex, const char *id, prototype_node *node)
 {
-  object_store &store = store_;
-
-  auto endpoint = std::make_shared<detail::relation_field_endpoint>(id,
-    detail::relation_field_endpoint::HAS_MANY,
-    [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *owner) {
-      store.mark_modified<T>(proxy);
-      matador::append(proxy->obj<T>(), field, object_ptr<V>(owner));
-    }, [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *owner) {
-      store.mark_modified<T>(proxy);
-      matador::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
-    }, node);
+  auto endpoint = std::make_shared<detail::relation_field_endpoint>(id, detail::relation_field_endpoint::HAS_MANY, node);
 
   // find counterpart node
   prototype_iterator foreign_node = store_.find<V>();

@@ -13,6 +13,7 @@ namespace matador {
 
 class object_proxy;
 class prototype_node;
+class object_store;
 
 namespace detail {
 
@@ -23,23 +24,20 @@ struct relation_field_endpoint
     BELONGS_TO, HAS_ONE, HAS_MANY
   };
 
-  typedef std::function<void(object_proxy*, const std::string&, object_proxy*)> modify_value_func;
-
-  relation_field_endpoint(const std::string &n,
-                          relation_type t,
-                          const modify_value_func &insert_func,
-                          const modify_value_func &remove_func,
-                          prototype_node *pn);
-
+  relation_field_endpoint(const std::string &n, relation_type t, prototype_node *pn);
   ~relation_field_endpoint();
 
-  void insert(object_proxy *owner, const std::string &field, object_proxy *value);
-  void remove(object_proxy *owner, const std::string &field, object_proxy *value);
+  template < class T, class V >
+  void set(object_store &store, object_proxy *owner, const std::string &field, object_proxy *value);
+  template < class T, class V >
+  void clear(object_store &store, object_proxy *owner, const std::string &field);
+  template < class T, class V >
+  void append(object_store &store, object_proxy *owner, const std::string &field, object_proxy *value);
+  template < class T, class V >
+  void remove(object_store &store, object_proxy *owner, const std::string &field, object_proxy *value);
 
   std::string name;
   relation_type type;
-  std::function<void(object_proxy*, const std::string&, object_proxy*)> insert_value;
-  std::function<void(object_proxy*, const std::string&, object_proxy*)> remove_value;
   prototype_node *node = nullptr;
   std::shared_ptr<relation_field_endpoint> foreign_endpoint;
   bool is_insert_in_progress = false;

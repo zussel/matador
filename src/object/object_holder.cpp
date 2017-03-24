@@ -79,7 +79,8 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade)
     oid_ = 0;
     if (is_internal() && is_inserted_ && proxy_->ostore_) {
       --(*proxy_);
-      proxy_->ostore_->on_remove_relation_item(this->relation_info_, proxy_, owner_);
+      this->relation_info_->clear(*proxy_->ostore_, proxy_, this->relation_info_->name);
+//      proxy_->ostore_->on_remove_relation_item(this->relation_info_, proxy_, owner_);
 //      proxy_->ostore_->on_remove_relation_item(*proxy_->node_, proxy_, owner_);
 //      proxy_->node_->notify_delete_relation(owner_, proxy);
     }
@@ -98,7 +99,8 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade)
     oid_ = proxy_->id();
     if (is_internal() && is_inserted_ && proxy_->ostore_) {
       ++(*proxy_);
-      proxy_->ostore_->on_append_relation_item(this->relation_info_, proxy_, owner_);
+      this->relation_info_->set(*proxy_->ostore_, proxy_, this->relation_info_->name, owner_);
+//      proxy_->ostore_->on_append_relation_item(this->relation_info_, proxy_, owner_);
 //      proxy_->ostore_->on_append_relation_item(*proxy_->node_, proxy_, owner_);
 //      proxy_->node_->notify_insert_relation(owner_, proxy);
     }

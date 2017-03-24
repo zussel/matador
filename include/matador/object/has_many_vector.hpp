@@ -609,7 +609,8 @@ public:
       if (info->type == detail::relation_field_endpoint::BELONGS_TO) {
         store.on_update_relation_owner(info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
       } else if (info->type == detail::relation_field_endpoint::HAS_MANY) {
-        store.on_append_relation_item(info, rtype->value().proxy_, &owner);
+        info->append(store, rtype->value().proxy_, info->name, &owner);
+//        store.on_append_relation_item(info, rtype->value().proxy_, &owner);
 //        store.on_append_relation_item(*info->foreign_node, rtype->value().proxy_, &owner);
         store.insert(rtype);
       }
@@ -668,7 +669,8 @@ public:
         store.on_remove_relation_owner(info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
       } else if (info->type == detail::relation_field_endpoint::HAS_MANY) {
 //        store.on_remove_relation_item(*info->foreign_node, rtype->value().proxy_, &owner);
-        store.on_remove_relation_item(info, rtype->value().proxy_, &owner);
+        info->remove(store, rtype->value().proxy_, info->name, &owner);
+//        store.on_remove_relation_item(info, rtype->value().proxy_, &owner);
         store.remove(rtype);
       }
     } else {

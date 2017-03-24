@@ -809,13 +809,13 @@ public:
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
   /// @cond MATADOR_DEV
-  void on_update_relation_owner(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
-
-  void on_remove_relation_owner(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
-
-  void on_append_relation_item(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
-
-  void on_remove_relation_item(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
+//  void on_update_relation_owner(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
+//
+//  void on_remove_relation_owner(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
+//
+//  void on_append_relation_item(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
+//
+//  void on_remove_relation_item(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
   /// @endcond
 
   /**
@@ -835,6 +835,7 @@ public:
 private:
   friend class detail::modified_marker;
   friend class detail::object_inserter;
+  friend class detail::relation_field_endpoint;
   friend class object_deleter;
   friend class object_serializer;
   friend class restore_visitor;
@@ -1126,6 +1127,7 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 }
 
 #include "matador/object/node_analyzer.tpp"
+#include "matador/object/relation_field_endpoint.tpp"
 #include "matador/object/object_inserter.tpp"
 #include "matador/object/object_deleter.tpp"
 
