@@ -292,6 +292,11 @@ public:
    */
   friend MATADOR_OBJECT_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
 
+protected:
+  /// @cond MATADOR_DEV
+  virtual void clear(object_proxy *proxy) = 0;
+  virtual void set(object_proxy *proxy, object_proxy *value) = 0;
+  /// @endcond
 private:
   friend class object_serializer;
   friend class object_proxy;

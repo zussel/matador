@@ -198,6 +198,17 @@ public:
     return self::identifier_->clone();
   }
 
+protected:
+  void clear(object_proxy *proxy) override
+  {
+
+  }
+
+  void set(object_proxy *proxy, object_proxy *value) override
+  {
+
+  }
+
 private:
   static std::string classname_;
   static std::unique_ptr<basic_identifier> identifier_;

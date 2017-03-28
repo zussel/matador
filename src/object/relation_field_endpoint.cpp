@@ -10,8 +10,8 @@ namespace matador {
 
 namespace detail {
 
-relation_field_endpoint::relation_field_endpoint(const std::string &n, relation_type t, prototype_node *pn)
-  : name(n), type(t), node(pn)
+relation_field_endpoint::relation_field_endpoint(const std::string &f, relation_type t, prototype_node *pn)
+  : field(f), type(t), node(pn)
 {
   std::cout << this << " creating relation_field_endpoint (" << this << ")\n";
 }

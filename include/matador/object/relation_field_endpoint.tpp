@@ -6,8 +6,8 @@
 namespace matador {
 namespace detail {
 
-template < class T, class V >
-void relation_field_endpoint::set(object_store &store, object_proxy *owner, const std::string &field, object_proxy *value)
+template < class T >
+void relation_field_endpoint::set(object_store &store, object_proxy *owner, object_proxy *value)
 {
   if (is_insert_in_progress) {
     return;
@@ -20,8 +20,8 @@ void relation_field_endpoint::set(object_store &store, object_proxy *owner, cons
   is_insert_in_progress = false;
 }
 
-template < class T, class V >
-void relation_field_endpoint::clear(object_store &store, object_proxy *owner, const std::string &field)
+template < class T >
+void relation_field_endpoint::clear(object_store &store, object_proxy *owner)
 {
   if (is_insert_in_progress) {
     return;
@@ -35,7 +35,7 @@ void relation_field_endpoint::clear(object_store &store, object_proxy *owner, co
 }
 
 template < class T, class V >
-void relation_field_endpoint::append(object_store &store, object_proxy *owner, const std::string &field, object_proxy *value)
+void relation_field_endpoint::append(object_store &store, object_proxy *owner, object_proxy *value)
 {
   if (is_insert_in_progress) {
     return;
@@ -49,7 +49,7 @@ void relation_field_endpoint::append(object_store &store, object_proxy *owner, c
 }
 
 template < class T, class V >
-void relation_field_endpoint::remove(object_store &store, object_proxy *owner, const std::string &field, object_proxy *value)
+void relation_field_endpoint::remove(object_store &store, object_proxy *owner, object_proxy *value)
 {
   if (is_remove_in_progress) {
     return;
