@@ -24,6 +24,7 @@
 
 #include "matador/object/object_holder_type.hpp"
 #include "matador/object/prototype_node.hpp"
+#include "matador/object/relation_field_endpoint.hpp"
 
 #include <memory>
 
@@ -294,8 +295,8 @@ public:
 
 protected:
   /// @cond MATADOR_DEV
-  virtual void clear(object_proxy *proxy) = 0;
-  virtual void set(object_proxy *proxy, object_proxy *value) = 0;
+  virtual void clear_foreign_relation(object_proxy *proxy) = 0;
+  virtual void set_foreign_relation(object_proxy *proxy, object_proxy *value) = 0;
   /// @endcond
 private:
   friend class object_serializer;

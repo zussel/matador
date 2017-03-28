@@ -199,12 +199,12 @@ public:
   }
 
 protected:
-  void clear(object_proxy *proxy) override
+  void clear_foreign_relation(object_proxy */*proxy*/) override
   {
 
   }
 
-  void set(object_proxy *proxy, object_proxy *value) override
+  void set_foreign_relation(object_proxy */*proxy*/, object_proxy */*value*/) override
   {
 
   }

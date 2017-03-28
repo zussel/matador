@@ -22,6 +22,7 @@ class object_inserter;
 }
 
 class object_store;
+class object_proxy;
 
 /// @cond MATADOR_DEV
 
@@ -36,6 +37,8 @@ public:
   std::string owner_field() const { return owner_field_; }
   std::string item_field() const { return item_field_; }
 
+  void append(object_proxy *proxy);
+  void remove(object_proxy *proxy);
 protected:
   friend class detail::object_inserter;
 
@@ -43,6 +46,9 @@ protected:
 
   std::string owner_field_ = "owner_id";
   std::string item_field_ = "item_id";
+
+  std::function<void(object_proxy*)> append_func_;
+  std::function<void(object_proxy*)> remove_func_;
 };
 
 /// @endcond

@@ -5,6 +5,8 @@
 #ifndef MATADOR_RELATION_FIELD_ENDPOINT_HPP
 #define MATADOR_RELATION_FIELD_ENDPOINT_HPP
 
+#include "matador/object/relation_field_serializer.hpp"
+
 #include <string>
 #include <functional>
 #include <memory>
@@ -31,9 +33,9 @@ struct relation_field_endpoint
   void set(object_store &store, object_proxy *owner, object_proxy *value);
   template < class T >
   void clear(object_store &store, object_proxy *owner);
-  template < class T, class V >
+  template < class T >
   void append(object_store &store, object_proxy *owner, object_proxy *value);
-  template < class T, class V >
+  template < class T >
   void remove(object_store &store, object_proxy *owner, object_proxy *value);
 
   std::string field;
@@ -42,6 +44,8 @@ struct relation_field_endpoint
   std::shared_ptr<relation_field_endpoint> foreign_endpoint;
   bool is_insert_in_progress = false;
   bool is_remove_in_progress = false;
+
+  relation_field_serializer field_serializer;
 };
 
 /// @endcond

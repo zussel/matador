@@ -14,8 +14,12 @@ void relation_field_endpoint::set(object_store &store, object_proxy *owner, obje
   }
   is_insert_in_progress = true;
 
+
   store.mark_modified<T>(owner);
-  matador::set(owner->obj<T>(), field, object_ptr<V>(owner));
+
+  field_serializer.set(field, owner->obj<T>(), value);
+
+//  matador::set(owner->obj<T>(), field, object_ptr<V>(owner));
 
   is_insert_in_progress = false;
 }
@@ -29,12 +33,15 @@ void relation_field_endpoint::clear(object_store &store, object_proxy *owner)
   is_insert_in_progress = true;
 
   store.mark_modified<T>(owner);
-  matador::set(owner->obj<T>(), field, object_ptr<V>());
+
+  field_serializer.set(field, owner->obj<T>(), nullptr);
+
+//  matador::set(owner->obj<T>(), field, object_ptr<V>());
 
   is_insert_in_progress = false;
 }
 
-template < class T, class V >
+template < class T >
 void relation_field_endpoint::append(object_store &store, object_proxy *owner, object_proxy *value)
 {
   if (is_insert_in_progress) {
@@ -43,12 +50,14 @@ void relation_field_endpoint::append(object_store &store, object_proxy *owner, o
   is_insert_in_progress = true;
 
   store.mark_modified<T>(owner);
-  matador::append(owner->obj<T>(), field, object_ptr<V>(owner));
+
+  field_serializer.append(field, owner->obj<T>(), value);
+//  matador::append(owner->obj<T>(), field, object_ptr<V>(owner));
 
   is_insert_in_progress = false;
 }
 
-template < class T, class V >
+template < class T >
 void relation_field_endpoint::remove(object_store &store, object_proxy *owner, object_proxy *value)
 {
   if (is_remove_in_progress) {
@@ -57,7 +66,8 @@ void relation_field_endpoint::remove(object_store &store, object_proxy *owner, o
   is_remove_in_progress = true;
 
   store.mark_modified<T>(owner);
-  matador::remove(owner->obj<T>(), field, object_ptr<V>(owner));
+  field_serializer.remove(field, owner->obj<T>(), value);
+//  matador::remove(owner->obj<T>(), field, object_ptr<V>(owner));
 
   is_remove_in_progress = false;
 }

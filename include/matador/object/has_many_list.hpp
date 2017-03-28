@@ -474,10 +474,11 @@ public:
     if (info != nullptr) {
       if (info->type == detail::relation_field_endpoint::BELONGS_TO) {
 //        store.on_update_relation_owner(*info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
-        store.on_update_relation_owner(info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+//        store.on_update_relation_owner(info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+        info->set<T>(store, rtype->value().proxy_, &owner);
       } else if (info->type == detail::relation_field_endpoint::HAS_MANY) {
 //        store.on_append_relation_item(*info->foreign_node, rtype->value().proxy_, &owner);
-        info->append(store, rtype->value().proxy_, info->name, &owner);
+        info->append<T>(store, rtype->value().proxy_, &owner);
 //        store.on_append_relation_item(info, rtype->value().proxy_, &owner);
         store.insert(rtype);
       }
@@ -510,6 +511,17 @@ public:
 //    }
     mark_modified_owner(store, &owner);
   }
+
+  void append_proxy(object_proxy */*proxy*/)
+  {
+//    item_type *item = this->create_item(value_type(proxy));
+//    relation_type iptr(item);
+//    if (this->ostore_) {
+//      inserter_.insert(this->relation_info_, *this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
+//    }
+//    this->container_.push_back(iptr);
+  }
+
 };
 
 template<class T>
@@ -526,6 +538,8 @@ public:
     store.insert(rtype);
     mark_modified_owner(store, &owner);
   }
+
+  void append_proxy(object_proxy*) {}
 };
 
 template<class T>
@@ -540,15 +554,16 @@ public:
     if (info != nullptr) {
       if (info->type == detail::relation_field_endpoint::BELONGS_TO) {
 //        store.on_remove_relation_owner(*info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
-        store.on_remove_relation_owner(info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+//        store.on_remove_relation_owner(info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+        info->clear<T>(store, rtype->value().proxy_);
       } else if (info->type == detail::relation_field_endpoint::HAS_MANY) {
 //        store.on_remove_relation_item(*info->foreign_node, rtype->value().proxy_, &owner);
-        info->remove(store, rtype->value().proxy_, info->name, &owner);
+        info->remove<T>(store, rtype->value().proxy_, &owner);
 //        store.on_remove_relation_item(info, rtype->value().proxy_, &owner);
         store.remove(rtype);
       }
     } else {
-      store.insert(rtype);
+      store.remove(rtype);
     }
 
 
@@ -576,6 +591,12 @@ public:
 //      store.remove(rtype);
 //    }
   }
+
+  void remove_proxy(object_proxy */*proxy*/)
+  {
+//    auto val = value_type(proxy);
+//    remove(val);
+  }
 };
 
 template<class T>
@@ -589,6 +610,8 @@ public:
   {
     store.remove(rtype);
   }
+
+  void remove_proxy(object_proxy*) {}
 };
 
 /// @endcond
@@ -639,7 +662,15 @@ public:
    * Creates an empty has_many object with a
    * std::list as container type
    */
-  has_many() {}
+  has_many()
+  {
+    this->append_func_ = [=](object_proxy *proxy) {
+      this->inserter_.append_proxy(proxy);
+    };
+    this->remove_func_ = [=](object_proxy *proxy) {
+      this->deleter_.remove_proxy(proxy);
+    };
+  }
 
   /**
    * @brief Inserts an element at the given position.
@@ -770,12 +801,6 @@ public:
       }
     }
     return iterator(this->container_.erase(start.iter_, end.iter_));
-  }
-
-private:
-  item_type* create_item(const value_type &value)
-  {
-    return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
   }
 
 private:

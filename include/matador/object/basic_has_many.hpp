@@ -162,8 +162,14 @@ public:
    */
   void append(const typename iterator::internal_type &item) { container_.push_back(item); }
 
-protected:
   /// @cond MATADOR_DEV
+protected:
+  item_type* create_item(const value_type &value)
+  {
+    return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
+  }
+
+protected:
 
   friend class detail::object_inserter;
   friend class object_store;
