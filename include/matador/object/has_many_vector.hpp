@@ -598,9 +598,12 @@ template<class T>
 class has_many_inserter<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
 {
 public:
-  typedef T value_type;
   typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
   typedef typename basic_has_many<T, std::vector>::mark_modified_owner_func mark_modified_owner_func;
+  typedef has_many<T, std::vector> container_type;
+  typedef typename basic_has_many<T, std::vector>::item_type item_type;
+
+  has_many_inserter(container_type &container) : container_(container) {}
 
   void insert(const std::shared_ptr<detail::relation_field_endpoint> &info, object_store &store,
               const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
@@ -638,32 +641,30 @@ public:
     mark_modified_owner(store, &owner);
   }
 
-  void append_proxy(object_proxy *proxy, basic_has_many<T, std::vector> &container)
+  void append_proxy(object_proxy *proxy)
   {
-    basic_has_many<T, std::vector>::item_type *item = new basic_has_many<T, std::vector>::item_type(
-      container.owner_field(), container.item_field(), this->owner_id_, proxy
+    item_type *item = new item_type(
+      container_.owner_field(), container_.item_field(), container_.owner_id_, proxy
     );
-    basic_has_many<T, std::vector>::relation_type iptr(item);
-    if (container.ostore_) {
-      insert(container.relation_info_, *container.ostore_, iptr, *container.owner_, container.mark_modified_owner_);
+    relation_type iptr(item);
+    if (container_.store()) {
+      insert(container_.relation_info_, *container_.store(), iptr, *container_.owner_, container_.mark_modified_owner_);
     }
-    container.container_.push_back(iptr);
+    container_.container_.push_back(iptr);
   }
 
-  void remove_proxy(object_proxy */*proxy*/)
-  {
-//    auto val = value_type(proxy);
-//    remove(val);
-  }
+  container_type &container_;
 };
 
 template<class T>
 class has_many_inserter<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
 {
 public:
-  typedef T value_type;
   typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
   typedef typename basic_has_many<T, std::vector>::mark_modified_owner_func mark_modified_owner_func;
+  typedef has_many<T, std::vector> container_type;
+
+  has_many_inserter(container_type &) {}
 
   void insert(const std::shared_ptr<detail::relation_field_endpoint> &, object_store &store,
               const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
@@ -679,8 +680,11 @@ template<class T>
 class has_many_deleter<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
 {
 public:
-  typedef T value_type;
   typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+  typedef typename has_many_iterator_traits<T, std::vector>::value_type value_type;
+  typedef has_many<T, std::vector> container_type;
+
+  has_many_deleter(container_type &container) : container_(container) {}
 
   void remove(const std::shared_ptr<detail::relation_field_endpoint> &info, object_store &store, relation_type &rtype, object_proxy &owner)
   {
@@ -715,19 +719,23 @@ public:
 //    }
   }
 
-  void remove_proxy(object_proxy*)
+  void remove_proxy(object_proxy *proxy)
   {
-
+    auto val = value_type(proxy);
+    container_.remove(val);
   }
 
+  container_type &container_;
 };
 
 template<class T>
 class has_many_deleter<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
 {
 public:
-  typedef T value_type;
   typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+  typedef has_many<T, std::vector> container_type;
+
+  has_many_deleter(container_type &) {}
 
   void remove(const std::shared_ptr<detail::relation_field_endpoint> &, object_store &store, relation_type &rtype, object_proxy &)
   {
@@ -784,7 +792,7 @@ public:
    * Creates an empty has_many object with a
    * std::vector as container type
    */
-  has_many()
+  has_many() : inserter_(*this), deleter_(*this)
   {
     this->append_func_ = [=](object_proxy *proxy) {
       this->inserter_.append_proxy(proxy);
@@ -809,7 +817,8 @@ public:
     if (this->ostore_) {
       inserter_.insert(this->relation_info_, *this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
     }
-    return iterator(this->container_.insert(pos.iter_, iptr));
+    auto ii = this->container_.insert(pos.iter_, iptr);
+    return iterator(ii);
   }
 
   /**

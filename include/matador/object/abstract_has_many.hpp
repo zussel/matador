@@ -39,6 +39,9 @@ public:
 
   void append(object_proxy *proxy);
   void remove(object_proxy *proxy);
+
+  object_store* store() const { return ostore_; }
+
 protected:
   friend class detail::object_inserter;
 

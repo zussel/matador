@@ -173,6 +173,11 @@ protected:
 
   friend class detail::object_inserter;
   friend class object_store;
+  friend class detail::has_many_inserter<T, std::vector>;
+  friend class detail::has_many_deleter<T, std::vector>;
+  friend class detail::has_many_inserter<T, std::list>;
+  friend class detail::has_many_deleter<T, std::list>;
+
 
   object_proxy *owner_ = nullptr;
   std::shared_ptr<basic_identifier> owner_id_;
