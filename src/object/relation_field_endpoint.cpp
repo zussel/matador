@@ -12,14 +12,10 @@ namespace detail {
 
 relation_field_endpoint::relation_field_endpoint(const std::string &f, relation_type t, prototype_node *pn)
   : field(f), type(t), node(pn)
-{
-  std::cout << this << " creating relation_field_endpoint (" << this << ")\n";
-}
+{}
 
 relation_field_endpoint::~relation_field_endpoint()
-{
-  std::cout << this << " deleting relation_field_endpoint (" << this << ")\n";
-}
+{}
 
 }
 }

@@ -98,8 +98,8 @@ void basic_node_analyzer::register_has_many(const std::type_index &typeindex, co
     if (i != foreign_node->relation_field_endpoint_map_.end()) {
       endpoint->foreign_endpoint = i->second;
       i->second->foreign_endpoint = endpoint;
-      std::cout << "basic_node_analyzer::register_has_many: endpoint " << endpoint->field << "(" << endpoint.get() << ") -> foreign " << endpoint->foreign_endpoint->field << "\n";
-      std::cout << "basic_node_analyzer::register_has_many: endpoint " << i->second->field << "(" << i->second.get() << ") -> foreign " << i->second->foreign_endpoint->field << "\n";
+//      std::cout << "basic_node_analyzer::register_has_many: endpoint " << endpoint->field << "(" << endpoint.get() << ") -> foreign " << i->second->field << "\n";
+//      std::cout << "basic_node_analyzer::register_has_many: endpoint " << i->second->field << "(" << i->second.get() << ") -> foreign " << endpoint->field << "\n";
     }
   }
 

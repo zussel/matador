@@ -31,13 +31,6 @@ prototype_node::prototype_node()
 
 prototype_node::~prototype_node()
 {
-  if (prototype) {
-    std::cout << "node: " << type_ << " (" << type_id() << ") relation field endpoints: " << relation_field_endpoint_map_.size() << "\n";
-    for (auto i : relation_field_endpoint_map_) {
-      std::cout << "relation field endpoint " << i.second.get() << "(count " << i.second.use_count() << ")\n";
-    }
-  }
-  relation_field_endpoint_map_.clear();
   if (deleter_) {
     deleter_(prototype, observer_list);
   }

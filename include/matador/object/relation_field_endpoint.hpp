@@ -30,18 +30,18 @@ struct relation_field_endpoint
   ~relation_field_endpoint();
 
   template < class T >
-  void set(object_store &store, object_proxy *owner, object_proxy *value);
+  void set(object_store &store, const object_ptr<T> &owner, object_proxy *value);
   template < class T >
-  void clear(object_store &store, object_proxy *owner);
+  void clear(object_store &store, const object_ptr<T> &owner);
   template < class T >
-  void append(object_store &store, object_proxy *owner, object_proxy *value);
+  void append(object_store &store, const object_ptr<T> &owner, object_proxy *value);
   template < class T >
-  void remove(object_store &store, object_proxy *owner, object_proxy *value);
+  void remove(object_store &store, const object_ptr<T> &owner, object_proxy *value);
 
   std::string field;
   relation_type type;
   prototype_node *node = nullptr;
-  std::shared_ptr<relation_field_endpoint> foreign_endpoint;
+  std::weak_ptr<relation_field_endpoint> foreign_endpoint;
   bool is_insert_in_progress = false;
   bool is_remove_in_progress = false;
 

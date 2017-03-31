@@ -1039,8 +1039,6 @@ void ObjectStoreTestUnit::test_has_many()
 
 void ObjectStoreTestUnit::test_has_many_to_many()
 {
-  std::cout << "\n";
-
   ostore_.attach<person>("person");
   ostore_.attach<student, person>("student");
   ostore_.attach<course>("course");

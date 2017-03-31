@@ -881,6 +881,12 @@ private:
   }
 
   template < class T >
+  void mark_modified(const object_ptr<T> &optr)
+  {
+    mark_modified<T>(optr.proxy_);
+  }
+
+  template < class T >
   object_ptr<T> insert(const object_ptr<T> &o, bool reset)
   {
     if (reset) {
@@ -1128,6 +1134,7 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 
 #include "matador/object/node_analyzer.tpp"
 #include "matador/object/relation_field_endpoint.tpp"
+#include "matador/object/relation_field_serializer.tpp"
 #include "matador/object/object_inserter.tpp"
 #include "matador/object/object_deleter.tpp"
 

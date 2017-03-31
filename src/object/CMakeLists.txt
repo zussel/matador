@@ -63,7 +63,9 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/object/node_analyzer.tpp
   ${CMAKE_SOURCE_DIR}/include/matador/object/relation_field_endpoint.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/object/relation_field_endpoint.tpp
-        ../../include/matador/object/relation_field_serializer.hpp)
+  ${CMAKE_SOURCE_DIR}/include/matador/object/relation_field_serializer.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/object/relation_field_serializer.tpp
+)
 
 ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
 
