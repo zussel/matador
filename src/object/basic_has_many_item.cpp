@@ -8,25 +8,33 @@ namespace matador {
 
 basic_has_many_item::basic_has_many_item()
   : basic_has_many_item("owner_id", "item_id")
-{ }
+{
+//  std::cout << "creating basic_has_many_item 0 " << this << ")\n";
+}
 
 basic_has_many_item::basic_has_many_item(const std::string &owner_id, const std::string &item_id)
   : basic_has_many_item(owner_id, item_id, nullptr)
-{ }
+{
+//  std::cout << "creating basic_has_many_item 1 " << this << ")\n";
+}
 
 basic_has_many_item::basic_has_many_item(const std::string &owner_id, const std::string &item_id,
                                          const std::shared_ptr<basic_identifier> owner)
   : owner_id_(owner_id)
   , item_id_(item_id)
   , owner_(owner)
-{ }
+{
+//  std::cout << "creating basic_has_many_item 2 " << this << ")\n";
+}
 
 basic_has_many_item::basic_has_many_item(const std::string &owner_id, const std::string &item_id,
                                          basic_identifier *owner)
   : owner_id_(owner_id)
   , item_id_(item_id)
   , owner_(owner)
-{ }
+{
+//  std::cout << "creating basic_has_many_item 3 " << this << ")\n";
+}
 
 void basic_has_many_item::owner_id(const std::string &oid)
 {

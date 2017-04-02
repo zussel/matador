@@ -41,24 +41,40 @@ public:
 
 public:
 
-  using basic_has_many_item::basic_has_many_item;
+//  using basic_has_many_item::basic_has_many_item;
 
   has_many_item()
     : basic_has_many_item()
-  {}
+  {
+    std::cout << "creating has_many_item 0 " << this << " (type: " << typeid(T).name() << ")\n";
+  }
+
+  ~has_many_item()
+  {
+    std::cout << "deleting has_many_item " << this << " (type: " << typeid(T).name() << ")\n";
+  }
 
   has_many_item(const std::string &owner_id, const std::string &item_id,
                 const std::shared_ptr<basic_identifier> &id, const object_ptr<T> &item)
     : basic_has_many_item(owner_id, item_id, id)
     , item_(item)
-  { }
+  {
+    std::cout << "creating has_many_item 1 " << this << " (type: " << typeid(T).name() << ")\n";
+  }
 
   has_many_item(const std::string &owner_id, const std::string &item_id,
                 const std::shared_ptr<basic_identifier> &id, object_proxy *proxy)
     : basic_has_many_item(owner_id, item_id, id)
     , item_(value_type(proxy))
-  { }
+  {
+    std::cout << "creating has_many_item 2 " << this << " (type: " << typeid(T).name() << ")\n";
+  }
 
+  has_many_item(const std::string &owner_id, const std::string &item_id, basic_identifier *owner)
+    : basic_has_many_item(owner_id, item_id, owner)
+  {
+    std::cout << "creating has_many_item 3 " << this << " (type: " << typeid(T).name() << ")\n";
+  }
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
@@ -111,6 +127,10 @@ public:
   {
     throw std::runtime_error("couldn't initialize builtin type with object_proxy");
   }
+
+  has_many_item(const std::string &owner_id, const std::string &item_id, basic_identifier *owner)
+      : basic_has_many_item(owner_id, item_id, owner)
+  {}
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)

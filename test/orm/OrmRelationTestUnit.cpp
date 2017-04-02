@@ -116,6 +116,8 @@ void OrmRelationTestUnit::test_belongs_to()
 
 void OrmRelationTestUnit::test_many_to_many()
 {
+  std::cout << "\nSTART ORM TEST\n";
+
   matador::persistence p(dns_);
 
   p.attach<person>("person");
@@ -123,6 +125,8 @@ void OrmRelationTestUnit::test_many_to_many()
   p.attach<course>("course");
 
   UNIT_ASSERT_EQUAL(4UL, p.store().size(), "unexpected size");
+
+  std::cout << "MARK FINISHED ATTACH\n";
 
   p.create();
 
@@ -138,7 +142,11 @@ void OrmRelationTestUnit::test_many_to_many()
   UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");
   UNIT_ASSERT_TRUE(art->students.empty(), "there must be no students in art");
 
+  std::cout << "MARK BEFORE PUSH\n";
+
   s.push_back(art->students, jane);
+
+  std::cout << "MARK AFTER PUSH\n";
 
   UNIT_ASSERT_FALSE(art->students.empty(), "there must not be students in art");
   UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "there must be one student in art course");
@@ -147,7 +155,11 @@ void OrmRelationTestUnit::test_many_to_many()
   UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL, "jane must've took one course");
   UNIT_ASSERT_EQUAL(jane->courses.front()->title, art->title, "janes course must be art");
 
+  std::cout << "MARK BEFORE REMOVE\n";
+
   s.erase(jane->courses, jane->courses.begin());
+
+  std::cout << "MARK AFTER REMOVE\n";
 
   UNIT_ASSERT_TRUE(jane->courses.empty(), "janes courses must be empty");
   UNIT_ASSERT_TRUE(art->students.empty(), "there must be no students in art");
@@ -167,4 +179,5 @@ void OrmRelationTestUnit::test_many_to_many()
   UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");  
 
   p.drop();
+  std::cout << "FINISH ORM TEST\n";
 }
