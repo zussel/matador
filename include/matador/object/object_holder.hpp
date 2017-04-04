@@ -23,10 +23,14 @@
 #include "matador/utils/identifiable_holder.hpp"
 
 #include "matador/object/object_holder_type.hpp"
+#include "matador/object/prototype_node.hpp"
+#include "matador/object/relation_field_endpoint.hpp"
 
 #include <memory>
 
 namespace matador {
+
+/// @cond MATADOR_DEV
 
 namespace detail {
 class object_inserter;
@@ -37,6 +41,8 @@ class has_many_inserter;
 template<class T, template <class ...> class C, class Enabled>
 class has_many_deleter;
 }
+
+/// @endcond
 
 class basic_identifier;
 class object_proxy;
@@ -287,6 +293,11 @@ public:
    */
   friend MATADOR_OBJECT_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
 
+protected:
+  /// @cond MATADOR_DEV
+  virtual void clear_foreign_relation(object_proxy *proxy) = 0;
+  virtual void set_foreign_relation(object_proxy *proxy, object_proxy *value) = 0;
+  /// @endcond
 private:
   friend class object_serializer;
   friend class object_proxy;
@@ -305,7 +316,8 @@ private:
   // Todo: replace private access of proxy with call to reset
   friend class table_reader;
 
-  template < class T, object_holder_type OPT > friend class object_pointer;
+  template < class T, object_holder_type OPT >
+  friend class object_pointer;
 
   object_proxy *proxy_ = nullptr;
   object_proxy *owner_ = nullptr; // only set if holder type is BELONGS_TO or HAS_MANY
@@ -313,6 +325,8 @@ private:
   object_holder_type type_;
   bool is_inserted_ = false;
   unsigned long oid_ = 0;
+
+  std::shared_ptr<detail::relation_field_endpoint> relation_info_;
 };
 
 }

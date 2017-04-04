@@ -20,7 +20,7 @@ OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, const std::s
 {
   add_test("has_many_delete", std::bind(&OrmRelationTestUnit::test_has_many_delete, this), "test has many delete item");
   add_test("belongs_to", std::bind(&OrmRelationTestUnit::test_belongs_to, this), "test belongs to");
-  add_test("has_many_to_many", std::bind(&OrmRelationTestUnit::test_many_to_many, this), "test many to many");
+  add_test("has_many_to_many", std::bind(&OrmRelationTestUnit::test_many_to_many, this), "test has many to many");
 }
 
 void OrmRelationTestUnit::test_has_many_delete()

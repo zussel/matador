@@ -218,6 +218,8 @@ private:
   friend class has_many<T, std::list>;
   friend class const_has_many_iterator<T, std::list>;
   friend class basic_has_many<T, std::list>;
+  friend class detail::has_many_inserter<T, std::list>;
+  friend class detail::has_many_deleter<T, std::list>;
   friend class object_serializer;
   friend class detail::object_inserter;
 
@@ -464,125 +466,121 @@ template<class T>
 class has_many_inserter<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
 {
 public:
-  typedef T value_type;
+  typedef typename basic_has_many<T, std::list>::iterator iterator;
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
   typedef typename basic_has_many<T, std::list>::mark_modified_owner_func mark_modified_owner_func;
+  typedef has_many<T, std::list> container_type;
+  typedef typename basic_has_many<T, std::vector>::item_type item_type;
 
-  void insert(prototype_node::relation_info *info, object_store &store,
-              const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
+  has_many_inserter(container_type &container) : container_(container) {}
+
+  void insert(iterator i)
   {
-    if (info != nullptr) {
-      if (info->type == prototype_node::relation_info::BELONGS_TO) {
-        store.on_update_relation_owner(*info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
-      } else if (info->type == prototype_node::relation_info::HAS_MANY) {
-        store.on_append_relation_item(*info->foreign_node, rtype->value().proxy_, &owner);
-        store.insert(rtype);
+    relation_type rtype(*i.iter_);
+    if (container_.relation_info_ != nullptr) {
+      if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
+        container_.relation_info_->set(*container_.store(), *i, container_.owner_);
+      } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
+        container_.relation_info_->append(*container_.store(), *i, container_.owner_);
+        container_.store()->insert(rtype);
       }
     } else {
-      store.insert(rtype);
+      container_.store()->insert(rtype);
     }
-
-
-
-//    prototype_iterator foreign_node_ = store.find(typeid(T).name());
-//
-//    auto i = foreign_node_->relation_info_map_.find(foreign_node_->type_index());
-//    if (i != foreign_node_->relation_info_map_.end()) {
-//      if (i->second.type == prototype_node::relation_info::BELONGS_TO) {
-//        store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
-//      } else if (i->second.type == prototype_node::relation_info::HAS_MANY) {
-//        store.on_append_relation_item(*foreign_node_, rtype->value().proxy_, &owner);
-//        store.insert(rtype);
-//      }
-//    } else {
-//      store.insert(rtype);
-//    }
-
-//    auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
-//    if (i != foreign_node_->relation_info_map_.end()) {
-//      // set owner into value
-//      store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
-//    } else {
-//      store.insert(rtype);
-//    }
-    mark_modified_owner(store, &owner);
+    container_.mark_modified_owner_(*container_.store(), container_.owner_);
   }
+
+  void append_proxy(object_proxy *proxy)
+  {
+    item_type *item = new item_type(
+        container_.owner_field(), container_.item_field(), container_.owner_id_, proxy
+    );
+    relation_type iptr(item);
+    iterator i(container_.container_.insert(container_.container_.end(), iptr));
+    if (container_.store()) {
+      insert(i);
+    }
+  }
+
+  container_type &container_;
 };
 
 template<class T>
 class has_many_inserter<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
 {
 public:
-  typedef T value_type;
+  typedef typename basic_has_many<T, std::list>::iterator iterator;
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
-  typedef typename basic_has_many<T, std::list>::mark_modified_owner_func mark_modified_owner_func;
+  typedef has_many<T, std::list> container_type;
 
-  void insert(prototype_node::relation_info *, object_store &store,
-              const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
+  has_many_inserter(container_type &container) : container_(container) {}
+
+  void insert(iterator i)
   {
-    store.insert(rtype);
-    mark_modified_owner(store, &owner);
+    relation_type rtype(*i.iter_);
+    container_.store()->insert(rtype);
+    container_ .mark_modified_owner_(*container_.store(), container_.owner_);
   }
+
+  void append_proxy(object_proxy*) {}
+
+  container_type &container_;
 };
 
 template<class T>
 class has_many_deleter<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
 {
 public:
-  typedef T value_type;
+  typedef typename basic_has_many<T, std::list>::iterator iterator;
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
+  typedef typename has_many_iterator_traits<T, std::list>::value_type value_type;
+  typedef has_many<T, std::list> container_type;
 
-  void remove(prototype_node::relation_info *info, object_store &store, relation_type &rtype, object_proxy &owner)
+  has_many_deleter(container_type &container) : container_(container) {}
+
+  void remove(iterator i)
   {
-    if (info != nullptr) {
-      if (info->type == prototype_node::relation_info::BELONGS_TO) {
-        store.on_remove_relation_owner(*info, rtype->value().proxy_ /*owner*/, &owner /*value*/);
-      } else if (info->type == prototype_node::relation_info::HAS_MANY) {
-        store.on_remove_relation_item(*info->foreign_node, rtype->value().proxy_, &owner);
-        store.remove(rtype);
+    relation_type rtype(*i.iter_);
+    if (container_.relation_info_ != nullptr) {
+      if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
+        container_.relation_info_->clear(*container_.store(), *i);
+      } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
+        container_.relation_info_->remove(*container_.store(), *i, container_.owner_);
+        container_.store()->remove(rtype);
       }
     } else {
-      store.insert(rtype);
+      container_.store()->remove(rtype);
     }
-
-
-
-//    prototype_iterator foreign_node_ = store.find(typeid(T).name());
-//
-//    auto i = foreign_node_->relation_info_map_.find(foreign_node_->type_index());
-//    if (i != foreign_node_->relation_info_map_.end()) {
-//      if (i->second.type == prototype_node::relation_info::BELONGS_TO) {
-//        store.on_remove_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
-//      } else if (i->second.type == prototype_node::relation_info::HAS_MANY) {
-//        store.on_remove_relation_item(*foreign_node_, rtype->value().proxy_, &owner);
-//        store.remove(rtype);
-//      }
-//    } else {
-//      store.remove(rtype);
-//    }
-
-//    auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
-//    if (i != foreign_node_->relation_info_map_
-//               .end()) {
-//      // set owner into value
-//      store.on_remove_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
-//    } else {
-//      store.remove(rtype);
-//    }
   }
+
+  void remove_proxy(object_proxy *proxy)
+  {
+    auto val = value_type(proxy);
+    container_.remove(val);
+  }
+
+  container_type &container_;
 };
 
 template<class T>
 class has_many_deleter<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
 {
 public:
-  typedef T value_type;
+  typedef typename basic_has_many<T, std::list>::iterator iterator;
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
+  typedef has_many<T, std::list> container_type;
 
-  void remove(prototype_node::relation_info *, object_store &store, relation_type &rtype, object_proxy &)
+  has_many_deleter(container_type &container) : container_(container) {}
+
+  void remove(iterator i)
   {
-    store.remove(rtype);
+    relation_type rtype(*i.iter_);
+    container_.store()->remove(rtype);
   }
+
+  void remove_proxy(object_proxy*) {}
+
+  container_type &container_;
 };
 
 /// @endcond
@@ -633,7 +631,15 @@ public:
    * Creates an empty has_many object with a
    * std::list as container type
    */
-  has_many() {}
+  has_many() : inserter_(*this), deleter_(*this)
+  {
+    this->append_func_ = [=](object_proxy *proxy) {
+      this->inserter_.append_proxy(proxy);
+    };
+    this->remove_func_ = [=](object_proxy *proxy) {
+      this->deleter_.remove_proxy(proxy);
+    };
+  }
 
   /**
    * @brief Inserts an element at the given position.
@@ -647,11 +653,13 @@ public:
     // create new has_many
     item_type *item = this->create_item(value);
     relation_type iptr(item);
+//    container_iterator i = pos.iter_;
+    iterator i(this->container_.insert(pos.iter_, iptr));
     if (this->ostore_) {
-      inserter_.insert(this->relation_info_, *this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
+      inserter_.insert(i);
+//      inserter_.insert(this->relation_info_, *this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
     }
-    container_iterator i = pos.iter_;
-    return iterator(this->container_.insert(i, iptr));
+    return i;
   }
 
   /**
@@ -735,8 +743,7 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      relation_type iptr(*i.iter_);
-      deleter_.remove(this->relation_info_, *this->ostore_, iptr, *this->owner_);
+      deleter_.remove(i);
     }
     container_iterator ci = this->container_.erase(i.iter_);
     return iterator(ci);
@@ -759,17 +766,10 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
-        relation_type iptr = (i++).relation_item();
-        deleter_.remove(this->relation_info_, *this->ostore_, iptr, *this->owner_);
+        deleter_.remove(i++);
       }
     }
     return iterator(this->container_.erase(start.iter_, end.iter_));
-  }
-
-private:
-  item_type* create_item(const value_type &value)
-  {
-    return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
   }
 
 private:

@@ -162,11 +162,22 @@ public:
    */
   void append(const typename iterator::internal_type &item) { container_.push_back(item); }
 
-protected:
   /// @cond MATADOR_DEV
+protected:
+  item_type* create_item(const value_type &value)
+  {
+    return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
+  }
+
+protected:
 
   friend class detail::object_inserter;
   friend class object_store;
+  friend class detail::has_many_inserter<T, std::vector>;
+  friend class detail::has_many_deleter<T, std::vector>;
+  friend class detail::has_many_inserter<T, std::list>;
+  friend class detail::has_many_deleter<T, std::list>;
+
 
   object_proxy *owner_ = nullptr;
   std::shared_ptr<basic_identifier> owner_id_;
@@ -175,7 +186,7 @@ protected:
 
   container_type container_;
 
-  prototype_node::relation_info *relation_info_ = nullptr;
+  std::shared_ptr<detail::relation_field_endpoint> relation_info_;
   /// @endcond
 
 };

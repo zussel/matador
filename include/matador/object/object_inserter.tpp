@@ -36,6 +36,15 @@ void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cas
   x.is_inserted_ = true;
   x.cascade_ = cascade;
   x.owner_ = object_proxy_stack_.top();
+
+  prototype_iterator foreign_node = ostore_.find<T>();
+  if (foreign_node != ostore_.end()) {
+    auto i = foreign_node->relation_field_endpoint_map_.find(foreign_node->type_index());
+    if (i != foreign_node->relation_field_endpoint_map_.end()) {
+      x.relation_info_ = i->second;
+    }
+  }
+
   // object was seen by inserter stop inserting
   if (!object_proxies_.insert(x.proxy_).second) {
     return;
@@ -65,6 +74,15 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
   x.is_inserted_ = true;
   x.cascade_ = cascade;
   x.owner_ = object_proxy_stack_.top();
+
+  prototype_iterator foreign_node = ostore_.find<T>();
+  if (foreign_node != ostore_.end()) {
+    auto i = foreign_node->relation_field_endpoint_map_.find(foreign_node->type_index());
+    if (i != foreign_node->relation_field_endpoint_map_.end()) {
+      x.relation_info_ = i->second;
+    }
+  }
+
   // object was seen by inserter stop inserting
   if (!object_proxies_.insert(x.proxy_).second) {
     return;
@@ -109,9 +127,9 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
 
   prototype_iterator foreign_node = ostore_.find<T>();
   if (foreign_node != ostore_.end()) {
-    auto i = foreign_node->relation_info_map_.find(foreign_node->type_index());
-    if (i != foreign_node->relation_info_map_.end()) {
-      x.relation_info_ = &i->second;
+    auto i = foreign_node->relation_field_endpoint_map_.find(foreign_node->type_index());
+    if (i != foreign_node->relation_field_endpoint_map_.end()) {
+      x.relation_info_ = i->second;
     }
   }
   typename basic_has_many<T, C>::iterator first = x.begin();

@@ -111,6 +111,7 @@ void session::session_observer::visit(delete_action *act)
 {
   persistence::t_table_map::iterator i = session_.persistence_.find_table(act->proxy()->node()->type());
   if (i == session_.persistence_.end()) {
+    std::cout << "session: couldn't find table for type '" << act->proxy()->node()->type() << "'\n";
     // Todo: can't find table: give warning
     return;
   }
