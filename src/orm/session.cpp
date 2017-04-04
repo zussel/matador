@@ -69,9 +69,7 @@ void session::session_observer::on_commit(transaction::t_action_vector &actions)
 {
   session_.persistence_.conn().begin();
 
-  std::cout << "committing actions (#: " << actions.size() << ")\n";
   for (transaction::action_ptr &actptr : actions) {
-    std::cout << "accepting action " << actptr.get() << "\n";
     actptr->accept(this);
   }
   session_.persistence_.conn().commit();
@@ -111,16 +109,12 @@ void session::session_observer::visit(update_action *act)
 
 void session::session_observer::visit(delete_action *act)
 {
-  std::cout << "session: visiting delete action " << act
-            << " (proxy: " << act->proxy() << ", type: " << act->proxy()->node()->type() << ")\n";
   persistence::t_table_map::iterator i = session_.persistence_.find_table(act->proxy()->node()->type());
   if (i == session_.persistence_.end()) {
     std::cout << "session: couldn't find table for type '" << act->proxy()->node()->type() << "'\n";
     // Todo: can't find table: give warning
     return;
   }
-
-  std::cout << "session: removing proxy " << act->proxy() << "\n";
 
   i->second->remove(act->proxy());
 

@@ -668,6 +668,7 @@ public:
   typedef typename basic_has_many<T, std::vector>::iterator iterator;
   typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
   typedef typename has_many_iterator_traits<T, std::vector>::value_type value_type;
+  typedef typename has_many_iterator_traits<T, std::vector>::item_type item_type;
   typedef has_many<T, std::vector> container_type;
 
   has_many_deleter(container_type &container) : container_(container) {}
@@ -679,8 +680,8 @@ public:
       if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
         container_.relation_info_->clear(*container_.store(), *i);
       } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
-        container_.store()->remove(rtype);
         container_.relation_info_->remove(*container_.store(), *i, container_.owner_);
+        container_.store()->remove(rtype);
       }
     } else {
       container_.store()->remove(rtype);

@@ -1039,13 +1039,9 @@ void ObjectStoreTestUnit::test_has_many()
 
 void ObjectStoreTestUnit::test_has_many_to_many()
 {
-  std::cout << "\nSTART STORE TEST\n";
-
   ostore_.attach<person>("person");
   ostore_.attach<student, person>("student");
   ostore_.attach<course>("course");
-
-  std::cout << "MARK FINISHED ATTACH\n";
 
   UNIT_ASSERT_EQUAL(4UL, ostore_.size(), "unexpected size");
 
@@ -1059,11 +1055,7 @@ void ObjectStoreTestUnit::test_has_many_to_many()
   UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");
   UNIT_ASSERT_TRUE(art->students.empty(), "there must be no students in art");
 
-  std::cout << "MARK BEFORE PUSH\n";
-
   art->students.push_back(jane);
-
-  std::cout << "MARK AFTER PUSH\n";
 
   UNIT_ASSERT_FALSE(art->students.empty(), "there must not be students in art");
   UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "there must be one student in art course");
@@ -1072,11 +1064,7 @@ void ObjectStoreTestUnit::test_has_many_to_many()
   UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL, "jane must've took one course");
   UNIT_ASSERT_EQUAL(jane->courses.front()->title, art->title, "janes course must be art");
 
-  std::cout << "MARK BEFORE REMOVE\n";
-
   jane->courses.erase(jane->courses.begin());
-
-  std::cout << "MARK AFTER REMOVE\n";
 
   UNIT_ASSERT_TRUE(jane->courses.empty(), "janes courses must be empty");
   UNIT_ASSERT_TRUE(art->students.empty(), "there must be no students in art");
@@ -1094,8 +1082,6 @@ void ObjectStoreTestUnit::test_has_many_to_many()
 
   UNIT_ASSERT_TRUE(george->courses.empty(), "georges courses must be empty");
   UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");
-
-  std::cout << "FINISH STORE TEST\n";
 }
 
 void ObjectStoreTestUnit::test_belongs_to_one()

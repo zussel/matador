@@ -285,8 +285,6 @@ void transaction::on_update(object_proxy *proxy)
    * is restored to old values
    *
    *****************/
-  std::cout << "transaction: on update delete proxy " << proxy
-            << " (type: " << proxy->node()->type() << ", id: " << proxy->id() << ")\n";
   if (transaction_data_->id_action_index_map_.find(proxy->id()) == transaction_data_->id_action_index_map_.end()) {
     std::shared_ptr<update_action> ua(new update_action(proxy, (T*)proxy->obj()));
     backup(ua, proxy);
@@ -308,16 +306,10 @@ void transaction::on_delete(object_proxy *proxy)
    * serializable store
    *
    *****************/
-  std::cout << "transaction: on delete delete proxy " << proxy
-            << " (type: " << proxy->node()->type() << ", id: " << proxy->id() << ")\n";
   t_id_action_index_map::iterator i = transaction_data_->id_action_index_map_.find(proxy->id());
   if (i == transaction_data_->id_action_index_map_.end()) {
-    std::cout << "transaction: backing up  proxy " << proxy
-              << " (type: " << proxy->node()->type() << ", id: " << proxy->id() << ")\n";
     backup(std::make_shared<delete_action>(proxy, (T*)proxy->obj()), proxy);
   } else {
-    std::cout << "transaction: calling action remover for proxy " << proxy
-              << " (type: " << proxy->node()->type() << ", id: " << proxy->id() << ")\n";
     action_remover ar(transaction_data_->actions_);
     ar.remove(i->second, proxy);
   }

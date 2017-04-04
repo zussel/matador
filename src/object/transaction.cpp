@@ -98,8 +98,6 @@ void transaction::backup(const action_ptr &a, const matador::object_proxy *proxy
   a->backup(transaction_data_->object_buffer_);
   transaction_data_->actions_.push_back(a);
   transaction_data_->id_action_index_map_.insert(std::make_pair(proxy->id(), transaction_data_->actions_.size() - 1));
-  std::cout << "transaction: backup proxy " << proxy << "(id: " << proxy->id() << ")\n";
-  std::cout << "transaction: id action map size " << transaction_data_->id_action_index_map_.size() << "\n";
 }
 
 void transaction::restore(const action_ptr &a)
