@@ -57,7 +57,7 @@ void action_remover::visit(update_action *a)
    ***********/
 //  if (a->proxy()->id() == id_) {
   if (a->proxy()->id() == proxy_->id()) {
-    actions_.at(0).reset(a->release_delete_action());
+    actions_.at(index_).reset(a->release_delete_action());
   }
 }
 
