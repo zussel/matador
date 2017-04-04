@@ -60,7 +60,7 @@ void relation_field_endpoint::append(object_store &store, const object_ptr<T> &o
 }
 
 template < class T >
-void relation_field_endpoint::remove(object_store &store, const object_ptr<T> &owner, object_proxy *value)
+void relation_field_endpoint::remove(object_store &, const object_ptr<T> &owner, object_proxy *value)
 {
   if (is_remove_in_progress) {
     return;
@@ -69,7 +69,7 @@ void relation_field_endpoint::remove(object_store &store, const object_ptr<T> &o
 
   auto sptr = foreign_endpoint.lock();
   if (!sptr->is_remove_in_progress) {
-    store.mark_modified(owner);
+//    store.mark_modified(owner);
 
     field_serializer.remove(field, owner, value);
   }

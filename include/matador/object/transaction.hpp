@@ -285,6 +285,8 @@ void transaction::on_update(object_proxy *proxy)
    * is restored to old values
    *
    *****************/
+  std::cout << "transaction: on update delete proxy " << proxy
+            << " (type: " << proxy->node()->type() << ", id: " << proxy->id() << ")\n";
   if (transaction_data_->id_action_index_map_.find(proxy->id()) == transaction_data_->id_action_index_map_.end()) {
     std::shared_ptr<update_action> ua(new update_action(proxy, (T*)proxy->obj()));
     backup(ua, proxy);

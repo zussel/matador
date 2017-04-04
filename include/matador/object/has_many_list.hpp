@@ -218,6 +218,8 @@ private:
   friend class has_many<T, std::list>;
   friend class const_has_many_iterator<T, std::list>;
   friend class basic_has_many<T, std::list>;
+  friend class detail::has_many_inserter<T, std::list>;
+  friend class detail::has_many_deleter<T, std::list>;
   friend class object_serializer;
   friend class detail::object_inserter;
 
@@ -464,6 +466,7 @@ template<class T>
 class has_many_inserter<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
 {
 public:
+  typedef typename basic_has_many<T, std::list>::iterator iterator;
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
   typedef typename basic_has_many<T, std::list>::mark_modified_owner_func mark_modified_owner_func;
   typedef has_many<T, std::list> container_type;
@@ -471,13 +474,14 @@ public:
 
   has_many_inserter(container_type &container) : container_(container) {}
 
-  void insert(const relation_type &rtype)
+  void insert(iterator i)
   {
+    relation_type rtype(*i.iter_);
     if (container_.relation_info_ != nullptr) {
       if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
-        container_.relation_info_->set(*container_.store(), rtype->value(), container_.owner_);
+        container_.relation_info_->set(*container_.store(), *i, container_.owner_);
       } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
-        container_.relation_info_->append(*container_.store(), rtype->value(), container_.owner_);
+        container_.relation_info_->append(*container_.store(), *i, container_.owner_);
         container_.store()->insert(rtype);
       }
     } else {
@@ -492,10 +496,10 @@ public:
         container_.owner_field(), container_.item_field(), container_.owner_id_, proxy
     );
     relation_type iptr(item);
+    iterator i(container_.container_.insert(container_.container_.end(), iptr));
     if (container_.store()) {
-      insert(iptr);
+      insert(i);
     }
-    container_.container_.push_back(iptr);
   }
 
   container_type &container_;
@@ -505,14 +509,15 @@ template<class T>
 class has_many_inserter<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
 {
 public:
+  typedef typename basic_has_many<T, std::list>::iterator iterator;
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
-  typedef typename basic_has_many<T, std::list>::mark_modified_owner_func mark_modified_owner_func;
   typedef has_many<T, std::list> container_type;
 
   has_many_inserter(container_type &container) : container_(container) {}
 
-  void insert(const relation_type &rtype)
+  void insert(iterator i)
   {
+    relation_type rtype(*i.iter_);
     container_.store()->insert(rtype);
     container_ .mark_modified_owner_(*container_.store(), container_.owner_);
   }
@@ -526,19 +531,21 @@ template<class T>
 class has_many_deleter<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
 {
 public:
+  typedef typename basic_has_many<T, std::list>::iterator iterator;
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
-  typedef typename has_many_iterator_traits<T, std::vector>::value_type value_type;
+  typedef typename has_many_iterator_traits<T, std::list>::value_type value_type;
   typedef has_many<T, std::list> container_type;
 
   has_many_deleter(container_type &container) : container_(container) {}
 
-  void remove(relation_type &rtype)
+  void remove(iterator i)
   {
+    relation_type rtype(*i.iter_);
     if (container_.relation_info_ != nullptr) {
       if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
-        container_.relation_info_->clear(*container_.store(), rtype->value());
+        container_.relation_info_->clear(*container_.store(), *i);
       } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
-        container_.relation_info_->remove(*container_.store(), rtype->value(), container_.owner_);
+        container_.relation_info_->remove(*container_.store(), *i, container_.owner_);
         container_.store()->remove(rtype);
       }
     } else {
@@ -559,13 +566,15 @@ template<class T>
 class has_many_deleter<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
 {
 public:
+  typedef typename basic_has_many<T, std::list>::iterator iterator;
   typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
   typedef has_many<T, std::list> container_type;
 
   has_many_deleter(container_type &container) : container_(container) {}
 
-  void remove(relation_type &rtype)
+  void remove(iterator i)
   {
+    relation_type rtype(*i.iter_);
     container_.store()->remove(rtype);
   }
 
@@ -644,12 +653,13 @@ public:
     // create new has_many
     item_type *item = this->create_item(value);
     relation_type iptr(item);
+//    container_iterator i = pos.iter_;
+    iterator i(this->container_.insert(pos.iter_, iptr));
     if (this->ostore_) {
-      inserter_.insert(iptr);
+      inserter_.insert(i);
 //      inserter_.insert(this->relation_info_, *this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
     }
-    container_iterator i = pos.iter_;
-    return iterator(this->container_.insert(i, iptr));
+    return i;
   }
 
   /**
@@ -733,8 +743,7 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      relation_type iptr(*i.iter_);
-      deleter_.remove(iptr);
+      deleter_.remove(i);
     }
     container_iterator ci = this->container_.erase(i.iter_);
     return iterator(ci);
@@ -757,8 +766,7 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
-        relation_type iptr = (i++).relation_item();
-        deleter_.remove(iptr);
+        deleter_.remove(i++);
       }
     }
     return iterator(this->container_.erase(start.iter_, end.iter_));
