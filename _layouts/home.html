@@ -11,8 +11,8 @@ layout: default
           aims to encapsulate all database backend communication. You don't have
           to deal with database backends or sql statements neither with mapping of
           data types or serialization of objects. It comes with relation handling out
-          of the box, brings a unique container for all kind of objects, a fluent sql
-          query interface. On top all features are combined into a ORM layer.
+          of the box, brings a unique container for all kind of objects and a fluent sql
+          query interface. On top all features are combined into an ORM layer.
         </p>
         <p><a class="btn btn-primary btn-lg" href="guide#introduction" role="button">Learn more &raquo;</a></p>
       </div>
@@ -29,10 +29,10 @@ layout: default
             <h2>Unique Container</h2>
             <p>
               matador comes with a unique kind of container where you can store all your objects
-              in. Once the hierarchy is set up you can perform all CRUD operations on the
-              container plus filtering and using views.
+              in. Once the hierarchy of your entities is set up you can perform all CRUD operations
+              on the container plus filtering and using views.
             </p>
-            <p><a class="btn btn-default" href="guide#objects" role="button">View details &raquo;</a></p>
+            <p><a class="btn btn-warning" href="guide#objects" role="button">View details &raquo;</a></p>
           </div>
           <div class="panel-body no-padding">
 {% highlight cpp linenos %}
@@ -56,10 +56,10 @@ auto dep = store.insert(new department("insurance"));
             <h2>Fluent Query</h2>
             <p>
               The sql query module provides simple fluent interface to build sql queries. A query
-              can be typed or just work on a row object. Once a query is finished it can be executed
+              can be typed or just work on a anonymous row object. Once a query is setup it can be executed
               directly or be captured in a prepared statement.
             </p>
-            <p><a class="btn btn-default" href="guide#queries" role="button">View details &raquo;</a></p>
+            <p><a class="btn btn-warning" href="guide#queries" role="button">View details &raquo;</a></p>
           </div>
           <div class="panel-body no-padding">
 {% highlight cpp linenos %}
@@ -82,13 +82,47 @@ for (auto p in res) {
       <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-heading">
+            <h2>Real Relations</h2>
+            <p>
+              matador comes with real relation handling (one to one, one to many and
+              many to many). Once one relation side changes the other side of the relation is
+              updated automatically. This works with plain object store as well as with
+              all supported database backends.
+            </p>
+            <p><a class="btn btn-warning" href="guide#relations" role="button">View details &raquo;</a></p>
+          </div>
+          <div class="panel-body no-padding">
+{% highlight cpp linenos %}
+object_store store;
+// prepare store ...
+
+auto george = store.insert(new employee("george"));
+auto jane = store.insert(new employee("jane"));
+auto dep = store.insert(new department("insurance"));
+
+dep->employees.push_back(jane);
+
+// janes department name is insurance
+std::cout << jane->department->name << "\n"
+
+george->department = dep;
+
+// second employee in department is george
+std::cout << dep->employees.size() << "\n"
+{% endhighlight %}
+          </div>
+        </div>
+      </div>
+            <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
             <h2>ORM Layer</h2>
             <p>
-              The ORM layer finally combines the unique container and the fluent query interface. It
-              hides all database stuff handles one to one, one to many and many to many relationships.
-              Actions are executed in transaction scope.
+              The ORM layer finally combines the unique container, the fluent query interface and the
+              relation handling. It hides all the database work, takes care of transaction handling and
+              object serialization, handles all types of relationships and provides the usera simple interface.
             </p>
-            <p><a class="btn btn-default" href="guide#persistence" role="button">View details &raquo;</a></p>
+            <p><a class="btn btn-warning" href="guide#persistence" role="button">View details &raquo;</a></p>
           </div>
           <div class="panel-body no-padding">
 {% highlight cpp linenos %}
@@ -102,37 +136,14 @@ p.create();
 
 session s(p);
 
-p.insert(new author("john irwing"));
-{% endhighlight %}
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h2>Real Relations</h2>
-            <p>
-              matador comes with real relations handling (one to one, one to many and
-              many to many). Once one side changes the other side of the realtion is
-              updated automatically.
-            </p>
-            <p><a class="btn btn-default" href="guide#relations" role="button">View details &raquo;</a></p>
-          </div>
-          <div class="panel-body no-padding">
-{% highlight cpp linenos %}
-object_store store;
-// prepare store ...
-
-auto george = store.insert(new employee("george"));
-auto jane = store.insert(new employee("jane"));
-auto dep = store.insert(new department("insurance"));
-
-dep->employees.push_back(jane);
- // janes department name is insurance
-std::cout << jane->department->name << "\n"
-george->department = dep;
- // second employee in department is george
-std::cout << dep->employees.size() << "\n"
+transaction tr = s.begin();
+try {
+  p.insert(new author("john irwing"));
+  p.insert(new author("charles darwin"));
+  tr.commit();
+} catch (std::exception &ex) {
+  tr.rollback();
+}
 {% endhighlight %}
           </div>
         </div>

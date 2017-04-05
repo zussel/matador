@@ -2,6 +2,7 @@ body {
   padding-top: 70px;
   /*background-color: #222;*/
   /*color: #ccc;*/
+  font-size: 16px;
 }
 
 .top-offset-50 {
@@ -42,6 +43,7 @@ a.anchor {
 
 pre {
   background-color: transparent;
+  font-size: 14px;
 }
 
 .sm {
@@ -93,6 +95,7 @@ pre {
 
 .highlight table td.code {
   width: 100%;
+  background-color: #eee;
 }
 
 .highlight .gutter {
@@ -113,7 +116,7 @@ pre {
   border: none;
   border-radius: 0;
   background-color: transparent;
-  color: #d0d0d0;
+  color: #666;
   margin: 0;
 }
 
@@ -146,7 +149,7 @@ pre {
     color: #999;
     border-left: 2px solid transparent;
     padding: 4px 20px;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 400;
 }
 
@@ -155,7 +158,7 @@ pre {
     padding-top: 1px;
     padding-bottom: 1px;
     padding-left: 30px;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 /* nested links */
@@ -163,7 +166,7 @@ pre {
     padding-top: 1px;
     padding-bottom: 1px;
     padding-left: 40px;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 /* active & hover links */

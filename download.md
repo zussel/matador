@@ -26,7 +26,7 @@ the [nullsoft scriptable install system](http://nsis.sourceforge.net).
 </table>
 
 Download the appropriate package and install it on your system. Once installed you
-can start developing your app starting with the [introduction](/matador/docs/introduction).
+can start developing your app starting with the [introduction](/matador/guide).
 
 ### Sources
 
