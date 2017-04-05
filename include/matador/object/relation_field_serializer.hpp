@@ -1,6 +1,20 @@
 #ifndef MATADOR_RELATION_FIELD_SERIALIZER_HPP
 #define MATADOR_RELATION_FIELD_SERIALIZER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_object_EXPORTS
+#define MATADOR_OBJECT_API __declspec(dllexport)
+#define EXPIMP_OBJECT_TEMPLATE
+#else
+#define MATADOR_OBJECT_API __declspec(dllimport)
+#define EXPIMP_OBJECT_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#pragma warning(disable: 4275)
+#else
+#define MATADOR_OBJECT_API
+#endif
+
 #include "matador/utils/access.hpp"
 #include "matador/utils/cascade_type.hpp"
 
@@ -20,7 +34,7 @@ class abstract_has_many;
 
 namespace detail {
 
-class relation_field_serializer
+class MATADOR_OBJECT_API relation_field_serializer
 {
 public:
 

@@ -5,6 +5,20 @@
 #ifndef MATADOR_RELATION_FIELD_ENDPOINT_HPP
 #define MATADOR_RELATION_FIELD_ENDPOINT_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_object_EXPORTS
+#define MATADOR_OBJECT_API __declspec(dllexport)
+#define EXPIMP_OBJECT_TEMPLATE
+#else
+#define MATADOR_OBJECT_API __declspec(dllimport)
+#define EXPIMP_OBJECT_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#pragma warning(disable: 4275)
+#else
+#define MATADOR_OBJECT_API
+#endif
+
 #include "matador/object/relation_field_serializer.hpp"
 
 #include <string>
@@ -20,7 +34,7 @@ class object_store;
 namespace detail {
 
 /// @cond MATADOR_DEV
-struct relation_field_endpoint
+struct MATADOR_OBJECT_API relation_field_endpoint
 {
   enum relation_type {
     BELONGS_TO, HAS_ONE, HAS_MANY
