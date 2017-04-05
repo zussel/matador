@@ -1,7 +1,9 @@
 # main links links
 main:
+#  - title: "Getting Started"
+#    url: /getting-started/
   - title: "Guide"
-    url: /guide
+    url: /guide/
   - title: "Api"
     url: /api/classes.html
   - title: "Download"

@@ -1,6 +1,7 @@
 ---
-title: Getting Started
+title: Guide
 layout: guide
+permalink: /guide/
 ---
 <div class="col-md-9 guide">
 

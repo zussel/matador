@@ -14,11 +14,7 @@
       <!--<ul class="nav navbar-nav masthead-nav">-->
       <ul class="nav navbar-nav">
         {% for nav in site.data.navigation.main %}
-          {% if nav.title == "Guide" %}
-          <li{% if page.url contains "guide" %} class="active"{% endif %}>
-            <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
-          </li>
-          {% elsif nav.title == "Api" %}
+          {% if nav.title == "Api" %}
           <li{% if page.url contains "api/" %} class="active"{% endif %}>
             <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
           </li>
