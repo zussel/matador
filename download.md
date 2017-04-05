@@ -26,7 +26,7 @@ the [nullsoft scriptable install system](http://nsis.sourceforge.net).
 </table>
 
 Download the appropriate package and install it on your system. Once installed you
-can start developing your app starting with the [introduction](/docs/introduction).
+can start developing your app starting with the [introduction](/matador/docs/introduction).
 
 ### Sources
 
@@ -69,4 +69,4 @@ $ cmake -G "Visual Studio *" ..
 
 Where `*` is one of the `Visual Studio` strings up from `14`. See cmake
 documentation [here](https://cmake.org/cmake/help/v3.6/manual/cmake-generators.7.html?#visual-studio-generators).
-After generation you find a `oos.sln` solution file in the current directory.
+After generation you find a `matador.sln` solution file in the current directory.
