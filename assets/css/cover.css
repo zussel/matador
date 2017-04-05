@@ -75,32 +75,46 @@ pre {
   margin-bottom: 20px;
 }
 
+.no-padding {
+  padding: 0;
+}
 .highlight {
-  background-color: transparent;
+  background-color: white;
 }
 
 .highlight table {
-  display: inline-block;
+  /*display: inline-block;*/
   width: 100%;
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,.5);
-  border-radius: 5px;
-  background-color: #404040;
-  border: 1px solid #b1b1b1;
+  /*box-shadow: 0 2px 5px 0 rgba(0,0,0,.5);*/
+  /*border-radius: 5px;*/
+  /*background-color: #404040;*/
+  /*border: 1px solid #b1b1b1;*/
 }
 
 .highlight table td.code {
   width: 100%;
 }
 
+.highlight .gutter {
+  border-right: 1px solid #ddd;
+  background-color: #ddd;
+}
+
 .highlight .gutter pre {
-  color: #586e75
+  color: #444;
+  /*color: #586e75*/
+}
+
+.highlight > pre {
+  padding: 0;
 }
 
 .highlight pre {
   border: none;
-  border-radius: none;
+  border-radius: 0;
   background-color: transparent;
   color: #d0d0d0;
+  margin: 0;
 }
 
 .navbar-vertical ul {

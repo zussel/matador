@@ -24,6 +24,17 @@ layout: default
     <!-- Example row of columns -->
     <div class="row">
       <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h2>Unique Container</h2>
+            <p>
+              matador comes with a unique kind of container where you can store all your objects
+              in. Once the hierarchy is set up you can perform all CRUD operations on the
+              container plus filtering and using views.
+            </p>
+            <p><a class="btn btn-default" href="guide#objects" role="button">View details &raquo;</a></p>
+          </div>
+          <div class="panel-body no-padding">
 {% highlight cpp linenos %}
 object_store store;
 
@@ -32,31 +43,25 @@ store.attach<employee, person>("employee");
 store.attach<department>("department");
 
 auto george = store.insert(new employee("george"));
+auto jane = store.insert(new employee("jane"));
 
 auto dep = store.insert(new department("insurance"));
 {% endhighlight %}
+          </div>
+        </div>
       </div>
       <div class="col-md-6">
-        <h2>Unique Container</h2>
-        <p>
-          matador comes with a unique kind of container where you can store all your objects
-          in. Once the hierarchy is set up you can perform all CRUD operations on the
-          container plus filtering and using views.
-        </p>
-        <p><a class="btn btn-default" href="guide#objects" role="button">View details &raquo;</a></p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <h2>Fluent Query</h2>
-        <p>
-          The sql query module provides simple fluent interface to build sql queries. A query
-          can be typed or just work on a row object. Once a query is finished it can be executed
-          directly or be captured in a prepared statement.
-        </p>
-        <p><a class="btn btn-default" href="guide#queries" role="button">View details &raquo;</a></p>
-      </div>
-      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h2>Fluent Query</h2>
+            <p>
+              The sql query module provides simple fluent interface to build sql queries. A query
+              can be typed or just work on a row object. Once a query is finished it can be executed
+              directly or be captured in a prepared statement.
+            </p>
+            <p><a class="btn btn-default" href="guide#queries" role="button">View details &raquo;</a></p>
+          </div>
+          <div class="panel-body no-padding">
 {% highlight cpp linenos %}
 connection conn("sqlite://db.sqlite");
 query<person> q("person", conn);
@@ -69,10 +74,23 @@ for (auto p in res) {
   std::cout << "name: " p->name << "\n";
 }
 {% endhighlight %}
+          </div>
+        </div>
       </div>
     </div>
     <div class="row">
       <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h2>ORM Layer</h2>
+            <p>
+              The ORM layer finally combines the unique container and the fluent query interface. It
+              hides all database stuff handles one to one, one to many and many to many relationships.
+              Actions are executed in transaction scope.
+            </p>
+            <p><a class="btn btn-default" href="guide#persistence" role="button">View details &raquo;</a></p>
+          </div>
+          <div class="panel-body no-padding">
 {% highlight cpp linenos %}
 persistence p("sqlite://db.sqlite");
 
@@ -86,15 +104,38 @@ session s(p);
 
 p.insert(new author("john irwing"));
 {% endhighlight %}
+          </div>
+        </div>
       </div>
       <div class="col-md-6">
-        <h2>ORM Layer</h2>
-        <p>
-          The ORM layer finally combines the unique container and the fluent query interface. It
-          hides all database stuff handles one to one, one to many and many to many relationships.
-          Actions are executed in transaction scope.
-        </p>
-        <p><a class="btn btn-default" href="guide#persistence" role="button">View details &raquo;</a></p>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h2>Real Relations</h2>
+            <p>
+              matador comes with real relations handling (one to one, one to many and
+              many to many). Once one side changes the other side of the realtion is
+              updated automatically.
+            </p>
+            <p><a class="btn btn-default" href="guide#relations" role="button">View details &raquo;</a></p>
+          </div>
+          <div class="panel-body no-padding">
+{% highlight cpp linenos %}
+object_store store;
+// prepare store ...
+
+auto george = store.insert(new employee("george"));
+auto jane = store.insert(new employee("jane"));
+auto dep = store.insert(new department("insurance"));
+
+dep->employees.push_back(jane);
+ // janes department name is insurance
+std::cout << jane->department->name << "\n"
+george->department = dep;
+ // second employee in department is george
+std::cout << dep->employees.size() << "\n"
+{% endhighlight %}
+          </div>
+        </div>
       </div>
     </div>
   </div>

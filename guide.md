@@ -105,12 +105,14 @@ The only thing that must exist is a `serialize` function.
 ```cpp
 struct person
 {
+    identifier<long> id;
     std::string name;
     unsigned age;
 
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
+        serializer.serialize("id", id);
         serializer.serialize("name", name);
         serializer.serialize("age", age);
     }
