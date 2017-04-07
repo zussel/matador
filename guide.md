@@ -7,7 +7,7 @@ permalink: /guide/
 
 ## Introduction
 
-The following documentation will give you an overview on Open Object Store. It will show you all main components of the library so that you can start building your own application with it.
+The following documentation will give you an overview on matador. It will show you all main components of the library so that you can start building your own application with it.
 
 matador consists of three main parts: A container for any kind of objects, a sql query class providing a fluent interface and on top an ORM layer.
 
