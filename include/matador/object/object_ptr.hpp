@@ -131,7 +131,7 @@ public:
    *
    * @return The type string of the object.
    */
-  const char* type() const
+  const char* type() const override
   {
     return classname_.c_str();
   }
@@ -193,7 +193,7 @@ public:
    *
    * @return A new identifier.
    */
-  basic_identifier* create_identifier() const
+  basic_identifier* create_identifier() const override
   {
     return self::identifier_->clone();
   }

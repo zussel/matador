@@ -105,7 +105,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
+void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*/*, typename std::enable_if<!matador::is_builtin<T>::value>::type* */)
 {
   // initialize the has many relation
   // set identifier

@@ -184,13 +184,13 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
   char opening_char = connection_.dialect()->identifier_opening_quote();
   char closing_char = connection_.dialect()->identifier_closing_quote();
   std::stringstream column_name;
-  column_name << "name_with_" << opening_char << "identifier_quotes" << closing_char << "_in_mssql_ctx";
+  column_name << "name_with_" << opening_char << "open_close_quotes" << closing_char << "_in_backend_ctx";
 
   std::vector<std::string> colnames = {
     "normal_name",
     column_name.str(),
     "name_with_'string'_\"literal\"_quotes",
-    "name_with_`identifier_quotes`_in_mysql_ctx",
+    "name_with_`identifier_quotes`_in_backend_ctx",
     "from"
   };
 
@@ -205,6 +205,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
     auto fields = connection_.describe("quotes");
 
     for (auto &&field : fields) {
+      std::cout << "\nmust be equal field [" << field.name() << "] and column [" << columns[field.index()] << "]";
       UNIT_EXPECT_EQUAL(field.name(), columns[field.index()], "invalid column name");
       UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
     }
