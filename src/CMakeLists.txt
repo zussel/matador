@@ -10,6 +10,6 @@ ADD_SUBDIRECTORY(db)
 
 INSTALL(
   FILES ${CMAKE_BINARY_DIR}/version.hpp
-  DESTINATION include/oos
+  DESTINATION include/matador
   COMPONENT headers
 )

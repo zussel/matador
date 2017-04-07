@@ -166,7 +166,7 @@ ADD_SUBDIRECTORY(test)
 
 INSTALL(
   DIRECTORY ${PROJECT_BINARY_DIR}/doc/web/
-  DESTINATION share/doc
+  DESTINATION share/doc/matador
   COMPONENT doc
 )
 
