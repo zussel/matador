@@ -51,7 +51,7 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::serialize(const char *, basic_has_many<T, C> &x, const char *, const char *)
+void object_deleter::serialize(const char *, basic_has_many<T, C> &x, const char *, const char *, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
 {
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
