@@ -20,6 +20,7 @@
 #endif
 
 #include "matador/object/relation_field_serializer.hpp"
+#include "matador/object/basic_has_many_to_many_item.hpp"
 
 #include <string>
 #include <functional>
@@ -51,6 +52,12 @@ struct MATADOR_OBJECT_API relation_field_endpoint
   void append(object_store &store, const object_ptr<T> &owner, object_proxy *value);
   template < class T >
   void remove(object_store &store, const object_ptr<T> &owner, object_proxy *value);
+
+  template < class T >
+  void create(object_store &store, const object_ptr<T> &owner, object_store *value);
+
+  template < class L, class R >
+  object_ptr<basic_has_many_to_many_item> insert(object_store &store, const object_ptr<L> &left, const object_ptr<R> &right);
 
   std::string field;
   relation_type type;

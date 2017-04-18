@@ -1,6 +1,7 @@
 #include "matador/object/relation_field_endpoint.hpp"
 #include "matador/object/object_store.hpp"
 #include "matador/object/object_ptr.hpp"
+#include "matador/object/has_many_to_many_item.hpp"
 
 namespace matador {
 namespace detail {
@@ -75,6 +76,19 @@ void relation_field_endpoint::remove(object_store &, const object_ptr<T> &owner,
   }
 
   is_remove_in_progress = false;
+}
+
+template<class T>
+void relation_field_endpoint::create(object_store &, const object_ptr <T> &, object_store *)
+{
+
+}
+
+template<class L, class R>
+object_ptr<basic_has_many_to_many_item>
+relation_field_endpoint::insert(object_store &store, const object_ptr <L> &left, const object_ptr <R> &right)
+{
+  return store.insert(new has_many_to_many_item<L, R>(left, right, "", ""));
 }
 
 }

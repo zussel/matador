@@ -630,9 +630,9 @@ public:
     );
     relation_type iptr(item);
     iterator i(container_.container_.insert(container_.container_.end(), iptr));
-    if (container_.store()) {
-      insert(i);
-    }
+//    if (container_.store()) {
+//      insert(i);
+//    }
   }
 
   container_type &container_;

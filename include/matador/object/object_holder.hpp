@@ -310,6 +310,8 @@ private:
   friend class detail::has_many_inserter;
   template<class T, template <class ...> class C, class Enabled >
   friend class detail::has_many_deleter;
+  template < class L, class R >
+  friend class has_many_to_many_item;
 
   // Todo: change interface to remove friend
   friend class session;

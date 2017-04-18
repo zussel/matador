@@ -16,7 +16,7 @@ SET(SOURCES
   object_proxy_accessor.cpp
   object_deleter.cpp
   object_inserter.cpp
-  relation_field_endpoint.cpp relation_field_serializer.cpp abstract_has_many.cpp)
+  relation_field_endpoint.cpp relation_field_serializer.cpp abstract_has_many.cpp basic_has_many_to_many_item.cpp)
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/object/action.hpp
@@ -65,7 +65,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/object/relation_field_endpoint.tpp
   ${CMAKE_SOURCE_DIR}/include/matador/object/relation_field_serializer.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/object/relation_field_serializer.tpp
-)
+  ../../include/matador/object/has_many_to_many_item.hpp ../../include/matador/object/basic_has_many_to_many_item.hpp)
 
 ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
 
