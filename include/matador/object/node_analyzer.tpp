@@ -2,6 +2,7 @@
 #include "matador/object/prototype_iterator.hpp"
 #include "matador/object/object_store.hpp"
 #include "matador/object/generic_access.hpp"
+#include "matador/object/has_many_to_many_item.hpp"
 
 namespace matador {
 namespace detail {
@@ -65,7 +66,9 @@ void basic_node_analyzer::process_has_one(const char *id, has_one <V> &x)
 }
 
 template<class V, class T, template<class ...> class C>
-void basic_node_analyzer::process_has_many(const prototype_iterator &pi, const char *id, has_many<V, C> &)
+void basic_node_analyzer::
+
+process_has_many(const prototype_iterator &pi, const char *id, has_many<V, C> &)
 {
   if (pi->type_index() == std::type_index(typeid(typename has_many<T, C>::item_type))) {
     // prototype is of type has_many_item
@@ -156,6 +159,19 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &x,
     pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
 
     this->register_has_many<V, T>(node_.type_index(), id, pi.get());
+
+
+    std::vector<O<has_many_to_many_item<T, V>>*> has_many_to_many_item_observer;
+    for (auto o : observer_) {
+      has_many_to_many_item_observer.push_back(new O<has_many_to_many_item<T, V>>(o));
+    }
+
+    prototype_node *node2 = prototype_node::make_relation_node<has_many_to_many_item<T, V>>(&store_, id, false, node_.type(), id, owner_column, item_column);
+
+    pi = store_.attach<has_many_to_many_item<T, V>>(node2, nullptr, has_many_to_many_item_observer);
+
+    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
+
   } else {
     this->process_has_many<V, T, C>(pi, id, x);
   }

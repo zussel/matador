@@ -11,12 +11,20 @@ template < class L, class R >
 class has_many_to_many_item : public basic_has_many_to_many_item
 {
 public:
+  has_many_to_many_item() {}
   has_many_to_many_item(const object_ptr<L> &left, const object_ptr<R> &right,
                         const std::string &left_column, const std::string &right_column)
     : basic_has_many_to_many_item(left.proxy_, right.proxy_, left_column, right_column)
     , left_(left)
     , right_(right)
   {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize(this->left_column().c_str(), left_, matador::cascade_type::NONE);
+    serializer.serialize(this->right_column().c_str(), right_, matador::cascade_type::NONE);
+  }
 
   object_ptr<L> left() const
   {
