@@ -45,6 +45,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("belongs_to_one", std::bind(&ObjectStoreTestUnit::test_belongs_to_one, this), "test belongs to one behaviour");
   add_test("belongs_to_many", std::bind(&ObjectStoreTestUnit::test_belongs_to_many, this), "test belongs to many behaviour");
   add_test("observer", std::bind(&ObjectStoreTestUnit::test_observer, this), "test observer functionality");
+  add_test("attach_has_many", std::bind(&ObjectStoreTestUnit::test_attach_has_many, this), "test attach has many");
 }
 
 struct basic_test_pair
@@ -1226,4 +1227,13 @@ void ObjectStoreTestUnit::test_observer()
   };
 
   UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
+}
+
+void ObjectStoreTestUnit::test_attach_has_many()
+{
+  ostore_.attach<person>("person");
+  ostore_.attach<student, person>("student");
+  ostore_.attach<course>("course");
+
+  UNIT_ASSERT_EQUAL(4UL, ostore_.size(), "unexpected size");
 }

@@ -44,6 +44,7 @@ public:
   void test_belongs_to_one();
   void test_belongs_to_many();
   void test_observer();
+  void test_attach_has_many();
 
 private:
   matador::object_store ostore_;

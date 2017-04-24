@@ -66,14 +66,16 @@ void basic_node_analyzer::process_has_one(const char *id, has_one <V> &x)
 }
 
 template<class V, class T, template<class ...> class C>
-void basic_node_analyzer::
-
-process_has_many(const prototype_iterator &pi, const char *id, has_many<V, C> &)
+void basic_node_analyzer::process_has_many(const prototype_iterator &pi, const char *id, has_many<V, C> &)
 {
   if (pi->type_index() == std::type_index(typeid(typename has_many<T, C>::item_type))) {
     // prototype is of type has_many_item
     this->register_has_many<V, T>(node_.type_index(), id, pi.get());
-    store_.typeid_prototype_map_[typeid(typename has_many<V, C>::item_type).name()].insert(std::make_pair(pi->type_, pi.get()));
+    store_.typeid_prototype_map_[typeid(typename has_many<V, C>::item_type).name()].insert(
+        std::make_pair(pi->type_, pi.get()));
+  } else if (pi->type_index() == std::type_index(typeid(has_many_to_many_item<T, V>))) {
+    // prototype is of type has_many_to_many_item
+    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
   } else {
     // found corresponding belongs_to or has_many
     auto j = pi->relation_field_endpoint_map_.find(pi->type_index());
@@ -160,7 +162,7 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &x,
 
     this->register_has_many<V, T>(node_.type_index(), id, pi.get());
 
-
+    // new has many to many item
     std::vector<O<has_many_to_many_item<T, V>>*> has_many_to_many_item_observer;
     for (auto o : observer_) {
       has_many_to_many_item_observer.push_back(new O<has_many_to_many_item<T, V>>(o));
@@ -251,6 +253,14 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &x,
     pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr);
 
     this->register_has_many<V, T>(node_.type_index(), id, pi.get());
+
+    // new has many to many item
+    prototype_node *node2 = prototype_node::make_relation_node<has_many_to_many_item<T, V>>(&store_, id, false, node_.type(), id, owner_column, item_column);
+
+    pi = store_.attach<has_many_to_many_item<T, V>>(node2, nullptr);
+
+    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
+
   } else {
     this->process_has_many<V, T, C>(pi, id, x);
   }
