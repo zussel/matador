@@ -1229,11 +1229,20 @@ void ObjectStoreTestUnit::test_observer()
   UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
 }
 
+typedef has_many_to_many_item<course, student> course_student_item;
+
 void ObjectStoreTestUnit::test_attach_has_many()
 {
+  std::cout<<"\n";
   ostore_.attach<person>("person");
   ostore_.attach<student, person>("student");
   ostore_.attach<course>("course");
 
   UNIT_ASSERT_EQUAL(4UL, ostore_.size(), "unexpected size");
+
+  std::unique_ptr<has_many_to_many_item<student, course>> item(ostore_.create<has_many_to_many_item<student, course>>());
+
+  UNIT_ASSERT_NOT_NULL(item.get(), "item must not be null");
+
+  UNIT_ASSERT_EXCEPTION(ostore_.create<course_student_item>(), object_exception, "unknown prototype type", "");
 }

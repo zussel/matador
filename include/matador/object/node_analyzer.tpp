@@ -68,14 +68,24 @@ void basic_node_analyzer::process_has_one(const char *id, has_one <V> &x)
 template<class V, class T, template<class ...> class C>
 void basic_node_analyzer::process_has_many(const prototype_iterator &pi, const char *id, has_many<V, C> &)
 {
-  if (pi->type_index() == std::type_index(typeid(typename has_many<T, C>::item_type))) {
-    // prototype is of type has_many_item
-    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
-    store_.typeid_prototype_map_[typeid(typename has_many<V, C>::item_type).name()].insert(
-        std::make_pair(pi->type_, pi.get()));
-  } else if (pi->type_index() == std::type_index(typeid(has_many_to_many_item<T, V>))) {
+  /*
+   * switch left (T) and right (V) template parameter
+   * to fit the already inserted has_many_to_many_item
+   * template parameter
+   */
+  std::type_index ti(typeid(has_many_to_many_item<V, T>));
+  std::cout << "checking type index (ti) " << ti.name() << " vs (pi) " << pi->type_index().name() << "\n";
+//  if (pi->type_index() == std::type_index(typeid(typename has_many<T, C>::item_type))) {
+//    // prototype is of type has_many_item
+//    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
+//    store_.typeid_prototype_map_[typeid(typename has_many<V, C>::item_type).name()].insert(
+//        std::make_pair(pi->type_, pi.get()));
+//  } else
+  if (pi->type_index() == std::type_index(typeid(has_many_to_many_item<V, T>))) {
     // prototype is of type has_many_to_many_item
     this->register_has_many<V, T>(node_.type_index(), id, pi.get());
+    store_.typeid_prototype_map_[ti.name()].insert(
+      std::make_pair(pi->type_, pi.get()));
   } else {
     // found corresponding belongs_to or has_many
     auto j = pi->relation_field_endpoint_map_.find(pi->type_index());
@@ -212,6 +222,7 @@ template<class T>
 void node_analyzer<T>::analyze()
 {
   T obj;
+  std::cout << "analyzing " << typeid(T).name() << "\n";
   matador::access::serialize(*this, obj);
 }
 
@@ -246,13 +257,15 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &x,
   // check if has many item is already attached
   // true: check owner and item field
   // false: attach it
+  std::cout << "analyze: serializing " << id << "\n";
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
-    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
-
-    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr);
-
-    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
+    std::cout << "has many relation " << id << " not found\n";
+//    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
+//
+//    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr);
+//
+//    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
 
     // new has many to many item
     prototype_node *node2 = prototype_node::make_relation_node<has_many_to_many_item<T, V>>(&store_, id, false, node_.type(), id, owner_column, item_column);
@@ -262,6 +275,7 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &x,
     this->register_has_many<V, T>(node_.type_index(), id, pi.get());
 
   } else {
+    std::cout << "found has many relation " << id << "\n";
     this->process_has_many<V, T, C>(pi, id, x);
   }
 }

@@ -30,6 +30,9 @@ struct has_many_iterator_traits<T, std::list, typename std::enable_if<!is_builti
   typedef typename container_type::iterator container_iterator;
   typedef typename container_type::const_iterator const_container_iterator;
   typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
+
+  typedef has_many_item_holder<T> holder_type;
+  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
 };
 
 template < class T >
@@ -45,6 +48,9 @@ struct has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin
   typedef typename container_type::iterator container_iterator;
   typedef typename container_type::iterator const_container_iterator;
   typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
+
+  typedef has_many_item_holder<T> holder_type;
+  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
 };
 
 /// @endcond
@@ -58,8 +64,7 @@ struct has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin
  * @tparam T The type of the iterator/container
  */
 template < class T >
-class has_many_iterator<T, std::list>
-  : public has_many_iterator_traits<T, std::list>
+class has_many_iterator<T, std::list> : public has_many_iterator_traits<T, std::list>
 {
 private:
   typedef has_many_iterator_traits<T, std::list> traits;

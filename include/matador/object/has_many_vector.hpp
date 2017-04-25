@@ -6,6 +6,7 @@
 #define OOS_HAS_MANY_VECTOR_HPP
 
 #include "matador/object/basic_has_many.hpp"
+//#include "matador/object/has_many_to_many_item.hpp"
 #include "matador/object/object_store.hpp"
 #include "matador/object/generic_access.hpp"
 
@@ -30,6 +31,9 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<!is_buil
   typedef typename container_type::iterator container_iterator;
   typedef typename container_type::const_iterator const_container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+
+  typedef has_many_item_holder<T> holder_type;
+  typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
 };
 
 template < class T >
@@ -45,6 +49,9 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<is_built
   typedef typename container_type::iterator container_iterator;
   typedef typename container_type::const_iterator const_container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+
+  typedef has_many_item_holder<T> holder_type;
+  typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
 };
 
 /// @endcond
