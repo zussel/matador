@@ -84,11 +84,14 @@ void relation_field_endpoint::create(object_store &, const object_ptr <T> &, obj
 
 }
 
-template<class L, class R>
-object_ptr<basic_has_many_to_many_item>
-relation_field_endpoint::insert(object_store &store, const object_ptr <L> &left, const object_ptr <R> &right)
+template< class T, class V >
+void relation_field_endpoint::insert(object_store &store, const object_ptr <T> &value, object_proxy *owner)
 {
-  return store.insert(new has_many_to_many_item<L, R>(left, right, "", ""));
+  if (side == LEFT) {
+    store.insert(new has_many_to_many_item<T, V>(value, object_ptr<V>(owner), "", ""));
+  } else /* side == RIGHT */ {
+    store.insert(new has_many_to_many_item<V, T>(object_ptr<V>(owner), value, "", ""));
+  }
 }
 
 }

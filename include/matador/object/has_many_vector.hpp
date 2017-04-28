@@ -24,16 +24,18 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<!is_buil
 {
   typedef has_many_iterator_traits<T, std::vector> self;
   typedef object_ptr<T> value_type;
-  typedef has_many_item<T> item_type;
-  typedef has_one<item_type> internal_type;
-  typedef object_ptr<item_type> relation_type;
-  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
-  typedef typename container_type::iterator container_iterator;
-  typedef typename container_type::const_iterator const_container_iterator;
+//  typedef has_many_item<T> item_type;
+//  typedef has_one<item_type> internal_type;
+//  typedef object_ptr<item_type> relation_type;
+//  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
+//  typedef typename container_type::iterator container_iterator;
+//  typedef typename container_type::const_iterator const_container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
 
   typedef has_many_item_holder<T> holder_type;
   typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
+  typedef holder_container_type::iterator container_iterator;
+  typedef holder_container_type::const_iterator const_container_iterator;
 };
 
 template < class T >
@@ -42,16 +44,18 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<is_built
 {
   typedef has_many_iterator_traits<T, std::vector> self;
   typedef T value_type;
-  typedef has_many_item<T> item_type;
-  typedef has_one<item_type> internal_type;
-  typedef object_ptr<item_type> relation_type;
-  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
-  typedef typename container_type::iterator container_iterator;
-  typedef typename container_type::const_iterator const_container_iterator;
+//  typedef has_many_item<T> item_type;
+//  typedef has_one<item_type> internal_type;
+//  typedef object_ptr<item_type> relation_type;
+//  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
+//  typedef typename container_type::iterator container_iterator;
+//  typedef typename container_type::const_iterator const_container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
 
   typedef has_many_item_holder<T> holder_type;
   typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
+  typedef holder_container_type::iterator container_iterator;
+  typedef holder_container_type::const_iterator const_container_iterator;
 };
 
 /// @endcond
@@ -65,19 +69,18 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<is_built
  * @tparam T The type of the iterator/container
  */
 template < class T >
-class has_many_iterator<T, std::vector>
-  : public has_many_iterator_traits<T, std::vector>
+class has_many_iterator<T, std::vector> : public has_many_iterator_traits<T, std::vector>
 {
 private:
   typedef has_many_iterator_traits<T, std::vector> traits;
-  typedef typename traits::item_type item_type;
-  typedef typename traits::internal_type internal_type;
-  typedef typename traits::container_type container_type;
+//  typedef typename traits::item_type item_type;
+//  typedef typename traits::internal_type internal_type;
+  typedef typename traits::holder_type container_type;
 
 public:
   typedef has_many_iterator<T, std::vector> self;                             /**< Shortcut value self */
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
-  typedef typename traits::relation_type relation_type;                       /**< Shortcut to the relation type */
+  typedef typename traits::holder_type holder_type;                           /**< Shortcut to the relation type */
   typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type */
   typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the internal container iterator */
   typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */
@@ -280,8 +283,8 @@ public:
    * 
    * @return The current value
    */
-  value_type operator->() const { return (*iter_)->item_; }
-  value_type operator*() const { return (*iter_)->item_; }
+  value_type operator->() const { return iter_->value(); }
+  value_type operator*() const { return iter_->value(); }
   //@}
 
 private:
@@ -296,7 +299,7 @@ private:
   template<class V, template <class ...> class C, class Enabled>
   friend class detail::has_many_deleter;
 
-  relation_type relation_item() const { return *iter_; }
+  holder_type holder_item() const { return *iter_; }
 
   void move(self &i)
   {
@@ -314,13 +317,18 @@ struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<!i
 {
   typedef has_many_iterator_traits<T, std::vector> self;
   typedef object_ptr<T> value_type;
-  typedef has_many_item<T> item_type;
-  typedef has_one<item_type> internal_type;
-  typedef object_ptr<item_type> relation_type;
-  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
-  typedef typename container_type::iterator container_iterator;
-  typedef typename container_type::const_iterator const_container_iterator;
+//  typedef has_many_item<T> item_type;
+//  typedef has_one<item_type> internal_type;
+//  typedef object_ptr<item_type> relation_type;
+//  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
+//  typedef typename container_type::iterator container_iterator;
+//  typedef typename container_type::const_iterator const_container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+
+  typedef has_many_item_holder<T> holder_type;
+  typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
+  typedef holder_container_type::iterator container_iterator;
+  typedef holder_container_type::const_iterator const_container_iterator;
 };
 
 template < class T >
@@ -329,13 +337,18 @@ struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<is
 {
   typedef has_many_iterator_traits<T, std::vector> self;
   typedef T value_type;
-  typedef has_many_item<T> item_type;
-  typedef has_one<item_type> internal_type;
-  typedef object_ptr<item_type> relation_type;
-  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
-  typedef typename container_type::iterator container_iterator;
-  typedef typename container_type::const_iterator const_container_iterator;
+//  typedef has_many_item<T> item_type;
+//  typedef has_one<item_type> internal_type;
+//  typedef object_ptr<item_type> relation_type;
+//  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
+//  typedef typename container_type::iterator container_iterator;
+//  typedef typename container_type::const_iterator const_container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+
+  typedef has_many_item_holder<T> holder_type;
+  typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
+  typedef holder_container_type::iterator container_iterator;
+  typedef holder_container_type::const_iterator const_container_iterator;
 };
 
 /// @endcond
@@ -349,19 +362,18 @@ struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<is
  * @tparam T The type of the iterator/container
  */
 template < class T >
-class const_has_many_iterator<T, std::vector>
-  : public const_has_many_iterator_traits<T, std::list>
+class const_has_many_iterator<T, std::vector> : public const_has_many_iterator_traits<T, std::list>
 {
 private:
   typedef const_has_many_iterator_traits<T, std::vector> traits;
-  typedef typename traits::item_type item_type;
-  typedef typename traits::internal_type internal_type;
-  typedef typename traits::container_type container_type;
+//  typedef typename traits::item_type item_type;
+//  typedef typename traits::internal_type internal_type;
+//  typedef typename traits::container_type container_type;
 
 public:
   typedef const_has_many_iterator<T, std::vector> self;                       /**< Shortcut value self */
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
-  typedef typename traits::relation_type relation_type;                       /**< Shortcut to the relation type */
+  typedef typename traits::holder_type holder_type;                           /**< Shortcut to the relation type */
   typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type*/
   typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the internal container iterator */
   typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */
@@ -586,7 +598,7 @@ public:
    */
   const value_type operator->() const { return get(); }
   const value_type operator*() const { return get(); }
-  const value_type get() const { return (*iter_)->value(); }
+  const value_type get() const { return iter_->value(); }
   //@}
   
 private:
@@ -595,7 +607,7 @@ private:
   friend class object_serializer;
   friend class detail::object_inserter;
 
-  const relation_type relation_item() const { return *iter_; }
+  const holder_type holder_item() const { return *iter_; }
 
   const_container_iterator iter_;
 };
@@ -608,27 +620,54 @@ class has_many_inserter<T, std::vector, typename std::enable_if<!is_builtin<T>::
 {
 public:
   typedef typename basic_has_many<T, std::vector>::iterator iterator;
-  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+//  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+  typedef typename has_many_iterator_traits<T, std::vector>::holder_type holder_type;
   typedef has_many<T, std::vector> container_type;
   typedef typename basic_has_many<T, std::vector>::item_type item_type;
 
   has_many_inserter(container_type &container) : container_(container) {}
 
-  void insert(iterator i)
+  void insert(const holder_type &holder)
   {
-    relation_type rtype(*i.iter_);
     if (container_.relation_info_ != nullptr) {
       if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
-        container_.relation_info_->set(*container_.store(), *i, container_.owner_);
+        /*
+         * foreign end of relation is
+         * belongs_to, set owner into
+         * corresponding field
+         */
+        container_.relation_info_->set(*container_.store(), holder.value(), container_.owner_);
       } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
-        container_.relation_info_->append(*container_.store(), *i, container_.owner_);
-        container_.store()->insert(rtype);
+        /*
+         * foreign end of relation is
+         * also has_many, insert has_many_to_many_item
+         */
+        container_.relation_info_->append(*container_.store(), holder.value(), container_.owner_);
+        container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
+//        container_.store()->insert(rtype);
       }
     } else {
-      container_.store()->insert(rtype);
+      std::cout << "what should I do here?\n";
+//      container_.store()->insert(rtype);
     }
     container_.mark_modified_owner_(*container_.store(), container_.owner_);
   }
+
+//  void insert(iterator i)
+//  {
+//    relation_type rtype(*i.iter_);
+//    if (container_.relation_info_ != nullptr) {
+//      if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
+//        container_.relation_info_->set(*container_.store(), *i, container_.owner_);
+//      } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
+//        container_.relation_info_->append(*container_.store(), *i, container_.owner_);
+//        container_.store()->insert(rtype);
+//      }
+//    } else {
+//      container_.store()->insert(rtype);
+//    }
+//    container_.mark_modified_owner_(*container_.store(), container_.owner_);
+//  }
 
   void append_proxy(object_proxy *proxy)
   {
@@ -650,11 +689,17 @@ class has_many_inserter<T, std::vector, typename std::enable_if<is_builtin<T>::v
 {
 public:
   typedef typename basic_has_many<T, std::vector>::iterator iterator;
-  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+//  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+  typedef typename has_many_iterator_traits<T, std::vector>::holder_type holder_type;
   typedef typename basic_has_many<T, std::vector>::mark_modified_owner_func mark_modified_owner_func;
   typedef has_many<T, std::vector> container_type;
 
   has_many_inserter(container_type &container) : container_(container) {}
+
+  void insert(const holder_type &holder)
+  {
+
+  }
 
   void insert(iterator i)
   {
@@ -763,6 +808,8 @@ public:
   typedef typename base::size_type size_type;                      /**< Shortcut to size_type */
   typedef typename base::relation_type relation_type;              /**< Shortcut to relation_type */
 
+  typedef typename base::holder_type holder_type;
+
 private:
   typedef typename base::container_iterator container_iterator;
 
@@ -792,6 +839,17 @@ public:
    */
   iterator insert(iterator pos, const value_type &value)
   {
+    holder_type holder(value, nullptr);
+
+    if (this->ostore_) {
+      inserter_.insert(holder);
+    }
+
+    return iterator(this->holder_container_.emplace(pos.iter_, holder));
+
+
+    // 1. create and insert has_many_to_many_item
+    // 2. create item_holder for
     // create new has_many
     item_type *item = this->create_item(value);
     relation_type iptr(item);

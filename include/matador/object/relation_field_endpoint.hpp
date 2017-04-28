@@ -41,6 +41,9 @@ struct MATADOR_OBJECT_API relation_field_endpoint
     BELONGS_TO, HAS_ONE, HAS_MANY
   };
 
+  enum has_many_relation_side {
+    LEFT, RIGHT
+  };
   relation_field_endpoint(const std::string &f, relation_type t, prototype_node *pn);
   ~relation_field_endpoint();
 
@@ -56,11 +59,12 @@ struct MATADOR_OBJECT_API relation_field_endpoint
   template < class T >
   void create(object_store &store, const object_ptr<T> &owner, object_store *value);
 
-  template < class L, class R >
-  object_ptr<basic_has_many_to_many_item> insert(object_store &store, const object_ptr<L> &left, const object_ptr<R> &right);
+  template < class T, class V >
+  void insert(object_store &store, const object_ptr<T> &value, object_proxy *owner);
 
   std::string field;
   relation_type type;
+  has_many_relation_side side = LEFT;
   prototype_node *node = nullptr;
   std::weak_ptr<relation_field_endpoint> foreign_endpoint;
   bool is_insert_in_progress = false;
