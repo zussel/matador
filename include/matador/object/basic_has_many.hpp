@@ -9,6 +9,7 @@
 #include "matador/object/has_many_item.hpp"
 #include "matador/object/abstract_has_many.hpp"
 #include "matador/object/container_type_traits.hpp"
+#include "has_many.hpp"
 
 namespace matador {
 
@@ -62,12 +63,12 @@ public:
   typedef has_many_iterator<T, C> iterator;                      /**< Shortcut to iterator class */
   typedef has_many_iterator_traits<T, C> traits;
   typedef typename iterator::value_type value_type;              /**< Shortcut to value type */
-  typedef typename iterator::item_type item_type;                /**< Shortcut to item type */
-  typedef typename traits::container_type container_type;      /**< Shortcut to container type */
+//  typedef typename iterator::item_type item_type;                /**< Shortcut to item type */
+  typedef typename traits::holder_container_type container_type;      /**< Shortcut to container type */
   typedef typename traits::holder_type holder_type;      /**< Shortcut to container type */
   typedef typename traits::holder_container_type holder_container_type;      /**< Shortcut to container type */
-  typedef typename iterator::relation_type relation_type;        /**< Shortcut to relation type */
-  typedef typename iterator::internal_type internal_type;        /**< Shortcut to internal type */
+//  typedef typename iterator::relation_type relation_type;        /**< Shortcut to relation type */
+//  typedef typename iterator::internal_type internal_type;        /**< Shortcut to internal type */
   typedef const_has_many_iterator<T,C> const_iterator;           /**< Shortcut to const iterator */
   typedef typename container_type::size_type size_type;          /**< Shortcut to size type */
   typedef typename container_type::iterator container_iterator;  /**< Shortcut to container iterator */
@@ -163,14 +164,14 @@ public:
    *
    * @param item Element to be appended
    */
-  void append(const typename iterator::internal_type &item) { container_.push_back(item); }
+  void append(const typename iterator::holder_type &item) { container_.push_back(item); }
 
   /// @cond MATADOR_DEV
 protected:
-  item_type* create_item(const value_type &value)
-  {
-    return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
-  }
+//  item_type* create_item(const value_type &value)
+//  {
+//    return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
+//  }
 
 protected:
 
