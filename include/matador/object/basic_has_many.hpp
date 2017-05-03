@@ -9,7 +9,6 @@
 #include "matador/object/has_many_item.hpp"
 #include "matador/object/abstract_has_many.hpp"
 #include "matador/object/container_type_traits.hpp"
-#include "has_many.hpp"
 
 namespace matador {
 
