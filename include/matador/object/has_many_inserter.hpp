@@ -6,25 +6,28 @@
 #define MATADOR_HAS_MANY_INSERTER_HPP
 
 #include "matador/object/basic_has_many.hpp"
+#include "matador/object/container_type_traits.hpp"
 
 #include "matador/utils/is_builtin.hpp"
 
 #include <vector>
+#include <list>
 
 namespace matador {
 namespace detail {
 
-template<class T, template < class... > class C, class Enable = void >
+template<class T, template < class... > class C, class Enable >
 class has_many_inserter;
 
-template<class T>
-class has_many_inserter<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
+template<class T, template < class... > class C>
+class has_many_inserter<T, C, typename std::enable_if<
+  !is_builtin<T>::value &&
+  (matador::is_same_container_type<C, std::list>::value || matador::is_same_container_type<C, std::vector>::value)>::type>
 {
 public:
-  typedef typename basic_has_many<T, std::vector>::iterator iterator;
-  typedef typename has_many_iterator_traits<T, std::vector>::holder_type holder_type;
-  typedef has_many<T, std::vector> container_type;
-  typedef typename basic_has_many<T, std::vector>::holder_type holder_type;
+  typedef typename basic_has_many<T, C>::iterator iterator;
+  typedef typename has_many_iterator_traits<T, C>::holder_type holder_type;
+  typedef has_many<T, C> container_type;
 
   has_many_inserter(container_type &container) : container_(container) {}
 
@@ -44,7 +47,7 @@ public:
          * also has_many, insert has_many_to_many_item
          * append it to foreign relation
          */
-        container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
+//        container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
         container_.relation_info_->append(*container_.store(), holder.value(), container_.owner_);
 //        container_.store()->insert(rtype);
       }
@@ -55,7 +58,7 @@ public:
     container_.mark_modified_owner_(*container_.store(), container_.owner_);
   }
 
-  void append_proxy(object_proxy *proxy)
+  void append_proxy(object_proxy */*proxy*/)
   {
 //    item_type *item = new item_type(
 //      container_.owner_field(), container_.item_field(), container_.owner_id_, proxy
@@ -70,15 +73,16 @@ public:
   container_type &container_;
 };
 
-template<class T>
-class has_many_inserter<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
+template<class T, template < class... > class C>
+class has_many_inserter<T, C, typename std::enable_if<
+  is_builtin<T>::value &&
+  (matador::is_same_container_type<C,std::list>::value || matador::is_same_container_type<C, std::vector>::value)>::type>
 {
 public:
-  typedef typename basic_has_many<T, std::vector>::iterator iterator;
-//  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
-  typedef typename has_many_iterator_traits<T, std::vector>::holder_type holder_type;
-  typedef typename basic_has_many<T, std::vector>::mark_modified_owner_func mark_modified_owner_func;
-  typedef has_many<T, std::vector> container_type;
+  typedef typename basic_has_many<T, C>::iterator iterator;
+  typedef typename has_many_iterator_traits<T, C>::holder_type holder_type;
+  typedef typename basic_has_many<T, C>::mark_modified_owner_func mark_modified_owner_func;
+  typedef has_many<T, C> container_type;
 
   has_many_inserter(container_type &container) : container_(container) {}
 

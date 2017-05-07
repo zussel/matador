@@ -7,6 +7,8 @@
 
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/object_store.hpp"
+#include "matador/object/has_many_inserter.hpp"
+#include "matador/object/has_many_deleter.hpp"
 
 #include "matador/utils/is_builtin.hpp"
 
@@ -15,7 +17,7 @@
 namespace matador {
 
 /// @cond MATADOR_DEV
-template < class T, template < class ... > class C, class Enable = void >
+template < class T, template < class ... > class C, class Enable >
 struct has_many_iterator_traits;
 
 template < class T >
@@ -46,10 +48,6 @@ struct has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin
 
 /// @endcond
 
-
-template < class T, template < class ... > class C, class Enable = void >
-struct has_many_iterator;
-
 /**
  * @brief Represents a has many iterator
  *
@@ -67,6 +65,7 @@ private:
 public:
   typedef has_many_iterator<T, std::list> self;                               /**< Shortcut value self */
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
+  typedef typename traits::holder_type holder_type;                           /**< Shortcut holder type */
   typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type*/
   typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the internal container iterator */
   typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */
@@ -208,7 +207,7 @@ private:
 
 /// @cond MATADOR_DEV
 
-template < class T, template < class... > class C, class Enable = void >
+template < class T, template < class... > class C, class Enable >
 struct const_has_many_iterator_traits;
 
 template < class T >
@@ -239,9 +238,6 @@ struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<is_b
 
 /// @endcond
 
-template < class T, template < class... > class C, class Enable = void >
-class const_has_many_iterator;
-
 /**
  * @brief Represents a const has many iterator
  *
@@ -259,7 +255,10 @@ private:
 public:
   typedef const_has_many_iterator<T, std::list> self;                         /**< Shortcut to self */
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
-  typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type*/
+  typedef typename traits::holder_type holder_type;                           /**< Shortcut holder type */
+  typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type */
+  typedef typename traits::container_iterator container_iterator;
+  typedef typename traits::const_container_iterator const_container_iterator;
 
 public:
   /**
@@ -422,135 +421,6 @@ private:
   const_container_iterator iter_;
 };
 
-namespace detail {
-
-/// @cond MATADOR_DEV
-
-template<class T>
-class has_many_inserter<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
-{
-public:
-  typedef typename basic_has_many<T, std::list>::iterator iterator;
-  typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
-  typedef typename basic_has_many<T, std::list>::mark_modified_owner_func mark_modified_owner_func;
-  typedef has_many<T, std::list> container_type;
-  typedef typename basic_has_many<T, std::vector>::item_type item_type;
-
-  has_many_inserter(container_type &container) : container_(container) {}
-
-  void insert(iterator i)
-  {
-    relation_type rtype(*i.iter_);
-    if (container_.relation_info_ != nullptr) {
-      if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
-        container_.relation_info_->set(*container_.store(), *i, container_.owner_);
-      } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
-        container_.relation_info_->append(*container_.store(), *i, container_.owner_);
-        container_.store()->insert(rtype);
-      }
-    } else {
-      container_.store()->insert(rtype);
-    }
-    container_.mark_modified_owner_(*container_.store(), container_.owner_);
-  }
-
-  void append_proxy(object_proxy *proxy)
-  {
-    item_type *item = new item_type(
-        container_.owner_field(), container_.item_field(), container_.owner_id_, proxy
-    );
-    relation_type iptr(item);
-    iterator i(container_.container_.insert(container_.container_.end(), iptr));
-    if (container_.store()) {
-      insert(i);
-    }
-  }
-
-  container_type &container_;
-};
-
-template<class T>
-class has_many_inserter<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
-{
-public:
-  typedef typename basic_has_many<T, std::list>::iterator iterator;
-  typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
-  typedef has_many<T, std::list> container_type;
-
-  has_many_inserter(container_type &container) : container_(container) {}
-
-  void insert(iterator i)
-  {
-    relation_type rtype(*i.iter_);
-    container_.store()->insert(rtype);
-    container_ .mark_modified_owner_(*container_.store(), container_.owner_);
-  }
-
-  void append_proxy(object_proxy*) {}
-
-  container_type &container_;
-};
-
-template<class T>
-class has_many_deleter<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
-{
-public:
-  typedef typename basic_has_many<T, std::list>::iterator iterator;
-  typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
-  typedef typename has_many_iterator_traits<T, std::list>::value_type value_type;
-  typedef has_many<T, std::list> container_type;
-
-  has_many_deleter(container_type &container) : container_(container) {}
-
-  void remove(iterator i)
-  {
-    relation_type rtype(*i.iter_);
-    if (container_.relation_info_ != nullptr) {
-      if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
-        container_.relation_info_->clear(*container_.store(), *i);
-      } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
-        container_.relation_info_->remove(*container_.store(), *i, container_.owner_);
-        container_.store()->remove(rtype);
-      }
-    } else {
-      container_.store()->remove(rtype);
-    }
-  }
-
-  void remove_proxy(object_proxy *proxy)
-  {
-    auto val = value_type(proxy);
-    container_.remove(val);
-  }
-
-  container_type &container_;
-};
-
-template<class T>
-class has_many_deleter<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
-{
-public:
-  typedef typename basic_has_many<T, std::list>::iterator iterator;
-  typedef typename has_many_iterator_traits<T, std::list>::relation_type relation_type;
-  typedef has_many<T, std::list> container_type;
-
-  has_many_deleter(container_type &container) : container_(container) {}
-
-  void remove(iterator i)
-  {
-    relation_type rtype(*i.iter_);
-    container_.store()->remove(rtype);
-  }
-
-  void remove_proxy(object_proxy*) {}
-
-  container_type &container_;
-};
-
-/// @endcond
-
-}
-
 /**
  * @brief Has many relation class using a std::list as container
  *
@@ -581,9 +451,8 @@ public:
   typedef basic_has_many<T, std::list> base;                    /**< Shortcut to self */
   typedef typename base::iterator iterator;                     /**< Shortcut to iterator type */
   typedef typename base::value_type value_type;                 /**< Shortcut to value_type */
-  typedef typename base::item_type item_type;                   /**< Shortcut to item_type */
-  typedef typename base::size_type size_type;                      /**< Shortcut to size_type */
-  typedef typename base::relation_type relation_type;           /**< Shortcut to relation_type */
+  typedef typename base::holder_type holder_type;               /**< Shortcut to holder_type */
+  typedef typename base::size_type size_type;                   /**< Shortcut to size_type */
 
 private:
   typedef typename base::container_iterator container_iterator; /**< Shortcut to container_iterator */
@@ -614,16 +483,23 @@ public:
    */
   iterator insert(iterator pos, const value_type &value)
   {
-    // create new has_many
-    item_type *item = this->create_item(value);
-    relation_type iptr(item);
-//    container_iterator i = pos.iter_;
-    iterator i(this->container_.insert(pos.iter_, iptr));
+    holder_type holder(value, nullptr);
+
     if (this->ostore_) {
-      inserter_.insert(i);
-//      inserter_.insert(this->relation_info_, *this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
+      inserter_.insert(holder);
     }
-    return i;
+
+    return iterator(this->holder_container_.emplace(pos.iter_, holder));
+    // create new has_many
+//    item_type *item = this->create_item(value);
+//    relation_type iptr(item);
+////    container_iterator i = pos.iter_;
+//    iterator i(this->container_.insert(pos.iter_, iptr));
+//    if (this->ostore_) {
+//      inserter_.insert(i);
+////      inserter_.insert(this->relation_info_, *this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
+//    }
+//    return i;
   }
 
   /**

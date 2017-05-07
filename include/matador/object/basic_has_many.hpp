@@ -17,11 +17,11 @@ namespace matador {
 namespace detail {
 class object_inserter;
 
-template<class T, template <class ...> class C, class Enabled = void>
-class has_many_deleter;
-
-template<class T, template <class ...> class C, class Enabled = void>
-class has_many_inserter;
+//template<class T, template <class ...> class C, class Enable = void>
+//class has_many_deleter;
+//
+//template<class T, template <class ...> class C, class Enable = void>
+//class has_many_inserter;
 }
 
 template < class T, template <class ...> class C = std::vector >

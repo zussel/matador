@@ -65,7 +65,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/object/relation_field_endpoint.tpp
   ${CMAKE_SOURCE_DIR}/include/matador/object/relation_field_serializer.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/object/relation_field_serializer.tpp
-  ../../include/matador/object/has_many_to_many_item.hpp ../../include/matador/object/basic_has_many_to_many_item.hpp ../../include/matador/object/has_many_inserter.hpp)
+  ../../include/matador/object/has_many_to_many_item.hpp ../../include/matador/object/basic_has_many_to_many_item.hpp ../../include/matador/object/has_many_inserter.hpp ../../include/matador/object/has_many_deleter.hpp)
 
 ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
 

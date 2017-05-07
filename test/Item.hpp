@@ -191,7 +191,6 @@ class ObjectItemList
 {
 public:
   typedef matador::has_many<ObjectItem<Item>> object_item_list_t;
-  typedef typename object_item_list_t::item_type item_type;
   typedef typename object_item_list_t::iterator iterator;
   typedef typename object_item_list_t::const_iterator const_iterator;
 
