@@ -4,6 +4,7 @@
 #include "matador/object/basic_has_many_to_many_item.hpp"
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/has_one.hpp"
+#include "matador/object/belongs_to.hpp"
 
 namespace matador {
 
@@ -40,7 +41,7 @@ public:
   }
 
 private:
-  has_one<L> left_;
+  belongs_to <L> left_;
   has_one<R> right_;
 };
 
