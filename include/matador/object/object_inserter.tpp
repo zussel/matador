@@ -135,13 +135,14 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
 
-  while (first != last) {
-    typename basic_has_many<T, C>::relation_type i = (first++).relation_item();
-    if (!i.is_inserted()) {
-      // item is not in store, insert it
-      ostore_.insert(i, false);
-    }
-  }
+  // Todo: make has many code work
+//  while (first != last) {
+//    typename basic_has_many<T, C>::relation_type i = (first++).relation_item();
+//    if (!i.is_inserted()) {
+//      // item is not in store, insert it
+//      ostore_.insert(i, false);
+//    }
+//  }
 }
 
 }

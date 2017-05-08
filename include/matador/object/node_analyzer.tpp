@@ -165,14 +165,20 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &x,
   // false: attach it
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
-    std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
+    std::vector<O<has_many_to_many_item<V, T> >*> has_many_item_observer;
+//    std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
     for (auto o : observer_) {
-      has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
+      has_many_item_observer.push_back(new O<has_many_to_many_item<V, T> >(o));
+//      has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
     }
 
-    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
+    prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<V, T> >(
+      &store_, id, false, node_.type(), id, owner_column, item_column
+    );
+//    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
 
-    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
+    pi = store_.attach<has_many_to_many_item<V, T> >(node, nullptr, has_many_item_observer);
+//    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
 
     this->register_has_many<V, T>(node_.type_index(), id, pi.get());
 
@@ -205,14 +211,20 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
   // false: attach it
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
-    std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
+    std::vector<O<has_many_to_many_item<V, T> >*> has_many_item_observer;
+//    std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
     for (auto o : observer_) {
-      has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
+      has_many_item_observer.push_back(new O<has_many_to_many_item<V, T> >(o));
+//      has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
     }
 
-    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
+    prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<V, T> >(
+      &store_, id, false, node_.type(), id, owner_column, item_column
+    );
+//    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
 
-    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
+    pi = store_.attach<has_many_to_many_item<V, T> >(node, nullptr, has_many_item_observer);
+//    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
   } else {
     // throw exception
     throw_object_exception("prototype already inserted: " << pi->type());
@@ -296,9 +308,12 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &,
   // false: attach it
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
-    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
+    prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<V, T> >(
+      &store_, id, false, node_.type(), id, owner_column, item_column
+    );
+//    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
 
-    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr);
+    pi = store_.attach<has_many_to_many_item<V, T> >(node, nullptr);
   } else {
     // throw exception
     throw_object_exception("prototype already inserted: " << pi->type());
