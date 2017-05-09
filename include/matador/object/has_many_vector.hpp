@@ -11,6 +11,7 @@
 #include "matador/object/generic_access.hpp"
 #include "matador/object/has_many_inserter.hpp"
 #include "matador/object/has_many_deleter.hpp"
+#include "matador/object/has_many_item_holder.hpp"
 
 #include "matador/utils/is_builtin.hpp"
 
