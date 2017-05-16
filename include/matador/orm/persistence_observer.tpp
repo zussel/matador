@@ -3,7 +3,8 @@
 
 namespace matador {
 
-void persistence_observer::on_attach(prototype_node &node)
+template < class T >
+void persistence_observer<T>::on_attach(prototype_node &node, T&)
 {
   if (persistence_.tables_.find(node.type()) != persistence_.tables_.end()) {
     return;
@@ -16,12 +17,13 @@ void persistence_observer::on_attach(prototype_node &node)
 //        node.node_info().owner_id_column_, node.node_info().item_id_column_
 //      )));
   } else {
-//    persistence_.tables_.insert(std::make_pair(node.type(), std::make_shared<table<T>>(&node, persistence_)));
-  } 
+    persistence_.tables_.insert(std::make_pair(node.type(), std::make_shared<table<T>>(&node, persistence_)));
+  }
 
 }
 
-void persistence_observer::on_detach(prototype_node &node)
+template < class T >
+void persistence_observer<T>::on_detach(prototype_node &node, T&)
 {
   auto i = persistence_.tables_.find(node.type());
   if (i == persistence_.tables_.end()) {

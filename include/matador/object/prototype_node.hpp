@@ -39,7 +39,7 @@
 #include "matador/object/relation_field_endpoint.hpp"
 
 #include <map>
-#include <list>
+#include <vector>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -154,6 +154,7 @@ public:
     , abstract_(abstract)
     , type_index_(typeid(T))
     , deleter_(&destroy<T>)
+    , notifier_(&notify_observer<T>)
     , prototype(proto)
   {
     first->next = last.get();
@@ -407,12 +408,63 @@ private:
    */
   void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
+  void register_observer(basic_object_store_observer *obs)
+  {
+    if (type_index_ != obs->index()) {
+      std::cout << "not same type\n";
+      throw std::runtime_error("not same type");
+    }
+    observer_list.emplace_back(std::unique_ptr<basic_object_store_observer>(obs));
+  }
+
+  typedef std::vector<std::unique_ptr<basic_object_store_observer>> t_observer_vector;
   typedef void (*deleter)(void*);
+  typedef void (*notifier)(notification_type, prototype_node&, void*, basic_object_store_observer*);
 
   template <typename T>
   static void destroy(void* p)
   {
     delete (T*)p;
+  }
+
+  void on_attach()
+  {
+    notify(ATTACH);
+  }
+
+  void on_detach()
+  {
+    notify(DETACH);
+  }
+
+  void notify(notification_type t) {
+    if (!notifier_) {
+      return;
+    }
+    for (auto &i : observer_list) {
+      notifier_(t, *this, prototype, i.get());
+    }
+  }
+
+  template < typename T >
+  static void notify_observer(notification_type t, prototype_node &pt, void *p, basic_object_store_observer *obs)
+  {
+    switch (t) {
+      case ATTACH:
+        static_cast<object_store_observer<T>*>(obs)->on_attach(pt, *(T*)p);
+        break;
+      case DETACH:
+        static_cast<object_store_observer<T>*>(obs)->on_detach(pt, *(T*)p);
+        break;
+      case INSERT:
+        break;
+      case UPDATE:
+        break;
+      case REMOVE:
+        break;
+      default:
+        break;
+    }
   }
 
 private:
@@ -458,7 +510,9 @@ private:
 
   std::type_index type_index_; /**< type index of the represented object type */
 
+  t_observer_vector observer_list;
   deleter deleter_ = nullptr;
+  notifier notifier_ = nullptr;
 
   void* prototype = nullptr;
 

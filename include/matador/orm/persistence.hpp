@@ -74,7 +74,8 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T>
-  void attach(const char *type, bool abstract = false, const char *parent = nullptr);
+  void attach(const char *type, object_store::abstract_type abstract = object_store::abstract_type::not_abstract,
+              const char *parent = nullptr);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -90,7 +91,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S>
-  void attach(const char *type, bool abstract = false);
+  void attach(const char *type, object_store::abstract_type abstract = object_store::abstract_type::not_abstract);
 
   /**
    * Removes an object prototype from the prototype tree. All children
@@ -193,6 +194,7 @@ public:
   const connection &conn() const;
 
 private:
+  template < class T >
   friend class persistence_observer;
 
 private:
@@ -204,18 +206,18 @@ private:
 
 }
 
-#include "../../../src/orm/persistence_observer.cpp"
+#include "persistence_observer.tpp"
 
 namespace matador {
 
 template<class T>
-void persistence::attach(const char *type, bool abstract, const char *parent)
+void persistence::attach(const char *type, object_store::abstract_type abstract, const char *parent)
 {
   store_.attach<T>(type, abstract, parent, { new persistence_observer<T>(*this) });
 }
 
 template<class T, class S>
-void persistence::attach(const char *type, bool abstract)
+void persistence::attach(const char *type, object_store::abstract_type abstract)
 {
   store_.attach<T,S>(type, abstract, { new persistence_observer<T>(*this) });
 }

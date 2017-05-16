@@ -118,8 +118,7 @@ public:
   typedef prototype_iterator iterator;              /**< Shortcut for the list iterator. */
   typedef const_prototype_iterator const_iterator;  /**< Shortcut for the list const iterator. */
 
-  using object_store_observer_vector = std::vector<std::shared_ptr<object_store_observer>>;
-  object_store_observer_vector  observer_vector_;
+  enum abstract_type { abstract, not_abstract };
 
 public:
   /**
@@ -131,9 +130,6 @@ public:
    * Destroys all prototypes, objects and observers in store.
    */
   ~object_store();
-
-  void register_observer(const std::shared_ptr<object_store_observer> &observer);
-  void unregister_observer(const std::shared_ptr<object_store_observer> &observer);
 
   /**
    * Inserts a new object prototype into the object_store. The prototype
@@ -151,7 +147,13 @@ public:
    * @return Iterator representing the inserted prototype node
    */
   template <class T >
-  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
+  prototype_iterator attach(const char *type, abstract_type abstract = not_abstract, const char *parent = nullptr,
+                            std::initializer_list<object_store_observer<T>*> observer = {});
+  template <class T >
+  prototype_iterator attach(const char *type, std::initializer_list<object_store_observer<T>*> observer)
+  {
+    return attach<T>(type, not_abstract, nullptr, observer);
+  }
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -167,7 +169,13 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S  >
-  prototype_iterator attach(const char *type, bool abstract = false);
+  prototype_iterator attach(const char *type, abstract_type abstract = not_abstract,
+                            std::initializer_list<object_store_observer<T>*> observer = {});
+  template<class T, class S  >
+  prototype_iterator attach(const char *type, std::initializer_list<object_store_observer<T>*> observer)
+  {
+    return attach<T>(type, not_abstract, typeid(S).name(), observer);
+  }
 
   /**
    * Inserts a new object prototype into the object_store. The
@@ -182,7 +190,8 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template < class T >
-  prototype_iterator attach(prototype_node *node, const char *parent = nullptr);
+  prototype_iterator attach(prototype_node *node, const char *parent = nullptr,
+                            std::initializer_list<object_store_observer<T>*> observer = {});
 
   /**
    * Removes an object prototype from the prototype tree. All children
@@ -694,16 +703,6 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
-  /// @cond MATADOR_DEV
-//  void on_update_relation_owner(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
-//
-//  void on_remove_relation_owner(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
-//
-//  void on_append_relation_item(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
-//
-//  void on_remove_relation_item(const std::shared_ptr<detail::relation_field_endpoint> &info, object_proxy *owner, object_proxy *value);
-  /// @endcond
-
   /**
    * Return the current transaction in stack
    *
@@ -889,22 +888,28 @@ void object_store::validate(prototype_node *node)
 }
 
 template <class T >
-prototype_iterator object_store::attach(const char *type, bool abstract, const char *parent)
+prototype_iterator object_store::attach(const char *type, object_store::abstract_type abstract, const char *parent,
+                                        std::initializer_list<object_store_observer<T>*> observer)
 {
   prototype_node *node = new prototype_node(this, type, new T, abstract);
 
-  return attach<T>(node, parent);
+  return attach<T>(node, parent, observer);
 }
 
 template<class T, class S  >
-prototype_iterator object_store::attach(const char *type, bool abstract)
+prototype_iterator object_store::attach(const char *type, object_store::abstract_type abstract,
+                                        std::initializer_list<object_store_observer<T>*> observer)
 {
-  return attach<T>(type, abstract, typeid(S).name());
+  return attach<T>(type, abstract, typeid(S).name(), observer);
 }
 
 template < class T >
-prototype_iterator object_store::attach(prototype_node *node, const char *parent)
+prototype_iterator object_store::attach(prototype_node *node, const char *parent,
+                                        std::initializer_list<object_store_observer<T>*> observer)
 {
+  for(auto obs : observer) {
+    node->register_observer(obs);
+  }
   // Check if nodes object has 'to-many' relations
   // Analyze primary and foreign keys of node
   detail::node_analyzer<T> analyzer(*node, *this);
@@ -914,9 +919,7 @@ prototype_iterator object_store::attach(prototype_node *node, const char *parent
 
   attach_node<T>(node, parent);
 
-  for (auto &observer : observer_vector_) {
-    observer->on_attach(*node);
-  }
+  node->on_attach();
 
   return prototype_iterator(node);
 }

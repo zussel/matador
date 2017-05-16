@@ -2,7 +2,6 @@ SET(SOURCES
   persistence.cpp
   session.cpp
   basic_table.cpp
-  persistence_observer.cpp
 )
 
 SET(HEADER
@@ -16,6 +15,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_resolver.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_item_appender.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence_observer.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence_observer.tpp
 )
 
 ADD_LIBRARY(matador-orm SHARED ${SOURCES} ${HEADER})
