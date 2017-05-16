@@ -1205,6 +1205,8 @@ void ObjectStoreTestUnit::test_observer()
 
   UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
 
+  std::cout << "---- CLEAR ----\n";
+
   basic_logger::nodes.clear();
 
   ostore_.clear(true);
@@ -1226,6 +1228,9 @@ void ObjectStoreTestUnit::test_observer()
 //    "book"
   };
 
+  for(auto &i : basic_logger::nodes) {
+    std::cout << "result: " << i << "\n";
+  }
   UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
 }
 
