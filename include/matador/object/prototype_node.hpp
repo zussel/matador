@@ -56,7 +56,7 @@ class has_many_inserter;
 template < class T, template <class ...> class C, class Enable = void >
 class has_many_deleter;
 class basic_node_analyzer;
-template < class T, template < class V = T > class O >
+template < class T >
 class node_analyzer;
 class object_inserter;
 }
@@ -90,6 +90,7 @@ public:
 
   struct relation_node_info
   {
+    std::shared_ptr<basic_identifier> owner_id_;
     std::string owner_type_;
     std::string relation_id_;
     std::string owner_id_column_;
@@ -153,7 +154,6 @@ public:
     , abstract_(abstract)
     , type_index_(typeid(T))
     , deleter_(&destroy<T>)
-    , notifier_(&notify_observer<T>)
     , prototype(proto)
   {
     first->next = last.get();
@@ -407,66 +407,12 @@ private:
    */
   void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
-  void register_observer(basic_object_store_observer *obs)
-  {
-    if (type_index_ != obs->index()) {
-      std::cout << "not same type\n";
-      throw std::runtime_error("not same type");
-    }
-    observer_list.push_back(obs);
-  }
-
-  typedef std::list<basic_object_store_observer*> t_observer_list;
-  typedef void (*deleter)(void*, t_observer_list&);
-  typedef void (*notifier)(notification_type, prototype_node&, void*, basic_object_store_observer*);
+  typedef void (*deleter)(void*);
 
   template <typename T>
-  static void destroy(void* p, t_observer_list &ol)
+  static void destroy(void* p)
   {
     delete (T*)p;
-    for(auto i : ol) {
-      delete (object_store_observer<T>*)i;
-    }
-  }
-
-  void on_attach()
-  {
-    notify(ATTACH);
-  }
-
-  void on_detach()
-  {
-    notify(DETACH);
-  }
-
-  void notify(notification_type t) {
-    if (!notifier_) {
-      return;
-    }
-    for (auto i : observer_list) {
-      notifier_(t, *this, prototype, i);
-    }
-  }
-
-  template < typename T >
-  static void notify_observer(notification_type t, prototype_node &pt, void *p, basic_object_store_observer *obs)
-  {
-    switch (t) {
-      case ATTACH:
-        static_cast<object_store_observer<T>*>(obs)->on_attach(pt, *(T*)p);
-        break;
-      case DETACH:
-        static_cast<object_store_observer<T>*>(obs)->on_detach(pt, *(T*)p);
-        break;
-      case INSERT:
-        break;
-      case UPDATE:
-        break;
-      case REMOVE:
-        break;
-      default:
-        break;
-    }
   }
 
 private:
@@ -512,9 +458,7 @@ private:
 
   std::type_index type_index_; /**< type index of the represented object type */
 
-  t_observer_list observer_list;
   deleter deleter_ = nullptr;
-  notifier notifier_ = nullptr;
 
   void* prototype = nullptr;
 

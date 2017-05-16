@@ -125,111 +125,111 @@ void basic_node_analyzer::register_has_many(const std::type_index &typeindex, co
   node_.register_relation_field_endpoint(typeindex, endpoint);
 }
 
-template<class T, template < class U = T > class O>
-void node_analyzer<T, O>::analyze()
-{
-  T obj;
-  matador::access::serialize(*this, obj);
-}
-
-template<class T, template < class U = T > class O>
-template<class V>
-void node_analyzer<T, O>::serialize(V &x)
-{
-  matador::access::serialize(*this, x);
-}
-
-template<class T, template < class U = T > class O>
-template<class V>
-void node_analyzer<T, O>::serialize(const char *id, belongs_to <V> &x, cascade_type)
-{
-  this->process_belongs_to<V, T>(id, x);
-}
-
-template<class T, template < class U = T > class O>
-template<class V>
-void node_analyzer<T, O>::serialize(const char *id, has_one <V> &x, cascade_type)
-{
-  this->process_has_one<V, T>(id, x);
-}
-
-template<class T, template < class U = T > class O>
-template<class V, template<class ...> class C>
-void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &x,
-                                    const char *owner_column, const char *item_column,
-                                    typename std::enable_if<!is_builtin<V>::value>::type*)
-{
-  // attach relation table for has many relation
-  // check if has many item is already attached
-  // true: check owner and item field
-  // false: attach it
-  prototype_iterator pi = store_.find(id);
-  if (pi == store_.end()) {
-    std::vector<O<has_many_to_many_item<V, T> >*> has_many_item_observer;
-//    std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
-    for (auto o : observer_) {
-      has_many_item_observer.push_back(new O<has_many_to_many_item<V, T> >(o));
-//      has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
-    }
-
-    prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<V, T> >(
-      &store_, id, false, node_.type(), id, owner_column, item_column
-    );
-//    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
-
-    pi = store_.attach<has_many_to_many_item<V, T> >(node, nullptr, has_many_item_observer);
-//    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
-
-    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
-
-    // new has many to many item
-    std::vector<O<has_many_to_many_item<T, V>>*> has_many_to_many_item_observer;
-    for (auto o : observer_) {
-      has_many_to_many_item_observer.push_back(new O<has_many_to_many_item<T, V>>(o));
-    }
-
-    prototype_node *node2 = prototype_node::make_relation_node<has_many_to_many_item<T, V>>(&store_, id, false, node_.type(), id, owner_column, item_column);
-
-    pi = store_.attach<has_many_to_many_item<T, V>>(node2, nullptr, has_many_to_many_item_observer);
-
-    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
-
-  } else {
-    this->process_has_many<V, T, C>(pi, id, x);
-  }
-}
-
-template<class T, template < class U = T > class O>
-template<class V, template<class ...> class C>
-void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
-                                    const char *owner_column, const char *item_column,
-                                    typename std::enable_if<is_builtin<V>::value>::type*)
-{
-  // attach relation table for has many relation
-  // check if has many item is already attached
-  // true: check owner and item field
-  // false: attach it
-  prototype_iterator pi = store_.find(id);
-  if (pi == store_.end()) {
-    std::vector<O<has_many_to_many_item<V, T> >*> has_many_item_observer;
-//    std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
-    for (auto o : observer_) {
-      has_many_item_observer.push_back(new O<has_many_to_many_item<V, T> >(o));
-//      has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
-    }
-
-    prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<V, T> >(
-      &store_, id, false, node_.type(), id, owner_column, item_column
-    );
-//    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
-
-    pi = store_.attach<has_many_to_many_item<V, T> >(node, nullptr, has_many_item_observer);
-//    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
-  } else {
-    // throw exception
-    throw_object_exception("prototype already inserted: " << pi->type());
-  }
-}
+//template<class T, template < class U = T > class O>
+//void node_analyzer<T, O>::analyze()
+//{
+//  T obj;
+//  matador::access::serialize(*this, obj);
+//}
+//
+//template<class T, template < class U = T > class O>
+//template<class V>
+//void node_analyzer<T, O>::serialize(V &x)
+//{
+//  matador::access::serialize(*this, x);
+//}
+//
+//template<class T, template < class U = T > class O>
+//template<class V>
+//void node_analyzer<T, O>::serialize(const char *id, belongs_to <V> &x, cascade_type)
+//{
+//  this->process_belongs_to<V, T>(id, x);
+//}
+//
+//template<class T, template < class U = T > class O>
+//template<class V>
+//void node_analyzer<T, O>::serialize(const char *id, has_one <V> &x, cascade_type)
+//{
+//  this->process_has_one<V, T>(id, x);
+//}
+//
+//template<class T, template < class U = T > class O>
+//template<class V, template<class ...> class C>
+//void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &x,
+//                                    const char *owner_column, const char *item_column,
+//                                    typename std::enable_if<!is_builtin<V>::value>::type*)
+//{
+//  // attach relation table for has many relation
+//  // check if has many item is already attached
+//  // true: check owner and item field
+//  // false: attach it
+//  prototype_iterator pi = store_.find(id);
+//  if (pi == store_.end()) {
+//    std::vector<std::shared_ptr<O<has_many_to_many_item<V, T> >>> has_many_item_observer;
+////    std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
+//    for (auto o : observer_) {
+//      has_many_item_observer.push_back(std::make_shared<O<has_many_to_many_item<V, T>>>(o));
+////      has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
+//    }
+//
+//    prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<V, T> >(
+//      &store_, id, false, node_.type(), id, owner_column, item_column
+//    );
+////    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
+//
+//    pi = store_.attach<has_many_to_many_item<V, T> >(node, nullptr, has_many_item_observer);
+////    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
+//
+//    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
+//
+//    // new has many to many item
+//    std::vector<std::shared_ptr<O<has_many_to_many_item<T, V>>>> has_many_to_many_item_observer;
+//    for (auto o : observer_) {
+//      has_many_to_many_item_observer.push_back(std::make_shared<O<has_many_to_many_item<T, V>>>(o));
+//    }
+//
+//    prototype_node *node2 = prototype_node::make_relation_node<has_many_to_many_item<T, V>>(&store_, id, false, node_.type(), id, owner_column, item_column);
+//
+//    pi = store_.attach<has_many_to_many_item<T, V>>(node2, nullptr, has_many_to_many_item_observer);
+//
+//    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
+//
+//  } else {
+//    this->process_has_many<V, T, C>(pi, id, x);
+//  }
+//}
+//
+//template<class T, template < class U = T > class O>
+//template<class V, template<class ...> class C>
+//void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
+//                                    const char *owner_column, const char *item_column,
+//                                    typename std::enable_if<is_builtin<V>::value>::type*)
+//{
+//  // attach relation table for has many relation
+//  // check if has many item is already attached
+//  // true: check owner and item field
+//  // false: attach it
+//  prototype_iterator pi = store_.find(id);
+//  if (pi == store_.end()) {
+//    std::vector<O<has_many_to_many_item<V, T> >*> has_many_item_observer;
+////    std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
+//    for (auto o : observer_) {
+//      has_many_item_observer.push_back(new O<has_many_to_many_item<V, T> >(o));
+////      has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
+//    }
+//
+//    prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<V, T> >(
+//      &store_, id, false, node_.type(), id, owner_column, item_column
+//    );
+////    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
+//
+//    pi = store_.attach<has_many_to_many_item<V, T> >(node, nullptr, has_many_item_observer);
+////    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
+//  } else {
+//    // throw exception
+//    throw_object_exception("prototype already inserted: " << pi->type());
+//  }
+//}
 
 /*
  * no observer version

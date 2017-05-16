@@ -10,6 +10,7 @@ namespace matador {
 persistence::persistence(const std::string &dns)
   : connection_(dns)
 {
+  store_.register_observer(std::make_shared<persistence_observer>(*this));
   connection_.open();
 }
 
@@ -17,6 +18,7 @@ persistence::~persistence()
 {
   tables_.clear();
   connection_.close();
+//  store_.unregister_observer(observer);
 }
 
 void persistence::detach(const char *type)

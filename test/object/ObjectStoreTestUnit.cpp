@@ -1191,16 +1191,16 @@ void ObjectStoreTestUnit::test_observer()
   ostore_.attach<person>("person", { new logger<person> });
   ostore_.attach<employee, person>("employee", { new logger<employee> });
   ostore_.attach<department>("department", { new logger<department> });
-  ostore_.attach<book>("book", { new logger<book> });
-  ostore_.attach<book_list>("book_list", { new logger<book_list> });
+//  ostore_.attach<book>("book", { new logger<book> });
+//  ostore_.attach<book_list>("book_list", { new logger<book_list> });
 
   std::vector<std::string> result({
     "person",
     "employee",
-    "department",
-    "book",
-    "books",
-    "book_list"
+    "department"
+//    "book",
+//    "books",
+//    "book_list"
   });
 
   UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
@@ -1212,18 +1212,18 @@ void ObjectStoreTestUnit::test_observer()
   ostore_.attach<person>("person", { new logger<person> });
   ostore_.attach<department>("department", { new logger<department> });
   ostore_.attach<employee, person>("employee", { new logger<employee> });
-  ostore_.attach<book_list>("book_list", { new logger<book_list> });
-  ostore_.attach<book>("book", { new logger<book> });
+//  ostore_.attach<book_list>("book_list", { new logger<book_list> });
+//  ostore_.attach<book>("book", { new logger<book> });
 
   result = {
     "person",
     "employee",
     "department",
     "employee",
-    "employee",
-    "books",
-    "book_list",
-    "book"
+    "employee"
+//    "books",
+//    "book_list",
+//    "book"
   };
 
   UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");

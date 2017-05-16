@@ -32,7 +32,7 @@ prototype_node::prototype_node()
 prototype_node::~prototype_node()
 {
   if (deleter_) {
-    deleter_(prototype, observer_list);
+    deleter_(prototype);
   }
 }
 
@@ -332,26 +332,6 @@ basic_identifier *prototype_node::id() const
 {
   return id_.get();
 }
-
-//size_t prototype_node::relation_count() const
-//{
-//  return relations.size();
-//}
-//
-//bool prototype_node::has_relation(const std::string &relation_name) const
-//{
-//  return relations.find(relation_name) != relations.end();
-//}
-
-//size_t prototype_node::foreign_key_count() const
-//{
-//  return foreign_keys.size();
-//}
-//
-//bool prototype_node::has_foreign_key(const std::string &foreign_key_name) const
-//{
-//  return foreign_keys.find(foreign_key_name) != foreign_keys.end();
-//}
 
 bool prototype_node::is_abstract() const
 {

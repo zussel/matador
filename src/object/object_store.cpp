@@ -42,6 +42,18 @@ object_store::~object_store()
   delete first_;
 }
 
+void object_store::register_observer(const std::shared_ptr<object_store_observer> &observer)
+{
+  observer_vector_.push_back(observer);
+}
+
+void object_store::unregister_observer(const std::shared_ptr<object_store_observer> &observer)
+{
+  std::remove_if(observer_vector_.begin(), observer_vector_.end(), [&observer](const std::shared_ptr<object_store_observer> &item) {
+    return observer.get() == item.get();
+  });
+}
+
 void object_store::detach(const char *type)
 {
   prototype_node *node = find_prototype_node(type);
@@ -49,7 +61,9 @@ void object_store::detach(const char *type)
     throw object_exception("unknown prototype type");
   }
 
-  node->on_detach();
+  for (auto &observer : observer_vector_) {
+    observer->on_detach(*node);
+  }
 
   remove_prototype_node(node, node->depth == 0);
 }
@@ -60,7 +74,9 @@ object_store::iterator object_store::detach(const prototype_iterator &i)
     throw object_exception("invalid prototype iterator");
   }
 
-  i->on_detach();
+  for (auto &observer : observer_vector_) {
+    observer->on_detach(*i);
+  }
 
   return remove_prototype_node(i.get(), i->depth == 0);
 }
