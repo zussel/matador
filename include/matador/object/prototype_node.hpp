@@ -153,6 +153,7 @@ public:
     , type_(type)
     , abstract_(abstract)
     , type_index_(typeid(T))
+    , creator_(&produce<T>)
     , deleter_(&destroy<T>)
     , notifier_(&notify_observer<T>)
     , prototype(proto)
@@ -250,6 +251,17 @@ public:
    * Unlinks node from list.
    */
   void unlink();
+
+  /**
+   * Create the represented object. The type
+   * is checked. If the type is invalid nullptr
+   * is returned.
+   *
+   * @tparam T Type of object to create
+   * @return A new instance or nullptr
+   */
+  template < class T >
+  T* create() const;
 
   /**
    * Returns nodes successor node or NULL if node is last.
@@ -420,6 +432,7 @@ private:
   }
 
   typedef std::vector<std::unique_ptr<basic_object_store_observer>> t_observer_vector;
+  typedef void* (*creator)(const prototype_node&);
   typedef void (*deleter)(void*);
   typedef void (*notifier)(notification_type, prototype_node&, void*, basic_object_store_observer*);
 
@@ -427,6 +440,16 @@ private:
   static void destroy(void* p)
   {
     delete (T*)p;
+  }
+
+  template < class T >
+  static void* produce(const prototype_node &node)
+  {
+    if (node.is_relation_node_) {
+      return nullptr;
+    } else {
+      return new T;
+    }
   }
 
   void on_attach()
@@ -513,6 +536,7 @@ private:
   std::type_index type_index_; /**< type index of the represented object type */
 
   t_observer_vector observer_list;
+  creator creator_ = nullptr;
   deleter deleter_ = nullptr;
   notifier notifier_ = nullptr;
 
@@ -533,6 +557,12 @@ private:
   bool is_relation_node_ = false;
   relation_node_info relation_node_info_;
 };
+
+template<class T>
+T* prototype_node::create() const
+{
+  return static_cast<T*>(creator_(*this));
+}
 
 template<class T>
 prototype_node *prototype_node::make_node(object_store *store, const char *type, bool abstract)
