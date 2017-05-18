@@ -358,6 +358,11 @@ void prototype_node::register_relation_field_endpoint(const std::type_index &tin
   relation_field_endpoint_map_.insert(std::make_pair(tindex, endpoint));
 }
 
+void prototype_node::unregister_relation_field_endpoint(const std::type_index &tindex)
+{
+  relation_field_endpoint_map_.erase(tindex);
+}
+
 /*
  * adjust the marker of all predeccessor nodes
  * self and last marker

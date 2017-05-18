@@ -56,7 +56,7 @@ class has_many_inserter;
 template < class T, template <class ...> class C, class Enable = void >
 class has_many_deleter;
 class basic_node_analyzer;
-template < class T >
+template < class T, template < class U = T > class O >
 class node_analyzer;
 class object_inserter;
 }
@@ -376,6 +376,8 @@ public:
    */
   void register_relation_field_endpoint(const std::type_index &tindex,
                                         const std::shared_ptr<detail::relation_field_endpoint> &endpoint);
+
+  void unregister_relation_field_endpoint(const std::type_index &tindex);
 
 private:
 

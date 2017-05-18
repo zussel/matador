@@ -15,37 +15,12 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-class basic_node_analyzer
+template < class T, template < class U = T > class O >
+class node_analyzer
 {
 public:
-  explicit basic_node_analyzer(prototype_node &node, object_store &store)
-    : node_(node), store_(store)
-  { }
-
-protected:
-  template < class V, class T >
-  void process_belongs_to(const char *id, belongs_to <V> &x);
-
-  template < class V, class T >
-  void process_has_one(const char *id, has_one <V> &x);
-
-  template < class V, class T, template<class ...> class C >
-  void process_has_many(const prototype_iterator &pi, const char *id, has_many<V, C> &x);
-
-  template < class V, class T >
-  void register_has_many(const std::type_index &typeindex, const char *id, prototype_node *node);
-
-protected:
-  prototype_node &node_;
-  object_store &store_;
-};
-
-template < class T >
-class node_analyzer : public basic_node_analyzer
-{
-public:
-  explicit node_analyzer(prototype_node &node, object_store &store)
-    : basic_node_analyzer(node, store)
+  explicit node_analyzer(prototype_node &node, object_store &store, std::vector<O<T>*> observer = {})
+    : node_(node), store_(store), observer_vector_(observer)
   { }
 
   ~node_analyzer() { }
@@ -69,6 +44,23 @@ public:
   void serialize(const char *, has_many<V, C> &, const char *, const char *,
                  typename std::enable_if<is_builtin<V>::value>::type* = 0);
 
+private:
+  template < class V >
+  void process_belongs_to(const char *id, belongs_to <V> &x);
+
+  template < class V >
+  void process_has_one(const char *id, has_one <V> &x);
+
+  template < class V, template<class ...> class C >
+  void process_has_many(const prototype_iterator &pi, const char *id, has_many<V, C> &x, const char *owner_column, const char *item_column);
+
+  template < class V >
+  void register_has_many_endpoint(const std::type_index &typeindex, const char *id, prototype_node *node);
+
+protected:
+  prototype_node &node_;
+  object_store &store_;
+  std::vector<O<T>*> observer_vector_;
 };
 
 /// @endcond
