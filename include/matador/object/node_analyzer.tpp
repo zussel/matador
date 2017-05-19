@@ -15,6 +15,12 @@ template<class T, template < class U = T > class O >
 void node_analyzer<T, O>::analyze()
 {
   T obj;
+  analyze(obj);
+}
+
+template<class T, template < class U = T > class O >
+void node_analyzer<T, O>::analyze(T &obj)
+{
   std::cout << node_.type() << " $$ analyzing " << typeid(T).name() << "\n";
   matador::access::serialize(*this, obj);
 }
@@ -60,12 +66,13 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &x,
       has_many_item_observer.push_back(new O<has_one_to_many_item<V, T> >(o));
     }
     // new has many to many item
-    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<V, T>>(&store_, id, false, node_.type(), id, owner_column, item_column);
+    auto proto = new has_one_to_many_item<V, T>(owner_column, item_column);
+    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<V, T> >(&store_, id, proto, false, node_.type(), id);
 
     std::cout << node_.type() << " $$ attach node " << id << " (typeindex:" << node->type_index().name() << ")\n";
     pi = store_.attach_internal<has_one_to_many_item<V, T>>(node, nullptr, has_many_item_observer);
 
-    this->register_has_many_endpoint<V>(node_.type_index(), id, pi.get());
+    this->register_has_many_endpoint<V>(node_, node_.type_index(), id, pi.get());
 
   } else {
     std::cout << node_.type() << " $$ found has many relation " << id << "\n";
@@ -90,10 +97,8 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
       has_many_item_observer.push_back(new O<has_one_to_many_item<V, T> >(o));
     }
 
-
-    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<V, T> >(
-      &store_, id, false, node_.type(), id, owner_column, item_column
-    );
+    auto proto = new has_one_to_many_item<V, T>(owner_column, item_column);
+    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<V, T> >(&store_, id, proto, false, node_.type(), id);
 
     std::cout << node_.type() << " $$ attach node " << id << " (typeindex:" << node->type_index().name() << ")\n";
     pi = store_.attach_internal<has_one_to_many_item<V, T> >(node, nullptr, has_many_item_observer);
@@ -184,7 +189,7 @@ void node_analyzer<T, O>::process_has_one(const char *id, has_one <V> &x)
 
 template<class T, template < class U = T > class O >
 template<class V, template<class ...> class C>
-void node_analyzer<T, O>::process_has_many(const prototype_iterator &pi, const char *id, has_many<V, C> &, const char *owner_column, const char *item_column)
+void node_analyzer<T, O>::process_has_many(prototype_iterator pi, const char *id, has_many<V, C> &, const char *owner_column, const char *item_column)
 {
   std::cout << node_.type() << " $$ process has many '" << id << "\n";
   /*
@@ -211,16 +216,17 @@ void node_analyzer<T, O>::process_has_many(const prototype_iterator &pi, const c
       has_many_item_observer.push_back(new O<has_many_to_many_item<T, V> >(o));
     }
     // new has many to many item
-    prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<T, V>>(&store_, id, false, node_.type(), id, owner_column, item_column);
+    auto proto = new has_many_to_many_item<T, V>(owner_column, item_column);
+    prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<T, V>>(&store_, id, proto, false, node_.type(), id);
 
     std::cout << node_.type() << " $$ attach node " << id << " (typeindex:" << node->type_index().name() << ")\n";
-    auto pi2 = store_.attach_internal<has_many_to_many_item<T, V>>(node, nullptr, has_many_item_observer);
+    pi = store_.attach_internal<has_many_to_many_item<T, V>>(node, nullptr, has_many_item_observer);
 
-    register_has_many_endpoint<V>(node_.type_index(), id, pi2.get());
+    store_.typeid_prototype_map_[typeid(has_many_to_many_item<V, T>).name()].insert(std::make_pair(pi->type_, pi.get()));
+    register_has_many_endpoint<V>(*fp, fp->type_index(), id, pi.get());
 
     // prototype is of type has_many_to_many_item
-    register_has_many_endpoint<T>(node_.type_index(), id, pi.get());
-    store_.typeid_prototype_map_[ti.name()].insert(std::make_pair(pi->type_, pi.get()));
+    register_has_many_endpoint<T>(node_, node_.type_index(), id, pi.get());
   } else {
     // found corresponding belongs_to or has_many
     auto j = pi->relation_field_endpoint_map_.find(pi->type_index());
@@ -231,15 +237,15 @@ void node_analyzer<T, O>::process_has_many(const prototype_iterator &pi, const c
       // set missing node
       j->second->node = &node_;
       j->second->foreign_endpoint = j->second;
-      this->register_has_many_endpoint<V>(pi->type_index(), id, pi.get());
+      this->register_has_many_endpoint<V>(node_, pi->type_index(), id, pi.get());
     }
   }
 }
 
 template<class T, template < class U = T > class O >
 template<class V>
-void node_analyzer<T, O>::register_has_many_endpoint(const std::type_index &typeindex, const char *id,
-                                                     prototype_node *node)
+void node_analyzer<T, O>::register_has_many_endpoint(prototype_node &local_node, const std::type_index &typeindex,
+                                                     const char *id, prototype_node *node)
 {
   auto endpoint = std::make_shared<detail::relation_field_endpoint>(id, detail::relation_field_endpoint::HAS_MANY, node);
 
@@ -254,20 +260,20 @@ void node_analyzer<T, O>::register_has_many_endpoint(const std::type_index &type
       endpoint->foreign_endpoint = i->second;
       endpoint->side =relation_field_endpoint::RIGHT;
       i->second->foreign_endpoint = endpoint;
-//      std::cout << "basic_node_analyzer::register_has_many_endpoint: endpoint " << endpoint->field << "(" << endpoint.get() << ") -> foreign " << i->second->field << "\n";
-//      std::cout << "basic_node_analyzer::register_has_many_endpoint: endpoint " << i->second->field << "(" << i->second.get() << ") -> foreign " << endpoint->field << "\n";
+      std::cout << "node_analyzer::register_has_many_endpoint: endpoint " << endpoint->field << "(" << endpoint.get() << ") -> foreign " << i->second->field << "\n";
+      std::cout << "node_analyzer::register_has_many_endpoint: endpoint " << i->second->field << "(" << i->second.get() << ") -> foreign " << endpoint->field << "\n";
     }
   }
 
   {
     auto fe = endpoint->foreign_endpoint.lock();
-    std::cout << node_.type() << " $$ register endpoint at node::field[" << id << " (typeindex: " << typeindex.name() << "]";
+    std::cout << local_node.type() << " $$ register endpoint at node::field[" << id << " (typeindex: " << typeindex.name() << "]";
     if (fe) {
       std::cout << ": foreign endpoint -> " << fe->field;
     }
     std::cout << "\n";
   }
-  node_.register_relation_field_endpoint(typeindex, endpoint);
+  local_node.register_relation_field_endpoint(typeindex, endpoint);
 }
 
 }

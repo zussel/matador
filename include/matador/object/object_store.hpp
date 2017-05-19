@@ -959,7 +959,9 @@ prototype_iterator object_store::attach_internal(prototype_node *node, const cha
   // Check if nodes object has 'to-many' relations
   // Analyze primary and foreign keys of node
   detail::node_analyzer<T, O> analyzer(*node, *this, observer);
-  analyzer.analyze();
+
+  T *proto = static_cast<T*>(node->prototype);
+  analyzer.analyze(*proto);
 
   validate<T>(node);
 

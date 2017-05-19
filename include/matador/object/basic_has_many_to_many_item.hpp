@@ -11,22 +11,15 @@ class basic_has_many_to_many_item
 {
 protected:
   basic_has_many_to_many_item() {}
-  basic_has_many_to_many_item(object_proxy *left_proxy, object_proxy *right_proxy,
-                              const std::string &left_column, const std::string &right_column);
+  basic_has_many_to_many_item(const std::string &left_column, const std::string &right_column);
 
 public:
-  object_proxy* left_proxy() const;
-  object_proxy* right_proxy() const;
-
   std::string left_column() const;
   std::string right_column() const;
 
 private:
   std::string left_column_;
   std::string right_column_;
-
-  object_proxy *left_proxy_;
-  object_proxy *right_proxy_;
 };
 
 }

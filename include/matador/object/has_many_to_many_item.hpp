@@ -14,9 +14,13 @@ public:
   has_many_to_many_item() {}
   has_many_to_many_item(const object_ptr<L> &left, const object_ptr<R> &right,
                         const std::string &left_column, const std::string &right_column)
-    : basic_has_many_to_many_item(left.proxy_, right.proxy_, left_column, right_column)
+    : basic_has_many_to_many_item(left_column, right_column)
     , left_(left)
     , right_(right)
+  {}
+
+  has_many_to_many_item(const std::string &left_column, const std::string &right_column)
+    : basic_has_many_to_many_item(left_column, right_column)
   {}
 
   template < class SERIALIZER >

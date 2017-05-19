@@ -15,39 +15,24 @@
 
 namespace matador {
 
-class basic_has_one_to_many_item
-{
-protected:
-  basic_has_one_to_many_item()
-  {}
-
-  basic_has_one_to_many_item(const std::string &left_column, const std::string &right_column)
-    : left_column_(left_column), right_column_(right_column)
-  {}
-
-public:
-  std::string left_column() const { return left_column_; }
-  std::string right_column() const { return right_column_; }
-
-private:
-  std::string left_column_;
-  std::string right_column_;
-};
-
 template<class L, class R, typename Enable = void>
 class has_one_to_many_item;
 
 template<class L, class R>
 class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<R>::value>::type>
-  : public basic_has_one_to_many_item
+  : public basic_has_many_to_many_item
 {
 public:
   has_one_to_many_item()
   {}
 
+  has_one_to_many_item(const std::string &left_column, const std::string &right_column)
+    : basic_has_many_to_many_item(left_column, right_column)
+  {}
+
   has_one_to_many_item(const object_ptr<L> &left, const object_ptr<R> &right,
                        const std::string &left_column, const std::string &right_column)
-    : basic_has_one_to_many_item(left_column, right_column), left_(left), right_(right)
+    : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(right)
   {}
 
   template<class SERIALIZER>
@@ -75,15 +60,19 @@ private:
 
 template<class L, class R>
 class has_one_to_many_item<L, R, typename std::enable_if<is_builtin<R>::value>::type>
-  : public basic_has_one_to_many_item
+  : public basic_has_many_to_many_item
 {
 public:
   has_one_to_many_item()
   {}
 
+  has_one_to_many_item(const std::string &left_column, const std::string &right_column)
+    : basic_has_many_to_many_item(left_column, right_column)
+  {}
+
   has_one_to_many_item(const object_ptr<L> &left, const R &right,
                        const std::string &left_column, const std::string &right_column)
-    : basic_has_one_to_many_item(left_column, right_column), left_(left), right_(right)
+    : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(right)
   {}
 
   template<class SERIALIZER>

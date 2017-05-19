@@ -107,11 +107,12 @@ public:
    * @tparam T Type of the node
    * @param store Corresponding object_store
    * @param type Type name
+   * @param prototype The one prototype object
    * @param abstract Flag indicating if node is abstract.
    * @return The created node.
    */
   template < class T >
-  static prototype_node* make_node(object_store *store, const char *type, bool abstract = false);
+  static prototype_node* make_node(object_store *store, const char *type, T* prototype, bool abstract = false);
 
   /**
    * Creates a relation prototype node.
@@ -119,17 +120,16 @@ public:
    * @tparam T Type of the node
    * @param store Corresponding object_store
    * @param type Type name
+   * @param item Prototype item
    * @param abstract Flag indicating if node is abstract.
    * @param owner_type Type name of the owner node
    * @param relation_id Name of the relation in the prototype object
-   * @param owner_column Owner column name
-   * @param item_column Item (foreign) column name
    * @return The created node.
    */
   template < class T >
-  static prototype_node* make_relation_node(object_store *store, const char *type, bool abstract,
-                                     const char *owner_type, const char *relation_id,
-                                     const char *owner_column, const char *item_column);
+  static prototype_node* make_relation_node(object_store *store, const char *type,
+                                            T *item, bool abstract,
+                                            const char *owner_type, const char *relation_id);
 
   prototype_node();
 
@@ -565,21 +565,21 @@ T* prototype_node::create() const
 }
 
 template<class T>
-prototype_node *prototype_node::make_node(object_store *store, const char *type, bool abstract)
+prototype_node *prototype_node::make_node(object_store *store, const char *type, T *prototype, bool abstract)
 {
-  return new prototype_node(store, type, new T, abstract);
+  return new prototype_node(store, type, prototype, abstract);
 }
 
 template<class T>
-prototype_node *prototype_node::make_relation_node(object_store *store, const char *type, bool abstract,
-                                                   const char *owner_type, const char *relation_id,
-                                                   const char *owner_column, const char *item_column)
+prototype_node *prototype_node::make_relation_node(object_store *store, const char *type,
+                                                   T *item, bool abstract,
+                                                   const char *owner_type, const char *relation_id)
 {
-  prototype_node *node = make_node<T>(store, type, abstract);
+  prototype_node *node = make_node<T>(store, type, item, abstract);
   node->relation_node_info_.owner_type_.assign(owner_type);
   node->relation_node_info_.relation_id_.assign(relation_id);
-  node->relation_node_info_.owner_id_column_.assign(owner_column);
-  node->relation_node_info_.item_id_column_.assign(item_column);
+  node->relation_node_info_.owner_id_column_.assign(item->left_column());
+  node->relation_node_info_.item_id_column_.assign(item->right_column());
   node->is_relation_node_ = true;
   return node;
 }

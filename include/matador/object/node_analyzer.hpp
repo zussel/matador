@@ -26,6 +26,7 @@ public:
   ~node_analyzer() { }
 
   void analyze();
+  void analyze(T &obj);
 
   template<class V>
   void serialize(V &x);
@@ -52,10 +53,10 @@ private:
   void process_has_one(const char *id, has_one <V> &x);
 
   template < class V, template<class ...> class C >
-  void process_has_many(const prototype_iterator &pi, const char *id, has_many<V, C> &x, const char *owner_column, const char *item_column);
+  void process_has_many(prototype_iterator pi, const char *id, has_many<V, C> &x, const char *owner_column, const char *item_column);
 
   template < class V >
-  void register_has_many_endpoint(const std::type_index &typeindex, const char *id, prototype_node *node);
+  void register_has_many_endpoint(prototype_node &local_node, const std::type_index &typeindex, const char *id, prototype_node *node);
 
 protected:
   prototype_node &node_;
