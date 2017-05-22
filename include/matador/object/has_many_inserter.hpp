@@ -55,7 +55,6 @@ public:
       std::cout << "what should I do here?\n";
 //      container_.store()->insert(rtype);
     }
-    container_.mark_modified_owner_(*container_.store(), container_.owner_);
   }
 
   void append_proxy(object_proxy */*proxy*/)

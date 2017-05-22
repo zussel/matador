@@ -651,6 +651,7 @@ public:
 
     if (this->ostore_) {
       inserter_.insert(holder);
+      this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
 
     return iterator(this->holder_container_.emplace(pos.iter_, holder));

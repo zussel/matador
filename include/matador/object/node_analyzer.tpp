@@ -1,6 +1,7 @@
 #include "matador/object/node_analyzer.hpp"
 #include "matador/object/prototype_iterator.hpp"
 #include "matador/object/object_store.hpp"
+#include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/generic_access.hpp"
 #include "matador/object/has_many_to_many_item.hpp"
 #include "matador/object/has_one_to_many_item.hpp"
@@ -248,6 +249,20 @@ void node_analyzer<T, O>::register_has_many_endpoint(prototype_node &local_node,
                                                      const char *id, prototype_node *node)
 {
   auto endpoint = std::make_shared<detail::relation_field_endpoint>(id, detail::relation_field_endpoint::HAS_MANY, node);
+
+
+  // V = foreign/owner type
+  // T = item/value type
+
+  auto insert = [](object_store &store, const object_ptr<T> &value, object_proxy *owner) {
+    // cast to real type object pointer
+    object_ptr<V> foreign(owner);
+    // insert new item
+    auto itemptr = store.insert(new has_many_to_many_item<V, T>(foreign, value, "", ""));
+    return new has_many_item_holder<T>(value, itemptr);
+  };
+
+  insert(store_, object_ptr<T>(), nullptr);
 
   // find counterpart node
   prototype_iterator foreign_node = store_.find<V>();

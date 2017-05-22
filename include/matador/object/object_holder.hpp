@@ -320,6 +320,8 @@ private:
 
   template < class T, object_holder_type OPT >
   friend class object_pointer;
+  template < class T, class Enable >
+  friend class has_many_item_holder;
 
   object_proxy *proxy_ = nullptr;
   object_proxy *owner_ = nullptr; // only set if holder type is BELONGS_TO or HAS_MANY

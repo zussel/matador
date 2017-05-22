@@ -16,12 +16,6 @@ namespace matador {
 
 namespace detail {
 class object_inserter;
-
-//template<class T, template <class ...> class C, class Enable = void>
-//class has_many_deleter;
-//
-//template<class T, template <class ...> class C, class Enable = void>
-//class has_many_inserter;
 }
 
 template < class T, template <class ...> class C = std::vector >
@@ -58,19 +52,16 @@ template < class T, template <class ...> class C >
 class basic_has_many : public abstract_has_many
 {
 public:
-  typedef basic_has_many<T, C> base;                             /**< Shortcut to self */
-  typedef has_many_iterator<T, C> iterator;                      /**< Shortcut to iterator class */
-  typedef has_many_iterator_traits<T, C> traits;
-  typedef typename iterator::value_type value_type;              /**< Shortcut to value type */
-//  typedef typename iterator::item_type item_type;                /**< Shortcut to item type */
-  typedef typename traits::holder_container_type container_type;      /**< Shortcut to container type */
-  typedef typename traits::holder_type holder_type;      /**< Shortcut to container type */
-  typedef typename traits::holder_container_type holder_container_type;      /**< Shortcut to container type */
-//  typedef typename iterator::relation_type relation_type;        /**< Shortcut to relation type */
-//  typedef typename iterator::internal_type internal_type;        /**< Shortcut to internal type */
-  typedef const_has_many_iterator<T,C> const_iterator;           /**< Shortcut to const iterator */
-  typedef typename container_type::size_type size_type;          /**< Shortcut to size type */
-  typedef typename container_type::iterator container_iterator;  /**< Shortcut to container iterator */
+  typedef basic_has_many<T, C> base;                                    /**< Shortcut to self */
+  typedef has_many_iterator<T, C> iterator;                             /**< Shortcut to iterator class */
+  typedef has_many_iterator_traits<T, C> traits;                        /**< Shortcut to traits class */
+  typedef typename iterator::value_type value_type;                     /**< Shortcut to value type */
+  typedef typename traits::holder_container_type container_type;        /**< Shortcut to container type */
+  typedef typename traits::holder_type holder_type;                     /**< Shortcut to container type */
+  typedef typename traits::holder_container_type holder_container_type; /**< Shortcut to container type */
+  typedef const_has_many_iterator<T,C> const_iterator;                  /**< Shortcut to const iterator */
+  typedef typename container_type::size_type size_type;                 /**< Shortcut to size type */
+  typedef typename container_type::iterator container_iterator;         /**< Shortcut to container iterator */
 
   typedef std::function<void(object_store&, object_proxy*)> mark_modified_owner_func; /**< Shortcut to mark modified owner function */
 
