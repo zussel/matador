@@ -21,6 +21,7 @@
 
 #include "matador/object/relation_field_serializer.hpp"
 #include "matador/object/basic_has_many_to_many_item.hpp"
+#include "matador/object/has_many_item_holder.hpp"
 
 #include <string>
 #include <functional>
@@ -31,6 +32,7 @@ namespace matador {
 class object_proxy;
 class prototype_node;
 class object_store;
+
 
 namespace detail {
 
@@ -73,6 +75,41 @@ struct MATADOR_OBJECT_API relation_field_endpoint
   relation_field_serializer field_serializer;
 };
 
+template < class Endpoint >
+struct relation_endpoint
+{
+
+};
+
+/*
+ * one_to_many endpoint
+ *
+ * foreign endpoint is a many_to_one endpoint
+ */
+template < class T >
+struct one_to_many_endpoint : relation_endpoint<one_to_many_endpoint<T>>
+{
+  typedef T value_type;
+
+  using insert_func_type = std::function<has_many_item_holder<T>*(object_store &, const object_ptr<T> &,object_proxy *)>;
+
+  insert_func_type insert_func;
+
+  void insert_object(object_store &store, const object_ptr<T> &owner, object_proxy *value)
+  {
+
+  }
+};
+/*
+ * many_to_one endpoint
+ *
+ *
+ * one_to_one endpoint
+ */
+template < class T >
+struct rfe {
+
+};
 /// @endcond
 
 }

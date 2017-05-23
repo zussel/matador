@@ -254,7 +254,9 @@ void node_analyzer<T, O>::register_has_many_endpoint(prototype_node &local_node,
   // V = foreign/owner type
   // T = item/value type
 
-  auto insert = [](object_store &store, const object_ptr<T> &value, object_proxy *owner) {
+  detail::one_to_many_endpoint<T> one_to_many;
+
+  one_to_many.insert_func = [](object_store &store, const object_ptr<T> &value, object_proxy *owner) {
     // cast to real type object pointer
     object_ptr<V> foreign(owner);
     // insert new item
@@ -262,7 +264,7 @@ void node_analyzer<T, O>::register_has_many_endpoint(prototype_node &local_node,
     return new has_many_item_holder<T>(value, itemptr);
   };
 
-  insert(store_, object_ptr<T>(), nullptr);
+//  insert(store_, object_ptr<T>(), nullptr);
 
   // find counterpart node
   prototype_iterator foreign_node = store_.find<V>();

@@ -7,11 +7,11 @@
 
 #include "matador/utils/is_builtin.hpp"
 
-#include "matador/object/object_ptr.hpp"
-
 namespace matador {
 
 class object_proxy;
+template < class T, object_holder_type OHT >
+class object_pointer;
 
 template < class T, class Enable = void >
 class has_many_item_holder;
