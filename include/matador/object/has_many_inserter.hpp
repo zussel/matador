@@ -34,6 +34,11 @@ public:
   void insert(const holder_type &holder)
   {
     if (container_.relation_info_ != nullptr) {
+
+
+      has_many_item_holder<T> *item = container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
+
+
       if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
         /*
          * foreign end of relation is
