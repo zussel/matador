@@ -26,14 +26,10 @@ using namespace std;
 namespace matador {
 
 prototype_node::prototype_node()
-  : type_index_(typeid(void))
 {}
 
 prototype_node::~prototype_node()
 {
-  if (deleter_) {
-    deleter_(prototype);
-  }
 }
 
 void prototype_node::initialize(object_store *tree, const char *type, bool abstract)
@@ -66,7 +62,7 @@ const char *prototype_node::type() const
 
 const char *prototype_node::type_id() const
 {
-  return type_index_.name();
+  return info_->type_index().name();
 }
 
 void prototype_node::append(prototype_node *sibling)
@@ -340,7 +336,7 @@ bool prototype_node::is_abstract() const
 
 std::type_index prototype_node::type_index() const
 {
-  return type_index_;
+  return info_->type_index();
 }
 
 object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier> &pk)

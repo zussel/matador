@@ -37,6 +37,7 @@
 #include "matador/object/identifier_proxy_map.hpp"
 #include "matador/object/object_store_observer.hpp"
 #include "matador/object/relation_field_endpoint.hpp"
+#include "matador/object/prototype_info.hpp"
 
 #include <map>
 #include <vector>
@@ -147,16 +148,12 @@ public:
    */
   template < class T >
   prototype_node(object_store *tree, const char *type, T *proto, bool abstract = false)
-    : tree_(tree)
+    : info_(std::make_unique<detail::prototype_info<T>>(*this, proto))
+    , tree_(tree)
     , first(new prototype_node)
     , last(new prototype_node)
     , type_(type)
     , abstract_(abstract)
-    , type_index_(typeid(T))
-    , creator_(&produce<T>)
-    , deleter_(&destroy<T>)
-    , notifier_(&notify_observer<T>)
-    , prototype(proto)
   {
     first->next = last.get();
     last->prev = first.get();
@@ -362,6 +359,12 @@ public:
    */
   const relation_node_info& node_info() const;
 
+  template < class T >
+  void register_observer(object_store_observer<T> *obs);
+
+  template < class T >
+  T* prototype() const;
+
   /**
    * Prints the node in graphviz layout to the stream.
    *
@@ -393,14 +396,6 @@ public:
 
 private:
 
-  enum notification_type {
-    ATTACH,
-    DETACH,
-    INSERT,
-    UPDATE,
-    REMOVE
-  };
-
   /**
    * @internal
    *
@@ -422,74 +417,14 @@ private:
    */
   void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
-  void register_observer(basic_object_store_observer *obs)
-  {
-    if (type_index_ != obs->index()) {
-      std::cout << "not same type\n";
-      throw std::runtime_error("not same type");
-    }
-    observer_list.emplace_back(std::unique_ptr<basic_object_store_observer>(obs));
-  }
-
-  typedef std::vector<std::unique_ptr<basic_object_store_observer>> t_observer_vector;
-  typedef void* (*creator)(const prototype_node&);
-  typedef void (*deleter)(void*);
-  typedef void (*notifier)(notification_type, prototype_node&, void*, basic_object_store_observer*);
-
-  template <typename T>
-  static void destroy(void* p)
-  {
-    delete (T*)p;
-  }
-
-  template < class T >
-  static void* produce(const prototype_node &node)
-  {
-    if (node.is_relation_node_) {
-      return nullptr;
-    } else {
-      return new T;
-    }
-  }
-
   void on_attach()
   {
-    notify(ATTACH);
+    info_->notify(detail::notification_type::ATTACH);
   }
 
   void on_detach()
   {
-    notify(DETACH);
-  }
-
-  void notify(notification_type t) {
-    if (!notifier_) {
-      return;
-    }
-    for (auto &i : observer_list) {
-      notifier_(t, *this, prototype, i.get());
-    }
-  }
-
-  template < typename T >
-  static void notify_observer(notification_type t, prototype_node &pt, void *p, basic_object_store_observer *obs)
-  {
-    switch (t) {
-      case ATTACH:
-        static_cast<object_store_observer<T>*>(obs)->on_attach(pt, *(T*)p);
-        break;
-      case DETACH:
-        static_cast<object_store_observer<T>*>(obs)->on_detach(pt, *(T*)p);
-        break;
-      case INSERT:
-        break;
-      case UPDATE:
-        break;
-      case REMOVE:
-        break;
-      default:
-        break;
-    }
+    info_->notify(detail::notification_type::DETACH);
   }
 
 private:
@@ -513,6 +448,8 @@ private:
   friend class detail::node_analyzer;
   friend class detail::object_inserter;
 
+  std::unique_ptr<matador::detail::basic_prototype_info> info_;
+
   object_store *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
 
   // tree links
@@ -533,15 +470,6 @@ private:
 
   bool abstract_ = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
 
-  std::type_index type_index_; /**< type index of the represented object type */
-
-  t_observer_vector observer_list;
-  creator creator_ = nullptr;
-  deleter deleter_ = nullptr;
-  notifier notifier_ = nullptr;
-
-  void* prototype = nullptr;
-
   /**
    * Holds the primary keys of all proxies in this node
    */
@@ -559,9 +487,21 @@ private:
 };
 
 template<class T>
-T* prototype_node::create() const
+T *prototype_node::create() const
 {
-  return static_cast<T*>(creator_(*this));
+  return static_cast<T*>(info_->create());
+}
+
+template<class T>
+void prototype_node::register_observer(object_store_observer<T> *obs)
+{
+  info_->register_observer(obs);
+}
+
+template<class T>
+T *prototype_node::prototype() const
+{
+  return static_cast<T*>(info_->prototype());
 }
 
 template<class T>

@@ -960,7 +960,7 @@ prototype_iterator object_store::attach_internal(prototype_node *node, const cha
   // Analyze primary and foreign keys of node
   detail::node_analyzer<T, O> analyzer(*node, *this, observer);
 
-  T *proto = static_cast<T*>(node->prototype);
+  T *proto = node->prototype<T>();
   analyzer.analyze(*proto);
 
   validate<T>(node);
