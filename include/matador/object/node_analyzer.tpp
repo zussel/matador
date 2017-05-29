@@ -37,82 +37,6 @@ template<class T, template < class U = T > class O >
 template<class V>
 void node_analyzer<T, O>::serialize(const char *id, belongs_to <V> &x, cascade_type)
 {
-  this->process_belongs_to<V>(id, x);
-}
-
-template<class T, template < class U = T > class O >
-template<class V>
-void node_analyzer<T, O>::serialize(const char *id, has_one <V> &x, cascade_type)
-{
-  this->process_has_one<V>(id, x);
-}
-
-template<class T, template < class U = T > class O >
-template<class V, template<class ...> class C>
-void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &x,
-                                 const char *owner_column, const char *item_column,
-                                 typename std::enable_if<!is_builtin<V>::value>::type*)
-{
-  // attach relation table for has many relation
-  // check if has many item is already attached
-  // true: check owner and item field
-  // false: attach it
-  std::cout << node_.type() << " $$ analyze: serializing " << id << "\n";
-  prototype_iterator pi = store_.find(id);
-  if (pi == store_.end()) {
-    std::cout << node_.type() << " $$ has many relation " << id << " not found\n";
-
-    std::vector<O<has_one_to_many_item<V, T> >*> has_many_item_observer;
-    for (auto o : observer_vector_) {
-      has_many_item_observer.push_back(new O<has_one_to_many_item<V, T> >(o));
-    }
-    // new has many to many item
-    auto proto = new has_one_to_many_item<V, T>(owner_column, item_column);
-    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<V, T> >(&store_, id, proto, false, node_.type(), id);
-
-    std::cout << node_.type() << " $$ attach node " << id << " (typeindex:" << node->type_index().name() << ")\n";
-    pi = store_.attach_internal<has_one_to_many_item<V, T>>(node, nullptr, has_many_item_observer);
-
-    this->register_has_many_endpoint<V>(node_, node_.type_index(), id, pi.get());
-
-  } else {
-    std::cout << node_.type() << " $$ found has many relation " << id << "\n";
-    this->process_has_many<V, C>(pi, id, x, owner_column, item_column);
-  }
-}
-
-template<class T, template < class U = T > class O >
-template<class V, template<class ...> class C>
-void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
-                                 const char *owner_column, const char *item_column,
-                                 typename std::enable_if<is_builtin<V>::value>::type*)
-{
-  // attach relation table for has many relation
-  // check if has many item is already attached
-  // true: check owner and item field
-  // false: attach it
-  prototype_iterator pi = store_.find(id);
-  if (pi == store_.end()) {
-    std::vector<O<has_one_to_many_item<V, T> >*> has_many_item_observer;
-    for (auto o : observer_vector_) {
-      has_many_item_observer.push_back(new O<has_one_to_many_item<V, T> >(o));
-    }
-
-    auto proto = new has_one_to_many_item<V, T>(owner_column, item_column);
-    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<V, T> >(&store_, id, proto, false, node_.type(), id);
-
-    std::cout << node_.type() << " $$ attach node " << id << " (typeindex:" << node->type_index().name() << ")\n";
-    pi = store_.attach_internal<has_one_to_many_item<V, T> >(node, nullptr, has_many_item_observer);
-  } else {
-    // throw exception
-    throw_object_exception("prototype already inserted: " << pi->type());
-  }
-}
-
-template<class T, template < class U = T > class O >
-template<class V >
-void node_analyzer<T, O>::process_belongs_to(const char *id, belongs_to <V> &x)
-{
   std::cout << node_.type() << " $$ process belongs to '" << id << "' (type: " << x.type() << ")\n";
   // find node of belongs to type
   prototype_iterator node = store_.find(x.type());
@@ -161,8 +85,8 @@ void node_analyzer<T, O>::process_belongs_to(const char *id, belongs_to <V> &x)
 }
 
 template<class T, template < class U = T > class O >
-template< class V >
-void node_analyzer<T, O>::process_has_one(const char *id, has_one <V> &x)
+template<class V>
+void node_analyzer<T, O>::serialize(const char *id, has_one <V> &x, cascade_type)
 {
   std::cout << node_.type() << " $$ process has one '" << id << " (type: " << x.type() << ")\n";
   prototype_iterator foreign_node = store_.find(x.type());
@@ -190,56 +114,121 @@ void node_analyzer<T, O>::process_has_one(const char *id, has_one <V> &x)
 
 template<class T, template < class U = T > class O >
 template<class V, template<class ...> class C>
-void node_analyzer<T, O>::process_has_many(prototype_iterator pi, const char *id, has_many<V, C> &, const char *owner_column, const char *item_column)
+void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
+                                 const char *owner_column, const char *item_column,
+                                 typename std::enable_if<!is_builtin<V>::value>::type*)
 {
-  std::cout << node_.type() << " $$ process has many '" << id << "\n";
-  /*
-   * switch left (T) and right (V) template parameter
-   * to fit the already inserted has_many_to_many_item
-   * template parameter
-   */
-  std::type_index ti(typeid(has_one_to_many_item<T, V>));
-  if (pi->type_index() == ti) {
-    // found has one to many
-    // must be detached because
-    // we have a many to many relation here
-    std::cout << node_.type() << " $$ detaching node " << pi->type() << "\n";
-    store_.detach(pi);
-    // remove registered endpoint from foreign site
-    prototype_iterator fp = store_.find<V>();
-    if (fp != store_.end()) {
-      std::cout << node_.type() << " $$ node [" << fp->type() << "] unregister endpoint node::field[" << id << " (typeindex: " << fp->type_index().name() << "]\n";
-      fp->unregister_relation_field_endpoint(fp->type_index());
-    }
+  // attach relation table for has many relation
+  // check if has many item is already attached
+  // true: check owner and item field
+  // false: attach it
+  std::cout << node_.type() << " $$ analyze: serializing " << id << "\n";
+  prototype_iterator pi = store_.find(id);
+  if (pi == store_.end()) {
+    std::cout << node_.type() << " $$ has many relation " << id << " not found\n";
 
-    std::vector<O<has_many_to_many_item<T, V> >*> has_many_item_observer;
+    /*
+     * V = value type
+     * T = owner type
+     * new has_many_to_many<T, V>
+     */
+    std::vector<O<has_one_to_many_item<V, T> >*> has_many_item_observer;
     for (auto o : observer_vector_) {
-      has_many_item_observer.push_back(new O<has_many_to_many_item<T, V> >(o));
+      has_many_item_observer.push_back(new O<has_one_to_many_item<V, T> >(o));
     }
     // new has many to many item
-    auto proto = new has_many_to_many_item<T, V>(owner_column, item_column);
-    prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<T, V>>(&store_, id, proto, false, node_.type(), id);
+    auto proto = new has_one_to_many_item<V, T>(owner_column, item_column);
+    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<V, T> >(&store_, id, proto, false, node_.type(), id);
 
     std::cout << node_.type() << " $$ attach node " << id << " (typeindex:" << node->type_index().name() << ")\n";
-    pi = store_.attach_internal<has_many_to_many_item<T, V>>(node, nullptr, has_many_item_observer);
+    pi = store_.attach_internal<has_one_to_many_item<V, T>>(node, nullptr, has_many_item_observer);
 
-    store_.typeid_prototype_map_[typeid(has_many_to_many_item<V, T>).name()].insert(std::make_pair(pi->type_, pi.get()));
-    register_has_many_endpoint<V>(*fp, fp->type_index(), id, pi.get());
+    this->register_has_many_endpoint<V>(node_, node_.type_index(), id, pi.get());
 
-    // prototype is of type has_many_to_many_item
-    register_has_many_endpoint<T>(node_, node_.type_index(), id, pi.get());
   } else {
-    // found corresponding belongs_to or has_many
-    auto j = pi->relation_field_endpoint_map_.find(pi->type_index());
-    if (j == pi->relation_field_endpoint_map_.end()) {
-      // check for has many item
-      throw_object_exception("prototype already inserted: " << pi->type());
-    } else if (j->second->type == detail::relation_field_endpoint::BELONGS_TO) {
-      // set missing node
-      j->second->node = &node_;
-      j->second->foreign_endpoint = j->second;
-      this->register_has_many_endpoint<V>(node_, pi->type_index(), id, pi.get());
+    std::cout << node_.type() << " $$ found has many relation '" << id << "'\n";
+    /*
+     * switch left (T) and right (V) template parameter
+     * to fit the already inserted has_many_to_many_item
+     * template parameter
+     */
+
+    /*
+     * V = value type
+     * T = owner type
+     * new has_many_to_many<V, T>
+     */
+    std::type_index ti(typeid(has_one_to_many_item<T, V>));
+    if (pi->type_index() == ti) {
+      // found has one to many
+      // must be detached because
+      // we have a many to many relation here
+      std::cout << node_.type() << " $$ detaching node " << pi->type() << "\n";
+      store_.detach(pi);
+      // remove registered endpoint from foreign site
+      prototype_iterator fp = store_.find<V>();
+      if (fp != store_.end()) {
+        std::cout << node_.type() << " $$ node [" << fp->type() << "] unregister endpoint node::field[" << id << " (typeindex: " << fp->type_index().name() << "]\n";
+        fp->unregister_relation_field_endpoint(fp->type_index());
+      }
+
+      std::vector<O<has_many_to_many_item<T, V> >*> has_many_item_observer;
+      for (auto o : observer_vector_) {
+        has_many_item_observer.push_back(new O<has_many_to_many_item<T, V> >(o));
+      }
+      // new has many to many item
+      auto proto = new has_many_to_many_item<T, V>(owner_column, item_column);
+      prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<T, V>>(&store_, id, proto, false, node_.type(), id);
+
+      std::cout << node_.type() << " $$ attach node " << id << " (typeindex:" << node->type_index().name() << ")\n";
+      pi = store_.attach_internal<has_many_to_many_item<T, V>>(node, nullptr, has_many_item_observer);
+
+      store_.typeid_prototype_map_[typeid(has_many_to_many_item<V, T>).name()].insert(std::make_pair(pi->type_, pi.get()));
+      register_has_many_endpoint<V>(*fp, fp->type_index(), id, pi.get());
+
+      // prototype is of type has_many_to_many_item
+      register_has_many_endpoint<T>(node_, node_.type_index(), id, pi.get());
+    } else {
+      // found corresponding belongs_to or has_many
+      auto j = pi->relation_field_endpoint_map_.find(pi->type_index());
+      if (j == pi->relation_field_endpoint_map_.end()) {
+        // check for has many item
+        throw_object_exception("prototype already inserted: " << pi->type());
+      } else if (j->second->type == detail::relation_field_endpoint::BELONGS_TO) {
+        // set missing node
+        j->second->node = &node_;
+        j->second->foreign_endpoint = j->second;
+        this->register_has_many_endpoint<V>(node_, pi->type_index(), id, pi.get());
+      }
     }
+  }
+}
+
+template<class T, template < class U = T > class O >
+template<class V, template<class ...> class C>
+void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
+                                 const char *owner_column, const char *item_column,
+                                 typename std::enable_if<is_builtin<V>::value>::type*)
+{
+  // attach relation table for has many relation
+  // check if has many item is already attached
+  // true: check owner and item field
+  // false: attach it
+  prototype_iterator pi = store_.find(id);
+  if (pi == store_.end()) {
+    std::vector<O<has_one_to_many_item<V, T> >*> has_many_item_observer;
+    for (auto o : observer_vector_) {
+      has_many_item_observer.push_back(new O<has_one_to_many_item<V, T> >(o));
+    }
+
+    auto proto = new has_one_to_many_item<V, T>(owner_column, item_column);
+    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<V, T> >(&store_, id, proto, false, node_.type(), id);
+
+    std::cout << node_.type() << " $$ attach node " << id << " (typeindex:" << node->type_index().name() << ")\n";
+    pi = store_.attach_internal<has_one_to_many_item<V, T> >(node, nullptr, has_many_item_observer);
+  } else {
+    // throw exception
+    throw_object_exception("prototype already inserted: " << pi->type());
   }
 }
 

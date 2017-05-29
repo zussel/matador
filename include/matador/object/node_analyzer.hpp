@@ -47,15 +47,6 @@ public:
 
 private:
   template < class V >
-  void process_belongs_to(const char *id, belongs_to <V> &x);
-
-  template < class V >
-  void process_has_one(const char *id, has_one <V> &x);
-
-  template < class V, template<class ...> class C >
-  void process_has_many(prototype_iterator pi, const char *id, has_many<V, C> &x, const char *owner_column, const char *item_column);
-
-  template < class V >
   void register_has_many_endpoint(prototype_node &local_node, const std::type_index &typeindex, const char *id, prototype_node *node);
 
 protected:
