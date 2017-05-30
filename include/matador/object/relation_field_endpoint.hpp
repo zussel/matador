@@ -75,17 +75,25 @@ struct MATADOR_OBJECT_API relation_field_endpoint
   relation_field_serializer field_serializer;
 };
 
-struct relation_endpoint
+struct basic_relation_endpoint
 {
-  virtual ~relation_endpoint() {}
+  virtual ~basic_relation_endpoint() {}
 
-  template < class T >
+
+  std::weak_ptr<basic_relation_endpoint> foreign_endpoint;
+};
+
+template < class T >
+struct relation_endpoint : public basic_relation_endpoint
+{
+  typedef has_many_item_holder<T>*(*create_func)(object_store &, const object_ptr<T> &,object_proxy *);
+
+  create_func creator;
+
   has_many_item_holder<T>* insert(object_store &, const object_ptr<T> &,object_proxy *)
   {
     return nullptr;
   }
-
-  std::weak_ptr<relation_endpoint> foreign_endpoint;
 };
 
 /*
@@ -94,7 +102,7 @@ struct relation_endpoint
  * foreign endpoint is a many_to_one endpoint
  */
 template < class T >
-struct one_to_many_endpoint : relation_endpoint
+struct one_to_many_endpoint : relation_endpoint<T>
 {
   typedef T value_type;
 
