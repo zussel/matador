@@ -49,6 +49,14 @@ private:
   template < class V >
   void register_has_many_endpoint(prototype_node &local_node, const std::type_index &typeindex, const char *id, prototype_node *node);
 
+  /**
+   * Detach has_one_to_many node
+   *
+   * @param node Node to detach
+   * @return The foreign prototype node iterator
+   */
+  prototype_iterator detach_one_to_many_node(prototype_iterator node);
+
 protected:
   prototype_node &node_;
   object_store &store_;

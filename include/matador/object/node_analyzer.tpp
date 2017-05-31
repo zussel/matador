@@ -160,17 +160,8 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
      */
     std::type_index ti(typeid(has_one_to_many_item<T, V>));
     if (pi->type_index() == ti) {
-      // found has one to many
-      // must be detached because
-      // we have a many to many relation here
-      std::cout << node_.type() << " $$ detaching node " << pi->type() << "\n";
-      store_.detach(pi);
-      // remove registered endpoint from foreign site
-      prototype_iterator fp = store_.find<V>();
-      if (fp != store_.end()) {
-        std::cout << node_.type() << " $$ node [" << fp->type() << "] unregister endpoint node::field[" << id << " (typeindex: " << fp->type_index().name() << "]\n";
-        fp->unregister_relation_field_endpoint(fp->type_index());
-      }
+
+      prototype_iterator fp = detach_one_to_many_node(pi);
 
       std::vector<O<has_many_to_many_item<T, V> >*> has_many_item_observer;
       for (auto o : observer_vector_) {
@@ -189,6 +180,7 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
       // prototype is of type has_many_to_many_item
       register_has_many_endpoint<T>(node_, node_.type_index(), id, pi.get());
     } else {
+
       // found corresponding belongs_to or has_many
       auto j = pi->relation_field_endpoint_map_.find(pi->type_index());
       if (j == pi->relation_field_endpoint_map_.end()) {
@@ -280,6 +272,24 @@ void node_analyzer<T, O>::register_has_many_endpoint(prototype_node &local_node,
     std::cout << "\n";
   }
   local_node.register_relation_field_endpoint(typeindex, endpoint);
+}
+
+template<class T, template < class U = T > class O >
+template<class V>
+prototype_iterator node_analyzer<T, O>::detach_one_to_many_node(prototype_iterator node)
+{
+  // found has one to many
+  // must be detached because
+  // we have a many to many relation here
+  std::cout << node_.type() << " $$ detaching node " << node->type() << "\n";
+  store_.detach(node);
+  // remove registered endpoint from foreign site
+  prototype_iterator fp = store_.find<V>();
+  if (fp != store_.end()) {
+    std::cout << node_.type() << " $$ node [" << fp->type() << "] unregister endpoint node::field[" << id << " (typeindex: " << fp->type_index().name() << "]\n";
+    fp->unregister_relation_field_endpoint(fp->type_index());
+  }
+  return fp;
 }
 
 }
