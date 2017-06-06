@@ -647,9 +647,15 @@ public:
    */
   iterator insert(iterator pos, const value_type &value)
   {
-    holder_type holder(value, nullptr);
+    holder_type holder(value, this->owner_);
 
     if (this->ostore_) {
+
+      relation_info_->insert_holder(*this->ostore_, holder);
+
+      relation_info_->
+
+
       inserter_.insert(holder);
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }

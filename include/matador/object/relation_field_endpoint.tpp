@@ -79,7 +79,7 @@ void relation_field_endpoint::remove(object_store &, const object_ptr<T> &owner,
 }
 
 template<class T>
-void relation_field_endpoint::create(object_store &, const object_ptr <T> &, object_store *)
+void relation_field_endpoint::create(object_store &, const object_ptr <T> &, object_proxy *owner)
 {
 
 }
@@ -94,5 +94,10 @@ void relation_field_endpoint::insert(object_store &store, const object_ptr <T> &
   }
 }
 
+template<class Value, class Owner>
+void relation_field_endpoint::insert(object_store &store, has_many_item_holder<Value> &holder)
+{
+
+}
 }
 }

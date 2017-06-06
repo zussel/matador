@@ -22,6 +22,8 @@
 #include "matador/object/relation_field_serializer.hpp"
 #include "matador/object/basic_has_many_to_many_item.hpp"
 #include "matador/object/has_many_item_holder.hpp"
+#include "matador/object/has_one_to_many_item.hpp"
+#include "matador/object/has_many_to_many_item.hpp"
 
 #include <string>
 #include <functional>
@@ -59,10 +61,13 @@ struct MATADOR_OBJECT_API relation_field_endpoint
   void remove(object_store &store, const object_ptr<T> &owner, object_proxy *value);
 
   template < class T >
-  void create(object_store &store, const object_ptr<T> &owner, object_store *value);
+  void create(object_store &store, const object_ptr<T> &value, object_proxy *owner);
 
   template < class T, class V >
   void insert(object_store &store, const object_ptr<T> &value, object_proxy *owner);
+
+  template < class Value, class Owner >
+  void insert(object_store &store, has_many_item_holder<Value> &holder);
 
   std::string field;
   relation_type type;
@@ -79,52 +84,107 @@ struct basic_relation_endpoint
 {
   virtual ~basic_relation_endpoint() {}
 
+  virtual void insert_value(object_proxy *value, object_proxy *owner) = 0;
+  virtual void remove_value(object_proxy *value, object_proxy *owner) = 0;
 
   std::weak_ptr<basic_relation_endpoint> foreign_endpoint;
 };
 
-template < class T >
+template < class Value >
 struct relation_endpoint : public basic_relation_endpoint
 {
-  typedef has_many_item_holder<T>*(*create_func)(object_store &, const object_ptr<T> &,object_proxy *);
+  relation_endpoint_serializer<Value> modifier;
 
-  create_func creator;
-
-  has_many_item_holder<T>* insert(object_store &, const object_ptr<T> &,object_proxy *)
-  {
-    return nullptr;
-  }
+  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
+  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
 };
 
-/*
- * one_to_many endpoint
- *
- * foreign endpoint is a many_to_one endpoint
- */
-template < class T >
-struct one_to_many_endpoint : relation_endpoint<T>
+template < class Value, class Owner, template < class... > class HasManyItem >
+struct to_many_endpoint : public relation_endpoint<Value>
 {
-  typedef T value_type;
+  std::string owner_column;
+  std::string item_column;
 
-  using insert_func_type = std::function<has_many_item_holder<T>*(object_store &, const object_ptr<T> &,object_proxy *)>;
-
-  insert_func_type insert_func;
-
-  void insert_object(object_store &store, const object_ptr<T> &owner, object_proxy *value)
+  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
+    // cast to real type object pointer
+    object_ptr<Owner> foreign(owner);
+    // insert new item
+    auto itemptr = store.insert(new HasManyItem<Value, Owner>(holder.value, foreign, owner_column, item_column));
+    holder.has_many_to_many_item_poxy_ = itemptr.proxy_;
+  }
 
+  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override { }
+
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override
+  {
+    object_ptr<Value> valptr(value);
+    object_ptr<Owner> ownptr(value);
+    this->modifier.set(ownptr, "", valptr);
+  }
+
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override
+  {
+    object_ptr<Value> valptr(value);
+    object_ptr<Owner> ownptr(value);
+    this->modifier.set(ownptr, "", valptr);
   }
 };
-/*
- * many_to_one endpoint
- *
- *
- * one_to_one endpoint
- */
-template < class T >
-struct rfe {
 
+template < class Value, class Owner >
+using has_one_to_many_endpoint = to_many_endpoint<Value, Owner, has_one_to_many_item >;
+
+template < class Value, class Owner >
+using has_many_to_many_endpoint = to_many_endpoint<Value, Owner, has_many_to_many_item >;
+
+template < class Value, class Owner >
+struct has_one_endpoint : public relation_endpoint<Value>
+{
+  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
+  {
+    holder.has_item_proxy = owner;
+  }
+
+  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override { }
+
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override
+  {
+    object_ptr<Value> valptr(value);
+    object_ptr<Owner> ownptr(value);
+    this->modifier.set(ownptr, "", valptr);
+  }
+
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override
+  {
+    object_ptr<Value> valptr(nullptr);
+    object_ptr<Owner> ownptr(value);
+    this->modifier.set(ownptr, "", valptr);
+  }
 };
+
+template < class Value, class Owner >
+struct to_one_endpoint : public relation_endpoint<Value>
+{
+  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
+  {
+    holder.has_item_proxy = owner;
+  }
+
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override
+  {
+    object_ptr<Value> valptr(value);
+    object_ptr<Owner> ownptr(value);
+    this->modifier.set(ownptr, "", valptr);
+  }
+
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override
+  {
+    object_ptr<Value> valptr(nullptr);
+    object_ptr<Owner> ownptr(value);
+    this->modifier.set(ownptr, "", valptr);
+  }
+};
+
 /// @endcond
 
 }

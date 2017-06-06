@@ -127,6 +127,21 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
   if (pi == store_.end()) {
     std::cout << node_.type() << " $$ has many relation " << id << " not found\n";
 
+    // V = foreign/owner type => left column
+    // T = item/value type    => right column
+
+//    detail::one_to_many_endpoint<T> one_to_many;
+//
+//    one_to_many.insert_func = [](object_store &store, const object_ptr<T> &value, object_proxy *owner) {
+//      // cast to real type object pointer
+//      object_ptr<V> foreign(owner);
+//      // insert new item
+//      auto itemptr = store.insert(new has_many_to_many_item<V, T>(foreign, value, owner_column, item_column));
+//      return new has_many_item_holder<T>(value, itemptr);
+//    };
+
+//  insert(store_, object_ptr<T>(), nullptr);
+
     /*
      * V = value type
      * T = owner type
@@ -181,7 +196,7 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
       register_has_many_endpoint<T>(node_, node_.type_index(), id, pi.get());
     } else {
 
-      // found corresponding belongs_to or has_many
+      // found corresponding belongs_to
       auto j = pi->relation_field_endpoint_map_.find(pi->type_index());
       if (j == pi->relation_field_endpoint_map_.end()) {
         // check for has many item
@@ -230,22 +245,6 @@ void node_analyzer<T, O>::register_has_many_endpoint(prototype_node &local_node,
                                                      const char *id, prototype_node *node)
 {
   auto endpoint = std::make_shared<detail::relation_field_endpoint>(id, detail::relation_field_endpoint::HAS_MANY, node);
-
-
-  // V = foreign/owner type
-  // T = item/value type
-
-  detail::one_to_many_endpoint<T> one_to_many;
-
-  one_to_many.insert_func = [](object_store &store, const object_ptr<T> &value, object_proxy *owner) {
-    // cast to real type object pointer
-    object_ptr<V> foreign(owner);
-    // insert new item
-    auto itemptr = store.insert(new has_many_to_many_item<V, T>(foreign, value, "", ""));
-    return new has_many_item_holder<T>(value, itemptr);
-  };
-
-//  insert(store_, object_ptr<T>(), nullptr);
 
   // find counterpart node
   prototype_iterator foreign_node = store_.find<V>();

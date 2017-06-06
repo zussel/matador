@@ -35,6 +35,7 @@ public:
   {
     if (container_.relation_info_ != nullptr) {
 
+      container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
 
 //      has_many_item_holder<T> *item = container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
 
