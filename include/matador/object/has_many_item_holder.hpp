@@ -35,7 +35,15 @@ public:
   {
     return value_;
   }
+
+  object_proxy* item_proxy() const
+  {
+    return has_many_to_many_item_poxy_;
+  }
+
 private:
+  friend class basic_relation_endpoint;
+
   object_ptr<T> value_;
   object_proxy *has_many_to_many_item_poxy_;
 };

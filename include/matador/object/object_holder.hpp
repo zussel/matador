@@ -322,6 +322,7 @@ private:
   friend class object_pointer;
   template < class T, class Enable >
   friend class has_many_item_holder;
+  friend class basic_relation_endpoint;
 
   object_proxy *proxy_ = nullptr;
   object_proxy *owner_ = nullptr; // only set if holder type is BELONGS_TO or HAS_MANY

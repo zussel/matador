@@ -12,7 +12,8 @@ template < class Value >
 class relation_endpoint_serializer
 {
 public:
-
+  template < class Owner >
+  void set(const object_ptr<Owner> &/*owner*/, const std::string &/*field*/, const object_ptr<Value> &/*value*/) {}
 };
 
 }

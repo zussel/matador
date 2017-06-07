@@ -16,7 +16,7 @@ SET(SOURCES
   object_proxy_accessor.cpp
   object_deleter.cpp
   object_inserter.cpp
-  relation_field_endpoint.cpp relation_field_serializer.cpp abstract_has_many.cpp basic_has_many_to_many_item.cpp)
+  relation_field_endpoint.cpp relation_field_serializer.cpp abstract_has_many.cpp basic_has_many_to_many_item.cpp prototype_info.cpp)
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/object/action.hpp

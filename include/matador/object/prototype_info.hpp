@@ -37,6 +37,9 @@ protected:
 public:
   std::type_index type_index() const { return type_index_; }
 
+  void register_relation_endpoint(const std::type_index &tindex, const std::shared_ptr<basic_relation_endpoint> &endpoint);
+  void unregister_relation_endpoint(const std::type_index &tindex);
+
   virtual void* prototype() const = 0;
   virtual void* create() const = 0;
   virtual void register_observer(basic_object_store_observer *obs) = 0;
@@ -46,7 +49,7 @@ protected:
   prototype_node &node;        /**< prototype node of the represented object type */
   std::type_index type_index_; /**< type index of the represented object type */
 
-  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_field_endpoint>> t_endpoint_map;
+  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::basic_relation_endpoint>> t_endpoint_map;
   t_endpoint_map endpoints;
 };
 

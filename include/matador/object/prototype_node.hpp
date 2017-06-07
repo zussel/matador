@@ -87,7 +87,7 @@ private:
 public:
   /// @cond MATADOR_DEV
 
-  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_field_endpoint>> t_endpoint_map;
+//  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_field_endpoint>> t_endpoint_map;
 
   struct relation_node_info
   {
@@ -392,6 +392,11 @@ public:
   void register_relation_field_endpoint(const std::type_index &tindex,
                                         const std::shared_ptr<detail::relation_field_endpoint> &endpoint);
 
+  /**
+   * Unregister relation_field_endpoint identified by the given type index.
+   *
+   * @param tindex
+   */
   void unregister_relation_field_endpoint(const std::type_index &tindex);
 
 private:
@@ -480,7 +485,7 @@ private:
    */
   std::unique_ptr<basic_identifier> id_;
 
-  t_endpoint_map relation_field_endpoint_map_;
+//  t_endpoint_map relation_field_endpoint_map_;
 
   bool is_relation_node_ = false;
   relation_node_info relation_node_info_;

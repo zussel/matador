@@ -24,6 +24,8 @@
 #include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/has_one_to_many_item.hpp"
 #include "matador/object/has_many_to_many_item.hpp"
+#include "matador/object/relation_endpoint_serializer.hpp"
+#include "object_holder.hpp"
 
 #include <string>
 #include <functional>
@@ -87,6 +89,12 @@ struct basic_relation_endpoint
   virtual void insert_value(object_proxy *value, object_proxy *owner) = 0;
   virtual void remove_value(object_proxy *value, object_proxy *owner) = 0;
 
+  template < class T >
+  void set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj) { set_has_many_item_proxy(holder, obj.proxy_); }
+
+  template < class T >
+  void set_has_many_item_proxy(has_many_item_holder<T> &holder, object_proxy *proxy) { holder.has_many_to_many_item_poxy_ = proxy; }
+
   std::weak_ptr<basic_relation_endpoint> foreign_endpoint;
 };
 
@@ -111,7 +119,7 @@ struct to_many_endpoint : public relation_endpoint<Value>
     object_ptr<Owner> foreign(owner);
     // insert new item
     auto itemptr = store.insert(new HasManyItem<Value, Owner>(holder.value, foreign, owner_column, item_column));
-    holder.has_many_to_many_item_poxy_ = itemptr.proxy_;
+    this->set_has_many_item_proxy(holder, itemptr);
   }
 
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override { }
@@ -142,7 +150,7 @@ struct has_one_endpoint : public relation_endpoint<Value>
 {
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
-    holder.has_item_proxy = owner;
+    this->set_has_many_item_proxy(holder, owner);
   }
 
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override { }
@@ -167,7 +175,7 @@ struct to_one_endpoint : public relation_endpoint<Value>
 {
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
-    holder.has_item_proxy = owner;
+    this->set_has_many_item_proxy(holder, owner);
   }
 
   virtual void insert_value(object_proxy *value, object_proxy *owner) override
