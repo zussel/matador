@@ -13,5 +13,11 @@ void basic_prototype_info::unregister_relation_endpoint(const std::type_index &t
 {
   endpoints.erase(tindex);
 }
+
+basic_prototype_info::t_endpoint_map::const_iterator
+basic_prototype_info::find_relation_endpoint(const std::type_index &tindex) const
+{
+  return endpoints.find(tindex);
+}
 }
 }

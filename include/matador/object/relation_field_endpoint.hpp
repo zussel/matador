@@ -20,12 +20,8 @@
 #endif
 
 #include "matador/object/relation_field_serializer.hpp"
-#include "matador/object/basic_has_many_to_many_item.hpp"
-#include "matador/object/has_many_item_holder.hpp"
-#include "matador/object/has_one_to_many_item.hpp"
-#include "matador/object/has_many_to_many_item.hpp"
 #include "matador/object/relation_endpoint_serializer.hpp"
-#include "object_holder.hpp"
+#include "matador/object/has_many_item_holder.hpp"
 
 #include <string>
 #include <functional>
@@ -36,7 +32,6 @@ namespace matador {
 class object_proxy;
 class prototype_node;
 class object_store;
-
 
 namespace detail {
 
@@ -90,10 +85,10 @@ struct basic_relation_endpoint
   virtual void remove_value(object_proxy *value, object_proxy *owner) = 0;
 
   template < class T >
-  void set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj) { set_has_many_item_proxy(holder, obj.proxy_); }
+  void set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj);
 
   template < class T >
-  void set_has_many_item_proxy(has_many_item_holder<T> &holder, object_proxy *proxy) { holder.has_many_to_many_item_poxy_ = proxy; }
+  void set_has_many_item_proxy(has_many_item_holder<T> &holder, object_proxy *proxy);
 
   std::weak_ptr<basic_relation_endpoint> foreign_endpoint;
 };
@@ -113,16 +108,8 @@ struct to_many_endpoint : public relation_endpoint<Value>
   std::string owner_column;
   std::string item_column;
 
-  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
-  {
-    // cast to real type object pointer
-    object_ptr<Owner> foreign(owner);
-    // insert new item
-    auto itemptr = store.insert(new HasManyItem<Value, Owner>(holder.value, foreign, owner_column, item_column));
-    this->set_has_many_item_proxy(holder, itemptr);
-  }
-
-  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override { }
+  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
+  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
 
   virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
@@ -140,20 +127,10 @@ struct to_many_endpoint : public relation_endpoint<Value>
 };
 
 template < class Value, class Owner >
-using has_one_to_many_endpoint = to_many_endpoint<Value, Owner, has_one_to_many_item >;
-
-template < class Value, class Owner >
-using has_many_to_many_endpoint = to_many_endpoint<Value, Owner, has_many_to_many_item >;
-
-template < class Value, class Owner >
 struct has_one_endpoint : public relation_endpoint<Value>
 {
-  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
-  {
-    this->set_has_many_item_proxy(holder, owner);
-  }
-
-  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override { }
+  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
+  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
 
   virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
@@ -173,10 +150,8 @@ struct has_one_endpoint : public relation_endpoint<Value>
 template < class Value, class Owner >
 struct to_one_endpoint : public relation_endpoint<Value>
 {
-  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
-  {
-    this->set_has_many_item_proxy(holder, owner);
-  }
+  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
+  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
 
   virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {

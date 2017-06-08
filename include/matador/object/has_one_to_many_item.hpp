@@ -10,6 +10,7 @@
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/has_one.hpp"
 #include "matador/object/belongs_to.hpp"
+#include "matador/object/basic_has_many_to_many_item.hpp"
 
 #include <string>
 
@@ -19,8 +20,7 @@ template<class L, class R, typename Enable = void>
 class has_one_to_many_item;
 
 template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<R>::value>::type>
-  : public basic_has_many_to_many_item
+class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<R>::value>::type> : public basic_has_many_to_many_item
 {
 public:
   has_one_to_many_item()

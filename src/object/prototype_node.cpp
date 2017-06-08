@@ -349,14 +349,14 @@ object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier>
 }
 
 void prototype_node::register_relation_field_endpoint(const std::type_index &tindex,
-                                                      const std::shared_ptr<detail::relation_field_endpoint> &endpoint)
+                                                      const std::shared_ptr<detail::basic_relation_endpoint> &endpoint)
 {
-  relation_field_endpoint_map_.insert(std::make_pair(tindex, endpoint));
+  info_->register_relation_endpoint(tindex, endpoint);
 }
 
 void prototype_node::unregister_relation_field_endpoint(const std::type_index &tindex)
 {
-  relation_field_endpoint_map_.erase(tindex);
+  info_->unregister_relation_endpoint(tindex);
 }
 
 /*

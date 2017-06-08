@@ -1,10 +1,31 @@
 #include "matador/object/relation_field_endpoint.hpp"
 #include "matador/object/object_store.hpp"
+#include "matador/object/has_one_to_many_item.hpp"
+#include "matador/object/has_many_to_many_item.hpp"
+#include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/has_many_to_many_item.hpp"
 
 namespace matador {
 namespace detail {
+
+template<class T>
+void basic_relation_endpoint::set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj)
+{
+  set_has_many_item_proxy(holder, obj.proxy_);
+}
+
+template<class T>
+void basic_relation_endpoint::set_has_many_item_proxy(has_many_item_holder<T> &holder, object_proxy *proxy)
+{
+  holder.has_many_to_many_item_poxy_ = proxy;
+}
+
+template < class Value, class Owner >
+using has_one_to_many_endpoint = to_many_endpoint<Value, Owner, has_one_to_many_item >;
+
+template < class Value, class Owner >
+using has_many_to_many_endpoint = to_many_endpoint<Value, Owner, has_many_to_many_item >;
 
 template < class T >
 void relation_field_endpoint::set(object_store &store, const object_ptr<T> &owner, object_proxy *value)
@@ -97,7 +118,44 @@ void relation_field_endpoint::insert(object_store &store, const object_ptr <T> &
 template<class Value, class Owner>
 void relation_field_endpoint::insert(object_store &store, has_many_item_holder<Value> &holder)
 {
-
 }
+
+template < class Value, class Owner, template < class... > class HasManyItem >
+void to_many_endpoint<Value, Owner, HasManyItem>::insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+{
+  // cast to real type object pointer
+  object_ptr<Owner> foreign(owner);
+  // insert new item
+  auto itemptr = store.insert(new HasManyItem<Value, Owner>(holder.value, foreign, owner_column, item_column));
+  this->set_has_many_item_proxy(holder, itemptr);
+}
+
+template < class Value, class Owner, template < class... > class HasManyItem >
+void to_many_endpoint<Value, Owner, HasManyItem>::remove_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/)
+{
+}
+
+template < class Value, class Owner >
+void has_one_endpoint<Value, Owner>::insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+{
+  this->set_has_many_item_proxy(holder, owner);
+}
+
+template < class Value, class Owner >
+void has_one_endpoint<Value, Owner>::remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+{
+}
+
+template < class Value, class Owner >
+void to_one_endpoint<Value, Owner>::insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+{
+  this->set_has_many_item_proxy(holder, owner);
+}
+
+template < class Value, class Owner >
+void to_one_endpoint<Value, Owner>::remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+{
+}
+
 }
 }

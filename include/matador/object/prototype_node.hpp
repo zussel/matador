@@ -390,7 +390,7 @@ public:
    * @param endpoint pointer to a relation_field_endpoint object
    */
   void register_relation_field_endpoint(const std::type_index &tindex,
-                                        const std::shared_ptr<detail::relation_field_endpoint> &endpoint);
+                                        const std::shared_ptr<detail::basic_relation_endpoint> &endpoint);
 
   /**
    * Unregister relation_field_endpoint identified by the given type index.
