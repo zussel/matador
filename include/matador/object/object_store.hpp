@@ -758,7 +758,7 @@ public:
 private:
   friend class detail::modified_marker;
   friend class detail::object_inserter;
-  friend struct detail::relation_field_endpoint;
+  friend struct detail::basic_relation_endpoint;
   friend class object_deleter;
   friend class object_serializer;
   friend class restore_visitor;

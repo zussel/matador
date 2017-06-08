@@ -204,12 +204,12 @@ protected:
     if (!relation_info_) {
       return;
     }
-    if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_ONE ||
-        relation_info_->type == detail::relation_field_endpoint::relation_type::BELONGS_TO) {
-      relation_info_->clear(*store(), object_ptr<T>(proxy));
-    } else if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_MANY) {
-      relation_info_->remove(*store(), object_ptr<T>(proxy), owner_);
-    }
+//    if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_ONE ||
+//        relation_info_->type == detail::relation_field_endpoint::relation_type::BELONGS_TO) {
+//      relation_info_->clear(*store(), object_ptr<T>(proxy));
+//    } else if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_MANY) {
+//      relation_info_->remove(*store(), object_ptr<T>(proxy), owner_);
+//    }
   }
 
   void set_foreign_relation(object_proxy *proxy, object_proxy *value) override
@@ -217,12 +217,12 @@ protected:
     if (!relation_info_) {
       return;
     }
-    if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_ONE ||
-        relation_info_->type == detail::relation_field_endpoint::relation_type::BELONGS_TO) {
-      relation_info_->set(*store(), object_ptr<T>(proxy), value);
-    } else if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_MANY) {
-      relation_info_->append(*store(), object_ptr<T>(proxy), value);
-    }
+//    if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_ONE ||
+//        relation_info_->type == detail::relation_field_endpoint::relation_type::BELONGS_TO) {
+//      relation_info_->set(*store(), object_ptr<T>(proxy), value);
+//    } else if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_MANY) {
+//      relation_info_->append(*store(), object_ptr<T>(proxy), value);
+//    }
   }
 
 private:

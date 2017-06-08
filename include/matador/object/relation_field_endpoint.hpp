@@ -36,46 +36,46 @@ class object_store;
 namespace detail {
 
 /// @cond MATADOR_DEV
-struct MATADOR_OBJECT_API relation_field_endpoint
-{
-  enum relation_type {
-    BELONGS_TO, HAS_ONE, HAS_MANY
-  };
-
-  enum has_many_relation_side {
-    LEFT, RIGHT
-  };
-  relation_field_endpoint(const std::string &f, relation_type t, prototype_node *pn);
-  ~relation_field_endpoint();
-
-  template < class T >
-  void set(object_store &store, const object_ptr<T> &owner, object_proxy *value);
-  template < class T >
-  void clear(object_store &store, const object_ptr<T> &owner);
-  template < class T >
-  void append(object_store &store, const object_ptr<T> &owner, object_proxy *value);
-  template < class T >
-  void remove(object_store &store, const object_ptr<T> &owner, object_proxy *value);
-
-  template < class T >
-  void create(object_store &store, const object_ptr<T> &value, object_proxy *owner);
-
-  template < class T, class V >
-  void insert(object_store &store, const object_ptr<T> &value, object_proxy *owner);
-
-  template < class Value, class Owner >
-  void insert(object_store &store, has_many_item_holder<Value> &holder);
-
-  std::string field;
-  relation_type type;
-  has_many_relation_side side = LEFT;
-  prototype_node *node = nullptr;
-  std::weak_ptr<relation_field_endpoint> foreign_endpoint;
-  bool is_insert_in_progress = false;
-  bool is_remove_in_progress = false;
-
-  relation_field_serializer field_serializer;
-};
+//struct MATADOR_OBJECT_API relation_field_endpoint
+//{
+//  enum relation_type {
+//    BELONGS_TO, HAS_ONE, HAS_MANY
+//  };
+//
+//  enum has_many_relation_side {
+//    LEFT, RIGHT
+//  };
+//  relation_field_endpoint(const std::string &f, relation_type t, prototype_node *pn);
+//  ~relation_field_endpoint();
+//
+//  template < class T >
+//  void set(object_store &store, const object_ptr<T> &owner, object_proxy *value);
+//  template < class T >
+//  void clear(object_store &store, const object_ptr<T> &owner);
+//  template < class T >
+//  void append(object_store &store, const object_ptr<T> &owner, object_proxy *value);
+//  template < class T >
+//  void remove(object_store &store, const object_ptr<T> &owner, object_proxy *value);
+//
+//  template < class T >
+//  void create(object_store &store, const object_ptr<T> &value, object_proxy *owner);
+//
+//  template < class T, class V >
+//  void insert(object_store &store, const object_ptr<T> &value, object_proxy *owner);
+//
+//  template < class Value, class Owner >
+//  void insert(object_store &store, has_many_item_holder<Value> &holder);
+//
+//  std::string field;
+//  relation_type type;
+//  has_many_relation_side side = LEFT;
+//  prototype_node *node = nullptr;
+//  std::weak_ptr<relation_field_endpoint> foreign_endpoint;
+//  bool is_insert_in_progress = false;
+//  bool is_remove_in_progress = false;
+//
+//  relation_field_serializer field_serializer;
+//};
 
 struct basic_relation_endpoint
 {
