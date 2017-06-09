@@ -18,6 +18,8 @@
 #ifndef OBJECT_STORE_OBSERVER_HPP
 #define OBJECT_STORE_OBSERVER_HPP
 
+#include <typeindex>
+
 namespace matador {
 
 class object_proxy;

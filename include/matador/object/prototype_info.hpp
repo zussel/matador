@@ -6,9 +6,11 @@
 #define MATADOR_PROTOTYPE_INFO_HPP
 
 #include "matador/object/object_store_observer.hpp"
+#include "matador/object/relation_field_endpoint.hpp"
 
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 namespace matador {
 
@@ -36,13 +38,22 @@ protected:
 
 public:
   typedef std::unordered_map<std::type_index, std::shared_ptr<detail::basic_relation_endpoint>> t_endpoint_map;
+  typedef t_endpoint_map::iterator endpoint_iterator;
+  typedef t_endpoint_map::const_iterator const_endpoint_iterator;
 
 public:
   std::type_index type_index() const { return type_index_; }
 
   void register_relation_endpoint(const std::type_index &tindex, const std::shared_ptr<basic_relation_endpoint> &endpoint);
   void unregister_relation_endpoint(const std::type_index &tindex);
-  t_endpoint_map::const_iterator find_relation_endpoint(const std::type_index &tindex) const;
+  const_endpoint_iterator find_relation_endpoint(const std::type_index &tindex) const;
+  endpoint_iterator find_relation_endpoint(const std::type_index &tindex);
+
+  endpoint_iterator endpoint_begin();
+  const_endpoint_iterator endpoint_begin() const;
+
+  endpoint_iterator endpoint_end();
+  const_endpoint_iterator endpoint_end() const;
 
   virtual void* prototype() const = 0;
   virtual void* create() const = 0;

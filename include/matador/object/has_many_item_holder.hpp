@@ -12,9 +12,12 @@ namespace matador {
 class object_proxy;
 template < class T, object_holder_type OHT >
 class object_pointer;
-
 template < class T, class Enable = void >
 class has_many_item_holder;
+
+namespace detail {
+struct basic_relation_endpoint;
+}
 
 template < class T >
 class has_many_item_holder<T, typename std::enable_if<!is_builtin<T>::value>::type>
@@ -42,7 +45,7 @@ public:
   }
 
 private:
-  friend class basic_relation_endpoint;
+  friend class detail::basic_relation_endpoint;
 
   object_ptr<T> value_;
   object_proxy *has_many_to_many_item_poxy_;
@@ -69,6 +72,8 @@ public:
     return value_;
   }
 private:
+  friend class detail::basic_relation_endpoint;
+
   T value_;
   object_proxy *has_many_to_many_item_poxy_;
 };

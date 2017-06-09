@@ -199,7 +199,7 @@ public:
   }
 
 protected:
-  void clear_foreign_relation(object_proxy *proxy) override
+  void clear_foreign_relation(object_proxy */*proxy*/) override
   {
     if (!relation_info_) {
       return;
@@ -212,7 +212,7 @@ protected:
 //    }
   }
 
-  void set_foreign_relation(object_proxy *proxy, object_proxy *value) override
+  void set_foreign_relation(object_proxy */*proxy*/, object_proxy */*value*/) override
   {
     if (!relation_info_) {
       return;

@@ -348,15 +348,45 @@ object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier>
   return (i != id_map_.end() ? i->second : nullptr);
 }
 
-void prototype_node::register_relation_field_endpoint(const std::type_index &tindex,
-                                                      const std::shared_ptr<detail::basic_relation_endpoint> &endpoint)
+void prototype_node::register_relation_endpoint(const std::type_index &tindex,
+                                                const std::shared_ptr<detail::basic_relation_endpoint> &endpoint)
 {
   info_->register_relation_endpoint(tindex, endpoint);
 }
 
-void prototype_node::unregister_relation_field_endpoint(const std::type_index &tindex)
+void prototype_node::unregister_relation_endpoint(const std::type_index &tindex)
 {
   info_->unregister_relation_endpoint(tindex);
+}
+
+prototype_node::const_endpoint_iterator prototype_node::find_endpoint(const std::type_index &tindex) const
+{
+  return info_->find_relation_endpoint(tindex);
+}
+
+prototype_node::endpoint_iterator prototype_node::find_endpoint(const std::type_index &tindex)
+{
+  return info_->find_relation_endpoint(tindex);
+}
+
+prototype_node::endpoint_iterator prototype_node::endpoint_begin()
+{
+  return info_->endpoint_begin();
+}
+
+prototype_node::const_endpoint_iterator prototype_node::endpoint_begin() const
+{
+  return info_->endpoint_begin();
+}
+
+prototype_node::endpoint_iterator prototype_node::endpoint_end()
+{
+  return info_->endpoint_end();
+}
+
+prototype_node::const_endpoint_iterator prototype_node::endpoint_end() const
+{
+  return info_->endpoint_end();
 }
 
 /*

@@ -651,10 +651,7 @@ public:
 
     if (this->ostore_) {
 
-      relation_info_->insert_holder(*this->ostore_, holder);
-
-      relation_info_->
-
+      this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
       inserter_.insert(holder);
       this->mark_modified_owner_(*this->ostore_, this->owner_);

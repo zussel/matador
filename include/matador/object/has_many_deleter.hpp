@@ -30,22 +30,22 @@ public:
 
   has_many_deleter(container_type &container) : container_(container) {}
 
-  void remove(iterator i)
+  void remove(iterator /*i*/)
   {
     if (container_.relation_info_ != nullptr) {
-      if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
+      if (container_.relation_info_->type == detail::basic_relation_endpoint::BELONGS_TO) {
         /*
          * foreign end of relation is
          * belongs_to, clear owner from
          * corresponding field
          */
-        container_.relation_info_->clear(*container_.store(), *i);
-      } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
+//        container_.relation_info_->clear(*container_.store(), *i);
+      } else if (container_.relation_info_->type == detail::basic_relation_endpoint::HAS_MANY) {
         /*
          * foreign end of relation is
          * also has_many, insert has_many_to_many_item
          */
-        container_.relation_info_->remove(*container_.store(), *i, container_.owner_);
+//        container_.relation_info_->remove(*container_.store(), *i, container_.owner_);
 //        container_.store()->remove(rtype);
       }
     } else {
@@ -74,9 +74,9 @@ public:
 
   has_many_deleter(container_type &container) : container_(container) {}
 
-  void remove(iterator i)
+  void remove(iterator /*i*/)
   {
-    container_.relation_info_->remove(*container_.store(), *i, container_.owner_);
+//    container_.relation_info_->remove(*container_.store(), *i, container_.owner_);
 //    relation_type rtype(*i.iter_);
 //    container_.store()->remove(rtype);
   }

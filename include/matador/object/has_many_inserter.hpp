@@ -31,30 +31,30 @@ public:
 
   has_many_inserter(container_type &container) : container_(container) {}
 
-  void insert(const holder_type &holder)
+  void insert(const holder_type &/*holder*/)
   {
     if (container_.relation_info_ != nullptr) {
 
-      container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
+//      container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
 
 //      has_many_item_holder<T> *item = container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
 
 
-      if (container_.relation_info_->type == detail::relation_field_endpoint::BELONGS_TO) {
+      if (container_.relation_info_->type == detail::basic_relation_endpoint::BELONGS_TO) {
         /*
          * foreign end of relation is
          * belongs_to, set owner into
          * corresponding field
          */
-        container_.relation_info_->set(*container_.store(), holder.value(), container_.owner_);
-      } else if (container_.relation_info_->type == detail::relation_field_endpoint::HAS_MANY) {
+//        container_.relation_info_->set(*container_.store(), holder.value(), container_.owner_);
+      } else if (container_.relation_info_->type == detail::basic_relation_endpoint::HAS_MANY) {
         /*
          * foreign end of relation is
          * also has_many, insert has_many_to_many_item
          * append it to foreign relation
          */
 //        container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
-        container_.relation_info_->append(*container_.store(), holder.value(), container_.owner_);
+//        container_.relation_info_->append(*container_.store(), holder.value(), container_.owner_);
 //        container_.store()->insert(rtype);
       }
     } else {
@@ -91,13 +91,13 @@ public:
 
   has_many_inserter(container_type &container) : container_(container) {}
 
-  void insert(const holder_type &holder)
+  void insert(const holder_type &/*holder*/)
   {
-    container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
+//    container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
 
   }
 
-  void insert(iterator i)
+  void insert(iterator /*i*/)
   {
 
 //    relation_type rtype(*i.iter_);

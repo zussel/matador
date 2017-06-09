@@ -39,8 +39,8 @@ void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cas
 
   prototype_iterator foreign_node = ostore_.find<T>();
   if (foreign_node != ostore_.end()) {
-    auto i = foreign_node->relation_field_endpoint_map_.find(foreign_node->type_index());
-    if (i != foreign_node->relation_field_endpoint_map_.end()) {
+    auto i = foreign_node->find_endpoint(foreign_node->type_index());
+    if (i != foreign_node->endpoint_end()) {
       x.relation_info_ = i->second;
     }
   }
@@ -77,8 +77,8 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
 
   prototype_iterator foreign_node = ostore_.find<T>();
   if (foreign_node != ostore_.end()) {
-    auto i = foreign_node->relation_field_endpoint_map_.find(foreign_node->type_index());
-    if (i != foreign_node->relation_field_endpoint_map_.end()) {
+    auto i = foreign_node->find_endpoint(foreign_node->type_index());
+    if (i != foreign_node->endpoint_end()) {
       x.relation_info_ = i->second;
     }
   }
@@ -127,9 +127,9 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
 
   prototype_iterator foreign_node = ostore_.find<T>();
   if (foreign_node != ostore_.end()) {
-    auto i = foreign_node->relation_field_endpoint_map_.find(foreign_node->type_index());
-    if (i != foreign_node->relation_field_endpoint_map_.end()) {
-      x.relation_info_ = i->second;
+    auto i = foreign_node->find_endpoint(foreign_node->type_index());
+    if (i != foreign_node->endpoint_end()) {
+      x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
     }
   }
   typename basic_has_many<T, C>::iterator first = x.begin();

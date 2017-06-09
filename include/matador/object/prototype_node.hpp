@@ -89,6 +89,9 @@ public:
 
 //  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_field_endpoint>> t_endpoint_map;
 
+  typedef detail::basic_prototype_info::t_endpoint_map::const_iterator const_endpoint_iterator;
+  typedef detail::basic_prototype_info::t_endpoint_map::iterator endpoint_iterator;
+
   struct relation_node_info
   {
     std::shared_ptr<basic_identifier> owner_id_;
@@ -389,15 +392,24 @@ public:
    * @param tindex type index for identification.
    * @param endpoint pointer to a relation_field_endpoint object
    */
-  void register_relation_field_endpoint(const std::type_index &tindex,
-                                        const std::shared_ptr<detail::basic_relation_endpoint> &endpoint);
+  void register_relation_endpoint(const std::type_index &tindex,
+                                  const std::shared_ptr<detail::basic_relation_endpoint> &endpoint);
 
   /**
    * Unregister relation_field_endpoint identified by the given type index.
    *
    * @param tindex
    */
-  void unregister_relation_field_endpoint(const std::type_index &tindex);
+  void unregister_relation_endpoint(const std::type_index &tindex);
+
+  const_endpoint_iterator find_endpoint(const std::type_index &tindex) const;
+  endpoint_iterator find_endpoint(const std::type_index &tindex);
+
+  endpoint_iterator endpoint_begin();
+  const_endpoint_iterator endpoint_begin() const;
+
+  endpoint_iterator endpoint_end();
+  const_endpoint_iterator endpoint_end() const;
 
 private:
 

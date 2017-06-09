@@ -136,25 +136,27 @@ void to_many_endpoint<Value, Owner, HasManyItem>::remove_holder(object_store &/*
 }
 
 template < class Value, class Owner >
-void has_one_endpoint<Value, Owner>::insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+void has_one_endpoint<Value, Owner>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
   this->set_has_many_item_proxy(holder, owner);
 }
 
 template < class Value, class Owner >
-void has_one_endpoint<Value, Owner>::remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+void has_one_endpoint<Value, Owner>::remove_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
 {
+  this->set_has_many_item_proxy(holder, nullptr);
 }
 
 template < class Value, class Owner >
-void to_one_endpoint<Value, Owner>::insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+void to_one_endpoint<Value, Owner>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
   this->set_has_many_item_proxy(holder, owner);
 }
 
 template < class Value, class Owner >
-void to_one_endpoint<Value, Owner>::remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+void to_one_endpoint<Value, Owner>::remove_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
 {
+  this->set_has_many_item_proxy(holder, nullptr);
 }
 
 }
