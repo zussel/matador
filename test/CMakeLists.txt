@@ -34,7 +34,8 @@ SET (TEST_OBJECT_SOURCES
 #  object/HasManyListUnitTest.hpp
 #  object/ObjectTransactiontestUnit.cpp
 #  object/ObjectTransactiontestUnit.hpp
-)
+  object/RelationTestUnit.cpp
+  object/RelationTestUnit.hpp)
 
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp
