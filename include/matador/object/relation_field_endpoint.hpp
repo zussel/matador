@@ -144,11 +144,11 @@ struct to_many_endpoint : public relation_endpoint<Value>
   }
 };
 
-template < class Value, class Owner >
-struct has_one_endpoint : public relation_endpoint<Value>
+template < class Value, class Owner, basic_relation_endpoint::relation_type Type>
+struct from_one_endpoint : public relation_endpoint<Value>
 {
-  has_one_endpoint(const std::string &field, prototype_node *node, basic_relation_endpoint::relation_type type)
-    : relation_endpoint<Value>(field, node, type)
+  from_one_endpoint(const std::string &field, prototype_node *node)
+    : relation_endpoint<Value>(field, node, Type)
   {}
 
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;

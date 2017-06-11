@@ -27,6 +27,12 @@ using has_one_to_many_endpoint = to_many_endpoint<Value, Owner, has_one_to_many_
 template < class Value, class Owner >
 using has_many_to_many_endpoint = to_many_endpoint<Value, Owner, has_many_to_many_item >;
 
+template < class Value, class Owner >
+using has_one_endpoint = from_one_endpoint<Value, Owner, basic_relation_endpoint::HAS_ONE >;
+
+template < class Value, class Owner >
+using belongs_to_endpoint = from_one_endpoint<Value, Owner, basic_relation_endpoint::BELONGS_TO >;
+
 //template < class T >
 //void relation_field_endpoint::set(object_store &store, const object_ptr<T> &owner, object_proxy *value)
 //{
@@ -136,13 +142,13 @@ void to_many_endpoint<Value, Owner, HasManyItem>::remove_holder(object_store &/*
 }
 
 template < class Value, class Owner >
-void has_one_endpoint<Value, Owner>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
+void from_one_endpoint<Value, Owner>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
   this->set_has_many_item_proxy(holder, owner);
 }
 
 template < class Value, class Owner >
-void has_one_endpoint<Value, Owner>::remove_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
+void from_one_endpoint<Value, Owner>::remove_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
 {
   this->set_has_many_item_proxy(holder, nullptr);
 }

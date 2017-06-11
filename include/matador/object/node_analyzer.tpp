@@ -38,12 +38,14 @@ template<class V>
 void node_analyzer<T, O>::serialize(const char *id, belongs_to <V> &x, cascade_type)
 {
   std::cout << node_.type() << " $$ process belongs to '" << id << "' (type: " << x.type() << ")\n";
-  // find foreign_node of belongs to type
-  prototype_iterator foreign_node = store_.find(x.type());
 
 //  auto endpoint = std::make_shared<detail::relation_field_endpoint>(id, detail::relation_field_endpoint::BELONGS_TO, foreign_node.get());
-  auto endpoint = std::make_shared<detail::has_one_endpoint<T, V>>(id, foreign_node.get(), basic_relation_endpoint::BELONGS_TO);
+  auto endpoint = std::make_shared<detail::belongs_to_endpoint<T, V>>(id, &node_);
 
+  node_.register_relation_endpoint(std::type_index(typeid(V)), endpoint);
+
+  // find foreign_node of belongs to type
+  prototype_iterator foreign_node = store_.find(x.type());
   if (foreign_node != store_.end()) {
     /*
      * foreign_node is already inserted
@@ -94,7 +96,7 @@ void node_analyzer<T, O>::serialize(const char *id, has_one <V> &x, cascade_type
   std::cout << node_.type() << " $$ process has one '" << id << " (type: " << x.type() << ")\n";
   prototype_iterator foreign_node = store_.find(x.type());
 
-  auto endpoint = std::make_shared<detail::has_one_endpoint<T, V>>(id, foreign_node.get(), basic_relation_endpoint::HAS_ONE);
+  auto endpoint = std::make_shared<detail::has_one_endpoint<T, V>>(id, foreign_node.get());
 
   if (foreign_node != store_.end()) {
     auto i = foreign_node->find_endpoint(foreign_node->type_index());
