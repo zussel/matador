@@ -389,6 +389,11 @@ prototype_node::const_endpoint_iterator prototype_node::endpoint_end() const
   return info_->endpoint_end();
 }
 
+const detail::basic_prototype_info::t_endpoint_map &prototype_node::endpoints() const
+{
+  return info_->endpoints();
+}
+
 /*
  * adjust the marker of all predeccessor nodes
  * self and last marker

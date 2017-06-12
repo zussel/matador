@@ -5,6 +5,8 @@
 #include "matador/object/object_store.hpp"
 #include "matador/object/has_one.hpp"
 
+#include "../Item.hpp"
+
 #include "RelationTestUnit.hpp"
 
 RelationTestUnit::RelationTestUnit()
@@ -15,46 +17,41 @@ RelationTestUnit::RelationTestUnit()
   add_test("has_many_builtin", std::bind(&RelationTestUnit::test_has_many_builtin, this), "test has many relation with builtin");
 }
 
-namespace relation {
-struct detail
-{
-  std::string name;
-
-  template<class S>
-  void serialize(S &serializer)
-  {
-    serializer.serialize("name", name);
-  }
-};
-
-struct master
-{
-  long id = 0;
-  matador::has_one<detail> dtl;
-
-  template<class S>
-  void serialize(S &serializer)
-  {
-    serializer.serialize("id", id);
-    serializer.serialize("detail", dtl, matador::cascade_type::ALL);
-  }
-};
-
-}
-
 void RelationTestUnit::test_has_one()
 {
+  std::cout << "\n";
+
   matador::object_store store;
 
-  store.attach<relation::detail>("detail");
-  store.attach<relation::master>("master");
+  store.attach<child>("child");
+  auto node = store.attach<master>("master");
 
+  for (auto endpoint : node->endpoints()) {
+    std::cout << "node " << node->type() << " has endpoint: " << endpoint.second->field << "\n";
+  }
 
+  auto chld = store.insert(new child("child 1"));
+
+  std::cout << "detail: " << chld->name << "\n";
+
+  auto mstr = store.insert(new master("m1", chld));
+
+  std::cout << "detail: " << mstr->children->name << "\n";
 }
 
 void RelationTestUnit::test_has_many()
 {
+  std::cout << "\n";
 
+  matador::object_store store;
+
+  store.attach<child>("child");
+  auto node = store.attach<children_vector>("children_vector");
+
+  std::cout << "\n";
+  for (auto endpoint : node->endpoints()) {
+    std::cout << "node " << node->type() << " has endpoint: " << endpoint.second->field << "\n";
+  }
 }
 
 void RelationTestUnit::test_has_many_builtin()

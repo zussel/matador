@@ -411,6 +411,8 @@ public:
   endpoint_iterator endpoint_end();
   const_endpoint_iterator endpoint_end() const;
 
+  const detail::basic_prototype_info::t_endpoint_map& endpoints() const;
+
 private:
 
   /**

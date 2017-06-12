@@ -640,6 +640,7 @@ public:
 public:
   master() {}
   master(const std::string &n) : name(n) {}
+  master(const std::string &n, const matador::object_ptr<child> &c) : name(n), children(c) {}
   ~master() {}
 
   template < class S >

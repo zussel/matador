@@ -170,6 +170,12 @@ struct from_one_endpoint : public relation_endpoint<Value>
 };
 
 template < class Value, class Owner >
+using has_one_endpoint = from_one_endpoint<Value, Owner, basic_relation_endpoint::HAS_ONE >;
+
+template < class Value, class Owner >
+using belongs_to_endpoint = from_one_endpoint<Value, Owner, basic_relation_endpoint::BELONGS_TO >;
+
+template < class Value, class Owner >
 struct to_one_endpoint : public relation_endpoint<Value>
 {
   to_one_endpoint(const std::string &field, prototype_node *node)

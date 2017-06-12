@@ -94,27 +94,42 @@ template<class V>
 void node_analyzer<T, O>::serialize(const char *id, has_one <V> &x, cascade_type)
 {
   std::cout << node_.type() << " $$ process has one '" << id << " (type: " << x.type() << ")\n";
+
+  auto endpoint = std::make_shared<detail::has_one_endpoint<T, V>>(id, &node_);
+
+  node_.register_relation_endpoint(std::type_index(typeid(V)), endpoint);
+
   prototype_iterator foreign_node = store_.find(x.type());
 
-  auto endpoint = std::make_shared<detail::has_one_endpoint<T, V>>(id, foreign_node.get());
-
   if (foreign_node != store_.end()) {
-    auto i = foreign_node->find_endpoint(foreign_node->type_index());
+    auto i = foreign_node->find_endpoint(node_.type_index());
     if (i != foreign_node->endpoint_end()) {
-      endpoint->foreign_endpoint = i->second;
-      i->second->foreign_endpoint = endpoint;
+      if (i->second->type == basic_relation_endpoint::BELONGS_TO) {
+        // link both nodes
+      } else {
+        throw object_exception("invalid endpoint type");
+      }
     }
   }
-
-  {
-    auto fe = endpoint->foreign_endpoint.lock();
-    std::cout << node_.type() << " $$ register endpoint at node::field[" << id << " (typeindex: " << node_.type_index().name() << "]";
-    if (fe) {
-      std::cout << ": foreign endpoint -> " << fe->field;
-    }
-    std::cout << "\n";
-  }
-  node_.register_relation_endpoint(node_.type_index(), endpoint);
+//
+//
+//  if (foreign_node != store_.end()) {
+//    auto i = foreign_node->find_endpoint(foreign_node->type_index());
+//    if (i != foreign_node->endpoint_end()) {
+//      endpoint->foreign_endpoint = i->second;
+//      i->second->foreign_endpoint = endpoint;
+//    }
+//  }
+//
+//  {
+//    auto fe = endpoint->foreign_endpoint.lock();
+//    std::cout << node_.type() << " $$ register endpoint at node::field[" << id << " (typeindex: " << node_.type_index().name() << "]";
+//    if (fe) {
+//      std::cout << ": foreign endpoint -> " << fe->field;
+//    }
+//    std::cout << "\n";
+//  }
+//  node_.register_relation_endpoint(node_.type_index(), endpoint);
 }
 
 template<class T, template < class U = T > class O >

@@ -55,6 +55,8 @@ public:
   endpoint_iterator endpoint_end();
   const_endpoint_iterator endpoint_end() const;
 
+  const t_endpoint_map& endpoints() const;
+
   virtual void* prototype() const = 0;
   virtual void* create() const = 0;
   virtual void register_observer(basic_object_store_observer *obs) = 0;
@@ -64,7 +66,7 @@ protected:
   prototype_node &node;        /**< prototype node of the represented object type */
   std::type_index type_index_; /**< type index of the represented object type */
 
-  t_endpoint_map endpoints;
+  t_endpoint_map endpoints_;
 };
 
 template < class T >
