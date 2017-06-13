@@ -3,8 +3,7 @@
 #include "matador/object/object_store.hpp"
 #include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/generic_access.hpp"
-#include "matador/object/has_many_to_many_item.hpp"
-#include "matador/object/has_one_to_many_item.hpp"
+#include "matador/object/to_many_endpoints.hpp"
 
 namespace matador {
 namespace detail {
@@ -52,7 +51,7 @@ void node_analyzer<T, O>::serialize(const char *id, belongs_to <V> &x, cascade_t
      * check if foreign_node was created from has_many
      * check if foreign_node has_many relation for id (id == tablename)
      */
-    auto i = foreign_node->find_endpoint(foreign_node->type_index());
+    auto i = foreign_node->find_endpoint(node_.type_index());
     if (i != foreign_node->endpoint_end()) {
 
 
@@ -78,15 +77,15 @@ void node_analyzer<T, O>::serialize(const char *id, belongs_to <V> &x, cascade_t
     }
   }
 
-  {
-    auto fe = endpoint->foreign_endpoint.lock();
-    std::cout << node_.type() << " $$ register endpoint at foreign_node::field[" << id << " (typeindex: " << node_.type_index().name() << "]";
-    if (fe) {
-      std::cout << ": foreign endpoint -> " << fe->field;
-    }
-    std::cout << "\n";
-  }
-  node_.register_relation_endpoint(node_.type_index(), endpoint);
+//  {
+//    auto fe = endpoint->foreign_endpoint.lock();
+//    std::cout << node_.type() << " $$ register endpoint at foreign_node::field[" << id << " (typeindex: " << node_.type_index().name() << "]";
+//    if (fe) {
+//      std::cout << ": foreign endpoint -> " << fe->field;
+//    }
+//    std::cout << "\n";
+//  }
+//  node_.register_relation_endpoint(node_.type_index(), endpoint);
 }
 
 template<class T, template < class U = T > class O >
@@ -106,6 +105,8 @@ void node_analyzer<T, O>::serialize(const char *id, has_one <V> &x, cascade_type
     if (i != foreign_node->endpoint_end()) {
       if (i->second->type == basic_relation_endpoint::BELONGS_TO) {
         // link both nodes
+        endpoint->foreign_endpoint = i->second;
+        i->second->foreign_endpoint = endpoint;
       } else {
         throw object_exception("invalid endpoint type");
       }
@@ -147,6 +148,7 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
   if (pi == store_.end()) {
     std::cout << node_.type() << " $$ has many relation " << id << " not found\n";
 
+
     // V = foreign/owner type => left column
     // T = item/value type    => right column
 
@@ -167,10 +169,16 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
      * T = owner type
      * new has_many_to_many<T, V>
      */
+    // handle observer
     std::vector<O<has_one_to_many_item<V, T> >*> has_many_item_observer;
     for (auto o : observer_vector_) {
       has_many_item_observer.push_back(new O<has_one_to_many_item<V, T> >(o));
     }
+
+    auto endpoint = std::make_shared<detail::has_one_to_many_endpoint <V, T>>(id, &node_);
+
+    node_.register_relation_endpoint(std::type_index(typeid(detail::has_one_to_many_endpoint <V, T>)), endpoint);
+
     // new has many to many item
     auto proto = new has_one_to_many_item<V, T>(owner_column, item_column);
     prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<V, T> >(&store_, id, proto, false, node_.type(), id);
@@ -178,7 +186,7 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
     std::cout << node_.type() << " $$ attach node " << id << " (typeindex:" << node->type_index().name() << ")\n";
     pi = store_.attach_internal<has_one_to_many_item<V, T>>(node, nullptr, has_many_item_observer);
 
-    this->register_has_many_endpoint<V>(node_, node_.type_index(), id, pi.get());
+//    this->register_has_many_endpoint<V>(node_, node_.type_index(), id, pi.get());
 
   } else {
     std::cout << node_.type() << " $$ found has many relation '" << id << "'\n";

@@ -353,7 +353,8 @@ public:
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(*matador::base_class<person>(this));
-    serializer.serialize("department", department_, matador::cascade_type::NONE);
+    serializer.serialize("department"    , department_, matador::cascade_type::NONE);
+                         // name of table, object     , cascade
   }
 
   matador::object_ptr<department> dep() { return department_; }

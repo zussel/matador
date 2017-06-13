@@ -15,6 +15,8 @@ RelationTestUnit::RelationTestUnit()
   add_test("has_one", std::bind(&RelationTestUnit::test_has_one, this), "test has one relation");
   add_test("has_many", std::bind(&RelationTestUnit::test_has_many, this), "test has many relation");
   add_test("has_many_builtin", std::bind(&RelationTestUnit::test_has_many_builtin, this), "test has many relation with builtin");
+  add_test("has_many_to_one", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to one relation");
+  add_test("has_many_to_many", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to many relation");
 }
 
 void RelationTestUnit::test_has_one()
@@ -24,10 +26,15 @@ void RelationTestUnit::test_has_one()
   matador::object_store store;
 
   store.attach<child>("child");
-  auto node = store.attach<master>("master");
+  store.attach<master>("master");
 
-  for (auto endpoint : node->endpoints()) {
-    std::cout << "node " << node->type() << " has endpoint: " << endpoint.second->field << "\n";
+  UNIT_ASSERT_EQUAL(2UL, store.size(), "must be two nodes");
+
+  for (auto &node : store) {
+    std::cout << "\n";
+    for (auto &endpoint : node.endpoints()) {
+      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << "\n";
+    }
   }
 
   auto chld = store.insert(new child("child 1"));
@@ -46,15 +53,59 @@ void RelationTestUnit::test_has_many()
   matador::object_store store;
 
   store.attach<child>("child");
-  auto node = store.attach<children_vector>("children_vector");
+  store.attach<children_vector>("children_vector");
 
-  std::cout << "\n";
-  for (auto endpoint : node->endpoints()) {
-    std::cout << "node " << node->type() << " has endpoint: " << endpoint.second->field << "\n";
+  UNIT_ASSERT_EQUAL(3UL, store.size(), "must be three nodes");
+
+  for (auto &node : store) {
+    std::cout << "\n";
+    for (auto &endpoint : node.endpoints()) {
+      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << "\n";
+    }
   }
 }
 
 void RelationTestUnit::test_has_many_builtin()
 {
 
+}
+
+void RelationTestUnit::test_has_many_to_one()
+{
+  std::cout << "\n";
+
+  matador::object_store store;
+
+  store.attach<person>("person");
+  store.attach<employee, person>("employee");
+  store.attach<department>("department");
+
+  UNIT_ASSERT_EQUAL(3UL, store.size(), "must be three nodes");
+
+  for (auto &node : store) {
+    std::cout << "\n";
+    for (auto &endpoint : node.endpoints()) {
+      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << "\n";
+    }
+  }
+}
+
+void RelationTestUnit::test_has_many_to_many()
+{
+  std::cout << "\n";
+
+  matador::object_store store;
+
+  store.attach<person>("person");
+  store.attach<student, person>("student");
+  store.attach<course>("course");
+
+  UNIT_ASSERT_EQUAL(4UL, store.size(), "must be four nodes");
+
+  for (auto &node : store) {
+    std::cout << "\n";
+    for (auto &endpoint : node.endpoints()) {
+      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << "\n";
+    }
+  }
 }

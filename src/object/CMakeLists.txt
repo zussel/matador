@@ -75,7 +75,7 @@ SET(HEADER
   ../../include/matador/object/has_many_deleter.hpp
   ../../include/matador/object/has_many_item_holder.hpp
   ../../include/matador/object/prototype_info.hpp
-  ../../include/matador/object/relation_endpoint_serializer.hpp)
+  ../../include/matador/object/relation_endpoint_serializer.hpp ../../include/matador/object/to_many_endpoints.hpp)
 
 ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
 
