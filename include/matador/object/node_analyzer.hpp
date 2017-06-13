@@ -46,9 +46,6 @@ public:
                  typename std::enable_if<is_builtin<V>::value>::type* = 0);
 
 private:
-  template < class V >
-  void register_has_many_endpoint(prototype_node &local_node, const std::type_index &typeindex, const char *id, prototype_node *node);
-
   /**
    * Detach has_one_to_many node
    *

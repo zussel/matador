@@ -85,7 +85,14 @@ struct basic_relation_endpoint
 
   basic_relation_endpoint(const std::string &fld, prototype_node *n, relation_type t)
     : field(fld), node(n), type(t)
-  {}
+  {
+    switch (type) {
+      case BELONGS_TO: type_name = "belongs_to"; break;
+      case HAS_ONE: type_name = "has_one"; break;
+      case HAS_MANY: type_name = "has_many"; break;
+      default: break;
+    }
+  }
   virtual ~basic_relation_endpoint() {}
 
   virtual void insert_value(object_proxy *value, object_proxy *owner) = 0;
@@ -98,6 +105,7 @@ struct basic_relation_endpoint
   void set_has_many_item_proxy(has_many_item_holder<T> &holder, object_proxy *proxy);
 
   std::string field;
+  std::string type_name;
   prototype_node *node = nullptr;
   relation_type type;
   std::weak_ptr<basic_relation_endpoint> foreign_endpoint;

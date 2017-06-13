@@ -33,7 +33,7 @@ void RelationTestUnit::test_has_one()
   for (auto &node : store) {
     std::cout << "\n";
     for (auto &endpoint : node.endpoints()) {
-      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << "\n";
+      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
     }
   }
 
@@ -60,7 +60,7 @@ void RelationTestUnit::test_has_many()
   for (auto &node : store) {
     std::cout << "\n";
     for (auto &endpoint : node.endpoints()) {
-      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << "\n";
+      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
     }
   }
 }
@@ -85,7 +85,7 @@ void RelationTestUnit::test_has_many_to_one()
   for (auto &node : store) {
     std::cout << "\n";
     for (auto &endpoint : node.endpoints()) {
-      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << "\n";
+      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
     }
   }
 }
@@ -105,7 +105,7 @@ void RelationTestUnit::test_has_many_to_many()
   for (auto &node : store) {
     std::cout << "\n";
     for (auto &endpoint : node.endpoints()) {
-      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << "\n";
+      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
     }
   }
 }
