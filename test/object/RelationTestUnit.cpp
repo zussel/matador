@@ -3,7 +3,6 @@
 //
 
 #include "matador/object/object_store.hpp"
-#include "matador/object/has_one.hpp"
 
 #include "../Item.hpp"
 
@@ -13,10 +12,11 @@ RelationTestUnit::RelationTestUnit()
   : unit_test("relation", "Relation Test Unit")
 {
   add_test("has_one", std::bind(&RelationTestUnit::test_has_one, this), "test has one relation");
+  add_test("belongs_to_one", std::bind(&RelationTestUnit::test_belongs_to_one, this), "test belongs to one relation");
   add_test("has_many", std::bind(&RelationTestUnit::test_has_many, this), "test has many relation");
   add_test("has_many_builtin", std::bind(&RelationTestUnit::test_has_many_builtin, this), "test has many relation with builtin");
-  add_test("has_many_to_one", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to one relation");
-  add_test("has_many_to_many", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to many relation");
+  add_test("belongs_to_many", std::bind(&RelationTestUnit::test_belongs_to_many, this), "test belongs to many relation");
+  add_test("has_many_to_many", std::bind(&RelationTestUnit::test_belongs_to_many, this), "test has many to many relation");
 }
 
 void RelationTestUnit::test_has_one()
@@ -41,9 +41,51 @@ void RelationTestUnit::test_has_one()
 
   std::cout << "detail: " << chld->name << "\n";
 
+//  chld = nullptr;
+
   auto mstr = store.insert(new master("m1", chld));
 
   std::cout << "detail: " << mstr->children->name << "\n";
+
+  mstr->children = nullptr;
+}
+
+void RelationTestUnit::test_belongs_to_one()
+{
+  std::cout << "\n";
+
+  matador::object_store store;
+
+  store.attach<person>("person");
+  store.attach<citizen, person>("citizen");
+  store.attach<address>("address");
+
+  UNIT_ASSERT_EQUAL(3UL, store.size(), "must be three nodes");
+
+  for (auto &node : store) {
+    std::cout << "\n";
+    for (auto &endpoint : node.endpoints()) {
+      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
+    }
+  }
+
+  auto george = store.insert(new citizen("george"));
+  auto home = store.insert(new address("foreststreet", "foresting"));
+
+  std::cout << "george id " << george.id() << "\n";
+  std::cout << "home id " << home.id() << "\n";
+  std::cout << "home->citizen: " << &home->citizen_ << " (" << home->citizen_.id() << ")\n";
+
+  george->address_ = home;
+
+  std::cout << "george->address: " << george->address_->street << "\n";
+  std::cout << "home->citizen: " << home->citizen_->name() << " (" << home->citizen_.id() << ")\n";
+
+  george->address_ = nullptr;
+
+  std::cout << "george->address: " << &george->address_ << "\n";
+  std::cout << "home->citizen: " << &home->citizen_ << " (" << home->citizen_.id() << ")\n";
+
 }
 
 void RelationTestUnit::test_has_many()
@@ -90,7 +132,7 @@ void RelationTestUnit::test_has_many_to_one()
   }
 }
 
-void RelationTestUnit::test_has_many_to_many()
+void RelationTestUnit::test_belongs_to_many()
 {
   std::cout << "\n";
 

@@ -1,7 +1,5 @@
 #include "matador/object/relation_field_serializer.hpp"
-//#include "matador/object/object_store.hpp"
 #include "matador/object/generic_access.hpp"
-#include "matador/object/object_ptr.hpp"
 
 namespace matador {
 namespace detail {

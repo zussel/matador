@@ -1020,6 +1020,8 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 #include "matador/object/node_analyzer.tpp"
 #include "matador/object/relation_field_endpoint.tpp"
 #include "matador/object/relation_field_serializer.tpp"
+#include "matador/object/relation_endpoint_value_inserter.tpp"
+#include "matador/object/relation_endpoint_value_remover.tpp"
 #include "matador/object/object_inserter.tpp"
 #include "matador/object/object_deleter.tpp"
 

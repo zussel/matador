@@ -37,12 +37,10 @@ void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cas
   x.cascade_ = cascade;
   x.owner_ = object_proxy_stack_.top();
 
-  prototype_iterator foreign_node = ostore_.find<T>();
-  if (foreign_node != ostore_.end()) {
-    auto i = foreign_node->find_endpoint(foreign_node->type_index());
-    if (i != foreign_node->endpoint_end()) {
-      x.relation_info_ = i->second;
-    }
+  prototype_node *node = x.owner_->node();
+  auto i = node->find_endpoint(std::type_index(typeid(T)));
+  if (i != node->endpoint_end()) {
+    x.relation_info_ = i->second;
   }
 
   // object was seen by inserter stop inserting
@@ -75,12 +73,10 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
   x.cascade_ = cascade;
   x.owner_ = object_proxy_stack_.top();
 
-  prototype_iterator foreign_node = ostore_.find<T>();
-  if (foreign_node != ostore_.end()) {
-    auto i = foreign_node->find_endpoint(foreign_node->type_index());
-    if (i != foreign_node->endpoint_end()) {
-      x.relation_info_ = i->second;
-    }
+  prototype_node *node = x.owner_->node();
+  auto i = node->find_endpoint(std::type_index(typeid(T)));
+  if (i != node->endpoint_end()) {
+    x.relation_info_ = i->second;
   }
 
   // object was seen by inserter stop inserting

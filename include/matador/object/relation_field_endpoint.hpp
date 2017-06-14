@@ -20,7 +20,8 @@
 #endif
 
 #include "matador/object/relation_field_serializer.hpp"
-#include "matador/object/relation_endpoint_serializer.hpp"
+#include "matador/object/relation_endpoint_value_inserter.hpp"
+#include "matador/object/relation_endpoint_value_remover.hpp"
 #include "matador/object/has_many_item_holder.hpp"
 
 #include <string>
@@ -98,6 +99,9 @@ struct basic_relation_endpoint
   virtual void insert_value(object_proxy *value, object_proxy *owner) = 0;
   virtual void remove_value(object_proxy *value, object_proxy *owner) = 0;
 
+  void insert_value_into_foreign(object_proxy *value, object_proxy *owner);
+  void remove_value_from_foreign(object_proxy *value, object_proxy *owner);
+
   template < class T >
   void set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj);
 
@@ -109,6 +113,11 @@ struct basic_relation_endpoint
   prototype_node *node = nullptr;
   relation_type type;
   std::weak_ptr<basic_relation_endpoint> foreign_endpoint;
+
+  // states
+  bool is_inserting = false;
+  bool is_removing = false;
+
 };
 
 template < class Value >
@@ -118,17 +127,26 @@ struct relation_endpoint : public basic_relation_endpoint
     : basic_relation_endpoint(field, node, type)
   {}
 
-  relation_endpoint_serializer<Value> modifier;
-
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
 };
 
+template < class Value, class Owner >
+struct modifiable_relation_endpoint : public relation_endpoint<Value>
+{
+  modifiable_relation_endpoint(const std::string &field, prototype_node *node, basic_relation_endpoint::relation_type type)
+    : relation_endpoint<Value>(field, node, type)
+  {}
+
+  relation_endpoint_value_inserter<Owner> inserter;
+  relation_endpoint_value_remover<Owner> remover;
+
+};
 template < class Value, class Owner, template < class... > class HasManyItem >
-struct to_many_endpoint : public relation_endpoint<Value>
+struct to_many_endpoint : public modifiable_relation_endpoint<Value, Owner>
 {
   to_many_endpoint(const std::string &field, prototype_node *node)
-    : relation_endpoint<Value>(field, node, basic_relation_endpoint::HAS_MANY)
+    : modifiable_relation_endpoint<Value, Owner>(field, node, basic_relation_endpoint::HAS_MANY)
   {}
 
   std::string owner_column;
@@ -140,40 +158,35 @@ struct to_many_endpoint : public relation_endpoint<Value>
   virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
     object_ptr<Value> valptr(value);
-    object_ptr<Owner> ownptr(owner);
-    this->modifier.set(ownptr, "", valptr);
+//    object_ptr<Owner> ownptr(owner);
+    this->inserter.insert(valptr, this->field, owner);
   }
 
   virtual void remove_value(object_proxy *value, object_proxy *owner) override
   {
     object_ptr<Value> valptr(value);
     object_ptr<Owner> ownptr(owner);
-    this->modifier.set(ownptr, "", valptr);
+    this->remover.remove(valptr, this->field, ownptr);
   }
 };
 
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type>
-struct from_one_endpoint : public relation_endpoint<Value>
+struct from_one_endpoint : public modifiable_relation_endpoint<Value, Owner>
 {
   from_one_endpoint(const std::string &field, prototype_node *node)
-    : relation_endpoint<Value>(field, node, Type)
+    : modifiable_relation_endpoint<Value, Owner>(field, node, Type)
   {}
 
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner) override
-  {
-    object_ptr<Value> valptr(value);
-    object_ptr<Owner> ownptr(owner);
-    this->modifier.set(ownptr, "", valptr);
-  }
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override;
 
-  virtual void remove_value(object_proxy *value, object_proxy */*owner*/) override
+  virtual void remove_value(object_proxy */*value*/, object_proxy *owner) override
   {
-    object_ptr<Value> valptr;
-    object_ptr<Owner> ownptr(value);
-    this->modifier.set(ownptr, "", valptr);
+    object_ptr<Value> ownptr(owner);
+    object_ptr<Owner> valptr;
+    this->remover.remove(ownptr, this->field, valptr);
   }
 };
 
@@ -184,10 +197,10 @@ template < class Value, class Owner >
 using belongs_to_endpoint = from_one_endpoint<Value, Owner, basic_relation_endpoint::BELONGS_TO >;
 
 template < class Value, class Owner >
-struct to_one_endpoint : public relation_endpoint<Value>
+struct to_one_endpoint : public modifiable_relation_endpoint<Value, Owner>
 {
   to_one_endpoint(const std::string &field, prototype_node *node)
-    : relation_endpoint<Value>(field, node, basic_relation_endpoint::HAS_MANY)
+    : modifiable_relation_endpoint<Value, Owner>(field, node, basic_relation_endpoint::HAS_MANY)
   {}
 
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
@@ -196,15 +209,15 @@ struct to_one_endpoint : public relation_endpoint<Value>
   virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
     object_ptr<Value> valptr(value);
-    object_ptr<Owner> ownptr(owner);
-    this->modifier.set(ownptr, "", valptr);
+//    object_ptr<Owner> ownptr(owner);
+    this->inserter.insert(valptr, this->field, owner);
   }
 
   virtual void remove_value(object_proxy *value, object_proxy */*owner*/) override
   {
-    object_ptr<Value> valptr;
-    object_ptr<Owner> ownptr(value);
-    this->modifier.set(ownptr, "", valptr);
+    object_ptr<Value> valptr(value);
+    object_ptr<Owner> ownptr;
+    this->remover.remove(valptr, this->field, ownptr);
   }
 };
 

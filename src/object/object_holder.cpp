@@ -77,21 +77,19 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade)
   }
   if (proxy_) {
     oid_ = 0;
+    proxy_->remove(this);
     if (is_internal() && is_inserted_ && proxy_->ostore_) {
       --(*proxy_);
 
-      clear_foreign_relation(proxy_);
-//      this->relation_info_->clear(*proxy_->ostore_, proxy_);
-//      proxy_->ostore_->on_remove_relation_item(this->relation_info_, proxy_, owner_);
-//      proxy_->ostore_->on_remove_relation_item(*proxy_->node_, proxy_, owner_);
-//      proxy_->node_->notify_delete_relation(owner_, proxy);
+      if (relation_info_) {
+        relation_info_->remove_value_from_foreign(owner_, proxy_);
+      }
     }
-    proxy_->remove(this);
     /*
      * if proxy was created temporary
      * we can delete it here
      */
-    if (!proxy_->ostore() && proxy_->ptr_set_.empty()) {
+    if (proxy_ && !proxy_->ostore() && proxy_->ptr_set_.empty()) {
       delete proxy_;
     }
   }
@@ -101,14 +99,17 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade)
     oid_ = proxy_->id();
     if (is_internal() && is_inserted_ && proxy_->ostore_) {
       ++(*proxy_);
-      set_foreign_relation(proxy_, owner_);
-//      this->relation_info_->set(*proxy_->ostore_, proxy_, owner_);
-//      proxy_->ostore_->on_append_relation_item(this->relation_info_, proxy_, owner_);
-//      proxy_->ostore_->on_append_relation_item(*proxy_->node_, proxy_, owner_);
-//      proxy_->node_->notify_insert_relation(owner_, proxy);
+      if (relation_info_) {
+        relation_info_->insert_value_into_foreign(owner_, proxy_);
+      }
     }
     proxy_->add(this);
   }
+}
+
+void object_holder::reset(object_holder &holder)
+{
+  reset(holder.proxy_, holder.cascade_);
 }
 
 void object_holder::clear()

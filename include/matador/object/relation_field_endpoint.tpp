@@ -136,6 +136,16 @@ void from_one_endpoint<Value, Owner, Type>::remove_holder(object_store &/*store*
   this->set_has_many_item_proxy(holder, nullptr);
 }
 
+template < class Value, class Owner, basic_relation_endpoint::relation_type Type>
+void from_one_endpoint<Value, Owner, Type>::insert_value(object_proxy *value, object_proxy *owner)
+{
+  object_ptr<Value> ownptr(owner);
+//    object_ptr<Owner> ownptr(owner);
+  std::cout << "insert value " << owner->id() << " (type: " << owner->node()->type() << ", typeid: " << typeid(Value).name() << ")\n";
+  std::cout << "of owner " << value->id() << " (type: " << value->node()->type() << ", typeid: " << typeid(Owner).name() << ")\n";
+  this->inserter.insert(ownptr, this->field, value);
+}
+
 template < class Value, class Owner >
 void to_one_endpoint<Value, Owner>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {

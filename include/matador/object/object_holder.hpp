@@ -132,6 +132,7 @@ public:
    * @param cascade Sets the cascadable actions for the proxy.
    */
   void reset(object_proxy *proxy, cascade_type cascade);
+  void reset(object_holder &holder);
 
   /**
    * Resets the object_holder with the given
@@ -294,11 +295,6 @@ public:
    */
   friend MATADOR_OBJECT_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
 
-protected:
-  /// @cond MATADOR_DEV
-  virtual void clear_foreign_relation(object_proxy *proxy) = 0;
-  virtual void set_foreign_relation(object_proxy *proxy, object_proxy *value) = 0;
-  /// @endcond
 private:
   friend class object_serializer;
   friend class object_proxy;
