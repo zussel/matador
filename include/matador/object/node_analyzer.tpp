@@ -185,15 +185,19 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
     } else {
 
       // found corresponding belongs_to
-      auto j = pi->find_endpoint(pi->type_index());
+      auto j = pi->find_endpoint(node_.type_index());
+//      auto j = pi->find_endpoint(pi->type_index());
       if (j == pi->endpoint_end()) {
         // check for has many item
         throw_object_exception("prototype already inserted: " << pi->type());
       } else if (j->second->type == detail::basic_relation_endpoint::BELONGS_TO) {
         // set missing node
-        j->second->node = &node_;
-        j->second->foreign_endpoint = j->second;
-//        this->register_has_many_endpoint<V>(node_, pi->type_index(), id, pi.get());
+        auto endpoint = std::make_shared<detail::to_one_endpoint <V, T>>(id, &node_);
+
+        node_.register_relation_endpoint(std::type_index(typeid(detail::to_one_endpoint <V, T>)), endpoint);
+
+        j->second->foreign_endpoint = endpoint;
+        endpoint->foreign_endpoint = j->second;
       }
     }
   }

@@ -16,7 +16,7 @@ RelationTestUnit::RelationTestUnit()
   add_test("has_many", std::bind(&RelationTestUnit::test_has_many, this), "test has many relation");
   add_test("has_many_builtin", std::bind(&RelationTestUnit::test_has_many_builtin, this), "test has many relation with builtin");
   add_test("belongs_to_many", std::bind(&RelationTestUnit::test_belongs_to_many, this), "test belongs to many relation");
-  add_test("has_many_to_many", std::bind(&RelationTestUnit::test_belongs_to_many, this), "test has many to many relation");
+  add_test("has_many_to_many", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to many relation");
 }
 
 void RelationTestUnit::test_has_one()
@@ -112,7 +112,7 @@ void RelationTestUnit::test_has_many_builtin()
 
 }
 
-void RelationTestUnit::test_has_many_to_one()
+void RelationTestUnit::test_belongs_to_many()
 {
   std::cout << "\n";
 
@@ -130,9 +130,16 @@ void RelationTestUnit::test_has_many_to_one()
       std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
     }
   }
+
+  auto jane = store.insert(new employee("jane"));
+  auto insurance = store.insert(new department("insurance"));
+
+  jane->dep(insurance);
+
+  std::cout << "dep size: " << insurance->employees.size() << "\n";
 }
 
-void RelationTestUnit::test_belongs_to_many()
+void RelationTestUnit::test_has_many_to_many()
 {
   std::cout << "\n";
 
