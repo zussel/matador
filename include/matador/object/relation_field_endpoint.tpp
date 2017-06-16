@@ -16,98 +16,17 @@ void basic_relation_endpoint::set_has_many_item_proxy(has_many_item_holder<T> &h
   holder.has_many_to_many_item_poxy_ = proxy;
 }
 
-//template < class T >
-//void relation_field_endpoint::set(object_store &store, const object_ptr<T> &owner, object_proxy *value)
-//{
-//  if (is_insert_in_progress) {
-//    return;
-//  }
-//  is_insert_in_progress = true;
-//
-//
-//  store.mark_modified(owner);
-//
-//  auto sptr = foreign_endpoint.lock();
-//  if (!sptr->is_insert_in_progress) {
-//    store.mark_modified(owner);
-//    field_serializer.set(field, owner, value);
-//  }
-//
-//  is_insert_in_progress = false;
-//}
-//
-//template < class T >
-//void relation_field_endpoint::clear(object_store &store, const object_ptr<T> &owner)
-//{
-//  if (is_remove_in_progress) {
-//    return;
-//  }
-//  is_remove_in_progress = true;
-//
-//  auto sptr = foreign_endpoint.lock();
-//  if (!sptr->is_remove_in_progress) {
-//    store.mark_modified(owner);
-//    field_serializer.clear(field, owner);
-//  }
-//
-//  is_remove_in_progress = false;
-//}
-//
-//template < class T >
-//void relation_field_endpoint::append(object_store &store, const object_ptr<T> &owner, object_proxy *value)
-//{
-//  if (is_insert_in_progress) {
-//    return;
-//  }
-//  is_insert_in_progress = true;
-//
-//  auto sptr = foreign_endpoint.lock();
-//  if (!sptr->is_insert_in_progress) {
-//    store.mark_modified(owner);
-//    field_serializer.append(field, owner, value);
-//  }
-//
-//  is_insert_in_progress = false;
-//}
-//
-//template < class T >
-//void relation_field_endpoint::remove(object_store &, const object_ptr<T> &owner, object_proxy *value)
-//{
-//  if (is_remove_in_progress) {
-//    return;
-//  }
-//  is_remove_in_progress = true;
-//
-//  auto sptr = foreign_endpoint.lock();
-//  if (!sptr->is_remove_in_progress) {
-////    store.mark_modified(owner);
-//
-//    field_serializer.remove(field, owner, value);
-//  }
-//
-//  is_remove_in_progress = false;
-//}
-//
-//template<class T>
-//void relation_field_endpoint::create(object_store &, const object_ptr <T> &, object_proxy *owner)
-//{
-//
-//}
-//
-//template< class T, class V >
-//void relation_field_endpoint::insert(object_store &store, const object_ptr <T> &value, object_proxy *owner)
-//{
-//  if (side == LEFT) {
-//    store.insert(new has_many_to_many_item<T, V>(value, object_ptr<V>(owner), "", ""));
-//  } else /* side == RIGHT */ {
-//    store.insert(new has_many_to_many_item<V, T>(object_ptr<V>(owner), value, "", ""));
-//  }
-//}
-//
-//template<class Value, class Owner>
-//void relation_field_endpoint::insert(object_store &store, has_many_item_holder<Value> &holder)
-//{
-//}
+template < class T >
+void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, const object_ptr<T> &owner)
+{
+  insert_value_into_foreign(value, owner.proxy_);
+}
+
+template < class T >
+void basic_relation_endpoint::remove_value_into_foreign(object_proxy *value, const object_ptr<T> &owner)
+{
+  remove_value_into_foreign(value, owner.proxy_);
+}
 
 template < class Value, class Owner, template < class... > class HasManyItem >
 void to_many_endpoint<Value, Owner, HasManyItem>::insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)

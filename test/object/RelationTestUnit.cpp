@@ -141,6 +141,14 @@ void RelationTestUnit::test_belongs_to_many()
   jane->dep(nullptr);
 
   std::cout << "[" << &insurance->employees << "] dep size: " << insurance->employees.size() << "\n";
+
+  insurance->employees.push_back(jane);
+
+  std::cout << "[" << &insurance->employees << "] dep size: " << insurance->employees.size() << "\n";
+
+  insurance->employees.clear();
+
+  std::cout << "[" << &insurance->employees << "] dep size: " << insurance->employees.size() << "\n";
 }
 
 void RelationTestUnit::test_has_many_to_many()

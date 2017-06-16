@@ -41,6 +41,10 @@ class has_many_inserter;
 template<class T, template <class ...> class C, class Enabled>
 class has_many_deleter;
 class basic_relation_endpoint;
+template < class Value >
+class relation_endpoint_value_inserter;
+template < class Value >
+class relation_endpoint_value_remover;
 }
 
 /// @endcond
@@ -296,6 +300,9 @@ public:
   friend MATADOR_OBJECT_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
 
 private:
+  void reset(object_proxy *proxy, cascade_type cascade, bool notify_foreign_relation);
+
+private:
   friend class object_serializer;
   friend class object_proxy;
   friend class detail::object_deleter;
@@ -309,6 +316,10 @@ private:
   friend class detail::has_many_deleter;
   template < class L, class R >
   friend class has_many_to_many_item;
+  template < class T >
+  friend class detail::relation_endpoint_value_inserter;
+  template < class T >
+  friend class detail::relation_endpoint_value_remover;
 
   // Todo: change interface to remove friend
   friend class session;

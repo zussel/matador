@@ -72,39 +72,7 @@ bool object_holder::operator!=(const object_holder &x) const
 
 void object_holder::reset(object_proxy *proxy, cascade_type cascade)
 {
-  if (proxy_ == proxy) {
-    return;
-  }
-  if (proxy_) {
-    oid_ = 0;
-    proxy_->remove(this);
-    if (is_internal() && is_inserted_ && proxy_->ostore_) {
-      --(*proxy_);
-
-      if (relation_info_) {
-        relation_info_->remove_value_from_foreign(owner_, proxy_);
-      }
-    }
-    /*
-     * if proxy was created temporary
-     * we can delete it here
-     */
-    if (proxy_ && !proxy_->ostore() && proxy_->ptr_set_.empty()) {
-      delete proxy_;
-    }
-  }
-  proxy_ = proxy;
-  cascade_ = cascade;
-  if (proxy_) {
-    oid_ = proxy_->id();
-    if (is_internal() && is_inserted_ && proxy_->ostore_) {
-      ++(*proxy_);
-      if (relation_info_) {
-        relation_info_->insert_value_into_foreign(owner_, proxy_);
-      }
-    }
-    proxy_->add(this);
-  }
+  reset(proxy, cascade, true);
 }
 
 void object_holder::reset(object_holder &holder)
@@ -241,6 +209,43 @@ std::ostream& operator<<(std::ostream &out, const object_holder &x)
     out << "unknown object [" << 0 << "]";
   }
   return out;
+}
+
+void object_holder::reset(object_proxy *proxy, cascade_type cascade, bool notify_foreign_relation)
+{
+  if (proxy_ == proxy) {
+    return;
+  }
+  if (proxy_) {
+    oid_ = 0;
+    proxy_->remove(this);
+    if (is_internal() && is_inserted_ && proxy_->ostore_) {
+      --(*proxy_);
+
+      if (relation_info_ && notify_foreign_relation) {
+        relation_info_->remove_value_from_foreign(owner_, proxy_);
+      }
+    }
+    /*
+     * if proxy was created temporary
+     * we can delete it here
+     */
+    if (proxy_ && !proxy_->ostore() && proxy_->ptr_set_.empty()) {
+      delete proxy_;
+    }
+  }
+  proxy_ = proxy;
+  cascade_ = cascade;
+  if (proxy_) {
+    oid_ = proxy_->id();
+    if (is_internal() && is_inserted_ && proxy_->ostore_) {
+      ++(*proxy_);
+      if (relation_info_ && notify_foreign_relation) {
+        relation_info_->insert_value_into_foreign(owner_, proxy_);
+      }
+    }
+    proxy_->add(this);
+  }
 }
 
 }

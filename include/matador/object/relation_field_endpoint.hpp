@@ -60,7 +60,11 @@ struct basic_relation_endpoint
   virtual void remove_value(object_proxy *value, object_proxy *owner) = 0;
 
   void insert_value_into_foreign(object_proxy *value, object_proxy *owner);
+  template < class T >
+  void insert_value_into_foreign(object_proxy *value, const object_ptr<T> &owner);
   void remove_value_from_foreign(object_proxy *value, object_proxy *owner);
+  template < class T >
+  void remove_value_into_foreign(object_proxy *value, const object_ptr<T> &owner);
 
   template < class T >
   void set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj);

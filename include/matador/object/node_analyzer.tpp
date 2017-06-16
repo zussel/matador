@@ -136,7 +136,8 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 
     auto endpoint = std::make_shared<detail::has_one_to_many_endpoint <Owner, Value>>(id, &node_);
 
-    node_.register_relation_endpoint(std::type_index(typeid(detail::has_one_to_many_endpoint <Owner, Value>)), endpoint);
+//    node_.register_relation_endpoint(std::type_index(typeid(detail::has_one_to_many_endpoint <Owner, Value>)), endpoint);
+    node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
     // new has many to many item
     auto proto = new has_one_to_many_item<Owner, Value>(owner_column, item_column);
@@ -174,7 +175,8 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 
       auto endpoint = std::make_shared<detail::has_many_to_many_endpoint <Owner, Value>>(id, &node_);
 
-      node_.register_relation_endpoint(std::type_index(typeid(detail::has_many_to_many_endpoint <Owner, Value>)), endpoint);
+      node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
+//      node_.register_relation_endpoint(std::type_index(typeid(detail::has_many_to_many_endpoint <Owner, Value>)), endpoint);
 
       // new has many to many item
       auto proto = new has_many_to_many_item<Owner, Value>(owner_column, item_column);
@@ -196,7 +198,8 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
         // set missing node
         auto endpoint = std::make_shared<detail::to_one_endpoint <Value, Owner>>(id, &node_);
 
-        node_.register_relation_endpoint(std::type_index(typeid(detail::to_one_endpoint <Value, Owner>)), endpoint);
+        node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
+//        node_.register_relation_endpoint(std::type_index(typeid(detail::to_one_endpoint <Value, Owner>)), endpoint);
 
         j->second->foreign_endpoint = endpoint;
         endpoint->foreign_endpoint = j->second;

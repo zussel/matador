@@ -6,13 +6,13 @@ namespace matador {
 namespace detail {
 
 template < class Value >
-void relation_endpoint_value_remover<Value>::serialize(const char *id, object_holder &x, cascade_type)
+void relation_endpoint_value_remover<Value>::serialize(const char *id, object_holder &x, cascade_type cascade)
 {
   if (field_ != id) {
     return;
   }
   std::cout << "clearing value (" << typeid(Value).name() << ") for field [" << field_ << "]\n";
-  x.clear();
+  x.reset(nullptr, cascade, false);
 }
 
 template < class Value >

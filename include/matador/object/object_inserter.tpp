@@ -121,13 +121,20 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   x.ostore_ = &ostore_;
   x.mark_modified_owner_ = modified_marker_;
 
-  prototype_iterator foreign_node = ostore_.find<T>();
-  if (foreign_node != ostore_.end()) {
-    auto i = foreign_node->find_endpoint(foreign_node->type_index());
-    if (i != foreign_node->endpoint_end()) {
-      x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
-    }
+
+  prototype_node *node = x.owner_->node();
+  auto i = node->find_endpoint(std::type_index(typeid(T)));
+  if (i != node->endpoint_end()) {
+    x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
   }
+
+//  prototype_iterator foreign_node = ostore_.find<T>();
+//  if (foreign_node != ostore_.end()) {
+//    auto i = foreign_node->find_endpoint(foreign_node->type_index());
+//    if (i != foreign_node->endpoint_end()) {
+//      x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
+//    }
+//  }
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
 

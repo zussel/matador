@@ -27,7 +27,7 @@ void relation_endpoint_value_inserter<Value>::serialize(const char *id, object_h
     return;
   }
   std::cout << "setting value (" << typeid(Value).name() << ") for field [" << field_ << "]\n";
-  x.reset(value_, cascade);
+  x.reset(value_, cascade, false);
 }
 
 template < class Value >
