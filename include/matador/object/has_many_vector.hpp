@@ -746,7 +746,7 @@ public:
     if (this->ostore_) {
       deleter_.remove(i);
     }
-    container_iterator ci = this->container_.erase(i.iter_);
+    container_iterator ci = this->holder_container_.erase(i.iter_);
     return iterator(ci);
   }
 
@@ -770,10 +770,31 @@ public:
         deleter_.remove(i++);
       }
     }
-    return iterator(this->container_.erase(start.iter_, end.iter_));
+    return iterator(this->holder_container_.erase(start.iter_, end.iter_));
   }
 
 private:
+  void insert_holder(const holder_type &holder)
+  {
+    std::cout << "[" << this << "] container size before insert " << this->holder_container_.size() << "\n";
+    this->holder_container_.push_back(holder);
+    std::cout << "[" << this << "] container size after insert " << this->holder_container_.size() << "\n";
+
+  }
+
+  void remove_holder(const holder_type &holder)
+  {
+    std::cout << "[" << this << "] container size " << this->holder_container_.size() << "\n";
+    if (this->holder_container_.size() > 0) {
+      std::cout << "first holder: " << this->holder_container_.front().value().id() << "\n";
+    }
+    this->holder_container_.erase(std::remove(this->holder_container_.begin(), this->holder_container_.end(), holder), this->holder_container_.end());
+  }
+
+private:
+  friend class detail::relation_endpoint_value_inserter<T>;
+  friend class detail::relation_endpoint_value_remover<T>;
+
   detail::has_many_inserter<T, std::vector> inserter_;
   detail::has_many_deleter<T, std::vector> deleter_;
 };

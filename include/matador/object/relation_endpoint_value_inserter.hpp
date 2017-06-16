@@ -31,8 +31,8 @@ public:
   void serialize(const char *, T &) {}
   void serialize(const char *, char *, size_t) {}
   void serialize(const char *id, object_holder &x, cascade_type);
-  template < template < class ... > class C >
-  void serialize(const char *id, has_many<Value, C> &, const char*, const char*);
+  template < template < class ... > class Container >
+  void serialize(const char *id, has_many<Value, Container> &, const char*, const char*);
 
 private:
   std::string field_;

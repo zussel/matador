@@ -17,6 +17,8 @@ public:
   template < class Owner >
   void remove(const object_ptr<Owner> &owner, const std::string &field, const object_ptr<Value> &value)
   {
+    std::cout << "removing for owner " << owner.id() << " (type: " << owner.type() << ") value " << value.id() << "(" << value.type() << ")\n";
+
     field_ = field;
     value_ = value;
 
@@ -36,7 +38,8 @@ public:
   void serialize(const char *, T &) {}
   void serialize(const char *, char *, size_t) {}
   void serialize(const char *id, object_holder &x, cascade_type);
-  void serialize(const char *id, abstract_has_many &, const char*, const char*);
+  template < template < class ... > class Container >
+  void serialize(const char *id, has_many<Value, Container> &, const char*, const char*);
 
 private:
   std::string field_;

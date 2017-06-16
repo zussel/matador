@@ -585,7 +585,7 @@ public:
     if (this->ostore_) {
       deleter_.remove(i);
     }
-    container_iterator ci = this->container_.erase(i.iter_);
+    container_iterator ci = this->holder_container_.erase(i.iter_);
     return iterator(ci);
   }
 
@@ -609,10 +609,24 @@ public:
         deleter_.remove(i++);
       }
     }
-    return iterator(this->container_.erase(start.iter_, end.iter_));
+    return iterator(this->holder_container_.erase(start.iter_, end.iter_));
   }
 
 private:
+  void insert_holder(const holder_type &holder)
+  {
+    this->holder_container_.push_back(holder);
+  }
+
+  void remove_holder(const holder_type &holder)
+  {
+    this->holder_container_.remove(holder);
+  }
+
+private:
+  friend class detail::relation_endpoint_value_inserter<T>;
+  friend class detail::relation_endpoint_value_remover<T>;
+
   detail::has_many_inserter<T, std::list> inserter_;
   detail::has_many_deleter<T, std::list> deleter_;
 };

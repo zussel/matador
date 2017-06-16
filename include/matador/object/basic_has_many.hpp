@@ -77,26 +77,26 @@ public:
    *
    * @return The begin iterator
    */
-  iterator begin() { return iterator(container_.begin()); }
+  iterator begin() { return iterator(holder_container_.begin()); }
   /**
    * @brief Returns the end iterator of the container
    *
    * @return The end iterator
    */
-  iterator end() { return iterator(container_.end()); }
+  iterator end() { return iterator(holder_container_.end()); }
 
   /**
    * @brief Returns the const begin iterator of the container
    *
    * @return The const begin iterator
    */
-  const_iterator begin() const { return const_iterator(container_.begin()); }
+  const_iterator begin() const { return const_iterator(holder_container_.begin()); }
   /**
    * @brief Returns the const end iterator of the container
    *
    * @return The const end iterator
    */
-  const_iterator end() const { return const_iterator(container_.end()); }
+  const_iterator end() const { return const_iterator(holder_container_.end()); }
 
   /**
    * @brief Returns a copy of the first element
@@ -141,26 +141,26 @@ public:
    *
    * @return The current size
    */
-  size_type size() const { return container_.size(); }
+  size_type size() const { return holder_container_.size(); }
 
   /**
    * @brief Returns true if the container is empty
    *
    * @return True if the container is empty
    */
-  bool empty() const { return container_.empty(); }
+  bool empty() const { return holder_container_.empty(); }
 
   /**
    * @brief Clears the container
    */
-  void reset() { container_.clear(); }
+  void reset() { holder_container_.clear(); }
 
   /**
    * @brief Appends an item to the end of the container
    *
    * @param item Element to be appended
    */
-  void append(const typename iterator::holder_type &item) { container_.push_back(item); }
+  void append(const typename iterator::holder_type &item) { holder_container_.push_back(item); }
 
   /// @cond MATADOR_DEV
 protected:
@@ -177,16 +177,12 @@ protected:
   friend class detail::has_many_deleter<T, std::vector>;
   friend class detail::has_many_inserter<T, std::list>;
   friend class detail::has_many_deleter<T, std::list>;
-  friend class detail::relation_endpoint_value_inserter<T>;
-  friend class detail::relation_endpoint_value_remover<T>;
 
 
   object_proxy *owner_ = nullptr;
   std::shared_ptr<basic_identifier> owner_id_;
 
   mark_modified_owner_func mark_modified_owner_;
-
-  container_type container_;
 
   holder_container_type holder_container_;
 

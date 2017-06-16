@@ -71,6 +71,10 @@ public:
     : object_holder(OPT, new object_proxy(o))
   {}
 
+  object_pointer(nullptr_t)
+    : object_holder(OPT)
+  {}
+
   /**
    * Create an object_pointer from an object_proxy
    *

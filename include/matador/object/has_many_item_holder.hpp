@@ -34,6 +34,16 @@ public:
     , has_many_to_many_item_poxy_(owner.proxy_)
   {}
 
+  friend bool operator==(const has_many_item_holder<T> &a, const has_many_item_holder<T> &b)
+  {
+    return a.value_ == b.value_;
+  }
+
+  friend bool operator!=(const has_many_item_holder<T> &a, const has_many_item_holder<T> &b)
+  {
+    return a.value_ != b.value_;
+  }
+
   object_ptr<T> value() const
   {
     return value_;
@@ -51,6 +61,7 @@ private:
   object_proxy *has_many_to_many_item_poxy_;
 };
 
+
 template < class T >
 class has_many_item_holder<T, typename std::enable_if<is_builtin<T>::value>::type>
 {
@@ -66,6 +77,15 @@ public:
     , has_many_to_many_item_poxy_(owner.proxy_)
   {}
 
+  friend bool operator==(const has_many_item_holder<T> &a, const has_many_item_holder<T> &b)
+  {
+    return a.value_ == b.value_;
+  }
+
+  friend bool operator!=(const has_many_item_holder<T> &a, const has_many_item_holder<T> &b)
+  {
+    return a.value_ != b.value_;
+  }
 
   T value() const
   {

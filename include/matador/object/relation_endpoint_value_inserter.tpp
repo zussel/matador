@@ -1,6 +1,6 @@
 #include "matador/object/relation_endpoint_value_inserter.hpp"
 #include "matador/object/object_holder.hpp"
-#include "has_many.hpp"
+#include "matador/object/has_many.hpp"
 
 namespace matador {
 namespace detail {
@@ -31,17 +31,17 @@ void relation_endpoint_value_inserter<Value>::serialize(const char *id, object_h
 }
 
 template < class Value >
-template < template < class ... > class C >
-void relation_endpoint_value_inserter<Value>::serialize(const char *id, has_many<Value, C> &x, const char *, const char *)
+template < template < class ... > class Container >
+void relation_endpoint_value_inserter<Value>::serialize(const char *id, has_many<Value, Container> &x, const char *, const char *)
 {
   if (field_ != id) {
     return;
   }
   std::cout << "inserting value (" << typeid(Value).name() << ") for field [" << field_ << "]\n";
 
-  typename has_many<Value, C>::holder_type holder(value_, nullptr);
+  typename has_many<Value, Container>::holder_type holder(object_ptr<Value>(value_), nullptr);
 
-  x.holder_container_.emplace_back(holder);
+  x.insert_holder(holder);
 }
 
 }
