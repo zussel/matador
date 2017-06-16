@@ -16,6 +16,12 @@ namespace matador {
 
 namespace detail {
 class object_inserter;
+
+template < class Value >
+class relation_endpoint_value_inserter;
+
+template < class Value >
+class relation_endpoint_value_remover;
 }
 
 template < class T, template <class ...> class C = std::vector >
@@ -171,6 +177,8 @@ protected:
   friend class detail::has_many_deleter<T, std::vector>;
   friend class detail::has_many_inserter<T, std::list>;
   friend class detail::has_many_deleter<T, std::list>;
+  friend class detail::relation_endpoint_value_inserter<T>;
+  friend class detail::relation_endpoint_value_remover<T>;
 
 
   object_proxy *owner_ = nullptr;

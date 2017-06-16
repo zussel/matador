@@ -141,20 +141,20 @@ void RelationTestUnit::test_belongs_to_many()
 
 void RelationTestUnit::test_has_many_to_many()
 {
-  std::cout << "\n";
-
-  matador::object_store store;
-
-  store.attach<person>("person");
-  store.attach<student, person>("student");
-  store.attach<course>("course");
-
-  UNIT_ASSERT_EQUAL(4UL, store.size(), "must be four nodes");
-
-  for (auto &node : store) {
-    std::cout << "\n";
-    for (auto &endpoint : node.endpoints()) {
-      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
-    }
-  }
+//  std::cout << "\n";
+//
+//  matador::object_store store;
+//
+//  store.attach<person>("person");
+//  store.attach<student, person>("student");
+//  store.attach<course>("course");
+//
+//  UNIT_ASSERT_EQUAL(4UL, store.size(), "must be four nodes");
+//
+//  for (auto &node : store) {
+//    std::cout << "\n";
+//    for (auto &endpoint : node.endpoints()) {
+//      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
+//    }
+//  }
 }

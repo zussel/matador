@@ -8,6 +8,10 @@
 #include <iostream>
 
 namespace matador {
+
+template < class V, template < class ... > class C >
+class has_many;
+
 namespace detail {
 
 template < class Value >
@@ -27,7 +31,8 @@ public:
   void serialize(const char *, T &) {}
   void serialize(const char *, char *, size_t) {}
   void serialize(const char *id, object_holder &x, cascade_type);
-  void serialize(const char *id, abstract_has_many &, const char*, const char*);
+  template < template < class ... > class C >
+  void serialize(const char *id, has_many<Value, C> &, const char*, const char*);
 
 private:
   std::string field_;
