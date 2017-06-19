@@ -464,14 +464,8 @@ public:
    * Creates an empty has_many object with a
    * std::list as container type
    */
-  has_many() : inserter_(*this), deleter_(*this)
+  has_many()
   {
-    this->append_func_ = [=](object_proxy *proxy) {
-      this->inserter_.append_proxy(proxy);
-    };
-    this->remove_func_ = [=](object_proxy *proxy) {
-      this->deleter_.remove_proxy(proxy);
-    };
   }
 
   /**
@@ -486,7 +480,7 @@ public:
     holder_type holder(value, nullptr);
 
     if (this->ostore_) {
-      inserter_.insert(holder);
+//      inserter_.insert(holder);
     }
 
     return iterator(this->holder_container_.emplace(pos.iter_, holder));
@@ -583,7 +577,7 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      deleter_.remove(i);
+//      deleter_.remove(i);
     }
     container_iterator ci = this->holder_container_.erase(i.iter_);
     return iterator(ci);
@@ -606,7 +600,8 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
-        deleter_.remove(i++);
+        ++i;
+//        deleter_.remove(i++);
       }
     }
     return iterator(this->holder_container_.erase(start.iter_, end.iter_));
@@ -626,9 +621,6 @@ private:
 private:
   friend class detail::relation_endpoint_value_inserter<T>;
   friend class detail::relation_endpoint_value_remover<T>;
-
-  detail::has_many_inserter<T, std::list> inserter_;
-  detail::has_many_deleter<T, std::list> deleter_;
 };
 
 }

@@ -23,9 +23,9 @@ void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, con
 }
 
 template < class T >
-void basic_relation_endpoint::remove_value_into_foreign(object_proxy *value, const object_ptr<T> &owner)
+void basic_relation_endpoint::remove_value_from_foreign(object_proxy *value, const object_ptr <T> &owner)
 {
-  remove_value_into_foreign(value, owner.proxy_);
+  remove_value_from_foreign(value, owner.proxy_);
 }
 
 template < class Value, class Owner, template < class... > class HasManyItem >

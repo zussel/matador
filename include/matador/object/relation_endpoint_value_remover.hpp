@@ -25,7 +25,7 @@ public:
     matador::access::serialize(*this, *owner);
 
     field_.clear();
-    value_.clear();
+    value_.reset(nullptr, value_.cascade_, false);
   }
 
   template < class T >

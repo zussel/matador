@@ -457,6 +457,7 @@ public:
     if (proxy->obj() == nullptr) {
       throw object_exception("object is null");
     }
+    std::cout << "find proxy classname: " << proxy->classname() << "\n";
     iterator node = find(proxy->classname());
     if (node == end()) {
       throw_object_exception("couldn't find object type");

@@ -351,11 +351,13 @@ object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier>
 void prototype_node::register_relation_endpoint(const std::type_index &tindex,
                                                 const std::shared_ptr<detail::basic_relation_endpoint> &endpoint)
 {
+  std::cout << type() << " $$ register for tindex " << tindex.name() << " endpoint " << typeid(*endpoint).name() << "\n";
   info_->register_relation_endpoint(tindex, endpoint);
 }
 
 void prototype_node::unregister_relation_endpoint(const std::type_index &tindex)
 {
+  std::cout << type() << " $$ unregister for tindex " << tindex.name() << "\n";
   info_->unregister_relation_endpoint(tindex);
 }
 
@@ -387,6 +389,16 @@ prototype_node::endpoint_iterator prototype_node::endpoint_end()
 prototype_node::const_endpoint_iterator prototype_node::endpoint_end() const
 {
   return info_->endpoint_end();
+}
+
+std::size_t prototype_node::endpoints_size() const
+{
+  return info_->endpoints_size();
+}
+
+bool prototype_node::endpoints_empty() const
+{
+  return info_->endpoints_empty();
 }
 
 const detail::basic_prototype_info::t_endpoint_map &prototype_node::endpoints() const

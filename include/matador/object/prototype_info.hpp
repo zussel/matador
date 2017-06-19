@@ -55,6 +55,9 @@ public:
   endpoint_iterator endpoint_end();
   const_endpoint_iterator endpoint_end() const;
 
+  std::size_t endpoints_size() const;
+  bool endpoints_empty() const;
+
   const t_endpoint_map& endpoints() const;
 
   virtual void* prototype() const = 0;

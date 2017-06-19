@@ -64,7 +64,7 @@ struct basic_relation_endpoint
   void insert_value_into_foreign(object_proxy *value, const object_ptr<T> &owner);
   void remove_value_from_foreign(object_proxy *value, object_proxy *owner);
   template < class T >
-  void remove_value_into_foreign(object_proxy *value, const object_ptr<T> &owner);
+  void remove_value_from_foreign(object_proxy *value, const object_ptr<T> &owner);
 
   template < class T >
   void set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj);
@@ -122,8 +122,8 @@ struct to_many_endpoint : public modifiable_relation_endpoint<Value, Owner>
   virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
 //    object_ptr<Owner> valptr(value);
-    object_ptr<Owner> ownptr(owner);
-    this->inserter.insert(ownptr, this->field, value);
+    object_ptr<Owner> ownptr(value);
+    this->inserter.insert(ownptr, this->field, owner);
   }
 
   virtual void remove_value(object_proxy *value, object_proxy *owner) override

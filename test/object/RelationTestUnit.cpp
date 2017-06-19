@@ -166,7 +166,18 @@ void RelationTestUnit::test_has_many_to_many()
   for (auto &node : store) {
     std::cout << "\n";
     for (auto &endpoint : node.endpoints()) {
-      std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
+      std::cout << "node [" << node.type() << "/" << endpoint.first.name() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
+      std::cout << "endpoint " << typeid(*endpoint.second).name() << "\n";
     }
   }
+
+  auto jane = store.insert(new student("jane"));
+  auto art = store.insert(new course("art"));
+
+  std::cout << "jane id " << jane.id() << "\n";
+  std::cout << "art id " << art.id() << "\n";
+
+  jane->courses.push_back(art);
+
+  std::cout << "[" << &art->students << "] students size: " << art->students.size() << "\n";
 }

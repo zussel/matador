@@ -23,9 +23,9 @@ void relation_field_serializer::serialize(const char *id, abstract_has_many &x, 
     return;
   }
   if (action_ == APPEND) {
-    x.append(value_);
+//    x.append(value_);
   } else if (action_ == REMOVE) {
-    x.remove(value_);
+//    x.remove(value_);
   }
 }
 

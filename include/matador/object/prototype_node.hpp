@@ -411,6 +411,9 @@ public:
   endpoint_iterator endpoint_end();
   const_endpoint_iterator endpoint_end() const;
 
+  std::size_t endpoints_size() const;
+  bool endpoints_empty() const;
+
   const detail::basic_prototype_info::t_endpoint_map& endpoints() const;
 
 private:

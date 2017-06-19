@@ -162,21 +162,28 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
      * new has_many_to_many<Value, Owner>
      */
     std::type_index ti(typeid(has_one_to_many_item<Value, Owner>));
-    std::cout << "pi type index: " << pi->type_index().name() << "\n";
-    std::cout << "ti type index: " << ti.name() << "\n";
     if (pi->type_index() == ti) {
 
       prototype_iterator foreign_node = detach_one_to_many_node<Value>(pi);
 
+      auto foreign_endpoint = std::make_shared<detail::has_many_to_many_endpoint <Value, Owner>>(id, foreign_node.get());
+
+      std::cout << " foreign node type " << foreign_node->type() << "\n";
+      foreign_node->register_relation_endpoint(std::type_index(typeid(Owner)), foreign_endpoint);
       std::vector<Observer<has_many_to_many_item<Owner, Value> >*> has_many_item_observer;
       for (auto o : observer_vector_) {
         has_many_item_observer.push_back(new Observer<has_many_to_many_item<Owner, Value> >(o));
       }
 
+      std::cout << "Owner " << typeid(Owner).name() << "\n";
+      std::cout << "Value " << typeid(Value).name() << "\n";
       auto endpoint = std::make_shared<detail::has_many_to_many_endpoint <Owner, Value>>(id, &node_);
 
       node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
-//      node_.register_relation_endpoint(std::type_index(typeid(detail::has_many_to_many_endpoint <Owner, Value>)), endpoint);
+
+      // link endpoints
+      foreign_endpoint->foreign_endpoint = endpoint;
+      endpoint->foreign_endpoint = foreign_endpoint;
 
       // new has many to many item
       auto proto = new has_many_to_many_item<Owner, Value>(owner_column, item_column);
@@ -185,7 +192,8 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
       std::cout << node_.type() << " $$ attach node " << id << " (typeindex:" << node->type_index().name() << ")\n";
       pi = store_.attach_internal<has_many_to_many_item<Owner, Value>>(node, nullptr, has_many_item_observer);
 
-      store_.typeid_prototype_map_[typeid(has_many_to_many_item<Owner, Value>).name()].insert(std::make_pair(pi->type_, pi.get()));
+      std::cout << node_.type() << " $$ registering type id " << typeid(has_many_to_many_item<Value, Owner>).name() << " => " << pi->type() << "\n";
+      store_.typeid_prototype_map_[typeid(has_many_to_many_item<Value, Owner>).name()].insert(std::make_pair(pi->type_, pi.get()));
     } else {
 
       // found corresponding belongs_to
@@ -248,9 +256,9 @@ prototype_iterator node_analyzer<Owner, Observer>::detach_one_to_many_node(proto
   // remove registered endpoint from foreign site
   prototype_iterator foreign_node = store_.find<Value>();
   if (foreign_node != store_.end()) {
-//    std::cout << node_.type() << " $$ node [" << foreign_node->type() << "] unregister endpoint node::field[" << id << " (typeindex: " << foreign_node->type_index().name() << "]\n";
-    foreign_node->unregister_relation_endpoint(foreign_node->type_index());
+    foreign_node->unregister_relation_endpoint(node_.type_index());
   }
+  std::cout << "foreign node endpoints size " << foreign_node->endpoints_size() << "\n";
   return foreign_node;
 }
 

@@ -52,5 +52,14 @@ const basic_prototype_info::t_endpoint_map &basic_prototype_info::endpoints() co
   return endpoints_;
 }
 
+std::size_t basic_prototype_info::endpoints_size() const
+{
+  return endpoints_.size();
+}
+
+bool basic_prototype_info::endpoints_empty() const
+{
+  return endpoints_.empty();
+}
 }
 }

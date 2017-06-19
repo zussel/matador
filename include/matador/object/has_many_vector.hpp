@@ -288,7 +288,7 @@ private:
   template<class V, template <class ...> class C, class Enabled>
   friend class detail::has_many_deleter;
 
-  holder_type holder_item() const { return *iter_; }
+  holder_type& holder_item() const { return *iter_; }
 
   void move(self &i)
   {
@@ -628,14 +628,8 @@ public:
    * Creates an empty has_many object with a
    * std::vector as container type
    */
-  has_many() : inserter_(*this), deleter_(*this)
+  has_many()
   {
-    this->append_func_ = [=](object_proxy *proxy) {
-      this->inserter_.append_proxy(proxy);
-    };
-    this->remove_func_ = [=](object_proxy *proxy) {
-      this->deleter_.remove_proxy(proxy);
-    };
   }
 
   /**
@@ -655,7 +649,6 @@ public:
 
       this->relation_info_->insert_value_into_foreign(this->owner_, value);
 
-//      inserter_.insert(holder);
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
 
@@ -746,7 +739,9 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      deleter_.remove(i);
+      this->relation_info_->remove_value_from_foreign(this->owner_, *i);
+      this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
+//      deleter_.remove(i);
     }
     container_iterator ci = this->holder_container_.erase(i.iter_);
     return iterator(ci);
@@ -761,7 +756,7 @@ public:
    * [first; last)
    *
    * @param start First iterator of the range
-   * @param end Last iterator of the range
+   * @param end Last iterator of the ranges
    * @return Iterator following the last removed element
    */
   iterator erase(iterator start, iterator end)
@@ -769,7 +764,10 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
-        deleter_.remove(i++);
+        this->relation_info_->remove_value_from_foreign(this->owner_, *i);
+        this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
+        ++i;
+//        deleter_.remove(i++);
       }
     }
     return iterator(this->holder_container_.erase(start.iter_, end.iter_));
@@ -796,9 +794,6 @@ private:
 private:
   friend class detail::relation_endpoint_value_inserter<T>;
   friend class detail::relation_endpoint_value_remover<T>;
-
-  detail::has_many_inserter<T, std::vector> inserter_;
-  detail::has_many_deleter<T, std::vector> deleter_;
 };
 
 }
