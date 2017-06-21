@@ -647,9 +647,9 @@ public:
 
       this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
-//      this->relation_info_->insert_value_into_foreign(this->owner_, value);
-
-      this->mark_modified_owner_(*this->ostore_, this->owner_);
+      this->relation_info_->insert_value_into_foreign(this->owner_, value);
+//
+//      this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
 
     return iterator(this->holder_container_.insert(pos.iter_, holder));
