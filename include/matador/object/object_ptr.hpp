@@ -62,6 +62,10 @@ public:
     : object_holder(x.type_, x.proxy_)
   {}
 
+  object_pointer(self &&x)
+    : object_holder(std::move(x))
+  {}
+
   /**
    * Create an object_pointer from an object
    *
@@ -116,6 +120,11 @@ public:
   {
     reset(x.proxy_, x.cascade_);
     return *this;
+  }
+
+  self& operator=(self &&x)
+  {
+    return static_cast<self&>(object_holder::operator=(std::move(x)));
   }
 
   /**

@@ -647,12 +647,12 @@ public:
 
       this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
-      this->relation_info_->insert_value_into_foreign(this->owner_, value);
+//      this->relation_info_->insert_value_into_foreign(this->owner_, value);
 
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
 
-    return iterator(this->holder_container_.emplace(pos.iter_, holder));
+    return iterator(this->holder_container_.insert(pos.iter_, holder));
 
 
     // 1. create and insert has_many_to_many_item

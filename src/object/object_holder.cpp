@@ -23,11 +23,42 @@ object_holder::object_holder(const object_holder &x)
   }
 }
 
+object_holder::object_holder(object_holder &&x)
+{
+  object_proxy *proxy = x.proxy_;
+  x.reset(nullptr, x.cascade_, false);
+  owner_ = x.owner_;
+  cascade_ = x.cascade_;
+  type_ = x.type_;
+  is_inserted_ = x.is_inserted_;
+  oid_ = x.oid_;
+  relation_info_ = std::move(x.relation_info_);
+  x.owner_ = nullptr;
+  reset(proxy, x.cascade_, false);
+}
+
 object_holder &
 object_holder::operator=(const object_holder &x)
 {
   if (this != &x && proxy_ != x.proxy_) {
     reset(x.proxy_, cascade_type::NONE);
+  }
+  return *this;
+}
+
+object_holder &object_holder::operator=(object_holder &&x)
+{
+  if (this != &x) {
+    object_proxy *proxy = x.proxy_;
+    x.reset(nullptr, x.cascade_, false);
+    owner_ = x.owner_;
+    cascade_ = x.cascade_;
+    type_ = x.type_;
+    is_inserted_ = x.is_inserted_;
+    oid_ = x.oid_;
+    relation_info_ = std::move(x.relation_info_);
+    x.owner_ = nullptr;
+    reset(proxy, x.cascade_, false);
   }
   return *this;
 }

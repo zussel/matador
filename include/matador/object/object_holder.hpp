@@ -85,11 +85,26 @@ protected:
   object_holder(const object_holder &x);
 
   /**
+   * Copy move constructor
+   *
+   * @param x object holder to copy move
+   */
+  object_holder(object_holder &&x);
+
+  /**
    * Assign operator.
    * 
    * @param x The object_holder to assign from.
    */
-  object_holder & operator=(const object_holder &x);
+  object_holder& operator=(const object_holder &x);
+
+  /**
+   * Assign move constructor
+   *
+   * @param x object holder to assign move
+   * @return The moved object holder
+   */
+  object_holder& operator=(object_holder &&x);
 
   /**
    * @brief Creates an object_holder with a given object_proxy
