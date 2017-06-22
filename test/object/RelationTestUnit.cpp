@@ -172,12 +172,17 @@ void RelationTestUnit::test_has_many_to_many()
   }
 
   auto jane = store.insert(new student("jane"));
+  auto tom = store.insert(new student("tom"));
   auto art = store.insert(new course("art"));
 
   std::cout << "jane id " << jane.id() << "\n";
   std::cout << "art id " << art.id() << "\n";
 
-  jane->courses.push_back(art); // jane (value) must be push_back to course art (owner) students!!
+//  jane->courses.push_back(art); // jane (value) must be push_back to course art (owner) students!!
+//
+//  std::cout << "[" << &art->students << "] students size: " << art->students.size() << "\n";
 
-  std::cout << "[" << &art->students << "] students size: " << art->students.size() << "\n";
+  art->students.push_back(tom);
+
+  std::cout << "[" << &tom->courses << "] courses size: " << tom->courses.size() << "\n";
 }

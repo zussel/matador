@@ -121,7 +121,7 @@ struct to_many_endpoint : public modifiable_relation_endpoint<Value, Owner>
 
   virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
-    std::cout << "insert_value (proxy) owner (value) " << owner->id() << " (type: " << typeid(Value).name() << ", " << owner->classname() << ")\n";
+    std::cout << "insert_value (proxy) owner (value) " << owner->id() << " (type: " << typeid(Value).name() << ")\n";
 //    object_ptr<Owner> valptr(value);
     object_ptr<Owner> ownptr(value);
     this->inserter.insert(ownptr, this->field, owner);
