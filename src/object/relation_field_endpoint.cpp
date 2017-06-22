@@ -12,15 +12,9 @@ namespace matador {
 
 namespace detail {
 
-//relation_field_endpoint::relation_field_endpoint(const std::string &f, relation_type t, prototype_node *pn)
-//  : field(f), type(t), node(pn)
-//{}
-//
-//relation_field_endpoint::~relation_field_endpoint()
-//{}
-
 void matador::detail::basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, object_proxy *owner)
 {
+  std::cout << "insert_value_into_foreign (proxy) owner " << owner->id() << " (type: " << owner->classname() << ")\n";
   if (is_inserting) {
     return;
   }

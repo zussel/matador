@@ -177,7 +177,7 @@ void RelationTestUnit::test_has_many_to_many()
   std::cout << "jane id " << jane.id() << "\n";
   std::cout << "art id " << art.id() << "\n";
 
-  jane->courses.push_back(art);
+  jane->courses.push_back(art); // jane (value) must be push_back to course art (owner) students!!
 
   std::cout << "[" << &art->students << "] students size: " << art->students.size() << "\n";
 }

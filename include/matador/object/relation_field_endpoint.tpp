@@ -17,9 +17,10 @@ void basic_relation_endpoint::set_has_many_item_proxy(has_many_item_holder<T> &h
 }
 
 template < class T >
-void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, const object_ptr<T> &owner)
+void basic_relation_endpoint::insert_value_into_foreign(const object_ptr<T> &value, object_proxy *owner)
 {
-  insert_value_into_foreign(value, owner.proxy_);
+  std::cout << "insert_value_into_foreign (ptr) owner " << owner->id() << " (type: " << owner->classname() << ")\n";
+  insert_value_into_foreign(value.proxy_, owner);
 }
 
 template < class T >

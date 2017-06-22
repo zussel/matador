@@ -29,7 +29,6 @@ object_proxy::object_proxy(const std::shared_ptr<basic_identifier> &pk)
 
 object_proxy::~object_proxy()
 {
-  std::cout << "deleting proxy " << this << "\n";
   if (ostore_ && id() > 0) {
     // Todo: callback to object store?
 //    ostore_->delete_proxy(id());

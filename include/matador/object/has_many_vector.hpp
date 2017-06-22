@@ -647,9 +647,10 @@ public:
 
       this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
-      this->relation_info_->insert_value_into_foreign(this->owner_, value);
-//
-//      this->mark_modified_owner_(*this->ostore_, this->owner_);
+      std::cout << "insert value " << value.id() << " (type: " << typeid(T).name() << ", " << value.type() << ")\n";
+      this->relation_info_->insert_value_into_foreign(value, this->owner_);
+
+      this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
 
     return iterator(this->holder_container_.insert(pos.iter_, holder));
@@ -776,9 +777,9 @@ public:
 private:
   void insert_holder(const holder_type &holder)
   {
-    std::cout << "[" << this << "] container size before insert " << this->holder_container_.size() << "\n";
-    this->holder_container_.push_back(holder);
-    std::cout << "[" << this << "] container size after insert " << this->holder_container_.size() << "\n";
+    std::cout << "[" << this << "] container (type: " << typeid(T).name() << ") size before insert " << this->holder_container_.size() << "\n";
+    this->holder_container_.emplace_back(holder);
+    std::cout << "[" << this << "] container (type: " << typeid(T).name() << ") size after insert " << this->holder_container_.size() << "\n";
 
   }
 
