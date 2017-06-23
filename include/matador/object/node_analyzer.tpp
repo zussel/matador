@@ -39,7 +39,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, belongs_to <Value
   std::cout << node_.type() << " $$ process belongs to '" << id << "' (type: " << x.type() << ")\n";
 
 //  auto endpoint = std::make_shared<detail::relation_field_endpoint>(id, detail::relation_field_endpoint::BELONGS_TO, foreign_node.get());
-  auto endpoint = std::make_shared<detail::belongs_to_endpoint<Value, Owner>>(id, &node_);
+  auto endpoint = std::make_shared<detail::belongs_to_one_endpoint<Value, Owner>>(id, &node_);
 
   node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
@@ -166,7 +166,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 
       prototype_iterator foreign_node = detach_one_to_many_node<Value>(pi);
 
-      auto foreign_endpoint = std::make_shared<detail::has_many_to_many_endpoint <Value, Owner>>(id, foreign_node.get());
+      auto foreign_endpoint = std::make_shared<detail::right_to_many_endpoint <Value, Owner>>(id, foreign_node.get());
 
       std::cout << " foreign node type " << foreign_node->type() << "\n";
       foreign_node->register_relation_endpoint(std::type_index(typeid(Owner)), foreign_endpoint);
@@ -177,7 +177,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 
       std::cout << "Owner " << typeid(Owner).name() << "\n";
       std::cout << "Value " << typeid(Value).name() << "\n";
-      auto endpoint = std::make_shared<detail::has_many_to_many_endpoint <Value, Owner>>(id, &node_);
+      auto endpoint = std::make_shared<detail::left_to_many_endpoint<Value, Owner>>(id, &node_);
 
       node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
@@ -203,14 +203,18 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
         // check for has many item
         throw_object_exception("prototype already inserted: " << pi->type());
       } else if (j->second->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        // set missing node
+        // replace foreign endpoint
+        pi->unregister_relation_endpoint(node_.type_index());
+        auto foreign_endpoint = std::make_shared<detail::belongs_to_many_endpoint <Value, Owner>>(id, pi.get());
+        pi->register_relation_endpoint(node_.type_index(), foreign_endpoint);
+
+        // create and register endpoint
         auto endpoint = std::make_shared<detail::to_one_endpoint <Value, Owner>>(id, &node_);
-
         node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
-//        node_.register_relation_endpoint(std::type_index(typeid(detail::to_one_endpoint <Value, Owner>)), endpoint);
 
-        j->second->foreign_endpoint = endpoint;
-        endpoint->foreign_endpoint = j->second;
+        // link both endpoints
+        foreign_endpoint->foreign_endpoint = endpoint;
+        endpoint->foreign_endpoint = foreign_endpoint;
       }
     }
   }

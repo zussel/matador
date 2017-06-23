@@ -86,6 +86,10 @@ void RelationTestUnit::test_belongs_to_one()
   std::cout << "george->address: " << &george->address_ << "\n";
   std::cout << "home->citizen: " << &home->citizen_ << " (" << home->citizen_.id() << ")\n";
 
+  home->citizen_ = george;
+
+  std::cout << "george->address: " << &george->address_ << "\n";
+  std::cout << "home->citizen: " << &home->citizen_ << " (" << home->citizen_.id() << ")\n";
 }
 
 void RelationTestUnit::test_has_many()
@@ -178,9 +182,9 @@ void RelationTestUnit::test_has_many_to_many()
   std::cout << "jane id " << jane.id() << "\n";
   std::cout << "art id " << art.id() << "\n";
 
-//  jane->courses.push_back(art); // jane (value) must be push_back to course art (owner) students!!
-//
-//  std::cout << "[" << &art->students << "] students size: " << art->students.size() << "\n";
+  jane->courses.push_back(art); // jane (value) must be push_back to course art (owner) students!!
+
+  std::cout << "[" << &art->students << "] students size: " << art->students.size() << "\n";
 
   art->students.push_back(tom);
 
