@@ -109,6 +109,15 @@ void RelationTestUnit::test_has_many()
       std::cout << "node [" << node.type() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
     }
   }
+
+  auto tim = store.insert(new child("tim"));
+  auto group = store.insert(new children_vector("group"));
+
+  std::cout << "[" << &group->children << "] children size: " << group->children.size() << "\n";
+
+  group->children.push_back(tim);
+
+  std::cout << "[" << &group->children << "] children size: " << group->children.size() << "\n";
 }
 
 void RelationTestUnit::test_has_many_builtin()
