@@ -31,8 +31,8 @@ struct basic_left_to_many_endpoint : public to_many_endpoint<Value, Owner, HasMa
 
   virtual void remove_value(object_proxy *value, object_proxy *owner) override
   {
-    object_ptr<Value> valptr(value);
-    object_ptr<Owner> ownptr(owner);
+    object_ptr<Value> valptr(owner);
+    object_ptr<Owner> ownptr(value);
     remover.remove(ownptr, this->field, valptr);
   }
 };

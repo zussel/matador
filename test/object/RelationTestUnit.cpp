@@ -237,8 +237,6 @@ void RelationTestUnit::test_belongs_to_many()
 
 void RelationTestUnit::test_has_many_to_many()
 {
-  std::cout << "\n";
-
   matador::object_store store;
 
   store.attach<person>("person");
@@ -247,23 +245,81 @@ void RelationTestUnit::test_has_many_to_many()
 
   UNIT_ASSERT_EQUAL(4UL, store.size(), "must be four nodes");
 
-  for (auto &node : store) {
-    std::cout << "\n";
-    for (auto &endpoint : node.endpoints()) {
-      std::cout << "node [" << node.type() << "/" << endpoint.first.name() << "] has endpoint: " << endpoint.second->field << " (type: " << endpoint.second->type_name << ")\n";
-      std::cout << "endpoint " << typeid(*endpoint.second).name() << "\n";
-    }
-  }
+  auto node = store.find("student");
+  UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
+  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
+  UNIT_ASSERT_EQUAL(node->endpoints_size(), 1UL, "endpoints must be one");
+
+  auto endpoint = node->endpoint_begin();
+
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "student_course", "endpoint field name must be 'student_course'");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY, "endpoint type must be HAS_MANY");
+
+  node = store.find("student_course");
+  UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
+  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
+  UNIT_ASSERT_EQUAL(node->endpoints_size(), 2UL, "endpoints must be one");
+
+  endpoint = node->endpoint_begin();
+
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "course_id", "endpoint field name must be 'course_id'");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+
+  ++endpoint;
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "student_id", "endpoint field name must be 'student_id'");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+
+  node = store.find<course>();
+  UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
+  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
+  UNIT_ASSERT_EQUAL(node->endpoints_size(), 1UL, "endpoints must be one");
+
+  endpoint = node->endpoint_begin();
+
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "student_course", "endpoint field name must be 'student_course'");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY, "endpoint type must be HAS_MANY");
 
   auto jane = store.insert(new student("jane"));
   auto tom = store.insert(new student("tom"));
   auto art = store.insert(new course("art"));
 
+  UNIT_ASSERT_TRUE(jane->courses.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(jane->courses.size(), 0UL, "vector size must be zero");
+  UNIT_ASSERT_TRUE(tom->courses.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(tom->courses.size(), 0UL, "vector size must be zero");
+  UNIT_ASSERT_TRUE(art->students.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(art->students.size(), 0UL, "vector size must be zero");
+
   jane->courses.push_back(art); // jane (value) must be push_back to course art (owner) students!!
 
-  std::cout << "[" << &art->students << "] students size: " << art->students.size() << "\n";
+  UNIT_ASSERT_FALSE(jane->courses.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL, "vector size must be one");
+  UNIT_ASSERT_EQUAL(jane->courses.front(), art, "objects must be same");
+  UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "vector size must be zero");
+  UNIT_ASSERT_EQUAL(art->students.front(), jane, "objects must be same");
 
   art->students.push_back(tom);
 
-  std::cout << "[" << &tom->courses << "] courses size: " << tom->courses.size() << "\n";
+  UNIT_ASSERT_FALSE(tom->courses.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(tom->courses.size(), 1UL, "vector size must be one");
+  UNIT_ASSERT_EQUAL(tom->courses.front(), art, "objects must be same");
+  UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(art->students.size(), 2UL, "vector size must be zero");
+  UNIT_ASSERT_EQUAL(art->students.back(), tom, "objects must be same");
+
+  art->students.remove(tom);
+
+  UNIT_ASSERT_TRUE(tom->courses.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(tom->courses.size(), 0UL, "vector size must be zero");
+  UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "vector size must be zero");
+  UNIT_ASSERT_EQUAL(art->students.back(), jane, "objects must be same");
+
+  jane->courses.clear();
+
+  UNIT_ASSERT_TRUE(jane->courses.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(jane->courses.size(), 0UL, "vector size must be zero");
+  UNIT_ASSERT_TRUE(art->students.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(art->students.size(), 0UL, "vector size must be zero");
 }
