@@ -966,7 +966,7 @@ void ObjectStoreTestUnit::test_structure_container()
   object_ptr<child> c1 = *childrens->children.begin();
 
   UNIT_ASSERT_GREATER(c1.id(), 0UL, "object store must be greater zero");
-  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
 }
 
 void ObjectStoreTestUnit::test_transient_optr()
