@@ -24,7 +24,6 @@ struct basic_left_to_many_endpoint : public to_many_endpoint<Value, Owner, HasMa
 
   virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
-    std::cout << "insert_value left (proxy) owner (value) " << owner->id() << " (type: " << typeid(Value).name() << ")\n";
 //    object_ptr<Owner> valptr(value);
     object_ptr<Owner> ownptr(value);
     inserter.insert(ownptr, this->field, owner);
@@ -56,7 +55,6 @@ struct right_to_many_endpoint : public to_many_endpoint<Value, Owner, has_many_t
 
   virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
-    std::cout << "insert_value right (proxy) owner (value) " << owner->id() << " (type: " << typeid(Value).name() << ")\n";
 //    object_ptr<Owner> valptr(value);
     object_ptr<Value> ownptr(value);
     inserter.insert(ownptr, this->field, owner);

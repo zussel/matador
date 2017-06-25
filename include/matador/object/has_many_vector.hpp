@@ -647,7 +647,6 @@ public:
 
       this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
-      std::cout << "insert value " << value.id() << " (type: " << typeid(T).name() << ", " << value.type() << ")\n";
       this->relation_info_->insert_value_into_foreign(value, this->owner_);
 
       this->mark_modified_owner_(*this->ostore_, this->owner_);
@@ -740,7 +739,7 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      this->relation_info_->remove_value_from_foreign(this->owner_, *i);
+      this->relation_info_->remove_value_from_foreign(*i, this->owner_);
       this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
 //      deleter_.remove(i);
     }
@@ -765,7 +764,7 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
-        this->relation_info_->remove_value_from_foreign(this->owner_, *i);
+        this->relation_info_->remove_value_from_foreign(*i, this->owner_);
         this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
         ++i;
 //        deleter_.remove(i++);
@@ -777,18 +776,11 @@ public:
 private:
   void insert_holder(const holder_type &holder)
   {
-    std::cout << "[" << this << "] container (type: " << typeid(T).name() << ") size before insert " << this->holder_container_.size() << "\n";
     this->holder_container_.emplace_back(holder);
-    std::cout << "[" << this << "] container (type: " << typeid(T).name() << ") size after insert " << this->holder_container_.size() << "\n";
-
   }
 
   void remove_holder(const holder_type &holder)
   {
-    std::cout << "[" << this << "] container size " << this->holder_container_.size() << "\n";
-    if (this->holder_container_.size() > 0) {
-      std::cout << "first holder: " << this->holder_container_.front().value().id() << "\n";
-    }
     this->holder_container_.erase(std::remove(this->holder_container_.begin(), this->holder_container_.end(), holder), this->holder_container_.end());
   }
 

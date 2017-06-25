@@ -9,8 +9,6 @@ template < class Value >
 template<class Owner>
 void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &owner, const std::string &field, object_proxy *value)
 {
-  std::cout << "inserting for owner " << owner.id() << " (type: " << owner.type() << ") value " << value->id() << "(" << value->node()->type() << ")\n";
-
   field_ = field;
   value_ = value;
 
@@ -26,7 +24,6 @@ void relation_endpoint_value_inserter<Value>::serialize(const char *id, object_h
   if (field_ != id) {
     return;
   }
-  std::cout << "setting value (" << typeid(Value).name() << ") for field [" << field_ << "]\n";
   x.reset(value_, cascade, false);
 }
 
@@ -37,8 +34,6 @@ void relation_endpoint_value_inserter<Value>::serialize(const char *id, has_many
   if (field_ != id) {
     return;
   }
-  std::cout << "inserting value (" << typeid(Value).name() << ") for field [" << field_ << "]\n";
-
   typename has_many<Value, Container>::holder_type holder(object_ptr<Value>(value_), nullptr);
 
   x.insert_holder(holder);

@@ -64,7 +64,7 @@ struct basic_relation_endpoint
   void insert_value_into_foreign(const object_ptr<T> &value, object_proxy *owner);
   void remove_value_from_foreign(object_proxy *value, object_proxy *owner);
   template < class T >
-  void remove_value_from_foreign(object_proxy *value, const object_ptr<T> &owner);
+  void remove_value_from_foreign(const object_ptr<T> &value, object_proxy *owner);
 
   template < class T >
   void set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj);
@@ -154,7 +154,7 @@ template < class Value, class Owner >
 struct belongs_to_many_endpoint : public relation_endpoint<Value>
 {
   belongs_to_many_endpoint(const std::string &field, prototype_node *node)
-    : relation_endpoint<Value>(field, node, basic_relation_endpoint::HAS_MANY)
+    : relation_endpoint<Value>(field, node, basic_relation_endpoint::BELONGS_TO)
   {}
 
   relation_endpoint_value_inserter<Owner> inserter;

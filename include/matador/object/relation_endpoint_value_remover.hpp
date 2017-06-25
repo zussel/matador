@@ -17,8 +17,6 @@ public:
   template < class Owner >
   void remove(const object_ptr<Owner> &owner, const std::string &field, const object_ptr<Value> &value)
   {
-    std::cout << "removing for owner " << owner.id() << " (type: " << owner.type() << ") value " << value.id() << "(" << value.type() << ")\n";
-
     field_ = field;
     value_ = value;
 

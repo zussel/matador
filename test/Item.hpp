@@ -358,7 +358,10 @@ public:
   }
 
   matador::object_ptr<department> dep() { return department_; }
-  void dep(const matador::object_ptr<department> &d) { department_ = d; }
+  void dep(const matador::object_ptr<department> &d)
+  {
+    department_ = d;
+  }
 };
 
 struct department

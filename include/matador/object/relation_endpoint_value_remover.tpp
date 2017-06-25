@@ -11,7 +11,6 @@ void relation_endpoint_value_remover<Value>::serialize(const char *id, object_ho
   if (field_ != id) {
     return;
   }
-  std::cout << "clearing value (" << typeid(Value).name() << ") for field [" << field_ << "]\n";
   x.reset(nullptr, cascade, false);
 }
 
@@ -22,7 +21,6 @@ void relation_endpoint_value_remover<Value>::serialize(const char *id, has_many<
   if (field_ != id) {
     return;
   }
-  std::cout << "removing value (" << typeid(Value).name() << ") for field [" << field_ << "]\n";
 
   typename has_many<Value, Container>::holder_type holder(object_ptr<Value>(value_), nullptr);
 
