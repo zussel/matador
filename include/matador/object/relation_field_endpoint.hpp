@@ -130,9 +130,9 @@ template < class Value, class Owner >
 using belongs_to_one_endpoint = from_one_endpoint<Value, Owner, basic_relation_endpoint::BELONGS_TO >;
 
 template < class Value, class Owner >
-struct to_one_endpoint : public relation_endpoint<Value>
+struct many_to_one_endpoint : public relation_endpoint<Value>
 {
-  to_one_endpoint(const std::string &field, prototype_node *node)
+  many_to_one_endpoint(const std::string &field, prototype_node *node)
     : relation_endpoint<Value>(field, node, basic_relation_endpoint::HAS_MANY)
   {}
 
@@ -153,8 +153,8 @@ struct belongs_to_many_endpoint : public relation_endpoint<Value>
     : relation_endpoint<Value>(field, node, basic_relation_endpoint::BELONGS_TO)
   {}
 
-  relation_endpoint_value_inserter<Owner> inserter;
-  relation_endpoint_value_remover<Owner> remover;
+  relation_endpoint_value_inserter<Value> inserter;
+  relation_endpoint_value_remover<Value> remover;
 
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;

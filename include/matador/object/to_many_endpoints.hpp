@@ -59,7 +59,7 @@ struct has_one_to_many_endpoint : public to_many_endpoint<Value, Owner, has_one_
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+  virtual void remove_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/)
   {}
 
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
@@ -99,7 +99,7 @@ struct right_to_many_endpoint : public to_many_endpoint<Value, Owner, has_many_t
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+  virtual void remove_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/)
   {}
 
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override

@@ -89,7 +89,7 @@ void belongs_to_many_endpoint<Value, Owner>::remove_holder(object_store &, has_m
 template < class Value, class Owner >
 void belongs_to_many_endpoint<Value, Owner>::insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
 {
-  object_ptr<Value> ownptr(value);
+  object_ptr<Owner> ownptr(value);
 //  object_ptr<Owner> ownptr(owner);
   inserter.insert(ownptr, this->field, owner, item_proxy);
 }
@@ -97,25 +97,25 @@ void belongs_to_many_endpoint<Value, Owner>::insert_value(object_proxy *value, o
 template < class Value, class Owner >
 void belongs_to_many_endpoint<Value, Owner>::remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
 {
-  object_ptr<Value> ownptr(value);
-  object_ptr<Owner> valptr(owner);
+  object_ptr<Owner> ownptr(value);
+  object_ptr<Value> valptr(owner);
   remover.remove(ownptr, this->field, valptr, item_proxy);
 }
 
 template < class Value, class Owner >
-void to_one_endpoint<Value, Owner>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
+void many_to_one_endpoint<Value, Owner>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
   this->set_has_many_item_proxy(holder, owner);
 }
 
 template < class Value, class Owner >
-void to_one_endpoint<Value, Owner>::remove_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
+void many_to_one_endpoint<Value, Owner>::remove_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
 {
   this->set_has_many_item_proxy(holder, nullptr);
 }
 
 template < class Value, class Owner >
-void to_one_endpoint<Value, Owner>::insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
+void many_to_one_endpoint<Value, Owner>::insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
 {
 //    object_ptr<Value> valptr(value);
   object_ptr<Owner> ownptr(owner);
@@ -123,7 +123,7 @@ void to_one_endpoint<Value, Owner>::insert_value(object_proxy *value, object_pro
 }
 
 template < class Value, class Owner >
-void to_one_endpoint<Value, Owner>::remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
+void many_to_one_endpoint<Value, Owner>::remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
 {
   object_ptr<Value> valptr(value);
   object_ptr<Owner> ownptr(owner);
