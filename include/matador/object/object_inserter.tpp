@@ -128,22 +128,14 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
     x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
   }
 
-//  prototype_iterator foreign_node = ostore_.find<T>();
-//  if (foreign_node != ostore_.end()) {
-//    auto i = foreign_node->find_endpoint(foreign_node->type_index());
-//    if (i != foreign_node->endpoint_end()) {
-//      x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
-//    }
-//  }
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
 
-  // Todo: make has many code work
   while (first != last) {
-    auto i = first++;
-    if (!(*i).is_inserted()) {
+    auto j = first++;
+    if (!(*j).is_inserted()) {
       // item is not in store, insert it
-      ostore_.insert(*i, false);
+      ostore_.insert(*j, false);
     }
   }
 }

@@ -7,13 +7,15 @@ namespace detail {
 
 template < class Value >
 template<class Owner>
-void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &owner, const std::string &field, object_proxy *value)
+void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &owner, const std::string &field, object_proxy *value, object_proxy *item_proxy)
 {
   field_ = field;
   value_ = value;
+  item_proxy_ = item_proxy;
 
   matador::access::serialize(*this, *owner);
 
+  item_proxy_ = nullptr;
   field_.clear();
   value_ = nullptr;
 }
@@ -34,7 +36,7 @@ void relation_endpoint_value_inserter<Value>::serialize(const char *id, has_many
   if (field_ != id) {
     return;
   }
-  typename has_many<Value, Container>::holder_type holder(object_ptr<Value>(value_), nullptr);
+  typename has_many<Value, Container>::holder_type holder(object_ptr<Value>(value_), item_proxy_);
 
   x.insert_holder(holder);
 }

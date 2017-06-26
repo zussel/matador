@@ -19,7 +19,7 @@ class relation_endpoint_value_inserter
 {
 public:
   template < class Owner >
-  void insert(const object_ptr<Owner> &owner, const std::string &field, object_proxy *value);
+  void insert(const object_ptr<Owner> &owner, const std::string &field, object_proxy *value, object_proxy *item_proxy);
 
   template < class T >
   void serialize(T &x)
@@ -37,6 +37,7 @@ public:
 private:
   std::string field_;
   object_proxy *value_;
+  object_proxy *item_proxy_ = nullptr; // only set if holder type is HAS_MANY and foreign type is also HAS_MANY
 };
 
 }

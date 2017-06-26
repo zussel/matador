@@ -350,7 +350,7 @@ private:
   object_proxy *proxy_ = nullptr;
   object_proxy *owner_ = nullptr; // only set if holder type is BELONGS_TO or HAS_MANY
   cascade_type cascade_ = cascade_type::NONE;
-  object_holder_type type_;
+  object_holder_type type_ = object_holder_type::OBJECT_PTR;
   bool is_inserted_ = false;
   unsigned long oid_ = 0;
 

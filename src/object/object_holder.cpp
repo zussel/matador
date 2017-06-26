@@ -256,7 +256,7 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade, bool notify
       --(*proxy_);
 
       if (relation_info_ && notify_foreign_relation) {
-        relation_info_->remove_value_from_foreign(owner_, proxy_);
+        relation_info_->remove_value_from_foreign(owner_, proxy_, nullptr);
       }
     }
     /*
@@ -274,7 +274,7 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade, bool notify
     if (is_internal() && is_inserted_ && proxy_->ostore_) {
       ++(*proxy_);
       if (relation_info_ && notify_foreign_relation) {
-        relation_info_->insert_value_into_foreign(owner_, proxy_);
+        relation_info_->insert_value_into_foreign(owner_, proxy_, nullptr);
       }
     }
     proxy_->add(this);

@@ -149,13 +149,18 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 
       prototype_iterator foreign_node = detach_one_to_many_node<Value>(pi);
 
-      auto foreign_endpoint = std::make_shared<detail::right_to_many_endpoint <Value, Owner>>(id, foreign_node.get());
+      auto foreign_endpoint = std::make_shared<detail::right_to_many_endpoint <Owner, Value>>(id, foreign_node.get());
 
       foreign_node->register_relation_endpoint(std::type_index(typeid(Owner)), foreign_endpoint);
-      std::vector<Observer<has_many_to_many_item<Value, Owner> >*> has_many_item_observer;
+
+      std::vector<Observer<has_many_to_many_item<Owner, Value> >*> has_many_item_observer;
       for (auto o : observer_vector_) {
-        has_many_item_observer.push_back(new Observer<has_many_to_many_item<Value, Owner> >(o));
+        has_many_item_observer.push_back(new Observer<has_many_to_many_item<Owner, Value> >(o));
       }
+//      std::vector<Observer<has_many_to_many_item<Value, Owner> >*> has_many_item_observer;
+//      for (auto o : observer_vector_) {
+//        has_many_item_observer.push_back(new Observer<has_many_to_many_item<Value, Owner> >(o));
+//      }
 
       auto endpoint = std::make_shared<detail::left_to_many_endpoint<Value, Owner>>(id, &node_);
 
@@ -166,12 +171,15 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
       endpoint->foreign_endpoint = foreign_endpoint;
 
       // new has many to many item
-      auto proto = new has_many_to_many_item<Value, Owner>(owner_column, item_column);
-      prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<Value, Owner>>(&store_, id, proto, false, node_.type(), id);
+      auto proto = new has_many_to_many_item<Owner, Value>(owner_column, item_column);
+//      auto proto = new has_many_to_many_item<Value, Owner>(owner_column, item_column);
+      prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<Owner, Value>>(&store_, id, proto, false, node_.type(), id);
+//      prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<Value, Owner>>(&store_, id, proto, false, node_.type(), id);
 
-      pi = store_.attach_internal<has_many_to_many_item<Value, Owner>>(node, nullptr, has_many_item_observer);
+      pi = store_.attach_internal<has_many_to_many_item<Owner, Value>>(node, nullptr, has_many_item_observer);
+//      pi = store_.attach_internal<has_many_to_many_item<Value, Owner>>(node, nullptr, has_many_item_observer);
 
-      store_.typeid_prototype_map_[typeid(has_many_to_many_item<Value, Owner>).name()].insert(std::make_pair(pi->type_, pi.get()));
+//      store_.typeid_prototype_map_[typeid(has_many_to_many_item<Owner, Value>).name()].insert(std::make_pair(pi->type_, pi.get()));
     } else {
 
       // found corresponding belongs_to

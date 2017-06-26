@@ -22,7 +22,7 @@ void relation_endpoint_value_remover<Value>::serialize(const char *id, has_many<
     return;
   }
 
-  typename has_many<Value, Container>::holder_type holder(object_ptr<Value>(value_), nullptr);
+  typename has_many<Value, Container>::holder_type holder(object_ptr<Value>(value_), item_proxy_);
 
   x.remove_holder(holder);
 }

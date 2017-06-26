@@ -155,6 +155,12 @@ public:
   {
     return value_;
   }
+
+  object_proxy* item_proxy() const
+  {
+    return has_many_to_many_item_poxy_;
+  }
+
 private:
   friend class detail::basic_relation_endpoint;
 

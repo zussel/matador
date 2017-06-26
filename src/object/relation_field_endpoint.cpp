@@ -12,36 +12,30 @@ namespace matador {
 
 namespace detail {
 
-void matador::detail::basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, object_proxy *owner)
+void basic_relation_endpoint::insert_value(object_proxy *value, object_proxy *owner)
 {
-  if (is_inserting) {
-    return;
-  }
-
-  is_inserting = true;
-
-  auto sptr = foreign_endpoint.lock();
-  if (sptr) {
-    sptr->insert_value(value, owner);
-  }
-
-  is_inserting = false;
+  insert_value(value, owner, nullptr);
 }
 
-void matador::detail::basic_relation_endpoint::remove_value_from_foreign(object_proxy *value, object_proxy *owner)
+void basic_relation_endpoint::remove_value(object_proxy *value, object_proxy *owner)
 {
-  if (is_removing) {
-    return;
-  }
+  remove_value(value, owner, nullptr);
+}
 
-  is_removing = true;
-
+void matador::detail::basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
+{
   auto sptr = foreign_endpoint.lock();
   if (sptr) {
-    sptr->remove_value(value, owner);
+    sptr->insert_value(value, owner, item_proxy);
   }
+}
 
-  is_removing = false;
+void matador::detail::basic_relation_endpoint::remove_value_from_foreign(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
+{
+  auto sptr = foreign_endpoint.lock();
+  if (sptr) {
+    sptr->remove_value(value, owner, item_proxy);
+  }
 }
 
 }

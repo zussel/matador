@@ -163,11 +163,6 @@ public:
   void append(const typename iterator::holder_type &item) { holder_container_.push_back(item); }
 
   /// @cond MATADOR_DEV
-protected:
-//  item_type* create_item(const value_type &value)
-//  {
-//    return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
-//  }
 
 protected:
 

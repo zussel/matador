@@ -15,13 +15,15 @@ class relation_endpoint_value_remover
 {
 public:
   template < class Owner >
-  void remove(const object_ptr<Owner> &owner, const std::string &field, const object_ptr<Value> &value)
+  void remove(const object_ptr<Owner> &owner, const std::string &field, const object_ptr<Value> &value, object_proxy *item_proxy)
   {
     field_ = field;
     value_ = value;
+    item_proxy_ = item_proxy;
 
     matador::access::serialize(*this, *owner);
 
+    item_proxy_ = nullptr;
     field_.clear();
     value_.reset(nullptr, value_.cascade_, false);
   }
@@ -42,6 +44,7 @@ public:
 private:
   std::string field_;
   matador::object_ptr<Value> value_;
+  object_proxy *item_proxy_ = nullptr; // only set if holder type is HAS_MANY and foreign type is also HAS_MANY
 };
 
 }

@@ -57,9 +57,7 @@ void object_deleter::serialize(const char *, basic_has_many<T, C> &x, const char
   typename basic_has_many<T, C>::iterator last = x.end();
   while (first != last) {
     // Todo: get the real holder: on join table get has_many_item
-    typename basic_has_many<T, C>::relation_type iptr = first.relation_item();
-    ++first;
-    object_proxy *proxy = iptr.proxy_;
+    object_proxy *proxy = first.holder_item().item_proxy();
     std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
       std::make_pair(proxy->id(), t_object_count(proxy, false, (T*)proxy->obj()))
     );
@@ -75,7 +73,9 @@ void object_deleter::serialize(const char *, basic_has_many<T, C> &x, const char
       ret.first->second.ignore = false;
     }
 
-    matador::access::serialize(*this, *iptr);
+    auto val = *first;
+    matador::access::serialize(*this, *val);
+    ++first;
   }
 }
 
