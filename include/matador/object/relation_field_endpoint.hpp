@@ -92,7 +92,7 @@ struct relation_endpoint : public basic_relation_endpoint
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
 };
 
-template < class Value, class Owner, template < class... > class HasManyItem >
+template < class Value, class Owner >
 struct to_many_endpoint : public relation_endpoint<Value>
 {
   to_many_endpoint(const std::string &field, prototype_node *node)
@@ -101,9 +101,6 @@ struct to_many_endpoint : public relation_endpoint<Value>
 
   std::string owner_column;
   std::string item_column;
-
-  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
-  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
 };
 
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type>
