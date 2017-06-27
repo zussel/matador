@@ -13,9 +13,9 @@ namespace matador {
 namespace detail {
 
 template < class Value, class Owner, template < class... > class HasManyItem >
-struct basic_left_to_many_endpoint : public to_many_endpoint<Value, Owner, HasManyItem>
+struct left_to_many_endpoint : public to_many_endpoint<Value, Owner, HasManyItem>
 {
-  basic_left_to_many_endpoint(const std::string &field, prototype_node *node)
+  left_to_many_endpoint(const std::string &field, prototype_node *node)
     : to_many_endpoint<Value, Owner, HasManyItem>(field, node)
   {}
 
@@ -24,7 +24,6 @@ struct basic_left_to_many_endpoint : public to_many_endpoint<Value, Owner, HasMa
 
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
   {
-//    object_ptr<Owner> valptr(value);
     object_ptr<Owner> ownptr(value);
     inserter.insert(ownptr, this->field, owner, item_proxy);
   }
@@ -36,9 +35,6 @@ struct basic_left_to_many_endpoint : public to_many_endpoint<Value, Owner, HasMa
     remover.remove(ownptr, this->field, valptr, item_proxy);
   }
 };
-
-//template < class Value, class Owner >
-//using has_one_to_many_endpoint = basic_left_to_many_endpoint<Value, Owner, has_one_to_many_item>;
 
 template < class Value, class Owner >
 struct has_one_to_many_endpoint : public to_many_endpoint<Value, Owner, has_one_to_many_item>
@@ -53,18 +49,17 @@ struct has_one_to_many_endpoint : public to_many_endpoint<Value, Owner, has_one_
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
   {
     object_ptr<Owner> ownptr(owner);
-    // insert new item
-//    auto itemptr = store.insert(new has_many_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column));
     auto itemptr = store.insert(new has_one_to_many_item<Value, Owner>(holder.value(), ownptr, this->owner_column, this->item_column));
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
   virtual void remove_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/)
-  {}
+  {
+
+  }
 
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
   {
-//    object_ptr<Owner> valptr(value);
     object_ptr<Owner> ownptr(value);
     inserter.insert(ownptr, this->field, owner, item_proxy);
   }
@@ -76,9 +71,6 @@ struct has_one_to_many_endpoint : public to_many_endpoint<Value, Owner, has_one_
     remover.remove(ownptr, this->field, valptr, item_proxy);
   }
 };
-
-template < class Value, class Owner >
-using left_to_many_endpoint = basic_left_to_many_endpoint<Value, Owner, has_many_to_many_item>;
 
 template < class Value, class Owner >
 struct right_to_many_endpoint : public to_many_endpoint<Value, Owner, has_many_to_many_item>
@@ -93,8 +85,6 @@ struct right_to_many_endpoint : public to_many_endpoint<Value, Owner, has_many_t
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
   {
     object_ptr<Owner> ownptr(owner);
-    // insert new item
-//    auto itemptr = store.insert(new has_many_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column));
     auto itemptr = store.insert(new has_many_to_many_item<Value, Owner>(holder.value(), ownptr, this->owner_column, this->item_column));
     this->set_has_many_item_proxy(holder, itemptr);
   }
@@ -104,7 +94,6 @@ struct right_to_many_endpoint : public to_many_endpoint<Value, Owner, has_many_t
 
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
   {
-//    object_ptr<Owner> valptr(value);
     object_ptr<Owner> ownptr(value);
     inserter.insert(ownptr, this->field, owner, item_proxy);
   }

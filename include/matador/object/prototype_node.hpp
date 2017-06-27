@@ -405,6 +405,9 @@ public:
   const_endpoint_iterator find_endpoint(const std::type_index &tindex) const;
   endpoint_iterator find_endpoint(const std::type_index &tindex);
 
+  const_endpoint_iterator find_endpoint(const std::string field) const;
+  endpoint_iterator find_endpoint(const std::string field);
+
   endpoint_iterator endpoint_begin();
   const_endpoint_iterator endpoint_begin() const;
 

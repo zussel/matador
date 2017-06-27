@@ -136,11 +136,13 @@ void RelationTestUnit::test_has_many()
   UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
   UNIT_ASSERT_EQUAL(node->endpoints_size(), 2UL, "endpoints must be one");
 
-  endpoint = node->endpoint_begin();
+  endpoint = node->find_endpoint("child_id");
+  UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "child_id", "endpoint field name must be 'child_id'");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
 
-  ++endpoint;
+  endpoint = node->find_endpoint("vector_id");
+  UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "vector_id", "endpoint field name must be 'vector_id'");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
 
@@ -166,8 +168,8 @@ void RelationTestUnit::test_belongs_to_many()
   matador::object_store store;
 
   store.attach<person>("person");
-  store.attach<employee, person>("employee");
   store.attach<department>("department");
+  store.attach<employee, person>("employee");
 
   UNIT_ASSERT_EQUAL(3UL, store.size(), "must be three nodes");
 

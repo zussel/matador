@@ -351,6 +351,7 @@ object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier>
 void prototype_node::register_relation_endpoint(const std::type_index &tindex,
                                                 const std::shared_ptr<detail::basic_relation_endpoint> &endpoint)
 {
+  std::cout << "\n" << type_ <<  " $$ registering endpoint " << tindex.name() << " for field " << endpoint->field << " (node: " << endpoint->node->type() << ")\n";
   info_->register_relation_endpoint(tindex, endpoint);
 }
 
@@ -367,6 +368,16 @@ prototype_node::const_endpoint_iterator prototype_node::find_endpoint(const std:
 prototype_node::endpoint_iterator prototype_node::find_endpoint(const std::type_index &tindex)
 {
   return info_->find_relation_endpoint(tindex);
+}
+
+prototype_node::const_endpoint_iterator prototype_node::find_endpoint(const std::string field) const
+{
+  return info_->find_relation_endpoint(field);
+}
+
+prototype_node::endpoint_iterator prototype_node::find_endpoint(const std::string field)
+{
+  return info_->find_relation_endpoint(field);
 }
 
 prototype_node::endpoint_iterator prototype_node::endpoint_begin()

@@ -35,7 +35,6 @@ void to_many_endpoint<Value, Owner, HasManyItem>::insert_holder(object_store &st
   object_ptr<Owner> ownptr(owner);
   // insert new item
   auto itemptr = store.insert(new HasManyItem<Owner, Value>(ownptr, holder.value(), owner_column, item_column));
-//  auto itemptr = store.insert(new HasManyItem<Value, Owner>(holder.value(), ownptr, owner_column, item_column));
   this->set_has_many_item_proxy(holder, itemptr);
 }
 
@@ -61,7 +60,6 @@ void from_one_endpoint<Value, Owner, Type>::remove_holder(object_store &/*store*
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type>
 void from_one_endpoint<Value, Owner, Type>::insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
 {
-//  object_ptr<Value> valptr();
   object_ptr<Owner> ownptr(owner);
   inserter.insert(ownptr, this->field, value, item_proxy);
 }
@@ -90,7 +88,6 @@ template < class Value, class Owner >
 void belongs_to_many_endpoint<Value, Owner>::insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
 {
   object_ptr<Owner> ownptr(value);
-//  object_ptr<Owner> ownptr(owner);
   inserter.insert(ownptr, this->field, owner, item_proxy);
 }
 
@@ -117,7 +114,6 @@ void many_to_one_endpoint<Value, Owner>::remove_holder(object_store &/*store*/, 
 template < class Value, class Owner >
 void many_to_one_endpoint<Value, Owner>::insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy)
 {
-//    object_ptr<Value> valptr(value);
   object_ptr<Owner> ownptr(owner);
   inserter.insert(ownptr, this->field, value, item_proxy);
 }

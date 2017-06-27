@@ -1229,7 +1229,6 @@ void ObjectStoreTestUnit::test_observer()
   UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
 }
 
-typedef has_many_to_many_item<student, course> student_course_item;
 typedef has_many_to_many_item<course, student> course_student_item;
 
 void ObjectStoreTestUnit::test_attach_has_many()
@@ -1245,15 +1244,7 @@ void ObjectStoreTestUnit::test_attach_has_many()
 
   UNIT_ASSERT_NOT_NULL(item1.get(), "course student item must not be null");
 
-  std::unique_ptr<student_course_item> item2(ostore_.create<student_course_item>());
-
-  UNIT_ASSERT_NOT_NULL(item2.get(), "student course item must not be null");
-
   auto node = ostore_.find("student_course");
-
-  UNIT_ASSERT_FALSE(node == ostore_.end(), "node must be valid");
-
-  node = ostore_.find<student_course_item>();
 
   UNIT_ASSERT_FALSE(node == ostore_.end(), "node must be valid");
 

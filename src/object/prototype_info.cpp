@@ -1,7 +1,6 @@
 #include "matador/object/prototype_info.hpp"
-#include "matador/object/relation_field_endpoint.hpp"
 
-#include <typeindex>
+#include <algorithm>
 
 namespace matador {
 namespace detail {
@@ -25,6 +24,20 @@ basic_prototype_info::const_endpoint_iterator basic_prototype_info::find_relatio
 basic_prototype_info::endpoint_iterator basic_prototype_info::find_relation_endpoint(const std::type_index &tindex)
 {
   return endpoints_.find(tindex);
+}
+
+basic_prototype_info::const_endpoint_iterator basic_prototype_info::find_relation_endpoint(const std::string &field) const
+{
+  return std::find_if(endpoints_.begin(), endpoints_.end(), [&field](const t_endpoint_map::value_type &value) {
+    return value.second->field == field;
+  });
+}
+
+basic_prototype_info::endpoint_iterator basic_prototype_info::find_relation_endpoint(const std::string &field)
+{
+  return std::find_if(endpoints_.begin(), endpoints_.end(), [&field](const t_endpoint_map::value_type &value) {
+    return value.second->field == field;
+  });
 }
 
 basic_prototype_info::endpoint_iterator basic_prototype_info::endpoint_begin()

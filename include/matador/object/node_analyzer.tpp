@@ -15,12 +15,14 @@ template<class Owner, template < class U = Owner > class Observer >
 void node_analyzer<Owner, Observer>::analyze()
 {
   Owner obj;
+  std::cout << "ANALYZING " << typeid(Owner).name() << "\n";
   analyze(obj);
 }
 
 template<class Owner, template < class U = Owner > class Observer >
 void node_analyzer<Owner, Observer>::analyze(Owner &obj)
 {
+  std::cout << "ANALYZING " << typeid(Owner).name() << "\n";
   matador::access::serialize(*this, obj);
 }
 
@@ -35,6 +37,8 @@ template<class Owner, template < class U = Owner > class Observer >
 template<class Value>
 void node_analyzer<Owner, Observer>::serialize(const char *id, belongs_to <Value> &x, cascade_type)
 {
+  std::cout << "ANALYZING " << typeid(Owner).name() << " found BELONGS_TO<" << typeid(Value).name() << ">\n";
+  std::cout << "ANALYZING " << typeid(Owner).name() << " searching foreign node <" << x.type() << ">\n";
   // find foreign_node of belongs to type
   prototype_iterator foreign_node = store_.find(x.type());
   if (foreign_node != store_.end()) {
@@ -43,28 +47,33 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, belongs_to <Value
      * check if foreign_node was created from has_many
      * check if foreign_node has_many relation for id (id == tablename)
      */
-    auto i = foreign_node->find_endpoint(node_.type_index());
-    if (i != foreign_node->endpoint_end()) {
+    std::cout << "ANALYZING " << typeid(Owner).name() << " searching foreign endpoint<" << node_.type_index().name() << ">\n";
 
+    auto i = foreign_node->find_endpoint(node_.type_index());
+
+    auto eps = foreign_node->endpoints();
+
+    if (i != foreign_node->endpoint_end()) {
 
       if (i->second->type == detail::basic_relation_endpoint::HAS_MANY) {
         // yes, foreign_node was created from has_many!
         // detach current foreign_node (has_many_item == relation table)
         store_.detach(node_.type());
 
+        std::cout << "serialize BELONGS_TO $$ creating detail::many_to_one_endpoint<Value: " << typeid(Value).name() << ", Owner: " << typeid(Owner).name() << ">\n";
+        auto foreign_endpoint = std::make_shared<detail::right_to_many_endpoint <Owner, Value>>(i->second->field, foreign_node.get());
         foreign_node->unregister_relation_endpoint(node_.type_index());
-        auto endpoint = std::make_shared<detail::belongs_to_many_endpoint<Value, Owner>>(id, &node_);
-
-        auto foreign_endpoint = std::make_shared<detail::many_to_one_endpoint <Value, Owner>>(id, foreign_node.get());
         foreign_node->register_relation_endpoint(node_.type_index(), foreign_endpoint);
 
+        auto endpoint = std::make_shared<detail::belongs_to_many_endpoint<Value, Owner>>(id, &node_);
         node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
+
         endpoint->foreign_endpoint = foreign_endpoint;
         foreign_endpoint->foreign_endpoint = endpoint;
       } else if (i->second->type == detail::basic_relation_endpoint::HAS_ONE) {
         // foreign_node was created from has_one
         // check if foreign_node is set
-        auto endpoint = std::make_shared<detail::belongs_to_one_endpoint<Owner, Value>>(id, &node_);
+        auto endpoint = std::make_shared<detail::belongs_to_one_endpoint<Value, Owner>>(id, &node_);
 
         node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
         endpoint->foreign_endpoint = i->second;
@@ -73,7 +82,9 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, belongs_to <Value
         throw_object_exception("foreign node is already a belongs to endpoint (node: " << node_.type() << ", field: " << id << ")");
       }
     } else {
-      throw_object_exception("no has_one endpoint for belongs_to (node: " << node_.type() << ", field: " << id << ")");
+      auto endpoint = std::make_shared<detail::belongs_to_one_endpoint<Value, Owner>>(id, &node_);
+
+      node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
     }
   } else {
     auto endpoint = std::make_shared<detail::belongs_to_one_endpoint<Value, Owner>>(id, &node_);
@@ -86,6 +97,8 @@ template<class Owner, template < class U = Owner > class Observer >
 template<class Value>
 void node_analyzer<Owner, Observer>::serialize(const char *id, has_one <Value> &x, cascade_type)
 {
+  std::cout << "ANALYZING " << typeid(Owner).name() << " found HAS_ONE<" << typeid(Value).name() << ">\n";
+
   auto endpoint = std::make_shared<detail::has_one_endpoint<Value, Owner>>(id, &node_);
 
   node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
@@ -112,6 +125,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
                                     const char *owner_column, const char *item_column,
                                     typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
+  std::cout << "ANALYZING " << typeid(Owner).name() << " found HAS_MANY<" << typeid(Value).name() << ">\n";
   // attach relation table for has many relation
   // check if has many item is already attached
   // true: check owner and item field
@@ -194,6 +208,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
         pi->register_relation_endpoint(node_.type_index(), foreign_endpoint);
 
         // create and register endpoint
+        std::cout << "serialize HAS_MANY $$ creating detail::many_to_one_endpoint<Value: " << typeid(Value).name() << ", Owner: " << typeid(Owner).name() << ">\n";
         auto endpoint = std::make_shared<detail::many_to_one_endpoint <Value, Owner>>(id, &node_);
         node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
@@ -211,6 +226,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
                                     const char *owner_column, const char *item_column,
                                     typename std::enable_if<is_builtin<Value>::value>::type*)
 {
+  std::cout << "ANALYZING " << typeid(Owner).name() << " found HAS_MANY<" << typeid(Value).name() << "> (builtin)\n";
   // attach relation table for has many relation
   // check if has many item is already attached
   // true: check owner and item field
