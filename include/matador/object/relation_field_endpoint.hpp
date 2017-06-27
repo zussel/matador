@@ -22,6 +22,7 @@
 #include "matador/object/relation_field_serializer.hpp"
 #include "matador/object/relation_endpoint_value_inserter.hpp"
 #include "matador/object/relation_endpoint_value_remover.hpp"
+#include "matador/object/basic_has_many_to_many_item.hpp"
 #include "matador/object/has_many_item_holder.hpp"
 
 #include <string>
@@ -38,6 +39,9 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
+/**
+ * Basic relation endpoint providing the interface
+ */
 struct basic_relation_endpoint
 {
   enum relation_type {
@@ -81,6 +85,10 @@ struct basic_relation_endpoint
   std::weak_ptr<basic_relation_endpoint> foreign_endpoint;
 };
 
+/**
+ * relation endpoint interface with value type
+ * @tparam Value
+ */
 template < class Value >
 struct relation_endpoint : public basic_relation_endpoint
 {
@@ -92,6 +100,13 @@ struct relation_endpoint : public basic_relation_endpoint
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
 };
 
+/**
+ * Base class for to_many relation endpoints
+ * providing value and owner type
+ *
+ * @tparam Value
+ * @tparam Owner
+ */
 template < class Value, class Owner >
 struct to_many_endpoint : public relation_endpoint<Value>
 {
@@ -103,6 +118,14 @@ struct to_many_endpoint : public relation_endpoint<Value>
   std::string item_column;
 };
 
+/**
+ * Base class for from one relation endpoints
+ * like 'has_one' and 'belongs_to_one' endpoints
+ *
+ * @tparam Value
+ * @tparam Owner
+ * @tparam Type
+ */
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type>
 struct from_one_endpoint : public relation_endpoint<Value>
 {
@@ -126,8 +149,12 @@ using has_one_endpoint = from_one_endpoint<Value, Owner, basic_relation_endpoint
 template < class Value, class Owner >
 using belongs_to_one_endpoint = from_one_endpoint<Value, Owner, basic_relation_endpoint::BELONGS_TO >;
 
+template < class Value, class Owner, class Enabled = void >
+struct many_to_one_endpoint;
+
 template < class Value, class Owner >
-struct many_to_one_endpoint : public relation_endpoint<Value>
+struct many_to_one_endpoint<Value, Owner, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type>
+  : public relation_endpoint<Value>
 {
   many_to_one_endpoint(const std::string &field, prototype_node *node)
     : relation_endpoint<Value>(field, node, basic_relation_endpoint::HAS_MANY)
@@ -141,6 +168,36 @@ struct many_to_one_endpoint : public relation_endpoint<Value>
 
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override;
   virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override;
+};
+
+template < class Value, class Owner >
+struct many_to_one_endpoint<Value, Owner, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, Value>::value>::type>
+  : public relation_endpoint<Value>
+{
+  many_to_one_endpoint(const std::string &field, prototype_node *node)
+    : relation_endpoint<Value>(field, node, basic_relation_endpoint::HAS_MANY)
+  {}
+
+  relation_endpoint_value_inserter<Value> inserter;
+  relation_endpoint_value_remover<Value> remover;
+
+  virtual void insert_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/) override
+  {
+    std::cout << "endpoint for field " << this->field << ": called INSERT_HOLDER (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
+  }
+  virtual void remove_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/) override
+  {
+    std::cout << "endpoint for field " << this->field << ": called REMOVE_HOLDER (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
+  }
+
+  virtual void insert_value(object_proxy */*value*/, object_proxy */*owner*/, object_proxy */*item_proxy*/) override
+  {
+    std::cout << "endpoint for field " << this->field << ": called INSERT_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
+  }
+  virtual void remove_value(object_proxy */*value*/, object_proxy */*owner*/, object_proxy */*item_proxy*/) override
+  {
+    std::cout << "endpoint for field " << this->field << ": called REMOVE_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
+  }
 };
 
 template < class Value, class Owner >

@@ -12,6 +12,12 @@
 namespace matador {
 namespace detail {
 
+/*
+ * Left side of a many to many relation
+ *
+ * Owner is stored in left column
+ * Value is stored in right column
+ */
 template < class Value, class Owner >
 struct left_to_many_endpoint : public to_many_endpoint<Value, Owner>
 {
@@ -51,6 +57,12 @@ struct left_to_many_endpoint : public to_many_endpoint<Value, Owner>
   }
 };
 
+/*
+ * One to many relation endpoint
+ *
+ * Owner is stored in left column
+ * Value is stored in right column
+ */
 template < class Value, class Owner >
 struct has_one_to_many_endpoint : public to_many_endpoint<Value, Owner>
 {
@@ -88,6 +100,12 @@ struct has_one_to_many_endpoint : public to_many_endpoint<Value, Owner>
   }
 };
 
+/*
+ * Right side of a many to many relation
+ *
+ * Owner is stored in right column
+ * Value is stored in left column
+ */
 template < class Value, class Owner >
 struct right_to_many_endpoint : public to_many_endpoint<Value, Owner>
 {

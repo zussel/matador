@@ -61,7 +61,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, belongs_to <Value
         store_.detach(node_.type());
 
         std::cout << "serialize BELONGS_TO $$ creating detail::many_to_one_endpoint<Value: " << typeid(Value).name() << ", Owner: " << typeid(Owner).name() << ">\n";
-        auto foreign_endpoint = std::make_shared<detail::right_to_many_endpoint <Owner, Value>>(i->second->field, foreign_node.get());
+        auto foreign_endpoint = std::make_shared<detail::many_to_one_endpoint<Owner, Value>>(i->second->field, foreign_node.get());
         foreign_node->unregister_relation_endpoint(node_.type_index());
         foreign_node->register_relation_endpoint(node_.type_index(), foreign_endpoint);
 
