@@ -46,13 +46,13 @@ struct left_to_many_endpoint : public to_many_endpoint<Value, Owner>
     // cast to real type object pointer
     object_ptr<Owner> ownptr(owner);
     // insert new item
-    auto itemptr = store.insert(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column));
+    auto itemptr = store.insert(new has_many_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column));
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
   void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
   {
-    object_ptr<has_one_to_many_item<Owner, Value>> item(holder.item_proxy());
+    object_ptr<has_many_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
   }
 };
@@ -82,7 +82,7 @@ struct has_one_to_many_endpoint : public to_many_endpoint<Value, Owner>
 
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
   {
-    object_ptr<has_many_to_many_item<Owner, Value>> item(holder.item_proxy());
+    object_ptr<has_one_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
   }
 

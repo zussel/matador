@@ -262,12 +262,13 @@ void RelationTestUnit::test_has_many_to_many()
   UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
   UNIT_ASSERT_EQUAL(node->endpoints_size(), 2UL, "endpoints must be one");
 
-  endpoint = node->endpoint_begin();
-
+  endpoint = node->find_endpoint("course_id");
+  UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "endpoint must be found");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "course_id", "endpoint field name must be 'course_id'");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
 
-  ++endpoint;
+  endpoint = node->find_endpoint("student_id");
+  UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "endpoint must be found");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "student_id", "endpoint field name must be 'student_id'");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
 

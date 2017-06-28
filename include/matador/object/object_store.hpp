@@ -452,10 +452,10 @@ public:
   object_proxy* insert(object_proxy *proxy, bool notify)
   {
     if (proxy == nullptr) {
-      throw object_exception("proxy is null");
+      throw_object_exception("proxy is null");
     }
     if (proxy->obj() == nullptr) {
-      throw object_exception("object is null");
+      throw_object_exception("object is null");
     }
     iterator node = find(proxy->classname());
     if (node == end()) {
@@ -467,7 +467,7 @@ public:
     }
     // check if proxy/object is already inserted
     if (proxy->ostore() == nullptr && proxy->id() > 0) {
-      throw object_exception("object has id but doesn't belong to a store");
+      throw_object_exception("object has id but doesn't belong to a store");
     }
 
     proxy->id(seq_.next());
@@ -579,14 +579,14 @@ public:
   void remove(object_proxy *proxy, bool notify, bool check_if_deletable)
   {
     if (proxy == nullptr) {
-      throw object_exception("object proxy is nullptr");
+      throw_object_exception("object proxy is nullptr");
     }
     if (proxy->node() == nullptr) {
-      throw object_exception("prototype node is nullptr");
+      throw_object_exception("prototype node is nullptr");
     }
     // check if object tree is deletable
     if (check_if_deletable && !object_deleter_.is_deletable<T>(proxy, (T*)proxy->obj())) {
-      throw object_exception("object is not removable");
+      throw_object_exception("object is not removable");
     }
 
     if (check_if_deletable) {
@@ -605,7 +605,7 @@ public:
       if (object_map_.erase(proxy->id()) != 1) {
         // couldn't remove object
         // throw exception
-        throw object_exception("couldn't remove object");
+        throw_object_exception("couldn't remove object");
       }
 
       proxy->node()->remove(proxy);
