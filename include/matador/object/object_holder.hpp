@@ -41,9 +41,9 @@ class has_many_inserter;
 template<class T, template <class ...> class C, class Enabled>
 class has_many_deleter;
 class basic_relation_endpoint;
-template < class Value >
+template < class Value, class Enabled >
 class relation_endpoint_value_inserter;
-template < class Value >
+template < class Value, class Enabled >
 class relation_endpoint_value_remover;
 }
 

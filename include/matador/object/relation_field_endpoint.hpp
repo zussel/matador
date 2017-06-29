@@ -60,21 +60,18 @@ struct basic_relation_endpoint
   }
   virtual ~basic_relation_endpoint() {}
 
-  void insert_value(object_proxy *value, object_proxy *owner);
-  void remove_value(object_proxy *value, object_proxy *owner);
-  virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) = 0;
-  virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) = 0;
+  virtual void insert_value(object_proxy *value, object_proxy *owner) = 0;
+  virtual void remove_value(object_proxy *value, object_proxy *owner) = 0;
 
-  void insert_value_into_foreign(object_proxy *value, object_proxy *owner, object_proxy *item_proxy);
+  void insert_value_into_foreign(object_proxy *value, object_proxy *owner);
   template < class Value >
   void insert_value_into_foreign(const has_many_item_holder<Value> &holder, object_proxy *owner);
-  void remove_value_from_foreign(object_proxy *value, object_proxy *owner, object_proxy *item_proxy);
+  void remove_value_from_foreign(object_proxy *value, object_proxy *owner);
   template < class Value >
   void remove_value_from_foreign(const has_many_item_holder<Value> &value, object_proxy *owner);
 
   template < class T >
   void set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj);
-
   template < class T >
   void set_has_many_item_proxy(has_many_item_holder<T> &holder, object_proxy *proxy);
 
@@ -98,6 +95,12 @@ struct relation_endpoint : public basic_relation_endpoint
 
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
+
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override;
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override;
+
+  virtual void insert_value(const has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
+  virtual void remove_value(const has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
 };
 
 /**
@@ -108,9 +111,9 @@ struct relation_endpoint : public basic_relation_endpoint
  * @tparam Owner
  */
 template < class Value, class Owner >
-struct to_many_endpoint : public relation_endpoint<Value>
+struct from_many_endpoint : public relation_endpoint<Value>
 {
-  to_many_endpoint(const std::string &field, prototype_node *node)
+  from_many_endpoint(const std::string &field, prototype_node *node)
     : relation_endpoint<Value>(field, node, basic_relation_endpoint::HAS_MANY)
   {}
 
@@ -139,8 +142,8 @@ struct from_one_endpoint : public relation_endpoint<Value>
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override;
-  virtual void remove_value(object_proxy */*value*/, object_proxy *owner, object_proxy *item_proxy) override;
+  virtual void insert_value(const has_many_item_holder<Value> &holder, object_proxy *owner) override;
+  virtual void remove_value(const has_many_item_holder<Value> &holder, object_proxy *owner) override;
 };
 
 template < class Value, class Owner >
@@ -166,8 +169,11 @@ struct many_to_one_endpoint<Value, Owner, typename std::enable_if<!std::is_base_
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override;
-  virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override;
+  virtual void insert_value(const has_many_item_holder<Value> &holder, object_proxy *owner) override;
+  virtual void remove_value(const has_many_item_holder<Value> &holder, object_proxy *owner) override;
+
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override;
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override;
 };
 
 template < class Value, class Owner >
@@ -190,11 +196,11 @@ struct many_to_one_endpoint<Value, Owner, typename std::enable_if<std::is_base_o
     std::cout << "endpoint for field " << this->field << ": called REMOVE_HOLDER (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
   }
 
-  virtual void insert_value(object_proxy */*value*/, object_proxy */*owner*/, object_proxy */*item_proxy*/) override
+  virtual void insert_value(const has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/) override
   {
     std::cout << "endpoint for field " << this->field << ": called INSERT_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
   }
-  virtual void remove_value(object_proxy */*value*/, object_proxy */*owner*/, object_proxy */*item_proxy*/) override
+  virtual void remove_value(const has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/) override
   {
     std::cout << "endpoint for field " << this->field << ": called REMOVE_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
   }
@@ -213,8 +219,8 @@ struct belongs_to_many_endpoint : public relation_endpoint<Value>
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override;
-  virtual void remove_value(object_proxy */*value*/, object_proxy *owner, object_proxy *item_proxy) override;
+  virtual void insert_value(const has_many_item_holder<Value> &holder, object_proxy *owner) override;
+  virtual void remove_value(const has_many_item_holder<Value> &holder, object_proxy *owner) override;
 };
 /// @endcond
 

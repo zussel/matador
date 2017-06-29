@@ -6,7 +6,25 @@ namespace matador {
 namespace detail {
 
 template < class Value >
-void relation_endpoint_value_remover<Value>::serialize(const char *id, object_holder &x, cascade_type cascade)
+template<class Owner>
+void relation_endpoint_value_remover<Value,
+  typename std::enable_if<
+    std::is_base_of<object_holder, Value>::value>::type
+>::remove(const object_ptr <Owner> &owner, const std::string &field, has_many_item_holder<Value> holder)
+{
+  field_ = field;
+  holder_ = holder;
+
+  matador::access::serialize(*this, *owner);
+
+  field_.clear();
+}
+
+template < class Value >
+void relation_endpoint_value_remover<Value,
+  typename std::enable_if<
+    std::is_base_of<object_holder, Value>::value>::type
+>::serialize(const char *id, object_holder &x, cascade_type cascade)
 {
   if (field_ != id) {
     return;
@@ -16,15 +34,47 @@ void relation_endpoint_value_remover<Value>::serialize(const char *id, object_ho
 
 template < class Value >
 template < template < class ... > class Container >
-void relation_endpoint_value_remover<Value>::serialize(const char *id, has_many<Value, Container> &x, const char *, const char *)
+void relation_endpoint_value_remover<Value,
+  typename std::enable_if<
+    std::is_base_of<object_holder, Value>::value>::type
+>::serialize(const char *id, has_many<Value, Container> &x, const char *, const char *)
 {
   if (field_ != id) {
     return;
   }
+  x.remove_holder(holder_);
+}
 
-  typename has_many<Value, Container>::holder_type holder(object_ptr<Value>(value_), item_proxy_);
+template < class Value >
+template<class Owner>
+void relation_endpoint_value_remover<Value,
+  typename std::enable_if<
+    !std::is_base_of<object_holder, Value>::value>::type
+>::remove(const object_ptr <Owner> &owner, const std::string &field, has_many_item_holder<Value> holder)
+{
+  field_ = field;
+  holder_ = holder;
 
-  x.remove_holder(holder);
+  matador::access::serialize(*this, *owner);
+
+  field_.clear();
+}
+
+template < class Value >
+template < class T >
+void relation_endpoint_value_remover<Value,
+  typename std::enable_if<
+    !std::is_base_of<object_holder, Value>::value>::type
+>::serialize(const char *, T &)
+{
+}
+
+template < class Value >
+void relation_endpoint_value_remover<Value,
+  typename std::enable_if<
+    !std::is_base_of<object_holder, Value>::value>::type
+>::serialize(const char *, char *, std::size_t )
+{
 }
 
 }
