@@ -19,10 +19,10 @@ namespace detail {
  * Value is stored in right column
  */
 template < class Value, class Owner >
-struct left_to_many_endpoint : public to_many_endpoint<Value, Owner>
+struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
 {
   left_to_many_endpoint(const std::string &field, prototype_node *node)
-    : to_many_endpoint<Value, Owner>(field, node)
+    : from_many_endpoint<Value, Owner>(field, node)
   {}
 
   relation_endpoint_value_inserter<Value> inserter;
@@ -31,14 +31,14 @@ struct left_to_many_endpoint : public to_many_endpoint<Value, Owner>
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
   {
     object_ptr<Owner> ownptr(value);
-    inserter.insert(ownptr, this->field, owner, item_proxy);
+    inserter.insert(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
   }
 
   virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
   {
     object_ptr<Value> valptr(owner);
     object_ptr<Owner> ownptr(value);
-    remover.remove(ownptr, this->field, valptr, item_proxy);
+    remover.remove(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
   }
 
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
@@ -64,10 +64,10 @@ struct left_to_many_endpoint : public to_many_endpoint<Value, Owner>
  * Value is stored in right column
  */
 template < class Value, class Owner >
-struct has_one_to_many_endpoint : public to_many_endpoint<Value, Owner>
+struct has_one_to_many_endpoint : public from_many_endpoint<Value, Owner>
 {
   has_one_to_many_endpoint(const std::string &field, prototype_node *node)
-    : to_many_endpoint<Value, Owner>(field, node)
+    : from_many_endpoint<Value, Owner>(field, node)
   {}
 
   relation_endpoint_value_inserter<Value> inserter;
@@ -89,14 +89,14 @@ struct has_one_to_many_endpoint : public to_many_endpoint<Value, Owner>
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
   {
     object_ptr<Owner> ownptr(value);
-    inserter.insert(ownptr, this->field, owner, item_proxy);
+    inserter.insert(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
   }
 
   virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
   {
     object_ptr<Value> valptr(owner);
     object_ptr<Owner> ownptr(value);
-    remover.remove(ownptr, this->field, valptr, item_proxy);
+    remover.remove(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
   }
 };
 
@@ -107,10 +107,10 @@ struct has_one_to_many_endpoint : public to_many_endpoint<Value, Owner>
  * Value is stored in left column
  */
 template < class Value, class Owner >
-struct right_to_many_endpoint : public to_many_endpoint<Value, Owner>
+struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
 {
   right_to_many_endpoint(const std::string &field, prototype_node *node)
-    : to_many_endpoint<Value, Owner>(field, node)
+    : from_many_endpoint<Value, Owner>(field, node)
   {}
 
   relation_endpoint_value_inserter<Value> inserter;
@@ -132,14 +132,14 @@ struct right_to_many_endpoint : public to_many_endpoint<Value, Owner>
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
   {
     object_ptr<Owner> ownptr(value);
-    inserter.insert(ownptr, this->field, owner, item_proxy);
+    inserter.insert(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
   }
 
   virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
   {
     object_ptr<Value> valptr(owner);
     object_ptr<Owner> ownptr(value);
-    remover.remove(ownptr, this->field, valptr, item_proxy);
+    remover.remove(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
   }
 };
 

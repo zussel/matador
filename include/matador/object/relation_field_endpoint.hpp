@@ -96,6 +96,9 @@ struct relation_endpoint : public basic_relation_endpoint
     : basic_relation_endpoint(field, node, type)
   {}
 
+  virtual void insert_value(const has_many_item_holder<Value> &value, object_proxy *owner) = 0;
+  virtual void remove_value(const has_many_item_holder<Value> &value, object_proxy *owner) = 0;
+
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
 };
@@ -108,9 +111,9 @@ struct relation_endpoint : public basic_relation_endpoint
  * @tparam Owner
  */
 template < class Value, class Owner >
-struct to_many_endpoint : public relation_endpoint<Value>
+struct from_many_endpoint : public relation_endpoint<Value>
 {
-  to_many_endpoint(const std::string &field, prototype_node *node)
+  from_many_endpoint(const std::string &field, prototype_node *node)
     : relation_endpoint<Value>(field, node, basic_relation_endpoint::HAS_MANY)
   {}
 
@@ -140,7 +143,9 @@ struct from_one_endpoint : public relation_endpoint<Value>
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override;
 
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override;
-  virtual void remove_value(object_proxy */*value*/, object_proxy *owner, object_proxy *item_proxy) override;
+  virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override;
+  virtual void insert_value(const has_many_item_holder<Value> &value, object_proxy *owner) override;
+  virtual void remove_value(const has_many_item_holder<Value> &value, object_proxy *owner) override;
 };
 
 template < class Value, class Owner >
@@ -168,6 +173,8 @@ struct many_to_one_endpoint<Value, Owner, typename std::enable_if<!std::is_base_
 
   virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override;
   virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override;
+  virtual void insert_value(const has_many_item_holder<Value> &value, object_proxy *owner) override;
+  virtual void remove_value(const has_many_item_holder<Value> &value, object_proxy *owner) override;
 };
 
 template < class Value, class Owner >

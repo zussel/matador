@@ -5,6 +5,8 @@
 #ifndef MATADOR_RELATION_ENDPOINT_VALUE_INSERTER_HPP
 #define MATADOR_RELATION_ENDPOINT_VALUE_INSERTER_HPP
 
+#include "matador/object/has_many_item_holder.hpp"
+
 #include <iostream>
 
 namespace matador {
@@ -19,7 +21,7 @@ class relation_endpoint_value_inserter
 {
 public:
   template < class Owner >
-  void insert(const object_ptr<Owner> &owner, const std::string &field, object_proxy *value, object_proxy *item_proxy);
+  void insert(const object_ptr<Owner> &owner, const std::string &field, const has_many_item_holder<Value> &holder);
 
   template < class T >
   void serialize(T &x)
@@ -36,8 +38,8 @@ public:
 
 private:
   std::string field_;
-  object_proxy *value_;
-  object_proxy *item_proxy_ = nullptr; // only set if holder type is HAS_MANY and foreign type is also HAS_MANY
+
+  has_many_item_holder<Value> holder_;
 };
 
 }
