@@ -215,8 +215,11 @@ struct many_to_one_endpoint<Value, Owner, typename std::enable_if<std::is_base_o
   }
 };
 
+template < class Value, class Owner, class Enabled = void >
+struct belongs_to_many_endpoint;
+
 template < class Value, class Owner >
-struct belongs_to_many_endpoint : public relation_endpoint<Value>
+struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type> : public relation_endpoint<Value>
 {
   belongs_to_many_endpoint(const std::string &field, prototype_node *node)
     : relation_endpoint<Value>(field, node, basic_relation_endpoint::BELONGS_TO)
@@ -233,6 +236,26 @@ struct belongs_to_many_endpoint : public relation_endpoint<Value>
 
   virtual void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override;
   virtual void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override;
+};
+
+template < class Value, class Owner >
+struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<matador::is_builtin<Value>::value>::type> : public relation_endpoint<Value>
+{
+  belongs_to_many_endpoint(const std::string &field, prototype_node *node)
+    : relation_endpoint<Value>(field, node, basic_relation_endpoint::BELONGS_TO)
+  {}
+
+  relation_endpoint_value_inserter<Value> inserter;
+  relation_endpoint_value_remover<Value> remover;
+
+  virtual void insert_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/) override {}
+  virtual void remove_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/) override {}
+
+  virtual void insert_value(object_proxy */*value*/, object_proxy */*owner*/) override {}
+  virtual void remove_value(object_proxy */*value*/, object_proxy */*owner*/) override {}
+
+  virtual void insert_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override {}
+  virtual void remove_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override {}
 };
 /// @endcond
 

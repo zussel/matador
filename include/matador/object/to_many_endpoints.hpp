@@ -40,8 +40,6 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
 
   virtual void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
-//    object_ptr<Owner> ownptr(owner);
-//    object_ptr<Owner> ownptr(value);
     inserter.insert(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
       this->field,
@@ -51,9 +49,6 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
 
   virtual void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
-//    object_ptr<Value> valptr(owner);
-//    object_ptr<Owner> ownptr(owner);
-//    object_ptr<Owner> ownptr(value);
     remover.remove(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
       this->field,
@@ -119,14 +114,11 @@ struct has_one_to_many_endpoint : public from_many_endpoint<Value, Owner>
   virtual void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
-//    object_ptr<Owner> ownptr(value);
     inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
   }
 
   virtual void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
-//    object_ptr<Value> valptr(owner);
-//    object_ptr<Owner> ownptr(value);
     object_ptr<Owner> ownptr(owner);
     remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
   }
@@ -173,9 +165,6 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
 
   virtual void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
-//    object_ptr<Owner> ownptr(value);
-//    object_ptr<Owner> ownptr(owner);
-//    inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
     inserter.insert(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
       this->field,
@@ -185,9 +174,6 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
 
   virtual void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
-//    object_ptr<Value> valptr(owner);
-//    object_ptr<Owner> ownptr(owner);
-//    object_ptr<Owner> ownptr(value);
     remover.remove(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
       this->field,

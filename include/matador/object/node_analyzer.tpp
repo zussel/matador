@@ -122,8 +122,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_one <Value> &
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, Container> &,
-                                    const char *owner_column, const char *item_column,
-                                    typename std::enable_if<!is_builtin<Value>::value>::type*)
+                                               const char *owner_column, const char *item_column)
 {
 //  std::cout << "ANALYZING " << typeid(Owner).name() << " found HAS_MANY<" << typeid(Value).name() << ">\n";
   // attach relation table for has many relation
@@ -220,33 +219,33 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
   }
 }
 
-template<class Owner, template < class U = Owner > class Observer >
-template<class Value, template<class ...> class Container>
-void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, Container> &,
-                                    const char *owner_column, const char *item_column,
-                                    typename std::enable_if<is_builtin<Value>::value>::type*)
-{
-//  std::cout << "ANALYZING " << typeid(Owner).name() << " found HAS_MANY<" << typeid(Value).name() << "> (builtin)\n";
-  // attach relation table for has many relation
-  // check if has many item is already attached
-  // true: check owner and item field
-  // false: attach it
-  prototype_iterator pi = store_.find(id);
-  if (pi == store_.end()) {
-    std::vector<Observer<has_one_to_many_item<Value, Owner> >*> has_many_item_observer;
-    for (auto o : observer_vector_) {
-      has_many_item_observer.push_back(new Observer<has_one_to_many_item<Value, Owner> >(o));
-    }
-
-    auto proto = new has_one_to_many_item<Value, Owner>(owner_column, item_column);
-    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<Value, Owner> >(&store_, id, proto, false, node_.type(), id);
-
-    pi = store_.attach_internal<has_one_to_many_item<Value, Owner> >(node, nullptr, has_many_item_observer);
-  } else {
-    // throw exception
-    throw_object_exception("prototype already inserted: " << pi->type());
-  }
-}
+//template<class Owner, template < class U = Owner > class Observer >
+//template<class Value, template<class ...> class Container>
+//void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, Container> &,
+//                                    const char *owner_column, const char *item_column,
+//                                    typename std::enable_if<is_builtin<Value>::value>::type*)
+//{
+////  std::cout << "ANALYZING " << typeid(Owner).name() << " found HAS_MANY<" << typeid(Value).name() << "> (builtin)\n";
+//  // attach relation table for has many relation
+//  // check if has many item is already attached
+//  // true: check owner and item field
+//  // false: attach it
+//  prototype_iterator pi = store_.find(id);
+//  if (pi == store_.end()) {
+//    std::vector<Observer<has_one_to_many_item<Value, Owner> >*> has_many_item_observer;
+//    for (auto o : observer_vector_) {
+//      has_many_item_observer.push_back(new Observer<has_one_to_many_item<Value, Owner> >(o));
+//    }
+//
+//    auto proto = new has_one_to_many_item<Value, Owner>(owner_column, item_column);
+//    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<Value, Owner> >(&store_, id, proto, false, node_.type(), id);
+//
+//    pi = store_.attach_internal<has_one_to_many_item<Value, Owner> >(node, nullptr, has_many_item_observer);
+//  } else {
+//    // throw exception
+//    throw_object_exception("prototype already inserted: " << pi->type());
+//  }
+//}
 
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value>

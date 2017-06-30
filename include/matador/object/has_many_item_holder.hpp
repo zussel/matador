@@ -155,7 +155,7 @@ public:
   {
     value_ = x.value_;
     has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-    x.value_ = nullptr;
+//    x.value_ = nullptr;
     x.has_many_to_many_item_poxy_ = nullptr;
   }
 
@@ -164,7 +164,7 @@ public:
     if (this != &x) {
       value_ = x.value_;
       has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-      x.value_ = nullptr;
+//      x.value_ = nullptr;
       x.has_many_to_many_item_poxy_ = nullptr;
     }
     return *this;

@@ -74,43 +74,38 @@ void from_one_endpoint<Value, Owner, Type>::remove_value(const basic_has_many_it
 }
 
 template < class Value, class Owner >
-void belongs_to_many_endpoint<Value, Owner>::insert_holder(object_store &, has_many_item_holder <Value> &holder, object_proxy *owner)
+void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::insert_holder(object_store &, has_many_item_holder <Value> &holder, object_proxy *owner)
 {
   this->set_has_many_item_proxy(holder, owner);
 }
 
 template < class Value, class Owner >
-void belongs_to_many_endpoint<Value, Owner>::remove_holder(object_store &, has_many_item_holder <Value> &holder, object_proxy */*owner*/)
+void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::remove_holder(object_store &, has_many_item_holder <Value> &holder, object_proxy */*owner*/)
 {
   this->set_has_many_item_proxy(holder, nullptr);
 }
 
 template < class Value, class Owner >
-void belongs_to_many_endpoint<Value, Owner>::insert_value(object_proxy *value, object_proxy *owner)
+void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::insert_value(object_proxy *value, object_proxy *owner)
 {
-  insert_value(has_many_item_holder<Value>(value, nullptr), owner);
+  inserter.insert(object_ptr<Owner>(value), this->field, has_many_item_holder<Value>(owner, nullptr));
 }
 
 template < class Value, class Owner >
-void belongs_to_many_endpoint<Value, Owner>::remove_value(object_proxy *value, object_proxy *owner)
+void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::remove_value(object_proxy *value, object_proxy *owner)
 {
-  remove_value(has_many_item_holder<Value>(value, nullptr), owner);
+  remover.remove(object_ptr<Owner>(value), this->field, has_many_item_holder<Value>(owner, nullptr));
 }
 
 template < class Value, class Owner >
-void belongs_to_many_endpoint<Value, Owner>::insert_value(const basic_has_many_item_holder &holder, object_proxy *owner)
+void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::insert_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
-//  object_ptr<Owner> ownptr();
-//  object_ptr<Owner> ownptr(value);
   inserter.insert(static_cast<const has_many_item_holder<Owner>&>(holder).value(), this->field, has_many_item_holder<Value>(owner, nullptr));
 }
 
 template < class Value, class Owner >
-void belongs_to_many_endpoint<Value, Owner>::remove_value(const basic_has_many_item_holder &holder, object_proxy *owner)
+void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::remove_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
-//  object_ptr<Owner> ownptr(owner);
-//  object_ptr<Owner> ownptr(value);
-//  object_ptr<Value> valptr(owner);
   remover.remove(static_cast<const has_many_item_holder<Owner>&>(holder).value(), this->field, has_many_item_holder<Value>(owner, nullptr));
 }
 

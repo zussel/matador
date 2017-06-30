@@ -22,8 +22,8 @@ SET (TEST_HEADER Item.hpp has_many_list.hpp)
 SET (TEST_OBJECT_SOURCES
 #  object/ObjectPrototypeTestUnit.cpp
 #  object/ObjectPrototypeTestUnit.hpp
-#  object/ObjectStoreTestUnit.cpp
-#  object/ObjectStoreTestUnit.hpp
+  object/ObjectStoreTestUnit.cpp
+  object/ObjectStoreTestUnit.hpp
 #  object/PrototypeTreeTest.cpp
 #  object/PrototypeTreeTest.hpp
 #  object/PrimaryKeyUnitTest.cpp
