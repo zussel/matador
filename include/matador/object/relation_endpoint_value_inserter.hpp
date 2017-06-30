@@ -14,14 +14,19 @@ namespace matador {
 template < class V, template < class ... > class C >
 class has_many;
 
+class object_holder;
+
 namespace detail {
 
+//template < class Value, class Enable = void >
+//class relation_endpoint_value_inserter;
+
 template < class Value >
-class relation_endpoint_value_inserter
+class relation_endpoint_value_inserter//<Value, typename std::enable_if<std::is_base_of<object_holder, Value>::value>::type>
 {
 public:
   template < class Owner >
-  void insert(const object_ptr<Owner> &owner, const std::string &field, const has_many_item_holder<Value> &holder);
+  void insert(const object_ptr<Owner> &owner, const std::string &field, has_many_item_holder<Value> holder);
 
   template < class T >
   void serialize(T &x)
@@ -34,13 +39,38 @@ public:
   void serialize(const char *, char *, size_t) {}
   void serialize(const char *id, object_holder &x, cascade_type);
   template < template < class ... > class Container >
-  void serialize(const char *id, has_many<Value, Container> &, const char*, const char*);
+  void serialize(const char *id, has_many<Value, Container> &x, const char*, const char*);
 
 private:
   std::string field_;
-
   has_many_item_holder<Value> holder_;
 };
+
+//template < class Value >
+//class relation_endpoint_value_inserter<Value, typename std::enable_if<!std::is_base_of<object_holder, Value>::value>::type>
+//{
+//public:
+//  template < class Owner >
+//  void insert(const object_ptr<Owner> &owner, const std::string &field, has_many_item_holder<Value> holder);
+//
+//  template < class T >
+//  void serialize(T &x)
+//  {
+//    matador::access::serialize(*this, x);
+//  }
+//
+//  template < class T >
+//  void serialize(const char *id, T &x);
+//  void serialize(const char *id, char *x, std::size_t s);
+//  void serialize(const char *id, object_holder &x, cascade_type) {}
+//  template < template < class ... > class Container >
+//  void serialize(const char *id, has_many<Value, Container> &, const char*, const char*) {}
+//
+//private:
+//  std::string field_;
+//  has_many_item_holder<Value> holder_;
+//};
+
 
 }
 }

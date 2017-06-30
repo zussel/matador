@@ -17,10 +17,10 @@ namespace matador {
 namespace detail {
 class object_inserter;
 
-template < class Value >
+template < class Value/*, class Enabled */>
 class relation_endpoint_value_inserter;
 
-template < class Value >
+template < class Value/*, class Enabled */>
 class relation_endpoint_value_remover;
 }
 

@@ -35,15 +35,15 @@ void PrototypeTreeTestUnit::test_empty()
 void PrototypeTreeTestUnit::test_insert()
 {
   object_store ptree;
-  UNIT_ASSERT_EXCEPTION(ptree.attach<Item>("item", false, "baba"), object_exception, "unknown prototype type", "inserted with invalid parent");
+  UNIT_ASSERT_EXCEPTION(ptree.attach<Item>("item", matador::object_store::not_abstract, "baba"), object_exception, "unknown prototype type", "inserted with invalid parent");
 
-  ptree.attach<Item>("item", false);
+  ptree.attach<Item>("item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
-  UNIT_ASSERT_EXCEPTION(ptree.attach<Item>("item", false), object_exception, "prototype already inserted: item", "inserted same prototype twice");
+  UNIT_ASSERT_EXCEPTION(ptree.attach<Item>("item"), object_exception, "prototype already inserted: item", "inserted same prototype twice");
 
-  ptree.attach<ItemA, Item>("item_a", false);
+  ptree.attach<ItemA, Item>("item_a");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (2)");
 }
@@ -51,7 +51,7 @@ void PrototypeTreeTestUnit::test_insert()
 void PrototypeTreeTestUnit::test_find()
 {
   object_store ptree;
-  ptree.attach<Item>("item", false);
+  ptree.attach<Item>("item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
@@ -68,7 +68,7 @@ void PrototypeTreeTestUnit::test_find()
   elem = ptree.find("unknown");
   UNIT_ASSERT_TRUE(elem == ptree.end(), "shouldn't find a prototype");
 
-  ptree.attach<ObjectItem<Item>>("object_item", false, "item");
+  ptree.attach<ObjectItem<Item>>("object_item", matador::object_store::not_abstract, "item");
   elem = ptree.find("object_item");
 
   UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
@@ -85,7 +85,7 @@ void PrototypeTreeTestUnit::test_find()
 void PrototypeTreeTestUnit::test_remove()
 {
   object_store ptree;
-  ptree.attach<Item>("item", false);
+  ptree.attach<Item>("item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
@@ -101,7 +101,7 @@ void PrototypeTreeTestUnit::test_remove()
 void PrototypeTreeTestUnit::test_erase()
 {
   object_store ptree;
-  prototype_iterator iter = ptree.attach<Item>("item", false);
+  prototype_iterator iter = ptree.attach<Item>("item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
@@ -117,10 +117,10 @@ void PrototypeTreeTestUnit::test_erase()
 void PrototypeTreeTestUnit::test_clear()
 {
   object_store ptree;
-  ptree.attach<Item>("item", false);
-  ptree.attach<ItemA>("item_a", false, "item");
-  ptree.attach<ItemB>("item_b", false, "item");
-  ptree.attach<ItemC>("item_c", false, "item");
+  ptree.attach<Item>("item");
+  ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemB>("item_b", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemC>("item_c", matador::object_store::not_abstract, "item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4, "prototype size must be one (4)");
 
@@ -133,8 +133,8 @@ void PrototypeTreeTestUnit::test_clear()
 void PrototypeTreeTestUnit::test_has_many()
 {
   object_store ptree;
-  ptree.attach<book>("book", false);
-  ptree.attach<book_list>("book_list", false);
+  ptree.attach<book>("book");
+  ptree.attach<book_list>("book_list");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)3, "prototype size must be one (3)");
 
@@ -146,7 +146,7 @@ void PrototypeTreeTestUnit::test_has_many()
 void PrototypeTreeTestUnit::test_decrement()
 {
   object_store ptree;
-  ptree.attach<Item>("item", false);
+  ptree.attach<Item>("item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
@@ -159,10 +159,10 @@ void PrototypeTreeTestUnit::test_decrement()
 
 void PrototypeTreeTestUnit::test_count() {
   object_store ptree;
-  ptree.attach<Item>("item", false);
-  ptree.attach<ItemA>("item_a", false, "item");
-  ptree.attach<ItemB>("item_b", false, "item");
-  ptree.attach<ItemC>("item_c", false, "item");
+  ptree.attach<Item>("item");
+  ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemB>("item_b", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemC>("item_c", matador::object_store::not_abstract, "item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4, "prototype size must be one (5)");
 }
@@ -170,8 +170,8 @@ void PrototypeTreeTestUnit::test_count() {
 void PrototypeTreeTestUnit::test_child_of()
 {
   object_store ptree;
-  ptree.attach<Item>("item", false);
-  ptree.attach<ItemA>("item_a", false, "item");
+  ptree.attach<Item>("item");
+  ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (1)");
 
@@ -187,10 +187,10 @@ void PrototypeTreeTestUnit::test_child_of()
 void PrototypeTreeTestUnit::test_traverse()
 {
   object_store ptree;
-  ptree.attach<Item>("item", false);
-  ptree.attach<ItemA>("item_a", false, "item");
-  ptree.attach<ItemB>("item_b", false, "item");
-  ptree.attach<ItemC>("item_c", false, "item");
+  ptree.attach<Item>("item");
+  ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemB>("item_b", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemC>("item_c", matador::object_store::not_abstract, "item");
 
   prototype_iterator first;
   first = ptree.begin();
@@ -215,10 +215,10 @@ void PrototypeTreeTestUnit::test_traverse()
 void PrototypeTreeTestUnit::test_const_traverse()
 {
   object_store ptree;
-  ptree.attach<Item>("item", false);
-  ptree.attach<ItemA>("item_a", false, "item");
-  ptree.attach<ItemB>("item_b", false, "item");
-  ptree.attach<ItemC>("item_c", false, "item");
+  ptree.attach<Item>("item");
+  ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemB>("item_b", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemC>("item_c", matador::object_store::not_abstract, "item");
 
   const_prototype_iterator first= ptree.begin();
   const_prototype_iterator last = ptree.end();

@@ -28,17 +28,37 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
-    object_ptr<Owner> ownptr(value);
-    inserter.insert(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
+    insert_value(has_many_item_holder<Value>(owner, nullptr), value);
   }
 
-  virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override
   {
-    object_ptr<Value> valptr(owner);
-    object_ptr<Owner> ownptr(value);
-    remover.remove(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
+    remove_value(has_many_item_holder<Value>(owner, nullptr), value);
+  }
+
+  virtual void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  {
+//    object_ptr<Owner> ownptr(owner);
+//    object_ptr<Owner> ownptr(value);
+    inserter.insert(
+      static_cast<const has_many_item_holder<Owner>&>(holder).value(),
+      this->field,
+      has_many_item_holder<Value>(owner, holder.item_proxy())
+    );
+  }
+
+  virtual void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  {
+//    object_ptr<Value> valptr(owner);
+//    object_ptr<Owner> ownptr(owner);
+//    object_ptr<Owner> ownptr(value);
+    remover.remove(
+      static_cast<const has_many_item_holder<Owner>&>(holder).value(),
+      this->field,
+      has_many_item_holder<Value>(owner, holder.item_proxy())
+    );
   }
 
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
@@ -86,17 +106,29 @@ struct has_one_to_many_endpoint : public from_many_endpoint<Value, Owner>
     store.remove(item);
   }
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
-    object_ptr<Owner> ownptr(value);
-    inserter.insert(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
+    insert_value(has_many_item_holder<Value>(owner, nullptr), value);
   }
 
-  virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override
   {
-    object_ptr<Value> valptr(owner);
-    object_ptr<Owner> ownptr(value);
-    remover.remove(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
+    remove_value(has_many_item_holder<Value>(owner, nullptr), value);
+  }
+
+  virtual void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  {
+    object_ptr<Owner> ownptr(owner);
+//    object_ptr<Owner> ownptr(value);
+    inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
+  }
+
+  virtual void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  {
+//    object_ptr<Value> valptr(owner);
+//    object_ptr<Owner> ownptr(value);
+    object_ptr<Owner> ownptr(owner);
+    remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
   }
 };
 
@@ -129,17 +161,38 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     store.remove(item);
   }
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override
   {
-    object_ptr<Owner> ownptr(value);
-    inserter.insert(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
+    insert_value(has_many_item_holder<Value>(owner, nullptr), value);
   }
 
-  virtual void remove_value(object_proxy *value, object_proxy *owner, object_proxy *item_proxy) override
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override
   {
-    object_ptr<Value> valptr(owner);
-    object_ptr<Owner> ownptr(value);
-    remover.remove(ownptr, this->field, has_many_item_holder<Value>(owner, item_proxy));
+    remove_value(has_many_item_holder<Value>(owner, nullptr), value);
+  }
+
+  virtual void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  {
+//    object_ptr<Owner> ownptr(value);
+//    object_ptr<Owner> ownptr(owner);
+//    inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
+    inserter.insert(
+      static_cast<const has_many_item_holder<Owner>&>(holder).value(),
+      this->field,
+      has_many_item_holder<Value>(owner, holder.item_proxy())
+    );
+  }
+
+  virtual void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  {
+//    object_ptr<Value> valptr(owner);
+//    object_ptr<Owner> ownptr(owner);
+//    object_ptr<Owner> ownptr(value);
+    remover.remove(
+      static_cast<const has_many_item_holder<Owner>&>(holder).value(),
+      this->field,
+      has_many_item_holder<Value>(owner, holder.item_proxy())
+    );
   }
 };
 
