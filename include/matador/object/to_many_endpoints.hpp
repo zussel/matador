@@ -97,7 +97,7 @@ struct has_one_to_many_endpoint : public from_many_endpoint<Value, Owner>
 
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
   {
-    object_ptr<has_one_to_many_item<Owner, Value>> item(holder.item_proxy());
+    object_ptr<has_one_to_many_item<Value, Owner>> item(holder.item_proxy());
     store.remove(item);
   }
 
