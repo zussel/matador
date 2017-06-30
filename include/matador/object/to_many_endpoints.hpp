@@ -28,6 +28,16 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override
+  {
+    insert_value(has_many_item_holder<Value>(owner, nullptr), value);
+  }
+
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override
+  {
+    remove_value(has_many_item_holder<Value>(owner, nullptr), value);
+  }
+
   virtual void insert_value(const has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
@@ -88,6 +98,16 @@ struct has_one_to_many_endpoint : public from_many_endpoint<Value, Owner>
     store.remove(item);
   }
 
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override
+  {
+    insert_value(has_many_item_holder<Value>(owner, nullptr), value);
+  }
+
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override
+  {
+    remove_value(has_many_item_holder<Value>(owner, nullptr), value);
+  }
+
   virtual void insert_value(const has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
@@ -131,6 +151,16 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
   {
     object_ptr<has_many_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
+  }
+
+  virtual void insert_value(object_proxy *value, object_proxy *owner) override
+  {
+    insert_value(has_many_item_holder<Value>(owner, nullptr), value);
+  }
+
+  virtual void remove_value(object_proxy *value, object_proxy *owner) override
+  {
+    remove_value(has_many_item_holder<Value>(owner, nullptr), value);
   }
 
   virtual void insert_value(const has_many_item_holder<Value> &holder, object_proxy *owner) override

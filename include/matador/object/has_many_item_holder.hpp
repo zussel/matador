@@ -7,6 +7,8 @@
 
 #include "matador/utils/is_builtin.hpp"
 
+#include "matador/object/object_holder_type.hpp"
+
 namespace matador {
 
 class object_proxy;
@@ -15,53 +17,91 @@ class object_pointer;
 template < class T, class Enable = void >
 class has_many_item_holder;
 
+template < class T >
+using object_ptr<T> = object_pointer<T, object_holder_type::OBJECT_PTR>;
+
 namespace detail {
 struct basic_relation_endpoint;
 }
 
+class basic_has_many_item_holder
+{
+protected:
+  basic_has_many_item_holder() {}
+  explicit basic_has_many_item_holder(object_proxy *item_proxy)
+    : has_many_to_many_item_poxy_(item_proxy)
+  {}
+
+public:
+  object_proxy* item_proxy() const
+  {
+    return has_many_to_many_item_poxy_;
+  }
+
+protected:
+  void set_item_proxy(object_proxy *itemproxy)
+  {
+    has_many_to_many_item_poxy_ = itemproxy;
+  }
+private:
+  friend class detail::basic_relation_endpoint;
+  object_proxy *has_many_to_many_item_poxy_ = nullptr;
+};
+
 template < class T >
-class has_many_item_holder<T, typename std::enable_if<!is_builtin<T>::value>::type>
+class has_many_item_holder<T, typename std::enable_if<!is_builtin<T>::value>::type> : public basic_has_many_item_holder
 {
 public:
   has_many_item_holder() {}
+
   has_many_item_holder(const object_ptr<T> &val, object_proxy *item_proxy)
-    : value_(val)
-    , has_many_to_many_item_poxy_(item_proxy)
+    : basic_has_many_item_holder(item_proxy)
+    , value_(val)
+  {}
+
+  has_many_item_holder(object_proxy *val, object_proxy *item_proxy)
+    : basic_has_many_item_holder(item_proxy)
+    , value_(val)
   {}
 
   template < class V >
   has_many_item_holder(const object_ptr<T> &val, const object_ptr<V> &owner)
-    : value_(val)
-    , has_many_to_many_item_poxy_(owner.proxy_)
+    : basic_has_many_item_holder(owner.proxy_)
+    , value_(val)
   {}
 
   has_many_item_holder(const has_many_item_holder &x)
-    : value_(x.value_)
-    , has_many_to_many_item_poxy_(x.has_many_to_many_item_poxy_)
+    : basic_has_many_item_holder(item_proxy)
+    , value_(x.value_)
   {}
 
   has_many_item_holder& operator=(const has_many_item_holder &x)
   {
     value_ = x.value_;
-    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
+    this->set_item_proxy(x.item_proxy());
+//    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
     return *this;
   }
 
   has_many_item_holder(has_many_item_holder &&x)
   {
     value_ = x.value_;
-    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
+    this->set_item_proxy(x.item_proxy());
+//    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
     x.value_ = nullptr;
-    x.has_many_to_many_item_poxy_ = nullptr;
+    x.set_item_proxy(nullptr);
+//    x.has_many_to_many_item_poxy_ = nullptr;
   }
 
   has_many_item_holder& operator=(has_many_item_holder &&x)
   {
     if (this != &x) {
       value_ = x.value_;
-      has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
+      this->set_item_proxy(x.item_proxy());
+//      has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
       x.value_ = nullptr;
-      x.has_many_to_many_item_poxy_ = nullptr;
+      x.set_item_proxy(nullptr);
+//      x.has_many_to_many_item_poxy_ = nullptr;
     }
     return *this;
   }
@@ -81,38 +121,39 @@ public:
     return value_;
   }
 
-  object_proxy* item_proxy() const
-  {
-    return has_many_to_many_item_poxy_;
-  }
+//  object_proxy* item_proxy() const
+//  {
+//    return has_many_to_many_item_poxy_;
+//  }
 
 private:
-  friend class detail::basic_relation_endpoint;
+//  friend class detail::basic_relation_endpoint;
 
   object_ptr<T> value_;
-  object_proxy *has_many_to_many_item_poxy_ = nullptr;
+//  object_proxy *has_many_to_many_item_poxy_ = nullptr;
 };
 
 
 template < class T >
-class has_many_item_holder<T, typename std::enable_if<is_builtin<T>::value>::type>
+class has_many_item_holder<T, typename std::enable_if<is_builtin<T>::value>::type> : public basic_has_many_item_holder
 {
 public:
   has_many_item_holder() {}
+
   has_many_item_holder(const T &val, object_proxy *item_proxy)
-    : value_(val)
-    , has_many_to_many_item_poxy_(item_proxy)
+    : basic_has_many_item_holder(item_proxy)
+    , value_(val)
   {}
 
   template < class V >
   has_many_item_holder(const T &val, const object_ptr<V> &owner)
-    : value_(val)
-    , has_many_to_many_item_poxy_(owner.proxy_)
+    : basic_has_many_item_holder(item_proxy)
+    , value_(val)
   {}
 
   has_many_item_holder(const has_many_item_holder &x)
-    : value_(x.value_)
-    , has_many_to_many_item_poxy_(x.has_many_to_many_item_poxy_)
+    : basic_has_many_item_holder(item_proxy)
+    , value_(x.value_)
   {}
 
   has_many_item_holder& operator=(const has_many_item_holder &x)
