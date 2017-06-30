@@ -69,7 +69,6 @@ template < class Value, class Owner, basic_relation_endpoint::relation_type Type
 void from_one_endpoint<Value, Owner, Type>::remove_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
   object_ptr<Owner> ownptr(owner);
-  object_ptr<Value> valptr;
   remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
 }
 
@@ -153,7 +152,6 @@ void many_to_one_endpoint<Value, Owner,
   typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type
 >::remove_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
-//  object_ptr<Value> valptr(value);
   object_ptr<Owner> ownptr(owner);
   remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
 }

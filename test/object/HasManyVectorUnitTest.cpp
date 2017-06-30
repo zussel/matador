@@ -12,10 +12,10 @@ HasManyVectorUnitTest::HasManyVectorUnitTest()
 {
   add_test("join", std::bind(&HasManyVectorUnitTest::test_join_table, this), "test vector join table");
   add_test("const_iterator", std::bind(&HasManyVectorUnitTest::test_const_iterator, this), "test vector const iterator");
-  add_test("remove_scalar", std::bind(&HasManyVectorUnitTest::test_remove_scalar, this), "test vector remove scalar elements");
-  add_test("remove_object", std::bind(&HasManyVectorUnitTest::test_remove_object, this), "test vector remove object elements");
   add_test("erase_scalar", std::bind(&HasManyVectorUnitTest::test_erase_scalar, this), "test vector erase scalar elements");
   add_test("erase_object", std::bind(&HasManyVectorUnitTest::test_erase_object, this), "test vector erase object elements");
+  add_test("remove_scalar", std::bind(&HasManyVectorUnitTest::test_remove_scalar, this), "test vector remove scalar elements");
+  add_test("remove_object", std::bind(&HasManyVectorUnitTest::test_remove_object, this), "test vector remove object elements");
   add_test("int", std::bind(&HasManyVectorUnitTest::test_integer, this), "test vector of elements");
   add_test("string", std::bind(&HasManyVectorUnitTest::test_string, this), "test list of strings");
 }

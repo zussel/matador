@@ -28,14 +28,15 @@ SET (TEST_OBJECT_SOURCES
 #  object/PrototypeTreeTest.hpp
 #  object/PrimaryKeyUnitTest.cpp
 #  object/PrimaryKeyUnitTest.hpp
-#  object/HasManyVectorUnitTest.cpp
-#  object/HasManyVectorUnitTest.hpp
+  object/HasManyVectorUnitTest.cpp
+  object/HasManyVectorUnitTest.hpp
 #  object/HasManyListUnitTest.cpp
 #  object/HasManyListUnitTest.hpp
 #  object/ObjectTransactiontestUnit.cpp
 #  object/ObjectTransactiontestUnit.hpp
   object/RelationTestUnit.cpp
-  object/RelationTestUnit.hpp)
+  object/RelationTestUnit.hpp
+)
 
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp

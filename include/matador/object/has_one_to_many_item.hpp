@@ -20,7 +20,7 @@ template<class L, class R, typename Enable = void>
 class has_one_to_many_item;
 
 template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<R>::value>::type> : public basic_has_many_to_many_item
+class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<L>::value>::type> : public basic_has_many_to_many_item
 {
 public:
   has_one_to_many_item()
@@ -59,7 +59,7 @@ private:
 
 
 template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<is_builtin<R>::value>::type>
+class has_one_to_many_item<L, R, typename std::enable_if<is_builtin<L>::value>::type>
   : public basic_has_many_to_many_item
 {
 public:
@@ -93,8 +93,8 @@ public:
   }
 
 private:
-  has_one<L> left_;
-  R right_;
+  L right_;
+  has_one<R> left_;
 };
 
 }
