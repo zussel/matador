@@ -653,20 +653,6 @@ public:
     }
 
     return iterator(this->holder_container_.insert(pos.iter_, holder));
-
-
-    // 1. create and insert has_many_to_many_item
-    // 2. create item_holder for
-    // create new has_many
-    /*
-    item_type *item = this->create_item(value);
-    relation_type iptr(item);
-    iterator i(this->container_.insert(pos.iter_, iptr));
-    if (this->ostore_) {
-      inserter_.insert(i);
-    }
-    return i;
-     */
   }
 
   /**
@@ -712,6 +698,12 @@ public:
   {
     iterator first = this->begin();
     iterator last = this->end();
+//    first = std::find_if(first, last, predicate);
+//    if (first != last)
+//      for(iterator i = first; ++i != last; )
+//        if (!predicate(*i))
+//          *first++ = std::move(*i);
+//    return first;
     first = std::find_if(first, last, predicate);
     if (first == last) {
       return first;
@@ -741,7 +733,6 @@ public:
     if (this->ostore_) {
       this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
       this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
-//      deleter_.remove(i);
     }
     container_iterator ci = this->holder_container_.erase(i.iter_);
     return iterator(ci);

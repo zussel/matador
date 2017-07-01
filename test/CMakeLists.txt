@@ -20,20 +20,20 @@ SET (TEST_TOOLS_SOURCES
 SET (TEST_HEADER Item.hpp has_many_list.hpp)
 
 SET (TEST_OBJECT_SOURCES
-#  object/ObjectPrototypeTestUnit.cpp
-#  object/ObjectPrototypeTestUnit.hpp
+  object/ObjectPrototypeTestUnit.cpp
+  object/ObjectPrototypeTestUnit.hpp
   object/ObjectStoreTestUnit.cpp
   object/ObjectStoreTestUnit.hpp
-#  object/PrototypeTreeTest.cpp
-#  object/PrototypeTreeTest.hpp
-#  object/PrimaryKeyUnitTest.cpp
-#  object/PrimaryKeyUnitTest.hpp
+  object/PrototypeTreeTest.cpp
+  object/PrototypeTreeTest.hpp
+  object/PrimaryKeyUnitTest.cpp
+  object/PrimaryKeyUnitTest.hpp
   object/HasManyVectorUnitTest.cpp
   object/HasManyVectorUnitTest.hpp
-#  object/HasManyListUnitTest.cpp
-#  object/HasManyListUnitTest.hpp
-#  object/ObjectTransactiontestUnit.cpp
-#  object/ObjectTransactiontestUnit.hpp
+  object/HasManyListUnitTest.cpp
+  object/HasManyListUnitTest.hpp
+  object/ObjectTransactiontestUnit.cpp
+  object/ObjectTransactiontestUnit.hpp
   object/RelationTestUnit.cpp
   object/RelationTestUnit.hpp
 )
@@ -83,11 +83,11 @@ SET (TEST_SOURCES test_matador.cpp)
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
   ${TEST_HEADER}
-#  ${TEST_TOOLS_SOURCES}
+  ${TEST_TOOLS_SOURCES}
   ${TEST_OBJECT_SOURCES}
-#  ${TEST_UNIT_SOURCES}
+  ${TEST_UNIT_SOURCES}
 #  ${TEST_ORM_SOURCES}
-#  ${TEST_SQL_SOURCES}
+  ${TEST_SQL_SOURCES}
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")

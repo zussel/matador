@@ -199,8 +199,9 @@ private:
   friend class detail::has_many_deleter<T, std::list>;
   friend class object_serializer;
   friend class detail::object_inserter;
+  friend class detail::object_deleter;
 
-  holder_type holder_item() const { return *iter_; }
+  holder_type& holder_item() const { return *iter_; }
 
   container_iterator iter_;
 };
@@ -414,6 +415,7 @@ private:
   friend class has_many<T, std::list>;
   friend class basic_has_many<T, std::list>;
   friend class object_serializer;
+  friend class detail::object_deleter;
   friend class detail::object_inserter;
 
   const holder_type holder_item() const { return *iter_; }
@@ -480,20 +482,14 @@ public:
     holder_type holder(value, nullptr);
 
     if (this->ostore_) {
-//      inserter_.insert(holder);
+      this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
+
+      this->relation_info_->insert_value_into_foreign(holder, this->owner_);
+
+      this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
 
     return iterator(this->holder_container_.emplace(pos.iter_, holder));
-    // create new has_many
-//    item_type *item = this->create_item(value);
-//    relation_type iptr(item);
-////    container_iterator i = pos.iter_;
-//    iterator i(this->container_.insert(pos.iter_, iptr));
-//    if (this->ostore_) {
-//      inserter_.insert(i);
-////      inserter_.insert(this->relation_info_, *this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
-//    }
-//    return i;
   }
 
   /**
@@ -577,7 +573,8 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-//      deleter_.remove(i);
+      this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+      this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
     }
     container_iterator ci = this->holder_container_.erase(i.iter_);
     return iterator(ci);
@@ -600,8 +597,9 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
+        this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+        this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
         ++i;
-//        deleter_.remove(i++);
       }
     }
     return iterator(this->holder_container_.erase(start.iter_, end.iter_));

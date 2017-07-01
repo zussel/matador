@@ -69,40 +69,40 @@ int main(int argc, char *argv[])
 {
   matador::test_suite suite;
 
-//  TestSuiteTestUnit test_suite_test;
-//  bool result = test_suite_test.test_create();
-//  result &= test_suite_test.test_list();
-//  result &= test_suite_test.test_init();
-//  result &= test_suite_test.test_method();
-//  result &= test_suite_test.test_unit();
-//  result &= test_suite_test.test_suite();
-//
-//  if (!result) {
-//    return EXIT_FAILURE;
-//  }
+  TestSuiteTestUnit test_suite_test;
+  bool result = test_suite_test.test_create();
+  result &= test_suite_test.test_list();
+  result &= test_suite_test.test_init();
+  result &= test_suite_test.test_method();
+  result &= test_suite_test.test_unit();
+  result &= test_suite_test.test_suite();
+
+  if (!result) {
+    return EXIT_FAILURE;
+  }
 
   suite.init(argc, argv);
 
-//  suite.register_unit(new AnyTestUnit);
-//  suite.register_unit(new DateTestUnit);
-//  suite.register_unit(new TimeTestUnit);
-//  suite.register_unit(new BlobTestUnit);
-//  suite.register_unit(new VarCharTestUnit);
-//  suite.register_unit(new FactoryTestUnit);
-//  suite.register_unit(new StringTestUnit);
-//  suite.register_unit(new SequencerTestUnit);
-//
-//  suite.register_unit(new PrimaryKeyUnitTest);
-//  suite.register_unit(new PrototypeTreeTestUnit);
-//  suite.register_unit(new ObjectPrototypeTestUnit);
+  suite.register_unit(new AnyTestUnit);
+  suite.register_unit(new DateTestUnit);
+  suite.register_unit(new TimeTestUnit);
+  suite.register_unit(new BlobTestUnit);
+  suite.register_unit(new VarCharTestUnit);
+  suite.register_unit(new FactoryTestUnit);
+  suite.register_unit(new StringTestUnit);
+  suite.register_unit(new SequencerTestUnit);
+
+  suite.register_unit(new PrimaryKeyUnitTest);
+  suite.register_unit(new PrototypeTreeTestUnit);
+  suite.register_unit(new ObjectPrototypeTestUnit);
   suite.register_unit(new ObjectStoreTestUnit);
-//  suite.register_unit(new ObjectTransactiontestUnit);
+  suite.register_unit(new ObjectTransactiontestUnit);
   suite.register_unit(new HasManyVectorUnitTest);
-//  suite.register_unit(new HasManyListUnitTest);
+  suite.register_unit(new HasManyListUnitTest);
   suite.register_unit(new RelationTestUnit);
-//
-//  suite.register_unit(new ConditionUnitTest);
-//  suite.register_unit(new DialectTestUnit);
+
+  suite.register_unit(new ConditionUnitTest);
+  suite.register_unit(new DialectTestUnit);
 //
 //#if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
 //  suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", ::connection::mysql));
@@ -137,6 +137,6 @@ int main(int argc, char *argv[])
 //
 //  suite.register_unit(new JsonTestUnit());
 
-  bool result = suite.run();
+  result = suite.run();
   return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }
