@@ -154,8 +154,8 @@ public:
         // get relation items for this owner identified by pk
         auto items = i->second.equal_range(id_);
         for (auto k = items.first; k != items.second; ++k) {
-          typename basic_has_many<V, C>::internal_type val(k->second);
-          x.append(val);
+//          typename basic_has_many<V, C>::internal_type val(k->second);
+//          x.append(val);
         }
       }
     } else {

@@ -257,7 +257,7 @@ public:
    */
   result<row> execute()
   {
-//    std::cout << "SQL: " << p->str() << '\n';
+    std::cout << "SQL: " << p->str() << '\n';
     return result<row>(p->execute(), prototype_);
   }
 

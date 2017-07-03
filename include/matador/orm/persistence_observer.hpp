@@ -15,6 +15,10 @@ class persistence_observer : public object_store_observer<T>
 public:
 
   persistence_observer(persistence &p) : persistence_(p) {}
+  template < class O >
+  persistence_observer(const persistence_observer<O> *x)
+    : persistence_(x->persistence_)
+  {}
 
   void on_attach(prototype_node &node, T &proto) override;
   void on_detach(prototype_node &node, T &proto) override;
@@ -23,7 +27,11 @@ public:
   void on_update(object_proxy &) override {}
   void on_delete(object_proxy &) override {}
 
+  persistence& get_persistence() const { return persistence_; }
 private:
+
+  template < class V >
+  friend class persistence_observer;
 
   persistence& persistence_;
 };

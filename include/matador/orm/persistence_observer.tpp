@@ -9,16 +9,16 @@ void persistence_observer<T>::on_attach(prototype_node &node, T&)
   if (persistence_.tables_.find(node.type()) != persistence_.tables_.end()) {
     return;
   }
-//  std::cout << "node type: " << node.type() << "\n";
-  if (node.is_relation_node()) {
+  std::cout << "node type: " << node.type() << "(typeid: " << typeid(T).name() << ")\n";
+//  if (node.is_relation_node()) {
 //    persistence_.tables_.insert(std::make_pair(
 //      node.type(), std::make_shared<relation_table<typename relation_type::object_type>>(
 //        &node, persistence_, relation_, node.node_info().owner_type_, node.node_info().relation_id_,
 //        node.node_info().owner_id_column_, node.node_info().item_id_column_
 //      )));
-  } else {
+//  } else {
     persistence_.tables_.insert(std::make_pair(node.type(), std::make_shared<table<T>>(&node, persistence_)));
-  }
+//  }
 
 }
 

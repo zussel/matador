@@ -60,8 +60,8 @@ public:
     }
     auto items = rel->second.equal_range(id_ptr_);
     for (auto item = items.first; item != items.second; ++item) {
-      typename basic_has_many<V, C>::internal_type val(item->second);
-      x.append(val);
+//      typename basic_has_many<V, C>::internal_type val(item->second);
+//      x.append(val);
     }
     // clear all elements
     rel->second.erase(id_ptr_);

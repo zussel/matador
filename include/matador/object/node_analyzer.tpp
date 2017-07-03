@@ -142,7 +142,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
      */
     // handle observer
     std::vector<Observer<has_one_to_many_item<Value, Owner> >*> has_many_item_observer;
-    for (auto o : observer_vector_) {
+    for (const auto &o : observer_vector_) {
       has_many_item_observer.push_back(new Observer<has_one_to_many_item<Value, Owner> >(o));
     }
 

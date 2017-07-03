@@ -123,15 +123,15 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new MSSQLDialectTestUnit());
 //#endif
 //
-//#if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
+#if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
 //  suite.register_unit(new ConnectionTestUnit("sqlite_conn", "sqlite connection test unit", ::connection::sqlite));
 //  suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", ::connection::sqlite));
-//  suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", ::connection::sqlite));
-//  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", ::connection::sqlite));
+  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
 //  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new SQLiteDialectTestUnit());
-//#endif
+  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new SQLiteDialectTestUnit());
+#endif
 
 //  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 //
