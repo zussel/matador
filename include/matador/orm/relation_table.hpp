@@ -31,21 +31,14 @@ public:
                  const std::string &owner_type, const std::string &relation_id,
                  const std::string &owner_id_field, const std::string &item_id_field)
     : basic_table(node, p)
-    , item_(relation)
-    , owner_id_column_(owner_id_field)
-    , item_id_column_(item_id_field)
-    , owner_type_(owner_type)
-    , relation_id_(relation_id)
     , resolver_(*this)
   {
-    item_.owner_id(owner_id_column_);
-    item_.item_id(item_id_column_);
   }
 
   virtual void create(connection &conn) override
   {
     query<relation_type> stmt(name());
-    stmt.create(item_).execute(conn);
+    stmt.create(*static_cast<T*>(this->node_->prototype())).execute(conn);
   }
 
   virtual void drop(connection &conn) override
@@ -58,22 +51,24 @@ public:
   {
     query<relation_type> q(name());
 
-    select_all_ = q.select({owner_id_column_, item_id_column_}).prepare(conn);
-    insert_ = q.insert(item_).prepare(conn);
+    select_all_ = q.select().prepare(conn);
+//    select_all_ = q.select({owner_id_column_, item_id_column_}).prepare(conn);
+    insert_ = q.insert(*static_cast<T*>(this->node_->prototype())).prepare(conn);
 
-    column owner_id(owner_id_column_);
-    column item_id(item_id_column_);
+    T *proto = static_cast<T*>(this->node_->prototype());
+    column owner_id(proto->left_column());
+    column item_id(proto->right_column());
 
-    update_ = q.update(item_).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
+    update_ = q.update(*proto).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
 
     // find owner table
-    auto tid = find_table(owner_type_);
-    if (tid == end_table()) {
-      // Todo: introduce throw_orm_exception
-      throw std::logic_error("no owner table " + owner_type_ + " found");
-    }
-    owner_table_ = tid->second;
+//    auto tid = find_table(owner_type_);
+//    if (tid == end_table()) {
+//      // Todo: introduce throw_orm_exception
+//      throw std::logic_error("no owner table " + owner_type_ + " found");
+//    }
+//    owner_table_ = tid->second;
   }
 
   virtual void load(object_store &store) override
@@ -140,17 +135,10 @@ public:
   }
 
 private:
-  relation_type item_;
-
   statement<relation_type> select_all_;
   statement<relation_type> insert_;
   statement<relation_type> update_;
   statement<relation_type> delete_;
-
-  std::string owner_id_column_;
-  std::string item_id_column_;
-  std::string owner_type_;
-  std::string relation_id_;
 
   detail::relation_resolver<relation_type> resolver_;
 

@@ -113,7 +113,12 @@ public:
     return a.value_ != b.value_;
   }
 
-  object_ptr<T> value() const
+  const object_ptr<T>& value() const
+  {
+    return value_;
+  }
+
+  object_ptr<T>& value()
   {
     return value_;
   }
@@ -180,7 +185,12 @@ public:
     return a.value_ != b.value_;
   }
 
-  T value() const
+  const T& value() const
+  {
+    return value_;
+  }
+
+  T& value()
   {
     return value_;
   }

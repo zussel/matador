@@ -186,9 +186,8 @@ public:
    *
    * @return The current value
    */
-  value_type operator->() const { return get(); }
-  value_type operator*() const { return get(); }
-  value_type get() const { return iter_->value(); }
+  value_type operator->() const { return iter_->value(); }
+  value_type& operator*() const { return iter_->value(); }
   //@}
 
 private:
@@ -406,9 +405,8 @@ public:
    *
    * @return The current value
    */
-  const value_type operator->() const { return get(); }
-  const value_type operator*() const { return get(); }
-  const value_type get() const { return iter_->value(); }
+  const value_type operator->() const { return iter_->value(); }
+  const value_type& operator*() const { return iter_->value(); }
   //@}
 
 private:

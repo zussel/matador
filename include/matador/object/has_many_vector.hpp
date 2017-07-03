@@ -273,7 +273,7 @@ public:
    * @return The current value
    */
   value_type operator->() const { return iter_->value(); }
-  value_type operator*() const { return iter_->value(); }
+  value_type& operator*() const { return iter_->value(); }
   //@}
 
 private:
@@ -570,9 +570,8 @@ public:
    * 
    * @return The current value
    */
-  const value_type operator->() const { return get(); }
-  const value_type operator*() const { return get(); }
-  const value_type get() const { return iter_->value(); }
+  const value_type operator->() const { return iter_->value(); }
+  const value_type& operator*() const { return iter_->value(); }
   //@}
   
 private:
@@ -696,27 +695,7 @@ public:
   template < class P >
   iterator remove_if(P predicate)
   {
-    iterator first = this->begin();
-    iterator last = this->end();
-//    first = std::find_if(first, last, predicate);
-//    if (first != last)
-//      for(iterator i = first; ++i != last; )
-//        if (!predicate(*i))
-//          *first++ = std::move(*i);
-//    return first;
-    first = std::find_if(first, last, predicate);
-    if (first == last) {
-      return first;
-    } else {
-      iterator result = first;
-      for (; first != last; ++first) {
-        if (!predicate(*first)) {
-          result.move(first);
-          ++result;
-        }
-      }
-      return erase(result, this->end());
-    }
+    return erase(std::remove_if(this->begin(), this->end(), predicate));
   }
 
   /**
