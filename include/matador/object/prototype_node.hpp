@@ -514,7 +514,7 @@ private:
 template<class T>
 T *prototype_node::create() const
 {
-  return static_cast<detail::basic_prototype_info<T>*>(info_.get())->create();
+  return static_cast<T*>(info_.get()->create());
 }
 
 template<class T>

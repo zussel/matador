@@ -14,7 +14,7 @@
 
 namespace matador {
 
-template < class T >
+template < class T, class Enabled >
 class table;
 
 namespace detail {

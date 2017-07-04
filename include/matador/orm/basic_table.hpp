@@ -147,8 +147,8 @@ protected:
 
   template < class T >
   friend class detail::relation_resolver;
-  template < class T >
-  friend class relation_table;
+  template < class T, class Enabled >
+  friend class table;
   friend class persistence;
 
 protected:
