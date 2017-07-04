@@ -409,7 +409,7 @@ bool prototype_node::endpoints_empty() const
   return info_->endpoints_empty();
 }
 
-const detail::basic_prototype_info::t_endpoint_map &prototype_node::endpoints() const
+const detail::abstract_prototype_info::t_endpoint_map &prototype_node::endpoints() const
 {
   return info_->endpoints();
 }

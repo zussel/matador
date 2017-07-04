@@ -6,7 +6,7 @@
 
 namespace matador {
 
-basic_table::basic_table(prototype_node *node, persistence &p)
+basic_table::basic_table(prototype_node &node, persistence &p)
   : persistence_(p)
   , node_(node)
 { }
@@ -16,7 +16,7 @@ basic_table::~basic_table() {}
 
 std::string basic_table::name() const
 {
-  return node_->type();
+  return node_.type();
 }
 
 bool basic_table::is_loaded() const

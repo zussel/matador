@@ -26,13 +26,13 @@ enum class notification_type {
   REMOVE
 };
 
-class basic_prototype_info
+class abstract_prototype_info
 {
 public:
-  virtual ~basic_prototype_info() {}
+  virtual ~abstract_prototype_info() {}
 
 protected:
-  basic_prototype_info(prototype_node &n, std::type_index tindex)
+  abstract_prototype_info(prototype_node &n, std::type_index tindex)
     : node(n), type_index_(tindex)
   {}
 
@@ -77,45 +77,38 @@ protected:
 };
 
 template < class T >
-class prototype_info : public basic_prototype_info
+class basic_prototype_info : public abstract_prototype_info
 {
-public:
-  prototype_info(prototype_node &node, T *proto)
-    : basic_prototype_info(node, std::type_index(typeid(T)))
+protected:
+  basic_prototype_info(prototype_node &node, T *proto)
+    : abstract_prototype_info(node, std::type_index(typeid(T)))
     , prototype_(proto)
   {}
 
   virtual void* prototype() const override;
-  virtual void* create() const override;
   virtual void register_observer(basic_object_store_observer *obs) override;
   virtual void notify(notification_type type) override;
 
-private:
+protected:
   std::unique_ptr<T> prototype_;
   typedef std::vector<std::unique_ptr<matador::object_store_observer<T>>> t_observer_vector;
   t_observer_vector observers;
 };
 
 template < class T >
-void* prototype_info<T>::prototype() const
+void* basic_prototype_info<T>::prototype() const
 {
   return prototype_.get();
 }
 
 template < class T >
-void* prototype_info<T>::create() const
-{
-  return new T;
-}
-
-template < class T >
-void prototype_info<T>::register_observer(basic_object_store_observer *obs)
+void basic_prototype_info<T>::register_observer(basic_object_store_observer *obs)
 {
   observers.emplace_back(std::unique_ptr<object_store_observer<T>>(static_cast<object_store_observer<T>*>(obs)));
 }
 
 template < class T >
-void prototype_info<T>::notify(notification_type type)
+void basic_prototype_info<T>::notify(notification_type type)
 {
   for(auto &observer : observers) {
     switch (type) {
@@ -129,6 +122,24 @@ void prototype_info<T>::notify(notification_type type)
         break;
     }
   }
+}
+
+template < class T >
+class prototype_info : public basic_prototype_info<T>
+{
+public:
+  prototype_info(prototype_node &node, T *proto)
+    : basic_prototype_info<T>(node, proto)
+  {}
+
+  virtual void* create() const override;
+
+};
+
+template < class T >
+void* prototype_info<T>::create() const
+{
+  return new T;
 }
 
 }

@@ -89,8 +89,8 @@ public:
 
 //  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_field_endpoint>> t_endpoint_map;
 
-  typedef detail::basic_prototype_info::t_endpoint_map::const_iterator const_endpoint_iterator;
-  typedef detail::basic_prototype_info::t_endpoint_map::iterator endpoint_iterator;
+  typedef detail::abstract_prototype_info::t_endpoint_map::const_iterator const_endpoint_iterator;
+  typedef detail::abstract_prototype_info::t_endpoint_map::iterator endpoint_iterator;
 
   struct relation_node_info
   {
@@ -417,7 +417,7 @@ public:
   std::size_t endpoints_size() const;
   bool endpoints_empty() const;
 
-  const detail::basic_prototype_info::t_endpoint_map& endpoints() const;
+  const detail::abstract_prototype_info::t_endpoint_map& endpoints() const;
 
 private:
 
@@ -473,7 +473,7 @@ private:
   friend class detail::node_analyzer;
   friend class detail::object_inserter;
 
-  std::unique_ptr<matador::detail::basic_prototype_info> info_;
+  std::unique_ptr<matador::detail::abstract_prototype_info> info_;
 
   object_store *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
 
@@ -514,7 +514,7 @@ private:
 template<class T>
 T *prototype_node::create() const
 {
-  return static_cast<T*>(info_->create());
+  return static_cast<detail::basic_prototype_info<T>*>(info_.get())->create();
 }
 
 template<class T>

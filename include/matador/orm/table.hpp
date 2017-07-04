@@ -20,6 +20,11 @@ namespace matador {
 
 class connection;
 
+template < class T, class Enabled >
+class table;
+
+class basic_has_many_to_many_item;
+
 /**
  * @brief Represents a database table
  *
@@ -30,7 +35,7 @@ class connection;
  * @tparam T The type of the table
  */
 template < class T >
-class table : public basic_table
+class table<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type> : public basic_table
 {
 public:
   /**
@@ -42,7 +47,7 @@ public:
    * @param node The underlying prototype_node
    * @param p The underlying persistence object
    */
-  table(prototype_node *node, persistence &p)
+  table(prototype_node &node, persistence &p)
     : basic_table(node, p)
     , resolver_(*this)
   { }
@@ -72,7 +77,7 @@ public:
       // try to find object proxy by id
       std::shared_ptr<basic_identifier> id(identifier_resolver_.resolve_object(first.get()));
 
-      detail::t_identifier_map::iterator i = identifier_proxy_map_.find(id);
+      auto i = identifier_proxy_map_.find(id);
       if (i != identifier_proxy_map_.end()) {
         // use proxy;
         proxy_.reset(i->second);

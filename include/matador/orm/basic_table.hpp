@@ -64,7 +64,7 @@ public:
    * @param node The underlying prototype_node
    * @param p The underlying persistence object
    */
-  basic_table(prototype_node *node, persistence &p);
+  basic_table(prototype_node &node, persistence &p);
 
   virtual ~basic_table();
 
@@ -171,7 +171,7 @@ protected:
   /// @endcond
 
 private:
-  prototype_node *node_;
+  prototype_node &node_;
 };
 
 }

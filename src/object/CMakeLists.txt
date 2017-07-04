@@ -19,7 +19,7 @@ SET(SOURCES
   relation_field_endpoint.cpp
   abstract_has_many.cpp
   basic_has_many_to_many_item.cpp
-  prototype_info.cpp)
+        prototype_info.cpp)
 
 SET(HEADER
   ../../include/matador/object/action.hpp
@@ -71,7 +71,7 @@ SET(HEADER
   ../../include/matador/object/has_many_inserter.hpp
   ../../include/matador/object/has_many_deleter.hpp
   ../../include/matador/object/has_many_item_holder.hpp
-  ../../include/matador/object/prototype_info.hpp
+        ../../include/matador/object/prototype_info.hpp
   ../../include/matador/object/relation_endpoint_value_inserter.hpp
   ../../include/matador/object/relation_endpoint_value_inserter.tpp
   ../../include/matador/object/relation_endpoint_value_remover.hpp

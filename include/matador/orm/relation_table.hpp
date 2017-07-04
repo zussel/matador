@@ -8,6 +8,7 @@
 
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/object_proxy_accessor.hpp"
+#include "matador/object/prototype_node.hpp"
 
 #include "matador/utils/basic_identifier.hpp"
 
@@ -21,41 +22,40 @@ namespace matador {
 /// @cond MATADOR_DEV
 
 template < class T >
-class relation_table : public basic_table, public detail::object_proxy_accessor
+class table : public basic_table, public detail::object_proxy_accessor
 {
 public:
-
-  typedef has_many_item<T> relation_type;
-
-  relation_table(prototype_node *node, persistence &p, const relation_type &relation,
-                 const std::string &owner_type, const std::string &relation_id,
-                 const std::string &owner_id_field, const std::string &item_id_field)
+  relation_table(prototype_node &node, persistence &p)
     : basic_table(node, p)
     , resolver_(*this)
   {
+
+    if (!node.is_relation_node()) {
+      throw_object_exception("node " << node.type() << " isn't a relation node");
+    }
   }
 
   virtual void create(connection &conn) override
   {
-    query<relation_type> stmt(name());
-    stmt.create(*static_cast<T*>(this->node_->prototype())).execute(conn);
+    query<T> stmt(name());
+    stmt.create(*this->node_.prototype<T>()).execute(conn);
   }
 
   virtual void drop(connection &conn) override
   {
-    query<relation_type> stmt(name());
+    query<T> stmt(name());
     stmt.drop().execute(conn);
   }
 
   virtual void prepare(connection &conn) override
   {
-    query<relation_type> q(name());
+    query<T> q(name());
 
     select_all_ = q.select().prepare(conn);
+    T *proto = this->node_.prototype<T>();
 //    select_all_ = q.select({owner_id_column_, item_id_column_}).prepare(conn);
-    insert_ = q.insert(*static_cast<T*>(this->node_->prototype())).prepare(conn);
+    insert_ = q.insert(*proto).prepare(conn);
 
-    T *proto = static_cast<T*>(this->node_->prototype());
     column owner_id(proto->left_column());
     column item_id(proto->right_column());
 
@@ -79,11 +79,15 @@ public:
     auto res = select_all_.execute();
 
     // set explicit creator function
-    relation_type item(item_);
-    auto func = [item]() {
-      relation_type *i = new relation_type(item.owner_id(), item.item_id(), item.owner()->clone());
+//    T item(item_);
+    prototype_node &node = this->node_;
+
+    auto func = [&node]() {
+
+      T *i = node.create<T>();
       return i;
     };
+
     res.creator(func);
 
     auto first = res.begin();
@@ -93,54 +97,54 @@ public:
       // create new proxy of relation object
       proxy_.reset(new object_proxy(first.release()));
       ++first;
-      object_proxy *proxy = store.insert<relation_type>(proxy_.release(), false);
+      object_proxy *proxy = store.insert<T>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
 
       // append item to owner table
-      auto i = owner_table_->has_many_relations_.find(relation_id_);
-      if (i == owner_table_->has_many_relations_.end()) {
-        i = owner_table_->has_many_relations_.insert(
-        std::make_pair(relation_id_, detail::t_identifier_multimap())).first;
-      }
-      i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), proxy));
+//      auto i = owner_table_->has_many_relations_.find(relation_id_);
+//      if (i == owner_table_->has_many_relations_.end()) {
+//        i = owner_table_->has_many_relations_.insert(
+//        std::make_pair(relation_id_, detail::t_identifier_multimap())).first;
+//      }
+//      i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), proxy));
     }
 
-    if (owner_table_->is_loaded()) {
-      // append items
-      owner_table_->append_relation_items(relation_id_, identifier_proxy_map_, owner_table_->has_many_relations_);
-    }
+//    if (owner_table_->is_loaded()) {
+//      // append items
+//      owner_table_->append_relation_items(relation_id_, identifier_proxy_map_, owner_table_->has_many_relations_);
+//    }
 
     is_loaded_ = true;
   }
 
   virtual void insert(object_proxy *proxy) override
   {
-    insert_.bind(0, (relation_type*)proxy->obj());
+    insert_.bind(0, static_cast<T*>(proxy->obj()));
     // Todo: check result
     insert_.execute();
   }
 
   virtual void update(object_proxy *proxy) override
   {
-    size_t pos = update_.bind(0, static_cast<relation_type*>(proxy->obj()));
-    update_.bind(pos, static_cast<relation_type*>(proxy->obj()));
+    size_t pos = update_.bind(0, static_cast<T*>(proxy->obj()));
+    update_.bind(pos, static_cast<T*>(proxy->obj()));
 
     update_.execute();
   }
 
   virtual void remove(object_proxy *proxy) override
   {
-    delete_.bind(0, static_cast<relation_type*>(proxy->obj()));
+    delete_.bind(0, static_cast<T*>(proxy->obj()));
     delete_.execute();
   }
 
 private:
-  statement<relation_type> select_all_;
-  statement<relation_type> insert_;
-  statement<relation_type> update_;
-  statement<relation_type> delete_;
+  statement<T> select_all_;
+  statement<T> insert_;
+  statement<T> update_;
+  statement<T> delete_;
 
-  detail::relation_resolver<relation_type> resolver_;
+  detail::relation_resolver<T> resolver_;
 
   std::unique_ptr<object_proxy> proxy_;
 
