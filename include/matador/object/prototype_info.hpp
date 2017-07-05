@@ -124,23 +124,39 @@ void basic_prototype_info<T>::notify(notification_type type)
   }
 }
 
+template < class T, class Enabled >
+class prototype_info;
+
 template < class T >
-class prototype_info : public basic_prototype_info<T>
+class prototype_info<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type> : public basic_prototype_info<T>
 {
 public:
   prototype_info(prototype_node &node, T *proto)
     : basic_prototype_info<T>(node, proto)
   {}
 
-  virtual void* create() const override;
+  virtual void* create() const override
+  {
+    return new T;
+  }
 
 };
 
 template < class T >
-void* prototype_info<T>::create() const
+class prototype_info<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type> : public basic_prototype_info<T>
 {
-  return new T;
-}
+public:
+  prototype_info(prototype_node &node, T *proto)
+    : basic_prototype_info<T>(node, proto)
+  {}
+
+  virtual void* create() const override
+  {
+    return new T;
+  }
+
+private:
+};
 
 }
 }
