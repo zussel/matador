@@ -755,6 +755,21 @@ public:
    */
   bool has_transaction() const;
 
+  template < class T >
+  void mark_modified(object_proxy *proxy)
+  {
+    if (!transactions_.empty()) {
+      transactions_.top().on_update<T>(proxy);
+    }
+  }
+
+  template < class T >
+  void mark_modified(const object_ptr<T> &optr)
+  {
+    mark_modified<T>(optr.proxy_);
+  }
+
+
 private:
   friend class detail::modified_marker;
   friend class detail::object_inserter;
@@ -794,20 +809,6 @@ private:
    * @throws matador::object_exception on error
    */
   prototype_node* clear(prototype_node *node);
-
-  template < class T >
-  void mark_modified(object_proxy *proxy)
-  {
-    if (!transactions_.empty()) {
-      transactions_.top().on_update<T>(proxy);
-    }
-  }
-
-  template < class T >
-  void mark_modified(const object_ptr<T> &optr)
-  {
-    mark_modified<T>(optr.proxy_);
-  }
 
   template < class T >
   object_ptr<T> insert(const object_ptr<T> &o, bool reset)

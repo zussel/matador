@@ -139,12 +139,12 @@ void RelationTestUnit::test_has_many()
   endpoint = node->find_endpoint("child_id");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "child_id", "endpoint field name must be 'child_id'");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
 
   endpoint = node->find_endpoint("vector_id");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "vector_id", "endpoint field name must be 'vector_id'");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
 
   auto tim = store.insert(new child("tim"));
   auto group = store.insert(new children_vector("group"));

@@ -87,25 +87,32 @@ void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is
 template < class Value, class Owner >
 void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::insert_value(object_proxy *value, object_proxy *owner)
 {
-  inserter.insert(object_ptr<Owner>(value), this->field, has_many_item_holder<Value>(owner, nullptr));
+  object_ptr<Owner> valptr(value);
+  inserter.insert(valptr, this->field, has_many_item_holder<Value>(owner, nullptr));
+  owner->ostore()->mark_modified(valptr);
 }
 
 template < class Value, class Owner >
 void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::remove_value(object_proxy *value, object_proxy *owner)
 {
-  remover.remove(object_ptr<Owner>(value), this->field, has_many_item_holder<Value>(owner, nullptr));
+  object_ptr<Owner> valptr(value);
+  remover.remove(valptr, this->field, has_many_item_holder<Value>(owner, nullptr));
+  owner->ostore()->mark_modified(valptr);
 }
 
 template < class Value, class Owner >
 void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::insert_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
   inserter.insert(static_cast<const has_many_item_holder<Owner>&>(holder).value(), this->field, has_many_item_holder<Value>(owner, nullptr));
+  owner->ostore()->mark_modified(static_cast<const has_many_item_holder<Owner>&>(holder).value());
 }
 
 template < class Value, class Owner >
 void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::remove_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
-  remover.remove(static_cast<const has_many_item_holder<Owner>&>(holder).value(), this->field, has_many_item_holder<Value>(owner, nullptr));
+  remover.remove(static_cast<const has_many_item_holder<Owner> &>(holder).value(), this->field,
+  has_many_item_holder<Value>(owner, nullptr));
+  owner->ostore()->mark_modified(static_cast<const has_many_item_holder<Owner> &>(holder).value());
 }
 
 template < class Value, class Owner >

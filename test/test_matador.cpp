@@ -124,8 +124,8 @@ int main(int argc, char *argv[])
 //#endif
 //
 #if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
-//  suite.register_unit(new ConnectionTestUnit("sqlite_conn", "sqlite connection test unit", ::connection::sqlite));
-//  suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", ::connection::sqlite));
+  suite.register_unit(new ConnectionTestUnit("sqlite_conn", "sqlite connection test unit", ::connection::sqlite));
+  suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", ::connection::sqlite));
   suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", ::connection::sqlite));
   suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
 //  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));

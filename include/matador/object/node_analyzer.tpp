@@ -151,7 +151,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
     node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
     // new has many to many item
-    auto proto = new has_one_to_many_item<Value, Owner>(owner_column, item_column);
+    auto proto = new has_one_to_many_item<Value, Owner>(item_column, owner_column);
     prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<Value, Owner> >(&store_, id, proto, false, node_.type(), id);
 
     pi = store_.attach_internal<has_one_to_many_item<Value, Owner>>(node, nullptr, has_many_item_observer);
@@ -190,7 +190,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
       endpoint->foreign_endpoint = foreign_endpoint;
 
       // new has many to many item
-      auto proto = new has_many_to_many_item<Owner, Value>(owner_column, item_column);
+      auto proto = new has_many_to_many_item<Owner, Value>(item_column, owner_column);
       prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<Owner, Value>>(&store_, id, proto, false, node_.type(), id);
 
       pi = store_.attach_internal<has_many_to_many_item<Owner, Value>>(node, nullptr, has_many_item_observer);
@@ -238,7 +238,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
       has_many_item_observer.push_back(new Observer<has_one_to_many_item<Value, Owner> >(o));
     }
 
-    auto proto = new has_one_to_many_item<Value, Owner>(owner_column, item_column);
+    auto proto = new has_one_to_many_item<Value, Owner>(item_column, owner_column);
     prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<Value, Owner> >(&store_, id, proto, false, node_.type(), id);
 
     pi = store_.attach_internal<has_one_to_many_item<Value, Owner> >(node, nullptr, has_many_item_observer);

@@ -89,6 +89,11 @@ protected:
   virtual void register_observer(basic_object_store_observer *obs) override;
   virtual void notify(notification_type type) override;
 
+  T* get() const
+  {
+    return static_cast<T*>(prototype());
+  }
+
 protected:
   std::unique_ptr<T> prototype_;
   typedef std::vector<std::unique_ptr<matador::object_store_observer<T>>> t_observer_vector;
@@ -124,7 +129,7 @@ void basic_prototype_info<T>::notify(notification_type type)
   }
 }
 
-template < class T, class Enabled >
+template < class T, class Enabled = void >
 class prototype_info;
 
 template < class T >
@@ -152,7 +157,7 @@ public:
 
   virtual void* create() const override
   {
-    return new T;
+    return new T(this->get()->left_column(), this->get()->right_column());
   }
 
 private:
