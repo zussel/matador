@@ -573,6 +573,7 @@ public:
     if (this->ostore_) {
       this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
       this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
+      this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
     container_iterator ci = this->holder_container_.erase(i.iter_);
     return iterator(ci);
@@ -599,6 +600,7 @@ public:
         this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
         ++i;
       }
+      this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
     return iterator(this->holder_container_.erase(start.iter_, end.iter_));
   }
