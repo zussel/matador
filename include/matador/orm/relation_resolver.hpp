@@ -126,7 +126,7 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &x, const char *, const char *)
+  void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);

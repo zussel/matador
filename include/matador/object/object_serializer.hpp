@@ -247,32 +247,35 @@ public:
       x.reset();
 
       // Todo: make has many code work
-//      for (typename basic_has_many<T, C>::size_type i = 0; i < s; ++i) {
-//
-//        // deserialize all items
-//        unsigned long oid = 0;
-//        serialize(id_oid.c_str(), oid);
-//        std::string type;
-//        serialize(id_type.c_str(), type);
-//
-//        // and append them to container
-//        typename basic_has_many<T, C>::internal_type ptr;
-//
-//        if (oid > 0) {
-//          object_proxy *oproxy = find_proxy(oid);
-//          if (!oproxy) {
-//            oproxy =  new object_proxy(new typename basic_has_many<T, C>::item_type, oid, ostore_);
-//            insert_proxy(oproxy);
-//          }
-//          ptr.reset(oproxy, cascade_type::NONE);
-//        } else {
-//          ptr.reset(new object_proxy(new typename basic_has_many<T, C>::item_type, oid, ostore_), cascade_type::NONE);
-//        }
-//
-////        serialize("has many item.oid", oid)
-////        serialize(typeid(typename basic_has_many<T, C>::item_type).name(), ptr, cascade_type::NONE);
-//        x.append(ptr);
-//      }
+      for (typename basic_has_many<T, C>::size_type i = 0; i < s; ++i) {
+
+        // deserialize all items
+        unsigned long oid = 0;
+        serialize(id_oid.c_str(), oid);
+
+
+        std::string type;
+        serialize(id_type.c_str(), type);
+
+        
+        // and append them to container
+        typename basic_has_many<T, C>::internal_type ptr;
+
+        if (oid > 0) {
+          object_proxy *oproxy = find_proxy(oid);
+          if (!oproxy) {
+            oproxy =  new object_proxy(new typename basic_has_many<T, C>::item_type, oid, ostore_);
+            insert_proxy(oproxy);
+          }
+          ptr.reset(oproxy, cascade_type::NONE);
+        } else {
+          ptr.reset(new object_proxy(new typename basic_has_many<T, C>::item_type, oid, ostore_), cascade_type::NONE);
+        }
+
+//        serialize("has many item.oid", oid)
+//        serialize(typeid(typename basic_has_many<T, C>::item_type).name(), ptr, cascade_type::NONE);
+        x.append(ptr);
+      }
     } else {
       typename basic_has_many<T, C>::size_type s = x.size();
       serialize(id, s);
@@ -280,14 +283,27 @@ public:
       typename basic_has_many<T, C>::iterator first = x.begin();
       typename basic_has_many<T, C>::iterator last = x.end();
       // Todo: make has many code work
-//      while (first != last) {
-////        serialize(nullptr, first.relation_item(), cascade_type::NONE);
-//        typename basic_has_many<T, C>::relation_type rptr = (first++).relation_item();
-//        unsigned long oid = rptr.id();
-//        serialize(id_oid.c_str(), oid);
-//        serialize(id_type.c_str(), const_cast<char*>(rptr.type()), strlen(rptr.type()));
-//      }
+
+      while (first != last) {
+        unsigned long oid = first.holder_item().item_proxy()->id();
+        // serialize holder proxy id
+        serialize(id_oid.c_str(), oid);
+        // serialize value
+        serialize("", *first++);
+      }
     }
+  }
+
+  template < class T >
+  void serialize_value(const T &val)
+  {
+
+  }
+
+  template < class T >
+  void serialize_value(const object_ptr<T> &val)
+  {
+
   }
 
 private:

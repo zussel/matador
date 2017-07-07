@@ -49,7 +49,7 @@ public:
   void serialize(const char*, HAS_ONE&, cascade_type) { }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &x, const char *, const char *)
+  void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *)
   {
     if (owner_id_ != id) {
       return;
