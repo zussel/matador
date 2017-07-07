@@ -168,6 +168,7 @@ protected:
 
   friend class detail::object_inserter;
   friend class object_store;
+  friend class object_serializer;
   friend class detail::has_many_inserter<T, std::vector>;
   friend class detail::has_many_deleter<T, std::vector>;
   friend class detail::has_many_inserter<T, std::list>;

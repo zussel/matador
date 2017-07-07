@@ -15,7 +15,7 @@
 using namespace hasmanylist;
 
 OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, const std::string &dns)
-  : unit_test(prefix + "_orm_relation", prefix + " orm test unit")
+  : unit_test(prefix + "_orm_relation", prefix + " orm relation test unit")
   , dns_(dns)
 {
   add_test("has_many_delete", std::bind(&OrmRelationTestUnit::test_has_many_delete, this), "test has many delete item");

@@ -54,6 +54,8 @@ template < class T >
 class has_many_item_holder<T, typename std::enable_if<!is_builtin<T>::value>::type> : public basic_has_many_item_holder
 {
 public:
+  typedef object_ptr<T> value_type;
+
   has_many_item_holder() {}
 
   has_many_item_holder(const object_ptr<T> &val, object_proxy *item_proxy)
@@ -131,6 +133,8 @@ template < class T >
 class has_many_item_holder<T, typename std::enable_if<is_builtin<T>::value>::type> : public basic_has_many_item_holder
 {
 public:
+  typedef T value_type;
+
   has_many_item_holder() {}
 
   has_many_item_holder(const T &val, object_proxy *item_proxy)

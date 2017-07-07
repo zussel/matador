@@ -162,8 +162,8 @@ public:
     }
   }
 
-  template < class T >
-	void serialize(const char* id, belongs_to<T> &x, cascade_type cascade)
+  template < class T, object_holder_type OHT >
+	void serialize(const char* id, object_pointer<T, OHT> &x, cascade_type cascade)
   {
     if (restore) {
       /***************
@@ -179,8 +179,8 @@ public:
 
       unsigned long oid = 0;
       serialize(id, oid);
-      std::string type;
-      serialize(id, type);
+//      std::string type;
+//      serialize(id, type);
 
       if (oid > 0) {
         object_proxy *oproxy = find_proxy(oid);
@@ -193,52 +193,52 @@ public:
     } else {
       unsigned long oid = x.id();
       serialize(id, oid);
-      serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
+//      serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
     }
   }
 
-  template < class T >
-	void serialize(const char* id, has_one<T> &x, cascade_type cascade)
-  {
-    if (restore) {
-      /***************
-       *
-       * extract id and type of serializable from buffer
-       * try to find serializable on serializable store
-       * if found check type if wrong type throw error
-       * else create serializable and set extracted id
-       * insert serializable into serializable store
-       *
-       ***************/
-      // Todo: correct implementation
-
-      unsigned long oid = 0;
-      serialize(id, oid);
-      std::string type;
-      serialize(id, type);
-
-      if (oid > 0) {
-        object_proxy *oproxy = find_proxy(oid);
-        if (!oproxy) {
-          oproxy =  new object_proxy(new T, oid, ostore_);
-          insert_proxy(oproxy);
-        }
-        x.reset(oproxy, cascade);
-      }
-    } else {
-      unsigned long oid = x.id();
-      serialize(id, oid);
-      serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
-    }
-  }
+//  template < class T >
+//	void serialize(const char* id, has_one<T> &x, cascade_type cascade)
+//  {
+//    if (restore) {
+//      /***************
+//       *
+//       * extract id and type of serializable from buffer
+//       * try to find serializable on serializable store
+//       * if found check type if wrong type throw error
+//       * else create serializable and set extracted id
+//       * insert serializable into serializable store
+//       *
+//       ***************/
+//      // Todo: correct implementation
+//
+//      unsigned long oid = 0;
+//      serialize(id, oid);
+//      std::string type;
+//      serialize(id, type);
+//
+//      if (oid > 0) {
+//        object_proxy *oproxy = find_proxy(oid);
+//        if (!oproxy) {
+//          oproxy =  new object_proxy(new T, oid, ostore_);
+//          insert_proxy(oproxy);
+//        }
+//        x.reset(oproxy, cascade);
+//      }
+//    } else {
+//      unsigned long oid = x.id();
+//      serialize(id, oid);
+//      serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
+//    }
+//  }
 
   template<class T, template<class ...> class C>
   void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *)
   {
     std::string id_oid(id);
     id_oid += ".oid";
-    std::string id_type(id);
-    id_type += ".oid";
+//    std::string id_type(id);
+//    id_type += ".oid";
     if (restore) {
       typename basic_has_many<T, C>::size_type s = 0;
       // deserialize container size
@@ -254,27 +254,16 @@ public:
         serialize(id_oid.c_str(), oid);
 
 
-        std::string type;
-        serialize(id_type.c_str(), type);
-
-        
         // and append them to container
-        typename basic_has_many<T, C>::internal_type ptr;
-
-        if (oid > 0) {
-          object_proxy *oproxy = find_proxy(oid);
-          if (!oproxy) {
-            oproxy =  new object_proxy(new typename basic_has_many<T, C>::item_type, oid, ostore_);
-            insert_proxy(oproxy);
-          }
-          ptr.reset(oproxy, cascade_type::NONE);
-        } else {
-          ptr.reset(new object_proxy(new typename basic_has_many<T, C>::item_type, oid, ostore_), cascade_type::NONE);
+        object_proxy *proxy = x.relation_info_->acquire_proxy(oid, *ostore_);
+        if (proxy) {
+          insert_proxy(proxy);
         }
 
-//        serialize("has many item.oid", oid)
-//        serialize(typeid(typename basic_has_many<T, C>::item_type).name(), ptr, cascade_type::NONE);
-        x.append(ptr);
+        typename has_many_item_holder<T>::value_type val;
+        serialize("", val);
+
+        x.append(has_many_item_holder<T>(val, proxy));
       }
     } else {
       typename basic_has_many<T, C>::size_type s = x.size();
@@ -285,7 +274,10 @@ public:
       // Todo: make has many code work
 
       while (first != last) {
-        unsigned long oid = first.holder_item().item_proxy()->id();
+        unsigned long oid(0);
+        if (first.holder_item().item_proxy()) {
+          oid = first.holder_item().item_proxy()->id();
+        }
         // serialize holder proxy id
         serialize(id_oid.c_str(), oid);
         // serialize value

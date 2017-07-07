@@ -70,6 +70,11 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     object_ptr<has_many_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
   }
+
+  virtual object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
+  {
+    return nullptr;
+  }
 };
 
 /*
@@ -122,6 +127,19 @@ struct has_one_to_many_endpoint : public from_many_endpoint<Value, Owner>
     object_ptr<Owner> ownptr(owner);
     remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
   }
+
+  virtual object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
+  {
+    if (oid == 0) {
+      return nullptr;
+    }
+    object_proxy *proxy = store.find_proxy(oid);
+    if (proxy == nullptr) {
+      proxy = new object_proxy(new has_one_to_many_item<Value, Owner>(), oid, &store);
+    }
+    return proxy;
+  }
+
 };
 
 /*
@@ -180,6 +198,12 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
       has_many_item_holder<Value>(owner, holder.item_proxy())
     );
   }
+
+  virtual object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
+  {
+    return nullptr;
+  }
+
 };
 
 }
