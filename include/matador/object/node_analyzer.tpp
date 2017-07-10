@@ -148,6 +148,10 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 
     auto endpoint = std::make_shared<detail::has_one_to_many_endpoint <Value, Owner>>(id, &node_);
 
+    std::cout << "owner column: " << owner_column << "\n";
+    std::cout << "item column: " << item_column << "\n";
+    std::cout << "node " << node_.type() << " has endpoint " << endpoint->field << ", type " << endpoint->type_name << "\n";
+
     node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
     // new has many to many item
@@ -155,6 +159,15 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
     prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<Value, Owner> >(&store_, id, proto, false, node_.type(), id);
 
     pi = store_.attach_internal<has_one_to_many_item<Value, Owner>>(node, nullptr, has_many_item_observer);
+
+    for(auto ep : pi->endpoints()) {
+      std::cout << "node " << pi->type() << " has endpoint " << ep.second->field << ", type " << ep.second->type_name;
+      auto sptr = ep.second->foreign_endpoint.lock();
+      if (sptr)
+        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
+      else
+        std::cout << " (no foreign endpoint)\n";
+    }
   } else {
     /*
      * switch left (Owner) and right (Value) template parameter
