@@ -228,8 +228,12 @@ public:
     update_ = q.update(*proto).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
 
-    // find owner table
-//    auto tid = find_table(owner_type_);
+    // find left table
+    auto left_endpoint = this->node_.find_endpoint(proto->left_column());
+    if (left_endpoint == this->node_.tree()->end()) {
+      throw_object_exception("couldn't find relation left endpoint " << proto->left_column());
+    }
+    auto tid = find_table(left_endpoint.second->node.type());
 //    if (tid == end_table()) {
 //      // Todo: introduce throw_orm_exception
 //      throw std::logic_error("no owner table " + owner_type_ + " found");
@@ -314,7 +318,8 @@ private:
 
   std::unique_ptr<object_proxy> proxy_;
 
-  table_ptr owner_table_;
+  table_ptr left_table_;
+  table_ptr right_table_;
 };
 
 }

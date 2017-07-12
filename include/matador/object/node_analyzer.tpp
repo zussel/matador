@@ -122,7 +122,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_one <Value> &
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, Container> &,
-                                               const char *owner_column, const char *item_column,
+                                               const char *left_column, const char *right_column,
                                                typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
 //  std::cout << "ANALYZING " << typeid(Owner).name() << " found HAS_MANY<" << typeid(Value).name() << ">\n";
@@ -148,25 +148,17 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 
     auto endpoint = std::make_shared<detail::has_one_to_many_endpoint <Value, Owner>>(id, &node_);
 
-    std::cout << "owner column: " << owner_column << "\n";
-    std::cout << "item column: " << item_column << "\n";
-    std::cout << "node " << node_.type() << " has endpoint " << endpoint->field << ", type " << endpoint->type_name << "\n";
-
     node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
     // new has many to many item
-    auto proto = new has_one_to_many_item<Value, Owner>(item_column, owner_column);
+    auto proto = new has_one_to_many_item<Value, Owner>(right_column, left_column);
     prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<Value, Owner> >(&store_, id, proto, false, node_.type(), id);
 
     pi = store_.attach_internal<has_one_to_many_item<Value, Owner>>(node, nullptr, has_many_item_observer);
 
-    for(auto ep : pi->endpoints()) {
-      std::cout << "node " << pi->type() << " has endpoint " << ep.second->field << ", type " << ep.second->type_name;
-      auto sptr = ep.second->foreign_endpoint.lock();
-      if (sptr)
-        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
-      else
-        std::cout << " (no foreign endpoint)\n";
+    auto sep = pi->find_endpoint(left_column);
+    if (sep != pi->endpoint_end()) {
+      sep->second->foreign_endpoint = endpoint;
     }
   } else {
     /*
@@ -203,10 +195,19 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
       endpoint->foreign_endpoint = foreign_endpoint;
 
       // new has many to many item
-      auto proto = new has_many_to_many_item<Owner, Value>(item_column, owner_column);
+      auto proto = new has_many_to_many_item<Owner, Value>(right_column, left_column);
       prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<Owner, Value>>(&store_, id, proto, false, node_.type(), id);
 
       pi = store_.attach_internal<has_many_to_many_item<Owner, Value>>(node, nullptr, has_many_item_observer);
+
+      auto sep = pi->find_endpoint(right_column);
+      if (sep != pi->endpoint_end()) {
+        sep->second->foreign_endpoint = endpoint;
+      }
+      sep = pi->find_endpoint(left_column);
+      if (sep != pi->endpoint_end()) {
+        sep->second->foreign_endpoint = foreign_endpoint;
+      }
     } else {
 
       // found corresponding belongs_to
