@@ -230,15 +230,15 @@ public:
 
     // find left table
     auto left_endpoint = this->node_.find_endpoint(proto->left_column());
-    if (left_endpoint == this->node_.tree()->end()) {
+    if (left_endpoint == this->node_.endpoint_end()) {
       throw_object_exception("couldn't find relation left endpoint " << proto->left_column());
     }
-    auto tid = find_table(left_endpoint.second->node.type());
-//    if (tid == end_table()) {
-//      // Todo: introduce throw_orm_exception
-//      throw std::logic_error("no owner table " + owner_type_ + " found");
-//    }
-//    owner_table_ = tid->second;
+    auto tid = find_table(left_endpoint->second->node->type());
+    if (tid == end_table()) {
+      // Todo: introduce throw_orm_exception
+      throw std::logic_error("no owner table " + std::string(left_endpoint->second->node->type()) + " found");
+    }
+    left_table_ = tid->second;
   }
 
   virtual void load(object_store &store) override

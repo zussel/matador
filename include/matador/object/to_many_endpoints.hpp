@@ -71,7 +71,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     store.remove(item);
   }
 
-  virtual object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
+  virtual object_proxy* acquire_proxy(unsigned long , object_store &) override
   {
     return nullptr;
   }
@@ -199,7 +199,7 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     );
   }
 
-  virtual object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
+  virtual object_proxy* acquire_proxy(unsigned long , object_store &) override
   {
     return nullptr;
   }
