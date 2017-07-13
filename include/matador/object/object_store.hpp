@@ -930,7 +930,7 @@ template <class T, template < class U = T > class O >
 prototype_iterator object_store::attach(const char *type, object_store::abstract_type abstract, const char *parent,
                                         std::initializer_list<O<T>*> observer)
 {
-  prototype_node *node = new prototype_node(this, type, new T, abstract);
+  prototype_node *node = new prototype_node(this, type, new T, abstract == object_store::abstract_type::abstract);
 
   return attach<T>(node, parent, observer);
 }

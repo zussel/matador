@@ -85,9 +85,7 @@ void OrmReloadTestUnit::test_load_has_one()
 
     auto c = s.insert(new child("child 1"));
 
-    auto m = new master("master 1");
-    m->children = c;
-    s.insert(m);
+    s.insert(new master("master 1", c));
   }
 
   p.clear();
@@ -106,6 +104,16 @@ void OrmReloadTestUnit::test_load_has_one()
 
     auto mptr = masters.front();
     UNIT_ASSERT_NOT_NULL(mptr->children.get(), "child must be valid");
+
+    typedef matador::object_view<child> t_child_view;
+    t_child_view childview(s.store());
+
+    UNIT_ASSERT_TRUE(!childview.empty(), "master view must not be empty");
+    UNIT_ASSERT_EQUAL(childview.size(), 1UL, "their must be 1 master");
+
+    auto chptr = childview.front();
+
+    UNIT_ASSERT_TRUE(chptr == mptr->children, "objects must be the same");
   }
 
   p.drop();
