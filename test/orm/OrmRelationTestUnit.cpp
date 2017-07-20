@@ -118,7 +118,7 @@ void OrmRelationTestUnit::test_many_to_many()
 {
   matador::persistence p(dns_);
 
-  p.attach<person>("person");
+  p.attach<person>("person", matador::object_store::abstract_type::abstract);
   p.attach<student, person>("student");
   p.attach<course>("course");
 
@@ -164,7 +164,7 @@ void OrmRelationTestUnit::test_many_to_many()
   s.clear(algebra->students);
 
   UNIT_ASSERT_TRUE(george->courses.empty(), "georges courses must be empty");
-  UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");  
+  UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");
 
   p.drop();
 }

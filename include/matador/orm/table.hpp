@@ -218,6 +218,7 @@ public:
     query<T> q(name());
 
     select_all_ = q.select().prepare(conn);
+
     T *proto = this->node_.prototype<T>();
 //    select_all_ = q.select({owner_id_column_, item_id_column_}).prepare(conn);
     insert_ = q.insert(*proto).prepare(conn);
@@ -236,9 +237,25 @@ public:
     auto tid = find_table(left_endpoint->second->node->type());
     if (tid == end_table()) {
       // Todo: introduce throw_orm_exception
-      throw std::logic_error("no owner table " + std::string(left_endpoint->second->node->type()) + " found");
+//      throw std::logic_error("no owner table " + std::string(left_endpoint->second->node->type()) + " found");
+      std::cout << "no owner table " << std::string(left_endpoint->second->node->type()) << " found\n";
+    } else {
+      left_table_ = tid->second;
     }
-    left_table_ = tid->second;
+
+    // find right table
+    auto right_endpoint = this->node_.find_endpoint(proto->right_column());
+    if (right_endpoint == this->node_.endpoint_end()) {
+      throw_object_exception("couldn't find relation right endpoint " << proto->left_column());
+    }
+    tid = find_table(right_endpoint->second->node->type());
+    if (tid == end_table()) {
+      // Todo: introduce throw_orm_exception
+//      throw std::logic_error("no owner table " + std::string(right_endpoint->second->node->type()) + " found");
+      std::cout << "no owner table " << std::string(right_endpoint->second->node->type()) << " found\n";
+    } else {
+      right_table_ = tid->second;
+    }
   }
 
   virtual void load(object_store &store) override
@@ -318,8 +335,8 @@ private:
 
   std::unique_ptr<object_proxy> proxy_;
 
-  table_ptr left_table_;
-  table_ptr right_table_;
+  std::weak_ptr<basic_table> left_table_;
+  std::weak_ptr<basic_table> right_table_;
 };
 
 }
