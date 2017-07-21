@@ -160,7 +160,30 @@ void RelationTestUnit::test_has_many()
 
 void RelationTestUnit::test_has_many_builtin()
 {
+  using many_vector_ints = many_builtins<int, std::vector>;
+//  using many_vector_strings = many_builtins<std::string, std::vector>;
 
+  matador::object_store store;
+
+  store.attach<many_vector_ints>("many_vector_ints");
+
+  UNIT_ASSERT_EQUAL(2UL, store.size(), "must be two nodes");
+
+  auto node = store.find("many_vector_ints");
+  UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
+//  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
+//  UNIT_ASSERT_EQUAL(node->endpoints_size(), 1UL, "endpoints must be one");
+
+  node = store.find("elements");
+  UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
+  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
+  UNIT_ASSERT_EQUAL(node->endpoints_size(), 1UL, "endpoints must be one");
+
+  auto endpoint = node->find_endpoint("list_id");
+
+  UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "list_id", "endpoint field name must be 'list_id'");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
 }
 
 void RelationTestUnit::test_belongs_to_many()

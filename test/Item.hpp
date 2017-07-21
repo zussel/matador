@@ -714,7 +714,7 @@ public:
   void serialize(S &s)
   {
     s.serialize("id", id);
-    s.serialize("elements", elements, "list_id", "value");
+    s.serialize("elements", elements, "value", "list_id");
   }
 };
 
