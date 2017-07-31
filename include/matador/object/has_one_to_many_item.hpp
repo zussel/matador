@@ -93,8 +93,8 @@ public:
   }
 
 private:
+  belongs_to<R> left_;
   L right_;
-  has_one<R> left_;
 };
 
 }

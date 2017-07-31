@@ -237,25 +237,34 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, Container> &,
-                                    const char *owner_column, const char *item_column,
+                                    const char *left_column, const char *right_column,
                                     typename std::enable_if<is_builtin<Value>::value>::type*)
 {
-//  std::cout << "ANALYZING " << typeid(Owner).name() << " found HAS_MANY<" << typeid(Value).name() << "> (builtin)\n";
+  std::cout << "ANALYZING " << typeid(Owner).name() << " found HAS_MANY<" << typeid(Value).name() << "> (builtin)\n";
   // attach relation table for has many relation
   // check if has many item is already attached
   // true: check owner and item field
   // false: attach it
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
-    std::vector<Observer<has_one_to_many_item<Value, Owner> >*> has_many_item_observer;
+    std::vector<Observer<has_one_to_many_item<Owner, Value> >*> has_many_item_observer;
     for (auto o : observer_vector_) {
-      has_many_item_observer.push_back(new Observer<has_one_to_many_item<Value, Owner> >(o));
+      has_many_item_observer.push_back(new Observer<has_one_to_many_item<Owner, Value> >(o));
     }
 
-    auto proto = new has_one_to_many_item<Value, Owner>(item_column, owner_column);
-    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<Value, Owner> >(&store_, id, proto, false, node_.type(), id);
+    auto endpoint = std::make_shared<detail::has_one_to_many_endpoint <Owner, Value>>(id, &node_);
 
-    pi = store_.attach_internal<has_one_to_many_item<Value, Owner> >(node, nullptr, has_many_item_observer);
+    node_.register_relation_endpoint(std::type_index(typeid(Owner)), endpoint);
+
+    auto proto = new has_one_to_many_item<Owner, Value>(right_column, left_column);
+    prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<Owner, Value> >(&store_, id, proto, false, node_.type(), id);
+
+    pi = store_.attach_internal<has_one_to_many_item<Owner, Value> >(node, nullptr, has_many_item_observer);
+
+    auto sep = pi->find_endpoint(left_column);
+    if (sep != pi->endpoint_end()) {
+      sep->second->foreign_endpoint = endpoint;
+    }
   } else {
     // throw exception
     throw_object_exception("prototype already inserted: " << pi->type());

@@ -171,8 +171,8 @@ void RelationTestUnit::test_has_many_builtin()
 
   auto node = store.find("many_vector_ints");
   UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
-//  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
-//  UNIT_ASSERT_EQUAL(node->endpoints_size(), 1UL, "endpoints must be one");
+  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
+  UNIT_ASSERT_EQUAL(node->endpoints_size(), 1UL, "endpoints must be one");
 
   node = store.find("elements");
   UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
