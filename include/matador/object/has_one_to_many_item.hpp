@@ -16,11 +16,19 @@
 
 namespace matador {
 
+/**
+ * Left is owner type
+ * Right is value type
+ *
+ * @tparam L owner type
+ * @tparam R value type
+ * @tparam Enable
+ */
 template<class L, class R, typename Enable = void>
 class has_one_to_many_item;
 
 template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<L>::value>::type> : public basic_has_many_to_many_item
+class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<R>::value>::type> : public basic_has_many_to_many_item
 {
 public:
   has_one_to_many_item()
@@ -59,7 +67,7 @@ private:
 
 
 template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<is_builtin<L>::value>::type>
+class has_one_to_many_item<L, R, typename std::enable_if<is_builtin<R>::value>::type>
   : public basic_has_many_to_many_item
 {
 public:
@@ -93,8 +101,8 @@ public:
   }
 
 private:
-  belongs_to<R> left_;
-  L right_;
+  belongs_to<L> left_;
+  R right_;
 };
 
 }

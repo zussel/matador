@@ -1,81 +1,78 @@
 SET (TEST_TOOLS_SOURCES
-  utils/TimeTestUnit.cpp
-  utils/TimeTestUnit.hpp
-  utils/DateTestUnit.cpp
-  utils/DateTestUnit.hpp
-  utils/BlobTestUnit.hpp
-  utils/BlobTestUnit.cpp
-  utils/VarCharTestUnit.hpp
-  utils/VarCharTestUnit.cpp
-  utils/FactoryTestUnit.hpp
-  utils/FactoryTestUnit.cpp
-  utils/StringTestUnit.cpp
-  utils/StringTestUnit.hpp
-  utils/AnyTestUnit.cpp
-  utils/AnyTestUnit.hpp
-  utils/SequencerTestUnit.cpp
-  utils/SequencerTestUnit.hpp
+#  utils/TimeTestUnit.cpp
+#  utils/TimeTestUnit.hpp
+#  utils/DateTestUnit.cpp
+#  utils/DateTestUnit.hpp
+#  utils/BlobTestUnit.hpp
+#  utils/BlobTestUnit.cpp
+#  utils/VarCharTestUnit.hpp
+#  utils/VarCharTestUnit.cpp
+#  utils/FactoryTestUnit.hpp
+#  utils/FactoryTestUnit.cpp
+#  utils/StringTestUnit.cpp
+#  utils/StringTestUnit.hpp
+#  utils/AnyTestUnit.cpp
+#  utils/AnyTestUnit.hpp
+#  utils/SequencerTestUnit.cpp
+#  utils/SequencerTestUnit.hpp
 )
 
 SET (TEST_HEADER Item.hpp has_many_list.hpp)
 
 SET (TEST_OBJECT_SOURCES
-  object/ObjectPrototypeTestUnit.cpp
-  object/ObjectPrototypeTestUnit.hpp
-  object/ObjectStoreTestUnit.cpp
-  object/ObjectStoreTestUnit.hpp
-  object/PrototypeTreeTest.cpp
-  object/PrototypeTreeTest.hpp
-  object/PrimaryKeyUnitTest.cpp
-  object/PrimaryKeyUnitTest.hpp
-  object/HasManyVectorUnitTest.cpp
-  object/HasManyVectorUnitTest.hpp
-  object/HasManyListUnitTest.cpp
-  object/HasManyListUnitTest.hpp
-  object/ObjectTransactiontestUnit.cpp
-  object/ObjectTransactiontestUnit.hpp
+#  object/ObjectPrototypeTestUnit.cpp
+#  object/ObjectPrototypeTestUnit.hpp
+#  object/ObjectStoreTestUnit.cpp
+#  object/ObjectStoreTestUnit.hpp
+#  object/PrototypeTreeTest.cpp
+#  object/PrototypeTreeTest.hpp
+#  object/PrimaryKeyUnitTest.cpp
+#  object/PrimaryKeyUnitTest.hpp
+#  object/HasManyVectorUnitTest.cpp
+#  object/HasManyVectorUnitTest.hpp
+#  object/HasManyListUnitTest.cpp
+#  object/HasManyListUnitTest.hpp
+#  object/ObjectTransactiontestUnit.cpp
+#  object/ObjectTransactiontestUnit.hpp
   object/RelationTestUnit.cpp
   object/RelationTestUnit.hpp
 )
 
 SET (TEST_UNIT_SOURCES
-  unit/FirstTestUnit.hpp
-  unit/SecondTestUnit.hpp
-  unit/TestSuiteTestUnit.cpp
-  unit/TestSuiteTestUnit.hpp)
-
-SET (TEST_JSON_SOURCES
-  json/JsonTestUnit.hpp
-  json/JsonTestUnit.cpp
+#  unit/FirstTestUnit.hpp
+#  unit/SecondTestUnit.hpp
+#  unit/TestSuiteTestUnit.cpp
+#  unit/TestSuiteTestUnit.hpp
 )
 
 SET (TEST_SQL_SOURCES
-  sql/ConnectionTestUnit.cpp
-  sql/ConnectionTestUnit.hpp
-  sql/QueryTestUnit.cpp
-  sql/QueryTestUnit.hpp
-  sql/ConditionUnitTest.cpp
-  sql/ConditionUnitTest.hpp
-  sql/DialectTestUnit.cpp
-  sql/DialectTestUnit.hpp
-  sql/TestDialect.cpp
-  sql/TestDialect.hpp
-  sql/MSSQLDialectTestUnit.cpp
-  sql/MSSQLDialectTestUnit.hpp
-  sql/SQLiteDialectTestUnit.cpp
-  sql/SQLiteDialectTestUnit.hpp
-  sql/ValueUnitTest.cpp
-  sql/ValueUnitTest.hpp)
+#  sql/ConnectionTestUnit.cpp
+#  sql/ConnectionTestUnit.hpp
+#  sql/QueryTestUnit.cpp
+#  sql/QueryTestUnit.hpp
+#  sql/ConditionUnitTest.cpp
+#  sql/ConditionUnitTest.hpp
+#  sql/DialectTestUnit.cpp
+#  sql/DialectTestUnit.hpp
+#  sql/TestDialect.cpp
+#  sql/TestDialect.hpp
+#  sql/MSSQLDialectTestUnit.cpp
+#  sql/MSSQLDialectTestUnit.hpp
+#  sql/SQLiteDialectTestUnit.cpp
+#  sql/SQLiteDialectTestUnit.hpp
+#  sql/ValueUnitTest.cpp
+#  sql/ValueUnitTest.hpp
+)
 
 SET (TEST_ORM_SOURCES
-  orm/TransactionTestUnit.cpp
-  orm/TransactionTestUnit.hpp
-  orm/OrmTestUnit.cpp
-  orm/OrmTestUnit.hpp
-  orm/OrmReloadTestUnit.cpp
-  orm/OrmReloadTestUnit.hpp
-  orm/OrmRelationTestUnit.cpp
-  orm/OrmRelationTestUnit.hpp
+#  orm/TransactionTestUnit.cpp
+#  orm/TransactionTestUnit.hpp
+#  orm/OrmTestUnit.cpp
+#  orm/OrmTestUnit.hpp
+#  orm/OrmReloadTestUnit.cpp
+#  orm/OrmReloadTestUnit.hpp
+#  orm/OrmRelationTestUnit.cpp
+#  orm/OrmRelationTestUnit.hpp
 )
 
 SET (TEST_SOURCES test_matador.cpp)
@@ -132,7 +129,6 @@ TARGET_LINK_LIBRARIES(test_matador
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("utils" FILES ${TEST_TOOLS_SOURCES})
-SOURCE_GROUP("json" FILES ${TEST_JSON_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})
 SOURCE_GROUP("sql" FILES ${TEST_SQL_SOURCES})

@@ -160,6 +160,8 @@ public:
     return *this;
   }
 
+  has_many_item_holder(object_proxy *, nullptr_t) {}
+
   has_many_item_holder(has_many_item_holder &&x)
   {
     value_ = x.value_;
