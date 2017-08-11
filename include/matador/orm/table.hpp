@@ -195,14 +195,14 @@ public:
 
   virtual void create(connection &conn) override
   {
-    for(auto endpoint : node_.endpoints()) {
-      std::cout << "node " << node_.type() << " has endpoint " << endpoint.second->field << ", type " << endpoint.second->type_name;
-      auto sptr = endpoint.second->foreign_endpoint.lock();
-      if (sptr)
-        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
-      else
-        std::cout << " (no foreign endpoint)\n";
-    }
+//    for(auto endpoint : node_.endpoints()) {
+//      std::cout << "node " << node_.type() << " has endpoint " << endpoint.second->field << ", type " << endpoint.second->type_name;
+//      auto sptr = endpoint.second->foreign_endpoint.lock();
+//      if (sptr)
+//        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
+//      else
+//        std::cout << " (no foreign endpoint)\n";
+//    }
     query<T> stmt(name());
     stmt.create(*this->node_.prototype<T>()).execute(conn);
   }

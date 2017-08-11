@@ -1233,7 +1233,6 @@ typedef has_many_to_many_item<course, student> course_student_item;
 
 void ObjectStoreTestUnit::test_attach_has_many()
 {
-  std::cout<<"\n";
   ostore_.attach<person>("person");
   ostore_.attach<student, person>("student");
   ostore_.attach<course>("course");

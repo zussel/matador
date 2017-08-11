@@ -117,8 +117,8 @@ public:
    */
   result<T> execute()
   {
-    std::cout << "SQL: " << p->str() << '\n';
-    std::cout.flush();
+//    std::cout << "SQL: " << p->str() << '\n';
+//    std::cout.flush();
     return result<T>(p->execute());
   }
 
@@ -257,7 +257,7 @@ public:
    */
   result<row> execute()
   {
-    std::cout << "SQL: " << p->str() << '\n';
+//    std::cout << "SQL: " << p->str() << '\n';
     return result<row>(p->execute(), prototype_);
   }
 
