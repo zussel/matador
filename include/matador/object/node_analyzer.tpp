@@ -151,7 +151,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
     node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
     // new has many to many item
-    auto proto = new has_one_to_many_item<Owner, Value>(right_column, left_column);
+    auto proto = new has_one_to_many_item<Owner, Value>(left_column, right_column);
     prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<Owner, Value> >(&store_, id, proto, false, node_.type(), id);
 
     pi = store_.attach_internal<has_one_to_many_item<Owner, Value>>(node, nullptr, has_many_item_observer);
@@ -159,6 +159,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
     auto sep = pi->find_endpoint(left_column);
     if (sep != pi->endpoint_end()) {
       sep->second->foreign_endpoint = endpoint;
+//      endpoint->foreign_endpoint = sep->second;
     }
   } else {
     /*
@@ -232,7 +233,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 
         // link both endpoints
         foreign_endpoint->foreign_endpoint = endpoint;
-        endpoint->foreign_endpoint = foreign_endpoint;
+//        endpoint->foreign_endpoint = foreign_endpoint;
       }
     }
   }
@@ -259,7 +260,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
     auto endpoint = std::make_shared<detail::has_one_to_many_endpoint <Owner, Value>>(id, &node_);
     node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
-    auto proto = new has_one_to_many_item<Owner, Value>(right_column, left_column);
+    auto proto = new has_one_to_many_item<Owner, Value>(left_column, right_column);
     prototype_node *node = prototype_node::make_relation_node<has_one_to_many_item<Owner, Value> >(&store_, id, proto, false, node_.type(), id);
 
     pi = store_.attach_internal<has_one_to_many_item<Owner, Value> >(node, nullptr, has_many_item_observer);
@@ -267,7 +268,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
     auto sep = pi->find_endpoint(left_column);
     if (sep != pi->endpoint_end()) {
       sep->second->foreign_endpoint = endpoint;
-    }
+      endpoint->foreign_endpoint = sep->second;    }
   } else {
     // throw exception
     throw_object_exception("prototype already inserted: " << pi->type());

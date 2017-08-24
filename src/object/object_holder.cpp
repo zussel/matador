@@ -24,7 +24,7 @@ object_holder::object_holder(const object_holder &x)
 //  }
 }
 
-object_holder::object_holder(object_holder &&x)
+object_holder::object_holder(object_holder &&x) noexcept
 {
   object_proxy *proxy = x.proxy_;
   x.reset(nullptr, x.cascade_, false);
@@ -48,7 +48,7 @@ object_holder::operator=(const object_holder &x)
   return *this;
 }
 
-object_holder &object_holder::operator=(object_holder &&x)
+object_holder &object_holder::operator=(object_holder &&x) noexcept
 {
   if (this != &x) {
     object_proxy *proxy = x.proxy_;

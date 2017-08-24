@@ -31,8 +31,10 @@ template<class L, class R>
 class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<R>::value>::type> : public basic_has_many_to_many_item
 {
 public:
-  has_one_to_many_item()
-  {}
+  typedef L left_value_type;
+  typedef R right_value_type;
+
+  has_one_to_many_item() = default;
 
   has_one_to_many_item(const std::string &left_column, const std::string &right_column)
     : basic_has_many_to_many_item(left_column, right_column)
@@ -71,8 +73,10 @@ class has_one_to_many_item<L, R, typename std::enable_if<is_builtin<R>::value>::
   : public basic_has_many_to_many_item
 {
 public:
-  has_one_to_many_item()
-  {}
+  typedef L left_value_type;
+  typedef R right_value_type;
+
+  has_one_to_many_item() = default;
 
   has_one_to_many_item(const std::string &left_column, const std::string &right_column)
     : basic_has_many_to_many_item(left_column, right_column)

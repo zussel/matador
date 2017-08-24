@@ -7,6 +7,7 @@
 
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/object_store.hpp"
+#include "matador/object/prototype_node.hpp"
 #include "matador/object/object_proxy_accessor.hpp"
 
 #include "matador/orm/basic_table.hpp"
@@ -53,21 +54,21 @@ public:
     , resolver_(*this)
   { }
 
-  virtual ~table() {}
+  virtual ~table() = default;
 
-  virtual void create(connection &conn) override
+  void create(connection &conn) override
   {
     query<T> stmt(name());
     stmt.create().execute(conn);
   }
 
-  virtual void drop(connection &conn) override
+  void drop(connection &conn) override
   {
     query<T> stmt(name());
     stmt.drop().execute(conn);
   }
 
-  virtual void load(object_store &store) override
+  void load(object_store &store) override
   {
     auto result = select_.execute();
 
@@ -98,14 +99,14 @@ public:
     is_loaded_ = true;
   }
 
-  virtual void insert(object_proxy *proxy) override
+  void insert(object_proxy *proxy) override
   {
     insert_.bind(0, static_cast<T*>(proxy->obj()));
     // Todo: check result
     insert_.execute();
   }
 
-  virtual void update(object_proxy *proxy) override
+  void update(object_proxy *proxy) override
   {
     T *obj = static_cast<T*>(proxy->obj());
     size_t pos = update_.bind(0, obj);
@@ -114,7 +115,7 @@ public:
     update_.execute();
   }
 
-  virtual void remove(object_proxy *proxy) override
+  void remove(object_proxy *proxy) override
   {
     binder_.bind((T*)proxy->obj(), &delete_, 0);
     // Todo: check result
@@ -137,7 +138,7 @@ protected:
    *
    * @param conn The database connection
    */
-  virtual void prepare(connection &conn) override
+  void prepare(connection &conn) override
   {
     query<T> q(name());
     insert_ = q.insert().prepare(conn);
@@ -158,7 +159,7 @@ protected:
    * @param identifier_proxy_map The map with all relationship holding objects
    * @param has_many_relations The relationship elements
    */
-  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override
+  void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override
   {
     appender_.append(id, identifier_proxy_map, &has_many_relations);
   }
@@ -180,9 +181,12 @@ private:
 };
 
 template < class T >
-class table<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type> : public basic_table, public detail::object_proxy_accessor
+class table<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
+  : public basic_table, public detail::object_proxy_accessor
 {
 public:
+  typedef T table_type;
+
   table(prototype_node &node, persistence &p)
   : basic_table(node, p)
   , resolver_(*this)
@@ -193,34 +197,26 @@ public:
     }
   }
 
-  virtual void create(connection &conn) override
+  void create(connection &conn) override
   {
-//    for(auto endpoint : node_.endpoints()) {
-//      std::cout << "node " << node_.type() << " has endpoint " << endpoint.second->field << ", type " << endpoint.second->type_name;
-//      auto sptr = endpoint.second->foreign_endpoint.lock();
-//      if (sptr)
-//        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
-//      else
-//        std::cout << " (no foreign endpoint)\n";
-//    }
     query<T> stmt(name());
     stmt.create(*this->node_.prototype<T>()).execute(conn);
   }
 
-  virtual void drop(connection &conn) override
+  void drop(connection &conn) override
   {
     query<T> stmt(name());
     stmt.drop().execute(conn);
   }
 
-  virtual void prepare(connection &conn) override
+  void prepare(connection &conn) override
   {
     query<T> q(name());
 
-    select_all_ = q.select().prepare(conn);
+//    select_all_ = q.select().prepare(conn);
 
     T *proto = this->node_.prototype<T>();
-//    select_all_ = q.select({owner_id_column_, item_id_column_}).prepare(conn);
+    select_all_ = q.select({proto->left_column(), proto->right_column()}).prepare(conn);
     insert_ = q.insert(*proto).prepare(conn);
 
     column owner_id(proto->left_column());
@@ -229,36 +225,43 @@ public:
     update_ = q.update(*proto).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
 
+
+    auto left_node = node_.tree()->find<typename table_type::left_value_type>();
+    auto right_node = node_.tree()->find<typename table_type::right_value_type>();
+
+//    for(auto endpoint : node_.endpoints()) {
+//      std::cout << "node " << node_.type() << " has endpoint " << endpoint.second->field << ", type " << endpoint.second->type_name;
+//      auto sptr = endpoint.second->foreign_endpoint.lock();
+//      if (sptr)
+//        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
+//      else
+//        std::cout << " (no foreign endpoint)\n";
+//    }
+
     // find left table
-    auto left_endpoint = this->node_.find_endpoint(proto->left_column());
-    if (left_endpoint == this->node_.endpoint_end()) {
-      throw_object_exception("couldn't find relation left endpoint " << proto->left_column());
-    }
-    auto tid = find_table(left_endpoint->second->node->type());
+//    std::cout << "preparing table " << node_.type() << " left table " << left_node->type() << " (field: " << proto->left_column() << ")\n";
+    auto tid = find_table(left_node->type());
     if (tid == end_table()) {
       // Todo: introduce throw_orm_exception
-//      throw std::logic_error("no owner table " + std::string(left_endpoint->second->node->type()) + " found");
-      std::cout << "no owner table " << std::string(left_endpoint->second->node->type()) << " found\n";
+      throw std::logic_error("no owner table " + std::string(left_node->type()) + " found");
+//      std::cout << "no owner table " << std::string(left_node->type()) << " found\n";
     } else {
       left_table_ = tid->second;
     }
 
     // find right table
-    auto right_endpoint = this->node_.find_endpoint(proto->right_column());
-    if (right_endpoint == this->node_.endpoint_end()) {
-      throw_object_exception("couldn't find relation right endpoint " << proto->left_column());
-    }
-    tid = find_table(right_endpoint->second->node->type());
+//    std::cout << "preparing table " << node_.type() << " right table " << right_node->type() << " (field: " << proto->right_column() << ")\n";
+    tid = find_table(right_node->type());
     if (tid == end_table()) {
       // Todo: introduce throw_orm_exception
-//      throw std::logic_error("no owner table " + std::string(right_endpoint->second->node->type()) + " found");
-      std::cout << "no owner table " << std::string(right_endpoint->second->node->type()) << " found\n";
+      throw std::logic_error("no owner table " + std::string(right_node->type()) + " found");
+//      std::cout << "no owner table " << std::string(right_node->type()) << " found\n";
     } else {
       right_table_ = tid->second;
     }
   }
 
-  virtual void load(object_store &store) override
+  void load(object_store &store) override
   {
     if (is_loaded_) {
       return;
@@ -269,6 +272,12 @@ public:
 //    T item(item_);
     prototype_node &node = this->node_;
 
+    for (auto endpoint : node.endpoints()) {
+//      std::cout << "node " << node.type() << " has endpoint " << endpoint.first.name()
+//                << " (field: " << endpoint.second->field
+//                << ", type: " << endpoint.second->type_name
+//                << ", node: " << endpoint.second->node->type() << ")\n";
+    }
     auto func = [&node]() {
 
       T *i = node.create<T>();
@@ -276,6 +285,12 @@ public:
     };
 
     res.creator(func);
+
+    auto left_table_ptr = left_table_.lock();
+    auto right_table_ptr = right_table_.lock();
+
+    auto left_endpoint = node_.find_endpoint(std::type_index(typeid(typename table_type::left_value_type)))->second;
+    auto right_endpoint = node_.find_endpoint(std::type_index(typeid(typename table_type::right_value_type)))->second;
 
     auto first = res.begin();
     auto last = res.end();
@@ -287,7 +302,66 @@ public:
       object_proxy *proxy = store.insert<T>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
 
-      // append item to owner table
+      typename table_type::left_value_type lv;
+
+      has_many_item_holder<typename table_type::left_value_type> holder;
+
+      T *obj = proxy->obj<T>();
+
+//      std::cout << "left object is loaded: " << obj->left().is_loaded() << " (type: "<< typeid(typename table_type::left_value_type).name() << ")\n";
+//      std::cout << "right object is loaded: " << obj->right().is_loaded() << " (type: "<< typeid(typename table_type::right_value_type).name() << ")\n";
+
+      if (obj->left().is_loaded()) {
+        if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+          left_endpoint->insert_value_into_foreign(
+            has_many_item_holder<typename table_type::right_value_type>(this->proxy(obj->right()), nullptr),
+            this->proxy(obj->left())
+          );
+        }
+      } else if (left_table_ptr) {
+//        std::cout << "left endpoint field " << left_endpoint->field << " (table: " << left_table_ptr->node_.type() << ")\n";
+        auto left_foreign_endpoint = left_endpoint->foreign_endpoint.lock();
+        if (left_foreign_endpoint) {
+//          std::cout << "foreign left endpoint field " << left_foreign_endpoint->field << " (type: " << left_foreign_endpoint->type_name << ")\n";
+          auto r = left_table_ptr->has_many_relations_.find(left_foreign_endpoint->field);
+          if (r == left_table_ptr->has_many_relations_.end()) {
+//            std::cout << "inserting new multimap for field " << left_foreign_endpoint->field << "\n";
+            r = left_table_ptr->has_many_relations_.insert(
+              std::make_pair(left_foreign_endpoint->field, detail::t_identifier_multimap())
+            ).first;
+            r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
+          } else {
+//            std::cout << "adding to existing multimap for field " << left_foreign_endpoint->field << "\n";
+            r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
+          }
+        }
+      }
+
+      if (obj->right().is_loaded()) {
+        if (right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+          right_endpoint->insert_value_into_foreign(
+            has_many_item_holder<typename table_type::left_value_type>(this->proxy(obj->left()), nullptr),
+            this->proxy(obj->right())
+          );
+        }
+      } else if (right_table_ptr) {
+//        std::cout << "right endpoint field " << right_endpoint->field << "\n";
+        auto right_foreign_endpoint = right_endpoint->foreign_endpoint.lock();
+        if (right_foreign_endpoint) {
+          auto r = right_table_ptr->has_many_relations_.find(right_foreign_endpoint->field);
+          if (r == right_table_ptr->has_many_relations_.end()) {
+//            std::cout << "inserting new multimap for field " << right_foreign_endpoint->field << "\n";
+            r = right_table_ptr->has_many_relations_.insert(
+              std::make_pair(right_foreign_endpoint->field, detail::t_identifier_multimap())
+            ).first;
+            r->second.insert(std::make_pair(obj->right().primary_key(), this->proxy(obj->left())));
+          } else {
+//            std::cout << "adding to existing multimap for field " << right_foreign_endpoint->field << "\n";
+            r->second.insert(std::make_pair(obj->right().primary_key(), this->proxy(obj->left())));
+          }
+        }
+      }
+
 //      auto i = owner_table_->has_many_relations_.find(relation_id_);
 //      if (i == owner_table_->has_many_relations_.end()) {
 //        i = owner_table_->has_many_relations_.insert(
@@ -304,14 +378,14 @@ public:
     is_loaded_ = true;
   }
 
-  virtual void insert(object_proxy *proxy) override
+  void insert(object_proxy *proxy) override
   {
     insert_.bind(0, static_cast<T*>(proxy->obj()));
     // Todo: check result
     insert_.execute();
   }
 
-  virtual void update(object_proxy *proxy) override
+  void update(object_proxy *proxy) override
   {
     size_t pos = update_.bind(0, static_cast<T*>(proxy->obj()));
     update_.bind(pos, static_cast<T*>(proxy->obj()));
@@ -319,7 +393,7 @@ public:
     update_.execute();
   }
 
-  virtual void remove(object_proxy *proxy) override
+  void remove(object_proxy *proxy) override
   {
     delete_.bind(0, static_cast<T*>(proxy->obj()));
     delete_.execute();

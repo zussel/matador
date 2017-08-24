@@ -523,10 +523,10 @@ private:
   track_vector_t tracks_;
   
 public:
-  album() {}
-  album(const std::string &name) : name_(name) {}
+  album() = default;
+  explicit album(std::string name) : name_(std::move(name)) {}
   
-  ~album() {}
+  ~album() = default;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -580,12 +580,10 @@ private:
   track_list_t backup_tracks_;
   
 public:
-  playlist() {}
-  playlist(const std::string &name)
-    : name_(name)
-  {}
+  playlist() = default;
+  explicit playlist(std::string name) : name_(std::move(name)) {}
   
-  virtual ~playlist() {}
+  ~playlist() = default;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -610,7 +608,7 @@ public:
   iterator end() { return tracks_.end(); }
   const_iterator end() const { return tracks_.end(); }
 
-  iterator erase(iterator i) { return tracks_.erase(i); }
+  iterator erase(const iterator &i) { return tracks_.erase(i); }
 
   size_type size() const { return tracks_.size(); }
   bool empty() const { return tracks_.empty(); }
@@ -619,9 +617,9 @@ public:
 class child
 {
 public:
-  child() {}
-  child(const std::string &n) : name(n) {}
-  ~child() {}
+  child() = default;
+  explicit child(std::string n) : name(std::move(n)) {}
+  ~child() = default;
 
   template < class S >
   void serialize(S &serializer)
@@ -642,10 +640,10 @@ public:
   matador::has_one<child> children;
 
 public:
-  master() {}
-  master(const std::string &n) : name(n) {}
-  master(const std::string &n, const matador::object_ptr<child> &c) : name(n), children(c) {}
-  ~master() {}
+  master() = default;
+  explicit master(std::string n) : name(std::move(n)) {}
+  master(std::string n, const matador::object_ptr<child> &c) : name(std::move(n)), children(c) {}
+  ~master() = default;
 
   template < class S >
   void serialize(S &serializer)
@@ -661,9 +659,9 @@ class children_vector
 public:
   typedef matador::has_many<child> children_vector_t;
 
-  children_vector() {}
-  children_vector(const std::string &n) : name(n) {}
-  ~children_vector() {}
+  children_vector() = default;
+  explicit children_vector(std::string n) : name(std::move(n)) {}
+  ~children_vector() = default;
 
   template < class S >
   void serialize(S &serializer)
@@ -683,9 +681,9 @@ class children_list
 public:
   typedef matador::has_many<child, std::list> children_list_t;
 
-  children_list() {}
-  children_list(const std::string &n) : name(n) {}
-  ~children_list() {}
+  children_list() = default;
+  explicit children_list(std::string n) : name(std::move(n)) {}
+  ~children_list() = default;
 
   template < class S >
   void serialize(S &serializer)
@@ -714,7 +712,7 @@ public:
   void serialize(S &s)
   {
     s.serialize("id", id);
-    s.serialize("elements", elements, "value", "list_id");
+    s.serialize("elements", elements, "list_id", "value");
   }
 };
 

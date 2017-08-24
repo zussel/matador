@@ -77,14 +77,17 @@ public:
        * proxy map. it will be used when
        * table is read.
        */
-      proxy = new object_proxy(pk, (T*)nullptr, node.get());
       basic_table::t_table_map::iterator j = table_.find_table(node->type());
 
       if (j == table_.end_table()) {
         throw_object_exception("unknown table " << node->type());
       }
-      j->second->identifier_proxy_map_.insert(std::make_pair(pk, proxy));
-      x.reset(proxy, cascade);
+      auto k = j->second->identifier_proxy_map_.find(pk);
+      if (k == j->second->identifier_proxy_map_.end()) {
+        proxy = new object_proxy(pk, (T*)nullptr, node.get());
+        k = j->second->identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+      }
+      x.reset(k->second, cascade);
     }
   }
 
@@ -114,14 +117,17 @@ public:
        * proxy map. it will be used when
        * table is read.
        */
-      proxy = new object_proxy(pk, (T*)nullptr, node.get());
       basic_table::t_table_map::iterator j = table_.find_table(node->type());
 
       if (j == table_.end_table()) {
         throw_object_exception("unknown table " << node->type());
       }
-      j->second->identifier_proxy_map_.insert(std::make_pair(pk, proxy));
-      x.reset(proxy, cascade);
+      auto k = j->second->identifier_proxy_map_.find(pk);
+      if (k == j->second->identifier_proxy_map_.end()) {
+        proxy = new object_proxy(pk, (T*)nullptr, node.get());
+        k = j->second->identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+      }
+      x.reset(k->second, cascade);
     }
   }
 
@@ -148,12 +154,19 @@ public:
     if (j->second->is_loaded()) {
         // relation table is loaded
 //      std::cout << "Todo: relation table [" << id << "/" << j->second->name() << "] loaded; append all elements for owner " << *id_ << "\n";
+
+      auto endpoint = proxy_->node()->find_endpoint(id);
+      if (!endpoint->second) {
+        throw_object_exception("couldn't find endpoint for field " << id);
+      }
       auto i = table_.has_many_relations_.find(id);
       // get relation items for id/relation
       if (i != table_.has_many_relations_.end()) {
         // get relation items for this owner identified by pk
         auto items = i->second.equal_range(id_);
         for (auto k = items.first; k != items.second; ++k) {
+//          endpoint->second->insert_value_into_foreign(has_many_item_holder<V>(k->second, nullptr), proxy_);
+          endpoint->second->insert_value(has_many_item_holder<V>(k->second, nullptr), proxy_);
 //          typename basic_has_many<V, C>::internal_type val(k->second);
 //          x.append(val);
         }
@@ -167,7 +180,7 @@ public:
 private:
   object_store *store_ = nullptr;
   basic_table &table_;
-  object_proxy *proxy_;
+  object_proxy *proxy_ = nullptr;
   std::shared_ptr<basic_identifier> id_;
 };
 

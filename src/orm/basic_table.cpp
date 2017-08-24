@@ -11,9 +11,6 @@ basic_table::basic_table(prototype_node &node, persistence &p)
   , node_(node)
 { }
 
-basic_table::~basic_table() {}
-
-
 std::string basic_table::name() const
 {
   return node_.type();

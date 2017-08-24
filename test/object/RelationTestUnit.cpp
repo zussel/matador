@@ -13,7 +13,8 @@ RelationTestUnit::RelationTestUnit()
 {
   add_test("has_one", std::bind(&RelationTestUnit::test_has_one, this), "test has one relation");
   add_test("belongs_to_one", std::bind(&RelationTestUnit::test_belongs_to_one, this), "test belongs to one relation");
-  add_test("has_many", std::bind(&RelationTestUnit::test_has_many, this), "test has many relation");
+  add_test("has_many_vector", std::bind(&RelationTestUnit::test_has_many_vector, this), "test has many vector relation");
+  add_test("has_many_list", std::bind(&RelationTestUnit::test_has_many_list, this), "test has many list relation");
   add_test("has_many_builtin", std::bind(&RelationTestUnit::test_has_many_builtin, this), "test has many relation with builtin");
   add_test("belongs_to_many", std::bind(&RelationTestUnit::test_belongs_to_many, this), "test belongs to many relation");
   add_test("has_many_to_many", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to many relation");
@@ -112,7 +113,7 @@ void RelationTestUnit::test_belongs_to_one()
   UNIT_ASSERT_NOT_NULL(home->citizen_.get(), "id must be null");
 }
 
-void RelationTestUnit::test_has_many()
+void RelationTestUnit::test_has_many_vector()
 {
   matador::object_store store;
 
@@ -131,6 +132,12 @@ void RelationTestUnit::test_has_many()
   UNIT_ASSERT_EQUAL(endpoint->second->field, "children", "endpoint field name must be 'children'");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY, "endpoint type must be HAS_MANY");
 
+//  auto foreign_endpoint = endpoint->second->foreign_endpoint.lock();
+//
+//  UNIT_ASSERT_NOT_NULL(foreign_endpoint.get(), "foreign endpoint must be valid");
+//  UNIT_ASSERT_EQUAL(foreign_endpoint->field, "vector_id", "endpoint field name must be 'vector_id'");
+//  UNIT_ASSERT_EQUAL(foreign_endpoint->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+
   node = store.find("children");
   UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
   UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
@@ -139,12 +146,12 @@ void RelationTestUnit::test_has_many()
   endpoint = node->find_endpoint("child_id");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "child_id", "endpoint field name must be 'child_id'");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
 
   endpoint = node->find_endpoint("vector_id");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "vector_id", "endpoint field name must be 'vector_id'");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
 
   auto tim = store.insert(new child("tim"));
   auto group = store.insert(new children_vector("group"));
@@ -154,8 +161,64 @@ void RelationTestUnit::test_has_many()
 
   group->children.push_back(tim);
 
-  UNIT_ASSERT_FALSE(group->children.empty(), "vector must be empty");
+  UNIT_ASSERT_FALSE(group->children.empty(), "vector must not be empty");
   UNIT_ASSERT_EQUAL(group->children.size(), 1UL, "vector size must be one");
+
+  UNIT_ASSERT_EQUAL(group->children.front()->name, "tim", "name must be 'tim'");
+}
+
+void RelationTestUnit::test_has_many_list()
+{
+  matador::object_store store;
+
+  store.attach<child>("child");
+  store.attach<children_list>("children_list");
+
+  UNIT_ASSERT_EQUAL(3UL, store.size(), "must be three nodes");
+
+  auto node = store.find("children_list");
+  UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
+  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
+  UNIT_ASSERT_EQUAL(node->endpoints_size(), 1UL, "endpoints must be one");
+
+  auto endpoint = node->endpoint_begin();
+
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "children", "endpoint field name must be 'children'");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY, "endpoint type must be HAS_MANY");
+
+//  auto foreign_endpoint = endpoint->second->foreign_endpoint.lock();
+//
+//  UNIT_ASSERT_NOT_NULL(foreign_endpoint.get(), "foreign endpoint must be valid");
+//  UNIT_ASSERT_EQUAL(foreign_endpoint->field, "list_id", "endpoint field name must be 'list_id'");
+//  UNIT_ASSERT_EQUAL(foreign_endpoint->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+
+  node = store.find("children");
+  UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
+  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
+  UNIT_ASSERT_EQUAL(node->endpoints_size(), 2UL, "endpoints must be one");
+
+  endpoint = node->find_endpoint("child_id");
+  UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "child_id", "endpoint field name must be 'child_id'");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
+
+  endpoint = node->find_endpoint("list_id");
+  UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "list_id", "endpoint field name must be 'list_id'");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+
+  auto tim = store.insert(new child("tim"));
+  auto group = store.insert(new children_list("group"));
+
+  UNIT_ASSERT_TRUE(group->children.empty(), "list must be empty");
+  UNIT_ASSERT_EQUAL(group->children.size(), 0UL, "list size must be zero");
+
+  group->children.push_back(tim);
+
+  UNIT_ASSERT_FALSE(group->children.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(group->children.size(), 1UL, "vector size must be one");
+
+  UNIT_ASSERT_EQUAL(group->children.front()->name, "tim", "name must be 'tim'");
 }
 
 void RelationTestUnit::test_has_many_builtin()

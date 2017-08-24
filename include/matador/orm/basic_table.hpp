@@ -66,7 +66,7 @@ public:
    */
   basic_table(prototype_node &node, persistence &p);
 
-  virtual ~basic_table();
+  virtual ~basic_table() = default;
 
   /**
    * @brief Returns the name of the table

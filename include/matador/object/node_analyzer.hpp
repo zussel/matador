@@ -19,11 +19,11 @@ template < class Owner, template < class U = Owner > class Observer >
 class node_analyzer
 {
 public:
-  explicit node_analyzer(prototype_node &node, object_store &store, std::vector<Observer<Owner>*> observer = {})
+  node_analyzer(prototype_node &node, object_store &store, std::vector<Observer<Owner>*> observer = {})
     : node_(node), store_(store), observer_vector_(observer)
   { }
 
-  ~node_analyzer() { }
+  ~node_analyzer() = default;
 
   void analyze();
   void analyze(Owner &obj);

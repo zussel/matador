@@ -89,7 +89,7 @@ protected:
    *
    * @param x object holder to copy move
    */
-  object_holder(object_holder &&x);
+  object_holder(object_holder &&x) noexcept;
 
   /**
    * Assign operator.
@@ -104,7 +104,7 @@ protected:
    * @param x object holder to assign move
    * @return The moved object holder
    */
-  object_holder& operator=(object_holder &&x);
+  object_holder& operator=(object_holder &&x) noexcept;
 
   /**
    * @brief Creates an object_holder with a given object_proxy
@@ -126,7 +126,7 @@ protected:
    * It is destroyed if it is not inserted
    * into any object_store.
    */
-  virtual ~object_holder();
+  ~object_holder() override;
 
 public:
 
@@ -162,7 +162,7 @@ public:
    *
    * @param id The identifier to set
    */
-  void reset(const std::shared_ptr<basic_identifier> &id);
+  void reset(const std::shared_ptr<basic_identifier> &id) override;
 
   /**
    * Clears the currently set object
@@ -277,14 +277,14 @@ public:
    *
    * @return true if object has a primary key
    */
-  bool has_primary_key() const;
+  bool has_primary_key() const override ;
 
   /**
    * Gets the primary key of the foreign object
    *
    * @return The primary key of the foreign object
    */
-  virtual std::shared_ptr<basic_identifier> primary_key() const;
+  std::shared_ptr<basic_identifier> primary_key() const override;
 
   /**
    * Returns the current reference count

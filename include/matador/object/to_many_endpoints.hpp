@@ -28,17 +28,17 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner) override
+  void insert_value(object_proxy *value, object_proxy *owner) override
   {
     insert_value(has_many_item_holder<Value>(owner, nullptr), value);
   }
 
-  virtual void remove_value(object_proxy *value, object_proxy *owner) override
+  void remove_value(object_proxy *value, object_proxy *owner) override
   {
     remove_value(has_many_item_holder<Value>(owner, nullptr), value);
   }
 
-  virtual void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
     inserter.insert(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
@@ -47,7 +47,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     );
   }
 
-  virtual void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
     remover.remove(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
@@ -71,7 +71,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     store.remove(item);
   }
 
-  virtual object_proxy* acquire_proxy(unsigned long , object_store &) override
+  object_proxy* acquire_proxy(unsigned long , object_store &) override
   {
     return nullptr;
   }
@@ -110,29 +110,29 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
     store.remove(item);
   }
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner) override
+  void insert_value(object_proxy *value, object_proxy *owner) override
   {
     insert_value(has_many_item_holder<Owner>(owner, nullptr), value);
   }
 
-  virtual void remove_value(object_proxy *value, object_proxy *owner) override
+  void remove_value(object_proxy *value, object_proxy *owner) override
   {
     remove_value(has_many_item_holder<Owner>(owner, nullptr), value);
   }
 
-  virtual void insert_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override
+  void insert_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override
   {
 //    object_ptr<Value> ownptr(owner);
 //    inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Owner>&>(holder));
   }
 
-  virtual void remove_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override
+  void remove_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override
   {
 //    object_ptr<Value> ownptr(owner);
 //    remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Owner>&>(holder));
   }
 
-  virtual object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
+  object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
   {
     if (oid == 0) {
       return nullptr;
@@ -150,8 +150,8 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
   : public from_many_endpoint<Value, Owner>
 {
 
-  relation_endpoint_value_inserter<Owner> inserter;
-  relation_endpoint_value_remover<Owner> remover;
+  relation_endpoint_value_inserter<Value> inserter;
+  relation_endpoint_value_remover<Value> remover;
 
   has_one_to_many_endpoint(const std::string &field, prototype_node *node)
     : from_many_endpoint<Value, Owner>(field, node)
@@ -170,29 +170,29 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     store.remove(item);
   }
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner) override
+  void insert_value(object_proxy *value, object_proxy *owner) override
   {
     insert_value(has_many_item_holder<Owner>(owner, nullptr), value);
   }
 
-  virtual void remove_value(object_proxy *value, object_proxy *owner) override
+  void remove_value(object_proxy *value, object_proxy *owner) override
   {
     remove_value(has_many_item_holder<Owner>(owner, nullptr), value);
   }
 
-  virtual void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
-    object_ptr<Value> ownptr(owner);
-    inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Owner>&>(holder));
+    object_ptr<Owner> ownptr(owner);
+    inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
   }
 
-  virtual void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+   void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
-    object_ptr<Value> ownptr(owner);
-    remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Owner>&>(holder));
+    object_ptr<Owner> ownptr(owner);
+    remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
   }
 
-  virtual object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
+  object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
   {
     if (oid == 0) {
       return nullptr;
@@ -234,17 +234,17 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     store.remove(item);
   }
 
-  virtual void insert_value(object_proxy *value, object_proxy *owner) override
+  void insert_value(object_proxy *value, object_proxy *owner) override
   {
     insert_value(has_many_item_holder<Value>(owner, nullptr), value);
   }
 
-  virtual void remove_value(object_proxy *value, object_proxy *owner) override
+  void remove_value(object_proxy *value, object_proxy *owner) override
   {
     remove_value(has_many_item_holder<Value>(owner, nullptr), value);
   }
 
-  virtual void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
     inserter.insert(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
@@ -253,7 +253,7 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     );
   }
 
-  virtual void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
+  void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
     remover.remove(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
@@ -262,7 +262,7 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     );
   }
 
-  virtual object_proxy* acquire_proxy(unsigned long , object_store &) override
+  object_proxy* acquire_proxy(unsigned long , object_store &) override
   {
     return nullptr;
   }
