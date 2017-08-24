@@ -152,9 +152,7 @@ public:
      * tables relation owner id list
      */
     if (j->second->is_loaded()) {
-        // relation table is loaded
-//      std::cout << "Todo: relation table [" << id << "/" << j->second->name() << "] loaded; append all elements for owner " << *id_ << "\n";
-
+      // relation table is loaded
       auto endpoint = proxy_->node()->find_endpoint(id);
       if (!endpoint->second) {
         throw_object_exception("couldn't find endpoint for field " << id);
@@ -165,10 +163,7 @@ public:
         // get relation items for this owner identified by pk
         auto items = i->second.equal_range(id_);
         for (auto k = items.first; k != items.second; ++k) {
-//          endpoint->second->insert_value_into_foreign(has_many_item_holder<V>(k->second, nullptr), proxy_);
           endpoint->second->insert_value(has_many_item_holder<V>(k->second, nullptr), proxy_);
-//          typename basic_has_many<V, C>::internal_type val(k->second);
-//          x.append(val);
         }
       }
     } else {
