@@ -94,8 +94,8 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
     : from_many_endpoint<Value, Owner>(field, node)
   {}
 
-//  relation_endpoint_value_inserter<Owner> inserter;
-//  relation_endpoint_value_remover<Owner> remover;
+  relation_endpoint_value_inserter<Value> inserter;
+  relation_endpoint_value_remover<Value> remover;
 
   virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
   {
@@ -120,16 +120,16 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
     remove_value(has_many_item_holder<Owner>(owner, nullptr), value);
   }
 
-  void insert_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override
+  void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
-//    object_ptr<Value> ownptr(owner);
-//    inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Owner>&>(holder));
+    object_ptr<Owner> ownptr(owner);
+    inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
   }
 
-  void remove_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override
+  void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override
   {
-//    object_ptr<Value> ownptr(owner);
-//    remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Owner>&>(holder));
+    object_ptr<Owner> ownptr(owner);
+    remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
   }
 
   object_proxy* acquire_proxy(unsigned long oid, object_store &store) override

@@ -6,6 +6,11 @@
 
 namespace matador {
 
+bool is_loaded(const object_holder &holder)
+{
+  return holder.is_loaded();
+}
+
 basic_table::basic_table(prototype_node &node, persistence &p)
   : persistence_(p)
   , node_(node)

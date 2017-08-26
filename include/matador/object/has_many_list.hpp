@@ -464,9 +464,7 @@ public:
    * Creates an empty has_many object with a
    * std::list as container type
    */
-  has_many()
-  {
-  }
+  has_many() = default;
 
   /**
    * @brief Inserts an element at the given position.
@@ -482,7 +480,9 @@ public:
     if (this->ostore_) {
       this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
-      this->relation_info_->insert_value_into_foreign(holder, this->owner_);
+      if (!matador::is_builtin<T>::value) {
+        this->relation_info_->insert_value_into_foreign(holder, this->owner_);
+      }
 
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
@@ -571,7 +571,9 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+      if (!matador::is_builtin<T>::value) {
+        this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+      }
       this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
@@ -596,7 +598,9 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
-        this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+        if (!matador::is_builtin<T>::value) {
+          this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+        }
         this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
         ++i;
       }

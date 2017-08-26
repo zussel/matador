@@ -17,7 +17,8 @@ OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, const std::strin
   add_test("load", std::bind(&OrmReloadTestUnit::test_load, this), "test load from table");
   add_test("load_has_one", std::bind(&OrmReloadTestUnit::test_load_has_one, this), "test load has one relation from table");
   add_test("load_has_many", std::bind(&OrmReloadTestUnit::test_load_has_many, this), "test load has many from table");
-//  add_test("load_has_many_int", std::bind(&OrmReloadTestUnit::test_load_has_many_int, this), "test load has many int from table");
+  add_test("load_has_many_to_many", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many, this), "test load has many to many from table");
+  add_test("load_has_many_int", std::bind(&OrmReloadTestUnit::test_load_has_many_int, this), "test load has many int from table");
 }
 
 void OrmReloadTestUnit::test_load()
@@ -34,7 +35,7 @@ void OrmReloadTestUnit::test_load()
     // insert some persons
     matador::session s(p);
 
-    for (std::string name : names) {
+    for (const std::string &name : names) {
       auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
 
       UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
@@ -178,60 +179,94 @@ void OrmReloadTestUnit::test_load_has_many()
   p.drop();
 }
 
+void OrmReloadTestUnit::test_load_has_many_to_many()
+{
+  matador::persistence p(dns_);
+
+  p.attach<person>("person");
+  p.attach<student, person>("student");
+  p.attach<course>("course");
+
+  p.create();
+
+  {
+    matador::session s(p);
+
+    auto jane = s.insert(new student("jane"));
+    auto tom = s.insert(new student("tom"));
+    auto art = s.insert(new course("art"));
+
+    s.push_back(jane->courses, art); // jane (value) must be push_back to course art (owner) students!!
+
+    s.push_back(art->students, tom);
+  }
+
+  p.clear();
+
+  {
+    matador::session s(p);
+
+    s.load();
+
+  }
+
+  p.drop();
+}
+
 void OrmReloadTestUnit::test_load_has_many_int()
 {
-//  matador::persistence p(dns_);
-//
-//  p.attach<many_ints>("many_ints");
-//
-//  p.create();
-//
-//  {
-//    matador::session s(p);
-//
-//    auto intlist = s.insert(new many_ints);
-//
-//    UNIT_ASSERT_GREATER(intlist->id, 0UL, "invalid intlist list");
-//    UNIT_ASSERT_TRUE(intlist->elements.empty(), "intlist list must be empty");
-//
-//    s.push_back(intlist->elements, 4);
-//
-//    UNIT_ASSERT_EQUAL(intlist->elements.front(), 4, "first int must be 4");
-//    UNIT_ASSERT_EQUAL(intlist->elements.back(), 4, "last int must be 4");
-//
-//    s.push_front(intlist->elements, 7);
-//
-//    UNIT_ASSERT_EQUAL(intlist->elements.front(), 7, "first int must be 7");
-//
-//    UNIT_ASSERT_FALSE(intlist->elements.empty(), "intlist list couldn't be empty");
-//    UNIT_ASSERT_EQUAL(intlist->elements.size(), 2UL, "invalid intlist list size");
-//  }
-//
-//  p.clear();
-//
-//  {
-//    matador::session s(p);
-//
-//    s.load();
-//
-//    typedef matador::object_view<many_ints> t_many_ints_view;
-//    t_many_ints_view ints_view(s.store());
-//
-//    UNIT_ASSERT_TRUE(!ints_view.empty(), "many ints view must not be empty");
-//    UNIT_ASSERT_EQUAL(ints_view.size(), 1UL, "their must be 1 int in many ints list");
-//
-//    auto intlist = ints_view.front();
-//
-//    UNIT_ASSERT_FALSE(intlist->elements.empty(), "intlist list couldn't be empty");
-//    UNIT_ASSERT_EQUAL(intlist->elements.size(), 2UL, "invalid intlist list size");
-//
-//    std::vector<int> result_ints({ 4, 7 });
-//    for (auto i : intlist->elements) {
-//      auto it = std::find(result_ints.begin(), result_ints.end(), i);
-//      UNIT_EXPECT_FALSE(it == result_ints.end(), "int must be found");
-//    }
-//
-//  }
-//
-//  p.drop();
+  matador::persistence p(dns_);
+
+  p.attach<many_ints>("many_ints");
+
+  p.create();
+
+  {
+    matador::session s(p);
+
+    auto intlist = s.insert(new many_ints);
+
+    UNIT_ASSERT_GREATER(intlist->id, 0UL, "invalid intlist list");
+    UNIT_ASSERT_TRUE(intlist->elements.empty(), "intlist list must be empty");
+
+    s.push_back(intlist->elements, 4);
+
+    UNIT_ASSERT_EQUAL(intlist->elements.front(), 4, "first int must be 4");
+    UNIT_ASSERT_EQUAL(intlist->elements.back(), 4, "last int must be 4");
+
+    s.push_front(intlist->elements, 7);
+
+    UNIT_ASSERT_EQUAL(intlist->elements.front(), 7, "first int must be 7");
+
+    UNIT_ASSERT_FALSE(intlist->elements.empty(), "intlist list couldn't be empty");
+    UNIT_ASSERT_EQUAL(intlist->elements.size(), 2UL, "invalid intlist list size");
+  }
+
+  p.clear();
+
+  {
+    matador::session s(p);
+
+    s.load();
+
+    typedef matador::object_view<many_ints> t_many_ints_view;
+    t_many_ints_view ints_view(s.store());
+
+    UNIT_ASSERT_TRUE(!ints_view.empty(), "many ints view must not be empty");
+    UNIT_ASSERT_EQUAL(ints_view.size(), 1UL, "their must be 1 int in many ints list");
+
+    auto intlist = ints_view.front();
+
+    UNIT_ASSERT_FALSE(intlist->elements.empty(), "intlist list couldn't be empty");
+    UNIT_ASSERT_EQUAL(intlist->elements.size(), 2UL, "invalid intlist list size");
+
+    std::vector<int> result_ints({ 4, 7 });
+    for (auto i : intlist->elements) {
+      auto it = std::find(result_ints.begin(), result_ints.end(), i);
+      UNIT_EXPECT_FALSE(it == result_ints.end(), "int must be found");
+    }
+
+  }
+
+  p.drop();
 }

@@ -101,7 +101,8 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
+void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*,
+                                typename std::enable_if<!matador::is_builtin<T>::value>::type*)
 {
   // initialize the has many relation
   // set identifier
@@ -121,15 +122,14 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   x.ostore_ = &ostore_;
   x.mark_modified_owner_ = modified_marker_;
 
-
   prototype_node *node = x.owner_->node();
   auto i = node->find_endpoint(std::type_index(typeid(T)));
   if (i != node->endpoint_end()) {
     x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
   }
 
-  typename basic_has_many<T, C>::iterator first = x.begin();
-  typename basic_has_many<T, C>::iterator last = x.end();
+  auto first = x.begin();
+  auto last = x.end();
 
   while (first != last) {
     auto j = first++;
@@ -137,6 +137,35 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
       // item is not in store, insert it
       ostore_.insert(*j, false);
     }
+  }
+}
+
+template<class T, template<class ...> class C>
+void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*,
+                                typename std::enable_if<matador::is_builtin<T>::value>::type*)
+{
+  // initialize the has many relation
+  // set identifier
+  // relation table name
+  // owner column name
+  // item column name
+  if (object_proxy_stack_.empty()) {
+    throw object_exception("no owner for has many relation");
+  }
+
+  if (x.ostore_) {
+    return;
+  }
+  object_proxy *proxy = object_proxy_stack_.top();
+  x.owner_id_ = proxy->pk();
+  x.owner_ = proxy;
+  x.ostore_ = &ostore_;
+  x.mark_modified_owner_ = modified_marker_;
+
+  prototype_node *node = x.owner_->node();
+  auto i = node->find_endpoint(std::type_index(typeid(T)));
+  if (i != node->endpoint_end()) {
+    x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
   }
 }
 

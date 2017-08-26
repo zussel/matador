@@ -41,6 +41,15 @@ class object_proxy;
 class object_store;
 class persistence;
 
+template < class T >
+bool is_loaded(const T &)
+{
+  return true;
+}
+
+template <>
+bool is_loaded(const object_holder &holder);
+
 /**
  * @brief Base class for kind of tables
  *

@@ -10,7 +10,7 @@ class object_proxy;
 class basic_has_many_to_many_item
 {
 protected:
-  basic_has_many_to_many_item() {}
+  basic_has_many_to_many_item() = default;
   basic_has_many_to_many_item(const std::string &left_column, const std::string &right_column);
 
 public:
