@@ -167,7 +167,7 @@ protected:
 
   virtual void prepare(connection &conn) = 0;
 
-  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations);
+//  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations);
 
   persistence &persistence_;
 

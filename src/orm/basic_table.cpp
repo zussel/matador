@@ -41,6 +41,6 @@ basic_table::t_table_map::iterator basic_table::end_table()
   return persistence_.end();
 }
 
-void basic_table::append_relation_items(const std::string &, detail::t_identifier_map &, basic_table::t_relation_item_map &) { }
+//void basic_table::append_relation_items(const std::string &, detail::t_identifier_map &, basic_table::t_relation_item_map &) { }
 
 }

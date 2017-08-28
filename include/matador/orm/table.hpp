@@ -54,7 +54,7 @@ public:
     , resolver_(*this)
   { }
 
-  virtual ~table() = default;
+  ~table() override = default;
 
   void create(connection &conn) override
   {
@@ -159,10 +159,10 @@ protected:
    * @param identifier_proxy_map The map with all relationship holding objects
    * @param has_many_relations The relationship elements
    */
-  void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override
-  {
-    appender_.append(id, identifier_proxy_map, &has_many_relations);
-  }
+//  void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override
+//  {
+//    appender_.append(id, identifier_proxy_map, &has_many_relations);
+//  }
 
 private:
   detail::identifier_binder<T> binder_;
@@ -173,7 +173,7 @@ private:
   statement<T> select_;
 
   detail::relation_resolver<T> resolver_;
-  detail::relation_item_appender<T> appender_;
+//  detail::relation_item_appender<T> appender_;
 
   std::unique_ptr<object_proxy> proxy_;
 
@@ -317,66 +317,68 @@ public:
 //      std::cout << "right object is loaded: " << obj->right().is_loaded() << " (type: "<< typeid(typename table_type::right_value_type).name() << ")\n";
 
 
-      if (matador::is_loaded(obj->left())) {
-//      if (obj->left().is_loaded()) {
+      if (matador::is_loaded(obj->left()) && matador::is_loaded(obj->right())) {
+        // both types left and right are loaded
         if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
           insert_value_into_foreign_endpoint(left_endpoint, obj->right(), obj->left());
-//          left_endpoint->insert_value_into_foreign(
-//            has_many_item_holder<typename table_type::right_value_type>(this->proxy(obj->right()), nullptr),
-//            this->proxy(obj->left())
-//          );
         }
-      } else if (left_table_ptr) {
-//        std::cout << "left endpoint field " << left_endpoint->field << " (table: " << left_table_ptr->node_.type() << ")\n";
-        auto left_foreign_endpoint = left_endpoint->foreign_endpoint.lock();
-        if (left_foreign_endpoint) {
-//          std::cout << "foreign left endpoint field " << left_foreign_endpoint->field << " (type: " << left_foreign_endpoint->type_name << ")\n";
-          auto r = left_table_ptr->has_many_relations_.find(left_foreign_endpoint->field);
-          if (r == left_table_ptr->has_many_relations_.end()) {
-//            std::cout << "inserting new multimap for field " << left_foreign_endpoint->field << "\n";
-            r = left_table_ptr->has_many_relations_.insert(
-              std::make_pair(left_foreign_endpoint->field, detail::t_identifier_multimap())
-            ).first;
-          }
-//            std::cout << "adding to existing multimap for field " << left_foreign_endpoint->field << "\n";
-          insert_has_many_relations(r->second, obj->left(), obj->right());
-//          r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
-        }
-      }
-
-      if (matador::is_loaded(obj->right())) {
-//      if (obj->right().is_loaded()) {
         if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
           insert_value_into_foreign_endpoint(right_endpoint, obj->left(), obj->right());
-//          right_endpoint->insert_value_into_foreign(
-//            has_many_item_holder<typename table_type::left_value_type>(this->proxy(obj->left()), nullptr),
-//            this->proxy(obj->right())
-//          );
         }
-      } else if (right_table_ptr) {
-//        std::cout << "right endpoint field " << right_endpoint->field << "\n";
-        auto right_foreign_endpoint = right_endpoint->foreign_endpoint.lock();
-        if (right_foreign_endpoint) {
-          auto r = right_table_ptr->has_many_relations_.find(right_foreign_endpoint->field);
-          if (r == right_table_ptr->has_many_relations_.end()) {
-//            std::cout << "inserting new multimap for field " << right_foreign_endpoint->field << "\n";
-            r = right_table_ptr->has_many_relations_.insert(
-              std::make_pair(right_foreign_endpoint->field, detail::t_identifier_multimap())
-            ).first;
+      } else if (matador::is_loaded(obj->left())) {
+        // left is loaded right isn't loaded
+        if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+          insert_value_into_foreign_endpoint(left_endpoint, obj->right(), obj->left());
+        }
+      } else if (matador::is_loaded(obj->right())) {
+        // right is loaded left isn't loaded
+        if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+          insert_value_into_foreign_endpoint(right_endpoint, obj->left(), obj->right());
+        }
+      } else {
+        // none is loaded
+        if (left_table_ptr) {
+//        std::cout << "left endpoint field " << left_endpoint->field << " (table: " << left_table_ptr->node_.type() << ")\n";
+          auto left_foreign_endpoint = left_endpoint->foreign_endpoint.lock();
+          if (left_foreign_endpoint) {
+//          std::cout << "foreign left endpoint field " << left_foreign_endpoint->field << " (type: " << left_foreign_endpoint->type_name << ")\n";
+            auto r = left_table_ptr->has_many_relations_.find(left_foreign_endpoint->field);
+            if (r == left_table_ptr->has_many_relations_.end()) {
+//            std::cout << "inserting new multimap for field " << left_foreign_endpoint->field << "\n";
+              r = left_table_ptr->has_many_relations_.insert(
+                std::make_pair(left_foreign_endpoint->field, detail::t_identifier_multimap())
+              ).first;
+            }
+//            std::cout << "adding to existing multimap for field " << left_foreign_endpoint->field << "\n";
+            insert_has_many_relations(r->second, obj->left(), obj->right());
+//          r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
           }
+        }
+        if (right_table_ptr) {
+//        std::cout << "right endpoint field " << right_endpoint->field << "\n";
+          auto right_foreign_endpoint = right_endpoint->foreign_endpoint.lock();
+          if (right_foreign_endpoint) {
+            auto r = right_table_ptr->has_many_relations_.find(right_foreign_endpoint->field);
+            if (r == right_table_ptr->has_many_relations_.end()) {
+//            std::cout << "inserting new multimap for field " << right_foreign_endpoint->field << "\n";
+              r = right_table_ptr->has_many_relations_.insert(
+                std::make_pair(right_foreign_endpoint->field, detail::t_identifier_multimap())
+              ).first;
+            }
 //            std::cout << "adding to existing multimap for field " << right_foreign_endpoint->field << "\n";
-          insert_has_many_relations(r->second, obj->right(), obj->left());
+            insert_has_many_relations(r->second, obj->right(), obj->left());
 //          r->second.insert(std::make_pair(obj->right().primary_key(), this->proxy(obj->left())));
+          }
         }
       }
-
+    }
 //      auto i = owner_table_->has_many_relations_.find(relation_id_);
 //      if (i == owner_table_->has_many_relations_.end()) {
 //        i = owner_table_->has_many_relations_.insert(
 //        std::make_pair(relation_id_, detail::t_identifier_multimap())).first;
 //      }
 //      i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), proxy));
-    }
+//    }
 
 //    if (owner_table_->is_loaded()) {
 //      // append items
@@ -411,7 +413,7 @@ private:
   template < class Owner, class Value >
   void insert_has_many_relations(detail::t_identifier_multimap &id_map, const object_ptr<Owner> &owner, const object_ptr<Value> &value)
   {
-    id_map.insert(std::make_pair(owner.primary_key(), this->proxy(value)));
+    id_map.insert(std::make_pair(owner.primary_key(), std::make_unique<has_many_item_holder<Value>>(value, nullptr)));
   }
 
   template < class Owner, class Value >

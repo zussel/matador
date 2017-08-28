@@ -163,7 +163,7 @@ public:
         // get relation items for this owner identified by pk
         auto items = i->second.equal_range(id_);
         for (auto k = items.first; k != items.second; ++k) {
-          endpoint->second->insert_value(has_many_item_holder<V>(k->second, nullptr), proxy_);
+          endpoint->second->insert_value(has_many_item_holder<V>(*static_cast<has_many_item_holder<V>*>(k->second.get())), proxy_);
         }
       }
     } else {
