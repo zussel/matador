@@ -316,61 +316,8 @@ public:
 //      std::cout << "left object is loaded: " << obj->left().is_loaded() << " (type: "<< typeid(typename table_type::left_value_type).name() << ")\n";
 //      std::cout << "right object is loaded: " << obj->right().is_loaded() << " (type: "<< typeid(typename table_type::right_value_type).name() << ")\n";
 
+      resolve_object_links(obj->left(), obj->right());
 
-      if (matador::is_loaded(obj->left()) && matador::is_loaded(obj->right())) {
-        // both types left and right are loaded
-        if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-          insert_value_into_foreign_endpoint(left_endpoint, obj->right(), obj->left());
-        }
-        if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-          insert_value_into_foreign_endpoint(right_endpoint, obj->left(), obj->right());
-        }
-      } else if (matador::is_loaded(obj->left())) {
-        // left is loaded right isn't loaded
-        if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-          insert_value_into_foreign_endpoint(left_endpoint, obj->right(), obj->left());
-        }
-      } else if (matador::is_loaded(obj->right())) {
-        // right is loaded left isn't loaded
-        if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-          insert_value_into_foreign_endpoint(right_endpoint, obj->left(), obj->right());
-        }
-      } else {
-        // none is loaded
-        if (left_table_ptr) {
-//        std::cout << "left endpoint field " << left_endpoint->field << " (table: " << left_table_ptr->node_.type() << ")\n";
-          auto left_foreign_endpoint = left_endpoint->foreign_endpoint.lock();
-          if (left_foreign_endpoint) {
-//          std::cout << "foreign left endpoint field " << left_foreign_endpoint->field << " (type: " << left_foreign_endpoint->type_name << ")\n";
-            auto r = left_table_ptr->has_many_relations_.find(left_foreign_endpoint->field);
-            if (r == left_table_ptr->has_many_relations_.end()) {
-//            std::cout << "inserting new multimap for field " << left_foreign_endpoint->field << "\n";
-              r = left_table_ptr->has_many_relations_.insert(
-                std::make_pair(left_foreign_endpoint->field, detail::t_identifier_multimap())
-              ).first;
-            }
-//            std::cout << "adding to existing multimap for field " << left_foreign_endpoint->field << "\n";
-            insert_has_many_relations(r->second, obj->left(), obj->right());
-//          r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
-          }
-        }
-        if (right_table_ptr) {
-//        std::cout << "right endpoint field " << right_endpoint->field << "\n";
-          auto right_foreign_endpoint = right_endpoint->foreign_endpoint.lock();
-          if (right_foreign_endpoint) {
-            auto r = right_table_ptr->has_many_relations_.find(right_foreign_endpoint->field);
-            if (r == right_table_ptr->has_many_relations_.end()) {
-//            std::cout << "inserting new multimap for field " << right_foreign_endpoint->field << "\n";
-              r = right_table_ptr->has_many_relations_.insert(
-                std::make_pair(right_foreign_endpoint->field, detail::t_identifier_multimap())
-              ).first;
-            }
-//            std::cout << "adding to existing multimap for field " << right_foreign_endpoint->field << "\n";
-            insert_has_many_relations(r->second, obj->right(), obj->left());
-//          r->second.insert(std::make_pair(obj->right().primary_key(), this->proxy(obj->left())));
-          }
-        }
-      }
     }
 //      auto i = owner_table_->has_many_relations_.find(relation_id_);
 //      if (i == owner_table_->has_many_relations_.end()) {
@@ -469,6 +416,71 @@ private:
       has_many_item_holder<Owner>(this->proxy(owner), nullptr),
       this->proxy(value)
     );
+  }
+
+  template < class Owner, class Value >
+  void resolve_object_links(const object_ptr<Owner> &owner, const object_ptr<Value> &value)
+  {
+    if (matador::is_loaded(obj->left()) && matador::is_loaded(obj->right())) {
+      // both types left and right are loaded
+      if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+        insert_value_into_foreign_endpoint(left_endpoint, obj->right(), obj->left());
+      }
+      if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+        insert_value_into_foreign_endpoint(right_endpoint, obj->left(), obj->right());
+      }
+    } else if (matador::is_loaded(obj->left())) {
+      // left is loaded right isn't loaded
+      if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+        insert_value_into_foreign_endpoint(left_endpoint, obj->right(), obj->left());
+      }
+    } else if (matador::is_loaded(obj->right())) {
+      // right is loaded left isn't loaded
+      if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+        insert_value_into_foreign_endpoint(right_endpoint, obj->left(), obj->right());
+      }
+    } else {
+      // none is loaded
+      if (left_table_ptr) {
+//        std::cout << "left endpoint field " << left_endpoint->field << " (table: " << left_table_ptr->node_.type() << ")\n";
+        auto left_foreign_endpoint = left_endpoint->foreign_endpoint.lock();
+        if (left_foreign_endpoint) {
+//          std::cout << "foreign left endpoint field " << left_foreign_endpoint->field << " (type: " << left_foreign_endpoint->type_name << ")\n";
+          auto r = left_table_ptr->has_many_relations_.find(left_foreign_endpoint->field);
+          if (r == left_table_ptr->has_many_relations_.end()) {
+//            std::cout << "inserting new multimap for field " << left_foreign_endpoint->field << "\n";
+            r = left_table_ptr->has_many_relations_.insert(
+                std::make_pair(left_foreign_endpoint->field, detail::t_identifier_multimap())
+            ).first;
+          }
+//            std::cout << "adding to existing multimap for field " << left_foreign_endpoint->field << "\n";
+          insert_has_many_relations(r->second, obj->left(), obj->right());
+//          r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
+        }
+      }
+      if (right_table_ptr) {
+//        std::cout << "right endpoint field " << right_endpoint->field << "\n";
+        auto right_foreign_endpoint = right_endpoint->foreign_endpoint.lock();
+        if (right_foreign_endpoint) {
+          auto r = right_table_ptr->has_many_relations_.find(right_foreign_endpoint->field);
+          if (r == right_table_ptr->has_many_relations_.end()) {
+//            std::cout << "inserting new multimap for field " << right_foreign_endpoint->field << "\n";
+            r = right_table_ptr->has_many_relations_.insert(
+                std::make_pair(right_foreign_endpoint->field, detail::t_identifier_multimap())
+            ).first;
+          }
+//            std::cout << "adding to existing multimap for field " << right_foreign_endpoint->field << "\n";
+          insert_has_many_relations(r->second, obj->right(), obj->left());
+//          r->second.insert(std::make_pair(obj->right().primary_key(), this->proxy(obj->left())));
+        }
+      }
+    }
+  }
+
+  template < class Owner, class Value >
+  void resolve_object_links(const object_ptr<Owner> &owner, const Value &value)
+  {
+
   }
 
 private:
