@@ -255,7 +255,7 @@ public:
     if (tid == end_table()) {
       // Todo: introduce throw_orm_exception
 //      throw std::logic_error("no owner table " + std::string(right_node->type()) + " found");
-      std::cout << "no owner table " << std::string(right_node->type()) << " found\n";
+//      std::cout << "no owner table " << std::string(right_node->type()) << " found\n";
     } else {
       right_table_ = tid->second;
     }
@@ -364,8 +364,9 @@ private:
   }
 
   template < class Owner, class Value >
-  void insert_has_many_relations(detail::t_identifier_multimap &/*id_map*/, const object_ptr<Owner> &/*owner*/, const Value &/*value*/)
+  void insert_has_many_relations(detail::t_identifier_multimap &id_map, const object_ptr<Owner> &owner, const Value &value)
   {
+    id_map.insert(std::make_pair(owner.primary_key(), std::make_unique<has_many_item_holder<Value>>(value, nullptr)));
 //    id_map.insert(std::make_pair(owner.primary_key(), value));
   }
 
@@ -439,10 +440,16 @@ private:
       if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
         insert_value_into_foreign_endpoint(left_endpoint, owner, owner);
       }
+      if (right_table_ptr) {
+        prepare_foreign_table_objects(value, owner, right_endpoint, right_table_ptr);
+      }
     } else if (value.is_loaded()) {
       // right is loaded left isn't loaded
       if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
         insert_value_into_foreign_endpoint(right_endpoint, owner, value);
+      }
+      if (left_table_ptr) {
+        prepare_foreign_table_objects(owner, value, left_endpoint, left_table_ptr);
       }
     } else {
       // none is loaded
@@ -458,14 +465,49 @@ private:
   template < class Owner, class Value >
   void resolve_object_links(const object_ptr<Owner> &owner, const Value &value,
                             const std::shared_ptr<detail::basic_relation_endpoint> &left_endpoint,
-                            const std::shared_ptr<detail::basic_relation_endpoint> &right_endpoint,
+                            const std::shared_ptr<detail::basic_relation_endpoint> &/*right_endpoint*/,
                             const std::shared_ptr<basic_table> &left_table_ptr,
-                            const std::shared_ptr<basic_table> &right_table_ptr)
+                            const std::shared_ptr<basic_table> &/*right_table_ptr*/)
   {
+    if (owner.is_loaded()) {
+      // left is loaded right isn't loaded
+      if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+        insert_value_into_foreign_endpoint(left_endpoint, owner, value);
+      }
+    } else {
+      if (left_table_ptr) {
+        prepare_foreign_table_objects(owner, value, left_endpoint, left_table_ptr);
+      }
+//    }
+//    if (right_table_ptr) {
+//      prepare_foreign_table_objects(value, owner, right_endpoint, right_table_ptr);
+    }
   }
 
   template < class Owner, class Value >
   void prepare_foreign_table_objects(const object_ptr<Owner> &owner, const object_ptr<Value> &value,
+                                     const std::shared_ptr<detail::basic_relation_endpoint> &relation_endpoint,
+                                     const std::shared_ptr<basic_table> &table_ptr)
+  {
+//        std::cout << "left endpoint field " << relation_endpoint->field << " (table: " << table_ptr->node_.type() << ")\n";
+    auto foreign_endpoint = relation_endpoint->foreign_endpoint.lock();
+    if (foreign_endpoint) {
+//          std::cout << "foreign left endpoint field " << foreign_endpoint->field << " (type: " << foreign_endpoint->type_name << ")\n";
+      auto r = table_ptr->has_many_relations_.find(foreign_endpoint->field);
+      if (r == table_ptr->has_many_relations_.end()) {
+//            std::cout << "inserting new multimap for field " << foreign_endpoint->field << "\n";
+        r = table_ptr->has_many_relations_.insert(
+            std::make_pair(foreign_endpoint->field, detail::t_identifier_multimap())
+        ).first;
+      }
+//            std::cout << "adding to existing multimap for field " << foreign_endpoint->field << "\n";
+      insert_has_many_relations(r->second, owner, value);
+//          r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
+    }
+  }
+
+  template < class Owner, class Value >
+  void prepare_foreign_table_objects(const object_ptr<Owner> &owner, const Value &value,
                                      const std::shared_ptr<detail::basic_relation_endpoint> &relation_endpoint,
                                      const std::shared_ptr<basic_table> &table_ptr)
   {
