@@ -34,7 +34,7 @@ protected:
     has_many_to_many_item_poxy_ = itemproxy;
   }
 private:
-  friend class detail::basic_relation_endpoint;
+  friend struct detail::basic_relation_endpoint;
   object_proxy *has_many_to_many_item_poxy_ = nullptr;
 };
 
