@@ -413,10 +413,11 @@ private:
   void insert_value_into_foreign_endpoint(const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
                                           const object_ptr<Owner> &owner, const object_ptr<Value> &value)
   {
-    foreign_endpoint->insert_value_into_foreign(
-      has_many_item_holder<Owner>(this->proxy(owner), nullptr),
-      this->proxy(value)
-    );
+    foreign_endpoint->insert_value(has_many_item_holder<Value>(this->proxy(value), nullptr), this->proxy(owner));
+//    foreign_endpoint->insert_value_into_foreign(
+//      has_many_item_holder<Value>(this->proxy(value), nullptr),
+//      this->proxy(owner)
+//    );
   }
 
   template < class Owner, class Value >
