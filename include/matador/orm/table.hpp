@@ -420,45 +420,45 @@ private:
 //    );
   }
 
-  template < class Owner, class Value >
-  void resolve_object_links(const object_ptr<Owner> &owner, const object_ptr<Value> &value,
+  template < class Left, class Right >
+  void resolve_object_links(const object_ptr<Left> &left, const object_ptr<Right> &right,
                             const std::shared_ptr<detail::basic_relation_endpoint> &left_endpoint,
                             const std::shared_ptr<detail::basic_relation_endpoint> &right_endpoint,
                             const std::shared_ptr<basic_table> &left_table_ptr,
                             const std::shared_ptr<basic_table> &right_table_ptr
   )
   {
-    if (owner.is_loaded() && value.is_loaded()) {
+    if (left.is_loaded() && right.is_loaded()) {
       // both types left and right are loaded
       if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        insert_value_into_foreign_endpoint(left_endpoint, value, owner);
+        insert_value_into_foreign_endpoint(left_endpoint, right, left);
       }
       if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        insert_value_into_foreign_endpoint(right_endpoint, owner, value);
+        insert_value_into_foreign_endpoint(right_endpoint, left, right);
       }
-    } else if (owner.is_loaded()) {
+    } else if (left.is_loaded()) {
       // left is loaded right isn't loaded
       if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        insert_value_into_foreign_endpoint(left_endpoint, owner, owner);
+        insert_value_into_foreign_endpoint(left_endpoint, left, left);
       }
       if (right_table_ptr) {
-        prepare_foreign_table_objects(value, owner, right_endpoint, right_table_ptr);
+        prepare_foreign_table_objects(right, left, right_endpoint, right_table_ptr);
       }
-    } else if (value.is_loaded()) {
+    } else if (right.is_loaded()) {
       // right is loaded left isn't loaded
       if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        insert_value_into_foreign_endpoint(right_endpoint, owner, value);
+        insert_value_into_foreign_endpoint(right_endpoint, left, right);
       }
       if (left_table_ptr) {
-        prepare_foreign_table_objects(owner, value, left_endpoint, left_table_ptr);
+        prepare_foreign_table_objects(left, right, left_endpoint, left_table_ptr);
       }
     } else {
       // none is loaded
       if (left_table_ptr) {
-        prepare_foreign_table_objects(owner, value, left_endpoint, left_table_ptr);
+        prepare_foreign_table_objects(left, right, left_endpoint, left_table_ptr);
       }
       if (right_table_ptr) {
-        prepare_foreign_table_objects(value, owner, right_endpoint, right_table_ptr);
+        prepare_foreign_table_objects(right, left, right_endpoint, right_table_ptr);
       }
     }
   }

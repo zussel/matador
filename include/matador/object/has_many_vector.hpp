@@ -627,9 +627,7 @@ public:
    * Creates an empty has_many object with a
    * std::vector as container type
    */
-  has_many()
-  {
-  }
+  has_many() = default;
 
   /**
    * @brief Inserts an element at the given position.
