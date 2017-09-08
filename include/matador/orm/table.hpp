@@ -357,69 +357,6 @@ public:
   }
 
 private:
-  template < class Owner, class Value >
-  void insert_has_many_relations(object_proxy *proxy, detail::t_identifier_multimap &id_map, const object_ptr<Owner> &owner, const object_ptr<Value> &value)
-  {
-    id_map.insert(std::make_pair(owner.primary_key(), std::make_unique<has_many_item_holder<Value>>(value, proxy)));
-  }
-
-  template < class Owner, class Value >
-  void insert_has_many_relations(object_proxy *proxy, detail::t_identifier_multimap &id_map, const object_ptr<Owner> &owner, const Value &value)
-  {
-    id_map.insert(std::make_pair(owner.primary_key(), std::make_unique<has_many_item_holder<Value>>(value, proxy)));
-//    id_map.insert(std::make_pair(owner.primary_key(), value));
-  }
-
-  template < class Owner, class Value >
-  void insert_has_many_relations(object_proxy */*proxy*/, detail::t_identifier_multimap &/*id_map*/, const Owner &/*owner*/, const object_ptr<Value> &/*value*/)
-  {
-//    id_map.insert(std::make_pair(owner.primary_key(), this->proxy(obj->left())));
-  }
-
-  template < class Owner, class Value >
-  void insert_has_many_relations(object_proxy *proxy, detail::t_identifier_multimap &id_map, const Owner &owner, Value &value)
-  {
-
-  }
-
-  template < class Owner, class Value >
-  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
-                                          const Owner &owner, const Value &value)
-  {
-
-  }
-
-  template < class Owner, class Value >
-  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
-                                          const object_ptr<Owner> &owner, const Value &value)
-  {
-    foreign_endpoint->insert_value_into_foreign(
-      has_many_item_holder<Value>(value, proxy),
-      this->proxy(owner)
-    );
-  }
-
-  template < class Owner, class Value >
-  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
-                                          const Owner &owner, const object_ptr<Value> &value)
-  {
-    foreign_endpoint->insert_value_into_foreign(
-      has_many_item_holder<typename table_type::right_value_type>(owner, proxy),
-      this->proxy(value)
-    );
-  }
-
-  template < class Owner, class Value >
-  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
-                                          const object_ptr<Owner> &owner, const object_ptr<Value> &value)
-  {
-    foreign_endpoint->insert_value(has_many_item_holder<Value>(this->proxy(value), proxy), this->proxy(owner));
-//    foreign_endpoint->insert_value_into_foreign(
-//      has_many_item_holder<Value>(this->proxy(value), nullptr),
-//      this->proxy(owner)
-//    );
-  }
-
   template < class Left, class Right >
   void resolve_object_links(object_proxy *proxy, const object_ptr<Left> &left, const object_ptr<Right> &right,
                             const std::shared_ptr<detail::basic_relation_endpoint> &left_endpoint,
@@ -483,6 +420,69 @@ private:
 //    if (right_table_ptr) {
 //      prepare_foreign_table_objects(value, owner, right_endpoint, right_table_ptr);
     }
+  }
+
+  template < class Owner, class Value >
+  void insert_has_many_relations(object_proxy *proxy, detail::t_identifier_multimap &id_map, const object_ptr<Owner> &owner, const object_ptr<Value> &value)
+  {
+    id_map.insert(std::make_pair(owner.primary_key(), std::make_unique<has_many_item_holder<Value>>(value, proxy)));
+  }
+
+  template < class Owner, class Value >
+  void insert_has_many_relations(object_proxy *proxy, detail::t_identifier_multimap &id_map, const object_ptr<Owner> &owner, const Value &value)
+  {
+    id_map.insert(std::make_pair(owner.primary_key(), std::make_unique<has_many_item_holder<Value>>(value, proxy)));
+//    id_map.insert(std::make_pair(owner.primary_key(), value));
+  }
+
+  template < class Owner, class Value >
+  void insert_has_many_relations(object_proxy */*proxy*/, detail::t_identifier_multimap &/*id_map*/, const Owner &/*owner*/, const object_ptr<Value> &/*value*/)
+  {
+//    id_map.insert(std::make_pair(owner.primary_key(), this->proxy(obj->left())));
+  }
+
+  template < class Owner, class Value >
+  void insert_has_many_relations(object_proxy *proxy, detail::t_identifier_multimap &id_map, const Owner &owner, Value &value)
+  {
+
+  }
+
+  template < class Owner, class Value >
+  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
+                                          const Owner &owner, const Value &value)
+  {
+
+  }
+
+  template < class Owner, class Value >
+  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
+                                          const object_ptr<Owner> &owner, const Value &value)
+  {
+    foreign_endpoint->insert_value_into_foreign(
+      has_many_item_holder<Value>(value, proxy),
+      this->proxy(owner)
+    );
+  }
+
+  template < class Owner, class Value >
+  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
+                                          const Owner &owner, const object_ptr<Value> &value)
+  {
+    foreign_endpoint->insert_value_into_foreign(
+      has_many_item_holder<typename table_type::right_value_type>(owner, proxy),
+      this->proxy(value)
+    );
+  }
+
+  template < class Owner, class Value >
+  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
+                                          const object_ptr<Owner> &owner, const object_ptr<Value> &value)
+  {
+    foreign_endpoint->insert_value_into_foreign(has_many_item_holder<Value>(this->proxy(value), proxy), this->proxy(owner));
+//    foreign_endpoint->insert_value_into_foreign(
+//      has_many_item_holder<Value>(this->proxy(value), nullptr),
+//      this->proxy(owner)
+//    );
   }
 
   template < class Owner, class Value >
