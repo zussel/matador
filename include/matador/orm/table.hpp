@@ -290,11 +290,13 @@ public:
     auto right_table_ptr = right_table_.lock();
 
     auto left_endpoint = node_.find_endpoint(std::type_index(typeid(typename table_type::left_value_type)))->second;
+    std::cout << *left_endpoint << "\n";
     auto right_endpoint_iterator = node_.find_endpoint(std::type_index(typeid(typename table_type::right_value_type)));
 
     std::shared_ptr<detail::basic_relation_endpoint> right_endpoint;
     if (right_endpoint_iterator != node_.endpoint_end()) {
       right_endpoint = right_endpoint_iterator->second;
+      std::cout << *right_endpoint << "\n";
     }
 
     auto first = res.begin();
@@ -365,6 +367,8 @@ private:
                             const std::shared_ptr<basic_table> &right_table_ptr
   )
   {
+    std::cout << "left:  " << *left_endpoint << "\n";
+    std::cout << "right: " << *right_endpoint << "\n";
     if (left.is_loaded() && right.is_loaded()) {
       // both types left and right are loaded
       if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
@@ -383,12 +387,17 @@ private:
       }
     } else if (right.is_loaded()) {
       // right is loaded left isn't loaded
-      if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        insert_value_into_foreign_endpoint(proxy, right_endpoint, left, right);
+      std::cout << "right table loaded " << right_table_ptr->name() << "\n";
+      std::cout << "left table not loaded " << left_table_ptr->name() << "\n";
+      if (left_endpoint && left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+        insert_value_into_foreign_endpoint(proxy, left_endpoint, left, right);
       }
-      if (left_table_ptr) {
-        prepare_foreign_table_objects(proxy, left, right, left_endpoint, left_table_ptr);
-      }
+//      if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
+//        insert_value_into_foreign_endpoint(proxy, right_endpoint, left, right);
+//      }
+//      if (left_table_ptr) {
+//        prepare_foreign_table_objects(proxy, left, right, left_endpoint, left_table_ptr);
+//      }
     } else {
       // none is loaded
       if (left_table_ptr) {
@@ -475,14 +484,22 @@ private:
   }
 
   template < class Owner, class Value >
-  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
+  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &endpoint,
                                           const object_ptr<Owner> &owner, const object_ptr<Value> &value)
   {
-    foreign_endpoint->insert_value_into_foreign(has_many_item_holder<Value>(this->proxy(value), proxy), this->proxy(owner));
-//    foreign_endpoint->insert_value_into_foreign(
+    std::cout << "owner type " << typeid(Owner).name() << ", value type " << typeid(Value).name() << "\n";
+    std::cout << *endpoint << " insert_value_into_foreign_endpoint - value type " << typeid(Owner).name() << "\n";
+
+    auto foreign_endpoint = endpoint->foreign_endpoint.lock();
+
+    if(foreign_endpoint) {
+//      foreign_endpoint->insert_value(has_many_item_holder<Owner>(this->proxy(owner), proxy), this->proxy(value));
+      foreign_endpoint->insert_value_into_foreign(has_many_item_holder<Value>(this->proxy(value), proxy), this->proxy(owner));
+//    endpoint->insert_value_into_foreign(
 //      has_many_item_holder<Value>(this->proxy(value), nullptr),
 //      this->proxy(owner)
 //    );
+    }
   }
 
   template < class Owner, class Value >

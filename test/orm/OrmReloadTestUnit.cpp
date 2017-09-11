@@ -181,6 +181,8 @@ void OrmReloadTestUnit::test_load_has_many()
 
 void OrmReloadTestUnit::test_load_has_many_to_many()
 {
+  std::cout <<"\n";
+
   matador::persistence p(dns_);
 
   p.attach<person>("person");
@@ -196,9 +198,30 @@ void OrmReloadTestUnit::test_load_has_many_to_many()
     auto tom = s.insert(new student("tom"));
     auto art = s.insert(new course("art"));
 
+    UNIT_ASSERT_TRUE(jane->courses.empty(), "vector must be empty");
+    UNIT_ASSERT_EQUAL(jane->courses.size(), 0UL, "vector size must be zero");
+    UNIT_ASSERT_TRUE(tom->courses.empty(), "vector must be empty");
+    UNIT_ASSERT_EQUAL(tom->courses.size(), 0UL, "vector size must be zero");
+    UNIT_ASSERT_TRUE(art->students.empty(), "vector must be empty");
+    UNIT_ASSERT_EQUAL(art->students.size(), 0UL, "vector size must be zero");
+
     s.push_back(jane->courses, art); // jane (value) must be push_back to course art (owner) students!!
 
+    UNIT_ASSERT_FALSE(jane->courses.empty(), "vector must not be empty");
+    UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL, "vector size must be one");
+    UNIT_ASSERT_EQUAL(jane->courses.front(), art, "objects must be same");
+    UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
+    UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "vector size must be zero");
+    UNIT_ASSERT_EQUAL(art->students.front(), jane, "objects must be same");
+
     s.push_back(art->students, tom);
+
+    UNIT_ASSERT_FALSE(tom->courses.empty(), "vector must not be empty");
+    UNIT_ASSERT_EQUAL(tom->courses.size(), 1UL, "vector size must be one");
+    UNIT_ASSERT_EQUAL(tom->courses.front(), art, "objects must be same");
+    UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
+    UNIT_ASSERT_EQUAL(art->students.size(), 2UL, "vector size must be zero");
+    UNIT_ASSERT_EQUAL(art->students.back(), tom, "objects must be same");
   }
 
   p.clear();
@@ -208,6 +231,16 @@ void OrmReloadTestUnit::test_load_has_many_to_many()
 
     s.load();
 
+    typedef matador::object_view<student> t_student_view;
+    t_student_view student_view(s.store());
+
+    UNIT_ASSERT_TRUE(!student_view.empty(), "student view must not be empty");
+    UNIT_ASSERT_EQUAL(student_view.size(), 2UL, "their must be 2 student list");
+
+    for (const auto &stdnt : student_view) {
+      UNIT_ASSERT_FALSE(stdnt->courses.empty(), "vector must not be empty");
+      UNIT_ASSERT_EQUAL(stdnt->courses.size(), 1UL, "vector size must be one");
+    }
   }
 
   p.drop();

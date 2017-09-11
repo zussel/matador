@@ -28,6 +28,7 @@
 #include <string>
 #include <functional>
 #include <memory>
+#include <iosfwd>
 
 namespace matador {
 
@@ -83,6 +84,8 @@ struct basic_relation_endpoint
   relation_type type;
   std::weak_ptr<basic_relation_endpoint> foreign_endpoint;
 };
+
+std::ostream& operator<<(std::ostream &stream, const basic_relation_endpoint &endpoint);
 
 /**
  * relation endpoint interface with value type

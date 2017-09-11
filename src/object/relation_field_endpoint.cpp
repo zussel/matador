@@ -28,5 +28,11 @@ void matador::detail::basic_relation_endpoint::remove_value_from_foreign(object_
   }
 }
 
+std::ostream& operator<<(std::ostream &stream, const basic_relation_endpoint &endpoint)
+{
+  stream << "relation " << endpoint.node->type() << "::" << endpoint.field << " (" << endpoint.type_name << ")";
+  return stream;
+}
+
 }
 }
