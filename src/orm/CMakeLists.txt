@@ -16,6 +16,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_item_appender.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence_observer.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence_observer.tpp
+  ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_data.hpp
 )
 
 ADD_LIBRARY(matador-orm SHARED ${SOURCES} ${HEADER})

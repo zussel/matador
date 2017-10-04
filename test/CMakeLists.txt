@@ -75,7 +75,7 @@ SET (TEST_ORM_SOURCES
   orm/OrmRelationTestUnit.hpp
 )
 
-SET (TEST_SOURCES test_matador.cpp ../include/matador/object/relation_data.hpp)
+SET (TEST_SOURCES test_matador.cpp ../include/matador/orm/relation_data.hpp)
 
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
