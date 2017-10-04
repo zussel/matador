@@ -14,9 +14,9 @@ class persistence_observer : public object_store_observer<T>
 {
 public:
 
-  persistence_observer(persistence &p) : persistence_(p) {}
+  explicit persistence_observer(persistence &p) : persistence_(p) {}
   template < class O >
-  persistence_observer(const persistence_observer<O> *x)
+  explicit persistence_observer(const persistence_observer<O> *x)
     : persistence_(x->persistence_)
   {}
 
