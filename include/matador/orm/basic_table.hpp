@@ -19,6 +19,7 @@
 #endif
 
 #include "matador/object/identifier_proxy_map.hpp"
+#include "relation_data.hpp"
 
 #include <string>
 #include <functional>
@@ -174,6 +175,10 @@ protected:
   detail::t_identifier_map identifier_proxy_map_;
 
   t_relation_item_map has_many_relations_;
+
+  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_data>> t_relation_data_map;
+
+  t_relation_data_map relation_data_map_;
 
   bool is_loaded_ = false;
 

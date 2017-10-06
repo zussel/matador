@@ -25,6 +25,8 @@ class relation_data
 template < class T >
 class relation_has_many_data : public relation_data
 {
+  typedef std::unordered_map<identifier_ptr, std::pair<object_proxy*, object_proxy*>, identifier_hash<identifier_ptr>, identifier_equal> t_id_rel_map;
+
   void insert(std::shared_ptr<basic_identifier> id, object_proxy *relation_item, object_proxy *value) override
   {
 

@@ -369,12 +369,12 @@ prototype_node::endpoint_iterator prototype_node::find_endpoint(const std::type_
   return info_->find_relation_endpoint(tindex);
 }
 
-prototype_node::const_endpoint_iterator prototype_node::find_endpoint(const std::string field) const
+prototype_node::const_endpoint_iterator prototype_node::find_endpoint(const std::string &field) const
 {
   return info_->find_relation_endpoint(field);
 }
 
-prototype_node::endpoint_iterator prototype_node::find_endpoint(const std::string field)
+prototype_node::endpoint_iterator prototype_node::find_endpoint(const std::string &field)
 {
   return info_->find_relation_endpoint(field);
 }
