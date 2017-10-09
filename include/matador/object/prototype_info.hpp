@@ -29,7 +29,7 @@ enum class notification_type {
 class abstract_prototype_info
 {
 public:
-  virtual ~abstract_prototype_info() {}
+  virtual ~abstract_prototype_info() = default;
 
 protected:
   abstract_prototype_info(prototype_node &n, std::type_index tindex)
@@ -85,9 +85,9 @@ protected:
     , prototype_(proto)
   {}
 
-  virtual void* prototype() const override;
-  virtual void register_observer(basic_object_store_observer *obs) override;
-  virtual void notify(notification_type type) override;
+  void* prototype() const override;
+  void register_observer(basic_object_store_observer *obs) override;
+  void notify(notification_type type) override;
 
   T* get() const
   {
@@ -140,7 +140,7 @@ public:
     : basic_prototype_info<T>(node, proto)
   {}
 
-  virtual void* create() const override
+  void* create() const override
   {
     return new T;
   }
@@ -155,7 +155,7 @@ public:
     : basic_prototype_info<T>(node, proto)
   {}
 
-  virtual void* create() const override
+  void* create() const override
   {
     return new T(this->get()->left_column(), this->get()->right_column());
   }
