@@ -21,8 +21,11 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
+//template < class T, class Enabled = void >
+//class relation_resolver;
+
 template < class T >
-class relation_resolver
+class relation_resolver<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
 {
 public:
   explicit relation_resolver(basic_table &tbl)
@@ -171,6 +174,56 @@ public:
       j->second->identifier_proxy_map_.insert(std::make_pair(id_, proxy_));
     }
   }
+
+private:
+  object_store *store_ = nullptr;
+  basic_table &table_;
+  object_proxy *proxy_ = nullptr;
+  std::shared_ptr<basic_identifier> id_;
+};
+
+template < class T >
+class relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
+{
+public:
+  explicit relation_resolver(basic_table &tbl)
+    : table_(tbl)
+  {}
+
+  void resolve(object_proxy *proxy, object_store *store)
+  {
+    store_ = store;
+    id_ = proxy->pk();
+    proxy_ = proxy;
+    matador::access::serialize(*this, *proxy->obj<T>());
+    proxy_ = nullptr;
+    id_.reset();
+    store_ = nullptr;
+  }
+
+  template < class V >
+  void serialize(V &obj)
+  {
+    matador::access::serialize(*this, obj);
+  }
+
+  template < class V >
+  void serialize(const char *, V &) { }
+
+  void serialize(const char *, char *, size_t) { }
+
+  template < class V >
+  void serialize(const char *, belongs_to<V> &, cascade_type )
+  {
+  }
+
+  template < class V >
+  void serialize(const char *, has_one<V> &, cascade_type )
+  {
+  }
+
+  template<class V, template<class ...> class C>
+  void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *) { }
 
 private:
   object_store *store_ = nullptr;

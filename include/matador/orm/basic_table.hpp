@@ -19,7 +19,7 @@
 #endif
 
 #include "matador/object/identifier_proxy_map.hpp"
-#include "relation_data.hpp"
+#include "matador/orm/relation_data.hpp"
 
 #include <string>
 #include <functional>
@@ -30,7 +30,7 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-template < class T >
+template < class T, class Enabled=void >
 class relation_resolver;
 
 /// @endcond
