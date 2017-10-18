@@ -208,18 +208,41 @@ public:
   }
 
   template < class V >
-  void serialize(const char *, V &) { }
+  void serialize(const char *, V &)
+  {
+    // must be right side value
+    // if left table is loaded
+    // insert it into concrete object
+    // else
+    // insert into relation data
+  }
 
-  void serialize(const char *, char *, size_t) { }
+  void serialize(const char *, char *, size_t)
+  {
+    // must be right side value
+    // if left table is loaded
+    // insert it into concrete object
+    // else
+    // insert into relation data
+  }
 
   template < class V >
   void serialize(const char *, belongs_to<V> &, cascade_type )
   {
+    // check wether is left or right side value
+    // left side will be determined first
+
+    // if right side value it is many to many relation
   }
 
   template < class V >
   void serialize(const char *, has_one<V> &, cascade_type )
   {
+    // must be right side value
+    // if left table is loaded
+    // insert it into concrete object
+    // else
+    // insert into relation data
   }
 
   template<class V, template<class ...> class C>

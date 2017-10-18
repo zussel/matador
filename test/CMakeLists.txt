@@ -65,26 +65,26 @@ SET (TEST_SQL_SOURCES
 )
 
 SET (TEST_ORM_SOURCES
-  orm/TransactionTestUnit.cpp
-  orm/TransactionTestUnit.hpp
-  orm/OrmTestUnit.cpp
-  orm/OrmTestUnit.hpp
+#  orm/TransactionTestUnit.cpp
+#  orm/TransactionTestUnit.hpp
+#  orm/OrmTestUnit.cpp
+#  orm/OrmTestUnit.hpp
   orm/OrmReloadTestUnit.cpp
   orm/OrmReloadTestUnit.hpp
-  orm/OrmRelationTestUnit.cpp
-  orm/OrmRelationTestUnit.hpp
+#  orm/OrmRelationTestUnit.cpp
+#  orm/OrmRelationTestUnit.hpp
 )
 
-SET (TEST_SOURCES test_matador.cpp ../include/matador/orm/relation_data.hpp)
+SET (TEST_SOURCES test_matador.cpp)
 
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
   ${TEST_HEADER}
-  ${TEST_TOOLS_SOURCES}
-  ${TEST_OBJECT_SOURCES}
-  ${TEST_UNIT_SOURCES}
+#  ${TEST_TOOLS_SOURCES}
+#  ${TEST_OBJECT_SOURCES}
+#  ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
-  ${TEST_SQL_SOURCES}
+#  ${TEST_SQL_SOURCES}
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")

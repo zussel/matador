@@ -49,12 +49,12 @@ public:
    *
    * @param what The message of the exception.
    */
-  explicit object_exception(const char *what) throw()
+  explicit object_exception(const char *what) noexcept
     : what_(what)
   {
   }
 
-  ~object_exception() throw() override = default;
+  ~object_exception() noexcept override = default;
 
   /**
    * Returns the message of the exception
@@ -72,7 +72,7 @@ private:
 #define throw_object_exception(message) \
   do { \
     std::stringstream msg; \
-    msg << message; \
+    msg << "message"; \
     throw object_exception(msg.str().c_str()); \
   } while(false);
 
