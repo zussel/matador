@@ -232,6 +232,10 @@ public:
     // check wether is left or right side value
     // left side will be determined first
 
+    // find table of type V
+    // find relation_data for type T
+    //
+
     // if right side value it is many to many relation
   }
 

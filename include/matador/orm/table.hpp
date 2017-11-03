@@ -40,6 +40,8 @@ template < class T >
 class table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type> : public basic_table
 {
 public:
+  typedef T table_type;
+
   /**
    * @brief Creates a new table
    *
@@ -58,13 +60,13 @@ public:
 
   void create(connection &conn) override
   {
-    query<T> stmt(name());
+    query<table_type> stmt(name());
     stmt.create().execute(conn);
   }
 
   void drop(connection &conn) override
   {
-    query<T> stmt(name());
+    query<table_type> stmt(name());
     stmt.drop().execute(conn);
   }
 
@@ -91,7 +93,7 @@ public:
       }
 
       ++first;
-      object_proxy *proxy = store.insert<T>(proxy_.release(), false);
+      object_proxy *proxy = store.insert<table_type>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
     }
 
@@ -101,14 +103,14 @@ public:
 
   void insert(object_proxy *proxy) override
   {
-    insert_.bind(0, static_cast<T*>(proxy->obj()));
+    insert_.bind(0, static_cast<table_type*>(proxy->obj()));
     // Todo: check result
     insert_.execute();
   }
 
   void update(object_proxy *proxy) override
   {
-    T *obj = static_cast<T*>(proxy->obj());
+    table_type *obj = static_cast<table_type*>(proxy->obj());
     size_t pos = update_.bind(0, obj);
     binder_.bind(obj, &update_, pos);
     // Todo: check result
@@ -117,7 +119,7 @@ public:
 
   void remove(object_proxy *proxy) override
   {
-    binder_.bind((T*)proxy->obj(), &delete_, 0);
+    binder_.bind(static_cast<table_type*>(proxy->obj()), &delete_, 0);
     // Todo: check result
     delete_.execute();
   }
@@ -140,7 +142,7 @@ protected:
    */
   void prepare(connection &conn) override
   {
-    query<T> q(name());
+    query<table_type> q(name());
     insert_ = q.insert().prepare(conn);
 //    std::cout << "INSERT: " << insert_.str() << "\n";
     column id = detail::identifier_column_resolver::resolve<T>();
@@ -165,12 +167,12 @@ protected:
 //  }
 
 private:
-  detail::identifier_binder<T> binder_;
+  detail::identifier_binder<table_type> binder_;
 
-  statement<T> insert_;
-  statement<T> update_;
-  statement<T> delete_;
-  statement<T> select_;
+  statement<table_type> insert_;
+  statement<table_type> update_;
+  statement<table_type> delete_;
+  statement<table_type> select_;
 
   detail::relation_resolver<T> resolver_;
 //  detail::relation_item_appender<T> appender_;
@@ -199,23 +201,23 @@ public:
 
   void create(connection &conn) override
   {
-    query<T> stmt(name());
-    stmt.create(*this->node_.prototype<T>()).execute(conn);
+    query<table_type> stmt(name());
+    stmt.create(node().prototype<T>()).execute(conn);
   }
 
   void drop(connection &conn) override
   {
-    query<T> stmt(name());
+    query<table_type> stmt(name());
     stmt.drop().execute(conn);
   }
 
   void prepare(connection &conn) override
   {
-    query<T> q(name());
+    query<table_type> q(name());
 
 //    select_all_ = q.select().prepare(conn);
 
-    T *proto = this->node_.prototype<T>();
+    table_type *proto = node().prototype<table_type>();
     select_all_ = q.select({proto->left_column(), proto->right_column()}).prepare(conn);
     insert_ = q.insert(*proto).prepare(conn);
 
@@ -226,8 +228,8 @@ public:
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
 
 
-    auto left_node = node_.tree()->find<typename table_type::left_value_type>();
-    auto right_node = node_.tree()->find<typename table_type::right_value_type>();
+    auto left_node = node().tree()->find<typename table_type::left_value_type>();
+    auto right_node = node().tree()->find<typename table_type::right_value_type>();
 
 //    for(auto endpoint : node_.endpoints()) {
 //      std::cout << "node " << node_.type() << " has endpoint " << endpoint.second->field << ", type " << endpoint.second->type_name;
@@ -270,7 +272,7 @@ public:
 
     // set explicit creator function
 //    T item(item_);
-    prototype_node &node = this->node_;
+    prototype_node &node = this->node();
 
 //    for (auto endpoint : node.endpoints()) {
 //      std::cout << "node " << node.type() << " has endpoint " << endpoint.first.name()
@@ -289,12 +291,12 @@ public:
     auto left_table_ptr = left_table_.lock();
     auto right_table_ptr = right_table_.lock();
 
-    auto left_endpoint = node_.find_endpoint(std::type_index(typeid(typename table_type::left_value_type)))->second;
+    auto left_endpoint = this->node().find_endpoint(std::type_index(typeid(typename table_type::left_value_type)))->second;
     std::cout << *left_endpoint << "\n";
-    auto right_endpoint_iterator = node_.find_endpoint(std::type_index(typeid(typename table_type::right_value_type)));
+    auto right_endpoint_iterator = this->node().find_endpoint(std::type_index(typeid(typename table_type::right_value_type)));
 
     std::shared_ptr<detail::basic_relation_endpoint> right_endpoint;
-    if (right_endpoint_iterator != node_.endpoint_end()) {
+    if (right_endpoint_iterator != this->node().endpoint_end()) {
       right_endpoint = right_endpoint_iterator->second;
       std::cout << *right_endpoint << "\n";
     }

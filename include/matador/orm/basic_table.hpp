@@ -158,7 +158,6 @@ protected:
   template < class T >
   friend class detail::relation_resolver;
   template < class T, class Enabled >
-  friend class table;
   friend class persistence;
 
 protected:
@@ -167,6 +166,10 @@ protected:
   t_table_map::iterator end_table();
 
   virtual void prepare(connection &conn) = 0;
+
+  prototype_node& node();
+
+  const prototype_node& node() const;
 
 //  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations);
 

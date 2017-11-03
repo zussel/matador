@@ -26,6 +26,16 @@ bool basic_table::is_loaded() const
   return is_loaded_;
 }
 
+prototype_node &basic_table::node()
+{
+  return node_;
+}
+
+const prototype_node &basic_table::node() const
+{
+  return node_;
+}
+
 basic_table::t_table_map::iterator basic_table::find_table(const std::string &type)
 {
   return persistence_.find_table(type);
