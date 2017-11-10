@@ -65,6 +65,9 @@ public:
 private:
   belongs_to<L> left_;
   has_one<R> right_;
+  // should be:
+//  has_one<L> left_;
+//  belongs_to<R> right_;
 };
 
 
@@ -106,6 +109,8 @@ public:
 
 private:
   belongs_to<L> left_;
+  // should be
+//  has_one<L> left_;
   R right_;
 };
 

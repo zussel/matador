@@ -24,7 +24,7 @@ class has_many_item_holder<T, typename std::enable_if<!is_builtin<T>::value>::ty
 public:
   typedef object_ptr<T> value_type;
 
-  has_many_item_holder() {}
+  has_many_item_holder() = default;
 
   has_many_item_holder(const object_ptr<T> &val, object_proxy *item_proxy)
     : basic_has_many_item_holder(item_proxy)
@@ -54,7 +54,7 @@ public:
     return *this;
   }
 
-  has_many_item_holder(has_many_item_holder &&x)
+  has_many_item_holder(has_many_item_holder &&x) noexcept
   {
     value_ = x.value_;
     this->set_item_proxy(x.item_proxy());
@@ -62,7 +62,7 @@ public:
     x.set_item_proxy(nullptr);
   }
 
-  has_many_item_holder& operator=(has_many_item_holder &&x)
+  has_many_item_holder& operator=(has_many_item_holder &&x) noexcept
   {
     if (this != &x) {
       value_ = x.value_;
@@ -103,7 +103,7 @@ class has_many_item_holder<T, typename std::enable_if<is_builtin<T>::value>::typ
 public:
   typedef T value_type;
 
-  has_many_item_holder() {}
+  has_many_item_holder() = default;
 
   has_many_item_holder(const T &val, object_proxy *item_proxy)
     : basic_has_many_item_holder(item_proxy)

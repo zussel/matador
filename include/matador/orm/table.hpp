@@ -202,7 +202,7 @@ public:
   void create(connection &conn) override
   {
     query<table_type> stmt(name());
-    stmt.create(node().prototype<T>()).execute(conn);
+    stmt.create(*node().prototype<table_type>()).execute(conn);
   }
 
   void drop(connection &conn) override
@@ -360,7 +360,7 @@ public:
     delete_.execute();
   }
 
-private:
+protected:
   template < class Left, class Right >
   void resolve_object_links(object_proxy *proxy, const object_ptr<Left> &left, const object_ptr<Right> &right,
                             const std::shared_ptr<detail::basic_relation_endpoint> &left_endpoint,
@@ -513,15 +513,15 @@ private:
     auto foreign_endpoint = relation_endpoint->foreign_endpoint.lock();
     if (foreign_endpoint) {
 //          std::cout << "foreign left endpoint field " << foreign_endpoint->field << " (type: " << foreign_endpoint->type_name << ")\n";
-      auto r = table_ptr->has_many_relations_.find(foreign_endpoint->field);
-      if (r == table_ptr->has_many_relations_.end()) {
-//            std::cout << "inserting new multimap for field " << foreign_endpoint->field << "\n";
-        r = table_ptr->has_many_relations_.insert(
-            std::make_pair(foreign_endpoint->field, detail::t_identifier_multimap())
-        ).first;
-      }
-//            std::cout << "adding to existing multimap for field " << foreign_endpoint->field << "\n";
-      insert_has_many_relations(proxy, r->second, owner, value);
+//      auto r = table_ptr->has_many_relations_.find(foreign_endpoint->field);
+//      if (r == table_ptr->has_many_relations_.end()) {
+////            std::cout << "inserting new multimap for field " << foreign_endpoint->field << "\n";
+//        r = table_ptr->has_many_relations_.insert(
+//            std::make_pair(foreign_endpoint->field, detail::t_identifier_multimap())
+//        ).first;
+//      }
+////            std::cout << "adding to existing multimap for field " << foreign_endpoint->field << "\n";
+//      insert_has_many_relations(proxy, r->second, owner, value);
 //          r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
     }
   }
@@ -535,15 +535,15 @@ private:
     auto left_foreign_endpoint = relation_endpoint->foreign_endpoint.lock();
     if (left_foreign_endpoint) {
 //          std::cout << "foreign left endpoint field " << left_foreign_endpoint->field << " (type: " << left_foreign_endpoint->type_name << ")\n";
-      auto r = table_ptr->has_many_relations_.find(left_foreign_endpoint->field);
-      if (r == table_ptr->has_many_relations_.end()) {
-//            std::cout << "inserting new multimap for field " << left_foreign_endpoint->field << "\n";
-        r = table_ptr->has_many_relations_.insert(
-            std::make_pair(left_foreign_endpoint->field, detail::t_identifier_multimap())
-        ).first;
-      }
-//            std::cout << "adding to existing multimap for field " << left_foreign_endpoint->field << "\n";
-      insert_has_many_relations(proxy, r->second, owner, value);
+//      auto r = table_ptr->has_many_relations_.find(left_foreign_endpoint->field);
+//      if (r == table_ptr->has_many_relations_.end()) {
+////            std::cout << "inserting new multimap for field " << left_foreign_endpoint->field << "\n";
+//        r = table_ptr->has_many_relations_.insert(
+//            std::make_pair(left_foreign_endpoint->field, detail::t_identifier_multimap())
+//        ).first;
+//      }
+////            std::cout << "adding to existing multimap for field " << left_foreign_endpoint->field << "\n";
+//      insert_has_many_relations(proxy, r->second, owner, value);
 //          r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
     }
   }

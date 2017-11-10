@@ -21,7 +21,7 @@ void basic_relation_endpoint::insert_value_into_foreign(const has_many_item_hold
 {
   auto sptr = foreign_endpoint.lock();
   if (sptr) {
-    std::cout << *sptr << ": inserting value of type " << typeid(Value).name() << " for owner " << owner->node()->type() << "\n";
+//    std::cout << *sptr << ": inserting value of type " << typeid(Value).name() << " for owner " << owner->node()->type() << "\n";
     static_cast<relation_endpoint<Value>*>(sptr.get())->insert_value(holder, owner);
   }
 }

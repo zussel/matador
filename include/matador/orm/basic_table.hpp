@@ -19,6 +19,7 @@
 #endif
 
 #include "matador/object/identifier_proxy_map.hpp"
+
 #include "matador/orm/relation_data.hpp"
 
 #include <string>
@@ -157,7 +158,6 @@ protected:
 
   template < class T >
   friend class detail::relation_resolver;
-  template < class T, class Enabled >
   friend class persistence;
 
 protected:

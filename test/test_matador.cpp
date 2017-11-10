@@ -35,7 +35,7 @@
 //#include "object/PrimaryKeyUnitTest.hpp"
 //#include "object/HasManyVectorUnitTest.hpp"
 //#include "object/HasManyListUnitTest.hpp"
-//#include "object/RelationTestUnit.hpp"
+#include "object/RelationTestUnit.hpp"
 //
 //#include "orm/OrmTestUnit.hpp"
 #include "orm/OrmReloadTestUnit.hpp"
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new ObjectTransactiontestUnit);
 //  suite.register_unit(new HasManyVectorUnitTest);
 //  suite.register_unit(new HasManyListUnitTest);
-//  suite.register_unit(new RelationTestUnit);
+  suite.register_unit(new RelationTestUnit);
 //
 //  suite.register_unit(new ConditionUnitTest);
 //  suite.register_unit(new DialectTestUnit);
