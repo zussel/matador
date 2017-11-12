@@ -645,7 +645,9 @@ public:
       this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
 //      std::cout << *this->relation_info_ << ": has_many::insert(" << typeid(T).name() << ") for owner " << this->owner_->classname() << "\n";
-      this->relation_info_->insert_value_into_foreign(holder, this->owner_);
+      if (!matador::is_builtin<T>::value) {
+        this->relation_info_->insert_value_into_foreign(holder, this->owner_);
+      }
 
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
