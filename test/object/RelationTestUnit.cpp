@@ -146,12 +146,12 @@ void RelationTestUnit::test_has_many_vector()
   endpoint = node->find_endpoint("child_id");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "child_id", "endpoint field name must be 'child_id'");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
 
   endpoint = node->find_endpoint("vector_id");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "vector_id", "endpoint field name must be 'vector_id'");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
 
   auto tim = store.insert(new child("tim"));
   auto group = store.insert(new children_vector("group"));
@@ -200,12 +200,12 @@ void RelationTestUnit::test_has_many_list()
   endpoint = node->find_endpoint("child_id");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "child_id", "endpoint field name must be 'child_id'");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
 
   endpoint = node->find_endpoint("list_id");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "list_id", "endpoint field name must be 'list_id'");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
 
   auto tim = store.insert(new child("tim"));
   auto group = store.insert(new children_list("group"));
@@ -252,7 +252,7 @@ void RelationTestUnit::test_has_many_builtin()
 
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end(), "must find endpoint");
   UNIT_ASSERT_EQUAL(endpoint->second->field, "list_id", "endpoint field name must be 'list_id'");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE, "endpoint type must be HAS_ONE");
 
   endpoint = node->find_endpoint("value");
 
