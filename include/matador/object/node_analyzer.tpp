@@ -176,7 +176,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
     std::type_index ti(typeid(has_one_to_many_item<Owner, Value>));
     if (pi->type_index() == ti) {
 
-      prototype_iterator foreign_node = detach_one_to_many_node<Owner>(pi);
+      prototype_iterator foreign_node = detach_one_to_many_node<Value>(pi);
 
       auto foreign_endpoint = std::make_shared<detail::right_to_many_endpoint <Owner, Value>>(id, foreign_node.get());
 

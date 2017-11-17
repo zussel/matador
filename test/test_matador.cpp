@@ -28,7 +28,7 @@
 //#include "utils/StringTestUnit.hpp"
 //#include "utils/SequencerTestUnit.hpp"
 
-//#include "object/ObjectStoreTestUnit.hpp"
+#include "object/ObjectStoreTestUnit.hpp"
 //#include "object/ObjectPrototypeTestUnit.hpp"
 //#include "object/ObjectTransactiontestUnit.hpp"
 //#include "object/PrototypeTreeTest.hpp"
@@ -38,7 +38,7 @@
 #include "object/RelationTestUnit.hpp"
 //
 //#include "orm/OrmTestUnit.hpp"
-#include "orm/OrmReloadTestUnit.hpp"
+//#include "orm/OrmReloadTestUnit.hpp"
 //#include "orm/OrmRelationTestUnit.hpp"
 //#include "orm/TransactionTestUnit.hpp"
 //
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new PrimaryKeyUnitTest);
 //  suite.register_unit(new PrototypeTreeTestUnit);
 //  suite.register_unit(new ObjectPrototypeTestUnit);
-//  suite.register_unit(new ObjectStoreTestUnit);
+  suite.register_unit(new ObjectStoreTestUnit);
 //  suite.register_unit(new ObjectTransactiontestUnit);
 //  suite.register_unit(new HasManyVectorUnitTest);
 //  suite.register_unit(new HasManyListUnitTest);
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", ::connection::sqlite));
 //  suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", ::connection::sqlite));
 //  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
-  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
+//  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
 //  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
 //  suite.register_unit(new SQLiteDialectTestUnit());
 #endif

@@ -22,8 +22,8 @@ SET (TEST_HEADER Item.hpp has_many_list.hpp)
 SET (TEST_OBJECT_SOURCES
 #  object/ObjectPrototypeTestUnit.cpp
 #  object/ObjectPrototypeTestUnit.hpp
-#  object/ObjectStoreTestUnit.cpp
-#  object/ObjectStoreTestUnit.hpp
+  object/ObjectStoreTestUnit.cpp
+  object/ObjectStoreTestUnit.hpp
 #  object/PrototypeTreeTest.cpp
 #  object/PrototypeTreeTest.hpp
 #  object/PrimaryKeyUnitTest.cpp
@@ -69,8 +69,8 @@ SET (TEST_ORM_SOURCES
 #  orm/TransactionTestUnit.hpp
 #  orm/OrmTestUnit.cpp
 #  orm/OrmTestUnit.hpp
-  orm/OrmReloadTestUnit.cpp
-  orm/OrmReloadTestUnit.hpp
+#  orm/OrmReloadTestUnit.cpp
+#  orm/OrmReloadTestUnit.hpp
 #  orm/OrmRelationTestUnit.cpp
 #  orm/OrmRelationTestUnit.hpp
 )

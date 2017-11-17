@@ -72,7 +72,7 @@ private:
 #define throw_object_exception(message) \
   do { \
     std::stringstream msg; \
-    msg << "message"; \
+    msg << message; \
     throw object_exception(msg.str().c_str()); \
   } while(false);
 
