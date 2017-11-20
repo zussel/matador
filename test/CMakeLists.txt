@@ -71,8 +71,8 @@ SET (TEST_ORM_SOURCES
 #  orm/OrmTestUnit.hpp
 #  orm/OrmReloadTestUnit.cpp
 #  orm/OrmReloadTestUnit.hpp
-#  orm/OrmRelationTestUnit.cpp
-#  orm/OrmRelationTestUnit.hpp
+  orm/OrmRelationTestUnit.cpp
+  orm/OrmRelationTestUnit.hpp
 )
 
 SET (TEST_SOURCES test_matador.cpp)

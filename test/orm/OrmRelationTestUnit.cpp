@@ -18,9 +18,73 @@ OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, const std::s
   : unit_test(prefix + "_orm_relation", prefix + " orm relation test unit")
   , dns_(dns)
 {
+  add_test("has_many_builtin_varchars", std::bind(&OrmRelationTestUnit::test_has_builtin_varchars, this), "test has many builtin varchars item");
+  add_test("has_many_builtin_ints", std::bind(&OrmRelationTestUnit::test_has_builtin_ints, this), "test has many builtin ints item");
   add_test("has_many_delete", std::bind(&OrmRelationTestUnit::test_has_many_delete, this), "test has many delete item");
   add_test("belongs_to", std::bind(&OrmRelationTestUnit::test_belongs_to, this), "test belongs to");
   add_test("has_many_to_many", std::bind(&OrmRelationTestUnit::test_many_to_many, this), "test has many to many");
+}
+
+using many_list_varchars = many_builtins<matador::varchar<255>, std::list>;
+
+void OrmRelationTestUnit::test_has_builtin_varchars()
+{
+  matador::persistence p(dns_);
+
+  p.attach<many_list_varchars>("many_varchars");
+
+  p.create();
+
+  matador::session s(p);
+
+  auto varchars = s.insert(new many_list_varchars);
+
+  UNIT_ASSERT_GREATER(varchars->id, 0UL, "invalid varchars list");
+  UNIT_ASSERT_TRUE(varchars->elements.empty(), "varchars list must be empty");
+
+  auto tr = s.begin();
+
+  try {
+    varchars->elements.push_back("george");
+    varchars->elements.push_back("jane");
+    varchars->elements.push_back("william");
+    tr.commit();
+  } catch (std::exception &) {
+    tr.rollback();
+  }
+
+  UNIT_ASSERT_FALSE(varchars->elements.empty(), "varchars list must not be empty");
+  UNIT_ASSERT_EQUAL(varchars->elements.size(), 3UL, "invalid varchars list size");
+
+  p.drop();
+}
+
+using many_list_ints = many_builtins<int, std::list>;
+
+void OrmRelationTestUnit::test_has_builtin_ints()
+{
+  matador::persistence p(dns_);
+
+  p.attach<many_list_ints>("many_ints");
+
+  p.create();
+
+  matador::session s(p);
+
+  auto ints = s.insert(new many_list_ints);
+
+  UNIT_ASSERT_GREATER(ints->id, 0UL, "invalid ints list");
+  UNIT_ASSERT_TRUE(ints->elements.empty(), "ints list must be empty");
+
+  s.push_back(ints->elements, 37);
+  s.push_back(ints->elements, 4711);
+  s.push_back(ints->elements, -12345);
+  s.push_back(ints->elements, 37);
+
+  UNIT_ASSERT_FALSE(ints->elements.empty(), "ints list must not be empty");
+  UNIT_ASSERT_EQUAL(ints->elements.size(), 4UL, "invalid ints list size");
+
+  p.drop();
 }
 
 void OrmRelationTestUnit::test_has_many_delete()
