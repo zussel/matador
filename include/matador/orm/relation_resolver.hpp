@@ -194,8 +194,26 @@ public:
 
   void prepare()
   {
-    auto left_node = table_.node().tree()->find<typename table_type::left_value_type>();
-    auto right_node = table_.node().tree()->find<typename table_type::right_value_type>();
+    auto left_table_it = table_.find_table<typename table_type::left_value_type>();
+
+    if (left_table_it == table_.end_table()) {
+      // Todo: introduce throw_orm_exception
+      throw std::logic_error("no owner table " + std::string(typeid(typename table_type::left_value_type).name()) + " found");
+//      std::cout << "no owner table " << std::string(left_node->type()) << " found\n";
+    } else {
+      left_table_ = left_table_it->second;
+    }
+
+
+    auto right_table_it = table_.find_table<typename table_type::right_value_type>();
+
+    if (right_table_it == table_.end_table()) {
+      // Todo: introduce throw_orm_exception
+      throw std::logic_error("no owner table " + std::string(typeid(typename table_type::right_value_type).name()) + " found");
+//      std::cout << "no owner table " << std::string(left_node->type()) << " found\n";
+    } else {
+      right_table_ = right_table_it->second;
+    }
 
   }
 
@@ -266,6 +284,9 @@ private:
   basic_table &table_;
   object_proxy *proxy_ = nullptr;
   std::shared_ptr<basic_identifier> id_;
+
+  std::shared_ptr<basic_table> left_table_;
+  std::shared_ptr<basic_table> right_table_;
 };
 
 /// @endcond

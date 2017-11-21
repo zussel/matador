@@ -153,6 +153,10 @@ public:
    */
   bool is_loaded() const;
 
+  prototype_node& node();
+
+  const prototype_node& node() const;
+
 protected:
   /// @cond MATADOR_DEV
 
@@ -162,14 +166,17 @@ protected:
 
 protected:
   t_table_map::iterator find_table(const std::string &type);
+  template < class T >
+  t_table_map::iterator find_table()
+  {
+    auto node = node_.tree()->find<T>();
+    return find_table(node->type());
+  }
+
   t_table_map::iterator begin_table();
   t_table_map::iterator end_table();
 
   virtual void prepare(connection &conn) = 0;
-
-  prototype_node& node();
-
-  const prototype_node& node() const;
 
 //  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations);
 
