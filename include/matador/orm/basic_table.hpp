@@ -156,7 +156,7 @@ public:
 protected:
   /// @cond MATADOR_DEV
 
-  template < class T >
+  template < class T, class Enabled >
   friend class detail::relation_resolver;
   friend class persistence;
 

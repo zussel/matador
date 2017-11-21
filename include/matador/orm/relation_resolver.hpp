@@ -186,9 +186,18 @@ template < class T >
 class relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
 {
 public:
+  typedef T table_type;
+  
   explicit relation_resolver(basic_table &tbl)
     : table_(tbl)
   {}
+
+  void prepare()
+  {
+    auto left_node = table_.node().tree()->find<typename table_type::left_value_type>();
+    auto right_node = table_.node().tree()->find<typename table_type::right_value_type>();
+
+  }
 
   void resolve(object_proxy *proxy, object_store *store)
   {
