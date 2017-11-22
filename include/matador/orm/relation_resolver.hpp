@@ -215,6 +215,39 @@ public:
       right_table_ = right_table_it->second;
     }
 
+    auto left_table_ptr = left_table_.lock();
+    for(auto endpoint : left_table_ptr->node().endpoints())
+    {
+      std::cout << "left node " << left_table_ptr->node().type() << " has endpoint " << endpoint.second->field << ", type "
+                << endpoint.second->type_name;
+      auto sptr = endpoint.second->foreign_endpoint.lock();
+      if (sptr)
+        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
+      else
+        std::cout << " (no foreign endpoint)\n";
+    }
+
+    auto right_table_ptr = right_table_.lock();
+    for(auto endpoint : right_table_ptr->node().endpoints())
+    {
+      std::cout << "right node " << right_table_ptr->node().type() << " has endpoint " << endpoint.second->field << ", type "
+                << endpoint.second->type_name;
+      auto sptr = endpoint.second->foreign_endpoint.lock();
+      if (sptr)
+        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
+      else
+        std::cout << " (no foreign endpoint)\n";
+    }
+
+    left_endpoint_ = table_.node().find_endpoint(std::type_index(typeid(typename table_type::left_value_type)))->second;
+    std::cout << *left_endpoint_ << "\n";
+    auto right_endpoint_iterator = table_.node().find_endpoint(std::type_index(typeid(typename table_type::right_value_type)));
+
+    if (right_endpoint_iterator != table_.node().endpoint_end()) {
+      right_endpoint_ = right_endpoint_iterator->second;
+      std::cout << *right_endpoint_ << "\n";
+    }
+
   }
 
   void resolve(object_proxy *proxy, object_store *store)
@@ -222,6 +255,8 @@ public:
     store_ = store;
     id_ = proxy->pk();
     proxy_ = proxy;
+    left_table_ptr_ = left_table_.lock();
+    right_table_ptr_ = right_table_.lock();
     matador::access::serialize(*this, *proxy->obj<T>());
     proxy_ = nullptr;
     id_.reset();
@@ -259,6 +294,15 @@ public:
     // check wether is left or right side value
     // left side will be determined first
 
+    if (left_table_ptr_->node().type_index() == std::type_index(typeid(V))) {
+      std::cout << "belongs_to " << left_table_ptr_->node().type() << " is left (loaded: " << left_table_ptr_->is_loaded() << ")\n";
+      // if left is not loaded
+      
+    } else {
+      std::cout << "belongs_to " << right_table_ptr_->node().type() << " is right (loaded: " << right_table_ptr_->is_loaded() << ")\n";
+
+
+    }
     // find table of type V
     // find relation_data for type T
     //
@@ -269,7 +313,7 @@ public:
   template < class V >
   void serialize(const char *, has_one<V> &, cascade_type )
   {
-    // must be right side value
+    // must be left side value
     // if left table is loaded
     // insert it into concrete object
     // else
@@ -285,8 +329,14 @@ private:
   object_proxy *proxy_ = nullptr;
   std::shared_ptr<basic_identifier> id_;
 
-  std::shared_ptr<basic_table> left_table_;
-  std::shared_ptr<basic_table> right_table_;
+  std::weak_ptr<basic_table> left_table_;
+  std::weak_ptr<basic_table> right_table_;
+
+  std::shared_ptr<basic_table> left_table_ptr_;
+  std::shared_ptr<basic_table> right_table_ptr_;
+
+  std::shared_ptr<basic_relation_endpoint> left_endpoint_;
+  std::shared_ptr<basic_relation_endpoint> right_endpoint_;
 };
 
 /// @endcond

@@ -227,9 +227,7 @@ public:
     update_ = q.update(*proto).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
 
-
-    auto left_node = node().tree()->find<typename table_type::left_value_type>();
-    auto right_node = node().tree()->find<typename table_type::right_value_type>();
+    resolver_.prepare();
 
 //    for(auto endpoint : node_.endpoints()) {
 //      std::cout << "node " << node_.type() << " has endpoint " << endpoint.second->field << ", type " << endpoint.second->type_name;
@@ -240,27 +238,6 @@ public:
 //        std::cout << " (no foreign endpoint)\n";
 //    }
 
-    // find left table
-//    std::cout << "preparing table " << node_.type() << " left table " << left_node->type() << " (field: " << proto->left_column() << ")\n";
-    auto tid = find_table(left_node->type());
-    if (tid == end_table()) {
-      // Todo: introduce throw_orm_exception
-      throw std::logic_error("no owner table " + std::string(left_node->type()) + " found");
-//      std::cout << "no owner table " << std::string(left_node->type()) << " found\n";
-    } else {
-      left_table_ = tid->second;
-    }
-
-    // find right table
-//    std::cout << "preparing table " << node_.type() << " right table " << right_node->type() << " (field: " << proto->right_column() << ")\n";
-    tid = find_table(right_node->type());
-    if (tid == end_table()) {
-      // Todo: introduce throw_orm_exception
-//      throw std::logic_error("no owner table " + std::string(right_node->type()) + " found");
-//      std::cout << "no owner table " << std::string(right_node->type()) << " found\n";
-    } else {
-      right_table_ = tid->second;
-    }
   }
 
   void load(object_store &store) override
@@ -288,19 +265,6 @@ public:
       return node.create<T>();
     });
 
-    auto left_table_ptr = left_table_.lock();
-    auto right_table_ptr = right_table_.lock();
-
-    auto left_endpoint = this->node().find_endpoint(std::type_index(typeid(typename table_type::left_value_type)))->second;
-    std::cout << *left_endpoint << "\n";
-    auto right_endpoint_iterator = this->node().find_endpoint(std::type_index(typeid(typename table_type::right_value_type)));
-
-    std::shared_ptr<detail::basic_relation_endpoint> right_endpoint;
-    if (right_endpoint_iterator != this->node().endpoint_end()) {
-      right_endpoint = right_endpoint_iterator->second;
-      std::cout << *right_endpoint << "\n";
-    }
-
     auto first = res.begin();
     auto last = res.end();
 
@@ -320,7 +284,7 @@ public:
 //      std::cout << "left object is loaded: " << obj->left().is_loaded() << " (type: "<< typeid(typename table_type::left_value_type).name() << ")\n";
 //      std::cout << "right object is loaded: " << obj->right().is_loaded() << " (type: "<< typeid(typename table_type::right_value_type).name() << ")\n";
 
-      resolve_object_links(proxy, obj->left(), obj->right(), left_endpoint, right_endpoint, left_table_ptr, right_table_ptr);
+//      resolve_object_links(proxy, obj->left(), obj->right(), left_endpoint, right_endpoint, left_table_ptr, right_table_ptr);
 
     }
 //      auto i = owner_table_->has_many_relations_.find(relation_id_);
