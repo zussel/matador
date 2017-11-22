@@ -62,7 +62,7 @@ public:
     : object_holder(x.type_, x.proxy_)
   {}
 
-  object_pointer(self &&x)
+  explicit object_pointer(self &&x)
     : object_holder(std::move(x))
   {}
 
@@ -124,7 +124,7 @@ public:
     return *this;
   }
 
-  self& operator=(self &&x)
+  self& operator=(self &&x) noexcept
   {
     return static_cast<self&>(object_holder::operator=(std::move(x)));
   }

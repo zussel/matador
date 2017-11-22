@@ -297,7 +297,7 @@ public:
     if (left_table_ptr_->node().type_index() == std::type_index(typeid(V))) {
       std::cout << "belongs_to " << left_table_ptr_->node().type() << " is left (loaded: " << left_table_ptr_->is_loaded() << ")\n";
       // if left is not loaded
-      
+
     } else {
       std::cout << "belongs_to " << right_table_ptr_->node().type() << " is right (loaded: " << right_table_ptr_->is_loaded() << ")\n";
 
@@ -324,6 +324,36 @@ public:
   void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *) { }
 
 private:
+  object_proxy* acquire_proxy(object_holder &x, std::shared_ptr<basic_identifier> pk, cascade_type cascade, std::shared_ptr<basic_table> tbl)
+  {
+    // get node of object type
+    prototype_iterator node = store_->find(x.type());
+
+    object_proxy *proxy = node->find_proxy(pk);
+    if (proxy) {
+      /**
+       * find proxy in node map
+       * if proxy can be found object was
+       * already read - replace proxy
+       */
+      x.reset(proxy, cascade);
+    } else {
+      /**
+       * if proxy can't be found we create
+       * a proxy and store it in tables
+       * proxy map. it will be used when
+       * table is read.
+       */
+      auto k = tbl->identifier_proxy_map_.find(pk);
+      if (k == tbl->identifier_proxy_map_.end()) {
+        proxy = new object_proxy(pk, (T*)nullptr, node.get());
+        k = tbl->identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+      }
+      x.reset(k->second, cascade);
+    }
+    return proxy;
+  }
+private:
   object_store *store_ = nullptr;
   basic_table &table_;
   object_proxy *proxy_ = nullptr;
@@ -337,6 +367,9 @@ private:
 
   std::shared_ptr<basic_relation_endpoint> left_endpoint_;
   std::shared_ptr<basic_relation_endpoint> right_endpoint_;
+
+  object_proxy *left_proxy = nullptr;
+  object_proxy *right_proxy = nullptr;
 };
 
 /// @endcond
