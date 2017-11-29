@@ -311,13 +311,32 @@ public:
   }
 
   template < class V >
-  void serialize(const char *, has_one<V> &, cascade_type )
+  void serialize(const char *, has_one<V> &x, cascade_type cascade)
   {
     // must be left side value
     // if left table is loaded
     // insert it into concrete object
     // else
     // insert into relation data
+    std::shared_ptr<basic_identifier> pk = x.primary_key();
+    if (!pk) {
+      return;
+    }
+
+    // get node of object type
+    prototype_iterator node = store_->find(x.type());
+
+    left_proxy = node->find_proxy(pk);
+    if (left_proxy) {
+      x.reset(left_proxy, cascade);
+    } else {
+      auto k = left_table_ptr_->identifier_proxy_map_.find(pk);
+      if (k == left_table_ptr_->identifier_proxy_map_.end()) {
+        left_proxy = new object_proxy(pk, (T*)nullptr, node.get());
+        k = left_table_ptr_->identifier_proxy_map_.insert(std::make_pair(pk, left_proxy)).first;
+      }
+      x.reset(k->second, cascade);
+    }
   }
 
   template<class V, template<class ...> class C>
@@ -369,7 +388,6 @@ private:
   std::shared_ptr<basic_relation_endpoint> right_endpoint_;
 
   object_proxy *left_proxy = nullptr;
-  object_proxy *right_proxy = nullptr;
 };
 
 /// @endcond

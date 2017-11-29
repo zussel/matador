@@ -275,11 +275,11 @@ public:
       object_proxy *proxy = store.insert<T>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
 
-      typename table_type::left_value_type lv;
+//      typename table_type::left_value_type lv;
+//
+//      has_many_item_holder<typename table_type::left_value_type> holder;
 
-      has_many_item_holder<typename table_type::left_value_type> holder;
-
-      T *obj = proxy->obj<T>();
+//      T *obj = proxy->obj<T>();
 
 //      std::cout << "left object is loaded: " << obj->left().is_loaded() << " (type: "<< typeid(typename table_type::left_value_type).name() << ")\n";
 //      std::cout << "right object is loaded: " << obj->right().is_loaded() << " (type: "<< typeid(typename table_type::right_value_type).name() << ")\n";
