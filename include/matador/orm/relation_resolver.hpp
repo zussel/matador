@@ -319,26 +319,14 @@ public:
     // else
     // insert into relation data
     std::shared_ptr<basic_identifier> pk = x.primary_key();
-    if (!pk) {
+    if (!pk)
+    {
       return;
     }
 
-    // get node of object type
-    prototype_iterator node = store_->find(x.type());
-
-    left_proxy = node->find_proxy(pk);
-    if (left_proxy) {
-      x.reset(left_proxy, cascade);
-    } else {
-      auto k = left_table_ptr_->identifier_proxy_map_.find(pk);
-      if (k == left_table_ptr_->identifier_proxy_map_.end()) {
-        left_proxy = new object_proxy(pk, (T*)nullptr, node.get());
-        k = left_table_ptr_->identifier_proxy_map_.insert(std::make_pair(pk, left_proxy)).first;
-      }
-      x.reset(k->second, cascade);
-    }
+    left_proxy = acquire_proxy(x, pk, cascade, left_table_ptr_);
   }
-
+  
   template<class V, template<class ...> class C>
   void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *) { }
 
@@ -350,19 +338,8 @@ private:
 
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
-      /**
-       * find proxy in node map
-       * if proxy can be found object was
-       * already read - replace proxy
-       */
       x.reset(proxy, cascade);
     } else {
-      /**
-       * if proxy can't be found we create
-       * a proxy and store it in tables
-       * proxy map. it will be used when
-       * table is read.
-       */
       auto k = tbl->identifier_proxy_map_.find(pk);
       if (k == tbl->identifier_proxy_map_.end()) {
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
