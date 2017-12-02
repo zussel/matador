@@ -344,7 +344,7 @@ public:
 
     left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
   }
-
+  
   template<class V, template<class ...> class C>
   void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *) { }
 
