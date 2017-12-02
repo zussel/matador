@@ -235,12 +235,22 @@ void OrmReloadTestUnit::test_load_has_many_to_many()
     t_student_view student_view(s.store());
 
     UNIT_ASSERT_TRUE(!student_view.empty(), "student view must not be empty");
-    UNIT_ASSERT_EQUAL(student_view.size(), 2UL, "their must be 2 student list");
+    UNIT_ASSERT_EQUAL(student_view.size(), 2UL, "their must be 2 student in list");
+
+    typedef matador::object_view<course> t_course_view;
+    t_course_view course_view(s.store());
+
+    UNIT_ASSERT_TRUE(!course_view.empty(), "course view must not be empty");
+    UNIT_ASSERT_EQUAL(course_view.size(), 1UL, "their must be 1 course in list");
 
     for (const auto &stdnt : student_view) {
       UNIT_ASSERT_FALSE(stdnt->courses.empty(), "vector must not be empty");
       UNIT_ASSERT_EQUAL(stdnt->courses.size(), 1UL, "vector size must be one");
     }
+
+//    auto art = course_view.front();
+//    UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
+//    UNIT_ASSERT_EQUAL(art->students.size(), 2UL, "vector size must be two");
   }
 
   p.drop();

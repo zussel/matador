@@ -20,7 +20,7 @@
 
 #include "matador/object/identifier_proxy_map.hpp"
 
-#include "matador/orm/relation_data.hpp"
+#include "matador/orm/basic_relation_data.hpp"
 
 #include <string>
 #include <functional>
@@ -157,6 +157,10 @@ public:
 
   const prototype_node& node() const;
 
+//  template < class T >
+//  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const T &data) = 0;
+  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, object_proxy *data) = 0;
+
 protected:
   /// @cond MATADOR_DEV
 
@@ -178,15 +182,13 @@ protected:
 
   virtual void prepare(connection &conn) = 0;
 
-//  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations);
-
   persistence &persistence_;
 
   detail::t_identifier_map identifier_proxy_map_;
 
   t_relation_item_map has_many_relations_;
 
-  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_data>> t_relation_data_map;
+  typedef std::unordered_map<std::string, std::shared_ptr<detail::basic_relation_data>> t_relation_data_map;
 
   t_relation_data_map relation_data_map_;
 

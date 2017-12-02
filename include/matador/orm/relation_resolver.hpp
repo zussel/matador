@@ -143,8 +143,6 @@ public:
       throw_object_exception("couldn't find prototype node");
     }
 
-    basic_table::t_table_map::iterator j = table_.find_table(node->type());
-
     /**
      * if relation table is loaded
      * check this tables relation proxy list
@@ -154,25 +152,20 @@ public:
      * append this proxy/id to relation
      * tables relation owner id list
      */
-    if (j->second->is_loaded()) {
-      // relation table is loaded
-      auto endpoint = proxy_->node()->find_endpoint(id);
-      if (!endpoint->second) {
-        throw_object_exception("couldn't find endpoint for field " << id);
-      }
-      auto i = table_.has_many_relations_.find(id);
-      // get relation items for id/relation
-      if (i != table_.has_many_relations_.end()) {
-        // get relation items for this owner identified by pk
-        auto items = i->second.equal_range(id_);
-        for (auto k = items.first; k != items.second; ++k) {
-          endpoint->second->insert_value(has_many_item_holder<V>(*static_cast<has_many_item_holder<V>*>(k->second.get())), proxy_);
-        }
-      }
-    } else {
-      table_.has_many_relations_.insert(std::make_pair(id, detail::t_identifier_multimap()));
-      j->second->identifier_proxy_map_.insert(std::make_pair(id_, proxy_));
+
+    auto data = table_.relation_data_map_.find(id);
+    if (data == table_.relation_data_map_.end()) {
+      return;
     }
+    auto endpoint = proxy_->node()->find_endpoint(id);
+    if (!endpoint->second) {
+      throw_object_exception("couldn't find endpoint for field " << id);
+    }
+
+    auto p = data->second.get();
+//    data->second->insert(proxy_, endpoint);
+//      table_.has_many_relations_.insert(std::make_pair(id, detail::t_identifier_multimap()));
+//      j->second->identifier_proxy_map_.insert(std::make_pair(id_, proxy_));
   }
 
 private:
@@ -194,6 +187,7 @@ public:
 
   void prepare()
   {
+    std::cout << "preparing table " << table_.name() << "\n";
     auto left_table_it = table_.find_table<typename table_type::left_value_type>();
 
     if (left_table_it == table_.end_table()) {
@@ -255,6 +249,7 @@ public:
     store_ = store;
     id_ = proxy->pk();
     proxy_ = proxy;
+    left_proxy_ = nullptr;
     left_table_ptr_ = left_table_.lock();
     right_table_ptr_ = right_table_.lock();
     matador::access::serialize(*this, *proxy->obj<T>());
@@ -270,13 +265,20 @@ public:
   }
 
   template < class V >
-  void serialize(const char *, V &)
+  void serialize(const char *, V &x)
   {
     // must be right side value
     // if left table is loaded
     // insert it into concrete object
     // else
     // insert into relation data
+    if (left_table_ptr_->is_loaded()) {
+      has_many_item_holder<V> value(x, nullptr);
+      left_endpoint_->insert_value_into_foreign(value, left_proxy_);
+    } else {
+      // Todo: append to left tables relation data
+//      left_table_ptr_->append_relation_data(left_proxy_, x);
+    }
   }
 
   void serialize(const char *, char *, size_t)
@@ -289,25 +291,42 @@ public:
   }
 
   template < class V >
-  void serialize(const char *, belongs_to<V> &, cascade_type )
+  void serialize(const char *, belongs_to<V> &x, cascade_type cascade)
   {
     // check wether is left or right side value
     // left side will be determined first
+    std::shared_ptr<basic_identifier> pk = x.primary_key();
+    if (!pk) {
+      return;
+    }
 
-    if (left_table_ptr_->node().type_index() == std::type_index(typeid(V))) {
+    std::cout << "belongs_to pk is " << *pk << "\n";
+
+    if (left_proxy_ == nullptr) {
+//    if (left_table_ptr_->node().type_index() == std::type_index(typeid(V))) {
       std::cout << "belongs_to " << left_table_ptr_->node().type() << " is left (loaded: " << left_table_ptr_->is_loaded() << ")\n";
       // if left is not loaded
+      left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
 
     } else {
       std::cout << "belongs_to " << right_table_ptr_->node().type() << " is right (loaded: " << right_table_ptr_->is_loaded() << ")\n";
 
+      object_proxy* right_proxy = acquire_proxy(x, pk, cascade, right_table_ptr_);
+      if (left_table_ptr_->is_loaded()) {
+        left_endpoint_->insert_value_into_foreign(right_proxy, left_proxy_);
+      } else {
+        // Todo: append to left tables relation data
+        left_table_ptr_->append_relation_data(table_.name(), left_proxy_->pk(), right_proxy);
+      }
+
+      if (right_table_ptr_->is_loaded()) {
+        right_endpoint_->insert_value_into_foreign(left_proxy_, right_proxy);
+      } else {
+        // Todo: append to left tables relation data
+        right_table_ptr_->append_relation_data(table_.name(), right_proxy->pk(), left_proxy_);
+      }
 
     }
-    // find table of type V
-    // find relation_data for type T
-    //
-
-    // if right side value it is many to many relation
   }
 
   template < class V >
@@ -323,20 +342,7 @@ public:
       return;
     }
 
-    // get node of object type
-    prototype_iterator node = store_->find(x.type());
-
-    left_proxy = node->find_proxy(pk);
-    if (left_proxy) {
-      x.reset(left_proxy, cascade);
-    } else {
-      auto k = left_table_ptr_->identifier_proxy_map_.find(pk);
-      if (k == left_table_ptr_->identifier_proxy_map_.end()) {
-        left_proxy = new object_proxy(pk, (T*)nullptr, node.get());
-        k = left_table_ptr_->identifier_proxy_map_.insert(std::make_pair(pk, left_proxy)).first;
-      }
-      x.reset(k->second, cascade);
-    }
+    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
   }
 
   template<class V, template<class ...> class C>
@@ -350,25 +356,16 @@ private:
 
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
-      /**
-       * find proxy in node map
-       * if proxy can be found object was
-       * already read - replace proxy
-       */
       x.reset(proxy, cascade);
     } else {
-      /**
-       * if proxy can't be found we create
-       * a proxy and store it in tables
-       * proxy map. it will be used when
-       * table is read.
-       */
-      auto k = tbl->identifier_proxy_map_.find(pk);
-      if (k == tbl->identifier_proxy_map_.end()) {
+      auto idproxy = tbl->identifier_proxy_map_.find(pk);
+      if (idproxy == tbl->identifier_proxy_map_.end()) {
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
-        k = tbl->identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+        idproxy = tbl->identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+      } else {
+        proxy = idproxy->second;
       }
-      x.reset(k->second, cascade);
+      x.reset(proxy, cascade);
     }
     return proxy;
   }
@@ -387,7 +384,7 @@ private:
   std::shared_ptr<basic_relation_endpoint> left_endpoint_;
   std::shared_ptr<basic_relation_endpoint> right_endpoint_;
 
-  object_proxy *left_proxy = nullptr;
+  object_proxy *left_proxy_ = nullptr;
 };
 
 /// @endcond

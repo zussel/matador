@@ -110,7 +110,7 @@ public:
 
   void update(object_proxy *proxy) override
   {
-    table_type *obj = static_cast<table_type*>(proxy->obj());
+    auto *obj = static_cast<table_type*>(proxy->obj());
     size_t pos = update_.bind(0, obj);
     binder_.bind(obj, &update_, pos);
     // Todo: check result
@@ -122,6 +122,33 @@ public:
     binder_.bind(static_cast<table_type*>(proxy->obj()), &delete_, 0);
     // Todo: check result
     delete_.execute();
+  }
+
+//  template < class T >
+//  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const T &data) override
+//  {
+//    auto i = relation_data_map_.find(field);
+//    if (i == relation_data_map_.end()) {
+//      auto value = std::make_shared<detail::basic_relation_data<T>>();
+//      value->append_data(id, data);
+//      relation_data_map_.insert(std::make_pair(field, value));
+//    } else {
+//      auto value = std::static_pointer_cast<detail::basic_relation_data<T>>(i.second);
+//      value->append_data(id, data);
+//    }
+//  }
+
+  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, object_proxy *proxy) override
+  {
+    auto i = relation_data_map_.find(field);
+    if (i == relation_data_map_.end()) {
+      auto value = std::make_shared<detail::relation_data<object_proxy>>();
+      value->append_data(id, proxy);
+      relation_data_map_.insert(std::make_pair(field, value));
+    } else {
+      auto value = std::static_pointer_cast<detail::relation_data<object_proxy>>(i->second);
+      value->append_data(id, proxy);
+    }
   }
 
 protected:
@@ -144,27 +171,11 @@ protected:
   {
     query<table_type> q(name());
     insert_ = q.insert().prepare(conn);
-//    std::cout << "INSERT: " << insert_.str() << "\n";
     column id = detail::identifier_column_resolver::resolve<T>();
     update_ = q.update().where(id == 1).prepare(conn);
-//    std::cout << "UPDATE: " << update_.str() << "\n";
     delete_ = q.remove().where(id == 1).prepare(conn);
     select_ = q.select().prepare(conn);
   }
-
-  /**
-   * @brief Append elements to a has many relation
-   *
-   * Append elements to a has many relation identified by id
-   *
-   * @param id The identifier of the has many relation object in entity
-   * @param identifier_proxy_map The map with all relationship holding objects
-   * @param has_many_relations The relationship elements
-   */
-//  void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override
-//  {
-//    appender_.append(id, identifier_proxy_map, &has_many_relations);
-//  }
 
 private:
   detail::identifier_binder<table_type> binder_;
@@ -175,7 +186,6 @@ private:
   statement<table_type> select_;
 
   detail::relation_resolver<T> resolver_;
-//  detail::relation_item_appender<T> appender_;
 
   std::unique_ptr<object_proxy> proxy_;
 
@@ -323,6 +333,8 @@ public:
     delete_.bind(0, static_cast<T*>(proxy->obj()));
     delete_.execute();
   }
+
+  void append_relation_data(const std::string &/*field*/, const std::shared_ptr<basic_identifier> &/*id*/, object_proxy */*proxy*/) override {}
 
 protected:
   template < class Left, class Right >
