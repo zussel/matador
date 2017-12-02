@@ -9,6 +9,7 @@
 
 #include "matador/object/object_holder_type.hpp"
 #include "matador/object/basic_has_many_item_holder.hpp"
+//#include "matador/object/object_holder.hpp"
 
 namespace matador {
 
@@ -22,11 +23,11 @@ template < class T >
 class has_many_item_holder<T, typename std::enable_if<!is_builtin<T>::value>::type> : public basic_has_many_item_holder
 {
 public:
-  typedef object_ptr<T> value_type;
+  typedef object_pointer<T, object_holder_type::OBJECT_PTR> value_type;
 
   has_many_item_holder() = default;
 
-  has_many_item_holder(const object_ptr<T> &val, object_proxy *item_proxy)
+  has_many_item_holder(const value_type &val, object_proxy *item_proxy)
     : basic_has_many_item_holder(item_proxy)
     , value_(val)
   {}
@@ -36,11 +37,11 @@ public:
     , value_(val)
   {}
 
-  template < class V >
-  has_many_item_holder(const object_ptr<T> &val, const object_ptr<V> &owner)
-    : basic_has_many_item_holder(owner.proxy_)
-    , value_(val)
-  {}
+//  template < class V >
+//  has_many_item_holder(const value_type &val, const object_holder &owner)
+//    : basic_has_many_item_holder(owner.proxy_)
+//    , value_(val)
+//  {}
 
   has_many_item_holder(const has_many_item_holder &x)
     : basic_has_many_item_holder(x)
@@ -83,18 +84,18 @@ public:
     return a.value_ != b.value_;
   }
 
-  const object_ptr<T>& value() const
+  const value_type& value() const
   {
     return value_;
   }
 
-  object_ptr<T>& value()
+  value_type& value()
   {
     return value_;
   }
 
 private:
-  object_ptr<T> value_;
+  value_type value_;
 };
 
 template < class T >
@@ -110,11 +111,11 @@ public:
     , value_(val)
   {}
 
-  template < class V >
-  has_many_item_holder(const T &val, const object_ptr<V> &owner)
-    : basic_has_many_item_holder(owner.proxy_)
-    , value_(val)
-  {}
+//  template < class V >
+//  has_many_item_holder(const T &val, const object_holder &owner)
+//    : basic_has_many_item_holder(owner.proxy_)
+//    , value_(val)
+//  {}
 
   has_many_item_holder(const has_many_item_holder &x)
     : basic_has_many_item_holder(x)

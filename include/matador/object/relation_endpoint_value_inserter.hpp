@@ -7,6 +7,10 @@
 
 #include "matador/object/has_many_item_holder.hpp"
 
+#include "matador/utils/cascade_type.hpp"
+
+#include "matador/utils/access.hpp"
+
 #include <iostream>
 
 namespace matador {
@@ -15,6 +19,9 @@ template < class V, template < class ... > class C >
 class has_many;
 
 class object_holder;
+
+template < class T, object_holder_type OHT >
+class object_pointer;
 
 namespace detail {
 
@@ -26,7 +33,7 @@ class relation_endpoint_value_inserter/*<Value, typename std::enable_if<std::is_
 {
 public:
   template < class Owner >
-  void insert(const object_ptr<Owner> &owner, const std::string &field, has_many_item_holder<Value> holder);
+  void insert(const object_pointer<Owner, object_holder_type::OBJECT_PTR> &owner, const std::string &field, has_many_item_holder<Value> holder);
 
   template < class T >
   void serialize(T &x)

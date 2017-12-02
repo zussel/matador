@@ -16,6 +16,9 @@ class has_many;
 
 class object_holder;
 
+template < class T, object_holder_type OHT >
+class object_pointer;
+
 namespace detail {
 
 //template < class Value, class Enable = void >
@@ -26,7 +29,7 @@ class relation_endpoint_value_remover//<Value, typename std::enable_if<std::is_b
 {
 public:
   template < class Owner >
-  void remove(const object_ptr<Owner> &owner, const std::string &field, has_many_item_holder<Value> holder);
+  void remove(const object_pointer<Owner, object_holder_type::OBJECT_PTR> &owner, const std::string &field, has_many_item_holder<Value> holder);
 
   template < class T >
   void serialize(T &x)

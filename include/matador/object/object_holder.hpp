@@ -331,6 +331,8 @@ private:
   friend class detail::has_many_inserter;
   template<class T, template <class ...> class C, class Enabled >
   friend class detail::has_many_deleter;
+  template < class T, class Enable >
+  friend class has_many_item_holder;
   template < class L, class R >
   friend class has_many_to_many_item;
   template < class T >

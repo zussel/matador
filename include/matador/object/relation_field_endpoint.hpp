@@ -19,7 +19,7 @@
 #define MATADOR_OBJECT_API
 #endif
 
-#include "matador/object/relation_field_serializer.hpp"
+//#include "matador/object/relation_field_serializer.hpp"
 #include "matador/object/relation_endpoint_value_inserter.hpp"
 #include "matador/object/relation_endpoint_value_remover.hpp"
 #include "matador/object/basic_has_many_to_many_item.hpp"
