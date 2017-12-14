@@ -21,8 +21,8 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-//template < class T, class Enabled = void >
-//class relation_resolver;
+template < class T, class Enabled = void >
+class relation_resolver;
 
 template < class T >
 class relation_resolver<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
@@ -135,7 +135,7 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *)
+  void serialize(const char *id, basic_has_many<V, C> &x, const char *, const char *)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);
@@ -162,7 +162,14 @@ public:
       throw_object_exception("couldn't find endpoint for field " << id);
     }
 
-    auto p = data->second.get();
+//    auto p = data->second.get();
+
+    if (data->second->type_index() == std::type_index(typeid(V))) {
+      // correct type
+      auto rdata = std::static_pointer_cast<detail::relation_data<V>>(data->second);
+
+      rdata->insert_into_container(proxy_->pk(), x);
+    }
 //    data->second->insert(proxy_, endpoint);
 //      table_.has_many_relations_.insert(std::make_pair(id, detail::t_identifier_multimap()));
 //      j->second->identifier_proxy_map_.insert(std::make_pair(id_, proxy_));
@@ -180,7 +187,9 @@ class relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_man
 {
 public:
   typedef T table_type;
-  
+  typedef typename table_type::left_value_type left_value_type;
+  typedef typename table_type::right_value_type right_value_type;
+
   explicit relation_resolver(basic_table &tbl)
     : table_(tbl)
   {}
@@ -188,22 +197,22 @@ public:
   void prepare()
   {
     std::cout << "preparing table " << table_.name() << "\n";
-    auto left_table_it = table_.find_table<typename table_type::left_value_type>();
+    auto left_table_it = table_.find_table<left_value_type>();
 
     if (left_table_it == table_.end_table()) {
       // Todo: introduce throw_orm_exception
-      throw std::logic_error("no owner table " + std::string(typeid(typename table_type::left_value_type).name()) + " found");
+      throw std::logic_error("no owner table " + std::string(typeid(left_value_type).name()) + " found");
 //      std::cout << "no owner table " << std::string(left_node->type()) << " found\n";
     } else {
       left_table_ = left_table_it->second;
     }
 
 
-    auto right_table_it = table_.find_table<typename table_type::right_value_type>();
+    auto right_table_it = table_.find_table<right_value_type>();
 
     if (right_table_it == table_.end_table()) {
       // Todo: introduce throw_orm_exception
-      throw std::logic_error("no owner table " + std::string(typeid(typename table_type::right_value_type).name()) + " found");
+      throw std::logic_error("no owner table " + std::string(typeid(right_value_type).name()) + " found");
 //      std::cout << "no owner table " << std::string(left_node->type()) << " found\n";
     } else {
       right_table_ = right_table_it->second;
@@ -233,9 +242,9 @@ public:
         std::cout << " (no foreign endpoint)\n";
     }
 
-    left_endpoint_ = table_.node().find_endpoint(std::type_index(typeid(typename table_type::left_value_type)))->second;
+    left_endpoint_ = table_.node().find_endpoint(std::type_index(typeid(left_value_type)))->second;
     std::cout << *left_endpoint_ << "\n";
-    auto right_endpoint_iterator = table_.node().find_endpoint(std::type_index(typeid(typename table_type::right_value_type)));
+    auto right_endpoint_iterator = table_.node().find_endpoint(std::type_index(typeid(right_value_type)));
 
     if (right_endpoint_iterator != table_.node().endpoint_end()) {
       right_endpoint_ = right_endpoint_iterator->second;
@@ -265,69 +274,73 @@ public:
   }
 
   template < class V >
-  void serialize(const char *, V &x)
-  {
-    // must be right side value
-    // if left table is loaded
-    // insert it into concrete object
-    // else
-    // insert into relation data
-    if (left_table_ptr_->is_loaded()) {
-      has_many_item_holder<V> value(x, nullptr);
-      left_endpoint_->insert_value_into_foreign(value, left_proxy_);
-    } else {
-      // Todo: append to left tables relation data
-//      left_table_ptr_->append_relation_data(left_proxy_, x);
-    }
-  }
+  void serialize(const char *, V &x);
+//  {
+//    // must be right side value
+//    // if left table is loaded
+//    // insert it into concrete object
+//    // else
+//    // insert into relation data
+//    if (left_table_ptr_->is_loaded()) {
+//      has_many_item_holder<V> value(x, nullptr);
+//      left_endpoint_->insert_value_into_foreign(value, left_proxy_);
+//    } else {
+//      // Todo: append to left tables relation data
+//
+//      auto lptr = std::static_pointer_cast<tleft>(left_table_ptr_);
+//
+//      lptr->append_relation_data2(table_.name(), left_proxy_, x);
+////      left_table_ptr_->append_relation_data(table_.name(), left_proxy_, x);
+//    }
+//  }
 
-  void serialize(const char *, char *, size_t)
-  {
-    // must be right side value
-    // if left table is loaded
-    // insert it into concrete object
-    // else
-    // insert into relation data
-  }
+  void serialize(const char *, char *, size_t);
+//  {
+//    // must be right side value
+//    // if left table is loaded
+//    // insert it into concrete object
+//    // else
+//    // insert into relation data
+//  }
 
   template < class V >
-  void serialize(const char *, belongs_to<V> &x, cascade_type cascade)
-  {
-    // check wether is left or right side value
-    // left side will be determined first
-    std::shared_ptr<basic_identifier> pk = x.primary_key();
-    if (!pk) {
-      return;
-    }
-
-    std::cout << "belongs_to pk is " << *pk << "\n";
-
-    if (left_proxy_ == nullptr) {
-//    if (left_table_ptr_->node().type_index() == std::type_index(typeid(V))) {
-      std::cout << "belongs_to " << left_table_ptr_->node().type() << " is left (loaded: " << left_table_ptr_->is_loaded() << ")\n";
-      // if left is not loaded
-      left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
-
-    } else {
-      std::cout << "belongs_to " << right_table_ptr_->node().type() << " is right (loaded: " << right_table_ptr_->is_loaded() << ")\n";
-
-      object_proxy* right_proxy = acquire_proxy(x, pk, cascade, right_table_ptr_);
-      if (left_table_ptr_->is_loaded()) {
-        left_endpoint_->insert_value_into_foreign(right_proxy, left_proxy_);
-      } else {
-        // Todo: append to left tables relation data
-        left_table_ptr_->append_relation_data(table_.name(), left_proxy_->pk(), right_proxy);
-      }
-
-      if (right_table_ptr_->is_loaded()) {
-        right_endpoint_->insert_value_into_foreign(left_proxy_, right_proxy);
-      } else {
-        // Todo: append to left tables relation data
-        right_table_ptr_->append_relation_data(table_.name(), right_proxy->pk(), left_proxy_);
-      }
-
-    }
-  }
+  void serialize(const char *, belongs_to<V> &x, cascade_type cascade);
+//  {
+//    // check wether is left or right side value
+//    // left side will be determined first
+//    std::shared_ptr<basic_identifier> pk = x.primary_key();
+//    if (!pk) {
+//      return;
+//    }
+//
+//    std::cout << "belongs_to pk is " << *pk << "\n";
+//
+//    if (left_proxy_ == nullptr) {
+////    if (left_table_ptr_->node().type_index() == std::type_index(typeid(V))) {
+//      std::cout << "belongs_to " << left_table_ptr_->node().type() << " is left (loaded: " << left_table_ptr_->is_loaded() << ")\n";
+//      // if left is not loaded
+//      left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
+//
+//    } else {
+//      std::cout << "belongs_to " << right_table_ptr_->node().type() << " is right (loaded: " << right_table_ptr_->is_loaded() << ")\n";
+//
+//      object_proxy* right_proxy = acquire_proxy(x, pk, cascade, right_table_ptr_);
+//      if (left_table_ptr_->is_loaded()) {
+//        left_endpoint_->insert_value_into_foreign(right_proxy, left_proxy_);
+//      } else {
+//        // Todo: append to left tables relation data
+//        left_table_ptr_->append_relation_data(table_.name(), left_proxy_->pk(), right_proxy);
+//      }
+//
+//      if (right_table_ptr_->is_loaded()) {
+//        right_endpoint_->insert_value_into_foreign(left_proxy_, right_proxy);
+//      } else {
+//        // Todo: append to left tables relation data
+//        right_table_ptr_->append_relation_data(table_.name(), right_proxy->pk(), left_proxy_);
+//      }
+//
+//    }
+//  }
 
   template < class V >
   void serialize(const char *, has_one<V> &x, cascade_type cascade)

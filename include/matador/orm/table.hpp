@@ -18,14 +18,20 @@
 
 #include "matador/sql/query.hpp"
 
+
 namespace matador {
 
 class connection;
 
-template < class T, class Enabled = void >
+template<class T, class Enabled = void>
 class table;
 
 class basic_has_many_to_many_item;
+
+}
+
+
+namespace matador {
 
 /**
  * @brief Represents a database table
@@ -36,8 +42,9 @@ class basic_has_many_to_many_item;
  *
  * @tparam T The type of the table
  */
-template < class T >
-class table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type> : public basic_table
+template<class T>
+class table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
+  : public basic_table
 {
 public:
   typedef T table_type;
@@ -52,9 +59,8 @@ public:
    * @param p The underlying persistence object
    */
   table(prototype_node &node, persistence &p)
-    : basic_table(node, p)
-    , resolver_(*this)
-  { }
+    : basic_table(node, p), resolver_(*this)
+  {}
 
   ~table() override = default;
 
@@ -103,14 +109,14 @@ public:
 
   void insert(object_proxy *proxy) override
   {
-    insert_.bind(0, static_cast<table_type*>(proxy->obj()));
+    insert_.bind(0, static_cast<table_type *>(proxy->obj()));
     // Todo: check result
     insert_.execute();
   }
 
   void update(object_proxy *proxy) override
   {
-    auto *obj = static_cast<table_type*>(proxy->obj());
+    auto *obj = static_cast<table_type *>(proxy->obj());
     size_t pos = update_.bind(0, obj);
     binder_.bind(obj, &update_, pos);
     // Todo: check result
@@ -119,37 +125,13 @@ public:
 
   void remove(object_proxy *proxy) override
   {
-    binder_.bind(static_cast<table_type*>(proxy->obj()), &delete_, 0);
+    binder_.bind(static_cast<table_type *>(proxy->obj()), &delete_, 0);
     // Todo: check result
     delete_.execute();
   }
 
-//  template < class T >
-//  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const T &data) override
-//  {
-//    auto i = relation_data_map_.find(field);
-//    if (i == relation_data_map_.end()) {
-//      auto value = std::make_shared<detail::basic_relation_data<T>>();
-//      value->append_data(id, data);
-//      relation_data_map_.insert(std::make_pair(field, value));
-//    } else {
-//      auto value = std::static_pointer_cast<detail::basic_relation_data<T>>(i.second);
-//      value->append_data(id, data);
-//    }
-//  }
-
-  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, object_proxy *proxy) override
-  {
-    auto i = relation_data_map_.find(field);
-    if (i == relation_data_map_.end()) {
-      auto value = std::make_shared<detail::relation_data<object_proxy>>();
-      value->append_data(id, proxy);
-      relation_data_map_.insert(std::make_pair(field, value));
-    } else {
-      auto value = std::static_pointer_cast<detail::relation_data<object_proxy>>(i->second);
-      value->append_data(id, proxy);
-    }
-  }
+  template<class V>
+  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val);
 
 protected:
   /**
@@ -191,6 +173,24 @@ private:
 
   identifier_resolver<T> identifier_resolver_;
 };
+
+template < class T >
+template < class V >
+void table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>::append_relation_data(
+  const std::string &field,
+  const std::shared_ptr<basic_identifier> &id,
+  const V &val)
+{
+  auto i = relation_data_map_.find(field);
+  if (i == relation_data_map_.end()) {
+      auto value = std::make_shared<detail::relation_data<V>>();
+      value->append_data(id, val);
+      relation_data_map_.insert(std::make_pair(field, value));
+  } else {
+      auto value = std::static_pointer_cast<detail::relation_data<V>>(i->second);
+      value->append_data(id, val);
+  }
+}
 
 template < class T >
 class table<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
@@ -334,195 +334,12 @@ public:
     delete_.execute();
   }
 
-  void append_relation_data(const std::string &/*field*/, const std::shared_ptr<basic_identifier> &/*id*/, object_proxy */*proxy*/) override {}
-
-protected:
-  template < class Left, class Right >
-  void resolve_object_links(object_proxy *proxy, const object_ptr<Left> &left, const object_ptr<Right> &right,
-                            const std::shared_ptr<detail::basic_relation_endpoint> &left_endpoint,
-                            const std::shared_ptr<detail::basic_relation_endpoint> &right_endpoint,
-                            const std::shared_ptr<basic_table> &left_table_ptr,
-                            const std::shared_ptr<basic_table> &right_table_ptr
-  )
+  template < class V >
+  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val)
   {
-    std::cout << "left:  " << *left_endpoint << "\n";
-    std::cout << "right: " << *right_endpoint << "\n";
-    if (left.is_loaded() && right.is_loaded()) {
-      // both types left and right are loaded
-      if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        insert_value_into_foreign_endpoint(proxy, left_endpoint, right, left);
-      }
-      if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        insert_value_into_foreign_endpoint(proxy, right_endpoint, left, right);
-      }
-    } else if (left.is_loaded()) {
-      // left is loaded right isn't loaded
-      if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        insert_value_into_foreign_endpoint(proxy, left_endpoint, left, left);
-      }
-      if (right_table_ptr) {
-        prepare_foreign_table_objects(proxy, right, left, right_endpoint, right_table_ptr);
-      }
-    } else if (right.is_loaded()) {
-      // right is loaded left isn't loaded
-      std::cout << "right table loaded " << right_table_ptr->name() << "\n";
-      std::cout << "left table not loaded " << left_table_ptr->name() << "\n";
-      if (left_endpoint && left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        insert_value_into_foreign_endpoint(proxy, left_endpoint, left, right);
-      }
-//      if (right_endpoint && right_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-//        insert_value_into_foreign_endpoint(proxy, right_endpoint, left, right);
-//      }
-//      if (left_table_ptr) {
-//        prepare_foreign_table_objects(proxy, left, right, left_endpoint, left_table_ptr);
-//      }
-    } else {
-      // none is loaded
-      if (left_table_ptr) {
-        prepare_foreign_table_objects(proxy, left, right, left_endpoint, left_table_ptr);
-      }
-      if (right_table_ptr) {
-        prepare_foreign_table_objects(proxy, right, left, right_endpoint, right_table_ptr);
-      }
-    }
+    std::cout << "calling append_relation_data2\n";
   }
 
-  template < class Owner, class Value >
-  void resolve_object_links(object_proxy *proxy, const object_ptr<Owner> &owner, const Value &value,
-                            const std::shared_ptr<detail::basic_relation_endpoint> &left_endpoint,
-                            const std::shared_ptr<detail::basic_relation_endpoint> &/*right_endpoint*/,
-                            const std::shared_ptr<basic_table> &left_table_ptr,
-                            const std::shared_ptr<basic_table> &/*right_table_ptr*/)
-  {
-    if (owner.is_loaded()) {
-      // left is loaded right isn't loaded
-      if (left_endpoint->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        insert_value_into_foreign_endpoint(proxy, left_endpoint, owner, value);
-      }
-    } else {
-      if (left_table_ptr) {
-        prepare_foreign_table_objects(proxy, owner, value, left_endpoint, left_table_ptr);
-      }
-//    }
-//    if (right_table_ptr) {
-//      prepare_foreign_table_objects(value, owner, right_endpoint, right_table_ptr);
-    }
-  }
-
-  template < class Owner, class Value >
-  void insert_has_many_relations(object_proxy *proxy, detail::t_identifier_multimap &id_map, const object_ptr<Owner> &owner, const object_ptr<Value> &value)
-  {
-    id_map.insert(std::make_pair(owner.primary_key(), std::make_unique<has_many_item_holder<Value>>(value, proxy)));
-  }
-
-  template < class Owner, class Value >
-  void insert_has_many_relations(object_proxy *proxy, detail::t_identifier_multimap &id_map, const object_ptr<Owner> &owner, const Value &value)
-  {
-    id_map.insert(std::make_pair(owner.primary_key(), std::make_unique<has_many_item_holder<Value>>(value, proxy)));
-//    id_map.insert(std::make_pair(owner.primary_key(), value));
-  }
-
-  template < class Owner, class Value >
-  void insert_has_many_relations(object_proxy */*proxy*/, detail::t_identifier_multimap &/*id_map*/, const Owner &/*owner*/, const object_ptr<Value> &/*value*/)
-  {
-//    id_map.insert(std::make_pair(owner.primary_key(), this->proxy(obj->left())));
-  }
-
-  template < class Owner, class Value >
-  void insert_has_many_relations(object_proxy *proxy, detail::t_identifier_multimap &id_map, const Owner &owner, Value &value)
-  {
-
-  }
-
-  template < class Owner, class Value >
-  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
-                                          const Owner &owner, const Value &value)
-  {
-
-  }
-
-  template < class Owner, class Value >
-  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
-                                          const object_ptr<Owner> &owner, const Value &value)
-  {
-    foreign_endpoint->insert_value_into_foreign(
-      has_many_item_holder<Value>(value, proxy),
-      this->proxy(owner)
-    );
-  }
-
-  template < class Owner, class Value >
-  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &foreign_endpoint,
-                                          const Owner &owner, const object_ptr<Value> &value)
-  {
-    foreign_endpoint->insert_value_into_foreign(
-      has_many_item_holder<typename table_type::right_value_type>(owner, proxy),
-      this->proxy(value)
-    );
-  }
-
-  template < class Owner, class Value >
-  void insert_value_into_foreign_endpoint(object_proxy *proxy, const std::shared_ptr<detail::basic_relation_endpoint> &endpoint,
-                                          const object_ptr<Owner> &owner, const object_ptr<Value> &value)
-  {
-    std::cout << "owner type " << typeid(Owner).name() << ", value type " << typeid(Value).name() << "\n";
-    std::cout << *endpoint << " insert_value_into_foreign_endpoint - value type " << typeid(Owner).name() << "\n";
-
-    auto foreign_endpoint = endpoint->foreign_endpoint.lock();
-
-    if(foreign_endpoint) {
-//      foreign_endpoint->insert_value(has_many_item_holder<Owner>(this->proxy(owner), proxy), this->proxy(value));
-      foreign_endpoint->insert_value_into_foreign(has_many_item_holder<Value>(this->proxy(value), proxy), this->proxy(owner));
-//    endpoint->insert_value_into_foreign(
-//      has_many_item_holder<Value>(this->proxy(value), nullptr),
-//      this->proxy(owner)
-//    );
-    }
-  }
-
-  template < class Owner, class Value >
-  void prepare_foreign_table_objects(object_proxy *proxy, const object_ptr<Owner> &owner, const object_ptr<Value> &value,
-                                     const std::shared_ptr<detail::basic_relation_endpoint> &relation_endpoint,
-                                     const std::shared_ptr<basic_table> &table_ptr)
-  {
-//        std::cout << "left endpoint field " << relation_endpoint->field << " (table: " << table_ptr->node_.type() << ")\n";
-    auto foreign_endpoint = relation_endpoint->foreign_endpoint.lock();
-    if (foreign_endpoint) {
-//          std::cout << "foreign left endpoint field " << foreign_endpoint->field << " (type: " << foreign_endpoint->type_name << ")\n";
-//      auto r = table_ptr->has_many_relations_.find(foreign_endpoint->field);
-//      if (r == table_ptr->has_many_relations_.end()) {
-////            std::cout << "inserting new multimap for field " << foreign_endpoint->field << "\n";
-//        r = table_ptr->has_many_relations_.insert(
-//            std::make_pair(foreign_endpoint->field, detail::t_identifier_multimap())
-//        ).first;
-//      }
-////            std::cout << "adding to existing multimap for field " << foreign_endpoint->field << "\n";
-//      insert_has_many_relations(proxy, r->second, owner, value);
-//          r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
-    }
-  }
-
-  template < class Owner, class Value >
-  void prepare_foreign_table_objects(object_proxy *proxy, const object_ptr<Owner> &owner, const Value &value,
-                                     const std::shared_ptr<detail::basic_relation_endpoint> &relation_endpoint,
-                                     const std::shared_ptr<basic_table> &table_ptr)
-  {
-//        std::cout << "left endpoint field " << relation_endpoint->field << " (table: " << table_ptr->node_.type() << ")\n";
-    auto left_foreign_endpoint = relation_endpoint->foreign_endpoint.lock();
-    if (left_foreign_endpoint) {
-//          std::cout << "foreign left endpoint field " << left_foreign_endpoint->field << " (type: " << left_foreign_endpoint->type_name << ")\n";
-//      auto r = table_ptr->has_many_relations_.find(left_foreign_endpoint->field);
-//      if (r == table_ptr->has_many_relations_.end()) {
-////            std::cout << "inserting new multimap for field " << left_foreign_endpoint->field << "\n";
-//        r = table_ptr->has_many_relations_.insert(
-//            std::make_pair(left_foreign_endpoint->field, detail::t_identifier_multimap())
-//        ).first;
-//      }
-////            std::cout << "adding to existing multimap for field " << left_foreign_endpoint->field << "\n";
-//      insert_has_many_relations(proxy, r->second, owner, value);
-//          r->second.insert(std::make_pair(obj->left().primary_key(), this->proxy(obj->right())));
-    }
-  }
 private:
   statement<T> select_all_;
   statement<T> insert_;
@@ -538,5 +355,7 @@ private:
 };
 
 }
+
+#include "matador/orm/relation_resolver.tpp"
 
 #endif //OOS_TABLE_HPP

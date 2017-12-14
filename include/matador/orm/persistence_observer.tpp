@@ -1,5 +1,6 @@
 #include "matador/orm/persistence_observer.hpp"
 #include "matador/orm/persistence.hpp"
+#include "matador/orm/table.hpp"
 
 namespace matador {
 

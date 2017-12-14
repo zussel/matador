@@ -31,8 +31,8 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-template < class T, class Enabled=void >
-class relation_resolver;
+//template < class T, class Enabled=void >
+//class relation_resolver;
 
 /// @endcond
 
@@ -159,16 +159,16 @@ public:
 
 //  template < class T >
 //  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const T &data) = 0;
-  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, object_proxy *data) = 0;
+//  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, object_proxy *data) = 0;
 
 protected:
   /// @cond MATADOR_DEV
 
-  template < class T, class Enabled >
-  friend class detail::relation_resolver;
-  friend class persistence;
+//  template < class T, class Enabled >
+//  friend class detail::relation_resolver;
+//  friend class persistence;
 
-protected:
+public:
   t_table_map::iterator find_table(const std::string &type);
   template < class T >
   t_table_map::iterator find_table()
