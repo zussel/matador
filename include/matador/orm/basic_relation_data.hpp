@@ -9,6 +9,7 @@
 
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/object_holder_type.hpp"
+#include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/identifier_proxy_map.hpp"
 
 #include <memory>
@@ -29,21 +30,31 @@ public:
   virtual const std::type_index& type_index() const = 0;
 };
 
+template < class T, class Enabled = void >
+class relation_data;
+
 template < class T >
-class relation_data : public basic_relation_data
+class relation_data<T, typename std::enable_if<matador::is_builtin<T>::value>::type> : public basic_relation_data
 {
 public:
   relation_data() : tindex_(std::type_index(typeid(T))) {}
 
   void append_data(const identifier_ptr &id, const T &data)
   {
+    std::cout << "insert value " << data << " for pk " << *id << " (type: " << typeid(T).name() << ")\n";
     id_multi_map_.insert(std::make_pair(id, data));
   }
 
   template < template <class ...> class C >
   void insert_into_container(const identifier_ptr &id, basic_has_many<T, C> &container)
   {
-    std::cout << "try to insert for pk " << *id << " into container (size: " << container.size() << ")\n";
+    std::cout << "try to insert for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
+    auto range = id_multi_map_.equal_range(id);
+    for (auto i = range.first; i != range.second; ++i)
+    {
+      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
+      container.append(has_many_item_holder<T>(i->second, nullptr));
+    }
   }
 
   const std::type_index& type_index() const override
@@ -54,26 +65,34 @@ public:
 private:
   std::type_index tindex_;
 
-  std::unordered_map<identifier_ptr, T> id_multi_map_;
+  std::unordered_multimap<identifier_ptr, T, identifier_hash<identifier_ptr>, identifier_equal> id_multi_map_;
 };
 
 template < class T >
-class relation_data<object_pointer<T, object_holder_type::OBJECT_PTR>> : public basic_relation_data
+class relation_data<T, typename std::enable_if<!matador::is_builtin<T>::value>::type> : public basic_relation_data
 {
 public:
-  typedef object_pointer<T, object_holder_type::OBJECT_PTR> value_type;
+//  typedef object_pointer<T, object_holder_type::OBJECT_PTR> value_type;
+  typedef typename T::object_type value_type;
 
-  relation_data() : tindex_(std::type_index(typeid(T))) {}
+  relation_data() : tindex_(std::type_index(typeid(value_type))) {}
 
-  void append_data(const identifier_ptr &id, const value_type &data)
+  void append_data(const identifier_ptr &id, const T &data)
   {
+    std::cout << "insert value " << data.id() << " for pk " << *id << " (type: " << typeid(T).name() << ")\n";
     id_multi_map_.insert(std::make_pair(id, data));
   }
 
   template < template <class ...> class C >
-  void insert_into_container(const identifier_ptr &id, basic_has_many<T, C> &container)
+  void insert_into_container(const identifier_ptr &id, basic_has_many<value_type, C> &container)
   {
-    std::cout << "try to insert for pk " << *id << " into container (size: " << container.size() << ")\n";
+    std::cout << "try to insert for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
+    auto range = id_multi_map_.equal_range(id);
+    for (auto i = range.first; i != range.second; ++i)
+    {
+      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
+      container.append(has_many_item_holder<value_type>(i->second, nullptr));
+    }
   }
 
   const std::type_index& type_index() const override
@@ -84,7 +103,7 @@ public:
 private:
   std::type_index tindex_;
 
-  std::unordered_map<identifier_ptr, value_type> id_multi_map_;
+  std::unordered_multimap<identifier_ptr, T, identifier_hash<identifier_ptr>, identifier_equal> id_multi_map_;
 };
 
 }

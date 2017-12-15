@@ -166,7 +166,7 @@ public:
 
     if (data->second->type_index() == std::type_index(typeid(V))) {
       // correct type
-      auto rdata = std::static_pointer_cast<detail::relation_data<V>>(data->second);
+      auto rdata = std::static_pointer_cast<detail::relation_data<object_pointer<V, object_holder_type::OBJECT_PTR>>>(data->second);
 
       rdata->insert_into_container(proxy_->pk(), x);
     }

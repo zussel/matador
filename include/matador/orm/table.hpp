@@ -183,6 +183,7 @@ void table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_it
 {
   auto i = relation_data_map_.find(field);
   if (i == relation_data_map_.end()) {
+    std::cout << "creating relation_data<" << typeid(V).name() << ">\n";
       auto value = std::make_shared<detail::relation_data<V>>();
       value->append_data(id, val);
       relation_data_map_.insert(std::make_pair(field, value));
