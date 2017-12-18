@@ -248,9 +248,9 @@ void OrmReloadTestUnit::test_load_has_many_to_many()
       UNIT_ASSERT_EQUAL(stdnt->courses.size(), 1UL, "vector size must be one");
     }
 
-//    auto art = course_view.front();
-//    UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
-//    UNIT_ASSERT_EQUAL(art->students.size(), 2UL, "vector size must be two");
+    auto art = course_view.front();
+    UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
+    UNIT_ASSERT_EQUAL(art->students.size(), 2UL, "vector size must be two");
   }
 
   p.drop();

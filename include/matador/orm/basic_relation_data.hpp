@@ -55,6 +55,7 @@ public:
       std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
       container.append(has_many_item_holder<T>(i->second, nullptr));
     }
+    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
   }
 
   const std::type_index& type_index() const override
@@ -93,6 +94,7 @@ public:
       std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
       container.append(has_many_item_holder<value_type>(i->second, nullptr));
     }
+    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
   }
 
   const std::type_index& type_index() const override
