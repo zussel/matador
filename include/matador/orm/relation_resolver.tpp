@@ -47,16 +47,16 @@ void relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many
     return;
   }
 
-  std::cout << "belongs_to pk is " << *pk << "\n";
+//  std::cout << "belongs_to pk is " << *pk << "\n";
 
   if (left_proxy_ == nullptr) {
 //    if (left_table_ptr_->node().type_index() == std::type_index(typeid(V))) {
-    std::cout << "belongs_to " << left_table_ptr_->node().type() << " is left (loaded: " << left_table_ptr_->is_loaded() << ")\n";
+//    std::cout << "belongs_to " << left_table_ptr_->node().type() << " is left (loaded: " << left_table_ptr_->is_loaded() << ")\n";
     // if left is not loaded
     left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
 
   } else {
-    std::cout << "belongs_to " << right_table_ptr_->node().type() << " is right (loaded: " << right_table_ptr_->is_loaded() << ")\n";
+//    std::cout << "belongs_to " << right_table_ptr_->node().type() << " is right (loaded: " << right_table_ptr_->is_loaded() << ")\n";
 
     object_proxy* right_proxy = acquire_proxy(x, pk, cascade, right_table_ptr_);
     if (left_table_ptr_->is_loaded()) {
@@ -122,16 +122,16 @@ void relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many
     return;
   }
 
-  std::cout << "belongs_to pk is " << *pk << "\n";
+//  std::cout << "belongs_to pk is " << *pk << "\n";
 
   if (left_proxy_ == nullptr) {
 //    if (left_table_ptr_->node().type_index() == std::type_index(typeid(V))) {
-    std::cout << "belongs_to " << left_table_ptr_->node().type() << " is left (loaded: " << left_table_ptr_->is_loaded() << ")\n";
+//    std::cout << "belongs_to " << left_table_ptr_->node().type() << " is left (loaded: " << left_table_ptr_->is_loaded() << ")\n";
     // if left is not loaded
     left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
 
   } else {
-    std::cout << "right type is builtin; this should not happen\n";
+//    std::cout << "right type is builtin; this should not happen\n";
     throw_object_exception("right value type must not be object pointer");
   }
 }

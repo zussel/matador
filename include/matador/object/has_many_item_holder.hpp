@@ -124,28 +124,25 @@ public:
 
   has_many_item_holder& operator=(const has_many_item_holder &x)
   {
+    basic_has_many_item_holder::operator=(x);
     value_ = x.value_;
-    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
     return *this;
   }
 
   has_many_item_holder(object_proxy *, nullptr_t) {}
 
-  has_many_item_holder(has_many_item_holder &&x)
+  has_many_item_holder(has_many_item_holder &&x) noexcept
   {
     value_ = x.value_;
-    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-//    x.value_ = nullptr;
-    x.has_many_to_many_item_poxy_ = nullptr;
+
+    basic_has_many_item_holder::operator=(x);
   }
 
   has_many_item_holder& operator=(has_many_item_holder &&x)
   {
     if (this != &x) {
       value_ = x.value_;
-      has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-//      x.value_ = nullptr;
-      x.has_many_to_many_item_poxy_ = nullptr;
+      basic_has_many_item_holder(x);
     }
     return *this;
   }
@@ -174,7 +171,6 @@ private:
   friend class detail::basic_relation_endpoint;
 
   T value_;
-  object_proxy *has_many_to_many_item_poxy_;
 };
 
 }

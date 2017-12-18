@@ -652,7 +652,7 @@ public:
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
 
-    return iterator(this->holder_container_.insert(pos.iter_, holder));
+    return iterator(this->holder_container_.emplace(pos.iter_, holder));
   }
 
   /**
@@ -711,7 +711,9 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+      if (!matador::is_builtin<T>::value) {
+        this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+      }
       this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
@@ -736,7 +738,9 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
-        this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+        if (!matador::is_builtin<T>::value) {
+          this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+        }
         this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
         ++i;
       }

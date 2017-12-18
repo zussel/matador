@@ -15,14 +15,18 @@ struct basic_relation_endpoint;
 
 class basic_has_many_item_holder
 {
-protected:
+public:
   basic_has_many_item_holder() = default;
 
   explicit basic_has_many_item_holder(object_proxy *item_proxy)
     : has_many_to_many_item_poxy_(item_proxy)
   {}
 
-public:
+  basic_has_many_item_holder& operator=(const basic_has_many_item_holder &x) = default;
+  basic_has_many_item_holder& operator=(basic_has_many_item_holder &&x) = default;
+  basic_has_many_item_holder(const basic_has_many_item_holder &x) = default;
+  basic_has_many_item_holder(basic_has_many_item_holder &&x) = default;
+
   object_proxy* item_proxy() const
   {
     return has_many_to_many_item_poxy_;
@@ -33,6 +37,7 @@ protected:
   {
     has_many_to_many_item_poxy_ = itemproxy;
   }
+
 private:
   friend struct detail::basic_relation_endpoint;
   object_proxy *has_many_to_many_item_poxy_ = nullptr;

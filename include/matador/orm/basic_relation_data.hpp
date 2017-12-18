@@ -41,21 +41,21 @@ public:
 
   void append_data(const identifier_ptr &id, const T &data)
   {
-    std::cout << "insert value " << data << " for pk " << *id << " (type: " << typeid(T).name() << ")\n";
+//    std::cout << "insert value " << data << " for pk " << *id << " (type: " << typeid(T).name() << ")\n";
     id_multi_map_.insert(std::make_pair(id, data));
   }
 
   template < template <class ...> class C >
   void insert_into_container(const identifier_ptr &id, basic_has_many<T, C> &container)
   {
-    std::cout << "try to insert for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
+//    std::cout << "try to insert for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
     auto range = id_multi_map_.equal_range(id);
     for (auto i = range.first; i != range.second; ++i)
     {
-      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
+//      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
       container.append(has_many_item_holder<T>(i->second, nullptr));
     }
-    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
+//    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
   }
 
   const std::type_index& type_index() const override
@@ -80,21 +80,21 @@ public:
 
   void append_data(const identifier_ptr &id, const T &data)
   {
-    std::cout << "insert value " << data.id() << " for pk " << *id << " (type: " << typeid(T).name() << ")\n";
+//    std::cout << "insert value " << data.id() << " for pk " << *id << " (type: " << typeid(T).name() << ")\n";
     id_multi_map_.insert(std::make_pair(id, data));
   }
 
   template < template <class ...> class C >
   void insert_into_container(const identifier_ptr &id, basic_has_many<value_type, C> &container)
   {
-    std::cout << "try to insert for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
+//    std::cout << "try to insert for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
     auto range = id_multi_map_.equal_range(id);
     for (auto i = range.first; i != range.second; ++i)
     {
-      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
+//      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
       container.append(has_many_item_holder<value_type>(i->second, nullptr));
     }
-    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
+//    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
   }
 
   const std::type_index& type_index() const override

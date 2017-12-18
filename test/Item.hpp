@@ -723,4 +723,7 @@ public:
 using many_ints = many_builtins<int, std::list>;
 using many_strings = many_builtins<std::string, std::list>;
 
+using many_vector_ints = many_builtins<int, std::vector>;
+using many_vector_strings = many_builtins<std::string, std::vector>;
+
 #endif /* ITEM_HPP */

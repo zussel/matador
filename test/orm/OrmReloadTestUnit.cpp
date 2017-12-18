@@ -181,8 +181,6 @@ void OrmReloadTestUnit::test_load_has_many()
 
 void OrmReloadTestUnit::test_load_has_many_to_many()
 {
-  std::cout <<"\n";
-
   matador::persistence p(dns_);
 
   p.attach<person>("person");

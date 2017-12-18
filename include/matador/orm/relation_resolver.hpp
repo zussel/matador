@@ -191,7 +191,7 @@ public:
 
   void prepare()
   {
-    std::cout << "preparing table " << table_.name() << "\n";
+//    std::cout << "preparing table " << table_.name() << "\n";
     auto left_table_it = table_.find_table<left_value_type>();
 
     if (left_table_it == table_.end_table()) {
@@ -213,37 +213,37 @@ public:
       right_table_ = right_table_it->second;
     }
 
-    auto left_table_ptr = left_table_.lock();
-    for(auto endpoint : left_table_ptr->node().endpoints())
-    {
-      std::cout << "left node " << left_table_ptr->node().type() << " has endpoint " << endpoint.second->field << ", type "
-                << endpoint.second->type_name;
-      auto sptr = endpoint.second->foreign_endpoint.lock();
-      if (sptr)
-        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
-      else
-        std::cout << " (no foreign endpoint)\n";
-    }
+//    auto left_table_ptr = left_table_.lock();
+//    for(auto endpoint : left_table_ptr->node().endpoints())
+//    {
+//      std::cout << "left node " << left_table_ptr->node().type() << " has endpoint " << endpoint.second->field << ", type "
+//                << endpoint.second->type_name;
+//      auto sptr = endpoint.second->foreign_endpoint.lock();
+//      if (sptr)
+//        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
+//      else
+//        std::cout << " (no foreign endpoint)\n";
+//    }
 
-    auto right_table_ptr = right_table_.lock();
-    for(auto endpoint : right_table_ptr->node().endpoints())
-    {
-      std::cout << "right node " << right_table_ptr->node().type() << " has endpoint " << endpoint.second->field << ", type "
-                << endpoint.second->type_name;
-      auto sptr = endpoint.second->foreign_endpoint.lock();
-      if (sptr)
-        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
-      else
-        std::cout << " (no foreign endpoint)\n";
-    }
+//    auto right_table_ptr = right_table_.lock();
+//    for(auto endpoint : right_table_ptr->node().endpoints())
+//    {
+//      std::cout << "right node " << right_table_ptr->node().type() << " has endpoint " << endpoint.second->field << ", type "
+//                << endpoint.second->type_name;
+//      auto sptr = endpoint.second->foreign_endpoint.lock();
+//      if (sptr)
+//        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
+//      else
+//        std::cout << " (no foreign endpoint)\n";
+//    }
 
     left_endpoint_ = table_.node().find_endpoint(std::type_index(typeid(left_value_type)))->second;
-    std::cout << *left_endpoint_ << "\n";
+//    std::cout << *left_endpoint_ << "\n";
     auto right_endpoint_iterator = table_.node().find_endpoint(std::type_index(typeid(right_value_type)));
 
     if (right_endpoint_iterator != table_.node().endpoint_end()) {
       right_endpoint_ = right_endpoint_iterator->second;
-      std::cout << *right_endpoint_ << "\n";
+//      std::cout << *right_endpoint_ << "\n";
     }
 
   }
@@ -348,7 +348,7 @@ public:
 
   void prepare()
   {
-    std::cout << "preparing table " << table_.name() << "\n";
+//    std::cout << "preparing table " << table_.name() << "\n";
     auto left_table_it = table_.find_table<left_value_type>();
 
     if (left_table_it == table_.end_table()) {
@@ -360,20 +360,20 @@ public:
     }
 
 
-    auto left_table_ptr = left_table_.lock();
-    for(auto endpoint : left_table_ptr->node().endpoints())
-    {
-      std::cout << "left node " << left_table_ptr->node().type() << " has endpoint " << endpoint.second->field << ", type "
-                << endpoint.second->type_name;
-      auto sptr = endpoint.second->foreign_endpoint.lock();
-      if (sptr)
-        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
-      else
-        std::cout << " (no foreign endpoint)\n";
-    }
+//    auto left_table_ptr = left_table_.lock();
+//    for(auto endpoint : left_table_ptr->node().endpoints())
+//    {
+//      std::cout << "left node " << left_table_ptr->node().type() << " has endpoint " << endpoint.second->field << ", type "
+//                << endpoint.second->type_name;
+//      auto sptr = endpoint.second->foreign_endpoint.lock();
+//      if (sptr)
+//        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
+//      else
+//        std::cout << " (no foreign endpoint)\n";
+//    }
 
     left_endpoint_ = table_.node().find_endpoint(std::type_index(typeid(left_value_type)))->second;
-    std::cout << *left_endpoint_ << "\n";
+//    std::cout << *left_endpoint_ << "\n";
   }
 
   void resolve(object_proxy *proxy, object_store *store)

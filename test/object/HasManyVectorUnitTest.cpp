@@ -110,8 +110,11 @@ void HasManyVectorUnitTest::test_erase_scalar()
   mptr->elements.push_back(4);
 
   i = mptr->elements.begin();
+  auto j = i;
+  ++j;
+  ++j;
 
-  i = mptr->elements.erase(i, i+2);
+  i = mptr->elements.erase(i, j);
 
   UNIT_ASSERT_EQUAL(2U, mptr->elements.size(), "size should be 2 (two)");
   UNIT_ASSERT_EQUAL(*i, 3, "name must be '3'");
