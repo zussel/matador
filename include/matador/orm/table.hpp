@@ -228,7 +228,7 @@ public:
 
 //    select_all_ = q.select().prepare(conn);
 
-    table_type *proto = node().prototype<table_type>();
+    table_type *proto = node().template prototype<table_type>();
     select_all_ = q.select({proto->left_column(), proto->right_column()}).prepare(conn);
     insert_ = q.insert(*proto).prepare(conn);
 
@@ -336,7 +336,7 @@ public:
   }
 
   template < class V >
-  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val)
+  void append_relation_data(const std::string &, const std::shared_ptr<basic_identifier> &, const V &)
   {
     std::cout << "calling append_relation_data2\n";
   }

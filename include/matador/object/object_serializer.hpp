@@ -287,13 +287,13 @@ public:
   }
 
   template < class T >
-  void serialize_value(const T &val)
+  void serialize_value(const T &)
   {
 
   }
 
   template < class T >
-  void serialize_value(const object_ptr<T> &val)
+  void serialize_value(const object_ptr<T> &)
   {
 
   }
