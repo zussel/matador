@@ -13,45 +13,45 @@ matrix:
       compiler: clang
 
     # clang-3.6 32
-    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=32
-      os: linux
-      addons: &clang36-32
-        apt:
-          packages:
-            - cmake
-            - cmake-data
-            - clang-3.6
-            - linux-libc-dev:i386
-            - g++-multilib
-            - gcc-multilib
-          sources:
-            - george-edison55-precise-backports
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-
-    - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=32
-      os: linux
-      addons: *clang36-32
+#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=32
+#      os: linux
+#      addons: &clang36-32
+#        apt:
+#          packages:
+#            - cmake
+#            - cmake-data
+#            - clang-3.6
+#            - linux-libc-dev:i386
+#            - g++-multilib
+#            - gcc-multilib
+#          sources:
+#            - george-edison55-precise-backports
+#            - ubuntu-toolchain-r-test
+#            - llvm-toolchain-precise-3.6
+#
+#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=32
+#      os: linux
+#      addons: *clang36-32
 
     # clang-3.6 64
-    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=64
-      os: linux
-      addons: &clang36-64
-        apt:
-          packages:
-            - cmake
-            - cmake-data
-            - clang-3.6
-            - g++
-            - gcc
-          sources:
-            - george-edison55-precise-backports
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-
-    - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=64
-      os: linux
-      addons: *clang36-64
+#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=64
+#      os: linux
+#      addons: &clang36-64
+#        apt:
+#          packages:
+#            - cmake
+#            - cmake-data
+#            - clang-3.6
+#            - g++
+#            - gcc
+#          sources:
+#            - george-edison55-precise-backports
+#            - ubuntu-toolchain-r-test
+#            - llvm-toolchain-precise-3.6
+#
+#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=64
+#      os: linux
+#      addons: *clang36-64
 
     # clang-3.7 32
     - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug ARCH=32
