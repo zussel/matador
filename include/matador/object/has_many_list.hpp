@@ -487,7 +487,7 @@ public:
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
 
-    return iterator(this->holder_container_.emplace(pos.iter_, holder));
+    return iterator(this->holder_container_.insert(pos.iter_, holder));
   }
 
   /**

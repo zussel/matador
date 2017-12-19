@@ -110,6 +110,7 @@ void HasManyVectorUnitTest::test_erase_scalar()
   mptr->elements.push_back(4);
 
   i = mptr->elements.begin();
+
   auto j = i;
   ++j;
   ++j;

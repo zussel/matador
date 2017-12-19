@@ -43,7 +43,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     inserter.insert(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
       this->field,
-      has_many_item_holder<Value>(owner, holder.item_proxy())
+      has_many_item_holder<Value>(owner, static_cast<const has_many_item_holder<Owner>&>(holder).item_proxy())
     );
   }
 
@@ -52,7 +52,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     remover.remove(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
       this->field,
-      has_many_item_holder<Value>(owner, holder.item_proxy())
+      has_many_item_holder<Value>(owner, static_cast<const has_many_item_holder<Owner>&>(holder).item_proxy())
     );
   }
 
@@ -249,7 +249,7 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     inserter.insert(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
       this->field,
-      has_many_item_holder<Value>(owner, holder.item_proxy())
+      has_many_item_holder<Value>(owner, static_cast<const has_many_item_holder<Owner>&>(holder).item_proxy())
     );
   }
 
@@ -258,7 +258,7 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     remover.remove(
       static_cast<const has_many_item_holder<Owner>&>(holder).value(),
       this->field,
-      has_many_item_holder<Value>(owner, holder.item_proxy())
+      has_many_item_holder<Value>(owner, static_cast<const has_many_item_holder<Owner>&>(holder).item_proxy())
     );
   }
 

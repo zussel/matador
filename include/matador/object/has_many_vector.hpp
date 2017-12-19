@@ -276,6 +276,8 @@ public:
   value_type& operator*() const { return iter_->value(); }
   //@}
 
+  holder_type& holder_item() const { return *iter_; }
+
 private:
   friend class has_many<T, std::vector>;
   friend class const_has_many_iterator<T, std::vector>;
@@ -287,8 +289,6 @@ private:
   friend class detail::object_deleter;
   template<class V, template <class ...> class C, class Enabled>
   friend class detail::has_many_deleter;
-
-  holder_type& holder_item() const { return *iter_; }
 
   void move(self &i)
   {
@@ -652,7 +652,7 @@ public:
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
 
-    return iterator(this->holder_container_.emplace(pos.iter_, holder));
+    return iterator(this->holder_container_.insert(pos.iter_, holder));
   }
 
   /**

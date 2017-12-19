@@ -9,9 +9,13 @@
 
 #include "matador/object/object_holder_type.hpp"
 #include "matador/object/basic_has_many_item_holder.hpp"
-//#include "matador/object/object_holder.hpp"
 
 namespace matador {
+
+namespace detail
+{
+  struct basic_relation_endpoint;
+}
 
 template < class T, object_holder_type OHT >
 class object_pointer;
@@ -28,48 +32,41 @@ public:
   has_many_item_holder() = default;
 
   has_many_item_holder(const value_type &val, object_proxy *item_proxy)
-    : basic_has_many_item_holder(item_proxy)
+    : has_many_to_many_item_poxy_(item_proxy)
     , value_(val)
   {}
 
   has_many_item_holder(object_proxy *val, object_proxy *item_proxy)
-    : basic_has_many_item_holder(item_proxy)
+    : has_many_to_many_item_poxy_(item_proxy)
     , value_(val)
   {}
 
-//  template < class V >
-//  has_many_item_holder(const value_type &val, const object_holder &owner)
-//    : basic_has_many_item_holder(owner.proxy_)
-//    , value_(val)
-//  {}
-
   has_many_item_holder(const has_many_item_holder &x)
     : basic_has_many_item_holder(x)
+    , has_many_to_many_item_poxy_(x.has_many_to_many_item_poxy_)
     , value_(x.value_)
   {}
 
   has_many_item_holder& operator=(const has_many_item_holder &x)
   {
     value_ = x.value_;
-    this->set_item_proxy(x.item_proxy());
+    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
     return *this;
   }
 
   has_many_item_holder(has_many_item_holder &&x) noexcept
   {
-    value_ = x.value_;
-    this->set_item_proxy(x.item_proxy());
-    x.value_ = nullptr;
-    x.set_item_proxy(nullptr);
+    value_ = std::move(x.value_);
+    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
+    x.has_many_to_many_item_poxy_ = nullptr;
   }
 
   has_many_item_holder& operator=(has_many_item_holder &&x) noexcept
   {
     if (this != &x) {
-      value_ = x.value_;
-      this->set_item_proxy(x.item_proxy());
-      x.value_ = nullptr;
-      x.set_item_proxy(nullptr);
+      value_ = std::move(x.value_);
+      has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
+      x.has_many_to_many_item_poxy_ = nullptr;
     }
     return *this;
   }
@@ -94,7 +91,15 @@ public:
     return value_;
   }
 
+  object_proxy* item_proxy() const
+  {
+    return has_many_to_many_item_poxy_;
+  }
+
 private:
+  friend struct detail::basic_relation_endpoint;
+
+  object_proxy *has_many_to_many_item_poxy_ = nullptr;
   value_type value_;
 };
 
@@ -107,24 +112,19 @@ public:
   has_many_item_holder() = default;
 
   has_many_item_holder(const T &val, object_proxy *item_proxy)
-    : basic_has_many_item_holder(item_proxy)
+    : has_many_to_many_item_poxy_(item_proxy)
     , value_(val)
   {}
 
-//  template < class V >
-//  has_many_item_holder(const T &val, const object_holder &owner)
-//    : basic_has_many_item_holder(owner.proxy_)
-//    , value_(val)
-//  {}
-
   has_many_item_holder(const has_many_item_holder &x)
     : basic_has_many_item_holder(x)
+    , has_many_to_many_item_poxy_(x.has_many_to_many_item_poxy_)
     , value_(x.value_)
   {}
 
   has_many_item_holder& operator=(const has_many_item_holder &x)
   {
-    basic_has_many_item_holder::operator=(x);
+    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
     value_ = x.value_;
     return *this;
   }
@@ -133,16 +133,20 @@ public:
 
   has_many_item_holder(has_many_item_holder &&x) noexcept
   {
-    value_ = x.value_;
+    value_ = std::move(x.value_);
+//    value_ = x.value_;
 
-    basic_has_many_item_holder::operator=(x);
+    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
+    x.has_many_to_many_item_poxy_ = nullptr;
   }
 
-  has_many_item_holder& operator=(has_many_item_holder &&x)
+  has_many_item_holder& operator=(has_many_item_holder &&x) noexcept
   {
     if (this != &x) {
-      value_ = x.value_;
-      basic_has_many_item_holder(x);
+      value_ = std::move(x.value_);
+      has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
+      x.has_many_to_many_item_poxy_ = nullptr;
+//      basic_has_many_item_holder(x);
     }
     return *this;
   }
@@ -167,9 +171,15 @@ public:
     return value_;
   }
 
+  object_proxy* item_proxy() const
+  {
+    return has_many_to_many_item_poxy_;
+  }
+
 private:
   friend class detail::basic_relation_endpoint;
 
+  object_proxy *has_many_to_many_item_poxy_ = nullptr;
   T value_;
 };
 

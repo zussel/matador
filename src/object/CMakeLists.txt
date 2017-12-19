@@ -78,7 +78,6 @@ SET(HEADER
   ../../include/matador/object/relation_endpoint_value_remover.hpp
   ../../include/matador/object/relation_endpoint_value_remover.tpp
   ../../include/matador/object/to_many_endpoints.hpp
-  ../../include/matador/object/basic_has_many_item_holder.hpp
 )
 
 ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
