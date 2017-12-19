@@ -213,7 +213,7 @@ public:
   void create(connection &conn) override
   {
     query<table_type> stmt(name());
-    stmt.create(*node().prototype<table_type>()).execute(conn);
+    stmt.create(*node().template prototype<table_type>()).execute(conn);
   }
 
   void drop(connection &conn) override

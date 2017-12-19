@@ -40,7 +40,7 @@ template<class T, template <class ...> class C, class Enabled>
 class has_many_inserter;
 template<class T, template <class ...> class C, class Enabled>
 class has_many_deleter;
-class basic_relation_endpoint;
+struct basic_relation_endpoint;
 template < class Value >
 class relation_endpoint_value_inserter;
 template < class Value/*, class Enabled*/ >
