@@ -65,7 +65,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/) override
   {
     object_ptr<has_many_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
