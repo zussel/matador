@@ -56,7 +56,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     );
   }
 
-  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+  void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     // cast to real type object pointer
     object_ptr<Owner> ownptr(owner);
@@ -97,14 +97,14 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
-  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+  void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
     auto itemptr = store.insert(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column));
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/) override
   {
     object_ptr<has_one_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
@@ -157,14 +157,14 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     : from_many_endpoint<Value, Owner>(field, node)
   {}
 
-  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+  void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
     auto itemptr = store.insert(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column));
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/) override
   {
     object_ptr<has_one_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
@@ -221,14 +221,14 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
-  virtual void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner)
+  void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
     auto itemptr = store.insert(new has_many_to_many_item<Value, Owner>(holder.value(), ownptr, this->owner_column, this->item_column));
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/)
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/) override
   {
     object_ptr<has_many_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);

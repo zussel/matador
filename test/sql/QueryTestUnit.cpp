@@ -205,7 +205,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
     auto fields = connection_.describe("quotes");
 
     for (auto &&field : fields) {
-      std::cout << "\nmust be equal field [" << field.name() << "] and column [" << columns[field.index()] << "]";
+//      std::cout << "\nmust be equal field [" << field.name() << "] and column [" << columns[field.index()] << "]";
       UNIT_EXPECT_EQUAL(field.name(), columns[field.index()], "invalid column name");
       UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
     }

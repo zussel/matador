@@ -420,7 +420,7 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *) { }
+  void serialize(const char *, basic_has_many<V, C> &, const char *, const char *) { }
 
 private:
   object_proxy* acquire_proxy(object_holder &x, std::shared_ptr<basic_identifier> pk, cascade_type cascade, std::shared_ptr<basic_table> tbl)
