@@ -136,7 +136,7 @@ public:
    * @param x The object_holder to check equality with.
    */
   bool operator==(const object_holder &x) const;
-  bool operator==(nullptr_t) const;
+  bool operator==(std::nullptr_t) const;
 
   /**
    * Not equal to operator for the object_holder
@@ -144,7 +144,7 @@ public:
    * @param x The object_holder to check unequality with.
    */
   bool operator!=(const object_holder &x) const;
-  bool operator!=(nullptr_t) const;
+  bool operator!=(std::nullptr_t) const;
 
   /**
    * Resets the object_holder with the given object_proxy.

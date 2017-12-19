@@ -75,7 +75,7 @@ public:
     : object_holder(OPT, new object_proxy(o))
   {}
 
-  object_pointer(nullptr_t)
+  object_pointer(std::nullptr_t)
     : object_holder(OPT)
   {}
 
@@ -142,7 +142,7 @@ public:
     return *this;
   }
 
-  self& operator=(nullptr_t)
+  self& operator=(std::nullptr_t)
   {
 //    relation_info_.reset();
     clear();

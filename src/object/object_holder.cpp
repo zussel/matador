@@ -98,7 +98,7 @@ bool object_holder::operator==(const object_holder &x) const
   return x.proxy_ == proxy_;
 }
 
-bool object_holder::operator==(nullptr_t) const
+bool object_holder::operator==(std::nullptr_t) const
 {
   return proxy_ == nullptr;
 }
@@ -108,7 +108,7 @@ bool object_holder::operator!=(const object_holder &x) const
   return !(x == *this);
 }
 
-bool object_holder::operator!=(nullptr_t) const
+bool object_holder::operator!=(std::nullptr_t) const
 {
   return !(*this == nullptr);
 }

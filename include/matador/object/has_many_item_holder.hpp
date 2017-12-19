@@ -129,7 +129,7 @@ public:
     return *this;
   }
 
-  has_many_item_holder(object_proxy *, nullptr_t) {}
+  has_many_item_holder(object_proxy *, std::nullptr_t) {}
 
   has_many_item_holder(has_many_item_holder &&x) noexcept
   {
