@@ -7,6 +7,8 @@
 
 #include "matador/utils/basic_identifier.hpp"
 
+#include "matador/object/basic_has_many_item_holder.hpp"
+
 #include <unordered_map>
 
 namespace matador {
@@ -40,7 +42,8 @@ public:
 
 typedef std::shared_ptr<basic_identifier> identifier_ptr; /**< Shortcut to shared identifier ptr */
 typedef std::unordered_map<identifier_ptr, object_proxy*, identifier_hash<identifier_ptr>, identifier_equal> t_identifier_map;
-typedef std::unordered_multimap<identifier_ptr, object_proxy*, identifier_hash<identifier_ptr>, identifier_equal> t_identifier_multimap;
+//typedef std::unordered_multimap<identifier_ptr, object_proxy*, identifier_hash<identifier_ptr>, identifier_equal> t_identifier_multimap;
+typedef std::unordered_multimap<identifier_ptr, std::unique_ptr<basic_has_many_item_holder>, identifier_hash<identifier_ptr>, identifier_equal> t_identifier_multimap;
 
 /// @endcond
 

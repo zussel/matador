@@ -49,7 +49,7 @@ public:
   void serialize(const char*, HAS_ONE&, cascade_type) { }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &x, const char *, const char *)
+  void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *)
   {
     if (owner_id_ != id) {
       return;
@@ -60,8 +60,8 @@ public:
     }
     auto items = rel->second.equal_range(id_ptr_);
     for (auto item = items.first; item != items.second; ++item) {
-      typename basic_has_many<V, C>::internal_type val(item->second);
-      x.append(val);
+//      typename basic_has_many<V, C>::internal_type val(item->second);
+//      x.append(val);
     }
     // clear all elements
     rel->second.erase(id_ptr_);

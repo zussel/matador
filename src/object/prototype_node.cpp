@@ -26,14 +26,10 @@ using namespace std;
 namespace matador {
 
 prototype_node::prototype_node()
-  : type_index_(typeid(void))
 {}
 
 prototype_node::~prototype_node()
 {
-  if (deleter_) {
-    deleter_(prototype, observer_list);
-  }
 }
 
 void prototype_node::initialize(object_store *tree, const char *type, bool abstract)
@@ -66,7 +62,7 @@ const char *prototype_node::type() const
 
 const char *prototype_node::type_id() const
 {
-  return type_index_.name();
+  return info_->type_index().name();
 }
 
 void prototype_node::append(prototype_node *sibling)
@@ -333,26 +329,6 @@ basic_identifier *prototype_node::id() const
   return id_.get();
 }
 
-//size_t prototype_node::relation_count() const
-//{
-//  return relations.size();
-//}
-//
-//bool prototype_node::has_relation(const std::string &relation_name) const
-//{
-//  return relations.find(relation_name) != relations.end();
-//}
-
-//size_t prototype_node::foreign_key_count() const
-//{
-//  return foreign_keys.size();
-//}
-//
-//bool prototype_node::has_foreign_key(const std::string &foreign_key_name) const
-//{
-//  return foreign_keys.find(foreign_key_name) != foreign_keys.end();
-//}
-
 bool prototype_node::is_abstract() const
 {
   return abstract_;
@@ -360,7 +336,7 @@ bool prototype_node::is_abstract() const
 
 std::type_index prototype_node::type_index() const
 {
-  return type_index_;
+  return info_->type_index();
 }
 
 object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier> &pk)
@@ -372,10 +348,70 @@ object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier>
   return (i != id_map_.end() ? i->second : nullptr);
 }
 
-void prototype_node::register_relation_field_endpoint(const std::type_index &tindex,
-                                                      const std::shared_ptr<detail::relation_field_endpoint> &endpoint)
+void prototype_node::register_relation_endpoint(const std::type_index &tindex,
+                                                const std::shared_ptr<detail::basic_relation_endpoint> &endpoint)
 {
-  relation_field_endpoint_map_.insert(std::make_pair(tindex, endpoint));
+  info_->register_relation_endpoint(tindex, endpoint);
+}
+
+void prototype_node::unregister_relation_endpoint(const std::type_index &tindex)
+{
+  info_->unregister_relation_endpoint(tindex);
+}
+
+prototype_node::const_endpoint_iterator prototype_node::find_endpoint(const std::type_index &tindex) const
+{
+  return info_->find_relation_endpoint(tindex);
+}
+
+prototype_node::endpoint_iterator prototype_node::find_endpoint(const std::type_index &tindex)
+{
+  return info_->find_relation_endpoint(tindex);
+}
+
+prototype_node::const_endpoint_iterator prototype_node::find_endpoint(const std::string &field) const
+{
+  return info_->find_relation_endpoint(field);
+}
+
+prototype_node::endpoint_iterator prototype_node::find_endpoint(const std::string &field)
+{
+  return info_->find_relation_endpoint(field);
+}
+
+prototype_node::endpoint_iterator prototype_node::endpoint_begin()
+{
+  return info_->endpoint_begin();
+}
+
+prototype_node::const_endpoint_iterator prototype_node::endpoint_begin() const
+{
+  return info_->endpoint_begin();
+}
+
+prototype_node::endpoint_iterator prototype_node::endpoint_end()
+{
+  return info_->endpoint_end();
+}
+
+prototype_node::const_endpoint_iterator prototype_node::endpoint_end() const
+{
+  return info_->endpoint_end();
+}
+
+std::size_t prototype_node::endpoints_size() const
+{
+  return info_->endpoints_size();
+}
+
+bool prototype_node::endpoints_empty() const
+{
+  return info_->endpoints_empty();
+}
+
+const detail::abstract_prototype_info::t_endpoint_map &prototype_node::endpoints() const
+{
+  return info_->endpoints();
 }
 
 /*

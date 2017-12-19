@@ -40,6 +40,11 @@ template<class T, template <class ...> class C, class Enabled>
 class has_many_inserter;
 template<class T, template <class ...> class C, class Enabled>
 class has_many_deleter;
+class basic_relation_endpoint;
+template < class Value >
+class relation_endpoint_value_inserter;
+template < class Value/*, class Enabled*/ >
+class relation_endpoint_value_remover;
 }
 
 /// @endcond
@@ -80,11 +85,26 @@ protected:
   object_holder(const object_holder &x);
 
   /**
+   * Copy move constructor
+   *
+   * @param x object holder to copy move
+   */
+  object_holder(object_holder &&x) noexcept;
+
+  /**
    * Assign operator.
    * 
    * @param x The object_holder to assign from.
    */
-  object_holder & operator=(const object_holder &x);
+  object_holder& operator=(const object_holder &x);
+
+  /**
+   * Assign move constructor
+   *
+   * @param x object holder to assign move
+   * @return The moved object holder
+   */
+  object_holder& operator=(object_holder &&x) noexcept;
 
   /**
    * @brief Creates an object_holder with a given object_proxy
@@ -106,7 +126,7 @@ protected:
    * It is destroyed if it is not inserted
    * into any object_store.
    */
-  virtual ~object_holder();
+  ~object_holder() override;
 
 public:
 
@@ -116,6 +136,7 @@ public:
    * @param x The object_holder to check equality with.
    */
   bool operator==(const object_holder &x) const;
+  bool operator==(nullptr_t) const;
 
   /**
    * Not equal to operator for the object_holder
@@ -123,6 +144,7 @@ public:
    * @param x The object_holder to check unequality with.
    */
   bool operator!=(const object_holder &x) const;
+  bool operator!=(nullptr_t) const;
 
   /**
    * Resets the object_holder with the given object_proxy.
@@ -131,6 +153,7 @@ public:
    * @param cascade Sets the cascadable actions for the proxy.
    */
   void reset(object_proxy *proxy, cascade_type cascade);
+  void reset(object_holder &holder);
 
   /**
    * Resets the object_holder with the given
@@ -139,7 +162,7 @@ public:
    *
    * @param id The identifier to set
    */
-  void reset(const std::shared_ptr<basic_identifier> &id);
+  void reset(const std::shared_ptr<basic_identifier> &id) override;
 
   /**
    * Clears the currently set object
@@ -254,14 +277,14 @@ public:
    *
    * @return true if object has a primary key
    */
-  bool has_primary_key() const;
+  bool has_primary_key() const override ;
 
   /**
    * Gets the primary key of the foreign object
    *
    * @return The primary key of the foreign object
    */
-  virtual std::shared_ptr<basic_identifier> primary_key() const;
+  std::shared_ptr<basic_identifier> primary_key() const override;
 
   /**
    * Returns the current reference count
@@ -293,11 +316,9 @@ public:
    */
   friend MATADOR_OBJECT_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
 
-protected:
-  /// @cond MATADOR_DEV
-  virtual void clear_foreign_relation(object_proxy *proxy) = 0;
-  virtual void set_foreign_relation(object_proxy *proxy, object_proxy *value) = 0;
-  /// @endcond
+private:
+  void reset(object_proxy *proxy, cascade_type cascade, bool notify_foreign_relation);
+
 private:
   friend class object_serializer;
   friend class object_proxy;
@@ -310,6 +331,14 @@ private:
   friend class detail::has_many_inserter;
   template<class T, template <class ...> class C, class Enabled >
   friend class detail::has_many_deleter;
+  template < class T, class Enable >
+  friend class has_many_item_holder;
+  template < class L, class R >
+  friend class has_many_to_many_item;
+  template < class T >
+  friend class detail::relation_endpoint_value_inserter;
+  template < class T >
+  friend class detail::relation_endpoint_value_remover;
 
   // Todo: change interface to remove friend
   friend class session;
@@ -318,15 +347,18 @@ private:
 
   template < class T, object_holder_type OPT >
   friend class object_pointer;
+  template < class T, class Enable >
+  friend class has_many_item_holder;
+  friend class detail::basic_relation_endpoint;
 
   object_proxy *proxy_ = nullptr;
   object_proxy *owner_ = nullptr; // only set if holder type is BELONGS_TO or HAS_MANY
   cascade_type cascade_ = cascade_type::NONE;
-  object_holder_type type_;
+  object_holder_type type_ = object_holder_type::OBJECT_PTR;
   bool is_inserted_ = false;
   unsigned long oid_ = 0;
 
-  std::shared_ptr<detail::relation_field_endpoint> relation_info_;
+  std::shared_ptr<detail::basic_relation_endpoint> relation_info_;
 };
 
 }

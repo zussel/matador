@@ -49,19 +49,19 @@ public:
    *
    * @param what The message of the exception.
    */
-  object_exception(const char *what)
+  explicit object_exception(const char *what) noexcept
     : what_(what)
   {
   }
 
-  virtual ~object_exception() throw() {}
+  ~object_exception() noexcept override = default;
 
   /**
    * Returns the message of the exception
    *
    * @return The message of this exception.
    */
-  virtual const char* what() const throw()
+  const char* what() const throw() override
   {
     return what_.c_str();
   }

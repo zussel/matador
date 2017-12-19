@@ -35,20 +35,19 @@
 #include "object/PrimaryKeyUnitTest.hpp"
 #include "object/HasManyVectorUnitTest.hpp"
 #include "object/HasManyListUnitTest.hpp"
-
+#include "object/RelationTestUnit.hpp"
+//
 #include "orm/OrmTestUnit.hpp"
 #include "orm/OrmReloadTestUnit.hpp"
 #include "orm/OrmRelationTestUnit.hpp"
 #include "orm/TransactionTestUnit.hpp"
-
+//
 #include "sql/ConnectionTestUnit.hpp"
 #include "sql/DialectTestUnit.hpp"
 #include "sql/QueryTestUnit.hpp"
 #include "sql/ConditionUnitTest.hpp"
 #include "sql/MSSQLDialectTestUnit.hpp"
 #include "sql/SQLiteDialectTestUnit.hpp"
-
-//#include "json/JsonTestUnit.hpp"
 
 #include "connections.hpp"
 
@@ -98,6 +97,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ObjectTransactiontestUnit);
   suite.register_unit(new HasManyVectorUnitTest);
   suite.register_unit(new HasManyListUnitTest);
+  suite.register_unit(new RelationTestUnit);
 
   suite.register_unit(new ConditionUnitTest);
   suite.register_unit(new DialectTestUnit);
@@ -132,9 +132,7 @@ int main(int argc, char *argv[])
 #endif
 
 //  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
-//
-//  suite.register_unit(new JsonTestUnit());
 
-  result &= suite.run();
+  result = suite.run();
   return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }

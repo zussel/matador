@@ -7,6 +7,8 @@
 
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/object_store.hpp"
+#include "matador/object/prototype_node.hpp"
+#include "matador/object/object_proxy_accessor.hpp"
 
 #include "matador/orm/basic_table.hpp"
 #include "matador/orm/identifier_binder.hpp"
@@ -16,9 +18,20 @@
 
 #include "matador/sql/query.hpp"
 
+
 namespace matador {
 
 class connection;
+
+template<class T, class Enabled = void>
+class table;
+
+class basic_has_many_to_many_item;
+
+}
+
+
+namespace matador {
 
 /**
  * @brief Represents a database table
@@ -29,10 +42,13 @@ class connection;
  *
  * @tparam T The type of the table
  */
-template < class T >
-class table : public basic_table
+template<class T>
+class table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
+  : public basic_table
 {
 public:
+  typedef T table_type;
+
   /**
    * @brief Creates a new table
    *
@@ -42,26 +58,25 @@ public:
    * @param node The underlying prototype_node
    * @param p The underlying persistence object
    */
-  table(prototype_node *node, persistence &p)
-    : basic_table(node, p)
-    , resolver_(*this)
-  { }
+  table(prototype_node &node, persistence &p)
+    : basic_table(node, p), resolver_(*this)
+  {}
 
-  virtual ~table() {}
+  ~table() override = default;
 
-  virtual void create(connection &conn) override
+  void create(connection &conn) override
   {
-    query<T> stmt(name());
+    query<table_type> stmt(name());
     stmt.create().execute(conn);
   }
 
-  virtual void drop(connection &conn) override
+  void drop(connection &conn) override
   {
-    query<T> stmt(name());
+    query<table_type> stmt(name());
     stmt.drop().execute(conn);
   }
 
-  virtual void load(object_store &store) override
+  void load(object_store &store) override
   {
     auto result = select_.execute();
 
@@ -72,7 +87,7 @@ public:
       // try to find object proxy by id
       std::shared_ptr<basic_identifier> id(identifier_resolver_.resolve_object(first.get()));
 
-      detail::t_identifier_map::iterator i = identifier_proxy_map_.find(id);
+      auto i = identifier_proxy_map_.find(id);
       if (i != identifier_proxy_map_.end()) {
         // use proxy;
         proxy_.reset(i->second);
@@ -84,7 +99,7 @@ public:
       }
 
       ++first;
-      object_proxy *proxy = store.insert<T>(proxy_.release(), false);
+      object_proxy *proxy = store.insert<table_type>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
     }
 
@@ -92,28 +107,31 @@ public:
     is_loaded_ = true;
   }
 
-  virtual void insert(object_proxy *proxy) override
+  void insert(object_proxy *proxy) override
   {
-    insert_.bind(0, static_cast<T*>(proxy->obj()));
+    insert_.bind(0, static_cast<table_type *>(proxy->obj()));
     // Todo: check result
     insert_.execute();
   }
 
-  virtual void update(object_proxy *proxy) override
+  void update(object_proxy *proxy) override
   {
-    T *obj = static_cast<T*>(proxy->obj());
+    auto *obj = static_cast<table_type *>(proxy->obj());
     size_t pos = update_.bind(0, obj);
     binder_.bind(obj, &update_, pos);
     // Todo: check result
     update_.execute();
   }
 
-  virtual void remove(object_proxy *proxy) override
+  void remove(object_proxy *proxy) override
   {
-    binder_.bind((T*)proxy->obj(), &delete_, 0);
+    binder_.bind(static_cast<table_type *>(proxy->obj()), &delete_, 0);
     // Todo: check result
     delete_.execute();
   }
+
+  template<class V>
+  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val);
 
 protected:
   /**
@@ -131,48 +149,214 @@ protected:
    *
    * @param conn The database connection
    */
-  virtual void prepare(connection &conn) override
+  void prepare(connection &conn) override
   {
-    query<T> q(name());
+    query<table_type> q(name());
     insert_ = q.insert().prepare(conn);
-//    std::cout << "INSERT: " << insert_.str() << "\n";
     column id = detail::identifier_column_resolver::resolve<T>();
     update_ = q.update().where(id == 1).prepare(conn);
-//    std::cout << "UPDATE: " << update_.str() << "\n";
     delete_ = q.remove().where(id == 1).prepare(conn);
     select_ = q.select().prepare(conn);
   }
 
-  /**
-   * @brief Append elements to a has many relation
-   *
-   * Append elements to a has many relation identified by id
-   *
-   * @param id The identifier of the has many relation object in entity
-   * @param identifier_proxy_map The map with all relationship holding objects
-   * @param has_many_relations The relationship elements
-   */
-  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override
-  {
-    appender_.append(id, identifier_proxy_map, &has_many_relations);
-  }
-
 private:
-  detail::identifier_binder<T> binder_;
+  detail::identifier_binder<table_type> binder_;
 
-  statement<T> insert_;
-  statement<T> update_;
-  statement<T> delete_;
-  statement<T> select_;
+  statement<table_type> insert_;
+  statement<table_type> update_;
+  statement<table_type> delete_;
+  statement<table_type> select_;
 
   detail::relation_resolver<T> resolver_;
-  detail::relation_item_appender<T> appender_;
 
   std::unique_ptr<object_proxy> proxy_;
 
   identifier_resolver<T> identifier_resolver_;
 };
 
+template < class T >
+template < class V >
+void table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>::append_relation_data(
+  const std::string &field,
+  const std::shared_ptr<basic_identifier> &id,
+  const V &val)
+{
+  auto i = relation_data_map_.find(field);
+  if (i == relation_data_map_.end()) {
+//    std::cout << "creating relation_data<" << typeid(V).name() << ">\n";
+      auto value = std::make_shared<detail::relation_data<V>>();
+      value->append_data(id, val);
+      relation_data_map_.insert(std::make_pair(field, value));
+  } else {
+      auto value = std::static_pointer_cast<detail::relation_data<V>>(i->second);
+      value->append_data(id, val);
+  }
 }
+
+template < class T >
+class table<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
+  : public basic_table, public detail::object_proxy_accessor
+{
+public:
+  typedef T table_type;
+
+  table(prototype_node &node, persistence &p)
+  : basic_table(node, p)
+  , resolver_(*this)
+  {
+
+    if (!node.is_relation_node()) {
+      throw_object_exception("node " << node.type() << " isn't a relation node");
+    }
+  }
+
+  void create(connection &conn) override
+  {
+    query<table_type> stmt(name());
+    stmt.create(*node().prototype<table_type>()).execute(conn);
+  }
+
+  void drop(connection &conn) override
+  {
+    query<table_type> stmt(name());
+    stmt.drop().execute(conn);
+  }
+
+  void prepare(connection &conn) override
+  {
+    query<table_type> q(name());
+
+//    select_all_ = q.select().prepare(conn);
+
+    table_type *proto = node().prototype<table_type>();
+    select_all_ = q.select({proto->left_column(), proto->right_column()}).prepare(conn);
+    insert_ = q.insert(*proto).prepare(conn);
+
+    column owner_id(proto->left_column());
+    column item_id(proto->right_column());
+
+    update_ = q.update(*proto).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
+    delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
+
+    resolver_.prepare();
+
+//    for(auto endpoint : node_.endpoints()) {
+//      std::cout << "node " << node_.type() << " has endpoint " << endpoint.second->field << ", type " << endpoint.second->type_name;
+//      auto sptr = endpoint.second->foreign_endpoint.lock();
+//      if (sptr)
+//        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
+//      else
+//        std::cout << " (no foreign endpoint)\n";
+//    }
+
+  }
+
+  void load(object_store &store) override
+  {
+    if (is_loaded_) {
+      return;
+    }
+    auto res = select_all_.execute();
+
+    // set explicit creator function
+//    T item(item_);
+    prototype_node &node = this->node();
+
+//    for (auto endpoint : node.endpoints()) {
+//      std::cout << "node " << node.type() << " has endpoint " << endpoint.first.name()
+//                << " (field: " << endpoint.second->field
+//                << ", type: " << endpoint.second->type_name
+//                << ", node: " << endpoint.second->node->type() << ")\n";
+//    }
+//    auto func = [&node]() {
+//      return node.create<T>();
+//    };
+
+    res.creator([&node]() {
+      return node.create<T>();
+    });
+
+    auto first = res.begin();
+    auto last = res.end();
+
+    while (first != last) {
+      // create new proxy of relation object
+      proxy_.reset(new object_proxy(first.release()));
+      ++first;
+      object_proxy *proxy = store.insert<T>(proxy_.release(), false);
+      resolver_.resolve(proxy, &store);
+
+//      typename table_type::left_value_type lv;
+//
+//      has_many_item_holder<typename table_type::left_value_type> holder;
+
+//      T *obj = proxy->obj<T>();
+
+//      std::cout << "left object is loaded: " << obj->left().is_loaded() << " (type: "<< typeid(typename table_type::left_value_type).name() << ")\n";
+//      std::cout << "right object is loaded: " << obj->right().is_loaded() << " (type: "<< typeid(typename table_type::right_value_type).name() << ")\n";
+
+//      resolve_object_links(proxy, obj->left(), obj->right(), left_endpoint, right_endpoint, left_table_ptr, right_table_ptr);
+
+    }
+//      auto i = owner_table_->has_many_relations_.find(relation_id_);
+//      if (i == owner_table_->has_many_relations_.end()) {
+//        i = owner_table_->has_many_relations_.insert(
+//        std::make_pair(relation_id_, detail::t_identifier_multimap())).first;
+//      }
+//      i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), proxy));
+//    }
+
+//    if (owner_table_->is_loaded()) {
+//      // append items
+//      owner_table_->append_relation_items(relation_id_, identifier_proxy_map_, owner_table_->has_many_relations_);
+//    }
+
+    is_loaded_ = true;
+  }
+
+  void insert(object_proxy *proxy) override
+  {
+    insert_.bind(0, static_cast<T*>(proxy->obj()));
+    // Todo: check result
+    insert_.execute();
+  }
+
+  void update(object_proxy *proxy) override
+  {
+    size_t pos = update_.bind(0, static_cast<T*>(proxy->obj()));
+    update_.bind(pos, static_cast<T*>(proxy->obj()));
+
+    update_.execute();
+  }
+
+  void remove(object_proxy *proxy) override
+  {
+    delete_.bind(0, static_cast<T*>(proxy->obj()));
+    delete_.execute();
+  }
+
+  template < class V >
+  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val)
+  {
+    std::cout << "calling append_relation_data2\n";
+  }
+
+private:
+  statement<T> select_all_;
+  statement<T> insert_;
+  statement<T> update_;
+  statement<T> delete_;
+
+  detail::relation_resolver<T> resolver_;
+
+  std::unique_ptr<object_proxy> proxy_;
+
+  std::weak_ptr<basic_table> left_table_;
+  std::weak_ptr<basic_table> right_table_;
+};
+
+}
+
+#include "matador/orm/relation_resolver.tpp"
 
 #endif //OOS_TABLE_HPP

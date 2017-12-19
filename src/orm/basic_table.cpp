@@ -6,22 +6,34 @@
 
 namespace matador {
 
-basic_table::basic_table(prototype_node *node, persistence &p)
+bool is_loaded(const object_holder &holder)
+{
+  return holder.is_loaded();
+}
+
+basic_table::basic_table(prototype_node &node, persistence &p)
   : persistence_(p)
   , node_(node)
 { }
 
-basic_table::~basic_table() {}
-
-
 std::string basic_table::name() const
 {
-  return node_->type();
+  return node_.type();
 }
 
 bool basic_table::is_loaded() const
 {
   return is_loaded_;
+}
+
+prototype_node &basic_table::node()
+{
+  return node_;
+}
+
+const prototype_node &basic_table::node() const
+{
+  return node_;
 }
 
 basic_table::t_table_map::iterator basic_table::find_table(const std::string &type)
@@ -39,6 +51,6 @@ basic_table::t_table_map::iterator basic_table::end_table()
   return persistence_.end();
 }
 
-void basic_table::append_relation_items(const std::string &, detail::t_identifier_map &, basic_table::t_relation_item_map &) { }
+//void basic_table::append_relation_items(const std::string &, detail::t_identifier_map &, basic_table::t_relation_item_map &) { }
 
 }

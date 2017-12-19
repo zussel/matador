@@ -17,11 +17,11 @@ namespace matador {
 namespace detail {
 class object_inserter;
 
-template<class T, template <class ...> class C, class Enabled = void>
-class has_many_deleter;
+template < class Value >
+class relation_endpoint_value_inserter;
 
-template<class T, template <class ...> class C, class Enabled = void>
-class has_many_inserter;
+template < class Value/*, class Enabled */>
+class relation_endpoint_value_remover;
 }
 
 template < class T, template <class ...> class C = std::vector >
@@ -58,16 +58,16 @@ template < class T, template <class ...> class C >
 class basic_has_many : public abstract_has_many
 {
 public:
-  typedef basic_has_many<T, C> base;                             /**< Shortcut to self */
-  typedef has_many_iterator<T, C> iterator;                      /**< Shortcut to iterator class */
-  typedef typename iterator::value_type value_type;              /**< Shortcut to value type */
-  typedef typename iterator::item_type item_type;                /**< Shortcut to item type */
-  typedef typename iterator::container_type container_type;      /**< Shortcut to container type */
-  typedef typename iterator::relation_type relation_type;        /**< Shortcut to relation type */
-  typedef typename iterator::internal_type internal_type;        /**< Shortcut to internal type */
-  typedef const_has_many_iterator<T,C> const_iterator;           /**< Shortcut to const iterator */
-  typedef typename container_type::size_type size_type;          /**< Shortcut to size type */
-  typedef typename container_type::iterator container_iterator;  /**< Shortcut to container iterator */
+  typedef basic_has_many<T, C> base;                                    /**< Shortcut to self */
+  typedef has_many_iterator<T, C> iterator;                             /**< Shortcut to iterator class */
+  typedef has_many_iterator_traits<T, C> traits;                        /**< Shortcut to traits class */
+  typedef typename iterator::value_type value_type;                     /**< Shortcut to value type */
+  typedef typename traits::holder_container_type container_type;        /**< Shortcut to container type */
+  typedef typename traits::holder_type holder_type;                     /**< Shortcut to container type */
+  typedef typename traits::holder_container_type holder_container_type; /**< Shortcut to container type */
+  typedef const_has_many_iterator<T,C> const_iterator;                  /**< Shortcut to const iterator */
+  typedef typename container_type::size_type size_type;                 /**< Shortcut to size type */
+  typedef typename container_type::iterator container_iterator;         /**< Shortcut to container iterator */
 
   typedef std::function<void(object_store&, object_proxy*)> mark_modified_owner_func; /**< Shortcut to mark modified owner function */
 
@@ -77,26 +77,26 @@ public:
    *
    * @return The begin iterator
    */
-  iterator begin() { return iterator(container_.begin()); }
+  iterator begin() { return iterator(holder_container_.begin()); }
   /**
    * @brief Returns the end iterator of the container
    *
    * @return The end iterator
    */
-  iterator end() { return iterator(container_.end()); }
+  iterator end() { return iterator(holder_container_.end()); }
 
   /**
    * @brief Returns the const begin iterator of the container
    *
    * @return The const begin iterator
    */
-  const_iterator begin() const { return const_iterator(container_.begin()); }
+  const_iterator begin() const { return const_iterator(holder_container_.begin()); }
   /**
    * @brief Returns the const end iterator of the container
    *
    * @return The const end iterator
    */
-  const_iterator end() const { return const_iterator(container_.end()); }
+  const_iterator end() const { return const_iterator(holder_container_.end()); }
 
   /**
    * @brief Returns a copy of the first element
@@ -141,38 +141,34 @@ public:
    *
    * @return The current size
    */
-  size_type size() const { return container_.size(); }
+  size_type size() const { return holder_container_.size(); }
 
   /**
    * @brief Returns true if the container is empty
    *
    * @return True if the container is empty
    */
-  bool empty() const { return container_.empty(); }
+  bool empty() const { return holder_container_.empty(); }
 
   /**
    * @brief Clears the container
    */
-  void reset() { container_.clear(); }
+  void reset() { holder_container_.clear(); }
 
   /**
    * @brief Appends an item to the end of the container
    *
    * @param item Element to be appended
    */
-  void append(const typename iterator::internal_type &item) { container_.push_back(item); }
+  void append(const typename iterator::holder_type &item) { holder_container_.push_back(item); }
 
   /// @cond MATADOR_DEV
-protected:
-  item_type* create_item(const value_type &value)
-  {
-    return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
-  }
 
 protected:
 
   friend class detail::object_inserter;
   friend class object_store;
+  friend class object_serializer;
   friend class detail::has_many_inserter<T, std::vector>;
   friend class detail::has_many_deleter<T, std::vector>;
   friend class detail::has_many_inserter<T, std::list>;
@@ -184,9 +180,9 @@ protected:
 
   mark_modified_owner_func mark_modified_owner_;
 
-  container_type container_;
+  holder_container_type holder_container_;
 
-  std::shared_ptr<detail::relation_field_endpoint> relation_info_;
+  std::shared_ptr<detail::relation_endpoint<T>> relation_info_;
   /// @endcond
 
 };

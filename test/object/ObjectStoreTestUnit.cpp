@@ -45,6 +45,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("belongs_to_one", std::bind(&ObjectStoreTestUnit::test_belongs_to_one, this), "test belongs to one behaviour");
   add_test("belongs_to_many", std::bind(&ObjectStoreTestUnit::test_belongs_to_many, this), "test belongs to many behaviour");
   add_test("observer", std::bind(&ObjectStoreTestUnit::test_observer, this), "test observer functionality");
+  add_test("attach_has_many", std::bind(&ObjectStoreTestUnit::test_attach_has_many, this), "test attach has many");
 }
 
 struct basic_test_pair
@@ -965,7 +966,7 @@ void ObjectStoreTestUnit::test_structure_container()
   object_ptr<child> c1 = *childrens->children.begin();
 
   UNIT_ASSERT_GREATER(c1.id(), 0UL, "object store must be greater zero");
-  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
 }
 
 void ObjectStoreTestUnit::test_transient_optr()
@@ -1226,4 +1227,27 @@ void ObjectStoreTestUnit::test_observer()
   };
 
   UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
+}
+
+typedef has_many_to_many_item<course, student> course_student_item;
+
+void ObjectStoreTestUnit::test_attach_has_many()
+{
+  ostore_.attach<person>("person");
+  ostore_.attach<student, person>("student");
+  ostore_.attach<course>("course");
+
+  UNIT_ASSERT_EQUAL(4UL, ostore_.size(), "unexpected size");
+
+  std::unique_ptr<course_student_item> item1(ostore_.create<course_student_item>());
+
+  UNIT_ASSERT_NOT_NULL(item1.get(), "course student item must not be null");
+
+  auto node = ostore_.find("student_course");
+
+  UNIT_ASSERT_FALSE(node == ostore_.end(), "node must be valid");
+
+  node = ostore_.find<course_student_item>();
+
+  UNIT_ASSERT_FALSE(node == ostore_.end(), "node must be valid");
 }

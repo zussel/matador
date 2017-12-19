@@ -62,6 +62,10 @@ public:
     : object_holder(x.type_, x.proxy_)
   {}
 
+  explicit object_pointer(self &&x)
+    : object_holder(std::move(x))
+  {}
+
   /**
    * Create an object_pointer from an object
    *
@@ -69,6 +73,10 @@ public:
    */
   object_pointer(T *o)
     : object_holder(OPT, new object_proxy(o))
+  {}
+
+  object_pointer(nullptr_t)
+    : object_holder(OPT)
   {}
 
   /**
@@ -87,9 +95,10 @@ public:
    */
   template < object_holder_type OOPT >
   object_pointer(const object_pointer<T, OOPT> &x)
-    : object_holder(OPT)
+    : object_holder(x)
   {
-    reset(x.proxy_, x.cascade_);
+//    relation_info_ = x.relation_info_;
+//    reset(x.proxy_, x.cascade_);
   }
 
   /**
@@ -110,8 +119,14 @@ public:
    */
   self& operator=(const self &x)
   {
+//    relation_info_ = x.relation_info_;
     reset(x.proxy_, x.cascade_);
     return *this;
+  }
+
+  self& operator=(self &&x) noexcept
+  {
+    return static_cast<self&>(object_holder::operator=(std::move(x)));
   }
 
   /**
@@ -122,10 +137,17 @@ public:
   template < object_holder_type OOPT >
   self& operator=(object_pointer<T, OOPT> &x)
   {
+//    relation_info_ = x.relation_info_;
     reset(x.proxy_, x.cascade_);
     return *this;
   }
 
+  self& operator=(nullptr_t)
+  {
+//    relation_info_.reset();
+    clear();
+    return *this;
+  }
   /**
    * Return the type string of the object
    *
@@ -196,33 +218,6 @@ public:
   basic_identifier* create_identifier() const override
   {
     return self::identifier_->clone();
-  }
-
-protected:
-  void clear_foreign_relation(object_proxy *proxy) override
-  {
-    if (!relation_info_) {
-      return;
-    }
-    if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_ONE ||
-        relation_info_->type == detail::relation_field_endpoint::relation_type::BELONGS_TO) {
-      relation_info_->clear(*store(), object_ptr<T>(proxy));
-    } else if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_MANY) {
-      relation_info_->remove(*store(), object_ptr<T>(proxy), owner_);
-    }
-  }
-
-  void set_foreign_relation(object_proxy *proxy, object_proxy *value) override
-  {
-    if (!relation_info_) {
-      return;
-    }
-    if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_ONE ||
-        relation_info_->type == detail::relation_field_endpoint::relation_type::BELONGS_TO) {
-      relation_info_->set(*store(), object_ptr<T>(proxy), value);
-    } else if (relation_info_->type == detail::relation_field_endpoint::relation_type::HAS_MANY) {
-      relation_info_->append(*store(), object_ptr<T>(proxy), value);
-    }
   }
 
 private:

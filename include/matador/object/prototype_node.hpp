@@ -37,9 +37,10 @@
 #include "matador/object/identifier_proxy_map.hpp"
 #include "matador/object/object_store_observer.hpp"
 #include "matador/object/relation_field_endpoint.hpp"
+#include "matador/object/prototype_info.hpp"
 
 #include <map>
-#include <list>
+#include <vector>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -51,12 +52,12 @@ class object_proxy;
 
 /// @cond MATADOR_DEV
 namespace detail {
-template < class T, template <class ...> class C, class Enabled >
+template < class T, template <class ...> class C, class Enable = void >
 class has_many_inserter;
-template < class T, template <class ...> class C, class Enabled >
+template < class T, template <class ...> class C, class Enable = void >
 class has_many_deleter;
 class basic_node_analyzer;
-template < class T, template < class V = T > class O >
+template < class T, template < class U = T > class O >
 class node_analyzer;
 class object_inserter;
 }
@@ -78,7 +79,7 @@ class object_inserter;
  */ 
 class MATADOR_OBJECT_API prototype_node
 {
-private:
+public:
   // copying not permitted
   prototype_node(const prototype_node&) = delete;
   prototype_node& operator=(const prototype_node&) = delete;
@@ -86,10 +87,14 @@ private:
 public:
   /// @cond MATADOR_DEV
 
-  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_field_endpoint>> t_endpoint_map;
+//  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_field_endpoint>> t_endpoint_map;
+
+  typedef detail::abstract_prototype_info::t_endpoint_map::const_iterator const_endpoint_iterator;
+  typedef detail::abstract_prototype_info::t_endpoint_map::iterator endpoint_iterator;
 
   struct relation_node_info
   {
+    std::shared_ptr<basic_identifier> owner_id_;
     std::string owner_type_;
     std::string relation_id_;
     std::string owner_id_column_;
@@ -106,11 +111,12 @@ public:
    * @tparam T Type of the node
    * @param store Corresponding object_store
    * @param type Type name
+   * @param prototype The one prototype object
    * @param abstract Flag indicating if node is abstract.
    * @return The created node.
    */
   template < class T >
-  static prototype_node* make_node(object_store *store, const char *type, bool abstract = false);
+  static prototype_node* make_node(object_store *store, const char *type, T* prototype, bool abstract = false);
 
   /**
    * Creates a relation prototype node.
@@ -118,17 +124,16 @@ public:
    * @tparam T Type of the node
    * @param store Corresponding object_store
    * @param type Type name
+   * @param item Prototype item
    * @param abstract Flag indicating if node is abstract.
    * @param owner_type Type name of the owner node
    * @param relation_id Name of the relation in the prototype object
-   * @param owner_column Owner column name
-   * @param item_column Item (foreign) column name
    * @return The created node.
    */
   template < class T >
-  static prototype_node* make_relation_node(object_store *store, const char *type, bool abstract,
-                                     const char *owner_type, const char *relation_id,
-                                     const char *owner_column, const char *item_column);
+  static prototype_node* make_relation_node(object_store *store, const char *type,
+                                            T *item, bool abstract,
+                                            const char *owner_type, const char *relation_id);
 
   prototype_node();
 
@@ -146,15 +151,12 @@ public:
    */
   template < class T >
   prototype_node(object_store *tree, const char *type, T *proto, bool abstract = false)
-    : tree_(tree)
+    : info_(std::make_unique<detail::prototype_info<T>>(*this, proto))
+    , tree_(tree)
     , first(new prototype_node)
     , last(new prototype_node)
     , type_(type)
     , abstract_(abstract)
-    , type_index_(typeid(T))
-    , deleter_(&destroy<T>)
-    , notifier_(&notify_observer<T>)
-    , prototype(proto)
   {
     first->next = last.get();
     last->prev = first.get();
@@ -249,6 +251,17 @@ public:
    * Unlinks node from list.
    */
   void unlink();
+
+  /**
+   * Create the represented object. The type
+   * is checked. If the type is invalid nullptr
+   * is returned.
+   *
+   * @tparam T Type of object to create
+   * @return A new instance or nullptr
+   */
+  template < class T >
+  T* create() const;
 
   /**
    * Returns nodes successor node or NULL if node is last.
@@ -349,6 +362,12 @@ public:
    */
   const relation_node_info& node_info() const;
 
+  template < class T >
+  void register_observer(object_store_observer<T> *obs);
+
+  template < class T >
+  T* prototype() const;
+
   /**
    * Prints the node in graphviz layout to the stream.
    *
@@ -373,18 +392,34 @@ public:
    * @param tindex type index for identification.
    * @param endpoint pointer to a relation_field_endpoint object
    */
-  void register_relation_field_endpoint(const std::type_index &tindex,
-                                        const std::shared_ptr<detail::relation_field_endpoint> &endpoint);
+  void register_relation_endpoint(const std::type_index &tindex,
+                                  const std::shared_ptr<detail::basic_relation_endpoint> &endpoint);
+
+  /**
+   * Unregister relation_field_endpoint identified by the given type index.
+   *
+   * @param tindex
+   */
+  void unregister_relation_endpoint(const std::type_index &tindex);
+
+  const_endpoint_iterator find_endpoint(const std::type_index &tindex) const;
+  endpoint_iterator find_endpoint(const std::type_index &tindex);
+
+  const_endpoint_iterator find_endpoint(const std::string &field) const;
+  endpoint_iterator find_endpoint(const std::string &field);
+
+  endpoint_iterator endpoint_begin();
+  const_endpoint_iterator endpoint_begin() const;
+
+  endpoint_iterator endpoint_end();
+  const_endpoint_iterator endpoint_end() const;
+
+  std::size_t endpoints_size() const;
+  bool endpoints_empty() const;
+
+  const detail::abstract_prototype_info::t_endpoint_map& endpoints() const;
 
 private:
-
-  enum notification_type {
-    ATTACH,
-    DETACH,
-    INSERT,
-    UPDATE,
-    REMOVE
-  };
 
   /**
    * @internal
@@ -407,66 +442,14 @@ private:
    */
   void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
-  void register_observer(basic_object_store_observer *obs)
-  {
-    if (type_index_ != obs->index()) {
-      std::cout << "not same type\n";
-      throw std::runtime_error("not same type");
-    }
-    observer_list.push_back(obs);
-  }
-
-  typedef std::list<basic_object_store_observer*> t_observer_list;
-  typedef void (*deleter)(void*, t_observer_list&);
-  typedef void (*notifier)(notification_type, prototype_node&, void*, basic_object_store_observer*);
-
-  template <typename T>
-  static void destroy(void* p, t_observer_list &ol)
-  {
-    delete (T*)p;
-    for(auto i : ol) {
-      delete (object_store_observer<T>*)i;
-    }
-  }
-
   void on_attach()
   {
-    notify(ATTACH);
+    info_->notify(detail::notification_type::ATTACH);
   }
 
   void on_detach()
   {
-    notify(DETACH);
-  }
-
-  void notify(notification_type t) {
-    if (!notifier_) {
-      return;
-    }
-    for (auto i : observer_list) {
-      notifier_(t, *this, prototype, i);
-    }
-  }
-
-  template < typename T >
-  static void notify_observer(notification_type t, prototype_node &pt, void *p, basic_object_store_observer *obs)
-  {
-    switch (t) {
-      case ATTACH:
-        static_cast<object_store_observer<T>*>(obs)->on_attach(pt, *(T*)p);
-        break;
-      case DETACH:
-        static_cast<object_store_observer<T>*>(obs)->on_detach(pt, *(T*)p);
-        break;
-      case INSERT:
-        break;
-      case UPDATE:
-        break;
-      case REMOVE:
-        break;
-      default:
-        break;
-    }
+    info_->notify(detail::notification_type::DETACH);
   }
 
 private:
@@ -481,14 +464,16 @@ private:
   friend class object_view_iterator;
   template < class T, template <class ...> class C >
   friend class has_many;
-  template < class T, template <class ...> class C, class Enabled >
+  template < class T, template <class ...> class C, class Enable >
   friend class detail::has_many_inserter;
-  template < class T, template <class ...> class C, class Enabled >
+  template < class T, template <class ...> class C, class Enable >
   friend class detail::has_many_deleter;
   friend class detail::basic_node_analyzer;
   template < class T,  template < class U = T > class O >
   friend class detail::node_analyzer;
   friend class detail::object_inserter;
+
+  std::unique_ptr<matador::detail::abstract_prototype_info> info_;
 
   object_store *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
 
@@ -510,14 +495,6 @@ private:
 
   bool abstract_ = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
 
-  std::type_index type_index_; /**< type index of the represented object type */
-
-  t_observer_list observer_list;
-  deleter deleter_ = nullptr;
-  notifier notifier_ = nullptr;
-
-  void* prototype = nullptr;
-
   /**
    * Holds the primary keys of all proxies in this node
    */
@@ -528,28 +505,46 @@ private:
    */
   std::unique_ptr<basic_identifier> id_;
 
-  t_endpoint_map relation_field_endpoint_map_;
+//  t_endpoint_map relation_field_endpoint_map_;
 
   bool is_relation_node_ = false;
   relation_node_info relation_node_info_;
 };
 
 template<class T>
-prototype_node *prototype_node::make_node(object_store *store, const char *type, bool abstract)
+T *prototype_node::create() const
 {
-  return new prototype_node(store, type, new T, abstract);
+  return static_cast<T*>(info_.get()->create());
 }
 
 template<class T>
-prototype_node *prototype_node::make_relation_node(object_store *store, const char *type, bool abstract,
-                                                   const char *owner_type, const char *relation_id,
-                                                   const char *owner_column, const char *item_column)
+void prototype_node::register_observer(object_store_observer<T> *obs)
 {
-  prototype_node *node = make_node<T>(store, type, abstract);
+  info_->register_observer(obs);
+}
+
+template<class T>
+T *prototype_node::prototype() const
+{
+  return static_cast<T*>(info_->prototype());
+}
+
+template<class T>
+prototype_node *prototype_node::make_node(object_store *store, const char *type, T *prototype, bool abstract)
+{
+  return new prototype_node(store, type, prototype, abstract);
+}
+
+template<class T>
+prototype_node *prototype_node::make_relation_node(object_store *store, const char *type,
+                                                   T *item, bool abstract,
+                                                   const char *owner_type, const char *relation_id)
+{
+  prototype_node *node = make_node<T>(store, type, item, abstract);
   node->relation_node_info_.owner_type_.assign(owner_type);
   node->relation_node_info_.relation_id_.assign(relation_id);
-  node->relation_node_info_.owner_id_column_.assign(owner_column);
-  node->relation_node_info_.item_id_column_.assign(item_column);
+  node->relation_node_info_.owner_id_column_.assign(item->left_column());
+  node->relation_node_info_.item_id_column_.assign(item->right_column());
   node->is_relation_node_ = true;
   return node;
 }

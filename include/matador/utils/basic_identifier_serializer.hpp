@@ -38,24 +38,24 @@ public:
   void serialize(basic_identifier &x, byte_buffer &buffer);
   void deserialize(basic_identifier &x, byte_buffer &buffer);
 
-  virtual void serialize(const char*, char&);
-  virtual void serialize(const char*, short&);
-  virtual void serialize(const char*, int&);
-  virtual void serialize(const char*, long&);
-  virtual void serialize(const char*, unsigned char&);
-  virtual void serialize(const char*, unsigned short&);
-  virtual void serialize(const char*, unsigned int&);
-  virtual void serialize(const char*, unsigned long&);
-  virtual void serialize(const char*, bool&);
-  virtual void serialize(const char*, float&);
-  virtual void serialize(const char*, double&);
-  virtual void serialize(const char*, char *, size_t);
-  virtual void serialize(const char*, std::string&);
-  virtual void serialize(const char*, matador::varchar_base&);
-  virtual void serialize(const char*, matador::time&);
-  virtual void serialize(const char*, matador::date&);
-  virtual void serialize(const char*, matador::basic_identifier &x);
-  virtual void serialize(const char*, matador::identifiable_holder &x, cascade_type);
+  void serialize(const char*, char&) override;
+  void serialize(const char*, short&) override;
+  void serialize(const char*, int&) override;
+  void serialize(const char*, long&) override;
+  void serialize(const char*, unsigned char&) override;
+  void serialize(const char*, unsigned short&) override;
+  void serialize(const char*, unsigned int&) override;
+  void serialize(const char*, unsigned long&) override;
+  void serialize(const char*, bool&) override;
+  void serialize(const char*, float&) override;
+  void serialize(const char*, double&) override;
+  void serialize(const char*, char *, size_t) override;
+  void serialize(const char*, std::string&) override;
+  void serialize(const char*, matador::varchar_base&) override;
+  void serialize(const char*, matador::time&) override;
+  void serialize(const char*, matador::date&) override;
+  void serialize(const char*, matador::basic_identifier &x) override;
+  void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
 
 private:
   template < class T >

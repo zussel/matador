@@ -14,20 +14,53 @@ object_holder::object_holder(object_holder_type holder_type)
 {}
 
 object_holder::object_holder(const object_holder &x)
-  : proxy_(x.proxy_)
-  , oid_(x.oid_)
+  : oid_(x.oid_)
+//  , relation_info_(x.relation_info_)
 {
-  if (proxy_) {
-    oid_ = proxy_->id();
-    proxy_->add(this);
-  }
+  reset(x.proxy_, x.cascade_);
+//  if (proxy_) {
+//    oid_ = proxy_->id();
+//    proxy_->add(this);
+//  }
+}
+
+object_holder::object_holder(object_holder &&x) noexcept
+{
+  object_proxy *proxy = x.proxy_;
+  x.reset(nullptr, x.cascade_, false);
+  reset(proxy, x.cascade_, true);
+//  owner_ = x.owner_;
+  cascade_ = x.cascade_;
+//  type_ = x.type_;
+//  is_inserted_ = x.is_inserted_;
+//  oid_ = x.oid_;
+//  relation_info_ = std::move(x.relation_info_);
+  x.owner_ = nullptr;
 }
 
 object_holder &
 object_holder::operator=(const object_holder &x)
 {
   if (this != &x && proxy_ != x.proxy_) {
+    relation_info_ = x.relation_info_;
     reset(x.proxy_, cascade_type::NONE);
+  }
+  return *this;
+}
+
+object_holder &object_holder::operator=(object_holder &&x) noexcept
+{
+  if (this != &x) {
+    object_proxy *proxy = x.proxy_;
+    x.reset(nullptr, x.cascade_, false);
+    reset(proxy, x.cascade_, true);
+//    owner_ = x.owner_;
+    cascade_ = x.cascade_;
+//    type_ = x.type_;
+//    is_inserted_ = x.is_inserted_;
+//    oid_ = x.oid_;
+//    relation_info_ = std::move(x.relation_info_);
+    x.owner_ = nullptr;
   }
   return *this;
 }
@@ -65,50 +98,29 @@ bool object_holder::operator==(const object_holder &x) const
   return x.proxy_ == proxy_;
 }
 
+bool object_holder::operator==(nullptr_t) const
+{
+  return proxy_ == nullptr;
+}
+
 bool object_holder::operator!=(const object_holder &x) const
 {
   return !(x == *this);
 }
 
+bool object_holder::operator!=(nullptr_t) const
+{
+  return !(*this == nullptr);
+}
+
 void object_holder::reset(object_proxy *proxy, cascade_type cascade)
 {
-  if (proxy_ == proxy) {
-    return;
-  }
-  if (proxy_) {
-    oid_ = 0;
-    if (is_internal() && is_inserted_ && proxy_->ostore_) {
-      --(*proxy_);
+  reset(proxy, cascade, true);
+}
 
-      clear_foreign_relation(proxy_);
-//      this->relation_info_->clear(*proxy_->ostore_, proxy_);
-//      proxy_->ostore_->on_remove_relation_item(this->relation_info_, proxy_, owner_);
-//      proxy_->ostore_->on_remove_relation_item(*proxy_->node_, proxy_, owner_);
-//      proxy_->node_->notify_delete_relation(owner_, proxy);
-    }
-    proxy_->remove(this);
-    /*
-     * if proxy was created temporary
-     * we can delete it here
-     */
-    if (!proxy_->ostore() && proxy_->ptr_set_.empty()) {
-      delete proxy_;
-    }
-  }
-  proxy_ = proxy;
-  cascade_ = cascade;
-  if (proxy_) {
-    oid_ = proxy_->id();
-    if (is_internal() && is_inserted_ && proxy_->ostore_) {
-      ++(*proxy_);
-      set_foreign_relation(proxy_, owner_);
-//      this->relation_info_->set(*proxy_->ostore_, proxy_, owner_);
-//      proxy_->ostore_->on_append_relation_item(this->relation_info_, proxy_, owner_);
-//      proxy_->ostore_->on_append_relation_item(*proxy_->node_, proxy_, owner_);
-//      proxy_->node_->notify_insert_relation(owner_, proxy);
-    }
-    proxy_->add(this);
-  }
+void object_holder::reset(object_holder &holder)
+{
+  reset(holder.proxy_, holder.cascade_);
 }
 
 void object_holder::clear()
@@ -240,6 +252,43 @@ std::ostream& operator<<(std::ostream &out, const object_holder &x)
     out << "unknown object [" << 0 << "]";
   }
   return out;
+}
+
+void object_holder::reset(object_proxy *proxy, cascade_type cascade, bool notify_foreign_relation)
+{
+  if (proxy_ == proxy) {
+    return;
+  }
+  if (proxy_) {
+    oid_ = 0;
+    proxy_->remove(this);
+    if (is_internal() && is_inserted_ && proxy_->ostore_) {
+      --(*proxy_);
+
+      if (relation_info_ && notify_foreign_relation) {
+        relation_info_->remove_value_from_foreign(owner_, proxy_);
+      }
+    }
+    /*
+     * if proxy was created temporary
+     * we can delete it here
+     */
+    if (proxy_ && !proxy_->ostore() && proxy_->ptr_set_.empty()) {
+      delete proxy_;
+    }
+  }
+  proxy_ = proxy;
+  cascade_ = cascade;
+  if (proxy_) {
+    oid_ = proxy_->id();
+    if (is_internal() && is_inserted_ && proxy_->ostore_) {
+      ++(*proxy_);
+      if (relation_info_ && notify_foreign_relation) {
+        relation_info_->insert_value_into_foreign(owner_, proxy_);
+      }
+    }
+    proxy_->add(this);
+  }
 }
 
 }

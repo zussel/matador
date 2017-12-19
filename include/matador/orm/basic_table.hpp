@@ -20,6 +20,8 @@
 
 #include "matador/object/identifier_proxy_map.hpp"
 
+#include "matador/orm/basic_relation_data.hpp"
+
 #include <string>
 #include <functional>
 
@@ -29,8 +31,8 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-template < class T >
-class relation_resolver;
+//template < class T, class Enabled=void >
+//class relation_resolver;
 
 /// @endcond
 
@@ -40,6 +42,15 @@ class connection;
 class object_proxy;
 class object_store;
 class persistence;
+
+template < class T >
+bool is_loaded(const T &)
+{
+  return true;
+}
+
+template <>
+bool is_loaded(const object_holder &holder);
 
 /**
  * @brief Base class for kind of tables
@@ -64,9 +75,9 @@ public:
    * @param node The underlying prototype_node
    * @param p The underlying persistence object
    */
-  basic_table(prototype_node *node, persistence &p);
+  basic_table(prototype_node &node, persistence &p);
 
-  virtual ~basic_table();
+  virtual ~basic_table() = default;
 
   /**
    * @brief Returns the name of the table
@@ -142,23 +153,34 @@ public:
    */
   bool is_loaded() const;
 
+  prototype_node& node();
+
+  const prototype_node& node() const;
+
+//  template < class T >
+//  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const T &data) = 0;
+//  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, object_proxy *data) = 0;
+
 protected:
   /// @cond MATADOR_DEV
 
-  template < class T >
-  friend class detail::relation_resolver;
-  template < class T >
-  friend class relation_table;
-  friend class persistence;
+//  template < class T, class Enabled >
+//  friend class detail::relation_resolver;
+//  friend class persistence;
 
-protected:
+public:
   t_table_map::iterator find_table(const std::string &type);
+  template < class T >
+  t_table_map::iterator find_table()
+  {
+    auto node = node_.tree()->find<T>();
+    return find_table(node->type());
+  }
+
   t_table_map::iterator begin_table();
   t_table_map::iterator end_table();
 
   virtual void prepare(connection &conn) = 0;
-
-  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations);
 
   persistence &persistence_;
 
@@ -166,12 +188,16 @@ protected:
 
   t_relation_item_map has_many_relations_;
 
+  typedef std::unordered_map<std::string, std::shared_ptr<detail::basic_relation_data>> t_relation_data_map;
+
+  t_relation_data_map relation_data_map_;
+
   bool is_loaded_ = false;
 
   /// @endcond
 
 private:
-  prototype_node *node_;
+  prototype_node &node_;
 };
 
 }

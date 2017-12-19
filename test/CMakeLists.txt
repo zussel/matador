@@ -34,17 +34,15 @@ SET (TEST_OBJECT_SOURCES
   object/HasManyListUnitTest.hpp
   object/ObjectTransactiontestUnit.cpp
   object/ObjectTransactiontestUnit.hpp
+  object/RelationTestUnit.cpp
+  object/RelationTestUnit.hpp
 )
 
 SET (TEST_UNIT_SOURCES
-  unit/FirstTestUnit.hpp
-  unit/SecondTestUnit.hpp
+#  unit/FirstTestUnit.hpp
+#  unit/SecondTestUnit.hpp
   unit/TestSuiteTestUnit.cpp
-  unit/TestSuiteTestUnit.hpp)
-
-SET (TEST_JSON_SOURCES
-  json/JsonTestUnit.hpp
-  json/JsonTestUnit.cpp
+  unit/TestSuiteTestUnit.hpp
 )
 
 SET (TEST_SQL_SOURCES
@@ -63,7 +61,8 @@ SET (TEST_SQL_SOURCES
   sql/SQLiteDialectTestUnit.cpp
   sql/SQLiteDialectTestUnit.hpp
   sql/ValueUnitTest.cpp
-  sql/ValueUnitTest.hpp)
+  sql/ValueUnitTest.hpp
+)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp
@@ -130,7 +129,6 @@ TARGET_LINK_LIBRARIES(test_matador
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("utils" FILES ${TEST_TOOLS_SOURCES})
-SOURCE_GROUP("json" FILES ${TEST_JSON_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})
 SOURCE_GROUP("sql" FILES ${TEST_SQL_SOURCES})

@@ -30,13 +30,16 @@
 
 #include "matador/utils/varchar.hpp"
 #include <ostream>
+#include <utility>
 
 class Item
 {
 public:
   Item() : Item("") { }
-  Item(const std::string &str) : Item(str, -65000) {}
-  Item(const std::string &str, int i) : int_(i), string_(str)
+
+  explicit Item(const std::string &str) : Item(str, -65000) {}
+
+  Item(std::string str, int i) : int_(i), string_(std::move(str))
   {
     memset(cstr_, 0, CSTR_LEN);
 #ifdef _MSC_VER
@@ -47,7 +50,7 @@ public:
     cstr_[5] = '\0';
   }
 
-  ~Item() {}
+  ~Item() = default;
 
 public:
   template < class SERIALIZER > void serialize(SERIALIZER &serializer)
@@ -154,7 +157,7 @@ class ObjectItem : public Item
 public:
   typedef matador::object_ptr<T> value_ptr;
 
-  ObjectItem() {}
+  ObjectItem() = default;
   ObjectItem(const std::string &n, int i)
     : Item(n, i)
   {}
@@ -191,7 +194,6 @@ class ObjectItemList
 {
 public:
   typedef matador::has_many<ObjectItem<Item>> object_item_list_t;
-  typedef typename object_item_list_t::item_type item_type;
   typedef typename object_item_list_t::iterator iterator;
   typedef typename object_item_list_t::const_iterator const_iterator;
 
@@ -199,8 +201,8 @@ public:
   std::string name;
   object_item_list_t items;
 
-  ObjectItemList() {}
-  explicit ObjectItemList(const std::string &n) : name(n) {}
+  ObjectItemList() = default;
+  explicit ObjectItemList(std::string n) : name(std::move(n)) {}
 
   template < class S >
   void serialize(S &s)
@@ -227,13 +229,13 @@ private:
   std::string author_;
 
 public:
-  book() {}
-  book(const std::string &title, const std::string &isbn, const std::string &author)
-    : title_(title)
-    , isbn_(isbn)
-    , author_(author)
+  book() = default;
+  book(std::string title, std::string isbn, std::string author)
+    : title_(std::move(title))
+    , isbn_(std::move(isbn))
+    , author_(std::move(author))
   {}
-  ~book() {}
+  ~book() = default;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -259,8 +261,8 @@ public:
   typedef book_list_t::iterator iterator;
   typedef book_list_t::const_iterator const_iterator;
   
-  book_list() {}
-  ~book_list() {}
+  book_list() = default;
+  ~book_list() = default;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -299,7 +301,7 @@ private:
   unsigned int height_ = 0;
 
 public:
-  person() {}
+  person() = default;
   person(unsigned long id, const std::string &name, const matador::date &birthdate, unsigned int height)
     : id_(id)
     , name_(name)
@@ -311,7 +313,7 @@ public:
     : person(0, name, birthdate, height)
   {}
 
-  virtual ~person() {}
+  virtual ~person() = default;
 
   template < class T >
   void serialize(T &serializer)
@@ -343,8 +345,8 @@ public:
   matador::belongs_to<department> department_;
   
 public:
-  employee() {}
-  employee(const std::string &name) : person(name, matador::date(17, 12, 1983), 183) {}
+  employee() = default;
+  explicit employee(const std::string &name) : person(name, matador::date(17, 12, 1983), 183) {}
   employee(const std::string &name, const matador::object_ptr<department> &dep)
     : person(name, matador::date(17, 12, 1983), 183)
     , department_(dep)
@@ -354,11 +356,15 @@ public:
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(*matador::base_class<person>(this));
-    serializer.serialize("department", department_, matador::cascade_type::NONE);
+    serializer.serialize("department"    , department_, matador::cascade_type::NONE);
+                         // name of table, object     , cascade
   }
 
   matador::object_ptr<department> dep() { return department_; }
-  void dep(const matador::object_ptr<department> &d) { department_ = d; }
+  void dep(const matador::object_ptr<department> &d)
+  {
+    department_ = d;
+  }
 };
 
 struct department
@@ -367,12 +373,12 @@ struct department
   matador::varchar<255> name;
   matador::has_many<employee> employees;
 
-  department() {}
-  department(const std::string &n)
-    : name(n)
+  department() = default;
+  explicit department(std::string n)
+    : name(std::move(n))
   {}
   
-  ~department() {}
+  ~department() = default;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -390,8 +396,9 @@ class course;
 class student : public person
 {
 public:
-  student() {}
-  student(const std::string &name, const matador::date &bdate = matador::date(), unsigned h = 170) : person(name, bdate, h) {}
+  student() = default;
+  explicit student(const std::string &name, const matador::date &bdate = matador::date(), unsigned h = 170)
+    : person(name, bdate, h) {}
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -407,8 +414,8 @@ class course
 {
 public:
 
-  course() {}
-  course(const std::string &t) : title(t) {}
+  course() = default;
+  explicit course(std::string t) : title(std::move(t)) {}
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -520,10 +527,10 @@ private:
   track_vector_t tracks_;
   
 public:
-  album() {}
-  album(const std::string &name) : name_(name) {}
+  album() = default;
+  explicit album(std::string name) : name_(std::move(name)) {}
   
-  ~album() {}
+  ~album() = default;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -577,12 +584,10 @@ private:
   track_list_t backup_tracks_;
   
 public:
-  playlist() {}
-  playlist(const std::string &name)
-    : name_(name)
-  {}
+  playlist() = default;
+  explicit playlist(std::string name) : name_(std::move(name)) {}
   
-  virtual ~playlist() {}
+  ~playlist() = default;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -607,7 +612,7 @@ public:
   iterator end() { return tracks_.end(); }
   const_iterator end() const { return tracks_.end(); }
 
-  iterator erase(iterator i) { return tracks_.erase(i); }
+  iterator erase(const iterator &i) { return tracks_.erase(i); }
 
   size_type size() const { return tracks_.size(); }
   bool empty() const { return tracks_.empty(); }
@@ -616,9 +621,9 @@ public:
 class child
 {
 public:
-  child() {}
-  child(const std::string &n) : name(n) {}
-  ~child() {}
+  child() = default;
+  explicit child(std::string n) : name(std::move(n)) {}
+  ~child() = default;
 
   template < class S >
   void serialize(S &serializer)
@@ -639,9 +644,10 @@ public:
   matador::has_one<child> children;
 
 public:
-  master() {}
-  master(const std::string &n) : name(n) {}
-  ~master() {}
+  master() = default;
+  explicit master(std::string n) : name(std::move(n)) {}
+  master(std::string n, const matador::object_ptr<child> &c) : name(std::move(n)), children(c) {}
+  ~master() = default;
 
   template < class S >
   void serialize(S &serializer)
@@ -657,9 +663,9 @@ class children_vector
 public:
   typedef matador::has_many<child> children_vector_t;
 
-  children_vector() {}
-  children_vector(const std::string &n) : name(n) {}
-  ~children_vector() {}
+  children_vector() = default;
+  explicit children_vector(std::string n) : name(std::move(n)) {}
+  ~children_vector() = default;
 
   template < class S >
   void serialize(S &serializer)
@@ -679,9 +685,9 @@ class children_list
 public:
   typedef matador::has_many<child, std::list> children_list_t;
 
-  children_list() {}
-  children_list(const std::string &n) : name(n) {}
-  ~children_list() {}
+  children_list() = default;
+  explicit children_list(std::string n) : name(std::move(n)) {}
+  ~children_list() = default;
 
   template < class S >
   void serialize(S &serializer)
@@ -716,5 +722,8 @@ public:
 
 using many_ints = many_builtins<int, std::list>;
 using many_strings = many_builtins<std::string, std::list>;
+
+using many_vector_ints = many_builtins<int, std::vector>;
+using many_vector_strings = many_builtins<std::string, std::vector>;
 
 #endif /* ITEM_HPP */
