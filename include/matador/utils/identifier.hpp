@@ -47,6 +47,12 @@ public:
    */
   identifier(T val) : id_(new T(val)) { }
 
+  identifier& operator=(const identifier &) = default;
+  identifier& operator=(identifier &&) = default;
+
+  identifier(const identifier &) = default;
+  identifier(identifier &&) = default;
+
   /**
    * @brief Copy assigns a new identifier from given value
    * @param val Value to be assigned
@@ -58,7 +64,7 @@ public:
     return *this;
   }
 
-  virtual ~identifier() { };
+  virtual ~identifier() = default;
 
   /**
    * Serialize the identifier value with

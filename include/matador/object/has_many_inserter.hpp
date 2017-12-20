@@ -63,7 +63,7 @@ public:
     }
   }
 
-  void append_proxy(object_proxy */*proxy*/)
+  void append_proxy(object_proxy *)
   {
 //    item_type *item = new item_type(
 //      container_.owner_field(), container_.item_field(), container_.owner_id_, proxy

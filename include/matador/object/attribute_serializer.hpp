@@ -123,7 +123,7 @@ public:
     if (id_ != id) {
       return;
     }
-    to = (from_ > 0);
+    to = (from_ ? 1 : 0);
     this->success_ = true;
   }
 
@@ -133,7 +133,7 @@ public:
     if (id_ != id) {
       return;
     }
-    to = (from_ > 0.0f);
+    to = (from_ ? 1.0f : 0.0f);
     this->success_ = true;
   }
 

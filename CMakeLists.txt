@@ -36,7 +36,7 @@ ELSEIF(CMAKE_CXX_COMPILER MATCHES "clang")
 
 ELSEIF(MSVC)
     MESSAGE(STATUS "MSVC detected - Adding compiler flags")
-    SET(CMAKE_CXX_FLAGS "/std:c++14 /W3 /EHsc")
+    SET(CMAKE_CXX_FLAGS "/std:c++14 /W3 /EHsc /bigobj")
     SET(CMAKE_CXX_FLAGS_DEBUG "/MDd /Od /Zi /D_DEBUG /DDEBUG")
     SET(CMAKE_CXX_FLAGS_RELEASE "/O2 /DNDEBUG")
 ENDIF()

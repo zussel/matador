@@ -65,7 +65,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/) override
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *) override // owner
   {
     object_ptr<has_many_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
@@ -104,7 +104,7 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/) override
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *) override // owner
   {
     object_ptr<has_one_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
@@ -164,7 +164,7 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/) override
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *) override // owner
   {
     object_ptr<has_one_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
@@ -228,7 +228,7 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy */*owner*/) override
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *) override // owner
   {
     object_ptr<has_many_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);

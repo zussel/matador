@@ -19,7 +19,6 @@
 #define MATADOR_OBJECT_API
 #endif
 
-//#include "matador/object/relation_field_serializer.hpp"
 #include "matador/object/relation_endpoint_value_inserter.hpp"
 #include "matador/object/relation_endpoint_value_remover.hpp"
 #include "matador/object/basic_has_many_to_many_item.hpp"
@@ -43,7 +42,7 @@ namespace detail {
 /**
  * Basic relation endpoint providing the interface
  */
-struct basic_relation_endpoint
+struct MATADOR_OBJECT_API basic_relation_endpoint
 {
   enum relation_type {
     BELONGS_TO, HAS_ONE, HAS_MANY
@@ -223,30 +222,30 @@ struct many_to_one_endpoint<Value, Owner, typename std::enable_if<std::is_base_o
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
-  void insert_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/) override
+  void insert_holder(object_store &, has_many_item_holder<Value> &, object_proxy *) override // owner
   {
     std::cout << "endpoint for field " << this->field << ": called INSERT_HOLDER (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
   }
-  void remove_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/) override
+  void remove_holder(object_store &, has_many_item_holder<Value> &, object_proxy *) override // owner
   {
     std::cout << "endpoint for field " << this->field << ": called REMOVE_HOLDER (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
   }
 
-  void insert_value(object_proxy */*value*/, object_proxy */*owner*/) override
+  void insert_value(object_proxy *, object_proxy *) override // value, owner
   {
     std::cout << "endpoint for field " << this->field << ": called INSERT_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
   }
 
-  void remove_value(object_proxy */*value*/, object_proxy */*owner*/) override
+  void remove_value(object_proxy *, object_proxy *) override // value, owner
   {
     std::cout << "endpoint for field " << this->field << ": called REMOVE_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
   }
 
-  void insert_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override
+  void insert_value(const basic_has_many_item_holder &, object_proxy *) override // owner
   {
     std::cout << "endpoint for field " << this->field << ": called INSERT_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
   }
-  void remove_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override
+  void remove_value(const basic_has_many_item_holder &, object_proxy *) override // owner
   {
     std::cout << "endpoint for field " << this->field << ": called REMOVE_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
   }
@@ -289,14 +288,14 @@ struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<matador::i
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
-  void insert_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/) override {}
-  void remove_holder(object_store &/*store*/, has_many_item_holder<Value> &/*holder*/, object_proxy */*owner*/) override {}
+  void insert_holder(object_store &, has_many_item_holder<Value> &, object_proxy *) override {} // owner
+  void remove_holder(object_store &, has_many_item_holder<Value> &, object_proxy *) override {} // owner
 
-  void insert_value(object_proxy */*value*/, object_proxy */*owner*/) override {}
-  void remove_value(object_proxy */*value*/, object_proxy */*owner*/) override {}
+  void insert_value(object_proxy *, object_proxy *) override {} // value, owner
+  void remove_value(object_proxy *, object_proxy *) override {} // value, owner
 
-  void insert_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override {}
-  void remove_value(const basic_has_many_item_holder &/*holder*/, object_proxy */*owner*/) override {}
+  void insert_value(const basic_has_many_item_holder &, object_proxy *) override {} // owner
+  void remove_value(const basic_has_many_item_holder &, object_proxy *) override {} // owner
 
   object_proxy* acquire_proxy(unsigned long , object_store &) override { return nullptr; }
 };

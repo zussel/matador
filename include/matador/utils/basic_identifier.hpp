@@ -49,6 +49,12 @@ public:
   basic_identifier();
   virtual ~basic_identifier();
 
+  basic_identifier& operator=(const basic_identifier &) = default;
+  basic_identifier& operator=(basic_identifier &&) = default;
+
+  basic_identifier(const basic_identifier &) = default;
+  basic_identifier(basic_identifier &&) = default;
+
   /**
    * Checks if two identifiers are equal
    *

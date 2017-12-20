@@ -858,18 +858,18 @@ private:
       : func(f), name(n), caption(c)
     {}
     enum t_state {
-      UNKNOWN = 0,
-      SUCCEEDED,
-      ERROR,
-      FAILURE
+      STATE_UNKNOWN = 0,
+      STATE_SUCCEEDED,
+      STATE_ERROR,
+      STATE_FAILURE
     };
 
-    bool is_error() const { return state == ERROR; }
-    bool is_failure() const { return state == FAILURE; }
-    bool is_succeeded() const { return state == SUCCEEDED; }
+    bool is_error() const { return state == STATE_ERROR; }
+    bool is_failure() const { return state == STATE_FAILURE; }
+    bool is_succeeded() const { return state == STATE_SUCCEEDED; }
     test_func func;
     bool succeeded = true;
-    t_state state = UNKNOWN;
+    t_state state = STATE_UNKNOWN;
     long duration;
     size_t assertion_count = 0;
     size_t error_count = 0;
