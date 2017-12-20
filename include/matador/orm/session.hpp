@@ -254,6 +254,19 @@ public:
     }
   }
 
+  template < template <class ...> class CONT, class T >
+  void remove(has_many<T, CONT> &container, const typename has_many<T, CONT>::value_type &value)
+  {
+    if (store().has_transaction()) {
+      container.remove(value);
+    } else {
+      transaction tr(persistence_.store(), observer_);
+      tr.begin();
+      container.remove(value);
+      tr.commit();
+    }
+  }
+
   /**
    * @brief Clears the complete container
    *

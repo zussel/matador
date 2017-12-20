@@ -39,10 +39,10 @@ class relation_data<T, typename std::enable_if<matador::is_builtin<T>::value>::t
 public:
   relation_data() : tindex_(std::type_index(typeid(T))) {}
 
-  void append_data(const identifier_ptr &id, const T &data)
+  void append_data(const identifier_ptr &id, const T &data, object_proxy *owner)
   {
 //    std::cout << "insert value " << data << " for pk " << *id << " (type: " << typeid(T).name() << ")\n";
-    id_multi_map_.insert(std::make_pair(id, data));
+    id_multi_map_.insert(std::make_pair(id, std::make_pair(data, owner)));
   }
 
   template < template <class ...> class C >
@@ -53,7 +53,7 @@ public:
     for (auto i = range.first; i != range.second; ++i)
     {
 //      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
-      container.append(has_many_item_holder<T>(i->second, nullptr));
+      container.append(has_many_item_holder<T>(i->second.first, i->second.second));
     }
 //    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
   }
@@ -66,7 +66,7 @@ public:
 private:
   std::type_index tindex_;
 
-  std::unordered_multimap<identifier_ptr, T, identifier_hash<identifier_ptr>, identifier_equal> id_multi_map_;
+  std::unordered_multimap<identifier_ptr, std::pair<T, object_proxy*>, identifier_hash<identifier_ptr>, identifier_equal> id_multi_map_;
 };
 
 template < class T >
@@ -78,10 +78,10 @@ public:
 
   relation_data() : tindex_(std::type_index(typeid(value_type))) {}
 
-  void append_data(const identifier_ptr &id, const T &data)
+  void append_data(const identifier_ptr &id, const T &data, object_proxy *owner)
   {
 //    std::cout << "insert value " << data.id() << " for pk " << *id << " (type: " << typeid(T).name() << ")\n";
-    id_multi_map_.insert(std::make_pair(id, data));
+    id_multi_map_.insert(std::make_pair(id, std::make_pair(data, owner)));
   }
 
   template < template <class ...> class C >
@@ -92,7 +92,7 @@ public:
     for (auto i = range.first; i != range.second; ++i)
     {
 //      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
-      container.append(has_many_item_holder<value_type>(i->second, nullptr));
+      container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
     }
 //    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
   }
@@ -105,7 +105,7 @@ public:
 private:
   std::type_index tindex_;
 
-  std::unordered_multimap<identifier_ptr, T, identifier_hash<identifier_ptr>, identifier_equal> id_multi_map_;
+  std::unordered_multimap<identifier_ptr, std::pair<T, object_proxy*>, identifier_hash<identifier_ptr>, identifier_equal> id_multi_map_;
 };
 
 }

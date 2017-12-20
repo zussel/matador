@@ -696,7 +696,10 @@ public:
   template < class P >
   iterator remove_if(P predicate)
   {
-    return erase(std::remove_if(this->begin(), this->end(), predicate));
+    auto ret = std::remove_if(this->begin(), this->end(), predicate);
+
+    auto ih = ret.holder_item();
+    return erase(ret, this->end());
   }
 
   /**

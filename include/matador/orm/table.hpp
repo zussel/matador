@@ -131,7 +131,7 @@ public:
   }
 
   template<class V>
-  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val);
+  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val, object_proxy *owner);
 
 protected:
   /**
@@ -179,17 +179,18 @@ template < class V >
 void table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>::append_relation_data(
   const std::string &field,
   const std::shared_ptr<basic_identifier> &id,
-  const V &val)
+  const V &val,
+  object_proxy *owner)
 {
   auto i = relation_data_map_.find(field);
   if (i == relation_data_map_.end()) {
 //    std::cout << "creating relation_data<" << typeid(V).name() << ">\n";
       auto value = std::make_shared<detail::relation_data<V>>();
-      value->append_data(id, val);
+      value->append_data(id, val, owner);
       relation_data_map_.insert(std::make_pair(field, value));
   } else {
       auto value = std::static_pointer_cast<detail::relation_data<V>>(i->second);
-      value->append_data(id, val);
+      value->append_data(id, val, owner);
   }
 }
 

@@ -1,4 +1,5 @@
 #include "matador/orm/relation_resolver.hpp"
+#include "relation_resolver.hpp"
 
 namespace matador {
 
@@ -65,7 +66,7 @@ void relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many
       // Todo: append to left tables relation data
       auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);
 
-      lptr->append_relation_data(table_.name(), left_proxy_->pk(), object_pointer<right_value_type, object_holder_type::OBJECT_PTR>(right_proxy));
+      lptr->append_relation_data(table_.name(), left_proxy_->pk(), object_pointer<right_value_type, object_holder_type::OBJECT_PTR>(right_proxy), proxy_);
     }
 
     if (right_table_ptr_->is_loaded()) {
@@ -73,7 +74,7 @@ void relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many
     } else {
       // Todo: append to left tables relation data
       auto rptr = std::static_pointer_cast<table<right_value_type>>(right_table_ptr_);
-      rptr->append_relation_data(table_.name(), right_proxy->pk(), object_pointer<left_value_type, object_holder_type::OBJECT_PTR>(left_proxy_));
+      rptr->append_relation_data(table_.name(), right_proxy->pk(), object_pointer<left_value_type, object_holder_type::OBJECT_PTR>(left_proxy_), proxy_);
     }
 
   }
@@ -96,7 +97,7 @@ void relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many
 
     auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);
 
-    lptr->append_relation_data(table_.name(), left_proxy_->pk(), x);
+    lptr->append_relation_data(table_.name(), left_proxy_->pk(), x, proxy_);
 //      left_table_ptr_->append_relation_data(table_.name(), left_proxy_, x);
   }
 }
