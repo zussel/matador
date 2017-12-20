@@ -83,8 +83,8 @@ matrix:
             - cmake
             - cmake-data
             - clang-3.7
-            - g++
-            - gcc
+            - g++-5
+            - gcc-5
           sources:
             - george-edison55-precise-backports
             - ubuntu-toolchain-r-test
@@ -105,8 +105,8 @@ matrix:
             - cmake-data
             - clang-3.8
             - linux-libc-dev:i386
-            - g++-multilib
-            - gcc-multilib
+            - g++-5-multilib
+            - gcc-5-multilib
           sources:
             - george-edison55-precise-backports
             - ubuntu-toolchain-r-test
@@ -125,8 +125,8 @@ matrix:
             - cmake
             - cmake-data
             - clang-3.8
-            - g++
-            - gcc
+            - g++-5
+            - gcc-5
           sources:
             - george-edison55-precise-backports
             - ubuntu-toolchain-r-test
