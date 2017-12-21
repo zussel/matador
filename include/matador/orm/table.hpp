@@ -184,7 +184,6 @@ void table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_it
 {
   auto i = relation_data_map_.find(field);
   if (i == relation_data_map_.end()) {
-//    std::cout << "creating relation_data<" << typeid(V).name() << ">\n";
       auto value = std::make_shared<detail::relation_data<V>>();
       value->append_data(id, val, owner);
       relation_data_map_.insert(std::make_pair(field, value));
@@ -227,8 +226,6 @@ public:
   {
     query<table_type> q(name());
 
-//    select_all_ = q.select().prepare(conn);
-
     table_type *proto = node().template prototype<table_type>();
     select_all_ = q.select({proto->left_column(), proto->right_column()}).prepare(conn);
     insert_ = q.insert(*proto).prepare(conn);
@@ -240,16 +237,6 @@ public:
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
 
     resolver_.prepare();
-
-//    for(auto endpoint : node_.endpoints()) {
-//      std::cout << "node " << node_.type() << " has endpoint " << endpoint.second->field << ", type " << endpoint.second->type_name;
-//      auto sptr = endpoint.second->foreign_endpoint.lock();
-//      if (sptr)
-//        std::cout << " (foreign node: " << sptr->node->type() << ")\n";
-//      else
-//        std::cout << " (no foreign endpoint)\n";
-//    }
-
   }
 
   void load(object_store &store) override
@@ -260,18 +247,7 @@ public:
     auto res = select_all_.execute();
 
     // set explicit creator function
-//    T item(item_);
     prototype_node &node = this->node();
-
-//    for (auto endpoint : node.endpoints()) {
-//      std::cout << "node " << node.type() << " has endpoint " << endpoint.first.name()
-//                << " (field: " << endpoint.second->field
-//                << ", type: " << endpoint.second->type_name
-//                << ", node: " << endpoint.second->node->type() << ")\n";
-//    }
-//    auto func = [&node]() {
-//      return node.create<T>();
-//    };
 
     res.creator([&node]() {
       return node.create<T>();
@@ -286,31 +262,7 @@ public:
       ++first;
       object_proxy *proxy = store.insert<T>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
-
-//      typename table_type::left_value_type lv;
-//
-//      has_many_item_holder<typename table_type::left_value_type> holder;
-
-//      T *obj = proxy->obj<T>();
-
-//      std::cout << "left object is loaded: " << obj->left().is_loaded() << " (type: "<< typeid(typename table_type::left_value_type).name() << ")\n";
-//      std::cout << "right object is loaded: " << obj->right().is_loaded() << " (type: "<< typeid(typename table_type::right_value_type).name() << ")\n";
-
-//      resolve_object_links(proxy, obj->left(), obj->right(), left_endpoint, right_endpoint, left_table_ptr, right_table_ptr);
-
     }
-//      auto i = owner_table_->has_many_relations_.find(relation_id_);
-//      if (i == owner_table_->has_many_relations_.end()) {
-//        i = owner_table_->has_many_relations_.insert(
-//        std::make_pair(relation_id_, detail::t_identifier_multimap())).first;
-//      }
-//      i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), proxy));
-//    }
-
-//    if (owner_table_->is_loaded()) {
-//      // append items
-//      owner_table_->append_relation_items(relation_id_, identifier_proxy_map_, owner_table_->has_many_relations_);
-//    }
 
     is_loaded_ = true;
   }
@@ -337,10 +289,7 @@ public:
   }
 
   template < class V >
-  void append_relation_data(const std::string &, const std::shared_ptr<basic_identifier> &, const V &)
-  {
-    std::cout << "calling append_relation_data2\n";
-  }
+  void append_relation_data(const std::string &, const std::shared_ptr<basic_identifier> &, const V &) { }
 
 private:
   statement<T> select_all_;
@@ -351,9 +300,6 @@ private:
   detail::relation_resolver<T> resolver_;
 
   std::unique_ptr<object_proxy> proxy_;
-
-  std::weak_ptr<basic_table> left_table_;
-  std::weak_ptr<basic_table> right_table_;
 };
 
 }

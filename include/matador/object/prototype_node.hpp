@@ -160,7 +160,6 @@ public:
   {
     first->next = last.get();
     last->prev = first.get();
-//    std::cout << "creating node " << type << "/" << type_index_.name() << "\n";
   }
 
 

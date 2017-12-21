@@ -78,7 +78,6 @@ private:
   template < class T >
   void bind_value(std::size_t index, enum_field_types type, T value)
   {
-//    std::cout << "binding [" << value << "] (index: " << index << ")\n";
     MYSQL_BIND &bind = host_array[index];
     if (bind.buffer == nullptr) {
       // allocating memory

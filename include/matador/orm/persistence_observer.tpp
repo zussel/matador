@@ -26,7 +26,6 @@ void persistence_observer<T>::on_detach(prototype_node &node, T&)
   if (i == persistence_.tables_.end()) {
     return;
   }
-//  std::cout << "detach node type: " << node.type() << "\n";
   persistence_.tables_.erase(i);
 }
 

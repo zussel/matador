@@ -8,8 +8,6 @@
 
 using namespace matador;
 
-using std::cout;
-
 DateTestUnit::DateTestUnit()
   : unit_test("date", "date test unit")
 {

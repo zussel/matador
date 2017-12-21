@@ -5,8 +5,6 @@
 #include <iostream>
 
 using matador::varchar;
-using std::cout;
-using std::endl;
 
 VarCharTestUnit::VarCharTestUnit()
   : unit_test("varchar", "varchar test unit")

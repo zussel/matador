@@ -41,22 +41,18 @@ public:
 
   void append_data(const identifier_ptr &id, const T &data, object_proxy *owner)
   {
-//    std::cout << "insert value " << data << " for pk " << *id << " (type: " << typeid(T).name() << ")\n";
     id_multi_map_.insert(std::make_pair(id, std::make_pair(data, owner)));
   }
 
   template < template <class ...> class C >
   void insert_into_container(const identifier_ptr &id, basic_has_many<T, C> &container)
   {
-//    std::cout << "try to insert for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
     auto range = id_multi_map_.equal_range(id);
     for (auto i = range.first; i != range.second; ++i)
     {
-//      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
       container.append(has_many_item_holder<T>(i->second.first, i->second.second));
     }
     id_multi_map_.erase(id);
-//    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
   }
 
   const std::type_index& type_index() const override
@@ -74,29 +70,24 @@ template < class T >
 class relation_data<T, typename std::enable_if<!matador::is_builtin<T>::value>::type> : public basic_relation_data
 {
 public:
-//  typedef object_pointer<T, object_holder_type::OBJECT_PTR> value_type;
   typedef typename T::object_type value_type;
 
   relation_data() : tindex_(std::type_index(typeid(value_type))) {}
 
   void append_data(const identifier_ptr &id, const T &data, object_proxy *owner)
   {
-//    std::cout << "insert value " << data.id() << " for pk " << *id << " (type: " << typeid(T).name() << ")\n";
     id_multi_map_.insert(std::make_pair(id, std::make_pair(data, owner)));
   }
 
   template < template <class ...> class C >
   void insert_into_container(const identifier_ptr &id, basic_has_many<value_type, C> &container)
   {
-//    std::cout << "try to insert for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
     auto range = id_multi_map_.equal_range(id);
     for (auto i = range.first; i != range.second; ++i)
     {
-//      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
       container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
     }
     id_multi_map_.erase(id);
-//    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
   }
 
   const std::type_index& type_index() const override

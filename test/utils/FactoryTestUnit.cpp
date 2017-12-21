@@ -5,8 +5,6 @@
 #include <iostream>
 
 using namespace matador;
-using std::cout;
-using std::endl;
 
 class Vehicle
 {

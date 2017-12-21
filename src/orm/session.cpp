@@ -28,9 +28,8 @@ void session::load()
     auto i = persistence_.find_table(node.type());
     if (i == persistence_.end()) {
       // Todo: replace with persistence exception
-      throw object_exception("couldn't find table");
+      throw_object_exception("couldn't find table");
     }
-//    std::cout << "loading table " << i->second->name() << "\n";
     load(i->second);
   }
 }
@@ -82,7 +81,7 @@ void session::session_observer::on_rollback()
 
 void session::session_observer::visit(insert_action *act)
 {
-  persistence::t_table_map::iterator i = session_.persistence_.find_table(act->type());
+  auto i = session_.persistence_.find_table(act->type());
   if (i == session_.persistence_.end()) {
     // Todo: can't find table: give warning
     return;
@@ -98,7 +97,7 @@ void session::session_observer::visit(insert_action *act)
 
 void session::session_observer::visit(update_action *act)
 {
-  persistence::t_table_map::iterator i = session_.persistence_.find_table(act->proxy()->node()->type());
+  auto i = session_.persistence_.find_table(act->proxy()->node()->type());
   if (i == session_.persistence_.end()) {
     // Todo: can't find table: give warning
     return;
@@ -109,7 +108,7 @@ void session::session_observer::visit(update_action *act)
 
 void session::session_observer::visit(delete_action *act)
 {
-  persistence::t_table_map::iterator i = session_.persistence_.find_table(act->proxy()->node()->type());
+  auto i = session_.persistence_.find_table(act->proxy()->node()->type());
   if (i == session_.persistence_.end()) {
     std::cout << "session: couldn't find table for type '" << act->proxy()->node()->type() << "'\n";
     // Todo: can't find table: give warning

@@ -171,7 +171,6 @@ void OrmReloadTestUnit::test_load_has_many()
 
     std::vector<std::string> result_names({ "kid 1", "kid 2"});
     for (auto kid : clptr->children) {
-      //std::cout << "kid " << kid->name << " (id: " << kid->id << ")\n";
       auto it = std::find(result_names.begin(), result_names.end(), kid->name);
       UNIT_EXPECT_FALSE(it == result_names.end(), "kid must be found");
     }

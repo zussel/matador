@@ -88,7 +88,7 @@ struct OOS_SQL_API token
   };
 
   explicit token(t_token tok);
-  virtual ~token() {}
+  virtual ~token() = default;
 
   virtual void accept(token_visitor &visitor) = 0;
 

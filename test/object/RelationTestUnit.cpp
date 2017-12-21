@@ -272,7 +272,6 @@ void RelationTestUnit::test_has_many_builtin()
 
 void RelationTestUnit::test_belongs_to_many()
 {
-//  std::cout << "\n";
   matador::object_store store;
 
   store.attach<person>("person");

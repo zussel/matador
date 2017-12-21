@@ -62,14 +62,13 @@ struct OOS_SQL_API basic_value : public token
     if (v) {
       return v->val;
     } else {
-      std::cout << "bad value cast: from " << type_id() << " to " << typeid(T).name() << "\n";
       throw std::bad_cast();
     }
   }
 
   virtual void serialize(const char *id, serializer &srlzr) = 0;
 
-  virtual void accept(token_visitor &visitor);
+  void accept(token_visitor &visitor) override;
 
   virtual std::string str() const = 0;
   virtual std::string safe_string(const basic_dialect &) const = 0;
@@ -85,12 +84,12 @@ struct null_value : public detail::basic_value
 
   null_value() : basic_value(detail::token::VALUE) { }
 
-  virtual void serialize(const char *id, serializer &srlzr);
+  void serialize(const char *id, serializer &srlzr) override;
 
-  std::string str() const;
-  std::string safe_string(const basic_dialect &) const;
+  std::string str() const override;
+  std::string safe_string(const basic_dialect &) const override;
 
-  const char* type_id() const;
+  const char* type_id() const override;
 };
 
 template<class T>
@@ -104,26 +103,26 @@ struct value<T, typename std::enable_if<
     , val(val)
   { }
 
-  virtual void serialize(const char *id, serializer &srlzr)
+  void serialize(const char *id, serializer &srlzr) override
   {
     srlzr.serialize(id, val);
   }
 
-  std::string str() const
+  std::string str() const override
   {
     std::stringstream str;
     str << val;
     return str.str();
   }
 
-  std::string safe_string(const basic_dialect &) const
+  std::string safe_string(const basic_dialect &) const override
   {
     std::stringstream str;
     str << val;
     return str.str();
   }
 
-  const char* type_id() const
+  const char* type_id() const override
   {
     return typeid(T).name();
   }

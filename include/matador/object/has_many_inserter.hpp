@@ -35,45 +35,25 @@ public:
   {
     if (container_.relation_info_ != nullptr) {
 
-//      container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
-
-//      has_many_item_holder<T> *item = container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
-
-
       if (container_.relation_info_->type == detail::basic_relation_endpoint::BELONGS_TO) {
         /*
          * foreign end of relation is
          * belongs_to, set owner into
          * corresponding field
          */
-//        container_.relation_info_->set(*container_.store(), holder.value(), container_.owner_);
       } else if (container_.relation_info_->type == detail::basic_relation_endpoint::HAS_MANY) {
         /*
          * foreign end of relation is
          * also has_many, insert has_many_to_many_item
          * append it to foreign relation
          */
-//        container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
-//        container_.relation_info_->append(*container_.store(), holder.value(), container_.owner_);
-//        container_.store()->insert(rtype);
       }
     } else {
       std::cout << "what should I do here?\n";
-//      container_.store()->insert(rtype);
     }
   }
 
-  void append_proxy(object_proxy *)
-  {
-//    item_type *item = new item_type(
-//      container_.owner_field(), container_.item_field(), container_.owner_id_, proxy
-//    );
-//    relation_type iptr(item);
-//    iterator i(container_.container_.insert(container_.container_.end(), iptr));
-//    if (container_.store()) {
-//      insert(i);
-//    }
-  }
+  void append_proxy(object_proxy *) { }
 
   container_type &container_;
 };
@@ -91,19 +71,9 @@ public:
 
   has_many_inserter(container_type &container) : container_(container) {}
 
-  void insert(const holder_type &/*holder*/)
-  {
-//    container_.relation_info_->insert(*container_.store(), holder.value(), container_.owner_);
+  void insert(const holder_type &) { }
 
-  }
-
-  void insert(iterator /*i*/)
-  {
-
-//    relation_type rtype(*i.iter_);
-//    container_.store()->insert(rtype);
-//    container_ .mark_modified_owner_(*container_.store(), container_.owner_);
-  }
+  void insert(iterator) { }
 
   void append_proxy(object_proxy*) {}
 

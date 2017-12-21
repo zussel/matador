@@ -107,7 +107,6 @@ std::string sqlite_connection::version() const
 matador::detail::result_impl* sqlite_connection::execute(const matador::sql &sql)
 {
   std::string stmt = dialect_.direct(sql);
-//  std::cout << "SQL: '" << stmt << "'\n";
   return execute(stmt);
 }
 

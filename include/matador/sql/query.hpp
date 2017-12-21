@@ -541,8 +541,6 @@ public:
    */
   result<T> execute(connection &conn)
   {
-//    std::cout << "SQL: " << conn.dialect()->direct(sql_) << '\n';
-//    std::cout.flush();
     return conn.execute<T>(sql_);
   }
 
@@ -914,8 +912,6 @@ public:
    */
   result<row> execute(connection &conn)
   {
-//    std::cout << "SQL: " << conn.dialect()->direct(sql_) << '\n';
-//    std::cout.flush();
     return conn.execute<row>(sql_, table_name_, row_);
   }
 
@@ -947,8 +943,6 @@ public:
    */
   statement<row> prepare(connection &conn)
   {
-//    std::cout << "SQL: " << sql_.prepare().c_str() << '\n';
-//    std::cout.flush();
     return conn.prepare<row>(sql_, table_name_, row_);
   }
 

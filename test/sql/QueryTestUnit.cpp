@@ -205,7 +205,6 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
     auto fields = connection_.describe("quotes");
 
     for (auto &&field : fields) {
-//      std::cout << "\nmust be equal field [" << field.name() << "] and column [" << columns[field.index()] << "]";
       UNIT_EXPECT_EQUAL(field.name(), columns[field.index()], "invalid column name");
       UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
     }
@@ -291,7 +290,6 @@ void QueryTestUnit::test_describe()
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()], "invalid column name");
     UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
-//    std::cout << "\n" << field.index() << " column: " << field.name() << " (type: " << field.type() << ")";
   }
 
   q.drop().execute(connection_);
@@ -982,7 +980,6 @@ void QueryTestUnit::test_query_select_columns()
     std::unique_ptr<row> item(first.release());
     UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
     UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name), "invalid value");
-//    std::cout << "id " << item->str(id.name) << ", name " << item->at<std::string>(name.name) << "\n";
     ++first;
   }
 

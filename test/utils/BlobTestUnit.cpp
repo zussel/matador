@@ -6,8 +6,6 @@
 
 using namespace matador;
 
-using std::cout;
-
 BlobTestUnit::BlobTestUnit()
   : unit_test("blob", "blob test unit")
 {

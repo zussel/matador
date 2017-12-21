@@ -217,38 +217,26 @@ struct many_to_one_endpoint<Value, Owner, typename std::enable_if<std::is_base_o
 {
   many_to_one_endpoint(const std::string &field, prototype_node *node)
     : relation_endpoint<Value>(field, node, basic_relation_endpoint::HAS_MANY)
-  {}
+  { }
 
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
   void insert_holder(object_store &, has_many_item_holder<Value> &, object_proxy *) override // owner
-  {
-    std::cout << "endpoint for field " << this->field << ": called INSERT_HOLDER (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
-  }
+  { }
   void remove_holder(object_store &, has_many_item_holder<Value> &, object_proxy *) override // owner
-  {
-    std::cout << "endpoint for field " << this->field << ": called REMOVE_HOLDER (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
-  }
+  { }
 
   void insert_value(object_proxy *, object_proxy *) override // value, owner
-  {
-    std::cout << "endpoint for field " << this->field << ": called INSERT_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
-  }
+  { }
 
   void remove_value(object_proxy *, object_proxy *) override // value, owner
-  {
-    std::cout << "endpoint for field " << this->field << ": called REMOVE_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
-  }
+  { }
 
   void insert_value(const basic_has_many_item_holder &, object_proxy *) override // owner
-  {
-    std::cout << "endpoint for field " << this->field << ": called INSERT_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
-  }
+  { }
   void remove_value(const basic_has_many_item_holder &, object_proxy *) override // owner
-  {
-    std::cout << "endpoint for field " << this->field << ": called REMOVE_VALUE (Value: " << typeid(Value).name() << ", Owner:" << typeid(Owner).name() << ")\n";
-  }
+  { }
 
   object_proxy* acquire_proxy(unsigned long , object_store &) override { return nullptr; }
 };
