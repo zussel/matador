@@ -157,6 +157,8 @@ public:
 
   const prototype_node& node() const;
 
+  void reset();
+
 //  template < class T >
 //  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const T &data) = 0;
 //  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, object_proxy *data) = 0;

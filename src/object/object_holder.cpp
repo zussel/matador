@@ -229,12 +229,12 @@ std::ostream& operator<<(std::ostream &out, const object_holder &x)
 {
   if (x.proxy_) {
     if (x.proxy_->obj()) {
-      out << "loaded object " << x.proxy_->obj();
+      out << "loaded object " << x.proxy_->obj() << " (proxy: " << x.proxy_ << ")";
     } else {
-      out << "unload object [" << x.id() << "]";
+      out << "unloaded object [" << x.id() << "]";
     }
   } else {
-    out << "unknown object [" << 0 << "]";
+    out << "unknown object [null]";
   }
   return out;
 }

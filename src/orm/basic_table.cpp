@@ -36,6 +36,11 @@ const prototype_node &basic_table::node() const
   return node_;
 }
 
+void basic_table::reset()
+{
+  is_loaded_ = false;
+}
+
 basic_table::t_table_map::iterator basic_table::find_table(const std::string &type)
 {
   return persistence_.find_table(type);

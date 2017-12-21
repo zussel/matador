@@ -55,6 +55,7 @@ public:
 //      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
       container.append(has_many_item_holder<T>(i->second.first, i->second.second));
     }
+    id_multi_map_.erase(id);
 //    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
   }
 
@@ -94,6 +95,7 @@ public:
 //      std::cout << "insert into container " << &i->second << " (type: " << typeid(T).name() << ")\n";
       container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
     }
+    id_multi_map_.erase(id);
 //    std::cout << "inserted for pk " << *id << " into container (size: " << container.size() << ", type: " << typeid(T).name() << ")\n";
   }
 

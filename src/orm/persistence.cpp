@@ -47,6 +47,9 @@ void persistence::drop()
 void persistence::clear()
 {
   store_.clear();
+  for (t_table_map::value_type &val : tables_) {
+    val.second->reset();
+  }
 }
 
 persistence::t_table_map::iterator persistence::find_table(const std::string &type)

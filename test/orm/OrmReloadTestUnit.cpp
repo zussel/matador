@@ -18,7 +18,7 @@ OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, const std::strin
   add_test("load_has_one", std::bind(&OrmReloadTestUnit::test_load_has_one, this), "test load has one relation from table");
   add_test("load_has_many", std::bind(&OrmReloadTestUnit::test_load_has_many, this), "test load has many from table");
   add_test("load_has_many_to_many", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many, this), "test load has many to many from table");
-//  add_test("load_has_many_to_many_remove", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many_remove, this), "test load has many to many from table with remove");
+  add_test("load_has_many_to_many_remove", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many_remove, this), "test load has many to many from table with remove");
   add_test("load_has_many_int", std::bind(&OrmReloadTestUnit::test_load_has_many_int, this), "test load has many int from table");
 }
 
@@ -320,10 +320,6 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
     UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
     UNIT_ASSERT_EQUAL(art->students.size(), 2UL, "vector size must be zero");
     UNIT_ASSERT_EQUAL(art->students.back(), tom, "objects must be same");
-
-    for (auto st : art->students) {
-      std::cout << "proxy: " << st << "\n";
-    }
   }
 
   p.clear();
@@ -354,10 +350,6 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
     UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
     UNIT_ASSERT_EQUAL(art->students.size(), 2UL, "vector size must be two");
 
-    for (auto st : art->students) {
-      std::cout << "proxy: " << st << "\n";
-    }
-
     auto stud = student_view.front();
 
     s.remove(art->students, stud);
@@ -385,14 +377,9 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
     UNIT_ASSERT_TRUE(!course_view.empty(), "course view must not be empty");
     UNIT_ASSERT_EQUAL(course_view.size(), 1UL, "their must be 1 course in list");
 
-//    for (const auto &stdnt : student_view) {
-//      UNIT_ASSERT_FALSE(stdnt->courses.empty(), "vector must not be empty");
-//      UNIT_ASSERT_EQUAL(stdnt->courses.size(), 1UL, "vector size must be one");
-//    }
-
     auto art = course_view.front();
     UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
-    UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "vector size must be two");
+    UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "vector size must be one");
   }
 
   p.drop();

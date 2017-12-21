@@ -290,7 +290,7 @@ private:
   template<class V, template <class ...> class C, class Enabled>
   friend class detail::has_many_deleter;
 
-  void move(self &i)
+  void move_to(self &i)
   {
     *iter_ = std::move(*i.iter_);
   }
@@ -573,7 +573,13 @@ public:
   const value_type operator->() const { return iter_->value(); }
   const value_type& operator*() const { return iter_->value(); }
   //@}
-  
+
+private:
+  void move_to(self &i)
+  {
+    *iter_ = std::move(*i.iter_);
+  }
+
 private:
   friend class has_many<T, std::vector>;
   friend class basic_has_many<T, std::vector>;
@@ -700,15 +706,33 @@ public:
     auto last = this->holder_container_.end();
 
     first = find_if(first, last, predicate);
-    if (first != last)
-      for(auto i = first; ++i != last; )
-        if (!predicate(i->value()))
-          *first++ = std::move(*i);
-//    return first;
-  //  auto ret = std::remove_if(this->holder_container_.begin(), this->holder_container_.end(), predicate);
-
-    //auto ih = ret.holder_item();
-    return erase(iterator(first), this->end());
+    if (first != last) {
+      // remove first
+      auto &hi = *first;
+      if (this->ostore_) {
+        if (!matador::is_builtin<T>::value) {
+          this->relation_info_->remove_value_from_foreign(*first, this->owner_);
+        }
+        this->relation_info_->remove_holder(*this->ostore_, *first, this->owner_);
+        this->mark_modified_owner_(*this->ostore_, this->owner_);
+      }
+      for (auto i = first; ++i != last;) {
+        hi = *i;
+        if (!predicate(i->value())) {
+          *first = std::move(*i);
+          ++first;
+        } else {
+          if (this->ostore_) {
+            if (!matador::is_builtin<T>::value) {
+              this->relation_info_->remove_value_from_foreign(*i, this->owner_);
+            }
+            this->relation_info_->remove_holder(*this->ostore_, *i, this->owner_);
+            this->mark_modified_owner_(*this->ostore_, this->owner_);
+          }
+        }
+      }
+    }
+    return iterator(this->holder_container_.erase(first, last));
   }
 
   /**

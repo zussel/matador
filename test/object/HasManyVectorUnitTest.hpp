@@ -64,6 +64,7 @@ public:
   void test_erase_object();
   void test_remove_scalar();
   void test_remove_object();
+  void test_remove_if();
   void test_integer();
   void test_string();
 };

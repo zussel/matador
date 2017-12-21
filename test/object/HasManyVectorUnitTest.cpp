@@ -16,6 +16,7 @@ HasManyVectorUnitTest::HasManyVectorUnitTest()
   add_test("erase_object", std::bind(&HasManyVectorUnitTest::test_erase_object, this), "test vector erase object elements");
   add_test("remove_scalar", std::bind(&HasManyVectorUnitTest::test_remove_scalar, this), "test vector remove scalar elements");
   add_test("remove_object", std::bind(&HasManyVectorUnitTest::test_remove_object, this), "test vector remove object elements");
+  add_test("remove_if", std::bind(&HasManyVectorUnitTest::test_remove_if, this), "test vector remove if");
   add_test("int", std::bind(&HasManyVectorUnitTest::test_integer, this), "test vector of elements");
   add_test("string", std::bind(&HasManyVectorUnitTest::test_string, this), "test list of strings");
 }
@@ -205,6 +206,44 @@ void HasManyVectorUnitTest::test_remove_object()
   o->items.remove(i1);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+}
+
+void HasManyVectorUnitTest::test_remove_if()
+{
+  object_store store;
+
+  store.attach<item>("item");
+  store.attach<owner>("owner");
+
+  object_ptr<owner> o = store.insert(new owner("hans"));
+  object_ptr<item> i1 = store.insert(new item("i1"));
+  object_ptr<item> i2 = store.insert(new item("i2"));
+  object_ptr<item> i3 = store.insert(new item("i3"));
+  object_ptr<item> i4 = store.insert(new item("i4"));
+  object_ptr<item> i5 = store.insert(new item("i5"));
+
+  UNIT_ASSERT_EQUAL("i1", i1->name, "name should be 'i1'");
+
+  o->items.push_back(i1);
+
+  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+
+  o->items.push_back(i2);
+
+  UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
+
+  o->items.push_back(i3);
+
+  UNIT_ASSERT_EQUAL(3U, o->items.size(), "size should be 3 (three)");
+
+  o->items.push_back(i4);
+  o->items.push_back(i5);
+
+  o->items.remove_if([&](const owner::item_vector_t::value_type &val) {
+    return i1 == val || i3 == val;
+  });
+
+  UNIT_ASSERT_EQUAL(3U, o->items.size(), "size should be 1 (one)");
 }
 
 void HasManyVectorUnitTest::test_integer()
