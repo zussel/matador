@@ -347,8 +347,6 @@ private:
 
   template < class T, object_holder_type OPT >
   friend class object_pointer;
-  template < class T, class Enable >
-  friend class has_many_item_holder;
   friend struct detail::basic_relation_endpoint;
 
   object_proxy *proxy_ = nullptr;
