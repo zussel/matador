@@ -78,7 +78,7 @@ public:
   /**
    * @brief Creates an empty has many iterator
    */
-  has_many_iterator() {}
+  has_many_iterator() = default;
 
   /**
    * @brief Copy constructs an iterator from another iterator
@@ -107,7 +107,7 @@ public:
     iter_ = iter.iter_;
     return *this;
   }
-  ~has_many_iterator() {}
+  ~has_many_iterator() = default;
 
   /**
    * @brief Compares equality iterator with another iterator.
@@ -356,7 +356,7 @@ public:
   /**
    * @brief Creates an empty const has many iterator
    */
-  const_has_many_iterator() {}
+  const_has_many_iterator() = default;
 
   /**
    * @brief Creates a const has many iterator from given internal container iterator
@@ -414,7 +414,7 @@ public:
     iter_ = iter.iter_;
     return *this;
   }
-  ~const_has_many_iterator() {}
+  ~const_has_many_iterator() = default;
 
   /**
    * @brief Compares equality iterator with another iterator.
@@ -696,10 +696,19 @@ public:
   template < class P >
   iterator remove_if(P predicate)
   {
-    auto ret = std::remove_if(this->begin(), this->end(), predicate);
+    auto first = this->holder_container_.begin();
+    auto last = this->holder_container_.end();
 
-    auto ih = ret.holder_item();
-    return erase(ret, this->end());
+    first = find_if(first, last, predicate);
+    if (first != last)
+      for(auto i = first; ++i != last; )
+        if (!predicate(i->value()))
+          *first++ = std::move(*i);
+//    return first;
+  //  auto ret = std::remove_if(this->holder_container_.begin(), this->holder_container_.end(), predicate);
+
+    //auto ih = ret.holder_item();
+    return erase(iterator(first), this->end());
   }
 
   /**
@@ -752,6 +761,23 @@ public:
     return iterator(this->holder_container_.erase(start.iter_, end.iter_));
   }
 
+  template < class P >
+  iterator find_if(P predicate)
+  {
+    return iterator(find_if(this->holder_container_.begin(), this->holder_container_.end(), predicate));
+  }
+
+private:
+  template < class InputIt, class P >
+  container_iterator find_if(InputIt first, InputIt last, P predicate)
+  {
+    for (; first != last; ++first) {
+      if (predicate(first->value())) {
+        return first;
+      }
+    }
+    return last;
+  }
 private:
   void insert_holder(const holder_type &holder)
   {
