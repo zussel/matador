@@ -335,9 +335,9 @@ private:
   friend class has_many_item_holder;
   template < class L, class R >
   friend class has_many_to_many_item;
-  template < class T >
+  template < class T, class Enable >
   friend class detail::relation_endpoint_value_inserter;
-  template < class T >
+  template < class T, class Enable >
   friend class detail::relation_endpoint_value_remover;
 
   // Todo: change interface to remove friend
