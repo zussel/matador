@@ -55,6 +55,7 @@ SET(HEADER
   ../../include/matador/object/has_many_item.hpp
   ../../include/matador/object/has_one_to_many_item.hpp
   ../../include/matador/object/basic_has_many_item.hpp
+  ../../include/matador/object/basic_has_many_item_holder.hpp
   ../../include/matador/object/identifier_proxy_map.hpp
   ../../include/matador/object/object_proxy_accessor.hpp
   ../../include/matador/object/belongs_to.hpp
