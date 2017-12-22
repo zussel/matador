@@ -35,8 +35,7 @@ SET (TEST_OBJECT_SOURCES
   object/ObjectTransactiontestUnit.cpp
   object/ObjectTransactiontestUnit.hpp
   object/RelationTestUnit.cpp
-  object/RelationTestUnit.hpp
-)
+  object/RelationTestUnit.hpp)
 
 SET (TEST_UNIT_SOURCES
 #  unit/FirstTestUnit.hpp
@@ -73,6 +72,8 @@ SET (TEST_ORM_SOURCES
   orm/OrmReloadTestUnit.hpp
   orm/OrmRelationTestUnit.cpp
   orm/OrmRelationTestUnit.hpp
+  orm/BlogUnitTest.cpp
+  orm/BlogUnitTest.hpp
 )
 
 SET (TEST_SOURCES test_matador.cpp)

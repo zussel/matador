@@ -36,12 +36,13 @@
 #include "object/HasManyVectorUnitTest.hpp"
 #include "object/HasManyListUnitTest.hpp"
 #include "object/RelationTestUnit.hpp"
-//
+
+#include "orm/BlogUnitTest.hpp"
 #include "orm/OrmTestUnit.hpp"
 #include "orm/OrmReloadTestUnit.hpp"
 #include "orm/OrmRelationTestUnit.hpp"
 #include "orm/TransactionTestUnit.hpp"
-//
+
 #include "sql/ConnectionTestUnit.hpp"
 #include "sql/DialectTestUnit.hpp"
 #include "sql/QueryTestUnit.hpp"
@@ -125,6 +126,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ConnectionTestUnit("sqlite_conn", "sqlite connection test unit", ::connection::sqlite));
   suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", ::connection::sqlite));
   suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", ::connection::sqlite));
+  suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
