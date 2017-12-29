@@ -1,7 +1,7 @@
 matador
 =======
 
-__Version 0.5.0-alpha.1__
+__Version 0.5.0__
 
 Take your database by the horns.
 
@@ -42,6 +42,7 @@ struct person {
   identifier<long> id;   // primary key
   varchar<256> name;
   unsigned int age = 0;
+  has_many<string> colors_;
   
   person(long i, const std::string n)
     : id(i), name(n)
@@ -52,6 +53,7 @@ struct person {
     serializer.serialize("id", id);
     serializer.serialize("name", name);
     serializer.serialize("age", age);
+    serializer.serialize("person_color", colors, "person_id", "color");
   }
 };
 
@@ -72,6 +74,8 @@ auto george = s.insert(new person(1, "george"));
 // modify george
 george->age = 35;
 s.update(george);
+// add color
+s.push_back(george->colors, "brown");
 // delete george
 s.remove(george);
 ```
