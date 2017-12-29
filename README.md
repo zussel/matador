@@ -42,7 +42,7 @@ struct person {
   identifier<long> id;   // primary key
   varchar<256> name;
   unsigned int age = 0;
-  has_many<string> colors_;
+  has_many<string> colors;
   
   person(long i, const std::string n)
     : id(i), name(n)
