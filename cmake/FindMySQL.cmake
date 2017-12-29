@@ -17,6 +17,7 @@ if(WIN32)
       $ENV{MYSQL_DIR}/include
       $ENV{ProgramFiles}/MySQL/*/include
       $ENV{SystemDrive}/MySQL/*/include
+      $ENV{ProgramW6432}/MySQL/*/include
    )
 else(WIN32)
    find_path(MYSQL_INCLUDE_DIR mysql.h
@@ -50,10 +51,15 @@ if(WIN32)
   FIND_LIBRARY(MYSQL_LIBRARY NAMES libmysql
     PATHS
     $ENV{MYSQL_DIR}/lib/${binary_dist}
-    $ENV{MYSQL_DIR}/libmysql/${build_dist}
-    $ENV{MYSQL_DIR}/client/${build_dist}
-    $ENV{ProgramFiles}/MySQL/*/lib/${binary_dist}
-    $ENV{SystemDrive}/MySQL/*/lib/${binary_dist}
+      $ENV{MYSQL_DIR}/libmysql/${build_dist}
+      $ENV{MYSQL_DIR}/client/${build_dist}
+      $ENV{ProgramFiles}/MySQL/*/lib/${binary_dist}
+      $ENV{SystemDrive}/MySQL/*/lib/${binary_dist}
+      $ENV{MYSQL_DIR}/lib/opt
+      $ENV{MYSQL_DIR}/client/release
+      $ENV{ProgramFiles}/MySQL/*/lib/opt
+      $ENV{SystemDrive}/MySQL/*/lib/opt
+      $ENV{ProgramW6432}/MySQL/*/lib
   )
 else(WIN32)
   find_library(MYSQL_LIBRARY NAMES libmysql
@@ -69,16 +75,16 @@ else(WIN32)
 endif(WIN32)
 
 if(WIN32)
-  set(MYSQL_LIB_PATHS
-    $ENV{MYSQL_DIR}/lib/opt
-    $ENV{MYSQL_DIR}/client/release
-    $ENV{ProgramFiles}/MySQL/*/lib/opt
-    $ENV{SystemDrive}/MySQL/*/lib/opt
-  )
-  find_library(MYSQL_LIBRARY NAMES mysqlclient
-    PATHS
-    ${MYSQL_LIB_PATHS}
-  )
+#  set(MYSQL_LIB_PATHS
+#    $ENV{MYSQL_DIR}/lib/opt
+#    $ENV{MYSQL_DIR}/client/release
+#    $ENV{ProgramFiles}/MySQL/*/lib/opt
+#    $ENV{SystemDrive}/MySQL/*/lib/opt
+#  )
+#  find_library(MYSQL_LIBRARY NAMES mysqlclient
+#    PATHS
+#    ${MYSQL_LIB_PATHS}
+#  )
 else(WIN32)
   set(MYSQL_LIB_PATHS
     $ENV{MYSQL_DIR}/libmysql_r/.libs
@@ -104,10 +110,8 @@ ELSE (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
 ENDIF (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
 
 IF (MYSQL_FOUND)
-  IF (NOT MYSQL_FIND_QUIETLY)
-#    MESSAGE(STATUS "Found MySQL LIB: ${MYSQL_LIBRARY}")
-#    MESSAGE(STATUS "Found MySQL Include: ${MYSQL_INCLUDE_DIR}")
-  ENDIF (NOT MYSQL_FIND_QUIETLY)
+#  IF (NOT MYSQL_FIND_QUIETLY)
+#  ENDIF (NOT MYSQL_FIND_QUIETLY)
 ELSE (MYSQL_FOUND)
   IF (MYSQL_FIND_REQUIRED)
 #    MESSAGE(STATUS "Looked for MySQL libraries named ${MYSQL_NAMES}.")

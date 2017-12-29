@@ -15,183 +15,24 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "object/object.hpp"
-#include "object/object_proxy.hpp"
-#include "object/object_store.hpp"
-#include "object/object_observer.hpp"
-#include "object/object_list.hpp"
-#include "object/object_vector.hpp"
-#include "object/object_container.hpp"
-#include "object/object_creator.hpp"
-#include "object/object_deleter.hpp"
-#include "object/object_exception.hpp"
-#include "object/prototype_node.hpp"
+#include "matador/object/object_store.hpp"
 
-#ifdef WIN32
-#include <functional>
-#include <memory>
-#else
-#include <tr1/functional>
-#include <tr1/memory>
-#endif
-
-#include <iostream>
 #include <iomanip>
-#include <typeinfo>
-#include <algorithm>
-#include <stack>
 
 using namespace std;
-using namespace std::tr1::placeholders;
+using namespace std::placeholders;
 
-namespace oos {
-
-class relation_handler : public generic_object_writer<relation_handler>
-{
-public:
-  typedef std::list<std::string> string_list_t;
-  typedef string_list_t::const_iterator const_iterator;
-
-public:
-  relation_handler(object_store &ostore, prototype_node *node)
-    : generic_object_writer<relation_handler>(this)
-    , ostore_(ostore)
-    , node_(node)
-  {}
-  virtual ~relation_handler() {}
-
-  template < class T >
-  void write_value(const char*, const T&) {}
-  
-  void write_value(const char*, const char*, int) {}
-  
-  void write_value(const char *id, const object_container &x)
-  {
-    /*
-     * container knows if it needs
-     * a relation table
-     */
-    x.handle_container_item(ostore_, id, node_);
-  }
-  
-private:
-  object_store &ostore_;
-  prototype_node *node_;
-};
-
-/*
-class equal_type : public std::unary_function<const prototype_node*, bool> {
-public:
-  explicit equal_type(const std::string &type) : type_(type) {}
-
-  bool operator() (const prototype_node *x) const {
-    return x->type == type_;
-  }
-private:
-  const std::string &type_;
-};
-*/
-
-prototype_iterator::prototype_iterator()
-  : node_(NULL)
-{}
-
-prototype_iterator::prototype_iterator(prototype_node *node)
-  : node_(node)
-{}
-
-prototype_iterator::prototype_iterator(const prototype_iterator &x)
-  : node_(x.node_)
-{}
-
-prototype_iterator& prototype_iterator::operator=(const prototype_iterator &x)
-{
-  node_ = x.node_;
-  return *this;
-}
-
-prototype_iterator::~prototype_iterator()
-{}
-
-bool prototype_iterator::operator==(const prototype_iterator &i) const
-{
-  return (node_ == i.node_);
-}
-
-bool prototype_iterator::operator!=(const prototype_iterator &i) const
-{
-//  return (node_ != i.node_);
-  return !operator==(i);
-}
-
-prototype_iterator::self& prototype_iterator::operator++()
-{
-  increment();
-  return *this;
-}
-
-prototype_iterator::self prototype_iterator::operator++(int)
-{
-  prototype_node *tmp = node_;
-  increment();
-  return prototype_iterator(tmp);
-}
-
-prototype_iterator::self& prototype_iterator::operator--()
-{
-  decrement();
-  return *this;
-}
-
-prototype_iterator::self prototype_iterator::operator--(int)
-{
-  prototype_node *tmp = node_;
-  decrement();
-  return prototype_iterator(tmp);
-}
-
-prototype_iterator::pointer prototype_iterator::operator->() const
-{
-  return node_;
-}
-
-prototype_iterator::reference prototype_iterator::operator*() const
-{
-  return *node_;
-}
-
-prototype_iterator::pointer prototype_iterator::get() const
-{
-  return node_;
-}
-
-void prototype_iterator::increment()
-{
-  if (node_) {
-    node_ = node_->next_node();
-  }
-}
-void prototype_iterator::decrement()
-{
-  if (node_) {
-    node_ = node_->previous_node();
-  }
-}
+namespace matador {
 
 object_store::object_store()
-  : root_(new prototype_node(new object_producer<object>, "object", true))
-  , first_(new object_proxy(this))
-  , last_(new object_proxy(this))
-  , object_deleter_(new object_deleter)
+  : first_(new prototype_node)
+  , last_(new prototype_node)
+  , object_inserter_(*this)
 {
-  prototype_map_.insert(std::make_pair("object", root_));
-  typeid_prototype_map_[root_->producer->classname()]["object"] = root_;
-  // set marker for root element
-  root_->op_first = first_;
-  root_->op_marker = last_;
-  root_->op_last = last_;
-  root_->op_first->next = root_->op_last;
-  root_->op_last->prev = root_->op_first;
+  // empty tree where first points to last and
+  // last points to first sentinel
+  first_->next = last_;
+  last_->prev = first_;
 }
 
 object_store::~object_store()
@@ -199,216 +40,122 @@ object_store::~object_store()
   clear(true);
   delete last_;
   delete first_;
-  delete root_;
-  delete object_deleter_;
 }
 
-prototype_iterator
-object_store::insert_prototype(object_base_producer *producer, const char *type, bool abstract, const char *parent)
+void object_store::detach(const char *type)
 {
-  // set node to root node
-  prototype_node *parent_node = get_prototype(parent);
-  if (!parent_node) {
-    throw object_exception("couldn't find parent prototype");
-  }
-
-  /* 
-   * try to insert new prototype node
-   */
-  prototype_node *node = 0;
-  t_prototype_map::iterator i = prototype_map_.find(type);
-  if (i == prototype_map_.end()) {
-    /* unknown type name try for typeid
-     * (unfinished prototype)
-     */
-    i = prototype_map_.find(producer->classname());
-    if (i == prototype_map_.end()) {
-      /*
-       * no typeid found, seems to be
-       * a new type
-       * to be sure check in typeid map
-       */
-      t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(producer->classname());
-      if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
-        /* unexpected found the
-         * typeid check for type
-         */
-        /* type found in typeid map
-         * throw exception
-         */
-        throw object_exception("unexpectly found prototype");
-      } else {
-        /* insert new prototype and add to
-         * typeid map
-         */
-        // create new one
-        node = new prototype_node(producer, type, abstract);
-      }
-    } else {
-      /* prototype is unfinished,
-       * finish it, insert by type name,
-       * remove typeid entry and add to
-       * typeid map
-       */
-      node = i->second;
-      node->initialize(producer, type, abstract);
-      prototype_map_.erase(i);
-    }
-  } else {
-    // already inserted return iterator
-    throw object_exception("prototype already inserted");
-  }
-
-  // append as child to parent prototype node
-  parent_node->insert(node);
-  // store prototype in map
-  i = prototype_map_.insert(std::make_pair(type, node)).first;
-  typeid_prototype_map_[producer->classname()][type] = node;
-
-  // Check if nodes object has to many relations
-  object *o = producer->create();
-  relation_handler rh(*this, node);
-  o->serialize(rh);
-  delete o;
-  
-  return prototype_iterator(node);
-}
-
-bool object_store::clear_prototype(const char *type, bool recursive)
-{
-  prototype_node *node = get_prototype(type);
+  prototype_node *node = find_prototype_node(type);
   if (!node) {
-    //throw new object_exception("couldn't find prototype");
-    return false;
-  }
-  if (recursive) {
-    // clear all objects from child nodes
-    // for each child call clear_prototype(child, recursive);
-    prototype_node *child = node->next_node();
-    while (child && (child != node || child != node->parent)) {
-      child->clear();
-      child = child->next_node();
-    }      
+    throw object_exception("unknown prototype type");
   }
 
-  node->clear();
+  node->on_detach();
 
-  return true;
+  remove_prototype_node(node, node->depth == 0);
 }
 
-bool object_store::remove_prototype(const char *type)
+object_store::iterator object_store::detach(const prototype_iterator &i)
 {
-  prototype_node *node = get_prototype(type);
+  if (i == end() || i.get() == nullptr) {
+    throw object_exception("invalid prototype iterator");
+  }
+
+  i->on_detach();
+
+  return remove_prototype_node(i.get(), i->depth == 0);
+}
+
+object_store::iterator object_store::find(const char *type)
+{
+  prototype_node *node = find_prototype_node(type);
   if (!node) {
-    //throw new object_exception("couldn't find prototype");
-    return false;
+    return end();
   }
-
-  // remove (and delete) from tree (deletes subsequently all child nodes
-  // for each child call remove_prototype(child);
-  while (node->first->next != node->last) {
-    remove_prototype(node->first->next->type.c_str());
-  }
-  // and objects they're containing 
-  node->clear();
-  // delete prototype node as well
-  // unlink node
-  node->unlink();
-  // get iterator
-  t_prototype_map::iterator i = prototype_map_.find(node->type.c_str());
-  if (i != prototype_map_.end()) {
-    prototype_map_.erase(i);
-  }
-  // find item in typeid map
-  t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(node->producer->classname());
-  if (j != typeid_prototype_map_.end()) {
-    j->second.erase(type);
-    if (j->second.empty()) {
-      typeid_prototype_map_.erase(j);
-    }
-  } else {
-    // TODO: throw error
-  }
-  delete node;
-
-  return true;
+  return iterator(node);
 }
 
-prototype_iterator object_store::find_prototype(const char *type) const
+object_store::const_iterator object_store::find(const char *type) const
 {
-  return prototype_iterator(get_prototype(type));
-}
-
-prototype_node* object_store::get_prototype(const char *type) const
-{
-  // check for null
-  if (type == 0) {
-    return 0;
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    return end();
   }
-  /*
-   * first search in the prototype map
-   */
-  t_prototype_map::const_iterator i = prototype_map_.find(type);
-  if (i == prototype_map_.end()) {
-    /*
-     * if not found search in the typeid to prototype map
-     */
-     t_typeid_prototype_map::const_iterator j = typeid_prototype_map_.find(type);
-     if (j == typeid_prototype_map_.end()) {
-       return 0;
-     } else {
-       const t_prototype_map &val = j->second;
-       /*
-        * if size is greater one (1) the name
-        * is a typeid and has more than one prototype
-        * node and therefor it is not unique and an
-        * exception is thrown
-        */
-       if (val.size() > 1) {
-         // throw exception
-         return 0;
-       } else {
-         // return the only prototype
-         return val.begin()->second;
-       }
-     }
-  } else {
-    return i->second;
-  }
+  return const_iterator(node);
 }
 
-prototype_iterator object_store::begin() const
+object_store::const_iterator object_store::begin() const
 {
-  return prototype_iterator(root_);
+  return const_iterator(first_->next);
 }
 
-prototype_iterator object_store::end() const
+prototype_iterator object_store::begin() {
+  return prototype_iterator(first_->next);
+}
+
+const_prototype_iterator object_store::end() const
 {
-  return prototype_iterator(0);
+  return const_iterator(last_);
+}
+
+prototype_iterator object_store::end()
+{
+  return iterator(last_);
 }
 
 void object_store::clear(bool full)
 {
   if (full) {
-    // clear objects and prototypes
-    while (root_->first->next != root_->last) {
-      remove_prototype(root_->first->next->type.c_str());
+    while (first_->next != last_) {
+      remove_prototype_node(first_->next, true);
     }
   } else {
     // only delete objects
-    clear_prototype(root_->type.c_str(), true);
+    prototype_iterator first = begin();
+    prototype_iterator last = end();
+    while (first != last) {
+        (first++)->clear(false);
+    }
   }
   object_map_.clear();
 }
 
-bool object_store::empty() const
+void object_store::clear(const char *type)
 {
-  return first_->next == last_;
+  clear(find(type));
 }
 
-int depth(prototype_node *node)
+void object_store::clear(const prototype_iterator &node)
 {
-  int d = 0;
+  clear(node.get());
+}
+
+prototype_node* object_store::clear(prototype_node *node)
+{
+  prototype_node *current = node->first->next;
+  while (current != node->last.get()) {
+    current = clear(current);
+  }
+  // finally link first to last and vice versa
+  return remove_prototype_node(node, false);
+}
+
+size_t object_store::size() const
+{
+  return (size_t) (std::distance(begin(), end()));
+}
+
+bool object_store::empty() const
+{
+  bool is_empty = true;
+  for_each_root_node([&](const_prototype_iterator i) {
+    is_empty &= i->empty(false);
+  });
+  return is_empty;
+}
+
+size_t object_store::depth(const prototype_node *node) const
+{
+  size_t d = 0;
   while (node->parent) {
     node = node->parent;
     ++d;
@@ -416,274 +163,59 @@ int depth(prototype_node *node)
   return d;
 }
 
-void object_store::dump_prototypes(std::ostream &out) const
+void object_store::dump(std::ostream &out) const
 {
-  prototype_node *node = root_;
+  const_prototype_iterator node = begin();
   out << "digraph G {\n";
   out << "\tgraph [fontsize=10]\n";
-	out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
-	out << "\tedge [color=\"#0c0c0c\"]\n";
+  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
+  out << "\tedge [color=\"#0c0c0c\"]\n";
   do {
-    int d = depth(node);
-    for (int i = 0; i < d; ++i) out << " ";
+    size_t d = depth(node.get());
+    for (size_t i = 0; i < d; ++i) out << " ";
     out << *node;
-    node = node->next_node();
-  } while (node);
+    out.flush();
+  } while (++node != end());
   out << "}" << std::endl;
+
+  out << "prototype map item keys\n";
+  std::for_each(prototype_map_.begin(), prototype_map_.end(), [&](const t_prototype_map::value_type &item) {
+    out << "key: " << item.first << "\n";
+  });
+  out << "typeid map item keys\n";
+  std::for_each(typeid_prototype_map_.begin(), typeid_prototype_map_.end(), [&](const t_typeid_prototype_map::value_type &item) {
+    out << "key: " << item.first << "\n";
+  });
 }
 
 void object_store::dump_objects(std::ostream &out) const
 {
+  const_prototype_iterator root = begin();
   out << "dumping all objects\n";
 
-  object_proxy *op = first_;
+  object_proxy *op = root->op_first;
   while (op) {
     out << "[" << op << "] (";
-    if (op->obj) {
-      out << *op->obj << " prev [" << op->prev->obj << "] next [" << op->next->obj << "])\n";
+    if (op->obj()) {
+      out << op->obj() << " prev [" << op->prev()->obj() << "] next [" << op->next()->obj() << "])\n";
     } else {
-      out << "object 0)\n";
+      out << "serializable 0)\n";
     }
-    op = op->next;
+    op = op->next_;
   }
 }
 
-object* object_store::create(const char *type) const
-{
-  prototype_node *node = get_prototype(type);
-  if (node) {
-    return node->producer->create();
-  } else {
-    return 0;
-  }
-}
-
-void object_store::mark_modified(object_proxy *oproxy)
-{
-  std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_update, _1, oproxy->obj));
-}
-
-void object_store::register_observer(object_observer *observer)
-{
-  if (std::find(observer_list_.begin(), observer_list_.end(), observer) == observer_list_.end()) {
-    observer_list_.push_back(observer);
-  }
-}
-
-void object_store::unregister_observer(object_observer *observer)
-{
-  t_observer_list::iterator i = std::find(observer_list_.begin(), observer_list_.end(), observer);
-  if (i != observer_list_.end()) {
-    observer_list_.erase(i);
-  }
-}
-
-void object_store::insert(object_container &oc)
-{
-  oc.install(this);
-}
-
-object*
-object_store::insert_object(object *o, bool notify)
-{
-  // find type in tree
-  if (!o) {
-    // throw exception
-    return NULL;
-  }
-  // find prototype node
-  prototype_node *node = get_prototype(typeid(*o).name());
-  if (!node) {
-    // raise exception
-    std::string msg("couldn't insert element of type [" + std::string(typeid(*o).name()) + "]");
-    throw object_exception(msg.c_str());
-  }
-  // retrieve and set new unique number into object
-  object_proxy *oproxy = find_proxy(o->id());
-  if (oproxy) {
-    if (oproxy->linked()) {
-      // an object exists in map.
-      // replace it with new object
-      // unlink it and
-      // link it into new place in list
-      remove_proxy(oproxy->node, oproxy);
-    }
-    oproxy->reset(o);
-  } else {
-    /* object doesn't exist in map
-     * if object has a valid id, update
-     * the sequencer else assign new
-     * nique id
-     */
-    if (o->id() == 0) {
-      o->id(seq_.next());
-    } else {
-      seq_.update(o->id());
-    }
-    oproxy = create_proxy(o->id());
-    if (!oproxy) {
-      // throw exception
-      throw object_exception("couldn't create object proxy");
-    }
-    oproxy->obj = o;
-  }
-  // insert new element node
-  insert_proxy(node, oproxy);
-  // create object
-  object_creator oc(*this, notify);
-  o->deserialize(oc);
-  // set corresponding prototype node
-  oproxy->node = node;
-  // set this into persistent object
-  o->proxy_ = oproxy;
-  // notify observer
-  if (notify) {
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_insert, _1, o));
-  }
-  // insert element into hash map for fast lookup
-  object_map_[o->id()] = oproxy;
-  // return new object
-  return o;
-}
-
-bool object_store::is_removable(const object_base_ptr &o) const
-{
-  return object_deleter_->is_deletable(o.ptr());
-}
-
-void
-object_store::remove(object_base_ptr &o)
-{
-  remove(o.ptr());
-}
-
-void
-object_store::remove(object *o)
-{
-  // check if object tree is deletable
-  if (!object_deleter_->is_deletable(o)) {
-    throw object_exception("object is not removable");
-  }
-  
-  object_deleter::iterator first = object_deleter_->begin();
-  object_deleter::iterator last = object_deleter_->end();
-  
-  while (first != last) {
-    if (!first->second.ignore) {
-      remove_object((first++)->second.obj, true);
-    } else {
-      ++first;
-    }
-  }
-}
-void
-object_store::remove_object(object *o, bool notify)
-{
-  // find prototype node
-  if (!o->proxy_->node) {
-    throw object_exception("couldn't remove object, no proxy");
-  }
-  
-  prototype_node *node = get_prototype(o->proxy_->node->type.c_str());
-  if (!node) {
-    throw object_exception("couldn't find node for object");
-  }
-  
-  if (object_map_.erase(o->id()) != 1) {
-    // couldn't remove object
-    // throw exception
-    throw object_exception("couldn't remove object");
-  }
-
-  remove_proxy(node, o->proxy_);
-
-  if (notify) {
-    // notify observer
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_delete, _1, o));
-  }
-  // set object in object_proxy to null
-  object_proxy *op = o->proxy_;
-  // delete node
-  delete op;
-}
-
-void
-object_store::remove(object_container &oc)
-{
-  /**************
-   * 
-   * remove all objects from container
-   * and first and last sentinel
-   * 
-   **************/
-  // check if object tree is deletable
-  if (!object_deleter_->is_deletable(oc)) {
-    throw object_exception("couldn't remove container object");
-  }
-
-  object_deleter::iterator first = object_deleter_->begin();
-  object_deleter::iterator last = object_deleter_->end();
-  
-  while (first != last) {
-    if (!first->second.ignore) {
-      remove_object((first++)->second.obj, true);
-    } else {
-      ++first;
-    }
-  }
-  oc.uninstall();
-}
-
-void
-object_store::link_proxy(object_proxy *base, object_proxy *prev_proxy)
-{
-  // link oproxy before this node
-  prev_proxy->prev = base->prev;
-  prev_proxy->next = base;
-  if (base->prev) {
-    base->prev->next = prev_proxy;
-  }
-  base->prev = prev_proxy;
-}
-
-void
-object_store::unlink_proxy(object_proxy *proxy)
-{
-  if (proxy->prev) {
-    proxy->prev->next = proxy->next;
-  }
-  if (proxy->next) {
-    proxy->next->prev = proxy->prev;
-  }
-  proxy->prev = NULL;
-  proxy->next = NULL;
-}
-
-object_proxy* object_store::find_proxy(long id) const
+object_proxy* object_store::find_proxy(unsigned long id) const
 {
   t_object_proxy_map::const_iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
-    return NULL;
+    return nullptr;
   } else {
     return i->second;
   }
 }
 
-object_proxy* object_store::create_proxy(long id)
-{
-  if (id == 0) {
-    return NULL;
-  }
-  
-  t_object_proxy_map::iterator i = object_map_.find(id);
-  if (i == object_map_.end()) {
-    return object_map_.insert(std::make_pair(id, new object_proxy(id, this))).first->second;
-  } else {
-    return 0;
-  }
-}
-
-bool object_store::delete_proxy(long id)
+bool object_store::delete_proxy(unsigned long id)
 {
   t_object_proxy_map::iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
@@ -696,62 +228,186 @@ bool object_store::delete_proxy(long id)
   }
 }
 
-void object_store::insert_proxy(prototype_node *node, object_proxy *oproxy)
+object_proxy* object_store::insert_proxy(object_proxy *proxy)
 {
-  // check count of object in subtree
-  if (node->count >= 2) {
-    /*************
-     *
-     * there are more than two objects (normal case)
-     * insert before last last
-     *
-     *************/
-    oproxy->link(node->op_marker->prev);
-  } else if (node->count == 1) {
-    /*************
-     *
-     * there is one object in subtree
-     * insert as first; adjust "left" marker
-     *
-     *************/
-    oproxy->link(node->op_marker->prev);
-    node->adjust_left_marker(oproxy->next, oproxy);
-  } else /* if (node->count == 0) */ {
-    /*************
-     *
-     * there is no object in subtree
-     * insert as last; adjust "right" marker
-     *
-     *************/
-    oproxy->link(node->op_marker);
-    node->adjust_left_marker(oproxy->next, oproxy);
-    node->adjust_right_marker(oproxy->prev, oproxy);
+  if (proxy == nullptr) {
+    throw object_exception("proxy is null");
   }
-  // set prototype node
-  oproxy->node = node;
-  // adjust size
-  ++node->count;
+  if (proxy->obj() == nullptr) {
+    throw object_exception("object is null");
+  }
+  if (proxy->id() == 0) {
+    throw_object_exception("object proxy doesn't have an id");
+  }
+  iterator node = find(proxy->classname());
+  if (node == end()) {
+    throw object_exception("couldn't find object type");
+  }
+
+  node->insert(proxy);
+
+  return object_map_.insert(std::make_pair(proxy->id(), proxy)).first->second;
 }
 
-void object_store::remove_proxy(prototype_node *node, object_proxy *oproxy)
+void object_store::remove_proxy(object_proxy *proxy)
 {
-  if (oproxy == node->op_first->next) {
-    // adjust left marker
-    node->adjust_left_marker(node->op_first->next, node->op_first->next->next);
+  if (proxy == nullptr) {
+    throw object_exception("object proxy is nullptr");
   }
-  if (oproxy == node->op_marker->prev) {
-    // adjust right marker
-    node->adjust_right_marker(oproxy, node->op_marker->prev->prev);
+  if (proxy->node() == nullptr) {
+    throw object_exception("prototype node is nullptr");
   }
-  // unlink object_proxy
-  unlink_proxy(oproxy);
-  // adjust object count for node
-  --node->count;
+  // single deletion
+  if (object_map_.erase(proxy->id()) != 1) {
+    // couldn't remove object
+    // throw exception
+    throw object_exception("couldn't remove object");
+  }
+
+  proxy->node()->remove(proxy);
+  delete proxy;
+}
+
+object_proxy* object_store::register_proxy(object_proxy *oproxy)
+{
+  if (oproxy->id() != 0) {
+    throw_object_exception("object proxy already registerd");
+  }
+
+  if (oproxy->node() == nullptr) {
+    throw_object_exception("object proxy hasn't git a prototype node");
+  }
+
+  oproxy->id(seq_.next());
+
+  return object_map_.insert(std::make_pair(oproxy->id(), oproxy)).first->second;
 }
 
 sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &seq)
 {
   return seq_.exchange_sequencer(seq);
 }
+
+prototype_node* object_store::find_prototype_node(const char *type) const {
+  // check for null
+  if (type == 0) {
+    throw object_exception("invalid type (null)");
+  }
+  /*
+   * first search in the prototype map
+   */
+  t_prototype_map::const_iterator i = prototype_map_.find(type);
+  if (i == prototype_map_.end()) {
+    /*
+   * if not found search in the typeid to prototype map
+   */
+    t_typeid_prototype_map::const_iterator j = typeid_prototype_map_.find(type);
+    if (j == typeid_prototype_map_.end()) {
+      return nullptr;
+    } else {
+      const t_prototype_map &val = j->second;
+      /*
+     * if size is greater one (1) the name
+     * is a typeid and has more than one prototype
+     * node and therefor it is not unique and an
+     * exception is thrown
+     */
+      if (val.size() > 1) {
+        // throw exception
+        throw object_exception("type id not unique");
+      } else {
+        // return the only prototype
+        return val.begin()->second;
+      }
+    }
+  } else {
+    return i->second;
+  }
+}
+
+prototype_node* object_store::remove_prototype_node(prototype_node *node, bool is_root)
+{
+  // remove (and delete) from tree (deletes subsequently all child nodes
+  // for each child call remove_prototype(child);
+  prototype_node *next = node->next_node(node);
+
+  while (node->has_children()) {
+    remove_prototype_node(node->first->next, false);
+  }
+  // and objects they're containing
+  node->clear(false);
+  // delete prototype node as well
+  // unlink node
+  node->unlink();
+  // get iterator
+  t_prototype_map::iterator j = prototype_map_.find(node->type_.c_str());
+  if (j != prototype_map_.end()) {
+    prototype_map_.erase(j);
+  }
+  // find item in typeid map
+  t_typeid_prototype_map::iterator k = typeid_prototype_map_.find(node->type_id());
+  if (k != typeid_prototype_map_.end()) {
+    k->second.erase(node->type_);
+    if (k->second.empty()) {
+      typeid_prototype_map_.erase(k);
+    }
+  } else {
+    throw object_exception("couldn't find node by id");
+  }
+  if (is_root) {
+    delete node->op_first;
+    delete node->op_last;
+  }
+  delete node;
+  return next;
+}
+
+prototype_node *object_store::find_parent(const char *name) const
+{
+  prototype_node *parent_node(nullptr);
+  if (name != nullptr) {
+    parent_node = find_prototype_node(name);
+    if (!parent_node) {
+      throw object_exception("unknown prototype type");
+    }
+  }
+  return parent_node;
+}
+
+void object_store::push_transaction(const transaction &tr)
+{
+  transactions_.push(tr);
+}
+
+void object_store::pop_transaction()
+{
+  transactions_.pop();
+}
+
+bool object_store::is_relation_notification_enabled()
+{
+  return relation_notification_;
+}
+
+void object_store::enable_relation_notification()
+{
+  relation_notification_ = true;
+}
+
+void object_store::disable_relation_notification()
+{
+  relation_notification_ = false;
+}
+
+transaction object_store::current_transaction()
+{
+  return transactions_.top();
+}
+
+bool object_store::has_transaction() const
+{
+  return !transactions_.empty();
+}
+
 
 }

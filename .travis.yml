@@ -1,21 +1,323 @@
 language: cpp
+#sudo: false
 
-services:
-  - mysql
+matrix:
+  include:
+    - env: BUILD_TYPE=Debug
+      os: osx
+      osx_image: xcode8
+      compiler: clang
+    - env: BUILD_TYPE=Release
+      os: osx
+      osx_image: xcode8
+      compiler: clang
 
-before_script:
-  - mysql -e 'create database oos_test;'
+    # clang-3.6 32
+#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=32
+#      os: linux
+#      addons: &clang36-32
+#        apt:
+#          packages:
+#            - cmake
+#            - cmake-data
+#            - clang-3.6
+#            - linux-libc-dev:i386
+#            - g++-multilib
+#            - gcc-multilib
+#          sources:
+#            - george-edison55-precise-backports
+#            - ubuntu-toolchain-r-test
+#            - llvm-toolchain-precise-3.6
+#
+#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=32
+#      os: linux
+#      addons: *clang36-32
 
-script:
-  - mkdir build
-  - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Debug -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..
-  - make
-  - make test
+    # clang-3.6 64
+#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=64
+#      os: linux
+#      addons: &clang36-64
+#        apt:
+#          packages:
+#            - cmake
+#            - cmake-data
+#            - clang-3.6
+#            - g++
+#            - gcc
+#          sources:
+#            - george-edison55-precise-backports
+#            - ubuntu-toolchain-r-test
+#            - llvm-toolchain-precise-3.6
+#
+#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=64
+#      os: linux
+#      addons: *clang36-64
+
+    # clang-3.7 32
+    - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug ARCH=32
+      os: linux
+      addons: &clang37-32
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - clang-3.7
+            - linux-libc-dev:i386
+            - g++-multilib
+            - gcc-multilib
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+
+    - env: CLANG_VERSION=3.7 BUILD_TYPE=Release ARCH=32
+      os: linux
+      addons: *clang37-32
+
+    # clang-3.7 64
+    - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug ARCH=64
+      os: linux
+      addons: &clang37-64
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - clang-3.7
+            - g++-5
+            - gcc-5
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+
+    - env: CLANG_VERSION=3.7 BUILD_TYPE=Release ARCH=64
+      os: linux
+      addons: *clang37-64
+
+
+    # clang-3.8 32
+    - env: CLANG_VERSION=3.8 BUILD_TYPE=Debug ARCH=32
+      os: linux
+      addons: &clang38-32
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - clang-3.8
+            - linux-libc-dev:i386
+            - g++-5-multilib
+            - gcc-5-multilib
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+
+    - env: CLANG_VERSION=3.8 BUILD_TYPE=Release ARCH=32
+      os: linux
+      addons: *clang38-32
+
+    # clang-3.8 64
+    - env: CLANG_VERSION=3.8 BUILD_TYPE=Debug ARCH=64
+      os: linux
+      addons: &clang38-64
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - clang-3.8
+            - g++-5
+            - gcc-5
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+
+    - env: CLANG_VERSION=3.8 BUILD_TYPE=Release ARCH=64
+      os: linux
+      addons: *clang38-64
+
+    # gcc-4.9 32
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=32
+      os: linux
+      addons: &gcc49-32
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - linux-libc-dev:i386
+            - g++-4.9-multilib
+            - gcc-4.9-multilib
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release ARCH=32
+      os: linux
+      addons: *gcc49-32
+
+    # gcc-4.9 64
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=64
+      os: linux
+      addons: &gcc49-64
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - g++-4.9
+            - gcc-4.9
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release ARCH=64
+      os: linux
+      addons: *gcc49-64
+
+    # gcc-5 32
+    - env: GCC_VERSION=5 BUILD_TYPE=Debug ARCH=32
+      os: linux
+      addons: &gcc5-32
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - linux-libc-dev:i386
+            - g++-5-multilib
+            - gcc-5-multilib
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=5 BUILD_TYPE=Release ARCH=32
+      os: linux
+      addons: *gcc5-32
+
+    # gcc-5 64
+    - env: GCC_VERSION=5 BUILD_TYPE=Debug ARCH=64
+      os: linux
+      addons: &gcc5-64
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - g++-5
+            - gcc-5
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=5 BUILD_TYPE=Release ARCH=64
+      os: linux
+      addons: *gcc5-64
+
+    # gcc-6 32
+    - env: GCC_VERSION=6 BUILD_TYPE=Debug ARCH=32
+      os: linux
+      addons: &gcc6-32
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - linux-libc-dev:i386
+            - g++-6-multilib
+            - gcc-6-multilib
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=6 BUILD_TYPE=Release ARCH=32
+      os: linux
+      addons: *gcc6-32
+
+    # gcc-6 64
+    - env: GCC_VERSION=6 BUILD_TYPE=Debug ARCH=64
+      os: linux
+      addons: &gcc6-64
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - g++-6
+            - gcc-6
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=6 BUILD_TYPE=Release ARCH=64
+      os: linux
+      addons: *gcc6-64
+  allow_failures:
+    - os: osx
 
 branches:
   only:
     - develop
+    - master
+    - /^\d+\.\d+\.\d+$/
+
+before_install:
+  - |
+    if [ -n "$GCC_VERSION" ]; then
+      export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}" GCOV="gcov-${GCC_VERSION}";
+    fi
+  - |
+    if [ -n "$CLANG_VERSION" ]; then
+      export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
+    fi
+
+install:
+  # install latest LCOV (1.9 was failing)
+  - |
+    if [[ $TRAVIS_OS_NAME != "osx" ]]; then
+      cd ${TRAVIS_BUILD_DIR}
+      wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.11.orig.tar.gz
+      tar xf lcov_1.11.orig.tar.gz
+      sudo make -C lcov-1.11/ install
+      gem install coveralls-lcov
+      lcov --version
+    fi
+
+before_script:
+  #- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update > /dev/null && brew install mariadb && mysql.server start; fi
+  - |
+    if [[ $TRAVIS_OS_NAME != "osx" ]]; then
+      mysql -e 'create database matador_test;';
+    fi
+  - mkdir build
+  - cd build
+  - |
+    if [ "$GCOV" == "gcov-5" ] && [ "$BUILD_TYPE" == "Debug" ] && [ "$ARCH" == "64" ]; then
+      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DARCH=${ARCH} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=true -DMATADOR_ODBC_TEST=false -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/matador_test" ..;
+      lcov --directory include --directory src --directory test --zerocounters
+    else
+      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DARCH=${ARCH} -DCMAKE_BUILD_TYPE=Debug -DMATADOR_ODBC_TEST=false -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/matador_test" ..;
+    fi
+
+script:
+  - make
+  - make test ARGS=-V
+
+after_success:
+  - |
+    if [ "$GCOV" == "gcov-5" ] && [ "$BUILD_TYPE" == "Debug" ] && [ "$ARCH" == "64" ]; then
+      cd ${TRAVIS_BUILD_DIR}
+      type $GCOV
+      lcov --no-external --base-directory ${TRAVIS_BUILD_DIR} --directory build/src --directory build/test --capture --gcov-tool `which $GCOV` --output-file coverage.info
+      lcov --remove coverage.info 'build/test/*' 'build/src/*' --gcov-tool `which $GCOV` --output-file coverage.info
+      lcov --list coverage.info
+      coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
+    fi
+
+before_deploy:
+  - cd ${TRAVIS_BUILD_DIR}
+  - cmake --build build --target package
+  - export RELEASE_PKG_FILE=$(ls Package/*.tar.gz)
+  - echo "deploying $RELEASE_PKG_FILE to GitHub releases"
+
+deploy:
+  provider: releases
+  api_key: ${GITHUB_TOKEN}
+  file_glob: true
+  file: "${RELEASE_PKG_FILE}"
+  skip_cleanup: true
+  on:
+    tags: true
+    condition: "$GCC_VERSION = 6 && $BUILD_TYPE = Release"
+    all_branches: true
 
 notifications:
   email:

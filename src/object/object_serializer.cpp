@@ -15,166 +15,96 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "object/object_serializer.hpp"
-#include "object/object.hpp"
-#include "object/object_store.hpp"
-#include "object/object_ptr.hpp"
-#include "object/object_list.hpp"
-#include "object/object_vector.hpp"
-#include "object/object_container.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/varchar.hpp"
 
-#include "tools/byte_buffer.hpp"
-#include "tools/varchar.hpp"
+#include "matador/object/object_serializer.hpp"
+#include "matador/object/object_store.hpp"
 
-#include <string.h>
-
-using namespace std::tr1::placeholders;
+using namespace std::placeholders;
 using namespace std;
 
-namespace oos {
+namespace matador {
 
 object_serializer::~object_serializer()
 {}
 
-bool object_serializer::serialize(const object *o, byte_buffer &buffer)
+void object_serializer::serialize(const char *, char *c, size_t s)
 {
-  buffer_ = &buffer;
-//  o->write_to(this);
-  o->serialize(*this);
-  buffer_ = NULL;
-  return true;
-}
-
-bool object_serializer::deserialize(object *o, byte_buffer &buffer, object_store *ostore)
-{
-  ostore_ = ostore;
-  buffer_ = &buffer;
-//  o->read_from(this);
-  o->deserialize(*this);
-  buffer_ = NULL;
-  ostore_ = NULL;
-  return true;
-}
-
-void object_serializer::write_value(const char*, const char *c, int s)
-{
-  size_t len = s;
-  
-  buffer_->append(&len, sizeof(len));
-  buffer_->append(c, len);
-}
-
-void object_serializer::write_value(const char*, const std::string &s)
-{
-  size_t len = s.size();
-  
-  buffer_->append(&len, sizeof(len));
-  buffer_->append(s.c_str(), len);
-}
-
-void object_serializer::write_value(const char*, const varchar_base &s)
-{
-  size_t len = s.size();
-  
-  buffer_->append(&len, sizeof(len));
-  buffer_->append(s.str().c_str(), len);
-}
-
-void object_serializer::write_value(const char*, const object_base_ptr &x)
-{
-  // write type and id into buffer
-  write(0, x.id());
-  write(0, x.type(), strlen(x.type()));
-//  write(0, x.classname(), strlen(x.classname()));
-}
-
-void object_serializer::write_value(const char*, const object_container &x)
-{
-  // write number of items in list
-  // for each item write id and type
-  write(0, x.size());
-  x.for_each(std::tr1::bind(&object_serializer::write_object_container_item, this, _1));  
-}
-
-void object_serializer::read_value(const char*, char *&c, int )
-{
-  size_t len = 0;
-  buffer_->release(&len, sizeof(len));
-  // TODO: check size of buffer
-  buffer_->release(c, len);
-}
-
-void object_serializer::read_value(const char*, std::string &s)
-{
-  size_t len = 0;
-  buffer_->release(&len, sizeof(len));
-  char *str = new char[len];
-  buffer_->release(str, len);
-  s.assign(str, len);
-  delete [] str;
-}
-
-void object_serializer::read_value(const char*, varchar_base &s)
-{
-  size_t len = 0;
-  buffer_->release(&len, sizeof(len));
-  char *str = new char[len];
-  buffer_->release(str, len);
-  s.assign(str, len);
-  delete [] str;
-}
-
-void object_serializer::read_value(const char*, object_base_ptr &x)
-{
-  /***************
-   *
-   * extract id and type of object from buffer
-   * try to find object on object store
-   * if found check type if wrong type throw error
-   * else create object and set extracted id
-   * insert object into object store
-   *
-   ***************/
-  long id = 0;
-  read(0, id);
-  std::string type;
-  read(0, type);
-
-  if (id > 0) {
-    object_proxy *oproxy = ostore_->find_proxy(id);
-    if (!oproxy) {
-      oproxy = ostore_->create_proxy(id);
-    }
-    x.reset(oproxy->obj);
+  if (restore) {
+    size_t len = 0;
+    buffer_->release(&len, sizeof(len));
+    // TODO: check size of buffer
+    buffer_->release(c, len);
   } else {
-    x.proxy_ = 0;
-    x.id_ = id;
+    size_t len = s;
+
+    buffer_->append(&len, sizeof(len));
+    buffer_->append(c, len);
   }
 }
 
-void object_serializer::read_value(const char*, object_container &x)
+void object_serializer::serialize(const char *, std::string &s)
 {
-  // get count of backuped list item
-  object_container::size_type s(0);
-  read(0, s);
-  x.reset();
-  string type;
-  long id(0);
-  for (unsigned int i = 0; i < s; ++i) {
-    read(0, id);
-    read(0, type);
-    object_proxy *oproxy = ostore_->find_proxy(id);
-    if (!oproxy) {
-      oproxy = ostore_->create_proxy(id);
-    }
-    x.append_proxy(oproxy);
+  if (restore) {
+    size_t len = 0;
+    buffer_->release(&len, sizeof(len));
+    char *str = new char[len];
+    buffer_->release(str, len);
+    s.assign(str, len);
+    delete [] str;
+  } else {
+    size_t len = s.size();
+
+    buffer_->append(&len, sizeof(len));
+    buffer_->append(s.c_str(), len);
   }
 }
 
-void object_serializer::write_object_container_item(const object *o)
+void object_serializer::serialize(const char *id, date &x)
 {
-  write(0, o->id());
-  write(0, o->classname(), strlen(o->classname()));
+  if (restore) {
+    int julian_date(0);
+    buffer_->release(&julian_date, sizeof(julian_date));
+    x.set(julian_date);
+  } else {
+    int jd(x.julian_date());
+    serialize(id, jd);
+  }
+}
+
+void object_serializer::serialize(const char *id, time &x)
+{
+  if (restore) {
+    struct timeval tv;
+    buffer_->release(&tv.tv_sec, sizeof(tv.tv_sec));
+    buffer_->release(&tv.tv_usec, sizeof(tv.tv_usec));
+    x.set(tv);
+  } else {
+    struct timeval tv = x.get_timeval();
+    serialize(id, tv.tv_sec);
+    serialize(id, tv.tv_usec);
+  }
+}
+
+void object_serializer::serialize(const char *, basic_identifier &x)
+{
+  if (restore) {
+    basic_identifier_serializer_.deserialize(x, *buffer_);
+  } else {
+    basic_identifier_serializer_.serialize(x, *buffer_);
+  }
+}
+
+object_proxy *object_serializer::find_proxy(unsigned long oid)
+{
+  return ostore_->find_proxy(oid);
+}
+
+void object_serializer::insert_proxy(object_proxy *proxy)
+{
+  ostore_->insert_proxy(proxy);
 }
 
 }

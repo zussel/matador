@@ -2,3 +2,7 @@ build/
 doc/api/
 doc/web/api/
 oos.geany
+.idea
+*.user
+.vscode/
+Package

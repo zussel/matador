@@ -3,7 +3,7 @@
 # 
 # ODBC is an open standard for connecting to different databases in a
 # semi-vendor-independent fashion.  First you install the ODBC driver
-# manager.  Then you need a driver for each separate database you want
+# manager.  Then you need a driver for each separate sql you want
 # to connect to (unless a generic one works).  VTK includes neither
 # the driver manager nor the vendor-specific drivers: you have to find
 # those yourself.
@@ -18,49 +18,51 @@
 
 set(ODBC_FOUND FALSE)
 
-IF (WIN32)
-  FIND_PATH(ODBC_INCLUDE_DIR sql.h
-    "$ENV{ProgramFiles}/ODBC/include"
-    "$ENV{ProgramFiles}/Microsoft SDKs/Windows/v7.0A/include"
-    "$ENV{ProgramFiles}/Microsoft SDKs/Windows/v6.0a/include" 
-    "C:/ODBC/include"
-    DOC "Specify the directory containing sql.h."
-  )
+find_path(ODBC_INCLUDE_DIR sql.h
+  /usr/include
+  /usr/include/odbc
+  /usr/local/include
+  /usr/local/include/odbc
+  /usr/local/odbc/include
+  "C:/Program Files (x86)/Windows Kits/8.1/include/um"
+  "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/Include"
+  "C:/Program Files/ODBC/include"
+  "C:/Program Files/Microsoft SDKs/Windows/v7.0/include"
+  "C:/Program Files/Microsoft SDKs/Windows/v6.0a/include"
+  "C:/ODBC/include"
+  DOC "Specify the directory containing sql.h."
+)
 
-  FIND_LIBRARY(ODBC_LIBRARY 
-    NAMES iodbc odbc odbcinst odbc32
-    PATHS
-    "$ENV{ProgramFiles}/ODBC/lib"
-    "C:/ODBC/lib/debug"
-    "$ENV{ProgramFiles}/Microsoft SDKs/Windows/v7.0A/Lib"
-    DOC "Specify the ODBC driver manager library here."
-  )
-ELSE()
-  FIND_PATH(ODBC_INCLUDE_DIR sql.h
-    /usr/include
-    /usr/include/odbc
-    /usr/local/include
-    /usr/local/include/odbc
-    /usr/local/odbc/include
-    DOC "Specify the directory containing sql.h."
-  )
-
-  FIND_LIBRARY(ODBC_LIBRARY 
-    NAMES iodbc odbc odbcinst odbc32
-    PATHS
-    /usr/lib
-    /usr/lib/odbc
-    /usr/local/lib
-    /usr/local/lib/odbc
-    /usr/local/odbc/lib
-    DOC "Specify the ODBC driver manager library here."
-  )
-ENDIF()
+if(MSVC)
+    # msvc knows where to find sdk libs
+    set(ODBC_LIBRARY odbc32)
+else()
+    find_library(ODBC_LIBRARY
+      NAMES iodbc odbc odbcinst odbc32
+      PATHS
+          /usr/lib
+          /usr/lib/odbc
+          /usr/local/lib
+          /usr/local/lib/odbc
+          /usr/local/odbc/lib
+          "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x86/"
+          "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/Lib"
+          "C:/Program Files/ODBC/lib"
+          "C:/ODBC/lib/debug"
+      DOC "Specify the ODBC driver manager library here."
+    )
+endif()
 
 if(ODBC_LIBRARY)
+#  MESSAGE(STATUS "found odbc library")
   if(ODBC_INCLUDE_DIR)
+#    MESSAGE(STATUS "found odbc header")
     set( ODBC_FOUND 1 )
+  else()
+#    MESSAGE(STATUS "con't find odbc header")
   endif()
+else()
+#  MESSAGE(STATUS "can't find odbc library")
 endif()
 
 set(ODBC_LIBRARIES ${ODBC_LIBRARY})

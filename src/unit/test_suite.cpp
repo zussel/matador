@@ -1,11 +1,11 @@
-#include "unit/test_suite.hpp"
-#include "unit/unit_test.hpp"
+#include "matador/unit/test_suite.hpp"
+#include "matador/unit/unit_test.hpp"
 
 #include <algorithm>
 #include <functional>
 #include <iostream>
 
-namespace oos {
+namespace matador {
 
 test_suite::test_suite()
 {}
@@ -15,36 +15,45 @@ void test_suite::register_unit(unit_test *utest)
   unit_test_map_.insert(std::make_pair(utest->name(), unit_test_ptr(utest)));
 }
 
-test_suite::unit_executer::unit_executer()
+test_suite::unit_executer::unit_executer(summary &sum, bool q)
+  : succeeded(true)
+  , quiet(q)
+  , summary_(sum)
 {}
 
 void test_suite::unit_executer::operator()(test_suite::value_type &x)
 {
-  std::cout << "Executing test unit [" << x.second->caption() << "]\n";
-  x.second->execute();
+  if (!quiet) {
+    std::cout << "[" << x.second->caption() << "]\n";
+  }
+  bool result = x.second->execute(quiet);
+  std::for_each(x.second->test_func_infos_.begin(), x.second->test_func_infos_.end(), [this](const unit_test::test_func_info &info) {
+    summary_.evaluate(info);
+  });
+//  summary_.evaluate(result);
+  if (succeeded && !result) {
+    succeeded = result;
+  }
 }
 
-test_suite::unit_lister::unit_lister(std::ostream &o, bool b, bool c)
-  : out(o), brief(b), cmake(c)
+test_suite::unit_lister::unit_lister(std::ostream &o, bool b)
+  : out(o), brief(b)
 {}
 
-void test_suite::unit_lister::operator()(test_suite::value_type &x)
+void test_suite::unit_lister::operator()(const test_suite::value_type &x) const
 {
-  if (!brief && !cmake) {
+  if (!brief) {
     out << "Unit Test [" << x.first << "] has the following test:\n";
   }
-  unit_test::t_test_func_info_map::const_iterator first = x.second->test_func_info_map_.begin();
-  unit_test::t_test_func_info_map::const_iterator last = x.second->test_func_info_map_.end();
-  while (first != last) {
+
+  const unit_test::t_test_func_info_vector &tests = x.second->test_func_infos_;
+  std::for_each(tests.begin(), tests.end(), [this](const unit_test::t_test_func_info_vector::value_type &x) {
     if (brief) {
-      out << x.first << ":" << first->first << "\n";
-    } else if (cmake) {
-      out << "ADD_TEST(test_oos_" << x.first << "_" << first->first << " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec " << x.first << ":" << first->first << ")\n";
+      out << x.name << ":" << x.caption << "\n";
     } else {
-      out << "Test [" << first->first << "]: " << first->second.caption << std::endl;
+      out << "Test [" << x.name << "]: " << x.caption << std::endl;
     }
-    ++first;
-  }
+  });
 }
 
 test_suite::~test_suite()
@@ -59,6 +68,7 @@ void test_suite::init(int argc, char *argv[])
     // no arguments
     return;
   }
+  args_.initialized = true;
   std::string arg(argv[1]);
   
   if (arg == "list") {
@@ -67,8 +77,6 @@ void test_suite::init(int argc, char *argv[])
     if (argc == 3) {
       if (strcmp(argv[2], "brief") == 0) {
         args_.brief = true;
-      } else if (strcmp(argv[2] , "cmake") == 0) {
-        args_.cmake = true;
       } else {
         // unknow option arg
       }
@@ -80,19 +88,32 @@ void test_suite::init(int argc, char *argv[])
     }
 
     args_.cmd = EXECUTE;
+    args_.brief = false;
 
     std::string val(argv[2]);
     if (val == "all") {
     } else {
-      size_t pos = val.find(':');
-      
-      if (pos == std::string::npos) {
-        // execute all test of a unit class
-        args_.unit = val;
-      } else {
-        // extract unit and test name
-        args_.unit = val.substr(0, pos);
-        args_.test = val.substr(pos+1);
+      std::stringstream sval(val);
+      std::string part;
+      while (std::getline(sval, part, ',')) {
+        size_t pos = part.find(':');
+
+        test_unit_args unit_args;
+
+        if (pos == std::string::npos) {
+          // execute all test of a unit class
+          unit_args.unit = part;
+        } else {
+          // extract unit and test name
+          unit_args.unit = part.substr(0, pos);
+          std::stringstream tests(part.substr(pos+1));
+          std::string test;
+          while (std::getline(tests, test, ':')) {
+            unit_args.tests.push_back(test);
+          }
+        }
+
+        args_.unit_args.push_back(unit_args);
       }
     }
   } else {
@@ -101,48 +122,145 @@ void test_suite::init(int argc, char *argv[])
   args_.initialized = true;
 }
 
-void test_suite::run()
+bool test_suite::run()
 {
   if (args_.initialized) {
     switch (args_.cmd) {
       case LIST:
-        std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_lister(std::cout, args_.brief, args_.cmake));
-        break;
-      case EXECUTE:
-        if (!args_.unit.empty() && !args_.test.empty()) {
-          run(args_.unit, args_.test);
-        } else if (!args_.unit.empty()) {
-          run(args_.unit);
-        } else {
-          std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_executer());
+        if (!args_.quiet) {
+          std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_lister(std::cout, args_.brief));
         }
         break;
+      case EXECUTE:
+        summary_.reset();
+        if (!args_.unit_args.empty()) {
+          bool result = true;
+          for (auto item : args_.unit_args) {
+            bool succeeded = run(item);
+            if (result && !succeeded) {
+              result = succeeded;
+            }
+          }
+          if (!args_.quiet) {
+            std::cout << summary_;
+          }
+          return result;
+        } else {
+          // execute all test units
+          unit_executer ue(summary_, args_.quiet);
+          std::for_each(unit_test_map_.begin(), unit_test_map_.end(), std::ref(ue));
+          if (!args_.quiet) {
+            std::cout << summary_;
+          }
+          return ue.succeeded;
+        }
       default:
         break;
       }
   } else {
-    std::cout << "usage: test_oos [list]|[exec <val>]\n";
+    std::cout << "usage: test_matador [list]|[exec <val>]\n";
   }
+  return true;
 }
 
-void test_suite::run(const std::string &unit)
+bool test_suite::run(const std::string &unit)
 {
   t_unit_test_map::const_iterator i = unit_test_map_.find(unit);
   if (i == unit_test_map_.end()) {
-    std::cout << "couldn't find test unit [" << unit << "]\n";
+    if (!args_.quiet) {
+      std::cout << "couldn't find test unit [" << unit << "]\n";
+    }
+    return false;
   } else {
-    i->second->execute();
+    if (!args_.quiet) {
+      std::cout << "[" << i->second->caption() << "]\n";
+    }
+    bool succeeded = i->second->execute(args_.quiet);
+    std::for_each(i->second->test_func_infos_.begin(), i->second->test_func_infos_.end(), [this](const unit_test::test_func_info &info) {
+      summary_.evaluate(info);
+    });
+    return succeeded;
   }
 }
 
-void test_suite::run(const std::string &unit, const std::string &test)
+bool test_suite::run(const test_unit_args &unit_args)
+{
+  bool result = true;
+  if (unit_args.tests.empty()) {
+    result = run(unit_args.unit);
+  } else {
+    for (auto test : unit_args.tests) {
+      bool succeeded = run(unit_args.unit, test);
+      if (result && !succeeded) {
+        result = succeeded;
+      }
+    }
+  }
+  return result;
+}
+
+bool test_suite::run(const std::string &unit, const std::string &test)
 {
   t_unit_test_map::const_iterator i = unit_test_map_.find(unit);
   if (i == unit_test_map_.end()) {
-    std::cout << "couldn't find test unit [" << unit << "]\n";
+    if (!args_.quiet) {
+      std::cout << "couldn't find test unit [" << unit << "]\n";
+    }
+    return false;
   } else {
-    i->second->execute(test);
+    bool succeeded = i->second->execute(test, args_.quiet);
+    auto j = std::find_if(i->second->test_func_infos_.begin(), i->second->test_func_infos_.end(), [test](const unit_test::t_test_func_info_vector::value_type &x) {
+      return x.name == test;
+    });
+    if (j != i->second->test_func_infos_.end()) {
+      summary_.evaluate(*j);
+    }
+    return succeeded;
   }
 }
+
+std::size_t test_suite::size() const
+{
+  return unit_test_map_.size();
+}
+
+bool test_suite::empty() const
+{
+  return unit_test_map_.empty();
+}
+
+test_suite::t_unit_test_map::const_iterator
+test_suite::begin() const
+{
+  return unit_test_map_.begin();
+}
+
+test_suite::t_unit_test_map::const_iterator
+test_suite::end() const
+{
+  return unit_test_map_.end();
+}
+
+const test_suite::summary& test_suite::test_summary() const
+{
+  return summary_;
+}
+
+const test_suite::test_suite_args& test_suite::test_args() const
+{
+  return args_;
+}
+
+void test_suite::quiet(bool q)
+{
+  args_.quiet = q;
+}
+
+std::ostream& operator<<(std::ostream& out, const test_suite::summary &s)
+{
+  out << "summary for " << s.tests << " tests with " << s.asserts << " asserts: (succeeded: " << s.succeeded << "), (failures: " << s.failures << "), (errors: " << s.errors << ")\n";
+  return out;
+}
+
 
 }

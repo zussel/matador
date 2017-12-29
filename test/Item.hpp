@@ -18,71 +18,31 @@
 #ifndef ITEM_HPP
 #define ITEM_HPP
 
-#include "object/object.hpp"
-#include "object/object_atomizer.hpp"
-#include "object/object_list.hpp"
-#include "object/object_vector.hpp"
-#include "object/linked_object_list.hpp"
+#include "matador/utils/base_class.hpp"
+#include "matador/object/object_ptr.hpp"
+#include "matador/object/has_one.hpp"
+#include "matador/object/belongs_to.hpp"
+#include "matador/object/has_many.hpp"
 
-#include "tools/varchar.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/identifier.hpp"
 
-class Item : public oos::object
+#include "matador/utils/varchar.hpp"
+#include <ostream>
+#include <utility>
+
+class Item
 {
 public:
-  Item()
-    : char_('c')
-    , float_(3.1415f)
-    , double_(1.1414)
-    , short_(-128)
-    , int_(-65000)
-    , long_(-1280000)
-    , unsigned_short_(128)
-    , unsigned_int_(65000)
-    , unsigned_long_(128000)
-    , bool_(true)
-    , string_("Welt")
-    , varchar_("Erde")
-  {
-    init();
-  }
-  explicit Item(const std::string &str)
-    : char_('c')
-    , float_(3.1415f)
-    , double_(1.1414)
-    , short_(-128)
-    , int_(-65000)
-    , long_(-1280000)
-    , unsigned_short_(128)
-    , unsigned_int_(65000)
-    , unsigned_long_(128000)
-    , bool_(true)
-    , string_(str)
-    , varchar_("Erde")
-  {
-    init();
-  }
-  Item(const std::string &str, int i)
-    : char_('c')
-    , float_(3.1415f)
-    , double_(1.1414)
-    , short_(-128)
-    , int_(i)
-    , long_(-1280000)
-    , unsigned_short_(128)
-    , unsigned_int_(65000)
-    , unsigned_long_(128000)
-    , bool_(true)
-    , string_(str)
-    , varchar_("Erde")
-  {
-    init();
-  }
-  virtual ~Item() {}
+  Item() : Item("") { }
 
-private:
-  void init() {
+  explicit Item(const std::string &str) : Item(str, -65000) {}
+
+  Item(std::string str, int i) : int_(i), string_(std::move(str))
+  {
     memset(cstr_, 0, CSTR_LEN);
-#ifdef WIN32
+#ifdef _MSC_VER
     strcpy_s(cstr_, CSTR_LEN, "Hallo");
 #else
     strcpy(cstr_, "Hallo");
@@ -90,55 +50,58 @@ private:
     cstr_[5] = '\0';
   }
 
+  ~Item() = default;
+
 public:
-  virtual void deserialize(oos::object_reader &deserializer)
+  template < class SERIALIZER > void serialize(SERIALIZER &serializer)
   {
-    oos::object::deserialize(deserializer);
-    deserializer.read("val_char", char_);
-    deserializer.read("val_float", float_);
-    deserializer.read("val_double", double_);
-    deserializer.read("val_short", short_);
-    deserializer.read("val_int", int_);
-    deserializer.read("val_long", long_);
-    deserializer.read("val_unsigned_short", unsigned_short_);
-    deserializer.read("val_unsigned_int", unsigned_int_);
-    deserializer.read("val_unsigned_long", unsigned_long_);
-    deserializer.read("val_bool", bool_);
-    deserializer.read("val_cstr", cstr_, CSTR_LEN);
-    deserializer.read("val_string", string_);
-    deserializer.read("val_varchar", varchar_);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    oos::object::serialize(serializer);
-    serializer.write("val_char", char_);
-    serializer.write("val_float", float_);
-    serializer.write("val_double", double_);
-    serializer.write("val_short", short_);
-    serializer.write("val_int", int_);
-    serializer.write("val_long", long_);
-    serializer.write("val_unsigned_short", unsigned_short_);
-    serializer.write("val_unsigned_int", unsigned_int_);
-    serializer.write("val_unsigned_long", unsigned_long_);
-    serializer.write("val_bool", bool_);
-    serializer.write("val_cstr", cstr_, CSTR_LEN);
-    serializer.write("val_string", string_);
-    serializer.write("val_varchar", varchar_);
+    serializer.serialize("id", id_);
+    serializer.serialize("val_char", char_);
+    serializer.serialize("val_float", float_);
+    serializer.serialize("val_double", double_);
+    serializer.serialize("val_short", short_);
+    serializer.serialize("val_int", int_);
+    serializer.serialize("val_long", long_);
+    serializer.serialize("val_unsigned_short", unsigned_short_);
+    serializer.serialize("val_unsigned_int", unsigned_int_);
+    serializer.serialize("val_unsigned_long", unsigned_long_);
+    serializer.serialize("val_bool", bool_);
+    serializer.serialize("val_cstr", cstr_, (size_t)CSTR_LEN);
+    serializer.serialize("val_string", string_);
+    serializer.serialize("val_varchar", varchar_);
+    serializer.serialize("val_date", date_);
+    serializer.serialize("val_time", time_);
   }
 
-  void set_char(char x) { modify(char_, x); }
-  void set_float(float x) { modify(float_, x); }
-  void set_double(double x) { modify(double_, x); }
-  void set_short(short x) { modify(short_, x); }
-  void set_int(int x) { modify(int_, x); }
-  void set_long(long x) { modify(long_, x); }
-  void set_unsigned_short(unsigned short x) { modify(unsigned_short_, x); }
-  void set_unsigned_int(unsigned int x) { modify(unsigned_int_, x); }
-  void set_unsigned_long(unsigned long x) { modify(unsigned_long_, x); }
-  void set_bool(bool x) { modify(bool_, x); }
-  void set_cstr(const char *x, int size) { modify(cstr_, CSTR_LEN, x, size); }
-  void set_string(const std::string &x) { modify(string_, x); }
-  void set_varchar(const oos::varchar_base &x) { modify(varchar_, x); }
+  unsigned long id() const { return id_.value(); }
+  void id(unsigned long i) { id_.value(i); }
+
+  void set_char(char x) { char_ = x; }
+  void set_float(float x) { float_ = x; }
+  void set_double(double x) { double_ = x; }
+  void set_short(short x) { short_ = x; }
+  void set_int(int x) { int_ = x; }
+  void set_long(long x) { long_ = x; }
+  void set_unsigned_short(unsigned short x) { unsigned_short_ = x; }
+  void set_unsigned_int(unsigned int x) { unsigned_int_ = x; }
+  void set_unsigned_long(unsigned long x) { unsigned_long_ = x; }
+  void set_bool(bool x) { bool_ = x; }
+  void set_cstr(const char *x, size_t size)
+  {
+    if (CSTR_LEN < size) {
+      throw std::logic_error("not enough character size");
+    }
+//    mark_modified();
+#ifdef _MSC_VER
+    strcpy_s(cstr_, CSTR_LEN, x);
+#else
+    strcpy(cstr_, x);
+#endif
+  }
+  void set_string(const std::string &x) { string_ = x; }
+  void set_varchar(const matador::varchar_base &x) { varchar_ = x.c_str(); }
+  void set_date(const matador::date &d) { date_ = d; }
+  void set_time(const matador::time &d) { time_ = d; }
 
   char get_char() const { return char_; }
   float get_float() const { return float_; }
@@ -152,7 +115,9 @@ public:
   bool get_bool() const { return bool_; }
   const char* get_cstr() const { return cstr_; }
   std::string get_string() const { return string_; }
-  oos::varchar_base get_varchar() const { return varchar_; }
+  matador::varchar_base get_varchar() const { return varchar_; }
+  matador::date get_date() const { return date_; }
+  matador::time get_time() const { return time_; }
 
   friend std::ostream& operator <<(std::ostream &os, const Item &i)
   {
@@ -163,19 +128,23 @@ public:
 private:
   enum { CSTR_LEN=256 };
 
-  char char_;
-  float float_;
-  double double_;
-  short short_;
-  int int_;
-  long long_;
-  unsigned short unsigned_short_;
-  unsigned int unsigned_int_;
-  unsigned long unsigned_long_;
-  bool bool_;
+  matador::identifier<unsigned long> id_ = 0;
+
+  char char_ = 'c';
+  float float_ = 3.1415f;
+  double double_ = 1.1414;
+  short short_ = -127;
+  int int_ = -65000;
+  long long_ = -128000;
+  unsigned short unsigned_short_ = 128;
+  unsigned int unsigned_int_ = 65000;
+  unsigned long unsigned_long_ = 128000;
+  bool bool_ = true;
   char cstr_[CSTR_LEN];
-  std::string string_;
-  oos::varchar<64> varchar_;
+  std::string string_ = "Welt";
+  matador::varchar<64> varchar_ = "Erde";
+  matador::date date_;
+  matador::time time_;
 };
 
 class ItemA : public Item {};
@@ -186,32 +155,27 @@ template < class T >
 class ObjectItem : public Item
 {
 public:
-  typedef oos::object_ptr<T> value_ptr;
-  typedef oos::object_ref<T> value_ref;
+  typedef matador::object_ptr<T> value_ptr;
 
-  ObjectItem() {}
+  ObjectItem() = default;
   ObjectItem(const std::string &n, int i)
     : Item(n, i)
   {}
-  virtual ~ObjectItem() {}
 
-  virtual void deserialize(oos::object_reader &deserializer)
+  template < class SERIALIZER > void serialize(SERIALIZER &serializer)
   {
-    Item::deserialize(deserializer);
-    deserializer.read("ref", ref_);
-    deserializer.read("ptr", ptr_);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    Item::serialize(serializer);
-    serializer.write("ref", ref_);
-    serializer.write("ptr", ptr_);
+    serializer.serialize(*matador::base_class<Item>(this));
+    serializer.serialize("ref", ref_, matador::cascade_type::NONE);
+    serializer.serialize("ptr", ptr_, matador::cascade_type::ALL);
   }
 
-  void ref(const value_ref &r) { modify(ref_, r); }
-  void ptr(const value_ptr &p) { modify(ptr_, p); }
+  void ref(const value_ptr &r)
+  {
+    ref_ = r;
+  }
+  void ptr(const value_ptr &p) { ptr_ = p; }
 
-  value_ref ref() const { return ref_; }
+  value_ptr ref() const { return ref_; }
   value_ptr ptr() const { return ptr_; }
 
   template < class I >
@@ -222,315 +186,92 @@ public:
   }
 
 private:
-  value_ref ref_;
-  value_ptr ptr_;
+  matador::has_one<T> ref_;
+  matador::has_one<T> ptr_;
 };
 
-template < class T >
-class List : public oos::object
+class ObjectItemList
 {
 public:
-  typedef T value_type;
-  typedef List<T> self;
-  typedef oos::object_list<self, T, true> list_t;
-  typedef typename list_t::item_type item_type;
-/*  typedef typename list_t::item_type item_ptr;*/
-  typedef typename list_t::size_type size_type;
-  typedef typename list_t::iterator iterator;
-  typedef typename list_t::const_iterator const_iterator;
+  typedef matador::has_many<ObjectItem<Item>> object_item_list_t;
+  typedef typename object_item_list_t::iterator iterator;
+  typedef typename object_item_list_t::const_iterator const_iterator;
 
-public:
-  List(const std::string &relation_name)
-    : list_(this)
-    , relation_name_(relation_name)
-  {}
-  virtual ~List() {}
+  matador::identifier<unsigned long> id;
+  std::string name;
+  object_item_list_t items;
 
-  virtual void deserialize(oos::object_reader &deserializer)
+  ObjectItemList() = default;
+  explicit ObjectItemList(std::string n) : name(std::move(n)) {}
+
+  template < class S >
+  void serialize(S &s)
   {
-    oos::object::deserialize(deserializer);
-    deserializer.read(relation_name_.c_str(), list_);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    oos::object::serialize(serializer);
-    serializer.write(relation_name_.c_str(), list_);
+    s.serialize("id", id);
+    s.serialize("name", name);
+    s.serialize("object_item_list", items, "list_id", "object_item_id");
   }
 
-  void push_front(const value_type &i)
-  {
-    list_.push_front(i);
-  }
+  iterator begin() { return items.begin(); }
+  iterator end() { return items.end(); }
 
-  void push_back(const value_type &i)
-  {
-    list_.push_back(i);
-  }
+  const_iterator begin() const { return items.begin(); }
+  const_iterator end() const { return items.end(); }
 
-  iterator begin() { return list_.begin(); }
-  const_iterator begin() const { return list_.begin(); }
-
-  iterator end() { return list_.end(); }
-  const_iterator end() const { return list_.end(); }
-
-  bool empty() const { return list_.empty(); }
-  void clear() { list_.clear(); }
-
-  size_type size() { return list_.size(); }
-
-private:
-  list_t list_;
-  std::string relation_name_;
 };
 
-class IntList : public List<int>
-{
-public:
-  IntList() : List<int>("int_list") {}
-  virtual ~IntList() {}
-};
-
-class ItemPtrList : public List<oos::object_ptr<Item> >
-{
-public:
-  ItemPtrList() : List<oos::object_ptr<Item> >("ptr_list") {}
-  virtual ~ItemPtrList() {}
-};
-
-class ItemRefList : public List<oos::object_ref<Item> >
-{
-public:
-  ItemRefList() : List<oos::object_ref<Item> >("ref_list") {}
-  virtual ~ItemRefList() {}
-};
-
-template < class T >
-class LinkedList : public oos::object
-{
-public:
-  typedef T value_type;
-  typedef oos::linked_object_list<LinkedList<value_type>, value_type> item_list_t;
-  typedef typename item_list_t::iterator iterator;
-  typedef typename item_list_t::item_type item_type;
-  typedef typename item_list_t::item_ptr item_ptr;
-  typedef typename item_list_t::const_iterator const_iterator;
-  typedef typename item_list_t::size_type size_type;
-
-public:
-  LinkedList(const std::string &relation_name)
-    : item_list_(this)
-    , relation_name_(relation_name)
-  {}
-  virtual ~LinkedList() {}
-
-  virtual void deserialize(oos::object_reader &deserializer)
-  {
-    oos::object::deserialize(deserializer);
-    deserializer.read(relation_name_.c_str(), item_list_);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    oos::object::serialize(serializer);
-    serializer.write(relation_name_.c_str(), item_list_);
-  }
-
-  void push_front(const value_type &i)
-  {
-    item_list_.push_front(i);
-  }
-
-  void push_back(const value_type &i)
-  {
-    item_list_.push_back(i);
-  }
-
-  iterator begin() { return item_list_.begin(); }
-  const_iterator begin() const { return item_list_.begin(); }
-
-  iterator end() { return item_list_.end(); }
-  const_iterator end() const { return item_list_.end(); }
-
-  bool empty() const { return item_list_.empty(); }
-  void clear() { item_list_.clear(); }
-
-  size_type size() const { return item_list_.size(); }
-
-  iterator erase(iterator i)
-  {
-    return item_list_.erase(i);
-  }
-private:
-  item_list_t item_list_;
-  std::string relation_name_;
-};
-
-class LinkedIntList : public LinkedList<int>
-{
-public:
-  LinkedIntList() : LinkedList<int>("linked_int_list") {}
-  virtual ~LinkedIntList() {}
-};
-
-class LinkedItemPtrList : public LinkedList<oos::object_ptr<Item> >
-{
-public:
-  LinkedItemPtrList() : LinkedList<oos::object_ptr<Item> >("linked_ptr_list") {}
-  virtual ~LinkedItemPtrList() {}
-};
-
-class LinkedItemRefList : public LinkedList<oos::object_ref<Item> >
-{
-public:
-  LinkedItemRefList() : LinkedList<oos::object_ref<Item> >("linked_ref_list") {}
-  virtual ~LinkedItemRefList() {}
-};
-
-template < class T >
-class Vector : public oos::object
-{
-public:
-  typedef T value_type;
-  typedef oos::object_vector<Vector<T>, value_type, true> vector_t;
-  typedef typename vector_t::item_type item_type;
-  typedef typename vector_t::item_ptr item_ptr;
-  typedef typename vector_t::size_type size_type;
-  typedef typename vector_t::iterator iterator;
-  typedef typename vector_t::const_iterator const_iterator;
-
-public:
-  Vector(const std::string &relation_name)
-    : vector_(this)
-    , relation_name_(relation_name)
-  {}
-  virtual ~Vector() {}
-
-  virtual void deserialize(oos::object_reader &deserializer)
-  {
-    oos::object::deserialize(deserializer);
-    deserializer.read(relation_name_.c_str(), vector_);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    oos::object::serialize(serializer);
-    serializer.write(relation_name_.c_str(), vector_);
-  }
-
-  void push_back(const value_type &i)
-  {
-    vector_.push_back(i);
-  }
-
-  iterator begin() { return vector_.begin(); }
-  const_iterator begin() const { return vector_.begin(); }
-
-  iterator end() { return vector_.end(); }
-  const_iterator end() const { return vector_.end(); }
-
-  bool empty() const { return vector_.empty(); }
-  void clear() { vector_.clear(); }
-
-  iterator erase(iterator i)
-  {
-    return vector_.erase(i);
-  }
-
-  iterator erase(iterator first, iterator last)
-  {
-    return vector_.erase(first, last);
-  }
-
-  size_type size() { return vector_.size(); }
-
-private:
-  vector_t vector_;
-  std::string relation_name_;
-};
-
-class IntVector : public Vector<int>
-{
-public:
-  IntVector() : Vector<int>("int_vector") {}
-  virtual ~IntVector() {}
-};
-
-class ItemPtrVector : public Vector<oos::object_ptr<Item> >
-{
-public:
-  ItemPtrVector() : Vector<oos::object_ptr<Item> >("ptr_vector") {}
-  virtual ~ItemPtrVector() {}
-};
-
-class ItemRefVector : public Vector<oos::object_ref<Item> >
-{
-public:
-  ItemRefVector() : Vector<oos::object_ref<Item> >("ref_vector") {}
-  virtual ~ItemRefVector() {}
-};
-
-
-class book : public oos::object
+class book
 {
 private:
+  matador::identifier<unsigned long> id_;
   std::string title_;
   std::string isbn_;
   std::string author_;
 
 public:
-  book() {}
-  book(const std::string &title, const std::string &isbn, const std::string &author)
-    : title_(title)
-    , isbn_(isbn)
-    , author_(author)
+  book() = default;
+  book(std::string title, std::string isbn, std::string author)
+    : title_(std::move(title))
+    , isbn_(std::move(isbn))
+    , author_(std::move(author))
   {}
-  virtual ~book() {}
+  ~book() = default;
 
-  virtual void deserialize(oos::object_reader &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    oos::object::deserialize(deserializer);
-    deserializer.read("title", title_);
-    deserializer.read("isbn", isbn_);
-    deserializer.read("author", author_);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    oos::object::serialize(serializer);
-    serializer.write("title", title_);
-    serializer.write("isbn", isbn_);
-    serializer.write("author", author_);
+    serializer.serialize("id", id_);
+    serializer.serialize("title", title_);
+    serializer.serialize("isbn", isbn_);
+    serializer.serialize("author", author_);
   }
 
+  unsigned long id() const { return id_; }
+  void id(unsigned long i)  { id_ = i; }
   std::string title() const { return title_; }
   std::string isbn() const { return isbn_; }
   std::string author() const { return author_; }
 };
 
-class book_list : public oos::object
+class book_list
 {
 public:
-  typedef oos::object_ref<book> book_ref;
-  typedef oos::object_list<book_list, book_ref, true> book_list_t;
-  typedef book_list_t::item_ptr item_ptr;
+  typedef matador::has_many<book> book_list_t;
   typedef book_list_t::size_type size_type;
   typedef book_list_t::iterator iterator;
   typedef book_list_t::const_iterator const_iterator;
   
-  book_list()
-    : book_list_(this)
-  {}
-  virtual ~book_list() {}
+  book_list() = default;
+  ~book_list() = default;
 
-  virtual void deserialize(oos::object_reader &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    oos::object::deserialize(deserializer);
-    deserializer.read("book_list", book_list_);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    oos::object::serialize(serializer);
-    serializer.write("book_list", book_list_);
+    serializer.serialize("id", id_);
+    serializer.serialize("books", book_list_, "book_list_id", "book_id");
   }
 
-  void add(const book_ref &b)
+  void add(const matador::object_ptr<book> &b)
   {
     book_list_.push_back(b);
   }
@@ -547,136 +288,198 @@ public:
   bool empty() const { return book_list_.empty(); }
   
 private:
+  matador::identifier<unsigned long> id_;
   book_list_t book_list_;
 };
 
-class person : public oos::object
+class person
 {
 private:
-  std::string name_;
+  matador::identifier<unsigned long> id_;
+  matador::varchar<255> name_;
+  matador::date birthdate_;
+  unsigned int height_ = 0;
 
 public:
-  person() {}
-  person(const std::string &name)
-    : name_(name)
+  person() = default;
+  person(unsigned long id, const std::string &name, const matador::date &birthdate, unsigned int height)
+    : id_(id)
+    , name_(name)
+    , birthdate_(birthdate)
+    , height_(height)
   {}
-  
-  virtual ~person() {}
 
-  virtual void deserialize(oos::object_reader &deserializer)
+  person(const std::string &name, const matador::date &birthdate, unsigned int height)
+    : person(0, name, birthdate, height)
+  {}
+
+  virtual ~person() = default;
+
+  template < class T >
+  void serialize(T &serializer)
   {
-    oos::object::deserialize(deserializer);
-    deserializer.read("name", name_);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    oos::object::serialize(serializer);
-    serializer.write("name", name_);
+    serializer.serialize("id", id_);
+    serializer.serialize("name", name_);
+    serializer.serialize("birthdate", birthdate_);
+    serializer.serialize("height", height_);
   }
 
-  std::string name() const { return name_; }
-  void name(const std::string &name) { modify(name_, name); }
-  
+  void id(unsigned long i) { id_.value(i); }
+  unsigned long id() const { return id_.value(); }
+
+  std::string name() const { return name_.str(); }
+  void name(const std::string &name) { name_ = name; }
+
+  matador::date birthdate() const { return birthdate_; }
+  void birthdate(const matador::date &birthdate) { birthdate_ = birthdate; }
+
+  unsigned int height() const { return height_; }
+  void height(unsigned int height) { height_ = height; }
 };
 
-class department;
+struct department;
 
 class employee : public person
 {
 public:
-  typedef oos::object_ref<department> dep_ref;
-
-private:
-  dep_ref dep_;
+  matador::belongs_to<department> department_;
   
 public:
-  employee() {}
-  employee(const std::string &name_) : person(name_) {}
-  employee(const std::string &name_, const dep_ref &dep)
-    : person(name_)
-    , dep_(dep)
+  employee() = default;
+  explicit employee(const std::string &name) : person(name, matador::date(17, 12, 1983), 183) {}
+  employee(const std::string &name, const matador::object_ptr<department> &dep)
+    : person(name, matador::date(17, 12, 1983), 183)
+    , department_(dep)
   {}
 
-  virtual void deserialize(oos::object_reader &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    person::deserialize(deserializer);
-    deserializer.read("department", dep_);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    person::serialize(serializer);
-    serializer.write("department", dep_);
+    serializer.serialize(*matador::base_class<person>(this));
+    serializer.serialize("department"    , department_, matador::cascade_type::NONE);
+                         // name of table, object     , cascade
   }
 
-  dep_ref dep() const { return dep_; }
-  void dep(const dep_ref &d) { dep_ = d; }
+  matador::object_ptr<department> dep() { return department_; }
+  void dep(const matador::object_ptr<department> &d)
+  {
+    department_ = d;
+  }
 };
 
-class department : public oos::object
+struct department
 {
-public:
-  typedef oos::object_ref<employee> emp_ref;
-  typedef oos::object_list<department, emp_ref, false> emp_list_t;
-  typedef emp_list_t::size_type size_type;
-  typedef emp_list_t::iterator iterator;
-  typedef emp_list_t::const_iterator const_iterator;
+  matador::identifier<unsigned long> id;
+  matador::varchar<255> name;
+  matador::has_many<employee> employees;
 
-private:
-  std::string name_;
-  emp_list_t emp_list_;
-  
-public:
-  department() : emp_list_(this, &employee::dep) {}
-  department(const std::string &name)
-    : name_(name)
-    , emp_list_(this, &employee::dep)
+  department() = default;
+  explicit department(std::string n)
+    : name(std::move(n))
   {}
   
-  virtual ~department() {}
+  ~department() = default;
 
-  virtual void deserialize(oos::object_reader &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    oos::object::deserialize(deserializer);
-    deserializer.read("name", name_);
-    deserializer.read("employees", emp_list_);
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("employee"    , employees, "department", "id");
+    //                    name of table, container,  name of member
+    //                                   to serialize
   }
-  virtual void serialize(oos::object_writer &serializer) const
+};
+
+class course;
+
+class student : public person
+{
+public:
+  student() = default;
+  explicit student(const std::string &name, const matador::date &bdate = matador::date(), unsigned h = 170)
+    : person(name, bdate, h) {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    oos::object::serialize(serializer);
-    serializer.write("name", name_);
-    serializer.write("employees", emp_list_);
+    serializer.serialize(*matador::base_class<person>(this));
+    serializer.serialize("student_course", courses, "student_id", "course_id");
   }
 
-  std::string name() const { return name_; }
-  void name(const std::string &name) { modify(name_, name); }
+  matador::has_many<course> courses;
+};
 
-  void add(const emp_ref &b)
+class course
+{
+public:
+
+  course() = default;
+  explicit course(std::string t) : title(std::move(t)) {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    emp_list_.push_back(b);
+    serializer.serialize("id", id);
+    serializer.serialize("title", title);
+    serializer.serialize("student_course", students, "student_id", "course_id");
   }
 
-  iterator begin() { return emp_list_.begin(); }
-  const_iterator begin() const { return emp_list_.begin(); }
+  matador::identifier<unsigned long> id;
+  std::string title;
+  matador::has_many<student> students;
+};
 
-  iterator end() { return emp_list_.end(); }
-  const_iterator end() const { return emp_list_.end(); }
+struct address;
 
-  iterator erase(iterator i) { return emp_list_.erase(i); }
+struct citizen : public person
+{
+  citizen() {}
+  citizen(const std::string &name, const matador::date &bdate = matador::date(), unsigned h = 170) : person(name, bdate, h) {}
 
-  size_type size() const { return emp_list_.size(); }
-  bool empty() const { return emp_list_.empty(); }
+  matador::has_one<address> address_;
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize(*matador::base_class<person>(this));
+    serializer.serialize("address", address_, matador::cascade_type::NONE);
+  }
+};
+
+struct address
+{
+  matador::identifier<unsigned long> id;
+  matador::varchar<255> street;
+  matador::varchar<255> city;
+  matador::belongs_to<citizen> citizen_;
+
+  address() {}
+  address(const std::string &str, const std::string &c)
+    : street(str), city(c)
+  {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("street", street);
+    serializer.serialize("city", city);
+    serializer.serialize("citizen", citizen_, matador::cascade_type::NONE);
+  }
 };
 
 class album;
 
-class track : public oos::object
+class track
 {
 public:
-  typedef oos::object_ref<album> album_ref;
+  typedef matador::object_ptr<album> album_ptr;
 
 private:
+  matador::identifier<unsigned long> id_;
   std::string title_;
-  album_ref album_;
+  matador::has_one<album> album_;
   int index_;
 
 public:
@@ -686,79 +489,68 @@ public:
     , index_(0)
   {}
   
-  virtual ~track() {}
+  ~track() {}
 
-  virtual void deserialize(oos::object_reader &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    oos::object::deserialize(deserializer);
-    deserializer.read("title", title_);
-    deserializer.read("album", album_);
-    deserializer.read("track_index", index_);
+    serializer.serialize("id", id_);
+    serializer.serialize("title", title_);
+    serializer.serialize("album", album_);
+    serializer.serialize("track_index", index_);
   }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    oos::object::serialize(serializer);
-    serializer.write("title", title_);
-    serializer.write("album", album_);
-    serializer.write("track_index", index_);
-  }
+
+  unsigned long id() { return id_.value(); }
 
   std::string title() const { return title_; }
-  void title(const std::string &t) { modify(title_, t); }
-  
-  album_ref alb() const { return album_; }
-  void alb(const album_ref &a) { album_ = a; }
+  void title(const std::string &t) { title_ = t; }
+
+  album_ptr alb() const { return album_; }
+  void alb(const album_ptr &a) { album_ = a; }
   
   int index() const { return index_; }
   void index(int i) { index_ = i; }
 };
 
-class album : public oos::object
+class album
 {
 public:
-  typedef oos::object_ref<track> track_ref;
-  typedef oos::object_vector<album, track_ref, false> track_list_t;
-  typedef /*typename*/ track_list_t::size_type size_type;
-  typedef track_list_t::iterator iterator;
-  typedef track_list_t::const_iterator const_iterator;
+  typedef matador::object_ptr<track> track_ptr;
+  typedef matador::has_many<track> track_vector_t;
+  typedef track_vector_t::size_type size_type;
+  typedef track_vector_t::iterator iterator;
+  typedef track_vector_t::const_iterator const_iterator;
 
 private:
+  matador::identifier<unsigned long> id_;
   std::string name_;
-  track_list_t tracks_;
+  track_vector_t tracks_;
   
 public:
-  album()
-    : tracks_(this, &track::alb, &track::index, &track::index)
-  {}
-  album(const std::string &name)
-    : name_(name)
-    , tracks_(this, &track::alb, &track::index, &track::index)
-  {}
+  album() = default;
+  explicit album(std::string name) : name_(std::move(name)) {}
   
-  virtual ~album() {}
+  ~album() = default;
 
-  virtual void deserialize(oos::object_reader &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    oos::object::deserialize(deserializer);
-    deserializer.read("name", name_);
-    deserializer.read("tracks", tracks_);
+    serializer.serialize("id", id_);
+    serializer.serialize("name", name_);
+    serializer.serialize("tracks", tracks_);
   }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    oos::object::serialize(serializer);
-    serializer.write("name", name_);
-    serializer.write("tracks", tracks_);
-  }
+
+  unsigned long id() { return id_.value(); }
 
   std::string name() const { return name_; }
-  void name(const std::string &name) { modify(name_, name); }
+  void name(const std::string &name) { name_ = name; }
 
-  void add(const track_ref &b)
+  void add(const track_ptr &t)
   {
-    tracks_.push_back(b);
+    tracks_.push_back(t);
   }
 
-  iterator insert(iterator pos, const track_ref &b)
+  iterator insert(iterator pos, const track_ptr &b)
   {
     return tracks_.insert(pos, b);
   }
@@ -776,47 +568,38 @@ public:
   bool empty() const { return tracks_.empty(); }
 };
 
-class playlist : public oos::object
+class playlist
 {
 public:
-  typedef oos::object_ref<track> track_ref;
-  typedef oos::object_vector<playlist, track_ref, true> track_list_t;
-  typedef /*typename*/ track_list_t::size_type size_type;
+  typedef matador::object_ptr<track> track_ref;
+  typedef matador::has_many<track> track_list_t;
+  typedef track_list_t::size_type size_type;
   typedef track_list_t::iterator iterator;
   typedef track_list_t::const_iterator const_iterator;
 
 private:
+  matador::identifier<unsigned long> id_;
   std::string name_;
   track_list_t tracks_;
   track_list_t backup_tracks_;
   
 public:
-  playlist() : tracks_(this), backup_tracks_(this) {}
-  playlist(const std::string &name)
-    : name_(name)
-    , tracks_(this)
-    , backup_tracks_(this)
-  {}
+  playlist() = default;
+  explicit playlist(std::string name) : name_(std::move(name)) {}
   
-  virtual ~playlist() {}
+  ~playlist() = default;
 
-  virtual void deserialize(oos::object_reader &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    oos::object::deserialize(deserializer);
-    deserializer.read("name", name_);
-    deserializer.read("tracks", tracks_);
-    deserializer.read("backup_tracks", backup_tracks_);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    oos::object::serialize(serializer);
-    serializer.write("name", name_);
-    serializer.write("tracks", tracks_);
-    serializer.write("backup_tracks", backup_tracks_);
+    serializer.serialize("id", id_);
+    serializer.serialize("name", name_);
+    serializer.serialize("playlist_tracks", tracks_);
+    serializer.serialize("backup_tracks", backup_tracks_);
   }
 
   std::string name() const { return name_; }
-  void name(const std::string &name) { modify(name_, name); }
+  void name(const std::string &name) { name_ = name; }
 
   void add(const track_ref &b)
   {
@@ -829,10 +612,118 @@ public:
   iterator end() { return tracks_.end(); }
   const_iterator end() const { return tracks_.end(); }
 
-  iterator erase(iterator i) { return tracks_.erase(i); }
+  iterator erase(const iterator &i) { return tracks_.erase(i); }
 
   size_type size() const { return tracks_.size(); }
   bool empty() const { return tracks_.empty(); }
 };
+
+class child
+{
+public:
+  child() = default;
+  explicit child(std::string n) : name(std::move(n)) {}
+  ~child() = default;
+
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+  }
+
+  matador::identifier<unsigned long> id;
+  std::string name;
+};
+
+class master
+{
+public:
+  matador::identifier<unsigned long> id;
+  std::string name;
+  matador::has_one<child> children;
+
+public:
+  master() = default;
+  explicit master(std::string n) : name(std::move(n)) {}
+  master(std::string n, const matador::object_ptr<child> &c) : name(std::move(n)), children(c) {}
+  ~master() = default;
+
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("child", children, matador::cascade_type::REMOVE);
+  }
+};
+
+class children_vector
+{
+public:
+  typedef matador::has_many<child> children_vector_t;
+
+  children_vector() = default;
+  explicit children_vector(std::string n) : name(std::move(n)) {}
+  ~children_vector() = default;
+
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("children", children, "vector_id", "child_id");
+  }
+
+  matador::identifier<unsigned long> id;
+  std::string name;
+  children_vector_t children;
+};
+
+class children_list
+{
+public:
+  typedef matador::has_many<child, std::list> children_list_t;
+
+  children_list() = default;
+  explicit children_list(std::string n) : name(std::move(n)) {}
+  ~children_list() = default;
+
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("children", children, "list_id", "child_id");
+  }
+
+  matador::identifier<unsigned long> id;
+  std::string name;
+  children_list_t children;
+};
+
+template < class T, template <class ...> class C >
+class many_builtins
+{
+public:
+  typedef matador::has_many<T, C> element_list_t;
+
+public:
+  matador::identifier<unsigned long> id;
+  element_list_t elements;
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("id", id);
+    s.serialize("elements", elements, "list_id", "value");
+  }
+};
+
+using many_ints = many_builtins<int, std::list>;
+using many_strings = many_builtins<std::string, std::list>;
+
+using many_vector_ints = many_builtins<int, std::vector>;
+using many_vector_strings = many_builtins<std::string, std::vector>;
 
 #endif /* ITEM_HPP */

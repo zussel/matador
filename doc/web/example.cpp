@@ -1,8 +1,8 @@
-#include "object/object.hpp"
-#include "object/object_atomizer.hpp"
-#include "object/object_store.hpp"
-#include "object/object_ptr.hpp"
-#include "object/object_view.hpp"
+#include "oos/object/serializable.hpp"
+#include "serializer.hpp"
+#include "oos/object/object_store.hpp"
+#include "oos/object/object_ptr.hpp"
+#include "oos/object/object_view.hpp"
 
 #include "database/session.hpp"
 #include "database/transaction.hpp"
@@ -14,39 +14,34 @@
 /*
  * the person class
  */
-class person : public oos::object
+class person : public oos::serializable
 {
-private:
-  std::string name_;
-  int age_;
+public:
+  // primary key
+  oos::identifier<long> id;
+  // properties
+  std::string name;
+  int age;
 
 public:
   person() {}
   person(const std::string &n)
-    : name_(n)
+    : name(n)
   {}
   virtual ~person() {}
   
   virtual void serialize(oos::object_writer &wrt) const
   {
-    oos::object::serialize(wrt);
-    wrt.write("name", name_);
+    wrt.write("id", id);
+    wrt.write("name", name);
+    wrt.write("age", age);
   }
 
   virtual void deserialize(oos::object_reader &rdr)
   {
-    oos::object::deserialize(rdr);
-    rdr.read("name", name_);
-  }
-
-  void name(const std::string &n)
-  {
-    modify(name_, n);
-  }
-
-  std::string name() const
-  {
-    return name_;
+    rdr.read("id", id);
+    rdr.read("name", name);
+    rdr.read("age", age);
   }
 };
 
@@ -62,10 +57,10 @@ int main(int, char *[])
   ostore.insert_prototype<person>("person");
   
   /*
-   * create a database session
+   * create a sql session
    * with a connection string
-   * to a database (in this case
-   * to a sqlite database)
+   * to a sql (in this case
+   * to a sqlite sql)
    * 
    * then call create to setup the
    * session, object store and tables.

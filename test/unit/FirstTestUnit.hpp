@@ -15,34 +15,29 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "unit/unit_test.hpp"
-#include "unit/test_suite.hpp"
-#include "unit/unit_exception.hpp"
+#include "matador/unit/unit_test.hpp"
+#include "matador/unit/test_suite.hpp"
+#include "matador/unit/unit_exception.hpp"
 
-#ifdef WIN32
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
 
-class FirstTestUnit : public oos::unit_test
+class FirstTestUnit : public matador::unit_test
 {
 public:
   FirstTestUnit() : unit_test("first", "First test unit")
   {
-    add_test("sub1", std::tr1::bind(&FirstTestUnit::first_sub_test, this), "sub first");
-    add_test("sub2", std::tr1::bind(&FirstTestUnit::second_sub_test, this), "sub second");
-    add_test("sub3", std::tr1::bind(&FirstTestUnit::third_sub_test, this), "sub third");
+    add_test("sub1", std::bind(&FirstTestUnit::first_sub_test, this), "sub first");
+    add_test("sub2", std::bind(&FirstTestUnit::second_sub_test, this), "sub second");
+    add_test("sub3", std::bind(&FirstTestUnit::third_sub_test, this), "sub third");
   }
-  virtual ~FirstTestUnit() {}
-  
+
   void first_sub_test()
   {
     UNIT_ASSERT_EQUAL(1, 1, "one is one");
     
     try {
       UNIT_ASSERT_EQUAL(1, 0, "one is not zero");
-    } catch (oos::unit_exception &) {
+    } catch (matador::unit_exception &) {
       UNIT_ASSERT_TRUE(true, "could not happen");
     }
   }
@@ -50,13 +45,10 @@ public:
   {
     // gives warning
     //UNIT_WARN("this is a test warning!");
+    UNIT_ASSERT_TRUE(true, "test should be executed");
   }
   void third_sub_test()
   {
+    UNIT_ASSERT_TRUE(true, "test should be executed");
   }
-  /**
-   * Initializes a test unit
-   */
-  virtual void initialize() {}
-  virtual void finalize() {}
 };

@@ -43,7 +43,7 @@ a.anchor
 
 #navigation
 {
-  width: 790px;
+  width: 960px;
   margin: 10px auto;
 }
 
@@ -104,7 +104,7 @@ a.anchor
 #wrapper
 {
 /*	width: 900px;*/
-	width: 790px;
+	width: 960px;
 	margin: 0 auto;
 }
 
@@ -838,7 +838,7 @@ p.warn
   border: 0;
   border-left: 5px solid #A80000;
   margin: 0;
-  padding; 0;
+  padding: 0;
 }
 
 .summary

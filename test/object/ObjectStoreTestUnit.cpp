@@ -1,66 +1,86 @@
 #include "ObjectStoreTestUnit.hpp"
 #include "../Item.hpp"
 
-#include "object/object_expression.hpp"
-#include "object/object_serializer.hpp"
-#include "object/object_view.hpp"
+#include "matador/object/object_expression.hpp"
+#include "matador/object/object_view.hpp"
+#include "matador/object/generic_access.hpp"
 
-#include "tools/byte_buffer.hpp"
-#include "tools/algorithm.hpp"
+#include "matador/utils/algorithm.hpp"
 
 #include "version.hpp"
-
-#include <algorithm>
 #include <iostream>
 
-using namespace oos;
+using namespace matador;
 using namespace std;
 
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
-  add_test("version", std::tr1::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
-  add_test("expression", std::tr1::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
-  add_test("set", std::tr1::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
-  add_test("get", std::tr1::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
-  add_test("serializer", std::tr1::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
-  add_test("ref_ptr_counter", std::tr1::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
-  add_test("simple", std::tr1::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
-  add_test("with_sub", std::tr1::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
-  add_test("multiple_simple", std::tr1::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
-  add_test("multiple_object_with_sub", std::tr1::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
-  add_test("delete", std::tr1::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
-  add_test("sub_delete", std::tr1::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
-  add_test("hierarchy", std::tr1::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
-  add_test("view", std::tr1::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
-  add_test("clear", std::tr1::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
-  add_test("generic", std::tr1::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
-//  add_test("structure", std::tr1::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
+  add_test("version", std::bind(&ObjectStoreTestUnit::test_version, this), "test matador version");
+  add_test("optr", std::bind(&ObjectStoreTestUnit::test_optr, this), "test optr behaviour");
+  add_test("expression", std::bind(&ObjectStoreTestUnit::test_expression, this), "test object expressions");
+  add_test("set", std::bind(&ObjectStoreTestUnit::test_set, this), "access object values via set interface");
+  add_test("get", std::bind(&ObjectStoreTestUnit::test_get, this), "access object values via get interface");
+  add_test("serializer", std::bind(&ObjectStoreTestUnit::test_serializer, this), "serializer test");
+  add_test("identifier_serializer", std::bind(&ObjectStoreTestUnit::test_identifier_serializer, this), "identifier serializer test");
+  add_test("reference_counter", std::bind(&ObjectStoreTestUnit::test_reference_counter, this), "reference counter test");
+  add_test("simple", std::bind(&ObjectStoreTestUnit::test_simple_object, this), "create and delete one object");
+  add_test("with_sub", std::bind(&ObjectStoreTestUnit::test_object_with_sub_object, this), "create and delete object with sub object");
+  add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::test_multiple_simple_objects, this), "create and delete multiple objects");
+  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::test_multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
+  add_test("delete", std::bind(&ObjectStoreTestUnit::test_delete_object, this), "object deletion test");
+  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::test_hierarchy, this), "object hierarchy test");
+  add_test("view", std::bind(&ObjectStoreTestUnit::test_view, this), "object view test");
+  add_test("clear", std::bind(&ObjectStoreTestUnit::test_clear, this), "object store clear test");
+  add_test("generic", std::bind(&ObjectStoreTestUnit::test_generic, this), "generic object access test");
+  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object transient structure test");
+  add_test("structure_cyclic", std::bind(&ObjectStoreTestUnit::test_structure_cyclic, this), "object transient cyclic structure test");
+  add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "object transient container structure test");
+  add_test("transient_optr", std::bind(&ObjectStoreTestUnit::test_transient_optr, this), "test transient object pointer");
+  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
+  add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "object remove test");
+  add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
+  add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
+  add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
+  add_test("belongs_to_one", std::bind(&ObjectStoreTestUnit::test_belongs_to_one, this), "test belongs to one behaviour");
+  add_test("belongs_to_many", std::bind(&ObjectStoreTestUnit::test_belongs_to_many, this), "test belongs to many behaviour");
+  add_test("observer", std::bind(&ObjectStoreTestUnit::test_observer, this), "test observer functionality");
+  add_test("attach_has_many", std::bind(&ObjectStoreTestUnit::test_attach_has_many, this), "test attach has many");
 }
 
-ObjectStoreTestUnit::~ObjectStoreTestUnit()
-{}
-
-class ObjectItemPtrList : public List<oos::object_ptr<ObjectItem<Item> > >
+struct basic_test_pair
 {
-public:
-  ObjectItemPtrList() : List<oos::object_ptr<ObjectItem<Item> > >("object_ptr_list") {}
-  virtual ~ObjectItemPtrList() {}
+  std::string str_result;
 };
 
-void
-ObjectStoreTestUnit::initialize()
-{
-  ostore_.insert_prototype<Item>("ITEM");
-  ostore_.insert_prototype<ObjectItem<Item> >("OBJECT_ITEM");
-  ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
-//  ostore_.insert_prototype<ItemPtrList::item_type>("ITEM_PTR");
-  ostore_.insert_prototype<ObjectItemPtrList>("OBJECT_ITEM_PTR_LIST");
-//  ostore_.insert_prototype<ObjectItemPtrList::item_type>("OBJECT_ITEM_PTR");
-}
+template < class T, class Enabled = void >
+struct test_pair;
 
-void
-ObjectStoreTestUnit::finalize()
+template < class T >
+struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::type > : public basic_test_pair
+{
+  explicit test_pair(const T &exp) : expected(exp) {}
+  T expected;
+  T result;
+};
+
+template <>
+struct test_pair<char*> : public basic_test_pair
+{
+  explicit test_pair(const char exp[],size_t s)
+    : expected(exp)
+    , result(new char[s])
+    , expected_size(strlen(exp))
+    , size(s)
+  {}
+  ~test_pair() { delete [] result; }
+  const char* expected;
+  char* result;
+  size_t expected_size;
+  size_t size;
+};
+
+void ObjectStoreTestUnit::finalize()
 {
   ostore_.clear(true);
 }
@@ -73,33 +93,55 @@ struct item_counter : public std::unary_function<const object_ptr<ObjectItem<Ite
   int &count;
 };
 
-void
-ObjectStoreTestUnit::version_test()
+void ObjectStoreTestUnit::test_version()
 {
-  std::string version("0.2.1");
+  std::string version("0.5.0");
   
-  UNIT_ASSERT_EQUAL(oos::version::str, version, "invalid oos version");
+  UNIT_ASSERT_EQUAL(matador::version::str, version, "invalid matador version");
 
-  UNIT_ASSERT_EQUAL(oos::version::major, 0, "invalid major version");
-  UNIT_ASSERT_EQUAL(oos::version::minor, 2, "invalid minor version");
-  UNIT_ASSERT_EQUAL(oos::version::patch_level, 1, "invalid patch level");
+  UNIT_ASSERT_EQUAL(matador::version::major, 0, "invalid major version");
+  UNIT_ASSERT_EQUAL(matador::version::minor, 5, "invalid minor version");
+  UNIT_ASSERT_EQUAL(matador::version::patch_level, 0, "invalid patch level");
 }
 
-void
-ObjectStoreTestUnit::expression_test()
+
+void ObjectStoreTestUnit::test_optr()
 {
+  ostore_.attach<Item>("item");
+
+  typedef object_ptr<Item> item_ptr;
+
+  item_ptr item_null;
+
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(item_null), object_exception, "proxy is null", "shouldn't insert null object pointer");
+
+  item_ptr item(new Item("Test"));
+
+  UNIT_ASSERT_NULL(item.store(), "item must not be internal");
+
+  item = ostore_.insert(item);
+
+  UNIT_ASSERT_NOT_NULL(item.store(), "item must be internal");
+}
+
+void ObjectStoreTestUnit::test_expression()
+{
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+  ostore_.attach<ObjectItemList>("object_item_ptr_list");
+
   typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   typedef object_ptr<Item> item_ptr;
-  typedef object_ptr<ObjectItemPtrList> itemlist_ptr;
+  typedef object_ptr<ObjectItemList> itemlist_ptr;
 
-  itemlist_ptr itemlist = ostore_.insert(new ObjectItemPtrList);
+  itemlist_ptr itemlist = ostore_.insert(new ObjectItemList("object_ptr_list"));
 
   item_ptr ii;
   for (int i = 0; i < 10; ++i) {
     object_item_ptr oi = ostore_.insert(new ObjectItem<Item>("ObjectItem", i));
     ii = ostore_.insert(new Item("Item", i));
     oi->ptr(ii);
-    itemlist->push_back(oi);
+    itemlist->items.push_back(oi);
   }
 
   variable<int> x(make_var(&ObjectItem<Item>::get_int));
@@ -113,15 +155,18 @@ ObjectStoreTestUnit::expression_test()
 
   UNIT_ASSERT_EQUAL(count, 4, "invalid number of objects found");
 
-  typedef ObjectItemPtrList::item_type ObjectItemType;
+  variable<int> z(make_var(&ObjectItem<Item>::get_int));
 
+  std::unique_ptr<expression> exp(make_expression(z == 4));
 
-  variable<int> k(make_var(&ObjectItem<Item>::ptr, &Item::get_int));
+  object_ptr<ObjectItem<Item>> optr = *itemlist->begin();
 
-  variable<int> z(make_var(&ObjectItemType::value, &ObjectItem<Item>::get_int));
+  (*exp)(optr);
 
-  ObjectItemPtrList::const_iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
+#ifndef _MSC_VER
+  ObjectItemList::iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
   UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
+#endif
 
   object_view<ObjectItem<Item> >::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
   UNIT_ASSERT_EQUAL((*j)->get_int(), 1, "couldn't find item 1");
@@ -156,8 +201,7 @@ ObjectStoreTestUnit::expression_test()
   UNIT_ASSERT_EQUAL((*j)->get_string(), "ObjectItem", "couldn't find item 'ObjectItem'");
 }
 
-void
-ObjectStoreTestUnit::serializer()
+void ObjectStoreTestUnit::test_serializer()
 {  
   char c = 'c';
   float f = 1.55f;
@@ -170,7 +214,9 @@ ObjectStoreTestUnit::serializer()
   unsigned long ul = 987654321;
   bool b = true;
   std::string title = "Hallo Welt";
-  oos::varchar<64> str("The answer is 42");
+  matador::varchar<64> str("The answer is 42");
+  matador::date dt(15, 9, 1972);
+  matador::time t(2008, 12, 27, 13, 6, 57, 4711);
 
   Item *item = new Item();
   
@@ -186,17 +232,19 @@ ObjectStoreTestUnit::serializer()
   item->set_bool(b);
   item->set_string(title);
   item->set_varchar(str);
+  item->set_date(dt);
+  item->set_time(t);
   
   object_serializer serializer;
  
   byte_buffer buffer;
-  serializer.serialize(item, buffer);
+  serializer.serialize(item, &buffer);
   
   delete item;
   
   item = new Item();
   
-  serializer.deserialize(item, buffer, &ostore_);
+  serializer.deserialize(item, &buffer, &ostore_);
 
   UNIT_ASSERT_EQUAL(c, item->get_char(), "restored character is not equal to the original character");
   UNIT_ASSERT_EQUAL(f, item->get_float(), "restored float is not equal to the original float");
@@ -210,104 +258,212 @@ ObjectStoreTestUnit::serializer()
   UNIT_ASSERT_EQUAL(b, item->get_bool(), "restored bool is not equal to the original bool");
   UNIT_ASSERT_EQUAL(title, item->get_string(), "restored string is not equal to the original string");
   UNIT_ASSERT_EQUAL(str, item->get_varchar(), "restored varchar is not equal to the original varchar");
-  
+  UNIT_ASSERT_EQUAL(dt, item->get_date(), "restored date is not equal to the original date");
+  UNIT_ASSERT_EQUAL(t, item->get_time(), "restored time is not equal to the original time");
+
   delete item;
 }
 
-void
-ObjectStoreTestUnit::ref_ptr_counter()
+void ObjectStoreTestUnit::test_identifier_serializer()
 {
+  byte_buffer buffer;
+  basic_identifier_serializer serializer;
+
+  {
+    typedef identifier<unsigned long> t_ul_id;
+    std::unique_ptr<t_ul_id> id(new t_ul_id(8UL));
+
+    UNIT_ASSERT_EQUAL(id->value(), 8UL, "identifier value must be 8");
+
+    serializer.serialize(*id, buffer);
+
+    std::unique_ptr<t_ul_id> id2(new identifier<unsigned long>());
+
+    serializer.deserialize(*id2, buffer);
+
+    UNIT_ASSERT_EQUAL(id2->value(), 8UL, "identifier value must be 8");
+
+    UNIT_ASSERT_EXCEPTION(serializer.deserialize(*id2, buffer), std::logic_error, "invalid identifier type", "deserialize excpetion must be thrown");
+  }
+
+  {
+    typedef identifier<std::string> t_str_id;
+    std::unique_ptr<t_str_id> id(new identifier<std::string>("hallo"));
+
+    UNIT_ASSERT_EQUAL(id->value(), "hallo", "identifier value must be 'hallo'");
+
+    serializer.serialize(*id, buffer);
+
+    std::unique_ptr<t_str_id> id2(new identifier<std::string>());
+
+    serializer.deserialize(*id2, buffer);
+
+    UNIT_ASSERT_EQUAL(id2->value(), "hallo", "identifier value must be 'hallo'");
+
+    UNIT_ASSERT_EXCEPTION(serializer.deserialize(*id2, buffer), std::logic_error, "invalid identifier type", "deserialize excpetion must be thrown");
+  }
+}
+
+void ObjectStoreTestUnit::test_reference_counter()
+{
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+
   Item *i = new Item("Item", 7);
   
   typedef object_ptr<Item> item_ptr;
   typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   
   item_ptr item = ostore_.insert(i);
-  
+
+  UNIT_ASSERT_EQUAL(item.reference_count(), 0UL, "reference count must be zero");
+
   object_item_ptr object_item_1 = ostore_.insert(new ObjectItem<Item>());
   object_item_ptr object_item_2 = ostore_.insert(new ObjectItem<Item>());
   object_item_1->ptr(item);
 
-  
-  unsigned long val = 0;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
+  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be one");
 
   item_ptr a1 = item;
   item_ptr a2 = item;
-  
-  val = 0;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
 
-  typedef object_ref<Item> item_ref;
-  
-  item_ref aref1 = a1;
-
-  val = 0;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
+  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be one");
+  UNIT_ASSERT_EQUAL(a1.reference_count(), 1UL, "reference count must be one");
+  UNIT_ASSERT_EQUAL(a2.reference_count(), 1UL, "reference count must be one");
 
   object_item_1->ref(a1);
 
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
-  
-  a1 = object_item_2->ptr();
-
-  val = 0;
-  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "reference count must be null");
-  val = 1;
-  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be one");
-
-  object_item_2->ptr(item);
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
-  val = 2;
-  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be two");
-  val = 0;
-  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be null");
-  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be null");
-
-  object_item_2->ref(item);
-  val = 2;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be two");
-
-  object_item_2->ref(a1);
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
-  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be null");
+  UNIT_ASSERT_EQUAL(item.reference_count(), 2UL, "reference count must be two");
+  UNIT_ASSERT_EQUAL(a1.reference_count(), 2UL, "reference count must be two");
+  UNIT_ASSERT_EQUAL(a2.reference_count(), 2UL, "reference count must be two");
 }
 
-void
-ObjectStoreTestUnit::set_test()
+
+void ObjectStoreTestUnit::test_set()
 {
-  Item *i = new Item("item", 4711);
+  matador::date dt(15, 9, 1972);
+  matador::time t(2008, 12, 27, 13, 6, 57, 4711);
+  matador::varchar<64> varstr("The answer is 42");
+  std::string str("tiger");
+
+  Item i("item", 4711);
   
-  std::string one("1");
-  i->set("val_int", one);
-  delete i;
+  matador::set(i, "val_char", 'f');
+  matador::set(i, "val_short", -2);
+  matador::set(i, "val_int", -1);
+  matador::set(i, "val_long", -7);
+  matador::set(i, "val_unsigned_short", 2);
+  matador::set(i, "val_unsigned_int", 1);
+  matador::set(i, "val_unsigned_long", 7);
+  matador::set(i, "val_bool", false);
+  matador::set(i, "val_float", 0.456);
+  matador::set(i, "val_double", 3.1415);
+  matador::set(i, "val_cstr", "tiger");
+  matador::set(i, "val_string", str);
+  matador::set(i, "val_varchar", varstr);
+  matador::set(i, "val_date", dt);
+  matador::set(i, "val_time", t);
+
+  UNIT_ASSERT_EQUAL('f', i.get_char(), "invalid value");
+  UNIT_ASSERT_EQUAL(-2, i.get_short(), "invalid value");
+  UNIT_ASSERT_EQUAL(-1, i.get_int(), "invalid value");
+  UNIT_ASSERT_EQUAL(-7L, i.get_long(), "invalid value");
+  UNIT_ASSERT_EQUAL(2, i.get_unsigned_short(), "invalid value");
+  UNIT_ASSERT_EQUAL(1U, i.get_unsigned_int(), "invalid value");
+  UNIT_ASSERT_EQUAL(7UL, i.get_unsigned_long(), "invalid value");
+  UNIT_ASSERT_EQUAL(7UL, i.get_unsigned_long(), "invalid value");
+  UNIT_ASSERT_EQUAL(false, i.get_bool(), "invalid value");
+  UNIT_ASSERT_EQUAL(0.456f, i.get_float(), "invalid value");
+  UNIT_ASSERT_EQUAL(3.1415, i.get_double(), "invalid value");
+  UNIT_ASSERT_EQUAL("tiger", i.get_string(), "invalid value");
+  UNIT_ASSERT_EQUAL(str, i.get_string(), "invalid value");
+  UNIT_ASSERT_EQUAL(varstr, i.get_varchar(), "invalid value");
+  UNIT_ASSERT_EQUAL(dt, i.get_date(), "invalid value");
+  UNIT_ASSERT_EQUAL(t, i.get_time(), "invalid value");
+
+  matador::set(i, "val_string", "lion");
+  UNIT_ASSERT_EQUAL("lion", i.get_string(), "invalid value");
+
+//  auto vc = matador::varchar<16>("elefant");
+//  matador::set(i, "val_string", vc);
+//  UNIT_ASSERT_EQUAL("elefant", i.get_string(), "invalid value");
 }
 
-void
-ObjectStoreTestUnit::get_test()
+void ObjectStoreTestUnit::test_get()
 {
+  test_pair<char> c('c');
+  test_pair<bool> b(true);
+  test_pair<float> f(1.55f);
+  test_pair<double> d(123.55789);
+  test_pair<short> s(-42);
+  test_pair<int> i(-98765);
+  test_pair<long> l(1234567890);
+  test_pair<unsigned short> us(45);
+  test_pair<unsigned int> ui(4567890);
+  test_pair<unsigned long> ul(987654321);
+  test_pair<char*> cstr("baba", 256);
+  test_pair<std::string> str("Hallo Welt");
+  test_pair<matador::varchar<64> > varstr("The answer is 42");
+  test_pair<matador::date> dateval(matador::date("29.4.1972"));
+  test_pair<matador::time > timeval(matador::time(2015, 10, 16, 8, 54, 32, 123));
+
+  Item item;
+
+  item.set_char(c.expected);
+  item.set_float(f.expected);
+  item.set_double(d.expected);
+  item.set_short(s.expected);
+  item.set_int(i.expected);
+  item.set_long(l.expected);
+  item.set_unsigned_short(us.expected);
+  item.set_unsigned_int(ui.expected);
+  item.set_unsigned_long(ul.expected);
+  item.set_bool(b.expected);
+  item.set_string(str.expected);
+  item.set_varchar(varstr.expected);
+  item.set_cstr(cstr.expected, cstr.size);
+  item.set_date(dateval.expected);
+  item.set_time(timeval.expected);
+
+  matador::get(item, "val_char", c.result);
+  UNIT_ASSERT_EQUAL(c.result, c.expected, "invalid value");
+  matador::get(item, "val_short", s.result);
+  UNIT_ASSERT_EQUAL(s.result, s.expected, "invalid value");
+  matador::get(item, "val_int", i.result);
+  UNIT_ASSERT_EQUAL(i.result, i.expected, "invalid value");
+  matador::get(item, "val_long", l.result);
+  UNIT_ASSERT_EQUAL(l.result, l.expected, "invalid value");
+  matador::get(item, "val_unsigned_short", us.result);
+  UNIT_ASSERT_EQUAL(us.result, us.expected, "invalid value");
+  matador::get(item, "val_unsigned_int", ui.result);
+  UNIT_ASSERT_EQUAL(ui.result, ui.expected, "invalid value");
+  matador::get(item, "val_unsigned_long", ul.result);
+  UNIT_ASSERT_EQUAL(ul.result, ul.expected, "invalid value");
+  matador::get(item, "val_float", f.result);
+  UNIT_ASSERT_EQUAL(f.result, f.expected, "invalid value");
+  matador::get(item, "val_double", d.result);
+  UNIT_ASSERT_EQUAL(d.result, d.expected, "invalid value");
+  matador::get(item, "val_bool", b.result);
+  UNIT_ASSERT_EQUAL(b.result, b.expected, "invalid value");
+  matador::get(item, "val_string", str.result);
+  UNIT_ASSERT_EQUAL(str.result, str.expected, "invalid value");
+  matador::get(item, "val_varchar", varstr.result);
+  UNIT_ASSERT_EQUAL(varstr.result, varstr.expected, "invalid value");
+  matador::get(item, "val_cstr", cstr.result, cstr.size);
+  UNIT_ASSERT_EQUAL(cstr.result, cstr.expected, "invalid value");
+  matador::get(item, "val_date", dateval.result);
+  UNIT_ASSERT_EQUAL(dateval.result, dateval.expected, "invalid value");
+  matador::get(item, "val_time", timeval.result);
+  UNIT_ASSERT_EQUAL(timeval.result, timeval.expected, "invalid value");
 }
 
-void
-ObjectStoreTestUnit::simple_object()
+void ObjectStoreTestUnit::test_simple_object()
 {
-  object *o = ostore_.create("ITEM");
+  ostore_.attach<Item>("item");
+
+  Item *a = ostore_.create<Item>();
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ITEM>");
-  
-  Item *a = dynamic_cast<Item*>(o);
-  
-  UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to Item");
+  UNIT_ASSERT_NOT_NULL(a, "couldn't create object of type <Item>");
   
   typedef object_ptr<Item> item_ptr;
   
@@ -320,16 +476,14 @@ ObjectStoreTestUnit::simple_object()
   ostore_.remove(simple);
 }
 
-void
-ObjectStoreTestUnit::object_with_sub_object()
+void ObjectStoreTestUnit::test_object_with_sub_object()
 {
-  object *o = ostore_.create("OBJECT_ITEM");
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+
+  ObjectItem<Item> *s = ostore_.create<ObjectItem<Item>>();
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ObjectItem>");
-  
-  ObjectItem<Item> *s = dynamic_cast<ObjectItem<Item>*>(o);
-  
-  UNIT_ASSERT_NOT_NULL(s, "couldn't cast object to ObjectItem<Item>");
+  UNIT_ASSERT_NOT_NULL(s, "couldn't create object of type <ObjectItem>");
   
   typedef object_ptr<ObjectItem<Item> > obj_item_ptr;
   
@@ -340,28 +494,25 @@ ObjectStoreTestUnit::object_with_sub_object()
   // check if sub object exists
   object_ptr<Item> simple = ows->ptr();
   
-  UNIT_ASSERT_NOT_NULL(simple.get(), "item object creation failed");
+  UNIT_ASSERT_NULL(simple.get(), "item must be nullptr");
   
   UNIT_ASSERT_TRUE(ostore_.is_removable(ows), "deletion of object item failed");
   
   ostore_.remove(ows);
 }
 
-void
-ObjectStoreTestUnit::multiple_simple_objects()
+void ObjectStoreTestUnit::test_multiple_simple_objects()
 {
+  ostore_.attach<Item>("item");
+
   typedef object_ptr<Item> item_ptr;
 
-  size_t elem_size = 10000;
-  // create 1000 objects
+  size_t elem_size = 10;
+  // create 10 objects
   for (size_t i = 0; i < elem_size; ++i) {
-    object *o = ostore_.create("ITEM");
+    Item *a = ostore_.create<Item>();
     
-    UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <Item>");
-    
-    Item *a = dynamic_cast<Item*>(o);
-    
-    UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to Item");
+    UNIT_ASSERT_NOT_NULL(a, "couldn't create object of type <Item>");
     
     item_ptr simple = ostore_.insert(a);
   }
@@ -369,42 +520,42 @@ ObjectStoreTestUnit::multiple_simple_objects()
   typedef object_view<Item> simple_view_t;
   simple_view_t simple_view(ostore_);
 
-  UNIT_ASSERT_EQUAL(elem_size, simple_view.size(), "expected size of view isn't 10000");
+  UNIT_ASSERT_EQUAL(elem_size, simple_view.size(), "expected size of view isn't 10");
 }
 
-void
-ObjectStoreTestUnit::multiple_object_with_sub_objects()
+void ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
 {
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+
   typedef object_ptr<ObjectItem<Item> > ows_ptr;
     
-  // create 1000 objects
-  size_t elem_size = 1000;
+  // create 10 objects
+  size_t elem_size = 10;
   for (size_t i = 0; i < elem_size; ++i) {
-    object *o = ostore_.create("OBJECT_ITEM");
+    ObjectItem<Item> *s = ostore_.create<ObjectItem<Item>>();
+
+    UNIT_ASSERT_NOT_NULL(s, "couldn't create object of type <ObjectItem>");
     
-    UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ObjectItem<Item> >");
-    
-    ObjectItem<Item>  *a = dynamic_cast<ObjectItem<Item> *>(o);
-    
-    UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to ObjectItem<Item> ");
-    
-    ows_ptr ows = ostore_.insert(a);
+    ows_ptr ows = ostore_.insert(s);
   }
 
   typedef object_view<ObjectItem<Item> > withsub_view_t;
   withsub_view_t withsub_view(ostore_);
 
-  UNIT_ASSERT_EQUAL(elem_size, withsub_view.size(), "expected size of view isn't 10000");
+  UNIT_ASSERT_EQUAL(elem_size, withsub_view.size(), "expected size of view isn't 10");
 }
 
-void
-ObjectStoreTestUnit::delete_object()
+void ObjectStoreTestUnit::test_delete_object()
 {
+//  std::cout << "\n";
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+
   typedef ObjectItem<Item> TestItem;
   typedef object_ptr<TestItem> test_item_ptr;
   typedef object_ptr<Item> item_ptr;
 
-  
   item_ptr item = ostore_.insert(new Item("item 1"));
 
   TestItem *ti = new TestItem;
@@ -412,66 +563,58 @@ ObjectStoreTestUnit::delete_object()
   
   test_item_ptr testitem = ostore_.insert(ti);
 
-  UNIT_ASSERT_EQUAL(item.ref_count(), (unsigned long)1, "reference count for item should be 1 (one)");
-  UNIT_ASSERT_EQUAL(item.ptr_count(), (unsigned long)0, "reference count for item should be 0 (zero)");
-  UNIT_ASSERT_EQUAL(testitem.ref_count(), (unsigned long)0, "reference count for test item should be 0 (zero)");
-  UNIT_ASSERT_EQUAL(testitem.ptr_count(), (unsigned long)0, "reference count for test item should be 0 (zero)");
-  
+  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count for item should be 1 (one)");
+  UNIT_ASSERT_EQUAL(testitem.reference_count(), 0UL, "reference count for test item should be 0 (zero)");
+
   typedef object_view<Item> item_view_t;
   item_view_t item_view(ostore_);
 
   UNIT_ASSERT_FALSE(ostore_.is_removable(item), "item shouldn't be removable because ref count is one");
 
-  try {
-    ostore_.remove(item);
-  } catch(object_exception &) {
-  }
+//  std::cout << "remove item from store (false)\n";
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is not removable", "item shouldn't be removed");
 
-  UNIT_ASSERT_TRUE(ostore_.is_removable(testitem), "test item must be removable");
-  
+  UNIT_ASSERT_TRUE(ostore_.is_removable(testitem), "test object item must be removable");
+
+//  std::cout << "remove testitem from store\n";
   ostore_.remove(testitem);
 
   UNIT_ASSERT_TRUE(ostore_.is_removable(item), "item must be removable");
-  
+
+//  std::cout << "remove item from store (true)\n";
   ostore_.remove(item);
 }
 
-void
-ObjectStoreTestUnit::sub_delete()
+void ObjectStoreTestUnit::test_hierarchy()
 {
-}
-
-void
-ObjectStoreTestUnit::hierarchy()
-{
-  ostore_.insert_prototype<ItemA, Item>("ITEM_A");
-  ostore_.insert_prototype<ItemB, Item>("ITEM_B");
-  ostore_.insert_prototype<ItemC, Item>("ITEM_C");
+  ostore_.attach<Item>("item");
+  ostore_.attach<ItemA, Item>("ITEM_A");
+  ostore_.attach<ItemB, Item>("ITEM_B");
+  ostore_.attach<ItemC, Item>("ITEM_C");
   
   /* Insert 5 object of each item
    * object type
    */
 
-  Item *itm;
   for (int i = 0; i < 5; ++i) {
     std::stringstream str;
     str << "item " << i;
     ostore_.insert(new Item(str.str()));
     str.str("");
     str << "item a " << i;
-    itm = new ItemA;
-    itm->set_string(str.str());
-    ostore_.insert(itm);
+    ItemA *ia = new ItemA;
+    ia->set_string(str.str());
+    ostore_.insert(ia);
     str.str("");
     str << "item b " << i;
-    itm = new ItemB;
-    itm->set_string(str.str());
-    ostore_.insert(itm);
+    ItemB *ib = new ItemB;
+    ib->set_string(str.str());
+    ostore_.insert(ib);
     str.str("");
     str << "item c " << i;
-    itm = new ItemC;
-    itm->set_string(str.str());
-    ostore_.insert(itm);
+    ItemC *ic = new ItemC;
+    ic->set_string(str.str());
+    ostore_.insert(ic);
   }
   
   typedef object_view<Item> item_view_t;
@@ -485,7 +628,7 @@ ObjectStoreTestUnit::hierarchy()
    ************************************/
 
   size_t max = 20;
-  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 15");
+  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 20");
   
   item_view_t::const_iterator first = item_view.begin();
   item_view_t::const_iterator last = item_view.end();
@@ -506,7 +649,7 @@ ObjectStoreTestUnit::hierarchy()
    ************************************/
 
   max = 5;
-  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 15");
+  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 5");
   
   first = item_view.begin();
   last = item_view.end();
@@ -538,9 +681,10 @@ ObjectStoreTestUnit::hierarchy()
   }
 }
 
-void
-ObjectStoreTestUnit::view_test()
+void ObjectStoreTestUnit::test_view()
 {
+  ostore_.attach<Item>("item");
+
   for (int i = 0; i < 10; ++i) {
     std::stringstream str;
     str << "Item " << i+1;
@@ -553,20 +697,21 @@ ObjectStoreTestUnit::view_test()
   item_view_t iview(ostore_);
 
   UNIT_ASSERT_EQUAL((int)iview.size(), 10, "invalid item view size");
-  UNIT_ASSERT_FALSE((int)iview.empty(), "item view is not empty");
+  UNIT_ASSERT_FALSE(iview.empty(), "item view is not empty");
 
   item_ptr item = iview.front();
 
-  UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+  UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 
   item = iview.back();
   
-  UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+  UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 }
 
-void
-ObjectStoreTestUnit::clear_test()
+void ObjectStoreTestUnit::test_clear()
 {
+  ostore_.attach<Item>("item");
+
   for (int i = 0; i < 10; ++i) {
     std::stringstream str;
     str << "Item " << i+1;
@@ -578,14 +723,14 @@ ObjectStoreTestUnit::clear_test()
   item_view_t iview(ostore_);
 
   UNIT_ASSERT_EQUAL((int)iview.size(), 10, "invalid item view size");
-  UNIT_ASSERT_FALSE((int)iview.empty(), "item view shouldn't be empty");
-  UNIT_ASSERT_FALSE((int)ostore_.empty(), "object store shouldn't be empty");
+  UNIT_ASSERT_FALSE(iview.empty(), "item view shouldn't be empty");
+  UNIT_ASSERT_FALSE(ostore_.empty(), "object store shouldn't be empty");
 
   ostore_.clear();
 
-  UNIT_ASSERT_TRUE((int)ostore_.empty(), "object store must be empty");
+  UNIT_ASSERT_TRUE(ostore_.empty(), "object store must be empty");
   UNIT_ASSERT_EQUAL((int)iview.size(), 0, "invalid item view size");
-  UNIT_ASSERT_TRUE((int)iview.empty(), "item view must be empty");
+  UNIT_ASSERT_TRUE(iview.empty(), "item view must be empty");
 
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
@@ -597,60 +742,139 @@ ObjectStoreTestUnit::clear_test()
   first = ostore_.begin();
   last = ostore_.end();
 
-  UNIT_ASSERT_TRUE(++first == last, "prototype iterator must be the same");
+  UNIT_ASSERT_TRUE(first == last, "prototype iterator must be the same");
 }
 
-void
-ObjectStoreTestUnit::generic_test()
+void ObjectStoreTestUnit::test_generic()
 {
-  char c = 'c';
-  float f = 1.55f;
-  double d = 123.55789;
-  short s = -42;
-  int i = -98765;
-  long l = -1234567890;
-  unsigned short us = 45;
-  unsigned int ui = 4567890;
-  unsigned long ul = 987654321;
-  bool b = true;
-  const char *cstr("baba");
-  std::string title = "Hallo Welt";
-  oos::varchar<64> str("The answer is 42");
+  test_pair<char> c('c');
+  test_pair<bool> b(true);
+  test_pair<float> f(1.55f);
+  test_pair<double> d(123.55789);
+  test_pair<short> s(-42);
+  test_pair<int> i(-98765);
+  test_pair<long> l(1234567890);
+  test_pair<unsigned short> us(45);
+  test_pair<unsigned int> ui(4567890);
+  test_pair<unsigned long> ul(987654321);
+  test_pair<char*> cstr("baba", 256);
+  test_pair<std::string> str("Hallo Welt");
+  test_pair<matador::varchar<64> > varstr("The answer is 42");
+  test_pair<matador::date> dateval(matador::date("29.4.1972"));
+  test_pair<matador::time > timeval(matador::time(2015, 10, 16, 8, 54, 32, 123));
 
-  Item *item = new Item();
-  
-  item->set("val_char", c);
-  item->set("val_float", f);
-  item->set("val_double", d);
-  item->set("val_short", s);
-  item->set("val_int", i);
-  item->set("val_long", l);
-  item->set("val_unsigned_short", us);
-  item->set("val_unsigned_int", ui);
-  item->set("val_unsigned_long", ul);
-  item->set("val_bool", b);
+  std::unique_ptr<Item> item(new Item());
 
-  item->set("val_cstr", cstr);
+  matador::set(*item, "val_char", c.expected);
+  matador::get(*item, "val_char", c.result);
+  UNIT_ASSERT_EQUAL(c.result, c.expected, "not expected result value");
 
-  item->set("val_string", title);
-  item->set("val_varchar", str);
+  matador::set(*item, "val_short", s.expected);
+  matador::get(*item, "val_short", s.result);
+  UNIT_ASSERT_EQUAL(s.result, s.expected, "not expected result value");
+  matador::get(*item, "val_short", s.str_result);
+  UNIT_ASSERT_EQUAL(s.str_result, "-42", "short string is invalid");
+
+  matador::set(*item, "val_int", i.expected);
+  matador::get(*item, "val_int", i.result);
+  UNIT_ASSERT_EQUAL(i.result, i.expected, "not expected result value");
+
+  matador::set(*item, "val_long", l.expected);
+  matador::get(*item, "val_long", l.result);
+  UNIT_ASSERT_EQUAL(l.result, l.expected, "not expected result value");
+
+  matador::set(*item, "val_unsigned_short", us.expected);
+  matador::get(*item, "val_unsigned_short", us.result);
+  UNIT_ASSERT_EQUAL(us.result, us.expected, "not expected result value");
+
+  matador::set(*item, "val_unsigned_int", ui.expected);
+  matador::get(*item, "val_unsigned_int", ui.result);
+  UNIT_ASSERT_EQUAL(ui.result, ui.expected, "not expected result value");
+
+  matador::set(*item, "val_unsigned_long", ul.expected);
+  matador::get(*item, "val_unsigned_long", ul.result);
+  UNIT_ASSERT_EQUAL(ul.result, ul.expected, "not expected result value");
+
+  matador::set(*item, "val_bool", b.expected);
+  matador::get(*item, "val_bool", b.result);
+  UNIT_ASSERT_EQUAL(b.result, b.expected, "not expected result value");
+
+  matador::set(*item, "val_cstr", cstr.expected);
+  matador::get(*item, "val_cstr", cstr.result, cstr.size);
+  UNIT_ASSERT_EQUAL(cstr.result, cstr.expected, "not expected result value");
+
+  matador::set(*item, "val_string", str.expected);
+  matador::get(*item, "val_string", str.result);
+  UNIT_ASSERT_EQUAL(str.result, str.expected, "not expected result value");
+
+  matador::set(*item, "val_varchar", varstr.expected);
+  matador::get(*item, "val_varchar", varstr.result);
+  UNIT_ASSERT_EQUAL(varstr.result, varstr.expected, "not expected result value");
+
+  matador::set(*item, "val_float", f.expected);
+  matador::get(*item, "val_float", f.result);
+  UNIT_ASSERT_EQUAL(f.result, f.expected, "not expected result value");
   /* get float value into string
    * with precision 2
    */
-  item->get("val_float", str, 2);
-  UNIT_ASSERT_EQUAL(str, "1.55", "float string is invalid");
+  matador::get(*item, "val_float", f.str_result, 2);
+  UNIT_ASSERT_EQUAL(f.str_result, "1.55", "float string is invalid");
 
-  item->get("val_int", str);
-  UNIT_ASSERT_EQUAL(str, "-98765", "float string is invalid");
+  matador::set(*item, "val_double", d.expected);
+  matador::get(*item, "val_double", d.result);
+  UNIT_ASSERT_EQUAL(d.result, d.expected, "not expected result value");
+  /* get double value into string
+   * with precision 3
+   */
+  matador::get(*item, "val_double", d.str_result, 3);
+  UNIT_ASSERT_EQUAL(d.str_result, "123.558", "double string is invalid");
 
-  item->get("val_double", str, 3);
-  UNIT_ASSERT_EQUAL(str, "123.558", "double string is invalid");
+  matador::get(*item, "val_int", str.result);
+  UNIT_ASSERT_EQUAL(str.result, "-98765", "float string is invalid");
 
-  delete item;
+  matador::set(*item, "val_date", dateval.expected);
+  matador::get(*item, "val_date", dateval.result);
+  UNIT_ASSERT_EQUAL(dateval.result, dateval.expected, "not expected result value");
+
+  matador::set(*item, "val_time", timeval.expected);
+  matador::get(*item, "val_time", timeval.result);
+  UNIT_ASSERT_EQUAL(timeval.result, timeval.expected, "not expected result value");
+
+  master m1("master 1");
+
+  object_ptr<child> c1(new child("child 1"));
+  object_ptr<child> child_result;
+
+  matador::set(m1, "child", c1);
+  matador::get(m1, "child", child_result);
+  UNIT_ASSERT_EQUAL(c1->name, child_result->name, "not expected result value");
+
+  matador::set(m1, "child", object_ptr<child>());
+  matador::get(m1, "child", child_result);
+  UNIT_ASSERT_TRUE(child_result.get() == nullptr, "not expected result value");
+
+  children_vector cv("children vector");
+
+  UNIT_ASSERT_TRUE(cv.children.empty(), "vector must be empty");
+  matador::append(cv, "children", c1);
+  UNIT_ASSERT_FALSE(cv.children.empty(), "vector must not be empty");
+  matador::remove(cv, "children", c1);
+  UNIT_ASSERT_TRUE(cv.children.empty(), "vector must be empty");
+  // Todo: matador::remove, matador::begin, matador::end, matador::size, matador::empty for generic access has_many
+  // see: https://tartanllama.github.io/c++/2017/01/03/deduction-on-the-left/ for begin and end
+//
+//  auto i = matador::begin(cv, "children");
+//  auto i = matador::end(cv, "children");
+//
+//  auto size = matador::size(cv, "children");
+//  bool is_empty = matador::empty(cv, "children");
 }
 
 void ObjectStoreTestUnit::test_structure()
 {
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+
   typedef ObjectItem<Item> object_item_t;
   typedef object_ptr<object_item_t> object_item_ptr;
   typedef object_ptr<Item> item_ptr;
@@ -661,4 +885,373 @@ void ObjectStoreTestUnit::test_structure()
   oi->ptr(iptr);
   
   object_item_ptr optr = ostore_.insert(oi);
+
+  UNIT_ASSERT_GREATER(optr.id(), 0UL, "object id must be greater zero");
+
+  iptr = optr->ptr();
+
+  UNIT_ASSERT_GREATER(iptr.id(), 0UL, "object id must be greater zero");
+}
+
+class cyclic
+{
+public:
+  cyclic() {}
+  cyclic(const std::string &n) : name(n) {}
+  ~cyclic() {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &w) {
+    w.serialize("id", id);
+    w.serialize("name", name);
+    w.serialize("cycler", cycler, cascade_type::NONE);
+  }
+  matador::identifier<unsigned long> id;
+  std::string name;
+  has_one<cyclic> cycler;
+};
+
+void ObjectStoreTestUnit::test_structure_cyclic()
+{
+  object_store ostore;
+  ostore.attach<cyclic>("cyclic");
+
+  using cyclic_ptr = object_ptr<cyclic>;
+
+  cyclic_ptr c1(new cyclic("c1"));
+  cyclic_ptr c2(new cyclic("c2"));
+  cyclic_ptr c3(new cyclic("c3"));
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL, "reference count must be zero");
+
+  // cycle: c1 -> c2 -> c1
+  c1->cycler = c2;
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL, "reference count must be zero");
+
+  c2->cycler = c1;
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL, "reference count must be zero");
+
+  c1 = ostore.insert(c1);
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be 1 (one)");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be 1 (one)");
+
+  c3->cycler = c1;
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be 1 (one)");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be 1 (one)");
+
+  c3 = ostore.insert(c3);
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 2UL, "reference count must be 2 (two)");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be 1 (one)");
+  UNIT_ASSERT_EQUAL(c3.reference_count(), 0UL, "reference count must be 0 (zero)");
+}
+
+void ObjectStoreTestUnit::test_structure_container()
+{
+  object_store ostore;
+  ostore.attach<child>("cild");
+  ostore.attach<children_vector>("children_vector");
+
+  using childrens_ptr = object_ptr<children_vector>;
+
+  childrens_ptr childrens(new children_vector("ch1"));
+
+  childrens->children.push_back(new child("heinz"));
+
+  ostore.insert(childrens);
+
+  object_ptr<child> c1 = *childrens->children.begin();
+
+  UNIT_ASSERT_GREATER(c1.id(), 0UL, "object store must be greater zero");
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+}
+
+void ObjectStoreTestUnit::test_transient_optr()
+{
+  ostore_.attach<Item>("item");
+
+  typedef object_ptr<Item> item_ptr;
+
+  item_ptr item(new Item("item", 5));
+
+  item_ptr item_copy = item;
+
+  item_copy.reset(nullptr, cascade_type::NONE);
+}
+
+void ObjectStoreTestUnit::test_insert()
+{
+  ostore_.attach<Item>("item");
+
+  UNIT_ASSERT_EXCEPTION(ostore_.insert((Item *)nullptr), object_exception, "object is null", "null shouldn't be insertable");
+
+  std::unique_ptr<ItemC> ic(new ItemC);
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic.get()), object_exception, "couldn't find object type", "unknown object type shouldn't be insertable");
+
+  object_ptr<Item> item = ostore_.insert(new Item("test"));
+  UNIT_ASSERT_NOT_NULL(item.ptr(), "internal pointer should not be zero");
+  UNIT_ASSERT_TRUE(item->id() > 0, "id must be greater zero");
+}
+
+void ObjectStoreTestUnit::test_remove()
+{
+  ostore_.attach<Item>("item");
+
+  typedef object_ptr<Item> item_ptr;
+
+  item_ptr item;
+
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "null shouldn't be removable");
+
+  Item *i = new Item;
+  item = i;
+
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "prototype node is nullptr", "transient object shouldn't be removable");
+}
+
+void ObjectStoreTestUnit::test_primary_key()
+{
+  typedef object_ptr<Item> item_ptr;
+
+  item_ptr item;
+
+  UNIT_ASSERT_FALSE(item.has_primary_key(), "item must not have a primary key");
+
+  item = new Item("Test");
+
+  UNIT_ASSERT_TRUE(item.has_primary_key(), "item must have a primary key");
+}
+
+void ObjectStoreTestUnit::test_has_many()
+{
+  ostore_.attach<book>("book");
+  ostore_.attach<book_list>("book_list");
+
+  auto prototype = ostore_.find("books");
+
+  UNIT_ASSERT_EQUAL("books", prototype->type(), "invalid type");
+  UNIT_ASSERT_FALSE(prototype->has_primary_key(), "must be false");
+
+  ostore_.insert(new book_list);
+}
+
+void ObjectStoreTestUnit::test_has_many_to_many()
+{
+  ostore_.attach<person>("person");
+  ostore_.attach<student, person>("student");
+  ostore_.attach<course>("course");
+
+  UNIT_ASSERT_EQUAL(4UL, ostore_.size(), "unexpected size");
+
+  auto george = ostore_.insert(new student("george"));
+  auto jane = ostore_.insert(new student("jane"));
+  auto algebra = ostore_.insert(new course("algebra"));
+  auto art = ostore_.insert(new course("art"));
+
+  UNIT_ASSERT_TRUE(george->courses.empty(), "georges courses must be empty");
+  UNIT_ASSERT_TRUE(jane->courses.empty(), "janes courses must be empty");
+  UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");
+  UNIT_ASSERT_TRUE(art->students.empty(), "there must be no students in art");
+
+  art->students.push_back(jane);
+
+  UNIT_ASSERT_FALSE(art->students.empty(), "there must not be students in art");
+  UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "there must be one student in art course");
+  UNIT_ASSERT_EQUAL(art->students.front()->name(), jane->name(), "arts student must be jane");
+  UNIT_ASSERT_FALSE(jane->courses.empty(), "janes courses must not be empty");
+  UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL, "jane must've took one course");
+  UNIT_ASSERT_EQUAL(jane->courses.front()->title, art->title, "janes course must be art");
+
+  jane->courses.erase(jane->courses.begin());
+
+  UNIT_ASSERT_TRUE(jane->courses.empty(), "janes courses must be empty");
+  UNIT_ASSERT_TRUE(art->students.empty(), "there must be no students in art");
+
+  george->courses.push_back(algebra);
+
+  UNIT_ASSERT_FALSE(algebra->students.empty(), "there must not be students in algebra");
+  UNIT_ASSERT_EQUAL(algebra->students.size(), 1UL, "there must be one student in algebra course");
+  UNIT_ASSERT_EQUAL(algebra->students.front()->name(), george->name(), "algebras student must be george");
+  UNIT_ASSERT_FALSE(george->courses.empty(), "georges courses must not be empty");
+  UNIT_ASSERT_EQUAL(george->courses.size(), 1UL, "george must've took one course");
+  UNIT_ASSERT_EQUAL(george->courses.front()->title, algebra->title, "georges course must be algebra");
+
+  algebra->students.clear();
+
+  UNIT_ASSERT_TRUE(george->courses.empty(), "georges courses must be empty");
+  UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");
+}
+
+void ObjectStoreTestUnit::test_belongs_to_one()
+{
+  ostore_.attach<person>("person");
+  ostore_.attach<address>("address");
+  ostore_.attach<citizen, person>("citizen");
+
+  auto george = ostore_.insert(new citizen("george"));
+  auto home = ostore_.insert(new address("foreststreet", "foresting"));
+
+  UNIT_ASSERT_TRUE(george->address_.empty(), "address must be empty");
+  UNIT_ASSERT_TRUE(home->citizen_.empty(), "citizen must be empty");
+
+//  george->address_ = home;
+  home->citizen_ = george;
+
+  UNIT_ASSERT_FALSE(george->address_.empty(), "address must not be empty");
+  UNIT_ASSERT_FALSE(home->citizen_.empty(), "citizen must not be empty");
+
+  george->address_.clear();
+
+  UNIT_ASSERT_TRUE(george->address_.empty(), "address must be empty");
+  UNIT_ASSERT_TRUE(home->citizen_.empty(), "citizen must be empty");
+
+  george->address_ = home;
+
+  UNIT_ASSERT_FALSE(george->address_.empty(), "address must not be empty");
+  UNIT_ASSERT_FALSE(home->citizen_.empty(), "citizen must not be empty");
+}
+
+void ObjectStoreTestUnit::test_belongs_to_many()
+{
+  ostore_.attach<person>("person");
+  ostore_.attach<department>("department");
+  ostore_.attach<employee, person>("employee");
+
+  // expected prototypes
+  // person, employee and department
+
+  auto george = ostore_.insert(new employee("george"));
+  auto jane = ostore_.insert(new employee("jane"));
+  auto dep = ostore_.insert(new department("insurance"));
+
+  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
+  UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
+  UNIT_ASSERT_TRUE(jane->dep().empty(), "there must not be an department");
+
+  // department is automatically set
+  dep->employees.push_back(george);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
+  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "george", "expected name must be george");
+  UNIT_ASSERT_FALSE(george->dep().empty(), "department must not be empty");
+  UNIT_ASSERT_EQUAL(george->dep()->name, dep->name, "names must be equal");
+
+  // jane is automatically added to deps employee list
+  jane->dep(dep);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL, "there must be two employees");
+
+  // remove george
+  auto i = dep->employees.begin();
+  i = dep->employees.erase(i);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
+  UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
+  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane", "expected name must be jane");
+
+  jane->department_.clear();
+
+  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
+}
+
+struct basic_logger
+{
+  static std::vector<std::string> nodes;
+};
+
+std::vector<std::string> basic_logger::nodes = std::vector<std::string>();
+
+template < class T >
+struct logger : public object_store_observer<T>, public basic_logger
+{
+  logger() {}
+
+  template < class V >
+  logger(const logger<V> *) {}
+  void on_attach(prototype_node &node, T &) override
+  {
+    nodes.push_back(node.type());
+  }
+
+  void on_detach(prototype_node &node, T &) override
+  {
+    nodes.push_back(node.type());
+  }
+
+  void on_insert(object_proxy &) override {}
+  void on_update(object_proxy &) override {}
+  void on_delete(object_proxy &) override {}
+};
+
+void ObjectStoreTestUnit::test_observer()
+{
+  ostore_.attach<person>("person", { new logger<person> });
+  ostore_.attach<employee, person>("employee", { new logger<employee> });
+  ostore_.attach<department>("department", { new logger<department> });
+  ostore_.attach<book>("book", { new logger<book> });
+  ostore_.attach<book_list>("book_list", { new logger<book_list> });
+
+  std::vector<std::string> result({
+    "person",
+    "employee",
+    "department",
+    "book",
+    "books",
+    "book_list"
+  });
+
+  UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
+
+  basic_logger::nodes.clear();
+
+  ostore_.clear(true);
+
+  ostore_.attach<person>("person", { new logger<person> });
+  ostore_.attach<department>("department", { new logger<department> });
+  ostore_.attach<employee, person>("employee", { new logger<employee> });
+  ostore_.attach<book_list>("book_list", { new logger<book_list> });
+  ostore_.attach<book>("book", { new logger<book> });
+
+  result = {
+    "person",
+    "employee",
+    "department",
+    "employee",
+    "employee",
+    "books",
+    "book_list",
+    "book"
+  };
+
+  UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
+}
+
+typedef has_many_to_many_item<course, student> course_student_item;
+
+void ObjectStoreTestUnit::test_attach_has_many()
+{
+  ostore_.attach<person>("person");
+  ostore_.attach<student, person>("student");
+  ostore_.attach<course>("course");
+
+  UNIT_ASSERT_EQUAL(4UL, ostore_.size(), "unexpected size");
+
+  std::unique_ptr<course_student_item> item1(ostore_.create<course_student_item>());
+
+  UNIT_ASSERT_NOT_NULL(item1.get(), "course student item must not be null");
+
+  auto node = ostore_.find("student_course");
+
+  UNIT_ASSERT_FALSE(node == ostore_.end(), "node must be valid");
+
+  node = ostore_.find<course_student_item>();
+
+  UNIT_ASSERT_FALSE(node == ostore_.end(), "node must be valid");
 }

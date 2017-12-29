@@ -15,146 +15,162 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "object/object_proxy.hpp"
-#include "object/object.hpp"
-#include "object/object_store.hpp"
+#include "matador/object/object_store.hpp"
 
 using namespace std;
 
-namespace oos {
+namespace matador {
 
-object_proxy::object_proxy(object_store *os)
-  : prev(0)
-  , next(0)
-  , obj(0)
-  , id(0)
-  , ref_count(0)
-  , ptr_count(0)
-  , ostore(os)
-  , node(0)
-{}
+object_proxy::object_proxy() {}
 
-object_proxy::object_proxy(long i, object_store *os)
-  : prev(0)
-  , next(0)
-  , obj(0)
-  , id(i)
-  , ref_count(0)
-  , ptr_count(0)
-  , ostore(os)
-  , node(0)
-{}
-
-object_proxy::object_proxy(object *o, object_store *os)
-  : prev(0)
-  , next(0)
-  , obj(o)
-  , id((o ? o->id() : 0))
-  , ref_count(0)
-  , ptr_count(0)
-  , ostore(os)
-  , node(0)
+object_proxy::object_proxy(const std::shared_ptr<basic_identifier> &pk)
+  : primary_key_(pk)
 {}
 
 object_proxy::~object_proxy()
 {
-  if (obj) {
-    delete obj;
-    obj = NULL;
+  if (ostore_ && id() > 0) {
+    // Todo: callback to object store?
+//    ostore_->delete_proxy(id());
   }
-  if (ostore && id > 0) {
-    ostore->delete_proxy(id);
+  if (obj_) {
+    deleter_(obj_);
   }
-  ostore = NULL;
+  ostore_ = 0;
   for (ptr_set_t::iterator i = ptr_set_.begin(); i != ptr_set_.end(); ++i) {
-    (*i)->proxy_ = NULL;
+    (*i)->proxy_ = nullptr;
   }
+}
+
+const char *object_proxy::classname() const
+{
+  return namer_();
+}
+
+object_store *object_proxy::ostore() const
+{
+  return ostore_;
+}
+
+prototype_node *object_proxy::node() const
+{
+  return node_;
 }
 
 void object_proxy::link(object_proxy *successor)
 {
-  // link oproxy before this node
-  prev = successor->prev;
-  next = successor;
-  if (successor->prev) {
-    successor->prev->next = this;
+  // link serializable proxy before this node_
+  prev_ = successor->prev_;
+  next_ = successor;
+  if (successor->prev_) {
+    successor->prev_->next_ = this;
   }
-  successor->prev = this;
+  successor->prev_ = this;
 }
 
 void object_proxy::unlink()
 {
-  if (prev) {
-    prev->next = next;
+  if (prev_) {
+    prev_->next_ = next_;
   }
-  if (next) {
-    next->prev = prev;
+  if (next_) {
+    next_->prev_ = prev_;
   }
-  prev = 0;
-  next = 0;
-  node = 0;
+  prev_ = 0;
+  next_ = 0;
+  node_ = 0;
 }
 
-void object_proxy::link_ref()
+unsigned long object_proxy::operator++()
 {
-  if (obj) {
-    ++ref_count;
-  }
+  return ++reference_counter_;
 }
 
-void object_proxy::unlink_ref()
+unsigned long object_proxy::operator++(int)
 {
-  if (obj) {
-    --ref_count;
-  }
+  return reference_counter_++;
 }
 
-void object_proxy::link_ptr()
+unsigned long object_proxy::operator--()
 {
-  if (obj) {
-    ++ptr_count;
-  }
+  return --reference_counter_;
 }
 
-void object_proxy::unlink_ptr()
+unsigned long object_proxy::operator--(int)
 {
-  if (obj) {
-    --ptr_count;
-  }
+  return reference_counter_--;
 }
 
 bool object_proxy::linked() const
 {
-  return node != 0;
+  return node_ != 0;
 }
 
-void object_proxy::reset(object *o)
+object_proxy *object_proxy::next() const
 {
-  ref_count = 0;
-  ptr_count = 0;
-  id = o->id();
-  obj = o;
-  node = 0;
+  return next_;
 }
 
-void object_proxy::add(object_base_ptr *ptr)
+object_proxy *object_proxy::prev() const
+{
+  return prev_;
+}
+
+unsigned long object_proxy::reference_count() const
+{
+  return reference_counter_;
+}
+
+void object_proxy::add(object_holder *ptr)
 {
   ptr_set_.insert(ptr);
 }
 
-bool object_proxy::remove(object_base_ptr *ptr)
+bool object_proxy::remove(object_holder *ptr)
 {
   return ptr_set_.erase(ptr) == 1;
 }
 
 bool object_proxy::valid() const
 {
-  return ostore && node && prev && next;
+  return ostore_ && node_ && prev_ && next_;
+}
+
+unsigned long object_proxy::id() const {
+  return oid;
+}
+
+void object_proxy::id(unsigned long i)
+{
+  oid = i;
+}
+
+bool object_proxy::has_identifier() const
+{
+  return primary_key_ != nullptr;
+}
+
+std::shared_ptr<basic_identifier> object_proxy::pk() const
+{
+  return primary_key_;
+}
+
+transaction object_proxy::current_transaction()
+{
+  return ostore_->current_transaction();
+}
+
+bool object_proxy::has_transaction() const
+{
+  return ostore_->has_transaction();
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
 {
-  os << "proxy [" << &op << "] prev [" << op.prev << "] next [" << op.next << "] object [" << op.obj << "] refs [" << op.ref_count << "] ptrs [" << op.ptr_count << "]";
+  os << "proxy [" << &op << "] (oid: " << op.oid << ", type: " << (op.node_ ? op.node_->type() : op.classname()) << ")"
+     << " prev_ [" << op.prev_ << "]"
+     << " next_ [" << op.next_ << "] object [" << op.obj_ << "] "
+     << " refs [" << op.reference_counter_ << "]";
   return os;
 }
 

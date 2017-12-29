@@ -1,0 +1,70 @@
+version: "{build}"
+
+services:
+  - mssql2014
+  - mysql
+
+image: Visual Studio 2015
+
+configuration:
+  - Debug
+  - Release
+
+environment:
+  matrix:
+#  - VS_VERSION: Visual Studio 14 2015
+#    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+  - VS_VERSION: Visual Studio 14 2015 Win64
+    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+
+branches:
+  only:
+    - master
+    - develop
+    - /^\d+\.\d+\.\d+$/
+
+install:
+  - git clone https://github.com/snikulov/sqlite.cmake.build.git C:\projects\sqlite\src
+
+before_build:
+  - cd C:\projects\sqlite\src
+  - mkdir build
+  - cd build
+  - set SQLITE_ROOT=C:\projects\sqlite\sqlite
+  - set PATH=%PATH%;%SQLITE_ROOT%\bin;%MYSQL_DIR%\bin;%MYSQL_DIR%\lib
+  - set MYSQL_PWD=Password12!
+  - set USER=root
+  - mysql -e "create database matador_test;" --user=root
+  - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE matador_test"
+  - cmake .. -G"%VS_VERSION%" -DCMAKE_INSTALL_PREFIX=C:\projects\sqlite\sqlite
+  - cmake --build . --config Release --target install
+  - cd "%APPVEYOR_BUILD_FOLDER%"
+  - mkdir build
+  - cd build
+  - cmake -G "%VS_VERSION%" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" ..
+  
+build_script:
+  - cmake --build . --config %configuration%
+
+test_script:
+  - cd "%APPVEYOR_BUILD_FOLDER%/build" && if %CONFIGURATION%==Debug (ctest --verbose -E perftest --build-config %CONFIGURATION%) else (ctest --verbose --build-config %CONFIGURATION%)
+
+after_build:
+  - ps: |
+      if (($env:APPVEYOR_REPO_TAG -Match "true") -and ($env:configuration -Match "Release")) {
+        cpack -G NSIS -C Release
+      }
+
+artifacts:
+  - path: Package/matador*.exe
+
+deploy:
+  provider: GitHub
+  auth_token:
+    secure: "kz/25t/c0oeOJ3Ux3r+Sy5F4G7YgPmjSrTpgZ73IQDY4N9mYNqH4kAv4+0I0oeh6"
+  artifact: /Package\/matador.*\.exe/
+  draft: false
+  prerelease: false
+  on:
+    configuration: Release
+    appveyor_repo_tag: true
