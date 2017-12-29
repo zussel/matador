@@ -225,6 +225,11 @@ object_holder_type object_holder::holder_type() const
   return type_;
 }
 
+cascade_type object_holder::cascade() const
+{
+  return cascade_;
+}
+
 std::ostream& operator<<(std::ostream &out, const object_holder &x)
 {
   if (x.proxy_) {

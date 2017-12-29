@@ -707,27 +707,13 @@ public:
     first = find_if(first, last, predicate);
     if (first != last) {
       // remove first
-      auto &hi = *first;
-      if (this->ostore_) {
-        if (!matador::is_builtin<T>::value) {
-          this->relation_info_->remove_value_from_foreign(*first, this->owner_);
-        }
-        this->relation_info_->remove_holder(*this->ostore_, *first, this->owner_);
-        this->mark_modified_owner_(*this->ostore_, this->owner_);
-      }
+      remove_it(*first);
       for (auto i = first; ++i != last;) {
-        hi = *i;
         if (!predicate(i->value())) {
           *first = std::move(*i);
           ++first;
         } else {
-          if (this->ostore_) {
-            if (!matador::is_builtin<T>::value) {
-              this->relation_info_->remove_value_from_foreign(*i, this->owner_);
-            }
-            this->relation_info_->remove_holder(*this->ostore_, *i, this->owner_);
-            this->mark_modified_owner_(*this->ostore_, this->owner_);
-          }
+          remove_it(*i);
         }
       }
     }
@@ -745,13 +731,7 @@ public:
    */
   iterator erase(iterator i)
   {
-    if (this->ostore_) {
-      if (!matador::is_builtin<T>::value) {
-        this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
-      }
-      this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
-      this->mark_modified_owner_(*this->ostore_, this->owner_);
-    }
+    remove_it(i.holder_item());
     container_iterator ci = this->holder_container_.erase(i.iter_);
     return iterator(ci);
   }
@@ -791,6 +771,17 @@ public:
   }
 
 private:
+  void remove_it(holder_type &holder)
+  {
+    if (this->ostore_) {
+      if (!matador::is_builtin<T>::value) {
+        this->relation_info_->remove_value_from_foreign(holder, this->owner_);
+      }
+      this->relation_info_->remove_holder(*this->ostore_, holder, this->owner_);
+      this->mark_modified_owner_(*this->ostore_, this->owner_);
+    }
+  }
+
   template < class InputIt, class P >
   container_iterator find_if(InputIt first, InputIt last, P predicate)
   {
@@ -804,7 +795,7 @@ private:
 private:
   void insert_holder(const holder_type &holder)
   {
-    this->holder_container_.emplace_back(holder);
+    this->holder_container_.push_back(holder);
   }
 
   void remove_holder(const holder_type &holder)

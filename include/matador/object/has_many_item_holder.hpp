@@ -30,7 +30,6 @@ public:
   typedef object_pointer<T, object_holder_type::OBJECT_PTR> value_type;
 
   has_many_item_holder() = default;
-  ~has_many_item_holder() = default;
 
   has_many_item_holder(const value_type &val, object_proxy *item_proxy)
     : has_many_to_many_item_poxy_(item_proxy)
@@ -97,6 +96,10 @@ public:
     return has_many_to_many_item_poxy_;
   }
 
+  void clear()
+  {
+    value_.reset(nullptr, value_.cascade());
+  }
 private:
   friend struct detail::basic_relation_endpoint;
 
@@ -177,6 +180,8 @@ public:
   {
     return has_many_to_many_item_poxy_;
   }
+
+  void clear() {}
 
 private:
   friend struct detail::basic_relation_endpoint;

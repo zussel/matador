@@ -18,6 +18,7 @@ RelationTestUnit::RelationTestUnit()
   add_test("has_many_builtin", std::bind(&RelationTestUnit::test_has_many_builtin, this), "test has many relation with builtin");
   add_test("belongs_to_many", std::bind(&RelationTestUnit::test_belongs_to_many, this), "test belongs to many relation");
   add_test("has_many_to_many", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to many relation");
+  add_test("has_many_to_many_remove", std::bind(&RelationTestUnit::test_has_many_to_many_remove, this), "test has many to many remove relation");
 }
 
 void RelationTestUnit::test_has_one()
@@ -432,4 +433,55 @@ void RelationTestUnit::test_has_many_to_many()
   UNIT_ASSERT_EQUAL(jane->courses.size(), 0UL, "vector size must be zero");
   UNIT_ASSERT_TRUE(art->students.empty(), "vector must be empty");
   UNIT_ASSERT_EQUAL(art->students.size(), 0UL, "vector size must be zero");
+}
+
+void RelationTestUnit::test_has_many_to_many_remove()
+{
+//  std::cout << "\n";
+  matador::object_store store;
+
+  store.attach<person>("person");
+  store.attach<student, person>("student");
+  store.attach<course>("course");
+
+  auto jane = store.insert(new student("jane"));
+  auto tom = store.insert(new student("tom"));
+  auto art = store.insert(new course("art"));
+
+  UNIT_ASSERT_TRUE(jane->courses.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(jane->courses.size(), 0UL, "vector size must be zero");
+  UNIT_ASSERT_TRUE(tom->courses.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(tom->courses.size(), 0UL, "vector size must be zero");
+  UNIT_ASSERT_TRUE(art->students.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(art->students.size(), 0UL, "vector size must be zero");
+
+  jane->courses.push_back(art); // jane (value) must be push_back to course art (owner) students!!
+
+  UNIT_ASSERT_FALSE(jane->courses.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL, "vector size must be one");
+  UNIT_ASSERT_EQUAL(jane->courses.front(), art, "objects must be same");
+  UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "vector size must be zero");
+  UNIT_ASSERT_EQUAL(art->students.front(), jane, "objects must be same");
+
+  art->students.push_back(tom);
+
+  UNIT_ASSERT_FALSE(tom->courses.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(tom->courses.size(), 1UL, "vector size must be one");
+  UNIT_ASSERT_EQUAL(tom->courses.front(), art, "objects must be same");
+  UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(art->students.size(), 2UL, "vector size must be zero");
+  UNIT_ASSERT_EQUAL(art->students.back(), tom, "objects must be same");
+  UNIT_ASSERT_EQUAL(tom.reference_count(), 1UL, "reference count must be 1");
+
+//  std::cout << "remove tom from container\n";
+  art->students.remove(tom);
+  UNIT_ASSERT_EQUAL(tom.reference_count(), 0UL, "reference count must be 0");
+
+//  std::cout << "remove tom from store\n";
+  store.remove(tom);
+
+  UNIT_ASSERT_FALSE(art->students.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "vector size must be zero");
+  UNIT_ASSERT_EQUAL(art->students.back(), jane, "objects must be same");
 }

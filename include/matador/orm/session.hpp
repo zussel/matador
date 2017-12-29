@@ -125,7 +125,8 @@ public:
   void remove(object_ptr<T> &optr)
   {
     if (store().has_transaction()) {
-      store().current_transaction().on_delete<T>(optr.proxy_);
+      persistence_.store().remove(optr);
+//      store().current_transaction().st<T>(optr.proxy_);
     } else {
       transaction tr(persistence_.store(), observer_);
       tr.begin();

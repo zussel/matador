@@ -167,7 +167,10 @@ bool object_proxy::has_transaction() const
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
 {
-  os << "proxy [" << &op << "] prev_ [" << op.prev_ << "] next_ [" << op.next_ << "] object [" << op.obj_ << "]";// refs [" << op.ref_count_ << "] ptrs [" << op.ptr_count_ << "]";
+  os << "proxy [" << &op << "] (oid: " << op.oid << ", type: " << (op.node_ ? op.node_->type() : op.classname()) << ")"
+     << " prev_ [" << op.prev_ << "]"
+     << " next_ [" << op.next_ << "] object [" << op.obj_ << "] "
+     << " refs [" << op.reference_counter_ << "]";
   return os;
 }
 

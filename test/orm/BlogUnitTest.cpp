@@ -129,6 +129,51 @@ struct post
   }
 };
 
+struct post_service
+{
+  explicit post_service(matador::session &ses)
+    : session_(ses)
+  {}
+
+  matador::object_ptr<post> add(std::string title, std::string content,
+                                const matador::object_ptr<author> &writer, const matador::object_ptr<category> &cat)
+  {
+    matador::transaction tr = session_.begin();
+    try {
+      auto first = session_.insert(new post(title, writer, content));
+
+      session_.push_back(first->categories, cat);
+
+      tr.commit();
+
+      return first;
+    } catch (std::exception &ex) {
+      tr.rollback();
+      return matador::object_ptr<post>();
+    }
+  }
+
+  bool remove(matador::object_ptr<post> &p)
+  {
+    matador::transaction tr = session_.begin();
+    try {
+      session_.clear(p->categories);
+      session_.clear(p->comments);
+      session_.clear(p->tags);
+      session_.remove(p);
+
+      tr.commit();
+
+      return true;
+    } catch (std::exception &ex) {
+      tr.rollback();
+      return false;
+    }
+  }
+
+  matador::session &session_;
+};
+
 BlogUnitTest::BlogUnitTest(const std::string &prefix, const std::string &dns)
   : unit_test(prefix + "_blog", prefix + " blog unit tests")
   , dns_(dns)
@@ -147,22 +192,57 @@ void BlogUnitTest::test_blog()
   p.attach<post>("post");
 
   p.create();
+  {
+    matador::session s(p);
 
-  matador::session s(p);
+    post_service pservice(s);
 
-  matador::transaction tr = s.begin();
-  try {
-    auto me = s.insert(new author("sascha", matador::date(29, 4, 1972)));
-    auto main = s.insert(new category("Main", "Main category"));
+    matador::transaction tr = s.begin();
+    try {
+      auto me = s.insert(new author("sascha", matador::date(29, 4, 1972)));
+      auto main = s.insert(new category("Main", "Main category"));
 
-    auto first = s.insert(new post("First post", me, "My first post content"));
+      pservice.add("First post", "My first post content", me, main);
+      pservice.add("Second post", "My first post content", me, main);
+      pservice.add("Third post", "My first post content", me, main);
+      pservice.add("Fourth post", "My first post content", me, main);
 
-    s.push_back(first->categories, main);
-
-    tr.commit();
-  } catch(std::exception &ex) {
-    tr.rollback();
+      tr.commit();
+    } catch (std::exception &ex) {
+      tr.rollback();
+    }
   }
 
+  p.clear();
+
+  {
+    matador::session s(p);
+
+    s.load();
+
+    post_service pservice(s);
+
+    using t_post_view = matador::object_view<post>;
+    t_post_view posts(s.store());
+
+//    for (const auto &p : posts) {
+//      std::cout << "Post title: " << p->title << "\n";
+//    }
+
+    // delete third post
+    auto i = std::find_if(posts.begin(), posts.end(), [](const matador::object_ptr<post> &p) {
+      return p->title == "Third post";
+    });
+
+    if (i != posts.end()) {
+      auto third = *i;
+
+      pservice.remove(third);
+    }
+
+//    for (const auto &p : posts) {
+//      std::cout << "Post title: " << p->title << "\n";
+//    }
+  }
   p.drop();
 }

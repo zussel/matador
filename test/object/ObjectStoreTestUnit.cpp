@@ -548,6 +548,7 @@ void ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
 
 void ObjectStoreTestUnit::test_delete_object()
 {
+//  std::cout << "\n";
   ostore_.attach<Item>("item");
   ostore_.attach<ObjectItem<Item> >("object_item");
 
@@ -570,14 +571,17 @@ void ObjectStoreTestUnit::test_delete_object()
 
   UNIT_ASSERT_FALSE(ostore_.is_removable(item), "item shouldn't be removable because ref count is one");
 
+//  std::cout << "remove item from store (false)\n";
   UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is not removable", "item shouldn't be removed");
 
   UNIT_ASSERT_TRUE(ostore_.is_removable(testitem), "test object item must be removable");
-  
+
+//  std::cout << "remove testitem from store\n";
   ostore_.remove(testitem);
 
   UNIT_ASSERT_TRUE(ostore_.is_removable(item), "item must be removable");
-  
+
+//  std::cout << "remove item from store (true)\n";
   ostore_.remove(item);
 }
 

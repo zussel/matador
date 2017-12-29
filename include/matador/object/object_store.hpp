@@ -578,6 +578,7 @@ public:
   template < class T >
   void remove(object_proxy *proxy, bool notify, bool check_if_deletable)
   {
+//    std::cout << "deleting " << *proxy << "\n";
     if (proxy == nullptr) {
       throw_object_exception("object proxy is nullptr");
     }
@@ -590,13 +591,18 @@ public:
     }
 
     if (check_if_deletable) {
-      detail::object_deleter::iterator first = object_deleter_.begin();
-      detail::object_deleter::iterator last = object_deleter_.end();
+      auto first = object_deleter_.begin();
+      auto last = object_deleter_.end();
 
       while (first != last) {
+//        auto p = first->second.proxy;
         if (!first->second.ignore) {
+//          std::cout << "remove: calling     " << *first->second.proxy << "\n";
           (first++)->second.remove(notify);
         } else {
+//          std::cout << "remove: ignoring    " << *first->second.proxy << "\n";
+//          --(*first->second.proxy);
+//          std::cout << "remove: decremented " << *first->second.proxy << "\n";
           ++first;
         }
       }

@@ -62,7 +62,7 @@ public:
     : object_holder(x.type_, x.proxy_)
   {}
 
-  explicit object_pointer(self &&x)
+  explicit object_pointer(self &&x) noexcept
     : object_holder(std::move(x))
   {}
 
@@ -95,7 +95,7 @@ public:
    */
   template < object_holder_type OOPT >
   object_pointer(const object_pointer<T, OOPT> &x)
-    : object_holder(x)
+    : object_holder(OPT, x.proxy_)
   {
 //    relation_info_ = x.relation_info_;
 //    reset(x.proxy_, x.cascade_);

@@ -27,6 +27,8 @@ protected:
   basic_has_many_to_many_item() = default;
   basic_has_many_to_many_item(const std::string &left_column, const std::string &right_column);
 
+  virtual ~basic_has_many_to_many_item() = default;
+
 public:
   std::string left_column() const;
   std::string right_column() const;

@@ -20,6 +20,7 @@ public:
   void test_has_many_builtin();
   void test_belongs_to_many();
   void test_has_many_to_many();
+  void test_has_many_to_many_remove();
 };
 
 

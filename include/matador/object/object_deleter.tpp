@@ -14,9 +14,11 @@ bool object_deleter::is_deletable(object_proxy *proxy, T *o) {
   object_count_map.clear();
   object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false, (T*)proxy->obj())));
 
+  visited_objects_.insert(proxy);
   // start collecting information
   matador::access::serialize(*this, *o);
 
+  visited_objects_.clear();
   return check_object_count_map();
 }
 
@@ -29,6 +31,13 @@ void object_deleter::serialize(const char *, belongs_to<T> &x, cascade_type casc
     std::make_pair(x.proxy_->id(), t_object_count(x.proxy_, true, (T*)x.proxy_->obj()))
   );
   --ret.first->second.reference_counter;
+
+  if (visited_objects_.find(x.proxy_) != visited_objects_.end()) {
+    return;
+  }
+
+  visited_objects_.insert(x.proxy_);
+
   if (cascade & cascade_type::REMOVE) {
     ret.first->second.ignore = false;
     matador::access::serialize(*this, *(T*)x.ptr());
@@ -44,6 +53,13 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
     std::make_pair(x.proxy_->id(), t_object_count(x.proxy_, true, (T*)x.proxy_->obj()))
   );
   --ret.first->second.reference_counter;
+
+  if (visited_objects_.find(x.proxy_) != visited_objects_.end()) {
+    return;
+  }
+
+  visited_objects_.insert(x.proxy_);
+
   if (cascade & cascade_type::REMOVE) {
     ret.first->second.ignore = false;
     matador::access::serialize(*this, *(T*)x.ptr());
@@ -58,6 +74,7 @@ void object_deleter::serialize(const char *, basic_has_many<T, C> &x, const char
   while (first != last) {
     // Todo: get the real holder: on join table get has_many_item
     object_proxy *proxy = first.holder_item().item_proxy();
+
     std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
       std::make_pair(proxy->id(), t_object_count(proxy, false, (T*)proxy->obj()))
     );
@@ -72,6 +89,12 @@ void object_deleter::serialize(const char *, basic_has_many<T, C> &x, const char
     if (!ret.second && ret.first->second.ignore) {
       ret.first->second.ignore = false;
     }
+
+    if (visited_objects_.find(proxy) != visited_objects_.end()) {
+      return;
+    }
+
+    visited_objects_.insert(proxy);
 
     auto val = *first;
     matador::access::serialize(*this, *val);

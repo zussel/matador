@@ -65,7 +65,9 @@ void relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many
     }
 
     if (right_table_ptr_->is_loaded()) {
-      right_endpoint_->insert_value_into_foreign(left_proxy_, right_proxy);
+      has_many_item_holder<right_value_type > holder(right_proxy, proxy_);
+      right_endpoint_->insert_value_into_foreign(holder, left_proxy_);
+//      right_endpoint_->insert_value_into_foreign(left_proxy_, right_proxy);
     } else {
       // Todo: append to left tables relation data
       auto rptr = std::static_pointer_cast<table<right_value_type>>(right_table_ptr_);

@@ -26,6 +26,8 @@ public:
     : basic_has_many_to_many_item(left_column, right_column)
   {}
 
+  ~has_many_to_many_item() override { }
+
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {

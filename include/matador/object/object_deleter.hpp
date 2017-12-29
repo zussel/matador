@@ -5,6 +5,8 @@
 #include "matador/object/belongs_to.hpp"
 #include "matador/object/basic_has_many.hpp"
 
+#include <unordered_set>
+
 #ifdef _MSC_VER
 #ifdef matador_object_EXPORTS
     #define MATADOR_OBJECT_API __declspec(dllexport)
@@ -85,14 +87,6 @@ class MATADOR_OBJECT_API object_deleter {
   bool is_deletable(object_proxy *proxy, T *o);
 
   /**
-   * Checks wether the given object_container is deletable.
-   *
-   * @param ovector The object_container to be checked.
-   * @return True if the object_container could be deleted.
-   */
-//  bool is_deletable(object_container &oc);
-
-  /**
    * @brief Returns the first deletable serializable.
    *
    * If the check was made and was successful this
@@ -130,6 +124,7 @@ class MATADOR_OBJECT_API object_deleter {
 
   private:
   t_object_count_map object_count_map;
+  std::unordered_set<object_proxy*> visited_objects_;
 };
 
 /// @endcond

@@ -570,13 +570,7 @@ public:
    */
   iterator erase(iterator i)
   {
-    if (this->ostore_) {
-      if (!matador::is_builtin<T>::value) {
-        this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
-      }
-      this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
-      this->mark_modified_owner_(*this->ostore_, this->owner_);
-    }
+    remove_it(i.holder_item());
     container_iterator ci = this->holder_container_.erase(i.iter_);
     return iterator(ci);
   }
@@ -610,6 +604,17 @@ public:
   }
 
 private:
+  void remove_it(holder_type &holder)
+  {
+    if (this->ostore_) {
+      if (!matador::is_builtin<T>::value) {
+        this->relation_info_->remove_value_from_foreign(holder, this->owner_);
+      }
+      this->relation_info_->remove_holder(*this->ostore_, holder, this->owner_);
+      this->mark_modified_owner_(*this->ostore_, this->owner_);
+    }
+  }
+
   void insert_holder(const holder_type &holder)
   {
     this->holder_container_.push_back(holder);

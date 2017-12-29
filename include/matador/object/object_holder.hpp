@@ -307,6 +307,7 @@ public:
    */
   object_holder_type holder_type() const;
 
+  cascade_type cascade() const;
   /**
    * Prints the underlaying object
    *

@@ -58,6 +58,7 @@ void relation_endpoint_value_remover<Value,
   if (field_ != id) {
     return;
   }
+//  holder_.value().reset(nullptr, holder_.value().cascade());
   x.remove_holder(holder_);
 }
 
