@@ -1,4 +1,4 @@
-version: "{build}"
+version: "{branch}-{build}"
 
 services:
   - mssql2014
@@ -25,6 +25,7 @@ branches:
 
 install:
   - git clone https://github.com/snikulov/sqlite.cmake.build.git C:\projects\sqlite\src
+  - appveyor-retry choco install doxygen.portable
 
 before_build:
   - cd C:\projects\sqlite\src
