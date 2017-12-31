@@ -53,14 +53,12 @@ test_script:
 after_build:
   - ps: |
       if (($env:APPVEYOR_REPO_TAG -Match "true") -and ($env:configuration -Match "Release")) {
+        cmake --build build --target web
         cpack -G NSIS -C Release
       }
 
 artifacts:
   - path: Package/matador*.exe
-
-before_deploy:
-  - cd "%APPVEYOR_BUILD_FOLDER%"/build && make web
 
 deploy:
   provider: GitHub
