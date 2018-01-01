@@ -53,7 +53,7 @@ test_script:
 after_build:
   - ps: |
       if (($env:APPVEYOR_REPO_TAG -Match "true") -and ($env:configuration -Match "Release")) {
-        cmake --build build --target web
+        cmake --build . --target web
         cpack -G NSIS -C Release
       }
 
