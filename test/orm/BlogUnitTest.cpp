@@ -153,7 +153,7 @@ struct post_service
     }
   }
 
-  bool remove(matador::object_ptr<post> &p)
+  bool remove(matador::object_ptr<post> p)
   {
     matador::transaction tr = session_.begin();
     try {
@@ -225,24 +225,14 @@ void BlogUnitTest::test_blog()
     using t_post_view = matador::object_view<post>;
     t_post_view posts(s.store());
 
-//    for (const auto &p : posts) {
-//      std::cout << "Post title: " << p->title << "\n";
-//    }
-
     // delete third post
     auto i = std::find_if(posts.begin(), posts.end(), [](const matador::object_ptr<post> &p) {
       return p->title == "Third post";
     });
 
     if (i != posts.end()) {
-      auto third = *i;
-
-      pservice.remove(third);
+      pservice.remove(*i);
     }
-
-//    for (const auto &p : posts) {
-//      std::cout << "Post title: " << p->title << "\n";
-//    }
   }
   p.drop();
 }
