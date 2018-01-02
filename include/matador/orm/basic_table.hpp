@@ -64,6 +64,7 @@ public:
   typedef std::shared_ptr<basic_table> table_ptr;                                             /**< Shortcut to table shared pointer */
   typedef std::unordered_map<std::string, table_ptr> t_table_map;                             /**< Shortcut to an unordered map of table shared pointer*/
   typedef std::unordered_map<std::string, detail::t_identifier_multimap> t_relation_item_map; /**< Shortcut to an unordered identifier multimap */
+  typedef std::unordered_map<std::string, std::shared_ptr<detail::basic_relation_data>> t_relation_data_map;
 
 public:
   /**
@@ -159,16 +160,7 @@ public:
 
   void reset();
 
-//  template < class T >
-//  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const T &data) = 0;
-//  virtual void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, object_proxy *data) = 0;
-
-protected:
   /// @cond MATADOR_DEV
-
-//  template < class T, class Enabled >
-//  friend class detail::relation_resolver;
-//  friend class persistence;
 
 public:
   t_table_map::iterator find_table(const std::string &type);
@@ -184,13 +176,21 @@ public:
 
   virtual void prepare(connection &conn) = 0;
 
+  detail::t_identifier_map::iterator insert_proxy(const std::shared_ptr<basic_identifier> &pk, object_proxy *proxy);
+  detail::t_identifier_map::iterator find_proxy(const std::shared_ptr<basic_identifier> &pk);
+  detail::t_identifier_map::iterator begin_proxy();
+  detail::t_identifier_map::iterator end_proxy();
+
+  t_relation_data_map::iterator find_relation_data(const char *id);
+  t_relation_data_map::iterator begin_relation_data();
+  t_relation_data_map::iterator end_relation_data();
+
+protected:
   persistence &persistence_;
 
   detail::t_identifier_map identifier_proxy_map_;
 
   t_relation_item_map has_many_relations_;
-
-  typedef std::unordered_map<std::string, std::shared_ptr<detail::basic_relation_data>> t_relation_data_map;
 
   t_relation_data_map relation_data_map_;
 
@@ -198,7 +198,6 @@ public:
 
   /// @endcond
 
-private:
   prototype_node &node_;
 };
 

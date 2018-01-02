@@ -85,10 +85,10 @@ public:
       if (j == table_.end_table()) {
         throw_object_exception("unknown table " << node->type());
       }
-      auto k = j->second->identifier_proxy_map_.find(pk);
-      if (k == j->second->identifier_proxy_map_.end()) {
+      auto k = j->second->find_proxy(pk);
+      if (k == j->second->end_proxy()) {
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
-        k = j->second->identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+        k = j->second->insert_proxy(pk, proxy);
       }
       x.reset(k->second, cascade);
     }
@@ -125,10 +125,10 @@ public:
       if (j == table_.end_table()) {
         throw_object_exception("unknown table " << node->type());
       }
-      auto k = j->second->identifier_proxy_map_.find(pk);
-      if (k == j->second->identifier_proxy_map_.end()) {
+      auto k = j->second->find_proxy(pk);
+      if (k == j->second->end_proxy()) {
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
-        k = j->second->identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+        k = j->second->insert_proxy(pk, proxy);
       }
       x.reset(k->second, cascade);
     }
@@ -153,8 +153,8 @@ public:
      * tables relation owner id list
      */
 
-    auto data = table_.relation_data_map_.find(id);
-    if (data == table_.relation_data_map_.end()) {
+    auto data = table_.find_relation_data(id);
+    if (data == table_.end_relation_data()) {
       return;
     }
     auto endpoint = proxy_->node()->find_endpoint(id);
@@ -276,10 +276,10 @@ private:
     if (proxy) {
       x.reset(proxy, cascade);
     } else {
-      auto idproxy = tbl->identifier_proxy_map_.find(pk);
-      if (idproxy == tbl->identifier_proxy_map_.end()) {
+      auto idproxy = tbl->find_proxy(pk);
+      if (idproxy == tbl->end_proxy()) {
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
-        idproxy = tbl->identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+        idproxy = tbl->insert_proxy(pk, proxy);
       } else {
         proxy = idproxy->second;
       }
@@ -387,10 +387,10 @@ private:
     if (proxy) {
       x.reset(proxy, cascade);
     } else {
-      auto idproxy = tbl->identifier_proxy_map_.find(pk);
-      if (idproxy == tbl->identifier_proxy_map_.end()) {
+      auto idproxy = tbl->find_proxy(pk);
+      if (idproxy == tbl->end_proxy()) {
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
-        idproxy = tbl->identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+        idproxy = tbl->insert_proxy(pk, proxy);
       } else {
         proxy = idproxy->second;
       }

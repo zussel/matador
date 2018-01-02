@@ -56,6 +56,42 @@ basic_table::t_table_map::iterator basic_table::end_table()
   return persistence_.end();
 }
 
-//void basic_table::append_relation_items(const std::string &, detail::t_identifier_map &, basic_table::t_relation_item_map &) { }
+detail::t_identifier_map::iterator
+basic_table::insert_proxy(const std::shared_ptr<basic_identifier> &pk, object_proxy *proxy)
+{
+  return identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+}
 
+detail::t_identifier_map::iterator basic_table::find_proxy(const std::shared_ptr<basic_identifier> &pk)
+{
+  return identifier_proxy_map_.find(pk);
+}
+
+detail::t_identifier_map::iterator basic_table::begin_proxy()
+{
+  return identifier_proxy_map_.begin();
+}
+
+detail::t_identifier_map::iterator basic_table::end_proxy()
+{
+  return identifier_proxy_map_.end();
+}
+
+basic_table::t_relation_data_map::iterator
+basic_table::find_relation_data(const char *id)
+{
+  return relation_data_map_.find(id);
+}
+
+basic_table::t_relation_data_map::iterator
+basic_table::begin_relation_data()
+{
+  return relation_data_map_.begin();
+}
+
+basic_table::t_relation_data_map::iterator
+basic_table::end_relation_data()
+{
+  return relation_data_map_.end();
+}
 }
