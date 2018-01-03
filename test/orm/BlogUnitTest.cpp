@@ -191,26 +191,32 @@ void BlogUnitTest::test_blog()
   p.attach<comment>("comment");
   p.attach<post>("post");
 
+  UNIT_ASSERT_EQUAL(p.store().size(), 7UL, "there must be seven nodes in store");
   p.create();
   {
     matador::session s(p);
 
-    post_service pservice(s);
+    post_service blogger(s);
 
     matador::transaction tr = s.begin();
     try {
       auto me = s.insert(new author("sascha", matador::date(29, 4, 1972)));
       auto main = s.insert(new category("Main", "Main category"));
 
-      pservice.add("First post", "My first post content", me, main);
-      pservice.add("Second post", "My first post content", me, main);
-      pservice.add("Third post", "My first post content", me, main);
-      pservice.add("Fourth post", "My first post content", me, main);
+      blogger.add("First post", "My first post content", me, main);
+      blogger.add("Second post", "My second post content", me, main);
+      blogger.add("Third post", "My third post content", me, main);
+      blogger.add("Fourth post", "My fourth post content", me, main);
 
       tr.commit();
     } catch (std::exception &ex) {
       tr.rollback();
     }
+
+    using t_post_view = matador::object_view<post>;
+    t_post_view posts(s.store());
+
+    UNIT_ASSERT_EQUAL(posts.size(), 4UL, "size must be three");
   }
 
   p.clear();
@@ -220,10 +226,12 @@ void BlogUnitTest::test_blog()
 
     s.load();
 
-    post_service pservice(s);
+    post_service blogger(s);
 
     using t_post_view = matador::object_view<post>;
     t_post_view posts(s.store());
+
+    UNIT_ASSERT_EQUAL(posts.size(), 4UL, "size must be three");
 
     // delete third post
     auto i = std::find_if(posts.begin(), posts.end(), [](const matador::object_ptr<post> &p) {
@@ -231,8 +239,10 @@ void BlogUnitTest::test_blog()
     });
 
     if (i != posts.end()) {
-      pservice.remove(*i);
+      blogger.remove(*i);
     }
+
+    UNIT_ASSERT_EQUAL(posts.size(), 3UL, "size must be three");
   }
   p.drop();
 }
