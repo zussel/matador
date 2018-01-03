@@ -4,16 +4,23 @@
 #  SQLITE3_INCLUDE_DIR - The SQLite3 include directories
 #  SQLITE3_LIBRARY - The libraries needed to use SQLite3
 
+set(PROGRAMFILES $ENV{ProgramFiles})
+if (DEFINED ENV{ProgramW6432})
+	set(PROGRAMFILES $ENV{ProgramW6432})
+endif()
+
 IF (WIN32)
 	FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
-		$ENV{PROGRAMFILES}/SQLite/include
+		$ENV{PROGRAMFILES}/SQLite/include/
+		${PROGRAMFILES}/SQLite/include/
 		DOC "The directory where sqlite3.h resides"
 	)
 
 	FIND_LIBRARY( SQLITE3_LIBRARY
 		NAMES sqlite3
 		PATHS
-		$ENV{PROGRAMFILES}/SQLite/lib
+		$ENV{PROGRAMFILES}/SQLite/lib/
+		${PROGRAMFILES}/SQLite/lib/
 		DOC "The SQLite3 library"
 	)
 ELSE (WIN32)
@@ -36,11 +43,9 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 IF (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
-	SET( SQLITE3_FOUND 1 CACHE STRING "Set to 1 if SQLite3 is found, 0 otherwise")
-#	MESSAGE(STATUS "SQLite3 found")
+	SET( SQLITE3_FOUND TRUE CACHE STRING "Set to TRUE if SQLite3 is found, FALSE otherwise")
 ELSE (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
-	SET( SQLITE3_FOUND 0 CACHE STRING "Set to 1 if SQLite3 is found, 0 otherwise")
-#	MESSAGE(STATUS "SQLite3 not found")
+	SET( SQLITE3_FOUND FALSE CACHE STRING "Set to TRUE if SQLite3 is found, FALSE otherwise")
 ENDIF (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
 
 MARK_AS_ADVANCED( SQLITE3_FOUND )
