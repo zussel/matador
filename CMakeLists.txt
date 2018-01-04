@@ -199,7 +199,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
   endif()
 endif()
 
-SET(CPACK_GENERATOR "DEB;STGZ;TGZ;TZ")
+SET(CPACK_GENERATOR "DEB;RPM;STGZ;TGZ;TZ")
 
 # Tell CPack all of the components to install. The "ALL"
 # refers to the fact that this is the set of components that

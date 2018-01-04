@@ -214,6 +214,7 @@ matrix:
           packages:
             - cmake
             - cmake-data
+            - rpm
             - linux-libc-dev:i386
             - g++-6-multilib
             - gcc-6-multilib
@@ -233,6 +234,7 @@ matrix:
           packages:
             - cmake
             - cmake-data
+            - rpm
             - g++-6
             - gcc-6
             - doxygen
@@ -308,14 +310,18 @@ before_deploy:
   - cd ${TRAVIS_BUILD_DIR}
   - cmake --build build --target web
   - cmake --build build --target package
-  - export RELEASE_PKG_FILE=$(ls Package/*.tar.gz)
-  - echo "deploying $RELEASE_PKG_FILE to GitHub releases"
+  - export RELEASE_TGZ_FILE=$(ls Package/*.tar.gz)
+  - export RELEASE_DEB_FILE=$(ls Package/*.deb)
+  - export RELEASE_RPM_FILE=$(ls Package/*.rpm)
+  - echo "deploying $RELEASE_TGZ_FILE, $RELEASE_DEB_FILE and $RELEASE_RPM_FILE to GitHub releases"
 
 deploy:
   provider: releases
   api_key: ${GITHUB_TOKEN}
-  file_glob: true
-  file: "${RELEASE_PKG_FILE}"
+  file:
+    - "${RELEASE_TGZ_FILE}"
+    - "${RELEASE_DEB_FILE}"
+    - "${RELEASE_RPM_FILE}"
   skip_cleanup: true
   on:
     tags: true
