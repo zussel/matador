@@ -176,6 +176,28 @@ INSTALL(
   COMPONENT doc
 )
 
+set(ARCHPKG_ARCH ${CMAKE_SYSTEM_PROCESSOR})
+if (${ARCH} MATCHES "32")
+  set(ARCHPKG_ARCH "x86")
+elseif(${ARCH} MATCHES "64")
+  set(CPACK_SYSTEM_NAME "x86_64")
+else()
+  set(ARCHPKG_ARCH ${CMAKE_SYSTEM_PROCESSOR})
+endif()
+
+add_custom_target(archpkg
+  COMMAND ${CMAKE_COMMAND}
+    -D NAME=${PROJECT_NAME}
+    -D URL=https://zussel.github.io/matador
+    -D DESC=Matador\ -\ take\ your\ database\ by\ the\ horns
+    -D VERSION=${APP_VERSION}
+    -D SRC_DIR=${PROJECT_SOURCE_DIR}
+    -D ARCH=${ARCHPKG_ARCH}
+    -D VERSION_INCLUDE_DIR=matador
+    -D VERSION_FILE=version.hpp
+    -P ${CMAKE_MODULE_PATH}/CreateArchLinuxPackage.cmake
+)
+
 # Basic CPack configuration
 SET(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 SET(CPACK_PACKAGE_VENDOR "zussel")
