@@ -18,10 +18,10 @@ namespace detail {
 class object_inserter;
 class object_deleter;
 
-template < class Value, class Enable >
+template < class Value >
 class relation_endpoint_value_inserter;
 
-template < class Value, class Enabled >
+template < class Value >
 class relation_endpoint_value_remover;
 }
 

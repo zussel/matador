@@ -74,11 +74,9 @@ public:
   }
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &, cascade_type ,
-                 typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0);
+  void serialize(const char *id, basic_has_many<T, C> &, cascade_type ,typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0);
   template<class T, template<class ...> class C>
-  void serialize(const char *, basic_has_many<T, C> &, cascade_type ,
-                 typename std::enable_if<matador::is_builtin<T>::value>::type* = 0);
+  void serialize(const char *, basic_has_many<T, C> &, cascade_type ,typename std::enable_if<matador::is_builtin<T>::value>::type* = 0);
 
 private:
   typedef std::set<object_proxy *> t_object_proxy_set;
