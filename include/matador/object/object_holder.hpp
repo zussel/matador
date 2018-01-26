@@ -147,6 +147,14 @@ public:
   bool operator!=(std::nullptr_t) const;
 
   /**
+   * Returns true if holder holds a valid
+   * proxy/object.
+   *
+   * @return True if proxy/object is not nullptr
+   */
+  explicit operator bool() const noexcept;
+
+  /**
    * Resets the object_holder with the given object_proxy.
    * 
    * @param proxy The new object_proxy for the object_holder.
@@ -175,8 +183,15 @@ public:
    *
    * @return True if object_holder doesn't holds an object
    */
-  bool empty() const;
+  bool empty() const noexcept;
 
+  /**
+   * Returns true if object_holder
+   * holds a valid object
+   *
+   * @return True if object_holder holds an object
+   */
+  bool valid() const noexcept;
   /**
    * Returns if the object is loaded.
    * 
@@ -190,14 +205,6 @@ public:
    * @return The id of the object.
    */
   unsigned long id() const;
-
-  /**
-   * Sets the object id. If a proxy
-   * is set an exception is thrown.
-   * 
-   * @param i The new object id
-   */
-  void id(unsigned long i);
 
   /**
    * Returns the corresponding
@@ -326,7 +333,7 @@ private:
   friend class detail::object_deleter;
   friend class detail::object_inserter;
   friend class object_store;
-  friend class object_container;
+  friend class abstract_has_many;
   friend class detail::object_proxy_accessor;
   template<class T, template <class ...> class C, class Enabled >
   friend class detail::has_many_inserter;
@@ -355,7 +362,6 @@ private:
   cascade_type cascade_ = cascade_type::NONE;
   object_holder_type type_ = object_holder_type::OBJECT_PTR;
   bool is_inserted_ = false;
-  unsigned long oid_ = 0;
 
   std::shared_ptr<detail::basic_relation_endpoint> relation_info_;
 };

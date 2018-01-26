@@ -41,7 +41,7 @@ class serializer;
  * This kind of exception is thrown, when 
  * an serializable dealing error occurs.
  */
-class object_exception : public std::exception
+class object_exception : public std::runtime_error
 {
 public:
   /**
@@ -50,23 +50,8 @@ public:
    * @param what The message of the exception.
    */
   explicit object_exception(const char *what) noexcept
-    : what_(what)
-  {
-  }
-
-  ~object_exception() noexcept override = default;
-
-  /**
-   * Returns the message of the exception
-   *
-   * @return The message of this exception.
-   */
-  const char* what() const throw() override
-  {
-    return what_.c_str();
-  }
-private:
-  std::string what_;
+    : std::runtime_error(what)
+  {}
 };
 
 #define throw_object_exception(message) \

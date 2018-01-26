@@ -72,7 +72,9 @@ void from_one_endpoint<
 >::insert_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
   object_ptr<Owner> ownptr(owner);
-  inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
+  const auto &value_holder = static_cast<const has_many_item_holder<Value>&>(holder);
+  inserter.insert(ownptr, this->field, value_holder);
+//  this->increment_reference_count(value_holder.value());
 }
 
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type>
@@ -81,7 +83,9 @@ void from_one_endpoint<
 >::remove_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
   object_ptr<Owner> ownptr(owner);
-  remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
+  const auto &value_holder = static_cast<const has_many_item_holder<Value>&>(holder);
+  remover.remove(ownptr, this->field, value_holder);
+//  this->decrement_reference_count(value_holder.value());
 }
 
 
@@ -181,7 +185,9 @@ void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is
 template < class Value, class Owner >
 void many_to_one_endpoint<Value, Owner, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
+  this->mark_holder_as_inserted(holder);
   this->set_has_many_item_proxy(holder, owner);
+  this->increment_reference_count(holder.value());
 }
 
 template < class Value, class Owner >
@@ -190,6 +196,7 @@ void many_to_one_endpoint<Value, Owner,
 >::remove_holder(object_store &, has_many_item_holder<Value> &holder, object_proxy *) // owner
 {
   this->set_has_many_item_proxy(holder, nullptr);
+  this->decrement_reference_count(holder.value());
 }
 
 template < class Value, class Owner >
@@ -197,7 +204,7 @@ void many_to_one_endpoint<Value, Owner,
   typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type
 >::insert_value(object_proxy *value, object_proxy *owner)
 {
-  insert_value(has_many_item_holder<Value>(value, nullptr), owner);
+  insert_value(value_type(value, nullptr), owner);
 }
 
 template < class Value, class Owner >
@@ -205,7 +212,7 @@ void many_to_one_endpoint<Value, Owner,
   typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type
 >::remove_value(object_proxy *value, object_proxy *owner)
 {
-  remove_value(has_many_item_holder<Value>(value, nullptr), owner);
+  remove_value(value_type(value, nullptr), owner);
 }
 
 template < class Value, class Owner >
@@ -213,8 +220,12 @@ void many_to_one_endpoint<Value, Owner,
   typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type
 >::insert_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
+  const auto &value_holder = static_cast<const has_many_item_holder<Value>&>(holder);
+
   object_ptr<Owner> ownptr(owner);
-  inserter.insert(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
+  this->mark_holder_as_inserted(const_cast<has_many_item_holder<Value>&>(value_holder));
+  inserter.insert(ownptr, this->field, value_holder);
+  this->increment_reference_count(value_holder.value());
 }
 
 template < class Value, class Owner >
@@ -222,8 +233,11 @@ void many_to_one_endpoint<Value, Owner,
   typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type
 >::remove_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
+  const auto &value_holder = static_cast<const has_many_item_holder<Value>&>(holder);
+
   object_ptr<Owner> ownptr(owner);
-  remover.remove(ownptr, this->field, static_cast<const has_many_item_holder<Value>&>(holder));
+  remover.remove(ownptr, this->field, value_holder);
+  this->decrement_reference_count(value_holder.value());
 }
 
 }

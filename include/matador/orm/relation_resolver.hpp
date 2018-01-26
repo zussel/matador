@@ -135,7 +135,13 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &x, const char *, const char *)
+  void serialize(const char *id, basic_has_many<V, C> &x, const char *, const char *, cascade_type cascade)
+  {
+    serialize(id, x, cascade);
+  }
+
+  template<class V, template<class ...> class C>
+  void serialize(const char *id, basic_has_many<V, C> &x, cascade_type)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);
@@ -263,8 +269,9 @@ public:
     left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
   }
   
-  template<class V, template<class ...> class C>
-  void serialize(const char *, basic_has_many<V, C> &, const char *, const char *) { }
+//  template<class V, template<class ...> class C>
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
+  void serialize(const char *, abstract_has_many &, cascade_type) { }
 
 private:
   object_proxy* acquire_proxy(object_holder &x, std::shared_ptr<basic_identifier> pk, cascade_type cascade, std::shared_ptr<basic_table> tbl)
@@ -374,8 +381,9 @@ public:
     left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
   }
 
-  template<class V, template<class ...> class C>
-  void serialize(const char *, basic_has_many<V, C> &, const char *, const char *) { }
+//  template<class V, template<class ...> class C>
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
+  void serialize(const char *, abstract_has_many &, cascade_type) { }
 
 private:
   object_proxy* acquire_proxy(object_holder &x, std::shared_ptr<basic_identifier> pk, cascade_type cascade, std::shared_ptr<basic_table> tbl)

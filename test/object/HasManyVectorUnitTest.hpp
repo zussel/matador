@@ -47,7 +47,7 @@ public:
   {
     s.serialize("id", id);
     s.serialize("name", name);
-    s.serialize("owner_item", items, "owner_id", "item_id");
+    s.serialize("owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
   }
 };
 

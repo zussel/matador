@@ -7,14 +7,10 @@ namespace detail {
 
 template < class Value >
 template<class Owner>
-void relation_endpoint_value_inserter<Value,
-  typename std::enable_if<
-    std::is_integral<int>::value>::type
-//    std::is_base_of<object_holder, Value>::value>::type
-  >::insert(const object_ptr <Owner> &owner, const std::string &field, has_many_item_holder<Value> holder)
+void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &owner, const std::string &field, has_many_item_holder<Value> holder)
 {
   field_ = field;
-  holder_ = holder;
+  holder_ = std::move(holder);
 
   matador::access::serialize(*this, *owner);
 
@@ -22,12 +18,7 @@ void relation_endpoint_value_inserter<Value,
 }
 
 template < class Value >
-void relation_endpoint_value_inserter<Value,
-  typename std::enable_if<
-    std::is_integral<int>::value>::type
-
-//    std::is_base_of<object_holder, Value>::value>::type
-  >::serialize(const char *id, object_pointer<Value, object_holder_type::BELONGS_TO> &x, cascade_type cascade)
+void relation_endpoint_value_inserter<Value>::serialize(const char *id, object_pointer<Value, object_holder_type::BELONGS_TO> &x, cascade_type cascade)
 {
   if (field_ != id) {
     return;
@@ -36,12 +27,7 @@ void relation_endpoint_value_inserter<Value,
 }
 
 template < class Value >
-void relation_endpoint_value_inserter<Value,
-  typename std::enable_if<
-    std::is_integral<int>::value>::type
-
-//    std::is_base_of<object_holder, Value>::value>::type
-  >::serialize(const char *id, object_pointer<Value, object_holder_type::HAS_ONE> &x, cascade_type cascade)
+void relation_endpoint_value_inserter<Value>::serialize(const char *id, object_pointer<Value, object_holder_type::HAS_ONE> &x, cascade_type cascade)
 {
   if (field_ != id) {
     return;
@@ -51,12 +37,7 @@ void relation_endpoint_value_inserter<Value,
 
 template < class Value >
 template < template < class ... > class Container >
-void relation_endpoint_value_inserter<Value,
-  typename std::enable_if<
-    std::is_integral<int>::value>::type
-
-//    std::is_base_of<object_holder, Value>::value>::type
-  >::serialize(const char *id, has_many<Value, Container> &x, const char *, const char *)
+void relation_endpoint_value_inserter<Value>::serialize(const char *id, has_many<Value, Container> &x, cascade_type)
 {
   if (field_ != id) {
     return;

@@ -6,6 +6,7 @@
 #define OOS_ABSTRACT_HAS_MANY_HPP
 
 #include "matador/object/object_holder.hpp"
+#include "matador/object/object_proxy_accessor.hpp"
 
 #include <functional>
 
@@ -26,7 +27,7 @@ class object_proxy;
 
 /// @cond MATADOR_DEV
 
-class abstract_has_many
+class abstract_has_many : public detail::object_proxy_accessor
 {
 public:
   typedef size_t size_type;
@@ -38,6 +39,10 @@ public:
   std::string item_field() const { return item_field_; }
 
   object_store* store() const { return ostore_; }
+
+protected:
+  void increment_reference_count(const object_holder &holder) const;
+  void decrement_reference_count(const object_holder &holder) const;
 
 protected:
   friend class detail::object_inserter;

@@ -233,7 +233,13 @@ public:
 //  }
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *)
+  void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *, cascade_type cascade)
+  {
+    serialize(id, x, cascade);
+  }
+
+  template<class T, template<class ...> class C>
+  void serialize(const char *id, basic_has_many<T, C> &x, cascade_type)
   {
     std::string id_oid(id);
     id_oid += ".oid";

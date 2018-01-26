@@ -510,9 +510,10 @@ public:
   object_ptr<T> insert(T *o)
   {
     if (o == nullptr) {
-      throw object_exception("object is null");
+      throw_object_exception("object is null");
     }
     object_inserter_.reset();
+//    auto proxy = std::make_unique<object_proxy>(o);
     std::unique_ptr<object_proxy> proxy(new object_proxy(o));
     try {
       insert<T>(proxy.get(), true);
@@ -591,21 +592,7 @@ public:
     }
 
     if (check_if_deletable) {
-      auto first = object_deleter_.begin();
-      auto last = object_deleter_.end();
-
-      while (first != last) {
-//        auto p = first->second.proxy;
-        if (!first->second.ignore) {
-//          std::cout << "remove: calling     " << *first->second.proxy << "\n";
-          (first++)->second.remove(notify);
-        } else {
-//          std::cout << "remove: ignoring    " << *first->second.proxy << "\n";
-//          --(*first->second.proxy);
-//          std::cout << "remove: decremented " << *first->second.proxy << "\n";
-          ++first;
-        }
-      }
+      object_deleter_.remove(notify);
     } else {
       // single deletion
       if (object_map_.erase(proxy->id()) != 1) {

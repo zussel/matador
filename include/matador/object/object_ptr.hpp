@@ -95,10 +95,11 @@ public:
    */
   template < object_holder_type OOPT >
   object_pointer(const object_pointer<T, OOPT> &x)
-    : object_holder(OPT, x.proxy_)
+    : object_holder(OPT)
+//    : object_holder(OPT, x.proxy_)
   {
 //    relation_info_ = x.relation_info_;
-//    reset(x.proxy_, x.cascade_);
+    reset(x.proxy_, x.cascade_);
   }
 
   /**
@@ -108,7 +109,7 @@ public:
    */
   self& operator=(T *x)
   {
-    reset(new object_proxy(x), cascade_type::NONE);
+    reset(new object_proxy(x), cascade_);
     return *this;
   }
 

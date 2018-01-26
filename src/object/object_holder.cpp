@@ -14,7 +14,6 @@ object_holder::object_holder(object_holder_type holder_type)
 {}
 
 object_holder::object_holder(const object_holder &x)
-  : oid_(x.oid_)
 {
   reset(x.proxy_, x.cascade_);
 }
@@ -53,10 +52,8 @@ object_holder &object_holder::operator=(object_holder &&x) noexcept
 object_holder::object_holder(object_holder_type holder_type, object_proxy *op)
   : proxy_(op)
   , type_(holder_type)
-  , oid_(0)
 {
   if (proxy_) {
-    oid_ = proxy_->id();
     proxy_->add(this);
   }
 }
@@ -98,6 +95,11 @@ bool object_holder::operator!=(std::nullptr_t) const
   return !(*this == nullptr);
 }
 
+object_holder::operator bool() const noexcept
+{
+  return proxy_ != nullptr;
+}
+
 void object_holder::reset(object_proxy *proxy, cascade_type cascade)
 {
   reset(proxy, cascade, true);
@@ -113,9 +115,14 @@ void object_holder::clear()
   reset(nullptr, cascade_type::ALL);
 }
 
-bool object_holder::empty() const
+bool object_holder::empty() const noexcept
 {
   return proxy_ == nullptr;
+}
+
+bool object_holder::valid() const noexcept
+{
+  return !empty();
 }
 
 void object_holder::reset(const std::shared_ptr<basic_identifier> &id)
@@ -126,25 +133,14 @@ void object_holder::reset(const std::shared_ptr<basic_identifier> &id)
   reset(new object_proxy(id), cascade_type::NONE);
 }
 
-bool
-object_holder::is_loaded() const
+bool object_holder::is_loaded() const
 {
   return (proxy_ && proxy_->obj());
 }
 
-unsigned long
-object_holder::id() const
+unsigned long object_holder::id() const
 {
-  return (proxy_ ? proxy_->id() : oid_);
-}
-
-void object_holder::id(unsigned long id)
-{
-  if (proxy_) {
-    throw std::logic_error("proxy already set");
-  } else {
-    oid_ = id;
-  }
+  return (proxy_ ? proxy_->id() : 0);
 }
 
 object_store *object_holder::store() const
@@ -250,11 +246,9 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade, bool notify
     return;
   }
   if (proxy_) {
-    oid_ = 0;
     proxy_->remove(this);
     if (is_internal() && is_inserted_ && proxy_->ostore_) {
       --(*proxy_);
-
       if (relation_info_ && notify_foreign_relation) {
         relation_info_->remove_value_from_foreign(owner_, proxy_);
       }
@@ -270,7 +264,6 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade, bool notify
   proxy_ = proxy;
   cascade_ = cascade;
   if (proxy_) {
-    oid_ = proxy_->id();
     if (is_internal() && is_inserted_ && proxy_->ostore_) {
       ++(*proxy_);
       if (relation_info_ && notify_foreign_relation) {

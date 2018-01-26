@@ -23,6 +23,7 @@
 #include "matador/object/relation_endpoint_value_remover.hpp"
 #include "matador/object/basic_has_many_to_many_item.hpp"
 #include "matador/object/has_many_item_holder.hpp"
+#include "matador/object/object_proxy_accessor.hpp"
 
 #include <string>
 #include <functional>
@@ -42,7 +43,7 @@ namespace detail {
 /**
  * Basic relation endpoint providing the interface
  */
-struct MATADOR_OBJECT_API basic_relation_endpoint
+struct MATADOR_OBJECT_API basic_relation_endpoint : public object_proxy_accessor
 {
   enum relation_type {
     BELONGS_TO, HAS_ONE, HAS_MANY
@@ -76,6 +77,12 @@ struct MATADOR_OBJECT_API basic_relation_endpoint
   void set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj);
   template < class T >
   void set_has_many_item_proxy(has_many_item_holder<T> &holder, object_proxy *proxy);
+
+
+  void increment_reference_count(const object_holder &holder);
+  void decrement_reference_count(const object_holder &holder);
+
+  void mark_holder_as_inserted(basic_has_many_item_holder &holder) const;
 
   std::string field;
   std::string type_name;
@@ -191,6 +198,8 @@ template < class Value, class Owner >
 struct many_to_one_endpoint<Value, Owner, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type>
   : public relation_endpoint<Value>
 {
+  typedef has_many_item_holder<Value> value_type;
+
   many_to_one_endpoint(const std::string &field, prototype_node *node)
     : relation_endpoint<Value>(field, node, basic_relation_endpoint::HAS_MANY)
   {}
@@ -245,7 +254,8 @@ template < class Value, class Owner, class Enabled = void >
 struct belongs_to_many_endpoint;
 
 template < class Value, class Owner >
-struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type> : public relation_endpoint<Value>
+struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>
+  : public relation_endpoint<Value>
 {
   belongs_to_many_endpoint(const std::string &field, prototype_node *node)
     : relation_endpoint<Value>(field, node, basic_relation_endpoint::BELONGS_TO)
@@ -267,7 +277,8 @@ struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::
 };
 
 template < class Value, class Owner >
-struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<matador::is_builtin<Value>::value>::type> : public relation_endpoint<Value>
+struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<matador::is_builtin<Value>::value>::type>
+  : public relation_endpoint<Value>
 {
   belongs_to_many_endpoint(const std::string &field, prototype_node *node)
     : relation_endpoint<Value>(field, node, basic_relation_endpoint::BELONGS_TO)

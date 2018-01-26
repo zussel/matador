@@ -10,7 +10,7 @@ void object_inserter::insert(object_proxy *proxy, T *o, bool notify)
 
   notify_ = notify;
 
-  object_proxy_stack_.push(proxy);
+  proxy_stack_.push(proxy);
 
   modified_marker_ = [](object_store &store, object_proxy *oproxy) {
     store.mark_modified<T>(oproxy);
@@ -19,7 +19,7 @@ void object_inserter::insert(object_proxy *proxy, T *o, bool notify)
   if (proxy->obj()) {
     matador::access::serialize(*this, *o);
   }
-  object_proxy_stack_.pop();
+  proxy_stack_.pop();
 }
 
 template<class T>
@@ -35,33 +35,44 @@ void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cas
   }
   x.is_inserted_ = true;
   x.cascade_ = cascade;
-  x.owner_ = object_proxy_stack_.top();
+  x.owner_ = proxy_stack_.top();
 
   prototype_node *node = x.owner_->node();
   auto i = node->find_endpoint(std::type_index(typeid(T)));
-  if (i != node->endpoint_end()) {
+  if (!proxy_stack_.top()->node()->is_relation_node() && i != node->endpoint_end()) {
     x.relation_info_ = i->second;
-  }
-
-  // object was seen by inserter stop inserting
-  if (!object_proxies_.insert(x.proxy_).second) {
-    return;
+    if (x.proxy_ && !x.relation_info_->foreign_endpoint.expired()) {
+      x.relation_info_->insert_value_into_foreign(x.owner_, x.proxy_);
+//      ++(*x.owner_);
+    }
   }
 
   if (!x.proxy_) {
     return;
   }
 
-  if (x.id()) {
-    // do the pointer count
-    object_proxy_stack_.push(x.proxy_);
-    matador::access::serialize(*this, *(T*)x.ptr());
-    object_proxy_stack_.pop();
-  } else {
-    // new object
-    ostore_.insert<T>(x.proxy_, notify_);
+  if (x.owner_->node()->is_relation_node()) {
+    ++(*x.owner_);
   }
+
   ++(*x.proxy_);
+
+  // object was seen by inserter stop inserting
+  if (!object_proxies_.insert(x.proxy_).second) {
+    return;
+  }
+
+  if (cascade & cascade_type::INSERT) {
+    if (x.id() > 0) {
+      // do the pointer count
+      proxy_stack_.push(x.proxy_);
+      matador::access::serialize(*this, *(T *) x.ptr());
+      proxy_stack_.pop();
+    } else {
+      // new object
+      ostore_.insert<T>(x.proxy_, notify_);
+    }
+  }
 }
 
 template<class T>
@@ -71,37 +82,49 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
   }
   x.is_inserted_ = true;
   x.cascade_ = cascade;
-  x.owner_ = object_proxy_stack_.top();
+  x.owner_ = proxy_stack_.top();
 
   prototype_node *node = x.owner_->node();
   auto i = node->find_endpoint(std::type_index(typeid(T)));
-  if (i != node->endpoint_end()) {
+  if (!proxy_stack_.top()->node()->is_relation_node() && i != node->endpoint_end()) {
     x.relation_info_ = i->second;
-  }
 
-  // object was seen by inserter stop inserting
-  if (!object_proxies_.insert(x.proxy_).second) {
-    return;
+    if (x.proxy_ && !x.relation_info_->foreign_endpoint.expired()) {
+      x.relation_info_->insert_value_into_foreign(x.owner_, x.proxy_);
+//      ++(*x.owner_);
+    }
   }
 
   if (!x.proxy_) {
     return;
   }
 
-  if (x.id()) {
-    // do the pointer count
-    object_proxy_stack_.push(x.proxy_);
-    matador::access::serialize(*this, *(T*)x.ptr());
-    object_proxy_stack_.pop();
-  } else {
-    // new object
-    ostore_.insert<T>(x.proxy_, notify_);
+  if (x.owner_->node()->is_relation_node()) {
+    ++(*x.owner_);
   }
+
   ++(*x.proxy_);
+
+  // object was seen by inserter stop inserting
+  if (!object_proxies_.insert(x.proxy_).second) {
+    return;
+  }
+
+  if (cascade & cascade_type::INSERT) {
+    if (x.id() > 0) {
+      // do the pointer count
+      proxy_stack_.push(x.proxy_);
+      matador::access::serialize(*this, *(T *) x.ptr());
+      proxy_stack_.pop();
+    } else {
+      // new object
+      ostore_.insert<T>(x.proxy_, notify_);
+    }
+  }
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*,
+void object_inserter::serialize(const char *, basic_has_many<T, C> &x, cascade_type cascade,
                                 typename std::enable_if<!matador::is_builtin<T>::value>::type*)
 {
   // initialize the has many relation
@@ -109,14 +132,14 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   // relation table name
   // owner column name
   // item column name
-  if (object_proxy_stack_.empty()) {
+  if (proxy_stack_.empty()) {
     throw object_exception("no owner for has many relation");
   }
 
   if (x.ostore_) {
     return;
   }
-  object_proxy *proxy = object_proxy_stack_.top();
+  object_proxy *proxy = proxy_stack_.top();
   x.owner_id_ = proxy->pk();
   x.owner_ = proxy;
   x.ostore_ = &ostore_;
@@ -133,15 +156,19 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
 
   while (first != last) {
     auto j = first++;
-    if (!(*j).is_inserted()) {
+
+    if (cascade & cascade_type::INSERT) {
       // item is not in store, insert it
       ostore_.insert(*j, false);
+    }
+    if (!j.holder_item().is_inserted()) {
+      x.relation_info_->insert_holder(ostore_, j.holder_item(), proxy);
     }
   }
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*,
+void object_inserter::serialize(const char *, basic_has_many<T, C> &x, cascade_type,
                                 typename std::enable_if<matador::is_builtin<T>::value>::type*)
 {
   // initialize the has many relation
@@ -149,14 +176,14 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   // relation table name
   // owner column name
   // item column name
-  if (object_proxy_stack_.empty()) {
+  if (proxy_stack_.empty()) {
     throw object_exception("no owner for has many relation");
   }
 
   if (x.ostore_) {
     return;
   }
-  object_proxy *proxy = object_proxy_stack_.top();
+  object_proxy *proxy = proxy_stack_.top();
   x.owner_id_ = proxy->pk();
   x.owner_ = proxy;
   x.ostore_ = &ostore_;

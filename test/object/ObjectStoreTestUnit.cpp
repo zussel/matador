@@ -510,7 +510,7 @@ void ObjectStoreTestUnit::test_multiple_simple_objects()
   size_t elem_size = 10;
   // create 10 objects
   for (size_t i = 0; i < elem_size; ++i) {
-    Item *a = ostore_.create<Item>();
+    auto *a = ostore_.create<Item>();
     
     UNIT_ASSERT_NOT_NULL(a, "couldn't create object of type <Item>");
     
@@ -533,7 +533,7 @@ void ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
   // create 10 objects
   size_t elem_size = 10;
   for (size_t i = 0; i < elem_size; ++i) {
-    ObjectItem<Item> *s = ostore_.create<ObjectItem<Item>>();
+    auto *s = ostore_.create<ObjectItem<Item>>();
 
     UNIT_ASSERT_NOT_NULL(s, "couldn't create object of type <ObjectItem>");
     
@@ -558,7 +558,7 @@ void ObjectStoreTestUnit::test_delete_object()
 
   item_ptr item = ostore_.insert(new Item("item 1"));
 
-  TestItem *ti = new TestItem;
+  auto *ti = new TestItem;
   ti->ref(item);
   
   test_item_ptr testitem = ostore_.insert(ti);

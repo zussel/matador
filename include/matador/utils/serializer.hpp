@@ -32,6 +32,7 @@ class date;
 class varchar_base;
 class identifiable_holder;
 class basic_identifier;
+class abstract_has_many;
 
 /**
  * @brief A base class to serialize objects
@@ -45,7 +46,7 @@ class basic_identifier;
 class OOS_UTILS_API serializer
 {
 public:
-  virtual ~serializer() {}
+  virtual ~serializer() = default;
 
   /**
    * @brief Serialize an object of type T.
@@ -227,8 +228,9 @@ public:
    * @param owner_id The name of the owner field
    * @param item_id The name of the item field
    */
-  template < class HAS_MANY >
-  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+//  template < class HAS_MANY >
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void serialize(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   template <unsigned int S >

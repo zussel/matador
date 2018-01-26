@@ -11,7 +11,7 @@
 using namespace hasmanylist;
 
 OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, const std::string &dns)
-  : unit_test(prefix + "_orm_reload", prefix + " orm test unit")
+  : unit_test(prefix + "_orm_reload", prefix + " orm reload test unit")
   , dns_(dns)
 {
   add_test("load", std::bind(&OrmReloadTestUnit::test_load, this), "test load from table");

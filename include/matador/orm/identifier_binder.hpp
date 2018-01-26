@@ -12,6 +12,9 @@
 
 namespace matador {
 
+class object_holder;
+class abstract_has_many;
+
 namespace detail {
 /// @cond MATADOR_DEV
 
@@ -38,13 +41,14 @@ public:
   void serialize(const char *, identifier<V> &x);
 
 //  template < class V, typename = typename std::enable_if<std::is_base_of<matador::identifiable_holder, V>::value>::type >
-  template < class HAS_ONE >
-  void serialize(const char *, HAS_ONE &, cascade_type) { }
+//  template < class HAS_ONE >
+  void serialize(const char *, object_holder &, cascade_type) { }
 
   void serialize(const char *, char *, size_t) { }
 
-  template < class HAS_MANY >
-  void serialize(const char*, HAS_MANY&, const char*, const char*) {}
+//  template < class HAS_MANY >
+  void serialize(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
+  void serialize(const char*, abstract_has_many&, cascade_type) {}
 
 private:
   void setup(statement<T> *stmt, T *obj, size_t pos);

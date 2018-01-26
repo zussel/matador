@@ -17,7 +17,7 @@ SET (TEST_TOOLS_SOURCES
   utils/SequencerTestUnit.hpp
 )
 
-SET (TEST_HEADER Item.hpp has_many_list.hpp)
+SET (TEST_HEADER Item.hpp has_many_list.hpp Blog.hpp)
 
 SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.cpp

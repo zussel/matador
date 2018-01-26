@@ -111,8 +111,25 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_one <Value> &
 
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value, template<class ...> class Container>
+void node_analyzer<Owner, Observer>::serialize(const char *id, has_many<Value, Container> &x, cascade_type cascade)
+{
+  if (is_builtin<Value>::value) {
+    this->serialize(id, x, node_.type(), typeid(Value).name(), cascade);
+  } else {
+    auto value_node = store_.find<Value>();
+    if (value_node == store_.end()) {
+      this->serialize(id, x, node_.type(), typeid(Value).name(), cascade);
+    } else {
+      this->serialize(id, x, node_.type(), value_node->type(), cascade);
+    }
+  }
+}
+
+template<class Owner, template < class U = Owner > class Observer >
+template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, Container> &,
                                                const char *left_column, const char *right_column,
+                                               cascade_type,
                                                typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   // attach relation table for has many relation
@@ -224,8 +241,9 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, Container> &,
-                                    const char *left_column, const char *right_column,
-                                    typename std::enable_if<is_builtin<Value>::value>::type*)
+                                               const char *left_column, const char *right_column,
+                                               cascade_type,
+                                               typename std::enable_if<is_builtin<Value>::value>::type*)
 {
   // attach relation table for has many relation
   // check if has many item is already attached

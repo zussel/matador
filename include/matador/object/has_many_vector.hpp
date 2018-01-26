@@ -650,8 +650,10 @@ public:
 
       this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
+//      inc_ref_count(holder.value());
       if (!matador::is_builtin<T>::value) {
         this->relation_info_->insert_value_into_foreign(holder, this->owner_);
+//        ++(*this->owner_);
       }
 
       this->mark_modified_owner_(*this->ostore_, this->owner_);
@@ -755,8 +757,10 @@ public:
       while (i != end) {
         if (!matador::is_builtin<T>::value) {
           this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
+//          --(*this->owner_);
         }
         this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
+//        dec_ref_count(i.holder_item().value());
         ++i;
       }
       this->mark_modified_owner_(*this->ostore_, this->owner_);
@@ -771,6 +775,26 @@ public:
   }
 
 private:
+
+
+  template < class V >
+  void inc_ref_count(const V &) {}
+
+  void inc_ref_count(const object_holder &val)
+  {
+    this->increment_reference_count(val);
+  }
+
+  template < class V >
+  void dec_ref_count(const V &) {}
+
+  template < class V >
+  void dec_ref_count(const object_holder &val)
+  {
+    this->decrement_reference_count(val);
+  }
+
+
   void remove_it(holder_type &holder)
   {
     if (this->ostore_) {

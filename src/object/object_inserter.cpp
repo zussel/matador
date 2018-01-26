@@ -11,8 +11,8 @@ object_inserter::~object_inserter() { }
 void object_inserter::reset()
 {
   object_proxies_.clear();
-  while (!object_proxy_stack_.empty()) {
-    object_proxy_stack_.pop();
+  while (!proxy_stack_.empty()) {
+    proxy_stack_.pop();
   }
 }
 

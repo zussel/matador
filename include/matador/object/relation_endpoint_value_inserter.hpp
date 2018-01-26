@@ -29,8 +29,7 @@ template < class Value, class Enable = void >
 class relation_endpoint_value_inserter;
 
 template < class Value >
-class relation_endpoint_value_inserter<Value, typename std::enable_if<std::is_integral<int>::value>::type>
-//class relation_endpoint_value_inserter<Value, typename std::enable_if<std::is_base_of<object_holder, Value>::value>::type>
+class relation_endpoint_value_inserter<Value>
 {
 public:
   template < class Owner >
@@ -50,9 +49,17 @@ public:
   void serialize(const char *id, object_pointer<Value, object_holder_type::BELONGS_TO> &x, cascade_type);
   void serialize(const char *id, object_pointer<Value, object_holder_type::HAS_ONE> &x, cascade_type);
   template < template < class ... > class Container >
-  void serialize(const char *id, has_many<Value, Container> &x, const char*, const char*);
+  void serialize(const char *id, has_many<Value, Container> &x, cascade_type cascade);
+
+  template < template < class ... > class Container >
+  void serialize(const char *id, has_many<Value, Container> &x, const char*, const char*, cascade_type cascade)
+  {
+    serialize(id, x, cascade);
+  }
   template < class T, template < class ... > class Container >
-  void serialize(const char *, has_many<T, Container> &, const char*, const char*) {}
+  void serialize(const char *, has_many<T, Container> &, cascade_type) {}
+  template < class T, template < class ... > class Container >
+  void serialize(const char *, has_many<T, Container> &, const char*, const char*, cascade_type) {}
 
 private:
   std::string field_;

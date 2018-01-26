@@ -41,6 +41,9 @@ template < class T >
 template < class V >
 void relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value && !matador::is_builtin<typename T::right_value_type>::value>::type>::serialize(const char *, belongs_to<V> &x, cascade_type cascade)
 {
+  // increase reference count of has_many_to_xxx item proxy
+  // because there will be an object for this kind of field
+  ++(*proxy_);
   // check wether is left or right side value
   // left side will be determined first
   std::shared_ptr<basic_identifier> pk = x.primary_key();

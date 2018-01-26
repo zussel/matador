@@ -32,6 +32,9 @@ namespace matador {
 
 /// @cond MATADOR_DEV
 
+class object_holder;
+class abstract_has_many;
+
 class basic_attribute_serializer
 {
 public:
@@ -99,10 +102,11 @@ public:
   template < class V >
   void serialize(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
   void serialize(const char *, char*, size_t) {}
-  template < class HAS_ONE >
-  void serialize(const char *, HAS_ONE &, cascade_type) {}
-  template < class HAS_MANY >
-  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+//  template < class HAS_ONE_OR_MANY >
+  void serialize(const char *, object_holder &, cascade_type) {}
+//  template < class HAS_MANY >
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void serialize(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   const T &from_;
@@ -150,10 +154,11 @@ public:
   template < class V >
   void serialize(const char *, V &, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
   void serialize(const char *, char*, size_t) {}
-  template < class HAS_ONE >
-  void serialize(const char *, HAS_ONE &, cascade_type) {}
-  template < class HAS_MANY >
-  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+//  template < class HAS_ONE >
+  void serialize(const char *, object_holder &, cascade_type) {}
+//  template < class HAS_MANY >
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void serialize(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   bool from_;
@@ -191,8 +196,9 @@ public:
     this->success_ = true;
   }
 
-  template < class HAS_MANY >
-  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+//  template < class HAS_MANY >
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void serialize(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   const object_ptr<T> &from_;
@@ -220,11 +226,18 @@ public:
   void serialize(const char *, V &) {}
   void serialize(const char *, char*, std::size_t) {}
 
-  template < class HAS_ONE >
-  void serialize(const char *, HAS_ONE &, cascade_type) { }
+//  template < class HAS_ONE >
+  void serialize(const char *, object_holder &, cascade_type) { }
 
   template<class V, template <class ...> class C>
-  void serialize(const char *, has_many<V, C> &x, const char *, const char *)
+  void serialize(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
+  {
+    x.push_back(from_);
+    this->success_ = true;
+  }
+
+  template<class V, template <class ...> class C>
+  void serialize(const char *, has_many<V, C> &x, cascade_type)
   {
     x.push_back(from_);
     this->success_ = true;
@@ -253,11 +266,18 @@ public:
   void serialize(const char *, V &) {}
   void serialize(const char *, char*, std::size_t) {}
 
-  template < class HAS_ONE >
-  void serialize(const char *, HAS_ONE &, cascade_type) { }
+//  template < class HAS_ONE >
+  void serialize(const char *, object_holder &, cascade_type) { }
 
   template<class V, template <class ...> class C>
-  void serialize(const char *, has_many<V, C> &x, const char *, const char *)
+  void serialize(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
+  {
+    x.push_back(from_);
+    this->success_ = true;
+  }
+
+  template<class V, template <class ...> class C>
+  void serialize(const char *, has_many<V, C> &x, cascade_type)
   {
     x.push_back(from_);
     this->success_ = true;
@@ -314,10 +334,11 @@ public:
       this->success_ = true;
     }
   }
-  template < class HAS_ONE >
-  void serialize(const char *, HAS_ONE &, cascade_type) {}
-  template < class HAS_MANY >
-  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+//  template < class HAS_ONE >
+  void serialize(const char *, object_holder &, cascade_type) {}
+//  template < class HAS_MANY >
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void serialize(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   const char* from_ = nullptr;
@@ -369,10 +390,11 @@ public:
   void serialize(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
 
   void serialize(const char *, char*, size_t) {}
-  template < class HAS_ONE >
-  void serialize(const char *, HAS_ONE &, cascade_type) {}
-  template < class HAS_MANY >
-  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+//  template < class HAS_ONE >
+  void serialize(const char *, object_holder &, cascade_type) {}
+//  template < class HAS_MANY >
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void serialize(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   T &to_;
@@ -403,8 +425,9 @@ public:
     to_ = x;
   }
 
-  template < class HAS_MANY >
-  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+//  template < class HAS_MANY >
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void serialize(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   object_ptr<T> &to_;
@@ -432,11 +455,18 @@ public:
   void serialize(const char *, V &) {}
   void serialize(const char *, char*, size_t) {}
 
-  template < class HAS_ONE >
-  void serialize(const char *, HAS_ONE &, cascade_type) {}
+//  template < class HAS_ONE >
+  void serialize(const char *, object_holder &, cascade_type) {}
 
   template<class V, template <class ...> class C>
-  void serialize(const char *, has_many<V, C> &x, const char *, const char *)
+  void serialize(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
+  {
+    x.remove(to_);
+    this->success_ = true;
+  }
+
+  template<class V, template <class ...> class C>
+  void serialize(const char *, has_many<V, C> &x, cascade_type)
   {
     x.remove(to_);
     this->success_ = true;
@@ -464,11 +494,18 @@ public:
   void serialize(const char *, V &) {}
   void serialize(const char *, char*, size_t) {}
 
-  template < class HAS_ONE >
-  void serialize(const char *, HAS_ONE &, cascade_type) {}
+//  template < class HAS_ONE >
+  void serialize(const char *, object_holder &, cascade_type) {}
 
   template<class V, template <class ...> class C>
-  void serialize(const char *, has_many<V, C> &x, const char *, const char *)
+  void serialize(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
+  {
+    x.remove(to_);
+    this->success_ = true;
+  }
+
+  template<class V, template <class ...> class C>
+  void serialize(const char *, has_many<V, C> &x, cascade_type)
   {
     x.remove(to_);
     this->success_ = true;
@@ -598,7 +635,8 @@ public:
     success_ = true;
   }
 
-  void serialize(const char*, abstract_has_many&, const char*, const char*) {}
+  void serialize(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
+  void serialize(const char*, abstract_has_many&, cascade_type) {}
 
 private:
   std::string &to_;
@@ -658,7 +696,8 @@ public:
   void serialize(const char*, belongs_to<V> &, cascade_type) {}
   template < class V >
   void serialize(const char*, has_one<V> &, cascade_type) {}
-  void serialize(const char*, abstract_has_many&, const char*, const char*) {}
+  void serialize(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
+  void serialize(const char*, abstract_has_many&, cascade_type) {}
   template < class V >
   void serialize(const char*, const identifier<V> &) {}
 

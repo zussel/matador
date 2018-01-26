@@ -68,10 +68,16 @@ public:
   void serialize(const char *, has_one<T> &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &, const char *, const char *,
+  void serialize(const char *id, basic_has_many<T, C> &x, const char*, const char*, cascade_type cascade)
+  {
+    serialize(id, x, cascade);
+  }
+
+  template<class T, template<class ...> class C>
+  void serialize(const char *id, basic_has_many<T, C> &, cascade_type ,
                  typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0);
   template<class T, template<class ...> class C>
-  void serialize(const char *, basic_has_many<T, C> &, const char *, const char *,
+  void serialize(const char *, basic_has_many<T, C> &, cascade_type ,
                  typename std::enable_if<matador::is_builtin<T>::value>::type* = 0);
 
 private:
@@ -79,7 +85,7 @@ private:
 
   t_object_proxy_set object_proxies_;
 
-  std::stack<object_proxy *> object_proxy_stack_;
+  std::stack<object_proxy *> proxy_stack_;
 
   object_store &ostore_;
 

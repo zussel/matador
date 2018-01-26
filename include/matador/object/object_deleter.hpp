@@ -6,6 +6,7 @@
 #include "matador/object/basic_has_many.hpp"
 
 #include <unordered_set>
+#include <stack>
 
 #ifdef _MSC_VER
 #ifdef matador_object_EXPORTS
@@ -39,14 +40,12 @@ namespace detail {
  * can be accepted via the iterators.
  */
 class MATADOR_OBJECT_API object_deleter {
-  private:
+private:
   struct MATADOR_OBJECT_API t_object_count {
     typedef void (*t_remove_func)(object_proxy*, bool);
     template < class T >
-    t_object_count(object_proxy *oproxy, bool ignr = true, T* = nullptr)
-    : proxy(oproxy)
-      , reference_counter(oproxy->reference_count())
-      , ignore(ignr)
+    explicit t_object_count(object_proxy *oproxy, T* = nullptr)
+      : proxy(oproxy)
       , remove_func(&remove_object<T>)
     {}
 
@@ -56,26 +55,43 @@ class MATADOR_OBJECT_API object_deleter {
     static void remove_object(object_proxy *proxy, bool notify);
 
     object_proxy *proxy;
-    unsigned long reference_counter;
-    bool ignore;
 
     t_remove_func remove_func;
   };
 
-  private:
-  typedef std::map<unsigned long, t_object_count> t_object_count_map;
+  struct t_relation_removal
+  {
+    t_relation_removal(object_proxy *oproxy, object_proxy *oowner, std::shared_ptr<detail::basic_relation_endpoint> rendpoint)
+      : proxy(oproxy), owner(oowner), endpoint(std::move(rendpoint))
+    {}
 
-  public:
-  typedef t_object_count_map::iterator iterator;
+    t_relation_removal(const t_relation_removal&) = default;
+    t_relation_removal(t_relation_removal&&) = default;
+
+    t_relation_removal& operator=(const t_relation_removal&) = default;
+    t_relation_removal& operator=(t_relation_removal&&) = default;
+
+    void remove();
+
+    object_proxy *proxy;
+    object_proxy *owner = nullptr;
+    std::shared_ptr<detail::basic_relation_endpoint> endpoint;
+  };
+private:
+  typedef std::map<unsigned long, t_object_count> t_objects_to_remove_map;
+  typedef std::vector<t_relation_removal> t_relations_to_remove_map;
+
+public:
+  typedef t_objects_to_remove_map::iterator iterator;
   /**< Shortcut the serializable map iterator */
-  typedef t_object_count_map::const_iterator const_iterator; /**< Shortcut the serializable map const_iterator */
+  typedef t_objects_to_remove_map::const_iterator const_iterator; /**< Shortcut the serializable map const_iterator */
 
   /**
    * Creates an instance of the object_deleter
    */
-  object_deleter() { }
+  object_deleter() = default;
 
-  ~object_deleter() { }
+  ~object_deleter() = default;
 
   /**
    * Checks wether the given serializable is deletable.
@@ -85,6 +101,8 @@ class MATADOR_OBJECT_API object_deleter {
    */
   template<class T>
   bool is_deletable(object_proxy *proxy, T *o);
+
+  void remove(bool notify);
 
   /**
    * @brief Returns the first deletable serializable.
@@ -106,25 +124,34 @@ class MATADOR_OBJECT_API object_deleter {
   void serialize(T &x) { matador::access::serialize(*this, x); }
 
   template<class T>
-  void serialize(const char *, T &) { }
-  void serialize(const char *, char *, size_t) { }
+  void serialize(const char *, T &);
+  void serialize(const char *, char *, size_t);
 
   template<class T>
   void serialize(const char *, belongs_to<T> &x, cascade_type cascade);
   template<class T>
   void serialize(const char *, has_one<T> &x, cascade_type cascade);
-  template<class T, template<class ...> class C>
-  void serialize(const char *, basic_has_many<T, C> &, const char *, const char *, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0);
-  template<class T, template<class ...> class C>
-  void serialize(const char *, basic_has_many<T, C> &, const char *, const char *, typename std::enable_if<matador::is_builtin<T>::value>::type* = 0) {}
+  template<class T, template<class ...> class Container>
+  void serialize(const char *id, basic_has_many<T, Container> &x, const char *, const char *, cascade_type cascade)
+  {
+    serialize(id, x, cascade);
+  }
+
+  template<class T, template<class ...> class Container>
+  void serialize(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
+  template<class T, template<class ...> class Container>
+  void serialize(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<is_builtin<T>::value>::type* = 0) {}
   template<class T>
   void serialize(const char *id, identifier<T> &x);
 
+private:
   bool check_object_count_map() const;
 
-  private:
-  t_object_count_map object_count_map;
-  std::unordered_set<object_proxy*> visited_objects_;
+private:
+  t_objects_to_remove_map objects_to_remove_;
+  t_relations_to_remove_map relations_to_remove_;
+  std::unordered_map<object_proxy*, long> visited_objects_;
+  std::stack<object_proxy*> proxy_stack_;
 };
 
 /// @endcond

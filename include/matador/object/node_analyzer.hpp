@@ -37,10 +37,14 @@ public:
   void serialize(const char *id, belongs_to<Value> &x, cascade_type);
   template<class Value>
   void serialize(const char *id, has_one<Value> &x, cascade_type);
+
   template<class Value, template<class ...> class Container>
-  void serialize(const char *, has_many<Value, Container> &, const char *, const char *, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void serialize(const char *id, has_many<Value, Container> &x, cascade_type cascade);
+
   template<class Value, template<class ...> class Container>
-  void serialize(const char *, has_many<Value, Container> &, const char *, const char *, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  void serialize(const char *, has_many<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  template<class Value, template<class ...> class Container>
+  void serialize(const char *, has_many<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
 
 private:
   /**

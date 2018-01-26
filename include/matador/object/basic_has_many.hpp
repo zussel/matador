@@ -16,6 +16,7 @@ namespace matador {
 
 namespace detail {
 class object_inserter;
+class object_deleter;
 
 template < class Value, class Enable >
 class relation_endpoint_value_inserter;
@@ -166,6 +167,7 @@ public:
 
 protected:
 
+  friend class detail::object_deleter;
   friend class detail::object_inserter;
   friend class object_store;
   friend class object_serializer;

@@ -209,7 +209,7 @@ public:
   {
     s.serialize("id", id);
     s.serialize("name", name);
-    s.serialize("object_item_list", items, "list_id", "object_item_id");
+    s.serialize("object_item_list", items, "list_id", "object_item_id", matador::cascade_type::NONE);
   }
 
   iterator begin() { return items.begin(); }
@@ -268,7 +268,7 @@ public:
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize("id", id_);
-    serializer.serialize("books", book_list_, "book_list_id", "book_id");
+    serializer.serialize("books", book_list_, "book_list_id", "book_id", matador::cascade_type::NONE);
   }
 
   void add(const matador::object_ptr<book> &b)
@@ -385,7 +385,7 @@ struct department
   {
     serializer.serialize("id", id);
     serializer.serialize("name", name);
-    serializer.serialize("employee"    , employees, "department", "id");
+    serializer.serialize("employee"    , employees, "department", "id", matador::cascade_type::NONE);
     //                    name of table, container,  name of member
     //                                   to serialize
   }
@@ -404,7 +404,7 @@ public:
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(*matador::base_class<person>(this));
-    serializer.serialize("student_course", courses, "student_id", "course_id");
+    serializer.serialize("student_course", courses, "student_id", "course_id", matador::cascade_type::NONE);
   }
 
   matador::has_many<course> courses;
@@ -422,7 +422,7 @@ public:
   {
     serializer.serialize("id", id);
     serializer.serialize("title", title);
-    serializer.serialize("student_course", students, "student_id", "course_id");
+    serializer.serialize("student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
   }
 
   matador::identifier<unsigned long> id;
@@ -434,8 +434,8 @@ struct address;
 
 struct citizen : public person
 {
-  citizen() {}
-  citizen(const std::string &name, const matador::date &bdate = matador::date(), unsigned h = 170) : person(name, bdate, h) {}
+  citizen() = default;
+  explicit citizen(const std::string &name, const matador::date &bdate = matador::date(), unsigned h = 170) : person(name, bdate, h) {}
 
   matador::has_one<address> address_;
 
@@ -443,7 +443,7 @@ struct citizen : public person
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(*matador::base_class<person>(this));
-    serializer.serialize("address", address_, matador::cascade_type::NONE);
+    serializer.serialize("address", address_, matador::cascade_type::ALL);
   }
 };
 
@@ -454,7 +454,7 @@ struct address
   matador::varchar<255> city;
   matador::belongs_to<citizen> citizen_;
 
-  address() {}
+  address() = default;
   address(const std::string &str, const std::string &c)
     : street(str), city(c)
   {}
@@ -654,7 +654,7 @@ public:
   {
     serializer.serialize("id", id);
     serializer.serialize("name", name);
-    serializer.serialize("child", children, matador::cascade_type::REMOVE);
+    serializer.serialize("child", children, matador::cascade_type::ALL);
   }
 };
 
@@ -672,7 +672,7 @@ public:
   {
     serializer.serialize("id", id);
     serializer.serialize("name", name);
-    serializer.serialize("children", children, "vector_id", "child_id");
+    serializer.serialize("children", children, "vector_id", "child_id", matador::cascade_type::ALL);
   }
 
   matador::identifier<unsigned long> id;
@@ -694,7 +694,7 @@ public:
   {
     serializer.serialize("id", id);
     serializer.serialize("name", name);
-    serializer.serialize("children", children, "list_id", "child_id");
+    serializer.serialize("children", children, "list_id", "child_id", matador::cascade_type::ALL);
   }
 
   matador::identifier<unsigned long> id;
@@ -716,7 +716,7 @@ public:
   void serialize(S &s)
   {
     s.serialize("id", id);
-    s.serialize("elements", elements, "list_id", "value");
+    s.serialize("elements", elements, "list_id", "value", matador::cascade_type::ALL);
   }
 };
 

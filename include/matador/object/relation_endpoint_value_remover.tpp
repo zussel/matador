@@ -53,7 +53,7 @@ void relation_endpoint_value_remover<Value,
   typename std::enable_if<
 //    std::is_base_of<object_holder, Value>::value>::type
     std::is_integral<int>::value>::type
->::serialize(const char *id, has_many<Value, Container> &x, const char *, const char *)
+>::serialize(const char *id, has_many<Value, Container> &x, cascade_type)
 {
   if (field_ != id) {
     return;

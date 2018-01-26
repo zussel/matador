@@ -28,6 +28,21 @@ void matador::detail::basic_relation_endpoint::remove_value_from_foreign(object_
   }
 }
 
+void basic_relation_endpoint::increment_reference_count(const object_holder &holder)
+{
+  ++(*(this->proxy(holder)));
+}
+
+void basic_relation_endpoint::decrement_reference_count(const object_holder &holder)
+{
+  --(*(this->proxy(holder)));
+}
+
+void basic_relation_endpoint::mark_holder_as_inserted(basic_has_many_item_holder &holder) const
+{
+  holder.is_inserted_ = true;
+}
+
 std::ostream& operator<<(std::ostream &stream, const basic_relation_endpoint &endpoint)
 {
   stream << "relation " << endpoint.node->type() << "::" << endpoint.field << " (" << endpoint.type_name << ")";

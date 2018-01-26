@@ -28,6 +28,8 @@ namespace matador {
 
 class basic_identifier;
 class prototype_node;
+class object_holder;
+class abstract_has_many;
 
 /// @cond MATADOR_DEV
 
@@ -79,11 +81,12 @@ public:
 
   void serialize(const char*, char*, size_t) {}
 
-  template < class HAS_ONE >
-  void serialize(const char*, HAS_ONE&, cascade_type) {}
+//  template < class HAS_ONE >
+  void serialize(const char*, object_holder&, cascade_type) {}
 
-  template < class HAS_MANY >
-  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+//  template < class HAS_MANY >
+  void serialize(const char *, abstract_has_many&, const char *, const char *, cascade_type) {}
+  void serialize(const char *, abstract_has_many&, cascade_type) {}
 
   template < class V >
   void serialize(const char *, identifier<V> &x)
