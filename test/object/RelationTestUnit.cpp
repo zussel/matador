@@ -65,6 +65,7 @@ void RelationTestUnit::test_has_one()
   auto child1 = store.insert(new child("child 1"));
 
   UNIT_ASSERT_TRUE(child1.id() > 0UL, "id must be greater zero");
+  UNIT_ASSERT_EQUAL(child1.reference_count(), 0UL, "ref count must be zero");
 
   auto m1 = store.insert(new master("m1", child1));
 
@@ -76,6 +77,7 @@ void RelationTestUnit::test_has_one()
   m1->children = nullptr;
 
   UNIT_ASSERT_NULL(m1->children.get(), "id must be null");
+  UNIT_ASSERT_EQUAL(child1.reference_count(), 0UL, "ref count must be zero");
 
   store.remove(m1);
 
