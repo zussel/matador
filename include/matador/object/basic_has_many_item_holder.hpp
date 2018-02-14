@@ -8,7 +8,7 @@
 namespace matador {
 
 namespace detail {
-class basic_relation_endpoint;
+struct basic_relation_endpoint;
 class object_inserter;
 }
 

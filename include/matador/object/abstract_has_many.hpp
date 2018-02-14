@@ -10,6 +10,20 @@
 
 #include <functional>
 
+#ifdef _MSC_VER
+#ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
+    #define EXPIMP_OBJECT_TEMPLATE
+  #else
+    #define MATADOR_OBJECT_API __declspec(dllimport)
+    #define EXPIMP_OBJECT_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define MATADOR_OBJECT_API
+#endif
+
 namespace matador {
 
 /**
@@ -29,7 +43,7 @@ class object_proxy;
 
 /// @cond MATADOR_DEV
 
-class abstract_has_many : public detail::object_proxy_accessor
+class MATADOR_OBJECT_API abstract_has_many : public detail::object_proxy_accessor
 {
 public:
   typedef size_t size_type;

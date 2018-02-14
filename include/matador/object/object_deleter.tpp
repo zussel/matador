@@ -99,7 +99,7 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
         --current_proxy->second;
       }
     }
-    visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1)).first;
+    visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1));
 
 //    auto foreign_endpoint = x.relation_info_->foreign_endpoint.lock();
   }
