@@ -5,7 +5,7 @@ __Version 0.5.0__
 
 Take your database by the horns.
 
-[![Build Status](https://travis-ci.org/zussel/matador.png?branch=master)](https://travis-ci.org/zussel/matador)
+[![Build Status](https://travis-ci.org/zussel/matador.png?branch=develop)](https://travis-ci.org/zussel/matador)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/zussel/matador?svg=true)](https://ci.appveyor.com/project/zussel/matador)
 [![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=master)](https://coveralls.io/github/zussel/matador?branch=develop)
 [![Gitter](https://img.shields.io/gitter/room/zussel/oos.svg)](https://gitter.im/oos-orm/Lobby)
