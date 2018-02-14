@@ -14,7 +14,7 @@ public:
   ~BlogUnitTest() override = default;
 
   void test_blog_single_post();
-  void test_blog();
+  void test_blog_multiple_post();
 
 private:
   std::string dns_;

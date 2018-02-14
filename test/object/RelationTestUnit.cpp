@@ -1026,7 +1026,7 @@ void RelationTestUnit::test_blog_single_post()
 
   store.remove(post1);
 
-  UNIT_ASSERT_EQUAL(posts.size(), 0UL, "size must be three");
+  UNIT_ASSERT_EQUAL(posts.size(), 0UL, "size must be zero");
   UNIT_ASSERT_EQUAL(me->posts.size(), 0UL, "size must be zero");
   UNIT_ASSERT_EQUAL(me.reference_count(), 0UL, "ref count must be 0");
   UNIT_ASSERT_EQUAL(main->posts.size(), 0UL, "size must be zero");

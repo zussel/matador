@@ -161,7 +161,11 @@ public:
    *
    * @param item Element to be appended
    */
-  void append(const typename iterator::holder_type &item) { holder_container_.push_back(item); }
+  void append(const typename iterator::holder_type &item)
+  {
+    this->mark_holder_as_inserted(const_cast<typename iterator::holder_type &>(item));
+    holder_container_.push_back(item);
+  }
 
   /// @cond MATADOR_DEV
 
