@@ -74,7 +74,7 @@ public:
 
 public:
   template < class T >
-  modified_marker(T*)
+  explicit modified_marker(T*)
     : marker_(&marker_func<T>)
   {}
 
@@ -110,7 +110,7 @@ private:
  */
 class MATADOR_OBJECT_API object_store
 {
-private:
+public:
   object_store(const object_store&) = delete;
   object_store& operator=(const object_store&) = delete;
 
@@ -124,7 +124,7 @@ public:
   struct null_observer : public object_store_observer<T>
   {
     template < class V >
-    null_observer(const null_observer<V> *) {}
+    explicit null_observer(const null_observer<V> *) {}
     void on_attach(prototype_node &, T &) override {}
     void on_detach(prototype_node &, T &) override {}
     void on_insert(object_proxy &) override {}
