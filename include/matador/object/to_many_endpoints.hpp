@@ -168,9 +168,11 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
   void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
-    auto itemptr = store.insert(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column));
+    std::unique_ptr<object_proxy> proxy(new object_proxy(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column)));
+    auto itemptr = store.insert<has_one_to_many_item<Owner, Value>>(proxy.release(), true);
     this->increment_reference_count(holder.value());
-    this->increment_reference_count(itemptr);
+    //this->increment_reference_count(itemptr);
+    ++(*itemptr);
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
