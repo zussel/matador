@@ -26,7 +26,7 @@ public:
   bool is_inserted() const { return is_inserted_; }
 
 protected:
-  friend class detail::basic_relation_endpoint;
+  friend struct detail::basic_relation_endpoint;
   friend class detail::object_inserter;
   friend class abstract_has_many;
 
