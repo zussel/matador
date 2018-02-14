@@ -12,7 +12,8 @@ void object_deleter::remove(bool notify)
 {
   // first clear all relations
   for (auto &relation_to_remove : relations_to_remove_) {
-    relation_to_remove.remove();
+    relation_to_remove();
+//    relation_to_remove.remove();
   }
 
   // second remove all objects/proxies
@@ -35,16 +36,7 @@ object_deleter::iterator object_deleter::end()
   return objects_to_remove_.end();
 }
 
-void object_deleter::serialize(const char *, char *, size_t)
-{
-  if (!proxy_stack_.top()->node()->is_relation_node()) {
-    return;
-  }
-  auto curr_obj = visited_objects_.find(proxy_stack_.top());
-  if (curr_obj != visited_objects_.end()) {
-//    --curr_obj->second;
-  }
-}
+void object_deleter::serialize(const char *, char *, size_t) {}
 
 bool object_deleter::check_object_count_map() const
 {
@@ -52,8 +44,9 @@ bool object_deleter::check_object_count_map() const
   {
     auto p = visited_objects_.find(o.second.proxy);
     if (p != visited_objects_.end()) {
-      auto &pp = *p;
+//      auto &pp = *p;
       if (p->second > 0) {
+//        std::cout << *p->first << " isn't deletable\n";
         return false;
       } else if (p->second < 0) {
         throw_object_exception("reference count of " << *p->first << " is less zero (" << p->second << ")");
@@ -66,7 +59,7 @@ bool object_deleter::check_object_count_map() const
 void object_deleter::t_relation_removal::remove()
 {
   if (owner && endpoint) {
-    endpoint->remove_value_from_foreign(proxy, owner);
+//    endpoint->remove_value_from_foreign(holder, owner);
   }
 }
 

@@ -34,7 +34,7 @@ namespace detail {
  * inserted into the serializable store.
  * This class does these tasks.
  */
-class MATADOR_OBJECT_API object_inserter {
+class MATADOR_OBJECT_API object_inserter : public object_proxy_accessor {
 public:
   /**
    * @brief Creates an object_inserter instance.
@@ -46,9 +46,9 @@ public:
    *
    * @param ostore The object_store.
    */
-  object_inserter(object_store &ostore);
+  explicit object_inserter(object_store &ostore);
 
-  ~object_inserter();
+  ~object_inserter() = default;
 
   template<class T>
   void insert(object_proxy *proxy, T *o, bool notify);
@@ -77,6 +77,24 @@ public:
   void serialize(const char *id, basic_has_many<T, C> &, cascade_type ,typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0);
   template<class T, template<class ...> class C>
   void serialize(const char *, basic_has_many<T, C> &, cascade_type ,typename std::enable_if<matador::is_builtin<T>::value>::type* = 0);
+
+private:
+  template < class T >
+  void increment_reference_count(T) const {}
+  template < class T >
+  void increment_reference_count(const object_pointer<T, object_holder_type::OBJECT_PTR> &pointer) const
+  {
+    increment_reference_count(static_cast<const object_holder&>(pointer));
+  }
+  void increment_reference_count(const object_holder &holder) const;
+  template < class T >
+  void decrement_reference_count(T) const {}
+  template < class T >
+  void decrement_reference_count(object_pointer<T, object_holder_type::OBJECT_PTR> &pointer) const
+  {
+    decrement_reference_count(static_cast<object_holder&>(pointer));
+  }
+  void decrement_reference_count(object_holder &holder) const;
 
 private:
   typedef std::set<object_proxy *> t_object_proxy_set;

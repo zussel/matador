@@ -29,10 +29,12 @@ void object_inserter::serialize(T &x)
 }
 
 template<class T>
-void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cascade) {
-  if (x.is_inserted() || (x.proxy_ && x.proxy_->obj() == nullptr)) {
+void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cascade)
+{
+  if (x.is_inserted()) {
     return;
   }
+
   x.is_inserted_ = true;
   x.cascade_ = cascade;
   x.owner_ = proxy_stack_.top();
@@ -41,21 +43,18 @@ void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cas
   auto i = node->find_endpoint(std::type_index(typeid(T)));
   if (!proxy_stack_.top()->node()->is_relation_node() && i != node->endpoint_end()) {
     x.relation_info_ = i->second;
-    if (x.proxy_ && !x.relation_info_->foreign_endpoint.expired()) {
+    if (x.proxy_ && x.proxy_->obj() != nullptr && !x.relation_info_->foreign_endpoint.expired()) {
       x.relation_info_->insert_value_into_foreign(x.owner_, x.proxy_);
-//      ++(*x.owner_);
     }
   }
 
-  if (!x.proxy_) {
+  if (!x.proxy_ || x.proxy_->obj() == nullptr) {
     return;
   }
 
-  if (x.owner_->node()->is_relation_node()) {
-    ++(*x.owner_);
+  if (!proxy_stack_.top()->node()->is_relation_node()) {
+    ++(*x.proxy_);
   }
-
-  ++(*x.proxy_);
 
   // object was seen by inserter stop inserting
   if (!object_proxies_.insert(x.proxy_).second) {
@@ -76,10 +75,12 @@ void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cas
 }
 
 template<class T>
-void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
-  if (x.is_inserted() || (x.proxy_ && x.proxy_->obj() == nullptr)) {
+void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade)
+{
+  if (x.is_inserted()) {
     return;
   }
+
   x.is_inserted_ = true;
   x.cascade_ = cascade;
   x.owner_ = proxy_stack_.top();
@@ -89,21 +90,17 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
   if (!proxy_stack_.top()->node()->is_relation_node() && i != node->endpoint_end()) {
     x.relation_info_ = i->second;
 
-    if (x.proxy_ && !x.relation_info_->foreign_endpoint.expired()) {
-      x.relation_info_->insert_value_into_foreign(x.owner_, x.proxy_);
-//      ++(*x.owner_);
+    if (x.proxy_ && x.proxy_->obj() != nullptr) {
+      ++(*x.proxy_);
+      if (!x.relation_info_->foreign_endpoint.expired()) {
+        x.relation_info_->insert_value_into_foreign(x.owner_, x.proxy_);
+      }
     }
   }
 
-  if (!x.proxy_) {
+  if (!x.proxy_ || x.proxy_->obj() == nullptr) {
     return;
   }
-
-  if (x.owner_->node()->is_relation_node()) {
-    ++(*x.owner_);
-  }
-
-  ++(*x.proxy_);
 
   // object was seen by inserter stop inserting
   if (!object_proxies_.insert(x.proxy_).second) {
@@ -160,9 +157,12 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, cascade_t
     if (cascade & cascade_type::INSERT) {
       // item is not in store, insert it
       ostore_.insert(*j, false);
+//      this->increment_reference_count(*j);
     }
     if (!j.holder_item().is_inserted()) {
       x.relation_info_->insert_holder(ostore_, j.holder_item(), proxy);
+      x.relation_info_->insert_value_into_foreign(j.holder_item(), proxy);
+      j.holder_item().is_inserted_ = true;
     }
   }
 }

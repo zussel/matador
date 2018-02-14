@@ -6,6 +6,7 @@
 #define MATADOR_RELATION_ENDPOINT_VALUE_REMOVER_HPP
 
 #include "matador/object/has_many_item_holder.hpp"
+#include "matador/object/object_proxy_accessor.hpp"
 
 #include <iostream>
 
@@ -22,7 +23,7 @@ class object_pointer;
 namespace detail {
 
 template < class Value >
-class relation_endpoint_value_remover
+class relation_endpoint_value_remover : object_proxy_accessor
 {
 public:
   template < class Owner >

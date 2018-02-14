@@ -17,8 +17,8 @@ public:
   matador::identifier<unsigned long> id;
   std::string name;
 
-  item() {}
-  explicit item(const std::string &n) : name(n) {}
+  item() = default;
+  explicit item(std::string n) : name(std::move(n)) {}
 
   template < class S >
   void serialize(S &s)
@@ -36,8 +36,8 @@ public:
   std::string name;
   item_list_t items;
 
-  owner() {}
-  explicit owner(const std::string &n) : name(n) {}
+  owner() = default;
+  explicit owner(std::string n) : name(std::move(n)) {}
 
   template < class S >
   void serialize(S &s)

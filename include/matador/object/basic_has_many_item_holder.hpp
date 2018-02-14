@@ -28,6 +28,7 @@ public:
 protected:
   friend class detail::basic_relation_endpoint;
   friend class detail::object_inserter;
+  friend class abstract_has_many;
 
   bool is_inserted_ = false;
 };

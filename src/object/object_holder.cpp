@@ -61,7 +61,7 @@ object_holder::object_holder(object_holder_type holder_type, object_proxy *op)
 object_holder::~object_holder()
 {
   if (proxy_) {
-    if (is_internal() && is_inserted_) {
+    if (is_internal() && is_inserted_ && relation_info_) {
       --(*proxy_);
     }
     proxy_->remove(this);

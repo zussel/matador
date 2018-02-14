@@ -904,7 +904,7 @@ public:
   void serialize(SERIALIZER &w) {
     w.serialize("id", id);
     w.serialize("name", name);
-    w.serialize("cycler", cycler, cascade_type::NONE);
+    w.serialize("cycler", cycler, cascade_type::ALL);
   }
   matador::identifier<unsigned long> id;
   std::string name;
@@ -956,7 +956,7 @@ void ObjectStoreTestUnit::test_structure_cyclic()
 void ObjectStoreTestUnit::test_structure_container()
 {
   object_store ostore;
-  ostore.attach<child>("cild");
+  ostore.attach<child>("child");
   ostore.attach<children_vector>("children_vector");
 
   using childrens_ptr = object_ptr<children_vector>;
@@ -967,10 +967,10 @@ void ObjectStoreTestUnit::test_structure_container()
 
   ostore.insert(childrens);
 
-  object_ptr<child> c1 = *childrens->children.begin();
+  object_ptr<child> c1 = childrens->children.front();
 
   UNIT_ASSERT_GREATER(c1.id(), 0UL, "object store must be greater zero");
-  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be one");
 }
 
 void ObjectStoreTestUnit::test_transient_optr()

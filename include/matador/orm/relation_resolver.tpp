@@ -18,12 +18,9 @@ void relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many
     has_many_item_holder<V> value(x, nullptr);
     left_endpoint_->insert_value_into_foreign(value, left_proxy_);
   } else {
-    // Todo: append to left tables relation data
-
     auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);
 
     lptr->append_relation_data(table_.name(), left_proxy_->pk(), x);
-//      left_table_ptr_->append_relation_data(table_.name(), left_proxy_, x);
   }
 }
 
@@ -61,18 +58,18 @@ void relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many
     if (left_table_ptr_->is_loaded()) {
       left_endpoint_->insert_value_into_foreign(right_proxy, left_proxy_);
     } else {
-      // Todo: append to left tables relation data
       auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);
 
+//      ++(*right_proxy);
       lptr->append_relation_data(table_.name(), left_proxy_->pk(), object_pointer<right_value_type, object_holder_type::OBJECT_PTR>(right_proxy), proxy_);
     }
 
     if (right_table_ptr_->is_loaded()) {
       has_many_item_holder<right_value_type > holder(right_proxy, proxy_);
       right_endpoint_->insert_value_into_foreign(holder, left_proxy_);
-//      right_endpoint_->insert_value_into_foreign(left_proxy_, right_proxy);
     } else {
-      // Todo: append to left tables relation data
+//      ++(*left_proxy_);
+
       auto rptr = std::static_pointer_cast<table<right_value_type>>(right_table_ptr_);
       rptr->append_relation_data(table_.name(), right_proxy->pk(), object_pointer<left_value_type, object_holder_type::OBJECT_PTR>(left_proxy_), proxy_);
     }
@@ -93,8 +90,6 @@ void relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many
     has_many_item_holder<V> value(x, nullptr);
     left_endpoint_->insert_value_into_foreign(value, left_proxy_);
   } else {
-    // Todo: append to left tables relation data
-
     auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);
 
     lptr->append_relation_data(table_.name(), left_proxy_->pk(), x, proxy_);

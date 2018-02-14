@@ -13,6 +13,7 @@ public:
   BlogUnitTest(const std::string &prefix, const std::string &dns);
   ~BlogUnitTest() override = default;
 
+  void test_blog_single_post();
   void test_blog();
 
 private:

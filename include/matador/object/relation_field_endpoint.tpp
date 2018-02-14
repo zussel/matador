@@ -225,7 +225,7 @@ void many_to_one_endpoint<Value, Owner,
   object_ptr<Owner> ownptr(owner);
   this->mark_holder_as_inserted(const_cast<has_many_item_holder<Value>&>(value_holder));
   inserter.insert(ownptr, this->field, value_holder);
-  this->increment_reference_count(value_holder.value());
+//  this->increment_reference_count(value_holder.value());
 }
 
 template < class Value, class Owner >
@@ -237,7 +237,7 @@ void many_to_one_endpoint<Value, Owner,
 
   object_ptr<Owner> ownptr(owner);
   remover.remove(ownptr, this->field, value_holder);
-  this->decrement_reference_count(value_holder.value());
+//  this->decrement_reference_count(value_holder.value());
 }
 
 }

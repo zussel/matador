@@ -21,8 +21,6 @@ using namespace std;
 
 namespace matador {
 
-object_proxy::object_proxy() {}
-
 object_proxy::object_proxy(const std::shared_ptr<basic_identifier> &pk)
   : primary_key_(pk)
 {}
@@ -36,9 +34,9 @@ object_proxy::~object_proxy()
   if (obj_) {
     deleter_(obj_);
   }
-  ostore_ = 0;
-  for (ptr_set_t::iterator i = ptr_set_.begin(); i != ptr_set_.end(); ++i) {
-    (*i)->proxy_ = nullptr;
+  ostore_ = nullptr;
+  for (auto &ptr : ptr_set_) {
+    ptr->proxy_ = nullptr;
   }
 }
 
@@ -76,34 +74,38 @@ void object_proxy::unlink()
   if (next_) {
     next_->prev_ = prev_;
   }
-  prev_ = 0;
-  next_ = 0;
-  node_ = 0;
+  prev_ = nullptr;
+  next_ = nullptr;
+  node_ = nullptr;
 }
 
 unsigned long object_proxy::operator++()
 {
+//  std::cout << "increasing ref count for " << *this << " new count " << reference_counter_ + 1 << "\n";
   return ++reference_counter_;
 }
 
 unsigned long object_proxy::operator++(int)
 {
+//  std::cout << "increasing ref count for " << *this << " new count " << reference_counter_ + 1 << "\n";
   return reference_counter_++;
 }
 
 unsigned long object_proxy::operator--()
 {
+//  std::cout << "decreasing ref count for " << *this << " new count " << reference_counter_ - 1 << "\n";
   return --reference_counter_;
 }
 
 unsigned long object_proxy::operator--(int)
 {
+//  std::cout << "decreasing ref count for " << *this << " new count " << reference_counter_ - 1 << "\n";
   return reference_counter_--;
 }
 
 bool object_proxy::linked() const
 {
-  return node_ != 0;
+  return node_ != nullptr;
 }
 
 object_proxy *object_proxy::next() const

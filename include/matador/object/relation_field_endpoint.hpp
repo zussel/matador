@@ -83,6 +83,7 @@ struct MATADOR_OBJECT_API basic_relation_endpoint : public object_proxy_accessor
   void decrement_reference_count(const object_holder &holder);
 
   void mark_holder_as_inserted(basic_has_many_item_holder &holder) const;
+  void mark_holder_as_removed(basic_has_many_item_holder &holder) const;
 
   std::string field;
   std::string type_name;

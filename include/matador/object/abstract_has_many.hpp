@@ -22,6 +22,8 @@ namespace detail {
 class object_inserter;
 }
 
+template < class T, object_holder_type OHT >
+class object_pointer;
 class object_store;
 class object_proxy;
 
@@ -41,8 +43,25 @@ public:
   object_store* store() const { return ostore_; }
 
 protected:
+  template < class T >
+  void increment_reference_count(T) const {}
+  template < class T >
+  void increment_reference_count(const object_pointer<T, object_holder_type::OBJECT_PTR> &pointer) const
+  {
+    increment_reference_count(static_cast<const object_holder&>(pointer));
+  }
   void increment_reference_count(const object_holder &holder) const;
+  template < class T >
+  void decrement_reference_count(T) const {}
+  template < class T >
+  void decrement_reference_count(const object_pointer<T, object_holder_type::OBJECT_PTR> &pointer) const
+  {
+    decrement_reference_count(static_cast<const object_holder&>(pointer));
+  }
   void decrement_reference_count(const object_holder &holder) const;
+
+  void mark_holder_as_inserted(basic_has_many_item_holder &holder) const;
+  void mark_holder_as_removed(basic_has_many_item_holder &holder) const;
 
 protected:
   friend class detail::object_inserter;

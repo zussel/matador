@@ -69,7 +69,7 @@ public:
    *
    * Create an empty object_proxy
    */
-  object_proxy();
+  object_proxy() = default;
 
   /**
    * Create a new object proxy with primary key
@@ -261,9 +261,11 @@ public:
    * @param o The new object for the object_proxy
    */
   template < typename T >
-  void reset(T *o, bool resolve_identifier = true)
+  void reset(T *o, bool resolve_identifier = true, bool keep_ref_count = false)
   {
-    reference_counter_ = 0;
+    if (!keep_ref_count) {
+      reference_counter_ = 0;
+    }
     deleter_ = &destroy<T>;
     namer_ = &type_id<T>;
     obj_ = o;

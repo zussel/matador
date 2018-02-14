@@ -43,8 +43,6 @@ void relation_endpoint_value_inserter<Value>::serialize(const char *id, has_many
     return;
   }
   x.insert_holder(holder_);
-
-//  ++(*this->proxy(holder_.value()));
 }
 
 }

@@ -480,6 +480,8 @@ public:
     if (this->ostore_) {
       this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
+      this->mark_holder_as_inserted(holder);
+
       if (!matador::is_builtin<T>::value) {
         this->relation_info_->insert_value_into_foreign(holder, this->owner_);
       }
@@ -617,12 +619,17 @@ private:
 
   void insert_holder(const holder_type &holder)
   {
+    this->mark_holder_as_inserted(const_cast<holder_type&>(holder));
+    this->increment_reference_count(holder.value());
     this->holder_container_.push_back(holder);
   }
 
   void remove_holder(const holder_type &holder)
   {
-    this->holder_container_.remove(holder);
+    auto i = std::remove(this->holder_container_.begin(), this->holder_container_.end(), holder);
+    this->mark_holder_as_removed(*i);
+    this->decrement_reference_count(holder.value());
+    this->holder_container_.erase(i, this->holder_container_.end());
   }
 
 private:

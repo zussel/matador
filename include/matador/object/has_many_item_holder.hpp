@@ -17,6 +17,8 @@ namespace detail
   struct basic_relation_endpoint;
 }
 
+class object_proxy;
+
 template < class T, object_holder_type OHT >
 class object_pointer;
 
@@ -117,7 +119,6 @@ public:
   typedef T value_type;
 
   has_many_item_holder() = default;
-  ~has_many_item_holder() = default;
 
   has_many_item_holder(const T &val, object_proxy *item_proxy)
     : has_many_to_many_item_poxy_(item_proxy)
@@ -142,7 +143,6 @@ public:
   has_many_item_holder(has_many_item_holder &&x) noexcept
   {
     value_ = std::move(x.value_);
-//    value_ = x.value_;
 
     has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
     x.has_many_to_many_item_poxy_ = nullptr;
@@ -154,7 +154,6 @@ public:
       value_ = std::move(x.value_);
       has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
       x.has_many_to_many_item_poxy_ = nullptr;
-//      basic_has_many_item_holder(x);
     }
     return *this;
   }

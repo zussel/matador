@@ -635,6 +635,16 @@ public:
    */
   has_many() = default;
 
+  ~has_many()
+  {
+    for(holder_type &item : this->holder_container_) {
+      if (item.is_inserted()) {
+        auto &val = item.value();
+        this->decrement_reference_count(val);
+      }
+    }
+  }
+
   /**
    * @brief Inserts an element at the given position.
    *
@@ -650,10 +660,10 @@ public:
 
       this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
-//      inc_ref_count(holder.value());
+      this->mark_holder_as_inserted(holder);
+
       if (!matador::is_builtin<T>::value) {
         this->relation_info_->insert_value_into_foreign(holder, this->owner_);
-//        ++(*this->owner_);
       }
 
       this->mark_modified_owner_(*this->ostore_, this->owner_);
@@ -755,12 +765,13 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
+        this->mark_holder_as_removed(i.holder_item());
+
         if (!matador::is_builtin<T>::value) {
           this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
-//          --(*this->owner_);
         }
         this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
-//        dec_ref_count(i.holder_item().value());
+
         ++i;
       }
       this->mark_modified_owner_(*this->ostore_, this->owner_);
@@ -776,32 +787,16 @@ public:
 
 private:
 
-
-  template < class V >
-  void inc_ref_count(const V &) {}
-
-  void inc_ref_count(const object_holder &val)
-  {
-    this->increment_reference_count(val);
-  }
-
-  template < class V >
-  void dec_ref_count(const V &) {}
-
-  template < class V >
-  void dec_ref_count(const object_holder &val)
-  {
-    this->decrement_reference_count(val);
-  }
-
-
   void remove_it(holder_type &holder)
   {
     if (this->ostore_) {
+      this->mark_holder_as_removed(holder);
+
       if (!matador::is_builtin<T>::value) {
         this->relation_info_->remove_value_from_foreign(holder, this->owner_);
       }
       this->relation_info_->remove_holder(*this->ostore_, holder, this->owner_);
+
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
   }
@@ -819,12 +814,27 @@ private:
 private:
   void insert_holder(const holder_type &holder)
   {
+    this->mark_holder_as_inserted(const_cast<holder_type&>(holder));
+    this->increment_reference_count(holder.value());
     this->holder_container_.push_back(holder);
   }
 
   void remove_holder(const holder_type &holder)
   {
-    this->holder_container_.erase(std::remove(this->holder_container_.begin(), this->holder_container_.end(), holder), this->holder_container_.end());
+    auto i = std::remove(this->holder_container_.begin(), this->holder_container_.end(), holder);
+    if (i != this->holder_container_.end()) {
+//      std::cout << "removing holder ";
+      if (holder.item_proxy()) {
+//        std::cout << *holder.item_proxy() << "\n";
+      } else {
+//        std::cout << "nullptr\n";
+      }
+      this->mark_holder_as_removed(*i);
+      this->decrement_reference_count(holder.value());
+      this->holder_container_.erase(i, this->holder_container_.end());
+    } else {
+      std::cout << "couldn't find holder to remove " << *holder.item_proxy() << "\n";
+    }
   }
 
 private:

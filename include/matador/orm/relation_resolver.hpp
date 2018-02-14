@@ -291,6 +291,7 @@ private:
         proxy = idproxy->second;
       }
       x.reset(proxy, cascade);
+      --(*proxy);
     }
     return proxy;
   }

@@ -43,6 +43,11 @@ void basic_relation_endpoint::mark_holder_as_inserted(basic_has_many_item_holder
   holder.is_inserted_ = true;
 }
 
+void basic_relation_endpoint::mark_holder_as_removed(basic_has_many_item_holder &holder) const
+{
+  holder.is_inserted_ = false;
+}
+
 std::ostream& operator<<(std::ostream &stream, const basic_relation_endpoint &endpoint)
 {
   stream << "relation " << endpoint.node->type() << "::" << endpoint.field << " (" << endpoint.type_name << ")";
