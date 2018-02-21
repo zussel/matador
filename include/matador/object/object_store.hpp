@@ -118,8 +118,16 @@ public:
   typedef prototype_iterator iterator;              /**< Shortcut for the list iterator. */
   typedef const_prototype_iterator const_iterator;  /**< Shortcut for the list const iterator. */
 
-  enum abstract_type { abstract, not_abstract };
+  /**
+   * Describes wether the inserted object type
+   * is handle as a concrete or abstract type
+   */
+  enum abstract_type {
+    abstract,           /**< Indicates an abstract object type */
+    not_abstract        /**< Indicates an concreate object type */
+  };
 
+/// @cond MATADOR_DEV
   template < class T >
   struct null_observer : public object_store_observer<T>
   {
@@ -131,6 +139,7 @@ public:
     void on_update(object_proxy &) override {}
     void on_delete(object_proxy &) override {}
   };
+/// @endcond
 
 public:
   /**
@@ -156,17 +165,43 @@ public:
    * @param type Name of the prototype
    * @param abstract If true prototype is treated as abstract
    * @param parent Name of the parent node
+   * @param observer A list of observer to be called an attach
    * @return Iterator representing the inserted prototype node
    */
   template <class T, template < class U = T > class O >
   prototype_iterator attach(const char *type, abstract_type abstract, const char *parent, std::initializer_list<O<T>*> observer);
 
+  /**
+   * Inserts a new object prototype into the object_store. The prototype
+   * consists of a unique type name. The type of the prototype is given via
+   * template parameter T.
+   * If parent name is given prototype node is inserted below the found parent
+   * node.
+   * If the abstract flag is true prototype is treated as abstract. No concrete
+   * object can be inserted for this prototype.
+   *
+   * @tparam T Type of the prototype
+   * @param type Name of the prototype
+   * @param abstract If true prototype is treated as abstract
+   * @param parent Name of the parent node
+   * @return Iterator representing the inserted prototype node
+   */
   template <class T >
   prototype_iterator attach(const char *type, abstract_type abstract = not_abstract, const char *parent = nullptr)
   {
     return attach<T, null_observer>(type, abstract, parent, {});
   }
 
+  /**
+   * Inserts a new concrete object prototype into the object_store at top level.
+   * The prototype consists of a unique type name. The type of the prototype is given via
+   * template parameter T.
+   *
+   * @tparam T Type of the prototype
+   * @param type Name of the prototype
+   * @param observer A list of observer to be called an attach
+   * @return Iterator representing the inserted prototype node
+   */
   template <class T, template < class U = T > class O >
   prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer)
   {
@@ -184,17 +219,39 @@ public:
    * @tparam S       The type of the parent prototype node
    * @param type     The unique name of the type.
    * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @param observer A list of observer to be called an attach
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S, template < class U = T > class O >
   prototype_iterator attach(const char *type, abstract_type abstract, std::initializer_list<O<T>*> observer);
 
+  /**
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * consists of a unique type name.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam S       The type of the parent prototype node
+   * @param type     The unique name of the type.
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @return         Returns new inserted prototype iterator.
+   */
   template<class T, class S >
   prototype_iterator attach(const char *type, abstract_type abstract = not_abstract)
   {
     return attach<T>(type, abstract, typeid(S).name());
   }
 
+  /**
+   * Inserts a new concreate object prototype into the prototype tree. The prototype
+   * consists of a unique type name.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam S       The type of the parent prototype node
+   * @tparam O       The type of the observer classes
+   * @param type     The unique name of the type.
+   * @param observer A list of observer to be called an attach
+   * @return         Returns new inserted prototype iterator.
+   */
   template<class T, class S, template < class U = T > class O >
   prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer)
   {
@@ -209,27 +266,65 @@ public:
    * node.
    *
    * @tparam T       The type of the prototype node
+   * @tparam O       The type of the observer classes
    * @param node     The prototype node to be inserted
    * @param parent   The name of the parent node.
+   * @param observer A list of observer to be called an attach
    * @return         Returns new inserted prototype iterator.
    */
   template < class T, template < class U = T > class O >
   prototype_iterator attach(prototype_node *node, const char *parent, std::initializer_list<O<T>*> observer);
 
-  template < class T, template < class U = T > class O >
-  prototype_iterator attach_internal(prototype_node *node, const char *parent, std::vector<O<T>*> observer);
-
+  /**
+   * Inserts a new object prototype into the object_store as a root object type.
+   * The type of the prototype is given via template parameter T. A prepared
+   * prototype node is passed to be inserted.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam O       The type of the observer classes
+   * @param node     The prototype node to be inserted
+   * @param observer A list of observer to be called an attach
+   * @return         Returns new inserted prototype iterator.
+   */
   template < class T, template < class U = T > class O >
   prototype_iterator attach(prototype_node *node, std::initializer_list<O<T>*> observer)
   {
     return attach<T>(node, nullptr, observer);
   }
 
+  /**
+   * Inserts a new object prototype into the object_store. The
+   * type of the prototype is given via template parameter T. A prepared
+   * prototype node is passed to be inserted.
+   * If parent name is given prototype node is inserted below the found parent
+   * node.
+   * 
+   * @tparam T       The type of the prototype node
+   * @param node     The prototype node to be inserted
+   * @param parent   The name of the parent node.
+   * @return         Returns new inserted prototype iterator.
+   */
   template < class T >
   prototype_iterator attach(prototype_node *node, const char *parent = nullptr)
   {
     return attach<T, null_observer>(node, parent, {});
   }
+
+  /**
+   * Inserts a new object prototype into the object_store as a root object type.
+   * The type of the prototype is given via template parameter T. A prepared
+   * prototype node is passed to be inserted.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam O       The type of the observer classes
+   * @param node     The prototype node to be inserted
+   * @param parent   The name of the parent node.
+   * @param observer A list of observer to be called an attach
+   * @return         Returns new inserted prototype iterator.
+   */
+  template < class T, template < class U = T > class O >
+  prototype_iterator attach_internal(prototype_node *node, const char *parent, std::vector<O<T>*> observer);
+
 
   /**
    * Removes an object prototype from the prototype tree. All children
@@ -748,6 +843,13 @@ public:
    */
   bool has_transaction() const;
 
+  /**
+   * Marks the given object proxy as modified
+   * and notifies all transactions
+   * 
+   * @tparam T Object type of the proxy
+   * @param proxy The modified object proxy
+   */
   template < class T >
   void mark_modified(object_proxy *proxy)
   {
@@ -756,6 +858,13 @@ public:
     }
   }
 
+  /**
+   * Marks the given object_ptr as modified
+   * and notifies all transactions
+   * 
+   * @tparam T Object type of the object_ptr
+   * @param optr The modified object_ptr
+   */
   template < class T >
   void mark_modified(const object_ptr<T> &optr)
   {

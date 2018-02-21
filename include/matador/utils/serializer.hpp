@@ -219,17 +219,25 @@ public:
 
 
   /**
-   * @fn template < class HAS_MANY > void serialize(const char *id, HAS_MANY &x, const char *owner_id, const char *item_id)
+   * @fn void serialize(const char *id, abstract_has_many &x, const char *owner_id, const char *item_id, cascade_type cascade)
    * @brief Interface to serialize a relation with given id
    *
-   * @tparam HAS_MANY The type of the relationship object
    * @param id The id of the value
    * @param x The value to be serialized
    * @param owner_id The name of the owner field
    * @param item_id The name of the item field
+   * @param cascade The cascade type
    */
-//  template < class HAS_MANY >
   void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+
+  /**
+   * @fn void serialize(const char *id, abstract_has_many &x, cascade_type cascade)
+   * @brief Interface to serialize a relation with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   * @param cascade The cascade type
+   */
   void serialize(const char *, abstract_has_many &, cascade_type) {}
 
 private:

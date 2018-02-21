@@ -276,6 +276,14 @@ public:
   value_type& operator*() const { return iter_->value(); }
   //@}
 
+  /**
+   * @brief Returns the holder item
+   *
+   * Returns the holder item representing
+   * one half of the relation table
+   *
+   * @return The holder item
+   */
   holder_type& holder_item() const { return *iter_; }
 
 private:
@@ -779,6 +787,16 @@ public:
     return iterator(this->holder_container_.erase(start.iter_, end.iter_));
   }
 
+  /**
+   * @brief Finds an element matching the predicate
+   *
+   * Finds the first element where the given predicate
+   * matches. If it doesn't match end() is returned
+   *
+   * @tparam P The type of the predicate object
+   * @param predicate The predicate object
+   * @return The found element of end()
+   */
   template < class P >
   iterator find_if(P predicate)
   {

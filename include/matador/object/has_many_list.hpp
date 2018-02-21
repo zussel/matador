@@ -257,8 +257,8 @@ public:
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
   typedef typename traits::holder_type holder_type;                           /**< Shortcut holder type */
   typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type */
-  typedef typename traits::container_iterator container_iterator;
-  typedef typename traits::const_container_iterator const_container_iterator;
+  typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the container iterator type */
+  typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the const container iterator type */
 
 public:
   /**
@@ -293,9 +293,6 @@ public:
    * @param iter Iterator to copy construct from.
    */
   const_has_many_iterator(const self &iter) : iter_(iter.iter_) {}
-
-  //const_has_many_iterator(self &&iter) = default;
-  //const_has_many_iterator& operator=(self &&iter) = default;
 
   /**
    * @brief Copy assigns a new const has many iterator

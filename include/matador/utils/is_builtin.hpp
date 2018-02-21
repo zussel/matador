@@ -10,6 +10,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 class date;
 class time;
 class varchar_base;
@@ -32,5 +34,8 @@ struct is_builtin< T,
   static const bool value = true;
 };
 
+/// @endcond
+
 }
+
 #endif //MATADOR_IS_BUILTIN_HPP

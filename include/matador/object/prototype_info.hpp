@@ -14,6 +14,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 class prototype_node;
 
 namespace detail {
@@ -159,9 +161,9 @@ public:
   {
     return new T(this->get()->left_column(), this->get()->right_column());
   }
-
-private:
 };
+
+/// @endcond
 
 }
 }

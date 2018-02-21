@@ -27,16 +27,7 @@
 
 namespace matador {
 
-namespace detail {
-
 /// @cond MATADOR_DEV
-
-//template < class T, class Enabled=void >
-//class relation_resolver;
-
-/// @endcond
-
-}
 
 class connection;
 class object_proxy;
@@ -52,6 +43,8 @@ bool is_loaded(const T &)
 template <>
 bool is_loaded(const object_holder &holder);
 
+/// @endcond
+
 /**
  * @brief Base class for kind of tables
  *
@@ -64,7 +57,7 @@ public:
   typedef std::shared_ptr<basic_table> table_ptr;                                             /**< Shortcut to table shared pointer */
   typedef std::unordered_map<std::string, table_ptr> t_table_map;                             /**< Shortcut to an unordered map of table shared pointer*/
   typedef std::unordered_map<std::string, detail::t_identifier_multimap> t_relation_item_map; /**< Shortcut to an unordered identifier multimap */
-  typedef std::unordered_map<std::string, std::shared_ptr<detail::basic_relation_data>> t_relation_data_map;
+  typedef std::unordered_map<std::string, std::shared_ptr<detail::basic_relation_data>> t_relation_data_map; /**< Shortcut to unordered relation data map */
 
 public:
   /**
@@ -154,10 +147,23 @@ public:
    */
   bool is_loaded() const;
 
+  /**
+   * @brief Returns the underlaying prototype node
+   *
+   * @return The underlaying prototype node
+   */
   prototype_node& node();
 
+  /**
+   * @brief Returns the underlaying prototype node
+   *
+   * @return The underlaying prototype node
+   */
   const prototype_node& node() const;
 
+  /**
+   * @brief Marks the table as not loaded
+   */
   void reset();
 
   /// @cond MATADOR_DEV
@@ -196,9 +202,9 @@ protected:
 
   bool is_loaded_ = false;
 
-  /// @endcond
-
   prototype_node &node_;
+
+  /// @endcond
 };
 
 }

@@ -361,9 +361,23 @@ public:
    */
   const relation_node_info& node_info() const;
 
+  /**
+   * Registers an object store observer for the object
+   * type of the node. The observer is notified
+   * on attach, detach, insert, update and delete.
+   * 
+   * @tparam T The object type of the observer
+   * @param obs The observer to register
+   */
   template < class T >
   void register_observer(object_store_observer<T> *obs);
 
+  /**
+   * Returns the prototype object of the node
+   * 
+   * @tparam T The object type of the prototype object
+   * @return The prototype object
+   */
   template < class T >
   T* prototype() const;
 
@@ -401,6 +415,7 @@ public:
    */
   void unregister_relation_endpoint(const std::type_index &tindex);
 
+/// @cond MATADOR_DEV
   const_endpoint_iterator find_endpoint(const std::type_index &tindex) const;
   endpoint_iterator find_endpoint(const std::type_index &tindex);
 
@@ -417,6 +432,7 @@ public:
   bool endpoints_empty() const;
 
   const detail::abstract_prototype_info::t_endpoint_map& endpoints() const;
+/// @endcond
 
 private:
 

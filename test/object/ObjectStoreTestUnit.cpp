@@ -95,13 +95,13 @@ struct item_counter : public std::unary_function<const object_ptr<ObjectItem<Ite
 
 void ObjectStoreTestUnit::test_version()
 {
-  std::string version("0.5.0");
+  std::string version("0.5.1");
   
   UNIT_ASSERT_EQUAL(matador::version::str, version, "invalid matador version");
 
   UNIT_ASSERT_EQUAL(matador::version::major, 0, "invalid major version");
   UNIT_ASSERT_EQUAL(matador::version::minor, 5, "invalid minor version");
-  UNIT_ASSERT_EQUAL(matador::version::patch_level, 0, "invalid patch level");
+  UNIT_ASSERT_EQUAL(matador::version::patch_level, 1, "invalid patch level");
 }
 
 

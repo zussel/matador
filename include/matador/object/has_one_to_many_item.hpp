@@ -16,6 +16,9 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
+
 /**
  * Left is owner type
  * Right is value type
@@ -113,6 +116,8 @@ private:
   has_one<L> left_;
   R right_;
 };
+
+/// @endcond
 
 }
 

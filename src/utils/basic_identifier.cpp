@@ -8,13 +8,6 @@
 #include <iosfwd>
 
 namespace matador {
-basic_identifier::basic_identifier() {
-
-}
-
-basic_identifier::~basic_identifier() {
-
-}
 
 bool basic_identifier::operator==(const basic_identifier &x) const {
 

@@ -62,6 +62,11 @@ public:
     : object_holder(x.type_, x.proxy_)
   {}
 
+  /**
+   * Move constructor
+   * 
+   * @param x object_pointer to move
+   */
   explicit object_pointer(self &&x) noexcept
     : object_holder(std::move(x))
   {}
@@ -75,6 +80,10 @@ public:
     : object_holder(OPT, new object_proxy(o))
   {}
 
+  /**
+   * Initializes the object_pointer
+   * with nullptr
+   */ 
   object_pointer(std::nullptr_t)
     : object_holder(OPT)
   {}
@@ -96,9 +105,7 @@ public:
   template < object_holder_type OOPT >
   object_pointer(const object_pointer<T, OOPT> &x)
     : object_holder(OPT)
-//    : object_holder(OPT, x.proxy_)
   {
-//    relation_info_ = x.relation_info_;
     reset(x.proxy_, x.cascade_);
   }
 
@@ -120,11 +127,15 @@ public:
    */
   self& operator=(const self &x)
   {
-//    relation_info_ = x.relation_info_;
     reset(x.proxy_, x.cascade_);
     return *this;
   }
 
+  /**
+   * Move assignment constructor
+   * 
+   * @param x object_pointer to be moved
+   */
   self& operator=(self &&x) noexcept
   {
     return static_cast<self&>(object_holder::operator=(std::move(x)));
@@ -138,14 +149,17 @@ public:
   template < object_holder_type OOPT >
   self& operator=(object_pointer<T, OOPT> &x)
   {
-//    relation_info_ = x.relation_info_;
     reset(x.proxy_, x.cascade_);
     return *this;
   }
 
+  /**
+   * Assigns nullptr to the object_pointer
+   * 
+   * @return Cleared reference to object_pointer
+   */
   self& operator=(std::nullptr_t)
   {
-//    relation_info_.reset();
     clear();
     return *this;
   }

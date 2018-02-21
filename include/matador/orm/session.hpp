@@ -255,6 +255,18 @@ public:
     }
   }
 
+  /**
+   * @brief Removes a given value from the container
+   *
+   * Removes the given value from the container. If the value
+   * is found and could be deleted it is removed from the
+   * database as well.
+   *
+   * @tparam CONT The type of the container
+   * @tparam T The type of the object
+   * @param container The container the value should be removed from
+   * @param value The value to remove
+   */
   template < template <class ...> class CONT, class T >
   void remove(has_many<T, CONT> &container, const typename has_many<T, CONT>::value_type &value)
   {
@@ -329,13 +341,13 @@ private:
   {
   public:
     explicit session_observer(session &s);
-    virtual void on_begin();
-    virtual void on_commit(transaction::t_action_vector &actions);
-    virtual void on_rollback();
+    void on_begin() override;
+    void on_commit(transaction::t_action_vector &actions) override;
+    void on_rollback() override;
 
-    virtual void visit(insert_action *act);
-    virtual void visit(update_action *act);
-    virtual void visit(delete_action *act);
+    void visit(insert_action *act) override;
+    void visit(update_action *act) override;
+    void visit(delete_action *act) override;
   private:
     session &session_;
   };

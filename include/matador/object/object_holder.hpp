@@ -134,16 +134,30 @@ public:
    * Equal to operator for the object_holder
    * 
    * @param x The object_holder to check equality with.
+   * @return True if the holder objects are the same
    */
   bool operator==(const object_holder &x) const;
+
+  /**
+   * Checks equality with a nullptr
+   *
+   * @return True if the holder objects is nullptr
+   */
   bool operator==(std::nullptr_t) const;
 
   /**
    * Not equal to operator for the object_holder
    * 
    * @param x The object_holder to check unequality with.
+   * @return True if the holder objects are not the same
    */
   bool operator!=(const object_holder &x) const;
+
+  /**
+   * Checks equality with a nullptr
+   *
+   * @return True if the holder objects isn't nullptr
+   */
   bool operator!=(std::nullptr_t) const;
 
   /**
@@ -161,6 +175,13 @@ public:
    * @param cascade Sets the cascadable actions for the proxy.
    */
   void reset(object_proxy *proxy, cascade_type cascade);
+
+  /**
+   * Resets the object holder with the given
+   * object holder.
+   *
+   * @param holder The object holder to be used to reset
+   */
   void reset(object_holder &holder);
 
   /**
@@ -314,7 +335,13 @@ public:
    */
   object_holder_type holder_type() const;
 
+  /**
+   * Returns the cascade type of the holder
+   *
+   * @return The cascade type
+   */
   cascade_type cascade() const;
+
   /**
    * Prints the underlaying object
    *

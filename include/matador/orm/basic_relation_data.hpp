@@ -17,6 +17,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 template < class T, object_holder_type OHT >
 class object_pointer;
 
@@ -102,6 +104,8 @@ private:
 
   std::unordered_multimap<identifier_ptr, std::pair<T, object_proxy*>, identifier_hash<identifier_ptr>, identifier_equal> id_multi_map_;
 };
+
+/// @endcond
 
 }
 }

@@ -19,6 +19,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 class object_proxy;
 
 class MATADOR_OBJECT_API basic_has_many_to_many_item
@@ -37,6 +39,8 @@ private:
   std::string left_column_;
   std::string right_column_;
 };
+
+/// @endcond
 
 }
 #endif //MATADOR_BASIC_HAS_MANY_TO_MANY_ITEM_HPP

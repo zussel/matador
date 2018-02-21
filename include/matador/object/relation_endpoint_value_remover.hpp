@@ -12,6 +12,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 template < class V, template < class ... > class C >
 class has_many;
 
@@ -58,6 +60,8 @@ private:
   std::string field_;
   has_many_item_holder<Value> holder_;
 };
+
+/// @endcond
 
 }
 }

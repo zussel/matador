@@ -46,13 +46,31 @@ class serializer;
 class OOS_UTILS_API basic_identifier
 {
 public:
-  basic_identifier();
-  virtual ~basic_identifier();
+  basic_identifier() = default;
+  virtual ~basic_identifier() = default;
 
+  /**
+   * @brief Default copy assignment constructor
+   *
+   * @return The copied identifier object
+   */
   basic_identifier& operator=(const basic_identifier &) = default;
+
+  /**
+   * @brief Default move assignment constructor
+   *
+   * @return The moved identifier object
+   */
   basic_identifier& operator=(basic_identifier &&) = default;
 
+  /**
+   * @brief Default copy constructor
+   */
   basic_identifier(const basic_identifier &) = default;
+
+  /**
+   * @brief Default move constructor
+   */
   basic_identifier(basic_identifier &&) = default;
 
   /**
@@ -173,17 +191,6 @@ public:
    * @return True id identifier is valid.
    */
   virtual bool is_valid() const = 0;
-
-  /**
-   * Cast the value of the concrete identifier
-   * to the type T. Throws a logical_error if
-   * a cast is not possible.
-   *
-   * @tparam T The type to cast to.
-   * @return The casted value.
-   */
-//  template<class T>
-//  T id() const;
 
   /**
    * Returns true if identifier should be

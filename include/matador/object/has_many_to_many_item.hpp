@@ -7,6 +7,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 template < class L, class R >
 class has_many_to_many_item : public basic_has_many_to_many_item
 {
@@ -25,8 +27,6 @@ public:
   has_many_to_many_item(const std::string &left_column, const std::string &right_column)
     : basic_has_many_to_many_item(left_column, right_column)
   {}
-
-  ~has_many_to_many_item() override { }
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -49,6 +49,8 @@ private:
   belongs_to<L> left_;
   belongs_to<R> right_;
 };
+
+/// @endcond
 
 }
 

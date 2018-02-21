@@ -47,7 +47,7 @@ class table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_i
   : public basic_table
 {
 public:
-  typedef T table_type;
+  typedef T table_type; /**< Shortcut to the type the table represents */
 
   /**
    * @brief Creates a new table
@@ -64,18 +64,43 @@ public:
 
   ~table() override = default;
 
+  /**
+   * @brief Create the table on database
+   *
+   * Creates the database table for
+   * the given connection
+   * @param conn The database connection
+   */
   void create(connection &conn) override
   {
     query<table_type> stmt(name());
     stmt.create().execute(conn);
   }
 
+  /**
+   * @brief Drops the table on database
+   *
+   * Drops the database table for
+   * the given connection
+   *
+   * @param conn The database connection
+   */
   void drop(connection &conn) override
   {
     query<table_type> stmt(name());
     stmt.drop().execute(conn);
   }
 
+  /**
+   * @brief Loads tables data into store
+   *
+   * Loads the data of the table into the
+   * given object store. It is also ensured
+   * that all relations are resolved or at
+   * least prepared for later resolve.
+   *
+   * @param store The object store to load the data into
+   */
   void load(object_store &store) override
   {
     auto result = select_.execute();
@@ -107,6 +132,14 @@ public:
     is_loaded_ = true;
   }
 
+  /**
+   * @brief Insert the object proxy into the table
+   *
+   * Insert the given object proxy into the database
+   * table.
+   *
+   * @param proxy The object proxy to be inserted
+   */
   void insert(object_proxy *proxy) override
   {
     insert_.bind(0, static_cast<table_type *>(proxy->obj()));
@@ -114,6 +147,14 @@ public:
     insert_.execute();
   }
 
+  /**
+   * @brief Updates the object proxy on database
+   *
+   * Updates the given object proxy on
+   * the database.
+   *
+   * @param proxy The object proxy to update
+   */
   void update(object_proxy *proxy) override
   {
     auto *obj = static_cast<table_type *>(proxy->obj());
@@ -123,6 +164,14 @@ public:
     update_.execute();
   }
 
+  /**
+   * @brief Deletes the object proxy from table
+   *
+   * The object represented by the object proxy
+   * is deleted from the table
+   *
+   * @param proxy The object proxy to be deleted
+   */
   void remove(object_proxy *proxy) override
   {
     binder_.bind(static_cast<table_type *>(proxy->obj()), &delete_, 0);
@@ -130,8 +179,10 @@ public:
     delete_.execute();
   }
 
+/// @cond MATADOR_DEV
   template<class V>
   void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val, object_proxy *owner);
+/// @endcond
 
 protected:
   /**
@@ -173,6 +224,8 @@ private:
 
   identifier_resolver<T> identifier_resolver_;
 };
+
+/// @cond MATADOR_DEV
 
 template < class T >
 template < class V >
@@ -301,6 +354,8 @@ private:
 
   std::unique_ptr<object_proxy> proxy_;
 };
+
+/// @endcond
 
 }
 

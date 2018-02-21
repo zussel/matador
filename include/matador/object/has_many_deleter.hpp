@@ -15,6 +15,8 @@
 namespace matador {
 namespace detail {
 
+/// @cond MATADOR_DEV
+
 template<class T, template<class...> class C, class Enable>
 class has_many_deleter;
 
@@ -85,6 +87,8 @@ public:
 
   container_type &container_;
 };
+
+/// @endcond
 
 }
 }

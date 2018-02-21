@@ -12,6 +12,8 @@
 namespace matador {
 namespace detail {
 
+/// @cond MATADOR_DEV
+
 /*
  * Left side of a many to many relation
  *
@@ -290,8 +292,9 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
   {
     return nullptr;
   }
-
 };
+
+/// @endcond
 
 }
 }

@@ -12,6 +12,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 namespace detail
 {
   struct basic_relation_endpoint;
@@ -191,6 +193,8 @@ private:
   object_proxy *has_many_to_many_item_poxy_ = nullptr;
   T value_;
 };
+
+/// @endcond
 
 }
 #endif //MATADOR_HAS_MANY_ITEM_HOLDER_HPP

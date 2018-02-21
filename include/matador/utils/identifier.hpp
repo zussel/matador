@@ -47,10 +47,28 @@ public:
    */
   identifier(T val) : id_(new T(val)) { }
 
+  /**
+   * @brief Default copy assignment constructor
+   *
+   * @return The copied identifier object
+   */
   identifier& operator=(const identifier &) = default;
+
+  /**
+   * @brief Default move assignment constructor
+   *
+   * @return The moved identifier object
+   */
   identifier& operator=(identifier &&) = default;
 
+  /**
+   * @brief Default copy constructor
+   */
   identifier(const identifier &) = default;
+
+  /**
+   * @brief Default move constructor
+   */
   identifier(identifier &&) = default;
 
   /**
@@ -63,8 +81,6 @@ public:
     *id_ = val;
     return *this;
   }
-
-  virtual ~identifier() = default;
 
   /**
    * Serialize the identifier value with

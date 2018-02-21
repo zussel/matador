@@ -7,6 +7,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 namespace detail {
 struct basic_relation_endpoint;
 class object_inserter;
@@ -32,6 +34,8 @@ protected:
 
   bool is_inserted_ = false;
 };
+
+/// @endcond
 
 }
 
