@@ -38,14 +38,15 @@ Example
 using namespace matador
 
 // a simple person class
-struct person {
+struct person
+{
   identifier<long> id;   // primary key
   varchar<256> name;
   unsigned int age = 0;
-  has_many<string> colors;
+  has_many<std::string> colors;
   
-  person(long i, const std::string n)
-    : id(i), name(n)
+  person(long i, std::string n)
+    : id(i), name(std::move(n))
   {}
   
   template < class SERIALIZER >
