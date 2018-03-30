@@ -14,6 +14,7 @@ public:
   void test_load_has_many_to_many();
   void test_load_has_many_to_many_remove();
   void test_load_has_many_int();
+  void test_load_belongs_to_many();
 
 private:
   std::string dns_;

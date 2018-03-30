@@ -11,6 +11,7 @@
 #include "matador/object/object_exception.hpp"
 
 #include "matador/orm/basic_table.hpp"
+#include "matador/orm/belongs_to_resolver.hpp"
 
 namespace matador {
 
@@ -31,6 +32,14 @@ public:
   explicit relation_resolver(basic_table &tbl)
   : table_(tbl)
   {}
+
+  void prepare()
+  {
+    // build up a map with all tables for all belong_to relations
+    belongs_to_resolver<T> resolver(table_);
+
+    auto table_map = resolver.resolve();
+  }
 
   void resolve(object_proxy *proxy, object_store *store)
   {
@@ -89,8 +98,11 @@ public:
       if (k == j->second->end_proxy()) {
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
         k = j->second->insert_proxy(pk, proxy);
+        // if foreign relation is HAS_ONE
+        x.reset(k->second, cascade, false);
+      } else {
+        x.reset(k->second, cascade, true);
       }
-      x.reset(k->second, cascade);
     }
   }
 
@@ -129,8 +141,10 @@ public:
       if (k == j->second->end_proxy()) {
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
         k = j->second->insert_proxy(pk, proxy);
+        x.reset(k->second, cascade, false);
+      } else {
+        x.reset(k->second, cascade, true);
       }
-      x.reset(k->second, cascade);
     }
   }
 
@@ -197,9 +211,17 @@ public:
 
   void prepare()
   {
-    auto left_table_it = table_.find_table<left_value_type>();
+    belongs_to_resolver<T> resolver(table_);
 
-    if (left_table_it == table_.end_table()) {
+    auto table_map = resolver.resolve();
+
+    basic_has_many_to_many_item* proto = table_.node().prototype<T>();
+
+    auto lc = proto->left_column();
+    auto rc = proto->right_column();
+
+    auto left_table_it = table_map.find(lc);
+    if (left_table_it == table_map.end()) {
       // Todo: introduce throw_orm_exception
       throw std::logic_error("no owner table " + std::string(typeid(left_value_type).name()) + " found");
     } else {
@@ -207,9 +229,8 @@ public:
     }
 
 
-    auto right_table_it = table_.find_table<right_value_type>();
-
-    if (right_table_it == table_.end_table()) {
+    auto right_table_it = table_map.find(rc);
+    if (right_table_it == table_map.end()) {
       // Todo: introduce throw_orm_exception
       throw std::logic_error("no owner table " + std::string(typeid(right_value_type).name()) + " found");
     } else {
@@ -327,9 +348,17 @@ public:
 
   void prepare()
   {
-    auto left_table_it = table_.find_table<left_value_type>();
+    belongs_to_resolver<T> resolver(table_);
 
-    if (left_table_it == table_.end_table()) {
+    auto table_map = resolver.resolve();
+
+    basic_has_many_to_many_item* proto = table_.node().prototype<T>();
+
+    auto lc = proto->left_column();
+
+    auto left_table_it = table_map.find(lc);
+
+    if (left_table_it == table_map.end()) {
       // Todo: introduce throw_orm_exception
       throw std::logic_error("no owner table " + std::string(typeid(left_value_type).name()) + " found");
     } else {

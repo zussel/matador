@@ -175,12 +175,8 @@ public:
        * insert serializable into serializable store
        *
        ***************/
-      // Todo: correct implementation
-
       unsigned long oid = 0;
       serialize(id, oid);
-//      std::string type;
-//      serialize(id, type);
 
       if (oid > 0) {
         object_proxy *oproxy = find_proxy(oid);
@@ -193,44 +189,8 @@ public:
     } else {
       unsigned long oid = x.id();
       serialize(id, oid);
-//      serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
     }
   }
-
-//  template < class T >
-//	void serialize(const char* id, has_one<T> &x, cascade_type cascade)
-//  {
-//    if (restore) {
-//      /***************
-//       *
-//       * extract id and type of serializable from buffer
-//       * try to find serializable on serializable store
-//       * if found check type if wrong type throw error
-//       * else create serializable and set extracted id
-//       * insert serializable into serializable store
-//       *
-//       ***************/
-//      // Todo: correct implementation
-//
-//      unsigned long oid = 0;
-//      serialize(id, oid);
-//      std::string type;
-//      serialize(id, type);
-//
-//      if (oid > 0) {
-//        object_proxy *oproxy = find_proxy(oid);
-//        if (!oproxy) {
-//          oproxy =  new object_proxy(new T, oid, ostore_);
-//          insert_proxy(oproxy);
-//        }
-//        x.reset(oproxy, cascade);
-//      }
-//    } else {
-//      unsigned long oid = x.id();
-//      serialize(id, oid);
-//      serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
-//    }
-//  }
 
   template<class T, template<class ...> class C>
   void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *, cascade_type cascade)
@@ -243,8 +203,6 @@ public:
   {
     std::string id_oid(id);
     id_oid += ".oid";
-//    std::string id_type(id);
-//    id_type += ".oid";
     if (restore) {
       typename basic_has_many<T, C>::size_type s = 0;
       // deserialize container size
@@ -252,7 +210,6 @@ public:
 
       x.reset();
 
-      // Todo: make has many code work
       for (typename basic_has_many<T, C>::size_type i = 0; i < s; ++i) {
 
         // deserialize all items
@@ -277,7 +234,6 @@ public:
 
       typename basic_has_many<T, C>::iterator first = x.begin();
       typename basic_has_many<T, C>::iterator last = x.end();
-      // Todo: make has many code work
 
       while (first != last) {
         unsigned long oid(0);

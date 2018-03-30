@@ -83,6 +83,11 @@ struct comment
   std::string content;
   matador::time created_at;
 
+  comment() = default;
+  comment(const std::string &eml, std::string msg)
+    : email(eml), content(std::move(msg))
+  {}
+
   template < class Serializer >
   void serialize(Serializer &serializer)
   {
@@ -132,7 +137,7 @@ struct post
     serializer.serialize("author", writer, matador::cascade_type::NONE);
     serializer.serialize("created_at", created_at);
     serializer.serialize("post_category", categories, "category_id", "post_id", matador::cascade_type::INSERT);
-    serializer.serialize("comment", comments, "comment", "id", matador::cascade_type::ALL);
+    serializer.serialize("comment", comments, "post", "id", matador::cascade_type::ALL);
     serializer.serialize("post_tag", tags, "post_id", "tag", matador::cascade_type::ALL);
     serializer.serialize("content", content);
   }

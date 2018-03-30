@@ -182,6 +182,12 @@ void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is
   owner->ostore()->mark_modified(static_cast<const has_many_item_holder<Owner> &>(holder).value());
 }
 
+template<class Value, class Owner>
+void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::print(std::ostream &out) const
+{
+  out << "belongs_to_many_endpoint<" << typeid(Value).name() << "," << typeid(Owner).name() << "> relation " << this->node->type() << "::" << this->field << " (" << this->type_name << ")";
+}
+
 template < class Value, class Owner >
 void many_to_one_endpoint<Value, Owner, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {

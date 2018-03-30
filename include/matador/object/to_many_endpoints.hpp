@@ -223,6 +223,11 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     }
     return proxy;
   }
+
+  void print(std::ostream &out) const override
+  {
+    out << "has_one_to_many_endpoint<" << typeid(Owner).name() << "," << typeid(Value).name() << "> relation " << this->node->type() << "::" << this->field << " (" << this->type_name << ")";
+  }
 };
 
 /*

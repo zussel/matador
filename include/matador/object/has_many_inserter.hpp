@@ -31,7 +31,7 @@ public:
   typedef typename has_many_iterator_traits<T, C>::holder_type holder_type;
   typedef has_many<T, C> container_type;
 
-  has_many_inserter(container_type &container) : container_(container) {}
+  explicit has_many_inserter(container_type &container) : container_(container) {}
 
   void insert(const holder_type &/*holder*/)
   {
@@ -71,7 +71,7 @@ public:
   typedef typename basic_has_many<T, C>::mark_modified_owner_func mark_modified_owner_func;
   typedef has_many<T, C> container_type;
 
-  has_many_inserter(container_type &container) : container_(container) {}
+  explicit has_many_inserter(container_type &container) : container_(container) {}
 
   void insert(const holder_type &) { }
 

@@ -23,7 +23,6 @@
 #include "matador/object/object_store.hpp"
 
 #include "matador/orm/basic_table.hpp"
-#include "matador/orm/relation_table.hpp"
 #include "matador/orm/persistence_observer.hpp"
 
 #include <memory>

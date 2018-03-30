@@ -47,6 +47,22 @@ struct post_service
     }
   }
 
+  bool add_comment(std::string email, std::string msg, const matador::object_ptr<post> &pst)
+  {
+    auto tr = session_.begin();
+    try {
+      auto cmt = session_.insert(new comment(email, msg));
+
+      pst->comments.push_back(cmt);
+
+      tr.commit();
+
+      return true;
+    } catch(std::exception &ex) {
+      tr.rollback();
+      return false;
+    }
+  }
   matador::session &session_;
 };
 
@@ -70,6 +86,7 @@ void BlogUnitTest::test_blog_single_post()
 
   UNIT_ASSERT_EQUAL(p.store().size(), 7UL, "there must be seven nodes in store");
   p.create();
+
   {
     matador::session s(p);
 
@@ -110,6 +127,10 @@ void BlogUnitTest::test_blog_single_post()
     UNIT_ASSERT_EQUAL(main.reference_count(), 1UL, "ref count must be one");
     UNIT_ASSERT_EQUAL(me->posts.size(), 1UL, "size must be one");
     UNIT_ASSERT_EQUAL(main->posts.size(), 1UL, "size must be one");
+
+    blogger.add_comment("uli@mail.de", "cool stuff", post1);
+
+    UNIT_ASSERT_EQUAL(post1->comments.size(), 1UL, "size must be one");
   }
 
   p.clear();

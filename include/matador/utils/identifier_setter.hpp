@@ -49,7 +49,6 @@ public:
   void serialize(const char *id, identifier<V> &x)
   {
     reading_pk_ = true;
-    // Todo: check correctness
     V val;
     serialize(id, val);
     x.value(val);

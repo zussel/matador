@@ -22,6 +22,7 @@ public:
   void test_insert_belongs_to_many();
   void test_belongs_to_many();
   void test_remove_belongs_to_many();
+  void test_belongs_to_many_first_belongs_to();
 
   void test_insert_has_many_vector();
   void test_has_many_vector();

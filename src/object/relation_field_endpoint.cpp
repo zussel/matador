@@ -50,8 +50,13 @@ void basic_relation_endpoint::mark_holder_as_removed(basic_has_many_item_holder 
 
 std::ostream& operator<<(std::ostream &stream, const basic_relation_endpoint &endpoint)
 {
-  stream << "relation " << endpoint.node->type() << "::" << endpoint.field << " (" << endpoint.type_name << ")";
+  endpoint.print(stream);
   return stream;
+}
+
+void basic_relation_endpoint::print(std::ostream &out) const
+{
+  out << "relation " << node->type() << "::" << field << " (" << type_name << ")";
 }
 
 }

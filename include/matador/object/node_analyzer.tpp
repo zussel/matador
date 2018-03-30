@@ -222,14 +222,16 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
         throw_object_exception("prototype already inserted: " << pi->type());
       } else if (j->second->type == detail::basic_relation_endpoint::BELONGS_TO) {
         // replace foreign endpoint
-        auto foreign_endpoint = std::make_shared<detail::belongs_to_many_endpoint <Value, Owner>>(j->second->field, pi.get());
+        auto foreign_endpoint = std::make_shared<detail::belongs_to_many_endpoint <Owner, Value>>(j->second->field, pi.get());
         pi->unregister_relation_endpoint(node_.type_index());
         pi->register_relation_endpoint(node_.type_index(), foreign_endpoint);
 
         // create and register endpoint
         // here
-        auto endpoint = std::make_shared<detail::many_to_one_endpoint <Owner, Value>>(id, &node_);
-        node_.register_relation_endpoint(std::type_index(typeid(Owner)), endpoint);
+        auto endpoint = std::make_shared<detail::many_to_one_endpoint <Value, Owner>>(id, &node_);
+        endpoint->foreign_endpoint = foreign_endpoint;
+        node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
+//        node_.register_relation_endpoint(std::type_index(typeid(Owner)), endpoint);
 
         // link both endpoints
         foreign_endpoint->foreign_endpoint = endpoint;

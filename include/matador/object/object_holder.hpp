@@ -177,6 +177,15 @@ public:
   void reset(object_proxy *proxy, cascade_type cascade);
 
   /**
+   * Resets the object_holder with the given object_proxy.
+   *
+   * @param proxy The new object_proxy for the object_holder.
+   * @param cascade Sets the cascadable actions for the proxy.
+   * @param notify_foreign_relation True if foreign relation endpoint should be modified
+   */
+  void reset(object_proxy *proxy, cascade_type cascade, bool notify_foreign_relation);
+
+  /**
    * Resets the object holder with the given
    * object holder.
    *
@@ -352,9 +361,6 @@ public:
   friend MATADOR_OBJECT_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
 
 private:
-  void reset(object_proxy *proxy, cascade_type cascade, bool notify_foreign_relation);
-
-private:
   friend class object_serializer;
   friend class object_proxy;
   friend class detail::object_deleter;
@@ -377,8 +383,6 @@ private:
 
   // Todo: change interface to remove friend
   friend class session;
-  // Todo: replace private access of proxy with call to reset
-  friend class table_reader;
 
   template < class T, object_holder_type OPT >
   friend class object_pointer;

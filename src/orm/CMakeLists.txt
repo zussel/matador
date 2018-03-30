@@ -11,14 +11,13 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/orm/basic_table.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/identifier_binder.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/identifier_column_resolver.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_table.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_resolver.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_resolver.tpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_item_appender.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence_observer.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence_observer.tpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/basic_relation_data.hpp
-)
+  ../../include/matador/orm/belongs_to_resolver.hpp)
 
 ADD_LIBRARY(matador-orm SHARED ${SOURCES} ${HEADER})
 

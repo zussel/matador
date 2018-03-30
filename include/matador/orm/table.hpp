@@ -208,6 +208,8 @@ protected:
     update_ = q.update().where(id == 1).prepare(conn);
     delete_ = q.remove().where(id == 1).prepare(conn);
     select_ = q.select().prepare(conn);
+
+    resolver_.prepare();
   }
 
 private:

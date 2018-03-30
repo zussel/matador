@@ -21,6 +21,7 @@ RelationTestUnit::RelationTestUnit()
   add_test("insert_belongs_to_many", std::bind(&RelationTestUnit::test_insert_belongs_to_many, this), "test insert belongs to many relation");
   add_test("belongs_to_many", std::bind(&RelationTestUnit::test_belongs_to_many, this), "test belongs to many relation");
   add_test("remove_belongs_to_many", std::bind(&RelationTestUnit::test_remove_belongs_to_many, this), "test remove belongs to many relation");
+  add_test("belongs_to_many_first_belongs_to", std::bind(&RelationTestUnit::test_belongs_to_many_first_belongs_to, this), "test belongs to many relation where belongs to is registered first");
 
   add_test("insert_has_many_vector", std::bind(&RelationTestUnit::test_insert_has_many_vector, this), "test insert has many vector relation");
   add_test("has_many_vector", std::bind(&RelationTestUnit::test_has_many_vector, this), "test has many vector relation");
@@ -570,6 +571,94 @@ void RelationTestUnit::test_remove_belongs_to_many()
   UNIT_ASSERT_NULL(george->dep().get(), "object must be null");
 }
 
+void RelationTestUnit::test_belongs_to_many_first_belongs_to()
+{
+  matador::object_store store;
+
+  store.attach<person>("person");
+  store.attach<employee, person>("employee");
+  store.attach<department>("department");
+
+  UNIT_ASSERT_EQUAL(3UL, store.size(), "must be three nodes");
+
+  auto node = store.find("employee");
+  UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
+  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
+  UNIT_ASSERT_EQUAL(node->endpoints_size(), 1UL, "endpoints must be one");
+
+  auto endpoint = node->endpoint_begin();
+
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "department", "endpoint field name must be 'department'");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO, "endpoint type must be BELONGS_TO");
+
+  node = store.find<department>();
+  UNIT_ASSERT_TRUE(node != store.end(), "must find a node");
+  UNIT_ASSERT_FALSE(node->endpoints_empty(), "endpoints must not be empty");
+  UNIT_ASSERT_EQUAL(node->endpoints_size(), 1UL, "endpoints must be one");
+
+  endpoint = node->endpoint_begin();
+
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "employee", "endpoint field name must be 'employee'");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY, "endpoint type must be HAS_MANY");
+
+  auto jane = store.insert(new employee("jane"));
+  auto insurance = store.insert(new department("insurance"));
+
+  UNIT_ASSERT_TRUE(insurance->employees.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL, "ref count must be zero");
+  UNIT_ASSERT_EQUAL(insurance->employees.size(), 0UL, "vector size must be zero");
+  UNIT_ASSERT_NULL(jane->dep().get(), "object must be null");
+  UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL, "ref count must be zero");
+
+  jane->dep(insurance);
+
+  UNIT_ASSERT_FALSE(insurance->employees.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL, "ref count must be one");
+  UNIT_ASSERT_EQUAL(insurance->employees.size(), 1UL, "vector size must be one");
+  UNIT_ASSERT_EQUAL(jane->dep(), insurance, "objects must be equal");
+  UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL, "ref count must be one");
+
+  jane->dep(nullptr);
+
+  UNIT_ASSERT_TRUE(insurance->employees.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL, "ref count must be zero");
+  UNIT_ASSERT_EQUAL(insurance->employees.size(), 0UL, "vector size must be zero");
+  UNIT_ASSERT_NULL(jane->dep().get(), "object must be null");
+  UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL, "ref count must be zero");
+
+  insurance->employees.push_back(jane);
+
+  UNIT_ASSERT_FALSE(insurance->employees.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL, "ref count must be one");
+  UNIT_ASSERT_EQUAL(insurance->employees.size(), 1UL, "vector size must be one");
+  UNIT_ASSERT_EQUAL(jane->dep(), insurance, "objects must be equal");
+  UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL, "ref count must be one");
+
+  insurance->employees.clear();
+
+  UNIT_ASSERT_TRUE(insurance->employees.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL, "ref count must be zero");
+  UNIT_ASSERT_EQUAL(insurance->employees.size(), 0UL, "vector size must be zero");
+  UNIT_ASSERT_NULL(jane->dep().get(), "object must be null");
+  UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL, "ref count must be zero");
+
+  jane->dep(insurance);
+
+  UNIT_ASSERT_FALSE(insurance->employees.empty(), "vector must not be empty");
+  UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL, "ref count must be one");
+  UNIT_ASSERT_EQUAL(insurance->employees.size(), 1UL, "vector size must be one");
+  UNIT_ASSERT_EQUAL(jane->dep(), insurance, "objects must be equal");
+  UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL, "ref count must be one");
+
+  insurance->employees.remove(jane);
+
+  UNIT_ASSERT_TRUE(insurance->employees.empty(), "vector must be empty");
+  UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL, "ref count must be zero");
+  UNIT_ASSERT_EQUAL(insurance->employees.size(), 0UL, "vector size must be zero");
+  UNIT_ASSERT_NULL(jane->dep().get(), "object must be null");
+  UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL, "ref count must be zero");
+}
+
 void RelationTestUnit::test_insert_has_many_vector()
 {
   matador::object_store store;
@@ -1023,6 +1112,17 @@ void RelationTestUnit::test_blog_single_post()
   UNIT_ASSERT_EQUAL(main.reference_count(), 1UL, "ref count must be one");
   UNIT_ASSERT_EQUAL(me->posts.size(), 1UL, "size must be one");
   UNIT_ASSERT_EQUAL(main->posts.size(), 1UL, "size must be one");
+
+  auto comment_one = store.insert(new comment("alfons@mail.fr", "cool stuff"));
+
+  UNIT_ASSERT_GREATER(comment_one.id(), 0UL, "id must be valid");
+  UNIT_ASSERT_FALSE(comment_one->blog_post.valid(), "post must be invalid");
+  UNIT_ASSERT_EQUAL(post1->comments.size(), 0UL, "size must be zero");
+
+  post1->comments.push_back(comment_one);
+
+  UNIT_ASSERT_TRUE(comment_one->blog_post.valid(), "post must be valid");
+  UNIT_ASSERT_EQUAL(post1->comments.size(), 1UL, "size must be one");
 
   store.remove(post1);
 

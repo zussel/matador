@@ -41,6 +41,16 @@ void basic_table::reset()
   is_loaded_ = false;
 }
 
+persistence& basic_table::persistence_unit()
+{
+  return persistence_;
+}
+
+const matador::persistence &basic_table::persistence_unit() const
+{
+  return persistence_;
+}
+
 basic_table::t_table_map::iterator basic_table::find_table(const std::string &type)
 {
   return persistence_.find_table(type);

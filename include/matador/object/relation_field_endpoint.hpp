@@ -85,6 +85,8 @@ struct MATADOR_OBJECT_API basic_relation_endpoint : public object_proxy_accessor
   void mark_holder_as_inserted(basic_has_many_item_holder &holder) const;
   void mark_holder_as_removed(basic_has_many_item_holder &holder) const;
 
+  virtual void print(std::ostream &out) const;
+
   std::string field;
   std::string type_name;
   prototype_node *node = nullptr;
@@ -275,6 +277,8 @@ struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::
   void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override;
 
   object_proxy* acquire_proxy(unsigned long , object_store &) override { return nullptr; }
+
+  void print(std::ostream &out) const override;
 };
 
 template < class Value, class Owner >

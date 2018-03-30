@@ -166,6 +166,10 @@ public:
    */
   void reset();
 
+  persistence& persistence_unit();
+
+  const persistence& persistence_unit() const;
+
   /// @cond MATADOR_DEV
 
 public:

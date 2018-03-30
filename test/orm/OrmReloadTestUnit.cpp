@@ -6,8 +6,6 @@
 #include "matador/orm/persistence.hpp"
 #include "matador/orm/session.hpp"
 
-#include "matador/object/object_view.hpp"
-
 using namespace hasmanylist;
 
 OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, const std::string &dns)
@@ -18,8 +16,9 @@ OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, const std::strin
   add_test("load_has_one", std::bind(&OrmReloadTestUnit::test_load_has_one, this), "test load has one relation from table");
   add_test("load_has_many", std::bind(&OrmReloadTestUnit::test_load_has_many, this), "test load has many from table");
   add_test("load_has_many_to_many", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many, this), "test load has many to many from table");
-//  add_test("load_has_many_to_many_remove", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many_remove, this), "test load has many to many from table with remove");
+  add_test("load_has_many_to_many_remove", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many_remove, this), "test load has many to many from table with remove");
   add_test("load_has_many_int", std::bind(&OrmReloadTestUnit::test_load_has_many_int, this), "test load has many int from table");
+  add_test("load_belongs_to_many", std::bind(&OrmReloadTestUnit::test_load_belongs_to_many, this), "test load belongs to many from table");
 }
 
 void OrmReloadTestUnit::test_load()
@@ -437,6 +436,55 @@ void OrmReloadTestUnit::test_load_has_many_int()
       UNIT_EXPECT_FALSE(it == result_ints.end(), "int must be found");
     }
 
+  }
+
+  p.drop();
+}
+
+void OrmReloadTestUnit::test_load_belongs_to_many()
+{
+  matador::persistence p(dns_);
+
+  p.attach<person>("person");
+  p.attach<department>("department");
+  p.attach<employee, person>("employee");
+
+  p.create();
+
+  {
+    matador::session s(p);
+
+    auto jane = s.insert(new employee("jane"));
+    auto insurance = s.insert(new department("insurance"));
+
+    UNIT_ASSERT_TRUE(insurance->employees.empty(), "vector must be empty");
+    UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL, "ref count must be zero");
+    UNIT_ASSERT_EQUAL(insurance->employees.size(), 0UL, "vector size must be zero");
+    UNIT_ASSERT_NULL(jane->dep().get(), "object must be null");
+    UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL, "ref count must be zero");
+
+    auto tr = s.begin();
+    try {
+      jane->dep(insurance);
+      tr.commit();
+    } catch (std::exception &ex) {
+      tr.rollback();
+      UNIT_FAIL(ex.what());
+    }
+
+    UNIT_ASSERT_FALSE(insurance->employees.empty(), "vector must not be empty");
+    UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL, "ref count must be one");
+    UNIT_ASSERT_EQUAL(insurance->employees.size(), 1UL, "vector size must be one");
+    UNIT_ASSERT_EQUAL(jane->dep(), insurance, "objects must be equal");
+    UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL, "ref count must be one");
+  }
+
+  p.clear();
+
+  {
+    matador::session s(p);
+
+    s.load();
   }
 
   p.drop();
