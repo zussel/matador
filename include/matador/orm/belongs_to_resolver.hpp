@@ -60,9 +60,7 @@ public:
   void serialize(const char *id, belongs_to<V> &, cascade_type)
   {
     auto it = table_.find_table<V>();
-    if (it == table_.end_table()) {
-      table_map_.insert(std::make_pair(id, std::shared_ptr<basic_table>()));
-    } else {
+    if (it != table_.end_table()) {
       table_map_.insert(std::make_pair(id, it->second));
     }
   }
