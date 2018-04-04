@@ -5,6 +5,83 @@ namespace matador {
 
 namespace detail {
 
+/*******************************
+ *
+ * Implementation common tables
+ *
+ *******************************/
+
+template < class T >
+template < class V >
+void relation_resolver<T, typename std::enable_if<
+  !std::is_base_of<basic_has_many_to_many_item, T>::value
+>::type>::serialize(const char *id, belongs_to<V> &x, cascade_type cascade)
+{
+  std::shared_ptr<basic_identifier> pk = x.primary_key();
+  if (!pk) {
+    return;
+  }
+
+  auto it = belongs_to_table_map_.find(id);
+  if (it == belongs_to_table_map_.end()) {
+    // Todo: create orm exception
+    throw_object_exception("couldn't find table with id " << id);
+  }
+
+  auto foreign_table = it->second;
+
+  // get node of object type
+  prototype_iterator node = store_->find(x.type());
+
+  object_proxy *proxy = node->find_proxy(pk);
+  if (proxy) {
+    /**
+     * find proxy in node map
+     * if proxy can be found object was
+     * already read - replace proxy
+     */
+    x.reset(proxy, cascade);
+  } else {
+    /**
+     * if proxy can't be found we create
+     * a proxy and store it in tables
+     * proxy map. it will be used when
+     * table is read.
+     */
+    auto foreign_proxy = foreign_table->find_proxy(pk);
+    if (foreign_proxy == foreign_table->end_proxy()) {
+      proxy = new object_proxy(pk, (T*)nullptr, node.get());
+      foreign_proxy = foreign_table->insert_proxy(pk, proxy);
+      // if foreign relation is HAS_ONE
+      x.reset(foreign_proxy->second, cascade, false);
+    } else {
+      x.reset(foreign_proxy->second, cascade, true);
+    }
+  }
+
+
+  if (foreign_table->is_loaded()) {
+    // insert into foreign endpoint
+    auto belongs_to_relation = table_.node().find_endpoint(id);
+
+    if (belongs_to_relation != table_.node().endpoint_end()) {
+      belongs_to_relation->second->insert_value_into_foreign(proxy, proxy_);
+    }
+
+  } else {
+    // add relation data
+    auto lptr = std::static_pointer_cast<table<V>>(foreign_table);
+    lptr->append_relation_data(table_.name(), proxy->pk(), object_pointer<T, object_holder_type::OBJECT_PTR>(proxy_), nullptr);
+  }
+}
+
+/*******************************
+ *
+ * Implementation for relation
+ * tables with foreign key
+ *
+ *******************************/
+
 template < class T >
 template < class V >
 void relation_resolver<T, typename std::enable_if<
@@ -81,6 +158,13 @@ void relation_resolver<T, typename std::enable_if<
 
   }
 }
+
+/*******************************
+ *
+ * Implementation for relation
+ * tables with builtin types
+ *
+ *******************************/
 
 template < class T >
 template < class V >

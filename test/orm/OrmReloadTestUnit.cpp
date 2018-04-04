@@ -474,7 +474,7 @@ void OrmReloadTestUnit::test_load_belongs_to_many()
 
     UNIT_ASSERT_FALSE(insurance->employees.empty(), "vector must not be empty");
     UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL, "ref count must be one");
-    UNIT_ASSERT_EQUAL(insurance->employees.size(), 1UL, "vector size must be one");
+    UNIT_ASSERT_EQUAL(insurance->employees.size(), 1UL, "employees size must be one");
     UNIT_ASSERT_EQUAL(jane->dep(), insurance, "objects must be equal");
     UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL, "ref count must be one");
   }
@@ -485,6 +485,28 @@ void OrmReloadTestUnit::test_load_belongs_to_many()
     matador::session s(p);
 
     s.load();
+
+    typedef matador::object_view<employee> t_employee_view;
+    t_employee_view employees(s.store());
+
+    UNIT_ASSERT_TRUE(!employees.empty(), "employees view must not be empty");
+    UNIT_ASSERT_EQUAL(employees.size(), 1UL, "their must be 1 employee in employees");
+
+    auto jane = employees.front();
+
+    UNIT_ASSERT_TRUE(jane->dep() != nullptr, "department must not be empty");
+
+    typedef matador::object_view<department> t_department_view;
+    t_department_view departments(s.store());
+
+    UNIT_ASSERT_TRUE(!departments.empty(), "departments view must not be empty");
+    UNIT_ASSERT_EQUAL(departments.size(), 1UL, "their must be 1 department in departments");
+
+    auto insurance = departments.front();
+
+    UNIT_ASSERT_FALSE(insurance->employees.empty(), "departments employees must not be empty");
+    UNIT_ASSERT_EQUAL(insurance->employees.size(), 1UL, "employees size must be one");
+    UNIT_ASSERT_EQUAL(insurance->employees.front(), jane, "employees must be equal");
   }
 
   p.drop();

@@ -38,7 +38,7 @@ public:
     // build up a map with all tables for all belong_to relations
     belongs_to_resolver<T> resolver(table_);
 
-    auto table_map = resolver.resolve();
+    belongs_to_table_map_ = resolver.resolve();
   }
 
   void resolve(object_proxy *proxy, object_store *store)
@@ -60,51 +60,10 @@ public:
 
   template < class V >
   void serialize(const char *, V &) { }
-
   void serialize(const char *, char *, size_t) { }
 
   template < class V >
-  void serialize(const char *, belongs_to<V> &x, cascade_type cascade)
-  {
-    std::shared_ptr<basic_identifier> pk = x.primary_key();
-    if (!pk) {
-      return;
-    }
-
-    // get node of object type
-    prototype_iterator node = store_->find(x.type());
-
-    object_proxy *proxy = node->find_proxy(pk);
-    if (proxy) {
-      /**
-       * find proxy in node map
-       * if proxy can be found object was
-       * already read - replace proxy
-       */
-      x.reset(proxy, cascade);
-    } else {
-      /**
-       * if proxy can't be found we create
-       * a proxy and store it in tables
-       * proxy map. it will be used when
-       * table is read.
-       */
-      basic_table::t_table_map::iterator j = table_.find_table(node->type());
-
-      if (j == table_.end_table()) {
-        throw_object_exception("unknown table " << node->type());
-      }
-      auto k = j->second->find_proxy(pk);
-      if (k == j->second->end_proxy()) {
-        proxy = new object_proxy(pk, (T*)nullptr, node.get());
-        k = j->second->insert_proxy(pk, proxy);
-        // if foreign relation is HAS_ONE
-        x.reset(k->second, cascade, false);
-      } else {
-        x.reset(k->second, cascade, true);
-      }
-    }
-  }
+  void serialize(const char *id, belongs_to<V> &x, cascade_type cascade);
 
   template < class V >
   void serialize(const char *, has_one<V> &x, cascade_type cascade)
@@ -195,10 +154,15 @@ private:
   basic_table &table_;
   object_proxy *proxy_ = nullptr;
   std::shared_ptr<basic_identifier> id_;
+
+  typename belongs_to_resolver<T>::t_table_map belongs_to_table_map_;
 };
 
 template < class T >
-class relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value && !matador::is_builtin<typename T::right_value_type>::value>::type>
+class relation_resolver<T, typename std::enable_if<
+  std::is_base_of<basic_has_many_to_many_item, T>::value &&
+  !matador::is_builtin<typename T::right_value_type>::value
+>::type>
 {
 public:
   typedef T table_type;
@@ -290,7 +254,6 @@ public:
     left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
   }
   
-//  template<class V, template<class ...> class C>
   void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
   void serialize(const char *, abstract_has_many &, cascade_type) { }
 
@@ -304,12 +267,13 @@ private:
     if (proxy) {
       x.reset(proxy, cascade);
     } else {
-      auto idproxy = tbl->find_proxy(pk);
-      if (idproxy == tbl->end_proxy()) {
+      // find proxy in tables id(pk) proxy map
+      auto id_proxy_pair = tbl->find_proxy(pk);
+      if (id_proxy_pair == tbl->end_proxy()) {
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
-        idproxy = tbl->insert_proxy(pk, proxy);
+        tbl->insert_proxy(pk, proxy);
       } else {
-        proxy = idproxy->second;
+        proxy = id_proxy_pair->second;
       }
       x.reset(proxy, cascade);
       --(*proxy);

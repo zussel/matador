@@ -66,7 +66,14 @@ public:
   }
 
   template<class V>
-  void serialize(const char *, has_one<V> &, cascade_type) {}
+  void serialize(const char *id, has_one<V> &, cascade_type)
+  {
+    auto it = table_.find_table<V>();
+    if (it != table_.end_table()) {
+      table_map_.insert(std::make_pair(id, it->second));
+    }
+  }
+
   void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
   void serialize(const char *, abstract_has_many &, cascade_type) {}
 

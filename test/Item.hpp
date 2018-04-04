@@ -343,7 +343,7 @@ class employee : public person
 {
 public:
   matador::belongs_to<department> department_;
-  
+
 public:
   employee() = default;
   explicit employee(const std::string &name) : person(name, matador::date(17, 12, 1983), 183) {}
@@ -726,4 +726,57 @@ using many_strings = many_builtins<std::string, std::list>;
 using many_vector_ints = many_builtins<int, std::vector>;
 using many_vector_strings = many_builtins<std::string, std::vector>;
 
+class load
+{
+public:
+  matador::identifier<unsigned long> id;
+  matador::varchar<255> name;
+
+  load() = default;
+  explicit load(std::string loadname) : name(std::move(loadname)) {}
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("id", id);
+    s.serialize("name", name);
+  }
+
+};
+
+class location
+{
+public:
+  matador::identifier<unsigned long> id;
+  matador::varchar<255> name;
+
+  location() = default;
+  explicit location(std::string locname) : name(std::move(locname)) {}
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("id", id);
+    s.serialize("name", name);
+  }
+};
+
+class order
+{
+public:
+  matador::identifier<unsigned long> id;
+  matador::varchar<255> name;
+  matador::has_many<location> sources;
+  matador::has_many<location> destinations;
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("id", id);
+    s.serialize("name", name);
+    s.serialize("sources", sources);
+    s.serialize("destinations", destinations);
+  }
+
+};
 #endif /* ITEM_HPP */
