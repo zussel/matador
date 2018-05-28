@@ -51,6 +51,10 @@ class prototype_node;
 class basic_identifier;
 class transaction;
 
+namespace detail {
+class basic_relation_data;
+}
+
 /**
  * @cond MATADOR_DEV
  * @class object_proxy
@@ -356,7 +360,7 @@ private:
   friend class restore_visitor;
   friend class object_holder;
   template < class T, object_holder_type OHT > friend class object_pointer;
-
+  friend class detail::basic_relation_data;
   typedef void (*deleter)(void*);
   typedef const char* (*namer)();
 

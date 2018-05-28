@@ -643,16 +643,6 @@ public:
    */
   has_many() = default;
 
-  ~has_many()
-  {
-    for(holder_type &item : this->holder_container_) {
-      if (item.is_inserted()) {
-        auto &val = item.value();
-        this->decrement_reference_count(val);
-      }
-    }
-  }
-
   /**
    * @brief Inserts an element at the given position.
    *

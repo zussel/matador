@@ -8,14 +8,15 @@
 #include <matador/orm/persistence.hpp>
 #include <matador/orm/session.hpp>
 
-struct post_service
+struct blog_service
 {
-  explicit post_service(matador::session &ses)
+  explicit blog_service(matador::session &ses)
     : session_(ses)
   {}
 
   matador::object_ptr<post> add(std::string title, std::string content,
-                                const matador::object_ptr<author> &writer, const matador::object_ptr<category> &cat)
+                                const matador::object_ptr<author> &writer,
+                                const matador::object_ptr<category> &cat)
   {
     matador::transaction tr = session_.begin();
     try {
@@ -90,7 +91,7 @@ void BlogUnitTest::test_blog_single_post()
   {
     matador::session s(p);
 
-    post_service blogger(s);
+    blog_service blogger(s);
 
     matador::transaction tr = s.begin();
 
@@ -118,11 +119,8 @@ void BlogUnitTest::test_blog_single_post()
     auto hi = post1->categories.begin().holder_item();
 
     UNIT_ASSERT_EQUAL(hi.item_proxy()->reference_count(), 2UL, "ref count must be two");
-
     UNIT_ASSERT_EQUAL(posts.size(), 1UL, "size must be three");
-
     UNIT_ASSERT_EQUAL(post1.reference_count(), 2UL, "ref count must be two");
-
     UNIT_ASSERT_EQUAL(me.reference_count(), 1UL, "ref count must be one");
     UNIT_ASSERT_EQUAL(main.reference_count(), 1UL, "ref count must be one");
     UNIT_ASSERT_EQUAL(me->posts.size(), 1UL, "size must be one");
@@ -139,8 +137,6 @@ void BlogUnitTest::test_blog_single_post()
     matador::session s(p);
 
     s.load();
-
-    post_service blogger(s);
 
     using t_author_view = matador::object_view<author>;
     t_author_view authors(s.store());
@@ -167,27 +163,28 @@ void BlogUnitTest::test_blog_single_post()
     auto hi = post1->categories.begin().holder_item();
 
     UNIT_ASSERT_EQUAL(hi.item_proxy()->reference_count(), 2UL, "ref count must be two");
-
     UNIT_ASSERT_EQUAL(posts.size(), 1UL, "size must be three");
-
     UNIT_ASSERT_EQUAL(post1.reference_count(), 2UL, "ref count must be two");
 
-    // delete third post
+//     delete post
     auto i = std::find_if(posts.begin(), posts.end(), [](const matador::object_ptr<post> &p) {
       return p->title == "First post";
     });
+
+    blog_service blogger(s);
 
     if (i != posts.end()) {
       blogger.remove(*i);
     }
 
-    UNIT_ASSERT_EQUAL(posts.size(), 0UL, "size must be three");
+    UNIT_ASSERT_EQUAL(posts.size(), 1UL, "size must be one");
 
     UNIT_ASSERT_EQUAL(me->posts.size(), 0UL, "size must be zero");
-    UNIT_ASSERT_EQUAL(main->posts.size(), 0UL, "size must be zero");
-    UNIT_ASSERT_EQUAL(main.reference_count(), 0UL, "ref count must be zero");
-    UNIT_ASSERT_EQUAL(me.reference_count(), 0UL, "ref count must be zero");
+    UNIT_ASSERT_EQUAL(main->posts.size(), 1UL, "size must be zero");
+    UNIT_ASSERT_EQUAL(main.reference_count(), 1UL, "ref count must be zero");
+    UNIT_ASSERT_EQUAL(me.reference_count(), 1UL, "ref count must be zero");
   }
+
   p.drop();
 }
 
@@ -206,7 +203,7 @@ void BlogUnitTest::test_blog_multiple_post()
   {
     matador::session s(p);
 
-    post_service blogger(s);
+    blog_service blogger(s);
 
     matador::object_ptr<author> me;
     matador::object_ptr<category> main;
@@ -244,7 +241,7 @@ void BlogUnitTest::test_blog_multiple_post()
 
     s.load();
 
-    post_service blogger(s);
+    blog_service blogger(s);
 
     using t_author_view = matador::object_view<author>;
     t_author_view authors(s.store());

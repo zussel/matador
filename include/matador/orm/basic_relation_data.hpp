@@ -24,12 +24,17 @@ class object_pointer;
 
 namespace detail {
 
-class basic_relation_data
+class basic_relation_data : public object_proxy_accessor
 {
 public:
   virtual ~basic_relation_data() = default;
 
   virtual const std::type_index& type_index() const = 0;
+
+  void increment_reference_count(object_proxy &proxy)
+  {
+    ++proxy;
+  }
 };
 
 template < class T, class Enabled = void >
@@ -90,6 +95,10 @@ public:
     for (auto i = range.first; i != range.second; ++i)
     {
       container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
+      if (!std::is_base_of<basic_has_many_item, value_type>::value && i->second.second == nullptr) {
+        ++(*proxy(i->second.first));
+      }
+
     }
     id_multi_map_.erase(id);
   }

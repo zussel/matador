@@ -115,6 +115,7 @@ void OrmReloadTestUnit::test_load_has_one()
     auto chptr = childview.front();
 
     UNIT_ASSERT_TRUE(chptr == mptr->children, "objects must be the same");
+    UNIT_ASSERT_EQUAL(chptr.reference_count(), 1UL, "ref count must be one");
   }
 
   p.drop();
@@ -172,6 +173,7 @@ void OrmReloadTestUnit::test_load_has_many()
     for (auto kid : clptr->children) {
       auto it = std::find(result_names.begin(), result_names.end(), kid->name);
       UNIT_EXPECT_FALSE(it == result_names.end(), "kid must be found");
+      UNIT_ASSERT_EQUAL(kid.reference_count(), 1UL, "ref count must be one");
     }
   }
 
@@ -495,6 +497,7 @@ void OrmReloadTestUnit::test_load_belongs_to_many()
     auto jane = employees.front();
 
     UNIT_ASSERT_TRUE(jane->dep() != nullptr, "department must not be empty");
+    UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL, "ref count must be one");
 
     typedef matador::object_view<department> t_department_view;
     t_department_view departments(s.store());
@@ -505,6 +508,7 @@ void OrmReloadTestUnit::test_load_belongs_to_many()
     auto insurance = departments.front();
 
     UNIT_ASSERT_FALSE(insurance->employees.empty(), "departments employees must not be empty");
+    UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL, "ref count must be one");
     UNIT_ASSERT_EQUAL(insurance->employees.size(), 1UL, "employees size must be one");
     UNIT_ASSERT_EQUAL(insurance->employees.front(), jane, "employees must be equal");
   }

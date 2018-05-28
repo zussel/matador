@@ -73,6 +73,15 @@ public:
   typedef std::function<void(object_store&, object_proxy*)> mark_modified_owner_func; /**< Shortcut to mark modified owner function */
 
 public:
+  ~basic_has_many()
+  {
+    for(holder_type &item : holder_container_) {
+      if (item.is_inserted()) {
+        auto &val = item.value();
+        this->decrement_reference_count(val);
+      }
+    }
+  }
   /**
    * @brief Returns the begin iterator of the container
    *
