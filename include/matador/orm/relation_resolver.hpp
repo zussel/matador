@@ -179,7 +179,7 @@ public:
 
     auto table_map = resolver.resolve();
 
-    basic_has_many_to_many_item* proto = table_.node().prototype<T>();
+    basic_has_many_to_many_item* proto = table_.node().template prototype<T>();
 
     auto lc = proto->left_column();
     auto rc = proto->right_column();
@@ -316,7 +316,7 @@ public:
 
     auto table_map = resolver.resolve();
 
-    basic_has_many_to_many_item* proto = table_.node().prototype<T>();
+    basic_has_many_to_many_item* proto = table_.node().template prototype<T>();
 
     auto lc = proto->left_column();
 

@@ -33,7 +33,7 @@ public:
   {
     table_map_.clear();
 
-    auto node = table_.persistence_unit().store().find<T>();
+    auto node = table_.persistence_unit().store().template find<T>();
 
     if (node == table_.persistence_unit().store().end()) {
       // Todo: introduce throw_orm_exception
