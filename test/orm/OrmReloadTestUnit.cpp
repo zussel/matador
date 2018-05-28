@@ -13,6 +13,7 @@ OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, const std::strin
   , dns_(dns)
 {
   add_test("load", std::bind(&OrmReloadTestUnit::test_load, this), "test load from table");
+  add_test("load_twice", std::bind(&OrmReloadTestUnit::test_load_twice, this), "test load twice from table");
   add_test("load_has_one", std::bind(&OrmReloadTestUnit::test_load_has_one, this), "test load has one relation from table");
   add_test("load_has_many", std::bind(&OrmReloadTestUnit::test_load_has_many, this), "test load has many from table");
   add_test("load_has_many_to_many", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many, this), "test load has many to many from table");
@@ -40,6 +41,82 @@ void OrmReloadTestUnit::test_load()
 
       UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
     }
+  }
+
+  p.clear();
+
+  {
+    // load persons from database
+    matador::session s(p);
+
+    s.load();
+
+    typedef matador::object_view<person> t_person_view;
+    t_person_view persons(s.store());
+
+    UNIT_ASSERT_TRUE(!persons.empty(), "person view must not be empty");
+    UNIT_ASSERT_EQUAL(persons.size(), 6UL, "thier must be 6 persons");
+
+    t_person_view::iterator first = persons.begin();
+    t_person_view::iterator last = persons.end();
+
+    while (first != last) {
+      auto pptr = *first++;
+      names.erase(std::remove_if(std::begin(names), std::end(names), [pptr](const std::string &name) {
+        return name == pptr->name();
+      }), names.end());
+    }
+    UNIT_ASSERT_TRUE(names.empty(), "names must be empty");
+  }
+
+  p.drop();
+}
+
+void OrmReloadTestUnit::test_load_twice()
+{
+  matador::persistence p(dns_);
+
+  p.attach<person>("person");
+
+  p.create();
+
+  std::vector<std::string> names({"hans", "otto", "georg", "hilde", "ute", "manfred"});
+
+  {
+    // insert some persons
+    matador::session s(p);
+
+    for (const std::string &name : names) {
+      auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
+
+      UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
+    }
+  }
+
+  p.clear();
+
+  {
+    // load persons from database
+    matador::session s(p);
+
+    s.load();
+
+    typedef matador::object_view<person> t_person_view;
+    t_person_view persons(s.store());
+
+    UNIT_ASSERT_TRUE(!persons.empty(), "person view must not be empty");
+    UNIT_ASSERT_EQUAL(persons.size(), 6UL, "thier must be 6 persons");
+
+    t_person_view::iterator first = persons.begin();
+    t_person_view::iterator last = persons.end();
+
+    while (first != last) {
+      auto pptr = *first++;
+      names.erase(std::remove_if(std::begin(names), std::end(names), [pptr](const std::string &name) {
+        return name == pptr->name();
+      }), names.end());
+    }
+    UNIT_ASSERT_TRUE(names.empty(), "names must be empty");
   }
 
   p.clear();

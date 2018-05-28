@@ -20,6 +20,7 @@ mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs)
   , stmt(s)
   , result_size(rs)
   , bind_(new MYSQL_BIND[rs])
+//  , info_(rs)
   , info_(new mysql_result_info[rs])
 {
     memset(bind_, 0, rs * sizeof(MYSQL_BIND));
@@ -30,9 +31,9 @@ mysql_prepared_result::~mysql_prepared_result()
 {
   delete [] bind_;
   for (int i = 0; i < result_size; ++i) {
-    if (info_[i].buffer != 0) {
-      delete [] info_[i].buffer;
-    }
+//    if (info_[i].buffer != 0) {
+    delete [] info_[i].buffer;
+//    }
   }
   delete [] info_;
 }

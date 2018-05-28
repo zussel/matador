@@ -9,6 +9,7 @@ public:
   OrmReloadTestUnit(const std::string &prefix, const std::string &dns);
 
   void test_load();
+  void test_load_twice();
   void test_load_has_one();
   void test_load_has_many();
   void test_load_has_many_to_many();

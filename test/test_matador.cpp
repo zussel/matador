@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new QueryTestUnit("mysql_query", "mysql query test unit", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
   suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
   suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
+//  suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
 #endif
 
 #if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
@@ -123,14 +123,14 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
-  suite.register_unit(new ConnectionTestUnit("sqlite_conn", "sqlite connection test unit", ::connection::sqlite));
-  suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", ::connection::sqlite));
-  suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", ::connection::sqlite));
+//  suite.register_unit(new ConnectionTestUnit("sqlite_conn", "sqlite connection test unit", ::connection::sqlite));
+//  suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", ::connection::sqlite));
+//  suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", ::connection::sqlite));
 //  suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
-  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
-  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
-  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
-  suite.register_unit(new SQLiteDialectTestUnit());
+//  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
+//  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
+//  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
+//  suite.register_unit(new SQLiteDialectTestUnit());
 #endif
 
 //  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));

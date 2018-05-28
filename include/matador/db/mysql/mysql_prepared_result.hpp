@@ -29,7 +29,7 @@ namespace mysql {
 
 class mysql_prepared_result : public detail::result_impl
 {
-private:
+public:
   mysql_prepared_result(const mysql_prepared_result &) = delete;
   mysql_prepared_result &operator=(const mysql_prepared_result &) = delete;
 
@@ -39,42 +39,42 @@ public:
 
 public:
   mysql_prepared_result(MYSQL_STMT *s, int rs);
-  ~mysql_prepared_result();
+  ~mysql_prepared_result() override;
 
-  virtual const char* column(size_type c) const override;
-  virtual bool fetch() override;
+  const char* column(size_type c) const override;
+  bool fetch() override;
 
-  virtual size_type affected_rows() const override;
-  virtual size_type result_rows() const override;
-  virtual size_type fields() const override;
+  size_type affected_rows() const override;
+  size_type result_rows() const override;
+  size_type fields() const override;
 
-  virtual int transform_index(int index) const override;
+  int transform_index(int index) const override;
 
-  virtual void serialize(const char *id, char &x) override;
-  virtual void serialize(const char *id, short &x) override;
-  virtual void serialize(const char *id, int &x) override;
-  virtual void serialize(const char *id, long &x) override;
-  virtual void serialize(const char *id, unsigned char &x) override;
-  virtual void serialize(const char *id, unsigned short &x) override;
-  virtual void serialize(const char *id, unsigned int &x) override;
-  virtual void serialize(const char *id, unsigned long &x) override;
-  virtual void serialize(const char *id, bool &x) override;
-  virtual void serialize(const char *id, float &x) override;
-  virtual void serialize(const char *id, double &x) override;
-  virtual void serialize(const char *id, char *x, size_t s) override;
-  virtual void serialize(const char *id, matador::date &x) override;
-  virtual void serialize(const char *id, matador::time &x) override;
-  virtual void serialize(const char *id, std::string &x) override;
-  virtual void serialize(const char *id, varchar_base &x) override;
-  virtual void serialize(const char *id, basic_identifier &x) override;
-  virtual void serialize(const char *id, identifiable_holder &x, cascade_type) override;
+  void serialize(const char *id, char &x) override;
+  void serialize(const char *id, short &x) override;
+  void serialize(const char *id, int &x) override;
+  void serialize(const char *id, long &x) override;
+  void serialize(const char *id, unsigned char &x) override;
+  void serialize(const char *id, unsigned short &x) override;
+  void serialize(const char *id, unsigned int &x) override;
+  void serialize(const char *id, unsigned long &x) override;
+  void serialize(const char *id, bool &x) override;
+  void serialize(const char *id, float &x) override;
+  void serialize(const char *id, double &x) override;
+  void serialize(const char *id, char *x, size_t s) override;
+  void serialize(const char *id, matador::date &x) override;
+  void serialize(const char *id, matador::time &x) override;
+  void serialize(const char *id, std::string &x) override;
+  void serialize(const char *id, varchar_base &x) override;
+  void serialize(const char *id, basic_identifier &x) override;
+  void serialize(const char *id, identifiable_holder &x, cascade_type) override;
 
 protected:
-  virtual bool needs_bind() override;
-  virtual bool finalize_bind() override;
+  bool needs_bind() override;
+  bool finalize_bind() override;
 
-  virtual bool prepare_fetch() override;
-  virtual bool finalize_fetch() override;
+  bool prepare_fetch() override;
+  bool finalize_fetch() override;
 
 private:
 
@@ -103,9 +103,8 @@ private:
   MYSQL_STMT *stmt;
   int result_size;
   MYSQL_BIND *bind_;
+//  std::vector<mysql_result_info> info_;
   mysql_result_info *info_;
-
-  t_pk_map pk_map_;
 
   bool prepare_binding_ = true;
 

@@ -164,7 +164,7 @@ public:
   /**
    * @brief Marks the table as not loaded
    */
-  void reset();
+  virtual void reset();
 
   persistence& persistence_unit();
 

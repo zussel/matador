@@ -41,7 +41,7 @@ namespace detail {
 template < class T >
 class statement
 {
-private:
+public:
   statement(const statement &x) = delete;
   statement& operator=(const statement &x) = delete;
 
@@ -49,9 +49,7 @@ public:
   /**
    * Creates an empty statement
    */
-  statement()
-    : p(nullptr)
-  { }
+  statement() : p(nullptr) { }
 
   /**
    * Creates a statement initialized from the
@@ -60,7 +58,7 @@ public:
    *
    * @param impl The statement implementation object
    */
-  statement(detail::statement_impl *impl)
+  explicit statement(detail::statement_impl *impl)
     : p(impl)
   { }
 

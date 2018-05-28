@@ -179,6 +179,12 @@ public:
     delete_.execute();
   }
 
+  void reset() override
+  {
+    basic_table::reset();
+    select_.reset();
+  }
+
 /// @cond MATADOR_DEV
   template<class V>
   void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val, object_proxy *owner);
