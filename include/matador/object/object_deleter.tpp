@@ -55,7 +55,7 @@ void object_deleter::serialize(const char *, belongs_to<T> &x, cascade_type casc
         x.relation_info_->remove_value_from_foreign(x.owner_, x.proxy_);
       });
     }
-    visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1)).first;
+    visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1));
   }
 
 
