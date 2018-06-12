@@ -87,7 +87,7 @@ void ObjectStoreTestUnit::finalize()
 
 struct item_counter : public std::unary_function<const object_ptr<ObjectItem<Item> >&, void>
 {
-  item_counter(int &c) : count(c) {}
+  explicit item_counter(int &c) : count(c) {}
   
   void operator ()(const object_ptr<ObjectItem<Item> > &) { ++count; }
   int &count;
@@ -218,7 +218,7 @@ void ObjectStoreTestUnit::test_serializer()
   matador::date dt(15, 9, 1972);
   matador::time t(2008, 12, 27, 13, 6, 57, 4711);
 
-  Item *item = new Item();
+  auto *item = new Item();
   
   item->set_char(c);
   item->set_float(f);
@@ -324,8 +324,8 @@ void ObjectStoreTestUnit::test_reference_counter()
 
   UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be one");
 
-  item_ptr a1 = item;
-  item_ptr a2 = item;
+  auto a1 = item;
+  auto a2 = item;
 
   UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be one");
   UNIT_ASSERT_EQUAL(a1.reference_count(), 1UL, "reference count must be one");
@@ -461,7 +461,7 @@ void ObjectStoreTestUnit::test_simple_object()
 {
   ostore_.attach<Item>("item");
 
-  Item *a = ostore_.create<Item>();
+  auto *a = ostore_.create<Item>();
   
   UNIT_ASSERT_NOT_NULL(a, "couldn't create object of type <Item>");
   
@@ -481,7 +481,7 @@ void ObjectStoreTestUnit::test_object_with_sub_object()
   ostore_.attach<Item>("item");
   ostore_.attach<ObjectItem<Item> >("object_item");
 
-  ObjectItem<Item> *s = ostore_.create<ObjectItem<Item>>();
+  auto *s = ostore_.create<ObjectItem<Item>>();
   
   UNIT_ASSERT_NOT_NULL(s, "couldn't create object of type <ObjectItem>");
   
@@ -602,17 +602,17 @@ void ObjectStoreTestUnit::test_hierarchy()
     ostore_.insert(new Item(str.str()));
     str.str("");
     str << "item a " << i;
-    ItemA *ia = new ItemA;
+    auto *ia = new ItemA;
     ia->set_string(str.str());
     ostore_.insert(ia);
     str.str("");
     str << "item b " << i;
-    ItemB *ib = new ItemB;
+    auto *ib = new ItemB;
     ib->set_string(str.str());
     ostore_.insert(ib);
     str.str("");
     str << "item c " << i;
-    ItemC *ic = new ItemC;
+    auto *ic = new ItemC;
     ic->set_string(str.str());
     ostore_.insert(ic);
   }
@@ -896,9 +896,9 @@ void ObjectStoreTestUnit::test_structure()
 class cyclic
 {
 public:
-  cyclic() {}
-  cyclic(const std::string &n) : name(n) {}
-  ~cyclic() {}
+  cyclic() = default;
+  explicit cyclic(std::string n) : name(std::move(n)) {}
+  ~cyclic() = default;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &w) {
@@ -1010,7 +1010,7 @@ void ObjectStoreTestUnit::test_remove()
 
   UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "null shouldn't be removable");
 
-  Item *i = new Item;
+  auto *i = new Item;
   item = i;
 
   UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "prototype node is nullptr", "transient object shouldn't be removable");
@@ -1171,18 +1171,19 @@ std::vector<std::string> basic_logger::nodes = std::vector<std::string>();
 template < class T >
 struct logger : public object_store_observer<T>, public basic_logger
 {
-  logger() {}
+  logger() = default;
 
   template < class V >
-  logger(const logger<V> *) {}
+  explicit logger(const logger<V> *) {}
+
   void on_attach(prototype_node &node, T &) override
   {
-    nodes.push_back(node.type());
+    nodes.emplace_back(node.type());
   }
 
   void on_detach(prototype_node &node, T &) override
   {
-    nodes.push_back(node.type());
+    nodes.emplace_back(node.type());
   }
 
   void on_insert(object_proxy &) override {}

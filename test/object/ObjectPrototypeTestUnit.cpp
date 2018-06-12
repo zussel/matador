@@ -101,7 +101,7 @@ ObjectPrototypeTestUnit::one_prototype()
 
   ostore.attach<Item>("item");
   
-  Item *o = ostore.create<Item>();
+  auto *o = ostore.create<Item>();
   
   UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
 
@@ -121,7 +121,7 @@ ObjectPrototypeTestUnit::prototype_hierachy()
   ostore.attach<ItemB, Item>("ITEM_B");
   ostore.attach<ItemC, Item>("ITEM_C");
 
-  ItemB *a = ostore.create<ItemB>();
+  auto *a = ostore.create<ItemB>();
   
   UNIT_ASSERT_NOT_NULL(a, "couldn't create serializable of type <ItemB>");
   

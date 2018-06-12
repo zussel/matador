@@ -959,10 +959,6 @@ private:
   void push_transaction(const transaction &tr);
   void pop_transaction();
 
-  bool is_relation_notification_enabled();
-  void enable_relation_notification();
-  void disable_relation_notification();
-
   template < class T >
   void validate(prototype_node *node);
 

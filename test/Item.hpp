@@ -39,7 +39,8 @@ public:
 
   explicit Item(const std::string &str) : Item(str, -65000) {}
 
-  Item(std::string str, int i) : int_(i), string_(std::move(str))
+  Item(std::string str, int i)
+    : int_(i), cstr_(""), string_(std::move(str))
   {
     memset(cstr_, 0, CSTR_LEN);
 #ifdef _MSC_VER
@@ -162,7 +163,8 @@ public:
     : Item(n, i)
   {}
 
-  template < class SERIALIZER > void serialize(SERIALIZER &serializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(*matador::base_class<Item>(this));
     serializer.serialize("ref", ref_, matador::cascade_type::NONE);
@@ -282,7 +284,7 @@ public:
   iterator end() { return book_list_.end(); }
   const_iterator end() const { return book_list_.end(); }
 
-  iterator erase(iterator i) { return book_list_.erase(i); }
+  iterator erase(const iterator &i) { return book_list_.erase(i); }
 
   size_type size() const { return book_list_.size(); }
   bool empty() const { return book_list_.empty(); }
@@ -302,10 +304,10 @@ private:
 
 public:
   person() = default;
-  person(unsigned long id, const std::string &name, const matador::date &birthdate, unsigned int height)
+  person(unsigned long id, const std::string &name, matador::date birthdate, unsigned int height)
     : id_(id)
     , name_(name)
-    , birthdate_(birthdate)
+    , birthdate_(std::move(birthdate))
     , height_(height)
   {}
 
@@ -375,7 +377,7 @@ struct department
 
   department() = default;
   explicit department(std::string n)
-    : name(std::move(n))
+    : name(n)
   {}
   
   ~department() = default;
@@ -484,12 +486,12 @@ private:
 
 public:
   track() : index_(0) {}
-  track(const std::string &title)
-    : title_(title)
+  explicit track(std::string title)
+    : title_(std::move(title))
     , index_(0)
   {}
   
-  ~track() {}
+  ~track() = default;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)

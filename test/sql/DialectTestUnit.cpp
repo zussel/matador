@@ -263,7 +263,7 @@ void DialectTestUnit::test_select_where_query()
 
   s.append(new detail::select);
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -285,7 +285,7 @@ void DialectTestUnit::test_select_where_query()
 
   s.append(new detail::select);
 
-  cols.reset(new columns(columns::WITHOUT_BRACKETS));
+  cols = std::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));

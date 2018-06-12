@@ -276,7 +276,7 @@ void HasManyListUnitTest::test_string()
   UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL, "has many list is not empty");
 
   std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
-  for (auto name : names) {
+  for (const auto &name : names) {
     mi->elements.push_back(name);
   }
 
@@ -304,7 +304,7 @@ void HasManyListUnitTest::test_varchar()
   UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL, "has many list is not empty");
 
   std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
-  for (auto name : names) {
+  for (const auto &name : names) {
     mi->elements.push_back(name.c_str());
   }
 

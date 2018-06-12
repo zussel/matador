@@ -40,6 +40,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
   add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
   add_test("prepare", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
+//  add_test("result_twice", std::bind(&QueryTestUnit::test_prepared_result_twice, this), "test query prepared statement get result twice");
   add_test("rows", std::bind(&QueryTestUnit::test_rows, this), "test row value serialization");
 }
 
@@ -194,7 +195,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
     "from"
   };
 
-  for (auto colname : colnames) {
+  for (const auto &colname : colnames) {
     query<> q(connection_, "quotes");
 
     q.create({make_typed_column<std::string>(colname)}).execute();
@@ -298,12 +299,12 @@ void QueryTestUnit::test_describe()
 class pktest
 {
 public:
-  pktest() {}
-  pktest(unsigned long i, const std::string &n)
-    : id(i), name(n)
+  pktest() = default;
+  pktest(unsigned long i, std::string n)
+    : id(i), name(std::move(std::move(n)))
   {}
 
-  ~pktest() {}
+  ~pktest() = default;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &s)
@@ -387,7 +388,7 @@ void QueryTestUnit::test_update()
   std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
 
   unsigned long id(0);
-  for (std::string name : names) {
+  for (const auto &name : names) {
     person p(name, matador::date(12, 3, 1980), 180);
     p.id(++id);
     q.insert(p).execute();
@@ -444,7 +445,7 @@ void QueryTestUnit::test_anonymous_create()
   UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
   auto fields = connection_.describe("person");
 
-  for (auto fld : fields) {
+  for (const auto &fld : fields) {
     UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
   }
 
@@ -573,7 +574,7 @@ void QueryTestUnit::test_statement_update()
   std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
 
   unsigned long id(0);
-  for (std::string name : names) {
+  for (const auto &name : names) {
     person p(name, matador::date(12, 3, 1980), 180);
     p.id(++id);
     stmt = q.insert(p).prepare();
@@ -992,7 +993,7 @@ struct relation
   t_id owner = 0UL;
   t_id item = 0UL;
 
-  relation() {}
+  relation() = default;
   relation(t_id oid, t_id iid)
     : owner(oid), item(iid)
   {}
@@ -1014,13 +1015,17 @@ void QueryTestUnit::test_select_limit()
   // create item table and insert item
   result<relation> res(q.create().execute(connection_));
 
-  std::unique_ptr<relation> r1(new relation(1UL, 1UL));
+  auto r1 = std::make_unique<relation>(1UL, 1UL);
+//  std::unique_ptr<relation> r1(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
-  r1.reset(new relation(1UL, 1UL));
+  r1 = std::make_unique<relation>(1UL, 1UL);
+//  r1.reset(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
-  r1.reset(new relation(1UL, 2UL));
+  r1 = std::make_unique<relation>(1UL, 2UL);
+//  r1.reset(new relation(1UL, 2UL));
   res = q.insert(*r1).execute(connection_);
-  r1.reset(new relation(2UL, 3UL));
+  r1 = std::make_unique<relation>(1UL, 3UL);
+//  r1.reset(new relation(2UL, 3UL));
   res = q.insert(*r1).execute(connection_);
 
   q.select().limit(1);
@@ -1047,13 +1052,17 @@ void QueryTestUnit::test_update_limit()
   // create item table and insert item
   result<relation> res(q.create().execute(connection_));
 
-  std::unique_ptr<relation> r1(new relation(1UL, 1UL));
+  auto r1 = std::make_unique<relation>(1UL, 1UL);
+//  std::unique_ptr<relation> r1(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
-  r1.reset(new relation(1UL, 1UL));
+  r1 = std::make_unique<relation>(1UL, 1UL);
+//  r1.reset(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
-  r1.reset(new relation(1UL, 2UL));
+  r1 = std::make_unique<relation>(1UL, 2UL);
+//  r1.reset(new relation(1UL, 2UL));
   res = q.insert(*r1).execute(connection_);
-  r1.reset(new relation(2UL, 3UL));
+  r1 = std::make_unique<relation>(1UL, 3UL);
+//  r1.reset(new relation(2UL, 3UL));
   res = q.insert(*r1).execute(connection_);
 
   matador::column owner("owner_id");
@@ -1087,8 +1096,69 @@ void QueryTestUnit::test_prepared_statement()
 
   auto cols = { "id", "name", "age" };
 
-  for (auto fld : fields) {
+  for (const auto &fld : fields) {
 	  UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
+  }
+
+  q.drop().execute();
+}
+
+void QueryTestUnit::test_prepared_result_twice()
+{
+  connection_.open();
+
+  query<person> q(connection_, "person");
+
+  q.create();
+
+  auto stmt = q.prepare();
+
+  stmt.execute();
+
+  UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
+
+  std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
+
+  unsigned long id(0);
+  for (const auto& name : names) {
+    person p(name, matador::date(12, 3, 1980), 180);
+    p.id(++id);
+    q.insert(p).execute();
+  }
+
+  stmt = q.select().prepare();
+
+  {
+    std::set<std::string> nameset;
+
+    for(const auto &name : names) {
+      nameset.insert(name);
+    }
+    auto result = stmt.execute();
+
+    for (auto p : result) {
+      auto i = nameset.find(p->name());
+      UNIT_ASSERT_TRUE(i != nameset.end(), "name " + p->name() + " not found");
+      nameset.erase(i);
+    }
+  }
+
+  stmt.reset();
+
+  {
+    std::set<std::string> nameset;
+
+    for(const auto &name : names) {
+      nameset.insert(name);
+    }
+
+    auto result = stmt.execute();
+
+    for (auto p : result) {
+      auto i = nameset.find(p->name());
+      UNIT_ASSERT_TRUE(i != nameset.end(), "name " + p->name() + " not found");
+      nameset.erase(i);
+    }
   }
 
   q.drop().execute();
@@ -1118,7 +1188,7 @@ void QueryTestUnit::test_rows()
   UNIT_ASSERT_TRUE(connection_.exists("item"), "table item must exist");
   auto fields = connection_.describe("item");
 
-  for (auto fld : fields) {
+  for (const auto &fld : fields) {
     UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
   }
 
@@ -1129,17 +1199,12 @@ void QueryTestUnit::test_rows()
 
   auto res = q.select({"id", "string", "varchar", "int", "float", "double"}).from("item").execute();
 
-  auto first = res.begin();
-  auto last = res.end();
-
-  while (first != last) {
-    std::unique_ptr<row> item(first.release());
+  for (auto item : res) {
     UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
     UNIT_EXPECT_EQUAL("long text", item->at<std::string>("string"), "invalid value");
     UNIT_EXPECT_EQUAL(-17, item->at<int>("int"), "invalid value");
     UNIT_EXPECT_EQUAL(3.1415f, item->at<float>("float"), "invalid value");
     UNIT_EXPECT_EQUAL(2.71828, item->at<double>("double"), "invalid value");
-    ++first;
   }
 
   q.drop("item").execute();

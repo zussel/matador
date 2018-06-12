@@ -30,7 +30,7 @@ class ConnectionTestUnit : public matador::unit_test
 {
 public:
   ConnectionTestUnit(const std::string &name, const std::string &msg, const std::string &dns);
-  virtual ~ConnectionTestUnit();
+  ~ConnectionTestUnit() override = default;
 
   void test_open_close();
   void test_reopen();

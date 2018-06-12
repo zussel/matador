@@ -32,9 +32,6 @@ ConnectionTestUnit::ConnectionTestUnit(const std::string &name, const std::strin
   add_test("reopen", std::bind(&ConnectionTestUnit::test_reopen, this), "reopen sql test");
 }
 
-ConnectionTestUnit::~ConnectionTestUnit()
-{}
-
 void ConnectionTestUnit::test_open_close()
 {
   matador::connection conn(connection_string());

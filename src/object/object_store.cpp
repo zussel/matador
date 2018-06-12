@@ -207,7 +207,7 @@ void object_store::dump_objects(std::ostream &out) const
 
 object_proxy* object_store::find_proxy(unsigned long id) const
 {
-  t_object_proxy_map::const_iterator i = object_map_.find(id);
+  auto i = object_map_.find(id);
   if (i == object_map_.end()) {
     return nullptr;
   } else {
@@ -217,7 +217,7 @@ object_proxy* object_store::find_proxy(unsigned long id) const
 
 bool object_store::delete_proxy(unsigned long id)
 {
-  t_object_proxy_map::iterator i = object_map_.find(id);
+  auto i = object_map_.find(id);
   if (i == object_map_.end()) {
     return false;
   } else if (i->second->linked()) {
@@ -290,18 +290,18 @@ sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &se
 
 prototype_node* object_store::find_prototype_node(const char *type) const {
   // check for null
-  if (type == 0) {
+  if (type == nullptr) {
     throw object_exception("invalid type (null)");
   }
   /*
    * first search in the prototype map
    */
-  t_prototype_map::const_iterator i = prototype_map_.find(type);
+  auto i = prototype_map_.find(type);
   if (i == prototype_map_.end()) {
     /*
    * if not found search in the typeid to prototype map
    */
-    t_typeid_prototype_map::const_iterator j = typeid_prototype_map_.find(type);
+    auto j = typeid_prototype_map_.find(type);
     if (j == typeid_prototype_map_.end()) {
       return nullptr;
     } else {
@@ -340,12 +340,12 @@ prototype_node* object_store::remove_prototype_node(prototype_node *node, bool i
   // unlink node
   node->unlink();
   // get iterator
-  t_prototype_map::iterator j = prototype_map_.find(node->type_.c_str());
+  auto j = prototype_map_.find(node->type_);
   if (j != prototype_map_.end()) {
     prototype_map_.erase(j);
   }
   // find item in typeid map
-  t_typeid_prototype_map::iterator k = typeid_prototype_map_.find(node->type_id());
+  auto k = typeid_prototype_map_.find(node->type_id());
   if (k != typeid_prototype_map_.end()) {
     k->second.erase(node->type_);
     if (k->second.empty()) {
@@ -382,21 +382,6 @@ void object_store::push_transaction(const transaction &tr)
 void object_store::pop_transaction()
 {
   transactions_.pop();
-}
-
-bool object_store::is_relation_notification_enabled()
-{
-  return relation_notification_;
-}
-
-void object_store::enable_relation_notification()
-{
-  relation_notification_ = true;
-}
-
-void object_store::disable_relation_notification()
-{
-  relation_notification_ = false;
 }
 
 transaction object_store::current_transaction()
