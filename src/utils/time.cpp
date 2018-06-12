@@ -63,7 +63,7 @@ time::time()
   if (detail::gettimeofday(&time_, 0) != 0) {
     throw std::logic_error("couldn' get time of day");
   }
-  const time_t temp = (const time_t)this->time_.tv_sec;
+  auto temp = this->time_.tv_sec;
   detail::localtime(temp, tm_);
 }
 
@@ -220,7 +220,7 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
 #endif
   this->time_.tv_usec = millis * 1000;
 
-  const time_t temp = (const time_t)this->time_.tv_sec;
+  auto temp = this->time_.tv_sec;
   detail::localtime(temp, this->tm_);
 }
 
@@ -232,7 +232,7 @@ void time::set(time_t t, long millis)
   time_.tv_sec = t;
 #endif
   time_.tv_usec = millis * 1000;
-  const time_t temp = (const time_t)this->time_.tv_sec;
+  auto temp = this->time_.tv_sec;
   detail::localtime(temp, tm_);
 }
 
@@ -244,7 +244,7 @@ void time::set(const date &d)
 void time::set(timeval tv)
 {
   time_ = tv;
-  const time_t temp = (const time_t)this->time_.tv_sec;
+  auto temp = this->time_.tv_sec;
   detail::localtime(temp, tm_);
 }
 

@@ -28,7 +28,7 @@ namespace detail {
 
 class OOS_SQL_API result_impl : public matador::serializer
 {
-private:
+public:
   result_impl(const result_impl &) = delete;
   result_impl &operator=(const result_impl &) = delete;
 
@@ -44,7 +44,7 @@ protected:
   virtual bool finalize_fetch() = 0;
 
 public:
-  virtual ~result_impl();
+  ~result_impl() override ;
 
   template < class T >
   void get(T *o)
@@ -52,24 +52,24 @@ public:
     matador::access::serialize(*this, *o);
   }
 
-  virtual void serialize(const char*, char&) = 0;
-  virtual void serialize(const char*, short&) = 0;
-  virtual void serialize(const char*, int&) = 0;
-  virtual void serialize(const char*, long&) = 0;
-  virtual void serialize(const char*, unsigned char&) = 0;
-  virtual void serialize(const char*, unsigned short&) = 0;
-  virtual void serialize(const char*, unsigned int&) = 0;
-  virtual void serialize(const char*, unsigned long&) = 0;
-  virtual void serialize(const char*, bool&) = 0;
-  virtual void serialize(const char*, float&) = 0;
-  virtual void serialize(const char*, double&) = 0;
-  virtual void serialize(const char*, char *, size_t) = 0;
-  virtual void serialize(const char*, std::string&) = 0;
-  virtual void serialize(const char*, matador::varchar_base&) = 0;
-  virtual void serialize(const char*, matador::time&) = 0;
-  virtual void serialize(const char*, matador::date&) = 0;
-  virtual void serialize(const char*, matador::basic_identifier &x) = 0;
-  virtual void serialize(const char*, matador::identifiable_holder &x, cascade_type) = 0;
+  void serialize(const char*, char&) override = 0;
+  void serialize(const char*, short&) override = 0;
+  void serialize(const char*, int&) override = 0;
+  void serialize(const char*, long&) override = 0;
+  void serialize(const char*, unsigned char&) override = 0;
+  void serialize(const char*, unsigned short&) override = 0;
+  void serialize(const char*, unsigned int&) override = 0;
+  void serialize(const char*, unsigned long&) override = 0;
+  void serialize(const char*, bool&) override = 0;
+  void serialize(const char*, float&) override = 0;
+  void serialize(const char*, double&) override = 0;
+  void serialize(const char*, char *, size_t) override = 0;
+  void serialize(const char*, std::string&) override = 0;
+  void serialize(const char*, matador::varchar_base&) override = 0;
+  void serialize(const char*, matador::time&) override = 0;
+  void serialize(const char*, matador::date&) override = 0;
+  void serialize(const char*, matador::basic_identifier &x) override = 0;
+  void serialize(const char*, matador::identifiable_holder &x, cascade_type) override = 0;
 
   virtual const char *column(size_type c) const = 0;
 

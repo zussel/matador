@@ -13,11 +13,19 @@ namespace mysql {
 
 struct mysql_result_info
 {
-  unsigned long length;
-  my_bool is_null;
-  my_bool error;
-  char *buffer;
-  unsigned long buffer_length;
+  unsigned long length = 0;
+  my_bool is_null = false;
+  my_bool error = false;
+  char *buffer = nullptr;
+  unsigned long buffer_length = 0;
+  bool is_allocated = false;
+
+  ~mysql_result_info()
+  {
+      if (is_allocated) {
+          delete [] buffer;
+      }
+  }
 };
 
 }

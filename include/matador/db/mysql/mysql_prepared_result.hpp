@@ -35,10 +35,9 @@ public:
 
 public:
   typedef detail::result_impl::size_type size_type;
-  typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_pk_map;
 
 public:
-  mysql_prepared_result(MYSQL_STMT *s, int rs);
+  mysql_prepared_result(MYSQL_STMT *s, unsigned int rs);
   ~mysql_prepared_result() override;
 
   const char* column(size_type c) const override;
@@ -101,10 +100,9 @@ private:
   size_type rows;
   size_type fields_;
   MYSQL_STMT *stmt;
-  int result_size;
-  MYSQL_BIND *bind_;
-//  std::vector<mysql_result_info> info_;
-  mysql_result_info *info_;
+//  unsigned int result_size;
+  std::vector<MYSQL_BIND> bind_;
+  std::vector<mysql_result_info> info_;
 
   bool prepare_binding_ = true;
 

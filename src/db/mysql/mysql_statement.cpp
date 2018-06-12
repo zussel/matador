@@ -44,12 +44,11 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   result_size = db.dialect()->column_count();
   host_size = db.dialect()->bind_count();
   if (host_size) {
-    host_array = new MYSQL_BIND[host_size];
-    memset(host_array, 0, host_size * sizeof(MYSQL_BIND));
+    host_array.resize(host_size);
     is_null_vector.assign(host_size, false);
   }
 
-  int res = mysql_stmt_prepare(stmt_, str().c_str(), (unsigned long)str().size());
+  int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
@@ -68,13 +67,12 @@ void mysql_statement::reset()
 
 void mysql_statement::clear()
 {
-  for (size_t i = 0; i < host_size; ++i) {
-    if (host_array[i].buffer) {
-      delete [] static_cast<char*>(host_array[i].buffer);
+  while (!host_array.empty()) {
+    if (host_array.back().buffer != nullptr) {
+      delete [] static_cast<char*>(host_array.back().buffer);
     }
+    host_array.pop_back();
   }
-  delete [] host_array;
-  host_array = nullptr;
 
   result_size = 0;
   host_size = 0;
@@ -83,8 +81,8 @@ void mysql_statement::clear()
 
 detail::result_impl* mysql_statement::execute()
 {
-  if (host_array) {
-    int res = mysql_stmt_bind_param(stmt_, host_array);
+  if (host_size > 0) {
+    int res = mysql_stmt_bind_param(stmt_, &host_array.front());
     if (res > 0) {
       throw_stmt_error(res, stmt_, "mysql", str());
     }
@@ -259,10 +257,10 @@ void mysql_statement::bind_value(std::size_t index, enum_field_types type, const
   }
   memset(bind.buffer, 0, sizeof(MYSQL_TIME));
   bind.buffer_type = type;
-  bind.length = 0;
+  bind.length = nullptr;
   is_null_vector[index] = false;
   bind.is_null = &is_null_vector[index];
-  MYSQL_TIME *mt = static_cast<MYSQL_TIME*>(bind.buffer);
+  auto *mt = static_cast<MYSQL_TIME*>(bind.buffer);
   mt->day = (unsigned int)x.day();
   mt->month = (unsigned int)x.month();
   mt->year = (unsigned int)x.year();
@@ -279,10 +277,10 @@ void mysql_statement::bind_value(std::size_t index, enum_field_types type, const
   }
   memset(bind.buffer, 0, sizeof(MYSQL_TIME));
   bind.buffer_type = type;
-  bind.length = 0;
+  bind.length = nullptr;
   is_null_vector[index] = false;
   bind.is_null = &is_null_vector[index];
-  MYSQL_TIME *mt = static_cast<MYSQL_TIME*>(bind.buffer);
+  auto *mt = static_cast<MYSQL_TIME*>(bind.buffer);
   mt->day = (unsigned int)x.day();
   mt->month = (unsigned int)x.month();
   mt->year = (unsigned int)x.year();

@@ -103,7 +103,7 @@ private:
   size_t host_size;
   std::vector<my_bool> is_null_vector;
   MYSQL_STMT *stmt_ = nullptr;
-  MYSQL_BIND *host_array = nullptr;
+  std::vector<MYSQL_BIND> host_array;
 };
 
 }

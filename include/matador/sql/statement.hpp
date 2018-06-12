@@ -74,7 +74,7 @@ public:
    * 
    * @param x The statement to move from
    */
-  statement(statement &&x)
+  statement(statement &&x) noexcept
   {
     std::swap(p, x.p);
   }
@@ -85,7 +85,7 @@ public:
    * @param x The statement to move from
    * @return Reference to this
    */
-  statement& operator=(statement &&x)
+  statement& operator=(statement &&x) noexcept
   {
     if (p) {
       delete p;
@@ -177,15 +177,14 @@ private:
 template <>
 class statement<row>
 {
-private:
+public:
   statement(const statement &x) = delete;
   statement& operator=(const statement &x) = delete;
 
-public:
   /**
    * Creates an empty statement
    */
-  statement() {}
+  statement() = default;
 
   /**
    * Creates a statement initialized from the
@@ -202,9 +201,7 @@ public:
 
   ~statement()
   {
-    if (p) {
-      delete p;
-    }
+    delete p;
   }
 
   /**
@@ -212,7 +209,7 @@ public:
    * 
    * @param x The statement to move from
    */
-  statement(statement &&x)
+  statement(statement &&x) noexcept
   {
     std::swap(p, x.p);
   }
@@ -223,7 +220,7 @@ public:
    * @param x The statement to move from
    * @return Reference to this
    */
-  statement& operator=(statement &&x)
+  statement& operator=(statement &&x) noexcept
   {
     if (p) {
       delete p;
