@@ -285,10 +285,12 @@ before_script:
   - cd build
   - |
     if [ "$GCOV" == "gcov-5" ] && [ "$BUILD_TYPE" == "Debug" ] && [ "$ARCH" == "64" ]; then
-      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DARCH=${ARCH} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCOVERAGE=true -DMATADOR_ODBC_TEST=false -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/matador_test" ..;
+      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DARCH=${ARCH} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCOVERAGE=true -DMATADOR_ODBC_TEST=false -DMATADOR_MYSQL_TEST=false ..;
+#      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DARCH=${ARCH} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCOVERAGE=true -DMATADOR_ODBC_TEST=false -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/matador_test" ..;
       lcov --directory include --directory src --directory test --zerocounters
     else
-      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DARCH=${ARCH} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DMATADOR_ODBC_TEST=false -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/matador_test" ..;
+      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DARCH=${ARCH} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DMATADOR_ODBC_TEST=false -DMATADOR_MYSQL_TEST=false ..;
+#      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DARCH=${ARCH} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DMATADOR_ODBC_TEST=false -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/matador_test" ..;
     fi
 
 script:
