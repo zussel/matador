@@ -40,7 +40,7 @@ public:
   explicit Item(const std::string &str) : Item(str, -65000) {}
 
   Item(std::string str, int i)
-    : int_(i), cstr_(""), string_(std::move(str))
+    : int_(i), string_(std::move(str))
   {
     memset(cstr_, 0, CSTR_LEN);
 #ifdef _MSC_VER
