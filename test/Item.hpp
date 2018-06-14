@@ -141,7 +141,7 @@ private:
   unsigned int unsigned_int_ = 65000;
   unsigned long unsigned_long_ = 128000;
   bool bool_ = true;
-  char cstr_[CSTR_LEN];
+  char cstr_[CSTR_LEN]{};
   std::string string_ = "Welt";
   matador::varchar<64> varchar_ = "Erde";
   matador::date date_;
@@ -517,7 +517,7 @@ public:
 class album
 {
 public:
-  typedef matador::object_ptr<track> track_ptr;
+  typedef matador::has_one <track> track_ptr;
   typedef matador::has_many<track> track_vector_t;
   typedef track_vector_t::size_type size_type;
   typedef track_vector_t::iterator iterator;

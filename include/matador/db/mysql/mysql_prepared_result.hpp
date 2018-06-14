@@ -84,7 +84,7 @@ private:
     bind_[index].buffer= (char *)&value;
     bind_[index].buffer_length = sizeof(T);
     bind_[index].is_null = &info_[index].is_null;
-    bind_[index].length = &info_[index].length;
+//    bind_[index].length = &info_[index].length;
     bind_[index].error = &info_[index].error;
   }
 

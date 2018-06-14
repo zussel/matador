@@ -58,14 +58,14 @@ class OOS_MYSQL_API mysql_connection : public connection_impl
 {
 public:
   mysql_connection();
-  virtual ~mysql_connection();
+  ~mysql_connection() override;
   
   /**
    * Returns true if the sql is open
    *
    * @return True on open sql connection.
    */
-  virtual bool is_open() const override;
+  bool is_open() const override;
 
   virtual unsigned long last_inserted_id();
 
@@ -77,24 +77,24 @@ public:
    */
   MYSQL* handle();
 
-  virtual void open(const std::string &db) override;
-  virtual void close() override;
+  void open(const std::string &db) override;
+  void close() override;
 
-  virtual detail::result_impl* execute(const matador::sql &stmt) override;
-  virtual detail::result_impl* execute(const std::string &stmt) override;
-  virtual detail::statement_impl* prepare(const matador::sql &stmt) override;
+  detail::result_impl* execute(const matador::sql &stmt) override;
+  detail::result_impl* execute(const std::string &stmt) override;
+  detail::statement_impl* prepare(const matador::sql &stmt) override;
 
-  virtual void begin() override;
-  virtual void commit() override;
-  virtual void rollback() override;
+  void begin() override;
+  void commit() override;
+  void rollback() override;
 
-  virtual std::string type() const override;
-  virtual std::string version() const override;
+  std::string type() const override;
+  std::string version() const override;
 
-  virtual bool exists(const std::string &tablename) override;
-  virtual std::vector<field> describe(const std::string &table) override;
+  bool exists(const std::string &tablename) override;
+  std::vector<field> describe(const std::string &table) override;
 
-  virtual basic_dialect* dialect() override;
+  basic_dialect* dialect() override;
 
 private:
   MYSQL mysql_;

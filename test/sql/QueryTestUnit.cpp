@@ -40,7 +40,8 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
   add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
   add_test("prepare", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
-//  add_test("result_twice", std::bind(&QueryTestUnit::test_prepared_result_twice, this), "test query prepared statement get result twice");
+  add_test("object_result_twice", std::bind(&QueryTestUnit::test_prepared_object_result_twice, this), "test query prepared statement get object result twice");
+  add_test("scalar_result_twice", std::bind(&QueryTestUnit::test_prepared_scalar_result_twice, this), "test query prepared statement get scalar result twice");
   add_test("rows", std::bind(&QueryTestUnit::test_rows, this), "test row value serialization");
 }
 
@@ -1103,7 +1104,7 @@ void QueryTestUnit::test_prepared_statement()
   q.drop().execute();
 }
 
-void QueryTestUnit::test_prepared_result_twice()
+void QueryTestUnit::test_prepared_object_result_twice()
 {
   connection_.open();
 
@@ -1143,7 +1144,7 @@ void QueryTestUnit::test_prepared_result_twice()
     }
   }
 
-  stmt.reset();
+//  stmt.reset();
 
   {
     std::set<std::string> nameset;
@@ -1162,6 +1163,60 @@ void QueryTestUnit::test_prepared_result_twice()
   }
 
   q.drop().execute();
+}
+
+void QueryTestUnit::test_prepared_scalar_result_twice()
+{
+  connection_.open();
+
+  query<> q(connection_, "person");
+
+  q.create({
+             make_typed_id_column<long>("id"),
+           });
+
+  q.execute();
+
+  std::vector<long> ids({ 1,2,3,4 });
+
+  for (long id : ids) {
+    q.insert({"id"}).values({id}).execute();
+  }
+
+  auto stmt = q.select({"id"}).from("person").prepare();
+
+  {
+    std::set<long> idset;
+
+    for(auto id : ids) {
+      idset.insert(id);
+    }
+    auto result = stmt.execute();
+
+    for (auto p : result) {
+      auto i = idset.find(p->at<long>("id"));
+      UNIT_ASSERT_TRUE(i != idset.end(), "id " + p->str("id") + " not found");
+      idset.erase(i);
+    }
+  }
+
+  {
+    std::set<long> idset;
+
+    for(auto id : ids) {
+      idset.insert(id);
+    }
+    auto result = stmt.execute();
+
+    for (auto p : result) {
+      auto i = idset.find(p->at<long>("id"));
+      UNIT_ASSERT_TRUE(i != idset.end(), "id " + p->str("id") + " not found");
+      idset.erase(i);
+    }
+  }
+
+
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_rows()

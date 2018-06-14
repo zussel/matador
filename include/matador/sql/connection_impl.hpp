@@ -39,7 +39,7 @@ class basic_dialect;
 class OOS_SQL_API connection_impl
 {
 public:
-  virtual ~connection_impl() {}
+  virtual ~connection_impl() = default;
 
   virtual void open(const std::string &db) = 0;
   virtual bool is_open() const = 0;

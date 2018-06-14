@@ -25,6 +25,9 @@ mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, unsigned int rs)
 mysql_prepared_result::~mysql_prepared_result()
 {
   mysql_stmt_free_result(stmt);
+
+  bind_.clear();
+  info_.clear();
 }
 
 const char* mysql_prepared_result::column(size_type ) const
@@ -322,7 +325,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].is_null = &info_[index].is_null;
-  bind_[index].length = &info_[index].length;
+//  bind_[index].length = &info_[index].length;
   bind_[index].error = &info_[index].error;
 }
 
@@ -339,7 +342,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].is_null = &info_[index].is_null;
-  bind_[index].length = &info_[index].length;
+//  bind_[index].length = &info_[index].length;
   bind_[index].error = &info_[index].error;
 }
 

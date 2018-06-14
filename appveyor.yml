@@ -42,8 +42,8 @@ before_build:
   - cd "%APPVEYOR_BUILD_FOLDER%"
   - mkdir build
   - cd build
-  - cmake -G "%VS_VERSION%" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=false  ..
-#  - cmake -G "%VS_VERSION%" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" ..
+  - cmake -G "%VS_VERSION%" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" ..
+#  - cmake -G "%VS_VERSION%" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=false  ..
 
 build_script:
   - cmake --build . --config %configuration%

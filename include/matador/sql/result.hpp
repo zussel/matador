@@ -42,12 +42,12 @@ public:
   typedef value_type* pointer;               /**< Shortcut for the pointer type. */
   typedef value_type& reference;             /**< Shortcut for the reference type */
 
-  base_result_iterator() {}
-  base_result_iterator(matador::result<T> *res, T *obj = nullptr)
+  base_result_iterator() = default;
+  explicit base_result_iterator(matador::result<T> *res, T *obj = nullptr)
   : obj_(obj)
   , result_(res)
   {}
-  base_result_iterator(base_result_iterator&& x)
+  base_result_iterator(base_result_iterator&& x) noexcept
   : obj_(x.obj_.release())
   , result_(x.result_)
   {}
@@ -59,7 +59,7 @@ public:
     return *this;
   }
 
-  ~base_result_iterator() {}
+  ~base_result_iterator() = default;
 
   bool operator==(const base_result_iterator& rhs)
   {
@@ -153,7 +153,7 @@ public:
   /**
    * Empty result
    */
-  result() {}
+  result() = default;
   
   /**
    * Creates a result initialized
@@ -161,15 +161,13 @@ public:
    * 
    * @param impl Result implementation
    */
-  result(matador::detail::result_impl *impl)
+  explicit result(matador::detail::result_impl *impl)
     : p(impl)
   {}
 
   ~result()
   {
-    if (p) {
-      delete p;
-    }
+    delete p;
   }
 
   /**
@@ -178,7 +176,7 @@ public:
    * 
    * @param x The result ro move
    */
-  result(result &&x)
+  result(result &&x) noexcept
   {
     std::swap(p, x.p);
   }
@@ -293,7 +291,7 @@ public:
   /**
    * Empty result
    */
-  result() {}
+  result() = default;
 
   /**
    * Creates a result initialized
@@ -311,9 +309,7 @@ public:
 
   ~result()
   {
-    if (p) {
-      delete p;
-    }
+    delete p;
   }
 
   /**
@@ -322,7 +318,7 @@ public:
    * 
    * @param x The result ro move
    */
-  result(result &&x)
+  result(result &&x) noexcept
   {
     std::swap(p, x.p);
   }
@@ -334,7 +330,7 @@ public:
    * @param x The result ro move
    * @return Reference to this
    */
-  result& operator=(result &&x)
+  result& operator=(result &&x) noexcept
   {
     if (p) {
       delete p;

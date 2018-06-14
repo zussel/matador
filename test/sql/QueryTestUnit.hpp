@@ -46,7 +46,8 @@ public:
   void test_select_limit();
   void test_update_limit();
   void test_prepared_statement();
-  void test_prepared_result_twice();
+  void test_prepared_object_result_twice();
+  void test_prepared_scalar_result_twice();
   void test_rows();
 
 protected:
