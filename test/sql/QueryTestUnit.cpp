@@ -551,7 +551,7 @@ void QueryTestUnit::test_statement_insert()
   while (first != last) {
     std::unique_ptr<Item> item(first.release());
     UNIT_EXPECT_EQUAL(item->id(), 23UL, "expected id must be 23");
-    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_EXPECT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
     UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
     UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
     ++first;
@@ -597,9 +597,9 @@ void QueryTestUnit::test_statement_update()
   while (first != last) {
     std::unique_ptr<person> p(first.release());
     UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
-    UNIT_ASSERT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
-    UNIT_ASSERT_EQUAL(p->height(), 180U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(p->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_EXPECT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
+    UNIT_EXPECT_EQUAL(p->height(), 180U, "expected height must be 180");
+    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
     ++first;
   }
 
@@ -629,9 +629,9 @@ void QueryTestUnit::test_statement_update()
   while (first != last) {
     std::unique_ptr<person> p(first.release());
     UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
-    UNIT_ASSERT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
-    UNIT_ASSERT_EQUAL(p->height(), 165U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(p->birthdate(), matador::date(15, 6, 1990), "expected birthdate is 12.3.1980");
+    UNIT_EXPECT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
+    UNIT_EXPECT_EQUAL(p->height(), 165U, "expected height must be 180");
+    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(15, 6, 1990), "expected birthdate is 12.3.1980");
     ++first;
   }
 
@@ -663,9 +663,9 @@ void QueryTestUnit::test_delete()
   while (first != last) {
     std::unique_ptr<person> item(first.release());
 
-    UNIT_ASSERT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
-    UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_EXPECT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
+    UNIT_EXPECT_EQUAL(item->height(), 180U, "expected height must be 180");
+    UNIT_EXPECT_EQUAL(item->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
 
     ++first;
   }
@@ -1139,7 +1139,7 @@ void QueryTestUnit::test_prepared_object_result_twice()
 
     for (auto p : result) {
       auto i = nameset.find(p->name());
-      UNIT_ASSERT_TRUE(i != nameset.end(), "name " + p->name() + " not found");
+      UNIT_EXPECT_TRUE(i != nameset.end(), "name " + p->name() + " not found");
       nameset.erase(i);
     }
   }
@@ -1157,7 +1157,7 @@ void QueryTestUnit::test_prepared_object_result_twice()
 
     for (auto p : result) {
       auto i = nameset.find(p->name());
-      UNIT_ASSERT_TRUE(i != nameset.end(), "name " + p->name() + " not found");
+      UNIT_EXPECT_TRUE(i != nameset.end(), "name " + p->name() + " not found");
       nameset.erase(i);
     }
   }
@@ -1195,7 +1195,7 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
 
     for (auto p : result) {
       auto i = idset.find(p->at<long>("id"));
-      UNIT_ASSERT_TRUE(i != idset.end(), "id " + p->str("id") + " not found");
+      UNIT_EXPECT_TRUE(i != idset.end(), "id " + p->str("id") + " not found");
       idset.erase(i);
     }
   }
@@ -1210,7 +1210,7 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
 
     for (auto p : result) {
       auto i = idset.find(p->at<long>("id"));
-      UNIT_ASSERT_TRUE(i != idset.end(), "id " + p->str("id") + " not found");
+      UNIT_EXPECT_TRUE(i != idset.end(), "id " + p->str("id") + " not found");
       idset.erase(i);
     }
   }

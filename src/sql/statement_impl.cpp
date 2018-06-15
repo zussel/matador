@@ -7,9 +7,6 @@ namespace matador {
 
 namespace detail {
 
-statement_impl::~statement_impl()
-{}
-
 std::string statement_impl::str() const
 {
   return sql_;

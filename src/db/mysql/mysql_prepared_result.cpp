@@ -24,10 +24,10 @@ mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, unsigned int rs)
 
 mysql_prepared_result::~mysql_prepared_result()
 {
-  mysql_stmt_free_result(stmt);
+  auto res = mysql_stmt_free_result(stmt);
 
-  bind_.clear();
   info_.clear();
+  bind_.clear();
 }
 
 const char* mysql_prepared_result::column(size_type ) const
@@ -206,6 +206,7 @@ void mysql_prepared_result::serialize(const char *, matador::date &x)
       auto *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
       x.set(mtt->day, mtt->month, mtt->year);
     }
+    bind_[result_index_].length = nullptr;
     ++result_index_;
   }
 }
@@ -238,6 +239,7 @@ void mysql_prepared_result::serialize(const char *, matador::time &x)
       x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
       ++result_index_;
     }
+    bind_[result_index_].length = nullptr;
   }
 }
 #endif
@@ -259,6 +261,7 @@ void mysql_prepared_result::serialize(const char *, std::string &x)
       }
       delete [] (char*)bind_[result_index_].buffer;
       bind_[result_index_].buffer = nullptr;
+      bind_[result_index_].length = nullptr;
     }
     ++result_index_;
   }

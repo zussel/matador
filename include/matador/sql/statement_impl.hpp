@@ -33,7 +33,7 @@ namespace detail {
 class OOS_SQL_API statement_impl : public serializer
 {
 public:
-  ~statement_impl() override;
+  ~statement_impl() override = default;
 
   virtual void clear() = 0;
 

@@ -165,10 +165,7 @@ public:
     : p(impl)
   {}
 
-  ~result()
-  {
-    delete p;
-  }
+  ~result() = default;
 
   /**
    * Copy moves a result from given
@@ -190,11 +187,7 @@ public:
    */
   result& operator=(result &&x)
   {
-    if (p) {
-      delete p;
-      p = nullptr;
-    }
-    std::swap(p, x.p);
+    p = std::move(x.p);
     return *this;
   }
 
@@ -266,7 +259,7 @@ private:
     }
   }
 private:
-  matador::detail::result_impl *p = nullptr;
+  std::unique_ptr<matador::detail::result_impl> p;
   t_creator_func creator_func_;
 };
 
