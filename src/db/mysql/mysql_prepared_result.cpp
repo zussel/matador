@@ -20,11 +20,14 @@ mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, unsigned int rs)
   , stmt(s)
   , bind_(rs)
   , info_(rs)
-{}
+{
+  std::cout << "mysql_prepared_result::~mysql_prepared_result:\tcreating\n";
+}
 
 mysql_prepared_result::~mysql_prepared_result()
 {
-  auto res = mysql_stmt_free_result(stmt);
+  std::cout << "mysql_prepared_result::~mysql_prepared_result:\tfreeing  STMT " << stmt << "\n";
+  mysql_stmt_free_result(stmt);
 
   info_.clear();
   bind_.clear();
@@ -300,6 +303,16 @@ void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, ca
       foreign_keys_.erase(i);
     }
   }
+}
+
+void mysql_prepared_result::free()
+{
+
+  info_.clear();
+  bind_.clear();
+  mysql_stmt_free_result(stmt);
+
+  stmt = nullptr;
 }
 
 bool mysql_prepared_result::needs_bind()

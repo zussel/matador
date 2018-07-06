@@ -49,6 +49,7 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   }
 
   int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
+  std::cout << "mysql_statement::mysql_statement:\t\t\t\tcreating STMT " << stmt_ << "\n";
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
@@ -57,6 +58,7 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
 mysql_statement::~mysql_statement()
 {
   clear();
+  std::cout << "mysql_statement::~mysql_statement:\t\t\t\tdeleting STMT " << stmt_ << "\n";
   mysql_stmt_close(stmt_);
 }
 
@@ -81,6 +83,9 @@ void mysql_statement::clear()
 
 detail::result_impl* mysql_statement::execute()
 {
+  if (current_result != nullptr) {
+    current_result->free();
+  }
   if (host_size > 0) {
     int res = mysql_stmt_bind_param(stmt_, &host_array.front());
     if (res > 0) {
@@ -96,7 +101,8 @@ detail::result_impl* mysql_statement::execute()
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
-  return new mysql_prepared_result(stmt_, (int)result_size);
+  current_result = new mysql_prepared_result(stmt_, (int)result_size);
+  return current_result;
 }
 
 void mysql_statement::serialize(const char *, char &x)

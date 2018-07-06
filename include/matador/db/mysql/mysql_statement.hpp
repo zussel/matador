@@ -43,6 +43,7 @@ class date;
 namespace mysql {
 
 class mysql_connection;
+class mysql_prepared_result;
 
 class mysql_statement : public matador::detail::statement_impl
 {
@@ -104,6 +105,8 @@ private:
   std::vector<my_bool> is_null_vector;
   MYSQL_STMT *stmt_ = nullptr;
   std::vector<MYSQL_BIND> host_array;
+
+  mysql_prepared_result *current_result = nullptr;
 };
 
 }

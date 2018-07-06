@@ -68,6 +68,8 @@ public:
   void serialize(const char *id, basic_identifier &x) override;
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
 
+  void free();
+  
 protected:
   bool needs_bind() override;
   bool finalize_bind() override;
