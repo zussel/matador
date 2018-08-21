@@ -70,7 +70,7 @@ bool mysql_prepared_result::finalize_fetch()
 
 mysql_prepared_result::size_type mysql_prepared_result::affected_rows() const
 {
-  size_t ar = mysql_stmt_affected_rows(stmt);
+  std::size_t ar = mysql_stmt_affected_rows(stmt);
   return (unsigned long)ar;
   //return affected_rows_;
 }
