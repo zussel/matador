@@ -20,11 +20,15 @@ mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, unsigned int rs)
   , stmt(s)
   , bind_(rs)
   , info_(rs)
-{}
+{
+  std::cout << stmt << " pass statement to result\n";
+}
 
 mysql_prepared_result::~mysql_prepared_result()
 {
-  auto res = mysql_stmt_free_result(stmt);
+  mysql_stmt_free_result(stmt);
+
+  std::cout << stmt << " free statement from result\n";
 
   info_.clear();
   bind_.clear();

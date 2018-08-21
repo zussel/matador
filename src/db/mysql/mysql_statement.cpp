@@ -49,6 +49,9 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   }
 
   int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
+
+  std::cout << stmt_ << " prepared statement\n";
+
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
@@ -76,6 +79,7 @@ void mysql_statement::clear()
 
   result_size = 0;
   host_size = 0;
+  std::cout << stmt_ << " free statement\n";
   mysql_stmt_free_result(stmt_);
 }
 
@@ -96,6 +100,9 @@ detail::result_impl* mysql_statement::execute()
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
+
+  std::cout << stmt_ << " create result with statement\n";
+
   return new mysql_prepared_result(stmt_, (int)result_size);
 }
 
