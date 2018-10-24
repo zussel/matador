@@ -21,7 +21,7 @@ mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, unsigned int rs)
   , bind_(rs)
   , info_(rs)
 {
-  std::cout << "mysql_prepared_result::~mysql_prepared_result:\tcreating\n";
+  std::cout << "mysql_prepared_result::~mysql_prepared_result:\tcreating result with STMT " << stmt << "\n";
 }
 
 mysql_prepared_result::~mysql_prepared_result()
@@ -70,7 +70,7 @@ bool mysql_prepared_result::finalize_fetch()
 
 mysql_prepared_result::size_type mysql_prepared_result::affected_rows() const
 {
-  size_t ar = mysql_stmt_affected_rows(stmt);
+  std::size_t ar = mysql_stmt_affected_rows(stmt);
   return (unsigned long)ar;
   //return affected_rows_;
 }

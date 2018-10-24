@@ -17,7 +17,7 @@ SET (TEST_TOOLS_SOURCES
   utils/SequencerTestUnit.hpp
 )
 
-SET (TEST_HEADER Item.hpp has_many_list.hpp Blog.hpp)
+SET (TEST_HEADER Item.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 
 SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.cpp
@@ -82,9 +82,9 @@ ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
   ${TEST_HEADER}
   ${TEST_TOOLS_SOURCES}
-  ${TEST_OBJECT_SOURCES}
+#  ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
-  ${TEST_ORM_SOURCES}
+#  ${TEST_ORM_SOURCES}
   ${TEST_SQL_SOURCES}
 )
 
@@ -120,9 +120,9 @@ ENDIF()
 TARGET_LINK_LIBRARIES(test_matador
   matador-unit
   matador-utils
-  matador-object
+#  matador-object
   matador-sql
-  matador-orm
+#  matador-orm
   ${CMAKE_DL_LIBS}
   ${DB_LIBRARIES}
 )

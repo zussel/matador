@@ -37,7 +37,7 @@ public:
   void test_statement_insert();
   void test_statement_update();
   void test_delete();
-  void test_foreign_query();
+//  void test_foreign_query();
   void test_query();
   void test_query_range_loop();
   void test_query_select();
@@ -46,6 +46,7 @@ public:
   void test_select_limit();
   void test_update_limit();
   void test_prepared_statement();
+  void test_prepared_statement_creation();
   void test_prepared_object_result_twice();
   void test_prepared_scalar_result_twice();
   void test_rows();

@@ -5,7 +5,8 @@
 #include "MSSQLDialectTestUnit.hpp"
 
 #include "connections.hpp"
-#include "../Item.hpp"
+
+#include "../person.hpp"
 
 #include "matador/sql/sql.hpp"
 #include "matador/sql/query.hpp"
