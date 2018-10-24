@@ -120,9 +120,9 @@ ENDIF()
 TARGET_LINK_LIBRARIES(test_matador
   matador-unit
   matador-utils
-  matador-object
+#  matador-object
   matador-sql
-  matador-orm
+#  matador-orm
   ${CMAKE_DL_LIBS}
   ${DB_LIBRARIES}
 )

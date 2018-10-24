@@ -114,11 +114,11 @@ int main(int argc, char *argv[])
 
 #if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
   suite.register_unit(new ConnectionTestUnit("mssql_conn", "mssql connection test unit", ::connection::mssql));
-  suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", ::connection::mssql));
+//  suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", ::connection::mssql));
   suite.register_unit(new QueryTestUnit("mssql_query", "mssql query test unit", ::connection::mssql));
-  suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
-  suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
-  suite.register_unit(new OrmRelationTestUnit("mssql", ::connection::mssql));
+//  suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
+//  suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
+//  suite.register_unit(new OrmRelationTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new MSSQLDialectTestUnit());
 #endif
 
