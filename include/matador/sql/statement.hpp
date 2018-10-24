@@ -49,7 +49,7 @@ public:
   /**
    * Creates an empty statement
    */
-  statement() : p(nullptr) { }
+  statement() = default;
 
   /**
    * Creates a statement initialized from the
@@ -62,12 +62,7 @@ public:
     : p(impl)
   { }
 
-  ~statement()
-  {
-    if (p) {
-      delete p;
-    }
-  }
+  ~statement() = default;
 
   /**
    * Copy move constructor for statement
@@ -87,11 +82,7 @@ public:
    */
   statement& operator=(statement &&x) noexcept
   {
-    if (p) {
-      delete p;
-      p = nullptr;
-    }
-    std::swap(p, x.p);
+    p = std::move(x.p);
     return *this;
   }
 
@@ -167,7 +158,7 @@ public:
   }
 
 private:
-  matador::detail::statement_impl *p = nullptr;
+  std::unique_ptr<matador::detail::statement_impl> p;
 };
 
 /**
@@ -199,10 +190,7 @@ public:
     , prototype_(prototype)
   { }
 
-  ~statement()
-  {
-    delete p;
-  }
+  ~statement() = default;
 
   /**
    * Copy move constructor for statement
@@ -222,11 +210,7 @@ public:
    */
   statement& operator=(statement &&x) noexcept
   {
-    if (p) {
-      delete p;
-      p = nullptr;
-    }
-    std::swap(p, x.p);
+    p = std::move(x.p);
     return *this;
   }
 
@@ -289,7 +273,7 @@ public:
   }
 
 private:
-  matador::detail::statement_impl *p = nullptr;
+  std::unique_ptr<matador::detail::statement_impl> p;
   const row prototype_;
 };
 
