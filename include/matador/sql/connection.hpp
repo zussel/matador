@@ -57,7 +57,7 @@ public:
    * 
    * @param x The connection to copy move
    */
-  connection(connection &&x);
+  connection(connection &&x) noexcept;
 
   /**
    * Assigns from the given connection
@@ -73,7 +73,7 @@ public:
    * @param x The connection to assign move
    * @return The reference to the assigned connection
    */
-  connection& operator=(connection &&x);
+  connection& operator=(connection &&x) noexcept;
 
   ~connection();
 
