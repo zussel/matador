@@ -16,10 +16,10 @@ private:
 public:
     person() = default;
     person(unsigned long id, const std::string &name, matador::date birthdate, unsigned int height)
-            : id_(id)
-            , name_(name)
-            , birthdate_(std::move(birthdate))
-            , height_(height)
+        : id_(id)
+        , name_(name)
+        , birthdate_(std::move(birthdate))
+        , height_(height)
     {}
 
     person(const std::string &name, const matador::date &birthdate, unsigned int height)
