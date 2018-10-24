@@ -28,20 +28,20 @@
 #include "utils/StringTestUnit.hpp"
 #include "utils/SequencerTestUnit.hpp"
 
-#include "object/ObjectStoreTestUnit.hpp"
-#include "object/ObjectPrototypeTestUnit.hpp"
-#include "object/ObjectTransactiontestUnit.hpp"
-#include "object/PrototypeTreeTest.hpp"
-#include "object/PrimaryKeyUnitTest.hpp"
-#include "object/HasManyVectorUnitTest.hpp"
-#include "object/HasManyListUnitTest.hpp"
-#include "object/RelationTestUnit.hpp"
-
-#include "orm/BlogUnitTest.hpp"
-#include "orm/OrmTestUnit.hpp"
-#include "orm/OrmReloadTestUnit.hpp"
-#include "orm/OrmRelationTestUnit.hpp"
-#include "orm/TransactionTestUnit.hpp"
+//#include "object/ObjectStoreTestUnit.hpp"
+//#include "object/ObjectPrototypeTestUnit.hpp"
+//#include "object/ObjectTransactiontestUnit.hpp"
+//#include "object/PrototypeTreeTest.hpp"
+//#include "object/PrimaryKeyUnitTest.hpp"
+//#include "object/HasManyVectorUnitTest.hpp"
+//#include "object/HasManyListUnitTest.hpp"
+//#include "object/RelationTestUnit.hpp"
+//
+//#include "orm/BlogUnitTest.hpp"
+//#include "orm/OrmTestUnit.hpp"
+//#include "orm/OrmReloadTestUnit.hpp"
+//#include "orm/OrmRelationTestUnit.hpp"
+//#include "orm/TransactionTestUnit.hpp"
 
 #include "sql/ConnectionTestUnit.hpp"
 #include "sql/DialectTestUnit.hpp"
@@ -91,24 +91,24 @@ int main(int argc, char *argv[])
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);
 
-  suite.register_unit(new PrimaryKeyUnitTest);
-  suite.register_unit(new PrototypeTreeTestUnit);
-  suite.register_unit(new ObjectPrototypeTestUnit);
-  suite.register_unit(new ObjectStoreTestUnit);
-  suite.register_unit(new ObjectTransactiontestUnit);
-  suite.register_unit(new HasManyVectorUnitTest);
-  suite.register_unit(new HasManyListUnitTest);
-  suite.register_unit(new RelationTestUnit);
+//  suite.register_unit(new PrimaryKeyUnitTest);
+//  suite.register_unit(new PrototypeTreeTestUnit);
+//  suite.register_unit(new ObjectPrototypeTestUnit);
+//  suite.register_unit(new ObjectStoreTestUnit);
+//  suite.register_unit(new ObjectTransactiontestUnit);
+//  suite.register_unit(new HasManyVectorUnitTest);
+//  suite.register_unit(new HasManyListUnitTest);
+//  suite.register_unit(new RelationTestUnit);
 
   suite.register_unit(new ConditionUnitTest);
   suite.register_unit(new DialectTestUnit);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", ::connection::mysql));
-  suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", ::connection::mysql));
+//  suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", ::connection::mysql));
   suite.register_unit(new QueryTestUnit("mysql_query", "mysql query test unit", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
-  suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
+//  suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
+//  suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
 //  suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
 #endif
 

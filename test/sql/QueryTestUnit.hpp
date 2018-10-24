@@ -37,7 +37,7 @@ public:
   void test_statement_insert();
   void test_statement_update();
   void test_delete();
-  void test_foreign_query();
+//  void test_foreign_query();
   void test_query();
   void test_query_range_loop();
   void test_query_select();
