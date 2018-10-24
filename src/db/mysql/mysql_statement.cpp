@@ -79,7 +79,7 @@ void mysql_statement::clear()
 
   result_size = 0;
   host_size = 0;
-  std::cout << stmt_ << " free statement\n";
+  std::cout << "mysql_statement::clear:\t\t\t\t\t\t\tfreeing STMT " << stmt_ << "\n";
   mysql_stmt_free_result(stmt_);
 }
 
@@ -104,7 +104,7 @@ detail::result_impl* mysql_statement::execute()
     throw_stmt_error(res, stmt_, "mysql", str());
   }
   current_result = new mysql_prepared_result(stmt_, (int)result_size);
-  std::cout << stmt_ << " create result with statement\n";
+  std::cout << "mysql_statement::execute:\t\t\t\t\t\tcreate result STMT " << stmt_ << "\n";
   return current_result;
 }
 

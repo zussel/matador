@@ -21,7 +21,7 @@ mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, unsigned int rs)
   , bind_(rs)
   , info_(rs)
 {
-  std::cout << "mysql_prepared_result::~mysql_prepared_result:\tcreating\n";
+  std::cout << "mysql_prepared_result::~mysql_prepared_result:\tcreating result with STMT " << stmt << "\n";
 }
 
 mysql_prepared_result::~mysql_prepared_result()
