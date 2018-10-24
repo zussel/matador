@@ -43,7 +43,8 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("select_columns", std::bind(&QueryTestUnit::test_query_select_columns, this), "test query select columns");
   add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
   add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
-  add_test("prepare", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
+  add_test("prepared_statement", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
+  add_test("prepared_statement_creation", std::bind(&QueryTestUnit::test_prepared_statement_creation, this), "test query prepared statement creation");
   add_test("object_result_twice", std::bind(&QueryTestUnit::test_prepared_object_result_twice, this), "test query prepared statement get object result twice");
   add_test("scalar_result_twice", std::bind(&QueryTestUnit::test_prepared_scalar_result_twice, this), "test query prepared statement get scalar result twice");
   add_test("rows", std::bind(&QueryTestUnit::test_rows, this), "test row value serialization");
@@ -1108,8 +1109,27 @@ void QueryTestUnit::test_prepared_statement()
   q.drop().execute();
 }
 
+void QueryTestUnit::test_prepared_statement_creation()
+{
+  connection_.open();
+
+  query<person> q(connection_, "person");
+
+  q.create();
+
+  auto stmt = q.prepare();
+
+  stmt.execute();
+
+  UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
+
+  q.drop().execute();
+}
+
 void QueryTestUnit::test_prepared_object_result_twice()
 {
+  std::cout << "\n";
+
   connection_.open();
 
   query<person> q(connection_, "person");
@@ -1148,7 +1168,7 @@ void QueryTestUnit::test_prepared_object_result_twice()
     }
   }
 
-//  stmt.reset();
+  stmt.reset();
 
   {
     std::set<std::string> nameset;
