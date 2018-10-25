@@ -27,6 +27,8 @@ class date;
 
 namespace mysql {
 
+class mysql_statement;
+
 class mysql_prepared_result : public detail::result_impl
 {
 public:
@@ -37,7 +39,7 @@ public:
   typedef detail::result_impl::size_type size_type;
 
 public:
-  mysql_prepared_result(MYSQL_STMT *s, unsigned int rs);
+  mysql_prepared_result(mysql_statement *owner, MYSQL_STMT *s, unsigned int rs);
   ~mysql_prepared_result() override;
 
   const char* column(size_type c) const override;
@@ -101,7 +103,8 @@ private:
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
-  MYSQL_STMT *stmt;
+  mysql_statement *owner_ = nullptr;
+  MYSQL_STMT *stmt = nullptr;
 //  unsigned int result_size;
   std::vector<MYSQL_BIND> bind_;
   std::vector<mysql_result_info> info_;

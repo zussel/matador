@@ -54,6 +54,8 @@ public:
   void clear() override;
   detail::result_impl* execute() override;
   void reset() override;
+
+  void unlink_result(mysql_prepared_result *result);
   
 protected:
   void serialize(const char *id, char &x) override;

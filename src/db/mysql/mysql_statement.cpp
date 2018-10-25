@@ -49,7 +49,7 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   }
 
   int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
-  std::cout << "mysql_statement::mysql_statement:\t\t\t\tcreating STMT " << stmt_ << "\n";
+//  std::cout << this << " $$ mysql_statement::mysql_statement:\t\t\t\tcreating STMT " << stmt_ << "\n";
 
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
@@ -59,13 +59,20 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
 mysql_statement::~mysql_statement()
 {
   clear();
-  std::cout << "mysql_statement::~mysql_statement:\t\t\t\tdeleting STMT " << stmt_ << "\n";
+//  std::cout << this << " $$ mysql_statement::~mysql_statement:\t\t\t\tdeleting STMT " << stmt_ << "\n";
   mysql_stmt_close(stmt_);
 }
 
 void mysql_statement::reset()
 {
   mysql_stmt_reset(stmt_);
+}
+
+void mysql_statement::unlink_result(mysql_prepared_result *result)
+{
+  if (result == current_result) {
+    current_result = nullptr;
+  }
 }
 
 void mysql_statement::clear()
@@ -79,8 +86,13 @@ void mysql_statement::clear()
 
   result_size = 0;
   host_size = 0;
-  std::cout << "mysql_statement::clear:\t\t\t\t\t\t\tfreeing STMT " << stmt_ << "\n";
-  mysql_stmt_free_result(stmt_);
+  if (current_result != nullptr) {
+//    std::cout << this << " $$ mysql_statement::clear:\t\t\t\t\t\tcalling free on result " << current_result << "\n";
+    current_result->free();
+  } else {
+//    std::cout << this << " $$ mysql_statement::clear:\t\t\t\t\t\tfreeing STMT " << stmt_ << "\n";
+    mysql_stmt_free_result(stmt_);
+  }
 }
 
 detail::result_impl* mysql_statement::execute()
@@ -103,8 +115,8 @@ detail::result_impl* mysql_statement::execute()
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
-  current_result = new mysql_prepared_result(stmt_, (int)result_size);
-  std::cout << "mysql_statement::execute:\t\t\t\t\t\tcreate result STMT " << stmt_ << "\n";
+  current_result = new mysql_prepared_result(this, stmt_, (int)result_size);
+//  std::cout << this << " $$ mysql_statement::execute:\t\t\t\t\t\tcreate result STMT " << stmt_ << "\n";
   return current_result;
 }
 

@@ -527,8 +527,6 @@ void QueryTestUnit::test_anonymous_update()
 
 void QueryTestUnit::test_statement_insert()
 {
-  std::cout << "\n";
-
   connection_.open();
 
   query<Item> q("item");
@@ -545,9 +543,11 @@ void QueryTestUnit::test_statement_insert()
   stmt = q.insert(hans).prepare(connection_);
 
   stmt.bind(0, &hans);
+
   res = stmt.execute();
 
   stmt = q.select().prepare(connection_);
+
   res = stmt.execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
@@ -560,7 +560,7 @@ void QueryTestUnit::test_statement_insert()
     UNIT_EXPECT_EQUAL(item->id(), 23UL, "expected id must be 23");
     UNIT_EXPECT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
     UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
-//    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
     ++first;
   }
 
@@ -1130,8 +1130,6 @@ void QueryTestUnit::test_prepared_statement_creation()
 
 void QueryTestUnit::test_prepared_object_result_twice()
 {
-  std::cout << "\n";
-
   connection_.open();
 
   query<person> q(connection_, "person");

@@ -1,4 +1,5 @@
 #include "matador/db/mysql/mysql_prepared_result.hpp"
+#include "matador/db/mysql/mysql_statement.hpp"
 #include "matador/db/mysql/mysql_exception.hpp"
 
 #include "matador/utils/date.hpp"
@@ -13,24 +14,22 @@ namespace matador {
 
 namespace mysql {
 
-mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, unsigned int rs)
+mysql_prepared_result::mysql_prepared_result(mysql_statement *owner, MYSQL_STMT *s, unsigned int rs)
   : affected_rows_((size_type)mysql_stmt_affected_rows(s))
   , rows((size_type)mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
+  , owner_(owner)
   , stmt(s)
   , bind_(rs)
   , info_(rs)
 {
-  std::cout << "mysql_prepared_result::~mysql_prepared_result:\tcreating result with STMT " << stmt << "\n";
+//  std::cout << this << " $$ mysql_prepared_result::~mysql_prepared_result:\tcreating result with STMT " << stmt << "\n";
 }
 
 mysql_prepared_result::~mysql_prepared_result()
 {
-  std::cout << "mysql_prepared_result::~mysql_prepared_result:\tfreeing  STMT " << stmt << "\n";
-  mysql_stmt_free_result(stmt);
-
-  info_.clear();
-  bind_.clear();
+//  std::cout << this << " $$ calling delete mysql_prepared_result()\n";
+  free();
 }
 
 const char* mysql_prepared_result::column(size_type ) const
@@ -307,12 +306,19 @@ void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, ca
 
 void mysql_prepared_result::free()
 {
-
   info_.clear();
   bind_.clear();
-  mysql_stmt_free_result(stmt);
 
-  stmt = nullptr;
+  if (stmt != nullptr) {
+//    std::cout << this << " $$ mysql_prepared_result::free:\t\t\t\t\tfreeing  STMT " << stmt << "\n";
+    mysql_stmt_free_result(stmt);
+    stmt = nullptr;
+  }
+  
+  if (owner_ != nullptr) {
+    owner_->unlink_result(this);
+    owner_ = nullptr;
+  }
 }
 
 bool mysql_prepared_result::needs_bind()
@@ -341,7 +347,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].is_null = &info_[index].is_null;
-//  bind_[index].length = &info_[index].length;
+  bind_[index].length = &info_[index].length;
   bind_[index].error = &info_[index].error;
 }
 
@@ -358,7 +364,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].is_null = &info_[index].is_null;
-//  bind_[index].length = &info_[index].length;
+  bind_[index].length = &info_[index].length;
   bind_[index].error = &info_[index].error;
 }
 

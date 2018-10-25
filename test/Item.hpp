@@ -66,7 +66,7 @@ public:
     serializer.serialize("val_string", string_);
     serializer.serialize("val_varchar", varchar_);
     serializer.serialize("val_date", date_);
-//    serializer.serialize("val_time", time_);
+    serializer.serialize("val_time", time_);
   }
 
   unsigned long id() const { return id_.value(); }
