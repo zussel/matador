@@ -59,7 +59,7 @@ public:
    *
    * @return The moved identifier object
    */
-  identifier& operator=(identifier &&) = default;
+  identifier& operator=(identifier &&) noexcept = default;
 
   /**
    * @brief Default copy constructor
@@ -69,7 +69,7 @@ public:
   /**
    * @brief Default move constructor
    */
-  identifier(identifier &&) = default;
+  identifier(identifier &&) noexcept = default;
 
   /**
    * @brief Copy assigns a new identifier from given value
@@ -89,7 +89,7 @@ public:
    * @param id Name of the identifier
    * @param s The serializer to serialize with
    */
-  virtual void serialize(const char *id, serializer &s) override
+  void serialize(const char *id, serializer &s) override
   {
     s.serialize(id, *id_);
   }
@@ -101,7 +101,7 @@ public:
    * @param x Foreign id to compare
    * @return True if own id value is less than foreign id value
    */
-  virtual bool less(const basic_identifier &x) const override
+  bool less(const basic_identifier &x) const override
   {
     if (this->is_same_type(x)) {
       return *id_ < static_cast<const self &>(x).value();
@@ -117,7 +117,7 @@ public:
    * @param x Foreign id to compare
    * @return True if own id value is equal to foreign id value
    */
-  virtual bool equal_to(const basic_identifier &x) const override
+  bool equal_to(const basic_identifier &x) const override
   {
     if (this->is_same_type(x)) {
       return *id_ == static_cast<const identifier<T> &>(x).value();
@@ -126,13 +126,23 @@ public:
     }
   }
 
+  bool assign(char *data, unsigned long size) override
+  {
+    if (sizeof(T) == size) {
+      T val = *((T*)data);
+      *id_ = val;
+      return true;
+    }
+    return false;
+  }
+
   /**
    * Create a hash value of current
    * id value
    * 
    * @return The calculated hash value
    */
-  virtual size_t hash() const override
+  size_t hash() const override
   {
     std::hash<T> pk_hash;
     return pk_hash(*id_);
@@ -145,7 +155,7 @@ public:
    * @param x Foreign identifier to validate with
    * @return True if types are the same
    */
-  virtual bool is_same_type(const basic_identifier &x) const override
+  bool is_same_type(const basic_identifier &x) const override
   {
     return type_index() == x.type_index();
   }
@@ -156,7 +166,7 @@ public:
    * 
    * @return The type_index object
    */
-  virtual const std::type_index &type_index() const override
+  const std::type_index &type_index() const override
   {
     return type_index_;
   }
@@ -169,7 +179,7 @@ public:
    * @param out Stream to write on
    * @return Modified stream
    */
-  virtual std::ostream &print(std::ostream &out) const override
+  std::ostream &print(std::ostream &out) const override
   {
     out << *id_;
     return out;
@@ -187,7 +197,7 @@ public:
    *
    * @return A clone of this identifier
    */
-  virtual basic_identifier *clone() const override
+  basic_identifier *clone() const override
   {
     T id = *id_;
     return new self(id);
@@ -199,7 +209,7 @@ public:
    * 
    * @return New identifier with shared value
    */
-  virtual self* share() override
+  self* share() override
   {
     std::unique_ptr<self> shared(new self());
     shared->id_ = id_;
@@ -210,7 +220,7 @@ public:
    * Isolate the shared value of the identifier
    * into a new yet unshared value
    */
-  virtual void isolate() override
+  void isolate() override
   {
     id_.reset(new T(*id_));
   }
@@ -224,7 +234,7 @@ public:
    * @param id Identifier to share the value with
    * @return True if sharing was successful.
    */
-  virtual bool share_with(basic_identifier &id) override
+  bool share_with(basic_identifier &id) override
   {
     if (!is_same_type(id)) {
       return false;
@@ -234,7 +244,7 @@ public:
     return true;
   }
 
-  virtual bool is_valid() const override
+  bool is_valid() const override
   {
     return *id_ != 0;
   }
@@ -304,8 +314,7 @@ public:
     return *this;
   }
 
-  virtual ~identifier()
-  { };
+  ~identifier() override = default;
 
   /**
    * Serialize the identifier value with
@@ -314,7 +323,7 @@ public:
    * @param id Name of the identifier
    * @param s The serializer to serialize with
    */
-  virtual void serialize(const char *id, serializer &s) override
+  void serialize(const char *id, serializer &s) override
   {
     s.serialize(id, *id_);
   }
@@ -326,7 +335,7 @@ public:
    * @param x Foreign id to compare
    * @return True if own id value is less than foreign id value
    */
-  virtual bool less(const basic_identifier &x) const override
+  bool less(const basic_identifier &x) const override
   {
     if (this->is_same_type(x)) {
       return *id_ < static_cast<const self &>(x).value();
@@ -342,7 +351,7 @@ public:
    * @param x Foreign id to compare
    * @return True if own id value is equal to foreign id value
    */
-  virtual bool equal_to(const basic_identifier &x) const override
+  bool equal_to(const basic_identifier &x) const override
   {
     if (this->is_same_type(x)) {
       return *id_ == static_cast<const identifier<std::string> &>(x).value();
@@ -351,13 +360,18 @@ public:
     }
   }
 
+  bool assign(char *data, unsigned long size) override
+  {
+    id_->copy(data, size);
+    return true;
+  }
   /**
    * Create a hash value of current
    * id value
    * 
    * @return The calculated hash value
    */
-  virtual size_t hash() const override
+  size_t hash() const override
   {
     std::hash<std::string> pk_hash;
     return pk_hash(*id_);
@@ -370,7 +384,7 @@ public:
    * @param x Foreign identifier to validate with
    * @return True if types are the same
    */
-  virtual bool is_same_type(const basic_identifier &x) const override
+  bool is_same_type(const basic_identifier &x) const override
   {
     return type_index() == x.type_index();
   }
@@ -381,7 +395,7 @@ public:
    * 
    * @return The type_index object
    */
-  virtual const std::type_index &type_index() const override
+  const std::type_index &type_index() const override
   {
     return type_index_;
   }
@@ -394,7 +408,7 @@ public:
    * @param out Stream to write on
    * @return Modified stream
    */
-  virtual std::ostream &print(std::ostream &out) const override
+  std::ostream &print(std::ostream &out) const override
   {
     out << *id_;
     return out;
@@ -412,7 +426,7 @@ public:
    *
    * @return A clone of this identifier
    */
-  virtual basic_identifier *clone() const override
+  basic_identifier *clone() const override
   {
     return new self(*id_);
   }
@@ -423,7 +437,7 @@ public:
    * 
    * @return New identifier with shared value
    */
-  virtual identifier<std::string>* share() override
+  identifier<std::string>* share() override
   {
     std::unique_ptr<identifier<std::string>> shared(new identifier<std::string>);
     shared->id_ = id_;
@@ -434,7 +448,7 @@ public:
    * Isolate the shared value of the identifier
    * into a new yet unshared value
    */
-  virtual void isolate() override
+  void isolate() override
   {
     id_.reset(new std::string(*id_));
   }
@@ -448,17 +462,17 @@ public:
    * @param id Identifier to share the value with
    * @return True if sharing was successful.
    */
-  virtual bool share_with(basic_identifier &id) override
+  bool share_with(basic_identifier &id) override
   {
     if (!is_same_type(id)) {
       return false;
     }
-    identifier<std::string> &xid = static_cast<identifier<std::string> &>(id);
+    auto &xid = static_cast<identifier<std::string> &>(id);
     xid.id_ = id_;
     return true;
   }
 
-  virtual bool is_valid() const  override
+  bool is_valid() const  override
   {
     return !id_->empty();
   }

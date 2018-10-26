@@ -27,6 +27,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("bind_tablename", std::bind(&QueryTestUnit::test_bind_tablename, this), "test bind tablenames");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
+  add_test("identifier_prepared", std::bind(&QueryTestUnit::test_identifier_prepared, this), "test sql prepared identifier");
   add_test("update", std::bind(&QueryTestUnit::test_update, this), "test direct sql update statement");
   add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
   add_test("create_anonymous", std::bind(&QueryTestUnit::test_anonymous_create, this), "test direct sql create statement via row (anonymous)");
@@ -349,6 +350,42 @@ void QueryTestUnit::test_identifier()
   UNIT_EXPECT_GREATER(p->id.value(), 0UL, "identifier value should be greater zero");
 
   q.drop().execute(connection_);
+}
+
+void QueryTestUnit::test_identifier_prepared()
+{
+  connection_.open();
+
+  matador::query<pktest> q("pktest");
+
+  auto stmt = q.create().prepare(connection_);
+  stmt.execute();
+
+  pktest p(7, "hans");
+
+  UNIT_EXPECT_EQUAL(p.id.value(), 7UL, "identifier value should be greater zero");
+
+  stmt = q.insert(p).prepare(connection_);
+  stmt.bind(0, &p);
+  stmt.execute();
+
+  stmt = q.select().prepare(connection_);
+
+  auto res = stmt.execute();
+
+//  auto first = res.begin();
+//  auto last = res.end();
+//
+//  UNIT_ASSERT_TRUE(first != last, "first must not be last");
+
+  for (auto pres : res) {
+    UNIT_EXPECT_GREATER(pres->id.value(), 0UL, "identifier value should be greater zero");
+  }
+//  std::unique_ptr<pktest> pres((first++).release());
+
+  stmt = q.drop().prepare(connection_);
+
+  stmt.execute();
 }
 
 void QueryTestUnit::test_create()
