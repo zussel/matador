@@ -535,10 +535,11 @@ void QueryTestUnit::test_statement_insert()
 
   result<Item> res(stmt.execute());
 
-  matador::identifier<unsigned long> id(23);
+  //matador::identifier<unsigned long> id(23);
+  unsigned long id(23);
   auto itime = time_val_;
   Item hans("Hans", 4711);
-  hans.id(id.value());
+  hans.id(id);
   hans.set_time(itime);
   stmt = q.insert(hans).prepare(connection_);
 
@@ -552,16 +553,17 @@ void QueryTestUnit::test_statement_insert()
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
 
-  auto first = res.begin();
-  auto last = res.end();
+  //auto first = res.begin();
+  //auto last = res.end();
 
-  while (first != last) {
-    std::unique_ptr<Item> item(first.release());
+  for (auto item : res) {
+    //while (first != last) {
+    //std::unique_ptr<Item> item(first.release());
     UNIT_EXPECT_EQUAL(item->id(), 23UL, "expected id must be 23");
     UNIT_EXPECT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
     UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
     UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
-    ++first;
+    //++first;
   }
 
   stmt = q.drop().prepare(connection_);
@@ -598,16 +600,17 @@ void QueryTestUnit::test_statement_update()
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
 
-  auto first = res.begin();
-  auto last = res.end();
+  //auto first = res.begin();
+  //auto last = res.end();
 
-  while (first != last) {
-    std::unique_ptr<person> p(first.release());
+  for (auto p : res) {
+  //while (first != last) {
+    //std::unique_ptr<person> p(first.release());
     UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
     UNIT_EXPECT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
     UNIT_EXPECT_EQUAL(p->height(), 180U, "expected height must be 180");
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
-    ++first;
+    //++first;
   }
 
 //  auto id_cond = id_condition_builder::build<person>();
@@ -630,16 +633,17 @@ void QueryTestUnit::test_statement_update()
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
 
-  first = res.begin();
-  last = res.end();
+  //first = res.begin();
+  //last = res.end();
 
-  while (first != last) {
-    std::unique_ptr<person> p(first.release());
+  for (auto p : res) {
+    //while (first != last) {
+    //std::unique_ptr<person> p(first.release());
     UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
     UNIT_EXPECT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
     UNIT_EXPECT_EQUAL(p->height(), 165U, "expected height must be 180");
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(15, 6, 1990), "expected birthdate is 12.3.1980");
-    ++first;
+    //++first;
   }
 
   stmt = q.drop().prepare();
@@ -667,14 +671,15 @@ void QueryTestUnit::test_delete()
   auto first = res.begin();
   auto last = res.end();
 
-  while (first != last) {
-    std::unique_ptr<person> item(first.release());
+  for (auto p : res) {
+    //while (first != last) {
+    //std::unique_ptr<person> item(first.release());
 
-    UNIT_EXPECT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
-    UNIT_EXPECT_EQUAL(item->height(), 180U, "expected height must be 180");
-    UNIT_EXPECT_EQUAL(item->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_EXPECT_EQUAL(p->name(), "Hans", "expected name must be 'Hans'");
+    UNIT_EXPECT_EQUAL(p->height(), 180U, "expected height must be 180");
+    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
 
-    ++first;
+    //++first;
   }
 
   q.remove().where(name == "Hans").execute(connection_);
