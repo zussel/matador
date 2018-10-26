@@ -65,6 +65,7 @@ mysql_statement::~mysql_statement()
 
 void mysql_statement::reset()
 {
+//  std::cout << this << " $$ mysql_statement::reset:\t\t\t\t\t\treseting STMT " << stmt_ << "\n";
   mysql_stmt_reset(stmt_);
 }
 
@@ -77,6 +78,7 @@ void mysql_statement::unlink_result(mysql_prepared_result *result)
 
 void mysql_statement::clear()
 {
+//  std::cout << this << " $$ deleting host array\n";
   while (!host_array.empty()) {
     if (host_array.back().buffer != nullptr) {
       delete [] static_cast<char*>(host_array.back().buffer);
@@ -108,6 +110,7 @@ detail::result_impl* mysql_statement::execute()
   }
 
   int res = mysql_stmt_execute(stmt_);
+//  std::cout << this << " $$ valgrind: invalid write took place\n";
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
