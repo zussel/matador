@@ -1195,7 +1195,7 @@ void QueryTestUnit::test_prepared_object_result_twice()
 
   stmt = q.select().prepare();
 
-  {
+//  {
     std::set<std::string> nameset;
 
     for(const auto &name : names) {
@@ -1208,25 +1208,25 @@ void QueryTestUnit::test_prepared_object_result_twice()
       UNIT_EXPECT_TRUE(i != nameset.end(), "name " + p->name() + " not found");
       nameset.erase(i);
     }
-  }
+//  }
 
   stmt.reset();
 
-  {
-    std::set<std::string> nameset;
+//  {
+//    std::set<std::string> nameset;
 
     for(const auto &name : names) {
       nameset.insert(name);
     }
 
-    auto result = stmt.execute();
+    /*auto */result = stmt.execute();
 
     for (auto p : result) {
       auto i = nameset.find(p->name());
       UNIT_EXPECT_TRUE(i != nameset.end(), "name " + p->name() + " not found");
       nameset.erase(i);
     }
-  }
+//  }
 
   q.drop().execute();
 }
@@ -1251,7 +1251,7 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
 
   auto stmt = q.select({"id"}).from("person").prepare();
 
-  {
+//  {
     std::set<long> idset;
 
     for(auto id : ids) {
@@ -1264,22 +1264,22 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
       UNIT_EXPECT_TRUE(i != idset.end(), "id " + p->str("id") + " not found");
       idset.erase(i);
     }
-  }
+//  }
 
-  {
-    std::set<long> idset;
+//  {
+//    std::set<long> idset;
 
     for(auto id : ids) {
       idset.insert(id);
     }
-    auto result = stmt.execute();
+    /*auto */result = stmt.execute();
 
     for (auto p : result) {
       auto i = idset.find(p->at<long>("id"));
       UNIT_EXPECT_TRUE(i != idset.end(), "id " + p->str("id") + " not found");
       idset.erase(i);
     }
-  }
+//  }
 
 
   q.drop("person").execute(connection_);

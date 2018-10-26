@@ -32,6 +32,23 @@ mysql_prepared_result::~mysql_prepared_result()
   free();
 }
 
+void mysql_prepared_result::free()
+{
+  info_.clear();
+  bind_.clear();
+
+  if (stmt != nullptr) {
+//    std::cout << this << " $$ mysql_prepared_result::free:\t\t\t\t\tfreeing  STMT " << stmt << "\n";
+    mysql_stmt_free_result(stmt);
+    stmt = nullptr;
+  }
+
+  if (owner_ != nullptr) {
+    owner_->unlink_result(this);
+    owner_ = nullptr;
+  }
+}
+
 const char* mysql_prepared_result::column(size_type ) const
 {
   return "not implemented";
@@ -310,23 +327,6 @@ void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, ca
       }
       foreign_keys_.erase(i);
     }
-  }
-}
-
-void mysql_prepared_result::free()
-{
-  info_.clear();
-  bind_.clear();
-
-  if (stmt != nullptr) {
-//    std::cout << this << " $$ mysql_prepared_result::free:\t\t\t\t\tfreeing  STMT " << stmt << "\n";
-    mysql_stmt_free_result(stmt);
-    stmt = nullptr;
-  }
-  
-  if (owner_ != nullptr) {
-    owner_->unlink_result(this);
-    owner_ = nullptr;
   }
 }
 
