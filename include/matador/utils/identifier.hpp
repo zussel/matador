@@ -130,7 +130,7 @@ public:
   {
     if (sizeof(T) == size) {
       T val = *((T*)data);
-      *id_ = val;
+      id_.reset(new T(val));
       return true;
     }
     return false;
