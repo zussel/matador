@@ -113,6 +113,8 @@ public:
    */
   virtual bool equal_to(const basic_identifier &x) const = 0;
 
+  virtual bool assign(char *data, unsigned long size) = 0;
+
   /**
    * Serializes the underlying identifier value
    *

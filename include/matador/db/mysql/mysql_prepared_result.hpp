@@ -15,6 +15,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <cstring>
 #include <memory>
 
 namespace matador {
@@ -84,11 +85,23 @@ private:
   template < class T >
   void prepare_bind_column(int index, enum_field_types type, T &value)
   {
+    if (use_local_copy_) {
+      if (info_[index].buffer == nullptr) {
+        size_t s = sizeof(T);
+        info_[index].buffer = new char[s];
+        memset(info_[index].buffer, 0, s);
+        info_[index].buffer_length = (unsigned long)s;
+        info_[index].is_allocated = true;
+      }
+      bind_[index].buffer = info_[index].buffer;
+      bind_[index].buffer_length = info_[index].buffer_length;
+    } else {
+      bind_[index].buffer= (char *)&value;
+      bind_[index].buffer_length = sizeof(T);
+    }
     bind_[index].buffer_type = type;
-    bind_[index].buffer= (char *)&value;
-    bind_[index].buffer_length = sizeof(T);
     bind_[index].is_null = &info_[index].is_null;
-//    bind_[index].length = &info_[index].length;
+    bind_[index].length = &info_[index].length;
     bind_[index].error = &info_[index].error;
   }
 
@@ -110,6 +123,7 @@ private:
   std::vector<mysql_result_info> info_;
 
   bool prepare_binding_ = true;
+  bool use_local_copy_ = false;
 
   typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_foreign_key_map;
   t_foreign_key_map foreign_keys_;
