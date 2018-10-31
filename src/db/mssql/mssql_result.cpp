@@ -238,9 +238,7 @@ void mssql_result::read_column(char const *, date &x)
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index_++), SQL_C_TYPE_DATE, &ds, 0, &info);
   if (SQL_SUCCEEDED(ret)) {
-    x.year(ds.year);
-    x.month(ds.month);
-    x.day(ds.day);
+    x.set(ds.day, ds.month, ds.year);
   } else {
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
