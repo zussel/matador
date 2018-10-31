@@ -39,13 +39,13 @@ public:
   /**
    * @brief Create an identifier
    */
-  identifier() : id_(new T(0)) { };
+  identifier() : id_(0) { };
 
   /**
    * @brief Create an identifier with given value
    * @param val Value of the identifier
    */
-  identifier(T val) : id_(new T(val)) { }
+  identifier(T val) : id_(val) { }
 
   /**
    * @brief Default copy assignment constructor
@@ -78,7 +78,7 @@ public:
    */
   identifier& operator=(T val)
   {
-    *id_ = val;
+    id_ = val;
     return *this;
   }
 
@@ -91,7 +91,7 @@ public:
    */
   void serialize(const char *id, serializer &s) override
   {
-    s.serialize(id, *id_);
+    s.serialize(id, id_);
   }
 
   /**
@@ -104,7 +104,7 @@ public:
   bool less(const basic_identifier &x) const override
   {
     if (this->is_same_type(x)) {
-      return *id_ < static_cast<const self &>(x).value();
+      return id_ < static_cast<const self &>(x).value();
     } else {
       throw std::logic_error("not the same type");
     }
@@ -120,21 +120,23 @@ public:
   bool equal_to(const basic_identifier &x) const override
   {
     if (this->is_same_type(x)) {
-      return *id_ == static_cast<const identifier<T> &>(x).value();
+      return id_ == static_cast<const identifier<T> &>(x).value();
     } else {
       throw std::logic_error("not the same type");
     }
   }
 
-  bool assign(char *data, unsigned long size) override
-  {
-    if (sizeof(T) == size) {
-      T val = *((T*)data);
-      id_.reset(new T(val));
-      return true;
-    }
-    return false;
-  }
+  //bool assign(char *data, unsigned long size) override
+  //{
+  //  if (sizeof(T) == size) {
+  //    //T val = *((T*)data);
+  //    std::cout << "assign buffer of type " << typeid(T).name() << "(value: " << *((T*)data) << ", size: " << size << ") address " << &data << "\n";
+  //    id_.reset(new T(*((T*)data)));
+  //    std::cout << "assigned buffer of type " << typeid(T).name() << "(value: " << *id_ << ", size: " << size << ") address " << id_.get() << "\n";
+  //    return true;
+  //  }
+  //  return false;
+  //}
 
   /**
    * Create a hash value of current
@@ -145,7 +147,7 @@ public:
   size_t hash() const override
   {
     std::hash<T> pk_hash;
-    return pk_hash(*id_);
+    return pk_hash(id_);
   }
 
   /**
@@ -181,7 +183,7 @@ public:
    */
   std::ostream &print(std::ostream &out) const override
   {
-    out << *id_;
+    out << id_;
     return out;
   }
 
@@ -199,8 +201,8 @@ public:
    */
   basic_identifier *clone() const override
   {
-    T id = *id_;
-    return new self(id);
+    //T id = *id_;
+    return new self(id_);
   }
 
   /**
@@ -209,21 +211,21 @@ public:
    * 
    * @return New identifier with shared value
    */
-  self* share() override
-  {
-    std::unique_ptr<self> shared(new self());
-    shared->id_ = id_;
-    return shared.release();
-  }
+  //self* share() override
+  //{
+  //  std::unique_ptr<self> shared(new self());
+  //  shared->id_ = id_;
+  //  return shared.release();
+  //}
 
   /**
    * Isolate the shared value of the identifier
    * into a new yet unshared value
    */
-  void isolate() override
-  {
-    id_.reset(new T(*id_));
-  }
+  //void isolate() override
+  //{
+  //  id_.reset(new T(*id_));
+  //}
 
   /**
    * Share identifiers value with given
@@ -234,19 +236,19 @@ public:
    * @param id Identifier to share the value with
    * @return True if sharing was successful.
    */
-  bool share_with(basic_identifier &id) override
-  {
-    if (!is_same_type(id)) {
-      return false;
-    }
-    identifier<T> &xid = static_cast<identifier<T> &>(id);
-    xid.id_ = id_;
-    return true;
-  }
+  //bool share_with(basic_identifier &id) override
+  //{
+  //  if (!is_same_type(id)) {
+  //    return false;
+  //  }
+  //  identifier<T> &xid = static_cast<identifier<T> &>(id);
+  //  xid.id_ = id_;
+  //  return true;
+  //}
 
   bool is_valid() const override
   {
-    return *id_ != 0;
+    return id_ != 0;
   }
 
   /**
@@ -254,14 +256,14 @@ public:
    *
    * @return The value
    */
-  T value() const { return *id_; }
+  T value() const { return id_; }
 
   /**
    * Set a new identifier value
    * 
    * @param val Value to set
    */
-  void value(T val) { *id_ = val; }
+  void value(T val) { id_ = val; }
 
   /**
    * Returns a reference to the value
@@ -271,7 +273,8 @@ public:
   T& reference() const { return *id_; }
 
 private:
-  std::shared_ptr<T> id_;
+  T id_;
+  //std::shared_ptr<T> id_;
   static std::type_index type_index_;
 };
 
@@ -360,11 +363,11 @@ public:
     }
   }
 
-  bool assign(char *data, unsigned long size) override
-  {
-    id_->copy(data, size);
-    return true;
-  }
+  //bool assign(char *data, unsigned long size) override
+  //{
+  //  //id_->copy(data, size);
+  //  return true;
+  //}
   /**
    * Create a hash value of current
    * id value
@@ -437,21 +440,21 @@ public:
    * 
    * @return New identifier with shared value
    */
-  identifier<std::string>* share() override
-  {
-    std::unique_ptr<identifier<std::string>> shared(new identifier<std::string>);
-    shared->id_ = id_;
-    return shared.release();
-  }
+  //identifier<std::string>* share() override
+  //{
+  //  std::unique_ptr<identifier<std::string>> shared(new identifier<std::string>);
+  //  shared->id_ = id_;
+  //  return shared.release();
+  //}
 
   /**
    * Isolate the shared value of the identifier
    * into a new yet unshared value
    */
-  void isolate() override
-  {
-    id_.reset(new std::string(*id_));
-  }
+  //void isolate() override
+  //{
+  //  id_.reset(new std::string(*id_));
+  //}
 
   /**
    * Share identifiers value with given
@@ -462,15 +465,15 @@ public:
    * @param id Identifier to share the value with
    * @return True if sharing was successful.
    */
-  bool share_with(basic_identifier &id) override
-  {
-    if (!is_same_type(id)) {
-      return false;
-    }
-    auto &xid = static_cast<identifier<std::string> &>(id);
-    xid.id_ = id_;
-    return true;
-  }
+  //bool share_with(basic_identifier &id) override
+  //{
+  //  if (!is_same_type(id)) {
+  //    return false;
+  //  }
+  //  auto &xid = static_cast<identifier<std::string> &>(id);
+  //  xid.id_ = id_;
+  //  return true;
+  //}
 
   bool is_valid() const  override
   {

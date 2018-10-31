@@ -301,16 +301,17 @@ void mysql_prepared_result::serialize(const char *, varchar_base &x)
 
 void mysql_prepared_result::serialize(const char *id, matador::basic_identifier &x)
 {
-  if (prepare_binding_) {
-    use_local_copy_ = true;
-    x.serialize(id, *this);
-    use_local_copy_ = false;
-  } else {
-    auto *data = (char*)bind_[result_index_].buffer;
-    unsigned long len = info_[result_index_].length;
-    x.assign(data, len);
-    ++result_index_;
-  }
+  x.serialize(id, *this);
+  //if (prepare_binding_) {
+  //  use_local_copy_ = true;
+  //  x.serialize(id, *this);
+  //  use_local_copy_ = false;
+  //} else {
+  //  auto *data = (char*)bind_[result_index_].buffer;
+  //  unsigned long len = info_[result_index_].buffer_length;
+  //  x.assign(data, len);
+  //  ++result_index_;
+  //}
 }
 
 void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, cascade_type)

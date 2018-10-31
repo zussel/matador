@@ -89,6 +89,7 @@ private:
       if (info_[index].buffer == nullptr) {
         size_t s = sizeof(T);
         info_[index].buffer = new char[s];
+        std::cout << "allocated new buffer of type " << typeid(T).name() << "(size: "  << s << ") address " << &info_[index].buffer << "\n";
         memset(info_[index].buffer, 0, s);
         info_[index].buffer_length = (unsigned long)s;
         info_[index].is_allocated = true;

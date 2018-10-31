@@ -104,8 +104,10 @@ int main(int argc, char *argv[])
   suite.register_unit(new DialectTestUnit);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
+  //suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", "mysql://sascha:sascha@192.168.27.110/oos_test"));
   suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", ::connection::mysql));
 //  suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", ::connection::mysql));
+  //suite.register_unit(new QueryTestUnit("mysql_query", "mysql query test unit", "mysql://sascha:sascha@192.168.27.110/oos_test", matador::time(2015, 3, 15, 13, 56, 23)));
   suite.register_unit(new QueryTestUnit("mysql_query", "mysql query test unit", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
 //  suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
 //  suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
