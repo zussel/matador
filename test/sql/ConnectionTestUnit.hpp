@@ -18,8 +18,6 @@
 #ifndef SESSION_TEST_UNIT_HPP
 #define SESSION_TEST_UNIT_HPP
 
-#include "matador/object/object_store.hpp"
-
 #include "matador/unit/unit_test.hpp"
 
 namespace matador {
