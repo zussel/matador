@@ -1,6 +1,6 @@
 CONFIGURE_FILE (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINARY_DIR}/version.hpp)
 
-#ADD_SUBDIRECTORY(object)
+ADD_SUBDIRECTORY(object)
 #ADD_SUBDIRECTORY(orm)
 ADD_SUBDIRECTORY(sql)
 ADD_SUBDIRECTORY(utils)

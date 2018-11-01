@@ -192,7 +192,7 @@ public:
    * 
    * @return The value of this identifier
    */
-  operator T() const { return *id_; }
+  operator T() const { return id_; }
 
   /**
    * Clones this identifier
@@ -295,7 +295,7 @@ public:
   /**
    * @brief Create an identifier
    */
-  identifier() : id_(new std::string(""))
+  identifier() : id_("")
   { };
 
   /**
@@ -303,7 +303,7 @@ public:
    * 
    * @param val String value of the identifier
    */
-  explicit identifier(const std::string &val) : id_(new std::string(val))
+  explicit identifier(const std::string &val) : id_(val)
   { }
 
   /**
@@ -313,7 +313,7 @@ public:
    */
   identifier& operator=(const std::string &val)
   {
-    *id_ = val;
+    id_ = val;
     return *this;
   }
 
@@ -328,7 +328,7 @@ public:
    */
   void serialize(const char *id, serializer &s) override
   {
-    s.serialize(id, *id_);
+    s.serialize(id, id_);
   }
 
   /**
@@ -341,7 +341,7 @@ public:
   bool less(const basic_identifier &x) const override
   {
     if (this->is_same_type(x)) {
-      return *id_ < static_cast<const self &>(x).value();
+      return id_ < static_cast<const self &>(x).value();
     } else {
       throw std::logic_error("not the same type");
     }
@@ -357,7 +357,7 @@ public:
   bool equal_to(const basic_identifier &x) const override
   {
     if (this->is_same_type(x)) {
-      return *id_ == static_cast<const identifier<std::string> &>(x).value();
+      return id_ == static_cast<const identifier<std::string> &>(x).value();
     } else {
       throw std::logic_error("not the same type");
     }
@@ -377,7 +377,7 @@ public:
   size_t hash() const override
   {
     std::hash<std::string> pk_hash;
-    return pk_hash(*id_);
+    return pk_hash(id_);
   }
 
   /**
@@ -413,7 +413,7 @@ public:
    */
   std::ostream &print(std::ostream &out) const override
   {
-    out << *id_;
+    out << id_;
     return out;
   }
 
@@ -422,7 +422,7 @@ public:
    * 
    * @return The value of this identifier
    */
-  operator std::string() const { return *id_; }
+  operator std::string() const { return id_; }
 
   /**
    * Clones this identifier
@@ -431,7 +431,7 @@ public:
    */
   basic_identifier *clone() const override
   {
-    return new self(*id_);
+    return new self(id_);
   }
 
   /**
@@ -477,7 +477,7 @@ public:
 
   bool is_valid() const  override
   {
-    return !id_->empty();
+    return !id_.empty();
   }
 
   /**
@@ -485,24 +485,25 @@ public:
    *
    * @return The string value
    */
-  std::string value() const { return *id_; }
+  std::string value() const { return id_; }
   
   /**
    * Set a new identifier value
    * 
    * @param val Value to set
    */
-  void value(const std::string &val) { *id_ = val; }
+  void value(const std::string &val) { id_ = val; }
 
   /**
    * Returns a reference to the value
    *
    * @return A reference to the value
    */
-  std::string& reference() const { return *id_; }
+  const std::string& reference() const { return id_; }
 
 private:
-  std::shared_ptr<std::string> id_;
+  std::string id_;
+//  std::shared_ptr<std::string> id_;
 
   static std::type_index type_index_;
 };

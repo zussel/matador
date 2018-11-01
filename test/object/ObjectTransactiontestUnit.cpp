@@ -5,6 +5,8 @@
 #include "ObjectTransactiontestUnit.hpp"
 
 #include "../Item.hpp"
+#include "../person.hpp"
+#include "../entities.hpp"
 
 #include "matador/object/object_store.hpp"
 #include "matador/object/transaction.hpp"
