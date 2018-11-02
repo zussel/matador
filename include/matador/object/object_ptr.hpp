@@ -251,7 +251,7 @@ template < class T, object_holder_type OPT >
 std::string object_pointer<T, OPT>::classname_ = typeid(T).name();
 
 template < class T, object_holder_type OPT >
-std::unique_ptr<basic_identifier> object_pointer<T, OPT>::identifier_(identifier_resolver<T>::resolve());
+std::unique_ptr<basic_identifier> object_pointer<T, OPT>::identifier_(identifier_resolver<T>::create());
 
 }
 

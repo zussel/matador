@@ -54,7 +54,7 @@ public:
     return resolver.resolve_object(o);
   }
 
-  static basic_identifier* resolve()
+  static basic_identifier* create()
   {
     identifier_resolver<T> resolver;
     T obj;
