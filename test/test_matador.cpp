@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new SQLiteDialectTestUnit());
 #endif
 
-  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
+  //suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 
   result = suite.run();
   return result ? EXIT_SUCCESS : EXIT_FAILURE;
