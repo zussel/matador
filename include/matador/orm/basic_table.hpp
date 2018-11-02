@@ -186,8 +186,8 @@ public:
 
   virtual void prepare(connection &conn) = 0;
 
-  detail::t_identifier_map::iterator insert_proxy(const std::shared_ptr<basic_identifier> &pk, object_proxy *proxy);
-  detail::t_identifier_map::iterator find_proxy(const std::shared_ptr<basic_identifier> &pk);
+  detail::t_identifier_map::iterator insert_proxy(basic_identifier *pk, object_proxy *proxy);
+  detail::t_identifier_map::iterator find_proxy(basic_identifier *pk);
   detail::t_identifier_map::iterator begin_proxy();
   detail::t_identifier_map::iterator end_proxy();
 

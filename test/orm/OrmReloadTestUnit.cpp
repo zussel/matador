@@ -1,6 +1,8 @@
 #include "OrmReloadTestUnit.hpp"
 
 #include "../Item.hpp"
+#include "../person.hpp"
+#include "../entities.hpp"
 #include "../has_many_list.hpp"
 
 #include "matador/orm/persistence.hpp"

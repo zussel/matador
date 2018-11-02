@@ -270,7 +270,7 @@ public:
    *
    * @return A reference to the value
    */
-  T& reference() const { return *id_; }
+  T& reference() { return id_; }
 
 private:
   T id_;

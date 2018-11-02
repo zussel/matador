@@ -82,15 +82,15 @@ public:
    */
   explicit object_proxy(basic_identifier *pk);
 
-//  template < class T >
-//  explicit object_proxy(basic_identifier *pk, T *obj, prototype_node *node)
-//    : obj_(obj)
-//    , deleter_(&destroy<T>)
-//    , namer_(&type_id<T>)
-//    , ostore_(node->tree())
-//    , node_(node)
-//    , primary_key_(pk)
-//  {}
+  template < class T >
+  explicit object_proxy(basic_identifier *pk, T *obj, prototype_node *node)
+    : obj_(obj)
+    , deleter_(&destroy<T>)
+    , namer_(&type_id<T>)
+    , ostore_(node->tree())
+    , node_(node)
+    , primary_key_(pk)
+  {}
 
   /**
    * @brief Create an object_proxy for a given object.

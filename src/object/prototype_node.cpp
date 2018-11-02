@@ -338,7 +338,7 @@ std::type_index prototype_node::type_index() const
   return info_->type_index();
 }
 
-object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier> &pk)
+object_proxy *prototype_node::find_proxy(basic_identifier *pk)
 {
   auto i = std::find_if(id_map_.begin(), id_map_.end(), [pk](const detail::t_identifier_map::value_type &x) {
     return *pk == *(x.first);

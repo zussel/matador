@@ -110,7 +110,7 @@ public:
 
     while (first != last) {
       // try to find object proxy by id
-      std::shared_ptr<basic_identifier> id(identifier_resolver_.resolve_object(first.get()));
+      basic_identifier* id(identifier_resolver_.resolve_object(first.get()));
 
       auto i = identifier_proxy_map_.find(id);
       if (i != identifier_proxy_map_.end()) {
@@ -187,7 +187,7 @@ public:
 
 /// @cond MATADOR_DEV
   template<class V>
-  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val, object_proxy *owner);
+  void append_relation_data(const std::string &field, basic_identifier *id, const V &val, object_proxy *owner);
 /// @endcond
 
 protected:
@@ -239,7 +239,7 @@ template < class T >
 template < class V >
 void table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>::append_relation_data(
   const std::string &field,
-  const std::shared_ptr<basic_identifier> &id,
+  basic_identifier *id,
   const V &val,
   object_proxy *owner)
 {
@@ -350,7 +350,7 @@ public:
   }
 
   template < class V >
-  void append_relation_data(const std::string &, const std::shared_ptr<basic_identifier> &, const V &) { }
+  void append_relation_data(const std::string &, basic_identifier*, const V &) { }
 
 private:
   statement<T> select_all_;

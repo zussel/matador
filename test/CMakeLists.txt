@@ -84,7 +84,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_TOOLS_SOURCES}
   ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
-#  ${TEST_ORM_SOURCES}
+  ${TEST_ORM_SOURCES}
   ${TEST_SQL_SOURCES}
 )
 
@@ -122,7 +122,7 @@ TARGET_LINK_LIBRARIES(test_matador
   matador-utils
   matador-object
   matador-sql
-#  matador-orm
+  matador-orm
   ${CMAKE_DL_LIBS}
   ${DB_LIBRARIES}
 )

@@ -48,7 +48,7 @@ public:
     proxy_ = proxy;
     matador::access::serialize(*this, *proxy->obj<T>());
     proxy_ = nullptr;
-    id_.reset();
+    id_ = nullptr;
     store_ = nullptr;
   }
 
@@ -68,7 +68,7 @@ public:
   template < class V >
   void serialize(const char *, has_one<V> &x, cascade_type cascade)
   {
-    std::shared_ptr<basic_identifier> pk = x.primary_key();
+    basic_identifier *pk = x.primary_key();
     if (!pk) {
       return;
     }
@@ -153,7 +153,7 @@ private:
   object_store *store_ = nullptr;
   basic_table &table_;
   object_proxy *proxy_ = nullptr;
-  std::shared_ptr<basic_identifier> id_;
+  basic_identifier *id_ = nullptr;
 
   typename belongs_to_resolver<T>::t_table_map belongs_to_table_map_;
 };
@@ -220,7 +220,7 @@ public:
     right_table_ptr_ = right_table_.lock();
     matador::access::serialize(*this, *proxy->obj<T>());
     proxy_ = nullptr;
-    id_.reset();
+    id_ = nullptr;
     store_ = nullptr;
   }
 
@@ -246,7 +246,7 @@ public:
     // insert it into concrete object
     // else
     // insert into relation data
-    std::shared_ptr<basic_identifier> pk = x.primary_key();
+    basic_identifier *pk = x.primary_key();
     if (!pk) {
       return;
     }
@@ -258,7 +258,7 @@ public:
   void serialize(const char *, abstract_has_many &, cascade_type) { }
 
 private:
-  object_proxy* acquire_proxy(object_holder &x, std::shared_ptr<basic_identifier> pk, cascade_type cascade, std::shared_ptr<basic_table> tbl)
+  object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, std::shared_ptr<basic_table> tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());
@@ -284,7 +284,7 @@ private:
   object_store *store_ = nullptr;
   basic_table &table_;
   object_proxy *proxy_ = nullptr;
-  std::shared_ptr<basic_identifier> id_;
+  basic_identifier *id_ = nullptr;
 
   std::weak_ptr<basic_table> left_table_;
   std::weak_ptr<basic_table> right_table_;
@@ -341,7 +341,7 @@ public:
     left_table_ptr_ = left_table_.lock();
     matador::access::serialize(*this, *proxy->obj<T>());
     proxy_ = nullptr;
-    id_.reset();
+    id_ = nullptr;
     store_ = nullptr;
   }
 
@@ -367,7 +367,7 @@ public:
     // insert it into concrete object
     // else
     // insert into relation data
-    std::shared_ptr<basic_identifier> pk = x.primary_key();
+    basic_identifier *pk = x.primary_key();
     if (!pk) {
       return;
     }
@@ -380,7 +380,7 @@ public:
   void serialize(const char *, abstract_has_many &, cascade_type) { }
 
 private:
-  object_proxy* acquire_proxy(object_holder &x, std::shared_ptr<basic_identifier> pk, cascade_type cascade, std::shared_ptr<basic_table> tbl)
+  object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, std::shared_ptr<basic_table> tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());
@@ -404,7 +404,7 @@ private:
   object_store *store_ = nullptr;
   basic_table &table_;
   object_proxy *proxy_ = nullptr;
-  std::shared_ptr<basic_identifier> id_;
+  basic_identifier *id_ = nullptr;
 
   std::weak_ptr<basic_table> left_table_;
 
