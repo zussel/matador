@@ -43,7 +43,7 @@ public:
     , restore_func_(&restore_update<T, object_serializer>)
   {}
 
-  virtual void accept(action_visitor *av);
+  void accept(action_visitor *av) override;
 
   /**
    * The serializable of the action.
@@ -55,9 +55,9 @@ public:
    */
   const object_proxy* proxy() const;
 
-  virtual void backup(byte_buffer &buffer);
+  void backup(byte_buffer &buffer) override;
 
-  virtual void restore(byte_buffer &buffer, object_store *store);
+  void restore(byte_buffer &buffer, object_store *store) override;
 
   delete_action* release_delete_action();
 

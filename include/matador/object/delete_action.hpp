@@ -62,9 +62,9 @@ public:
     , restore_func_(&restore_delete<T, object_serializer>)
   {}
 
-  virtual ~delete_action();
+  ~delete_action() override;
 
-  virtual void accept(action_visitor *av);
+  void accept(action_visitor *av) override;
 
   /**
    * Return the class name of the
@@ -85,9 +85,9 @@ public:
 
   object_proxy* proxy() const;
 
-  virtual void backup(byte_buffer &buffer);
+  void backup(byte_buffer &buffer) override;
 
-  virtual void restore(byte_buffer &buffer, object_store *store);
+  void restore(byte_buffer &buffer, object_store *store) override;
 
   void mark_deleted();
 

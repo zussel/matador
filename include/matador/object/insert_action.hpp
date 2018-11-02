@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by sascha on 12.03.16.
 //
@@ -51,11 +53,11 @@ public:
    * @param type The type of the expected objects
    */
   template < class T >
-  explicit insert_action(const std::string &type, T*)
-    : type_(type)
+  explicit insert_action(std::string type, T*)
+    : type_(std::move(type))
   {}
 
-  virtual void accept(action_visitor *av);
+  void accept(action_visitor *av) override;
 
   /**
    * Return the object type
@@ -80,9 +82,9 @@ public:
 
   iterator erase(iterator i);
 
-  virtual void backup(byte_buffer &) { }
+  void backup(byte_buffer &) override { }
 
-  virtual void restore(byte_buffer &, object_store *store);
+  void restore(byte_buffer &, object_store *store) override;
 
 private:
   std::string type_;
