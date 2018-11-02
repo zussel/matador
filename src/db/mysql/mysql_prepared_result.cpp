@@ -319,7 +319,7 @@ void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, ca
   if (prepare_binding_) {
     std::unique_ptr<basic_identifier> pk(x.create_identifier());
     pk->serialize(id, *this);
-    foreign_keys_.insert(std::make_pair(id, pk));
+    foreign_keys_.insert(std::make_pair(id, std::move(pk)));
   } else {
     auto i = foreign_keys_.find(id);
     if (i != foreign_keys_.end()) {
