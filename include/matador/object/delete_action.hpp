@@ -159,9 +159,9 @@ private:
 private:
   std::string classname_;
   unsigned long id_ = 0;
-  std::unique_ptr<basic_identifier> pk_;
+  basic_identifier *pk_ = nullptr;
   object_proxy *proxy_ = nullptr;
-  std::shared_ptr<basic_identifier> owner_identifier_;
+  basic_identifier* owner_identifier_ = nullptr;
 
   t_backup_func backup_func_;
   t_restore_func restore_func_;

@@ -27,7 +27,7 @@ const char* delete_action::classname() const
 
 basic_identifier * delete_action::pk() const
 {
-  return pk_.get();
+  return pk_;
 }
 
 unsigned long delete_action::id() const
