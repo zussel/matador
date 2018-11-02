@@ -123,7 +123,7 @@ private:
       serializer.deserialize(obj, &buffer, store);
       // restore pk
       if (act->pk()) {
-        proxy->pk().reset(act->pk()->clone());
+        proxy->pk(act->pk()->clone());
       }
       // insert serializable
 //      store->insert<T>(proxy, false);

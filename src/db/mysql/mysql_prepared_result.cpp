@@ -317,14 +317,14 @@ void mysql_prepared_result::serialize(const char *id, matador::basic_identifier 
 void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
   if (prepare_binding_) {
-    std::shared_ptr<basic_identifier> pk(x.create_identifier());
+    std::unique_ptr<basic_identifier> pk(x.create_identifier());
     pk->serialize(id, *this);
     foreign_keys_.insert(std::make_pair(id, pk));
   } else {
     auto i = foreign_keys_.find(id);
     if (i != foreign_keys_.end()) {
       if (i->second->is_valid()) {
-        x.reset(i->second);
+        x.reset(i->second.release());
       }
       foreign_keys_.erase(i);
     }

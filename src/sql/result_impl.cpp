@@ -10,15 +10,12 @@
 namespace matador {
 namespace detail {
 
-result_impl::result_impl() {}
-result_impl::~result_impl() {}
-
 void result_impl::read_foreign_object(const char *id, identifiable_holder &x)
 {
   //determine and create primary key of object ptr
-  std::shared_ptr<basic_identifier> pk = x.primary_key();
+  basic_identifier* pk = x.primary_key();
   if (!pk) {
-    pk.reset(x.create_identifier());
+    pk = x.create_identifier();
   }
 
   pk->serialize(id, *this);

@@ -125,7 +125,7 @@ bool object_holder::valid() const noexcept
   return !empty();
 }
 
-void object_holder::reset(const std::shared_ptr<basic_identifier> &id)
+void object_holder::reset(basic_identifier *id)
 {
   if (proxy_ && !proxy_->pk()->is_same_type(*id)) {
     throw object_exception("identifier types are not equal");
@@ -206,7 +206,7 @@ bool object_holder::has_primary_key() const
   return (proxy_ ? proxy_->has_identifier() : false);
 }
 
-std::shared_ptr<basic_identifier> object_holder::primary_key() const
+basic_identifier* object_holder::primary_key() const
 {
   return (proxy_ ? proxy_->pk() : nullptr);
 }

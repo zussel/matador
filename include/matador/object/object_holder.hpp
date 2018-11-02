@@ -200,7 +200,7 @@ public:
    *
    * @param id The identifier to set
    */
-  void reset(const std::shared_ptr<basic_identifier> &id) override;
+  void reset(basic_identifier *id) override;
 
   /**
    * Clears the currently set object
@@ -321,7 +321,7 @@ public:
    *
    * @return The primary key of the foreign object
    */
-  std::shared_ptr<basic_identifier> primary_key() const override;
+  basic_identifier* primary_key() const override;
 
   /**
    * Returns the current reference count

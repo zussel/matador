@@ -1089,7 +1089,6 @@ prototype_node* object_store::attach_node(prototype_node *node, const char *pare
   // Analyze primary and foreign keys of node
   basic_identifier *id = identifier_resolver<T>::create();
   if (id) {
-    id = id->clone();
     node->id_.reset(id);
   }
   // store prototype in map

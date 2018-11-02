@@ -31,7 +31,7 @@ class basic_identifier;
 class identifiable_holder
 {
 public:
-  virtual ~identifiable_holder() {}
+  virtual ~identifiable_holder() = default;
 
   /**
    * Resets the object_holder with the given
@@ -40,7 +40,7 @@ public:
    *
    * @param id The identifier to set
    */
-  virtual void reset(const std::shared_ptr<basic_identifier> &id) = 0;
+  virtual void reset(basic_identifier* id) = 0;
 
   /**
    * Returns true if serializable has a primary key
@@ -54,7 +54,7 @@ public:
    *
    * @return The primary key of the foreign serializable
    */
-  virtual std::shared_ptr<basic_identifier> primary_key() const = 0;
+  virtual basic_identifier* primary_key() const = 0;
 
   /**
    * Creates a new identifier object.

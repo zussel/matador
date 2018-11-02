@@ -96,8 +96,8 @@ public:
     if (clone_) {
       id_ = x.clone();
     } else {
-      id_ = x.clone();
-      //id_ = &x;
+//      id_ = x.clone();
+      id_ = &x;
     }
   }
 

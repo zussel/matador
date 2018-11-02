@@ -126,7 +126,7 @@ private:
   bool prepare_binding_ = true;
   bool use_local_copy_ = false;
 
-  typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_foreign_key_map;
+  typedef std::unordered_map<std::string, std::unique_ptr<basic_identifier> > t_foreign_key_map;
   t_foreign_key_map foreign_keys_;
 };
 
