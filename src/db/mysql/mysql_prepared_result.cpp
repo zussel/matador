@@ -14,14 +14,14 @@ namespace matador {
 
 namespace mysql {
 
-mysql_prepared_result::mysql_prepared_result(mysql_statement *owner, MYSQL_STMT *s, unsigned int rs)
+mysql_prepared_result::mysql_prepared_result(mysql_statement *owner, MYSQL_STMT *s, std::vector<MYSQL_BIND> &bind, std::vector<mysql_result_info> &info)
   : affected_rows_((size_type)mysql_stmt_affected_rows(s))
   , rows((size_type)mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
   , owner_(owner)
   , stmt(s)
-  , bind_(rs)
-  , info_(rs)
+  , bind_(bind)
+  , info_(info)
 {
 //  std::cout << this << " $$ mysql_prepared_result::~mysql_prepared_result:\tcreating result with STMT " << stmt << "\n";
 }
@@ -34,8 +34,8 @@ mysql_prepared_result::~mysql_prepared_result()
 
 void mysql_prepared_result::free()
 {
-  info_.clear();
-  bind_.clear();
+//  info_.clear();
+//  bind_.clear();
 
   if (stmt != nullptr) {
 //    std::cout << this << " $$ mysql_prepared_result::free:\t\t\t\t\tfreeing  STMT " << stmt << "\n";

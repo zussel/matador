@@ -43,6 +43,10 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   // parse sql to create result and host arrays
   result_size = db.dialect()->column_count();
   host_size = db.dialect()->bind_count();
+
+  bind_.resize(result_size);
+  info_.resize(result_size);
+
   if (host_size) {
     host_array.resize(host_size);
     is_null_vector.assign(host_size, false);
@@ -118,7 +122,7 @@ detail::result_impl* mysql_statement::execute()
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
-  current_result = new mysql_prepared_result(this, stmt_, (int)result_size);
+  current_result = new mysql_prepared_result(this, stmt_, bind_, info_);
 //  std::cout << this << " $$ mysql_statement::execute:\t\t\t\t\t\tcreate result STMT " << stmt_ << "\n";
   return current_result;
 }

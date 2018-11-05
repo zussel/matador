@@ -40,7 +40,7 @@ public:
   typedef detail::result_impl::size_type size_type;
 
 public:
-  mysql_prepared_result(mysql_statement *owner, MYSQL_STMT *s, unsigned int rs);
+  mysql_prepared_result(mysql_statement *owner, MYSQL_STMT *s, std::vector<MYSQL_BIND> &bind, std::vector<mysql_result_info> &info);
   ~mysql_prepared_result() override;
 
   const char* column(size_type c) const override;
@@ -120,8 +120,9 @@ private:
   mysql_statement *owner_ = nullptr;
   MYSQL_STMT *stmt = nullptr;
 //  unsigned int result_size;
-  std::vector<MYSQL_BIND> bind_;
-  std::vector<mysql_result_info> info_;
+
+  std::vector<MYSQL_BIND> &bind_;
+  std::vector<mysql_result_info> &info_;
 
   bool prepare_binding_ = true;
   bool use_local_copy_ = false;

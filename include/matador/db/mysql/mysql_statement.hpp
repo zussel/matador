@@ -23,6 +23,8 @@
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/varchar.hpp"
 
+#include "matador/db/mysql/mysql_result_info.hpp"
+
 #ifdef _MSC_VER
 //#include <winsock2.h>
 #include <mysql.h>
@@ -107,6 +109,9 @@ private:
   std::vector<my_bool> is_null_vector;
   MYSQL_STMT *stmt_ = nullptr;
   std::vector<MYSQL_BIND> host_array;
+
+  std::vector<MYSQL_BIND> bind_;
+  std::vector<mysql_result_info> info_;
 
   mysql_prepared_result *current_result = nullptr;
 };
