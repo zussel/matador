@@ -21,7 +21,6 @@
 #include <stdexcept>
 #include <functional>
 #include <memory>
-#include <ldb_module.h>
 
 namespace matador {
 
