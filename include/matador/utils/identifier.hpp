@@ -21,6 +21,7 @@
 #include <stdexcept>
 #include <functional>
 #include <memory>
+#include <ldb_module.h>
 
 namespace matador {
 
@@ -39,13 +40,15 @@ public:
   /**
    * @brief Create an identifier
    */
-  identifier() : id_(0) { };
+  identifier() : id_(0) {}
 
   /**
    * @brief Create an identifier with given value
    * @param val Value of the identifier
    */
-  identifier(T val) : id_(val) { }
+  identifier(T val) : id_(val) {}
+
+  ~identifier() override = default;
 
   /**
    * @brief Default copy assignment constructor
@@ -125,18 +128,6 @@ public:
       throw std::logic_error("not the same type");
     }
   }
-
-  //bool assign(char *data, unsigned long size) override
-  //{
-  //  if (sizeof(T) == size) {
-  //    //T val = *((T*)data);
-  //    std::cout << "assign buffer of type " << typeid(T).name() << "(value: " << *((T*)data) << ", size: " << size << ") address " << &data << "\n";
-  //    id_.reset(new T(*((T*)data)));
-  //    std::cout << "assigned buffer of type " << typeid(T).name() << "(value: " << *id_ << ", size: " << size << ") address " << id_.get() << "\n";
-  //    return true;
-  //  }
-  //  return false;
-  //}
 
   /**
    * Create a hash value of current

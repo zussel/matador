@@ -24,6 +24,8 @@ void session::load()
       continue;
     }
 
+//    std::cout << "loading table " << node.type() << "\n";
+
     // find corresponding table and load entities
     auto i = persistence_.find_table(node.type());
     if (i == persistence_.end()) {

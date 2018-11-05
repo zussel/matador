@@ -108,6 +108,8 @@ public:
     auto first = result.begin();
     auto last = result.end();
 
+    std::vector<basic_identifier*> identifier_to_delete;
+
     while (first != last) {
       // try to find object proxy by id
       basic_identifier* id(identifier_resolver_.resolve_object(first.get()));
@@ -116,7 +118,8 @@ public:
       if (i != identifier_proxy_map_.end()) {
         // use proxy;
         proxy_.reset(i->second);
-        proxy_->reset(first.release(), false, true);
+        identifier_to_delete.push_back(proxy_->pk());
+        proxy_->reset(first.release(), true, true);
         identifier_proxy_map_.erase(i);
       } else {
         // create new proxy
@@ -126,6 +129,12 @@ public:
       ++first;
       object_proxy *proxy = store.insert<table_type>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
+    }
+
+    while (!identifier_to_delete.empty()) {
+      auto pk = identifier_to_delete.back();
+      identifier_to_delete.pop_back();
+      delete pk;
     }
 
     // mark table as loaded

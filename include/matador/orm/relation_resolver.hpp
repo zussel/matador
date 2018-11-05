@@ -84,6 +84,7 @@ public:
        * already read - replace proxy
        */
       x.reset(proxy, cascade);
+      delete pk;
     } else {
       /**
        * if proxy can't be found we create
@@ -258,13 +259,14 @@ public:
   void serialize(const char *, abstract_has_many &, cascade_type) { }
 
 private:
-  object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, std::shared_ptr<basic_table> tbl)
+  object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());
 
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
+      delete x.primary_key();
       x.reset(proxy, cascade);
     } else {
       // find proxy in tables id(pk) proxy map
@@ -380,7 +382,7 @@ public:
   void serialize(const char *, abstract_has_many &, cascade_type) { }
 
 private:
-  object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, std::shared_ptr<basic_table> tbl)
+  object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());
