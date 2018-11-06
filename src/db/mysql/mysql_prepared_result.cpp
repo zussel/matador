@@ -314,6 +314,7 @@ void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, ca
     auto i = foreign_keys_.find(id);
     if (i != foreign_keys_.end()) {
       if (i->second->is_valid()) {
+//        std::cout << "created identifier " << *i->second << " (field: " << i->first << ", " << i->second.get() << ")\n";
         x.reset(i->second.release());
       }
       foreign_keys_.erase(i);

@@ -84,6 +84,7 @@ public:
        * already read - replace proxy
        */
       x.reset(proxy, cascade);
+//      std::cout << "deleting identifier " << *pk << " (field: " << id << ", " << pk << ")\n";
       delete pk;
     } else {
       /**
@@ -101,10 +102,11 @@ public:
       if (k == j->second->end_proxy()) {
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
         k = j->second->insert_proxy(pk, proxy);
-        x.reset(k->second, cascade, false);
+        x.reset(k->second.proxy, cascade, false);
       } else {
-        x.reset(k->second, cascade, true);
+        x.reset(k->second.proxy, cascade, true);
       }
+      k->second.primary_keys.push_back(pk);
     }
   }
 
@@ -252,6 +254,8 @@ public:
       return;
     }
 
+//    std::cout << "processing identifier " << *pk << " (has_one field: " << id << ", " << pk << ")\n";
+
     left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
   }
   
@@ -266,17 +270,23 @@ private:
 
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
-      delete x.primary_key();
+      auto id = x.primary_key();
+//      std::cout << "deleting identifier " << *id << " (" << id << ")\n";
+      delete id;
       x.reset(proxy, cascade);
     } else {
+      // proxy wasn't created (wasn't found in node tree)
       // find proxy in tables id(pk) proxy map
       auto id_proxy_pair = tbl->find_proxy(pk);
       if (id_proxy_pair == tbl->end_proxy()) {
+//        std::cout << "relation_resolver::" << __FUNCTION__ << ": couldn't find proxy by pk" << *pk << " (" << pk << ")\n";
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
-        tbl->insert_proxy(pk, proxy);
+        id_proxy_pair = tbl->insert_proxy(pk, proxy);
       } else {
-        proxy = id_proxy_pair->second;
+//        std::cout << "relation_resolver::" << __FUNCTION__ << ": found proxy by pk" << *pk << " (" << pk << ")\n";
+        proxy = id_proxy_pair->second.proxy;
       }
+      id_proxy_pair->second.primary_keys.push_back(pk);
       x.reset(proxy, cascade);
       --(*proxy);
     }
@@ -301,7 +311,10 @@ private:
 };
 
 template < class T >
-class relation_resolver<T, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value && matador::is_builtin<typename T::right_value_type>::value>::type>
+class relation_resolver<T, typename std::enable_if<
+  std::is_base_of<basic_has_many_to_many_item, T>::value &&
+  matador::is_builtin<typename T::right_value_type>::value>
+::type>
 {
 public:
   typedef T table_type;
@@ -396,8 +409,9 @@ private:
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
         idproxy = tbl->insert_proxy(pk, proxy);
       } else {
-        proxy = idproxy->second;
+        proxy = idproxy->second.proxy;
       }
+      idproxy->second.primary_keys.push_back(pk);
       x.reset(proxy, cascade);
     }
     return proxy;

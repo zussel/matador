@@ -53,10 +53,11 @@ void relation_resolver<T, typename std::enable_if<
       proxy = new object_proxy(pk, (T*)nullptr, node.get());
       foreign_proxy = foreign_table->insert_proxy(pk, proxy);
       // if foreign relation is HAS_ONE
-      x.reset(foreign_proxy->second, cascade, false);
+      x.reset(foreign_proxy->second.proxy, cascade, false);
     } else {
-      x.reset(foreign_proxy->second, cascade, true);
+      x.reset(foreign_proxy->second.proxy, cascade, true);
     }
+    foreign_proxy->second.primary_keys.push_back(pk);
   }
 
 
@@ -133,6 +134,8 @@ void relation_resolver<T, typename std::enable_if<
   if (!pk) {
     return;
   }
+
+//  std::cout << "processing identifier " << *pk << " (belongs_to field: " << id << ", " << pk << ")\n";
 
   if (left_proxy_ == nullptr) {
     // if left is not loaded

@@ -105,36 +105,34 @@ public:
   {
     auto result = select_.execute();
 
-    auto first = result.begin();
-    auto last = result.end();
-
-    std::vector<basic_identifier*> identifier_to_delete;
-
-    while (first != last) {
+    for (auto entity : result) {
       // try to find object proxy by id
-      basic_identifier* id(identifier_resolver_.resolve_object(first.get()));
+      basic_identifier* id(identifier_resolver_.resolve_object(entity.get()));
+
+//      std::cout <<  "table::" << __FUNCTION__ << " created object with identifier " << *id << " (" << id << ")\n";
 
       auto i = identifier_proxy_map_.find(id);
       if (i != identifier_proxy_map_.end()) {
+//        std::cout <<  "table::" << __FUNCTION__ << " found stored proxy with identifier " << *id << " (" << id << ")\n";
         // use proxy;
-        proxy_.reset(i->second);
-        identifier_to_delete.push_back(proxy_->pk());
-        proxy_->reset(first.release(), true, true);
-        identifier_proxy_map_.erase(i);
+        proxy_.reset(i->second.proxy);
+        proxy_->reset(entity.release(), true, true);
       } else {
         // create new proxy
-        proxy_.reset(new object_proxy(first.release()));
+//        std::cout <<  "table::" << __FUNCTION__ << " create new proxy with identifier " << *id << " (" << id << ")\n";
+        proxy_.reset(new object_proxy(entity.release()));
       }
 
-      ++first;
       object_proxy *proxy = store.insert<table_type>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
-    }
 
-    while (!identifier_to_delete.empty()) {
-      auto pk = identifier_to_delete.back();
-      identifier_to_delete.pop_back();
-      delete pk;
+      if (i != identifier_proxy_map_.end()) {
+        for (auto pk : i->second.primary_keys) {
+//          std::cout <<  "table::" << __FUNCTION__ << " deleting identifier " << *pk << " (" << pk << ")\n";
+          delete pk;
+        }
+        identifier_proxy_map_.erase(i);
+      }
     }
 
     // mark table as loaded
@@ -314,22 +312,18 @@ public:
     if (is_loaded_) {
       return;
     }
-    auto res = select_all_.execute();
+    auto result = select_all_.execute();
 
     // set explicit creator function
     prototype_node &node = this->node();
 
-    res.creator([&node]() {
+    result.creator([&node]() {
       return node.create<T>();
     });
 
-    auto first = res.begin();
-    auto last = res.end();
-
-    while (first != last) {
+    for (auto entity : result) {
       // create new proxy of relation object
-      proxy_.reset(new object_proxy(first.release()));
-      ++first;
+      proxy_.reset(new object_proxy(entity.release()));
       object_proxy *proxy = store.insert<T>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
     }
