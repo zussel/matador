@@ -21,7 +21,7 @@ using namespace std;
 
 namespace matador {
 
-object_proxy::object_proxy(const std::shared_ptr<basic_identifier> &pk)
+object_proxy::object_proxy(basic_identifier *pk)
   : primary_key_(pk)
 {}
 
@@ -152,9 +152,14 @@ bool object_proxy::has_identifier() const
   return primary_key_ != nullptr;
 }
 
-std::shared_ptr<basic_identifier> object_proxy::pk() const
+basic_identifier* object_proxy::pk() const
 {
   return primary_key_;
+}
+
+void object_proxy::pk(basic_identifier *id)
+{
+  primary_key_ = id;
 }
 
 transaction object_proxy::current_transaction()

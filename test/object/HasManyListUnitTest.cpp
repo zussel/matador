@@ -6,6 +6,7 @@
 
 #include "../has_many_list.hpp"
 #include "../Item.hpp"
+#include "../entities.hpp"
 
 using namespace matador;
 using namespace hasmanylist;

@@ -38,7 +38,7 @@ namespace mysql {
 
 class mysql_result : public detail::result_impl
 {
-private:
+public:
   mysql_result(const mysql_result&) = delete;
   mysql_result& operator=(const mysql_result&) = delete;
 
@@ -46,51 +46,51 @@ public:
   typedef detail::result_impl::size_type size_type;
 
 public:
-  mysql_result(MYSQL *c);
-  virtual ~mysql_result();
+  explicit mysql_result(MYSQL *c);
+  ~mysql_result() override;
 
-  virtual const char* column(size_type c) const override;
-  virtual bool fetch() override;
+  const char* column(size_type c) const override;
+  bool fetch() override;
   
-  virtual size_type affected_rows() const override;
-  virtual size_type result_rows() const override;
-  virtual size_type fields() const override;
+  size_type affected_rows() const override;
+  size_type result_rows() const override;
+  size_type fields() const override;
 
-  virtual int transform_index(int index) const override;
-
-protected:
-  virtual void serialize(const char *id, char &x) override;
-  virtual void serialize(const char *id, short &x) override;
-  virtual void serialize(const char *id, int &x) override;
-  virtual void serialize(const char *id, long &x) override;
-  virtual void serialize(const char *id, unsigned char &x) override;
-  virtual void serialize(const char *id, unsigned short &x) override;
-  virtual void serialize(const char *id, unsigned int &x) override;
-  virtual void serialize(const char *id, unsigned long &x) override;
-  virtual void serialize(const char *id, bool &x) override;
-  virtual void serialize(const char *id, float &x) override;
-  virtual void serialize(const char *id, double &x) override;
-  virtual void serialize(const char *id, char *x, size_t s) override;
-  virtual void serialize(const char *id, varchar_base &x) override;
-  virtual void serialize(const char *id, std::string &x) override;
-  virtual void serialize(const char *id, matador::date &x) override;
-  virtual void serialize(const char *id, matador::time &x) override;
-  virtual void serialize(const char *id, matador::basic_identifier &x) override;
-  virtual void serialize(const char *id, matador::identifiable_holder &x, cascade_type) override;
+  int transform_index(int index) const override;
 
 protected:
-  virtual bool prepare_fetch() override;
-  virtual bool finalize_fetch() override;
+  void serialize(const char *id, char &x) override;
+  void serialize(const char *id, short &x) override;
+  void serialize(const char *id, int &x) override;
+  void serialize(const char *id, long &x) override;
+  void serialize(const char *id, unsigned char &x) override;
+  void serialize(const char *id, unsigned short &x) override;
+  void serialize(const char *id, unsigned int &x) override;
+  void serialize(const char *id, unsigned long &x) override;
+  void serialize(const char *id, bool &x) override;
+  void serialize(const char *id, float &x) override;
+  void serialize(const char *id, double &x) override;
+  void serialize(const char *id, char *x, size_t s) override;
+  void serialize(const char *id, varchar_base &x) override;
+  void serialize(const char *id, std::string &x) override;
+  void serialize(const char *id, matador::date &x) override;
+  void serialize(const char *id, matador::time &x) override;
+  void serialize(const char *id, matador::basic_identifier &x) override;
+  void serialize(const char *id, matador::identifiable_holder &x, cascade_type) override;
+
+protected:
+  bool prepare_fetch() override;
+  bool finalize_fetch() override;
 
 private:
-  struct result_deleter
-  {
-    void operator()(MYSQL_RES *res) const {
-      if (res) {
-        mysql_free_result(res);
-      }
-    }
-  };
+//  struct result_deleter
+//  {
+//    void operator()(MYSQL_RES *res) const {
+//      if (res) {
+//        mysql_free_result(res);
+//      }
+//    }
+//  };
   size_type affected_rows_;
   size_type rows_;
   size_type fields_;

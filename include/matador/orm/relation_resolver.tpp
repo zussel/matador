@@ -17,7 +17,7 @@ void relation_resolver<T, typename std::enable_if<
   !std::is_base_of<basic_has_many_to_many_item, T>::value
 >::type>::serialize(const char *id, belongs_to<V> &x, cascade_type cascade)
 {
-  std::shared_ptr<basic_identifier> pk = x.primary_key();
+  basic_identifier *pk = x.primary_key();
   if (!pk) {
     return;
   }
@@ -53,10 +53,11 @@ void relation_resolver<T, typename std::enable_if<
       proxy = new object_proxy(pk, (T*)nullptr, node.get());
       foreign_proxy = foreign_table->insert_proxy(pk, proxy);
       // if foreign relation is HAS_ONE
-      x.reset(foreign_proxy->second, cascade, false);
+      x.reset(foreign_proxy->second.proxy, cascade, false);
     } else {
-      x.reset(foreign_proxy->second, cascade, true);
+      x.reset(foreign_proxy->second.proxy, cascade, true);
     }
+    foreign_proxy->second.primary_keys.push_back(pk);
   }
 
 
@@ -129,10 +130,12 @@ void relation_resolver<T, typename std::enable_if<
   ++(*proxy_);
   // check wether is left or right side value
   // left side will be determined first
-  std::shared_ptr<basic_identifier> pk = x.primary_key();
+  basic_identifier *pk = x.primary_key();
   if (!pk) {
     return;
   }
+
+//  std::cout << "processing identifier " << *pk << " (belongs_to field: " << id << ", " << pk << ")\n";
 
   if (left_proxy_ == nullptr) {
     // if left is not loaded
@@ -210,7 +213,7 @@ void relation_resolver<T, typename std::enable_if<
 {
   // check wether is left or right side value
   // left side will be determined first
-  std::shared_ptr<basic_identifier> pk = x.primary_key();
+  basic_identifier *pk = x.primary_key();
   if (!pk) {
     return;
   }

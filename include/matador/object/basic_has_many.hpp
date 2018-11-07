@@ -191,7 +191,7 @@ protected:
 
 
   object_proxy *owner_ = nullptr;
-  std::shared_ptr<basic_identifier> owner_id_;
+  basic_identifier *owner_id_ = nullptr;
 
   mark_modified_owner_func mark_modified_owner_;
 

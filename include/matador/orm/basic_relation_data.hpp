@@ -48,13 +48,13 @@ public:
 
   relation_data() : tindex_(std::type_index(typeid(value_type))) {}
 
-  void append_data(const identifier_ptr &id, const value_type &data, object_proxy *owner)
+  void append_data(basic_identifier *id, const value_type &data, object_proxy *owner)
   {
     id_multi_map_.insert(std::make_pair(id, std::make_pair(data, owner)));
   }
 
   template < template <class ...> class C >
-  void insert_into_container(const identifier_ptr &id, basic_has_many<value_type, C> &container)
+  void insert_into_container(basic_identifier *id, basic_has_many<value_type, C> &container)
   {
     auto range = id_multi_map_.equal_range(id);
     for (auto i = range.first; i != range.second; ++i)
@@ -72,7 +72,7 @@ public:
 private:
   std::type_index tindex_;
 
-  std::unordered_multimap<identifier_ptr, std::pair<value_type, object_proxy*>, identifier_hash<identifier_ptr>, identifier_equal> id_multi_map_;
+  std::unordered_multimap<basic_identifier*, std::pair<value_type, object_proxy*>, identifier_hash<basic_identifier>, identifier_equal> id_multi_map_;
 };
 
 template < class T >
@@ -83,24 +83,33 @@ public:
 
   relation_data() : tindex_(std::type_index(typeid(value_type))) {}
 
-  void append_data(const identifier_ptr &id, const T &data, object_proxy *owner)
+  void append_data(basic_identifier *id, const T &data, object_proxy *owner)
   {
     id_multi_map_.insert(std::make_pair(id, std::make_pair(data, owner)));
   }
 
   template < template <class ...> class C >
-  void insert_into_container(const identifier_ptr &id, basic_has_many<value_type, C> &container)
+  void insert_into_container(basic_identifier *id, basic_has_many<value_type, C> &container)
   {
     auto range = id_multi_map_.equal_range(id);
+
+//    basic_identifier *pk = nullptr;
     for (auto i = range.first; i != range.second; ++i)
     {
+//      pk = i->first;
+//      std::cout << "relation_data::" << __FUNCTION__ << ": processing identifier " << *pk << " (" << pk << ")\n";
       container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
       if (!std::is_base_of<basic_has_many_item, value_type>::value && i->second.second == nullptr) {
         ++(*proxy(i->second.first));
       }
 
     }
+
     id_multi_map_.erase(id);
+
+//    std::cout << "deleting identifier " << *pk << " (" << pk << ")\n";
+
+    //delete pk;
   }
 
   const std::type_index& type_index() const override
@@ -111,7 +120,7 @@ public:
 private:
   std::type_index tindex_;
 
-  std::unordered_multimap<identifier_ptr, std::pair<T, object_proxy*>, identifier_hash<identifier_ptr>, identifier_equal> id_multi_map_;
+  std::unordered_multimap<basic_identifier*, std::pair<T, object_proxy*>, identifier_hash<basic_identifier>, identifier_equal> id_multi_map_;
 };
 
 /// @endcond

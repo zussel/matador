@@ -23,6 +23,8 @@
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/varchar.hpp"
 
+#include "matador/db/mysql/mysql_result_info.hpp"
+
 #ifdef _MSC_VER
 //#include <winsock2.h>
 #include <mysql.h>
@@ -43,6 +45,7 @@ class date;
 namespace mysql {
 
 class mysql_connection;
+class mysql_prepared_result;
 
 class mysql_statement : public matador::detail::statement_impl
 {
@@ -53,6 +56,8 @@ public:
   void clear() override;
   detail::result_impl* execute() override;
   void reset() override;
+
+  void unlink_result(mysql_prepared_result *result);
   
 protected:
   void serialize(const char *id, char &x) override;
@@ -104,6 +109,11 @@ private:
   std::vector<my_bool> is_null_vector;
   MYSQL_STMT *stmt_ = nullptr;
   std::vector<MYSQL_BIND> host_array;
+
+  std::vector<MYSQL_BIND> bind_;
+  std::vector<mysql_result_info> info_;
+
+  mysql_prepared_result *current_result = nullptr;
 };
 
 }

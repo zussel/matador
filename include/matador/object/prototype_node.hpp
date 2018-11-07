@@ -94,7 +94,7 @@ public:
 
   struct relation_node_info
   {
-    std::shared_ptr<basic_identifier> owner_id_;
+    basic_identifier *owner_id_ = nullptr;
     std::string owner_type_;
     std::string relation_id_;
     std::string owner_id_column_;
@@ -397,7 +397,7 @@ public:
    * @param pk The primary key
    * @return The corresponding object_proxy or nullptr
    */
-  object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
+  object_proxy* find_proxy(basic_identifier *pk);
 
   /**
    * Register relation_field_endpoint identified by the given type index.

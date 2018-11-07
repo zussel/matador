@@ -5,6 +5,7 @@
 #include <matador/object/object_view.hpp>
 
 #include "../Item.hpp"
+#include "../entities.hpp"
 #include "../Blog.hpp"
 
 #include "RelationTestUnit.hpp"

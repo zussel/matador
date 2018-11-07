@@ -1,0 +1,32 @@
+valgrind is happy; statement is destroyed after reset
+
+0x5ac0760 $$ mysql_statement::mysql_statement:				creating STMT 0x5ac0828
+0x5ac0760 $$ valgrind: invalid write took place
+0x5ac2b00 $$ mysql_prepared_result::~mysql_prepared_result:	creating result with STMT 0x5ac0828
+0x5ac0760 $$ mysql_statement::execute:						create result STMT 0x5ac0828
+0x5ac2b00 $$ calling delete mysql_prepared_result()
+0x5ac2b00 $$ mysql_prepared_result::free:					freeing  STMT 0x5ac0828
+0x5acd6a0 $$ mysql_statement::mysql_statement:				creating STMT 0x5acd768
+0x5ac0760 $$ deleting host array
+0x5ac0760 $$ mysql_statement::clear:						freeing STMT 0x5ac0828
+0x5ac0760 $$ mysql_statement::~mysql_statement:				deleting STMT 0x5ac0828
+-----
+0x5acd6a0 $$ valgrind: invalid write took place
+0x5ad5be0 $$ mysql_prepared_result::~mysql_prepared_result:	creating result with STMT 0x5acd768
+0x5acd6a0 $$ mysql_statement::execute:						create result STMT 0x5acd768
+-----
+-----
+0x5acd6a0 $$ mysql_statement::reset:						reseting STMT 0x5acd768
+-----
+-----
+0x5ad5be0 $$ mysql_prepared_result::free:					freeing  STMT 0x5acd768
+0x5acd6a0 $$ valgrind: invalid write took place
+0x5adb930 $$ mysql_prepared_result::~mysql_prepared_result:	creating result with STMT 0x5acd768
+0x5acd6a0 $$ mysql_statement::execute:						create result STMT 0x5acd768
+0x5ad5be0 $$ calling delete mysql_prepared_result()
+-----
+0x5adb930 $$ calling delete mysql_prepared_result()
+0x5adb930 $$ mysql_prepared_result::free:					freeing  STMT 0x5acd768
+0x5acd6a0 $$ deleting host array
+0x5acd6a0 $$ mysql_statement::clear:						freeing STMT 0x5acd768
+0x5acd6a0 $$ mysql_statement::~mysql_statement:				deleting STMT 0x5acd768

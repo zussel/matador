@@ -15,6 +15,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <cstring>
 #include <memory>
 
 namespace matador {
@@ -27,6 +28,8 @@ class date;
 
 namespace mysql {
 
+class mysql_statement;
+
 class mysql_prepared_result : public detail::result_impl
 {
 public:
@@ -37,7 +40,7 @@ public:
   typedef detail::result_impl::size_type size_type;
 
 public:
-  mysql_prepared_result(MYSQL_STMT *s, unsigned int rs);
+  mysql_prepared_result(mysql_statement *owner, MYSQL_STMT *s, std::vector<MYSQL_BIND> &bind, std::vector<mysql_result_info> &info);
   ~mysql_prepared_result() override;
 
   const char* column(size_type c) const override;
@@ -68,6 +71,8 @@ public:
   void serialize(const char *id, basic_identifier &x) override;
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
 
+  void free();
+  
 protected:
   bool needs_bind() override;
   bool finalize_bind() override;
@@ -80,11 +85,11 @@ private:
   template < class T >
   void prepare_bind_column(int index, enum_field_types type, T &value)
   {
-    bind_[index].buffer_type = type;
     bind_[index].buffer= (char *)&value;
     bind_[index].buffer_length = sizeof(T);
+    bind_[index].buffer_type = type;
     bind_[index].is_null = &info_[index].is_null;
-//    bind_[index].length = &info_[index].length;
+    bind_[index].length = &info_[index].length;
     bind_[index].error = &info_[index].error;
   }
 
@@ -99,14 +104,16 @@ private:
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
-  MYSQL_STMT *stmt;
+  mysql_statement *owner_ = nullptr;
+  MYSQL_STMT *stmt = nullptr;
 //  unsigned int result_size;
-  std::vector<MYSQL_BIND> bind_;
-  std::vector<mysql_result_info> info_;
+
+  std::vector<MYSQL_BIND> &bind_;
+  std::vector<mysql_result_info> &info_;
 
   bool prepare_binding_ = true;
 
-  typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_foreign_key_map;
+  typedef std::unordered_map<std::string, std::unique_ptr<basic_identifier> > t_foreign_key_map;
   t_foreign_key_map foreign_keys_;
 };
 

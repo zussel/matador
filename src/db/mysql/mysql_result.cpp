@@ -35,10 +35,10 @@ mysql_result::mysql_result(MYSQL *c)
   : affected_rows_((size_type)mysql_affected_rows(c))
   , rows_(0)
   , fields_(0)
-  , res_(0)
+  , res_(nullptr)
 {
   res_ = mysql_store_result(c);
-  if (res_ == 0 && mysql_errno(c) > 0) {
+  if (res_ == nullptr && mysql_errno(c) > 0) {
     throw_error(-1, c, "mysql", "");
   } else if (res_) {
     rows_ = (size_type)mysql_num_rows(res_);
@@ -57,7 +57,7 @@ const char* mysql_result::column(size_type c) const
   if (row_) {
     return row_[c];
   } else {
-    return 0;
+    return nullptr;
   }
 }
 

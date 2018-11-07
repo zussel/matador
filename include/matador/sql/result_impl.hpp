@@ -36,7 +36,7 @@ public:
   typedef unsigned long size_type;
 
 protected:
-  result_impl();
+  result_impl() = default;
 
   virtual bool needs_bind() { return false; };
   virtual bool finalize_bind() { return false; }
@@ -44,7 +44,7 @@ protected:
   virtual bool finalize_fetch() = 0;
 
 public:
-  ~result_impl() override ;
+  ~result_impl() override = default;
 
   template < class T >
   void get(T *o)

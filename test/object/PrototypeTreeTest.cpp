@@ -2,6 +2,7 @@
 
 #include "matador/object/object_store.hpp"
 #include "../Item.hpp"
+#include "../entities.hpp"
 
 #include <fstream>
 

@@ -75,7 +75,7 @@ public:
 
 private:
   std::string owner_id_;
-  detail::identifier_ptr id_ptr_;
+  basic_identifier* id_ptr_;
   basic_table::t_relation_item_map *has_many_relations_ = nullptr;
 };
 

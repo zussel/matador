@@ -11,6 +11,7 @@
 #include "matador/utils/identifier.hpp"
 #include "matador/object/has_many.hpp"
 #include "../Item.hpp"
+#include "../entities.hpp"
 
 namespace hasmanyvector {
 

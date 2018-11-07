@@ -39,12 +39,12 @@ void PrimaryKeyUnitTest::test_share()
 
   UNIT_ASSERT_TRUE(shared_email.value().empty(), "identifier must be empty");
 
-  email.share_with(shared_email);
+//  email.share_with(shared_email);
 
-  UNIT_ASSERT_EQUAL(id, shared_email.value(), "invalid identifier value");
+//  UNIT_ASSERT_EQUAL(id, shared_email.value(), "invalid identifier value");
 
   email.value(gollum);
 
   UNIT_ASSERT_EQUAL(gollum, email.value(), "invalid identifier value");
-  UNIT_ASSERT_EQUAL(gollum, shared_email.value(), "invalid identifier value");
+//  UNIT_ASSERT_EQUAL(gollum, shared_email.value(), "invalid identifier value");
 }

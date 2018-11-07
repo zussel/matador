@@ -1,5 +1,6 @@
 #include "ObjectStoreTestUnit.hpp"
 #include "../Item.hpp"
+#include "../entities.hpp"
 
 #include "matador/object/object_expression.hpp"
 #include "matador/object/object_view.hpp"

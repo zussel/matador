@@ -105,27 +105,35 @@ public:
   {
     auto result = select_.execute();
 
-    auto first = result.begin();
-    auto last = result.end();
-
-    while (first != last) {
+    for (auto entity : result) {
       // try to find object proxy by id
-      std::shared_ptr<basic_identifier> id(identifier_resolver_.resolve_object(first.get()));
+      basic_identifier* id(identifier_resolver_.resolve_object(entity.get()));
+
+//      std::cout <<  "table::" << __FUNCTION__ << " created object with identifier " << *id << " (" << id << ")\n";
 
       auto i = identifier_proxy_map_.find(id);
       if (i != identifier_proxy_map_.end()) {
+//        std::cout <<  "table::" << __FUNCTION__ << " found stored proxy with identifier " << *id << " (" << id << ")\n";
         // use proxy;
-        proxy_.reset(i->second);
-        proxy_->reset(first.release(), false, true);
-        identifier_proxy_map_.erase(i);
+        proxy_.reset(i->second.proxy);
+        proxy_->reset(entity.release(), true, true);
       } else {
         // create new proxy
-        proxy_.reset(new object_proxy(first.release()));
+//        std::cout <<  "table::" << __FUNCTION__ << " create new proxy with identifier " << *id << " (" << id << ")\n";
+        proxy_.reset(new object_proxy(entity.release()));
       }
 
-      ++first;
       object_proxy *proxy = store.insert<table_type>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
+
+      if (i != identifier_proxy_map_.end()) {
+        auto proxy_info = i->second;
+        identifier_proxy_map_.erase(i);
+        for (auto pk : proxy_info.primary_keys) {
+//          std::cout <<  "table::" << __FUNCTION__ << " deleting identifier " << *pk << " (" << pk << ")\n";
+          delete pk;
+        }
+      }
     }
 
     // mark table as loaded
@@ -187,7 +195,7 @@ public:
 
 /// @cond MATADOR_DEV
   template<class V>
-  void append_relation_data(const std::string &field, const std::shared_ptr<basic_identifier> &id, const V &val, object_proxy *owner);
+  void append_relation_data(const std::string &field, basic_identifier *id, const V &val, object_proxy *owner);
 /// @endcond
 
 protected:
@@ -239,7 +247,7 @@ template < class T >
 template < class V >
 void table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>::append_relation_data(
   const std::string &field,
-  const std::shared_ptr<basic_identifier> &id,
+  basic_identifier *id,
   const V &val,
   object_proxy *owner)
 {
@@ -305,22 +313,18 @@ public:
     if (is_loaded_) {
       return;
     }
-    auto res = select_all_.execute();
+    auto result = select_all_.execute();
 
     // set explicit creator function
     prototype_node &node = this->node();
 
-    res.creator([&node]() {
+    result.creator([&node]() {
       return node.create<T>();
     });
 
-    auto first = res.begin();
-    auto last = res.end();
-
-    while (first != last) {
+    for (auto entity : result) {
       // create new proxy of relation object
-      proxy_.reset(new object_proxy(first.release()));
-      ++first;
+      proxy_.reset(new object_proxy(entity.release()));
       object_proxy *proxy = store.insert<T>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
     }
@@ -350,7 +354,7 @@ public:
   }
 
   template < class V >
-  void append_relation_data(const std::string &, const std::shared_ptr<basic_identifier> &, const V &) { }
+  void append_relation_data(const std::string &, basic_identifier*, const V &) { }
 
 private:
   statement<T> select_all_;

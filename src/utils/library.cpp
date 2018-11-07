@@ -44,6 +44,7 @@ bool library::load()
 #endif
   if (!handle_) {
 #if defined(_MSC_VER) || defined(__MINGW32__)
+    DWORD errorMessageID = ::GetLastError();
 #else
       // TODO: handle win32 and linux error
     fprintf(stdout, "dlopen error: %s", dlerror());

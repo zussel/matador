@@ -1,6 +1,8 @@
 #include "OrmReloadTestUnit.hpp"
 
 #include "../Item.hpp"
+#include "../person.hpp"
+#include "../entities.hpp"
 #include "../has_many_list.hpp"
 
 #include "matador/orm/persistence.hpp"
@@ -17,7 +19,7 @@ OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, const std::strin
   add_test("load_has_one", std::bind(&OrmReloadTestUnit::test_load_has_one, this), "test load has one relation from table");
   add_test("load_has_many", std::bind(&OrmReloadTestUnit::test_load_has_many, this), "test load has many from table");
   add_test("load_has_many_to_many", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many, this), "test load has many to many from table");
-  add_test("load_has_many_to_many_remove", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many_remove, this), "test load has many to many from table with remove");
+  //add_test("load_has_many_to_many_remove", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many_remove, this), "test load has many to many from table with remove");
   add_test("load_has_many_int", std::bind(&OrmReloadTestUnit::test_load_has_many_int, this), "test load has many int from table");
   add_test("load_belongs_to_many", std::bind(&OrmReloadTestUnit::test_load_belongs_to_many, this), "test load belongs to many from table");
 }

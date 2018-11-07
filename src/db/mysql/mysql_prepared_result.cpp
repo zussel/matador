@@ -1,4 +1,5 @@
 #include "matador/db/mysql/mysql_prepared_result.hpp"
+#include "matador/db/mysql/mysql_statement.hpp"
 #include "matador/db/mysql/mysql_exception.hpp"
 
 #include "matador/utils/date.hpp"
@@ -13,25 +14,39 @@ namespace matador {
 
 namespace mysql {
 
-mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, unsigned int rs)
+mysql_prepared_result::mysql_prepared_result(mysql_statement *owner, MYSQL_STMT *s, std::vector<MYSQL_BIND> &bind, std::vector<mysql_result_info> &info)
   : affected_rows_((size_type)mysql_stmt_affected_rows(s))
   , rows((size_type)mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
+  , owner_(owner)
   , stmt(s)
-  , bind_(rs)
-  , info_(rs)
+  , bind_(bind)
+  , info_(info)
 {
-  std::cout << stmt << " pass statement to result\n";
+//  std::cout << this << " $$ mysql_prepared_result::~mysql_prepared_result:\tcreating result with STMT " << stmt << "\n";
 }
 
 mysql_prepared_result::~mysql_prepared_result()
 {
-  mysql_stmt_free_result(stmt);
+//  std::cout << this << " $$ calling delete mysql_prepared_result()\n";
+  free();
+}
 
-  std::cout << stmt << " free statement from result\n";
+void mysql_prepared_result::free()
+{
+//  info_.clear();
+//  bind_.clear();
 
-  info_.clear();
-  bind_.clear();
+  if (stmt != nullptr) {
+//    std::cout << this << " $$ mysql_prepared_result::free:\t\t\t\t\tfreeing  STMT " << stmt << "\n";
+    mysql_stmt_free_result(stmt);
+    stmt = nullptr;
+  }
+
+  if (owner_ != nullptr) {
+    owner_->unlink_result(this);
+    owner_ = nullptr;
+  }
 }
 
 const char* mysql_prepared_result::column(size_type ) const
@@ -71,7 +86,7 @@ bool mysql_prepared_result::finalize_fetch()
 
 mysql_prepared_result::size_type mysql_prepared_result::affected_rows() const
 {
-  size_t ar = mysql_stmt_affected_rows(stmt);
+  std::size_t ar = mysql_stmt_affected_rows(stmt);
   return (unsigned long)ar;
   //return affected_rows_;
 }
@@ -292,14 +307,15 @@ void mysql_prepared_result::serialize(const char *id, matador::basic_identifier 
 void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
   if (prepare_binding_) {
-    std::shared_ptr<basic_identifier> pk(x.create_identifier());
+    std::unique_ptr<basic_identifier> pk(x.create_identifier());
     pk->serialize(id, *this);
-    foreign_keys_.insert(std::make_pair(id, pk));
+    foreign_keys_.insert(std::make_pair(id, std::move(pk)));
   } else {
     auto i = foreign_keys_.find(id);
     if (i != foreign_keys_.end()) {
       if (i->second->is_valid()) {
-        x.reset(i->second);
+//        std::cout << "created identifier " << *i->second << " (field: " << i->first << ", " << i->second.get() << ")\n";
+        x.reset(i->second.release());
       }
       foreign_keys_.erase(i);
     }
@@ -332,7 +348,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].is_null = &info_[index].is_null;
-//  bind_[index].length = &info_[index].length;
+  bind_[index].length = &info_[index].length;
   bind_[index].error = &info_[index].error;
 }
 
@@ -349,7 +365,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].is_null = &info_[index].is_null;
-//  bind_[index].length = &info_[index].length;
+  bind_[index].length = &info_[index].length;
   bind_[index].error = &info_[index].error;
 }
 

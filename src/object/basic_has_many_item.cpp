@@ -17,14 +17,6 @@ basic_has_many_item::basic_has_many_item(const std::string &owner_id, const std:
 }
 
 basic_has_many_item::basic_has_many_item(const std::string &owner_id, const std::string &item_id,
-                                         const std::shared_ptr<basic_identifier> owner)
-  : owner_id_(owner_id)
-  , item_id_(item_id)
-  , owner_(owner)
-{
-}
-
-basic_has_many_item::basic_has_many_item(const std::string &owner_id, const std::string &item_id,
                                          basic_identifier *owner)
   : owner_id_(owner_id)
   , item_id_(item_id)
@@ -47,12 +39,12 @@ void basic_has_many_item::item_id(const std::string &iid)
   item_id_ = iid;
 }
 
-std::shared_ptr<basic_identifier> basic_has_many_item::owner() const
+basic_identifier* basic_has_many_item::owner() const
 {
   return owner_;
 }
 
-void basic_has_many_item::owner(const std::shared_ptr<basic_identifier> &owner)
+void basic_has_many_item::owner(basic_identifier *owner)
 {
   owner_ = owner;
 }

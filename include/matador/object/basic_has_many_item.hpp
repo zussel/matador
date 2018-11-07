@@ -32,7 +32,6 @@ public:
 
   basic_has_many_item();
   basic_has_many_item(const std::string &owner_id_, const std::string &item_id_);
-  basic_has_many_item(const std::string &owner_id_, const std::string &item_id_, const std::shared_ptr<basic_identifier> owner);
   basic_has_many_item(const std::string &owner_id_, const std::string &item_id_, basic_identifier *owner);
 
   virtual ~basic_has_many_item() = default;
@@ -51,15 +50,15 @@ public:
 
   void item_id(const std::string &iid);
 
-  void owner(const std::shared_ptr<basic_identifier> &owner);
+  void owner(basic_identifier *owner);
 
-  std::shared_ptr<basic_identifier> owner() const;
+  basic_identifier* owner() const;
 
 private:
   std::string owner_id_;
   std::string item_id_;
 
-  std::shared_ptr<basic_identifier> owner_;
+  basic_identifier *owner_;
 };
 
 /// @endcond

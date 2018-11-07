@@ -152,13 +152,13 @@ public:
    *
    * @return A new identifier object with the shared id.
    */
-  virtual basic_identifier* share() = 0;
+  //virtual basic_identifier* share() = 0;
 
   /**
    * Isolate means unshring a shared identifier id creating
    * a new copy of the identifier id.
    */
-  virtual void isolate() = 0;
+  //virtual void isolate() = 0;
 
   /**
    * Share identifiers id with given identifier.
@@ -166,7 +166,7 @@ public:
    * @param id The identifier to share the id with.
    * @return True if value was successfully shared.
    */
-  virtual bool share_with(basic_identifier &id) = 0;
+  //virtual bool share_with(basic_identifier &id) = 0;
 
   /**
    * Prints the identifier to the given stream.

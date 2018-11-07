@@ -43,14 +43,17 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   // parse sql to create result and host arrays
   result_size = db.dialect()->column_count();
   host_size = db.dialect()->bind_count();
+
+  bind_.resize(result_size);
+  info_.resize(result_size);
+
   if (host_size) {
     host_array.resize(host_size);
     is_null_vector.assign(host_size, false);
   }
 
   int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
-
-  std::cout << stmt_ << " prepared statement\n";
+//  std::cout << this << " $$ mysql_statement::mysql_statement:\t\t\t\tcreating STMT " << stmt_ << "\n";
 
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
@@ -60,16 +63,26 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
 mysql_statement::~mysql_statement()
 {
   clear();
+//  std::cout << this << " $$ mysql_statement::~mysql_statement:\t\t\t\tdeleting STMT " << stmt_ << "\n";
   mysql_stmt_close(stmt_);
 }
 
 void mysql_statement::reset()
 {
+//  std::cout << this << " $$ mysql_statement::reset:\t\t\t\t\t\treseting STMT " << stmt_ << "\n";
   mysql_stmt_reset(stmt_);
+}
+
+void mysql_statement::unlink_result(mysql_prepared_result *result)
+{
+  if (result == current_result) {
+    current_result = nullptr;
+  }
 }
 
 void mysql_statement::clear()
 {
+//  std::cout << this << " $$ deleting host array\n";
   while (!host_array.empty()) {
     if (host_array.back().buffer != nullptr) {
       delete [] static_cast<char*>(host_array.back().buffer);
@@ -79,12 +92,20 @@ void mysql_statement::clear()
 
   result_size = 0;
   host_size = 0;
-  std::cout << stmt_ << " free statement\n";
-  mysql_stmt_free_result(stmt_);
+  if (current_result != nullptr) {
+//    std::cout << this << " $$ mysql_statement::clear:\t\t\t\t\t\tcalling free on result " << current_result << "\n";
+    current_result->free();
+  } else {
+//    std::cout << this << " $$ mysql_statement::clear:\t\t\t\t\t\tfreeing STMT " << stmt_ << "\n";
+    mysql_stmt_free_result(stmt_);
+  }
 }
 
 detail::result_impl* mysql_statement::execute()
 {
+  if (current_result != nullptr) {
+    current_result->free();
+  }
   if (host_size > 0) {
     int res = mysql_stmt_bind_param(stmt_, &host_array.front());
     if (res > 0) {
@@ -93,6 +114,7 @@ detail::result_impl* mysql_statement::execute()
   }
 
   int res = mysql_stmt_execute(stmt_);
+//  std::cout << this << " $$ valgrind: invalid write took place\n";
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
@@ -100,10 +122,9 @@ detail::result_impl* mysql_statement::execute()
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
-
-  std::cout << stmt_ << " create result with statement\n";
-
-  return new mysql_prepared_result(stmt_, (int)result_size);
+  current_result = new mysql_prepared_result(this, stmt_, bind_, info_);
+//  std::cout << this << " $$ mysql_statement::execute:\t\t\t\t\t\tcreate result STMT " << stmt_ << "\n";
+  return current_result;
 }
 
 void mysql_statement::serialize(const char *, char &x)

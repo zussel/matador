@@ -66,23 +66,23 @@ basic_table::t_table_map::iterator basic_table::end_table()
   return persistence_.end();
 }
 
-detail::t_identifier_map::iterator
-basic_table::insert_proxy(const std::shared_ptr<basic_identifier> &pk, object_proxy *proxy)
+detail::t_identifier_proxy_infos::iterator
+basic_table::insert_proxy(basic_identifier *pk, object_proxy *proxy)
 {
-  return identifier_proxy_map_.insert(std::make_pair(pk, proxy)).first;
+  return identifier_proxy_map_.insert(std::make_pair(pk, detail::object_proxy_info(proxy))).first;
 }
 
-detail::t_identifier_map::iterator basic_table::find_proxy(const std::shared_ptr<basic_identifier> &pk)
+detail::t_identifier_proxy_infos::iterator basic_table::find_proxy(basic_identifier *pk)
 {
   return identifier_proxy_map_.find(pk);
 }
 
-detail::t_identifier_map::iterator basic_table::begin_proxy()
+detail::t_identifier_proxy_infos::iterator basic_table::begin_proxy()
 {
   return identifier_proxy_map_.begin();
 }
 
-detail::t_identifier_map::iterator basic_table::end_proxy()
+detail::t_identifier_proxy_infos::iterator basic_table::end_proxy()
 {
   return identifier_proxy_map_.end();
 }

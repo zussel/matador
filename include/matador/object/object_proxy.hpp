@@ -80,10 +80,10 @@ public:
    *
    * @param pk primary key of object
    */
-  object_proxy(const std::shared_ptr<basic_identifier> &pk);
+  explicit object_proxy(basic_identifier *pk);
 
   template < class T >
-  explicit object_proxy(const std::shared_ptr<basic_identifier> &pk, T *obj, prototype_node *node)
+  explicit object_proxy(basic_identifier *pk, T *obj, prototype_node *node)
     : obj_(obj)
     , deleter_(&destroy<T>)
     , namer_(&type_id<T>)
@@ -106,7 +106,7 @@ public:
     , deleter_(&destroy<T>)
     , namer_(&type_id<T>)
   {
-    primary_key_.reset(identifier_resolver<T>::resolve(o));
+    primary_key_ = identifier_resolver<T>::resolve(o);
   }
 
   /**
@@ -128,7 +128,7 @@ public:
     , ostore_(os)
   {
     if (obj_ != nullptr) {
-      primary_key_.reset(identifier_resolver<T>::resolve(o));
+      primary_key_ = identifier_resolver<T>::resolve(o);
     }
   }
 
@@ -274,9 +274,10 @@ public:
     namer_ = &type_id<T>;
     obj_ = o;
     oid = 0;
-    node_ = 0;
+    node_ = nullptr;
     if (obj_ != nullptr && resolve_identifier) {
-      primary_key_.reset(identifier_resolver<T>::resolve());
+      primary_key_ = identifier_resolver<T>::resolve(o);
+//      primary_key_.reset(identifier_resolver<T>::create());
     }
   }
 
@@ -341,11 +342,13 @@ public:
   /**
    * Return the primary key. If underlaying object
    * doesn't have a primary key, an uninitialized
-   * primary key shared ptr is returned
+   * primary key is returned
    *
    * @return The primary key of the underlaying object
    */
-  std::shared_ptr<basic_identifier> pk() const;
+  basic_identifier* pk() const;
+
+  void pk(basic_identifier *id);
 
 private:
   transaction current_transaction();
@@ -380,8 +383,8 @@ private:
   object_proxy *next_ = nullptr;      /**< The next object_proxy in the list. */
 
   void *obj_ = nullptr;         /**< The concrete object. */
-  deleter deleter_;             /**< The object deleter function */
-  namer namer_;                 /**< The object classname function */
+  deleter deleter_ = nullptr;             /**< The object deleter function */
+  namer namer_ = nullptr;       /**< The object classname function */
   unsigned long oid = 0;        /**< The id of the concrete or expected object. */
 
   unsigned long reference_counter_ = 0;
@@ -392,7 +395,8 @@ private:
   typedef std::set<object_holder *> ptr_set_t; /**< Shortcut to the object_holder set. */
   ptr_set_t ptr_set_;      /**< This set contains every object_holder pointing to this object_proxy. */
   
-  std::shared_ptr<basic_identifier> primary_key_ = nullptr;
+//  std::shared_ptr<basic_identifier> primary_key_ = nullptr;
+  basic_identifier *primary_key_ = nullptr;
 };
 /// @endcond
 }

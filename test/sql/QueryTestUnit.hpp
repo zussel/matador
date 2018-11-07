@@ -19,7 +19,7 @@ class QueryTestUnit : public matador::unit_test
 public:
   QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory", const matador::time &timeval = matador::time(2015, 3, 15, 13, 56, 23, 123));
 
-  virtual void initialize();
+  void initialize() override;
 
   void test_datatypes();
   void test_query_value_creator();
@@ -29,6 +29,7 @@ public:
   void test_bind_tablename();
   void test_describe();
   void test_identifier();
+  void test_identifier_prepared();
   void test_create();
   void test_update();
   void test_anonymous_create();
@@ -37,7 +38,7 @@ public:
   void test_statement_insert();
   void test_statement_update();
   void test_delete();
-  void test_foreign_query();
+//  void test_foreign_query();
   void test_query();
   void test_query_range_loop();
   void test_query_select();

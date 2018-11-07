@@ -62,9 +62,9 @@ public:
     , restore_func_(&restore_delete<T, object_serializer>)
   {}
 
-  virtual ~delete_action();
+  ~delete_action() override;
 
-  virtual void accept(action_visitor *av);
+  void accept(action_visitor *av) override;
 
   /**
    * Return the class name of the
@@ -85,9 +85,9 @@ public:
 
   object_proxy* proxy() const;
 
-  virtual void backup(byte_buffer &buffer);
+  void backup(byte_buffer &buffer) override;
 
-  virtual void restore(byte_buffer &buffer, object_store *store);
+  void restore(byte_buffer &buffer, object_store *store) override;
 
   void mark_deleted();
 
@@ -123,7 +123,7 @@ private:
       serializer.deserialize(obj, &buffer, store);
       // restore pk
       if (act->pk()) {
-        proxy->pk().reset(act->pk()->clone());
+        proxy->pk(act->pk()->clone());
       }
       // insert serializable
 //      store->insert<T>(proxy, false);
@@ -159,9 +159,9 @@ private:
 private:
   std::string classname_;
   unsigned long id_ = 0;
-  std::unique_ptr<basic_identifier> pk_;
+  basic_identifier *pk_ = nullptr;
   object_proxy *proxy_ = nullptr;
-  std::shared_ptr<basic_identifier> owner_identifier_;
+  basic_identifier* owner_identifier_ = nullptr;
 
   t_backup_func backup_func_;
   t_restore_func restore_func_;

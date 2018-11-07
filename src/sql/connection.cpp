@@ -20,7 +20,7 @@ connection::connection(const connection &x)
   init_from_foreign_connection(x);
 }
 
-connection::connection(connection &&x)
+connection::connection(connection &&x) noexcept
   : type_(std::move(x.type_))
   , dns_(std::move(x.dns_))
   , impl_(std::move(x.impl_))
@@ -36,7 +36,7 @@ connection &connection::operator=(const connection &x)
   return *this;
 }
 
-connection &connection::operator=(connection &&x)
+connection &connection::operator=(connection &&x) noexcept
 {
   type_ = std::move(x.type_);
   dns_ = std::move(x.dns_);

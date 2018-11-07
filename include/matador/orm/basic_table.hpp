@@ -43,6 +43,25 @@ bool is_loaded(const T &)
 template <>
 bool is_loaded(const object_holder &holder);
 
+namespace detail {
+class object_proxy_info
+{
+public:
+  object_proxy_info() = default;
+  explicit object_proxy_info(object_proxy *p) : proxy(p) {}
+  object_proxy_info(const object_proxy_info &) = default;
+  object_proxy_info(object_proxy_info &&) = default;
+  object_proxy_info& operator=(const object_proxy_info &) = default;
+  object_proxy_info& operator=(object_proxy_info &&) = default;
+  ~object_proxy_info() = default;
+
+  object_proxy *proxy;
+  std::vector<basic_identifier*> primary_keys;
+};
+
+typedef std::unordered_map<basic_identifier*, object_proxy_info, detail::identifier_hash<basic_identifier>, detail::identifier_equal> t_identifier_proxy_infos;
+}
+
 /// @endcond
 
 /**
@@ -186,10 +205,10 @@ public:
 
   virtual void prepare(connection &conn) = 0;
 
-  detail::t_identifier_map::iterator insert_proxy(const std::shared_ptr<basic_identifier> &pk, object_proxy *proxy);
-  detail::t_identifier_map::iterator find_proxy(const std::shared_ptr<basic_identifier> &pk);
-  detail::t_identifier_map::iterator begin_proxy();
-  detail::t_identifier_map::iterator end_proxy();
+  detail::t_identifier_proxy_infos::iterator insert_proxy(basic_identifier *pk, object_proxy *proxy);
+  detail::t_identifier_proxy_infos::iterator find_proxy(basic_identifier *pk);
+  detail::t_identifier_proxy_infos::iterator begin_proxy();
+  detail::t_identifier_proxy_infos::iterator end_proxy();
 
   t_relation_data_map::iterator find_relation_data(const char *id);
   t_relation_data_map::iterator begin_relation_data();
@@ -198,7 +217,7 @@ public:
 protected:
   persistence &persistence_;
 
-  detail::t_identifier_map identifier_proxy_map_;
+  detail::t_identifier_proxy_infos identifier_proxy_map_;
 
   t_relation_item_map has_many_relations_;
 

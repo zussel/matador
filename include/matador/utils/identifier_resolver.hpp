@@ -45,8 +45,8 @@ template < class T >
 class identifier_resolver
 {
 public:
-  identifier_resolver() {}
-  ~identifier_resolver() {}
+  identifier_resolver() = default;
+  ~identifier_resolver() = default;
 
   static basic_identifier* resolve(T *o)
   {
@@ -54,16 +54,18 @@ public:
     return resolver.resolve_object(o);
   }
 
-  static basic_identifier* resolve()
+  static basic_identifier* create()
   {
     identifier_resolver<T> resolver;
     T obj;
-    return resolver.resolve_object(&obj);
+    return resolver.resolve_object(&obj, true);
   }
 
-  basic_identifier* resolve_object(T *o)
+  basic_identifier* resolve_object(T *o, bool clone = false)
   {
+    clone_ = clone;
     matador::access::serialize(*this, *o);
+    clone_ = false;
     if (!id_) {
       return nullptr;
     }
@@ -91,10 +93,16 @@ public:
   template < class V >
   void serialize(const char *, identifier<V> &x)
   {
-    id_ = x.share();
+    if (clone_) {
+      id_ = x.clone();
+    } else {
+//      id_ = x.clone();
+      id_ = &x;
+    }
   }
 
 private:
+  bool clone_ = false;
   basic_identifier *id_ = nullptr;
 };
 

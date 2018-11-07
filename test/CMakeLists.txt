@@ -17,7 +17,7 @@ SET (TEST_TOOLS_SOURCES
   utils/SequencerTestUnit.hpp
 )
 
-SET (TEST_HEADER Item.hpp has_many_list.hpp Blog.hpp)
+SET (TEST_HEADER Item.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 
 SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.cpp
@@ -88,7 +88,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_SQL_SOURCES}
 )
 
-SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")
+SET(MYSQL_CONNECTION_STRING "mysql://sascha:sascha@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
 IF (WIN32)
   SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\\\SQLEXPRESS/test_oos (SQL Server)" CACHE STRING "mssql connection string")
 ELSE()

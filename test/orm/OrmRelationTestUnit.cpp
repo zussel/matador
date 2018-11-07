@@ -5,6 +5,7 @@
 #include "OrmRelationTestUnit.hpp"
 
 #include "../Item.hpp"
+#include "../entities.hpp"
 #include "../has_many_list.hpp"
 
 #include "matador/orm/persistence.hpp"
