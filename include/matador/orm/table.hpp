@@ -127,11 +127,12 @@ public:
       resolver_.resolve(proxy, &store);
 
       if (i != identifier_proxy_map_.end()) {
-        for (auto pk : i->second.primary_keys) {
+        auto proxy_info = i->second;
+        identifier_proxy_map_.erase(i);
+        for (auto pk : proxy_info.primary_keys) {
 //          std::cout <<  "table::" << __FUNCTION__ << " deleting identifier " << *pk << " (" << pk << ")\n";
           delete pk;
         }
-        identifier_proxy_map_.erase(i);
       }
     }
 
