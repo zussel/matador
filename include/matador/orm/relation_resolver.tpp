@@ -66,7 +66,7 @@ void relation_resolver<T, typename std::enable_if<
     auto belongs_to_relation = table_.node().find_endpoint(id);
 
     if (belongs_to_relation != table_.node().endpoint_end()) {
-      belongs_to_relation->second->insert_value_into_foreign(proxy, proxy_);
+      belongs_to_relation->second->insert_value_into_foreign(proxy_, proxy);
     }
 
   } else {
