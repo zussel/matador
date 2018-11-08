@@ -6,7 +6,6 @@
 #define OOS_BASIC_HAS_MANY_HPP
 
 #include "matador/object/has_one.hpp"
-#include "matador/object/has_many_item.hpp"
 #include "matador/object/abstract_has_many.hpp"
 #include "matador/object/container_type_traits.hpp"
 

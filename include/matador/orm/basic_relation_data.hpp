@@ -9,6 +9,7 @@
 
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/object_holder_type.hpp"
+#include "matador/object/basic_has_many.hpp"
 #include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/identifier_proxy_map.hpp"
 
@@ -99,7 +100,7 @@ public:
 //      pk = i->first;
 //      std::cout << "relation_data::" << __FUNCTION__ << ": processing identifier " << *pk << " (" << pk << ")\n";
       container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
-      if (!std::is_base_of<basic_has_many_item, value_type>::value && i->second.second == nullptr) {
+      if (!std::is_base_of<basic_has_many_to_many_item, value_type>::value && i->second.second == nullptr) {
         ++(*proxy(i->second.first));
       }
 

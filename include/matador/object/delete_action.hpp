@@ -21,7 +21,6 @@
 #include "matador/object/action.hpp"
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/prototype_node.hpp"
-#include "matador/object/basic_has_many_item.hpp"
 
 #include "matador/utils/basic_identifier.hpp"
 #include "abstract_has_many.hpp"
@@ -135,24 +134,24 @@ private:
   }
 
   template < class T >
-  void backup_object(T *, typename std::enable_if<!std::is_base_of<basic_has_many_item, T>::value>::type* = 0) {}
+  void backup_object(T *, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0) {}
 
   template < class T >
-  void backup_object(T *obj, typename std::enable_if<std::is_base_of<basic_has_many_item, T>::value>::type* = 0)
+  void backup_object(T *, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0)
   {
-    owner_identifier_ = obj->owner();
+//    owner_identifier_ = obj->owner();
   }
 
   template < class T >
-  T* init_object(T *obj, typename std::enable_if<!std::is_base_of<basic_has_many_item, T>::value>::type* = 0)
+  T* init_object(T *obj, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0)
   {
     return obj;
   }
 
   template < class T >
-  T* init_object(T *obj, typename std::enable_if<std::is_base_of<basic_has_many_item, T>::value>::type* = 0)
+  T* init_object(T *obj, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0)
   {
-    obj->owner(owner_identifier_);
+//    obj->owner(owner_identifier_);
     return obj;
   }
 
@@ -161,7 +160,7 @@ private:
   unsigned long id_ = 0;
   basic_identifier *pk_ = nullptr;
   object_proxy *proxy_ = nullptr;
-  basic_identifier* owner_identifier_ = nullptr;
+//  basic_identifier* owner_identifier_ = nullptr;
 
   t_backup_func backup_func_;
   t_restore_func restore_func_;

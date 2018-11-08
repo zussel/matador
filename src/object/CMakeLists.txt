@@ -12,7 +12,6 @@ SET(SOURCES
   insert_action.cpp
   update_action.cpp
   delete_action.cpp
-  basic_has_many_item.cpp
   object_proxy_accessor.cpp
   object_deleter.cpp
   object_inserter.cpp
@@ -52,9 +51,7 @@ SET(HEADER
   ../../include/matador/object/update_action.hpp
   ../../include/matador/object/delete_action.hpp
   ../../include/matador/object/abstract_has_many.hpp
-  ../../include/matador/object/has_many_item.hpp
   ../../include/matador/object/has_one_to_many_item.hpp
-  ../../include/matador/object/basic_has_many_item.hpp
   ../../include/matador/object/basic_has_many_item_holder.hpp
   ../../include/matador/object/identifier_proxy_map.hpp
   ../../include/matador/object/object_proxy_accessor.hpp

@@ -1,3 +1,5 @@
+#include <utility>
+
 /*
  * This file is part of OpenObjectStore OOS.
  *
@@ -42,8 +44,8 @@ public:
    * 
    * @param msg Message of the exception.
    */
-  unit_exception(const std::string &msg) throw()
-    : what_(msg)
+  explicit unit_exception(std::string msg) throw()
+    : what_(std::move(msg))
   {}
 
   virtual ~unit_exception() throw() {}
