@@ -526,7 +526,7 @@ void OrmReloadTestUnit::test_load_belongs_to_many()
 {
   matador::persistence p(dns_);
 
-  p.attach<person>("person");
+  p.attach<person>("person", matador::object_store::abstract);
   p.attach<department>("department");
   p.attach<employee, person>("employee");
 
@@ -565,7 +565,8 @@ void OrmReloadTestUnit::test_load_belongs_to_many()
   {
     matador::session s(p);
 
-    s.load();
+    s.load("employee");
+    s.load<department>();
 
     typedef matador::object_view<employee> t_employee_view;
     t_employee_view employees(s.store());
