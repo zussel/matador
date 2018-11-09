@@ -40,7 +40,7 @@ void relation_resolver<T, typename std::enable_if<
      * if proxy can be found object was
      * already read - replace proxy
      */
-    x.reset(proxy, cascade);
+    x.reset(proxy, cascade, false);
   } else {
     /**
      * if proxy can't be found we create
@@ -62,6 +62,7 @@ void relation_resolver<T, typename std::enable_if<
 
 
   if (foreign_table->is_loaded()) {
+
     // insert into foreign endpoint
     auto belongs_to_relation = table_.node().find_endpoint(id);
 
