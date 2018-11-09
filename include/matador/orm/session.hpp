@@ -313,6 +313,23 @@ public:
   void load();
 
   /**
+   * @brief Load a specific table by given name
+   *
+   * @param name of the table to load
+   */
+  void load(const std::string &name);
+
+  /**
+   * @brief Load a specific table by given type
+   *
+   * @tparam T type of the table to load
+   */
+  template < class T >
+  void load() {
+    load(typeid(T).name());
+  }
+
+  /**
    * @brief Starts a transaction.
    *
    * @return The started transaction object

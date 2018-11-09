@@ -36,6 +36,25 @@ void session::load()
   }
 }
 
+void session::load(const std::string &name)
+{
+  auto i = persistence_.store().find(name.c_str());
+  if (i == persistence_.store().end()) {
+    throw_object_exception("couldn't find prototype node");
+  }
+
+  if (i->is_abstract()) {
+    return;
+  }
+
+  auto t = persistence_.find_table(i->type());
+  if (t == persistence_.end()) {
+    throw_object_exception("couldn't find table");
+  }
+
+  load(t->second);
+}
+
 transaction session::begin()
 {
   transaction tr(persistence_.store(), observer_);
