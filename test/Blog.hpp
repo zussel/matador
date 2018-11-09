@@ -63,7 +63,7 @@ struct category
 
   category() = default;
   explicit category(const std::string &n) : category(n, "") {}
-  category(std::string n, std::string desc) : name(std::move(n)), description(std::move(desc)) {}
+  category(std::string n, std::string desc) : name(n), description(std::move(desc)) {}
 
   template < class Serializer >
   void serialize(Serializer &serializer)

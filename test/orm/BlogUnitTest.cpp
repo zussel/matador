@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by sascha on 22.12.17.
 //
@@ -14,13 +16,13 @@ struct blog_service
     : session_(ses)
   {}
 
-  matador::object_ptr<post> add(std::string title, std::string content,
+  matador::object_ptr<post> add(const std::string &title, std::string content,
                                 const matador::object_ptr<author> &writer,
                                 const matador::object_ptr<category> &cat)
   {
     matador::transaction tr = session_.begin();
     try {
-      auto first = session_.insert(new post(title, writer, content));
+      auto first = session_.insert(new post(title, writer, std::move(content)));
 
       session_.push_back(first->categories, cat);
 
@@ -48,11 +50,11 @@ struct blog_service
     }
   }
 
-  bool add_comment(std::string email, std::string msg, const matador::object_ptr<post> &pst)
+  bool add_comment(const std::string &email, std::string msg, const matador::object_ptr<post> &pst)
   {
     auto tr = session_.begin();
     try {
-      auto cmt = session_.insert(new comment(email, msg));
+      auto cmt = session_.insert(new comment(email, std::move(msg)));
 
       pst->comments.push_back(cmt);
 
