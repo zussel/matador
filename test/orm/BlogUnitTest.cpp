@@ -74,7 +74,7 @@ BlogUnitTest::BlogUnitTest(const std::string &prefix, const std::string &dns)
   , dns_(dns)
 {
   add_test("blog_single", std::bind(&BlogUnitTest::test_blog_single_post, this), "test single blog post");
-//  add_test("blog_multiple", std::bind(&BlogUnitTest::test_blog_multiple_post, this), "test multiple blog post");
+  add_test("blog_multiple", std::bind(&BlogUnitTest::test_blog_multiple_post, this), "test multiple blog post");
 }
 
 void BlogUnitTest::test_blog_single_post()

@@ -41,6 +41,7 @@ void relation_resolver<T, typename std::enable_if<
      * already read - replace proxy
      */
     x.reset(proxy, cascade, false);
+    delete pk;
   } else {
     /**
      * if proxy can't be found we create
