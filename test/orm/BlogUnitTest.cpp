@@ -29,7 +29,7 @@ struct blog_service
       tr.commit();
 
       return first;
-    } catch (std::exception &ex) {
+    } catch (std::exception &) {
       tr.rollback();
       return matador::object_ptr<post>();
     }
@@ -44,7 +44,7 @@ struct blog_service
       tr.commit();
 
       return true;
-    } catch (std::exception &ex) {
+    } catch (std::exception &) {
       tr.rollback();
       return false;
     }
@@ -106,7 +106,7 @@ void BlogUnitTest::test_blog_single_post()
       blogger.add("First post", "My first post content", me, main);
 
       tr.commit();
-    } catch (std::exception &ex) {
+    } catch (std::exception &) {
       tr.rollback();
       UNIT_FAIL("failed on commit blog post");
     }
@@ -222,7 +222,7 @@ void BlogUnitTest::test_blog_multiple_post()
       blogger.add("Fourth post", "My fourth post content", me, main);
 
       tr.commit();
-    } catch (std::exception &ex) {
+    } catch (std::exception &) {
       tr.rollback();
     }
 
