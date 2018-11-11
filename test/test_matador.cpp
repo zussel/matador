@@ -104,10 +104,11 @@ int main(int argc, char *argv[])
   suite.register_unit(new DialectTestUnit);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
+  //suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", "mysql://sascha:sascha@192.168.178.51/matador_test"));
   suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", ::connection::mysql));
   suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", ::connection::mysql));
   suite.register_unit(new QueryTestUnit("mysql_query", "mysql query test unit", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
-  suite.register_unit(new BlogUnitTest("mysql", ::connection::sqlite));
+  suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
   suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
   suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
   suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
@@ -119,7 +120,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", ::connection::mssql));
   //suite.register_unit(new QueryTestUnit("mssql_query", "mssql query test unit", "mssql://sascha:sascha@192.168.27.58/test"));
   suite.register_unit(new QueryTestUnit("mssql_query", "mssql query test unit", ::connection::mssql));
-  suite.register_unit(new BlogUnitTest("mssql", ::connection::sqlite));
+  suite.register_unit(new BlogUnitTest("mssql", ::connection::mssql));
   suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new OrmRelationTestUnit("mssql", ::connection::mssql));
