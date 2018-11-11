@@ -19,6 +19,7 @@
 #include "matador/db/mysql/mysql_connection.hpp"
 #include "matador/db/mysql/mysql_exception.hpp"
 #include "matador/db/mysql/mysql_prepared_result.hpp"
+#include "matador/db/mysql/mysql_constants.hpp"
 
 #include "matador/utils/string.hpp"
 #include "matador/utils/date.hpp"
@@ -215,15 +216,15 @@ void mysql_statement::serialize(const char *, matador::date &x)
 
 void mysql_statement::serialize(const char *, matador::time &x)
 {
-#if MYSQL_VERSION_ID < 50604
-  // before mysql version 5.6.4 datetime
-  // doesn't support fractional seconds
-  // so we use a datetime string here
-  std::string tstr = to_string(x, "%FT%T");
-  bind_value(host_index, MYSQL_TYPE_VAR_STRING, tstr.c_str(), tstr.size());
-#else
-  bind_value(host_index, MYSQL_TYPE_TIMESTAMP, x);
-#endif
+  if (mysql::version < 50604) {
+    // before mysql version 5.6.4 datetime
+    // doesn't support fractional seconds
+    // so we use a datetime string here
+    std::string tstr = to_string(x, "%FT%T");
+    bind_value(host_index, MYSQL_TYPE_VAR_STRING, tstr.c_str(), tstr.size());
+  } else {
+    bind_value(host_index, MYSQL_TYPE_TIMESTAMP, x);
+  }
   ++host_index;
 }
 

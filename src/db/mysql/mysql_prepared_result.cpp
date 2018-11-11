@@ -1,6 +1,7 @@
 #include "matador/db/mysql/mysql_prepared_result.hpp"
 #include "matador/db/mysql/mysql_statement.hpp"
 #include "matador/db/mysql/mysql_exception.hpp"
+#include "matador/db/mysql/mysql_constants.hpp"
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
@@ -230,38 +231,35 @@ void mysql_prepared_result::serialize(const char *, matador::date &x)
   }
 }
 
-#if MYSQL_VERSION_ID < 50604
 void mysql_prepared_result::serialize(const char *id, matador::time &x)
 {
-  if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
+  if (mysql::version < 50604) {
+    if (prepare_binding_) {
+      prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
+    } else {
+      if (info_[result_index_].length > 0) {
+        // before mysql version 5.6.4 datetime
+        // doesn't support fractional seconds
+        // so we use a datetime string here
+        std::string val;
+        serialize(id, val);
+        x = matador::time::parse(val, "%FT%T");
+        ++result_index_;
+      }
+    }
   } else {
-    if (info_[result_index_].length > 0) {
-      // before mysql version 5.6.4 datetime
-      // doesn't support fractional seconds
-      // so we use a datetime string here
-      std::string val;
-      serialize(id, val);
-      x = matador::time::parse(val, "%FT%T");
-      ++result_index_;
+    if (prepare_binding_) {
+      prepare_bind_column(column_index_++, MYSQL_TYPE_TIMESTAMP, x);
+    } else {
+      if (info_[result_index_].length > 0) {
+        auto *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
+        x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
+        ++result_index_;
+      }
+      bind_[result_index_].length = nullptr;
     }
   }
 }
-#else
-void mysql_prepared_result::serialize(const char *, matador::time &x)
-{
-  if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_TIMESTAMP, x);
-  } else {
-    if (info_[result_index_].length > 0) {
-      auto *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
-      x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
-      ++result_index_;
-    }
-    bind_[result_index_].length = nullptr;
-  }
-}
-#endif
 
 void mysql_prepared_result::serialize(const char *, std::string &x)
 {
@@ -319,6 +317,7 @@ void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, ca
       }
       foreign_keys_.erase(i);
     }
+    ++result_index_;
   }
 }
 

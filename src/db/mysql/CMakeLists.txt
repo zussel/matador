@@ -16,7 +16,12 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_result_info.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_types.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_dialect.hpp
-        ../../../include/matador/object/relation_field_endpoint.hpp ../../../include/matador/object/has_one_to_many_item.hpp)
+  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_constants.hpp
+)
+
+SET(HEADER_INSTALL
+  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_constants.hpp
+)
 
 ADD_LIBRARY(matador-mysql SHARED ${SOURCES} ${HEADER})
 
@@ -42,4 +47,10 @@ INSTALL(
   TARGETS matador-mysql
   DESTINATION lib
   COMPONENT libraries
+)
+
+INSTALL(
+  FILES ${HEADER_INSTALL}
+  DESTINATION include/matador/db/mysql
+  COMPONENT headers
 )

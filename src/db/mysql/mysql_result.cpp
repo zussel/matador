@@ -24,6 +24,7 @@
 
 #include "matador/db/mysql/mysql_result.hpp"
 #include "matador/db/mysql/mysql_exception.hpp"
+#include "matador/db/mysql/mysql_constants.hpp"
 
 #include <cstring>
 
@@ -260,18 +261,16 @@ void mysql_result::serialize(const char *, matador::date &x)
 
 void mysql_result::serialize(const char *id, matador::time &x)
 {
-#if MYSQL_VERSION_ID < 50604
-  // before mysql version 5.6.4 datetime
-  // doesn't support fractional seconds
-  // so we use a datetime string here
   std::string val;
   serialize(id, val);
-  x = matador::time::parse(val, "%Y-%m-%dT%T");
-#else
-  std::string val;
-  serialize(id, val);
-  x = matador::time::parse(val, "%Y-%m-%d %T.%f");
-#endif
+  if (mysql::version < 50604) {
+    // before mysql version 5.6.4 datetime
+    // doesn't support fractional seconds
+    // so we use a datetime string here
+    x = matador::time::parse(val, "%Y-%m-%dT%T");
+  } else {
+    x = matador::time::parse(val, "%Y-%m-%d %T.%f");
+  }
 }
 
 void mysql_result::serialize(const char *id, matador::basic_identifier &x)

@@ -2,6 +2,7 @@
 // Created by sascha on 3/8/16.
 //
 #include "matador/db/mysql/mysql_dialect.hpp"
+#include "matador/db/mysql/mysql_constants.hpp"
 
 #include "matador/sql/dialect_token.hpp"
 #include "matador/sql/basic_dialect_compiler.hpp"
@@ -60,14 +61,14 @@ const char* mysql_dialect::type_string(matador::data_type type) const
     case data_type::type_date:
       return "DATE";
     case data_type::type_time:
-#if MYSQL_VERSION_ID < 50604
-      // before mysql version 5.6.4 datetime
-      // doesn't support fractional seconds
-      // so we use a datetime string here
-      return "VARCHAR(256)";
-#else
-      return "DATETIME(3)";
-#endif
+      if (mysql::version < 50604) {
+        // before mysql version 5.6.4 datetime
+        // doesn't support fractional seconds
+        // so we use a datetime string here
+        return "VARCHAR(256)";
+      } else {
+        return "DATETIME(3)";
+      }
     case data_type::type_char_pointer:
       return "VARCHAR";
     case data_type::type_varchar:
