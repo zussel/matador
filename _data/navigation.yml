@@ -1,7 +1,7 @@
 # main links links
 main:
-#  - title: "Getting Started"
-#    url: /getting-started/
+  - title: "Getting Started"
+    url: /getting-started/
   - title: "Guide"
     url: /guide/
   - title: "Api"

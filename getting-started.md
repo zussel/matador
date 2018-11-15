@@ -5,7 +5,7 @@ permalink: /getting-started/
 ---
 <div class="col-md-9 guide">
 
-### Goal
+## Goal
 
 The goal of this tutorial to get you up and running a simple matador executable
 

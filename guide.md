@@ -3,7 +3,7 @@ title: Guide
 layout: guide
 permalink: /guide/
 ---
-<div class="col-md-9 guide">
+<div class="col-xs-12 col-sm-9 guide">
 
 ## Introduction
 
@@ -13,7 +13,7 @@ matador consists of three main parts: A container for any kind of objects, a sql
 
 ### The object store
 
-The [object store](/#) is the central element. Once it is configured with an object hierarchy, one can insert, update or delete any of objects of the introduced types. Create a view to access all objects of a specific type or of a specific base type. Once the [view](/#) is created all objects can be iterated or filtered via a simple [expression](/#). As a special feature a [transaction](/#) mechanism is also integrated.
+The [object store](#prototypes) is the central element. Once it is configured with an object hierarchy, one can insert, update or delete any of objects of the introduced types. Create a view to access all objects of a specific type or of a specific base type. Once the [view](#views) is created all objects can be iterated or filtered via a simple [expression](#expressions). As a special feature a [transaction](#transactions) mechanism is also integrated.
 
 ```cpp
 struct person
@@ -43,7 +43,7 @@ int main()
 
 ### The SQL Query
 
-With the [query](/#) class at hand one can write simple sql statements, prepare and execute.
+With the [query](#querries) class at hand one can write simple sql statements, prepare and execute.
 
 ```cpp
 matador::query<person> q("person");
@@ -59,7 +59,7 @@ for (auto p : res) {
 
 ### The ORM Layer
 
-On top of the object store and the query interface comes the persistence layer. It represents the ORM mechanism provided by the library. Once a [persistence](/#) object is created one can again configure the object hierarchy in the same way it is done with the object store.
+On top of the object store and the query interface comes the persistence layer. It represents the ORM mechanism provided by the library. Once a [persistence](#persistence) object is created one can again configure the object hierarchy in the same way it is done with the object store.
 
 ```cpp
 matador::persistence p("sqlite://db.sqlite");
@@ -195,7 +195,7 @@ struct strings
 
 ### Time ad date
 
-matador comes with its own [time](/docs/time) and [date](/docs/date) classes.
+matador comes with its own [time](/api/classmatador_1_1time) and [date](/api/classmatador_1_1date) classes.
 The ```serialize()``` interface is also straight forward.
 
 ```cpp
@@ -895,7 +895,7 @@ q.insert({"id", "name", "age"}).values({1, "jane", 35}).execute(conn);
 
 Updating an object works the same way as inserting an object. Asume there is an object
 one can modify it and pass it to the ```update``` method. Notice the where clause with
-expression to limit the update statement. These conditions are explained [condition chapter](/#) bewlow
+expression to limit the update statement. These conditions are explained [condition chapter](#conditions) bewlow
 
 ```cpp
 person jane("jane", 35);
@@ -1048,7 +1048,7 @@ column age("age");
 matador::between(age, 21, 30);
 ```
 
-Take a look at the [query API reference](/#) to get an overview of the provided syntax.
+Take a look at the [query API reference](/api/classmatador_1_1query) to get an overview of the provided syntax.
 
 ## Persistence
 
@@ -1088,7 +1088,7 @@ After that is done you can deal with a session object and start building your ap
 
 ## Sessions
 
-Once the database schema is set up with the ```persistence``` object you need a session
+Once the database schema is set up with the ```persistence``` object you need a [session](/api/classmatador_1_1session)
 to use the ORM layer.
 
 ```cpp
