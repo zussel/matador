@@ -185,8 +185,18 @@ public:
    */
   virtual void reset();
 
+  /**
+   * @brief Access the underlaying persistence unit object
+   *
+   * @return The underlaying persistence unit object
+   */
   persistence& persistence_unit();
 
+  /**
+   * @brief Access the underlaying persistence unit object
+   *
+   * @return The underlaying persistence unit object
+   */
   const persistence& persistence_unit() const;
 
   /// @cond MATADOR_DEV

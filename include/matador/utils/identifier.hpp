@@ -191,51 +191,14 @@ public:
    */
   basic_identifier *clone() const override
   {
-    //T id = *id_;
     return new self(id_);
   }
 
   /**
-   * Shares the value of this identifier with
-   * a newly created identifier
-   * 
-   * @return New identifier with shared value
+   * Returns true if identifier value is valid.
+   *
+   * @return True if identifier value is valid.
    */
-  //self* share() override
-  //{
-  //  std::unique_ptr<self> shared(new self());
-  //  shared->id_ = id_;
-  //  return shared.release();
-  //}
-
-  /**
-   * Isolate the shared value of the identifier
-   * into a new yet unshared value
-   */
-  //void isolate() override
-  //{
-  //  id_.reset(new T(*id_));
-  //}
-
-  /**
-   * Share identifiers value with given
-   * foreign identifiers value.
-   * 
-   * If they are not of the same type false is returned
-   * 
-   * @param id Identifier to share the value with
-   * @return True if sharing was successful.
-   */
-  //bool share_with(basic_identifier &id) override
-  //{
-  //  if (!is_same_type(id)) {
-  //    return false;
-  //  }
-  //  identifier<T> &xid = static_cast<identifier<T> &>(id);
-  //  xid.id_ = id_;
-  //  return true;
-  //}
-
   bool is_valid() const override
   {
     return id_ != 0;
@@ -353,11 +316,6 @@ public:
     }
   }
 
-  //bool assign(char *data, unsigned long size) override
-  //{
-  //  //id_->copy(data, size);
-  //  return true;
-  //}
   /**
    * Create a hash value of current
    * id value
@@ -425,46 +383,10 @@ public:
   }
 
   /**
-   * Shares the value of this identifier with
-   * a newly created identifier
-   * 
-   * @return New identifier with shared value
+   * Returns true if identifier value is valid.
+   *
+   * @return True if identifier value is valid.
    */
-  //identifier<std::string>* share() override
-  //{
-  //  std::unique_ptr<identifier<std::string>> shared(new identifier<std::string>);
-  //  shared->id_ = id_;
-  //  return shared.release();
-  //}
-
-  /**
-   * Isolate the shared value of the identifier
-   * into a new yet unshared value
-   */
-  //void isolate() override
-  //{
-  //  id_.reset(new std::string(*id_));
-  //}
-
-  /**
-   * Share identifiers value with given
-   * foreign identifiers value.
-   * 
-   * If they are not of the same type false is returned
-   * 
-   * @param id Identifier to share the value with
-   * @return True if sharing was successful.
-   */
-  //bool share_with(basic_identifier &id) override
-  //{
-  //  if (!is_same_type(id)) {
-  //    return false;
-  //  }
-  //  auto &xid = static_cast<identifier<std::string> &>(id);
-  //  xid.id_ = id_;
-  //  return true;
-  //}
-
   bool is_valid() const  override
   {
     return !id_.empty();
