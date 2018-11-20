@@ -193,9 +193,9 @@ struct strings
 };
 ```
 
-### Time ad date
+### Time and date
 
-matador comes with its own [time](/api/classmatador_1_1time) and [date](/api/classmatador_1_1date) classes.
+matador comes with its own [time](api/classmatador_1_1time) and [date](api/classmatador_1_1date) classes.
 The ```serialize()``` interface is also straight forward.
 
 ```cpp
