@@ -31,7 +31,7 @@ void TimeTestUnit::test_create()
   struct tm *tt = localtime(&t);
 #endif
 
-  matador::time now;
+  matador::time now(t);
 
   UNIT_ASSERT_EQUAL(tt->tm_year + 1900, now.year(), "year isn't equal");
   UNIT_ASSERT_EQUAL(tt->tm_mon + 1, now.month(), "month of year isn't equal");
