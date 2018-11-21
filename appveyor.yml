@@ -37,22 +37,32 @@ install:
   - appveyor-retry choco install doxygen.portable
 
 before_build:
-  - cd C:\projects\sqlite\src
-  - mkdir build
-  - cd build
-  - set SQLITE_ROOT=C:\projects\sqlite\sqlite
-  - set PATH=%PATH%;%SQLITE_ROOT%\bin;%MYSQL_DIR%\bin;%MYSQL_DIR%\lib
-  - set MYSQL_PWD=Password12!
-  - set USER=root
-  - mysql -e "create database matador_test;" --user=root
-  - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE matador_test"
-  - cmake .. -G"%VS_VERSION%" -DCMAKE_INSTALL_PREFIX=C:\projects\sqlite\sqlite
-  - cmake --build . --config Release --target install
-  - cd "%APPVEYOR_BUILD_FOLDER%"
-  - mkdir build
-  - cd build
-  - cmake -G "%VS_VERSION%" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" ..
-#  - cmake -G "%VS_VERSION%" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=false  ..
+  - ps: |
+      cd C:\projects\sqlite\src
+      mkdir build
+      cd build
+      set SQLITE_ROOT=C:\projects\sqlite\sqlite
+      set PATH=%PATH%;%SQLITE_ROOT%\bin;%MYSQL_DIR%\bin;%MYSQL_DIR%\lib
+      set MYSQL_PWD=Password12!
+      set USER=root
+      mysql -e "create database matador_test;" --user=root
+      sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE matador_test"
+      cmake .. -G"%VS_VERSION%" -DCMAKE_INSTALL_PREFIX=C:\projects\sqlite\sqlite
+      cmake --build . --config Release --target install
+      cd "%APPVEYOR_BUILD_FOLDER%"
+      mkdir build
+      cd build
+      if ("$env:APPVEYOR_BUILD_WORKER_IMAGE" -match "Visual Studio 2015") {
+          $env:generator="Visual Studio 14 2015"
+      } else {
+          $env:generator="Visual Studio 15 2017"
+      }
+      if ($env:PLATFORM -eq "x64") {
+          $env:generator="$env:generator Win64"
+      }
+      echo generator="$env:generator"
+      cmake -G "$env:generator" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" ..
+      # cmake -G "$env:generator" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=false  ..
 
 build_script:
   - cmake --build . --config %configuration%
