@@ -1,21 +1,29 @@
 version: "{branch}-{build}"
 
+shallow_clone: true
+
+platform:
+  - x86
+  - x64
+
 services:
   - mssql2014
   - mysql
 
-image: Visual Studio 2015
+image:
+  - Visual Studio 2015
+  - Visual Studio 2017
 
 configuration:
   - Debug
   - Release
 
-environment:
-  matrix:
-#  - VS_VERSION: Visual Studio 14 2015
-#    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
-  - VS_VERSION: Visual Studio 14 2015 Win64
-    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+# environment:
+#   matrix:
+# #  - VS_VERSION: Visual Studio 14 2015
+# #    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+#   - VS_VERSION: Visual Studio 14 2015 Win64
+#     MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
 
 branches:
   only:
