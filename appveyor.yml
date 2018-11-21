@@ -4,7 +4,7 @@ shallow_clone: true
 
 platform:
   - x86
-  - x64
+  # - x64
 
 services:
   - mssql2014
@@ -12,11 +12,11 @@ services:
 
 image:
   - Visual Studio 2015
-  - Visual Studio 2017
+  # - Visual Studio 2017
 
 configuration:
   - Debug
-  - Release
+  # - Release
 
 environment:
   MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
@@ -50,15 +50,15 @@ before_build:
           $env:generator="$env:generator Win64"
       }
       echo generator="$env:generator"
-      set SQLITE_ROOT=C:\projects\sqlite\sqlite
-      set PATH=%PATH%;%SQLITE_ROOT%\bin;%MYSQL_DIR%\bin;%MYSQL_DIR%\lib
-      set MYSQL_PWD=Password12!
-      set USER=root
+      $env:SQLITE_ROOT=C:\projects\sqlite\sqlite
+      $env:PATH=$env:PATH;$env:SQLITE_ROOT\bin;$env:MYSQL_DIR\bin;$env:MYSQL_DIR\lib
+      $env:MYSQL_PWD=Password12!
+      $env:USER=root
       mysql -e "create database matador_test;" --user=root
       sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE matador_test"
       cmake .. -G"$env:generator" -DCMAKE_INSTALL_PREFIX=C:\projects\sqlite\sqlite
       cmake --build . --config Release --target install
-      cd "%APPVEYOR_BUILD_FOLDER%"
+      cd "$env:APPVEYOR_BUILD_FOLDER"
       mkdir build
       cd build
       cmake -G "$env:generator" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" ..
