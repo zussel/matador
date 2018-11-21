@@ -23,7 +23,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
-    - env: COMPILER=clang++-3.6 BUILD_TYPE=Release ARCH=32
+    - env: CLANG_VERSION=clang++-3.6 BUILD_TYPE=Release ARCH=32
       addons: *clang36-32
 
     # clang-3.6 64
@@ -37,7 +37,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
-    - env: COMPILER=clang++-3.6 BUILD_TYPE=Release ARCH=32
+    - env: CLANG_VERSION=clang++-3.6 BUILD_TYPE=Release ARCH=32
       addons: *clang36-64
       
     # clang-3.7 32
@@ -331,7 +331,7 @@ matrix:
       addons: *gcc7-32
 
     # gcc-7 64
-    - env: GCC_VERSION=6 BUILD_TYPE=Debug ARCH=64
+    - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=64
       addons: &gcc7-64
         apt:
           packages:
