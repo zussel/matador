@@ -6,16 +6,7 @@ os: linux
 dist: trusty
 
 matrix:
-#  include:
-#    - env: BUILD_TYPE=Debug
-#      os: osx
-#      osx_image: xcode8
-#      compiler: clang
-#    - env: BUILD_TYPE=Release
-#      os: osx
-#      osx_image: xcode8
-#      compiler: clang
-
+  include:
     ##########################################################################
     # Clang on Linux
     ##########################################################################
@@ -35,7 +26,7 @@ matrix:
     - env: COMPILER=clang++-3.6 BUILD_TYPE=Release ARCH=32
       addons: *clang36-32
 
-# clang-3.6 64
+    # clang-3.6 64
     - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=64
       addons: &clang36-64
         apt:
@@ -245,7 +236,7 @@ matrix:
     - env: CLANG_VERSION=6.0 BUILD_TYPE=Release ARCH=64
       addons: *clang60-64
 
-# gcc-4.9 32
+    # gcc-4.9 32
     - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=32
       addons: &gcc49-32
         apt:
@@ -352,8 +343,6 @@ matrix:
             - ubuntu-toolchain-r-test
     - env: GCC_VERSION=7 BUILD_TYPE=Release ARCH=64
       addons: *gcc7-64
-  allow_failures:
-    - os: osx
 
 branches:
   only:
