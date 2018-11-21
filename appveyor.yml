@@ -50,10 +50,10 @@ before_build:
           $env:generator="$env:generator Win64"
       }
       echo generator="$env:generator"
-      $env:SQLITE_ROOT=C:\projects\sqlite\sqlite
-      $env:PATH=$env:PATH;$env:SQLITE_ROOT\bin;$env:MYSQL_DIR\bin;$env:MYSQL_DIR\lib
-      $env:MYSQL_PWD=Password12!
-      $env:USER=root
+      $env:SQLITE_ROOT="C:\projects\sqlite\sqlite"
+      $env:PATH="$env:PATH;$env:SQLITE_ROOT\bin;$env:MYSQL_DIR\bin;$env:MYSQL_DIR\lib"
+      $env:MYSQL_PWD="Password12!"
+      $env:USER="root"
       mysql -e "create database matador_test;" --user=root
       sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE matador_test"
       cmake .. -G"$env:generator" -DCMAKE_INSTALL_PREFIX=C:\projects\sqlite\sqlite
