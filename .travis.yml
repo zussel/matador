@@ -1,77 +1,68 @@
 language: cpp
-#sudo: false
+sudo: false
+
+# Use Linux unless specified otherwise
+os: linux
+dist: trusty
 
 matrix:
-  include:
-    - env: BUILD_TYPE=Debug
-      os: osx
-      osx_image: xcode8
-      compiler: clang
-    - env: BUILD_TYPE=Release
-      os: osx
-      osx_image: xcode8
-      compiler: clang
+#  include:
+#    - env: BUILD_TYPE=Debug
+#      os: osx
+#      osx_image: xcode8
+#      compiler: clang
+#    - env: BUILD_TYPE=Release
+#      os: osx
+#      osx_image: xcode8
+#      compiler: clang
+
+    ##########################################################################
+    # Clang on Linux
+    ##########################################################################
 
     # clang-3.6 32
-#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=32
-#      os: linux
-#      addons: &clang36-32
-#        apt:
-#          packages:
-#            - cmake
-#            - cmake-data
-#            - clang-3.6
-#            - linux-libc-dev:i386
-#            - g++-multilib
-#            - gcc-multilib
-#          sources:
-#            - george-edison55-precise-backports
-#            - ubuntu-toolchain-r-test
-#            - llvm-toolchain-precise-3.6
-#
-#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=32
-#      os: linux
-#      addons: *clang36-32
+    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=32
+      addons: &clang36-32
+        apt:
+          packages:
+            - clang-3.6
+            - linux-libc-dev:i386
+            - g++-5-multilib
+            - gcc-5-multilib
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+    - env: COMPILER=clang++-3.6 BUILD_TYPE=Release ARCH=32
+      addons: *clang36-32
 
-    # clang-3.6 64
-#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=64
-#      os: linux
-#      addons: &clang36-64
-#        apt:
-#          packages:
-#            - cmake
-#            - cmake-data
-#            - clang-3.6
-#            - g++
-#            - gcc
-#          sources:
-#            - george-edison55-precise-backports
-#            - ubuntu-toolchain-r-test
-#            - llvm-toolchain-precise-3.6
-#
-#    - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=64
-#      os: linux
-#      addons: *clang36-64
-
+# clang-3.6 64
+    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=64
+      addons: &clang36-64
+        apt:
+          packages:
+            - clang-3.6
+            - g++-5
+            - gcc-5
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+    - env: COMPILER=clang++-3.6 BUILD_TYPE=Release ARCH=32
+      addons: *clang36-64
+      
     # clang-3.7 32
     - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug ARCH=32
-      os: linux
       addons: &clang37-32
         apt:
           packages:
-            - cmake
-            - cmake-data
             - clang-3.7
             - linux-libc-dev:i386
-            - g++-multilib
-            - gcc-multilib
+            - g++-5-multilib
+            - gcc-5-multilib
           sources:
-            - george-edison55-precise-backports
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
 
     - env: CLANG_VERSION=3.7 BUILD_TYPE=Release ARCH=32
-      os: linux
       addons: *clang37-32
 
     # clang-3.7 64
@@ -80,13 +71,10 @@ matrix:
       addons: &clang37-64
         apt:
           packages:
-            - cmake
-            - cmake-data
             - clang-3.7
             - g++-5
             - gcc-5
           sources:
-            - george-edison55-precise-backports
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
 
@@ -94,156 +82,276 @@ matrix:
       os: linux
       addons: *clang37-64
 
-
     # clang-3.8 32
     - env: CLANG_VERSION=3.8 BUILD_TYPE=Debug ARCH=32
-      os: linux
       addons: &clang38-32
         apt:
           packages:
-            - cmake
-            - cmake-data
             - clang-3.8
             - linux-libc-dev:i386
             - g++-5-multilib
             - gcc-5-multilib
           sources:
-            - george-edison55-precise-backports
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
 
     - env: CLANG_VERSION=3.8 BUILD_TYPE=Release ARCH=32
-      os: linux
       addons: *clang38-32
 
     # clang-3.8 64
     - env: CLANG_VERSION=3.8 BUILD_TYPE=Debug ARCH=64
-      os: linux
       addons: &clang38-64
         apt:
           packages:
-            - cmake
-            - cmake-data
             - clang-3.8
             - g++-5
             - gcc-5
           sources:
-            - george-edison55-precise-backports
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
 
     - env: CLANG_VERSION=3.8 BUILD_TYPE=Release ARCH=64
-      os: linux
       addons: *clang38-64
 
-    # gcc-4.9 32
-    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=32
-      os: linux
-      addons: &gcc49-32
+    # clang-3.9 32
+    - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug ARCH=32
+      addons: &clang39-32
         apt:
           packages:
-            - cmake
-            - cmake-data
-            - linux-libc-dev:i386
-            - g++-4.9-multilib
-            - gcc-4.9-multilib
-          sources:
-            - george-edison55-precise-backports
-            - ubuntu-toolchain-r-test
-    - env: GCC_VERSION=4.9 BUILD_TYPE=Release ARCH=32
-      os: linux
-      addons: *gcc49-32
-
-    # gcc-4.9 64
-    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=64
-      os: linux
-      addons: &gcc49-64
-        apt:
-          packages:
-            - cmake
-            - cmake-data
-            - g++-4.9
-            - gcc-4.9
-          sources:
-            - george-edison55-precise-backports
-            - ubuntu-toolchain-r-test
-    - env: GCC_VERSION=4.9 BUILD_TYPE=Release ARCH=64
-      os: linux
-      addons: *gcc49-64
-
-    # gcc-5 32
-    - env: GCC_VERSION=5 BUILD_TYPE=Debug ARCH=32
-      os: linux
-      addons: &gcc5-32
-        apt:
-          packages:
-            - cmake
-            - cmake-data
+            - clang-3.9
             - linux-libc-dev:i386
             - g++-5-multilib
             - gcc-5-multilib
           sources:
-            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.9
+
+    - env: CLANG_VERSION=3.9 BUILD_TYPE=Release ARCH=32
+      addons: *clang39-32
+
+    # clang-3.9 64
+    - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug ARCH=64
+      addons: &clang39-64
+        apt:
+          packages:
+            - clang-3.9
+            - g++-5
+            - gcc-5
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.9
+
+    - env: CLANG_VERSION=3.9 BUILD_TYPE=Release ARCH=64
+      addons: *clang39-64
+
+    # clang-4.0 32
+    - env: CLANG_VERSION=4.0 BUILD_TYPE=Debug ARCH=32
+      addons: &clang40-32
+        apt:
+          packages:
+            - clang-4.0
+            - linux-libc-dev:i386
+            - g++-5-multilib
+            - gcc-5-multilib
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-4.0
+
+    - env: CLANG_VERSION=4.0 BUILD_TYPE=Release ARCH=32
+      addons: *clang40-32
+
+    # clang-4.0 64
+    - env: CLANG_VERSION=4.0 BUILD_TYPE=Debug ARCH=64
+      addons: &clang40-64
+        apt:
+          packages:
+            - clang-4.0
+            - g++-5
+            - gcc-5
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-4.0
+
+    - env: CLANG_VERSION=4.0 BUILD_TYPE=Release ARCH=64
+      addons: *clang40-64
+
+    # clang-5.0 32
+    - env: CLANG_VERSION=5.0 BUILD_TYPE=Debug ARCH=32
+      addons: &clang50-32
+        apt:
+          packages:
+            - clang-5.0
+            - linux-libc-dev:i386
+            - g++-5-multilib
+            - gcc-5-multilib
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+            - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+
+    - env: CLANG_VERSION=5.0 BUILD_TYPE=Release ARCH=32
+      addons: *clang50-32
+
+    # clang-5.0 64
+    - env: CLANG_VERSION=5.0 BUILD_TYPE=Debug ARCH=64
+      addons: &clang50-64
+        apt:
+          packages:
+            - clang-5.0
+            - g++-5
+            - gcc-5
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+            - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+
+    - env: CLANG_VERSION=5.0 BUILD_TYPE=Release ARCH=64
+      addons: *clang50-64
+
+    # clang-6.0 32
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug ARCH=32
+      addons: &clang60-32
+        apt:
+          packages:
+            - clang-6.0
+            - linux-libc-dev:i386
+            - g++-5-multilib
+            - gcc-5-multilib
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+            - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release ARCH=32
+      addons: *clang60-32
+
+    # clang-6.0 64
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug ARCH=64
+      addons: &clang60-64
+        apt:
+          packages:
+            - clang-6.0
+            - g++-5
+            - gcc-5
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+            - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release ARCH=64
+      addons: *clang60-64
+
+# gcc-4.9 32
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=32
+      addons: &gcc49-32
+        apt:
+          packages:
+            - linux-libc-dev:i386
+            - g++-4.9-multilib
+            - gcc-4.9-multilib
+          sources:
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release ARCH=32
+      addons: *gcc49-32
+
+    # gcc-4.9 64
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=64
+      addons: &gcc49-64
+        apt:
+          packages:
+            - g++-4.9
+            - gcc-4.9
+          sources:
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release ARCH=64
+      addons: *gcc49-64
+
+    # gcc-5 32
+    - env: GCC_VERSION=5 BUILD_TYPE=Debug ARCH=32
+      addons: &gcc5-32
+        apt:
+          packages:
+            - linux-libc-dev:i386
+            - g++-5-multilib
+            - gcc-5-multilib
+          sources:
             - ubuntu-toolchain-r-test
     - env: GCC_VERSION=5 BUILD_TYPE=Release ARCH=32
-      os: linux
       addons: *gcc5-32
 
     # gcc-5 64
     - env: GCC_VERSION=5 BUILD_TYPE=Debug ARCH=64
-      os: linux
       addons: &gcc5-64
         apt:
           packages:
-            - cmake
-            - cmake-data
             - g++-5
             - gcc-5
           sources:
-            - george-edison55-precise-backports
             - ubuntu-toolchain-r-test
     - env: GCC_VERSION=5 BUILD_TYPE=Release ARCH=64
-      os: linux
       addons: *gcc5-64
 
     # gcc-6 32
     - env: GCC_VERSION=6 BUILD_TYPE=Debug ARCH=32
-      os: linux
       addons: &gcc6-32
         apt:
           packages:
-            - cmake
-            - cmake-data
             - rpm
             - linux-libc-dev:i386
             - g++-6-multilib
             - gcc-6-multilib
             - doxygen
           sources:
-            - george-edison55-precise-backports
             - ubuntu-toolchain-r-test
     - env: GCC_VERSION=6 BUILD_TYPE=Release ARCH=32
-      os: linux
       addons: *gcc6-32
 
     # gcc-6 64
     - env: GCC_VERSION=6 BUILD_TYPE=Debug ARCH=64
-      os: linux
       addons: &gcc6-64
         apt:
           packages:
-            - cmake
-            - cmake-data
             - rpm
             - g++-6
             - gcc-6
             - doxygen
           sources:
-            - george-edison55-precise-backports
             - ubuntu-toolchain-r-test
     - env: GCC_VERSION=6 BUILD_TYPE=Release ARCH=64
-      os: linux
       addons: *gcc6-64
+
+    # gcc-7 32
+    - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=32
+      addons: &gcc7-32
+        apt:
+          packages:
+            - rpm
+            - linux-libc-dev:i386
+            - g++-7-multilib
+            - gcc-7-multilib
+            - doxygen
+          sources:
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=7 BUILD_TYPE=Release ARCH=32
+      addons: *gcc7-32
+
+    # gcc-7 64
+    - env: GCC_VERSION=6 BUILD_TYPE=Debug ARCH=64
+      addons: &gcc7-64
+        apt:
+          packages:
+            - rpm
+            - g++-7
+            - gcc-7
+            - doxygen
+          sources:
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=7 BUILD_TYPE=Release ARCH=64
+      addons: *gcc7-64
   allow_failures:
     - os: osx
 
@@ -274,7 +382,23 @@ install:
       gem install coveralls-lcov
       lcov --version
     fi
+  # Travis machines have 2 cores
+  - JOBS=2
 
+  ############################################################################
+  # Install a recent CMake (unless already installed on OS X)
+  ############################################################################
+  - CMAKE_VERSION=3.7.2
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      CMAKE_URL="https://cmake.org/files/v${CMAKE_VERSION%.[0-9]}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz"
+      mkdir cmake && travis_retry wget --no-check-certificate -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+      export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+    else
+      brew install cmake || brew upgrade cmake
+    fi
+  - cmake --version
+  
 before_script:
   #- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update > /dev/null && brew install mariadb && mysql.server start; fi
   - |
