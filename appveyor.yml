@@ -56,7 +56,7 @@ before_build:
       $env:USER="root"
       mysql -e "create database matador_test;" --user=root
       sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE matador_test"
-      cmake .. -G"$env:generator" -DCMAKE_INSTALL_PREFIX="C:\projects\sqlite\sqlite"
+      cmake -G "$env:generator" -DCMAKE_INSTALL_PREFIX="C:\projects\sqlite\sqlite" ..
       cmake --build . --config Release --target install
       cd "$env:APPVEYOR_BUILD_FOLDER"
       mkdir build
