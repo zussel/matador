@@ -16,7 +16,7 @@ image:
 
 configuration:
   - Debug
-  # - Release
+  - Release
 
 environment:
   MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7

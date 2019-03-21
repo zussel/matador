@@ -442,7 +442,7 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    condition: "$GCC_VERSION = 6 && $BUILD_TYPE = Release"
+    condition: "$GCC_VERSION = 7 && $BUILD_TYPE = Release"
     all_branches: true
 
 notifications:
