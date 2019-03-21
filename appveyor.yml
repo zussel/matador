@@ -34,7 +34,7 @@ branches:
 
 install:
   - git clone https://github.com/snikulov/sqlite.cmake.build.git C:\projects\sqlite\src
-  - appveyor-retry choco install doxygen.portable
+  - appveyor-retry choco install doxygen.install
 
 before_build:
   - ps: |
