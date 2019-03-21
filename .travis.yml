@@ -428,8 +428,7 @@ before_deploy:
   - export RELEASE_TGZ_FILE=$(ls Package/*.tar.gz)
   - export RELEASE_DEB_FILE=$(ls Package/*.deb)
   - export RELEASE_RPM_FILE=$(ls Package/*.rpm)
-  - export RELEASE_PKG_FILE=$(ls Package/*.pkg.tar.xz)
-  - echo "deploying $RELEASE_TGZ_FILE, $RELEASE_DEB_FILE $RELEASE_PKG_FILE and $RELEASE_RPM_FILE to GitHub releases"
+  - echo "deploying $RELEASE_TGZ_FILE, $RELEASE_DEB_FILE and $RELEASE_RPM_FILE to GitHub releases"
 
 deploy:
   provider: releases
@@ -438,7 +437,6 @@ deploy:
     - "${RELEASE_TGZ_FILE}"
     - "${RELEASE_DEB_FILE}"
     - "${RELEASE_RPM_FILE}"
-    - "${RELEASE_PKG_FILE}"
   skip_cleanup: true
   on:
     tags: true

@@ -80,7 +80,7 @@ after_build:
 artifacts:
   - path: Package/matador*.exe
     name: installer
-  - path: Package/calc*.zip
+  - path: Package/matador*.zip
     name: zipper
 
 deploy:
