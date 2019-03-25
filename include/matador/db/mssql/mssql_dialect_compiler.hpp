@@ -16,15 +16,15 @@ namespace mssql {
 class mssql_dialect_compiler : public detail::basic_dialect_compiler
 {
 public:
-  mssql_dialect_compiler();
+  mssql_dialect_compiler() = default;
 
-  virtual void visit(const matador::detail::select &select1) override;
-  virtual void visit(const matador::detail::update &update1) override;
-  virtual void visit(const matador::detail::remove &remove1) override;
-  virtual void visit(const matador::detail::top &top1) override;
+  void visit(const matador::detail::select &select1) override;
+  void visit(const matador::detail::update &update1) override;
+  void visit(const matador::detail::remove &remove1) override;
+  void visit(const matador::detail::top &top1) override;
 
 protected:
-  virtual void on_compile_start() override;
+  void on_compile_start() override;
 
 private:
   std::stack<token_list_t::iterator> commands_;

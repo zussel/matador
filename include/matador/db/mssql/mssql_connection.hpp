@@ -55,37 +55,37 @@ class OOS_MSSQL_API mssql_connection : public connection_impl
 {
 public:
   explicit mssql_connection();
-  virtual ~mssql_connection();
+  ~mssql_connection() override;
 
-  virtual void open(const std::string &db) override;
-  virtual void close() override;
+  void open(const std::string &db) override;
+  void close() override;
 
   /**
    * Returns true if the connection is open
    *
    * @return True on open connection connection.
    */
-  virtual bool is_open() const override;
+  bool is_open() const override;
 
-  virtual matador::detail::result_impl* execute(const matador::sql &stmt) override;
-  virtual matador::detail::result_impl* execute(const std::string &stmt) override;
-  virtual matador::detail::statement_impl* prepare(const matador::sql &stmt) override;
+  matador::detail::result_impl* execute(const matador::sql &stmt) override;
+  matador::detail::result_impl* execute(const std::string &stmt) override;
+  matador::detail::statement_impl* prepare(const matador::sql &stmt) override;
 
-  virtual void begin() override;
-  virtual void commit() override;
-  virtual void rollback() override;
+  void begin() override;
+  void commit() override;
+  void rollback() override;
 
-  virtual std::string type() const override;
-  virtual std::string version() const override;
+  std::string type() const override;
+  std::string version() const override;
 
-  virtual bool exists(const std::string &tablename) override;
-  virtual std::vector<field> describe(const std::string &table) override;
+  bool exists(const std::string &tablename) override;
+  std::vector<field> describe(const std::string &table) override;
 
   SQLHANDLE handle();
 
   virtual unsigned long last_inserted_id();
 
-  virtual basic_dialect* dialect() override;
+  basic_dialect* dialect() override;
 
 private:
   void execute_no_result(const std::string &stmt);

@@ -107,7 +107,7 @@ detail::result_impl* mssql_statement::execute()
     throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
   }
 
-  mssql_result *res = new mssql_result(stmt_);
+  auto *res = new mssql_result(stmt_);
 
   create_statement();
 
@@ -213,28 +213,28 @@ void mssql_statement::serialize(const char *id, basic_identifier &x)
 
 void mssql_statement::bind_value(char c, size_t index)
 {
-  value_t *v = new value_t;
+  auto *v = new value_t;
   if (bind_null_) {
-    v->data = NULL;
+    v->data = nullptr;
     v->len = SQL_NULL_DATA;
   } else {
     v->len = sizeof(char);
     v->data = new char[1];
-    *static_cast<char*>(v->data) = c;
+    v->data[0] = c;
   }
   host_data_.push_back(v);
 
-  SQLUSMALLINT ctype = (SQLUSMALLINT)mssql_statement::type2int(data_type_traits<char>::type());
-  SQLUSMALLINT type = (SQLUSMALLINT)mssql_statement::type2sql(data_type_traits<char>::type());
+  auto ctype = (SQLUSMALLINT)mssql_statement::type2int(data_type_traits<char>::type());
+  auto type = (SQLUSMALLINT)mssql_statement::type2sql(data_type_traits<char>::type());
   SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 1, 0, v->data, v->len, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
 void mssql_statement::bind_value(unsigned char c, size_t index)
 {
-  value_t *v = new value_t;
+  auto *v = new value_t;
   if (bind_null_) {
-    v->data = NULL;
+    v->data = nullptr;
     v->len = SQL_NULL_DATA;
   } else {
     v->len = sizeof(unsigned char);
@@ -243,17 +243,17 @@ void mssql_statement::bind_value(unsigned char c, size_t index)
   }
   host_data_.push_back(v);
 
-  SQLUSMALLINT ctype = (SQLUSMALLINT)mssql_statement::type2int(data_type_traits<unsigned char>::type());
-  SQLUSMALLINT type = (SQLUSMALLINT)mssql_statement::type2sql(data_type_traits<unsigned char>::type());
+  auto ctype = (SQLUSMALLINT)mssql_statement::type2int(data_type_traits<unsigned char>::type());
+  auto type = (SQLUSMALLINT)mssql_statement::type2sql(data_type_traits<unsigned char>::type());
   SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 1, 0, v->data, v->len, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
 void mssql_statement::bind_value(bool val, size_t index)
 {
-  value_t *v = new value_t;
+  auto *v = new value_t;
   if (bind_null_) {
-    v->data = NULL;
+    v->data = nullptr;
     v->len = SQL_NULL_DATA;
   }
   else {
@@ -262,9 +262,9 @@ void mssql_statement::bind_value(bool val, size_t index)
   }
   host_data_.push_back(v);
 
-  SQLSMALLINT ctype = (SQLSMALLINT)mssql_statement::type2int(data_type_traits<bool>::type());
-  SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2sql(data_type_traits<bool>::type());
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, NULL);
+  auto ctype = (SQLSMALLINT)mssql_statement::type2int(data_type_traits<bool>::type());
+  auto type = (SQLSMALLINT)mssql_statement::type2sql(data_type_traits<bool>::type());
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, nullptr);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
@@ -279,7 +279,7 @@ void mssql_statement::bind_value(const matador::date &d, size_t index)
     v->data = new char[sizeof(SQL_DATE_STRUCT)];
     v->len = sizeof(SQL_DATE_STRUCT);
 
-    SQL_DATE_STRUCT *ts = reinterpret_cast<SQL_DATE_STRUCT *>(v->data);
+    auto *ts = reinterpret_cast<SQL_DATE_STRUCT *>(v->data);
 
     ts->year = (SQLSMALLINT) d.year();
     ts->month = (SQLUSMALLINT) d.month();
@@ -303,7 +303,7 @@ void mssql_statement::bind_value(const matador::time &t, size_t index)
     v->data = new char[sizeof(SQL_TIMESTAMP_STRUCT)];
     v->len = sizeof(SQL_TIMESTAMP_STRUCT);
 
-    SQL_TIMESTAMP_STRUCT *ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT *>(v->data);
+    auto *ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT *>(v->data);
 
     ts->year = (SQLSMALLINT) t.year();
     ts->month = (SQLUSMALLINT) t.month();
@@ -323,12 +323,12 @@ void mssql_statement::bind_value(const matador::time &t, size_t index)
 
 void mssql_statement::bind_value(unsigned long val, size_t index)
 {
-  value_t *v = new value_t;
+  auto *v = new value_t;
   if (bind_null_) {
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
   } else {
-	v->len = sizeof(unsigned long);
+	  v->len = sizeof(unsigned long);
     v->data = new char[v->len];
     *reinterpret_cast<unsigned long*>(v->data) = val;
 
@@ -341,7 +341,7 @@ void mssql_statement::bind_value(unsigned long val, size_t index)
 
 void mssql_statement::bind_value(const char *val, size_t size, size_t index)
 {
-  value_t *v = new value_t(strlen(val));
+  auto *v = new value_t(strlen(val));
 
   if (bind_null_) {
     v->data = nullptr;
@@ -358,14 +358,14 @@ void mssql_statement::bind_value(const char *val, size_t size, size_t index)
 
   host_data_.push_back(v);
 
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, size, 0, v->data, v->len, NULL);
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, size, 0, v->data, v->len, nullptr);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
 void mssql_statement::bind_value(const std::string &str, size_t index)
 {
   size_t s = str.size();
-  value_t *v = new value_t(SQL_NTS);
+  auto *v = new value_t(SQL_NTS);
 
   if (bind_null_) {
     v->data = nullptr;
@@ -375,11 +375,11 @@ void mssql_statement::bind_value(const std::string &str, size_t index)
     v->data = new char[s + 1];
     v->len = s;
 #ifdef _MSC_VER
-    strncpy_s((char *)v->data, s + 1, str.c_str(), s);
+    strncpy_s(v->data, s + 1, str.c_str(), s);
 #else
-    v->data = strncpy((char *)v->data, str.c_str(), s);
+    v->data = strncpy(v->data, str.c_str(), s);
 #endif
-    ((char *)v->data)[s++] = '\0';
+    (v->data)[s + 1] = '\0';
   }
 
   host_data_.push_back(v);

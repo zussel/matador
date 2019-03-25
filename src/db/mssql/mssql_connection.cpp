@@ -32,8 +32,8 @@ namespace matador {
 namespace mssql {
 
 mssql_connection::mssql_connection()
-  : odbc_(0)
-  , connection_(0)
+  : odbc_(nullptr)
+  , connection_(nullptr)
   , is_open_(false)
 {
 }
@@ -48,7 +48,7 @@ void mssql_connection::open(const std::string &connection)
 {
   // dns syntax:
   // user[:passwd]@host[:port]/instance/db [(Drivername)]
-  static const std::regex DNS_RGX("(.+?)(?::(.+?))?@([^:]+?)(?::([1-9][0-9]*?))?(?:/(.+?))?/(.+?)(?:\\s+\\((.+)\\))?");
+  static const std::regex DNS_RGX(R"((.+?)(?::(.+?))?@([^:]+?)(?::([1-9][0-9]*?))?(?:/(.+?))?/(.+?)(?:\s+\((.+)\))?)");
   std::smatch what;
 
   if (!std::regex_match(connection, what, DNS_RGX)) {
@@ -98,7 +98,7 @@ void mssql_connection::open(const std::string &connection)
   std::string dns("DRIVER={" + driver + "};SERVER=" + host + ";Protocol=TCPIP;Port=" + port + ";DATABASE=" + db_ + ";UID=" + user + ";PWD=" + passwd + ";");
 
   SQLCHAR retconstring[1024];
-  ret = SQLDriverConnect(connection_, 0, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, NULL,SQL_DRIVER_NOPROMPT);
+  ret = SQLDriverConnect(connection_, nullptr, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, nullptr, SQL_DRIVER_NOPROMPT);
 
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on connect");
 
@@ -207,7 +207,7 @@ bool mssql_connection::exists(const std::string &tablename)
   }
 }
 
-static data_type type2data_type(SQLSMALLINT type, SQLINTEGER size);
+static data_type type2data_type(SQLSMALLINT type, size_t size);
 
 std::vector<field> mssql_connection::describe(const std::string &table)
 {
@@ -224,16 +224,17 @@ std::vector<field> mssql_connection::describe(const std::string &table)
 #else
   strcpy((char*)buf, table.c_str());
 #endif
-  ret = SQLColumns(stmt, NULL, 0, NULL, 0, buf, SQL_NTS, NULL, 0);
+  ret = SQLColumns(stmt, nullptr, 0, nullptr, 0, buf, SQL_NTS, nullptr, 0);
   throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on executing column description");
   //std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute(stmt)));
 
   // bind to columns we need (column name, data type of column and index)
-  SQLINTEGER pos(0);
+  size_t pos(0);
+  size_t size(0);
+
   SQLCHAR column[64];
   SQLSMALLINT data_type(0);
   SQLCHAR type[64];
-  SQLINTEGER size(0);
   SQLINTEGER not_null(0);
   SQLLEN indicator[6];
 
@@ -276,7 +277,7 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   return fields;
 }
 
-data_type type2data_type(SQLSMALLINT type, SQLINTEGER size)
+data_type type2data_type(SQLSMALLINT type, size_t size)
 {
   switch (type) {
   case SQL_CHAR:

@@ -14,9 +14,9 @@ namespace mssql {
 class mssql_dialect_linker : public detail::basic_dialect_linker
 {
 public:
-  virtual ~mssql_dialect_linker() {}
+  ~mssql_dialect_linker() override = default;
 
-  virtual void visit(const matador::detail::top &top) override;
+  void visit(const matador::detail::top &top) override;
 
 };
 
