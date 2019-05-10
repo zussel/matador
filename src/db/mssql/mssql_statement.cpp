@@ -379,7 +379,7 @@ void mssql_statement::bind_value(const std::string &str, size_t index)
 #else
     v->data = strncpy(v->data, str.c_str(), s);
 #endif
-    (v->data)[s + 1] = '\0';
+    (v->data)[s++] = '\0';
   }
 
   host_data_.push_back(v);
