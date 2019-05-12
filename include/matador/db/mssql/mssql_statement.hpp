@@ -45,11 +45,11 @@ class mssql_statement : public detail::statement_impl
 {
 public:
   mssql_statement(mssql_connection &db, const sql &s);
-  virtual ~mssql_statement();
+  ~mssql_statement() override;
 
-  virtual void clear() override;
-  virtual detail::result_impl* execute() override;
-  virtual void reset() override;
+  void clear() override;
+  detail::result_impl* execute() override;
+  void reset() override;
   
 //  virtual int column_count() const;
 //  virtual const char* column_name(int i) const;
@@ -58,31 +58,31 @@ public:
   static int type2sql(data_type type);
 
 protected:
-  virtual void serialize(const char*, char&) override;
-  virtual void serialize(const char*, short&) override;
-  virtual void serialize(const char*, int&) override;
-  virtual void serialize(const char*, long&) override;
-  virtual void serialize(const char*, unsigned char&) override;
-  virtual void serialize(const char*, unsigned short&) override;
-  virtual void serialize(const char*, unsigned int&) override;
-  virtual void serialize(const char*, unsigned long&) override;
-  virtual void serialize(const char*, bool&) override;
-  virtual void serialize(const char*, float&) override;
-  virtual void serialize(const char*, double&) override;
-  virtual void serialize(const char*, char *, size_t) override;
-  virtual void serialize(const char*, std::string&) override;
-  virtual void serialize(const char*, matador::varchar_base&) override;
-  virtual void serialize(const char*, matador::time&) override;
-  virtual void serialize(const char*, matador::date&) override;
-  virtual void serialize(const char*, matador::basic_identifier &x) override;
-  virtual void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
+  void serialize(const char*, char&) override;
+  void serialize(const char*, short&) override;
+  void serialize(const char*, int&) override;
+  void serialize(const char*, long&) override;
+  void serialize(const char*, unsigned char&) override;
+  void serialize(const char*, unsigned short&) override;
+  void serialize(const char*, unsigned int&) override;
+  void serialize(const char*, unsigned long&) override;
+  void serialize(const char*, bool&) override;
+  void serialize(const char*, float&) override;
+  void serialize(const char*, double&) override;
+  void serialize(const char*, char *, size_t) override;
+  void serialize(const char*, std::string&) override;
+  void serialize(const char*, matador::varchar_base&) override;
+  void serialize(const char*, matador::time&) override;
+  void serialize(const char*, matador::date&) override;
+  void serialize(const char*, matador::basic_identifier &x) override;
+  void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
 
   template < class T >
   void bind_value(T val, size_t index)
   {
-    value_t *v = new value_t;
+    auto *v = new value_t;
     if (bind_null_) {
-      v->data = NULL;
+      v->data = nullptr;
       v->len = SQL_NULL_DATA;
     } else {
       v->data = new char[sizeof(T)];
@@ -90,9 +90,9 @@ protected:
     }
     host_data_.push_back(v);
     
-    SQLSMALLINT ctype = (SQLSMALLINT)mssql_statement::type2int(data_type_traits<T>::type());
-    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2sql(data_type_traits<T>::type());
-    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, NULL);
+    auto ctype = (SQLSMALLINT)mssql_statement::type2int(data_type_traits<T>::type());
+    auto type = (SQLSMALLINT)mssql_statement::type2sql(data_type_traits<T>::type());
+    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, nullptr);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
   }
   void bind_value(char c, size_t index);
@@ -107,14 +107,15 @@ protected:
   template < class T >
   void bind_null(size_t index)
   {
-    value_t *v = new value_t;
+    auto *v = new value_t;
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
     host_data_.push_back(v);
 
     int ctype = mssql_statement::type2int(data_type_traits<T>::type());
     int type = mssql_statement::type2sql(data_type_traits<T>::type());
-    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, NULL, 0, NULL);
+    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type,
+                                     0, 0, nullptr, 0, nullptr);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind null parameter");
   }
 
@@ -126,7 +127,7 @@ private:
 
 private:
   struct value_t {
-    explicit value_t(SQLLEN l = 0) : len(l), data(0) {}
+    explicit value_t(SQLLEN l = 0) : len(l), data(nullptr) {}
     ~value_t() { delete [] data; }
     SQLLEN len;
     SQLLEN result_len = 0;

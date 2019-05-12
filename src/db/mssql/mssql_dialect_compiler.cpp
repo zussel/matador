@@ -10,9 +10,6 @@ namespace matador {
 
 namespace mssql {
 
-mssql_dialect_compiler::mssql_dialect_compiler()
-{ }
-
 void mssql_dialect_compiler::visit(const matador::detail::select &)
 {
   commands_.push(top().current);

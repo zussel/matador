@@ -41,29 +41,29 @@ namespace mssql {
 
 class mssql_result : public detail::result_impl
 {
-private:
+public:
   mssql_result(const mssql_result&) = delete;
   mssql_result& operator=(const mssql_result&) = delete;
 
 public:
   explicit mssql_result(SQLHANDLE stmt);
-  virtual ~mssql_result();
+  ~mssql_result() override;
 
-  virtual const char* column(size_type c) const override;
-  virtual bool fetch() override;
+  const char* column(size_type c) const override;
+  bool fetch() override;
 
-  virtual size_type affected_rows() const override;
-  virtual size_type result_rows() const override;
-  virtual size_type fields() const override;
+  size_type affected_rows() const override;
+  size_type result_rows() const override;
+  size_type fields() const override;
 
-  virtual int transform_index(int index) const override;
+  int transform_index(int index) const override;
 
   template < class T >
   T get(size_type index, typename std::enable_if<std::is_integral<T>::value>::type* = nullptr) const
   {
     T val;
     SQLLEN info = 0;
-    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(matador::data_type_traits<T>::type());
+    auto type = (SQLSMALLINT)mssql_statement::type2int(matador::data_type_traits<T>::type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (!SQL_SUCCEEDED(ret)) {
       throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
@@ -84,30 +84,30 @@ public:
   }
 
 protected:
-  virtual void serialize(const char*, char&) override;
-  virtual void serialize(const char*, short&) override;
-  virtual void serialize(const char*, int&) override;
-  virtual void serialize(const char*, long&) override;
-  virtual void serialize(const char*, unsigned char&) override;
-  virtual void serialize(const char*, unsigned short&) override;
-  virtual void serialize(const char*, unsigned int&) override;
-  virtual void serialize(const char*, unsigned long&) override;
-  virtual void serialize(const char*, bool&) override;
-  virtual void serialize(const char*, float&) override;
-  virtual void serialize(const char*, double&) override;
-  virtual void serialize(const char*, char *, size_t) override;
-  virtual void serialize(const char*, std::string&) override;
-  virtual void serialize(const char*, matador::varchar_base&) override;
-  virtual void serialize(const char*, matador::time&) override;
-  virtual void serialize(const char*, matador::date&) override;
-  virtual void serialize(const char*, matador::basic_identifier &x) override;
-  virtual void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
+  void serialize(const char*, char&) override;
+  void serialize(const char*, short&) override;
+  void serialize(const char*, int&) override;
+  void serialize(const char*, long&) override;
+  void serialize(const char*, unsigned char&) override;
+  void serialize(const char*, unsigned short&) override;
+  void serialize(const char*, unsigned int&) override;
+  void serialize(const char*, unsigned long&) override;
+  void serialize(const char*, bool&) override;
+  void serialize(const char*, float&) override;
+  void serialize(const char*, double&) override;
+  void serialize(const char*, char *, size_t) override;
+  void serialize(const char*, std::string&) override;
+  void serialize(const char*, matador::varchar_base&) override;
+  void serialize(const char*, matador::time&) override;
+  void serialize(const char*, matador::date&) override;
+  void serialize(const char*, matador::basic_identifier &x) override;
+  void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
 
   template < class T >
   void read_column(const char *, T & val)
   {
     SQLLEN info = 0;
-    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(data_type_traits<T>::type());
+    auto type = (SQLSMALLINT)mssql_statement::type2int(data_type_traits<T>::type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index_++), type, &val, sizeof(T), &info);
     if (SQL_SUCCEEDED(ret)) {
       return;
@@ -123,9 +123,9 @@ protected:
   void read_column(const char *, matador::time &val);
 
 
-  virtual bool prepare_fetch() override;
+  bool prepare_fetch() override;
 
-  virtual bool finalize_fetch() override;
+  bool finalize_fetch() override;
 
 private:
   size_type affected_rows_ = 0;
