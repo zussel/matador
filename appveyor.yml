@@ -86,7 +86,7 @@ artifacts:
 deploy:
   provider: GitHub
   auth_token:
-    secure: "kz/25t/c0oeOJ3Ux3r+Sy5F4G7YgPmjSrTpgZ73IQDY4N9mYNqH4kAv4+0I0oeh6"
+    secure: VeO32deD2N9OiPdQuq6MZOO+ApWe5TH9GHcc6MVoM/5NCFizAv+KjYcpleTN1z1TdG44G4XxUvWkCKdFM374Be6tWJ0UPL/Edvkv2TDrEqe3zkIFxpn4a3D7emtKsr2UZ9MT3ysfkDcNhjfYaJ/peNw4TH4y/dhkQBCzclB8HNE=
   artifact: installer,zipper
   draft: false
   prerelease: false
