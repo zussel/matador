@@ -315,10 +315,17 @@ before_deploy:
 - export RELEASE_RPM_FILE=$(ls Package/*.rpm)
 - echo "deploying $RELEASE_TGZ_FILE, $RELEASE_DEB_FILE and $RELEASE_RPM_FILE to GitHub
   releases"
+notifications:
+  email:
+    recipients:
+    - sascha.kuehl@gmx.net
+  on_success: change
+  on_failure: always
+
 deploy:
   provider: releases
   api_key:
-    secure: VeO32deD2N9OiPdQuq6MZOO+ApWe5TH9GHcc6MVoM/5NCFizAv+KjYcpleTN1z1TdG44G4XxUvWkCKdFM374Be6tWJ0UPL/Edvkv2TDrEqe3zkIFxpn4a3D7emtKsr2UZ9MT3ysfkDcNhjfYaJ/peNw4TH4y/dhkQBCzclB8HNE=
+    secure: rXDCwgPmhkO4Z14VOrHh89s2aN3Mhi7cuVL5nf6zivwe8YESHQGtxbNOotq/UK2Y2sPkK8Eb+F1OLuxxvnZTOPJTzXP/QYOa+GoRm/YifzkOa3Yz3zE6MD0W3bfyzhSmaUeko+2jOECccrPYtyCjmWQY/Ey/0JvGdunOoqq1sso=
   file:
   - "${RELEASE_TGZ_FILE}"
   - "${RELEASE_DEB_FILE}"
@@ -328,9 +335,4 @@ deploy:
     tags: true
     condition: "$GCC_VERSION = 7 && $BUILD_TYPE = Release"
     all_branches: true
-notifications:
-  email:
-    recipients:
-    - sascha.kuehl@gmx.net
-  on_success: change
-  on_failure: always
+    repo: zussel/matador
