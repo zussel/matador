@@ -85,8 +85,8 @@ TARGET_LINK_LIBRARIES(matador-object matador-utils)
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-object
   PROPERTIES
-  VERSION 0.5.0
-  SOVERSION 0)
+  VERSION ${APP_VERSION}
+  SOVERSION ${APP_MAJOR_VERSION})
 
 SOURCE_GROUP("include\\matador\\object" FILES ${HEADER})
 SOURCE_GROUP("src\\matador\\object" FILES ${SOURCES})
