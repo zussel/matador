@@ -105,10 +105,10 @@ detail::result_impl* mysql_connection::execute(const matador::sql &sql)
   return execute(stmt);
 }
 
-detail::result_impl* mysql_connection::execute(const std::string &stmt)
+detail::result_impl* mysql_connection::execute(const std::string &sql)
 {
-  if (mysql_query(&mysql_, stmt.c_str())) {
-    throw mysql_exception(&mysql_, "mysql_query", stmt);
+  if (mysql_query(&mysql_, sql.c_str())) {
+    throw mysql_exception(&mysql_, "mysql_query", sql);
   }
   return new mysql_result(&mysql_);
 }

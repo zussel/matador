@@ -50,7 +50,7 @@ struct blog_service
     }
   }
 
-  bool add_comment(const std::string &email, std::string msg, const matador::object_ptr<post> &pst)
+  bool add_comment(const std::string &email, std::string msg, matador::object_ptr<post> pst)
   {
     auto tr = session_.begin();
     try {
@@ -69,9 +69,9 @@ struct blog_service
   matador::session &session_;
 };
 
-BlogUnitTest::BlogUnitTest(const std::string &prefix, const std::string &dns)
+BlogUnitTest::BlogUnitTest(const std::string& prefix, std::string dns)
   : unit_test(prefix + "_blog", prefix + " blog unit tests")
-  , dns_(dns)
+  , dns_(std::move(dns))
 {
   add_test("blog_single", std::bind(&BlogUnitTest::test_blog_single_post, this), "test single blog post");
   add_test("blog_multiple", std::bind(&BlogUnitTest::test_blog_multiple_post, this), "test multiple blog post");

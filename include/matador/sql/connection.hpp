@@ -196,6 +196,7 @@ private:
   {
     // get column descriptions
     prepare_prototype_row(prototype, tablename);
+    std::cout << "\n" << impl_->dialect()->direct(stmt);
     return result<T>(impl_->execute(stmt), prototype);
   }
 
@@ -209,6 +210,7 @@ private:
   template < class T >
   result<T> execute(const sql &stmt, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
+    std::cout << "\n" << impl_->dialect()->direct(stmt);
     return result<T>(impl_->execute(stmt));
   }
 

@@ -101,7 +101,7 @@ public:
    * @return True if the serializable could be deleted.
    */
   template<class T>
-  bool is_deletable(object_proxy *proxy, T *o);
+  bool is_deletable(object_proxy *proxy, const T *o);
 
   void remove(bool notify);
 
@@ -125,7 +125,7 @@ public:
   void serialize(T &x) { matador::access::serialize(*this, x); }
 
   template<class T>
-  void serialize(const char *, T &);
+  void serialize(const char *, const T &);
   void serialize(const char *, char *, size_t);
 
   template<class T>

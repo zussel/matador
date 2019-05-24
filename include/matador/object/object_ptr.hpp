@@ -67,7 +67,7 @@ public:
    * 
    * @param x object_pointer to move
    */
-  explicit object_pointer(self &&x) noexcept
+  object_pointer(self &&x) noexcept
     : object_holder(std::move(x))
   {}
 
@@ -114,7 +114,7 @@ public:
    *
    * @param x The x serializable to assign from.
    */
-  self& operator=(T *x)
+  object_pointer& operator=(T *x)
   {
     reset(new object_proxy(x), cascade_);
     return *this;
@@ -125,7 +125,7 @@ public:
    * @param x The has_one object to created the object_pointer from
    * @return A reference to the created object_pointer
    */
-  self& operator=(const self &x)
+  object_pointer& operator=(const self &x)
   {
     reset(x.proxy_, x.cascade_);
     return *this;
@@ -136,7 +136,7 @@ public:
    * 
    * @param x object_pointer to be moved
    */
-  self& operator=(self &&x) noexcept
+  object_pointer& operator=(self &&x) noexcept
   {
     return static_cast<self&>(object_holder::operator=(std::move(x)));
   }
@@ -147,7 +147,7 @@ public:
    * @return A reference to the created object_pointer
    */
   template < object_holder_type OOPT >
-  self& operator=(object_pointer<T, OOPT> &x)
+  object_pointer& operator=(object_pointer<T, OOPT> &x)
   {
     reset(x.proxy_, x.cascade_);
     return *this;
@@ -158,7 +158,7 @@ public:
    * 
    * @return Cleared reference to object_pointer
    */
-  self& operator=(std::nullptr_t)
+  object_pointer& operator=(std::nullptr_t)
   {
     clear();
     return *this;
@@ -182,7 +182,7 @@ public:
    *
    * @return The pointer to the serializable of type T.
    */
-  T* operator->() const {
+  const T* operator->() const {
     return get();
   }
 
@@ -190,9 +190,10 @@ public:
     return get();
   }
 
-  T* get() const {
+  const T* get() const {
     return static_cast<T*>(lookup_object());
   }
+
   T* get() {
     if (proxy_ && proxy_->obj()) {
       if (proxy_->ostore_ && proxy_->has_transaction()) {
@@ -215,7 +216,7 @@ public:
    *
    * @return The reference to the serializable of type T.
    */
-  T& operator*() const {
+  const T& operator*() const {
     return *get();
   }
 

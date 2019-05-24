@@ -10,7 +10,7 @@ void object_deleter::t_object_count::remove_object(object_proxy *proxy, bool not
 }
 
 template<class T>
-bool object_deleter::is_deletable(object_proxy *proxy, T *o) {
+bool object_deleter::is_deletable(object_proxy *proxy, const T *o) {
   objects_to_remove_.clear();
   objects_to_remove_.insert(std::make_pair(proxy->id(), t_object_count(proxy, (T*)proxy->obj())));
 
@@ -26,7 +26,7 @@ bool object_deleter::is_deletable(object_proxy *proxy, T *o) {
 }
 
 template<class T>
-void object_deleter::serialize(const char *, T &)
+void object_deleter::serialize(const char *, const T &)
 {
   if (!proxy_stack_.top()->node()->is_relation_node()) {
     return;
