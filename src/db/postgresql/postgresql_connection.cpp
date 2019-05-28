@@ -33,6 +33,7 @@ unsigned long postgresql_connection::last_inserted_id()
 
 void postgresql_connection::open(const std::string &db)
 {
+
   PGconn *conn = PQconnectdb(db.c_str());
   if (PQstatus(conn) == CONNECTION_BAD) {
     throw postgresql_exception(conn, "mysql_query", sql);
