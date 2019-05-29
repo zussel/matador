@@ -152,7 +152,7 @@ bool object_store::empty() const
   });
   return is_empty;
 }
-
+/*
 size_t object_store::depth(const prototype_node *node) const
 {
   size_t d = 0;
@@ -204,7 +204,7 @@ void object_store::dump_objects(std::ostream &out) const
     op = op->next_;
   }
 }
-
+*/
 object_proxy* object_store::find_proxy(unsigned long id) const
 {
   auto i = object_map_.find(id);
@@ -214,7 +214,7 @@ object_proxy* object_store::find_proxy(unsigned long id) const
     return i->second;
   }
 }
-
+/*
 bool object_store::delete_proxy(unsigned long id)
 {
   auto i = object_map_.find(id);
@@ -227,7 +227,7 @@ bool object_store::delete_proxy(unsigned long id)
     return true;
   }
 }
-
+*/
 object_proxy* object_store::insert_proxy(object_proxy *proxy)
 {
   if (proxy == nullptr) {
@@ -267,7 +267,7 @@ void object_store::remove_proxy(object_proxy *proxy)
   proxy->node()->remove(proxy);
   delete proxy;
 }
-
+/*
 object_proxy* object_store::register_proxy(object_proxy *oproxy)
 {
   if (oproxy->id() != 0) {
@@ -287,7 +287,7 @@ sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &se
 {
   return seq_.exchange_sequencer(seq);
 }
-
+*/
 prototype_node* object_store::find_prototype_node(const char *type) const {
   // check for null
   if (type == nullptr) {

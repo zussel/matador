@@ -59,7 +59,7 @@ public:
     std::stringstream msg; \
     msg << message; \
     throw object_exception(msg.str().c_str()); \
-  } while(false);
+  } while(false)
 
 }
 
