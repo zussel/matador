@@ -87,6 +87,7 @@ private:
   std::string db_;
   bool is_open_;
   postgresql_dialect dialect_;
+  PGconn *conn_ = nullptr;
 };
 
 }

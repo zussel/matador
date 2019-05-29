@@ -24,9 +24,9 @@
 using namespace matador;
 using namespace std;
 
-ConnectionTestUnit::ConnectionTestUnit(const std::string &name, const std::string &msg, const std::string &dns)
+ConnectionTestUnit::ConnectionTestUnit(const std::string &name, const std::string &msg, std::string dns)
   : unit_test(name, msg)
-  , dns_(dns)
+  , dns_(std::move(dns))
 {
   add_test("open_close", std::bind(&ConnectionTestUnit::test_open_close, this), "open sql test");
   add_test("reopen", std::bind(&ConnectionTestUnit::test_reopen, this), "reopen sql test");

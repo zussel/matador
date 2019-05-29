@@ -138,6 +138,9 @@ int main(int argc, char *argv[])
   suite.register_unit(new SQLiteDialectTestUnit());
 #endif
 
+#if defined(MATADOR_POSTGRESQL) && defined(MATADOR_POSTGRESQL_TEST)
+  suite.register_unit(new ConnectionTestUnit("postgresql_conn", "postgresql connection test unit", ::connection::postgresql));
+#endif
   //suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 
   result = suite.run();
