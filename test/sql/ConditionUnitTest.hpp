@@ -12,6 +12,7 @@ class ConditionUnitTest : public matador::unit_test
 public:
   ConditionUnitTest();
 
+  void test_col_literal();
   void test_logical_condition();
   void test_and_condition();
   void test_or_condition();

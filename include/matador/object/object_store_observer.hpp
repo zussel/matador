@@ -37,12 +37,12 @@ protected:
    *
    * @param tindex type index of the observer
    */
-  basic_object_store_observer(const std::type_index &tindex)
+  explicit basic_object_store_observer(const std::type_index &tindex)
   : type_index_(tindex)
   {}
 
 public:
-  virtual ~basic_object_store_observer() {}
+  virtual ~basic_object_store_observer() = default;
 
   /**
    * Return the type index of the observer.

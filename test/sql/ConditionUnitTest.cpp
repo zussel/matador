@@ -10,9 +10,12 @@
 
 #include "TestDialect.hpp"
 
+using namespace matador;
+
 ConditionUnitTest::ConditionUnitTest()
   : unit_test("condition", "condition test unit")
 {
+  add_test("literal", std::bind(&ConditionUnitTest::test_col_literal, this), "test col literal");
   add_test("logical", std::bind(&ConditionUnitTest::test_logical_condition, this), "test a logical condition");
   add_test("and", std::bind(&ConditionUnitTest::test_and_condition, this), "test an and condition");
   add_test("or", std::bind(&ConditionUnitTest::test_or_condition, this), "test an or condition");
@@ -20,6 +23,13 @@ ConditionUnitTest::ConditionUnitTest()
   add_test("in", std::bind(&ConditionUnitTest::test_in_condition, this), "test an in condition");
   add_test("in_query", std::bind(&ConditionUnitTest::test_in_query_condition, this), "test an in query condition");
   add_test("between", std::bind(&ConditionUnitTest::test_between_condition, this), "test a between condition");
+}
+
+void ConditionUnitTest::test_col_literal()
+{
+    auto name = "name"_col;
+
+    UNIT_ASSERT_EQUAL(name.name, "name", "name must be equal name");
 }
 
 void ConditionUnitTest::test_logical_condition()
@@ -45,6 +55,7 @@ void ConditionUnitTest::test_logical_condition()
 
 void ConditionUnitTest::test_and_condition()
 {
+
   matador::column name("name");
 
   UNIT_ASSERT_EQUAL(name.name, "name", "name must be equal name");

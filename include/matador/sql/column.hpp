@@ -173,10 +173,7 @@ private:
   static column count_all_;                      /**< An count all column object */
 };
 
-column operator "" _col(const char *name)
-{
-  return column(name);
-}
+column operator "" _col(const char *name, size_t len);
 
 namespace detail {
 struct typed_column;

@@ -122,4 +122,9 @@ column columns::count_all()
 columns columns::all_ = columns({column("*", true)}, WITHOUT_BRACKETS);
 column columns::count_all_ = column("COUNT(*)", true);
 
+column operator "" _col(const char *name, size_t len)
+{
+    return column(std::string(name, len));
+}
+
 }
