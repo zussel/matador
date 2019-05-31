@@ -14,6 +14,13 @@ namespace matador {
 
 namespace postgresql {
 
+#define THROW_POSTGRESQL_ERROR(db, source, msg)         \
+  do {                                                  \
+    std::stringstream what;                             \
+    what << msg;                                        \
+    throw postgresql_exception(db, source, what.str()); \
+  } while (false)
+
 void throw_error(const std::string &source, const std::string &sql = "");
 
 void throw_error(int ec, PGconn *db, const std::string &source, const std::string &sql = "");

@@ -42,7 +42,7 @@ void throw_error(int ec, sqlite3 *db, const std::string &source)
 }
 
 sqlite_connection::sqlite_connection()
-  : sqlite_db_(0)
+  : sqlite_db_(nullptr)
 {
 }
 
@@ -62,7 +62,7 @@ void sqlite_connection::open(const std::string &db)
 
 bool sqlite_connection::is_open() const
 {
-  return sqlite_db_ != 0;
+  return sqlite_db_ != nullptr;
 }
 
 void sqlite_connection::close()
@@ -71,7 +71,7 @@ void sqlite_connection::close()
   
   throw_error(ret, sqlite_db_, "sqlite_close");
 
-  sqlite_db_ = 0;
+  sqlite_db_ = nullptr;
 }
 
 sqlite3* sqlite_connection::handle()
@@ -81,17 +81,17 @@ sqlite3* sqlite_connection::handle()
 
 void sqlite_connection::begin()
 {
-  std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute("BEGIN TRANSACTION;")));
+  std::unique_ptr<sqlite_result> res(execute_internal("BEGIN TRANSACTION;"));
 }
 
 void sqlite_connection::commit()
 {
-  std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute("COMMIT TRANSACTION;")));
+  std::unique_ptr<sqlite_result> res(execute_internal("COMMIT TRANSACTION;"));
 }
 
 void sqlite_connection::rollback()
 {
-  std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute("ROLLBACK TRANSACTION;")));
+  std::unique_ptr<sqlite_result> res(execute_internal("ROLLBACK TRANSACTION;"));
 }
 
 std::string sqlite_connection::type() const
@@ -107,20 +107,12 @@ std::string sqlite_connection::version() const
 matador::detail::result_impl* sqlite_connection::execute(const matador::sql &sql)
 {
   std::string stmt = dialect_.direct(sql);
-  return execute(stmt);
+  return execute_internal(stmt);
 }
 
 matador::detail::result_impl* sqlite_connection::execute(const std::string &stmt)
 {
-  std::unique_ptr<sqlite_result> res(new sqlite_result);
-  char *errmsg = 0;
-  int ret = sqlite3_exec(sqlite_db_, stmt.c_str(), parse_result, res.get(), &errmsg);
-  if (ret != SQLITE_OK) {
-    std::string error(errmsg);
-    sqlite3_free(errmsg);
-    throw sqlite_exception(error);
-  }
-  return res.release();
+  return execute_internal(stmt);
 }
 
 matador::detail::statement_impl *sqlite_connection::prepare(const matador::sql &sql)
@@ -132,7 +124,7 @@ matador::detail::statement_impl *sqlite_connection::prepare(const matador::sql &
 bool sqlite_connection::exists(const std::string &tablename)
 {
   std::string stmt("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND tbl_name='" + tablename + "' LIMIT 1");
-  std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute(stmt)));
+  std::unique_ptr<sqlite_result> res((execute_internal(stmt)));
 
   if (res->result_rows() != 1) {
     return false;
@@ -145,7 +137,7 @@ bool sqlite_connection::exists(const std::string &tablename)
 std::vector<field> sqlite_connection::describe(const std::string &table)
 {
   std::string stmt("PRAGMA table_info(" + table + ")");
-  std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute(stmt)));
+  std::unique_ptr<sqlite_result> res((execute_internal(stmt)));
 
   std::vector<field> fields;
 
@@ -173,7 +165,7 @@ basic_dialect *sqlite_connection::dialect()
 
 int sqlite_connection::parse_result(void* param, int column_count, char** values, char** /*columns*/)
 {
-  sqlite_result *result = static_cast<sqlite_result*>(param);
+  auto *result = static_cast<sqlite_result*>(param);
 
   /********************
    *
@@ -194,6 +186,18 @@ unsigned long sqlite_connection::last_inserted_id()
   return static_cast<unsigned long>(sqlite3_last_insert_rowid(sqlite_db_));
 }
 
+sqlite_result *sqlite_connection::execute_internal(const std::string &stmt)
+{
+  std::unique_ptr<sqlite_result> res(new sqlite_result);
+  char *errmsg = nullptr;
+  int ret = sqlite3_exec(sqlite_db_, stmt.c_str(), parse_result, res.get(), &errmsg);
+  if (ret != SQLITE_OK) {
+    std::string error(errmsg);
+    sqlite3_free(errmsg);
+    throw sqlite_exception(error);
+  }
+  return res.release();
+}
 }
 
 }

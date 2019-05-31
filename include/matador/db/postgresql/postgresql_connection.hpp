@@ -6,14 +6,14 @@
 #define MATADOR_POSTGRESQL_CONNECTION_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_mysql_EXPORTS
-    #define OOS_MYSQL_API __declspec(dllexport)
+#ifdef matador_postgresql_EXPORTS
+    #define MATADOR_POSTGRESQL_API __declspec(dllexport)
   #else
-    #define OOS_MYSQL_API __declspec(dllimport)
+    #define MATADOR_POSTGRESQL_API __declspec(dllimport)
   #endif
   #pragma warning(disable: 4355)
 #else
-#define OOS_MYSQL_API
+#define MATADOR_POSTGRESQL_API
 #endif
 
 #include "matador/sql/connection_impl.hpp"
@@ -21,18 +21,12 @@
 
 #include "matador/db/postgresql/postgresql_dialect.hpp"
 
-#ifdef _MSC_VER
-//#include <winsock2.h>
-#include <mysql.h>
-#else
-#include <mysql/mysql.h>
-#endif
-
 namespace matador {
 
 namespace postgresql {
 
 class postgresql_statement;
+class postgresql_result;
 
 /**
  * @class mysql_database
@@ -41,7 +35,7 @@ class postgresql_statement;
  * This class is the sqlite sql backend
  * class. It provides the mysql version 4 and higher
  */
-class OOS_MYSQL_API postgresql_connection : public connection_impl
+class MATADOR_POSTGRESQL_API postgresql_connection : public connection_impl
 {
 public:
   postgresql_connection();
@@ -84,6 +78,9 @@ public:
   basic_dialect* dialect() override;
 
 private:
+  postgresql_result* execute_internal(const std::string &stmt);
+
+private:
   std::string db_;
   bool is_open_;
   postgresql_dialect dialect_;
@@ -96,9 +93,9 @@ private:
 
 extern "C"
 {
-OOS_MYSQL_API matador::connection_impl* create_database();
+MATADOR_POSTGRESQL_API matador::connection_impl* create_database();
 
-OOS_MYSQL_API void destroy_database(matador::connection_impl *db);
+MATADOR_POSTGRESQL_API void destroy_database(matador::connection_impl *db);
 }
 
 #endif //MATADOR_POSTGRESQL_CONNECTION_HPP

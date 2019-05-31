@@ -31,16 +31,16 @@ public:
   {}
 
 
-  virtual ~sql_exception() {}
+  ~sql_exception() override = default;
 
   /**
    * Returns the message of the exception
    *
    * @return The message of this exception.
    */
-  virtual const char* what() const noexcept
+  const char* what() const noexcept override
   {
-    return what_.c_str();
+    return what_;
   }
 
   /**
@@ -50,12 +50,12 @@ public:
    */
   const char* source() const
   {
-    return source_.c_str();
+    return source_;
   }
 
 private:
-  std::string source_;
-  std::string what_;
+  const char *source_;
+  const char *what_;
 };
 
 }

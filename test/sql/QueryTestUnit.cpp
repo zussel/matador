@@ -439,8 +439,7 @@ void QueryTestUnit::test_update()
     q.insert(p).execute();
   }
 
-  column name("name");
-  res = q.select().where(name == "hans").execute();
+  res = q.select().where("name"_col == "hans").execute();
 
   auto first = res.begin();
   auto last = res.end();
@@ -460,7 +459,7 @@ void QueryTestUnit::test_update()
   column idcol("id");
   q.update(hans).where(idcol == 1).execute();
 
-  res = q.select().where(name == "hans").execute();
+  res = q.select().where("name"_col == "hans").execute();
 
   for (auto i : res) {
     UNIT_ASSERT_EQUAL(i->name(), "hans", "expected name must be 'Hans'");

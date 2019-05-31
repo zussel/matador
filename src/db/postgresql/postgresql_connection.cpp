@@ -7,6 +7,7 @@
 
 #include "matador/db/postgresql/postgresql_connection.hpp"
 #include "matador/db/postgresql/postgresql_exception.hpp"
+#include "matador/db/postgresql/postgresql_result.hpp"
 
 namespace matador {
 namespace postgresql {
@@ -78,12 +79,12 @@ void postgresql_connection::close()
 detail::result_impl *postgresql_connection::execute(const matador::sql &sql)
 {
   std::string stmt = dialect_.direct(sql);
-  return execute(stmt);
+  return execute_internal(stmt);
 }
 
 detail::result_impl *postgresql_connection::execute(const std::string &stmt)
 {
-  return nullptr;
+  return execute_internal(stmt);
 }
 
 detail::statement_impl *postgresql_connection::prepare(const matador::sql &stmt)
@@ -118,7 +119,10 @@ std::string postgresql_connection::version() const
 
 bool postgresql_connection::exists(const std::string &tablename)
 {
-  return false;
+  std::string stmt("SELECT EXISTS (SELECT 1FROM information_schema.tables WHERE table_schema = 'public' AND table_name = '" + tablename + "')");
+
+  std::unique_ptr<postgresql_result> res(execute_internal(stmt));
+  return res->fetch();
 }
 
 std::vector<field> postgresql_connection::describe(const std::string &table)
@@ -128,20 +132,31 @@ std::vector<field> postgresql_connection::describe(const std::string &table)
 
 basic_dialect *postgresql_connection::dialect()
 {
-  return nullptr;
-}
-}
+  return &dialect_;
 }
 
+postgresql_result* postgresql_connection::execute_internal(const std::string &stmt)
+{
+  PGresult *res = PQexec(conn_, stmt.c_str());
+
+  auto status = PQresultStatus(res);
+  if (status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK) {
+    THROW_POSTGRESQL_ERROR(conn_, "execute", "error on sql statement");
+  }
+  return new postgresql_result(res);
+}
+
+}
+}
 
 extern "C"
 {
-OOS_MYSQL_API matador::connection_impl* create_database()
+MATADOR_POSTGRESQL_API matador::connection_impl* create_database()
 {
   return new matador::postgresql::postgresql_connection();
 }
 
-OOS_MYSQL_API void destroy_database(matador::connection_impl *db)
+MATADOR_POSTGRESQL_API void destroy_database(matador::connection_impl *db)
 {
   delete db;
 }

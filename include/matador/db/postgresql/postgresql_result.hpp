@@ -5,7 +5,20 @@
 #ifndef MATADOR_POSTGRESQL_RESULT_HPP
 #define MATADOR_POSTGRESQL_RESULT_HPP
 
-#include <matador/sql/result_impl.hpp>
+#ifdef _MSC_VER
+#ifdef matador_postgresql_EXPORTS
+    #define MATADOR_POSTGRESQL_API __declspec(dllexport)
+  #else
+    #define MATADOR_POSTGRESQL_API __declspec(dllimport)
+  #endif
+  #pragma warning(disable: 4355)
+#else
+#define MATADOR_POSTGRESQL_API
+#endif
+
+#include <libpq-fe.h>
+
+#include "matador/sql/result_impl.hpp"
 
 namespace matador {
 
@@ -14,7 +27,7 @@ class serializer;
 
 namespace postgresql {
 
-class postgresql_result : public detail::result_impl
+class MATADOR_POSTGRESQL_API postgresql_result : public detail::result_impl
 {
 public:
   postgresql_result(const postgresql_result&) = delete;
@@ -24,7 +37,7 @@ public:
   typedef detail::result_impl::size_type size_type;
 
 public:
-  explicit postgresql_result();
+  explicit postgresql_result(PGresult *res);
   ~postgresql_result() override;
 
   const char* column(size_type c) const override;
@@ -65,8 +78,10 @@ private:
   size_type rows_;
   size_type fields_;
 
-//  MYSQL_ROW row_;
-//  MYSQL_RES *res_;
+  size_type column_ = 0;
+  size_type pos_ = 0;
+  
+  PGresult *res_ = nullptr;
 };
 
 }
