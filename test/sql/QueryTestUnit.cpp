@@ -14,10 +14,10 @@
 
 using namespace matador;
 
-QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db, const matador::time &timeval)
+QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, std::string db, matador::time timeval)
   : unit_test(name, msg)
-  , db_(db)
-  , time_val_(timeval)
+  , db_(std::move(db))
+  , time_val_(std::move(timeval))
 {
   add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
@@ -82,7 +82,14 @@ void QueryTestUnit::test_datatypes()
   bool bval = true;
   const char *cstr("Armer schwarzer Kater");
   matador::varchar<32> vval("hallo welt");
-  std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+  std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam "
+                       "nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
+                       "sed diam voluptua. At vero eos et accusam et justo duo dolores et ea "
+                       "rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. "
+                       "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy "
+                       "eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. "
+                       "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd "
+                       "gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
   matador::date date_val(15, 3, 2015);
   matador::time time_val(time_val_);
   Item item;

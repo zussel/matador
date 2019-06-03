@@ -80,6 +80,8 @@ matador::data_type postgresql_dialect::string_type(const char *type) const
     return data_type::type_double;
   } else if (strncmp(type, "varchar", 7) == 0) {
     return data_type::type_varchar;
+  } else if (strncmp(type, "character varying", 7) == 0) {
+    return data_type::type_varchar;
   } else if (strncmp(type, "text", 0) == 0) {
     return data_type::type_text;
   } else {

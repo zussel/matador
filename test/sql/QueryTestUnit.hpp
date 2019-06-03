@@ -17,7 +17,10 @@ class connection;
 class QueryTestUnit : public matador::unit_test
 {
 public:
-  QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory", const matador::time &timeval = matador::time(2015, 3, 15, 13, 56, 23, 123));
+  QueryTestUnit(
+    const std::string &name, const std::string &msg, std::string db = "memory",
+    matador::time timeval = matador::time(2015, 3, 15, 13, 56, 23, 123)
+  );
 
   void initialize() override;
 
