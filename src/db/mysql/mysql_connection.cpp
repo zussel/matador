@@ -107,10 +107,7 @@ detail::result_impl* mysql_connection::execute(const matador::sql &sql)
 
 detail::result_impl* mysql_connection::execute(const std::string &sql)
 {
-  if (mysql_query(&mysql_, sql.c_str())) {
-    throw mysql_exception(&mysql_, "mysql_query", sql);
-  }
-  return new mysql_result(&mysql_);
+  return execute_internal(sql);
 }
 
 detail::statement_impl* mysql_connection::prepare(const matador::sql &stmt)
@@ -121,19 +118,19 @@ detail::statement_impl* mysql_connection::prepare(const matador::sql &stmt)
 void mysql_connection::begin()
 {
   // TODO: check result
-  std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute("START TRANSACTION;")));
+  std::unique_ptr<mysql_result> res(execute_internal("START TRANSACTION;"));
 }
 
 void mysql_connection::commit()
 {
   // TODO: check result
-  std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute("COMMIT;")));
+  std::unique_ptr<mysql_result> res(execute_internal("COMMIT;"));
 }
 
 void mysql_connection::rollback()
 {
   // TODO: check result
-  std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute("ROLLBACK;")));
+  std::unique_ptr<mysql_result> res(execute_internal("ROLLBACK;"));
 }
 
 std::string mysql_connection::type() const
@@ -150,20 +147,14 @@ bool mysql_connection::exists(const std::string &tablename)
 {
   std::string stmt("SHOW TABLES LIKE '" + tablename + "'");
 //  std::string stmt("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + db_ + "' AND table_name = '" + tablename + "' LIMIT 1");
-  std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute(stmt)));
-  if (!res->fetch()) {
-    return false;
-  } else {
-    return true;
-//    char *end;
-//    return strtoul(res->column(0), &end, 10) == 1;
-  }
+  std::unique_ptr<mysql_result> res(execute_internal(stmt));
+  return res->fetch();
 }
 
 std::vector<field> mysql_connection::describe(const std::string &table)
 {
   std::string stmt("SHOW COLUMNS FROM " + table);
-  std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute(stmt)));
+  std::unique_ptr<mysql_result> res(execute_internal(stmt));
 
   std::vector<field> fields;
 
@@ -179,6 +170,14 @@ std::vector<field> mysql_connection::describe(const std::string &table)
   }
 
   return fields;
+}
+
+mysql_result *mysql_connection::execute_internal(const std::string &sql)
+{
+  if (mysql_query(&mysql_, sql.c_str())) {
+    throw mysql_exception(&mysql_, "mysql_query", sql);
+  }
+  return new mysql_result(&mysql_);
 }
 
 basic_dialect* mysql_connection::dialect()

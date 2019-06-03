@@ -49,6 +49,8 @@ public:
 
   int transform_index(int index) const override;
 
+  PGresult* result_handle();
+
 protected:
   void serialize(const char *id, char &x) override;
   void serialize(const char *id, short &x) override;

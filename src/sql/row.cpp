@@ -19,12 +19,6 @@
 
 namespace matador {
 
-row::row()
-{}
-
-row::~row()
-{}
-
 bool row::add_column(const std::string &column)
 {
   return add_column(column, std::make_shared<null_value>());

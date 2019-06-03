@@ -31,7 +31,7 @@ postgresql_result::~postgresql_result()
 
 const char *postgresql_result::column(postgresql_result::size_type c) const
 {
-  return nullptr;
+  return PQgetvalue(res_, pos_, c);
 }
 
 bool postgresql_result::fetch()
@@ -247,5 +247,11 @@ bool postgresql_result::finalize_fetch()
   ++pos_;
   return true;
 }
+
+PGresult *postgresql_result::result_handle()
+{
+  return res_;
+}
+
 }
 }

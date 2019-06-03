@@ -73,7 +73,7 @@ enum struct data_type {
  * @param type The data ytpe to be written
  * @return The modified output stream
  */
-OOS_SQL_API std::ostream& operator<<(std::ostream &out, const matador::data_type type);
+//OOS_SQL_API std::ostream& operator<<(std::ostream &out, const matador::data_type &type);
 
 /**
  * @tparam T The type of the traits

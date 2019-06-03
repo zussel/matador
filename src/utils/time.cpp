@@ -46,7 +46,7 @@ namespace detail {
 
     return 0;
 #else
-    return ::gettimeofday(tp, 0);
+    return ::gettimeofday(tp, nullptr);
 #endif
   }
 }
@@ -174,7 +174,7 @@ time time::parse(const std::string &tstr, const char *format)
     char *next;
     usec = std::strtoul(endptr, &next, 10);
     // calculate precision
-    unsigned digits = (unsigned int) (next - endptr);
+    auto digits = (unsigned int) (next - endptr);
     usec *= (unsigned long)pow(10.0, 6 - digits);
     if ((size_t)(next - format) != strlen(format)) {
       // still time string to parse
