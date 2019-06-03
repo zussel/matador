@@ -61,7 +61,7 @@ public:
   sql();
   ~sql();
 
-  void append(const std::shared_ptr<detail::token> tokptr);
+  void append(const std::shared_ptr<detail::token> &tokptr);
   void append(detail::token *tok);
   void append(const sql &stmt);
 
@@ -91,9 +91,9 @@ namespace detail {
 
 struct query : public token
 {
-  query(const sql &s);
+  explicit query(const sql &s);
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 
   sql sql_;
 };

@@ -31,7 +31,7 @@ sql::~sql()
   reset(t_query_command::UNKNOWN);
 }
 
-void sql::append(const std::shared_ptr<detail::token> tokptr)
+void sql::append(const std::shared_ptr<detail::token> &tokptr)
 {
   token_list_.push_back(tokptr);
 }
@@ -95,8 +95,6 @@ query::query(const sql &s)
 void query::accept(token_visitor &visitor)
 {
   visitor.visit(*this);
-//  std::string result("(");
-//  return result.append(sql_.compile(d)).append(")");
 }
 
 }

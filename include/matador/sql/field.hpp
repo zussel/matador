@@ -40,13 +40,17 @@ public:
    * @brief Creates a named field
    * @param name Name of the column field
    */
-  field(const char *name);
+  explicit field(const char *name);
 
   /**
    * @brief Creates a named field
    * @param name Name of the column field
    */
-  field(const std::string &name);
+  explicit field(const std::string &name);
+
+  /**
+   * @brief Destroy a field
+   */
   ~field();
 
   /**

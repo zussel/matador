@@ -49,13 +49,13 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
   throw sqlite_exception(msg.str()); 
 }
 
-sqlite_statement::sqlite_statement(sqlite_connection &db, const std::string stmt)
+sqlite_statement::sqlite_statement(sqlite_connection &db, const std::string &stmt)
   : db_(db)
-  , stmt_(0)
+  , stmt_(nullptr)
 {
   str(stmt);
   // prepare sqlite statement
-  int ret = sqlite3_prepare_v2(db_.handle(), str().c_str(), str().size(), &stmt_, 0);
+  int ret = sqlite3_prepare_v2(db_.handle(), str().c_str(), str().size(), &stmt_, nullptr);
   throw_error(ret, db_.handle(), "sqlite3_prepare_v2", str());
 }
 
@@ -87,8 +87,7 @@ void sqlite_statement::clear()
   }
   int ret = sqlite3_finalize(stmt_);
   throw_error(ret, db_.handle(), "sqlite3_finalize");
-  stmt_ = 0;
-  return;
+  stmt_ = nullptr;
 }
 
 void sqlite_statement::serialize(const char*, bool &x)
@@ -159,19 +158,19 @@ void sqlite_statement::serialize(const char*, double &x)
 
 void sqlite_statement::serialize(const char*, char *x, size_t len)
 {
-  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x, (int)len, 0);
+  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x, (int)len, nullptr);
   throw_error(ret, db_.handle(), "sqlite3_bind_text");
 }
 
 void sqlite_statement::serialize(const char*, std::string &x)
 {
-  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x.c_str(), (int)x.size(), 0);
+  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x.c_str(), (int)x.size(), nullptr);
   throw_error(ret, db_.handle(), "sqlite3_bind_text");
 }
 
 void sqlite_statement::serialize(const char*, varchar_base &x)
 {
-  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x.c_str(), (int)x.size(), 0);
+  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x.c_str(), (int)x.size(), nullptr);
   throw_error(ret, db_.handle(), "sqlite3_bind_text");
 }
 
