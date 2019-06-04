@@ -35,7 +35,7 @@ void drop::accept(token_visitor &visitor)
 }
 
 create::create(const std::string &t)
-  : token(CREATE_TABLE), table(t)
+  : table_name_token(CREATE_TABLE, t)
 {}
 
 void create::accept(token_visitor &visitor)
@@ -43,8 +43,8 @@ void create::accept(token_visitor &visitor)
   visitor.visit(*this);
 }
 
-insert::insert(const std::string &t)
-  : token(INSERT), table(t)
+insert::insert(std::string t)
+  : table_name_token(INSERT, std::move(t))
 {}
 
 void insert::accept(token_visitor &visitor)
@@ -61,9 +61,8 @@ void update::accept(token_visitor &visitor)
   visitor.visit(*this);
 }
 
-tablename::tablename(const std::string &t)
-  : token(TABLE)
-  , tab(t)
+tablename::tablename(std::string t)
+  : table_name_token(TABLE, std::move(t))
 {}
 
 void tablename::accept(token_visitor &visitor)
@@ -101,7 +100,7 @@ void desc::accept(token_visitor &visitor)
 }
 
 from::from(const std::string &t)
-  : token(FROM), table(t)
+  : table_name_token(FROM, t)
 {}
 
 void from::accept(token_visitor &visitor)

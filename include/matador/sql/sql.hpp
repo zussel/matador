@@ -67,13 +67,15 @@ public:
 
   void reset(t_query_command command_type);
 
-  static unsigned int type_size(data_type type);
-
   template < class T >
   static unsigned int type()
   {
     return data_type_traits<T>::type();
   }
+
+  std::string command() const;
+  std::string table_name() const;
+  void table_name(const std::string &tname);
 
 private:
   friend class basic_dialect;
@@ -85,6 +87,8 @@ private:
 
   t_query_command command_type_;
   token_list_t token_list_;
+
+  std::string table_name_;
 };
 
 namespace detail {

@@ -38,7 +38,7 @@ struct OOS_SQL_API column : public detail::token
    *
    * @param col The name of the column
    */
-  column(const std::string &col);
+  explicit column(const std::string &col);
 
   /**
    * @brief Creates a new column with given name

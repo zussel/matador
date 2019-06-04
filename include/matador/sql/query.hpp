@@ -51,8 +51,6 @@
 
 namespace matador {
 
-//class condition;
-
 /**
  * @class query
  * @brief Creates a SQL query.
@@ -101,10 +99,10 @@ public:
   /**
    * @brief Create a new query for the given table.
    *
-   * @param tablename The default tablename used for the query.
+   * @param table_name The default table name used for the query.
    */
-  query(const std::string &tablename)
-    : basic_query(tablename)
+  explicit query(const std::string &table_name)
+    : basic_query(table_name)
   {}
 
   /**
@@ -112,7 +110,7 @@ public:
    *
    * @param conn The default connection to be used
    */
-  query(const connection &conn)
+  explicit query(const connection &conn)
     : query(conn, "")
   {
     determine_tablename<T>();
@@ -128,17 +126,17 @@ public:
     : detail::basic_query(conn, tablename)
   {}
 
-  ~query() {}
+  ~query() = default;
 
   /**
-   * Bind a tablename to a specific
+   * Bind a table name to a specific
    * object type
    *
-   * @param tablename The tablename to bind
+   * @param table_name The tablename to bind
    */
-  static void bind_table(const std::string &tablename)
+  static void bind_table(const std::string &table_name)
   {
-    tablename_map_.insert(std::make_pair(std::type_index(typeid(T)), tablename));
+    tablename_map_.insert(std::make_pair(std::type_index(typeid(T)), table_name));
   }
 
   /**
@@ -171,6 +169,7 @@ public:
     reset(t_query_command::CREATE);
 
     sql_.append(new detail::create(table_name_));
+    sql_.table_name(table_name_);
 
     detail::typed_column_serializer serializer;
 
@@ -215,6 +214,7 @@ public:
     sql_.append(cols.release());
 
     sql_.append(new detail::from(table_name_));
+    sql_.table_name(table_name_);
 
     state = QUERY_FROM;
     return *this;
@@ -241,6 +241,7 @@ public:
     sql_.append(cols.release());
 
     sql_.append(new detail::from(table_name_));
+    sql_.table_name(table_name_);
 
     state = QUERY_FROM;
     return *this;
@@ -268,6 +269,7 @@ public:
     reset(t_query_command::INSERT);
 
     sql_.append(new detail::insert(table_name_));
+    sql_.table_name(table_name_);
 
     detail::column_serializer serializer(columns::WITH_BRACKETS);
 
@@ -314,6 +316,7 @@ public:
 
     sql_.append(new detail::update);
     sql_.append(new detail::tablename(table_name_));
+    sql_.table_name(table_name_);
     sql_.append(new detail::set);
     sql_.append(update_columns_);
 
@@ -342,6 +345,7 @@ public:
 
     sql_.append(new detail::update);
     sql_.append(new detail::tablename(table_name_));
+    sql_.table_name(table_name_);
     sql_.append(new detail::set);
 
     for (auto colvalue : colvalues) {
@@ -366,6 +370,7 @@ public:
   query& from(const std::string &table)
   {
     sql_.append(new detail::from(table));
+    sql_.table_name(table_name_);
 
     return *this;
   }
@@ -381,6 +386,7 @@ public:
 
     sql_.append(new detail::remove());
     sql_.append(new detail::from(table_name_));
+    sql_.table_name(table_name_);
 
     state = QUERY_DELETE;
 
@@ -605,10 +611,10 @@ public:
    * @brief Create a new query for the
    * given table.
    *
-   * @param tablename The default tablename used for the query.
+   * @param table_name The default table name used for the query.
    */
-  query(const std::string &tablename)
-    : basic_query(tablename)
+  explicit query(const std::string &table_name)
+    : basic_query(table_name)
   {}
 
   /**
@@ -616,7 +622,7 @@ public:
    *
    * @param conn The default connection to be used
    */
-  query(const connection &conn)
+  explicit query(const connection &conn)
     : query(conn, "")
   {}
 
@@ -624,13 +630,13 @@ public:
    * @brief Create a query with a default connection and default tablename
    *
    * @param conn The default connection to be used
-   * @param tablename The default tablename used for the query.
+   * @param table_name The default table name used for the query.
    */
-  query(const connection &conn, const std::string &tablename)
-    : detail::basic_query(conn, tablename)
+  query(const connection &conn, const std::string &table_name)
+    : detail::basic_query(conn, table_name)
   {}
 
-  ~query() {}
+  ~query() = default;
 
   /**
    * @brief Start a create query for default table
@@ -645,15 +651,16 @@ public:
   /**
    * @brief Create a table with given name
    *
-   * @param tablename The tablename to be used for the statement
+   * @param table_name The table name to be used for the statement
    * @param collist The columns to be created
    * @return A reference to the query.
    */
-  query& create(const std::string &tablename, const std::initializer_list<std::shared_ptr<detail::typed_column>> &collist)
+  query& create(const std::string &table_name, const std::initializer_list<std::shared_ptr<detail::typed_column>> &collist)
   {
     reset(t_query_command::CREATE);
 
-    sql_.append(new detail::create(tablename));
+    sql_.append(new detail::create(table_name));
+    sql_.table_name(table_name_);
 
     std::unique_ptr<matador::columns> cols(new matador::columns(matador::columns::WITH_BRACKETS));
     for (auto &&col : collist) {
@@ -676,14 +683,15 @@ public:
   }
 
   /**
-   * @brief Start a drop query for the given tablename
-   * @param tablename The table to be dropped
+   * @brief Start a drop query for the given table name
+   * @param table_name The table to be dropped
    * @return A reference to the query.
    */
-  query& drop(const std::string &tablename)
+  query& drop(const std::string &table_name)
   {
     reset(t_query_command::DROP);
-    sql_.append(new detail::drop(tablename));
+    sql_.append(new detail::drop(table_name));
+    sql_.table_name(table_name_);
 
     state = QUERY_DROP;
     return *this;
@@ -699,6 +707,7 @@ public:
     reset(t_query_command::INSERT);
 
     sql_.append(new detail::insert(table_name_));
+    sql_.table_name(table_name_);
 
     std::unique_ptr<columns> cols(new matador::columns);
 
@@ -748,6 +757,7 @@ public:
 
     sql_.append(new detail::update);
     sql_.append(new detail::tablename(table_name_));
+    sql_.table_name(table_name_);
     sql_.append(new detail::set);
 
     for (auto colvalue : colvalues) {
@@ -825,6 +835,7 @@ public:
     throw_invalid(QUERY_FROM, state);
 
     sql_.append(new detail::from(table));
+    sql_.table_name(table_name_);
 
     table_name_ = table;
 

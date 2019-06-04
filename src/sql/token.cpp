@@ -11,5 +11,10 @@ token::token(t_token tok)
   : type(tok)
 {}
 
+table_name_token::table_name_token(token::t_token tok, std::string tablename)
+  : token(tok)
+  , table_name(tablename)
+{}
+
 }
 }

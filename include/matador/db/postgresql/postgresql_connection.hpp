@@ -79,6 +79,8 @@ public:
 
   basic_dialect* dialect() override;
 
+  PGconn* handle() const;
+
 private:
   postgresql_result* execute_internal(const std::string &stmt);
 

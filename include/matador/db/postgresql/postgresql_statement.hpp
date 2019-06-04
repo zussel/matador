@@ -68,11 +68,18 @@ protected:
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
 
 private:
+  std::string generate_statement_name(const matador::sql &stmt);
+
+private:
   postgresql_connection &db_;
   size_t result_size;
   size_t host_size;
 
   std::vector<std::shared_ptr<std::string> > host_strings_;
+
+  std::string name_;
+
+  static std::unordered_map<std::string, unsigned long> statement_name_map_;
 };
 
 }

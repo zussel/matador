@@ -98,7 +98,7 @@ struct value<T, typename std::enable_if<
   !std::is_same<char, T>::value &&
   !std::is_same<char*, T>::value>::type> : public detail::basic_value
 {
-  value(const T &val)
+  explicit value(const T &val)
     : basic_value(detail::token::VALUE)
     , val(val)
   { }
@@ -134,7 +134,7 @@ struct value<T, typename std::enable_if<
 template<class T>
 struct value<T, typename std::enable_if<std::is_base_of<matador::varchar_base, T>::value>::type> : public detail::basic_value
 {
-  value(const T &val)
+  explicit value(const T &val)
     : basic_value(detail::token::VALUE)
     , val(val) { }
 
@@ -163,9 +163,9 @@ struct value<T, typename std::enable_if<std::is_base_of<matador::varchar_base, T
 template<>
 struct value<std::string> : public detail::basic_value
 {
-  value(const std::string &val)
+  explicit value(std::string val)
     : basic_value(detail::token::VALUE)
-    , val(val) { }
+    , val(std::move(val)) { }
 
   void serialize(const char *id, serializer &srlzr) override
   {
@@ -192,7 +192,7 @@ struct value<std::string> : public detail::basic_value
 template<>
 struct value<char> : public detail::basic_value
 {
-  value(char val)
+  explicit value(char val)
     : basic_value(detail::token::VALUE)
     , val(val) { }
 
@@ -296,9 +296,9 @@ struct value<const char*> : public detail::basic_value
 template<>
 struct value<matador::date> : public detail::basic_value
 {
-  value(const matador::date &val)
+  explicit value(matador::date val)
     : basic_value(detail::token::VALUE)
-    , val(val) { }
+    , val(std::move(val)) { }
 
   void serialize(const char *id, serializer &srlzr) override
   {
@@ -329,9 +329,9 @@ struct value<matador::date> : public detail::basic_value
 template<>
 struct value<matador::time> : public detail::basic_value
 {
-  value(const matador::time &val)
+  explicit value(matador::time val)
     : basic_value(detail::token::VALUE)
-    , val(val)
+    , val(std::move(val))
   { }
 
   void serialize(const char *id, serializer &srlzr) override

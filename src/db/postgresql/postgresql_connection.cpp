@@ -155,6 +155,11 @@ std::vector<field> postgresql_connection::describe(const std::string &table)
   return fields;
 }
 
+PGconn *postgresql_connection::handle() const
+{
+  return conn_;
+}
+
 basic_dialect *postgresql_connection::dialect()
 {
   return &dialect_;

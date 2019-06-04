@@ -14,7 +14,7 @@ namespace detail {
 void basic_dialect_linker::link()
 {
   // build the query
-  for(auto tokptr : top().tokens_) {
+  for(auto const &tokptr : top().tokens_) {
     tokptr->accept(*this);
   }
 }
@@ -42,12 +42,12 @@ void basic_dialect_linker::visit(matador::detail::query &q)
 
 void basic_dialect_linker::visit(const matador::detail::create &create)
 {
-  dialect().append_to_result(token_string(create.type) + " " + dialect_->prepare_identifier(create.table) + " ");
+  dialect().append_to_result(token_string(create.type) + " " + dialect_->prepare_identifier(create.table_name) + " ");
 }
 
 void basic_dialect_linker::visit(const matador::detail::drop &drop)
 {
-  dialect().append_to_result(token_string(drop.type) + " " + dialect_->prepare_identifier(drop.table) + " ");
+  dialect().append_to_result(token_string(drop.type) + " " + dialect_->prepare_identifier(drop.table_name) + " ");
 }
 
 void basic_dialect_linker::visit(const matador::detail::select &select)
@@ -67,7 +67,7 @@ void basic_dialect_linker::visit(const matador::detail::update &update)
 
 void basic_dialect_linker::visit(const matador::detail::tablename &table)
 {
-  dialect().append_to_result(dialect_->prepare_identifier(table.tab) + " ");
+  dialect().append_to_result(dialect_->prepare_identifier(table.table_name) + " ");
 }
 
 void basic_dialect_linker::visit(const matador::detail::set &set)
@@ -142,15 +142,15 @@ void basic_dialect_linker::visit(const matador::detail::group_by &by)
 
 void basic_dialect_linker::visit(const matador::detail::insert &insert)
 {
-  dialect().append_to_result(token_string(insert.type) + " " + dialect_->prepare_identifier(insert.table) + " ");
+  dialect().append_to_result(token_string(insert.type) + " " + dialect_->prepare_identifier(insert.table_name) + " ");
 }
 
 void basic_dialect_linker::visit(const matador::detail::from &from)
 {
-  if (from.table.empty()) {
+  if (from.table_name.empty()) {
     dialect().append_to_result(token_string(from.type) + " ");
   } else {
-    dialect().append_to_result(token_string(from.type) + " " + dialect_->prepare_identifier(from.table) + " ");
+    dialect().append_to_result(token_string(from.type) + " " + dialect_->prepare_identifier(from.table_name) + " ");
   }
 }
 

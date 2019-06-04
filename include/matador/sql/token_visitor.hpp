@@ -65,7 +65,7 @@ struct query;
 class OOS_SQL_API token_visitor
 {
 public:
-  virtual ~token_visitor() {}
+  virtual ~token_visitor() = default;
 
   virtual void visit(const matador::detail::create &) = 0;
   virtual void visit(const matador::detail::drop &) = 0;

@@ -51,7 +51,7 @@ public:
    *
    * @param table_name The name of the table
    */
-  basic_query(const std::string &table_name);
+  explicit basic_query(std::string table_name);
 
   /**
    * Creates a basic query for the given

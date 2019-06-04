@@ -23,7 +23,7 @@ SET(SOURCES
   type.cpp
   query_value_column_processor.cpp
   query_value_creator.cpp
-)
+  )
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/condition.hpp

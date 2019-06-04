@@ -2,6 +2,10 @@
 // Created by sascha on 04.06.19.
 //
 
+#include <matador/sql/query.hpp>
+
+#include "../person.hpp"
+
 #include "connections.hpp"
 
 #include "matador/sql/connection.hpp"
@@ -17,6 +21,7 @@ PostgreSQLDialectTestUnit::PostgreSQLDialectTestUnit()
   : unit_test("postgresql_dialect" , "postgresql dialect test")
 {
   add_test("placeholder", std::bind(&PostgreSQLDialectTestUnit::test_placeholder, this), "test postgresql placeholder link");
+  add_test("tablename", std::bind(&PostgreSQLDialectTestUnit::test_table_name, this), "test postgresql extract table name");
 }
 
 void PostgreSQLDialectTestUnit::test_placeholder()
@@ -50,4 +55,15 @@ void PostgreSQLDialectTestUnit::test_placeholder()
   std::string result = conn.dialect()->prepare(s);
 
   UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES ($1, $2, $3) ", result, "insert statement isn't as expected");
+}
+
+void PostgreSQLDialectTestUnit::test_table_name()
+{
+  query<person> q("person");
+
+  column id("id");
+
+  q.select();
+
+  UNIT_ASSERT_EQUAL("person", q.stmt().table_name(), "table names must be equal");
 }

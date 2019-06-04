@@ -56,9 +56,7 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
 //  std::cout << this << " $$ mysql_statement::mysql_statement:\t\t\t\tcreating STMT " << stmt_ << "\n";
 
-  if (res > 0) {
-    throw_stmt_error(res, stmt_, "mysql", str());
-  }
+  throw_stmt_error(res, stmt_, "mysql", str());
 }
 
 mysql_statement::~mysql_statement()
@@ -109,20 +107,14 @@ detail::result_impl* mysql_statement::execute()
   }
   if (host_size > 0) {
     int res = mysql_stmt_bind_param(stmt_, &host_array.front());
-    if (res > 0) {
-      throw_stmt_error(res, stmt_, "mysql", str());
-    }
+    throw_stmt_error(res, stmt_, "mysql", str());
   }
 
   int res = mysql_stmt_execute(stmt_);
 //  std::cout << this << " $$ valgrind: invalid write took place\n";
-  if (res > 0) {
-    throw_stmt_error(res, stmt_, "mysql", str());
-  }
+  throw_stmt_error(res, stmt_, "mysql", str());
   res = mysql_stmt_store_result(stmt_);
-  if (res > 0) {
-    throw_stmt_error(res, stmt_, "mysql", str());
-  }
+  throw_stmt_error(res, stmt_, "mysql", str());
   current_result = new mysql_prepared_result(this, stmt_, bind_, info_);
 //  std::cout << this << " $$ mysql_statement::execute:\t\t\t\t\t\tcreate result STMT " << stmt_ << "\n";
   return current_result;

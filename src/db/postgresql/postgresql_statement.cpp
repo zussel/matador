@@ -5,9 +5,13 @@
 #include "matador/db/postgresql/postgresql_statement.hpp"
 #include "matador/db/postgresql/postgresql_connection.hpp"
 
+#include "matador/sql/sql.hpp"
+
 namespace matador {
 
 namespace postgresql {
+
+std::unordered_map<std::string, unsigned long> postgresql_statement::statement_name_map_ = {};
 
 postgresql_statement::postgresql_statement(postgresql_connection &db, const matador::sql &stmt)
   : db_(db)
@@ -17,11 +21,15 @@ postgresql_statement::postgresql_statement(postgresql_connection &db, const mata
   // parse sql to create result and host arrays
   result_size = db.dialect()->column_count();
   host_size = db.dialect()->bind_count();
+
+  name_ = generate_statement_name(stmt);
+
+  PQprepare(db.handle(), name_.c_str(), str().c_str(), host_size, nullptr);
 }
 
 postgresql_statement::~postgresql_statement()
 {
-
+  clear();
 }
 
 void postgresql_statement::clear()
@@ -128,5 +136,21 @@ void postgresql_statement::serialize(const char *id, identifiable_holder &x, cas
 {
 
 }
+
+std::string postgresql_statement::generate_statement_name(const matador::sql &stmt)
+{
+  std::stringstream name;
+  name << stmt.table_name() << "_" << stmt.command();
+  auto result = postgresql_statement::statement_name_map_.find(name.str());
+
+  if (result == postgresql_statement::statement_name_map_.end()) {
+    result = postgresql_statement::statement_name_map_.insert(std::make_pair(name.str(), 0)).first;
+  }
+
+  name << "_" << ++result->second;
+
+  return name.str();
+}
+
 }
 }

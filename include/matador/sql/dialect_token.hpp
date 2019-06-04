@@ -32,92 +32,84 @@ struct OOS_SQL_API select : public token
 {
   select() : token(SELECT) {}
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 };
 
 struct OOS_SQL_API begin : public token
 {
   begin() : token(BEGIN) {}
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 };
 
 struct OOS_SQL_API commit : public token
 {
   commit() : token(COMMIT) {}
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 };
 
 struct OOS_SQL_API rollback : public token
 {
   rollback() : token(ROLLBACK) {}
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API drop : public token
+struct OOS_SQL_API drop : public table_name_token
 {
-  drop(const std::string &t) : token(DROP), table(t) {}
+  explicit drop(const std::string &t) : table_name_token(DROP, t) {}
 
-  virtual void accept(token_visitor &visitor) override;
-
-  std::string table;
+  void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API create : public token
+struct OOS_SQL_API create : public table_name_token
 {
-  create(const std::string &t);
+  explicit create(const std::string &t);
 
-  virtual void accept(token_visitor &visitor) override;
-
-  std::string table;
+  void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API insert : public token
+struct OOS_SQL_API insert : public table_name_token
 {
-  insert(const std::string &t);
+  explicit insert(std::string t);
 
-  virtual void accept(token_visitor &visitor) override;
-
-  std::string table;
+  void accept(token_visitor &visitor) override;
 };
 
 struct OOS_SQL_API update : public token
 {
   update();
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API tablename : public token
+struct OOS_SQL_API tablename : public table_name_token
 {
-  tablename(const std::string &t);
+  explicit tablename(std::string t);
 
-  virtual void accept(token_visitor &visitor) override;
-
-  std::string tab;
+  void accept(token_visitor &visitor) override;
 };
 
 struct OOS_SQL_API remove : public token
 {
   remove();
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 };
 
 struct OOS_SQL_API distinct : public token
 {
   distinct() : token(DISTINCT) {}
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 };
 
 struct OOS_SQL_API set : public token
 {
   set() : token(SET) {}
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 };
 
 struct OOS_SQL_API values : public token
@@ -126,7 +118,7 @@ struct OOS_SQL_API values : public token
 
   void push_back(const std::shared_ptr<basic_value> &val) { values_.push_back(val); }
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     return visitor.visit(*this);
   }
@@ -138,57 +130,55 @@ struct OOS_SQL_API asc : public token
 {
   asc() : token(ASC) {}
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 };
 
 struct OOS_SQL_API desc : public token
 {
   desc() : token(DESC) {}
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API from : public token
+struct OOS_SQL_API from : public table_name_token
 {
-  from(const std::string &t);
+  explicit from(const std::string &t);
 
-  virtual void accept(token_visitor &visitor) override;
-
-  std::string table;
+  void accept(token_visitor &visitor) override;
 };
 
 struct OOS_SQL_API top : public token
 {
-  top(size_t lmt);
+  explicit top(size_t lmt);
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 
   size_t limit_;
 };
 
 struct OOS_SQL_API as : public token
 {
-  as(const std::string &a);
+  explicit as(const std::string &a);
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 
   std::string alias;
 };
 
 struct OOS_SQL_API order_by : public token
 {
-  order_by(const std::string &col);
+  explicit order_by(const std::string &col);
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 
   std::string column;
 };
 
 struct OOS_SQL_API group_by : public token
 {
-  group_by(const std::string &col);
+  explicit group_by(const std::string &col);
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 
   std::string column;
 };
@@ -201,12 +191,12 @@ struct OOS_SQL_API where : public token
     , cond(new COND(c))
   { }
 
-  where(const std::shared_ptr<basic_condition> &c)
+  explicit where(std::shared_ptr<basic_condition> c)
     : token(token::WHERE)
-    , cond(c)
+    , cond(std::move(c))
   { }
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 
   std::shared_ptr<basic_condition> cond;
 };
