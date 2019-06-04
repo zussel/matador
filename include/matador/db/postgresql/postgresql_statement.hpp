@@ -20,7 +20,7 @@ class postgresql_connection;
 class postgresql_statement : public matador::detail::statement_impl
 {
 public:
-  postgresql_statement(postgresql_connection &db, const std::string &stmt);
+  postgresql_statement(postgresql_connection &db, const matador::sql &stmt);
 
   ~postgresql_statement() override;
 
@@ -69,6 +69,8 @@ protected:
 
 private:
   postgresql_connection &db_;
+  size_t result_size;
+  size_t host_size;
 
   std::vector<std::shared_ptr<std::string> > host_strings_;
 };

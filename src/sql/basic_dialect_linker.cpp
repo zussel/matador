@@ -116,7 +116,7 @@ void basic_dialect_linker::visit(const matador::detail::basic_value &val)
     dialect().append_to_result(val.safe_string(dialect()));
   } else {
     dialect().inc_bind_count();
-    dialect().append_to_result("?");
+    dialect().append_to_result(dialect().next_placeholder());
   }
 }
 

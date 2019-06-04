@@ -6,6 +6,7 @@
 #include <regex>
 
 #include "matador/db/postgresql/postgresql_connection.hpp"
+#include "matador/db/postgresql/postgresql_statement.hpp"
 #include "matador/db/postgresql/postgresql_exception.hpp"
 #include "matador/db/postgresql/postgresql_result.hpp"
 
@@ -89,7 +90,7 @@ detail::result_impl *postgresql_connection::execute(const std::string &stmt)
 
 detail::statement_impl *postgresql_connection::prepare(const matador::sql &stmt)
 {
-  return nullptr;
+  return new postgresql_statement(*this, stmt);
 }
 
 void postgresql_connection::begin()

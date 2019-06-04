@@ -2,6 +2,8 @@
 // Created by sascha on 24.05.19.
 //
 
+#include <sstream>
+
 #include "matador/db/postgresql/postgresql_dialect.hpp"
 
 #include "matador/sql/dialect_token.hpp"
@@ -92,6 +94,13 @@ matador::data_type postgresql_dialect::string_type(const char *type) const
 matador::dialect_traits::identifier postgresql_dialect::identifier_escape_type() const
 {
   return dialect_traits::ESCAPE_BOTH_SAME;
+}
+
+std::string postgresql_dialect::next_placeholder() const
+{
+  std::stringstream ss;
+  ss << "$" << bind_count();
+  return ss.str();
 }
 
 }

@@ -82,7 +82,7 @@ public:
   std::string type() const override;
   std::string version() const override;
 
-  bool exists(const std::string &tablename) override;
+  bool exists(const std::string &table_name) override;
   std::vector<field> describe(const std::string &table) override;
 
   basic_dialect* dialect() override;

@@ -20,6 +20,8 @@ public:
   data_type string_type(const char *type) const;
 
   dialect_traits::identifier identifier_escape_type() const override;
+
+  std::string next_placeholder() const override;
 };
 
 }

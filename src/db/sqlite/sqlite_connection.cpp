@@ -121,9 +121,9 @@ matador::detail::statement_impl *sqlite_connection::prepare(const matador::sql &
   return new sqlite_statement(*this, stmt);
 }
 
-bool sqlite_connection::exists(const std::string &tablename)
+bool sqlite_connection::exists(const std::string &table_name)
 {
-  std::string stmt("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND tbl_name='" + tablename + "' LIMIT 1");
+  std::string stmt("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND tbl_name='" + table_name + "' LIMIT 1");
   std::unique_ptr<sqlite_result> res((execute_internal(stmt)));
 
   if (res->result_rows() != 1) {

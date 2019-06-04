@@ -3,16 +3,20 @@
 //
 
 #include "matador/db/postgresql/postgresql_statement.hpp"
+#include "matador/db/postgresql/postgresql_connection.hpp"
 
 namespace matador {
 
 namespace postgresql {
 
-postgresql_statement::postgresql_statement(postgresql_connection &db, const std::string &stmt)
+postgresql_statement::postgresql_statement(postgresql_connection &db, const matador::sql &stmt)
   : db_(db)
 {
-  str(stmt);
-
+  // generate sql
+  str(db.dialect()->prepare(stmt));
+  // parse sql to create result and host arrays
+  result_size = db.dialect()->column_count();
+  host_size = db.dialect()->bind_count();
 }
 
 postgresql_statement::~postgresql_statement()

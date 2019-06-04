@@ -56,7 +56,7 @@ public:
   virtual std::string type() const = 0;
   virtual std::string version() const = 0;
 
-  virtual bool exists(const std::string &tablename) = 0;
+  virtual bool exists(const std::string &table_name) = 0;
   virtual std::vector<field> describe(const std::string &table) = 0;
 
   virtual basic_dialect* dialect() = 0;

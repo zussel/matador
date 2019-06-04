@@ -61,7 +61,8 @@ SET (TEST_SQL_SOURCES
   sql/SQLiteDialectTestUnit.hpp
   sql/ValueUnitTest.cpp
   sql/ValueUnitTest.hpp
-)
+  sql/PostgreSQLDialectTestUnit.cpp
+  sql/PostgreSQLDialectTestUnit.hpp)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp

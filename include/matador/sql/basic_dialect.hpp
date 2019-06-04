@@ -203,6 +203,14 @@ public:
   virtual dialect_traits::identifier identifier_escape_type() const = 0;
 
   /**
+   * Generates a next placeholder string. default is
+   * questionmark '?'
+   *
+   * @return Placeholder string
+   */
+  virtual std::string next_placeholder() const;
+
+  /**
    * Return the identifier opening quote
    *
    * @return Identifier opening quote.

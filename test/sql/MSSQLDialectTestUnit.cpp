@@ -65,7 +65,6 @@ void MSSQLDialectTestUnit::test_query_select_sub_select()
 
 void MSSQLDialectTestUnit::test_query_select_sub_select_result()
 {
-  std::cout << "\nstarted sub select\n";
   matador::connection conn(::connection::mssql);
 
   conn.open();

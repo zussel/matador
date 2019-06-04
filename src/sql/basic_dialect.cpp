@@ -172,6 +172,11 @@ void basic_dialect::escape_quotes_in_literals(std::string &str) const
   replace_all(str, single_quote, double_quote);
 }
 
+std::string basic_dialect::next_placeholder() const
+{
+  return "?";
+}
+
 char basic_dialect::identifier_opening_quote() const
 {
   return token_at(detail::token::START_QUOTE)[0];
