@@ -39,6 +39,7 @@ void postgresql_statement::clear()
 
 detail::result_impl *postgresql_statement::execute()
 {
+  PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), host_size, nullptr, nullptr, nullptr, 0);
   return nullptr;
 }
 
