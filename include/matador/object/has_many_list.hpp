@@ -74,7 +74,7 @@ public:
   /**
    * @brief Creates an empty has many iterator
    */
-  has_many_iterator() {}
+  has_many_iterator() = default;
 
   /**
    * @brief Copy constructs an iterator from another iterator
@@ -104,7 +104,7 @@ public:
     return *this;
   }
 
-  ~has_many_iterator() {}
+  ~has_many_iterator() = default;
 
   /**
    * @brief Compares equality iterator with another iterator.
@@ -149,9 +149,9 @@ public:
    */
   self operator++(int)
   {
-    self tmp = *this;
+    self result(*this);
     ++iter_;
-    return tmp;
+    return result;
   }
 
   /**

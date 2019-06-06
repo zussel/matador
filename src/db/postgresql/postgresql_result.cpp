@@ -10,6 +10,7 @@
 #include "matador/utils/basic_identifier.hpp"
 
 #include "matador/db/postgresql/postgresql_result.hpp"
+#include "matador/db/postgresql/postgresql_getvalue.hpp"
 
 namespace matador {
 namespace postgresql {
@@ -61,169 +62,82 @@ int postgresql_result::transform_index(int index) const
 
 void postgresql_result::serialize(const char *, char &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) > 1) {
-    x = val[0];
-  }
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, short &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) == 0) {
-    return;
-  }
-  char *end;
-  x = (short)strtol(val, &end, 10);
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, int &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) == 0) {
-    return;
-  }
-  char *end;
-  x = (int)strtol(val, &end, 10);
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, long &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) == 0) {
-    return;
-  }
-  char *end;
-  x = strtol(val, &end, 10);
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, unsigned char &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) == 0) {
-    return;
-  }
-  char *end;
-  x = (unsigned char)strtoul(val, &end, 10);
-  // Todo: check error
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, unsigned short &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) == 0) {
-    return;
-  }
-  char *end;
-  x = (unsigned short)strtoul(val, &end, 10);
-  // Todo: check error
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, unsigned int &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) == 0) {
-    return;
-  }
-  char *end;
-  x = (unsigned int)strtoul(val, &end, 10);
-  // Todo: check error
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, unsigned long &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) == 0) {
-    return;
-  }
-  char *end;
-  x = strtoul(val, &end, 10);
-  // Todo: check error
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, bool &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) == 0) {
-    return;
-  }
-  char *end;
-  x = (unsigned char)strtoul(val, &end, 10) > 0;
-  // Todo: check error
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, float &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) == 0) {
-    return;
-  }
-  char *end;
-  x = (float)strtod(val, &end);
-  // Todo: check error
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, double &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  if (strlen(val) == 0) {
-    return;
-  }
-  char *end;
-  x = strtod(val, &end);
-  // Todo: check error
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, char *x, size_t s)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  size_t len = strlen(val);
-  if (len > (size_t)s) {
-    strncpy(x, val, s);
-    x[s-1] = '\n';
-  } else {
-    strcpy(x, val);
-  }
+  detail::get_value(res_, pos_, column_++, x, s);
 }
 
 void postgresql_result::serialize(const char *, varchar_base &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  x.assign(val);
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, std::string &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  x = val;
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, matador::date &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  x.set(val, date_format::ISO8601);
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *, matador::time &x)
 {
-  auto val = PQgetvalue(res_, pos_, column_++);
-
-  x = matador::time::parse(val, "%Y-%m-%d %T.%f");
+  detail::get_value(res_, pos_, column_++, x);
 }
 
 void postgresql_result::serialize(const char *id, matador::basic_identifier &x)

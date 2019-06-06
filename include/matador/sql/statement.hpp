@@ -176,7 +176,7 @@ public:
   /**
    * Creates an empty statement
    */
-  statement() = default;
+  statement() : prototype_(row()) {}
 
   /**
    * Creates a statement initialized from the
