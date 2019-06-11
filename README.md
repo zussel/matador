@@ -34,7 +34,7 @@ Example
 -------
 
 ```cpp
-// use matador' namespace
+// use matador namespace
 using namespace matador
 
 // a simple person class
@@ -54,7 +54,8 @@ struct person
     serializer.serialize("id", id);
     serializer.serialize("name", name);
     serializer.serialize("age", age);
-    serializer.serialize("person_color", colors, "person_id", "color");
+    serializer.serialize("person_color", colors, "person_id",   "color");
+    //                    table name     member   left column   right column
   }
 };
 
