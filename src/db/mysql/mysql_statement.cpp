@@ -25,6 +25,7 @@
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/identifiable_holder.hpp"
+#include "matador/utils/identifier.hpp"
 
 #include "matador/sql/sql.hpp"
 

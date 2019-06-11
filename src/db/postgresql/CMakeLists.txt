@@ -1,14 +1,24 @@
 SET(SOURCES
   postgresql_connection.cpp
-  postgresql_dialect.cpp postgresql_exception.cpp postgresql_result.cpp postgresql_statement.cpp postgresql_getvalue.cpp)
+  postgresql_dialect.cpp
+  postgresql_exception.cpp
+  postgresql_result.cpp
+  postgresql_statement.cpp
+  postgresql_getvalue.cpp
+  postgresql_prepared_result.cpp)
 
 SET(HEADER
-  ${CMAKE_SOURCE_DIR}/include/matador/db/postgresql/postgresql_connection.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/postgresql/postgresql_dialect.hpp
-  ../../../include/matador/db/postgresql/postgresql_exception.hpp ../../../include/matador/db/postgresql/postgresql_result.hpp ../../../include/matador/db/postgresql/postgresql_statement.hpp ../../../include/matador/db/postgresql/postgresql_getvalue.hpp)
+  ../../../include/matador/db/postgresql/postgresql_connection.hpp
+  ../../../include/matador/db/postgresql/postgresql_dialect.hpp
+  ../../../include/matador/db/postgresql/postgresql_exception.hpp
+  ../../../include/matador/db/postgresql/postgresql_result.hpp
+  ../../../include/matador/db/postgresql/postgresql_statement.hpp
+  ../../../include/matador/db/postgresql/postgresql_getvalue.hpp
+  ../../../include/matador/db/postgresql/postgresql_prepared_result.hpp
+)
 
 SET(HEADER_INSTALL
-  ${CMAKE_SOURCE_DIR}/include/matador/db/postgresql/postgresql_constants.hpp
+  ../../../include/matador/db/postgresql/postgresql_constants.hpp
 )
 
 ADD_LIBRARY(matador-postgresql SHARED ${SOURCES} ${HEADER})

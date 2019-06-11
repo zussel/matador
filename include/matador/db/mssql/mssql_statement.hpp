@@ -140,8 +140,8 @@ private:
 
   bool bind_null_ = false;
 
-  SQLHANDLE stmt_;
-  SQLHANDLE db_;
+  SQLHANDLE stmt_ = nullptr;
+  SQLHANDLE db_ = nullptr;
 };
 
 }

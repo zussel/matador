@@ -20,7 +20,6 @@
 
 #include "matador/sql/statement_impl.hpp"
 
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/varchar.hpp"
 
 #include "matador/db/mysql/mysql_result_info.hpp"
@@ -41,6 +40,7 @@ namespace matador {
 class varchar_base;
 class time;
 class date;
+class basic_identifier;
 
 namespace mysql {
 
