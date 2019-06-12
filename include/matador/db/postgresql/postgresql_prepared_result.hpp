@@ -55,10 +55,21 @@ public:
   void serialize(const char *id, basic_identifier &x) override;
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
 
+protected:
+  bool needs_bind() override;
+  bool finalize_bind() override;
+
+  bool prepare_fetch() override;
+  bool finalize_fetch() override;
+
 private:
   PGresult *res_ = nullptr;
-  size_t row_ = 0;
-  size_t column_ = 0;
+  size_type row_ = 0;
+  size_type column_ = 0;
+
+  size_type affected_rows_ = 0;
+  size_type rows_ = 0;
+  size_type fields_ = 0;
 };
 
 }

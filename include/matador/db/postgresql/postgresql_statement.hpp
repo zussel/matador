@@ -7,6 +7,8 @@
 
 #include "matador/sql/statement_impl.hpp"
 
+#include <libpq-fe.h>
+
 namespace matador {
 
 class varchar_base;
@@ -21,7 +23,8 @@ class postgresql_statement : public matador::detail::statement_impl
 {
 public:
   postgresql_statement(postgresql_connection &db, const matador::sql &stmt);
-
+  postgresql_statement(const postgresql_statement &x);
+  postgresql_statement& operator=(const postgresql_statement &x);
   ~postgresql_statement() override;
 
   void clear() override;
@@ -64,6 +67,8 @@ private:
   std::string name_;
 
   static std::unordered_map<std::string, unsigned long> statement_name_map_;
+
+  PGresult *res_ = nullptr;
 };
 
 }

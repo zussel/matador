@@ -9,45 +9,48 @@
 namespace matador {
 namespace postgresql {
 
-postgresql_prepared_result::postgresql_prepared_result(postgresql_statement *owner, PGresult *s)
-  : res_(s)
+postgresql_prepared_result::postgresql_prepared_result(postgresql_statement *, PGresult *res)
+  : res_(res)
+  , affected_rows_(0)
+  , rows_(PQntuples(res))
+  , fields_(PQnfields(res))
 {
 
 }
 
 postgresql_prepared_result::~postgresql_prepared_result()
 {
-
+  PQclear(res_);
 }
 
 const char *postgresql_prepared_result::column(postgresql_prepared_result::size_type c) const
 {
-  return nullptr;
+  return PQgetvalue(res_,row_, c);
 }
 
 bool postgresql_prepared_result::fetch()
 {
-  return false;
+  return ++row_ < rows_;
 }
 
 postgresql_prepared_result::size_type postgresql_prepared_result::affected_rows() const
 {
-  return 0;
+  return affected_rows_;
 }
 
 postgresql_prepared_result::size_type postgresql_prepared_result::result_rows() const
 {
-  return 0;
+  return rows_;
 }
 
 postgresql_prepared_result::size_type postgresql_prepared_result::fields() const
 {
-  return 0;
+  return fields_;
 }
 
 int postgresql_prepared_result::transform_index(int index) const
 {
-  return 0;
+  return index;
 }
 
 void postgresql_prepared_result::serialize(const char *, char &x)
@@ -138,6 +141,26 @@ void postgresql_prepared_result::serialize(const char *id, basic_identifier &x)
 void postgresql_prepared_result::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
   read_foreign_object(id, x);
+}
+
+bool postgresql_prepared_result::needs_bind()
+{
+  return result_impl::needs_bind();
+}
+
+bool postgresql_prepared_result::finalize_bind()
+{
+  return result_impl::finalize_bind();
+}
+
+bool postgresql_prepared_result::prepare_fetch()
+{
+  return false;
+}
+
+bool postgresql_prepared_result::finalize_fetch()
+{
+  return false;
 }
 }
 }

@@ -598,17 +598,11 @@ void QueryTestUnit::test_statement_insert()
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
 
-  //auto first = res.begin();
-  //auto last = res.end();
-
-  for (auto item : res) {
-    //while (first != last) {
-    //std::unique_ptr<Item> item(first.release());
+  for (auto const &item : res) {
     UNIT_EXPECT_EQUAL(item->id(), 23UL, "expected id must be 23");
     UNIT_EXPECT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
     UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
     UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
-    //++first;
   }
 
   stmt = q.drop().prepare(connection_);

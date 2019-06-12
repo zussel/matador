@@ -16,12 +16,12 @@
 #define MATADOR_POSTGRESQL_API
 #endif
 
-#include <libpq-fe.h>
-
 #include "matador/sql/connection_impl.hpp"
 #include "matador/sql/types.hpp"
 
 #include "matador/db/postgresql/postgresql_dialect.hpp"
+
+#include <libpq-fe.h>
 
 namespace matador {
 

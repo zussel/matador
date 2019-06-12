@@ -64,7 +64,7 @@ protected:
   void str(const std::string &s);
 
 protected:
-  size_t host_index;
+  size_t host_index = 0;
 
 private:
   std::string sql_;

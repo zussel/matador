@@ -3,6 +3,7 @@
 //
 
 #include "matador/db/postgresql/postgresql_statement.hpp"
+#include "matador/db/postgresql/postgresql_prepared_result.hpp"
 #include "matador/db/postgresql/postgresql_connection.hpp"
 
 #include "matador/utils/identifiable_holder.hpp"
@@ -30,7 +31,39 @@ postgresql_statement::postgresql_statement(postgresql_connection &db, const mata
 
   name_ = generate_statement_name(stmt);
 
-  PQprepare(db.handle(), name_.c_str(), str().c_str(), host_size, nullptr);
+  res_ = PQprepare(db.handle(), name_.c_str(), str().c_str(), host_size, nullptr);
+}
+
+postgresql_statement::postgresql_statement(const postgresql_statement &x)
+  : db_(x.db_)
+  , result_size(x.result_size)
+  , host_size(x.host_size)
+  , host_strings_(x.host_strings_)
+  , host_params_(x.host_params_)
+  , name_(x.name_)
+{
+  host_index = x.host_index;
+  if (res_ != nullptr) {
+    PQclear(res_);
+  }
+  res_ = x.res_;
+}
+
+postgresql_statement &postgresql_statement::operator=(const postgresql_statement &x)
+{
+  db_ = x.db_;
+  result_size = x.result_size;
+  host_index = x.host_index;
+  host_size = x.host_size;
+  host_strings_ = x.host_strings_;
+  host_params_ = x.host_params_;
+  name_ = x.name_;
+
+  if (res_ != nullptr) {
+    PQclear(res_);
+  }
+  res_ = x.res_;
+  return *this;
 }
 
 postgresql_statement::~postgresql_statement()
@@ -40,18 +73,23 @@ postgresql_statement::~postgresql_statement()
 
 void postgresql_statement::clear()
 {
+  if (res_ != nullptr) {
+    PQclear(res_);
+    res_ = nullptr;
+  }
 
+  host_params_.clear();
+  host_strings_.clear();
 }
 
 detail::result_impl *postgresql_statement::execute()
 {
-  PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), host_size, nullptr, nullptr, nullptr, 0);
-  return nullptr;
+  PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), host_size, host_params_.data(), nullptr, nullptr, 0);
+  return new postgresql_prepared_result(this, res);
 }
 
 void postgresql_statement::reset()
 {
-
 }
 
 template < class T >
@@ -62,91 +100,102 @@ void bind_value(std::vector<std::string> &strings, std::vector<const char*> &par
   params[index++] = strval.c_str();
 }
 
-void bind_null(size_t index)
+template <>
+void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, matador::date &x)
 {
+  auto strval = matador::to_string(x, date_format::ISO8601);
+  strings[index] = strval;
+  params[index++] = strval.c_str();
+}
 
+template <>
+void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, matador::time &x)
+{
+  auto strval = matador::to_string(x, "%Y-%m-%d %T.%f");
+  strings[index] = strval;
+  params[index++] = strval.c_str();
 }
 
 void postgresql_statement::serialize(const char *, char &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *, short &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *, int &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *, long &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *, unsigned char &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *, unsigned short &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *, unsigned int &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *, unsigned long &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *, float &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *, double &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *, bool &x)
 {
-  bind_value(host_strings_, host_params_, host_size, x);
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, char *x, size_t s)
+void postgresql_statement::serialize(const char *, char *x, size_t)
 {
-  host_params_[host_size++] = x;
+  host_params_[host_index++] = x;
 }
 
 void postgresql_statement::serialize(const char *, varchar_base &x)
 {
-  host_strings_[host_size] = x.str();
-  host_params_[host_size++] = x.str().c_str();
+  host_strings_[host_index] = x.str();
+  host_params_[host_index++] = x.str().c_str();
 }
 
 void postgresql_statement::serialize(const char *, std::string &x)
 {
-  host_strings_[host_size] = x;
-  host_params_[host_size++] = x.c_str();
+  host_strings_[host_index] = x;
+  host_params_[host_index++] = x.c_str();
 }
 
-void postgresql_statement::serialize(const char *id, matador::date &x)
+void postgresql_statement::serialize(const char *, matador::date &x)
 {
-
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *id, matador::time &x)
+void postgresql_statement::serialize(const char *, matador::time &x)
 {
-
+  bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *id, basic_identifier &x)
@@ -159,7 +208,7 @@ void postgresql_statement::serialize(const char *id, identifiable_holder &x, cas
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
   } else {
-    bind_null(host_index++);
+    host_params_[host_index++] = nullptr;
   }
 }
 
