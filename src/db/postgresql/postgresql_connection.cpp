@@ -95,17 +95,20 @@ detail::statement_impl *postgresql_connection::prepare(const matador::sql &stmt)
 
 void postgresql_connection::begin()
 {
-
+  // TODO: check result
+  std::unique_ptr<postgresql_result> res(execute_internal("START TRANSACTION;"));
 }
 
 void postgresql_connection::commit()
 {
-
+  // TODO: check result
+  std::unique_ptr<postgresql_result> res(execute_internal("COMMIT;"));
 }
 
 void postgresql_connection::rollback()
 {
-
+  // TODO: check result
+  std::unique_ptr<postgresql_result> res(execute_internal("ROLLBACK;"));
 }
 
 std::string postgresql_connection::type() const

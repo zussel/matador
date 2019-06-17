@@ -33,6 +33,13 @@ namespace detail {
 class OOS_SQL_API statement_impl : public serializer
 {
 public:
+  statement_impl& operator=(statement_impl &&) = delete;
+  statement_impl(statement_impl &&) = delete;
+
+public:
+  statement_impl() = default;
+  statement_impl(const statement_impl &) = default;
+  statement_impl& operator=(const statement_impl &) = default;
   ~statement_impl() override = default;
 
   virtual void clear() = 0;

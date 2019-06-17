@@ -45,16 +45,16 @@ void throw_error(int ec, PGconn *db, const std::string &source, const std::strin
 //}
 
 postgresql_exception::postgresql_exception(const std::string &source, const std::string &what)
-  : sql_exception("mysql", (source + ": " + what).c_str())
+  : sql_exception("postgresql", (source + ": " + what).c_str())
 {}
 
 
 postgresql_exception::postgresql_exception(PGconn *db, const std::string &source, const std::string &what)
-  : sql_exception("mysql", error_message(db, source, what).c_str())
+  : sql_exception("postgresql", error_message(db, source, what).c_str())
 {}
 
 postgresql_stmt_exception::postgresql_stmt_exception(const std::string &what)
-  : sql_exception("mysql", what.c_str())
+  : sql_exception("postgresql", what.c_str())
 {}
 
 //postgresql_stmt_exception::postgresql_stmt_exception(MYSQL_STMT *stmt, const std::string &source, const std::string &what)

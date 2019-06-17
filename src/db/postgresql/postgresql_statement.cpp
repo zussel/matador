@@ -2,6 +2,7 @@
 // Created by sascha on 03.06.19.
 //
 
+#include "matador/db/postgresql/postgresql_exception.hpp"
 #include "matador/db/postgresql/postgresql_statement.hpp"
 #include "matador/db/postgresql/postgresql_prepared_result.hpp"
 #include "matador/db/postgresql/postgresql_connection.hpp"
@@ -35,14 +36,14 @@ postgresql_statement::postgresql_statement(postgresql_connection &db, const mata
 }
 
 postgresql_statement::postgresql_statement(const postgresql_statement &x)
-  : db_(x.db_)
+  : statement_impl(x)
+  , db_(x.db_)
   , result_size(x.result_size)
   , host_size(x.host_size)
   , host_strings_(x.host_strings_)
   , host_params_(x.host_params_)
   , name_(x.name_)
 {
-  host_index = x.host_index;
   if (res_ != nullptr) {
     PQclear(res_);
   }
@@ -85,6 +86,10 @@ void postgresql_statement::clear()
 detail::result_impl *postgresql_statement::execute()
 {
   PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), host_size, host_params_.data(), nullptr, nullptr, 0);
+  auto status = PQresultStatus(res);
+  if (status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK) {
+    THROW_POSTGRESQL_ERROR(db_.handle(), "execute", "error on sql statement");
+  }
   return new postgresql_prepared_result(this, res);
 }
 
