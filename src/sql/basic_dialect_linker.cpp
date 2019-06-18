@@ -164,7 +164,6 @@ void basic_dialect_linker::visit(const matador::detail::where &where)
 void basic_dialect_linker::visit(const matador::detail::basic_condition &cond)
 {
   dialect().append_to_result(cond.evaluate(dialect()));
-//  cond.evaluate(dialect().compile_type());
 }
 
 void basic_dialect_linker::visit(const matador::detail::basic_column_condition &cond)

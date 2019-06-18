@@ -73,7 +73,7 @@ public:
     num_operands = 9
   };
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     visitor.visit(*this);
   }
@@ -89,11 +89,11 @@ public:
   column field_;
   std::string operand;
 
-  basic_column_condition(const column &fld, detail::basic_condition::t_operand op)
-    : field_(fld), operand(detail::basic_condition::operands[op])
+  basic_column_condition(column fld, detail::basic_condition::t_operand op)
+    : field_(std::move(fld)), operand(detail::basic_condition::operands[op])
   { }
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     visitor.visit(*this);
   }
@@ -104,11 +104,11 @@ class OOS_SQL_API basic_in_condition : public basic_condition
 public:
   column field_;
 
-  basic_in_condition(const column &fld)
-    : field_(fld)
+  explicit basic_in_condition(column fld)
+    : field_(std::move(fld))
   { }
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     visitor.visit(*this);
   }
@@ -152,13 +152,13 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " " << operand << " " << value;
     } else {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << "?";
+      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << dialect.next_placeholder();
     }
     return str.str();
   }
@@ -177,13 +177,13 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " " << operand << " '" << value << "'";
     } else {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << "?";
+      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << dialect.next_placeholder();
     }
     return str.str();
   }
@@ -203,7 +203,7 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << value << " " << operand << " " << dialect.prepare_identifier(field_.name);
@@ -224,7 +224,7 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << "'" << value << "' " << operand << " " << dialect.prepare_identifier(field_.name);
@@ -271,7 +271,7 @@ public:
    * @param dialect The dialect used to evaluate
    * @return A condition IN part of the query
    */
-  virtual std::string evaluate(basic_dialect &dialect) const override
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << dialect.prepare_identifier(field_.name) << " IN (";
@@ -283,7 +283,7 @@ public:
           str << *first++ << ",";
         } else {
           ++first;
-          str << "?,";
+          str << dialect.next_placeholder() << ",";
         }
       }
     }
@@ -291,7 +291,7 @@ public:
       if (dialect.compile_type() == basic_dialect::DIRECT) {
         str << args_.back();
       } else {
-        str << "?";
+        str << dialect.next_placeholder();
       }
     }
     str << ")";
@@ -302,7 +302,7 @@ public:
    * @brief Returns the number of arguments in the list
    * @return The number of arguments in the list
    */
-  virtual size_t size() const override
+  size_t size() const override
   {
     return args_.size();
   }
@@ -335,8 +335,8 @@ public:
    * @param col Column for the IN condition
    * @param q The query to be evaluated to the IN arguments
    */
-  condition(const column &col, const detail::basic_query &q)
-          : field_(col), query_(q)
+  condition(column col, const detail::basic_query &q)
+          : field_(std::move(col)), query_(q)
   {}
 
   /**
@@ -348,7 +348,7 @@ public:
    * @param dialect The dialect used to evaluate
    * @return A condition IN part of the query
    */
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::string result(dialect.prepare_identifier(field_.name) + " IN (");
     result += dialect.build(query_.stmt(), dialect.compile_type());
@@ -379,8 +379,8 @@ public:
    * @param col The column for the range check
    * @param range The boundary values defining the range
    */
-  condition(const column &col, const std::pair<T, T> &range)
-    : field_(col), range_(range) { }
+  condition(column col, const std::pair<T, T> &range)
+    : field_(std::move(col)), range_(range) { }
 
   /**
    * @brief Evaluates the condition
@@ -391,13 +391,13 @@ public:
    * @param dialect The dialect used to evaluate
    * @return A condition BETWEEN part of the query
    */
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " BETWEEN " << range_.first << " AND " << range_.second;
     } else {
-      str << dialect.prepare_identifier(field_.name) << " BETWEEN ? AND ?";
+      str << dialect.prepare_identifier(field_.name) << " BETWEEN " << dialect.next_placeholder() << " AND " << dialect.next_placeholder();
     }
     return str.str();
   }
@@ -438,7 +438,7 @@ public:
    * @param dialect The dialect used to evaluate
    * @return The exaluated string based on the compile type
    */
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     if (operand == detail::basic_condition::AND) {
@@ -480,7 +480,7 @@ public:
    * @param dialect The dialect used to evaluate
    * @return The exaluated string based on the compile type
    */
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << operand << " (" << cond.evaluate(dialect) << ")";

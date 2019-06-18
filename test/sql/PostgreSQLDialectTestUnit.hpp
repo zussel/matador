@@ -14,6 +14,7 @@ public:
   PostgreSQLDialectTestUnit();
 
   void test_placeholder();
+  void test_placeholder_condition();
   void test_table_name();
 };
 

@@ -21,6 +21,7 @@ PostgreSQLDialectTestUnit::PostgreSQLDialectTestUnit()
   : unit_test("postgresql_dialect" , "postgresql dialect test")
 {
   add_test("placeholder", std::bind(&PostgreSQLDialectTestUnit::test_placeholder, this), "test postgresql placeholder link");
+  add_test("placeholder_condition", std::bind(&PostgreSQLDialectTestUnit::test_placeholder_condition, this), "test postgresql placeholder in condition link");
   add_test("tablename", std::bind(&PostgreSQLDialectTestUnit::test_table_name, this), "test postgresql extract table name");
 }
 
@@ -55,6 +56,31 @@ void PostgreSQLDialectTestUnit::test_placeholder()
   std::string result = conn.dialect()->prepare(s);
 
   UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES ($1, $2, $3) ", result, "insert statement isn't as expected");
+}
+
+void PostgreSQLDialectTestUnit::test_placeholder_condition()
+{
+  matador::connection conn(::connection::postgresql);
+
+  sql s;
+
+  s.append(new detail::select());
+
+  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+
+  cols->push_back(std::make_shared<column>("id"));
+  cols->push_back(std::make_shared<column>("name"));
+  cols->push_back(std::make_shared<column>("age"));
+
+  s.append(cols.release());
+
+  s.append(new detail::from("person"));
+
+  s.append(new detail::where("name"_col == "hans"));
+
+  std::string result = conn.dialect()->prepare(s);
+
+  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" = $1 ", result, "select statement isn't as expected");
 }
 
 void PostgreSQLDialectTestUnit::test_table_name()

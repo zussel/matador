@@ -631,10 +631,9 @@ void QueryTestUnit::test_statement_update()
     stmt.execute();
   }
 
-  column name("name");
-  stmt = q.select().where(name == "").prepare();
-  matador::varchar<255> hname("hans");
-  stmt.bind(0, hname);
+  stmt = q.select().where("name"_col == "").prepare();
+  matador::varchar<255> name("hans");
+  stmt.bind(0, name);
   res = stmt.execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
@@ -642,14 +641,11 @@ void QueryTestUnit::test_statement_update()
   //auto first = res.begin();
   //auto last = res.end();
 
-  for (auto p : res) {
-  //while (first != last) {
-    //std::unique_ptr<person> p(first.release());
+  for (auto const &p : res) {
     UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
     UNIT_EXPECT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
     UNIT_EXPECT_EQUAL(p->height(), 180U, "expected height must be 180");
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
-    //++first;
   }
 
 //  auto id_cond = id_condition_builder::build<person>();
@@ -666,8 +662,8 @@ void QueryTestUnit::test_statement_update()
 
   res = stmt.execute();
 
-  stmt = q.select().where(name == "").prepare();
-  stmt.bind(0, hname);
+  stmt = q.select().where("name"_col == "").prepare();
+  stmt.bind(0, name);
   res = stmt.execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
@@ -675,7 +671,7 @@ void QueryTestUnit::test_statement_update()
   //first = res.begin();
   //last = res.end();
 
-  for (auto p : res) {
+  for (const auto &p : res) {
     //while (first != last) {
     //std::unique_ptr<person> p(first.release());
     UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
@@ -1120,7 +1116,7 @@ void QueryTestUnit::test_update_limit()
   matador::column owner("owner_id");
   matador::column item("item_id");
   relation::t_id newid(4UL);
-  q.update({{item.name, newid}}).where(owner == 1 && item == 1).limit(1);
+  q.update({{item.name, newid}}).where("owner_id"_col == 1 && item == 1).limit(1);
 
   res = q.execute(connection_);
 
