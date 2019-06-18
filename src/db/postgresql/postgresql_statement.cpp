@@ -100,25 +100,33 @@ void postgresql_statement::reset()
 template < class T >
 void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, T &x)
 {
-  auto strval = std::to_string(x);
-  strings[index] = strval;
-  params[index++] = strval.c_str();
+  strings[index] = std::to_string(x);
+  params[index] = strings[index].c_str();
+  ++index;
+}
+
+template <>
+void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, char &x)
+{
+  strings[index] = x;
+  params[index] = strings[index].data();
+  ++index;
 }
 
 template <>
 void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, matador::date &x)
 {
-  auto strval = matador::to_string(x, date_format::ISO8601);
-  strings[index] = strval;
-  params[index++] = strval.c_str();
+  strings[index] = matador::to_string(x, date_format::ISO8601);
+  params[index] = strings[index].c_str();
+  ++index;
 }
 
 template <>
 void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, matador::time &x)
 {
-  auto strval = matador::to_string(x, "%Y-%m-%d %T.%f");
-  strings[index] = strval;
-  params[index++] = strval.c_str();
+  strings[index] = matador::to_string(x, "%Y-%m-%d %T.%f");
+  params[index] = strings[index].c_str();
+  ++index;
 }
 
 void postgresql_statement::serialize(const char *, char &x)
@@ -184,13 +192,15 @@ void postgresql_statement::serialize(const char *, char *x, size_t)
 void postgresql_statement::serialize(const char *, varchar_base &x)
 {
   host_strings_[host_index] = x.str();
-  host_params_[host_index++] = x.str().c_str();
+  host_params_[host_index] = host_strings_[host_index].c_str();
+  ++host_index;
 }
 
 void postgresql_statement::serialize(const char *, std::string &x)
 {
   host_strings_[host_index] = x;
-  host_params_[host_index++] = x.c_str();
+  host_params_[host_index] = host_strings_[host_index].c_str();
+  ++host_index;
 }
 
 void postgresql_statement::serialize(const char *, matador::date &x)

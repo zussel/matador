@@ -48,7 +48,9 @@ std::string basic_dialect::prepare(const sql &s)
 std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
 {
   compile_type_ = compile_type;
-
+  bind_count_ = 0;
+  column_count_ = 0;
+  
   push(s);
   compile();
   link();
