@@ -22,6 +22,7 @@ PostgreSQLDialectTestUnit::PostgreSQLDialectTestUnit()
 {
   add_test("placeholder", std::bind(&PostgreSQLDialectTestUnit::test_placeholder, this), "test postgresql placeholder link");
   add_test("placeholder_condition", std::bind(&PostgreSQLDialectTestUnit::test_placeholder_condition, this), "test postgresql placeholder in condition link");
+  add_test("limit", std::bind(&PostgreSQLDialectTestUnit::test_limit, this), "test postgresql limit");
   add_test("tablename", std::bind(&PostgreSQLDialectTestUnit::test_table_name, this), "test postgresql extract table name");
 }
 
@@ -81,6 +82,32 @@ void PostgreSQLDialectTestUnit::test_placeholder_condition()
   std::string result = conn.dialect()->prepare(s);
 
   UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" = $1 ", result, "select statement isn't as expected");
+}
+
+void PostgreSQLDialectTestUnit::test_limit()
+{
+  matador::connection conn(::connection::postgresql);
+
+  sql s;
+
+  s.append(new detail::select());
+
+  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+
+  cols->push_back(std::make_shared<column>("owner_id"));
+  cols->push_back(std::make_shared<column>("item_id"));
+
+  s.append(cols.release());
+
+  s.append(new detail::from("relation"));
+
+  s.append(new detail::where("owner_id"_col == 1 && "item_id"_col == 1));
+  s.append(new detail::top(1));
+
+  std::string result = conn.dialect()->direct(s);
+
+  UNIT_ASSERT_EQUAL("SELECT \"owner_id\", \"item_id\" FROM \"relation\" WHERE (\"owner_id\" = 1 AND \"item_id\" = 1) LIMIT 1 ", result, "select statement isn't as expected");
+
 }
 
 void PostgreSQLDialectTestUnit::test_table_name()

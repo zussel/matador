@@ -15,6 +15,7 @@ public:
 
   void test_placeholder();
   void test_placeholder_condition();
+  void test_limit();
   void test_table_name();
 };
 
