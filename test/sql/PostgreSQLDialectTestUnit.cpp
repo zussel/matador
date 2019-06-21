@@ -22,7 +22,7 @@ PostgreSQLDialectTestUnit::PostgreSQLDialectTestUnit()
 {
   add_test("placeholder", std::bind(&PostgreSQLDialectTestUnit::test_placeholder, this), "test postgresql placeholder link");
   add_test("placeholder_condition", std::bind(&PostgreSQLDialectTestUnit::test_placeholder_condition, this), "test postgresql placeholder in condition link");
-  add_test("limit", std::bind(&PostgreSQLDialectTestUnit::test_limit, this), "test postgresql limit");
+  add_test("update_limit", std::bind(&PostgreSQLDialectTestUnit::test_update_limit, this), "test postgresql limit");
   add_test("tablename", std::bind(&PostgreSQLDialectTestUnit::test_table_name, this), "test postgresql extract table name");
 }
 
@@ -84,22 +84,25 @@ void PostgreSQLDialectTestUnit::test_placeholder_condition()
   UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" = $1 ", result, "select statement isn't as expected");
 }
 
-void PostgreSQLDialectTestUnit::test_limit()
+void PostgreSQLDialectTestUnit::test_update_limit()
 {
+  std::shared_ptr<columns> update_columns;
+  std::vector<matador::any> rowvalues;
+  detail::query_value_column_processor query_value_column_processor(update_columns, rowvalues);
+
   matador::connection conn(::connection::postgresql);
 
   sql s;
 
-  s.append(new detail::select());
+  s.append(new detail::update);
+  s.append(new detail::tablename("relation"));
+  s.append(new detail::set);
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto colvalues = std::list<std::pair<std::string, matador::any>>{{"owner_id", 1}};
 
-  cols->push_back(std::make_shared<column>("owner_id"));
-  cols->push_back(std::make_shared<column>("item_id"));
-
-  s.append(cols.release());
-
-  s.append(new detail::from("relation"));
+  for(auto colvalue : colvalues) {
+    query_value_column_processor.execute(colvalue);
+  }
 
   s.append(new detail::where("owner_id"_col == 1 && "item_id"_col == 1));
   s.append(new detail::top(1));
@@ -107,7 +110,6 @@ void PostgreSQLDialectTestUnit::test_limit()
   std::string result = conn.dialect()->direct(s);
 
   UNIT_ASSERT_EQUAL("SELECT \"owner_id\", \"item_id\" FROM \"relation\" WHERE (\"owner_id\" = 1 AND \"item_id\" = 1) LIMIT 1 ", result, "select statement isn't as expected");
-
 }
 
 void PostgreSQLDialectTestUnit::test_table_name()

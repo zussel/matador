@@ -15,7 +15,7 @@ SET(HEADER
   ../../../include/matador/db/postgresql/postgresql_statement.hpp
   ../../../include/matador/db/postgresql/postgresql_getvalue.hpp
   ../../../include/matador/db/postgresql/postgresql_prepared_result.hpp
-)
+  ../../../include/matador/db/postgresql/postgresql_dialect_compiler.hpp)
 
 SET(HEADER_INSTALL
   ../../../include/matador/db/postgresql/postgresql_constants.hpp
