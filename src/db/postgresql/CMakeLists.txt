@@ -5,7 +5,7 @@ SET(SOURCES
   postgresql_result.cpp
   postgresql_statement.cpp
   postgresql_getvalue.cpp
-  postgresql_prepared_result.cpp)
+  postgresql_prepared_result.cpp postgresql_dialect_compiler.cpp)
 
 SET(HEADER
   ../../../include/matador/db/postgresql/postgresql_connection.hpp

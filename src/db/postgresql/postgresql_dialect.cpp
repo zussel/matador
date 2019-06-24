@@ -4,6 +4,7 @@
 
 #include <sstream>
 
+#include "matador/db/postgresql/postgresql_dialect_compiler.hpp"
 #include "matador/db/postgresql/postgresql_dialect.hpp"
 
 #include "matador/sql/dialect_token.hpp"
@@ -14,7 +15,7 @@ namespace matador {
 namespace postgresql {
 
 postgresql_dialect::postgresql_dialect()
-: basic_dialect(new detail::basic_dialect_compiler, new detail::basic_dialect_linker)
+: basic_dialect(new postgresql_dialect_compiler, new detail::basic_dialect_linker)
 {
 
 }
