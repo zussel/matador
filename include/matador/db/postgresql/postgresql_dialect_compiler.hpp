@@ -14,7 +14,9 @@ namespace postgresql {
 class postgresql_dialect_compiler : public detail::basic_dialect_compiler
 {
 public:
+  void visit(const matador::detail::select &select1) override;
   void visit(const matador::detail::update &update1) override;
+  void visit(const matador::detail::remove &remove1) override;
   void visit(const matador::detail::tablename &tab) override;
   void visit(const matador::detail::from &from1) override;
 

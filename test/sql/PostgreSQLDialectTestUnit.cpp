@@ -86,10 +86,6 @@ void PostgreSQLDialectTestUnit::test_placeholder_condition()
 
 void PostgreSQLDialectTestUnit::test_update_limit()
 {
-  std::shared_ptr<columns> update_columns;
-  std::vector<matador::any> rowvalues;
-  detail::query_value_column_processor query_value_column_processor(update_columns, rowvalues);
-
   matador::connection conn(::connection::postgresql);
 
   sql s;
@@ -98,18 +94,19 @@ void PostgreSQLDialectTestUnit::test_update_limit()
   s.append(new detail::tablename("relation"));
   s.append(new detail::set);
 
-  auto colvalues = std::list<std::pair<std::string, matador::any>>{{"owner_id", 1}};
+  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
-  for(auto colvalue : colvalues) {
-    query_value_column_processor.execute(colvalue);
-  }
+  unsigned long owner_id(1);
+  cols->push_back(std::make_shared<detail::value_column<unsigned long>>("owner_id", owner_id));
+
+  s.append(cols.release());
 
   s.append(new detail::where("owner_id"_col == 1 && "item_id"_col == 1));
   s.append(new detail::top(1));
 
   std::string result = conn.dialect()->direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT \"owner_id\", \"item_id\" FROM \"relation\" WHERE (\"owner_id\" = 1 AND \"item_id\" = 1) LIMIT 1 ", result, "select statement isn't as expected");
+  UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=1 WHERE \"owner_id\" = (SELECT \"owner_id\" FROM \"relation\" WHERE (\"owner_id\" = 1 AND \"item_id\" = 1) LIMIT 1 ) ", result, "select statement isn't as expected");
 }
 
 void PostgreSQLDialectTestUnit::test_table_name()

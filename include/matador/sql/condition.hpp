@@ -65,12 +65,13 @@ public:
     GREATER_EQUAL,
     OR,
     AND,
-    NOT
+    NOT,
+    IN
   };
 
   enum
   {
-    num_operands = 9
+    num_operands = 10
   };
 
   void accept(token_visitor &visitor) override
@@ -322,7 +323,7 @@ private:
  * @endcode
  */
 template <>
-class condition<column, detail::basic_query> : public detail::basic_condition
+class condition<column, detail::basic_query> : public detail::basic_column_condition
 {
 public:
   /**
@@ -335,8 +336,9 @@ public:
    * @param col Column for the IN condition
    * @param q The query to be evaluated to the IN arguments
    */
-  condition(column col, const detail::basic_query &q)
-          : field_(std::move(col)), query_(q)
+  condition(column col, detail::basic_condition::t_operand op, detail::basic_query q)
+    : basic_column_condition(std::move(col), op)
+    , query_(std::move(q))
   {}
 
   /**
@@ -350,14 +352,13 @@ public:
    */
   std::string evaluate(basic_dialect &dialect) const override
   {
-    std::string result(dialect.prepare_identifier(field_.name) + " IN (");
+    std::string result(dialect.prepare_identifier(field_.name) + " " + operand + " (");
     result += dialect.build(query_.stmt(), dialect.compile_type());
     result += (")");
     return result;
   }
 
 private:
-  column field_;
   detail::basic_query query_;
 };
 
@@ -565,6 +566,8 @@ condition<column, T> operator==(const column &col, T val)
 {
   return condition<column, T>(col, detail::basic_condition::EQUAL, val);
 }
+
+condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
 
 /**
  * @brief Condition unequality operator for a column and a value
