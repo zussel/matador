@@ -118,7 +118,7 @@ std::string postgresql_connection::type() const
 
 std::string postgresql_connection::version() const
 {
-  return std::__cxx11::string();
+  return "";
 }
 
 bool postgresql_connection::exists(const std::string &tablename)
