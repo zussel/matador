@@ -31,6 +31,9 @@ private:
 
   std::string tablename_;
   token_list_t::iterator where_;
+
+//  matador::detail::basic_condition extract_first_condition(
+//  std::list<std::shared_ptr<matador::detail::token>, std::allocator<std::shared_ptr<matador::detail::token>>>::iterator iterator);
 };
 
 }

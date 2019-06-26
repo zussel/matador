@@ -716,6 +716,10 @@ std::shared_ptr<detail::basic_condition> make_condition(const condition<L, R> &c
   return std::make_shared<condition<L, R>>(cond);
 }
 
+std::list<std::shared_ptr<detail::basic_column_condition> > extract_column_conditions() {
+  return std::list<std::shared_ptr<detail::basic_column_condition> >();
+}
+
 }
 
 #endif /* CONDITION_HPP */
