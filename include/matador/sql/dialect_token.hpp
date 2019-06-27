@@ -158,7 +158,7 @@ struct OOS_SQL_API top : public token
 
 struct OOS_SQL_API as : public token
 {
-  explicit as(const std::string &a);
+  explicit as(std::string a);
 
   void accept(token_visitor &visitor) override;
 
@@ -167,7 +167,7 @@ struct OOS_SQL_API as : public token
 
 struct OOS_SQL_API order_by : public token
 {
-  explicit order_by(const std::string &col);
+  explicit order_by(std::string col);
 
   void accept(token_visitor &visitor) override;
 
@@ -176,7 +176,7 @@ struct OOS_SQL_API order_by : public token
 
 struct OOS_SQL_API group_by : public token
 {
-  explicit group_by(const std::string &col);
+  explicit group_by(std::string col);
 
   void accept(token_visitor &visitor) override;
 

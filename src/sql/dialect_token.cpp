@@ -117,8 +117,8 @@ void top::accept(token_visitor &visitor)
   visitor.visit(*this);
 }
 
-as::as(const std::string &a)
-  : token(AS), alias(a)
+as::as(std::string a)
+  : token(AS), alias(std::move(a))
 { }
 
 void as::accept(token_visitor &visitor)
@@ -126,8 +126,8 @@ void as::accept(token_visitor &visitor)
   visitor.visit(*this);
 }
 
-order_by::order_by(const std::string &col)
-  : token(ORDER_BY), column(col)
+order_by::order_by(std::string col)
+  : token(ORDER_BY), column(std::move(col))
 {}
 
 void order_by::accept(token_visitor &visitor)
@@ -135,8 +135,8 @@ void order_by::accept(token_visitor &visitor)
   visitor.visit(*this);
 }
 
-group_by::group_by(const std::string &col)
-  : token(GROUP_BY), column(col)
+group_by::group_by(std::string col)
+  : token(GROUP_BY), column(std::move(col))
 {}
 
 void group_by::accept(token_visitor &visitor)

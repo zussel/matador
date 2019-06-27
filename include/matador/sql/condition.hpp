@@ -450,6 +450,12 @@ public:
     return str.str();
   }
 
+  void accept(token_visitor &visitor) override
+  {
+    left.accept(visitor);
+    right.accept(visitor);
+  }
+
 private:
   condition<L1, R1> left;
   condition<L2, R2> right;
@@ -655,7 +661,7 @@ condition<column, T> operator>=(const column &col, T val)
 }
 
 /**
- * @brief AND operation condition consisting of a left and rigth hand condition
+ * @brief AND operation condition consisting of a left and right hand condition
  *
  * @tparam L1 Left hand type of left hand condition
  * @tparam R1 Right hand type of left hand condition
@@ -672,7 +678,7 @@ condition<condition<L1, R1>, condition<L2, R2>> operator&&(const condition<L1, R
 }
 
 /**
- * @brief OR operation condition consisting of a left and rigth hand condition
+ * @brief OR operation condition consisting of a left and right hand condition
  *
  * @tparam L1 Left hand type of left hand condition
  * @tparam R1 Right hand type of left hand condition
@@ -714,10 +720,6 @@ template<class L, class R>
 std::shared_ptr<detail::basic_condition> make_condition(const condition<L, R> &cond)
 {
   return std::make_shared<condition<L, R>>(cond);
-}
-
-std::list<std::shared_ptr<detail::basic_column_condition> > extract_column_conditions() {
-  return std::list<std::shared_ptr<detail::basic_column_condition> >();
 }
 
 }
