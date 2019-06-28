@@ -169,13 +169,11 @@ void basic_dialect_linker::visit(const matador::detail::basic_condition &cond)
 
 void basic_dialect_linker::visit(const matador::detail::basic_column_condition &cond)
 {
-  dialect().inc_bind_count();
   dialect().append_to_result(cond.evaluate(dialect()));
 }
 
 void basic_dialect_linker::visit(const matador::detail::basic_in_condition &cond)
 {
-  dialect().inc_bind_count(cond.size());
   dialect().append_to_result(cond.evaluate(dialect()));
 }
 

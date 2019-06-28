@@ -745,6 +745,14 @@ public:
     }
   }
 #ifndef MATADOR_DOXYGEN_DOC
+  void expect_equal(const double &a, const double &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (std::abs(a - b) > 0.000001) {
+      ++current_test_func_info->errors;
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    }
+  }
   void expect_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->error_count;

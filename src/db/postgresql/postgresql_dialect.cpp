@@ -44,9 +44,9 @@ const char *postgresql_dialect::type_string(matador::data_type type) const
     case data_type::type_bool:
       return "INTEGER";
     case data_type::type_float:
-      return "FLOAT(4)";
+      return "FLOAT4";
     case data_type::type_double:
-      return "REAL";
+      return "FLOAT8";
     case data_type::type_date:
       return "DATE";
     case data_type::type_time:
@@ -77,9 +77,9 @@ matador::data_type postgresql_dialect::string_type(const char *type) const
     return data_type::type_date;
   } else if (strncmp(type, "timestamp", 8) == 0) {
     return data_type::type_time;
-  } else if (strcmp(type, "float") == 0) {
+  } else if (strcmp(type, "real") == 0 || strcmp(type, "float4") == 0) {
     return data_type::type_float;
-  } else if (strcmp(type, "double") == 0) {
+  } else if (strcmp(type, "double precision") == 0 || strcmp(type, "float8") == 0) {
     return data_type::type_double;
   } else if (strncmp(type, "varchar", 7) == 0) {
     return data_type::type_varchar;

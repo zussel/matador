@@ -155,6 +155,7 @@ public:
 
   std::string evaluate(basic_dialect &dialect) const override
   {
+    dialect.inc_bind_count();
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " " << operand << " " << value;
@@ -180,6 +181,7 @@ public:
 
   std::string evaluate(basic_dialect &dialect) const override
   {
+    dialect.inc_bind_count();
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " " << operand << " '" << value << "'";
@@ -274,6 +276,7 @@ public:
    */
   std::string evaluate(basic_dialect &dialect) const override
   {
+    dialect.inc_bind_count(size());
     std::stringstream str;
     str << dialect.prepare_identifier(field_.name) << " IN (";
     if (args_.size() > 1) {
@@ -394,6 +397,7 @@ public:
    */
   std::string evaluate(basic_dialect &dialect) const override
   {
+    dialect.inc_bind_count(2);
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " BETWEEN " << range_.first << " AND " << range_.second;
