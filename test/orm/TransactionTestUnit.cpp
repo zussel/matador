@@ -28,8 +28,6 @@ TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::str
 }
 
 
-TransactionTestUnit::~TransactionTestUnit() {}
-
 void TransactionTestUnit::test_simple()
 {
   matador::persistence p(dns_);

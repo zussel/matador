@@ -30,7 +30,7 @@ class TransactionTestUnit : public matador::unit_test
 {
 public:
   TransactionTestUnit(const std::string &name, const std::string &msg, const std::string &dns = "memory");
-  virtual ~TransactionTestUnit();
+  ~TransactionTestUnit() override = default;
 
   void test_simple();
   void test_nested();
