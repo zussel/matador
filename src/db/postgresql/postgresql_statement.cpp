@@ -33,6 +33,11 @@ postgresql_statement::postgresql_statement(postgresql_connection &db, const mata
   name_ = generate_statement_name(stmt);
 
   res_ = PQprepare(db.handle(), name_.c_str(), str().c_str(), host_size, nullptr);
+  if (res_ == nullptr) {
+    THROW_POSTGRESQL_ERROR(db_.handle(), "execute", "error on sql statement");
+  } else if (PQresultStatus(res_) != PGRES_COMMAND_OK) {
+    THROW_POSTGRESQL_ERROR(db_.handle(), "execute", "error on sql statement");
+  }
 }
 
 postgresql_statement::postgresql_statement(const postgresql_statement &x)

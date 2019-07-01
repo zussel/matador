@@ -29,6 +29,7 @@ protected:
 
 private:
   bool is_update = false;
+  bool is_delete = false;
   bool has_condition_column_name_ = false;
 
   std::string tablename_;

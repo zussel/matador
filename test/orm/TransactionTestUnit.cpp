@@ -45,9 +45,9 @@ void TransactionTestUnit::test_simple()
     auto hans = s.insert(new person("hans", d1, 180));
 
     tr.commit();
-  } catch (sql_exception &) {
+  } catch (sql_exception &ex) {
     tr.rollback();
-    UNIT_FAIL("transaction failed");
+    UNIT_FAIL("transaction failed: " << ex.what());
   }
 
   matador::object_view<person> persons(s.store());

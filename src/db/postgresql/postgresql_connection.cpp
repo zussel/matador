@@ -123,7 +123,7 @@ std::string postgresql_connection::version() const
 
 bool postgresql_connection::exists(const std::string &tablename)
 {
-  std::string stmt("SELECT EXISTS (SELECT 1FROM information_schema.tables WHERE table_schema = 'public' AND table_name = '" + tablename + "')");
+  std::string stmt("SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = '" + tablename + "'");
 
   std::unique_ptr<postgresql_result> res(execute_internal(stmt));
   return res->result_rows() == 1;
@@ -170,6 +170,7 @@ basic_dialect *postgresql_connection::dialect()
 
 postgresql_result* postgresql_connection::execute_internal(const std::string &stmt)
 {
+//  std::cout << "\n" << stmt;
   PGresult *res = PQexec(conn_, stmt.c_str());
 
   auto status = PQresultStatus(res);

@@ -11,18 +11,21 @@ namespace postgresql {
 void postgresql_dialect_compiler::visit(const matador::detail::select &)
 {
   is_update = false;
+  is_delete = false;
   has_condition_column_name_ = false;
 }
 
 void postgresql_dialect_compiler::visit(const matador::detail::update &)
 {
   is_update = true;
+  is_delete = false;
   has_condition_column_name_ = false;
 }
 
 void postgresql_dialect_compiler::visit(const matador::detail::remove &)
 {
   is_update = false;
+  is_delete = true;
   has_condition_column_name_ = false;
 }
 
@@ -38,7 +41,7 @@ void postgresql_dialect_compiler::visit(const matador::detail::from &tab)
 
 void postgresql_dialect_compiler::visit(const matador::detail::where &whr)
 {
-  if (is_update) {
+  if (is_update || is_delete) {
     where_ = top().current;
     whr.cond->accept(*this);
   }
@@ -54,7 +57,7 @@ void postgresql_dialect_compiler::visit(const matador::detail::basic_column_cond
 
 void postgresql_dialect_compiler::visit(const matador::detail::top &limit)
 {
-  if (!is_update) {
+  if (!is_update && !is_delete) {
     return;
   }
 
