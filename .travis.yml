@@ -1,249 +1,63 @@
 language: cpp
 sudo: false
-os: linux
 dist: trusty
+
+os: linux
+
 matrix:
   include:
-  - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=32
-    addons:
-      apt:
-        packages:
-        - clang-3.6
-        - linux-libc-dev:i386
-        - g++-5-multilib
-        - gcc-5-multilib
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.6
-  - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug ARCH=64
-    addons:
-      apt:
-        packages:
-        - clang-3.6
-        - g++-5
-        - gcc-5
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.6
-  - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug ARCH=32
-    addons:
-      apt:
-        packages:
-        - clang-3.7
-        - linux-libc-dev:i386
-        - g++-5-multilib
-        - gcc-5-multilib
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.7
-  - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug ARCH=64
-    os: linux
-    addons:
-      apt:
-        packages:
-        - clang-3.7
-        - g++-5
-        - gcc-5
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.7
-  - env: CLANG_VERSION=3.8 BUILD_TYPE=Debug ARCH=32
-    addons:
-      apt:
-        packages:
-        - clang-3.8
-        - linux-libc-dev:i386
-        - g++-5-multilib
-        - gcc-5-multilib
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.8
-  - env: CLANG_VERSION=3.8 BUILD_TYPE=Debug ARCH=64
-    addons:
-      apt:
-        packages:
-        - clang-3.8
-        - g++-5
-        - gcc-5
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.8
-  - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug ARCH=32
-    addons:
-      apt:
-        packages:
-        - clang-3.9
-        - linux-libc-dev:i386
-        - g++-5-multilib
-        - gcc-5-multilib
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.9
-  - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug ARCH=64
-    addons:
-      apt:
-        packages:
-        - clang-3.9
-        - g++-5
-        - gcc-5
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.9
-  - env: CLANG_VERSION=4.0 BUILD_TYPE=Debug ARCH=32
-    addons:
-      apt:
-        packages:
-        - clang-4.0
-        - linux-libc-dev:i386
-        - g++-5-multilib
-        - gcc-5-multilib
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-trusty-4.0
-  - env: CLANG_VERSION=4.0 BUILD_TYPE=Debug ARCH=64
-    addons:
-      apt:
-        packages:
-        - clang-4.0
-        - g++-5
-        - gcc-5
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-trusty-4.0
-  - env: CLANG_VERSION=5.0 BUILD_TYPE=Debug ARCH=32
-    addons:
-      apt:
-        packages:
-        - clang-5.0
-        - linux-libc-dev:i386
-        - g++-5-multilib
-        - gcc-5-multilib
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-trusty-5.0
-        - sourceline: deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main
-          key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
-  - env: CLANG_VERSION=5.0 BUILD_TYPE=Debug ARCH=64
-    addons:
-      apt:
-        packages:
-        - clang-5.0
-        - g++-5
-        - gcc-5
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-trusty-5.0
-        - sourceline: deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main
-          key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
+  - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=32
+    addons: { apt: {packages: [clang-3.6,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
+  - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=64
+    addons: { apt: {packages: [clang-3.6,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
+  - env: CLANG_VERSION=3.7 BUILD_TYPE=Release ARCH=32
+    addons: { apt: {packages: [clang-3.7,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
+  - env: CLANG_VERSION=3.7 BUILD_TYPE=Release ARCH=64
+    addons: { apt: {packages: [clang-3.7,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
+  - env: CLANG_VERSION=3.8 BUILD_TYPE=Release ARCH=32
+    addons: { apt: {packages: [clang-3.8,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
+  - env: CLANG_VERSION=3.8 BUILD_TYPE=Release ARCH=64
+    addons: { apt: {packages: [clang-3.8,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
+  - env: CLANG_VERSION=3.9 BUILD_TYPE=Release ARCH=32
+    addons: { apt: {packages: [clang-3.9,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-3.9]}}
+  - env: CLANG_VERSION=3.9 BUILD_TYPE=Release ARCH=64
+    addons: { apt: {packages: [clang-3.9,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-3.9]}}
+  - env: CLANG_VERSION=4.0 BUILD_TYPE=Release ARCH=32
+    addons: { apt: {packages: [clang-4.0,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-4.0]}}
+  - env: CLANG_VERSION=4.0 BUILD_TYPE=Release ARCH=64
+    addons: { apt: {packages: [clang-4.0,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-4.0]}}
+  - env: CLANG_VERSION=5.0 BUILD_TYPE=Release ARCH=32
+    addons: { apt: {packages: [clang-5.0,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-5.0]}}
+  - env: CLANG_VERSION=5.0 BUILD_TYPE=Release ARCH=64
+    addons: { apt: {packages: [clang-5.0,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-5.0]}}
   - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug ARCH=32
-    addons: &1
-      apt:
-        packages:
-        - clang-6.0
-        - linux-libc-dev:i386
-        - g++-5-multilib
-        - gcc-5-multilib
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-trusty-6.0
-        - sourceline: deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main
-          key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
+    addons: &clang6_32 { apt: {packages: [clang-6.0,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-6.0]}}
   - env: CLANG_VERSION=6.0 BUILD_TYPE=Release ARCH=32
-    addons: *1
+    addons: *clang6_32
   - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug ARCH=64
-    addons: &2
-      apt:
-        packages:
-        - clang-6.0
-        - g++-5
-        - gcc-5
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-trusty-6.0
-        - sourceline: deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main
-          key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
+    addons: &clang6_64 { apt: {packages: [clang-6.0,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-6.0]}}
   - env: CLANG_VERSION=6.0 BUILD_TYPE=Release ARCH=64
-    addons: *2
+    addons: *clang6_64
   - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=32
-    addons:
-      apt:
-        packages:
-        - linux-libc-dev:i386
-        - g++-4.9-multilib
-        - gcc-4.9-multilib
-        sources:
-        - ubuntu-toolchain-r-test
+    addons: { apt: {packages: [g++-4.9-multilib,linux-libc-dev:i386] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=64
-    addons:
-      apt:
-        packages:
-        - g++-4.9
-        - gcc-4.9
-        sources:
-        - ubuntu-toolchain-r-test
+    addons: { apt: {packages: [g++-4.9] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=5 BUILD_TYPE=Debug ARCH=32
-    addons:
-      apt:
-        packages:
-        - linux-libc-dev:i386
-        - g++-5-multilib
-        - gcc-5-multilib
-        sources:
-        - ubuntu-toolchain-r-test
+    addons: { apt: {packages: [g++-5-multilib,linux-libc-dev:i386] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=5 BUILD_TYPE=Debug ARCH=64
-    addons:
-      apt:
-        packages:
-        - g++-5
-        - gcc-5
-        sources:
-        - ubuntu-toolchain-r-test
+    addons: { apt: {packages: [g++-5] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=6 BUILD_TYPE=Debug ARCH=32
-    addons:
-      apt:
-        packages:
-        - rpm
-        - linux-libc-dev:i386
-        - g++-6-multilib
-        - gcc-6-multilib
-        - doxygen
-        sources:
-        - ubuntu-toolchain-r-test
+    addons: { apt: {packages: [g++-6-multilib,linux-libc-dev:i386] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=6 BUILD_TYPE=Debug ARCH=64
-    addons:
-      apt:
-        packages:
-        - rpm
-        - g++-6
-        - gcc-6
-        - doxygen
-        sources:
-        - ubuntu-toolchain-r-test
+    addons: { apt: {packages: [g++-6] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=32
-    addons: &3
-      apt:
-        packages:
-        - rpm
-        - linux-libc-dev:i386
-        - g++-7-multilib
-        - gcc-7-multilib
-        - doxygen
-        sources:
-        - ubuntu-toolchain-r-test
-  - env: GCC_VERSION=7 BUILD_TYPE=Release ARCH=32
-    addons: *3
-  - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=64
-    addons: &4
-      apt:
-        packages:
-        - rpm
-        - g++-7
-        - gcc-7
-        - doxygen
-        sources:
-        - ubuntu-toolchain-r-test
+    addons: &gcc7_32 { apt: {packages: [g++-7-multilib,rpm,doxygen,linux-libc-dev:i386] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=7 BUILD_TYPE=Release ARCH=64
-    addons: *4
+    addons: *gcc7_32
+  - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=64
+    addons: &gcc7_64 { apt: {packages: [g++-7,rpm,doxygen] , sources: [ubuntu-toolchain-r-test]}}
+  - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=64
+    addons: *gcc7_64
 branches:
   only:
   - develop
