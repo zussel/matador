@@ -30,7 +30,7 @@ const char *postgresql_prepared_result::column(postgresql_prepared_result::size_
 
 bool postgresql_prepared_result::fetch()
 {
-  return ++row_ < rows_;
+  return row_++ < rows_;
 }
 
 postgresql_prepared_result::size_type postgresql_prepared_result::affected_rows() const
@@ -155,12 +155,14 @@ bool postgresql_prepared_result::finalize_bind()
 
 bool postgresql_prepared_result::prepare_fetch()
 {
-  return false;
+  column_ = 0;
+  return row_ + 1 <= rows_;
 }
 
 bool postgresql_prepared_result::finalize_fetch()
 {
-  return false;
+  ++row_;
+  return true;
 }
 }
 }

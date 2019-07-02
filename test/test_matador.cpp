@@ -140,10 +140,13 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(MATADOR_POSTGRESQL) && defined(MATADOR_POSTGRESQL_TEST)
-  suite.register_unit(new PostgreSQLDialectTestUnit());
   suite.register_unit(new ConnectionTestUnit("postgresql_conn", "postgresql connection test unit", ::connection::postgresql));
   suite.register_unit(new TransactionTestUnit("postgresql_transaction", "postgresql transaction test unit", ::connection::postgresql));
   suite.register_unit(new QueryTestUnit("postgresql_query", "postgresql query test unit", ::connection::postgresql));
+  suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new PostgreSQLDialectTestUnit());
 #endif
 
   //suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));

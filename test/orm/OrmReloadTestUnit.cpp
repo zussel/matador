@@ -57,7 +57,7 @@ void OrmReloadTestUnit::test_load()
     t_person_view persons(s.store());
 
     UNIT_ASSERT_TRUE(!persons.empty(), "person view must not be empty");
-    UNIT_ASSERT_EQUAL(persons.size(), 6UL, "thier must be 6 persons");
+    UNIT_ASSERT_EQUAL(persons.size(), 6UL, "there must be 6 persons");
 
     t_person_view::iterator first = persons.begin();
     t_person_view::iterator last = persons.end();

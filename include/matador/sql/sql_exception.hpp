@@ -31,6 +31,12 @@ public:
   {}
 
 
+  sql_exception(std::string source, std::string what)
+    : source_(std::move(source))
+    , what_(std::move(what))
+  {}
+
+
   ~sql_exception() override = default;
 
   /**
@@ -40,7 +46,7 @@ public:
    */
   const char* what() const noexcept override
   {
-    return what_;
+    return what_.c_str();
   }
 
   /**
@@ -50,12 +56,12 @@ public:
    */
   const char* source() const
   {
-    return source_;
+    return source_.c_str();
   }
 
 private:
-  const char *source_;
-  const char *what_;
+  std::string source_;
+  std::string what_;
 };
 
 }
