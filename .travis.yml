@@ -63,7 +63,7 @@ branches:
   - develop
   - master
   - "/^v\\d+\\.\\d+\\.\\d+$/"
-  - "/^feature\\/.*$/"
+  - "/^feature.*/"
 before_install:
 - |
   if [ -n "$GCC_VERSION" ]; then
