@@ -39,6 +39,7 @@
 #include <map>
 #include <vector>
 #include <cstring>
+#include <cstdlib>
 #include <string>
 #include <sstream>
 #include <type_traits>
