@@ -312,6 +312,7 @@ public:
    * @param x The result ro move
    */
   result(result &&x) noexcept
+    : prototype_(x.prototype_)
   {
     std::swap(p, x.p);
   }

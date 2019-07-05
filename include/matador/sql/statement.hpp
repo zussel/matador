@@ -199,6 +199,7 @@ public:
    * @param x The statement to move from
    */
   statement(statement &&x) noexcept
+    : prototype_(x.prototype_)
   {
     std::swap(p, x.p);
   }

@@ -23,9 +23,9 @@ public:
    * @param t Object to be serialized
    */
   template<class S, class T>
-  friend inline void serialize(S &s, T &t) {}
+  friend inline void serialize(S &, T &) {}
   template<class S, class T>
-  friend inline void serialize(S &s, const T &t) {}
+  friend inline void serialize(S &, const T &) {}
 
   /**
    * @brief Serializes the given object with the given serializer
