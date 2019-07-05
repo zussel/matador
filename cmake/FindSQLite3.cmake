@@ -1,66 +1,51 @@
-# Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
-# file Copyright.txt or https://cmake.org/licensing for details.
+# - Try to find SQLite3
+# Once done this will define
+#  SQLITE3_FOUND - System has SQLite3
+#  SQLITE3_INCLUDE_DIR - The SQLite3 include directories
+#  SQLITE3_LIBRARY - The libraries needed to use SQLite3
 
-#[=======================================================================[.rst:
-FindSQLite3
------------
-
-Find the SQLite libraries, v3
-
-IMPORTED targets
-^^^^^^^^^^^^^^^^
-
-This module defines the following :prop_tgt:`IMPORTED` target:
-
-``SQLite::SQLite3``
-
-Result variables
-^^^^^^^^^^^^^^^^
-
-This module will set the following variables if found:
-
-``SQLite3_INCLUDE_DIRS``
-  where to find sqlite3.h, etc.
-``SQLite3_LIBRARIES``
-  the libraries to link against to use SQLite3.
-``SQLite3_VERSION``
-  version of the SQLite3 library found
-``SQLite3_FOUND``
-  TRUE if found
-
-#]=======================================================================]
-
-# Look for the necessary header
-find_path(SQLite3_INCLUDE_DIR NAMES sqlite3.h)
-mark_as_advanced(SQLite3_INCLUDE_DIR)
-
-# Look for the necessary library
-find_library(SQLite3_LIBRARY NAMES sqlite3 sqlite)
-mark_as_advanced(SQLite3_LIBRARY)
-
-# Extract version information from the header file
-if(SQLite3_INCLUDE_DIR)
-    file(STRINGS ${SQLite3_INCLUDE_DIR}/sqlite3.h _ver_line
-         REGEX "^#define SQLITE_VERSION  *\"[0-9]+\\.[0-9]+\\.[0-9]+\""
-         LIMIT_COUNT 1)
-    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
-           SQLite3_VERSION "${_ver_line}")
-    unset(_ver_line)
+set(PROGRAMFILES $ENV{ProgramFiles})
+if (DEFINED ENV{ProgramW6432})
+    set(PROGRAMFILES $ENV{ProgramW6432})
 endif()
 
-include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-find_package_handle_standard_args(SQLite3
-    REQUIRED_VARS SQLite3_INCLUDE_DIR SQLite3_LIBRARY
-    VERSION_VAR SQLite3_VERSION)
+IF (WIN32)
+    FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
+      $ENV{PROGRAMFILES}/SQLite/include/
+      ${PROGRAMFILES}/SQLite/include/
+      DOC "The directory where sqlite3.h resides"
+      )
 
-# Create the imported target
-if(SQLite3_FOUND)
-    set(SQLite3_INCLUDE_DIRS ${SQLite3_INCLUDE_DIR})
-    set(SQLite3_LIBRARIES ${SQLite3_LIBRARY})
-    if(NOT TARGET SQLite::SQLite3)
-        add_library(SQLite::SQLite3 UNKNOWN IMPORTED)
-        set_target_properties(SQLite::SQLite3 PROPERTIES
-            IMPORTED_LOCATION             "${SQLite3_LIBRARY}"
-            INTERFACE_INCLUDE_DIRECTORIES "${SQLite3_INCLUDE_DIR}")
-    endif()
-endif()
+    FIND_LIBRARY( SQLITE3_LIBRARY
+      NAMES sqlite3
+      PATHS
+      $ENV{PROGRAMFILES}/SQLite/lib/
+      ${PROGRAMFILES}/SQLite/lib/
+      DOC "The SQLite3 library"
+      )
+ELSE (WIN32)
+    FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
+      /usr/include
+      /usr/local/include
+      /sw/include
+      /opt/local/include
+      DOC "The directory where sqlite3.h resides")
+    FIND_LIBRARY( SQLITE3_LIBRARY
+      NAMES sqlite3
+      PATHS
+      /usr/lib64
+      /usr/lib
+      /usr/local/lib64
+      /usr/local/lib
+      /sw/lib
+      /opt/local/lib
+      DOC "The SQLite3 library")
+ENDIF (WIN32)
+
+IF (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
+    SET( SQLITE3_FOUND TRUE CACHE STRING "Set to TRUE if SQLite3 is found, FALSE otherwise")
+ELSE (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
+    SET( SQLITE3_FOUND FALSE CACHE STRING "Set to TRUE if SQLite3 is found, FALSE otherwise")
+ENDIF (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
+
+MARK_AS_ADVANCED( SQLITE3_FOUND )
