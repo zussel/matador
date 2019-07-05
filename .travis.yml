@@ -58,12 +58,12 @@ matrix:
     addons: &gcc7_64 { apt: {packages: [g++-7,rpm,doxygen] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=64
     addons: *gcc7_64
-branches:
-  only:
-  - develop
-  - master
-  - "/^v\\d+\\.\\d+\\.\\d+$/"
-  - "/^feature.*/"
+#branches:
+#  only:
+#  - develop
+#  - master
+#  - "/^v\\d+\\.\\d+\\.\\d+$/"
+#  - "/^feature.*/"
 before_install:
 - |
   if [ -n "$GCC_VERSION" ]; then
