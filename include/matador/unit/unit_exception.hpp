@@ -44,18 +44,18 @@ public:
    * 
    * @param msg Message of the exception.
    */
-  explicit unit_exception(std::string msg) throw()
+  explicit unit_exception(std::string msg) noexcept
     : what_(std::move(msg))
   {}
 
-  virtual ~unit_exception() throw() {}
+  ~unit_exception() noexcept override = default;
   
   /**
    * Returns the message of this exception.
    * 
    * @return The message of the exception.
    */
-  virtual const char* what() const throw()
+  const char* what() const noexcept override
   {
     return what_.c_str();
   }

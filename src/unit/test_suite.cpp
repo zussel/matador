@@ -4,11 +4,9 @@
 #include <algorithm>
 #include <functional>
 #include <iostream>
+#include <cstring>
 
 namespace matador {
-
-test_suite::test_suite()
-{}
 
 void test_suite::register_unit(unit_test *utest)
 {
@@ -135,7 +133,7 @@ bool test_suite::run()
         summary_.reset();
         if (!args_.unit_args.empty()) {
           bool result = true;
-          for (auto item : args_.unit_args) {
+          for (auto const &item : args_.unit_args) {
             bool succeeded = run(item);
             if (result && !succeeded) {
               result = succeeded;
@@ -189,7 +187,7 @@ bool test_suite::run(const test_unit_args &unit_args)
   if (unit_args.tests.empty()) {
     result = run(unit_args.unit);
   } else {
-    for (auto test : unit_args.tests) {
+    for (auto const &test : unit_args.tests) {
       bool succeeded = run(unit_args.unit, test);
       if (result && !succeeded) {
         result = succeeded;

@@ -168,14 +168,14 @@ private:
 
   struct unit_lister : public std::unary_function<unit_test_ptr, void>
   {
-    unit_lister(std::ostream &o, bool b = false);
+    explicit unit_lister(std::ostream &o, bool b = false);
     void operator()(const test_suite::value_type &x) const;
     std::ostream &out;
     bool brief;
   };
 
 public:
-  test_suite();
+  test_suite() = default;
   virtual ~test_suite();
   
   /**

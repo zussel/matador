@@ -38,8 +38,6 @@
 #include <functional>
 #include <map>
 #include <vector>
-#include <cstring>
-#include <cstdlib>
 #include <string>
 #include <sstream>
 #include <type_traits>
@@ -255,7 +253,7 @@ public:
    * @param name The name of a test_unit serializable.
    * @param caption The caption of a test_unit serializable.
    */
-  unit_test(const std::string &name, const std::string &caption);
+  unit_test(std::string name, std::string caption);
   virtual ~unit_test();
   
   /**
@@ -387,43 +385,11 @@ public:
   }
 
 #ifndef MATADOR_DOXYGEN_DOC
-  void assert_equal(char *&a, const char* &b, const std::string &msg, int line, const char *file)
-  {
-    ++current_test_func_info->assertion_count;
-    if (strcmp(a, b) != 0) {
-      std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-      throw unit_exception(msgstr.str());
-    }
-  }
+  void assert_equal(char *&a, const char* &b, const std::string &msg, int line, const char *file);
+  void assert_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file);
+  void assert_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file);
+  void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file);
 
-  void assert_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file)
-  {
-    ++current_test_func_info->assertion_count;
-    if (strcmp(a.c_str(), b) != 0) {
-      std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-      throw unit_exception(msgstr.str());
-    }
-  }
-  void assert_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file)
-  {
-    ++current_test_func_info->assertion_count;
-    if (strcmp(a, b.c_str()) != 0) {
-      std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-      throw unit_exception(msgstr.str());
-    }
-  }
-  void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
-  {
-    ++current_test_func_info->assertion_count;
-    if (strcmp(a, b) != 0) {
-      std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-      throw unit_exception(msgstr.str());
-    }
-  }
   template < int N1, int N2 >
   void
   assert_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
@@ -435,6 +401,7 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+
   template < int N1, int N2 >
   void
   assert_equal(char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
@@ -446,6 +413,7 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+
   template < class X >
   void assert_equal(const X &a, const bool &b, const std::string &msg, int line, const char *file)
   {
@@ -458,15 +426,7 @@ public:
     }
   }
 
-  void assert_equal(const bool &a, const bool &b, const std::string &msg, int line, const char *file)
-  {
-    ++current_test_func_info->assertion_count;
-    if (a != b) {
-      std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-      throw unit_exception(msgstr.str());
-    }
-  }
+  void assert_equal(const bool &a, const bool &b, const std::string &msg, int line, const char *file);
 #endif /* MATADOR_DOXYGEN_DOC */
 
   /**
@@ -746,38 +706,10 @@ public:
     }
   }
 #ifndef MATADOR_DOXYGEN_DOC
-  void expect_equal(const double &a, const double &b, const std::string &msg, int line, const char *file)
-  {
-    ++current_test_func_info->error_count;
-    if (std::abs(a - b) > 0.000001) {
-      ++current_test_func_info->errors;
-      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-    }
-  }
-  void expect_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file)
-  {
-    ++current_test_func_info->error_count;
-    if (strcmp(a, b.c_str()) != 0) {
-      ++current_test_func_info->errors;
-      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-    }
-  }
-  void expect_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file)
-  {
-    ++current_test_func_info->error_count;
-    if (strcmp(a.c_str(), b) != 0) {
-      ++current_test_func_info->errors;
-      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-    }
-  }
-  void expect_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
-  {
-    ++current_test_func_info->error_count;
-    if (strcmp(a, b) != 0) {
-      ++current_test_func_info->errors;
-      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-    }
-  }
+  void expect_equal(const double &a, const double &b, const std::string &msg, int line, const char *file);
+  void expect_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file);
+  void expect_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file);
+  void expect_equal(const char *a, const char *b, const std::string &msg, int line, const char *file);
   template < int N1, int N2 >
   void
   expect_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
@@ -899,7 +831,7 @@ private:
   t_test_func_info_vector test_func_infos_;
 
   // runtime data
-  test_func_info *current_test_func_info;
+  test_func_info *current_test_func_info = nullptr;
 };
 
 }
