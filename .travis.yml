@@ -11,9 +11,9 @@ matrix:
   - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=64
     addons: { apt: {packages: [clang-3.6,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
   - env: CLANG_VERSION=3.7 BUILD_TYPE=Release ARCH=32
-    addons: { apt: {packages: [clang-3.7,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
+    addons: { apt: {packages: [clang-3.7,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-precise-3.7]}}
   - env: CLANG_VERSION=3.7 BUILD_TYPE=Release ARCH=64
-    addons: { apt: {packages: [clang-3.7,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
+    addons: { apt: {packages: [clang-3.7,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-precise-3.7]}}
   - env: CLANG_VERSION=3.8 BUILD_TYPE=Release ARCH=32
     addons: { apt: {packages: [clang-3.8,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
   - env: CLANG_VERSION=3.8 BUILD_TYPE=Release ARCH=64
