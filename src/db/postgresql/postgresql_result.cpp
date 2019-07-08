@@ -37,7 +37,7 @@ const char *postgresql_result::column(postgresql_result::size_type c) const
 
 bool postgresql_result::fetch()
 {
-  return pos_++ < rows_;
+  return ++pos_ < rows_;
 }
 
 postgresql_result::size_type postgresql_result::affected_rows() const
