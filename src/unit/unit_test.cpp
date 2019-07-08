@@ -173,7 +173,7 @@ void unit_test::execute(test_func_info &test_info, bool quiet)
     return;
   }
   if (test_info.succeeded) {
-    std::cout << "PASS (" << test_info.assertion_count + test_info.error_count << " assertions) (" << (double)(dur)/1000.0 << "ms)\n";
+    std::cout << "PASS (" << ::std::right << std::setw(3) << test_info.assertion_count + test_info.error_count << " assertions) (" << std::setw(8) << (double)(dur)/1000.0 << "ms)\n";
   } else {
     std::cout << "FAILED\n\t" << test_info.message << "\n";
   }

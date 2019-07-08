@@ -580,7 +580,6 @@ void QueryTestUnit::test_statement_insert()
 
   result<Item> res(stmt.execute());
 
-  //matador::identifier<unsigned long> id(23);
   unsigned long id(23);
   auto itime = time_val_;
   Item hans("Hans", 4711);
