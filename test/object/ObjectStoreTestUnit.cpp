@@ -32,7 +32,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("delete", std::bind(&ObjectStoreTestUnit::test_delete_object, this), "object deletion test");
   add_test("hierarchy", std::bind(&ObjectStoreTestUnit::test_hierarchy, this), "object hierarchy test");
   add_test("view", std::bind(&ObjectStoreTestUnit::test_view, this), "object view test");
-  add_test("clear_type", std::bind(&ObjectStoreTestUnit::test_clear_type, this), "object store clear type test");
+//  add_test("clear_type", std::bind(&ObjectStoreTestUnit::test_clear_type, this), "object store clear type test");
   add_test("clear", std::bind(&ObjectStoreTestUnit::test_clear, this), "object store clear test");
   add_test("generic", std::bind(&ObjectStoreTestUnit::test_generic, this), "generic object access test");
   add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object transient structure test");
@@ -710,42 +710,42 @@ void ObjectStoreTestUnit::test_view()
   UNIT_ASSERT_GREATER(item->id(), 0UL);
 }
 
-void ObjectStoreTestUnit::test_clear_type()
-{
-  ostore_.attach<Item>("item");
-
-  for (int i = 0; i < 10; ++i) {
-    std::stringstream str;
-    str << "Item " << i+1;
-    ostore_.insert(new Item(str.str(), i+1));
-  }
-
-  typedef object_view<Item> item_view_t;
-
-  item_view_t iview(ostore_);
-
-  UNIT_ASSERT_EQUAL((int)iview.size(), 10);
-  UNIT_ASSERT_FALSE(iview.empty());
-  UNIT_ASSERT_FALSE(ostore_.empty());
-
-  ostore_.clear("item");
-
-  UNIT_ASSERT_TRUE(ostore_.empty());
-  UNIT_ASSERT_EQUAL(iview.size(), 0UL);
-  UNIT_ASSERT_TRUE(iview.empty());
-
-  prototype_iterator first = ostore_.begin();
-  prototype_iterator last = ostore_.end();
-
-  UNIT_ASSERT_FALSE(first == last);
-
-  ostore_.clear(true);
-
-  first = ostore_.begin();
-  last = ostore_.end();
-
-  UNIT_ASSERT_TRUE(first == last);
-}
+//void ObjectStoreTestUnit::test_clear_type()
+//{
+//  ostore_.attach<Item>("item");
+//
+//  for (int i = 0; i < 10; ++i) {
+//    std::stringstream str;
+//    str << "Item " << i+1;
+//    ostore_.insert(new Item(str.str(), i+1));
+//  }
+//
+//  typedef object_view<Item> item_view_t;
+//
+//  item_view_t iview(ostore_);
+//
+//  UNIT_ASSERT_EQUAL((int)iview.size(), 10);
+//  UNIT_ASSERT_FALSE(iview.empty());
+//  UNIT_ASSERT_FALSE(ostore_.empty());
+//
+//  ostore_.clear("item");
+//
+//  UNIT_ASSERT_TRUE(ostore_.empty());
+//  UNIT_ASSERT_EQUAL(iview.size(), 0UL);
+//  UNIT_ASSERT_TRUE(iview.empty());
+//
+//  prototype_iterator first = ostore_.begin();
+//  prototype_iterator last = ostore_.end();
+//
+//  UNIT_ASSERT_FALSE(first == last);
+//
+//  ostore_.clear(true);
+//
+//  first = ostore_.begin();
+//  last = ostore_.end();
+//
+//  UNIT_ASSERT_TRUE(first == last);
+//}
 
 void ObjectStoreTestUnit::test_clear()
 {
