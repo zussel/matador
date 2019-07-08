@@ -66,7 +66,7 @@ public:
     OR,
     AND,
     NOT,
-    IN
+    IN_LIST
   };
 
   enum
