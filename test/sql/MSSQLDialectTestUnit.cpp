@@ -45,7 +45,7 @@ void MSSQLDialectTestUnit::test_limit()
 
   std::string result = conn.dialect()->direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT TOP (10) [id], [name], [age] FROM [person] ", result, "select limit isn't as expected");
+  UNIT_ASSERT_EQUAL("SELECT TOP (10) [id], [name], [age] FROM [person] ", result);
 }
 
 void MSSQLDialectTestUnit::test_query_select_sub_select()
@@ -60,7 +60,7 @@ void MSSQLDialectTestUnit::test_query_select_sub_select()
 
   q.select().where(matador::in(id, subselect));
 
-  UNIT_ASSERT_EQUAL("SELECT [id], [name], [birthdate], [height] FROM [person] WHERE [id] IN (SELECT * FROM (SELECT TOP (1) [id] FROM [person] ) AS p ) ", q.str(conn, false), "select limit isn't as expected");
+  UNIT_ASSERT_EQUAL("SELECT [id], [name], [birthdate], [height] FROM [person] WHERE [id] IN (SELECT * FROM (SELECT TOP (1) [id] FROM [person] ) AS p ) ", q.str(conn, false));
 }
 
 void MSSQLDialectTestUnit::test_query_select_sub_select_result()
@@ -95,8 +95,8 @@ void MSSQLDialectTestUnit::test_query_select_sub_select_result()
   res = q.select().where(matador::in(id, subselect)).execute(conn);
 
   //for (auto p : res) {
-  //    UNIT_EXPECT_EQUAL(1UL, p->id(), "invalid value");
-  //    UNIT_EXPECT_EQUAL("Hans", p->name(), "invalid value");
+  //    UNIT_EXPECT_EQUAL(1UL, p->id());
+  //    UNIT_EXPECT_EQUAL("Hans", p->name());
   //}
   q.drop().execute(conn);
 

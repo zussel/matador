@@ -12,7 +12,7 @@ class SequencerTestUnit : public matador::unit_test
 {
 public:
   SequencerTestUnit();
-  virtual ~SequencerTestUnit();
+  ~SequencerTestUnit() override = default;
 
   void test_init();
   void test_inc();

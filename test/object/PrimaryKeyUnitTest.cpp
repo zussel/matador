@@ -24,7 +24,7 @@ void PrimaryKeyUnitTest::test_create()
 
 //  long result = pkb->id<long>();
 //
-//  UNIT_ASSERT_EQUAL(id57, result, "values are must be equal");
+//  UNIT_ASSERT_EQUAL(id57, result);
 }
 
 void PrimaryKeyUnitTest::test_share()
@@ -33,18 +33,18 @@ void PrimaryKeyUnitTest::test_share()
   std::string gollum("gollum@mittelerde.to");
   matador::identifier<std::string> email(id);
 
-  UNIT_ASSERT_EQUAL(id, email.value(), "invalid identifier value");
+  UNIT_ASSERT_EQUAL(id, email.value());
 
   matador::identifier<std::string> shared_email;
 
-  UNIT_ASSERT_TRUE(shared_email.value().empty(), "identifier must be empty");
+  UNIT_ASSERT_TRUE(shared_email.value().empty());
 
 //  email.share_with(shared_email);
 
-//  UNIT_ASSERT_EQUAL(id, shared_email.value(), "invalid identifier value");
+//  UNIT_ASSERT_EQUAL(id, shared_email.value());
 
   email.value(gollum);
 
-  UNIT_ASSERT_EQUAL(gollum, email.value(), "invalid identifier value");
-//  UNIT_ASSERT_EQUAL(gollum, shared_email.value(), "invalid identifier value");
+  UNIT_ASSERT_EQUAL(gollum, email.value());
+//  UNIT_ASSERT_EQUAL(gollum, shared_email.value());
 }

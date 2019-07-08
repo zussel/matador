@@ -10,7 +10,7 @@
 class OrmTestUnit : public matador::unit_test
 {
 public:
-  OrmTestUnit(const std::string &prefix, const std::string &dns);
+  OrmTestUnit(const std::string &prefix, std::string dns);
 
   void test_create();
   void test_insert();

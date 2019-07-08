@@ -56,7 +56,7 @@ void PostgreSQLDialectTestUnit::test_placeholder()
 
   std::string result = conn.dialect()->prepare(s);
 
-  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES ($1, $2, $3) ", result, "insert statement isn't as expected");
+  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES ($1, $2, $3) ", result);
 }
 
 void PostgreSQLDialectTestUnit::test_placeholder_condition()
@@ -81,7 +81,7 @@ void PostgreSQLDialectTestUnit::test_placeholder_condition()
 
   std::string result = conn.dialect()->prepare(s);
 
-  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" = $1 ", result, "select statement isn't as expected");
+  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" = $1 ", result);
 }
 
 void PostgreSQLDialectTestUnit::test_update_limit()
@@ -106,7 +106,7 @@ void PostgreSQLDialectTestUnit::test_update_limit()
 
   std::string result = conn.dialect()->direct(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=1 WHERE \"owner_id\" = (SELECT \"owner_id\" FROM \"relation\" WHERE (\"owner_id\" = 1 AND \"item_id\" = 1) LIMIT 1 ) ", result, "select statement isn't as expected");
+  UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=1 WHERE \"owner_id\" = (SELECT \"owner_id\" FROM \"relation\" WHERE (\"owner_id\" = 1 AND \"item_id\" = 1) LIMIT 1 ) ", result);
 }
 
 void PostgreSQLDialectTestUnit::test_table_name()
@@ -117,5 +117,5 @@ void PostgreSQLDialectTestUnit::test_table_name()
 
   q.select();
 
-  UNIT_ASSERT_EQUAL("person", q.stmt().table_name(), "table names must be equal");
+  UNIT_ASSERT_EQUAL("person", q.stmt().table_name());
 }

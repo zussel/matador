@@ -60,7 +60,7 @@
  * exception is caught by the test_suite the
  * message is displayed
  */
-#define UNIT_ASSERT_EQUAL(a, b, msg)     assert_equal(a, b, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_EQUAL(a, b)     assert_equal(a, b, __LINE__, __FILE__)
 
 /**
  * @brief Checks if a is not msgstrequal b.
@@ -70,7 +70,7 @@
  * exception is caught by the test_suite the
  * message is displayed
  */
-#define UNIT_ASSERT_NOT_EQUAL(a, b, msg) assert_not_equal(a, b, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_NOT_EQUAL(a, b) assert_not_equal(a, b, __LINE__, __FILE__)
 
 /**
  * @brief Checks if a is greater b.
@@ -80,7 +80,7 @@
  * exception is caught by the test_suite the
  * message is displayed
  */
-#define UNIT_ASSERT_GREATER(a, b, msg)     assert_greater(a, b, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_GREATER(a, b)     assert_greater(a, b, __LINE__, __FILE__)
 
 /**
  * @brief Checks if a is greater b.
@@ -90,7 +90,7 @@
  * exception is caught by the test_suite the
  * message is displayed
  */
-#define UNIT_ASSERT_LESS(a, b, msg)        assert_less(a, b, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_LESS(a, b)        assert_less(a, b, __LINE__, __FILE__)
 
 /**
  * @brief Checks if a evaluates to false.
@@ -100,7 +100,7 @@
  * The exception is caught by the test_suite the
  * message is displayed
  */
-#define UNIT_ASSERT_FALSE(a, msg)        assert_false(a, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_FALSE(a)        assert_false(a, __LINE__, __FILE__)
 
 /**
  * @brief Checks if a evaluates to true.
@@ -110,7 +110,7 @@
  * The exception is caught by the test_suite the
  * message is displayed
  */
-#define UNIT_ASSERT_TRUE(a, msg)         assert_true(a, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_TRUE(a)         assert_true(a, __LINE__, __FILE__)
 
 /**
  * @brief Checks if o is NULL.
@@ -120,7 +120,7 @@
  * exception is caught by the test_suite the
  * message is displayed
  */
-#define UNIT_ASSERT_NULL(o, msg)         assert_null(o, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_NULL(o)         assert_null(o, __LINE__, __FILE__)
 
 /**
  * @brief Checks if o is not NULL.
@@ -130,7 +130,7 @@
  * exception is caught by the test_suite the
  * message is displayed
  */
-#define UNIT_ASSERT_NOT_NULL(o, msg)     assert_not_null(o, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_NOT_NULL(o)     assert_not_null(o, __LINE__, __FILE__)
 
 /**
 * @brief Checks if a is equal b.
@@ -140,19 +140,19 @@
 * exception is caught by the test_suite the
 * message is displayed
 */
-#define UNIT_ASSERT_EXCEPTION(expression, exception_type, exception_msg, msg)     \
+#define UNIT_ASSERT_EXCEPTION(expression, exception_type, exception_msg)     \
   do {                                                                            \
     bool exception_caught(false);                                                 \
     try {                                                                         \
       expression;                                                                 \
     } catch(exception_type &ex) {                                                 \
-      assert_equal(ex.what(), exception_msg, msg, __LINE__, __FILE__); \
+      assert_equal(ex.what(), exception_msg, __LINE__, __FILE__); \
       exception_caught = true;                                                    \
     }                                                                             \
     if (!exception_caught) {                                                      \
-      error(msg, __LINE__, __FILE__);                                             \
+      error("expected exception not caught", __LINE__, __FILE__);                 \
     }                                                                             \
-  } while(false);
+  } while(false)
 
 
 /**
@@ -161,7 +161,7 @@
  * If a is not equal b the test prints
  * the given message to stdout.
  */
-#define UNIT_EXPECT_EQUAL(a, b, msg)     expect_equal(a, b, msg, __LINE__, __FILE__)
+#define UNIT_EXPECT_EQUAL(a, b)     expect_equal(a, b, __LINE__, __FILE__)
 
 /**
  * @brief Checks if a is greater b.
@@ -169,7 +169,7 @@
  * If a is not greater b the test prints
  * the given message to stdout.
  */
-#define UNIT_EXPECT_GREATER(a, b, msg)   expect_greater(a, b, msg, __LINE__, __FILE__)
+#define UNIT_EXPECT_GREATER(a, b)   expect_greater(a, b, __LINE__, __FILE__)
 
 /**
  * @brief Checks if a evaluates to false.
@@ -177,7 +177,7 @@
  * If a doesn't evaluates to false the test method
  * prints the given message to stdout.
  */
-#define UNIT_EXPECT_FALSE(a, msg)        expect_false(a, msg, __LINE__, __FILE__)
+#define UNIT_EXPECT_FALSE(a)        expect_false(a, __LINE__, __FILE__)
 
 /**
  * @brief Checks if a evaluates to true.
@@ -185,7 +185,7 @@
  * If a doesn't evaluates to true the test method
  * prints the given message to stdout.
  */
-#define UNIT_EXPECT_TRUE(a, msg)         expect_true(a, msg, __LINE__, __FILE__)
+#define UNIT_EXPECT_TRUE(a)         expect_true(a, __LINE__, __FILE__)
 
 /**
  * @brief Throws an error.
@@ -347,12 +347,12 @@ public:
    * @param file The file where this check can be found.
    */
   template < class X >
-  void assert_equal(const X &a, const X &b, const std::string &msg, int line, const char *file)
+  void assert_equal(const X &a, const X &b, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (a != b) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
       throw unit_exception(msgstr.str());
     }
   }
@@ -374,59 +374,59 @@ public:
    * @param file The file where this check can be found.
    */
   template < class X, class Y >
-  void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
+  void assert_equal(const X &a, const Y &b, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (a != b) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
       throw unit_exception(msgstr.str());
     }
   }
 
 #ifndef MATADOR_DOXYGEN_DOC
-  void assert_equal(char *&a, const char* &b, const std::string &msg, int line, const char *file);
-  void assert_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file);
-  void assert_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file);
-  void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file);
+  void assert_equal(char *&a, const char* &b, int line, const char *file);
+  void assert_equal(const std::string &a, const char *b, int line, const char *file);
+  void assert_equal(const char *a, const std::string &b, int line, const char *file);
+  void assert_equal(const char *a, const char *b, int line, const char *file);
 
   template < int N1, int N2 >
   void
-  assert_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
+  assert_equal(const char (&a)[N1], const char (&b)[N2], int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (strcmp(a, b) != 0) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
       throw unit_exception(msgstr.str());
     }
   }
 
   template < int N1, int N2 >
   void
-  assert_equal(char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
+  assert_equal(char (&a)[N1], const char (&b)[N2], int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (strcmp(a, b) != 0) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
       throw unit_exception(msgstr.str());
     }
   }
 
   template < class X >
-  void assert_equal(const X &a, const bool &b, const std::string &msg, int line, const char *file)
+  void assert_equal(const X &a, const bool &b, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     bool cmp = a > 0;
     if (cmp != b) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
       throw unit_exception(msgstr.str());
     }
   }
 
-  void assert_equal(const bool &a, const bool &b, const std::string &msg, int line, const char *file);
+  void assert_equal(const bool &a, const bool &b, int line, const char *file);
 #endif /* MATADOR_DOXYGEN_DOC */
 
   /**
@@ -445,12 +445,12 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T >
-  void assert_not_equal(const T &a, const T &b, const std::string &msg, int line, const char *file)
+  void assert_not_equal(const T &a, const T &b, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (a == b) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b;
       throw unit_exception(msgstr.str());
     }
   }
@@ -472,12 +472,12 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T, class V >
-  void assert_not_equal(const T &a, const V &b, const std::string &msg, int line, const char *file)
+  void assert_not_equal(const T &a, const V &b, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (a == b) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b;
       throw unit_exception(msgstr.str());
     }
   }
@@ -498,24 +498,24 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T >
-  void assert_greater(const T &a, const T &b, const std::string &msg, int line, const char *file)
+  void assert_greater(const T &a, const T &b, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (a <= b) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b;
       throw unit_exception(msgstr.str());
     }
   }
 
 #ifndef MATADOR_DOXYGEN_DOC
   template < class X, class Y >
-  void assert_greater(const X &a, const Y &b, const std::string &msg, int line, const char *file)
+  void assert_greater(const X &a, const Y &b, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (a <= b) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b;
       throw unit_exception(msgstr.str());
     }
   }
@@ -537,12 +537,12 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T >
-  void assert_less(const T &a, const T &b, const std::string &msg, int line, const char *file)
+  void assert_less(const T &a, const T &b, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (a >= b) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is greater equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is greater equal " << b;
       throw unit_exception(msgstr.str());
     }
   }
@@ -562,12 +562,12 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T >
-  void assert_null(const T *a, const std::string &msg, int line, const char *file)
+  void assert_null(const T *a, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (a != nullptr) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not null: " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not null";
       throw unit_exception(msgstr.str());
     }
   }
@@ -587,12 +587,12 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T >
-  void assert_not_null(const T *a, const std::string &msg, int line, const char *file)
+  void assert_not_null(const T *a, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (a == 0) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is null: " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is null";
       throw unit_exception(msgstr.str());
     }
   }
@@ -611,7 +611,7 @@ public:
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
-  void assert_true(bool a, const std::string &msg, int line, const char *file);
+  void assert_true(bool a, int line, const char *file);
 
   /**
    * @brief Checks if a evaluates to false.
@@ -627,7 +627,7 @@ public:
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
-  void assert_false(bool a, const std::string &msg, int line, const char *file);
+  void assert_false(bool a, int line, const char *file);
 
   /**
    * @brief Checks if a evaluates to true.
@@ -641,7 +641,7 @@ public:
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
-  void expect_true(bool a, const std::string &msg, int line, const char *file);
+  void expect_true(bool a, int line, const char *file);
 
   /**
    * @brief Checks if a evaluates to false.
@@ -657,7 +657,7 @@ public:
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
-  void expect_false(bool a, const std::string &msg, int line, const char *file);
+  void expect_false(bool a, int line, const char *file);
 
   /**
    * @brief Checks if a is equal b.
@@ -673,12 +673,12 @@ public:
    * @param file The file where this check can be found.
    */
   template < class X >
-  void expect_equal(const X &a, const X &b, const std::string &msg, int line, const char *file)
+  void expect_equal(const X &a, const X &b, int line, const char *file)
   {
     ++current_test_func_info->error_count;
     if (a != b) {
       ++current_test_func_info->errors;
-      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
     }
   }
 
@@ -697,37 +697,37 @@ public:
    * @param file The file where this check can be found.
    */
   template < class X, class Y >
-  void expect_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
+  void expect_equal(const X &a, const Y &b, int line, const char *file)
   {
     ++current_test_func_info->error_count;
     if (a != b) {
       ++current_test_func_info->errors;
-      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
     }
   }
 #ifndef MATADOR_DOXYGEN_DOC
-  void expect_equal(const double &a, const double &b, const std::string &msg, int line, const char *file);
-  void expect_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file);
-  void expect_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file);
-  void expect_equal(const char *a, const char *b, const std::string &msg, int line, const char *file);
+  void expect_equal(const double &a, const double &b, int line, const char *file);
+  void expect_equal(const char *a, const std::string &b, int line, const char *file);
+  void expect_equal(const std::string &a, const char *b, int line, const char *file);
+  void expect_equal(const char *a, const char *b, int line, const char *file);
   template < int N1, int N2 >
   void
-  expect_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
+  expect_equal(const char (&a)[N1], const char (&b)[N2], int line, const char *file)
   {
     ++current_test_func_info->error_count;
     if (strcmp(a, b) != 0) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
     }
   }
   template < int N1, int N2 >
   void
-  expect_equal(char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
+  expect_equal(char (&a)[N1], const char (&b)[N2], int line, const char *file)
   {
     ++current_test_func_info->error_count;
     if (strcmp(a, b) != 0) {
       std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
     }
   }
 #endif
@@ -745,12 +745,12 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T >
-  void expect_greater(const T &a, const T &b, const std::string &msg, int line, const char *file)
+  void expect_greater(const T &a, const T &b, int line, const char *file)
   {
     ++current_test_func_info->error_count;
     if (a <= b) {
       ++current_test_func_info->errors;
-      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b;
     }
   }
 

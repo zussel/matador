@@ -33,25 +33,25 @@ void HasManyListUnitTest::test_join_table()
   store.attach<owner>("owner");
 
   prototype_iterator i = store.find("owner_item");
-  UNIT_ASSERT_TRUE(i != store.end(), "iterator shouldn't be end");
+  UNIT_ASSERT_TRUE(i != store.end());
 
-  UNIT_ASSERT_EQUAL("owner_item", i->type(), "type should be 'owner_item'");
+  UNIT_ASSERT_EQUAL("owner_item", i->type());
 
   object_ptr<owner> o = store.insert(new owner("hans"));
 
-  UNIT_ASSERT_EQUAL("hans", o->name, "name should be 'hans'");
+  UNIT_ASSERT_EQUAL("hans", o->name);
 
   object_ptr<item> i1 = store.insert(new item("i1"));
 
-  UNIT_ASSERT_EQUAL("i1", i1->name, "name should be 'i1'");
+  UNIT_ASSERT_EQUAL("i1", i1->name);
 
   o->items.push_back(i1);
 
-  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+  UNIT_ASSERT_EQUAL(1U, o->items.size());
 
   o->items.push_back(new item("i2"));
 
-  UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
+  UNIT_ASSERT_EQUAL(2U, o->items.size());
 }
 
 void HasManyListUnitTest::test_const_iterator()
@@ -66,25 +66,25 @@ void HasManyListUnitTest::test_const_iterator()
   many_ints::element_list_t::iterator i = mi.elements.end();
   many_ints::element_list_t::const_iterator last = i;
 
-  UNIT_ASSERT_FALSE(first == last, "first and last must not be equal");
-  UNIT_ASSERT_TRUE(first == mi.elements.begin(), "first must be equal begin()");
-  UNIT_ASSERT_TRUE(last == mi.elements.end(), "last must be equal end()");
+  UNIT_ASSERT_FALSE(first == last);
+  UNIT_ASSERT_TRUE(first == mi.elements.begin());
+  UNIT_ASSERT_TRUE(last == mi.elements.end());
 
   ++first;
 
-  UNIT_ASSERT_EQUAL(*first, 7, "value of first must be '7'");
+  UNIT_ASSERT_EQUAL(*first, 7);
 
   first++;
 
-  UNIT_ASSERT_EQUAL(*first, 1, "value of first must be '1'");
+  UNIT_ASSERT_EQUAL(*first, 1);
 
   first--;
 
-  UNIT_ASSERT_EQUAL(*first, 7, "value of first must be '7'");
+  UNIT_ASSERT_EQUAL(*first, 7);
 
   --first;
 
-  UNIT_ASSERT_EQUAL(*first, 6, "value of first must be '6'");
+  UNIT_ASSERT_EQUAL(*first, 6);
 }
 
 void HasManyListUnitTest::test_erase_scalar()
@@ -97,19 +97,19 @@ void HasManyListUnitTest::test_erase_scalar()
 
   mptr->elements.push_back(1);
 
-  UNIT_ASSERT_EQUAL(1U, mptr->elements.size(), "size should be 1 (one)");
+  UNIT_ASSERT_EQUAL(1U, mptr->elements.size());
 
   mptr->elements.push_back(7);
   mptr->elements.push_back(90);
 
-  UNIT_ASSERT_EQUAL(3U, mptr->elements.size(), "size should be 3 (three)");
+  UNIT_ASSERT_EQUAL(3U, mptr->elements.size());
 
   many_ints::element_list_t::iterator i = mptr->elements.begin();
 
   i = mptr->elements.erase(i);
 
-  UNIT_ASSERT_EQUAL(2U, mptr->elements.size(), "size should be 2 (two)");
-  UNIT_ASSERT_EQUAL(*i, 7, "name must be '7'");
+  UNIT_ASSERT_EQUAL(2U, mptr->elements.size());
+  UNIT_ASSERT_EQUAL(*i, 7);
 
   mptr->elements.push_back(3);
   mptr->elements.push_back(4);
@@ -122,8 +122,8 @@ void HasManyListUnitTest::test_erase_scalar()
 
   i = mptr->elements.erase(i, j);
 
-  UNIT_ASSERT_EQUAL(2U, mptr->elements.size(), "size should be 2 (two)");
-  UNIT_ASSERT_EQUAL(*i, 3, "name must be '3'");
+  UNIT_ASSERT_EQUAL(2U, mptr->elements.size());
+  UNIT_ASSERT_EQUAL(*i, 3);
 }
 
 void HasManyListUnitTest::test_erase_object()
@@ -136,22 +136,22 @@ void HasManyListUnitTest::test_erase_object()
   object_ptr<owner> o = store.insert(new owner("hans"));
   object_ptr<item> i1 = store.insert(new item("i1"));
 
-  UNIT_ASSERT_EQUAL("i1", i1->name, "name should be 'i1'");
+  UNIT_ASSERT_EQUAL("i1", i1->name);
 
   o->items.push_back(i1);
 
-  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+  UNIT_ASSERT_EQUAL(1U, o->items.size());
 
   o->items.push_back(new item("i2"));
 
-  UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
+  UNIT_ASSERT_EQUAL(2U, o->items.size());
 
   owner::item_list_t::iterator i = o->items.begin();
 
   i = o->items.erase(i);
 
-  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
-  UNIT_ASSERT_EQUAL(i->name, "i2", "name must be 'i2");
+  UNIT_ASSERT_EQUAL(1U, o->items.size());
+  UNIT_ASSERT_EQUAL(i->name, "i2");
 
   o->items.push_back(new item("i3"));
   o->items.push_back(new item("i4"));
@@ -164,8 +164,8 @@ void HasManyListUnitTest::test_erase_object()
 
   i = o->items.erase(i, j);
 
-  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
-  UNIT_ASSERT_EQUAL(i->name, "i4", "name must be 'i4'");
+  UNIT_ASSERT_EQUAL(1U, o->items.size());
+  UNIT_ASSERT_EQUAL(i->name, "i4");
 }
 
 void HasManyListUnitTest::test_remove_scalar()
@@ -178,22 +178,22 @@ void HasManyListUnitTest::test_remove_scalar()
 
   mptr->elements.push_back(1);
 
-  UNIT_ASSERT_EQUAL(1U, mptr->elements.size(), "size should be 1 (one)");
+  UNIT_ASSERT_EQUAL(1U, mptr->elements.size());
 
   mptr->elements.push_back(7);
   mptr->elements.push_back(90);
 
-  UNIT_ASSERT_EQUAL(3U, mptr->elements.size(), "size should be 3 (three)");
+  UNIT_ASSERT_EQUAL(3U, mptr->elements.size());
 
   mptr->elements.remove(1);
 
-  UNIT_ASSERT_EQUAL(2U, mptr->elements.size(), "size should be 2 (two)");
+  UNIT_ASSERT_EQUAL(2U, mptr->elements.size());
 
   mptr->elements.remove_if([](const int &val) {
     return val == 90;
   });
 
-  UNIT_ASSERT_EQUAL(1U, mptr->elements.size(), "size should be 1 (one)");
+  UNIT_ASSERT_EQUAL(1U, mptr->elements.size());
 }
 
 void HasManyListUnitTest::test_remove_object()
@@ -207,26 +207,26 @@ void HasManyListUnitTest::test_remove_object()
   object_ptr<item> i1 = store.insert(new item("i1"));
   object_ptr<item> i2 = store.insert(new item("i2"));
 
-  UNIT_ASSERT_EQUAL("i1", i1->name, "name should be 'i1'");
+  UNIT_ASSERT_EQUAL("i1", i1->name);
 
   o->items.push_back(i1);
 
-  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+  UNIT_ASSERT_EQUAL(1U, o->items.size());
 
   o->items.push_back(i2);
 
-  UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
+  UNIT_ASSERT_EQUAL(2U, o->items.size());
 
   o->items.remove(i2);
 
-  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+  UNIT_ASSERT_EQUAL(1U, o->items.size());
 
   o->items.remove_if([&i1](const object_ptr<item> &x) {
     return i1 == x;
   });
 
-  UNIT_ASSERT_EQUAL(0U, o->items.size(), "size should be 0 (zero)");
-  UNIT_ASSERT_TRUE(o->items.empty(), "list should be empty");
+  UNIT_ASSERT_EQUAL(0U, o->items.size());
+  UNIT_ASSERT_TRUE(o->items.empty());
 }
 
 void HasManyListUnitTest::test_integer()
@@ -237,24 +237,24 @@ void HasManyListUnitTest::test_integer()
 
   object_ptr<many_ints> mi = store.insert(new many_ints);
 
-  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL, "has many list is not empty");
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
 
   for (int i = 0; i < 20; ++i) {
     mi->elements.push_back(i);
   }
 
-  UNIT_ASSERT_EQUAL(mi->elements.size(), 20UL, "has many list has invalid size");
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 20UL);
 
   many_ints::element_list_t::iterator i = mi->elements.begin();
 
-  UNIT_ASSERT_EQUAL(*i, 0, "item is invalid");
+  UNIT_ASSERT_EQUAL(*i, 0);
 
   i++;
 
-  UNIT_ASSERT_EQUAL(*i, 1, "item is invalid");
+  UNIT_ASSERT_EQUAL(*i, 1);
 
 //  ival = 4;
-//  UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
+//  UNIT_ASSERT_EQUAL((int)(*i)->index(), ival);
 //
 //  i = itemvector->erase(i);
 //
@@ -262,8 +262,8 @@ void HasManyListUnitTest::test_integer()
 //
 ////  std::for_each(itemvector->begin(), itemvector->end(), print);
 //
-//  UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
-//  UNIT_ASSERT_EQUAL((int)itemvector->size(), 19, "itemvector size isn't valid");
+//  UNIT_ASSERT_EQUAL((int)(*i)->index(), ival);
+//  UNIT_ASSERT_EQUAL((int)itemvector->size(), 19);
 }
 
 void HasManyListUnitTest::test_string()
@@ -274,22 +274,22 @@ void HasManyListUnitTest::test_string()
 
   object_ptr<many_strings> mi = store.insert(new many_strings);
 
-  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL, "has many list is not empty");
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
 
   std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
   for (const auto &name : names) {
     mi->elements.push_back(name);
   }
 
-  UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL, "has many list has invalid size");
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);
 
   many_strings::element_list_t::iterator i = mi->elements.begin();
 
-  UNIT_ASSERT_EQUAL(*i, "george", "value is invalid");
+  UNIT_ASSERT_EQUAL(*i, "george");
 
   i++;
 
-  UNIT_ASSERT_EQUAL(*i, "jane", "value is invalid");
+  UNIT_ASSERT_EQUAL(*i, "jane");
 }
 
 using many_list_varchars = many_builtins<matador::varchar<255>, std::list>;
@@ -302,20 +302,20 @@ void HasManyListUnitTest::test_varchar()
 
   object_ptr<many_list_varchars> mi = store.insert(new many_list_varchars);
 
-  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL, "has many list is not empty");
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
 
   std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
   for (const auto &name : names) {
     mi->elements.push_back(name.c_str());
   }
 
-  UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL, "has many list has invalid size");
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);
 
   auto i = mi->elements.begin();
 
-  UNIT_ASSERT_EQUAL(*i, "george", "value is invalid");
+  UNIT_ASSERT_EQUAL(*i, "george");
 
   i++;
 
-  UNIT_ASSERT_EQUAL(*i, "jane", "value is invalid");  
+  UNIT_ASSERT_EQUAL(*i, "jane");
 }

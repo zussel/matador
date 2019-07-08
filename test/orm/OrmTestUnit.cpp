@@ -15,9 +15,9 @@
 
 using namespace hasmanylist;
 
-OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
+OrmTestUnit::OrmTestUnit(const std::string &prefix, std::string dns)
   : unit_test(prefix + "_orm", prefix + " orm test unit")
-  , dns_(dns)
+  , dns_(std::move(dns))
 {
   add_test("create", std::bind(&OrmTestUnit::test_create, this), "test create table");
   add_test("insert", std::bind(&OrmTestUnit::test_insert, this), "test insert into table");
@@ -35,12 +35,12 @@ void OrmTestUnit::test_create()
   p.create();
 
   // check if table exists
-  UNIT_EXPECT_TRUE(p.exists<person>(), "table must exist");
+  UNIT_EXPECT_TRUE(p.exists<person>());
 
   p.drop();
 
   // check if table exists
-  UNIT_EXPECT_FALSE(p.exists<person>(), "table must not exist");
+  UNIT_EXPECT_FALSE(p.exists<person>());
 }
 
 void OrmTestUnit::test_insert()
@@ -55,18 +55,18 @@ void OrmTestUnit::test_insert()
 
   auto hans = s.insert(new person("hans", matador::date(18, 5, 1980), 180));
 
-  UNIT_EXPECT_GREATER(hans->id(), 0UL, "is must be greater zero");
+  UNIT_EXPECT_GREATER(hans->id(), 0UL);
 
   matador::query<person> q("person");
   auto res = q.select().where(matador::column("name") == "hans").execute(p.conn());
 
   auto first = res.begin();
 
-  UNIT_ASSERT_TRUE(first != res.end(), "first must not end");
+  UNIT_ASSERT_TRUE(first != res.end());
 
   std::unique_ptr<person> p1(first.release());
 
-  UNIT_EXPECT_EQUAL("hans", p1->name(), "invalid name");
+  UNIT_EXPECT_EQUAL("hans", p1->name());
 
   // Todo: fix open cursor with Free TDS
   ++first;
@@ -93,17 +93,17 @@ void OrmTestUnit::test_select()
   std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
   //std::vector<std::string> names({ "hans", "otto", "georg", "hilde", "ute", "manfred" });
 
-  for (std::string name : names) {
+  for (auto const &name : names) {
     auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
-  	UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
+  	UNIT_EXPECT_GREATER(pptr->id(), 0UL);
   }
 
   auto view = s.select<person>();
 
-  UNIT_ASSERT_EQUAL(view.size(), names.size(), "unexpected size");
+  UNIT_ASSERT_EQUAL(view.size(), names.size());
 
   for (auto optr : view) {
-    UNIT_ASSERT_TRUE(contains(names, optr->name()), "unknown name from view");
+    UNIT_ASSERT_TRUE(contains(names, optr->name()));
   }
 
   p.drop();
@@ -122,15 +122,15 @@ void OrmTestUnit::test_update()
   matador::date birthday(18, 5, 1980);
   auto hans = s.insert(new person("hans", birthday, 180));
 
-  UNIT_EXPECT_GREATER(hans->id(), 0UL, "id must be greater zero");
-  UNIT_EXPECT_EQUAL(hans->height(), 180U, "height must be 180");
-  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday, "birthday must be equal");
+  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+  UNIT_EXPECT_EQUAL(hans->height(), 180U);
+  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
   hans->height(179);
 
   hans = s.update(hans);
 
-  UNIT_EXPECT_EQUAL(hans->height(), 179U, "height must be 179");
+  UNIT_EXPECT_EQUAL(hans->height(), 179U);
 
   matador::query<person> q("person");
   matador::connection c(dns_);
@@ -139,13 +139,13 @@ void OrmTestUnit::test_update()
 
   auto first = res.begin();
 
-  UNIT_ASSERT_TRUE(first != res.end(), "first must not end");
+  UNIT_ASSERT_TRUE(first != res.end());
 
   std::unique_ptr<person> p1(first.release());
 
-  UNIT_EXPECT_EQUAL("hans", p1->name(), "invalid name");
-  UNIT_EXPECT_EQUAL(179U, p1->height(), "height must be 179");
-  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday, "birthday must be equal");
+  UNIT_EXPECT_EQUAL("hans", p1->name());
+  UNIT_EXPECT_EQUAL(179U, p1->height());
+  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
   p.drop();
 }
@@ -162,7 +162,7 @@ void OrmTestUnit::test_delete()
 
   auto hans = s.insert(new person("hans", matador::date(18, 5, 1980), 180));
 
-  UNIT_EXPECT_GREATER(hans->id(), 0UL, "is must be greater zero");
+  UNIT_EXPECT_GREATER(hans->id(), 0UL);
 
   matador::query<person> q("person");
   matador::connection c(dns_);
@@ -171,11 +171,11 @@ void OrmTestUnit::test_delete()
 
   auto first = res.begin();
 
-  UNIT_ASSERT_TRUE(first != res.end(), "first must not end");
+  UNIT_ASSERT_TRUE(first != res.end());
 
   std::unique_ptr<person> p1((first++).release());
 
-  UNIT_EXPECT_EQUAL("hans", p1->name(), "invalid name");
+  UNIT_EXPECT_EQUAL("hans", p1->name());
 
   s.remove(hans);
 
@@ -183,8 +183,8 @@ void OrmTestUnit::test_delete()
 
   first = res.begin();
 
-  UNIT_EXPECT_TRUE(first == res.end(), "first must be end");
-//  UNIT_EXPECT_TRUE(res.empty(), "result set must be empty");
+  UNIT_EXPECT_TRUE(first == res.end());
+//  UNIT_EXPECT_TRUE(res.empty());
 
   p.drop();
 }

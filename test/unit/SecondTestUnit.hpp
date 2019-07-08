@@ -31,10 +31,10 @@ public:
 
   void small_test()
   {
-    UNIT_ASSERT_TRUE(true, "test should be executed");
+    UNIT_ASSERT_TRUE(true);
   }
   void big_test()
   {
-    UNIT_ASSERT_TRUE(true, "test should be executed");
+    UNIT_ASSERT_TRUE(true);
   }
 };

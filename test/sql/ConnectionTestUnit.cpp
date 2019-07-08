@@ -36,36 +36,36 @@ void ConnectionTestUnit::test_open_close()
 {
   matador::connection conn(connection_string());
 
-  UNIT_ASSERT_FALSE(conn.is_open(), "connection must not be open");
+  UNIT_ASSERT_FALSE(conn.is_open());
 
   conn.open();
 
-  UNIT_ASSERT_TRUE(conn.is_open(), "couldn't open sql sql");
+  UNIT_ASSERT_TRUE(conn.is_open());
 
   conn.close();
 
-  UNIT_ASSERT_FALSE(conn.is_open(), "couldn't close sql sql");
+  UNIT_ASSERT_FALSE(conn.is_open());
 }
 
 void ConnectionTestUnit::test_reopen()
 {
   matador::connection conn(connection_string());
 
-  UNIT_ASSERT_FALSE(conn.is_open(), "connection must not be open");
+  UNIT_ASSERT_FALSE(conn.is_open());
 
   conn.open();
 
-  UNIT_ASSERT_TRUE(conn.is_open(), "couldn't open sql sql");
+  UNIT_ASSERT_TRUE(conn.is_open());
 
   conn.close();
 
   conn.open();
 
-  UNIT_ASSERT_TRUE(conn.is_open(), "couldn't open sql sql");
+  UNIT_ASSERT_TRUE(conn.is_open());
 
   conn.close();
 
-  UNIT_ASSERT_FALSE(conn.is_open(), "couldn't close sql sql");
+  UNIT_ASSERT_FALSE(conn.is_open());
 }
 
 std::string ConnectionTestUnit::connection_string()

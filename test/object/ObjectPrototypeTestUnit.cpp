@@ -28,7 +28,7 @@ ObjectPrototypeTestUnit::empty_store()
 {
   object_store ostore;
 
-  UNIT_ASSERT_TRUE(ostore.empty(), "serializable store must be empty");
+  UNIT_ASSERT_TRUE(ostore.empty());
 }
 
 void
@@ -39,7 +39,7 @@ ObjectPrototypeTestUnit::test_find()
   
   prototype_iterator i = ostore.find<Item>();
   
-  UNIT_ASSERT_TRUE(i != ostore.end(), "couldn't find prototype");
+  UNIT_ASSERT_TRUE(i != ostore.end());
 }
 
 void
@@ -49,17 +49,17 @@ ObjectPrototypeTestUnit::test_size()
   
   prototype_iterator i = ostore.begin();
   
-  UNIT_ASSERT_TRUE(i->size() == 0, "prototype node must be empty");
+  UNIT_ASSERT_TRUE(i->size() == 0);
 
   ostore.attach<Item>("item");
     
   i = ostore.find<Item>();
 
-  UNIT_ASSERT_TRUE(i->size() == 0, "prototype node must be empty");
+  UNIT_ASSERT_TRUE(i->size() == 0);
   
   ostore.insert(new Item);
 
-  UNIT_ASSERT_TRUE(i->size() == 1, "prototype node must be one (1)");
+  UNIT_ASSERT_TRUE(i->size() == 1);
 }
 
 void
@@ -69,15 +69,15 @@ ObjectPrototypeTestUnit::test_is_parent_of()
   
   prototype_iterator root = ostore.begin();
   
-  UNIT_ASSERT_TRUE(root->size() == 0, "prototype node must be empty");
+  UNIT_ASSERT_TRUE(root->size() == 0);
 
   ostore.attach<Item>("item");
     
   prototype_iterator i = ostore.find<Item>();
 
-  UNIT_ASSERT_FALSE(root->is_child_of(i.get()), "root must not be child of node");
+  UNIT_ASSERT_FALSE(root->is_child_of(i.get()));
 
-//  UNIT_ASSERT_TRUE(i->is_child_of(root.get()), "node must be child of root");
+//  UNIT_ASSERT_TRUE(i->is_child_of(root.get()));
 }
 
 void
@@ -91,7 +91,7 @@ ObjectPrototypeTestUnit::test_decrement()
 
   --i;
 
-  UNIT_ASSERT_TRUE(--i == ostore.begin(), "iterator must be begin");
+  UNIT_ASSERT_TRUE(--i == ostore.begin());
 }
 
 void
@@ -103,13 +103,13 @@ ObjectPrototypeTestUnit::one_prototype()
   
   auto *o = ostore.create<Item>();
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
+  UNIT_ASSERT_NOT_NULL(o);
 
   delete o;
   
   ostore.detach("item");
   
-  UNIT_ASSERT_EXCEPTION(ostore.create<Item>(), object_exception, "unknown prototype type", "create with invalid type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<Item>(), object_exception, "unknown prototype type");
 }
 
 void
@@ -123,19 +123,19 @@ ObjectPrototypeTestUnit::prototype_hierachy()
 
   auto *a = ostore.create<ItemB>();
   
-  UNIT_ASSERT_NOT_NULL(a, "couldn't create serializable of type <ItemB>");
+  UNIT_ASSERT_NOT_NULL(a);
   
   delete a;
   
   ostore.detach("ITEM_B");
   
-  UNIT_ASSERT_EXCEPTION(ostore.create<ItemB>(), object_exception, "unknown prototype type", "create with invalid type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<ItemB>(), object_exception, "unknown prototype type");
   
   ostore.detach("ITEM");
   
-  UNIT_ASSERT_EXCEPTION(ostore.create<Item>(), object_exception, "unknown prototype type", "create with invalid type");
-  UNIT_ASSERT_EXCEPTION(ostore.create<ItemA>(), object_exception, "unknown prototype type", "create with invalid type");
-  UNIT_ASSERT_EXCEPTION(ostore.create<ItemC>(), object_exception, "unknown prototype type", "create with invalid type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<Item>(), object_exception, "unknown prototype type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<ItemA>(), object_exception, "unknown prototype type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<ItemC>(), object_exception, "unknown prototype type");
 }
 
 void
@@ -152,12 +152,12 @@ ObjectPrototypeTestUnit::prototype_traverse()
   int count(0);
 
   while (first != last) {
-    UNIT_ASSERT_LESS(count, 4, "prototype count isn't valid");
+    UNIT_ASSERT_LESS(count, 4);
     ++first;
     ++count;
   }
   
-  UNIT_ASSERT_EQUAL(count, 4, "expected prototype size isn't 4");
+  UNIT_ASSERT_EQUAL(count, 4);
 }
 
 void

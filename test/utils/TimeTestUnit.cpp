@@ -33,12 +33,12 @@ void TimeTestUnit::test_create()
 
   matador::time now(t);
 
-  UNIT_ASSERT_EQUAL(tt->tm_year + 1900, now.year(), "year isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_mon + 1, now.month(), "month of year isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_mday, now.day(), "day of month isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_hour, now.hour(), "hour of day isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_min, now.minute(), "minute of day isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_sec, now.second(), "second of day isn't equal");
+  UNIT_ASSERT_EQUAL(tt->tm_year + 1900, now.year());
+  UNIT_ASSERT_EQUAL(tt->tm_mon + 1, now.month());
+  UNIT_ASSERT_EQUAL(tt->tm_mday, now.day());
+  UNIT_ASSERT_EQUAL(tt->tm_hour, now.hour());
+  UNIT_ASSERT_EQUAL(tt->tm_min, now.minute());
+  UNIT_ASSERT_EQUAL(tt->tm_sec, now.second());
 
 #ifdef _MSC_VER
   localtime_s(tt, &t);
@@ -47,29 +47,29 @@ void TimeTestUnit::test_create()
 #endif
   matador::time t1 = time::now();
 
-  UNIT_ASSERT_EQUAL(tt->tm_year + 1900, t1.year(), "year isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_mon + 1, t1.month(), "month of year isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_mday, t1.day(), "day of month isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_hour, t1.hour(), "hour of day isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_min, t1.minute(), "minute of day isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_sec, t1.second(), "second of day isn't equal");
+  UNIT_ASSERT_EQUAL(tt->tm_year + 1900, t1.year());
+  UNIT_ASSERT_EQUAL(tt->tm_mon + 1, t1.month());
+  UNIT_ASSERT_EQUAL(tt->tm_mday, t1.day());
+  UNIT_ASSERT_EQUAL(tt->tm_hour, t1.hour());
+  UNIT_ASSERT_EQUAL(tt->tm_min, t1.minute());
+  UNIT_ASSERT_EQUAL(tt->tm_sec, t1.second());
 }
 
 void TimeTestUnit::test_initialize()
 {
   matador::time t1(2014, 12, 3, 20, 17, 45);
 
-  UNIT_ASSERT_EQUAL(2014, t1.year(), "year isn't equal 2014");
-  UNIT_ASSERT_EQUAL(12, t1.month(), "month of year isn't equal 12");
-  UNIT_ASSERT_EQUAL(3, t1.day(), "day of month isn't equal 3");
-  UNIT_ASSERT_EQUAL(20, t1.hour(), "hour of day isn't equal 20");
-  UNIT_ASSERT_EQUAL(17, t1.minute(), "minute day isn't equal 17");
-  UNIT_ASSERT_EQUAL(45, t1.second(), "second of day isn't equal 45");
-  UNIT_ASSERT_EQUAL(0, t1.milli_second(), "millisecond of day isn't equal 0");
-  UNIT_ASSERT_EQUAL(3, t1.day_of_week(), "day of week isn't equal 0");
-  UNIT_ASSERT_EQUAL(336, t1.day_of_year(), "day of week isn't equal 0");
-  UNIT_ASSERT_FALSE(t1.is_daylight_saving(), "time stamp must not be daylight saving");
-  UNIT_ASSERT_FALSE(t1.is_leapyear(), "time stamp must not be a leap year");
+  UNIT_ASSERT_EQUAL(2014, t1.year());
+  UNIT_ASSERT_EQUAL(12, t1.month());
+  UNIT_ASSERT_EQUAL(3, t1.day());
+  UNIT_ASSERT_EQUAL(20, t1.hour());
+  UNIT_ASSERT_EQUAL(17, t1.minute());
+  UNIT_ASSERT_EQUAL(45, t1.second());
+  UNIT_ASSERT_EQUAL(0, t1.milli_second());
+  UNIT_ASSERT_EQUAL(3, t1.day_of_week());
+  UNIT_ASSERT_EQUAL(336, t1.day_of_year());
+  UNIT_ASSERT_FALSE(t1.is_daylight_saving());
+  UNIT_ASSERT_FALSE(t1.is_leapyear());
 
   time_t t;
   ::time(&t);
@@ -90,26 +90,26 @@ void TimeTestUnit::test_initialize()
 
   matador::time t2(mktime(tt));
 
-  UNIT_ASSERT_EQUAL(2014, t2.year(), "year isn't equal 2014");
-  UNIT_ASSERT_EQUAL(12, t2.month(), "month of year isn't equal 12");
-  UNIT_ASSERT_EQUAL(3, t2.day(), "day of month isn't equal 3");
-  UNIT_ASSERT_EQUAL(20, t2.hour(), "hour of day isn't equal 20");
-  UNIT_ASSERT_EQUAL(17, t2.minute(), "minute day isn't equal 17");
-  UNIT_ASSERT_EQUAL(45, t2.second(), "second of day isn't equal 45");
-  UNIT_ASSERT_EQUAL(0, t2.milli_second(), "millisecond of day isn't equal 0");
-  UNIT_ASSERT_FALSE(t2.is_daylight_saving(), "time stamp must not be daylight saving");
-  UNIT_ASSERT_FALSE(t2.is_leapyear(), "time stamp must not be a leap year");
+  UNIT_ASSERT_EQUAL(2014, t2.year());
+  UNIT_ASSERT_EQUAL(12, t2.month());
+  UNIT_ASSERT_EQUAL(3, t2.day());
+  UNIT_ASSERT_EQUAL(20, t2.hour());
+  UNIT_ASSERT_EQUAL(17, t2.minute());
+  UNIT_ASSERT_EQUAL(45, t2.second());
+  UNIT_ASSERT_EQUAL(0, t2.milli_second());
+  UNIT_ASSERT_FALSE(t2.is_daylight_saving());
+  UNIT_ASSERT_FALSE(t2.is_leapyear());
 }
 
 void TimeTestUnit::test_invalid()
 {
-  UNIT_ASSERT_EXCEPTION(matador::time(2015, 12, 42, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(matador::time(2015, 13, 31, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 29, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 63, 12, 12), std::logic_error, "time isn't valid", "time should not be valid");
-  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 12, 63, 12), std::logic_error, "time isn't valid", "time should not be valid");
-  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 12, 12, 63), std::logic_error, "time isn't valid", "time should not be valid");
-  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 12, 12, 12, 10000), std::logic_error, "time isn't valid", "time should not be valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 12, 42, 12, 12, 12), std::logic_error, "date isn't valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 13, 31, 12, 12, 12), std::logic_error, "date isn't valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 29, 12, 12, 12), std::logic_error, "date isn't valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 63, 12, 12), std::logic_error, "time isn't valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 12, 63, 12), std::logic_error, "time isn't valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 12, 12, 63), std::logic_error, "time isn't valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 12, 12, 12, 10000), std::logic_error, "time isn't valid");
 }
 
 void TimeTestUnit::test_copy()
@@ -117,27 +117,27 @@ void TimeTestUnit::test_copy()
   matador::time t1(2014, 12, 3, 20, 17, 45);
   matador::time t2(t1);
 
-  UNIT_ASSERT_EQUAL(2014, t1.year(), "year isn't equal 2014");
-  UNIT_ASSERT_EQUAL(12, t1.month(), "month of year isn't equal 12");
-  UNIT_ASSERT_EQUAL(3, t1.day(), "day of month isn't equal 3");
-  UNIT_ASSERT_EQUAL(20, t1.hour(), "hour of day isn't equal 20");
-  UNIT_ASSERT_EQUAL(17, t1.minute(), "minute day isn't equal 17");
-  UNIT_ASSERT_EQUAL(45, t1.second(), "second of day isn't equal 45");
-  UNIT_ASSERT_EQUAL(0, t1.milli_second(), "millisecond of day isn't equal 0");
-  UNIT_ASSERT_FALSE(t1.is_daylight_saving(), "time stamp must not be daylight saving");
-  UNIT_ASSERT_FALSE(t1.is_leapyear(), "time stamp must not be a leap year");
+  UNIT_ASSERT_EQUAL(2014, t1.year());
+  UNIT_ASSERT_EQUAL(12, t1.month());
+  UNIT_ASSERT_EQUAL(3, t1.day());
+  UNIT_ASSERT_EQUAL(20, t1.hour());
+  UNIT_ASSERT_EQUAL(17, t1.minute());
+  UNIT_ASSERT_EQUAL(45, t1.second());
+  UNIT_ASSERT_EQUAL(0, t1.milli_second());
+  UNIT_ASSERT_FALSE(t1.is_daylight_saving());
+  UNIT_ASSERT_FALSE(t1.is_leapyear());
 
-  UNIT_ASSERT_EQUAL(2014, t2.year(), "year isn't equal 2014");
-  UNIT_ASSERT_EQUAL(12, t2.month(), "month of year isn't equal 12");
-  UNIT_ASSERT_EQUAL(3, t2.day(), "day of month isn't equal 3");
-  UNIT_ASSERT_EQUAL(20, t2.hour(), "hour of day isn't equal 20");
-  UNIT_ASSERT_EQUAL(17, t2.minute(), "minute day isn't equal 17");
-  UNIT_ASSERT_EQUAL(45, t2.second(), "second of day isn't equal 45");
-  UNIT_ASSERT_EQUAL(0, t2.milli_second(), "millisecond of day isn't equal 0");
-  UNIT_ASSERT_FALSE(t2.is_daylight_saving(), "time stamp must not be daylight saving");
-  UNIT_ASSERT_FALSE(t2.is_leapyear(), "time stamp must not be a leap year");
+  UNIT_ASSERT_EQUAL(2014, t2.year());
+  UNIT_ASSERT_EQUAL(12, t2.month());
+  UNIT_ASSERT_EQUAL(3, t2.day());
+  UNIT_ASSERT_EQUAL(20, t2.hour());
+  UNIT_ASSERT_EQUAL(17, t2.minute());
+  UNIT_ASSERT_EQUAL(45, t2.second());
+  UNIT_ASSERT_EQUAL(0, t2.milli_second());
+  UNIT_ASSERT_FALSE(t2.is_daylight_saving());
+  UNIT_ASSERT_FALSE(t2.is_leapyear());
 
-  UNIT_ASSERT_TRUE(t1 == t2, "times must be equal");
+  UNIT_ASSERT_TRUE(t1 == t2);
 }
 
 void TimeTestUnit::test_assign()
@@ -146,27 +146,27 @@ void TimeTestUnit::test_assign()
   matador::time t2;
   t2 = t1;
 
-  UNIT_ASSERT_EQUAL(2014, t1.year(), "year isn't equal 2014");
-  UNIT_ASSERT_EQUAL(12, t1.month(), "month of year isn't equal 12");
-  UNIT_ASSERT_EQUAL(3, t1.day(), "day of month isn't equal 3");
-  UNIT_ASSERT_EQUAL(20, t1.hour(), "hour of day isn't equal 20");
-  UNIT_ASSERT_EQUAL(17, t1.minute(), "minute day isn't equal 17");
-  UNIT_ASSERT_EQUAL(45, t1.second(), "second of day isn't equal 45");
-  UNIT_ASSERT_EQUAL(0, t1.milli_second(), "millisecond of day isn't equal 0");
-  UNIT_ASSERT_FALSE(t1.is_daylight_saving(), "time stamp must not be daylight saving");
-  UNIT_ASSERT_FALSE(t1.is_leapyear(), "time stamp must not be a leap year");
+  UNIT_ASSERT_EQUAL(2014, t1.year());
+  UNIT_ASSERT_EQUAL(12, t1.month());
+  UNIT_ASSERT_EQUAL(3, t1.day());
+  UNIT_ASSERT_EQUAL(20, t1.hour());
+  UNIT_ASSERT_EQUAL(17, t1.minute());
+  UNIT_ASSERT_EQUAL(45, t1.second());
+  UNIT_ASSERT_EQUAL(0, t1.milli_second());
+  UNIT_ASSERT_FALSE(t1.is_daylight_saving());
+  UNIT_ASSERT_FALSE(t1.is_leapyear());
 
-  UNIT_ASSERT_EQUAL(2014, t2.year(), "year isn't equal 2014");
-  UNIT_ASSERT_EQUAL(12, t2.month(), "month of year isn't equal 12");
-  UNIT_ASSERT_EQUAL(3, t2.day(), "day of month isn't equal 3");
-  UNIT_ASSERT_EQUAL(20, t2.hour(), "hour of day isn't equal 20");
-  UNIT_ASSERT_EQUAL(17, t2.minute(), "minute day isn't equal 17");
-  UNIT_ASSERT_EQUAL(45, t2.second(), "second of day isn't equal 45");
-  UNIT_ASSERT_EQUAL(0, t2.milli_second(), "millisecond of day isn't equal 0");
-  UNIT_ASSERT_FALSE(t2.is_daylight_saving(), "time stamp must not be daylight saving");
-  UNIT_ASSERT_FALSE(t2.is_leapyear(), "time stamp must not be a leap year");
+  UNIT_ASSERT_EQUAL(2014, t2.year());
+  UNIT_ASSERT_EQUAL(12, t2.month());
+  UNIT_ASSERT_EQUAL(3, t2.day());
+  UNIT_ASSERT_EQUAL(20, t2.hour());
+  UNIT_ASSERT_EQUAL(17, t2.minute());
+  UNIT_ASSERT_EQUAL(45, t2.second());
+  UNIT_ASSERT_EQUAL(0, t2.milli_second());
+  UNIT_ASSERT_FALSE(t2.is_daylight_saving());
+  UNIT_ASSERT_FALSE(t2.is_leapyear());
 
-  UNIT_ASSERT_TRUE(t1 == t2, "times must be equal");
+  UNIT_ASSERT_TRUE(t1 == t2);
 }
 
 void TimeTestUnit::test_compare()
@@ -175,65 +175,65 @@ void TimeTestUnit::test_compare()
   matador::time t2(2014, 12, 3, 20, 17, 45);
   matador::time t3(t1);
 
-  UNIT_ASSERT_TRUE(t1 > t2, "t1 is greater than t2");
-  UNIT_ASSERT_TRUE(t2 < t1, "t2 is less than t1");
-  UNIT_ASSERT_TRUE(t2 != t1, "t1 is not equal t2");
-  UNIT_ASSERT_TRUE(t3 == t1, "t1 is equal t3");
-  UNIT_ASSERT_TRUE(t1 >= t2, "t1 is greater equal than t2");
-  UNIT_ASSERT_TRUE(t2 <= t1, "t2 is less equal than t1");
-  UNIT_ASSERT_TRUE(t1 >= t3, "t1 is greater equal than t2");
-  UNIT_ASSERT_TRUE(t3 <= t1, "t2 is less equal than t1");
+  UNIT_ASSERT_TRUE(t1 > t2);
+  UNIT_ASSERT_TRUE(t2 < t1);
+  UNIT_ASSERT_TRUE(t2 != t1);
+  UNIT_ASSERT_TRUE(t3 == t1);
+  UNIT_ASSERT_TRUE(t1 >= t2);
+  UNIT_ASSERT_TRUE(t2 <= t1);
+  UNIT_ASSERT_TRUE(t1 >= t3);
+  UNIT_ASSERT_TRUE(t3 <= t1);
 }
 
 void TimeTestUnit::test_modify()
 {
   matador::time t(2015, 1, 31, 11, 35, 7);
 
-  UNIT_ASSERT_EQUAL(2015, t.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(1, t.month(), "month of year isn't equal 1");
-  UNIT_ASSERT_EQUAL(31, t.day(), "day of month isn't equal 31");
-  UNIT_ASSERT_EQUAL(11, t.hour(), "hour of day isn't equal 11");
-  UNIT_ASSERT_EQUAL(35, t.minute(), "minute day isn't equal 35");
-  UNIT_ASSERT_EQUAL(7, t.second(), "second of day isn't equal 7");
-  UNIT_ASSERT_EQUAL(0, t.milli_second(), "millisecond of day isn't equal 0");
-  UNIT_ASSERT_FALSE(t.is_daylight_saving(), "time stamp must not be daylight saving");
-  UNIT_ASSERT_FALSE(t.is_leapyear(), "time stamp must not be a leap year");
+  UNIT_ASSERT_EQUAL(2015, t.year());
+  UNIT_ASSERT_EQUAL(1, t.month());
+  UNIT_ASSERT_EQUAL(31, t.day());
+  UNIT_ASSERT_EQUAL(11, t.hour());
+  UNIT_ASSERT_EQUAL(35, t.minute());
+  UNIT_ASSERT_EQUAL(7, t.second());
+  UNIT_ASSERT_EQUAL(0, t.milli_second());
+  UNIT_ASSERT_FALSE(t.is_daylight_saving());
+  UNIT_ASSERT_FALSE(t.is_leapyear());
 
   t.year(2014).month(8).day(8);
 
-  UNIT_ASSERT_EQUAL(2014, t.year(), "year isn't equal 2014");
-  UNIT_ASSERT_EQUAL(8, t.month(), "month of year isn't equal 12");
-  UNIT_ASSERT_EQUAL(8, t.day(), "day of month isn't equal 3");
-  UNIT_ASSERT_EQUAL(11, t.hour(), "hour of day isn't equal 11");
-  UNIT_ASSERT_EQUAL(35, t.minute(), "minute day isn't equal 35");
-  UNIT_ASSERT_EQUAL(7, t.second(), "second of day isn't equal 7");
-  UNIT_ASSERT_EQUAL(0, t.milli_second(), "millisecond of day isn't equal 0");
-//  UNIT_ASSERT_TRUE(t.is_daylight_saving(), "time stamp must not be daylight saving");
-  UNIT_ASSERT_FALSE(t.is_leapyear(), "time stamp must not be a leap year");
+  UNIT_ASSERT_EQUAL(2014, t.year());
+  UNIT_ASSERT_EQUAL(8, t.month());
+  UNIT_ASSERT_EQUAL(8, t.day());
+  UNIT_ASSERT_EQUAL(11, t.hour());
+  UNIT_ASSERT_EQUAL(35, t.minute());
+  UNIT_ASSERT_EQUAL(7, t.second());
+  UNIT_ASSERT_EQUAL(0, t.milli_second());
+//  UNIT_ASSERT_TRUE(t.is_daylight_saving());
+  UNIT_ASSERT_FALSE(t.is_leapyear());
 
   t.year(2016);
 
-  UNIT_ASSERT_EQUAL(2016, t.year(), "year isn't equal 2016");
-  UNIT_ASSERT_EQUAL(8, t.month(), "month of year isn't equal 8");
-  UNIT_ASSERT_EQUAL(8, t.day(), "day of month isn't equal 8");
-  UNIT_ASSERT_EQUAL(11, t.hour(), "hour of day isn't equal 11");
-  UNIT_ASSERT_EQUAL(35, t.minute(), "minute day isn't equal 35");
-  UNIT_ASSERT_EQUAL(7, t.second(), "second of day isn't equal 7");
-  UNIT_ASSERT_EQUAL(0, t.milli_second(), "millisecond of day isn't equal 0");
-//  UNIT_ASSERT_TRUE(t.is_daylight_saving(), "time stamp must not be daylight saving");
-  UNIT_ASSERT_TRUE(t.is_leapyear(), "time stamp must be a leap year");
+  UNIT_ASSERT_EQUAL(2016, t.year());
+  UNIT_ASSERT_EQUAL(8, t.month());
+  UNIT_ASSERT_EQUAL(8, t.day());
+  UNIT_ASSERT_EQUAL(11, t.hour());
+  UNIT_ASSERT_EQUAL(35, t.minute());
+  UNIT_ASSERT_EQUAL(7, t.second());
+  UNIT_ASSERT_EQUAL(0, t.milli_second());
+//  UNIT_ASSERT_TRUE(t.is_daylight_saving());
+  UNIT_ASSERT_TRUE(t.is_leapyear());
 
   t.year(2000).hour(23).minute(13).second(1).milli_second(4711);
 
-  UNIT_ASSERT_EQUAL(2000, t.year(), "year isn't equal 2000");
-  UNIT_ASSERT_EQUAL(8, t.month(), "month of year isn't equal 8");
-  UNIT_ASSERT_EQUAL(8, t.day(), "day of month isn't equal 8");
-  UNIT_ASSERT_EQUAL(23, t.hour(), "hour of day isn't equal 11");
-  UNIT_ASSERT_EQUAL(13, t.minute(), "minute day isn't equal 35");
-  UNIT_ASSERT_EQUAL(1, t.second(), "second of day isn't equal 7");
-  UNIT_ASSERT_EQUAL(4711, t.milli_second(), "millisecond of day isn't equal 4711");
-//  UNIT_ASSERT_TRUE(t.is_daylight_saving(), "time stamp must not be daylight saving");
-  UNIT_ASSERT_TRUE(t.is_leapyear(), "time stamp must be a leap year");
+  UNIT_ASSERT_EQUAL(2000, t.year());
+  UNIT_ASSERT_EQUAL(8, t.month());
+  UNIT_ASSERT_EQUAL(8, t.day());
+  UNIT_ASSERT_EQUAL(23, t.hour());
+  UNIT_ASSERT_EQUAL(13, t.minute());
+  UNIT_ASSERT_EQUAL(1, t.second());
+  UNIT_ASSERT_EQUAL(4711, t.milli_second());
+//  UNIT_ASSERT_TRUE(t.is_daylight_saving());
+  UNIT_ASSERT_TRUE(t.is_leapyear());
 }
 
 void TimeTestUnit::test_parse()
@@ -242,37 +242,37 @@ void TimeTestUnit::test_parse()
 
   matador::time t = matador::time::parse(tstr1, "%d.%m.%Y %H:%M:%S.%f");
 
-  UNIT_ASSERT_EQUAL(2015, t.year(), "year must be 2015");
-  UNIT_ASSERT_EQUAL(4, t.month(), "month must be 4");
-  UNIT_ASSERT_EQUAL(3, t.day(), "day must be 3");
-  UNIT_ASSERT_EQUAL(12, t.hour(), "hour must be 12");
-  UNIT_ASSERT_EQUAL(55, t.minute(), "minute must be 55");
-  UNIT_ASSERT_EQUAL(12, t.second(), "second must be 12");
-  UNIT_ASSERT_EQUAL(123, t.milli_second(), "millisecond must be 123");
+  UNIT_ASSERT_EQUAL(2015, t.year());
+  UNIT_ASSERT_EQUAL(4, t.month());
+  UNIT_ASSERT_EQUAL(3, t.day());
+  UNIT_ASSERT_EQUAL(12, t.hour());
+  UNIT_ASSERT_EQUAL(55, t.minute());
+  UNIT_ASSERT_EQUAL(12, t.second());
+  UNIT_ASSERT_EQUAL(123, t.milli_second());
 
   tstr1.assign("12:55:12.123 03.04.2015");
 
   t = matador::time::parse(tstr1, "%H:%M:%S.%f %d.%m.%Y");
 
-  UNIT_ASSERT_EQUAL(2015, t.year(), "year must be 2015");
-  UNIT_ASSERT_EQUAL(4, t.month(), "month must be 4");
-  UNIT_ASSERT_EQUAL(3, t.day(), "day must be 3");
-  UNIT_ASSERT_EQUAL(12, t.hour(), "hour must be 12");
-  UNIT_ASSERT_EQUAL(55, t.minute(), "minute must be 55");
-  UNIT_ASSERT_EQUAL(12, t.second(), "second must be 12");
-  UNIT_ASSERT_EQUAL(123, t.milli_second(), "millisecond must be 123");
+  UNIT_ASSERT_EQUAL(2015, t.year());
+  UNIT_ASSERT_EQUAL(4, t.month());
+  UNIT_ASSERT_EQUAL(3, t.day());
+  UNIT_ASSERT_EQUAL(12, t.hour());
+  UNIT_ASSERT_EQUAL(55, t.minute());
+  UNIT_ASSERT_EQUAL(12, t.second());
+  UNIT_ASSERT_EQUAL(123, t.milli_second());
 
   tstr1.assign("12:55:12 03.04.2015");
 
   t = matador::time::parse(tstr1, "%H:%M:%S %d.%m.%Y");
 
-  UNIT_ASSERT_EQUAL(2015, t.year(), "year must be 2015");
-  UNIT_ASSERT_EQUAL(4, t.month(), "month must be 4");
-  UNIT_ASSERT_EQUAL(3, t.day(), "day must be 3");
-  UNIT_ASSERT_EQUAL(12, t.hour(), "hour must be 12");
-  UNIT_ASSERT_EQUAL(55, t.minute(), "minute must be 55");
-  UNIT_ASSERT_EQUAL(12, t.second(), "second must be 12");
-  UNIT_ASSERT_EQUAL(0, t.milli_second(), "millisecond must be 0");
+  UNIT_ASSERT_EQUAL(2015, t.year());
+  UNIT_ASSERT_EQUAL(4, t.month());
+  UNIT_ASSERT_EQUAL(3, t.day());
+  UNIT_ASSERT_EQUAL(12, t.hour());
+  UNIT_ASSERT_EQUAL(55, t.minute());
+  UNIT_ASSERT_EQUAL(12, t.second());
+  UNIT_ASSERT_EQUAL(0, t.milli_second());
 }
 
 void TimeTestUnit::test_format()
@@ -281,5 +281,5 @@ void TimeTestUnit::test_format()
 
   std::string tstr(to_string(t, "%H:%M:%S.%f %d.%m.%Y"));
 
-  UNIT_ASSERT_EQUAL(tstr, "11:35:07.123 31.01.2015", "invalid time string [" + tstr + "]");
+  UNIT_ASSERT_EQUAL(tstr, "11:35:07.123 31.01.2015");
 }
