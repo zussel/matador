@@ -106,7 +106,7 @@ public:
    */
   result<T> execute()
   {
-    std::cout << "\n" << p->str();
+//    std::cout << "\n" << p->str();
     return result<T>(p->execute());
   }
 
@@ -236,7 +236,7 @@ public:
    */
   result<row> execute()
   {
-    std::cout << "\n" << p->str();
+//    std::cout << "\n" << p->str();
     return result<row>(p->execute(), prototype_);
   }
 
