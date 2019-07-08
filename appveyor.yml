@@ -61,7 +61,7 @@ before_build:
       cd "$env:APPVEYOR_BUILD_FOLDER"
       mkdir build
       cd build
-      cmake -G "$env:generator" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" ..
+      cmake -G "$env:generator" -DMATADOR_ODBC=true -DMATADOR_POSTGRESQL=false -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" ..
       # cmake -G "$env:generator" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=false  ..
 
 build_script:
