@@ -1233,7 +1233,7 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
 {
   connection_.open();
 
-  query<> q(connection_);
+  query<> q(connection_, "person");
 
   q.create({
              make_typed_id_column<long>("id"),
@@ -1287,7 +1287,7 @@ void QueryTestUnit::test_rows()
 {
   connection_.open();
 
-  query<> q(connection_);
+  query<> q(connection_, "item");
 
   auto cols = {"id", "string", "varchar", "int", "float", "double", "date", "time"};
 
