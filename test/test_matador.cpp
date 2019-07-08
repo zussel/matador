@@ -52,15 +52,6 @@
 #include "sql/SQLiteDialectTestUnit.hpp"
 
 #include "connections.hpp"
-
-#ifdef OOS_MYSQL
-#ifdef WIN32
-#include <mysql_version.h>
-#else
-#include <mysql/mysql_version.h>
-#endif
-#endif
-
 #include <cstdlib> // EXIT_SUCCESS
 
 using namespace matador;

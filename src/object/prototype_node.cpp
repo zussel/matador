@@ -1,3 +1,5 @@
+#include <memory>
+
 /*
  * This file is part of OpenObjectStore OOS.
  *
@@ -25,18 +27,11 @@ using namespace std;
 
 namespace matador {
 
-prototype_node::prototype_node()
-{}
-
-prototype_node::~prototype_node()
-{
-}
-
 void prototype_node::initialize(object_store *tree, const char *type, bool abstract)
 {
   tree_ = tree;
-  first.reset(new prototype_node);
-  last.reset(new prototype_node);
+  first = std::make_unique<prototype_node>();
+  last = std::make_unique<prototype_node>();
   type_.assign(type);
   abstract_ = abstract;
   first->next = last.get();
@@ -77,9 +72,7 @@ void prototype_node::append(prototype_node *sibling)
 
   if (!parent) {
     sibling->op_first = new object_proxy();
-//    sibling->op_first = new object_proxy(nullptr);
     sibling->op_last = sibling->op_marker = new object_proxy();
-//    sibling->op_last = sibling->op_marker = new object_proxy(nullptr);
     sibling->op_first->next_ = sibling->op_last;
     sibling->op_last->prev_ = sibling->op_first;
   } else {
@@ -220,8 +213,8 @@ void prototype_node::unlink()
   // unlink node
   prev->next = next;
   next->prev = prev;
-  next = 0;
-  prev = 0;
+  next = nullptr;
+  prev = nullptr;
 }
 
 prototype_node* prototype_node::next_node() const
@@ -264,7 +257,7 @@ prototype_node* prototype_node::previous_node() const
 {
   // if node has a previous sibling, we set it
   // as our next iterator. then we check if there
-  // are last childs. if so, we set the last last
+  // are last children. if so, we set the last last
   // child as our iterator
   if (prev && prev->prev) {
     const prototype_node *node = prev;
@@ -283,7 +276,7 @@ prototype_node* prototype_node::previous_node(const prototype_node *root) const
 {
   // if node has a previous sibling, we set it
   // as our next iterator. then we check if there
-  // are last childs. if so, we set the last last
+  // are last children. if so, we set the last last
   // child as our iterator
   if (prev && prev->prev) {
     const prototype_node *node = prev;
@@ -303,13 +296,13 @@ object_store *prototype_node::tree() const
   return tree_;
 }
 
-bool prototype_node::is_child_of(const prototype_node *parent) const
+bool prototype_node::is_child_of(const prototype_node *prnt) const
 {
   const prototype_node *node = this;
-  while (parent->depth < node->depth) {
+  while (prnt->depth < node->depth) {
     node = node->parent;
   }
-  return node == parent;
+  return node == prnt;
 }
 
 
@@ -453,32 +446,6 @@ bool prototype_node::is_relation_node() const
 const prototype_node::relation_node_info &prototype_node::node_info() const
 {
   return relation_node_info_;
-}
-
-std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
-{
-  if (pn.parent) {
-    os << "\t" << pn.parent->type_ << " -> " << pn.type_ << "\n";
-  }
-  os << "\t" << pn.type_ << " [label=\"{" << pn.type_ << " (" << &pn << ")";
-  os << "|{op_first|" << pn.op_first << "}";
-  os << "|{op_marker|" << pn.op_marker << "}";
-  os << "|{op_last|" << pn.op_last << "}";
-  os << "|{parent|" << pn.parent << "}";
-  os << "|{prev|" << pn.prev << "}";
-  os << "|{next|" << pn.next << "}";
-  os << "|{first|" << pn.first.get() << "}";
-  os << "|{last|" << pn.last.get() << "}";
-  // determine size
-  int i = 0;
-  const object_proxy *iop = pn.op_first;
-  while (iop && iop->next() != pn.op_marker) {
-    ++i;
-    iop = iop->next();
-  }
-  os << "|{size|" << i << "}";
-  os << "}\"]\n";
-  return os;
 }
 
 }

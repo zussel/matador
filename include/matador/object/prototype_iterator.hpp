@@ -35,7 +35,7 @@ typedef base_iterator::reference reference ;  /**< Shortcut for the reference ty
 /**
 * Creates an empty iterator
 */
-prototype_iterator();
+prototype_iterator() = default;
 
 /**
 * @brief Creates a iterator for a concrete type.
@@ -45,7 +45,7 @@ prototype_iterator();
 *
 * @param node The prototype_node of the object_proxy
 */
-prototype_iterator(pointer node);
+explicit prototype_iterator(pointer node);
 
 /**
 * Copy from a given const_object_view_iterator.
@@ -62,7 +62,7 @@ prototype_iterator(const prototype_iterator &x);
 */
 prototype_iterator& operator=(const prototype_iterator &x);
 
-~prototype_iterator();
+~prototype_iterator() = default;
 
 /**
 * @brief Compares this with another iterators.
@@ -170,7 +170,7 @@ const_prototype_iterator();
 *
 * @param node The prototype_node of the object_proxy
 */
-const_prototype_iterator(pointer node);
+explicit const_prototype_iterator(pointer node);
 
 /**
 * Copy from a given const_object_view_iterator.
@@ -202,7 +202,7 @@ const_prototype_iterator& operator=(const prototype_iterator &x);
 */
 const_prototype_iterator& operator=(const const_prototype_iterator &x);
 
-~const_prototype_iterator();
+~const_prototype_iterator() = default;
 
 /**
 * @brief Compares this with another iterators.

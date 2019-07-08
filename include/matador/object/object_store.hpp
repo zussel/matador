@@ -453,17 +453,17 @@ public:
   void clear(bool full = false);
 
   /**
- * Clears a prototype node and its cildren nodes.
- * All objects will be deleted.
- *
- * @param type The name of the type to remove.
- * @throws matador::object_exception on error
- */
+   * Clears a prototype node and its cildren nodes.
+   * All objects will be deleted.
+   *
+   * @param type The name of the type to remove.
+   * @throws matador::object_exception on error
+   */
   void clear(const char *type);
 
   /**
    * Clears a prototype node by an iterator and its
-   * cildren nodes. All object_proxy objects will be
+   * children nodes. All object_proxy objects will be
    * deleted.
    *
    * @param node The prototype_iterator to remove.
@@ -890,15 +890,6 @@ private:
 
 
 private:
-//  template < class T, template < class V = T > class ... O, typename = typename std::enable_if< std::is_same<T, has_many_item<typename T::value_type>>::value >::type >
-//  prototype_iterator attach(const char *id, abstract_has_many *container)
-//  {
-//    temp_container_ = container;
-//    prototype_iterator i = attach<T, O...>(id);
-//    temp_container_ = nullptr;
-//    return i;
-//  }
-
   /**
    * Clears a prototype_node and its
    * cildren nodes. All object_proxy objects will be
@@ -982,13 +973,7 @@ private:
   detail::object_deleter object_deleter_;
   detail::object_inserter object_inserter_;
 
-  // only used when a has_many object is inserted
-  abstract_has_many *temp_container_ = nullptr;
-
   std::stack<transaction> transactions_;
-
-  // relation notification related
-  bool relation_notification_ = true;
 };
 
 template < class T >
@@ -1115,7 +1100,6 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 
 #include "matador/object/node_analyzer.tpp"
 #include "matador/object/relation_field_endpoint.tpp"
-//#include "matador/object/relation_field_serializer.tpp"
 #include "matador/object/relation_endpoint_value_inserter.tpp"
 #include "matador/object/relation_endpoint_value_remover.tpp"
 #include "matador/object/object_inserter.tpp"

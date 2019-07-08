@@ -40,19 +40,16 @@ void TimeTestUnit::test_create()
   UNIT_ASSERT_EQUAL(tt->tm_min, now.minute());
   UNIT_ASSERT_EQUAL(tt->tm_sec, now.second());
 
-#ifdef _MSC_VER
-  localtime_s(tt, &t);
-#else
-  tt = localtime(&t);
-#endif
   matador::time t1 = time::now();
 
-  UNIT_ASSERT_EQUAL(tt->tm_year + 1900, t1.year());
-  UNIT_ASSERT_EQUAL(tt->tm_mon + 1, t1.month());
-  UNIT_ASSERT_EQUAL(tt->tm_mday, t1.day());
-  UNIT_ASSERT_EQUAL(tt->tm_hour, t1.hour());
-  UNIT_ASSERT_EQUAL(tt->tm_min, t1.minute());
-  UNIT_ASSERT_EQUAL(tt->tm_sec, t1.second());
+  struct tm ttt = t1.get_tm();
+  
+  UNIT_ASSERT_EQUAL(ttt.tm_year + 1900, t1.year());
+  UNIT_ASSERT_EQUAL(ttt.tm_mon + 1, t1.month());
+  UNIT_ASSERT_EQUAL(ttt.tm_mday, t1.day());
+  UNIT_ASSERT_EQUAL(ttt.tm_hour, t1.hour());
+  UNIT_ASSERT_EQUAL(ttt.tm_min, t1.minute());
+  UNIT_ASSERT_EQUAL(ttt.tm_sec, t1.second());
 }
 
 void TimeTestUnit::test_initialize()

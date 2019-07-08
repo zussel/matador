@@ -5,9 +5,6 @@
 
 namespace matador {
 
-prototype_iterator::prototype_iterator()
-{}
-
 prototype_iterator::prototype_iterator(prototype_iterator::pointer node)
   : node_(node)
 {}
@@ -21,9 +18,6 @@ prototype_iterator& prototype_iterator::operator=(const prototype_iterator &x)
   node_ = x.node_;
   return *this;
 }
-
-prototype_iterator::~prototype_iterator()
-{}
 
 bool prototype_iterator::operator==(const prototype_iterator &i) const
 {
@@ -127,9 +121,6 @@ const_prototype_iterator& const_prototype_iterator::operator=(const prototype_it
   node_ = x.node_;
   return *this;
 }
-
-const_prototype_iterator::~const_prototype_iterator()
-{}
 
 bool const_prototype_iterator::operator==(const const_prototype_iterator &i) const
 {

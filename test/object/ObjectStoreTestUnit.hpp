@@ -30,6 +30,7 @@ public:
   void test_delete_object();
   void test_hierarchy();
   void test_view();
+  void test_clear_type();
   void test_clear();
   void test_generic();
   void test_structure();
