@@ -156,7 +156,7 @@ void QueryTestUnit::test_quoted_identifier()
 {
   connection_.open();
 
-  query<> q(connection_);
+  query<> q(connection_, "quotes");
 
   q.create({make_typed_column<std::string>("from"), make_typed_column<std::string>("to")}).execute();
 
@@ -210,7 +210,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
   };
 
   for (const auto &colname : colnames) {
-    query<> q(connection_);
+    query<> q(connection_, "quotes");
 
     q.create({make_typed_column<std::string>(colname)}).execute();
 
@@ -232,7 +232,7 @@ void QueryTestUnit::test_quoted_literals()
 {
   connection_.open();
 
-  query<> q(connection_);
+  query<> q(connection_, "escapes");
 
   q.create({make_typed_column<std::string>("name")}).execute();
 
@@ -432,7 +432,7 @@ void QueryTestUnit::test_update()
 {
   connection_.open();
 
-  query<person> q(connection_);
+  query<person> q(connection_, "person");
 
   // create item table and insert item
   result<person> res(q.create().execute());
@@ -481,7 +481,7 @@ void QueryTestUnit::test_anonymous_create()
 {
   connection_.open();
 
-  query<> q(connection_);
+  query<> q(connection_, "person");
 
   auto cols = {"id", "name", "age"};
 
@@ -507,7 +507,7 @@ void QueryTestUnit::test_anonymous_insert()
 {
   connection_.open();
 
-  query<> q(connection_);
+  query<> q(connection_, "person");
 
   q.create({
      make_typed_id_column<long>("id"),
@@ -539,7 +539,7 @@ void QueryTestUnit::test_anonymous_update()
 {
   connection_.open();
 
-  query<> q(connection_);
+  query<> q(connection_, "person");
 
   q.create({
      make_typed_id_column<long>("id"),
@@ -614,7 +614,7 @@ void QueryTestUnit::test_statement_update()
 {
   connection_.open();
 
-  query<person> q(connection_);
+  query<person> q(connection_, "person");
 
   statement<person> stmt(q.create().prepare());
 
@@ -1127,7 +1127,7 @@ void QueryTestUnit::test_prepared_statement()
 {
   connection_.open();
 
-  query<> q(connection_);
+  query<> q(connection_, "person");
 
   q.create({
 	  make_typed_id_column<long>("id"),
@@ -1155,7 +1155,7 @@ void QueryTestUnit::test_prepared_statement_creation()
 {
   connection_.open();
 
-  query<person> q(connection_);
+  query<person> q(connection_, "person");
 
   q.create();
 
@@ -1172,7 +1172,7 @@ void QueryTestUnit::test_prepared_object_result_twice()
 {
   connection_.open();
 
-  query<person> q(connection_);
+  query<person> q(connection_, "person");
 
   q.create();
 
