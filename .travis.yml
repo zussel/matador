@@ -79,7 +79,7 @@ before_install:
   if [ -n "$CLANG_VERSION" ]; then
     export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
   fi
-- sudo -u postgres psql -c "CREATE USER postgres WITH PASSWORD ''"
+#- sudo -u postgres psql -c "CREATE USER postgres WITH PASSWORD ''"
 - sudo -u postgres psql -c "ALTER ROLE postgres SUPERUSER"
 install:
 - |
