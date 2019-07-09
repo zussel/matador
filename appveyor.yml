@@ -26,7 +26,7 @@ init:
   - SET PGUSER=postgres
   - SET PGPASSWORD=Password12!
   - SET PGPORT=5433
-  - SET PATH=C:\Program Files\PostgreSQL\10.1\bin\;%PATH%
+  - SET PATH=C:\Program Files\PostgreSQL\10\bin\;%PATH%
   - psql --version
 
 branches:
