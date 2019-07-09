@@ -4,6 +4,9 @@ dist: trusty
 
 os: linux
 
+services:
+  - postgresql
+
 matrix:
   include:
   - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=32
@@ -98,6 +101,8 @@ before_script:
   if [[ $TRAVIS_OS_NAME != "osx" ]]; then
     mysql -e 'create database matador_test;';
   fi
+- psql -c "CREATE DATABASE matador_test;" -U postgres
+- psql -c "CREATE USER test WITH PASSWORD 'test123';" -U postgres
 - mkdir build
 - cd build
 - |
