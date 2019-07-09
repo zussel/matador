@@ -254,9 +254,9 @@ void mysql_prepared_result::serialize(const char *id, matador::time &x)
       if (info_[result_index_].length > 0) {
         auto *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
         x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
-        ++result_index_;
       }
       bind_[result_index_].length = nullptr;
+      ++result_index_;
     }
   }
 }
