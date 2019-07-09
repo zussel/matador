@@ -4,6 +4,9 @@ dist: trusty
 
 os: linux
 
+services:
+  - postgresql
+
 addons:
   postgresql: "10"
   apt:
@@ -17,7 +20,7 @@ env:
 matrix:
   include:
   - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=32
-    addons: { apt: {packages: [clang-3.6,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
+    addons: { postgresql: "10" , apt: {packages: [clang-3.6,libstdc++-6-dev,postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test]}}
   - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=64
     addons: { apt: {packages: [clang-3.6,libstdc++-6-dev] , sources: [ubuntu-toolchain-r-test]}}
   - env: CLANG_VERSION=3.7 BUILD_TYPE=Release ARCH=32
