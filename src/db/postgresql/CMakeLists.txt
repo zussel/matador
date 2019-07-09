@@ -23,7 +23,7 @@ SET(HEADER_INSTALL
 
 ADD_LIBRARY(matador-postgresql SHARED ${SOURCES} ${HEADER})
 
-TARGET_LINK_LIBRARIES(matador-postgresql matador-utils matador-sql ${PostgreSQL_LIBRARIES})
+TARGET_LINK_LIBRARIES(matador-postgresql matador-utils matador-sql ${POSTGRESQL_LIBRARIES})
 
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-postgresql
