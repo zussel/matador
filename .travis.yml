@@ -79,8 +79,9 @@ before_install:
   if [ -n "$CLANG_VERSION" ]; then
     export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
   fi
-#- sudo -u postgres psql -c "CREATE USER postgres WITH PASSWORD ''"
-- sudo -u postgres psql -c "ALTER ROLE postgres SUPERUSER"
+- sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
+- sudo service postgresql restart
+- sleep 1
 install:
 - |
   if [[ $TRAVIS_OS_NAME != "osx" ]]; then
