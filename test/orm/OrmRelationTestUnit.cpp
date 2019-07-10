@@ -30,11 +30,19 @@ using many_list_varchars = many_builtins<matador::varchar<255>, std::list>;
 
 void OrmRelationTestUnit::test_has_builtin_varchars()
 {
+  std::cout << "\n";
+
   matador::persistence p(dns_);
 
   p.attach<many_list_varchars>("many_varchars");
 
   p.create();
+
+  auto cols = p.conn().describe("elements");
+
+  for (auto const &fld : cols) {
+    std::cout << fld.index() << ": " << fld.name() << " (type: " << (int)fld.type() << ")\n";
+  }
 
   matador::session s(p);
 
@@ -43,7 +51,11 @@ void OrmRelationTestUnit::test_has_builtin_varchars()
   UNIT_ASSERT_GREATER(varchars->id, 0UL);
   UNIT_ASSERT_TRUE(varchars->elements.empty());
 
+  std::cout << "inserted many_list_varchars\n";
+
   auto tr = s.begin();
+
+  std::cout << "start adding varchars to many_list_varchars\n";
 
   try {
     varchars->elements.push_back("george");
@@ -53,6 +65,8 @@ void OrmRelationTestUnit::test_has_builtin_varchars()
   } catch (std::exception &) {
     tr.rollback();
   }
+
+  std::cout << "finished adding varchars to many_list_varchars\n";
 
   UNIT_ASSERT_FALSE(varchars->elements.empty());
   UNIT_ASSERT_EQUAL(varchars->elements.size(), 3UL);
