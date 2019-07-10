@@ -34,9 +34,13 @@ void OrmRelationTestUnit::test_has_builtin_varchars()
 
   matador::persistence p(dns_);
 
+  std::cout << "attaching many_varchars\n";
   p.attach<many_list_varchars>("many_varchars");
+  std::cout << "done attaching many_varchars\n";
 
+  std::cout << "creating tables many_varchars\n";
   p.create();
+  std::cout << "done creating tables many_varchars\n";
 
   auto cols = p.conn().describe("elements");
 

@@ -19,37 +19,37 @@
 
 #include "unit/TestSuiteTestUnit.hpp"
 
-#include "utils/AnyTestUnit.hpp"
-#include "utils/BlobTestUnit.hpp"
-#include "utils/DateTestUnit.hpp"
-#include "utils/TimeTestUnit.hpp"
-#include "utils/VarCharTestUnit.hpp"
-#include "utils/FactoryTestUnit.hpp"
-#include "utils/StringTestUnit.hpp"
-#include "utils/SequencerTestUnit.hpp"
+//#include "utils/AnyTestUnit.hpp"
+//#include "utils/BlobTestUnit.hpp"
+//#include "utils/DateTestUnit.hpp"
+//#include "utils/TimeTestUnit.hpp"
+//#include "utils/VarCharTestUnit.hpp"
+//#include "utils/FactoryTestUnit.hpp"
+//#include "utils/StringTestUnit.hpp"
+//#include "utils/SequencerTestUnit.hpp"
+//
+//#include "object/ObjectStoreTestUnit.hpp"
+//#include "object/ObjectPrototypeTestUnit.hpp"
+//#include "object/ObjectTransactiontestUnit.hpp"
+//#include "object/PrototypeTreeTest.hpp"
+//#include "object/PrimaryKeyUnitTest.hpp"
+//#include "object/HasManyVectorUnitTest.hpp"
+//#include "object/HasManyListUnitTest.hpp"
+//#include "object/RelationTestUnit.hpp"
 
-#include "object/ObjectStoreTestUnit.hpp"
-#include "object/ObjectPrototypeTestUnit.hpp"
-#include "object/ObjectTransactiontestUnit.hpp"
-#include "object/PrototypeTreeTest.hpp"
-#include "object/PrimaryKeyUnitTest.hpp"
-#include "object/HasManyVectorUnitTest.hpp"
-#include "object/HasManyListUnitTest.hpp"
-#include "object/RelationTestUnit.hpp"
-
-#include "orm/BlogUnitTest.hpp"
-#include "orm/OrmTestUnit.hpp"
-#include "orm/OrmReloadTestUnit.hpp"
+//#include "orm/BlogUnitTest.hpp"
+//#include "orm/OrmTestUnit.hpp"
+//#include "orm/OrmReloadTestUnit.hpp"
 #include "orm/OrmRelationTestUnit.hpp"
-#include "orm/TransactionTestUnit.hpp"
-
-#include "sql/ConnectionTestUnit.hpp"
-#include "sql/DialectTestUnit.hpp"
-#include "sql/QueryTestUnit.hpp"
-#include "sql/ConditionUnitTest.hpp"
-#include "sql/MSSQLDialectTestUnit.hpp"
-#include "sql/PostgreSQLDialectTestUnit.hpp"
-#include "sql/SQLiteDialectTestUnit.hpp"
+//#include "orm/TransactionTestUnit.hpp"
+//
+//#include "sql/ConnectionTestUnit.hpp"
+//#include "sql/DialectTestUnit.hpp"
+//#include "sql/QueryTestUnit.hpp"
+//#include "sql/ConditionUnitTest.hpp"
+//#include "sql/MSSQLDialectTestUnit.hpp"
+//#include "sql/PostgreSQLDialectTestUnit.hpp"
+//#include "sql/SQLiteDialectTestUnit.hpp"
 
 #include "connections.hpp"
 #include <cstdlib> // EXIT_SUCCESS
@@ -74,49 +74,47 @@ int main(int argc, char *argv[])
 
   suite.init(argc, argv);
 
-  suite.register_unit(new AnyTestUnit);
-  suite.register_unit(new DateTestUnit);
-  suite.register_unit(new TimeTestUnit);
-  suite.register_unit(new BlobTestUnit);
-  suite.register_unit(new VarCharTestUnit);
-  suite.register_unit(new FactoryTestUnit);
-  suite.register_unit(new StringTestUnit);
-  suite.register_unit(new SequencerTestUnit);
+  //suite.register_unit(new AnyTestUnit);
+  //suite.register_unit(new DateTestUnit);
+  //suite.register_unit(new TimeTestUnit);
+  //suite.register_unit(new BlobTestUnit);
+  //suite.register_unit(new VarCharTestUnit);
+  //suite.register_unit(new FactoryTestUnit);
+  //suite.register_unit(new StringTestUnit);
+  //suite.register_unit(new SequencerTestUnit);
 
-  suite.register_unit(new PrimaryKeyUnitTest);
-  suite.register_unit(new PrototypeTreeTestUnit);
-  suite.register_unit(new ObjectPrototypeTestUnit);
-  suite.register_unit(new ObjectStoreTestUnit);
-  suite.register_unit(new ObjectTransactiontestUnit);
-  suite.register_unit(new HasManyVectorUnitTest);
-  suite.register_unit(new HasManyListUnitTest);
-  suite.register_unit(new RelationTestUnit);
+  //suite.register_unit(new PrimaryKeyUnitTest);
+  //suite.register_unit(new PrototypeTreeTestUnit);
+  //suite.register_unit(new ObjectPrototypeTestUnit);
+  //suite.register_unit(new ObjectStoreTestUnit);
+  //suite.register_unit(new ObjectTransactiontestUnit);
+  //suite.register_unit(new HasManyVectorUnitTest);
+  //suite.register_unit(new HasManyListUnitTest);
+  //suite.register_unit(new RelationTestUnit);
 
-  suite.register_unit(new ConditionUnitTest);
-  suite.register_unit(new DialectTestUnit);
+  //suite.register_unit(new ConditionUnitTest);
+  //suite.register_unit(new DialectTestUnit);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   //suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", "mysql://sascha:sascha@192.168.178.51/matador_test"));
-  suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", ::connection::mysql));
-  suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", ::connection::mysql));
-  suite.register_unit(new QueryTestUnit("mysql_query", "mysql query test unit", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
-  suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
-  suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
+  //suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", ::connection::mysql));
+  //suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", ::connection::mysql));
+  //suite.register_unit(new QueryTestUnit("mysql_query", "mysql query test unit", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
+  //suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
+  //suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
+  //suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
   suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
 #endif
 
 #if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
-  //suite.register_unit(new ConnectionTestUnit("mssql_conn", "mssql connection test unit", "mssql://sascha:sascha@192.168.27.58/test"));
-  suite.register_unit(new ConnectionTestUnit("mssql_conn", "mssql connection test unit", ::connection::mssql));
-  suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", ::connection::mssql));
-  //suite.register_unit(new QueryTestUnit("mssql_query", "mssql query test unit", "mssql://sascha:sascha@192.168.27.58/test"));
-  suite.register_unit(new QueryTestUnit("mssql_query", "mssql query test unit", ::connection::mssql));
-  suite.register_unit(new BlogUnitTest("mssql", ::connection::mssql));
-  suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
-  suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
+  //suite.register_unit(new ConnectionTestUnit("mssql_conn", "mssql connection test unit", ::connection::mssql));
+  //suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", ::connection::mssql));
+  //suite.register_unit(new QueryTestUnit("mssql_query", "mssql query test unit", ::connection::mssql));
+  //suite.register_unit(new BlogUnitTest("mssql", ::connection::mssql));
+  //suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
+  //suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new OrmRelationTestUnit("mssql", ::connection::mssql));
-  suite.register_unit(new MSSQLDialectTestUnit());
+  //suite.register_unit(new MSSQLDialectTestUnit());
 #endif
 
 #if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
@@ -131,13 +129,13 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(MATADOR_POSTGRESQL) && defined(MATADOR_POSTGRESQL_TEST)
-  suite.register_unit(new ConnectionTestUnit("postgresql_conn", "postgresql connection test unit", ::connection::postgresql));
-  suite.register_unit(new TransactionTestUnit("postgresql_transaction", "postgresql transaction test unit", ::connection::postgresql));
-  suite.register_unit(new QueryTestUnit("postgresql_query", "postgresql query test unit", ::connection::postgresql));
-  suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
-  suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
+  //suite.register_unit(new ConnectionTestUnit("postgresql_conn", "postgresql connection test unit", ::connection::postgresql));
+  //suite.register_unit(new TransactionTestUnit("postgresql_transaction", "postgresql transaction test unit", ::connection::postgresql));
+  //suite.register_unit(new QueryTestUnit("postgresql_query", "postgresql query test unit", ::connection::postgresql));
+  //suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
+  //suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
-  suite.register_unit(new PostgreSQLDialectTestUnit());
+  //suite.register_unit(new PostgreSQLDialectTestUnit());
 #endif
 
   //suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
