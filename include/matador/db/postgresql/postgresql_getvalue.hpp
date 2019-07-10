@@ -21,7 +21,7 @@ namespace detail {
 template < typename T, typename std::enable_if_t<std::is_integral<T>::value && std::is_signed<T>::value && !std::is_same<T, char>::value>* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
-  auto value = PQgetvalue(res, row, col);
+  auto value = PQgetvalue(res, (int)row, (int)col);
 
   if (strlen(value) == 0) {
     return;
@@ -33,7 +33,7 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
 template < typename T, typename std::enable_if_t<std::is_integral<T>::value && std::is_unsigned<T>::value && !std::is_same<T, bool>::value>* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
-  auto value = PQgetvalue(res, row, col);
+  auto value = PQgetvalue(res, (int)row, (int)col);
 
   if (strlen(value) == 0) {
     return;
@@ -45,19 +45,19 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
 template < typename T, typename std::enable_if_t<std::is_same<T, bool>::value>* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
-  auto value = PQgetvalue(res, row, col);
+  auto value = PQgetvalue(res, (int)row, (int)col);
 
   if (strlen(value) == 0) {
     return;
   }
   char *end;
-  val = (T)strtoul(value, &end, 10) > 0;
+  val = strtoul(value, &end, 10) > 0UL;
 }
 
 template < typename T, typename std::enable_if_t<std::is_same<T, char>::value>* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
-  auto value = PQgetvalue(res, row, col);
+  auto value = PQgetvalue(res, (int)row, (int)col);
 
   if (strlen(value) > 1) {
     val = value[0];
@@ -67,7 +67,7 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
 template < typename T, typename std::enable_if_t<std::is_floating_point<T>::value>* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
-  auto value = PQgetvalue(res, row, col);
+  auto value = PQgetvalue(res, (int)row, (int)col);
 
   if (strlen(value) == 0) {
     return;
@@ -79,25 +79,25 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
 template < typename T, typename std::enable_if_t<std::is_base_of<varchar_base, T>::value>* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
-  val.assign(PQgetvalue(res, row, col));
+  val.assign(PQgetvalue(res, (int)row, (int)col));
 }
 
 template < typename T, typename std::enable_if_t<std::is_same<T, std::string>::value>* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
-  val = PQgetvalue(res, row, col);
+  val = PQgetvalue(res, (int)row, (int)col);
 }
 
 template < typename T, typename std::enable_if_t<std::is_same<T, matador::time>::value>* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
-  val = matador::time::parse(PQgetvalue(res, row, col), "%Y-%m-%d %T.%f");
+  val = matador::time::parse(PQgetvalue(res, (int)row, (int)col), "%Y-%m-%d %T.%f");
 }
 
 template < typename T, typename std::enable_if_t<std::is_same<T, matador::date>::value>* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
-  val.set(PQgetvalue(res, row, col), date_format::ISO8601);
+  val.set(PQgetvalue(res, (int)row, (int)col), date_format::ISO8601);
 }
 
 void get_value(PGresult *res, size_t row, size_t col, char *val, size_t s);

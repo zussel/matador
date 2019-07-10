@@ -577,7 +577,7 @@ condition<column, T> operator==(const column &col, T val)
   return condition<column, T>(col, detail::basic_condition::EQUAL, val);
 }
 
-condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
+OOS_SQL_API condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
 
 /**
  * @brief Condition unequality operator for a column and a value
