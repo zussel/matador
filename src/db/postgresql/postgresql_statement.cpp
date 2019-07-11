@@ -134,97 +134,115 @@ void bind_value(std::vector<std::string> &strings, std::vector<const char*> &par
   ++index;
 }
 
-void postgresql_statement::serialize(const char *, char &x)
+void postgresql_statement::serialize(const char *id, char &x)
 {
+  std::cout << "PSQL: Bind value (char) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, short &x)
+void postgresql_statement::serialize(const char *id, short &x)
 {
+  std::cout << "PSQL: Bind value (short) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, int &x)
+void postgresql_statement::serialize(const char *id, int &x)
 {
+  std::cout << "PSQL: Bind value (int) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, long &x)
+void postgresql_statement::serialize(const char *id, long &x)
 {
+  std::cout << "PSQL: Bind value (long) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, unsigned char &x)
+void postgresql_statement::serialize(const char *id, unsigned char &x)
 {
+  std::cout << "PSQL: Bind value (unsigned char) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, unsigned short &x)
+void postgresql_statement::serialize(const char *id, unsigned short &x)
 {
+  std::cout << "PSQL: Bind value (unsigned short) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, unsigned int &x)
+void postgresql_statement::serialize(const char *id, unsigned int &x)
 {
+  std::cout << "PSQL: Bind value (unsigned int) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, unsigned long &x)
+void postgresql_statement::serialize(const char *id, unsigned long &x)
 {
+  std::cout << "PSQL: Bind value (unsigned long) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, float &x)
+void postgresql_statement::serialize(const char *id, float &x)
 {
+  std::cout << "PSQL: Bind value (float) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, double &x)
+void postgresql_statement::serialize(const char *id, double &x)
 {
+  std::cout << "PSQL: Bind value (double) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, bool &x)
+void postgresql_statement::serialize(const char *id, bool &x)
 {
+  std::cout << "PSQL: Bind value (bool) [" << x << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, char *x, size_t)
+void postgresql_statement::serialize(const char *id, char *x, size_t)
 {
+  std::cout << "PSQL: Bind value (char*) [" << x << "] for column " << id << "\n";
   host_params_[host_index++] = x;
 }
 
-void postgresql_statement::serialize(const char *, varchar_base &x)
+void postgresql_statement::serialize(const char *id, varchar_base &x)
 {
+  std::cout << "PSQL: Bind value (varchar) [" << x << "] for column " << id << "\n";
   host_strings_[host_index] = x.str();
   host_params_[host_index] = host_strings_[host_index].c_str();
   ++host_index;
 }
 
-void postgresql_statement::serialize(const char *, std::string &x)
+void postgresql_statement::serialize(const char *id, std::string &x)
 {
+  std::cout << "PSQL: Bind value (string) [" << x << "] for column " << id << "\n";
   host_strings_[host_index] = x;
   host_params_[host_index] = host_strings_[host_index].c_str();
   ++host_index;
 }
 
-void postgresql_statement::serialize(const char *, matador::date &x)
+void postgresql_statement::serialize(const char *id, matador::date &x)
 {
+  std::cout << "PSQL: Bind value (date) [" << matador::to_string(x) << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, matador::time &x)
+void postgresql_statement::serialize(const char *id, matador::time &x)
 {
+  std::cout << "PSQL: Bind value (time) [" << matador::to_string(x) << "] for column " << id << "\n";
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
 void postgresql_statement::serialize(const char *id, basic_identifier &x)
 {
+  std::cout << "PSQL: Bind value (identifier) [" << x << "] for column " << id << "\n";
   x.serialize(id, *this);
 }
 
 void postgresql_statement::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
+  std::cout << "PSQL: Bind value (object) for column " << id << "\n";
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
   } else {
