@@ -217,7 +217,7 @@ private:
   template < class T >
   statement<T> prepare(const matador::sql &sql, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
-    std::cout << "PSQL: " << impl_->dialect()->direct(sql) << "\n";
+    std::cout << "PSQL: " << impl_->dialect()->prepare(sql) << "\n";
     return statement<T>(impl_->prepare(sql));
   }
 
@@ -225,7 +225,7 @@ private:
   statement<T> prepare(const matador::sql &sql, const std::string &tablename, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
     prepare_prototype_row(prototype, tablename);
-    std::cout << "PSQL: " << impl_->dialect()->direct(sql) << "\n";
+    std::cout << "PSQL (row): " << impl_->dialect()->prepare(sql) << "\n";
     return statement<T>(impl_->prepare(sql), prototype);
   }
 
