@@ -152,6 +152,7 @@ std::vector<field> postgresql_connection::describe(const std::string &table)
     end = nullptr;
     f.not_null(strtoul(res->column(3), &end, 10) == 0);
     f.default_value(res->column(4));
+    std::cout << "DESCRIBE FIELD " << f.index() << ": " << f.name() << " (type: " << res->column(2) << ")\n";
     fields.push_back(f);
   } while(res->fetch());
 

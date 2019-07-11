@@ -69,7 +69,7 @@ connection_factory::dynamic_connection_producer::dynamic_connection_producer(con
   // load matador driver library
   // create instance
   if (!loader_.load(("matador-"+name).c_str())) {
-    throw std::runtime_error("couldn't fínd library [" + name + "]");
+    throw std::runtime_error("couldn't find library [" + name + "]");
   }
   // get create function
   create_ = reinterpret_cast<create_func>(reinterpret_cast<std::uintptr_t>(loader_.function("create_database")));
