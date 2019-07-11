@@ -65,16 +65,16 @@ SET (TEST_SQL_SOURCES
   sql/PostgreSQLDialectTestUnit.hpp)
 
 SET (TEST_ORM_SOURCES
-  orm/TransactionTestUnit.cpp
-  orm/TransactionTestUnit.hpp
-  orm/OrmTestUnit.cpp
-  orm/OrmTestUnit.hpp
-  orm/OrmReloadTestUnit.cpp
-  orm/OrmReloadTestUnit.hpp
+#  orm/TransactionTestUnit.cpp
+#  orm/TransactionTestUnit.hpp
+#  orm/OrmTestUnit.cpp
+#  orm/OrmTestUnit.hpp
+#  orm/OrmReloadTestUnit.cpp
+#  orm/OrmReloadTestUnit.hpp
   orm/OrmRelationTestUnit.cpp
   orm/OrmRelationTestUnit.hpp
-  orm/BlogUnitTest.cpp
-  orm/BlogUnitTest.hpp
+#  orm/BlogUnitTest.cpp
+#  orm/BlogUnitTest.hpp
 )
 
 SET (TEST_SOURCES test_matador.cpp)
@@ -82,11 +82,11 @@ SET (TEST_SOURCES test_matador.cpp)
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
   ${TEST_HEADER}
-  ${TEST_TOOLS_SOURCES}
-  ${TEST_OBJECT_SOURCES}
-  ${TEST_UNIT_SOURCES}
+#  ${TEST_TOOLS_SOURCES}
+#  ${TEST_OBJECT_SOURCES}
+#  ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
-  ${TEST_SQL_SOURCES}
+#  ${TEST_SQL_SOURCES}
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://sascha:sascha@127.0.0.1/matador_test" CACHE STRING "mysql connection string")

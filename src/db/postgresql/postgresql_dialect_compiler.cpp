@@ -65,12 +65,12 @@ void postgresql_dialect_compiler::visit(const matador::detail::top &limit)
     return;
   }
 
-  column rowid(condition_column_name_);
-  auto where_token = std::static_pointer_cast<detail::where>(*where_);
-  auto sub_select = matador::select({rowid}).from(tablename_).where(where_token->cond).limit(limit.limit_);
-  auto cond = make_condition(equals(rowid, sub_select));
+  //column rowid(condition_column_name_);
+  //auto where_token = std::static_pointer_cast<detail::where>(*where_);
+  //auto sub_select = matador::select({rowid}).from(tablename_).where(where_token->cond).limit(limit.limit_);
+  //auto cond = make_condition(equals(rowid, sub_select));
 
-  where_token->cond.swap(cond);
+  //where_token->cond.swap(cond);
 
   top().tokens_.erase(top().current);
 }
