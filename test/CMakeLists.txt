@@ -45,22 +45,22 @@ SET (TEST_UNIT_SOURCES
 )
 
 SET (TEST_SQL_SOURCES
-  sql/ConnectionTestUnit.cpp
-  sql/ConnectionTestUnit.hpp
-  sql/QueryTestUnit.cpp
-  sql/QueryTestUnit.hpp
-  sql/ConditionUnitTest.cpp
-  sql/ConditionUnitTest.hpp
-  sql/DialectTestUnit.cpp
-  sql/DialectTestUnit.hpp
-  sql/TestDialect.cpp
-  sql/TestDialect.hpp
-  sql/MSSQLDialectTestUnit.cpp
-  sql/MSSQLDialectTestUnit.hpp
-  sql/SQLiteDialectTestUnit.cpp
-  sql/SQLiteDialectTestUnit.hpp
-  sql/ValueUnitTest.cpp
-  sql/ValueUnitTest.hpp
+#  sql/ConnectionTestUnit.cpp
+#  sql/ConnectionTestUnit.hpp
+#  sql/QueryTestUnit.cpp
+#  sql/QueryTestUnit.hpp
+#  sql/ConditionUnitTest.cpp
+#  sql/ConditionUnitTest.hpp
+#  sql/DialectTestUnit.cpp
+#  sql/DialectTestUnit.hpp
+#  sql/TestDialect.cpp
+#  sql/TestDialect.hpp
+#  sql/MSSQLDialectTestUnit.cpp
+#  sql/MSSQLDialectTestUnit.hpp
+#  sql/SQLiteDialectTestUnit.cpp
+#  sql/SQLiteDialectTestUnit.hpp
+#  sql/ValueUnitTest.cpp
+#  sql/ValueUnitTest.hpp
   sql/PostgreSQLDialectTestUnit.cpp
   sql/PostgreSQLDialectTestUnit.hpp)
 
@@ -86,7 +86,7 @@ ADD_EXECUTABLE(test_matador
 #  ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
-#  ${TEST_SQL_SOURCES}
+  ${TEST_SQL_SOURCES}
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://sascha:sascha@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
