@@ -10,7 +10,7 @@
 class OrmRelationTestUnit : public matador::unit_test
 {
 public:
-  OrmRelationTestUnit(const std::string &prefix, const std::string &dns);
+  OrmRelationTestUnit(const std::string &prefix, std::string dns);
 
   void test_has_builtin_varchars();
   void test_has_builtin_ints();

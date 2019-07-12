@@ -15,9 +15,9 @@
 
 using namespace hasmanylist;
 
-OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, const std::string &dns)
+OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, std::string dns)
   : unit_test(prefix + "_orm_relation", prefix + " orm relation test unit")
-  , dns_(dns)
+  , dns_(std::move(dns))
 {
   add_test("has_many_builtin_varchars", std::bind(&OrmRelationTestUnit::test_has_builtin_varchars, this), "test has many builtin varchars item");
   add_test("has_many_builtin_ints", std::bind(&OrmRelationTestUnit::test_has_builtin_ints, this), "test has many builtin ints item");

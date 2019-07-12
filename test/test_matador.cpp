@@ -48,7 +48,7 @@
 //#include "sql/QueryTestUnit.hpp"
 //#include "sql/ConditionUnitTest.hpp"
 //#include "sql/MSSQLDialectTestUnit.hpp"
-//#include "sql/PostgreSQLDialectTestUnit.hpp"
+#include "sql/PostgreSQLDialectTestUnit.hpp"
 //#include "sql/SQLiteDialectTestUnit.hpp"
 
 #include "connections.hpp"
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
   //suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
   //suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
-  //suite.register_unit(new PostgreSQLDialectTestUnit());
+  suite.register_unit(new PostgreSQLDialectTestUnit());
 #endif
 
   //suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));

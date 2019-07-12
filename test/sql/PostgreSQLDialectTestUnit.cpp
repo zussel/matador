@@ -107,6 +107,10 @@ void PostgreSQLDialectTestUnit::test_update_limit()
   std::string result = conn.dialect()->direct(s);
 
   UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=1 WHERE \"owner_id\" = (SELECT \"owner_id\" FROM \"relation\" WHERE (\"owner_id\" = 1 AND \"item_id\" = 1) LIMIT 1 ) ", result);
+
+  result = conn.dialect()->prepare(s);
+
+  UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=$1 WHERE \"owner_id\" = (SELECT \"owner_id\" FROM \"relation\" WHERE (\"owner_id\" = $1 AND \"item_id\" = $2) LIMIT 1 ) ", result);
 }
 
 void PostgreSQLDialectTestUnit::test_table_name()
