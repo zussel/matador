@@ -356,7 +356,7 @@ public:
   std::string evaluate(basic_dialect &dialect) const override
   {
     std::string result(dialect.prepare_identifier(field_.name) + " " + operand + " (");
-    result += dialect.build(query_.stmt(), dialect.compile_type());
+    result += dialect.continue_build(query_.stmt(), dialect.compile_type());
     result += (")");
     return result;
   }
@@ -446,10 +446,13 @@ public:
   std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
+    // ensure the numbering order for host vars
+    auto cl = left.evaluate(dialect);
+    auto cr = right.evaluate(dialect);
     if (operand == detail::basic_condition::AND) {
-      str << "(" << left.evaluate(dialect) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(dialect) << ")";
+      str << "(" << cl << " " << detail::basic_condition::operands[operand] << " " << cr << ")";
     } else {
-      str << left.evaluate(dialect) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(dialect);
+      str << cl << " " << detail::basic_condition::operands[operand] << " " << cr;
     }
     return str.str();
   }

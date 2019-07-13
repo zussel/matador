@@ -237,6 +237,7 @@ protected:
   bool is_preparing() const;
 
   std::string build(const sql &s, t_compile_type compile_type);
+  std::string continue_build(const sql &s, t_compile_type compile_type);
 
   void replace_token(detail::token::t_token tkn, const std::string &value);
 

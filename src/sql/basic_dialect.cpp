@@ -59,6 +59,19 @@ std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
   return result;
 }
 
+std::string basic_dialect::continue_build(const sql &s, basic_dialect::t_compile_type compile_type) {
+  compile_type_ = compile_type;
+//  bind_count_ = 0;
+//  column_count_ = 0;
+
+  push(s);
+  compile();
+  link();
+  std::string result(top().result);
+  pop();
+  return result;
+}
+
 void basic_dialect::compile()
 {
   compiler_->compile(*this);

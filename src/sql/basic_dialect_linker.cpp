@@ -36,7 +36,7 @@ void basic_dialect_linker::visit(const matador::detail::rollback &rollback)
 void basic_dialect_linker::visit(matador::detail::query &q)
 {
   dialect().append_to_result("(");
-  dialect().append_to_result(dialect().build(q.sql_, dialect().compile_type()));
+  dialect().append_to_result(dialect().continue_build(q.sql_, dialect().compile_type()));
   dialect().append_to_result(") ");
 }
 
