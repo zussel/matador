@@ -218,12 +218,12 @@ void postgresql_statement::serialize(const char *, matador::time &x)
   bind_value(host_strings_, host_params_, host_index, x);
 }
 
-void postgresql_statement::serialize(const char *, basic_identifier &x)
+void postgresql_statement::serialize(const char *id, basic_identifier &x)
 {
   x.serialize(id, *this);
 }
 
-void postgresql_statement::serialize(const char *, identifiable_holder &x, cascade_type)
+void postgresql_statement::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
