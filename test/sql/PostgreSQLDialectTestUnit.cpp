@@ -23,6 +23,7 @@ PostgreSQLDialectTestUnit::PostgreSQLDialectTestUnit()
   add_test("placeholder", std::bind(&PostgreSQLDialectTestUnit::test_placeholder, this), "test postgresql placeholder link");
   add_test("placeholder_condition", std::bind(&PostgreSQLDialectTestUnit::test_placeholder_condition, this), "test postgresql placeholder in condition link");
   add_test("update_limit", std::bind(&PostgreSQLDialectTestUnit::test_update_limit, this), "test postgresql limit");
+  add_test("update_limit_prepare", std::bind(&PostgreSQLDialectTestUnit::test_update_limit_prepare, this), "test postgresql prepared limit");
   add_test("tablename", std::bind(&PostgreSQLDialectTestUnit::test_table_name, this), "test postgresql extract table name");
 }
 
@@ -107,11 +108,30 @@ void PostgreSQLDialectTestUnit::test_update_limit()
   std::string result = conn.dialect()->direct(s);
 
   UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=1 WHERE \"owner_id\" = (SELECT \"owner_id\" FROM \"relation\" WHERE (\"owner_id\" = 1 AND \"item_id\" = 1) LIMIT 1 ) ", result);
+}
 
-//  std::cout << "\n" << conn.dialect()->prepare(s);
-//  std::cout << "\n" << conn.dialect()->prepare(s);
+void PostgreSQLDialectTestUnit::test_update_limit_prepare(){
+  matador::connection conn(::connection::postgresql);
 
-//  UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=$1 WHERE \"owner_id\" = (SELECT \"owner_id\" FROM \"relation\" WHERE (\"owner_id\" = $1 AND \"item_id\" = $2) LIMIT 1 ) ", result);
+  sql s;
+
+  s.append(new detail::update);
+  s.append(new detail::tablename("relation"));
+  s.append(new detail::set);
+
+  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+
+  unsigned long owner_id(1);
+  cols->push_back(std::make_shared<detail::value_column<unsigned long>>("owner_id", owner_id));
+
+  s.append(cols.release());
+
+  s.append(new detail::where("owner_id"_col == 1 && "item_id"_col == 1));
+  s.append(new detail::top(1));
+
+  std::string result = conn.dialect()->prepare(s);
+
+  UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=$1 WHERE \"owner_id\" = (SELECT \"owner_id\" FROM \"relation\" WHERE (\"owner_id\" = $2 AND \"item_id\" = $3) LIMIT 1 ) ", result);
 }
 
 void PostgreSQLDialectTestUnit::test_table_name()

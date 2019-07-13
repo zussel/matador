@@ -16,6 +16,7 @@ public:
   void test_placeholder();
   void test_placeholder_condition();
   void test_update_limit();
+  void test_update_limit_prepare();
   void test_table_name();
 };
 
