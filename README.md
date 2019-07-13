@@ -21,7 +21,7 @@ concrete object types.
 Features:
 
  * A unique fluent query interface
- * Support for SQLite, MySQL and MS SQL Server
+ * Support for PostgreSQL, SQLite, MySQL and MS SQL Server
  * One to one/many relations
  * One storage container
  * Filter with simple expressions
