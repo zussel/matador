@@ -52,19 +52,19 @@ void AnyTestUnit::test_any_visitor()
 
   visitor.visit(as);
 
-  UNIT_ASSERT_EQUAL(2, as._<short>(), "values must be equal");
+  UNIT_ASSERT_EQUAL(2, as._<short>());
 
   visitor.visit(ai);
 
-  UNIT_ASSERT_EQUAL(8, ai._<int>(), "values must be equal");
+  UNIT_ASSERT_EQUAL(8, ai._<int>());
 
   visitor.visit(al);
 
-  UNIT_ASSERT_EQUAL(14L, al._<long>(), "values must be equal");
+  UNIT_ASSERT_EQUAL(14L, al._<long>());
 
   visitor.visit(astr);
 
-  UNIT_ASSERT_EQUAL("welt", astr._<std::string>(), "values must be equal");
+  UNIT_ASSERT_EQUAL("welt", astr._<std::string>());
 }
 
 struct processor
@@ -110,16 +110,16 @@ void AnyTestUnit::test_any_visitor_class()
   matador::any astr(std::string("hello"));
 
   processor p;
-  UNIT_ASSERT_EQUAL(7, ai._<int>(), "values must be equal");
+  UNIT_ASSERT_EQUAL(7, ai._<int>());
   p.apply(ai);
-  UNIT_ASSERT_EQUAL(8, ai._<int>(), "values must be equal");
-  UNIT_ASSERT_EQUAL(13L, al._<long>(), "values must be equal");
+  UNIT_ASSERT_EQUAL(8, ai._<int>());
+  UNIT_ASSERT_EQUAL(13L, al._<long>());
   p.apply(al);
-  UNIT_ASSERT_EQUAL(14L, al._<long>(), "values must be equal");
-  UNIT_ASSERT_EQUAL(0.4f, af._<float>(), "values must be equal");
+  UNIT_ASSERT_EQUAL(14L, al._<long>());
+  UNIT_ASSERT_EQUAL(0.4f, af._<float>());
   p.apply(af);
-  UNIT_ASSERT_EQUAL(0.5f, af._<float>(), "values must be equal");
-  UNIT_ASSERT_EQUAL("hello", astr._<std::string>(), "values must be equal");
+  UNIT_ASSERT_EQUAL(0.5f, af._<float>());
+  UNIT_ASSERT_EQUAL("hello", astr._<std::string>());
   p.apply(astr);
-  UNIT_ASSERT_EQUAL("world", astr._<std::string>(), "values must be equal");
+  UNIT_ASSERT_EQUAL("world", astr._<std::string>());
 }

@@ -95,6 +95,13 @@ struct OOS_SQL_API token
   t_token type;
 };
 
+struct OOS_SQL_API table_name_token : public token
+{
+  table_name_token(t_token tok, std::string tablename);
+
+  std::string table_name;
+};
+
 }
 
 /// @endcond

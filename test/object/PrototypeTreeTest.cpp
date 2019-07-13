@@ -29,24 +29,24 @@ PrototypeTreeTestUnit::PrototypeTreeTestUnit()
 void PrototypeTreeTestUnit::test_empty()
 {
   object_store ptree;
-  UNIT_ASSERT_TRUE(ptree.empty(), "prototype must be empty");
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be zero (0)");
+  UNIT_ASSERT_TRUE(ptree.empty());
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0);
 }
 
 void PrototypeTreeTestUnit::test_insert()
 {
   object_store ptree;
-  UNIT_ASSERT_EXCEPTION(ptree.attach<Item>("item", matador::object_store::not_abstract, "baba"), object_exception, "unknown prototype type", "inserted with invalid parent");
+  UNIT_ASSERT_EXCEPTION(ptree.attach<Item>("item", matador::object_store::not_abstract, "baba"), object_exception, "unknown prototype type");
 
   ptree.attach<Item>("item");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1);
 
-  UNIT_ASSERT_EXCEPTION(ptree.attach<Item>("item"), object_exception, "prototype already inserted: item", "inserted same prototype twice");
+  UNIT_ASSERT_EXCEPTION(ptree.attach<Item>("item"), object_exception, "prototype already inserted: item");
 
   ptree.attach<ItemA, Item>("item_a");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (2)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2);
 }
 
 void PrototypeTreeTestUnit::test_find()
@@ -54,33 +54,33 @@ void PrototypeTreeTestUnit::test_find()
   object_store ptree;
   ptree.attach<Item>("item");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1);
 
   prototype_iterator elem = ptree.find("item");
 
-  UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
-  UNIT_ASSERT_EQUAL(elem->type(), "item", "type must be 'item'");
+  UNIT_ASSERT_TRUE(elem != ptree.end());
+  UNIT_ASSERT_EQUAL(elem->type(), "item");
 
   elem = ptree.find<Item>();
 
-  UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
-  UNIT_ASSERT_EQUAL(elem->type(), "item", "type must be 'item'");
+  UNIT_ASSERT_TRUE(elem != ptree.end());
+  UNIT_ASSERT_EQUAL(elem->type(), "item");
 
   elem = ptree.find("unknown");
-  UNIT_ASSERT_TRUE(elem == ptree.end(), "shouldn't find a prototype");
+  UNIT_ASSERT_TRUE(elem == ptree.end());
 
-  ptree.attach<ObjectItem<Item>>("object_item", matador::object_store::not_abstract, "item");
+  ptree.attach<ObjectItem<Item>>("object_item", matador::object_store::not_abstract);
   elem = ptree.find("object_item");
 
-  UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
-  UNIT_ASSERT_EQUAL(elem->type(), "object_item", "type must be 'item'");
+  UNIT_ASSERT_TRUE(elem != ptree.end());
+  UNIT_ASSERT_EQUAL(elem->type(), "object_item");
 
   elem = ptree.find("item");
 
-  UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
-  UNIT_ASSERT_EQUAL(elem->type(), "item", "type must be 'item'");
+  UNIT_ASSERT_TRUE(elem != ptree.end());
+  UNIT_ASSERT_EQUAL(elem->type(), "item");
 
-//  ptree.insert(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
+//  ptree.insert(new list_object_producer<ItemPtrList>("ptr_list"));
 }
 
 void PrototypeTreeTestUnit::test_remove()
@@ -88,15 +88,15 @@ void PrototypeTreeTestUnit::test_remove()
   object_store ptree;
   ptree.attach<Item>("item");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1);
 
-  UNIT_ASSERT_EXCEPTION(ptree.detach(nullptr), object_exception, "invalid type (null)", "expect an serializable exception when trying to remove unknown type");
-  UNIT_ASSERT_EXCEPTION(ptree.detach("ITEM"), object_exception, "unknown prototype type", "expect an serializable exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.detach(nullptr), object_exception, "invalid type (null)");
+  UNIT_ASSERT_EXCEPTION(ptree.detach("ITEM"), object_exception, "unknown prototype type");
 
   ptree.detach("item");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be one (0)");
-  UNIT_ASSERT_TRUE(ptree.empty(), "prototype tree must be empty");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0);
+  UNIT_ASSERT_TRUE(ptree.empty());
 }
 
 void PrototypeTreeTestUnit::test_erase()
@@ -104,15 +104,15 @@ void PrototypeTreeTestUnit::test_erase()
   object_store ptree;
   prototype_iterator iter = ptree.attach<Item>("item");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1);
 
   prototype_iterator iter2;
-  UNIT_ASSERT_EXCEPTION(ptree.detach(iter2), object_exception, "invalid prototype iterator", "expect an serializable exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.detach(iter2), object_exception, "invalid prototype iterator");
 
   ptree.detach(iter);
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be one (0)");
-  UNIT_ASSERT_TRUE(ptree.empty(), "prototype tree must be empty");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0);
+  UNIT_ASSERT_TRUE(ptree.empty());
 }
 
 void PrototypeTreeTestUnit::test_clear()
@@ -123,12 +123,12 @@ void PrototypeTreeTestUnit::test_clear()
   ptree.attach<ItemB>("item_b", matador::object_store::not_abstract, "item");
   ptree.attach<ItemC>("item_c", matador::object_store::not_abstract, "item");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4, "prototype size must be one (4)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4);
 
   ptree.clear(true);
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be one (0)");
-  UNIT_ASSERT_TRUE(ptree.empty(), "prototype tree must be empty");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0);
+  UNIT_ASSERT_TRUE(ptree.empty());
 }
 
 void PrototypeTreeTestUnit::test_has_many()
@@ -137,11 +137,11 @@ void PrototypeTreeTestUnit::test_has_many()
   ptree.attach<book>("book");
   ptree.attach<book_list>("book_list");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)3, "prototype size must be one (3)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)3);
 
   prototype_iterator i = ptree.find("books");
 
-  UNIT_ASSERT_TRUE(i != ptree.end(), "should've found 'books' node");
+  UNIT_ASSERT_TRUE(i != ptree.end());
 }
 
 void PrototypeTreeTestUnit::test_decrement()
@@ -149,13 +149,13 @@ void PrototypeTreeTestUnit::test_decrement()
   object_store ptree;
   ptree.attach<Item>("item");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1);
 
   prototype_iterator i = ptree.end();
 
   --i;
 
-  UNIT_ASSERT_TRUE(i == ptree.begin(), "iterator must be begin");
+  UNIT_ASSERT_TRUE(i == ptree.begin());
 }
 
 void PrototypeTreeTestUnit::test_count() {
@@ -165,7 +165,7 @@ void PrototypeTreeTestUnit::test_count() {
   ptree.attach<ItemB>("item_b", matador::object_store::not_abstract, "item");
   ptree.attach<ItemC>("item_c", matador::object_store::not_abstract, "item");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4, "prototype size must be one (5)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4);
 }
 
 void PrototypeTreeTestUnit::test_child_of()
@@ -174,15 +174,15 @@ void PrototypeTreeTestUnit::test_child_of()
   ptree.attach<Item>("item");
   ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (1)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2);
 
   prototype_iterator root = ptree.begin();
 
   prototype_iterator item_a = ptree.find<ItemA>();
 
-  UNIT_ASSERT_FALSE(root->is_child_of(item_a.get()), "root must not be child of node");
+  UNIT_ASSERT_FALSE(root->is_child_of(item_a.get()));
 
-  UNIT_ASSERT_TRUE(item_a->is_child_of(root.get()), "node must be child of root");
+  UNIT_ASSERT_TRUE(item_a->is_child_of(root.get()));
 }
 
 void PrototypeTreeTestUnit::test_traverse()
@@ -199,18 +199,18 @@ void PrototypeTreeTestUnit::test_traverse()
   int count(0);
 
   while (first != last) {
-    UNIT_ASSERT_LESS(count, 4, "prototype count isn't valid");
+    UNIT_ASSERT_LESS(count, 4);
     ++first;
     ++count;
   }
 
-  UNIT_ASSERT_EQUAL(count, 4, "expected prototype size isn't 5");
+  UNIT_ASSERT_EQUAL(count, 4);
 
   first = ptree.begin();
   ++first;
   first--;
 
-  UNIT_ASSERT_TRUE(first == ptree.begin(), "expected prototype iterator to be begin()");
+  UNIT_ASSERT_TRUE(first == ptree.begin());
 }
 
 void PrototypeTreeTestUnit::test_const_traverse()
@@ -226,19 +226,19 @@ void PrototypeTreeTestUnit::test_const_traverse()
   int count(0);
 
   while (first != last) {
-    UNIT_ASSERT_LESS(count, 4, "prototype count isn't valid");
+    UNIT_ASSERT_LESS(count, 4);
     ++first;
     ++count;
   }
 
-  UNIT_ASSERT_EQUAL(count, 4, "expected prototype size isn't 5");
+  UNIT_ASSERT_EQUAL(count, 4);
 
   first = ptree.begin();
   first++;
-  UNIT_ASSERT_EQUAL(first->type(), "item_a", "type must be 'item_a'");
-  UNIT_ASSERT_EQUAL((*first).type(), "item_a", "type must be 'item_a'");
-  UNIT_ASSERT_EQUAL(first.get()->type(), "item_a", "type must be 'item_a'");
+  UNIT_ASSERT_EQUAL(first->type(), "item_a");
+  UNIT_ASSERT_EQUAL((*first).type(), "item_a");
+  UNIT_ASSERT_EQUAL(first.get()->type(), "item_a");
   first--;
 
-  UNIT_ASSERT_TRUE(first == ptree.begin(), "expected prototype iterator to be begin()");
+  UNIT_ASSERT_TRUE(first == ptree.begin());
 }

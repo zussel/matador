@@ -14,10 +14,10 @@
 
 using namespace matador;
 
-QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db, const matador::time &timeval)
+QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, std::string db, matador::time timeval)
   : unit_test(name, msg)
-  , db_(db)
-  , time_val_(timeval)
+  , db_(std::move(db))
+  , time_val_(std::move(timeval))
 {
   add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
@@ -82,7 +82,14 @@ void QueryTestUnit::test_datatypes()
   bool bval = true;
   const char *cstr("Armer schwarzer Kater");
   matador::varchar<32> vval("hallo welt");
-  std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+  std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam "
+                       "nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
+                       "sed diam voluptua. At vero eos et accusam et justo duo dolores et ea "
+                       "rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. "
+                       "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy "
+                       "eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. "
+                       "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd "
+                       "gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
   matador::date date_val(15, 3, 2015);
   matador::time time_val(time_val_);
   Item item;
@@ -111,23 +118,23 @@ void QueryTestUnit::test_datatypes()
   auto first = res.begin();
   auto last = res.end();
 
-  UNIT_ASSERT_TRUE(first != last, "first must not be last");
+  UNIT_ASSERT_TRUE(first != last);
 
   std::unique_ptr<Item> it((first++).release());
 
-  UNIT_EXPECT_EQUAL(it->get_char(), cval, "character is not equal");
-  UNIT_EXPECT_EQUAL(it->get_short(), sval, "short is not equal");
-  UNIT_EXPECT_EQUAL(it->get_int(), ival, "integer is not equal");
-  UNIT_EXPECT_EQUAL(it->get_long(), lval, "long is not equal");
-  UNIT_EXPECT_EQUAL(it->get_unsigned_short(), usval, "unsigned short is not equal");
-  UNIT_EXPECT_EQUAL(it->get_unsigned_int(), uival, "unsigned integer is not equal");
-  UNIT_EXPECT_EQUAL(it->get_unsigned_long(), ulval, "unsigned long is not equal");
-  UNIT_EXPECT_EQUAL(it->get_bool(), bval, "bool is not equal");
-  UNIT_EXPECT_EQUAL(it->get_cstr(), cstr, "const char pointer is not equal");
-  UNIT_EXPECT_EQUAL(it->get_string(), strval, "strings is not equal");
-  UNIT_EXPECT_EQUAL(it->get_varchar(), vval, "varchar is not equal");
-  UNIT_EXPECT_EQUAL(it->get_date(), date_val, "date is not equal");
-  UNIT_EXPECT_EQUAL(it->get_time(), time_val, "time is not equal");
+  UNIT_EXPECT_EQUAL(it->get_char(), cval);
+  UNIT_EXPECT_EQUAL(it->get_short(), sval);
+  UNIT_EXPECT_EQUAL(it->get_int(), ival);
+  UNIT_EXPECT_EQUAL(it->get_long(), lval);
+  UNIT_EXPECT_EQUAL(it->get_unsigned_short(), usval);
+  UNIT_EXPECT_EQUAL(it->get_unsigned_int(), uival);
+  UNIT_EXPECT_EQUAL(it->get_unsigned_long(), ulval);
+  UNIT_EXPECT_EQUAL(it->get_bool(), bval);
+  UNIT_EXPECT_EQUAL(it->get_cstr(), cstr);
+  UNIT_EXPECT_EQUAL(it->get_string(), strval);
+  UNIT_EXPECT_EQUAL(it->get_varchar(), vval);
+  UNIT_EXPECT_EQUAL(it->get_date(), date_val);
+  UNIT_EXPECT_EQUAL(it->get_time(), time_val);
 
   q.drop().execute(connection_);
 }
@@ -142,7 +149,7 @@ void QueryTestUnit::test_query_value_creator()
 
   auto val = qvc.create_from_any(ac);
 
-  UNIT_ASSERT_EQUAL(val->get<char>(), 'c', "values must be equal");
+  UNIT_ASSERT_EQUAL(val->get<char>(), 'c');
 }
 
 void QueryTestUnit::test_quoted_identifier()
@@ -159,8 +166,8 @@ void QueryTestUnit::test_quoted_identifier()
   auto fields = connection_.describe("quotes");
 
   for (auto &&field : fields) {
-    UNIT_EXPECT_EQUAL(field.name(), columns[field.index()], "invalid column name");
-    UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
+    UNIT_EXPECT_EQUAL(field.name(), columns[field.index()]);
+    UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()]);
   }
 
   q.insert({"from", "to"}).values({"Berlin", "London"}).execute();
@@ -168,8 +175,8 @@ void QueryTestUnit::test_quoted_identifier()
   auto res = q.select({"from", "to"}).from("quotes").execute();
 
   for (auto row : res) {
-    UNIT_EXPECT_EQUAL("Berlin", row->at<std::string>("from"), "values must be equal");
-    UNIT_EXPECT_EQUAL("London", row->at<std::string>("to"), "values must be equal");
+    UNIT_EXPECT_EQUAL("Berlin", row->at<std::string>("from"));
+    UNIT_EXPECT_EQUAL("London", row->at<std::string>("to"));
   }
 
   column from("from");
@@ -178,8 +185,8 @@ void QueryTestUnit::test_quoted_identifier()
   res = q.select({"from", "to"}).from("quotes").execute();
 
   for (auto row : res) {
-    UNIT_EXPECT_EQUAL("Hamburg", row->at<std::string>("from"), "values must be equal");
-    UNIT_EXPECT_EQUAL("New York", row->at<std::string>("to"), "values must be equal");
+    UNIT_EXPECT_EQUAL("Hamburg", row->at<std::string>("from"));
+    UNIT_EXPECT_EQUAL("New York", row->at<std::string>("to"));
   }
 
   q.drop().execute();
@@ -213,8 +220,8 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
     auto fields = connection_.describe("quotes");
 
     for (auto &&field : fields) {
-      UNIT_EXPECT_EQUAL(field.name(), columns[field.index()], "invalid column name");
-      UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
+      UNIT_EXPECT_EQUAL(field.name(), columns[field.index()]);
+      UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()]);
     }
 
     q.drop().execute();
@@ -234,7 +241,7 @@ void QueryTestUnit::test_quoted_literals()
   auto res = q.select({"name"}).from("escapes").execute();
 
   for (auto item : res) {
-    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text", "values must be equal");
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text");
   }
 
   q.update({{"name", "text'd"}}).execute();
@@ -242,7 +249,7 @@ void QueryTestUnit::test_quoted_literals()
   res = q.select({"name"}).from("escapes").execute();
 
   for (auto item : res) {
-    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text'd", "values must be equal");
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text'd");
   }
 
   q.update({{"name", "text\nhello\tworld"}}).execute();
@@ -250,7 +257,7 @@ void QueryTestUnit::test_quoted_literals()
   res = q.select({"name"}).from("escapes").execute();
 
   for (auto item : res) {
-    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text\nhello\tworld", "values must be equal");
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text\nhello\tworld");
   }
 
   q.update({{"name", "text \"text\""}}).execute();
@@ -258,7 +265,7 @@ void QueryTestUnit::test_quoted_literals()
   res = q.select({"name"}).from("escapes").execute();
 
   for (auto item : res) {
-    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text \"text\"", "values must be equal");
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text \"text\"");
   }
 
   q.drop().execute();
@@ -270,16 +277,16 @@ void QueryTestUnit::test_bind_tablename()
 
   matador::query<person> q0; // tablename should be person
 
-  UNIT_ASSERT_TRUE(q0.tablename().empty(), "name must be empty");
+  UNIT_ASSERT_TRUE(q0.tablename().empty());
   matador::query<person>::bind_table("person");
 
   matador::query<person> q1; // tablename should be person
 
-  UNIT_ASSERT_EQUAL(q1.tablename(), "person", "names must be equal");
+  UNIT_ASSERT_EQUAL(q1.tablename(), "person");
 
   matador::query<person> q2("student"); // tablename should be student
 
-  UNIT_ASSERT_EQUAL(q2.tablename(), "student", "names must be equal");
+  UNIT_ASSERT_EQUAL(q2.tablename(), "student");
 }
 
 void QueryTestUnit::test_describe()
@@ -296,8 +303,8 @@ void QueryTestUnit::test_describe()
   std::vector<data_type > types = { matador::data_type::type_long, matador::data_type::type_varchar, matador::data_type::type_date, matador::data_type::type_long};
 
   for (auto &&field : fields) {
-    UNIT_ASSERT_EQUAL(field.name(), columns[field.index()], "invalid column name");
-    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
+    UNIT_ASSERT_EQUAL(field.name(), columns[field.index()]);
+    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()]);
   }
 
   q.drop().execute(connection_);
@@ -334,7 +341,7 @@ void QueryTestUnit::test_identifier()
 
   std::unique_ptr<pktest> p(new pktest(7, "hans"));
 
-  UNIT_EXPECT_EQUAL(p->id.value(), 7UL, "identifier value should be greater zero");
+  UNIT_EXPECT_EQUAL(p->id.value(), 7UL);
 
   q.insert(*p).execute(connection_);
 
@@ -343,11 +350,11 @@ void QueryTestUnit::test_identifier()
   auto first = res.begin();
   auto last = res.end();
 
-  UNIT_ASSERT_TRUE(first != last, "first must not be last");
+  UNIT_ASSERT_TRUE(first != last);
 
   p.reset((first++).release());
 
-  UNIT_EXPECT_GREATER(p->id.value(), 0UL, "identifier value should be greater zero");
+  UNIT_EXPECT_GREATER(p->id.value(), 0UL);
 
   q.drop().execute(connection_);
 }
@@ -363,7 +370,7 @@ void QueryTestUnit::test_identifier_prepared()
 
   pktest p(7, "hans");
 
-  UNIT_EXPECT_EQUAL(p.id.value(), 7UL, "identifier value should be greater zero");
+  UNIT_EXPECT_EQUAL(p.id.value(), 7UL);
 
   stmt = q.insert(p).prepare(connection_);
   stmt.bind(0, &p);
@@ -376,11 +383,11 @@ void QueryTestUnit::test_identifier_prepared()
 //  auto first = res.begin();
 //  auto last = res.end();
 //
-//  UNIT_ASSERT_TRUE(first != last, "first must not be last");
+//  UNIT_ASSERT_TRUE(first != last);
 
   for (auto pres : res) {
-    UNIT_EXPECT_EQUAL(pres->name, "hans", "name must be hans");
-    UNIT_EXPECT_GREATER(pres->id.value(), 0UL, "identifier value should be greater zero");
+    UNIT_EXPECT_EQUAL(pres->name, "hans");
+    UNIT_EXPECT_GREATER(pres->id.value(), 0UL);
     //std::cout << "id: " << pres->id.value() << "\n";
   }
 //  std::unique_ptr<pktest> pres((first++).release());
@@ -405,16 +412,16 @@ void QueryTestUnit::test_create()
 
   res = q.select().execute(connection_);
 
-//  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
+//  UNIT_ASSERT_EQUAL(res.size(), 1UL);
 
   auto first = res.begin();
   auto last = res.end();
 
   while (first != last) {
     std::unique_ptr<Item> item(first.release());
-    UNIT_EXPECT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
-    UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
-    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    UNIT_EXPECT_EQUAL(item->get_string(), "Hans");
+    UNIT_EXPECT_EQUAL(item->get_int(), 4711);
+    UNIT_EXPECT_EQUAL(item->get_time(), itime);
     ++first;
   }
 
@@ -439,8 +446,7 @@ void QueryTestUnit::test_update()
     q.insert(p).execute();
   }
 
-  column name("name");
-  res = q.select().where(name == "hans").execute();
+  res = q.select().where("name"_col == "hans").execute();
 
   auto first = res.begin();
   auto last = res.end();
@@ -448,9 +454,9 @@ void QueryTestUnit::test_update()
   while (first != last) {
     std::unique_ptr<person> item(first.release());
 
-    UNIT_ASSERT_EQUAL(item->name(), "hans", "expected name must be 'Hans'");
-    UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(item->name(), "hans");
+    UNIT_ASSERT_EQUAL(item->height(), 180U);
+    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980));
 
     ++first;
   }
@@ -460,12 +466,12 @@ void QueryTestUnit::test_update()
   column idcol("id");
   q.update(hans).where(idcol == 1).execute();
 
-  res = q.select().where(name == "hans").execute();
+  res = q.select().where("name"_col == "hans").execute();
 
   for (auto i : res) {
-    UNIT_ASSERT_EQUAL(i->name(), "hans", "expected name must be 'Hans'");
-    UNIT_ASSERT_EQUAL(i->height(), 165U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(i->birthdate(), matador::date(15, 6, 1990), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(i->name(), "hans");
+    UNIT_ASSERT_EQUAL(i->height(), 165U);
+    UNIT_ASSERT_EQUAL(i->birthdate(), matador::date(15, 6, 1990));
   }
 
   q.drop().execute();
@@ -487,11 +493,11 @@ void QueryTestUnit::test_anonymous_create()
 
   q.execute();
 
-  UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
+  UNIT_ASSERT_TRUE(connection_.exists("person"));
   auto fields = connection_.describe("person");
 
   for (const auto &fld : fields) {
-    UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
+    UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end());
   }
 
   q.drop("person").execute(connection_);
@@ -520,8 +526,8 @@ void QueryTestUnit::test_anonymous_insert()
 
   while (first != last) {
     std::unique_ptr<row> item(first.release());
-    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
-    UNIT_EXPECT_EQUAL("hans", item->at<std::string>("name"), "invalid value");
+    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"));
+    UNIT_EXPECT_EQUAL("hans", item->at<std::string>("name"));
     ++first;
   }
 
@@ -556,8 +562,8 @@ void QueryTestUnit::test_anonymous_update()
 
   while (first != last) {
     std::unique_ptr<row> item(first.release());
-    UNIT_EXPECT_EQUAL("jane", item->at<std::string>("name"), "invalid value");
-    UNIT_EXPECT_EQUAL(47L, item->at<long>("age"), "invalid value");
+    UNIT_EXPECT_EQUAL("jane", item->at<std::string>("name"));
+    UNIT_EXPECT_EQUAL(47L, item->at<long>("age"));
     ++first;
   }
 
@@ -574,7 +580,6 @@ void QueryTestUnit::test_statement_insert()
 
   result<Item> res(stmt.execute());
 
-  //matador::identifier<unsigned long> id(23);
   unsigned long id(23);
   auto itime = time_val_;
   Item hans("Hans", 4711);
@@ -590,19 +595,13 @@ void QueryTestUnit::test_statement_insert()
 
   res = stmt.execute();
 
-//  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
+//  UNIT_ASSERT_EQUAL(res.size(), 1UL);
 
-  //auto first = res.begin();
-  //auto last = res.end();
-
-  for (auto item : res) {
-    //while (first != last) {
-    //std::unique_ptr<Item> item(first.release());
-    UNIT_EXPECT_EQUAL(item->id(), 23UL, "expected id must be 23");
-    UNIT_EXPECT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
-    UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
-    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
-    //++first;
+  for (auto const &item : res) {
+    UNIT_EXPECT_EQUAL(item->id(), 23UL);
+    UNIT_EXPECT_EQUAL(item->get_string(), "Hans");
+    UNIT_EXPECT_EQUAL(item->get_int(), 4711);
+    UNIT_EXPECT_EQUAL(item->get_time(), itime);
   }
 
   stmt = q.drop().prepare(connection_);
@@ -631,25 +630,21 @@ void QueryTestUnit::test_statement_update()
     stmt.execute();
   }
 
-  column name("name");
-  stmt = q.select().where(name == "").prepare();
-  matador::varchar<255> hname("hans");
-  stmt.bind(0, hname);
+  stmt = q.select().where("name"_col == "").prepare();
+  matador::varchar<255> name("hans");
+  stmt.bind(0, name);
   res = stmt.execute();
 
-//  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
+//  UNIT_ASSERT_EQUAL(res.size(), 1UL);
 
   //auto first = res.begin();
   //auto last = res.end();
 
-  for (auto p : res) {
-  //while (first != last) {
-    //std::unique_ptr<person> p(first.release());
-    UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
-    UNIT_EXPECT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
-    UNIT_EXPECT_EQUAL(p->height(), 180U, "expected height must be 180");
-    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
-    //++first;
+  for (auto const &p : res) {
+    UNIT_EXPECT_EQUAL(p->id(), 1UL);
+    UNIT_EXPECT_EQUAL(p->name(), "hans");
+    UNIT_EXPECT_EQUAL(p->height(), 180U);
+    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980));
   }
 
 //  auto id_cond = id_condition_builder::build<person>();
@@ -666,22 +661,22 @@ void QueryTestUnit::test_statement_update()
 
   res = stmt.execute();
 
-  stmt = q.select().where(name == "").prepare();
-  stmt.bind(0, hname);
+  stmt = q.select().where("name"_col == "").prepare();
+  stmt.bind(0, name);
   res = stmt.execute();
 
-//  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
+//  UNIT_ASSERT_EQUAL(res.size(), 1UL);
 
   //first = res.begin();
   //last = res.end();
 
-  for (auto p : res) {
+  for (const auto &p : res) {
     //while (first != last) {
     //std::unique_ptr<person> p(first.release());
-    UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
-    UNIT_EXPECT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
-    UNIT_EXPECT_EQUAL(p->height(), 165U, "expected height must be 180");
-    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(15, 6, 1990), "expected birthdate is 12.3.1980");
+    UNIT_EXPECT_EQUAL(p->id(), 1UL);
+    UNIT_EXPECT_EQUAL(p->name(), "hans");
+    UNIT_EXPECT_EQUAL(p->height(), 165U);
+    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(15, 6, 1990));
     //++first;
   }
 
@@ -714,9 +709,9 @@ void QueryTestUnit::test_delete()
     //while (first != last) {
     //std::unique_ptr<person> item(first.release());
 
-    UNIT_EXPECT_EQUAL(p->name(), "Hans", "expected name must be 'Hans'");
-    UNIT_EXPECT_EQUAL(p->height(), 180U, "expected height must be 180");
-    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_EXPECT_EQUAL(p->name(), "Hans");
+    UNIT_EXPECT_EQUAL(p->height(), 180U);
+    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980));
 
     //++first;
   }
@@ -725,7 +720,7 @@ void QueryTestUnit::test_delete()
 
   res = q.select().where(name == "Hans").execute(connection_);
 
-  UNIT_ASSERT_TRUE(res.begin() == res.end(), "result list must be empty");
+  UNIT_ASSERT_TRUE(res.begin() == res.end());
 
   q.drop().execute(connection_);
 }
@@ -765,8 +760,8 @@ void QueryTestUnit::test_delete()
 //    std::unique_ptr<t_object_item> obj(first.release());
 //
 //    object_ptr<Item> i = obj->ptr();
-//    UNIT_ASSERT_TRUE(i.has_primary_key(), "expected valid identifier");
-//    UNIT_ASSERT_TRUE(*i.primary_key() == id, "expected id must be 23");
+//    UNIT_ASSERT_TRUE(i.has_primary_key());
+//    UNIT_ASSERT_TRUE(*i.primary_key() == id);
 //
 //    ++first;
 //  }
@@ -798,16 +793,16 @@ void QueryTestUnit::test_query()
   while (first != last) {
     std::unique_ptr<person> item(first.release());
 
-    UNIT_ASSERT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
-    UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(item->name(), "Hans");
+    UNIT_ASSERT_EQUAL(item->height(), 180U);
+    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980));
 
     ++first;
   }
 
   res = q.select().where(name == "heinz").execute(connection_);
 
-  UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
+  UNIT_ASSERT_TRUE(res.begin() == res.end());
 
   q.drop().execute(connection_);
 }
@@ -844,16 +839,16 @@ void QueryTestUnit::test_query_range_loop()
   for (auto &&item : res) {
     ++size;
 
-     UNIT_EXPECT_TRUE(contains(result_names, item->name()), "expected name '" + item->name() + "'not found");
-//    UNIT_ASSERT_EQUAL(item.height(), 180U, "expected height must be 180");
+     UNIT_EXPECT_TRUE(contains(result_names, item->name()));
+//    UNIT_ASSERT_EQUAL(item.height(), 180U);
 //    UNIT_ASSERT_EQUAL(item.birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
   }
 
-  UNIT_ASSERT_EQUAL(size, 2U, "result size must be two (2)");
+  UNIT_ASSERT_EQUAL(size, 2U);
 
   res = q.select().where(name == "heinz").execute(connection_);
 
-  UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
+  UNIT_ASSERT_TRUE(res.begin() == res.end());
 
   q.drop().execute(connection_);
 
@@ -884,7 +879,7 @@ void QueryTestUnit::test_query_select()
 
   res = q.select().execute(connection_);
 
-//  UNIT_ASSERT_EQUAL(res.size(), 4UL, "result size must be one (4)");
+//  UNIT_ASSERT_EQUAL(res.size(), 4UL);
 
   auto first = res.begin();
   auto last = res.end();
@@ -897,7 +892,7 @@ void QueryTestUnit::test_query_select()
   column name("name");
   res = q.select().where(name == "Hans").execute(connection_);
 
-//  UNIT_ASSERT_EQUAL(res.size(), 1UL, "result size must be one (1)");
+//  UNIT_ASSERT_EQUAL(res.size(), 1UL);
 
   first = res.begin();
   last = res.end();
@@ -905,9 +900,9 @@ void QueryTestUnit::test_query_select()
   while (first != last) {
     std::unique_ptr<person> item(first.release());
 
-    UNIT_ASSERT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
-    UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(item->name(), "Hans");
+    UNIT_ASSERT_EQUAL(item->height(), 180U);
+    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980));
 
     ++first;
   }
@@ -921,8 +916,8 @@ void QueryTestUnit::test_query_select()
     std::unique_ptr<person> item(first.release());
 
     if (is_first) {
-      UNIT_ASSERT_EQUAL(item->name(), "Otto", "expected name must be 'Otto'");
-      UNIT_ASSERT_EQUAL(item->height(), 159U, "expected height must be 159");
+      UNIT_ASSERT_EQUAL(item->name(), "Otto");
+      UNIT_ASSERT_EQUAL(item->height(), 159U);
       is_first = false;
     }
 
@@ -936,7 +931,7 @@ void QueryTestUnit::test_query_select()
     .desc()
     .execute(connection_);
 
-//  UNIT_ASSERT_EQUAL(res.size(), 2UL, "result size must be one (2)");
+//  UNIT_ASSERT_EQUAL(res.size(), 2UL);
 
   first = res.begin();
 
@@ -945,8 +940,8 @@ void QueryTestUnit::test_query_select()
     std::unique_ptr<person> item(first.release());
 
     if (is_first) {
-      UNIT_ASSERT_EQUAL(item->name(), "Hilde", "expected name must be 'Hilde'");
-      UNIT_ASSERT_EQUAL(item->height(), 175U, "expected height must be 175");
+      UNIT_ASSERT_EQUAL(item->name(), "Hilde");
+      UNIT_ASSERT_EQUAL(item->height(), 175U);
       is_first = false;
     }
 
@@ -989,7 +984,7 @@ void QueryTestUnit::test_query_select_count()
 
   while (first != last) {
     std::unique_ptr<row> item(first.release());
-    UNIT_EXPECT_EQUAL(2, item->at<int>(0), "invalid value");
+    UNIT_EXPECT_EQUAL(2, item->at<int>(0));
     ++first;
   }
 
@@ -1031,8 +1026,8 @@ void QueryTestUnit::test_query_select_columns()
 
   while (first != last) {
     std::unique_ptr<row> item(first.release());
-    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
-    UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name), "invalid value");
+    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"));
+    UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name));
     ++first;
   }
 
@@ -1120,7 +1115,7 @@ void QueryTestUnit::test_update_limit()
   matador::column owner("owner_id");
   matador::column item("item_id");
   relation::t_id newid(4UL);
-  q.update({{item.name, newid}}).where(owner == 1 && item == 1).limit(1);
+  q.update({{item.name, newid}}).where("owner_id"_col == 1 && item == 1).limit(1);
 
   res = q.execute(connection_);
 
@@ -1143,13 +1138,13 @@ void QueryTestUnit::test_prepared_statement()
 
   stmt.execute();
 
-  UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
+  UNIT_ASSERT_TRUE(connection_.exists("person"));
   auto fields = connection_.describe("person");
 
   auto cols = { "id", "name", "age" };
 
   for (const auto &fld : fields) {
-	  UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
+	  UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end());
   }
 
   q.drop().execute();
@@ -1167,7 +1162,7 @@ void QueryTestUnit::test_prepared_statement_creation()
 
   stmt.execute();
 
-  UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
+  UNIT_ASSERT_TRUE(connection_.exists("person"));
 
   q.drop().execute();
 }
@@ -1184,7 +1179,7 @@ void QueryTestUnit::test_prepared_object_result_twice()
 
   stmt.execute();
 
-  UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
+  UNIT_ASSERT_TRUE(connection_.exists("person"));
 
   std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
 
@@ -1207,7 +1202,7 @@ void QueryTestUnit::test_prepared_object_result_twice()
 
     for (auto p : result) {
       auto i = nameset.find(p->name());
-      UNIT_EXPECT_TRUE(i != nameset.end(), "name " + p->name() + " not found");
+      UNIT_EXPECT_TRUE(i != nameset.end());
       nameset.erase(i);
     }
   }
@@ -1225,7 +1220,7 @@ void QueryTestUnit::test_prepared_object_result_twice()
 
     for (auto p : result) {
       auto i = nameset.find(p->name());
-      UNIT_EXPECT_TRUE(i != nameset.end(), "name " + p->name() + " not found");
+      UNIT_EXPECT_TRUE(i != nameset.end());
       nameset.erase(i);
     }
   }
@@ -1263,7 +1258,7 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
 
     for (auto p : result) {
       auto i = idset.find(p->at<long>("id"));
-      UNIT_EXPECT_TRUE(i != idset.end(), "id " + p->str("id") + " not found");
+      UNIT_EXPECT_TRUE(i != idset.end());
       idset.erase(i);
     }
 //  }
@@ -1278,7 +1273,7 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
 
     for (auto p : result) {
       auto i = idset.find(p->at<long>("id"));
-      UNIT_EXPECT_TRUE(i != idset.end(), "id " + p->str("id") + " not found");
+      UNIT_EXPECT_TRUE(i != idset.end());
       idset.erase(i);
     }
 //  }
@@ -1308,11 +1303,11 @@ void QueryTestUnit::test_rows()
 
   q.execute();
 
-  UNIT_ASSERT_TRUE(connection_.exists("item"), "table item must exist");
+  UNIT_ASSERT_TRUE(connection_.exists("item"));
   auto fields = connection_.describe("item");
 
   for (const auto &fld : fields) {
-    UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
+    UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end());
   }
 
   q
@@ -1323,11 +1318,11 @@ void QueryTestUnit::test_rows()
   auto res = q.select({"id", "string", "varchar", "int", "float", "double"}).from("item").execute();
 
   for (auto item : res) {
-    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
-    UNIT_EXPECT_EQUAL("long text", item->at<std::string>("string"), "invalid value");
-    UNIT_EXPECT_EQUAL(-17, item->at<int>("int"), "invalid value");
-    UNIT_EXPECT_EQUAL(3.1415f, item->at<float>("float"), "invalid value");
-    UNIT_EXPECT_EQUAL(2.71828, item->at<double>("double"), "invalid value");
+    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"));
+    UNIT_EXPECT_EQUAL("long text", item->at<std::string>("string"));
+    UNIT_EXPECT_EQUAL(-17, item->at<int>("int"));
+    UNIT_EXPECT_EQUAL(3.1415f, item->at<float>("float"));
+    UNIT_EXPECT_EQUAL(2.71828, item->at<double>("double"));
   }
 
   q.drop("item").execute();

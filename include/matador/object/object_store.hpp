@@ -124,7 +124,7 @@ public:
    */
   enum abstract_type {
     abstract,           /**< Indicates an abstract object type */
-    not_abstract        /**< Indicates an concreate object type */
+    not_abstract        /**< Indicates a concrete object type */
   };
 
 /// @cond MATADOR_DEV
@@ -453,17 +453,17 @@ public:
   void clear(bool full = false);
 
   /**
- * Clears a prototype node and its cildren nodes.
- * All objects will be deleted.
- *
- * @param type The name of the type to remove.
- * @throws matador::object_exception on error
- */
+   * Clears a prototype node and its cildren nodes.
+   * All objects will be deleted.
+   *
+   * @param type The name of the type to remove.
+   * @throws matador::object_exception on error
+   */
   void clear(const char *type);
 
   /**
    * Clears a prototype node by an iterator and its
-   * cildren nodes. All object_proxy objects will be
+   * children nodes. All object_proxy objects will be
    * deleted.
    *
    * @param node The prototype_iterator to remove.
@@ -493,10 +493,10 @@ public:
    * @param node The prototype_node
    * @return The depth of the node
    */
-  size_t depth(const prototype_node *node) const;
+//  size_t depth(const prototype_node *node) const;
 
   /// @cond MATADOR_DEV
-  void dump(std::ostream &out) const;
+//  void dump(std::ostream &out) const;
   /// @endcond
 
   /**
@@ -504,7 +504,7 @@ public:
    *
    * @param out The stream to the objects dump on.
    */
-  void dump_objects(std::ostream &out) const;
+//  void dump_objects(std::ostream &out) const;
 
   /**
    * Creates an serializable of the given type name.
@@ -738,12 +738,12 @@ public:
    * @param o The object set into the new object proxy.
    * @return An serializable proxy serializable or null.
    */
-  template<class T>
-  object_proxy *create_proxy(T *o)
-  {
-    std::unique_ptr<object_proxy> proxy(new object_proxy(o, seq_.next(), this));
-    return object_map_.insert(std::make_pair(seq_.current(), proxy.release())).first->second;
-  }
+//  template<class T>
+//  object_proxy *create_proxy(T *o)
+//  {
+//    std::unique_ptr<object_proxy> proxy(new object_proxy(o, seq_.next(), this));
+//    return object_map_.insert(std::make_pair(seq_.current(), proxy.release())).first->second;
+//  }
 
   /**
    * @brief Creates and inserts an serializable proxy serializable.
@@ -762,14 +762,12 @@ public:
    * @param oid  Unique id of the object_proxy.
    * @return     An object_proxy object or null.
    */
-  template<class T>
-  object_proxy *create_proxy(T *o, unsigned long oid)
-  {
-    std::unique_ptr<object_proxy> proxy(new object_proxy(o, oid, this));
-    return object_map_.insert(std::make_pair(oid, proxy.release())).first->second;
-  }
-
-//  object_proxy *create_proxy(unsigned long id);
+//  template<class T>
+//  object_proxy *create_proxy(T *o, unsigned long oid)
+//  {
+//    std::unique_ptr<object_proxy> proxy(new object_proxy(o, oid, this));
+//    return object_map_.insert(std::make_pair(oid, proxy.release())).first->second;
+//  }
 
   /**
    * @brief Delete proxy from map
@@ -780,7 +778,7 @@ public:
    * @param id Id of proxy to delete
    * @return Returns true if deletion was successfully
    */
-  bool delete_proxy(unsigned long id);
+//  bool delete_proxy(unsigned long id);
 
   /**
    * @brief Finds serializable proxy with id
@@ -813,7 +811,7 @@ public:
    * @return The registered object_proxy
    * @throws object_exception
    */
-  object_proxy *register_proxy(object_proxy *oproxy);
+//  object_proxy *register_proxy(object_proxy *oproxy);
 
   /**
    * @brief Exchange the sequencer strategy.
@@ -827,7 +825,7 @@ public:
    * @param seq The new sequencer strategy serializable.
    * @return The old sequencer startegy implementation.
    */
-  sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
+//  sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
   /**
    * Return the current transaction in stack
@@ -892,15 +890,6 @@ private:
 
 
 private:
-//  template < class T, template < class V = T > class ... O, typename = typename std::enable_if< std::is_same<T, has_many_item<typename T::value_type>>::value >::type >
-//  prototype_iterator attach(const char *id, abstract_has_many *container)
-//  {
-//    temp_container_ = container;
-//    prototype_iterator i = attach<T, O...>(id);
-//    temp_container_ = nullptr;
-//    return i;
-//  }
-
   /**
    * Clears a prototype_node and its
    * cildren nodes. All object_proxy objects will be
@@ -984,13 +973,7 @@ private:
   detail::object_deleter object_deleter_;
   detail::object_inserter object_inserter_;
 
-  // only used when a has_many object is inserted
-  abstract_has_many *temp_container_ = nullptr;
-
   std::stack<transaction> transactions_;
-
-  // relation notification related
-  bool relation_notification_ = true;
 };
 
 template < class T >
@@ -999,7 +982,7 @@ void object_store::validate(prototype_node *node)
   std::unique_ptr<prototype_node> nptr(node);
   // try to find node in prepared map
   const char *name = typeid(T).name();
-  t_prototype_map::iterator i = prototype_map_.find(node->type_);
+  auto i = prototype_map_.find(node->type_);
   if (i != prototype_map_.end()) {
     throw_object_exception("prototype already inserted: " << node->type_.c_str());
   }
@@ -1013,7 +996,7 @@ void object_store::validate(prototype_node *node)
    * a new type
    * to be sure check in typeid map
    */
-  t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(name);
+  auto j = typeid_prototype_map_.find(name);
   if (j != typeid_prototype_map_.end() && j->second.find(node->type_) != j->second.end()) {
     /* unexpected found the
      * typeid check for type
@@ -1028,7 +1011,7 @@ template <class T, template < class U = T > class O >
 prototype_iterator object_store::attach(const char *type, object_store::abstract_type abstract, const char *parent,
                                         std::initializer_list<O<T>*> observer)
 {
-  prototype_node *node = new prototype_node(this, type, new T, abstract == object_store::abstract_type::abstract);
+  auto *node = new prototype_node(this, type, new T, abstract == object_store::abstract_type::abstract);
 
   return attach<T>(node, parent, observer);
 }
@@ -1117,7 +1100,6 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 
 #include "matador/object/node_analyzer.tpp"
 #include "matador/object/relation_field_endpoint.tpp"
-//#include "matador/object/relation_field_serializer.tpp"
 #include "matador/object/relation_endpoint_value_inserter.tpp"
 #include "matador/object/relation_endpoint_value_remover.tpp"
 #include "matador/object/object_inserter.tpp"

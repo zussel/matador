@@ -38,7 +38,7 @@ struct OOS_SQL_API column : public detail::token
    *
    * @param col The name of the column
    */
-  column(const std::string &col);
+  explicit column(const std::string &col);
 
   /**
    * @brief Creates a new column with given name
@@ -53,7 +53,7 @@ struct OOS_SQL_API column : public detail::token
    *
    * @param visitor The visitor obejct to be accepted
    */
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 
   std::string name;         /**< Name of the column */
   bool skip_quotes = false; /**< If true skip quoting */
@@ -163,7 +163,7 @@ struct OOS_SQL_API columns : public detail::token
    *
    * @param visitor The visitor obejct to be accepted
    */
-  virtual void accept(token_visitor &visitor);
+  void accept(token_visitor &visitor) override;
 
   std::vector<std::shared_ptr<column>> columns_; /**< The list of column shared pointer */
   t_brackets with_brackets_ = WITH_BRACKETS;     /**< The bracket type */
@@ -172,6 +172,8 @@ private:
   static columns all_;                           /**< The all columns object */
   static column count_all_;                      /**< An count all column object */
 };
+
+OOS_SQL_API column operator "" _col(const char *name, size_t len);
 
 namespace detail {
 struct typed_column;
@@ -236,7 +238,7 @@ struct OOS_SQL_API typed_column : public matador::column
   typed_column(const std::string &col, data_type t);
   typed_column(const std::string &col, data_type t, std::size_t idx, bool host);
 
-  virtual void accept(token_visitor &visitor) override;
+  void accept(token_visitor &visitor) override;
 
   data_type type;
   std::size_t index = 0;
@@ -248,7 +250,7 @@ struct OOS_SQL_API typed_identifier_column : public typed_column
   typed_identifier_column(const std::string &n, data_type t) : typed_column(n, t) { }
   typed_identifier_column(const std::string &n, data_type t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     return visitor.visit(*this);
   }
@@ -265,7 +267,7 @@ struct OOS_SQL_API typed_varchar_column : public typed_column
     , size(size)
   { }
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     return visitor.visit(*this);
   }
@@ -279,7 +281,7 @@ struct OOS_SQL_API identifier_varchar_column : public typed_varchar_column
     : typed_varchar_column(n, size, t, idx, host)
   { }
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     return visitor.visit(*this);
   }
@@ -297,7 +299,7 @@ struct OOS_SQL_API basic_value_column : public column
     , value_(val)
   { }
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     visitor.visit(*this);
   }

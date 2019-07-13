@@ -52,7 +52,7 @@ private:
   connection_factory();
 
 public:
-  virtual ~connection_factory();
+  ~connection_factory() override;
 
   connection_impl* create(const std::string &name);
   bool destroy(const std::string &name, connection_impl* impl);
@@ -62,9 +62,9 @@ private:
   class connection_producer : public factory_t::producer_base
   {
   public:
-    explicit connection_producer() {};
-    virtual ~connection_producer() {};
-    virtual factory_t::value_type* create() const;
+    connection_producer() = default;
+    ~connection_producer() override = default;
+    factory_t::value_type* create() const override;
     virtual void destroy(factory_t::value_type* val) const;
   };
 
@@ -72,9 +72,9 @@ private:
   {
   public:
     explicit dynamic_connection_producer(const std::string &name);
-    virtual ~dynamic_connection_producer();
-    virtual factory_t::value_type* create() const;
-    virtual void destroy(factory_t::value_type* val) const;
+    ~dynamic_connection_producer() override;
+    factory_t::value_type* create() const override;
+    void destroy(factory_t::value_type* val) const override;
 
   private:
     typedef connection_impl*(*create_func)();

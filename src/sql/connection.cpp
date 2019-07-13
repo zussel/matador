@@ -111,9 +111,9 @@ std::string connection::version() const
   return "";
 }
 
-bool connection::exists(const std::string &tablename) const
+bool connection::exists(const std::string &table_name) const
 {
-  return impl_->exists(tablename);
+  return impl_->exists(table_name);
 }
 
 std::vector<field> connection::describe(const std::string &table) const
@@ -142,13 +142,10 @@ void connection::prepare_prototype_row(row &prototype, const std::string &tablen
   for (auto &&f : fields) {
     if (!prototype.has_column(f.name())) {
       continue;
-    };
+    }
     // generate value by type
-//    f.type();
-//    std::shared_ptr<detail::basic_value> value(new null_value);
     std::shared_ptr<detail::basic_value> value(create_default_value(f.type()));
     prototype.set(f.name(), value);
-//    prototype.set(f.name(), std::make_shared<null_value>());
   }
   // default value for count(*)
   if (prototype.has_column(matador::columns::count_all().name)) {

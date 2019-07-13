@@ -23,13 +23,9 @@ sqlite_prepared_result::sqlite_prepared_result(sqlite3_stmt *stmt, int ret)
 {
 }
 
-sqlite_prepared_result::~sqlite_prepared_result()
+const char* sqlite_prepared_result::column(size_type c) const
 {
-}
-
-const char* sqlite_prepared_result::column(size_type ) const
-{
-  return 0;
+  return (const char*)sqlite3_column_text(stmt_, c);
 }
 
 bool sqlite_prepared_result::fetch()
@@ -122,14 +118,14 @@ void sqlite_prepared_result::serialize(const char *, double &x)
 
 void sqlite_prepared_result::serialize(const char *, std::string &x)
 {
-  size_t s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
-  const char *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
+  auto s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
+  auto *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
   x.assign(text, s);
 }
 
 void sqlite_prepared_result::serialize(const char *, varchar_base &x)
 {
-  size_t s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
+  auto s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   const char *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
   if (s == 0) {
   } else {
@@ -139,7 +135,7 @@ void sqlite_prepared_result::serialize(const char *, varchar_base &x)
 
 void sqlite_prepared_result::serialize(const char *, char *x, size_t s)
 {
-  size_t size = (size_t)sqlite3_column_bytes(stmt_, result_index_);
+  auto size = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   if (size < s) {
 #ifdef _MSC_VER
     strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index_++), s);

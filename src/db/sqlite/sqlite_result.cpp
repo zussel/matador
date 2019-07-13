@@ -30,12 +30,10 @@ namespace matador {
 
 namespace sqlite {
 
-sqlite_result::sqlite_result()  {}
-
 sqlite_result::~sqlite_result()
 {
   std::for_each(result_.begin(), result_.end(), [](t_result::value_type& row) {
-    std::for_each(row.begin(), row.end(), [](char *val) {
+    std::for_each(row.begin(), row.end(), [](const char *val) {
       delete [] val;
     });
   });
@@ -246,22 +244,17 @@ void sqlite_result::serialize(const char *, std::string &x)
 {
   t_row::value_type val = result_[pos_][column_++];
   x = val;
-//  x.assign(val);
 }
 
 void sqlite_result::serialize(const char *, matador::date &x)
 {
   t_row::value_type val = result_[pos_][column_++];
-//  std::string val;
-//  serialize(id, val);
   x.set(val, date_format::ISO8601);
 }
 
 void sqlite_result::serialize(const char *, matador::time &x)
 {
   t_row::value_type val = result_[pos_][column_++];
-//  std::string val;
-//  serialize(id, val);
   x = matador::time::parse(val, "%Y-%m-%dT%T.%f");
 }
 

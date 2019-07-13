@@ -6,46 +6,46 @@
 
 set(PROGRAMFILES $ENV{ProgramFiles})
 if (DEFINED ENV{ProgramW6432})
-	set(PROGRAMFILES $ENV{ProgramW6432})
+    set(PROGRAMFILES $ENV{ProgramW6432})
 endif()
 
 IF (WIN32)
-	FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
-		$ENV{PROGRAMFILES}/SQLite/include/
-		${PROGRAMFILES}/SQLite/include/
-		DOC "The directory where sqlite3.h resides"
-	)
+    FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
+      $ENV{PROGRAMFILES}/SQLite/include/
+      ${PROGRAMFILES}/SQLite/include/
+      DOC "The directory where sqlite3.h resides"
+      )
 
-	FIND_LIBRARY( SQLITE3_LIBRARY
-		NAMES sqlite3
-		PATHS
-		$ENV{PROGRAMFILES}/SQLite/lib/
-		${PROGRAMFILES}/SQLite/lib/
-		DOC "The SQLite3 library"
-	)
+    FIND_LIBRARY( SQLITE3_LIBRARY
+      NAMES sqlite3
+      PATHS
+      $ENV{PROGRAMFILES}/SQLite/lib/
+      ${PROGRAMFILES}/SQLite/lib/
+      DOC "The SQLite3 library"
+      )
 ELSE (WIN32)
-	FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
-		/usr/include
-		/usr/local/include
-		/sw/include
-		/opt/local/include
-		DOC "The directory where sqlite3.h resides")
-	FIND_LIBRARY( SQLITE3_LIBRARY
-		NAMES sqlite3
-		PATHS
-		/usr/lib64
-		/usr/lib
-		/usr/local/lib64
-		/usr/local/lib
-		/sw/lib
-		/opt/local/lib
-		DOC "The SQLite3 library")
+    FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
+      /usr/include
+      /usr/local/include
+      /sw/include
+      /opt/local/include
+      DOC "The directory where sqlite3.h resides")
+    FIND_LIBRARY( SQLITE3_LIBRARY
+      NAMES sqlite3
+      PATHS
+      /usr/lib64
+      /usr/lib
+      /usr/local/lib64
+      /usr/local/lib
+      /sw/lib
+      /opt/local/lib
+      DOC "The SQLite3 library")
 ENDIF (WIN32)
 
 IF (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
-	SET( SQLITE3_FOUND TRUE CACHE STRING "Set to TRUE if SQLite3 is found, FALSE otherwise")
+    SET( SQLITE3_FOUND TRUE CACHE STRING "Set to TRUE if SQLite3 is found, FALSE otherwise")
 ELSE (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
-	SET( SQLITE3_FOUND FALSE CACHE STRING "Set to TRUE if SQLite3 is found, FALSE otherwise")
+    SET( SQLITE3_FOUND FALSE CACHE STRING "Set to TRUE if SQLite3 is found, FALSE otherwise")
 ENDIF (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
 
 MARK_AS_ADVANCED( SQLITE3_FOUND )

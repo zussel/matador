@@ -65,15 +65,16 @@ public:
     GREATER_EQUAL,
     OR,
     AND,
-    NOT
+    NOT,
+    IN_LIST
   };
 
   enum
   {
-    num_operands = 9
+    num_operands = 10
   };
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     visitor.visit(*this);
   }
@@ -89,11 +90,11 @@ public:
   column field_;
   std::string operand;
 
-  basic_column_condition(const column &fld, detail::basic_condition::t_operand op)
-    : field_(fld), operand(detail::basic_condition::operands[op])
+  basic_column_condition(column fld, detail::basic_condition::t_operand op)
+    : field_(std::move(fld)), operand(detail::basic_condition::operands[op])
   { }
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     visitor.visit(*this);
   }
@@ -104,11 +105,11 @@ class OOS_SQL_API basic_in_condition : public basic_condition
 public:
   column field_;
 
-  basic_in_condition(const column &fld)
-    : field_(fld)
+  explicit basic_in_condition(column fld)
+    : field_(std::move(fld))
   { }
 
-  virtual void accept(token_visitor &visitor) override
+  void accept(token_visitor &visitor) override
   {
     visitor.visit(*this);
   }
@@ -152,13 +153,14 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
+    dialect.inc_bind_count();
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " " << operand << " " << value;
     } else {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << "?";
+      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << dialect.next_placeholder();
     }
     return str.str();
   }
@@ -177,13 +179,14 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
+    dialect.inc_bind_count();
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " " << operand << " '" << value << "'";
     } else {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << "?";
+      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << dialect.next_placeholder();
     }
     return str.str();
   }
@@ -203,7 +206,7 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << value << " " << operand << " " << dialect.prepare_identifier(field_.name);
@@ -224,7 +227,7 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << "'" << value << "' " << operand << " " << dialect.prepare_identifier(field_.name);
@@ -271,8 +274,9 @@ public:
    * @param dialect The dialect used to evaluate
    * @return A condition IN part of the query
    */
-  virtual std::string evaluate(basic_dialect &dialect) const override
+  std::string evaluate(basic_dialect &dialect) const override
   {
+    dialect.inc_bind_count(size());
     std::stringstream str;
     str << dialect.prepare_identifier(field_.name) << " IN (";
     if (args_.size() > 1) {
@@ -283,7 +287,7 @@ public:
           str << *first++ << ",";
         } else {
           ++first;
-          str << "?,";
+          str << dialect.next_placeholder() << ",";
         }
       }
     }
@@ -291,7 +295,7 @@ public:
       if (dialect.compile_type() == basic_dialect::DIRECT) {
         str << args_.back();
       } else {
-        str << "?";
+        str << dialect.next_placeholder();
       }
     }
     str << ")";
@@ -302,7 +306,7 @@ public:
    * @brief Returns the number of arguments in the list
    * @return The number of arguments in the list
    */
-  virtual size_t size() const override
+  size_t size() const override
   {
     return args_.size();
   }
@@ -322,7 +326,7 @@ private:
  * @endcode
  */
 template <>
-class condition<column, detail::basic_query> : public detail::basic_condition
+class condition<column, detail::basic_query> : public detail::basic_column_condition
 {
 public:
   /**
@@ -335,8 +339,9 @@ public:
    * @param col Column for the IN condition
    * @param q The query to be evaluated to the IN arguments
    */
-  condition(const column &col, const detail::basic_query &q)
-          : field_(col), query_(q)
+  condition(column col, detail::basic_condition::t_operand op, detail::basic_query q)
+    : basic_column_condition(std::move(col), op)
+    , query_(std::move(q))
   {}
 
   /**
@@ -348,16 +353,15 @@ public:
    * @param dialect The dialect used to evaluate
    * @return A condition IN part of the query
    */
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
-    std::string result(dialect.prepare_identifier(field_.name) + " IN (");
-    result += dialect.build(query_.stmt(), dialect.compile_type());
+    std::string result(dialect.prepare_identifier(field_.name) + " " + operand + " (");
+    result += dialect.continue_build(query_.stmt(), dialect.compile_type());
     result += (")");
     return result;
   }
 
 private:
-  column field_;
   detail::basic_query query_;
 };
 
@@ -379,8 +383,8 @@ public:
    * @param col The column for the range check
    * @param range The boundary values defining the range
    */
-  condition(const column &col, const std::pair<T, T> &range)
-    : field_(col), range_(range) { }
+  condition(column col, const std::pair<T, T> &range)
+    : field_(std::move(col)), range_(range) { }
 
   /**
    * @brief Evaluates the condition
@@ -391,13 +395,14 @@ public:
    * @param dialect The dialect used to evaluate
    * @return A condition BETWEEN part of the query
    */
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
+    dialect.inc_bind_count(2);
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " BETWEEN " << range_.first << " AND " << range_.second;
     } else {
-      str << dialect.prepare_identifier(field_.name) << " BETWEEN ? AND ?";
+      str << dialect.prepare_identifier(field_.name) << " BETWEEN " << dialect.next_placeholder() << " AND " << dialect.next_placeholder();
     }
     return str.str();
   }
@@ -438,15 +443,24 @@ public:
    * @param dialect The dialect used to evaluate
    * @return The exaluated string based on the compile type
    */
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
+    // ensure the numbering order for host vars
+    auto cl = left.evaluate(dialect);
+    auto cr = right.evaluate(dialect);
     if (operand == detail::basic_condition::AND) {
-      str << "(" << left.evaluate(dialect) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(dialect) << ")";
+      str << "(" << cl << " " << detail::basic_condition::operands[operand] << " " << cr << ")";
     } else {
-      str << left.evaluate(dialect) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(dialect);
+      str << cl << " " << detail::basic_condition::operands[operand] << " " << cr;
     }
     return str.str();
+  }
+
+  void accept(token_visitor &visitor) override
+  {
+    left.accept(visitor);
+    right.accept(visitor);
   }
 
 private:
@@ -480,7 +494,7 @@ public:
    * @param dialect The dialect used to evaluate
    * @return The exaluated string based on the compile type
    */
-  std::string evaluate(basic_dialect &dialect) const
+  std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << operand << " (" << cond.evaluate(dialect) << ")";
@@ -565,6 +579,8 @@ condition<column, T> operator==(const column &col, T val)
 {
   return condition<column, T>(col, detail::basic_condition::EQUAL, val);
 }
+
+OOS_SQL_API condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
 
 /**
  * @brief Condition unequality operator for a column and a value
@@ -652,7 +668,7 @@ condition<column, T> operator>=(const column &col, T val)
 }
 
 /**
- * @brief AND operation condition consisting of a left and rigth hand condition
+ * @brief AND operation condition consisting of a left and right hand condition
  *
  * @tparam L1 Left hand type of left hand condition
  * @tparam R1 Right hand type of left hand condition
@@ -669,7 +685,7 @@ condition<condition<L1, R1>, condition<L2, R2>> operator&&(const condition<L1, R
 }
 
 /**
- * @brief OR operation condition consisting of a left and rigth hand condition
+ * @brief OR operation condition consisting of a left and right hand condition
  *
  * @tparam L1 Left hand type of left hand condition
  * @tparam R1 Right hand type of left hand condition

@@ -21,8 +21,8 @@ void StringTestUnit::test_split()
 
   size_t count = matador::split(str, ',', strvec);
 
-  UNIT_ASSERT_EQUAL(count, (size_t)5, "expected count must be 5");
-  UNIT_ASSERT_EQUAL(strvec.size(), (size_t)5, "expected vector size must be 5");
+  UNIT_ASSERT_EQUAL(count, (size_t)5);
+  UNIT_ASSERT_EQUAL(strvec.size(), (size_t)5);
 }
 
 void StringTestUnit::test_trim()
@@ -31,9 +31,9 @@ void StringTestUnit::test_trim()
 
   std::string result = matador::trim(str);
 
-  UNIT_ASSERT_EQUAL(result, "middle", "expect string must be 'middle'");
+  UNIT_ASSERT_EQUAL(result, "middle");
 
   result = matador::trim(str, "-");
 
-  UNIT_ASSERT_EQUAL(result, str, "expect string must be '" + str + "'");
+  UNIT_ASSERT_EQUAL(result, str);
 }

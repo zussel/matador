@@ -106,6 +106,7 @@ public:
    */
   result<T> execute()
   {
+//    std::cout << "\n" << p->str();
     return result<T>(p->execute());
   }
 
@@ -175,7 +176,7 @@ public:
   /**
    * Creates an empty statement
    */
-  statement() = default;
+  statement() : prototype_(row()) {}
 
   /**
    * Creates a statement initialized from the
@@ -198,6 +199,7 @@ public:
    * @param x The statement to move from
    */
   statement(statement &&x) noexcept
+    : prototype_(x.prototype_)
   {
     std::swap(p, x.p);
   }
@@ -234,6 +236,7 @@ public:
    */
   result<row> execute()
   {
+//    std::cout << "\n" << p->str();
     return result<row>(p->execute(), prototype_);
   }
 

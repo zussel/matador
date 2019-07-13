@@ -13,9 +13,9 @@
 using namespace matador;
 
 
-TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::string &msg, std::string const &dns)
+TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::string &msg, std::string dns)
   : unit_test(name, msg)
-  , dns_(dns)
+  , dns_(std::move(dns))
 {
   add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple transaction test");
   add_test("nested", std::bind(&TransactionTestUnit::test_nested, this), "nested transaction test");
@@ -27,8 +27,6 @@ TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::str
 //  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "serializable with serializable vector sql test");
 }
 
-
-TransactionTestUnit::~TransactionTestUnit() {}
 
 void TransactionTestUnit::test_simple()
 {
@@ -47,21 +45,21 @@ void TransactionTestUnit::test_simple()
     auto hans = s.insert(new person("hans", d1, 180));
 
     tr.commit();
-  } catch (sql_exception &) {
+  } catch (sql_exception &ex) {
     tr.rollback();
-    UNIT_FAIL("transaction failed");
+    UNIT_FAIL("transaction failed: " << ex.what());
   }
 
   matador::object_view<person> persons(s.store());
 //  matador::object_view<person> persons = s.create_view<person>();
 
-  UNIT_ASSERT_EQUAL(1UL, persons.size(), "size must be one");
+  UNIT_ASSERT_EQUAL(1UL, persons.size());
 
   auto hans2 = persons.front();
 
-  UNIT_ASSERT_EQUAL("hans", hans2->name(), "name must be 'hans'");
-  UNIT_ASSERT_EQUAL(d1, hans2->birthdate(), "birthdate must be " + matador::to_string(d1));
-  UNIT_ASSERT_EQUAL(180U, hans2->height(), "height must be 180");
+  UNIT_ASSERT_EQUAL("hans", hans2->name());
+  UNIT_ASSERT_EQUAL(d1, hans2->birthdate());
+  UNIT_ASSERT_EQUAL(180U, hans2->height());
 
   p.drop();
 }
@@ -85,13 +83,13 @@ void TransactionTestUnit::test_nested()
     typedef object_view<Item> item_view;
     // insert new serializable
     item_ptr item = s.store().insert(new Item("Hello World", 70));
-    UNIT_ASSERT_GREATER(item->id(), 0UL, "item has invalid serializable id");
+    UNIT_ASSERT_GREATER(item->id(), 0UL);
     tr.commit();
 
     tr.begin();
     // modify serializable
     item->set_int(120);
-    UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
+    UNIT_ASSERT_EQUAL(item->get_int(), 120);
 
 
     // begin inner transaction
@@ -100,22 +98,22 @@ void TransactionTestUnit::test_nested()
       // change name again
       item->set_int(170);
 
-      UNIT_ASSERT_EQUAL(item->get_int(), 170, "item has invalid int value");
+      UNIT_ASSERT_EQUAL(item->get_int(), 170);
       // rollback transaction
       tr2.rollback();
 
-      UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
+      UNIT_ASSERT_EQUAL(item->get_int(), 120);
     } catch (std::exception &ex) {
       UNIT_WARN("transaction [" << tr2.id() << "] rolled back: " << ex.what());
       tr2.rollback();
     }
     tr.rollback();
 
-    UNIT_ASSERT_EQUAL(item->get_int(), 70, "item has invalid int value");
+    UNIT_ASSERT_EQUAL(item->get_int(), 70);
 
     tr.begin();
     // delete serializable
-    UNIT_ASSERT_TRUE(s.store().is_removable(item), "couldn't delete item");
+    UNIT_ASSERT_TRUE(s.store().is_removable(item));
 
     s.store().remove(item);
 
@@ -123,23 +121,23 @@ void TransactionTestUnit::test_nested()
 
     item_view view(s.store());
 
-    UNIT_ASSERT_FALSE(view.empty(), "item view is empty");
-    UNIT_ASSERT_EQUAL((int)view.size(), 1, "more than one item in view");
+    UNIT_ASSERT_FALSE(view.empty());
+    UNIT_ASSERT_EQUAL((int)view.size(), 1);
 
     item = view.front();
 
-    UNIT_ASSERT_EQUAL(item->get_string(), "Hello World", "invalid item name");
-    UNIT_ASSERT_EQUAL(item->get_int(), 70, "invalid item int value");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Hello World");
+    UNIT_ASSERT_EQUAL(item->get_int(), 70);
 
     tr.begin();
 
-    UNIT_ASSERT_TRUE(s.store().is_removable(item), "couldn't delete item");
+    UNIT_ASSERT_TRUE(s.store().is_removable(item));
 
     s.store().remove(item);
 
     tr.commit();
 
-    UNIT_ASSERT_TRUE(view.empty(), "item view is empty");
+    UNIT_ASSERT_TRUE(view.empty());
   } catch (sql_exception &ex) {
     // error, abort transaction
     UNIT_WARN("transaction [" << tr.id() << "] rolled back: " << ex.what());
@@ -185,38 +183,38 @@ void TransactionTestUnit::test_foreign()
     object_item_ptr object_item = s.insert(new object_item_t("Foo", 42));
     object_item->ptr(item);
 
-    UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid serializable item");
+    UNIT_ASSERT_GREATER(object_item->id(), 0UL);
 
     item = object_item->ptr();
 
-    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
+    UNIT_ASSERT_GREATER(item->id(), 0UL);
 
     item->set_int(120);
     item->set_string("Bar");
 
-    UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
-    //UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
+    UNIT_ASSERT_EQUAL(item->get_int(), 120);
+    //UNIT_ASSERT_EQUAL(item->get_string(), "Bar");
 
     tr.commit();
 
-    UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
-    //UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
+    UNIT_ASSERT_EQUAL(item->get_int(), 120);
+    //UNIT_ASSERT_EQUAL(item->get_string(), "Bar");
 
     tr.begin();
 
     object_view<object_item_t> oview(s.store());
 
-    UNIT_ASSERT_FALSE(oview.empty(), "serializable item view couldn't be empty");
+    UNIT_ASSERT_FALSE(oview.empty());
 
-    UNIT_ASSERT_TRUE(s.store().is_removable(object_item), "couldn't remove serializable item");
+    UNIT_ASSERT_TRUE(s.store().is_removable(object_item));
 
     s.store().remove(object_item);
 
-    UNIT_ASSERT_TRUE(oview.empty(), "serializable item view must be empty");
+    UNIT_ASSERT_TRUE(oview.empty());
 
     tr.rollback();
 
-    UNIT_ASSERT_FALSE(oview.empty(), "serializable item view couldn't be empty");
+    UNIT_ASSERT_FALSE(oview.empty());
 
   } catch (sql_exception &ex) {
     // error, abort transaction
@@ -246,8 +244,8 @@ void TransactionTestUnit::test_has_many_list_commit()
   try {
     auto children = s.insert(new children_list("children list"));
 
-    UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children list");
-    UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
+    UNIT_ASSERT_GREATER(children->id, 0UL);
+    UNIT_ASSERT_TRUE(children->children.empty());
 
     tr.commit();
 
@@ -258,18 +256,18 @@ void TransactionTestUnit::test_has_many_list_commit()
       name << "child " << i;
       auto kid = s.insert(new child(name.str()));
 
-      UNIT_ASSERT_GREATER(kid->id, 0UL, "invalid child");
+      UNIT_ASSERT_GREATER(kid->id, 0UL);
 
       children->children.push_back(kid);
     }
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
     tr.commit();
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "item children couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
   } catch(sql_exception &ex) {
     // error, abort transaction
@@ -299,8 +297,8 @@ void TransactionTestUnit::test_has_many_list_rollback()
   try {
     auto children = s.insert(new children_list("children list"));
 
-    UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children list");
-    UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
+    UNIT_ASSERT_GREATER(children->id, 0UL);
+    UNIT_ASSERT_TRUE(children->children.empty());
 
     tr.commit();
 
@@ -311,18 +309,18 @@ void TransactionTestUnit::test_has_many_list_rollback()
       name << "child " << i;
       auto kid = s.insert(new child(name.str()));
 
-      UNIT_ASSERT_GREATER(kid->id, 0UL, "invalid child");
+      UNIT_ASSERT_GREATER(kid->id, 0UL);
 
       children->children.push_back(kid);
     }
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
     tr.rollback();
 
-    UNIT_ASSERT_TRUE(children->children.empty(), "item children must be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 0UL, "invalid children list size");
+    UNIT_ASSERT_TRUE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 0UL);
 
   } catch(sql_exception &ex) {
     // error, abort transaction
@@ -352,8 +350,8 @@ void TransactionTestUnit::test_has_many_list()
   try {
     auto children = s.insert(new children_list("children list"));
 
-    UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children list");
-    UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
+    UNIT_ASSERT_GREATER(children->id, 0UL);
+    UNIT_ASSERT_TRUE(children->children.empty());
 
     tr.commit();
 
@@ -364,18 +362,18 @@ void TransactionTestUnit::test_has_many_list()
       name << "child " << i;
       auto kid = s.insert(new child(name.str()));
 
-      UNIT_ASSERT_GREATER(kid->id, 0UL, "invalid child");
+      UNIT_ASSERT_GREATER(kid->id, 0UL);
 
       children->children.push_back(kid);
     }
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
     tr.rollback();
 
-    UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 0UL, "invalid children list size");
+    UNIT_ASSERT_TRUE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 0UL);
 
     tr.begin();
 
@@ -384,30 +382,30 @@ void TransactionTestUnit::test_has_many_list()
       name << "child " << i;
       auto kid = s.insert(new child(name.str()));
 
-      UNIT_ASSERT_GREATER(kid->id, 0UL, "invalid child");
+      UNIT_ASSERT_GREATER(kid->id, 0UL);
 
       children->children.push_back(kid);
     }
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "item children couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
     tr.commit();
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "item children couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
     tr.begin();
 
     children->children.clear();
 
-    UNIT_ASSERT_TRUE(children->children.empty(), "item list must be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 0UL, "invalid item list size");
+    UNIT_ASSERT_TRUE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 0UL);
 
     tr.rollback();
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid item list size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
   } catch(sql_exception &ex) {
     // error, abort transaction
@@ -437,8 +435,8 @@ void TransactionTestUnit::test_has_many_vector()
   try {
     auto children = s.insert(new children_vector("children vector"));
 
-    UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children vector");
-    UNIT_ASSERT_TRUE(children->children.empty(), "children vector must be empty");
+    UNIT_ASSERT_GREATER(children->id, 0UL);
+    UNIT_ASSERT_TRUE(children->children.empty());
 
     tr.commit();
 
@@ -449,18 +447,18 @@ void TransactionTestUnit::test_has_many_vector()
       name << "child " << i;
       auto kid = s.insert(new child(name.str()));
 
-      UNIT_ASSERT_GREATER(kid->id, 0UL, "invalid child");
+      UNIT_ASSERT_GREATER(kid->id, 0UL);
 
       children->children.push_back(kid);
     }
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "children vector couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children vector size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
     tr.rollback();
 
-    UNIT_ASSERT_TRUE(children->children.empty(), "children vector must be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 0UL, "invalid children vector size");
+    UNIT_ASSERT_TRUE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 0UL);
 
     tr.begin();
 
@@ -469,30 +467,30 @@ void TransactionTestUnit::test_has_many_vector()
       name << "child " << i;
       auto kid = s.insert(new child(name.str()));
 
-      UNIT_ASSERT_GREATER(kid->id, 0UL, "invalid child");
+      UNIT_ASSERT_GREATER(kid->id, 0UL);
 
       children->children.push_back(kid);
     }
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "item children couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children vector size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
     tr.commit();
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "item children couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children vector size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
     tr.begin();
 
     children->children.clear();
 
-    UNIT_ASSERT_TRUE(children->children.empty(), "item vector must be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 0UL, "invalid item vector size");
+    UNIT_ASSERT_TRUE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 0UL);
 
     tr.rollback();
 
-    UNIT_ASSERT_FALSE(children->children.empty(), "item vector couldn't be empty");
-    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid item vector size");
+    UNIT_ASSERT_FALSE(children->children.empty());
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
   } catch(sql_exception &ex) {
     // error, abort transaction

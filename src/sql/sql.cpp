@@ -31,7 +31,7 @@ sql::~sql()
   reset(t_query_command::UNKNOWN);
 }
 
-void sql::append(const std::shared_ptr<detail::token> tokptr)
+void sql::append(const std::shared_ptr<detail::token> &tokptr)
 {
   token_list_.push_back(tokptr);
 }
@@ -53,38 +53,35 @@ void sql::reset(t_query_command command_type)
   token_list_.clear();
 }
 
-unsigned int sql::type_size(data_type type)
+std::string sql::command() const
 {
-  switch(type) {
-    case data_type::type_char:
-      return sizeof(char);
-    case data_type::type_short:
-      return sizeof(short);
-    case data_type::type_int:
-      return sizeof(int);
-    case data_type::type_long:
-      return sizeof(long);
-    case data_type::type_unsigned_char:
-      return sizeof(unsigned char);
-    case data_type::type_unsigned_short:
-      return sizeof(unsigned short);
-    case data_type::type_unsigned_int:
-      return sizeof(unsigned int);
-    case data_type::type_unsigned_long:
-      return sizeof(unsigned long);
-    case data_type::type_bool:
-      return sizeof(bool);
-    case data_type::type_float:
-      return sizeof(float);
-    case data_type::type_double:
-      return sizeof(double);
-    case data_type::type_char_pointer:
-    case data_type::type_varchar:
-    case data_type::type_text:
-      return 64;
+  switch (command_type_) {
+    case t_query_command::CREATE:
+      return "create";
+    case t_query_command::DROP:
+      return "drop";
+    case t_query_command::INSERT:
+      return "insert";
+    case t_query_command::UPDATE:
+      return "update";
+    case t_query_command::REMOVE:
+      return "delete";
+    case t_query_command::SELECT:
+      return "select";
+    case t_query_command::UNKNOWN:
     default:
-      throw std::logic_error("unknown type");
+      return "unknown";
   }
+}
+
+std::string sql::table_name() const
+{
+  return table_name_;
+}
+
+void sql::table_name(const std::string &tname)
+{
+  table_name_ = tname;
 }
 
 namespace detail {
@@ -95,8 +92,6 @@ query::query(const sql &s)
 void query::accept(token_visitor &visitor)
 {
   visitor.visit(*this);
-//  std::string result("(");
-//  return result.append(sql_.compile(d)).append(")");
 }
 
 }

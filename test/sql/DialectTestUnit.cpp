@@ -43,13 +43,14 @@ void DialectTestUnit::test_escaping_quotes()
 
   dialect.escape_quotes_in_identifier(str);
 
-  UNIT_ASSERT_EQUAL("baba\"\"gaga", str, "strings must be equal");
+  UNIT_ASSERT_EQUAL("baba\"\"gaga", str);
 }
 
 void DialectTestUnit::test_create_query()
 {
   sql s;
 
+  s.reset(t_query_command::CREATE);
   s.append(new detail::create("person"));
 
   std::unique_ptr<matador::columns> cols(new columns(columns::WITH_BRACKETS));
@@ -63,25 +64,30 @@ void DialectTestUnit::test_create_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("CREATE TABLE \"person\" (\"id\" INTEGER NOT NULL PRIMARY KEY, \"name\" VARCHAR(256), \"age\" INTEGER) ", result, "create statement isn't as expected");
+  UNIT_ASSERT_EQUAL("create", s.command());
+  UNIT_ASSERT_EQUAL("CREATE TABLE \"person\" (\"id\" INTEGER NOT NULL PRIMARY KEY, \"name\" VARCHAR(256), \"age\" INTEGER) ", result);
 }
 
 void DialectTestUnit::test_drop_query()
 {
   sql s;
 
+  s.reset(t_query_command::DROP);
   s.append(new detail::drop("person"));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("DROP TABLE \"person\" ", result, "drop statement isn't as expected");
+  UNIT_ASSERT_EQUAL("drop", s.command());
+  UNIT_ASSERT_EQUAL("DROP TABLE \"person\" ", result);
 }
 
 void DialectTestUnit::test_insert_query()
 {
   sql s;
 
+  s.reset(t_query_command::INSERT);
+  s.table_name("person");
   s.append(new detail::insert("person"));
 
   std::unique_ptr<matador::columns> cols(new columns(columns::WITH_BRACKETS));
@@ -107,13 +113,16 @@ void DialectTestUnit::test_insert_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES (8, 'hans', 25) ", result, "insert statement isn't as expected");
+  UNIT_ASSERT_EQUAL("person", s.table_name());
+  UNIT_ASSERT_EQUAL("insert", s.command());
+  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES (8, 'hans', 25) ", result);
 }
 
 void DialectTestUnit::test_insert_prepare_query()
 {
   sql s;
 
+  s.reset(t_query_command::INSERT);
   s.append(new detail::insert("person"));
 
   std::unique_ptr<matador::columns> cols(new columns(columns::WITH_BRACKETS));
@@ -139,13 +148,14 @@ void DialectTestUnit::test_insert_prepare_query()
   TestDialect dialect;
   std::string result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES (?, ?, ?) ", result, "insert statement isn't as expected");
+  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES (?, ?, ?) ", result);
 }
 
 void DialectTestUnit::test_select_all_query()
 {
   sql s;
 
+  s.reset(t_query_command::SELECT);
   s.append(new detail::select);
 
   std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
@@ -161,13 +171,15 @@ void DialectTestUnit::test_select_all_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" ", result, "select isn't as expected");
+  UNIT_ASSERT_EQUAL("select", s.command());
+  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" ", result);
 }
 
 void DialectTestUnit::test_select_distinct_query()
 {
   sql s;
 
+  s.reset(t_query_command::SELECT);
   s.append(new detail::select);
   s.append(new detail::distinct);
 
@@ -184,13 +196,15 @@ void DialectTestUnit::test_select_distinct_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT DISTINCT \"id\", \"name\", \"age\" FROM \"person\" ", result, "select distinct isn't as expected");
+  UNIT_ASSERT_EQUAL("select", s.command());
+  UNIT_ASSERT_EQUAL("SELECT DISTINCT \"id\", \"name\", \"age\" FROM \"person\" ", result);
 }
 
 void DialectTestUnit::test_select_limit_query()
 {
   sql s;
 
+  s.reset(t_query_command::SELECT);
   s.append(new detail::select);
   s.append(new detail::top(10));
 
@@ -207,13 +221,15 @@ void DialectTestUnit::test_select_limit_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT LIMIT 10 \"id\", \"name\", \"age\" FROM \"person\" ", result, "select limit isn't as expected");
+  UNIT_ASSERT_EQUAL("select", s.command());
+  UNIT_ASSERT_EQUAL("SELECT LIMIT 10 \"id\", \"name\", \"age\" FROM \"person\" ", result);
 }
 
 void DialectTestUnit::test_select_ordered_query()
 {
   sql s;
 
+  s.reset(t_query_command::SELECT);
   s.append(new detail::select);
 
   std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
@@ -231,13 +247,15 @@ void DialectTestUnit::test_select_ordered_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" ORDER BY \"name\" DESC ", result, "select isn't as expected");
+  UNIT_ASSERT_EQUAL("select", s.command());
+  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" ORDER BY \"name\" DESC ", result);
 }
 
 void DialectTestUnit::test_select_grouped_query()
 {
   sql s;
 
+  s.reset(t_query_command::SELECT);
   s.append(new detail::select);
 
   std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
@@ -254,13 +272,15 @@ void DialectTestUnit::test_select_grouped_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" GROUP BY \"name\" ", result, "select isn't as expected");
+  UNIT_ASSERT_EQUAL("select", s.command());
+  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" GROUP BY \"name\" ", result);
 }
 
 void DialectTestUnit::test_select_where_query()
 {
   sql s;
 
+  s.reset(t_query_command::SELECT);
   s.append(new detail::select);
 
   auto cols = std::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
@@ -279,7 +299,8 @@ void DialectTestUnit::test_select_where_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" <> 'hans' ", result, "select isn't as expected");
+  UNIT_ASSERT_EQUAL("select", s.command());
+  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" <> 'hans' ", result);
 
   s.reset(t_query_command::SELECT);
 
@@ -299,13 +320,15 @@ void DialectTestUnit::test_select_where_query()
 
   result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE (\"name\" <> 'Hans' AND \"name\" <> 'Dieter') ", result, "select isn't as expected");
+  UNIT_ASSERT_EQUAL("select", s.command());
+  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE (\"name\" <> 'Hans' AND \"name\" <> 'Dieter') ", result);
 }
 
 void DialectTestUnit::test_update_query()
 {
   sql s;
 
+  s.reset(t_query_command::UPDATE);
   s.append(new detail::update);
   s.append(new detail::tablename("person"));
   s.append(new detail::set);
@@ -322,13 +345,15 @@ void DialectTestUnit::test_update_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"='Dieter', \"age\"=54 ", result, "update isn't as expected");
+  UNIT_ASSERT_EQUAL("update", s.command());
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"='Dieter', \"age\"=54 ", result);
 }
 
 void DialectTestUnit::test_update_where_query()
 {
   sql s;
 
+  s.reset(t_query_command::UPDATE);
   s.append(new detail::update);
   s.append(new detail::tablename("person"));
   s.append(new detail::set);
@@ -349,13 +374,15 @@ void DialectTestUnit::test_update_where_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"='Dieter', \"age\"=54 WHERE (\"name\" <> 'Hans' AND \"age\" IN (7,5,5,8)) ", result, "update where isn't as expected");
+  UNIT_ASSERT_EQUAL("update", s.command());
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"='Dieter', \"age\"=54 WHERE (\"name\" <> 'Hans' AND \"age\" IN (7,5,5,8)) ", result);
 }
 
 void DialectTestUnit::test_update_prepare_query()
 {
   sql s;
 
+  s.reset(t_query_command::UPDATE);
   s.append(new detail::update);
   s.append(new detail::tablename("person"));
   s.append(new detail::set);
@@ -372,13 +399,14 @@ void DialectTestUnit::test_update_prepare_query()
   TestDialect dialect;
   std::string result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? ", result, "update isn't as expected");
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? ", result);
 }
 
 void DialectTestUnit::test_update_where_prepare_query()
 {
   sql s;
 
+  s.reset(t_query_command::UPDATE);
   s.append(new detail::update);
   s.append(new detail::tablename("person"));
   s.append(new detail::set);
@@ -399,7 +427,7 @@ void DialectTestUnit::test_update_where_prepare_query()
   TestDialect dialect;
   std::string result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? WHERE (\"name\" <> ? AND \"age\" IN (?,?,?,?)) ", result, "update where isn't as expected");
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? WHERE (\"name\" <> ? AND \"age\" IN (?,?,?,?)) ", result);
 
 }
 
@@ -407,19 +435,22 @@ void DialectTestUnit::test_delete_query()
 {
   sql s;
 
+  s.reset(t_query_command::REMOVE);
   s.append(new detail::remove());
   s.append(new detail::from("person"));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("DELETE FROM \"person\" ", result, "delete isn't as expected");
+  UNIT_ASSERT_EQUAL("delete", s.command());
+  UNIT_ASSERT_EQUAL("DELETE FROM \"person\" ", result);
 }
 
 void DialectTestUnit::test_delete_where_query()
 {
   sql s;
 
+  s.reset(t_query_command::REMOVE);
   s.append(new detail::remove());
   s.append(new detail::from("person"));
 
@@ -430,5 +461,5 @@ void DialectTestUnit::test_delete_where_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("DELETE FROM \"person\" WHERE (\"name\" <> 'Hans' AND \"age\" BETWEEN 21 AND 30) ", result, "delete where isn't as expected");
+  UNIT_ASSERT_EQUAL("DELETE FROM \"person\" WHERE (\"name\" <> 'Hans' AND \"age\" BETWEEN 21 AND 30) ", result);
 }

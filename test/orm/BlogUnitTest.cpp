@@ -50,7 +50,7 @@ struct blog_service
     }
   }
 
-  bool add_comment(const std::string &email, std::string msg, const matador::object_ptr<post> &pst)
+  bool add_comment(const std::string &email, std::string msg, matador::object_ptr<post> pst)
   {
     auto tr = session_.begin();
     try {
@@ -69,9 +69,9 @@ struct blog_service
   matador::session &session_;
 };
 
-BlogUnitTest::BlogUnitTest(const std::string &prefix, const std::string &dns)
+BlogUnitTest::BlogUnitTest(const std::string& prefix, std::string dns)
   : unit_test(prefix + "_blog", prefix + " blog unit tests")
-  , dns_(dns)
+  , dns_(std::move(dns))
 {
   add_test("blog_single", std::bind(&BlogUnitTest::test_blog_single_post, this), "test single blog post");
   add_test("blog_multiple", std::bind(&BlogUnitTest::test_blog_multiple_post, this), "test multiple blog post");
@@ -87,7 +87,7 @@ void BlogUnitTest::test_blog_single_post()
   p.attach<comment>("comment");
   p.attach<post>("post");
 
-  UNIT_ASSERT_EQUAL(p.store().size(), 7UL, "there must be seven nodes in store");
+  UNIT_ASSERT_EQUAL(p.store().size(), 7UL);
   p.create();
 
   {
@@ -114,24 +114,24 @@ void BlogUnitTest::test_blog_single_post()
     using t_post_view = matador::object_view<post>;
     t_post_view posts(s.store());
 
-    UNIT_ASSERT_EQUAL(posts.size(), 1UL, "size must be three");
+    UNIT_ASSERT_EQUAL(posts.size(), 1UL);
 
     auto post1 = posts.front();
 
     auto hi = post1->categories.begin().holder_item();
 
-    UNIT_ASSERT_EQUAL(hi.item_proxy()->reference_count(), 2UL, "ref count must be two");
-    UNIT_ASSERT_EQUAL(posts.size(), 1UL, "size must be three");
-    UNIT_ASSERT_EQUAL(post1.reference_count(), 2UL, "ref count must be two");
-    UNIT_ASSERT_EQUAL(me.reference_count(), 1UL, "ref count must be one");
-    UNIT_ASSERT_EQUAL(main.reference_count(), 1UL, "ref count must be one");
-    UNIT_ASSERT_EQUAL(me->posts.size(), 1UL, "size must be one");
-    UNIT_ASSERT_EQUAL(main->posts.size(), 1UL, "size must be one");
+    UNIT_ASSERT_EQUAL(hi.item_proxy()->reference_count(), 2UL);
+    UNIT_ASSERT_EQUAL(posts.size(), 1UL);
+    UNIT_ASSERT_EQUAL(post1.reference_count(), 2UL);
+    UNIT_ASSERT_EQUAL(me.reference_count(), 1UL);
+    UNIT_ASSERT_EQUAL(main.reference_count(), 1UL);
+    UNIT_ASSERT_EQUAL(me->posts.size(), 1UL);
+    UNIT_ASSERT_EQUAL(main->posts.size(), 1UL);
 
     blogger.add_comment("uli@mail.de", "cool stuff", post1);
 
-    UNIT_ASSERT_EQUAL(post1->comments.size(), 1UL, "size must be one");
-    UNIT_ASSERT_EQUAL(post1.reference_count(), 3UL, "ref count must be two");
+    UNIT_ASSERT_EQUAL(post1->comments.size(), 1UL);
+    UNIT_ASSERT_EQUAL(post1.reference_count(), 3UL);
   }
 
   p.clear();
@@ -151,23 +151,23 @@ void BlogUnitTest::test_blog_single_post()
 
     auto main = categories.front();
 
-    UNIT_ASSERT_EQUAL(me->posts.size(), 1UL, "size must be one");
-    UNIT_ASSERT_EQUAL(main->posts.size(), 1UL, "size must be one");
-    UNIT_ASSERT_EQUAL(main.reference_count(), 1UL, "ref count must be one");
-    UNIT_ASSERT_EQUAL(me.reference_count(), 1UL, "ref count must be one");
+    UNIT_ASSERT_EQUAL(me->posts.size(), 1UL);
+    UNIT_ASSERT_EQUAL(main->posts.size(), 1UL);
+    UNIT_ASSERT_EQUAL(main.reference_count(), 1UL);
+    UNIT_ASSERT_EQUAL(me.reference_count(), 1UL);
 
     using t_post_view = matador::object_view<post>;
     t_post_view posts(s.store());
 
-    UNIT_ASSERT_EQUAL(posts.size(), 1UL, "size must be three");
+    UNIT_ASSERT_EQUAL(posts.size(), 1UL);
 
     auto post1 = posts.front();
 
     auto hi = post1->categories.begin().holder_item();
 
-    UNIT_ASSERT_EQUAL(hi.item_proxy()->reference_count(), 2UL, "ref count must be two");
-    UNIT_ASSERT_EQUAL(posts.size(), 1UL, "size must be three");
-    UNIT_ASSERT_EQUAL(post1.reference_count(), 3UL, "ref count must be two");
+    UNIT_ASSERT_EQUAL(hi.item_proxy()->reference_count(), 2UL);
+    UNIT_ASSERT_EQUAL(posts.size(), 1UL);
+    UNIT_ASSERT_EQUAL(post1.reference_count(), 3UL);
 
 //     delete post
     auto i = std::find_if(posts.begin(), posts.end(), [](const matador::object_ptr<post> &p) {
@@ -180,12 +180,12 @@ void BlogUnitTest::test_blog_single_post()
       blogger.remove(*i);
     }
 
-    UNIT_ASSERT_EQUAL(posts.size(), 0UL, "size must be one");
+    UNIT_ASSERT_EQUAL(posts.size(), 0UL);
 
-    UNIT_ASSERT_EQUAL(me->posts.size(), 0UL, "size must be zero");
-    UNIT_ASSERT_EQUAL(main->posts.size(), 0UL, "size must be zero");
-    UNIT_ASSERT_EQUAL(main.reference_count(), 0UL, "ref count must be zero");
-    UNIT_ASSERT_EQUAL(me.reference_count(), 0UL, "ref count must be zero");
+    UNIT_ASSERT_EQUAL(me->posts.size(), 0UL);
+    UNIT_ASSERT_EQUAL(main->posts.size(), 0UL);
+    UNIT_ASSERT_EQUAL(main.reference_count(), 0UL);
+    UNIT_ASSERT_EQUAL(me.reference_count(), 0UL);
   }
 
   p.drop();
@@ -201,7 +201,7 @@ void BlogUnitTest::test_blog_multiple_post()
   p.attach<comment>("comment");
   p.attach<post>("post");
 
-  UNIT_ASSERT_EQUAL(p.store().size(), 7UL, "there must be seven nodes in store");
+  UNIT_ASSERT_EQUAL(p.store().size(), 7UL);
   p.create();
   {
     matador::session s(p);
@@ -226,15 +226,15 @@ void BlogUnitTest::test_blog_multiple_post()
       tr.rollback();
     }
 
-    UNIT_ASSERT_EQUAL(me.reference_count(), 4UL, "ref count must be four");
-    UNIT_ASSERT_EQUAL(main.reference_count(), 4UL, "ref count must be four");
-    UNIT_ASSERT_EQUAL(me->posts.size(), 4UL, "size must be four");
-    UNIT_ASSERT_EQUAL(main->posts.size(), 4UL, "size must be four");
+    UNIT_ASSERT_EQUAL(me.reference_count(), 4UL);
+    UNIT_ASSERT_EQUAL(main.reference_count(), 4UL);
+    UNIT_ASSERT_EQUAL(me->posts.size(), 4UL);
+    UNIT_ASSERT_EQUAL(main->posts.size(), 4UL);
 
     using t_post_view = matador::object_view<post>;
     t_post_view posts(s.store());
 
-    UNIT_ASSERT_EQUAL(posts.size(), 4UL, "size must be three");
+    UNIT_ASSERT_EQUAL(posts.size(), 4UL);
   }
 
   p.clear();
@@ -249,26 +249,26 @@ void BlogUnitTest::test_blog_multiple_post()
     using t_author_view = matador::object_view<author>;
     t_author_view authors(s.store());
 
-    UNIT_ASSERT_EQUAL(authors.size(), 1UL, "size must be one");
+    UNIT_ASSERT_EQUAL(authors.size(), 1UL);
 
     auto me = authors.front();
 
     using t_category_view = matador::object_view<category>;
     t_category_view categories(s.store());
 
-    UNIT_ASSERT_EQUAL(categories.size(), 1UL, "size must be one");
+    UNIT_ASSERT_EQUAL(categories.size(), 1UL);
 
     auto main = categories.front();
 
-    UNIT_ASSERT_EQUAL(me.reference_count(), 4UL, "ref count must be four");
-    UNIT_ASSERT_EQUAL(main.reference_count(), 4UL, "ref count must be four");
-    UNIT_ASSERT_EQUAL(me->posts.size(), 4UL, "size must be four");
-    UNIT_ASSERT_EQUAL(main->posts.size(), 4UL, "size must be four");
+    UNIT_ASSERT_EQUAL(me.reference_count(), 4UL);
+    UNIT_ASSERT_EQUAL(main.reference_count(), 4UL);
+    UNIT_ASSERT_EQUAL(me->posts.size(), 4UL);
+    UNIT_ASSERT_EQUAL(main->posts.size(), 4UL);
 
     using t_post_view = matador::object_view<post>;
     t_post_view posts(s.store());
 
-    UNIT_ASSERT_EQUAL(posts.size(), 4UL, "size must be three");
+    UNIT_ASSERT_EQUAL(posts.size(), 4UL);
 
     // delete third post
     auto i = std::find_if(posts.begin(), posts.end(), [](const matador::object_ptr<post> &p) {
@@ -279,12 +279,12 @@ void BlogUnitTest::test_blog_multiple_post()
       blogger.remove(*i);
     }
 
-    UNIT_ASSERT_EQUAL(posts.size(), 3UL, "size must be three");
+    UNIT_ASSERT_EQUAL(posts.size(), 3UL);
 
-    UNIT_ASSERT_EQUAL(me.reference_count(), 3UL, "ref count must be three");
-    UNIT_ASSERT_EQUAL(main.reference_count(), 3UL, "ref count must be three");
-    UNIT_ASSERT_EQUAL(me->posts.size(), 3UL, "size must be three");
-    UNIT_ASSERT_EQUAL(main->posts.size(), 3UL, "size must be three");
+    UNIT_ASSERT_EQUAL(me.reference_count(), 3UL);
+    UNIT_ASSERT_EQUAL(main.reference_count(), 3UL);
+    UNIT_ASSERT_EQUAL(me->posts.size(), 3UL);
+    UNIT_ASSERT_EQUAL(main->posts.size(), 3UL);
   }
   p.drop();
 }

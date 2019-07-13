@@ -60,11 +60,11 @@ FactoryTestUnit::FactoryTestUnit()
 void FactoryTestUnit::create_factory()
 {
   typedef factory<std::string, Vehicle> vehicle_factory_t;
-  vehicle_factory_t *vfac = new vehicle_factory_t;
+  auto *vfac = new vehicle_factory_t;
 
-  UNIT_ASSERT_NOT_NULL(vfac, "factory pointer must be valid");
-  UNIT_ASSERT_TRUE(vfac->empty(), "factory should be empty");
-  UNIT_ASSERT_EQUAL((int)vfac->size(), 0, "size of factory must be zero");
+  UNIT_ASSERT_NOT_NULL(vfac);
+  UNIT_ASSERT_TRUE(vfac->empty());
+  UNIT_ASSERT_EQUAL((int)vfac->size(), 0);
   
   delete vfac;
 }
@@ -74,8 +74,8 @@ void FactoryTestUnit::insert_items()
   typedef factory<std::string, Vehicle> vehicle_factory;
   vehicle_factory vfac;
 
-  UNIT_ASSERT_TRUE(vfac.empty(), "factory should be empty");
-  UNIT_ASSERT_EQUAL((int)vfac.size(), 0, "size of factory must be zero");
+  UNIT_ASSERT_TRUE(vfac.empty());
+  UNIT_ASSERT_EQUAL((int)vfac.size(), 0);
 
 
   vfac.insert("plane", new vehicle_factory::default_producer<Plane>);
@@ -83,8 +83,8 @@ void FactoryTestUnit::insert_items()
   vfac.insert("car", new vehicle_factory::default_producer<Car>);
   vfac.insert("ship", new vehicle_factory::default_producer<Ship>);
 
-  UNIT_ASSERT_FALSE(vfac.empty(), "factory must not be empty");
-  UNIT_ASSERT_EQUAL((int)vfac.size(), 4, "size of factory must be four");
+  UNIT_ASSERT_FALSE(vfac.empty());
+  UNIT_ASSERT_EQUAL((int)vfac.size(), 4);
 }
 
 void FactoryTestUnit::produce_items()
@@ -99,8 +99,8 @@ void FactoryTestUnit::produce_items()
 
   Vehicle *vec = vfac.create("car");
 
-  UNIT_ASSERT_NOT_NULL(vec, "produced item must not be zero");
-  UNIT_ASSERT_EQUAL(vec->type(), "car", "invalid produced item");
+  UNIT_ASSERT_NOT_NULL(vec);
+  UNIT_ASSERT_EQUAL(vec->type(), "car");
   
   delete vec;
 }
@@ -118,7 +118,7 @@ void FactoryTestUnit::list_items()
   vehicle_factory::const_iterator first = vfac.begin();
   vehicle_factory::const_iterator last = vfac.end();
 
-  UNIT_ASSERT_FALSE(first == last, "iterators must not be the same");
+  UNIT_ASSERT_FALSE(first == last);
   
-  UNIT_ASSERT_EQUAL(vfac.size(), (size_t)4, "size of factory must be 4 (four)");
+  UNIT_ASSERT_EQUAL(vfac.size(), (size_t)4);
 }

@@ -52,7 +52,7 @@ public:
   , result_(x.result_)
   {}
 
-  base_result_iterator& operator=(base_result_iterator&& x)
+  base_result_iterator& operator=(base_result_iterator&& x) noexcept
   {
     result_ = x.result_;
     obj_.reset(x.obj_.release());
@@ -284,7 +284,7 @@ public:
   /**
    * Empty result
    */
-  result() = default;
+  result() : prototype_(row()) {}
 
   /**
    * Creates a result initialized
@@ -312,6 +312,7 @@ public:
    * @param x The result ro move
    */
   result(result &&x) noexcept
+    : prototype_(x.prototype_)
   {
     std::swap(p, x.p);
   }

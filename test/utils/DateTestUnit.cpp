@@ -27,7 +27,7 @@ DateTestUnit::DateTestUnit()
 
 void DateTestUnit::test_create()
 {
-  time_t t = std::time(0);
+  time_t t = std::time(nullptr);
 #ifdef _MSC_VER
   struct tm *tt = new tm;
   localtime_s(tt, &t);
@@ -37,30 +37,30 @@ void DateTestUnit::test_create()
 
   date now;
 
-  UNIT_ASSERT_EQUAL(tt->tm_year + 1900, now.year(), "year isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_mon + 1, now.month(), "month of year isn't equal");
-  UNIT_ASSERT_EQUAL(tt->tm_mday, now.day(), "day of month isn't equal");
+  UNIT_ASSERT_EQUAL(tt->tm_year + 1900, now.year());
+  UNIT_ASSERT_EQUAL(tt->tm_mon + 1, now.month());
+  UNIT_ASSERT_EQUAL(tt->tm_mday, now.day());
 }
 
 void DateTestUnit::test_parse()
 {
   date d = date::parse("13-11-1979", "%d-%m-%Y");
 
-  UNIT_ASSERT_EQUAL(d.day(), 13, "invalid day");
-  UNIT_ASSERT_EQUAL(d.month(), 11, "invalid day");
-  UNIT_ASSERT_EQUAL(d.year(), 1979, "invalid day");
+  UNIT_ASSERT_EQUAL(d.day(), 13);
+  UNIT_ASSERT_EQUAL(d.month(), 11);
+  UNIT_ASSERT_EQUAL(d.year(), 1979);
 
   d = date::parse("2000-11-24", date_format::ISO8601);
 
-  UNIT_ASSERT_EQUAL(d.day(), 24, "invalid day");
-  UNIT_ASSERT_EQUAL(d.month(), 11, "invalid day");
-  UNIT_ASSERT_EQUAL(d.year(), 2000, "invalid day");
+  UNIT_ASSERT_EQUAL(d.day(), 24);
+  UNIT_ASSERT_EQUAL(d.month(), 11);
+  UNIT_ASSERT_EQUAL(d.year(), 2000);
 
   d.set("12/23/2012", "%m/%d/%Y");
 
-  UNIT_ASSERT_EQUAL(d.day(), 23, "invalid day");
-  UNIT_ASSERT_EQUAL(d.month(), 12, "invalid day");
-  UNIT_ASSERT_EQUAL(d.year(), 2012, "invalid day");
+  UNIT_ASSERT_EQUAL(d.day(), 23);
+  UNIT_ASSERT_EQUAL(d.month(), 12);
+  UNIT_ASSERT_EQUAL(d.year(), 2012);
 }
 
 void DateTestUnit::test_julian_date()
@@ -68,30 +68,30 @@ void DateTestUnit::test_julian_date()
   // 15.3.2015
   date d(2457090);
 
-  UNIT_ASSERT_EQUAL(2015, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(3, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(8, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_FALSE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2015, d.year());
+  UNIT_ASSERT_EQUAL(3, d.month());
+  UNIT_ASSERT_EQUAL(8, d.day());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_FALSE(d.is_daylight_saving());
 }
 
 void DateTestUnit::test_initialize()
 {
   date d(8, 3, 2015);
 
-  UNIT_ASSERT_EQUAL(2015, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(3, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(8, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2457090, d.julian_date(), "julian date isn't equal 2457090");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_FALSE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2015, d.year());
+  UNIT_ASSERT_EQUAL(3, d.month());
+  UNIT_ASSERT_EQUAL(8, d.day());
+  UNIT_ASSERT_EQUAL(2457090, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_FALSE(d.is_daylight_saving());
 }
 
 void DateTestUnit::test_invalid()
 {
-  UNIT_ASSERT_EXCEPTION(date d(42, 12, 2015), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(date d(31, 13, 2015), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(date d(29, 2, 2015), std::logic_error, "date isn't valid", "date should not be valid");
+  UNIT_ASSERT_EXCEPTION(date d(42, 12, 2015), std::logic_error, "date isn't valid");
+  UNIT_ASSERT_EXCEPTION(date d(31, 13, 2015), std::logic_error, "date isn't valid");
+  UNIT_ASSERT_EXCEPTION(date d(29, 2, 2015), std::logic_error, "date isn't valid");
 }
 
 void DateTestUnit::test_copy()
@@ -100,13 +100,13 @@ void DateTestUnit::test_copy()
 
   date d2(d1);
 
-  UNIT_ASSERT_TRUE(d1 == d2, "dates must be equal");
-  UNIT_ASSERT_EQUAL(2015, d2.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(3, d2.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(8, d2.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2457090, d2.julian_date(), "julian date isn't equal 2457090");
-  UNIT_ASSERT_FALSE(d2.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_FALSE(d2.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_TRUE(d1 == d2);
+  UNIT_ASSERT_EQUAL(2015, d2.year());
+  UNIT_ASSERT_EQUAL(3, d2.month());
+  UNIT_ASSERT_EQUAL(8, d2.day());
+  UNIT_ASSERT_EQUAL(2457090, d2.julian_date());
+  UNIT_ASSERT_FALSE(d2.is_leapyear());
+  UNIT_ASSERT_FALSE(d2.is_daylight_saving());
 }
 
 void DateTestUnit::test_assign()
@@ -116,13 +116,13 @@ void DateTestUnit::test_assign()
   date d2;
   d2 = d1;
 
-  UNIT_ASSERT_TRUE(d1 == d2, "dates must be equal");
-  UNIT_ASSERT_EQUAL(2015, d2.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(3, d2.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(8, d2.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2457090, d2.julian_date(), "julian date isn't equal 2457090");
-  UNIT_ASSERT_FALSE(d2.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_FALSE(d2.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_TRUE(d1 == d2);
+  UNIT_ASSERT_EQUAL(2015, d2.year());
+  UNIT_ASSERT_EQUAL(3, d2.month());
+  UNIT_ASSERT_EQUAL(8, d2.day());
+  UNIT_ASSERT_EQUAL(2457090, d2.julian_date());
+  UNIT_ASSERT_FALSE(d2.is_leapyear());
+  UNIT_ASSERT_FALSE(d2.is_daylight_saving());
 }
 
 void DateTestUnit::test_compare()
@@ -131,14 +131,14 @@ void DateTestUnit::test_compare()
   date d2(27, 8, 2014);
   date d3(d1);
 
-  UNIT_ASSERT_TRUE(d1 > d2, "d1 is greater than d2");
-  UNIT_ASSERT_TRUE(d2 < d1, "d2 is less than d1");
-  UNIT_ASSERT_TRUE(d2 != d1, "d1 is not equal d2");
-  UNIT_ASSERT_TRUE(d3 == d1, "d1 is equal d3");
-  UNIT_ASSERT_TRUE(d1 >= d2, "d1 is greater equal than d2");
-  UNIT_ASSERT_TRUE(d2 <= d1, "d2 is less equal than d1");
-  UNIT_ASSERT_TRUE(d1 >= d3, "d1 is greater equal than d2");
-  UNIT_ASSERT_TRUE(d3 <= d1, "d2 is less equal than d1");
+  UNIT_ASSERT_TRUE(d1 > d2);
+  UNIT_ASSERT_TRUE(d2 < d1);
+  UNIT_ASSERT_TRUE(d2 != d1);
+  UNIT_ASSERT_TRUE(d3 == d1);
+  UNIT_ASSERT_TRUE(d1 >= d2);
+  UNIT_ASSERT_TRUE(d2 <= d1);
+  UNIT_ASSERT_TRUE(d1 >= d3);
+  UNIT_ASSERT_TRUE(d3 <= d1);
 }
 
 void DateTestUnit::test_set()
@@ -147,126 +147,126 @@ void DateTestUnit::test_set()
 
   d.set(8, 3, 2015);
 
-  UNIT_ASSERT_EQUAL(2015, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(3, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(8, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2457090, d.julian_date(), "julian date isn't equal 2457090");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_FALSE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2015, d.year());
+  UNIT_ASSERT_EQUAL(3, d.month());
+  UNIT_ASSERT_EQUAL(8, d.day());
+  UNIT_ASSERT_EQUAL(2457090, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_FALSE(d.is_daylight_saving());
 }
 
 void DateTestUnit::test_modify()
 {
   date d(8, 3, 2015);
 
-  UNIT_ASSERT_EQUAL(2015, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(3, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(8, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2457090, d.julian_date(), "julian date isn't equal 2457090");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_FALSE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2015, d.year());
+  UNIT_ASSERT_EQUAL(3, d.month());
+  UNIT_ASSERT_EQUAL(8, d.day());
+  UNIT_ASSERT_EQUAL(2457090, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_FALSE(d.is_daylight_saving());
 
   d.day(3).month(4);
 
-  UNIT_ASSERT_EQUAL(2015, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(4, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(3, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2457116, d.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2015, d.year());
+  UNIT_ASSERT_EQUAL(4, d.month());
+  UNIT_ASSERT_EQUAL(3, d.day());
+  UNIT_ASSERT_EQUAL(2457116, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_TRUE(d.is_daylight_saving());
 
   d.year(2014);
 
-  UNIT_ASSERT_EQUAL(2014, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(4, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(3, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456751, d.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2014, d.year());
+  UNIT_ASSERT_EQUAL(4, d.month());
+  UNIT_ASSERT_EQUAL(3, d.day());
+  UNIT_ASSERT_EQUAL(2456751, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_TRUE(d.is_daylight_saving());
 
   d = d + 5;
 
-  UNIT_ASSERT_EQUAL(2014, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(4, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(8, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456756, d.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2014, d.year());
+  UNIT_ASSERT_EQUAL(4, d.month());
+  UNIT_ASSERT_EQUAL(8, d.day());
+  UNIT_ASSERT_EQUAL(2456756, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_TRUE(d.is_daylight_saving());
 
   d = d - 2;
 
-  UNIT_ASSERT_EQUAL(2014, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(4, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(6, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456754, d.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2014, d.year());
+  UNIT_ASSERT_EQUAL(4, d.month());
+  UNIT_ASSERT_EQUAL(6, d.day());
+  UNIT_ASSERT_EQUAL(2456754, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_TRUE(d.is_daylight_saving());
 
   d += 7;
 
-  UNIT_ASSERT_EQUAL(2014, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(4, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(13, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456761, d.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2014, d.year());
+  UNIT_ASSERT_EQUAL(4, d.month());
+  UNIT_ASSERT_EQUAL(13, d.day());
+  UNIT_ASSERT_EQUAL(2456761, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_TRUE(d.is_daylight_saving());
 
   d -= 13;
 
-  UNIT_ASSERT_EQUAL(2014, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(3, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(31, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456748, d.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2014, d.year());
+  UNIT_ASSERT_EQUAL(3, d.month());
+  UNIT_ASSERT_EQUAL(31, d.day());
+  UNIT_ASSERT_EQUAL(2456748, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_TRUE(d.is_daylight_saving());
 
   date d1 = d++;
 
-  UNIT_ASSERT_EQUAL(2014, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(4, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(1, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456749, d.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d.is_daylight_saving(), "date is inside daylight saving period");
-  UNIT_ASSERT_EQUAL(2014, d1.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(3, d1.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(31, d1.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456748, d1.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d1.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d1.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2014, d.year());
+  UNIT_ASSERT_EQUAL(4, d.month());
+  UNIT_ASSERT_EQUAL(1, d.day());
+  UNIT_ASSERT_EQUAL(2456749, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_TRUE(d.is_daylight_saving());
+  UNIT_ASSERT_EQUAL(2014, d1.year());
+  UNIT_ASSERT_EQUAL(3, d1.month());
+  UNIT_ASSERT_EQUAL(31, d1.day());
+  UNIT_ASSERT_EQUAL(2456748, d1.julian_date());
+  UNIT_ASSERT_FALSE(d1.is_leapyear());
+  UNIT_ASSERT_TRUE(d1.is_daylight_saving());
 
   d1 = d--;
 
-  UNIT_ASSERT_EQUAL(2014, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(3, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(31, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456748, d.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d.is_daylight_saving(), "date is inside daylight saving period");
-  UNIT_ASSERT_EQUAL(2014, d1.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(4, d1.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(1, d1.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456749, d1.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d1.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d1.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2014, d.year());
+  UNIT_ASSERT_EQUAL(3, d.month());
+  UNIT_ASSERT_EQUAL(31, d.day());
+  UNIT_ASSERT_EQUAL(2456748, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_TRUE(d.is_daylight_saving());
+  UNIT_ASSERT_EQUAL(2014, d1.year());
+  UNIT_ASSERT_EQUAL(4, d1.month());
+  UNIT_ASSERT_EQUAL(1, d1.day());
+  UNIT_ASSERT_EQUAL(2456749, d1.julian_date());
+  UNIT_ASSERT_FALSE(d1.is_leapyear());
+  UNIT_ASSERT_TRUE(d1.is_daylight_saving());
 
   ++d;
 
-  UNIT_ASSERT_EQUAL(2014, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(4, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(1, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456749, d.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2014, d.year());
+  UNIT_ASSERT_EQUAL(4, d.month());
+  UNIT_ASSERT_EQUAL(1, d.day());
+  UNIT_ASSERT_EQUAL(2456749, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_TRUE(d.is_daylight_saving());
 
   --d;
 
-  UNIT_ASSERT_EQUAL(2014, d.year(), "year isn't equal 2015");
-  UNIT_ASSERT_EQUAL(3, d.month(), "month of year isn't equal 3");
-  UNIT_ASSERT_EQUAL(31, d.day(), "day of month isn't equal 15");
-  UNIT_ASSERT_EQUAL(2456748, d.julian_date(), "julian date isn't equal 2457116");
-  UNIT_ASSERT_FALSE(d.is_leapyear(), "year isn't a leapp year");
-  UNIT_ASSERT_TRUE(d.is_daylight_saving(), "date is inside daylight saving period");
+  UNIT_ASSERT_EQUAL(2014, d.year());
+  UNIT_ASSERT_EQUAL(3, d.month());
+  UNIT_ASSERT_EQUAL(31, d.day());
+  UNIT_ASSERT_EQUAL(2456748, d.julian_date());
+  UNIT_ASSERT_FALSE(d.is_leapyear());
+  UNIT_ASSERT_TRUE(d.is_daylight_saving());
 }
 
 void DateTestUnit::test_difference()
@@ -275,7 +275,7 @@ void DateTestUnit::test_difference()
   date d2(1, 6, 2015);
 
   int diff = d2.difference(d1);
-  UNIT_ASSERT_EQUAL(diff, 29, "difference between d1 and d2 must be 29 days");
+  UNIT_ASSERT_EQUAL(diff, 29);
 }
 
 void DateTestUnit::test_to_string()
@@ -284,5 +284,5 @@ void DateTestUnit::test_to_string()
 
   std::string str = matador::to_string(d1);
 
-  UNIT_ASSERT_EQUAL(str, "2015-06-30", "result must be '2015-06-30'");
+  UNIT_ASSERT_EQUAL(str, "2015-06-30");
 }

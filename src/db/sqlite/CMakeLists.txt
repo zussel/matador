@@ -26,8 +26,8 @@ TARGET_LINK_LIBRARIES(matador-sqlite matador-utils matador-sql ${SQLITE3_LIBRARY
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-sqlite
   PROPERTIES
-  VERSION 0.5.0
-  SOVERSION 0)
+  VERSION ${APP_VERSION}
+  SOVERSION ${APP_MAJOR_VERSION})
 
 SOURCE_GROUP("include\\matador\\db\\sqlite" FILES ${HEADER})
 SOURCE_GROUP("src\\matador\\db\\sqlite" FILES ${SOURCES})

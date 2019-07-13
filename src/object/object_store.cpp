@@ -62,7 +62,7 @@ object_store::iterator object_store::detach(const prototype_iterator &i)
 
   i->on_detach();
 
-  return remove_prototype_node(i.get(), i->depth == 0);
+  return iterator(remove_prototype_node(i.get(), i->depth == 0));
 }
 
 object_store::iterator object_store::find(const char *type)
@@ -153,58 +153,6 @@ bool object_store::empty() const
   return is_empty;
 }
 
-size_t object_store::depth(const prototype_node *node) const
-{
-  size_t d = 0;
-  while (node->parent) {
-    node = node->parent;
-    ++d;
-  }
-  return d;
-}
-
-void object_store::dump(std::ostream &out) const
-{
-  const_prototype_iterator node = begin();
-  out << "digraph G {\n";
-  out << "\tgraph [fontsize=10]\n";
-  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
-  out << "\tedge [color=\"#0c0c0c\"]\n";
-  do {
-    size_t d = depth(node.get());
-    for (size_t i = 0; i < d; ++i) out << " ";
-    out << *node;
-    out.flush();
-  } while (++node != end());
-  out << "}" << std::endl;
-
-  out << "prototype map item keys\n";
-  std::for_each(prototype_map_.begin(), prototype_map_.end(), [&](const t_prototype_map::value_type &item) {
-    out << "key: " << item.first << "\n";
-  });
-  out << "typeid map item keys\n";
-  std::for_each(typeid_prototype_map_.begin(), typeid_prototype_map_.end(), [&](const t_typeid_prototype_map::value_type &item) {
-    out << "key: " << item.first << "\n";
-  });
-}
-
-void object_store::dump_objects(std::ostream &out) const
-{
-  const_prototype_iterator root = begin();
-  out << "dumping all objects\n";
-
-  object_proxy *op = root->op_first;
-  while (op) {
-    out << "[" << op << "] (";
-    if (op->obj()) {
-      out << op->obj() << " prev [" << op->prev()->obj() << "] next [" << op->next()->obj() << "])\n";
-    } else {
-      out << "serializable 0)\n";
-    }
-    op = op->next_;
-  }
-}
-
 object_proxy* object_store::find_proxy(unsigned long id) const
 {
   auto i = object_map_.find(id);
@@ -212,19 +160,6 @@ object_proxy* object_store::find_proxy(unsigned long id) const
     return nullptr;
   } else {
     return i->second;
-  }
-}
-
-bool object_store::delete_proxy(unsigned long id)
-{
-  auto i = object_map_.find(id);
-  if (i == object_map_.end()) {
-    return false;
-  } else if (i->second->linked()) {
-    return false;
-  } else {
-    object_map_.erase(i);
-    return true;
   }
 }
 
@@ -266,26 +201,6 @@ void object_store::remove_proxy(object_proxy *proxy)
 
   proxy->node()->remove(proxy);
   delete proxy;
-}
-
-object_proxy* object_store::register_proxy(object_proxy *oproxy)
-{
-  if (oproxy->id() != 0) {
-    throw_object_exception("object proxy already registerd");
-  }
-
-  if (oproxy->node() == nullptr) {
-    throw_object_exception("object proxy hasn't git a prototype node");
-  }
-
-  oproxy->id(seq_.next());
-
-  return object_map_.insert(std::make_pair(oproxy->id(), oproxy)).first->second;
-}
-
-sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &seq)
-{
-  return seq_.exchange_sequencer(seq);
 }
 
 prototype_node* object_store::find_prototype_node(const char *type) const {

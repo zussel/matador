@@ -20,16 +20,16 @@ void BlobTestUnit::test_create()
   b1.append(val);
   b1.append(val);
 
-  UNIT_ASSERT_EQUAL(b1.size(), 8UL, "invalid size");
+  UNIT_ASSERT_EQUAL(b1.size(), 8UL);
 
   blob b2;
 
   b2.append(val);
   b2.append(val);
 
-  UNIT_ASSERT_EQUAL(b2.size(), 8UL, "invalid size");
+  UNIT_ASSERT_EQUAL(b2.size(), 8UL);
 
   const unsigned char *data = b1.data();
 
-  UNIT_ASSERT_TRUE(data != nullptr, "data must be valid pointer");
+  UNIT_ASSERT_TRUE(data != nullptr);
 }

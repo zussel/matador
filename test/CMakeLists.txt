@@ -38,8 +38,6 @@ SET (TEST_OBJECT_SOURCES
   object/RelationTestUnit.hpp)
 
 SET (TEST_UNIT_SOURCES
-#  unit/FirstTestUnit.hpp
-#  unit/SecondTestUnit.hpp
   unit/TestSuiteTestUnit.cpp
   unit/TestSuiteTestUnit.hpp
 )
@@ -61,7 +59,8 @@ SET (TEST_SQL_SOURCES
   sql/SQLiteDialectTestUnit.hpp
   sql/ValueUnitTest.cpp
   sql/ValueUnitTest.hpp
-)
+  sql/PostgreSQLDialectTestUnit.cpp
+  sql/PostgreSQLDialectTestUnit.hpp)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp
@@ -96,25 +95,36 @@ ELSE()
 #  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@192.168.178.31\\\\SQLEXPRESS/test_matador (FreeTDS)" CACHE STRING "mssql connection string")
 ENDIF()
 SET(SQLITE_CONNECTION_STRING "sqlite://test.sqlite" CACHE STRING "sqlite connection string")
+SET(POSTGRESQL_CONNECTION_STRING "postgresql://test:test123@127.0.0.1:5433/matador_test" CACHE STRING "postgresql connection string")
+
 
 MESSAGE(STATUS "mysql connection string: ${MYSQL_CONNECTION_STRING}")
 MESSAGE(STATUS "mssql connection string: ${MSSQL_CONNECTION_STRING}")
 MESSAGE(STATUS "sqlite connection string: ${SQLITE_CONNECTION_STRING}")
+MESSAGE(STATUS "postgresql connection string: ${POSTGRESQL_CONNECTION_STRING}")
 
 CONFIGURE_FILE(connections.hpp.in ${PROJECT_BINARY_DIR}/connections.hpp @ONLY IMMEDIATE)
 
 SET(DB_LIBRARIES)
 
 IF(ODBC_FOUND)
+  MESSAGE(STATUS "Appendig ODBC libs: ${ODBC_LIBRARY}")
   LIST(APPEND DB_LIBRARIES ${ODBC_LIBRARY})
 ENDIF()
 
 IF(MYSQL_FOUND)
+  MESSAGE(STATUS "Appendig MySQL libs: ${MYSQL_LIBRARY}")
   LIST(APPEND DB_LIBRARIES ${MYSQL_LIBRARY})
 ENDIF()
 
 IF(SQLITE3_FOUND)
+  MESSAGE(STATUS "Appendig SQLite3 libs: ${SQLITE3_LIBRARY}")
   LIST(APPEND DB_LIBRARIES ${SQLITE3_LIBRARY})
+ENDIF()
+
+IF(POSTGRESQL_FOUND)
+  MESSAGE(STATUS "Appendig PostgreSQL libs: ${POSTGRESQL_LIBRARIES}")
+  LIST(APPEND DB_LIBRARIES ${POSTGRESQL_LIBRARIES})
 ENDIF()
 
 TARGET_LINK_LIBRARIES(test_matador

@@ -34,9 +34,6 @@ namespace mysql {
 
 mysql_result::mysql_result(MYSQL *c)
   : affected_rows_((size_type)mysql_affected_rows(c))
-  , rows_(0)
-  , fields_(0)
-  , res_(nullptr)
 {
   res_ = mysql_store_result(c);
   if (res_ == nullptr && mysql_errno(c) > 0) {
@@ -46,6 +43,7 @@ mysql_result::mysql_result(MYSQL *c)
     fields_ = mysql_num_fields(res_);
   }
 }
+
 mysql_result::~mysql_result()
 {
   if (res_) {

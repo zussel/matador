@@ -23,7 +23,7 @@ SET(SOURCES
   type.cpp
   query_value_column_processor.cpp
   query_value_creator.cpp
-)
+  )
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/condition.hpp
@@ -66,8 +66,8 @@ TARGET_LINK_LIBRARIES(matador-sql matador-utils)
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-sql
   PROPERTIES
-  VERSION 0.5.0
-  SOVERSION 0)
+  VERSION ${APP_VERSION}
+  SOVERSION ${APP_MAJOR_VERSION})
 
 SOURCE_GROUP("include\\matador\\sql" FILES ${HEADER})
 SOURCE_GROUP("src\\matador\\sql" FILES ${SOURCES})

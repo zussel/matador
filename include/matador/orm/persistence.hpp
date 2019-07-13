@@ -110,7 +110,7 @@ public:
   template<class T>
   bool exists()
   {
-    t_table_map::iterator i = tables_.find(store_.type<T>());
+    auto i = tables_.find(store_.type<T>());
 
     if (i == tables_.end()) {
       return false;

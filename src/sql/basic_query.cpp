@@ -10,9 +10,9 @@ namespace matador {
 
 namespace detail {
 
-basic_query::basic_query(const std::string &table_name)
+basic_query::basic_query(std::string table_name)
   : state(QUERY_BEGIN)
-  , table_name_(table_name)
+  , table_name_(std::move(table_name))
   , update_columns_(new columns(columns::WITHOUT_BRACKETS))
   , query_value_column_processor_(update_columns_, rowvalues_)
 {}
@@ -28,6 +28,7 @@ basic_query::basic_query(const connection &conn, const std::string &table_name)
 void basic_query::reset_query(t_query_command query_command)
 {
   sql_.reset(query_command);
+  sql_.table_name("");
   state = QUERY_BEGIN;
   update_columns_->columns_.clear();
 }

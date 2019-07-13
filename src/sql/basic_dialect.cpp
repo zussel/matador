@@ -48,6 +48,21 @@ std::string basic_dialect::prepare(const sql &s)
 std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
 {
   compile_type_ = compile_type;
+  bind_count_ = 0;
+  column_count_ = 0;
+  
+  push(s);
+  compile();
+  link();
+  std::string result(top().result);
+  pop();
+  return result;
+}
+
+std::string basic_dialect::continue_build(const sql &s, basic_dialect::t_compile_type compile_type) {
+  compile_type_ = compile_type;
+//  bind_count_ = 0;
+//  column_count_ = 0;
 
   push(s);
   compile();
@@ -170,6 +185,11 @@ void basic_dialect::escape_quotes_in_literals(std::string &str) const
   const std::string single_quote(token_at(detail::token::STRING_QUOTE));
   const std::string double_quote(token_at(detail::token::STRING_QUOTE) + token_at(detail::token::STRING_QUOTE));
   replace_all(str, single_quote, double_quote);
+}
+
+std::string basic_dialect::next_placeholder() const
+{
+  return "?";
 }
 
 char basic_dialect::identifier_opening_quote() const

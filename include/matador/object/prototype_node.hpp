@@ -135,7 +135,7 @@ public:
                                             T *item, bool abstract,
                                             const char *owner_type, const char *relation_id);
 
-  prototype_node();
+  prototype_node() = default;
 
   /**
    * @brief Creates a new prototype_node.
@@ -163,7 +163,7 @@ public:
   }
 
 
-  ~prototype_node();
+  ~prototype_node() = default;
 
   /**
    * @brief Initializes a prototype_node.
@@ -306,10 +306,10 @@ public:
   /**
    * Returns true if node is child of given parent node.
    * 
-   * @param parent The parent node.
+   * @param prnt The parent node.
    * @return True if node is child of given parent node.
    */
-  bool is_child_of(const prototype_node *parent) const;
+  bool is_child_of(const prototype_node *prnt) const;
 
   /**
    * Returns true if node has children.
@@ -380,15 +380,6 @@ public:
    */
   template < class T >
   T* prototype() const;
-
-  /**
-   * Prints the node in graphviz layout to the stream.
-   *
-   * @param os The ostream to write to.
-   * @param pn The prototype_node to be written.
-   * @return The modified ostream.
-   */
-  friend MATADOR_OBJECT_API std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
   /**
    * Find the underlying proxy of the given primary key.
@@ -529,7 +520,7 @@ private:
 template<class T>
 T *prototype_node::create() const
 {
-  return static_cast<T*>(info_.get()->create());
+  return static_cast<T*>(info_->create());
 }
 
 template<class T>

@@ -55,10 +55,10 @@ namespace detail {
 
 struct OOS_SQL_API basic_value : public token
 {
-  basic_value(token::t_token tok) : token(tok) { }
+  explicit basic_value(token::t_token tok) : token(tok) { }
 
   template < class T > T get() {
-    matador::value<T> *v = dynamic_cast<matador::value<T>* >(this);
+    auto *v = dynamic_cast<matador::value<T>* >(this);
     if (v) {
       return v->val;
     } else {
@@ -98,7 +98,7 @@ struct value<T, typename std::enable_if<
   !std::is_same<char, T>::value &&
   !std::is_same<char*, T>::value>::type> : public detail::basic_value
 {
-  value(const T &val)
+  explicit value(const T &val)
     : basic_value(detail::token::VALUE)
     , val(val)
   { }
@@ -134,26 +134,26 @@ struct value<T, typename std::enable_if<
 template<class T>
 struct value<T, typename std::enable_if<std::is_base_of<matador::varchar_base, T>::value>::type> : public detail::basic_value
 {
-  value(const T &val)
+  explicit value(const T &val)
     : basic_value(detail::token::VALUE)
     , val(val) { }
 
-  virtual void serialize(const char *id, serializer &srlzr)
+  void serialize(const char *id, serializer &srlzr) override
   {
     srlzr.serialize(id, val);
   }
 
-  std::string str() const
+  std::string str() const override
   {
     return "'" + val.str() + "'";
   }
 
-  std::string safe_string(const basic_dialect &dialect) const
+  std::string safe_string(const basic_dialect &dialect) const override
   {
     return "'" + dialect.prepare_literal(val.str()) + "'";
   }
 
-  const char* type_id() const
+  const char* type_id() const override
   {
     return typeid(T).name();
   }
@@ -163,26 +163,26 @@ struct value<T, typename std::enable_if<std::is_base_of<matador::varchar_base, T
 template<>
 struct value<std::string> : public detail::basic_value
 {
-  value(const std::string &val)
+  explicit value(std::string val)
     : basic_value(detail::token::VALUE)
-    , val(val) { }
+    , val(std::move(val)) { }
 
-  virtual void serialize(const char *id, serializer &srlzr)
+  void serialize(const char *id, serializer &srlzr) override
   {
     srlzr.serialize(id, val);
   }
 
-  std::string str() const
+  std::string str() const override
   {
     return "'" + val + "'";
   }
 
-  std::string safe_string(const basic_dialect &dialect) const
+  std::string safe_string(const basic_dialect &dialect) const override
   {
     return "'" + dialect.prepare_literal(val) + "'";
   }
 
-  const char* type_id() const
+  const char* type_id() const override
   {
     return typeid(std::string).name();
   }
@@ -192,30 +192,30 @@ struct value<std::string> : public detail::basic_value
 template<>
 struct value<char> : public detail::basic_value
 {
-  value(char val)
+  explicit value(char val)
     : basic_value(detail::token::VALUE)
     , val(val) { }
 
-  virtual void serialize(const char *id, serializer &srlzr)
+  void serialize(const char *id, serializer &srlzr) override
   {
     srlzr.serialize(id, val);
   }
 
-  std::string str() const
+  std::string str() const override
   {
     std::stringstream str;
     str << "'" << val << "'";
     return str.str();
   }
 
-  std::string safe_string(const basic_dialect &) const
+  std::string safe_string(const basic_dialect &) const override
   {
     std::stringstream str;
     str << "'" << val << "'";
     return str.str();
   }
 
-  const char* type_id() const
+  const char* type_id() const override
   {
     return typeid(char).name();
   }
@@ -231,26 +231,26 @@ struct value<char*> : public detail::basic_value
   {
   }
 
-  virtual void serialize(const char *id, serializer &srlzr)
+  void serialize(const char *id, serializer &srlzr) override
   {
     srlzr.serialize(id, val);
   }
 
-  std::string str() const
+  std::string str() const override
   {
     std::stringstream str;
     str << "'" << val << "'";
     return str.str();
   }
 
-  std::string safe_string(const basic_dialect &dialect) const
+  std::string safe_string(const basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << "'" <<  dialect.prepare_literal(val) << "'";
     return str.str();
   }
 
-  const char* type_id() const
+  const char* type_id() const override
   {
     return typeid(char*).name();
   }
@@ -267,26 +267,26 @@ struct value<const char*> : public detail::basic_value
   {
   }
 
-  virtual void serialize(const char *id, serializer &srlzr)
+  void serialize(const char *id, serializer &srlzr) override
   {
     srlzr.serialize(id, val);
   }
 
-  std::string str() const
+  std::string str() const override
   {
     std::stringstream str;
     str << "'" << val << "'";
     return str.str();
   }
 
-  std::string safe_string(const basic_dialect &dialect) const
+  std::string safe_string(const basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << "'" << dialect.prepare_literal(val) << "'";
     return str.str();
   }
 
-  const char* type_id() const
+  const char* type_id() const override
   {
     return typeid(const char*).name();
   }
@@ -296,30 +296,30 @@ struct value<const char*> : public detail::basic_value
 template<>
 struct value<matador::date> : public detail::basic_value
 {
-  value(const matador::date &val)
+  explicit value(matador::date val)
     : basic_value(detail::token::VALUE)
-    , val(val) { }
+    , val(std::move(val)) { }
 
-  virtual void serialize(const char *id, serializer &srlzr)
+  void serialize(const char *id, serializer &srlzr) override
   {
     srlzr.serialize(id, val);
   }
 
-  std::string str() const
+  std::string str() const override
   {
     std::stringstream str;
     str << "'" << matador::to_string(val) << "'";
     return str.str();
   }
 
-  std::string safe_string(const basic_dialect &dialect) const
+  std::string safe_string(const basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << "'" << dialect.prepare_literal(matador::to_string(val)) << "'";
     return str.str();
   }
 
-  const char* type_id() const
+  const char* type_id() const override
   {
     return typeid(matador::date).name();
   }
@@ -329,31 +329,31 @@ struct value<matador::date> : public detail::basic_value
 template<>
 struct value<matador::time> : public detail::basic_value
 {
-  value(const matador::time &val)
+  explicit value(matador::time val)
     : basic_value(detail::token::VALUE)
-    , val(val)
+    , val(std::move(val))
   { }
 
-  virtual void serialize(const char *id, serializer &srlzr)
+  void serialize(const char *id, serializer &srlzr) override
   {
     srlzr.serialize(id, val);
   }
 
-  std::string str() const
+  std::string str() const override
   {
     std::stringstream str;
     str << "'" << matador::to_string(val, "%FT%T.%f") << "'";
     return str.str();
   }
 
-  std::string safe_string(const basic_dialect &dialect) const
+  std::string safe_string(const basic_dialect &dialect) const override
   {
     std::stringstream str;
     str << "'" << dialect.prepare_literal(matador::to_string(val, "%FT%T.%f")) << "'";
     return str.str();
   }
 
-  const char* type_id() const
+  const char* type_id() const override
   {
     return typeid(matador::time).name();
   }

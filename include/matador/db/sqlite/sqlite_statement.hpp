@@ -38,32 +38,32 @@ class sqlite_connection;
 class sqlite_statement : public matador::detail::statement_impl
 {
 public:
-  sqlite_statement(sqlite_connection &db, const std::string stmt);
-  virtual ~sqlite_statement();
+  sqlite_statement(sqlite_connection &db, const std::string &stmt);
+  ~sqlite_statement() override;
 
-  virtual void clear();
-  virtual detail::result_impl* execute();
-  virtual void reset();
+  void clear() override;
+  detail::result_impl* execute() override;
+  void reset() override;
 
 protected:
-  virtual void serialize(const char *id, char &x);
-  virtual void serialize(const char *id, short &x);
-  virtual void serialize(const char *id, int &x);
-  virtual void serialize(const char *id, long &x);
-  virtual void serialize(const char *id, unsigned char &x);
-  virtual void serialize(const char *id, unsigned short &x);
-  virtual void serialize(const char *id, unsigned int &x);
-  virtual void serialize(const char *id, unsigned long &x);
-  virtual void serialize(const char *id, float &x);
-  virtual void serialize(const char *id, double &x);
-  virtual void serialize(const char *id, bool &x);
-  virtual void serialize(const char *id, char *x, size_t s);
-  virtual void serialize(const char *id, varchar_base &x);
-  virtual void serialize(const char *id, std::string &x);
-  virtual void serialize(const char *id, matador::date &x);
-  virtual void serialize(const char *id, matador::time &x);
-  virtual void serialize(const char *id, basic_identifier &x);
-  virtual void serialize(const char *id, identifiable_holder&x, cascade_type);
+  void serialize(const char *id, char &x) override;
+  void serialize(const char *id, short &x) override;
+  void serialize(const char *id, int &x) override;
+  void serialize(const char *id, long &x) override;
+  void serialize(const char *id, unsigned char &x) override;
+  void serialize(const char *id, unsigned short &x) override;
+  void serialize(const char *id, unsigned int &x) override;
+  void serialize(const char *id, unsigned long &x) override;
+  void serialize(const char *id, float &x) override;
+  void serialize(const char *id, double &x) override;
+  void serialize(const char *id, bool &x) override;
+  void serialize(const char *id, char *x, size_t s) override;
+  void serialize(const char *id, varchar_base &x) override;
+  void serialize(const char *id, std::string &x) override;
+  void serialize(const char *id, matador::date &x) override;
+  void serialize(const char *id, matador::time &x) override;
+  void serialize(const char *id, basic_identifier &x) override;
+  void serialize(const char *id, identifiable_holder&x, cascade_type) override;
 
 private:
   sqlite_connection &db_;

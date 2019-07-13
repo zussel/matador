@@ -83,19 +83,11 @@ protected:
   bool finalize_fetch() override;
 
 private:
-//  struct result_deleter
-//  {
-//    void operator()(MYSQL_RES *res) const {
-//      if (res) {
-//        mysql_free_result(res);
-//      }
-//    }
-//  };
-  size_type affected_rows_;
-  size_type rows_;
-  size_type fields_;
+  size_type affected_rows_ = 0;
+  size_type rows_ = 0;
+  size_type fields_ = 0;
   MYSQL_ROW row_;
-  MYSQL_RES *res_;
+  MYSQL_RES *res_ = nullptr;
 };
 
 }

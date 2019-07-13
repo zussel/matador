@@ -31,12 +31,12 @@ void sqlite_dialect_compiler::visit(const matador::detail::remove &)
 
 void sqlite_dialect_compiler::visit(const matador::detail::tablename &tab)
 {
-  tablename_ = tab.tab;
+  tablename_ = tab.table_name;
 }
 
 void sqlite_dialect_compiler::visit(const matador::detail::from &from1)
 {
-  tablename_ = from1.table;
+  tablename_ = from1.table_name;
 }
 
 void sqlite_dialect_compiler::visit(const matador::detail::where &)
@@ -57,8 +57,8 @@ void sqlite_dialect_compiler::visit(const matador::detail::top &limit)
 
   column rowid("rowid");
   auto where_token = std::static_pointer_cast<detail::where>(*where_);
-  auto subselect = matador::select({rowid}).from(tablename_).where(where_token->cond).limit(limit.limit_);
-  auto cond = make_condition(matador::in(rowid, subselect));
+  auto sub_select = matador::select({rowid}).from(tablename_).where(where_token->cond).limit(limit.limit_);
+  auto cond = make_condition(matador::in(rowid, sub_select));
 
   where_token->cond.swap(cond);
 

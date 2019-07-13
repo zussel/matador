@@ -33,22 +33,22 @@ public:
 
   void first_sub_test()
   {
-    UNIT_ASSERT_EQUAL(1, 1, "one is one");
+    UNIT_ASSERT_EQUAL(1, 1);
     
     try {
-      UNIT_ASSERT_EQUAL(1, 0, "one is not zero");
+      UNIT_ASSERT_EQUAL(1, 0);
     } catch (matador::unit_exception &) {
-      UNIT_ASSERT_TRUE(true, "could not happen");
+      UNIT_ASSERT_TRUE(true);
     }
   }
   void second_sub_test()
   {
     // gives warning
     //UNIT_WARN("this is a test warning!");
-    UNIT_ASSERT_TRUE(true, "test should be executed");
+    UNIT_ASSERT_TRUE(true);
   }
   void third_sub_test()
   {
-    UNIT_ASSERT_TRUE(true, "test should be executed");
+    UNIT_ASSERT_TRUE(true);
   }
 };

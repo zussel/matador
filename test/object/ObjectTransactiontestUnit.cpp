@@ -40,7 +40,7 @@ void ObjectTransactiontestUnit::test_insert()
 
     auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
-    UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+    UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
     tr.commit();
   } catch (std::exception &) {
@@ -51,8 +51,8 @@ void ObjectTransactiontestUnit::test_insert()
 
   auto p = pview.front();
 
-  UNIT_ASSERT_GREATER(p->id(), 0UL, "id must be valid");
-  UNIT_ASSERT_EQUAL(p->name(), "Hans", "name must be 'Hans'");
+  UNIT_ASSERT_GREATER(p->id(), 0UL);
+  UNIT_ASSERT_EQUAL(p->name(), "Hans");
 }
 
 void ObjectTransactiontestUnit::test_insert_rollback()
@@ -67,7 +67,7 @@ void ObjectTransactiontestUnit::test_insert_rollback()
 
     auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
-    UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+    UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
     tr.rollback();
   } catch (std::exception &) {
@@ -76,7 +76,7 @@ void ObjectTransactiontestUnit::test_insert_rollback()
 
   matador::object_view<person> pview(store);
 
-  UNIT_ASSERT_TRUE(pview.empty(), "view must be empty");
+  UNIT_ASSERT_TRUE(pview.empty());
 }
 
 void ObjectTransactiontestUnit::test_update()
@@ -92,22 +92,22 @@ void ObjectTransactiontestUnit::test_update()
     tr.begin();
 
 
-    UNIT_ASSERT_EQUAL(hans->height(), 180U, "height must be valid");
+    UNIT_ASSERT_EQUAL(hans->height(), 180U);
     hans->height(183);
-    UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
-    UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+    UNIT_ASSERT_EQUAL(hans->height(), 183U);
+    UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
     tr.commit();
   } catch (std::exception &) {
     UNIT_FAIL("shouldn't come here");
   }
 
-  UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
-  UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+  UNIT_ASSERT_EQUAL(hans->height(), 183U);
+  UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
   matador::object_view<person> pview(store);
 
-  UNIT_ASSERT_FALSE(pview.empty(), "view must not be empty");
+  UNIT_ASSERT_FALSE(pview.empty());
 }
 
 void ObjectTransactiontestUnit::test_update_rollback()
@@ -124,22 +124,22 @@ void ObjectTransactiontestUnit::test_update_rollback()
     tr.begin();
 
 
-    UNIT_ASSERT_EQUAL(hans->height(), 180U, "height must be valid");
+    UNIT_ASSERT_EQUAL(hans->height(), 180U);
     hans->height(183);
-    UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
-    UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+    UNIT_ASSERT_EQUAL(hans->height(), 183U);
+    UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
     tr.rollback();
   } catch (std::exception &) {
     UNIT_FAIL("shouldn't come here");
   }
 
-  UNIT_ASSERT_EQUAL(hans->height(), 180U, "height must be valid");
-  UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+  UNIT_ASSERT_EQUAL(hans->height(), 180U);
+  UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
   matador::object_view<person> pview(store);
 
-  UNIT_ASSERT_FALSE(pview.empty(), "view must not be empty");
+  UNIT_ASSERT_FALSE(pview.empty());
 }
 
 void ObjectTransactiontestUnit::test_delete()
@@ -149,7 +149,7 @@ void ObjectTransactiontestUnit::test_delete()
 
   auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
-  UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+  UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
   matador::transaction tr(store);
 
@@ -167,8 +167,8 @@ void ObjectTransactiontestUnit::test_delete()
 
   auto p = pview.front();
 
-  UNIT_ASSERT_EQUAL(p.id(), 0UL, "id must be valid");
-  UNIT_ASSERT_TRUE(p.ptr() == nullptr, "object must be nullptr");
+  UNIT_ASSERT_EQUAL(p.id(), 0UL);
+  UNIT_ASSERT_TRUE(p.ptr() == nullptr);
 }
 
 void ObjectTransactiontestUnit::test_delete_rollback()
@@ -178,7 +178,7 @@ void ObjectTransactiontestUnit::test_delete_rollback()
 
   auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
-  UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+  UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
   matador::transaction tr(store);
 
@@ -195,12 +195,12 @@ void ObjectTransactiontestUnit::test_delete_rollback()
   matador::object_view<person> pview(store);
 
   auto p = pview.front();
-  UNIT_ASSERT_EQUAL(pview.size(), 1UL, "size must be one");
+  UNIT_ASSERT_EQUAL(pview.size(), 1UL);
 
-  UNIT_ASSERT_GREATER(p.id(), 0UL, "id must be valid");
-  UNIT_ASSERT_FALSE(p.ptr() == nullptr, "object must be nullptr");
-  UNIT_ASSERT_GREATER(p->id(), 0UL, "id must be valid");
-  UNIT_ASSERT_EQUAL(p->name(), "Hans", "name must be 'Hans'");
+  UNIT_ASSERT_GREATER(p.id(), 0UL);
+  UNIT_ASSERT_FALSE(p.ptr() == nullptr);
+  UNIT_ASSERT_GREATER(p->id(), 0UL);
+  UNIT_ASSERT_EQUAL(p->name(), "Hans");
 }
 
 void ObjectTransactiontestUnit::test_nested()
@@ -215,24 +215,24 @@ void ObjectTransactiontestUnit::test_nested()
 
     auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
-    UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+    UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
     tr1.commit();
 
     tr1.begin();
 
-    UNIT_ASSERT_EQUAL(hans->height(), 180U, "height must be valid");
+    UNIT_ASSERT_EQUAL(hans->height(), 180U);
     hans->height(183);
-    UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
+    UNIT_ASSERT_EQUAL(hans->height(), 183U);
 
     matador::transaction tr2(store);
 
     try {
       tr2.begin();
 
-      UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
+      UNIT_ASSERT_EQUAL(hans->height(), 183U);
       hans->height(159);
-      UNIT_ASSERT_EQUAL(hans->height(), 159U, "height must be valid");
+      UNIT_ASSERT_EQUAL(hans->height(), 159U);
 
       tr2.commit();
     } catch (std::exception &) {
@@ -248,8 +248,8 @@ void ObjectTransactiontestUnit::test_nested()
 
   auto p = pview.front();
 
-  UNIT_ASSERT_GREATER(p->id(), 0UL, "id must be valid");
-  UNIT_ASSERT_EQUAL(p->name(), "Hans", "name must be 'Hans'");
+  UNIT_ASSERT_GREATER(p->id(), 0UL);
+  UNIT_ASSERT_EQUAL(p->name(), "Hans");
 }
 
 void ObjectTransactiontestUnit::test_nested_rollback()
@@ -264,28 +264,28 @@ void ObjectTransactiontestUnit::test_nested_rollback()
 
     auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
-    UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+    UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
     tr1.commit();
 
     tr1.begin();
 
-    UNIT_ASSERT_EQUAL(hans->height(), 180U, "height must be valid");
+    UNIT_ASSERT_EQUAL(hans->height(), 180U);
     hans->height(183);
-    UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
+    UNIT_ASSERT_EQUAL(hans->height(), 183U);
 
     matador::transaction tr2(store);
 
     try {
       tr2.begin();
 
-      UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
+      UNIT_ASSERT_EQUAL(hans->height(), 183U);
       hans->height(159);
-      UNIT_ASSERT_EQUAL(hans->height(), 159U, "height must be valid");
+      UNIT_ASSERT_EQUAL(hans->height(), 159U);
 
       tr2.rollback();
 
-      UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
+      UNIT_ASSERT_EQUAL(hans->height(), 183U);
 
     } catch (std::exception &) {
       tr2.rollback();
@@ -300,8 +300,8 @@ void ObjectTransactiontestUnit::test_nested_rollback()
 
   auto p = pview.front();
 
-  UNIT_ASSERT_GREATER(p->id(), 0UL, "id must be valid");
-  UNIT_ASSERT_EQUAL(p->name(), "Hans", "name must be 'Hans'");
+  UNIT_ASSERT_GREATER(p->id(), 0UL);
+  UNIT_ASSERT_EQUAL(p->name(), "Hans");
 }
 
 void ObjectTransactiontestUnit::test_foreign()
@@ -323,15 +323,15 @@ void ObjectTransactiontestUnit::test_foreign()
 
     m1 = mview.front();
 
-    UNIT_ASSERT_TRUE(m1.ptr() != nullptr, "master must be valid");
-    UNIT_ASSERT_TRUE(m1->children.ptr() != nullptr, "child must be valid");
-    UNIT_ASSERT_EQUAL(m1->name, "m1", "name must be valid");
+    UNIT_ASSERT_TRUE(m1.ptr() != nullptr);
+    UNIT_ASSERT_TRUE(m1->children.ptr() != nullptr);
+    UNIT_ASSERT_EQUAL(m1->name, "m1");
 
-    UNIT_ASSERT_TRUE(store.is_removable(m1), "m1 must be removable");
+    UNIT_ASSERT_TRUE(store.is_removable(m1));
 
     store.remove(m1);
 
-    UNIT_ASSERT_TRUE(mview.empty(), "view must be empty");
+    UNIT_ASSERT_TRUE(mview.empty());
 
     tr.commit();
   } catch (std::exception &) {
@@ -358,21 +358,21 @@ void ObjectTransactiontestUnit::test_foreign_rollback()
   try {
     tr.begin();
 
-    UNIT_ASSERT_TRUE(m1.ptr() != nullptr, "master must be valid");
-    UNIT_ASSERT_TRUE(m1->children.ptr() != nullptr, "child must be valid");
-    UNIT_ASSERT_EQUAL(m1->name, "m1", "name must be valid");
+    UNIT_ASSERT_TRUE(m1.ptr() != nullptr);
+    UNIT_ASSERT_TRUE(m1->children.ptr() != nullptr);
+    UNIT_ASSERT_EQUAL(m1->name, "m1");
 
-    UNIT_ASSERT_TRUE(store.is_removable(m1), "m1 must be removable");
+    UNIT_ASSERT_TRUE(store.is_removable(m1));
 
     store.remove(m1);
 
-    UNIT_ASSERT_TRUE(mview.empty(), "view must be empty");
+    UNIT_ASSERT_TRUE(mview.empty());
 
     tr.rollback();
   } catch (std::exception &) {
     tr.rollback();
   }
 
-  UNIT_ASSERT_FALSE(mview.empty(), "view must be empty");
+  UNIT_ASSERT_FALSE(mview.empty());
 
 }

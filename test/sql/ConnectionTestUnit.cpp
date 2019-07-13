@@ -24,9 +24,9 @@
 using namespace matador;
 using namespace std;
 
-ConnectionTestUnit::ConnectionTestUnit(const std::string &name, const std::string &msg, const std::string &dns)
+ConnectionTestUnit::ConnectionTestUnit(const std::string &name, const std::string &msg, std::string dns)
   : unit_test(name, msg)
-  , dns_(dns)
+  , dns_(std::move(dns))
 {
   add_test("open_close", std::bind(&ConnectionTestUnit::test_open_close, this), "open sql test");
   add_test("reopen", std::bind(&ConnectionTestUnit::test_reopen, this), "reopen sql test");
@@ -36,36 +36,36 @@ void ConnectionTestUnit::test_open_close()
 {
   matador::connection conn(connection_string());
 
-  UNIT_ASSERT_FALSE(conn.is_open(), "connection must not be open");
+  UNIT_ASSERT_FALSE(conn.is_open());
 
   conn.open();
 
-  UNIT_ASSERT_TRUE(conn.is_open(), "couldn't open sql sql");
+  UNIT_ASSERT_TRUE(conn.is_open());
 
   conn.close();
 
-  UNIT_ASSERT_FALSE(conn.is_open(), "couldn't close sql sql");
+  UNIT_ASSERT_FALSE(conn.is_open());
 }
 
 void ConnectionTestUnit::test_reopen()
 {
   matador::connection conn(connection_string());
 
-  UNIT_ASSERT_FALSE(conn.is_open(), "connection must not be open");
+  UNIT_ASSERT_FALSE(conn.is_open());
 
   conn.open();
 
-  UNIT_ASSERT_TRUE(conn.is_open(), "couldn't open sql sql");
+  UNIT_ASSERT_TRUE(conn.is_open());
 
   conn.close();
 
   conn.open();
 
-  UNIT_ASSERT_TRUE(conn.is_open(), "couldn't open sql sql");
+  UNIT_ASSERT_TRUE(conn.is_open());
 
   conn.close();
 
-  UNIT_ASSERT_FALSE(conn.is_open(), "couldn't close sql sql");
+  UNIT_ASSERT_FALSE(conn.is_open());
 }
 
 std::string ConnectionTestUnit::connection_string()

@@ -46,6 +46,7 @@ namespace matador {
 namespace mysql {
 
 class mysql_statement;
+class mysql_result;
 
 /**
  * @class mysql_database
@@ -81,7 +82,7 @@ public:
   void close() override;
 
   detail::result_impl* execute(const matador::sql &stmt) override;
-  detail::result_impl* execute(const std::string &stmt) override;
+  detail::result_impl* execute(const std::string &sql) override;
   detail::statement_impl* prepare(const matador::sql &stmt) override;
 
   void begin() override;
@@ -97,7 +98,10 @@ public:
   basic_dialect* dialect() override;
 
 private:
-  MYSQL mysql_;
+  mysql_result* execute_internal(const std::string &stmt);
+
+private:
+  MYSQL mysql_ = MYSQL();
   std::string db_;
   bool is_open_;
   mysql_dialect dialect_;

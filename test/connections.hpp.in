@@ -5,6 +5,7 @@ namespace connection {
  const char* const mysql = "@MYSQL_CONNECTION_STRING@";
  const char* const sqlite = "@SQLITE_CONNECTION_STRING@";
  const char* const mssql = "@MSSQL_CONNECTION_STRING@";
+ const char* const postgresql = "@POSTGRESQL_CONNECTION_STRING@";
 }
 
 #endif /* CONNECTIONS_HPP */

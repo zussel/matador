@@ -52,8 +52,8 @@ TARGET_LINK_LIBRARIES(matador-utils ${CMAKE_DL_LIBS})
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-utils
   PROPERTIES
-  VERSION 0.5.0
-  SOVERSION 0)
+  VERSION ${APP_VERSION}
+  SOVERSION ${APP_MAJOR_VERSION})
 
 SOURCE_GROUP("include\\matador\\utils" FILES ${HEADER})
 SOURCE_GROUP("src\\matador\\utils" FILES ${SOURCES})

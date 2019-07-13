@@ -10,9 +10,12 @@
 
 #include "TestDialect.hpp"
 
+using namespace matador;
+
 ConditionUnitTest::ConditionUnitTest()
   : unit_test("condition", "condition test unit")
 {
+  add_test("literal", std::bind(&ConditionUnitTest::test_col_literal, this), "test col literal");
   add_test("logical", std::bind(&ConditionUnitTest::test_logical_condition, this), "test a logical condition");
   add_test("and", std::bind(&ConditionUnitTest::test_and_condition, this), "test an and condition");
   add_test("or", std::bind(&ConditionUnitTest::test_or_condition, this), "test an or condition");
@@ -22,80 +25,88 @@ ConditionUnitTest::ConditionUnitTest()
   add_test("between", std::bind(&ConditionUnitTest::test_between_condition, this), "test a between condition");
 }
 
+void ConditionUnitTest::test_col_literal()
+{
+    auto name = "name"_col;
+
+    UNIT_ASSERT_EQUAL(name.name, "name");
+}
+
 void ConditionUnitTest::test_logical_condition()
 {
   matador::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name, "name", "name must be equal name");
+  UNIT_ASSERT_EQUAL(name.name, "name");
 
   auto cond1 = name != "Hans";
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond1.evaluate(dialect), "\"name\" <> 'Hans'", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond1.evaluate(dialect), "\"name\" <> 'Hans'");
 
   matador::column age("age");
 
-  UNIT_ASSERT_EQUAL(age.name, "age", "name must be equal age");
+  UNIT_ASSERT_EQUAL(age.name, "age");
 
   auto cond2 = age != 9;
 
-  UNIT_ASSERT_EQUAL(cond2.evaluate(dialect), "\"age\" <> 9", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond2.evaluate(dialect), "\"age\" <> 9");
 }
 
 void ConditionUnitTest::test_and_condition()
 {
+
   matador::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name, "name", "name must be equal name");
+  UNIT_ASSERT_EQUAL(name.name, "name");
 
   auto cond = name != "Hans" && name != "Dieter";
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"name\" <> 'Hans' AND \"name\" <> 'Dieter')", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"name\" <> 'Hans' AND \"name\" <> 'Dieter')");
 }
 
 void ConditionUnitTest::test_or_condition()
 {
   matador::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name, "name", "name must be equal name");
+  UNIT_ASSERT_EQUAL(name.name, "name");
 
   auto cond = name == "Hans" || name == "Dieter";
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "\"name\" = 'Hans' OR \"name\" = 'Dieter'", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "\"name\" = 'Hans' OR \"name\" = 'Dieter'");
 }
 
 void ConditionUnitTest::test_not_condition()
 {
   matador::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name, "name", "name must be equal name");
+  UNIT_ASSERT_EQUAL(name.name, "name");
 
   auto cond = !(name != "Hans");
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "NOT (\"name\" <> 'Hans')", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "NOT (\"name\" <> 'Hans')");
 }
 
 void ConditionUnitTest::test_in_condition()
 {
   matador::column age("age");
-  UNIT_ASSERT_EQUAL(age.name, "age", "name must be equal age");
+  UNIT_ASSERT_EQUAL(age.name, "age");
 
   auto cond = age != 7 && matador::in(age,  {7,5,5,8});
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"age\" IN (7,5,5,8))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"age\" IN (7,5,5,8))");
 
   cond = age != 7 && matador::in(age,  {7});
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"age\" IN (7))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"age\" IN (7))");
 }
 
 void ConditionUnitTest::test_in_query_condition()
@@ -108,19 +119,19 @@ void ConditionUnitTest::test_in_query_condition()
 
   auto cond = age != 7 && matador::in(name, q);
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"name\" IN (SELECT \"name\" FROM \"test\" ))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"name\" IN (SELECT \"name\" FROM \"test\" ))");
 }
 
 void ConditionUnitTest::test_between_condition()
 {
   matador::column age("age");
-  UNIT_ASSERT_EQUAL(age.name, "age", "name must be equal age");
+  UNIT_ASSERT_EQUAL(age.name, "age");
 
   auto cond = age != 7 && matador::between(age, 21, 30);
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"age\" BETWEEN 21 AND 30)", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"age\" BETWEEN 21 AND 30)");
 }
 
 

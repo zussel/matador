@@ -44,6 +44,7 @@ class prototype_node;
 namespace sqlite {
 
 class sqlite_statement;
+class sqlite_result;
 
 /**
  * @class sqlite_database
@@ -56,35 +57,35 @@ class OOS_SQLITE_API sqlite_connection : public connection_impl
 {
 public:
   sqlite_connection();
-  virtual ~sqlite_connection();
+  ~sqlite_connection() override;
   
   /**
    * Returns true if the sql is open
    *
    * @return True on open sql connection.
    */
-  virtual bool is_open() const override;
+  bool is_open() const override;
 
-  virtual unsigned long last_inserted_id();
+  unsigned long last_inserted_id();
 
-  virtual void open(const std::string &db) override;
-  virtual void close() override;
+  void open(const std::string &db) override;
+  void close() override;
 
-  virtual detail::result_impl* execute(const matador::sql &stmt) override;
-  virtual detail::result_impl* execute(const std::string &stmt) override;
-  virtual detail::statement_impl* prepare(const matador::sql &stmt) override;
+  detail::result_impl* execute(const matador::sql &stmt) override;
+  detail::result_impl* execute(const std::string &stmt) override;
+  detail::statement_impl* prepare(const matador::sql &stmt) override;
 
-  virtual void begin() override;
-  virtual void commit() override;
-  virtual void rollback() override;
+  void begin() override;
+  void commit() override;
+  void rollback() override;
 
-  virtual std::string type() const override;
-  virtual std::string version() const override;
+  std::string type() const override;
+  std::string version() const override;
 
-  virtual bool exists(const std::string &tablename) override;
-  virtual std::vector<field> describe(const std::string &table) override;
+  bool exists(const std::string &table_name) override;
+  std::vector<field> describe(const std::string &table) override;
 
-  virtual basic_dialect* dialect() override;
+  basic_dialect* dialect() override;
 
   /**
    * Return the raw pointer to the sqlite3
@@ -95,6 +96,8 @@ public:
   sqlite3* handle();
 
 private:
+  sqlite_result* execute_internal(const std::string &stmt);
+
   static int parse_result(void* param, int column_count, char** values, char** columns);
 
 private:

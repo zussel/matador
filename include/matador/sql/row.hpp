@@ -45,8 +45,8 @@ namespace matador {
 class OOS_SQL_API row
 {
 public:
-  row();
-  ~row();
+  row() = default;
+  ~row() = default;
 
   /**
    * Add a column to the row. If column

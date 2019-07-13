@@ -31,14 +31,20 @@ public:
   {}
 
 
-  virtual ~sql_exception() {}
+  sql_exception(std::string source, std::string what)
+    : source_(std::move(source))
+    , what_(std::move(what))
+  {}
+
+
+  ~sql_exception() override = default;
 
   /**
    * Returns the message of the exception
    *
    * @return The message of this exception.
    */
-  virtual const char* what() const noexcept
+  const char* what() const noexcept override
   {
     return what_.c_str();
   }

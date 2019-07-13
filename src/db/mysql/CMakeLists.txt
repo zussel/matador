@@ -30,8 +30,8 @@ TARGET_LINK_LIBRARIES(matador-mysql matador-utils matador-sql ${MYSQL_LIBRARY})
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-mysql
   PROPERTIES
-  VERSION 0.5.0
-  SOVERSION 0)
+  VERSION ${APP_VERSION}
+  SOVERSION ${APP_MAJOR_VERSION})
 
 SOURCE_GROUP("include\\matador\\db\\mysql" FILES ${HEADER})
 SOURCE_GROUP("src\\matador\\db\\mysql" FILES ${SOURCES})

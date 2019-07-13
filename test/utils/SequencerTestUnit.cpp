@@ -13,13 +13,11 @@ SequencerTestUnit::SequencerTestUnit() : unit_test("sequencer", "sequencer test 
   add_test("exchange", std::bind(&SequencerTestUnit::test_reset, this), "exchange sequencer");
 }
 
-SequencerTestUnit::~SequencerTestUnit() {}
-
 void SequencerTestUnit::test_init()
 {
   matador::sequencer seq;
 
-  UNIT_ASSERT_EQUAL(seq.init(), 0UL, "invalid value");
+  UNIT_ASSERT_EQUAL(seq.init(), 0UL);
 }
 
 void SequencerTestUnit::test_inc()
@@ -28,9 +26,9 @@ void SequencerTestUnit::test_inc()
 
   seq.init();
 
-  UNIT_ASSERT_EQUAL(seq.current(), 0UL, "invalid value");
-  UNIT_ASSERT_EQUAL(seq.next(), 1UL, "invalid value");
-  UNIT_ASSERT_EQUAL(seq.update(5), 5UL, "invalid value");
+  UNIT_ASSERT_EQUAL(seq.current(), 0UL);
+  UNIT_ASSERT_EQUAL(seq.next(), 1UL);
+  UNIT_ASSERT_EQUAL(seq.update(5), 5UL);
 }
 
 void SequencerTestUnit::test_reset()
@@ -39,9 +37,9 @@ void SequencerTestUnit::test_reset()
 
   seq.init();
 
-  UNIT_ASSERT_EQUAL(seq.current(), 0UL, "invalid value");
-  UNIT_ASSERT_EQUAL(seq.next(), 1UL, "invalid value");
-  UNIT_ASSERT_EQUAL(seq.reset(3), 3UL, "invalid value");
+  UNIT_ASSERT_EQUAL(seq.current(), 0UL);
+  UNIT_ASSERT_EQUAL(seq.next(), 1UL);
+  UNIT_ASSERT_EQUAL(seq.reset(3), 3UL);
 }
 
 void SequencerTestUnit::test_exchange()
@@ -50,13 +48,13 @@ void SequencerTestUnit::test_exchange()
 
   seq.init();
 
-  UNIT_ASSERT_EQUAL(seq.current(), 0UL, "invalid value");
-  UNIT_ASSERT_EQUAL(seq.next(), 1UL, "invalid value");
+  UNIT_ASSERT_EQUAL(seq.current(), 0UL);
+  UNIT_ASSERT_EQUAL(seq.next(), 1UL);
 
   matador::sequencer_impl_ptr another_seq_ptr(new matador::default_sequencer);
 
   auto old_seq_ptr = seq.exchange_sequencer(another_seq_ptr);
 
-  UNIT_ASSERT_EQUAL(seq.current(), 0UL, "invalid value");
-  UNIT_ASSERT_EQUAL(seq.next(), 1UL, "invalid value");
+  UNIT_ASSERT_EQUAL(seq.current(), 0UL);
+  UNIT_ASSERT_EQUAL(seq.next(), 1UL);
 }
