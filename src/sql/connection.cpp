@@ -146,7 +146,6 @@ void connection::prepare_prototype_row(row &prototype, const std::string &tablen
     // generate value by type
     std::shared_ptr<detail::basic_value> value(create_default_value(f.type()));
     prototype.set(f.name(), value);
-    std::cout << "Prepare row column " << f.name() << " with default value [" << value->safe_string(*dialect()) << "]\n";
   }
   // default value for count(*)
   if (prototype.has_column(matador::columns::count_all().name)) {

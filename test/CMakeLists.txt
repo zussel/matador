@@ -38,43 +38,41 @@ SET (TEST_OBJECT_SOURCES
   object/RelationTestUnit.hpp)
 
 SET (TEST_UNIT_SOURCES
-#  unit/FirstTestUnit.hpp
-#  unit/SecondTestUnit.hpp
   unit/TestSuiteTestUnit.cpp
   unit/TestSuiteTestUnit.hpp
 )
 
 SET (TEST_SQL_SOURCES
-#  sql/ConnectionTestUnit.cpp
-#  sql/ConnectionTestUnit.hpp
-#  sql/QueryTestUnit.cpp
-#  sql/QueryTestUnit.hpp
-#  sql/ConditionUnitTest.cpp
-#  sql/ConditionUnitTest.hpp
-#  sql/DialectTestUnit.cpp
-#  sql/DialectTestUnit.hpp
-#  sql/TestDialect.cpp
-#  sql/TestDialect.hpp
-#  sql/MSSQLDialectTestUnit.cpp
-#  sql/MSSQLDialectTestUnit.hpp
-#  sql/SQLiteDialectTestUnit.cpp
-#  sql/SQLiteDialectTestUnit.hpp
-#  sql/ValueUnitTest.cpp
-#  sql/ValueUnitTest.hpp
+  sql/ConnectionTestUnit.cpp
+  sql/ConnectionTestUnit.hpp
+  sql/QueryTestUnit.cpp
+  sql/QueryTestUnit.hpp
+  sql/ConditionUnitTest.cpp
+  sql/ConditionUnitTest.hpp
+  sql/DialectTestUnit.cpp
+  sql/DialectTestUnit.hpp
+  sql/TestDialect.cpp
+  sql/TestDialect.hpp
+  sql/MSSQLDialectTestUnit.cpp
+  sql/MSSQLDialectTestUnit.hpp
+  sql/SQLiteDialectTestUnit.cpp
+  sql/SQLiteDialectTestUnit.hpp
+  sql/ValueUnitTest.cpp
+  sql/ValueUnitTest.hpp
   sql/PostgreSQLDialectTestUnit.cpp
   sql/PostgreSQLDialectTestUnit.hpp)
 
 SET (TEST_ORM_SOURCES
-#  orm/TransactionTestUnit.cpp
-#  orm/TransactionTestUnit.hpp
-#  orm/OrmTestUnit.cpp
-#  orm/OrmTestUnit.hpp
-#  orm/OrmReloadTestUnit.cpp
-#  orm/OrmReloadTestUnit.hpp
+  orm/TransactionTestUnit.cpp
+  orm/TransactionTestUnit.hpp
+  orm/OrmTestUnit.cpp
+  orm/OrmTestUnit.hpp
+  orm/OrmReloadTestUnit.cpp
+  orm/OrmReloadTestUnit.hpp
   orm/OrmRelationTestUnit.cpp
   orm/OrmRelationTestUnit.hpp
-#  orm/BlogUnitTest.cpp
-#  orm/BlogUnitTest.hpp
+  orm/BlogUnitTest.cpp
+  orm/BlogUnitTest.hpp
 )
 
 SET (TEST_SOURCES test_matador.cpp)
@@ -82,8 +80,8 @@ SET (TEST_SOURCES test_matador.cpp)
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
   ${TEST_HEADER}
-#  ${TEST_TOOLS_SOURCES}
-#  ${TEST_OBJECT_SOURCES}
+  ${TEST_TOOLS_SOURCES}
+  ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
   ${TEST_SQL_SOURCES}

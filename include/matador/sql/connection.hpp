@@ -196,7 +196,6 @@ private:
   {
     // get column descriptions
     prepare_prototype_row(prototype, tablename);
-    std::cout << impl_->dialect()->direct(stmt) << "\n";
     return result<T>(impl_->execute(stmt), prototype);
   }
 
@@ -210,14 +209,12 @@ private:
   template < class T >
   result<T> execute(const sql &stmt, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
-    std::cout << impl_->dialect()->direct(stmt) << "\n";
     return result<T>(impl_->execute(stmt));
   }
 
   template < class T >
   statement<T> prepare(const matador::sql &sql, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
-    std::cout << "PSQL: " << impl_->dialect()->prepare(sql) << "\n";
     return statement<T>(impl_->prepare(sql));
   }
 
@@ -225,7 +222,6 @@ private:
   statement<T> prepare(const matador::sql &sql, const std::string &tablename, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
     prepare_prototype_row(prototype, tablename);
-    std::cout << "PSQL (row): " << impl_->dialect()->prepare(sql) << "\n";
     return statement<T>(impl_->prepare(sql), prototype);
   }
 
