@@ -16,7 +16,7 @@ namespace matador {
 
 namespace postgresql {
 
-std::unordered_map<std::string, unsigned long> postgresql_statement::statement_name_map_ = {};
+std::unordered_map<std::string, unsigned long> postgresql_statement::statement_name_map_ = std::unordered_map<std::string, unsigned long>();
 
 postgresql_statement::postgresql_statement(postgresql_connection &db, const matador::sql &stmt)
   : db_(db)
