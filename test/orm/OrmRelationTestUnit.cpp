@@ -24,6 +24,7 @@ OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, std::string 
   add_test("has_many_delete", std::bind(&OrmRelationTestUnit::test_has_many_delete, this), "test has many delete item");
   add_test("belongs_to", std::bind(&OrmRelationTestUnit::test_belongs_to, this), "test belongs to");
   add_test("has_many_to_many", std::bind(&OrmRelationTestUnit::test_many_to_many, this), "test has many to many");
+  add_test("save", std::bind(&OrmRelationTestUnit::test_save, this), "test save");
 }
 
 using many_list_varchars = many_builtins<matador::varchar<255>, std::list>;
@@ -232,4 +233,8 @@ void OrmRelationTestUnit::test_many_to_many()
   UNIT_ASSERT_TRUE(algebra->students.empty());
 
   p.drop();
+}
+
+void OrmRelationTestUnit::test_save() {
+
 }

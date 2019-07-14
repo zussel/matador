@@ -69,7 +69,7 @@ public:
    */
   struct observer
   {
-    virtual ~observer() {}
+    virtual ~observer() = default;
 
     /**
      * @brief Interface for the begin transaction event

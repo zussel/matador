@@ -14,6 +14,7 @@
 #include "matador/object/object_view.hpp"
 
 using namespace hasmanylist;
+using namespace matador;
 
 OrmTestUnit::OrmTestUnit(const std::string &prefix, std::string dns)
   : unit_test(prefix + "_orm", prefix + " orm test unit")
@@ -24,6 +25,7 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, std::string dns)
   add_test("select", std::bind(&OrmTestUnit::test_select, this), "test select a table");
   add_test("update", std::bind(&OrmTestUnit::test_update, this), "test update on table");
   add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test delete from table");
+  add_test("save", std::bind(&OrmTestUnit::test_save, this), "test save");
 }
 
 void OrmTestUnit::test_create()
@@ -185,6 +187,55 @@ void OrmTestUnit::test_delete()
 
   UNIT_EXPECT_TRUE(first == res.end());
 //  UNIT_EXPECT_TRUE(res.empty());
+
+  p.drop();
+}
+
+void OrmTestUnit::test_save() {
+  matador::persistence p(dns_);
+
+  p.attach<person>("person");
+
+  p.create();
+
+  matador::session s(p);
+
+  matador::date birthday(18, 5, 1980);
+  auto hans = s.save(new person("hans", birthday, 180));
+
+  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+  UNIT_EXPECT_EQUAL(hans->height(), 180U);
+  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
+
+  hans->height(179);
+
+  hans = s.save(hans);
+
+  UNIT_EXPECT_EQUAL(hans->height(), 179U);
+
+  matador::connection conn(dns_);
+  conn.open();
+
+  matador::query<person> q(conn, "person");
+  auto res = q.select().where("name"_col == "hans").execute();
+
+  auto first = res.begin();
+
+  UNIT_ASSERT_TRUE(first != res.end());
+
+  std::unique_ptr<person> p1(first.release());
+
+  UNIT_EXPECT_EQUAL("hans", p1->name());
+  UNIT_EXPECT_EQUAL(179U, p1->height());
+  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
+
+  s.remove(hans);
+
+  res = q.select().where("name"_col == "hans").execute();
+
+  first = res.begin();
+
+  UNIT_EXPECT_TRUE(first == res.end());
 
   p.drop();
 }

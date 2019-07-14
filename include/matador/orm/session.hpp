@@ -124,15 +124,24 @@ public:
   template < class T >
   void remove(object_ptr<T> &optr)
   {
-    if (store().has_transaction()) {
-      persistence_.store().remove(optr);
-//      store().current_transaction().st<T>(optr.proxy_);
-    } else {
-      transaction tr(persistence_.store(), observer_);
-      tr.begin();
-      store().remove(optr);
-      tr.commit();
+    auto i = persistence_.store().find(typeid(T).name());
+    if (i == persistence_.store().end()) {
+      throw_object_exception("couldn't find prototype node");
     }
+    auto t = persistence_.find_table(i->type());
+    if (t == persistence_.end()) {
+      throw_object_exception("couldn't find table");
+    }
+    t->second->remove(optr.proxy_);
+    store().remove(optr);
+//    if (store().has_transaction()) {
+//      persistence_.store().remove(optr);
+//    } else {
+//      transaction tr(persistence_.store(), observer_);
+//      tr.begin();
+//      store().remove(optr);
+//      tr.commit();
+//    }
   }
 
   /**
@@ -302,6 +311,55 @@ public:
       container.clear();
       tr.commit();
     }
+  }
+
+  /**
+   * @brief Saves an object to the database
+   *
+   * @tparam T Type of object to save
+   * @param obj Object to save
+   * @return Saved object
+   */
+  template < class T >
+  object_ptr<T> save(T *obj)
+  {
+    auto i = persistence_.store().find(typeid(T).name());
+    if (i == persistence_.store().end()) {
+      throw_object_exception("couldn't find prototype node");
+    }
+    auto t = persistence_.find_table(i->type());
+    if (t == persistence_.end()) {
+      throw_object_exception("couldn't find table");
+    }
+
+    object_ptr<T> optr(persistence_.store().insert(obj));
+
+    t->second->insert(optr.proxy_);
+    return optr;
+
+  }
+
+  /**
+   * @brief Save an object on database.
+   *
+   * @tparam T Type of object to save
+   * @param obj Object to save
+   * @return Saved object
+   */
+  template < class T >
+  object_ptr<T> save(const object_ptr<T> &obj)
+  {
+    auto i = persistence_.store().find(typeid(T).name());
+    if (i == persistence_.store().end()) {
+      throw_object_exception("couldn't find prototype node");
+    }
+    auto t = persistence_.find_table(i->type());
+    if (t == persistence_.end()) {
+      throw_object_exception("couldn't find table");
+    }
+
+    t->second->update(obj.proxy_);
+    return obj;
   }
 
   /**
