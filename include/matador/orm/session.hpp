@@ -124,16 +124,20 @@ public:
   template < class T >
   void remove(object_ptr<T> &optr)
   {
-    auto i = persistence_.store().find(typeid(T).name());
-    if (i == persistence_.store().end()) {
-      throw_object_exception("couldn't find prototype node");
+    if (store().has_transaction()) {
+      persistence_.store().remove(optr);
+    } else {
+      auto i = persistence_.store().find(typeid(T).name());
+      if (i == persistence_.store().end()) {
+        throw_object_exception("couldn't find prototype node");
+      }
+      auto t = persistence_.find_table(i->type());
+      if (t == persistence_.end()) {
+        throw_object_exception("couldn't find table");
+      }
+      t->second->remove(optr.proxy_);
+      store().remove(optr);
     }
-    auto t = persistence_.find_table(i->type());
-    if (t == persistence_.end()) {
-      throw_object_exception("couldn't find table");
-    }
-    t->second->remove(optr.proxy_);
-    store().remove(optr);
 //    if (store().has_transaction()) {
 //      persistence_.store().remove(optr);
 //    } else {
@@ -323,20 +327,23 @@ public:
   template < class T >
   object_ptr<T> save(T *obj)
   {
-    auto i = persistence_.store().find(typeid(T).name());
-    if (i == persistence_.store().end()) {
-      throw_object_exception("couldn't find prototype node");
+    if (store().has_transaction()) {
+      return store().insert(obj);
+    } else {
+      auto i = persistence_.store().find(typeid(T).name());
+      if (i == persistence_.store().end()) {
+        throw_object_exception("couldn't find prototype node");
+      }
+      auto t = persistence_.find_table(i->type());
+      if (t == persistence_.end()) {
+        throw_object_exception("couldn't find table");
+      }
+
+      object_ptr<T> optr(persistence_.store().insert(obj));
+
+      t->second->insert(optr.proxy_);
+      return optr;
     }
-    auto t = persistence_.find_table(i->type());
-    if (t == persistence_.end()) {
-      throw_object_exception("couldn't find table");
-    }
-
-    object_ptr<T> optr(persistence_.store().insert(obj));
-
-    t->second->insert(optr.proxy_);
-    return optr;
-
   }
 
   /**
@@ -349,16 +356,20 @@ public:
   template < class T >
   object_ptr<T> save(const object_ptr<T> &obj)
   {
-    auto i = persistence_.store().find(typeid(T).name());
-    if (i == persistence_.store().end()) {
-      throw_object_exception("couldn't find prototype node");
-    }
-    auto t = persistence_.find_table(i->type());
-    if (t == persistence_.end()) {
-      throw_object_exception("couldn't find table");
-    }
+    if (store().has_transaction()) {
+      store().current_transaction().on_update<T>(obj.proxy_);
+    } else {
+      auto i = persistence_.store().find(typeid(T).name());
+      if (i == persistence_.store().end()) {
+        throw_object_exception("couldn't find prototype node");
+      }
+      auto t = persistence_.find_table(i->type());
+      if (t == persistence_.end()) {
+        throw_object_exception("couldn't find table");
+      }
 
-    t->second->update(obj.proxy_);
+      t->second->update(obj.proxy_);
+    }
     return obj;
   }
 
