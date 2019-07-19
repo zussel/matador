@@ -38,9 +38,9 @@ namespace sqlite {
 class sqlite_exception : public sql_exception
 {
 public:
-  sqlite_exception(const std::string &what);
+  explicit sqlite_exception(const std::string &what);
 
-  virtual ~sqlite_exception() throw();
+  ~sqlite_exception() noexcept override = default;
 };
 
 }

@@ -25,9 +25,6 @@ sqlite_exception::sqlite_exception(const std::string &what)
   : sql_exception("sqlite", what.c_str())
 {}
 
-sqlite_exception::~sqlite_exception() throw()
-{}
-
 }
 
 }

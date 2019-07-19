@@ -31,7 +31,7 @@ public:
   void rollback() override {}
 
   std::string type() const override { return "memory"; };
-  std::string version() const override { return "0.5.1"; };
+  std::string version() const override { return "0.6.0"; };
 
   virtual const char *type_string(data_type) const { return nullptr; }
 

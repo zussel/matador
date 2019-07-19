@@ -216,4 +216,9 @@ void connection::parse_dns(const std::string &dns)
   dns_ = dns.substr(pos + 3);
 }
 
+void connection::log(const std::string &msg) const
+{
+  std::cout << "SQL: " << msg << "\n";
+}
+
 }

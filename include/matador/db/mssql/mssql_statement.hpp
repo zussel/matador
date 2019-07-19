@@ -44,7 +44,7 @@ class mssql_connection;
 class mssql_statement : public detail::statement_impl
 {
 public:
-  mssql_statement(mssql_connection &db, const sql &s);
+  mssql_statement(mssql_connection &db, const matador::sql &stmt);
   ~mssql_statement() override;
 
   void clear() override;

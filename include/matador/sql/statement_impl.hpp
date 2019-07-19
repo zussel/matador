@@ -67,6 +67,8 @@ public:
 
   std::string str() const;
 
+  void log(const std::string &stmt) const;
+
 protected:
   void str(const std::string &s);
 

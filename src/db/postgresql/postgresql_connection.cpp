@@ -15,9 +15,7 @@ namespace postgresql {
 
 postgresql_connection::postgresql_connection()
   :is_open_(false)
-{
-
-}
+{}
 
 postgresql_connection::~postgresql_connection()
 {
@@ -170,7 +168,6 @@ basic_dialect *postgresql_connection::dialect()
 
 postgresql_result* postgresql_connection::execute_internal(const std::string &stmt)
 {
-//  std::cout << "\n" << stmt;
   PGresult *res = PQexec(conn_, stmt.c_str());
 
   auto status = PQresultStatus(res);

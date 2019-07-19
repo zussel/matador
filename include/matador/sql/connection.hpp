@@ -18,8 +18,8 @@
 #include "matador/sql/result.hpp"
 #include "matador/sql/statement.hpp"
 #include "matador/sql/connection_impl.hpp"
-#include "row.hpp"
-#include "field.hpp"
+#include "matador/sql/row.hpp"
+#include "matador/sql/field.hpp"
 
 #include <string>
 
@@ -196,7 +196,9 @@ private:
   {
     // get column descriptions
     prepare_prototype_row(prototype, tablename);
-    return result<T>(impl_->execute(stmt), prototype);
+    auto sql_stmt = dialect()->direct(stmt);
+    log(sql_stmt);
+    return result<T>(impl_->execute(sql_stmt), prototype);
   }
 
   /**
@@ -209,7 +211,9 @@ private:
   template < class T >
   result<T> execute(const sql &stmt, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
-    return result<T>(impl_->execute(stmt));
+    auto sql_stmt = dialect()->direct(stmt);
+    log(sql_stmt);
+    return result<T>(impl_->execute(sql_stmt));
   }
 
   template < class T >
@@ -219,9 +223,9 @@ private:
   }
 
   template < class T >
-  statement<T> prepare(const matador::sql &sql, const std::string &tablename, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
+  statement<T> prepare(const matador::sql &sql, const std::string &table_name, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
-    prepare_prototype_row(prototype, tablename);
+    prepare_prototype_row(prototype, table_name);
     return statement<T>(impl_->prepare(sql), prototype);
   }
 
@@ -229,6 +233,8 @@ private:
   connection_impl* create_connection(const std::string &type) const;
   void init_from_foreign_connection(const connection &foreign_connection);
   void parse_dns(const std::string &dns);
+
+  void log(const std::string &msg) const;
 
 private:
   std::string type_;

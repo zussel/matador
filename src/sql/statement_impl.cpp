@@ -17,6 +17,11 @@ void statement_impl::str(const std::string &s)
   sql_ = s;
 }
 
+void statement_impl::log(const std::string &stmt) const
+{
+  std::cout << "SQL: " << stmt << "\n";
+}
+
 }
 
 }

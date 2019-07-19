@@ -235,6 +235,30 @@ void OrmRelationTestUnit::test_many_to_many()
   p.drop();
 }
 
-void OrmRelationTestUnit::test_save() {
+void OrmRelationTestUnit::test_save()
+{
+  matador::persistence p(dns_);
 
+  p.attach<many_list_ints>("many_ints");
+
+  p.create();
+
+  matador::session s(p);
+
+  auto ints = s.save(new many_list_ints);
+
+  UNIT_ASSERT_GREATER(ints->id, 0UL);
+  UNIT_ASSERT_TRUE(ints->elements.empty());
+
+  ints->elements.push_back(37);
+  ints->elements.push_back(4711);
+  ints->elements.push_back(-12345);
+  ints->elements.push_back(37);
+
+  s.save(ints);
+
+  UNIT_ASSERT_FALSE(ints->elements.empty());
+  UNIT_ASSERT_EQUAL(ints->elements.size(), 4UL);
+
+  p.drop();
 }

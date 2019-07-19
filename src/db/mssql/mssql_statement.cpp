@@ -32,14 +32,14 @@ namespace matador {
 
 namespace mssql {
 
-mssql_statement::mssql_statement(mssql_connection &db, const sql &s)
+mssql_statement::mssql_statement(mssql_connection &db, const matador::sql &stmt)
   : db_(db.handle())
 {
   if (!db_) {
     throw_error("mssql", "no odbc connection established");
   }
 
-  str(db.dialect()->prepare(s));
+  str(db.dialect()->prepare(stmt));
 
   create_statement();
 }
