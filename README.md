@@ -1,7 +1,7 @@
 matador
 =======
 
-__Version 0.5.1__
+__Version 0.6.0__
 
 Take your database by the horns.
 
