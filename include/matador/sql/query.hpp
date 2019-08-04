@@ -105,27 +105,6 @@ public:
     : basic_query(table_name)
   {}
 
-  /**
-   * @brief Create a query with a default connection
-   *
-   * @param conn The default connection to be used
-   */
-  explicit query(const connection &conn)
-    : query(conn, "")
-  {
-    determine_tablename<T>();
-  }
-
-  /**
-   * @brief Create a query with a default connection and default tablename
-   *
-   * @param conn The default connection to be used
-   * @param tablename The default tablename used for the query.
-   */
-  query(const connection &conn, const std::string &tablename)
-    : detail::basic_query(conn, tablename)
-  {}
-
   ~query() = default;
 
   /**
@@ -523,23 +502,6 @@ public:
   }
 
   /**
-   * @brief Execute the query
-   *
-   * Execute the query with the stored
-   * connection. If internal connection is null
-   * an exception is thrown.
-   *
-   * @throws std::logic_error
-   * @return The result of the query
-   */
-  result<T> execute()
-  {
-    if (!conn_.is_open()) {
-      throw std::logic_error("connection is not open");
-    }
-    return execute(conn_);
-  }
-  /**
    * Executes the current query and
    * returns a new result serializable.
    * 
@@ -548,26 +510,6 @@ public:
   result<T> execute(connection &conn)
   {
     return conn.execute<T>(sql_);
-  }
-
-
-  /**
-   * @brief Prepare the query
-   *
-   * Prepare the query with the stored
-   * connection. If internal connection is null
-   * an exception is thrown.
-   *
-   * @throws std::logic_error
-   * @return The prepared statement
-   */
-  statement<T> prepare()
-  {
-    if (!conn_.is_open()) {
-      throw std::logic_error("connection is not open");
-    }
-    return prepare(conn_);
-
   }
 
   /**
@@ -615,25 +557,6 @@ public:
    */
   explicit query(const std::string &table_name)
     : basic_query(table_name)
-  {}
-
-  /**
-   * @brief Create a query with a default connection
-   *
-   * @param conn The default connection to be used
-   */
-  explicit query(const connection &conn)
-    : query(conn, "")
-  {}
-
-  /**
-   * @brief Create a query with a default connection and default tablename
-   *
-   * @param conn The default connection to be used
-   * @param table_name The default table name used for the query.
-   */
-  query(const connection &conn, const std::string &table_name)
-    : detail::basic_query(conn, table_name)
   {}
 
   ~query() = default;
@@ -897,23 +820,6 @@ public:
   }
 
   /**
-   * @brief Execute the query
-   *
-   * Execute the query with the stored
-   * connection. If internal connection is null
-   * an exception is thrown.
-   *
-   * @throws std::logic_error
-   * @return The result of the query
-   */
-  result<row> execute()
-  {
-    if (!conn_.is_open()) {
-      throw std::logic_error("connection is not open");
-    }
-    return execute(conn_);
-  }
-  /**
    * @brief Execute the query.
    *
    * Execute the query for the given connection
@@ -926,24 +832,6 @@ public:
     return conn.execute<row>(sql_, table_name_, row_);
   }
 
-  /**
-   * @brief Prepare the query
-   *
-   * Prepare the query with the stored
-   * connection. If internal connection is null
-   * an exception is thrown.
-   *
-   * @throws std::logic_error
-   * @return The prepared statement
-   */
-  statement<row> prepare()
-  {
-    if (!conn_.is_open()) {
-      throw std::logic_error("connection is not open");
-    }
-    return prepare(conn_);
-
-  }
   /**
    * @brief Prepares the query.
    *

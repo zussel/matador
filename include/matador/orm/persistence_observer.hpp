@@ -1,7 +1,7 @@
 #ifndef OOS_PERSISTENCE_OBSERVER_HPP
 #define OOS_PERSISTENCE_OBSERVER_HPP
 
-#include "matador/object/object_store_observer.hpp"
+#include "matador/object/typed_object_store_observer.hpp"
 
 namespace matador {
 
@@ -10,7 +10,7 @@ class persistence;
 /// @cond MATADOR_DEV
 
 template < class T >
-class persistence_observer : public object_store_observer<T>
+class persistence_observer : public typed_object_store_observer<T>
 {
 public:
 

@@ -71,11 +71,11 @@ private:
  * Use this class as base class for all observer classes.
  */
 template < class T >
-class object_store_observer : public basic_object_store_observer
+class typed_object_store_observer : public basic_object_store_observer
 {
 public:
 
-  object_store_observer() : basic_object_store_observer(std::type_index(typeid(T))) {}
+  typed_object_store_observer() : basic_object_store_observer(std::type_index(typeid(T))) {}
 
   /**
    * @brief Called on prototype_node attach

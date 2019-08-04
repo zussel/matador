@@ -81,7 +81,7 @@ void BlogUnitTest::test_blog_single_post()
 {
   matador::persistence p(dns_);
 
-  p.attach<blog_detail::person>("person", matador::object_store::abstract);
+  p.attach_abstract<blog_detail::person>("person");
   p.attach<author, blog_detail::person>("author");
   p.attach<category>("category");
   p.attach<comment>("comment");
@@ -195,7 +195,7 @@ void BlogUnitTest::test_blog_multiple_post()
 {
   matador::persistence p(dns_);
 
-  p.attach<blog_detail::person>("person", matador::object_store::abstract);
+  p.attach_abstract<blog_detail::person>("person");
   p.attach<author, blog_detail::person>("author");
   p.attach<category>("category");
   p.attach<comment>("comment");

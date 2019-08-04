@@ -41,7 +41,7 @@ void postgresql_connection::open(const std::string &dns)
   std::smatch what;
 
   if (!std::regex_match(dns, what, DNS_RGX)) {
-    throw_error("mysql:open", "invalid dns: " + dns);
+    throw_error("mysql:connect", "invalid dns: " + dns);
   }
 
   const std::string user = what[1].str();

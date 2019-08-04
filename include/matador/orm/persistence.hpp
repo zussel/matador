@@ -73,8 +73,22 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T>
-  void attach(const char *type, object_store::abstract_type abstract = object_store::abstract_type::not_abstract,
-              const char *parent = nullptr);
+  void attach(const char *type, const char *parent = nullptr);
+
+  /**
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * consists of a unique type name. To know where the new
+   * prototype is inserted into the hierarchy the type name of the parent
+   * node is also given.
+   *
+   * @tparam T       The type of the prototype node
+   * @param type     The unique name of the type.
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @param parent   The name of the parent type.
+   * @return         Returns new inserted prototype iterator.
+   */
+  template<class T>
+  void attach_abstract(const char *type, const char *parent = nullptr);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -90,7 +104,23 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S>
-  void attach(const char *type, object_store::abstract_type abstract = object_store::abstract_type::not_abstract);
+  void attach(const char *type);
+
+  /**
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * consists of a unique type name. To know where the new
+   * prototype is inserted into the hierarchy the type name of the parent
+   * node is also given.
+   * parameter.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam S       The type of the parent prototype node
+   * @param type     The unique name of the type.
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @return         Returns new inserted prototype iterator.
+   */
+  template<class T, class S>
+  void attach_abstract(const char *type);
 
   /**
    * Removes an object prototype from the prototype tree. All children
@@ -165,28 +195,28 @@ public:
   t_table_map::iterator end();
 
   /**
-   * @brief Return a reference to the underlaying object_store
+   * @brief Return a reference to the underlying object_store
    *
    * @return A reference to the object_store.
    */
   object_store &store();
 
   /**
-   * @brief Return a const reference to the underlaying object_store
+   * @brief Return a const reference to the underlying object_store
    *
    * @return A const reference to the object_store.
    */
   const object_store &store() const;
 
   /**
-   * @brief Return a reference to the underlaying database connection
+   * @brief Return a reference to the underlying database connection
    *
    * @return A reference to the database connection.
    */
   connection &conn();
 
   /**
-   * @brief Return a const reference to the underlaying database connection
+   * @brief Return a const reference to the underlying database connection
    *
    * @return A const reference to the database connection.
    */
@@ -210,15 +240,27 @@ private:
 namespace matador {
 
 template<class T>
-void persistence::attach(const char *type, object_store::abstract_type abstract, const char *parent)
+void persistence::attach(const char *type, const char *parent)
 {
-  store_.attach<T>(type, abstract, parent, { new persistence_observer<T>(*this) });
+  store_.attach<T>(type, object_store::not_abstract, parent, { new persistence_observer<T>(*this) });
+}
+
+template<class T>
+void persistence::attach_abstract(const char *type, const char *parent)
+{
+  store_.attach<T>(type, object_store::abstract, parent, { new persistence_observer<T>(*this) });
 }
 
 template<class T, class S>
-void persistence::attach(const char *type, object_store::abstract_type abstract)
+void persistence::attach(const char *type)
 {
-  store_.attach<T,S>(type, abstract, { new persistence_observer<T>(*this) });
+  store_.attach<T>(type, object_store::not_abstract, typeid(S).name(), { new persistence_observer<T>(*this) });
+}
+
+template<class T, class S>
+void persistence::attach_abstract(const char *type)
+{
+  store_.attach<T>(type, object_store::abstract, typeid(S).name(), { new persistence_observer<T>(*this) });
 }
 
 }

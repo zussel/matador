@@ -158,6 +158,32 @@ public:
     return p->str();
   }
 
+  /**
+   * Enable console log of sql statements
+   */
+  void enable_log()
+  {
+    p->enable_log();
+  }
+
+  /**
+   * Disable console log of sql statements
+   */
+  void disable_log()
+  {
+    p->disable_log();
+  }
+
+  /**
+   * Returns true if logging is enabled.
+   *
+   * @return True if logging is enabled
+   */
+  bool is_log_enabled() const
+  {
+    return p->is_log_enabled();
+  }
+
 private:
   std::unique_ptr<matador::detail::statement_impl> p;
 };
@@ -273,6 +299,32 @@ public:
   std::string str() const
   {
     return p->str();
+  }
+
+  /**
+   * Enable console log of sql statements
+   */
+  void enable_log()
+  {
+    p->enable_log();
+  }
+
+  /**
+   * Disable console log of sql statements
+   */
+  void disable_log()
+  {
+    p->disable_log();
+  }
+
+  /**
+   * Returns true if logging is enabled.
+   *
+   * @return True if logging is enabled
+   */
+  bool is_log_enabled() const
+  {
+    return p->is_log_enabled();
   }
 
 private:

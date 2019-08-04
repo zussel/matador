@@ -52,7 +52,7 @@ void mssql_connection::open(const std::string &connection)
   std::smatch what;
 
   if (!std::regex_match(connection, what, DNS_RGX)) {
-    throw_error("mssql:open", "invalid dns: " + connection);
+    throw_error("mssql:connect", "invalid dns: " + connection);
   }
 
   const std::string user = what[1].str();
@@ -118,7 +118,7 @@ void mssql_connection::close()
 
   SQLRETURN ret = SQLDisconnect(connection_);
 
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on close");
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on disconnect");
 
   ret = SQLFreeHandle(SQL_HANDLE_DBC, connection_);
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on freeing connection");

@@ -10,13 +10,13 @@ namespace matador {
 persistence::persistence(const std::string &dns)
   : connection_(dns)
 {
-  connection_.open();
+  connection_.connect();
 }
 
 persistence::~persistence()
 {
   tables_.clear();
-  connection_.close();
+  connection_.disconnect();
 }
 
 void persistence::detach(const char *type)

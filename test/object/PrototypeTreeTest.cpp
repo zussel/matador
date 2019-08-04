@@ -69,7 +69,7 @@ void PrototypeTreeTestUnit::test_find()
   elem = ptree.find("unknown");
   UNIT_ASSERT_TRUE(elem == ptree.end());
 
-  ptree.attach<ObjectItem<Item>>("object_item", matador::object_store::not_abstract);
+  ptree.attach<ObjectItem<Item>>("object_item");
   elem = ptree.find("object_item");
 
   UNIT_ASSERT_TRUE(elem != ptree.end());

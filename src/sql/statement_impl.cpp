@@ -19,9 +19,24 @@ void statement_impl::str(const std::string &s)
 
 void statement_impl::log(const std::string &stmt) const
 {
-  std::cout << "SQL: " << stmt << "\n";
+  if (log_enabled_) {
+    std::cout << "SQL: " << stmt << "\n";
+  }
 }
 
+void statement_impl::enable_log()
+{
+  log_enabled_ = true;
+}
+
+void statement_impl::disable_log()
+{
+  log_enabled_ = false;
+}
+
+bool statement_impl::is_log_enabled() const {
+  return log_enabled_;
+}
 }
 
 }

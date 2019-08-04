@@ -35,7 +35,7 @@
 #include "matador/utils/identifier.hpp"
 
 #include "matador/object/identifier_proxy_map.hpp"
-#include "matador/object/object_store_observer.hpp"
+#include "matador/object/typed_object_store_observer.hpp"
 #include "matador/object/relation_field_endpoint.hpp"
 #include "matador/object/prototype_info.hpp"
 
@@ -370,7 +370,7 @@ public:
    * @param obs The observer to register
    */
   template < class T >
-  void register_observer(object_store_observer<T> *obs);
+  void register_observer(typed_object_store_observer<T> *obs);
 
   /**
    * Returns the prototype object of the node
@@ -524,7 +524,7 @@ T *prototype_node::create() const
 }
 
 template<class T>
-void prototype_node::register_observer(object_store_observer<T> *obs)
+void prototype_node::register_observer(typed_object_store_observer<T> *obs)
 {
   info_->register_observer(obs);
 }

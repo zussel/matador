@@ -20,7 +20,7 @@
 
 #include "matador/object/prototype_iterator.hpp"
 #include "matador/object/object_exception.hpp"
-#include "matador/object/object_store_observer.hpp"
+#include "matador/object/typed_object_store_observer.hpp"
 #include "matador/object/object_inserter.hpp"
 #include "matador/object/object_deleter.hpp"
 #include "matador/object/node_analyzer.hpp"
@@ -129,7 +129,7 @@ public:
 
 /// @cond MATADOR_DEV
   template < class T >
-  struct null_observer : public object_store_observer<T>
+  struct null_observer : public typed_object_store_observer<T>
   {
     template < class V >
     explicit null_observer(const null_observer<V> *) {}
@@ -153,96 +153,107 @@ public:
   ~object_store();
 
   /**
-   * Inserts a new object prototype into the object_store. The prototype
+   * Inserts a new concrete object prototype into the object_store. The prototype
    * consists of a unique type name. The type of the prototype is given via
    * template parameter T.
    * If parent name is given prototype node is inserted below the found parent
    * node.
-   * If the abstract flag is true prototype is treated as abstract. No concrete
-   * object can be inserted for this prototype.
    *
    * @tparam T Type of the prototype
    * @param type Name of the prototype
-   * @param abstract If true prototype is treated as abstract
-   * @param parent Name of the parent node
-   * @param observer A list of observer to be called an attach
-   * @return Iterator representing the inserted prototype node
-   */
-  template <class T, template < class U = T > class O >
-  prototype_iterator attach(const char *type, abstract_type abstract, const char *parent, std::initializer_list<O<T>*> observer);
-
-  /**
-   * Inserts a new object prototype into the object_store. The prototype
-   * consists of a unique type name. The type of the prototype is given via
-   * template parameter T.
-   * If parent name is given prototype node is inserted below the found parent
-   * node.
-   * If the abstract flag is true prototype is treated as abstract. No concrete
-   * object can be inserted for this prototype.
-   *
-   * @tparam T Type of the prototype
-   * @param type Name of the prototype
-   * @param abstract If true prototype is treated as abstract
    * @param parent Name of the parent node
    * @return Iterator representing the inserted prototype node
    */
   template <class T >
-  prototype_iterator attach(const char *type, abstract_type abstract = not_abstract, const char *parent = nullptr)
+  prototype_iterator attach(const char *type, const char *parent = nullptr)
   {
-    return attach<T, null_observer>(type, abstract, parent, {});
+    return attach<T>(type, abstract_type::not_abstract, parent);
   }
 
   /**
-   * Inserts a new concrete object prototype into the object_store at top level.
-   * The prototype consists of a unique type name. The type of the prototype is given via
+   * Inserts a new abstract object prototype into the object_store. The prototype
+   * consists of a unique type name. The type of the prototype is given via
    * template parameter T.
+   * If parent name is given prototype node is inserted below the found parent
+   * node.
    *
    * @tparam T Type of the prototype
    * @param type Name of the prototype
-   * @param observer A list of observer to be called an attach
+   * @param parent Name of the parent node
    * @return Iterator representing the inserted prototype node
    */
-  template <class T, template < class U = T > class O >
-  prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer)
+  template <class T >
+  prototype_iterator attach_abstract(const char *type, const char *parent = nullptr)
   {
-    return attach<T>(type, not_abstract, nullptr, observer);
+    return attach<T>(type, abstract_type::abstract, parent);
   }
 
   /**
-   * Inserts a new object prototype into the prototype tree. The prototype
-   * consists of a unique type name. To know where the new
-   * prototype is inserted into the hierarchy the type name of the parent
-   * node is also given.
-   * parameter.
-   *
-   * @tparam T       The type of the prototype node
-   * @tparam S       The type of the parent prototype node
-   * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
-   * @param observer A list of observer to be called an attach
-   * @return         Returns new inserted prototype iterator.
-   */
-  template<class T, class S, template < class U = T > class O >
-  prototype_iterator attach(const char *type, abstract_type abstract, std::initializer_list<O<T>*> observer);
-
-  /**
-   * Inserts a new object prototype into the prototype tree. The prototype
+   * Inserts a new concrete object prototype into the prototype tree. The prototype
    * consists of a unique type name.
    *
    * @tparam T       The type of the prototype node
    * @tparam S       The type of the parent prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S >
-  prototype_iterator attach(const char *type, abstract_type abstract = not_abstract)
+  prototype_iterator attach(const char *type)
   {
     return attach<T>(type, abstract, typeid(S).name());
   }
 
   /**
-   * Inserts a new concreate object prototype into the prototype tree. The prototype
+   * Inserts a new abstract object prototype into the prototype tree. The prototype
+   * consists of a unique type name.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam S       The type of the parent prototype node
+   * @param type     The unique name of the type.
+   * @return         Returns new inserted prototype iterator.
+   */
+  template<class T, class S >
+  prototype_iterator attach_abstract(const char *type)
+  {
+    return attach<T>(type, abstract, typeid(S).name());
+  }
+
+  /**
+   *
+   * If the abstract flag is true prototype is treated as abstract. No concrete
+   * object can be inserted for this prototype.
+   *
+   * @tparam T       The type of the prototype node
+   * @param type     The unique name of the type.
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @param parent   Name of the parent node
+   * @return         Returns new inserted prototype iterator.
+   */
+  template < class T >
+  prototype_iterator attach(const char *type, abstract_type abstract, const char *parent)
+  {
+    auto node = new prototype_node(this, type, new T, abstract == abstract_type::abstract);
+    return attach_internal<T, null_observer>(node, parent, {});
+  }
+
+  /**
+   * Inserts a new concrete object prototype into the prototype tree. The prototype
+   * consists of a unique type name.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam O       The type of the observer classes
+   * @param type     The unique name of the type.
+   * @param observer A list of observer to be called an attach
+   * @return         Returns new inserted prototype iterator.
+   */
+  template<class T, template < class U = T > class O >
+  prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer)
+  {
+    return attach<T, O>(type, abstract_type::not_abstract, nullptr, observer);
+  }
+
+  /**
+   * Inserts a new concrete object prototype into the prototype tree. The prototype
    * consists of a unique type name.
    *
    * @tparam T       The type of the prototype node
@@ -255,7 +266,42 @@ public:
   template<class T, class S, template < class U = T > class O >
   prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer)
   {
-    return attach<T>(type, not_abstract, typeid(S).name(), observer);
+    return attach<T>(type, abstract_type::not_abstract, typeid(S).name(), observer);
+  }
+
+  /**
+   * Inserts a new abstract object prototype into the prototype tree. The prototype
+   * consists of a unique type name.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam S       The type of the parent prototype node
+   * @tparam O       The type of the observer classes
+   * @param type     The unique name of the type.
+   * @param observer A list of observer to be called an attach
+   * @return         Returns new inserted prototype iterator.
+   */
+  template<class T, class S, template < class U = T > class O >
+  prototype_iterator attach_abstract(const char *type, std::initializer_list<O<T>*> observer)
+  {
+    return attach<T>(type, abstract_type::abstract, typeid(S).name(), observer);
+  }
+
+  /**
+   * Inserts a new abstract object prototype into the prototype tree. The prototype
+   * consists of a unique type name.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam O       The type of the observer classes
+   * @param type     The unique name of the type.
+   * @param abstract Indicates weather type is abstract or not
+   * @param observer A list of observer to be called an attach
+   * @return         Returns new inserted prototype iterator.
+   */
+  template < class T, template < class U = T > class O >
+  prototype_iterator attach(const char *type, abstract_type abstract, const char *parent, std::initializer_list<O<T>*> observer)
+  {
+    auto node = new prototype_node(this, type, new T, abstract == abstract_type::abstract);
+    return attach_internal<T>(node, parent, std::vector<O<T>*>(observer));
   }
 
   /**
@@ -1007,32 +1053,14 @@ void object_store::validate(prototype_node *node)
   nptr.release();
 }
 
-template <class T, template < class U = T > class O >
-prototype_iterator object_store::attach(const char *type, object_store::abstract_type abstract, const char *parent,
-                                        std::initializer_list<O<T>*> observer)
-{
-  auto *node = new prototype_node(this, type, new T, abstract == object_store::abstract_type::abstract);
-
-  return attach<T>(node, parent, observer);
-}
-
-template<class T, class S, template < class U = T > class O  >
-prototype_iterator object_store::attach(const char *type, object_store::abstract_type abstract,
-                                        std::initializer_list<O<T>*> observer)
-{
-  return attach<T>(type, abstract, typeid(S).name(), observer);
-}
-
 template < class T, template < class U = T > class O  >
-prototype_iterator object_store::attach(prototype_node *node, const char *parent,
-                                        std::initializer_list<O<T>*> observer)
+prototype_iterator object_store::attach(prototype_node *node, const char *parent, std::initializer_list<O<T>*> observer)
 {
   return attach_internal<T>(node, parent, std::vector<O<T>*>(observer));
 }
 
 template < class T, template < class U = T > class O  >
-prototype_iterator object_store::attach_internal(prototype_node *node, const char *parent,
-                                        std::vector<O<T>*> observer)
+prototype_iterator object_store::attach_internal(prototype_node *node, const char *parent, std::vector<O<T>*> observer)
 {
 
   for(auto obs : observer) {

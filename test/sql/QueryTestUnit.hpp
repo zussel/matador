@@ -54,6 +54,7 @@ public:
   void test_prepared_object_result_twice();
   void test_prepared_scalar_result_twice();
   void test_rows();
+  void test_log();
 
 protected:
   matador::connection create_connection();

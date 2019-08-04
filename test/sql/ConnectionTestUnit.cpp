@@ -28,44 +28,64 @@ ConnectionTestUnit::ConnectionTestUnit(const std::string &name, const std::strin
   : unit_test(name, msg)
   , dns_(std::move(dns))
 {
-  add_test("open_close", std::bind(&ConnectionTestUnit::test_open_close, this), "open sql test");
+  add_test("open_close", std::bind(&ConnectionTestUnit::test_open_close, this), "connect sql test");
   add_test("reopen", std::bind(&ConnectionTestUnit::test_reopen, this), "reopen sql test");
+  add_test("reconnect", std::bind(&ConnectionTestUnit::test_reopen, this), "reconnect sql test");
 }
 
 void ConnectionTestUnit::test_open_close()
 {
   matador::connection conn(connection_string());
 
-  UNIT_ASSERT_FALSE(conn.is_open());
+  UNIT_ASSERT_FALSE(conn.is_connected());
 
-  conn.open();
+  conn.connect();
 
-  UNIT_ASSERT_TRUE(conn.is_open());
+  UNIT_ASSERT_TRUE(conn.is_connected());
 
-  conn.close();
+  conn.disconnect();
 
-  UNIT_ASSERT_FALSE(conn.is_open());
+  UNIT_ASSERT_FALSE(conn.is_connected());
 }
 
 void ConnectionTestUnit::test_reopen()
 {
   matador::connection conn(connection_string());
 
-  UNIT_ASSERT_FALSE(conn.is_open());
+  UNIT_ASSERT_FALSE(conn.is_connected());
 
-  conn.open();
+  conn.connect();
 
-  UNIT_ASSERT_TRUE(conn.is_open());
+  UNIT_ASSERT_TRUE(conn.is_connected());
 
-  conn.close();
+  conn.disconnect();
 
-  conn.open();
+  conn.connect();
 
-  UNIT_ASSERT_TRUE(conn.is_open());
+  UNIT_ASSERT_TRUE(conn.is_connected());
 
-  conn.close();
+  conn.disconnect();
 
-  UNIT_ASSERT_FALSE(conn.is_open());
+  UNIT_ASSERT_FALSE(conn.is_connected());
+}
+
+void ConnectionTestUnit::test_reconnect()
+{
+  matador::connection conn(connection_string());
+
+  UNIT_ASSERT_FALSE(conn.is_connected());
+
+  conn.connect();
+
+  UNIT_ASSERT_TRUE(conn.is_connected());
+
+  conn.reconnect();
+
+  UNIT_ASSERT_TRUE(conn.is_connected());
+
+  conn.disconnect();
+
+  UNIT_ASSERT_FALSE(conn.is_connected());
 }
 
 std::string ConnectionTestUnit::connection_string()

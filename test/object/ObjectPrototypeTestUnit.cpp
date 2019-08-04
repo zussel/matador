@@ -85,7 +85,7 @@ ObjectPrototypeTestUnit::test_decrement()
 {
   object_store ostore;
   ostore.attach<Item>("item");
-  ostore.attach<ItemA, Item>("item_a", matador::object_store::not_abstract);
+  ostore.attach<ItemA, Item>("item_a");
 
   prototype_iterator i = ostore.end();
 

@@ -69,6 +69,10 @@ public:
 
   void log(const std::string &stmt) const;
 
+  void enable_log();
+  void disable_log();
+  bool is_log_enabled() const;
+
 protected:
   void str(const std::string &s);
 
@@ -77,6 +81,7 @@ protected:
 
 private:
   std::string sql_;
+  bool log_enabled_ = false;
 };
 
 /// @endcond

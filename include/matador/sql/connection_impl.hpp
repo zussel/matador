@@ -60,6 +60,26 @@ public:
   virtual std::vector<field> describe(const std::string &table) = 0;
 
   virtual basic_dialect* dialect() = 0;
+
+  /**
+   * Enable console log of sql statements
+   */
+  void enable_log();
+
+  /**
+   * Disable console log of sql statements
+   */
+  void disable_log();
+
+  /**
+   * Returns true if logging is enabled.
+   *
+   * @return True if logging is enabled
+   */
+  bool is_log_enabled() const;
+
+private:
+  bool log_enabled_ = false;
 };
 
 /// @endcond

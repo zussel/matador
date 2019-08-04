@@ -56,7 +56,7 @@ void sqlite_connection::open(const std::string &db)
 {
   int ret = sqlite3_open(db.c_str(), &sqlite_db_);
   if (ret != SQLITE_OK) {
-    throw sqlite_exception("couldn't open sql: " + db);
+    throw sqlite_exception("couldn't connect sql: " + db);
   }
 }
 

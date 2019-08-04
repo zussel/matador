@@ -17,6 +17,7 @@
 #include "matador/utils/sequencer.hpp"
 
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <unordered_map>
 
@@ -212,13 +213,13 @@ private:
 private:
   struct null_observer : public observer, public action_visitor
   {
-    void on_begin() {};
-    void on_commit(transaction::t_action_vector &actions);
-    void on_rollback() {};
+    void on_begin() override {};
+    void on_commit(transaction::t_action_vector &actions) override;
+    void on_rollback() override {};
 
-    virtual void visit(insert_action *) {}
-    virtual void visit(update_action *) {}
-    virtual void visit(delete_action *act);
+    void visit(insert_action *) override {}
+    void visit(update_action *) override {}
+    void visit(delete_action *act) override;
   };
 
   struct transaction_data
@@ -226,7 +227,7 @@ private:
     transaction_data(object_store &store, std::shared_ptr<observer> obsrvr)
       : store_(store)
       , inserter_(actions_)
-      , observer_(obsrvr)
+      , observer_(std::move(obsrvr))
       , id_(transaction::sequencer_.next())
     {}
 
@@ -260,7 +261,7 @@ void transaction::on_insert(object_proxy *proxy)
    * from object store
    *
    *****************/
-  t_id_action_index_map::iterator i = transaction_data_->id_action_index_map_.find(proxy->id());
+  auto i = transaction_data_->id_action_index_map_.find(proxy->id());
   if (i == transaction_data_->id_action_index_map_.end()) {
     // create insert action and insert serializable
     t_action_vector::size_type index = transaction_data_->inserter_.insert<T>(proxy);
@@ -306,7 +307,7 @@ void transaction::on_delete(object_proxy *proxy)
    * serializable store
    *
    *****************/
-  t_id_action_index_map::iterator i = transaction_data_->id_action_index_map_.find(proxy->id());
+  auto i = transaction_data_->id_action_index_map_.find(proxy->id());
   if (i == transaction_data_->id_action_index_map_.end()) {
     backup(std::make_shared<delete_action>(proxy, (T*)proxy->obj()), proxy);
   } else {

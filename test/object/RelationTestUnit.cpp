@@ -113,7 +113,7 @@ void RelationTestUnit::test_insert_belongs_to_one()
 {
   matador::object_store store;
 
-  store.attach<person>("person", matador::object_store::abstract);
+  store.attach_abstract<person>("person");
   store.attach<citizen, person>("citizen");
   store.attach<address>("address");
 
@@ -192,7 +192,7 @@ void RelationTestUnit::test_belongs_to_one()
 {
   matador::object_store store;
 
-  store.attach<person>("person", matador::object_store::abstract);
+  store.attach_abstract<person>("person");
   store.attach<citizen, person>("citizen");
   store.attach<address>("address");
 
@@ -246,7 +246,7 @@ void RelationTestUnit::test_remove_belongs_to_one()
 {
   matador::object_store store;
 
-  store.attach<person>("person", matador::object_store::abstract);
+  store.attach_abstract<person>("person");
   store.attach<citizen, person>("citizen");
   store.attach<address>("address");
 
@@ -1086,7 +1086,7 @@ void RelationTestUnit::test_blog_single_post()
 {
   matador::object_store store;
 
-  store.attach<blog_detail::person>("person", matador::object_store::abstract);
+  store.attach_abstract<blog_detail::person>("person");
   store.attach<author, blog_detail::person>("author");
   store.attach<category>("category");
   store.attach<comment>("comment");
@@ -1138,7 +1138,7 @@ void RelationTestUnit::test_blog_multi_posts()
 {
   matador::object_store store;
 
-  store.attach<blog_detail::person>("person", matador::object_store::abstract);
+  store.attach_abstract<blog_detail::person>("person");
   store.attach<author, blog_detail::person>("author");
   store.attach<category>("category");
   store.attach<comment>("comment");

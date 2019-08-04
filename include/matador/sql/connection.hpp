@@ -36,7 +36,7 @@ public:
   /**
    * @brief Creates an empty connection
    */
-  connection();
+  connection() = default;
 
   /**
    * @brief Creates a database connection from a connection string.
@@ -83,7 +83,7 @@ public:
    * Opens the sql. If sql couldn't be opened
    * an exception is thrown.
    */
-  void open(const std::string &dns);
+  void connect(const std::string &dns);
 
   /**
    * @brief Opens the sql.
@@ -91,7 +91,13 @@ public:
    * Opens the sql. If sql couldn't be opened
    * an exception is thrown.
    */
-  void open();
+  void connect();
+
+  /**
+   * Reconnect to the database. This means to close
+   * and open the connection.
+   */
+  void reconnect();
 
   /**
    * @brief Returns true if sql is open.
@@ -100,14 +106,14 @@ public:
    *
    * @return True on open sql.
    */
-  bool is_open() const;
+  bool is_connected() const;
 
   /**
    * @brief Closes the sql.
    *
    * Closes the sql.
    */
-  void close();
+  void disconnect();
 
   /**
    * @brief Executes the BEGIN TRANSACTION sql command
@@ -150,16 +156,17 @@ public:
    */
   void execute(const std::string &stmt)
   {
+    log(stmt);
     std::unique_ptr<detail::result_impl> res(impl_->execute(stmt));
   }
 
   /**
    * @brief returns true if a table with given name exists.
    *
-   * @param tablename Name of table to be checked
+   * @param table_name Name of table to be checked
    * @return True if table exists.
    */
-  bool exists(const std::string &tablename) const;
+  bool exists(const std::string &table_name) const;
 
   /**
    * @brief Retrieve a field description list of a table
@@ -184,6 +191,23 @@ public:
    * @return True if connection is valid
    */
   bool is_valid() const;
+
+  /**
+   * Enable console log of sql statements
+   */
+  void enable_log();
+
+  /**
+   * Disable console log of sql statements
+   */
+  void disable_log();
+
+  /**
+   * Returns true if logging is enabled.
+   *
+   * @return True if logging is enabled
+   */
+  bool is_log_enabled() const;
 
 private:
   template < class T >
@@ -219,16 +243,23 @@ private:
   template < class T >
   statement<T> prepare(const matador::sql &sql, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
-    return statement<T>(impl_->prepare(sql));
+    auto stmt = statement<T>(impl_->prepare(sql));
+    if (is_log_enabled()) {
+      stmt.enable_log();
+    }
+    return stmt;
   }
 
   template < class T >
   statement<T> prepare(const matador::sql &sql, const std::string &table_name, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
     prepare_prototype_row(prototype, table_name);
-    return statement<T>(impl_->prepare(sql), prototype);
+    auto stmt = statement<T>(impl_->prepare(sql), prototype);
+    if (is_log_enabled()) {
+      stmt.enable_log();
+    }
+    return stmt;
   }
-
 private:
   connection_impl* create_connection(const std::string &type) const;
   void init_from_foreign_connection(const connection &foreign_connection);

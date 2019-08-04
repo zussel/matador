@@ -49,7 +49,7 @@ void mysql_connection::open(const std::string &connection)
   std::smatch what;
 
   if (!std::regex_match(connection, what, DNS_RGX)) {
-    throw_error("mysql:open", "invalid dns: " + connection);
+    throw_error("mysql:connect", "invalid dns: " + connection);
   }
 
   const std::string user = what[1].str();
@@ -69,7 +69,7 @@ void mysql_connection::open(const std::string &connection)
   }
 
   if (!mysql_real_connect(&mysql_, host.c_str(), user.c_str(), !passwd.empty() ? passwd.c_str() : nullptr, db_.c_str(), port, nullptr, 0)) {
-    // close all handles
+    // disconnect all handles
     mysql_close(&mysql_);
     // throw exception
     throw_error(-1, &mysql_, "mysql");
@@ -88,7 +88,7 @@ void mysql_connection::close()
     mysql_close(&mysql_);
   }
 
-  // tell mysql to close the library
+  // tell mysql to disconnect the library
   mysql_library_end();
 
   is_open_ = false;

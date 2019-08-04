@@ -136,7 +136,7 @@ void OrmTestUnit::test_update()
 
   matador::query<person> q("person");
   matador::connection c(dns_);
-  c.open();
+  c.connect();
   auto res = q.select().where(matador::column("name") == "hans").execute(c);
 
   auto first = res.begin();
@@ -168,7 +168,7 @@ void OrmTestUnit::test_delete()
 
   matador::query<person> q("person");
   matador::connection c(dns_);
-  c.open();
+  c.connect();
   auto res = q.select().where(matador::column("name") == "hans").execute(c);
 
   auto first = res.begin();
@@ -214,10 +214,10 @@ void OrmTestUnit::test_save() {
   UNIT_EXPECT_EQUAL(hans->height(), 179U);
 
   matador::connection conn(dns_);
-  conn.open();
+  conn.connect();
 
-  matador::query<person> q(conn, "person");
-  auto res = q.select().where("name"_col == "hans").execute();
+  matador::query<person> q("person");
+  auto res = q.select().where("name"_col == "hans").execute(conn);
 
   auto first = res.begin();
 
@@ -231,7 +231,7 @@ void OrmTestUnit::test_save() {
 
   s.remove(hans);
 
-  res = q.select().where("name"_col == "hans").execute();
+  res = q.select().where("name"_col == "hans").execute(conn);
 
   first = res.begin();
 

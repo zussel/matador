@@ -184,7 +184,7 @@ void OrmRelationTestUnit::test_many_to_many()
 {
   matador::persistence p(dns_);
 
-  p.attach<person>("person", matador::object_store::abstract_type::abstract);
+  p.attach_abstract<person>("person");
   p.attach<student, person>("student");
   p.attach<course>("course");
 

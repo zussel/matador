@@ -231,7 +231,6 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
         auto endpoint = std::make_shared<detail::many_to_one_endpoint <Value, Owner>>(id, &node_);
         endpoint->foreign_endpoint = foreign_endpoint;
         node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
-//        node_.register_relation_endpoint(std::type_index(typeid(Owner)), endpoint);
 
         // link both endpoints
         foreign_endpoint->foreign_endpoint = endpoint;

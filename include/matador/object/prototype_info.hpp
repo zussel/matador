@@ -5,7 +5,7 @@
 #ifndef MATADOR_PROTOTYPE_INFO_HPP
 #define MATADOR_PROTOTYPE_INFO_HPP
 
-#include "matador/object/object_store_observer.hpp"
+#include "matador/object/typed_object_store_observer.hpp"
 #include "matador/object/relation_field_endpoint.hpp"
 
 #include <memory>
@@ -98,7 +98,7 @@ protected:
 
 protected:
   std::unique_ptr<T> prototype_;
-  typedef std::vector<std::unique_ptr<matador::object_store_observer<T>>> t_observer_vector;
+  typedef std::vector<std::unique_ptr<matador::typed_object_store_observer<T>>> t_observer_vector;
   t_observer_vector observers;
 };
 
@@ -111,7 +111,7 @@ void* basic_prototype_info<T>::prototype() const
 template < class T >
 void basic_prototype_info<T>::register_observer(basic_object_store_observer *obs)
 {
-  observers.emplace_back(std::unique_ptr<object_store_observer<T>>(static_cast<object_store_observer<T>*>(obs)));
+  observers.emplace_back(std::unique_ptr<typed_object_store_observer<T>>(static_cast<typed_object_store_observer<T>*>(obs)));
 }
 
 template < class T >

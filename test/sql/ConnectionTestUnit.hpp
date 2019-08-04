@@ -32,6 +32,7 @@ public:
 
   void test_open_close();
   void test_reopen();
+  void test_reconnect();
 
 protected:
   std::string connection_string();

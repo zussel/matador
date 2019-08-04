@@ -21,12 +21,17 @@ concrete object types.
 Features:
 
  * A unique fluent query interface
- * Support for PostgreSQL, SQLite, MySQL and MS SQL Server
  * One to one/many relations
  * One storage container
  * Filter with simple expressions
  * Transactions
  * STL like interface and iterators
+
+Supported databases:
+ * PostgreSQL
+ * SQLite
+ * MySQL
+ * MS SQL Server
 
 Documentation can be found [here](http://zussel.github.io/matador).
 

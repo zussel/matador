@@ -67,7 +67,7 @@ void MSSQLDialectTestUnit::test_query_select_sub_select_result()
 {
   matador::connection conn(::connection::mssql);
 
-  conn.open();
+  conn.connect();
 
   query<person> q("person");
 
@@ -100,5 +100,5 @@ void MSSQLDialectTestUnit::test_query_select_sub_select_result()
   //}
   q.drop().execute(conn);
 
-  conn.close();
+  conn.disconnect();
 }

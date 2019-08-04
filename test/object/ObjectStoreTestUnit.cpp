@@ -1208,7 +1208,7 @@ struct basic_logger
 std::vector<std::string> basic_logger::nodes = std::vector<std::string>();
 
 template < class T >
-struct logger : public object_store_observer<T>, public basic_logger
+struct logger : public typed_object_store_observer<T>, public basic_logger
 {
   logger() = default;
 

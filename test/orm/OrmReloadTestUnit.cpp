@@ -526,7 +526,7 @@ void OrmReloadTestUnit::test_load_belongs_to_many()
 {
   matador::persistence p(dns_);
 
-  p.attach<person>("person", matador::object_store::abstract);
+  p.attach_abstract<person>("person");
   p.attach<department>("department");
   p.attach<employee, person>("employee");
 

@@ -5,8 +5,6 @@
 
 namespace matador {
 
-connection::connection() {}
-
 connection::connection(const std::string &dns)
 {
   parse_dns(dns);
@@ -53,9 +51,9 @@ connection::~connection()
   connection_factory::instance().destroy(type_, impl_.release());
 }
 
-void connection::open(const std::string &dns)
+void connection::connect(const std::string &dns)
 {
-  if (is_open()) {
+  if (is_connected()) {
     return;
   } else {
     parse_dns(dns);
@@ -63,25 +61,33 @@ void connection::open(const std::string &dns)
   }
 }
 
-void connection::open()
+void connection::connect()
 {
-  if (is_open()) {
+  if (is_connected()) {
     return;
   } else {
-    if (impl_) {
+    if (!impl_) {
       connection_factory::instance().destroy(type_, impl_.release());
+      impl_.reset(create_connection(type_));
     }
-    impl_.reset(create_connection(type_));
     impl_->open(dns_);
   }
 }
 
-bool connection::is_open() const
+void connection::reconnect()
+{
+  if (is_connected()) {
+    impl_->close();
+  }
+  impl_->open(dns_);
+}
+
+bool connection::is_connected() const
 {
   return impl_->is_open();
 }
 
-void connection::close()
+void connection::disconnect()
 {
   impl_->close();
 }
@@ -203,8 +209,8 @@ void connection::init_from_foreign_connection(const connection &foreign_connecti
   if (is_valid()) {
     impl_.reset(create_connection(type_));
 
-    if (foreign_connection.is_open()) {
-      open();
+    if (foreign_connection.is_connected()) {
+      connect();
     }
   }
 }
@@ -218,7 +224,24 @@ void connection::parse_dns(const std::string &dns)
 
 void connection::log(const std::string &msg) const
 {
-  std::cout << "SQL: " << msg << "\n";
+  if (impl_->is_log_enabled()) {
+    std::cout << "SQL: " << msg << "\n";
+  }
+}
+
+void connection::enable_log()
+{
+  impl_->enable_log();
+}
+
+void connection::disable_log()
+{
+  impl_->disable_log();
+}
+
+bool connection::is_log_enabled() const
+{
+  return impl_->is_log_enabled();
 }
 
 }
