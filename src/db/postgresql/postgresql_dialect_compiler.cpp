@@ -12,21 +12,18 @@ void postgresql_dialect_compiler::visit(const matador::detail::select &)
 {
   is_update = false;
   is_delete = false;
-  has_condition_column_name_ = false;
 }
 
 void postgresql_dialect_compiler::visit(const matador::detail::update &)
 {
   is_update = true;
   is_delete = false;
-  has_condition_column_name_ = false;
 }
 
 void postgresql_dialect_compiler::visit(const matador::detail::remove &)
 {
   is_update = false;
   is_delete = true;
-  has_condition_column_name_ = false;
 }
 
 void postgresql_dialect_compiler::visit(const matador::detail::tablename &tab)
@@ -47,25 +44,13 @@ void postgresql_dialect_compiler::visit(const matador::detail::where &whr)
   }
 }
 
-void postgresql_dialect_compiler::visit(const matador::detail::basic_column_condition &cond)
-{
-  if (!has_condition_column_name_) {
-    condition_column_name_ = cond.field_.name;
-    has_condition_column_name_ = true;
-  }
-}
-
 void postgresql_dialect_compiler::visit(const matador::detail::top &limit)
 {
   if (!is_update && !is_delete) {
     return;
   }
 
-  if (!has_condition_column_name_) {
-    return;
-  }
-
-  column rowid(condition_column_name_);
+  column rowid("ctid");
   auto where_token = std::static_pointer_cast<detail::where>(*where_);
   auto sub_select = matador::select({rowid}).from(tablename_).where(where_token->cond).limit(limit.limit_);
   auto cond = make_condition(equals(rowid, sub_select));
@@ -77,7 +62,8 @@ void postgresql_dialect_compiler::visit(const matador::detail::top &limit)
 
 void postgresql_dialect_compiler::on_compile_start()
 {
-  basic_dialect_compiler::on_compile_start();
+  where_ = top().tokens_.end();
+  tablename_.clear();
 }
 
 }

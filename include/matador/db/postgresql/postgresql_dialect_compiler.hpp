@@ -21,7 +21,6 @@ public:
   void visit(const matador::detail::from &from1) override;
 
   void visit(const matador::detail::where &where1) override;
-  void visit(const matador::detail::basic_column_condition &) override;
   void visit(const matador::detail::top &limit) override;
 
 protected:
@@ -30,10 +29,8 @@ protected:
 private:
   bool is_update = false;
   bool is_delete = false;
-  bool has_condition_column_name_ = false;
 
   std::string tablename_;
-  std::string condition_column_name_;
   token_list_t::iterator where_;
 };
 

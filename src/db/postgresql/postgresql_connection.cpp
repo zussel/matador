@@ -60,8 +60,9 @@ void postgresql_connection::open(const std::string &dns)
 
   conn_ = PQconnectdb(connection.c_str());
   if (PQstatus(conn_) == CONNECTION_BAD) {
+    std::string error = PQerrorMessage(conn_);
     PQfinish(conn_);
-    throw postgresql_exception(conn_, "mysql_query", dns);
+    throw postgresql_exception("open", error + "(" + dns + ")");
   }
 
   is_open_ = true;
