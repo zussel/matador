@@ -34,6 +34,16 @@ void OrmTestUnit::test_persistence()
 {
   matador::persistence p(dns_);
 
+  UNIT_EXPECT_FALSE(p.is_log_enabled());
+
+  p.enable_log();
+
+  UNIT_EXPECT_TRUE(p.is_log_enabled());
+
+  p.disable_log();
+
+  UNIT_EXPECT_FALSE(p.is_log_enabled());
+
   p.attach<person>("person");
 
   for (auto const &tbl : p) {

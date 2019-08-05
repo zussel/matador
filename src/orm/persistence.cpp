@@ -86,4 +86,19 @@ const connection &persistence::conn() const {
   return connection_;
 }
 
+void persistence::enable_log()
+{
+  connection_.enable_log();
+}
+
+void persistence::disable_log()
+{
+  connection_.disable_log();
+}
+
+bool persistence::is_log_enabled() const
+{
+  return connection_.is_log_enabled();
+}
+
 }

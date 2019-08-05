@@ -222,6 +222,23 @@ public:
    */
   const connection &conn() const;
 
+  /**
+   * Enable console log of sql statements
+   */
+  void enable_log();
+
+  /**
+   * Disable console log of sql statements
+   */
+  void disable_log();
+
+  /**
+   * Returns true if logging is enabled.
+   *
+   * @return True if logging is enabled
+   */
+  bool is_log_enabled() const;
+
 private:
   template < class T >
   friend class persistence_observer;
