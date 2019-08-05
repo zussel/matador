@@ -17,10 +17,6 @@ SET(HEADER
   ../../../include/matador/db/postgresql/postgresql_prepared_result.hpp
   ../../../include/matador/db/postgresql/postgresql_dialect_compiler.hpp)
 
-SET(HEADER_INSTALL
-  ../../../include/matador/db/postgresql/postgresql_constants.hpp
-)
-
 ADD_LIBRARY(matador-postgresql SHARED ${SOURCES} ${HEADER})
 
 TARGET_LINK_LIBRARIES(matador-postgresql matador-utils matador-sql ${POSTGRESQL_LIBRARIES})
@@ -48,7 +44,7 @@ INSTALL(
 )
 
 INSTALL(
-  FILES ${HEADER_INSTALL}
+  FILES ${HEADER}
   DESTINATION include/matador/db/postgresql
   COMPONENT headers
 )

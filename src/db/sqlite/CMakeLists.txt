@@ -9,14 +9,14 @@ SET(SOURCES
 )
 
 SET(HEADER
-  ${CMAKE_SOURCE_DIR}/include/matador/db/sqlite/sqlite_connection.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/sqlite/sqlite_exception.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/sqlite/sqlite_statement.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/sqlite/sqlite_result.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/sqlite/sqlite_prepared_result.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/sqlite/sqlite_types.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/sqlite/sqlite_dialect.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/sqlite/sqlite_dialect_compiler.hpp
+  ../../../include/matador/db/sqlite/sqlite_connection.hpp
+  ../../../include/matador/db/sqlite/sqlite_exception.hpp
+  ../../../include/matador/db/sqlite/sqlite_statement.hpp
+  ../../../include/matador/db/sqlite/sqlite_result.hpp
+  ../../../include/matador/db/sqlite/sqlite_prepared_result.hpp
+  ../../../include/matador/db/sqlite/sqlite_types.hpp
+  ../../../include/matador/db/sqlite/sqlite_dialect.hpp
+  ../../../include/matador/db/sqlite/sqlite_dialect_compiler.hpp
 )
 
 ADD_LIBRARY(matador-sqlite SHARED ${SOURCES} ${HEADER})
@@ -43,4 +43,10 @@ INSTALL(
   TARGETS matador-sqlite
   DESTINATION lib
   COMPONENT libraries
+)
+
+INSTALL(
+    FILES ${HEADER}
+    DESTINATION include/matador/db/sqlite
+    COMPONENT headers
 )

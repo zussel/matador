@@ -9,14 +9,14 @@ SET(SOURCES
 )
 
 SET(HEADER
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mssql/mssql_connection.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mssql/mssql_exception.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mssql/mssql_statement.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mssql/mssql_result.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mssql/mssql_types.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mssql/mssql_dialect.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mssql/mssql_dialect_compiler.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mssql/mssql_dialect_linker.hpp
+  ../../../include/matador/db/mssql/mssql_connection.hpp
+  ../../../include/matador/db/mssql/mssql_exception.hpp
+  ../../../include/matador/db/mssql/mssql_statement.hpp
+  ../../../include/matador/db/mssql/mssql_result.hpp
+  ../../../include/matador/db/mssql/mssql_types.hpp
+  ../../../include/matador/db/mssql/mssql_dialect.hpp
+  ../../../include/matador/db/mssql/mssql_dialect_compiler.hpp
+  ../../../include/matador/db/mssql/mssql_dialect_linker.hpp
 )
 
 ADD_LIBRARY(matador-mssql SHARED ${SOURCES} ${HEADER})
@@ -43,4 +43,10 @@ INSTALL(
   TARGETS matador-mssql
   DESTINATION lib
   COMPONENT libraries
+)
+
+INSTALL(
+    FILES ${HEADER}
+    DESTINATION include/matador/db/mssql
+    COMPONENT headers
 )

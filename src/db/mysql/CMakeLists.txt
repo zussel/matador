@@ -8,19 +8,16 @@ SET(SOURCES
 )
 
 SET(HEADER
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_connection.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_exception.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_statement.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_result.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_prepared_result.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_result_info.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_types.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_dialect.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_constants.hpp
-)
-
-SET(HEADER_INSTALL
-  ${CMAKE_SOURCE_DIR}/include/matador/db/mysql/mysql_constants.hpp
+  ../../../include/matador/db/mysql/mysql_constants.hpp
+  ../../../include/matador/db/mysql/mysql_connection.hpp
+  ../../../include/matador/db/mysql/mysql_exception.hpp
+  ../../../include/matador/db/mysql/mysql_statement.hpp
+  ../../../include/matador/db/mysql/mysql_result.hpp
+  ../../../include/matador/db/mysql/mysql_prepared_result.hpp
+  ../../../include/matador/db/mysql/mysql_result_info.hpp
+  ../../../include/matador/db/mysql/mysql_types.hpp
+  ../../../include/matador/db/mysql/mysql_dialect.hpp
+  ../../../include/matador/db/mysql/mysql_constants.hpp
 )
 
 ADD_LIBRARY(matador-mysql SHARED ${SOURCES} ${HEADER})
@@ -50,7 +47,7 @@ INSTALL(
 )
 
 INSTALL(
-  FILES ${HEADER_INSTALL}
+  FILES ${HEADER}
   DESTINATION include/matador/db/mysql
   COMPONENT headers
 )
