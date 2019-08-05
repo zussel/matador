@@ -20,12 +20,60 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, std::string dns)
   : unit_test(prefix + "_orm", prefix + " orm test unit")
   , dns_(std::move(dns))
 {
+  add_test("persistence", std::bind(&OrmTestUnit::test_persistence, this), "test persistence class");
+  add_test("table", std::bind(&OrmTestUnit::test_table, this), "test table class");
   add_test("create", std::bind(&OrmTestUnit::test_create, this), "test create table");
   add_test("insert", std::bind(&OrmTestUnit::test_insert, this), "test insert into table");
   add_test("select", std::bind(&OrmTestUnit::test_select, this), "test select a table");
   add_test("update", std::bind(&OrmTestUnit::test_update, this), "test update on table");
   add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test delete from table");
   add_test("save", std::bind(&OrmTestUnit::test_save, this), "test save");
+}
+
+void OrmTestUnit::test_persistence()
+{
+  matador::persistence p(dns_);
+
+  p.attach<person>("person");
+
+  for (auto const &tbl : p) {
+    UNIT_EXPECT_EQUAL("person", tbl.second->name());
+  }
+
+  UNIT_EXPECT_EQUAL(1UL, p.store().size());
+
+  UNIT_ASSERT_TRUE(p.conn().is_connected());
+
+  p.detach("person");
+
+  UNIT_EXPECT_TRUE(p.end() == p.find_table("person"));
+}
+
+void OrmTestUnit::test_table()
+{
+  matador::persistence p(dns_);
+
+  p.attach<person>("person");
+
+  auto tbl = p.find_table("person");
+
+  UNIT_EXPECT_FALSE(p.end() == p.find_table("person"));
+
+  UNIT_EXPECT_EQUAL("person", tbl->second->node().type());
+
+  UNIT_EXPECT_EQUAL(&p, &tbl->second->persistence_unit());
+
+  p.create();
+
+  matador::session s(p);
+
+  auto hans = s.insert(new person("hans", matador::date(18, 5, 1980), 180));
+
+  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+
+  UNIT_ASSERT_TRUE(is_loaded(hans));
+
+  p.drop();
 }
 
 void OrmTestUnit::test_create()

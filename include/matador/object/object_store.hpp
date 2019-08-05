@@ -533,26 +533,6 @@ public:
   bool empty() const;
 
   /**
-   * Return the depth of the given prototype_node
-   * in the prototype tree.
-   *
-   * @param node The prototype_node
-   * @return The depth of the node
-   */
-//  size_t depth(const prototype_node *node) const;
-
-  /// @cond MATADOR_DEV
-//  void dump(std::ostream &out) const;
-  /// @endcond
-
-  /**
-   * Dump all serializable to a given stream
-   *
-   * @param out The stream to the objects dump on.
-   */
-//  void dump_objects(std::ostream &out) const;
-
-  /**
    * Creates an serializable of the given type name.
    * 
    * @return The created serializable on success or NULL if the type couldn't be found.

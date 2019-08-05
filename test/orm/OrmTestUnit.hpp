@@ -12,6 +12,8 @@ class OrmTestUnit : public matador::unit_test
 public:
   OrmTestUnit(const std::string &prefix, std::string dns);
 
+  void test_persistence();
+  void test_table();
   void test_create();
   void test_insert();
   void test_select();
