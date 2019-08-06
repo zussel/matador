@@ -59,11 +59,11 @@ matrix:
     addons: { postgresql: "10" , apt: {packages: [g++-6,postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=32
     addons: &gcc7_32 { postgresql: "10" , apt: {packages: [g++-7-multilib,rpm,doxygen,"linux-libc-dev:i386",postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test]}}
-  - env: GCC_VERSION=7 BUILD_TYPE=Release ARCH=64
+  - env: GCC_VERSION=7 BUILD_TYPE=Release ARCH=32
     addons: *gcc7_32
   - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=64
     addons: &gcc7_64 { postgresql: "10" , apt: {packages: [g++-7,rpm,doxygen,postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test]}}
-  - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=64
+  - env: GCC_VERSION=7 BUILD_TYPE=Release ARCH=64
     addons: *gcc7_64
 branches:
   only:
