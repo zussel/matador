@@ -734,7 +734,7 @@ public:
   }
 
   /**
-   * Removes an object from the object store. After successfull
+   * Removes an object from the object store. After successful
    * removal the object is set to zero and isn't valid any more.
    * 
    * Before removal is done a reference and pointer counter check
@@ -749,62 +749,6 @@ public:
   {
     remove<T>(o.proxy_, true, true);
   }
-
-  /**
-   * @brief Creates and inserts an serializable proxy serializable.
-   * 
-   * An object_proxy object is created and inserted
-   * into the internal proxy hash map. The proxy won't
-   * be linked into the main serializable proxy list until
-   * it gets a valid object.
-   *
-   * If the object_proxy couldn't be created the method
-   * returns nullptr
-   *
-   * @param o The object set into the new object proxy.
-   * @return An serializable proxy serializable or null.
-   */
-//  template<class T>
-//  object_proxy *create_proxy(T *o)
-//  {
-//    std::unique_ptr<object_proxy> proxy(new object_proxy(o, seq_.next(), this));
-//    return object_map_.insert(std::make_pair(seq_.current(), proxy.release())).first->second;
-//  }
-
-  /**
-   * @brief Creates and inserts an serializable proxy serializable.
-   *
-   * An object_proxy object is created and inserted
-   * into the internal proxy hash map. The proxy won't
-   * be linked into the main serializable proxy list until
-   * it gets a valid object.
-   *
-   * A unique id must be passed to the method.
-   *
-   * If the object_proxy couldn't be created the method
-   * returns nullptr
-   *
-   * @param o    The object set into the new object proxy.
-   * @param oid  Unique id of the object_proxy.
-   * @return     An object_proxy object or null.
-   */
-//  template<class T>
-//  object_proxy *create_proxy(T *o, unsigned long oid)
-//  {
-//    std::unique_ptr<object_proxy> proxy(new object_proxy(o, oid, this));
-//    return object_map_.insert(std::make_pair(oid, proxy.release())).first->second;
-//  }
-
-  /**
-   * @brief Delete proxy from map
-   *
-   * Deletes the proxy with the given id
-   * from map.
-   *
-   * @param id Id of proxy to delete
-   * @return Returns true if deletion was successfully
-   */
-//  bool delete_proxy(unsigned long id);
 
   /**
    * @brief Finds serializable proxy with id
@@ -824,34 +768,6 @@ public:
    * Object id must be set
    */
   object_proxy* insert_proxy(object_proxy *proxy);
-
-  /**
-   * @brief Registers a new proxy
-   *
-   * Proxy will be registered in object store. It
-   * gets an id and is insert into object map.
-   * If proxy has already an id an exception is thrown.
-   * If proxy doesn't have a prototype_node an exception is thrown.
-   *
-   * @param oproxy The object_proxy to register
-   * @return The registered object_proxy
-   * @throws object_exception
-   */
-//  object_proxy *register_proxy(object_proxy *oproxy);
-
-  /**
-   * @brief Exchange the sequencer strategy.
-   * 
-   * Exchange the sequencer strategy of this object_store.
-   * The current sequencer is replaced by the new one and
-   * the current sequence is synced with the new sequencer
-   * sequence.
-   * The old strategy is returned.
-   * 
-   * @param seq The new sequencer strategy serializable.
-   * @return The old sequencer startegy implementation.
-   */
-//  sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
   /**
    * Return the current transaction in stack
@@ -877,6 +793,9 @@ public:
   template < class T >
   void mark_modified(object_proxy *proxy)
   {
+    // notify observers
+    proxy->node()->on_update_proxy(proxy);
+
     if (!transactions_.empty()) {
       transactions_.top().on_update<T>(proxy);
     }

@@ -1225,9 +1225,21 @@ struct logger : public typed_object_store_observer<T>, public basic_logger
     nodes.emplace_back(node.type());
   }
 
-  void on_insert(object_proxy &) override {}
-  void on_update(object_proxy &) override {}
-  void on_delete(object_proxy &) override {}
+  void on_insert(object_proxy &proxy) override
+  {
+    nodes.emplace_back(std::string("insert ") + proxy.node()->type());
+  }
+
+  void on_update(object_proxy &proxy) override
+  {
+    nodes.emplace_back(std::string("update ") + proxy.node()->type());
+  }
+
+  void on_delete(object_proxy &proxy) override
+  {
+    nodes.emplace_back(std::string("delete ") + proxy.node()->type());
+  }
+
 };
 
 void ObjectStoreTestUnit::test_observer()
@@ -1268,6 +1280,23 @@ void ObjectStoreTestUnit::test_observer()
     "books",
     "book_list",
     "book"
+  };
+
+  UNIT_ASSERT_TRUE(basic_logger::nodes == result);
+
+  // test insert, update and delete
+  basic_logger::nodes.clear();
+
+  auto dep = ostore_.insert(new department("dep1"));
+
+  ostore_.mark_modified(dep);
+
+  ostore_.remove(dep);
+
+  result = {
+    "insert department",
+    "update department",
+    "delete department"
   };
 
   UNIT_ASSERT_TRUE(basic_logger::nodes == result);

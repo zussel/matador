@@ -435,7 +435,7 @@ private:
    * @param old_proxy The old first marker proxy.
    * @param new_proxy The new first marker proxy.
    */
-  void adjust_right_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
+  static void adjust_right_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
   /**
    * @internal
@@ -446,17 +446,13 @@ private:
    * @param old_proxy The old last marker proxy.
    * @param new_proxy The new last marker proxy.
    */
-  void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
+  static void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
-  void on_attach()
-  {
-    info_->notify(detail::notification_type::ATTACH);
-  }
-
-  void on_detach()
-  {
-    info_->notify(detail::notification_type::DETACH);
-  }
+  void on_attach() const;
+  void on_detach() const;
+  void on_insert_proxy(object_proxy *proxy) const;
+  void on_update_proxy(object_proxy *proxy) const;
+  void on_delete_proxy(object_proxy *proxy) const;
 
 private:
   friend class prototype_tree;

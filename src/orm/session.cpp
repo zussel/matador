@@ -9,7 +9,7 @@ namespace matador {
 
 session::session(persistence &p)
   : persistence_(p)
-  , observer_(new session_observer(*this))
+  , observer_(new session_transaction_observer(*this))
 {
 
 }
@@ -77,15 +77,15 @@ void session::load(const persistence::table_ptr &table)
   table->load(persistence_.store());
 }
 
-session::session_observer::session_observer(session &s)
+session::session_transaction_observer::session_transaction_observer(session &s)
   : session_(s)
 {}
 
-void session::session_observer::on_begin()
+void session::session_transaction_observer::on_begin()
 {
 }
 
-void session::session_observer::on_commit(transaction::t_action_vector &actions)
+void session::session_transaction_observer::on_commit(transaction::t_action_vector &actions)
 {
   session_.persistence_.conn().begin();
 
@@ -95,12 +95,12 @@ void session::session_observer::on_commit(transaction::t_action_vector &actions)
   session_.persistence_.conn().commit();
 }
 
-void session::session_observer::on_rollback()
+void session::session_transaction_observer::on_rollback()
 {
   session_.persistence_.conn().rollback();
 }
 
-void session::session_observer::visit(insert_action *act)
+void session::session_transaction_observer::visit(insert_action *act)
 {
   auto i = session_.persistence_.find_table(act->type());
   if (i == session_.persistence_.end()) {
@@ -116,7 +116,7 @@ void session::session_observer::visit(insert_action *act)
 
 }
 
-void session::session_observer::visit(update_action *act)
+void session::session_transaction_observer::visit(update_action *act)
 {
   auto i = session_.persistence_.find_table(act->proxy()->node()->type());
   if (i == session_.persistence_.end()) {
@@ -127,7 +127,7 @@ void session::session_observer::visit(update_action *act)
   i->second->update(act->proxy());
 }
 
-void session::session_observer::visit(delete_action *act)
+void session::session_transaction_observer::visit(delete_action *act)
 {
   auto i = session_.persistence_.find_table(act->proxy()->node()->type());
   if (i == session_.persistence_.end()) {

@@ -65,7 +65,11 @@ using many_list_ints = many_builtins<int, std::list>;
 
 void OrmRelationTestUnit::test_has_builtin_ints()
 {
+  std::cout << "\n";
+
   matador::persistence p(dns_);
+
+  p.enable_log();
 
   p.attach<many_list_ints>("many_ints");
 

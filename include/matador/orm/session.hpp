@@ -423,10 +423,10 @@ private:
   void load(const persistence::table_ptr &table);
 
 private:
-  class session_observer : public transaction::observer, public action_visitor
+  class session_transaction_observer : public transaction::observer, public action_visitor
   {
   public:
-    explicit session_observer(session &s);
+    explicit session_transaction_observer(session &s);
     void on_begin() override;
     void on_commit(transaction::t_action_vector &actions) override;
     void on_rollback() override;

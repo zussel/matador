@@ -69,7 +69,7 @@ public:
   virtual void* prototype() const = 0;
   virtual void* create() const = 0;
   virtual void register_observer(basic_object_store_observer *obs) = 0;
-  virtual void notify(notification_type type) = 0;
+  virtual void notify(notification_type type, object_proxy *proxy = nullptr) const = 0;
 
 protected:
   prototype_node &node;        /**< prototype node of the represented object type */
@@ -89,7 +89,7 @@ protected:
 
   void* prototype() const override;
   void register_observer(basic_object_store_observer *obs) override;
-  void notify(notification_type type) override;
+  void notify(notification_type type, object_proxy *proxy) const override;
 
   T* get() const
   {
@@ -115,7 +115,7 @@ void basic_prototype_info<T>::register_observer(basic_object_store_observer *obs
 }
 
 template < class T >
-void basic_prototype_info<T>::notify(notification_type type)
+void basic_prototype_info<T>::notify(notification_type type, object_proxy *proxy) const
 {
   for(auto &observer : observers) {
     switch (type) {
@@ -124,6 +124,15 @@ void basic_prototype_info<T>::notify(notification_type type)
         break;
       case notification_type::DETACH:
         observer->on_detach(node, *prototype_);
+        break;
+      case notification_type::INSERT:
+        observer->on_insert(*proxy);
+        break;
+      case notification_type::UPDATE:
+        observer->on_update(*proxy);
+        break;
+      case notification_type::REMOVE:
+        observer->on_delete(*proxy);
         break;
       default:
         break;
