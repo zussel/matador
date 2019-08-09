@@ -243,6 +243,9 @@ private:
   template < class T >
   friend class persistence_observer;
 
+  void register_proxy_insert(object_proxy &proxy);
+  void register_proxy_update(object_proxy &proxy);
+  void register_proxy_delete(object_proxy &proxy);
 private:
   connection connection_;
   object_store store_;
@@ -278,6 +281,21 @@ template<class T, class S>
 void persistence::attach_abstract(const char *type)
 {
   store_.attach<T>(type, object_store::abstract, typeid(S).name(), { new persistence_observer<T>(*this) });
+}
+
+void persistence::register_proxy_insert(object_proxy &proxy)
+{
+
+}
+
+void persistence::register_proxy_update(object_proxy &proxy)
+{
+
+}
+
+void persistence::register_proxy_delete(object_proxy &proxy)
+{
+
 }
 
 }
