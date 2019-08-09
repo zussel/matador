@@ -283,21 +283,6 @@ void persistence::attach_abstract(const char *type)
   store_.attach<T>(type, object_store::abstract, typeid(S).name(), { new persistence_observer<T>(*this) });
 }
 
-void persistence::register_proxy_insert(object_proxy &proxy)
-{
-
-}
-
-void persistence::register_proxy_update(object_proxy &proxy)
-{
-
-}
-
-void persistence::register_proxy_delete(object_proxy &proxy)
-{
-
-}
-
 }
 
 #endif //OOS_PERSISTENCE_HPP

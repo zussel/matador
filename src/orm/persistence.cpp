@@ -101,4 +101,19 @@ bool persistence::is_log_enabled() const
   return connection_.is_log_enabled();
 }
 
+void persistence::register_proxy_insert(object_proxy &proxy)
+{
+
+}
+
+void persistence::register_proxy_update(object_proxy &proxy)
+{
+
+}
+
+void persistence::register_proxy_delete(object_proxy &proxy)
+{
+
+}
+
 }
