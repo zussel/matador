@@ -251,6 +251,11 @@ private:
   object_store store_;
 
   t_table_map tables_;
+
+  enum proxy_change_action {
+    INSERT, UPDATE, REMOVE
+  };
+  std::unordered_map<object_proxy*, proxy_change_action> proxy_changes_;
 };
 
 }
