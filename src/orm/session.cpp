@@ -14,6 +14,14 @@ session::session(persistence &p)
 
 }
 
+void session::flush()
+{
+  for (auto const &i : persistence_.proxy_changes_) {
+    std::cout << persistence_.proxy_change_action_to_string[i.second] << " proxy " << i.first->node()->type() << "\n";
+  }
+  persistence_.proxy_changes_.clear();
+}
+
 void session::load()
 {
   prototype_iterator first = persistence_.store().begin();

@@ -241,7 +241,11 @@ void OrmRelationTestUnit::test_many_to_many()
 
 void OrmRelationTestUnit::test_save()
 {
+  std::cout << "\n";
+
   matador::persistence p(dns_);
+
+  p.enable_log();
 
   p.attach<many_list_ints>("many_ints");
 
@@ -259,7 +263,8 @@ void OrmRelationTestUnit::test_save()
   ints->elements.push_back(-12345);
   ints->elements.push_back(37);
 
-  s.save(ints);
+  s.flush();
+//  s.save(ints);
 
   UNIT_ASSERT_FALSE(ints->elements.empty());
   UNIT_ASSERT_EQUAL(ints->elements.size(), 4UL);

@@ -242,6 +242,7 @@ public:
 private:
   template < class T >
   friend class persistence_observer;
+  friend class session;
 
   void register_proxy_insert(object_proxy &proxy);
   void register_proxy_update(object_proxy &proxy);
@@ -252,9 +253,12 @@ private:
 
   t_table_map tables_;
 
-  enum proxy_change_action {
+  enum class proxy_change_action : int {
     INSERT, UPDATE, REMOVE
   };
+
+  std::map<proxy_change_action, std::string> proxy_change_action_to_string;
+
   std::unordered_map<object_proxy*, proxy_change_action> proxy_changes_;
 };
 

@@ -194,17 +194,7 @@ public:
     return static_cast<T*>(lookup_object());
   }
 
-  T* get() {
-    if (proxy_ && proxy_->obj()) {
-      if (proxy_->ostore_ && proxy_->has_transaction()) {
-        proxy_->current_transaction().on_update<T>(proxy_);
-      }
-      return (T*)proxy_->obj();
-    } else {
-      return nullptr;
-    }
-
-  }
+  T* get();
   //@}
 
   //@{

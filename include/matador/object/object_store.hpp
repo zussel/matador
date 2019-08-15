@@ -796,7 +796,7 @@ public:
     // notify observers
     proxy->node()->on_update_proxy(proxy);
 
-    if (!transactions_.empty()) {
+    if (has_transaction()) {
       transactions_.top().on_update<T>(proxy);
     }
   }
@@ -1031,5 +1031,6 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 #include "matador/object/relation_endpoint_value_remover.tpp"
 #include "matador/object/object_inserter.tpp"
 #include "matador/object/object_deleter.tpp"
+#include "matador/object/object_ptr.tpp"
 
 #endif /* OBJECT_STORE_HPP */

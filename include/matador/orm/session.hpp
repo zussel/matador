@@ -87,6 +87,12 @@ public:
     }
   }
 
+  template < class T >
+  object_ptr<T> insert2(T *obj)
+  {
+    return persistence_.store().insert(obj);
+  }
+
   /**
    * @brief Updates an object.
    *
@@ -372,6 +378,11 @@ public:
     }
     return obj;
   }
+
+  /**
+   * Flushes all stored changes to the database
+   */
+  void flush();
 
   /**
    * @brief Loads all tables from database.
