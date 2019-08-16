@@ -32,18 +32,21 @@ void persistence_observer<T>::on_detach(prototype_node &node, T&)
 template<class T>
 void persistence_observer<T>::on_insert(object_proxy &proxy)
 {
+  std::cout << "on insert " << proxy.node()->type() << "\n";
   persistence_.register_proxy_insert(proxy);
 }
 
 template<class T>
 void persistence_observer<T>::on_update(object_proxy &proxy)
 {
+  std::cout << "on update " << proxy.node()->type() << "\n";
   persistence_.register_proxy_update(proxy);
 }
 
 template<class T>
 void persistence_observer<T>::on_delete(object_proxy &proxy)
 {
+  std::cout << "on delete " << proxy.node()->type() << "\n";
   persistence_.register_proxy_delete(proxy);
 }
 

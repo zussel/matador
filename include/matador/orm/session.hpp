@@ -88,7 +88,7 @@ public:
   }
 
   template < class T >
-  object_ptr<T> insert2(T *obj)
+  object_ptr<T> insert_only(T *obj)
   {
     return persistence_.store().insert(obj);
   }

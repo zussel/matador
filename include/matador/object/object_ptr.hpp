@@ -190,6 +190,10 @@ public:
     return get();
   }
 
+  T* modify() {
+    return get();
+  }
+
   const T* get() const {
     return static_cast<T*>(lookup_object());
   }

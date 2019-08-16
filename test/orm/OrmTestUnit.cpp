@@ -311,7 +311,7 @@ void OrmTestUnit::test_flush()
   matador::session s(p);
 
   matador::date birthday(18, 5, 1980);
-  auto hans = s.insert2(new person("hans", birthday, 180));
+  auto hans = s.insert_only(new person("hans", birthday, 180));
 
   UNIT_EXPECT_GREATER(hans->id(), 0UL);
   UNIT_EXPECT_EQUAL(hans->height(), 180U);
@@ -319,7 +319,7 @@ void OrmTestUnit::test_flush()
 
   hans->height(179);
 
-  auto george = s.insert2(new person("george", birthday, 154));
+  auto george = s.insert_only(new person("george", birthday, 154));
 
   UNIT_EXPECT_GREATER(george->id(), 0UL);
   UNIT_EXPECT_EQUAL(george->height(), 154U);

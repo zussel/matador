@@ -253,15 +253,15 @@ void OrmRelationTestUnit::test_save()
 
   matador::session s(p);
 
-  auto ints = s.save(new many_list_ints);
+  auto ints = s.insert_only(new many_list_ints);
 
   UNIT_ASSERT_GREATER(ints->id, 0UL);
   UNIT_ASSERT_TRUE(ints->elements.empty());
 
-  ints->elements.push_back(37);
-  ints->elements.push_back(4711);
-  ints->elements.push_back(-12345);
-  ints->elements.push_back(37);
+  ints.modify()->elements.push_back(37);
+  ints.modify()->elements.push_back(4711);
+  ints.modify()->elements.push_back(-12345);
+  ints.modify()->elements.push_back(37);
 
   s.flush();
 //  s.save(ints);
