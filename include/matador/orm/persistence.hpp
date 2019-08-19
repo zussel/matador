@@ -259,7 +259,15 @@ private:
 
   std::map<proxy_change_action, std::string> proxy_change_action_to_string;
 
-  std::unordered_map<object_proxy*, proxy_change_action> proxy_changes_;
+  struct proxy_change {
+    proxy_change(object_proxy &p, proxy_change_action a)
+      : proxy(&p), action(a)
+    {}
+
+    object_proxy *proxy = nullptr;
+    proxy_change_action action;
+  };
+  std::vector<proxy_change> proxy_change_queue_;
 };
 
 }

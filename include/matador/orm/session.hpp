@@ -154,6 +154,11 @@ public:
 //    }
   }
 
+  template < class T >
+  void remove_only(object_ptr<T> &optr) {
+    persistence_.store().remove(optr);
+  }
+
   /**
    * @brief Select all object of a specific type
    *

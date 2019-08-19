@@ -107,33 +107,34 @@ bool persistence::is_log_enabled() const
 
 void persistence::register_proxy_insert(object_proxy &proxy)
 {
-  auto i = proxy_changes_.find(&proxy);
-  if (i != proxy_changes_.end() && i->second == persistence::proxy_change_action::REMOVE) {
-    i->second = persistence::proxy_change_action::INSERT;
-  } else if (i == proxy_changes_.end()) {
-    proxy_changes_.insert(std::make_pair(&proxy, persistence::proxy_change_action::INSERT));
+  auto i = std::find_if(proxy_change_queue_.begin(), proxy_change_queue_.end(), [&proxy](const proxy_change &pc) { return &proxy == pc.proxy; });
+
+  if (i != proxy_change_queue_.end() && i->action == persistence::proxy_change_action::REMOVE) {
+    i->action = persistence::proxy_change_action::INSERT;
+  } else if (i == proxy_change_queue_.end()) {
+    proxy_change_queue_.emplace_back(proxy, persistence::proxy_change_action::INSERT);
   }
 }
 
 void persistence::register_proxy_update(object_proxy &proxy)
 {
-  auto i = proxy_changes_.find(&proxy);
-  if (i == proxy_changes_.end()) {
-    proxy_changes_.insert(std::make_pair(&proxy, persistence::proxy_change_action::UPDATE));
+  auto i = std::find_if(proxy_change_queue_.begin(), proxy_change_queue_.end(), [&proxy](const proxy_change &pc) { return &proxy == pc.proxy; });
+  if (i == proxy_change_queue_.end()) {
+    proxy_change_queue_.emplace_back(proxy, persistence::proxy_change_action::UPDATE);
   }
 }
 
 void persistence::register_proxy_delete(object_proxy &proxy)
 {
-  auto i = proxy_changes_.find(&proxy);
-  if (i != proxy_changes_.end()) {
-    if (i->second == persistence::proxy_change_action::INSERT) {
-      proxy_changes_.erase(i);
-    } else if (i->second == persistence::proxy_change_action::UPDATE) {
-      i->second = persistence::proxy_change_action::REMOVE;
+  auto i = std::find_if(proxy_change_queue_.begin(), proxy_change_queue_.end(), [&proxy](const proxy_change &pc) { return &proxy == pc.proxy; });
+  if (i != proxy_change_queue_.end()) {
+    if (i->action == persistence::proxy_change_action::INSERT) {
+      proxy_change_queue_.erase(i);
+    } else if (i->action == persistence::proxy_change_action::UPDATE) {
+      i->action = persistence::proxy_change_action::REMOVE;
     }
-  } else if (i == proxy_changes_.end()) {
-    proxy_changes_.insert(std::make_pair(&proxy, persistence::proxy_change_action::REMOVE));
+  } else if (i == proxy_change_queue_.end()) {
+    proxy_change_queue_.emplace_back(proxy, persistence::proxy_change_action::REMOVE);
   }
 }
 

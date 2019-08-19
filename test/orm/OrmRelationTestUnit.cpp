@@ -25,6 +25,7 @@ OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, std::string 
   add_test("belongs_to", std::bind(&OrmRelationTestUnit::test_belongs_to, this), "test belongs to");
   add_test("has_many_to_many", std::bind(&OrmRelationTestUnit::test_many_to_many, this), "test has many to many");
   add_test("save", std::bind(&OrmRelationTestUnit::test_save, this), "test save");
+  add_test("save_object", std::bind(&OrmRelationTestUnit::test_save_object, this), "test save object");
 }
 
 using many_list_varchars = many_builtins<matador::varchar<255>, std::list>;
@@ -268,6 +269,51 @@ void OrmRelationTestUnit::test_save()
 
   UNIT_ASSERT_FALSE(ints->elements.empty());
   UNIT_ASSERT_EQUAL(ints->elements.size(), 4UL);
+
+  p.drop();
+}
+
+void OrmRelationTestUnit::test_save_object()
+{
+  std::cout << "\n";
+
+  matador::persistence p(dns_);
+
+  p.enable_log();
+
+  p.attach<child>("child");
+  p.attach<children_list>("children_list");
+
+  p.create();
+
+  matador::session s(p);
+
+  auto children = s.insert_only(new children_list("children list"));
+  auto kid1 = s.insert_only(new child("kid 1"));
+  auto kid2 = s.insert_only(new child("kid 2"));
+
+  UNIT_ASSERT_GREATER(children->id, 0UL);
+  UNIT_ASSERT_TRUE(children->children.empty());
+
+  children.modify()->children.push_back(kid1);
+  children.modify()->children.push_back(kid2);
+
+  children.modify()->children.erase(children->children.begin());
+
+  s.remove_only(kid1);
+
+  s.flush();
+
+//  children.modify()->children.erase(children->children.begin());
+//
+//  s.remove_only(kid2);
+//
+//  s.flush();
+
+//  s.save(ints);
+
+  UNIT_EXPECT_FALSE(children->children.empty());
+  UNIT_EXPECT_EQUAL(children->children.size(), 1UL);
 
   p.drop();
 }
