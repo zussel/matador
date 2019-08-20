@@ -33,6 +33,7 @@
 #endif
 
 #include "matador/utils/identifier.hpp"
+#include "matador/utils/memory.hpp"
 
 #include "matador/object/identifier_proxy_map.hpp"
 #include "matador/object/typed_object_store_observer.hpp"
@@ -151,7 +152,7 @@ public:
    */
   template < class T >
   prototype_node(object_store *tree, const char *type, T *proto, bool abstract = false)
-    : info_(std::make_unique<detail::prototype_info<T>>(*this, proto))
+    : info_(matador::make_unique<detail::prototype_info<T>>(*this, proto))
     , tree_(tree)
     , first(new prototype_node)
     , last(new prototype_node)

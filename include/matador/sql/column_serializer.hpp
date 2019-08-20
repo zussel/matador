@@ -25,6 +25,7 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/serializer.hpp"
+#include "matador/utils/memory.hpp"
 
 namespace matador {
 
@@ -42,7 +43,7 @@ public:
 
   template<class T>
   columns *execute(T &x) {
-    cols_ = std::make_unique<columns>(brackets_);
+    cols_ = matador::make_unique<columns>(brackets_);
     matador::access::serialize(static_cast<serializer&>(*this), x);
     return cols_.release();
   }

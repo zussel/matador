@@ -91,8 +91,8 @@ void RelationTestUnit::test_has_one()
 
   UNIT_ASSERT_EQUAL(store.find<child>()->size(), 0UL);
 
-  auto m1_ptr = std::make_unique<master>("m1");
-  auto child1_ptr = std::make_unique<child>("child 1");
+  auto m1_ptr = matador::make_unique<master>("m1");
+  auto child1_ptr = matador::make_unique<child>("child 1");
 
   m1_ptr->children = child1_ptr.release();
 
@@ -144,7 +144,7 @@ void RelationTestUnit::test_insert_belongs_to_one()
   // both citizen and address must be inserted
   // and the relation must be resolved
   // address' citizen must be set
-  auto george_ptr = std::make_unique<citizen>("george");
+  auto george_ptr = matador::make_unique<citizen>("george");
   george_ptr->address_ = new address("foreststreet", "foresting");
 
   auto george = store.insert(george_ptr.release());
@@ -164,7 +164,7 @@ void RelationTestUnit::test_insert_belongs_to_one()
   UNIT_ASSERT_EQUAL(store.find<citizen>()->size(), 0UL);
   UNIT_ASSERT_EQUAL(store.find<address>()->size(), 0UL);
 
-  george_ptr = std::make_unique<citizen>("george");
+  george_ptr = matador::make_unique<citizen>("george");
   home = store.insert(new address("foreststreet", "foresting"));
 
   UNIT_ASSERT_TRUE(home.id() > 0UL);
@@ -353,7 +353,7 @@ void RelationTestUnit::test_insert_belongs_to_many()
   UNIT_ASSERT_EQUAL(endpoint->second->field, "employee");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY);
 
-  auto george_ptr = std::make_unique<employee>("george");
+  auto george_ptr = matador::make_unique<employee>("george");
   george_ptr->dep(new department("insurance"));
 
   auto george = store.insert(george_ptr.release());
@@ -387,7 +387,7 @@ void RelationTestUnit::test_insert_belongs_to_many()
   UNIT_ASSERT_EQUAL(store.find<employee>()->size(), 0UL);
   UNIT_ASSERT_EQUAL(store.find<department>()->size(), 0UL);
 
-  george_ptr = std::make_unique<employee>("george");
+  george_ptr = matador::make_unique<employee>("george");
   insurance = store.insert(new department("insurance"));
 
   UNIT_ASSERT_TRUE(insurance.id() > 0UL);
@@ -694,8 +694,8 @@ void RelationTestUnit::test_insert_has_many_vector()
   UNIT_ASSERT_EQUAL(endpoint->second->field, "vector_id");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE);
 
-  auto tim_ptr = std::make_unique<child>("tim");
-  auto group_ptr = std::make_unique<children_vector>("group");
+  auto tim_ptr = matador::make_unique<child>("tim");
+  auto group_ptr = matador::make_unique<children_vector>("group");
 
   UNIT_ASSERT_TRUE(group_ptr->children.empty());
   UNIT_ASSERT_EQUAL(group_ptr->children.size(), 0UL);

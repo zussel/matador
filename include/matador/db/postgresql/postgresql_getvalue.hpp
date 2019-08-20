@@ -15,10 +15,7 @@
 namespace matador {
 namespace detail {
 
-//template < typename T >
-//void get_value(PGresult *res, size_t row, size_t col, T &val);
-
-template < typename T, typename std::enable_if_t<std::is_integral<T>::value && std::is_signed<T>::value && !std::is_same<T, char>::value>* = nullptr>
+template < typename T, typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value && !std::is_same<T, char>::value>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   auto value = PQgetvalue(res, (int)row, (int)col);
@@ -30,7 +27,7 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
   val = (T)strtol(value, &end, 10);
 }
 
-template < typename T, typename std::enable_if_t<std::is_integral<T>::value && std::is_unsigned<T>::value && !std::is_same<T, bool>::value>* = nullptr>
+template < typename T, typename std::enable_if<std::is_integral<T>::value && std::is_unsigned<T>::value && !std::is_same<T, bool>::value>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   auto value = PQgetvalue(res, (int)row, (int)col);
@@ -42,7 +39,7 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
   val = (T)strtoul(value, &end, 10);
 }
 
-template < typename T, typename std::enable_if_t<std::is_same<T, bool>::value>* = nullptr>
+template < typename T, typename std::enable_if<std::is_same<T, bool>::value>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   auto value = PQgetvalue(res, (int)row, (int)col);
@@ -54,7 +51,7 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
   val = strtoul(value, &end, 10) > 0UL;
 }
 
-template < typename T, typename std::enable_if_t<std::is_same<T, char>::value>* = nullptr>
+template < typename T, typename std::enable_if<std::is_same<T, char>::value>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   auto value = PQgetvalue(res, (int)row, (int)col);
@@ -64,7 +61,7 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
   }
 }
 
-template < typename T, typename std::enable_if_t<std::is_floating_point<T>::value>* = nullptr>
+template < typename T, typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   auto value = PQgetvalue(res, (int)row, (int)col);
@@ -76,25 +73,25 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
   val = (T)strtof(value, &end);
 }
 
-template < typename T, typename std::enable_if_t<std::is_base_of<varchar_base, T>::value>* = nullptr>
+template < typename T, typename std::enable_if<std::is_base_of<varchar_base, T>::value>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   val.assign(PQgetvalue(res, (int)row, (int)col));
 }
 
-template < typename T, typename std::enable_if_t<std::is_same<T, std::string>::value>* = nullptr>
+template < typename T, typename std::enable_if<std::is_same<T, std::string>::value>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   val = PQgetvalue(res, (int)row, (int)col);
 }
 
-template < typename T, typename std::enable_if_t<std::is_same<T, matador::time>::value>* = nullptr>
+template < typename T, typename std::enable_if<std::is_same<T, matador::time>::value>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   val = matador::time::parse(PQgetvalue(res, (int)row, (int)col), "%Y-%m-%d %T.%f");
 }
 
-template < typename T, typename std::enable_if_t<std::is_same<T, matador::date>::value>* = nullptr>
+template < typename T, typename std::enable_if<std::is_same<T, matador::date>::value>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   val.set(PQgetvalue(res, (int)row, (int)col), date_format::ISO8601);
