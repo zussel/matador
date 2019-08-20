@@ -42,44 +42,25 @@ namespace detail {
 class MATADOR_OBJECT_API object_deleter {
 private:
   struct MATADOR_OBJECT_API t_object_count {
-    typedef void (*t_remove_func)(object_proxy*, bool);
+    typedef void (*t_remove_func)(object_proxy*);
     template < class T >
     explicit t_object_count(object_proxy *oproxy, T* = nullptr)
       : proxy(oproxy)
       , remove_func(&remove_object<T>)
     {}
 
-    void remove(bool notify);
+    void remove();
 
     template <typename T>
-    static void remove_object(object_proxy *proxy, bool notify);
+    static void remove_object(object_proxy *proxy);
 
     object_proxy *proxy;
 
     t_remove_func remove_func;
   };
 
-  struct t_relation_removal
-  {
-    t_relation_removal(object_proxy *oproxy, object_proxy *oowner, std::shared_ptr<detail::basic_relation_endpoint> rendpoint)
-      : proxy(oproxy), owner(oowner), endpoint(std::move(rendpoint))
-    {}
-
-    t_relation_removal(const t_relation_removal&) = default;
-    t_relation_removal(t_relation_removal&&) = default;
-
-    t_relation_removal& operator=(const t_relation_removal&) = default;
-    t_relation_removal& operator=(t_relation_removal&&) = default;
-
-    void remove();
-
-    object_proxy *proxy;
-    object_proxy *owner = nullptr;
-    std::shared_ptr<detail::basic_relation_endpoint> endpoint;
-  };
 private:
   typedef std::map<unsigned long, t_object_count> t_objects_to_remove_map;
-//  typedef std::vector<t_relation_removal> t_relations_to_remove_map;
   typedef std::vector<std::function<void()>> t_relations_to_remove_map;
 
 public:
@@ -103,7 +84,7 @@ public:
   template<class T>
   bool is_deletable(object_proxy *proxy, const T *o);
 
-  void remove(bool notify);
+  void remove();
 
   /**
    * @brief Returns the first deletable serializable.

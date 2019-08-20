@@ -2,7 +2,6 @@
 #include "matador/object/prototype_iterator.hpp"
 #include "matador/object/object_store.hpp"
 #include "matador/object/has_many_item_holder.hpp"
-#include "matador/object/generic_access.hpp"
 #include "matador/object/to_many_endpoints.hpp"
 
 namespace matador {
