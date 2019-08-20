@@ -31,16 +31,6 @@ namespace matador {
   
 namespace sqlite {
   
-void throw_error(int ec, sqlite3 *db, const std::string &source)
-{
-  if (ec == SQLITE_OK) {
-    return;
-  }
-  std::stringstream msg;
-  msg << source << ": " << sqlite3_errmsg(db);
-  throw sqlite_exception(msg.str()); 
-}
-
 sqlite_connection::sqlite_connection()
   : sqlite_db_(nullptr)
 {
