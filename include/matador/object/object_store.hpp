@@ -634,7 +634,6 @@ public:
       throw_object_exception("object is null");
     }
     object_inserter_.reset();
-//    auto proxy = matador::make_unique<object_proxy>(o);
     std::unique_ptr<object_proxy> proxy(new object_proxy(o));
     try {
       insert<T>(proxy.get(), true);
