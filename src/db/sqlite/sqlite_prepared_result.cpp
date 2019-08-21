@@ -176,14 +176,14 @@ bool sqlite_prepared_result::prepare_fetch()
   if (!first_) {
     // get next row
     ret_ = sqlite3_step(stmt_);
-    if (ret_ != SQLITE_DONE && ret_ != SQLITE_OK) {
+    if (ret_ != SQLITE_DONE && ret_ != SQLITE_ROW) {
       sqlite3 *db = sqlite3_db_handle(stmt_);
       throw_error(ret_, db, "sqlite3_step");
     }
   } else {
     first_ = false;
   }
-  return !(ret_ == SQLITE_DONE || ret_ == SQLITE_OK);
+  return ret_ == SQLITE_ROW;
 }
 
 bool sqlite_prepared_result::finalize_fetch()
