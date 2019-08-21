@@ -268,6 +268,8 @@ private:
     proxy_change_action action;
   };
   std::vector<proxy_change> proxy_change_queue_;
+
+  std::unordered_set<object_proxy*> proxies_to_delete_;
 };
 
 }

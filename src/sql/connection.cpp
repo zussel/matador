@@ -94,16 +94,19 @@ void connection::disconnect()
 
 void connection::begin()
 {
+  log_token(detail::token::BEGIN);
   impl_->begin();
 }
 
 void connection::commit()
 {
+  log_token(detail::token::COMMIT);
   impl_->commit();
 }
 
 void connection::rollback()
 {
+  log_token(detail::token::ROLLBACK);
   impl_->rollback();
 }
 
@@ -226,6 +229,13 @@ void connection::log(const std::string &msg) const
 {
   if (impl_->is_log_enabled()) {
     std::cout << "SQL: " << msg << "\n";
+  }
+}
+
+void connection::log_token(detail::token::t_token tok)
+{
+  if (impl_->is_log_enabled()) {
+    std::cout << "SQL: " << dialect()->token_at(tok) << "\n";
   }
 }
 

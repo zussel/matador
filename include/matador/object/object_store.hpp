@@ -727,7 +727,7 @@ public:
         // notify transaction
         transactions_.top().on_delete<T>(proxy);
       } else {
-        delete proxy;
+        on_proxy_delete_(proxy);
       }
     }
   }
@@ -813,7 +813,7 @@ public:
     mark_modified<T>(optr.proxy_);
   }
 
-
+  void on_proxy_delete(std::function<void(object_proxy*)> callback);
 private:
   friend class detail::object_inserter;
   friend struct detail::basic_relation_endpoint;
@@ -911,6 +911,8 @@ private:
   detail::object_inserter object_inserter_;
 
   std::stack<transaction> transactions_;
+
+  std::function<void(object_proxy *)> on_proxy_delete_;
 };
 
 template < class T >

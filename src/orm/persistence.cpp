@@ -14,6 +14,10 @@ persistence::persistence(const std::string &dns)
   proxy_change_action_to_string.insert(std::make_pair(proxy_change_action::INSERT, "INSERT"));
   proxy_change_action_to_string.insert(std::make_pair(proxy_change_action::UPDATE, "UPDATE"));
   proxy_change_action_to_string.insert(std::make_pair(proxy_change_action::REMOVE, "REMOVE"));
+
+  store_.on_proxy_delete([this](object_proxy *proxy) {
+    proxies_to_delete_.insert(proxy);
+  });
   connection_.connect();
 }
 
@@ -130,6 +134,8 @@ void persistence::register_proxy_delete(object_proxy &proxy)
   if (i != proxy_change_queue_.end()) {
     if (i->action == persistence::proxy_change_action::INSERT) {
       proxy_change_queue_.erase(i);
+      proxies_to_delete_.erase(&proxy);
+      delete &proxy;
     } else if (i->action == persistence::proxy_change_action::UPDATE) {
       i->action = persistence::proxy_change_action::REMOVE;
     }

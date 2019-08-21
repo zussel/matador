@@ -304,16 +304,16 @@ void OrmRelationTestUnit::test_save_object()
 
   s.flush();
 
-//  children.modify()->children.erase(children->children.begin());
-//
-//  s.remove_only(kid2);
-//
-//  s.flush();
+  children.modify()->children.erase(children.modify()->children.begin());
+
+  s.remove_only(kid2);
+
+  s.flush();
 
 //  s.save(ints);
 
-  UNIT_EXPECT_FALSE(children->children.empty());
-  UNIT_EXPECT_EQUAL(children->children.size(), 1UL);
+  UNIT_EXPECT_TRUE(children->children.empty());
+  UNIT_EXPECT_EQUAL(children->children.size(), 0UL);
 
   p.drop();
 }

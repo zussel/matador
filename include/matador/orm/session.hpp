@@ -144,14 +144,6 @@ public:
       t->second->remove(optr.proxy_);
       store().remove(optr);
     }
-//    if (store().has_transaction()) {
-//      persistence_.store().remove(optr);
-//    } else {
-//      transaction tr(persistence_.store(), observer_);
-//      tr.begin();
-//      store().remove(optr);
-//      tr.commit();
-//    }
   }
 
   template < class T >
