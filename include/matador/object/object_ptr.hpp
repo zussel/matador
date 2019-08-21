@@ -186,20 +186,20 @@ public:
     return get();
   }
 
-  T* operator->() {
-    return get();
-  }
-
-  T* modify() {
-    return get();
-  }
-
   const T* get() const {
     return static_cast<T*>(lookup_object());
   }
-
-  T* get();
   //@}
+
+  /**
+   * The modify method allows to modify the underlying
+   * object. It ensures that this object is marked
+   * as modified in the object_store and all registered
+   * observers are notified
+   *
+   * @return Pointer to the underlying object
+   */
+  T* modify();
 
   //@{
   /**

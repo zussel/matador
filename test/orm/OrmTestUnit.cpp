@@ -187,7 +187,7 @@ void OrmTestUnit::test_update()
   UNIT_EXPECT_EQUAL(hans->height(), 180U);
   UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
-  hans->height(179);
+  hans.modify()->height(179);
 
   hans = s.update(hans);
 
@@ -266,7 +266,7 @@ void OrmTestUnit::test_save() {
   UNIT_EXPECT_EQUAL(hans->height(), 180U);
   UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
-  hans->height(179);
+  hans.modify()->height(179);
 
   hans = s.save(hans);
 
@@ -317,7 +317,7 @@ void OrmTestUnit::test_flush()
   UNIT_EXPECT_EQUAL(hans->height(), 180U);
   UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
-  hans->height(179);
+  hans.modify()->height(179);
 
   auto george = s.insert_only(new person("george", birthday, 154));
 
@@ -325,7 +325,7 @@ void OrmTestUnit::test_flush()
   UNIT_EXPECT_EQUAL(george->height(), 154U);
   UNIT_EXPECT_EQUAL(george->birthdate(), birthday);
 
-  george->height(153);
+  george.modify()->height(153);
 
   s.flush();
 

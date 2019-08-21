@@ -142,8 +142,8 @@ void ObjectStoreTestUnit::test_expression()
   for (int i = 0; i < 10; ++i) {
     object_item_ptr oi = ostore_.insert(new ObjectItem<Item>("ObjectItem", i));
     ii = ostore_.insert(new Item("Item", i));
-    oi->ptr(ii);
-    itemlist->items.push_back(oi);
+    oi.modify()->ptr(ii);
+    itemlist.modify()->items.push_back(oi);
   }
 
   variable<int> x(make_var(&ObjectItem<Item>::get_int));
@@ -166,7 +166,7 @@ void ObjectStoreTestUnit::test_expression()
   (*exp)(optr);
 
 #ifndef _MSC_VER
-  ObjectItemList::iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
+  auto it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
   UNIT_ASSERT_FALSE(it == itemlist->end());
 #endif
 
@@ -322,7 +322,7 @@ void ObjectStoreTestUnit::test_reference_counter()
 
   object_item_ptr object_item_1 = ostore_.insert(new ObjectItem<Item>());
   object_item_ptr object_item_2 = ostore_.insert(new ObjectItem<Item>());
-  object_item_1->ptr(item);
+  object_item_1.modify()->ptr(item);
 
   UNIT_ASSERT_EQUAL(item.reference_count(), 1UL);
 
@@ -333,7 +333,7 @@ void ObjectStoreTestUnit::test_reference_counter()
   UNIT_ASSERT_EQUAL(a1.reference_count(), 1UL);
   UNIT_ASSERT_EQUAL(a2.reference_count(), 1UL);
 
-  object_item_1->ref(a1);
+  object_item_1.modify()->ref(a1);
 
   UNIT_ASSERT_EQUAL(item.reference_count(), 2UL);
   UNIT_ASSERT_EQUAL(a1.reference_count(), 2UL);
@@ -965,12 +965,12 @@ void ObjectStoreTestUnit::test_structure_cyclic()
   UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL);
 
   // cycle: c1 -> c2 -> c1
-  c1->cycler = c2;
+  c1.modify()->cycler = c2;
 
   UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL);
   UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL);
 
-  c2->cycler = c1;
+  c2.modify()->cycler = c1;
 
   UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL);
   UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL);
@@ -980,7 +980,7 @@ void ObjectStoreTestUnit::test_structure_cyclic()
   UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL);
   UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL);
 
-  c3->cycler = c1;
+  c3.modify()->cycler = c1;
 
   UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL);
   UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL);
@@ -1002,7 +1002,7 @@ void ObjectStoreTestUnit::test_structure_container()
 
   childrens_ptr childrens(new children_vector("ch1"));
 
-  childrens->children.push_back(new child("heinz"));
+  childrens.modify()->children.push_back(new child("heinz"));
 
   ostore.insert(childrens);
 
@@ -1099,7 +1099,7 @@ void ObjectStoreTestUnit::test_has_many_to_many()
   UNIT_ASSERT_TRUE(algebra->students.empty());
   UNIT_ASSERT_TRUE(art->students.empty());
 
-  art->students.push_back(jane);
+  art.modify()->students.push_back(jane);
 
   UNIT_ASSERT_FALSE(art->students.empty());
   UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
@@ -1108,12 +1108,12 @@ void ObjectStoreTestUnit::test_has_many_to_many()
   UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL);
   UNIT_ASSERT_EQUAL(jane->courses.front()->title, art->title);
 
-  jane->courses.erase(jane->courses.begin());
+  jane.modify()->courses.erase(jane.modify()->courses.begin());
 
   UNIT_ASSERT_TRUE(jane->courses.empty());
   UNIT_ASSERT_TRUE(art->students.empty());
 
-  george->courses.push_back(algebra);
+  george.modify()->courses.push_back(algebra);
 
   UNIT_ASSERT_FALSE(algebra->students.empty());
   UNIT_ASSERT_EQUAL(algebra->students.size(), 1UL);
@@ -1122,7 +1122,7 @@ void ObjectStoreTestUnit::test_has_many_to_many()
   UNIT_ASSERT_EQUAL(george->courses.size(), 1UL);
   UNIT_ASSERT_EQUAL(george->courses.front()->title, algebra->title);
 
-  algebra->students.clear();
+  algebra.modify()->students.clear();
 
   UNIT_ASSERT_TRUE(george->courses.empty());
   UNIT_ASSERT_TRUE(algebra->students.empty());
@@ -1141,17 +1141,17 @@ void ObjectStoreTestUnit::test_belongs_to_one()
   UNIT_ASSERT_TRUE(home->citizen_.empty());
 
 //  george->address_ = home;
-  home->citizen_ = george;
+  home.modify()->citizen_ = george;
 
   UNIT_ASSERT_FALSE(george->address_.empty());
   UNIT_ASSERT_FALSE(home->citizen_.empty());
 
-  george->address_.clear();
+  george.modify()->address_.clear();
 
   UNIT_ASSERT_TRUE(george->address_.empty());
   UNIT_ASSERT_TRUE(home->citizen_.empty());
 
-  george->address_ = home;
+  george.modify()->address_ = home;
 
   UNIT_ASSERT_FALSE(george->address_.empty());
   UNIT_ASSERT_FALSE(home->citizen_.empty());
@@ -1175,7 +1175,7 @@ void ObjectStoreTestUnit::test_belongs_to_many()
   UNIT_ASSERT_TRUE(jane->dep().empty());
 
   // department is automatically set
-  dep->employees.push_back(george);
+  dep.modify()->employees.push_back(george);
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL);
   UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "george");
@@ -1183,19 +1183,19 @@ void ObjectStoreTestUnit::test_belongs_to_many()
   UNIT_ASSERT_EQUAL(george->dep()->name, dep->name);
 
   // jane is automatically added to deps employee list
-  jane->dep(dep);
+  jane.modify()->dep(dep);
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL);
 
   // remove george
-  auto i = dep->employees.begin();
-  i = dep->employees.erase(i);
+  auto i = dep.modify()->employees.begin();
+  i = dep.modify()->employees.erase(i);
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL);
   UNIT_ASSERT_TRUE(george->dep().empty());
   UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane");
 
-  jane->department_.clear();
+  jane.modify()->department_.clear();
 
   UNIT_ASSERT_TRUE(dep->employees.empty());
 }

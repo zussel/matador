@@ -45,11 +45,11 @@ void HasManyListUnitTest::test_join_table()
 
   UNIT_ASSERT_EQUAL("i1", i1->name);
 
-  o->items.push_back(i1);
+  o.modify()->items.push_back(i1);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
 
-  o->items.push_back(new item("i2"));
+  o.modify()->items.push_back(new item("i2"));
 
   UNIT_ASSERT_EQUAL(2U, o->items.size());
 }
@@ -95,32 +95,32 @@ void HasManyListUnitTest::test_erase_scalar()
 
   object_ptr<many_ints> mptr = store.insert(new many_ints);
 
-  mptr->elements.push_back(1);
+  mptr.modify()->elements.push_back(1);
 
   UNIT_ASSERT_EQUAL(1U, mptr->elements.size());
 
-  mptr->elements.push_back(7);
-  mptr->elements.push_back(90);
+  mptr.modify()->elements.push_back(7);
+  mptr.modify()->elements.push_back(90);
 
   UNIT_ASSERT_EQUAL(3U, mptr->elements.size());
 
-  many_ints::element_list_t::iterator i = mptr->elements.begin();
+  auto i = mptr.modify()->elements.begin();
 
-  i = mptr->elements.erase(i);
+  i = mptr.modify()->elements.erase(i);
 
   UNIT_ASSERT_EQUAL(2U, mptr->elements.size());
   UNIT_ASSERT_EQUAL(*i, 7);
 
-  mptr->elements.push_back(3);
-  mptr->elements.push_back(4);
+  mptr.modify()->elements.push_back(3);
+  mptr.modify()->elements.push_back(4);
 
-  i = mptr->elements.begin();
+  i = mptr.modify()->elements.begin();
 
   auto j = i;
   ++j;
   ++j;
 
-  i = mptr->elements.erase(i, j);
+  i = mptr.modify()->elements.erase(i, j);
 
   UNIT_ASSERT_EQUAL(2U, mptr->elements.size());
   UNIT_ASSERT_EQUAL(*i, 3);
@@ -138,31 +138,31 @@ void HasManyListUnitTest::test_erase_object()
 
   UNIT_ASSERT_EQUAL("i1", i1->name);
 
-  o->items.push_back(i1);
+  o.modify()->items.push_back(i1);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
 
-  o->items.push_back(new item("i2"));
+  o.modify()->items.push_back(new item("i2"));
 
   UNIT_ASSERT_EQUAL(2U, o->items.size());
 
-  owner::item_list_t::iterator i = o->items.begin();
+  auto i = o.modify()->items.begin();
 
-  i = o->items.erase(i);
+  i = o.modify()->items.erase(i);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
   UNIT_ASSERT_EQUAL(i->name, "i2");
 
-  o->items.push_back(new item("i3"));
-  o->items.push_back(new item("i4"));
+  o.modify()->items.push_back(new item("i3"));
+  o.modify()->items.push_back(new item("i4"));
 
-  i = o->items.begin();
+  i = o.modify()->items.begin();
 
   auto j = i;
   ++j;
   ++j;
 
-  i = o->items.erase(i, j);
+  i = o.modify()->items.erase(i, j);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
   UNIT_ASSERT_EQUAL(i->name, "i4");
@@ -174,22 +174,22 @@ void HasManyListUnitTest::test_remove_scalar()
 
   store.attach<many_ints>("many_ints");
 
-  object_ptr<many_ints> mptr = store.insert(new many_ints);
+  auto mptr = store.insert(new many_ints);
 
-  mptr->elements.push_back(1);
+  mptr.modify()->elements.push_back(1);
 
   UNIT_ASSERT_EQUAL(1U, mptr->elements.size());
 
-  mptr->elements.push_back(7);
-  mptr->elements.push_back(90);
+  mptr.modify()->elements.push_back(7);
+  mptr.modify()->elements.push_back(90);
 
   UNIT_ASSERT_EQUAL(3U, mptr->elements.size());
 
-  mptr->elements.remove(1);
+  mptr.modify()->elements.remove(1);
 
   UNIT_ASSERT_EQUAL(2U, mptr->elements.size());
 
-  mptr->elements.remove_if([](const int &val) {
+  mptr.modify()->elements.remove_if([](const int &val) {
     return val == 90;
   });
 
@@ -209,19 +209,19 @@ void HasManyListUnitTest::test_remove_object()
 
   UNIT_ASSERT_EQUAL("i1", i1->name);
 
-  o->items.push_back(i1);
+  o.modify()->items.push_back(i1);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
 
-  o->items.push_back(i2);
+  o.modify()->items.push_back(i2);
 
   UNIT_ASSERT_EQUAL(2U, o->items.size());
 
-  o->items.remove(i2);
+  o.modify()->items.remove(i2);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
 
-  o->items.remove_if([&i1](const object_ptr<item> &x) {
+  o.modify()->items.remove_if([&i1](const object_ptr<item> &x) {
     return i1 == x;
   });
 
@@ -240,12 +240,12 @@ void HasManyListUnitTest::test_integer()
   UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
 
   for (int i = 0; i < 20; ++i) {
-    mi->elements.push_back(i);
+    mi.modify()->elements.push_back(i);
   }
 
   UNIT_ASSERT_EQUAL(mi->elements.size(), 20UL);
 
-  many_ints::element_list_t::iterator i = mi->elements.begin();
+  auto i = mi->elements.begin();
 
   UNIT_ASSERT_EQUAL(*i, 0);
 
@@ -278,12 +278,12 @@ void HasManyListUnitTest::test_string()
 
   std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
   for (const auto &name : names) {
-    mi->elements.push_back(name);
+    mi.modify()->elements.push_back(name);
   }
 
   UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);
 
-  many_strings::element_list_t::iterator i = mi->elements.begin();
+  auto i = mi->elements.begin();
 
   UNIT_ASSERT_EQUAL(*i, "george");
 
@@ -306,7 +306,7 @@ void HasManyListUnitTest::test_varchar()
 
   std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
   for (const auto &name : names) {
-    mi->elements.push_back(name.c_str());
+    mi.modify()->elements.push_back(name.c_str());
   }
 
   UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);

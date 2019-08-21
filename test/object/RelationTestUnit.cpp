@@ -77,7 +77,7 @@ void RelationTestUnit::test_has_one()
   UNIT_ASSERT_NOT_NULL(m1->children.get());
   UNIT_ASSERT_EQUAL(child1.reference_count(), 1UL);
 
-  m1->children = nullptr;
+  m1.modify()->children = nullptr;
 
   UNIT_ASSERT_NULL(m1->children.get());
   UNIT_ASSERT_EQUAL(child1.reference_count(), 0UL);
@@ -226,17 +226,17 @@ void RelationTestUnit::test_belongs_to_one()
   UNIT_ASSERT_NULL(george->address_.get());
   UNIT_ASSERT_NULL(home->citizen_.get());
 
-  george->address_ = home;
+  george.modify()->address_ = home;
 
   UNIT_ASSERT_NOT_NULL(george->address_.get());
   UNIT_ASSERT_NOT_NULL(home->citizen_.get());
 
-  george->address_ = nullptr;
+  george.modify()->address_ = nullptr;
 
   UNIT_ASSERT_NULL(george->address_.get());
   UNIT_ASSERT_NULL(home->citizen_.get());
 
-  home->citizen_ = george;
+  home.modify()->citizen_ = george;
 
   UNIT_ASSERT_NOT_NULL(george->address_.get());
   UNIT_ASSERT_NOT_NULL(home->citizen_.get());
@@ -280,7 +280,7 @@ void RelationTestUnit::test_remove_belongs_to_one()
   UNIT_ASSERT_TRUE(home.id() > 0UL);
   UNIT_ASSERT_NULL(home->citizen_.get());
 
-  george->address_ = home;
+  george.modify()->address_ = home;
 
   UNIT_ASSERT_NOT_NULL(george->address_.get());
   UNIT_ASSERT_EQUAL(george.reference_count(), 1UL);
@@ -303,7 +303,7 @@ void RelationTestUnit::test_remove_belongs_to_one()
   UNIT_ASSERT_TRUE(home.id() > 0UL);
   UNIT_ASSERT_FALSE(home->citizen_.valid());
 
-  home->citizen_ = george;
+  home.modify()->citizen_ = george;
 
   UNIT_ASSERT_TRUE(george->address_.valid());
   UNIT_ASSERT_EQUAL(george.reference_count(), 1UL);
@@ -457,7 +457,7 @@ void RelationTestUnit::test_belongs_to_many()
   UNIT_ASSERT_NULL(jane->dep().get());
   UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL);
 
-  jane->dep(insurance);
+  jane.modify()->dep(insurance);
 
   UNIT_ASSERT_FALSE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL);
@@ -465,7 +465,7 @@ void RelationTestUnit::test_belongs_to_many()
   UNIT_ASSERT_EQUAL(jane->dep(), insurance);
   UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL);
 
-  jane->dep(nullptr);
+  jane.modify()->dep(nullptr);
 
   UNIT_ASSERT_TRUE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL);
@@ -473,7 +473,7 @@ void RelationTestUnit::test_belongs_to_many()
   UNIT_ASSERT_NULL(jane->dep().get());
   UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL);
 
-  insurance->employees.push_back(jane);
+  insurance.modify()->employees.push_back(jane);
 
   UNIT_ASSERT_FALSE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL);
@@ -481,7 +481,7 @@ void RelationTestUnit::test_belongs_to_many()
   UNIT_ASSERT_EQUAL(jane->dep(), insurance);
   UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL);
 
-  insurance->employees.clear();
+  insurance.modify()->employees.clear();
 
   UNIT_ASSERT_TRUE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL);
@@ -489,7 +489,7 @@ void RelationTestUnit::test_belongs_to_many()
   UNIT_ASSERT_NULL(jane->dep().get());
   UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL);
 
-  jane->dep(insurance);
+  jane.modify()->dep(insurance);
 
   UNIT_ASSERT_FALSE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL);
@@ -497,7 +497,7 @@ void RelationTestUnit::test_belongs_to_many()
   UNIT_ASSERT_EQUAL(jane->dep(), insurance);
   UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL);
 
-  insurance->employees.remove(jane);
+  insurance.modify()->employees.remove(jane);
 
   UNIT_ASSERT_TRUE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL);
@@ -548,7 +548,7 @@ void RelationTestUnit::test_remove_belongs_to_many()
   UNIT_ASSERT_NULL(george->dep().get());
   UNIT_ASSERT_EQUAL(george.reference_count(), 0UL);
 
-  jane->dep(insurance);
+  jane.modify()->dep(insurance);
 
   UNIT_ASSERT_FALSE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance->employees.size(), 1UL);
@@ -561,7 +561,7 @@ void RelationTestUnit::test_remove_belongs_to_many()
   UNIT_ASSERT_TRUE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance->employees.size(), 0UL);
 
-  george->dep(insurance);
+  george.modify()->dep(insurance);
 
   UNIT_ASSERT_FALSE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance->employees.size(), 1UL);
@@ -611,7 +611,7 @@ void RelationTestUnit::test_belongs_to_many_first_belongs_to()
   UNIT_ASSERT_NULL(jane->dep().get());
   UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL);
 
-  jane->dep(insurance);
+  jane.modify()->dep(insurance);
 
   UNIT_ASSERT_FALSE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL);
@@ -619,7 +619,7 @@ void RelationTestUnit::test_belongs_to_many_first_belongs_to()
   UNIT_ASSERT_EQUAL(jane->dep(), insurance);
   UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL);
 
-  jane->dep(nullptr);
+  jane.modify()->dep(nullptr);
 
   UNIT_ASSERT_TRUE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL);
@@ -627,7 +627,7 @@ void RelationTestUnit::test_belongs_to_many_first_belongs_to()
   UNIT_ASSERT_NULL(jane->dep().get());
   UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL);
 
-  insurance->employees.push_back(jane);
+  insurance.modify()->employees.push_back(jane);
 
   UNIT_ASSERT_FALSE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL);
@@ -635,7 +635,7 @@ void RelationTestUnit::test_belongs_to_many_first_belongs_to()
   UNIT_ASSERT_EQUAL(jane->dep(), insurance);
   UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL);
 
-  insurance->employees.clear();
+  insurance.modify()->employees.clear();
 
   UNIT_ASSERT_TRUE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL);
@@ -643,7 +643,7 @@ void RelationTestUnit::test_belongs_to_many_first_belongs_to()
   UNIT_ASSERT_NULL(jane->dep().get());
   UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL);
 
-  jane->dep(insurance);
+  jane.modify()->dep(insurance);
 
   UNIT_ASSERT_FALSE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 1UL);
@@ -651,7 +651,7 @@ void RelationTestUnit::test_belongs_to_many_first_belongs_to()
   UNIT_ASSERT_EQUAL(jane->dep(), insurance);
   UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL);
 
-  insurance->employees.remove(jane);
+  insurance.modify()->employees.remove(jane);
 
   UNIT_ASSERT_TRUE(insurance->employees.empty());
   UNIT_ASSERT_EQUAL(insurance.reference_count(), 0UL);
@@ -716,7 +716,7 @@ void RelationTestUnit::test_insert_has_many_vector()
   UNIT_ASSERT_EQUAL(tim.reference_count(), 1UL);
   UNIT_ASSERT_GREATER(tim.id(), 0UL);
 
-  group->children.clear();
+  group.modify()->children.clear();
 
   UNIT_ASSERT_EQUAL(tim.reference_count(), 0UL);
   UNIT_ASSERT_GREATER(tim.id(), 0UL);
@@ -778,28 +778,28 @@ void RelationTestUnit::test_has_many_vector()
   UNIT_ASSERT_EQUAL(group.reference_count(), 0UL);
   UNIT_ASSERT_EQUAL(group->children.size(), 0UL);
 
-  group->children.push_back(tim);
+  group.modify()->children.push_back(tim);
 
   UNIT_ASSERT_FALSE(group->children.empty());
   UNIT_ASSERT_EQUAL(group->children.size(), 1UL);
   UNIT_ASSERT_EQUAL(group->children.front()->name, "tim");
   UNIT_ASSERT_EQUAL(tim.reference_count(), 1UL);
 
-  group->children.remove(tim);
+  group.modify()->children.remove(tim);
 
   UNIT_ASSERT_TRUE(group->children.empty());
   UNIT_ASSERT_EQUAL(group->children.size(), 0UL);
   UNIT_ASSERT_GREATER(tim.id(), 0UL);
   UNIT_ASSERT_EQUAL(tim.reference_count(), 0UL);
 
-  group->children.push_back(tim);
+  group.modify()->children.push_back(tim);
 
   UNIT_ASSERT_FALSE(group->children.empty());
   UNIT_ASSERT_EQUAL(group->children.size(), 1UL);
   UNIT_ASSERT_EQUAL(group->children.front()->name, "tim");
   UNIT_ASSERT_EQUAL(tim.reference_count(), 1UL);
 
-  group->children.clear();
+  group.modify()->children.clear();
 
   UNIT_ASSERT_TRUE(group->children.empty());
   UNIT_ASSERT_EQUAL(group->children.size(), 0UL);
@@ -860,7 +860,7 @@ void RelationTestUnit::test_has_many_list()
   UNIT_ASSERT_EQUAL(group->children.size(), 0UL);
   UNIT_ASSERT_EQUAL(tim.reference_count(), 0UL);
 
-  group->children.push_back(tim);
+  group.modify()->children.push_back(tim);
 
   UNIT_ASSERT_FALSE(group->children.empty());
   UNIT_ASSERT_EQUAL(group->children.size(), 1UL);
@@ -910,7 +910,7 @@ void RelationTestUnit::test_has_many_builtin()
   UNIT_ASSERT_TRUE(many_ints->elements.empty());
   UNIT_ASSERT_EQUAL(many_ints->elements.size(), 0UL);
 
-  many_ints->elements.push_back(7);
+  many_ints.modify()->elements.push_back(7);
 
   UNIT_ASSERT_FALSE(many_ints->elements.empty());
   UNIT_ASSERT_EQUAL(many_ints->elements.size(), 1UL);
@@ -977,7 +977,7 @@ void RelationTestUnit::test_has_many_to_many()
   UNIT_ASSERT_EQUAL(art.reference_count(), 0UL);
   UNIT_ASSERT_EQUAL(art->students.size(), 0UL);
 
-  jane->courses.push_back(art);
+  jane.modify()->courses.push_back(art);
 
   UNIT_ASSERT_FALSE(jane->courses.empty());
   UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL);
@@ -988,7 +988,7 @@ void RelationTestUnit::test_has_many_to_many()
   UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
   UNIT_ASSERT_EQUAL(art->students.front(), jane);
 
-  art->students.push_back(tom);
+  art.modify()->students.push_back(tom);
 
   UNIT_ASSERT_FALSE(tom->courses.empty());
   UNIT_ASSERT_EQUAL(tom.reference_count(), 1UL);
@@ -999,7 +999,7 @@ void RelationTestUnit::test_has_many_to_many()
   UNIT_ASSERT_EQUAL(art->students.size(), 2UL);
   UNIT_ASSERT_EQUAL(art->students.back(), tom);
 
-  art->students.remove(tom);
+  art.modify()->students.remove(tom);
 
   UNIT_ASSERT_TRUE(tom->courses.empty());
   UNIT_ASSERT_EQUAL(tom.reference_count(), 0UL);
@@ -1009,7 +1009,7 @@ void RelationTestUnit::test_has_many_to_many()
   UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
   UNIT_ASSERT_EQUAL(art->students.back(), jane);
 
-  jane->courses.clear();
+  jane.modify()->courses.clear();
 
   UNIT_ASSERT_TRUE(jane->courses.empty());
   UNIT_ASSERT_EQUAL(jane.reference_count(), 0UL);
@@ -1052,7 +1052,7 @@ void RelationTestUnit::test_remove_has_many_to_many()
   UNIT_ASSERT_EQUAL(art->students.size(), 0UL);
   UNIT_ASSERT_EQUAL(art.reference_count(), 0UL);
 
-  jane->courses.push_back(art); // jane (value) must be push_back to course art (owner) students!!
+  jane.modify()->courses.push_back(art); // jane (value) must be push_back to course art (owner) students!!
 
   UNIT_ASSERT_FALSE(jane->courses.empty());
   UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL);
@@ -1063,7 +1063,7 @@ void RelationTestUnit::test_remove_has_many_to_many()
   UNIT_ASSERT_EQUAL(art->students.front(), jane);
   UNIT_ASSERT_EQUAL(art.reference_count(), 1UL);
 
-  art->students.push_back(tom);
+  art.modify()->students.push_back(tom);
 
   UNIT_ASSERT_FALSE(tom->courses.empty());
   UNIT_ASSERT_EQUAL(tom->courses.size(), 1UL);
@@ -1120,7 +1120,7 @@ void RelationTestUnit::test_blog_single_post()
   UNIT_ASSERT_FALSE(comment_one->blog_post.valid());
   UNIT_ASSERT_EQUAL(post1->comments.size(), 0UL);
 
-  post1->comments.push_back(comment_one);
+  post1.modify()->comments.push_back(comment_one);
 
   UNIT_ASSERT_TRUE(comment_one->blog_post.valid());
   UNIT_ASSERT_EQUAL(post1->comments.size(), 1UL);

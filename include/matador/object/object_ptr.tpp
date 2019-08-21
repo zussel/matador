@@ -4,7 +4,7 @@
 namespace matador {
 
 template < class T, object_holder_type OPT >
-T* object_pointer<T, OPT>::get() {
+T* object_pointer<T, OPT>::modify() {
   if (proxy_ && proxy_->obj()) {
     if (proxy_->ostore_) {
       proxy_->ostore_->mark_modified<T>(proxy_);

@@ -16,7 +16,7 @@ session::session(persistence &p)
 
 void session::flush()
 {
-  std::cout << "flushing all database changes\n";
+  std::cout << "START: flushing all database changes\n";
   for (auto const &i : persistence_.proxy_change_queue_) {
     auto it = persistence_.find_table(i.proxy->node()->type());
     if (it == persistence_.end()) {
@@ -34,9 +34,10 @@ void session::flush()
         it->second->remove(i.proxy);
         break;
     }
-    std::cout << persistence_.proxy_change_action_to_string[i.action] << " proxy " << i.proxy->node()->type() << "\n";
+//    std::cout << persistence_.proxy_change_action_to_string[i.action] << " proxy " << i.proxy->node()->type() << "\n";
   }
   persistence_.proxy_change_queue_.clear();
+  std::cout << "FINISH: flushing all database changes\n";
 }
 
 void session::load()

@@ -1,6 +1,5 @@
 #include "OrmReloadTestUnit.hpp"
 
-#include "../Item.hpp"
 #include "../person.hpp"
 #include "../entities.hpp"
 #include "../has_many_list.hpp"
@@ -223,8 +222,8 @@ void OrmReloadTestUnit::test_load_has_many()
     UNIT_ASSERT_GREATER(kid1->id, 0UL);
     UNIT_ASSERT_GREATER(kid2->id, 0UL);
 
-    s.push_back(children->children, kid1);
-    s.push_back(children->children, kid2);
+    s.push_back(children.modify()->children, kid1);
+    s.push_back(children.modify()->children, kid2);
 
     UNIT_ASSERT_FALSE(children->children.empty());
     UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
@@ -249,7 +248,7 @@ void OrmReloadTestUnit::test_load_has_many()
     UNIT_ASSERT_EQUAL(clptr->children.size(), 2UL);
 
     std::vector<std::string> result_names({ "kid 1", "kid 2"});
-    for (auto kid : clptr->children) {
+    for (const auto &kid : clptr->children) {
       auto it = std::find(result_names.begin(), result_names.end(), kid->name);
       UNIT_EXPECT_FALSE(it == result_names.end());
       UNIT_ASSERT_EQUAL(kid.reference_count(), 1UL);
@@ -283,7 +282,7 @@ void OrmReloadTestUnit::test_load_has_many_to_many()
     UNIT_ASSERT_TRUE(art->students.empty());
     UNIT_ASSERT_EQUAL(art->students.size(), 0UL);
 
-    s.push_back(jane->courses, art); // jane (value) must be push_back to course art (owner) students!!
+    s.push_back(jane.modify()->courses, art); // jane (value) must be push_back to course art (owner) students!!
 
     UNIT_ASSERT_FALSE(jane->courses.empty());
     UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL);
@@ -292,7 +291,7 @@ void OrmReloadTestUnit::test_load_has_many_to_many()
     UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
     UNIT_ASSERT_EQUAL(art->students.front(), jane);
 
-    s.push_back(art->students, tom);
+    s.push_back(art.modify()->students, tom);
 
     UNIT_ASSERT_FALSE(tom->courses.empty());
     UNIT_ASSERT_EQUAL(tom->courses.size(), 1UL);
@@ -332,7 +331,7 @@ void OrmReloadTestUnit::test_load_has_many_to_many()
 
     auto stud = student_view.front();
 
-    s.remove(art->students, stud);
+    s.remove(art.modify()->students, stud);
 
     UNIT_ASSERT_FALSE(art->students.empty());
     UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
@@ -365,7 +364,7 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
     UNIT_ASSERT_TRUE(art->students.empty());
     UNIT_ASSERT_EQUAL(art->students.size(), 0UL);
 
-    s.push_back(jane->courses, art); // jane (value) must be push_back to course art (owner) students!!
+    s.push_back(jane.modify()->courses, art); // jane (value) must be push_back to course art (owner) students!!
 
     UNIT_ASSERT_FALSE(jane->courses.empty());
     UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL);
@@ -374,7 +373,7 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
     UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
     UNIT_ASSERT_EQUAL(art->students.front(), jane);
 
-    s.push_back(art->students, tom);
+    s.push_back(art.modify()->students, tom);
 
     UNIT_ASSERT_FALSE(tom->courses.empty());
     UNIT_ASSERT_EQUAL(tom->courses.size(), 1UL);
@@ -383,7 +382,7 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
     UNIT_ASSERT_EQUAL(art->students.size(), 2UL);
     UNIT_ASSERT_EQUAL(art->students.back(), tom);
 
-    s.remove(art->students, tom);
+    s.remove(art.modify()->students, tom);
 
     UNIT_ASSERT_TRUE(tom->courses.empty());
     UNIT_ASSERT_EQUAL(tom->courses.size(), 0UL);
@@ -391,7 +390,7 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
     UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
     UNIT_ASSERT_EQUAL(art->students.back(), jane);
 
-    s.push_back(art->students, tom);
+    s.push_back(art.modify()->students, tom);
 
     UNIT_ASSERT_FALSE(tom->courses.empty());
     UNIT_ASSERT_EQUAL(tom->courses.size(), 1UL);
@@ -431,7 +430,7 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
 
     auto stud = student_view.front();
 
-    s.remove(art->students, stud);
+    s.remove(art.modify()->students, stud);
 
     UNIT_ASSERT_FALSE(art->students.empty());
     UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
@@ -480,12 +479,12 @@ void OrmReloadTestUnit::test_load_has_many_int()
     UNIT_ASSERT_GREATER(intlist->id, 0UL);
     UNIT_ASSERT_TRUE(intlist->elements.empty());
 
-    s.push_back(intlist->elements, 4);
+    s.push_back(intlist.modify()->elements, 4);
 
     UNIT_ASSERT_EQUAL(intlist->elements.front(), 4);
     UNIT_ASSERT_EQUAL(intlist->elements.back(), 4);
 
-    s.push_front(intlist->elements, 7);
+    s.push_front(intlist.modify()->elements, 7);
 
     UNIT_ASSERT_EQUAL(intlist->elements.front(), 7);
 
@@ -546,7 +545,7 @@ void OrmReloadTestUnit::test_load_belongs_to_many()
 
     auto tr = s.begin();
     try {
-      jane->dep(insurance);
+      jane.modify()->dep(insurance);
       tr.commit();
     } catch (std::exception &ex) {
       tr.rollback();

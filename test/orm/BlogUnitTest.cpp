@@ -24,7 +24,7 @@ struct blog_service
     try {
       auto first = session_.insert(new post(title, writer, std::move(content)));
 
-      session_.push_back(first->categories, cat);
+      session_.push_back(first.modify()->categories, cat);
 
       tr.commit();
 
@@ -50,13 +50,13 @@ struct blog_service
     }
   }
 
-  bool add_comment(const std::string &email, std::string msg, matador::object_ptr<post> pst)
+  bool add_comment(const std::string &email, std::string msg, matador::object_ptr<post> &pst)
   {
     auto tr = session_.begin();
     try {
       auto cmt = session_.insert(new comment(email, std::move(msg)));
 
-      pst->comments.push_back(cmt);
+      pst.modify()->comments.push_back(cmt);
 
       tr.commit();
 

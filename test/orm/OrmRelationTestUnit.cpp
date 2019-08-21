@@ -48,9 +48,9 @@ void OrmRelationTestUnit::test_has_builtin_varchars()
   auto tr = s.begin();
 
   try {
-    varchars->elements.push_back("george");
-    varchars->elements.push_back("jane");
-    varchars->elements.push_back("william");
+    varchars.modify()->elements.push_back("george");
+    varchars.modify()->elements.push_back("jane");
+    varchars.modify()->elements.push_back("william");
     tr.commit();
   } catch (std::exception &) {
     tr.rollback();
@@ -83,10 +83,10 @@ void OrmRelationTestUnit::test_has_builtin_ints()
   UNIT_ASSERT_GREATER(ints->id, 0UL);
   UNIT_ASSERT_TRUE(ints->elements.empty());
 
-  s.push_back(ints->elements, 37);
-  s.push_back(ints->elements, 4711);
-  s.push_back(ints->elements, -12345);
-  s.push_back(ints->elements, 37);
+  s.push_back(ints.modify()->elements, 37);
+  s.push_back(ints.modify()->elements, 4711);
+  s.push_back(ints.modify()->elements, -12345);
+  s.push_back(ints.modify()->elements, 37);
 
   UNIT_ASSERT_FALSE(ints->elements.empty());
   UNIT_ASSERT_EQUAL(ints->elements.size(), 4UL);
@@ -116,19 +116,19 @@ void OrmRelationTestUnit::test_has_many_delete()
   UNIT_ASSERT_GREATER(kid1->id, 0UL);
   UNIT_ASSERT_GREATER(kid2->id, 0UL);
 
-  s.push_back(children->children, kid1);
-  s.push_back(children->children, kid1);
-  s.push_back(children->children, kid2);
+  s.push_back(children.modify()->children, kid1);
+  s.push_back(children.modify()->children, kid1);
+  s.push_back(children.modify()->children, kid2);
 
   UNIT_ASSERT_FALSE(children->children.empty());
   UNIT_ASSERT_EQUAL(children->children.size(), 3UL);
 
-  s.erase(children->children, children->children.begin());
+  s.erase(children.modify()->children, children.modify()->children.begin());
 
   UNIT_ASSERT_FALSE(children->children.empty());
   UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
-  s.erase(children->children, children->children.begin(), children->children.end());
+  s.erase(children.modify()->children, children.modify()->children.begin(), children.modify()->children.end());
 
   UNIT_ASSERT_GREATER(children->id, 0UL);
   UNIT_ASSERT_TRUE(children->children.empty());
@@ -157,7 +157,7 @@ void OrmRelationTestUnit::test_belongs_to()
   UNIT_ASSERT_TRUE(jane->dep().empty());
 
   // department is automatically set
-  s.push_back(dep->employees, george);
+  s.push_back(dep.modify()->employees, george);
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL);
   UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "george");
@@ -165,19 +165,19 @@ void OrmRelationTestUnit::test_belongs_to()
   UNIT_ASSERT_EQUAL(george->dep()->name, dep->name);
 
   // jane is automatically added to deps employee list
-  jane->dep(dep);
+  jane.modify()->dep(dep);
   s.update(jane);
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL);
 
   // remove george
-  s.erase(dep->employees, dep->employees.begin());
+  s.erase(dep.modify()->employees, dep.modify()->employees.begin());
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL);
   UNIT_ASSERT_TRUE(george->dep().empty());
   UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane");
 //
-  jane->department_.clear();
+  jane.modify()->department_.clear();
   s.update(jane);
 //
   UNIT_ASSERT_TRUE(dep->employees.empty());
@@ -209,7 +209,7 @@ void OrmRelationTestUnit::test_many_to_many()
   UNIT_ASSERT_TRUE(algebra->students.empty());
   UNIT_ASSERT_TRUE(art->students.empty());
 
-  s.push_back(art->students, jane);
+  s.push_back(art.modify()->students, jane);
 
   UNIT_ASSERT_FALSE(art->students.empty());
   UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
@@ -218,12 +218,12 @@ void OrmRelationTestUnit::test_many_to_many()
   UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL);
   UNIT_ASSERT_EQUAL(jane->courses.front()->title, art->title);
 
-  s.erase(jane->courses, jane->courses.begin());
+  s.erase(jane.modify()->courses, jane.modify()->courses.begin());
 
   UNIT_ASSERT_TRUE(jane->courses.empty());
   UNIT_ASSERT_TRUE(art->students.empty());
 
-  s.push_back(george->courses, algebra);
+  s.push_back(george.modify()->courses, algebra);
 
   UNIT_ASSERT_FALSE(algebra->students.empty());
   UNIT_ASSERT_EQUAL(algebra->students.size(), 1UL);
@@ -232,7 +232,7 @@ void OrmRelationTestUnit::test_many_to_many()
   UNIT_ASSERT_EQUAL(george->courses.size(), 1UL);
   UNIT_ASSERT_EQUAL(george->courses.front()->title, algebra->title);
 
-  s.clear(algebra->students);
+  s.clear(algebra.modify()->students);
 
   UNIT_ASSERT_TRUE(george->courses.empty());
   UNIT_ASSERT_TRUE(algebra->students.empty());
@@ -298,7 +298,7 @@ void OrmRelationTestUnit::test_save_object()
   children.modify()->children.push_back(kid1);
   children.modify()->children.push_back(kid2);
 
-  children.modify()->children.erase(children->children.begin());
+  children.modify()->children.erase(children.modify()->children.begin());
 
   s.remove_only(kid1);
 
