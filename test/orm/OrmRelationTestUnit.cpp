@@ -42,19 +42,16 @@ void OrmRelationTestUnit::test_has_builtin_varchars()
 
   auto varchars = s.insert(new many_list_varchars);
 
+  s.flush();
+
   UNIT_ASSERT_GREATER(varchars->id, 0UL);
   UNIT_ASSERT_TRUE(varchars->elements.empty());
 
-  auto tr = s.begin();
+  varchars.modify()->elements.push_back("george");
+  varchars.modify()->elements.push_back("jane");
+  varchars.modify()->elements.push_back("william");
 
-  try {
-    varchars.modify()->elements.push_back("george");
-    varchars.modify()->elements.push_back("jane");
-    varchars.modify()->elements.push_back("william");
-    tr.commit();
-  } catch (std::exception &) {
-    tr.rollback();
-  }
+  s.flush();
 
   UNIT_ASSERT_FALSE(varchars->elements.empty());
   UNIT_ASSERT_EQUAL(varchars->elements.size(), 3UL);
@@ -66,11 +63,7 @@ using many_list_ints = many_builtins<int, std::list>;
 
 void OrmRelationTestUnit::test_has_builtin_ints()
 {
-  std::cout << "\n";
-
   matador::persistence p(dns_);
-
-  p.enable_log();
 
   p.attach<many_list_ints>("many_ints");
 
@@ -80,13 +73,17 @@ void OrmRelationTestUnit::test_has_builtin_ints()
 
   auto ints = s.insert(new many_list_ints);
 
+  s.flush();
+
   UNIT_ASSERT_GREATER(ints->id, 0UL);
   UNIT_ASSERT_TRUE(ints->elements.empty());
 
-  s.push_back(ints.modify()->elements, 37);
-  s.push_back(ints.modify()->elements, 4711);
-  s.push_back(ints.modify()->elements, -12345);
-  s.push_back(ints.modify()->elements, 37);
+  ints.modify()->elements.push_back(37);
+  ints.modify()->elements.push_back(4711);
+  ints.modify()->elements.push_back(-12345);
+  ints.modify()->elements.push_back(37);
+
+  s.flush();
 
   UNIT_ASSERT_FALSE(ints->elements.empty());
   UNIT_ASSERT_EQUAL(ints->elements.size(), 4UL);
@@ -113,22 +110,30 @@ void OrmRelationTestUnit::test_has_many_delete()
   auto kid1 = s.insert(new child("kid 1"));
   auto kid2 = s.insert(new child("kid 2"));
 
+  s.flush();
+
   UNIT_ASSERT_GREATER(kid1->id, 0UL);
   UNIT_ASSERT_GREATER(kid2->id, 0UL);
 
-  s.push_back(children.modify()->children, kid1);
-  s.push_back(children.modify()->children, kid1);
-  s.push_back(children.modify()->children, kid2);
+  children.modify()->children.push_back(kid1);
+  children.modify()->children.push_back(kid1);
+  children.modify()->children.push_back(kid2);
+
+  s.flush();
 
   UNIT_ASSERT_FALSE(children->children.empty());
   UNIT_ASSERT_EQUAL(children->children.size(), 3UL);
 
-  s.erase(children.modify()->children, children.modify()->children.begin());
+  children.modify()->children.erase(children.modify()->children.begin());
+
+  s.flush();
 
   UNIT_ASSERT_FALSE(children->children.empty());
   UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
-  s.erase(children.modify()->children, children.modify()->children.begin(), children.modify()->children.end());
+  children.modify()->children.erase(children.modify()->children.begin(), children.modify()->children.end());
+
+  s.flush();
 
   UNIT_ASSERT_GREATER(children->id, 0UL);
   UNIT_ASSERT_TRUE(children->children.empty());
@@ -152,12 +157,16 @@ void OrmRelationTestUnit::test_belongs_to()
   auto jane = s.insert(new employee("jane"));
   auto dep = s.insert(new department("insurance"));
 
+  s.flush();
+
   UNIT_ASSERT_TRUE(dep->employees.empty());
   UNIT_ASSERT_TRUE(george->dep().empty());
   UNIT_ASSERT_TRUE(jane->dep().empty());
 
   // department is automatically set
-  s.push_back(dep.modify()->employees, george);
+  dep.modify()->employees.push_back(george);
+
+  s.flush();
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL);
   UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "george");
@@ -166,20 +175,23 @@ void OrmRelationTestUnit::test_belongs_to()
 
   // jane is automatically added to deps employee list
   jane.modify()->dep(dep);
-  s.update(jane);
+
+  s.flush();
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL);
 
   // remove george
-  s.erase(dep.modify()->employees, dep.modify()->employees.begin());
+  dep.modify()->employees.erase(dep.modify()->employees.begin());
+
+  s.flush();
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL);
   UNIT_ASSERT_TRUE(george->dep().empty());
   UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane");
-//
+
   jane.modify()->department_.clear();
-  s.update(jane);
-//
+  s.flush();
+
   UNIT_ASSERT_TRUE(dep->employees.empty());
 
   p.drop();
@@ -204,12 +216,16 @@ void OrmRelationTestUnit::test_many_to_many()
   auto algebra = s.insert(new course("algebra"));
   auto art = s.insert(new course("art"));
 
+  s.flush();
+
   UNIT_ASSERT_TRUE(george->courses.empty());
   UNIT_ASSERT_TRUE(jane->courses.empty());
   UNIT_ASSERT_TRUE(algebra->students.empty());
   UNIT_ASSERT_TRUE(art->students.empty());
 
-  s.push_back(art.modify()->students, jane);
+  art.modify()->students.push_back(jane);
+
+  s.flush();
 
   UNIT_ASSERT_FALSE(art->students.empty());
   UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
@@ -218,12 +234,16 @@ void OrmRelationTestUnit::test_many_to_many()
   UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL);
   UNIT_ASSERT_EQUAL(jane->courses.front()->title, art->title);
 
-  s.erase(jane.modify()->courses, jane.modify()->courses.begin());
+  jane.modify()->courses.erase(jane.modify()->courses.begin());
+
+  s.flush();
 
   UNIT_ASSERT_TRUE(jane->courses.empty());
   UNIT_ASSERT_TRUE(art->students.empty());
 
-  s.push_back(george.modify()->courses, algebra);
+  george.modify()->courses.push_back(algebra);
+
+  s.flush();
 
   UNIT_ASSERT_FALSE(algebra->students.empty());
   UNIT_ASSERT_EQUAL(algebra->students.size(), 1UL);
@@ -232,7 +252,9 @@ void OrmRelationTestUnit::test_many_to_many()
   UNIT_ASSERT_EQUAL(george->courses.size(), 1UL);
   UNIT_ASSERT_EQUAL(george->courses.front()->title, algebra->title);
 
-  s.clear(algebra.modify()->students);
+  algebra.modify()->students.clear();
+
+  s.flush();
 
   UNIT_ASSERT_TRUE(george->courses.empty());
   UNIT_ASSERT_TRUE(algebra->students.empty());
@@ -242,11 +264,7 @@ void OrmRelationTestUnit::test_many_to_many()
 
 void OrmRelationTestUnit::test_save()
 {
-  std::cout << "\n";
-
   matador::persistence p(dns_);
-
-  p.enable_log();
 
   p.attach<many_list_ints>("many_ints");
 
@@ -254,7 +272,7 @@ void OrmRelationTestUnit::test_save()
 
   matador::session s(p);
 
-  auto ints = s.insert_only(new many_list_ints);
+  auto ints = s.insert(new many_list_ints);
 
   UNIT_ASSERT_GREATER(ints->id, 0UL);
   UNIT_ASSERT_TRUE(ints->elements.empty());
@@ -275,11 +293,7 @@ void OrmRelationTestUnit::test_save()
 
 void OrmRelationTestUnit::test_save_object()
 {
-  std::cout << "\n";
-
   matador::persistence p(dns_);
-
-  p.enable_log();
 
   p.attach<child>("child");
   p.attach<children_list>("children_list");
@@ -288,9 +302,9 @@ void OrmRelationTestUnit::test_save_object()
 
   matador::session s(p);
 
-  auto children = s.insert_only(new children_list("children list"));
-  auto kid1 = s.insert_only(new child("kid 1"));
-  auto kid2 = s.insert_only(new child("kid 2"));
+  auto children = s.insert(new children_list("children list"));
+  auto kid1 = s.insert(new child("kid 1"));
+  auto kid2 = s.insert(new child("kid 2"));
 
   UNIT_ASSERT_GREATER(children->id, 0UL);
   UNIT_ASSERT_TRUE(children->children.empty());
@@ -300,13 +314,13 @@ void OrmRelationTestUnit::test_save_object()
 
   children.modify()->children.erase(children.modify()->children.begin());
 
-  s.remove_only(kid1);
+  s.remove(kid1);
 
   s.flush();
 
   children.modify()->children.erase(children.modify()->children.begin());
 
-  s.remove_only(kid2);
+  s.remove(kid2);
 
   s.flush();
 

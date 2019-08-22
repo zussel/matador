@@ -13,8 +13,8 @@
 using namespace matador;
 
 
-TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::string &msg, std::string dns)
-  : unit_test(name, msg)
+TransactionTestUnit::TransactionTestUnit(const std::string &prefix, std::string dns)
+  : unit_test(prefix + "_transaction", prefix + " transaction test unit")
   , dns_(std::move(dns))
 {
   add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple transaction test");
@@ -50,8 +50,8 @@ void TransactionTestUnit::test_simple()
     UNIT_FAIL("transaction failed: " << ex.what());
   }
 
-  matador::object_view<person> persons(s.store());
-//  matador::object_view<person> persons = s.create_view<person>();
+//  matador::object_view<person> persons(s.store());
+  matador::object_view<person> persons = s.select<person>();
 
   UNIT_ASSERT_EQUAL(1UL, persons.size());
 
@@ -503,10 +503,5 @@ void TransactionTestUnit::test_has_many_vector()
   }
 
   p.drop();
-}
-
-std::string TransactionTestUnit::connection_string()
-{
-  return dns_;
 }
 

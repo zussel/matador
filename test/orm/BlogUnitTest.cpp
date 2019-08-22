@@ -20,7 +20,7 @@ struct blog_service
                                 const matador::object_ptr<author> &writer,
                                 const matador::object_ptr<category> &cat)
   {
-    auto first = session_.insert_only(new post(title, writer, std::move(content)));
+    auto first = session_.insert(new post(title, writer, std::move(content)));
     first.modify()->categories.push_back(cat);
     session_.flush();
     return first;
@@ -28,13 +28,13 @@ struct blog_service
 
   void remove(matador::object_ptr<post> p)
   {
-    session_.remove_only(p);
+    session_.remove(p);
     session_.flush();
   }
 
   void add_comment(const std::string &email, std::string msg, matador::object_ptr<post> &pst)
   {
-    auto cmt = session_.insert_only(new comment(email, std::move(msg)));
+    auto cmt = session_.insert(new comment(email, std::move(msg)));
     pst.modify()->comments.push_back(cmt);
     session_.flush();
   }
@@ -70,8 +70,8 @@ void BlogUnitTest::test_blog_single_post()
     matador::object_ptr<author> me;
     matador::object_ptr<category> main;
 
-    me = s.insert_only(new author("sascha", matador::date(29, 4, 1972)));
-    main = s.insert_only(new category("Main", "Main category"));
+    me = s.insert(new author("sascha", matador::date(29, 4, 1972)));
+    main = s.insert(new category("Main", "Main category"));
 
     s.flush();
 
@@ -177,8 +177,8 @@ void BlogUnitTest::test_blog_multiple_post()
     matador::object_ptr<author> me;
     matador::object_ptr<category> main;
 
-    me = s.insert_only(new author("sascha", matador::date(29, 4, 1972)));
-    main = s.insert_only(new category("Main", "Main category"));
+    me = s.insert(new author("sascha", matador::date(29, 4, 1972)));
+    main = s.insert(new category("Main", "Main category"));
 
     s.flush();
 

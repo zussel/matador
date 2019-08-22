@@ -14,8 +14,8 @@
 
 using namespace matador;
 
-QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, std::string db, matador::time timeval)
-  : unit_test(name, msg)
+QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador::time timeval)
+  : unit_test(prefix + "_query", prefix + " query test unit")
   , db_(std::move(db))
   , time_val_(std::move(timeval))
 {

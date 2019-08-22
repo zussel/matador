@@ -29,7 +29,7 @@ class session;
 class TransactionTestUnit : public matador::unit_test
 {
 public:
-  TransactionTestUnit(const std::string &name, const std::string &msg, std::string dns = "memory");
+  explicit TransactionTestUnit(const std::string &prefix, std::string dns = "memory");
   ~TransactionTestUnit() override = default;
 
   void test_simple();
@@ -39,9 +39,6 @@ public:
   void test_has_many_list_rollback();
   void test_has_many_list();
   void test_has_many_vector();
-
-protected:
-  std::string connection_string();
 
 private:
   std::string dns_;
