@@ -200,7 +200,7 @@ public:
         // name of table, object     , cascade
     }
 
-    matador::object_ptr<department> dep() { return department_; }
+    matador::object_ptr<department> dep() const { return department_; }
     void dep(const matador::object_ptr<department> &d)
     {
         department_ = d;

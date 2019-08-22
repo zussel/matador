@@ -458,6 +458,15 @@ public:
   bool operator<(const self &i) const { return iter_ < i.iter_; }
 
   /**
+   * @brief Returns the difference of two iterators a and b.
+   *
+   * @param a The minuend iterator
+   * @param b The subtrahend iterator
+   * @return The difference between both iterators
+   */
+  friend difference_type operator-(self a, self b) { return a.iter_ - b.iter_; }
+
+  /**
    * @brief Pre increments self
    *
    * @return A reference to incremented self
@@ -582,6 +591,8 @@ public:
   const value_type& operator*() const { return iter_->value(); }
   //@}
 
+  holder_type holder_item() const { return *iter_; }
+
 private:
   void move_to(self &i)
   {
@@ -593,8 +604,6 @@ private:
   friend class basic_has_many<T, std::vector>;
   friend class object_serializer;
   friend class detail::object_inserter;
-
-  const holder_type holder_item() const { return *iter_; }
 
   const_container_iterator iter_;
 };

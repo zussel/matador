@@ -224,6 +224,14 @@ public:
    */
   char identifier_closing_quote() const;
 
+  /**
+   * Return database specific sql token
+   *
+   * @param tok Requested token
+   * @return Database specific sql token
+   */
+  std::string token_at(detail::token::t_token tok) const;
+
 protected:
   /// @cond MATADOR_DEV
 
@@ -240,8 +248,6 @@ protected:
   std::string continue_build(const sql &s, t_compile_type compile_type);
 
   void replace_token(detail::token::t_token tkn, const std::string &value);
-
-  std::string token_at(detail::token::t_token tok) const;
 
   void append_to_result(const std::string &part);
 

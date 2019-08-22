@@ -20,51 +20,23 @@ struct blog_service
                                 const matador::object_ptr<author> &writer,
                                 const matador::object_ptr<category> &cat)
   {
-    matador::transaction tr = session_.begin();
-    try {
-      auto first = session_.insert(new post(title, writer, std::move(content)));
-
-      session_.push_back(first->categories, cat);
-
-      tr.commit();
-
-      return first;
-    } catch (std::exception &) {
-      tr.rollback();
-      return matador::object_ptr<post>();
-    }
+    auto first = session_.insert(new post(title, writer, std::move(content)));
+    first.modify()->categories.push_back(cat);
+    session_.flush();
+    return first;
   }
 
-  bool remove(matador::object_ptr<post> p)
+  void remove(matador::object_ptr<post> p)
   {
-    matador::transaction tr = session_.begin();
-    try {
-      session_.remove(p);
-
-      tr.commit();
-
-      return true;
-    } catch (std::exception &) {
-      tr.rollback();
-      return false;
-    }
+    session_.remove(p);
+    session_.flush();
   }
 
-  bool add_comment(const std::string &email, std::string msg, matador::object_ptr<post> pst)
+  void add_comment(const std::string &email, std::string msg, matador::object_ptr<post> &pst)
   {
-    auto tr = session_.begin();
-    try {
-      auto cmt = session_.insert(new comment(email, std::move(msg)));
-
-      pst->comments.push_back(cmt);
-
-      tr.commit();
-
-      return true;
-    } catch(std::exception &ex) {
-      tr.rollback();
-      return false;
-    }
+    auto cmt = session_.insert(new comment(email, std::move(msg)));
+    pst.modify()->comments.push_back(cmt);
+    session_.flush();
   }
   matador::session &session_;
 };
@@ -95,21 +67,15 @@ void BlogUnitTest::test_blog_single_post()
 
     blog_service blogger(s);
 
-    matador::transaction tr = s.begin();
-
     matador::object_ptr<author> me;
     matador::object_ptr<category> main;
-    try {
-      me = s.insert(new author("sascha", matador::date(29, 4, 1972)));
-      main = s.insert(new category("Main", "Main category"));
 
-      blogger.add("First post", "My first post content", me, main);
+    me = s.insert(new author("sascha", matador::date(29, 4, 1972)));
+    main = s.insert(new category("Main", "Main category"));
 
-      tr.commit();
-    } catch (std::exception &) {
-      tr.rollback();
-      UNIT_FAIL("failed on commit blog post");
-    }
+    s.flush();
+
+    blogger.add("First post", "My first post content", me, main);
 
     using t_post_view = matador::object_view<post>;
     t_post_view posts(s.store());
@@ -211,20 +177,15 @@ void BlogUnitTest::test_blog_multiple_post()
     matador::object_ptr<author> me;
     matador::object_ptr<category> main;
 
-    matador::transaction tr = s.begin();
-    try {
-      me = s.insert(new author("sascha", matador::date(29, 4, 1972)));
-      main = s.insert(new category("Main", "Main category"));
+    me = s.insert(new author("sascha", matador::date(29, 4, 1972)));
+    main = s.insert(new category("Main", "Main category"));
 
-      blogger.add("First post", "My first post content", me, main);
-      blogger.add("Second post", "My second post content", me, main);
-      blogger.add("Third post", "My third post content", me, main);
-      blogger.add("Fourth post", "My fourth post content", me, main);
+    s.flush();
 
-      tr.commit();
-    } catch (std::exception &) {
-      tr.rollback();
-    }
+    blogger.add("First post", "My first post content", me, main);
+    blogger.add("Second post", "My second post content", me, main);
+    blogger.add("Third post", "My third post content", me, main);
+    blogger.add("Fourth post", "My fourth post content", me, main);
 
     UNIT_ASSERT_EQUAL(me.reference_count(), 4UL);
     UNIT_ASSERT_EQUAL(main.reference_count(), 4UL);

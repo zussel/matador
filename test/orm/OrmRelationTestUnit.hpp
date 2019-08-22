@@ -18,6 +18,7 @@ public:
   void test_belongs_to();
   void test_many_to_many();
   void test_save();
+  void test_save_object();
 
 private:
   std::string dns_;

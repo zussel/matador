@@ -13,8 +13,8 @@
 using namespace matador;
 
 
-TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::string &msg, std::string dns)
-  : unit_test(name, msg)
+TransactionTestUnit::TransactionTestUnit(const std::string &prefix, std::string dns)
+  : unit_test(prefix + "_transaction", prefix + " transaction test unit")
   , dns_(std::move(dns))
 {
   add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple transaction test");
@@ -50,8 +50,8 @@ void TransactionTestUnit::test_simple()
     UNIT_FAIL("transaction failed: " << ex.what());
   }
 
-  matador::object_view<person> persons(s.store());
-//  matador::object_view<person> persons = s.create_view<person>();
+//  matador::object_view<person> persons(s.store());
+  matador::object_view<person> persons = s.select<person>();
 
   UNIT_ASSERT_EQUAL(1UL, persons.size());
 
@@ -88,7 +88,7 @@ void TransactionTestUnit::test_nested()
 
     tr.begin();
     // modify serializable
-    item->set_int(120);
+    item.modify()->set_int(120);
     UNIT_ASSERT_EQUAL(item->get_int(), 120);
 
 
@@ -96,7 +96,7 @@ void TransactionTestUnit::test_nested()
     transaction tr2 = s.begin();
     try {
       // change name again
-      item->set_int(170);
+      item.modify()->set_int(170);
 
       UNIT_ASSERT_EQUAL(item->get_int(), 170);
       // rollback transaction
@@ -181,7 +181,7 @@ void TransactionTestUnit::test_foreign()
     // insert new serializable
     item_ptr item = s.insert(new Item("Bar", 13));
     object_item_ptr object_item = s.insert(new object_item_t("Foo", 42));
-    object_item->ptr(item);
+    object_item.modify()->ptr(item);
 
     UNIT_ASSERT_GREATER(object_item->id(), 0UL);
 
@@ -189,8 +189,8 @@ void TransactionTestUnit::test_foreign()
 
     UNIT_ASSERT_GREATER(item->id(), 0UL);
 
-    item->set_int(120);
-    item->set_string("Bar");
+    item.modify()->set_int(120);
+    item.modify()->set_string("Bar");
 
     UNIT_ASSERT_EQUAL(item->get_int(), 120);
     //UNIT_ASSERT_EQUAL(item->get_string(), "Bar");
@@ -258,7 +258,7 @@ void TransactionTestUnit::test_has_many_list_commit()
 
       UNIT_ASSERT_GREATER(kid->id, 0UL);
 
-      children->children.push_back(kid);
+      children.modify()->children.push_back(kid);
     }
 
     UNIT_ASSERT_FALSE(children->children.empty());
@@ -311,7 +311,7 @@ void TransactionTestUnit::test_has_many_list_rollback()
 
       UNIT_ASSERT_GREATER(kid->id, 0UL);
 
-      children->children.push_back(kid);
+      children.modify()->children.push_back(kid);
     }
 
     UNIT_ASSERT_FALSE(children->children.empty());
@@ -364,7 +364,7 @@ void TransactionTestUnit::test_has_many_list()
 
       UNIT_ASSERT_GREATER(kid->id, 0UL);
 
-      children->children.push_back(kid);
+      children.modify()->children.push_back(kid);
     }
 
     UNIT_ASSERT_FALSE(children->children.empty());
@@ -384,7 +384,7 @@ void TransactionTestUnit::test_has_many_list()
 
       UNIT_ASSERT_GREATER(kid->id, 0UL);
 
-      children->children.push_back(kid);
+      children.modify()->children.push_back(kid);
     }
 
     UNIT_ASSERT_FALSE(children->children.empty());
@@ -397,7 +397,7 @@ void TransactionTestUnit::test_has_many_list()
 
     tr.begin();
 
-    children->children.clear();
+    children.modify()->children.clear();
 
     UNIT_ASSERT_TRUE(children->children.empty());
     UNIT_ASSERT_EQUAL(children->children.size(), 0UL);
@@ -449,7 +449,7 @@ void TransactionTestUnit::test_has_many_vector()
 
       UNIT_ASSERT_GREATER(kid->id, 0UL);
 
-      children->children.push_back(kid);
+      children.modify()->children.push_back(kid);
     }
 
     UNIT_ASSERT_FALSE(children->children.empty());
@@ -469,7 +469,7 @@ void TransactionTestUnit::test_has_many_vector()
 
       UNIT_ASSERT_GREATER(kid->id, 0UL);
 
-      children->children.push_back(kid);
+      children.modify()->children.push_back(kid);
     }
 
     UNIT_ASSERT_FALSE(children->children.empty());
@@ -482,7 +482,7 @@ void TransactionTestUnit::test_has_many_vector()
 
     tr.begin();
 
-    children->children.clear();
+    children.modify()->children.clear();
 
     UNIT_ASSERT_TRUE(children->children.empty());
     UNIT_ASSERT_EQUAL(children->children.size(), 0UL);
@@ -503,10 +503,5 @@ void TransactionTestUnit::test_has_many_vector()
   }
 
   p.drop();
-}
-
-std::string TransactionTestUnit::connection_string()
-{
-  return dns_;
 }
 

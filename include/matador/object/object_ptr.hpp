@@ -186,26 +186,20 @@ public:
     return get();
   }
 
-  T* operator->() {
-    return get();
-  }
-
   const T* get() const {
     return static_cast<T*>(lookup_object());
   }
-
-  T* get() {
-    if (proxy_ && proxy_->obj()) {
-      if (proxy_->ostore_ && proxy_->has_transaction()) {
-        proxy_->current_transaction().on_update<T>(proxy_);
-      }
-      return (T*)proxy_->obj();
-    } else {
-      return nullptr;
-    }
-
-  }
   //@}
+
+  /**
+   * The modify method allows to modify the underlying
+   * object. It ensures that this object is marked
+   * as modified in the object_store and all registered
+   * observers are notified
+   *
+   * @return Pointer to the underlying object
+   */
+  T* modify();
 
   //@{
   /**

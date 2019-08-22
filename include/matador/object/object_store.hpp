@@ -634,7 +634,6 @@ public:
       throw_object_exception("object is null");
     }
     object_inserter_.reset();
-//    auto proxy = std::make_unique<object_proxy>(o);
     std::unique_ptr<object_proxy> proxy(new object_proxy(o));
     try {
       insert<T>(proxy.get(), true);
@@ -698,7 +697,7 @@ public:
    * @param check_if_deletable If true methods checks if proxy is deletable.
    */
   template < class T >
-  void remove(object_proxy *proxy, bool notify, bool check_if_deletable)
+  void remove(object_proxy *proxy, bool check_if_deletable)
   {
 //    std::cout << "deleting " << *proxy << "\n";
     if (proxy == nullptr) {
@@ -713,7 +712,7 @@ public:
     }
 
     if (check_if_deletable) {
-      object_deleter_.remove(notify);
+      object_deleter_.remove();
     } else {
       // single deletion
       if (object_map_.erase(proxy->id()) != 1) {
@@ -724,11 +723,11 @@ public:
 
       proxy->node()->remove(proxy);
 
-      if (notify && !transactions_.empty()) {
+      if (!transactions_.empty()) {
         // notify transaction
         transactions_.top().on_delete<T>(proxy);
       } else {
-        delete proxy;
+        on_proxy_delete_(proxy);
       }
     }
   }
@@ -747,7 +746,7 @@ public:
   template<class T>
   void remove(object_ptr<T> &o)
   {
-    remove<T>(o.proxy_, true, true);
+    remove<T>(o.proxy_, true);
   }
 
   /**
@@ -796,7 +795,7 @@ public:
     // notify observers
     proxy->node()->on_update_proxy(proxy);
 
-    if (!transactions_.empty()) {
+    if (has_transaction()) {
       transactions_.top().on_update<T>(proxy);
     }
   }
@@ -814,21 +813,14 @@ public:
     mark_modified<T>(optr.proxy_);
   }
 
-
+  void on_proxy_delete(std::function<void(object_proxy*)> callback);
 private:
-  friend class detail::modified_marker;
   friend class detail::object_inserter;
   friend struct detail::basic_relation_endpoint;
-  friend class object_deleter;
   friend class object_serializer;
-  friend class restore_visitor;
-  friend class object_container;
   friend class object_holder;
   friend class object_proxy;
   friend class prototype_node;
-  friend class detail::basic_node_analyzer;
-  template < class T, template < class U = T > class O >
-  friend class detail::node_analyzer;
   friend class transaction;
   template < class T, template <class ...> class C >
   friend class has_many;
@@ -919,6 +911,8 @@ private:
   detail::object_inserter object_inserter_;
 
   std::stack<transaction> transactions_;
+
+  std::function<void(object_proxy *)> on_proxy_delete_;
 };
 
 template < class T >
@@ -974,7 +968,7 @@ prototype_iterator object_store::attach_internal(prototype_node *node, const cha
 
   validate<T>(node);
 
-  attach_node<T>(node, parent);
+  node = attach_node<T>(node, parent);
 
   node->on_attach();
 
@@ -1031,5 +1025,6 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 #include "matador/object/relation_endpoint_value_remover.tpp"
 #include "matador/object/object_inserter.tpp"
 #include "matador/object/object_deleter.tpp"
+#include "matador/object/object_ptr.tpp"
 
 #endif /* OBJECT_STORE_HPP */

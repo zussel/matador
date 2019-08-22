@@ -1,4 +1,5 @@
 #include "matador/db/sqlite/sqlite_prepared_result.hpp"
+#include "matador/db/sqlite/sqlite_exception.hpp"
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
@@ -30,14 +31,7 @@ const char* sqlite_prepared_result::column(size_type c) const
 
 bool sqlite_prepared_result::fetch()
 {
-  if (!first_) {
-    // get next row
-    ret_ = sqlite3_step(stmt_);
-  } else {
-    first_ = false;
-  }
-  return !(ret_ == SQLITE_DONE || ret_ == SQLITE_OK);
-
+  return prepare_fetch();
 }
 
 sqlite_prepared_result::size_type sqlite_prepared_result::affected_rows() const
@@ -182,10 +176,14 @@ bool sqlite_prepared_result::prepare_fetch()
   if (!first_) {
     // get next row
     ret_ = sqlite3_step(stmt_);
+    if (ret_ != SQLITE_DONE && ret_ != SQLITE_ROW) {
+      sqlite3 *db = sqlite3_db_handle(stmt_);
+      throw_error(ret_, db, "sqlite3_step");
+    }
   } else {
     first_ = false;
   }
-  return !(ret_ == SQLITE_DONE || ret_ == SQLITE_OK);
+  return ret_ == SQLITE_ROW;
 }
 
 bool sqlite_prepared_result::finalize_fetch()

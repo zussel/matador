@@ -18,7 +18,7 @@ class QueryTestUnit : public matador::unit_test
 {
 public:
   QueryTestUnit(
-    const std::string &name, const std::string &msg, std::string db = "memory",
+    const std::string &prefix, std::string db = "memory",
     matador::time timeval = matador::time(2015, 3, 15, 13, 56, 23, 123)
   );
 

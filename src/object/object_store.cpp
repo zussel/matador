@@ -18,6 +18,7 @@
 #include "matador/object/object_store.hpp"
 
 #include <iomanip>
+#include <utility>
 
 using namespace std;
 using namespace std::placeholders;
@@ -33,6 +34,9 @@ object_store::object_store()
   // last points to first sentinel
   first_->next = last_;
   last_->prev = first_;
+  on_proxy_delete_ = [](object_proxy *proxy) {
+    delete proxy;
+  };
 }
 
 object_store::~object_store()
@@ -307,6 +311,11 @@ transaction object_store::current_transaction()
 bool object_store::has_transaction() const
 {
   return !transactions_.empty();
+}
+
+void object_store::on_proxy_delete(std::function<void(object_proxy *)> callback)
+{
+  on_proxy_delete_ = std::move(callback);
 }
 
 

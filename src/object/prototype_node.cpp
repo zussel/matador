@@ -17,6 +17,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "matador/utils/memory.hpp"
+
 #include "matador/object/prototype_node.hpp"
 #include "matador/object/object_exception.hpp"
 #include "matador/object/object_proxy.hpp"
@@ -30,8 +32,8 @@ namespace matador {
 void prototype_node::initialize(object_store *tree, const char *type, bool abstract)
 {
   tree_ = tree;
-  first = std::make_unique<prototype_node>();
-  last = std::make_unique<prototype_node>();
+  first = matador::make_unique<prototype_node>();
+  last = matador::make_unique<prototype_node>();
   type_.assign(type);
   abstract_ = abstract;
   first->next = last.get();

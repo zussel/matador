@@ -20,7 +20,9 @@
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/serializer.hpp"
-#include "dialect_token.hpp"
+#include "matador/utils/memory.hpp"
+
+#include "matador/sql/dialect_token.hpp"
 
 namespace matador {
 
@@ -38,7 +40,7 @@ public:
 
   template<class T>
   values *execute(T &x) {
-    values_ = std::make_unique<values>();
+    values_ = matador::make_unique<values>();
     matador::access::serialize(static_cast<serializer&>(*this), x);
     return values_.release();
   }

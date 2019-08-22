@@ -43,7 +43,8 @@ SET(HEADER
   ../../include/matador/utils/identifiable_holder.hpp
   ../../include/matador/utils/any.hpp
   ../../include/matador/utils/any_visitor.hpp
-  ../../include/matador/utils/is_builtin.hpp)
+  ../../include/matador/utils/is_builtin.hpp
+  ../../include/matador/utils/memory.hpp)
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
 

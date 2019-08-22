@@ -14,6 +14,38 @@ session::session(persistence &p)
 
 }
 
+void session::flush()
+{
+//  std::cout << "START: flushing all database changes\n";
+  persistence_.conn().begin();
+  for (auto const &i : persistence_.proxy_change_queue_) {
+    auto it = persistence_.find_table(i.proxy->node()->type());
+    if (it == persistence_.end()) {
+      std::cout << "couldn't find table " << i.proxy->node()->type() << "; skip action " << persistence_.proxy_change_action_to_string[i.action] << "\n";
+      continue;
+    }
+    switch (i.action) {
+      case persistence::proxy_change_action::INSERT:
+//        std::cout << "inserting proxy " << i.proxy->id() << "\n";
+        it->second->insert(i.proxy);
+        break;
+      case persistence::proxy_change_action::UPDATE:
+//        std::cout << "updating proxy " << i.proxy->id() << "\n";
+        it->second->update(i.proxy);
+        break;
+      case persistence::proxy_change_action::REMOVE:
+//        std::cout << "deleting proxy " << i.proxy->id() << "\n";
+        it->second->remove(i.proxy);
+        persistence_.proxies_to_delete_.erase(i.proxy);
+        delete i.proxy;
+        break;
+    }
+  }
+  persistence_.conn().commit();
+  persistence_.proxy_change_queue_.clear();
+//  std::cout << "FINISH: flushing all database changes\n";
+}
+
 void session::load()
 {
   prototype_iterator first = persistence_.store().begin();
@@ -34,6 +66,7 @@ void session::load()
     }
     load(i->second);
   }
+  persistence_.proxy_change_queue_.clear();
 }
 
 void session::load(const std::string &name)

@@ -4,7 +4,6 @@
 
 #include "ObjectTransactiontestUnit.hpp"
 
-#include "../Item.hpp"
 #include "../person.hpp"
 #include "../entities.hpp"
 
@@ -93,7 +92,7 @@ void ObjectTransactiontestUnit::test_update()
 
 
     UNIT_ASSERT_EQUAL(hans->height(), 180U);
-    hans->height(183);
+    hans.modify()->height(183);
     UNIT_ASSERT_EQUAL(hans->height(), 183U);
     UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
@@ -116,7 +115,7 @@ void ObjectTransactiontestUnit::test_update_rollback()
   store.attach<person>("person");
 
   auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
-  hans->id(7UL);
+  hans.modify()->id(7UL);
 
   matador::transaction tr(store);
 
@@ -125,7 +124,7 @@ void ObjectTransactiontestUnit::test_update_rollback()
 
 
     UNIT_ASSERT_EQUAL(hans->height(), 180U);
-    hans->height(183);
+    hans.modify()->height(183);
     UNIT_ASSERT_EQUAL(hans->height(), 183U);
     UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
@@ -222,7 +221,7 @@ void ObjectTransactiontestUnit::test_nested()
     tr1.begin();
 
     UNIT_ASSERT_EQUAL(hans->height(), 180U);
-    hans->height(183);
+    hans.modify()->height(183);
     UNIT_ASSERT_EQUAL(hans->height(), 183U);
 
     matador::transaction tr2(store);
@@ -231,7 +230,7 @@ void ObjectTransactiontestUnit::test_nested()
       tr2.begin();
 
       UNIT_ASSERT_EQUAL(hans->height(), 183U);
-      hans->height(159);
+      hans.modify()->height(159);
       UNIT_ASSERT_EQUAL(hans->height(), 159U);
 
       tr2.commit();
@@ -271,7 +270,7 @@ void ObjectTransactiontestUnit::test_nested_rollback()
     tr1.begin();
 
     UNIT_ASSERT_EQUAL(hans->height(), 180U);
-    hans->height(183);
+    hans.modify()->height(183);
     UNIT_ASSERT_EQUAL(hans->height(), 183U);
 
     matador::transaction tr2(store);
@@ -280,7 +279,7 @@ void ObjectTransactiontestUnit::test_nested_rollback()
       tr2.begin();
 
       UNIT_ASSERT_EQUAL(hans->height(), 183U);
-      hans->height(159);
+      hans.modify()->height(159);
       UNIT_ASSERT_EQUAL(hans->height(), 159U);
 
       tr2.rollback();
@@ -312,7 +311,7 @@ void ObjectTransactiontestUnit::test_foreign()
 
   auto ch1 = store.insert(new child("child 1"));
   auto m1 = store.insert(new master("m1"));
-  m1->children = ch1;
+  m1.modify()->children = ch1;
 
   matador::transaction tr(store);
 
@@ -347,7 +346,7 @@ void ObjectTransactiontestUnit::test_foreign_rollback()
 
   auto ch1 = store.insert(new child("child 1"));
   auto m1 = store.insert(new master("m1"));
-  m1->children = ch1;
+  m1.modify()->children = ch1;
 
   matador::transaction tr(store);
 

@@ -6,6 +6,8 @@
 
 #include "TestDialect.hpp"
 
+#include "matador/utils/memory.hpp"
+
 #include "matador/sql/sql.hpp"
 #include "matador/sql/dialect_token.hpp"
 #include "matador/sql/column.hpp"
@@ -283,7 +285,7 @@ void DialectTestUnit::test_select_where_query()
   s.reset(t_query_command::SELECT);
   s.append(new detail::select);
 
-  auto cols = std::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
+  auto cols = matador::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -306,7 +308,7 @@ void DialectTestUnit::test_select_where_query()
 
   s.append(new detail::select);
 
-  cols = std::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
+  cols = matador::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));

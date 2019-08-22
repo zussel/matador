@@ -17,7 +17,7 @@ MESSAGE(STATUS "${PROJECT_NAME_UPPER} ${APP_VERSION}")
 # Common compiler flags
 # These are defined for clang/gcc compatibility.
 # When non-compatible flags are implemented then we must specify them separately.
-SET(GCC_CLANG_COMMON_FLAGS "-std=c++14 -Wall -Wextra -pedantic")
+SET(GCC_CLANG_COMMON_FLAGS "-std=c++11 -Wall -Wextra -pedantic")
 SET(GCC_CLANG_COMMON_FLAGS_DEBUG "-O0 -g -DDEBUG")
 SET(GCC_CLANG_COMMON_FLAGS_RELEASE "-O1 -DNDEBUG")
 SET(CMAKE_POSITION_INDEPENDENT_CODE ON)

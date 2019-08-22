@@ -26,12 +26,13 @@ SET(HEADER
   ../../include/matador/object/generic_access.hpp
   ../../include/matador/object/object_exception.hpp
   ../../include/matador/object/object_ptr.hpp
+  ../../include/matador/object/object_ptr.tpp
   ../../include/matador/object/object_store.hpp
   ../../include/matador/object/object_view.hpp
   ../../include/matador/object/object_proxy.hpp
   ../../include/matador/object/object_serializer.hpp
   ../../include/matador/object/prototype_node.hpp
-    ../../include/matador/object/typed_object_store_observer.hpp
+  ../../include/matador/object/typed_object_store_observer.hpp
   ../../include/matador/object/object_expression.hpp
   ../../include/matador/object/attribute_serializer.hpp
   ../../include/matador/object/prototype_iterator.hpp
