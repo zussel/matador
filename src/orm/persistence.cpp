@@ -111,6 +111,9 @@ bool persistence::is_log_enabled() const
 
 void persistence::register_proxy_insert(object_proxy &proxy)
 {
+  if (store_.has_transaction()) {
+    return;
+  }
   auto i = std::find_if(proxy_change_queue_.begin(), proxy_change_queue_.end(), [&proxy](const proxy_change &pc) { return &proxy == pc.proxy; });
 
   if (i != proxy_change_queue_.end() && i->action == persistence::proxy_change_action::REMOVE) {
@@ -122,6 +125,9 @@ void persistence::register_proxy_insert(object_proxy &proxy)
 
 void persistence::register_proxy_update(object_proxy &proxy)
 {
+  if (store_.has_transaction()) {
+    return;
+  }
   auto i = std::find_if(proxy_change_queue_.begin(), proxy_change_queue_.end(), [&proxy](const proxy_change &pc) { return &proxy == pc.proxy; });
   if (i == proxy_change_queue_.end()) {
     proxy_change_queue_.emplace_back(proxy, persistence::proxy_change_action::UPDATE);
@@ -130,6 +136,9 @@ void persistence::register_proxy_update(object_proxy &proxy)
 
 void persistence::register_proxy_delete(object_proxy &proxy)
 {
+  if (store_.has_transaction()) {
+    return;
+  }
   auto i = std::find_if(proxy_change_queue_.begin(), proxy_change_queue_.end(), [&proxy](const proxy_change &pc) { return &proxy == pc.proxy; });
   if (i != proxy_change_queue_.end()) {
     if (i->action == persistence::proxy_change_action::INSERT) {

@@ -63,91 +63,20 @@ public:
    */
   explicit session(persistence &p);
 
-  /**
-   * @brief Inserts an object.
-   *
-   * Inserts an object. This leads to a new database entry
-   * and a new object in the underlying object_store.
-   *
-   * @tparam T The type of the object to be inserted
-   * @param obj The object to be inserted
-   * @return The new object wrapped by an object_ptr
-   */
   template < class T >
   object_ptr<T> insert(T *obj)
-  {
-    if (store().has_transaction()) {
-      return persistence_.store().insert(obj);
-    } else {
-      transaction tr(persistence_.store(), observer_);
-      tr.begin();
-      object_ptr<T> optr(persistence_.store().insert(obj));
-      tr.commit();
-      return optr;
-    }
-  }
-
-  template < class T >
-  object_ptr<T> insert_only(T *obj)
   {
     return persistence_.store().insert(obj);
   }
 
   /**
-   * @brief Updates an object.
-   *
-   * Updates an object. This leads to an updated database entry
-   * and an updated object in the underlying object_store.
-   *
-   * @tparam T The type of the object to be updated
-   * @param optr The object to be updated
-   * @return The updated object wrapped by an object_ptr
-   */
-  template < class T >
-  object_ptr<T> update(const object_ptr<T> &optr)
-  {
-    if (store().has_transaction()) {
-      store().current_transaction().on_update<T>(optr.proxy_);
-    } else {
-      transaction tr(persistence_.store(), observer_);
-      tr.begin();
-      tr.on_update<T>(optr.proxy_);
-      tr.commit();
-    }
-    return optr;
-  }
-
-  /**
-   * @brief Deletes an object.
-   *
-   * Deletes an object. This leads to an deleted object
-   * on the database as well as an deleted object in the
-   * underlying object_store
-   *
-   * @tparam T The type of the object to deleted
-   * @param optr The object to be deleted
+   * Remove object from object store
+   * @tparam T Type of object to be removed
+   * @param optr Object to be removed
    */
   template < class T >
   void remove(object_ptr<T> &optr)
   {
-    if (store().has_transaction()) {
-      persistence_.store().remove(optr);
-    } else {
-      auto i = persistence_.store().find(typeid(T).name());
-      if (i == persistence_.store().end()) {
-        throw_object_exception("couldn't find prototype node");
-      }
-      auto t = persistence_.find_table(i->type());
-      if (t == persistence_.end()) {
-        throw_object_exception("couldn't find table");
-      }
-      t->second->remove(optr.proxy_);
-      store().remove(optr);
-    }
-  }
-
-  template < class T >
-  void remove_only(object_ptr<T> &optr) {
     persistence_.store().remove(optr);
   }
 
@@ -161,163 +90,6 @@ public:
   object_view<T> select()
   {
     return object_view<T>(store());
-  }
-  /**
-   * @brief Inserts an object at the end of a container
-   *
-   * Inserts an object at the end of a container. This leads at
-   * least to one new database entry. If the value is an entity/object
-   * then a second object is also created.
-   * The same changes are made to the underlying object_store
-   * as well
-   *
-   * @tparam CONT The type of the container
-   * @tparam T The type of the object
-   * @param container The container the object should be inserted into
-   * @param value The object to be inserted
-   */
-  template < template <class ...> class CONT, class T >
-  void push_back(has_many<T, CONT> &container, const typename has_many<T, CONT>::value_type &value)
-  {
-    if (store().has_transaction()) {
-      container.push_back(value);
-    } else {
-      transaction tr(persistence_.store(), observer_);
-      tr.begin();
-      container.push_back(value);
-      tr.commit();
-    }
-  }
-
-  /**
-   * @brief Inserts an object at the begin of a container
-   *
-   * Inserts an object at the begin of a container. This leads at
-   * least to one new database entry. If the value is an entity/object
-   * then a second object is also created.
-   * The same changes are made to the underlying object_store
-   * as well
-   *
-   * @tparam CONT The type of the container
-   * @tparam T The type of the object
-   * @param container The container the object should be inserted into
-   * @param value The object to be inserted
-   */
-  template < template <class ...> class CONT, class T >
-  void push_front(has_many<T, CONT> &container, const typename has_many<T, CONT>::value_type &value)
-  {
-    if (store().has_transaction()) {
-      container.push_front(value);
-    } else {
-      transaction tr(persistence_.store(), observer_);
-      tr.begin();
-      container.push_front(value);
-      tr.commit();
-    }
-  }
-
-  /**
-   * @brief Deletes an object from a container
-   *
-   * Deletes an object identified by the given iterator
-   * from a container. This leads at least to one removed
-   * database entry.
-   * The same changes are made to the underlying object_store
-   * as well.
-   *
-   * @tparam CONT The type of the container
-   * @tparam T The type of the object
-   * @param container The container the object shoulb be removed from
-   * @param it The iterator representing the object
-   */
-  template < template <class ...> class CONT, class T >
-  void erase(has_many<T, CONT> &container, const typename has_many<T, CONT>::iterator &it)
-  {
-    if (store().has_transaction()) {
-      container.erase(it);
-    } else {
-      transaction tr(persistence_.store(), observer_);
-      tr.begin();
-      container.erase(it);
-      tr.commit();
-    }
-  }
-
-  /**
-   * @brief Deletes a range of objects from a container
-   *
-   * Deletes a range objects identified by the given first and
-   * last iterator from a container. This leads at least to one
-   * removed database entry.
-   * The same changes are made to the underlying object_store
-   * as well.
-   *
-   * @tparam CONT The type of the container
-   * @tparam T The type of the object
-   * @param container The container the objects should be removed from
-   * @param first The iterator representing the first object
-   * @param last The iterator representing the last object
-   */
-  template < template <class ...> class CONT, class T >
-  void erase(has_many<T, CONT> &container, const typename has_many<T, CONT>::iterator &first, const typename has_many<T, CONT>::iterator &last)
-  {
-    if (store().has_transaction()) {
-      container.erase(first, last);
-    } else {
-      transaction tr(persistence_.store(), observer_);
-      tr.begin();
-      container.erase(first, last);
-      tr.commit();
-    }
-  }
-
-  /**
-   * @brief Removes a given value from the container
-   *
-   * Removes the given value from the container. If the value
-   * is found and could be deleted it is removed from the
-   * database as well.
-   *
-   * @tparam CONT The type of the container
-   * @tparam T The type of the object
-   * @param container The container the value should be removed from
-   * @param value The value to remove
-   */
-  template < template <class ...> class CONT, class T >
-  void remove(has_many<T, CONT> &container, const typename has_many<T, CONT>::value_type &value)
-  {
-    if (store().has_transaction()) {
-      container.remove(value);
-    } else {
-      transaction tr(persistence_.store(), observer_);
-      tr.begin();
-      container.remove(value);
-      tr.commit();
-    }
-  }
-
-  /**
-   * @brief Clears the complete container
-   *
-   * Deletes all elements from the given container.
-   * The same changes are made to the underlying object_store
-   * as well.
-   *
-   * @tparam CONT The type of the container
-   * @tparam T The type of the object
-   * @param container The container to be cleared
-   */
-  template < template <class ...> class CONT, class T >
-  void clear(has_many<T, CONT> &container)
-  {
-    if (store().has_transaction()) {
-      container.clear();
-    } else {
-      transaction tr(persistence_.store(), observer_);
-      tr.begin();
-      container.clear();
-      tr.commit();
-    }
   }
 
   /**
@@ -333,18 +105,8 @@ public:
     if (store().has_transaction()) {
       return store().insert(obj);
     } else {
-      auto i = persistence_.store().find(typeid(T).name());
-      if (i == persistence_.store().end()) {
-        throw_object_exception("couldn't find prototype node");
-      }
-      auto t = persistence_.find_table(i->type());
-      if (t == persistence_.end()) {
-        throw_object_exception("couldn't find table");
-      }
-
-      object_ptr<T> optr(persistence_.store().insert(obj));
-
-      t->second->insert(optr.proxy_);
+      auto optr = insert(obj);
+      flush();
       return optr;
     }
   }
@@ -362,16 +124,8 @@ public:
     if (store().has_transaction()) {
       store().current_transaction().on_update<T>(obj.proxy_);
     } else {
-      auto i = persistence_.store().find(typeid(T).name());
-      if (i == persistence_.store().end()) {
-        throw_object_exception("couldn't find prototype node");
-      }
-      auto t = persistence_.find_table(i->type());
-      if (t == persistence_.end()) {
-        throw_object_exception("couldn't find table");
-      }
-
-      t->second->update(obj.proxy_);
+      persistence_.store().mark_modified(obj);
+      flush();
     }
     return obj;
   }
@@ -402,7 +156,8 @@ public:
    * @tparam T type of the table to load
    */
   template < class T >
-  void load() {
+  void load()
+  {
     load(typeid(T).name());
   }
 

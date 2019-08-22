@@ -26,12 +26,15 @@ void session::flush()
     }
     switch (i.action) {
       case persistence::proxy_change_action::INSERT:
+//        std::cout << "inserting proxy " << i.proxy->id() << "\n";
         it->second->insert(i.proxy);
         break;
       case persistence::proxy_change_action::UPDATE:
+//        std::cout << "updating proxy " << i.proxy->id() << "\n";
         it->second->update(i.proxy);
         break;
       case persistence::proxy_change_action::REMOVE:
+//        std::cout << "deleting proxy " << i.proxy->id() << "\n";
         it->second->remove(i.proxy);
         persistence_.proxies_to_delete_.erase(i.proxy);
         delete i.proxy;
