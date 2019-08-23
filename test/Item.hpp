@@ -121,7 +121,7 @@ public:
   }
 
 private:
-  enum { CSTR_LEN=256 };
+  enum { CSTR_LEN=255 };
 
   matador::identifier<unsigned long> id_ = 0;
 

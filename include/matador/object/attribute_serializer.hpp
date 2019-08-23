@@ -101,6 +101,7 @@ public:
   template < class V >
   void serialize(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
   void serialize(const char *, char*, size_t) {}
+
   void serialize(const char *, std::string &, size_t) {}
 //  template < class HAS_ONE_OR_MANY >
   void serialize(const char *, object_holder &, cascade_type) {}
@@ -346,6 +347,61 @@ public:
 private:
   const char* from_ = nullptr;
   size_t len_ = 0;
+};
+
+template <>
+class attribute_reader<std::string> : public basic_attribute_serializer
+{
+public:
+  attribute_reader(const std::string &id, const std::string &from)
+    : basic_attribute_serializer(id)
+    , from_(from)
+  {}
+
+  ~attribute_reader() = default;
+
+  template < class V >
+  void serialize(const char *, V &) {}
+  void serialize(const char *id, std::string &to, size_t)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to = from_;
+    this->success_ = true;
+  }
+  void serialize(const char *id, std::string &to)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to = from_;
+    this->success_ = true;
+  }
+
+  void serialize(const char *id, char *to, size_t len)
+  {
+    if (id_ != id) {
+      return;
+    }
+    if (len > from_.size()) {
+#ifdef _MSC_VER
+		strncpy_s(to, len, from_.c_str(), from_.size());
+		to[len_] = '\0';
+#else
+		strncpy(to, from_.c_str(), from_.size());
+#endif
+      this->success_ = true;
+    }
+  }
+//  template < class HAS_ONE >
+  void serialize(const char *, object_holder &, cascade_type) {}
+//  template < class HAS_MANY >
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void serialize(const char *, abstract_has_many &, cascade_type) {}
+
+private:
+  const std::string &from_;
 };
 
 template < class T >

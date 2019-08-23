@@ -796,7 +796,7 @@ void ObjectStoreTestUnit::test_generic()
   test_pair<unsigned short> us(45);
   test_pair<unsigned int> ui(4567890);
   test_pair<unsigned long> ul(987654321);
-  test_pair<char*> cstr("baba", 256);
+  test_pair<char*> cstr("baba", 255);
   test_pair<std::string> str("Hallo Welt");
   test_pair<std::string> varstr("The answer is 42");
   test_pair<matador::date> dateval(matador::date("29.4.1972"));
