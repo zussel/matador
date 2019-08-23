@@ -386,15 +386,22 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].error = &info_[index].error;
 }
 
-void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, std::string & /*value*/, size_t)
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, std::string & /*value*/, size_t s)
 {
+  if (info_[index].buffer == nullptr) {
+    info_[index].buffer = new char[s];
+    memset(info_[index].buffer, 0, s);
+    info_[index].buffer_length = (unsigned long)s;
+    info_[index].is_allocated = true;
+  }
   bind_[index].buffer_type = type;
+  bind_[index].buffer = info_[index].buffer;
+  bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].buffer = nullptr;
   bind_[index].buffer_length = 0;
   bind_[index].is_null = &info_[index].is_null;
   bind_[index].length = &info_[index].length;
-  bind_[index].error = &info_[index].error;
-}
+  bind_[index].error = &info_[index].error;}
 
 }
 
