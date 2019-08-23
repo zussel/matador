@@ -387,7 +387,7 @@ public:
     if (len > from_.size()) {
 #ifdef _MSC_VER
 		strncpy_s(to, len, from_.c_str(), from_.size());
-		to[len_] = '\0';
+		to[from_.size()] = '\0';
 #else
 		strncpy(to, from_.c_str(), from_.size());
 #endif
