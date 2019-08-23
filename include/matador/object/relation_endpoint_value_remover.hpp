@@ -40,6 +40,7 @@ public:
   template < class T >
   void serialize(const char *, T &) {}
   void serialize(const char *, char *, size_t) {}
+  void serialize(const char *, std::string &, size_t) {}
   template < class T >
   void serialize(const char *, T &, cascade_type) {}
   void serialize(const char *id, object_pointer<Value, object_holder_type::BELONGS_TO> &x, cascade_type);

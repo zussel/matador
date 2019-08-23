@@ -19,7 +19,6 @@
 #include "matador/db/mssql/mssql_connection.hpp"
 #include "matador/db/mssql/mssql_result.hpp"
 
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/identifiable_holder.hpp"
@@ -189,7 +188,7 @@ void mssql_statement::serialize(const char *, matador::time &x)
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::serialize(const char *, varchar_base &x)
+void mssql_statement::serialize(const char *, std::string &x, size_t)
 {
   bind_value(x.c_str(), x.capacity(), ++host_index);
 }

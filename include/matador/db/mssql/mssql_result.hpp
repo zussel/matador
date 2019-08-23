@@ -97,7 +97,7 @@ protected:
   void serialize(const char*, double&) override;
   void serialize(const char*, char *, size_t) override;
   void serialize(const char*, std::string&) override;
-  void serialize(const char*, matador::varchar_base&) override;
+  void serialize(const char*, std::string &x, size_t s) override;
   void serialize(const char*, matador::time&) override;
   void serialize(const char*, matador::date&) override;
   void serialize(const char*, matador::basic_identifier &x) override;
@@ -118,7 +118,6 @@ protected:
   
   void read_column(const char *, char &val);
   void read_column(const char *, std::string &val);
-  void read_column(const char *, varchar_base &val);
   void read_column(const char *, matador::date &val);
   void read_column(const char *, matador::time &val);
 

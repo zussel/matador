@@ -4,11 +4,11 @@ namespace matador {
 namespace detail {
 
 query_value_column_processor::query_value_column_processor(
-  const std::shared_ptr<columns> &update_columns,
-  const std::vector<matador::any> &rowvalues
+  std::shared_ptr<columns> update_columns,
+  std::vector<matador::any> rowvalues
 )
-  : update_columns_(update_columns)
-  , rowvalues_(rowvalues)
+  : update_columns_(std::move(update_columns))
+  , rowvalues_(std::move(rowvalues))
 {
   visitor_.register_visitor<char>([this](char &val) { this->process(val); });
   visitor_.register_visitor<short>([this](short &val) { this->process(val); });
@@ -21,7 +21,7 @@ query_value_column_processor::query_value_column_processor(
   visitor_.register_visitor<bool>([this](bool &val) { this->process(val); });
   visitor_.register_visitor<float>([this](float &val) { this->process(val); });
   visitor_.register_visitor<double>([this](double &val) { this->process(val); });
-  visitor_.register_visitor<matador::varchar_base>([this](matador::varchar_base &val) { this->process(val); });
+//  visitor_.register_visitor<matador::varchar_base>([this](matador::varchar_base &val) { this->process(val); });
   visitor_.register_visitor<std::string>([this](std::string &val) { this->process(val); });
   visitor_.register_visitor<char*>([this](char *val) { this->process(val); });
   visitor_.register_visitor<const char*>([this](const char *val) { this->process(val); });

@@ -3,8 +3,6 @@
 
 #include "matador/unit/unit_test.hpp"
 
-#include "matador/utils/varchar.hpp"
-
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/object_store.hpp"
 

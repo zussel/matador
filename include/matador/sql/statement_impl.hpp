@@ -5,8 +5,6 @@
 #ifndef OOS_STATEMENT_IMPL_HPP
 #define OOS_STATEMENT_IMPL_HPP
 
-#include "matador/utils/varchar.hpp"
-
 #include "matador/sql/result.hpp"
 
 #ifdef _MSC_VER

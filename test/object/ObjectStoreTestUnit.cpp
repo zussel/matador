@@ -216,7 +216,7 @@ void ObjectStoreTestUnit::test_serializer()
   unsigned long ul = 987654321;
   bool b = true;
   std::string title = "Hallo Welt";
-  matador::varchar<64> str("The answer is 42");
+  std::string str("The answer is 42");
   matador::date dt(15, 9, 1972);
   matador::time t(2008, 12, 27, 13, 6, 57, 4711);
 
@@ -345,7 +345,7 @@ void ObjectStoreTestUnit::test_set()
 {
   matador::date dt(15, 9, 1972);
   matador::time t(2008, 12, 27, 13, 6, 57, 4711);
-  matador::varchar<64> varstr("The answer is 42");
+  std::string varstr("The answer is 42");
   std::string str("tiger");
 
   Item i("item", 4711);
@@ -403,9 +403,9 @@ void ObjectStoreTestUnit::test_get()
   test_pair<unsigned short> us(45);
   test_pair<unsigned int> ui(4567890);
   test_pair<unsigned long> ul(987654321);
-  test_pair<char*> cstr("baba", 256);
+  test_pair<char*> cstr("baba", 255);
   test_pair<std::string> str("Hallo Welt");
-  test_pair<matador::varchar<64> > varstr("The answer is 42");
+  test_pair<std::string> varstr("The answer is 42");
   test_pair<matador::date> dateval(matador::date("29.4.1972"));
   test_pair<matador::time > timeval(matador::time(2015, 10, 16, 8, 54, 32, 123));
 
@@ -798,7 +798,7 @@ void ObjectStoreTestUnit::test_generic()
   test_pair<unsigned long> ul(987654321);
   test_pair<char*> cstr("baba", 256);
   test_pair<std::string> str("Hallo Welt");
-  test_pair<matador::varchar<64> > varstr("The answer is 42");
+  test_pair<std::string> varstr("The answer is 42");
   test_pair<matador::date> dateval(matador::date("29.4.1972"));
   test_pair<matador::time > timeval(matador::time(2015, 10, 16, 8, 54, 32, 123));
 

@@ -128,9 +128,9 @@ void postgresql_prepared_result::serialize(const char *, std::string &x)
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, varchar_base &x)
+void postgresql_prepared_result::serialize(const char *, std::string &x, size_t s)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row_, column_++, x, s);
 }
 
 void postgresql_prepared_result::serialize(const char *id, basic_identifier &x)

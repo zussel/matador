@@ -33,7 +33,7 @@ class byte_buffer;
 
 class OOS_UTILS_API basic_identifier_serializer : public serializer {
 public:
-  basic_identifier_serializer();
+  basic_identifier_serializer() = default;
 
   void serialize(basic_identifier &x, byte_buffer &buffer);
   void deserialize(basic_identifier &x, byte_buffer &buffer);
@@ -51,7 +51,7 @@ public:
   void serialize(const char*, double&) override;
   void serialize(const char*, char *, size_t) override;
   void serialize(const char*, std::string&) override;
-  void serialize(const char*, matador::varchar_base&) override;
+  void serialize(const char*, std::string&, size_t) override;
   void serialize(const char*, matador::time&) override;
   void serialize(const char*, matador::date&) override;
   void serialize(const char*, matador::basic_identifier &x) override;

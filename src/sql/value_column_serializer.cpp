@@ -9,9 +9,6 @@
 namespace matador {
 namespace detail {
 
-value_column_serializer::value_column_serializer()
-{ }
-
 template < class T >
 std::shared_ptr<value_column<T>> make_shared_value_column(const char *col, T &val)
 {
@@ -83,7 +80,7 @@ void value_column_serializer::serialize(const char *id, char *x, size_t s)
   cols_->push_back(make_shared_value_column(id, x, s));
 }
 
-void value_column_serializer::serialize(const char *id, varchar_base &x)
+void value_column_serializer::serialize(const char *id, std::string &x, size_t)
 {
   cols_->push_back(make_shared_value_column(id, x));
 }

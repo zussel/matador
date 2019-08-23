@@ -82,6 +82,7 @@ public:
   void serialize(const char*, V&) {}
 
   void serialize(const char*, char*, size_t) {}
+  void serialize(const char*, std::string &, size_t) {}
 
 //  template < class HAS_ONE >
   void serialize(const char*, object_holder&, cascade_type) {}

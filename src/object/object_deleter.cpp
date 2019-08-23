@@ -35,8 +35,6 @@ object_deleter::iterator object_deleter::end()
   return objects_to_remove_.end();
 }
 
-void object_deleter::serialize(const char *, char *, size_t) {}
-
 bool object_deleter::check_object_count_map() const
 {
   for (const auto &o : objects_to_remove_)

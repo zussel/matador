@@ -631,7 +631,8 @@ private:
  * @tparam T The type of the elements
  */
 template < class T >
-class has_many<T, std::vector> : public basic_has_many<T, std::vector>
+class
+has_many<T, std::vector> : public basic_has_many<T, std::vector>
 {
 public:
   typedef basic_has_many<T, std::vector> base;                     /**< Shortcut to self */

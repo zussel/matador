@@ -194,9 +194,9 @@ void postgresql_statement::serialize(const char *, char *x, size_t)
   host_params_[host_index++] = x;
 }
 
-void postgresql_statement::serialize(const char *, varchar_base &x)
+void postgresql_statement::serialize(const char *, std::string &x, size_t)
 {
-  host_strings_[host_index] = x.str();
+  host_strings_[host_index] = x;
   host_params_[host_index] = host_strings_[host_index].c_str();
   ++host_index;
 }

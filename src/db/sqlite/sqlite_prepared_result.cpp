@@ -3,7 +3,6 @@
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/string.hpp"
 #include "matador/utils/basic_identifier.hpp"
 
@@ -117,7 +116,7 @@ void sqlite_prepared_result::serialize(const char *, std::string &x)
   x.assign(text, s);
 }
 
-void sqlite_prepared_result::serialize(const char *, varchar_base &x)
+void sqlite_prepared_result::serialize(const char *, std::string &x, size_t )
 {
   auto s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   const char *text = (const char*)sqlite3_column_text(stmt_, result_index_++);

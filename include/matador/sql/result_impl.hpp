@@ -65,7 +65,7 @@ public:
   void serialize(const char*, double&) override = 0;
   void serialize(const char*, char *, size_t) override = 0;
   void serialize(const char*, std::string&) override = 0;
-  void serialize(const char*, matador::varchar_base&) override = 0;
+  void serialize(const char*, std::string&, size_t) override = 0;
   void serialize(const char*, matador::time&) override = 0;
   void serialize(const char*, matador::date&) override = 0;
   void serialize(const char*, matador::basic_identifier &x) override = 0;

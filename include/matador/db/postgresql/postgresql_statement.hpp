@@ -46,7 +46,7 @@ protected:
   void serialize(const char *id, double &x) override;
   void serialize(const char *id, bool &x) override;
   void serialize(const char *id, char *x, size_t s) override;
-  void serialize(const char *id, varchar_base &x) override;
+  void serialize(const char *id, std::string &x, size_t s) override;
   void serialize(const char *id, std::string &x) override;
   void serialize(const char *id, matador::date &x) override;
   void serialize(const char *id, matador::time &x) override;

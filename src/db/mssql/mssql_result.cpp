@@ -17,7 +17,6 @@
 
 #include "matador/db/mssql/mssql_result.hpp"
 
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/basic_identifier.hpp"
@@ -163,7 +162,7 @@ void mssql_result::serialize(const char * /*id*/, char *x, size_t s)
   }
 }
 
-void mssql_result::serialize(const char *id, varchar_base &x)
+void mssql_result::serialize(const char *id, std::string &x, size_t)
 {
   read_column(id, x);
 }
@@ -215,21 +214,6 @@ void mssql_result::read_column(const char *, char &val)
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
 }
-
-void mssql_result::read_column(const char *, varchar_base &val)
-{
-  char *buf = new char[val.capacity()];
-  SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index_++), SQL_C_CHAR, buf, val.capacity(), &info);
-  if (SQL_SUCCEEDED(ret)) {
-    val.assign(buf, static_cast<size_t>(info));
-    delete [] buf;
-  } else {
-    delete [] buf;
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
-  }
-}
-
 
 void mssql_result::read_column(char const *, date &x)
 {

@@ -34,7 +34,6 @@
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-#include "matador/utils/varchar.hpp"
 
 #include <string>
 
@@ -153,12 +152,12 @@ template <> struct data_type_traits<double>
   inline static unsigned long size() { return sizeof(double); }
 };
 
-template < unsigned int C >
-struct data_type_traits<varchar<C>>
-{
-  inline static data_type type() { return data_type::type_varchar; }
-  inline static unsigned long size() { return C; }
-};
+//template < unsigned int C >
+//struct data_type_traits<varchar<C>>
+//{
+//  inline static data_type type() { return data_type::type_varchar; }
+//  inline static unsigned long size() { return C; }
+//};
 
 template <> struct data_type_traits<const char*>
 {

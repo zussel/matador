@@ -5,7 +5,6 @@
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/basic_identifier.hpp"
 #include "matador/utils/identifiable_holder.hpp"
 
@@ -284,13 +283,12 @@ void mysql_prepared_result::serialize(const char *, std::string &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char *, varchar_base &x)
+void mysql_prepared_result::serialize(const char *, std::string &x, size_t s)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
+    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x, s);
   } else {
     auto *data = (char*)bind_[result_index_].buffer;
-//  unsigned long len = bind_[result_index].buffer_length;
     unsigned long len = info_[result_index_].length;
     x.assign(data, len);
     ++result_index_;
@@ -388,17 +386,11 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].error = &info_[index].error;
 }
 
-void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, varchar_base &x)
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, std::string & /*value*/, size_t)
 {
-  if (info_[index].buffer == nullptr) {
-    info_[index].buffer = new char[x.capacity()];
-    memset(info_[index].buffer, 0, x.capacity());
-    info_[index].buffer_length = (unsigned long)x.capacity();
-    info_[index].is_allocated = true;
-  }
   bind_[index].buffer_type = type;
-  bind_[index].buffer = info_[index].buffer;
-  bind_[index].buffer_length = info_[index].buffer_length;
+  bind_[index].buffer = nullptr;
+  bind_[index].buffer_length = 0;
   bind_[index].is_null = &info_[index].is_null;
   bind_[index].length = &info_[index].length;
   bind_[index].error = &info_[index].error;

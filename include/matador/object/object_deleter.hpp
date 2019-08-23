@@ -107,7 +107,8 @@ public:
 
   template<class T>
   void serialize(const char *, const T &);
-  void serialize(const char *, char *, size_t);
+  void serialize(const char *, char *, size_t) {}
+  void serialize(const char *, std::string &, size_t) {}
 
   template<class T>
   void serialize(const char *, belongs_to<T> &x, cascade_type cascade);

@@ -19,7 +19,6 @@
 #endif
 
 #include "matador/utils/cascade_type.hpp"
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/access.hpp"
 
 #include <string>
@@ -29,7 +28,6 @@ namespace matador {
 
 class time;
 class date;
-class varchar_base;
 class identifiable_holder;
 class basic_identifier;
 class abstract_has_many;
@@ -154,11 +152,14 @@ public:
   virtual void serialize(const char *id, std::string &x) = 0;
   /**
    * @brief Interface to serialize a varchar with given id
+   * Interface to serialize a varchar with given id. Varchar
+   * consists of a string and a size
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param s The size of the string
    */
-  virtual void serialize(const char *id, matador::varchar_base &x) = 0;
+  virtual void serialize(const char *id, std::string &x, size_t s) = 0;
   /**
    * @brief Interface to serialize a time with given id
    *
@@ -188,19 +189,6 @@ public:
    * @param cascade The cascade type
    */
   virtual void serialize(const char *id, matador::identifiable_holder &x, cascade_type cascade) = 0;
-
-  /**
-   * @brief Interface to serialize a varchar with given id
-   *
-   * @tparam S The size of the varchar
-   * @param id The id of the value
-   * @param x The value to be serialized
-   */
-  template <unsigned int S >
-  void serialize(const char *id, varchar<S> &x)
-  {
-    serialize(id, serializer::to_varchar_base(x));
-  }
 
   /**
    * @brief Interface to serialize a identifier with given id
@@ -241,9 +229,6 @@ public:
   void serialize(const char *, abstract_has_many &, cascade_type) {}
 
 private:
-  template <unsigned int S >
-  static varchar_base& to_varchar_base(varchar<S> &x) { return x; }
-
   template < class T, typename = typename std::enable_if<
     std::is_base_of<basic_identifier, T>::value &&
     !std::is_same<T, basic_identifier>::value

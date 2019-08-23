@@ -69,6 +69,11 @@ columns &columns::operator=(const columns &x)
   return *this;
 }
 
+std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col, size_t size)
+{
+  return std::make_shared<detail::typed_varchar_column>(col, size, data_type::type_varchar);
+}
+
 namespace detail {
 
 typed_column::typed_column(const std::string &col, data_type t)

@@ -16,7 +16,7 @@ query_value_creator::query_value_creator()
   visitor_.register_visitor<bool>([this](bool &val) { this->process(val); });
   visitor_.register_visitor<float>([this](float &val) { this->process(val); });
   visitor_.register_visitor<double>([this](double &val) { this->process(val); });
-  visitor_.register_visitor<matador::varchar_base>([this](matador::varchar_base &val) { this->process(val); });
+//  visitor_.register_visitor<matador::varchar_base>([this](matador::varchar_base &val) { this->process(val); });
   visitor_.register_visitor<std::string>([this](std::string &val) { this->process(val); });
   visitor_.register_visitor<char*>([this](char *val) { this->process(val); });
   visitor_.register_visitor<const char*>([this](const char *val) { this->process(val); });

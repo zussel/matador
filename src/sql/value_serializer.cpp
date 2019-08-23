@@ -73,9 +73,9 @@ void value_serializer::serialize(const char*, char *x, size_t len)
   values_->push_back(std::make_shared<value<char*>>(x, len));
 }
 
-void value_serializer::serialize(const char*, varchar_base &x)
+void value_serializer::serialize(const char*, std::string &x, size_t)
 {
-  values_->push_back(std::make_shared<value<varchar_base>>(x));
+  values_->push_back(std::make_shared<value<std::string>>(x));
 }
 
 void value_serializer::serialize(const char*, std::string  &x)

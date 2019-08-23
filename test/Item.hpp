@@ -25,7 +25,6 @@
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/identifier.hpp"
-#include "matador/utils/varchar.hpp"
 
 class Item
 {
@@ -64,7 +63,7 @@ public:
     serializer.serialize("val_bool", bool_);
     serializer.serialize("val_cstr", cstr_, (size_t)CSTR_LEN);
     serializer.serialize("val_string", string_);
-    serializer.serialize("val_varchar", varchar_);
+    serializer.serialize("val_varchar", varchar_, 64);
     serializer.serialize("val_date", date_);
     serializer.serialize("val_time", time_);
   }
@@ -95,7 +94,7 @@ public:
 #endif
   }
   void set_string(const std::string &x) { string_ = x; }
-  void set_varchar(const matador::varchar_base &x) { varchar_ = x.c_str(); }
+  void set_varchar(const std::string &x) { varchar_ = x; }
   void set_date(const matador::date &d) { date_ = d; }
   void set_time(const matador::time &d) { time_ = d; }
 
@@ -111,7 +110,7 @@ public:
   bool get_bool() const { return bool_; }
   const char* get_cstr() const { return cstr_; }
   std::string get_string() const { return string_; }
-  matador::varchar_base get_varchar() const { return varchar_; }
+  std::string get_varchar() const { return varchar_; }
   matador::date get_date() const { return date_; }
   matador::time get_time() const { return time_; }
 
@@ -138,7 +137,7 @@ private:
   bool bool_ = true;
   char cstr_[CSTR_LEN]{};
   std::string string_ = "Welt";
-  matador::varchar<64> varchar_ = "Erde";
+  std::string varchar_ = "Erde";
   matador::date date_;
   matador::time time_;
 };

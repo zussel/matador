@@ -21,7 +21,6 @@
 #include "matador/object/object_ptr.hpp"
 
 #include "matador/utils/identifier.hpp"
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/string.hpp"
 
 #include <stdexcept>
@@ -44,7 +43,7 @@ public:
   }
 
 protected:
-  explicit basic_attribute_serializer(const std::string &id) : id_(id) {}
+  explicit basic_attribute_serializer(std::string id) : id_(std::move(id)) {}
 
 protected:
   std::string id_;
@@ -102,6 +101,7 @@ public:
   template < class V >
   void serialize(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
   void serialize(const char *, char*, size_t) {}
+  void serialize(const char *, std::string &, size_t) {}
 //  template < class HAS_ONE_OR_MANY >
   void serialize(const char *, object_holder &, cascade_type) {}
 //  template < class HAS_MANY >
@@ -154,6 +154,7 @@ public:
   template < class V >
   void serialize(const char *, V &, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
   void serialize(const char *, char*, size_t) {}
+  void serialize(const char *, std::string &, size_t) {}
 //  template < class HAS_ONE >
   void serialize(const char *, object_holder &, cascade_type) {}
 //  template < class HAS_MANY >
@@ -182,6 +183,7 @@ public:
   template < class V >
   void serialize(const char *, V &) {}
   void serialize(const char *, char*, std::size_t) {}
+  void serialize(const char *, std::string &, std::size_t) {}
 
   template < class V >
   void serialize(const char *, belongs_to<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
@@ -225,6 +227,7 @@ public:
   template < class V >
   void serialize(const char *, V &) {}
   void serialize(const char *, char*, std::size_t) {}
+  void serialize(const char *, std::string &, std::size_t) {}
 
 //  template < class HAS_ONE >
   void serialize(const char *, object_holder &, cascade_type) { }
@@ -265,6 +268,7 @@ public:
   template < class V >
   void serialize(const char *, V &) {}
   void serialize(const char *, char*, std::size_t) {}
+  void serialize(const char *, std::string &, std::size_t) {}
 
 //  template < class HAS_ONE >
   void serialize(const char *, object_holder &, cascade_type) { }
@@ -297,12 +301,11 @@ public:
     , len_(strlen(from))
   {}
 
-  ~attribute_reader() {}
+  ~attribute_reader() = default;
 
   template < class V >
   void serialize(const char *, V &) {}
-  template < unsigned int C >
-  void serialize(const char *id, varchar<C> &to)
+  void serialize(const char *id, std::string &to, size_t)
   {
     if (id_ != id) {
       return;
@@ -355,7 +358,7 @@ public:
     , precision_(precision)
   {}
 
-  ~attribute_writer() {}
+  ~attribute_writer() = default;
 
   template < class V >
   void serialize(const char *id, V &from, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
@@ -390,6 +393,7 @@ public:
   void serialize(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
 
   void serialize(const char *, char*, size_t) {}
+  void serialize(const char *, std::string &, size_t) {}
 //  template < class HAS_ONE >
   void serialize(const char *, object_holder &, cascade_type) {}
 //  template < class HAS_MANY >
@@ -413,6 +417,7 @@ public:
   template < class V >
   void serialize(const char *, V &) {}
   void serialize(const char *, char*, size_t) {}
+  void serialize(const char *, std::string &, size_t) {}
 
   template < class V >
   void serialize(const char *, belongs_to<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
@@ -454,6 +459,7 @@ public:
   template < class V >
   void serialize(const char *, V &) {}
   void serialize(const char *, char*, size_t) {}
+  void serialize(const char *, std::string &, size_t) {}
 
 //  template < class HAS_ONE >
   void serialize(const char *, object_holder &, cascade_type) {}
@@ -493,6 +499,7 @@ public:
   template < class V >
   void serialize(const char *, V &) {}
   void serialize(const char *, char*, size_t) {}
+  void serialize(const char *, std::string &, size_t) {}
 
 //  template < class HAS_ONE >
   void serialize(const char *, object_holder &, cascade_type) {}
@@ -524,7 +531,7 @@ public:
     , precision_(precision)
   {}
 
-  ~attribute_writer() {}
+  ~attribute_writer() = default;
 
   template < class V >
   void serialize(const char *id, V &from, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
@@ -555,13 +562,12 @@ public:
     success_ = true;
   }
 
-  template < unsigned int C >
-  void serialize(const char *id, matador::varchar<C> &from)
+  void serialize(const char *id, std::string &from, size_t)
   {
     if (id_ != id) {
       return;
     }
-    to_ = from.str();
+    to_ = from;
     success_ = true;
   }
 
@@ -657,15 +663,14 @@ public:
    * @param id The name of the attribute.
    * @param to The attribute value to retrieve.
    */
-  attribute_writer(const std::string &id, char *to, size_t size/*, size_t precision = 0*/)
-    : id_(id)
+  attribute_writer(std::string id, char *to, size_t size/*, size_t precision = 0*/)
+    : id_(std::move(id))
     , to_(to)
     , size_(size)
     , success_(false)
-//    , precision_(precision)
   {}
 
-  ~attribute_writer() {}
+  ~attribute_writer() = default;
 
   /**
    * @brief True if value could be retrieved.
@@ -700,6 +705,29 @@ public:
   void serialize(const char*, abstract_has_many&, cascade_type) {}
   template < class V >
   void serialize(const char*, const identifier<V> &) {}
+
+  void serialize(const char *id, std::string &from, size_t size)
+  {
+    if (id_ != id) {
+      return;
+    }
+    if (size_ < size) {
+      // not enough size
+      return;
+    }
+#ifdef _MSC_VER
+    strncpy_s(to_, size_, from.c_str(), size);
+#else
+    strncpy(to_, from.c_str(), size);
+#endif
+    size_t from_size = from.size();
+    if (from_size > (size_t)size) {
+      to_[size-1] = '\0';
+    } else {
+      to_[from_size] = '\0';
+    }
+    success_ = true;
+  }
 
   void serialize(const char *id, char *from, size_t size)
   {

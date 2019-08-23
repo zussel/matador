@@ -61,6 +61,7 @@ public:
   template < class V >
   void serialize(const char *, V &) { }
   void serialize(const char *, char *, size_t) { }
+  void serialize(const char *, std::string &, size_t) { }
 
   template < class V >
   void serialize(const char *id, belongs_to<V> &x, cascade_type cascade);
@@ -93,7 +94,7 @@ public:
        * proxy map. it will be used when
        * table is read.
        */
-      basic_table::t_table_map::iterator j = table_.find_table(node->type());
+      auto j = table_.find_table(node->type());
 
       if (j == table_.end_table()) {
         throw_object_exception("unknown table " << node->type());

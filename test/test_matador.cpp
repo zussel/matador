@@ -23,7 +23,7 @@
 #include "utils/BlobTestUnit.hpp"
 #include "utils/DateTestUnit.hpp"
 #include "utils/TimeTestUnit.hpp"
-#include "utils/VarCharTestUnit.hpp"
+//#include "utils/VarCharTestUnit.hpp"
 #include "utils/FactoryTestUnit.hpp"
 #include "utils/StringTestUnit.hpp"
 #include "utils/SequencerTestUnit.hpp"
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new DateTestUnit);
   suite.register_unit(new TimeTestUnit);
   suite.register_unit(new BlobTestUnit);
-  suite.register_unit(new VarCharTestUnit);
+//  suite.register_unit(new VarCharTestUnit);
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);

@@ -5,8 +5,6 @@ SET (TEST_TOOLS_SOURCES
   utils/DateTestUnit.hpp
   utils/BlobTestUnit.hpp
   utils/BlobTestUnit.cpp
-  utils/VarCharTestUnit.hpp
-  utils/VarCharTestUnit.cpp
   utils/FactoryTestUnit.hpp
   utils/FactoryTestUnit.cpp
   utils/StringTestUnit.cpp

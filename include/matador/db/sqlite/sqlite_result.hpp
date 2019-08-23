@@ -71,7 +71,7 @@ protected:
   void serialize(const char*, double&) override;
   void serialize(const char*, char *, size_t) override;
   void serialize(const char*, std::string&) override;
-  void serialize(const char*, matador::varchar_base&) override;
+  void serialize(const char*, std::string &x, size_t s) override;
   void serialize(const char*, matador::time&) override;
   void serialize(const char*, matador::date&) override;
   void serialize(const char*, matador::basic_identifier &x) override;

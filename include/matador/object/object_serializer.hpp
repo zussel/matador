@@ -32,7 +32,6 @@
 #endif
 
 #include "matador/utils/byte_buffer.hpp"
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/access.hpp"
 #include "matador/utils/identifier.hpp"
 
@@ -67,9 +66,9 @@ public:
   /**
    * Creates an object_serializer
    */
-  object_serializer() {}
+  object_serializer() = default;
 
-  virtual ~object_serializer();
+  virtual ~object_serializer() = default;
 
   /**
    * Serialize the given serializable to the given buffer
@@ -125,24 +124,7 @@ public:
 
 	void serialize(const char* id, char *c, size_t s);
 	void serialize(const char* id, std::string &s);
-
-  template < unsigned int C >
-  void serialize(const char *, varchar<C> &s)
-  {
-    if (restore) {
-      size_t len = 0;
-      buffer_->release(&len, sizeof(len));
-      char *str = new char[len];
-      buffer_->release(str, len);
-      s.assign(str, len);
-      delete [] str;
-    } else {
-      size_t len = s.size();
-
-      buffer_->append(&len, sizeof(len));
-      buffer_->append(s.str().c_str(), len);
-    }
-  }
+	void serialize(const char *, std::string &s, size_t);
 
 	void serialize(const char* id, date &x);
 	void serialize(const char* id, time &x);
@@ -248,17 +230,17 @@ public:
     }
   }
 
-  template < class T >
-  void serialize_value(const T &)
-  {
-
-  }
-
-  template < class T >
-  void serialize_value(const object_ptr<T> &)
-  {
-
-  }
+//  template < class T >
+//  void serialize_value(const T &)
+//  {
+//
+//  }
+//
+//  template < class T >
+//  void serialize_value(const object_ptr<T> &)
+//  {
+//
+//  }
 
 private:
   object_proxy* find_proxy(unsigned long oid);

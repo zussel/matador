@@ -82,7 +82,7 @@ void QueryTestUnit::test_datatypes()
   unsigned long ulval = 765432182;
   bool bval = true;
   const char *cstr("Armer schwarzer Kater");
-  matador::varchar<32> vval("hallo welt");
+  std::string vval("hallo welt");
   std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam "
                        "nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
                        "sed diam voluptua. At vero eos et accusam et justo duo dolores et ea "
@@ -488,7 +488,7 @@ void QueryTestUnit::test_anonymous_create()
 
   q.create({
     make_typed_id_column<long>("id"),
-    make_typed_varchar_column<32>("name"),
+    make_typed_varchar_column("name", 32),
     make_typed_column<unsigned>("age")
   });
 
@@ -512,7 +512,7 @@ void QueryTestUnit::test_anonymous_insert()
 
   q.create({
      make_typed_id_column<long>("id"),
-     make_typed_varchar_column<32>("name"),
+     make_typed_varchar_column("name", 32),
      make_typed_column<unsigned>("age")
    });
 
@@ -544,7 +544,7 @@ void QueryTestUnit::test_anonymous_update()
 
   q.create({
      make_typed_id_column<long>("id"),
-     make_typed_varchar_column<32>("name"),
+     make_typed_varchar_column("name", 32),
      make_typed_column<unsigned>("age")
    });
 
@@ -632,7 +632,7 @@ void QueryTestUnit::test_statement_update()
   }
 
   stmt = q.select().where("name"_col == "").prepare(connection_);
-  matador::varchar<255> name("hans");
+  std::string name("hans");
   stmt.bind(0, name);
   res = stmt.execute();
 
@@ -1131,7 +1131,7 @@ void QueryTestUnit::test_prepared_statement()
 
   q.create({
 	  make_typed_id_column<long>("id"),
-	  make_typed_varchar_column<32>("name"),
+	  make_typed_varchar_column("name", 32),
 	  make_typed_column<unsigned>("age")
   });
 
@@ -1294,7 +1294,7 @@ void QueryTestUnit::test_rows()
   q.create({
              make_typed_id_column<long>("id"),
              make_typed_column<std::string>("string"),
-             make_typed_varchar_column<32>("varchar"),
+             make_typed_varchar_column("varchar", 32),
              make_typed_column<int>("int"),
              make_typed_column<float>("float"),
              make_typed_column<double>("double"),

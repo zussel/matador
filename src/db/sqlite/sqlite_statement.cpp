@@ -24,7 +24,6 @@
 
 #include "matador/utils/string.hpp"
 #include "matador/utils/date.hpp"
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/identifiable_holder.hpp"
 #include "matador/utils/basic_identifier.hpp"
 
@@ -158,7 +157,7 @@ void sqlite_statement::serialize(const char*, std::string &x)
   throw_error(ret, db_.handle(), "sqlite3_bind_text");
 }
 
-void sqlite_statement::serialize(const char*, varchar_base &x)
+void sqlite_statement::serialize(const char*, std::string &x, size_t)
 {
   int ret = sqlite3_bind_text(stmt_, (int)++host_index, x.c_str(), (int)x.size(), nullptr);
   throw_error(ret, db_.handle(), "sqlite3_bind_text");

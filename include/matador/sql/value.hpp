@@ -35,7 +35,6 @@
 #include "matador/sql/token.hpp"
 #include "matador/sql/basic_dialect.hpp"
 
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/string.hpp"
@@ -131,34 +130,34 @@ struct value<T, typename std::enable_if<
 };
 
 
-template<class T>
-struct value<T, typename std::enable_if<std::is_base_of<matador::varchar_base, T>::value>::type> : public detail::basic_value
-{
-  explicit value(const T &val)
-    : basic_value(detail::token::VALUE)
-    , val(val) { }
-
-  void serialize(const char *id, serializer &srlzr) override
-  {
-    srlzr.serialize(id, val);
-  }
-
-  std::string str() const override
-  {
-    return "'" + val.str() + "'";
-  }
-
-  std::string safe_string(const basic_dialect &dialect) const override
-  {
-    return "'" + dialect.prepare_literal(val.str()) + "'";
-  }
-
-  const char* type_id() const override
-  {
-    return typeid(T).name();
-  }
-  T val;
-};
+//template<class T>
+//struct value<T, typename std::enable_if<std::is_base_of<matador::varchar_base, T>::value>::type> : public detail::basic_value
+//{
+//  explicit value(const T &val)
+//    : basic_value(detail::token::VALUE)
+//    , val(val) { }
+//
+//  void serialize(const char *id, serializer &srlzr) override
+//  {
+//    srlzr.serialize(id, val);
+//  }
+//
+//  std::string str() const override
+//  {
+//    return "'" + val.str() + "'";
+//  }
+//
+//  std::string safe_string(const basic_dialect &dialect) const override
+//  {
+//    return "'" + dialect.prepare_literal(val.str()) + "'";
+//  }
+//
+//  const char* type_id() const override
+//  {
+//    return typeid(T).name();
+//  }
+//  T val;
+//};
 
 template<>
 struct value<std::string> : public detail::basic_value
