@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <cstring>
 #include <cmath>
-#include <vector>
 
 #ifndef _MSC_VER
 #include <sys/time.h>
@@ -60,7 +59,7 @@ void throw_invalid_time(int h, int m, int s, long ms)
 
 time::time()
 {
-  if (detail::gettimeofday(&time_, 0) != 0) {
+  if (detail::gettimeofday(&time_, nullptr) != 0) {
     throw std::logic_error("couldn' get time of day");
   }
   auto temp = this->time_.tv_sec;
@@ -88,22 +87,6 @@ time::time(int year, int month, int day, int hour, int min, int sec, long millis
 //  time_.tv_usec = microseconds % 1000000;
 //  localtime_r(&time_.tv_sec, &tm_);
 //}
-
-time::time(const time &x)
-  : time_(x.time_)
-  , tm_(x.tm_)
-{}
-
-time &time::operator=(const time &x)
-{
-  time_ = x.time_;
-  tm_ = x.tm_;
-  return *this;
-}
-
-time::~time()
-{
-}
 
 bool time::operator==(const time &x) const
 {
@@ -138,7 +121,7 @@ bool time::operator>=(const time &x) const
 
 time time::now()
 {
-  return time();
+  return time{};
 }
 
 bool time::is_valid_time(int hour, int min, int sec, long millis) {
@@ -163,7 +146,7 @@ time time::parse(const std::string &tstr, const char *format)
   const char *pch = strstr(format, "%f");
 
   std::string part(format, (pch ? pch-format : strlen(format)));
-  struct tm tm;
+  struct tm tm{};
   memset(&tm, 0, sizeof(struct tm));
   const char *endptr = detail::strptime(tstr.c_str(), part.c_str(), &tm);
   unsigned long usec = 0;
@@ -183,7 +166,7 @@ time time::parse(const std::string &tstr, const char *format)
   }
 
   tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
-  struct timeval tv;
+  struct timeval tv{};
 #ifdef _MSC_VER
   tv.tv_sec = (long)mktime(&tm);
   tv.tv_usec = usec;
@@ -199,10 +182,10 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   throw_invalid_date(day, month, year);
   throw_invalid_time(hour, min, sec, millis);
 
-  time_t rawtime;
+  time_t rawtime{};
   ::time(&rawtime);
 
-  struct tm t;
+  struct tm t{};
   detail::localtime(rawtime, t);
   t.tm_year = year - 1900;
   t.tm_mon = month - 1;
