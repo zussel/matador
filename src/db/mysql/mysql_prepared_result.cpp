@@ -265,12 +265,12 @@ void mysql_prepared_result::serialize(const char *, std::string &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_STRING, x);
   } else {
-    if (*bind_[result_index_].error) {
+//    if (*bind_[result_index_].error) {
       // assume truncated data
       on_truncated_data(result_index_, x);
-    } else {
-      throw_error("mysql_stmt_fetch_column");
-    }
+//    } else {
+//      throw_error("mysql_stmt_fetch_column");
+//    }
     ++result_index_;
   }
 }
