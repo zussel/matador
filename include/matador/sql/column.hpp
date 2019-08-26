@@ -207,7 +207,7 @@ std::shared_ptr<detail::typed_column> make_typed_column(const std::string &col)
  * @param size Size of the varchar
  * @return The varchar typed column
  */
-std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col, size_t size);
+OOS_SQL_API std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col, size_t size);
 
 /**
  * @brief Create a identifier typed column object
