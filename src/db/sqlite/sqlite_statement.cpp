@@ -148,7 +148,7 @@ void sqlite_statement::serialize(const char*, double &x)
 void sqlite_statement::serialize(const char*, char *x, size_t len)
 {
   auto size = strlen(x);
-  len = std::min(size, len);
+  len = (size > len) ? len : size;
   int ret = sqlite3_bind_text(stmt_, (int)++host_index, x, (int)len, nullptr);
   throw_error(ret, db_.handle(), "sqlite3_bind_text");
 }
