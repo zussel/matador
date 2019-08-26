@@ -63,7 +63,7 @@ public:
     serializer.serialize("val_bool", bool_);
     serializer.serialize("val_cstr", cstr_, (size_t)CSTR_LEN);
     serializer.serialize("val_string", string_);
-    serializer.serialize("val_varchar", varchar_, 64);
+    serializer.serialize("val_varchar", varchar_, 63);
     serializer.serialize("val_date", date_);
     serializer.serialize("val_time", time_);
   }

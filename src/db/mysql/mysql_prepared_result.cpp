@@ -265,19 +265,11 @@ void mysql_prepared_result::serialize(const char *, std::string &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_STRING, x);
   } else {
-    if (info_[result_index_].length > 0) {
-      bind_[result_index_].buffer = new char[info_[result_index_].length];
-      bind_[result_index_].buffer_length = info_[result_index_].length;
-      if (mysql_stmt_fetch_column(stmt, &bind_[result_index_], result_index_, 0) != 0) {
-        // an error occured
-      } else {
-        auto *data = (char*)bind_[result_index_].buffer;
-        unsigned long len = bind_[result_index_].buffer_length;
-        x.assign(data, len);
-      }
-      delete [] (char*)bind_[result_index_].buffer;
-      bind_[result_index_].buffer = nullptr;
-      bind_[result_index_].length = nullptr;
+    if (*bind_[result_index_].error) {
+      // assume truncated data
+      on_truncated_data(result_index_, x);
+    } else {
+      throw_error("mysql_stmt_fetch_column");
     }
     ++result_index_;
   }
@@ -288,11 +280,34 @@ void mysql_prepared_result::serialize(const char *, std::string &x, size_t s)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x, s);
   } else {
-    auto *data = (char*)bind_[result_index_].buffer;
-    unsigned long len = info_[result_index_].length;
-    x.assign(data, len);
+    if (*bind_[result_index_].error) {
+      // assume truncated data
+      on_truncated_data(result_index_, x);
+    } else {
+      auto *data = (char *) bind_[result_index_].buffer;
+      unsigned long len = info_[result_index_].length;
+      x.assign(data, len);
+    }
     ++result_index_;
   }
+}
+
+void mysql_prepared_result::on_truncated_data(int index, std::string &x) {
+  if (info_[index].length == 0) {
+    return;
+  }
+  bind_[index].buffer = new char[info_[index].length];
+  bind_[index].buffer_length = info_[index].length;
+  if (mysql_stmt_fetch_column(stmt, &bind_[index], index, 0) != 0) {
+    // an error occured
+  } else {
+    auto *data = (char*)bind_[index].buffer;
+    unsigned long len = bind_[index].buffer_length;
+    x.assign(data, len);
+  }
+  delete [] (char*)bind_[index].buffer;
+  bind_[index].buffer = nullptr;
+  bind_[index].length = nullptr;
 }
 
 void mysql_prepared_result::serialize(const char *id, matador::basic_identifier &x)

@@ -99,6 +99,8 @@ private:
   void prepare_bind_column(int index, enum_field_types type, std::string &value, size_t s);
   void prepare_bind_column(int index, enum_field_types type, char *x, size_t s);
 
+  void on_truncated_data(int index, std::string &x);
+
 private:
   int column_index_ = 0;
   size_type affected_rows_;

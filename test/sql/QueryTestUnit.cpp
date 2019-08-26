@@ -17,7 +17,7 @@ using namespace matador;
 QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador::time timeval)
   : unit_test(prefix + "_query", prefix + " query test unit")
   , db_(std::move(db))
-  , time_val_(std::move(timeval))
+  , time_val_(timeval)
 {
   add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");

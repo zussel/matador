@@ -23,7 +23,6 @@
 #include "utils/BlobTestUnit.hpp"
 #include "utils/DateTestUnit.hpp"
 #include "utils/TimeTestUnit.hpp"
-//#include "utils/VarCharTestUnit.hpp"
 #include "utils/FactoryTestUnit.hpp"
 #include "utils/StringTestUnit.hpp"
 #include "utils/SequencerTestUnit.hpp"
@@ -52,6 +51,7 @@
 #include "sql/SQLiteDialectTestUnit.hpp"
 
 #include "connections.hpp"
+
 #include <cstdlib> // EXIT_SUCCESS
 
 using namespace matador;

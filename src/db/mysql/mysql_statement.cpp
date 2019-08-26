@@ -223,7 +223,7 @@ void mysql_statement::serialize(const char *, matador::time &x)
 
 void mysql_statement::serialize(const char *, std::string &x, size_t)
 {
-  bind_value(host_index, MYSQL_TYPE_VAR_STRING, x.c_str(), x.size());
+  bind_value(host_index, MYSQL_TYPE_VAR_STRING, x.data(), x.size());
   ++host_index;
 }
 
