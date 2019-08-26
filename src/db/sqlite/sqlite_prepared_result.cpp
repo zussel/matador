@@ -119,9 +119,8 @@ void sqlite_prepared_result::serialize(const char *, std::string &x)
 void sqlite_prepared_result::serialize(const char *, std::string &x, size_t )
 {
   auto s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
-  const char *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
-  if (s == 0) {
-  } else {
+  auto *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
+  if (s > 0) {
     x.assign(text, s);
   }
 }

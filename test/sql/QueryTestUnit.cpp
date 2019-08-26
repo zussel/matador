@@ -601,6 +601,8 @@ void QueryTestUnit::test_statement_insert()
   for (auto const &item : res) {
     UNIT_EXPECT_EQUAL(item->id(), 23UL);
     UNIT_EXPECT_EQUAL(item->get_string(), "Hans");
+    UNIT_EXPECT_EQUAL(item->get_varchar(), "Erde");
+    UNIT_EXPECT_EQUAL(item->get_cstr(), "Hallo");
     UNIT_EXPECT_EQUAL(item->get_int(), 4711);
     UNIT_EXPECT_EQUAL(item->get_time(), itime);
   }
