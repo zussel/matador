@@ -151,7 +151,7 @@ void mssql_result::serialize(const char *id, double &x)
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char * /*id*/, char *x, size_t s)
+void mssql_result::serialize(const char *, char *x, size_t s)
 {
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, result_index_++, SQL_C_CHAR, x, s, &info);
@@ -162,9 +162,9 @@ void mssql_result::serialize(const char * /*id*/, char *x, size_t s)
   }
 }
 
-void mssql_result::serialize(const char *id, std::string &x, size_t)
+void mssql_result::serialize(const char *id, std::string &x, size_t s)
 {
-  read_column(id, x);
+  read_column(id, x, s);
 }
 
 void mssql_result::serialize(const char *id, std::string &x)
@@ -202,6 +202,19 @@ void mssql_result::read_column(const char *, std::string &val)
   } else {
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
+}
+
+void mssql_result::read_column(const char *, std::string &val, size_t s)
+{
+  std::vector<char> buf(s, 0);
+  SQLLEN info = 0;
+  SQLRETURN ret = SQLGetData(stmt_, result_index_++, SQL_C_CHAR, buf.data(), s, &info);
+  if (SQL_SUCCEEDED(ret)) {
+    val.assign(buf.data(), info);
+  } else {
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+  }
+
 }
 
 void mssql_result::read_column(const char *, char &val)

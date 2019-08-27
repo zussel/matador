@@ -59,6 +59,7 @@ public:
   size_t bind(T &val, size_t pos)
   {
     host_index = pos;
+    // get column name at pos
     serialize("", val);
     return host_index;
   }

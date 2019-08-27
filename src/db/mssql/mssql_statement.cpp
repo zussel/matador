@@ -91,7 +91,7 @@ detail::result_impl* mssql_statement::execute()
       ret = SQLParamData(stmt_, &pid);
       if (!is_success(ret) && ret != SQL_NEED_DATA) {
         // error
-        throw_error(ret, SQL_HANDLE_STMT, stmt_, "", "");
+        throw_error(ret, SQL_HANDLE_STMT, stmt_, "execute->SQLParamData", str());
       } else if (ret == SQL_NEED_DATA) {
         // determine next column data pointer
         it = data_to_put_map_.find(pid);

@@ -158,7 +158,6 @@ void basic_dialect_linker::visit(const matador::detail::where &where)
 {
   dialect().append_to_result(token_string(where.type) + " ");
   dialect().append_to_result(where.cond->evaluate(dialect()));
-//  where.cond->accept(*this);
   dialect().append_to_result(" ");
 }
 

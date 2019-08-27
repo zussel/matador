@@ -118,6 +118,7 @@ protected:
   
   void read_column(const char *, char &val);
   void read_column(const char *, std::string &val);
+  void read_column(const char *, std::string &val, size_t);
   void read_column(const char *, matador::date &val);
   void read_column(const char *, matador::time &val);
 

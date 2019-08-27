@@ -616,6 +616,9 @@ void QueryTestUnit::test_statement_update()
 {
   connection_.connect();
 
+  std::cout << "\n";
+  connection_.enable_log();
+
   query<person> q("person");
 
   statement<person> stmt(q.create().prepare(connection_));
