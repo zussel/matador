@@ -255,12 +255,11 @@ protected:
   void pop();
   detail::build_info& top();
 
-  size_t inc_bind_count();
-  size_t inc_bind_count(size_t val);
-  size_t dec_bind_count();
+  void add_host_var(const std::string &host_var, int count);
+  void add_column(const std::string &column);
 
-  size_t inc_column_count();
-  size_t dec_column_count();
+  const std::vector<std::pair<std::string, int>>& host_vars() const;
+  const std::vector<std::string>& columns() const;
 
   ///  @endcond
 
@@ -268,15 +267,15 @@ private:
   void compile();
   void link();
 
-  size_t bind_count_ = 0;
-  size_t column_count_ = 0;
-
   t_compile_type compile_type_ = DIRECT;
 
   detail::basic_dialect_compiler* compiler_;
   detail::basic_dialect_linker* linker_;
 
   std::stack<detail::build_info> build_info_stack_;
+
+  std::vector<std::pair<std::string, int>> host_vars_;
+  std::vector<std::string> columns_;
 
   typedef std::unordered_map<detail::token::t_token, std::string, std::hash<int>> t_token_map;
   t_token_map tokens {
