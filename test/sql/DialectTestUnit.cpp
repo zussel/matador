@@ -148,9 +148,9 @@ void DialectTestUnit::test_insert_prepare_query()
   s.append(vals.release());
 
   TestDialect dialect;
-  std::string result = dialect.prepare(s);
+  auto result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES (?, ?, ?) ", result);
+  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES (?, ?, ?) ", std::get<0>(result));
 }
 
 void DialectTestUnit::test_select_all_query()
@@ -399,9 +399,9 @@ void DialectTestUnit::test_update_prepare_query()
   s.append(cols.release());
 
   TestDialect dialect;
-  std::string result = dialect.prepare(s);
+  auto result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? ", result);
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? ", std::get<0>(result));
 }
 
 void DialectTestUnit::test_update_where_prepare_query()
@@ -427,9 +427,9 @@ void DialectTestUnit::test_update_where_prepare_query()
   s.append(new detail::where(name != "Hans" && matador::in(age, {7,5,5,8})));
 
   TestDialect dialect;
-  std::string result = dialect.prepare(s);
+  auto result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? WHERE (\"name\" <> ? AND \"age\" IN (?,?,?,?)) ", result);
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? WHERE (\"name\" <> ? AND \"age\" IN (?,?,?,?)) ", std::get<0>(result));
 
 }
 

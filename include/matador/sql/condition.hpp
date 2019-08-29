@@ -155,7 +155,7 @@ public:
 
   std::string evaluate(basic_dialect &dialect) const override
   {
-    dialect.add_host_var(field_.name, 1);
+    dialect.add_host_var(field_.name);
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " " << operand << " " << value;
@@ -181,7 +181,7 @@ public:
 
   std::string evaluate(basic_dialect &dialect) const override
   {
-    dialect.add_host_var(field_.name, 1);
+    dialect.add_host_var(field_.name);
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " " << operand << " '" << value << "'";
@@ -276,7 +276,10 @@ public:
    */
   std::string evaluate(basic_dialect &dialect) const override
   {
-    dialect.add_host_var(field_.name, size());
+    auto count = size();
+    for (size_t i = 0; i < count; ++i) {
+      dialect.add_host_var(field_.name);
+    }
     std::stringstream str;
     str << dialect.prepare_identifier(field_.name) << " IN (";
     if (args_.size() > 1) {
@@ -397,7 +400,8 @@ public:
    */
   std::string evaluate(basic_dialect &dialect) const override
   {
-    dialect.add_host_var(field_.name, 2);
+    dialect.add_host_var(field_.name);
+    dialect.add_host_var(field_.name);
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
       str << dialect.prepare_identifier(field_.name) << " BETWEEN " << range_.first << " AND " << range_.second;

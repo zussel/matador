@@ -32,13 +32,12 @@ namespace matador {
 namespace mssql {
 
 mssql_statement::mssql_statement(mssql_connection &db, const matador::sql &stmt)
-  : db_(db.handle())
+  : statement_impl(db.dialect(), stmt)
+  , db_(db.handle())
 {
   if (!db_) {
     throw_error("mssql", "no odbc connection established");
   }
-
-  str(db.dialect()->prepare(stmt));
 
   create_statement();
 }
@@ -113,84 +112,116 @@ detail::result_impl* mssql_statement::execute()
   return res;
 }
 
-void mssql_statement::serialize(const char *, char &x)
+void mssql_statement::serialize(const char *id, char &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, short &x)
+void mssql_statement::serialize(const char *id, short &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, int &x)
+void mssql_statement::serialize(const char *id, int &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, long &x)
+void mssql_statement::serialize(const char *id, long &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, unsigned char &x)
+void mssql_statement::serialize(const char *id, unsigned char &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, unsigned short &x)
+void mssql_statement::serialize(const char *id, unsigned short &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, unsigned int &x)
+void mssql_statement::serialize(const char *id, unsigned int &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, unsigned long &x)
+void mssql_statement::serialize(const char *id, unsigned long &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, bool &x)
+void mssql_statement::serialize(const char *id, bool &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, float &x)
+void mssql_statement::serialize(const char *id, float &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, double &x)
+void mssql_statement::serialize(const char *id, double &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, char *x, size_t s)
+void mssql_statement::serialize(const char *id, char *x, size_t s)
 {
-  bind_value(x, s, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, s, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, std::string &x)
+void mssql_statement::serialize(const char *id, std::string &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, matador::date &x)
+void mssql_statement::serialize(const char *id, matador::date &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, matador::time &x)
+void mssql_statement::serialize(const char *id, matador::time &x)
 {
-  bind_value(x, ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x, ++host_index);
+  }
 }
 
-void mssql_statement::serialize(const char *, std::string &x, size_t)
+void mssql_statement::serialize(const char *id, std::string &x, size_t)
 {
-  bind_value(x.c_str(), x.capacity(), ++host_index);
+  if (host_var_.empty() || host_var_ == id) {
+    bind_value(x.c_str(), x.capacity(), ++host_index);
+  }
 }
 
 void mssql_statement::serialize(const char *id, identifiable_holder &x, cascade_type)

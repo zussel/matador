@@ -36,15 +36,14 @@ namespace matador {
 namespace mysql {
 
 mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
-  : result_size(0)
+  : statement_impl(db.dialect(), stmt)
+  , result_size(0)
   , host_size(0)
   , stmt_(mysql_stmt_init(db.handle()))
 {
-  str(db.dialect()->prepare(stmt));
-  // Todo: use new sql compile style
   // parse sql to create result and host arrays
-  result_size = db.dialect()->column_count();
-  host_size = db.dialect()->bind_count();
+  result_size = columns().size();
+  host_size = bind_vars().size();
 
   bind_.resize(result_size);
   info_.resize(result_size);

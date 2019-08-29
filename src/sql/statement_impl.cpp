@@ -7,14 +7,25 @@ namespace matador {
 
 namespace detail {
 
+statement_impl::statement_impl(basic_dialect *dialect, const matador::sql &stmt)
+{
+  std::tie(sql_, bind_vars_, columns_) = dialect->prepare(stmt);
+
+}
+
 std::string statement_impl::str() const
 {
   return sql_;
 }
 
-void statement_impl::str(const std::string &s)
+const std::vector<std::string> &statement_impl::bind_vars() const
 {
-  sql_ = s;
+  return bind_vars_;
+}
+
+const std::vector<std::string> &statement_impl::columns() const
+{
+  return columns_;
 }
 
 void statement_impl::log(const std::string &stmt) const

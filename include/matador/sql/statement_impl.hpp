@@ -31,11 +31,12 @@ namespace detail {
 class OOS_SQL_API statement_impl : public serializer
 {
 public:
+  statement_impl() = delete;
   statement_impl& operator=(statement_impl &&) = delete;
   statement_impl(statement_impl &&) = delete;
 
 public:
-  statement_impl() = default;
+  statement_impl(basic_dialect *dialect, const matador::sql &stmt);
   statement_impl(const statement_impl &) = default;
   statement_impl& operator=(const statement_impl &) = default;
   ~statement_impl() override = default;
@@ -55,16 +56,30 @@ public:
     return host_index;
   }
 
-  template < class T >
-  size_t bind(T &val, size_t pos)
+  template < class T, class V >
+  size_t bind(V &val, size_t pos)
   {
+    T obj;
     host_index = pos;
     // get column name at pos
+    if (pos >= bind_vars().size()) {
+      throw std::out_of_range("host index out of range");
+    }
+
+    host_var_ = bind_vars().at(pos);
+
+//    matador::set(obj, host_var_, val);
+    matador::access::serialize(static_cast<serializer&>(*this), obj);
+
+    host_var_.clear();
+
     serialize("", val);
     return host_index;
   }
 
   std::string str() const;
+  const std::vector<std::string>& bind_vars() const;
+  const std::vector<std::string>& columns() const;
 
   void log(const std::string &stmt) const;
 
@@ -73,13 +88,14 @@ public:
   bool is_log_enabled() const;
 
 protected:
-  void str(const std::string &s);
-
-protected:
   size_t host_index = 0;
+  std::string host_var_;
 
 private:
   std::string sql_;
+  std::vector<std::string> bind_vars_;
+  std::vector<std::string> columns_;
+
   bool log_enabled_ = false;
 };
 

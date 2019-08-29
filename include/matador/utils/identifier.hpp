@@ -256,7 +256,7 @@ public:
    * 
    * @param val String value of the identifier
    */
-  explicit identifier(const std::string &val) : id_(val)
+  explicit identifier(std::string val) : id_(std::move(val))
   { }
 
   /**

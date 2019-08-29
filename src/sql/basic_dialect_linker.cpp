@@ -115,7 +115,8 @@ void basic_dialect_linker::visit(const matador::detail::basic_value &val)
   if (dialect().compile_type() == basic_dialect::DIRECT) {
     dialect().append_to_result(val.safe_string(dialect()));
   } else {
-    dialect().add_host_var(val.str(), 1);
+    // Todo: check correct value to add
+    dialect().add_host_var(val.str());
     dialect().append_to_result(dialect().next_placeholder());
   }
 }
@@ -207,7 +208,7 @@ void basic_dialect_linker::visit(const matador::column &col)
   } else {
     dialect().append_to_result(dialect_->prepare_identifier(col.name));
   }
-  dialect().add_host_var(col.name, 1);
+  dialect().add_host_var(col.name);
 }
 
 void basic_dialect_linker::visit(const matador::detail::typed_column &col)

@@ -132,29 +132,8 @@ public:
    * @param s The sql object to be compiled and linked
    * @return The sql string as a prepared statement
    */
-  std::string prepare(const sql &s);
-
-  /**
-   * @brief The count of values to be bind
-   *
-   * This function returns the count of
-   * values to be bind. The count is only
-   * valid if a prepared statement was created
-   *
-   * @return Count of values to be bind
-   */
-  size_t bind_count() const;
-
-  /**
-   * @brief The count of columns to be bind
-   *
-   * This function returns the count of
-   * columns to be bind. The count is only
-   * valid if a prepared statement was created
-   *
-   * @return Count of columns to be bind
-   */
-  size_t column_count() const;
+  std::tuple<std::string, std::vector<std::string>, std::vector<std::string>> prepare(const sql &s);
+//  std::string prepare(const sql &s);
 
   /**
    * Prepare sql dialect identifier for execution
@@ -255,10 +234,10 @@ protected:
   void pop();
   detail::build_info& top();
 
-  void add_host_var(const std::string &host_var, int count);
+  void add_host_var(const std::string &host_var);
   void add_column(const std::string &column);
 
-  const std::vector<std::pair<std::string, int>>& host_vars() const;
+  const std::vector<std::string>& host_vars() const;
   const std::vector<std::string>& columns() const;
 
   ///  @endcond
@@ -274,7 +253,7 @@ private:
 
   std::stack<detail::build_info> build_info_stack_;
 
-  std::vector<std::pair<std::string, int>> host_vars_;
+  std::vector<std::string> host_vars_;
   std::vector<std::string> columns_;
 
   typedef std::unordered_map<detail::token::t_token, std::string, std::hash<int>> t_token_map;

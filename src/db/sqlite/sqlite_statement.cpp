@@ -35,11 +35,11 @@ namespace matador {
 
 namespace sqlite {
 
-sqlite_statement::sqlite_statement(sqlite_connection &db, const std::string &stmt)
-  : db_(db)
+sqlite_statement::sqlite_statement(sqlite_connection &db, const matador::sql &sql)
+  : statement_impl(db.dialect(), sql)
+  , db_(db)
   , stmt_(nullptr)
 {
-  str(stmt);
   // prepare sqlite statement
   int ret = sqlite3_prepare_v2(db_.handle(), str().c_str(), str().size(), &stmt_, nullptr);
   throw_error(ret, db_.handle(), "sqlite3_prepare_v2", str());

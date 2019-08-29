@@ -19,13 +19,12 @@ namespace postgresql {
 std::unordered_map<std::string, unsigned long> postgresql_statement::statement_name_map_ = std::unordered_map<std::string, unsigned long>();
 
 postgresql_statement::postgresql_statement(postgresql_connection &db, const matador::sql &stmt)
-  : db_(db)
+  : statement_impl(db.dialect(), stmt)
+  , db_(db)
 {
-  // generate sql
-  str(db.dialect()->prepare(stmt));
   // parse sql to create result and host arrays
-  result_size = db.dialect()->column_count();
-  host_size = db.dialect()->bind_count();
+  result_size = bind_vars().size();
+  host_size = columns().size();
 
   host_strings_.resize(host_size);
   host_params_.resize(host_size);

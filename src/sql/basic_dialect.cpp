@@ -40,9 +40,10 @@ std::string basic_dialect::direct(const sql &s)
   return build(s, DIRECT);
 }
 
-std::string basic_dialect::prepare(const sql &s)
+std::tuple<std::string, std::vector<std::string>, std::vector<std::string>>
+basic_dialect::prepare(const sql &s)
 {
-  return build(s, PREPARED);
+  return std::make_tuple(build(s, PREPARED), host_vars_, columns_);
 }
 
 std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
@@ -56,6 +57,7 @@ std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
   link();
   std::string result(top().result);
   pop();
+
   return result;
 }
 
@@ -67,6 +69,7 @@ std::string basic_dialect::continue_build(const sql &s, t_compile_type compile_t
   link();
   std::string result(top().result);
   pop();
+
   return result;
 }
 
@@ -110,9 +113,9 @@ detail::build_info &basic_dialect::top()
   return build_info_stack_.top();
 }
 
-void basic_dialect::add_host_var(const std::string &host_var, int count)
+void basic_dialect::add_host_var(const std::string &host_var)
 {
-  host_vars_.emplace_back(host_var, count);
+  host_vars_.push_back(host_var);
 }
 
 void basic_dialect::add_column(const std::string &column)
@@ -120,7 +123,7 @@ void basic_dialect::add_column(const std::string &column)
   columns_.push_back( column);
 }
 
-const std::vector<std::pair<std::string, int>>& basic_dialect::host_vars() const
+const std::vector<std::string>& basic_dialect::host_vars() const
 {
   return host_vars_;
 }

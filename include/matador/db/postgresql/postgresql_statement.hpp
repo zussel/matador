@@ -54,7 +54,7 @@ protected:
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
 
 private:
-  std::string generate_statement_name(const matador::sql &stmt);
+  static std::string generate_statement_name(const matador::sql &stmt);
 
 private:
   postgresql_connection &db_;

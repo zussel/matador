@@ -38,7 +38,7 @@ class sqlite_connection;
 class sqlite_statement : public matador::detail::statement_impl
 {
 public:
-  sqlite_statement(sqlite_connection &db, const std::string &stmt);
+  sqlite_statement(sqlite_connection &db, const matador::sql &sql);
   ~sqlite_statement() override;
 
   void clear() override;

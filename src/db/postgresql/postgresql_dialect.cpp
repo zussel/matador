@@ -100,7 +100,7 @@ matador::dialect_traits::identifier postgresql_dialect::identifier_escape_type()
 std::string postgresql_dialect::next_placeholder() const
 {
   std::stringstream ss;
-  ss << "$" << bind_count();
+  ss << "$" << host_vars().size();
   return ss.str();
 }
 
