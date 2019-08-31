@@ -6,6 +6,7 @@
 #define OOS_STATEMENT_IMPL_HPP
 
 #include "matador/sql/result.hpp"
+#include "matador/sql/parameter_binder.hpp"
 
 #ifdef _MSC_VER
 #ifdef matador_sql_EXPORTS
@@ -68,12 +69,12 @@ public:
 
     host_var_ = bind_vars().at(pos);
 
-//    matador::set(obj, host_var_, val);
-    matador::access::serialize(static_cast<serializer&>(*this), obj);
+    matador::parameter_binder<V> binder(host_var_, val, this->binder());
+    matador::access::serialize(binder, obj);
 
     host_var_.clear();
 
-    serialize("", val);
+//    serialize("", val);
     return host_index;
   }
 
@@ -90,6 +91,8 @@ public:
 protected:
   size_t host_index = 0;
   std::string host_var_;
+
+  virtual detail::parameter_binder_impl* binder() const = 0;
 
 private:
   std::string sql_;

@@ -246,5 +246,10 @@ std::string postgresql_statement::generate_statement_name(const matador::sql &st
   return name.str();
 }
 
+detail::parameter_binder_impl *postgresql_statement::binder() const
+{
+  return nullptr;
+}
+
 }
 }

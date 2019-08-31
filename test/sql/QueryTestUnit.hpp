@@ -17,7 +17,7 @@ class connection;
 class QueryTestUnit : public matador::unit_test
 {
 public:
-  QueryTestUnit(
+  explicit QueryTestUnit(
     const std::string &prefix, std::string db = "memory",
     matador::time timeval = matador::time(2015, 3, 15, 13, 56, 23, 123)
   );

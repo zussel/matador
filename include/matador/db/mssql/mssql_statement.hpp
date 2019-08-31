@@ -22,6 +22,7 @@
 #include "matador/sql/sql.hpp"
 
 #include "matador/db/mssql/mssql_exception.hpp"
+#include "mssql_parameter_binder.hpp"
 
 #if defined(_MSC_VER)
 #include <windows.h>
@@ -85,6 +86,7 @@ protected:
       v->data = nullptr;
       v->len = SQL_NULL_DATA;
     } else {
+      v->len = sizeof(T);
       v->data = new char[sizeof(T)];
       *reinterpret_cast<T*>(v->data) = val;
     }
@@ -101,7 +103,7 @@ protected:
   void bind_value(const matador::time &t, size_t index);
   void bind_value(unsigned long val, size_t index);
   void bind_value(bool val, size_t index);
-  void bind_value(const char *val, size_t size, size_t index);
+  void bind_value(const char *val, size_t s, size_t index);
   void bind_value(const std::string &str, size_t index);
 
   template < class T >
@@ -118,6 +120,9 @@ protected:
                                      0, 0, nullptr, 0, nullptr);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind null parameter");
   }
+
+protected:
+  detail::parameter_binder_impl *binder() const override;
 
 private:
   void bind_null();
@@ -142,6 +147,8 @@ private:
 
   SQLHANDLE stmt_ = nullptr;
   SQLHANDLE db_ = nullptr;
+
+  mssql_parameter_binder *binder_ = new mssql_parameter_binder;
 };
 
 }

@@ -77,6 +77,8 @@ protected:
   void serialize(const char *id, basic_identifier &x) override;
   void serialize(const char *id, identifiable_holder&x, cascade_type) override;
 
+  detail::parameter_binder_impl *binder() const override;
+
 private:
   template < class T >
   void bind_value(std::size_t index, enum_field_types type, T value)

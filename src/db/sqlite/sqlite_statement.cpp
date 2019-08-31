@@ -196,6 +196,11 @@ void sqlite_statement::serialize(const char *id, basic_identifier &x)
   x.serialize(id, *this);
 }
 
+detail::parameter_binder_impl *sqlite_statement::binder() const
+{
+  return nullptr;
+}
+
 }
 
 }

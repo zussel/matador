@@ -394,9 +394,7 @@ public:
       this->success_ = true;
     }
   }
-//  template < class HAS_ONE >
   void serialize(const char *, object_holder &, cascade_type) {}
-//  template < class HAS_MANY >
   void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
   void serialize(const char *, abstract_has_many &, cascade_type) {}
 
@@ -450,9 +448,7 @@ public:
 
   void serialize(const char *, char*, size_t) {}
   void serialize(const char *, std::string &, size_t) {}
-//  template < class HAS_ONE >
   void serialize(const char *, object_holder &, cascade_type) {}
-//  template < class HAS_MANY >
   void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
   void serialize(const char *, abstract_has_many &, cascade_type) {}
 

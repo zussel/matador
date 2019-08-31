@@ -6,7 +6,7 @@ SET(SOURCES
   mssql_dialect.cpp
   mssql_dialect_compiler.cpp
   mssql_dialect_linker.cpp
-)
+  mssql_parameter_binder.cpp)
 
 SET(HEADER
   ../../../include/matador/db/mssql/mssql_connection.hpp
@@ -17,7 +17,7 @@ SET(HEADER
   ../../../include/matador/db/mssql/mssql_dialect.hpp
   ../../../include/matador/db/mssql/mssql_dialect_compiler.hpp
   ../../../include/matador/db/mssql/mssql_dialect_linker.hpp
-)
+  ../../../include/matador/db/mssql/mssql_parameter_binder.hpp)
 
 ADD_LIBRARY(matador-mssql SHARED ${SOURCES} ${HEADER})
 

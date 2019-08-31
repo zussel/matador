@@ -415,7 +415,6 @@ public:
 
 private:
   std::string id_;
-//  std::shared_ptr<std::string> id_;
 
   static std::type_index type_index_;
 };

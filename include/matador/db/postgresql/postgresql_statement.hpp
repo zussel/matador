@@ -53,6 +53,8 @@ protected:
   void serialize(const char *id, basic_identifier &x) override;
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
 
+  detail::parameter_binder_impl *binder() const override;
+
 private:
   static std::string generate_statement_name(const matador::sql &stmt);
 

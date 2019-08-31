@@ -57,7 +57,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_dialect_compiler.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_dialect_linker.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_column_processor.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_creator.hpp)
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_creator.hpp ../../include/matador/sql/parameter_binder.hpp)
 
 ADD_LIBRARY(matador-sql SHARED ${SOURCES} ${HEADER})
 

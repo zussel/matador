@@ -65,6 +65,8 @@ protected:
   void serialize(const char *id, basic_identifier &x) override;
   void serialize(const char *id, identifiable_holder&x, cascade_type) override;
 
+  detail::parameter_binder_impl *binder() const override;
+
 private:
   sqlite_connection &db_;
   sqlite3_stmt *stmt_;

@@ -208,7 +208,7 @@ void basic_dialect_linker::visit(const matador::column &col)
   } else {
     dialect().append_to_result(dialect_->prepare_identifier(col.name));
   }
-  dialect().add_host_var(col.name);
+  dialect().add_column(col.name);
 }
 
 void basic_dialect_linker::visit(const matador::detail::typed_column &col)
