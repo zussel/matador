@@ -225,7 +225,7 @@ void mssql_parameter_binder::bind(const matador::time &t, size_t index)
     ts->fraction = (SQLUINTEGER) t.milli_second() * 1000 * 1000;
   }
 
-  bind_value<unsigned long>(stmt_, host_data_.back(), index);
+  bind_value<matador::time>(stmt_, host_data_.back(), index);
 }
 
 void mssql_parameter_binder::bind(const matador::date &d, size_t index)
@@ -240,7 +240,7 @@ void mssql_parameter_binder::bind(const matador::date &d, size_t index)
     ts->day = (SQLUSMALLINT) d.day();
   }
 
-  bind_value<unsigned long>(stmt_, host_data_.back(), index);
+  bind_value<matador::date>(stmt_, host_data_.back(), index);
 }
 
 }
