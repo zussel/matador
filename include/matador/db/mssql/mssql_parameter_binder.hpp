@@ -25,6 +25,7 @@ namespace mssql {
 class mssql_parameter_binder : public detail::parameter_binder_impl
 {
 public:
+  explicit mssql_parameter_binder(SQLHANDLE stmt);
   void bind(char i, size_t) override;
   void bind(short i, size_t) override;
   void bind(int i, size_t) override;
@@ -41,8 +42,6 @@ public:
   void bind(const std::string &x, size_t s, size_t) override;
   void bind(const matador::time &time, size_t) override;
   void bind(const matador::date &date, size_t) override;
-  void bind(const matador::basic_identifier &x, size_t) override;
-  void bind(const matador::identifiable_holder &x, cascade_type type, size_t) override;
 
   struct value_t
   {

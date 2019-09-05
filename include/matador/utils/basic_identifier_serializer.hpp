@@ -56,6 +56,8 @@ public:
   void serialize(const char*, matador::date&) override;
   void serialize(const char*, matador::basic_identifier &x) override;
   void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void serialize(const char *, abstract_has_many &, cascade_type) override {}
 
 private:
   template < class T >

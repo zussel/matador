@@ -148,7 +148,7 @@ private:
   SQLHANDLE stmt_ = nullptr;
   SQLHANDLE db_ = nullptr;
 
-  mssql_parameter_binder *binder_ = new mssql_parameter_binder;
+  mssql_parameter_binder *binder_ = nullptr;
 };
 
 }

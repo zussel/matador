@@ -521,6 +521,8 @@ void mssql_statement::create_statement()
 
   ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
+
+  binder_ = new mssql_parameter_binder(stmt_);
 }
 
 detail::parameter_binder_impl* mssql_statement::binder() const

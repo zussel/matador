@@ -6,6 +6,8 @@
 #define MATADOR_PARAMETER_BINDER_HPP
 
 #include "matador/utils/cascade_type.hpp"
+#include "matador/utils/basic_identifier.hpp"
+#include "matador/utils/identifiable_holder.hpp"
 
 #include <string>
 
@@ -35,13 +37,19 @@ public:
   virtual void bind(const std::string &x, size_t s, size_t) = 0;
   virtual void bind(const matador::time&, size_t) = 0;
   virtual void bind(const matador::date&, size_t) = 0;
-  virtual void bind(const matador::basic_identifier &x, size_t) = 0;
-  virtual void bind(const matador::identifiable_holder &x, cascade_type, size_t) = 0;
+
+  void bind_null(bool is_null)
+  {
+    bind_null_ = is_null;
+  }
+
+protected:
+  bool bind_null_ = false;
 };
 
 }
 template < class T >
-class parameter_binder
+class parameter_binder : public serializer
 {
 public:
   parameter_binder(const std::string &id, T &param, detail::parameter_binder_impl *impl)
@@ -49,45 +57,38 @@ public:
   {}
 
   template < class V >
-  void serialize(V &obj)
-  {
-    access::serialize(*this, obj);
-  }
+  void serialize(V &) {}
 
+  void serialize(const char *id, char &) override { bind(id, param_); }
+  void serialize(const char *id, short &) override { bind(id, param_); }
+  void serialize(const char *id, int &) override { bind(id, param_); }
+  void serialize(const char *id, long &) override { bind(id, param_); }
+  void serialize(const char *id, unsigned char &) override { bind(id, param_); }
+  void serialize(const char *id, unsigned short &) override { bind(id, param_); }
+  void serialize(const char *id, unsigned int &) override { bind(id, param_); }
+  void serialize(const char *id, unsigned long &) override { bind(id, param_); }
+  void serialize(const char *id, bool &) override { bind(id, param_); }
+  void serialize(const char *id, float &) override { bind(id, param_); }
+  void serialize(const char *id, double &) override { bind(id, param_); }
+  void serialize(const char *, matador::time &) override {}
+  void serialize(const char *, matador::date &) override {}
+  void serialize(const char *, char*, size_t) override {}
+  void serialize(const char *, std::string &, size_t) override {}
+  void serialize(const char *, std::string &) override {}
+  void serialize(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
+  void serialize(const char *, identifiable_holder &, cascade_type) override {}
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void serialize(const char *, abstract_has_many &, cascade_type) override {}
+
+private:
   template < class V >
-  void serialize(const char *id, V &, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
+  void bind(const char *id, V &x)
   {
     if (id_ != id) {
       return;
     }
-    impl_->bind(param_, index_);
+    impl_->bind(x, ++index_);
   }
-
-  template < class V >
-  void serialize(const char *id, V &, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && std::is_same<bool, T>::value>::type* = 0)
-  {
-    if (id_ != id) {
-      return;
-    }
-    impl_->bind(param_, index_);
-//    param_ = (from ? 1 : 0);
-  }
-
-  template < class V >
-  void serialize(const char *id, V &, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
-  {
-    if (id_ != id) {
-      return;
-    }
-    impl_->bind(param_, index_);
-  }
-  template < class V >
-  void serialize(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
-  void serialize(const char *, char*, size_t) {}
-  void serialize(const char *, std::string &, size_t) {}
-  void serialize(const char *, object_holder &, cascade_type) {}
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void serialize(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   const std::string &id_;
@@ -99,45 +100,121 @@ private:
 };
 
 template <>
-class parameter_binder<std::string>
+class parameter_binder<std::string> : public serializer
 {
 public:
   parameter_binder(const std::string &id, std::string &param, detail::parameter_binder_impl *impl)
     : id_(id), param_(param), impl_(impl)
   {}
 
-  template < class V >
-  void serialize(V &obj)
+  void serialize(const char *, char &) override {}
+  void serialize(const char *, short &) override {}
+  void serialize(const char *, int &) override {}
+  void serialize(const char *, long &) override {}
+  void serialize(const char *, unsigned char &) override {}
+  void serialize(const char *, unsigned short &) override {}
+  void serialize(const char *, unsigned int &) override {}
+  void serialize(const char *, unsigned long &) override {}
+  void serialize(const char *, bool &) override {}
+  void serialize(const char *, float &) override {}
+  void serialize(const char *, double &) override {}
+  void serialize(const char *, matador::time &) override {}
+  void serialize(const char *, matador::date &) override {}
+  void serialize(const char *id, char*, size_t) override { bind(id, param_.data(), param_.size()); }
+  void serialize(const char *id, std::string &, size_t) override { bind(id, param_.data(), param_.size()); }
+  void serialize(const char *id, std::string &) override { bind(id, param_);}
+  void serialize(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
+  void serialize(const char *id, identifiable_holder &x, cascade_type) override
   {
-    access::serialize(*this, obj);
+    if (x.has_primary_key()) {
+      x.primary_key()->serialize(id, *this);
+    } else {
+      std::unique_ptr<basic_identifier> basic_id(x.create_identifier());
+      impl_->bind_null(true);
+      basic_id->serialize(id, *this);
+      impl_->bind_null(false);
+    }
   }
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void serialize(const char *, abstract_has_many &, cascade_type) override {}
 
+private:
   template < class V >
-  void serialize(const char *, V &) {}
-
-  void serialize(const char *id, char*, size_t)
+  void bind(const char *id, V &x)
   {
     if (id_ != id) {
       return;
     }
-    impl_->bind(param_.data(), param_.size(), index_);
+    impl_->bind(x, ++index_);
   }
-  void serialize(const char *id, std::string &, size_t)
+
+  void bind(const char *id, const char *data, size_t size)
   {
     if (id_ != id) {
       return;
     }
-    impl_->bind(param_.data(), param_.size(), index_);
+    impl_->bind(data, size, ++index_);
   }
-  void serialize(const char *, object_holder &, cascade_type) {}
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void serialize(const char *, abstract_has_many &, cascade_type) {}
-
 private:
   const std::string &id_;
 
   std::string &param_;
 
+  size_t index_ = 0;
+
+  detail::parameter_binder_impl *impl_;
+};
+
+template <>
+class parameter_binder<void> : public serializer
+{
+public:
+  explicit parameter_binder(detail::parameter_binder_impl *impl)
+    : impl_(impl)
+  {}
+
+  template < class V >
+  void serialize(V &) {}
+
+  void serialize(const char *id, char &x) override { bind(id, x); }
+  void serialize(const char *id, short &x) override { bind(id, x); }
+  void serialize(const char *id, int &x) override { bind(id, x); }
+  void serialize(const char *id, long &x) override { bind(id, x); }
+  void serialize(const char *id, unsigned char &x) override { bind(id, x); }
+  void serialize(const char *id, unsigned short &x) override { bind(id, x); }
+  void serialize(const char *id, unsigned int &x) override { bind(id, x); }
+  void serialize(const char *id, unsigned long &x) override { bind(id, x); }
+  void serialize(const char *id, bool &x) override { bind(id, x); }
+  void serialize(const char *id, float &x) override { bind(id, x); }
+  void serialize(const char *id, double &x) override { bind(id, x); }
+  void serialize(const char *id, matador::time &x) override { bind(id, x); }
+  void serialize(const char *id, matador::date &x) override { bind(id, x); }
+  void serialize(const char *id, std::string &x) override { bind(id, x); }
+  void serialize(const char *, char *x, size_t s) override { impl_->bind(x, s, ++index_); }
+  void serialize(const char *, std::string &x, size_t s) override { impl_->bind(x, s, ++index_); }
+  void serialize(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
+  void serialize(const char *id, identifiable_holder &x, cascade_type) override
+  {
+    if (x.has_primary_key()) {
+      x.primary_key()->serialize(id, *this);
+    } else {
+      std::unique_ptr<basic_identifier> basic_id(x.create_identifier());
+      impl_->bind_null(true);
+      basic_id->serialize(id, *this);
+      impl_->bind_null(false);
+    }
+  }
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void serialize(const char *, abstract_has_many &, cascade_type) override {}
+
+private:
+  template < class V >
+  void bind(const char *, V &x)
+  {
+    impl_->bind(x, ++index_);
+  }
+
+private:
   size_t index_ = 0;
 
   detail::parameter_binder_impl *impl_;

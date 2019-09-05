@@ -53,7 +53,8 @@ public:
   {
     reset();
     host_index = pos;
-    matador::access::serialize(static_cast<serializer&>(*this), *o);
+    matador::parameter_binder<void> binder(this->binder());
+    matador::access::serialize(binder, *o);
     return host_index;
   }
 
