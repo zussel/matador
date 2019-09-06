@@ -26,6 +26,9 @@ class mssql_parameter_binder : public detail::parameter_binder_impl
 {
 public:
   explicit mssql_parameter_binder(SQLHANDLE stmt);
+
+  void reset() override;
+
   void bind(char i, size_t) override;
   void bind(short i, size_t) override;
   void bind(int i, size_t) override;

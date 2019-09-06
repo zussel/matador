@@ -23,9 +23,9 @@
 #include "matador/utils/time.hpp"
 #include "matador/utils/identifiable_holder.hpp"
 #include "matador/utils/basic_identifier.hpp"
+#include "matador/utils/memory.hpp"
 
 #include <cstring>
-#include <sstream>
 
 namespace matador {
 
@@ -105,316 +105,13 @@ detail::result_impl* mssql_statement::execute()
     throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
   }
 
+  binder_->reset();
+
   auto *res = new mssql_result(stmt_);
 
   create_statement();
 
   return res;
-}
-
-void mssql_statement::serialize(const char *id, char &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, short &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, int &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, long &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, unsigned char &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, unsigned short &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, unsigned int &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, unsigned long &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, bool &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, float &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, double &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, char *x, size_t s)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, s, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, std::string &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, matador::date &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, matador::time &x)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x, ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, std::string &x, size_t)
-{
-  if (host_var_.empty() || host_var_ == id) {
-    bind_value(x.c_str(), x.capacity(), ++host_index);
-  }
-}
-
-void mssql_statement::serialize(const char *id, identifiable_holder &x, cascade_type)
-{
-  if (x.has_primary_key()) {
-    x.primary_key()->serialize(id, *this);
-  } else {
-    std::unique_ptr<basic_identifier> bid(x.create_identifier());
-    bind_null();
-    bid->serialize(id, *this);
-    bind_value();
-  }
-}
-
-void mssql_statement::serialize(const char *id, basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
-void mssql_statement::bind_value(char c, size_t index)
-{
-  auto *v = new value_t;
-  if (bind_null_) {
-    v->data = nullptr;
-    v->len = SQL_NULL_DATA;
-  } else {
-    v->len = sizeof(char);
-    v->data = new char[1];
-    v->data[0] = c;
-  }
-  host_data_.push_back(v);
-
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, 1, 0, v->data, v->len, &v->len);
-  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
-}
-
-void mssql_statement::bind_value(unsigned char c, size_t index)
-{
-  auto *v = new value_t;
-  if (bind_null_) {
-    v->data = nullptr;
-    v->len = SQL_NULL_DATA;
-  } else {
-    v->len = sizeof(unsigned char);
-    v->data = new char[1];
-    v->data[0] = c;
-  }
-  host_data_.push_back(v);
-
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, 1, 0, v->data, v->len, &v->len);
-  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
-}
-
-void mssql_statement::bind_value(bool val, size_t index)
-{
-  auto *v = new value_t;
-  if (bind_null_) {
-    v->data = nullptr;
-    v->len = SQL_NULL_DATA;
-  } else {
-    v->len = sizeof(unsigned short);
-    v->data = new char[sizeof(unsigned short)];
-    *reinterpret_cast<unsigned short*>(v->data) = (unsigned short)val;
-  }
-  host_data_.push_back(v);
-
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_USHORT, SQL_INTEGER, 0, 0, v->data, 0, nullptr);
-  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
-}
-
-void mssql_statement::bind_value(const matador::date &d, size_t index)
-{
-  std::unique_ptr<value_t> v(new value_t(true));
-
-  if (bind_null_) {
-    v->data = nullptr;
-    v->len = SQL_NULL_DATA;
-  } else {
-    v->len = sizeof(SQL_DATE_STRUCT);
-    v->data = new char[sizeof(SQL_DATE_STRUCT)];
-    v->len = sizeof(SQL_DATE_STRUCT);
-
-    auto *ts = reinterpret_cast<SQL_DATE_STRUCT *>(v->data);
-
-    ts->year = (SQLSMALLINT) d.year();
-    ts->month = (SQLUSMALLINT) d.month();
-    ts->day = (SQLUSMALLINT) d.day();
-  }
-
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_DATE, SQL_TYPE_TIMESTAMP, 10, 0, v->data, 0, &v->len);
-  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
-
-  host_data_.push_back(v.release());
-}
-
-void mssql_statement::bind_value(const matador::time &t, size_t index)
-{
-  std::unique_ptr<value_t> v(new value_t(true));
-
-  if (bind_null_) {
-    v->data = nullptr;
-    v->len = SQL_NULL_DATA;
-  } else {
-    v->len = sizeof(SQL_TIMESTAMP_STRUCT);
-    v->data = new char[sizeof(SQL_TIMESTAMP_STRUCT)];
-    v->len = sizeof(SQL_TIMESTAMP_STRUCT);
-
-    auto *ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT *>(v->data);
-
-    ts->year = (SQLSMALLINT) t.year();
-    ts->month = (SQLUSMALLINT) t.month();
-    ts->day = (SQLUSMALLINT) t.day();
-    ts->hour = (SQLUSMALLINT) t.hour();
-    ts->minute = (SQLUSMALLINT) t.minute();
-    ts->second = (SQLUSMALLINT) t.second();
-    ts->fraction = (SQLUINTEGER) t.milli_second() * 1000 * 1000;
-  }
-
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, 23, 3, v->data, 0, &v->len);
-
-  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
-
-  host_data_.push_back(v.release());
-}
-
-void mssql_statement::bind_value(unsigned long val, size_t index)
-{
-  auto *v = new value_t;
-  if (bind_null_) {
-    v->data = nullptr;
-    v->len = SQL_NULL_DATA;
-  } else {
-	  v->len = sizeof(unsigned long);
-    v->data = new char[v->len];
-    *reinterpret_cast<unsigned long*>(v->data) = val;
-  }
-  host_data_.push_back(v);
-
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_BIGINT, 0, 0, v->data, 0, &v->len);
-  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
-}
-
-void mssql_statement::bind_value(const char *val, size_t s, size_t index)
-{
-  auto *v = new value_t(strlen(val));
-
-  if (bind_null_) {
-    v->data = nullptr;
-    v->len = SQL_NULL_DATA;
-  } else {
-
-    v->len = s;
-    v->data = new char[s + 1];
-#ifdef _MSC_VER
-	  strncpy_s((char *) v->data, s + 1, val, s);
-#else
-	  v->data = strcpy((char *)v->data, val);
-#endif
-    (v->data)[s++] = '\0';
-  }
-
-  host_data_.push_back(v);
-
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, s, 0, v->data, v->len, nullptr);
-  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
-}
-
-void mssql_statement::bind_value(const std::string &str, size_t index)
-{
-  size_t s = str.size();
-  auto *v = new value_t(SQL_NTS);
-
-  if (bind_null_) {
-    v->data = nullptr;
-    v->len = SQL_NULL_DATA;
-  } else {
-
-    v->len = s;
-    v->data = new char[s + 1];
-#ifdef _MSC_VER
-    strncpy_s(v->data, s + 1, str.c_str(), s);
-#else
-    v->data = strncpy(v->data, str.c_str(), s);
-#endif
-    (v->data)[s++] = '\0';
-  }
-
-  host_data_.push_back(v);
-  data_to_put_map_.insert(std::make_pair(v->data, v));
-
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_LONGVARCHAR, v->len, 0, v->data, v->len, &v->result_len);
-  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
-  v->result_len = SQL_LEN_DATA_AT_EXEC((SQLLEN)v->len);
 }
 
 int mssql_statement::type2int(data_type type)
@@ -522,12 +219,12 @@ void mssql_statement::create_statement()
   ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
 
-  binder_ = new mssql_parameter_binder(stmt_);
+  binder_ = matador::make_unique<mssql_parameter_binder>(stmt_);
 }
 
 detail::parameter_binder_impl* mssql_statement::binder() const
 {
-  return binder_;
+  return binder_.get();
 }
 
 }

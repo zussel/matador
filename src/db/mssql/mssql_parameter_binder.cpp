@@ -70,19 +70,17 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, const cha
 {
   size_t val_size = strlen(val);
   val_size = (val_size < size ? val_size : size);
-  auto v = matador::make_unique<mssql_parameter_binder::value_t>(val_size);
+  auto v = matador::make_unique<mssql_parameter_binder::value_t>(val_size + 1);
 
   if (is_null_value) {
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
   } else {
-
-    v->len = val_size;
     v->data = new char[val_size + 1];
 #ifdef _MSC_VER
     strncpy_s((char *) v->data, val_size + 1, val, val_size);
 #else
-    v->data = strcpy((char *)v->data, val);
+    v->data = strncpy((char *)v->data, val, val_size);
 #endif
     (v->data)[val_size++] = '\0';
   }
@@ -95,13 +93,24 @@ void bind_value(SQLHANDLE stmt, mssql_parameter_binder::value_t *v, size_t index
   data_type dt = data_type_traits<T>::type();
   auto ctype = (SQLUSMALLINT) mssql_statement::type2int(dt);
   auto type = (SQLUSMALLINT) mssql_statement::type2sql(dt);
-  SQLRETURN ret = SQLBindParameter(stmt, (SQLUSMALLINT) index, SQL_PARAM_INPUT, ctype, type, 1, 0, v->data, 0, &v->len);
+  SQLLEN buffer_length(0);
+//  SQLLEN delayed_data(0);
+  SQLRETURN ret = SQLBindParameter(stmt, (SQLUSMALLINT) index, SQL_PARAM_INPUT, ctype, type, v->len, 0, v->data, buffer_length,nullptr);
   throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't bind parameter");
 }
 
 mssql_parameter_binder::mssql_parameter_binder(SQLHANDLE stmt)
   : stmt_(stmt)
 { }
+
+void mssql_parameter_binder::reset()
+{
+  while (!host_data_.empty()) {
+    delete host_data_.back();
+    host_data_.pop_back();
+  }
+  data_to_put_map_.clear();
+}
 
 void mssql_parameter_binder::bind(char i, size_t index)
 {

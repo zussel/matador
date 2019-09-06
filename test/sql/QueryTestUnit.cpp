@@ -653,8 +653,6 @@ void QueryTestUnit::test_statement_update()
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980));
   }
 
-//  auto id_cond = id_condition_builder::build<person>();
-
   matador::column idcol("id");
   person hans("hans", matador::date(15, 6, 1990), 165);
   hans.id(1);

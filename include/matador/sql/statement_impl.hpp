@@ -29,7 +29,7 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API statement_impl : public serializer
+class OOS_SQL_API statement_impl
 {
 public:
   statement_impl() = delete;
@@ -40,7 +40,7 @@ public:
   statement_impl(basic_dialect *dialect, const matador::sql &stmt);
   statement_impl(const statement_impl &) = default;
   statement_impl& operator=(const statement_impl &) = default;
-  ~statement_impl() override = default;
+  virtual ~statement_impl() = default;
 
   virtual void clear() = 0;
 
@@ -52,17 +52,14 @@ public:
   size_t bind(T *o, size_t pos)
   {
     reset();
-    host_index = pos;
-    matador::parameter_binder<void> binder(this->binder());
-    matador::access::serialize(binder, *o);
-    return host_index;
+    matador::parameter_binder<void> binder(pos, this->binder());
+    return binder.bind(*o);
   }
 
   template < class T, class V >
   size_t bind(V &val, size_t pos)
   {
     T obj;
-    host_index = pos;
     // get column name at pos
     if (pos >= bind_vars().size()) {
       throw std::out_of_range("host index out of range");
@@ -70,13 +67,12 @@ public:
 
     host_var_ = bind_vars().at(pos);
 
-    matador::parameter_binder<V> binder(host_var_, val, this->binder());
-    matador::access::serialize(binder, obj);
+    matador::parameter_binder<V> binder(host_var_, val, pos, this->binder());
+    pos = binder.bind(obj);
 
     host_var_.clear();
 
-//    serialize("", val);
-    return host_index;
+    return pos;
   }
 
   std::string str() const;

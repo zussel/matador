@@ -23,7 +23,6 @@
 #include "matador/db/mysql/mysql_result_info.hpp"
 
 #ifdef _MSC_VER
-//#include <winsock2.h>
 #include <mysql.h>
 #else
 #include <mysql/mysql.h>
@@ -87,13 +86,13 @@ private:
     if (bind.buffer == nullptr) {
       // allocating memory
       bind.buffer = new char[sizeof(T)];
+      bind.buffer_length = sizeof(T);
+      bind.buffer_type = type;
+      bind.is_unsigned = std::is_unsigned<T>::value;
+      bind.is_null = &is_null_vector[index];
     }
     *static_cast<T*>(bind.buffer) = value;
-    bind.buffer_type = type;
-	  bind.buffer_length = sizeof(T);
     is_null_vector[index] = false;
-    bind.is_null = &is_null_vector[index];
-	  bind.is_unsigned = std::is_unsigned<T>::value;
   }
   void bind_value(std::size_t index, enum_field_types type, char x);
   void bind_value(std::size_t index, enum_field_types type, unsigned char x);

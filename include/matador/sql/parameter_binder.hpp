@@ -21,6 +21,8 @@ namespace detail {
 class parameter_binder_impl
 {
 public:
+  virtual void reset() = 0;
+
   virtual void bind(char, size_t) = 0;
   virtual void bind(short, size_t) = 0;
   virtual void bind(int, size_t) = 0;
@@ -52,9 +54,16 @@ template < class T >
 class parameter_binder : public serializer
 {
 public:
-  parameter_binder(const std::string &id, T &param, detail::parameter_binder_impl *impl)
-    : id_(id), param_(param), impl_(impl)
+  parameter_binder(const std::string &id, T &param, size_t index, detail::parameter_binder_impl *impl)
+    : id_(id), param_(param), index_(index), impl_(impl)
   {}
+
+  template < class V >
+  size_t bind(V &obj)
+  {
+    matador::access::serialize(*this, obj);
+    return index_;
+  }
 
   template < class V >
   void serialize(V &) {}
@@ -103,9 +112,16 @@ template <>
 class parameter_binder<std::string> : public serializer
 {
 public:
-  parameter_binder(const std::string &id, std::string &param, detail::parameter_binder_impl *impl)
-    : id_(id), param_(param), impl_(impl)
+  parameter_binder(const std::string &id, std::string &param, size_t index, detail::parameter_binder_impl *impl)
+    : id_(id), param_(param), index_(index), impl_(impl)
   {}
+
+  template < class V >
+  size_t bind(V &obj)
+  {
+    matador::access::serialize(*this, obj);
+    return index_;
+  }
 
   void serialize(const char *, char &) override {}
   void serialize(const char *, short &) override {}
@@ -169,27 +185,34 @@ template <>
 class parameter_binder<void> : public serializer
 {
 public:
-  explicit parameter_binder(detail::parameter_binder_impl *impl)
-    : impl_(impl)
+  explicit parameter_binder(size_t index, detail::parameter_binder_impl *impl)
+    : index_(index), impl_(impl)
   {}
+
+  template < class V >
+  size_t bind(V &obj)
+  {
+    matador::access::serialize(*this, obj);
+    return index_;
+  }
 
   template < class V >
   void serialize(V &) {}
 
-  void serialize(const char *id, char &x) override { bind(id, x); }
-  void serialize(const char *id, short &x) override { bind(id, x); }
-  void serialize(const char *id, int &x) override { bind(id, x); }
-  void serialize(const char *id, long &x) override { bind(id, x); }
-  void serialize(const char *id, unsigned char &x) override { bind(id, x); }
-  void serialize(const char *id, unsigned short &x) override { bind(id, x); }
-  void serialize(const char *id, unsigned int &x) override { bind(id, x); }
-  void serialize(const char *id, unsigned long &x) override { bind(id, x); }
-  void serialize(const char *id, bool &x) override { bind(id, x); }
-  void serialize(const char *id, float &x) override { bind(id, x); }
-  void serialize(const char *id, double &x) override { bind(id, x); }
-  void serialize(const char *id, matador::time &x) override { bind(id, x); }
-  void serialize(const char *id, matador::date &x) override { bind(id, x); }
-  void serialize(const char *id, std::string &x) override { bind(id, x); }
+  void serialize(const char *id, char &x) override { bind_value(id, x); }
+  void serialize(const char *id, short &x) override { bind_value(id, x); }
+  void serialize(const char *id, int &x) override { bind_value(id, x); }
+  void serialize(const char *id, long &x) override { bind_value(id, x); }
+  void serialize(const char *id, unsigned char &x) override { bind_value(id, x); }
+  void serialize(const char *id, unsigned short &x) override { bind_value(id, x); }
+  void serialize(const char *id, unsigned int &x) override { bind_value(id, x); }
+  void serialize(const char *id, unsigned long &x) override { bind_value(id, x); }
+  void serialize(const char *id, bool &x) override { bind_value(id, x); }
+  void serialize(const char *id, float &x) override { bind_value(id, x); }
+  void serialize(const char *id, double &x) override { bind_value(id, x); }
+  void serialize(const char *id, matador::time &x) override { bind_value(id, x); }
+  void serialize(const char *id, matador::date &x) override { bind_value(id, x); }
+  void serialize(const char *id, std::string &x) override { bind_value(id, x); }
   void serialize(const char *, char *x, size_t s) override { impl_->bind(x, s, ++index_); }
   void serialize(const char *, std::string &x, size_t s) override { impl_->bind(x, s, ++index_); }
   void serialize(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
@@ -209,7 +232,7 @@ public:
 
 private:
   template < class V >
-  void bind(const char *, V &x)
+  void bind_value(const char *, V &x)
   {
     impl_->bind(x, ++index_);
   }
