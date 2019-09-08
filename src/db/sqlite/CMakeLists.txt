@@ -6,7 +6,7 @@ SET(SOURCES
   sqlite_prepared_result.cpp
   sqlite_dialect.cpp
   sqlite_dialect_compiler.cpp
-)
+    sqlite_parameter_binder.cpp)
 
 SET(HEADER
   ../../../include/matador/db/sqlite/sqlite_connection.hpp
@@ -17,7 +17,7 @@ SET(HEADER
   ../../../include/matador/db/sqlite/sqlite_types.hpp
   ../../../include/matador/db/sqlite/sqlite_dialect.hpp
   ../../../include/matador/db/sqlite/sqlite_dialect_compiler.hpp
-)
+    ../../../include/matador/db/sqlite/sqlite_parameter_binder.hpp)
 
 ADD_LIBRARY(matador-sqlite SHARED ${SOURCES} ${HEADER})
 

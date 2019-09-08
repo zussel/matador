@@ -22,13 +22,6 @@
 
 #include "matador/sql/row.hpp"
 
-#include "matador/utils/string.hpp"
-#include "matador/utils/date.hpp"
-#include "matador/utils/identifiable_holder.hpp"
-#include "matador/utils/basic_identifier.hpp"
-
-#include <cstring>
-
 #include <sqlite3.h>
 
 namespace matador {
@@ -77,123 +70,6 @@ void sqlite_statement::clear()
   int ret = sqlite3_finalize(stmt_);
   throw_error(ret, db_.handle(), "sqlite3_finalize");
   stmt_ = nullptr;
-}
-
-void sqlite_statement::serialize(const char*, bool &x)
-{
-  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::serialize(const char*, char &x)
-{
-  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::serialize(const char*, short &x)
-{
-  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::serialize(const char*, int &x)
-{
-  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::serialize(const char*, long &x)
-{
-  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::serialize(const char*, unsigned char &x)
-{
-  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::serialize(const char*, unsigned short &x)
-{
-  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::serialize(const char*, unsigned int &x)
-{
-  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::serialize(const char*, unsigned long &x)
-{
-  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::serialize(const char*, float &x)
-{
-  int ret = sqlite3_bind_double(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_double");
-}
-
-void sqlite_statement::serialize(const char*, double &x)
-{
-  int ret = sqlite3_bind_double(stmt_, (int)++host_index, x);
-  throw_error(ret, db_.handle(), "sqlite3_bind_double");
-}
-
-void sqlite_statement::serialize(const char*, char *x, size_t len)
-{
-  auto size = strlen(x);
-  len = (size > len) ? len : size;
-  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x, (int)len, nullptr);
-  throw_error(ret, db_.handle(), "sqlite3_bind_text");
-}
-
-void sqlite_statement::serialize(const char*, std::string &x)
-{
-  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x.c_str(), (int)x.size(), nullptr);
-  throw_error(ret, db_.handle(), "sqlite3_bind_text");
-}
-
-void sqlite_statement::serialize(const char*, std::string &x, size_t)
-{
-  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x.c_str(), (int)x.size(), nullptr);
-  throw_error(ret, db_.handle(), "sqlite3_bind_text");
-}
-
-void sqlite_statement::serialize(const char *id, matador::date &x)
-{
-  auto date_string = std::make_shared<std::string>(matador::to_string(x, date_format::ISO8601));
-  serialize(id, *date_string);
-  host_strings_.push_back(date_string);
-//  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x.julian_date());
-//  throw_error(ret, db_.handle(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::serialize(const char *id, matador::time &x)
-{
-  // format time to ISO8601
-  auto time_string = std::make_shared<std::string>(matador::to_string(x, "%Y-%m-%dT%T.%f"));
-  serialize(id, *time_string);
-  host_strings_.push_back(time_string);
-}
-
-void sqlite_statement::serialize(const char *id, identifiable_holder &x, cascade_type)
-{
-  if (x.has_primary_key()) {
-    x.primary_key()->serialize(id, *this);
-  } else {
-    sqlite3_bind_null(stmt_, (int)++host_index);
-  }
-}
-
-void sqlite_statement::serialize(const char *id, basic_identifier &x)
-{
-  x.serialize(id, *this);
 }
 
 detail::parameter_binder_impl *sqlite_statement::binder() const

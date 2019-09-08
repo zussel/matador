@@ -57,48 +57,11 @@ public:
   void unlink_result(mysql_prepared_result *result);
   
 protected:
-  void serialize(const char *id, char &x) override;
-  void serialize(const char *id, short &x) override;
-  void serialize(const char *id, int &x) override;
-  void serialize(const char *id, long &x) override;
-  void serialize(const char *id, unsigned char &x) override;
-  void serialize(const char *id, unsigned short &x) override;
-  void serialize(const char *id, unsigned int &x) override;
-  void serialize(const char *id, unsigned long &x) override;
-  void serialize(const char *id, float &x) override;
-  void serialize(const char *id, double &x) override;
-  void serialize(const char *id, bool &x) override;
-  void serialize(const char *id, char *x, size_t s) override;
-  void serialize(const char *id, std::string &x, size_t s) override;
-  void serialize(const char *id, std::string &x) override;
-  void serialize(const char *id, matador::date &x) override;
-  void serialize(const char *id, matador::time &x) override;
-  void serialize(const char *id, basic_identifier &x) override;
-  void serialize(const char *id, identifiable_holder&x, cascade_type) override;
-
   detail::parameter_binder_impl *binder() const override;
 
 private:
-  template < class T >
-  void bind_value(std::size_t index, enum_field_types type, T value)
-  {
-    MYSQL_BIND &bind = host_array[index];
-    if (bind.buffer == nullptr) {
-      // allocating memory
-      bind.buffer = new char[sizeof(T)];
-      bind.buffer_length = sizeof(T);
-      bind.buffer_type = type;
-      bind.is_unsigned = std::is_unsigned<T>::value;
-      bind.is_null = &is_null_vector[index];
-    }
-    *static_cast<T*>(bind.buffer) = value;
-    is_null_vector[index] = false;
-  }
   void bind_value(std::size_t index, enum_field_types type, char x);
   void bind_value(std::size_t index, enum_field_types type, unsigned char x);
-  void bind_value(std::size_t index, enum_field_types type, const matador::date &x);
-  void bind_value(std::size_t index, enum_field_types type, const matador::time &x);
-  void bind_value(std::size_t index, enum_field_types type, const char *value, size_t size);
 
   void bind_null(std::size_t index);
 

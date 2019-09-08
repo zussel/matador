@@ -34,24 +34,6 @@ public:
   void reset() override;
 
 protected:
-  void serialize(const char *id, char &x) override;
-  void serialize(const char *id, short &x) override;
-  void serialize(const char *id, int &x) override;
-  void serialize(const char *id, long &x) override;
-  void serialize(const char *id, unsigned char &x) override;
-  void serialize(const char *id, unsigned short &x) override;
-  void serialize(const char *id, unsigned int &x) override;
-  void serialize(const char *id, unsigned long &x) override;
-  void serialize(const char *id, float &x) override;
-  void serialize(const char *id, double &x) override;
-  void serialize(const char *id, bool &x) override;
-  void serialize(const char *id, char *x, size_t s) override;
-  void serialize(const char *id, std::string &x, size_t s) override;
-  void serialize(const char *id, std::string &x) override;
-  void serialize(const char *id, matador::date &x) override;
-  void serialize(const char *id, matador::time &x) override;
-  void serialize(const char *id, basic_identifier &x) override;
-  void serialize(const char *id, identifiable_holder &x, cascade_type) override;
 
   detail::parameter_binder_impl *binder() const override;
 
@@ -62,9 +44,6 @@ private:
   postgresql_connection &db_;
   size_t result_size;
   size_t host_size;
-
-  std::vector<std::string> host_strings_;
-  std::vector<const char*> host_params_;
 
   std::string name_;
 

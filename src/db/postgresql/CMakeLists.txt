@@ -5,7 +5,7 @@ SET(SOURCES
   postgresql_result.cpp
   postgresql_statement.cpp
   postgresql_getvalue.cpp
-  postgresql_prepared_result.cpp postgresql_dialect_compiler.cpp)
+  postgresql_prepared_result.cpp postgresql_dialect_compiler.cpp postgresql_parameter_binder.cpp)
 
 SET(HEADER
   ../../../include/matador/db/postgresql/postgresql_connection.hpp
@@ -15,7 +15,7 @@ SET(HEADER
   ../../../include/matador/db/postgresql/postgresql_statement.hpp
   ../../../include/matador/db/postgresql/postgresql_getvalue.hpp
   ../../../include/matador/db/postgresql/postgresql_prepared_result.hpp
-  ../../../include/matador/db/postgresql/postgresql_dialect_compiler.hpp)
+  ../../../include/matador/db/postgresql/postgresql_dialect_compiler.hpp ../../../include/matador/db/postgresql/postgresql_parameter_binder.hpp)
 
 ADD_LIBRARY(matador-postgresql SHARED ${SOURCES} ${HEADER})
 
