@@ -47,18 +47,6 @@ public:
   virtual ~serializer() = default;
 
   /**
-   * @brief Serialize an object of type T.
-   *
-   * @tparam T Type of x
-   * @param x instance of x to be serialized
-   */
-  template < class T >
-  void serialize(T &x)
-  {
-    matador::access::serialize(*this, x);
-  }
-
-  /**
    * @brief Interface to serialize a char with given id
    *
    * @param id The id of the value

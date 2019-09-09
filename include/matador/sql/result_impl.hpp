@@ -47,9 +47,9 @@ public:
   ~result_impl() override = default;
 
   template < class T >
-  void get(T *o)
+  void serialize(T &x)
   {
-    matador::access::serialize(*this, *o);
+    matador::access::serialize(*this, x);
   }
 
   void serialize(const char*, char&) override = 0;
@@ -70,6 +70,8 @@ public:
   void serialize(const char*, matador::date&) override = 0;
   void serialize(const char*, matador::basic_identifier &x) override = 0;
   void serialize(const char*, matador::identifiable_holder &x, cascade_type) override = 0;
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void serialize(const char *, abstract_has_many &, cascade_type) override {}
 
   virtual const char *column(size_type c) const = 0;
 
@@ -86,7 +88,7 @@ public:
   void bind(T *o)
   {
     if (needs_bind()) {
-      serializer::serialize(*o);
+      serialize(*o);
       finalize_bind();
     }
   }
@@ -98,7 +100,7 @@ public:
       return false;
     }
     result_index_ = transform_index(0);
-    serializer::serialize(*o);
+    serialize(*o);
     return finalize_fetch();
   }
 

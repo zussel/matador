@@ -62,22 +62,9 @@ protected:
   detail::parameter_binder_impl *binder() const override;
 
 private:
-  void bind_null();
-  void bind_value();
-
   void create_statement();
 
 private:
-  struct value_t {
-    explicit value_t(SQLLEN l = 0) : len(l), data(nullptr) {}
-    ~value_t() { delete [] data; }
-    SQLLEN len;
-    SQLLEN result_len = 0;
-    char *data;
-  };
-  std::vector<value_t*> host_data_;
-  std::unordered_map<PTR, value_t*> data_to_put_map_;
-
   enum { NUMERIC_LEN = 21 };
 
   bool bind_null_ = false;

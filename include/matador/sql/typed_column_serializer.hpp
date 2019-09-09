@@ -42,8 +42,14 @@ public:
   columns* execute(T &x)
   {
     cols_.reset(new columns);
-    matador::access::serialize(static_cast<serializer&>(*this), x);
+    matador::access::serialize(*this, x);
     return cols_.release();
+  }
+
+  template < class T >
+  void serialize(T &x)
+  {
+    matador::access::serialize(*this, x);
   }
 
   void serialize(const char *id, char &x) override;
@@ -67,6 +73,8 @@ public:
 
   template < class V >
   void serialize(const char *, identifier<V> &) { }
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void serialize(const char *, abstract_has_many &, cascade_type) override {}
 
 private:
   std::unique_ptr<columns> cols_;

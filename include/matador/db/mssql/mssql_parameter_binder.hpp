@@ -59,6 +59,8 @@ public:
     char *data;
   };
 
+  const std::unordered_map<PTR, value_t *>& data_to_put_map() const;
+
 private:
   bool bind_null_ = false;
 

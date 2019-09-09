@@ -41,8 +41,14 @@ public:
   template<class T>
   values *execute(T &x) {
     values_ = matador::make_unique<values>();
-    matador::access::serialize(static_cast<serializer&>(*this), x);
+    matador::access::serialize(*this, x);
     return values_.release();
+  }
+
+  template < class T >
+  void serialize(T &x)
+  {
+    matador::access::serialize(*this, x);
   }
 
   void serialize(const char *id, char &x) override;
@@ -63,6 +69,8 @@ public:
   void serialize(const char *id, time &x) override;
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
   void serialize(const char *id, basic_identifier &x) override;
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void serialize(const char *, abstract_has_many &, cascade_type) override {}
 
 private:
   std::unique_ptr<values> values_;

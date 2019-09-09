@@ -15,7 +15,6 @@ namespace postgresql {
 class postgresql_parameter_binder : detail::parameter_binder_impl
 {
 public:
-private:
   void reset() override;
 
   void bind(char i, size_t size) override;
@@ -34,6 +33,8 @@ private:
   void bind(const std::string &x, size_t s, size_t size) override;
   void bind(const matador::time &time, size_t size) override;
   void bind(const matador::date &date, size_t size) override;
+
+  const std::vector<const char*>& params() const;
 
 private:
   std::vector<std::string> strings_;

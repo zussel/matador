@@ -19,13 +19,8 @@
 #include "matador/db/mssql/mssql_connection.hpp"
 #include "matador/db/mssql/mssql_result.hpp"
 
-#include "matador/utils/date.hpp"
-#include "matador/utils/time.hpp"
 #include "matador/utils/identifiable_holder.hpp"
-#include "matador/utils/basic_identifier.hpp"
 #include "matador/utils/memory.hpp"
-
-#include <cstring>
 
 namespace matador {
 
@@ -49,11 +44,6 @@ mssql_statement::~mssql_statement()
 
 void mssql_statement::reset()
 {
-  while (!host_data_.empty()) {
-    delete host_data_.back();
-    host_data_.pop_back();
-  }
-  data_to_put_map_.clear();
 }
 
 void mssql_statement::clear()
@@ -73,13 +63,13 @@ detail::result_impl* mssql_statement::execute()
     PTR pid{ nullptr };
     ret = SQLParamData(stmt_, &pid);
     // get data from map
-    auto it = data_to_put_map_.find(pid);
-    if (it == data_to_put_map_.end()) {
+    auto it = binder_->data_to_put_map().find(pid);
+    if (it == binder_->data_to_put_map().end()) {
       throw_error("mssql", "couldn't find data to put");
     }
-    value_t *val = it->second;
+    mssql_parameter_binder::value_t *val = it->second;
     // Todo
-    // put data as long it is requested
+    // put data as long if it is requested
     while (ret == SQL_NEED_DATA) {
       while (val->len > 256) {
         ret = SQLPutData(stmt_, val->data, 256);
@@ -93,8 +83,8 @@ detail::result_impl* mssql_statement::execute()
         throw_error(ret, SQL_HANDLE_STMT, stmt_, "execute->SQLParamData", str());
       } else if (ret == SQL_NEED_DATA) {
         // determine next column data pointer
-        it = data_to_put_map_.find(pid);
-        if (it == data_to_put_map_.end()) {
+        it = binder_->data_to_put_map().find(pid);
+        if (it == binder_->data_to_put_map().end()) {
           throw_error("mssql", "couldn't find data to put");
         }
         val = it->second;
@@ -183,10 +173,8 @@ int mssql_statement::type2sql(data_type type)
       return SQL_DOUBLE;
     case data_type::type_char_pointer:
       return SQL_VARCHAR;
-      //return SQL_LONGVARCHAR;
     case data_type::type_varchar:
       return SQL_VARCHAR;
-      //return SQL_LONGVARCHAR;
     case data_type::type_text:
       return SQL_LONGVARCHAR;
     case data_type::type_date:
@@ -198,16 +186,6 @@ int mssql_statement::type2sql(data_type type)
         throw std::logic_error("mssql statement: unknown type");
       }
     }
-}
-
-void mssql_statement::bind_null()
-{
-  bind_null_ = true;
-}
-
-void mssql_statement::bind_value()
-{
-  bind_null_ = false;
 }
 
 void mssql_statement::create_statement()

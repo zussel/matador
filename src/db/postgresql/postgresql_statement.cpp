@@ -21,13 +21,11 @@ std::unordered_map<std::string, unsigned long> postgresql_statement::statement_n
 postgresql_statement::postgresql_statement(postgresql_connection &db, const matador::sql &stmt)
   : statement_impl(db.dialect(), stmt)
   , db_(db)
+  , binder_(new postgresql_parameter_binder)
 {
   // parse sql to create result and host arrays
   result_size = bind_vars().size();
   host_size = columns().size();
-
-  host_strings_.resize(host_size);
-  host_params_.resize(host_size);
 
   name_ = generate_statement_name(stmt);
 
@@ -39,37 +37,37 @@ postgresql_statement::postgresql_statement(postgresql_connection &db, const mata
   }
 }
 
-postgresql_statement::postgresql_statement(const postgresql_statement &x)
-  : statement_impl(x)
-  , db_(x.db_)
-  , result_size(x.result_size)
-  , host_size(x.host_size)
-  , host_strings_(x.host_strings_)
-  , host_params_(x.host_params_)
-  , name_(x.name_)
-{
-  if (res_ != nullptr) {
-    PQclear(res_);
-  }
-  res_ = x.res_;
-}
-
-postgresql_statement &postgresql_statement::operator=(const postgresql_statement &x)
-{
-  db_ = x.db_;
-  result_size = x.result_size;
-  host_index = x.host_index;
-  host_size = x.host_size;
-  host_strings_ = x.host_strings_;
-  host_params_ = x.host_params_;
-  name_ = x.name_;
-
-  if (res_ != nullptr) {
-    PQclear(res_);
-  }
-  res_ = x.res_;
-  return *this;
-}
+//postgresql_statement::postgresql_statement(const postgresql_statement &x)
+//  : statement_impl(x)
+//  , db_(x.db_)
+//  , result_size(x.result_size)
+//  , host_size(x.host_size)
+//  , host_strings_(x.host_strings_)
+//  , host_params_(x.host_params_)
+//  , name_(x.name_)
+//{
+//  if (res_ != nullptr) {
+//    PQclear(res_);
+//  }
+//  res_ = x.res_;
+//}
+//
+//postgresql_statement &postgresql_statement::operator=(const postgresql_statement &x)
+//{
+//  db_ = x.db_;
+//  result_size = x.result_size;
+//  host_index = x.host_index;
+//  host_size = x.host_size;
+//  host_strings_ = x.host_strings_;
+//  host_params_ = x.host_params_;
+//  name_ = x.name_;
+//
+//  if (res_ != nullptr) {
+//    PQclear(res_);
+//  }
+//  res_ = x.res_;
+//  return *this;
+//}
 
 postgresql_statement::~postgresql_statement()
 {
@@ -82,14 +80,11 @@ void postgresql_statement::clear()
     PQclear(res_);
     res_ = nullptr;
   }
-
-//  host_params_.clear();
-//  host_strings_.clear();
 }
 
 detail::result_impl *postgresql_statement::execute()
 {
-  PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), host_size, host_params_.data(), nullptr, nullptr, 0);
+  PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), host_size, binder_->params().data(), nullptr, nullptr, 0);
   auto status = PQresultStatus(res);
   if (status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK) {
     THROW_POSTGRESQL_ERROR(db_.handle(), "execute", "error on sql statement");

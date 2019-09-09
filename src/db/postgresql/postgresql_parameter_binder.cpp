@@ -133,5 +133,9 @@ void postgresql_parameter_binder::bind(const matador::date &x, size_t index)
   bind_value(strings_, params_, index, x);
 }
 
+const std::vector<const char *> &postgresql_parameter_binder::params() const
+{
+  return params_;
+}
 }
 }

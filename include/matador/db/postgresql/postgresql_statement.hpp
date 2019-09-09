@@ -6,6 +6,7 @@
 #define MATADOR_POSTGRESQL_STATEMENT_HPP
 
 #include "matador/sql/statement_impl.hpp"
+#include "matador/db/postgresql/postgresql_parameter_binder.hpp"
 
 #include <libpq-fe.h>
 
@@ -23,8 +24,8 @@ class postgresql_statement : public matador::detail::statement_impl
 {
 public:
   postgresql_statement(postgresql_connection &db, const matador::sql &stmt);
-  postgresql_statement(const postgresql_statement &x);
-  postgresql_statement& operator=(const postgresql_statement &x);
+  postgresql_statement(const postgresql_statement &x) = delete;
+  postgresql_statement& operator=(const postgresql_statement &x) = delete;
   ~postgresql_statement() override;
 
   void clear() override;
@@ -50,6 +51,8 @@ private:
   static std::unordered_map<std::string, unsigned long> statement_name_map_;
 
   PGresult *res_ = nullptr;
+
+  std::unique_ptr<postgresql_parameter_binder> binder_;
 };
 
 }
