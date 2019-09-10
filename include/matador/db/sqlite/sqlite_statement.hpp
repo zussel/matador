@@ -18,6 +18,8 @@
 #ifndef SQLITE_STATEMENT_HPP
 #define SQLITE_STATEMENT_HPP
 
+#include "matador/db/sqlite/sqlite_parameter_binder.hpp"
+
 #include "matador/sql/statement_impl.hpp"
 
 #include <string>
@@ -52,6 +54,8 @@ protected:
 private:
   sqlite_connection &db_;
   sqlite3_stmt *stmt_;
+
+  std::unique_ptr<sqlite_parameter_binder> binder_;
 };
 
 }

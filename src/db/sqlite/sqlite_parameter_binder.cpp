@@ -20,7 +20,7 @@ sqlite_parameter_binder::sqlite_parameter_binder(sqlite3 *db, sqlite3_stmt *stmt
 
 void sqlite_parameter_binder::reset()
 {
-
+  host_strings_.clear();
 }
 
 void sqlite_parameter_binder::bind(char i, size_t index)

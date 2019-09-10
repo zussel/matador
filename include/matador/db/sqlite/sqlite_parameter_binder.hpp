@@ -15,10 +15,9 @@ namespace matador {
 
 namespace sqlite {
 
-class sqlite_parameter_binder : detail::parameter_binder_impl
+class sqlite_parameter_binder : public detail::parameter_binder_impl
 {
 public:
-private:
   sqlite_parameter_binder(sqlite3 *db, sqlite3_stmt *stmt);
 
   void reset() override;
