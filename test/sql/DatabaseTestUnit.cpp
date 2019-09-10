@@ -17,7 +17,7 @@
 
 #include "DatabaseTestUnit.hpp"
 
-#include "../Item.hpp"
+#include "../datatypes.hpp"
 
 #include "matador/object/object_view.hpp"
 

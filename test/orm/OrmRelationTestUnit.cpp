@@ -4,7 +4,7 @@
 
 #include "OrmRelationTestUnit.hpp"
 
-#include "../Item.hpp"
+#include "../datatypes.hpp"
 #include "../entities.hpp"
 #include "../has_many_list.hpp"
 

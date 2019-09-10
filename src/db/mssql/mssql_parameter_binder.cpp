@@ -29,6 +29,34 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, T val)
   return v.release();
 }
 
+mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, char val)
+{
+  auto v = matador::make_unique<mssql_parameter_binder::value_t>(2);
+  if (is_null_value) {
+    v->data = nullptr;
+    v->len = SQL_NULL_DATA;
+  } else {
+    v->data = new char[2];
+    v->data[0] = val;
+    v->data[1] = '\0';
+  }
+  return v.release();
+}
+
+mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, unsigned char val)
+{
+  auto v = matador::make_unique<mssql_parameter_binder::value_t>(2);
+  if (is_null_value) {
+    v->data = nullptr;
+    v->len = SQL_NULL_DATA;
+  } else {
+    v->data = new char[2];
+    reinterpret_cast<unsigned char*>(v->data)[0] = val;
+    v->data[1] = '\0';
+  }
+  return v.release();
+}
+
 mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, const std::string &val)
 {
   auto v = matador::make_unique<mssql_parameter_binder::value_t>(SQL_NTS);

@@ -26,14 +26,14 @@
 #include "matador/utils/date.hpp"
 #include "matador/utils/identifier.hpp"
 
-class Item
+class datatypes
 {
 public:
-  Item() : Item("") { }
+  datatypes() : datatypes("") { }
 
-  explicit Item(const std::string &str) : Item(str, -65000) {}
+  explicit datatypes(const std::string &str) : datatypes(str, -65000) {}
 
-  Item(std::string str, int i)
+  datatypes(std::string str, int i)
     : int_(i), string_(std::move(str))
   {
     memset(cstr_, 0, CSTR_LEN);
@@ -45,7 +45,7 @@ public:
     cstr_[5] = '\0';
   }
 
-  ~Item() = default;
+  ~datatypes() = default;
 
 public:
   template < class SERIALIZER > void serialize(SERIALIZER &serializer)
@@ -57,6 +57,7 @@ public:
     serializer.serialize("val_short", short_);
     serializer.serialize("val_int", int_);
     serializer.serialize("val_long", long_);
+    serializer.serialize("val_unsigned_char", unsigned_char_);
     serializer.serialize("val_unsigned_short", unsigned_short_);
     serializer.serialize("val_unsigned_int", unsigned_int_);
     serializer.serialize("val_unsigned_long", unsigned_long_);
@@ -77,6 +78,7 @@ public:
   void set_short(short x) { short_ = x; }
   void set_int(int x) { int_ = x; }
   void set_long(long x) { long_ = x; }
+  void set_unsigned_char(unsigned char x) { unsigned_char_ = x; }
   void set_unsigned_short(unsigned short x) { unsigned_short_ = x; }
   void set_unsigned_int(unsigned int x) { unsigned_int_ = x; }
   void set_unsigned_long(unsigned long x) { unsigned_long_ = x; }
@@ -104,6 +106,7 @@ public:
   short get_short() const { return short_; }
   int get_int() const { return int_; }
   long get_long() const { return long_; }
+  unsigned char get_unsigned_char() const { return unsigned_char_; }
   unsigned short get_unsigned_short() const { return unsigned_short_; }
   unsigned int get_unsigned_int() const { return unsigned_int_; }
   unsigned long get_unsigned_long() const { return unsigned_long_; }
@@ -114,9 +117,9 @@ public:
   matador::date get_date() const { return date_; }
   matador::time get_time() const { return time_; }
 
-  friend std::ostream& operator <<(std::ostream &os, const Item &i)
+  friend std::ostream& operator <<(std::ostream &os, const datatypes &i)
   {
-    os << "Item [" << i.get_string() << "] (" << i.get_int() << ")";
+    os << "datatypes [" << i.get_string() << "] (" << i.get_int() << ")";
     return os;
   }
 
@@ -131,6 +134,7 @@ private:
   short short_ = -127;
   int int_ = -65000;
   long long_ = -128000;
+  unsigned char unsigned_char_ = 72;
   unsigned short unsigned_short_ = 128;
   unsigned int unsigned_int_ = 65000;
   unsigned long unsigned_long_ = 128000;
@@ -142,8 +146,8 @@ private:
   matador::time time_;
 };
 
-class ItemA : public Item {};
-class ItemB : public Item {};
-class ItemC : public Item {};
+class ItemA : public datatypes {};
+class ItemB : public datatypes {};
+class ItemC : public datatypes {};
 
 #endif /* ITEM_HPP */

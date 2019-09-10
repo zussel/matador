@@ -6,7 +6,7 @@ SET(SOURCES
   mssql_dialect.cpp
   mssql_dialect_compiler.cpp
   mssql_dialect_linker.cpp
-  mssql_parameter_binder.cpp)
+  mssql_parameter_binder.cpp mssql_types.cpp)
 
 SET(HEADER
   ../../../include/matador/db/mssql/mssql_connection.hpp

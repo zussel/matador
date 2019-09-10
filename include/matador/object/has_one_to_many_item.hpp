@@ -108,10 +108,8 @@ public:
   }
 
 private:
-//  belongs_to<L> left_;
-  // should be
   has_one<L> left_;
-  R right_;
+  R right_ = {};
 };
 
 /// @endcond

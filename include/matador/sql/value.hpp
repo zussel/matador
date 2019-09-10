@@ -222,6 +222,39 @@ struct value<char> : public detail::basic_value
 };
 
 template<>
+struct value<unsigned char> : public detail::basic_value
+{
+  explicit value(unsigned char val)
+    : basic_value(detail::token::VALUE)
+    , val(val) { }
+
+  void serialize(const char *id, serializer &srlzr) override
+  {
+    srlzr.serialize(id, val);
+  }
+
+  std::string str() const override
+  {
+    std::stringstream str;
+    str << "'" << val << "'";
+    return str.str();
+  }
+
+  std::string safe_string(const basic_dialect &) const override
+  {
+    std::stringstream str;
+    str << "'" << val << "'";
+    return str.str();
+  }
+
+  const char* type_id() const override
+  {
+    return typeid(unsigned char).name();
+  }
+  unsigned char val;
+};
+
+template<>
 struct value<char*> : public detail::basic_value
 {
   value(const char *v, size_t)
@@ -330,7 +363,7 @@ struct value<matador::time> : public detail::basic_value
 {
   explicit value(matador::time val)
     : basic_value(detail::token::VALUE)
-    , val(std::move(val))
+    , val(val)
   { }
 
   void serialize(const char *id, serializer &srlzr) override

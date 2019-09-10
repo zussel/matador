@@ -66,7 +66,10 @@ public:
   }
 
   template < class V >
-  void serialize(V &) {}
+  void serialize(V &x)
+  {
+    matador::access::serialize(*this, x);
+  }
 
   void serialize(const char *id, char &) override { bind(id, param_); }
   void serialize(const char *id, short &) override { bind(id, param_); }
@@ -197,7 +200,10 @@ public:
   }
 
   template < class V >
-  void serialize(V &) {}
+  void serialize(V &x)
+  {
+    matador::access::serialize(*this, x);
+  }
 
   void serialize(const char *id, char &x) override { bind_value(id, x); }
   void serialize(const char *id, short &x) override { bind_value(id, x); }

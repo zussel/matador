@@ -31,24 +31,24 @@
 #include <ostream>
 #include <utility>
 
-#include "Item.hpp"
+#include "datatypes.hpp"
 #include "person.hpp"
 
 template < class T >
-class ObjectItem : public Item
+class ObjectItem : public datatypes
 {
 public:
     typedef matador::object_ptr<T> value_ptr;
 
     ObjectItem() = default;
     ObjectItem(const std::string &n, int i)
-            : Item(n, i)
+            : datatypes(n, i)
     {}
 
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize(*matador::base_class<Item>(this));
+        serializer.serialize(*matador::base_class<datatypes>(this));
         serializer.serialize("ref", ref_, matador::cascade_type::NONE);
         serializer.serialize("ptr", ptr_, matador::cascade_type::ALL);
     }
@@ -77,7 +77,7 @@ private:
 class ObjectItemList
 {
 public:
-    typedef matador::has_many<ObjectItem<Item>> object_item_list_t;
+    typedef matador::has_many<ObjectItem<datatypes>> object_item_list_t;
     typedef typename object_item_list_t::iterator iterator;
     typedef typename object_item_list_t::const_iterator const_iterator;
 

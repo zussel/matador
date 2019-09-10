@@ -55,8 +55,6 @@ public:
 //  virtual int column_count() const;
 //  virtual const char* column_name(int i) const;
 
-  static int type2int(data_type type);
-  static int type2sql(data_type type);
 
 protected:
   detail::parameter_binder_impl *binder() const override;

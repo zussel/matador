@@ -1,5 +1,5 @@
 #include "ObjectStoreTestUnit.hpp"
-#include "../Item.hpp"
+#include "../datatypes.hpp"
 #include "../entities.hpp"
 
 #include "matador/object/object_expression.hpp"
@@ -87,11 +87,11 @@ void ObjectStoreTestUnit::finalize()
   ostore_.clear(true);
 }
 
-struct item_counter : public std::unary_function<const object_ptr<ObjectItem<Item> >&, void>
+struct item_counter : public std::unary_function<const object_ptr<ObjectItem<datatypes> >&, void>
 {
   explicit item_counter(int &c) : count(c) {}
   
-  void operator ()(const object_ptr<ObjectItem<Item> > &) { ++count; }
+  void operator ()(const object_ptr<ObjectItem<datatypes> > &) { ++count; }
   int &count;
 };
 
@@ -109,15 +109,15 @@ void ObjectStoreTestUnit::test_version()
 
 void ObjectStoreTestUnit::test_optr()
 {
-  ostore_.attach<Item>("item");
+  ostore_.attach<datatypes>("item");
 
-  typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<datatypes> item_ptr;
 
   item_ptr item_null;
 
   UNIT_ASSERT_EXCEPTION(ostore_.insert(item_null), object_exception, "proxy is null");
 
-  item_ptr item(new Item("Test"));
+  item_ptr item(new datatypes("Test"));
 
   UNIT_ASSERT_NULL(item.store());
 
@@ -128,40 +128,40 @@ void ObjectStoreTestUnit::test_optr()
 
 void ObjectStoreTestUnit::test_expression()
 {
-  ostore_.attach<Item>("item");
-  ostore_.attach<ObjectItem<Item> >("object_item");
+  ostore_.attach<datatypes>("item");
+  ostore_.attach<ObjectItem<datatypes> >("object_item");
   ostore_.attach<ObjectItemList>("object_item_ptr_list");
 
-  typedef object_ptr<ObjectItem<Item> > object_item_ptr;
-  typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<ObjectItem<datatypes> > object_item_ptr;
+  typedef object_ptr<datatypes> item_ptr;
   typedef object_ptr<ObjectItemList> itemlist_ptr;
 
   itemlist_ptr itemlist = ostore_.insert(new ObjectItemList("object_ptr_list"));
 
   item_ptr ii;
   for (int i = 0; i < 10; ++i) {
-    object_item_ptr oi = ostore_.insert(new ObjectItem<Item>("ObjectItem", i));
-    ii = ostore_.insert(new Item("Item", i));
+    object_item_ptr oi = ostore_.insert(new ObjectItem<datatypes>("ObjectItem", i));
+    ii = ostore_.insert(new datatypes("datatypes", i));
     oi.modify()->ptr(ii);
     itemlist.modify()->items.push_back(oi);
   }
 
-  variable<int> x(make_var(&ObjectItem<Item>::get_int));
-  variable<std::string> y(make_var(&ObjectItem<Item>::get_string));
-  variable<object_ptr<Item> > u(make_var(&ObjectItem<Item>::ptr));
+  variable<int> x(make_var(&ObjectItem<datatypes>::get_int));
+  variable<std::string> y(make_var(&ObjectItem<datatypes>::get_string));
+  variable<object_ptr<datatypes> > u(make_var(&ObjectItem<datatypes>::ptr));
 
-  object_view<ObjectItem<Item> > oview(ostore_);
+  object_view<ObjectItem<datatypes> > oview(ostore_);
   
   int count(0);
   for_each_if(oview.begin(), oview.end(), x >= 3 && x <= 7 && x != 5, item_counter(count));
 
   UNIT_ASSERT_EQUAL(count, 4);
 
-  variable<int> z(make_var(&ObjectItem<Item>::get_int));
+  variable<int> z(make_var(&ObjectItem<datatypes>::get_int));
 
   std::unique_ptr<expression> exp(make_expression(z == 4));
 
-  object_ptr<ObjectItem<Item>> optr = *itemlist->begin();
+  object_ptr<ObjectItem<datatypes>> optr = *itemlist->begin();
 
   (*exp)(optr);
 
@@ -170,7 +170,7 @@ void ObjectStoreTestUnit::test_expression()
   UNIT_ASSERT_FALSE(it == itemlist->end());
 #endif
 
-  object_view<ObjectItem<Item> >::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
+  object_view<ObjectItem<datatypes> >::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
   UNIT_ASSERT_EQUAL((*j)->get_int(), 1);
 
   j = std::find_if(oview.begin(), oview.end(), x > 6);
@@ -220,7 +220,7 @@ void ObjectStoreTestUnit::test_serializer()
   matador::date dt(15, 9, 1972);
   matador::time t(2008, 12, 27, 13, 6, 57, 4711);
 
-  auto *item = new Item();
+  auto *item = new datatypes();
   
   item->set_char(c);
   item->set_float(f);
@@ -244,7 +244,7 @@ void ObjectStoreTestUnit::test_serializer()
   
   delete item;
   
-  item = new Item();
+  item = new datatypes();
   
   serializer.deserialize(item, &buffer, &ostore_);
 
@@ -308,20 +308,20 @@ void ObjectStoreTestUnit::test_identifier_serializer()
 
 void ObjectStoreTestUnit::test_reference_counter()
 {
-  ostore_.attach<Item>("item");
-  ostore_.attach<ObjectItem<Item> >("object_item");
+  ostore_.attach<datatypes>("item");
+  ostore_.attach<ObjectItem<datatypes> >("object_item");
 
-  Item *i = new Item("Item", 7);
+  datatypes *i = new datatypes("datatypes", 7);
   
-  typedef object_ptr<Item> item_ptr;
-  typedef object_ptr<ObjectItem<Item> > object_item_ptr;
+  typedef object_ptr<datatypes> item_ptr;
+  typedef object_ptr<ObjectItem<datatypes> > object_item_ptr;
   
   item_ptr item = ostore_.insert(i);
 
   UNIT_ASSERT_EQUAL(item.reference_count(), 0UL);
 
-  object_item_ptr object_item_1 = ostore_.insert(new ObjectItem<Item>());
-  object_item_ptr object_item_2 = ostore_.insert(new ObjectItem<Item>());
+  object_item_ptr object_item_1 = ostore_.insert(new ObjectItem<datatypes>());
+  object_item_ptr object_item_2 = ostore_.insert(new ObjectItem<datatypes>());
   object_item_1.modify()->ptr(item);
 
   UNIT_ASSERT_EQUAL(item.reference_count(), 1UL);
@@ -348,7 +348,7 @@ void ObjectStoreTestUnit::test_set()
   std::string varstr("The answer is 42");
   std::string str("tiger");
 
-  Item i("item", 4711);
+  datatypes i("item", 4711);
   
   matador::set(i, "val_char", 'f');
   matador::set(i, "val_short", -2);
@@ -409,7 +409,7 @@ void ObjectStoreTestUnit::test_get()
   test_pair<matador::date> dateval(matador::date("29.4.1972"));
   test_pair<matador::time > timeval(matador::time(2015, 10, 16, 8, 54, 32, 123));
 
-  Item item;
+  datatypes item;
 
   item.set_char(c.expected);
   item.set_float(f.expected);
@@ -461,13 +461,13 @@ void ObjectStoreTestUnit::test_get()
 
 void ObjectStoreTestUnit::test_simple_object()
 {
-  ostore_.attach<Item>("item");
+  ostore_.attach<datatypes>("item");
 
-  auto *a = ostore_.create<Item>();
+  auto *a = ostore_.create<datatypes>();
   
   UNIT_ASSERT_NOT_NULL(a);
   
-  typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<datatypes> item_ptr;
   
   item_ptr simple = ostore_.insert(a);
   
@@ -480,21 +480,21 @@ void ObjectStoreTestUnit::test_simple_object()
 
 void ObjectStoreTestUnit::test_object_with_sub_object()
 {
-  ostore_.attach<Item>("item");
-  ostore_.attach<ObjectItem<Item> >("object_item");
+  ostore_.attach<datatypes>("item");
+  ostore_.attach<ObjectItem<datatypes> >("object_item");
 
-  auto *s = ostore_.create<ObjectItem<Item>>();
+  auto *s = ostore_.create<ObjectItem<datatypes>>();
   
   UNIT_ASSERT_NOT_NULL(s);
   
-  typedef object_ptr<ObjectItem<Item> > obj_item_ptr;
+  typedef object_ptr<ObjectItem<datatypes> > obj_item_ptr;
   
   obj_item_ptr ows = ostore_.insert(s);
   
   UNIT_ASSERT_NOT_NULL(ows.get());
   
   // check if sub object exists
-  object_ptr<Item> simple = ows->ptr();
+  object_ptr<datatypes> simple = ows->ptr();
   
   UNIT_ASSERT_NULL(simple.get());
   
@@ -505,21 +505,21 @@ void ObjectStoreTestUnit::test_object_with_sub_object()
 
 void ObjectStoreTestUnit::test_multiple_simple_objects()
 {
-  ostore_.attach<Item>("item");
+  ostore_.attach<datatypes>("item");
 
-  typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<datatypes> item_ptr;
 
   size_t elem_size = 10;
   // create 10 objects
   for (size_t i = 0; i < elem_size; ++i) {
-    auto *a = ostore_.create<Item>();
+    auto *a = ostore_.create<datatypes>();
     
     UNIT_ASSERT_NOT_NULL(a);
     
     item_ptr simple = ostore_.insert(a);
   }
 
-  typedef object_view<Item> simple_view_t;
+  typedef object_view<datatypes> simple_view_t;
   simple_view_t simple_view(ostore_);
 
   UNIT_ASSERT_EQUAL(elem_size, simple_view.size());
@@ -527,22 +527,22 @@ void ObjectStoreTestUnit::test_multiple_simple_objects()
 
 void ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
 {
-  ostore_.attach<Item>("item");
-  ostore_.attach<ObjectItem<Item> >("object_item");
+  ostore_.attach<datatypes>("item");
+  ostore_.attach<ObjectItem<datatypes> >("object_item");
 
-  typedef object_ptr<ObjectItem<Item> > ows_ptr;
+  typedef object_ptr<ObjectItem<datatypes> > ows_ptr;
     
   // create 10 objects
   size_t elem_size = 10;
   for (size_t i = 0; i < elem_size; ++i) {
-    auto *s = ostore_.create<ObjectItem<Item>>();
+    auto *s = ostore_.create<ObjectItem<datatypes>>();
 
     UNIT_ASSERT_NOT_NULL(s);
     
     ows_ptr ows = ostore_.insert(s);
   }
 
-  typedef object_view<ObjectItem<Item> > withsub_view_t;
+  typedef object_view<ObjectItem<datatypes> > withsub_view_t;
   withsub_view_t withsub_view(ostore_);
 
   UNIT_ASSERT_EQUAL(elem_size, withsub_view.size());
@@ -551,14 +551,14 @@ void ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
 void ObjectStoreTestUnit::test_delete_object()
 {
 //  std::cout << "\n";
-  ostore_.attach<Item>("item");
-  ostore_.attach<ObjectItem<Item> >("object_item");
+  ostore_.attach<datatypes>("item");
+  ostore_.attach<ObjectItem<datatypes> >("object_item");
 
-  typedef ObjectItem<Item> TestItem;
+  typedef ObjectItem<datatypes> TestItem;
   typedef object_ptr<TestItem> test_item_ptr;
-  typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<datatypes> item_ptr;
 
-  item_ptr item = ostore_.insert(new Item("item 1"));
+  item_ptr item = ostore_.insert(new datatypes("item 1"));
 
   auto *ti = new TestItem;
   ti->ref(item);
@@ -568,7 +568,7 @@ void ObjectStoreTestUnit::test_delete_object()
   UNIT_ASSERT_EQUAL(item.reference_count(), 1UL);
   UNIT_ASSERT_EQUAL(testitem.reference_count(), 0UL);
 
-  typedef object_view<Item> item_view_t;
+  typedef object_view<datatypes> item_view_t;
   item_view_t item_view(ostore_);
 
   UNIT_ASSERT_FALSE(ostore_.is_removable(item));
@@ -589,10 +589,10 @@ void ObjectStoreTestUnit::test_delete_object()
 
 void ObjectStoreTestUnit::test_hierarchy()
 {
-  ostore_.attach<Item>("item");
-  ostore_.attach<ItemA, Item>("ITEM_A");
-  ostore_.attach<ItemB, Item>("ITEM_B");
-  ostore_.attach<ItemC, Item>("ITEM_C");
+  ostore_.attach<datatypes>("item");
+  ostore_.attach<ItemA, datatypes>("ITEM_A");
+  ostore_.attach<ItemB, datatypes>("ITEM_B");
+  ostore_.attach<ItemC, datatypes>("ITEM_C");
   
   /* Insert 5 object of each item
    * object type
@@ -601,7 +601,7 @@ void ObjectStoreTestUnit::test_hierarchy()
   for (int i = 0; i < 5; ++i) {
     std::stringstream str;
     str << "item " << i;
-    ostore_.insert(new Item(str.str()));
+    ostore_.insert(new datatypes(str.str()));
     str.str("");
     str << "item a " << i;
     auto *ia = new ItemA;
@@ -619,7 +619,7 @@ void ObjectStoreTestUnit::test_hierarchy()
     ostore_.insert(ic);
   }
   
-  typedef object_view<Item> item_view_t;
+  typedef object_view<datatypes> item_view_t;
 
   item_view_t item_view(ostore_);
 
@@ -685,16 +685,16 @@ void ObjectStoreTestUnit::test_hierarchy()
 
 void ObjectStoreTestUnit::test_view()
 {
-  ostore_.attach<Item>("item");
+  ostore_.attach<datatypes>("item");
 
   for (int i = 0; i < 10; ++i) {
     std::stringstream str;
-    str << "Item " << i+1;
-    ostore_.insert(new Item(str.str(), i+1));
+    str << "datatypes " << i+1;
+    ostore_.insert(new datatypes(str.str(), i + 1));
   }
 
-  typedef object_ptr<Item> item_ptr;
-  typedef object_view<Item> item_view_t;
+  typedef object_ptr<datatypes> item_ptr;
+  typedef object_view<datatypes> item_view_t;
 
   item_view_t iview(ostore_);
 
@@ -712,15 +712,15 @@ void ObjectStoreTestUnit::test_view()
 
 //void ObjectStoreTestUnit::test_clear_type()
 //{
-//  ostore_.attach<Item>("item");
+//  ostore_.attach<datatypes>("item");
 //
 //  for (int i = 0; i < 10; ++i) {
 //    std::stringstream str;
-//    str << "Item " << i+1;
-//    ostore_.insert(new Item(str.str(), i+1));
+//    str << "datatypes " << i+1;
+//    ostore_.insert(new datatypes(str.str(), i+1));
 //  }
 //
-//  typedef object_view<Item> item_view_t;
+//  typedef object_view<datatypes> item_view_t;
 //
 //  item_view_t iview(ostore_);
 //
@@ -749,15 +749,15 @@ void ObjectStoreTestUnit::test_view()
 
 void ObjectStoreTestUnit::test_clear()
 {
-  ostore_.attach<Item>("item");
+  ostore_.attach<datatypes>("item");
 
   for (int i = 0; i < 10; ++i) {
     std::stringstream str;
-    str << "Item " << i+1;
-    ostore_.insert(new Item(str.str(), i+1));
+    str << "datatypes " << i+1;
+    ostore_.insert(new datatypes(str.str(), i + 1));
   }
 
-  typedef object_view<Item> item_view_t;
+  typedef object_view<datatypes> item_view_t;
 
   item_view_t iview(ostore_);
 
@@ -802,7 +802,7 @@ void ObjectStoreTestUnit::test_generic()
   test_pair<matador::date> dateval(matador::date("29.4.1972"));
   test_pair<matador::time > timeval(matador::time(2015, 10, 16, 8, 54, 32, 123));
 
-  std::unique_ptr<Item> item(new Item());
+  std::unique_ptr<datatypes> item(new datatypes());
 
   matador::set(*item, "val_char", c.expected);
   matador::get(*item, "val_char", c.result);
@@ -911,16 +911,16 @@ void ObjectStoreTestUnit::test_generic()
 
 void ObjectStoreTestUnit::test_structure()
 {
-  ostore_.attach<Item>("item");
-  ostore_.attach<ObjectItem<Item> >("object_item");
+  ostore_.attach<datatypes>("item");
+  ostore_.attach<ObjectItem<datatypes> >("object_item");
 
-  typedef ObjectItem<Item> object_item_t;
+  typedef ObjectItem<datatypes> object_item_t;
   typedef object_ptr<object_item_t> object_item_ptr;
-  typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<datatypes> item_ptr;
   
   object_item_t *oi = new object_item_t("object_item", 42);
   
-  item_ptr iptr(new Item);
+  item_ptr iptr(new datatypes);
   oi->ptr(iptr);
   
   object_item_ptr optr = ostore_.insert(oi);
@@ -1014,11 +1014,11 @@ void ObjectStoreTestUnit::test_structure_container()
 
 void ObjectStoreTestUnit::test_transient_optr()
 {
-  ostore_.attach<Item>("item");
+  ostore_.attach<datatypes>("item");
 
-  typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<datatypes> item_ptr;
 
-  item_ptr item(new Item("item", 5));
+  item_ptr item(new datatypes("item", 5));
 
   item_ptr item_copy = item;
 
@@ -1027,29 +1027,29 @@ void ObjectStoreTestUnit::test_transient_optr()
 
 void ObjectStoreTestUnit::test_insert()
 {
-  ostore_.attach<Item>("item");
+  ostore_.attach<datatypes>("item");
 
-  UNIT_ASSERT_EXCEPTION(ostore_.insert((Item *)nullptr), object_exception, "object is null");
+  UNIT_ASSERT_EXCEPTION(ostore_.insert((datatypes *)nullptr), object_exception, "object is null");
 
   std::unique_ptr<ItemC> ic(new ItemC);
   UNIT_ASSERT_EXCEPTION(ostore_.insert(ic.get()), object_exception, "couldn't find object type");
 
-  object_ptr<Item> item = ostore_.insert(new Item("test"));
+  object_ptr<datatypes> item = ostore_.insert(new datatypes("test"));
   UNIT_ASSERT_NOT_NULL(item.ptr());
   UNIT_ASSERT_TRUE(item->id() > 0);
 }
 
 void ObjectStoreTestUnit::test_remove()
 {
-  ostore_.attach<Item>("item");
+  ostore_.attach<datatypes>("item");
 
-  typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<datatypes> item_ptr;
 
   item_ptr item;
 
   UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr");
 
-  auto *i = new Item;
+  auto *i = new datatypes;
   item = i;
 
   UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "prototype node is nullptr");
@@ -1057,13 +1057,13 @@ void ObjectStoreTestUnit::test_remove()
 
 void ObjectStoreTestUnit::test_primary_key()
 {
-  typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<datatypes> item_ptr;
 
   item_ptr item;
 
   UNIT_ASSERT_FALSE(item.has_primary_key());
 
-  item = new Item("Test");
+  item = new datatypes("Test");
 
   UNIT_ASSERT_TRUE(item.has_primary_key());
 }
