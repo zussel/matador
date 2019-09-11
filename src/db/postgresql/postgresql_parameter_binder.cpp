@@ -46,7 +46,22 @@ void bind_value(std::vector<std::string> &strings, std::vector<const char*> &par
 
 void postgresql_parameter_binder::reset()
 {
+  index_ = 0;
+}
 
+void postgresql_parameter_binder::initialize_index(size_t index)
+{
+  index_ = index;
+}
+
+size_t postgresql_parameter_binder::next_index()
+{
+  return index_++;
+}
+
+size_t postgresql_parameter_binder::current_index() const
+{
+  return index_;
 }
 
 void postgresql_parameter_binder::bind(char i, size_t index)
@@ -137,5 +152,6 @@ const std::vector<const char *> &postgresql_parameter_binder::params() const
 {
   return params_;
 }
+
 }
 }

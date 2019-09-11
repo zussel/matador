@@ -23,6 +23,10 @@ class parameter_binder_impl
 public:
   virtual void reset() = 0;
 
+  virtual void initialize_index(size_t index) = 0;
+  virtual size_t next_index() = 0;
+  virtual size_t current_index() const = 0;
+
   virtual void bind(char, size_t) = 0;
   virtual void bind(short, size_t) = 0;
   virtual void bind(int, size_t) = 0;
@@ -55,14 +59,16 @@ class parameter_binder : public serializer
 {
 public:
   parameter_binder(const std::string &id, T &param, size_t index, detail::parameter_binder_impl *impl)
-    : id_(id), param_(param), index_(index), impl_(impl)
-  {}
+    : id_(id), param_(param), impl_(impl)
+  {
+    impl_->initialize_index(index);
+  }
 
   template < class V >
   size_t bind(V &obj)
   {
     matador::access::serialize(*this, obj);
-    return index_;
+    return impl_->current_index();
   }
 
   template < class V >
@@ -99,7 +105,7 @@ private:
     if (id_ != id) {
       return;
     }
-    impl_->bind(x, ++index_);
+    impl_->bind(x, impl_->next_index());
   }
 
 private:
@@ -107,7 +113,6 @@ private:
 
   T &param_;
 
-  size_t index_ = 0;
   detail::parameter_binder_impl *impl_;
 };
 
@@ -116,14 +121,16 @@ class parameter_binder<std::string> : public serializer
 {
 public:
   parameter_binder(const std::string &id, std::string &param, size_t index, detail::parameter_binder_impl *impl)
-    : id_(id), param_(param), index_(index), impl_(impl)
-  {}
+    : id_(id), param_(param), impl_(impl)
+  {
+    impl_->initialize_index(index);
+  }
 
   template < class V >
   size_t bind(V &obj)
   {
     matador::access::serialize(*this, obj);
-    return index_;
+    return impl_->current_index();
   }
 
   void serialize(const char *, char &) override {}
@@ -164,7 +171,7 @@ private:
     if (id_ != id) {
       return;
     }
-    impl_->bind(x, ++index_);
+    impl_->bind(x, impl_->next_index());
   }
 
   void bind(const char *id, const char *data, size_t size)
@@ -172,14 +179,12 @@ private:
     if (id_ != id) {
       return;
     }
-    impl_->bind(data, size, ++index_);
+    impl_->bind(data, size, impl_->next_index());
   }
 private:
   const std::string &id_;
 
   std::string &param_;
-
-  size_t index_ = 0;
 
   detail::parameter_binder_impl *impl_;
 };
@@ -189,14 +194,16 @@ class parameter_binder<void> : public serializer
 {
 public:
   explicit parameter_binder(size_t index, detail::parameter_binder_impl *impl)
-    : index_(index), impl_(impl)
-  {}
+    : impl_(impl)
+  {
+    impl_->initialize_index(index);
+  }
 
   template < class V >
   size_t bind(V &obj)
   {
     matador::access::serialize(*this, obj);
-    return index_;
+    return impl_->current_index();
   }
 
   template < class V >
@@ -219,8 +226,8 @@ public:
   void serialize(const char *id, matador::time &x) override { bind_value(id, x); }
   void serialize(const char *id, matador::date &x) override { bind_value(id, x); }
   void serialize(const char *id, std::string &x) override { bind_value(id, x); }
-  void serialize(const char *, char *x, size_t s) override { impl_->bind(x, s, ++index_); }
-  void serialize(const char *, std::string &x, size_t s) override { impl_->bind(x, s, ++index_); }
+  void serialize(const char *, char *x, size_t s) override { impl_->bind(x, s, impl_->next_index()); }
+  void serialize(const char *, std::string &x, size_t s) override { impl_->bind(x, s, impl_->next_index()); }
   void serialize(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
   void serialize(const char *id, identifiable_holder &x, cascade_type) override
   {
@@ -240,12 +247,10 @@ private:
   template < class V >
   void bind_value(const char *, V &x)
   {
-    impl_->bind(x, ++index_);
+    impl_->bind(x, impl_->next_index());
   }
 
 private:
-  size_t index_ = 0;
-
   detail::parameter_binder_impl *impl_;
 };
 

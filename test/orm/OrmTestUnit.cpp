@@ -4,14 +4,11 @@
 
 #include "OrmTestUnit.hpp"
 
-#include "../datatypes.hpp"
 #include "../person.hpp"
 #include "../has_many_list.hpp"
 
 #include "matador/orm/persistence.hpp"
 #include "matador/orm/session.hpp"
-
-#include "matador/object/object_view.hpp"
 
 using namespace hasmanylist;
 using namespace matador;
@@ -155,8 +152,8 @@ void OrmTestUnit::test_select()
 
   matador::session s(p);
 
+//  std::vector<std::string> names({ "hans" });
   std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
-  //std::vector<std::string> names({ "hans", "otto", "georg", "hilde", "ute", "manfred" });
 
   for (auto const &name : names) {
     auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));

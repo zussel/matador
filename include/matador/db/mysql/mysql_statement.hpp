@@ -21,6 +21,7 @@
 #include "matador/sql/statement_impl.hpp"
 
 #include "matador/db/mysql/mysql_result_info.hpp"
+#include "matador/db/mysql/mysql_parameter_binder.hpp"
 
 #ifdef _MSC_VER
 #include <mysql.h>
@@ -76,6 +77,8 @@ private:
   std::vector<mysql_result_info> info_;
 
   mysql_prepared_result *current_result = nullptr;
+
+  std::unique_ptr<mysql_parameter_binder> binder_;
 };
 
 }

@@ -98,7 +98,22 @@ void bind_value(enum_field_types type, const matador::time &x, MYSQL_BIND &bind,
 
 void mysql_parameter_binder::reset()
 {
+  index_ = 0;
+}
 
+void mysql_parameter_binder::initialize_index(size_t index)
+{
+  index_ = index;
+}
+
+size_t mysql_parameter_binder::next_index()
+{
+  return index_++;
+}
+
+size_t mysql_parameter_binder::current_index() const
+{
+  return index_;
 }
 
 void mysql_parameter_binder::bind(char i, size_t index)

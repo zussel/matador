@@ -12,10 +12,14 @@ namespace matador {
 
 namespace postgresql {
 
-class postgresql_parameter_binder : detail::parameter_binder_impl
+class postgresql_parameter_binder : public detail::parameter_binder_impl
 {
 public:
   void reset() override;
+
+  void initialize_index(size_t index) override;
+  size_t next_index() override;
+  size_t current_index() const override;
 
   void bind(char i, size_t size) override;
   void bind(short i, size_t size) override;
@@ -39,6 +43,8 @@ public:
 private:
   std::vector<std::string> strings_;
   std::vector<const char*> params_;
+
+  size_t index_ = 0;
 };
 
 }

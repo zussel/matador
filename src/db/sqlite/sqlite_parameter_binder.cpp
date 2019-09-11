@@ -21,6 +21,22 @@ sqlite_parameter_binder::sqlite_parameter_binder(sqlite3 *db, sqlite3_stmt *stmt
 void sqlite_parameter_binder::reset()
 {
   host_strings_.clear();
+  index_ = 1;
+}
+
+void sqlite_parameter_binder::initialize_index(size_t index)
+{
+  index_ = index + 1;
+}
+
+size_t sqlite_parameter_binder::next_index()
+{
+  return index_++;
+}
+
+size_t sqlite_parameter_binder::current_index() const
+{
+  return index_ - 1;
 }
 
 void sqlite_parameter_binder::bind(char i, size_t index)
@@ -113,17 +129,17 @@ void sqlite_parameter_binder::bind(const std::string &x, size_t len, size_t inde
 
 void sqlite_parameter_binder::bind(const matador::time &x, size_t index)
 {
-  auto date_string = std::make_shared<std::string>(matador::to_string(x, date_format::ISO8601));
-  bind(*date_string, index);
-  host_strings_.push_back(date_string);
+  auto time_string = std::make_shared<std::string>(matador::to_string(x, "%Y-%m-%dT%T.%f"));
+  bind(*time_string, index);
+  host_strings_.push_back(time_string);
 }
 
 void sqlite_parameter_binder::bind(const matador::date &x, size_t index)
 {
   // format time to ISO8601
-  auto time_string = std::make_shared<std::string>(matador::to_string(x, "%Y-%m-%dT%T.%f"));
-  bind(*time_string, index);
-  host_strings_.push_back(time_string);
+  auto date_string = std::make_shared<std::string>(matador::to_string(x, date_format::ISO8601));
+  bind(*date_string, index);
+  host_strings_.push_back(date_string);
 }
 
 }

@@ -51,6 +51,7 @@ public:
   template < class T >
   size_t bind(T *o, size_t pos)
   {
+    reset();
     matador::parameter_binder<void> binder(pos, this->binder());
     return binder.bind(*o);
   }

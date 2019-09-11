@@ -113,7 +113,7 @@ std::string postgresql_statement::generate_statement_name(const matador::sql &st
 
 detail::parameter_binder_impl *postgresql_statement::binder() const
 {
-  return nullptr;
+  return binder_.get();
 }
 
 }

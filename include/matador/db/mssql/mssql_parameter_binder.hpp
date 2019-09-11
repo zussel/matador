@@ -29,6 +29,10 @@ public:
 
   void reset() override;
 
+  void initialize_index(size_t index) override;
+  size_t next_index() override;
+  size_t current_index() const override;
+
   void bind(char i, size_t) override;
   void bind(short i, size_t) override;
   void bind(int i, size_t) override;
@@ -68,6 +72,8 @@ private:
   std::unordered_map<PTR, value_t *> data_to_put_map_;
 
   SQLHANDLE stmt_ = nullptr;
+
+  size_t index_ = 1;
 };
 
 }

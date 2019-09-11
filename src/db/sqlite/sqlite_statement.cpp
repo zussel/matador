@@ -49,6 +49,7 @@ sqlite_statement::~sqlite_statement()
 detail::result_impl* sqlite_statement::execute()
 {
   // get next row
+  sqlite3_reset(stmt_);
   int ret = sqlite3_step(stmt_);
 
   if (ret != SQLITE_ROW && ret != SQLITE_DONE) {

@@ -133,6 +133,23 @@ void mssql_parameter_binder::reset()
     host_data_.pop_back();
   }
   data_to_put_map_.clear();
+
+  index_ = 1;
+}
+
+void mssql_parameter_binder::initialize_index(size_t index)
+{
+  index_ = index + 1;
+}
+
+size_t mssql_parameter_binder::next_index()
+{
+  return index_++;
+}
+
+size_t mssql_parameter_binder::current_index() const
+{
+  return index_ - 1;
 }
 
 void mssql_parameter_binder::bind(char i, size_t index)

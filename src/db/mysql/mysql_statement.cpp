@@ -30,6 +30,7 @@
 #include "matador/sql/sql.hpp"
 
 #include <cstring>
+#include <matador/utils/memory.hpp>
 
 namespace matador {
 
@@ -56,6 +57,8 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
 
   throw_stmt_error(res, stmt_, "mysql", str());
+
+  binder_ = matador::make_unique<mysql_parameter_binder>();
 }
 
 mysql_statement::~mysql_statement()
@@ -149,7 +152,7 @@ void mysql_statement::bind_null(std::size_t index)
 
 detail::parameter_binder_impl *mysql_statement::binder() const
 {
-  return nullptr;
+  return binder_.get();
 }
 
 }
