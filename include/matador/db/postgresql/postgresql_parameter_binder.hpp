@@ -15,6 +15,7 @@ namespace postgresql {
 class postgresql_parameter_binder : public detail::parameter_binder_impl
 {
 public:
+  explicit postgresql_parameter_binder(size_t bind_var_size);
   void reset() override;
 
   void initialize_index(size_t index) override;

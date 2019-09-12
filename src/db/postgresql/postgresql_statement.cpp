@@ -7,7 +7,7 @@
 #include "matador/db/postgresql/postgresql_prepared_result.hpp"
 #include "matador/db/postgresql/postgresql_connection.hpp"
 
-#include "matador/utils/identifiable_holder.hpp"
+#include "matador/utils/memory.hpp"
 #include "matador/utils/identifier.hpp"
 
 #include "matador/sql/sql.hpp"
@@ -21,15 +21,12 @@ std::unordered_map<std::string, unsigned long> postgresql_statement::statement_n
 postgresql_statement::postgresql_statement(postgresql_connection &db, const matador::sql &stmt)
   : statement_impl(db.dialect(), stmt)
   , db_(db)
-  , binder_(new postgresql_parameter_binder)
 {
+  binder_ = matador::make_unique<postgresql_parameter_binder>(bind_vars().size());
   // parse sql to create result and host arrays
-  result_size = bind_vars().size();
-  host_size = columns().size();
-
   name_ = generate_statement_name(stmt);
 
-  res_ = PQprepare(db.handle(), name_.c_str(), str().c_str(), host_size, nullptr);
+  res_ = PQprepare(db.handle(), name_.c_str(), str().c_str(), bind_vars().size(), nullptr);
   if (res_ == nullptr) {
     THROW_POSTGRESQL_ERROR(db_.handle(), "execute", "error on sql statement");
   } else if (PQresultStatus(res_) != PGRES_COMMAND_OK) {
@@ -84,7 +81,7 @@ void postgresql_statement::clear()
 
 detail::result_impl *postgresql_statement::execute()
 {
-  PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), host_size, binder_->params().data(), nullptr, nullptr, 0);
+  PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), binder_->params().size(), binder_->params().data(), nullptr, nullptr, 0);
   auto status = PQresultStatus(res);
   if (status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK) {
     THROW_POSTGRESQL_ERROR(db_.handle(), "execute", "error on sql statement");

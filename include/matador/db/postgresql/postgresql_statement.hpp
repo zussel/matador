@@ -43,8 +43,6 @@ private:
 
 private:
   postgresql_connection &db_;
-  size_t result_size;
-  size_t host_size;
 
   std::string name_;
 

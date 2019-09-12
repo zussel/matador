@@ -29,6 +29,14 @@ void bind_value(std::vector<std::string> &strings, std::vector<const char*> &par
 }
 
 template <>
+void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, unsigned char &x)
+{
+  strings[index] = x;
+  params[index] = strings[index].data();
+  ++index;
+}
+
+template <>
 void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, const matador::date &x)
 {
   strings[index] = matador::to_string(x, date_format::ISO8601);
@@ -42,6 +50,12 @@ void bind_value(std::vector<std::string> &strings, std::vector<const char*> &par
   strings[index] = matador::to_string(x, "%Y-%m-%d %T.%f");
   params[index] = strings[index].c_str();
   ++index;
+}
+
+postgresql_parameter_binder::postgresql_parameter_binder(size_t bind_var_size)
+{
+  params_.resize(bind_var_size);
+  strings_.resize(bind_var_size);
 }
 
 void postgresql_parameter_binder::reset()
