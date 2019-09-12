@@ -96,9 +96,27 @@ void bind_value(enum_field_types type, const matador::time &x, MYSQL_BIND &bind,
   mt->time_type  = MYSQL_TIMESTAMP_DATETIME;
 }
 
+mysql_parameter_binder::mysql_parameter_binder(size_t column_size, size_t bind_var_size)
+{
+  bind_.resize(column_size);
+  info_.resize(column_size);
+
+  if (bind_var_size) {
+    host_array_.resize(bind_var_size);
+    is_null_vector.assign(bind_var_size, false);
+  }
+
+}
+
 void mysql_parameter_binder::reset()
 {
   index_ = 0;
+  while (!host_array_.empty()) {
+    if (host_array_.back().buffer != nullptr) {
+      delete [] static_cast<char*>(host_array_.back().buffer);
+    }
+    host_array_.pop_back();
+  }
 }
 
 void mysql_parameter_binder::initialize_index(size_t index)
@@ -118,72 +136,72 @@ size_t mysql_parameter_binder::current_index() const
 
 void mysql_parameter_binder::bind(char i, size_t index)
 {
-  bind_value(MYSQL_TYPE_TINY, i, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_VAR_STRING, i, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(short i, size_t index)
 {
-  bind_value(MYSQL_TYPE_SHORT, i, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_SHORT, i, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(int i, size_t index)
 {
-  bind_value(MYSQL_TYPE_LONG, i, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_LONG, i, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(long i, size_t index)
 {
-  bind_value(MYSQL_TYPE_LONG, i, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_LONG, i, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(unsigned char i, size_t index)
 {
-  bind_value(MYSQL_TYPE_TINY, i, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_VAR_STRING, i, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(unsigned short i, size_t index)
 {
-  bind_value(MYSQL_TYPE_SHORT, i, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_SHORT, i, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(unsigned int i, size_t index)
 {
-  bind_value(MYSQL_TYPE_LONG, i, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_LONG, i, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(unsigned long i, size_t index)
 {
-  bind_value(MYSQL_TYPE_LONG, i, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_LONG, i, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(bool b, size_t index)
 {
-  bind_value(MYSQL_TYPE_TINY, b, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_TINY, b, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(float d, size_t index)
 {
-  bind_value(MYSQL_TYPE_FLOAT, d, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_FLOAT, d, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(double d, size_t index)
 {
-  bind_value(MYSQL_TYPE_DOUBLE, d, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_DOUBLE, d, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(const char *x, size_t size, size_t index)
 {
-  bind_value(MYSQL_TYPE_VAR_STRING, x, size, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_VAR_STRING, x, size, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(const std::string &x, size_t index)
 {
-  bind_value(MYSQL_TYPE_STRING, x.data(), x.size(), bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_STRING, x.data(), x.size(), host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(const std::string &x, size_t size, size_t index)
 {
-  bind_value(MYSQL_TYPE_VAR_STRING, x.data(), size, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_VAR_STRING, x.data(), size, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(const matador::time &x, size_t index)
@@ -193,16 +211,31 @@ void mysql_parameter_binder::bind(const matador::time &x, size_t index)
     // doesn't support fractional seconds
     // so we use a datetime string here
     std::string tstr = to_string(x, "%FT%T");
-    bind_value(MYSQL_TYPE_VAR_STRING, tstr.c_str(), tstr.size(), bind_[index], is_null_vector[index]);
+    bind_value(MYSQL_TYPE_VAR_STRING, tstr.c_str(), tstr.size(), host_array_[index], is_null_vector[index]);
   } else {
-    bind_value(MYSQL_TYPE_DATE, x, bind_[index], is_null_vector[index]);
+    bind_value(MYSQL_TYPE_TIMESTAMP, x, host_array_[index], is_null_vector[index]);
   }
 
 }
 
 void mysql_parameter_binder::bind(const matador::date &x, size_t index)
 {
-  bind_value(MYSQL_TYPE_TIMESTAMP, x, bind_[index], is_null_vector[index]);
+  bind_value(MYSQL_TYPE_DATE, x, host_array_[index], is_null_vector[index]);
+}
+
+std::vector<MYSQL_BIND> &mysql_parameter_binder::host_array()
+{
+  return host_array_;
+}
+
+std::vector<MYSQL_BIND> &mysql_parameter_binder::bindings()
+{
+  return bind_;
+}
+
+std::vector<mysql_result_info> &mysql_parameter_binder::result_infos()
+{
+  return info_;
 }
 }
 }

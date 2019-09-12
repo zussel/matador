@@ -61,20 +61,11 @@ protected:
   detail::parameter_binder_impl *binder() const override;
 
 private:
-  void bind_value(std::size_t index, enum_field_types type, char x);
-  void bind_value(std::size_t index, enum_field_types type, unsigned char x);
 
-  void bind_null(std::size_t index);
+//  void bind_null(std::size_t index);
 
 private:
-  size_t result_size;
-  size_t host_size;
-  std::vector<my_bool> is_null_vector;
   MYSQL_STMT *stmt_ = nullptr;
-  std::vector<MYSQL_BIND> host_array;
-
-  std::vector<MYSQL_BIND> bind_;
-  std::vector<mysql_result_info> info_;
 
   mysql_prepared_result *current_result = nullptr;
 

@@ -21,15 +21,8 @@
 #include "matador/db/mysql/mysql_prepared_result.hpp"
 #include "matador/db/mysql/mysql_constants.hpp"
 
-#include "matador/utils/string.hpp"
-#include "matador/utils/date.hpp"
-#include "matador/utils/time.hpp"
-#include "matador/utils/identifiable_holder.hpp"
-#include "matador/utils/identifier.hpp"
-
 #include "matador/sql/sql.hpp"
 
-#include <cstring>
 #include <matador/utils/memory.hpp>
 
 namespace matador {
@@ -38,27 +31,13 @@ namespace mysql {
 
 mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   : statement_impl(db.dialect(), stmt)
-  , result_size(0)
-  , host_size(0)
   , stmt_(mysql_stmt_init(db.handle()))
 {
-  // parse sql to create result and host arrays
-  result_size = columns().size();
-  host_size = bind_vars().size();
-
-  bind_.resize(result_size);
-  info_.resize(result_size);
-
-  if (host_size) {
-    host_array.resize(host_size);
-    is_null_vector.assign(host_size, false);
-  }
-
   int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
 
   throw_stmt_error(res, stmt_, "mysql", str());
 
-  binder_ = matador::make_unique<mysql_parameter_binder>();
+  binder_ = matador::make_unique<mysql_parameter_binder>(columns().size(), bind_vars().size());
 }
 
 mysql_statement::~mysql_statement()
@@ -81,15 +60,7 @@ void mysql_statement::unlink_result(mysql_prepared_result *result)
 
 void mysql_statement::clear()
 {
-  while (!host_array.empty()) {
-    if (host_array.back().buffer != nullptr) {
-      delete [] static_cast<char*>(host_array.back().buffer);
-    }
-    host_array.pop_back();
-  }
-
-  result_size = 0;
-  host_size = 0;
+  binder_->reset();
   if (current_result != nullptr) {
     current_result->free();
   } else {
@@ -102,8 +73,8 @@ detail::result_impl* mysql_statement::execute()
   if (current_result != nullptr) {
     current_result->free();
   }
-  if (host_size > 0) {
-    int res = mysql_stmt_bind_param(stmt_, &host_array.front());
+  if (!binder_->host_array().empty()) {
+    int res = mysql_stmt_bind_param(stmt_, binder_->host_array().data());
     throw_stmt_error(res, stmt_, "mysql", str());
   }
 
@@ -111,44 +82,16 @@ detail::result_impl* mysql_statement::execute()
   throw_stmt_error(res, stmt_, "mysql", str());
   res = mysql_stmt_store_result(stmt_);
   throw_stmt_error(res, stmt_, "mysql", str());
-  current_result = new mysql_prepared_result(this, stmt_, bind_, info_);
+  current_result = new mysql_prepared_result(this, stmt_, binder_->bindings(), binder_->result_infos());
   return current_result;
 }
 
-void mysql_statement::bind_value(std::size_t index, enum_field_types, char x)
-{
-  MYSQL_BIND &bind = host_array[index];
-  if (bind.buffer == nullptr) {
-    size_t s = sizeof(char);
-    bind.buffer = new char[s];
-    bind.buffer_length = (unsigned long)s;
-  }
-  *static_cast<char*>(bind.buffer) = x;
-  bind.buffer_type = MYSQL_TYPE_VAR_STRING;
-  is_null_vector[index] = false;
-  bind.is_null = &is_null_vector[index];
-}
-
-void mysql_statement::bind_value(std::size_t index, enum_field_types, unsigned char x)
-{
-  MYSQL_BIND &bind = host_array[index];
-  if (bind.buffer == nullptr) {
-    size_t s = sizeof(unsigned char);
-    bind.buffer = new unsigned char[s];
-    bind.buffer_length = (unsigned long)s;
-  }
-  *static_cast<unsigned char*>(bind.buffer) = x;
-  bind.buffer_type = MYSQL_TYPE_VAR_STRING;
-  is_null_vector[index] = false;
-  bind.is_null = &is_null_vector[index];
-}
-
-void mysql_statement::bind_null(std::size_t index)
-{
-  MYSQL_BIND &bind = host_array[index];
-  is_null_vector[index] = true;
-  bind.is_null = &is_null_vector[index];
-}
+//void mysql_statement::bind_null(std::size_t index)
+//{
+//  MYSQL_BIND &bind = host_array[index];
+//  is_null_vector[index] = true;
+//  bind.is_null = &is_null_vector[index];
+//}
 
 detail::parameter_binder_impl *mysql_statement::binder() const
 {
