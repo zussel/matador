@@ -26,16 +26,12 @@ public:
 
   void test_insert_has_many_vector();
   void test_has_many_vector();
-  void test_remove_has_many_vector();
 
   void test_has_many_list();
   void test_has_many_builtin();
 
   void test_has_many_to_many();
   void test_remove_has_many_to_many();
-
-  void test_remove_has_many_object();
-  void test_remove_has_many_builtin();
 
   void test_blog_single_post();
   void test_blog_multi_posts();

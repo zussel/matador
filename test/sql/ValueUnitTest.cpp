@@ -3,6 +3,7 @@
 //
 
 #include "ValueUnitTest.hpp"
+#include "../datatypes.hpp"
 
 ValueUnitTest::ValueUnitTest() : unit_test("value", "value test unit")
 {
@@ -11,5 +12,8 @@ ValueUnitTest::ValueUnitTest() : unit_test("value", "value test unit")
 
 void ValueUnitTest::test_serialize()
 {
+  datatypes dt;
+
+  //value_serializer vs();
 
 }

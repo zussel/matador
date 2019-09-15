@@ -35,7 +35,7 @@ namespace detail {
 class OOS_SQL_API value_serializer : public serializer
 {
 public:
-  value_serializer();
+  value_serializer() = default;
   ~value_serializer() override = default;
 
   template<class T>
