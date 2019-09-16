@@ -228,6 +228,17 @@ void mssql_result::read_column(const char *, char &val)
   }
 }
 
+void mssql_result::read_column(const char *, unsigned char &val)
+{
+  SQLLEN info = 0;
+  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index_++), SQL_C_CHAR, &val, 0, &info);
+  if (SQL_SUCCEEDED(ret)) {
+    return;
+  } else {
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+  }
+}
+
 void mssql_result::read_column(char const *, date &x)
 {
   SQL_DATE_STRUCT ds;

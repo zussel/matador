@@ -604,7 +604,7 @@ void QueryTestUnit::test_statement_insert()
     UNIT_EXPECT_EQUAL(item->get_varchar(), "Erde");
     UNIT_EXPECT_EQUAL(item->get_cstr(), "Hallo");
     UNIT_EXPECT_EQUAL(item->get_int(), 4711);
-//    UNIT_EXPECT_EQUAL(item->get_unsigned_char(), (unsigned char)72);
+    UNIT_EXPECT_EQUAL(item->get_unsigned_char(), 'H');
     UNIT_EXPECT_EQUAL(item->get_time(), itime);
   }
 

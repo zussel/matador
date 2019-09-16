@@ -10,9 +10,6 @@
 namespace matador {
 namespace detail {
 
-value_serializer::value_serializer()
-{}
-
 void value_serializer::serialize(const char*, char &x)
 {
   values_->push_back(std::make_shared<value<char>>(x));

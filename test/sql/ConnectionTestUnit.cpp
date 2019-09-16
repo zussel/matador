@@ -30,7 +30,7 @@ ConnectionTestUnit::ConnectionTestUnit(const std::string &prefix, std::string dn
 {
   add_test("open_close", std::bind(&ConnectionTestUnit::test_open_close, this), "connect sql test");
   add_test("reopen", std::bind(&ConnectionTestUnit::test_reopen, this), "reopen sql test");
-  add_test("reconnect", std::bind(&ConnectionTestUnit::test_reopen, this), "reconnect sql test");
+  add_test("reconnect", std::bind(&ConnectionTestUnit::test_reconnect, this), "reconnect sql test");
 }
 
 void ConnectionTestUnit::test_open_close()

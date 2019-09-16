@@ -54,16 +54,6 @@ public:
   explicit basic_query(std::string table_name);
 
   /**
-   * Creates a basic query for the given
-   * table identified by table_name and the
-   * given connection
-   *
-   * @param conn The default connection for the query
-   * @param table_name The name of the table
-   */
-  basic_query(connection conn, std::string table_name);
-
-  /**
    * Resets the query.
    *
    * @param query_command The query command to reset to

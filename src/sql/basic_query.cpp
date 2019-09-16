@@ -17,14 +17,6 @@ basic_query::basic_query(std::string table_name)
   , query_value_column_processor_(update_columns_, rowvalues_)
 {}
 
-basic_query::basic_query(connection conn, std::string table_name)
-  : state(QUERY_BEGIN)
-  , table_name_(std::move(table_name))
-  , update_columns_(new columns(columns::WITHOUT_BRACKETS))
-  , query_value_column_processor_(update_columns_, rowvalues_)
-  , conn_(std::move(conn))
-{}
-
 void basic_query::reset_query(t_query_command query_command)
 {
   sql_.reset(query_command);

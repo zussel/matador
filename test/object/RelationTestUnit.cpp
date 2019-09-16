@@ -26,16 +26,12 @@ RelationTestUnit::RelationTestUnit()
 
   add_test("insert_has_many_vector", std::bind(&RelationTestUnit::test_insert_has_many_vector, this), "test insert has many vector relation");
   add_test("has_many_vector", std::bind(&RelationTestUnit::test_has_many_vector, this), "test has many vector relation");
-//  add_test("remove_has_many_vector", std::bind(&RelationTestUnit::test_remove_has_many_vector, this), "test remove has many vector relation");
 
   add_test("has_many_list", std::bind(&RelationTestUnit::test_has_many_list, this), "test has many list relation");
   add_test("has_many_builtin", std::bind(&RelationTestUnit::test_has_many_builtin, this), "test has many relation with builtin");
 
   add_test("has_many_to_many", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to many relation");
   add_test("remove_has_many_to_many", std::bind(&RelationTestUnit::test_remove_has_many_to_many, this), "test remove has many to many relation");
-
-//  add_test("remove_has_many_object", std::bind(&RelationTestUnit::test_remove_has_many_object, this), "test remove has many object relation");
-//  add_test("remove_has_many_builtin", std::bind(&RelationTestUnit::test_remove_has_many_builtin, this), "test remove has many builtin relation");
 
   add_test("blog_single", std::bind(&RelationTestUnit::test_blog_single_post, this), "test blog single post relations");
   add_test("blog_multi", std::bind(&RelationTestUnit::test_blog_multi_posts, this), "test blog multiple posts relations");
@@ -807,11 +803,6 @@ void RelationTestUnit::test_has_many_vector()
   UNIT_ASSERT_EQUAL(tim.reference_count(), 0UL);
 }
 
-void RelationTestUnit::test_remove_has_many_vector()
-{
-
-}
-
 void RelationTestUnit::test_has_many_list()
 {
   matador::object_store store;
@@ -1017,16 +1008,6 @@ void RelationTestUnit::test_has_many_to_many()
   UNIT_ASSERT_TRUE(art->students.empty());
   UNIT_ASSERT_EQUAL(art.reference_count(), 0UL);
   UNIT_ASSERT_EQUAL(art->students.size(), 0UL);
-}
-
-void RelationTestUnit::test_remove_has_many_object()
-{
-
-}
-
-void RelationTestUnit::test_remove_has_many_builtin()
-{
-
 }
 
 void RelationTestUnit::test_remove_has_many_to_many()
