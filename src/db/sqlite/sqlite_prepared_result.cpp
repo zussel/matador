@@ -130,7 +130,8 @@ void sqlite_prepared_result::serialize(const char *, char *x, size_t s)
   auto size = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   if (size < s) {
 #ifdef _MSC_VER
-    strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index_++), s);
+    auto val = sqlite3_column_text(stmt_, result_index_++);
+    strncpy_s(x, s, (const char*)val, size);
 #else
     strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index_++), size);
 #endif

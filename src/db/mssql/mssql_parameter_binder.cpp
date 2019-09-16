@@ -118,7 +118,14 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, const cha
 void bind_value(SQLHANDLE stmt, SQLUSMALLINT ctype, SQLUSMALLINT type, mssql_parameter_binder::value_t *v, size_t index)
 {
   SQLLEN buffer_length(0);
-  SQLRETURN ret = SQLBindParameter(stmt, (SQLUSMALLINT) index, SQL_PARAM_INPUT, ctype, type, v->len, 0, v->data, buffer_length,nullptr);
+  SQLRETURN ret = SQLBindParameter(stmt, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, v->len, 0, v->data, buffer_length, nullptr);
+  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't bind parameter");
+}
+
+void bind_value(SQLHANDLE stmt, SQLUSMALLINT ctype, SQLUSMALLINT type, mssql_parameter_binder::value_t *v, unsigned short scale, size_t index)
+{
+  SQLLEN buffer_length(0);
+  SQLRETURN ret = SQLBindParameter(stmt, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, v->len, scale, v->data, buffer_length, nullptr);
   throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't bind parameter");
 }
 
@@ -205,7 +212,7 @@ void mssql_parameter_binder::bind(unsigned long i, size_t index)
 {
   host_data_.push_back(create_bind_value(bind_null_, i));
 
-  bind_value(stmt_, SQL_C_ULONG, SQL_NUMERIC, host_data_.back(), index);
+  bind_value(stmt_, SQL_C_ULONG, SQL_BIGINT, host_data_.back(), index);
 }
 
 void mssql_parameter_binder::bind(bool b, size_t index)
@@ -262,6 +269,8 @@ void mssql_parameter_binder::bind(const matador::time &t, size_t index)
 {
   host_data_.push_back(create_bind_value<SQL_TIMESTAMP_STRUCT>(bind_null_));
 
+  host_data_.back()->len = 23;
+
   if (!bind_null_) {
     auto *ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT *>(host_data_.back()->data);
 
@@ -274,12 +283,14 @@ void mssql_parameter_binder::bind(const matador::time &t, size_t index)
     ts->fraction = (SQLUINTEGER) t.milli_second() * 1000 * 1000;
   }
 
-  bind_value(stmt_, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, host_data_.back(), index);
+  bind_value(stmt_, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, host_data_.back(), 0, index);
 }
 
 void mssql_parameter_binder::bind(const matador::date &d, size_t index)
 {
   host_data_.push_back(create_bind_value<SQL_DATE_STRUCT>(bind_null_));
+
+  host_data_.back()->len = 23;
 
   if (!bind_null_) {
     auto *ts = reinterpret_cast<SQL_DATE_STRUCT *>(host_data_.back()->data);
@@ -289,7 +300,7 @@ void mssql_parameter_binder::bind(const matador::date &d, size_t index)
     ts->day = (SQLUSMALLINT) d.day();
   }
 
-  bind_value(stmt_, SQL_C_TYPE_DATE, SQL_TIMESTAMP, host_data_.back(), index);
+  bind_value(stmt_, SQL_C_TYPE_DATE, SQL_TIMESTAMP, host_data_.back(), 0, index);
 }
 
 const std::unordered_map<PTR, mssql_parameter_binder::value_t *> &mssql_parameter_binder::data_to_put_map() const
