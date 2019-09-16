@@ -204,7 +204,7 @@ public:
    * @param item_id The name of the item field
    * @param cascade The cascade type
    */
-  virtual void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  virtual void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) = 0;
 
   /**
    * @fn void serialize(const char *id, abstract_has_many &x, cascade_type cascade)
@@ -214,7 +214,7 @@ public:
    * @param x The value to be serialized
    * @param cascade The cascade type
    */
-  virtual void serialize(const char *, abstract_has_many &, cascade_type) {}
+  virtual void serialize(const char *, abstract_has_many &, cascade_type) = 0;
 
 private:
   template < class T, typename = typename std::enable_if<

@@ -205,7 +205,7 @@ void mssql_parameter_binder::bind(unsigned long i, size_t index)
 {
   host_data_.push_back(create_bind_value(bind_null_, i));
 
-  bind_value(stmt_, SQL_C_ULONG, SQL_NUMERIC, host_data_.back(), index);
+  bind_value(stmt_, SQL_C_ULONG, SQL_BIGINT, host_data_.back(), index);
 }
 
 void mssql_parameter_binder::bind(bool b, size_t index)

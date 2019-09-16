@@ -134,7 +134,7 @@ private:
   short short_ = -127;
   int int_ = -65000;
   long long_ = -128000;
-  unsigned char unsigned_char_ = 72;
+  unsigned char unsigned_char_ = 'H';
   unsigned short unsigned_short_ = 128;
   unsigned int unsigned_int_ = 65000;
   unsigned long unsigned_long_ = 128000;
