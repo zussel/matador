@@ -49,6 +49,7 @@
 #include "sql/MSSQLDialectTestUnit.hpp"
 #include "sql/PostgreSQLDialectTestUnit.hpp"
 #include "sql/SQLiteDialectTestUnit.hpp"
+#include "sql/ValueUnitTest.hpp"
 
 #include "connections.hpp"
 
@@ -94,6 +95,7 @@ int main(int argc, char *argv[])
 
   suite.register_unit(new ConditionUnitTest);
   suite.register_unit(new DialectTestUnit);
+  suite.register_unit(new ValueUnitTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
