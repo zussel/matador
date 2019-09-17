@@ -822,7 +822,7 @@ private:
   friend class object_proxy;
   friend class prototype_node;
   friend class transaction;
-  template < class T, template <class ...> class C >
+  template < class T, template <class ...> class C, class Enabled >
   friend class has_many;
 
 

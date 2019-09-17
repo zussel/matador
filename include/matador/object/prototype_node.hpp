@@ -465,7 +465,7 @@ private:
   friend class const_object_view_iterator;
   template < class T >
   friend class object_view_iterator;
-  template < class T, template <class ...> class C >
+  template < class T, template <class ...> class C, class Enabled >
   friend class has_many;
   template < class T, template <class ...> class C, class Enable >
   friend class detail::has_many_inserter;

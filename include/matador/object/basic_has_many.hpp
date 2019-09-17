@@ -27,7 +27,7 @@ class relation_endpoint_value_remover;
 template < class T, template <class ...> class C = std::vector >
 class basic_has_many;
 
-template < class T, template <class ...> class C = std::vector  >
+template < class T, template <class ...> class C = std::vector, class Enabled >
 class has_many;
 
 template < class T, template <class ...> class C, class Enable = void >

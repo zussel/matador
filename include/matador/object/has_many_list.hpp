@@ -11,6 +11,8 @@
 #include "matador/object/has_many_deleter.hpp"
 
 #include "matador/utils/is_builtin.hpp"
+#include "matador/utils/is_varchar.hpp"
+#include "matador/utils/varchar.hpp"
 
 #include <list>
 
@@ -264,7 +266,7 @@ public:
   /**
    * @brief Creates an empty const has many iterator
    */
-  const_has_many_iterator() {}
+  const_has_many_iterator() = default;
 
   /**
    * @brief Creates a const has many iterator from given internal container iterator
@@ -320,7 +322,7 @@ public:
     iter_ = iter.iter_;
     return *this;
   }
-  ~const_has_many_iterator() {}
+  ~const_has_many_iterator() = default;
 
   /**
    * @brief Compares equality iterator with another iterator.
@@ -418,30 +420,12 @@ private:
   const_container_iterator iter_;
 };
 
-/**
- * @brief Has many relation class using a std::list as container
- *
- * The has many relation class uses a std::list as internal
- * container to store the objects.
- *
- * It provides all main interface functions std::list provides
- * - insert element at a iterator position
- * - push back an element
- * - push front an element
- * - erase an element at iterator position
- * - erase a range of elements within first and last iterator position
- * - clear the container
- *
- * All of these methods are wrappes around the std::list methods plus
- * the modification in the corresponding object_store and notification
- * of the transaction observer
- *
- * The relation holds object_ptr elements as well as scalar data elements.
- *
- * @tparam T The type of the elements
- */
+namespace detail {
+template < class T, template < class ... > class C >
+class has_many_list;
+
 template < class T >
-class has_many<T, std::list> : public basic_has_many<T, std::list>
+class has_many_list<T, std::list> : public basic_has_many<T, std::list>
 {
 public:
 
@@ -461,7 +445,7 @@ public:
    * Creates an empty has_many object with a
    * std::list as container type
    */
-  has_many() = default;
+  has_many_list() = default;
 
   /**
    * @brief Inserts an element at the given position.
@@ -632,6 +616,61 @@ private:
 private:
   friend class detail::relation_endpoint_value_inserter<T>;
   friend class detail::relation_endpoint_value_remover<T>;
+};
+
+}
+/**
+ * @brief Has many relation class using a std::list as container
+ *
+ * The has many relation class uses a std::list as internal
+ * container to store the objects.
+ *
+ * It provides all main interface functions std::list provides
+ * - insert element at a iterator position
+ * - push back an element
+ * - push front an element
+ * - erase an element at iterator position
+ * - erase a range of elements within first and last iterator position
+ * - clear the container
+ *
+ * All of these methods are wraps around the std::list methods plus
+ * the modification in the corresponding object_store and notification
+ * of the transaction observer
+ *
+ * The relation holds object_ptr elements as well as scalar data elements.
+ *
+ * @tparam T The type of the elements
+ */
+template < int SIZE, class T >
+class has_many<varchar<SIZE, T>, std::list, typename std::enable_if<
+  is_varchar<T, SIZE>::value &&
+  std::is_array<T>::value>
+::type
+> : public detail::has_many_list<T, std::list>
+{
+public:
+  has_many() = default;
+};
+
+template < int SIZE, class T >
+class has_many<varchar<SIZE, T>, std::list, typename std::enable_if<
+  is_varchar<T, SIZE>::value &&
+  !std::is_array<T>::value>
+::type
+> : public detail::has_many_list<T, std::list>
+{
+public:
+  has_many() = default;
+};
+
+template < class T >
+class has_many<T, std::list, typename std::enable_if<
+  !std::is_base_of<varchar_base, T>::value>
+::type
+> : public detail::has_many_list<T, std::list>
+{
+public:
+  has_many() = default;
 };
 
 }

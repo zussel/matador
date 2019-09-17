@@ -18,7 +18,7 @@ namespace matador {
 
 /// @cond MATADOR_DEV
 
-template < class V, template < class ... > class C >
+template < class V, template < class ... > class C, class Enabled = void >
 class has_many;
 
 class object_holder;
