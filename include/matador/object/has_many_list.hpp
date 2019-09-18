@@ -19,6 +19,11 @@
 namespace matador {
 
 /// @cond MATADOR_DEV
+namespace detail {
+template < class T, template < class ... > class C >
+class has_many_list;
+}
+
 template < class T, template < class ... > class C, class Enable >
 struct has_many_iterator_traits;
 
@@ -193,7 +198,7 @@ public:
   //@}
 
 private:
-  friend class has_many<T, std::list>;
+  friend class detail::has_many_list<T, std::list>;
   friend class const_has_many_iterator<T, std::list>;
   friend class basic_has_many<T, std::list>;
   friend class detail::has_many_inserter<T, std::list>;
@@ -421,8 +426,6 @@ private:
 };
 
 namespace detail {
-template < class T, template < class ... > class C >
-class has_many_list;
 
 template < class T >
 class has_many_list<T, std::list> : public basic_has_many<T, std::list>
