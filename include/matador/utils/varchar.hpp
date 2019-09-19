@@ -24,13 +24,10 @@ struct varchar<SIZE, T, typename std::enable_if<
 ::type
 > : public varchar_base
 {
-  int size = SIZE;
   typedef typename std::decay<T>::type value_type;
 
-  const char *type_name()
-  {
-    return typeid(value_type).name();
-  }
+  int size = SIZE;
+  value_type value[SIZE];
 };
 
 template<int SIZE, class T>
@@ -40,13 +37,10 @@ struct varchar<SIZE, T, typename std::enable_if<
 ::type
 > : public varchar_base
 {
-  int size = SIZE;
   typedef T value_type;
 
-  const char *type_name()
-  {
-    return typeid(value_type).name();
-  }
+  int size = SIZE;
+  value_type value;
 };
 }
 #endif //MATADOR_VARCHAR_HPP

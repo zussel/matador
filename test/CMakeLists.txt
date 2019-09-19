@@ -33,7 +33,7 @@ SET (TEST_OBJECT_SOURCES
   object/ObjectTransactiontestUnit.cpp
   object/ObjectTransactiontestUnit.hpp
   object/RelationTestUnit.cpp
-  object/RelationTestUnit.hpp)
+  object/RelationTestUnit.hpp object/HasManyUnitTest.cpp object/HasManyUnitTest.hpp)
 
 SET (TEST_UNIT_SOURCES
   unit/TestSuiteTestUnit.cpp

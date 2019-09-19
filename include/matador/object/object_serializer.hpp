@@ -45,7 +45,6 @@
 namespace matador {
 
 class object_holder;
-class varchar_base;
 
 /**
  * @cond MATADOR_DEV

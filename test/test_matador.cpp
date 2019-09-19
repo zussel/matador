@@ -32,6 +32,7 @@
 #include "object/ObjectTransactiontestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
 #include "object/PrimaryKeyUnitTest.hpp"
+#include "object/HasManyUnitTest.hpp"
 #include "object/HasManyVectorUnitTest.hpp"
 #include "object/HasManyListUnitTest.hpp"
 #include "object/RelationTestUnit.hpp"
@@ -89,6 +90,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ObjectPrototypeTestUnit);
   suite.register_unit(new ObjectStoreTestUnit);
   suite.register_unit(new ObjectTransactiontestUnit);
+  suite.register_unit(new HasManyUnitTest);
   suite.register_unit(new HasManyVectorUnitTest);
   suite.register_unit(new HasManyListUnitTest);
   suite.register_unit(new RelationTestUnit);

@@ -35,7 +35,6 @@
 
 namespace matador {
 
-class varchar_base;
 class time;
 class date;
 class basic_identifier;

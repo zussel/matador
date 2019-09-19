@@ -14,6 +14,7 @@ namespace matador {
 
 class date;
 class time;
+struct varchar_base;
 
 template <typename T, typename Enabled = void>
 struct is_builtin {
@@ -24,6 +25,7 @@ template <typename T>
 struct is_builtin< T,
   typename std::enable_if<
     std::is_scalar<T>::value ||
+    std::is_convertible<T*, varchar_base*>::value ||
     std::is_same<T, std::string>::value ||
     std::is_same<T, matador::date>::value ||
     std::is_same<T, matador::time>::value>::type

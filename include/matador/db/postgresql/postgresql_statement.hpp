@@ -12,8 +12,6 @@
 
 namespace matador {
 
-class varchar_base;
-
 class basic_identifier;
 
 namespace postgresql {
