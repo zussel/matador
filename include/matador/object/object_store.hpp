@@ -578,6 +578,8 @@ public:
     if (proxy->obj() == nullptr) {
       throw_object_exception("object is null");
     }
+    std::type_index ti(typeid(T));
+    std::cout << "try to insert proxy of type " << ti.name() << " (hash: " << ti.hash_code() << ")\n";
     iterator node = find(proxy->classname());
     if (node == end()) {
       throw_object_exception("couldn't find object type");
@@ -978,6 +980,8 @@ prototype_iterator object_store::attach_internal(prototype_node *node, const cha
 template < class T >
 prototype_node* object_store::attach_node(prototype_node *node, const char *parent)
 {
+  std::type_index ti(typeid(T));
+  std::cout << "attaching node type " << ti.name() << " (hash: " << ti.hash_code() << ")\n";
   std::unique_ptr<prototype_node> nptr(node);
   // set node to root node
   prototype_node *parent_node = find_parent(parent);

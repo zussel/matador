@@ -209,6 +209,7 @@ void object_store::remove_proxy(object_proxy *proxy)
 
 prototype_node* object_store::find_prototype_node(const char *type) const {
   // check for null
+  std::cout << "try to find node type " << type << "\n";
   if (type == nullptr) {
     throw object_exception("invalid type (null)");
   }

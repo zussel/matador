@@ -295,26 +295,30 @@ using many_list_varchars = many_builtins<varchar<255>, std::list>;
 
 void HasManyListUnitTest::test_varchar()
 {
+  std::cout << "\n";
   object_store store;
 
   store.attach<many_list_varchars>("many_list_varchars");
 
-  object_ptr<many_list_varchars> mi = store.insert(new many_list_varchars);
+  // object_ptr<many_list_varchars> mi = store.insert(new many_list_varchars);
 
-  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
+  // UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
 
-//  std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
-//  for (const auto &name : names) {
-//    mi.modify()->elements.push_back(name);
-//  }
-//
-//  UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);
-//
-//  auto i = mi->elements.begin();
-//
-//  UNIT_ASSERT_EQUAL(*i, "george");
-//
-//  i++;
-//
-//  UNIT_ASSERT_EQUAL(*i, "jane");
+  // for(const auto &n : store) {
+  //   std::cout << "node " << n.type() << " (typeid: " << n.type_id() << ", " << n.type_index().name() << ", " << n.type_index().hash_code() << ")\n";
+  // }
+  // std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
+  // for (const auto &name : names) {
+  //   mi.modify()->elements.push_back(name);
+  // }
+
+  // UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);
+
+  // auto i = mi->elements.begin();
+
+  // UNIT_ASSERT_EQUAL(*i, "george");
+
+  // i++;
+
+  // UNIT_ASSERT_EQUAL(*i, "jane");
 }
