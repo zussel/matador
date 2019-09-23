@@ -259,18 +259,18 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
     std::cout << "outer value is type " << typeid(Value).name() << "\n";
     std::cout << "inner value is type " << typeid(typename has_many_item::right_value_type).name() << "\n";
     std::cout << "owner is type " << typeid(Owner).name() << "\n";
-    std::vector<Observer<has_many_item >*> has_many_item_observer;
+    std::vector<Observer<has_many_item_right >*> has_many_item_observer;
     for (auto o : observer_vector_) {
-      has_many_item_observer.push_back(new Observer<has_many_item >(o));
+      has_many_item_observer.push_back(new Observer<has_many_item_right >(o));
     }
 
     auto endpoint = std::make_shared<detail::has_one_to_many_endpoint <Owner, typename has_many_item::right_value_type >>(id, &node_);
     node_.register_relation_endpoint(std::type_index(typeid(typename has_many_item::right_value_type)), endpoint);
 
-    auto proto = new has_many_item(left_column, right_column);
-    prototype_node *node = prototype_node::make_relation_node<has_many_item >(&store_, id, proto, false, node_.type(), id);
+    auto proto = new has_many_item_right(left_column, right_column);
+    prototype_node *node = prototype_node::make_relation_node<has_many_item_right >(&store_, id, proto, false, node_.type(), id);
 
-    pi = store_.attach_internal<has_many_item >(node, nullptr, has_many_item_observer);
+    pi = store_.attach_internal<has_many_item_right >(node, nullptr, has_many_item_observer);
 
     auto sep = pi->find_endpoint(left_column);
     if (sep != pi->endpoint_end()) {
