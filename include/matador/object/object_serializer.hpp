@@ -204,7 +204,7 @@ public:
           insert_proxy(proxy);
         }
 
-        typename has_many_item_holder<T>::value_type val;
+        typename has_many_item_holder<T>::object_type val;
         serialize("", val);
 
         x.append(has_many_item_holder<T>(val, proxy));

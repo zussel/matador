@@ -109,8 +109,12 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
   void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
+    using has_many_item = has_one_to_many_item<Owner, Value>;
+    std::type_index ti(typeid(has_many_item));
+    std::cout << "inserting value of type " << ti.name() << " (hash: " << ti.hash_code() << ")\n";
+    std::cout << "value is type " << typeid(Value).name() << "\n";
+    std::cout << "owner is type " << typeid(Owner).name() << "\n";
     auto itemptr = store.insert(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column));
-//    this->increment_reference_count(itemptr);
     this->set_has_many_item_proxy(holder, itemptr);
   }
 

@@ -31,11 +31,12 @@ template < class T >
 class has_many_item_holder<T, typename std::enable_if<!is_builtin<T>::value>::type> : public basic_has_many_item_holder
 {
 public:
-  typedef object_pointer<T, object_holder_type::OBJECT_PTR> value_type;
+  typedef object_pointer<T, object_holder_type::OBJECT_PTR> object_type;
+  typedef T value_type;
 
   has_many_item_holder() = default;
 
-  has_many_item_holder(const value_type &val, object_proxy *item_proxy)
+  has_many_item_holder(const object_type &val, object_proxy *item_proxy)
     : has_many_to_many_item_poxy_(item_proxy)
     , value_(val)
   {}
@@ -88,12 +89,12 @@ public:
     return a.value_ != b.value_;
   }
 
-  const value_type& value() const
+  const object_type& value() const
   {
     return value_;
   }
 
-  value_type& value()
+  object_type& value()
   {
     return value_;
   }
@@ -111,13 +112,14 @@ private:
   friend struct detail::basic_relation_endpoint;
 
   object_proxy *has_many_to_many_item_poxy_ = nullptr;
-  value_type value_;
+  object_type value_;
 };
 
 template < class T >
 class has_many_item_holder<T, typename std::enable_if<is_builtin<T>::value>::type> : public basic_has_many_item_holder
 {
 public:
+  typedef T object_type;
   typedef T value_type;
 
   has_many_item_holder() = default;
