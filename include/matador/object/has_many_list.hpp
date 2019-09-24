@@ -646,7 +646,7 @@ private:
  * @tparam T The type of the elements
  */
 template < int SIZE, class T >
-class has_many<varchar<SIZE, T>, std::list> : public detail::has_many_list<T, std::list>
+class has_many<varchar<SIZE, T>, std::list> : public detail::has_many_list<varchar<SIZE, T>, std::list>
 {
 public:
   has_many() = default;
