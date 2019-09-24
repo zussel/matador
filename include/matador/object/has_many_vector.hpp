@@ -20,6 +20,11 @@
 namespace matador {
 
 /// @cond MATADOR_DEV
+namespace detail {
+template < class T, template < class ... > class C >
+class has_many_vector;
+}
+
 template < class T, template < class ... > class C, class Enable >
 struct has_many_iterator_traits;
 
@@ -287,7 +292,7 @@ public:
   holder_type& holder_item() const { return *iter_; }
 
 private:
-  friend class has_many<T, std::vector>;
+  friend class detail::has_many_vector<T, std::vector>;
   friend class const_has_many_iterator<T, std::vector>;
   friend class basic_has_many<T, std::vector>;
   friend class detail::has_many_inserter<T, std::vector>;
@@ -600,7 +605,7 @@ private:
   }
 
 private:
-  friend class has_many<T, std::vector>;
+  friend class detail::has_many_vector<T, std::vector>;
   friend class basic_has_many<T, std::vector>;
   friend class object_serializer;
   friend class detail::object_inserter;
@@ -608,30 +613,9 @@ private:
   const_container_iterator iter_;
 };
 
-/**
- * @brief Has many relation class using a std::vector as container
- *
- * The has many relation class uses a std::vector as internal
- * container to store the objects.
- *
- * It provides all main interface functions std::vector provides
- * - insert element at a iterator position
- * - access with bracket operator []
- * - push back an element
- * - erase an element at iterator position
- * - erase a range of elements within first and last iterator position
- * - clear the container
- *
- * All of these methods are wrappes around the std::vector methods plus
- * the modification in the corresponding object_store and notification
- * of the transaction observer
- *
- * The relation holds object_ptr elements as well as scalar data elements.
- *
- * @tparam T The type of the elements
- */
-template < class T >
-class has_many<T, std::vector> : public basic_has_many<T, std::vector>
+namespace detail {
+template<class T>
+class has_many_vector<T, std::vector> : public basic_has_many<T, std::vector>
 {
 public:
   typedef basic_has_many<T, std::vector> base;                     /**< Shortcut to self */
@@ -650,7 +634,7 @@ public:
    * Creates an empty has_many object with a
    * std::vector as container type
    */
-  has_many() = default;
+  has_many_vector() = default;
 
   /**
    * @brief Inserts an element at the given position.
@@ -717,7 +701,7 @@ public:
    * @tparam P Type of the predicate
    * @param predicate Predicate to be evaluated
    */
-  template < class P >
+  template<class P>
   iterator remove_if(P predicate)
   {
     auto first = this->holder_container_.begin();
@@ -796,7 +780,7 @@ public:
    * @param predicate The predicate object
    * @return The found element of end()
    */
-  template < class P >
+  template<class P>
   iterator find_if(P predicate)
   {
     return iterator(find_if(this->holder_container_.begin(), this->holder_container_.end(), predicate));
@@ -818,7 +802,7 @@ private:
     }
   }
 
-  template < class InputIt, class P >
+  template<class InputIt, class P>
   container_iterator find_if(InputIt first, InputIt last, P predicate)
   {
     for (; first != last; ++first) {
@@ -828,10 +812,11 @@ private:
     }
     return last;
   }
+
 private:
   void insert_holder(const holder_type &holder)
   {
-    this->mark_holder_as_inserted(const_cast<holder_type&>(holder));
+    this->mark_holder_as_inserted(const_cast<holder_type &>(holder));
     this->increment_reference_count(holder.value());
     this->holder_container_.push_back(holder);
   }
@@ -840,12 +825,6 @@ private:
   {
     auto i = std::remove(this->holder_container_.begin(), this->holder_container_.end(), holder);
     if (i != this->holder_container_.end()) {
-//      std::cout << "removing holder ";
-      if (holder.item_proxy()) {
-//        std::cout << *holder.item_proxy() << "\n";
-      } else {
-//        std::cout << "nullptr\n";
-      }
       this->mark_holder_as_removed(*i);
       this->decrement_reference_count(holder.value());
       this->holder_container_.erase(i, this->holder_container_.end());
@@ -856,7 +835,46 @@ private:
 
 private:
   friend class detail::relation_endpoint_value_inserter<T>;
+
   friend class detail::relation_endpoint_value_remover<T>;
+};
+}
+
+/**
+ * @brief Has many relation class using a std::vector as container
+ *
+ * The has many relation class uses a std::vector as internal
+ * container to store the objects.
+ *
+ * It provides all main interface functions std::vector provides
+ * - insert element at a iterator position
+ * - access with bracket operator []
+ * - push back an element
+ * - erase an element at iterator position
+ * - erase a range of elements within first and last iterator position
+ * - clear the container
+ *
+ * All of these methods are wrappes around the std::vector methods plus
+ * the modification in the corresponding object_store and notification
+ * of the transaction observer
+ *
+ * The relation holds object_ptr elements as well as scalar data elements.
+ *
+ * @tparam T The type of the elements
+ */
+template < int SIZE, class T >
+class has_many<varchar<SIZE, T>, std::vector> : public detail::has_many_vector<T, std::vector>
+{
+public:
+  has_many() = default;
+};
+
+template < class T >
+class has_many<T, std::vector, typename std::enable_if<!std::is_convertible<T*, varchar_base*>::value>::type>
+: public detail::has_many_vector<T, std::vector>
+{
+public:
+  has_many() = default;
 };
 
 }

@@ -646,56 +646,15 @@ private:
  * @tparam T The type of the elements
  */
 template < int SIZE, class T >
-class has_many<varchar<SIZE, T>, std::list, typename std::enable_if<
-  is_varchar<T, SIZE>::value &&
-  std::is_array<T>::value>
-::type
-> : public detail::has_many_list<T, std::list>
+class has_many<varchar<SIZE, T>, std::list> : public detail::has_many_list<T, std::list>
 {
 public:
   has_many() = default;
-};
-
-template < int SIZE, class T >
-class has_many<varchar<SIZE, T>, std::list, typename std::enable_if<
-  is_varchar<T, SIZE>::value &&
-  !std::is_array<T>::value>
-::type
-> : public detail::has_many_list<T, std::list>
-{
-public:
-  has_many() = default;
-
-private:
-  typedef detail::has_many_list<T, std::list> list_base;             /**< Shortcut to self */
-  typedef typename list_base::holder_type holder_type;               /**< Shortcut to holder_type */
-
-  void insert_holder(const has_many_item_holder<varchar<SIZE, T>> &holder)
-  {
-    holder_type ht(holder.value().value, holder.item_proxy());
-    this->mark_holder_as_inserted(ht);
-    this->increment_reference_count(ht.value());
-    this->holder_container_.push_back(ht);
-  }
-
-  void remove_holder(const has_many_item_holder<varchar<SIZE, T>> &holder)
-  {
-    holder_type ht(holder.value().value, holder.item_proxy());
-    auto i = std::remove(this->holder_container_.begin(), this->holder_container_.end(), ht);
-    this->mark_holder_as_removed(*i);
-    this->decrement_reference_count(ht.value());
-    this->holder_container_.erase(i, this->holder_container_.end());
-  }
-
-  friend class detail::relation_endpoint_value_inserter<varchar<SIZE, T>>;
-  friend class detail::relation_endpoint_value_remover<varchar<SIZE, T>>;
 };
 
 template < class T >
-class has_many<T, std::list, typename std::enable_if<
-  !std::is_base_of<varchar_base, T>::value>
-::type
-> : public detail::has_many_list<T, std::list>
+class has_many<T, std::list, typename std::enable_if<!std::is_base_of<varchar_base, T>::value>::type>
+  : public detail::has_many_list<T, std::list>
 {
 public:
   has_many() = default;
