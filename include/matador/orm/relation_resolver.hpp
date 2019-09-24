@@ -85,7 +85,6 @@ public:
        * already read - replace proxy
        */
       x.reset(proxy, cascade);
-//      std::cout << "deleting identifier " << *pk << " (field: " << id << ", " << pk << ")\n";
       delete pk;
     } else {
       /**
@@ -272,7 +271,6 @@ private:
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
       auto id = x.primary_key();
-//      std::cout << "deleting identifier " << *id << " (" << id << ")\n";
       delete id;
       x.reset(proxy, cascade);
     } else {
@@ -280,11 +278,9 @@ private:
       // find proxy in tables id(pk) proxy map
       auto id_proxy_pair = tbl->find_proxy(pk);
       if (id_proxy_pair == tbl->end_proxy()) {
-//        std::cout << "relation_resolver::" << __FUNCTION__ << ": couldn't find proxy by pk" << *pk << " (" << pk << ")\n";
         proxy = new object_proxy(pk, (T*)nullptr, node.get());
         id_proxy_pair = tbl->insert_proxy(pk, proxy);
       } else {
-//        std::cout << "relation_resolver::" << __FUNCTION__ << ": found proxy by pk" << *pk << " (" << pk << ")\n";
         proxy = id_proxy_pair->second.proxy;
       }
       id_proxy_pair->second.primary_keys.push_back(pk);

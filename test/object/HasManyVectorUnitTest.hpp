@@ -68,6 +68,7 @@ public:
   void test_remove_if();
   void test_integer();
   void test_string();
+  void test_varchar();
 };
 
 #endif //OOS_HASMANYUNITTEST_HPP

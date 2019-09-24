@@ -550,7 +550,6 @@ void ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
 
 void ObjectStoreTestUnit::test_delete_object()
 {
-//  std::cout << "\n";
   ostore_.attach<datatypes>("item");
   ostore_.attach<ObjectItem<datatypes> >("object_item");
 
@@ -573,17 +572,14 @@ void ObjectStoreTestUnit::test_delete_object()
 
   UNIT_ASSERT_FALSE(ostore_.is_removable(item));
 
-//  std::cout << "remove item from store (false)\n";
   UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is not removable");
 
   UNIT_ASSERT_TRUE(ostore_.is_removable(testitem));
 
-//  std::cout << "remove testitem from store\n";
   ostore_.remove(testitem);
 
   UNIT_ASSERT_TRUE(ostore_.is_removable(item));
 
-//  std::cout << "remove item from store (true)\n";
   ostore_.remove(item);
 }
 

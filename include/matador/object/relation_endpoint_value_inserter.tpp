@@ -1,5 +1,4 @@
 #include "matador/object/relation_endpoint_value_inserter.hpp"
-#include "matador/object/object_holder.hpp"
 #include "matador/object/has_many.hpp"
 
 namespace matador {

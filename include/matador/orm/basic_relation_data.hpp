@@ -94,11 +94,8 @@ public:
   {
     auto range = id_multi_map_.equal_range(id);
 
-//    basic_identifier *pk = nullptr;
     for (auto i = range.first; i != range.second; ++i)
     {
-//      pk = i->first;
-//      std::cout << "relation_data::" << __FUNCTION__ << ": processing identifier " << *pk << " (" << pk << ")\n";
       container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
       if (!std::is_base_of<basic_has_many_to_many_item, value_type>::value && i->second.second == nullptr) {
         ++(*proxy(i->second.first));
@@ -107,10 +104,6 @@ public:
     }
 
     id_multi_map_.erase(id);
-
-//    std::cout << "deleting identifier " << *pk << " (" << pk << ")\n";
-
-    //delete pk;
   }
 
   const std::type_index& type_index() const override

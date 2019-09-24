@@ -81,25 +81,21 @@ void object_proxy::unlink()
 
 unsigned long object_proxy::operator++()
 {
-//  std::cout << "increasing ref count for " << *this << " new count " << reference_counter_ + 1 << "\n";
   return ++reference_counter_;
 }
 
 unsigned long object_proxy::operator++(int)
 {
-//  std::cout << "increasing ref count for " << *this << " new count " << reference_counter_ + 1 << "\n";
   return reference_counter_++;
 }
 
 unsigned long object_proxy::operator--()
 {
-//  std::cout << "decreasing ref count for " << *this << " new count " << reference_counter_ - 1 << "\n";
   return --reference_counter_;
 }
 
 unsigned long object_proxy::operator--(int)
 {
-//  std::cout << "decreasing ref count for " << *this << " new count " << reference_counter_ - 1 << "\n";
   return reference_counter_--;
 }
 

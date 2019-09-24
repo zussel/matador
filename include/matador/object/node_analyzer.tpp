@@ -254,11 +254,6 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
   if (pi == store_.end()) {
     using has_many_item = has_one_to_many_item<Owner, Value>;
     using has_many_item_right = has_one_to_many_item<Owner, typename has_many_item::right_value_type>;
-    std::cout << "has_many_item " << typeid(has_many_item).name() << "\n";
-    std::cout << "has_many_item right" << typeid(has_many_item_right).name() << "\n";
-    std::cout << "outer value is type " << typeid(Value).name() << "\n";
-    std::cout << "inner value is type " << typeid(typename has_many_item::right_value_type).name() << "\n";
-    std::cout << "owner is type " << typeid(Owner).name() << "\n";
     std::vector<Observer<has_many_item_right >*> has_many_item_observer;
     for (auto o : observer_vector_) {
       has_many_item_observer.push_back(new Observer<has_many_item_right >(o));

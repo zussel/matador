@@ -389,7 +389,6 @@ void QueryTestUnit::test_identifier_prepared()
   for (auto pres : res) {
     UNIT_EXPECT_EQUAL(pres->name, "hans");
     UNIT_EXPECT_GREATER(pres->id.value(), 0UL);
-    //std::cout << "id: " << pres->id.value() << "\n";
   }
 //  std::unique_ptr<pktest> pres((first++).release());
 

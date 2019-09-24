@@ -137,8 +137,6 @@ void relation_resolver<T, typename std::enable_if<
     return;
   }
 
-//  std::cout << "processing identifier " << *pk << " (belongs_to field: " << id << ", " << pk << ")\n";
-
   if (left_proxy_ == nullptr) {
     // if left is not loaded
     left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);

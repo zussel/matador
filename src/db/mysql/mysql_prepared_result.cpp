@@ -23,22 +23,16 @@ mysql_prepared_result::mysql_prepared_result(mysql_statement *owner, MYSQL_STMT 
   , bind_(bind)
   , info_(info)
 {
-//  std::cout << this << " $$ mysql_prepared_result::~mysql_prepared_result:\tcreating result with STMT " << stmt << "\n";
 }
 
 mysql_prepared_result::~mysql_prepared_result()
 {
-//  std::cout << this << " $$ calling delete mysql_prepared_result()\n";
   free();
 }
 
 void mysql_prepared_result::free()
 {
-//  info_.clear();
-//  bind_.clear();
-
   if (stmt != nullptr) {
-//    std::cout << this << " $$ mysql_prepared_result::free:\t\t\t\t\tfreeing  STMT " << stmt << "\n";
     mysql_stmt_free_result(stmt);
     stmt = nullptr;
   }

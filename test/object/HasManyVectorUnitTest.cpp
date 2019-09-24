@@ -19,6 +19,7 @@ HasManyVectorUnitTest::HasManyVectorUnitTest()
   add_test("remove_if", std::bind(&HasManyVectorUnitTest::test_remove_if, this), "test vector remove if");
   add_test("int", std::bind(&HasManyVectorUnitTest::test_integer, this), "test vector of elements");
   add_test("string", std::bind(&HasManyVectorUnitTest::test_string, this), "test list of strings");
+  add_test("varchar", std::bind(&HasManyVectorUnitTest::test_varchar, this), "test list of varchars");
 }
 
 void HasManyVectorUnitTest::test_join_table()
@@ -278,6 +279,34 @@ void HasManyVectorUnitTest::test_string()
   store.attach<many_vector_strings>("many_strings");
 
   object_ptr<many_vector_strings> mi = store.insert(new many_vector_strings);
+
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
+
+  std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
+  for (const auto &name : names) {
+    mi.modify()->elements.push_back(name);
+  }
+
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);
+
+  auto i = mi->elements.begin();
+
+  UNIT_ASSERT_EQUAL(*i, "george");
+
+  i++;
+
+  UNIT_ASSERT_EQUAL(*i, "jane");
+}
+
+using many_vector_varchars = many_builtins<varchar<255>, std::vector>;
+
+void HasManyVectorUnitTest::test_varchar()
+{
+  object_store store;
+
+  store.attach<many_vector_varchars>("many_list_varchars");
+
+  object_ptr<many_vector_varchars> mi = store.insert(new many_vector_varchars);
 
   UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
 
