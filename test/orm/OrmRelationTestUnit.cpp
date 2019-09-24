@@ -4,15 +4,13 @@
 
 #include "OrmRelationTestUnit.hpp"
 
-#include "../datatypes.hpp"
 #include "../entities.hpp"
 #include "../has_many_list.hpp"
 
 #include "matador/orm/persistence.hpp"
 #include "matador/orm/session.hpp"
 
-#include "matador/object/object_view.hpp"
-
+using namespace matador;
 using namespace hasmanylist;
 
 OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, std::string dns)
@@ -28,35 +26,35 @@ OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, std::string 
   add_test("save_object", std::bind(&OrmRelationTestUnit::test_save_object, this), "test save object");
 }
 
-//using many_list_varchars = many_builtins<matador::varchar<255>, std::list>;
+using many_list_varchars = many_builtins<varchar<255>, std::list>;
 
 void OrmRelationTestUnit::test_has_builtin_varchars()
 {
-//  matador::persistence p(dns_);
-//
-//  p.attach<many_list_varchars>("many_varchars");
-//
-//  p.create();
-//
-//  matador::session s(p);
-//
-//  auto varchars = s.insert(new many_list_varchars);
-//
-//  s.flush();
-//
-//  UNIT_ASSERT_GREATER(varchars->id, 0UL);
-//  UNIT_ASSERT_TRUE(varchars->elements.empty());
-//
-//  varchars.modify()->elements.push_back("george");
-//  varchars.modify()->elements.push_back("jane");
-//  varchars.modify()->elements.push_back("william");
-//
-//  s.flush();
-//
-//  UNIT_ASSERT_FALSE(varchars->elements.empty());
-//  UNIT_ASSERT_EQUAL(varchars->elements.size(), 3UL);
-//
-//  p.drop();
+  matador::persistence p(dns_);
+
+  p.attach<many_list_varchars>("many_varchars");
+
+  p.create();
+
+  matador::session s(p);
+
+  auto varchars = s.insert(new many_list_varchars);
+
+  s.flush();
+
+  UNIT_ASSERT_GREATER(varchars->id, 0UL);
+  UNIT_ASSERT_TRUE(varchars->elements.empty());
+
+  varchars.modify()->elements.push_back("george");
+  varchars.modify()->elements.push_back("jane");
+  varchars.modify()->elements.push_back("william");
+
+  s.flush();
+
+  UNIT_ASSERT_FALSE(varchars->elements.empty());
+  UNIT_ASSERT_EQUAL(varchars->elements.size(), 3UL);
+
+  p.drop();
 }
 
 using many_list_ints = many_builtins<int, std::list>;
