@@ -26,6 +26,12 @@ struct varchar<SIZE, T, typename std::enable_if<
 {
   typedef typename std::decay<T>::type value_type;
 
+  explicit varchar(const value_type *value) {
+    size_t s = strlen(value);
+    s = s < size ? s : size;
+    strncpy(value, value, s);
+    value[s] = '\0';
+  }
   int size = SIZE;
   value_type value[SIZE];
 };
@@ -38,6 +44,10 @@ struct varchar<SIZE, T, typename std::enable_if<
 > : public varchar_base
 {
   typedef T value_type;
+
+  explicit varchar(const value_type &val)
+    : value(val)
+  {}
 
   int size = SIZE;
   value_type value;

@@ -458,7 +458,7 @@ public:
    * @param value The element to be inserted
    * @return The iterator at position of inserted element
    */
-  iterator insert(iterator pos, const value_type &value)
+  iterator insert_element(iterator pos, const value_type &value)
   {
     holder_type holder(value, nullptr);
 
@@ -482,7 +482,7 @@ public:
    *
    * @param value The element to be inserted
    */
-  void push_front(const value_type &value)
+  void push_front_element(const value_type &value)
   {
     insert(this->begin(), value);
   }
@@ -492,7 +492,7 @@ public:
    *
    * @param value The element to be inserted
    */
-  void push_back(const value_type &value)
+  void push_back_element(const value_type &value)
   {
     insert(this->end(), value);
   }
@@ -511,7 +511,7 @@ public:
    *
    * @param value Value to remove
    */
-  void remove(const value_type &value)
+  void remove_element(const value_type &value)
   {
     iterator first = this->begin();
     iterator last = this->end();
@@ -650,6 +650,34 @@ class has_many<varchar<SIZE, T>, std::list> : public detail::has_many_list<varch
 {
 public:
   has_many() = default;
+
+  typedef detail::has_many_vector<varchar<SIZE, T>, std::list> base;
+  typedef typename base::iterator iterator;
+  typedef typename base::value_type varchar_type;
+
+  iterator insert(iterator pos, const typename varchar_type::value_type &value)
+  {
+    varchar_type val(value);
+    return base::insert_element(pos, val);
+  }
+
+  void push_back(const typename varchar_type::value_type &value)
+  {
+    varchar_type val(value);
+    base::insert_element(this->end(), val);
+  }
+
+  void push_front(const typename varchar_type::value_type &value)
+  {
+    varchar_type val(value);
+    base::insert_element(this->begin(), val);
+  }
+
+  iterator remove(const typename varchar_type::value_type &value)
+  {
+    varchar_type val(value);
+    return base::remove_element(val);
+  }
 };
 
 template < class T >
@@ -658,6 +686,30 @@ class has_many<T, std::list, typename std::enable_if<!std::is_base_of<varchar_ba
 {
 public:
   has_many() = default;
+
+  typedef detail::has_many_vector<T, std::vector> base;
+  typedef typename base::iterator iterator;
+  typedef typename base::value_type value_type;
+
+  iterator insert(iterator pos, const value_type &value)
+  {
+    return base::insert_element(pos, value);
+  }
+
+  void push_back(const value_type &value)
+  {
+    base::insert_element(this->end(), value);
+  }
+
+  void push_front(const value_type &value)
+  {
+    base::insert_element(this->begin(), value);
+  }
+
+  iterator remove(const value_type &value)
+  {
+    return base::remove_element(value);
+  }
 };
 
 }
