@@ -229,18 +229,6 @@ public:
     }
   }
 
-//  template < class T >
-//  void serialize_value(const T &)
-//  {
-//
-//  }
-//
-//  template < class T >
-//  void serialize_value(const object_ptr<T> &)
-//  {
-//
-//  }
-
 private:
   object_proxy* find_proxy(unsigned long oid);
   void insert_proxy(object_proxy *proxy);

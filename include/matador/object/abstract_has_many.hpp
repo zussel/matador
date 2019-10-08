@@ -36,6 +36,7 @@ namespace detail {
 class object_inserter;
 }
 
+class basic_has_many_item_holder;
 template < class T, object_holder_type OHT >
 class object_pointer;
 class object_store;

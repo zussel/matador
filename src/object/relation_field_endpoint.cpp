@@ -4,7 +4,7 @@
 
 //#include <iostream>
 //#include <matador/object/object_store.hpp>
-//#include "matador/object/relation_field_endpoint.hpp"
+#include "matador/object/relation_field_endpoint.hpp"
 
 #include <matador/object/object_proxy.hpp>
 
@@ -56,7 +56,7 @@ std::ostream& operator<<(std::ostream &stream, const basic_relation_endpoint &en
 
 void basic_relation_endpoint::print(std::ostream &out) const
 {
-  out << "relation " << node->type() << "::" << field << " (" << type_name << ")";
+//  out << "relation " << node->type() << "::" << field << " (" << type_name << ")";
 }
 
 }

@@ -18,9 +18,9 @@
 #define OOS_UTILS_API
 #endif
 
-#include "cascade_type.hpp"
+#include "matador/utils/cascade_type.hpp"
 #include "matador/utils/basic_identifier.hpp"
-#include "access.hpp"
+#include "matador/utils/access.hpp"
 
 #include <stdexcept>
 

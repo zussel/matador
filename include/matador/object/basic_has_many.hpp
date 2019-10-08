@@ -36,7 +36,7 @@ struct has_many_iterator_traits;
 template < class T, template <class ...> class C, class Enable = void >
 struct const_has_many_iterator_traits;
 
-template < class T, template <class ...> class C >
+template < class T, template <class ...> class C, class Enable = void >
 class has_many_iterator;
 
 template < class T, template <class ...> class C >

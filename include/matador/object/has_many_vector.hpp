@@ -56,8 +56,8 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<is_built
 
 /// @endcond
 
-template < class T, template <class ...> class C >
-class has_many_iterator_base;
+template < class T, template <class ...> class C, class Enable>
+class has_many_iterator;
 
 /**
  * @brief Represents a has many iterator
@@ -68,7 +68,8 @@ class has_many_iterator_base;
  * @tparam T The type of the iterator/container
  */
 template < class T >
-class has_many_iterator_base<T, std::vector> : public has_many_iterator_traits<T, std::vector>
+class has_many_iterator<T, std::vector, typename std::enable_if<!std::is_convertible<varchar_base*, T*>::value>::type>
+  : public has_many_iterator_traits<T, std::vector>
 {
 private:
   typedef has_many_iterator_traits<T, std::vector> traits;
@@ -86,23 +87,21 @@ public:
   /**
    * @brief Creates an empty has many iterator
    */
-  has_many_iterator_base() = default;
+  has_many_iterator() = default;
 
   /**
    * @brief Copy constructs an iterator from another iterator
    *
    * @param iter The iterator to copy from
    */
-  has_many_iterator_base(const self &iter) : iter_(iter.iter_) {}
+  has_many_iterator(const self &iter) : iter_(iter.iter_) {}
 
-  //has_many_iterator(self &&iter) = default;
-  //has_many_iterator& operator=(self &&iter) = default;
   /**
    * @brief Creates a has many iterator from given internal container iterator
    *
    * @param iter The iterator to create the has many iterator from
    */
-  explicit has_many_iterator_base(container_iterator iter) : iter_(iter) {}
+  explicit has_many_iterator(container_iterator iter) : iter_(iter) {}
 
   /**
    * @brief Copy assign an iterator from another iterator
@@ -110,12 +109,12 @@ public:
    * @param iter The iterator to copy from
    * @return A reference to self
    */
-  has_many_iterator_base& operator=(const self &iter)
+  has_many_iterator& operator=(const self &iter)
   {
     iter_ = iter.iter_;
     return *this;
   }
-  ~has_many_iterator_base() = default;
+  ~has_many_iterator() = default;
 
   /**
    * @brief Compares equality iterator with another iterator.
@@ -273,6 +272,16 @@ public:
     return out;
   }
 
+  //@{
+  /**
+   * Return the current value
+   * represented by the iterator
+   *
+   * @return The current value
+   */
+  value_type operator->() const { return this->iter_->value(); }
+  value_type& operator*() const { return this->iter_->value(); }
+  //@}
   /**
    * @brief Returns the holder item
    *
@@ -287,7 +296,6 @@ private:
   friend class detail::has_many_vector<T, std::vector>;
   friend class const_has_many_iterator<T, std::vector>;
   friend class basic_has_many<T, std::vector>;
-  friend class has_many_iterator<T, std::vector>;
   friend class detail::has_many_inserter<T, std::vector>;
   friend class detail::has_many_deleter<T, std::vector>;
   friend class object_serializer;
@@ -304,12 +312,85 @@ private:
   container_iterator iter_;
 };
 
-template < class T >
-class has_many_iterator<T, std::vector> : public has_many_iterator_base<T, std::vector>
+template < int SIZE, class T >
+class has_many_iterator<varchar<SIZE, T>, std::vector, typename std::enable_if<std::is_convertible<varchar_base*, T*>::value>::type>
+  : public has_many_iterator_traits<varchar<SIZE, T>, std::vector>
 {
+private:
+  typedef has_many_iterator_traits<T, std::vector> traits;
+  typedef typename traits::holder_type container_type;
+
 public:
-  typedef has_many_iterator_base<T, std::vector> base;
-  typedef typename base::value_type value_type;
+  typedef has_many_iterator<T, std::vector> self;                             /**< Shortcut value self */
+  typedef varchar<SIZE, T> varchar_type;
+  typedef varchar_type value_type;                                            /**< Shortcut value type */
+  typedef typename traits::holder_type holder_type;                           /**< Shortcut to the relation type */
+  typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type */
+  typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the internal container iterator */
+  typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */
+
+public:
+  has_many_iterator() = default;
+  has_many_iterator(const self &iter) : iter_(iter.iter_) {}
+  explicit has_many_iterator(container_iterator iter) : iter_(iter) {}
+  has_many_iterator& operator=(const self &iter)
+  {
+    iter_ = iter.iter_;
+    return *this;
+  }
+  ~has_many_iterator() = default;
+
+  bool operator==(const self &i) const { return (iter_ == i.iter_); }
+  bool operator!=(const self &i) const { return !this->operator==(i); }
+  bool operator<(const self &i) const { return iter_ < i.iter_; }
+//  friend difference_type operator-(self a, self b) { return a.iter_ - b.iter_; }
+  self& operator++()
+  {
+    ++iter_;
+    return *this;
+  }
+  self operator++(int)
+  {
+    self tmp = *this;
+    ++iter_;
+    return tmp;
+  }
+  self& operator--()
+  {
+    --iter_;
+    return *this;
+  }
+  self operator--(int)
+  {
+    --iter_;
+    return self();
+  }
+  self& operator+=(difference_type offset)
+  {
+    iter_ += offset;
+    return *this;
+  }
+  self& operator-=(difference_type offset)
+  {
+    iter_ -= offset;
+    return *this;
+
+  }
+  self operator+(difference_type offset)
+  {
+    self tmp = *this;
+    return tmp += offset;
+  }
+  self operator-(difference_type offset)
+  {
+    self tmp = *this;
+    return tmp -= offset;
+  }
+//  friend const self operator+(difference_type offset, self out)
+//  {
+//    out.iter_ += offset;
+//    return out;
+//  }
   //@{
   /**
    * Return the current value
@@ -317,9 +398,29 @@ public:
    *
    * @return The current value
    */
-  value_type operator->() const { return this->iter_->value(); }
-  value_type& operator*() const { return this->iter_->value(); }
+  value_type operator->() const { return this->iter_->value().value; }
+  value_type& operator*() const { return this->iter_->value().value; }
   //@}
+  holder_type& holder_item() const { return *iter_; }
+
+private:
+  friend class detail::has_many_vector<T, std::vector>;
+  friend class const_has_many_iterator<T, std::vector>;
+  friend class basic_has_many<T, std::vector>;
+  friend class detail::has_many_inserter<T, std::vector>;
+  friend class detail::has_many_deleter<T, std::vector>;
+  friend class object_serializer;
+  friend class detail::object_inserter;
+  friend class detail::object_deleter;
+  template<class V, template <class ...> class C, class Enabled>
+  friend class detail::has_many_deleter;
+
+  void move_to(self &i)
+  {
+    *iter_ = std::move(*i.iter_);
+  }
+
+  container_iterator iter_;
 };
 
 /// @cond MATADOR_DEV
@@ -916,6 +1017,11 @@ public:
   iterator insert(iterator pos, const value_type &value)
   {
     return base::insert_element(pos, value);
+  }
+
+  void push_back(T *val)
+  {
+    push_back(value_type(val));
   }
 
   void push_back(const value_type &value)

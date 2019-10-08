@@ -76,7 +76,7 @@ public:
    *
    * @param o The object.
    */
-  object_pointer(T *o)
+  explicit object_pointer(T *o)
     : object_holder(OPT, new object_proxy(o))
   {}
 
@@ -84,7 +84,7 @@ public:
    * Initializes the object_pointer
    * with nullptr
    */ 
-  object_pointer(std::nullptr_t)
+  explicit object_pointer(std::nullptr_t)
     : object_holder(OPT)
   {}
 

@@ -23,8 +23,6 @@
 #include "matador/utils/identifiable_holder.hpp"
 
 #include "matador/object/object_holder_type.hpp"
-#include "matador/object/prototype_node.hpp"
-#include "matador/object/relation_field_endpoint.hpp"
 
 #include <memory>
 
