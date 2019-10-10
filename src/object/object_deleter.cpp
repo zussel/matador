@@ -1,4 +1,5 @@
 #include "matador/object/object_deleter.hpp"
+#include "matador/object/object_exception.hpp"
 
 namespace matador {
 namespace detail {

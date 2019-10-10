@@ -20,7 +20,6 @@
 
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/object_holder.hpp"
-#include "matador/object/transaction.hpp"
 #include "matador/utils/identifier_resolver.hpp"
 
 #include <memory>
@@ -76,7 +75,7 @@ public:
    *
    * @param o The object.
    */
-  explicit object_pointer(T *o)
+  object_pointer(T *o)
     : object_holder(OPT, new object_proxy(o))
   {}
 
@@ -84,7 +83,7 @@ public:
    * Initializes the object_pointer
    * with nullptr
    */ 
-  explicit object_pointer(std::nullptr_t)
+  object_pointer(std::nullptr_t)
     : object_holder(OPT)
   {}
 

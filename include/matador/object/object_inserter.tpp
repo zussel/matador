@@ -145,7 +145,7 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, cascade_t
   prototype_node *node = x.owner_->node();
   auto i = node->find_endpoint(std::type_index(typeid(T)));
   if (i != node->endpoint_end()) {
-    x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
+    x.relation_info_ = std::static_pointer_cast<relation_endpoint>(i->second);
   }
 
   auto first = x.begin();
@@ -192,7 +192,7 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, cascade_t
   prototype_node *node = x.owner_->node();
   auto i = node->find_endpoint(std::type_index(typeid(T)));
   if (i != node->endpoint_end()) {
-    x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
+    x.relation_info_ = std::static_pointer_cast<relation_endpoint>(i->second);
   }
 }
 

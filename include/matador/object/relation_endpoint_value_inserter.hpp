@@ -18,7 +18,7 @@ namespace matador {
 
 /// @cond MATADOR_DEV
 
-template < class V, template < class ... > class C, class Enabled = void >
+template < class V, template < class ... > class C >
 class has_many;
 
 class object_holder;
@@ -44,13 +44,20 @@ public:
   template < class T >
   void serialize(const char *, T &) {}
   void serialize(const char *, char *, size_t) {}
-  void serialize(const char *, std::string &, size_t) {}
+//  void serialize(const char *, std::string &, size_t) {}
   template < class T >
   void serialize(const char *, T &, cascade_type) {}
   void serialize(const char *id, object_pointer<Value, object_holder_type::BELONGS_TO> &x, cascade_type);
   void serialize(const char *id, object_pointer<Value, object_holder_type::HAS_ONE> &x, cascade_type);
   template < template < class ... > class Container >
-  void serialize(const char *id, has_many<Value, Container> &x, cascade_type cascade);
+  void serialize(const char *id, has_many<Value, Container> &x, cascade_type)
+  {
+    if (field_ != id) {
+      return;
+    }
+    x.insert_holder(holder_);
+  }
+
 
   template < template < class ... > class Container >
   void serialize(const char *id, has_many<Value, Container> &x, const char*, const char*, cascade_type cascade)

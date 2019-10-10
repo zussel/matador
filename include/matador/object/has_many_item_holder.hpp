@@ -5,9 +5,9 @@
 #ifndef MATADOR_HAS_MANY_ITEM_HOLDER_HPP
 #define MATADOR_HAS_MANY_ITEM_HOLDER_HPP
 
-#include "matador/utils/is_builtin.hpp"
+#include "matador/utils/varchar.hpp"
 
-#include "matador/object/object_holder_type.hpp"
+#include "matador/object/object_ptr.hpp"
 #include "matador/object/basic_has_many_item_holder.hpp"
 
 namespace matador {
@@ -21,40 +21,104 @@ namespace detail
 
 class object_proxy;
 
-template < class T, object_holder_type OHT >
-class object_pointer;
-
-template < class T, class Enable = void >
-class has_many_item_holder;
-
 template < class T >
-class has_many_item_holder<T, typename std::enable_if<!is_builtin<T>::value>::type> : public basic_has_many_item_holder
+class has_many_item_holder : public basic_has_many_item_holder
 {
 public:
-  typedef object_pointer<T, object_holder_type::OBJECT_PTR> object_type;
+  typedef T object_type;
+  typedef T value_type;
+
+  has_many_item_holder() = default;
+
+  has_many_item_holder(const T &val, object_proxy *item_proxy)
+  : basic_has_many_item_holder(item_proxy)
+  , value_(val)
+  {}
+
+  has_many_item_holder(const has_many_item_holder &x)
+  : basic_has_many_item_holder(x.has_many_to_many_item_poxy_)
+  , value_(x.value_)
+  {}
+
+  has_many_item_holder& operator=(const has_many_item_holder &x)
+  {
+    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
+    value_ = x.value_;
+    return *this;
+  }
+
+  has_many_item_holder(object_proxy *, std::nullptr_t) {}
+
+  has_many_item_holder(has_many_item_holder &&x) noexcept
+    : basic_has_many_item_holder(std::move(x))
+  {
+    value_ = std::move(x.value_);
+  }
+
+  has_many_item_holder& operator=(has_many_item_holder &&x) noexcept
+  {
+    if (this != &x) {
+      value_ = std::move(x.value_);
+      has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
+      x.has_many_to_many_item_poxy_ = nullptr;
+    }
+    return *this;
+  }
+
+  friend bool operator==(const has_many_item_holder &a, const has_many_item_holder &b)
+  {
+    return a.value_ == b.value_;
+  }
+
+  friend bool operator!=(const has_many_item_holder &a, const has_many_item_holder &b)
+  {
+    return a.value_ != b.value_;
+  }
+
+  const T& value() const
+  {
+    return value_;
+  }
+
+  T& value()
+  {
+    return value_;
+  }
+
+  void clear() {}
+
+private:
+  friend struct detail::basic_relation_endpoint;
+
+  T value_;
+};
+
+template < class T >
+class has_many_item_holder<object_ptr<T>> : public basic_has_many_item_holder
+{
+public:
+  typedef object_ptr<T> object_type;
   typedef T value_type;
 
   has_many_item_holder() = default;
 
   has_many_item_holder(const object_type &val, object_proxy *item_proxy)
-    : has_many_to_many_item_poxy_(item_proxy)
+    : basic_has_many_item_holder(item_proxy)
     , value_(val)
   {}
 
   has_many_item_holder(object_proxy *val, object_proxy *item_proxy)
-    : has_many_to_many_item_poxy_(item_proxy)
+    : basic_has_many_item_holder(item_proxy)
     , value_(val)
   {}
 
   has_many_item_holder(const has_many_item_holder &x)
-    : basic_has_many_item_holder(x)
-    , has_many_to_many_item_poxy_(x.has_many_to_many_item_poxy_)
+    : basic_has_many_item_holder(x.has_many_to_many_item_poxy_)
     , value_(x.value_)
   {}
 
   has_many_item_holder& operator=(const has_many_item_holder &x)
   {
-    basic_has_many_item_holder::operator=(x);
     value_ = x.value_;
     has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
     return *this;
@@ -64,8 +128,6 @@ public:
     : basic_has_many_item_holder(std::move(x))
   {
     value_ = std::move(x.value_);
-    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-    x.has_many_to_many_item_poxy_ = nullptr;
   }
 
   has_many_item_holder& operator=(has_many_item_holder &&x) noexcept
@@ -73,18 +135,16 @@ public:
     if (this != &x) {
       basic_has_many_item_holder::operator=(std::move(x));
       value_ = std::move(x.value_);
-      has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-      x.has_many_to_many_item_poxy_ = nullptr;
     }
     return *this;
   }
 
-  friend bool operator==(const has_many_item_holder<T> &a, const has_many_item_holder<T> &b)
+  friend bool operator==(const has_many_item_holder &a, const has_many_item_holder &b)
   {
     return a.value_ == b.value_;
   }
 
-  friend bool operator!=(const has_many_item_holder<T> &a, const has_many_item_holder<T> &b)
+  friend bool operator!=(const has_many_item_holder &a, const has_many_item_holder &b)
   {
     return a.value_ != b.value_;
   }
@@ -99,11 +159,6 @@ public:
     return value_;
   }
 
-  object_proxy* item_proxy() const
-  {
-    return has_many_to_many_item_poxy_;
-  }
-
   void clear()
   {
     value_.reset(nullptr, value_.cascade());
@@ -111,27 +166,25 @@ public:
 private:
   friend struct detail::basic_relation_endpoint;
 
-  object_proxy *has_many_to_many_item_poxy_ = nullptr;
   object_type value_;
 };
 
-template < class T >
-class has_many_item_holder<T, typename std::enable_if<is_builtin<T>::value>::type> : public basic_has_many_item_holder
+template < int SIZE, class T >
+class has_many_item_holder<varchar<SIZE, T>> : public basic_has_many_item_holder
 {
 public:
-  typedef T object_type;
+  typedef varchar<SIZE, T> object_type;
   typedef T value_type;
 
   has_many_item_holder() = default;
 
   has_many_item_holder(const T &val, object_proxy *item_proxy)
-    : has_many_to_many_item_poxy_(item_proxy)
+    : basic_has_many_item_holder(item_proxy)
     , value_(val)
   {}
 
   has_many_item_holder(const has_many_item_holder &x)
-    : basic_has_many_item_holder(x)
-    , has_many_to_many_item_poxy_(x.has_many_to_many_item_poxy_)
+    : basic_has_many_item_holder(x.has_many_to_many_item_poxy_)
     , value_(x.value_)
   {}
 
@@ -162,29 +215,24 @@ public:
     return *this;
   }
 
-  friend bool operator==(const has_many_item_holder<T> &a, const has_many_item_holder<T> &b)
+  friend bool operator==(const has_many_item_holder &a, const has_many_item_holder &b)
   {
-    return a.value_ == b.value_;
+    return a.value_.value == b.value_.value;
   }
 
-  friend bool operator!=(const has_many_item_holder<T> &a, const has_many_item_holder<T> &b)
+  friend bool operator!=(const has_many_item_holder &a, const has_many_item_holder &b)
   {
-    return a.value_ != b.value_;
+    return a.value_.value != b.value_.value;
   }
 
   const T& value() const
   {
-    return value_;
+    return value_.value;
   }
 
   T& value()
   {
-    return value_;
-  }
-
-  object_proxy* item_proxy() const
-  {
-    return has_many_to_many_item_poxy_;
+    return value_.value;
   }
 
   void clear() {}
@@ -192,8 +240,7 @@ public:
 private:
   friend struct detail::basic_relation_endpoint;
 
-  object_proxy *has_many_to_many_item_poxy_ = nullptr;
-  T value_;
+  object_type value_;
 };
 
 /// @endcond

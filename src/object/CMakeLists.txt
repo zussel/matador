@@ -68,8 +68,6 @@ SET(HEADER
   ../../include/matador/object/relation_field_endpoint.tpp
   ../../include/matador/object/has_many_to_many_item.hpp
   ../../include/matador/object/basic_has_many_to_many_item.hpp
-  ../../include/matador/object/has_many_inserter.hpp
-  ../../include/matador/object/has_many_deleter.hpp
   ../../include/matador/object/has_many_item_holder.hpp
   ../../include/matador/object/prototype_info.hpp
   ../../include/matador/object/relation_endpoint_value_inserter.hpp
@@ -77,7 +75,7 @@ SET(HEADER
   ../../include/matador/object/relation_endpoint_value_remover.hpp
   ../../include/matador/object/relation_endpoint_value_remover.tpp
   ../../include/matador/object/to_many_endpoints.hpp
-  )
+  ../../include/matador/object/has_many_iterator_traits.hpp)
 
 ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
 

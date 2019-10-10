@@ -8,6 +8,8 @@
 #include "matador/object/has_one.hpp"
 #include "matador/object/abstract_has_many.hpp"
 #include "matador/object/container_type_traits.hpp"
+#include "matador/object/relation_field_endpoint.hpp"
+#include "matador/object/has_many_iterator_traits.hpp"
 
 namespace matador {
 
@@ -27,16 +29,13 @@ class relation_endpoint_value_remover;
 template < class T, template <class ...> class C = std::vector >
 class basic_has_many;
 
-template < class T, template <class ...> class C = std::vector, class Enabled >
+template < class T, template <class ...> class C = std::vector >
 class has_many;
 
-template < class T, template <class ...> class C, class Enable = void >
-struct has_many_iterator_traits;
-
-template < class T, template <class ...> class C, class Enable = void >
+template < class T, template <class ...> class C, class Enable >
 struct const_has_many_iterator_traits;
 
-template < class T, template <class ...> class C, class Enable = void >
+template < class T, template <class ...> class C >
 class has_many_iterator;
 
 template < class T, template <class ...> class C >
@@ -183,11 +182,6 @@ protected:
   friend class detail::object_inserter;
   friend class object_store;
   friend class object_serializer;
-  friend class detail::has_many_inserter<T, std::vector>;
-  friend class detail::has_many_deleter<T, std::vector>;
-  friend class detail::has_many_inserter<T, std::list>;
-  friend class detail::has_many_deleter<T, std::list>;
-
 
   object_proxy *owner_ = nullptr;
   basic_identifier *owner_id_ = nullptr;
@@ -196,7 +190,7 @@ protected:
 
   holder_container_type holder_container_;
 
-  std::shared_ptr<detail::relation_endpoint<T>> relation_info_;
+  std::shared_ptr<detail::relation_endpoint> relation_info_;
   /// @endcond
 
 };

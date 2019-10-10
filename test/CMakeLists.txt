@@ -73,7 +73,7 @@ SET (TEST_ORM_SOURCES
   orm/BlogUnitTest.hpp
 )
 
-SET (TEST_SOURCES test_matador.cpp ../include/matador/db/postgresql/postgresql_parameter_binder.hpp ../include/matador/utils/varchar.hpp)
+SET (TEST_SOURCES test_matador.cpp ../include/matador/db/postgresql/postgresql_parameter_binder.hpp ../include/matador/utils/varchar.hpp ../include/matador/object/has_many_iterator_traits.hpp)
 
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}

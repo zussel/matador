@@ -34,10 +34,6 @@ namespace detail {
 class object_inserter;
 class object_deleter;
 class object_proxy_accessor;
-template<class T, template <class ...> class C, class Enabled>
-class has_many_inserter;
-template<class T, template <class ...> class C, class Enabled>
-class has_many_deleter;
 struct basic_relation_endpoint;
 template < class Value >
 class relation_endpoint_value_inserter;
@@ -366,11 +362,7 @@ private:
   friend class object_store;
   friend class abstract_has_many;
   friend class detail::object_proxy_accessor;
-  template<class T, template <class ...> class C, class Enabled >
-  friend class detail::has_many_inserter;
-  template<class T, template <class ...> class C, class Enabled >
-  friend class detail::has_many_deleter;
-  template < class T, class Enable >
+  template < class T >
   friend class has_many_item_holder;
   template < class L, class R >
   friend class has_many_to_many_item;

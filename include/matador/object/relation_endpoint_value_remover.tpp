@@ -1,6 +1,6 @@
 #include "matador/object/relation_endpoint_value_remover.hpp"
 #include "matador/object/object_holder.hpp"
-#include "matador/object/has_many.hpp"
+//#include "matador/object/has_many.hpp"
 
 namespace matador {
 namespace detail {
@@ -35,15 +35,15 @@ void relation_endpoint_value_remover<Value>::serialize(const char *id, object_po
   x.reset(nullptr, cascade, false);
 }
 
-template < class Value >
-template < template < class ... > class Container >
-void relation_endpoint_value_remover<Value>::serialize(const char *id, has_many<Value, Container> &x, cascade_type)
-{
-  if (field_ != id) {
-    return;
-  }
-  x.remove_holder(holder_);
-}
+//template < class Value >
+//template < template < class ... > class Container >
+//void relation_endpoint_value_remover<Value>::serialize(const char *id, has_many<Value, Container> &x, cascade_type)
+//{
+//  if (field_ != id) {
+//    return;
+//  }
+//  x.remove_holder(holder_);
+//}
 
 }
 }

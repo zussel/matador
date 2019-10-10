@@ -7,9 +7,7 @@
 
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/has_many_item_holder.hpp"
-#include "matador/object/object_store.hpp"
-#include "matador/object/has_many_inserter.hpp"
-#include "matador/object/has_many_deleter.hpp"
+#include "matador/object/has_many_iterator_traits.hpp"
 
 #include "matador/utils/is_builtin.hpp"
 #include "matador/utils/is_varchar.hpp"
@@ -20,40 +18,8 @@
 namespace matador {
 
 /// @cond MATADOR_DEV
-namespace detail {
 template < class T, template < class ... > class C >
-class has_many_list;
-}
-
-template < class T, template < class ... > class C, class Enable >
-struct has_many_iterator_traits;
-
-template < class T >
-struct has_many_iterator_traits<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
-  : public std::iterator<std::bidirectional_iterator_tag, T>
-{
-  typedef has_many_iterator_traits<T, std::list> self;
-  typedef object_ptr<T> value_type;
-  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
-template < class T >
-struct has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
-  : public std::iterator<std::bidirectional_iterator_tag, T>
-{
-  typedef has_many_iterator_traits<T, std::list> self;
-  typedef T value_type;
-  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
+class has_many;
 /// @endcond
 
 /**
@@ -199,11 +165,9 @@ public:
   //@}
 
 private:
-  friend class detail::has_many_list<T, std::list>;
+  friend class has_many<T, std::list>;
   friend class const_has_many_iterator<T, std::list>;
   friend class basic_has_many<T, std::list>;
-  friend class detail::has_many_inserter<T, std::list>;
-  friend class detail::has_many_deleter<T, std::list>;
   friend class object_serializer;
   friend class detail::object_inserter;
   friend class detail::object_deleter;
@@ -212,39 +176,6 @@ private:
 
   container_iterator iter_;
 };
-
-/// @cond MATADOR_DEV
-
-template < class T, template < class... > class C, class Enable >
-struct const_has_many_iterator_traits;
-
-template < class T >
-struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
-  : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
-{
-  typedef const_has_many_iterator_traits<T, std::list> self;
-  typedef object_ptr<T> value_type;
-  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
-template < class T >
-struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
-  : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
-{
-  typedef const_has_many_iterator_traits<T, std::list> self;
-  typedef T value_type;
-  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
-/// @endcond
 
 /**
  * @brief Represents a const has many iterator
@@ -426,10 +357,30 @@ private:
   const_container_iterator iter_;
 };
 
-namespace detail {
-
+/**
+ * @brief Has many relation class using a std::list as container
+ *
+ * The has many relation class uses a std::list as internal
+ * container to store the objects.
+ *
+ * It provides all main interface functions std::list provides
+ * - insert element at a iterator position
+ * - push back an element
+ * - push front an element
+ * - erase an element at iterator position
+ * - erase a range of elements within first and last iterator position
+ * - clear the container
+ *
+ * All of these methods are wraps around the std::list methods plus
+ * the modification in the corresponding object_store and notification
+ * of the transaction observer
+ *
+ * The relation holds object_ptr elements as well as scalar data elements.
+ *
+ * @tparam T The type of the elements
+ */
 template < class T >
-class has_many_list<T, std::list> : public basic_has_many<T, std::list>
+class has_many<T, std::list> : public basic_has_many<T, std::list>
 {
 public:
 
@@ -449,7 +400,7 @@ public:
    * Creates an empty has_many object with a
    * std::list as container type
    */
-  has_many_list() = default;
+  has_many() = default;
 
   /**
    * @brief Inserts an element at the given position.
@@ -458,7 +409,7 @@ public:
    * @param value The element to be inserted
    * @return The iterator at position of inserted element
    */
-  iterator insert_element(iterator pos, const value_type &value)
+  iterator insert(iterator pos, const value_type &value)
   {
     holder_type holder(value, nullptr);
 
@@ -482,7 +433,7 @@ public:
    *
    * @param value The element to be inserted
    */
-  void push_front_element(const value_type &value)
+  void push_front(const value_type &value)
   {
     insert(this->begin(), value);
   }
@@ -492,7 +443,7 @@ public:
    *
    * @param value The element to be inserted
    */
-  void push_back_element(const value_type &value)
+  void push_back(const value_type &value)
   {
     insert(this->end(), value);
   }
@@ -511,7 +462,7 @@ public:
    *
    * @param value Value to remove
    */
-  void remove_element(const value_type &value)
+  void remove(const value_type &value)
   {
     iterator first = this->begin();
     iterator last = this->end();
@@ -620,96 +571,6 @@ private:
 private:
   friend class detail::relation_endpoint_value_inserter<T>;
   friend class detail::relation_endpoint_value_remover<T>;
-};
-
-}
-/**
- * @brief Has many relation class using a std::list as container
- *
- * The has many relation class uses a std::list as internal
- * container to store the objects.
- *
- * It provides all main interface functions std::list provides
- * - insert element at a iterator position
- * - push back an element
- * - push front an element
- * - erase an element at iterator position
- * - erase a range of elements within first and last iterator position
- * - clear the container
- *
- * All of these methods are wraps around the std::list methods plus
- * the modification in the corresponding object_store and notification
- * of the transaction observer
- *
- * The relation holds object_ptr elements as well as scalar data elements.
- *
- * @tparam T The type of the elements
- */
-template < int SIZE, class T >
-class has_many<varchar<SIZE, T>, std::list> : public detail::has_many_list<varchar<SIZE, T>, std::list>
-{
-public:
-  has_many() = default;
-
-  typedef detail::has_many_vector<varchar<SIZE, T>, std::list> base;
-  typedef typename base::iterator iterator;
-  typedef typename base::value_type varchar_type;
-
-  iterator insert(iterator pos, const typename varchar_type::value_type &value)
-  {
-    varchar_type val(value);
-    return base::insert_element(pos, val);
-  }
-
-  void push_back(const typename varchar_type::value_type &value)
-  {
-    varchar_type val(value);
-    base::insert_element(this->end(), val);
-  }
-
-  void push_front(const typename varchar_type::value_type &value)
-  {
-    varchar_type val(value);
-    base::insert_element(this->begin(), val);
-  }
-
-  iterator remove(const typename varchar_type::value_type &value)
-  {
-    varchar_type val(value);
-    return base::remove_element(val);
-  }
-};
-
-template < class T >
-class has_many<T, std::list, typename std::enable_if<!std::is_base_of<varchar_base, T>::value>::type>
-  : public detail::has_many_list<T, std::list>
-{
-public:
-  has_many() = default;
-
-  typedef detail::has_many_vector<T, std::vector> base;
-  typedef typename base::iterator iterator;
-  typedef typename base::value_type value_type;
-
-  iterator insert(iterator pos, const value_type &value)
-  {
-    return base::insert_element(pos, value);
-  }
-
-  void push_back(const value_type &value)
-  {
-    base::insert_element(this->end(), value);
-  }
-
-  void push_front(const value_type &value)
-  {
-    base::insert_element(this->begin(), value);
-  }
-
-  iterator remove(const value_type &value)
-  {
-    return base::remove_element(value);
-  }
 };
 
 }

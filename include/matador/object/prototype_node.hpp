@@ -53,10 +53,6 @@ class object_proxy;
 
 /// @cond MATADOR_DEV
 namespace detail {
-template < class T, template <class ...> class C, class Enable = void >
-class has_many_inserter;
-template < class T, template <class ...> class C, class Enable = void >
-class has_many_deleter;
 class basic_node_analyzer;
 template < class T, template < class U = T > class O >
 class node_analyzer;
@@ -465,12 +461,8 @@ private:
   friend class const_object_view_iterator;
   template < class T >
   friend class object_view_iterator;
-  template < class T, template <class ...> class C, class Enabled >
+  template < class T, template <class ...> class C >
   friend class has_many;
-  template < class T, template <class ...> class C, class Enable >
-  friend class detail::has_many_inserter;
-  template < class T, template <class ...> class C, class Enable >
-  friend class detail::has_many_deleter;
   friend class detail::basic_node_analyzer;
   template < class T,  template < class U = T > class O >
   friend class detail::node_analyzer;

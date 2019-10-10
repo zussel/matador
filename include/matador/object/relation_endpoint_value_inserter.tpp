@@ -1,5 +1,5 @@
 #include "matador/object/relation_endpoint_value_inserter.hpp"
-#include "matador/object/has_many.hpp"
+//#include "matador/object/has_many.hpp"
 
 namespace matador {
 namespace detail {
@@ -34,15 +34,15 @@ void relation_endpoint_value_inserter<Value>::serialize(const char *id, object_p
   x.reset(holder_.value().proxy_, cascade, false);
 }
 
-template < class Value >
-template < template < class ... > class Container >
-void relation_endpoint_value_inserter<Value>::serialize(const char *id, has_many<Value, Container> &x, cascade_type)
-{
-  if (field_ != id) {
-    return;
-  }
-  x.insert_holder(holder_);
-}
+//template < class Value >
+//template < template < class ... > class Container >
+//void relation_endpoint_value_inserter<Value>::serialize(const char *id, has_many<Value, Container> &x, cascade_type)
+//{
+//  if (field_ != id) {
+//    return;
+//  }
+//  x.insert_holder(holder_);
+//}
 
 }
 }
