@@ -2,6 +2,8 @@
 // Created by sascha on 1/19/16.
 //
 
+#include "matador/object/object_store.hpp"
+
 #include "HasManyListUnitTest.hpp"
 
 #include "../has_many_list.hpp"

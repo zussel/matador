@@ -20,6 +20,7 @@ class object_proxy;
 class basic_has_many_item_holder
 {
 protected:
+  basic_has_many_item_holder() = default;
   explicit basic_has_many_item_holder(object_proxy *item_proxy)
     : has_many_to_many_item_poxy_(item_proxy)
   {}

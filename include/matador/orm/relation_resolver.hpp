@@ -237,6 +237,7 @@ public:
   void serialize(const char *, V &x);
 
   void serialize(const char *, char *, size_t);
+  void serialize(const char *, std::string &, size_t) { }
 
   template < class V >
   void serialize(const char *, belongs_to<V> &x, cascade_type cascade);
@@ -367,6 +368,7 @@ public:
   void serialize(const char *, V &x);
 
   void serialize(const char *, char *, size_t);
+  void serialize(const char *, std::string &, size_t) {}
 
   template < class V >
   void serialize(const char *, belongs_to<V> &x, cascade_type cascade);

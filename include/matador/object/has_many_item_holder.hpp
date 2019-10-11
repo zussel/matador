@@ -21,8 +21,14 @@ namespace detail
 
 class object_proxy;
 
+template < class T, class Enable = void >
+class has_many_item_holder;
+
 template < class T >
-class has_many_item_holder : public basic_has_many_item_holder
+class has_many_item_holder<T, typename std::enable_if<
+  is_builtin<T>::value &&
+  !std::is_convertible<T*, varchar_base*>::value
+>::type> : public basic_has_many_item_holder
 {
 public:
   typedef T object_type;
@@ -94,11 +100,14 @@ private:
 };
 
 template < class T >
-class has_many_item_holder<object_ptr<T>> : public basic_has_many_item_holder
+class has_many_item_holder<T, typename std::enable_if<
+  !is_builtin<T>::value &&
+  !std::is_convertible<T*, varchar_base*>::value
+>::type> : public basic_has_many_item_holder
 {
 public:
   typedef object_ptr<T> object_type;
-  typedef T value_type;
+  typedef object_ptr<T> value_type;
 
   has_many_item_holder() = default;
 
@@ -179,6 +188,11 @@ public:
   has_many_item_holder() = default;
 
   has_many_item_holder(const T &val, object_proxy *item_proxy)
+    : basic_has_many_item_holder(item_proxy)
+    , value_(val)
+  {}
+
+  has_many_item_holder(const object_type &val, object_proxy *item_proxy)
     : basic_has_many_item_holder(item_proxy)
     , value_(val)
   {}

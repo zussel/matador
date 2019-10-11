@@ -32,7 +32,10 @@ template<class L, class R, typename Enable = void>
 class has_one_to_many_item;
 
 template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<R>::value>::type>
+class has_one_to_many_item<L, R, typename std::enable_if<
+  !is_builtin<R>::value &&
+  !std::is_base_of<varchar_base, R>::value
+>::type>
   : public basic_has_many_to_many_item
 {
 public:
@@ -74,7 +77,10 @@ private:
 
 
 template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<is_builtin<R>::value && !std::is_base_of<varchar_base, R>::value>::type>
+class has_one_to_many_item<L, R, typename std::enable_if<
+  is_builtin<R>::value &&
+  !std::is_base_of<varchar_base, R>::value
+>::type>
   : public basic_has_many_to_many_item
 {
 public:
@@ -115,7 +121,7 @@ private:
 };
 
 template<class L, class R, int SIZE>
-class has_one_to_many_item<L, varchar<SIZE, R>, typename std::enable_if<is_builtin<R>::value>::type>
+class has_one_to_many_item<L, varchar<SIZE, R>>
   : public basic_has_many_to_many_item
 {
 public:

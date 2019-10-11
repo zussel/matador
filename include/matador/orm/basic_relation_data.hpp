@@ -42,7 +42,10 @@ template < class T, class Enabled = void >
 class relation_data;
 
 template < class T >
-class relation_data<T, typename std::enable_if<matador::is_builtin<T>::value>::type> : public basic_relation_data
+class relation_data<T, typename std::enable_if<
+  matador::is_builtin<T>::value &&
+  !std::is_base_of<varchar_base, T>::value
+>::type> : public basic_relation_data
 {
 public:
   typedef T value_type;
@@ -77,10 +80,54 @@ private:
 };
 
 template < class T >
-class relation_data<T, typename std::enable_if<!matador::is_builtin<T>::value>::type> : public basic_relation_data
+class relation_data<T, typename std::enable_if<
+  !matador::is_builtin<T>::value &&
+  !std::is_base_of<varchar_base, T>::value
+>::type> : public basic_relation_data
 {
 public:
   typedef typename T::object_type value_type;
+
+  relation_data() : tindex_(std::type_index(typeid(value_type))) {}
+
+  void append_data(basic_identifier *id, const T &data, object_proxy *owner)
+  {
+    id_multi_map_.insert(std::make_pair(id, std::make_pair(data, owner)));
+  }
+
+  template < template <class ...> class C >
+  void insert_into_container(basic_identifier *id, basic_has_many<value_type, C> &container)
+  {
+    auto range = id_multi_map_.equal_range(id);
+
+    for (auto i = range.first; i != range.second; ++i)
+    {
+      container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
+      if (!std::is_base_of<basic_has_many_to_many_item, value_type>::value && i->second.second == nullptr) {
+        ++(*proxy(i->second.first));
+      }
+
+    }
+
+    id_multi_map_.erase(id);
+  }
+
+  const std::type_index& type_index() const override
+  {
+    return tindex_;
+  }
+
+private:
+  std::type_index tindex_;
+
+  std::unordered_multimap<basic_identifier*, std::pair<T, object_proxy*>, identifier_hash<basic_identifier>, identifier_equal> id_multi_map_;
+};
+
+template < int SIZE, class T >
+class relation_data<varchar<SIZE, T>> : public basic_relation_data
+{
+public:
+  typedef varchar<SIZE, T> value_type;
 
   relation_data() : tindex_(std::type_index(typeid(value_type))) {}
 

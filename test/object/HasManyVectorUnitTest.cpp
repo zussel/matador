@@ -4,6 +4,8 @@
 
 #include "HasManyVectorUnitTest.hpp"
 
+#include "matador/object/object_store.hpp"
+
 using namespace matador;
 using namespace hasmanyvector;
 

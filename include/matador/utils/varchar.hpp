@@ -26,6 +26,7 @@ struct varchar<SIZE, T, typename std::enable_if<
 {
   typedef typename std::decay<T>::type value_type;
 
+  varchar() = default;
   explicit varchar(const value_type *value) {
     size_t s = strlen(value);
     s = s < size ? s : size;
@@ -45,6 +46,7 @@ struct varchar<SIZE, T, typename std::enable_if<
 {
   typedef T value_type;
 
+  varchar() = default;
   explicit varchar(const value_type &val)
     : value(val)
   {}

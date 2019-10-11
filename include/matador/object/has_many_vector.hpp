@@ -14,6 +14,7 @@
 #include "matador/utils/is_builtin.hpp"
 
 #include <vector>
+#include <algorithm>
 
 namespace matador {
 
