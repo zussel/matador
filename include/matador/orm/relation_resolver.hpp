@@ -117,7 +117,7 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &x, cascade_type)
+  void serialize(const char *id, basic_has_many<V, C> &, cascade_type)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);
@@ -146,9 +146,9 @@ public:
 
     if (data->second->type_index() == std::type_index(typeid(V))) {
       // correct type
-      auto rdata = std::static_pointer_cast<detail::relation_data<typename basic_has_many<V, C>::value_type>>(data->second);
+//      auto rdata = std::static_pointer_cast<detail::relation_data<typename basic_has_many<V, C>::value_type>>(data->second);
 
-      rdata->insert_into_container(proxy_->pk(), x);
+//      rdata->insert_into_container(proxy_->pk(), x);
     }
   }
 
