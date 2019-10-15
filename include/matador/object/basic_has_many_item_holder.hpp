@@ -25,18 +25,10 @@ protected:
     : has_many_to_many_item_poxy_(item_proxy)
   {}
 
-  basic_has_many_item_holder(basic_has_many_item_holder &&x) noexcept
-  {
-    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-    x.has_many_to_many_item_poxy_ = nullptr;
-  }
-
-  basic_has_many_item_holder& operator=(basic_has_many_item_holder &&x) noexcept
-  {
-    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-    x.has_many_to_many_item_poxy_ = nullptr;
-    return *this;
-  }
+  basic_has_many_item_holder(const basic_has_many_item_holder &x) = default;
+  basic_has_many_item_holder(basic_has_many_item_holder &&x) noexcept = default;
+  basic_has_many_item_holder& operator=(basic_has_many_item_holder &&x) noexcept = default;
+  basic_has_many_item_holder& operator=(const basic_has_many_item_holder &x) noexcept = default;
 
 public:
   bool is_inserted() const { return is_inserted_; }

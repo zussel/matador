@@ -126,7 +126,7 @@ class has_one_to_many_item<L, varchar<SIZE, R>>
 {
 public:
   typedef L left_value_type;
-  typedef R right_value_type;
+  typedef varchar<SIZE, R> right_value_type;
 
   has_one_to_many_item() = default;
 

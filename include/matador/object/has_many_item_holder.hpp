@@ -122,14 +122,14 @@ public:
   {}
 
   has_many_item_holder(const has_many_item_holder &x)
-    : basic_has_many_item_holder(x.has_many_to_many_item_poxy_)
+    : basic_has_many_item_holder(x)
     , value_(x.value_)
   {}
 
   has_many_item_holder& operator=(const has_many_item_holder &x)
   {
+    basic_has_many_item_holder::operator=(x);
     value_ = x.value_;
-    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
     return *this;
   }
 

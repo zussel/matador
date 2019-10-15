@@ -350,7 +350,8 @@ void RelationTestUnit::test_insert_belongs_to_many()
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY);
 
   auto george_ptr = matador::make_unique<employee>("george");
-  george_ptr->dep(new department("insurance"));
+  auto dep = new department("insurance");
+  george_ptr->dep(dep);
 
   auto george = store.insert(george_ptr.release());
 
