@@ -9,7 +9,7 @@ void basic_relation_endpoint::insert_value_into_foreign(const has_many_item_hold
 {
   auto sptr = foreign_endpoint.lock();
   if (sptr) {
-    static_cast<relation_endpoint*>(sptr.get())->insert_value(holder, owner);
+    static_cast<relation_endpoint<Value>*>(sptr.get())->insert_value(holder, owner);
   }
 }
 
@@ -18,14 +18,14 @@ void basic_relation_endpoint::remove_value_from_foreign(const has_many_item_hold
 {
   auto sptr = foreign_endpoint.lock();
   if (sptr) {
-    static_cast<relation_endpoint*>(sptr.get())->remove_value(holder, owner);
+    static_cast<relation_endpoint<Value>*>(sptr.get())->remove_value(holder, owner);
   }
 }
 
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type >
 void from_one_endpoint<
   Value, Owner, Type,typename std::enable_if<!matador::is_builtin<Value>::value>::type
->::insert_holder(object_store &/*store*/, basic_has_many_item_holder &holder, object_proxy *owner)
+>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
   this->set_has_many_item_proxy(holder, owner);
 }
@@ -33,7 +33,7 @@ void from_one_endpoint<
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type >
 void from_one_endpoint<
   Value, Owner, Type, typename std::enable_if<!matador::is_builtin<Value>::value>::type
->::remove_holder(object_store &/*store*/, basic_has_many_item_holder &holder, object_proxy *) // owner
+>::remove_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *) // owner
 {
   this->set_has_many_item_proxy(holder, nullptr);
 }
@@ -80,7 +80,7 @@ void from_one_endpoint<
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type >
 void from_one_endpoint<
   Value, Owner, Type,typename std::enable_if<matador::is_builtin<Value>::value>::type
->::insert_holder(object_store &/*store*/, basic_has_many_item_holder &holder, object_proxy *owner)
+>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
   this->set_has_many_item_proxy(holder, owner);
 }
@@ -88,7 +88,7 @@ void from_one_endpoint<
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type >
 void from_one_endpoint<
   Value, Owner, Type, typename std::enable_if<matador::is_builtin<Value>::value>::type
->::remove_holder(object_store &/*store*/, basic_has_many_item_holder &holder, object_proxy *) // owner
+>::remove_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *) // owner
 {
   this->set_has_many_item_proxy(holder, nullptr);
 }
@@ -128,13 +128,17 @@ void from_one_endpoint<
 }
 
 template < class Value, class Owner >
-void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::insert_holder(object_store &, basic_has_many_item_holder &holder, object_proxy *owner)
+void belongs_to_many_endpoint<
+  Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type
+>::insert_holder(object_store &, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
   this->set_has_many_item_proxy(holder, owner);
 }
 
 template < class Value, class Owner >
-void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::remove_holder(object_store &, basic_has_many_item_holder &holder, object_proxy *) // owner
+void belongs_to_many_endpoint<
+  Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type
+>::remove_holder(object_store &, has_many_item_holder<Value> &holder, object_proxy *) // owner
 {
   this->set_has_many_item_proxy(holder, nullptr);
 }
@@ -177,7 +181,9 @@ void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is
 }
 
 template < class Value, class Owner >
-void many_to_one_endpoint<Value, Owner, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type>::insert_holder(object_store &/*store*/, basic_has_many_item_holder &holder, object_proxy *owner)
+void many_to_one_endpoint<
+  Value, Owner, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type
+>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
   auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
   this->mark_holder_as_inserted(holder);
@@ -188,7 +194,7 @@ void many_to_one_endpoint<Value, Owner, typename std::enable_if<!std::is_base_of
 template < class Value, class Owner >
 void many_to_one_endpoint<Value, Owner,
   typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type
->::remove_holder(object_store &, basic_has_many_item_holder &holder, object_proxy *) // owner
+>::remove_holder(object_store &, has_many_item_holder<Value> &holder, object_proxy *) // owner
 {
   auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
   this->set_has_many_item_proxy(holder, nullptr);
