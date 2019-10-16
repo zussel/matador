@@ -11,17 +11,6 @@ namespace matador {
 
 namespace detail {
 
-void basic_relation_endpoint::set_has_many_item_proxy(basic_has_many_item_holder &holder, const object_holder &obj)
-{
-  set_has_many_item_proxy(holder, obj.proxy_);
-}
-
-void basic_relation_endpoint::set_has_many_item_proxy(basic_has_many_item_holder &holder, object_proxy *proxy)
-{
-  holder.has_many_to_many_item_poxy_ = proxy;
-}
-
-
 void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, object_proxy *owner)
 {
   auto sptr = foreign_endpoint.lock();
@@ -69,9 +58,5 @@ void basic_relation_endpoint::print(std::ostream &out) const
   out << "relation " << node->type() << "::" << field << " (" << type_name << ")";
 }
 
-relation_endpoint::relation_endpoint(const std::string &field, prototype_node *node,
-                                     basic_relation_endpoint::relation_type type)
-: basic_relation_endpoint(field, node, type)
-{}
 }
 }

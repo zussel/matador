@@ -57,26 +57,24 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     remover.remove(owner_holder.value(), this->field, value_holder);
   }
 
-  void insert_holder(object_store &store, basic_has_many_item_holder &holder, object_proxy *owner) override
+  void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     // cast to real type object pointer
     object_ptr<Owner> ownptr(owner);
     // insert new item
-    auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
-    std::unique_ptr<object_proxy> proxy(new object_proxy(new has_many_to_many_item<Owner, Value>(ownptr, typed_holder.value(), this->owner_column, this->item_column)));
+    std::unique_ptr<object_proxy> proxy(new object_proxy(new has_many_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column)));
     auto itemptr = store.insert<has_many_to_many_item<Owner, Value>>(proxy.release(), true);
-    this->increment_reference_count(typed_holder.value());
+    this->increment_reference_count(holder.value());
     this->set_has_many_item_proxy(holder, itemptr);
     ++(*itemptr);
     ++(*itemptr);
   }
 
-  void remove_holder(object_store &store, basic_has_many_item_holder &holder, object_proxy *) override // owner
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *) override // owner
   {
     object_ptr<has_many_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
-    auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
-    this->decrement_reference_count(typed_holder.value());
+    this->decrement_reference_count(holder.value());
   }
 
   object_proxy* acquire_proxy(unsigned long , object_store &) override
@@ -107,15 +105,14 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
-  void insert_holder(object_store &store, basic_has_many_item_holder &holder, object_proxy *owner) override
+  void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
-    auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
-    auto itemptr = store.insert(new has_one_to_many_item<Owner, Value>(ownptr, typed_holder.value(), this->owner_column, this->item_column));
+    auto itemptr = store.insert(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column));
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  void remove_holder(object_store &store, basic_has_many_item_holder &holder, object_proxy *) override // owner
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *) override // owner
   {
     object_ptr<has_one_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
@@ -168,24 +165,21 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     : from_many_endpoint<Value, Owner>(field, node)
   {}
 
-  void insert_holder(object_store &store, basic_has_many_item_holder &holder, object_proxy *owner) override
+  void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
-    auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
-    std::unique_ptr<object_proxy> proxy(new object_proxy(new has_one_to_many_item<Owner, Value>(ownptr, typed_holder.value(), this->owner_column, this->item_column)));
+    std::unique_ptr<object_proxy> proxy(new object_proxy(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column)));
     auto itemptr = store.insert<has_one_to_many_item<Owner, Value>>(proxy.release(), true);
-    this->increment_reference_count(typed_holder.value());
-    //this->increment_reference_count(itemptr);
+    this->increment_reference_count(holder.value());
     ++(*itemptr);
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  void remove_holder(object_store &store, basic_has_many_item_holder &holder, object_proxy *) override // owner
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *) override // owner
   {
     object_ptr<has_one_to_many_item<Owner, Value>> itemptr(holder.item_proxy());
     store.remove(itemptr);
-    auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
-    this->decrement_reference_count(typed_holder.value());
+    this->decrement_reference_count(holder.value());
   }
 
   void insert_value(object_proxy *value, object_proxy *owner) override
@@ -251,25 +245,23 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
-  void insert_holder(object_store &store, basic_has_many_item_holder &holder, object_proxy *owner) override
+  void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {
     object_ptr<Owner> ownptr(owner);
 
-    auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
-    std::unique_ptr<object_proxy> proxy(new object_proxy(new has_many_to_many_item<Value, Owner>(typed_holder.value(), ownptr, this->owner_column, this->item_column)));
+    std::unique_ptr<object_proxy> proxy(new object_proxy(new has_many_to_many_item<Value, Owner>(holder.value(), ownptr, this->owner_column, this->item_column)));
     auto itemptr = store.insert<has_many_to_many_item<Owner, Value>>(proxy.release(), true);
-    this->increment_reference_count(typed_holder.value());
+    this->increment_reference_count(holder.value());
     ++(*itemptr);
     ++(*itemptr);
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
-  void remove_holder(object_store &store, basic_has_many_item_holder &holder, object_proxy *) override // owner
+  void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *) override // owner
   {
     object_ptr<has_many_to_many_item<Owner, Value>> item(holder.item_proxy());
     store.remove(item);
-    auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
-    this->decrement_reference_count(typed_holder.value());
+    this->decrement_reference_count(holder.value());
   }
 
   void insert_value(object_proxy *value, object_proxy *owner) override

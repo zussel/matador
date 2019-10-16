@@ -190,7 +190,7 @@ protected:
 
   holder_container_type holder_container_;
 
-  std::shared_ptr<detail::relation_endpoint> relation_info_;
+  std::shared_ptr<detail::relation_endpoint<T>> relation_info_;
   /// @endcond
 
 };

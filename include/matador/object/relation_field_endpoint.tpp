@@ -4,6 +4,18 @@
 namespace matador {
 namespace detail {
 
+template<class T>
+void basic_relation_endpoint::set_has_many_item_proxy(has_many_item_holder<T> &holder, const object_holder &obj)
+{
+  set_has_many_item_proxy(holder, obj.proxy_);
+}
+
+template<class T>
+void basic_relation_endpoint::set_has_many_item_proxy(has_many_item_holder<T> &holder, object_proxy *proxy)
+{
+  holder.has_many_to_many_item_poxy_ = proxy;
+}
+
 template < class Value >
 void basic_relation_endpoint::insert_value_into_foreign(const has_many_item_holder<Value> &holder, object_proxy *owner)
 {
@@ -185,10 +197,9 @@ void many_to_one_endpoint<
   Value, Owner, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type
 >::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
-  auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
   this->mark_holder_as_inserted(holder);
   this->set_has_many_item_proxy(holder, owner);
-  this->increment_reference_count(typed_holder.value());
+  this->increment_reference_count(holder.value());
 }
 
 template < class Value, class Owner >
@@ -196,9 +207,8 @@ void many_to_one_endpoint<Value, Owner,
   typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type
 >::remove_holder(object_store &, has_many_item_holder<Value> &holder, object_proxy *) // owner
 {
-  auto typed_holder = static_cast<has_many_item_holder<Value>&>(holder);
   this->set_has_many_item_proxy(holder, nullptr);
-  this->decrement_reference_count(typed_holder.value());
+  this->decrement_reference_count(holder.value());
 }
 
 template < class Value, class Owner >
