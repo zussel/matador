@@ -12,8 +12,8 @@ class OrmRelationTestUnit : public matador::unit_test
 public:
   OrmRelationTestUnit(const std::string &prefix, std::string dns);
 
-  void test_has_builtin_varchars();
-  void test_has_builtin_ints();
+  void test_has_many_varchars();
+  void test_has_many_ints();
   void test_has_many_delete();
   void test_belongs_to();
   void test_many_to_many();
