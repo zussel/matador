@@ -61,6 +61,7 @@ public:
   typedef has_many_iterator<T, C> iterator;                             /**< Shortcut to iterator class */
   typedef has_many_iterator_traits<T, C> traits;                        /**< Shortcut to traits class */
   typedef typename iterator::value_type value_type;                     /**< Shortcut to value type */
+  typedef typename iterator::object_type object_type;                   /**< Shortcut to object type */
   typedef typename traits::holder_container_type container_type;        /**< Shortcut to container type */
   typedef typename traits::holder_type holder_type;                     /**< Shortcut to container type */
   typedef typename traits::holder_container_type holder_container_type; /**< Shortcut to container type */

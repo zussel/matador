@@ -126,7 +126,7 @@ struct value<T, typename std::enable_if<
     return typeid(T).name();
   }
 
-  T val;
+  T val = {};
 };
 
 template<>

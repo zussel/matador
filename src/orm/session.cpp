@@ -46,17 +46,7 @@ void session::load()
   prototype_iterator last = persistence_.store().end();
   while (first != last) {
     const prototype_node &node = (*first++);
-    if (node.is_abstract()) {
-      continue;
-    }
-
-    // find corresponding table and load entities
-    auto i = persistence_.find_table(node.type());
-    if (i == persistence_.end()) {
-      // Todo: replace with persistence exception
-      throw_object_exception("couldn't find table");
-    }
-    load(i->second);
+    load(node);
   }
   persistence_.proxy_change_queue_.clear();
 }
@@ -68,16 +58,7 @@ void session::load(const std::string &name)
     throw_object_exception("couldn't find prototype node");
   }
 
-  if (i->is_abstract()) {
-    return;
-  }
-
-  auto t = persistence_.find_table(i->type());
-  if (t == persistence_.end()) {
-    throw_object_exception("couldn't find table");
-  }
-
-  load(t->second);
+  load(*i);
 }
 
 transaction session::begin()
@@ -100,6 +81,21 @@ const object_store &session::store() const
 void session::load(const persistence::table_ptr &table)
 {
   table->load(persistence_.store());
+}
+
+void session::load(const prototype_node &node)
+{
+  if (node.is_abstract()) {
+    return;
+  }
+
+  // find corresponding table and load entities
+  auto i = persistence_.find_table(node.type());
+  if (i == persistence_.end()) {
+    // Todo: replace with persistence exception
+    throw_object_exception("couldn't find table");
+  }
+  load(i->second);
 }
 
 session::session_transaction_observer::session_transaction_observer(session &s)

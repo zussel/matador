@@ -144,10 +144,6 @@ public:
     for (auto i = range.first; i != range.second; ++i)
     {
       container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
-      if (!std::is_base_of<basic_has_many_to_many_item, value_type>::value && i->second.second == nullptr) {
-        ++(*proxy(i->second.first));
-      }
-
     }
 
     id_multi_map_.erase(id);

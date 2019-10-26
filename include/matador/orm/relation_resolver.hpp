@@ -25,6 +25,24 @@ namespace detail {
 template < class T, class Enabled = void >
 class relation_resolver;
 
+template < typename T >
+struct relation_data_type
+{
+  typedef T value_type;
+};
+
+template < int SIZE, class T >
+struct relation_data_type<varchar<SIZE, T>>
+{
+  typedef typename varchar<SIZE, T>::value_type value_type;
+};
+
+template < typename T >
+bool is_same_type(const std::shared_ptr<detail::basic_relation_data> &rdata)
+{
+  return rdata->type_index() == std::type_index(typeid(typename relation_data_type<T>::value_type));
+}
+
 template < class T >
 class relation_resolver<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
 {
@@ -117,7 +135,7 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &, cascade_type)
+  void serialize(const char *id, basic_has_many<V, C> &x, cascade_type)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);
@@ -144,11 +162,11 @@ public:
       throw_object_exception("couldn't find endpoint for field " << id);
     }
 
-    if (data->second->type_index() == std::type_index(typeid(V))) {
+    if (is_same_type<V>(data->second)) {
       // correct type
-      auto rdata = std::static_pointer_cast<detail::relation_data<typename basic_has_many<V, C>::value_type>>(data->second);
+      auto rdata = std::static_pointer_cast<detail::relation_data<typename basic_has_many<V, C>::object_type>>(data->second);
 
-//      rdata->insert_into_container(proxy_->pk(), x);
+      rdata->insert_into_container(proxy_->pk(), x);
     }
   }
 
@@ -194,7 +212,6 @@ public:
     } else {
       left_table_ = left_table_it->second;
     }
-
 
     auto right_table_it = table_map.find(rc);
     if (right_table_it == table_map.end()) {

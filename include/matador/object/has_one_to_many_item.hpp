@@ -117,7 +117,7 @@ public:
 
 private:
   has_one<L> left_;
-  R right_;
+  R right_ = {};
 };
 
 template<class L, class R, int SIZE>

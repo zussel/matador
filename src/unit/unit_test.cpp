@@ -95,7 +95,7 @@ void unit_test::assert_true(bool a, int line, const char *file)
   ++current_test_func_info->assertion_count;
   if (!a) {
     std::stringstream msgstr;
-    msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is false";
+    msgstr << "FAILURE at " << file << ":" << line << ": expected value to be true";
     throw unit_exception(msgstr.str());
   }
 }
@@ -105,7 +105,7 @@ void unit_test::assert_false(bool a, int line, const char *file)
   ++current_test_func_info->assertion_count;
   if (a) {
     std::stringstream msgstr;
-    msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is true";
+    msgstr << "FAILURE at " << file << ":" << line << ": expected value to be false";
     throw unit_exception(msgstr.str());
   }
 }
@@ -115,7 +115,7 @@ void unit_test::expect_true(bool a, int line, const char *file)
   ++current_test_func_info->error_count;
   if (!a) {
     ++current_test_func_info->errors;
-    std::cout << "ERROR at " << file << ":" << line << ": value " << a << " is false";
+    std::cout << "ERROR at " << file << ":" << line << ": expected value to be true";
   }
 }
 
@@ -124,7 +124,7 @@ void unit_test::expect_false(bool a, int line, const char *file)
   ++current_test_func_info->error_count;
   if (a) {
     ++current_test_func_info->errors;
-    std::cout << "ERROR at " << file << ":" << line << ": value " << a << " is false";
+    std::cout << "ERROR at " << file << ":" << line << ": expected value to be false";
   }
 }
 
