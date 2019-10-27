@@ -58,7 +58,7 @@ SET (TEST_SQL_SOURCES
   sql/ValueUnitTest.cpp
   sql/ValueUnitTest.hpp
   sql/PostgreSQLDialectTestUnit.cpp
-  sql/PostgreSQLDialectTestUnit.hpp)
+  sql/PostgreSQLDialectTestUnit.hpp orm/PrimaryKeyTestUnit.cpp orm/PrimaryKeyTestUnit.hpp)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp
