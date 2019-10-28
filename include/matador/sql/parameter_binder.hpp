@@ -58,7 +58,7 @@ template < class T >
 class parameter_binder : public serializer
 {
 public:
-  parameter_binder(const std::string &id, T &param, size_t index, detail::parameter_binder_impl *impl)
+  parameter_binder(const std::string &id, const T &param, size_t index, detail::parameter_binder_impl *impl)
     : id_(id), param_(param), impl_(impl)
   {
     impl_->initialize_index(index);
@@ -111,7 +111,7 @@ private:
 private:
   const std::string &id_;
 
-  T &param_;
+  const T &param_;
 
   detail::parameter_binder_impl *impl_;
 };
@@ -120,7 +120,7 @@ template <>
 class parameter_binder<std::string> : public serializer
 {
 public:
-  parameter_binder(const std::string &id, std::string &param, size_t index, detail::parameter_binder_impl *impl)
+  parameter_binder(const std::string &id, const std::string &param, size_t index, detail::parameter_binder_impl *impl)
     : id_(id), param_(param), impl_(impl)
   {
     impl_->initialize_index(index);
@@ -184,7 +184,7 @@ private:
 private:
   const std::string &id_;
 
-  std::string &param_;
+  const std::string &param_;
 
   detail::parameter_binder_impl *impl_;
 };

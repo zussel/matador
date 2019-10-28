@@ -67,7 +67,7 @@ public:
 
     host_var_ = bind_vars().at(pos);
 
-    matador::parameter_binder<V> binder(host_var_, val, pos, this->binder());
+    matador::parameter_binder<typename std::remove_const<V>::type> binder(host_var_, val, pos, this->binder());
     pos = binder.bind(obj);
 
     host_var_.clear();

@@ -2,9 +2,11 @@
 // Created by sascha on 27.10.19.
 //
 
-#include <matador/utils/identifier.hpp>
-#include <matador/orm/persistence.hpp>
 #include "PrimaryKeyTestUnit.hpp"
+
+#include "matador/utils/identifier.hpp"
+#include "matador/orm/persistence.hpp"
+#include "matador/orm/session.hpp"
 
 PrimaryKeyTestUnit::PrimaryKeyTestUnit(const std::string &prefix, std::string dns)
   : unit_test(prefix + "_pk", prefix + " primary key test unit")
@@ -30,6 +32,8 @@ struct user
     s.serialize("email", email);
     s.serialize("name", name, 255);
   }
+
+
 };
 
 void PrimaryKeyTestUnit::test_string_pk()
@@ -40,5 +44,16 @@ void PrimaryKeyTestUnit::test_string_pk()
 
   p.create();
 
+  matador::session s(p);
 
+  auto hans = new user{"hans@email.com", "hans"};
+  auto optr = s.insert(hans);
+
+  s.flush();
+
+  optr.modify()->email = "hans@email.de";
+
+  s.flush();
+
+  p.drop();
 }
