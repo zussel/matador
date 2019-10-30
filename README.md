@@ -77,14 +77,18 @@ session s(p);
 // insert george
 // returns an matador::object_ptr<person>
 auto george = s.insert(new person(1, "george"));
+// flush changes
+s.flush();
 
 // modify george
-george->age = 35;
-s.update(george);
+george.modify()->age = 35;
 // add color
-s.push_back(george->colors, "brown");
+george.modify()->colors.push_back("brown");
+s.flush();
+
 // delete george
 s.remove(george);
+s.flush();
 ```
 Requirements
 ------------
