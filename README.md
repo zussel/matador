@@ -46,9 +46,9 @@ using namespace matador
 struct person
 {
   identifier<long> id;   // primary key
-  varchar<256> name;
+  std::string name;
   unsigned int age = 0;
-  has_many<std::string> colors;
+  has_many<varchar<255>> colors;
   
   person(long i, std::string n)
     : id(i), name(std::move(n))
@@ -57,7 +57,7 @@ struct person
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer) {
     serializer.serialize("id", id);
-    serializer.serialize("name", name);
+    serializer.serialize("name", name, 255);
     serializer.serialize("age", age);
     serializer.serialize("person_color", colors, "person_id",   "color");
     //                    table name     member   left column   right column
