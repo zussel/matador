@@ -160,9 +160,13 @@ public:
    */
   void update(object_proxy *proxy) override
   {
+    auto it = persistence_.proxy_identifier_map_.find(proxy);
+    if (it == persistence_.proxy_identifier_map_.end()) {
+      throw_object_exception("couldn't find proxy " << proxy);
+    }
     auto *obj = static_cast<table_type *>(proxy->obj());
     size_t pos = update_.bind(0, obj);
-    binder_.bind(obj, &update_, pos);
+    binder_.bind(obj, &update_, pos, it->second.get());
     // Todo: check result
     update_.execute();
   }
@@ -177,7 +181,7 @@ public:
    */
   void remove(object_proxy *proxy) override
   {
-    binder_.bind(static_cast<table_type *>(proxy->obj()), &delete_, 0);
+    binder_.bind(static_cast<table_type *>(proxy->obj()), &delete_, 0, proxy->pk());
     // Todo: check result
     delete_.execute();
   }

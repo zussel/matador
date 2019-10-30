@@ -240,6 +240,8 @@ public:
   bool is_log_enabled() const;
 
 private:
+  template < class T, class Enabled >
+  friend class table;
   template < class T >
   friend class persistence_observer;
   friend class session;
@@ -270,6 +272,8 @@ private:
   std::vector<proxy_change> proxy_change_queue_;
 
   std::unordered_set<object_proxy*> proxies_to_delete_;
+
+  std::unordered_map<object_proxy*, std::unique_ptr<basic_identifier>> proxy_identifier_map_;
 };
 
 }

@@ -38,6 +38,7 @@ void session::flush()
   }
   persistence_.conn().commit();
   persistence_.proxy_change_queue_.clear();
+  persistence_.proxy_identifier_map_.clear();
 }
 
 void session::load()

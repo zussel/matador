@@ -25,7 +25,7 @@ public:
   identifier_binder() = default;
   virtual ~identifier_binder() = default;
 
-  void bind(T *obj, statement<T> *stmt, size_t pos);
+  void bind(T *obj, statement<T> *stmt, size_t pos, basic_identifier *id);
 
   template<class V>
   void serialize(V &x)
@@ -48,7 +48,7 @@ public:
   void serialize(const char*, abstract_has_many&, cascade_type) {}
 
 private:
-  void setup(statement<T> *stmt, T *obj, size_t pos);
+  void setup(statement<T> *stmt, T *obj, size_t pos, basic_identifier *id);
 
   void cleanup();
 
@@ -56,12 +56,13 @@ private:
   statement<T> *stmt_ = nullptr;
   size_t pos_ = 0;
   T *obj_ = nullptr;
+  basic_identifier* id_ = nullptr;
 };
 
 template<class T>
-void identifier_binder<T>::bind(T *obj, statement<T> *stmt, size_t pos)
+void identifier_binder<T>::bind(T *obj, statement<T> *stmt, size_t pos, basic_identifier *id)
 {
-  setup(stmt, obj, pos);
+  setup(stmt, obj, pos, id);
 
   matador::access::serialize(*this, *obj);
 
@@ -76,11 +77,12 @@ void identifier_binder<T>::serialize(const char *, identifier<V> &x)
 }
 
 template < class T >
-void identifier_binder<T>::setup(statement <T> *stmt, T *obj, size_t pos)
+void identifier_binder<T>::setup(statement <T> *stmt, T *obj, size_t pos, basic_identifier *id)
 {
   stmt_ = stmt;
   pos_ = pos;
   obj_ = obj;
+  id_ = id;
 }
 
 template < class T >
@@ -89,6 +91,7 @@ void identifier_binder<T>::cleanup()
   stmt_ = nullptr;
   pos_ = 0;
   obj_ = nullptr;
+  id_ = nullptr;
 }
 
 /// @endcond
