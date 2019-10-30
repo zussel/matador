@@ -427,8 +427,8 @@ private:
   void sync_time(int y, int m, int d, int h, int min, int s, long ms);
 
 private:
-  struct timeval time_ = {};
-  struct tm tm_ = {};
+  struct timeval time_ = {0,0 };
+  struct tm tm_ = {0,0,0,0,0,0,0,0,0, 0, nullptr };
 };
 
 }

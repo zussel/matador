@@ -73,7 +73,10 @@ template < class T >
 template< class V >
 void identifier_binder<T>::serialize(const char *, identifier<V> &x)
 {
-  stmt_->bind(pos_, x.reference());
+  if (!x.is_same_type(*id_)) {
+    throw_object_exception("identifier types aren't equal");
+  }
+  stmt_->bind(pos_, static_cast<identifier<V>*>(id_)->reference());
 }
 
 template < class T >

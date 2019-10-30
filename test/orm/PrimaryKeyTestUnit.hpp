@@ -12,7 +12,7 @@ class PrimaryKeyTestUnit : public matador::unit_test
 public:
   PrimaryKeyTestUnit(const std::string &prefix, std::string dns);
 
-  void test_integer_pk();
+  void test_long_pk();
   void test_string_pk();
 
 private:
