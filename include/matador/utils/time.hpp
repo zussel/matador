@@ -428,7 +428,8 @@ private:
 
 private:
   struct timeval time_ = {0,0 };
-  struct tm tm_ = {0,0,0,0,0,0,0,0,0, 0, nullptr };
+//  struct tm tm_ = {0,0,0,0,0,0,0,0,0,0,nullptr};
+  struct tm tm_ = {};
 };
 
 }
