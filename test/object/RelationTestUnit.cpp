@@ -4,7 +4,7 @@
 
 #include <matador/object/object_view.hpp>
 
-#include "../Item.hpp"
+#include "../datatypes.hpp"
 #include "../entities.hpp"
 #include "../Blog.hpp"
 
@@ -26,16 +26,12 @@ RelationTestUnit::RelationTestUnit()
 
   add_test("insert_has_many_vector", std::bind(&RelationTestUnit::test_insert_has_many_vector, this), "test insert has many vector relation");
   add_test("has_many_vector", std::bind(&RelationTestUnit::test_has_many_vector, this), "test has many vector relation");
-//  add_test("remove_has_many_vector", std::bind(&RelationTestUnit::test_remove_has_many_vector, this), "test remove has many vector relation");
 
   add_test("has_many_list", std::bind(&RelationTestUnit::test_has_many_list, this), "test has many list relation");
   add_test("has_many_builtin", std::bind(&RelationTestUnit::test_has_many_builtin, this), "test has many relation with builtin");
 
   add_test("has_many_to_many", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to many relation");
   add_test("remove_has_many_to_many", std::bind(&RelationTestUnit::test_remove_has_many_to_many, this), "test remove has many to many relation");
-
-//  add_test("remove_has_many_object", std::bind(&RelationTestUnit::test_remove_has_many_object, this), "test remove has many object relation");
-//  add_test("remove_has_many_builtin", std::bind(&RelationTestUnit::test_remove_has_many_builtin, this), "test remove has many builtin relation");
 
   add_test("blog_single", std::bind(&RelationTestUnit::test_blog_single_post, this), "test blog single post relations");
   add_test("blog_multi", std::bind(&RelationTestUnit::test_blog_multi_posts, this), "test blog multiple posts relations");
@@ -354,7 +350,8 @@ void RelationTestUnit::test_insert_belongs_to_many()
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY);
 
   auto george_ptr = matador::make_unique<employee>("george");
-  george_ptr->dep(new department("insurance"));
+  auto dep = new department("insurance");
+  george_ptr->dep(dep);
 
   auto george = store.insert(george_ptr.release());
 
@@ -807,11 +804,6 @@ void RelationTestUnit::test_has_many_vector()
   UNIT_ASSERT_EQUAL(tim.reference_count(), 0UL);
 }
 
-void RelationTestUnit::test_remove_has_many_vector()
-{
-
-}
-
 void RelationTestUnit::test_has_many_list()
 {
   matador::object_store store;
@@ -919,7 +911,6 @@ void RelationTestUnit::test_has_many_builtin()
 
 void RelationTestUnit::test_has_many_to_many()
 {
-//  std::cout << "\n";
   matador::object_store store;
 
   store.attach<person>("person");
@@ -1017,16 +1008,6 @@ void RelationTestUnit::test_has_many_to_many()
   UNIT_ASSERT_TRUE(art->students.empty());
   UNIT_ASSERT_EQUAL(art.reference_count(), 0UL);
   UNIT_ASSERT_EQUAL(art->students.size(), 0UL);
-}
-
-void RelationTestUnit::test_remove_has_many_object()
-{
-
-}
-
-void RelationTestUnit::test_remove_has_many_builtin()
-{
-
 }
 
 void RelationTestUnit::test_remove_has_many_to_many()

@@ -1,5 +1,6 @@
 #include "matador/object/abstract_has_many.hpp"
 #include "matador/object/object_proxy.hpp"
+#include "matador/object/basic_has_many_item_holder.hpp"
 
 namespace matador {
 

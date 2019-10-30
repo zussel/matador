@@ -185,6 +185,8 @@ public:
 private:
   void load(const persistence::table_ptr &table);
 
+  void load(const prototype_node &node);
+
 private:
   class session_transaction_observer : public transaction::observer, public action_visitor
   {

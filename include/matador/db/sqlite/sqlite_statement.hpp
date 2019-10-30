@@ -18,6 +18,8 @@
 #ifndef SQLITE_STATEMENT_HPP
 #define SQLITE_STATEMENT_HPP
 
+#include "matador/db/sqlite/sqlite_parameter_binder.hpp"
+
 #include "matador/sql/statement_impl.hpp"
 
 #include <string>
@@ -28,7 +30,6 @@ struct sqlite3_stmt;
 
 namespace matador {
 
-class varchar_base;
 class basic_identifier;
 
 namespace sqlite {
@@ -38,7 +39,7 @@ class sqlite_connection;
 class sqlite_statement : public matador::detail::statement_impl
 {
 public:
-  sqlite_statement(sqlite_connection &db, const std::string &stmt);
+  sqlite_statement(sqlite_connection &db, const matador::sql &sql);
   ~sqlite_statement() override;
 
   void clear() override;
@@ -46,30 +47,14 @@ public:
   void reset() override;
 
 protected:
-  void serialize(const char *id, char &x) override;
-  void serialize(const char *id, short &x) override;
-  void serialize(const char *id, int &x) override;
-  void serialize(const char *id, long &x) override;
-  void serialize(const char *id, unsigned char &x) override;
-  void serialize(const char *id, unsigned short &x) override;
-  void serialize(const char *id, unsigned int &x) override;
-  void serialize(const char *id, unsigned long &x) override;
-  void serialize(const char *id, float &x) override;
-  void serialize(const char *id, double &x) override;
-  void serialize(const char *id, bool &x) override;
-  void serialize(const char *id, char *x, size_t s) override;
-  void serialize(const char *id, varchar_base &x) override;
-  void serialize(const char *id, std::string &x) override;
-  void serialize(const char *id, matador::date &x) override;
-  void serialize(const char *id, matador::time &x) override;
-  void serialize(const char *id, basic_identifier &x) override;
-  void serialize(const char *id, identifiable_holder&x, cascade_type) override;
+
+  detail::parameter_binder_impl *binder() const override;
 
 private:
   sqlite_connection &db_;
   sqlite3_stmt *stmt_;
 
-  std::vector<std::shared_ptr<std::string> > host_strings_;
+  std::unique_ptr<sqlite_parameter_binder> binder_;
 };
 
 }

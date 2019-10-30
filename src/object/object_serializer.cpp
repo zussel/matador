@@ -17,7 +17,6 @@
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-#include "matador/utils/varchar.hpp"
 
 #include "matador/object/object_serializer.hpp"
 #include "matador/object/object_store.hpp"
@@ -26,9 +25,6 @@ using namespace std::placeholders;
 using namespace std;
 
 namespace matador {
-
-object_serializer::~object_serializer()
-{}
 
 void object_serializer::serialize(const char *, char *c, size_t s)
 {
@@ -42,6 +38,23 @@ void object_serializer::serialize(const char *, char *c, size_t s)
 
     buffer_->append(&len, sizeof(len));
     buffer_->append(c, len);
+  }
+}
+
+void object_serializer::serialize(const char *, std::string &s, size_t)
+{
+  if (restore) {
+    size_t len = 0;
+    buffer_->release(&len, sizeof(len));
+    char *str = new char[len];
+    buffer_->release(str, len);
+    s.assign(str, len);
+    delete [] str;
+  } else {
+    size_t len = s.size();
+
+    buffer_->append(&len, sizeof(len));
+    buffer_->append(s.c_str(), len);
   }
 }
 
@@ -77,7 +90,7 @@ void object_serializer::serialize(const char *id, date &x)
 void object_serializer::serialize(const char *id, time &x)
 {
   if (restore) {
-    struct timeval tv;
+    struct timeval tv{};
     buffer_->release(&tv.tv_sec, sizeof(tv.tv_sec));
     buffer_->release(&tv.tv_usec, sizeof(tv.tv_usec));
     x.set(tv);

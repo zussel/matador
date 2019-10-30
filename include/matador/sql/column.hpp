@@ -203,15 +203,11 @@ std::shared_ptr<detail::typed_column> make_typed_column(const std::string &col)
  * Create a varchar typed column object with the given
  * name and varchar size of the column
  *
- * @tparam C The size of the varchar column
  * @param col The name of the column
+ * @param size Size of the varchar
  * @return The varchar typed column
  */
-template < unsigned int C >
-std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col)
-{
-  return std::make_shared<detail::typed_varchar_column>(col, C, data_type_traits<varchar<C>>::type());
-}
+OOS_SQL_API std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col, size_t size);
 
 /**
  * @brief Create a identifier typed column object
@@ -354,6 +350,22 @@ struct value_column<const char*> : public basic_value_column
   : basic_value_column(col, new value<char*>(val, s))
   { }
 };
+
+//template <>
+//struct value_column<std::string> : public basic_value_column
+//{
+//  value_column(const std::string &col, basic_value *val)
+//  : basic_value_column(col, val)
+//  { }
+//
+//  value_column(const std::string &col, const std::string &val, size_t)
+//    : basic_value_column(col, new value<std::string>(val))
+//  { }
+//
+//  value_column(const char *col, const std::string &val, size_t)
+//  : basic_value_column(col, new value<std::string>(val))
+//  { }
+//};
 
 /// @endcond
 

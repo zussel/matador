@@ -20,6 +20,7 @@ OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, std::string dns)
   add_test("load_has_many_to_many", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many, this), "test load has many to many from table");
   add_test("load_has_many_to_many_remove", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many_remove, this), "test load has many to many from table with remove");
   add_test("load_has_many_int", std::bind(&OrmReloadTestUnit::test_load_has_many_int, this), "test load has many int from table");
+  add_test("load_has_many_varchar", std::bind(&OrmReloadTestUnit::test_load_has_many_varchar, this), "test load has many varchar from table");
   add_test("load_belongs_to_many", std::bind(&OrmReloadTestUnit::test_load_belongs_to_many, this), "test load belongs to many from table");
 }
 
@@ -554,6 +555,71 @@ void OrmReloadTestUnit::test_load_has_many_int()
       UNIT_EXPECT_FALSE(it == result_ints.end());
     }
 
+  }
+
+  p.drop();
+}
+
+using many_varchars = many_builtins<matador::varchar<255>, std::list>;
+
+void OrmReloadTestUnit::test_load_has_many_varchar()
+{
+  matador::persistence p(dns_);
+
+  p.attach<many_varchars>("many_varchars");
+
+  p.create();
+
+  {
+    matador::session s(p);
+
+    auto varcharlist = s.insert(new many_varchars);
+
+    s.flush();
+
+    UNIT_ASSERT_GREATER(varcharlist->id, 0UL);
+    UNIT_ASSERT_TRUE(varcharlist->elements.empty());
+
+    varcharlist.modify()->elements.push_back("welt");
+
+    s.flush();
+
+    UNIT_ASSERT_EQUAL(varcharlist->elements.front(), "welt");
+    UNIT_ASSERT_EQUAL(varcharlist->elements.back(), "welt");
+
+    varcharlist.modify()->elements.push_front("hallo");
+
+    s.flush();
+
+    UNIT_ASSERT_EQUAL(varcharlist->elements.front(), "hallo");
+
+    UNIT_ASSERT_FALSE(varcharlist->elements.empty());
+    UNIT_ASSERT_EQUAL(varcharlist->elements.size(), 2UL);
+  }
+
+  p.clear();
+
+  {
+    matador::session s(p);
+
+    s.load();
+
+    typedef matador::object_view<many_varchars > t_many_varchars_view;
+    t_many_varchars_view varchars_view(s.store());
+
+    UNIT_ASSERT_TRUE(!varchars_view.empty());
+    UNIT_ASSERT_EQUAL(varchars_view.size(), 1UL);
+
+    auto varcharlist = varchars_view.front();
+
+    UNIT_ASSERT_FALSE(varcharlist->elements.empty());
+    UNIT_ASSERT_EQUAL(varcharlist->elements.size(), 2UL);
+
+    std::vector<std::string> result_varchars({ "welt", "hallo" });
+    for (const auto &i : varcharlist->elements) {
+      auto it = std::find(result_varchars.begin(), result_varchars.end(), i);
+      UNIT_EXPECT_FALSE(it == result_varchars.end());
+    }
   }
 
   p.drop();

@@ -17,6 +17,7 @@ public:
   void test_modify();
   void test_parse();
   void test_format();
+  void test_to_date();
 };
 
 #endif /* TIMETESTUNIT_HPP */

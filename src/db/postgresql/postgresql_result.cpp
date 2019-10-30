@@ -120,9 +120,9 @@ void postgresql_result::serialize(const char *, char *x, size_t s)
   detail::get_value(res_, pos_, column_++, x, s);
 }
 
-void postgresql_result::serialize(const char *, varchar_base &x)
+void postgresql_result::serialize(const char *, std::string &x, size_t s)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, pos_, column_++, x, s);
 }
 
 void postgresql_result::serialize(const char *, std::string &x)

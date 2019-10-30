@@ -17,7 +17,6 @@
 
 #include "matador/db/mssql/mssql_result.hpp"
 
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/basic_identifier.hpp"
@@ -152,7 +151,7 @@ void mssql_result::serialize(const char *id, double &x)
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char * /*id*/, char *x, size_t s)
+void mssql_result::serialize(const char *, char *x, size_t s)
 {
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, result_index_++, SQL_C_CHAR, x, s, &info);
@@ -163,9 +162,9 @@ void mssql_result::serialize(const char * /*id*/, char *x, size_t s)
   }
 }
 
-void mssql_result::serialize(const char *id, varchar_base &x)
+void mssql_result::serialize(const char *id, std::string &x, size_t s)
 {
-  read_column(id, x);
+  read_column(id, x, s);
 }
 
 void mssql_result::serialize(const char *id, std::string &x)
@@ -205,6 +204,19 @@ void mssql_result::read_column(const char *, std::string &val)
   }
 }
 
+void mssql_result::read_column(const char *, std::string &val, size_t s)
+{
+  std::vector<char> buf(s, 0);
+  SQLLEN info = 0;
+  SQLRETURN ret = SQLGetData(stmt_, result_index_++, SQL_C_CHAR, buf.data(), s, &info);
+  if (SQL_SUCCEEDED(ret)) {
+    val.assign(buf.data(), info);
+  } else {
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+  }
+
+}
+
 void mssql_result::read_column(const char *, char &val)
 {
   SQLLEN info = 0;
@@ -216,20 +228,16 @@ void mssql_result::read_column(const char *, char &val)
   }
 }
 
-void mssql_result::read_column(const char *, varchar_base &val)
+void mssql_result::read_column(const char *, unsigned char &val)
 {
-  char *buf = new char[val.capacity()];
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index_++), SQL_C_CHAR, buf, val.capacity(), &info);
+  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index_++), SQL_C_CHAR, &val, 0, &info);
   if (SQL_SUCCEEDED(ret)) {
-    val.assign(buf, static_cast<size_t>(info));
-    delete [] buf;
+    return;
   } else {
-    delete [] buf;
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
 }
-
 
 void mssql_result::read_column(char const *, date &x)
 {

@@ -15,7 +15,6 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/string.hpp"
@@ -235,7 +234,7 @@ void mysql_result::serialize(const char *, char *x, size_t s)
 
 }
 
-void mysql_result::serialize(const char *, varchar_base &x)
+void mysql_result::serialize(const char *, std::string &x, size_t)
 {
   char *val = row_[result_index_++];
   x.assign(val);

@@ -140,13 +140,17 @@ void from_one_endpoint<
 }
 
 template < class Value, class Owner >
-void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::insert_holder(object_store &, has_many_item_holder <Value> &holder, object_proxy *owner)
+void belongs_to_many_endpoint<
+  Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type
+>::insert_holder(object_store &, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
   this->set_has_many_item_proxy(holder, owner);
 }
 
 template < class Value, class Owner >
-void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::remove_holder(object_store &, has_many_item_holder <Value> &holder, object_proxy *) // owner
+void belongs_to_many_endpoint<
+  Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type
+>::remove_holder(object_store &, has_many_item_holder<Value> &holder, object_proxy *) // owner
 {
   this->set_has_many_item_proxy(holder, nullptr);
 }
@@ -189,7 +193,9 @@ void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is
 }
 
 template < class Value, class Owner >
-void many_to_one_endpoint<Value, Owner, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
+void many_to_one_endpoint<
+  Value, Owner, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::value>::type
+>::insert_holder(object_store &/*store*/, has_many_item_holder<Value> &holder, object_proxy *owner)
 {
   this->mark_holder_as_inserted(holder);
   this->set_has_many_item_proxy(holder, owner);

@@ -23,7 +23,6 @@
 #include "utils/BlobTestUnit.hpp"
 #include "utils/DateTestUnit.hpp"
 #include "utils/TimeTestUnit.hpp"
-#include "utils/VarCharTestUnit.hpp"
 #include "utils/FactoryTestUnit.hpp"
 #include "utils/StringTestUnit.hpp"
 #include "utils/SequencerTestUnit.hpp"
@@ -33,11 +32,13 @@
 #include "object/ObjectTransactiontestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
 #include "object/PrimaryKeyUnitTest.hpp"
+#include "object/HasManyUnitTest.hpp"
 #include "object/HasManyVectorUnitTest.hpp"
 #include "object/HasManyListUnitTest.hpp"
 #include "object/RelationTestUnit.hpp"
 
 #include "orm/BlogUnitTest.hpp"
+#include "orm/PrimaryKeyTestUnit.hpp"
 #include "orm/OrmTestUnit.hpp"
 #include "orm/OrmReloadTestUnit.hpp"
 #include "orm/OrmRelationTestUnit.hpp"
@@ -50,8 +51,10 @@
 #include "sql/MSSQLDialectTestUnit.hpp"
 #include "sql/PostgreSQLDialectTestUnit.hpp"
 #include "sql/SQLiteDialectTestUnit.hpp"
+#include "sql/ValueUnitTest.hpp"
 
 #include "connections.hpp"
+
 #include <cstdlib> // EXIT_SUCCESS
 
 using namespace matador;
@@ -78,7 +81,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new DateTestUnit);
   suite.register_unit(new TimeTestUnit);
   suite.register_unit(new BlobTestUnit);
-  suite.register_unit(new VarCharTestUnit);
+//  suite.register_unit(new VarCharTestUnit);
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);
@@ -88,12 +91,14 @@ int main(int argc, char *argv[])
   suite.register_unit(new ObjectPrototypeTestUnit);
   suite.register_unit(new ObjectStoreTestUnit);
   suite.register_unit(new ObjectTransactiontestUnit);
+  suite.register_unit(new HasManyUnitTest);
   suite.register_unit(new HasManyVectorUnitTest);
   suite.register_unit(new HasManyListUnitTest);
   suite.register_unit(new RelationTestUnit);
 
   suite.register_unit(new ConditionUnitTest);
   suite.register_unit(new DialectTestUnit);
+  suite.register_unit(new ValueUnitTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
@@ -121,6 +126,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new QueryTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
+  suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));

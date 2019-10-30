@@ -21,7 +21,6 @@
 namespace matador {
 
 class object_base_ptr;
-class varchar_base;
 class basic_identifier;
 class time;
 class date;
@@ -67,7 +66,7 @@ public:
   void serialize(const char *id, matador::date &x) override;
   void serialize(const char *id, matador::time &x) override;
   void serialize(const char *id, std::string &x) override;
-  void serialize(const char *id, varchar_base &x) override;
+  void serialize(const char *id, std::string &x, size_t s) override;
   void serialize(const char *id, basic_identifier &x) override;
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
 
@@ -96,8 +95,10 @@ private:
   void prepare_bind_column(int index, enum_field_types type, matador::date &value);
   void prepare_bind_column(int index, enum_field_types type, matador::time &value);
   void prepare_bind_column(int index, enum_field_types type, std::string &value);
+  void prepare_bind_column(int index, enum_field_types type, std::string &value, size_t s);
   void prepare_bind_column(int index, enum_field_types type, char *x, size_t s);
-  void prepare_bind_column(int index, enum_field_types type, varchar_base &value);
+
+  void on_truncated_data(int index, std::string &x);
 
 private:
   int column_index_ = 0;

@@ -14,7 +14,7 @@ namespace matador {
 
 class date;
 class time;
-class varchar_base;
+struct varchar_base;
 
 template <typename T, typename Enabled = void>
 struct is_builtin {

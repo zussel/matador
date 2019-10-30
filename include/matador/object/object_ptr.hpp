@@ -20,7 +20,6 @@
 
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/object_holder.hpp"
-#include "matador/object/transaction.hpp"
 #include "matador/utils/identifier_resolver.hpp"
 
 #include <memory>

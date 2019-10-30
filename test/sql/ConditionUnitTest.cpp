@@ -6,7 +6,6 @@
 
 #include "matador/sql/query.hpp"
 #include "matador/sql/condition.hpp"
-#include "matador/sql/basic_dialect.hpp"
 
 #include "TestDialect.hpp"
 

@@ -2,7 +2,7 @@
 
 #include "matador/object/object_store.hpp"
 
-#include "../Item.hpp"
+#include "../datatypes.hpp"
 
 #include <iostream>
 
@@ -35,9 +35,9 @@ void
 ObjectPrototypeTestUnit::test_find()
 {
   object_store ostore;
-  ostore.attach<Item>("item");
+  ostore.attach<datatypes>("item");
   
-  prototype_iterator i = ostore.find<Item>();
+  prototype_iterator i = ostore.find<datatypes>();
   
   UNIT_ASSERT_TRUE(i != ostore.end());
 }
@@ -51,13 +51,13 @@ ObjectPrototypeTestUnit::test_size()
   
   UNIT_ASSERT_TRUE(i->size() == 0);
 
-  ostore.attach<Item>("item");
+  ostore.attach<datatypes>("item");
     
-  i = ostore.find<Item>();
+  i = ostore.find<datatypes>();
 
   UNIT_ASSERT_TRUE(i->size() == 0);
   
-  ostore.insert(new Item);
+  ostore.insert(new datatypes);
 
   UNIT_ASSERT_TRUE(i->size() == 1);
 }
@@ -71,9 +71,9 @@ ObjectPrototypeTestUnit::test_is_parent_of()
   
   UNIT_ASSERT_TRUE(root->size() == 0);
 
-  ostore.attach<Item>("item");
+  ostore.attach<datatypes>("item");
     
-  prototype_iterator i = ostore.find<Item>();
+  prototype_iterator i = ostore.find<datatypes>();
 
   UNIT_ASSERT_FALSE(root->is_child_of(i.get()));
 
@@ -84,8 +84,8 @@ void
 ObjectPrototypeTestUnit::test_decrement()
 {
   object_store ostore;
-  ostore.attach<Item>("item");
-  ostore.attach<ItemA, Item>("item_a");
+  ostore.attach<datatypes>("item");
+  ostore.attach<ItemA, datatypes>("item_a");
 
   prototype_iterator i = ostore.end();
 
@@ -99,9 +99,9 @@ ObjectPrototypeTestUnit::one_prototype()
 {
   object_store ostore;
 
-  ostore.attach<Item>("item");
+  ostore.attach<datatypes>("item");
   
-  auto *o = ostore.create<Item>();
+  auto *o = ostore.create<datatypes>();
   
   UNIT_ASSERT_NOT_NULL(o);
 
@@ -109,17 +109,17 @@ ObjectPrototypeTestUnit::one_prototype()
   
   ostore.detach("item");
   
-  UNIT_ASSERT_EXCEPTION(ostore.create<Item>(), object_exception, "unknown prototype type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<datatypes>(), object_exception, "unknown prototype type");
 }
 
 void
 ObjectPrototypeTestUnit::prototype_hierachy()
 {
   object_store ostore;
-  ostore.attach<Item>("ITEM");
-  ostore.attach<ItemA, Item>("ITEM_A");
-  ostore.attach<ItemB, Item>("ITEM_B");
-  ostore.attach<ItemC, Item>("ITEM_C");
+  ostore.attach<datatypes>("ITEM");
+  ostore.attach<ItemA, datatypes>("ITEM_A");
+  ostore.attach<ItemB, datatypes>("ITEM_B");
+  ostore.attach<ItemC, datatypes>("ITEM_C");
 
   auto *a = ostore.create<ItemB>();
   
@@ -133,7 +133,7 @@ ObjectPrototypeTestUnit::prototype_hierachy()
   
   ostore.detach("ITEM");
   
-  UNIT_ASSERT_EXCEPTION(ostore.create<Item>(), object_exception, "unknown prototype type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<datatypes>(), object_exception, "unknown prototype type");
   UNIT_ASSERT_EXCEPTION(ostore.create<ItemA>(), object_exception, "unknown prototype type");
   UNIT_ASSERT_EXCEPTION(ostore.create<ItemC>(), object_exception, "unknown prototype type");
 }
@@ -142,10 +142,10 @@ void
 ObjectPrototypeTestUnit::prototype_traverse()
 {
   object_store ostore;
-  ostore.attach<Item>("ITEM");
-  ostore.attach<ItemA, Item>("ITEM_A");
-  ostore.attach<ItemB, Item>("ITEM_B");
-  ostore.attach<ItemC, Item>("ITEM_C");
+  ostore.attach<datatypes>("ITEM");
+  ostore.attach<ItemA, datatypes>("ITEM_A");
+  ostore.attach<ItemB, datatypes>("ITEM_B");
+  ostore.attach<ItemC, datatypes>("ITEM_C");
 
   prototype_iterator first = ostore.begin();
   prototype_iterator last = ostore.end();

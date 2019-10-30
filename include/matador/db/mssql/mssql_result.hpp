@@ -20,6 +20,7 @@
 
 #include "matador/db/mssql/mssql_exception.hpp"
 #include "matador/db/mssql/mssql_statement.hpp"
+#include "matador/db/mssql/mssql_types.hpp"
 
 #include "matador/sql/result_impl.hpp"
 #include "matador/sql/types.hpp"
@@ -63,7 +64,7 @@ public:
   {
     T val;
     SQLLEN info = 0;
-    auto type = (SQLSMALLINT)mssql_statement::type2int(matador::data_type_traits<T>::type());
+    auto type = (SQLSMALLINT)type2int(matador::data_type_traits<T>::type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (!SQL_SUCCEEDED(ret)) {
       throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
@@ -97,7 +98,7 @@ protected:
   void serialize(const char*, double&) override;
   void serialize(const char*, char *, size_t) override;
   void serialize(const char*, std::string&) override;
-  void serialize(const char*, matador::varchar_base&) override;
+  void serialize(const char*, std::string &x, size_t s) override;
   void serialize(const char*, matador::time&) override;
   void serialize(const char*, matador::date&) override;
   void serialize(const char*, matador::basic_identifier &x) override;
@@ -107,7 +108,7 @@ protected:
   void read_column(const char *, T & val)
   {
     SQLLEN info = 0;
-    auto type = (SQLSMALLINT)mssql_statement::type2int(data_type_traits<T>::type());
+    auto type = (SQLSMALLINT)type2int(data_type_traits<T>::type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index_++), type, &val, sizeof(T), &info);
     if (SQL_SUCCEEDED(ret)) {
       return;
@@ -117,8 +118,9 @@ protected:
   }
   
   void read_column(const char *, char &val);
+  void read_column(const char *, unsigned char &val);
   void read_column(const char *, std::string &val);
-  void read_column(const char *, varchar_base &val);
+  void read_column(const char *, std::string &val, size_t);
   void read_column(const char *, matador::date &val);
   void read_column(const char *, matador::time &val);
 

@@ -5,7 +5,7 @@ SET(SOURCES
   mysql_result.cpp
   mysql_prepared_result.cpp
   mysql_dialect.cpp
-)
+  mysql_parameter_binder.cpp)
 
 SET(HEADER
   ../../../include/matador/db/mysql/mysql_constants.hpp
@@ -18,7 +18,7 @@ SET(HEADER
   ../../../include/matador/db/mysql/mysql_types.hpp
   ../../../include/matador/db/mysql/mysql_dialect.hpp
   ../../../include/matador/db/mysql/mysql_constants.hpp
-)
+  ../../../include/matador/db/mysql/mysql_parameter_binder.hpp)
 
 ADD_LIBRARY(matador-mysql SHARED ${SOURCES} ${HEADER})
 

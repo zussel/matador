@@ -25,7 +25,6 @@ struct mysql_result_info
   ~mysql_result_info()
   {
       if (is_allocated) {
-        //std::cout << "deleting result buffer at address " << &buffer << " (size: " << buffer_length << ")\n";
           delete [] buffer;
       }
   }

@@ -26,7 +26,7 @@
 #include "matador/orm/persistence_observer.hpp"
 
 #include <memory>
-#include <unordered_map>
+#include <unordered_set>
 
 namespace matador {
 

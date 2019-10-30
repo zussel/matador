@@ -51,7 +51,7 @@ public:
   void serialize(const char *id, matador::date &x) override;
   void serialize(const char *id, matador::time &x) override;
   void serialize(const char *id, std::string &x) override;
-  void serialize(const char *id, varchar_base &x) override;
+  void serialize(const char *id, std::string &x, size_t s) override;
   void serialize(const char *id, basic_identifier &x) override;
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
 

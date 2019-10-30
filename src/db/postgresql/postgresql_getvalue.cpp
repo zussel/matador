@@ -2,8 +2,6 @@
 // Created by sascha on 06.06.19.
 //
 
-#include "matador/utils/varchar.hpp"
-
 #include "matador/db/postgresql/postgresql_getvalue.hpp"
 
 namespace matador {

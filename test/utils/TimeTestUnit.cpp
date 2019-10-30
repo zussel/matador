@@ -19,6 +19,7 @@ TimeTestUnit::TimeTestUnit()
   add_test("modify", std::bind(&TimeTestUnit::test_modify, this), "modify time");
   add_test("parse", std::bind(&TimeTestUnit::test_parse, this), "parse time");
   add_test("format", std::bind(&TimeTestUnit::test_format, this), "format time");
+  add_test("to_date", std::bind(&TimeTestUnit::test_to_date, this), "time to date");
 }
 
 void TimeTestUnit::test_create()
@@ -279,4 +280,27 @@ void TimeTestUnit::test_format()
   std::string tstr(to_string(t, "%H:%M:%S.%f %d.%m.%Y"));
 
   UNIT_ASSERT_EQUAL(tstr, "11:35:07.123 31.01.2015");
+}
+
+void TimeTestUnit::test_to_date()
+{
+  matador::time t1(2014, 12, 3, 20, 17, 45);
+
+  UNIT_ASSERT_EQUAL(2014, t1.year());
+  UNIT_ASSERT_EQUAL(12, t1.month());
+  UNIT_ASSERT_EQUAL(3, t1.day());
+  UNIT_ASSERT_EQUAL(20, t1.hour());
+  UNIT_ASSERT_EQUAL(17, t1.minute());
+  UNIT_ASSERT_EQUAL(45, t1.second());
+  UNIT_ASSERT_EQUAL(0, t1.milli_second());
+  UNIT_ASSERT_EQUAL(3, t1.day_of_week());
+  UNIT_ASSERT_EQUAL(336, t1.day_of_year());
+  UNIT_ASSERT_FALSE(t1.is_daylight_saving());
+  UNIT_ASSERT_FALSE(t1.is_leapyear());
+
+  matador::date d1 = t1.to_date();
+
+  UNIT_ASSERT_EQUAL(2014, d1.year());
+  UNIT_ASSERT_EQUAL(12, d1.month());
+  UNIT_ASSERT_EQUAL(3, d1.day());
 }

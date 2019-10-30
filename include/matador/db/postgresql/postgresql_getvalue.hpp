@@ -73,14 +73,14 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
   val = (T)strtof(value, &end);
 }
 
-template < typename T, typename std::enable_if<std::is_base_of<varchar_base, T>::value>::type* = nullptr>
+template < typename T, typename std::enable_if<std::is_same<T, std::string>::value>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
-  val.assign(PQgetvalue(res, (int)row, (int)col));
+  val = PQgetvalue(res, (int)row, (int)col);
 }
 
 template < typename T, typename std::enable_if<std::is_same<T, std::string>::value>::type* = nullptr>
-void get_value(PGresult *res, size_t row, size_t col, T &val)
+void get_value(PGresult *res, size_t row, size_t col, T &val, size_t)
 {
   val = PQgetvalue(res, (int)row, (int)col);
 }

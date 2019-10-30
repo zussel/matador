@@ -1,4 +1,5 @@
 #include "matador/object/object_deleter.hpp"
+#include "matador/object/object_exception.hpp"
 
 namespace matador {
 namespace detail {
@@ -34,8 +35,6 @@ object_deleter::iterator object_deleter::end()
 {
   return objects_to_remove_.end();
 }
-
-void object_deleter::serialize(const char *, char *, size_t) {}
 
 bool object_deleter::check_object_count_map() const
 {

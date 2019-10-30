@@ -107,8 +107,7 @@ matador::detail::result_impl* sqlite_connection::execute(const std::string &stmt
 
 matador::detail::statement_impl *sqlite_connection::prepare(const matador::sql &sql)
 {
-  std::string stmt(dialect_.prepare(sql));
-  return new sqlite_statement(*this, stmt);
+  return new sqlite_statement(*this, sql);
 }
 
 bool sqlite_connection::exists(const std::string &table_name)

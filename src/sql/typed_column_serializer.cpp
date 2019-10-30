@@ -5,7 +5,6 @@
 
 #include "matador/utils/identifiable_holder.hpp"
 #include "matador/utils/basic_identifier.hpp"
-#include "matador/utils/varchar.hpp"
 
 namespace matador {
 namespace detail {
@@ -106,9 +105,9 @@ void typed_column_serializer::serialize(const char *id, char *, size_t s)
   cols_->push_back(create_varchar_column_func_(id, s, data_type::type_char_pointer, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, varchar_base &x)
+void typed_column_serializer::serialize(const char *id, std::string &, size_t s)
 {
-  cols_->push_back(create_varchar_column_func_(id, x.capacity(), data_type::type_varchar, index_++));
+  cols_->push_back(create_varchar_column_func_(id, s, data_type::type_varchar, index_++));
 }
 
 void typed_column_serializer::serialize(const char *id, std::string &)

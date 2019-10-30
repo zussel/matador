@@ -4,7 +4,7 @@
 
 #include "QueryTestUnit.hpp"
 
-#include "../Item.hpp"
+#include "../datatypes.hpp"
 #include "../person.hpp"
 
 #include "matador/sql/query.hpp"
@@ -17,7 +17,7 @@ using namespace matador;
 QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador::time timeval)
   : unit_test(prefix + "_query", prefix + " query test unit")
   , db_(std::move(db))
-  , time_val_(std::move(timeval))
+  , time_val_(timeval)
 {
   add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
@@ -67,7 +67,7 @@ void QueryTestUnit::test_datatypes()
 {
   connection_.connect();
 
-  query<Item> q("item");
+  query<datatypes> q("datatypes");
 
   q.create().execute(connection_);
 
@@ -82,7 +82,7 @@ void QueryTestUnit::test_datatypes()
   unsigned long ulval = 765432182;
   bool bval = true;
   const char *cstr("Armer schwarzer Kater");
-  matador::varchar<32> vval("hallo welt");
+  std::string varcharval("hallo welt");
   std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam "
                        "nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
                        "sed diam voluptua. At vero eos et accusam et justo duo dolores et ea "
@@ -93,7 +93,7 @@ void QueryTestUnit::test_datatypes()
                        "gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
   matador::date date_val(15, 3, 2015);
   matador::time time_val(time_val_);
-  Item item;
+  datatypes item;
 
   // set values
   item.set_bool(bval);
@@ -107,7 +107,7 @@ void QueryTestUnit::test_datatypes()
   item.set_unsigned_int(uival);
   item.set_unsigned_long(ulval);
   item.set_cstr(cstr, strlen(cstr) + 1);
-  item.set_varchar(vval);
+  item.set_varchar(varcharval);
   item.set_string(strval);
   item.set_date(date_val);
   item.set_time(time_val);
@@ -121,7 +121,7 @@ void QueryTestUnit::test_datatypes()
 
   UNIT_ASSERT_TRUE(first != last);
 
-  std::unique_ptr<Item> it((first++).release());
+  std::unique_ptr<datatypes> it((first++).release());
 
   UNIT_EXPECT_EQUAL(it->get_char(), cval);
   UNIT_EXPECT_EQUAL(it->get_short(), sval);
@@ -133,7 +133,7 @@ void QueryTestUnit::test_datatypes()
   UNIT_EXPECT_EQUAL(it->get_bool(), bval);
   UNIT_EXPECT_EQUAL(it->get_cstr(), cstr);
   UNIT_EXPECT_EQUAL(it->get_string(), strval);
-  UNIT_EXPECT_EQUAL(it->get_varchar(), vval);
+  UNIT_EXPECT_EQUAL(it->get_varchar(), varcharval);
   UNIT_EXPECT_EQUAL(it->get_date(), date_val);
   UNIT_EXPECT_EQUAL(it->get_time(), time_val);
 
@@ -389,7 +389,6 @@ void QueryTestUnit::test_identifier_prepared()
   for (auto pres : res) {
     UNIT_EXPECT_EQUAL(pres->name, "hans");
     UNIT_EXPECT_GREATER(pres->id.value(), 0UL);
-    //std::cout << "id: " << pres->id.value() << "\n";
   }
 //  std::unique_ptr<pktest> pres((first++).release());
 
@@ -402,14 +401,14 @@ void QueryTestUnit::test_create()
 {
   connection_.connect();
 
-  query<Item> q("item");
+  query<datatypes> q("item");
 
   q.create().execute(connection_);
 
   auto itime = time_val_;
-  Item hans("Hans", 4711);
+  datatypes hans("Hans", 4711);
   hans.set_time(itime);
-  result<Item> res = q.insert(hans).execute(connection_);
+  result<datatypes> res = q.insert(hans).execute(connection_);
 
   res = q.select().execute(connection_);
 
@@ -419,7 +418,7 @@ void QueryTestUnit::test_create()
   auto last = res.end();
 
   while (first != last) {
-    std::unique_ptr<Item> item(first.release());
+    std::unique_ptr<datatypes> item(first.release());
     UNIT_EXPECT_EQUAL(item->get_string(), "Hans");
     UNIT_EXPECT_EQUAL(item->get_int(), 4711);
     UNIT_EXPECT_EQUAL(item->get_time(), itime);
@@ -488,7 +487,7 @@ void QueryTestUnit::test_anonymous_create()
 
   q.create({
     make_typed_id_column<long>("id"),
-    make_typed_varchar_column<32>("name"),
+    make_typed_varchar_column("name", 32),
     make_typed_column<unsigned>("age")
   });
 
@@ -512,7 +511,7 @@ void QueryTestUnit::test_anonymous_insert()
 
   q.create({
      make_typed_id_column<long>("id"),
-     make_typed_varchar_column<32>("name"),
+     make_typed_varchar_column("name", 32),
      make_typed_column<unsigned>("age")
    });
 
@@ -544,7 +543,7 @@ void QueryTestUnit::test_anonymous_update()
 
   q.create({
      make_typed_id_column<long>("id"),
-     make_typed_varchar_column<32>("name"),
+     make_typed_varchar_column("name", 32),
      make_typed_column<unsigned>("age")
    });
 
@@ -575,15 +574,15 @@ void QueryTestUnit::test_statement_insert()
 {
   connection_.connect();
 
-  query<Item> q("item");
+  query<datatypes> q("datatypes");
 
-  statement<Item> stmt(q.create().prepare(connection_));
+  statement<datatypes> stmt(q.create().prepare(connection_));
 
-  result<Item> res(stmt.execute());
+  result<datatypes> res(stmt.execute());
 
   unsigned long id(23);
   auto itime = time_val_;
-  Item hans("Hans", 4711);
+  datatypes hans("Hans", 4711);
   hans.id(id);
   hans.set_time(itime);
   stmt = q.insert(hans).prepare(connection_);
@@ -601,7 +600,10 @@ void QueryTestUnit::test_statement_insert()
   for (auto const &item : res) {
     UNIT_EXPECT_EQUAL(item->id(), 23UL);
     UNIT_EXPECT_EQUAL(item->get_string(), "Hans");
+    UNIT_EXPECT_EQUAL(item->get_varchar(), "Erde");
+    UNIT_EXPECT_EQUAL(item->get_cstr(), "Hallo");
     UNIT_EXPECT_EQUAL(item->get_int(), 4711);
+    UNIT_EXPECT_EQUAL(item->get_unsigned_char(), 'H');
     UNIT_EXPECT_EQUAL(item->get_time(), itime);
   }
 
@@ -632,7 +634,7 @@ void QueryTestUnit::test_statement_update()
   }
 
   stmt = q.select().where("name"_col == "").prepare(connection_);
-  matador::varchar<255> name("hans");
+  std::string name("hans");
   stmt.bind(0, name);
   res = stmt.execute();
 
@@ -647,8 +649,6 @@ void QueryTestUnit::test_statement_update()
     UNIT_EXPECT_EQUAL(p->height(), 180U);
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980));
   }
-
-//  auto id_cond = id_condition_builder::build<person>();
 
   matador::column idcol("id");
   person hans("hans", matador::date(15, 6, 1990), 165);
@@ -730,16 +730,16 @@ void QueryTestUnit::test_delete()
 //{
 //  connection_.open();
 //
-//  query<Item> q("item");
+//  query<datatypes> q("item");
 //
-//  using t_object_item = ObjectItem<Item>;
+//  using t_object_item = ObjectItem<datatypes>;
 //
 //  // create item table and insert item
-//  result<Item> res(q.create().execute(connection_));
+//  result<datatypes> res(q.create().execute(connection_));
 //
 //  auto itime = time_val_;
 //  matador::identifier<unsigned long> id(23);
-//  Item *hans = new Item("Hans", 4711);
+//  datatypes *hans = new datatypes("Hans", 4711);
 //  hans->id(id.value());
 //  hans->set_time(itime);
 //  res = q.insert(*hans).execute(connection_);
@@ -760,7 +760,7 @@ void QueryTestUnit::test_delete()
 //  while (first != last) {
 //    std::unique_ptr<t_object_item> obj(first.release());
 //
-//    object_ptr<Item> i = obj->ptr();
+//    object_ptr<datatypes> i = obj->ptr();
 //    UNIT_ASSERT_TRUE(i.has_primary_key());
 //    UNIT_ASSERT_TRUE(*i.primary_key() == id);
 //
@@ -1131,7 +1131,7 @@ void QueryTestUnit::test_prepared_statement()
 
   q.create({
 	  make_typed_id_column<long>("id"),
-	  make_typed_varchar_column<32>("name"),
+	  make_typed_varchar_column("name", 32),
 	  make_typed_column<unsigned>("age")
   });
 
@@ -1294,7 +1294,7 @@ void QueryTestUnit::test_rows()
   q.create({
              make_typed_id_column<long>("id"),
              make_typed_column<std::string>("string"),
-             make_typed_varchar_column<32>("varchar"),
+             make_typed_varchar_column("varchar", 32),
              make_typed_column<int>("int"),
              make_typed_column<float>("float"),
              make_typed_column<double>("double"),

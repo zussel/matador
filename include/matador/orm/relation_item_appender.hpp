@@ -44,6 +44,7 @@ public:
   template<class T>
   void serialize(const char *, T &) {}
   void serialize(const char *, char *, size_t) { }
+  void serialize(const char *, std::string &, size_t) { }
 
   template < class HAS_ONE >
   void serialize(const char*, HAS_ONE&, cascade_type) { }

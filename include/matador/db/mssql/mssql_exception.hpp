@@ -51,8 +51,6 @@ class mssql_exception : public sql_exception
 {
 public:
   mssql_exception(const std::string &source, const std::string &what);
-
-  virtual ~mssql_exception() throw();
 };
 
 class mssql_stmt_exception : public sql_exception
@@ -60,8 +58,6 @@ class mssql_stmt_exception : public sql_exception
 public:
   explicit mssql_stmt_exception(const std::string &what);
   mssql_stmt_exception(const std::string &source, const std::string &what);
-  
-  virtual ~mssql_stmt_exception() throw();
 };
 
 }

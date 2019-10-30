@@ -15,7 +15,6 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/basic_identifier.hpp"
@@ -234,7 +233,7 @@ void sqlite_result::serialize(const char *, char *x, size_t s)
   }
 }
 
-void sqlite_result::serialize(const char *, varchar_base &x)
+void sqlite_result::serialize(const char *, std::string &x, size_t)
 {
   t_row::value_type val = result_[pos_][column_++];
   x.assign(val);

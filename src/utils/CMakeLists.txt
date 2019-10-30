@@ -5,7 +5,6 @@ SET(SOURCES
   calendar.cpp
   date.cpp
   time.cpp
-  varchar.cpp
   sequencer.cpp
   string.cpp
   strptime.cpp
@@ -27,7 +26,6 @@ SET(HEADER
   ../../include/matador/utils/calendar.h
   ../../include/matador/utils/date.hpp
   ../../include/matador/utils/time.hpp
-  ../../include/matador/utils/varchar.hpp
   ../../include/matador/utils/sequencer.hpp
   ../../include/matador/utils/factory.hpp
   ../../include/matador/utils/string.hpp
@@ -44,7 +42,9 @@ SET(HEADER
   ../../include/matador/utils/any.hpp
   ../../include/matador/utils/any_visitor.hpp
   ../../include/matador/utils/is_builtin.hpp
-  ../../include/matador/utils/memory.hpp)
+  ../../include/matador/utils/memory.hpp
+  ../../include/matador/utils/is_varchar.hpp
+  ../../include/matador/utils/varchar.hpp)
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
 

@@ -22,7 +22,6 @@
 
 namespace matador {
 
-class varchar_base;
 class object_base_ptr;
 
 namespace mysql {
@@ -43,7 +42,6 @@ template <> struct type_traits<unsigned long> { inline static const char* type_s
 template <> struct type_traits<bool> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<float> { inline static const char* type_string() { return "FLOAT"; } };
 template <> struct type_traits<double> { inline static const char* type_string() { return "DOUBLE"; } };
-template <> struct type_traits<varchar_base> { inline static const char* type_string() { return "VARCHAR"; } };
 template <> struct type_traits<const char*> { inline static const char* type_string() { return "VARCHAR"; } };
 template <> struct type_traits<std::string> { inline static const char* type_string() { return "TEXT"; } };
 template <> struct type_traits<object_base_ptr> { inline static const char* type_string() { return "INTEGER"; } };

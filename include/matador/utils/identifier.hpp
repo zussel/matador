@@ -256,8 +256,10 @@ public:
    * 
    * @param val String value of the identifier
    */
-  explicit identifier(const std::string &val) : id_(val)
+  explicit identifier(std::string val) : id_(std::move(val))
   { }
+
+  identifier(const char *val) :id_(val) {}
 
   /**
    * @brief Copy assigns a new identifier from given string value
@@ -267,6 +269,17 @@ public:
   identifier& operator=(const std::string &val)
   {
     id_ = val;
+    return *this;
+  }
+
+  /**
+   * @brief Copy assigns a new identifier from given string value
+   * @param val String value to be assigned
+   * @return Reference to the new identfifier
+   */
+  identifier& operator=(const char *val)
+  {
+    id_.assign(val);
     return *this;
   }
 
@@ -415,7 +428,6 @@ public:
 
 private:
   std::string id_;
-//  std::shared_ptr<std::string> id_;
 
   static std::type_index type_index_;
 };

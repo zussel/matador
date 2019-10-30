@@ -25,6 +25,24 @@ namespace detail {
 template < class T, class Enabled = void >
 class relation_resolver;
 
+template < typename T >
+struct relation_data_type
+{
+  typedef T value_type;
+};
+
+template < int SIZE, class T >
+struct relation_data_type<varchar<SIZE, T>>
+{
+  typedef typename varchar<SIZE, T>::value_type value_type;
+};
+
+template < typename T >
+bool is_same_type(const std::shared_ptr<detail::basic_relation_data> &rdata)
+{
+  return rdata->type_index() == std::type_index(typeid(typename relation_data_type<T>::value_type));
+}
+
 template < class T >
 class relation_resolver<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>
 {
@@ -61,6 +79,7 @@ public:
   template < class V >
   void serialize(const char *, V &) { }
   void serialize(const char *, char *, size_t) { }
+  void serialize(const char *, std::string &, size_t) { }
 
   template < class V >
   void serialize(const char *id, belongs_to<V> &x, cascade_type cascade);
@@ -84,7 +103,6 @@ public:
        * already read - replace proxy
        */
       x.reset(proxy, cascade);
-//      std::cout << "deleting identifier " << *pk << " (field: " << id << ", " << pk << ")\n";
       delete pk;
     } else {
       /**
@@ -93,14 +111,14 @@ public:
        * proxy map. it will be used when
        * table is read.
        */
-      basic_table::t_table_map::iterator j = table_.find_table(node->type());
+      auto j = table_.find_table(node->type());
 
       if (j == table_.end_table()) {
         throw_object_exception("unknown table " << node->type());
       }
       auto k = j->second->find_proxy(pk);
       if (k == j->second->end_proxy()) {
-        proxy = new object_proxy(pk, (T*)nullptr, node.get());
+        proxy = new object_proxy(pk, (T*)nullptr, node->tree(), node.get());
         k = j->second->insert_proxy(pk, proxy);
         x.reset(k->second.proxy, cascade, false);
       } else {
@@ -144,9 +162,9 @@ public:
       throw_object_exception("couldn't find endpoint for field " << id);
     }
 
-    if (data->second->type_index() == std::type_index(typeid(V))) {
+    if (is_same_type<V>(data->second)) {
       // correct type
-      auto rdata = std::static_pointer_cast<detail::relation_data<typename basic_has_many<V, C>::value_type>>(data->second);
+      auto rdata = std::static_pointer_cast<detail::relation_data<typename basic_has_many<V, C>::object_type>>(data->second);
 
       rdata->insert_into_container(proxy_->pk(), x);
     }
@@ -195,7 +213,6 @@ public:
       left_table_ = left_table_it->second;
     }
 
-
     auto right_table_it = table_map.find(rc);
     if (right_table_it == table_map.end()) {
       // Todo: introduce throw_orm_exception
@@ -237,6 +254,7 @@ public:
   void serialize(const char *, V &x);
 
   void serialize(const char *, char *, size_t);
+  void serialize(const char *, std::string &, size_t) { }
 
   template < class V >
   void serialize(const char *, belongs_to<V> &x, cascade_type cascade);
@@ -271,7 +289,6 @@ private:
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
       auto id = x.primary_key();
-//      std::cout << "deleting identifier " << *id << " (" << id << ")\n";
       delete id;
       x.reset(proxy, cascade);
     } else {
@@ -279,11 +296,9 @@ private:
       // find proxy in tables id(pk) proxy map
       auto id_proxy_pair = tbl->find_proxy(pk);
       if (id_proxy_pair == tbl->end_proxy()) {
-//        std::cout << "relation_resolver::" << __FUNCTION__ << ": couldn't find proxy by pk" << *pk << " (" << pk << ")\n";
-        proxy = new object_proxy(pk, (T*)nullptr, node.get());
+        proxy = new object_proxy(pk, (T*)nullptr, node->tree(), node.get());
         id_proxy_pair = tbl->insert_proxy(pk, proxy);
       } else {
-//        std::cout << "relation_resolver::" << __FUNCTION__ << ": found proxy by pk" << *pk << " (" << pk << ")\n";
         proxy = id_proxy_pair->second.proxy;
       }
       id_proxy_pair->second.primary_keys.push_back(pk);
@@ -370,6 +385,7 @@ public:
   void serialize(const char *, V &x);
 
   void serialize(const char *, char *, size_t);
+  void serialize(const char *, std::string &, size_t);
 
   template < class V >
   void serialize(const char *, belongs_to<V> &x, cascade_type cascade);
@@ -406,7 +422,7 @@ private:
     } else {
       auto idproxy = tbl->find_proxy(pk);
       if (idproxy == tbl->end_proxy()) {
-        proxy = new object_proxy(pk, (T*)nullptr, node.get());
+        proxy = new object_proxy(pk, (T*)nullptr, node->tree(), node.get());
         idproxy = tbl->insert_proxy(pk, proxy);
       } else {
         proxy = idproxy->second.proxy;

@@ -3,21 +3,20 @@
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/identifier.hpp"
-#include "matador/utils/varchar.hpp"
 
 class person
 {
 private:
     matador::identifier<unsigned long> id_;
-    matador::varchar<255> name_;
+    std::string name_;
     matador::date birthdate_;
     unsigned int height_ = 0;
 
 public:
     person() = default;
-    person(unsigned long id, const std::string &name, matador::date birthdate, unsigned int height)
+    person(unsigned long id, std::string name, matador::date birthdate, unsigned int height)
         : id_(id)
-        , name_(name)
+        , name_(std::move(name))
         , birthdate_(std::move(birthdate))
         , height_(height)
     {}
@@ -32,7 +31,7 @@ public:
     void serialize(T &serializer)
     {
         serializer.serialize("id", id_);
-        serializer.serialize("name", name_);
+        serializer.serialize("name", name_, 255);
         serializer.serialize("birthdate", birthdate_);
         serializer.serialize("height", height_);
     }
@@ -40,7 +39,7 @@ public:
     void id(unsigned long i) { id_.value(i); }
     unsigned long id() const { return id_.value(); }
 
-    std::string name() const { return name_.str(); }
+    std::string name() const { return name_; }
     void name(const std::string &name) { name_ = name; }
 
     matador::date birthdate() const { return birthdate_; }

@@ -71,7 +71,7 @@ void column_serializer::serialize(const char *id, char *, size_t)
   cols_->push_back(std::make_shared<column>(id));
 }
 
-void column_serializer::serialize(const char *id, varchar_base &)
+void column_serializer::serialize(const char *id, std::string &, size_t)
 {
   cols_->push_back(std::make_shared<column>(id));
 }

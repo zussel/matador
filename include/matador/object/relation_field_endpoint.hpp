@@ -19,6 +19,8 @@
 #define MATADOR_OBJECT_API
 #endif
 
+#include "matador/utils/is_builtin.hpp"
+
 #include "matador/object/relation_endpoint_value_inserter.hpp"
 #include "matador/object/relation_endpoint_value_remover.hpp"
 #include "matador/object/basic_has_many_to_many_item.hpp"
@@ -234,21 +236,14 @@ struct many_to_one_endpoint<Value, Owner, typename std::enable_if<std::is_base_o
   relation_endpoint_value_inserter<Value> inserter;
   relation_endpoint_value_remover<Value> remover;
 
-  void insert_holder(object_store &, has_many_item_holder<Value> &, object_proxy *) override // owner
-  { }
-  void remove_holder(object_store &, has_many_item_holder<Value> &, object_proxy *) override // owner
-  { }
+  void insert_holder(object_store &, has_many_item_holder<Value> &, object_proxy *) override {} // owner
+  void remove_holder(object_store &, has_many_item_holder<Value> &, object_proxy *) override {} // owner
 
-  void insert_value(object_proxy *, object_proxy *) override // value, owner
-  { }
+  void insert_value(object_proxy *, object_proxy *) override {} // value, owner
+  void remove_value(object_proxy *, object_proxy *) override {} // value, owner
 
-  void remove_value(object_proxy *, object_proxy *) override // value, owner
-  { }
-
-  void insert_value(const basic_has_many_item_holder &, object_proxy *) override // owner
-  { }
-  void remove_value(const basic_has_many_item_holder &, object_proxy *) override // owner
-  { }
+  void insert_value(const basic_has_many_item_holder &, object_proxy *) override {} // owner
+  void remove_value(const basic_has_many_item_holder &, object_proxy *) override {} // owner
 
   object_proxy* acquire_proxy(unsigned long , object_store &) override { return nullptr; }
 };

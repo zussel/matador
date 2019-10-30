@@ -2,10 +2,11 @@
 // Created by sascha on 1/19/16.
 //
 
+#include "matador/object/object_store.hpp"
+
 #include "HasManyListUnitTest.hpp"
 
 #include "../has_many_list.hpp"
-#include "../Item.hpp"
 #include "../entities.hpp"
 
 using namespace matador;
@@ -292,7 +293,7 @@ void HasManyListUnitTest::test_string()
   UNIT_ASSERT_EQUAL(*i, "jane");
 }
 
-using many_list_varchars = many_builtins<matador::varchar<255>, std::list>;
+using many_list_varchars = many_builtins<varchar<255>, std::list>;
 
 void HasManyListUnitTest::test_varchar()
 {
@@ -300,22 +301,22 @@ void HasManyListUnitTest::test_varchar()
 
   store.attach<many_list_varchars>("many_list_varchars");
 
-  object_ptr<many_list_varchars> mi = store.insert(new many_list_varchars);
+   object_ptr<many_list_varchars> mi = store.insert(new many_list_varchars);
 
-  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
+   UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
 
-  std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
-  for (const auto &name : names) {
-    mi.modify()->elements.push_back(name.c_str());
-  }
+   std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
+   for (const auto &name : names) {
+     mi.modify()->elements.push_back(name);
+   }
 
-  UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);
+   UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);
 
-  auto i = mi->elements.begin();
+   auto i = mi->elements.begin();
 
-  UNIT_ASSERT_EQUAL(*i, "george");
+   UNIT_ASSERT_EQUAL(*i, "george");
 
-  i++;
+   i++;
 
-  UNIT_ASSERT_EQUAL(*i, "jane");
+   UNIT_ASSERT_EQUAL(*i, "jane");
 }

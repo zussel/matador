@@ -1,6 +1,6 @@
 #include "TransactionTestUnit.hpp"
 
-#include "../Item.hpp"
+#include "../datatypes.hpp"
 #include "../person.hpp"
 #include "../entities.hpp"
 
@@ -68,7 +68,7 @@ void TransactionTestUnit::test_nested()
 {
   matador::persistence p(dns_);
 
-  p.attach<Item>("item");
+  p.attach<datatypes>("item");
 
   p.create();
 
@@ -79,10 +79,10 @@ void TransactionTestUnit::test_nested()
 
   try {
     // ... do some serializable modifications
-    typedef object_ptr<Item> item_ptr;
-    typedef object_view<Item> item_view;
+    typedef object_ptr<datatypes> item_ptr;
+    typedef object_view<datatypes> item_view;
     // insert new serializable
-    item_ptr item = s.store().insert(new Item("Hello World", 70));
+    item_ptr item = s.store().insert(new datatypes("Hello World", 70));
     UNIT_ASSERT_GREATER(item->id(), 0UL);
     tr.commit();
 
@@ -151,8 +151,8 @@ void TransactionTestUnit::test_foreign()
 {
   matador::persistence p(dns_);
 
-  p.attach<Item>("item");
-  p.attach<ObjectItem<Item>>("object_item");
+  p.attach<datatypes>("item");
+  p.attach<ObjectItem<datatypes>>("object_item");
 
   p.create();
 
@@ -175,11 +175,11 @@ void TransactionTestUnit::test_foreign()
   transaction tr = s.begin();
   try {
     // ... do some serializable modifications
-    typedef ObjectItem<Item> object_item_t;
+    typedef ObjectItem<datatypes> object_item_t;
     typedef object_ptr<object_item_t> object_item_ptr;
-    typedef object_ptr<Item> item_ptr;
+    typedef object_ptr<datatypes> item_ptr;
     // insert new serializable
-    item_ptr item = s.insert(new Item("Bar", 13));
+    item_ptr item = s.insert(new datatypes("Bar", 13));
     object_item_ptr object_item = s.insert(new object_item_t("Foo", 42));
     object_item.modify()->ptr(item);
 
@@ -216,13 +216,9 @@ void TransactionTestUnit::test_foreign()
 
     UNIT_ASSERT_FALSE(oview.empty());
 
-  } catch (sql_exception &ex) {
+  } catch (std::exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  } catch (object_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
 
@@ -269,14 +265,9 @@ void TransactionTestUnit::test_has_many_list_commit()
     UNIT_ASSERT_FALSE(children->children.empty());
     UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
-  } catch(sql_exception &ex) {
+  } catch(std::exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  } catch (object_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
+    UNIT_WARN("caught exception: " << ex.what() << " (start rollback)");
   }
 
   p.drop();
@@ -322,13 +313,9 @@ void TransactionTestUnit::test_has_many_list_rollback()
     UNIT_ASSERT_TRUE(children->children.empty());
     UNIT_ASSERT_EQUAL(children->children.size(), 0UL);
 
-  } catch(sql_exception &ex) {
+  } catch(std::exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  } catch (object_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
 
@@ -407,13 +394,9 @@ void TransactionTestUnit::test_has_many_list()
     UNIT_ASSERT_FALSE(children->children.empty());
     UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
-  } catch(sql_exception &ex) {
+  } catch(std::exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  } catch (object_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
 
@@ -492,13 +475,9 @@ void TransactionTestUnit::test_has_many_vector()
     UNIT_ASSERT_FALSE(children->children.empty());
     UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
 
-  } catch(sql_exception &ex) {
+  } catch(std::exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  } catch (object_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
 

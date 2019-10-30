@@ -54,7 +54,6 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
   {
     const auto &owner_holder = static_cast<const owner_type&>(holder);
     value_type value_holder(owner, owner_holder.item_proxy());
-//    std::cout << "\ncalling remove_value (value: "  << *owner << ", owner: " << owner_holder.value() << ")";
     remover.remove(owner_holder.value(), this->field, value_holder);
   }
 
@@ -110,7 +109,6 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
   {
     object_ptr<Owner> ownptr(owner);
     auto itemptr = store.insert(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column));
-//    this->increment_reference_count(itemptr);
     this->set_has_many_item_proxy(holder, itemptr);
   }
 
@@ -173,7 +171,6 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     std::unique_ptr<object_proxy> proxy(new object_proxy(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column)));
     auto itemptr = store.insert<has_one_to_many_item<Owner, Value>>(proxy.release(), true);
     this->increment_reference_count(holder.value());
-    //this->increment_reference_count(itemptr);
     ++(*itemptr);
     this->set_has_many_item_proxy(holder, itemptr);
   }
@@ -183,7 +180,6 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     object_ptr<has_one_to_many_item<Owner, Value>> itemptr(holder.item_proxy());
     store.remove(itemptr);
     this->decrement_reference_count(holder.value());
-//    this->decrement_reference_count(itemptr);
   }
 
   void insert_value(object_proxy *value, object_proxy *owner) override

@@ -699,7 +699,6 @@ public:
   template < class T >
   void remove(object_proxy *proxy, bool check_if_deletable)
   {
-//    std::cout << "deleting " << *proxy << "\n";
     if (proxy == nullptr) {
       throw_object_exception("object proxy is nullptr");
     }
