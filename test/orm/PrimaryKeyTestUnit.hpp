@@ -14,6 +14,7 @@ public:
 
   void test_long_pk();
   void test_string_pk();
+  void test_varchar_pk();
 
 private:
   std::string dns_;

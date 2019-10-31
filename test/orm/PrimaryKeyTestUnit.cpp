@@ -17,6 +17,7 @@ PrimaryKeyTestUnit::PrimaryKeyTestUnit(const std::string &prefix, std::string dn
 {
   add_test("long", std::bind(&PrimaryKeyTestUnit::test_long_pk, this), "test long primary key");
   add_test("string", std::bind(&PrimaryKeyTestUnit::test_string_pk, this), "test string primary key");
+  add_test("varchar", std::bind(&PrimaryKeyTestUnit::test_varchar_pk, this), "test varchar primary key");
 }
 
 void PrimaryKeyTestUnit::test_long_pk()
@@ -114,4 +115,60 @@ void PrimaryKeyTestUnit::test_string_pk()
   UNIT_EXPECT_EQUAL("hans@email.de", p1->email.value());
 
   p.drop();
+}
+
+struct product
+{
+  matador::identifier<varchar<255>> id;
+  std::string name;
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("id", id);
+    s.serialize("name", name, 255);
+  }
+};
+
+void PrimaryKeyTestUnit::test_varchar_pk()
+{
+  matador::persistence p(dns_);
+
+  p.attach<product>("product");
+
+  p.create();
+
+  matador::session s(p);
+
+  auto p1 = new product{"p1", "super stuff"};
+  auto optr = s.insert(p1);
+
+  s.flush();
+
+  matador::query<product> q("product");
+  matador::connection c(dns_);
+  c.connect();
+  auto id_col = "id"_col;
+  auto res = q.select().where(id_col == "p1").execute(c);
+  auto first = res.begin();
+
+  UNIT_ASSERT_TRUE(first != res.end());
+  std::unique_ptr<product> pp(first.release());
+
+  UNIT_EXPECT_EQUAL("p1", pp->id.value());
+
+  optr.modify()->id = "p2";
+
+  s.flush();
+
+  res = q.select().where(id_col == "p2").execute(c);
+  first = res.begin();
+
+  UNIT_ASSERT_TRUE(first != res.end());
+  pp.reset(first.release());
+
+  UNIT_EXPECT_EQUAL("p2", pp->id.value());
+
+  p.drop();
+
 }
