@@ -513,7 +513,7 @@ public:
   bool less(const basic_identifier &x) const override
   {
     if (this->is_same_type(x)) {
-      return id_.value.compare(static_cast<const self &>(x).reference());
+      return id_ < static_cast<const self &>(x).id_;
     } else {
       throw std::logic_error("not the same type");
     }
@@ -529,7 +529,7 @@ public:
   bool equal_to(const basic_identifier &x) const override
   {
     if (this->is_same_type(x)) {
-      return id_.value == static_cast<const identifier<varchar_type> &>(x).value();
+      return id_ == static_cast<const identifier<varchar_type> &>(x).id_;
     } else {
       throw std::logic_error("not the same type");
     }
@@ -543,9 +543,7 @@ public:
    */
   size_t hash() const override
   {
-    size_t h1 = std::hash<typename varchar_type::value_type>()(id_.value);
-    size_t h2 = std::hash<int>()(id_.size);
-    return h1 ^ (h2 << 1);
+    return id_.hash();
   }
 
   /**
