@@ -196,7 +196,7 @@ struct strings
 
 ### Time and date
 
-matador comes with its own [time](/api/classmatador_1_1time) and [date](/api/classmatador_1_1date) classes.
+matador comes with its own [time](../api/classmatador_1_1time) and [date](../api/classmatador_1_1date) classes.
 The ```serialize()``` interface is also straight forward.
 
 {% highlight cpp linenos %}
@@ -1048,7 +1048,7 @@ column age("age");
 matador::between(age, 21, 30);
 {% endhighlight %}
 
-Take a look at the [query API reference](api/classmatador_1_1query) to get an overview of the provided syntax.
+Take a look at the [query API reference](../api/classmatador_1_1query) to get an overview of the provided syntax.
 
 ## Persistence
 
@@ -1088,7 +1088,7 @@ After that is done you can deal with a session object and start building your ap
 
 ## Sessions
 
-Once the database schema is set up with the ```persistence``` object you need a [session](api/classmatador_1_1session)
+Once the database schema is set up with the ```persistence``` object you need a [session](../api/classmatador_1_1session)
 to use the ORM layer.
 
 {% highlight cpp linenos %}
@@ -1139,7 +1139,7 @@ try {
 
 matador comes with its own simple time class. It represents a time with milliseconds
 precisions. Once a time object exists it can be modified, copied or assigned. For full
-documentation see the [api](api/classmatador_1_1time/).
+documentation see the [api](../api/classmatador_1_1time/).
 
 ### Creation
 
@@ -1205,7 +1205,7 @@ t.year(2014).month(8).day(8);
 
 ### Conversions
 
-The time can be converted into a [```matador::date```](/docs/date)
+The time can be converted into a [```matador::date```](../api/classmatador_1_1date/)
 
 
 {% highlight cpp linenos %}
@@ -1227,7 +1227,7 @@ struct timeval tv = t.get_timeval();
 
 matador comes with its own simple date class. It represents a date consisting of year, month
 and day. The underlying calendar is a julian date calendar. Once a date object exists it
-can be modified, copied or assigned. For full documentation see the [api](api/classmatador_1_1date/).
+can be modified, copied or assigned. For full documentation see the [api](../api/classmatador_1_1date/).
 
 ### Creation
 
@@ -1317,7 +1317,7 @@ std::cout << "julian date: " << d.julian_date();
 The ```varchar<T>``` class represents a VARCHAR database data type. Internally it contains
 a ```std::string```. The template parameter takes the capacity of the varchar. If the assigned
 string is exceeds the capacity, the string is truncated on database. For full documentation
-see the api of [varchar_base](api/classmatador_1_1varchar__base/) and [varchar](api/classmatador_1_1varchar/).
+see the api of [varchar_base](../api/classmatador_1_1varchar__base/) and [varchar](../api/classmatador_1_1varchar/).
 
 ### Creation
 
