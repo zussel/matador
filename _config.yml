@@ -23,8 +23,8 @@ description: > # this means to ignore newlines until "baseurl:"
   relation handling out of the box, brings a unique container for all
   kind of objects, a fluent sql query interface. On top all features
   are combined into a ORM layer.
+url: "https://zussel.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 baseurl: "/matador" # the subpath of your site, e.g. /blog
-url: "https://zussel.github.io/matador" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: zussel72
 github_username:  zussel
 

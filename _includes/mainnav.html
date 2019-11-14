@@ -7,7 +7,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{{ site.url }}">matador</a>
+      <a class="navbar-brand" href="{{ '/' | relative_url }}">matador</a>
       <!--<a class="navbar-brand masthead-brand" href="#">matador</a>-->
     </div>
     <div id="navbar" class="navbar-collapse collapse pull-right">
@@ -16,7 +16,7 @@
         {% for nav in site.data.navigation.main %}
           {% if nav.title == "Api" %}
           <li{% if page.url contains "api/" %} class="active"{% endif %}>
-            <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
+            <a href="{{ nav.url | relative_url }}">{{ nav.title }}</a>
           </li>
           {% elsif nav.external %}
           <li{% if page.url == nav.url %} class="active"{% endif %}>
@@ -24,7 +24,7 @@
           </li>
           {% else %}
           <li{% if page.url == nav.url %} class="active"{% endif %}>
-            <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
+            <a href="{{ nav.url | relative_url }}">{{ nav.title }}</a>
           </li>
           {% endif %}
         {% endfor %}
