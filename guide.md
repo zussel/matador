@@ -1395,4 +1395,4 @@ Title: My other title
 {:toc .nav .nav-stacked .fixed}
 </nav>
 </div>
-<script src="{{ "/assets/javascript/guide.js" | relative_url }}"></script>
+<script src="{{ base_path }}/assets/javascript/guide.js"></script>

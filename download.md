@@ -15,7 +15,7 @@ the [nullsoft scriptable install system](http://nsis.sourceforge.net).
 
 ### Binary Packages
 
-<script src="{{ "/assets/javascript/downloads.js" | relative_url }}"></script>
+<script src="{{ base_path }}/assets/javascript/downloads.js"></script>
 <table class="table table-bordered table-striped" id="downloads">
   <thead>
     <tr>
