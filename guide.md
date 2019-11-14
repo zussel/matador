@@ -15,7 +15,7 @@ matador consists of three main parts: A container for any kind of objects, a sql
 
 The [object store](#prototypes) is the central element. Once it is configured with an object hierarchy, one can insert, update or delete any of objects of the introduced types. Create a view to access all objects of a specific type or of a specific base type. Once the [view](#views) is created all objects can be iterated or filtered via a simple [expression](#expressions). As a special feature a [transaction](#transactions) mechanism is also integrated.
 
-```cpp
+{% highlight cpp linenos %}
 struct person
 {
   matador::identifier<long> id;
@@ -39,13 +39,13 @@ int main()
 
   matador::object_view<person> view(store);
 }
-```
+{% endhighlight %}
 
 ### The SQL Query
 
 With the [query](#querries) class at hand one can write simple sql statements, prepare and execute.
 
-```cpp
+{% highlight cpp linenos %}
 matador::query<person> q("person");
 
 // select all person with name 'jane' or 'tarzan' from database
@@ -55,27 +55,28 @@ auto res = q.select().where(col == "jane" || col == "tarzan").execute();
 for (auto p : res) {
   std::cout << "my name is " << p->name << "\n";
 }
-```
+{% endhighlight %}
+
 
 ### The ORM Layer
 
 On top of the object store and the query interface comes the persistence layer. It represents the ORM mechanism provided by the library. Once a [persistence](#persistence) object is created one can again configure the object hierarchy in the same way it is done with the object store.
 
-```cpp
+{% highlight cpp linenos %}
 matador::persistence p("sqlite://db.sqlite");
 p.attach<person>("person");
-```
+{% endhighlight %}
 
 After the persistance layer is configured all the database tables can be created
 
-```cpp
+{% highlight cpp linenos %}
 p.create();
-```
+{% endhighlight %}
 
 Now you can create a session and insert, update, select or delete entities on the
 database.
 
-```cpp
+{% highlight cpp linenos %}
 session s(p);
 
 auto jane = s.insert(new person("jane"));
@@ -86,14 +87,14 @@ s.update(jane);
 
 // bye bye jane
 s.remove(jane)
-```
+{% endhighlight %}
 Once you have data in your database you can load it this way:
 
-```cpp
+{% highlight cpp linenos %}
 session s(p);
 
 s.load();
-```
+{% endhighlight %}
 
 ## Objects
 
@@ -103,7 +104,7 @@ methods.
 
 The only thing that must exist is a `serialize` function.
 
-```cpp
+{% highlight cpp linenos %}
 struct person
 {
     identifier<long> id;
@@ -118,7 +119,7 @@ struct person
         serializer.serialize("age", age);
     }
 };
-```
+{% endhighlight %}
 
 Provide such a method for all objects to be attached to the object store and you're done.
 
@@ -134,7 +135,7 @@ All arithmetic number types are supported (```char```, ```short```, ```int```, `
 
 The ```serialize()``` method takes the name of the attribute and attribute itself.
 
-```cpp
+{% highlight cpp linenos %}
 struct numbers
 {
   char char_ = 'c';
@@ -166,7 +167,7 @@ struct numbers
   }
 
 };
-```
+{% endhighlight %}
 
 ### Strings
 
@@ -174,7 +175,7 @@ There are three types of supported strings (```std::string```, ```const char*```
 ```matador::varchar<S>```). The latter is a string type representing database type VARCHAR
 taking its size as the template argument.
 
-```cpp
+{% highlight cpp linenos %}
 struct strings
 {
   enum { CSTR_LEN=255 };
@@ -191,14 +192,14 @@ struct strings
     serializer.serialize("val_varchar", varchar_);
   }
 };
-```
+{% endhighlight %}
 
 ### Time and date
 
 matador comes with its own [time](../api/classmatador_1_1time) and [date](../api/classmatador_1_1date) classes.
 The ```serialize()``` interface is also straight forward.
 
-```cpp
+{% highlight cpp linenos %}
 struct time_and_date
 {
   matador::date date_;
@@ -211,14 +212,14 @@ struct time_and_date
     serializer.serialize("val_time", time_);
   }
 };
-```
+{% endhighlight %}
 
 ### Primary keys
 
 There is also a special type ```identifier<T>``` providing primary key
 behavior. The serializer looks like this:
 
-```cpp
+{% highlight cpp linenos %}
 struct identifier_type
 {
   matador::identifier<unsigned long> id_ = 0;
@@ -229,14 +230,14 @@ struct identifier_type
     serializer.serialize("id", id_);
   }
 };
-```
+{% endhighlight %}
 
 ### Foreign Objects
 
 Foreign objects are supported by simply using ```has_one<T>```. This class acts as a wrapper
 around the object of type ```T```. It can be accessed like a pointer.
 
-```cpp
+{% highlight cpp linenos %}
 struct foreign_key
 {
   matador::has_one<T> foreign_;         // just a foreign object
@@ -247,7 +248,7 @@ struct foreign_key
     serializer.serialize("foreign", foreign_, matador::cascade_type::ALL);
   }
 };
-```
+{% endhighlight %}
 
 ```has_one<T>``` is just a link to a foreign object. With the third parameter
 in the serialize method one adjust the cascading command behavior when
@@ -262,7 +263,7 @@ deleted the foreign is deleted as well).
 Collections are supported by ```has_many<T, Container>```. By now ```has_many``` supports
 two container types ```std::vector``` (default) and ```std::list```.
 
-```cpp
+{% highlight cpp linenos %}
 struct relations
 {
   matador::has_many<T> collection_; // a collection with objects
@@ -273,7 +274,7 @@ struct relations
     serializer.serialize("collection", collection_, "local_id", "foreign_id");
   }
 };
-```
+{% endhighlight %}
 
 ```has_many<T>``` describes a collection leading to a relation table/object between
 the containing object and the foreign object. If the foreign object is of
@@ -289,13 +290,13 @@ Assume we have an abstract base class ```Vehicle``` and derived from this the
 classes ```Truck```, ```Car``` and ```Bike```. Now lets make this hierarchy known to the
 matador::object_store:
 
-```cpp
+{% highlight cpp linenos %}
 matador::object_store ostore;
 ostore.attach<Vehicle>("vehicle", true);
 ostore.attach<Truck, Vehicle>("truck");
 ostore.attach<Car, Vehicle>("car");
 ostore.attach<Bike, Vehicle>("bike");
-```
+{% endhighlight %}
 
 As you can see it is quite simple to add the hierarchy to
 the matador::object_store by calling method ```matador::object_store::attach```.
@@ -313,13 +314,13 @@ abstract type.
 Now that we've setup up our hierarchy we can insert objects into
 the matador::object_store.
 
-```cpp
+{% highlight cpp linenos %}
 typedef object_ptr<vehicle> vehicle_ptr;
 
 vehicle_ptr truck = ostore.insert(new Truck("MAN");
 vehicle_ptr car   = ostore.insert(new Car("VW Beetle");
 vehicle_ptr bike  = ostore.insert(new Bike("Honda");
-```
+{% endhighlight %}
 As you can see we use matador::object_ptr of type vehicle. The vehicle class in
 our example is the abstract base class for all concrete vehicle types.
 So the concrete vehicle object is inserted correctly and assigned to the
@@ -340,13 +341,13 @@ The ```matador::object_store``` returns an ```matador::object_ptr``` when an
 object is inserted. Once you received the ```matador::object_ptr```
 you can change your object by using it like usual pointer.
 
-```cpp
+{% highlight cpp linenos %}
 typedef matador::object_ptr<Truck> truck_ptr;
 truck_ptr truck = ostore.insert(new Truck("MAN"));
 
 truck->weight = 2.5;
 truck->color = red;
-```
+{% endhighlight %}
 **Note:** When using the raw pointer object store can't guarantee that a change is
 properly rolled back when an exception occurs.
 {: .bs-callout .bs-callout-warning}
@@ -356,7 +357,7 @@ properly rolled back when an exception occurs.
 An already inserted object can be deleted from the object store using the ```remove```
 method:
 
-```cpp
+{% highlight cpp linenos %}
 typedef matador::object_ptr<Truck> truck_ptr;
 truck_ptr truck = ostore.insert(new Truck("MAN"));
 
@@ -366,7 +367,7 @@ if (ostore.is_removable(truck)) {
 } else {
   // object can't be removed
 }
-```
+{% endhighlight %}
 The object store will check if the object is removable (i.e. there are no other objects
 referencing this object). If the object is not removable an ```object_exception``` is
 thrown.
@@ -390,7 +391,7 @@ serialize method.
 For the person in address we add the ```cascade_type::NONE```. That means if
 the address is removed the person won't be removed.
 
-```cpp
+{% highlight cpp linenos %}
 struct address
 {
   std::string street;
@@ -404,14 +405,14 @@ struct address
     serialize("citizen", citizen, cascade_type::NONE);
   }
 };
-```
+{% endhighlight %}
 
 In the persons declaration we add an ```matador::has_one<address>``` and
 the call to ```serialize``` to the class. Here we use ```cascade_type::ALL```.
 That means if the person is removed the address is removed as well.
 That's it. Now we have a one to one relationship beetween two classes.
 
-```cpp
+{% highlight cpp linenos %}
 struct person
 {
   // ...
@@ -424,7 +425,7 @@ struct person
     serialize("address", addr, cascade_type::ALL);
   }
 };
-```
+{% endhighlight %}
 
 **Node:** With this kind of relationship we have a hard linked
 relationship. Which means if we remove the person from
@@ -441,7 +442,7 @@ When using this construct the matador will take care of the following:
 - If an address object is set into persons ```address``` field the address'
 ```citizen``` field is automatically updated with this person.
 
-```cpp
+{% highlight cpp linenos %}
 // setup session/object_store
 auto george = s.insert(new person("george"));
 auto home = s.insert(new address("homestreet", "homecity"));
@@ -450,7 +451,7 @@ george->addr = home;
 
 // person george will be set into address
 std::cout << "citizen: " << home->citizen->name << "\n";
-```
+{% endhighlight %}
 
 ### OneToMany Relations
 
@@ -470,7 +471,7 @@ We change our handy ```person``` class that it has a lot of addresses.
 The ```address``` class can stay untouched because the ```belongs_to``` part
 doesn't need to change.
 
-```cpp
+{% highlight cpp linenos %}
 struct person
 {
   std::string name;
@@ -483,13 +484,13 @@ struct person
     serialize("address", addresses, "person_id", "address_id");
   }
 };
-```
+{% endhighlight %}
 Now we can add several addresses to a person object and address' ```citizen```
 field is filled again automatically.
 But it works also in the opposite way: If a person is set into an address the
 address is automatically added to persons address list.
 
-```cpp
+{% highlight cpp linenos %}
 // ...
 // create a new person
 auto joe = s.insert(new person("joe"));
@@ -503,17 +504,17 @@ std::cout << "citizen: " << home->citizen->name << "\n";
 work->citizen = joe;
 // joes addresses have now increased to two
 std::cout << "joes addresses: " << joe->addresses.size() << "\n";
-```
+{% endhighlight %}
 
 Now we can simply iterate over the list like we used to
 do it with all STL containers..
 
-```cpp
+{% highlight cpp linenos %}
 // access all friends
 for (auto addr : joe->addresses) {
   std::cout << "address street: " << addr->street << "\n";
 }
-```
+{% endhighlight %}
 
 ### ManyToMany Relations
 
@@ -521,7 +522,7 @@ Many to many relationships can also be used straight forward. Asume we
 have a class ```student``` taking a list of courses and a class ```course```
 having a list of students.
 
-```cpp
+{% highlight cpp linenos %}
 struct student
 {
   matador::has_many<course> courses;
@@ -545,12 +546,12 @@ struct course
     serialize("student_course", students, "student_id", "course_id");
   }
 };
-```
+{% endhighlight %}
 Once a student adds a course to its course list the student is added to the list
 of students of the course. And the other way around if a student is added to a course
 the course is added to the list of students course list.
 
-```cpp
+{% highlight cpp linenos %}
 auto jane = s.insert(new student("jane"));
 auto art = s.insert(new course("art"));
 auto algebra = s.insert(new course("algebra"));
@@ -560,7 +561,7 @@ std::cout << art->students.front()->name << "\n"; // prints out 'jane'
 
 art->students.push_back(jane);
 std::cout << jane->courses.size() << "\n"; // prints out '2'
-```
+{% endhighlight %}
 
 ## Views
 
@@ -571,20 +572,20 @@ to inspect.
 Again we use our little person class and insert some persons into
 our store.
 
-```cpp
+{% highlight cpp linenos %}
 // add some friends
 ostore.insert(new person("joe"))
 ostore.insert(new person("walter"));
 ostore.insert(new person("helen"));
 ostore.insert(new person("tim"));
-```
+{% endhighlight %}
 
 Than we create a view with the ```matador::object_view``` class. This class
 takes as the template parameter the desired class type. Then we can
 use the view like a STL list containing ```matador::object_ptr``` of our
 desired type.
 
-```cpp
+{% highlight cpp linenos %}
 // shortcut to the person view
 typedef matador::object_view<person> person_view_t;
 
@@ -594,7 +595,7 @@ person_view_t::iterator i = pview.begin();
 for (i; i != pview.end(); ++i) {
   std::cout << "person: " << i->name << std::endl;
 }
-```
+{% endhighlight %}
 
 But this class can to somethig more for us. If we have a hierarchy
 of classes, we can create a view of the base type and easily iterate
@@ -606,7 +607,7 @@ employee.
 And again we create a view of type person to access all objects of
 type person including sub-types student and employee.
 
-```cpp
+{% highlight cpp linenos %}
 class student : public person { //... };
 class employee : public person { //... };
 
@@ -623,7 +624,7 @@ person_view_t::iterator i = pview.begin();
 for (i; i != pview.end(); ++i) {
   std::cout << i->name() << std::endl;
 }
-```
+{% endhighlight %}
 
 ## Expressions
 
@@ -638,7 +639,7 @@ define or filter criterion?
 First add some elements (persons) to the store and create the view.
 As you can see we've extended the person class with an age attribute.
 
-```cpp
+{% highlight cpp linenos %}
 // add some persons
 ostore.insert(new person("joe", 45))
 ostore.insert(new person("walter", 56));
@@ -652,20 +653,20 @@ typedef matador::object_view<person> person_view_t;
 typedef person_view_t::iterator iterator;
 
 person_view_t pview(ostore);
-```
+{% endhighlight %}
 
 If we want to find the person of age 25 we can achieve this by using
 the ```matador::object_view::find_if``` method. But first we have to create a
 variable holding the method of our object which should be used for
 comparation. Here it is ```person::age```.
 
-```cpp
+{% highlight cpp linenos %}
 // create the variable
 matador::variable<int> x(matador::make_var(&person::age));
 
 // find the person of age 25
 iterator i = pview.find_if(x == 25);
-```
+{% endhighlight %}
 
 The call returns the first occurence of the object matching
 the expression or the end iterator.
@@ -674,7 +675,7 @@ If you want to apply a function to all objects matching a
 certain expression use ```matador::for_each_if()``` and use it in the
 following described way.
 
-```cpp
+{% highlight cpp linenos %}
 // print all persons with age between 20 and 60 years
 void print(const person_ptr &p)
 {
@@ -686,7 +687,7 @@ matador::variable<int> x(matador::make_var(&person::age));
 
 // use the for_each_if function
 for_each_if(pview.begin(), pview.end(), x > 20 && x < 60, print);
-```
+{% endhighlight %}
 
 All persons whos age lays between 40 and 60 are printed.
 
@@ -696,7 +697,7 @@ A handy feature ist the transaction mechanism provided by the ```object_store```
 object is inserted, updated or deleted the change is not reversible. If you use a transaction
 it is. Therefor a transaction must be started:
 
-```cpp
+{% highlight cpp linenos %}
 matador::object_store store;
 store.attach<person>("person");
 
@@ -712,14 +713,14 @@ try {
 } catch (std::exception &) {
   tr.rollback();
 }
-```
+{% endhighlight %}
 
 Once a transaction is started all changed are tracked until a ```commit``` is called. When it
 comes to rollback a transaction ```roolback``` must be called (i.e an exception is thrown).
 
 It is also possible to nest transaction:
 
-```cpp
+{% highlight cpp linenos %}
 matador::transaction outer(store);
 
 outer.begin();
@@ -731,7 +732,7 @@ inner.begin();
 inner.commit();
 // commit outer
 outer.commit();
-```
+{% endhighlight %}
 
 ## Databases
 
@@ -751,13 +752,13 @@ in an uri way:
 
 __Example:__
 
-```cpp
+{% highlight cpp linenos %}
 connection conn("mysql://test@localhost/mydb");
 
 conn.open();
 // ... use connection
 conn.close();
-```
+{% endhighlight %}
 
 ### Supported Databases
 
@@ -767,30 +768,30 @@ database connection string for the supported databases.
 
 #### MS SQL Server
 
-```cpp
+{% highlight cpp linenos %}
 // MSSQL connection string with password
 session ses(ostore, "mssql://user:passwd@host/db");
 
 // MSSQL connection string without password
 session ses(ostore, "mssql://user@host/db");
-```
+{% endhighlight %}
 
 #### MySQL
 
-```cpp
+{% highlight cpp linenos %}
 // MySQL connection string with password
 session ses(ostore, "mysql://user:passwd@host/db");
 
 // MySQL connection string without password
 session ses(ostore, "mysql://user@host/db");
-```
+{% endhighlight %}
 
 #### SQLite
 
-```cpp
+{% highlight cpp linenos %}
 // MySQL connection string
 session ses(ostore, "sqlite://database.sqlite");
-```
+{% endhighlight %}
 
 ## Queries
 
@@ -802,7 +803,7 @@ are two type of queries a typed one and an anonymous one dealing with a ```row``
 
 Once you have established a connection to yout database you can execute a query.
 
-```cpp
+{% highlight cpp linenos %}
 matador::connection conn("sqlite://test.sqlite");
 
 conn.open();
@@ -811,16 +812,16 @@ matador::query<person> q("person");
 
 // create the table based on the given type
 q.create().execute(conn);
-```
+{% endhighlight %}
 You can use an anonymous query as well:
 
-```cpp
+{% highlight cpp linenos %}
 
 matador::query<> q;
 auto res = count.select({columns::count_all()}).from("person").execute(*conn);
 
 int count = res.begin()->at<int>(0);
-```
+{% endhighlight %}
 
 **Note:** The query interface represents not the full command syntax. By now it provides
 basic functionality to ```create```, ```drop```, ```insert```, ```update```, ```select```
@@ -832,16 +833,16 @@ and ```delete``` a table.
 The ```create``` method is used to create a database table. The typed version looks
 like this:
 
-```cpp
+{% highlight cpp linenos %}
 matador::query<person> q("person");
 
 // create the table based on the given type
 q.create().execute(conn);
-```
+{% endhighlight %}
 
 When using the anonymous version you have to describe the fields of the table to create:
 
-```cpp
+{% highlight cpp linenos %}
 matador::query<> q("person");
 // Todo: implement functionality
 q.create({
@@ -849,47 +850,47 @@ q.create({
     make_typed_varchar_column<std::string>("name"),
     make_typed_column<unsigned>("age")
 }).execute(conn);
-```
+{% endhighlight %}
 
 #### Drop
 
 The ```drop``` method is used to drop a table. The typed usage is as follows:
 
-```cpp
+{% highlight cpp linenos %}
 matador::query<person> q("person");
 
 // create the table based on the given type
 q.drop().execute(conn);
-```
+{% endhighlight %}
 The anonymous version is like this:
 
-```cpp
+{% highlight cpp linenos %}
 matador::query<> q;
 
 // create the table based on the given type
 q.drop("person").execute(conn);
-```
+{% endhighlight %}
 
 #### Insert
 
 Inserting an object is done as simple. Just pass the object to the ```insert``` method
 and you're done.
 
-```cpp
+{% highlight cpp linenos %}
 matador::query<person> q("person");
 
 person jane("jane", 35);
 
 q.insert(jane).execute(conn);
-```
+{% endhighlight %}
 
 When building an anonymous insert statement one has to column and value fields like that
 
-```cpp
+{% highlight cpp linenos %}
 matador::query<> q("person");
 
 q.insert({"id", "name", "age"}).values({1, "jane", 35}).execute(conn);
-```
+{% endhighlight %}
 
 #### Update
 
@@ -897,7 +898,7 @@ Updating an object works the same way as inserting an object. Asume there is an 
 one can modify it and pass it to the ```update``` method. Notice the where clause with
 expression to limit the update statement. These conditions are explained [condition chapter](#conditions) bewlow
 
-```cpp
+{% highlight cpp linenos %}
 person jane("jane", 35);
 matador::query<person> q("person");
 // insert ...
@@ -905,13 +906,13 @@ jane.age = 47;
 matador::column name("name");
 
 q.update(jane).where(name == "jane").execute(conn);
-```
+{% endhighlight %}
 
 If you're dealing with an anonymous row query the update query looks like the example below. As
 you can see, it is simple done with initializer list and pairs of columns and their new
 values.
 
-```cpp
+{% highlight cpp linenos %}
 matador::query<> q("person");
 
 matador::column name("name");
@@ -919,8 +920,7 @@ q.update({
     {"name", "otto"},
     {"age", 47}
 }).where(name == "jane");
-
-```
+{% endhighlight %}
 
 #### Select
 
@@ -931,7 +931,7 @@ columns you want to use in your condition.
 Once the statement is executed you get a result object. You can iterate the result with STL
 iterators (iterator is a ```std::forward_iterator``` so you can only use it once).
 
-```cpp
+{% highlight cpp linenos %}
 matador::query<person> q("person");
 
 matador::column name("name");
@@ -944,11 +944,11 @@ auto res = q.select()
 for (auto item : res) {
     std::cout << "name: " << item.name << "\n";
 }
-```
+{% endhighlight %}
 
 The anonymous version works in the same way:
 
-```cpp
+{% highlight cpp linenos %}
 matador::query<> q;
 
 matador::column name("name");
@@ -962,14 +962,14 @@ auto rowres = q.select({"name", "age"})
 for (auto row : rowres) {
     std::cout << "name: " << row->at<std::string>("name") << "\n";
 }
-```
+{% endhighlight %}
 
 #### Delete
 
 The ```delete``` statement works similar to the other statements. If you want to delete an
 object the statement looks like this:
 
-```cpp
+{% highlight cpp linenos %}
 person jane("jane", 35);
 matador::query<person> q("person");
 // insert ...
@@ -978,7 +978,7 @@ q.insert(jane).execute(conn);
 
 matador::column name("name");
 q.delete().where(name == "jane").execute(conn);
-```
+{% endhighlight %}
 
 #### Conditions
 
@@ -996,33 +996,33 @@ With condition one can express a query where clause (for ```update```, ```delete
 To express a simple compare condition one needs a ```column``` object of the column to
 compare. Then you can write the comparision:
 
-```cpp
+{% highlight cpp linenos %}
 column name("name");
 name == "Jane"
 
 column age("age");
 age > 35
-```
+{% endhighlight %}
 
 ##### Logic Conditions
 
 To concat to simple compare condition within a logical condition just write it:
 
-```cpp
+{% highlight cpp linenos %}
 column name("name");
 column age("age");
 
 (name != "Theo" && name != "Jane") || age > 35
-```
+{% endhighlight %}
 
 ##### IN Condition
 
 With the IN condition one can check if a column value is one of a list.
 
-```cpp
+{% highlight cpp linenos %}
 column age("age");
 in(age, {23,45,72});
-```
+{% endhighlight %}
 
 ##### IN Query Condition
 
@@ -1031,22 +1031,22 @@ The IN condition works also with a query.
 __Note:__ You have to pass a dialect object as a third parameter to the function. You
 can retrieve the dialect from the connection object.
 
-```cpp
+{% highlight cpp linenos %}
 column name("name");
 auto q = matador::select({name}).from("test");
 
 matador::in(name, q, &conn.dialect());
-```
+{% endhighlight %}
 
 ##### Range Condition
 
 The range condition checks if a column value is between two given boundaries.
 
-```cpp
+{% highlight cpp linenos %}
 column age("age");
 
 matador::between(age, 21, 30);
-```
+{% endhighlight %}
 
 Take a look at the [query API reference](../api/classmatador_1_1query) to get an overview of the provided syntax.
 
@@ -1067,23 +1067,23 @@ configure all entities you want to use. For that you need an instance of class
 Once such an object is created you can attach entities in the same way it is done with
 the ```object_store```.
 
-```cpp
+{% highlight cpp linenos %}
 persistence p("sqlite://db.sqlite");
 p.attach<person>("person");
 p.attach<student, person>("student");
 p.attach<course>("course");
-```
+{% endhighlight %}
 
 Now you can create the database schema simply by calling ```create```:
 
-```cpp
+{% highlight cpp linenos %}
 p.create();
-```
+{% endhighlight %}
 Or you can drop it as well:
 
-```cpp
+{% highlight cpp linenos %}
 p.drop();
-```
+{% endhighlight %}
 After that is done you can deal with a session object and start building your app.
 
 ## Sessions
@@ -1091,20 +1091,20 @@ After that is done you can deal with a session object and start building your ap
 Once the database schema is set up with the ```persistence``` object you need a [session](../api/classmatador_1_1session)
 to use the ORM layer.
 
-```cpp
+{% highlight cpp linenos %}
 persistence p("sqlite://db.sqlite");
 p.attach<person>("person");
 
 session s(p);
-```
+{% endhighlight %}
 
 If you have already setup the persitence layer and inserted some data, just call load to
 get it into the layer.
 
-```cpp
+{% highlight cpp linenos %}
 // load the data from database
 s.load();
-```
+{% endhighlight %}
 
 Now you can start and insert, update or delete your data. Therefor create a transaction
 object with the current session and start the transaction by calling
@@ -1114,7 +1114,7 @@ database. If in error occurred while doing your modifications catch
 the exception. In the catch block you can call ```matador::transaction::rollback()```
 to rollback all your modifications.
 
-```cpp
+{% highlight cpp linenos %}
 // create a transaction for session
 
 matador::transaction tr = s.begin();
@@ -1133,7 +1133,7 @@ try {
   // on error rollback transactions
   tr.rollback();
 }
-```
+{% endhighlight %}
 
 ## Time
 
@@ -1154,9 +1154,9 @@ Time can be created from several constructors.
 
 The obvious copy and assignment constructors exists as well as a static parsing function
 
-```cpp
+{% highlight cpp linenos %}
 matador::time t = matador::time::parse("03.04.2015 12:55:12.123", "%d.%m.%Y %H:%M:%S.%f");
-```
+{% endhighlight %}
 
 The parse format tokens are the same as the ones from [```strptime```](https://linux.die.net/man/3/strptime)
 plus the ```%f``` for the milliseconds.
@@ -1165,11 +1165,11 @@ plus the ```%f``` for the milliseconds.
 
 The time consists of an stream output operator which displays the time in ISO8601 format
 
-```cpp
+{% highlight cpp linenos %}
 matador::time t(2015, 1, 31, 11, 35, 7, 123);
 
 std::cout << t;
-```
+{% endhighlight %}
 
 Results in:
 
@@ -1180,11 +1180,11 @@ Results in:
 There is also a ```to_string()``` function taking the time as first parameter and a format
 string as second parameter. It returns the formatted time as ```std::string```.
 
-```cpp
+{% highlight cpp linenos %}
 matador::time t(2015, 1, 31, 11, 35, 7, 123);
 
 std::cout << to_string(t, "%H:%M:%S.%f %d.%m.%Y");
-```
+{% endhighlight %}
 
 Results in:
 
@@ -1197,32 +1197,31 @@ Results in:
 To modify a time one can use the fluent interface allowing the user to concatenate
 all parts to be modified in sequence.
 
-```cpp
+{% highlight cpp linenos %}
 matador::time t(2015, 1, 31, 11, 35, 7);
 // modification
 t.year(2014).month(8).day(8);
-
-```
+{% endhighlight %}
 
 ### Conversions
 
 The time can be converted into a [```matador::date```](../api/classmatador_1_1date/)
 
 
-```cpp
+{% highlight cpp linenos %}
 matador::time t(2015, 1, 31, 11, 35, 7);
 
 matador::date d = t.to_date();
-```
+{% endhighlight %}
 
 There are also methods to retrieve ```tm``` and ```timeval``` struct:
 
-```cpp
+{% highlight cpp linenos %}
 matador::time t(2015, 1, 31, 11, 35, 7);
 
 struct tm ttm = t.get_tm();
 struct timeval tv = t.get_timeval();
-```
+{% endhighlight %}
 
 ## Date
 
@@ -1247,11 +1246,11 @@ The obvious copy and assignment constructors exists as well.
 
 The date consists of an stream output operator which displays the date in ISO8601 format
 
-```cpp
+{% highlight cpp linenos %}
 matador::date d(31, 1, 2015);
 
 std::cout << d;
-```
+{% endhighlight %}
 
 Results in:
 
@@ -1262,11 +1261,11 @@ Results in:
 There is also a ```to_string()``` function taking the date as first parameter and a format
 string as second parameter. It returns the formatted date as ```std::string```.
 
-```cpp
+{% highlight cpp linenos %}
 matador::date d(31, 1, 2015);
 
 std::cout << to_string(d, "%d.%m.%Y");
-```
+{% endhighlight %}
 
 Results in:
 
@@ -1279,23 +1278,23 @@ Results in:
 To modify a date one can use the fluent interface allowing the user to concatenate
 all parts to be modified in sequence.
 
-```cpp
+{% highlight cpp linenos %}
 matador::date d(31, 1, 2015);
 // modification
 d.year(2014).month(8).day(8);
-```
+{% endhighlight %}
 
 The operators ```++```, ```--```, ```+=``` and ```-=``` are also available and increase or decrease
 the date by one day or the given amount of days for the latter two operators.
 
-```cpp
+{% highlight cpp linenos %}
 matador::date d(31, 1, 2015);
 // modification
 
 d += 4;
 
 std:cout << d;
-```
+{% endhighlight %}
 
 Leads to
 
@@ -1307,11 +1306,11 @@ Leads to
 
 The date can be retrieved as julian date value:
 
-```cpp
+{% highlight cpp linenos %}
 matador::date d(31, 1, 2015);
 
 std::cout << "julian date: " << d.julian_date();
-```
+{% endhighlight %}
 
 ## Varchar
 
@@ -1324,25 +1323,25 @@ see the api of [varchar_base](../api/classmatador_1_1varchar__base/) and [varcha
 
 A ```varchar``` is simply created:
 
-```cpp
+{% highlight cpp linenos %}
 // without value
 matador::varchar<255> name;
 
 // with initial value
 matador::varchar<255> name("hello world");
-```
+{% endhighlight %}
 
 ### Display
 
 The ```varchar<T>``` has an overloaded output stream operator. So it can be written to every
 stream as usual
 
-```cpp
+{% highlight cpp linenos %}
 
 matador::varchar<255> title("My title");
 
 std::cout << "Title: " << title;
-```
+{% endhighlight %}
 
 Leads to
 
@@ -1354,13 +1353,13 @@ Title: My title
 
 There are a few modification methods and operators like
 
-```cpp
+{% highlight cpp linenos %}
 matador::varchar<255> title("My title");
 
 title += " is great";
 
 std::cout << "Title: " << title;
-```
+{% endhighlight %}
 
 Results in
 
@@ -1370,14 +1369,14 @@ Title: My title is great
 
 Assignment is available for other ```varchar<T>``` objects, std::string and character pointers.
 
-```cpp
+{% highlight cpp linenos %}
 matador::varchar<255> title("My title");
 matador::varchar<255> other_title("My other title");
 
 title.assign(other_title);
 
 std::cout << "Title: " << title;
-```
+{% endhighlight %}
 
 Results in
 
@@ -1389,7 +1388,7 @@ Title: My other title
 
 *Tbd!*
 </div>
-<div class="col-md-3">
+<div class="col-md-3 hidden-xs hidden-sm">
 <nav class="bs-docs-sidebar">
 * Will be replaced with the ToC, excluding the "Contents" header
 {:toc .nav .nav-stacked .fixed}
