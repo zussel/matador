@@ -3,14 +3,17 @@ matador
 
 __Version 0.6.0__
 
-Take your database by the horns.
-
-[![Build Status](https://travis-ci.org/zussel/matador.png?branch=develop)](https://travis-ci.org/zussel/matador)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/zussel/matador?svg=true)](https://ci.appveyor.com/project/zussel/matador)
-[![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=develop)](https://coveralls.io/github/zussel/matador?branch=develop)
-[![Gitter](https://img.shields.io/gitter/room/zussel/oos.svg)](https://gitter.im/oos-orm/Lobby)
 [![GitHub version](https://badge.fury.io/gh/zussel%2Fmatador.svg)](https://badge.fury.io/gh/zussel%2Fmatador)
 [![GitHub license](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://raw.githubusercontent.com/zussel/matador/develop/License)
+
+Take your database by the horns.
+
+__Build Status__
+
+| Branches    | Travis-CI | AppVeyor-CI | Coveralls    |
+|-------------|-----------|-------------|--------------|
+| master      |[![Build Status](https://travis-ci.org/zussel/matador.png?branch=master)](https://travis-ci.org/zussel/matador?branch=master)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/master)|[![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=master)](https://coveralls.io/github/zussel/matador?branch=master)|
+| develop     |[![Build Status](https://travis-ci.org/zussel/matador.png?branch=develop)](https://travis-ci.org/zussel/matador)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/develop)|[![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=develop)](https://coveralls.io/github/zussel/matador?branch=develop)|
 
 matador is a ORM framework written in C++. It aims to encapsulate all database stuff
 (database backends, sql statements, serialization of objects) and provides the user an
