@@ -82,11 +82,12 @@ session s(p);
 auto jane = s.insert(new person("jane"));
 
 // set janes real age
-jane->age = 35;
-s.update(jane);
+jane.modify()->age = 35;
+s.flush();
 
 // bye bye jane
 s.remove(jane)
+s.flush();
 {% endhighlight %}
 Once you have data in your database you can load it this way:
 
@@ -171,9 +172,7 @@ struct numbers
 
 ### Strings
 
-There are three types of supported strings (```std::string```, ```const char*``` and
-```matador::varchar<S>```). The latter is a string type representing database type VARCHAR
-taking its size as the template argument.
+There are three types of supported strings (```std::string``` and ```const char*```). A varchar type can be represented by a string combined with a length in its ```serialize``` method. See example below
 
 {% highlight cpp linenos %}
 struct strings
@@ -182,14 +181,14 @@ struct strings
 
   char cstr_[CSTR_LEN];
   std::string string_ = "world";
-  matador::varchar<255> varchar_ = "earth";
+  std::string varchar_ = "earth";
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize("val_cstr", cstr_, (std::size_t)CSTR_LEN);
     serializer.serialize("val_string", string_);
-    serializer.serialize("val_varchar", varchar_);
+    serializer.serialize("val_varchar", varchar_, 255); // varchar of length 255
   }
 };
 {% endhighlight %}
@@ -447,7 +446,7 @@ When using this construct the matador will take care of the following:
 auto george = s.insert(new person("george"));
 auto home = s.insert(new address("homestreet", "homecity"));
 
-george->addr = home;
+george.modify()->addr = home;
 
 // person george will be set into address
 std::cout << "citizen: " << home->citizen->name << "\n";
@@ -497,11 +496,11 @@ auto joe = s.insert(new person("joe"));
 auto home = s.insert(new address("homestreet", "homecity"));
 auto work = s.insert(new address("workstreet", "workcity"));
 
-joe->addresses.push_back(home);
+joe.modify()->addresses.push_back(home);
 // homes citicen will be joe
 std::cout << "citizen: " << home->citizen->name << "\n";
 
-work->citizen = joe;
+work.modify()->citizen = joe;
 // joes addresses have now increased to two
 std::cout << "joes addresses: " << joe->addresses.size() << "\n";
 {% endhighlight %}
@@ -511,7 +510,7 @@ do it with all STL containers..
 
 {% highlight cpp linenos %}
 // access all friends
-for (auto addr : joe->addresses) {
+for (const auto &addr : joe->addresses) {
   std::cout << "address street: " << addr->street << "\n";
 }
 {% endhighlight %}
@@ -556,10 +555,10 @@ auto jane = s.insert(new student("jane"));
 auto art = s.insert(new course("art"));
 auto algebra = s.insert(new course("algebra"));
 
-jane->courses.push_back(art);
+jane.modify()->courses.push_back(art);
 std::cout << art->students.front()->name << "\n"; // prints out 'jane'
 
-art->students.push_back(jane);
+art.modify()->students.push_back(jane);
 std::cout << jane->courses.size() << "\n"; // prints out '2'
 {% endhighlight %}
 
@@ -592,8 +591,8 @@ typedef matador::object_view<person> person_view_t;
 person_view_t pview(ostore);
 
 person_view_t::iterator i = pview.begin();
-for (i; i != pview.end(); ++i) {
-  std::cout << "person: " << i->name << std::endl;
+for (const auto &p : pview) {
+  std::cout << "person: " << p->name << std::endl;
 }
 {% endhighlight %}
 
@@ -621,8 +620,8 @@ typedef matador::object_view<person> person_view_t;
 person_view_t pview(ostore);
 
 person_view_t::iterator i = pview.begin();
-for (i; i != pview.end(); ++i) {
-  std::cout << i->name() << std::endl;
+for (const auto &p : pview) {
+  std::cout << p->name() << std::endl;
 }
 {% endhighlight %}
 
@@ -762,9 +761,18 @@ conn.close();
 
 ### Supported Databases
 
-There're currently three supported databases and the in memory database.
-But more databases will follow. Next is the description of the
+There're currently four supported databases and the in memory database. Next is the description of the
 database connection string for the supported databases.
+
+#### PostgreSQL
+
+{% highlight cpp linenos %}
+// PostgreSQL connection string with password
+session ses(ostore, "postgresql://user:passwd@host/db");
+
+// PostgreSQL connection string without password
+session ses(ostore, "postgresql://user@host/db");
+{% endhighlight %}
 
 #### MS SQL Server
 
@@ -776,7 +784,7 @@ session ses(ostore, "mssql://user:passwd@host/db");
 session ses(ostore, "mssql://user@host/db");
 {% endhighlight %}
 
-#### MySQL
+#### MySQL / MariaDB
 
 {% highlight cpp linenos %}
 // MySQL connection string with password
@@ -1135,13 +1143,18 @@ try {
 }
 {% endhighlight %}
 
-## Time
+## Matador Datatypes
+
+Matador comes with some own datatypes and helper classes. The datatype classes represents ```time```, ```date``` and ```identifier<T>``` (which stands for a primary key).
+The helper class ```varchar<SIZE>``` eases the creation of ```has_many``` relations or identifiers with varchars.
+
+### Time
 
 matador comes with its own simple time class. It represents a time with milliseconds
 precisions. Once a time object exists it can be modified, copied or assigned. For full
 documentation see the [api](../api/classmatador_1_1time/).
 
-### Creation
+#### Creation
 
 Time can be created from several constructors.
 
@@ -1161,7 +1174,7 @@ matador::time t = matador::time::parse("03.04.2015 12:55:12.123", "%d.%m.%Y %H:%
 The parse format tokens are the same as the ones from [```strptime```](https://linux.die.net/man/3/strptime)
 plus the ```%f``` for the milliseconds.
 
-### Display
+#### Display
 
 The time consists of an stream output operator which displays the time in ISO8601 format
 
@@ -1192,7 +1205,7 @@ Results in:
 11:35:07.123 31.01.2015
 ```
 
-### Modify
+#### Modify
 
 To modify a time one can use the fluent interface allowing the user to concatenate
 all parts to be modified in sequence.
@@ -1203,7 +1216,7 @@ matador::time t(2015, 1, 31, 11, 35, 7);
 t.year(2014).month(8).day(8);
 {% endhighlight %}
 
-### Conversions
+#### Conversions
 
 The time can be converted into a [```matador::date```](../api/classmatador_1_1date/)
 
@@ -1223,13 +1236,13 @@ struct tm ttm = t.get_tm();
 struct timeval tv = t.get_timeval();
 {% endhighlight %}
 
-## Date
+### Date
 
 matador comes with its own simple date class. It represents a date consisting of year, month
 and day. The underlying calendar is a julian date calendar. Once a date object exists it
 can be modified, copied or assigned. For full documentation see the [api](../api/classmatador_1_1date/).
 
-### Creation
+#### Creation
 
 Date can be created from several constructors.
 
@@ -1242,7 +1255,7 @@ Date can be created from several constructors.
 
 The obvious copy and assignment constructors exists as well.
 
-### Display
+#### Display
 
 The date consists of an stream output operator which displays the date in ISO8601 format
 
@@ -1273,7 +1286,7 @@ Results in:
 31.01.2015
 ```
 
-### Modify
+#### Modify
 
 To modify a date one can use the fluent interface allowing the user to concatenate
 all parts to be modified in sequence.
@@ -1302,7 +1315,7 @@ Leads to
 2015-02-04
 ```
 
-### Conversions
+#### Conversions
 
 The date can be retrieved as julian date value:
 
@@ -1312,14 +1325,14 @@ matador::date d(31, 1, 2015);
 std::cout << "julian date: " << d.julian_date();
 {% endhighlight %}
 
-## Varchar
+### Varchar
 
 The ```varchar<T>``` class represents a VARCHAR database data type. Internally it contains
 a ```std::string```. The template parameter takes the capacity of the varchar. If the assigned
 string is exceeds the capacity, the string is truncated on database. For full documentation
 see the api of [varchar_base](../api/classmatador_1_1varchar__base/) and [varchar](../api/classmatador_1_1varchar/).
 
-### Creation
+#### Creation
 
 A ```varchar``` is simply created:
 
@@ -1331,7 +1344,7 @@ matador::varchar<255> name;
 matador::varchar<255> name("hello world");
 {% endhighlight %}
 
-### Display
+#### Display
 
 The ```varchar<T>``` has an overloaded output stream operator. So it can be written to every
 stream as usual
@@ -1349,7 +1362,7 @@ Leads to
 Title: My title
 ```
 
-### Modification
+#### Modification
 
 There are a few modification methods and operators like
 
@@ -1384,7 +1397,7 @@ Results in
 Title: My other title
 ```
 
-## Identifier
+### Identifier
 
 *Tbd!*
 </div>
