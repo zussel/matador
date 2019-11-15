@@ -7,7 +7,7 @@ layout: default
       <div class="container">
         <h1>matador</h1>
         <p>
-          matador is an object relational mapping framework written in C++. It
+          matador is an ORM framework written in C++. It
           aims to encapsulate all database backend communication. You don't have
           to deal with database backends or sql statements neither with mapping of
           data types or serialization of objects. It comes with relation handling out
@@ -105,7 +105,7 @@ dep->employees.push_back(jane);
 // janes department name is insurance
 std::cout << jane->department->name << "\n"
 
-george->department = dep;
+george.modify()->department = dep;
 
 // second employee in department is george
 std::cout << dep->employees.size() << "\n"
