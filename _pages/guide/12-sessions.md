@@ -18,8 +18,24 @@ get it into the layer.
 s.load();
 {% endhighlight %}
 
-Now you can start and insert, update or delete your data. Therefor create a transaction
-object with the current session and start the transaction by calling
+Now you can start and insert, update or delete your data. This can be done in two ways. Using ```session::save()``` or ```session::flush()``` to write the changes directly to database or use a transactional scope to allow a rollback of a transaction.
+
+Using the direct way it looks like the following code:
+{% highlight cpp linenos %}
+// insert and save an object directly
+auto ptr = s.save(new person("james bond"));
+
+// do multiple modifications and flush them at once
+ptr.modify()->name = "james blunt"
+
+auto addr = s.insert(new address("downing street 10"));
+
+// flush changes
+s.flush();
+{% endhighlight %}
+
+
+When using the transactional way you have to create a instance of ```transaction``` with the current session and start the transaction by calling
 ```matador::transaction::begin()```. After completing your modifications call
 ```matador::transaction::commit()``` to commit all your modifications to the
 database. If in error occurred while doing your modifications catch
