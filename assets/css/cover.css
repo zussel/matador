@@ -1,5 +1,5 @@
 body {
-  padding-top: 70px;
+  padding-top: 50px;
   /*background-color: #222;*/
   /*color: #ccc;*/
   font-size: 16px;
@@ -50,15 +50,19 @@ pre {
   z-index: 1020;
 }
 
-/*.jumbotron {
-  background-color: transparent;
-  text-align: center;
-  color: seashell;
+.jumbotron {
+  background-image: url("../images/nightsky-1280.jpg");
+  background-size: cover;
+}
+
+.jumbotron h1 {
+  color: #eee;
 }
 
 .jumbotron p {
-  color: linen;
-}*/
+  color: #eee;
+  font-weight: 400;
+}
 
 .navbar-vertical
 {
