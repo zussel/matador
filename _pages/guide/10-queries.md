@@ -23,7 +23,10 @@ You can use an anonymous query as well:
 {% highlight cpp linenos %}
 
 matador::query<> q;
-auto res = count.select({columns::count_all()}).from("person").execute(*conn);
+auto res = count
+    .select({columns::count_all()})
+    .from("person")
+    .execute(*conn);
 
 int count = res.begin()->at<int>(0);
 {% endhighlight %}
@@ -92,9 +95,12 @@ q.insert(jane).execute(conn);
 When building an anonymous insert statement one has to column and value fields like that
 
 {% highlight cpp linenos %}
-matador::query<> q("person");
+matador::query<> person_query("person");
 
-q.insert({"id", "name", "age"}).values({1, "jane", 35}).execute(conn);
+person_query
+    .insert({"id", "name", "age"})
+    .values({1, "jane", 35})
+    .execute(conn);
 {% endhighlight %}
 
 #### Update
