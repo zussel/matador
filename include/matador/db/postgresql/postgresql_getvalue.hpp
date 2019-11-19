@@ -27,7 +27,12 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
   val = (T)strtol(value, &end, 10);
 }
 
-template < typename T, typename std::enable_if<std::is_integral<T>::value && std::is_unsigned<T>::value && !std::is_same<T, bool>::value>::type* = nullptr>
+template < typename T, typename std::enable_if<
+std::is_integral<T>::value &&
+std::is_unsigned<T>::value &&
+!std::is_same<T, unsigned char>::value &&
+!std::is_same<T, bool>::value
+>::type* = nullptr>
 void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   auto value = PQgetvalue(res, (int)row, (int)col);
@@ -98,6 +103,7 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
 }
 
 void get_value(PGresult *res, size_t row, size_t col, char *val, size_t s);
+void get_value(PGresult *res, size_t row, size_t col, unsigned char &val);
 
 }
 }

@@ -28,5 +28,15 @@ void get_value(PGresult *res, size_t row, size_t col, char *val, size_t s)
   }
 }
 
+void get_value(PGresult *res, size_t row, size_t col, unsigned char &val)
+{
+  auto value = PQgetvalue(res, (int)row, (int)col);
+
+  if (strlen(value) == 0) {
+    return;
+  }
+
+  val = value[0];
+}
 }
 }
