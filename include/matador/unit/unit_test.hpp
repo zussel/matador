@@ -349,7 +349,7 @@ public:
   template < class X >
   void assert_equal(const X &a, const X &b, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (a != b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -376,7 +376,7 @@ public:
   template < class X, class Y >
   void assert_equal(const X &a, const Y &b, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (a != b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -394,7 +394,7 @@ public:
   void
   assert_equal(const char (&a)[N1], const char (&b)[N2], int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (strcmp(a, b) != 0) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -406,7 +406,7 @@ public:
   void
   assert_equal(char (&a)[N1], const char (&b)[N2], int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (strcmp(a, b) != 0) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -417,7 +417,7 @@ public:
   template < class X >
   void assert_equal(const X &a, const bool &b, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     bool cmp = a > 0;
     if (cmp != b) {
       std::stringstream msgstr;
@@ -447,7 +447,7 @@ public:
   template < class T >
   void assert_not_equal(const T &a, const T &b, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (a == b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b;
@@ -474,7 +474,7 @@ public:
   template < class T, class V >
   void assert_not_equal(const T &a, const V &b, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (a == b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b;
@@ -500,7 +500,7 @@ public:
   template < class T >
   void assert_greater(const T &a, const T &b, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (a <= b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b;
@@ -512,7 +512,7 @@ public:
   template < class X, class Y >
   void assert_greater(const X &a, const Y &b, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (a <= b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b;
@@ -539,7 +539,7 @@ public:
   template < class T >
   void assert_less(const T &a, const T &b, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (a >= b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is greater equal " << b;
@@ -564,7 +564,7 @@ public:
   template < class T >
   void assert_null(const T *a, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (a != nullptr) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not null";
@@ -589,7 +589,7 @@ public:
   template < class T >
   void assert_not_null(const T *a, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
+    ++current_test_func_info->assertion_check_count;
     if (a == 0) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is null";
@@ -675,9 +675,9 @@ public:
   template < class X >
   void expect_equal(const X &a, const X &b, int line, const char *file)
   {
-    ++current_test_func_info->error_count;
+    ++current_test_func_info->error_check_count;
     if (a != b) {
-      ++current_test_func_info->errors;
+      ++current_test_func_info->error_count;
       std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
     }
   }
@@ -699,9 +699,9 @@ public:
   template < class X, class Y >
   void expect_equal(const X &a, const Y &b, int line, const char *file)
   {
-    ++current_test_func_info->error_count;
+    ++current_test_func_info->error_check_count;
     if (a != b) {
-      ++current_test_func_info->errors;
+      ++current_test_func_info->error_count;
       std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
     }
   }
@@ -714,7 +714,7 @@ public:
   void
   expect_equal(const char (&a)[N1], const char (&b)[N2], int line, const char *file)
   {
-    ++current_test_func_info->error_count;
+    ++current_test_func_info->error_check_count;
     if (strcmp(a, b) != 0) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -724,7 +724,7 @@ public:
   void
   expect_equal(char (&a)[N1], const char (&b)[N2], int line, const char *file)
   {
-    ++current_test_func_info->error_count;
+    ++current_test_func_info->error_check_count;
     if (strcmp(a, b) != 0) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -747,9 +747,9 @@ public:
   template < class T >
   void expect_greater(const T &a, const T &b, int line, const char *file)
   {
-    ++current_test_func_info->error_count;
+    ++current_test_func_info->error_check_count;
     if (a <= b) {
-      ++current_test_func_info->errors;
+      ++current_test_func_info->error_count;
       std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b;
     }
   }
@@ -795,8 +795,8 @@ private:
 
   typedef struct test_func_info_struct
   {
-    test_func_info_struct(const test_func &f, const std::string &n, const std::string &c)
-      : func(f), name(n), caption(c)
+    test_func_info_struct(test_func f, std::string n, std::string c)
+      : func(std::move(f)), name(std::move(n)), caption(std::move(c))
     {}
     enum t_state {
       STATE_UNKNOWN = 0,
@@ -812,9 +812,9 @@ private:
     bool succeeded = true;
     t_state state = STATE_UNKNOWN;
     long duration;
-    size_t assertion_count = 0;
+    size_t assertion_check_count = 0;
+    size_t error_check_count = 0;
     size_t error_count = 0;
-    size_t errors = 0;
     std::string name;
     std::string caption;
     std::string message;
