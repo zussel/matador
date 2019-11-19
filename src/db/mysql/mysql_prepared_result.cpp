@@ -140,7 +140,7 @@ void mysql_prepared_result::serialize(const char *, long &x)
 void mysql_prepared_result::serialize(const char *, unsigned char &x)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
+    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
   } else {
     ++result_index_;
   }
