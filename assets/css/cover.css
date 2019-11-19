@@ -50,6 +50,11 @@ pre {
   z-index: 1020;
 }
 
+.nopadding {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .jumbotron {
   background-image: url("../images/nightsky-1280.jpg");
   background-size: cover;
