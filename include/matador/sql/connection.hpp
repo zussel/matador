@@ -138,6 +138,7 @@ public:
    * - mssql
    * - mysql
    * - sqlite
+   * - postgressql
    *
    * @return The database type string
    */

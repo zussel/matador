@@ -35,11 +35,11 @@ const char *sqlite_dialect::type_string(matador::data_type type) const
     case data_type::type_long_long:
       return "BIGINT";
     case data_type::type_unsigned_char:
-      return "TINYINT";
+      return "TINYINT UNSIGNED";
     case data_type::type_unsigned_short:
-      return "INTEGER";
+      return "SMALLINT UNSIGNED";
     case data_type::type_unsigned_int:
-      return "BIGINT UNSIGNED";
+      return "INTEGER UNSIGNED";
     case data_type::type_unsigned_long:
       return "BIGINT UNSIGNED";
     case data_type::type_unsigned_long_long:
@@ -71,14 +71,31 @@ const char *sqlite_dialect::type_string(matador::data_type type) const
 
 data_type sqlite_dialect::string_type(const char *type) const
 {
-  if (strcmp(type, "INTEGER") == 0) {
+  if (strncmp(type, "INTEGER", 7) == 0) {
+    if (strstr(type, "UNSIGNED") != nullptr) {
+      return data_type::type_unsigned_int;
+    } else {
+      return data_type::type_int;
+    }
     return data_type::type_int;
-  } else if (strcmp(type, "TINYINT") == 0) {
-    return data_type::type_char;
-  } else if (strcmp(type, "SMALLINT") == 0) {
-    return data_type::type_short;
-  } else if (strcmp(type, "BIGINT") == 0) {
-    return data_type::type_long;
+  } else if (strncmp(type, "TINYINT", 3) == 0) {
+    if (strstr(type, "UNSIGNED") != nullptr) {
+      return data_type::type_unsigned_char;
+    } else {
+      return data_type::type_char;
+    }
+  } else if (strncmp(type, "SMALLINT", 8) == 0) {
+    if (strstr(type, "UNSIGNED") != nullptr) {
+      return data_type::type_unsigned_short;
+    } else {
+      return data_type::type_short;
+    }
+  } else if (strncmp(type, "BIGINT", 6) == 0) {
+    if (strstr(type, "UNSIGNED") != nullptr) {
+      return data_type::type_unsigned_long_long;
+    } else {
+      return data_type::type_long_long;
+    }
   } else if (strcmp(type, "REAL") == 0) {
     return data_type::type_double;
   } else if (strcmp(type, "FLOAT") == 0) {

@@ -82,6 +82,10 @@ void QueryTestUnit::test_datatypes()
   unsigned int uival = std::numeric_limits<unsigned int>::max();
   unsigned long ulval = std::numeric_limits<unsigned long>::max();
   unsigned long long ullval = std::numeric_limits<unsigned long long>::max();
+  if (connection_.type() == "sqlite") {
+    ulval = std::numeric_limits<long long>::max();
+    ullval = std::numeric_limits<long long>::max();
+  }
   bool bval = true;
   const char *cstr("Armer schwarzer Kater");
   std::string varcharval("hallo welt");
