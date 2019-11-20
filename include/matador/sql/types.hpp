@@ -47,10 +47,12 @@ enum struct data_type {
   type_short,          /*!< Data type short */
   type_int,            /*!< Data type int */
   type_long,           /*!< Data type long */
+  type_long_long,      /*!< Data type long long */
   type_unsigned_char,  /*!< Data type unsigned char */
   type_unsigned_short, /*!< Data type unsigned short */
   type_unsigned_int,   /*!< Data type unsigned int */
   type_unsigned_long,  /*!< Data type unsigned long */
+  type_unsigned_long_long,  /*!< Data type unsigned long long */
   type_float,          /*!< Data type float */
   type_double,         /*!< Data type double */
   type_bool,           /*!< Data type bool */
@@ -110,6 +112,12 @@ template <> struct data_type_traits<long>
   inline static unsigned long size() { return sizeof(long); }
 };
 
+template <> struct data_type_traits<long long>
+{
+  inline static data_type type() { return data_type::type_long_long; }
+  inline static unsigned long size() { return sizeof(long long); }
+};
+
 template <> struct data_type_traits<unsigned char>
 {
   inline static data_type type() { return data_type::type_unsigned_char; }
@@ -132,6 +140,12 @@ template <> struct data_type_traits<unsigned long>
 {
   inline static data_type type() { return data_type::type_unsigned_long; }
   inline static unsigned long size() { return sizeof(unsigned long); }
+};
+
+template <> struct data_type_traits<unsigned long long>
+{
+  inline static data_type type() { return data_type::type_unsigned_long_long; }
+  inline static unsigned long size() { return sizeof(unsigned long long); }
 };
 
 template <> struct data_type_traits<bool>

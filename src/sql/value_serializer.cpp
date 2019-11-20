@@ -30,6 +30,11 @@ void value_serializer::serialize(const char*, long &x)
   values_->push_back(std::make_shared<value<long>>(x));
 }
 
+void value_serializer::serialize(const char*, long long &x)
+{
+  values_->push_back(std::make_shared<value<long long>>(x));
+}
+
 void value_serializer::serialize(const char*, unsigned char &x)
 {
   values_->push_back(std::make_shared<value<unsigned char>>(x));
@@ -48,6 +53,11 @@ void value_serializer::serialize(const char*, unsigned int &x)
 void value_serializer::serialize(const char*, unsigned long &x)
 {
   values_->push_back(std::make_shared<value<unsigned long>>(x));
+}
+
+void value_serializer::serialize(const char*, unsigned long long &x)
+{
+  values_->push_back(std::make_shared<value<unsigned long long>>(x));
 }
 
 void value_serializer::serialize(const char*, float &x)

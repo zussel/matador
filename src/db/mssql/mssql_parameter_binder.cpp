@@ -187,6 +187,13 @@ void mssql_parameter_binder::bind(long i, size_t index)
   bind_value(stmt_, SQL_C_SLONG, SQL_INTEGER, host_data_.back(), index);
 }
 
+void mssql_parameter_binder::bind(long long i, size_t index)
+{
+  host_data_.push_back(create_bind_value(bind_null_, i));
+
+  bind_value(stmt_, SQL_C_SBIGINT, SQL_BIGINT, host_data_.back(), index);
+}
+
 void mssql_parameter_binder::bind(unsigned char i, size_t index)
 {
   host_data_.push_back(create_bind_value(bind_null_, i));
@@ -213,6 +220,13 @@ void mssql_parameter_binder::bind(unsigned long i, size_t index)
   host_data_.push_back(create_bind_value(bind_null_, i));
 
   bind_value(stmt_, SQL_C_ULONG, SQL_BIGINT, host_data_.back(), index);
+}
+
+void mssql_parameter_binder::bind(unsigned long long i, size_t index)
+{
+  host_data_.push_back(create_bind_value(bind_null_, i));
+
+  bind_value(stmt_, SQL_C_UBIGINT, SQL_BIGINT, host_data_.back(), index);
 }
 
 void mssql_parameter_binder::bind(bool b, size_t index)

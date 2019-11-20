@@ -75,6 +75,13 @@ public:
    */
   virtual void serialize(const char *id, long &x) = 0;
   /**
+   * @brief Interface to serialize a long long with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, long long &x) = 0;
+  /**
    * @brief Interface to serialize a unsigned char with given id
    *
    * @param id The id of the value
@@ -95,6 +102,13 @@ public:
    * @param x The value to be serialized
    */
   virtual void serialize(const char *id, unsigned int &x) = 0;
+  /**
+   * @brief Interface to serialize a unsigned long long with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, unsigned long long &x) = 0;
   /**
    * @brief Interface to serialize a unsigned long with given id
    *

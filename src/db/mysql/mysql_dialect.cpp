@@ -41,17 +41,19 @@ const char* mysql_dialect::type_string(matador::data_type type) const
     case data_type::type_int:
       return "INTEGER";
     case data_type::type_long:
-	    //return "INTEGER";
+	    return "BIGINT";
+    case data_type::type_long_long:
 	    return "BIGINT";
     case data_type::type_unsigned_char:
       return "CHAR(1)";
     case data_type::type_unsigned_short:
-      return "INTEGER";
+      return "SMALLINT UNSIGNED";
     case data_type::type_unsigned_int:
-      return "BIGINT";
+      return "INTEGER UNSIGNED";
     case data_type::type_unsigned_long:
-	    //return "INTEGER";
-	    return "BIGINT";
+	    return "BIGINT UNSIGNED";
+    case data_type::type_unsigned_long_long:
+	    return "BIGINT UNSIGNED";
 	  case data_type::type_bool:
       return "INTEGER";
     case data_type::type_float:
@@ -88,9 +90,17 @@ const char* mysql_dialect::type_string(matador::data_type type) const
 data_type mysql_dialect::string_type(const char *type) const
 {
   if (strncmp(type, "int", 3) == 0) {
-    return data_type::type_int;
+    if (strstr(type, "unsigned") != nullptr) {
+      return data_type::type_unsigned_int;
+    } else {
+      return data_type::type_int;
+    }
   } else if (strncmp(type, "bigint", 6) == 0) {
-    return data_type::type_long;
+    if (strstr(type, "unsigned") != nullptr) {
+      return data_type::type_unsigned_long_long;
+    } else {
+      return data_type::type_long_long;
+    }
   } else if (strcmp(type, "date") == 0) {
     return data_type::type_date;
   } else if (strncmp(type, "datetime", 8) == 0) {

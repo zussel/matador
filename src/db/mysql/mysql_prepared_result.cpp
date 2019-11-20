@@ -137,6 +137,16 @@ void mysql_prepared_result::serialize(const char *, long &x)
   }
 }
 
+void mysql_prepared_result::serialize(const char *, long long &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
+//	prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
+  } else {
+    ++result_index_;
+  }
+}
+
 void mysql_prepared_result::serialize(const char *, unsigned char &x)
 {
   if (prepare_binding_) {
@@ -165,6 +175,16 @@ void mysql_prepared_result::serialize(const char *, unsigned int &x)
 }
 
 void mysql_prepared_result::serialize(const char *, unsigned long &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
+//	prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char *, unsigned long long &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);

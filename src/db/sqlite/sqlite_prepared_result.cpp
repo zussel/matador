@@ -74,6 +74,11 @@ void sqlite_prepared_result::serialize(const char *, long &x)
   x = (long)sqlite3_column_int(stmt_, result_index_++);
 }
 
+void sqlite_prepared_result::serialize(const char *, long long &x)
+{
+  x = (long)sqlite3_column_int64(stmt_, result_index_++);
+}
+
 void sqlite_prepared_result::serialize(const char *, unsigned char &x)
 {
   x = (unsigned char)sqlite3_column_int(stmt_, result_index_++);
@@ -92,6 +97,11 @@ void sqlite_prepared_result::serialize(const char *, unsigned int &x)
 void sqlite_prepared_result::serialize(const char *, unsigned long &x)
 {
   x = (unsigned long)sqlite3_column_int(stmt_, result_index_++);
+}
+
+void sqlite_prepared_result::serialize(const char *, unsigned long long &x)
+{
+  x = (unsigned long long)sqlite3_column_int64(stmt_, result_index_++);
 }
 
 void sqlite_prepared_result::serialize(const char *, bool &x)

@@ -32,14 +32,18 @@ const char *sqlite_dialect::type_string(matador::data_type type) const
       return "INTEGER";
     case data_type::type_long:
       return "BIGINT";
+    case data_type::type_long_long:
+      return "BIGINT";
     case data_type::type_unsigned_char:
       return "TINYINT";
     case data_type::type_unsigned_short:
       return "INTEGER";
     case data_type::type_unsigned_int:
-      return "BIGINT";
+      return "BIGINT UNSIGNED";
     case data_type::type_unsigned_long:
-      return "BIGINT";
+      return "BIGINT UNSIGNED";
+    case data_type::type_unsigned_long_long:
+      return "BIGINT UNSIGNED";
     case data_type::type_bool:
       return "BOOLEAN";
     case data_type::type_float:

@@ -98,6 +98,11 @@ void postgresql_parameter_binder::bind(long i, size_t index)
   bind_value(strings_, params_, index, i);
 }
 
+void postgresql_parameter_binder::bind(long long i, size_t index)
+{
+  bind_value(strings_, params_, index, i);
+}
+
 void postgresql_parameter_binder::bind(unsigned char i, size_t index)
 {
   bind_value(strings_, params_, index, i);
@@ -114,6 +119,11 @@ void postgresql_parameter_binder::bind(unsigned int i, size_t index)
 }
 
 void postgresql_parameter_binder::bind(unsigned long i, size_t index)
+{
+  bind_value(strings_, params_, index, i);
+}
+
+void postgresql_parameter_binder::bind(unsigned long long i, size_t index)
 {
   bind_value(strings_, params_, index, i);
 }

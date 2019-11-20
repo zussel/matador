@@ -56,10 +56,12 @@ protected:
   void serialize(const char *id, short &x) override;
   void serialize(const char *id, int &x) override;
   void serialize(const char *id, long &x) override;
+  void serialize(const char *id, long long &x) override;
   void serialize(const char *id, unsigned char &x) override;
   void serialize(const char *id, unsigned short &x) override;
   void serialize(const char *id, unsigned int &x) override;
   void serialize(const char *id, unsigned long &x) override;
+  void serialize(const char *id, unsigned long long &x) override;
   void serialize(const char *id, bool &x) override;
   void serialize(const char *id, float &x) override;
   void serialize(const char *id, double &x) override;

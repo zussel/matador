@@ -48,6 +48,11 @@ void basic_identifier_serializer::serialize(const char *, long &x)
   serialize_value(x);
 }
 
+void basic_identifier_serializer::serialize(const char *, long long &x)
+{
+  serialize_value(x);
+}
+
 void basic_identifier_serializer::serialize(const char *, unsigned char &x)
 {
   serialize_value(x);
@@ -64,6 +69,11 @@ void basic_identifier_serializer::serialize(const char *, unsigned int &x)
 }
 
 void basic_identifier_serializer::serialize(const char *, unsigned long &x)
+{
+  serialize_value(x);
+}
+
+void basic_identifier_serializer::serialize(const char *, unsigned long long &x)
 {
   serialize_value(x);
 }

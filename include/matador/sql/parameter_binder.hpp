@@ -31,10 +31,12 @@ public:
   virtual void bind(short, size_t) = 0;
   virtual void bind(int, size_t) = 0;
   virtual void bind(long, size_t) = 0;
+  virtual void bind(long long, size_t) = 0;
   virtual void bind(unsigned char, size_t) = 0;
   virtual void bind(unsigned short, size_t) = 0;
   virtual void bind(unsigned int, size_t) = 0;
   virtual void bind(unsigned long, size_t) = 0;
+  virtual void bind(unsigned long long, size_t) = 0;
   virtual void bind(bool, size_t) = 0;
   virtual void bind(float, size_t) = 0;
   virtual void bind(double, size_t) = 0;
@@ -81,10 +83,12 @@ public:
   void serialize(const char *id, short &) override { bind(id, param_); }
   void serialize(const char *id, int &) override { bind(id, param_); }
   void serialize(const char *id, long &) override { bind(id, param_); }
+  void serialize(const char *id, long long &) override { bind(id, param_); }
   void serialize(const char *id, unsigned char &) override { bind(id, param_); }
   void serialize(const char *id, unsigned short &) override { bind(id, param_); }
   void serialize(const char *id, unsigned int &) override { bind(id, param_); }
   void serialize(const char *id, unsigned long &) override { bind(id, param_); }
+  void serialize(const char *id, unsigned long long &) override { bind(id, param_); }
   void serialize(const char *id, bool &) override { bind(id, param_); }
   void serialize(const char *id, float &) override { bind(id, param_); }
   void serialize(const char *id, double &) override { bind(id, param_); }
@@ -137,10 +141,12 @@ public:
   void serialize(const char *, short &) override {}
   void serialize(const char *, int &) override {}
   void serialize(const char *, long &) override {}
+  void serialize(const char *, long long &) override {}
   void serialize(const char *, unsigned char &) override {}
   void serialize(const char *, unsigned short &) override {}
   void serialize(const char *, unsigned int &) override {}
   void serialize(const char *, unsigned long &) override {}
+  void serialize(const char *, unsigned long long &) override {}
   void serialize(const char *, bool &) override {}
   void serialize(const char *, float &) override {}
   void serialize(const char *, double &) override {}
@@ -216,10 +222,12 @@ public:
   void serialize(const char *id, short &x) override { bind_value(id, x); }
   void serialize(const char *id, int &x) override { bind_value(id, x); }
   void serialize(const char *id, long &x) override { bind_value(id, x); }
+  void serialize(const char *id, long long &x) override { bind_value(id, x); }
   void serialize(const char *id, unsigned char &x) override { bind_value(id, x); }
   void serialize(const char *id, unsigned short &x) override { bind_value(id, x); }
   void serialize(const char *id, unsigned int &x) override { bind_value(id, x); }
   void serialize(const char *id, unsigned long &x) override { bind_value(id, x); }
+  void serialize(const char *id, unsigned long long &x) override { bind_value(id, x); }
   void serialize(const char *id, bool &x) override { bind_value(id, x); }
   void serialize(const char *id, float &x) override { bind_value(id, x); }
   void serialize(const char *id, double &x) override { bind_value(id, x); }

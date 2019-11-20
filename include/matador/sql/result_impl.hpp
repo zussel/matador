@@ -56,10 +56,12 @@ public:
   void serialize(const char*, short&) override = 0;
   void serialize(const char*, int&) override = 0;
   void serialize(const char*, long&) override = 0;
+  void serialize(const char*, long long&) override = 0;
   void serialize(const char*, unsigned char&) override = 0;
   void serialize(const char*, unsigned short&) override = 0;
   void serialize(const char*, unsigned int&) override = 0;
   void serialize(const char*, unsigned long&) override = 0;
+  void serialize(const char*, unsigned long long&) override = 0;
   void serialize(const char*, bool&) override = 0;
   void serialize(const char*, float&) override = 0;
   void serialize(const char*, double&) override = 0;

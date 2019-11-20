@@ -89,10 +89,12 @@ protected:
   void serialize(const char*, short&) override;
   void serialize(const char*, int&) override;
   void serialize(const char*, long&) override;
+  void serialize(const char*, long long&) override;
   void serialize(const char*, unsigned char&) override;
   void serialize(const char*, unsigned short&) override;
   void serialize(const char*, unsigned int&) override;
   void serialize(const char*, unsigned long&) override;
+  void serialize(const char*, unsigned long long&) override;
   void serialize(const char*, bool&) override;
   void serialize(const char*, float&) override;
   void serialize(const char*, double&) override;
