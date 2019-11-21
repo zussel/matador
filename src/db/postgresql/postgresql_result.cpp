@@ -105,6 +105,11 @@ void postgresql_result::serialize(const char *, unsigned long &x)
   detail::get_value(res_, pos_, column_++, x);
 }
 
+void postgresql_result::serialize(const char *, unsigned long long &x)
+{
+  detail::get_value(res_, pos_, column_++, x);
+}
+
 void postgresql_result::serialize(const char *, bool &x)
 {
   detail::get_value(res_, pos_, column_++, x);
