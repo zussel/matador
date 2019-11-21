@@ -9,8 +9,23 @@
 AnyTestUnit::AnyTestUnit()
   : unit_test("any", "any test unit")
 {
+  add_test("any", std::bind(&AnyTestUnit::test_any, this), "any test");
   add_test("visitor", std::bind(&AnyTestUnit::test_any_visitor, this), "any visitor test");
   add_test("visitor_class", std::bind(&AnyTestUnit::test_any_visitor_class, this), "any visitor class test");
+}
+
+void AnyTestUnit::test_any()
+{
+  using matador::any;
+
+  any al = 7L;
+  auto i = al._<int>();
+
+  UNIT_ASSERT_EQUAL(7, i);
+
+  auto str = al._<std::string>();
+
+  UNIT_ASSERT_EQUAL("", str);
 }
 
 void test_visit(int &i)
@@ -119,6 +134,7 @@ void AnyTestUnit::test_any_visitor_class()
   UNIT_ASSERT_EQUAL(0.4f, af._<float>());
   p.apply(af);
   UNIT_ASSERT_EQUAL(0.5f, af._<float>());
+  UNIT_ASSERT_EQUAL(0.5f, af._<double>());
   UNIT_ASSERT_EQUAL("hello", astr._<std::string>());
   p.apply(astr);
   UNIT_ASSERT_EQUAL("world", astr._<std::string>());
