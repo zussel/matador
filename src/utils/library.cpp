@@ -17,15 +17,12 @@
 
 #include "matador/utils/library.hpp"
 
+#include <utility>
+
 namespace matador {
 
-library::library()
-  : handle_(0)
-{}
-
-library::library(const std::string &lib)
-  : lib_(lib)
-  , handle_(0)
+library::library(std::string lib)
+  : lib_(std::move(lib))
 {}
 
 library::~library()
@@ -74,7 +71,7 @@ bool library::unload()
 #endif
     if (!ret) {
     } else {
-      handle_ = 0;
+      handle_ = nullptr;
     }
   }
   return ret;
