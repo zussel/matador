@@ -43,6 +43,7 @@
 #include <string>
 #include <typeinfo>
 #include <cstring>
+#include <type_traits>
 
 namespace matador {
 
@@ -93,13 +94,50 @@ struct null_value : public detail::basic_value
 
 template<class T>
 struct value<T, typename std::enable_if<
-  std::is_scalar<T>::value &&
+  std::is_integral<T>::value &&
   !std::is_same<char, T>::value &&
   !std::is_same<char*, T>::value>::type> : public detail::basic_value
 {
   explicit value(const T &val)
     : basic_value(detail::token::VALUE)
     , val(val)
+  { }
+
+  void serialize(const char *id, serializer &srlzr) override
+  {
+    srlzr.serialize(id, val);
+  }
+
+  std::string str() const override
+  {
+    std::stringstream str;
+    str << val;
+    return str.str();
+  }
+
+  std::string safe_string(const basic_dialect &) const override
+  {
+    std::stringstream str;
+    str << val;
+    return str.str();
+  }
+
+  const char* type_id() const override
+  {
+    return typeid(T).name();
+  }
+
+  T val = {};
+};
+
+template < class T >
+struct value<T, typename std::enable_if<
+  std::is_floating_point<T>::value
+>::type > : public detail::basic_value
+{
+  explicit value(const T &val)
+  : basic_value(detail::token::VALUE)
+  , val(val)
   { }
 
   void serialize(const char *id, serializer &srlzr) override
