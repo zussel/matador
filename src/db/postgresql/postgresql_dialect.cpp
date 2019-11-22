@@ -30,7 +30,8 @@ const char *postgresql_dialect::type_string(matador::data_type type) const
     case data_type::type_int:
       return "INTEGER";
     case data_type::type_long:
-      //return "INTEGER";
+      return "BIGINT";
+    case data_type::type_long_long:
       return "BIGINT";
     case data_type::type_unsigned_char:
       return "CHAR(1)";
@@ -39,7 +40,8 @@ const char *postgresql_dialect::type_string(matador::data_type type) const
     case data_type::type_unsigned_int:
       return "BIGINT";
     case data_type::type_unsigned_long:
-      //return "INTEGER";
+      return "BIGINT";
+    case data_type::type_unsigned_long_long:
       return "BIGINT";
     case data_type::type_bool:
       return "INTEGER";
@@ -69,17 +71,21 @@ const char *postgresql_dialect::type_string(matador::data_type type) const
 
 matador::data_type postgresql_dialect::string_type(const char *type) const
 {
-  if (strncmp(type, "int", 3) == 0) {
+  if (strcmp(type, "int2") == 0) {
+    return data_type::type_short;
+  } else if (strcmp(type, "int4") == 0) {
     return data_type::type_int;
-  } else if (strncmp(type, "bigint", 6) == 0) {
+  } else if (strcmp(type, "int8") == 0) {
     return data_type::type_long;
+  } else if (strncmp(type, "int8", 6) == 0) {
+    return data_type::type_long_long;
   } else if (strcmp(type, "date") == 0) {
     return data_type::type_date;
   } else if (strncmp(type, "timestamp", 8) == 0) {
     return data_type::type_time;
-  } else if (strcmp(type, "real") == 0 || strcmp(type, "float4") == 0) {
+  } else if (strcmp(type, "float4") == 0) {
     return data_type::type_float;
-  } else if (strcmp(type, "double precision") == 0 || strcmp(type, "float8") == 0) {
+  } else if (strcmp(type, "float8") == 0) {
     return data_type::type_double;
   } else if (strncmp(type, "varchar", 7) == 0) {
     return data_type::type_varchar;
