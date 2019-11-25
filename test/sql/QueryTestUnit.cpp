@@ -173,7 +173,7 @@ void QueryTestUnit::test_quoted_identifier()
 
   // check table description
   std::vector<std::string> columns = { "from", "to"};
-  std::vector<data_type > types = { matador::data_type::type_text, matador::data_type::type_text};
+  std::vector<database_type > types = {matador::database_type::type_text, matador::database_type::type_text};
   auto fields = connection_.describe("quotes");
 
   for (auto &&field : fields) {
@@ -227,7 +227,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
 
     // check table description
     std::vector<std::string> columns({ colname });
-    std::vector<data_type > types({ matador::data_type::type_text });
+    std::vector<database_type > types({matador::database_type::type_text });
     auto fields = connection_.describe("quotes");
 
     for (auto &&field : fields) {
@@ -311,7 +311,7 @@ void QueryTestUnit::test_describe()
   auto fields = connection_.describe("person");
 
   std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
-//  std::vector<data_type > types = { matador::data_type::type_unsigned_long_long, matador::data_type::type_varchar, matador::data_type::type_date, matador::data_type::type_unsigned_int};
+//  std::vector<database_type > types = { matador::database_type::type_unsigned_long_long, matador::database_type::type_varchar, matador::database_type::type_date, matador::database_type::type_unsigned_int};
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()]);

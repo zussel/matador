@@ -52,7 +52,7 @@ void typed_column_serializer::serialize(const char *id, char&)
 
 void typed_column_serializer::serialize(const char *id, short&)
 {
-  cols_->push_back(create_column_func_(id, data_type::type_smallint, index_++));
+  cols_->push_back(create_column_func_(id, data_type::type_short, index_++));
 }
 
 void typed_column_serializer::serialize(const char *id, int&)
@@ -62,12 +62,12 @@ void typed_column_serializer::serialize(const char *id, int&)
 
 void typed_column_serializer::serialize(const char *id, long&)
 {
-  cols_->push_back(create_column_func_(id, data_type::type_bigint, index_++));
+  cols_->push_back(create_column_func_(id, data_type::type_long, index_++));
 }
 
 void typed_column_serializer::serialize(const char *id, long long&)
 {
-  cols_->push_back(create_column_func_(id, data_type::type_bigint, index_++));
+  cols_->push_back(create_column_func_(id, data_type::type_long_long, index_++));
 }
 
 void typed_column_serializer::serialize(const char *id, unsigned char&)
@@ -77,22 +77,22 @@ void typed_column_serializer::serialize(const char *id, unsigned char&)
 
 void typed_column_serializer::serialize(const char *id, unsigned short&)
 {
-  cols_->push_back(create_column_func_(id, data_type::type_smallint, index_++));
+  cols_->push_back(create_column_func_(id, data_type::type_unsigned_short, index_++));
 }
 
 void typed_column_serializer::serialize(const char *id, unsigned int&)
 {
-  cols_->push_back(create_column_func_(id, data_type::type_int, index_++));
+  cols_->push_back(create_column_func_(id, data_type::type_unsigned_int, index_++));
 }
 
 void typed_column_serializer::serialize(const char *id, unsigned long&)
 {
-  cols_->push_back(create_column_func_(id, data_type::type_bigint, index_++));
+  cols_->push_back(create_column_func_(id, data_type::type_unsigned_long, index_++));
 }
 
 void typed_column_serializer::serialize(const char *id, unsigned long long&)
 {
-  cols_->push_back(create_column_func_(id, data_type::type_bigint, index_++));
+  cols_->push_back(create_column_func_(id, data_type::type_unsigned_long_long, index_++));
 }
 
 void typed_column_serializer::serialize(const char *id, float&)

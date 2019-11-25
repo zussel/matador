@@ -31,16 +31,25 @@ mysql_dialect::mysql_dialect()
   replace_token(detail::token::END_QUOTE, "`");
 }
 
-const char* mysql_dialect::type_string(matador::data_type type) const
+const char* mysql_dialect::to_database_type_string(matador::data_type type) const
 {
   switch(type) {
     case data_type::type_char:
       return "CHAR(1)";
-    case data_type::type_smallint:
+    case data_type::type_short:
       return "SMALLINT";
     case data_type::type_int:
       return "INTEGER";
-    case data_type::type_bigint:
+    case data_type::type_long:
+	    //return "INTEGER";
+	    return "BIGINT";
+    case data_type::type_unsigned_char:
+      return "CHAR(1)";
+    case data_type::type_unsigned_short:
+      return "INTEGER";
+    case data_type::type_unsigned_int:
+      return "BIGINT";
+    case data_type::type_unsigned_long:
 	    return "BIGINT";
 	  case data_type::type_bool:
       return "INTEGER";
@@ -75,34 +84,34 @@ const char* mysql_dialect::type_string(matador::data_type type) const
   }
 }
 
-data_type mysql_dialect::string_type(const char *type) const
+database_type mysql_dialect::string_type(const char *type) const
 {
   if (strncmp(type, "int", 3) == 0) {
     if (strstr(type, "unsigned") != nullptr) {
-      return data_type::type_unsigned_int;
+      return database_type::type_int;
     } else {
-      return data_type::type_int;
+      return database_type::type_int;
     }
   } else if (strncmp(type, "bigint", 6) == 0) {
     if (strstr(type, "unsigned") != nullptr) {
-      return data_type::type_unsigned_long_long;
+      return database_type::type_bigint;
     } else {
-      return data_type::type_long_long;
+      return database_type::type_bigint;
     }
   } else if (strcmp(type, "date") == 0) {
-    return data_type::type_date;
+    return database_type::type_date;
   } else if (strncmp(type, "datetime", 8) == 0) {
-    return data_type::type_time;
+    return database_type::type_time;
   } else if (strcmp(type, "float") == 0) {
-    return data_type::type_float;
+    return database_type::type_float;
   } else if (strcmp(type, "double") == 0) {
-    return data_type::type_double;
+    return database_type::type_double;
   } else if (strncmp(type, "varchar", 7) == 0) {
-    return data_type::type_varchar;
+    return database_type::type_varchar;
   } else if (strncmp(type, "text", 0) == 0) {
-    return data_type::type_text;
+    return database_type::type_text;
   } else {
-    return data_type::type_unknown;
+    return database_type::type_unknown;
   }
 }
 

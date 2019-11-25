@@ -64,7 +64,7 @@ public:
   {
     T val;
     SQLLEN info = 0;
-    auto type = (SQLSMALLINT)type2int(matador::data_type_traits<T>::type());
+    auto type = (SQLSMALLINT)type2int(matador::data_type_traits<T>::builtin_type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (!SQL_SUCCEEDED(ret)) {
       throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
@@ -110,7 +110,7 @@ protected:
   void read_column(const char *, T & val)
   {
     SQLLEN info = 0;
-    auto type = (SQLSMALLINT)type2int(data_type_traits<T>::type());
+    auto type = (SQLSMALLINT)type2int(data_type_traits<T>::builtin_type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index_++), type, &val, sizeof(T), &info);
     if (SQL_SUCCEEDED(ret)) {
       return;

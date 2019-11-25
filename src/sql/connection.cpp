@@ -140,7 +140,7 @@ bool connection::is_valid() const
   return !type_.empty() && !dns_.empty();
 }
 
-detail::basic_value* create_default_value(data_type type);
+detail::basic_value* create_default_value(database_type type);
 
 void connection::prepare_prototype_row(row &prototype, const std::string &tablename)
 {
@@ -158,35 +158,35 @@ void connection::prepare_prototype_row(row &prototype, const std::string &tablen
   }
   // default value for count(*)
   if (prototype.has_column(matador::columns::count_all().name)) {
-    std::shared_ptr<detail::basic_value> value(create_default_value(data_type::type_int));
+    std::shared_ptr<detail::basic_value> value(create_default_value(database_type::type_int));
     prototype.set(matador::columns::count_all().name, value);
   }
 }
 
-detail::basic_value* create_default_value(data_type type)
+detail::basic_value* create_default_value(database_type type)
 {
   switch (type) {
-    case data_type::type_char:
+    case database_type::type_char:
       return make_value((char)0);
-    case data_type::type_smallint:
+    case database_type::type_smallint:
       return make_value<short>(0);
-    case data_type::type_int:
+    case database_type::type_int:
       return make_value<int>(0);
-    case data_type::type_bigint:
+    case database_type::type_bigint:
       return make_value<long>(0);
-    case data_type::type_float:
+    case database_type::type_float:
       return make_value<float>(0);
-    case data_type::type_double:
+    case database_type::type_double:
       return make_value<double>(0);
-    case data_type::type_char_pointer:
+    case database_type::type_char_pointer:
       return new value<char*>((char*)nullptr, 0UL);
-    case data_type::type_text:
+    case database_type::type_text:
       return make_value<std::string>("");
-    case data_type::type_date:
+    case database_type::type_date:
       return make_value<matador::date>(date());
-    case data_type::type_time:
+    case database_type::type_time:
       return make_value<matador::time>(matador::time());
-    case data_type::type_varchar:
+    case database_type::type_varchar:
       return make_value<std::string>("");
     default:
       return new null_value;

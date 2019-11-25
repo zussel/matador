@@ -207,7 +207,7 @@ bool mssql_connection::exists(const std::string &tablename)
   }
 }
 
-static data_type type2data_type(SQLSMALLINT type, size_t size);
+static database_type type2data_type(SQLSMALLINT type, size_t size);
 
 std::vector<field> mssql_connection::describe(const std::string &table)
 {
@@ -277,35 +277,36 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   return fields;
 }
 
-data_type type2data_type(SQLSMALLINT type, size_t size)
+database_type type2data_type(SQLSMALLINT type, size_t size)
 {
   switch (type) {
   case SQL_CHAR:
-    return data_type::type_char;
+    return database_type::type_char;
   case SQL_SMALLINT:
-    return data_type::type_smallint;
+    return database_type::type_smallint;
   case SQL_INTEGER:
-    return data_type::type_int;
+    return database_type::type_int;
   case SQL_BIGINT:
   case SQL_NUMERIC:
-    return data_type::type_bigint;
+    return database_type::type_bigint;
   case SQL_DATE:
   case -9:
-    return data_type::type_date;
+    return database_type::type_date;
   case SQL_TYPE_TIMESTAMP:
-    return data_type::type_time;
+    return database_type::type_time;
   case SQL_VARCHAR:
-    return data_type::type_varchar;
+    return database_type::type_varchar;
   case SQL_REAL:
-  case SQL_FLOAT:
-    return data_type::type_real;
+    return database_type::type_float;
+    case SQL_FLOAT:
+    return database_type::type_double;
   case SQL_BIT:
-    return data_type::type_bool;
+    return database_type::type_bool;
   case SQL_LONGVARCHAR:
-    return (size != 2147483647 ? data_type::type_varchar : data_type::type_text);
+    return (size != 2147483647 ? database_type::type_varchar : database_type::type_text);
   case SQL_UNKNOWN_TYPE:
   default:
-    return data_type::type_unknown;
+    return database_type::type_unknown;
   }
 }
 

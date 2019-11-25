@@ -6,7 +6,7 @@
 
 namespace matador {
 
-//std::ostream& operator<<(std::ostream &out, const matador::data_type type)
+//std::ostream& operator<<(std::ostream &out, const matador::database_type type)
 //{
 //  out << type;
 //  return out;

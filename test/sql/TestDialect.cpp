@@ -16,7 +16,7 @@ TestDialect::TestDialect()
   : basic_dialect(new detail::basic_dialect_compiler, new detail::basic_dialect_linker)
 { }
 
-const char* TestDialect::type_string(data_type type) const
+const char* TestDialect::to_database_type_string(data_type type) const
 {
   switch(type) {
     case data_type::type_char:

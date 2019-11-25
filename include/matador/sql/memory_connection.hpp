@@ -33,7 +33,7 @@ public:
   std::string type() const override { return "memory"; };
   std::string version() const override { return "0.6.0"; };
 
-  virtual const char *type_string(data_type) const { return nullptr; }
+  virtual const char *type_string(database_type) const { return nullptr; }
 
   bool exists(const std::string &) override { return true; }
 

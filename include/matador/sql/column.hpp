@@ -194,7 +194,7 @@ struct typed_varchar_column;
 template < class T >
 std::shared_ptr<detail::typed_column> make_typed_column(const std::string &col)
 {
-  return std::make_shared<detail::typed_column>(col, data_type_traits<T>::type());
+  return std::make_shared<detail::typed_column>(col, data_type_traits<T>::builtin_type());
 }
 
 /**
@@ -222,7 +222,7 @@ OOS_SQL_API std::shared_ptr<detail::typed_column> make_typed_varchar_column(cons
 template < class T >
 std::shared_ptr<detail::typed_column> make_typed_id_column(const std::string &col)
 {
-  return std::make_shared<detail::typed_identifier_column>(col, data_type_traits<T>::type());
+  return std::make_shared<detail::typed_identifier_column>(col, data_type_traits<T>::builtin_type());
 }
 
 namespace detail {
