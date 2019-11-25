@@ -44,17 +44,21 @@ namespace matador {
  */
 enum struct data_type {
   type_char = 0,       /*!< Data type char */
-  type_short,          /*!< Data type short */
-  type_int,            /*!< Data type int */
-  type_long,           /*!< Data type long */
-  type_long_long,      /*!< Data type long long */
-  type_unsigned_char,  /*!< Data type unsigned char */
-  type_unsigned_short, /*!< Data type unsigned short */
-  type_unsigned_int,   /*!< Data type unsigned int */
-  type_unsigned_long,  /*!< Data type unsigned long */
-  type_unsigned_long_long,  /*!< Data type unsigned long long */
+//  type_short,          /*!< Data type short */
+//  type_int,            /*!< Data type int */
+//  type_long,           /*!< Data type long */
+//  type_long_long,      /*!< Data type long long */
+//  type_unsigned_char,  /*!< Data type unsigned char */
+//  type_unsigned_short, /*!< Data type unsigned short */
+//  type_unsigned_int,   /*!< Data type unsigned int */
+//  type_unsigned_long,  /*!< Data type unsigned long */
+//  type_unsigned_long_long,  /*!< Data type unsigned long long */
   type_float,          /*!< Data type float */
   type_double,         /*!< Data type double */
+  type_smallint,
+  type_int,
+  type_bigint,
+//  type_real,
   type_bool,           /*!< Data type bool */
   type_char_pointer,   /*!< Data type character pointer */
   type_varchar,        /*!< Data type varchar */
@@ -96,7 +100,7 @@ template <> struct data_type_traits<char>
 
 template <> struct data_type_traits<short>
 {
-  inline static data_type type() { return data_type::type_short; }
+  inline static data_type type() { return data_type::type_smallint; }
   inline static unsigned long size() { return sizeof(short); }
 };
 
@@ -108,43 +112,43 @@ template <> struct data_type_traits<int>
 
 template <> struct data_type_traits<long>
 {
-  inline static data_type type() { return data_type::type_long; }
+  inline static data_type type() { return data_type::type_bigint; }
   inline static unsigned long size() { return sizeof(long); }
 };
 
 template <> struct data_type_traits<long long>
 {
-  inline static data_type type() { return data_type::type_long_long; }
+  inline static data_type type() { return data_type::type_bigint; }
   inline static unsigned long size() { return sizeof(long long); }
 };
 
 template <> struct data_type_traits<unsigned char>
 {
-  inline static data_type type() { return data_type::type_unsigned_char; }
+  inline static data_type type() { return data_type::type_char; }
   inline static unsigned long size() { return sizeof(unsigned char); }
 };
 
 template <> struct data_type_traits<unsigned short>
 {
-  inline static data_type type() { return data_type::type_unsigned_short; }
+  inline static data_type type() { return data_type::type_smallint; }
   inline static unsigned long size() { return sizeof(unsigned short); }
 };
 
 template <> struct data_type_traits<unsigned int>
 {
-  inline static data_type type() { return data_type::type_unsigned_int; }
+  inline static data_type type() { return data_type::type_int; }
   inline static unsigned long size() { return sizeof(unsigned int); }
 };
 
 template <> struct data_type_traits<unsigned long>
 {
-  inline static data_type type() { return data_type::type_unsigned_long; }
+  inline static data_type type() { return data_type::type_bigint; }
   inline static unsigned long size() { return sizeof(unsigned long); }
 };
 
 template <> struct data_type_traits<unsigned long long>
 {
-  inline static data_type type() { return data_type::type_unsigned_long_long; }
+  inline static data_type type() { return data_type::type_bigint; }
   inline static unsigned long size() { return sizeof(unsigned long long); }
 };
 
@@ -162,7 +166,7 @@ template <> struct data_type_traits<float>
 
 template <> struct data_type_traits<double>
 {
-  inline static data_type type() { return data_type::type_double; }
+  inline static data_type type() { return data_type::type_date; }
   inline static unsigned long size() { return sizeof(double); }
 };
 

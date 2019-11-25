@@ -26,24 +26,12 @@ const char *sqlite_dialect::type_string(matador::data_type type) const
   switch(type) {
     case data_type::type_char:
       return "TINYINT";
-    case data_type::type_short:
+    case data_type::type_smallint:
       return "SMALLINT";
     case data_type::type_int:
       return "INTEGER";
-    case data_type::type_long:
+    case data_type::type_bigint:
       return "BIGINT";
-    case data_type::type_long_long:
-      return "BIGINT";
-    case data_type::type_unsigned_char:
-      return "TINYINT UNSIGNED";
-    case data_type::type_unsigned_short:
-      return "SMALLINT UNSIGNED";
-    case data_type::type_unsigned_int:
-      return "INTEGER UNSIGNED";
-    case data_type::type_unsigned_long:
-      return "BIGINT UNSIGNED";
-    case data_type::type_unsigned_long_long:
-      return "BIGINT UNSIGNED";
     case data_type::type_bool:
       return "BOOLEAN";
     case data_type::type_float:
@@ -72,35 +60,14 @@ const char *sqlite_dialect::type_string(matador::data_type type) const
 data_type sqlite_dialect::string_type(const char *type) const
 {
   if (strncmp(type, "INTEGER", 7) == 0) {
-    if (strstr(type, "UNSIGNED") != nullptr) {
-      return data_type::type_unsigned_int;
-    } else {
-      return data_type::type_int;
-    }
     return data_type::type_int;
   } else if (strncmp(type, "TINYINT", 3) == 0) {
-    if (strstr(type, "UNSIGNED") != nullptr) {
-      return data_type::type_unsigned_char;
-    } else {
-      return data_type::type_char;
-    }
+    return data_type::type_char;
   } else if (strncmp(type, "SMALLINT", 8) == 0) {
-    if (strstr(type, "UNSIGNED") != nullptr) {
-      return data_type::type_unsigned_short;
-    } else {
-      return data_type::type_short;
-    }
+    return data_type::type_smallint;
   } else if (strncmp(type, "BIGINT", 6) == 0) {
-    if (strstr(type, "UNSIGNED") != nullptr) {
-      return data_type::type_unsigned_long_long;
-    } else {
-      return data_type::type_long_long;
-    }
+    return data_type::type_bigint;
   } else if (strcmp(type, "REAL") == 0) {
-    return data_type::type_double;
-  } else if (strcmp(type, "FLOAT") == 0) {
-    return data_type::type_float;
-  } else if (strcmp(type, "DOUBLE") == 0) {
     return data_type::type_double;
   } else if (strcmp(type, "BLOB") == 0) {
     return data_type::type_blob;

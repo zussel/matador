@@ -168,24 +168,12 @@ detail::basic_value* create_default_value(data_type type)
   switch (type) {
     case data_type::type_char:
       return make_value((char)0);
-    case data_type::type_short:
+    case data_type::type_smallint:
       return make_value<short>(0);
     case data_type::type_int:
       return make_value<int>(0);
-    case data_type::type_long:
+    case data_type::type_bigint:
       return make_value<long>(0);
-    case data_type::type_long_long:
-      return make_value<long long>(0);
-    case data_type::type_unsigned_char:
-      return make_value<unsigned char>(0);
-    case data_type::type_unsigned_short:
-      return make_value<unsigned short>(0);
-    case data_type::type_unsigned_int:
-      return make_value<unsigned int>(0);
-    case data_type::type_unsigned_long:
-      return make_value<unsigned long>(0);
-    case data_type::type_unsigned_long_long:
-      return make_value<unsigned long long>(0);
     case data_type::type_float:
       return make_value<float>(0);
     case data_type::type_double:

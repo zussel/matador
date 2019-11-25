@@ -36,24 +36,12 @@ const char* mysql_dialect::type_string(matador::data_type type) const
   switch(type) {
     case data_type::type_char:
       return "CHAR(1)";
-    case data_type::type_short:
+    case data_type::type_smallint:
       return "SMALLINT";
     case data_type::type_int:
       return "INTEGER";
-    case data_type::type_long:
+    case data_type::type_bigint:
 	    return "BIGINT";
-    case data_type::type_long_long:
-	    return "BIGINT";
-    case data_type::type_unsigned_char:
-      return "CHAR(1)";
-    case data_type::type_unsigned_short:
-      return "SMALLINT UNSIGNED";
-    case data_type::type_unsigned_int:
-      return "INTEGER UNSIGNED";
-    case data_type::type_unsigned_long:
-	    return "BIGINT UNSIGNED";
-    case data_type::type_unsigned_long_long:
-	    return "BIGINT UNSIGNED";
 	  case data_type::type_bool:
       return "INTEGER";
     case data_type::type_float:

@@ -283,12 +283,12 @@ data_type type2data_type(SQLSMALLINT type, size_t size)
   case SQL_CHAR:
     return data_type::type_char;
   case SQL_SMALLINT:
-    return data_type::type_short;
+    return data_type::type_smallint;
   case SQL_INTEGER:
     return data_type::type_int;
   case SQL_BIGINT:
   case SQL_NUMERIC:
-    return data_type::type_long;
+    return data_type::type_bigint;
   case SQL_DATE:
   case -9:
     return data_type::type_date;
@@ -297,9 +297,8 @@ data_type type2data_type(SQLSMALLINT type, size_t size)
   case SQL_VARCHAR:
     return data_type::type_varchar;
   case SQL_REAL:
-    return data_type::type_float;
   case SQL_FLOAT:
-    return data_type::type_double;
+    return data_type::type_real;
   case SQL_BIT:
     return data_type::type_bool;
   case SQL_LONGVARCHAR:
