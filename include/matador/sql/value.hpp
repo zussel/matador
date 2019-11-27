@@ -39,6 +39,7 @@
 #include "matador/utils/time.hpp"
 #include "matador/utils/string.hpp"
 #include "matador/utils/serializer.hpp"
+#include "matador/utils/any.hpp"
 
 #include <string>
 #include <typeinfo>
@@ -55,6 +56,12 @@ namespace detail {
 
 struct OOS_SQL_API basic_value : public token
 {
+  template<typename T, typename U = std::decay<T>>
+  basic_value(T &&val, token::t_token tok)
+    : token(tok)
+    , value_(val)
+  {}
+
   explicit basic_value(token::t_token tok) : token(tok) { }
 
   template < class T > T get() {
@@ -74,6 +81,8 @@ struct OOS_SQL_API basic_value : public token
   virtual std::string safe_string(const basic_dialect &) const = 0;
 
   virtual const char* type_id() const = 0;
+
+  any value_;
 };
 
 }
