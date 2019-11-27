@@ -18,6 +18,12 @@ void AnyTestUnit::test_any()
 {
   using matador::any;
 
+  any d(6.5);
+
+  double dd = d._<double>();
+
+  UNIT_ASSERT_EQUAL(6.5, dd);
+
   any al = 7L;
   auto i = al._<int>();
 
@@ -134,7 +140,7 @@ void AnyTestUnit::test_any_visitor_class()
   UNIT_ASSERT_EQUAL(0.4f, af._<float>());
   p.apply(af);
   UNIT_ASSERT_EQUAL(0.5f, af._<float>());
-  UNIT_ASSERT_EQUAL(0.5f, af._<double>());
+//  UNIT_ASSERT_EQUAL(0.5f, af._<double>());
   UNIT_ASSERT_EQUAL("hello", astr._<std::string>());
   p.apply(astr);
   UNIT_ASSERT_EQUAL("world", astr._<std::string>());
