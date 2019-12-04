@@ -24,7 +24,7 @@ bool row::add_column(const std::string &column)
   return add_column(column, std::make_shared<null_value>());
 }
 
-bool row::add_column(const std::string &column, const std::shared_ptr<detail::basic_value> &value)
+bool row::add_column(const std::string &column, const std::shared_ptr<basic_value> &value)
 {
   if (has_column(column)) {
     return false;
@@ -39,7 +39,7 @@ bool row::has_column(const std::string &column) const
   return values_.find(column) != values_.end();
 }
 
-void row::set(const std::string &column, const std::shared_ptr<detail::basic_value> &value)
+void row::set(const std::string &column, const std::shared_ptr<basic_value> &value)
 {
   values_.at(column) = value;
 }

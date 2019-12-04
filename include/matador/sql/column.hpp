@@ -311,11 +311,11 @@ struct value_column : public basic_value_column
   { }
 
   value_column(const std::string &col, const T& val)
-    : basic_value_column(col, new value<T>(val))
+    : basic_value_column(col, new basic_value(val))
   { }
 
   value_column(const char *col, const T& val)
-  : basic_value_column(col, new value<T>(val))
+  : basic_value_column(col, new basic_value(val))
   { }
 };
 
@@ -327,11 +327,11 @@ struct value_column<char*> : public basic_value_column
   { }
 
   value_column(const std::string &col, char* val, size_t s)
-    : basic_value_column(col, new basic_value<char*>(val))
+    : basic_value_column(col, new basic_value(val/*, s*/))
   { }
 
   value_column(const char *col, char* val, size_t s)
-  : basic_value_column(col, new value<char*>(val, s))
+  : basic_value_column(col, new basic_value(val/*, s*/))
   { }
 };
 
@@ -343,11 +343,11 @@ struct value_column<const char*> : public basic_value_column
   { }
 
   value_column(const std::string &col, const char* val, size_t s)
-    : basic_value_column(col, new value<char*>(val, s))
+    : basic_value_column(col, new basic_value(val/*, s*/))
   { }
 
   value_column(const char *col, const char* val, size_t s)
-  : basic_value_column(col, new value<char*>(val, s))
+  : basic_value_column(col, new basic_value(val/*, s*/))
   { }
 };
 

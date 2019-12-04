@@ -31,20 +31,20 @@ class OOS_SQL_API query_value_creator
 public:
   query_value_creator();
 
-  std::shared_ptr<matador::detail::basic_value> create_from_any(any &a);
+  std::shared_ptr<basic_value> create_from_any(any &a);
 
 private:
   template < class T >
   void process(T &val)
   {
-    value_ = std::make_shared<value<T>>(val);
+    value_ = std::make_shared<basic_value>(val);
   }
   void process(char *val);
   void process(const char *val);
 
 private:
   any_visitor visitor_;
-  std::shared_ptr<matador::detail::basic_value> value_;
+  std::shared_ptr<basic_value> value_;
 };
 
 /// @endcond

@@ -49,56 +49,65 @@
 
 namespace matador {
 
-template<class T, class Enabled = void>
-struct value;
+//template<class T, class Enabled = void>
+//struct value;
 
-namespace detail {
+//namespace detail {
 /// @cond MATADOR_DEV
 
-struct OOS_SQL_API basic_value : public token
+struct OOS_SQL_API basic_value : public detail::token
 {
   template<typename T, typename U = std::decay<T>>
-  basic_value(T &&val, token::t_token tok)
+  basic_value(T &&val, detail::token::t_token tok)
     : token(tok)
     , value_(val)
   {}
 
-  explicit basic_value(token::t_token tok) : token(tok) { }
+  template<typename T, typename U = std::decay<T>>
+  basic_value(const T &val, detail::token::t_token tok)
+    : token(tok)
+    , value_(val)
+  {}
+
+  template<typename T, typename U = std::decay<T>>
+  basic_value(T val, detail::token::t_token tok)
+    : token(tok)
+    , value_(val)
+  {}
+
+  explicit basic_value(detail::token::t_token tok) : token(tok) { }
 
   template < class T > T get() {
-    auto *v = dynamic_cast<matador::value<T>* >(this);
-    if (v) {
-      return v->val;
-    } else {
-      throw std::bad_cast();
-    }
+    return value_._<T>();
+//    auto *v = dynamic_cast<matador::value<T>* >(this);
+//    if (v) {
+//      return v->val;
+//    } else {
+//      throw std::bad_cast();
+//    }
   }
 
-  virtual void serialize(const char *id, serializer &srlzr) = 0;
+  void serialize(const char *id, serializer &srlzr);
 
   void accept(token_visitor &visitor) override;
 
-  virtual std::string str() const = 0;
-  virtual std::string safe_string(const basic_dialect &) const = 0;
+  std::string str();
+  std::string safe_string(const basic_dialect &);
 
-  virtual const char* type_id() const = 0;
+  virtual const char* type_id() const;
 
   any value_;
   detail::value_visitor value_visitor_;
+  detail::value_to_string_visitor value_to_string_visitor_;
 };
 
-}
+//}
 
-struct null_value : public detail::basic_value
+struct null_value : public basic_value
 {
   static std::string NULLSTR;
 
-  null_value() : basic_value(detail::token::VALUE) { }
-
-  void serialize(const char *id, serializer &srlzr) override;
-
-  std::string str() const override;
-  std::string safe_string(const basic_dialect &) const override;
+  null_value() : basic_value(NULLSTR,detail::token::VALUE) { }
 
   const char* type_id() const override;
 };
@@ -413,12 +422,12 @@ struct null_value : public detail::basic_value
 //};
 
 template < class T >
-detail::basic_value* make_value(const T &val)
+basic_value* make_value(const T &val)
 {
-  return new value<T>(val);
+  return new basic_value(val);
 }
 
-detail::basic_value* make_value(const char* val, size_t len);
+basic_value* make_value(const char* val, size_t len);
 
 /// @endcond
 
