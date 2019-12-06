@@ -58,24 +58,24 @@ namespace matador {
 struct OOS_SQL_API basic_value : public detail::token
 {
   template<typename T, typename U = std::decay<T>>
-  basic_value(T &&val, detail::token::t_token tok)
-    : token(tok)
+  basic_value(T &&val)
+    : token(detail::token::VALUE)
     , value_(val)
   {}
 
-  template<typename T, typename U = std::decay<T>>
-  basic_value(const T &val, detail::token::t_token tok)
-    : token(tok)
-    , value_(val)
-  {}
+//  template<typename T, typename U = std::decay<T>>
+//  basic_value(const T &val)
+//    : token(detail::token::VALUE)
+//    , value_(val)
+//  {}
+//
+//  template<typename T, typename U = std::decay<T>>
+//  basic_value(T val)
+//    : token(detail::token::VALUE)
+//    , value_(val)
+//  {}
 
-  template<typename T, typename U = std::decay<T>>
-  basic_value(T val, detail::token::t_token tok)
-    : token(tok)
-    , value_(val)
-  {}
-
-  explicit basic_value(detail::token::t_token tok) : token(tok) { }
+//  basic_value() : token(detail::token::VALUE) { }
 
   template < class T > T get() {
     return value_._<T>();
@@ -107,7 +107,7 @@ struct null_value : public basic_value
 {
   static std::string NULLSTR;
 
-  null_value() : basic_value(NULLSTR,detail::token::VALUE) { }
+  null_value() : basic_value(NULLSTR) { }
 
   const char* type_id() const override;
 };

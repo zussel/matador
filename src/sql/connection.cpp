@@ -179,7 +179,7 @@ basic_value* create_default_value(database_type type)
     case database_type::type_double:
       return make_value<double>(0);
     case database_type::type_char_pointer:
-      return new value<char*>((char*)nullptr, 0UL);
+      return new basic_value((char*)nullptr/*, 0UL*/);
     case database_type::type_text:
       return make_value<std::string>("");
     case database_type::type_date:

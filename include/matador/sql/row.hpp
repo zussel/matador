@@ -117,7 +117,7 @@ public:
   template < class T >
   void set(const std::string &column, const T &val)
   {
-    values_.at(column).reset(new value<T>(val));
+    values_.at(column).reset(new basic_value(val));
   }
 
   /**

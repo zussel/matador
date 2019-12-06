@@ -20,7 +20,7 @@ void basic_value::serialize(const char *id, serializer &srlzr)
 
 std::string basic_value::str()
 {
-  return value_to_string_visitor_.to_string(value_)
+  return value_to_string_visitor_.to_string(value_);
 }
 
 std::string basic_value::safe_string(const basic_dialect &d)
