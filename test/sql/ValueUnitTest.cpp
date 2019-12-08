@@ -2,6 +2,7 @@
 // Created by sascha on 03.01.17.
 //
 
+#include "matador/sql/value.hpp"
 #include "matador/sql/value_serializer.hpp"
 
 #include "ValueUnitTest.hpp"
@@ -9,7 +10,15 @@
 
 ValueUnitTest::ValueUnitTest() : unit_test("value", "value test unit")
 {
+  add_test("values", std::bind(&ValueUnitTest::test_values, this), "test values");
   add_test("serialize", std::bind(&ValueUnitTest::test_serialize, this), "test serialize values");
+}
+
+void ValueUnitTest::test_values()
+{
+  matador::value v(28UL);
+
+  UNIT_ASSERT_EQUAL("28", v.str());
 }
 
 void ValueUnitTest::test_serialize()

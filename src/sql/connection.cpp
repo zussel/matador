@@ -140,7 +140,7 @@ bool connection::is_valid() const
   return !type_.empty() && !dns_.empty();
 }
 
-basic_value* create_default_value(database_type type);
+value* create_default_value(database_type type);
 
 void connection::prepare_prototype_row(row &prototype, const std::string &tablename)
 {
@@ -153,17 +153,17 @@ void connection::prepare_prototype_row(row &prototype, const std::string &tablen
       continue;
     }
     // generate value by type
-    std::shared_ptr<basic_value> value(create_default_value(f.type()));
+    std::shared_ptr<value> value(create_default_value(f.type()));
     prototype.set(f.name(), value);
   }
   // default value for count(*)
   if (prototype.has_column(matador::columns::count_all().name)) {
-    std::shared_ptr<basic_value> value(create_default_value(database_type::type_int));
+    std::shared_ptr<value> value(create_default_value(database_type::type_int));
     prototype.set(matador::columns::count_all().name, value);
   }
 }
 
-basic_value* create_default_value(database_type type)
+value* create_default_value(database_type type)
 {
   switch (type) {
     case database_type::type_char:
@@ -179,7 +179,7 @@ basic_value* create_default_value(database_type type)
     case database_type::type_double:
       return make_value<double>(0);
     case database_type::type_char_pointer:
-      return new basic_value((char*)nullptr/*, 0UL*/);
+      return new value((char*)nullptr/*, 0UL*/);
     case database_type::type_text:
       return make_value<std::string>("");
     case database_type::type_date:

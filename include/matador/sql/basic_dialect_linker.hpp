@@ -54,7 +54,7 @@ public:
   void visit(const matador::detail::top &) override;
   void visit(const matador::detail::remove &) override;
   void visit(const matador::detail::values &values) override;
-  void visit(const matador::basic_value &) override;
+  void visit(const matador::value &) override;
   void visit(const matador::detail::order_by &) override;
   void visit(const matador::detail::asc &) override;
   void visit(const matador::detail::desc &) override;

@@ -65,7 +65,7 @@ public:
    * @param value Value of the column
    * @return True if column was added, false if column aready exists
    */
-  bool add_column(const std::string &column, const std::shared_ptr<basic_value> &value);
+  bool add_column(const std::string &column, const std::shared_ptr<value> &value);
 
   /**
    * @brief Checks if the row has a column of the given name
@@ -101,7 +101,7 @@ public:
   template < class T >
   void set(size_t index, const T &val)
   {
-    values_.at(columns_.at(index)).reset(new basic_value(val));
+    values_.at(columns_.at(index)).reset(new value(val));
   }
 
   /**
@@ -117,7 +117,7 @@ public:
   template < class T >
   void set(const std::string &column, const T &val)
   {
-    values_.at(column).reset(new basic_value(val));
+    values_.at(column).reset(new value(val));
   }
 
   /**
@@ -126,7 +126,7 @@ public:
    * @param column The name of the column to be set
    * @param value  The new value of the column
    */
-  void set(const std::string &column, const std::shared_ptr<basic_value> &value);
+  void set(const std::string &column, const std::shared_ptr<value> &value);
 
   /**
    * Get value of column position
@@ -185,9 +185,9 @@ public:
 
 private:
 
-//  std::vector<detail::basic_value> values_;
+//  std::vector<detail::value> values_;
 
-  typedef std::shared_ptr<basic_value> value_ptr;
+  typedef std::shared_ptr<value> value_ptr;
   typedef std::vector<std::string> t_columns;
   typedef std::unordered_map<std::string, value_ptr> t_values;
 

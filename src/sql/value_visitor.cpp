@@ -91,7 +91,7 @@ std::string value_to_string_visitor::to_string(matador::any &a)
   return result_;
 }
 
-std::string value_to_string_visitor::to_safe_string(matador::any &a, basic_dialect *d)
+std::string value_to_string_visitor::to_safe_string(matador::any &a, const basic_dialect *d)
 {
   dialect_ = d;
   result_.clear();

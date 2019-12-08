@@ -285,12 +285,12 @@ struct OOS_SQL_API identifier_varchar_column : public typed_varchar_column
 
 struct OOS_SQL_API basic_value_column : public column
 {
-  basic_value_column(const std::string &col, basic_value *val)
+  basic_value_column(const std::string &col, value *val)
     : column(col)
     , value_(val)
   { }
 
-  basic_value_column(const char *col, basic_value *val)
+  basic_value_column(const char *col, value *val)
     : column(col)
     , value_(val)
   { }
@@ -300,61 +300,61 @@ struct OOS_SQL_API basic_value_column : public column
     visitor.visit(*this);
   }
 
-  std::unique_ptr<basic_value> value_;
+  std::unique_ptr<value> value_;
 };
 
 template < class T >
 struct value_column : public basic_value_column
 {
-  value_column(const std::string &col, basic_value *val)
+  value_column(const std::string &col, value *val)
     : basic_value_column(col, val)
   { }
 
   value_column(const std::string &col, const T& val)
-    : basic_value_column(col, new basic_value(val))
+    : basic_value_column(col, new value(val))
   { }
 
   value_column(const char *col, const T& val)
-  : basic_value_column(col, new basic_value(val))
+  : basic_value_column(col, new value(val))
   { }
 };
 
 template <>
 struct value_column<char*> : public basic_value_column
 {
-  value_column(const std::string &col, basic_value *val)
+  value_column(const std::string &col, value *val)
   : basic_value_column(col, val)
   { }
 
   value_column(const std::string &col, char* val, size_t s)
-    : basic_value_column(col, new basic_value(val/*, s*/))
+    : basic_value_column(col, new value(val, s))
   { }
 
   value_column(const char *col, char* val, size_t s)
-  : basic_value_column(col, new basic_value(val/*, s*/))
+  : basic_value_column(col, new value(val, s))
   { }
 };
 
 template <>
 struct value_column<const char*> : public basic_value_column
 {
-  value_column(const std::string &col, basic_value *val)
+  value_column(const std::string &col, value *val)
   : basic_value_column(col, val)
   { }
 
   value_column(const std::string &col, const char* val, size_t s)
-    : basic_value_column(col, new basic_value(val/*, s*/))
+    : basic_value_column(col, new value(val, s))
   { }
 
   value_column(const char *col, const char* val, size_t s)
-  : basic_value_column(col, new basic_value(val/*, s*/))
+  : basic_value_column(col, new value(val, s))
   { }
 };
 
 //template <>
 //struct value_column<std::string> : public basic_value_column
 //{
-//  value_column(const std::string &col, basic_value *val)
+//  value_column(const std::string &col, value *val)
 //  : basic_value_column(col, val)
 //  { }
 //

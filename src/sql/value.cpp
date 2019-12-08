@@ -6,33 +6,31 @@
 #include "matador/sql/basic_dialect.hpp"
 
 namespace matador {
-//namespace detail {
 
-void basic_value::accept(token_visitor &visitor)
+void value::accept(token_visitor &visitor)
 {
   return visitor.visit(*this);
 }
 
-void basic_value::serialize(const char *id, serializer &srlzr)
+void value::serialize(const char *id, serializer &srlzr)
 {
   value_visitor_.apply(value_, id, &srlzr);
 }
 
-std::string basic_value::str()
+std::string value::str() const
 {
-  return value_to_string_visitor_.to_string(value_);
+  return const_cast<detail::value_to_string_visitor&>(value_to_string_visitor_).to_string(const_cast<any&>(value_));
 }
 
-std::string basic_value::safe_string(const basic_dialect &d)
+std::string value::safe_string(const basic_dialect &d) const
 {
-  return value_to_string_visitor_.to_safe_string(value_, &d);
+  return const_cast<detail::value_to_string_visitor&>(value_to_string_visitor_).to_safe_string(const_cast<any&>(value_), &d);
 }
 
-const char *basic_value::type_id() const
+const char *value::type_id() const
 {
   return value_.type_index().name();
 }
-//}
 
 std::string null_value::NULLSTR = "NULL";
 
@@ -40,9 +38,9 @@ const char *null_value::type_id() const {
   return "null";
 }
 
-basic_value* make_value(const char* val, size_t len)
+value* make_value(const char* val, std::size_t len)
 {
-  return new basic_value(val);
+  return new value(val, len);
 }
 
 }

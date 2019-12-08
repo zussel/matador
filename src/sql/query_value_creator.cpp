@@ -23,7 +23,7 @@ query_value_creator::query_value_creator()
   visitor_.register_visitor<matador::date>([this](matador::date &val) { this->process(val); });
 }
 
-std::shared_ptr<matador::basic_value> query_value_creator::create_from_any(any &a)
+std::shared_ptr<matador::value> query_value_creator::create_from_any(any &a)
 {
   visitor_.visit(a);
   return value_;
@@ -31,12 +31,12 @@ std::shared_ptr<matador::basic_value> query_value_creator::create_from_any(any &
 
 void query_value_creator::process(char *val)
 {
-  value_ = std::make_shared<basic_value>(val/*, strlen(val)*/);
+  value_ = std::make_shared<value>(val/*, strlen(val)*/);
 }
 
 void query_value_creator::process(const char *val)
 {
-  value_ = std::make_shared<basic_value>(val/*, strlen(val)*/);
+  value_ = std::make_shared<value>(val/*, strlen(val)*/);
 }
 
 }

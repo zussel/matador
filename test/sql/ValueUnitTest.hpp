@@ -13,6 +13,7 @@ class ValueUnitTest : public matador::unit_test
 public:
   ValueUnitTest();
 
+  void test_values();
   void test_serialize();
 };
 

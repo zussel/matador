@@ -99,7 +99,7 @@ void basic_dialect_linker::visit(const matador::detail::values &values)
   dialect().append_to_result(token_string(values.type) + " (");
 
   if (values.values_.size() > 1) {
-    std::for_each(values.values_.begin(), values.values_.end() - 1, [&](const std::shared_ptr<basic_value> &val) {
+    std::for_each(values.values_.begin(), values.values_.end() - 1, [&](const std::shared_ptr<value> &val) {
       val->accept(*this);
       dialect().append_to_result(", ");
     });
@@ -110,7 +110,7 @@ void basic_dialect_linker::visit(const matador::detail::values &values)
   dialect().append_to_result(") ");
 }
 
-void basic_dialect_linker::visit(const matador::basic_value &val)
+void basic_dialect_linker::visit(const matador::value &val)
 {
   if (dialect().compile_type() == basic_dialect::DIRECT) {
     dialect().append_to_result(val.safe_string(dialect()));

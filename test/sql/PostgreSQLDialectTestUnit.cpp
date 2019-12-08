@@ -49,9 +49,9 @@ void PostgreSQLDialectTestUnit::test_placeholder()
   std::string name("hans");
   unsigned int age(25);
 
-  vals->push_back(std::make_shared<value<unsigned long>>(id));
-  vals->push_back(std::make_shared<value<std::string>>(name));
-  vals->push_back(std::make_shared<value<unsigned int>>(age));
+  vals->push_back(std::make_shared<value>(id));
+  vals->push_back(std::make_shared<value>(name));
+  vals->push_back(std::make_shared<value>(age));
 
   s.append(vals.release());
 

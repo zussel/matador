@@ -77,7 +77,7 @@ void basic_dialect_compiler::visit(const matador::detail::insert &) { }
 
 void basic_dialect_compiler::visit(const matador::detail::values &) { }
 
-void basic_dialect_compiler::visit(const matador::basic_value &) { }
+void basic_dialect_compiler::visit(const matador::value &) { }
 
 void basic_dialect_compiler::visit(const matador::detail::remove &) { }
 

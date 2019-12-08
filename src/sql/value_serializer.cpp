@@ -12,92 +12,92 @@ namespace detail {
 
 void value_serializer::serialize(const char*, char &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, short &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, int &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, long &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, long long &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, unsigned char &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, unsigned short &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, unsigned int &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, unsigned long &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, unsigned long long &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, float &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, double &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, bool &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, char *x, size_t len)
 {
-  values_->push_back(std::make_shared<basic_value>(x/*, len*/));
+  values_->push_back(std::make_shared<value>(x, len));
 }
 
-void value_serializer::serialize(const char*, std::string &x, size_t)
+void value_serializer::serialize(const char*, std::string &x, size_t len)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x, len));
 }
 
 void value_serializer::serialize(const char*, std::string  &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, date &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char*, time &x)
 {
-  values_->push_back(std::make_shared<basic_value>(x));
+  values_->push_back(std::make_shared<value>(x));
 }
 
 void value_serializer::serialize(const char *id, identifiable_holder &x, cascade_type)

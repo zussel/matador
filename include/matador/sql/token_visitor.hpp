@@ -23,7 +23,7 @@ namespace matador {
 class sql;
 struct column;
 struct columns;
-struct basic_value;
+struct value;
 
 namespace detail {
 
@@ -92,7 +92,7 @@ public:
   virtual void visit(const matador::detail::group_by &) = 0;
   virtual void visit(const matador::detail::insert &) = 0;
   virtual void visit(const matador::detail::values &) = 0;
-  virtual void visit(const matador::basic_value &) = 0;
+  virtual void visit(const matador::value &) = 0;
   virtual void visit(const matador::detail::remove &) = 0;
   virtual void visit(const matador::detail::top &) = 0;
   virtual void visit(const matador::detail::as &) = 0;
