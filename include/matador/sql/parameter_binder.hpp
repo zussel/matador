@@ -21,6 +21,7 @@ namespace detail {
 class parameter_binder_impl
 {
 public:
+  virtual ~parameter_binder_impl() = default;
   virtual void reset() = 0;
 
   virtual void initialize_index(size_t index) = 0;
