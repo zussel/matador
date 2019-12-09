@@ -10,6 +10,7 @@
 #include "matador/sql/query.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <set>
 
 using namespace matador;
@@ -74,17 +75,17 @@ void QueryTestUnit::test_datatypes()
   float fval = 2.445566f;
   double dval = 11111.23433345;
   char cval = 'c';
-  short sval = std::numeric_limits<short>::min();;
-  int ival = std::numeric_limits<int>::min();;
-  long lval = std::numeric_limits<long>::min();;
-  long long llval = std::numeric_limits<long long>::max();
-  unsigned short usval = std::numeric_limits<unsigned short>::max();
-  unsigned int uival = std::numeric_limits<unsigned int>::max();
-  unsigned long ulval = std::numeric_limits<unsigned long>::max();
-  unsigned long long ullval = std::numeric_limits<unsigned long long>::max();
+  short sval = (std::numeric_limits<short>::min)();
+  int ival = (std::numeric_limits<int>::min)();
+  long lval = (std::numeric_limits<long>::min)();
+  long long llval = (std::numeric_limits<long long>::max)();
+  unsigned short usval = (std::numeric_limits<unsigned short>::max)();
+  unsigned int uival = (std::numeric_limits<unsigned int>::max)();
+  unsigned long ulval = (std::numeric_limits<unsigned long>::max)();
+  unsigned long long ullval = (std::numeric_limits<unsigned long long>::max)();
   if (connection_.type() == "sqlite" || connection_.type() == "postgresql") {
-    ulval = std::numeric_limits<long long>::max();
-    ullval = std::numeric_limits<long long>::max();
+    ulval = (std::numeric_limits<long>::max)();
+    ullval = (std::numeric_limits<long long>::max)();
   }
   bool bval = true;
   const char *cstr("Armer schwarzer Kater");

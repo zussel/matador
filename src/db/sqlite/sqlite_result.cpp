@@ -248,10 +248,18 @@ void sqlite_result::serialize(const char *, char *x, size_t s)
   t_row::value_type &val = result_[pos_][column_++];
   size_t len = strlen(val);
   if (len > (size_t)s) {
+#ifdef _MSC_VER
+    strncpy_s(x, s, val, len);
+#else
     strncpy(x, val, s);
+#endif
     x[s-1] = '\n';
   } else {
+#ifdef _MSC_VER
+    strcpy_s(x, s, val);
+#else
     strcpy(x, val);
+#endif
   }
 }
 

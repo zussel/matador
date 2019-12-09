@@ -80,12 +80,12 @@ public:
   void set_short(short x) { short_ = x; }
   void set_int(int x) { int_ = x; }
   void set_long(long x) { long_ = x; }
-  void set_long_long(long x) { long64_ = x; }
+  void set_long_long(long long x) { long64_ = x; }
   void set_unsigned_char(unsigned char x) { unsigned_char_ = x; }
   void set_unsigned_short(unsigned short x) { unsigned_short_ = x; }
   void set_unsigned_int(unsigned int x) { unsigned_int_ = x; }
   void set_unsigned_long(unsigned long x) { unsigned_long_ = x; }
-  void set_unsigned_long_long(unsigned long x) { unsigned_long64_ = x; }
+  void set_unsigned_long_long(unsigned long long x) { unsigned_long64_ = x; }
   void set_bool(bool x) { bool_ = x; }
   void set_cstr(const char *x, size_t size)
   {
@@ -110,12 +110,12 @@ public:
   short get_short() const { return short_; }
   int get_int() const { return int_; }
   long get_long() const { return long_; }
-  long get_long_long() const { return long64_; }
+  long long get_long_long() const { return long64_; }
   unsigned char get_unsigned_char() const { return unsigned_char_; }
   unsigned short get_unsigned_short() const { return unsigned_short_; }
   unsigned int get_unsigned_int() const { return unsigned_int_; }
   unsigned long get_unsigned_long() const { return unsigned_long_; }
-  unsigned long get_unsigned_long_long() const { return unsigned_long64_; }
+  unsigned long long get_unsigned_long_long() const { return unsigned_long64_; }
   bool get_bool() const { return bool_; }
   const char* get_cstr() const { return cstr_; }
   std::string get_string() const { return string_; }
