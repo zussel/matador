@@ -29,9 +29,9 @@ void AnyTestUnit::test_any()
 
   UNIT_ASSERT_EQUAL(7, i);
 
-  auto str = al._<std::string>();
-
-  UNIT_ASSERT_EQUAL("", str);
+//  auto str = al._<std::string>();
+//
+//  UNIT_ASSERT_EQUAL("", str);
 }
 
 void test_visit(int &i)
