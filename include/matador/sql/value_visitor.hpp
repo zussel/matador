@@ -79,6 +79,7 @@ public:
   void process(char &val);
   void process(unsigned char &val);
   void process(char *val);
+  void process(const char *val);
   void process(time &val);
   void process(date &val);
 

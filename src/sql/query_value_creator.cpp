@@ -31,12 +31,12 @@ std::shared_ptr<matador::value> query_value_creator::create_from_any(any &a)
 
 void query_value_creator::process(char *val)
 {
-  value_ = std::make_shared<value>(val/*, strlen(val)*/);
+  value_ = std::make_shared<value>(val, strlen(val));
 }
 
 void query_value_creator::process(const char *val)
 {
-  value_ = std::make_shared<value>(val/*, strlen(val)*/);
+  value_ = std::make_shared<value>(val, strlen(val));
 }
 
 }

@@ -70,21 +70,11 @@ enum struct data_type {
  */
 enum struct database_type {
   type_char = 0,       /*!< Data type char */
-//  type_short,          /*!< Data type short */
-//  type_int,            /*!< Data type int */
-//  type_long,           /*!< Data type long */
-//  type_long_long,      /*!< Data type long long */
-//  type_unsigned_char,  /*!< Data type unsigned char */
-//  type_unsigned_short, /*!< Data type unsigned short */
-//  type_unsigned_int,   /*!< Data type unsigned int */
-//  type_unsigned_long,  /*!< Data type unsigned long */
-//  type_unsigned_long_long,  /*!< Data type unsigned long long */
   type_float,          /*!< Data type float */
   type_double,         /*!< Data type double */
   type_smallint,
   type_int,
   type_bigint,
-//  type_real,
   type_bool,           /*!< Data type bool */
   type_char_pointer,   /*!< Data type character pointer */
   type_varchar,        /*!< Data type varchar */

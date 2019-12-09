@@ -41,16 +41,19 @@ const char* mysql_dialect::to_database_type_string(matador::data_type type) cons
     case data_type::type_int:
       return "INTEGER";
     case data_type::type_long:
-	    //return "INTEGER";
+	    return "BIGINT";
+    case data_type::type_long_long:
 	    return "BIGINT";
     case data_type::type_unsigned_char:
       return "CHAR(1)";
     case data_type::type_unsigned_short:
-      return "INTEGER";
+      return "SMALLINT UNSIGNED";
     case data_type::type_unsigned_int:
-      return "BIGINT";
+      return "INTEGER UNSIGNED";
     case data_type::type_unsigned_long:
-	    return "BIGINT";
+	    return "BIGINT UNSIGNED";
+    case data_type::type_unsigned_long_long:
+	    return "BIGINT UNSIGNED";
 	  case data_type::type_bool:
       return "INTEGER";
     case data_type::type_float:
@@ -88,9 +91,9 @@ database_type mysql_dialect::string_type(const char *type) const
 {
   if (strncmp(type, "int", 3) == 0) {
     if (strstr(type, "unsigned") != nullptr) {
-      return database_type::type_int;
+      return database_type::type_bigint;
     } else {
-      return database_type::type_int;
+      return database_type::type_bigint;
     }
   } else if (strncmp(type, "bigint", 6) == 0) {
     if (strstr(type, "unsigned") != nullptr) {

@@ -147,7 +147,7 @@ std::vector<field> postgresql_connection::describe(const std::string &table)
     char *end = nullptr;
     f.index(strtoul(res->column(0), &end, 10) - 1);
     f.name(res->column(1));
-    f.type(dialect_.string_type(res->column(3)));
+    f.type(dialect_.string_type(res->column(2)));
     end = nullptr;
     f.not_null(strtoul(res->column(4), &end, 10) == 0);
     f.default_value(res->column(5));

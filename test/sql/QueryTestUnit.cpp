@@ -311,11 +311,11 @@ void QueryTestUnit::test_describe()
   auto fields = connection_.describe("person");
 
   std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
-//  std::vector<database_type > types = { matador::database_type::type_unsigned_long_long, matador::database_type::type_varchar, matador::database_type::type_date, matador::database_type::type_unsigned_int};
+  std::vector<database_type > types = { matador::database_type::type_bigint, matador::database_type::type_varchar, matador::database_type::type_date, matador::database_type::type_bigint};
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()]);
-//    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()]);
+    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()]);
   }
 
   q.drop().execute(connection_);
@@ -683,13 +683,10 @@ void QueryTestUnit::test_statement_update()
   //last = res.end();
 
   for (const auto &p : res) {
-    //while (first != last) {
-    //std::unique_ptr<person> p(first.release());
     UNIT_EXPECT_EQUAL(p->id(), 1UL);
     UNIT_EXPECT_EQUAL(p->name(), "hans");
     UNIT_EXPECT_EQUAL(p->height(), 165U);
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(15, 6, 1990));
-    //++first;
   }
 
   stmt = q.drop().prepare(connection_);
@@ -849,11 +846,10 @@ void QueryTestUnit::test_query_range_loop()
   std::vector<std::string> result_names({"Hilde", "Trude"});
   unsigned size(0);
   for (auto &&item : res) {
-    ++size;
-
+     ++size;
      UNIT_EXPECT_TRUE(contains(result_names, item->name()));
-//    UNIT_ASSERT_EQUAL(item.height(), 180U);
-//    UNIT_ASSERT_EQUAL(item.birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+//     UNIT_ASSERT_EQUAL(180U, item->height());
+//     UNIT_ASSERT_EQUAL(matador::date(12, 3, 1980), item->birthdate());
   }
 
   UNIT_ASSERT_EQUAL(size, 2U);
@@ -1075,16 +1071,12 @@ void QueryTestUnit::test_select_limit()
   result<relation> res(q.create().execute(connection_));
 
   auto r1 = matador::make_unique<relation>(1UL, 1UL);
-//  std::unique_ptr<relation> r1(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 1UL);
-//  r1.reset(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 2UL);
-//  r1.reset(new relation(1UL, 2UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 3UL);
-//  r1.reset(new relation(2UL, 3UL));
   res = q.insert(*r1).execute(connection_);
 
   q.select().limit(1);
@@ -1094,10 +1086,13 @@ void QueryTestUnit::test_select_limit()
   auto first = res.begin();
   auto last = res.end();
 
+  std::size_t count = 0;
   while (first != last) {
     std::unique_ptr<relation> item(first.release());
     ++first;
+    ++count;
   }
+  UNIT_ASSERT_EQUAL(1UL, count);
 
   q.drop().execute(connection_);
 }
@@ -1112,16 +1107,12 @@ void QueryTestUnit::test_update_limit()
   result<relation> res(q.create().execute(connection_));
 
   auto r1 = matador::make_unique<relation>(1UL, 1UL);
-//  std::unique_ptr<relation> r1(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 1UL);
-//  r1.reset(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 2UL);
-//  r1.reset(new relation(1UL, 2UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 3UL);
-//  r1.reset(new relation(2UL, 3UL));
   res = q.insert(*r1).execute(connection_);
 
   matador::column owner("owner_id");
@@ -1260,36 +1251,29 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
 
   auto stmt = q.select({"id"}).from("person").prepare(connection_);
 
-//  {
-    std::set<int> idset;
+  std::set<int> idset;
 
-    for(auto id : ids) {
-      idset.insert(id);
-    }
-    auto result = stmt.execute();
+  for(auto id : ids) {
+    idset.insert(id);
+  }
+  auto result = stmt.execute();
 
-    for (auto p : result) {
-      auto i = idset.find(p->at<int>("id"));
-      UNIT_EXPECT_TRUE(i != idset.end());
-      idset.erase(i);
-    }
-//  }
+  for (auto p : result) {
+    auto i = idset.find(p->at<int>("id"));
+    UNIT_EXPECT_TRUE(i != idset.end());
+    idset.erase(i);
+  }
 
-//  {
-//    std::set<long> idset;
+  for(auto id : ids) {
+    idset.insert(id);
+  }
+  /*auto */result = stmt.execute();
 
-    for(auto id : ids) {
-      idset.insert(id);
-    }
-    /*auto */result = stmt.execute();
-
-    for (auto p : result) {
-      auto i = idset.find(p->at<int>("id"));
-      UNIT_EXPECT_TRUE(i != idset.end());
-      idset.erase(i);
-    }
-//  }
-
+  for (auto p : result) {
+    auto i = idset.find(p->at<int>("id"));
+    UNIT_EXPECT_TRUE(i != idset.end());
+    idset.erase(i);
+  }
 
   q.drop("person").execute(connection_);
 }

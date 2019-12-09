@@ -78,6 +78,7 @@ value_to_string_visitor::value_to_string_visitor()
   visitor.register_visitor<float>([this](float &val) { this->process(val); });
   visitor.register_visitor<double>([this](double &val) { this->process(val); });
   visitor.register_visitor<char*>([this](char *val) { this->process(val); });
+  visitor.register_visitor<const char*>([this](const char *val) { this->process(val); });
   visitor.register_visitor<std::string>([this](std::string &val) { this->process(val); });
   visitor.register_visitor<time>([this](time &val) { this->process(val); });
   visitor.register_visitor<date>([this](date &val) { this->process(val); });
@@ -135,15 +136,28 @@ void value_to_string_visitor::process(char *val)
   }
 }
 
+void value_to_string_visitor::process(const char *val)
+{
+  if (dialect_ != nullptr) {
+    std::stringstream ss;
+    ss << "'" << dialect_->prepare_literal(val) << "'";
+    result_ = ss.str();
+  } else {
+    std::stringstream ss;
+    ss << "'" << val << "'";
+    result_ = ss.str();
+  }
+}
+
 void value_to_string_visitor::process(time &val)
 {
   if (dialect_ != nullptr) {
     std::stringstream ss;
-    ss << "'" << dialect_->prepare_literal(matador::to_string(val)) << "'";
+    ss << "'" << dialect_->prepare_literal(matador::to_string(val, "%FT%T.%f")) << "'";
     result_ = ss.str();
   } else {
     std::stringstream ss;
-    ss << "'" << matador::to_string(val) << "'";
+    ss << "'" << matador::to_string(val, "%FT%T.%f") << "'";
     result_ = ss.str();
   }
 }

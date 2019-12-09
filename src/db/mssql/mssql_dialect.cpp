@@ -35,6 +35,8 @@ const char* mssql_dialect::to_database_type_string(matador::data_type type) cons
       return "INT";
     case data_type::type_long:
       return "BIGINT";
+    case data_type::type_long_long:
+      return "BIGINT";
     case data_type::type_unsigned_char:
       return "CHAR(1)";
     case data_type::type_unsigned_short:
@@ -42,6 +44,8 @@ const char* mssql_dialect::to_database_type_string(matador::data_type type) cons
     case data_type::type_unsigned_int:
       return "BIGINT";
     case data_type::type_unsigned_long:
+      return "NUMERIC(21,0)";
+    case data_type::type_unsigned_long_long:
       return "NUMERIC(21,0)";
     case data_type::type_bool:
       return "BIT";
