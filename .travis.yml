@@ -6,6 +6,7 @@ os: linux
 
 services:
   - postgresql
+  - mysql
 
 env:
   global:
