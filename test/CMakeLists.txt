@@ -93,7 +93,7 @@ ELSE()
 #  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@192.168.178.31\\\\SQLEXPRESS/test_matador (FreeTDS)" CACHE STRING "mssql connection string")
 ENDIF()
 SET(SQLITE_CONNECTION_STRING "sqlite://test.sqlite" CACHE STRING "sqlite connection string")
-SET(POSTGRESQL_CONNECTION_STRING "postgresql://test:test123@127.0.0.1:5433/matador_test" CACHE STRING "postgresql connection string")
+SET(POSTGRESQL_CONNECTION_STRING "postgresql://test:test123@127.0.0.1/matador_test" CACHE STRING "postgresql connection string")
 
 
 MESSAGE(STATUS "mysql connection string: ${MYSQL_CONNECTION_STRING}")
