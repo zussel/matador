@@ -111,14 +111,14 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
-//  suite.register_unit(new ConnectionTestUnit("mssql", ::connection::mssql));
-//  suite.register_unit(new TransactionTestUnit("mssql", ::connection::mssql));
-//  suite.register_unit(new QueryTestUnit("mssql", ::connection::mssql));
-//  suite.register_unit(new BlogUnitTest("mssql", ::connection::mssql));
-//  suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
-//  suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
-//  suite.register_unit(new OrmRelationTestUnit("mssql", ::connection::mssql));
-//  suite.register_unit(new MSSQLDialectTestUnit());
+  suite.register_unit(new ConnectionTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new TransactionTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new QueryTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new BlogUnitTest("mssql", ::connection::mssql));
+  suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new OrmRelationTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new MSSQLDialectTestUnit());
 #endif
 
 #if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
