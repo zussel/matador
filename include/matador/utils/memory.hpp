@@ -8,6 +8,15 @@
 #include <memory>
 
 namespace matador {
+
+/**
+ * A quick fill in method for missing make_unique in c++11
+ *
+ * @tparam T Type to be created
+ * @tparam Args Forwared arg types
+ * @param args Forwared arguments
+ * @return The cre
+ */
 template<typename T, typename... Args>
 std::unique_ptr<T> make_unique(Args&&... args)
 {

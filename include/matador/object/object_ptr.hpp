@@ -162,6 +162,7 @@ public:
     clear();
     return *this;
   }
+
   /**
    * Return the type string of the object
    *
@@ -172,7 +173,6 @@ public:
     return classname_.c_str();
   }
 
-  //@{
   /**
    * @brief Return the pointer to the serializable of type T.
    *
@@ -185,10 +185,17 @@ public:
     return get();
   }
 
+  /**
+   * @brief Return the pointer to the serializable of type T.
+   *
+   * Return the pointer to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
+   *
+   * @return The pointer to the serializable of type T.
+   */
   const T* get() const {
     return static_cast<T*>(lookup_object());
   }
-  //@}
 
   /**
    * The modify method allows to modify the underlying
@@ -200,7 +207,6 @@ public:
    */
   T* modify();
 
-  //@{
   /**
    * @brief Return the reference to the serializable of type T.
    *
@@ -213,10 +219,17 @@ public:
     return *get();
   }
 
+  /**
+   * @brief Return the reference to the serializable of type T.
+   *
+   * Return the reference to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
+   *
+   * @return The reference to the serializable of type T.
+   */
   T& operator*() {
     return *get();
   }
-  //@}
 
   /**
    * Creates a new identifier, represented by the identifier

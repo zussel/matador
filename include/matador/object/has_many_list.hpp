@@ -153,7 +153,6 @@ public:
     return self();
   }
 
-  //@{
   /**
    * Return the current value
    * represented by the iterator
@@ -161,8 +160,14 @@ public:
    * @return The current value
    */
   value_type operator->() const { return iter_->value(); }
+
+  /**
+   * Return reference of the current value
+   * represented by the iterator
+   *
+   * @return The current value
+   */
   value_type& operator*() const { return iter_->value(); }
-  //@}
 
 private:
   friend class has_many<T, std::list>;
@@ -334,7 +339,6 @@ public:
     return self();
   }
 
-  //@{
   /**
    * Return the current value
    * represented by the iterator
@@ -342,8 +346,14 @@ public:
    * @return The current value
    */
   const value_type operator->() const { return iter_->value(); }
+
+  /**
+   * Return a const reference to the current value
+   * represented by the iterator
+   *
+   * @return The current value
+   */
   const value_type& operator*() const { return iter_->value(); }
-  //@}
 
 private:
   friend class has_many<T, std::list>;

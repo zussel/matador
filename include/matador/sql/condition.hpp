@@ -340,6 +340,7 @@ public:
    * given.
    *
    * @param col Column for the IN condition
+   * @param op Operand of the condition
    * @param q The query to be evaluated to the IN arguments
    */
   condition(column col, detail::basic_condition::t_operand op, detail::basic_query q)
@@ -461,11 +462,17 @@ public:
     return str.str();
   }
 
+  /// @cond MATADOR_DEV
+  /**
+   * Accept the given visitor for this condition
+   * @param visitor Visitor to be accepted
+   */
   void accept(token_visitor &visitor) override
   {
     left.accept(visitor);
     right.accept(visitor);
   }
+  /// @endcond
 
 private:
   condition<L1, R1> left;
@@ -570,7 +577,7 @@ condition<column, std::pair<T, T>> between(const matador::column &col, T low, T 
 /**
  * @brief Condition equality operator for a column and a value
  *
- * Creates a condition condition object of a column and a value
+ * Creates a condition object of a column and a value
  * checked on equality.
  *
  * @tparam T The type of the value
@@ -584,6 +591,16 @@ condition<column, T> operator==(const column &col, T val)
   return condition<column, T>(col, detail::basic_condition::EQUAL, val);
 }
 
+/**
+ * @brief Condition equality method for a column and a query
+ *
+ * Creates a condition object of a column and a query
+ * checked on equality.
+ *
+ * @param col The column object
+ * @param q The query to compare with
+ * @return The condition object representing the equality operation
+ */
 OOS_SQL_API condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
 
 /**

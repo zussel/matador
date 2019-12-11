@@ -31,6 +31,12 @@ public:
   {}
 
 
+  /**
+   * Creates a database_exception
+   *
+   * @param source The source of the exception.
+   * @param what The message of the exception.
+   */
   sql_exception(std::string source, std::string what)
     : source_(std::move(source))
     , what_(std::move(what))

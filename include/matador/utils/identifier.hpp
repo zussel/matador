@@ -259,6 +259,11 @@ public:
   explicit identifier(std::string val) : id_(std::move(val))
   { }
 
+  /**
+   * Create an identifier from given string
+   *
+   * @param val Value of identifier
+   */
   identifier(const char *val) :id_(val) {}
 
   /**
@@ -439,9 +444,9 @@ template < int SIZE, class T >
 class OOS_UTILS_API identifier<varchar<SIZE, T>> : public basic_identifier
 {
 public:
-  typedef varchar<SIZE, T> varchar_type;
+  typedef varchar<SIZE, T> varchar_type;  /**< Shortcut to varchar type */
   typedef identifier<varchar_type> self;  /**< Shortcut to self */
-  typedef typename varchar_type::value_type value_type;
+  typedef typename varchar_type::value_type value_type; /**< Shortcut to varchar value type */
 
   /**
    * @brief Create an identifier
@@ -465,6 +470,11 @@ public:
   explicit identifier(const varchar_type &val) : id_(val)
   { }
 
+  /**
+   * Create an identifier from given string
+   *
+   * @param val Value of identifier
+   */
   identifier(const char *val) :id_(val) {}
 
   /**
@@ -500,7 +510,7 @@ public:
    */
   void serialize(const char *id, serializer &s) override
   {
-    s.serialize(id, id_.value, SIZE);
+    s.serialize(id, id_.value(), SIZE);
   }
 
   /**
@@ -579,7 +589,7 @@ public:
    */
   std::ostream &print(std::ostream &out) const override
   {
-    out << id_.value;
+    out << id_.value();
     return out;
   }
 
@@ -588,7 +598,7 @@ public:
    *
    * @return The value of this identifier
    */
-  operator value_type () const { return id_.value; }
+  operator value_type () const { return id_.value(); }
 
   /**
    * Clones this identifier
@@ -607,7 +617,7 @@ public:
    */
   bool is_valid() const  override
   {
-    return !id_.value.empty();
+    return !id_.empty();
   }
 
   /**
@@ -615,14 +625,14 @@ public:
    *
    * @return The string value
    */
-  value_type value() const { return id_.value; }
+  value_type value() const { return id_.value(); }
 
   /**
    * Set a new identifier value
    *
    * @param val Value to set
    */
-  void value(const std::string &val) { id_ = val; }
+  void value(const std::string &val) { id_.assign(val); }
 
   /**
    * Set a new identifier value
@@ -636,7 +646,7 @@ public:
    *
    * @return A reference to the value
    */
-  const std::string& reference() const { return id_.value; }
+  const std::string& reference() const { return id_.value(); }
 
 private:
   varchar_type id_;

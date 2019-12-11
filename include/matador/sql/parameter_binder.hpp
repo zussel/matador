@@ -13,6 +13,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 class object_holder;
 class abstract_has_many;
 
@@ -263,5 +265,6 @@ private:
   detail::parameter_binder_impl *impl_;
 };
 
+/// @endcond
 }
 #endif //MATADOR_PARAMETER_BINDER_HPP

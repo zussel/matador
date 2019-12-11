@@ -17,67 +17,164 @@ namespace matador {
 struct varchar_base {};
 
 template<int SIZE, class T = std::string>
-struct varchar;
+class varchar;
 
+/**
+ * A varchar helper class for all has_many relations
+ * where the type should be a varchar
+ *
+ * Default varchar type is of std::string, but const char*
+ * and char[] is also valid
+ *
+ * @tparam SIZE size of the varchar
+ */
 template<int SIZE>
-struct varchar<SIZE, std::string> : public varchar_base
+class varchar<SIZE, std::string> : public varchar_base
 {
-  typedef std::string value_type;
+public:
+  typedef std::string value_type; /**< Shortcut of the internal varchar type */
 
+  /**
+   * Creates an empty varchar
+   */
   varchar() = default;
+  /**
+   * Creates a varchar with given value
+   *
+   * @param val Value of varchar
+   */
   explicit varchar(value_type val)
-  : value(std::move(val))
+  : value_(std::move(val))
   {}
 
+  /**
+   * Provides the less to compare operator
+   *
+   * @param x Value to compare
+   * @return True if this is less than x
+   */
   bool operator<(const varchar &x) const
   {
-    return value < x.value;
+    return value_ < x.value_;
   }
 
+  /**
+   * Provides the equal to operator
+   *
+   * @param x Value to compare
+   * @return True if values are equal
+   */
   bool operator==(const varchar &x) const
   {
-    return value == x.value;
+    return value_ == x.value_;
   }
 
+  /**
+   * Provides the not equal to operator
+   *
+   * @param x Value to compare
+   * @return True if values are not equal
+   */
+  bool operator!=(const varchar &x) const
+  {
+    return !operator==(x);
+  }
+
+  /**
+   * Assigns a new std::string value to varchar
+   *
+   * @param val Value to assign
+   */
   void assign(const std::string &val)
   {
-    value = val;
+    value_ = val;
   }
 
+  /**
+   * Assigns a new char value to varchar
+   *
+   * @param val Value to assign
+   */
   void assign(const char *val)
   {
-    value.assign(val);
+    value_.assign(val);
   }
 
+  /**
+   * Creates a hash for storing in a hash map/set
+   *
+   * @return A hash based on current value and size
+   */
   size_t hash() const
   {
-    size_t h1 = std::hash<std::string>()(value);
+    size_t h1 = std::hash<std::string>()(value_);
     size_t h2 = std::hash<int>()(size);
     return h1 ^ (h2 << 1);
   }
 
+  /**
+   * Returns true if varchar is empty
+   *
+   * @return True if empty
+   */
+  bool empty() const
+  {
+    return value_.empty();
+  }
+
+  /**
+   * Return a reference to the internal value
+   *
+   * @return Reference to the internal value
+   */
+  value_type& value() {
+    return value_;
+  }
+
+  /**
+   * Return a const reference to the internal value
+   *
+   * @return Const reference to the internal value
+   */
+  const value_type& value() const {
+    return value_;
+  }
+
+private:
   int size = SIZE;
-  value_type value;
+  value_type value_;
 };
 
+/// @cond MATADOR_DEV
+
 template<int SIZE>
-struct varchar<SIZE, char> : public varchar_base
+class varchar<SIZE, char> : public varchar_base
 {
+public:
   typedef char value_type;
 
-  varchar() = default;
+  varchar()
+  {
+    value_[0] = '\0';
+  };
+
   explicit varchar(const value_type *val) {
     assign(val);
   }
 
   bool operator<(const varchar &x) const
   {
-    return strcmp(value, x.value) < 0;
+    return strcmp(value_, x.value) < 0;
   }
 
   bool operator==(const varchar &x) const
   {
-    return strcmp(value, x.value) == 0;
+    return strcmp(value_, x.value) == 0;
+  }
+
+  bool operator!=(const varchar &x) const
+  {
+    return !operator==(x);
   }
 
   void assign(const std::string &val)
@@ -92,40 +189,60 @@ struct varchar<SIZE, char> : public varchar_base
 #ifdef _MSC_VER
     strncpy_s(value, size, val, len);
 #else
-    strncpy(value, val, len);
+    strncpy(value_, val, len);
 #endif
-    value[len] = '\0';
+    value_[len] = '\0';
   }
 
   size_t hash() const
   {
-    size_t h1 = std::hash<char>()(value);
+    size_t h1 = std::hash<char>()(value_);
     size_t h2 = std::hash<int>()(size);
     return h1 ^ (h2 << 1);
   }
 
+  bool empty() const
+  {
+    return strlen(value_) == 0;
+  }
+
+  value_type& value() {
+    return value_;
+  }
+
+  const value_type& value() const {
+    return value_;
+  }
+
+private:
   int size = SIZE;
-  value_type value[SIZE] = {};
+  value_type value_[SIZE] = {};
 };
 
 template<int SIZE>
-struct varchar<SIZE, const char*> : public varchar_base
+class varchar<SIZE, const char*> : public varchar_base
 {
+public:
   typedef const char* value_type;
 
   varchar() = default;
   explicit varchar(value_type val)
-    : value(val)
+    : value_(val)
   {}
 
   bool operator<(const varchar &x) const
   {
-    return strcmp(value, x.value) < 0;
+    return strcmp(value_, x.value) < 0;
   }
 
   bool operator==(const varchar &x) const
   {
-    return strcmp(value, x.value) == 0;
+    return strcmp(value_, x.value) == 0;
+  }
+
+  bool operator!=(const varchar &x) const
+  {
+    return !operator==(x);
   }
 
   void assign(const std::string &val)
@@ -140,21 +257,37 @@ struct varchar<SIZE, const char*> : public varchar_base
 #ifdef _MSC_VER
     strncpy_s(value, size, val, len);
 #else
-    strncpy(value, val, len);
+    strncpy(value_, val, len);
 #endif
-    value[len] = '\0';
+    value_[len] = '\0';
   }
 
   size_t hash() const
   {
-    size_t h1 = std::hash<const char*>()(value);
+    size_t h1 = std::hash<const char*>()(value_);
     size_t h2 = std::hash<int>()(size);
     return h1 ^ (h2 << 1);
   }
 
+  bool empty() const
+  {
+    return value_ == nullptr || strlen(value_) == 0;
+  }
+
+  value_type& value() {
+    return value_;
+  }
+
+  const value_type& value() const {
+    return value_;
+  }
+
+private:
   int size = SIZE;
-  value_type value = nullptr;
+  value_type value_ = nullptr;
 };
+
+/// @endcond
 
 }
 #endif //MATADOR_VARCHAR_HPP

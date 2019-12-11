@@ -173,6 +173,12 @@ private:
   static column count_all_;                      /**< An count all column object */
 };
 
+/**
+ * User defined literal to have a shortcut creating a column object
+ * @param name Name of the column
+ * @param len Lenght of the column name
+ * @return A column object with given name
+ */
 OOS_SQL_API column operator "" _col(const char *name, size_t len);
 
 namespace detail {

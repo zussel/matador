@@ -236,7 +236,6 @@ public:
     return out;
   }
 
-  //@{
   /**
    * Return the current value
    * represented by the iterator
@@ -248,9 +247,18 @@ public:
     value_type v = this->iter_->value();
     return v;
   }
-//    return this->iter_->value(); }
-  value_type& operator*() const { return this->iter_->value(); }
-  //@}
+
+  /**
+   * Return the current value
+   * represented by the iterator
+   *
+   * @return The current value
+   */
+  value_type& operator*() const
+  {
+    return this->iter_->value();
+  }
+
   /**
    * @brief Returns the holder item
    *
@@ -519,7 +527,6 @@ public:
     return out;
   }
 
-  //@{
   /**
    * Return the current value
    * represented by the iterator
@@ -527,10 +534,18 @@ public:
    * @return The current value
    */
   const value_type operator->() const { return iter_->value(); }
-  const value_type& operator*() const { return iter_->value(); }
-  //@}
 
+  /**
+   * Return a const reference to the current value
+   * represented by the iterator
+   *
+   * @return The current value
+   */
+  const value_type& operator*() const { return iter_->value(); }
+
+  /// @cond MATADOR_DEV
   holder_type holder_item() const { return *iter_; }
+  /// @endcond
 
 private:
   void move_to(self &i)
