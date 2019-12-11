@@ -1080,18 +1080,15 @@ void QueryTestUnit::test_select_limit()
   r1 = matador::make_unique<relation>(1UL, 3UL);
   res = q.insert(*r1).execute(connection_);
 
-  q.select().limit(1);
+  res = q.select().limit(1).execute(connection_);
 
-  res = q.execute(connection_);
-
+  std::size_t count = 0;
   auto first = res.begin();
   auto last = res.end();
 
-  std::size_t count = 0;
   while (first != last) {
-    std::unique_ptr<relation> item(first.release());
-    ++first;
     ++count;
+    ++first;
   }
   UNIT_ASSERT_EQUAL(1UL, count);
 
