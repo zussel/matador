@@ -144,6 +144,17 @@ void sqlite_result::serialize(const char *, long &x)
   // Todo: check error
 }
 
+void sqlite_result::serialize(const char *, long long &x)
+{
+  t_row::value_type &val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
+  char *end;
+  x = strtoll(val, &end, 10);
+  // Todo: check error
+}
+
 void sqlite_result::serialize(const char *, unsigned char &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
@@ -184,7 +195,18 @@ void sqlite_result::serialize(const char *, unsigned long &x)
     return;
   }
   char *end = nullptr;
-  x = strtoul(val, &end, 10);
+  x = strtoul(val, &end, 0);
+  // Todo: check error
+}
+
+void sqlite_result::serialize(const char *, unsigned long long &x)
+{
+  char *val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
+  char *end = nullptr;
+  x = strtoull(val, &end, 10);
   // Todo: check error
 }
 
@@ -226,10 +248,18 @@ void sqlite_result::serialize(const char *, char *x, size_t s)
   t_row::value_type &val = result_[pos_][column_++];
   size_t len = strlen(val);
   if (len > (size_t)s) {
+#ifdef _MSC_VER
+    strncpy_s(x, s, val, len);
+#else
     strncpy(x, val, s);
+#endif
     x[s-1] = '\n';
   } else {
+#ifdef _MSC_VER
+    strcpy_s(x, s, val);
+#else
     strcpy(x, val);
+#endif
   }
 }
 

@@ -19,6 +19,8 @@ int type2int(data_type type)
       return SQL_C_SLONG;
     case data_type::type_long:
       return SQL_C_SLONG;
+    case data_type::type_long_long:
+      return SQL_C_SBIGINT;
     case data_type::type_unsigned_char:
       return SQL_C_CHAR;
     case data_type::type_unsigned_short:
@@ -27,6 +29,8 @@ int type2int(data_type type)
       return SQL_C_ULONG;
     case data_type::type_unsigned_long:
       return SQL_C_ULONG;
+    case data_type::type_unsigned_long_long:
+      return SQL_C_UBIGINT;
     case data_type::type_bool:
       return SQL_C_BIT;
     case data_type::type_float:

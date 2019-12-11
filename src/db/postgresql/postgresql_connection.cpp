@@ -131,7 +131,7 @@ bool postgresql_connection::exists(const std::string &tablename)
 std::vector<field> postgresql_connection::describe(const std::string &table)
 {
   std::string stmt(
-    "SELECT ordinal_position, column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_schema='public' AND table_name='" + table + "'");
+    "SELECT ordinal_position, column_name, udt_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_schema='public' AND table_name='" + table + "'");
 
   std::unique_ptr<postgresql_result> res(execute_internal(stmt));
 
@@ -149,8 +149,8 @@ std::vector<field> postgresql_connection::describe(const std::string &table)
     f.name(res->column(1));
     f.type(dialect_.string_type(res->column(2)));
     end = nullptr;
-    f.not_null(strtoul(res->column(3), &end, 10) == 0);
-    f.default_value(res->column(4));
+    f.not_null(strtoul(res->column(4), &end, 10) == 0);
+    f.default_value(res->column(5));
     fields.push_back(f);
   } while(res->fetch());
 

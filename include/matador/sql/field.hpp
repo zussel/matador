@@ -81,13 +81,13 @@ public:
    * @brief Returns the type of the field
    * @return Type of the field
    */
-  data_type type() const;
+  database_type type() const;
 
   /**
    * @brief Sets the type of the field
    * @param t Type of the field to set
    */
-  void type(data_type t);
+  void type(database_type t);
 
   /**
    * @brief Returns the size of the field
@@ -156,7 +156,7 @@ public:
 private:
   size_t index_ = 0;
   std::string name_;
-  data_type type_ = data_type::type_unknown;
+  database_type type_ = database_type::type_unknown;
   std::size_t size_ = 0;
   std::size_t precision_ = 0;
   bool not_null_ = false;

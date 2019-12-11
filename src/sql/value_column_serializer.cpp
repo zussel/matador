@@ -40,6 +40,11 @@ void value_column_serializer::serialize(const char *id, long &x)
   cols_->push_back(make_shared_value_column(id, x));
 }
 
+void value_column_serializer::serialize(const char *id, long long &x)
+{
+  cols_->push_back(make_shared_value_column(id, x));
+}
+
 void value_column_serializer::serialize(const char *id, unsigned char &x)
 {
   cols_->push_back(make_shared_value_column(id, x));
@@ -56,6 +61,11 @@ void value_column_serializer::serialize(const char *id, unsigned int &x)
 }
 
 void value_column_serializer::serialize(const char *id, unsigned long &x)
+{
+  cols_->push_back(make_shared_value_column(id, x));
+}
+
+void value_column_serializer::serialize(const char *id, unsigned long long &x)
 {
   cols_->push_back(make_shared_value_column(id, x));
 }

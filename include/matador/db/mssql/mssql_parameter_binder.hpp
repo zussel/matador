@@ -37,10 +37,12 @@ public:
   void bind(short i, size_t) override;
   void bind(int i, size_t) override;
   void bind(long i, size_t) override;
+  void bind(long long i, size_t) override;
   void bind(unsigned char i, size_t) override;
   void bind(unsigned short i, size_t) override;
   void bind(unsigned int i, size_t) override;
   void bind(unsigned long i, size_t) override;
+  void bind(unsigned long long i, size_t) override;
   void bind(bool b, size_t) override;
   void bind(float d, size_t) override;
   void bind(double d, size_t) override;

@@ -15,7 +15,7 @@ public:
 
   TestDialect();
 
-  const char* type_string(matador::data_type type) const override;
+  const char* to_database_type_string(matador::data_type type) const override;
 
   matador::dialect_traits::identifier identifier_escape_type() const override;
 };

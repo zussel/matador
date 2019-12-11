@@ -24,7 +24,7 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
     return;
   }
   char *end;
-  val = (T)strtol(value, &end, 10);
+  val = (T)strtoll(value, &end, 10);
 }
 
 template < typename T, typename std::enable_if<
@@ -41,7 +41,7 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
     return;
   }
   char *end;
-  val = (T)strtoul(value, &end, 10);
+  val = (T)strtoull(value, &end, 10);
 }
 
 template < typename T, typename std::enable_if<std::is_same<T, bool>::value>::type* = nullptr>

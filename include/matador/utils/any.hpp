@@ -35,7 +35,7 @@ class any
 
   struct base
   {
-    virtual ~base() { }
+    virtual ~base() = default;
     virtual bool is(id) const = 0;
     virtual base *copy() const = 0;
     virtual std::type_index type_index() const = 0;
@@ -73,14 +73,15 @@ public:
    *
    * Create an empty anonymous any
    */
-  any() { }
+  any() = default;
   ~any() { delete p; }
 
   /**
    * @brief Move copy constructor
    * @param s any object to be moved
    */
-  any(any &&s)      : p{s.p} { s.p = nullptr; }
+  any(any &&s) noexcept
+    : p{s.p} { s.p = nullptr; }
   /**
    * @brief Copy constructor
    * @param s any object to be copied
@@ -94,7 +95,9 @@ public:
    * @param x Concrete object
    */
   template<typename T, typename U = decay<T>, typename = none<U>>
-  any(T &&x) : p{new data<U>{std::forward<T>(x)}} { }
+  any(T &&x)
+    : p{new data<U>{std::forward<T>(x)}}
+  { }
 
   /**
    * @brief Assignment operator
@@ -193,14 +196,14 @@ public:
    * @tparam T Type of any
    * @return The moved any object
    */
-  template<typename T> operator T     &&()     && { return std::move(_<T>()); }
+  template<typename T> operator T &&()     && { return std::move(_<T>()); }
 
   /**
    * @brief Returns reference to any object as static cast
    * @tparam T Type of any
    * @return Reference to any object
    */
-  template<typename T> operator T      &()      & { return _<T>(); }
+  template<typename T> operator T &()      & { return _<T>(); }
 
   /**
    * @brief Returns const reference to any object as static cast

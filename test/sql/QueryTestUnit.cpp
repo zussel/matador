@@ -10,6 +10,7 @@
 #include "matador/sql/query.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <set>
 
 using namespace matador;
@@ -74,12 +75,18 @@ void QueryTestUnit::test_datatypes()
   float fval = 2.445566f;
   double dval = 11111.23433345;
   char cval = 'c';
-  short sval = -128;
-  int ival = -49152;
-  long lval = -123456789;
-  unsigned short usval = 255;
-  unsigned int uival = 49152;
-  unsigned long ulval = 765432182;
+  short sval = (std::numeric_limits<short>::min)();
+  int ival = (std::numeric_limits<int>::min)();
+  long lval = (std::numeric_limits<long>::min)();
+  long long llval = (std::numeric_limits<long long>::max)();
+  unsigned short usval = (std::numeric_limits<unsigned short>::max)();
+  unsigned int uival = (std::numeric_limits<unsigned int>::max)();
+  unsigned long ulval = (std::numeric_limits<unsigned long>::max)();
+  unsigned long long ullval = (std::numeric_limits<unsigned long long>::max)();
+  if (connection_.type() == "sqlite" || connection_.type() == "postgresql") {
+    ulval = (std::numeric_limits<long>::max)();
+    ullval = (std::numeric_limits<long long>::max)();
+  }
   bool bval = true;
   const char *cstr("Armer schwarzer Kater");
   std::string varcharval("hallo welt");
@@ -103,9 +110,11 @@ void QueryTestUnit::test_datatypes()
   item.set_short(sval);
   item.set_int(ival);
   item.set_long(lval);
+  item.set_long_long(llval);
   item.set_unsigned_short(usval);
   item.set_unsigned_int(uival);
   item.set_unsigned_long(ulval);
+  item.set_unsigned_long_long(ullval);
   item.set_cstr(cstr, strlen(cstr) + 1);
   item.set_varchar(varcharval);
   item.set_string(strval);
@@ -127,9 +136,11 @@ void QueryTestUnit::test_datatypes()
   UNIT_EXPECT_EQUAL(it->get_short(), sval);
   UNIT_EXPECT_EQUAL(it->get_int(), ival);
   UNIT_EXPECT_EQUAL(it->get_long(), lval);
+  UNIT_EXPECT_EQUAL(it->get_long_long(), llval);
   UNIT_EXPECT_EQUAL(it->get_unsigned_short(), usval);
   UNIT_EXPECT_EQUAL(it->get_unsigned_int(), uival);
   UNIT_EXPECT_EQUAL(it->get_unsigned_long(), ulval);
+  UNIT_EXPECT_EQUAL(it->get_unsigned_long_long(), ullval);
   UNIT_EXPECT_EQUAL(it->get_bool(), bval);
   UNIT_EXPECT_EQUAL(it->get_cstr(), cstr);
   UNIT_EXPECT_EQUAL(it->get_string(), strval);
@@ -163,7 +174,7 @@ void QueryTestUnit::test_quoted_identifier()
 
   // check table description
   std::vector<std::string> columns = { "from", "to"};
-  std::vector<data_type > types = { matador::data_type::type_text, matador::data_type::type_text};
+  std::vector<database_type > types = {matador::database_type::type_text, matador::database_type::type_text};
   auto fields = connection_.describe("quotes");
 
   for (auto &&field : fields) {
@@ -217,7 +228,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
 
     // check table description
     std::vector<std::string> columns({ colname });
-    std::vector<data_type > types({ matador::data_type::type_text });
+    std::vector<database_type > types({matador::database_type::type_text });
     auto fields = connection_.describe("quotes");
 
     for (auto &&field : fields) {
@@ -301,7 +312,7 @@ void QueryTestUnit::test_describe()
   auto fields = connection_.describe("person");
 
   std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
-  std::vector<data_type > types = { matador::data_type::type_long, matador::data_type::type_varchar, matador::data_type::type_date, matador::data_type::type_long};
+  std::vector<database_type > types = { matador::database_type::type_bigint, matador::database_type::type_varchar, matador::database_type::type_date, matador::database_type::type_bigint};
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()]);
@@ -510,7 +521,7 @@ void QueryTestUnit::test_anonymous_insert()
   query<> q("person");
 
   q.create({
-     make_typed_id_column<long>("id"),
+     make_typed_id_column<int>("id"),
      make_typed_varchar_column("name", 32),
      make_typed_column<unsigned>("age")
    });
@@ -526,8 +537,9 @@ void QueryTestUnit::test_anonymous_insert()
 
   while (first != last) {
     std::unique_ptr<row> item(first.release());
-    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"));
+    UNIT_EXPECT_EQUAL(1, item->at<int>("id"));
     UNIT_EXPECT_EQUAL("hans", item->at<std::string>("name"));
+    UNIT_EXPECT_EQUAL(45U, item->at<unsigned>("age"));
     ++first;
   }
 
@@ -542,7 +554,7 @@ void QueryTestUnit::test_anonymous_update()
   query<> q("person");
 
   q.create({
-     make_typed_id_column<long>("id"),
+     make_typed_id_column<int>("id"),
      make_typed_varchar_column("name", 32),
      make_typed_column<unsigned>("age")
    });
@@ -563,7 +575,7 @@ void QueryTestUnit::test_anonymous_update()
   while (first != last) {
     std::unique_ptr<row> item(first.release());
     UNIT_EXPECT_EQUAL("jane", item->at<std::string>("name"));
-    UNIT_EXPECT_EQUAL(47L, item->at<long>("age"));
+    UNIT_EXPECT_EQUAL(47U, item->at<unsigned>("age"));
     ++first;
   }
 
@@ -672,13 +684,10 @@ void QueryTestUnit::test_statement_update()
   //last = res.end();
 
   for (const auto &p : res) {
-    //while (first != last) {
-    //std::unique_ptr<person> p(first.release());
     UNIT_EXPECT_EQUAL(p->id(), 1UL);
     UNIT_EXPECT_EQUAL(p->name(), "hans");
     UNIT_EXPECT_EQUAL(p->height(), 165U);
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(15, 6, 1990));
-    //++first;
   }
 
   stmt = q.drop().prepare(connection_);
@@ -838,11 +847,10 @@ void QueryTestUnit::test_query_range_loop()
   std::vector<std::string> result_names({"Hilde", "Trude"});
   unsigned size(0);
   for (auto &&item : res) {
-    ++size;
-
+     ++size;
      UNIT_EXPECT_TRUE(contains(result_names, item->name()));
-//    UNIT_ASSERT_EQUAL(item.height(), 180U);
-//    UNIT_ASSERT_EQUAL(item.birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+//     UNIT_ASSERT_EQUAL(180U, item->height());
+//     UNIT_ASSERT_EQUAL(matador::date(12, 3, 1980), item->birthdate());
   }
 
   UNIT_ASSERT_EQUAL(size, 2U);
@@ -1027,7 +1035,7 @@ void QueryTestUnit::test_query_select_columns()
 
   while (first != last) {
     std::unique_ptr<row> item(first.release());
-    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"));
+    UNIT_EXPECT_EQUAL(1UL, item->at<unsigned long long>("id"));
     UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name));
     ++first;
   }
@@ -1064,29 +1072,25 @@ void QueryTestUnit::test_select_limit()
   result<relation> res(q.create().execute(connection_));
 
   auto r1 = matador::make_unique<relation>(1UL, 1UL);
-//  std::unique_ptr<relation> r1(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 1UL);
-//  r1.reset(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 2UL);
-//  r1.reset(new relation(1UL, 2UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 3UL);
-//  r1.reset(new relation(2UL, 3UL));
   res = q.insert(*r1).execute(connection_);
 
-  q.select().limit(1);
+  res = q.select().limit(1).execute(connection_);
 
-  res = q.execute(connection_);
-
+  std::size_t count = 0;
   auto first = res.begin();
   auto last = res.end();
 
   while (first != last) {
-    std::unique_ptr<relation> item(first.release());
+    ++count;
     ++first;
   }
+  UNIT_ASSERT_EQUAL(1UL, count);
 
   q.drop().execute(connection_);
 }
@@ -1101,16 +1105,12 @@ void QueryTestUnit::test_update_limit()
   result<relation> res(q.create().execute(connection_));
 
   auto r1 = matador::make_unique<relation>(1UL, 1UL);
-//  std::unique_ptr<relation> r1(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 1UL);
-//  r1.reset(new relation(1UL, 1UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 2UL);
-//  r1.reset(new relation(1UL, 2UL));
   res = q.insert(*r1).execute(connection_);
   r1 = matador::make_unique<relation>(1UL, 3UL);
-//  r1.reset(new relation(2UL, 3UL));
   res = q.insert(*r1).execute(connection_);
 
   matador::column owner("owner_id");
@@ -1236,49 +1236,42 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
   query<> q("person");
 
   q.create({
-             make_typed_id_column<long>("id"),
+             make_typed_id_column<int>("id"),
            });
 
   q.execute(connection_);
 
-  std::vector<long> ids({ 1,2,3,4 });
+  std::vector<int> ids({ 1,2,3,4 });
 
-  for (long id : ids) {
+  for (int id : ids) {
     q.insert({"id"}).values({id}).execute(connection_);
   }
 
   auto stmt = q.select({"id"}).from("person").prepare(connection_);
 
-//  {
-    std::set<long> idset;
+  std::set<int> idset;
 
-    for(auto id : ids) {
-      idset.insert(id);
-    }
-    auto result = stmt.execute();
+  for(auto id : ids) {
+    idset.insert(id);
+  }
+  auto result = stmt.execute();
 
-    for (auto p : result) {
-      auto i = idset.find(p->at<long>("id"));
-      UNIT_EXPECT_TRUE(i != idset.end());
-      idset.erase(i);
-    }
-//  }
+  for (auto p : result) {
+    auto i = idset.find(p->at<int>("id"));
+    UNIT_EXPECT_TRUE(i != idset.end());
+    idset.erase(i);
+  }
 
-//  {
-//    std::set<long> idset;
+  for(auto id : ids) {
+    idset.insert(id);
+  }
+  /*auto */result = stmt.execute();
 
-    for(auto id : ids) {
-      idset.insert(id);
-    }
-    /*auto */result = stmt.execute();
-
-    for (auto p : result) {
-      auto i = idset.find(p->at<long>("id"));
-      UNIT_EXPECT_TRUE(i != idset.end());
-      idset.erase(i);
-    }
-//  }
-
+  for (auto p : result) {
+    auto i = idset.find(p->at<int>("id"));
+    UNIT_EXPECT_TRUE(i != idset.end());
+    idset.erase(i);
+  }
 
   q.drop("person").execute(connection_);
 }
@@ -1292,7 +1285,7 @@ void QueryTestUnit::test_rows()
   auto cols = {"id", "string", "varchar", "int", "float", "double", "date", "time"};
 
   q.create({
-             make_typed_id_column<long>("id"),
+             make_typed_id_column<int>("id"),
              make_typed_column<std::string>("string"),
              make_typed_varchar_column("varchar", 32),
              make_typed_column<int>("int"),
@@ -1319,7 +1312,7 @@ void QueryTestUnit::test_rows()
   auto res = q.select({"id", "string", "varchar", "int", "float", "double"}).from("item").execute(connection_);
 
   for (auto item : res) {
-    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"));
+    UNIT_EXPECT_EQUAL(1L, item->at<int>("id"));
     UNIT_EXPECT_EQUAL("long text", item->at<std::string>("string"));
     UNIT_EXPECT_EQUAL(-17, item->at<int>("int"));
     UNIT_EXPECT_EQUAL(3.1415f, item->at<float>("float"));

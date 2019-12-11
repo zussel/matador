@@ -116,6 +116,11 @@ void mssql_result::serialize(const char *id, long &x)
   read_column(id, x);
 }
 
+void mssql_result::serialize(const char *id, long long &x)
+{
+  read_column(id, x);
+}
+
 void mssql_result::serialize(const char *id, unsigned char &x)
 {
   read_column(id, x);
@@ -132,6 +137,11 @@ void mssql_result::serialize(const char *id, unsigned int &x)
 }
 
 void mssql_result::serialize(const char *id, unsigned long &x)
+{
+  read_column(id, x);
+}
+
+void mssql_result::serialize(const char *id, unsigned long long &x)
 {
   read_column(id, x);
 }

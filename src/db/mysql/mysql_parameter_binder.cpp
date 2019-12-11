@@ -154,6 +154,11 @@ void mysql_parameter_binder::bind(long i, size_t index)
   bind_value(MYSQL_TYPE_LONG, i, host_array_[index], is_null_vector[index]);
 }
 
+void mysql_parameter_binder::bind(long long i, size_t index)
+{
+  bind_value(MYSQL_TYPE_LONGLONG, i, host_array_[index], is_null_vector[index]);
+}
+
 void mysql_parameter_binder::bind(unsigned char i, size_t index)
 {
   bind_value(MYSQL_TYPE_VAR_STRING, i, host_array_[index], is_null_vector[index]);
@@ -172,6 +177,11 @@ void mysql_parameter_binder::bind(unsigned int i, size_t index)
 void mysql_parameter_binder::bind(unsigned long i, size_t index)
 {
   bind_value(MYSQL_TYPE_LONG, i, host_array_[index], is_null_vector[index]);
+}
+
+void mysql_parameter_binder::bind(unsigned long long i, size_t index)
+{
+  bind_value(MYSQL_TYPE_LONGLONG, i, host_array_[index], is_null_vector[index]);
 }
 
 void mysql_parameter_binder::bind(bool b, size_t index)

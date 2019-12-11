@@ -218,7 +218,7 @@ protected:
   friend class detail::basic_dialect_linker;
   template < class L, class R, class E > friend class condition;
 
-  virtual const char* type_string(data_type type) const = 0;
+  virtual const char* to_database_type_string(data_type type) const = 0;
   t_compile_type compile_type() const;
 
   bool is_preparing() const;

@@ -63,6 +63,12 @@ void sqlite_parameter_binder::bind(long i, size_t index)
   throw_error(ret, db_, "sqlite3_bind_int");
 }
 
+void sqlite_parameter_binder::bind(long long i, size_t index)
+{
+  int ret = sqlite3_bind_int64(stmt_, (int)index, i);
+  throw_error(ret, db_, "sqlite3_bind_int");
+}
+
 void sqlite_parameter_binder::bind(unsigned char i, size_t index)
 {
   int ret = sqlite3_bind_int(stmt_, (int)index, i);
@@ -84,6 +90,12 @@ void sqlite_parameter_binder::bind(unsigned int i, size_t index)
 void sqlite_parameter_binder::bind(unsigned long i, size_t index)
 {
   int ret = sqlite3_bind_int(stmt_, (int)index, i);
+  throw_error(ret, db_, "sqlite3_bind_int");
+}
+
+void sqlite_parameter_binder::bind(unsigned long long i, size_t index)
+{
+  int ret = sqlite3_bind_int64(stmt_, (int)index, i);
   throw_error(ret, db_, "sqlite3_bind_int");
 }
 
