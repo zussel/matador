@@ -8,10 +8,15 @@
 #include "../person.hpp"
 
 #include "matador/sql/query.hpp"
+#include "matador/sql/types.hpp"
+
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
 
 #include <algorithm>
 #include <limits>
 #include <set>
+#include <iomanip>
 
 using namespace matador;
 
@@ -20,6 +25,7 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   , db_(std::move(db))
   , time_val_(timeval)
 {
+  add_test("info", std::bind(&QueryTestUnit::print_datatypes, this), "print datatypes info");
   add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
   add_test("quoted_identifier", std::bind(&QueryTestUnit::test_quoted_identifier, this), "test quoted identifier");
@@ -62,6 +68,32 @@ bool contains(const C &container, const T &value)
 void QueryTestUnit::initialize()
 {
   connection_ = create_connection();
+}
+
+using namespace matador;
+
+void QueryTestUnit::print_datatypes()
+{
+  std::cout << "\n";
+  std::cout << std::setw(20) << "type" << "|" << std::setw(8) << "size" << "\n";
+  std::cout << std::setw(20) << std::setfill('=') << "=" << "+" << std::setw(8) <<"=" << std::setfill(' ') << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<char>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<char>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<short>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<short>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<int>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<int>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<long>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<long>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<long long>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<long long>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<unsigned char>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<unsigned char>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<unsigned short>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<unsigned short>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<unsigned int>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<unsigned int>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<unsigned long>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<unsigned long>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<unsigned long long>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<unsigned long long>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<bool>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<bool>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<float>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<float>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<double>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<double>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<std::string>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<std::string>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<const char*>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<const char*>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<matador::date>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<matador::date>::size() << "\n";
+  std::cout << std::left << std::setw(20) << data_type_traits<matador::time>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<matador::time>::size() << "\n";
 }
 
 void QueryTestUnit::test_datatypes()
