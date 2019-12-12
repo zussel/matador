@@ -10,6 +10,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 template<class T>
 struct is_c_str
 : std::integral_constant<
@@ -33,6 +35,8 @@ struct is_varchar<T, SIZE, typename std::enable_if<
 {
   static const bool value = true;
 };
+
+/// @endcond
 
 }
 

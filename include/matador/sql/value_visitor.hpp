@@ -28,6 +28,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 class basic_dialect;
 
 namespace detail {
@@ -104,5 +106,8 @@ private:
 };
 
 }
+
+/// @endcond
+
 }
 #endif //MATADOR_VALUE_VISITOR_HPP

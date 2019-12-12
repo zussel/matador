@@ -107,7 +107,7 @@ protected:
   void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
 
   template < class T >
-  void read_column(const char *, T & val)
+  void read_column(const char *id, T & val)
   {
     SQLLEN info = 0;
     auto type = (SQLSMALLINT)type2int(data_type_traits<T>::builtin_type());
@@ -115,7 +115,9 @@ protected:
     if (SQL_SUCCEEDED(ret)) {
       return;
     } else {
-      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+      std::stringstream msg;
+      msg << "error on retrieving value for column " << id << " (type " << typeid(T).name() << ")";
+      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", msg.str());
     }
   }
   

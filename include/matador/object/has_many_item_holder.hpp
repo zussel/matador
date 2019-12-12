@@ -231,22 +231,22 @@ public:
 
   friend bool operator==(const has_many_item_holder &a, const has_many_item_holder &b)
   {
-    return a.value_.value == b.value_.value;
+    return a.value_ == b.value_;
   }
 
   friend bool operator!=(const has_many_item_holder &a, const has_many_item_holder &b)
   {
-    return a.value_.value != b.value_.value;
+    return a.value_ != b.value_;
   }
 
   const T& value() const
   {
-    return value_.value;
+    return value_.value();
   }
 
   T& value()
   {
-    return value_.value;
+    return value_.value();
   }
 
   void clear() {}

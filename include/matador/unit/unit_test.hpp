@@ -342,7 +342,6 @@ public:
    * @tparam X The type of the left and right hand serializable to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -369,7 +368,6 @@ public:
    * @tparam Y The type of the right hand serializable to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -440,7 +438,6 @@ public:
    * @tparam T The type of the objects to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -467,7 +464,6 @@ public:
    * @tparam V The type of the right hand object to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -493,7 +489,6 @@ public:
    * @tparam T The type of the objects to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -532,7 +527,6 @@ public:
    * @tparam T The type of the objects to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -557,7 +551,6 @@ public:
    * 
    * @tparam T The type of the objects to compare.
    * @param a The value to evaluate.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -582,7 +575,6 @@ public:
    * 
    * @tparam T The type of the objects to compare.
    * @param a The value to evaluate.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -607,7 +599,6 @@ public:
    * 
    * @tparam T The type of the objects to compare.
    * @param a The value to evaluate.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -623,7 +614,6 @@ public:
    * 
    * @tparam T The type of the objects to compare.
    * @param a The value to evaluate.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -637,7 +627,6 @@ public:
    *
    * @tparam T The type of the objects to compare.
    * @param a The value to evaluate.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -653,7 +642,6 @@ public:
    *
    * @tparam T The type of the objects to compare.
    * @param a The value to evaluate.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -668,7 +656,6 @@ public:
    * @tparam X The type of the left and right hand serializable to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -692,7 +679,6 @@ public:
    * @tparam Y The type of the right hand serializable to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -740,7 +726,6 @@ public:
    * @tparam T The type of the objects to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
-   * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
@@ -811,7 +796,7 @@ private:
     test_func func;
     bool succeeded = true;
     t_state state = STATE_UNKNOWN;
-    long duration;
+    long duration = 0L;
     size_t assertion_check_count = 0;
     size_t error_check_count = 0;
     size_t error_count = 0;

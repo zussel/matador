@@ -63,6 +63,15 @@ public:
    */
   explicit session(persistence &p);
 
+  /**
+   * Inserts an object of type T into the
+   * object_store without writing it to the database.
+   * It returns an object_ptr of the inserted object.
+   *
+   * @tparam T Type of the object to be inserted
+   * @param obj Object to be inserted
+   * @return object_ptr of the inserted object
+   */
   template < class T >
   object_ptr<T> insert(T *obj)
   {

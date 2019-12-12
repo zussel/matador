@@ -68,7 +68,6 @@ public:
    *
    * @tparam T       The type of the prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
@@ -83,7 +82,6 @@ public:
    *
    * @tparam T       The type of the prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
@@ -100,7 +98,6 @@ public:
    * @tparam T       The type of the prototype node
    * @tparam S       The type of the parent prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S>
@@ -116,7 +113,6 @@ public:
    * @tparam T       The type of the prototype node
    * @tparam S       The type of the parent prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S>

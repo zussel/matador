@@ -143,14 +143,14 @@ public:
                        const std::string &left_column, const std::string &right_column)
     : basic_has_many_to_many_item(left_column, right_column), left_(left)
   {
-    right_.value = right;
+    right_.assign(right);
   }
 
   template<class SERIALIZER>
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.serialize(this->right_column().c_str(), right_.value, SIZE);
+    serializer.serialize(this->right_column().c_str(), right_.value(), SIZE);
   }
 
   object_ptr<L> left() const
@@ -160,7 +160,7 @@ public:
 
   R right() const
   {
-    return right_.value;
+    return right_.value();
   }
 
 private:

@@ -294,6 +294,7 @@ public:
    * @tparam O       The type of the observer classes
    * @param type     The unique name of the type.
    * @param abstract Indicates weather type is abstract or not
+   * @param parent   The name of the parent node.
    * @param observer A list of observer to be called an attach
    * @return         Returns new inserted prototype iterator.
    */
@@ -693,7 +694,6 @@ public:
    *
    * @tparam T Type of the object represented by the object_proxy
    * @param proxy              The object_proxy to be removed.
-   * @param notify             If true notify observers
    * @param check_if_deletable If true methods checks if proxy is deletable.
    */
   template < class T >
@@ -812,6 +812,12 @@ public:
     mark_modified<T>(optr.proxy_);
   }
 
+  /**
+   * Registers a callback when an object proxy
+   * is deleted from the object store
+   *
+   * @param callback To be called when an object proxy is deleted
+   */
   void on_proxy_delete(std::function<void(object_proxy*)> callback);
 private:
   friend class detail::object_inserter;
