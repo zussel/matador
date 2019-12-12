@@ -14,12 +14,12 @@ $(function() {
 <div id="main-nav"></div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="/matador/api/namespacematador/index.html">matador</a></li><li class="navelem"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html">basic_table</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacematador.html">matador</a></li><li class="navelem"><a class="el" href="classmatador_1_1basic__table.html">basic_table</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="/matador/api/classmatador_1_1basic__table-members/index.html">List of all members</a> &#124;
+<a href="classmatador_1_1basic__table-members.html">List of all members</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
@@ -28,67 +28,67 @@ $(function() {
 <div class="contents">
 
 <p>Base class for kind of tables.  
- <a href="/matador/api/classmatador_1_1basic__table/index.html#details">More...</a></p>
+ <a href="classmatador_1_1basic__table.html#details">More...</a></p>
 
 <p><code>#include &lt;basic_table.hpp&gt;</code></p>
 
-<p>Inherited by <a class="el" href="/matador/api/classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da/index.html">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
+<p>Inherited by <a class="el" href="classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da.html">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ad52fefea49fbdbc3acbfcf70e76108b4"><td class="memItemLeft" align="right" valign="top">typedef std::shared_ptr&lt; <a class="el" href="/matador/api/classmatador_1_1basic__table/index.html">basic_table</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#ad52fefea49fbdbc3acbfcf70e76108b4">table_ptr</a></td></tr>
+<tr class="memitem:ad52fefea49fbdbc3acbfcf70e76108b4"><td class="memItemLeft" align="right" valign="top">typedef std::shared_ptr&lt; <a class="el" href="classmatador_1_1basic__table.html">basic_table</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#ad52fefea49fbdbc3acbfcf70e76108b4">table_ptr</a></td></tr>
 <tr class="separator:ad52fefea49fbdbc3acbfcf70e76108b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d22c8097a1ec192a1291df85883352b"><td class="memItemLeft" align="right" valign="top">typedef std::unordered_map&lt; std::string, <a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#ad52fefea49fbdbc3acbfcf70e76108b4">table_ptr</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a1d22c8097a1ec192a1291df85883352b">t_table_map</a></td></tr>
+<tr class="memitem:a1d22c8097a1ec192a1291df85883352b"><td class="memItemLeft" align="right" valign="top">typedef std::unordered_map&lt; std::string, <a class="el" href="classmatador_1_1basic__table.html#ad52fefea49fbdbc3acbfcf70e76108b4">table_ptr</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a1d22c8097a1ec192a1291df85883352b">t_table_map</a></td></tr>
 <tr class="separator:a1d22c8097a1ec192a1291df85883352b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa412cc21f71a9c73c74dbf13688bbf6e"><td class="memItemLeft" align="right" valign="top">typedef std::unordered_map&lt; std::string, detail::t_identifier_multimap &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#aa412cc21f71a9c73c74dbf13688bbf6e">t_relation_item_map</a></td></tr>
+<tr class="memitem:aa412cc21f71a9c73c74dbf13688bbf6e"><td class="memItemLeft" align="right" valign="top">typedef std::unordered_map&lt; std::string, detail::t_identifier_multimap &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#aa412cc21f71a9c73c74dbf13688bbf6e">t_relation_item_map</a></td></tr>
 <tr class="separator:aa412cc21f71a9c73c74dbf13688bbf6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96c32bea2b006bfe4b4dff5ec7caf447"><td class="memItemLeft" align="right" valign="top">typedef std::unordered_map&lt; std::string, std::shared_ptr&lt; detail::basic_relation_data &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a96c32bea2b006bfe4b4dff5ec7caf447">t_relation_data_map</a></td></tr>
+<tr class="memitem:a96c32bea2b006bfe4b4dff5ec7caf447"><td class="memItemLeft" align="right" valign="top">typedef std::unordered_map&lt; std::string, std::shared_ptr&lt; detail::basic_relation_data &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a96c32bea2b006bfe4b4dff5ec7caf447">t_relation_data_map</a></td></tr>
 <tr class="separator:a96c32bea2b006bfe4b4dff5ec7caf447"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a88aa3053b9dd554710195bea22ea2641"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a88aa3053b9dd554710195bea22ea2641">basic_table</a> (<a class="el" href="/matador/api/classmatador_1_1prototype__node/index.html">prototype_node</a> &amp;<a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a0717198c2594726368ef560a15e9ae20">node</a>, <a class="el" href="/matador/api/classmatador_1_1persistence/index.html">persistence</a> &amp;p)</td></tr>
-<tr class="memdesc:a88aa3053b9dd554710195bea22ea2641"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a <a class="el" href="/matador/api/classmatador_1_1basic__table/index.html" title="Base class for kind of tables.">basic_table</a>.  <a href="/matador/api/classmatador_1_1basic__table/index.html#a88aa3053b9dd554710195bea22ea2641">More...</a><br /></td></tr>
+<tr class="memitem:a88aa3053b9dd554710195bea22ea2641"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a88aa3053b9dd554710195bea22ea2641">basic_table</a> (<a class="el" href="classmatador_1_1prototype__node.html">prototype_node</a> &amp;<a class="el" href="classmatador_1_1basic__table.html#a0717198c2594726368ef560a15e9ae20">node</a>, <a class="el" href="classmatador_1_1persistence.html">persistence</a> &amp;p)</td></tr>
+<tr class="memdesc:a88aa3053b9dd554710195bea22ea2641"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a <a class="el" href="classmatador_1_1basic__table.html" title="Base class for kind of tables.">basic_table</a>.  <a href="classmatador_1_1basic__table.html#a88aa3053b9dd554710195bea22ea2641">More...</a><br /></td></tr>
 <tr class="separator:a88aa3053b9dd554710195bea22ea2641"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78c6a52ae5e2d6b811830dde3f1fd3ce"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a78c6a52ae5e2d6b811830dde3f1fd3ce">name</a> () const</td></tr>
-<tr class="memdesc:a78c6a52ae5e2d6b811830dde3f1fd3ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of the table.  <a href="/matador/api/classmatador_1_1basic__table/index.html#a78c6a52ae5e2d6b811830dde3f1fd3ce">More...</a><br /></td></tr>
+<tr class="memitem:a78c6a52ae5e2d6b811830dde3f1fd3ce"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a78c6a52ae5e2d6b811830dde3f1fd3ce">name</a> () const</td></tr>
+<tr class="memdesc:a78c6a52ae5e2d6b811830dde3f1fd3ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of the table.  <a href="classmatador_1_1basic__table.html#a78c6a52ae5e2d6b811830dde3f1fd3ce">More...</a><br /></td></tr>
 <tr class="separator:a78c6a52ae5e2d6b811830dde3f1fd3ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2383bdbbd0187a715783bb60224c6e88"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a2383bdbbd0187a715783bb60224c6e88">create</a> (<a class="el" href="/matador/api/classmatador_1_1connection/index.html">connection</a> &amp;conn)=0</td></tr>
-<tr class="memdesc:a2383bdbbd0187a715783bb60224c6e88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for creating a table.  <a href="/matador/api/classmatador_1_1basic__table/index.html#a2383bdbbd0187a715783bb60224c6e88">More...</a><br /></td></tr>
+<tr class="memitem:a2383bdbbd0187a715783bb60224c6e88"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a2383bdbbd0187a715783bb60224c6e88">create</a> (<a class="el" href="classmatador_1_1connection.html">connection</a> &amp;conn)=0</td></tr>
+<tr class="memdesc:a2383bdbbd0187a715783bb60224c6e88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for creating a table.  <a href="classmatador_1_1basic__table.html#a2383bdbbd0187a715783bb60224c6e88">More...</a><br /></td></tr>
 <tr class="separator:a2383bdbbd0187a715783bb60224c6e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31a02e86b6c4aad3b7893de89f6e0bab"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a31a02e86b6c4aad3b7893de89f6e0bab">drop</a> (<a class="el" href="/matador/api/classmatador_1_1connection/index.html">connection</a> &amp;conn)=0</td></tr>
-<tr class="memdesc:a31a02e86b6c4aad3b7893de89f6e0bab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for droping a table.  <a href="/matador/api/classmatador_1_1basic__table/index.html#a31a02e86b6c4aad3b7893de89f6e0bab">More...</a><br /></td></tr>
+<tr class="memitem:a31a02e86b6c4aad3b7893de89f6e0bab"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a31a02e86b6c4aad3b7893de89f6e0bab">drop</a> (<a class="el" href="classmatador_1_1connection.html">connection</a> &amp;conn)=0</td></tr>
+<tr class="memdesc:a31a02e86b6c4aad3b7893de89f6e0bab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for droping a table.  <a href="classmatador_1_1basic__table.html#a31a02e86b6c4aad3b7893de89f6e0bab">More...</a><br /></td></tr>
 <tr class="separator:a31a02e86b6c4aad3b7893de89f6e0bab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46ed19d9908dad677e4534024bf33131"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a46ed19d9908dad677e4534024bf33131">load</a> (<a class="el" href="/matador/api/classmatador_1_1object__store/index.html">object_store</a> &amp;p)=0</td></tr>
-<tr class="memdesc:a46ed19d9908dad677e4534024bf33131"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for loading a table.  <a href="/matador/api/classmatador_1_1basic__table/index.html#a46ed19d9908dad677e4534024bf33131">More...</a><br /></td></tr>
+<tr class="memitem:a46ed19d9908dad677e4534024bf33131"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a46ed19d9908dad677e4534024bf33131">load</a> (<a class="el" href="classmatador_1_1object__store.html">object_store</a> &amp;p)=0</td></tr>
+<tr class="memdesc:a46ed19d9908dad677e4534024bf33131"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for loading a table.  <a href="classmatador_1_1basic__table.html#a46ed19d9908dad677e4534024bf33131">More...</a><br /></td></tr>
 <tr class="separator:a46ed19d9908dad677e4534024bf33131"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47c24e7142faf9b0dafe2f15bc47b561"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a47c24e7142faf9b0dafe2f15bc47b561">insert</a> (object_proxy *proxy)=0</td></tr>
-<tr class="memdesc:a47c24e7142faf9b0dafe2f15bc47b561"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for inserting an object.  <a href="/matador/api/classmatador_1_1basic__table/index.html#a47c24e7142faf9b0dafe2f15bc47b561">More...</a><br /></td></tr>
+<tr class="memitem:a47c24e7142faf9b0dafe2f15bc47b561"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a47c24e7142faf9b0dafe2f15bc47b561">insert</a> (object_proxy *proxy)=0</td></tr>
+<tr class="memdesc:a47c24e7142faf9b0dafe2f15bc47b561"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for inserting an object.  <a href="classmatador_1_1basic__table.html#a47c24e7142faf9b0dafe2f15bc47b561">More...</a><br /></td></tr>
 <tr class="separator:a47c24e7142faf9b0dafe2f15bc47b561"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade13ebb7e9c09d4c91bde44461eb6bfd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#ade13ebb7e9c09d4c91bde44461eb6bfd">update</a> (object_proxy *proxy)=0</td></tr>
-<tr class="memdesc:ade13ebb7e9c09d4c91bde44461eb6bfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for updating an object.  <a href="/matador/api/classmatador_1_1basic__table/index.html#ade13ebb7e9c09d4c91bde44461eb6bfd">More...</a><br /></td></tr>
+<tr class="memitem:ade13ebb7e9c09d4c91bde44461eb6bfd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#ade13ebb7e9c09d4c91bde44461eb6bfd">update</a> (object_proxy *proxy)=0</td></tr>
+<tr class="memdesc:ade13ebb7e9c09d4c91bde44461eb6bfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for updating an object.  <a href="classmatador_1_1basic__table.html#ade13ebb7e9c09d4c91bde44461eb6bfd">More...</a><br /></td></tr>
 <tr class="separator:ade13ebb7e9c09d4c91bde44461eb6bfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c2e9106c46ac0ee3ab3def06ed071e7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a1c2e9106c46ac0ee3ab3def06ed071e7">remove</a> (object_proxy *proxy)=0</td></tr>
-<tr class="memdesc:a1c2e9106c46ac0ee3ab3def06ed071e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for deleting an object.  <a href="/matador/api/classmatador_1_1basic__table/index.html#a1c2e9106c46ac0ee3ab3def06ed071e7">More...</a><br /></td></tr>
+<tr class="memitem:a1c2e9106c46ac0ee3ab3def06ed071e7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a1c2e9106c46ac0ee3ab3def06ed071e7">remove</a> (object_proxy *proxy)=0</td></tr>
+<tr class="memdesc:a1c2e9106c46ac0ee3ab3def06ed071e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface for deleting an object.  <a href="classmatador_1_1basic__table.html#a1c2e9106c46ac0ee3ab3def06ed071e7">More...</a><br /></td></tr>
 <tr class="separator:a1c2e9106c46ac0ee3ab3def06ed071e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae92daa73e2754025a3c2f4b7b229441"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#aae92daa73e2754025a3c2f4b7b229441">is_loaded</a> () const</td></tr>
-<tr class="memdesc:aae92daa73e2754025a3c2f4b7b229441"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the table is laready loaded.  <a href="/matador/api/classmatador_1_1basic__table/index.html#aae92daa73e2754025a3c2f4b7b229441">More...</a><br /></td></tr>
+<tr class="memitem:aae92daa73e2754025a3c2f4b7b229441"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#aae92daa73e2754025a3c2f4b7b229441">is_loaded</a> () const</td></tr>
+<tr class="memdesc:aae92daa73e2754025a3c2f4b7b229441"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the table is laready loaded.  <a href="classmatador_1_1basic__table.html#aae92daa73e2754025a3c2f4b7b229441">More...</a><br /></td></tr>
 <tr class="separator:aae92daa73e2754025a3c2f4b7b229441"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0717198c2594726368ef560a15e9ae20"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/matador/api/classmatador_1_1prototype__node/index.html">prototype_node</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a0717198c2594726368ef560a15e9ae20">node</a> ()</td></tr>
-<tr class="memdesc:a0717198c2594726368ef560a15e9ae20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the underlaying prototype node.  <a href="/matador/api/classmatador_1_1basic__table/index.html#a0717198c2594726368ef560a15e9ae20">More...</a><br /></td></tr>
+<tr class="memitem:a0717198c2594726368ef560a15e9ae20"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmatador_1_1prototype__node.html">prototype_node</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a0717198c2594726368ef560a15e9ae20">node</a> ()</td></tr>
+<tr class="memdesc:a0717198c2594726368ef560a15e9ae20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the underlaying prototype node.  <a href="classmatador_1_1basic__table.html#a0717198c2594726368ef560a15e9ae20">More...</a><br /></td></tr>
 <tr class="separator:a0717198c2594726368ef560a15e9ae20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34b97250e8ec6a7d563ecc2f30efc201"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="/matador/api/classmatador_1_1prototype__node/index.html">prototype_node</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a34b97250e8ec6a7d563ecc2f30efc201">node</a> () const</td></tr>
-<tr class="memdesc:a34b97250e8ec6a7d563ecc2f30efc201"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the underlaying prototype node.  <a href="/matador/api/classmatador_1_1basic__table/index.html#a34b97250e8ec6a7d563ecc2f30efc201">More...</a><br /></td></tr>
+<tr class="memitem:a34b97250e8ec6a7d563ecc2f30efc201"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmatador_1_1prototype__node.html">prototype_node</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a34b97250e8ec6a7d563ecc2f30efc201">node</a> () const</td></tr>
+<tr class="memdesc:a34b97250e8ec6a7d563ecc2f30efc201"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the underlaying prototype node.  <a href="classmatador_1_1basic__table.html#a34b97250e8ec6a7d563ecc2f30efc201">More...</a><br /></td></tr>
 <tr class="separator:a34b97250e8ec6a7d563ecc2f30efc201"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace267f400bcfcda2a735ff7f06f3e031"><td class="memItemLeft" align="right" valign="top"><a id="ace267f400bcfcda2a735ff7f06f3e031"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#ace267f400bcfcda2a735ff7f06f3e031">reset</a> ()</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#ace267f400bcfcda2a735ff7f06f3e031">reset</a> ()</td></tr>
 <tr class="memdesc:ace267f400bcfcda2a735ff7f06f3e031"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the table as not loaded. <br /></td></tr>
 <tr class="separator:ace267f400bcfcda2a735ff7f06f3e031"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0de3394613493192beb4f677545b139a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/matador/api/classmatador_1_1persistence/index.html">persistence</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a0de3394613493192beb4f677545b139a">persistence_unit</a> ()</td></tr>
-<tr class="memdesc:a0de3394613493192beb4f677545b139a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the underlaying persistence unit object.  <a href="/matador/api/classmatador_1_1basic__table/index.html#a0de3394613493192beb4f677545b139a">More...</a><br /></td></tr>
+<tr class="memitem:a0de3394613493192beb4f677545b139a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmatador_1_1persistence.html">persistence</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#a0de3394613493192beb4f677545b139a">persistence_unit</a> ()</td></tr>
+<tr class="memdesc:a0de3394613493192beb4f677545b139a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the underlaying persistence unit object.  <a href="classmatador_1_1basic__table.html#a0de3394613493192beb4f677545b139a">More...</a><br /></td></tr>
 <tr class="separator:a0de3394613493192beb4f677545b139a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acce91b01be36ea280db1ec44c5b0a994"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="/matador/api/classmatador_1_1persistence/index.html">persistence</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#acce91b01be36ea280db1ec44c5b0a994">persistence_unit</a> () const</td></tr>
-<tr class="memdesc:acce91b01be36ea280db1ec44c5b0a994"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the underlaying persistence unit object.  <a href="/matador/api/classmatador_1_1basic__table/index.html#acce91b01be36ea280db1ec44c5b0a994">More...</a><br /></td></tr>
+<tr class="memitem:acce91b01be36ea280db1ec44c5b0a994"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmatador_1_1persistence.html">persistence</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__table.html#acce91b01be36ea280db1ec44c5b0a994">persistence_unit</a> () const</td></tr>
+<tr class="memdesc:acce91b01be36ea280db1ec44c5b0a994"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the underlaying persistence unit object.  <a href="classmatador_1_1basic__table.html#acce91b01be36ea280db1ec44c5b0a994">More...</a><br /></td></tr>
 <tr class="separator:acce91b01be36ea280db1ec44c5b0a994"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -102,7 +102,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::unordered_map&lt;std::string, std::shared_ptr&lt;detail::basic_relation_data&gt; &gt; <a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a96c32bea2b006bfe4b4dff5ec7caf447">matador::basic_table::t_relation_data_map</a></td>
+          <td class="memname">typedef std::unordered_map&lt;std::string, std::shared_ptr&lt;detail::basic_relation_data&gt; &gt; <a class="el" href="classmatador_1_1basic__table.html#a96c32bea2b006bfe4b4dff5ec7caf447">matador::basic_table::t_relation_data_map</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -117,7 +117,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::unordered_map&lt;std::string, detail::t_identifier_multimap&gt; <a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#aa412cc21f71a9c73c74dbf13688bbf6e">matador::basic_table::t_relation_item_map</a></td>
+          <td class="memname">typedef std::unordered_map&lt;std::string, detail::t_identifier_multimap&gt; <a class="el" href="classmatador_1_1basic__table.html#aa412cc21f71a9c73c74dbf13688bbf6e">matador::basic_table::t_relation_item_map</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -132,7 +132,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::unordered_map&lt;std::string, <a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#ad52fefea49fbdbc3acbfcf70e76108b4">table_ptr</a>&gt; <a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#a1d22c8097a1ec192a1291df85883352b">matador::basic_table::t_table_map</a></td>
+          <td class="memname">typedef std::unordered_map&lt;std::string, <a class="el" href="classmatador_1_1basic__table.html#ad52fefea49fbdbc3acbfcf70e76108b4">table_ptr</a>&gt; <a class="el" href="classmatador_1_1basic__table.html#a1d22c8097a1ec192a1291df85883352b">matador::basic_table::t_table_map</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -147,7 +147,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::shared_ptr&lt;<a class="el" href="/matador/api/classmatador_1_1basic__table/index.html">basic_table</a>&gt; <a class="el" href="/matador/api/classmatador_1_1basic__table/index.html#ad52fefea49fbdbc3acbfcf70e76108b4">matador::basic_table::table_ptr</a></td>
+          <td class="memname">typedef std::shared_ptr&lt;<a class="el" href="classmatador_1_1basic__table.html">basic_table</a>&gt; <a class="el" href="classmatador_1_1basic__table.html#ad52fefea49fbdbc3acbfcf70e76108b4">matador::basic_table::table_ptr</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -165,13 +165,13 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         <tr>
           <td class="memname">matador::basic_table::basic_table </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="/matador/api/classmatador_1_1prototype__node/index.html">prototype_node</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmatador_1_1prototype__node.html">prototype_node</a> &amp;&#160;</td>
           <td class="paramname"><em>node</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="/matador/api/classmatador_1_1persistence/index.html">persistence</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmatador_1_1persistence.html">persistence</a> &amp;&#160;</td>
           <td class="paramname"><em>p</em>&#160;</td>
         </tr>
         <tr>
@@ -182,11 +182,11 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
       </table>
 </div><div class="memdoc">
 
-<p>Creates a <a class="el" href="/matador/api/classmatador_1_1basic__table/index.html" title="Base class for kind of tables.">basic_table</a>. </p>
-<p>Creates a <a class="el" href="/matador/api/classmatador_1_1basic__table/index.html" title="Base class for kind of tables.">basic_table</a> for the given <a class="el" href="/matador/api/classmatador_1_1prototype__node/index.html" title="Holds the prototype of a concrete serializable.">prototype_node</a> and the persistence object</p>
+<p>Creates a <a class="el" href="classmatador_1_1basic__table.html" title="Base class for kind of tables.">basic_table</a>. </p>
+<p>Creates a <a class="el" href="classmatador_1_1basic__table.html" title="Base class for kind of tables.">basic_table</a> for the given <a class="el" href="classmatador_1_1prototype__node.html" title="Holds the prototype of a concrete serializable.">prototype_node</a> and the persistence object</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">node</td><td>The underlying <a class="el" href="/matador/api/classmatador_1_1prototype__node/index.html" title="Holds the prototype of a concrete serializable.">prototype_node</a> </td></tr>
+    <tr><td class="paramname">node</td><td>The underlying <a class="el" href="classmatador_1_1prototype__node.html" title="Holds the prototype of a concrete serializable.">prototype_node</a> </td></tr>
     <tr><td class="paramname">p</td><td>The underlying persistence object </td></tr>
   </table>
   </dd>
@@ -207,7 +207,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         <tr>
           <td class="memname">virtual void matador::basic_table::create </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="/matador/api/classmatador_1_1connection/index.html">connection</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmatador_1_1connection.html">connection</a> &amp;&#160;</td>
           <td class="paramname"><em>conn</em></td><td>)</td>
           <td></td>
         </tr>
@@ -228,7 +228,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="/matador/api/classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da/index.html#ac49aa3fb64d8358c1193f908d147a720">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da.html#ac49aa3fb64d8358c1193f908d147a720">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
 
 </div>
 </div>
@@ -244,7 +244,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         <tr>
           <td class="memname">virtual void matador::basic_table::drop </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="/matador/api/classmatador_1_1connection/index.html">connection</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmatador_1_1connection.html">connection</a> &amp;&#160;</td>
           <td class="paramname"><em>conn</em></td><td>)</td>
           <td></td>
         </tr>
@@ -265,7 +265,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="/matador/api/classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da/index.html#a42f37381278a3a1418b16187431fe92d">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da.html#a42f37381278a3a1418b16187431fe92d">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
 
 </div>
 </div>
@@ -302,7 +302,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="/matador/api/classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da/index.html#a8bace0f5a9f485d21ff7cb27489fb97a">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da.html#a8bace0f5a9f485d21ff7cb27489fb97a">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
 
 </div>
 </div>
@@ -338,7 +338,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         <tr>
           <td class="memname">virtual void matador::basic_table::load </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="/matador/api/classmatador_1_1object__store/index.html">object_store</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmatador_1_1object__store.html">object_store</a> &amp;&#160;</td>
           <td class="paramname"><em>p</em></td><td>)</td>
           <td></td>
         </tr>
@@ -351,15 +351,15 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div><div class="memdoc">
 
 <p>Interface for loading a table. </p>
-<p>Interface for loading a table into the given <a class="el" href="/matador/api/classmatador_1_1object__store/index.html" title="A class that stores all kind of objects.">object_store</a>.</p>
+<p>Interface for loading a table into the given <a class="el" href="classmatador_1_1object__store.html" title="A class that stores all kind of objects.">object_store</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>The <a class="el" href="/matador/api/classmatador_1_1object__store/index.html" title="A class that stores all kind of objects.">object_store</a> to load the table into </td></tr>
+    <tr><td class="paramname">p</td><td>The <a class="el" href="classmatador_1_1object__store.html" title="A class that stores all kind of objects.">object_store</a> to load the table into </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="/matador/api/classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da/index.html#a97d156e7020c400d7d702f22fbd7901b">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da.html#a97d156e7020c400d7d702f22fbd7901b">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
 
 </div>
 </div>
@@ -390,7 +390,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="/matador/api/classmatador_1_1prototype__node/index.html">prototype_node</a>&amp; matador::basic_table::node </td>
+          <td class="memname"><a class="el" href="classmatador_1_1prototype__node.html">prototype_node</a>&amp; matador::basic_table::node </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -410,7 +410,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="/matador/api/classmatador_1_1prototype__node/index.html">prototype_node</a>&amp; matador::basic_table::node </td>
+          <td class="memname">const <a class="el" href="classmatador_1_1prototype__node.html">prototype_node</a>&amp; matador::basic_table::node </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -430,7 +430,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="/matador/api/classmatador_1_1persistence/index.html">persistence</a>&amp; matador::basic_table::persistence_unit </td>
+          <td class="memname"><a class="el" href="classmatador_1_1persistence.html">persistence</a>&amp; matador::basic_table::persistence_unit </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -450,7 +450,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="/matador/api/classmatador_1_1persistence/index.html">persistence</a>&amp; matador::basic_table::persistence_unit </td>
+          <td class="memname">const <a class="el" href="classmatador_1_1persistence.html">persistence</a>&amp; matador::basic_table::persistence_unit </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -496,7 +496,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="/matador/api/classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da/index.html#a7e595fc7be056435e7815e19109c2d55">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da.html#a7e595fc7be056435e7815e19109c2d55">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
 
 </div>
 </div>
@@ -533,7 +533,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="/matador/api/classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da/index.html#a5eb10a96a8292ef821024bd02378f63b">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da.html#a5eb10a96a8292ef821024bd02378f63b">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>.</p>
 
 </div>
 </div>
