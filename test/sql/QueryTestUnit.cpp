@@ -1067,7 +1067,7 @@ void QueryTestUnit::test_query_select_columns()
 
   while (first != last) {
     std::unique_ptr<row> item(first.release());
-    UNIT_EXPECT_EQUAL(1UL, item->at<unsigned long long>("id"));
+    UNIT_EXPECT_EQUAL(1UL, item->at<unsigned long>("id"));
     UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name));
     ++first;
   }
