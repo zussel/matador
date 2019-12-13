@@ -103,7 +103,7 @@ void ObjectStoreTestUnit::test_version()
 
   UNIT_ASSERT_EQUAL(matador::version::major, 0);
   UNIT_ASSERT_EQUAL(matador::version::minor, 6);
-  UNIT_ASSERT_EQUAL(matador::version::patch_level, 0);
+  UNIT_ASSERT_EQUAL(matador::version::patch_level, 1);
 }
 
 
