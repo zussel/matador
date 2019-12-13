@@ -22,7 +22,6 @@
 
 namespace matador {
 
-class varchar_base;
 class object_base_ptr;
 
 namespace sqlite {
@@ -34,14 +33,15 @@ template <> struct type_traits<char> { inline static const char* type_string() {
 template <> struct type_traits<short> { inline static const char* type_string() { return "SMALLINT"; } };
 template <> struct type_traits<int> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<long> { inline static const char* type_string() { return "BIGINT"; } };
+template <> struct type_traits<long long> { inline static const char* type_string() { return "BIGINT"; } };
 template <> struct type_traits<unsigned char> { inline static const char* type_string() { return "TINYINT"; } };
 template <> struct type_traits<unsigned short> { inline static const char* type_string() { return "SMALLINT"; } };
 template <> struct type_traits<unsigned int> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<unsigned long> { inline static const char* type_string() { return "BIGINT"; } };
+template <> struct type_traits<unsigned long long> { inline static const char* type_string() { return "BIGINT"; } };
 template <> struct type_traits<bool> { inline static const char* type_string() { return "BOOLEAN"; } };
 template <> struct type_traits<float> { inline static const char* type_string() { return "FLOAT"; } };
 template <> struct type_traits<double> { inline static const char* type_string() { return "DOUBLE"; } };
-template <> struct type_traits<varchar_base> { inline static const char* type_string() { return "VARCHAR"; } };
 template <> struct type_traits<const char*> { inline static const char* type_string() { return "VARCHAR"; } };
 template <> struct type_traits<std::string> { inline static const char* type_string() { return "TEXT"; } };
 template <> struct type_traits<matador::date> { inline static const char* type_string() { return "DATE"; } };

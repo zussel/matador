@@ -85,7 +85,7 @@ public:
    *
    * @param x Other time object to be initialized from
    */
-  time(const time &x);
+  time(const time &x) = default;
 
   /**
    * Copy move from another time
@@ -100,7 +100,7 @@ public:
    * @param x Assign time from this time object
    * @return Return reference of this
    */
-  time& operator=(const time &x);
+  time& operator=(const time &x) = default;
 
   /**
    * Assignment move from another time
@@ -113,7 +113,7 @@ public:
   /**
    * Destroy time
    */
-  ~time();
+  ~time() = default;
 
   /**
    * Check if two times are equal
@@ -427,8 +427,9 @@ private:
   void sync_time(int y, int m, int d, int h, int min, int s, long ms);
 
 private:
-  struct timeval time_;
-  struct tm tm_;
+  struct timeval time_ = {0,0 };
+//  struct tm tm_ = {0,0,0,0,0,0,0,0,0,0,nullptr};
+  struct tm tm_ = {};
 };
 
 }

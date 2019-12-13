@@ -9,9 +9,36 @@ namespace matador {
 
 session::session(persistence &p)
   : persistence_(p)
-  , observer_(new session_observer(*this))
+  , observer_(new session_transaction_observer(*this))
 {
 
+}
+
+void session::flush()
+{
+  persistence_.conn().begin();
+  for (auto const &i : persistence_.proxy_change_queue_) {
+    auto it = persistence_.find_table(i.proxy->node()->type());
+    if (it == persistence_.end()) {
+      continue;
+    }
+    switch (i.action) {
+      case persistence::proxy_change_action::INSERT:
+        it->second->insert(i.proxy);
+        break;
+      case persistence::proxy_change_action::UPDATE:
+        it->second->update(i.proxy);
+        break;
+      case persistence::proxy_change_action::REMOVE:
+        it->second->remove(i.proxy);
+        persistence_.proxies_to_delete_.erase(i.proxy);
+        delete i.proxy;
+        break;
+    }
+  }
+  persistence_.conn().commit();
+  persistence_.proxy_change_queue_.clear();
+  persistence_.proxy_identifier_map_.clear();
 }
 
 void session::load()
@@ -20,20 +47,9 @@ void session::load()
   prototype_iterator last = persistence_.store().end();
   while (first != last) {
     const prototype_node &node = (*first++);
-    if (node.is_abstract()) {
-      continue;
-    }
-
-//    std::cout << "loading table " << node.type() << "\n";
-
-    // find corresponding table and load entities
-    auto i = persistence_.find_table(node.type());
-    if (i == persistence_.end()) {
-      // Todo: replace with persistence exception
-      throw_object_exception("couldn't find table");
-    }
-    load(i->second);
+    load(node);
   }
+  persistence_.proxy_change_queue_.clear();
 }
 
 void session::load(const std::string &name)
@@ -43,16 +59,7 @@ void session::load(const std::string &name)
     throw_object_exception("couldn't find prototype node");
   }
 
-  if (i->is_abstract()) {
-    return;
-  }
-
-  auto t = persistence_.find_table(i->type());
-  if (t == persistence_.end()) {
-    throw_object_exception("couldn't find table");
-  }
-
-  load(t->second);
+  load(*i);
 }
 
 transaction session::begin()
@@ -77,15 +84,30 @@ void session::load(const persistence::table_ptr &table)
   table->load(persistence_.store());
 }
 
-session::session_observer::session_observer(session &s)
+void session::load(const prototype_node &node)
+{
+  if (node.is_abstract()) {
+    return;
+  }
+
+  // find corresponding table and load entities
+  auto i = persistence_.find_table(node.type());
+  if (i == persistence_.end()) {
+    // Todo: replace with persistence exception
+    throw_object_exception("couldn't find table");
+  }
+  load(i->second);
+}
+
+session::session_transaction_observer::session_transaction_observer(session &s)
   : session_(s)
 {}
 
-void session::session_observer::on_begin()
+void session::session_transaction_observer::on_begin()
 {
 }
 
-void session::session_observer::on_commit(transaction::t_action_vector &actions)
+void session::session_transaction_observer::on_commit(transaction::t_action_vector &actions)
 {
   session_.persistence_.conn().begin();
 
@@ -95,12 +117,12 @@ void session::session_observer::on_commit(transaction::t_action_vector &actions)
   session_.persistence_.conn().commit();
 }
 
-void session::session_observer::on_rollback()
+void session::session_transaction_observer::on_rollback()
 {
   session_.persistence_.conn().rollback();
 }
 
-void session::session_observer::visit(insert_action *act)
+void session::session_transaction_observer::visit(insert_action *act)
 {
   auto i = session_.persistence_.find_table(act->type());
   if (i == session_.persistence_.end()) {
@@ -116,7 +138,7 @@ void session::session_observer::visit(insert_action *act)
 
 }
 
-void session::session_observer::visit(update_action *act)
+void session::session_transaction_observer::visit(update_action *act)
 {
   auto i = session_.persistence_.find_table(act->proxy()->node()->type());
   if (i == session_.persistence_.end()) {
@@ -127,7 +149,7 @@ void session::session_observer::visit(update_action *act)
   i->second->update(act->proxy());
 }
 
-void session::session_observer::visit(delete_action *act)
+void session::session_transaction_observer::visit(delete_action *act)
 {
   auto i = session_.persistence_.find_table(act->proxy()->node()->type());
   if (i == session_.persistence_.end()) {

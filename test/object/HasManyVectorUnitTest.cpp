@@ -4,6 +4,8 @@
 
 #include "HasManyVectorUnitTest.hpp"
 
+#include "matador/object/object_store.hpp"
+
 using namespace matador;
 using namespace hasmanyvector;
 
@@ -19,6 +21,7 @@ HasManyVectorUnitTest::HasManyVectorUnitTest()
   add_test("remove_if", std::bind(&HasManyVectorUnitTest::test_remove_if, this), "test vector remove if");
   add_test("int", std::bind(&HasManyVectorUnitTest::test_integer, this), "test vector of elements");
   add_test("string", std::bind(&HasManyVectorUnitTest::test_string, this), "test list of strings");
+  add_test("varchar", std::bind(&HasManyVectorUnitTest::test_varchar, this), "test list of varchars");
 }
 
 void HasManyVectorUnitTest::test_join_table()
@@ -41,11 +44,11 @@ void HasManyVectorUnitTest::test_join_table()
 
   UNIT_ASSERT_EQUAL("i1", i1->name);
 
-  o->items.push_back(i1);
+  o.modify()->items.push_back(i1);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
 
-  o->items.push_back(new item("i2"));
+  o.modify()->items.push_back(new item("i2"));
 
   UNIT_ASSERT_EQUAL(2U, o->items.size());
 }
@@ -91,32 +94,32 @@ void HasManyVectorUnitTest::test_erase_scalar()
 
   object_ptr<many_vector_ints> mptr = store.insert(new many_vector_ints);
 
-  mptr->elements.push_back(1);
+  mptr.modify()->elements.push_back(1);
 
   UNIT_ASSERT_EQUAL(1U, mptr->elements.size());
 
-  mptr->elements.push_back(7);
-  mptr->elements.push_back(90);
+  mptr.modify()->elements.push_back(7);
+  mptr.modify()->elements.push_back(90);
 
   UNIT_ASSERT_EQUAL(3U, mptr->elements.size());
 
-  many_vector_ints::element_list_t::iterator i = mptr->elements.begin();
+  auto i = mptr.modify()->elements.begin();
 
-  i = mptr->elements.erase(i);
+  i = mptr.modify()->elements.erase(i);
 
   UNIT_ASSERT_EQUAL(2U, mptr->elements.size());
   UNIT_ASSERT_EQUAL(*i, 7);
 
-  mptr->elements.push_back(3);
-  mptr->elements.push_back(4);
+  mptr.modify()->elements.push_back(3);
+  mptr.modify()->elements.push_back(4);
 
-  i = mptr->elements.begin();
+  i = mptr.modify()->elements.begin();
 
   auto j = i;
   ++j;
   ++j;
 
-  i = mptr->elements.erase(i, j);
+  i = mptr.modify()->elements.erase(i, j);
 
   UNIT_ASSERT_EQUAL(2U, mptr->elements.size());
   UNIT_ASSERT_EQUAL(*i, 3);
@@ -134,27 +137,27 @@ void HasManyVectorUnitTest::test_erase_object()
 
   UNIT_ASSERT_EQUAL("i1", i1->name);
 
-  o->items.push_back(i1);
+  o.modify()->items.push_back(i1);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
 
-  o->items.push_back(new item("i2"));
+  o.modify()->items.push_back(new item("i2"));
 
   UNIT_ASSERT_EQUAL(2U, o->items.size());
 
-  owner::item_vector_t::iterator i = o->items.begin();
+  auto i = o.modify()->items.begin();
 
-  i = o->items.erase(i);
+  i = o.modify()->items.erase(i);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
   UNIT_ASSERT_EQUAL(i->name, "i2");
 
-  o->items.push_back(new item("i3"));
-  o->items.push_back(new item("i4"));
+  o.modify()->items.push_back(new item("i3"));
+  o.modify()->items.push_back(new item("i4"));
 
-  i = o->items.begin();
+  i = o.modify()->items.begin();
 
-  i = o->items.erase(i, i+2);
+  i = o.modify()->items.erase(i, i+2);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
   UNIT_ASSERT_EQUAL(i->name, "i4");
@@ -168,16 +171,16 @@ void HasManyVectorUnitTest::test_remove_scalar()
 
   object_ptr<many_vector_ints> mptr = store.insert(new many_vector_ints);
 
-  mptr->elements.push_back(1);
+  mptr.modify()->elements.push_back(1);
 
   UNIT_ASSERT_EQUAL(1U, mptr->elements.size());
 
-  mptr->elements.push_back(7);
-  mptr->elements.push_back(90);
+  mptr.modify()->elements.push_back(7);
+  mptr.modify()->elements.push_back(90);
 
   UNIT_ASSERT_EQUAL(3U, mptr->elements.size());
 
-  mptr->elements.remove(7);
+  mptr.modify()->elements.remove(7);
 
   UNIT_ASSERT_EQUAL(2U, mptr->elements.size());
 }
@@ -195,15 +198,15 @@ void HasManyVectorUnitTest::test_remove_object()
 
   UNIT_ASSERT_EQUAL("i1", i1->name);
 
-  o->items.push_back(i1);
+  o.modify()->items.push_back(i1);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
 
-  o->items.push_back(i2);
+  o.modify()->items.push_back(i2);
 
   UNIT_ASSERT_EQUAL(2U, o->items.size());
 
-  o->items.remove(i1);
+  o.modify()->items.remove(i1);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
 }
@@ -224,22 +227,22 @@ void HasManyVectorUnitTest::test_remove_if()
 
   UNIT_ASSERT_EQUAL("i1", i1->name);
 
-  o->items.push_back(i1);
+  o.modify()->items.push_back(i1);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size());
 
-  o->items.push_back(i2);
+  o.modify()->items.push_back(i2);
 
   UNIT_ASSERT_EQUAL(2U, o->items.size());
 
-  o->items.push_back(i3);
+  o.modify()->items.push_back(i3);
 
   UNIT_ASSERT_EQUAL(3U, o->items.size());
 
-  o->items.push_back(i4);
-  o->items.push_back(i5);
+  o.modify()->items.push_back(i4);
+  o.modify()->items.push_back(i5);
 
-  o->items.remove_if([&](const owner::item_vector_t::value_type &val) {
+  o.modify()->items.remove_if([&](const owner::item_vector_t::value_type &val) {
     return i1 == val || i3 == val;
   });
 
@@ -257,12 +260,12 @@ void HasManyVectorUnitTest::test_integer()
   UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
 
   for (int i = 0; i < 20; ++i) {
-    mi->elements.push_back(i);
+    mi.modify()->elements.push_back(i);
   }
 
   UNIT_ASSERT_EQUAL(mi->elements.size(), 20UL);
 
-  many_vector_ints::element_list_t::iterator i = mi->elements.begin();
+  auto i = mi->elements.begin();
 
   UNIT_ASSERT_EQUAL(*i, 0);
 
@@ -283,12 +286,40 @@ void HasManyVectorUnitTest::test_string()
 
   std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
   for (const auto &name : names) {
-    mi->elements.push_back(name);
+    mi.modify()->elements.push_back(name);
   }
 
   UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);
 
-  many_vector_strings::element_list_t::iterator i = mi->elements.begin();
+  auto i = mi->elements.begin();
+
+  UNIT_ASSERT_EQUAL(*i, "george");
+
+  i++;
+
+  UNIT_ASSERT_EQUAL(*i, "jane");
+}
+
+using many_vector_varchars = many_builtins<varchar<255>, std::vector>;
+
+void HasManyVectorUnitTest::test_varchar()
+{
+  object_store store;
+
+  store.attach<many_vector_varchars>("many_list_varchars");
+
+  object_ptr<many_vector_varchars> mi = store.insert(new many_vector_varchars);
+
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL);
+
+  std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
+  for (const auto &name : names) {
+    mi.modify()->elements.push_back(name);
+  }
+
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL);
+
+  auto i = mi->elements.begin();
 
   UNIT_ASSERT_EQUAL(*i, "george");
 

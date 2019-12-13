@@ -5,8 +5,6 @@ SET (TEST_TOOLS_SOURCES
   utils/DateTestUnit.hpp
   utils/BlobTestUnit.hpp
   utils/BlobTestUnit.cpp
-  utils/VarCharTestUnit.hpp
-  utils/VarCharTestUnit.cpp
   utils/FactoryTestUnit.hpp
   utils/FactoryTestUnit.cpp
   utils/StringTestUnit.cpp
@@ -17,7 +15,7 @@ SET (TEST_TOOLS_SOURCES
   utils/SequencerTestUnit.hpp
 )
 
-SET (TEST_HEADER Item.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
+SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 
 SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.cpp
@@ -35,7 +33,7 @@ SET (TEST_OBJECT_SOURCES
   object/ObjectTransactiontestUnit.cpp
   object/ObjectTransactiontestUnit.hpp
   object/RelationTestUnit.cpp
-  object/RelationTestUnit.hpp)
+  object/RelationTestUnit.hpp object/HasManyUnitTest.cpp object/HasManyUnitTest.hpp)
 
 SET (TEST_UNIT_SOURCES
   unit/TestSuiteTestUnit.cpp
@@ -60,7 +58,7 @@ SET (TEST_SQL_SOURCES
   sql/ValueUnitTest.cpp
   sql/ValueUnitTest.hpp
   sql/PostgreSQLDialectTestUnit.cpp
-  sql/PostgreSQLDialectTestUnit.hpp)
+  sql/PostgreSQLDialectTestUnit.hpp orm/PrimaryKeyTestUnit.cpp orm/PrimaryKeyTestUnit.hpp)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp
@@ -75,7 +73,7 @@ SET (TEST_ORM_SOURCES
   orm/BlogUnitTest.hpp
 )
 
-SET (TEST_SOURCES test_matador.cpp)
+SET (TEST_SOURCES test_matador.cpp ../include/matador/db/postgresql/postgresql_parameter_binder.hpp ../include/matador/utils/varchar.hpp ../include/matador/object/has_many_iterator_traits.hpp)
 
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
@@ -95,7 +93,7 @@ ELSE()
 #  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@192.168.178.31\\\\SQLEXPRESS/test_matador (FreeTDS)" CACHE STRING "mssql connection string")
 ENDIF()
 SET(SQLITE_CONNECTION_STRING "sqlite://test.sqlite" CACHE STRING "sqlite connection string")
-SET(POSTGRESQL_CONNECTION_STRING "postgresql://test:test123@127.0.0.1:5433/matador_test" CACHE STRING "postgresql connection string")
+SET(POSTGRESQL_CONNECTION_STRING "postgresql://test:test123@127.0.0.1/matador_test" CACHE STRING "postgresql connection string")
 
 
 MESSAGE(STATUS "mysql connection string: ${MYSQL_CONNECTION_STRING}")

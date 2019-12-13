@@ -13,6 +13,7 @@ class AnyTestUnit : public matador::unit_test
 public:
   AnyTestUnit();
 
+  void test_any();
   void test_any_visitor();
   void test_any_visitor_class();
 };

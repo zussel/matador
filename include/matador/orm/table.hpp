@@ -109,17 +109,13 @@ public:
       // try to find object proxy by id
       basic_identifier* id(identifier_resolver_.resolve_object(entity.get()));
 
-//      std::cout <<  "table::" << __FUNCTION__ << " created object of type " << this->node_.type() << " with identifier " << *id << " (" << id << ")\n";
-
       auto i = identifier_proxy_map_.find(id);
       if (i != identifier_proxy_map_.end()) {
-//        std::cout <<  "table::" << __FUNCTION__ << " found stored proxy of type " << this->node_.type() << " with identifier " << *id << " (" << id << ")\n";
         // use proxy;
         proxy_.reset(i->second.proxy);
         proxy_->reset(entity.release(), true, true);
       } else {
         // create new proxy
-//        std::cout <<  "table::" << __FUNCTION__ << " create new proxy of type " << this->node_.type() << " with identifier " << *id << " (" << id << ")\n";
         proxy_.reset(new object_proxy(entity.release()));
       }
 
@@ -130,7 +126,6 @@ public:
         auto proxy_info = i->second;
         identifier_proxy_map_.erase(i);
         for (auto pk : proxy_info.primary_keys) {
-//          std::cout <<  "table::" << __FUNCTION__ << " deleting identifier of object of type " << this->node_.type() << " id: " << *pk << " (" << pk << ")\n";
           delete pk;
         }
       }
@@ -165,9 +160,13 @@ public:
    */
   void update(object_proxy *proxy) override
   {
+    auto it = persistence_.proxy_identifier_map_.find(proxy);
+    if (it == persistence_.proxy_identifier_map_.end()) {
+      throw_object_exception("couldn't find proxy " << proxy);
+    }
     auto *obj = static_cast<table_type *>(proxy->obj());
     size_t pos = update_.bind(0, obj);
-    binder_.bind(obj, &update_, pos);
+    binder_.bind(obj, &update_, pos, it->second.get());
     // Todo: check result
     update_.execute();
   }
@@ -182,7 +181,7 @@ public:
    */
   void remove(object_proxy *proxy) override
   {
-    binder_.bind(static_cast<table_type *>(proxy->obj()), &delete_, 0);
+    binder_.bind(static_cast<table_type *>(proxy->obj()), &delete_, 0, proxy->pk());
     // Todo: check result
     delete_.execute();
   }

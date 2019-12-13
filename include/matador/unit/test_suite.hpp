@@ -87,8 +87,8 @@ public:
     void evaluate(const unit_test::test_func_info &info)
     {
       ++tests;
-      asserts += (info.assertion_count + info.error_count);
-      errors += info.errors;
+      asserts += (info.assertion_check_count + info.error_check_count);
+      errors += info.error_count;
       if (info.succeeded) {
         ++succeeded;
       } else {

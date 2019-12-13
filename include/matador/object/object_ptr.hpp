@@ -20,7 +20,6 @@
 
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/object_holder.hpp"
-#include "matador/object/transaction.hpp"
 #include "matador/utils/identifier_resolver.hpp"
 
 #include <memory>
@@ -163,6 +162,7 @@ public:
     clear();
     return *this;
   }
+
   /**
    * Return the type string of the object
    *
@@ -173,7 +173,6 @@ public:
     return classname_.c_str();
   }
 
-  //@{
   /**
    * @brief Return the pointer to the serializable of type T.
    *
@@ -186,28 +185,28 @@ public:
     return get();
   }
 
-  T* operator->() {
-    return get();
-  }
-
+  /**
+   * @brief Return the pointer to the serializable of type T.
+   *
+   * Return the pointer to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
+   *
+   * @return The pointer to the serializable of type T.
+   */
   const T* get() const {
     return static_cast<T*>(lookup_object());
   }
 
-  T* get() {
-    if (proxy_ && proxy_->obj()) {
-      if (proxy_->ostore_ && proxy_->has_transaction()) {
-        proxy_->current_transaction().on_update<T>(proxy_);
-      }
-      return (T*)proxy_->obj();
-    } else {
-      return nullptr;
-    }
+  /**
+   * The modify method allows to modify the underlying
+   * object. It ensures that this object is marked
+   * as modified in the object_store and all registered
+   * observers are notified
+   *
+   * @return Pointer to the underlying object
+   */
+  T* modify();
 
-  }
-  //@}
-
-  //@{
   /**
    * @brief Return the reference to the serializable of type T.
    *
@@ -220,10 +219,17 @@ public:
     return *get();
   }
 
+  /**
+   * @brief Return the reference to the serializable of type T.
+   *
+   * Return the reference to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
+   *
+   * @return The reference to the serializable of type T.
+   */
   T& operator*() {
     return *get();
   }
-  //@}
 
   /**
    * Creates a new identifier, represented by the identifier

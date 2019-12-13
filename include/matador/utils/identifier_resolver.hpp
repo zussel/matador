@@ -18,9 +18,9 @@
 #define OOS_UTILS_API
 #endif
 
-#include "cascade_type.hpp"
+#include "matador/utils/cascade_type.hpp"
 #include "matador/utils/basic_identifier.hpp"
-#include "access.hpp"
+#include "matador/utils/access.hpp"
 
 #include <stdexcept>
 
@@ -82,6 +82,7 @@ public:
   void serialize(const char*, V&) {}
 
   void serialize(const char*, char*, size_t) {}
+  void serialize(const char*, std::string &, size_t) {}
 
 //  template < class HAS_ONE >
   void serialize(const char*, object_holder&, cascade_type) {}

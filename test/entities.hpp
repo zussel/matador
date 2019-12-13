@@ -27,29 +27,28 @@
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/identifier.hpp"
-#include "matador/utils/varchar.hpp"
 
 #include <ostream>
 #include <utility>
 
-#include "Item.hpp"
+#include "datatypes.hpp"
 #include "person.hpp"
 
 template < class T >
-class ObjectItem : public Item
+class ObjectItem : public datatypes
 {
 public:
     typedef matador::object_ptr<T> value_ptr;
 
     ObjectItem() = default;
     ObjectItem(const std::string &n, int i)
-            : Item(n, i)
+            : datatypes(n, i)
     {}
 
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize(*matador::base_class<Item>(this));
+        serializer.serialize(*matador::base_class<datatypes>(this));
         serializer.serialize("ref", ref_, matador::cascade_type::NONE);
         serializer.serialize("ptr", ptr_, matador::cascade_type::ALL);
     }
@@ -78,7 +77,7 @@ private:
 class ObjectItemList
 {
 public:
-    typedef matador::has_many<ObjectItem<Item>> object_item_list_t;
+    typedef matador::has_many<ObjectItem<datatypes>> object_item_list_t;
     typedef typename object_item_list_t::iterator iterator;
     typedef typename object_item_list_t::const_iterator const_iterator;
 
@@ -200,7 +199,7 @@ public:
         // name of table, object     , cascade
     }
 
-    matador::object_ptr<department> dep() { return department_; }
+    matador::object_ptr<department> dep() const { return department_; }
     void dep(const matador::object_ptr<department> &d)
     {
         department_ = d;
@@ -210,7 +209,7 @@ public:
 struct department
 {
     matador::identifier<unsigned long> id;
-    matador::varchar<255> name;
+    std::string name;
     matador::has_many<employee> employees;
 
     department() = default;
@@ -224,7 +223,7 @@ struct department
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize("id", id);
-        serializer.serialize("name", name);
+        serializer.serialize("name", name, 255);
         serializer.serialize("employee"    , employees, "department", "id", matador::cascade_type::NONE);
         //                    name of table, container,  name of member
         //                                   to serialize
@@ -261,7 +260,7 @@ public:
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize("id", id);
-        serializer.serialize("title", title);
+        serializer.serialize("title", title, 1023);
         serializer.serialize("student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
     }
 
@@ -290,8 +289,8 @@ struct citizen : public person
 struct address
 {
     matador::identifier<unsigned long> id;
-    matador::varchar<255> street;
-    matador::varchar<255> city;
+    std::string street;
+    std::string city;
     matador::belongs_to<citizen> citizen_;
 
     address() = default;
@@ -303,8 +302,8 @@ struct address
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize("id", id);
-        serializer.serialize("street", street);
-        serializer.serialize("city", city);
+        serializer.serialize("street", street, 255);
+        serializer.serialize("city", city, 255);
         serializer.serialize("citizen", citizen_, matador::cascade_type::NONE);
     }
 };
@@ -570,7 +569,7 @@ class load
 {
 public:
     matador::identifier<unsigned long> id;
-    matador::varchar<255> name;
+    std::string name;
 
     load() = default;
     explicit load(std::string loadname) : name(std::move(loadname)) {}
@@ -579,7 +578,7 @@ public:
     void serialize(S &s)
     {
         s.serialize("id", id);
-        s.serialize("name", name);
+        s.serialize("name", name, 255);
     }
 
 };
@@ -588,7 +587,7 @@ class location
 {
 public:
     matador::identifier<unsigned long> id;
-    matador::varchar<255> name;
+    std::string name;
 
     location() = default;
     explicit location(std::string locname) : name(std::move(locname)) {}
@@ -597,7 +596,7 @@ public:
     void serialize(S &s)
     {
         s.serialize("id", id);
-        s.serialize("name", name);
+        s.serialize("name", name, 255);
     }
 };
 
@@ -605,7 +604,7 @@ class order
 {
 public:
     matador::identifier<unsigned long> id;
-    matador::varchar<255> name;
+    std::string name;
     matador::has_many<location> sources;
     matador::has_many<location> destinations;
 
@@ -613,7 +612,7 @@ public:
     void serialize(S &s)
     {
         s.serialize("id", id);
-        s.serialize("name", name);
+        s.serialize("name", name, 255);
         s.serialize("sources", sources);
         s.serialize("destinations", destinations);
     }

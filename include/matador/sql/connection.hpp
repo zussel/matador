@@ -138,6 +138,7 @@ public:
    * - mssql
    * - mysql
    * - sqlite
+   * - postgressql
    *
    * @return The database type string
    */
@@ -266,6 +267,7 @@ private:
   void parse_dns(const std::string &dns);
 
   void log(const std::string &msg) const;
+  void log_token(detail::token::t_token tok);
 
 private:
   std::string type_;

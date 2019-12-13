@@ -23,9 +23,9 @@ public:
   void on_attach(prototype_node &node, T &proto) override;
   void on_detach(prototype_node &node, T &proto) override;
 
-  void on_insert(object_proxy &) override {}
-  void on_update(object_proxy &) override {}
-  void on_delete(object_proxy &) override {}
+  void on_insert(object_proxy &proxy) override;
+  void on_update(object_proxy &proxy) override;
+  void on_delete(object_proxy &proxy) override;
 
   persistence& get_persistence() const { return persistence_; }
 private:

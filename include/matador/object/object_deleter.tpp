@@ -4,9 +4,9 @@ namespace matador {
 namespace detail {
 
 template <typename T>
-void object_deleter::t_object_count::remove_object(object_proxy *proxy, bool notify)
+void object_deleter::t_object_count::remove_object(object_proxy *proxy)
 {
-  proxy->ostore()->remove<T>(proxy, notify, false);
+  proxy->ostore()->remove<T>(proxy, false);
 }
 
 template<class T>
@@ -83,9 +83,6 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
     return;
   }
 
-//  auto proxy = proxy_stack_.top();
-//  auto current_proxy = visited_objects_.find(proxy);
-//  auto &cptr = *current_proxy;
   if (!proxy_stack_.top()->node()->is_relation_node()) {
     if (x.proxy_ && x.relation_info_) {
       relations_to_remove_.push_back([&x]() {
@@ -100,19 +97,7 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
       }
     }
     visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1));
-
-//    auto foreign_endpoint = x.relation_info_->foreign_endpoint.lock();
   }
-//    if (foreign_endpoint && foreign_endpoint->type == basic_relation_endpoint::BELONGS_TO) {
-//      if (current_proxy != visited_objects_.end()) {
-//        --current_proxy->second;
-//      }
-//    }
-//  } else {
-//    if (current_proxy != visited_objects_.end()) {
-//      --current_proxy->second;
-//    }
-//  }
 
   if (cascade & cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_, (T*)x.proxy_->obj())));

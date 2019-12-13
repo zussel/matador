@@ -26,7 +26,7 @@
 #include "matador/orm/persistence_observer.hpp"
 
 #include <memory>
-#include <unordered_map>
+#include <unordered_set>
 
 namespace matador {
 
@@ -68,7 +68,6 @@ public:
    *
    * @tparam T       The type of the prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
@@ -83,7 +82,6 @@ public:
    *
    * @tparam T       The type of the prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
@@ -100,7 +98,6 @@ public:
    * @tparam T       The type of the prototype node
    * @tparam S       The type of the parent prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S>
@@ -116,7 +113,6 @@ public:
    * @tparam T       The type of the prototype node
    * @tparam S       The type of the parent prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S>
@@ -240,14 +236,40 @@ public:
   bool is_log_enabled() const;
 
 private:
+  template < class T, class Enabled >
+  friend class table;
   template < class T >
   friend class persistence_observer;
+  friend class session;
 
+  void register_proxy_insert(object_proxy &proxy);
+  void register_proxy_update(object_proxy &proxy);
+  void register_proxy_delete(object_proxy &proxy);
 private:
   connection connection_;
   object_store store_;
 
   t_table_map tables_;
+
+  enum class proxy_change_action : int {
+    INSERT, UPDATE, REMOVE
+  };
+
+  std::map<proxy_change_action, std::string> proxy_change_action_to_string;
+
+  struct proxy_change {
+    proxy_change(object_proxy &p, proxy_change_action a)
+      : proxy(&p), action(a)
+    {}
+
+    object_proxy *proxy = nullptr;
+    proxy_change_action action;
+  };
+  std::vector<proxy_change> proxy_change_queue_;
+
+  std::unordered_set<object_proxy*> proxies_to_delete_;
+
+  std::unordered_map<object_proxy*, std::unique_ptr<basic_identifier>> proxy_identifier_map_;
 };
 
 }

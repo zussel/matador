@@ -144,7 +144,7 @@ public:
   template < class V >
   std::size_t bind(std::size_t index, V &val)
   {
-    return p->bind(val, index);
+    return p->bind<T>(val, index);
   }
 
   /**

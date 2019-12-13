@@ -33,6 +33,7 @@
 #endif
 
 #include "matador/utils/identifier.hpp"
+#include "matador/utils/memory.hpp"
 
 #include "matador/object/identifier_proxy_map.hpp"
 #include "matador/object/typed_object_store_observer.hpp"
@@ -52,10 +53,6 @@ class object_proxy;
 
 /// @cond MATADOR_DEV
 namespace detail {
-template < class T, template <class ...> class C, class Enable = void >
-class has_many_inserter;
-template < class T, template <class ...> class C, class Enable = void >
-class has_many_deleter;
 class basic_node_analyzer;
 template < class T, template < class U = T > class O >
 class node_analyzer;
@@ -151,7 +148,7 @@ public:
    */
   template < class T >
   prototype_node(object_store *tree, const char *type, T *proto, bool abstract = false)
-    : info_(std::make_unique<detail::prototype_info<T>>(*this, proto))
+    : info_(matador::make_unique<detail::prototype_info<T>>(*this, proto))
     , tree_(tree)
     , first(new prototype_node)
     , last(new prototype_node)
@@ -435,7 +432,7 @@ private:
    * @param old_proxy The old first marker proxy.
    * @param new_proxy The new first marker proxy.
    */
-  void adjust_right_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
+  static void adjust_right_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
   /**
    * @internal
@@ -446,17 +443,13 @@ private:
    * @param old_proxy The old last marker proxy.
    * @param new_proxy The new last marker proxy.
    */
-  void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
+  static void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
-  void on_attach()
-  {
-    info_->notify(detail::notification_type::ATTACH);
-  }
-
-  void on_detach()
-  {
-    info_->notify(detail::notification_type::DETACH);
-  }
+  void on_attach() const;
+  void on_detach() const;
+  void on_insert_proxy(object_proxy *proxy) const;
+  void on_update_proxy(object_proxy *proxy) const;
+  void on_delete_proxy(object_proxy *proxy) const;
 
 private:
   friend class prototype_tree;
@@ -470,10 +463,6 @@ private:
   friend class object_view_iterator;
   template < class T, template <class ...> class C >
   friend class has_many;
-  template < class T, template <class ...> class C, class Enable >
-  friend class detail::has_many_inserter;
-  template < class T, template <class ...> class C, class Enable >
-  friend class detail::has_many_deleter;
   friend class detail::basic_node_analyzer;
   template < class T,  template < class U = T > class O >
   friend class detail::node_analyzer;

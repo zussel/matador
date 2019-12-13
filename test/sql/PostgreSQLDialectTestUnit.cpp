@@ -49,15 +49,15 @@ void PostgreSQLDialectTestUnit::test_placeholder()
   std::string name("hans");
   unsigned int age(25);
 
-  vals->push_back(std::make_shared<value<unsigned long>>(id));
-  vals->push_back(std::make_shared<value<std::string>>(name));
-  vals->push_back(std::make_shared<value<unsigned int>>(age));
+  vals->push_back(std::make_shared<value>(id));
+  vals->push_back(std::make_shared<value>(name));
+  vals->push_back(std::make_shared<value>(age));
 
   s.append(vals.release());
 
-  std::string result = conn.dialect()->prepare(s);
+  auto result = conn.dialect()->prepare(s);
 
-  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES ($1, $2, $3) ", result);
+  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES ($1, $2, $3) ", std::get<0>(result));
 }
 
 void PostgreSQLDialectTestUnit::test_placeholder_condition()
@@ -80,9 +80,9 @@ void PostgreSQLDialectTestUnit::test_placeholder_condition()
 
   s.append(new detail::where("name"_col == "hans"));
 
-  std::string result = conn.dialect()->prepare(s);
+  auto result = conn.dialect()->prepare(s);
 
-  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" = $1 ", result);
+  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" = $1 ", std::get<0>(result));
 }
 
 void PostgreSQLDialectTestUnit::test_update_limit()
@@ -105,7 +105,7 @@ void PostgreSQLDialectTestUnit::test_update_limit()
   s.append(new detail::where("owner_id"_col == 1 && "item_id"_col == 1));
   s.append(new detail::top(1));
 
-  std::string result = conn.dialect()->direct(s);
+  auto result = conn.dialect()->direct(s);
 
   UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=1 WHERE \"ctid\" = (SELECT \"ctid\" FROM \"relation\" WHERE (\"owner_id\" = 1 AND \"item_id\" = 1) LIMIT 1 ) ", result);
 }
@@ -129,9 +129,9 @@ void PostgreSQLDialectTestUnit::test_update_limit_prepare(){
   s.append(new detail::where("owner_id"_col == 1 && "item_id"_col == 1));
   s.append(new detail::top(1));
 
-  std::string result = conn.dialect()->prepare(s);
+  auto result = conn.dialect()->prepare(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=$1 WHERE \"ctid\" = (SELECT \"ctid\" FROM \"relation\" WHERE (\"owner_id\" = $2 AND \"item_id\" = $3) LIMIT 1 ) ", result);
+  UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=$1 WHERE \"ctid\" = (SELECT \"ctid\" FROM \"relation\" WHERE (\"owner_id\" = $2 AND \"item_id\" = $3) LIMIT 1 ) ", std::get<0>(result));
 }
 
 void PostgreSQLDialectTestUnit::test_table_name()

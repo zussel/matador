@@ -116,14 +116,14 @@ struct OOS_SQL_API values : public token
 {
   values() : token(VALUES) {}
 
-  void push_back(const std::shared_ptr<basic_value> &val) { values_.push_back(val); }
+  void push_back(const std::shared_ptr<value> &val) { values_.push_back(val); }
 
   void accept(token_visitor &visitor) override
   {
     return visitor.visit(*this);
   }
 
-  std::vector<std::shared_ptr<basic_value>> values_;
+  std::vector<std::shared_ptr<value>> values_;
 };
 
 struct OOS_SQL_API asc : public token

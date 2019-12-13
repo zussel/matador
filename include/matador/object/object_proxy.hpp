@@ -33,7 +33,6 @@
 
 #include "matador/utils/identifier_resolver.hpp"
 
-#include "matador/object/prototype_node.hpp"
 #include "matador/object/object_holder_type.hpp"
 
 #include <ostream>
@@ -83,11 +82,11 @@ public:
   explicit object_proxy(basic_identifier *pk);
 
   template < class T >
-  explicit object_proxy(basic_identifier *pk, T *obj, prototype_node *node)
+  explicit object_proxy(basic_identifier *pk, T *obj, object_store *store, prototype_node *node)
     : obj_(obj)
     , deleter_(&destroy<T>)
     , namer_(&type_id<T>)
-    , ostore_(node->tree())
+    , ostore_(store)
     , node_(node)
     , primary_key_(pk)
   {}

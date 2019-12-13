@@ -26,12 +26,13 @@ SET(HEADER
   ../../include/matador/object/generic_access.hpp
   ../../include/matador/object/object_exception.hpp
   ../../include/matador/object/object_ptr.hpp
+  ../../include/matador/object/object_ptr.tpp
   ../../include/matador/object/object_store.hpp
   ../../include/matador/object/object_view.hpp
   ../../include/matador/object/object_proxy.hpp
   ../../include/matador/object/object_serializer.hpp
   ../../include/matador/object/prototype_node.hpp
-    ../../include/matador/object/typed_object_store_observer.hpp
+  ../../include/matador/object/typed_object_store_observer.hpp
   ../../include/matador/object/object_expression.hpp
   ../../include/matador/object/attribute_serializer.hpp
   ../../include/matador/object/prototype_iterator.hpp
@@ -67,8 +68,6 @@ SET(HEADER
   ../../include/matador/object/relation_field_endpoint.tpp
   ../../include/matador/object/has_many_to_many_item.hpp
   ../../include/matador/object/basic_has_many_to_many_item.hpp
-  ../../include/matador/object/has_many_inserter.hpp
-  ../../include/matador/object/has_many_deleter.hpp
   ../../include/matador/object/has_many_item_holder.hpp
   ../../include/matador/object/prototype_info.hpp
   ../../include/matador/object/relation_endpoint_value_inserter.hpp
@@ -76,7 +75,7 @@ SET(HEADER
   ../../include/matador/object/relation_endpoint_value_remover.hpp
   ../../include/matador/object/relation_endpoint_value_remover.tpp
   ../../include/matador/object/to_many_endpoints.hpp
-  )
+  ../../include/matador/object/has_many_iterator_traits.hpp)
 
 ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
 

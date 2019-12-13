@@ -25,10 +25,10 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/serializer.hpp"
+#include "matador/utils/memory.hpp"
 
 namespace matador {
 
-class varchar_base;
 
 namespace detail {
 
@@ -42,29 +42,39 @@ public:
 
   template<class T>
   columns *execute(T &x) {
-    cols_ = std::make_unique<columns>(brackets_);
-    matador::access::serialize(static_cast<serializer&>(*this), x);
+    cols_ = matador::make_unique<columns>(brackets_);
+    matador::access::serialize(*this, x);
     return cols_.release();
+  }
+
+  template < class T >
+  void serialize(T &x)
+  {
+    matador::access::serialize(*this, x);
   }
 
   void serialize(const char *id, char &x) override;
   void serialize(const char *id, short &x) override;
   void serialize(const char *id, int &x) override;
   void serialize(const char *id, long &x) override;
+  void serialize(const char *id, long long &x) override;
   void serialize(const char *id, unsigned char &x) override;
   void serialize(const char *id, unsigned short &x) override;
   void serialize(const char *id, unsigned int &x) override;
   void serialize(const char *id, unsigned long &x) override;
+  void serialize(const char *id, unsigned long long &x) override;
   void serialize(const char *id, float &x) override;
   void serialize(const char *id, double &x) override;
   void serialize(const char *id, bool &x) override;
   void serialize(const char *id, char *x, size_t s) override;
-  void serialize(const char *id, varchar_base &x) override;
+  void serialize(const char *id, std::string &x, size_t s) override;
   void serialize(const char *id, std::string &x) override;
   void serialize(const char *id, date &x) override;
   void serialize(const char *id, time &x) override;
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
   void serialize(const char *id, basic_identifier &x) override;
+  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void serialize(const char *, abstract_has_many &, cascade_type) override {}
 
 private:
   columns::t_brackets brackets_;

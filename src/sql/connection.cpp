@@ -94,16 +94,19 @@ void connection::disconnect()
 
 void connection::begin()
 {
+  log_token(detail::token::BEGIN);
   impl_->begin();
 }
 
 void connection::commit()
 {
+  log_token(detail::token::COMMIT);
   impl_->commit();
 }
 
 void connection::rollback()
 {
+  log_token(detail::token::ROLLBACK);
   impl_->rollback();
 }
 
@@ -137,7 +140,7 @@ bool connection::is_valid() const
   return !type_.empty() && !dns_.empty();
 }
 
-detail::basic_value* create_default_value(data_type type);
+value* create_default_value(database_type type);
 
 void connection::prepare_prototype_row(row &prototype, const std::string &tablename)
 {
@@ -150,48 +153,40 @@ void connection::prepare_prototype_row(row &prototype, const std::string &tablen
       continue;
     }
     // generate value by type
-    std::shared_ptr<detail::basic_value> value(create_default_value(f.type()));
+    std::shared_ptr<value> value(create_default_value(f.type()));
     prototype.set(f.name(), value);
   }
   // default value for count(*)
   if (prototype.has_column(matador::columns::count_all().name)) {
-    std::shared_ptr<detail::basic_value> value(create_default_value(data_type::type_int));
+    std::shared_ptr<value> value(create_default_value(database_type::type_int));
     prototype.set(matador::columns::count_all().name, value);
   }
 }
 
-detail::basic_value* create_default_value(data_type type)
+value* create_default_value(database_type type)
 {
   switch (type) {
-    case data_type::type_char:
+    case database_type::type_char:
       return make_value((char)0);
-    case data_type::type_short:
+    case database_type::type_smallint:
       return make_value<short>(0);
-    case data_type::type_int:
+    case database_type::type_int:
       return make_value<int>(0);
-    case data_type::type_long:
+    case database_type::type_bigint:
       return make_value<long>(0);
-    case data_type::type_unsigned_char:
-      return make_value<unsigned char>(0);
-    case data_type::type_unsigned_short:
-      return make_value<unsigned short>(0);
-    case data_type::type_unsigned_int:
-      return make_value<unsigned int>(0);
-    case data_type::type_unsigned_long:
-      return make_value<unsigned long>(0);
-    case data_type::type_float:
+    case database_type::type_float:
       return make_value<float>(0);
-    case data_type::type_double:
+    case database_type::type_double:
       return make_value<double>(0);
-    case data_type::type_char_pointer:
-      return new value<char*>((char*)nullptr, 0UL);
-    case data_type::type_text:
+    case database_type::type_char_pointer:
+      return new value((char*)nullptr/*, 0UL*/);
+    case database_type::type_text:
       return make_value<std::string>("");
-    case data_type::type_date:
+    case database_type::type_date:
       return make_value<matador::date>(date());
-    case data_type::type_time:
+    case database_type::type_time:
       return make_value<matador::time>(matador::time());
-    case data_type::type_varchar:
+    case database_type::type_varchar:
       return make_value<std::string>("");
     default:
       return new null_value;
@@ -226,6 +221,13 @@ void connection::log(const std::string &msg) const
 {
   if (impl_->is_log_enabled()) {
     std::cout << "SQL: " << msg << "\n";
+  }
+}
+
+void connection::log_token(detail::token::t_token tok)
+{
+  if (impl_->is_log_enabled()) {
+    std::cout << "SQL: " << dialect()->token_at(tok) << "\n";
   }
 }
 

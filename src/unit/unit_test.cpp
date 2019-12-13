@@ -92,39 +92,39 @@ void unit_test::add_test(const std::string &name, const test_func &test, const s
 
 void unit_test::assert_true(bool a, int line, const char *file)
 {
-  ++current_test_func_info->assertion_count;
+  ++current_test_func_info->assertion_check_count;
   if (!a) {
     std::stringstream msgstr;
-    msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is false";
+    msgstr << "FAILURE at " << file << ":" << line << ": expected value to be true";
     throw unit_exception(msgstr.str());
   }
 }
 
 void unit_test::assert_false(bool a, int line, const char *file)
 {
-  ++current_test_func_info->assertion_count;
+  ++current_test_func_info->assertion_check_count;
   if (a) {
     std::stringstream msgstr;
-    msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is true";
+    msgstr << "FAILURE at " << file << ":" << line << ": expected value to be false";
     throw unit_exception(msgstr.str());
   }
 }
 
 void unit_test::expect_true(bool a, int line, const char *file)
 {
-  ++current_test_func_info->error_count;
+  ++current_test_func_info->error_check_count;
   if (!a) {
-    ++current_test_func_info->errors;
-    std::cout << "ERROR at " << file << ":" << line << ": value " << a << " is false";
+    ++current_test_func_info->error_count;
+    std::cout << "ERROR at " << file << ":" << line << ": expected value to be true";
   }
 }
 
 void unit_test::expect_false(bool a, int line, const char *file)
 {
-  ++current_test_func_info->error_count;
+  ++current_test_func_info->error_check_count;
   if (a) {
-    ++current_test_func_info->errors;
-    std::cout << "ERROR at " << file << ":" << line << ": value " << a << " is false";
+    ++current_test_func_info->error_count;
+    std::cout << "ERROR at " << file << ":" << line << ": expected value to be false";
   }
 }
 
@@ -172,15 +172,15 @@ void unit_test::execute(test_func_info &test_info, bool quiet)
   if (quiet) {
     return;
   }
-  if (test_info.succeeded) {
-    std::cout << "PASS (" << ::std::right << std::setw(3) << test_info.assertion_count + test_info.error_count << " assertions) (" << std::setw(8) << (double)(dur)/1000.0 << "ms)\n";
+  if (test_info.succeeded && test_info.error_count == 0) {
+    std::cout << "PASS (" << ::std::right << std::setw(3) << test_info.assertion_check_count + test_info.error_check_count << " assertions) (" << std::setw(8) << (double)(dur) / 1000.0 << "ms)\n";
   } else {
     std::cout << "FAILED\n\t" << test_info.message << "\n";
   }
 }
 
 void unit_test::assert_equal(char *&a, const char *&b, int line, const char *file) {
-  ++current_test_func_info->assertion_count;
+  ++current_test_func_info->assertion_check_count;
   if (strcmp(a, b) != 0) {
     std::stringstream msgstr;
     msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -189,7 +189,7 @@ void unit_test::assert_equal(char *&a, const char *&b, int line, const char *fil
 }
 
 void unit_test::assert_equal(const std::string &a, const char *b, int line, const char *file) {
-  ++current_test_func_info->assertion_count;
+  ++current_test_func_info->assertion_check_count;
   if (strcmp(a.c_str(), b) != 0) {
     std::stringstream msgstr;
     msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -198,7 +198,7 @@ void unit_test::assert_equal(const std::string &a, const char *b, int line, cons
 }
 
 void unit_test::assert_equal(const char *a, const std::string &b, int line, const char *file) {
-  ++current_test_func_info->assertion_count;
+  ++current_test_func_info->assertion_check_count;
   if (strcmp(a, b.c_str()) != 0) {
     std::stringstream msgstr;
     msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -207,7 +207,7 @@ void unit_test::assert_equal(const char *a, const std::string &b, int line, cons
 }
 
 void unit_test::assert_equal(const char *a, const char *b, int line, const char *file) {
-  ++current_test_func_info->assertion_count;
+  ++current_test_func_info->assertion_check_count;
   if (strcmp(a, b) != 0) {
     std::stringstream msgstr;
     msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -216,7 +216,7 @@ void unit_test::assert_equal(const char *a, const char *b, int line, const char 
 }
 
 void unit_test::assert_equal(const bool &a, const bool &b, int line, const char *file) {
-  ++current_test_func_info->assertion_count;
+  ++current_test_func_info->assertion_check_count;
   if (a != b) {
     std::stringstream msgstr;
     msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
@@ -225,33 +225,33 @@ void unit_test::assert_equal(const bool &a, const bool &b, int line, const char 
 }
 
 void unit_test::expect_equal(const double &a, const double &b, int line, const char *file) {
-  ++current_test_func_info->error_count;
+  ++current_test_func_info->error_check_count;
   if (std::abs(a - b) > 0.000001) {
-    ++current_test_func_info->errors;
+    ++current_test_func_info->error_count;
     std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
   }
 }
 
 void unit_test::expect_equal(const char *a, const std::string &b, int line, const char *file) {
-  ++current_test_func_info->error_count;
+  ++current_test_func_info->error_check_count;
   if (strcmp(a, b.c_str()) != 0) {
-    ++current_test_func_info->errors;
+    ++current_test_func_info->error_count;
     std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
   }
 }
 
 void unit_test::expect_equal(const std::string &a, const char *b, int line, const char *file) {
-  ++current_test_func_info->error_count;
+  ++current_test_func_info->error_check_count;
   if (strcmp(a.c_str(), b) != 0) {
-    ++current_test_func_info->errors;
+    ++current_test_func_info->error_count;
     std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
   }
 }
 
 void unit_test::expect_equal(const char *a, const char *b, int line, const char *file) {
-  ++current_test_func_info->error_count;
+  ++current_test_func_info->error_check_count;
   if (strcmp(a, b) != 0) {
-    ++current_test_func_info->errors;
+    ++current_test_func_info->error_count;
     std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
   }
 }

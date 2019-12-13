@@ -29,4 +29,22 @@ void persistence_observer<T>::on_detach(prototype_node &node, T&)
   persistence_.tables_.erase(i);
 }
 
+template<class T>
+void persistence_observer<T>::on_insert(object_proxy &proxy)
+{
+  persistence_.register_proxy_insert(proxy);
+}
+
+template<class T>
+void persistence_observer<T>::on_update(object_proxy &proxy)
+{
+  persistence_.register_proxy_update(proxy);
+}
+
+template<class T>
+void persistence_observer<T>::on_delete(object_proxy &proxy)
+{
+  persistence_.register_proxy_delete(proxy);
+}
+
 }

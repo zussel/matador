@@ -20,6 +20,7 @@ public:
   void test_update();
   void test_delete();
   void test_save();
+  void test_flush();
 
 private:
   std::string dns_;

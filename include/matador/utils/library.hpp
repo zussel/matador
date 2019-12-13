@@ -68,13 +68,13 @@ public:
   /**
    * Create a unspecified library serializable
    */
-  library();
+  library() = default;
   /**
    * Create a library for the given lib path
    *
    * @param lib The path to the library to map.
    */
-  explicit library(const std::string &lib);
+  explicit library(std::string lib);
   ~library();
 
   /**
@@ -123,9 +123,9 @@ private:
   std::string lib_;
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-  HMODULE handle_;
+  HMODULE handle_ = nullptr;
 #else
-  void *handle_;
+  void *handle_ = nullptr;
 #endif
 };
 

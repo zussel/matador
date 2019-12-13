@@ -6,6 +6,8 @@
 
 #include "TestDialect.hpp"
 
+#include "matador/utils/memory.hpp"
+
 #include "matador/sql/sql.hpp"
 #include "matador/sql/dialect_token.hpp"
 #include "matador/sql/column.hpp"
@@ -104,9 +106,9 @@ void DialectTestUnit::test_insert_query()
   std::string name("hans");
   unsigned int age(25);
 
-  vals->push_back(std::make_shared<value<unsigned long>>(id));
-  vals->push_back(std::make_shared<value<std::string>>(name));
-  vals->push_back(std::make_shared<value<unsigned int>>(age));
+  vals->push_back(std::make_shared<value>(id));
+  vals->push_back(std::make_shared<value>(name));
+  vals->push_back(std::make_shared<value>(age));
 
   s.append(vals.release());
 
@@ -139,16 +141,16 @@ void DialectTestUnit::test_insert_prepare_query()
   std::string name("hans");
   unsigned int age(25);
 
-  vals->push_back(std::make_shared<value<unsigned long>>(id));
-  vals->push_back(std::make_shared<value<std::string>>(name));
-  vals->push_back(std::make_shared<value<unsigned int>>(age));
+  vals->push_back(std::make_shared<value>(id));
+  vals->push_back(std::make_shared<value>(name));
+  vals->push_back(std::make_shared<value>(age));
 
   s.append(vals.release());
 
   TestDialect dialect;
-  std::string result = dialect.prepare(s);
+  auto result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES (?, ?, ?) ", result);
+  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES (?, ?, ?) ", std::get<0>(result));
 }
 
 void DialectTestUnit::test_select_all_query()
@@ -283,7 +285,7 @@ void DialectTestUnit::test_select_where_query()
   s.reset(t_query_command::SELECT);
   s.append(new detail::select);
 
-  auto cols = std::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
+  auto cols = matador::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -306,7 +308,7 @@ void DialectTestUnit::test_select_where_query()
 
   s.append(new detail::select);
 
-  cols = std::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
+  cols = matador::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -397,9 +399,9 @@ void DialectTestUnit::test_update_prepare_query()
   s.append(cols.release());
 
   TestDialect dialect;
-  std::string result = dialect.prepare(s);
+  auto result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? ", result);
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? ", std::get<0>(result));
 }
 
 void DialectTestUnit::test_update_where_prepare_query()
@@ -425,9 +427,9 @@ void DialectTestUnit::test_update_where_prepare_query()
   s.append(new detail::where(name != "Hans" && matador::in(age, {7,5,5,8})));
 
   TestDialect dialect;
-  std::string result = dialect.prepare(s);
+  auto result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? WHERE (\"name\" <> ? AND \"age\" IN (?,?,?,?)) ", result);
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? WHERE (\"name\" <> ? AND \"age\" IN (?,?,?,?)) ", std::get<0>(result));
 
 }
 

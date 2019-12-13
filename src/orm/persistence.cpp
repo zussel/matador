@@ -7,9 +7,17 @@
 namespace matador {
 
 
+
 persistence::persistence(const std::string &dns)
   : connection_(dns)
 {
+  proxy_change_action_to_string.insert(std::make_pair(proxy_change_action::INSERT, "INSERT"));
+  proxy_change_action_to_string.insert(std::make_pair(proxy_change_action::UPDATE, "UPDATE"));
+  proxy_change_action_to_string.insert(std::make_pair(proxy_change_action::REMOVE, "REMOVE"));
+
+  store_.on_proxy_delete([this](object_proxy *proxy) {
+    proxies_to_delete_.insert(proxy);
+  });
   connection_.connect();
 }
 
@@ -99,6 +107,53 @@ void persistence::disable_log()
 bool persistence::is_log_enabled() const
 {
   return connection_.is_log_enabled();
+}
+
+void persistence::register_proxy_insert(object_proxy &proxy)
+{
+  if (store_.has_transaction()) {
+    return;
+  }
+  auto i = std::find_if(proxy_change_queue_.begin(), proxy_change_queue_.end(), [&proxy](const proxy_change &pc) { return &proxy == pc.proxy; });
+
+  if (i != proxy_change_queue_.end() && i->action == persistence::proxy_change_action::REMOVE) {
+    i->action = persistence::proxy_change_action::INSERT;
+  } else if (i == proxy_change_queue_.end()) {
+    proxy_change_queue_.emplace_back(proxy, persistence::proxy_change_action::INSERT);
+  }
+}
+
+void persistence::register_proxy_update(object_proxy &proxy)
+{
+  if (proxy_identifier_map_.find(&proxy) == proxy_identifier_map_.end()) {
+    proxy_identifier_map_.insert(std::make_pair(&proxy, std::unique_ptr<basic_identifier>(proxy.pk()->clone())));
+  }
+  if (store_.has_transaction()) {
+    return;
+  }
+  auto i = std::find_if(proxy_change_queue_.begin(), proxy_change_queue_.end(), [&proxy](const proxy_change &pc) { return &proxy == pc.proxy; });
+  if (i == proxy_change_queue_.end()) {
+    proxy_change_queue_.emplace_back(proxy, persistence::proxy_change_action::UPDATE);
+  }
+}
+
+void persistence::register_proxy_delete(object_proxy &proxy)
+{
+  if (store_.has_transaction()) {
+    return;
+  }
+  auto i = std::find_if(proxy_change_queue_.begin(), proxy_change_queue_.end(), [&proxy](const proxy_change &pc) { return &proxy == pc.proxy; });
+  if (i != proxy_change_queue_.end()) {
+    if (i->action == persistence::proxy_change_action::INSERT) {
+      proxy_change_queue_.erase(i);
+      proxies_to_delete_.erase(&proxy);
+      delete &proxy;
+    } else if (i->action == persistence::proxy_change_action::UPDATE) {
+      i->action = persistence::proxy_change_action::REMOVE;
+    }
+  } else if (i == proxy_change_queue_.end()) {
+    proxy_change_queue_.emplace_back(proxy, persistence::proxy_change_action::REMOVE);
+  }
 }
 
 }

@@ -10,7 +10,7 @@
 
 #include "matador/utils/identifier.hpp"
 #include "matador/object/has_many.hpp"
-#include "../Item.hpp"
+#include "../datatypes.hpp"
 #include "../entities.hpp"
 
 namespace hasmanyvector {
@@ -68,6 +68,7 @@ public:
   void test_remove_if();
   void test_integer();
   void test_string();
+  void test_varchar();
 };
 
 #endif //OOS_HASMANYUNITTEST_HPP

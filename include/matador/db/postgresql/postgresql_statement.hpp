@@ -6,12 +6,11 @@
 #define MATADOR_POSTGRESQL_STATEMENT_HPP
 
 #include "matador/sql/statement_impl.hpp"
+#include "matador/db/postgresql/postgresql_parameter_binder.hpp"
 
 #include <libpq-fe.h>
 
 namespace matador {
-
-class varchar_base;
 
 class basic_identifier;
 
@@ -23,8 +22,8 @@ class postgresql_statement : public matador::detail::statement_impl
 {
 public:
   postgresql_statement(postgresql_connection &db, const matador::sql &stmt);
-  postgresql_statement(const postgresql_statement &x);
-  postgresql_statement& operator=(const postgresql_statement &x);
+  postgresql_statement(const postgresql_statement &x) = delete;
+  postgresql_statement& operator=(const postgresql_statement &x) = delete;
   ~postgresql_statement() override;
 
   void clear() override;
@@ -34,41 +33,22 @@ public:
   void reset() override;
 
 protected:
-  void serialize(const char *id, char &x) override;
-  void serialize(const char *id, short &x) override;
-  void serialize(const char *id, int &x) override;
-  void serialize(const char *id, long &x) override;
-  void serialize(const char *id, unsigned char &x) override;
-  void serialize(const char *id, unsigned short &x) override;
-  void serialize(const char *id, unsigned int &x) override;
-  void serialize(const char *id, unsigned long &x) override;
-  void serialize(const char *id, float &x) override;
-  void serialize(const char *id, double &x) override;
-  void serialize(const char *id, bool &x) override;
-  void serialize(const char *id, char *x, size_t s) override;
-  void serialize(const char *id, varchar_base &x) override;
-  void serialize(const char *id, std::string &x) override;
-  void serialize(const char *id, matador::date &x) override;
-  void serialize(const char *id, matador::time &x) override;
-  void serialize(const char *id, basic_identifier &x) override;
-  void serialize(const char *id, identifiable_holder &x, cascade_type) override;
+
+  detail::parameter_binder_impl *binder() const override;
 
 private:
-  std::string generate_statement_name(const matador::sql &stmt);
+  static std::string generate_statement_name(const matador::sql &stmt);
 
 private:
   postgresql_connection &db_;
-  size_t result_size;
-  size_t host_size;
-
-  std::vector<std::string> host_strings_;
-  std::vector<const char*> host_params_;
 
   std::string name_;
 
   static std::unordered_map<std::string, unsigned long> statement_name_map_;
 
   PGresult *res_ = nullptr;
+
+  std::unique_ptr<postgresql_parameter_binder> binder_;
 };
 
 }

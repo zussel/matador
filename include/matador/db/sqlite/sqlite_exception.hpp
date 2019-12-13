@@ -29,11 +29,15 @@
   #define OOS_SQLITE_API
 #endif
 
+#include <sqlite3.h>
+
 #include "matador/sql/sql_exception.hpp"
 
 namespace matador {
 
 namespace sqlite {
+
+void throw_error(int ec, sqlite3 *db, const std::string &source, const std::string &sql = "");
 
 class sqlite_exception : public sql_exception
 {

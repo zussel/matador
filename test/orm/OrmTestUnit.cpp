@@ -4,14 +4,11 @@
 
 #include "OrmTestUnit.hpp"
 
-#include "../Item.hpp"
 #include "../person.hpp"
 #include "../has_many_list.hpp"
 
 #include "matador/orm/persistence.hpp"
 #include "matador/orm/session.hpp"
-
-#include "matador/object/object_view.hpp"
 
 using namespace hasmanylist;
 using namespace matador;
@@ -27,7 +24,8 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, std::string dns)
   add_test("select", std::bind(&OrmTestUnit::test_select, this), "test select a table");
   add_test("update", std::bind(&OrmTestUnit::test_update, this), "test update on table");
   add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test delete from table");
-  add_test("save", std::bind(&OrmTestUnit::test_save, this), "test save");
+  add_test("save", std::bind(&OrmTestUnit::test_save, this), "test session save");
+  add_test("flush", std::bind(&OrmTestUnit::test_flush, this), "test session flush");
 }
 
 void OrmTestUnit::test_persistence()
@@ -79,6 +77,8 @@ void OrmTestUnit::test_table()
 
   auto hans = s.insert(new person("hans", matador::date(18, 5, 1980), 180));
 
+  s.flush();
+
   UNIT_EXPECT_GREATER(hans->id(), 0UL);
 
   UNIT_ASSERT_TRUE(is_loaded(hans));
@@ -115,6 +115,8 @@ void OrmTestUnit::test_insert()
 
   auto hans = s.insert(new person("hans", matador::date(18, 5, 1980), 180));
 
+  s.flush();
+
   UNIT_EXPECT_GREATER(hans->id(), 0UL);
 
   matador::query<person> q("person");
@@ -150,13 +152,15 @@ void OrmTestUnit::test_select()
 
   matador::session s(p);
 
+//  std::vector<std::string> names({ "hans" });
   std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
-  //std::vector<std::string> names({ "hans", "otto", "georg", "hilde", "ute", "manfred" });
 
   for (auto const &name : names) {
     auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
   	UNIT_EXPECT_GREATER(pptr->id(), 0UL);
   }
+
+  s.flush();
 
   auto view = s.select<person>();
 
@@ -182,13 +186,16 @@ void OrmTestUnit::test_update()
   matador::date birthday(18, 5, 1980);
   auto hans = s.insert(new person("hans", birthday, 180));
 
+  s.flush();
+
   UNIT_EXPECT_GREATER(hans->id(), 0UL);
   UNIT_EXPECT_EQUAL(hans->height(), 180U);
   UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
-  hans->height(179);
+  hans.modify()->height(179);
 
-  hans = s.update(hans);
+  s.flush();
+//  hans = s.save(hans);
 
   UNIT_EXPECT_EQUAL(hans->height(), 179U);
 
@@ -222,6 +229,8 @@ void OrmTestUnit::test_delete()
 
   auto hans = s.insert(new person("hans", matador::date(18, 5, 1980), 180));
 
+  s.flush();
+
   UNIT_EXPECT_GREATER(hans->id(), 0UL);
 
   matador::query<person> q("person");
@@ -239,6 +248,8 @@ void OrmTestUnit::test_delete()
 
   s.remove(hans);
 
+  s.flush();
+
   res = q.select().where(matador::column("name") == "hans").execute(c);
 
   first = res.begin();
@@ -249,7 +260,8 @@ void OrmTestUnit::test_delete()
   p.drop();
 }
 
-void OrmTestUnit::test_save() {
+void OrmTestUnit::test_save()
+{
   matador::persistence p(dns_);
 
   p.attach<person>("person");
@@ -265,7 +277,7 @@ void OrmTestUnit::test_save() {
   UNIT_EXPECT_EQUAL(hans->height(), 180U);
   UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
-  hans->height(179);
+  hans.modify()->height(179);
 
   hans = s.save(hans);
 
@@ -277,23 +289,85 @@ void OrmTestUnit::test_save() {
   matador::query<person> q("person");
   auto res = q.select().where("name"_col == "hans").execute(conn);
 
-  auto first = res.begin();
+//  auto first = res.begin();
+//
+//  UNIT_ASSERT_TRUE(first != res.end());
+//
+//  std::unique_ptr<person> p1(first.release());
 
-  UNIT_ASSERT_TRUE(first != res.end());
-
-  std::unique_ptr<person> p1(first.release());
-
-  UNIT_EXPECT_EQUAL("hans", p1->name());
-  UNIT_EXPECT_EQUAL(179U, p1->height());
-  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
+  for (const auto &p1 : res) {
+    UNIT_EXPECT_EQUAL("hans", p1->name());
+    UNIT_EXPECT_EQUAL(179U, p1->height());
+    UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
+  }
 
   s.remove(hans);
 
+  s.flush();
+
   res = q.select().where("name"_col == "hans").execute(conn);
 
-  first = res.begin();
+  auto first = res.begin();
 
   UNIT_EXPECT_TRUE(first == res.end());
+
+  p.drop();
+}
+
+void OrmTestUnit::test_flush()
+{
+  matador::persistence p(dns_);
+
+  p.attach<person>("person");
+
+  p.create();
+
+  matador::session s(p);
+
+  matador::date birthday(18, 5, 1980);
+  auto hans = s.insert(new person("hans", birthday, 180));
+
+  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+  UNIT_EXPECT_EQUAL(hans->height(), 180U);
+  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
+
+  hans.modify()->height(179);
+
+  auto george = s.insert(new person("george", birthday, 154));
+
+  UNIT_EXPECT_GREATER(george->id(), 0UL);
+  UNIT_EXPECT_EQUAL(george->height(), 154U);
+  UNIT_EXPECT_EQUAL(george->birthdate(), birthday);
+
+  george.modify()->height(153);
+
+  s.flush();
+
+//  UNIT_EXPECT_EQUAL(hans->height(), 179U);
+//
+//  matador::connection conn(dns_);
+//  conn.connect();
+//
+//  matador::query<person> q("person");
+//  auto res = q.select().where("name"_col == "hans").execute(conn);
+//
+//  auto first = res.begin();
+//
+//  UNIT_ASSERT_TRUE(first != res.end());
+//
+//  std::unique_ptr<person> p1(first.release());
+//
+//  UNIT_EXPECT_EQUAL("hans", p1->name());
+//  UNIT_EXPECT_EQUAL(179U, p1->height());
+//  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
+//
+//  s.remove(hans);
+//
+//  res = q.select().where("name"_col == "hans").execute(conn);
+//
+//  first = res.begin();
+//
+//  UNIT_EXPECT_TRUE(first == res.end());
 
   p.drop();
 }

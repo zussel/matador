@@ -132,29 +132,8 @@ public:
    * @param s The sql object to be compiled and linked
    * @return The sql string as a prepared statement
    */
-  std::string prepare(const sql &s);
-
-  /**
-   * @brief The count of values to be bind
-   *
-   * This function returns the count of
-   * values to be bind. The count is only
-   * valid if a prepared statement was created
-   *
-   * @return Count of values to be bind
-   */
-  size_t bind_count() const;
-
-  /**
-   * @brief The count of columns to be bind
-   *
-   * This function returns the count of
-   * columns to be bind. The count is only
-   * valid if a prepared statement was created
-   *
-   * @return Count of columns to be bind
-   */
-  size_t column_count() const;
+  std::tuple<std::string, std::vector<std::string>, std::vector<std::string>> prepare(const sql &s);
+//  std::string prepare(const sql &s);
 
   /**
    * Prepare sql dialect identifier for execution
@@ -224,6 +203,14 @@ public:
    */
   char identifier_closing_quote() const;
 
+  /**
+   * Return database specific sql token
+   *
+   * @param tok Requested token
+   * @return Database specific sql token
+   */
+  std::string token_at(detail::token::t_token tok) const;
+
 protected:
   /// @cond MATADOR_DEV
 
@@ -231,7 +218,7 @@ protected:
   friend class detail::basic_dialect_linker;
   template < class L, class R, class E > friend class condition;
 
-  virtual const char* type_string(data_type type) const = 0;
+  virtual const char* to_database_type_string(data_type type) const = 0;
   t_compile_type compile_type() const;
 
   bool is_preparing() const;
@@ -241,20 +228,17 @@ protected:
 
   void replace_token(detail::token::t_token tkn, const std::string &value);
 
-  std::string token_at(detail::token::t_token tok) const;
-
   void append_to_result(const std::string &part);
 
   void push(const sql &s);
   void pop();
   detail::build_info& top();
 
-  size_t inc_bind_count();
-  size_t inc_bind_count(size_t val);
-  size_t dec_bind_count();
+  void add_host_var(const std::string &host_var);
+  void add_column(const std::string &column);
 
-  size_t inc_column_count();
-  size_t dec_column_count();
+  const std::vector<std::string>& host_vars() const;
+  const std::vector<std::string>& columns() const;
 
   ///  @endcond
 
@@ -262,15 +246,15 @@ private:
   void compile();
   void link();
 
-  size_t bind_count_ = 0;
-  size_t column_count_ = 0;
-
   t_compile_type compile_type_ = DIRECT;
 
   detail::basic_dialect_compiler* compiler_;
   detail::basic_dialect_linker* linker_;
 
   std::stack<detail::build_info> build_info_stack_;
+
+  std::vector<std::string> host_vars_;
+  std::vector<std::string> columns_;
 
   typedef std::unordered_map<detail::token::t_token, std::string, std::hash<int>> t_token_map;
   t_token_map tokens {

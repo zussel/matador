@@ -54,7 +54,7 @@ public:
   void visit(const matador::detail::top &) override;
   void visit(const matador::detail::remove &) override;
   void visit(const matador::detail::values &values) override;
-  void visit(const matador::detail::basic_value &) override;
+  void visit(const matador::value &) override;
   void visit(const matador::detail::order_by &) override;
   void visit(const matador::detail::asc &) override;
   void visit(const matador::detail::desc &) override;
@@ -81,7 +81,7 @@ protected:
   basic_dialect& dialect() const;
   build_info& top() const;
 
-  void append_to_result(basic_dialect &dialect, const std::string &part);
+  static void append_to_result(basic_dialect &dialect, const std::string &part);
 
 private:
   friend class matador::basic_dialect;

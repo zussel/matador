@@ -23,7 +23,6 @@
 #include "utils/BlobTestUnit.hpp"
 #include "utils/DateTestUnit.hpp"
 #include "utils/TimeTestUnit.hpp"
-#include "utils/VarCharTestUnit.hpp"
 #include "utils/FactoryTestUnit.hpp"
 #include "utils/StringTestUnit.hpp"
 #include "utils/SequencerTestUnit.hpp"
@@ -33,11 +32,13 @@
 #include "object/ObjectTransactiontestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
 #include "object/PrimaryKeyUnitTest.hpp"
+#include "object/HasManyUnitTest.hpp"
 #include "object/HasManyVectorUnitTest.hpp"
 #include "object/HasManyListUnitTest.hpp"
 #include "object/RelationTestUnit.hpp"
 
 #include "orm/BlogUnitTest.hpp"
+#include "orm/PrimaryKeyTestUnit.hpp"
 #include "orm/OrmTestUnit.hpp"
 #include "orm/OrmReloadTestUnit.hpp"
 #include "orm/OrmRelationTestUnit.hpp"
@@ -50,8 +51,10 @@
 #include "sql/MSSQLDialectTestUnit.hpp"
 #include "sql/PostgreSQLDialectTestUnit.hpp"
 #include "sql/SQLiteDialectTestUnit.hpp"
+#include "sql/ValueUnitTest.hpp"
 
 #include "connections.hpp"
+
 #include <cstdlib> // EXIT_SUCCESS
 
 using namespace matador;
@@ -78,7 +81,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new DateTestUnit);
   suite.register_unit(new TimeTestUnit);
   suite.register_unit(new BlobTestUnit);
-  suite.register_unit(new VarCharTestUnit);
+//  suite.register_unit(new VarCharTestUnit);
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);
@@ -88,18 +91,19 @@ int main(int argc, char *argv[])
   suite.register_unit(new ObjectPrototypeTestUnit);
   suite.register_unit(new ObjectStoreTestUnit);
   suite.register_unit(new ObjectTransactiontestUnit);
+  suite.register_unit(new HasManyUnitTest);
   suite.register_unit(new HasManyVectorUnitTest);
   suite.register_unit(new HasManyListUnitTest);
   suite.register_unit(new RelationTestUnit);
 
   suite.register_unit(new ConditionUnitTest);
   suite.register_unit(new DialectTestUnit);
+  suite.register_unit(new ValueUnitTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
-  suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", ::connection::mysql));
-  suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", ::connection::mysql));
-  suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", ::connection::mysql));
-  suite.register_unit(new QueryTestUnit("mysql_query", "mysql query test unit", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
+  suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
+  suite.register_unit(new TransactionTestUnit("mysql", ::connection::mysql));
+  suite.register_unit(new QueryTestUnit("mysql", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
   suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
   suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
   suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
@@ -107,9 +111,9 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
-  suite.register_unit(new ConnectionTestUnit("mssql_conn", "mssql connection test unit", ::connection::mssql));
-  suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", ::connection::mssql));
-  suite.register_unit(new QueryTestUnit("mssql_query", "mssql query test unit", ::connection::mssql));
+  suite.register_unit(new ConnectionTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new TransactionTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new QueryTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new BlogUnitTest("mssql", ::connection::mssql));
   suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
@@ -118,10 +122,11 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
-  suite.register_unit(new ConnectionTestUnit("sqlite_conn", "sqlite connection test unit", ::connection::sqlite));
-  suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", ::connection::sqlite));
-  suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", ::connection::sqlite));
+  suite.register_unit(new ConnectionTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new QueryTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
+  suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
@@ -129,9 +134,9 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(MATADOR_POSTGRESQL) && defined(MATADOR_POSTGRESQL_TEST)
-  suite.register_unit(new ConnectionTestUnit("postgresql_conn", "postgresql connection test unit", ::connection::postgresql));
-  suite.register_unit(new TransactionTestUnit("postgresql_transaction", "postgresql transaction test unit", ::connection::postgresql));
-  suite.register_unit(new QueryTestUnit("postgresql_query", "postgresql query test unit", ::connection::postgresql));
+  suite.register_unit(new ConnectionTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new QueryTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));

@@ -5,9 +5,8 @@
 #ifndef OOS_STATEMENT_IMPL_HPP
 #define OOS_STATEMENT_IMPL_HPP
 
-#include "matador/utils/varchar.hpp"
-
 #include "matador/sql/result.hpp"
+#include "matador/sql/parameter_binder.hpp"
 
 #ifdef _MSC_VER
 #ifdef matador_sql_EXPORTS
@@ -30,17 +29,18 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API statement_impl : public serializer
+class OOS_SQL_API statement_impl
 {
 public:
+  statement_impl() = delete;
   statement_impl& operator=(statement_impl &&) = delete;
   statement_impl(statement_impl &&) = delete;
 
 public:
-  statement_impl() = default;
+  statement_impl(basic_dialect *dialect, const matador::sql &stmt);
   statement_impl(const statement_impl &) = default;
   statement_impl& operator=(const statement_impl &) = default;
-  ~statement_impl() override = default;
+  virtual ~statement_impl() = default;
 
   virtual void clear() = 0;
 
@@ -52,20 +52,32 @@ public:
   size_t bind(T *o, size_t pos)
   {
     reset();
-    host_index = pos;
-    matador::access::serialize(static_cast<serializer&>(*this), *o);
-    return host_index;
+    matador::parameter_binder<void> binder(pos, this->binder());
+    return binder.bind(*o);
   }
 
-  template < class T >
-  size_t bind(T &val, size_t pos)
+  template < class T, class V >
+  size_t bind(V &val, size_t pos)
   {
-    host_index = pos;
-    serialize("", val);
-    return host_index;
+    T obj;
+    // get column name at pos
+    if (pos >= bind_vars().size()) {
+      throw std::out_of_range("host index out of range");
+    }
+
+    host_var_ = bind_vars().at(pos);
+
+    matador::parameter_binder<typename std::remove_const<V>::type> binder(host_var_, val, pos, this->binder());
+    pos = binder.bind(obj);
+
+    host_var_.clear();
+
+    return pos;
   }
 
   std::string str() const;
+  const std::vector<std::string>& bind_vars() const;
+  const std::vector<std::string>& columns() const;
 
   void log(const std::string &stmt) const;
 
@@ -74,13 +86,16 @@ public:
   bool is_log_enabled() const;
 
 protected:
-  void str(const std::string &s);
-
-protected:
   size_t host_index = 0;
+  std::string host_var_;
+
+  virtual detail::parameter_binder_impl* binder() const = 0;
 
 private:
   std::string sql_;
+  std::vector<std::string> bind_vars_;
+  std::vector<std::string> columns_;
+
   bool log_enabled_ = false;
 };
 

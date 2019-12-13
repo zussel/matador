@@ -6,46 +6,20 @@
 #define OOS_TEST_HAS_MANY_LIST_HPP
 
 #include "matador/object/basic_has_many.hpp"
-#include "matador/object/object_store.hpp"
-#include "matador/object/has_many_inserter.hpp"
-#include "matador/object/has_many_deleter.hpp"
+#include "matador/object/has_many_item_holder.hpp"
+#include "matador/object/has_many_iterator_traits.hpp"
 
 #include "matador/utils/is_builtin.hpp"
+#include "matador/utils/is_varchar.hpp"
+#include "matador/utils/varchar.hpp"
 
 #include <list>
 
 namespace matador {
 
 /// @cond MATADOR_DEV
-template < class T, template < class ... > class C, class Enable >
-struct has_many_iterator_traits;
-
-template < class T >
-struct has_many_iterator_traits<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
-  : public std::iterator<std::bidirectional_iterator_tag, T>
-{
-  typedef has_many_iterator_traits<T, std::list> self;
-  typedef object_ptr<T> value_type;
-  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
-template < class T >
-struct has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
-  : public std::iterator<std::bidirectional_iterator_tag, T>
-{
-  typedef has_many_iterator_traits<T, std::list> self;
-  typedef T value_type;
-  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
+template < class T, template < class ... > class C >
+class has_many;
 /// @endcond
 
 /**
@@ -179,7 +153,6 @@ public:
     return self();
   }
 
-  //@{
   /**
    * Return the current value
    * represented by the iterator
@@ -187,15 +160,19 @@ public:
    * @return The current value
    */
   value_type operator->() const { return iter_->value(); }
+
+  /**
+   * Return reference of the current value
+   * represented by the iterator
+   *
+   * @return The current value
+   */
   value_type& operator*() const { return iter_->value(); }
-  //@}
 
 private:
   friend class has_many<T, std::list>;
   friend class const_has_many_iterator<T, std::list>;
   friend class basic_has_many<T, std::list>;
-  friend class detail::has_many_inserter<T, std::list>;
-  friend class detail::has_many_deleter<T, std::list>;
   friend class object_serializer;
   friend class detail::object_inserter;
   friend class detail::object_deleter;
@@ -204,39 +181,6 @@ private:
 
   container_iterator iter_;
 };
-
-/// @cond MATADOR_DEV
-
-template < class T, template < class... > class C, class Enable >
-struct const_has_many_iterator_traits;
-
-template < class T >
-struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
-  : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
-{
-  typedef const_has_many_iterator_traits<T, std::list> self;
-  typedef object_ptr<T> value_type;
-  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
-template < class T >
-struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
-  : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
-{
-  typedef const_has_many_iterator_traits<T, std::list> self;
-  typedef T value_type;
-  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
-/// @endcond
 
 /**
  * @brief Represents a const has many iterator
@@ -264,7 +208,7 @@ public:
   /**
    * @brief Creates an empty const has many iterator
    */
-  const_has_many_iterator() {}
+  const_has_many_iterator() = default;
 
   /**
    * @brief Creates a const has many iterator from given internal container iterator
@@ -320,7 +264,7 @@ public:
     iter_ = iter.iter_;
     return *this;
   }
-  ~const_has_many_iterator() {}
+  ~const_has_many_iterator() = default;
 
   /**
    * @brief Compares equality iterator with another iterator.
@@ -395,7 +339,6 @@ public:
     return self();
   }
 
-  //@{
   /**
    * Return the current value
    * represented by the iterator
@@ -403,8 +346,14 @@ public:
    * @return The current value
    */
   const value_type operator->() const { return iter_->value(); }
+
+  /**
+   * Return a const reference to the current value
+   * represented by the iterator
+   *
+   * @return The current value
+   */
   const value_type& operator*() const { return iter_->value(); }
-  //@}
 
 private:
   friend class has_many<T, std::list>;
@@ -432,7 +381,7 @@ private:
  * - erase a range of elements within first and last iterator position
  * - clear the container
  *
- * All of these methods are wrappes around the std::list methods plus
+ * All of these methods are wraps around the std::list methods plus
  * the modification in the corresponding object_store and notification
  * of the transaction observer
  *

@@ -16,7 +16,6 @@ query_value_creator::query_value_creator()
   visitor_.register_visitor<bool>([this](bool &val) { this->process(val); });
   visitor_.register_visitor<float>([this](float &val) { this->process(val); });
   visitor_.register_visitor<double>([this](double &val) { this->process(val); });
-  visitor_.register_visitor<matador::varchar_base>([this](matador::varchar_base &val) { this->process(val); });
   visitor_.register_visitor<std::string>([this](std::string &val) { this->process(val); });
   visitor_.register_visitor<char*>([this](char *val) { this->process(val); });
   visitor_.register_visitor<const char*>([this](const char *val) { this->process(val); });
@@ -24,7 +23,7 @@ query_value_creator::query_value_creator()
   visitor_.register_visitor<matador::date>([this](matador::date &val) { this->process(val); });
 }
 
-std::shared_ptr<matador::detail::basic_value> query_value_creator::create_from_any(any &a)
+std::shared_ptr<matador::value> query_value_creator::create_from_any(any &a)
 {
   visitor_.visit(a);
   return value_;
@@ -32,12 +31,12 @@ std::shared_ptr<matador::detail::basic_value> query_value_creator::create_from_a
 
 void query_value_creator::process(char *val)
 {
-  value_ = std::make_shared<value<const char*>>(val, strlen(val));
+  value_ = std::make_shared<value>(val, strlen(val));
 }
 
 void query_value_creator::process(const char *val)
 {
-  value_ = std::make_shared<value<const char*>>(val, strlen(val));
+  value_ = std::make_shared<value>(val, strlen(val));
 }
 
 }

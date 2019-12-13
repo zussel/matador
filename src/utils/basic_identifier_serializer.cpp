@@ -9,9 +9,6 @@
 
 namespace matador {
 
-basic_identifier_serializer::basic_identifier_serializer()
-{ }
-
 void basic_identifier_serializer::serialize(basic_identifier &x, byte_buffer &buffer)
 {
   restore_ = false;
@@ -51,6 +48,11 @@ void basic_identifier_serializer::serialize(const char *, long &x)
   serialize_value(x);
 }
 
+void basic_identifier_serializer::serialize(const char *, long long &x)
+{
+  serialize_value(x);
+}
+
 void basic_identifier_serializer::serialize(const char *, unsigned char &x)
 {
   serialize_value(x);
@@ -67,6 +69,11 @@ void basic_identifier_serializer::serialize(const char *, unsigned int &x)
 }
 
 void basic_identifier_serializer::serialize(const char *, unsigned long &x)
+{
+  serialize_value(x);
+}
+
+void basic_identifier_serializer::serialize(const char *, unsigned long long &x)
 {
   serialize_value(x);
 }
@@ -118,22 +125,28 @@ void basic_identifier_serializer::serialize(const char *, std::string &x)
   }
 }
 
-void basic_identifier_serializer::serialize(const char *id, matador::varchar_base &x)
+void basic_identifier_serializer::serialize(const char *, std::string &x, size_t)
 {
-  std::string value;
   if (restore_) {
-    serialize(id, value);
-    x.assign(value);
+    size_t len = 0;
+    buffer_->release(&len, sizeof(len));
+    // TODO: check size of buffer
+    char *str = new char[len];
+    buffer_->release(str, len);
+    x.assign(str, len);
+    delete [] str;
   } else {
-    value = x.str();
-    serialize(id, value);
+    size_t len = x.size();
+
+    buffer_->append(&len, sizeof(len));
+    buffer_->append(x.c_str(), len);
   }
 }
 
 void basic_identifier_serializer::serialize(const char *id, matador::time &x)
 {
   if (restore_) {
-    struct timeval tv;
+    struct timeval tv{};
     buffer_->release(&tv.tv_sec, sizeof(tv.tv_sec));
     buffer_->release(&tv.tv_usec, sizeof(tv.tv_usec));
     x.set(tv);

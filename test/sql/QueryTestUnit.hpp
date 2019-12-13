@@ -17,13 +17,14 @@ class connection;
 class QueryTestUnit : public matador::unit_test
 {
 public:
-  QueryTestUnit(
-    const std::string &name, const std::string &msg, std::string db = "memory",
+  explicit QueryTestUnit(
+    const std::string &prefix, std::string db = "memory",
     matador::time timeval = matador::time(2015, 3, 15, 13, 56, 23, 123)
   );
 
   void initialize() override;
 
+  void print_datatypes();
   void test_datatypes();
   void test_query_value_creator();
   void test_quoted_identifier();

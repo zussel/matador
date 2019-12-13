@@ -55,6 +55,7 @@ public:
   template<class V>
   void serialize(const char *, V &) {}
   void serialize(const char *, char *, size_t) {}
+  void serialize(const char *, std::string &, size_t) { }
 
   template<class V>
   void serialize(const char *id, belongs_to<V> &, cascade_type)

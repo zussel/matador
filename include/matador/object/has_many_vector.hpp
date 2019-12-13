@@ -7,48 +7,20 @@
 
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/has_many_to_many_item.hpp"
-#include "matador/object/object_store.hpp"
 #include "matador/object/generic_access.hpp"
-#include "matador/object/has_many_inserter.hpp"
-#include "matador/object/has_many_deleter.hpp"
 #include "matador/object/has_many_item_holder.hpp"
+#include "matador/object/has_many_iterator_traits.hpp"
 
 #include "matador/utils/is_builtin.hpp"
 
 #include <vector>
+#include <algorithm>
 
 namespace matador {
 
 /// @cond MATADOR_DEV
-template < class T, template < class ... > class C, class Enable >
-struct has_many_iterator_traits;
-
-template < class T >
-struct has_many_iterator_traits<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
-  : public std::iterator<std::random_access_iterator_tag, T>
-{
-  typedef has_many_iterator_traits<T, std::vector> self;
-  typedef object_ptr<T> value_type;
-  typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
-template < class T >
-struct has_many_iterator_traits<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
-  : public std::iterator<std::random_access_iterator_tag, T>
-{
-  typedef has_many_iterator_traits<T, std::vector> self;
-  typedef T value_type;
-  typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
+template < class T, template < class ... > class C >
+class has_many;
 /// @endcond
 
 /**
@@ -60,7 +32,8 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<is_built
  * @tparam T The type of the iterator/container
  */
 template < class T >
-class has_many_iterator<T, std::vector> : public has_many_iterator_traits<T, std::vector>
+class has_many_iterator<T, std::vector>
+  : public has_many_iterator_traits<T, std::vector>
 {
 private:
   typedef has_many_iterator_traits<T, std::vector> traits;
@@ -87,8 +60,6 @@ public:
    */
   has_many_iterator(const self &iter) : iter_(iter.iter_) {}
 
-  //has_many_iterator(self &&iter) = default;
-  //has_many_iterator& operator=(self &&iter) = default;
   /**
    * @brief Creates a has many iterator from given internal container iterator
    *
@@ -265,16 +236,28 @@ public:
     return out;
   }
 
-  //@{
   /**
    * Return the current value
    * represented by the iterator
-   * 
+   *
    * @return The current value
    */
-  value_type operator->() const { return iter_->value(); }
-  value_type& operator*() const { return iter_->value(); }
-  //@}
+  value_type operator->() const
+  {
+    value_type v = this->iter_->value();
+    return v;
+  }
+
+  /**
+   * Return the current value
+   * represented by the iterator
+   *
+   * @return The current value
+   */
+  value_type& operator*() const
+  {
+    return this->iter_->value();
+  }
 
   /**
    * @brief Returns the holder item
@@ -290,13 +273,9 @@ private:
   friend class has_many<T, std::vector>;
   friend class const_has_many_iterator<T, std::vector>;
   friend class basic_has_many<T, std::vector>;
-  friend class detail::has_many_inserter<T, std::vector>;
-  friend class detail::has_many_deleter<T, std::vector>;
   friend class object_serializer;
   friend class detail::object_inserter;
   friend class detail::object_deleter;
-  template<class V, template <class ...> class C, class Enabled>
-  friend class detail::has_many_deleter;
 
   void move_to(self &i)
   {
@@ -305,38 +284,6 @@ private:
 
   container_iterator iter_;
 };
-
-/// @cond MATADOR_DEV
-template < class T, template < class... > class C, class Enable >
-struct const_has_many_iterator_traits;
-
-template < class T >
-struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
-  : public std::iterator<std::random_access_iterator_tag, T>
-{
-  typedef const_has_many_iterator_traits<T, std::vector> self;
-  typedef object_ptr<T> value_type;
-  typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
-template < class T >
-struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
-  : public std::iterator<std::random_access_iterator_tag, T>
-{
-  typedef const_has_many_iterator_traits<T, std::vector> self;
-  typedef T value_type;
-  typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
-  typedef has_many_item_holder<T> holder_type;
-  typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
-/// @endcond
 
 /**
  * @brief Represents a const has many iterator
@@ -458,6 +405,15 @@ public:
   bool operator<(const self &i) const { return iter_ < i.iter_; }
 
   /**
+   * @brief Returns the difference of two iterators a and b.
+   *
+   * @param a The minuend iterator
+   * @param b The subtrahend iterator
+   * @return The difference between both iterators
+   */
+  friend difference_type operator-(self a, self b) { return a.iter_ - b.iter_; }
+
+  /**
    * @brief Pre increments self
    *
    * @return A reference to incremented self
@@ -571,7 +527,6 @@ public:
     return out;
   }
 
-  //@{
   /**
    * Return the current value
    * represented by the iterator
@@ -579,8 +534,18 @@ public:
    * @return The current value
    */
   const value_type operator->() const { return iter_->value(); }
+
+  /**
+   * Return a const reference to the current value
+   * represented by the iterator
+   *
+   * @return The current value
+   */
   const value_type& operator*() const { return iter_->value(); }
-  //@}
+
+  /// @cond MATADOR_DEV
+  holder_type holder_item() const { return *iter_; }
+  /// @endcond
 
 private:
   void move_to(self &i)
@@ -593,8 +558,6 @@ private:
   friend class basic_has_many<T, std::vector>;
   friend class object_serializer;
   friend class detail::object_inserter;
-
-  const holder_type holder_item() const { return *iter_; }
 
   const_container_iterator iter_;
 };
@@ -621,7 +584,7 @@ private:
  *
  * @tparam T The type of the elements
  */
-template < class T >
+template<class T>
 class has_many<T, std::vector> : public basic_has_many<T, std::vector>
 {
 public:
@@ -708,7 +671,7 @@ public:
    * @tparam P Type of the predicate
    * @param predicate Predicate to be evaluated
    */
-  template < class P >
+  template<class P>
   iterator remove_if(P predicate)
   {
     auto first = this->holder_container_.begin();
@@ -787,7 +750,7 @@ public:
    * @param predicate The predicate object
    * @return The found element of end()
    */
-  template < class P >
+  template<class P>
   iterator find_if(P predicate)
   {
     return iterator(find_if(this->holder_container_.begin(), this->holder_container_.end(), predicate));
@@ -809,7 +772,7 @@ private:
     }
   }
 
-  template < class InputIt, class P >
+  template<class InputIt, class P>
   container_iterator find_if(InputIt first, InputIt last, P predicate)
   {
     for (; first != last; ++first) {
@@ -819,10 +782,11 @@ private:
     }
     return last;
   }
+
 private:
   void insert_holder(const holder_type &holder)
   {
-    this->mark_holder_as_inserted(const_cast<holder_type&>(holder));
+    this->mark_holder_as_inserted(const_cast<holder_type &>(holder));
     this->increment_reference_count(holder.value());
     this->holder_container_.push_back(holder);
   }
@@ -831,12 +795,6 @@ private:
   {
     auto i = std::remove(this->holder_container_.begin(), this->holder_container_.end(), holder);
     if (i != this->holder_container_.end()) {
-//      std::cout << "removing holder ";
-      if (holder.item_proxy()) {
-//        std::cout << *holder.item_proxy() << "\n";
-      } else {
-//        std::cout << "nullptr\n";
-      }
       this->mark_holder_as_removed(*i);
       this->decrement_reference_count(holder.value());
       this->holder_container_.erase(i, this->holder_container_.end());

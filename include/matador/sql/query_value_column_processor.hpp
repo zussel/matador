@@ -14,7 +14,6 @@
 #define OOS_SQL_API
 #endif
 
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/any_visitor.hpp"
 
@@ -28,7 +27,7 @@ namespace detail {
 class OOS_SQL_API query_value_column_processor
 {
 public:
-  query_value_column_processor(const std::shared_ptr<columns> &update_columns, const std::vector<matador::any> &rowvalues);
+  query_value_column_processor(std::shared_ptr<columns> update_columns, std::vector<matador::any> rowvalues);
 
   void execute(std::pair<std::string, matador::any> &a);
 

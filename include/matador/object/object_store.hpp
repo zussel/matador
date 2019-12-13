@@ -294,6 +294,7 @@ public:
    * @tparam O       The type of the observer classes
    * @param type     The unique name of the type.
    * @param abstract Indicates weather type is abstract or not
+   * @param parent   The name of the parent node.
    * @param observer A list of observer to be called an attach
    * @return         Returns new inserted prototype iterator.
    */
@@ -634,7 +635,6 @@ public:
       throw_object_exception("object is null");
     }
     object_inserter_.reset();
-//    auto proxy = std::make_unique<object_proxy>(o);
     std::unique_ptr<object_proxy> proxy(new object_proxy(o));
     try {
       insert<T>(proxy.get(), true);
@@ -694,13 +694,11 @@ public:
    *
    * @tparam T Type of the object represented by the object_proxy
    * @param proxy              The object_proxy to be removed.
-   * @param notify             If true notify observers
    * @param check_if_deletable If true methods checks if proxy is deletable.
    */
   template < class T >
-  void remove(object_proxy *proxy, bool notify, bool check_if_deletable)
+  void remove(object_proxy *proxy, bool check_if_deletable)
   {
-//    std::cout << "deleting " << *proxy << "\n";
     if (proxy == nullptr) {
       throw_object_exception("object proxy is nullptr");
     }
@@ -713,7 +711,7 @@ public:
     }
 
     if (check_if_deletable) {
-      object_deleter_.remove(notify);
+      object_deleter_.remove();
     } else {
       // single deletion
       if (object_map_.erase(proxy->id()) != 1) {
@@ -724,17 +722,17 @@ public:
 
       proxy->node()->remove(proxy);
 
-      if (notify && !transactions_.empty()) {
+      if (!transactions_.empty()) {
         // notify transaction
         transactions_.top().on_delete<T>(proxy);
       } else {
-        delete proxy;
+        on_proxy_delete_(proxy);
       }
     }
   }
 
   /**
-   * Removes an object from the object store. After successfull
+   * Removes an object from the object store. After successful
    * removal the object is set to zero and isn't valid any more.
    * 
    * Before removal is done a reference and pointer counter check
@@ -747,64 +745,8 @@ public:
   template<class T>
   void remove(object_ptr<T> &o)
   {
-    remove<T>(o.proxy_, true, true);
+    remove<T>(o.proxy_, true);
   }
-
-  /**
-   * @brief Creates and inserts an serializable proxy serializable.
-   * 
-   * An object_proxy object is created and inserted
-   * into the internal proxy hash map. The proxy won't
-   * be linked into the main serializable proxy list until
-   * it gets a valid object.
-   *
-   * If the object_proxy couldn't be created the method
-   * returns nullptr
-   *
-   * @param o The object set into the new object proxy.
-   * @return An serializable proxy serializable or null.
-   */
-//  template<class T>
-//  object_proxy *create_proxy(T *o)
-//  {
-//    std::unique_ptr<object_proxy> proxy(new object_proxy(o, seq_.next(), this));
-//    return object_map_.insert(std::make_pair(seq_.current(), proxy.release())).first->second;
-//  }
-
-  /**
-   * @brief Creates and inserts an serializable proxy serializable.
-   *
-   * An object_proxy object is created and inserted
-   * into the internal proxy hash map. The proxy won't
-   * be linked into the main serializable proxy list until
-   * it gets a valid object.
-   *
-   * A unique id must be passed to the method.
-   *
-   * If the object_proxy couldn't be created the method
-   * returns nullptr
-   *
-   * @param o    The object set into the new object proxy.
-   * @param oid  Unique id of the object_proxy.
-   * @return     An object_proxy object or null.
-   */
-//  template<class T>
-//  object_proxy *create_proxy(T *o, unsigned long oid)
-//  {
-//    std::unique_ptr<object_proxy> proxy(new object_proxy(o, oid, this));
-//    return object_map_.insert(std::make_pair(oid, proxy.release())).first->second;
-//  }
-
-  /**
-   * @brief Delete proxy from map
-   *
-   * Deletes the proxy with the given id
-   * from map.
-   *
-   * @param id Id of proxy to delete
-   * @return Returns true if deletion was successfully
-   */
-//  bool delete_proxy(unsigned long id);
 
   /**
    * @brief Finds serializable proxy with id
@@ -824,34 +766,6 @@ public:
    * Object id must be set
    */
   object_proxy* insert_proxy(object_proxy *proxy);
-
-  /**
-   * @brief Registers a new proxy
-   *
-   * Proxy will be registered in object store. It
-   * gets an id and is insert into object map.
-   * If proxy has already an id an exception is thrown.
-   * If proxy doesn't have a prototype_node an exception is thrown.
-   *
-   * @param oproxy The object_proxy to register
-   * @return The registered object_proxy
-   * @throws object_exception
-   */
-//  object_proxy *register_proxy(object_proxy *oproxy);
-
-  /**
-   * @brief Exchange the sequencer strategy.
-   * 
-   * Exchange the sequencer strategy of this object_store.
-   * The current sequencer is replaced by the new one and
-   * the current sequence is synced with the new sequencer
-   * sequence.
-   * The old strategy is returned.
-   * 
-   * @param seq The new sequencer strategy serializable.
-   * @return The old sequencer startegy implementation.
-   */
-//  sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
   /**
    * Return the current transaction in stack
@@ -877,7 +791,10 @@ public:
   template < class T >
   void mark_modified(object_proxy *proxy)
   {
-    if (!transactions_.empty()) {
+    // notify observers
+    proxy->node()->on_update_proxy(proxy);
+
+    if (has_transaction()) {
       transactions_.top().on_update<T>(proxy);
     }
   }
@@ -895,21 +812,20 @@ public:
     mark_modified<T>(optr.proxy_);
   }
 
-
+  /**
+   * Registers a callback when an object proxy
+   * is deleted from the object store
+   *
+   * @param callback To be called when an object proxy is deleted
+   */
+  void on_proxy_delete(std::function<void(object_proxy*)> callback);
 private:
-  friend class detail::modified_marker;
   friend class detail::object_inserter;
   friend struct detail::basic_relation_endpoint;
-  friend class object_deleter;
   friend class object_serializer;
-  friend class restore_visitor;
-  friend class object_container;
   friend class object_holder;
   friend class object_proxy;
   friend class prototype_node;
-  friend class detail::basic_node_analyzer;
-  template < class T, template < class U = T > class O >
-  friend class detail::node_analyzer;
   friend class transaction;
   template < class T, template <class ...> class C >
   friend class has_many;
@@ -1000,6 +916,8 @@ private:
   detail::object_inserter object_inserter_;
 
   std::stack<transaction> transactions_;
+
+  std::function<void(object_proxy *)> on_proxy_delete_;
 };
 
 template < class T >
@@ -1055,7 +973,7 @@ prototype_iterator object_store::attach_internal(prototype_node *node, const cha
 
   validate<T>(node);
 
-  attach_node<T>(node, parent);
+  node = attach_node<T>(node, parent);
 
   node->on_attach();
 
@@ -1112,5 +1030,6 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 #include "matador/object/relation_endpoint_value_remover.tpp"
 #include "matador/object/object_inserter.tpp"
 #include "matador/object/object_deleter.tpp"
+#include "matador/object/object_ptr.tpp"
 
 #endif /* OBJECT_STORE_HPP */

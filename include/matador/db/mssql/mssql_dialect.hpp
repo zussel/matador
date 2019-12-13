@@ -14,8 +14,8 @@ class mssql_dialect : public basic_dialect
 {
 public:
   mssql_dialect();
-  const char* type_string(matador::data_type type) const override;
-  data_type string_type(const char *type) const;
+  const char* to_database_type_string(matador::data_type type) const override;
+  database_type string_type(const char *type) const;
 
   dialect_traits::identifier identifier_escape_type() const override;
 };

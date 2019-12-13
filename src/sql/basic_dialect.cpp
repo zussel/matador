@@ -40,35 +40,36 @@ std::string basic_dialect::direct(const sql &s)
   return build(s, DIRECT);
 }
 
-std::string basic_dialect::prepare(const sql &s)
+std::tuple<std::string, std::vector<std::string>, std::vector<std::string>>
+basic_dialect::prepare(const sql &s)
 {
-  return build(s, PREPARED);
+  return std::make_tuple(build(s, PREPARED), host_vars_, columns_);
 }
 
 std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
 {
   compile_type_ = compile_type;
-  bind_count_ = 0;
-  column_count_ = 0;
-  
+  host_vars_.clear();
+  columns_.clear();
+
   push(s);
   compile();
   link();
   std::string result(top().result);
   pop();
+
   return result;
 }
 
-std::string basic_dialect::continue_build(const sql &s, basic_dialect::t_compile_type compile_type) {
+std::string basic_dialect::continue_build(const sql &s, t_compile_type compile_type) {
   compile_type_ = compile_type;
-//  bind_count_ = 0;
-//  column_count_ = 0;
 
   push(s);
   compile();
   link();
   std::string result(top().result);
   pop();
+
   return result;
 }
 
@@ -112,40 +113,24 @@ detail::build_info &basic_dialect::top()
   return build_info_stack_.top();
 }
 
-size_t basic_dialect::inc_bind_count()
+void basic_dialect::add_host_var(const std::string &host_var)
 {
-  return ++bind_count_;
+  host_vars_.push_back(host_var);
 }
 
-size_t basic_dialect::inc_bind_count(size_t val)
+void basic_dialect::add_column(const std::string &column)
 {
-  bind_count_ += val;
-  return bind_count_;
+  columns_.push_back( column);
 }
 
-size_t basic_dialect::dec_bind_count()
+const std::vector<std::string>& basic_dialect::host_vars() const
 {
-  return --bind_count_;
+  return host_vars_;
 }
 
-size_t basic_dialect::inc_column_count()
+const std::vector<std::string>& basic_dialect::columns() const
 {
-  return ++column_count_;
-}
-
-size_t basic_dialect::dec_column_count()
-{
-  return --column_count_;
-}
-
-size_t basic_dialect::bind_count() const
-{
-  return bind_count_;
-}
-
-size_t basic_dialect::column_count() const
-{
-  return column_count_;
+  return columns_;
 }
 
 std::string basic_dialect::prepare_identifier(const std::string &str)

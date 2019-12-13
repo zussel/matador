@@ -15,11 +15,26 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <sstream>
+
 #include "matador/db/sqlite/sqlite_exception.hpp"
 
 namespace matador {
 
 namespace sqlite {
+
+void throw_error(int ec, sqlite3 *db, const std::string &source, const std::string &sql)
+{
+  if (ec == SQLITE_OK) {
+    return;
+  }
+  std::stringstream msg;
+  msg << source << ": " << sqlite3_errmsg(db);
+  if (!sql.empty()) {
+    msg << " (" << sql << ")";
+  }
+  throw sqlite_exception(msg.str());
+}
 
 sqlite_exception::sqlite_exception(const std::string &what)
   : sql_exception("sqlite", what.c_str())

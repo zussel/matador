@@ -27,7 +27,7 @@ class session;
 class ConnectionTestUnit : public matador::unit_test
 {
 public:
-  ConnectionTestUnit(const std::string &name, const std::string &msg, std::string dns);
+  ConnectionTestUnit(const std::string &prefix, std::string dns);
   ~ConnectionTestUnit() override = default;
 
   void test_open_close();

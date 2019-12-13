@@ -56,9 +56,9 @@ private:
 };
 
 /**
- * @class object_store_observer
- * @tparam T Type of the object store observer
- * @brief Base class for object observer classes
+ * @class typed_object_store_observer
+ * @tparam T Type of the typed object store observer
+ * @brief Base class for typed object observer classes
  * 
  * When interested to observe
  * - attach (prototype_node)
@@ -75,6 +75,9 @@ class typed_object_store_observer : public basic_object_store_observer
 {
 public:
 
+  /**
+   * Default constructor
+   */
   typed_object_store_observer() : basic_object_store_observer(std::type_index(typeid(T))) {}
 
   /**

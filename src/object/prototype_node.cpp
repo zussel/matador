@@ -17,6 +17,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "matador/utils/memory.hpp"
+
 #include "matador/object/prototype_node.hpp"
 #include "matador/object/object_exception.hpp"
 #include "matador/object/object_proxy.hpp"
@@ -30,8 +32,8 @@ namespace matador {
 void prototype_node::initialize(object_store *tree, const char *type, bool abstract)
 {
   tree_ = tree;
-  first = std::make_unique<prototype_node>();
-  last = std::make_unique<prototype_node>();
+  first = matador::make_unique<prototype_node>();
+  last = matador::make_unique<prototype_node>();
   type_.assign(type);
   abstract_ = abstract;
   first->next = last.get();
@@ -149,6 +151,9 @@ void prototype_node::insert(object_proxy *proxy)
   if (proxy->primary_key_) {
     id_map_.insert(std::make_pair(proxy->primary_key_, proxy));
   }
+
+  // notify observers
+  on_insert_proxy(proxy);
 }
 
 void prototype_node::remove(object_proxy *proxy)
@@ -176,6 +181,9 @@ void prototype_node::remove(object_proxy *proxy)
       // couldn't find and erase primary key
     }
   }
+
+  // notify observers
+  on_delete_proxy(proxy);
 
   // adjust serializable count for node
   --count;
@@ -313,7 +321,7 @@ bool prototype_node::has_children() const
 
 bool prototype_node::has_primary_key() const
 {
-  return id_.get() != nullptr;
+  return id_ != nullptr;
 }
 
 basic_identifier *prototype_node::id() const
@@ -446,6 +454,31 @@ bool prototype_node::is_relation_node() const
 const prototype_node::relation_node_info &prototype_node::node_info() const
 {
   return relation_node_info_;
+}
+
+void prototype_node::on_attach() const
+{
+  info_->notify(detail::notification_type::ATTACH);
+}
+
+void prototype_node::on_detach() const
+{
+  info_->notify(detail::notification_type::DETACH);
+}
+
+void prototype_node::on_insert_proxy(object_proxy *proxy) const
+{
+  info_->notify(detail::notification_type::INSERT, proxy);
+}
+
+void prototype_node::on_update_proxy(object_proxy *proxy) const
+{
+  info_->notify(detail::notification_type::UPDATE, proxy);
+}
+
+void prototype_node::on_delete_proxy(object_proxy *proxy) const
+{
+  info_->notify(detail::notification_type::REMOVE, proxy);
 }
 
 }
