@@ -97,7 +97,7 @@ struct item_counter : public std::unary_function<const object_ptr<ObjectItem<dat
 
 void ObjectStoreTestUnit::test_version()
 {
-  std::string version("0.6.0");
+  std::string version("0.6.1");
   
   UNIT_ASSERT_EQUAL(matador::version::str, version);
 
