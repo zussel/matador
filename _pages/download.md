@@ -39,7 +39,7 @@ $ cd matador
 
 Or get the pre-packaged sources:
 
-[zip](https://github.com/zussel/matador/archive/v0.2.1.zip){: .btn .btn-success} [tar.gz](https://github.com/zussel/matador/archive/v0.2.1.tar.gz){: .btn .btn-success}
+<p id="zips"></p>
 
 ### Building under Linux
 

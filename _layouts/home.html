@@ -1,6 +1,7 @@
 ---
 layout: default
 ---
+<script src="{{ '/assets/javascript/version.js' | relative_url }}"></script>
 <div class="green-background">
   <!-- <div class="container"> -->
     <div class="jumbotron">
@@ -18,6 +19,27 @@ layout: default
       </div>
     </div>
   <!-- </div> -->
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12" id="release-version">
+    </div>
+    <div class="col-md-12">
+      <div class="centered">
+        <h4>Supported Databases</h4>
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default disabled"><strong class="text-success">SQLite</strong></button>
+            <button type="button" class="btn btn-default disabled"><strong class="text-primary">PostgreSQL</strong></button>
+            <button type="button" class="btn btn-default disabled"><strong class="text-warning">MySQL/MariaDB</strong></button>
+            <button type="button" class="btn btn-default disabled"><strong class="text-danger">MS SQL Server</strong></button>
+            <!-- <button type="button" class="btn btn-primary">SQLite</button>
+            <button type="button" class="btn btn-success">PostgreSQL</button>
+            <button type="button" class="btn btn-warning">MySQL/MariaDB</button>
+            <button type="button" class="btn btn-danger">SQL Server</button> -->
+        </div>
+    </div>
+    </div>
+  </div>
 </div>
 <div class="dark-layout top-offset-50">
   <div class="container">
