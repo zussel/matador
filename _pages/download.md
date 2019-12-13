@@ -32,10 +32,10 @@ can start developing your app starting with the [introduction](/matador/guide).
 
 Get the sources from GitHub and enter the created directory:
 
-```bash
+{% highlight bash linenos %}
 $ git clone https://github.com/zussel/matador.git
 $ cd matador
-```
+{% endhighlight %}
 
 Or get the pre-packaged sources:
 
@@ -45,27 +45,27 @@ Or get the pre-packaged sources:
 
 Create a build directory change to it and call cmake:
 
-```bash
+{% highlight bash linenos %}
 $ mkdir build
 $ cd build
 $ cmake ..
-```
+{% endhighlight %}
 
 Then you can build oos from sources:
 
-```bash
+{% highlight bash linenos %}
 $ make
-```
+{% endhighlight %}
 
 ### Building under Windows (for Visual Studio)
 
 Create a build directory change to it and call cmake:
 
-```bash
+{% highlight bash linenos %}
 $ mkdir build
 $ cd build
 $ cmake -G "Visual Studio *" ..
-```
+{% endhighlight %}
 
 Where `*` is one of the `Visual Studio` strings up from `14`. See cmake
 documentation [here](https://cmake.org/cmake/help/v3.6/manual/cmake-generators.7.html?#visual-studio-generators).
