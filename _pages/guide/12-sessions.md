@@ -18,6 +18,11 @@ get it into the layer.
 s.load();
 {% endhighlight %}
 
+**Note:** By now the database is loaded __completely__ into the underlying object store. Lazy loading
+isn't implemented yet. It will be relealized in a future version of _matador_.
+{: .bs-callout .bs-callout-warning}
+
+
 Now you can start and insert, update or delete your data. This can be done in two ways. Using ```session::save()``` or ```session::flush()``` to write the changes directly to database or use a transactional scope to allow a rollback of a transaction.
 
 Using the direct way it looks like the following code:

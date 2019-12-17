@@ -5,8 +5,8 @@ The following types are supported and can be used within the ```serialize()``` m
 ### Numbers
 
 All arithmetic number types are supported (```char```, ```short```, ```int```, ```long```,
-```unsigned char```, ```unsigned short```, ```unsigned int```, ```unsigned long```,
-```float```, ```double``` and ```bool```).
+```long long```, ```unsigned char```, ```unsigned short```, ```unsigned int```, ```unsigned long```,
+```unsigned long long```, ```float```, ```double``` and ```bool```).
 
 The ```serialize()``` method takes the name of the attribute and attribute itself.
 
@@ -17,10 +17,12 @@ struct numbers
   short short_ = -127;
   int int_ = -65000;
   long long_ = -128000;
+  long long long64_ = -32128000;
   unsigned char unsigned_char_ = 'u';
   unsigned short unsigned_short_ = 128;
   unsigned int unsigned_int_ = 65000;
   unsigned long unsigned_long_ = 128000;
+  unsigned long long unsigned_long64_ = 32128000;
   bool bool_ = true;
   float float_ = 3.1415f;
   double double_ = 1.1414;
@@ -32,10 +34,12 @@ struct numbers
     serializer.serialize("val_short", short_);
     serializer.serialize("val_int", int_);
     serializer.serialize("val_long", long_);
+    serializer.serialize("val_long64", long64_);
     serializer.serialize("val_unsigned_chr", unsigned_char_);
     serializer.serialize("val_unsigned_short", unsigned_short_);
     serializer.serialize("val_unsigned_int", unsigned_int_);
     serializer.serialize("val_unsigned_long", unsigned_long_);
+    serializer.serialize("val_unsigned_long64", unsigned_long64_);
     serializer.serialize("val_bool", bool_);
     serializer.serialize("val_float", float_);
     serializer.serialize("val_double", double_);
