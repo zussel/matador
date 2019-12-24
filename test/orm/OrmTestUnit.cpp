@@ -17,6 +17,7 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, std::string dns)
   : unit_test(prefix + "_orm", prefix + " orm test unit")
   , dns_(std::move(dns))
 {
+  add_test("demo", std::bind(&OrmTestUnit::test_demo, this), "test demo");
   add_test("persistence", std::bind(&OrmTestUnit::test_persistence, this), "test persistence class");
   add_test("table", std::bind(&OrmTestUnit::test_table, this), "test table class");
   add_test("create", std::bind(&OrmTestUnit::test_create, this), "test create table");
@@ -26,6 +27,63 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, std::string dns)
   add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test delete from table");
   add_test("save", std::bind(&OrmTestUnit::test_save, this), "test session save");
   add_test("flush", std::bind(&OrmTestUnit::test_flush, this), "test session flush");
+}
+
+namespace demo {
+// a simple person class
+struct person
+{
+  identifier<long> id;   // primary key
+  std::string name;
+  std::string ip;
+  unsigned int age = 0;
+  has_many<std::string> colors;
+
+  person() = default;
+  person(long i, std::string n)
+    : id(i), name(std::move(n))
+  {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer) {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name, 255);
+    serializer.serialize("ip", ip);
+    serializer.serialize("age", age);
+    serializer.serialize("person_color", colors, "person_id",   "color",      matador::cascade_type::ALL);
+    //                    table name     member   left column   right column  cascade type
+  }
+};
+}
+
+void OrmTestUnit::test_demo()
+{
+  matador::persistence p(dns_);
+  p.attach<demo::person>("person");
+
+// create tables
+  p.create();
+
+// create a database session
+  session s(p);
+
+// insert george
+// returns an matador::object_ptr<person>
+  auto george = s.insert(new demo::person(1, "george"));
+  s.flush();
+
+// modify george
+  george.modify()->age = 35;
+  george.modify()->ip = "127.0.0.1";
+
+  s.save(george);
+// add color
+  george.modify()->colors.push_back("yellow");
+  s.save(george);
+// delete george
+  s.remove(george);
+
+  s.flush();
 }
 
 void OrmTestUnit::test_persistence()
