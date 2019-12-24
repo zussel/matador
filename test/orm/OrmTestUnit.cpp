@@ -84,6 +84,8 @@ void OrmTestUnit::test_demo()
   s.remove(george);
 
   s.flush();
+
+  p.drop();
 }
 
 void OrmTestUnit::test_persistence()
