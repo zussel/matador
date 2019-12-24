@@ -4,6 +4,8 @@ SET(SOURCES
   blob.cpp
   calendar.cpp
   date.cpp
+  json.cpp
+  json_parser.cpp
   time.cpp
   sequencer.cpp
   string.cpp
@@ -28,6 +30,10 @@ SET(HEADER
   ../../include/matador/utils/time.hpp
   ../../include/matador/utils/sequencer.hpp
   ../../include/matador/utils/factory.hpp
+  ../../include/matador/utils/json.hpp
+  ../../include/matador/utils/json_exception.hpp
+  ../../include/matador/utils/json_parser.hpp
+  ../../include/matador/utils/generic_json_parser.hpp
   ../../include/matador/utils/string.hpp
   ../../include/matador/utils/strptime.hpp
   ../../include/matador/utils/enable_if.hpp

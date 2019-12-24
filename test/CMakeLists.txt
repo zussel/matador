@@ -13,7 +13,7 @@ SET (TEST_TOOLS_SOURCES
   utils/AnyTestUnit.hpp
   utils/SequencerTestUnit.cpp
   utils/SequencerTestUnit.hpp
-)
+    utils/JsonTestUnit.cpp utils/JsonTestUnit.hpp)
 
 SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 
