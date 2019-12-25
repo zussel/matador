@@ -15,7 +15,7 @@ namespace matador {
 namespace mysql {
 
 template < class T >
-void bind_value(enum_field_types type, T value, MYSQL_BIND &bind, my_bool &is_null)
+void bind_value(enum_field_types type, T value, MYSQL_BIND &bind, bool is_null)
 {
   if (bind.buffer == nullptr) {
     // allocating memory
@@ -29,7 +29,7 @@ void bind_value(enum_field_types type, T value, MYSQL_BIND &bind, my_bool &is_nu
   is_null = false;
 }
 
-void bind_value(enum_field_types type, const char *value, size_t, MYSQL_BIND &bind, my_bool &is_null)
+void bind_value(enum_field_types type, const char *value, size_t, MYSQL_BIND &bind, bool is_null)
 {
   std::size_t len(strlen(value) + 1);
   if (bind.buffer_length < len) {
@@ -54,7 +54,7 @@ void bind_value(enum_field_types type, const char *value, size_t, MYSQL_BIND &bi
   is_null = false;
 }
 
-void bind_value(enum_field_types type, const matador::date &x, MYSQL_BIND &bind, my_bool &is_null)
+void bind_value(enum_field_types type, const matador::date &x, MYSQL_BIND &bind, bool is_null)
 {
   if (bind.buffer == nullptr) {
     size_t s = sizeof(MYSQL_TIME);
@@ -73,7 +73,7 @@ void bind_value(enum_field_types type, const matador::date &x, MYSQL_BIND &bind,
   mt->time_type  = MYSQL_TIMESTAMP_DATE;
 }
 
-void bind_value(enum_field_types type, const matador::time &x, MYSQL_BIND &bind, my_bool &is_null)
+void bind_value(enum_field_types type, const matador::time &x, MYSQL_BIND &bind, bool is_null)
 {
   if (bind.buffer == nullptr) {
     size_t s = sizeof(MYSQL_TIME);

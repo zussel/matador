@@ -16,8 +16,8 @@ namespace mysql {
 struct mysql_result_info
 {
   unsigned long length = 0;
-  my_bool is_null = false;
-  my_bool error = false;
+  bool is_null = false;
+  bool error = false;
   char *buffer = nullptr;
   unsigned long buffer_length = 0;
   bool is_allocated = false;
