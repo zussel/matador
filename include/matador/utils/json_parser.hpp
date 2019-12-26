@@ -83,13 +83,8 @@ private:
   json value_;
 
   std::string key_;
-  /*
-   * the boolean value indicates wether the
-   * value is a serializable (true) or an array
-   * (false)
-   */
-  typedef std::pair<bool, json> state_value_pair_t;
-  std::stack<state_value_pair_t> state_stack_;
+  std::stack<json*> state_stack_;
+  //std::stack<std::reference_wrapper<json>> state_stack_;
 };
 
 }

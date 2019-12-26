@@ -29,8 +29,7 @@ json json_parser::parse(std::istream &in)
   /*
    * return value
    */
-  json& jj = state_stack_.top().second;
-  return jj;
+  return value_;
 }
 
 json json_parser::parse(const char *str)
@@ -46,18 +45,18 @@ json json_parser::parse(std::string &str)
 
 void json_parser::on_begin_object()
 {
-  json value = json::object();
-  if (state_stack_.empty()) {
-    value_ = value;
-  } else {
-    if (state_stack_.top().first) {
-      state_stack_.top().second[key_] = value;
+  if (!state_stack_.empty()) {
+    if (state_stack_.top()->is_object()) {
+      state_stack_.top()->operator[](key_) = json::object();
+      state_stack_.push(&state_stack_.top()->operator[](key_));
     } else {
-      state_stack_.top().second.push_back(value);
+      state_stack_.top()->push_back(json::object());
+      state_stack_.push(&state_stack_.top()->back());
     }
+  } else {
+    value_ = json::object();
+    state_stack_.push(&value_);
   }
-  state_stack_.push(std::make_pair(true, value));
-
 }
 
 void json_parser::on_object_key(const std::string &key)
@@ -72,18 +71,18 @@ void json_parser::on_end_object()
 
 void json_parser::on_begin_array()
 {
-  json value(json::array());
   if (state_stack_.empty()) {
-    value_ = value;
+    value_ = json::array();
+    state_stack_.push(&value_);
   } else {
-    if (state_stack_.top().first) {
-      state_stack_.top().second[key_] = value;
+    if (state_stack_.top()->is_object()) {
+      state_stack_.top()->operator[](key_) = json::array();
+      state_stack_.push(&state_stack_.top()->operator[](key_));
     } else {
-      state_stack_.top().second.push_back(value);
+      state_stack_.top()->push_back(json::array());
+      state_stack_.push(&state_stack_.top()->back());
     }
   }
-  state_stack_.push(std::make_pair(false, value));
-
 }
 
 void json_parser::on_end_array()
@@ -93,37 +92,37 @@ void json_parser::on_end_array()
 
 void json_parser::on_string(const std::string &value)
 {
-  if (state_stack_.top().first) {
-    state_stack_.top().second[key_] = value;
+  if (state_stack_.top()->is_object()) {
+    state_stack_.top()->operator[](key_) = value;
   } else {
-    state_stack_.top().second.push_back(value);
+    state_stack_.top()->push_back(value);
   }
 }
 
 void json_parser::on_number(double value)
 {
-  if (state_stack_.top().first) {
-    state_stack_.top().second[key_] = value;
+  if (state_stack_.top()->is_object()) {
+    state_stack_.top()->operator[](key_) = value;
   } else {
-    state_stack_.top().second.push_back(value);
+    state_stack_.top()->push_back(value);
   }
 }
 
 void json_parser::on_bool(bool value)
 {
-  if (state_stack_.top().first) {
-    state_stack_.top().second[key_] = value;
+  if (state_stack_.top()->is_object()) {
+    state_stack_.top()->operator[](key_) = value;
   } else {
-    state_stack_.top().second.push_back(value);
+    state_stack_.top()->push_back(value);
   }
 }
 
 void json_parser::on_null()
 {
-  if (state_stack_.top().first) {
-    state_stack_.top().second[key_] = json();
+  if (state_stack_.top()->is_object()) {
+    state_stack_.top()->operator[](key_) = json();
   } else {
-    state_stack_.top().second.push_back(json());
+    state_stack_.top()->push_back(json());
   }
 }
 }

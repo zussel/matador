@@ -59,6 +59,8 @@ void JsonTestUnit::test_simple()
 
   UNIT_ASSERT_EQUAL("hans", family["father"]["name"].as<std::string>());
 
+  family["mother"] = json::object();
+
   ji.push_back(9);
 
   UNIT_ASSERT_TRUE(ji.is_array());
@@ -118,15 +120,34 @@ void JsonTestUnit::test_simple()
     std::cout << "builtin value: " << val << "\n";
   }
   */
+  json jnull;
+
+  jnull = json::object();
+
+  UNIT_ASSERT_FALSE(jnull.is_number());
 }
 
 void JsonTestUnit::test_parser()
 {
   json_parser parser;
 
-  json j = parser.parse(R"(           {      "text" :       "hello world!",     "bool" : false, "array" :  [   null, false, -5.66667 ], "serializable" :      { "found": true}      })");
+  json j = parser.parse(R"(           {      "text" :       "hello world!"   ,     "bool" : false   })");
 
-  std::string result(R"({ "array" : [ null, false, -5.66667 ], "bool" : false, "serializable" : { "found" : true }, "text" : "hello world!" })");
+  std::string result(R"({"bool": false, "text": "hello world!"})");
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_EQUAL(result, to_string(j));
+
+  j = parser.parse(R"(           {      "text" :       "hello world!",     "bool" : false, "array" :  [   null, false, -5.66667 ], "serializable" :      { "found": true}      })");
+
+  result = R"({"serializable": {"found": true}, "array": [null, false, -5.66667], "text": "hello world!", "bool": false})";
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_EQUAL(result, to_string(j));
+
+  j =  parser.parse(R"(   {       "serializable" : { "found" : true }    }    )");
+
+  result = R"({"serializable": {"found": true}})";
 
   UNIT_ASSERT_FALSE(j.is_null());
   UNIT_ASSERT_EQUAL(result, to_string(j));

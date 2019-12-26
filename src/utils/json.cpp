@@ -5,6 +5,7 @@
 #include "matador/utils/json.hpp"
 
 #include <sstream>
+#include <iostream>
 
 namespace matador {
 
@@ -190,6 +191,24 @@ std::size_t json::size() const
 bool json::empty() const
 {
   return false;
+}
+
+json &json::back()
+{
+  if (type == e_array) {
+    return value_.array->back();
+  } else {
+    throw std::logic_error("type doesn't have back()");
+  }
+}
+
+const json &json::back() const
+{
+  if (type == e_array) {
+    return value_.array->back();
+  } else {
+    throw std::logic_error("type doesn't have back()");
+  }
 }
 
 void json::erase(const std::string &key)

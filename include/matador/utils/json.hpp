@@ -143,6 +143,9 @@ struct json
     value_.array->push_back(val);
   }
 
+  json& back();
+  const json& back() const;
+
   template < class T >
   void reset(T val, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type * = 0)
   {
