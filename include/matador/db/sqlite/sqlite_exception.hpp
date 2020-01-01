@@ -37,15 +37,7 @@ namespace matador {
 
 namespace sqlite {
 
-void throw_error(int ec, sqlite3 *db, const std::string &source, const std::string &sql = "");
-
-class sqlite_exception : public sql_exception
-{
-public:
-  explicit sqlite_exception(const std::string &what);
-
-  ~sqlite_exception() noexcept override = default;
-};
+void throw_database_error(int ec, sqlite3 *db, const std::string &source, const std::string &sql = "");
 
 }
 

@@ -36,7 +36,7 @@ mysql_result::mysql_result(MYSQL *c)
 {
   res_ = mysql_store_result(c);
   if (res_ == nullptr && mysql_errno(c) > 0) {
-    throw_error(-1, c, "mysql", "");
+    throw_error(c, "mysql", "");
   } else if (res_) {
     rows_ = (size_type)mysql_num_rows(res_);
     fields_ = mysql_num_fields(res_);

@@ -192,7 +192,7 @@ template <> struct data_type_traits<bool>
   inline static database_type type() { return database_type::type_bool; }
   inline static data_type builtin_type() { return data_type::type_bool; }
   inline static unsigned long size() { return sizeof(bool); }
-  inline static const char* name() { return "unsigned bool"; }
+  inline static const char* name() { return "bool"; }
 };
 
 template <> struct data_type_traits<float>

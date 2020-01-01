@@ -18,6 +18,7 @@
 #include "ConnectionTestUnit.hpp"
 
 #include "matador/sql/connection.hpp"
+#include "matador/sql/database_error.hpp"
 
 #include <fstream>
 
@@ -27,10 +28,12 @@ using namespace std;
 ConnectionTestUnit::ConnectionTestUnit(const std::string &prefix, std::string dns)
   : unit_test(prefix + "_conn", prefix + " connection test unit")
   , dns_(std::move(dns))
+  , db_vendor_(prefix)
 {
   add_test("open_close", std::bind(&ConnectionTestUnit::test_open_close, this), "connect sql test");
   add_test("reopen", std::bind(&ConnectionTestUnit::test_reopen, this), "reopen sql test");
   add_test("reconnect", std::bind(&ConnectionTestUnit::test_reconnect, this), "reconnect sql test");
+  add_test("connection_failed", std::bind(&ConnectionTestUnit::test_connection_failed, this), "connection failed test");
 }
 
 void ConnectionTestUnit::test_open_close()
@@ -86,6 +89,24 @@ void ConnectionTestUnit::test_reconnect()
   conn.disconnect();
 
   UNIT_ASSERT_FALSE(conn.is_connected());
+}
+
+void ConnectionTestUnit::test_connection_failed()
+{
+  string dns = db_vendor_ + "://sa:Sa%%docker18@127.0.0.1/matador_test (FreeTDS)";
+
+  matador::connection conn(dns);
+
+  bool caught_exception = false;
+  try {
+    conn.connect();
+  } catch (database_error &ex) {
+    caught_exception = true;
+    UNIT_EXPECT_EQUAL("42000", ex.sql_state());
+  } catch (...) {
+    UNIT_FAIL("caught from exception");
+  }
+  UNIT_ASSERT_TRUE(caught_exception);
 }
 
 std::string ConnectionTestUnit::connection_string()

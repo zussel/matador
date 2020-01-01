@@ -119,14 +119,14 @@ void bind_value(SQLHANDLE stmt, SQLUSMALLINT ctype, SQLUSMALLINT type, mssql_par
 {
   SQLLEN buffer_length(0);
   SQLRETURN ret = SQLBindParameter(stmt, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, v->len, 0, v->data, buffer_length, nullptr);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't bind parameter");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
 }
 
 void bind_value(SQLHANDLE stmt, SQLUSMALLINT ctype, SQLUSMALLINT type, mssql_parameter_binder::value_t *v, unsigned short scale, size_t index)
 {
   SQLLEN buffer_length(0);
   SQLRETURN ret = SQLBindParameter(stmt, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, v->len, scale, v->data, buffer_length, nullptr);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't bind parameter");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
 }
 
 mssql_parameter_binder::mssql_parameter_binder(SQLHANDLE stmt)

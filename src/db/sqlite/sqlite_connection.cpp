@@ -45,9 +45,8 @@ sqlite_connection::~sqlite_connection()
 void sqlite_connection::open(const std::string &db)
 {
   int ret = sqlite3_open(db.c_str(), &sqlite_db_);
-  if (ret != SQLITE_OK) {
-    throw sqlite_exception("couldn't connect sql: " + db);
-  }
+
+  throw_database_error(ret, sqlite_db_, "sqlite");
 }
 
 bool sqlite_connection::is_open() const
@@ -58,8 +57,8 @@ bool sqlite_connection::is_open() const
 void sqlite_connection::close()
 {
   int ret = sqlite3_close(sqlite_db_);
-  
-  throw_error(ret, sqlite_db_, "sqlite_close");
+
+  throw_database_error(ret, sqlite_db_, "sqlite_close");
 
   sqlite_db_ = nullptr;
 }
@@ -89,7 +88,12 @@ std::string sqlite_connection::type() const
   return "sqlite";
 }
 
-std::string sqlite_connection::version() const
+std::string sqlite_connection::client_version() const
+{
+  return SQLITE_VERSION;
+}
+
+std::string sqlite_connection::server_version() const
 {
   return SQLITE_VERSION;
 }
@@ -180,11 +184,9 @@ sqlite_result *sqlite_connection::execute_internal(const std::string &stmt)
   std::unique_ptr<sqlite_result> res(new sqlite_result);
   char *errmsg = nullptr;
   int ret = sqlite3_exec(sqlite_db_, stmt.c_str(), parse_result, res.get(), &errmsg);
-  if (ret != SQLITE_OK) {
-    std::string error(errmsg);
-    sqlite3_free(errmsg);
-    throw sqlite_exception(error);
-  }
+
+  throw_database_error(ret, sqlite_db_, "sqlite", stmt);
+
   return res.release();
 }
 }

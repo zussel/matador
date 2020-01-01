@@ -32,7 +32,6 @@
 #include "matador/sql/sql_exception.hpp"
 
 #ifdef _MSC_VER
-//#include <winsock2.h>
 #include <mysql.h>
 #else
 #include <mysql/mysql.h>
@@ -42,29 +41,9 @@ namespace matador {
 
 namespace mysql {
 
-void throw_error(const std::string &source, const std::string &sql = "");
+void throw_error(MYSQL *db, const std::string &source, const std::string &sql = "");
 
-void throw_error(int ec, MYSQL *db, const std::string &source, const std::string &sql = "");
-
-void throw_stmt_error(int ec, MYSQL_STMT *stmt, const std::string &source, const std::string &sql = "");
-
-class mysql_exception : public sql_exception
-{
-public:
-  mysql_exception(const std::string &source, const std::string &what);
-  mysql_exception(MYSQL *db, const std::string &source, const std::string &what);
-
-  virtual ~mysql_exception() throw();
-};
-
-class mysql_stmt_exception : public sql_exception
-{
-public:
-  explicit mysql_stmt_exception(const std::string &what);
-  mysql_stmt_exception(MYSQL_STMT *stmt, const std::string &source, const std::string &what);
-  
-  virtual ~mysql_stmt_exception() throw();
-};
+void throw_stmt_error(MYSQL_STMT *stmt, const std::string &source, const std::string &sql = "");
 
 }
 

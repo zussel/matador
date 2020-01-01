@@ -67,7 +67,7 @@ bool mysql_prepared_result::prepare_fetch()
   if (ret == MYSQL_NO_DATA) {
     return false;
   } else if (ret == 1) {
-    throw_stmt_error(ret, stmt, "mysql", "");
+    throw_stmt_error(stmt, "mysql", "");
   }
   prepare_binding_ = false;
   return true;
