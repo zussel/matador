@@ -68,7 +68,7 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, const std
     v->len = SQL_NULL_DATA;
   } else {
 
-    v->len = s;
+    v->len = (s == 0 ? 1 : s);
     v->data = new char[s + 1];
 #ifdef _MSC_VER
     strncpy_s(v->data, s + 1, val.c_str(), s);
