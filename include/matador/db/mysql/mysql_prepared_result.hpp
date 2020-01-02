@@ -4,6 +4,7 @@
 #include "matador/sql/result_impl.hpp"
 
 #include "matador/db/mysql/mysql_result_info.hpp"
+#include "matador/db/mysql/mysql_bool.hpp"
 
 #ifdef _MSC_VER
 //#include <winsock2.h>
@@ -89,9 +90,11 @@ private:
     bind_[index].buffer= (char *)&value;
     bind_[index].buffer_length = sizeof(T);
     bind_[index].buffer_type = type;
-    bind_[index].is_null = &info_[index].is_null;
+    set_my_bool(bind_[index].is_null, info_[index].is_null);
+//  bind_[index].is_null = &info_[index].is_null;
     bind_[index].length = &info_[index].length;
-    bind_[index].error = &info_[index].error;
+    set_my_bool(bind_[index].error, info_[index].error);
+//  bind_[index].error = &info_[index].error;
   }
 
   void prepare_bind_column(int index, enum_field_types type, matador::date &value);

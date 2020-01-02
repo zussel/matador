@@ -18,11 +18,6 @@ public:
   static const long version = MYSQL_VERSION_ID;
 };
 
-#if MYSQL_VERSION_ID >= 80000
-typedef bool mysql_bool;
-#else
-typedef my_bool bool;
-#endif
 }
 }
 #endif /* MYSQL_CONSTANTS_HPP */
