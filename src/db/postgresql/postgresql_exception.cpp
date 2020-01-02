@@ -4,8 +4,6 @@
 
 #include "matador/sql/database_error.hpp"
 
-#include <sqlca.h>
-
 #include "matador/db/postgresql/postgresql_exception.hpp"
 
 namespace matador {
@@ -17,7 +15,7 @@ void throw_database_error(PGresult *res, PGconn *db, const std::string &source, 
   if (res == nullptr ||
       (PQresultStatus(res) != PGRES_COMMAND_OK &&
        PQresultStatus(res) != PGRES_TUPLES_OK)) {
-    database_error(PQerrorMessage(db), source, sqlca.sqlstate, sql);
+    database_error(PQerrorMessage(db), source, PQresultErrorField(res, PG_DIAG_SQLSTATE), sql);
   }
 }
 

@@ -4,7 +4,6 @@
 
 #include <libpq-fe.h>
 #include <regex>
-#include <sqlca.h>
 
 #include "matador/sql/database_error.hpp"
 
@@ -63,8 +62,9 @@ void postgresql_connection::open(const std::string &dns)
 
   conn_ = PQconnectdb(connection.c_str());
   if (PQstatus(conn_) == CONNECTION_BAD) {
+    std::string msg = PQerrorMessage(conn_);
     PQfinish(conn_);
-    throw database_error(PQerrorMessage(conn_), "postgresql", sqlca.sqlstate);
+    throw database_error(msg, "postgresql", "42000");
   }
 
   is_open_ = true;
