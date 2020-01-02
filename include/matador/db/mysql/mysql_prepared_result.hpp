@@ -90,11 +90,9 @@ private:
     bind_[index].buffer= (char *)&value;
     bind_[index].buffer_length = sizeof(T);
     bind_[index].buffer_type = type;
-    set_my_bool(bind_[index].is_null, info_[index].is_null);
-//  bind_[index].is_null = &info_[index].is_null;
+    bind_[index].is_null = &info_[index].is_null;
     bind_[index].length = &info_[index].length;
-    set_my_bool(bind_[index].error, info_[index].error);
-//  bind_[index].error = &info_[index].error;
+    bind_[index].error = &info_[index].error;
   }
 
   void prepare_bind_column(int index, enum_field_types type, matador::date &value);

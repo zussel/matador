@@ -1,6 +1,8 @@
 #ifndef MYSQL_RESULT_INFO_HPP
 #define MYSQL_RESULT_INFO_HPP
 
+#include "matador/db/mysql/mysql_bool.hpp"
+
 #ifdef _MSC_VER
 #include <mysql.h>
 #else
@@ -16,8 +18,8 @@ namespace mysql {
 struct mysql_result_info
 {
   unsigned long length = 0;
-  bool is_null = false;
-  bool error = false;
+  my_bool is_null = false;
+  my_bool error = false;
   char *buffer = nullptr;
   unsigned long buffer_length = 0;
   bool is_allocated = false;

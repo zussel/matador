@@ -60,7 +60,7 @@ public:
 private:
   std::vector<MYSQL_BIND> host_array_;
   std::vector<MYSQL_BIND> bind_;
-  t_bool_vector is_null_vector;
+  std::vector<my_bool> is_null_vector;
   std::vector<mysql_result_info> info_;
 
   size_t index_ = 0;
