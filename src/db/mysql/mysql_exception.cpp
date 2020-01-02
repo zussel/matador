@@ -27,12 +27,12 @@ namespace mysql {
 
 void throw_error(MYSQL *db, const std::string &source, const std::string &sql)
 {
-  throw database_error(mysql_error(db), source, mysql_errno(db), sql);
+  throw database_error(mysql_error(db), source, mysql_sqlstate(db), mysql_errno(db), sql);
 }
 
 void throw_stmt_error(MYSQL_STMT *stmt, const std::string &source, const std::string &sql)
 {
-  throw database_error(mysql_stmt_error(stmt), source, mysql_stmt_errno(stmt), sql);
+  throw database_error(mysql_stmt_error(stmt), source, mysql_stmt_sqlstate(stmt), mysql_stmt_errno(stmt), sql);
 }
 
 }
