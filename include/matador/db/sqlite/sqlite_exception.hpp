@@ -31,8 +31,6 @@
 
 #include <sqlite3.h>
 
-#include "matador/sql/sql_exception.hpp"
-
 namespace matador {
 
 namespace sqlite {

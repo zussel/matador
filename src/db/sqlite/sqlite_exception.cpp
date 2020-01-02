@@ -23,12 +23,12 @@ namespace matador {
 
 namespace sqlite {
 
-void throw_error(int ec, sqlite3 *db, const std::string &sql)
+void throw_database_error(int ec, sqlite3 *db, const std::string &source, const std::string &sql)
 {
   if (ec == SQLITE_OK) {
     return;
   }
-  throw database_error(sqlite3_errmsg(db), "sqlite", sqlite3_errcode(db), sql);
+  throw database_error(sqlite3_errmsg(db), source, sqlite3_errcode(db), sql);
 }
 
 }
