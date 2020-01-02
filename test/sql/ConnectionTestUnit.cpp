@@ -93,7 +93,12 @@ void ConnectionTestUnit::test_reconnect()
 
 void ConnectionTestUnit::test_connection_failed()
 {
-  string dns = db_vendor_ + "://sa:Sa%%docker18@127.0.0.1/matador_test (FreeTDS)";
+  if (db_vendor_ == "sqlite") {
+    UNIT_INFO("skipping connection fail test for sqlite");
+    return;
+  }
+
+  string dns = get_invalid_dns(db_vendor_);
 
   matador::connection conn(dns);
 
@@ -112,4 +117,21 @@ void ConnectionTestUnit::test_connection_failed()
 std::string ConnectionTestUnit::connection_string()
 {
   return dns_;
+}
+
+std::string ConnectionTestUnit::get_invalid_dns(const std::string &db_vendor)
+{
+  std::string dns = db_vendor + "://";
+  if (db_vendor == "mysql") {
+    dns += "sascha:sascha@127.0.0.1/matador_invalid";
+  } else if (db_vendor == "mssql") {
+    dns += "sa:Sa%%docker18@127.0.0.1/matador_test (FreeTDS)";
+  } else if (db_vendor == "sqlite") {
+    dns += "test.sqlite";
+  } else if (db_vendor == "postgresql") {
+    dns += "test:test123@127.0.0.1/matador_invalid";
+  } else {
+    UNIT_FAIL("unknown db vendor " + db_vendor);
+  }
+  return dns;
 }
