@@ -21,6 +21,7 @@
 #include "matador/sql/database_error.hpp"
 
 #include <fstream>
+#include <regex>
 
 using namespace matador;
 using namespace std;
@@ -38,7 +39,7 @@ ConnectionTestUnit::ConnectionTestUnit(const std::string &prefix, std::string dn
 
 void ConnectionTestUnit::test_open_close()
 {
-  matador::connection conn(connection_string());
+  matador::connection conn(dns_);
 
   UNIT_ASSERT_FALSE(conn.is_connected());
 
@@ -53,7 +54,7 @@ void ConnectionTestUnit::test_open_close()
 
 void ConnectionTestUnit::test_reopen()
 {
-  matador::connection conn(connection_string());
+  matador::connection conn(dns_);
 
   UNIT_ASSERT_FALSE(conn.is_connected());
 
@@ -74,7 +75,7 @@ void ConnectionTestUnit::test_reopen()
 
 void ConnectionTestUnit::test_reconnect()
 {
-  matador::connection conn(connection_string());
+  matador::connection conn(dns_);
 
   UNIT_ASSERT_FALSE(conn.is_connected());
 
@@ -98,7 +99,8 @@ void ConnectionTestUnit::test_connection_failed()
     return;
   }
 
-  string dns = get_invalid_dns(db_vendor_);
+  std::regex re("(matador_test)");
+  string dns = std::regex_replace(dns_, re, "matador_invalid");
 
   matador::connection conn(dns);
 
@@ -112,26 +114,4 @@ void ConnectionTestUnit::test_connection_failed()
     UNIT_FAIL("caught from exception");
   }
   UNIT_ASSERT_TRUE(caught_exception);
-}
-
-std::string ConnectionTestUnit::connection_string()
-{
-  return dns_;
-}
-
-std::string ConnectionTestUnit::get_invalid_dns(const std::string &db_vendor)
-{
-  std::string dns = db_vendor + "://";
-  if (db_vendor == "mysql") {
-    dns += "sascha:sascha@127.0.0.1/matador_invalid";
-  } else if (db_vendor == "mssql") {
-    dns += "sa:Sa%%docker18@127.0.0.1/matador_test (FreeTDS)";
-  } else if (db_vendor == "sqlite") {
-    dns += "test.sqlite";
-  } else if (db_vendor == "postgresql") {
-    dns += "test:test123@127.0.0.1/matador_invalid";
-  } else {
-    UNIT_FAIL("unknown db vendor " + db_vendor);
-  }
-  return dns;
 }

@@ -35,12 +35,6 @@ public:
   void test_reconnect();
   void test_connection_failed();
 
-protected:
-  std::string connection_string();
-
-private:
-  std::string get_invalid_dns(const std::string &db_vendor);
-
 private:
   std::string dns_;
   std::string db_vendor_;
