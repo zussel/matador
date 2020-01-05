@@ -48,7 +48,7 @@ struct person
   void serialize(SERIALIZER &serializer) {
     serializer.serialize("id", id);
     serializer.serialize("name", name, 255);
-    serializer.serialize("ip", ip);
+    serializer.serialize("ip", ip, 255);
     serializer.serialize("age", age);
     serializer.serialize("person_color", colors, "person_id",   "color",      matador::cascade_type::ALL);
     //                    table name     member   left column   right column  cascade type
