@@ -89,13 +89,6 @@ detail::result_impl* mysql_statement::execute()
   return current_result;
 }
 
-//void mysql_statement::bind_null(std::size_t index)
-//{
-//  MYSQL_BIND &bind = host_array[index];
-//  is_null_vector[index] = true;
-//  bind.is_null = &is_null_vector[index];
-//}
-
 detail::parameter_binder_impl *mysql_statement::binder() const
 {
   return binder_.get();
