@@ -9,6 +9,7 @@
 
 #include "matador/sql/query.hpp"
 #include "matador/sql/types.hpp"
+#include "matador/sql/database_error.hpp"
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
@@ -23,6 +24,7 @@ using namespace matador;
 QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador::time timeval)
   : unit_test(prefix + "_query", prefix + " query test unit")
   , db_(std::move(db))
+  , db_vendor_(prefix)
   , time_val_(timeval)
 {
   add_test("info", std::bind(&QueryTestUnit::print_datatypes, this), "print datatypes info");
@@ -33,6 +35,7 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("quoted_literals", std::bind(&QueryTestUnit::test_quoted_literals, this), "test quoted literals");
   add_test("bind_tablename", std::bind(&QueryTestUnit::test_bind_tablename, this), "test bind tablenames");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
+  add_test("unknown_table", std::bind(&QueryTestUnit::test_unknown_table, this), "test unknown table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
   add_test("identifier_prepared", std::bind(&QueryTestUnit::test_identifier_prepared, this), "test sql prepared identifier");
   add_test("update", std::bind(&QueryTestUnit::test_update, this), "test direct sql update statement");
@@ -352,6 +355,35 @@ void QueryTestUnit::test_describe()
   }
 
   q.drop().execute(connection_);
+}
+
+void QueryTestUnit::test_unknown_table()
+{
+  connection_.connect();
+
+  matador::query<person> q("person");
+
+  bool caught_exception = false;
+
+  try {
+    q.select().execute(connection_);
+  } catch (database_error &ex) {
+    caught_exception = true;
+    if (db_vendor_ == "postgresql") {
+      UNIT_EXPECT_EQUAL("42P01", ex.sql_state());
+    } else if (db_vendor_ == "mysql") {
+      UNIT_EXPECT_EQUAL("42S02", ex.sql_state());
+    } else if (db_vendor_ == "mssql") {
+      UNIT_EXPECT_EQUAL("42S02", ex.sql_state());
+    } else if (db_vendor_ == "sqlite") {
+      UNIT_EXPECT_EQUAL(1L, ex.error_code());
+    } else {
+      UNIT_FAIL("invalid database vendor string: " << db_vendor_);
+    }
+  } catch (...) {
+    UNIT_FAIL("caught from exception");
+  }
+  UNIT_ASSERT_TRUE(caught_exception);
 }
 
 class pktest

@@ -88,6 +88,8 @@ public:
    * provided by the database backend. It is a 5 char long
    * string representing a sql error code.
    *
+   * <a href="https://en.wikipedia.org/wiki/SQLSTATE">SQL States</a>
+   *
    * @return SQL State
    */
   const char* sql_state() const noexcept;
