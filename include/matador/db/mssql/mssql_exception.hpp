@@ -41,24 +41,13 @@ namespace matador {
 
 namespace mssql {
 
-void throw_error(SQLRETURN ret, SQLSMALLINT htype, SQLHANDLE hndl, const std::string &source, const std::string &sql = "");
+void throw_database_error(SQLRETURN ret, SQLSMALLINT htype, SQLHANDLE hndl, const std::string &source, const std::string &sql = "");
 
-void throw_error(const std::string &source, const std::string &sql = "");
+//void throw_error(SQLRETURN ret, SQLSMALLINT htype, SQLHANDLE hndl, const std::string &source, const std::string &sql = "");
+
+//void throw_error(const std::string &source, const std::string &sql = "");
 
 bool is_success(SQLRETURN ret);
-
-class mssql_exception : public sql_exception
-{
-public:
-  mssql_exception(const std::string &source, const std::string &what);
-};
-
-class mssql_stmt_exception : public sql_exception
-{
-public:
-  explicit mssql_stmt_exception(const std::string &what);
-  mssql_stmt_exception(const std::string &source, const std::string &what);
-};
 
 }
 

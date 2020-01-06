@@ -23,7 +23,7 @@ SET(SOURCES
   type.cpp
   query_value_column_processor.cpp
   query_value_creator.cpp
-    connection_impl.cpp value_visitor.cpp)
+    connection_impl.cpp value_visitor.cpp database_error.cpp)
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/condition.hpp
@@ -57,7 +57,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_dialect_compiler.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_dialect_linker.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_column_processor.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_creator.hpp ../../include/matador/sql/parameter_binder.hpp ../../include/matador/sql/value_visitor.hpp)
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_creator.hpp ../../include/matador/sql/parameter_binder.hpp ../../include/matador/sql/value_visitor.hpp ../../include/matador/sql/database_error.hpp)
 
 ADD_LIBRARY(matador-sql SHARED ${SOURCES} ${HEADER})
 

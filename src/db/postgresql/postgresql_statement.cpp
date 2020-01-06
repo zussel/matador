@@ -27,44 +27,9 @@ postgresql_statement::postgresql_statement(postgresql_connection &db, const mata
   name_ = generate_statement_name(stmt);
 
   res_ = PQprepare(db.handle(), name_.c_str(), str().c_str(), bind_vars().size(), nullptr);
-  if (res_ == nullptr) {
-    THROW_POSTGRESQL_ERROR(db_.handle(), "execute", "error on sql statement");
-  } else if (PQresultStatus(res_) != PGRES_COMMAND_OK) {
-    THROW_POSTGRESQL_ERROR(db_.handle(), "execute", "error on sql statement");
-  }
-}
 
-//postgresql_statement::postgresql_statement(const postgresql_statement &x)
-//  : statement_impl(x)
-//  , db_(x.db_)
-//  , result_size(x.result_size)
-//  , host_size(x.host_size)
-//  , host_strings_(x.host_strings_)
-//  , host_params_(x.host_params_)
-//  , name_(x.name_)
-//{
-//  if (res_ != nullptr) {
-//    PQclear(res_);
-//  }
-//  res_ = x.res_;
-//}
-//
-//postgresql_statement &postgresql_statement::operator=(const postgresql_statement &x)
-//{
-//  db_ = x.db_;
-//  result_size = x.result_size;
-//  host_index = x.host_index;
-//  host_size = x.host_size;
-//  host_strings_ = x.host_strings_;
-//  host_params_ = x.host_params_;
-//  name_ = x.name_;
-//
-//  if (res_ != nullptr) {
-//    PQclear(res_);
-//  }
-//  res_ = x.res_;
-//  return *this;
-//}
+  throw_database_error(res_, db_.handle(), "postgresql", str());
+}
 
 postgresql_statement::~postgresql_statement()
 {
@@ -82,10 +47,9 @@ void postgresql_statement::clear()
 detail::result_impl *postgresql_statement::execute()
 {
   PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), binder_->params().size(), binder_->params().data(), nullptr, nullptr, 0);
-  auto status = PQresultStatus(res);
-  if (status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK) {
-    THROW_POSTGRESQL_ERROR(db_.handle(), "execute", "error on sql statement");
-  }
+
+  throw_database_error(res, db_.handle(), "postgresql", str());
+
   return new postgresql_prepared_result(this, res);
 }
 

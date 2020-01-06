@@ -18,7 +18,7 @@ SET(HEADER
   ../../../include/matador/db/mysql/mysql_types.hpp
   ../../../include/matador/db/mysql/mysql_dialect.hpp
   ../../../include/matador/db/mysql/mysql_constants.hpp
-  ../../../include/matador/db/mysql/mysql_parameter_binder.hpp)
+  ../../../include/matador/db/mysql/mysql_parameter_binder.hpp ../../../include/matador/db/mysql/mysql_bool.hpp)
 
 ADD_LIBRARY(matador-mysql SHARED ${SOURCES} ${HEADER})
 

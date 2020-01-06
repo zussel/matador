@@ -227,7 +227,7 @@ public:
   T& reference() { return id_; }
 
 private:
-  T id_;
+  T id_ = {};
   static std::type_index type_index_;
 };
 
@@ -459,7 +459,7 @@ public:
    *
    * @param val String value of the identifier
    */
-  explicit identifier(std::string val) : id_(std::move(val))
+  explicit identifier(const std::string& val) : id_(val)
   { }
 
   /**

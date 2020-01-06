@@ -5,6 +5,8 @@
 #include <libpq-fe.h>
 #include <regex>
 
+#include "matador/sql/database_error.hpp"
+
 #include "matador/db/postgresql/postgresql_connection.hpp"
 #include "matador/db/postgresql/postgresql_statement.hpp"
 #include "matador/db/postgresql/postgresql_exception.hpp"
@@ -41,7 +43,7 @@ void postgresql_connection::open(const std::string &dns)
   std::smatch what;
 
   if (!std::regex_match(dns, what, DNS_RGX)) {
-    throw_error("mysql:connect", "invalid dns: " + dns);
+    throw std::logic_error("mysql:connect invalid dns: " + dns);
   }
 
   const std::string user = what[1].str();
@@ -60,9 +62,9 @@ void postgresql_connection::open(const std::string &dns)
 
   conn_ = PQconnectdb(connection.c_str());
   if (PQstatus(conn_) == CONNECTION_BAD) {
-    std::string error = PQerrorMessage(conn_);
+    std::string msg = PQerrorMessage(conn_);
     PQfinish(conn_);
-    throw postgresql_exception("open", error + "(" + dns + ")");
+    throw database_error(msg, "postgresql", "42000");
   }
 
   is_open_ = true;
@@ -115,7 +117,12 @@ std::string postgresql_connection::type() const
   return "postgresql";
 }
 
-std::string postgresql_connection::version() const
+std::string postgresql_connection::client_version() const
+{
+  return "";
+}
+
+std::string postgresql_connection::server_version() const
 {
   return "";
 }
@@ -171,10 +178,8 @@ postgresql_result* postgresql_connection::execute_internal(const std::string &st
 {
   PGresult *res = PQexec(conn_, stmt.c_str());
 
-  auto status = PQresultStatus(res);
-  if (status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK) {
-    THROW_POSTGRESQL_ERROR(conn_, "execute", "error on sql statement");
-  }
+  throw_database_error(res, conn_, "postgresql", stmt);
+
   return new postgresql_result(res);
 }
 

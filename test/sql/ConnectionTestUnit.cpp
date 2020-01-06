@@ -18,8 +18,10 @@
 #include "ConnectionTestUnit.hpp"
 
 #include "matador/sql/connection.hpp"
+#include "matador/sql/database_error.hpp"
 
 #include <fstream>
+#include <regex>
 
 using namespace matador;
 using namespace std;
@@ -27,15 +29,17 @@ using namespace std;
 ConnectionTestUnit::ConnectionTestUnit(const std::string &prefix, std::string dns)
   : unit_test(prefix + "_conn", prefix + " connection test unit")
   , dns_(std::move(dns))
+  , db_vendor_(prefix)
 {
   add_test("open_close", std::bind(&ConnectionTestUnit::test_open_close, this), "connect sql test");
   add_test("reopen", std::bind(&ConnectionTestUnit::test_reopen, this), "reopen sql test");
   add_test("reconnect", std::bind(&ConnectionTestUnit::test_reconnect, this), "reconnect sql test");
+  add_test("connection_failed", std::bind(&ConnectionTestUnit::test_connection_failed, this), "connection failed test");
 }
 
 void ConnectionTestUnit::test_open_close()
 {
-  matador::connection conn(connection_string());
+  matador::connection conn(dns_);
 
   UNIT_ASSERT_FALSE(conn.is_connected());
 
@@ -50,7 +54,7 @@ void ConnectionTestUnit::test_open_close()
 
 void ConnectionTestUnit::test_reopen()
 {
-  matador::connection conn(connection_string());
+  matador::connection conn(dns_);
 
   UNIT_ASSERT_FALSE(conn.is_connected());
 
@@ -71,7 +75,7 @@ void ConnectionTestUnit::test_reopen()
 
 void ConnectionTestUnit::test_reconnect()
 {
-  matador::connection conn(connection_string());
+  matador::connection conn(dns_);
 
   UNIT_ASSERT_FALSE(conn.is_connected());
 
@@ -88,7 +92,26 @@ void ConnectionTestUnit::test_reconnect()
   UNIT_ASSERT_FALSE(conn.is_connected());
 }
 
-std::string ConnectionTestUnit::connection_string()
+void ConnectionTestUnit::test_connection_failed()
 {
-  return dns_;
+  if (db_vendor_ == "sqlite") {
+    UNIT_INFO("skipping connection fail test for sqlite");
+    return;
+  }
+
+  std::regex re("(matador_test)");
+  string dns = std::regex_replace(dns_, re, "matador_invalid");
+
+  matador::connection conn(dns);
+
+  bool caught_exception = false;
+  try {
+    conn.connect();
+  } catch (database_error &ex) {
+    caught_exception = true;
+    UNIT_EXPECT_EQUAL("42000", ex.sql_state());
+  } catch (...) {
+    UNIT_FAIL("caught from exception");
+  }
+  UNIT_ASSERT_TRUE(caught_exception);
 }
