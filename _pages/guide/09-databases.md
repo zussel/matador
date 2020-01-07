@@ -65,3 +65,22 @@ session ses(ostore, "mysql://user@host/db");
 // MySQL connection string
 session ses(ostore, "sqlite://database.sqlite");
 {% endhighlight %}
+
+### Handling Database errors
+
+Each backend has its own error handling, error codes or error messages. Some
+use [SQLSTATE](https://en.wikipedia.org/wiki/SQLSTATE) other (like SQLite) don't.
+
+Once a backend delivers a database error matador collects all available information
+in a ```database_error``` object which is thrown.
+
+{% highlight cpp linenos %}
+connection conn("mysql://test@localhost/mydb");
+
+try {
+  conn.open();
+} catch (database_error &ex) {
+  std::cout << "caught error '" << ex.what() << "' from backend '" << ex.source() << "' " \
+            << "with sqlstate '" << ex.sql_state() << "' and error code " << ex.error_code() << "\n";
+}
+{% endhighlight %}
