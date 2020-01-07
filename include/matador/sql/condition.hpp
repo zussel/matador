@@ -585,7 +585,7 @@ condition<column, std::pair<T, T>> between(const matador::column &col, T low, T 
  * @param val The value to the like operator
  * @return The like condition object
  */
-condition<column, std::string> like(const matador::column &col, const std::string &val);
+OOS_SQL_API condition<column, std::string> like(const matador::column &col, const std::string &val);
 
 /**
  * @brief Condition equality operator for a column and a value
