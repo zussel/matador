@@ -249,6 +249,17 @@ auto q = matador::select({name}).from("test");
 matador::in(name, q, &conn.dialect());
 {% endhighlight %}
 
+##### Like Condition
+
+To express a _like_ condition one has to call ```like``` with the column and
+the compare value.
+
+{% highlight cpp linenos %}
+auto name = "name"_col;
+
+matador::like(name, "%ight%");
+{% endhighlight %}
+
 ##### Range Condition
 
 The range condition checks if a column value is between two given boundaries.
