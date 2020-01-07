@@ -6,6 +6,7 @@
 
 #include "../datatypes.hpp"
 #include "../person.hpp"
+#include "../entities.hpp"
 
 #include "matador/sql/query.hpp"
 #include "matador/sql/types.hpp"
@@ -52,6 +53,7 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("select", std::bind(&QueryTestUnit::test_query_select, this), "test query select");
   add_test("select_count", std::bind(&QueryTestUnit::test_query_select_count, this), "test query select count");
   add_test("select_columns", std::bind(&QueryTestUnit::test_query_select_columns, this), "test query select columns");
+  add_test("select_like", std::bind(&QueryTestUnit::test_query_select_like, this), "test query select like");
   add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
   add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
   add_test("prepared_statement", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
@@ -1103,6 +1105,40 @@ void QueryTestUnit::test_query_select_columns()
     UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name));
     ++first;
   }
+
+  q.drop().execute(connection_);
+}
+
+void QueryTestUnit::test_query_select_like()
+{
+  connection_.connect();
+
+  query<child> q("child");
+
+  // create item table and insert item
+  result<child> res(q.create().execute(connection_));
+
+  std::vector<std::string> names({ "height", "light", "night", "dark" });
+
+  unsigned long id(0);
+  for (const auto &name : names) {
+    child c(name);
+    c.id = ++id;
+    q.insert(c).execute(connection_);
+  }
+
+  res = q.select().where(like("name"_col, "%ight%")).execute(connection_);
+
+  std::vector<std::string> result_names({ "height", "light", "night" });
+
+  for (auto ch : res) {
+    auto it = std::find(result_names.begin(), result_names.end(), ch->name);
+    if (it != result_names.end()) {
+      result_names.erase(it);
+    }
+  }
+
+  UNIT_EXPECT_TRUE(result_names.empty());
 
   q.drop().execute(connection_);
 }

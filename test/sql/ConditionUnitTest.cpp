@@ -22,6 +22,7 @@ ConditionUnitTest::ConditionUnitTest()
   add_test("in", std::bind(&ConditionUnitTest::test_in_condition, this), "test an in condition");
   add_test("in_query", std::bind(&ConditionUnitTest::test_in_query_condition, this), "test an in query condition");
   add_test("between", std::bind(&ConditionUnitTest::test_between_condition, this), "test a between condition");
+  add_test("like", std::bind(&ConditionUnitTest::test_like_condition, this), "test a like condition");
 }
 
 void ConditionUnitTest::test_col_literal()
@@ -133,4 +134,14 @@ void ConditionUnitTest::test_between_condition()
   UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"age\" BETWEEN 21 AND 30)");
 }
 
+void ConditionUnitTest::test_like_condition()
+{
+  auto name = "name"_col;
+  UNIT_ASSERT_EQUAL(name.name, "name");
 
+  auto cond = matador::like(name, "%er%");
+
+  TestDialect dialect;
+
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "\"name\" LIKE '%er%'");
+}

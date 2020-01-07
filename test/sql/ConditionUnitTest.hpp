@@ -20,6 +20,7 @@ public:
   void test_in_condition();
   void test_in_query_condition();
   void test_between_condition();
+  void test_like_condition();
 };
 
 
