@@ -6,9 +6,11 @@
 
 #include "../datatypes.hpp"
 #include "../person.hpp"
+#include "../entities.hpp"
 
 #include "matador/sql/query.hpp"
 #include "matador/sql/types.hpp"
+#include "matador/sql/database_error.hpp"
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
@@ -23,6 +25,7 @@ using namespace matador;
 QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador::time timeval)
   : unit_test(prefix + "_query", prefix + " query test unit")
   , db_(std::move(db))
+  , db_vendor_(prefix)
   , time_val_(timeval)
 {
   add_test("info", std::bind(&QueryTestUnit::print_datatypes, this), "print datatypes info");
@@ -33,6 +36,7 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("quoted_literals", std::bind(&QueryTestUnit::test_quoted_literals, this), "test quoted literals");
   add_test("bind_tablename", std::bind(&QueryTestUnit::test_bind_tablename, this), "test bind tablenames");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
+  add_test("unknown_table", std::bind(&QueryTestUnit::test_unknown_table, this), "test unknown table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
   add_test("identifier_prepared", std::bind(&QueryTestUnit::test_identifier_prepared, this), "test sql prepared identifier");
   add_test("update", std::bind(&QueryTestUnit::test_update, this), "test direct sql update statement");
@@ -49,6 +53,7 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("select", std::bind(&QueryTestUnit::test_query_select, this), "test query select");
   add_test("select_count", std::bind(&QueryTestUnit::test_query_select_count, this), "test query select count");
   add_test("select_columns", std::bind(&QueryTestUnit::test_query_select_columns, this), "test query select columns");
+  add_test("select_like", std::bind(&QueryTestUnit::test_query_select_like, this), "test query select like");
   add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
   add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
   add_test("prepared_statement", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
@@ -352,6 +357,35 @@ void QueryTestUnit::test_describe()
   }
 
   q.drop().execute(connection_);
+}
+
+void QueryTestUnit::test_unknown_table()
+{
+  connection_.connect();
+
+  matador::query<person> q("person");
+
+  bool caught_exception = false;
+
+  try {
+    q.select().execute(connection_);
+  } catch (database_error &ex) {
+    caught_exception = true;
+    if (db_vendor_ == "postgresql") {
+      UNIT_EXPECT_EQUAL("42P01", ex.sql_state());
+    } else if (db_vendor_ == "mysql") {
+      UNIT_EXPECT_EQUAL("42S02", ex.sql_state());
+    } else if (db_vendor_ == "mssql") {
+      UNIT_EXPECT_EQUAL("42S02", ex.sql_state());
+    } else if (db_vendor_ == "sqlite") {
+      UNIT_EXPECT_EQUAL(1L, ex.error_code());
+    } else {
+      UNIT_FAIL("invalid database vendor string: " << db_vendor_);
+    }
+  } catch (...) {
+    UNIT_FAIL("caught from exception");
+  }
+  UNIT_ASSERT_TRUE(caught_exception);
 }
 
 class pktest
@@ -1071,6 +1105,40 @@ void QueryTestUnit::test_query_select_columns()
     UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name));
     ++first;
   }
+
+  q.drop().execute(connection_);
+}
+
+void QueryTestUnit::test_query_select_like()
+{
+  connection_.connect();
+
+  query<child> q("child");
+
+  // create item table and insert item
+  result<child> res(q.create().execute(connection_));
+
+  std::vector<std::string> names({ "height", "light", "night", "dark" });
+
+  unsigned long id(0);
+  for (const auto &name : names) {
+    child c(name);
+    c.id = ++id;
+    q.insert(c).execute(connection_);
+  }
+
+  res = q.select().where(like("name"_col, "%ight%")).execute(connection_);
+
+  std::vector<std::string> result_names({ "height", "light", "night" });
+
+  for (auto ch : res) {
+    auto it = std::find(result_names.begin(), result_names.end(), ch->name);
+    if (it != result_names.end()) {
+      result_names.erase(it);
+    }
+  }
+
+  UNIT_EXPECT_TRUE(result_names.empty());
 
   q.drop().execute(connection_);
 }

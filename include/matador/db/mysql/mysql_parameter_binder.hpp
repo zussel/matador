@@ -8,6 +8,7 @@
 #include "matador/sql/parameter_binder.hpp"
 
 #include "matador/db/mysql/mysql_result_info.hpp"
+#include "matador/db/mysql/mysql_bool.hpp"
 
 #ifdef _MSC_VER
 #include <mysql.h>
@@ -55,10 +56,17 @@ public:
   std::vector<MYSQL_BIND>& bindings();
   std::vector<mysql_result_info>& result_infos();
 
+
+  void bind_null(std::size_t index);
 private:
+  struct is_null_t
+  {
+    my_bool is_null = false;
+  };
+
   std::vector<MYSQL_BIND> host_array_;
   std::vector<MYSQL_BIND> bind_;
-  std::vector<my_bool> is_null_vector;
+  std::vector<is_null_t> is_null_vector;
   std::vector<mysql_result_info> info_;
 
   size_t index_ = 0;

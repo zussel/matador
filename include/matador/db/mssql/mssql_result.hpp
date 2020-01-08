@@ -67,7 +67,7 @@ public:
     auto type = (SQLSMALLINT)type2int(matador::data_type_traits<T>::builtin_type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (!SQL_SUCCEEDED(ret)) {
-      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+      throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
     }
     return val;
   }
@@ -79,7 +79,7 @@ public:
     SQLLEN info = 0;
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, buf, 1024, &info);
     if (!SQL_SUCCEEDED(ret)) {
-      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+      throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
     }
     return std::string(buf, info);
   }
@@ -117,7 +117,7 @@ protected:
     } else {
       std::stringstream msg;
       msg << "error on retrieving value for column " << id << " (type " << typeid(T).name() << ")";
-      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", msg.str());
+      throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", msg.str());
     }
   }
   

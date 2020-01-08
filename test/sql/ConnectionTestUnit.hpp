@@ -33,12 +33,11 @@ public:
   void test_open_close();
   void test_reopen();
   void test_reconnect();
-
-protected:
-  std::string connection_string();
+  void test_connection_failed();
 
 private:
   std::string dns_;
+  std::string db_vendor_;
 };
 
 #endif /* SESSION_TEST_UNIT_HPP */

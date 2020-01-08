@@ -33,9 +33,9 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   : statement_impl(db.dialect(), stmt)
   , stmt_(mysql_stmt_init(db.handle()))
 {
-  int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
-
-  throw_stmt_error(res, stmt_, "mysql", str());
+  if (mysql_stmt_prepare(stmt_, str().c_str(), str().size()) != 0) {
+    throw_stmt_error(stmt_, "mysql", str());
+  }
 
   binder_ = matador::make_unique<mysql_parameter_binder>(columns().size(), bind_vars().size());
 }
@@ -74,24 +74,20 @@ detail::result_impl* mysql_statement::execute()
     current_result->free();
   }
   if (!binder_->host_array().empty()) {
-    int res = mysql_stmt_bind_param(stmt_, binder_->host_array().data());
-    throw_stmt_error(res, stmt_, "mysql", str());
+    if (mysql_stmt_bind_param(stmt_, binder_->host_array().data()) != 0) {
+      throw_stmt_error(stmt_, "mysql", str());
+    }
   }
 
-  int res = mysql_stmt_execute(stmt_);
-  throw_stmt_error(res, stmt_, "mysql", str());
-  res = mysql_stmt_store_result(stmt_);
-  throw_stmt_error(res, stmt_, "mysql", str());
+  if (mysql_stmt_execute(stmt_) != 0) {
+    throw_stmt_error(stmt_, "mysql", str());
+  }
+  if (mysql_stmt_store_result(stmt_) != 0) {
+    throw_stmt_error(stmt_, "mysql", str());
+  }
   current_result = new mysql_prepared_result(this, stmt_, binder_->bindings(), binder_->result_infos());
   return current_result;
 }
-
-//void mysql_statement::bind_null(std::size_t index)
-//{
-//  MYSQL_BIND &bind = host_array[index];
-//  is_null_vector[index] = true;
-//  bind.is_null = &is_null_vector[index];
-//}
 
 detail::parameter_binder_impl *mysql_statement::binder() const
 {

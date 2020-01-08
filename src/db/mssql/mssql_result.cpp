@@ -36,7 +36,7 @@ mssql_result::mssql_result(SQLHANDLE stmt)
   // get row and column information
   SQLLEN r(0);
   SQLRETURN ret = SQLRowCount(stmt, &r);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't retrieve row count");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
 
   if (r != SQL_ERROR && r >= 0) {
     rows = (unsigned long) r;
@@ -44,7 +44,7 @@ mssql_result::mssql_result(SQLHANDLE stmt)
 
   SQLSMALLINT columns = 0;
   ret = SQLNumResultCols(stmt, &columns);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't get column count");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
 }
 
 mssql_result::~mssql_result()
@@ -71,7 +71,7 @@ bool mssql_result::fetch()
   if (SQL_SUCCEEDED(ret)) {
     return true;
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on fetching next row");
+    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
     return false;
   }
 }
@@ -168,7 +168,7 @@ void mssql_result::serialize(const char *, char *x, size_t s)
   if (ret == SQL_SUCCESS) {
     return;
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
 }
 
@@ -210,7 +210,7 @@ void mssql_result::read_column(const char *, std::string &val)
   if (SQL_SUCCEEDED(ret)) {
     val.assign(buf, info);
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
 }
 
@@ -222,7 +222,7 @@ void mssql_result::read_column(const char *, std::string &val, size_t s)
   if (SQL_SUCCEEDED(ret)) {
     val.assign(buf.data(), info);
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
 
 }
@@ -234,7 +234,7 @@ void mssql_result::read_column(const char *, char &val)
   if (SQL_SUCCEEDED(ret)) {
     return;
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
 }
 
@@ -245,7 +245,7 @@ void mssql_result::read_column(const char *, unsigned char &val)
   if (SQL_SUCCEEDED(ret)) {
     return;
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
 }
 
@@ -258,7 +258,7 @@ void mssql_result::read_column(char const *, date &x)
   if (SQL_SUCCEEDED(ret)) {
     x.set(ds.day, ds.month, ds.year);
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
 }
 
@@ -271,7 +271,7 @@ void mssql_result::read_column(char const *, time &x)
   if (SQL_SUCCEEDED(ret)) {
     x.set(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.fraction / 1000 / 1000);
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
 }
 

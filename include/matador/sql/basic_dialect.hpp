@@ -271,6 +271,7 @@ private:
     {detail::token::WHERE, "WHERE"},
     {detail::token::AND, "AND"},
     {detail::token::OR, "OR"},
+    {detail::token::LIKE, "LIKE"},
     {detail::token::ORDER_BY, "ORDER BY"},
     {detail::token::GROUP_BY, "GROUP BY"},
     {detail::token::ASC, "ASC"},

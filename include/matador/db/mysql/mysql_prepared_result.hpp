@@ -4,6 +4,7 @@
 #include "matador/sql/result_impl.hpp"
 
 #include "matador/db/mysql/mysql_result_info.hpp"
+#include "matador/db/mysql/mysql_bool.hpp"
 
 #ifdef _MSC_VER
 //#include <winsock2.h>

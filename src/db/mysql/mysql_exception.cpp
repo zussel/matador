@@ -17,70 +17,23 @@
 
 #include "matador/db/mysql/mysql_exception.hpp"
 
+#include "matador/sql/database_error.hpp"
+
 #include <string>
-#include <sstream>
 
 namespace matador {
 
 namespace mysql {
 
-std::string error_message(MYSQL *db, const std::string &source, const std::string &sql)
+void throw_error(MYSQL *db, const std::string &source, const std::string &sql)
 {
-  std::stringstream msg;
-  msg << source << ": " << mysql_error(db) << " (" << sql << ")";
-  return msg.str();
+  throw database_error(mysql_error(db), source, mysql_sqlstate(db), mysql_errno(db), sql);
 }
 
-std::string error_message(MYSQL_STMT *stmt, const std::string &source, const std::string &sql)
+void throw_stmt_error(MYSQL_STMT *stmt, const std::string &source, const std::string &sql)
 {
-  std::stringstream msg;
-  msg << source << ": " << mysql_stmt_error(stmt) << " (" << sql << ")";
-  return msg.str();
+  throw database_error(mysql_stmt_error(stmt), source, mysql_stmt_sqlstate(stmt), mysql_stmt_errno(stmt), sql);
 }
-
-void throw_error(const std::string &source, const std::string &msg)
-{
-  throw mysql_exception(source, msg);
-}
-
-void throw_error(int ec, MYSQL *db, const std::string &source, const std::string &sql)
-{
-  if (ec == 0) {
-    return;
-  }
-  throw mysql_exception(db, source, sql);
-}
-
-void throw_stmt_error(int ec, MYSQL_STMT *stmt, const std::string &source, const std::string &sql)
-{
-  if (ec == 0) {
-    return;
-  }
-  throw mysql_stmt_exception(stmt, source, sql); 
-}
-
-mysql_exception::mysql_exception(const std::string &source, const std::string &what)
-  : sql_exception("mysql", (source + ": " + what).c_str())
-{}
-
-
-mysql_exception::mysql_exception(MYSQL *db, const std::string &source, const std::string &what)
-  : sql_exception("mysql", error_message(db, source, what).c_str())
-{}
-
-mysql_exception::~mysql_exception() throw()
-{}
-
-mysql_stmt_exception::mysql_stmt_exception(const std::string &what)
-  : sql_exception("mysql", what.c_str())
-{}
-
-mysql_stmt_exception::mysql_stmt_exception(MYSQL_STMT *stmt, const std::string &source, const std::string &what)
-  : sql_exception("mysql", error_message(stmt, source, what).c_str())
-{}
-
-mysql_stmt_exception::~mysql_stmt_exception() throw()
-{}
 
 }
 

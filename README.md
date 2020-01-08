@@ -52,6 +52,7 @@ struct person
   unsigned int age = 0;
   has_many<varchar<255>> colors;
   
+  person() = default;
   person(long i, std::string n)
     : id(i), name(std::move(n))
   {}
@@ -61,8 +62,8 @@ struct person
     serializer.serialize("id", id);
     serializer.serialize("name", name, 255);
     serializer.serialize("age", age);
-    serializer.serialize("person_color", colors, "person_id",   "color");
-    //                    table name     member   left column   right column
+    serializer.serialize("person_color", colors, "person_id",   "color",      matador::cascade_type::ALL);
+    //                    table name     member   left column   right column  cascade type
   }
 };
 
@@ -84,9 +85,11 @@ s.flush();
 
 // modify george
 george.modify()->age = 35;
+s.save(george);
+
 // add color
 george.modify()->colors.push_back("brown");
-s.flush();
+s.save(george);
 
 // delete george
 s.remove(george);

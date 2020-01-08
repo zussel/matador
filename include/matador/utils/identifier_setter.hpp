@@ -49,7 +49,7 @@ public:
   void serialize(const char *id, identifier<V> &x)
   {
     reading_pk_ = true;
-    V val;
+    V val = {};
     serialize(id, val);
     x.value(val);
     reading_pk_ = false;
@@ -59,10 +59,7 @@ public:
   void serialize(const char*, V &) {}
   void serialize(const char*, char *, size_t) {}
   void serialize(const char*, std::string &, size_t) {}
-//  template < class HAS_ONE >
   void serialize(const char*, object_holder&, cascade_type) {}
-
-//  template < class HAS_MANY >
   void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
   void serialize(const char *, abstract_has_many &, cascade_type) {}
 

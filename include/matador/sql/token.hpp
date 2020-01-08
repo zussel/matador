@@ -65,6 +65,7 @@ struct OOS_SQL_API token
     WHERE,
     AND,
     OR,
+    LIKE,
     ORDER_BY,
     GROUP_BY,
     ASC,
