@@ -51,7 +51,7 @@ struct person
 };
 {% endhighlight %}
 
-**Node:** With this kind of relationship we have a hard linked
+**Note:** With this kind of relationship we have a hard linked
 relationship. Which means if we remove the person from
 our store the address object is removed as well. The
 ```cascade_type::ALL``` means the all operation of
@@ -83,7 +83,7 @@ When it comes to one to many relationships it is also
 quiet easy. matador comes with a handy wrapper to the STL container
 class ```std::vector``` and ```std::list```.
 
-**Node:** The STL container class ```std::set``` and ```std::unordered_set```
+**Note:** The STL container class ```std::set``` and ```std::unordered_set```
 will be supported soon.
 {: .bs-callout .bs-callout-warning}
 
