@@ -66,12 +66,13 @@ public:
     OR,
     AND,
     NOT,
-    IN_LIST
+    IN_LIST,
+    LIKE
   };
 
   enum
   {
-    num_operands = 10
+    num_operands = 11
   };
 
   void accept(token_visitor &visitor) override
@@ -573,6 +574,18 @@ condition<column, std::pair<T, T>> between(const matador::column &col, T low, T 
 {
   return condition<column, std::pair<T, T>>(col, std::make_pair(low, high));
 }
+
+/**
+ * @brief Creates a like condition
+ *
+ * Creates a like condition for the given column
+ * and the given value string.
+ *
+ * @param col The column for the like condition
+ * @param val The value to the like operator
+ * @return The like condition object
+ */
+OOS_SQL_API condition<column, std::string> like(const matador::column &col, const std::string &val);
 
 /**
  * @brief Condition equality operator for a column and a value
