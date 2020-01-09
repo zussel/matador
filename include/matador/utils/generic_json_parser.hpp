@@ -31,6 +31,12 @@ protected:
    */
   explicit generic_json_parser(T *h) : handler_(h) {}
 
+  struct real_t {
+    double real = 0.0;
+    long long integer = 0;
+    bool is_real = false;
+  };
+
 public:
   virtual ~generic_json_parser() = default;
 
@@ -49,7 +55,7 @@ private:
   void parse_json_object(std::istream &in);
   void parse_json_array(std::istream &in);
   std::string parse_json_string(std::istream &in);
-  double parse_json_number(std::istream &in);
+  real_t parse_json_number(std::istream &in);
   bool parse_json_bool(std::istream &in);
   void parse_json_null(std::istream &in);
   void parse_json_value(std::istream &in);
@@ -309,17 +315,33 @@ generic_json_parser<T>::parse_json_string(std::istream &in)
 }
 
 template < class T >
-double
+typename generic_json_parser<T>::real_t
 generic_json_parser<T>::parse_json_number(std::istream &in)
 {
   // skip white
   in >> std::ws;
 
-  double value;
-  in >> value;
+  // number could be an integer
+  // or a floating point
+  real_t value;
+  in >> value.integer;
 
   char c = in.peek();
 
+  if (c == '.') {
+    // it's a double
+    value.is_real = true;
+    double real;
+    in >> real;
+
+    if (value.integer < 0) {
+      value.real = value.integer - real;
+    } else {
+      value.real = value.integer + real;
+    }
+    value.integer = 0;
+    c = in.peek();
+  }
   switch (c) {
     case ' ':
     case ',':
@@ -454,6 +476,7 @@ generic_json_parser<T>::parse_json_value(std::istream &in)
     case '7':
     case '8':
     case '9':
+    case '.':
       handler_->on_number(parse_json_number(in));
       break;
     case 't':

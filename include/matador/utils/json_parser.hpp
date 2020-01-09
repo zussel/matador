@@ -74,7 +74,7 @@ public:
   void on_end_array();
 
   void on_string(const std::string &value);
-  void on_number(double value);
+  void on_number(generic_json_parser<json_parser>::real_t value);
   void on_bool(bool value);
   void on_null();
   /// @endcond OOS_DEV //

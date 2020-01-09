@@ -99,12 +99,20 @@ void json_parser::on_string(const std::string &value)
   }
 }
 
-void json_parser::on_number(double value)
+void json_parser::on_number(generic_json_parser<json_parser>::real_t value)
 {
   if (state_stack_.top()->is_object()) {
-    state_stack_.top()->operator[](key_) = value;
+    if (value.is_real) {
+      state_stack_.top()->operator[](key_) = value.real;
+    } else {
+      state_stack_.top()->operator[](key_) = value.integer;
+    }
   } else {
-    state_stack_.top()->push_back(value);
+    if (value.is_real) {
+      state_stack_.top()->push_back(value.real);
+    } else {
+      state_stack_.top()->push_back(value.integer);
+    }
   }
 }
 

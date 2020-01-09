@@ -266,11 +266,11 @@ struct json
 
   union json_value {
     json_value() : integer(0) {}
-    json_value(long long l) : integer(l) {}
-    json_value(double d) : real(d) {}
-    json_value(bool b) : boolean(b) {}
-    json_value(const char *val) : str(new std::string(val)) {}
-    json_value(std::string s) : str(new std::string(std::move(s))) {}
+    explicit json_value(long long l) : integer(l) {}
+    explicit json_value(double d) : real(d) {}
+    explicit json_value(bool b) : boolean(b) {}
+    explicit json_value(const char *val) : str(new std::string(val)) {}
+    explicit json_value(std::string s) : str(new std::string(std::move(s))) {}
 
     long long integer;
     double real;
