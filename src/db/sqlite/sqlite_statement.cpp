@@ -37,7 +37,7 @@ sqlite_statement::sqlite_statement(sqlite_connection &db, const matador::sql &sq
 {
   // prepare sqlite statement
   int ret = sqlite3_prepare_v2(db_.handle(), str().c_str(), str().size(), &stmt_, nullptr);
-  throw_error(ret, db_.handle(), "sqlite3_prepare_v2", str());
+  throw_database_error(ret, db_.handle(), "sqlite3_prepare_v2", str());
   binder_ = matador::make_unique<sqlite_parameter_binder>(db.handle(), stmt_);
 }
 
@@ -53,7 +53,7 @@ detail::result_impl* sqlite_statement::execute()
   int ret = sqlite3_step(stmt_);
 
   if (ret != SQLITE_ROW && ret != SQLITE_DONE) {
-    throw_error(ret, db_.handle(), "sqlite3_step");
+    throw_database_error(ret, db_.handle(), "sqlite3_step");
   }
   return new sqlite_prepared_result(stmt_, ret);
 }
@@ -72,7 +72,7 @@ void sqlite_statement::clear()
     return;
   }
   int ret = sqlite3_finalize(stmt_);
-  throw_error(ret, db_.handle(), "sqlite3_finalize");
+  throw_database_error(ret, db_.handle(), "sqlite3_finalize");
   stmt_ = nullptr;
 }
 

@@ -52,7 +52,7 @@ void mssql_connection::open(const std::string &connection)
   std::smatch what;
 
   if (!std::regex_match(connection, what, DNS_RGX)) {
-    throw_error("mssql:connect", "invalid dns: " + connection);
+    throw std::logic_error("mssql:connect invalid dns: " + connection);
   }
 
   const std::string user = what[1].str();
@@ -78,19 +78,19 @@ void mssql_connection::open(const std::string &connection)
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &odbc_);
   if (ret != SQL_SUCCESS) {
     SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
-    throw_error(ret, SQL_HANDLE_ENV, odbc_, "mssql", "couldn't get odbc handle");
+    throw_database_error(ret, SQL_HANDLE_ENV, odbc_, "mssql");
   }
 
   ret = SQLSetEnvAttr(odbc_, SQL_ATTR_ODBC_VERSION,(SQLPOINTER)SQL_OV_ODBC3, 0);
   if (ret != SQL_SUCCESS) {
     SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
-    throw_error(ret, SQL_HANDLE_ENV, odbc_, "mssql", "couldn't set odbc driver version");
+    throw_database_error(ret, SQL_HANDLE_ENV, odbc_, "mssql");
   }
 
   ret = SQLAllocHandle(SQL_HANDLE_DBC, odbc_, &connection_);
   if (ret != SQL_SUCCESS) {
     SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
-    throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "couldn't get connection handle");
+    throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
   }
 
   SQLSetConnectAttr(connection_, SQL_LOGIN_TIMEOUT, (SQLPOINTER *)5, 0);
@@ -100,7 +100,7 @@ void mssql_connection::open(const std::string &connection)
   SQLCHAR retconstring[1024];
   ret = SQLDriverConnect(connection_, nullptr, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, nullptr, SQL_DRIVER_NOPROMPT);
 
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on connect");
+  throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
 
   is_open_ = true;
 }
@@ -118,15 +118,15 @@ void mssql_connection::close()
 
   SQLRETURN ret = SQLDisconnect(connection_);
 
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on disconnect");
+  throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
 
   ret = SQLFreeHandle(SQL_HANDLE_DBC, connection_);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on freeing connection");
+  throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
 
   connection_ = nullptr;
 
   ret = SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
-  throw_error(ret, SQL_HANDLE_ENV, odbc_, "mssql", "error on freeing odbc");
+  throw_database_error(ret, SQL_HANDLE_ENV, odbc_, "mssql");
 
   odbc_ = nullptr;
 
@@ -142,13 +142,13 @@ matador::detail::result_impl *mssql_connection::execute(const matador::sql &sql)
 detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
 {
   if (!connection_) {
-    throw_error("mssql", "no odbc connection established");
+    throw std::logic_error("mssql no odbc connection established");
   }
   // create statement handle
   SQLHANDLE stmt;
 
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
+  throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql", sqlstr);
 
   // execute statement
 //  int retry = retries_;
@@ -160,7 +160,7 @@ detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
   } while (retry-- && !(SQL_SUCCEEDED(ret) || SQL_NO_DATA));
   */
 
-  throw_error(ret, SQL_HANDLE_STMT, stmt, sqlstr, "error on query execute");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql", sqlstr);
 
   return new mssql_result(stmt);
 }
@@ -190,7 +190,12 @@ std::string mssql_connection::type() const
   return "mssql";
 }
 
-std::string mssql_connection::version() const
+std::string mssql_connection::client_version() const
+{
+  return "1.1.1";
+}
+
+std::string mssql_connection::server_version() const
 {
   return "1.1.1";
 }
@@ -214,7 +219,7 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   // create statement handle
   SQLHANDLE stmt;
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
+  throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
 
   //std::string stmt("EXEC SP_COLUMNS " + table);
 
@@ -225,7 +230,7 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   strcpy((char*)buf, table.c_str());
 #endif
   ret = SQLColumns(stmt, nullptr, 0, nullptr, 0, buf, SQL_NTS, nullptr, 0);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on executing column description");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
   //std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute(stmt)));
 
   // bind to columns we need (column name, data type of column and index)
@@ -240,22 +245,22 @@ std::vector<field> mssql_connection::describe(const std::string &table)
 
   // column name
   ret = SQLBindCol(stmt, 4, SQL_C_CHAR, column, sizeof(column), &indicator[0]);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (column)");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
   // data type
   ret = SQLBindCol(stmt, 5, SQL_C_SSHORT, &data_type, sizeof(data_type), &indicator[1]);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (data type)");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
   // type name
   ret = SQLBindCol(stmt, 6, SQL_C_CHAR, type, sizeof(type), &indicator[2]);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (type name)");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
   // size
   ret = SQLBindCol(stmt, 7, SQL_C_SLONG, &size, sizeof(size), &indicator[3]);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (data size)");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
   // nullable
   ret = SQLBindCol(stmt, 11, SQL_C_SSHORT, &not_null, 0, &indicator[4]);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (not null)");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
   // index (1 based)
   ret = SQLBindCol(stmt, 17, SQL_C_SLONG, &pos, 0, &indicator[5]);
-  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (pos)");
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
 
   std::vector<field> fields;
 
@@ -329,13 +334,13 @@ basic_dialect* mssql_connection::dialect()
 void mssql_connection::execute_no_result(const std::string &stmt)
 {
   if (!connection_) {
-    throw_error("mssql", "no odbc connection established");
+    throw std::logic_error("mssql no odbc connection established");
   }
   // create statement handle
   SQLHANDLE handle;
 
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &handle);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
+  throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql", stmt);
 
   // execute statement
 //  int retry = retries_;
@@ -347,7 +352,7 @@ void mssql_connection::execute_no_result(const std::string &stmt)
   } while (retry-- && !(SQL_SUCCEEDED(ret) || SQL_NO_DATA));
   */
 
-  throw_error(ret, SQL_HANDLE_STMT, handle, stmt, "error on query execute");
+  throw_database_error(ret, SQL_HANDLE_STMT, handle, "mssql", stmt);
 }
 
 }

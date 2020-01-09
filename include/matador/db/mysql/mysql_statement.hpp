@@ -60,10 +60,6 @@ protected:
   detail::parameter_binder_impl *binder() const override;
 
 private:
-
-//  void bind_null(std::size_t index);
-
-private:
   MYSQL_STMT *stmt_ = nullptr;
 
   mysql_prepared_result *current_result = nullptr;

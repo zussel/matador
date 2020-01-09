@@ -31,7 +31,7 @@ mssql_statement::mssql_statement(mssql_connection &db, const matador::sql &stmt)
   , db_(db.handle())
 {
   if (!db_) {
-    throw_error("mssql", "no odbc connection established");
+    throw std::logic_error("mssql no odbc connection established");
   }
 
   create_statement();
@@ -65,7 +65,7 @@ detail::result_impl* mssql_statement::execute()
     // get data from map
     auto it = binder_->data_to_put_map().find(pid);
     if (it == binder_->data_to_put_map().end()) {
-      throw_error("mssql", "couldn't find data to put");
+      throw std::logic_error("mssql couldn't find data to put");
     }
     mssql_parameter_binder::value_t *val = it->second;
     // Todo
@@ -80,19 +80,19 @@ detail::result_impl* mssql_statement::execute()
       ret = SQLParamData(stmt_, &pid);
       if (!is_success(ret) && ret != SQL_NEED_DATA) {
         // error
-        throw_error(ret, SQL_HANDLE_STMT, stmt_, "execute->SQLParamData", str());
+        throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", str());
       } else if (ret == SQL_NEED_DATA) {
         // determine next column data pointer
         it = binder_->data_to_put_map().find(pid);
         if (it == binder_->data_to_put_map().end()) {
-          throw_error("mssql", "couldn't find data to put");
+          throw std::logic_error("mssql couldn't find data to put");
         }
         val = it->second;
       }
     }
   } else {
     // check result
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
+    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", str());
   }
 
   binder_->reset();
@@ -108,10 +108,10 @@ void mssql_statement::create_statement()
 {
   // create statement handle
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, db_, &stmt_);
-  throw_error(ret, SQL_HANDLE_DBC, db_, "mssql", "error on creating sql statement");
+  throw_database_error(ret, SQL_HANDLE_DBC, db_, "mssql");
 
   ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
-  throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
+  throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", str());
 
   binder_ = matador::make_unique<mssql_parameter_binder>(stmt_);
 }

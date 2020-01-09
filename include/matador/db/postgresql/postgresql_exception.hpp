@@ -14,33 +14,7 @@ namespace matador {
 
 namespace postgresql {
 
-#define THROW_POSTGRESQL_ERROR(db, source, msg)         \
-  do {                                                  \
-    std::stringstream what;                             \
-    what << msg;                                        \
-    throw postgresql_exception(db, source, what.str()); \
-  } while (false)
-
-void throw_error(const std::string &source, const std::string &sql = "");
-
-void throw_error(int ec, PGconn *db, const std::string &source, const std::string &sql = "");
-
-class postgresql_exception : public sql_exception
-{
-public:
-  postgresql_exception(const std::string &source, const std::string &what);
-  postgresql_exception(PGconn *db, const std::string &source, const std::string &what);
-
-  ~postgresql_exception() noexcept override = default;
-};
-
-class postgresql_stmt_exception : public sql_exception
-{
-public:
-  explicit postgresql_stmt_exception(const std::string &what);
-
-  ~postgresql_stmt_exception() noexcept override = default;
-};
+void throw_database_error(PGresult *res, PGconn *db, const std::string &source, const std::string &sql = "");
 
 }
 

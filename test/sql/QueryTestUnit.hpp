@@ -32,6 +32,7 @@ public:
   void test_quoted_literals();
   void test_bind_tablename();
   void test_describe();
+  void test_unknown_table();
   void test_identifier();
   void test_identifier_prepared();
   void test_create();
@@ -48,6 +49,7 @@ public:
   void test_query_select();
   void test_query_select_count();
   void test_query_select_columns();
+  void test_query_select_like();
   void test_select_limit();
   void test_update_limit();
   void test_prepared_statement();
@@ -64,6 +66,7 @@ protected:
 
 private:
   std::string db_;
+  std::string db_vendor_;
   matador::connection connection_;
   matador::time time_val_;
 };

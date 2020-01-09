@@ -67,7 +67,7 @@ bool mysql_prepared_result::prepare_fetch()
   if (ret == MYSQL_NO_DATA) {
     return false;
   } else if (ret == 1) {
-    throw_stmt_error(ret, stmt, "mysql", "");
+    throw_stmt_error(stmt, "mysql", "");
   }
   prepare_binding_ = false;
   return true;
@@ -430,8 +430,8 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].buffer_length = 0;
   bind_[index].is_null = &info_[index].is_null;
   bind_[index].length = &info_[index].length;
-  bind_[index].error = &info_[index].error;}
-
+  bind_[index].error = &info_[index].error;
 }
 
+}
 }

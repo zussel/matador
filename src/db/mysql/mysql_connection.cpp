@@ -49,7 +49,7 @@ void mysql_connection::open(const std::string &connection)
   std::smatch what;
 
   if (!std::regex_match(connection, what, DNS_RGX)) {
-    throw_error("mysql:connect", "invalid dns: " + connection);
+    throw std::logic_error("mysql:connect invalid dns: " + connection);
   }
 
   const std::string user = what[1].str();
@@ -65,14 +65,14 @@ void mysql_connection::open(const std::string &connection)
 
 
   if (!mysql_init(&mysql_)) {
-    throw_error("mysql", "initialization failed");
+    throw_error(&mysql_, "mysql");
   }
 
   if (!mysql_real_connect(&mysql_, host.c_str(), user.c_str(), !passwd.empty() ? passwd.c_str() : nullptr, db_.c_str(), port, nullptr, 0)) {
     // disconnect all handles
     mysql_close(&mysql_);
     // throw exception
-    throw_error(-1, &mysql_, "mysql");
+    throw_error(&mysql_, "mysql");
   }
   is_open_ = true;
 }
@@ -138,9 +138,14 @@ std::string mysql_connection::type() const
   return "mysql";
 }
 
-std::string mysql_connection::version() const
+std::string mysql_connection::client_version() const
 {
   return mysql_get_server_info(const_cast<MYSQL*>(&mysql_));
+}
+
+std::string mysql_connection::server_version() const
+{
+  return mysql_get_client_info();
 }
 
 bool mysql_connection::exists(const std::string &tablename)
@@ -175,7 +180,7 @@ std::vector<field> mysql_connection::describe(const std::string &table)
 mysql_result *mysql_connection::execute_internal(const std::string &sql)
 {
   if (mysql_query(&mysql_, sql.c_str())) {
-    throw mysql_exception(&mysql_, "mysql_query", sql);
+    throw_error(&mysql_, "mysql_query", sql);
   }
   return new mysql_result(&mysql_);
 }
