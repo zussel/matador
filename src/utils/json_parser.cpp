@@ -9,33 +9,34 @@
 namespace matador
 {
 json_parser::json_parser()
-  : generic_json_parser<json_parser>(this)
+  : generic_json_parser_ng<json_parser>(this)
 {}
 
-json json_parser::parse(std::istream &in)
+//json json_parser::parse(std::istream &in)
+//{
+//  // clear stack
+//  while (!state_stack_.empty()) {
+//    state_stack_.pop();
+//  }
+//
+//  // call parser
+////  parse_json(in);
+//
+//  // return json vale
+//  return value_;
+//}
+
+json json_parser::parse(const char *str)
 {
-  /*
-   * clear stack
-   */
   while (!state_stack_.empty()) {
     state_stack_.pop();
   }
 
-  /*
-   * call parser
-   */
-  parse_json(in);
+  parse_json(str);
 
-  /*
-   * return value
-   */
   return value_;
-}
-
-json json_parser::parse(const char *str)
-{
-  std::istringstream in(str);
-  return parse(in);
+//  std::istringstream in(str);
+//  return parse(in);
 }
 
 json json_parser::parse(std::string &str)
@@ -99,7 +100,7 @@ void json_parser::on_string(const std::string &value)
   }
 }
 
-void json_parser::on_number(generic_json_parser<json_parser>::real_t value)
+void json_parser::on_number(generic_json_parser_ng<json_parser>::real_t value)
 {
   if (state_stack_.top()->is_object()) {
     if (value.is_real) {

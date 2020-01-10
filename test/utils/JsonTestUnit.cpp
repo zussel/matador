@@ -131,9 +131,16 @@ void JsonTestUnit::test_parser()
 {
   json_parser parser;
 
-  json j = parser.parse(R"(           {      "text" :       "hello world!"   ,     "bool" : false   })");
+  json j = parser.parse(R"(           {      "text" :       "hello world!"   ,     "bool" : false   }   )");
 
   std::string result(R"({"bool": false, "text": "hello world!"})");
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_EQUAL(result, to_string(j));
+
+  j = parser.parse(R"(  { "real"  : -5.66667, "number"  :   -123456789 })");
+
+  result = R"({"number": -123456789, "real": -5.66667})";
 
   UNIT_ASSERT_FALSE(j.is_null());
   UNIT_ASSERT_EQUAL(result, to_string(j));

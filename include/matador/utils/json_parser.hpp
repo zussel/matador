@@ -6,7 +6,7 @@
 #define REACTOR_JSON_PARSER_HPP
 
 #include "matador/utils/json.hpp"
-#include "matador/utils/generic_json_parser.hpp"
+#include "matador/utils/generic_json_parser_ng.hpp"
 
 #include <stack>
 
@@ -20,7 +20,7 @@ namespace matador {
  * into a json serializable representation.
  * The result will be a oos::json_value serializable.
  */
-class json_parser : public generic_json_parser<json_parser>
+class json_parser : public generic_json_parser_ng<json_parser>
 {
 public:
   /**
@@ -39,7 +39,7 @@ public:
    * @param in The json input stream.
    * @return A json_value structure.
    */
-  json parse(std::istream &in);
+//  json parse(std::istream &in);
 
   /**
    * @brief parse a const character string.
@@ -74,7 +74,7 @@ public:
   void on_end_array();
 
   void on_string(const std::string &value);
-  void on_number(generic_json_parser<json_parser>::real_t value);
+  void on_number(generic_json_parser_ng<json_parser>::real_t value);
   void on_bool(bool value);
   void on_null();
   /// @endcond OOS_DEV //
@@ -84,7 +84,6 @@ private:
 
   std::string key_;
   std::stack<json*> state_stack_;
-  //std::stack<std::reference_wrapper<json>> state_stack_;
 };
 
 }
