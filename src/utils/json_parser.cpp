@@ -39,7 +39,7 @@ json json_parser::parse(const char *str)
 //  return parse(in);
 }
 
-json json_parser::parse(std::string &str)
+json json_parser::parse(const std::string &str)
 {
   return parse(str.c_str());
 }

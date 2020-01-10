@@ -63,7 +63,7 @@ public:
    * @param str The json std::string.
    * @return A json_value structure.
    */
-  json parse(std::string &str);
+  json parse(const std::string &str);
 
   /// @cond OOS_DEV //
   void on_begin_object();

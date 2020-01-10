@@ -125,7 +125,7 @@ generic_json_parser_ng<T>::parse_json_object()
 
   skip_whitespace();
 
-  bool has_next = false;
+  bool has_next;
   do {
 
     // get key and call handler callback
@@ -180,10 +180,10 @@ void generic_json_parser_ng<T>::parse_json_array()
 
   skip_whitespace();
 
-  bool has_next = false;
+  bool has_next;
   do {
 
-    c = skip_whitespace();
+    skip_whitespace();
 
     parse_json_value();
 
@@ -274,7 +274,7 @@ std::string generic_json_parser_ng<T>::parse_json_string()
 template<class T>
 typename generic_json_parser_ng<T>::real_t generic_json_parser_ng<T>::parse_json_number()
 {
-  char c = skip_whitespace();
+  skip_whitespace();
 
   // number could be an integer
   // or a floating point
@@ -297,7 +297,7 @@ typename generic_json_parser_ng<T>::real_t generic_json_parser_ng<T>::parse_json
 
   json_cursor = end;
 
-  c = end[0];
+  char c = end[0];
 
   switch (c) {
     case ' ':
