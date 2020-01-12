@@ -24,7 +24,8 @@ protected:
    */
   explicit generic_json_parser_ng(T *h) : handler_(h) {}
 
-  struct real_t {
+public:
+  struct number_t {
     double real = 0.0;
     long long integer = 0;
     bool is_real = false;
@@ -40,7 +41,7 @@ private:
   void parse_json_object();
   void parse_json_array();
   std::string parse_json_string();
-  real_t parse_json_number();
+  number_t parse_json_number();
   bool parse_json_bool();
   void parse_json_null();
   void parse_json_value();
@@ -272,13 +273,13 @@ std::string generic_json_parser_ng<T>::parse_json_string()
 }
 
 template<class T>
-typename generic_json_parser_ng<T>::real_t generic_json_parser_ng<T>::parse_json_number()
+typename generic_json_parser_ng<T>::number_t generic_json_parser_ng<T>::parse_json_number()
 {
   skip_whitespace();
 
   // number could be an integer
   // or a floating point
-  real_t value;
+  number_t value;
   char *end;
   value.integer = strtoll(json_cursor, &end, 10);
   if (errno == ERANGE) {

@@ -1,7 +1,10 @@
 #include "JsonTestUnit.hpp"
 
+#include "../person.hpp"
+
 #include "matador/utils/json.hpp"
 #include "matador/utils/json_parser.hpp"
+#include "matador/utils/json_mapper.hpp"
 
 using namespace matador;
 
@@ -10,6 +13,7 @@ JsonTestUnit::JsonTestUnit()
 {
   add_test("simple", std::bind(&JsonTestUnit::test_simple, this), "test simple json");
   add_test("parser", std::bind(&JsonTestUnit::test_parser, this), "test json parser");
+  add_test("mapper", std::bind(&JsonTestUnit::test_mapper, this), "test json mapper");
 }
 
 void JsonTestUnit::test_simple()
@@ -158,4 +162,17 @@ void JsonTestUnit::test_parser()
 
   UNIT_ASSERT_FALSE(j.is_null());
   UNIT_ASSERT_EQUAL(result, to_string(j));
+}
+
+void JsonTestUnit::test_mapper()
+{
+  json_mapper<person> mapper;
+
+  auto p = mapper.from_string(R"(  { "id":  5, "name": "george", "height": 185 } )");
+
+  UNIT_ASSERT_NOT_NULL(p);
+  UNIT_EXPECT_EQUAL(5UL, p->id());
+  UNIT_EXPECT_EQUAL("george", p->name());
+  UNIT_EXPECT_EQUAL(185U, p->height());
+  delete p;
 }

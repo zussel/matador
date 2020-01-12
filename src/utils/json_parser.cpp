@@ -100,7 +100,7 @@ void json_parser::on_string(const std::string &value)
   }
 }
 
-void json_parser::on_number(generic_json_parser_ng<json_parser>::real_t value)
+void json_parser::on_number(generic_json_parser_ng<json_parser>::number_t value)
 {
   if (state_stack_.top()->is_object()) {
     if (value.is_real) {
