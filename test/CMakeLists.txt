@@ -78,7 +78,7 @@ SET (TEST_ORM_SOURCES
   orm/PrimaryKeyTestUnit.hpp
 )
 
-SET (TEST_SOURCES test_matador.cpp)
+SET (TEST_SOURCES test_matador.cpp object/JsonObjectMapperTest.cpp object/JsonObjectMapperTest.hpp)
 
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
