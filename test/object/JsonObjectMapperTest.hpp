@@ -14,6 +14,7 @@ public:
   JsonObjectMapperTest();
 
   void test_simple();
+  void test_derived();
 };
 
 

@@ -31,11 +31,15 @@ public:
     bool is_real = false;
   };
 
+  const char* json_cursor() const;
+
 public:
   virtual ~generic_json_parser_ng() = default;
 
 protected:
   void parse_json(const char *json_str);
+
+  void sync_cursor(const char *cursor);
 
 private:
   void parse_json_object();
@@ -56,7 +60,7 @@ private:
   static const char *true_string;
   static const char *false_string;
 
-  const char *json_cursor = nullptr;
+  const char *json_cursor_ = nullptr;
 };
 
 template < class T > const char *generic_json_parser_ng<T>::null_string = "null";
@@ -67,7 +71,7 @@ template < class T >
 void
 generic_json_parser_ng<T>::parse_json(const char *json_str)
 {
-  json_cursor = json_str;
+  json_cursor_ = json_str;
 
   char c = skip_whitespace();
 
@@ -89,10 +93,22 @@ generic_json_parser_ng<T>::parse_json(const char *json_str)
   // skip white
   c = skip_whitespace();
 
-  // no characters after closing parenthesis are aloud
-  if (!is_eos(c)) {
-    throw json_exception("no characters are allowed after closed root node");
-  }
+  // no characters after closing parenthesis are allowed
+//  if (!is_eos(c)) {
+//    throw json_exception("no characters are allowed after closed root node");
+//  }
+}
+
+template<class T>
+const char *generic_json_parser_ng<T>::json_cursor() const
+{
+  return json_cursor_;
+}
+
+template<class T>
+void generic_json_parser_ng<T>::sync_cursor(const char *cursor)
+{
+  json_cursor_ = cursor;
 }
 
 template < class T >
@@ -112,10 +128,10 @@ generic_json_parser_ng<T>::parse_json_object()
     throw json_exception("character isn't serializable opening bracket");
   }
 
-  c = next_char();
-
   // call handler callback
   handler_->on_begin_object();
+
+  c = next_char();
 
   if (!is_eos(c) && c == '}') {
     next_char();
@@ -281,7 +297,7 @@ typename generic_json_parser_ng<T>::number_t generic_json_parser_ng<T>::parse_js
   // or a floating point
   number_t value;
   char *end;
-  value.integer = strtoll(json_cursor, &end, 10);
+  value.integer = strtoll(json_cursor_, &end, 10);
   if (errno == ERANGE) {
     throw json_exception("errno integer error");
   }
@@ -290,13 +306,13 @@ typename generic_json_parser_ng<T>::number_t generic_json_parser_ng<T>::parse_js
     // value is double
     value.is_real = true;
     value.integer = 0;
-    value.real = strtod(json_cursor, &end);
+    value.real = strtod(json_cursor_, &end);
     if (errno == ERANGE) {
       throw json_exception("errno double error");
     }
   }
 
-  json_cursor = end;
+  json_cursor_ = end;
 
   char c = end[0];
 
@@ -432,17 +448,17 @@ void generic_json_parser_ng<T>::parse_json_value()
 template<class T>
 char generic_json_parser_ng<T>::skip_whitespace()
 {
-  json_cursor = skip_ws(json_cursor);
-  return json_cursor[0];
+  json_cursor_ = skip_ws(json_cursor_);
+  return json_cursor_[0];
 }
 
 template<class T>
 char generic_json_parser_ng<T>::next_char()
 {
-  if (json_cursor == nullptr) {
+  if (json_cursor_ == nullptr) {
     throw json_exception("no current json string");
   }
-  return (++json_cursor)[0];
+  return (++json_cursor_)[0];
 }
 
 }
