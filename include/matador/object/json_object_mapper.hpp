@@ -71,6 +71,7 @@ private:
 template<class T>
 T* json_object_mapper<T>::from_string(const char *str)
 {
+  std::cout << "start parsing json [" << str << "]\n";
   object_ = matador::make_unique<T>();
   this->parse_json(str);
   return object_.release();
@@ -79,7 +80,9 @@ T* json_object_mapper<T>::from_string(const char *str)
 template<class T>
 void json_object_mapper<T>::on_begin_object()
 {
+  std::cout << "starting object [" << key_ << "]\n";
   object_key_ = key_;
+  key_.clear();
   object_cursor_ = this->json_cursor();
 }
 
@@ -87,11 +90,13 @@ template<class T>
 void json_object_mapper<T>::on_object_key(const std::string &key)
 {
   key_ = key;
+  std::cout << "read key [" << key_ << "]\n";
 }
 
 template<class T>
 void json_object_mapper<T>::on_end_object()
 {
+  std::cout << "finished object [" << object_key_ << "]\n";
   object_cursor_ = nullptr;
   object_key_.clear();
 }
@@ -111,23 +116,21 @@ void json_object_mapper<T>::on_end_array()
 template<class T>
 void json_object_mapper<T>::on_string(const std::string &value)
 {
-  if (!object_key_.empty()) {
-    return;
+  if (object_key_.empty()) {
+    value_.set(value);
   }
-  value_.str = value;
   access::serialize(*this, *object_);
 }
 
 template<class T>
 void json_object_mapper<T>::on_number(typename generic_json_parser_ng<json_object_mapper<T>>::number_t value)
 {
-  if (!object_key_.empty()) {
-    return;
-  }
-  if (value.is_real) {
-    value_.real = value.real;
-  } else {
-    value_.integer = value.integer;
+  if (object_key_.empty()) {
+    if (value.is_real) {
+      value_.set(value.real);
+    } else {
+      value_.set(value.integer);
+    }
   }
   access::serialize(*this, *object_);
 }
@@ -135,10 +138,9 @@ void json_object_mapper<T>::on_number(typename generic_json_parser_ng<json_objec
 template<class T>
 void json_object_mapper<T>::on_bool(bool value)
 {
-  if (!object_key_.empty()) {
-    return;
+  if (object_key_.empty()) {
+    value_.set(value);
   }
-  value_.boolean = value;
   access::serialize(*this, *object_);
 }
 
@@ -147,7 +149,7 @@ void json_object_mapper<T>::on_null()
 {
   if (object_cursor_ != nullptr) {
     return;
-  }
+  } y xc
 }
 
 template<class T>
@@ -163,6 +165,7 @@ void json_object_mapper<T>::serialize(const char *id, basic_identifier &pk)
   if (key_ != id) {
     return;
   }
+  std::cout << "key [" << id << "]: assigning value [" << value_ << "]\n";
   id_mapper_.set_identifier_value(pk, &value_);
 }
 

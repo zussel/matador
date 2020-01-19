@@ -8,6 +8,29 @@
 #include <cstring>
 
 namespace matador {
+
+std::ostream& operator<<(std::ostream &out, const value_t &val) {
+  switch (val.type) {
+    case value_t::INTEGER:
+      out << val.integer;
+      break;
+    case value_t::BOOL:
+      out << std::boolalpha << val.boolean;
+      break;
+    case value_t::REAL:
+      out << val.real;
+      break;
+    case value_t::STRING:
+      out << val.str;
+      break;
+    default:
+    case value_t::NULL_VAL:
+      out << "null";
+      break;
+  }
+  return out;
+}
+
 void json_identifier_mapper::set_identifier_value(basic_identifier &id, const value_t *val)
 {
   value_ = val;

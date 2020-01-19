@@ -6,6 +6,7 @@
 #define MATADOR_JSON_IDENTIFIER_MAPPER_HPP
 
 #include <utility>
+#include <ostream>
 
 #include "matador/utils/serializer.hpp"
 
@@ -34,8 +35,10 @@ struct value_t
   double real = 0.0;
   bool boolean = false;
   std::string str;
-
 };
+
+std::ostream& operator<<(std::ostream &out, const value_t &val);
+
 class json_identifier_mapper : public serializer
 {
 public:
