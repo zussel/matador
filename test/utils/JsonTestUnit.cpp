@@ -14,6 +14,7 @@ JsonTestUnit::JsonTestUnit()
   add_test("simple", std::bind(&JsonTestUnit::test_simple, this), "test simple json");
   add_test("parser", std::bind(&JsonTestUnit::test_parser, this), "test json parser");
   add_test("mapper", std::bind(&JsonTestUnit::test_mapper, this), "test json mapper");
+  add_test("failure", std::bind(&JsonTestUnit::test_failure, this), "test json mapping failures");
 }
 
 void JsonTestUnit::test_simple()
@@ -175,4 +176,13 @@ void JsonTestUnit::test_mapper()
   UNIT_EXPECT_EQUAL("george", p->name());
   UNIT_EXPECT_EQUAL(185U, p->height());
   delete p;
+}
+
+void JsonTestUnit::test_failure()
+{
+  json_mapper<person> mapper;
+
+  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(    )"), json_exception, "invalid stream");
+
+  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(    --)"), json_exception, "root must be either array '[]' or serializable '{}'");
 }

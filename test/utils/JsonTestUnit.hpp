@@ -11,6 +11,7 @@ public:
   void test_simple();
   void test_parser();
   void test_mapper();
+  void test_failure();
 };
 
 

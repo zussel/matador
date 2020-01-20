@@ -1,24 +1,17 @@
-#ifndef REACTOR_GENERIC_JSON_PARSER_HPP
-#define REACTOR_GENERIC_JSON_PARSER_HPP
+//
+// Created by sascha on 09.01.20.
+//
 
-#include <stdexcept>
-#include <iostream>
+#ifndef MATADOR_GENERIC_JSON_PARSER_HPP
+#define MATADOR_GENERIC_JSON_PARSER_HPP
+
+#include "matador/utils/string.hpp"
+#include "matador/utils/json_exception.hpp"
+
+#include <string>
 
 namespace matador {
 
-/**
- * @class generic_json_parser
- * @tparam T The concrete parser class
- *
- * @brief An generic json parser base class
- *
- * This class implements a generic json
- * parser base class. It parses an json
- * input stream and for each json value type
- * a method of parser class T is called.
- * The parser class decides what it will do
- * with the given information.
- */
 template < class T >
 class generic_json_parser
 {
@@ -31,34 +24,34 @@ protected:
    */
   explicit generic_json_parser(T *h) : handler_(h) {}
 
-  struct real_t {
+public:
+  struct number_t {
     double real = 0.0;
     long long integer = 0;
     bool is_real = false;
   };
 
+  const char* json_cursor() const;
+
 public:
   virtual ~generic_json_parser() = default;
 
 protected:
-  /**
-   * @brief Parse the json input stream.
-   *
-   * Parse the json input stream and call
-   * the appropiate callbacks interally.
-   *
-   * @param in The json input stream
-   */
-  void parse_json(std::istream &in);
+  void parse_json(const char *json_str);
+
+  void sync_cursor(const char *cursor);
 
 private:
-  void parse_json_object(std::istream &in);
-  void parse_json_array(std::istream &in);
-  std::string parse_json_string(std::istream &in);
-  real_t parse_json_number(std::istream &in);
-  bool parse_json_bool(std::istream &in);
-  void parse_json_null(std::istream &in);
-  void parse_json_value(std::istream &in);
+  void parse_json_object();
+  void parse_json_array();
+  std::string parse_json_string();
+  number_t parse_json_number();
+  bool parse_json_bool();
+  void parse_json_null();
+  void parse_json_value();
+
+  char skip_whitespace();
+  char next_char();
 
 private:
   T *handler_;
@@ -66,6 +59,8 @@ private:
   static const char *null_string;
   static const char *true_string;
   static const char *false_string;
+
+  const char *json_cursor_ = nullptr;
 };
 
 template < class T > const char *generic_json_parser<T>::null_string = "null";
@@ -74,200 +69,180 @@ template < class T > const char *generic_json_parser<T>::false_string = "false";
 
 template < class T >
 void
-generic_json_parser<T>::parse_json(std::istream &in)
+generic_json_parser<T>::parse_json(const char *json_str)
 {
-  // eat whitespace
-  in >> std::ws;
+  json_cursor_ = json_str;
 
-  char c = in.peek();
+  char c = skip_whitespace();
 
-  if (!in.good()) {
-    // TODO: throw json_error instead
-    throw std::logic_error("invalid stream");
+  if (is_eos(c)) {
+    throw json_exception("invalid stream");
   }
 
   switch (c) {
     case '{':
-      parse_json_object(in);
+      parse_json_object();
       break;
     case '[':
-      parse_json_array(in);
+      parse_json_array();
       break;
     default:
-      // TODO: throw json_error instead
-      throw std::logic_error("root must be either array '[]' or serializable '{}'");
+      throw json_exception("root must be either array '[]' or serializable '{}'");
   }
 
   // skip white
-  in >> std::ws;
+  c = skip_whitespace();
 
-  // no characters after closing parenthesis are aloud
-  if (!in.eof()) {
-    // TODO: throw json_error instead
-    throw std::logic_error("no characters are allowed after closed root node");
-  }
+  // no characters after closing parenthesis are allowed
+//  if (!is_eos(c)) {
+//    throw json_exception("no characters are allowed after closed root node");
+//  }
+}
+
+template<class T>
+const char *generic_json_parser<T>::json_cursor() const
+{
+  return json_cursor_;
+}
+
+template<class T>
+void generic_json_parser<T>::sync_cursor(const char *cursor)
+{
+  json_cursor_ = cursor;
 }
 
 template < class T >
 void
-generic_json_parser<T>::parse_json_object(std::istream &in)
+generic_json_parser<T>::parse_json_object()
 {
-  in >> std::ws;
+  char c = skip_whitespace();
 
   /*
    * parse '{'
-   *
    * parse string (key)
-   *
    * parse ':'
-   *
    * parse value (serializable, string, array, number, bool or null)
-   *
    * parse '}'
    */
-  char c(0);
-
-  c = in.get();
-  if (in.good() && c != '{') {
-    in.putback(c);
-    // TODO: throw json_error instead
-    throw std::logic_error("character isn't serializable opening bracket");
+  if (!is_eos(c) && c != '{') {
+    throw json_exception("character isn't serializable opening bracket");
   }
 
-  /*
-   * call handler callback
-   */
+  // call handler callback
   handler_->on_begin_object();
 
-  c = in.get();
-  if (in.good() && c == '}') {
-    /*
-     * call handler callback
-     */
+  c = next_char();
+
+  if (!is_eos(c) && c == '}') {
+    next_char();
+    // call handler callback
     handler_->on_end_object();
-    // empty serializable
     return;
   }
 
-  // skip white
-  in >> std::ws;
+  skip_whitespace();
 
+  bool has_next;
   do {
 
-    /*
-     * call handler callback
-     */
-    handler_->on_object_key(parse_json_string(in));
+    // get key and call handler callback
+    handler_->on_object_key(parse_json_string());
 
-    // skip ws
-    in >> std::ws;
-
+    c = skip_whitespace();
     // read colon
-    c = in.get();
-    if (in.good() && c != ':') {
-      // TODO: throw json_error instead
-      throw std::logic_error("character isn't colon");
+    if (!is_eos(c) && c != ':') {
+      throw json_exception("character isn't colon");
     }
 
-    parse_json_value(in);
+    next_char();
 
-    // skip white
-    in >> std::ws;
+    parse_json_value();
 
-    c = in.get();
-  } while (in && in.good() && c == ',');
+    c = skip_whitespace();
 
-  if (c != '}') {
-    // TODO: throw json_error instead
-    throw std::logic_error("not a valid serializable closing bracket");
+    if (c == ',') {
+      has_next = true;
+      next_char();
+    } else {
+      has_next = false;
+    }
+  } while (!is_eos(c) && has_next);
+
+  if (!is_eos(c) && c != '}') {
+    throw json_exception("not a valid serializable closing bracket");
   }
+  next_char();
 
-  /*
-   * call handler callback
-   */
+  // call handler callback
   handler_->on_end_object();
 }
 
-template < class T >
-void
-generic_json_parser<T>::parse_json_array(std::istream &in)
+template<class T>
+void generic_json_parser<T>::parse_json_array()
 {
-  // skip white
-  in >> std::ws;
+  char c = skip_whitespace();
 
-  char c(0);
-
-  c = in.get();
-  if (in.good() && c != '[') {
-    in.putback(c);
-    // TODO: throw json_error instead
-    throw std::logic_error("not an array");
+  if (!is_eos(c) && c != '[') {
+    throw json_exception("not an array");
   }
 
   handler_->on_begin_array();
 
-  c = in.get();
-  if (in.good() && c == ']') {
+  c = next_char();
+  if (!is_eos(c) && c == ']') {
     handler_->on_end_array();
     // empty array
     return;
   }
 
-  // skip white
-  in >> std::ws;
+  skip_whitespace();
 
+  bool has_next;
   do {
 
-    // skip ws
-    in >> std::ws;
+    skip_whitespace();
 
-    parse_json_value(in);
+    parse_json_value();
 
-    // skip white
-    in >> std::ws;
+    c = skip_whitespace();
 
-    c = in.get();
-  } while (in && in.good() && c == ',');
+    if (c == ',') {
+      has_next = true;
+      next_char();
+    } else {
+      has_next = false;
+    }
+  } while (!is_eos(c) && has_next);
 
   if (c != ']') {
-    // TODO: throw json_error instead
-    throw std::logic_error("not a valid array closing bracket");
+    throw json_exception("not a valid array closing bracket");
   }
+  next_char();
 
   handler_->on_end_array();
 }
 
-template < class T >
-std::string
-generic_json_parser<T>::parse_json_string(std::istream &in)
+template<class T>
+std::string generic_json_parser<T>::parse_json_string()
 {
-  // skip white
-  in >> std::ws;
+  char c = skip_whitespace();
 
   // parse string
-  char c = in.get();
-  if (in.good() && c != '"') {
-    // invalid key
-    in.putback(' ');
-    in.putback(c);
-    // TODO: throw json_error instead
-    throw std::logic_error("invalid json character");
+  if (!is_eos(c) && c != '"') {
+    throw json_exception("invalid json character");
   }
-
+  
   std::string value;
   // read until next '"' or eof of stream
-
-  while (in && in.good()) {
-    c = in.get();
-    if (!in.good()) {
-      continue;
-    }
+  c = next_char();
+  while (!is_eos(c)) {
 
     if (c == '"') {
       // read closing double quote
+      next_char();
       break;
     } else if (c == '\\') {
-      c = in.get();
+      c = next_char();
       switch (c) {
         case '"':
         case '\\':
@@ -294,54 +269,53 @@ generic_json_parser<T>::parse_json_string(std::istream &in)
           value.push_back('\\');
           value.push_back('u');
           for (int i = 0; i < 4; ++i) {
-            c = in.get();
+            c = next_char();
             if (isxdigit(c)) {
               value.push_back(c);
             } else {
-              // TODO: throw json_error instead
-              throw std::logic_error("invalid json character");
+              throw json_exception("invalid json character");
             }
           }
           break;
         default:
-          // TODO: throw json_error instead
-          throw std::logic_error("invalid json character");
+          throw json_exception("invalid json character");
       }
     } else {
       value.push_back(c);
     }
+    c = next_char();
   }
   return value;
 }
 
-template < class T >
-typename generic_json_parser<T>::real_t
-generic_json_parser<T>::parse_json_number(std::istream &in)
+template<class T>
+typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_number()
 {
-  // skip white
-  in >> std::ws;
+  skip_whitespace();
 
   // number could be an integer
   // or a floating point
-  real_t value;
-  in >> value.integer;
-
-  char c = in.peek();
-
-  if (c == '.') {
-    // it's a double
-    value.is_real = true;
-    double real;
-    in >> real;
-
-    if (value.integer < 0) {
-      value.real = value.integer - real;
-    } else {
-      value.real = value.integer + real;
-    }
-    value.integer = 0;
-    c = in.peek();
+  number_t value;
+  char *end;
+  value.integer = strtoll(json_cursor_, &end, 10);
+  if (errno == ERANGE) {
+    throw json_exception("errno integer error");
   }
+
+  if (!is_eos(end[0]) && end[0] == '.') {
+    // value is double
+    value.is_real = true;
+    value.integer = 0;
+    value.real = strtod(json_cursor_, &end);
+    if (errno == ERANGE) {
+      throw json_exception("errno double error");
+    }
+  }
+
+  json_cursor_ = end;
+
+  char c = end[0];
+
   switch (c) {
     case ' ':
     case ',':
@@ -349,121 +323,99 @@ generic_json_parser<T>::parse_json_number(std::istream &in)
     case '}':
       break;
     default:
-      // TODO: throw json_error instead
-      throw std::logic_error("invalid json character");
+      throw json_exception("invalid json character");
   }
   return value;
 }
 
-template < class T >
-bool
-generic_json_parser<T>::parse_json_bool(std::istream &in)
+template<class T>
+bool generic_json_parser<T>::parse_json_bool()
 {
-  // skip white
-  in >> std::ws;
+  char c = skip_whitespace();
 
-  // parse string
-  char c = in.get();
-
-  if (!in.good()) {
-    // TODO: throw json_error instead
-    throw std::logic_error("input stream isn't good");
+  if (is_eos(c)) {
+    throw json_exception("input stream isn't good");
   }
 
   int i = 1;
   if (c == 't') {
     // check for "true"
-    while (in && i < 4) {
-      c = in.get();
-      if (!in.good()) {
-        // TODO: throw json_error instead
-        throw std::logic_error("input stream isn't good");
+    while (i < 4) {
+      c = next_char();
+      if (is_eos(c)) {
+        throw json_exception("input stream isn't good");
       }
       if (generic_json_parser<T>::true_string[i++] != c) {
-        // TODO: throw json_error instead
-        throw std::logic_error("invalid bool character");
+        throw json_exception("invalid bool character");
       }
     }
+    next_char();
     return true;
 
   } else if (c == 'f') {
     // check for "false"
-    while (in && i < 5) {
-      c = in.get();
-      if (!in.good()) {
-        // TODO: throw json_error instead
-        throw std::logic_error("input stream isn't good");
+    while (i < 5) {
+      c = next_char();
+      if (is_eos(c)) {
+        throw json_exception("input stream isn't good");
       }
       if (generic_json_parser<T>::false_string[i++] != c) {
-        // TODO: throw json_error instead
-        throw std::logic_error("invalid bool character");
+        throw json_exception("invalid bool character");
       }
     }
+    next_char();
     return false;
   } else {
-    // TODO: throw json_error instead
-    throw std::logic_error("invalid bool character");
+    throw json_exception("invalid bool character");
   }
 }
 
-template < class T >
-void
-generic_json_parser<T>::parse_json_null(std::istream &in)
+template<class T>
+void generic_json_parser<T>::parse_json_null()
 {
-  // skip white
-  in >> std::ws;
+  char c = skip_whitespace();
 
-  // parse string
-  char c = in.get();
-
-  if (!in.good()) {
-    // TODO: throw json_error instead
-    throw std::logic_error("input stream isn't good");
+  if (is_eos(c)) {
+    throw json_exception("input stream isn't good");
   }
 
   int i = 1;
   if (c == 'n') {
     // check for "null"
-    while (in && i < 4) {
-      c = in.get();
-      if (!in.good()) {
-        // TODO: throw json_error instead
-        throw std::logic_error("input stream isn't good");
+    while (i < 4) {
+      c = next_char();
+      if (is_eos(c)) {
+        throw json_exception("input stream isn't good");
       }
       if (generic_json_parser<T>::null_string[i++] != c) {
-        // TODO: throw json_error instead
-        throw std::logic_error("invalid bool character");
+        throw json_exception("invalid bool character");
       }
     }
+    next_char();
   } else {
-    // TODO: throw json_error instead
     throw std::logic_error("invalid bool character");
   }
 }
 
-template < class T >
-void
-generic_json_parser<T>::parse_json_value(std::istream &in)
+template<class T>
+void generic_json_parser<T>::parse_json_value()
 {
-  // skip ws
-  in >> std::ws;
-
   // parse value of key
-  char c = in.peek();
+  char c = skip_whitespace();
 
-  if (!in.good()) {
-    throw std::logic_error("invalid stream");
+  if (is_eos(c)) {
+    throw json_exception("invalid stream");
   }
 
   switch (c) {
     case '{':
-      parse_json_object(in);
+      parse_json_object();
       break;
     case '[':
-      parse_json_array(in);
+      parse_json_array();
       break;
     case '"':
-      handler_->on_string(parse_json_string(in));
+      handler_->on_string(parse_json_string());
       break;
     case '-':
     case '0':
@@ -477,21 +429,38 @@ generic_json_parser<T>::parse_json_value(std::istream &in)
     case '8':
     case '9':
     case '.':
-      handler_->on_number(parse_json_number(in));
+      handler_->on_number(parse_json_number());
       break;
     case 't':
     case 'f':
-      handler_->on_bool(parse_json_bool(in));
+      handler_->on_bool(parse_json_bool());
       break;
     case 'n':
-      parse_json_null(in);
+      parse_json_null();
       handler_->on_null();
       break;
     default:
-      // TODO: throw json_error instead
-      throw std::logic_error("unknown json type");
+      throw json_exception("unknown json type");
   }
+
+}
+
+template<class T>
+char generic_json_parser<T>::skip_whitespace()
+{
+  json_cursor_ = skip_ws(json_cursor_);
+  return json_cursor_[0];
+}
+
+template<class T>
+char generic_json_parser<T>::next_char()
+{
+  if (json_cursor_ == nullptr) {
+    throw json_exception("no current json string");
+  }
+  return (++json_cursor_)[0];
 }
 
 }
-#endif //REACTOR_GENERIC_JSON_PARSER_HPP
+
+#endif //MATADOR_GENERIC_JSON_PARSER_HPP

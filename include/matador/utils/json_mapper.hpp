@@ -13,10 +13,10 @@
 namespace matador {
 
 template < class T >
-class json_mapper : public generic_json_parser_ng<json_mapper<T>>
+class json_mapper : public generic_json_parser<json_mapper<T>>
 {
 public:
-  json_mapper() : generic_json_parser_ng<json_mapper<T>>(this) {}
+  json_mapper() : generic_json_parser<json_mapper<T>>(this) {}
 
   T* from_string(const char *str);
 
@@ -29,7 +29,7 @@ public:
   void on_end_array();
 
   void on_string(const std::string &value);
-  void on_number(typename generic_json_parser_ng<json_mapper<T>>::number_t value);
+  void on_number(typename generic_json_parser<json_mapper<T>>::number_t value);
   void on_bool(bool value);
   void on_null();
   /// @endcond OOS_DEV //
@@ -139,7 +139,7 @@ void json_mapper<T>::on_string(const std::string &value)
 }
 
 template<class T>
-void json_mapper<T>::on_number(typename generic_json_parser_ng<json_mapper<T>>::number_t value)
+void json_mapper<T>::on_number(typename generic_json_parser<json_mapper<T>>::number_t value)
 {
   if (value.is_real) {
     value_.real = value.real;

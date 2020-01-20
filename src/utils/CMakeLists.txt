@@ -33,7 +33,7 @@ SET(HEADER
   ../../include/matador/utils/json.hpp
   ../../include/matador/utils/json_exception.hpp
   ../../include/matador/utils/json_parser.hpp
-  ../../include/matador/utils/generic_json_parser.hpp
+    ../../include/matador/utils/generic_json_parser_cstring.hpp
   ../../include/matador/utils/string.hpp
   ../../include/matador/utils/strptime.hpp
   ../../include/matador/utils/enable_if.hpp
@@ -51,7 +51,7 @@ SET(HEADER
   ../../include/matador/utils/memory.hpp
   ../../include/matador/utils/is_varchar.hpp
   ../../include/matador/utils/varchar.hpp
-  ../../include/matador/utils/generic_json_parser_ng.hpp
+    ../../include/matador/utils/generic_json_parser.hpp
     ../../include/matador/utils/json_mapper.hpp ../../include/matador/utils/json_identifier_mapper.hpp)
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
