@@ -34,12 +34,14 @@ void JsonObjectMapperTest::test_derived()
   std::cout << "\n";
   json_object_mapper<citizen> mapper;
 
-  std::unique_ptr<citizen> p(mapper.from_string(R"(  { "id":  5, "name": "george", "height": 185, "address": { "id": 4, "street": "east-street", "city": "east-city" } } )"));
+  std::unique_ptr<citizen> p(mapper.from_string(R"(  { "id":  5, "name": "george", "height": 185, "birthdate": "2001-11-27", "address": { "id": 4, "street": "east-street", "city": "east-city" } } )"));
 
+  date birthday(27, 11, 2001);
   UNIT_ASSERT_NOT_NULL(p.get());
   UNIT_EXPECT_EQUAL(5UL, p->id());
   UNIT_EXPECT_EQUAL("george", p->name());
   UNIT_EXPECT_EQUAL(185U, p->height());
+  UNIT_EXPECT_EQUAL(birthday, p->birthdate());
 
   UNIT_ASSERT_NOT_NULL(p->address_.get());
 

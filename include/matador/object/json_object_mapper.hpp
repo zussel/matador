@@ -89,6 +89,10 @@ void json_object_mapper<T>::on_begin_object()
 template<class T>
 void json_object_mapper<T>::on_object_key(const std::string &key)
 {
+  if (!object_key_.empty()) {
+    std::cout << "skipping setting of key [" << key << "]\n";
+    return;
+  }
   key_ = key;
   std::cout << "read key [" << key_ << "]\n";
 }
@@ -149,7 +153,7 @@ void json_object_mapper<T>::on_null()
 {
   if (object_cursor_ != nullptr) {
     return;
-  } y xc
+  }
 }
 
 template<class T>
@@ -204,7 +208,7 @@ void json_object_mapper<T>::serialize(const char *id, date &to)
   if (key_ != id) {
     return;
   }
-  to.set(value_.str.c_str());
+  to.set(value_.str.c_str(), "%Y-%m-%d");
 }
 
 template<class T>
