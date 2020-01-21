@@ -82,6 +82,8 @@ struct json
 
   json(std::initializer_list<json> l);
 
+  json(nullptr_t n);
+
   explicit json(json_type t);
 
   ~json();

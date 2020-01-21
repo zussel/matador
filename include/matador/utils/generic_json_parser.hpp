@@ -5,10 +5,26 @@
 #ifndef MATADOR_GENERIC_JSON_PARSER_HPP
 #define MATADOR_GENERIC_JSON_PARSER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_UTILS_API __declspec(dllexport)
+    #define EXPIMP_UTILS_TEMPLATE
+  #else
+    #define OOS_UTILS_API __declspec(dllimport)
+    #define EXPIMP_UTILS_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_UTILS_API
+#endif
+
 #include "matador/utils/string.hpp"
 #include "matador/utils/json_exception.hpp"
 
 #include <string>
+#include <cstring>
+#include <climits>
+#include <cmath>
 
 namespace matador {
 
@@ -37,7 +53,7 @@ public:
   virtual ~generic_json_parser() = default;
 
 protected:
-  void parse_json(const char *json_str);
+  void parse_json(const char *json_str, bool is_root = true);
 
   void sync_cursor(const char *cursor);
 
@@ -52,6 +68,9 @@ private:
 
   char skip_whitespace();
   char next_char();
+  char current_char() const;
+
+  void compare_string(const char *to_compare, size_t len);
 
 private:
   T *handler_;
@@ -69,7 +88,7 @@ template < class T > const char *generic_json_parser<T>::false_string = "false";
 
 template < class T >
 void
-generic_json_parser<T>::parse_json(const char *json_str)
+generic_json_parser<T>::parse_json(const char *json_str, bool is_root)
 {
   json_cursor_ = json_str;
 
@@ -94,9 +113,9 @@ generic_json_parser<T>::parse_json(const char *json_str)
   c = skip_whitespace();
 
   // no characters after closing parenthesis are allowed
-//  if (!is_eos(c)) {
-//    throw json_exception("no characters are allowed after closed root node");
-//  }
+  if (is_root && !is_eos(c)) {
+    throw json_exception("no characters are allowed after closed root node");
+  }
 }
 
 template<class T>
@@ -115,8 +134,6 @@ template < class T >
 void
 generic_json_parser<T>::parse_json_object()
 {
-  char c = skip_whitespace();
-
   /*
    * parse '{'
    * parse string (key)
@@ -124,14 +141,10 @@ generic_json_parser<T>::parse_json_object()
    * parse value (serializable, string, array, number, bool or null)
    * parse '}'
    */
-  if (!is_eos(c) && c != '{') {
-    throw json_exception("character isn't serializable opening bracket");
-  }
-
   // call handler callback
   handler_->on_begin_object();
 
-  c = next_char();
+  char c = next_char();
 
   if (!is_eos(c) && c == '}') {
     next_char();
@@ -168,27 +181,25 @@ generic_json_parser<T>::parse_json_object()
     }
   } while (!is_eos(c) && has_next);
 
-  if (!is_eos(c) && c != '}') {
-    throw json_exception("not a valid serializable closing bracket");
+  c = skip_whitespace();
+
+  if (is_eos(c)) {
+    throw json_exception("unexpected end of string");
+  } else if (c != '}') {
+    throw json_exception("not a valid object closing bracket");
   }
+
   next_char();
 
-  // call handler callback
   handler_->on_end_object();
 }
 
 template<class T>
 void generic_json_parser<T>::parse_json_array()
 {
-  char c = skip_whitespace();
-
-  if (!is_eos(c) && c != '[') {
-    throw json_exception("not an array");
-  }
-
   handler_->on_begin_array();
 
-  c = next_char();
+  char c = next_char();
   if (!is_eos(c) && c == ']') {
     handler_->on_end_array();
     // empty array
@@ -199,8 +210,6 @@ void generic_json_parser<T>::parse_json_array()
 
   bool has_next;
   do {
-
-    skip_whitespace();
 
     parse_json_value();
 
@@ -214,9 +223,14 @@ void generic_json_parser<T>::parse_json_array()
     }
   } while (!is_eos(c) && has_next);
 
-  if (c != ']') {
+  c = skip_whitespace();
+
+  if (is_eos(c)) {
+    throw json_exception("unexpected end of string");
+  } else if (c != ']') {
     throw json_exception("not a valid array closing bracket");
   }
+
   next_char();
 
   handler_->on_end_array();
@@ -229,7 +243,7 @@ std::string generic_json_parser<T>::parse_json_string()
 
   // parse string
   if (!is_eos(c) && c != '"') {
-    throw json_exception("invalid json character");
+    throw json_exception("expected string opening quotes");
   }
   
   std::string value;
@@ -273,12 +287,12 @@ std::string generic_json_parser<T>::parse_json_string()
             if (isxdigit(c)) {
               value.push_back(c);
             } else {
-              throw json_exception("invalid json character");
+              throw json_exception("invalid json string hex character");
             }
           }
           break;
         default:
-          throw json_exception("invalid json character");
+          throw json_exception("invalid json string character");
       }
     } else {
       value.push_back(c);
@@ -288,17 +302,18 @@ std::string generic_json_parser<T>::parse_json_string()
   return value;
 }
 
+OOS_UTILS_API bool is_error(const char *start, const char *end, long long value);
+OOS_UTILS_API bool is_error(const char *start, const char *end, double value);
+
 template<class T>
 typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_number()
 {
-  skip_whitespace();
-
   // number could be an integer
   // or a floating point
   number_t value;
   char *end;
   value.integer = strtoll(json_cursor_, &end, 10);
-  if (errno == ERANGE) {
+  if (is_error(json_cursor_, end, value.integer)) {
     throw json_exception("errno integer error");
   }
 
@@ -307,7 +322,7 @@ typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_num
     value.is_real = true;
     value.integer = 0;
     value.real = strtod(json_cursor_, &end);
-    if (errno == ERANGE) {
+    if (is_error(json_cursor_, end, value.real)) {
       throw json_exception("errno double error");
     }
   }
@@ -331,38 +346,16 @@ typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_num
 template<class T>
 bool generic_json_parser<T>::parse_json_bool()
 {
-  char c = skip_whitespace();
+  char c = current_char();
 
-  if (is_eos(c)) {
-    throw json_exception("input stream isn't good");
-  }
-
-  int i = 1;
   if (c == 't') {
     // check for "true"
-    while (i < 4) {
-      c = next_char();
-      if (is_eos(c)) {
-        throw json_exception("input stream isn't good");
-      }
-      if (generic_json_parser<T>::true_string[i++] != c) {
-        throw json_exception("invalid bool character");
-      }
-    }
+    compare_string(generic_json_parser<T>::true_string, 4);
     next_char();
     return true;
-
   } else if (c == 'f') {
     // check for "false"
-    while (i < 5) {
-      c = next_char();
-      if (is_eos(c)) {
-        throw json_exception("input stream isn't good");
-      }
-      if (generic_json_parser<T>::false_string[i++] != c) {
-        throw json_exception("invalid bool character");
-      }
-    }
+    compare_string(generic_json_parser<T>::false_string, 5);
     next_char();
     return false;
   } else {
@@ -371,13 +364,25 @@ bool generic_json_parser<T>::parse_json_bool()
 }
 
 template<class T>
+void generic_json_parser<T>::compare_string(const char *to_compare, size_t len)
+{
+  size_t i{1};
+  char c{};
+  while (i < len) {
+    c = next_char();
+    if (is_eos(c)) {
+      throw json_exception("unexpected end of string");
+    }
+    if (to_compare[i++] != c) {
+      throw json_exception("invalid character for bool value string");
+    }
+  }
+}
+
+template<class T>
 void generic_json_parser<T>::parse_json_null()
 {
-  char c = skip_whitespace();
-
-  if (is_eos(c)) {
-    throw json_exception("input stream isn't good");
-  }
+  char c = current_char();
 
   int i = 1;
   if (c == 'n') {
@@ -385,10 +390,10 @@ void generic_json_parser<T>::parse_json_null()
     while (i < 4) {
       c = next_char();
       if (is_eos(c)) {
-        throw json_exception("input stream isn't good");
+        throw json_exception("unexpected end of string");
       }
       if (generic_json_parser<T>::null_string[i++] != c) {
-        throw json_exception("invalid bool character");
+        throw json_exception("invalid null character");
       }
     }
     next_char();
@@ -459,6 +464,12 @@ char generic_json_parser<T>::next_char()
     throw json_exception("no current json string");
   }
   return (++json_cursor_)[0];
+}
+
+template<class T>
+char generic_json_parser<T>::current_char() const
+{
+  return json_cursor_[0];
 }
 
 }

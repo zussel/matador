@@ -21,7 +21,7 @@ class json_object_mapper : public generic_json_parser<json_object_mapper<T>>
 public:
   json_object_mapper() : generic_json_parser<json_object_mapper<T>>(this) {}
 
-  T* from_string(const char *str);
+  T* from_string(const char *str, bool is_root = true);
 
   /// @cond OOS_DEV //
   void on_begin_object();
@@ -65,11 +65,11 @@ private:
 };
 
 template<class T>
-T* json_object_mapper<T>::from_string(const char *str)
+T* json_object_mapper<T>::from_string(const char *str, bool is_root)
 {
   std::cout << "start parsing json [" << str << "]\n";
   object_ = matador::make_unique<T>();
-  this->parse_json(str);
+  this->parse_json(str, is_root);
   return object_.release();
 }
 
@@ -216,7 +216,7 @@ void json_object_mapper<T>::serialize(const char *id, belongs_to<Value> &x, casc
   }
 
   json_object_mapper<Value> mapper;
-  x = mapper.from_string(object_cursor_);
+  x = mapper.from_string(object_cursor_, false);
   this->sync_cursor(mapper.json_cursor());
 }
 
@@ -229,7 +229,7 @@ void json_object_mapper<T>::serialize(const char *id, has_one<Value> &x, cascade
   }
 
   json_object_mapper<Value> mapper;
-  x = mapper.from_string(object_cursor_);
+  x = mapper.from_string(object_cursor_, false);
   this->sync_cursor(mapper.json_cursor());
 }
 
