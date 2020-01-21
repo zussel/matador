@@ -19,7 +19,7 @@ template < class T >
 class json_object_mapper : public generic_json_parser<json_object_mapper<T>>
 {
 public:
-  json_object_mapper() : generic_json_parser<json_object_mapper<T>>(this) {}
+  json_object_mapper() = default;
 
   T* from_string(const char *str, bool is_root = true);
 

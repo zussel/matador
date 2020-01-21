@@ -38,7 +38,7 @@ protected:
    *
    * @param h The concrete parser.
    */
-  explicit generic_json_parser(T *h) : handler_(h) {}
+  generic_json_parser() = default;
 
 public:
   struct number_t {
@@ -58,7 +58,7 @@ protected:
   void sync_cursor(const char *cursor);
 
 private:
-  void parse_json_object();
+  void parse_json_object(bool is_root);
   void parse_json_array();
   std::string parse_json_string();
   number_t parse_json_number();
@@ -73,8 +73,6 @@ private:
   void compare_string(const char *to_compare, size_t len);
 
 private:
-  T *handler_;
-
   static const char *null_string;
   static const char *true_string;
   static const char *false_string;
@@ -100,7 +98,7 @@ generic_json_parser<T>::parse_json(const char *json_str, bool is_root)
 
   switch (c) {
     case '{':
-      parse_json_object();
+      parse_json_object(is_root);
       break;
     case '[':
       parse_json_array();
@@ -132,7 +130,7 @@ void generic_json_parser<T>::sync_cursor(const char *cursor)
 
 template < class T >
 void
-generic_json_parser<T>::parse_json_object()
+generic_json_parser<T>::parse_json_object(bool is_root)
 {
   /*
    * parse '{'
@@ -142,14 +140,14 @@ generic_json_parser<T>::parse_json_object()
    * parse '}'
    */
   // call handler callback
-  handler_->on_begin_object();
+  static_cast<T*>(this)->on_begin_object();
 
   char c = next_char();
 
   if (!is_eos(c) && c == '}') {
     next_char();
     // call handler callback
-    handler_->on_end_object();
+    static_cast<T*>(this)->on_end_object();
     return;
   }
 
@@ -159,7 +157,7 @@ generic_json_parser<T>::parse_json_object()
   do {
 
     // get key and call handler callback
-    handler_->on_object_key(parse_json_string());
+    static_cast<T*>(this)->on_object_key(parse_json_string());
 
     c = skip_whitespace();
     // read colon
@@ -183,7 +181,7 @@ generic_json_parser<T>::parse_json_object()
 
   c = skip_whitespace();
 
-  if (is_eos(c)) {
+  if (!is_root && is_eos(c)) {
     throw json_exception("unexpected end of string");
   } else if (c != '}') {
     throw json_exception("not a valid object closing bracket");
@@ -191,17 +189,17 @@ generic_json_parser<T>::parse_json_object()
 
   next_char();
 
-  handler_->on_end_object();
+  static_cast<T*>(this)->on_end_object();
 }
 
 template<class T>
 void generic_json_parser<T>::parse_json_array()
 {
-  handler_->on_begin_array();
+  static_cast<T*>(this)->on_begin_array();
 
   char c = next_char();
   if (!is_eos(c) && c == ']') {
-    handler_->on_end_array();
+    static_cast<T*>(this)->on_end_array();
     // empty array
     return;
   }
@@ -233,7 +231,7 @@ void generic_json_parser<T>::parse_json_array()
 
   next_char();
 
-  handler_->on_end_array();
+  static_cast<T*>(this)->on_end_array();
 }
 
 template<class T>
@@ -414,13 +412,13 @@ void generic_json_parser<T>::parse_json_value()
 
   switch (c) {
     case '{':
-      parse_json_object();
+      parse_json_object(false);
       break;
     case '[':
       parse_json_array();
       break;
     case '"':
-      handler_->on_string(parse_json_string());
+      static_cast<T*>(this)->on_string(parse_json_string());
       break;
     case '-':
     case '0':
@@ -434,15 +432,15 @@ void generic_json_parser<T>::parse_json_value()
     case '8':
     case '9':
     case '.':
-      handler_->on_number(parse_json_number());
+      static_cast<T*>(this)->on_number(parse_json_number());
       break;
     case 't':
     case 'f':
-      handler_->on_bool(parse_json_bool());
+      static_cast<T*>(this)->on_bool(parse_json_bool());
       break;
     case 'n':
       parse_json_null();
-      handler_->on_null();
+      static_cast<T*>(this)->on_null();
       break;
     default:
       throw json_exception("unknown json type");

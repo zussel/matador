@@ -8,9 +8,6 @@
 
 namespace matador
 {
-json_parser::json_parser()
-  : generic_json_parser<json_parser>(this)
-{}
 
 //json json_parser::parse(std::istream &in)
 //{

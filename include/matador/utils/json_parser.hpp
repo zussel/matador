@@ -26,8 +26,7 @@ public:
   /**
    * Creates a new json_parser instance
    */
-  json_parser();
-  ~json_parser() override = default;
+  json_parser() = default;
 
   /**
    * @brief parse an input stream.
