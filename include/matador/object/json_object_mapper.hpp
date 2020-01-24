@@ -235,8 +235,7 @@ void json_object_mapper<T>::serialize(const char *id, has_one<Value> &x, cascade
 
 template<class T>
 template<class V>
-void json_object_mapper<T>::serialize(const char *id, V &to,
-                                      typename std::enable_if<std::is_floating_point<V>::value>::type *)
+void json_object_mapper<T>::serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type *)
 {
   if (key_ != id) {
     return;
