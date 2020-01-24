@@ -31,7 +31,7 @@ void JsonObjectMapperTest::test_simple()
 
 void JsonObjectMapperTest::test_derived()
 {
-  std::cout << "\n";
+  //std::cout << "\n";
   json_object_mapper<citizen> mapper;
 
   std::unique_ptr<citizen> p(mapper.from_string(R"(  { "id":  5, "name": "george", "height": 185, "birthdate": "2001-11-27", "address": { "id": 4, "street": "east-street", "city": "east-city", "citizen": 5 } } )"));
