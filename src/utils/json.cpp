@@ -34,7 +34,7 @@ json::json(std::initializer_list<json> l)
   }
 }
 
-json::json(nullptr_t) : type(e_null)
+json::json(std::nullptr_t) : type(e_null)
 {
 
 }

@@ -1,6 +1,19 @@
 #ifndef REACTOR_JSON_HPP
 #define REACTOR_JSON_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_UTILS_API __declspec(dllexport)
+    #define EXPIMP_UTILS_TEMPLATE
+  #else
+    #define OOS_UTILS_API __declspec(dllimport)
+    #define EXPIMP_UTILS_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_UTILS_API
+#endif
+
 #include <unordered_map>
 #include <memory>
 #include <utility>
@@ -46,7 +59,7 @@ void join(std::unordered_map<K, V> &range, std::ostream &out, const std::string 
 template < class JSON_TYPE >
 class json_iterator;
 
-struct json
+struct OOS_UTILS_API json
 {
   typedef json_iterator<json> iterator;
 
@@ -82,7 +95,7 @@ struct json
 
   json(std::initializer_list<json> l);
 
-  json(nullptr_t n);
+  json(std::nullptr_t n);
 
   explicit json(json_type t);
 

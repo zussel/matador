@@ -5,6 +5,19 @@
 #ifndef REACTOR_JSON_PARSER_HPP
 #define REACTOR_JSON_PARSER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_UTILS_API __declspec(dllexport)
+    #define EXPIMP_UTILS_TEMPLATE
+  #else
+    #define OOS_UTILS_API __declspec(dllimport)
+    #define EXPIMP_UTILS_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_UTILS_API
+#endif
+
 #include "matador/utils/json.hpp"
 #include "matador/utils/generic_json_parser.hpp"
 
@@ -20,7 +33,7 @@ namespace matador {
  * into a json serializable representation.
  * The result will be a oos::json_value serializable.
  */
-class json_parser : public generic_json_parser<json_parser>
+class OOS_UTILS_API json_parser : public generic_json_parser<json_parser>
 {
 public:
   /**

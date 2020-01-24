@@ -141,8 +141,8 @@ std::string to_string(T x, size_t precision = 0, typename std::enable_if<std::is
   }
 }
 
-const char* skip_ws(const char *str);
-bool is_eos(char c);
+OOS_UTILS_API const char* skip_ws(const char *str);
+OOS_UTILS_API bool is_eos(char c);
 
 }
 

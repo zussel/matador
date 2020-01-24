@@ -5,6 +5,19 @@
 #ifndef MATADOR_JSON_IDENTIFIER_MAPPER_HPP
 #define MATADOR_JSON_IDENTIFIER_MAPPER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_UTILS_API __declspec(dllexport)
+    #define EXPIMP_UTILS_TEMPLATE
+  #else
+    #define OOS_UTILS_API __declspec(dllimport)
+    #define EXPIMP_UTILS_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_UTILS_API
+#endif
+
 #include <utility>
 #include <ostream>
 
@@ -12,7 +25,7 @@
 
 namespace matador {
 
-struct value_t
+struct OOS_UTILS_API value_t
 {
   enum value_type {
     UNKNOWN, INTEGER, REAL, BOOL, STRING, NULL_VAL
@@ -37,9 +50,9 @@ struct value_t
   std::string str;
 };
 
-std::ostream& operator<<(std::ostream &out, const value_t &val);
+OOS_UTILS_API std::ostream& operator<<(std::ostream &out, const value_t &val);
 
-class json_identifier_mapper : public serializer
+class OOS_UTILS_API json_identifier_mapper : public serializer
 {
 public:
   void set_identifier_value(basic_identifier &id, const value_t *val);

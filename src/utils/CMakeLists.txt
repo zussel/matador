@@ -14,7 +14,8 @@ SET(SOURCES
   basic_identifier.cpp
   basic_identifier_serializer.cpp
   serializer.cpp
-    json_identifier_mapper.cpp ../../test/utils/generic_json_parser.cpp)
+  json_identifier_mapper.cpp
+  generic_json_parser.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
