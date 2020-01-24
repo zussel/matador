@@ -193,7 +193,7 @@ void JsonTestUnit::test_failures()
 
   UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key" ; )"), json_exception, "character isn't colon");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key": "value" )"), json_exception, "unexpected end of string");
+  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key": "value" )"), json_exception, "not a valid object closing bracket");
 
   UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key": "value" ]  )"), json_exception, "not a valid object closing bracket");
 
