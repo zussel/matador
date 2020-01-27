@@ -189,7 +189,9 @@ void JsonTestUnit::test_failures()
 
   UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  key)"), json_exception, "expected string opening quotes");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key)"), json_exception, "character isn't colon");
+  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key)"), json_exception, "invalid stream");
+
+  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key  )"), json_exception, "invalid stream");
 
   UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key" ; )"), json_exception, "character isn't colon");
 
