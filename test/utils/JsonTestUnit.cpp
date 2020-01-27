@@ -153,7 +153,7 @@ void JsonTestUnit::test_parser()
 
   j = parser.parse(R"(           {      "text" :       "hello world!",     "bool" : false, "array" :  [   null, false, -5.66667,123456789    ], "serializable" :      { "found": true}      })");
 
-  result = R"({"serializable": {"found": true}, "array": [null, false, -5.66667, 123456789], "text": "hello world!", "bool": false})";
+  result = R"({"array": [null, false, -5.66667, 123456789], "bool": false, "serializable": {"found": true}, "text": "hello world!"})";
 
   UNIT_ASSERT_FALSE(j.is_null());
   UNIT_ASSERT_EQUAL(result, to_string(j));

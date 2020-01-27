@@ -22,7 +22,7 @@ json::json(std::initializer_list<json> l)
     return j.is_array() && j.size() == 2 && j[0].is_string();
   });
   if (is_obj) {
-    auto *obj = new std::unordered_map<std::string, json>;
+    auto *obj = new object_type;
     for (auto &i : l) {
       obj->insert(std::make_pair(i.value_.array->at(0).as<std::string>(), i[1]));
     }
@@ -30,7 +30,7 @@ json::json(std::initializer_list<json> l)
     type = e_object;
     value_.object = obj;
   } else {
-    value_.array = new std::vector<json>(l);
+    value_.array = new array_type(l);
   }
 }
 
@@ -46,10 +46,10 @@ json::json(json::json_type t) : value_(), type(t)
       value_.str = new std::string();
       break;
     case e_object:
-      value_.object = new std::unordered_map<std::string, json>;
+      value_.object = new object_type;
       break;
     case e_array:
-      value_.array = new std::vector<json>;
+      value_.array = new array_type;
       break;
     default:
       break;
@@ -143,10 +143,10 @@ void json::copy_from(const json &x)
   type = x.type;
   switch (x.type) {
     case e_object:
-      value_.object = new std::unordered_map<std::string, json>(*x.value_.object);
+      value_.object = new object_type(*x.value_.object);
       break;
     case e_array:
-      value_.array = new std::vector<json>(*x.value_.array);
+      value_.array = new array_type(*x.value_.array);
       break;
     case e_string:
       value_.str = new std::string(*x.value_.str);

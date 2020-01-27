@@ -14,7 +14,8 @@
 #define OOS_UTILS_API
 #endif
 
-#include <unordered_map>
+#include <map>
+//#include <unordered_map>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -41,7 +42,8 @@ void join(R &range, std::ostream &out, const std::string &delim)
 }
 
 template < class K, class V >
-void join(std::unordered_map<K, V> &range, std::ostream &out, const std::string &delim)
+void join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
+//void join(std::unordered_map<K, V> &range, std::ostream &out, const std::string &delim)
 {
   if (range.size() < 2) {
     for (auto &i : range) {
@@ -128,7 +130,7 @@ struct OOS_UTILS_API json
   json& operator[](const std::string &key) {
     if (type != e_object) {
       clear();
-      value_.object = new std::unordered_map<std::string, json>;
+      value_.object = new object_type;
       type = e_object;
     }
     auto it = value_.object->insert(std::make_pair(key, json())).first;
@@ -276,7 +278,8 @@ struct OOS_UTILS_API json
 
   void throw_on_wrong_type(json_type t) const;
 
-  typedef std::unordered_map<std::string, json> object_type;
+  //typedef std::unordered_map<std::string, json> object_type;
+  typedef std::map<std::string, json> object_type;
   typedef std::vector<json> array_type;
 
   union json_value {
