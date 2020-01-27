@@ -164,7 +164,9 @@ generic_json_parser<T>::parse_json_object(bool is_root)
 
     c = skip_whitespace();
     // read colon
-    if (!is_eos(c) && c != ':') {
+    if (is_eos(c)) {
+      throw json_exception("invalid stream");
+    } else if (c != ':') {
       throw json_exception("character isn't colon");
     }
 

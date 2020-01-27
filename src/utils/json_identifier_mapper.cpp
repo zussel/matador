@@ -55,7 +55,7 @@ void json_identifier_mapper::serialize(const char *, int &x)
 
 void json_identifier_mapper::serialize(const char *, long &x)
 {
-  x = (long long)(value_->integer);
+  x = (long)(value_->integer);
 }
 
 void json_identifier_mapper::serialize(const char *, long long &x)
@@ -106,7 +106,11 @@ void json_identifier_mapper::serialize(const char *, double &x)
 
 void json_identifier_mapper::serialize(const char *, char *x, size_t s)
 {
+#ifdef _MSC_VER
+  strncpy_s(x, s, value_->str.c_str(), s);
+#else
   strncpy(x, value_->str.c_str(), s);
+#endif
 }
 
 void json_identifier_mapper::serialize(const char *, std::string &x)
