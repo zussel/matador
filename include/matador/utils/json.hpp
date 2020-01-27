@@ -455,7 +455,7 @@ private:
   std::size_t it = 0;
 };
 
-std::string to_string(const matador::json &j);
+OOS_UTILS_API std::string to_string(const matador::json &j);
 
 }
 
