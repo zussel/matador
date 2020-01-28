@@ -42,6 +42,7 @@
 #include <sstream>
 #include <type_traits>
 #include <iostream>
+#include <cstring>
 
 /**
  * @file unit_test.hpp
@@ -388,6 +389,18 @@ public:
   void assert_equal(const char *a, const std::string &b, int line, const char *file);
   void assert_equal(const char *a, const char *b, int line, const char *file);
 
+  template < int N >
+  void
+  assert_equal(const char (&a)[N], char *b, int line, const char *file)
+  {
+    ++current_test_func_info->assertion_check_count;
+    if (strcmp(a, b) != 0) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
+      throw unit_exception(msgstr.str());
+    }
+  }
+
   template < int N1, int N2 >
   void
   assert_equal(const char (&a)[N1], const char (&b)[N2], int line, const char *file)
@@ -699,6 +712,16 @@ public:
   template < int N1, int N2 >
   void
   expect_equal(const char (&a)[N1], const char (&b)[N2], int line, const char *file)
+  {
+    ++current_test_func_info->error_check_count;
+    if (strcmp(a, b) != 0) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
+    }
+  }
+  template < int N >
+  void
+  expect_equal(const char (&a)[N], const char *b, int line, const char *file)
   {
     ++current_test_func_info->error_check_count;
     if (strcmp(a, b) != 0) {

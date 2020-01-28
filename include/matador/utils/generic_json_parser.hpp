@@ -60,7 +60,7 @@ protected:
 
 private:
   void parse_json_object(bool is_root);
-  void parse_json_array();
+  void parse_json_array(bool is_root);
   std::string parse_json_string();
   number_t parse_json_number();
   bool parse_json_bool();
@@ -102,7 +102,7 @@ generic_json_parser<T>::parse_json(const char *json_str, bool is_root)
       parse_json_object(is_root);
       break;
     case '[':
-      parse_json_array();
+      parse_json_array(is_root);
       break;
     default:
       throw json_exception("root must be either array '[]' or serializable '{}'");
@@ -145,7 +145,9 @@ generic_json_parser<T>::parse_json_object(bool is_root)
   // call handler callback
   static_cast<T*>(this)->on_begin_object();
 
-  char c = next_char();
+  next_char();
+
+  char c = skip_whitespace();
 
   if (!is_eos(c) && c == '}') {
     next_char();
@@ -154,9 +156,8 @@ generic_json_parser<T>::parse_json_object(bool is_root)
     return;
   }
 
-  skip_whitespace();
-
   bool has_next;
+
   do {
 
     // get key and call handler callback
@@ -202,11 +203,12 @@ generic_json_parser<T>::parse_json_object(bool is_root)
 }
 
 template<class T>
-void generic_json_parser<T>::parse_json_array()
+void generic_json_parser<T>::parse_json_array(bool is_root)
 {
   static_cast<T*>(this)->on_begin_array();
 
-  char c = next_char();
+  next_char();
+  char c = skip_whitespace();
   if (!is_eos(c) && c == ']') {
     static_cast<T*>(this)->on_end_array();
     // empty array
@@ -232,13 +234,15 @@ void generic_json_parser<T>::parse_json_array()
 
   c = skip_whitespace();
 
-  if (is_eos(c)) {
+  if (!is_root && is_eos(c)) {
     throw json_exception("unexpected end of string");
   } else if (c != ']') {
     throw json_exception("not a valid array closing bracket");
   }
 
-  next_char();
+  if (is_root) {
+    next_char();
+  }
 
   static_cast<T*>(this)->on_end_array();
 }
@@ -424,7 +428,7 @@ void generic_json_parser<T>::parse_json_value()
       parse_json_object(true);
       break;
     case '[':
-      parse_json_array();
+      parse_json_array(true);
       break;
     case '"':
       static_cast<T*>(this)->on_string(parse_json_string());

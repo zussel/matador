@@ -451,8 +451,7 @@ public:
   /**
    * @brief Create an identifier
    */
-  identifier() : id_("")
-  { };
+  identifier() = default;
 
   /**
    * @brief Create an identifier with given string value
@@ -625,7 +624,14 @@ public:
    *
    * @return The string value
    */
-  value_type value() const { return id_.value(); }
+  value_type value() { return id_.value(); }
+
+  /**
+   * Return the string value if the id
+   *
+   * @return The string value
+   */
+  const value_type value() const { return id_.value(); }
 
   /**
    * Set a new identifier value

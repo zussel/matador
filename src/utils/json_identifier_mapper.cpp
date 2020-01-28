@@ -89,21 +89,6 @@ void json_identifier_mapper::serialize(const char *, unsigned long long &x)
   x = (unsigned long long)(value_->integer);
 }
 
-void json_identifier_mapper::serialize(const char *, bool &x)
-{
-  x = value_->boolean;
-}
-
-void json_identifier_mapper::serialize(const char *, float &x)
-{
-  x = (float)(value_->real);
-}
-
-void json_identifier_mapper::serialize(const char *, double &x)
-{
-  x = value_->real;
-}
-
 void json_identifier_mapper::serialize(const char *, char *x, size_t s)
 {
 #ifdef _MSC_VER
@@ -111,11 +96,7 @@ void json_identifier_mapper::serialize(const char *, char *x, size_t s)
 #else
   strncpy(x, value_->str.c_str(), s);
 #endif
-}
-
-void json_identifier_mapper::serialize(const char *, std::string &x)
-{
-  x = value_->str;
+  x[value_->str.size()] = '\0';
 }
 
 void json_identifier_mapper::serialize(const char *, std::string &x, size_t)

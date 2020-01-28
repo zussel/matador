@@ -32,6 +32,7 @@ struct OOS_UTILS_API value_t
   };
   value_t() = default;
   explicit value_t(std::string s) : type(STRING), str(std::move(s)) {}
+  explicit value_t(const char *s) : type(STRING), str(s) {}
   explicit value_t(long long i) : type(INTEGER), integer(i) {}
   explicit value_t(double d) : type(REAL), real(d) {}
   explicit value_t(bool b) : type(BOOL), boolean(b) {}
@@ -66,11 +67,11 @@ public:
   void serialize(const char*, unsigned int&) override;
   void serialize(const char*, unsigned long&) override;
   void serialize(const char*, unsigned long long&) override;
-  void serialize(const char*, bool&) override;
-  void serialize(const char*, float&) override;
-  void serialize(const char*, double&) override;
+  void serialize(const char*, bool&) override {}
+  void serialize(const char*, float&) override {}
+  void serialize(const char*, double&) override {}
   void serialize(const char*, char *, size_t) override;
-  void serialize(const char*, std::string&) override;
+  void serialize(const char*, std::string&) override {}
   void serialize(const char*, std::string&, size_t) override;
   void serialize(const char*, matador::time&) override {}
   void serialize(const char*, matador::date&) override {}

@@ -144,6 +144,20 @@ void JsonTestUnit::test_parser()
   UNIT_ASSERT_FALSE(j.is_null());
   UNIT_ASSERT_EQUAL(result, to_string(j));
 
+  j = parser.parse(R"( { } )");
+
+  result = R"({})";
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_EQUAL(result, to_string(j));
+
+  j = parser.parse(R"( [ ] )");
+
+  result = R"([])";
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_EQUAL(result, to_string(j));
+
   j = parser.parse(R"(  { "real"  : -5.66667, "number"  :   -123456789 })");
 
   result = R"({"number": -123456789, "real": -5.66667})";
@@ -203,7 +217,7 @@ void JsonTestUnit::test_failures()
 
   UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  [  8)"), json_exception, "invalid json character");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  [  8 )"), json_exception, "unexpected end of string");
+  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  [  8 )"), json_exception, "not a valid array closing bracket");
 
   UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  [  8 fff)"), json_exception, "not a valid array closing bracket");
 
