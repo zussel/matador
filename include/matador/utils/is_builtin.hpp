@@ -5,6 +5,9 @@
 #ifndef MATADOR_IS_BUILTIN_HPP
 #define MATADOR_IS_BUILTIN_HPP
 
+#include "matador/utils/time.hpp"
+#include "matador/utils/date.hpp"
+
 #include <type_traits>
 #include <string>
 
@@ -12,8 +15,6 @@ namespace matador {
 
 /// @cond MATADOR_DEV
 
-class date;
-class time;
 struct varchar_base;
 
 template <typename T, typename Enabled = void>
