@@ -210,6 +210,7 @@ void generic_json_parser<T>::parse_json_array(bool is_root)
   next_char();
   char c = skip_whitespace();
   if (!is_eos(c) && c == ']') {
+    next_char();
     static_cast<T*>(this)->on_end_array();
     // empty array
     return;
