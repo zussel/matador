@@ -84,7 +84,10 @@ query<person> q("person", conn);
 
 column name("name");
 column age("age");
-auto res = q.select().where(name != "george" && age > 35).execute();
+auto res = q
+  .select()
+  .where(name != "george" && age > 35)
+  .execute();
 
 for (auto p in res) {
   std::cout << "name: " p->name << "\n";
