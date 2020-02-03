@@ -5,6 +5,7 @@
 #include "matador/utils/json.hpp"
 #include "matador/utils/json_parser.hpp"
 #include "matador/utils/json_mapper.hpp"
+#include "matador/utils/time.hpp"
 
 using namespace matador;
 
@@ -178,18 +179,66 @@ void JsonTestUnit::test_parser()
 
   UNIT_ASSERT_FALSE(j.is_null());
   UNIT_ASSERT_EQUAL(result, to_string(j));
+
+  // nested array
+  j = parser.parse(R"( [  {  "name":   "hello" }    ]  )");
+
+  result = R"([{"name": "hello"}])";
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_EQUAL(result, to_string(j));
+
+  j = parser.parse(R"( [  [   "hello",   null     ]    ]  )");
+
+  result = R"([["hello", null]])";
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_EQUAL(result, to_string(j));
+
+  std::string str(R"(           {      "text" :       "hello world!"   ,     "bool" : false   }   )");
+
+  j = parser.parse(str);
+
+  result = R"({"bool": false, "text": "hello world!"})";
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_EQUAL(result, to_string(j));
 }
+
+struct json_values
+{
+  long id = 0;
+  std::string name;
+  date birthday;
+  matador::time created;
+  bool flag;
+  std::vector<double> doubles;
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("id", id);
+    s.serialize("name", name);
+    s.serialize("birthday", birthday);
+    s.serialize("created", created);
+    s.serialize("flag", flag);
+    s.serialize("doubles", doubles);
+  }
+};
 
 void JsonTestUnit::test_mapper()
 {
-  json_mapper<person> mapper;
+  json_mapper<json_values> mapper;
 
-  auto p = mapper.from_string(R"(  { "id":  5, "name": "george", "height": 185 } )");
+  auto p = mapper.from_string(R"(  { "id":  5, "name": "george", "birthday": "1987-09-27", "created": "2020-02-03 13:34:23", "flag": false, "doubles": [1.2, 3.5, 6.9] } )");
+
+  date b(27, 9, 1987);
 
   UNIT_ASSERT_NOT_NULL(p);
-  UNIT_EXPECT_EQUAL(5UL, p->id());
-  UNIT_EXPECT_EQUAL("george", p->name());
-  UNIT_EXPECT_EQUAL(185U, p->height());
+  UNIT_EXPECT_EQUAL(5L, p->id);
+  UNIT_EXPECT_EQUAL("george", p->name);
+  UNIT_EXPECT_EQUAL(b, p->birthday);
+  UNIT_EXPECT_EQUAL(3U, p->doubles.size());
   delete p;
 }
 

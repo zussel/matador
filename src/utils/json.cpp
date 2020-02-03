@@ -240,6 +240,16 @@ bool json::is_number() const
   return type == e_integer || type == e_real;
 }
 
+bool json::is_real() const
+{
+  return type == e_real;
+}
+
+bool json::is_integer() const
+{
+  return type == e_integer;
+}
+
 bool json::is_boolean() const
 {
   return type == e_boolean;

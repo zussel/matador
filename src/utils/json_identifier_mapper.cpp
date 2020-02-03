@@ -9,98 +9,88 @@
 
 namespace matador {
 
-std::ostream& operator<<(std::ostream &out, const value_t &val) {
-  switch (val.type) {
-    case value_t::INTEGER:
-      out << val.integer;
-      break;
-    case value_t::BOOL:
-      out << std::boolalpha << val.boolean;
-      break;
-    case value_t::REAL:
-      out << val.real;
-      break;
-    case value_t::STRING:
-      out << val.str;
-      break;
-    default:
-    case value_t::NULL_VAL:
-      out << "null";
-      break;
-  }
-  return out;
-}
-
-void json_identifier_mapper::set_identifier_value(basic_identifier &id, const value_t *val)
+void json_identifier_mapper::set_identifier_value(basic_identifier &id, const json &val)
 {
   value_ = val;
   id.serialize("", *this);
-  value_ = nullptr;
+}
+
+template < class T >
+void assign_integer(const json &value, T &x)
+{
+  if (value.is_integer()) {
+    x = value.as<T>();
+  }
 }
 
 void json_identifier_mapper::serialize(const char *, char &x)
 {
-  x = (char)(value_->integer);
+  assign_integer(value_, x);
 }
 
 void json_identifier_mapper::serialize(const char *, short &x)
 {
-  x = (short)(value_->integer);
+  assign_integer(value_, x);
 }
 
 void json_identifier_mapper::serialize(const char *, int &x)
 {
-  x = (int)(value_->integer);
+  assign_integer(value_, x);
 }
 
 void json_identifier_mapper::serialize(const char *, long &x)
 {
-  x = (long)(value_->integer);
+  assign_integer(value_, x);
 }
 
 void json_identifier_mapper::serialize(const char *, long long &x)
 {
-  x = value_->integer;
+  assign_integer(value_, x);
 }
 
 void json_identifier_mapper::serialize(const char *, unsigned char &x)
 {
-  x = (unsigned char)(value_->integer);
+  assign_integer(value_, x);
 }
 
 void json_identifier_mapper::serialize(const char *, unsigned short &x)
 {
-  x = (unsigned short)(value_->integer);
+  assign_integer(value_, x);
 }
 
 void json_identifier_mapper::serialize(const char *, unsigned int &x)
 {
-  x = (unsigned int)(value_->integer);
+  assign_integer(value_, x);
 }
-
 
 void json_identifier_mapper::serialize(const char *, unsigned long &x)
 {
-  x = (unsigned long)(value_->integer);
+  assign_integer(value_, x);
 }
 
 void json_identifier_mapper::serialize(const char *, unsigned long long &x)
 {
-  x = (unsigned long long)(value_->integer);
+  assign_integer(value_, x);
 }
 
 void json_identifier_mapper::serialize(const char *, char *x, size_t s)
 {
+  if (!value_.is_string()) {
+    return;
+  }
 #ifdef _MSC_VER
-  strncpy_s(x, s, value_->str.c_str(), s);
+  strncpy_s(x, s, value_.as<std::string>().c_str(), s);
 #else
-  strncpy(x, value_->str.c_str(), s);
+  strncpy(x, value_.as<std::string>().c_str(), s);
 #endif
-  x[value_->str.size()] = '\0';
+  x[value_.as<std::string>().size()] = '\0';
 }
 
 void json_identifier_mapper::serialize(const char *, std::string &x, size_t)
 {
-  x = value_->str;
+  if (!value_.is_string()) {
+    return;
+  }
+  x = value_.as<std::string>();
 }
 }

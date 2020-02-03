@@ -210,6 +210,15 @@ public:
   void set(int year, int month, int day, int hour, int min, int sec, long millis);
 
   /**
+   * Sets the date from a given date/time
+   * string and a format string
+   *
+   * @param timestr The date/time string to parse
+   * @param format The format to use for parsing
+   */
+  void set(const char *timestr, const char *format = "%Y-%m-%d %H:%M%S");
+
+  /**
    * Sets the time from a given time_t and milliseconds
    *
    * @param t The time_t to set.
@@ -425,6 +434,8 @@ private:
   void sync_second(int s);
   void sync_milli_second(int ms);
   void sync_time(int y, int m, int d, int h, int min, int s, long ms);
+
+  static timeval parse_time_string(const std::string &tstr, const char *format);
 
 private:
   struct timeval time_ = {0,0 };

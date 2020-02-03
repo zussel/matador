@@ -55,7 +55,7 @@ public:
 
 private:
   std::unique_ptr<T> object_;
-  value_t value_;
+  json value_;
   std::string key_;
 
   const char *object_cursor_ = nullptr;
@@ -117,7 +117,7 @@ template<class T>
 void json_object_mapper<T>::on_string(const std::string &value)
 {
   if (object_key_.empty()) {
-    value_.set(value);
+    value_ = value;
   }
   access::serialize(*this, *object_);
 }
@@ -127,9 +127,9 @@ void json_object_mapper<T>::on_number(typename generic_json_parser<json_object_m
 {
   if (object_key_.empty()) {
     if (value.is_real) {
-      value_.set(value.real);
+      value_ = value.real;
     } else {
-      value_.set(value.integer);
+      value_ = value.integer;
     }
   }
   access::serialize(*this, *object_);
@@ -139,7 +139,7 @@ template<class T>
 void json_object_mapper<T>::on_bool(bool value)
 {
   if (object_key_.empty()) {
-    value_.set(value);
+    value_ = value;
   }
   access::serialize(*this, *object_);
 }
@@ -166,18 +166,33 @@ void json_object_mapper<T>::serialize(const char *id, basic_identifier &pk)
     return;
   }
   //std::cout << "key [" << id << "]: assigning value [" << value_ << "]\n";
-  id_mapper_.set_identifier_value(pk, &value_);
+  id_mapper_.set_identifier_value(pk, value_);
 }
 
 template<class T>
 template<class V>
-void json_object_mapper<T>::serialize(const char *id, V &to, typename std::enable_if<
-std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
+void json_object_mapper<T>::serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
   if (key_ != id) {
     return;
   }
-  to = (V)value_.integer;
+  if (!value_.is_integer()) {
+    return;
+  }
+  to = value_.as<V>();
+}
+
+template<class T>
+template<class V>
+void json_object_mapper<T>::serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type *)
+{
+  if (key_ != id) {
+    return;
+  }
+  if (!value_.is_real()) {
+    return;
+  }
+  to = value_.as<V>();
 }
 
 template<class T>
@@ -186,7 +201,10 @@ void json_object_mapper<T>::serialize(const char *id, bool &to)
   if (key_ != id) {
     return;
   }
-  to = value_.boolean;
+  if (!value_.is_boolean()) {
+    return;
+  }
+  to = value_.as<bool>();
 }
 
 template<class T>
@@ -195,7 +213,10 @@ void json_object_mapper<T>::serialize(const char *id, std::string &to, size_t)
   if (key_ != id) {
     return;
   }
-  to = value_.str;
+  if (!value_.is_string()) {
+    return;
+  }
+  to = value_.as<std::string>();
 }
 
 template<class T>
@@ -204,7 +225,10 @@ void json_object_mapper<T>::serialize(const char *id, date &to)
   if (key_ != id) {
     return;
   }
-  to.set(value_.str.c_str(), "%Y-%m-%d");
+  if (!value_.is_string()) {
+    return;
+  }
+  to.set(value_.as<std::string>().c_str(), "%Y-%m-%d");
 }
 
 template<class T>
@@ -231,16 +255,6 @@ void json_object_mapper<T>::serialize(const char *id, has_one<Value> &x, cascade
   json_object_mapper<Value> mapper;
   x = mapper.from_string(object_cursor_, false);
   this->sync_cursor(mapper.json_cursor());
-}
-
-template<class T>
-template<class V>
-void json_object_mapper<T>::serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type *)
-{
-  if (key_ != id) {
-    return;
-  }
-  to = (V)value_.real;
 }
 }
 #endif //MATADOR_JSON_MAPPER_HPP

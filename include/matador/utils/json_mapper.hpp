@@ -9,6 +9,7 @@
 #include "matador/utils/json_parser.hpp"
 #include "matador/utils/memory.hpp"
 #include "matador/utils/json_identifier_mapper.hpp"
+#include "matador/utils/time.hpp"
 
 namespace matador {
 
@@ -49,7 +50,10 @@ public:
     if (key_ != id) {
       return;
     }
-    to = (V)value_.integer;
+    if (!value_.is_integer()) {
+      return;
+    }
+    to = value_.as<V>();
   }
 
   template < class V >
@@ -58,7 +62,10 @@ public:
     if (key_ != id) {
       return;
     }
-    to = (V)value_.real;
+    if (!value_.is_real()) {
+      return;
+    }
+    to = value_.as<V>();
   }
 
   void serialize(const char *id, bool &to)
@@ -66,7 +73,21 @@ public:
     if (key_ != id) {
       return;
     }
-    to = value_.boolean;
+    if (!value_.is_boolean()) {
+      return;
+    }
+    to = value_.as<bool>();
+  }
+
+  void serialize(const char *id, std::string &to)
+  {
+    if (key_ != id) {
+      return;
+    }
+    if (!value_.is_string()) {
+      return;
+    }
+    to = value_.as<std::string>();
   }
 
   void serialize(const char *id, std::string &to, size_t)
@@ -74,7 +95,10 @@ public:
     if (key_ != id) {
       return;
     }
-    to = value_.str;
+    if (!value_.is_string()) {
+      return;
+    }
+    to = value_.as<std::string>();
   }
 
   void serialize(const char *id, date &to)
@@ -82,12 +106,37 @@ public:
     if (key_ != id) {
       return;
     }
-    to.set(value_.str.c_str());
+    if (!value_.is_string()) {
+      return;
+    }
+    to.set(value_.as<std::string>().c_str(), "%Y-%m-%d");
   }
 
+  void serialize(const char *id, time &to)
+  {
+    if (key_ != id) {
+      return;
+    }
+    if (!value_.is_string()) {
+      return;
+    }
+    to.set(value_.as<std::string>().c_str());
+  }
+
+  template < class V >
+  void serialize(const char *id, std::vector<V> &vec)
+  {
+    if (key_ != id) {
+      return;
+    }
+
+    for (auto &val : value_) {
+      vec.push_back(val.template as<V>());
+    }
+  }
 private:
   std::unique_ptr<T> object_;
-  value_t value_;
+  json value_;
   std::string key_;
 
   json_identifier_mapper id_mapper_;
@@ -134,7 +183,7 @@ void json_mapper<T>::on_end_array()
 template<class T>
 void json_mapper<T>::on_string(const std::string &value)
 {
-  value_.str = value;
+  value_ = value;
   access::serialize(*this, *object_);
 }
 
@@ -142,9 +191,9 @@ template<class T>
 void json_mapper<T>::on_number(typename generic_json_parser<json_mapper<T>>::number_t value)
 {
   if (value.is_real) {
-    value_.real = value.real;
+    value_ = value.real;
   } else {
-    value_.integer = value.integer;
+    value_ = value.integer;
   }
   access::serialize(*this, *object_);
 }
@@ -152,7 +201,7 @@ void json_mapper<T>::on_number(typename generic_json_parser<json_mapper<T>>::num
 template<class T>
 void json_mapper<T>::on_bool(bool value)
 {
-  value_.boolean = value;
+  value_ = value;
   access::serialize(*this, *object_);
 }
 

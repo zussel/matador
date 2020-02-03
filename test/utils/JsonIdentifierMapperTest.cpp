@@ -35,12 +35,12 @@ void JsonIdentifierMapperTest::test_varchar_identifier()
 {
   json_identifier_mapper id_mapper;
 
-  matador::value_t val("hallo");
+  matador::json val("hallo");
   matador::identifier<varchar<255>> str_id;
-  id_mapper.set_identifier_value(str_id, &val);
+  id_mapper.set_identifier_value(str_id, val);
   UNIT_EXPECT_EQUAL("hallo", str_id.value());
 
   matador::identifier<varchar<255, char*>> char_id;
-  id_mapper.set_identifier_value(char_id, &val);
+  id_mapper.set_identifier_value(char_id, val);
   UNIT_ASSERT_EQUAL("hallo", char_id.value());
 }

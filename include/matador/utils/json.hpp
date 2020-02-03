@@ -236,6 +236,10 @@ struct OOS_UTILS_API json
 
   bool is_number() const;
 
+  bool is_real() const;
+
+  bool is_integer() const;
+
   bool is_boolean() const;
 
   bool is_string() const;
@@ -271,6 +275,8 @@ struct OOS_UTILS_API json
         type = e_null;
         break;
     }
+
+    value_ = {};
   }
 
   void erase(const std::string &key);
