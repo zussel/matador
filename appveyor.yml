@@ -70,6 +70,9 @@ before_build:
 build_script:
   - cmake --build . --config %configuration%
 
+before_test:
+  - copy "C:\projects\sqlite\sqlite\bin\sqlite3.dll" "C:\projects\matador\build\Release\bin\%CONFIGURATION%\"
+
 test_script:
   - cd "%APPVEYOR_BUILD_FOLDER%/build" && if %CONFIGURATION%==Debug (ctest --verbose -E perftest --build-config %CONFIGURATION%) else (ctest --verbose --build-config %CONFIGURATION%)
 
