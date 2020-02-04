@@ -21,8 +21,14 @@ JsonTestUnit::JsonTestUnit()
 void JsonTestUnit::test_simple()
 {
   json jn;
-
   UNIT_ASSERT_TRUE(jn.is_null());
+
+  json jts(json::e_string);
+  UNIT_ASSERT_TRUE(jts.is_string());
+
+  json jtr(json::e_real);
+  UNIT_ASSERT_TRUE(jtr.is_real());
+  UNIT_ASSERT_TRUE(jtr.is_number());
 
   json ji(7);
   json jb(true);
@@ -69,21 +75,51 @@ void JsonTestUnit::test_simple()
   family["mother"] = json::object();
 
   ji.push_back(9);
+  ji.push_back("hallo");
 
   UNIT_ASSERT_TRUE(ji.is_array());
-  UNIT_ASSERT_EQUAL(1UL, ji.size());
+  UNIT_ASSERT_EQUAL(2UL, ji.size());
+  UNIT_ASSERT_FALSE(ji.empty());
+
+  auto jib = ji.back();
+  UNIT_EXPECT_EQUAL("hallo", jib.as<std::string>());
+
+  // invalid index
+  UNIT_ASSERT_EXCEPTION(ji[2], std::logic_error, "index out of bounds");
+
+  auto jii = ji[0];
+  UNIT_EXPECT_EQUAL(9, jii.as<int>());
+
+  // not an array
+  UNIT_ASSERT_EXCEPTION(jii.size(), std::logic_error, "type doesn't have size()");
+  UNIT_ASSERT_EXCEPTION(jii.empty(), std::logic_error, "type doesn't have empty()");
 
   auto ii = ji.at<int>(0);
-
   UNIT_ASSERT_EQUAL(9, ii);
 
   ji.push_back(jb);
 
-  UNIT_ASSERT_EQUAL(2UL, ji.size());
+  UNIT_ASSERT_EQUAL(3UL, ji.size());
 
-  auto bb = ji.at<bool>(1);
-
+  auto bb = ji.at<bool>(2);
   UNIT_ASSERT_TRUE(bb);
+
+  UNIT_ASSERT_EXCEPTION(ji.at<bool>(1), std::logic_error, "wrong type; couldn't cast");
+
+  const json jac = {1,2,true};
+
+  UNIT_ASSERT_EQUAL(3UL, jac.size());
+  const auto &jacb = jac.back();
+  UNIT_ASSERT_TRUE(jacb.as<bool>());
+
+  auto it = ji.begin();
+  auto iend = ji.end();
+  size_t count = 0;
+  while (it != iend) {
+    ++count;
+    ++it;
+  }
+  UNIT_ASSERT_EQUAL(3UL, count);
 
   json jv = {"hallo", 9, 4.6, false, json::array(), json::object()};
 
@@ -93,6 +129,10 @@ void JsonTestUnit::test_simple()
   UNIT_ASSERT_EQUAL(4.6f, jv[2].as<float>());
   UNIT_ASSERT_TRUE(jv[4].is_array());
   UNIT_ASSERT_EQUAL(0UL, jv[4].size());
+
+  jv.erase("hallo");
+  UNIT_ASSERT_FALSE(jv.empty());
+  UNIT_ASSERT_EQUAL(6UL, jv.size());
 
   jv.erase(2);
 
@@ -109,7 +149,37 @@ void JsonTestUnit::test_simple()
 //  std::cout << js << "\n";
 
   UNIT_ASSERT_TRUE(jo.is_object());
+  UNIT_ASSERT_FALSE(jo.empty());
   UNIT_ASSERT_EQUAL(1UL, jo.size());
+
+  UNIT_ASSERT_EXCEPTION(jo.back(), std::logic_error, "type doesn't have back()");
+
+  count = 0;
+  it = jo.begin();
+  iend = jo.end();
+  while (it != iend) {
+    ++count;
+    ++it;
+  }
+  UNIT_ASSERT_EQUAL(1UL, count);
+
+  jo.erase(1);
+  UNIT_ASSERT_FALSE(jo.empty());
+  UNIT_ASSERT_EQUAL(1UL, jo.size());
+
+  jo.erase("hallo");
+  UNIT_ASSERT_TRUE(jo.empty());
+  UNIT_ASSERT_EQUAL(0UL, jo.size());
+
+  const json jco = json::object();
+  UNIT_ASSERT_EXCEPTION(
+  const auto &r = jco.back(); r.empty();,
+  std::logic_error,
+  "type doesn't have back()"
+  );
+
+
+
 /*
   auto it = js.begin();
 
@@ -230,7 +300,7 @@ void JsonTestUnit::test_mapper()
 {
   json_mapper<json_values> mapper;
 
-  auto p = mapper.from_string(R"(  { "id":  5, "name": "george", "birthday": "1987-09-27", "created": "2020-02-03 13:34:23", "flag": false, "doubles": [1.2, 3.5, 6.9] } )");
+  json_values *p = mapper.from_string(R"(  { "id":  5, "name": "george", "birthday": "1987-09-27", "created": "2020-02-03 13:34:23", "flag": false, "doubles": [1.2, 3.5, 6.9] } )");
 
   date b(27, 9, 1987);
 
@@ -240,6 +310,13 @@ void JsonTestUnit::test_mapper()
   UNIT_EXPECT_EQUAL(b, p->birthday);
   UNIT_EXPECT_EQUAL(3U, p->doubles.size());
   delete p;
+
+  json_mapper<person> pmapper;
+
+  person *pp = pmapper.from_string(R"({ "name": "\r\ferik\tder\nwikinger\b\u0085"})");
+
+  UNIT_ASSERT_NOT_NULL(pp);
+  UNIT_EXPECT_EQUAL("\r\ferik\tder\nwikinger\b\\u0085", pp->name());
 }
 
 void JsonTestUnit::test_failures()

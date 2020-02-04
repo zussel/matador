@@ -304,7 +304,7 @@ std::string generic_json_parser<T>::parse_json_string()
           }
           break;
         default:
-          throw json_exception("invalid json string character");
+          throw json_exception("invalid json control string character");
       }
     } else {
       value.push_back(c);

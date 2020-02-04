@@ -61,9 +61,13 @@ void join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
 template < class JSON_TYPE >
 class json_iterator;
 
-struct OOS_UTILS_API json
+class OOS_UTILS_API json
 {
+public:
   typedef json_iterator<json> iterator;
+  //typedef std::unordered_map<std::string, json> object_type;
+  typedef std::map<std::string, json> object_type;
+  typedef std::vector<json> array_type;
 
   enum json_type
   {
@@ -136,8 +140,6 @@ struct OOS_UTILS_API json
     auto it = value_.object->insert(std::make_pair(key, json())).first;
     return it->second;
   }
-
-  json& operator[](const char *key);
 
   json& operator[](std::size_t i);
   const json& operator[](std::size_t i) const {
@@ -282,11 +284,10 @@ struct OOS_UTILS_API json
   void erase(const std::string &key);
   void erase(std::size_t i);
 
+private:
   void throw_on_wrong_type(json_type t) const;
 
-  //typedef std::unordered_map<std::string, json> object_type;
-  typedef std::map<std::string, json> object_type;
-  typedef std::vector<json> array_type;
+  friend class json_iterator<json>;
 
   union json_value {
     json_value() : integer(0) {}

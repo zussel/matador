@@ -156,18 +156,13 @@ void json::copy_from(const json &x)
   }
 }
 
-json &json::operator[](const char *key)
-{
-  return this->operator[](std::string(key));
-}
-
 json &json::operator[](std::size_t i)
 {
   if (type != e_array) {
     return *this;
   }
   if (i >= value_.array->size()) {
-    throw std::logic_error("index out of bounce");
+    throw std::logic_error("index out of bounds");
   }
   return value_.array->at(i);
 }
@@ -195,7 +190,14 @@ std::size_t json::size() const
 
 bool json::empty() const
 {
-  return false;
+  switch (type) {
+    case e_array:
+      return value_.array->empty();
+    case e_object:
+      return value_.object->empty();
+    default:
+      throw std::logic_error("type doesn't have empty()");
+  }
 }
 
 json &json::back()
