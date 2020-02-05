@@ -152,8 +152,20 @@ public:
     to.set(value_.as<std::string>().c_str());
   }
 
-  template < class V, template < class ... > class C >
-  void serialize(const char *id, C<V> &cont)
+  template < class V >
+  void serialize(const char *id, std::list<V> &cont)
+  {
+    if (key_ != id) {
+      return;
+    }
+
+    for (auto &val : value_) {
+      cont.push_back(val.template as<V>());
+    }
+  }
+
+  template < class V >
+  void serialize(const char *id, std::vector<V> &cont)
   {
     if (key_ != id) {
       return;
