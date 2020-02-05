@@ -1,3 +1,7 @@
+#include <set>
+#include <list>
+#include <unordered_set>
+
 #include "JsonTestUnit.hpp"
 
 #include "../person.hpp"
@@ -277,12 +281,16 @@ void JsonTestUnit::test_parser()
 
 struct json_values
 {
-  long id = 0;
+  identifier<varchar<255>> id;
   std::string name;
   date birthday;
   matador::time created;
   bool flag;
+  long height;
   std::vector<double> doubles;
+  std::list<bool> bits;
+  std::set<std::string> names;
+  std::unordered_set<int> values;
 
   template < class S >
   void serialize(S &s)
@@ -292,7 +300,11 @@ struct json_values
     s.serialize("birthday", birthday);
     s.serialize("created", created);
     s.serialize("flag", flag);
+    s.serialize("height", height);
     s.serialize("doubles", doubles);
+    s.serialize("bits", bits);
+    s.serialize("names", names);
+    s.serialize("values", values);
   }
 };
 
@@ -300,15 +312,29 @@ void JsonTestUnit::test_mapper()
 {
   json_mapper<json_values> mapper;
 
-  json_values *p = mapper.from_string(R"(  { "id":  5, "name": "george", "birthday": "1987-09-27", "created": "2020-02-03 13:34:23", "flag": false, "doubles": [1.2, 3.5, 6.9] } )");
+  json_values *p = mapper.from_string(R"(  {     "id":  "george@mail.net", "name": "george",
+"birthday": "1987-09-27", "created": "2020-02-03 13:34:23", "flag": false, "height": 183,
+"doubles": [1.2, 3.5, 6.9],
+"bits": [true, false, true],
+"names": ["hans", "clara", "james"],
+"values": [11, 12, 13]
+} )");
 
   date b(27, 9, 1987);
 
   UNIT_ASSERT_NOT_NULL(p);
-  UNIT_EXPECT_EQUAL(5L, p->id);
+  UNIT_EXPECT_EQUAL("george@mail.net", p->id.value());
   UNIT_EXPECT_EQUAL("george", p->name);
   UNIT_EXPECT_EQUAL(b, p->birthday);
+  UNIT_EXPECT_EQUAL(183L, p->height);
   UNIT_EXPECT_EQUAL(3U, p->doubles.size());
+  UNIT_EXPECT_EQUAL(3U, p->bits.size());
+  auto it = p->bits.begin();
+  UNIT_EXPECT_TRUE(*(it++));
+  UNIT_EXPECT_FALSE(*(it++));
+  UNIT_EXPECT_TRUE(*(it++));
+  UNIT_EXPECT_EQUAL(3U, p->names.size());
+  UNIT_EXPECT_EQUAL(3U, p->values.size());
   delete p;
 
   json_mapper<person> pmapper;

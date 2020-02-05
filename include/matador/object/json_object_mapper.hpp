@@ -9,7 +9,6 @@
 #include "matador/utils/json_parser.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/memory.hpp"
-#include "matador/utils/json_identifier_mapper.hpp"
 #include "matador/object/belongs_to.hpp"
 #include "matador/object/has_one.hpp"
 
@@ -40,7 +39,11 @@ public:
 public:
   template < class V >
   void serialize(V &obj);
-  void serialize(const char *id, basic_identifier &pk);
+  template < class V >
+  void serialize(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void serialize(const char *id, identifier<std::string> &pk);
+  template < int SIZE, class V >
+  void serialize(const char *id, identifier<varchar<SIZE, V>> &pk);
   template < class V >
   void serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
   template < class V >
@@ -60,8 +63,6 @@ private:
 
   const char *object_cursor_ = nullptr;
   std::string object_key_;
-
-  json_identifier_mapper id_mapper_;
 };
 
 template<class T>
@@ -160,13 +161,45 @@ void json_object_mapper<T>::serialize(V &obj)
 }
 
 template<class T>
-void json_object_mapper<T>::serialize(const char *id, basic_identifier &pk)
+template<class V>
+void json_object_mapper<T>::serialize(const char *id, identifier<V> &pk, typename std::enable_if<
+std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
   if (key_ != id) {
     return;
   }
-  //std::cout << "key [" << id << "]: assigning value [" << value_ << "]\n";
-  id_mapper_.set_identifier_value(pk, value_);
+  if (!value_.is_integer()) {
+    return;
+  }
+
+  pk.value(value_.as<V>());
+}
+
+template<class T>
+void json_object_mapper<T>::serialize(const char *id, identifier<std::string> &pk)
+{
+  if (key_ != id) {
+    return;
+  }
+  if (!value_.is_string()) {
+    return;
+  }
+
+  pk.value(value_.as<std::string>());
+}
+
+template<class T>
+template<int SIZE, class V>
+void json_object_mapper<T>::serialize(const char *id, identifier<varchar<SIZE, V>> &pk)
+{
+  if (key_ != id) {
+    return;
+  }
+  if (!value_.is_string()) {
+    return;
+  }
+
+  pk.value(value_.as<std::string>());
 }
 
 template<class T>

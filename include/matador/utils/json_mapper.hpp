@@ -8,7 +8,6 @@
 #include "matador/utils/json.hpp"
 #include "matador/utils/json_parser.hpp"
 #include "matador/utils/memory.hpp"
-#include "matador/utils/json_identifier_mapper.hpp"
 #include "matador/utils/time.hpp"
 
 namespace matador {
@@ -36,12 +35,42 @@ public:
   /// @endcond OOS_DEV //
 
 public:
-  void serialize(const char *id, basic_identifier &pk)
+  template < class V >
+  void serialize(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     if (key_ != id) {
       return;
     }
-    id_mapper_.set_identifier_value(pk, &value_);
+    if (!value_.is_integer()) {
+      return;
+    }
+
+    pk.value(value_.as<V>());
+  }
+
+  void serialize(const char *id, identifier<std::string> &pk)
+  {
+    if (key_ != id) {
+      return;
+    }
+    if (!value_.is_string()) {
+      return;
+    }
+
+    pk.value(value_.as<std::string>());
+  }
+
+  template < int SIZE, class V >
+  void serialize(const char *id, identifier<varchar<SIZE, V>> &pk)
+  {
+    if (key_ != id) {
+      return;
+    }
+    if (!value_.is_string()) {
+      return;
+    }
+
+    pk.value(value_.as<std::string>());
   }
 
   template < class V >
@@ -123,23 +152,45 @@ public:
     to.set(value_.as<std::string>().c_str());
   }
 
-  template < class V >
-  void serialize(const char *id, std::vector<V> &vec)
+  template < class V, template < class ... > class C >
+  void serialize(const char *id, C<V> &cont)
   {
     if (key_ != id) {
       return;
     }
 
     for (auto &val : value_) {
-      vec.push_back(val.template as<V>());
+      cont.push_back(val.template as<V>());
+    }
+  }
+
+  template < class V >
+  void serialize(const char *id, std::set<V> &cont)
+  {
+    if (key_ != id) {
+      return;
+    }
+
+    for (auto &val : value_) {
+      cont.insert(val.template as<V>());
+    }
+  }
+
+  template < class V >
+  void serialize(const char *id, std::unordered_set<V> &cont)
+  {
+    if (key_ != id) {
+      return;
+    }
+
+    for (auto &val : value_) {
+      cont.insert(val.template as<V>());
     }
   }
 private:
   std::unique_ptr<T> object_;
   json value_;
   std::string key_;
-
-  json_identifier_mapper id_mapper_;
 };
 
 template<class T>
