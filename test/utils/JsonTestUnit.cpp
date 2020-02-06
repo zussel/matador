@@ -279,18 +279,34 @@ void JsonTestUnit::test_parser()
   UNIT_ASSERT_EQUAL(result, to_string(j));
 }
 
+struct json_sub_values
+{
+  long length = 0;
+  long width = 0;
+  long height = 0;
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("length", length);
+    s.serialize("width", width);
+    s.serialize("height", height);
+  }
+};
+
 struct json_values
 {
   identifier<varchar<255>> id;
   std::string name;
   date birthday;
   matador::time created;
-  bool flag;
-  long height;
+  bool flag = false;
+  long height = 0;
   std::vector<double> doubles;
   std::list<bool> bits;
   std::set<std::string> names;
   std::unordered_set<int> values;
+  json_sub_values dimensions;
 
   template < class S >
   void serialize(S &s)
@@ -305,6 +321,7 @@ struct json_values
     s.serialize("bits", bits);
     s.serialize("names", names);
     s.serialize("values", values);
+    s.serialize("dimensions", dimensions);
   }
 };
 
@@ -312,17 +329,18 @@ void JsonTestUnit::test_mapper()
 {
   json_mapper<json_values> mapper;
 
-  json_values *p = mapper.from_string(R"(  {     "id":  "george@mail.net", "name": "george",
+  std::unique_ptr<json_values> p(mapper.from_string(R"(  {     "id":  "george@mail.net", "name": "george",
 "birthday": "1987-09-27", "created": "2020-02-03 13:34:23", "flag": false, "height": 183,
 "doubles": [1.2, 3.5, 6.9],
 "bits": [true, false, true],
 "names": ["hans", "clara", "james"],
-"values": [11, 12, 13]
-} )");
+"values": [11, 12, 13],
+"dimensions": { "length": 200, "width":  300, "height":   100 }
+} )"));
 
   date b(27, 9, 1987);
 
-  UNIT_ASSERT_NOT_NULL(p);
+  UNIT_ASSERT_NOT_NULL(p.get());
   UNIT_EXPECT_EQUAL("george@mail.net", p->id.value());
   UNIT_EXPECT_EQUAL("george", p->name);
   UNIT_EXPECT_EQUAL(b, p->birthday);
@@ -335,7 +353,26 @@ void JsonTestUnit::test_mapper()
   UNIT_EXPECT_TRUE(*(it++));
   UNIT_EXPECT_EQUAL(3U, p->names.size());
   UNIT_EXPECT_EQUAL(3U, p->values.size());
-  delete p;
+
+  // check false types
+  p.reset(mapper.from_string(R"(  {     "id":  9, "name": true,
+"birthday": false, "created": false, "flag": 2.3, "height": "wrong",
+"doubles": false,
+"bits": "hallo",
+"names": false,
+"values": false
+} )"));
+
+  UNIT_ASSERT_NOT_NULL(p.get());
+  UNIT_EXPECT_EQUAL("", p->id.value());
+  UNIT_EXPECT_EQUAL("", p->name);
+  UNIT_EXPECT_FALSE(p->flag);
+  UNIT_EXPECT_FALSE(b == p->birthday);
+  UNIT_EXPECT_EQUAL(0L, p->height);
+  UNIT_EXPECT_EQUAL(0U, p->doubles.size());
+  UNIT_EXPECT_EQUAL(0U, p->bits.size());
+  UNIT_EXPECT_EQUAL(0U, p->names.size());
+  UNIT_EXPECT_EQUAL(0U, p->values.size());
 
   json_mapper<person> pmapper;
 

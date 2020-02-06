@@ -94,12 +94,15 @@ json &json::operator=(json &&x) noexcept
 
 json &json::operator=(const json &x)
 {
+  if (this == &x) {
+    return *this;
+  }
   clear();
   copy_from(x);
   return *this;
 }
 
-std::ostream &operator<<(std::ostream &out, json &val)
+std::ostream &operator<<(std::ostream &out, const json &val)
 {
   val.dump(out);
   return out;

@@ -739,6 +739,7 @@ public:
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b;
     }
   }
+
 #endif
   /**
    * @brief Checks if a is greater b.

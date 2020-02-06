@@ -125,7 +125,7 @@ public:
 
   json& operator=(const json &x);
 
-  friend std::ostream& operator<<(std::ostream &out, json &val);
+  friend std::ostream& operator<<(std::ostream &out, const json &val);
 
   void dump(std::ostream &out) const;
 
@@ -234,6 +234,26 @@ public:
   as() const {
     throw_on_wrong_type(e_string);
     return *value_.str;
+  }
+
+  template < class T >
+  bool fits_to_type(typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type * = 0) const {
+    return is_integer();
+  }
+
+  template < class T >
+  bool fits_to_type(typename std::enable_if<std::is_floating_point<T>::value>::type * = 0) const {
+    return is_real();
+  }
+
+  template < class T >
+  bool fits_to_type(typename std::enable_if<std::is_same<bool, T>::value>::type * = 0) const {
+    return is_boolean();
+  }
+
+  template < class T >
+  bool fits_to_type(typename std::enable_if<std::is_convertible<T, std::string>::value>::type * = 0) const {
+    return is_string();
   }
 
   bool is_number() const;
