@@ -306,7 +306,8 @@ struct json_values
   std::list<bool> bits;
   std::set<std::string> names;
   std::unordered_set<int> values;
-  json_sub_values dimensions;
+  json_sub_values dimension;
+  std::vector<json_sub_values> dimensions;
 
   template < class S >
   void serialize(S &s)
@@ -321,6 +322,7 @@ struct json_values
     s.serialize("bits", bits);
     s.serialize("names", names);
     s.serialize("values", values);
+    s.serialize("dimension", dimension);
     s.serialize("dimensions", dimensions);
   }
 };
@@ -335,8 +337,10 @@ void JsonTestUnit::test_mapper()
 "bits": [true, false, true],
 "names": ["hans", "clara", "james"],
 "values": [11, 12, 13],
-"dimensions": { "length": 200, "width":  300, "height":   100 }
+"dimension": { "length": 200, "width":  300, "height":   100 }
 } )"));
+
+//  "dimensions": [{ "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 }]
 
   date b(27, 9, 1987);
 
@@ -353,6 +357,9 @@ void JsonTestUnit::test_mapper()
   UNIT_EXPECT_TRUE(*(it++));
   UNIT_EXPECT_EQUAL(3U, p->names.size());
   UNIT_EXPECT_EQUAL(3U, p->values.size());
+  UNIT_EXPECT_EQUAL(200, p->dimension.length);
+  UNIT_EXPECT_EQUAL(300, p->dimension.width);
+  UNIT_EXPECT_EQUAL(100, p->dimension.height);
 
   // check false types
   p.reset(mapper.from_string(R"(  {     "id":  9, "name": true,
@@ -376,9 +383,9 @@ void JsonTestUnit::test_mapper()
 
   json_mapper<person> pmapper;
 
-  person *pp = pmapper.from_string(R"({ "name": "\r\ferik\tder\nwikinger\b\u0085"})");
+  std::unique_ptr<person> pp(pmapper.from_string(R"({ "name": "\r\ferik\tder\nwikinger\b\u0085"})"));
 
-  UNIT_ASSERT_NOT_NULL(pp);
+  UNIT_ASSERT_NOT_NULL(pp.get());
   UNIT_EXPECT_EQUAL("\r\ferik\tder\nwikinger\b\\u0085", pp->name());
 }
 
