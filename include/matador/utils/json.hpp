@@ -125,7 +125,7 @@ public:
 
   json& operator=(const json &x);
 
-  friend std::ostream& operator<<(std::ostream &out, const json &val);
+  friend OOS_UTILS_API std::ostream& operator<<(std::ostream &out, const json &val);
 
   void dump(std::ostream &out) const;
 
