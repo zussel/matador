@@ -18,9 +18,10 @@ class json_mapper : public generic_json_parser<json_mapper<T>>
 public:
   json_mapper() = default;
 
-  T* from_string(const char *str, bool is_root = true);
-  T* from_string(const char *str, T *obj, bool is_root = true);
-  T* from_json(T *obj, const json &j, bool is_root = true);
+  std::unique_ptr<T> object_from_string(const char *str, bool is_root = true);
+  void object_from_string(const char *str, T *obj, bool is_root = true);
+
+  std::vector<std::unique_ptr<T>> array_from_string(const char *str, bool is_root = true);
 
   /// @cond OOS_DEV //
   void on_begin_object();
@@ -74,30 +75,28 @@ private:
 };
 
 template<class T>
-T* json_mapper<T>::from_string(const char *str, bool is_root)
+std::unique_ptr<T> json_mapper<T>::object_from_string(const char *str, bool is_root)
 {
   object_ = matador::make_unique<T>();
-  this->parse_json(str, is_root);
-  return object_.release();
+  this->parse_json_object(str, is_root);
+  return std::move(object_);
 }
 
 template<class T>
-T* json_mapper<T>::from_string(const char *str, T *obj, bool is_root)
+void json_mapper<T>::object_from_string(const char *str, T *obj, bool is_root)
 {
   object_ = matador::make_unique<T>();
   object_.reset(obj);
-  this->parse_json(str, is_root);
-  return object_.release();
+  this->parse_json_object(str, is_root);
+  object_.release();
 }
 
 template<class T>
-T* json_mapper<T>::from_json(T *obj, const json &j, bool is_root)
+std::vector<std::unique_ptr<T>> json_mapper<T>::array_from_string(const char *str, bool is_root)
 {
-  object_.reset(obj);
-  std::stringstream str;
-  str << j;
-  this->parse_json(str.str().c_str(), is_root);
-  return object_.release();
+  std::vector<std::unique_ptr<T>> result;
+  this->parse_json_array(str, is_root);
+  return result;
 }
 
 template<class T>
@@ -181,7 +180,7 @@ void json_mapper<T>::serialize(const char *id, V &obj, typename std::enable_if<s
     return;
   }
   json_mapper<V> mapper;
-  mapper.from_string(object_cursor_, &obj, false);
+  mapper.object_from_string(object_cursor_, &obj, false);
   this->sync_cursor(mapper.json_cursor());
 }
 
@@ -330,10 +329,11 @@ void json_mapper<T>::serialize(const char *id, std::vector<V> &, typename std::e
     return;
   }
 
-//  json_mapper<V> mapper;
-//  mapper.from_string(object_cursor_, &obj, false);
-//  this->sync_cursor(mapper.json_cursor());
+  json_mapper<V> mapper;
+  auto result =  mapper.parse_json_array(object_cursor_, false);
+  this->sync_cursor(mapper.json_cursor());
 
+  for
   for (auto &val : value_) {
     std::cout << "got object " << val << " for vector\n";
   }

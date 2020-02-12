@@ -55,6 +55,8 @@ public:
 
 protected:
   void parse_json(const char *json_str, bool is_root = true);
+  void parse_json_object(const char *json_str, bool is_root = true);
+  void parse_json_array(const char *json_str, bool is_root = true);
 
   void sync_cursor(const char *cursor);
 
@@ -105,8 +107,60 @@ generic_json_parser<T>::parse_json(const char *json_str, bool is_root)
       parse_json_array(is_root);
       break;
     default:
-      throw json_exception("root must be either array '[]' or serializable '{}'");
+      throw json_exception("root must be either array '[]' or object '{}'");
   }
+
+  // skip white
+  c = skip_whitespace();
+
+  // no characters after closing parenthesis are allowed
+  if (is_root && !is_eos(c)) {
+    throw json_exception("no characters are allowed after closed root node");
+  }
+}
+
+template<class T>
+void generic_json_parser<T>::parse_json_object(const char *json_str, bool is_root)
+{
+  json_cursor_ = json_str;
+
+  char c = skip_whitespace();
+
+  if (is_eos(c)) {
+    throw json_exception("invalid stream");
+  }
+
+  if (c != '{') {
+    throw json_exception("root must be object '{}'");
+  }
+
+  parse_json_object(is_root);
+
+  // skip white
+  c = skip_whitespace();
+
+  // no characters after closing parenthesis are allowed
+  if (is_root && !is_eos(c)) {
+    throw json_exception("no characters are allowed after closed root node");
+  }
+}
+
+template<class T>
+void generic_json_parser<T>::parse_json_array(const char *json_str, bool is_root)
+{
+  json_cursor_ = json_str;
+
+  char c = skip_whitespace();
+
+  if (is_eos(c)) {
+    throw json_exception("invalid stream");
+  }
+
+  if (c != '[') {
+    throw json_exception("root must be array '[]]'");
+  }
+
+  parse_json_array(is_root);
 
   // skip white
   c = skip_whitespace();

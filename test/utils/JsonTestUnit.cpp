@@ -331,14 +331,14 @@ void JsonTestUnit::test_mapper()
 {
   json_mapper<json_values> mapper;
 
-  std::unique_ptr<json_values> p(mapper.from_string(R"(  {     "id":  "george@mail.net", "name": "george",
+  auto p = mapper.object_from_string(R"(  {     "id":  "george@mail.net", "name": "george",
 "birthday": "1987-09-27", "created": "2020-02-03 13:34:23", "flag": false, "height": 183,
 "doubles": [1.2, 3.5, 6.9],
 "bits": [true, false, true],
 "names": ["hans", "clara", "james"],
 "values": [11, 12, 13],
 "dimension": { "length": 200, "width":  300, "height":   100 }
-} )"));
+} )");
 
 //  "dimensions": [{ "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 }]
 
@@ -362,13 +362,13 @@ void JsonTestUnit::test_mapper()
   UNIT_EXPECT_EQUAL(100, p->dimension.height);
 
   // check false types
-  p.reset(mapper.from_string(R"(  {     "id":  9, "name": true,
+  p = mapper.object_from_string(R"(  {     "id":  9, "name": true,
 "birthday": false, "created": false, "flag": 2.3, "height": "wrong",
 "doubles": false,
 "bits": "hallo",
 "names": false,
 "values": false
-} )"));
+} )");
 
   UNIT_ASSERT_NOT_NULL(p.get());
   UNIT_EXPECT_EQUAL("", p->id.value());
@@ -383,7 +383,7 @@ void JsonTestUnit::test_mapper()
 
   json_mapper<person> pmapper;
 
-  std::unique_ptr<person> pp(pmapper.from_string(R"({ "name": "\r\ferik\tder\nwikinger\b\u0085"})"));
+  std::unique_ptr<person> pp(pmapper.object_from_string(R"({ "name": "\r\ferik\tder\nwikinger\b\u0085"})"));
 
   UNIT_ASSERT_NOT_NULL(pp.get());
   UNIT_EXPECT_EQUAL("\r\ferik\tder\nwikinger\b\\u0085", pp->name());
@@ -393,48 +393,48 @@ void JsonTestUnit::test_failures()
 {
   json_mapper<person> mapper;
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(    )"), json_exception, "invalid stream");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(    )"), json_exception, "invalid stream");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(    --)"), json_exception, "root must be either array '[]' or serializable '{}'");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(    --)"), json_exception, "root must be either array '[]' or serializable '{}'");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  key)"), json_exception, "expected string opening quotes");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  key)"), json_exception, "expected string opening quotes");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key)"), json_exception, "invalid stream");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key)"), json_exception, "invalid stream");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key  )"), json_exception, "invalid stream");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key  )"), json_exception, "invalid stream");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key" ; )"), json_exception, "character isn't colon");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key" ; )"), json_exception, "character isn't colon");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key": "value" )"), json_exception, "not a valid object closing bracket");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key": "value" )"), json_exception, "not a valid object closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key": "value" ]  )"), json_exception, "not a valid object closing bracket");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key": "value" ]  )"), json_exception, "not a valid object closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  {  "key": "value" } hhh  )"), json_exception, "no characters are allowed after closed root node");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key": "value" } hhh  )"), json_exception, "no characters are allowed after closed root node");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  [  8)"), json_exception, "invalid json character");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  8)"), json_exception, "invalid json character");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  [  8 )"), json_exception, "not a valid array closing bracket");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  8 )"), json_exception, "not a valid array closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  [  8 fff)"), json_exception, "not a valid array closing bracket");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  8 fff)"), json_exception, "not a valid array closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  [  12345678901234567890123456789 ]   )"), json_exception, "errno integer error");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  12345678901234567890123456789 ]   )"), json_exception, "errno integer error");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  [  1.79769e+309 ]   )"), json_exception, "errno double error");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  1.79769e+309 ]   )"), json_exception, "errno double error");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  [  1.79769e+308ddd ]   )"), json_exception, "invalid json character");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  1.79769e+308ddd ]   )"), json_exception, "invalid json character");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  { "key": t)"), json_exception, "unexpected end of string");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": t)"), json_exception, "unexpected end of string");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  { "key": tg)"), json_exception, "invalid character for bool value string");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": tg)"), json_exception, "invalid character for bool value string");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  { "key": f)"), json_exception, "unexpected end of string");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": f)"), json_exception, "unexpected end of string");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  { "key": fu)"), json_exception, "invalid character for bool value string");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": fu)"), json_exception, "invalid character for bool value string");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  { "key": w)"), json_exception, "unknown json type");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": w)"), json_exception, "unknown json type");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  { "key": n)"), json_exception, "unexpected end of string");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": n)"), json_exception, "unexpected end of string");
 
-  UNIT_ASSERT_EXCEPTION(mapper.from_string(R"(  { "key": na)"), json_exception, "invalid null character");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": na)"), json_exception, "invalid null character");
 }
 
