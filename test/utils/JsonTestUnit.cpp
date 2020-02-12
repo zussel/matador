@@ -395,7 +395,7 @@ void JsonTestUnit::test_failures()
 
   UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(    )"), json_exception, "invalid stream");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(    --)"), json_exception, "root must be either array '[]' or serializable '{}'");
+  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(    --)"), json_exception, "root must be object '{}'");
 
   UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  key)"), json_exception, "expected string opening quotes");
 
@@ -411,17 +411,17 @@ void JsonTestUnit::test_failures()
 
   UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key": "value" } hhh  )"), json_exception, "no characters are allowed after closed root node");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  8)"), json_exception, "invalid json character");
+  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  8)"), json_exception, "invalid json character");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  8 )"), json_exception, "not a valid array closing bracket");
+  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  8 )"), json_exception, "not a valid array closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  8 fff)"), json_exception, "not a valid array closing bracket");
+  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  8 fff)"), json_exception, "not a valid array closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  12345678901234567890123456789 ]   )"), json_exception, "errno integer error");
+  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  12345678901234567890123456789 ]   )"), json_exception, "errno integer error");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  1.79769e+309 ]   )"), json_exception, "errno double error");
+  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  1.79769e+309 ]   )"), json_exception, "errno double error");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  [  1.79769e+308ddd ]   )"), json_exception, "invalid json character");
+  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  1.79769e+308ddd ]   )"), json_exception, "invalid json character");
 
   UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": t)"), json_exception, "unexpected end of string");
 

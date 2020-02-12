@@ -330,10 +330,9 @@ void json_mapper<T>::serialize(const char *id, std::vector<V> &, typename std::e
   }
 
   json_mapper<V> mapper;
-  auto result =  mapper.parse_json_array(object_cursor_, false);
+  mapper.array_from_string(object_cursor_, false);
   this->sync_cursor(mapper.json_cursor());
 
-  for
   for (auto &val : value_) {
     std::cout << "got object " << val << " for vector\n";
   }
