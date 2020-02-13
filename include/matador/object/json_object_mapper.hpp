@@ -20,7 +20,7 @@ class json_object_mapper : public generic_json_parser<json_object_mapper<T>>
 public:
   json_object_mapper() = default;
 
-  T* from_string(const char *str, bool is_root = true);
+  std::unique_ptr<T> object_from_string(const char *str, bool is_root = true);
 
   /// @cond OOS_DEV //
   void on_begin_object();
@@ -66,18 +66,16 @@ private:
 };
 
 template<class T>
-T* json_object_mapper<T>::from_string(const char *str, bool is_root)
+std::unique_ptr<T> json_object_mapper<T>::object_from_string(const char *str, bool is_root)
 {
-  //std::cout << "start parsing json [" << str << "]\n";
   object_ = matador::make_unique<T>();
   this->parse_json(str, is_root);
-  return object_.release();
+  return std::move(object_);
 }
 
 template<class T>
 void json_object_mapper<T>::on_begin_object()
 {
-  //std::cout << "starting object [" << key_ << "]\n";
   object_key_ = key_;
   key_.clear();
   object_cursor_ = this->json_cursor();
@@ -87,17 +85,14 @@ template<class T>
 void json_object_mapper<T>::on_object_key(const std::string &key)
 {
   if (!object_key_.empty()) {
-    //std::cout << "skipping setting of key [" << key << "]\n";
     return;
   }
   key_ = key;
-  //std::cout << "read key [" << key_ << "]\n";
 }
 
 template<class T>
 void json_object_mapper<T>::on_end_object()
 {
-  //std::cout << "finished object [" << object_key_ << "]\n";
   object_cursor_ = nullptr;
   object_key_.clear();
 }
@@ -273,7 +268,7 @@ void json_object_mapper<T>::serialize(const char *id, belongs_to<Value> &x, casc
   }
 
   json_object_mapper<Value> mapper;
-  x = mapper.from_string(object_cursor_, false);
+  x = mapper.object_from_string(object_cursor_, false).release();
   this->sync_cursor(mapper.json_cursor());
 }
 
@@ -286,7 +281,8 @@ void json_object_mapper<T>::serialize(const char *id, has_one<Value> &x, cascade
   }
 
   json_object_mapper<Value> mapper;
-  x = mapper.from_string(object_cursor_, false);
+  auto result = mapper.object_from_string(object_cursor_, false);
+  x = result.release();
   this->sync_cursor(mapper.json_cursor());
 }
 }

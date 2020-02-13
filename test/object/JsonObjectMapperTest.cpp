@@ -11,7 +11,7 @@
 using namespace matador;
 
 JsonObjectMapperTest::JsonObjectMapperTest()
-  : unit_test("object_json", "Object Json Mapper Test")
+  : unit_test("json_object", "Json Object Mapper Test")
 {
   add_test("simple", std::bind(&JsonObjectMapperTest::test_simple, this), "test simple json object mapper");
   add_test("derived", std::bind(&JsonObjectMapperTest::test_derived, this), "test derived json object mapper");
@@ -21,7 +21,7 @@ void JsonObjectMapperTest::test_simple()
 {
   json_object_mapper<person> mapper;
 
-  std::unique_ptr<person> p(mapper.from_string(R"(  { "id":  5, "name": "george", "height": 185 } )"));
+  auto  p = mapper.object_from_string(R"(  { "id":  5, "name": "george", "height": 185 } )");
 
   UNIT_ASSERT_NOT_NULL(p.get());
   UNIT_EXPECT_EQUAL(5UL, p->id());
@@ -34,7 +34,7 @@ void JsonObjectMapperTest::test_derived()
   //std::cout << "\n";
   json_object_mapper<citizen> mapper;
 
-  std::unique_ptr<citizen> p(mapper.from_string(R"(  { "id":  5, "name": "george", "height": 185, "birthdate": "2001-11-27", "address": { "id": 4, "street": "east-street", "city": "east-city", "citizen": 5 } } )"));
+  auto p = mapper.object_from_string(R"(  { "id":  5, "name": "george", "height": 185, "birthdate": "2001-11-27", "address": { "id": 4, "street": "east-street", "city": "east-city", "citizen": 5 } } )");
 
   date birthday(27, 11, 2001);
   UNIT_ASSERT_NOT_NULL(p.get());
