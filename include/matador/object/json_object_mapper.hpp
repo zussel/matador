@@ -20,7 +20,7 @@ class json_object_mapper : public generic_json_parser<json_object_mapper<T>>
 public:
   json_object_mapper() = default;
 
-  std::unique_ptr<T> object_from_string(const char *str, bool is_root = true);
+  T object_from_string(const char *str, bool is_root = true);
 
   /// @cond OOS_DEV //
   void on_begin_object();
@@ -57,7 +57,7 @@ public:
   void serialize(const char *id, has_one<Value> &x, cascade_type);
 
 private:
-  std::unique_ptr<T> object_;
+  T object_;
   json value_;
   std::string key_;
 
@@ -66,9 +66,9 @@ private:
 };
 
 template<class T>
-std::unique_ptr<T> json_object_mapper<T>::object_from_string(const char *str, bool is_root)
+T json_object_mapper<T>::object_from_string(const char *str, bool is_root)
 {
-  object_ = matador::make_unique<T>();
+  object_ = T();
   this->parse_json(str, is_root);
   return std::move(object_);
 }
@@ -115,7 +115,7 @@ void json_object_mapper<T>::on_string(const std::string &value)
   if (object_key_.empty()) {
     value_ = value;
   }
-  access::serialize(*this, *object_);
+  access::serialize(*this, object_);
 }
 
 template<class T>
@@ -128,7 +128,7 @@ void json_object_mapper<T>::on_number(typename generic_json_parser<json_object_m
       value_ = value.integer;
     }
   }
-  access::serialize(*this, *object_);
+  access::serialize(*this, object_);
 }
 
 template<class T>
@@ -137,7 +137,7 @@ void json_object_mapper<T>::on_bool(bool value)
   if (object_key_.empty()) {
     value_ = value;
   }
-  access::serialize(*this, *object_);
+  access::serialize(*this, object_);
 }
 
 template<class T>
@@ -268,7 +268,8 @@ void json_object_mapper<T>::serialize(const char *id, belongs_to<Value> &x, casc
   }
 
   json_object_mapper<Value> mapper;
-  x = mapper.object_from_string(object_cursor_, false).release();
+  x = new Value;
+  *x = mapper.object_from_string(object_cursor_, false);
   this->sync_cursor(mapper.json_cursor());
 }
 
@@ -282,7 +283,8 @@ void json_object_mapper<T>::serialize(const char *id, has_one<Value> &x, cascade
 
   json_object_mapper<Value> mapper;
   auto result = mapper.object_from_string(object_cursor_, false);
-  x = result.release();
+  x = new Value;
+  *x = std::move(result);
   this->sync_cursor(mapper.json_cursor());
 }
 }

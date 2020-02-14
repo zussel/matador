@@ -18,10 +18,10 @@ class json_mapper : public generic_json_parser<json_mapper<T>>
 public:
   json_mapper() = default;
 
-  std::unique_ptr<T> object_from_string(const char *str, bool is_root = true);
+  T object_from_string(const char *str, bool is_root = true);
   void object_from_string(const char *str, T *obj, bool is_root = true);
 
-  std::vector<std::unique_ptr<T>> array_from_string(const char *str, bool is_root = true);
+  std::vector<T> array_from_string(const char *str, bool is_root = true);
 
   /// @cond OOS_DEV //
   void on_begin_object();
@@ -66,18 +66,20 @@ public:
   void serialize(const char *id, std::unordered_set<V> &cont);
 
 private:
-  std::unique_ptr<T> object_;
+  T object_;
+  std::vector<T> array_;
   json value_;
   std::string key_;
 
-  const char *object_cursor_ = nullptr;
   std::string object_key_;
+  bool is_array_ = false;
+  const char *array_cursor_ = nullptr;
 };
 
 template<class T>
-std::unique_ptr<T> json_mapper<T>::object_from_string(const char *str, bool is_root)
+T json_mapper<T>::object_from_string(const char *str, bool is_root)
 {
-  object_ = matador::make_unique<T>();
+  object_ = T();
   this->parse_json_object(str, is_root);
   return std::move(object_);
 }
@@ -85,18 +87,17 @@ std::unique_ptr<T> json_mapper<T>::object_from_string(const char *str, bool is_r
 template<class T>
 void json_mapper<T>::object_from_string(const char *str, T *obj, bool is_root)
 {
-  object_ = matador::make_unique<T>();
-  object_.reset(obj);
+  object_ = T();
   this->parse_json_object(str, is_root);
-  object_.release();
+  *obj = std::move(object_);
 }
 
 template<class T>
-std::vector<std::unique_ptr<T>> json_mapper<T>::array_from_string(const char *str, bool is_root)
+std::vector<T> json_mapper<T>::array_from_string(const char *str, bool is_root)
 {
-  std::vector<std::unique_ptr<T>> result;
+  array_.clear();
   this->parse_json_array(str, is_root);
-  return result;
+  return array_;
 }
 
 template<class T>
@@ -104,7 +105,9 @@ void json_mapper<T>::on_begin_object()
 {
   object_key_ = key_;
   key_.clear();
-  object_cursor_ = this->json_cursor();
+  if (!object_key_.empty()) {
+    access::serialize(*this, object_);
+  }
 }
 
 template<class T>
@@ -119,20 +122,28 @@ void json_mapper<T>::on_object_key(const std::string &key)
 template<class T>
 void json_mapper<T>::on_end_object()
 {
-  object_cursor_ = nullptr;
   object_key_.clear();
+  if (is_array_) {
+    array_.emplace_back(std::move(object_));
+  }
 }
 
 template<class T>
 void json_mapper<T>::on_begin_array()
 {
-
+  is_array_ = true;
+  array_cursor_ = this->json_cursor();
+  if (!object_key_.empty()) {
+    access::serialize(*this, object_);
+    this->sync_cursor(this->json_cursor() - 1);
+  }
 }
 
 template<class T>
 void json_mapper<T>::on_end_array()
 {
-
+  array_cursor_ = nullptr;
+  is_array_ = false;
 }
 
 template<class T>
@@ -141,7 +152,7 @@ void json_mapper<T>::on_string(const std::string &value)
   if (object_key_.empty()) {
     value_ = value;
   }
-  access::serialize(*this, *object_);
+  access::serialize(*this, object_);
 }
 
 template<class T>
@@ -154,7 +165,7 @@ void json_mapper<T>::on_number(typename generic_json_parser<json_mapper<T>>::num
       value_ = value.integer;
     }
   }
-  access::serialize(*this, *object_);
+  access::serialize(*this, object_);
 }
 
 template<class T>
@@ -163,7 +174,7 @@ void json_mapper<T>::on_bool(bool value)
   if (object_key_.empty()) {
     value_ = value;
   }
-  access::serialize(*this, *object_);
+  access::serialize(*this, object_);
 }
 
 template<class T>
@@ -180,8 +191,8 @@ void json_mapper<T>::serialize(const char *id, V &obj, typename std::enable_if<s
     return;
   }
   json_mapper<V> mapper;
-  mapper.object_from_string(object_cursor_, &obj, false);
-  this->sync_cursor(mapper.json_cursor());
+  mapper.object_from_string(this->json_cursor(), &obj, false);
+  this->sync_cursor(mapper.json_cursor() - 1);
 }
 
 template<class T>
@@ -323,19 +334,15 @@ void json_mapper<T>::serialize(const char *id, std::vector<V> &cont, typename st
 
 template<class T>
 template<class V>
-void json_mapper<T>::serialize(const char *id, std::vector<V> &, typename std::enable_if<std::is_class<V>::value>::type*)
+void json_mapper<T>::serialize(const char *id, std::vector<V> &v, typename std::enable_if<std::is_class<V>::value>::type*)
 {
-  if (key_ != id) {
+  if (object_key_ != id) {
     return;
   }
 
   json_mapper<V> mapper;
-  mapper.array_from_string(object_cursor_, false);
-  this->sync_cursor(mapper.json_cursor());
-
-  for (auto &val : value_) {
-    std::cout << "got object " << val << " for vector\n";
-  }
+  v = mapper.array_from_string(array_cursor_, false);
+  this->sync_cursor(mapper.json_cursor() - 1);
 }
 
 template<class T>

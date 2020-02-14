@@ -55,14 +55,22 @@ public:
    *
    * @return The copied identifier object
    */
-  identifier& operator=(const identifier &) = default;
+  identifier& operator=(const identifier &x) {
+    if (this != &x) {
+      id_ = x.id_;
+    }
+    return *this;
+  }
 
   /**
    * @brief Default move assignment constructor
    *
    * @return The moved identifier object
    */
-  identifier& operator=(identifier &&) noexcept = default;
+  identifier& operator=(identifier &&x) noexcept {
+    id_ = x.id_;
+    return *this;
+  }
 
   /**
    * @brief Default copy constructor
