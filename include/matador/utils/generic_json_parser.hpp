@@ -50,25 +50,25 @@ public:
   virtual ~generic_json_parser() = default;
 
 protected:
+  void on_parse_object(bool is_root);
+  void on_begin_object();
+  void on_object_key(const std::string &key);
+  void on_end_object();
+
+  void on_begin_array();
+  void on_end_array();
+
+  void on_string(const std::string &value);
+  void on_number(number_t value);
+  void on_bool(bool value);
+  void on_null();
+
+protected:
   void parse_json(const char *json_str, bool is_root = true);
   void parse_json_object(const char *json_str, bool is_root = true);
   void parse_json_array(const char *json_str, bool is_root = true);
 
   void sync_cursor(const char *cursor);
-
-protected:
-  void on_parse_object(bool is_root);
-//  void on_begin_object();
-//  void on_object_key(const std::string &key);
-//  void on_end_object();
-//
-//  void on_begin_array();
-//  void on_end_array();
-//
-//  void on_string(const std::string &value);
-//  void on_number(number_t value);
-//  void on_bool(bool value);
-//  void on_null();
 
 private:
   void parse_json_object(bool is_root);
@@ -96,6 +96,60 @@ private:
 template < class T > const char *generic_json_parser<T>::null_string = "null";
 template < class T > const char *generic_json_parser<T>::true_string = "true";
 template < class T > const char *generic_json_parser<T>::false_string = "false";
+
+template<class T>
+void generic_json_parser<T>::on_begin_object()
+{
+
+}
+
+template<class T>
+void generic_json_parser<T>::on_object_key(const std::string &key)
+{
+
+}
+
+template<class T>
+void generic_json_parser<T>::on_end_object()
+{
+
+}
+
+template<class T>
+void generic_json_parser<T>::on_begin_array()
+{
+
+}
+
+template<class T>
+void generic_json_parser<T>::on_end_array()
+{
+
+}
+
+template<class T>
+void generic_json_parser<T>::on_string(const std::string &value)
+{
+
+}
+
+template<class T>
+void generic_json_parser<T>::on_number(generic_json_parser::number_t value)
+{
+
+}
+
+template<class T>
+void generic_json_parser<T>::on_bool(bool value)
+{
+
+}
+
+template<class T>
+void generic_json_parser<T>::on_null()
+{
+
+}
 
 template < class T >
 void

@@ -24,7 +24,7 @@ public:
   std::vector<T> array_from_string(const char *str, bool is_root = true);
 
   /// @cond OOS_DEV //
-  void on_parse_object(bool is_root);
+//  void on_parse_object(bool is_root);
   void on_begin_object();
   void on_object_key(const std::string &key);
   void on_end_object();
@@ -101,11 +101,11 @@ std::vector<T> json_mapper<T>::array_from_string(const char *str, bool is_root)
   return array_;
 }
 
-template<class T>
-void json_mapper<T>::on_parse_object(bool is_root)
-{
-  generic_json_parser::on_parse_object(is_root);
-}
+//template<class T>
+//void json_mapper<T>::on_parse_object(bool is_root)
+//{
+//  access::serialize(*this, object_);
+//}
 
 template<class T>
 void json_mapper<T>::on_begin_object()
