@@ -24,6 +24,7 @@ public:
   std::vector<std::unique_ptr<T>> array_from_string(const char *str, bool is_root = true);
 
   /// @cond OOS_DEV //
+  void on_parse_object(bool is_root);
   void on_begin_object();
   void on_object_key(const std::string &key);
   void on_end_object();
@@ -97,6 +98,12 @@ std::vector<std::unique_ptr<T>> json_mapper<T>::array_from_string(const char *st
   std::vector<std::unique_ptr<T>> result;
   this->parse_json_array(str, is_root);
   return result;
+}
+
+template<class T>
+void json_mapper<T>::on_parse_object(bool is_root)
+{
+  generic_json_parser::on_parse_object(is_root);
 }
 
 template<class T>

@@ -60,6 +60,20 @@ protected:
 
   void sync_cursor(const char *cursor);
 
+protected:
+  void on_parse_object(bool is_root);
+//  void on_begin_object();
+//  void on_object_key(const std::string &key);
+//  void on_end_object();
+//
+//  void on_begin_array();
+//  void on_end_array();
+//
+//  void on_string(const std::string &value);
+//  void on_number(number_t value);
+//  void on_bool(bool value);
+//  void on_null();
+
 private:
   void parse_json_object(bool is_root);
   void parse_json_array(bool is_root);
@@ -186,6 +200,14 @@ void generic_json_parser<T>::sync_cursor(const char *cursor)
 template < class T >
 void
 generic_json_parser<T>::parse_json_object(bool is_root)
+{
+  T& t = static_cast<T&>(*this);
+  t.on_parse_object(is_root);
+}
+
+template < class T >
+void
+generic_json_parser<T>::on_parse_object(bool is_root)
 {
 //  std::cout << "(this: " << this << ") start parse_json_object, cursor: [" << json_cursor_ << "]\n";
 
