@@ -1,7 +1,3 @@
-//
-// Created by sascha on 09.01.20.
-//
-
 #ifndef MATADOR_GENERIC_JSON_PARSER_HPP
 #define MATADOR_GENERIC_JSON_PARSER_HPP
 
@@ -171,7 +167,7 @@ void generic_json_parser<T>::parse_json_array(const char *json_str, bool is_root
   }
 
   if (c != '[') {
-    throw json_exception("root must be array '[]]'");
+    throw json_exception("root must be array '[]'");
   }
 
   parse_json_array(is_root);
@@ -263,19 +259,17 @@ generic_json_parser<T>::on_parse_object(bool is_root)
 
   c = skip_whitespace();
 
-//  std::cout << "(this: " << this << ") finished parse_json_object, cursor: [" << json_cursor_ << "]\n";
-
   if (!is_root && is_eos(c)) {
     throw json_exception("unexpected end of string");
   } else if (c != '}') {
     throw json_exception("not a valid object closing bracket");
   }
 
+  static_cast<T*>(this)->on_end_object();
+
   if (is_root) {
     next_char();
   }
-
-  static_cast<T*>(this)->on_end_object();
 }
 
 template<class T>
@@ -317,11 +311,11 @@ void generic_json_parser<T>::parse_json_array(bool is_root)
     throw json_exception("not a valid array closing bracket");
   }
 
+  static_cast<T*>(this)->on_end_array();
+
   if (is_root) {
     next_char();
   }
-
-  static_cast<T*>(this)->on_end_array();
 }
 
 template<class T>

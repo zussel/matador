@@ -21,12 +21,11 @@ void JsonObjectMapperTest::test_simple()
 {
   json_object_mapper<person> mapper;
 
-  auto  p = mapper.object_from_string(R"(  { "id":  5, "name": "george", "height": 185 } )");
+  auto p = mapper.object_from_string(R"(  { "id":  5, "name": "george", "height": 185 } )");
 
-  UNIT_ASSERT_NOT_NULL(p.get());
-  UNIT_EXPECT_EQUAL(5UL, p->id());
-  UNIT_EXPECT_EQUAL("george", p->name());
-  UNIT_EXPECT_EQUAL(185U, p->height());
+  UNIT_EXPECT_EQUAL(5UL, p.id());
+  UNIT_EXPECT_EQUAL("george", p.name());
+  UNIT_EXPECT_EQUAL(185U, p.height());
 }
 
 void JsonObjectMapperTest::test_derived()
@@ -37,15 +36,14 @@ void JsonObjectMapperTest::test_derived()
   auto p = mapper.object_from_string(R"(  { "id":  5, "name": "george", "height": 185, "birthdate": "2001-11-27", "address": { "id": 4, "street": "east-street", "city": "east-city", "citizen": 5 } } )");
 
   date birthday(27, 11, 2001);
-  UNIT_ASSERT_NOT_NULL(p.get());
-  UNIT_EXPECT_EQUAL(5UL, p->id());
-  UNIT_EXPECT_EQUAL("george", p->name());
-  UNIT_EXPECT_EQUAL(185U, p->height());
-  UNIT_EXPECT_EQUAL(birthday, p->birthdate());
+  UNIT_EXPECT_EQUAL(5UL, p.id());
+  UNIT_EXPECT_EQUAL("george", p.name());
+  UNIT_EXPECT_EQUAL(185U, p.height());
+  UNIT_EXPECT_EQUAL(birthday, p.birthdate());
 
-  UNIT_ASSERT_NOT_NULL(p->address_.get());
+  UNIT_ASSERT_NOT_NULL(p.address_.get());
 
-  object_ptr<address> addr = p->address_;
+  object_ptr<address> addr = p.address_;
 
   UNIT_EXPECT_EQUAL(4UL, addr->id);
   UNIT_EXPECT_EQUAL("east-street", addr->street);
