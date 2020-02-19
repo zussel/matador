@@ -24,7 +24,8 @@ public:
   std::vector<T> array_from_string(const char *str, bool is_root = true);
 
   /// @cond OOS_DEV //
-//  void on_parse_object(bool is_root);
+//  void on_parse_array(bool is_root);
+  void on_parse_object(bool is_root);
   void on_begin_object();
   void on_object_key(const std::string &key);
   void on_end_object();
@@ -101,10 +102,24 @@ std::vector<T> json_mapper<T>::array_from_string(const char *str, bool is_root)
   return array_;
 }
 
+template<class T>
+void json_mapper<T>::on_parse_object(bool is_root)
+{
+  if (is_root) {
+    generic_json_parser<json_mapper<T>>::on_parse_object(is_root);
+  } else {
+    access::serialize(*this, object_);
+  }
+}
+
 //template<class T>
-//void json_mapper<T>::on_parse_object(bool is_root)
+//void json_mapper<T>::on_parse_array(bool is_root)
 //{
-//  access::serialize(*this, object_);
+//  if (is_root) {
+//    generic_json_parser<json_mapper<T>>::on_parse_array(is_root);
+//  } else {
+//    access::serialize(*this, object_);
+//  }
 //}
 
 template<class T>
@@ -143,6 +158,8 @@ void json_mapper<T>::on_begin_array()
   if (!object_key_.empty()) {
     access::serialize(*this, object_);
     this->sync_cursor(this->json_cursor() - 1);
+  } else {
+    value_ = json::array();
   }
 }
 
@@ -151,43 +168,77 @@ void json_mapper<T>::on_end_array()
 {
   array_cursor_ = nullptr;
   is_array_ = false;
+  if (object_key_.empty()) {
+    access::serialize(*this, object_);
+  }
 }
 
 template<class T>
 void json_mapper<T>::on_string(const std::string &value)
 {
   if (object_key_.empty()) {
-    value_ = value;
+    if (is_array_) {
+      value_.push_back(value);
+    } else {
+      value_ = value;
+      access::serialize(*this, object_);
+    }
+  } else {
+    access::serialize(*this, object_);
   }
-  access::serialize(*this, object_);
 }
 
 template<class T>
 void json_mapper<T>::on_number(typename generic_json_parser<json_mapper<T>>::number_t value)
 {
   if (object_key_.empty()) {
-    if (value.is_real) {
-      value_ = value.real;
+    if (is_array_) {
+      if (value.is_real) {
+        value_.push_back(value.real);
+      } else {
+        value_.push_back(value.integer);
+      }
     } else {
-      value_ = value.integer;
+      if (value.is_real) {
+        value_ = value.real;
+      } else {
+        value_ = value.integer;
+      }
+      access::serialize(*this, object_);
     }
+  } else {
+    access::serialize(*this, object_);
   }
-  access::serialize(*this, object_);
 }
 
 template<class T>
 void json_mapper<T>::on_bool(bool value)
 {
   if (object_key_.empty()) {
-    value_ = value;
+    if (is_array_) {
+      value_.push_back(value);
+    } else {
+      value_ = value;
+      access::serialize(*this, object_);
+    }
+  } else {
+    access::serialize(*this, object_);
   }
-  access::serialize(*this, object_);
 }
 
 template<class T>
 void json_mapper<T>::on_null()
 {
-
+  if (object_key_.empty()) {
+    if (is_array_) {
+      value_.push_back(nullptr);
+    } else {
+      value_ = nullptr;
+      access::serialize(*this, object_);
+    }
+  } else {
+    access::serialize(*this, object_);
+  }
 }
 
 template<class T>

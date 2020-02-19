@@ -331,14 +331,19 @@ void JsonTestUnit::test_mapper()
 {
   json_mapper<json_values> mapper;
 
-  auto p = mapper.object_from_string(R"(  {     "id":  "george@mail.net", "name": "george",
-"birthday": "1987-09-27", "created": "2020-02-03 13:34:23", "flag": false, "height": 183,
+  auto p = mapper.object_from_string(R"(  {
+"id":  "george@mail.net",
+"name": "george",
+"birthday": "1987-09-27",
+"created": "2020-02-03 13:34:23",
+"flag": false,
+"height": 183,
 "doubles": [1.2, 3.5, 6.9],
 "bits": [true, false, true],
 "names": ["hans", "clara", "james"],
-"values": [11, 12, 13],
-"dimension": { "length": 200, "width":  300, "height":   100 }
+"values": [11, 12, 13]
 } )");
+//  "dimension": { "length": 200, "width":  300, "height":   100 }
 //  "dimensions": [{ "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 }]
 
 

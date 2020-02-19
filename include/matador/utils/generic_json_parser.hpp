@@ -51,6 +51,7 @@ public:
 
 protected:
   void on_parse_object(bool is_root);
+  void on_parse_array(bool is_root);
   void on_begin_object();
   void on_object_key(const std::string &key);
   void on_end_object();
@@ -134,7 +135,7 @@ void generic_json_parser<T>::on_string(const std::string &value)
 }
 
 template<class T>
-void generic_json_parser<T>::on_number(generic_json_parser::number_t value)
+void generic_json_parser<T>::on_number(number_t value)
 {
 
 }
@@ -326,8 +327,16 @@ generic_json_parser<T>::on_parse_object(bool is_root)
   }
 }
 
+template < class T >
+void
+generic_json_parser<T>::parse_json_array(bool is_root)
+{
+  T& t = static_cast<T&>(*this);
+  t.on_parse_array(is_root);
+}
+
 template<class T>
-void generic_json_parser<T>::parse_json_array(bool is_root)
+void generic_json_parser<T>::on_parse_array(bool is_root)
 {
   static_cast<T*>(this)->on_begin_array();
 
@@ -550,7 +559,7 @@ void generic_json_parser<T>::parse_json_value()
 
   switch (c) {
     case '{':
-      parse_json_object(true);
+      parse_json_object(false);
       break;
     case '[':
       parse_json_array(true);
