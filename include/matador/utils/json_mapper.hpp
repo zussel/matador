@@ -108,7 +108,9 @@ void json_mapper<T>::on_parse_object(bool is_root)
   if (is_root) {
     generic_json_parser<json_mapper<T>>::on_parse_object(is_root);
   } else {
+    object_key_ = key_;
     access::serialize(*this, object_);
+    object_key_.clear();
   }
 }
 
@@ -249,7 +251,7 @@ void json_mapper<T>::serialize(const char *id, V &obj, typename std::enable_if<s
     return;
   }
   json_mapper<V> mapper;
-  mapper.object_from_string(this->json_cursor(), &obj, false);
+  mapper.object_from_string(this->json_cursor(), &obj, true);
   this->sync_cursor(mapper.json_cursor() - 1);
 }
 

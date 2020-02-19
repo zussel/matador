@@ -341,9 +341,9 @@ void JsonTestUnit::test_mapper()
 "doubles": [1.2, 3.5, 6.9],
 "bits": [true, false, true],
 "names": ["hans", "clara", "james"],
-"values": [11, 12, 13]
+"values": [11, 12, 13],
+"dimension": { "length": 200, "width":  300, "height":   100 }
 } )");
-//  "dimension": { "length": 200, "width":  300, "height":   100 }
 //  "dimensions": [{ "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 }]
 
 
@@ -361,9 +361,9 @@ void JsonTestUnit::test_mapper()
   UNIT_EXPECT_TRUE(*(it++));
   UNIT_EXPECT_EQUAL(3U, p.names.size());
   UNIT_EXPECT_EQUAL(3U, p.values.size());
-//  UNIT_EXPECT_EQUAL(200, p.dimension.length);
-//  UNIT_EXPECT_EQUAL(300, p.dimension.width);
-//  UNIT_EXPECT_EQUAL(100, p.dimension.height);
+  UNIT_EXPECT_EQUAL(200, p.dimension.length);
+  UNIT_EXPECT_EQUAL(300, p.dimension.width);
+  UNIT_EXPECT_EQUAL(100, p.dimension.height);
 
   // check false types
 //  p = mapper.object_from_string(R"(  {     "id":  9, "name": true,
