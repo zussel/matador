@@ -50,8 +50,8 @@ public:
   virtual ~generic_json_parser() = default;
 
 protected:
-  void on_parse_object(bool is_root);
-  void on_parse_array(bool is_root);
+  void on_parse_object(bool check_for_eos);
+  void on_parse_array(bool check_for_eos);
   void on_begin_object();
   void on_object_key(const std::string &key);
   void on_end_object();
@@ -65,15 +65,15 @@ protected:
   void on_null();
 
 protected:
-  void parse_json(const char *json_str, bool is_root = true);
-  void parse_json_object(const char *json_str, bool is_root = true);
-  void parse_json_array(const char *json_str, bool is_root = true);
+  void parse_json(const char *json_str, bool check_for_eos = true);
+  void parse_json_object(const char *json_str, bool check_for_eos = true);
+  void parse_json_array(const char *json_str, bool check_for_eos = true);
 
   void sync_cursor(const char *cursor);
 
 private:
-  void parse_json_object(bool is_root);
-  void parse_json_array(bool is_root);
+  void parse_json_object(bool check_for_eos);
+  void parse_json_array(bool check_for_eos);
   std::string parse_json_string();
   number_t parse_json_number();
   bool parse_json_bool();
@@ -154,7 +154,7 @@ void generic_json_parser<T>::on_null()
 
 template < class T >
 void
-generic_json_parser<T>::parse_json(const char *json_str, bool is_root)
+generic_json_parser<T>::parse_json(const char *json_str, bool check_for_eos)
 {
   json_cursor_ = json_str;
 
@@ -166,10 +166,10 @@ generic_json_parser<T>::parse_json(const char *json_str, bool is_root)
 
   switch (c) {
     case '{':
-      parse_json_object(is_root);
+      parse_json_object(check_for_eos);
       break;
     case '[':
-      parse_json_array(is_root);
+      parse_json_array(check_for_eos);
       break;
     default:
       throw json_exception("root must be either array '[]' or object '{}'");
@@ -179,13 +179,13 @@ generic_json_parser<T>::parse_json(const char *json_str, bool is_root)
   c = skip_whitespace();
 
   // no characters after closing parenthesis are allowed
-  if (is_root && !is_eos(c)) {
+  if (check_for_eos && !is_eos(c)) {
     throw json_exception("no characters are allowed after closed root node");
   }
 }
 
 template<class T>
-void generic_json_parser<T>::parse_json_object(const char *json_str, bool is_root)
+void generic_json_parser<T>::parse_json_object(const char *json_str, bool check_for_eos)
 {
   json_cursor_ = json_str;
 
@@ -199,19 +199,19 @@ void generic_json_parser<T>::parse_json_object(const char *json_str, bool is_roo
     throw json_exception("root must be object '{}'");
   }
 
-  parse_json_object(is_root);
+  parse_json_object(check_for_eos);
 
   // skip white
   c = skip_whitespace();
 
   // no characters after closing parenthesis are allowed
-  if (is_root && !is_eos(c)) {
+  if (check_for_eos && !is_eos(c)) {
     throw json_exception("no characters are allowed after closed root node");
   }
 }
 
 template<class T>
-void generic_json_parser<T>::parse_json_array(const char *json_str, bool is_root)
+void generic_json_parser<T>::parse_json_array(const char *json_str, bool check_for_eos)
 {
   json_cursor_ = json_str;
 
@@ -225,13 +225,13 @@ void generic_json_parser<T>::parse_json_array(const char *json_str, bool is_root
     throw json_exception("root must be array '[]'");
   }
 
-  parse_json_array(is_root);
+  parse_json_array(check_for_eos);
 
   // skip white
   c = skip_whitespace();
 
   // no characters after closing parenthesis are allowed
-  if (is_root && !is_eos(c)) {
+  if (check_for_eos && !is_eos(c)) {
     throw json_exception("no characters are allowed after closed root node");
   }
 }
@@ -250,15 +250,15 @@ void generic_json_parser<T>::sync_cursor(const char *cursor)
 
 template < class T >
 void
-generic_json_parser<T>::parse_json_object(bool is_root)
+generic_json_parser<T>::parse_json_object(bool check_for_eos)
 {
   T& t = static_cast<T&>(*this);
-  t.on_parse_object(is_root);
+  t.on_parse_object(check_for_eos);
 }
 
 template < class T >
 void
-generic_json_parser<T>::on_parse_object(bool is_root)
+generic_json_parser<T>::on_parse_object(bool check_for_eos)
 {
 //  std::cout << "(this: " << this << ") start parse_json_object, cursor: [" << json_cursor_ << "]\n";
 
@@ -314,7 +314,7 @@ generic_json_parser<T>::on_parse_object(bool is_root)
 
   c = skip_whitespace();
 
-  if (!is_root && is_eos(c)) {
+  if (!check_for_eos && is_eos(c)) {
     throw json_exception("unexpected end of string");
   } else if (c != '}') {
     throw json_exception("not a valid object closing bracket");
@@ -322,21 +322,21 @@ generic_json_parser<T>::on_parse_object(bool is_root)
 
   static_cast<T*>(this)->on_end_object();
 
-  if (is_root) {
+  if (check_for_eos) {
     next_char();
   }
 }
 
 template < class T >
 void
-generic_json_parser<T>::parse_json_array(bool is_root)
+generic_json_parser<T>::parse_json_array(bool check_for_eos)
 {
   T& t = static_cast<T&>(*this);
-  t.on_parse_array(is_root);
+  t.on_parse_array(check_for_eos);
 }
 
 template<class T>
-void generic_json_parser<T>::on_parse_array(bool is_root)
+void generic_json_parser<T>::on_parse_array(bool check_for_eos)
 {
   static_cast<T*>(this)->on_begin_array();
 
@@ -368,7 +368,7 @@ void generic_json_parser<T>::on_parse_array(bool is_root)
 
   c = skip_whitespace();
 
-  if (!is_root && is_eos(c)) {
+  if (!check_for_eos && is_eos(c)) {
     throw json_exception("unexpected end of string");
   } else if (c != ']') {
     throw json_exception("not a valid array closing bracket");
@@ -376,7 +376,7 @@ void generic_json_parser<T>::on_parse_array(bool is_root)
 
   static_cast<T*>(this)->on_end_array();
 
-  if (is_root) {
+  if (check_for_eos) {
     next_char();
   }
 }

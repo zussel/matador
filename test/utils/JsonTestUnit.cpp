@@ -344,7 +344,8 @@ void JsonTestUnit::test_mapper()
 "values": [11, 12, 13],
 "dimension": { "length": 200, "width":  300, "height":   100 }
 } )");
-//  "dimensions": [{ "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 }]
+
+  //  "dimensions": [{ "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 }]
 
 
   date b(27, 9, 1987);

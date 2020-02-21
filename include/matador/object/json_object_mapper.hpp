@@ -20,7 +20,7 @@ class json_object_mapper : public generic_json_parser<json_object_mapper<T>>
 public:
   json_object_mapper() = default;
 
-  T object_from_string(const char *str, bool is_root = true);
+  T object_from_string(const char *str, bool check_for_eos = true);
 
   /// @cond OOS_DEV //
   void on_begin_object();
@@ -66,10 +66,10 @@ private:
 };
 
 template<class T>
-T json_object_mapper<T>::object_from_string(const char *str, bool is_root)
+T json_object_mapper<T>::object_from_string(const char *str, bool check_for_eos)
 {
   object_ = T();
-  this->parse_json(str, is_root);
+  this->parse_json(str, check_for_eos);
   return std::move(object_);
 }
 

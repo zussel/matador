@@ -18,14 +18,14 @@ class json_mapper : public generic_json_parser<json_mapper<T>>
 public:
   json_mapper() = default;
 
-  T object_from_string(const char *str, bool is_root = true);
-  void object_from_string(const char *str, T *obj, bool is_root = true);
+  T object_from_string(const char *str, bool check_for_eos = true);
+  void object_from_string(const char *str, T *obj, bool check_for_eos = true);
 
-  std::vector<T> array_from_string(const char *str, bool is_root = true);
+  std::vector<T> array_from_string(const char *str, bool check_for_eos = true);
 
   /// @cond OOS_DEV //
-//  void on_parse_array(bool is_root);
-  void on_parse_object(bool is_root);
+//  void on_parse_array(bool check_for_eos);
+  void on_parse_object(bool check_for_eos);
   void on_begin_object();
   void on_object_key(const std::string &key);
   void on_end_object();
@@ -79,34 +79,37 @@ private:
 };
 
 template<class T>
-T json_mapper<T>::object_from_string(const char *str, bool is_root)
+T json_mapper<T>::object_from_string(const char *str, bool check_for_eos)
 {
+  key_.clear();
   object_ = T();
-  this->parse_json_object(str, is_root);
+  this->parse_json_object(str, check_for_eos);
   return std::move(object_);
 }
 
 template<class T>
-void json_mapper<T>::object_from_string(const char *str, T *obj, bool is_root)
+void json_mapper<T>::object_from_string(const char *str, T *obj, bool check_for_eos)
 {
+  key_.clear();
   object_ = T();
-  this->parse_json_object(str, is_root);
+  this->parse_json_object(str, check_for_eos);
   *obj = std::move(object_);
 }
 
 template<class T>
-std::vector<T> json_mapper<T>::array_from_string(const char *str, bool is_root)
+std::vector<T> json_mapper<T>::array_from_string(const char *str, bool check_for_eos)
 {
+  key_.clear();
   array_.clear();
-  this->parse_json_array(str, is_root);
+  this->parse_json_array(str, check_for_eos);
   return array_;
 }
 
 template<class T>
-void json_mapper<T>::on_parse_object(bool is_root)
+void json_mapper<T>::on_parse_object(bool check_for_eos)
 {
-  if (is_root) {
-    generic_json_parser<json_mapper<T>>::on_parse_object(is_root);
+  if (object_key_.empty()) {
+    generic_json_parser<json_mapper<T>>::on_parse_object(check_for_eos);
   } else {
     object_key_ = key_;
     access::serialize(*this, object_);
@@ -115,10 +118,10 @@ void json_mapper<T>::on_parse_object(bool is_root)
 }
 
 //template<class T>
-//void json_mapper<T>::on_parse_array(bool is_root)
+//void json_mapper<T>::on_parse_array(bool check_for_eos)
 //{
-//  if (is_root) {
-//    generic_json_parser<json_mapper<T>>::on_parse_array(is_root);
+//  if (check_for_eos) {
+//    generic_json_parser<json_mapper<T>>::on_parse_array(check_for_eos);
 //  } else {
 //    access::serialize(*this, object_);
 //  }
@@ -251,7 +254,7 @@ void json_mapper<T>::serialize(const char *id, V &obj, typename std::enable_if<s
     return;
   }
   json_mapper<V> mapper;
-  mapper.object_from_string(this->json_cursor(), &obj, true);
+  mapper.object_from_string(this->json_cursor(), &obj, false);
   this->sync_cursor(mapper.json_cursor() - 1);
 }
 

@@ -876,11 +876,11 @@ private:
    * return its successor node
    *
    * @param node The prototype node to remove
-   * @param is_root Indicates if given node is root node
+   * @param check_for_eos Indicates if given node is root node
    * @return The successor node
    * @throws matador::object_exception if in error occurrs
    */
-  prototype_node *remove_prototype_node(prototype_node *node, bool is_root);
+  prototype_node *remove_prototype_node(prototype_node *node, bool check_for_eos);
 
   template < class T >
   prototype_node* attach_node(prototype_node *node, const char *parent);
