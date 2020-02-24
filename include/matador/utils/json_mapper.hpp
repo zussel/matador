@@ -2,6 +2,8 @@
 // Created by sascha on 11.01.20.
 //
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "HidingNonVirtualFunction"
 #ifndef MATADOR_JSON_MAPPER_HPP
 #define MATADOR_JSON_MAPPER_HPP
 
@@ -26,6 +28,7 @@ public:
   /// @cond OOS_DEV //
 //  void on_parse_array(bool check_for_eos);
   void on_parse_object(bool check_for_eos);
+//  void on_parse_array(bool check_for_eos);
   void on_begin_object();
   void on_object_key(const std::string &key);
   void on_end_object();
@@ -75,7 +78,6 @@ private:
 
   std::string object_key_;
   bool is_array_ = false;
-  const char *array_cursor_ = nullptr;
 };
 
 template<class T>
@@ -108,7 +110,7 @@ std::vector<T> json_mapper<T>::array_from_string(const char *str, bool check_for
 template<class T>
 void json_mapper<T>::on_parse_object(bool check_for_eos)
 {
-  if (object_key_.empty()) {
+  if (key_.empty()) {
     generic_json_parser<json_mapper<T>>::on_parse_object(check_for_eos);
   } else {
     object_key_ = key_;
@@ -120,10 +122,12 @@ void json_mapper<T>::on_parse_object(bool check_for_eos)
 //template<class T>
 //void json_mapper<T>::on_parse_array(bool check_for_eos)
 //{
-//  if (check_for_eos) {
+//  if (key_.empty()) {
 //    generic_json_parser<json_mapper<T>>::on_parse_array(check_for_eos);
 //  } else {
+//    object_key_ = key_;
 //    access::serialize(*this, object_);
+//    object_key_.clear();
 //  }
 //}
 
@@ -132,9 +136,12 @@ void json_mapper<T>::on_begin_object()
 {
   object_key_ = key_;
   key_.clear();
-  if (!object_key_.empty()) {
-    access::serialize(*this, object_);
+  if (is_array_) {
+    object_ = T();
   }
+//  if (!object_key_.empty()) {
+//    access::serialize(*this, object_);
+//  }
 }
 
 template<class T>
@@ -159,7 +166,6 @@ template<class T>
 void json_mapper<T>::on_begin_array()
 {
   is_array_ = true;
-  array_cursor_ = this->json_cursor();
   if (!object_key_.empty()) {
     access::serialize(*this, object_);
     this->sync_cursor(this->json_cursor() - 1);
@@ -171,7 +177,6 @@ void json_mapper<T>::on_begin_array()
 template<class T>
 void json_mapper<T>::on_end_array()
 {
-  array_cursor_ = nullptr;
   is_array_ = false;
   if (object_key_.empty()) {
     access::serialize(*this, object_);
@@ -255,7 +260,7 @@ void json_mapper<T>::serialize(const char *id, V &obj, typename std::enable_if<s
   }
   json_mapper<V> mapper;
   mapper.object_from_string(this->json_cursor(), &obj, false);
-  this->sync_cursor(mapper.json_cursor() - 1);
+  this->sync_cursor(mapper.json_cursor());
 }
 
 template<class T>
@@ -404,8 +409,8 @@ void json_mapper<T>::serialize(const char *id, std::vector<V> &v, typename std::
   }
 
   json_mapper<V> mapper;
-  v = mapper.array_from_string(array_cursor_, false);
-  this->sync_cursor(mapper.json_cursor() - 1);
+  v = mapper.array_from_string(this->json_cursor(), false);
+  this->sync_cursor(mapper.json_cursor());
 }
 
 template<class T>
@@ -465,3 +470,5 @@ void json_mapper<T>::serialize(const char *id, std::set<V> &cont)
 }
 }
 #endif //MATADOR_JSON_MAPPER_HPP
+
+#pragma clang diagnostic pop

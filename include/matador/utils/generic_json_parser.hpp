@@ -314,15 +314,18 @@ generic_json_parser<T>::on_parse_object(bool check_for_eos)
 
   c = skip_whitespace();
 
-  if (!check_for_eos && is_eos(c)) {
-    throw json_exception("unexpected end of string");
-  } else if (c != '}') {
+  if (c != '}') {
     throw json_exception("not a valid object closing bracket");
   }
 
   static_cast<T*>(this)->on_end_object();
 
-  if (check_for_eos) {
+  bool eos = is_eos(c);
+  if (!check_for_eos && eos) {
+    throw json_exception("unexpected end of string");
+  }
+
+  if (!eos) {
     next_char();
   }
 }
