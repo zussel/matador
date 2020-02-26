@@ -60,7 +60,8 @@ protected:
   void on_end_array();
 
   void on_string(const std::string &value);
-  void on_number(number_t value);
+  void on_integer(long long value);
+  void on_real(double value);
   void on_bool(bool value);
   void on_null();
 
@@ -79,6 +80,8 @@ private:
   bool parse_json_bool();
   void parse_json_null();
   void parse_json_value();
+
+  void on_parse_number(const number_t &numb);
 
   char skip_whitespace();
   char next_char();
@@ -105,7 +108,7 @@ void generic_json_parser<T>::on_begin_object()
 }
 
 template<class T>
-void generic_json_parser<T>::on_object_key(const std::string &key)
+void generic_json_parser<T>::on_object_key(const std::string &)
 {
 
 }
@@ -129,19 +132,25 @@ void generic_json_parser<T>::on_end_array()
 }
 
 template<class T>
-void generic_json_parser<T>::on_string(const std::string &value)
+void generic_json_parser<T>::on_string(const std::string &)
 {
 
 }
 
 template<class T>
-void generic_json_parser<T>::on_number(number_t value)
+void generic_json_parser<T>::on_integer(long long)
 {
 
 }
 
 template<class T>
-void generic_json_parser<T>::on_bool(bool value)
+void generic_json_parser<T>::on_real(double)
+{
+
+}
+
+template<class T>
+void generic_json_parser<T>::on_bool(bool)
 {
 
 }
@@ -371,15 +380,18 @@ void generic_json_parser<T>::on_parse_array(bool check_for_eos)
 
   c = skip_whitespace();
 
-  if (!check_for_eos && is_eos(c)) {
-    throw json_exception("unexpected end of string");
-  } else if (c != ']') {
+  if (c != ']') {
     throw json_exception("not a valid array closing bracket");
   }
 
   static_cast<T*>(this)->on_end_array();
 
-  if (check_for_eos) {
+  bool eos = is_eos(c);
+  if (!check_for_eos && eos) {
+    throw json_exception("unexpected end of string");
+  }
+
+  if (!eos) {
     next_char();
   }
 }
@@ -582,7 +594,7 @@ void generic_json_parser<T>::parse_json_value()
     case '8':
     case '9':
     case '.':
-      static_cast<T*>(this)->on_number(parse_json_number());
+      on_parse_number(parse_json_number());
       break;
     case 't':
     case 'f':
@@ -596,6 +608,16 @@ void generic_json_parser<T>::parse_json_value()
       throw json_exception("unknown json type");
   }
 
+}
+
+template<class T>
+void generic_json_parser<T>::on_parse_number(const generic_json_parser::number_t &numb)
+{
+  if (numb.is_real) {
+    static_cast<T *>(this)->on_real(numb.real);
+  } else {
+    static_cast<T *>(this)->on_integer(numb.integer);
+  }
 }
 
 template<class T>

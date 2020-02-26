@@ -329,18 +329,36 @@ struct json_values
 
 void JsonTestUnit::test_mapper()
 {
+  json_mapper<json_sub_values> sub_mapper;
+
+  auto subs = sub_mapper.array_from_string(R"( [ { "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 } ] )");
+
+  UNIT_ASSERT_EQUAL(2UL, subs.size());
+
+  auto &item = subs[0];
+
+  UNIT_ASSERT_EQUAL(200L, item.length);
+  UNIT_ASSERT_EQUAL(300L, item.width);
+  UNIT_ASSERT_EQUAL(100L, item.height);
+
+  item = subs[1];
+
+  UNIT_ASSERT_EQUAL(900L, item.length);
+  UNIT_ASSERT_EQUAL(800L, item.width);
+  UNIT_ASSERT_EQUAL(700L, item.height);
+
   json_mapper<json_values> mapper;
 
   auto p = mapper.object_from_string(R"(  {
+"id":  "george@mail.net",
+"name": "george",
+"birthday": "1987-09-27",
+"created": "2020-02-03 13:34:23",
+"flag": false,
+"height": 183,
 "dimensions": [{ "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 }]
 } )");
 
-//  "id":  "george@mail.net",
-//  "name": "george",
-//  "birthday": "1987-09-27",
-//  "created": "2020-02-03 13:34:23",
-//  "flag": false,
-//  "height": 183,
 //  "doubles": [1.2, 3.5, 6.9],
 //  "bits": [true, false, true],
 //  "names": ["hans", "clara", "james"],
@@ -356,16 +374,17 @@ void JsonTestUnit::test_mapper()
   UNIT_EXPECT_EQUAL(b, p.birthday);
   UNIT_EXPECT_EQUAL(183L, p.height);
   UNIT_EXPECT_EQUAL(3U, p.doubles.size());
-  UNIT_EXPECT_EQUAL(3U, p.bits.size());
-  auto it = p.bits.begin();
-  UNIT_EXPECT_TRUE(*(it++));
-  UNIT_EXPECT_FALSE(*(it++));
-  UNIT_EXPECT_TRUE(*(it++));
-  UNIT_EXPECT_EQUAL(3U, p.names.size());
-  UNIT_EXPECT_EQUAL(3U, p.values.size());
-  UNIT_EXPECT_EQUAL(200, p.dimension.length);
-  UNIT_EXPECT_EQUAL(300, p.dimension.width);
-  UNIT_EXPECT_EQUAL(100, p.dimension.height);
+//  UNIT_EXPECT_EQUAL(3U, p.bits.size());
+//  auto it = p.bits.begin();
+//  UNIT_EXPECT_TRUE(*(it++));
+//  UNIT_EXPECT_FALSE(*(it++));
+//  UNIT_EXPECT_TRUE(*(it++));
+//  UNIT_EXPECT_EQUAL(3U, p.names.size());
+//  UNIT_EXPECT_EQUAL(3U, p.values.size());
+//  UNIT_EXPECT_EQUAL(200, p.dimension.length);
+//  UNIT_EXPECT_EQUAL(300, p.dimension.width);
+//  UNIT_EXPECT_EQUAL(100, p.dimension.height);
+  UNIT_EXPECT_EQUAL(2UL, p.dimensions.size());
 
   // check false types
 //  p = mapper.object_from_string(R"(  {     "id":  9, "name": true,

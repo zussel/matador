@@ -2,8 +2,6 @@
 // Created by sascha on 11.01.20.
 //
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "HidingNonVirtualFunction"
 #ifndef MATADOR_JSON_MAPPER_HPP
 #define MATADOR_JSON_MAPPER_HPP
 
@@ -26,7 +24,6 @@ public:
   std::vector<T> array_from_string(const char *str, bool check_for_eos = true);
 
   /// @cond OOS_DEV //
-//  void on_parse_array(bool check_for_eos);
   void on_parse_object(bool check_for_eos);
 //  void on_parse_array(bool check_for_eos);
   void on_begin_object();
@@ -37,7 +34,8 @@ public:
   void on_end_array();
 
   void on_string(const std::string &value);
-  void on_number(typename generic_json_parser<json_mapper<T>>::number_t value);
+  void on_integer(long long value);
+  void on_real(double value);
   void on_bool(bool value);
   void on_null();
   /// @endcond OOS_DEV //
@@ -78,6 +76,9 @@ private:
 
   std::string object_key_;
   bool is_array_ = false;
+  bool is_object_ = false;
+
+  const char *json_array_cursor_ = nullptr;
 };
 
 template<class T>
@@ -137,11 +138,9 @@ void json_mapper<T>::on_begin_object()
   object_key_ = key_;
   key_.clear();
   if (is_array_) {
+    is_object_ = true;
     object_ = T();
   }
-//  if (!object_key_.empty()) {
-//    access::serialize(*this, object_);
-//  }
 }
 
 template<class T>
@@ -157,7 +156,9 @@ template<class T>
 void json_mapper<T>::on_end_object()
 {
   object_key_.clear();
+  key_.clear();
   if (is_array_) {
+    is_object_ = false;
     array_.emplace_back(std::move(object_));
   }
 }
@@ -166,6 +167,7 @@ template<class T>
 void json_mapper<T>::on_begin_array()
 {
   is_array_ = true;
+  json_array_cursor_ = this->json_cursor();
   if (!object_key_.empty()) {
     access::serialize(*this, object_);
     this->sync_cursor(this->json_cursor() - 1);
@@ -178,18 +180,53 @@ template<class T>
 void json_mapper<T>::on_end_array()
 {
   is_array_ = false;
+  json_array_cursor_ = nullptr;
   if (object_key_.empty()) {
     access::serialize(*this, object_);
   }
+}
+
+template< class T, class V >
+void try_push_back(std::vector<T> &, const V &)
+{
+}
+
+template< class T >
+void try_push_back(std::vector<T> &vec, const std::string &value, typename std::enable_if<std::is_convertible<T, std::string>::value>::type*)
+{
+  vec.push_back(value);
+}
+
+template<class T>
+void try_push_back(std::vector<T> &vec, long long value, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type *)
+{
+  vec.push_back(value);
+}
+
+template<class T>
+void try_push_back(std::vector<T> &vec, double value, typename std::enable_if<std::is_floating_point<T>::value>::type *)
+{
+  vec.push_back(value);
+}
+
+template<class T>
+void try_push_back(std::vector<T> &vec, bool value, typename std::enable_if<std::is_same<T, bool>::value>::type *)
+{
+  vec.push_back(value);
+}
+
+template<class T>
+void try_push_back(std::vector<T> &, nullptr_t)
+{
 }
 
 template<class T>
 void json_mapper<T>::on_string(const std::string &value)
 {
   if (object_key_.empty()) {
-    if (is_array_) {
-      value_.push_back(value);
-    } else {
+    if (is_array_ && !is_object_) {
+      try_push_back(array_, value);
+    } else /*if (is_array_ && is_object_)*/ {
       value_ = value;
       access::serialize(*this, object_);
     }
@@ -198,22 +235,29 @@ void json_mapper<T>::on_string(const std::string &value)
   }
 }
 
-template<class T>
-void json_mapper<T>::on_number(typename generic_json_parser<json_mapper<T>>::number_t value)
+template < class T >
+void json_mapper<T>::on_integer(long long value)
 {
   if (object_key_.empty()) {
-    if (is_array_) {
-      if (value.is_real) {
-        value_.push_back(value.real);
-      } else {
-        value_.push_back(value.integer);
-      }
-    } else {
-      if (value.is_real) {
-        value_ = value.real;
-      } else {
-        value_ = value.integer;
-      }
+    if (is_array_ && !is_object_) {
+      try_push_back(array_, value);
+    } else /*if (is_array_ && is_object_)*/ {
+      value_ = value;
+      access::serialize(*this, object_);
+    }
+  } else {
+    access::serialize(*this, object_);
+  }
+}
+
+template < class T >
+void json_mapper<T>::on_real(double value)
+{
+  if (object_key_.empty()) {
+    if (is_array_ && !is_object_) {
+      try_push_back(array_, value);
+    } else /*if (is_array_ && is_object_)*/ {
+      value_ = value;
       access::serialize(*this, object_);
     }
   } else {
@@ -225,9 +269,9 @@ template<class T>
 void json_mapper<T>::on_bool(bool value)
 {
   if (object_key_.empty()) {
-    if (is_array_) {
-      value_.push_back(value);
-    } else {
+    if (is_array_ && !is_object_) {
+      try_push_back(array_, value);
+    } else /*if (is_array_ && is_object_)*/ {
       value_ = value;
       access::serialize(*this, object_);
     }
@@ -240,8 +284,8 @@ template<class T>
 void json_mapper<T>::on_null()
 {
   if (object_key_.empty()) {
-    if (is_array_) {
-      value_.push_back(nullptr);
+    if (is_array_ && !is_object_) {
+      try_push_back(array_, nullptr);
     } else {
       value_ = nullptr;
       access::serialize(*this, object_);
@@ -386,7 +430,7 @@ void json_mapper<T>::serialize(const char *id, std::unordered_set<V> &cont)
 
 template<class T>
 template<class V>
-void json_mapper<T>::serialize(const char *id, std::vector<V> &cont, typename std::enable_if<!std::is_class<V>::value>::type*)
+void json_mapper<T>::serialize(const char *id, std::vector<V> &v, typename std::enable_if<!std::is_class<V>::value>::type*)
 {
   if (key_ != id) {
     return;
@@ -396,7 +440,7 @@ void json_mapper<T>::serialize(const char *id, std::vector<V> &cont, typename st
     if (!val.template fits_to_type<V>()) {
       continue;
     }
-    cont.push_back(val.template as<V>());
+    v.push_back(val.template as<V>());
   }
 }
 
@@ -409,7 +453,7 @@ void json_mapper<T>::serialize(const char *id, std::vector<V> &v, typename std::
   }
 
   json_mapper<V> mapper;
-  v = mapper.array_from_string(this->json_cursor(), false);
+  v = mapper.array_from_string(json_array_cursor_, false);
   this->sync_cursor(mapper.json_cursor());
 }
 
@@ -468,7 +512,6 @@ void json_mapper<T>::serialize(const char *id, std::set<V> &cont)
     cont.insert(val.template as<V>());
   }
 }
+
 }
 #endif //MATADOR_JSON_MAPPER_HPP
-
-#pragma clang diagnostic pop
