@@ -10,6 +10,9 @@
 #include "matador/utils/memory.hpp"
 #include "matador/utils/time.hpp"
 
+#include <set>
+#include <unordered_set>
+
 namespace matador {
 
 template < class T >
@@ -75,6 +78,7 @@ private:
   std::string key_;
 
   std::string object_key_;
+  std::string array_key_;
   bool is_array_ = false;
   bool is_object_ = false;
 
@@ -111,7 +115,8 @@ std::vector<T> json_mapper<T>::array_from_string(const char *str, bool check_for
 template<class T>
 void json_mapper<T>::on_parse_object(bool check_for_eos)
 {
-  if (key_.empty()) {
+//  if (key_.empty()) {
+  if (!is_object_) {
     generic_json_parser<json_mapper<T>>::on_parse_object(check_for_eos);
   } else {
     object_key_ = key_;
@@ -135,20 +140,21 @@ void json_mapper<T>::on_parse_object(bool check_for_eos)
 template<class T>
 void json_mapper<T>::on_begin_object()
 {
-  object_key_ = key_;
-  key_.clear();
   if (is_array_) {
     is_object_ = true;
     object_ = T();
+  } else {
+    object_key_ = key_;
   }
+  key_.clear();
 }
 
 template<class T>
 void json_mapper<T>::on_object_key(const std::string &key)
 {
-  if (!object_key_.empty()) {
-    return;
-  }
+//  if (!object_key_.empty()) {
+//    return;
+//  }
   key_ = key;
 }
 
@@ -167,6 +173,7 @@ template<class T>
 void json_mapper<T>::on_begin_array()
 {
   is_array_ = true;
+  array_key_ = key_;
   json_array_cursor_ = this->json_cursor();
   if (!object_key_.empty()) {
     access::serialize(*this, object_);
@@ -180,6 +187,7 @@ template<class T>
 void json_mapper<T>::on_end_array()
 {
   is_array_ = false;
+  array_key_.clear();
   json_array_cursor_ = nullptr;
   if (object_key_.empty()) {
     access::serialize(*this, object_);
@@ -231,6 +239,7 @@ void json_mapper<T>::on_string(const std::string &value)
       access::serialize(*this, object_);
     }
   } else {
+    value_ = value;
     access::serialize(*this, object_);
   }
 }
@@ -246,6 +255,7 @@ void json_mapper<T>::on_integer(long long value)
       access::serialize(*this, object_);
     }
   } else {
+    value_ = value;
     access::serialize(*this, object_);
   }
 }
@@ -261,6 +271,7 @@ void json_mapper<T>::on_real(double value)
       access::serialize(*this, object_);
     }
   } else {
+    value_ = value;
     access::serialize(*this, object_);
   }
 }
@@ -276,6 +287,7 @@ void json_mapper<T>::on_bool(bool value)
       access::serialize(*this, object_);
     }
   } else {
+    value_ = value;
     access::serialize(*this, object_);
   }
 }
@@ -291,6 +303,7 @@ void json_mapper<T>::on_null()
       access::serialize(*this, object_);
     }
   } else {
+    value_ = nullptr;
     access::serialize(*this, object_);
   }
 }

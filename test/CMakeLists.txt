@@ -14,7 +14,7 @@ SET (TEST_TOOLS_SOURCES
   utils/SequencerTestUnit.cpp
   utils/SequencerTestUnit.hpp
   utils/JsonTestUnit.cpp
-  utils/JsonTestUnit.hpp)
+  utils/JsonTestUnit.hpp utils/JsonMapperTestUnit.cpp utils/JsonMapperTestUnit.hpp)
 
 SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 
