@@ -44,7 +44,7 @@ struct bounding_box
   }
 };
 
-struct json_values
+struct dto
 {
   identifier<varchar<255>> id;
   std::string name;
@@ -79,7 +79,7 @@ struct json_values
 
 void JsonMapperTestUnit::test_fields()
 {
-  json_mapper<json_values> mapper;
+  json_mapper<dto> mapper;
 
   auto p = mapper.object_from_string(R"(  {
 "id":  "george@mail.net",
@@ -100,7 +100,23 @@ void JsonMapperTestUnit::test_fields()
 
 void JsonMapperTestUnit::test_array_of_builtins()
 {
+  json_mapper<dto> mapper;
 
+  auto p = mapper.object_from_string(R"(  {
+"doubles": [1.2, 3.5, 6.9],
+"bits": [true, false, true],
+"names": ["hans", "clara", "james"],
+"values": [11, 12, 13]
+} )");
+
+  UNIT_EXPECT_EQUAL(3U, p.doubles.size());
+  UNIT_EXPECT_EQUAL(3U, p.bits.size());
+  auto it = p.bits.begin();
+  UNIT_EXPECT_TRUE(*(it++));
+  UNIT_EXPECT_FALSE(*(it++));
+  UNIT_EXPECT_TRUE(*(it++));
+  UNIT_EXPECT_EQUAL(3U, p.names.size());
+  UNIT_EXPECT_EQUAL(3U, p.values.size());
 }
 
 void JsonMapperTestUnit::test_array_of_objects()
@@ -126,7 +142,7 @@ void JsonMapperTestUnit::test_array_of_objects()
 
 void JsonMapperTestUnit::test_complex()
 {
-  json_mapper<json_values> mapper;
+  json_mapper<dto> mapper;
 
   auto p = mapper.object_from_string(R"(  {
 "id":  "george@mail.net",
@@ -214,7 +230,7 @@ void JsonMapperTestUnit::test_failure()
 
 void JsonMapperTestUnit::test_false_types()
 {
-  json_mapper<json_values> mapper;
+  json_mapper<dto> mapper;
 
   // check false types
   auto p = mapper.object_from_string(R"(  {     "id":  9, "name": true,
