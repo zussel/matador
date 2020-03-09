@@ -195,36 +195,37 @@ void json_mapper<T>::on_end_array()
 }
 
 template< class T, class V >
-void try_push_back(std::vector<T> &, const V &)
+void try_push_back(std::vector<T> &, json &jval, const V &value)
 {
+  jval.push_back(value);
 }
 
 template< class T >
-void try_push_back(std::vector<T> &vec, const std::string &value, typename std::enable_if<std::is_convertible<T, std::string>::value>::type*)
+void try_push_back(std::vector<T> &vec, json&, const std::string &value, typename std::enable_if<std::is_convertible<T, std::string>::value>::type*)
 {
   vec.push_back(value);
 }
 
 template<class T>
-void try_push_back(std::vector<T> &vec, long long value, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type *)
+void try_push_back(std::vector<T> &vec, json&, long long value, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type *)
 {
   vec.push_back(value);
 }
 
 template<class T>
-void try_push_back(std::vector<T> &vec, double value, typename std::enable_if<std::is_floating_point<T>::value>::type *)
+void try_push_back(std::vector<T> &vec, json&, double value, typename std::enable_if<std::is_floating_point<T>::value>::type *)
 {
   vec.push_back(value);
 }
 
 template<class T>
-void try_push_back(std::vector<T> &vec, bool value, typename std::enable_if<std::is_same<T, bool>::value>::type *)
+void try_push_back(std::vector<T> &vec, json&, bool value, typename std::enable_if<std::is_same<T, bool>::value>::type *)
 {
   vec.push_back(value);
 }
 
 template<class T>
-void try_push_back(std::vector<T> &, nullptr_t)
+void try_push_back(std::vector<T> &, json&, nullptr_t)
 {
 }
 
@@ -233,7 +234,7 @@ void json_mapper<T>::on_string(const std::string &value)
 {
   if (object_key_.empty()) {
     if (is_array_ && !is_object_) {
-      try_push_back(array_, value);
+      try_push_back(array_, value_, value);
     } else /*if (is_array_ && is_object_)*/ {
       value_ = value;
       access::serialize(*this, object_);
@@ -249,7 +250,7 @@ void json_mapper<T>::on_integer(long long value)
 {
   if (object_key_.empty()) {
     if (is_array_ && !is_object_) {
-      try_push_back(array_, value);
+      try_push_back(array_, value_, value);
     } else /*if (is_array_ && is_object_)*/ {
       value_ = value;
       access::serialize(*this, object_);
@@ -265,7 +266,7 @@ void json_mapper<T>::on_real(double value)
 {
   if (object_key_.empty()) {
     if (is_array_ && !is_object_) {
-      try_push_back(array_, value);
+      try_push_back(array_, value_, value);
     } else /*if (is_array_ && is_object_)*/ {
       value_ = value;
       access::serialize(*this, object_);
@@ -281,7 +282,7 @@ void json_mapper<T>::on_bool(bool value)
 {
   if (object_key_.empty()) {
     if (is_array_ && !is_object_) {
-      try_push_back(array_, value);
+      try_push_back(array_, value_, value);
     } else /*if (is_array_ && is_object_)*/ {
       value_ = value;
       access::serialize(*this, object_);
@@ -297,7 +298,7 @@ void json_mapper<T>::on_null()
 {
   if (object_key_.empty()) {
     if (is_array_ && !is_object_) {
-      try_push_back(array_, nullptr);
+      try_push_back(array_, value_, nullptr);
     } else {
       value_ = nullptr;
       access::serialize(*this, object_);
