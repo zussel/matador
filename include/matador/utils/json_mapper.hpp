@@ -82,6 +82,9 @@ private:
   bool is_array_ = false;
   bool is_object_ = false;
 
+  template < class V >
+  friend class json_mapper;
+
   const char *json_array_cursor_ = nullptr;
 };
 
@@ -115,8 +118,7 @@ std::vector<T> json_mapper<T>::array_from_string(const char *str, bool check_for
 template<class T>
 void json_mapper<T>::on_parse_object(bool check_for_eos)
 {
-//  if (key_.empty()) {
-  if (!is_object_) {
+  if (key_.empty()) {
     generic_json_parser<json_mapper<T>>::on_parse_object(check_for_eos);
   } else {
     object_key_ = key_;
@@ -188,8 +190,8 @@ void json_mapper<T>::on_end_array()
 {
   is_array_ = false;
   array_key_.clear();
-  json_array_cursor_ = nullptr;
-  if (object_key_.empty()) {
+  json_array_cursor_ = this->json_cursor();
+  if (!key_.empty()) {
     access::serialize(*this, object_);
   }
 }
@@ -468,7 +470,7 @@ void json_mapper<T>::serialize(const char *id, std::vector<V> &v, typename std::
 
   json_mapper<V> mapper;
   v = mapper.array_from_string(json_array_cursor_, false);
-  this->sync_cursor(mapper.json_cursor());
+  this->sync_cursor(mapper.json_array_cursor_);
 }
 
 template<class T>
