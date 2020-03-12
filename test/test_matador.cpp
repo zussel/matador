@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ObjectStoreTestUnit);
   suite.register_unit(new ObjectTransactiontestUnit);
   suite.register_unit(new HasManyUnitTest);
-  suite.register_unit(new JsonObjectMapperTest);
+//  suite.register_unit(new JsonObjectMapperTest);
   suite.register_unit(new HasManyVectorUnitTest);
   suite.register_unit(new HasManyListUnitTest);
   suite.register_unit(new RelationTestUnit);

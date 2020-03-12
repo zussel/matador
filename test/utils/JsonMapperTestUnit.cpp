@@ -92,10 +92,11 @@ void JsonMapperTestUnit::test_fields()
 
   date b(27, 9, 1987);
 
-  UNIT_EXPECT_EQUAL("george@mail.net", p.id.value());
-  UNIT_EXPECT_EQUAL("george", p.name);
-  UNIT_EXPECT_EQUAL(b, p.birthday);
-  UNIT_EXPECT_EQUAL(183L, p.height);
+  UNIT_ASSERT_EQUAL("george@mail.net", p.id.value());
+  UNIT_ASSERT_EQUAL("george", p.name);
+  UNIT_ASSERT_EQUAL(b, p.birthday);
+  UNIT_ASSERT_EQUAL(183L, p.height);
+  UNIT_ASSERT_FALSE(p.flag);
 }
 
 void JsonMapperTestUnit::test_array_of_builtins()
@@ -109,14 +110,14 @@ void JsonMapperTestUnit::test_array_of_builtins()
 "values": [11, 12, 13]
 } )");
 
-  UNIT_EXPECT_EQUAL(3U, p.doubles.size());
-  UNIT_EXPECT_EQUAL(3U, p.bits.size());
+  UNIT_ASSERT_EQUAL(3U, p.doubles.size());
+  UNIT_ASSERT_EQUAL(3U, p.bits.size());
   auto it = p.bits.begin();
   UNIT_EXPECT_TRUE(*(it++));
-  UNIT_EXPECT_FALSE(*(it++));
+  UNIT_ASSERT_FALSE(*(it++));
   UNIT_EXPECT_TRUE(*(it++));
-  UNIT_EXPECT_EQUAL(3U, p.names.size());
-  UNIT_EXPECT_EQUAL(3U, p.values.size());
+  UNIT_ASSERT_EQUAL(3U, p.names.size());
+  UNIT_ASSERT_EQUAL(3U, p.values.size());
 }
 
 void JsonMapperTestUnit::test_array_of_objects()

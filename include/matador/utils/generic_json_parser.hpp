@@ -492,6 +492,7 @@ typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_num
   char c = end[0];
 
   switch (c) {
+    case '\n':
     case ' ':
     case ',':
     case ']':
