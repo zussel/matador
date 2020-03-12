@@ -228,7 +228,7 @@ void try_push_back(std::vector<T> &vec, json&, bool value, typename std::enable_
 }
 
 template<class T>
-void try_push_back(std::vector<T> &, json&, nullptr_t)
+void try_push_back(std::vector<T> &, json&, std::nullptr_t)
 {
 }
 
