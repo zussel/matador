@@ -12,6 +12,7 @@
 
 #include <set>
 #include <unordered_set>
+#include <cstddef>
 
 namespace matador {
 
