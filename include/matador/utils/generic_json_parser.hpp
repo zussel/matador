@@ -612,7 +612,7 @@ void generic_json_parser<T>::parse_json_value()
 }
 
 template<class T>
-void generic_json_parser<T>::on_parse_number(const generic_json_parser::number_t &numb)
+void generic_json_parser<T>::on_parse_number(const number_t &numb)
 {
   if (numb.is_real) {
     static_cast<T *>(this)->on_real(numb.real);
