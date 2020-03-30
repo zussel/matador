@@ -14,7 +14,7 @@ SET(SOURCES
   basic_identifier.cpp
   basic_identifier_serializer.cpp
   serializer.cpp
-  generic_json_parser.cpp)
+  generic_json_parser.cpp json_mapper.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -52,7 +52,7 @@ SET(HEADER
   ../../include/matador/utils/is_varchar.hpp
   ../../include/matador/utils/varchar.hpp
     ../../include/matador/utils/generic_json_parser.hpp
-    ../../include/matador/utils/json_mapper.hpp)
+    ../../include/matador/utils/json_mapper.hpp ../../include/matador/utils/basic_json_mapper.hpp)
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
 

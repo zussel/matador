@@ -25,6 +25,22 @@
 
 namespace matador {
 
+struct json_cursor
+{
+  json_cursor& operator=(const char *json_str)
+  {
+    json_cursor_ = json_str;
+    return *this;
+  }
+
+  char operator[](int i) const { return json_cursor_[i]; }
+  bool is_null() const { return json_cursor_ == nullptr; }
+  const char* operator()() const { return json_cursor_; }
+  void sync_cursor(const char *cursor) { json_cursor_ = cursor; }
+
+  const char *json_cursor_ = nullptr;
+};
+
 template < class T >
 class generic_json_parser
 {
@@ -44,6 +60,8 @@ public:
     bool is_real = false;
   };
 
+  json_cursor& cursor() const { return json_cursor_; }
+
   const char* json_cursor() const;
 
 public:
@@ -52,18 +70,18 @@ public:
 protected:
   void on_parse_object(bool check_for_eos);
   void on_parse_array(bool check_for_eos);
-  void on_begin_object();
-  void on_object_key(const std::string &key);
-  void on_end_object();
+  void on_begin_object() {}
+  void on_object_key(const std::string &) {}
+  void on_end_object() {}
 
-  void on_begin_array();
-  void on_end_array();
+  void on_begin_array() {}
+  void on_end_array() {}
 
-  void on_string(const std::string &value);
-  void on_integer(long long value);
-  void on_real(double value);
-  void on_bool(bool value);
-  void on_null();
+  void on_string(const std::string &) {}
+  void on_integer(long long) {}
+  void on_real(double) {}
+  void on_bool(bool) {}
+  void on_null() {}
 
 protected:
   void parse_json(const char *json_str, bool check_for_eos = true);
@@ -94,72 +112,12 @@ private:
   static const char *true_string;
   static const char *false_string;
 
-  const char *json_cursor_ = nullptr;
+  struct json_cursor json_cursor_;
 };
 
 template < class T > const char *generic_json_parser<T>::null_string = "null";
 template < class T > const char *generic_json_parser<T>::true_string = "true";
 template < class T > const char *generic_json_parser<T>::false_string = "false";
-
-template<class T>
-void generic_json_parser<T>::on_begin_object()
-{
-
-}
-
-template<class T>
-void generic_json_parser<T>::on_object_key(const std::string &)
-{
-
-}
-
-template<class T>
-void generic_json_parser<T>::on_end_object()
-{
-
-}
-
-template<class T>
-void generic_json_parser<T>::on_begin_array()
-{
-
-}
-
-template<class T>
-void generic_json_parser<T>::on_end_array()
-{
-
-}
-
-template<class T>
-void generic_json_parser<T>::on_string(const std::string &)
-{
-
-}
-
-template<class T>
-void generic_json_parser<T>::on_integer(long long)
-{
-
-}
-
-template<class T>
-void generic_json_parser<T>::on_real(double)
-{
-
-}
-
-template<class T>
-void generic_json_parser<T>::on_bool(bool)
-{
-
-}
-
-template<class T>
-void generic_json_parser<T>::on_null()
-{
-
-}
 
 template < class T >
 void
@@ -248,7 +206,7 @@ void generic_json_parser<T>::parse_json_array(const char *json_str, bool check_f
 template<class T>
 const char *generic_json_parser<T>::json_cursor() const
 {
-  return json_cursor_;
+  return json_cursor_();
 }
 
 template<class T>
@@ -472,8 +430,8 @@ typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_num
   // or a floating point
   number_t value;
   char *end;
-  value.integer = strtoll(json_cursor_, &end, 10);
-  if (is_error(json_cursor_, end, value.integer)) {
+  value.integer = strtoll(json_cursor_(), &end, 10);
+  if (is_error(json_cursor_(), end, value.integer)) {
     throw json_exception("errno integer error");
   }
 
@@ -481,13 +439,13 @@ typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_num
     // value is double
     value.is_real = true;
     value.integer = 0;
-    value.real = strtod(json_cursor_, &end);
-    if (is_error(json_cursor_, end, value.real)) {
+    value.real = strtod(json_cursor_(), &end);
+    if (is_error(json_cursor_(), end, value.real)) {
       throw json_exception("errno double error");
     }
   }
 
-  json_cursor_ = end;
+  json_cursor_() = end;
 
   char c = end[0];
 
@@ -624,7 +582,7 @@ void generic_json_parser<T>::on_parse_number(const number_t &numb)
 template<class T>
 char generic_json_parser<T>::skip_whitespace()
 {
-  json_cursor_ = skip_ws(json_cursor_);
+  json_cursor_ = skip_ws(json_cursor_());
   return json_cursor_[0];
 }
 
