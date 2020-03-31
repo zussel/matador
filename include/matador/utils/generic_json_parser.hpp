@@ -38,6 +38,25 @@ struct json_cursor
   const char* operator()() const { return json_cursor_; }
   void sync_cursor(const char *cursor) { json_cursor_ = cursor; }
 
+  char skip_whitespace()
+  {
+    json_cursor_ = skip_ws(json_cursor_);
+    return json_cursor_[0];
+  }
+
+  char next_char()
+  {
+    if (is_null()) {
+      throw json_exception("no current json string");
+    }
+    return (++json_cursor_)[0];
+  }
+
+  char current_char() const
+  {
+    return json_cursor_[0];
+  }
+
   const char *json_cursor_ = nullptr;
 };
 
@@ -60,9 +79,10 @@ public:
     bool is_real = false;
   };
 
-  json_cursor& cursor() const { return json_cursor_; }
+  const json_cursor& cursor() const { return json_cursor_; }
+  json_cursor& cursor() { return json_cursor_; }
 
-  const char* json_cursor() const;
+//  const char* json_cursor() const;
 
 public:
   virtual ~generic_json_parser() = default;
@@ -203,16 +223,16 @@ void generic_json_parser<T>::parse_json_array(const char *json_str, bool check_f
   }
 }
 
-template<class T>
-const char *generic_json_parser<T>::json_cursor() const
-{
-  return json_cursor_();
-}
+//template<class T>
+//const char *generic_json_parser<T>::json_cursor() const
+//{
+//  return json_cursor_();
+//}
 
 template<class T>
 void generic_json_parser<T>::sync_cursor(const char *cursor)
 {
-  json_cursor_ = cursor;
+  json_cursor_.sync_cursor(cursor);
 }
 
 template < class T >
@@ -445,7 +465,7 @@ typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_num
     }
   }
 
-  json_cursor_() = end;
+  json_cursor_.sync_cursor(end);
 
   char c = end[0];
 
@@ -582,23 +602,19 @@ void generic_json_parser<T>::on_parse_number(const number_t &numb)
 template<class T>
 char generic_json_parser<T>::skip_whitespace()
 {
-  json_cursor_ = skip_ws(json_cursor_());
-  return json_cursor_[0];
+  return json_cursor_.skip_whitespace();
 }
 
 template<class T>
 char generic_json_parser<T>::next_char()
 {
-  if (json_cursor_ == nullptr) {
-    throw json_exception("no current json string");
-  }
-  return (++json_cursor_)[0];
+  return json_cursor_.next_char();
 }
 
 template<class T>
 char generic_json_parser<T>::current_char() const
 {
-  return json_cursor_[0];
+  return json_cursor_.current_char();
 }
 
 }

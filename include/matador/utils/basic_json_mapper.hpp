@@ -11,11 +11,12 @@ namespace matador {
 
 namespace details {
 struct mapper_runtime {
+  explicit mapper_runtime(json_cursor &c) : cursor(c) {}
   json value;
   std::string key;
   std::string object_key;
   std::string array_key;
-  const char *json_cursor = nullptr;
+  json_cursor &cursor;
   const char *json_array_cursor = nullptr;
 };
 
@@ -27,10 +28,10 @@ class basic_json_mapper : public generic_json_parser<basic_json_mapper<T, S> >
 public:
   typedef generic_json_parser<basic_json_mapper<T, S> > base;
 
-  basic_json_mapper() : serializer_(mapper_runtime_)
-  {
-    mapper_runtime_.json_cursor = this->json_cursor();
-  }
+  basic_json_mapper()
+    : mapper_runtime_(this->cursor())
+    , serializer_(mapper_runtime_)
+  {}
 
   T object_from_string(const char *str, bool check_for_eos = true);
   void object_from_string(const char *str, T *obj, bool check_for_eos = true);
@@ -74,7 +75,6 @@ template<class T, class C>
 T basic_json_mapper<T, C>::object_from_string(const char *str, bool check_for_eos)
 {
   mapper_runtime_.key.clear();
-  mapper_runtime_.json_cursor = str;
   object_ = T();
   this->parse_json_object(str, check_for_eos);
   return std::move(object_);
@@ -84,7 +84,6 @@ template<class T, class C>
 void basic_json_mapper<T, C>::object_from_string(const char *str, T *obj, bool check_for_eos)
 {
   mapper_runtime_.key.clear();
-  mapper_runtime_.json_cursor = str;
   object_ = T();
   this->parse_json_object(str, check_for_eos);
   *obj = std::move(object_);
@@ -94,7 +93,6 @@ template<class T, class C>
 std::vector<T> basic_json_mapper<T, C>::array_from_string(const char *str, bool check_for_eos)
 {
   mapper_runtime_.key.clear();
-  mapper_runtime_.json_cursor = str;
   array_.clear();
   this->parse_json_array(str, check_for_eos);
   return array_;
@@ -146,10 +144,10 @@ void basic_json_mapper<T, C>::on_begin_array()
 {
   is_array_ = true;
   mapper_runtime_.array_key = mapper_runtime_.key;
-  mapper_runtime_.json_array_cursor = this->json_cursor();
+  mapper_runtime_.json_array_cursor = this->cursor()();
   if (!mapper_runtime_.object_key.empty()) {
     access::serialize(serializer_, object_);
-    this->sync_cursor(this->json_cursor() - 1);
+    this->sync_cursor(this->cursor()() - 1);
   } else {
     mapper_runtime_.value = json::array();
   }
@@ -160,7 +158,7 @@ void basic_json_mapper<T, C>::on_end_array()
 {
   is_array_ = false;
   mapper_runtime_.array_key.clear();
-  mapper_runtime_.json_array_cursor = this->json_cursor();
+  mapper_runtime_.json_array_cursor = this->cursor()();
   if (!mapper_runtime_.key.empty()) {
     access::serialize(serializer_, object_);
   }
