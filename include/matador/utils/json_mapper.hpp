@@ -160,7 +160,7 @@ void json_mapper_serializer::serialize(const char *id, std::vector<V> &cont, typ
 
   json_mapper<V> mapper;
   cont = mapper.array_from_string(runtime_data_.json_array_cursor, false);
-  runtime_data_.cursor.sync_cursor(mapper.cursor().json_cursor_);
+  runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
 }
 
 template<class V>

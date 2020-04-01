@@ -16,6 +16,7 @@ public:
   void test_array_of_builtins();
   void test_array_of_objects();
   void test_nested_object();
+  void test_nested_array_of_object();
   void test_complex();
   void test_failure();
   void test_false_types();

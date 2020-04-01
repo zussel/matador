@@ -8,23 +8,23 @@ typedef unsigned long int  DWORD;
 struct s_mediaserverconf
 {
   matador::identifier<unsigned long> id;
-  char DEV_NAME[255];
-  char strVhost[255];
-  char strApp[255];
-  char strId[255];
-  int wchannel;
-  DWORD dwStreamType;
+  char DEV_NAME[255] = {};
+  char strVhost[255] = {};
+  char strApp[255] = {};
+  char strId[255] = {};
+  int wchannel = -1;
+  DWORD dwStreamType = 0;
 
-  double fDuration;
-  int bEanbleRtsp;
-  int bEanbleRtmp;
-  int bEanbleHls;
-  int bEnableMp4;
-  int bUseAsynLogin;
-  int wPort;
-  char sDeviceAddress[255];
-  char sUserName[255];
-  char sPassword[255];
+  double fDuration = 0.0;
+  int bEanbleRtsp = 0;
+  int bEanbleRtmp = 0;
+  int bEanbleHls = 0;
+  int bEnableMp4 = 0;
+  int bUseAsynLogin = 0;
+  int wPort = 0;
+  char sDeviceAddress[255] = {};
+  char sUserName[255] = {};
+  char sPassword[255] = {};
 
 
   template<class SERIALIZER>
@@ -82,5 +82,5 @@ int main() {
 
   s.flush();
 
-  //p.drop();
+  p.drop();
 }

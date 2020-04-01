@@ -24,6 +24,7 @@ JsonMapperTestUnit::JsonMapperTestUnit()
   add_test("array_builtins", std::bind(&JsonMapperTestUnit::test_array_of_builtins, this), "test mapping array of builtin fields");
   add_test("array_objects", std::bind(&JsonMapperTestUnit::test_array_of_objects, this), "test mapping array of objects");
   add_test("nested_object", std::bind(&JsonMapperTestUnit::test_nested_object, this), "test mapping nested object");
+  add_test("nested_array_of_object", std::bind(&JsonMapperTestUnit::test_nested_array_of_object, this), "test mapping nested array of objects");
   add_test("complex", std::bind(&JsonMapperTestUnit::test_complex, this), "test mapping complex object");
   add_test("failures", std::bind(&JsonMapperTestUnit::test_failure, this), "test mapping failures");
   add_test("false_types", std::bind(&JsonMapperTestUnit::test_false_types, this), "test mapping with false types");
@@ -153,6 +154,17 @@ void JsonMapperTestUnit::test_nested_object()
   UNIT_EXPECT_EQUAL(200, p.dimension.length);
   UNIT_EXPECT_EQUAL(300, p.dimension.width);
   UNIT_EXPECT_EQUAL(100, p.dimension.height);
+}
+
+void JsonMapperTestUnit::test_nested_array_of_object()
+{
+  json_mapper<dto> mapper;
+
+  auto p = mapper.object_from_string(R"(  {
+"dimensions": [{ "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 }]
+} )");
+
+  UNIT_EXPECT_EQUAL(2UL, p.dimensions.size());
 }
 
 void JsonMapperTestUnit::test_complex()
