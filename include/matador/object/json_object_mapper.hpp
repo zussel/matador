@@ -27,9 +27,7 @@ namespace matador {
 class OOS_UTILS_API json_object_mapper_serializer
 {
 public:
-  explicit json_object_mapper_serializer(details::mapper_runtime &runtime_data)
-    : runtime_data_(runtime_data)
-  {}
+  explicit json_object_mapper_serializer(details::mapper_runtime &runtime_data);
 
 public:
   template < class V >
@@ -143,5 +141,6 @@ void json_object_mapper_serializer::serialize(const char *id, has_one<Value> &x,
   *x = std::move(result);
   runtime_data_.cursor.sync_cursor(mapper.runtime_data().cursor());
 }
+
 }
 #endif //MATADOR_JSON_MAPPER_HPP

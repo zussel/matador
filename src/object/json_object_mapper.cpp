@@ -2,6 +2,10 @@
 
 namespace matador {
 
+json_object_mapper_serializer::json_object_mapper_serializer(details::mapper_runtime &runtime_data)
+  : runtime_data_(runtime_data)
+{}
+
 void json_object_mapper_serializer::serialize(const char *id, identifier<std::string> &pk)
 {
   if (runtime_data_.key != id) {
