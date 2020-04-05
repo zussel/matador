@@ -31,7 +31,7 @@
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
-#include "object/ObjectTransactiontestUnit.hpp"
+#include "object/ObjectTransactionTestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
 #include "object/PrimaryKeyUnitTest.hpp"
 #include "object/JsonObjectMapperTest.hpp"
@@ -94,9 +94,9 @@ int main(int argc, char *argv[])
   suite.register_unit(new PrototypeTreeTestUnit);
   suite.register_unit(new ObjectPrototypeTestUnit);
   suite.register_unit(new ObjectStoreTestUnit);
-  suite.register_unit(new ObjectTransactiontestUnit);
+  suite.register_unit(new ObjectTransactionTestUnit);
   suite.register_unit(new HasManyUnitTest);
-//  suite.register_unit(new JsonObjectMapperTest);
+  suite.register_unit(new JsonObjectMapperTest);
   suite.register_unit(new HasManyVectorUnitTest);
   suite.register_unit(new HasManyListUnitTest);
   suite.register_unit(new RelationTestUnit);

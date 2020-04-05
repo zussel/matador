@@ -18,7 +18,7 @@ SET(SOURCES
   relation_field_endpoint.cpp
   abstract_has_many.cpp
   basic_has_many_to_many_item.cpp
-  prototype_info.cpp)
+  prototype_info.cpp json_object_mapper.cpp)
 
 SET(HEADER
   ../../include/matador/object/action.hpp

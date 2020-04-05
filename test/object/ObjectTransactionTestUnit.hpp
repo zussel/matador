@@ -8,11 +8,11 @@
 
 #include "matador/unit/unit_test.hpp"
 
-class ObjectTransactiontestUnit : public matador::unit_test
+class ObjectTransactionTestUnit : public matador::unit_test
 {
 
 public:
-  ObjectTransactiontestUnit();
+  ObjectTransactionTestUnit();
 
   void test_insert();
   void test_insert_rollback();

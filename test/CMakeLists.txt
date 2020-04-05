@@ -34,12 +34,14 @@ SET (TEST_OBJECT_SOURCES
   object/HasManyVectorUnitTest.hpp
   object/HasManyListUnitTest.cpp
   object/HasManyListUnitTest.hpp
-  object/ObjectTransactiontestUnit.cpp
-  object/ObjectTransactiontestUnit.hpp
+  object/ObjectTransactionTestUnit.cpp
+  object/ObjectTransactionTestUnit.hpp
   object/RelationTestUnit.cpp
   object/RelationTestUnit.hpp
   object/HasManyUnitTest.cpp
-  object/HasManyUnitTest.hpp)
+  object/HasManyUnitTest.hpp
+  object/JsonObjectMapperTest.cpp
+  object/JsonObjectMapperTest.hpp)
 
 SET (TEST_UNIT_SOURCES
   unit/TestSuiteTestUnit.cpp

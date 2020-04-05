@@ -1,10 +1,20 @@
-//
-// Created by sascha on 11.01.20.
-//
-
 #ifndef MATADOR_JSON_MAPPER_HPP
 #define MATADOR_JSON_MAPPER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_UTILS_API __declspec(dllexport)
+    #define EXPIMP_UTILS_TEMPLATE
+  #else
+    #define OOS_UTILS_API __declspec(dllimport)
+    #define EXPIMP_UTILS_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_UTILS_API
+#endif
+
+#include "matador/utils/basic_json_mapper.hpp"
 #include "matador/utils/json.hpp"
 #include "matador/utils/json_parser.hpp"
 #include "matador/utils/date.hpp"
@@ -14,27 +24,12 @@
 
 namespace matador {
 
-template < class T >
-class json_object_mapper : public generic_json_parser<json_object_mapper<T>>
+class OOS_UTILS_API json_object_mapper_serializer
 {
 public:
-  json_object_mapper() = default;
-
-  T object_from_string(const char *str, bool check_for_eos = true);
-
-  /// @cond OOS_DEV //
-  void on_begin_object();
-  void on_object_key(const std::string &key);
-  void on_end_object();
-
-  void on_begin_array();
-  void on_end_array();
-
-  void on_string(const std::string &value);
-  void on_number(typename generic_json_parser<json_object_mapper<T>>::number_t value);
-  void on_bool(bool value);
-  void on_null();
-  /// @endcond OOS_DEV //
+  explicit json_object_mapper_serializer(details::mapper_runtime &runtime_data)
+    : runtime_data_(runtime_data)
+  {}
 
 public:
   template < class V >
@@ -49,243 +44,104 @@ public:
   template < class V >
   void serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
   void serialize(const char *id, bool &to);
+  void serialize(const char *id, std::string &to);
   void serialize(const char *id, std::string &to, size_t);
   void serialize(const char *id, date &to);
+  void serialize(const char *id, time &to);
   template<class Value>
   void serialize(const char *id, belongs_to<Value> &x, cascade_type);
   template<class Value>
   void serialize(const char *id, has_one<Value> &x, cascade_type);
 
 private:
-  T object_;
-  json value_;
-  std::string key_;
-
-  const char *object_cursor_ = nullptr;
-  std::string object_key_;
+  details::mapper_runtime &runtime_data_;
 };
 
-template<class T>
-T json_object_mapper<T>::object_from_string(const char *str, bool check_for_eos)
-{
-  object_ = T();
-  this->parse_json(str, check_for_eos);
-  return std::move(object_);
-}
+template < class T >
+using json_object_mapper = basic_json_mapper<T, json_object_mapper_serializer>;
 
-template<class T>
-void json_object_mapper<T>::on_begin_object()
-{
-  object_key_ = key_;
-  key_.clear();
-  object_cursor_ = this->json_cursor();
-}
-
-template<class T>
-void json_object_mapper<T>::on_object_key(const std::string &key)
-{
-  if (!object_key_.empty()) {
-    return;
-  }
-  key_ = key;
-}
-
-template<class T>
-void json_object_mapper<T>::on_end_object()
-{
-  object_cursor_ = nullptr;
-  object_key_.clear();
-}
-
-template<class T>
-void json_object_mapper<T>::on_begin_array()
-{
-
-}
-
-template<class T>
-void json_object_mapper<T>::on_end_array()
-{
-
-}
-
-template<class T>
-void json_object_mapper<T>::on_string(const std::string &value)
-{
-  if (object_key_.empty()) {
-    value_ = value;
-  }
-  access::serialize(*this, object_);
-}
-
-template<class T>
-void json_object_mapper<T>::on_number(typename generic_json_parser<json_object_mapper<T>>::number_t value)
-{
-  if (object_key_.empty()) {
-    if (value.is_real) {
-      value_ = value.real;
-    } else {
-      value_ = value.integer;
-    }
-  }
-  access::serialize(*this, object_);
-}
-
-template<class T>
-void json_object_mapper<T>::on_bool(bool value)
-{
-  if (object_key_.empty()) {
-    value_ = value;
-  }
-  access::serialize(*this, object_);
-}
-
-template<class T>
-void json_object_mapper<T>::on_null()
-{
-  if (object_cursor_ != nullptr) {
-    return;
-  }
-}
-
-template<class T>
 template<class V>
-void json_object_mapper<T>::serialize(V &obj)
+void json_object_mapper_serializer::serialize(V &obj)
 {
   access::serialize(*this, obj);
 }
 
-template<class T>
 template<class V>
-void json_object_mapper<T>::serialize(const char *id, identifier<V> &pk, typename std::enable_if<
+void json_object_mapper_serializer::serialize(const char *id, identifier<V> &pk, typename std::enable_if<
 std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
-  if (key_ != id) {
+  if (runtime_data_.key != id) {
     return;
   }
-  if (!value_.is_integer()) {
+  if (!runtime_data_.value.is_integer()) {
     return;
   }
 
-  pk.value(value_.as<V>());
+  pk.value(runtime_data_.value.as<V>());
 }
 
-template<class T>
-void json_object_mapper<T>::serialize(const char *id, identifier<std::string> &pk)
-{
-  if (key_ != id) {
-    return;
-  }
-  if (!value_.is_string()) {
-    return;
-  }
-
-  pk.value(value_.as<std::string>());
-}
-
-template<class T>
 template<int SIZE, class V>
-void json_object_mapper<T>::serialize(const char *id, identifier<varchar<SIZE, V>> &pk)
+void json_object_mapper_serializer::serialize(const char *id, identifier<varchar<SIZE, V>> &pk)
 {
-  if (key_ != id) {
+  if (runtime_data_.key != id) {
     return;
   }
-  if (!value_.is_string()) {
+  if (!runtime_data_.value.is_string()) {
     return;
   }
 
-  pk.value(value_.as<std::string>());
+  pk.value(runtime_data_.value.as<std::string>());
 }
 
-template<class T>
 template<class V>
-void json_object_mapper<T>::serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
+void json_object_mapper_serializer::serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
-  if (key_ != id) {
+  if (runtime_data_.key != id) {
     return;
   }
-  if (!value_.is_integer()) {
+  if (!runtime_data_.value.is_integer()) {
     return;
   }
-  to = value_.as<V>();
+  to = runtime_data_.value.as<V>();
 }
 
-template<class T>
 template<class V>
-void json_object_mapper<T>::serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type *)
+void json_object_mapper_serializer::serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type *)
 {
-  if (key_ != id) {
+  if (runtime_data_.key != id) {
     return;
   }
-  if (!value_.is_real()) {
+  if (!runtime_data_.value.is_real()) {
     return;
   }
-  to = value_.as<V>();
+  to = runtime_data_.value.as<V>();
 }
 
-template<class T>
-void json_object_mapper<T>::serialize(const char *id, bool &to)
-{
-  if (key_ != id) {
-    return;
-  }
-  if (!value_.is_boolean()) {
-    return;
-  }
-  to = value_.as<bool>();
-}
-
-template<class T>
-void json_object_mapper<T>::serialize(const char *id, std::string &to, size_t)
-{
-  if (key_ != id) {
-    return;
-  }
-  if (!value_.is_string()) {
-    return;
-  }
-  to = value_.as<std::string>();
-}
-
-template<class T>
-void json_object_mapper<T>::serialize(const char *id, date &to)
-{
-  if (key_ != id) {
-    return;
-  }
-  if (!value_.is_string()) {
-    return;
-  }
-  to.set(value_.as<std::string>().c_str(), "%Y-%m-%d");
-}
-
-template<class T>
 template<class Value>
-void json_object_mapper<T>::serialize(const char *id, belongs_to<Value> &x, cascade_type)
+void json_object_mapper_serializer::serialize(const char *id, belongs_to<Value> &x, cascade_type)
 {
-  if (object_key_ != id) {
+  if (runtime_data_.object_key != id) {
     return;
   }
 
   json_object_mapper<Value> mapper;
   x = new Value;
-  *x = mapper.object_from_string(object_cursor_, false);
-  this->sync_cursor(mapper.json_cursor());
+  *x = mapper.object_from_string(runtime_data_.cursor.json_cursor_, false);
+  runtime_data_.cursor.sync_cursor(mapper.runtime_data().cursor());
 }
 
-template<class T>
 template<class Value>
-void json_object_mapper<T>::serialize(const char *id, has_one<Value> &x, cascade_type)
+void json_object_mapper_serializer::serialize(const char *id, has_one<Value> &x, cascade_type)
 {
-  if (object_key_ != id) {
+  if (runtime_data_.object_key != id) {
     return;
   }
 
   json_object_mapper<Value> mapper;
-  auto result = mapper.object_from_string(object_cursor_, false);
+  auto result = mapper.object_from_string(runtime_data_.cursor.json_cursor_, false);
   x = new Value;
   *x = std::move(result);
-  this->sync_cursor(mapper.json_cursor());
+  runtime_data_.cursor.sync_cursor(mapper.runtime_data().cursor());
 }
 }
 #endif //MATADOR_JSON_MAPPER_HPP

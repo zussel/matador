@@ -2,7 +2,7 @@
 // Created by sascha on 3/9/16.
 //
 
-#include "ObjectTransactiontestUnit.hpp"
+#include "ObjectTransactionTestUnit.hpp"
 
 #include "../person.hpp"
 #include "../entities.hpp"
@@ -11,23 +11,23 @@
 #include "matador/object/transaction.hpp"
 #include "matador/object/object_view.hpp"
 
-ObjectTransactiontestUnit::ObjectTransactiontestUnit()
+ObjectTransactionTestUnit::ObjectTransactionTestUnit()
   : unit_test("transaction", "transaction unit test")
 {
-  add_test("insert", std::bind(&ObjectTransactiontestUnit::test_insert, this), "test transaction insert");
-  add_test("insert_rollback", std::bind(&ObjectTransactiontestUnit::test_insert_rollback, this), "test transaction insert rollback");
-  add_test("update", std::bind(&ObjectTransactiontestUnit::test_update, this), "test transaction update");
-  add_test("update_rollback", std::bind(&ObjectTransactiontestUnit::test_update_rollback, this), "test transaction update rollback");
-  add_test("delete", std::bind(&ObjectTransactiontestUnit::test_delete, this), "test transaction delete");
-  add_test("delete_rollback", std::bind(&ObjectTransactiontestUnit::test_delete_rollback, this), "test transaction delete rollback");
-  add_test("nested", std::bind(&ObjectTransactiontestUnit::test_nested, this), "test nested transaction");
-  add_test("nested_rollback", std::bind(&ObjectTransactiontestUnit::test_nested_rollback, this), "test nested transaction rollback");
-  add_test("foreign", std::bind(&ObjectTransactiontestUnit::test_foreign, this), "test transaction foreign object");
-  add_test("foreign_rollback", std::bind(&ObjectTransactiontestUnit::test_foreign_rollback, this), "test transaction foreign object rollback");
+  add_test("insert", std::bind(&ObjectTransactionTestUnit::test_insert, this), "test transaction insert");
+  add_test("insert_rollback", std::bind(&ObjectTransactionTestUnit::test_insert_rollback, this), "test transaction insert rollback");
+  add_test("update", std::bind(&ObjectTransactionTestUnit::test_update, this), "test transaction update");
+  add_test("update_rollback", std::bind(&ObjectTransactionTestUnit::test_update_rollback, this), "test transaction update rollback");
+  add_test("delete", std::bind(&ObjectTransactionTestUnit::test_delete, this), "test transaction delete");
+  add_test("delete_rollback", std::bind(&ObjectTransactionTestUnit::test_delete_rollback, this), "test transaction delete rollback");
+  add_test("nested", std::bind(&ObjectTransactionTestUnit::test_nested, this), "test nested transaction");
+  add_test("nested_rollback", std::bind(&ObjectTransactionTestUnit::test_nested_rollback, this), "test nested transaction rollback");
+  add_test("foreign", std::bind(&ObjectTransactionTestUnit::test_foreign, this), "test transaction foreign object");
+  add_test("foreign_rollback", std::bind(&ObjectTransactionTestUnit::test_foreign_rollback, this), "test transaction foreign object rollback");
 }
 
 
-void ObjectTransactiontestUnit::test_insert()
+void ObjectTransactionTestUnit::test_insert()
 {
   matador::object_store store;
   store.attach<person>("person");
@@ -54,7 +54,7 @@ void ObjectTransactiontestUnit::test_insert()
   UNIT_ASSERT_EQUAL(p->name(), "Hans");
 }
 
-void ObjectTransactiontestUnit::test_insert_rollback()
+void ObjectTransactionTestUnit::test_insert_rollback()
 {
   matador::object_store store;
   store.attach<person>("person");
@@ -78,7 +78,7 @@ void ObjectTransactiontestUnit::test_insert_rollback()
   UNIT_ASSERT_TRUE(pview.empty());
 }
 
-void ObjectTransactiontestUnit::test_update()
+void ObjectTransactionTestUnit::test_update()
 {
   matador::object_store store;
   store.attach<person>("person");
@@ -109,7 +109,7 @@ void ObjectTransactiontestUnit::test_update()
   UNIT_ASSERT_FALSE(pview.empty());
 }
 
-void ObjectTransactiontestUnit::test_update_rollback()
+void ObjectTransactionTestUnit::test_update_rollback()
 {
   matador::object_store store;
   store.attach<person>("person");
@@ -141,7 +141,7 @@ void ObjectTransactiontestUnit::test_update_rollback()
   UNIT_ASSERT_FALSE(pview.empty());
 }
 
-void ObjectTransactiontestUnit::test_delete()
+void ObjectTransactionTestUnit::test_delete()
 {
   matador::object_store store;
   store.attach<person>("person");
@@ -170,7 +170,7 @@ void ObjectTransactiontestUnit::test_delete()
   UNIT_ASSERT_TRUE(p.ptr() == nullptr);
 }
 
-void ObjectTransactiontestUnit::test_delete_rollback()
+void ObjectTransactionTestUnit::test_delete_rollback()
 {
   matador::object_store store;
   store.attach<person>("person");
@@ -202,7 +202,7 @@ void ObjectTransactiontestUnit::test_delete_rollback()
   UNIT_ASSERT_EQUAL(p->name(), "Hans");
 }
 
-void ObjectTransactiontestUnit::test_nested()
+void ObjectTransactionTestUnit::test_nested()
 {
   matador::object_store store;
   store.attach<person>("person");
@@ -251,7 +251,7 @@ void ObjectTransactiontestUnit::test_nested()
   UNIT_ASSERT_EQUAL(p->name(), "Hans");
 }
 
-void ObjectTransactiontestUnit::test_nested_rollback()
+void ObjectTransactionTestUnit::test_nested_rollback()
 {
   matador::object_store store;
   store.attach<person>("person");
@@ -303,7 +303,7 @@ void ObjectTransactiontestUnit::test_nested_rollback()
   UNIT_ASSERT_EQUAL(p->name(), "Hans");
 }
 
-void ObjectTransactiontestUnit::test_foreign()
+void ObjectTransactionTestUnit::test_foreign()
 {
   matador::object_store store;
   store.attach<child>("child");
@@ -338,7 +338,7 @@ void ObjectTransactiontestUnit::test_foreign()
   }
 }
 
-void ObjectTransactiontestUnit::test_foreign_rollback()
+void ObjectTransactionTestUnit::test_foreign_rollback()
 {
   matador::object_store store;
   store.attach<child>("child");
