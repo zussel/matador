@@ -7,6 +7,7 @@
 
 #include "matador/object/json_object_mapper.hpp"
 #include "../entities.hpp"
+#include "../has_many_list.hpp"
 
 using namespace matador;
 
@@ -15,6 +16,7 @@ JsonObjectMapperTest::JsonObjectMapperTest()
 {
   add_test("simple", std::bind(&JsonObjectMapperTest::test_simple, this), "test simple json object mapper");
   add_test("derived", std::bind(&JsonObjectMapperTest::test_derived, this), "test derived json object mapper");
+  add_test("has_many", std::bind(&JsonObjectMapperTest::test_has_many, this), "test has many json object mapper");
 }
 
 void JsonObjectMapperTest::test_simple()
@@ -30,7 +32,6 @@ void JsonObjectMapperTest::test_simple()
 
 void JsonObjectMapperTest::test_derived()
 {
-  //std::cout << "\n";
   json_object_mapper<citizen> mapper;
 
   auto p = mapper.object_from_string(R"(  { "id":  5, "name": "george", "height": 185, "birthdate": "2001-11-27", "address": { "id": 4, "street": "east-street", "city": "east-city", "citizen": 5 } } )");
@@ -48,4 +49,23 @@ void JsonObjectMapperTest::test_derived()
   UNIT_EXPECT_EQUAL(4UL, addr->id);
   UNIT_EXPECT_EQUAL("east-street", addr->street);
   UNIT_EXPECT_EQUAL("east-city", addr->city);
+}
+
+void JsonObjectMapperTest::test_has_many()
+{
+  json_object_mapper<hasmanylist::owner> mapper;
+
+  auto p = mapper.object_from_string(R"(  {
+"id":  5,
+"name": "george",
+"owner_item": [{"id": 13, "name": "strawberry"}, {"id": 17, "name": "banana"}   ]
+} )");
+
+  UNIT_EXPECT_EQUAL(5UL, p.id);
+  UNIT_EXPECT_EQUAL("george", p.name);
+  UNIT_ASSERT_EQUAL(2UL, p.items.size());
+
+  const auto &i = p.items.front();
+  UNIT_ASSERT_EQUAL(13UL, i->id);
+  UNIT_ASSERT_EQUAL("strawberry", i->name);
 }

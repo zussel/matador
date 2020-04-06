@@ -19,6 +19,8 @@
 #include "matador/utils/json_parser.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/memory.hpp"
+
+#include "matador/object/basic_has_many.hpp"
 #include "matador/object/belongs_to.hpp"
 #include "matador/object/has_one.hpp"
 
@@ -50,6 +52,8 @@ public:
   void serialize(const char *id, belongs_to<Value> &x, cascade_type);
   template<class Value>
   void serialize(const char *id, has_one<Value> &x, cascade_type);
+  template < class Value, template <class ...> class Container >
+  void serialize(const char *id, basic_has_many<Value, Container> &x, const char *, const char *, cascade_type);
 
 private:
   details::mapper_runtime &runtime_data_;
@@ -140,6 +144,23 @@ void json_object_mapper_serializer::serialize(const char *id, has_one<Value> &x,
   x = new Value;
   *x = std::move(result);
   runtime_data_.cursor.sync_cursor(mapper.runtime_data().cursor());
+}
+
+template<class Value, template <class ...> class Container>
+void json_object_mapper_serializer::serialize(const char *id, basic_has_many<Value, Container> &x, const char *,
+                                              const char *, cascade_type)
+{
+  if (runtime_data_.object_key != id) {
+    return;
+  }
+
+  json_object_mapper<Value> mapper;
+  auto elements = mapper.array_from_string(runtime_data_.json_array_cursor, false);
+  for (auto &&item : elements) {
+    typename has_many_item_holder<Value>::object_type val(new Value(item));
+    x.append(has_many_item_holder<Value>(val, nullptr));
+  }
+  runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
 }
 
 }

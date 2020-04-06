@@ -15,6 +15,7 @@ public:
 
   void test_simple();
   void test_derived();
+  void test_has_many();
 };
 
 
