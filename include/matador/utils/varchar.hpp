@@ -220,24 +220,31 @@ private:
 };
 
 template<int SIZE>
-class varchar<SIZE, const char*> : public varchar_base
+class varchar<SIZE, char*> : public varchar_base
 {
 public:
-  typedef const char* value_type;
+  typedef char* value_type;
 
-  varchar() = default;
+  varchar() : value_(new char[SIZE]) {}
+
   explicit varchar(value_type val)
-    : value_(val)
-  {}
+  {
+    assign(val);
+  }
+
+  ~varchar()
+  {
+    delete [] value_;
+  }
 
   bool operator<(const varchar &x) const
   {
-    return strcmp(value_, x.value) < 0;
+    return strcmp(value_, x.value()) < 0;
   }
 
   bool operator==(const varchar &x) const
   {
-    return strcmp(value_, x.value) == 0;
+    return strcmp(value_, x.value()) == 0;
   }
 
   bool operator!=(const varchar &x) const
@@ -253,7 +260,7 @@ public:
   void assign(const char *val)
   {
     auto len = strlen(val);
-    len = len > size ? size : len;
+    len = len > (size_t)size ? (size_t)size : len;
 #ifdef _MSC_VER
     strncpy_s(value, size, val, len);
 #else
@@ -274,11 +281,11 @@ public:
     return value_ == nullptr || strlen(value_) == 0;
   }
 
-  value_type& value() {
+  char* value() {
     return value_;
   }
 
-  const value_type& value() const {
+  const char* value() const {
     return value_;
   }
 

@@ -244,7 +244,7 @@ prototype_node* object_store::find_prototype_node(const char *type) const {
   }
 }
 
-prototype_node* object_store::remove_prototype_node(prototype_node *node, bool is_root)
+prototype_node* object_store::remove_prototype_node(prototype_node *node, bool check_for_eos)
 {
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
@@ -273,7 +273,7 @@ prototype_node* object_store::remove_prototype_node(prototype_node *node, bool i
   } else {
     throw object_exception("couldn't find node by id");
   }
-  if (is_root) {
+  if (check_for_eos) {
     delete node->op_first;
     delete node->op_last;
   }

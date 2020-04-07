@@ -22,6 +22,8 @@
 #include "utils/AnyTestUnit.hpp"
 #include "utils/BlobTestUnit.hpp"
 #include "utils/DateTestUnit.hpp"
+#include "utils/JsonTestUnit.hpp"
+#include "utils/JsonMapperTestUnit.hpp"
 #include "utils/TimeTestUnit.hpp"
 #include "utils/FactoryTestUnit.hpp"
 #include "utils/StringTestUnit.hpp"
@@ -29,9 +31,10 @@
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
-#include "object/ObjectTransactiontestUnit.hpp"
+#include "object/ObjectTransactionTestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
 #include "object/PrimaryKeyUnitTest.hpp"
+#include "object/JsonObjectMapperTest.hpp"
 #include "object/HasManyUnitTest.hpp"
 #include "object/HasManyVectorUnitTest.hpp"
 #include "object/HasManyListUnitTest.hpp"
@@ -81,6 +84,8 @@ int main(int argc, char *argv[])
   suite.register_unit(new DateTestUnit);
   suite.register_unit(new TimeTestUnit);
   suite.register_unit(new BlobTestUnit);
+  suite.register_unit(new JsonTestUnit);
+  suite.register_unit(new JsonMapperTestUnit);
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);
@@ -89,8 +94,9 @@ int main(int argc, char *argv[])
   suite.register_unit(new PrototypeTreeTestUnit);
   suite.register_unit(new ObjectPrototypeTestUnit);
   suite.register_unit(new ObjectStoreTestUnit);
-  suite.register_unit(new ObjectTransactiontestUnit);
+  suite.register_unit(new ObjectTransactionTestUnit);
   suite.register_unit(new HasManyUnitTest);
+  suite.register_unit(new JsonObjectMapperTest);
   suite.register_unit(new HasManyVectorUnitTest);
   suite.register_unit(new HasManyListUnitTest);
   suite.register_unit(new RelationTestUnit);

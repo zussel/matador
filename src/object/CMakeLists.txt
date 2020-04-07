@@ -18,7 +18,7 @@ SET(SOURCES
   relation_field_endpoint.cpp
   abstract_has_many.cpp
   basic_has_many_to_many_item.cpp
-  prototype_info.cpp)
+  prototype_info.cpp json_object_mapper.cpp)
 
 SET(HEADER
   ../../include/matador/object/action.hpp
@@ -38,6 +38,7 @@ SET(HEADER
   ../../include/matador/object/prototype_iterator.hpp
   ../../include/matador/object/has_many.hpp
   ../../include/matador/object/has_one.hpp
+  ../../include/matador/object/json_object_mapper.hpp
   ../../include/matador/object/container_type_traits.hpp
   ../../include/matador/object/object_holder.hpp
   ../../include/matador/object/basic_has_many.hpp

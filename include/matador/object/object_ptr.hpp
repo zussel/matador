@@ -198,6 +198,18 @@ public:
   }
 
   /**
+   * @brief Return the pointer to the serializable of type T.
+   *
+   * Return the pointer to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
+   *
+   * @return The pointer to the serializable of type T.
+   */
+  T* get() {
+    return static_cast<T*>(lookup_object());
+  }
+
+  /**
    * The modify method allows to modify the underlying
    * object. It ensures that this object is marked
    * as modified in the object_store and all registered

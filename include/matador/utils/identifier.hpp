@@ -55,14 +55,22 @@ public:
    *
    * @return The copied identifier object
    */
-  identifier& operator=(const identifier &) = default;
+  identifier& operator=(const identifier &x) {
+    if (this != &x) {
+      id_ = x.id_;
+    }
+    return *this;
+  }
 
   /**
    * @brief Default move assignment constructor
    *
    * @return The moved identifier object
    */
-  identifier& operator=(identifier &&) noexcept = default;
+  identifier& operator=(identifier &&x) noexcept {
+    id_ = x.id_;
+    return *this;
+  }
 
   /**
    * @brief Default copy constructor
@@ -451,8 +459,7 @@ public:
   /**
    * @brief Create an identifier
    */
-  identifier() : id_("")
-  { };
+  identifier() = default;
 
   /**
    * @brief Create an identifier with given string value
@@ -625,7 +632,14 @@ public:
    *
    * @return The string value
    */
-  value_type value() const { return id_.value(); }
+  value_type value() { return id_.value(); }
+
+  /**
+   * Return the string value if the id
+   *
+   * @return The string value
+   */
+  const value_type value() const { return id_.value(); }
 
   /**
    * Set a new identifier value

@@ -15,6 +15,7 @@
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
+  #pragma warning(disable: 4275)
 #else
 #define OOS_SQL_API
 #endif
