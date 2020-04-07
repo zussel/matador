@@ -171,6 +171,16 @@ public:
   static time now();
 
   /**
+   * Creates a timestamp string with the given
+   * buffer and the given format
+   *
+   * @param buffer Buffer to write the timestamp to
+   * @param format Format string of the timestamp
+   * @return The formatted timestamp
+   */
+  static const char* timestamp(char *buffer, const char *format);
+
+  /**
    * Checks if given time parts are valid
    *
    * 0 <= hour < 24

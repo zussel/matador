@@ -48,6 +48,53 @@ namespace detail {
     return ::gettimeofday(tp, nullptr);
 #endif
   }
+
+  void strftime(char *buffer, size_t size, const char *format, const struct tm *timeinfo)
+  {
+#ifdef _MSC_VER
+  // try to find "%f" for milliseconds
+  const char *fpos = strstr(format, "%f");
+  if (fpos != nullptr) {
+    // split format string (exclude %f)
+    size_t len = fpos - format;
+    char *d = new char[len + 1];
+    strncpy_s(d, len + 1, format, len);
+    d[len] = '\0';
+    std::string fstr = to_string(x, d) + std::to_string(x.milli_second());
+    delete[] d;
+	if ((fpos + 2)[0] != '\0') {
+	  fstr += to_string(x, fpos + 2);
+	}
+    return fstr;
+    /*
+    len = strlen(format) - len - 2;
+    d = new char[len + 1];
+    strncpy_s(d, len + 1, fpos + 2, len);
+    d[len] = '\0';
+    fstr += to_string(x, d);
+    delete[] d;
+    return fstr;
+    */
+  } else {
+    if (strftime(buffer, 255, format, &timeinfo) == 0) {
+      throw std::logic_error("couldn't format time string");
+    }
+    return buffer;
+  }
+#else
+    if (::strftime(buffer, size, format, timeinfo) == 0) {
+      throw std::logic_error("couldn't format date string");
+    }
+    std::string result(buffer);
+    // check for %f
+    auto pos = result.find("%f");
+//    if (pos != std::string::npos) {
+//      std::string millis = std::to_string(x.milli_second());
+//      // replace %f with millis
+//      result.replace(pos, 2, millis);
+//    }
+#endif
+  }
 }
 
 void throw_invalid_time(int h, int m, int s, long ms)
@@ -122,6 +169,12 @@ bool time::operator>=(const time &x) const
 time time::now()
 {
   return time{};
+}
+
+const char *time::timestamp(char *buffer, const char *format)
+{
+
+  return nullptr;
 }
 
 bool time::is_valid_time(int hour, int min, int sec, long millis) {
