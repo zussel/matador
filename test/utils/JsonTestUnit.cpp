@@ -1,10 +1,7 @@
-#include <set>
 #include <list>
 #include <unordered_set>
 
 #include "JsonTestUnit.hpp"
-
-#include "../person.hpp"
 
 #include "matador/utils/json.hpp"
 #include "matador/utils/json_parser.hpp"
