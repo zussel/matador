@@ -18,7 +18,7 @@ public:
     LVL_INFO, LVL_WARN, LVL_DEBUG, LVL_ERROR, LVL_TRACE
   };
 
-  static constexpr const char* TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S";
+  static constexpr const char* TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S.%f";
 
   static std::map<level, std::string> level_strings;
 
@@ -84,13 +84,11 @@ private:
   template < typename ... ARGS >
   void log(level lvl, const char *what, ARGS const & ... args);
 
-  const char* gettimestamp(char *buffer) const
+  const char* gettimestamp(char *buffer, size_t size) const
   {
-    time_t rawtime;
-    struct tm * timeinfo;
-    ::time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
-    strftime (buffer, 80, TIMESTAMP_FORMAT, timeinfo);
+    struct timeval tp{};
+    matador::gettimeofday(&tp);
+    matador::strftime (buffer, size, TIMESTAMP_FORMAT, &tp);
     return buffer;
   }
 
@@ -195,11 +193,11 @@ public:
 void logger::log(level lvl, const char *what) {
   char timestamp_buffer [80];
 
-  const char *timestamp = gettimestamp(timestamp_buffer);
+  const char *timestamp = gettimestamp(timestamp_buffer, 80);
 
   char message_buffer[1024];
 
-  int ret = sprintf(message_buffer, "%s $$ %7s $$ %s $$ %s\n", timestamp, level_strings[lvl].c_str(), source_, what);
+  int ret = sprintf(message_buffer, "%s $$ %-7s $$ %s $$ %s\n", timestamp, level_strings[lvl].c_str(), source_, what);
 
   manager_.log(message_buffer, ret);
 }
@@ -209,7 +207,7 @@ void logger::log(logger::level lvl, const char *what, ARGS const &... args)
 {
   char timestamp_buffer [80];
 
-  const char *timestamp = gettimestamp(timestamp_buffer);
+  const char *timestamp = gettimestamp(timestamp_buffer, 80);
 
   char message_buffer[912];
 
@@ -217,7 +215,7 @@ void logger::log(logger::level lvl, const char *what, ARGS const &... args)
 
   char log_buffer[1024];
 
-  int ret = sprintf(log_buffer, "%s $$ %7s $$ %s $$ %s\n", timestamp, level_strings[lvl].c_str(), source_, message_buffer);
+  int ret = sprintf(log_buffer, "%s $$ %-7s $$ %s $$ %s\n", timestamp, level_strings[lvl].c_str(), source_, message_buffer);
 
   manager_.log(log_buffer, ret);
 }
