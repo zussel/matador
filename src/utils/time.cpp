@@ -79,18 +79,18 @@ int gettimeofday(struct timeval *tp)
 {
 #ifdef _MSC_VER
   FILETIME    file_time;
-    SYSTEMTIME  system_time;
-    ULARGE_INTEGER ularge;
+  SYSTEMTIME  system_time;
+  ULARGE_INTEGER ularge;
 
-    GetSystemTime(&system_time);
-    SystemTimeToFileTime(&system_time, &file_time);
-    ularge.LowPart = file_time.dwLowDateTime;
-    ularge.HighPart = file_time.dwHighDateTime;
+  GetSystemTime(&system_time);
+  SystemTimeToFileTime(&system_time, &file_time);
+  ularge.LowPart = file_time.dwLowDateTime;
+  ularge.HighPart = file_time.dwHighDateTime;
 
-    tp->tv_sec = (long)((ularge.QuadPart - epoch) / 10000000L);
-    tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
+  tp->tv_sec = (long)((ularge.QuadPart - detail::epoch) / 10000000L);
+  tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
 
-    return 0;
+  return 0;
 #else
   return ::gettimeofday(tp, nullptr);
 #endif
