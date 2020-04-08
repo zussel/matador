@@ -27,6 +27,36 @@
 namespace matador {
 
 /**
+ * Multi platform version of localtime
+ *
+ * @param in time_t value to be converted
+ * @param out converted value
+ */
+OOS_UTILS_API void localtime(const time_t &in, struct tm &out);
+
+/**
+ * Formats a given timeval struct as a string
+ * within the given buffer. It is possible to format the
+ * string with fractional seconds using the format
+ * token '%f'.
+ *
+ * @param buffer Buffer to write the time string to
+ * @param size Size of the buffer
+ * @param format Format of the time string
+ * @param tv timeval struct containing the time to format
+ * @return The length of the buffer string
+ */
+OOS_UTILS_API int strftime(char *buffer, size_t size, const char *format, const struct timeval *tv);
+
+/**
+ * Multi platform version of gettimeofday
+ *
+ * @param tp Timeval struct where the result ist stored
+ * @return Returns 0 on success
+ */
+OOS_UTILS_API int gettimeofday(struct timeval *tp);
+
+/**
  * @class time
  *
  * @brief Simple time class with milliseconds
@@ -169,16 +199,6 @@ public:
    * @return Returns current time.
    */
   static time now();
-
-  /**
-   * Creates a timestamp string with the given
-   * buffer and the given format
-   *
-   * @param buffer Buffer to write the timestamp to
-   * @param format Format string of the timestamp
-   * @return The formatted timestamp
-   */
-  static const char* timestamp(char *buffer, const char *format);
 
   /**
    * Checks if given time parts are valid
