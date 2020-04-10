@@ -1,30 +1,8 @@
+#include <thread>
 #include "matador/utils/memory.hpp"
-#include "matador/logger/basic_file_sink.hpp"
 #include "matador/logger/logger.hpp"
 #include "matador/logger/log_manager.hpp"
 #include "matador/logger/file_sink.hpp"
-
-namespace matador {
-
-class stdout_sink : public basic_file_sink
-{
-public:
-  stdout_sink()
-    : basic_file_sink(stdout)
-  {}
-};
-
-class stderr_sink : public basic_file_sink
-{
-public:
-  stderr_sink()
-    : basic_file_sink(stderr)
-  {}
-};
-
-static log_manager logman;
-
-}
 
 class MyClass
 {
@@ -41,16 +19,21 @@ public:
   }
 };
 
-matador::logger MyClass::LOG = matador::logman.create_logger("MyClass");
+matador::logger MyClass::LOG = matador::log_manager::instance().create_logger("MyClass");
 
 int main()
 {
-  matador::logman.add(matador::make_unique<matador::file_sink>("log.txt"));
-  matador::logman.add(matador::make_unique<matador::stdout_sink>());
+  std::thread::id this_id = std::this_thread::get_id();
 
-  matador::logger log = matador::logman.create_logger("test");
 
-  log.info("hello info %d", 6);
+  auto logsink = std::make_shared<matador::file_sink>("log.txt");
+  auto stdoutsink = std::make_shared<matador::stdout_sink>();
+
+  matador::log_manager::instance().add_sink(stdoutsink);
+  matador::log_manager::instance().add_sink(logsink);
+  auto log = matador::log_manager::instance().create_logger("test");
+
+  log.info("hello info %d [%d]", 6, this_id);
   log.debug("hello debug bug bug bug");
   log.error("hello error -> fatal");
   log.warn("hello warn: attention");

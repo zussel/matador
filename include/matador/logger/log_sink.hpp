@@ -2,6 +2,7 @@
 #define MATADOR_LOG_SINK_HPP
 
 #include <cstddef>
+#include <memory>
 
 namespace matador {
 
@@ -12,6 +13,8 @@ public:
 
   virtual void write(const char *message, std::size_t size) = 0;
 };
+
+using sink_ptr = std::shared_ptr<log_sink>;
 
 }
 

@@ -31,6 +31,18 @@ public:
   ~file_sink() override;
 };
 
+class OOS_LOGGER_API stdout_sink : public basic_file_sink
+{
+public:
+  stdout_sink();
+};
+
+class OOS_LOGGER_API stderr_sink : public basic_file_sink
+{
+public:
+  stderr_sink();
+};
+
 }
 
 #endif //MATADOR_FILE_SINK_HPP

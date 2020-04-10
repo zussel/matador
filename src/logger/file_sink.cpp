@@ -19,4 +19,11 @@ file_sink::~file_sink()
   fclose(stream);
 }
 
+stdout_sink::stdout_sink()
+  : basic_file_sink(stdout)
+{}
+
+stderr_sink::stderr_sink()
+  : basic_file_sink(stderr)
+{}
 }

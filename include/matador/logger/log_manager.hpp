@@ -14,6 +14,8 @@
 #define OOS_LOGGER_API
 #endif
 
+#include "matador/utils/singleton.hpp"
+
 #include "matador/logger/logger.hpp"
 #include "matador/logger/log_sink.hpp"
 
@@ -22,16 +24,26 @@
 
 namespace matador {
 
-class OOS_LOGGER_API log_manager
+class OOS_LOGGER_API log_manager : public singleton<log_manager>
 {
 public:
-  logger create_logger(const char *source);
+  logger create_logger(std::string source);
+  logger create_logger(std::string source, const std::string &domain_name);
 
-  void add(std::unique_ptr<log_sink> sink);
+  void add_sink(sink_ptr sink);
 
-  void log(const char *msg, size_t size);
+protected:
+  log_manager()
+  {
+    default_log_domain_ = log_map.insert(std::make_pair("default", std::make_shared<logger_domain>())).first->second;
+  }
 private:
-  std::list<std::unique_ptr<log_sink>> sinks;
+  friend class singleton<log_manager>;
+
+  std::shared_ptr<logger_domain> default_log_domain_;
+
+
+  std::map<std::string, std::shared_ptr<logger_domain>> log_map;
 };
 
 }
