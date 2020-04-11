@@ -31,20 +31,30 @@ public:
   logger create_logger(std::string source, const std::string &domain_name);
 
   void add_sink(sink_ptr sink);
+  void add_sink(sink_ptr sink, const std::string &domain_name);
 
 protected:
   log_manager()
   {
-    default_log_domain_ = log_map.insert(std::make_pair("default", std::make_shared<logger_domain>())).first->second;
+    default_log_domain_ = log_domain_map.insert(std::make_pair("default", std::make_shared<logger_domain>())).first->second;
   }
+
+private:
+  std::shared_ptr<logger_domain> acquire_domain(const std::string &name);
+
 private:
   friend class singleton<log_manager>;
 
   std::shared_ptr<logger_domain> default_log_domain_;
 
-
-  std::map<std::string, std::shared_ptr<logger_domain>> log_map;
+  std::map<std::string, std::shared_ptr<logger_domain>> log_domain_map;
 };
+
+void add_log_sink(sink_ptr sink);
+void add_log_sink(sink_ptr sink, const std::string &domain);
+
+logger create_logger(std::string source);
+logger create_logger(std::string source, const std::string &domain);
 
 }
 

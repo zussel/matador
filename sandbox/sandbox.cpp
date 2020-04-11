@@ -25,13 +25,13 @@ int main()
 {
   std::thread::id this_id = std::this_thread::get_id();
 
-
   auto logsink = std::make_shared<matador::file_sink>("log.txt");
   auto stdoutsink = std::make_shared<matador::stdout_sink>();
 
-  matador::log_manager::instance().add_sink(stdoutsink);
-  matador::log_manager::instance().add_sink(logsink);
-  auto log = matador::log_manager::instance().create_logger("test");
+  matador::add_log_sink(stdoutsink);
+  matador::add_log_sink(logsink);
+
+  auto log = matador::create_logger("test");
 
   log.info("hello info %d [%d]", 6, this_id);
   log.debug("hello debug bug bug bug");
@@ -41,4 +41,11 @@ int main()
 
   MyClass my1;
   MyClass my2;
+
+  auto netsink = std::make_shared<matador::file_sink>("netlog.txt");
+  matador::add_log_sink(netsink, "net");
+
+  auto another_log = matador::create_logger("side", "net");
+
+  another_log.warn("another net log");
 }
