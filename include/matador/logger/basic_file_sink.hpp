@@ -2,12 +2,12 @@
 #define MATADOR_BASIC_FILE_SINK_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
+#ifdef matador_logger_EXPORTS
+    #define OOS_LOGGER_API __declspec(dllexport)
+    #define EXPIMP_LOGGER_TEMPLATE
   #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
+    #define OOS_LOGGER_API __declspec(dllimport)
+    #define EXPIMP_LOGGER_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
@@ -28,6 +28,8 @@ protected:
 
 public:
   void write(const char *message, size_t size) override;
+
+  void close() override;
 
 protected:
   FILE *stream = nullptr;

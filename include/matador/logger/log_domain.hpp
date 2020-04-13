@@ -1,6 +1,19 @@
 #ifndef MATADOR_LOG_DOMAIN_HPP
 #define MATADOR_LOG_DOMAIN_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_logger_EXPORTS
+#define OOS_LOGGER_API __declspec(dllexport)
+#define EXPIMP_LOGGER_TEMPLATE
+#else
+#define OOS_LOGGER_API __declspec(dllimport)
+#define EXPIMP_LOGGER_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_LOGGER_API
+#endif
+
 #include "matador/logger/log_sink.hpp"
 #include "matador/logger/log_level.hpp"
 
@@ -10,7 +23,7 @@
 
 namespace matador {
 
-class log_domain
+class OOS_LOGGER_API log_domain
 {
 public:
   static constexpr const char *TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S.%f";

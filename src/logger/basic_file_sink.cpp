@@ -12,4 +12,9 @@ void basic_file_sink::write(const char *message, size_t size)
   fflush(stream);
 }
 
+void basic_file_sink::close()
+{
+  fclose(stream);
+}
+
 }

@@ -2,12 +2,12 @@
 #define MATADOR_LOG_MANAGER_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
+#ifdef matador_logger_EXPORTS
+    #define OOS_LOGGER_API __declspec(dllexport)
+    #define EXPIMP_LOGGER_TEMPLATE
   #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
+    #define OOS_LOGGER_API __declspec(dllimport)
+    #define EXPIMP_LOGGER_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
@@ -50,11 +50,11 @@ private:
   std::map<std::string, std::shared_ptr<log_domain>> log_domain_map;
 };
 
-void add_log_sink(sink_ptr sink);
-void add_log_sink(sink_ptr sink, const std::string &domain);
+OOS_LOGGER_API void add_log_sink(sink_ptr sink);
+OOS_LOGGER_API void add_log_sink(sink_ptr sink, const std::string &domain);
 
-logger create_logger(std::string source);
-logger create_logger(std::string source, const std::string &domain);
+OOS_LOGGER_API logger create_logger(std::string source);
+OOS_LOGGER_API logger create_logger(std::string source, const std::string &domain);
 
 }
 

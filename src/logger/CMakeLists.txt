@@ -8,6 +8,8 @@ SET(HEADER
 
 ADD_LIBRARY(matador-logger SHARED ${SOURCES} ${HEADER})
 
+TARGET_LINK_LIBRARIES(matador-logger matador-utils)
+
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-logger
                       PROPERTIES

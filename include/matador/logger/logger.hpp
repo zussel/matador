@@ -2,12 +2,12 @@
 #define MATADOR_LOGGER_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
+#ifdef matador_logger_EXPORTS
+    #define OOS_LOGGER_API __declspec(dllexport)
+    #define EXPIMP_LOGGER_TEMPLATE
   #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
+    #define OOS_LOGGER_API __declspec(dllimport)
+    #define EXPIMP_LOGGER_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
@@ -66,7 +66,11 @@ void logger::log(log_level lvl, const char *what, ARGS const &... args)
 {
   char message_buffer[912];
 
+#ifdef _MSC_VER
+  sprintf_s(message_buffer, 912, what, args...);
+#else
   sprintf(message_buffer, what, args...);
+#endif
 
   logger_domain_->log(lvl, source_, message_buffer);
 }

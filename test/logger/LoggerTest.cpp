@@ -84,7 +84,11 @@ void LoggerTest::test_logger()
   UNIT_ASSERT_TRUE(filehelper::file_is_readable("log.txt"));
   UNIT_ASSERT_TRUE(filehelper::file_is_writable("log.txt"));
 
-  ::remove("log.txt");
+  logsink->close();
+
+  if (::remove("log.txt") == -1) {
+    UNIT_FAIL(strerror(errno));
+  }
 
   UNIT_ASSERT_FALSE(filehelper::file_exists("log.txt"));
 
@@ -97,6 +101,8 @@ void LoggerTest::test_logger()
 
   UNIT_ASSERT_TRUE(filehelper::file_is_readable("net.txt"));
   UNIT_ASSERT_TRUE(filehelper::file_is_writable("net.txt"));
+
+  logsink->close();
 
   ::remove("net.txt");
 
@@ -123,11 +129,14 @@ void LoggerTest::test_logging()
   logger.trace("tracing something");
   logger.error("big error");
 
+  logsink->close();
+
   UNIT_ASSERT_TRUE(filehelper::validate_log_file_line("log.txt", 0, "INFO", "test", "information"));
   UNIT_ASSERT_TRUE(filehelper::validate_log_file_line("log.txt", 1, "WARN", "test", "warning"));
   UNIT_ASSERT_TRUE(filehelper::validate_log_file_line("log.txt", 2, "DEBUG", "test", "debugging"));
   UNIT_ASSERT_TRUE(filehelper::validate_log_file_line("log.txt", 3, "TRACE", "test", "tracing something"));
   UNIT_ASSERT_TRUE(filehelper::validate_log_file_line("log.txt", 4, "ERROR", "test", "big error"));
+
 
   ::remove("log.txt");
 

@@ -8,7 +8,11 @@ file_sink::file_sink(const std::string &path)
 
 file_sink::file_sink(const char *path)
 {
+#ifdef _MSC_VER
+  fopen_s(&stream, path, "a");
+#else
   stream = fopen(path, "a");
+#endif
   if (stream == nullptr) {
     throw std::logic_error("error opening file");
   }
