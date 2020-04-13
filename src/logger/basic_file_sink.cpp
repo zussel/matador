@@ -9,6 +9,7 @@ basic_file_sink::basic_file_sink(FILE *f)
 void basic_file_sink::write(const char *message, size_t size)
 {
   fwrite(message, sizeof(char), size, stream);
+  fflush(stream);
 }
 
 }

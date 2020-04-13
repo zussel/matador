@@ -1,10 +1,10 @@
 SET(SOURCES
   logger.cpp
-  log_manager.cpp basic_file_sink.cpp file_sink.cpp logger_domain.cpp)
+  log_manager.cpp basic_file_sink.cpp file_sink.cpp log_domain.cpp)
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/logger/logger.hpp
-  ../../include/matador/logger/log_manager.hpp ../../include/matador/logger/log_sink.hpp ../../include/matador/logger/basic_file_sink.hpp ../../include/matador/logger/file_sink.hpp ../../include/matador/logger/logger_domain.hpp ../../include/matador/logger/log_level.hpp)
+  ../../include/matador/logger/log_manager.hpp ../../include/matador/logger/log_sink.hpp ../../include/matador/logger/basic_file_sink.hpp ../../include/matador/logger/file_sink.hpp ../../include/matador/logger/log_domain.hpp ../../include/matador/logger/log_level.hpp)
 
 ADD_LIBRARY(matador-logger SHARED ${SOURCES} ${HEADER})
 

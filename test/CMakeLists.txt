@@ -19,6 +19,11 @@ SET (TEST_TOOLS_SOURCES
   utils/JsonMapperTestUnit.hpp
 )
 
+SET (TEST_LOGGER_SOURCES
+  logger/LoggerTest.cpp
+  logger/LoggerTest.hpp
+)
+
 SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 
 SET (TEST_OBJECT_SOURCES
@@ -92,6 +97,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
+  ${TEST_LOGGER_SOURCES}
   ${TEST_SQL_SOURCES}
 )
 

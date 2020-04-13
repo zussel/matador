@@ -19,6 +19,8 @@
 
 #include "unit/TestSuiteTestUnit.hpp"
 
+#include "logger/LoggerTest.hpp"
+
 #include "utils/AnyTestUnit.hpp"
 #include "utils/BlobTestUnit.hpp"
 #include "utils/DateTestUnit.hpp"
@@ -89,6 +91,8 @@ int main(int argc, char *argv[])
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);
+
+  suite.register_unit(new LoggerTest);
 
   suite.register_unit(new PrimaryKeyUnitTest);
   suite.register_unit(new PrototypeTreeTestUnit);

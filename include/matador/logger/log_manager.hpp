@@ -36,18 +36,18 @@ public:
 protected:
   log_manager()
   {
-    default_log_domain_ = log_domain_map.insert(std::make_pair("default", std::make_shared<logger_domain>())).first->second;
+    default_log_domain_ = log_domain_map.insert(std::make_pair("default", std::make_shared<log_domain>("default"))).first->second;
   }
 
 private:
-  std::shared_ptr<logger_domain> acquire_domain(const std::string &name);
+  std::shared_ptr<log_domain> acquire_domain(const std::string &name);
 
 private:
   friend class singleton<log_manager>;
 
-  std::shared_ptr<logger_domain> default_log_domain_;
+  std::shared_ptr<log_domain> default_log_domain_;
 
-  std::map<std::string, std::shared_ptr<logger_domain>> log_domain_map;
+  std::map<std::string, std::shared_ptr<log_domain>> log_domain_map;
 };
 
 void add_log_sink(sink_ptr sink);

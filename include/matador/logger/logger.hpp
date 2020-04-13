@@ -15,7 +15,7 @@
 #endif
 
 #include "matador/logger/log_level.hpp"
-#include "matador/logger/logger_domain.hpp"
+#include "matador/logger/log_domain.hpp"
 
 #include <string>
 #include <map>
@@ -28,7 +28,7 @@ class OOS_LOGGER_API logger
 {
 public:
 
-  logger(std::string source, std::shared_ptr<logger_domain> log_domain);
+  logger(std::string source, std::shared_ptr<log_domain> log_domain);
 
   template<typename ... ARGS>
   void info(const std::string &what, ARGS const &... args) { info(what.c_str(), args...); }
@@ -53,9 +53,12 @@ public:
   template<typename ... ARGS>
   void log(log_level lvl, const char *what, ARGS const &... args);
 
+  std::string source() const;
+  std::string domain() const;
+
 private:
   std::string source_;
-  std::shared_ptr<logger_domain> logger_domain_;
+  std::shared_ptr<log_domain> logger_domain_;
 };
 
 template<typename... ARGS>

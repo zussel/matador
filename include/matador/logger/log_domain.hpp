@@ -1,5 +1,5 @@
-#ifndef MATADOR_LOGGER_DOMAIN_HPP
-#define MATADOR_LOGGER_DOMAIN_HPP
+#ifndef MATADOR_LOG_DOMAIN_HPP
+#define MATADOR_LOG_DOMAIN_HPP
 
 #include "matador/logger/log_sink.hpp"
 #include "matador/logger/log_level.hpp"
@@ -10,13 +10,13 @@
 
 namespace matador {
 
-class logger_domain
+class log_domain
 {
 public:
   static constexpr const char *TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S.%f";
 
-  logger_domain() = default;
-  logger_domain(std::string name, sink_ptr sink);
+  explicit log_domain(std::string name);
+  log_domain(std::string name, sink_ptr sink);
 
   std::string name() const;
 
@@ -32,4 +32,4 @@ private:
 };
 
 }
-#endif //MATADOR_LOGGER_DOMAIN_HPP
+#endif //MATADOR_LOG_DOMAIN_HPP

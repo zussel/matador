@@ -26,14 +26,14 @@ void log_manager::add_sink(sink_ptr sink, const std::string &domain_name)
   log_domain->add_sink(std::move(sink));
 }
 
-std::shared_ptr<logger_domain> log_manager::acquire_domain(const std::string &name)
+std::shared_ptr<log_domain> log_manager::acquire_domain(const std::string &name)
 {
   if (name == "default") {
     return default_log_domain_;
   }
   auto it = log_domain_map.find(name);
   if (it == log_domain_map.end()) {
-    it = log_domain_map.insert(std::make_pair(name, std::make_shared<logger_domain>())).first;
+    it = log_domain_map.insert(std::make_pair(name, std::make_shared<log_domain>(name))).first;
   }
   return it->second;
 }
