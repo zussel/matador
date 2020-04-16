@@ -1,6 +1,19 @@
 #ifndef MATADOR_BASIC_JSON_MAPPER_HPP
 #define MATADOR_BASIC_JSON_MAPPER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_UTILS_API __declspec(dllexport)
+    #define EXPIMP_UTILS_TEMPLATE
+  #else
+    #define OOS_UTILS_API __declspec(dllimport)
+    #define EXPIMP_UTILS_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_UTILS_API
+#endif
+
 #include "matador/utils/json.hpp"
 #include "matador/utils/json_parser.hpp"
 #include "matador/utils/identifier.hpp"
@@ -10,7 +23,7 @@
 namespace matador {
 
 namespace details {
-struct mapper_runtime {
+struct OOS_UTILS_API mapper_runtime {
   explicit mapper_runtime(json_cursor &c) : cursor(c) {}
   json value;
   std::string key;

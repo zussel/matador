@@ -28,11 +28,11 @@ log_domain::log_domain(std::string name)
   : name_(std::move(name))
 {}
 
-log_domain::log_domain(std::string name, sink_ptr sink)
-  : name_(std::move(name))
-{
-  sinks.push_back(std::move(sink));
-}
+//log_domain::log_domain(std::string name, sink_ptr sink)
+//  : name_(std::move(name))
+//{
+//  sinks.push_back(std::move(sink));
+//}
 
 std::string log_domain::name() const
 {

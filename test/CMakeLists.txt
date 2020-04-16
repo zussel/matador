@@ -22,7 +22,7 @@ SET (TEST_TOOLS_SOURCES
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
   logger/LoggerTest.hpp
-)
+    logger/file.cpp logger/file.hpp)
 
 SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 

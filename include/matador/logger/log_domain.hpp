@@ -29,7 +29,7 @@ public:
   static constexpr const char *TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S.%f";
 
   explicit log_domain(std::string name);
-  log_domain(std::string name, sink_ptr sink);
+//  log_domain(std::string name, sink_ptr sink);
 
   std::string name() const;
 

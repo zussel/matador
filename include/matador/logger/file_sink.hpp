@@ -25,10 +25,14 @@ class OOS_LOGGER_API file_sink : public basic_file_sink
 {
 public:
   explicit file_sink(const std::string &path);
-
   explicit file_sink(const char *path);
 
   ~file_sink() override;
+
+  std::string path() const;
+
+private:
+  std::string path_;
 };
 
 class OOS_LOGGER_API stdout_sink : public basic_file_sink
