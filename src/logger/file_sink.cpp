@@ -6,7 +6,7 @@ file_sink::file_sink(const std::string &path)
   : path_(path)
 {
 #ifdef _MSC_VER
-  fopen_s(&stream, path, "a");
+  fopen_s(&stream, path.c_str(), "a");
 #else
   stream = fopen(path.c_str(), "a");
 #endif
