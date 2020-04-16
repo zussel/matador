@@ -10,6 +10,8 @@ public:
 
   void test_logger();
   void test_logging();
+  void test_stdout();
+  void test_stderr();
 };
 
 

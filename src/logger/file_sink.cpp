@@ -20,7 +20,10 @@ file_sink::file_sink(const char *path)
 
 file_sink::~file_sink()
 {
-  fclose(stream);
+  if (stream) {
+    fclose(stream);
+    stream = nullptr;
+  }
 }
 
 stdout_sink::stdout_sink()

@@ -14,7 +14,10 @@ void basic_file_sink::write(const char *message, size_t size)
 
 void basic_file_sink::close()
 {
-  fclose(stream);
+  if (stream) {
+    fclose(stream);
+    stream = nullptr;
+  }
 }
 
 }

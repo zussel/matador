@@ -36,6 +36,8 @@ public:
   void add_sink(sink_ptr sink);
 
   void log(log_level lvl, const std::string &source, const char *message);
+
+  void clear();
 private:
 
   static std::map<log_level, std::string> level_strings;

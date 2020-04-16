@@ -26,6 +26,12 @@ void log_manager::add_sink(sink_ptr sink, const std::string &domain_name)
   log_domain->add_sink(std::move(sink));
 }
 
+void log_manager::clear()
+{
+  log_domain_map.clear();
+  default_log_domain_->clear();
+}
+
 std::shared_ptr<log_domain> log_manager::acquire_domain(const std::string &name)
 {
   if (name == "default") {

@@ -70,6 +70,8 @@ LoggerTest::LoggerTest()
 {
   add_test("logger", std::bind(&LoggerTest::test_logger, this), "logger test");
   add_test("logging", std::bind(&LoggerTest::test_logging, this), "logger logging test");
+  add_test("stdout", std::bind(&LoggerTest::test_stdout, this), "logger stdout logging test");
+  add_test("stderr", std::bind(&LoggerTest::test_stderr, this), "logger stderr logging test");
 }
 
 void LoggerTest::test_logger()
@@ -107,6 +109,8 @@ void LoggerTest::test_logger()
   ::remove("net.txt");
 
   UNIT_ASSERT_FALSE(filehelper::file_exists("net.txt"));
+
+  matador::log_manager::instance().clear();
 }
 
 void LoggerTest::test_logging()
@@ -141,6 +145,85 @@ void LoggerTest::test_logging()
   ::remove("log.txt");
 
   UNIT_ASSERT_FALSE(filehelper::file_exists("log.txt"));
+
+  matador::log_manager::instance().clear();
+}
+
+
+class std_stream_switcher
+{
+public:
+  explicit std_stream_switcher(FILE *str, const char* redirect)
+    : stream(str)
+  {
+    fflush(stream);
+    fgetpos(stream, &pos);
+    fd = dup(fileno(stream));
+    freopen(redirect, "w+", stream);
+  }
+
+  ~std_stream_switcher()
+  {
+    fflush(stream);
+    dup2(fd, fileno(stream));
+    close(fd);
+    clearerr(stream);
+    fsetpos(stream, &pos);
+  }
+private:
+  FILE *stream = nullptr;
+  int fd = 0;
+  fpos_t pos = {};
+};
+
+void LoggerTest::test_stdout()
+{
+  auto logger = matador::create_logger("test");
+
+  UNIT_ASSERT_EQUAL("test", logger.source());
+  UNIT_ASSERT_EQUAL("default", logger.domain());
+
+  auto logsink = std::make_shared<matador::stdout_sink>();
+
+  // Redirect stdout
+  {
+    std_stream_switcher stdout_switcher(stdout, "stdout.txt");
+    matador::add_log_sink(logsink);
+    logger.info("information");
+  }
+
+  UNIT_ASSERT_TRUE(filehelper::validate_log_file_line("stdout.txt", 0, "INFO", "test", "information"));
+
+  ::remove("stdout.txt");
+
+  UNIT_ASSERT_FALSE(filehelper::file_exists("stdout.txt"));
+
+  matador::log_manager::instance().clear();
+}
+
+void LoggerTest::test_stderr()
+{
+  auto logger = matador::create_logger("test");
+
+  UNIT_ASSERT_EQUAL("test", logger.source());
+  UNIT_ASSERT_EQUAL("default", logger.domain());
+
+  auto logsink = std::make_shared<matador::stderr_sink>();
+
+  // Redirect stdout
+  {
+    std_stream_switcher stdout_switcher(stderr, "stderr.txt");
+    matador::add_log_sink(logsink);
+    logger.info("information");
+  }
+
+  UNIT_ASSERT_TRUE(filehelper::validate_log_file_line("stderr.txt", 0, "INFO", "test", "information"));
+
+  ::remove("stderr.txt");
+
+  UNIT_ASSERT_FALSE(filehelper::file_exists("stderr.txt"));
+
+  matador::log_manager::instance().clear();
 }
 
 namespace filehelper {

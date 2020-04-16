@@ -33,6 +33,8 @@ public:
   void add_sink(sink_ptr sink);
   void add_sink(sink_ptr sink, const std::string &domain_name);
 
+  void clear();
+
 protected:
   log_manager()
   {

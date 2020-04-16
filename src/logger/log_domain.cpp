@@ -63,4 +63,9 @@ void log_domain::log(log_level lvl, const std::string &source, const char *messa
   }
 }
 
+void log_domain::clear()
+{
+  sinks.clear();
+}
+
 }
