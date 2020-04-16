@@ -59,13 +59,15 @@ void LoggerTest::test_logger()
 
   logsink->close();
 
+  if (::remove("test.txt") == -1) {
 #ifdef _MSC_VER
-  char buf[1024];
+    char buf[1024];
     strerror_s(buf, 1024, errno);
     UNIT_FAIL(buf);
 #else
-  UNIT_FAIL(strerror(errno));
+    UNIT_FAIL(strerror(errno));
 #endif
+  }
 
   UNIT_ASSERT_FALSE(filehelper::file::exists("log.txt"));
 
