@@ -59,7 +59,7 @@ void LoggerTest::test_logger()
 
   logsink->close();
 
-  if (::remove("test.txt") == -1) {
+  if (::remove("log.txt") == -1) {
 #ifdef _MSC_VER
     char buf[1024];
     strerror_s(buf, 1024, errno);
