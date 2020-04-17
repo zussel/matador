@@ -60,15 +60,26 @@ public:
   {
     fflush(stream);
     fgetpos(stream, &pos);
+#ifdef _MSC_VER
+    fd = _dup(_fileno(stream));
+    FILE* redirected_stream;
+    freopen_s(&redirected_stream, redirect, "w+", stream);
+#else
     fd = dup(fileno(stream));
     freopen(redirect, "w+", stream);
+#endif
   }
 
   ~std_stream_switcher()
   {
     fflush(stream);
+#ifdef _MSC_VER
+    _dup2(fd, _fileno(stream));
+    _close(fd);
+#else
     dup2(fd, fileno(stream));
     close(fd);
+#endif
     clearerr(stream);
     fsetpos(stream, &pos);
   }
