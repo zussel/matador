@@ -4,6 +4,8 @@
 #include "matador/logger/file_sink.hpp"
 #include "matador/logger/log_manager.hpp"
 
+#include "matador/utils/os.hpp"
+
 #include <cstdio>
 #include <fstream>
 #include <regex>
@@ -12,12 +14,15 @@
 #include <io.h>
 #else
 #include <unistd.h>
+#include <matador/logger/rotating_file_sink.hpp>
+
 #endif
 
 LoggerTest::LoggerTest()
   : unit_test("logger", "logger test")
 {
   add_test("file_sink", std::bind(&LoggerTest::test_file_sink, this), "logger file sink test");
+  add_test("rotating_file_sink", std::bind(&LoggerTest::test_rotating_file_sink, this), "logger rotating file sink test");
   add_test("logger", std::bind(&LoggerTest::test_logger, this), "logger test");
   add_test("logging", std::bind(&LoggerTest::test_logging, this), "logger logging test");
   add_test("stdout", std::bind(&LoggerTest::test_stdout, this), "logger stdout logging test");
@@ -42,7 +47,15 @@ void LoggerTest::test_file_sink()
 #endif
   }
 
-  UNIT_ASSERT_FALSE(filehelper::file::exists("test.txt"));
+  UNIT_ASSERT_FALSE(matador::os::exists("test.txt"));
+}
+
+void LoggerTest::test_rotating_file_sink()
+{
+  auto logsink = std::make_shared<matador::rotating_file_sink>("log.txt", 100, 3);
+
+  UNIT_ASSERT_TRUE(matador::os::is_readable("log.txt"));
+  UNIT_ASSERT_TRUE(matador::os::is_writable("log.txt"));
 }
 
 void LoggerTest::test_logger()
@@ -54,8 +67,8 @@ void LoggerTest::test_logger()
 
   auto logsink = std::make_shared<matador::file_sink>("log.txt");
 
-  UNIT_ASSERT_TRUE(filehelper::file::is_readable("log.txt"));
-  UNIT_ASSERT_TRUE(filehelper::file::is_writable("log.txt"));
+  UNIT_ASSERT_TRUE(matador::os::is_readable("log.txt"));
+  UNIT_ASSERT_TRUE(matador::os::is_writable("log.txt"));
 
   logsink->close();
 
@@ -69,7 +82,7 @@ void LoggerTest::test_logger()
 #endif
   }
 
-  UNIT_ASSERT_FALSE(filehelper::file::exists("log.txt"));
+  UNIT_ASSERT_FALSE(matador::os::exists("log.txt"));
 
   logger = matador::create_logger("net", "system");
 
@@ -78,14 +91,14 @@ void LoggerTest::test_logger()
 
   logsink = std::make_shared<matador::file_sink>("net.txt");
 
-  UNIT_ASSERT_TRUE(filehelper::file::is_readable("net.txt"));
-  UNIT_ASSERT_TRUE(filehelper::file::is_writable("net.txt"));
+  UNIT_ASSERT_TRUE(matador::os::is_readable("net.txt"));
+  UNIT_ASSERT_TRUE(matador::os::is_writable("net.txt"));
 
   logsink->close();
 
   ::remove("net.txt");
 
-  UNIT_ASSERT_FALSE(filehelper::file::exists("net.txt"));
+  UNIT_ASSERT_FALSE(matador::os::exists("net.txt"));
 
   matador::log_manager::instance().clear();
 }
@@ -99,8 +112,8 @@ void LoggerTest::test_logging()
 
   auto logsink = std::make_shared<matador::file_sink>("log.txt");
 
-  UNIT_ASSERT_TRUE(filehelper::file::is_readable("log.txt"));
-  UNIT_ASSERT_TRUE(filehelper::file::is_writable("log.txt"));
+  UNIT_ASSERT_TRUE(matador::os::is_readable("log.txt"));
+  UNIT_ASSERT_TRUE(matador::os::is_writable("log.txt"));
 
   matador::add_log_sink(logsink);
 
@@ -121,7 +134,7 @@ void LoggerTest::test_logging()
 
   ::remove("log.txt");
 
-  UNIT_ASSERT_FALSE(filehelper::file::exists("log.txt"));
+  UNIT_ASSERT_FALSE(matador::os::exists("log.txt"));
 
   matador::log_manager::instance().clear();
 }
@@ -146,7 +159,7 @@ void LoggerTest::test_stdout()
 
   ::remove("stdout.txt");
 
-  UNIT_ASSERT_FALSE(filehelper::file::exists("stdout.txt"));
+  UNIT_ASSERT_FALSE(matador::os::exists("stdout.txt"));
 
   matador::log_manager::instance().clear();
 }
@@ -171,7 +184,7 @@ void LoggerTest::test_stderr()
 
   ::remove("stderr.txt");
 
-  UNIT_ASSERT_FALSE(filehelper::file::exists("stderr.txt"));
+  UNIT_ASSERT_FALSE(matador::os::exists("stderr.txt"));
 
   matador::log_manager::instance().clear();
 }

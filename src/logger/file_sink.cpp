@@ -1,15 +1,13 @@
 #include "matador/logger/file_sink.hpp"
 
+#include "matador/utils/os.hpp"
+
 namespace matador {
 
 file_sink::file_sink(const std::string &path)
   : path_(path)
 {
-#ifdef _MSC_VER
-  fopen_s(&stream, path.c_str(), "a");
-#else
-  stream = fopen(path.c_str(), "a");
-#endif
+  stream = os::fopen(path, "a");
   if (stream == nullptr) {
     throw std::logic_error("error opening file");
   }

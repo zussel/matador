@@ -9,6 +9,7 @@ public:
   LoggerTest();
 
   void test_file_sink();
+  void test_rotating_file_sink();
   void test_logger();
   void test_logging();
   void test_stdout();
