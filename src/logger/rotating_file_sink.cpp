@@ -1,7 +1,7 @@
 #include "matador/logger/rotating_file_sink.hpp"
 
 #include "matador/utils/string.hpp"
-#include "matador/utils/string.hpp"
+#include "matador/utils/os.hpp"
 
 #include <utility>
 #include <iostream>
@@ -15,7 +15,7 @@ rotating_file_sink::rotating_file_sink(const std::string& path, size_t max_size,
 {
   split(logfile_.path());
 
-  rotate();
+  //rotate();
 
   // generate filename {name}.{n}.[extension}
   std::string filename = calculate_filename(current_file_no_);
