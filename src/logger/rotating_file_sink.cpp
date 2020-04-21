@@ -3,7 +3,6 @@
 #include "matador/utils/string.hpp"
 #include "matador/utils/os.hpp"
 
-#include <utility>
 #include <iostream>
 
 namespace matador {
@@ -15,24 +14,23 @@ rotating_file_sink::rotating_file_sink(const std::string& path, size_t max_size,
 {
   split(logfile_.path());
 
-  //rotate();
-
-  // generate filename {name}.{n}.[extension}
-  std::string filename = calculate_filename(current_file_no_);
-
+  current_size_ = logfile_.size();
 }
 
 void rotating_file_sink::write(const char *message, size_t size)
 {
   current_size_ += size;
   if (current_size_ > max_size_) {
-    current_size_ = max_size_;
+    current_size_ = size;
     rotate();
-    // close current log file
-    // rename current logfile
-    // open current logfile truncated
   }
-  basic_file_sink::write(message, size);
+  fwrite(message, sizeof(char), size, logfile_.stream());
+  fflush(logfile_.stream());
+}
+
+void rotating_file_sink::close()
+{
+  logfile_.close();
 }
 
 std::string rotating_file_sink::calculate_filename(size_t fileno)
@@ -54,15 +52,22 @@ std::string rotating_file_sink::calculate_filename(size_t fileno)
  */
 void rotating_file_sink::rotate()
 {
+  std::string filename;
   for (size_t i = file_count_; i != 0; --i) {
+    filename = calculate_filename(i);
+    if (!matador::os::exists(filename.c_str())) {
+      continue;
+    }
     if (i == file_count_) {
-      matador::os::remove(calculate_filename(i));
-      std::cout << "deleting " << calculate_filename(i) << "\n";
+      matador::os::remove(filename.c_str());
     } else {
-      std::cout << "moving " << calculate_filename(i) << " to " << calculate_filename(i+1) + "\n";
+      matador::os::rename(filename.c_str(), calculate_filename(i+1).c_str());
     }
   }
-  std::cout << "moving " << logfile_.path() << " to " << calculate_filename(1) << "\n";
+  std::string path = logfile_.path();
+  logfile_.close();
+  matador::os::rename(path.c_str(), filename.c_str());
+  logfile_.open(path, "a");
 }
 
 void rotating_file_sink::split(const std::string &path)

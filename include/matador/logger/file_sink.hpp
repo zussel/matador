@@ -40,6 +40,8 @@ class OOS_LOGGER_API stdout_sink : public basic_file_sink
 public:
   stdout_sink();
   ~stdout_sink() override = default;
+
+  void close() override {}
 };
 
 class OOS_LOGGER_API stderr_sink : public basic_file_sink
@@ -47,6 +49,8 @@ class OOS_LOGGER_API stderr_sink : public basic_file_sink
 public:
   stderr_sink();
   ~stderr_sink() override = default;
+
+  void close() override {}
 };
 
 }

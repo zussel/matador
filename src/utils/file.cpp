@@ -24,6 +24,7 @@ void file::open(const char *path, const char *mode)
 
 void file::open(const std::string &path, const char *mode)
 {
+  close();
   path_ = path;
   stream_ = os::fopen(path, mode);
 }

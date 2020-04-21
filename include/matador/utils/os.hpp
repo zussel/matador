@@ -15,6 +15,10 @@ FILE* freopen(const char *path, const char *modes, FILE *stream);
 
 bool remove(const std::string &name);
 bool remove(const char *name);
+
+bool rename(const std::string &old_name, const std::string &new_name);
+bool rename(const char *old_name, const char *new_name);
+
 bool access(const std::string &path, int mode);
 bool access(const char *path, int mode);
 

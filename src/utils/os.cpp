@@ -53,6 +53,16 @@ bool remove(const char *name)
   return ::remove(name) == 0;
 }
 
+bool rename(const std::string &old_name, const std::string &new_name)
+{
+  return os::rename(old_name.c_str(), new_name.c_str());
+}
+
+bool rename(const char *old_name, const char *new_name)
+{
+  return ::rename(old_name, new_name) == 0;
+}
+
 bool access(const std::string &path, int mode)
 {
   return os::access(path.c_str(), mode);

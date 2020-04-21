@@ -5,19 +5,21 @@
 #ifndef MATADOR_ROTATING_FILE_SINK_HPP
 #define MATADOR_ROTATING_FILE_SINK_HPP
 
-#include "matador/logger/file_sink.hpp"
+#include "matador/logger/log_sink.hpp"
 #include "matador/utils/file.hpp"
 
 #include <vector>
 
 namespace matador {
 
-class rotating_file_sink : public basic_file_sink
+class rotating_file_sink : public log_sink
 {
 public:
   rotating_file_sink(const std::string& path, size_t max_size, size_t file_count);
 
   void write(const char *message, size_t size) override;
+
+  void close() override;
 
 private:
   std::string calculate_filename(size_t fileno);
