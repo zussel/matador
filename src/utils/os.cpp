@@ -43,6 +43,16 @@ FILE* freopen(const char *path, const char *modes, FILE *stream)
 #endif
 }
 
+bool remove(const std::string &name)
+{
+  return os::remove(name.c_str());
+}
+
+bool remove(const char *name)
+{
+  return ::remove(name) == 0;
+}
+
 bool access(const std::string &path, int mode)
 {
   return os::access(path.c_str(), mode);

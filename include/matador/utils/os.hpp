@@ -13,6 +13,8 @@ FILE* fopen(const char *path, const char *modes);
 FILE* freopen(const std::string &path, const char *modes, FILE *stream);
 FILE* freopen(const char *path, const char *modes, FILE *stream);
 
+bool remove(const std::string &name);
+bool remove(const char *name);
 bool access(const std::string &path, int mode);
 bool access(const char *path, int mode);
 
