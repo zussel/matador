@@ -20,7 +20,7 @@ FILE* fopen(const char *path, const char *modes)
 {
 #ifdef _WIN32
   FILE *stream;
-  fopen_s(&stream, path.c_str(), "a");
+  fopen_s(&stream, path, "a");
   return stream;
 #else
   return ::fopen(path, modes);
@@ -36,7 +36,7 @@ FILE* freopen(const char *path, const char *modes, FILE *stream)
 {
 #ifdef _WIN32
   FILE* redirected_stream;
-  freopen_s(&redirected_stream, redirect, "w+", stream);
+  freopen_s(&redirected_stream, path, "w+", stream);
   return redirected_stream;
 #else
   return ::freopen(path, modes, stream);

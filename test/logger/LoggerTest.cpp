@@ -2,6 +2,7 @@
 #include "file.hpp"
 
 #include "matador/logger/file_sink.hpp"
+#include "matador/logger/rotating_file_sink.hpp"
 #include "matador/logger/log_manager.hpp"
 
 #include "matador/utils/os.hpp"

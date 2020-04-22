@@ -1,9 +1,18 @@
-//
-// Created by sascha on 17.04.20.
-//
-
 #ifndef MATADOR_ROTATING_FILE_SINK_HPP
 #define MATADOR_ROTATING_FILE_SINK_HPP
+
+#ifdef _MSC_VER
+#ifdef matador_logger_EXPORTS
+#define OOS_LOGGER_API __declspec(dllexport)
+#define EXPIMP_LOGGER_TEMPLATE
+#else
+#define OOS_LOGGER_API __declspec(dllimport)
+#define EXPIMP_LOGGER_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_LOGGER_API
+#endif
 
 #include "matador/logger/log_sink.hpp"
 #include "matador/utils/file.hpp"
@@ -12,7 +21,7 @@
 
 namespace matador {
 
-class rotating_file_sink : public log_sink
+class OOS_LOGGER_API rotating_file_sink : public log_sink
 {
 public:
   rotating_file_sink(const std::string& path, size_t max_size, size_t file_count);
