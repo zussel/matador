@@ -2,9 +2,11 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <cstring>
 
 #ifdef _WIN32
 #include <io.h>
+#include <dirent.h>
 #else
 #include <unistd.h>
 #endif
@@ -84,6 +86,67 @@ int dup(FILE *stream)
 #else
   return ::dup(fileno(stream));
 #endif
+}
+
+bool mkdir(const std::string &dirname)
+{
+  return os::mkdir(dirname.c_str());
+}
+
+bool mkdir(const char *dirname)
+{
+#ifdef _WIN32
+  return _mkdir(dirname) == 0;
+#else
+  return ::mkdir(dirname, S_IRWXU) == 0;
+#endif
+}
+
+bool rmdir(const std::string &dirname)
+{
+  return os::rmdir(dirname.c_str());
+}
+
+bool rmdir(const char *dirname)
+{
+#ifdef _WIN32
+  return _rmdir(dirname) == 0;
+#else
+  return ::rmdir(dirname);
+#endif
+}
+
+bool mkpath(const std::string &path)
+{
+  return os::mkpath(path.c_str());
+}
+
+#ifdef _WIN32
+char DIR_SEPARATOR = '\\';
+#else
+char DIR_SEPARATOR = '/';
+#endif
+
+bool mkpath(const char *path)
+{
+  char tmp[256];
+  char *p = nullptr;
+  size_t len;
+
+  snprintf(tmp, sizeof(tmp),"%s",path);
+  len = strlen(tmp);
+  if(tmp[len - 1] == DIR_SEPARATOR)
+    tmp[len - 1] = 0;
+  for(p = tmp + 1; *p; p++) {
+    if (*p == DIR_SEPARATOR) {
+      *p = 0;
+      if (!os::mkdir(tmp)) {
+        return false;
+      }
+      *p = DIR_SEPARATOR;
+    }
+  }
+  return os::mkdir(tmp);
 }
 
 bool is_readable(const std::string &path)
