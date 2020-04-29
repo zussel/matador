@@ -112,7 +112,7 @@ bool rmdir(const char *dirname)
 #ifdef _WIN32
   return _rmdir(dirname) == 0;
 #else
-  return ::rmdir(dirname);
+  return ::rmdir(dirname) == 0;
 #endif
 }
 
