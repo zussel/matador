@@ -30,6 +30,7 @@
 #include "utils/FactoryTestUnit.hpp"
 #include "utils/StringTestUnit.hpp"
 #include "utils/SequencerTestUnit.hpp"
+#include "utils/OSTest.hpp"
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
@@ -91,6 +92,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);
+  suite.register_unit(new OSTest);
 
   suite.register_unit(new LoggerTest);
 

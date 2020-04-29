@@ -6,7 +6,7 @@
 
 #ifdef _WIN32
 #include <io.h>
-#include <dirent.h>
+#include <direct.h>
 #else
 #include <unistd.h>
 #endif
@@ -96,7 +96,7 @@ bool mkdir(const std::string &dirname)
 bool mkdir(const char *dirname)
 {
 #ifdef _WIN32
-  return _mkdir(dirname) == 0;
+  return ::_mkdir(dirname) == 0;
 #else
   return ::mkdir(dirname, S_IRWXU) == 0;
 #endif

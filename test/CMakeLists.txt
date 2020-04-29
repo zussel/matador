@@ -17,6 +17,8 @@ SET (TEST_TOOLS_SOURCES
   utils/JsonTestUnit.hpp
   utils/JsonMapperTestUnit.cpp
   utils/JsonMapperTestUnit.hpp
+  utils/OSTest.cpp
+  utils/OSTest.hpp
 )
 
 SET (TEST_LOGGER_SOURCES
