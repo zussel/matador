@@ -3,6 +3,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <cstring>
+#include <vector>
+#include <stdexcept>
+#include <algorithm>
 
 #ifdef _WIN32
 #include <io.h>
@@ -102,6 +105,20 @@ bool mkdir(const char *dirname)
 #endif
 }
 
+bool chdir(const std::string &dirname)
+{
+  return os::chdir(dirname.c_str());
+}
+
+bool chdir(const char *dirname)
+{
+#ifdef _WIN32
+  return _chdir(dirname) == 0;
+#else
+  return ::chdir(dirname) == 0;
+#endif
+}
+
 bool rmdir(const std::string &dirname)
 {
   return os::rmdir(dirname.c_str());
@@ -116,6 +133,24 @@ bool rmdir(const char *dirname)
 #endif
 }
 
+std::string get_current_dir()
+{
+  char buffer[1024];
+#ifdef _WIN32
+  char *dir = _getcwd(buffer, 1024);
+#else
+  char *dir = ::getcwd(buffer, 1024);
+#endif
+  if (dir == nullptr) {
+#ifdef _WIN32
+    throw std::logic_error(_strerror(errno));
+#else
+    throw std::logic_error(::strerror(errno));
+#endif
+  }
+  return std::string(buffer);
+}
+
 bool mkpath(const std::string &path)
 {
   return os::mkpath(path.c_str());
@@ -123,8 +158,10 @@ bool mkpath(const std::string &path)
 
 #ifdef _WIN32
 char DIR_SEPARATOR = '\\';
+const char* DIR_SEPARATOR_STRING = "\\";
 #else
 char DIR_SEPARATOR = '/';
+const char* DIR_SEPARATOR_STRING = "/";
 #endif
 
 bool mkpath(const char *path)
@@ -147,6 +184,38 @@ bool mkpath(const char *path)
     }
   }
   return os::mkdir(tmp);
+}
+
+bool rmpath(const std::string &path)
+{
+  return os::rmpath(path.c_str());
+}
+
+bool rmpath(const char *path)
+{
+  // change next to last path segment
+
+  std::vector<char> pathcopy(path, path+::strlen(path));
+  std::vector<std::string> segments;
+  char *segment = ::strtok(pathcopy.data(), DIR_SEPARATOR_STRING);
+
+  while (segment != nullptr) {
+    segments.emplace_back(segment);
+    segment = ::strtok(nullptr, DIR_SEPARATOR_STRING);
+  }
+
+  for (const auto &part : segments) {
+    os::chdir(part);
+  }
+
+  os::chdir("..");
+
+  auto first = segments.rbegin();
+  for (auto it=first; it!=segments.rend(); ++it) {
+    os::rmdir(*it);
+    os::chdir("..");
+  }
+  return true;
 }
 
 bool is_readable(const std::string &path)

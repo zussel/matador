@@ -171,6 +171,8 @@ void LoggerTest::test_stdout()
     logger.info("information");
   }
 
+  logsink->close();
+
   validate_log_file_line("stdout.txt", 0, "INFO", "test", "information");
 
   matador::os::remove("stdout.txt");
@@ -195,6 +197,8 @@ void LoggerTest::test_stderr()
     matador::add_log_sink(logsink);
     logger.info("information");
   }
+
+  logsink->close();
 
   validate_log_file_line("stderr.txt", 0, "INFO", "test", "information");
 

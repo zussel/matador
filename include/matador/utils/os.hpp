@@ -40,11 +40,19 @@ OOS_UTILS_API int dup(FILE *stream);
 OOS_UTILS_API bool mkdir(const std::string &dirname);
 OOS_UTILS_API bool mkdir(const char *dirname);
 
+OOS_UTILS_API bool chdir(const std::string &dirname);
+OOS_UTILS_API bool chdir(const char *dirname);
+
 OOS_UTILS_API bool rmdir(const std::string &dirname);
 OOS_UTILS_API bool rmdir(const char *dirname);
 
+OOS_UTILS_API std::string get_current_dir();
+
 OOS_UTILS_API bool mkpath(const std::string &path);
 OOS_UTILS_API bool mkpath(const char *path);
+
+OOS_UTILS_API bool rmpath(const std::string &path);
+OOS_UTILS_API bool rmpath(const char *path);
 
 OOS_UTILS_API bool is_readable(const std::string &path);
 OOS_UTILS_API bool is_readable(const char *path);
