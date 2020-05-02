@@ -36,7 +36,11 @@ void rotating_file_sink::close()
 std::string rotating_file_sink::calculate_filename(size_t fileno)
 {
   char buffer[1024];
+#ifdef _WIN32
+  sprintf_s(buffer, 1024, "%s.%zu.%s", base_path_.c_str(), fileno, extension_.c_str());
+#else
   sprintf(buffer, "%s.%zu.%s", base_path_.c_str(), fileno, extension_.c_str());
+#endif
   return buffer;
 }
 
