@@ -48,6 +48,11 @@ FILE* freopen(const char *path, const char *modes, FILE *stream)
 #endif
 }
 
+bool fclose(FILE *f)
+{
+  return ::fclose(f) == 0;
+}
+
 bool remove(const std::string &name)
 {
   return os::remove(name.c_str());
@@ -215,12 +220,10 @@ bool rmpath(const char *path)
 #endif
   }
 
-  os::chdir("..");
-
   auto first = segments.rbegin();
   for (auto it=first; it!=segments.rend(); ++it) {
-    os::rmdir(*it);
     os::chdir("..");
+    os::rmdir(*it);
   }
   return true;
 }

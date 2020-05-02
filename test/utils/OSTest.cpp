@@ -44,8 +44,6 @@ void OSTest::test_mkpath()
   // chdir
   UNIT_ASSERT_TRUE(os::chdir(temppath));
 
-  std::cout << "path: " << os::get_current_dir() << "\n";
-
   UNIT_ASSERT_TRUE(os::rmpath(temppath));
 }
 
@@ -57,10 +55,14 @@ void OSTest::test_remove_file()
   UNIT_ASSERT_FALSE(os::exists(tempfilename));
 
   // create file
-  UNIT_ASSERT_TRUE(os::fopen(tempfilename, "w"));
+  FILE *f = os::fopen(tempfilename, "w");
+  UNIT_ASSERT_NOT_NULL(f);
 
   // test if file exists
   UNIT_ASSERT_TRUE(os::exists(tempfilename));
+
+  // close file
+  UNIT_ASSERT_TRUE(os::fclose(f));
 
   // delete file
   UNIT_ASSERT_TRUE(os::remove(tempfilename));
@@ -74,7 +76,8 @@ void OSTest::test_rename_file()
   UNIT_ASSERT_FALSE(os::exists(tempfilename));
 
   // create file
-  UNIT_ASSERT_TRUE(os::fopen(tempfilename, "w"));
+  FILE *f = os::fopen(tempfilename, "w");
+  UNIT_ASSERT_NOT_NULL(f);
 
   // test if file exists
   UNIT_ASSERT_TRUE(os::exists(tempfilename));
@@ -83,6 +86,9 @@ void OSTest::test_rename_file()
 
   // check if file exists
   UNIT_ASSERT_FALSE(os::exists(newtempfilename));
+
+  // close file
+  UNIT_ASSERT_TRUE(os::fclose(f));
 
   // rename file
   UNIT_ASSERT_TRUE(os::rename(tempfilename, newtempfilename));
@@ -105,7 +111,8 @@ void OSTest::test_access_file()
   UNIT_ASSERT_FALSE(os::exists(tempfilename));
 
   // create file
-  UNIT_ASSERT_TRUE(os::fopen(tempfilename, "w"));
+  FILE *f = os::fopen(tempfilename, "w");
+  UNIT_ASSERT_NOT_NULL(f);
 
   // test if file exists
   UNIT_ASSERT_TRUE(os::exists(tempfilename));
@@ -115,6 +122,9 @@ void OSTest::test_access_file()
 
   // check readable
   UNIT_ASSERT_TRUE(os::is_readable(tempfilename));
+
+  // close file
+  UNIT_ASSERT_TRUE(os::fclose(f));
 
   // delete file
   UNIT_ASSERT_TRUE(os::remove(tempfilename));

@@ -32,7 +32,7 @@ void file::open(const std::string &path, const char *mode)
 void file::close()
 {
   if (stream_ != nullptr) {
-    fclose(stream_);
+    os::fclose(stream_);
     stream_ = nullptr;
   }
 }

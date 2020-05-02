@@ -26,6 +26,8 @@ OOS_UTILS_API FILE* fopen(const char *path, const char *modes);
 OOS_UTILS_API FILE* freopen(const std::string &path, const char *modes, FILE *stream);
 OOS_UTILS_API FILE* freopen(const char *path, const char *modes, FILE *stream);
 
+OOS_UTILS_API bool fclose(FILE *f);
+
 OOS_UTILS_API bool remove(const std::string &name);
 OOS_UTILS_API bool remove(const char *name);
 
