@@ -143,7 +143,8 @@ std::string get_current_dir()
 #endif
   if (dir == nullptr) {
 #ifdef _WIN32
-    throw std::logic_error(_strerror(errno));
+    ::strerror_s(buffer, 1024, errno);
+    throw std::logic_error(buffer);
 #else
     throw std::logic_error(::strerror(errno));
 #endif
@@ -195,17 +196,23 @@ bool rmpath(const char *path)
 {
   // change next to last path segment
 
-  std::vector<char> pathcopy(path, path+::strlen(path));
+  std::vector<char> pathcopy(path, path+::strlen(path)+1);
   std::vector<std::string> segments;
+#ifdef _WIN32
+  char *next_token = nullptr;
+  char *segment = ::strtok_s(pathcopy.data(), DIR_SEPARATOR_STRING, &next_token);
+#else
   char *segment = ::strtok(pathcopy.data(), DIR_SEPARATOR_STRING);
+#endif
 
   while (segment != nullptr) {
+    os::chdir(segment);
     segments.emplace_back(segment);
+#ifdef _WIN32
+    segment = ::strtok_s(nullptr, DIR_SEPARATOR_STRING, &next_token);
+#else
     segment = ::strtok(nullptr, DIR_SEPARATOR_STRING);
-  }
-
-  for (const auto &part : segments) {
-    os::chdir(part);
+#endif
   }
 
   os::chdir("..");

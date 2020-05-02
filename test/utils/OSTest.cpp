@@ -32,7 +32,11 @@ void OSTest::test_mkdir()
 
 void OSTest::test_mkpath()
 {
+#ifdef _WIN32
+  std::string temppath("my\\tmp\\dir\\path");
+#else
   std::string temppath("my/tmp/dir/path");
+#endif
 
   // create path
   UNIT_ASSERT_TRUE(os::mkpath(temppath));
