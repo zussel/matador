@@ -31,6 +31,8 @@ permalink: /guide/
 
 {% include_relative /guide/13-matador-datatypes.md %}
 
+{% include_relative /guide/14-json.md %}
+
 </div>
 <div class="col-md-3 hidden-xs hidden-sm">
 <nav class="bs-docs-sidebar">
