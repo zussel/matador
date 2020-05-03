@@ -80,6 +80,8 @@ void LoggerTest::test_rotating_file_sink()
 
   matador::os::chdir("..");
   matador::os::chdir("..");
+
+  matador::os::rmpath(matador::os::build_path("my", "log"));
 }
 
 void LoggerTest::test_logger()
