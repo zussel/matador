@@ -4,15 +4,16 @@
 #include "matador/utils/os.hpp"
 
 #include <iostream>
+#include <cstring>
 
 namespace matador {
 
 rotating_file_sink::rotating_file_sink(const std::string& path, size_t max_size, size_t file_count)
-  : logfile_(path, "a")
-  , max_size_(max_size)
+  : max_size_(max_size)
   , file_count_(file_count)
 {
-  split(logfile_.path());
+  // split path and file
+  prepare(path);
 
   current_size_ = logfile_.size();
 }
@@ -74,13 +75,29 @@ void rotating_file_sink::rotate()
   logfile_.open(path, "a");
 }
 
-void rotating_file_sink::split(const std::string &path)
+void rotating_file_sink::prepare(const std::string &path)
 {
+  // find last dir delimiter
+  const char *last = strrchr(path.c_str(), matador::os::DIR_SEPARATOR);
+  if (last != nullptr) {
+    path_.assign(path.data(), last-path.data());
+  } else {
+    path_.clear();
+  }
+
+  std::string filename(last+1);
+  // extract base path and extension
   std::vector<std::string> result;
-  if (matador::split(path, '.', result) != 2) {
+  if (matador::split(filename, '.', result) != 2) {
     throw std::logic_error("splitted path must consists of two elements");
   }
   base_path_ = result.at(0);
   extension_ = result.at(1);
+  // make path
+  os::mkpath(path_);
+  // change into path
+  os::chdir(path_);
+  // create file
+  logfile_.open(filename, "a");
 }
 }

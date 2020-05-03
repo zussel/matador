@@ -20,6 +20,14 @@
 namespace matador {
 namespace os {
 
+#ifdef _WIN32
+OOS_UTILS_API extern char DIR_SEPARATOR;
+OOS_UTILS_API extern const char* DIR_SEPARATOR_STRING;
+#else
+OOS_UTILS_API extern char DIR_SEPARATOR;
+OOS_UTILS_API extern const char* DIR_SEPARATOR_STRING;
+#endif
+
 OOS_UTILS_API FILE* fopen(const std::string &path, const char *modes);
 OOS_UTILS_API FILE* fopen(const char *path, const char *modes);
 
@@ -64,6 +72,14 @@ OOS_UTILS_API bool exists(const std::string &path);
 OOS_UTILS_API bool exists(const char *path);
 
 OOS_UTILS_API size_t file_size(FILE *stream);
+
+OOS_UTILS_API std::string build_path(const std::string &a, const std::string &b);
+
+template <typename ...T>
+std::string build_path(const std::string &a, const std::string &b, T& ...arg)
+{
+  return build_path(build_path(a, b), arg...);
+}
 
 }
 }

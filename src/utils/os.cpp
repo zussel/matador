@@ -1,6 +1,5 @@
 #include "matador/utils/os.hpp"
 
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <cstring>
 #include <vector>
@@ -270,5 +269,11 @@ size_t file_size(FILE *stream)
   return buf.st_size;
 #endif
 }
+
+std::string build_path(const std::string &a, const std::string &b)
+{
+  return a + DIR_SEPARATOR_STRING + b;
+}
+
 }
 }

@@ -53,7 +53,9 @@ void LoggerTest::test_file_sink()
 
 void LoggerTest::test_rotating_file_sink()
 {
-  auto logsink = std::make_shared<matador::rotating_file_sink>("log.txt", 30, 3);
+  auto path = matador::os::build_path("my", "log", "log.txt");
+
+  auto logsink = std::make_shared<matador::rotating_file_sink>(path, 30, 3);
 
   UNIT_ASSERT_TRUE(matador::os::is_readable("log.txt"));
   UNIT_ASSERT_TRUE(matador::os::is_writable("log.txt"));
@@ -61,6 +63,9 @@ void LoggerTest::test_rotating_file_sink()
   std::string line = "hello world and first line\n";
 
   logsink->write(line.c_str(), line.size());
+
+  matador::os::chdir("my");
+  matador::os::chdir("log");
 
   UNIT_ASSERT_FALSE(matador::os::exists("log.1.txt"));
 
@@ -72,6 +77,9 @@ void LoggerTest::test_rotating_file_sink()
 
   matador::os::remove("log.txt");
   matador::os::remove("log.1.txt");
+
+  matador::os::chdir("..");
+  matador::os::chdir("..");
 }
 
 void LoggerTest::test_logger()

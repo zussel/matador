@@ -34,10 +34,11 @@ private:
   std::string calculate_filename(size_t fileno);
 
   void rotate();
-  void split(const std::string &path);
+  void prepare(const std::string &path);
 
 private:
   file logfile_;
+  std::string path_;
   std::string base_path_;
   std::string extension_;
   size_t max_size_ = 0;
