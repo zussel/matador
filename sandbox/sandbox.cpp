@@ -25,8 +25,8 @@ int main()
 {
   std::thread::id this_id = std::this_thread::get_id();
 
-  auto logsink = std::make_shared<matador::file_sink>("log.txt");
-  auto stdoutsink = std::make_shared<matador::stdout_sink>();
+  auto logsink = matador::create_file_sink("log.txt");
+  auto stdoutsink = matador::create_stdout_sink();
 
   matador::add_log_sink(stdoutsink);
   matador::add_log_sink(logsink);
@@ -42,7 +42,7 @@ int main()
   MyClass my1;
   MyClass my2;
 
-  auto netsink = std::make_shared<matador::file_sink>("netlog.txt");
+  auto netsink = matador::create_file_sink("netlog.txt");
   matador::add_log_sink(netsink, "net");
 
   auto another_log = matador::create_logger("side", "net");

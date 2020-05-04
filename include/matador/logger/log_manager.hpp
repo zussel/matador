@@ -18,6 +18,8 @@
 
 #include "matador/logger/logger.hpp"
 #include "matador/logger/log_sink.hpp"
+#include "matador/logger/file_sink.hpp"
+#include "matador/logger/rotating_file_sink.hpp"
 
 #include <memory>
 #include <list>
@@ -51,6 +53,11 @@ private:
 
   std::map<std::string, std::shared_ptr<log_domain>> log_domain_map;
 };
+
+OOS_LOGGER_API std::shared_ptr<file_sink> create_file_sink(const std::string &logfile);
+OOS_LOGGER_API std::shared_ptr<stderr_sink> create_stderr_sink();
+OOS_LOGGER_API std::shared_ptr<stdout_sink> create_stdout_sink();
+OOS_LOGGER_API std::shared_ptr<rotating_file_sink> create_rotating_file_sink(const std::string &logfile, size_t max_size, size_t file_count);
 
 OOS_LOGGER_API void add_log_sink(sink_ptr sink);
 OOS_LOGGER_API void add_log_sink(sink_ptr sink, const std::string &domain);
