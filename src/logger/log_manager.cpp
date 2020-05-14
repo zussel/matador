@@ -44,6 +44,26 @@ std::shared_ptr<log_domain> log_manager::acquire_domain(const std::string &name)
   return it->second;
 }
 
+std::shared_ptr<file_sink> create_file_sink(const std::string &logfile)
+{
+  return std::make_shared<file_sink>(logfile);
+}
+
+std::shared_ptr<stderr_sink> create_stderr_sink()
+{
+  return std::make_shared<stderr_sink>();
+}
+
+std::shared_ptr<stdout_sink> create_stdout_sink()
+{
+  return std::make_shared<stdout_sink>();
+}
+
+std::shared_ptr<rotating_file_sink> create_rotating_file_sink(const std::string &logfile, size_t max_size, size_t file_count)
+{
+  return std::make_shared<rotating_file_sink>(logfile, max_size, file_count);
+}
+
 void add_log_sink(sink_ptr sink)
 {
   log_manager::instance().add_sink(std::move(sink));
@@ -62,26 +82,6 @@ logger create_logger(std::string source)
 logger create_logger(std::string source, const std::string &domain)
 {
   return log_manager::instance().create_logger(std::move(source), domain);
-}
-
-std::shared_ptr<stdout_sink> mk_stdout_sink()
-{
-  return std::make_shared<stdout_sink>();
-}
-
-std::shared_ptr<stderr_sink> mk_stderr_sink()
-{
-  return std::make_shared<stderr_sink>();
-}
-
-std::shared_ptr<file_sink> mk_file_sink(const std::string &path)
-{
-  return std::make_shared<file_sink>(path);
-}
-
-std::shared_ptr<rotating_file_sink> mk_rotating_file_sink(const std::string &path, size_t max_size, size_t file_count)
-{
-  return std::make_shared<rotating_file_sink>(path, max_size, file_count);
 }
 
 }

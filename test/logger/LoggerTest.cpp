@@ -55,7 +55,7 @@ void LoggerTest::test_rotating_file_sink()
 {
   auto path = matador::os::build_path("my", "log", "log.txt");
 
-  auto logsink = std::make_shared<matador::rotating_file_sink>(path, 30, 3);
+  auto logsink = matador::create_rotating_file_sink(path, 30, 3);
 
   UNIT_ASSERT_TRUE(matador::os::is_readable("log.txt"));
   UNIT_ASSERT_TRUE(matador::os::is_writable("log.txt"));
@@ -91,7 +91,7 @@ void LoggerTest::test_logger()
   UNIT_ASSERT_EQUAL("test", logger.source());
   UNIT_ASSERT_EQUAL("default", logger.domain());
 
-  auto logsink = std::make_shared<matador::file_sink>("log.txt");
+  auto logsink = matador::create_file_sink("log.txt");
 
   UNIT_ASSERT_TRUE(matador::os::is_readable("log.txt"));
   UNIT_ASSERT_TRUE(matador::os::is_writable("log.txt"));
@@ -115,7 +115,7 @@ void LoggerTest::test_logger()
   UNIT_ASSERT_EQUAL("net", logger.source());
   UNIT_ASSERT_EQUAL("system", logger.domain());
 
-  logsink = std::make_shared<matador::file_sink>("net.txt");
+  logsink = matador::create_file_sink("net.txt");
 
   UNIT_ASSERT_TRUE(matador::os::is_readable("net.txt"));
   UNIT_ASSERT_TRUE(matador::os::is_writable("net.txt"));
@@ -136,7 +136,7 @@ void LoggerTest::test_logging()
   UNIT_ASSERT_EQUAL("test", logger.source());
   UNIT_ASSERT_EQUAL("default", logger.domain());
 
-  auto logsink = std::make_shared<matador::file_sink>("log.txt");
+  auto logsink = matador::create_file_sink("log.txt");
 
   UNIT_ASSERT_TRUE(matador::os::is_readable("log.txt"));
   UNIT_ASSERT_TRUE(matador::os::is_writable("log.txt"));
@@ -157,7 +157,6 @@ void LoggerTest::test_logging()
   validate_log_file_line("log.txt", 3, "TRACE", "test", "tracing something");
   validate_log_file_line("log.txt", 4, "ERROR", "test", "big error");
 
-
   matador::os::remove("log.txt");
 
   UNIT_ASSERT_FALSE(matador::os::exists("log.txt"));
@@ -172,7 +171,7 @@ void LoggerTest::test_stdout()
   UNIT_ASSERT_EQUAL("test", logger.source());
   UNIT_ASSERT_EQUAL("default", logger.domain());
 
-  auto logsink = std::make_shared<matador::stdout_sink>();
+  auto logsink = matador::create_stdout_sink();
 
   // Redirect stdout
   {
@@ -199,7 +198,7 @@ void LoggerTest::test_stderr()
   UNIT_ASSERT_EQUAL("test", logger.source());
   UNIT_ASSERT_EQUAL("default", logger.domain());
 
-  auto logsink = std::make_shared<matador::stderr_sink>();
+  auto logsink = matador::create_stderr_sink();
 
   // Redirect stdout
   {

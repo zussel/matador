@@ -7,8 +7,8 @@ namespace matador {
 sql_logger::sql_logger()
   : LOG(create_logger("sql"))
 {
-  add_log_sink(mk_rotating_file_sink("log/sql.log", 1000000, 5));
-  add_log_sink(mk_stdout_sink());
+  add_log_sink(create_rotating_file_sink("log/sql.log", 1000000, 5));
+  add_log_sink(create_stdout_sink());
 }
 
 void sql_logger::on_execute(const std::string &stmt)
