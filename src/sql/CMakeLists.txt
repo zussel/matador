@@ -70,7 +70,7 @@ SET(HEADER
 
 ADD_LIBRARY(matador-sql SHARED ${SOURCES} ${HEADER})
 
-TARGET_LINK_LIBRARIES(matador-sql matador-utils)
+TARGET_LINK_LIBRARIES(matador-sql matador-logger matador-utils)
 
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-sql
