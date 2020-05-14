@@ -20,9 +20,11 @@
 
 #include "matador/sql/statement_impl.hpp"
 #include "matador/sql/result.hpp"
+#include "matador/sql/basic_sql_logger.hpp"
 
 #include <string>
 #include <functional>
+#include <utility>
 
 namespace matador {
 
@@ -58,8 +60,8 @@ public:
    *
    * @param impl The statement implementation object
    */
-  explicit statement(detail::statement_impl *impl)
-    : p(impl)
+  explicit statement(detail::statement_impl *impl, std::shared_ptr<basic_sql_logger> sqllogger)
+    : p(impl), logger_(std::move(sqllogger))
   { }
 
   ~statement() = default;
@@ -71,7 +73,8 @@ public:
    */
   statement(statement &&x) noexcept
   {
-    std::swap(p, x.p);
+    p = std::move(x.p);
+    logger_ = std::move(x.logger_);
   }
 
   /**
@@ -83,6 +86,7 @@ public:
   statement& operator=(statement &&x) noexcept
   {
     p = std::move(x.p);
+    logger_ = std::move(x.logger_);
     return *this;
   }
 
@@ -106,7 +110,7 @@ public:
    */
   result<T> execute()
   {
-    p->log(p->str());
+    logger_->on_execute(p->str());
     return result<T>(p->execute());
   }
 
@@ -186,6 +190,7 @@ public:
 
 private:
   std::unique_ptr<matador::detail::statement_impl> p;
+  std::shared_ptr<basic_sql_logger> logger_;
 };
 
 /**
@@ -212,9 +217,10 @@ public:
    * @param impl The statement implementation object
    * @param prototype Row object containing prototype columns
    */
-  statement(detail::statement_impl *impl, const row &prototype)
+  statement(detail::statement_impl *impl, row prototype, std::shared_ptr<basic_sql_logger> sqllogger)
     : p(impl)
-    , prototype_(prototype)
+    , prototype_(std::move(prototype))
+    , logger_(std::move(sqllogger))
   { }
 
   ~statement() = default;
@@ -225,10 +231,10 @@ public:
    * @param x The statement to move from
    */
   statement(statement &&x) noexcept
-    : prototype_(x.prototype_)
-  {
-    std::swap(p, x.p);
-  }
+    : p(std::move(x.p))
+    , prototype_(x.prototype_)
+    , logger_(std::move(x.logger_))
+  {}
 
   /**
    * Assignment move constructor for statement
@@ -239,6 +245,7 @@ public:
   statement& operator=(statement &&x) noexcept
   {
     p = std::move(x.p);
+    logger_ = std::move(x.logger_);
     return *this;
   }
 
@@ -262,7 +269,7 @@ public:
    */
   result<row> execute()
   {
-    p->log(p->str());
+    logger_->on_execute(p->str());
     return result<row>(p->execute(), prototype_);
   }
 
@@ -330,6 +337,7 @@ public:
 private:
   std::unique_ptr<matador::detail::statement_impl> p;
   const row prototype_;
+  std::shared_ptr<basic_sql_logger> logger_;
 };
 
 

@@ -20,6 +20,7 @@
 #include "matador/sql/connection_impl.hpp"
 #include "matador/sql/row.hpp"
 #include "matador/sql/field.hpp"
+#include "matador/sql/basic_sql_logger.hpp"
 
 #include <string>
 
@@ -39,12 +40,24 @@ public:
   connection() = default;
 
   /**
+   * @brief Creates an empty connection
+   */
+  connection(std::shared_ptr<basic_sql_logger> sqllogger);
+
+  /**
    * @brief Creates a database connection from a connection string.
    *
    * @param dns The database connection string
    */
   explicit connection(const std::string &dns);
   
+  /**
+   * @brief Creates a database connection from a connection string.
+   *
+   * @param dns The database connection string
+   */
+  connection(const std::string &dns, std::shared_ptr<basic_sql_logger> sqllogger);
+
   /**
    * Copies a given connection
    * 
@@ -157,7 +170,7 @@ public:
    */
   void execute(const std::string &stmt)
   {
-    log(stmt);
+    logger_->on_execute(stmt);
     std::unique_ptr<detail::result_impl> res(impl_->execute(stmt));
   }
 
@@ -214,7 +227,7 @@ private:
   template < class T >
   friend class query;
 
-  void prepare_prototype_row(row &prototype, const std::string &tablename);
+  void prepare_prototype_row(row &prototype, const std::string &table_name);
 
   template < class T >
   result<T> execute(const sql &stmt, const std::string &tablename, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
@@ -222,7 +235,7 @@ private:
     // get column descriptions
     prepare_prototype_row(prototype, tablename);
     auto sql_stmt = dialect()->direct(stmt);
-    log(sql_stmt);
+    logger_->on_execute(sql_stmt);
     return result<T>(impl_->execute(sql_stmt), prototype);
   }
 
@@ -237,14 +250,14 @@ private:
   result<T> execute(const sql &stmt, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
     auto sql_stmt = dialect()->direct(stmt);
-    log(sql_stmt);
+    logger_->on_execute(sql_stmt);
     return result<T>(impl_->execute(sql_stmt));
   }
 
   template < class T >
   statement<T> prepare(const matador::sql &sql, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
-    auto stmt = statement<T>(impl_->prepare(sql));
+    auto stmt = statement<T>(impl_->prepare(sql), logger_);
     if (is_log_enabled()) {
       stmt.enable_log();
     }
@@ -255,24 +268,26 @@ private:
   statement<T> prepare(const matador::sql &sql, const std::string &table_name, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
     prepare_prototype_row(prototype, table_name);
-    auto stmt = statement<T>(impl_->prepare(sql), prototype);
+    auto stmt = statement<T>(impl_->prepare(sql), prototype, logger_);
     if (is_log_enabled()) {
       stmt.enable_log();
     }
     return stmt;
   }
+
 private:
-  connection_impl* create_connection(const std::string &type) const;
+  static connection_impl* create_connection(const std::string &type) ;
   void init_from_foreign_connection(const connection &foreign_connection);
   void parse_dns(const std::string &dns);
 
-  void log(const std::string &msg) const;
   void log_token(detail::token::t_token tok);
 
 private:
   std::string type_;
   std::string dns_;
   std::unique_ptr<connection_impl> impl_;
+
+  std::shared_ptr<basic_sql_logger> logger_ = std::make_shared<null_sql_logger>();
 };
 
 }

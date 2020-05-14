@@ -46,6 +46,10 @@ class OOS_SQL_API row
 {
 public:
   row() = default;
+  row(const row &) = default;
+  row(row &&) = default;
+  row& operator=(const row &) = default;
+  row& operator=(row &&) = default;
   ~row() = default;
 
   /**
@@ -184,9 +188,6 @@ public:
   void clear();
 
 private:
-
-//  std::vector<detail::value> values_;
-
   typedef std::shared_ptr<value> value_ptr;
   typedef std::vector<std::string> t_columns;
   typedef std::unordered_map<std::string, value_ptr> t_values;

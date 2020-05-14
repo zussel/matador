@@ -19,14 +19,14 @@ public:
   }
 };
 
-matador::logger MyClass::LOG = matador::log_manager::instance().create_logger("MyClass");
+matador::logger MyClass::LOG = matador::create_logger("MyClass");
 
 int main()
 {
   std::thread::id this_id = std::this_thread::get_id();
 
-  auto logsink = std::make_shared<matador::file_sink>("log.txt");
-  auto stdoutsink = std::make_shared<matador::stdout_sink>();
+  auto logsink = matador::mk_file_sink("log.txt");
+  auto stdoutsink = matador::mk_stdout_sink();
 
   matador::add_log_sink(stdoutsink);
   matador::add_log_sink(logsink);

@@ -20,10 +20,12 @@
 #endif
 
 #include "matador/sql/types.hpp"
+#include "matador/sql/basic_sql_logger.hpp"
 #include "field.hpp"
 
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace matador {
 
