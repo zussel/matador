@@ -33,6 +33,8 @@ permalink: /guide/
 
 {% include_relative /guide/14-json.md %}
 
+{% include_relative /guide/15-logging.md %}
+
 </div>
 <div class="col-md-3 hidden-xs hidden-sm">
 <nav class="bs-docs-sidebar">
