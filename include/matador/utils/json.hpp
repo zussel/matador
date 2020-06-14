@@ -60,76 +60,203 @@ void join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
 template < class JSON_TYPE >
 class json_iterator;
 
+/**
+ * @brief This class represents either a json value an object or an array
+ *
+ * This class represents any json value
+ * - number (double or long long)
+ * - string
+ * - boolean
+ * - object
+ * - array
+ *
+ *
+ */
 class OOS_UTILS_API json
 {
 public:
-  typedef json_iterator<json> iterator;
-  //typedef std::unordered_map<std::string, json> object_type;
-  typedef std::map<std::string, json> object_type;
-  typedef std::vector<json> array_type;
+  typedef json_iterator<json> iterator;             /**< Shortcut to json iterator type */
+  typedef std::map<std::string, json> object_type;  /**< Shortcut to json object map type */
+  typedef std::vector<json> array_type;             /**< Shortcut to json array vector type */
 
+  /**
+   * Enum representing the different json value types
+   */
   enum json_type
   {
-    e_null,
-    e_integer,
-    e_real,
-    e_boolean,
-    e_string,
-    e_object,
-    e_array,
+    e_null,     /**< Json null type */
+    e_integer,  /**< Json integer type (number) */
+    e_real,     /**< Json real type (number) */
+    e_boolean,  /**< Json boolean type */
+    e_string,   /**< Json string type */
+    e_object,   /**< Json object type */
+    e_array,    /**< Json array type */
   };
 
+  /**
+   * Creates an json null value
+   */
   json();
 
+  /**
+   * Creates a number json value where the
+   * value is treated like an integer of type long long
+   *
+   * @tparam T Type of the value
+   * @param val Value of the json object
+   */
   template<class T>
   json(T val, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type * = 0)
     : value_((long long)val), type(e_integer)
   {}
 
+  /**
+   * Creates a number json value where the
+   * value is treated like a floating point of type double
+   *
+   * @tparam T Type of the value
+   * @param val Value of the json object
+   */
   template<class T>
   json(T val, typename std::enable_if<std::is_floating_point<T>::value>::type * = 0)
    : value_(val), type(e_real)
   {}
 
+  /**
+   * Creates a string json value where the
+   * value is treated like std::string
+   *
+   * @tparam T Type of the value
+   * @param val Value of the json object
+   */
   template<class T>
   json(T val, typename std::enable_if<std::is_convertible<T, std::string>::value>::type * = 0)
    : value_(val), type(e_string)
   {}
 
+  /**
+   * Creates a boolean json value
+   *
+   * @param b The boolean value of the json object
+   */
   json(bool b);
 
+  /**
+   * Creates a json array from the initializer list.
+   *
+   * Note: If the list contains just two elements and the first element
+   * is of type string an json object is created.
+   *
+   * @param l
+   */
   json(std::initializer_list<json> l);
 
+  /**
+   * Creates a null value json object
+   *
+   * @param n Null value
+   */
   json(std::nullptr_t n);
 
+  /**
+   * Creates explicitly a json object of
+   * the give json type
+   *
+   * @param t Type of the json object
+   * @sa json_type
+   */
   explicit json(json_type t);
 
+  /**
+   * Destroys the json object
+   */
   ~json();
 
+  /**
+   * Creates an empty json object.
+   *
+   * @return An empty json object
+   */
   static json object();
 
+  /**
+   * Creates an empty json array.
+   *
+   * @return An empty json array
+   */
   static json array();
 
+  /**
+   * Assigns a value to the json object
+   * On json type change the changes
+   * are adjusted
+   *
+   * @tparam T Type of the value
+   * @param val Value to assign
+   * @return The assigned json object
+   */
   template < class T >
   json& operator=(T val) {
     reset(val);
     return *this;
   }
 
+  /**
+   * Copy construct a josn object from
+   * the given json object
+   *
+   * @param x The json object to copy from
+   */
   json(const json &x);
 
+  /**
+   * Copy move the given json object
+   *
+   * @param x The json object to copy move
+   */
   json(json &&x) noexcept;
 
+  /**
+   * Move assign the given json object
+   *
+   * @param x The json object to move assign
+   * @return The move assigned json object
+   */
   json& operator=(json &&x) noexcept;
 
+  /**
+   * Copy assign the given json object
+   *
+   * @param x The json object to copy assign
+   * @return The copied json object
+   */
   json& operator=(const json &x);
 
+  /**
+   * Print the json object to the given ostream
+   *
+   * @param out The stream to write on
+   * @param val The json object to write
+   * @return The written on stream
+   */
   friend OOS_UTILS_API std::ostream& operator<<(std::ostream &out, const json &val);
 
+  /**
+   * Print the json object to the given ostream
+   *
+   * @param out The stream to write on
+   */
   void dump(std::ostream &out) const;
 
-  void copy_from(const json &x);
-
+  /**
+   * Get the json object of the given key.
+   * If the json type isn't object the type
+   * is changed to object and a json null
+   * value is inserted at key
+   *
+   * @param key The key of the requested value
+   * @return The requested value for the given key
+   */
   json& operator[](const std::string &key) {
     if (type != e_object) {
       clear();
@@ -140,6 +267,19 @@ public:
     return it->second;
   }
 
+  /**
+   * Get the json object at given index i
+   * if the json if of type array.
+   * 
+   * If the json isn't of type array a reference
+   * the this json is returned.
+   * If the index is out of bound a logic_error is
+   * thrown
+   * 
+   * @param i Index of the requested value
+   * @return The requested value for the given index
+   * @throws std::logic_error If the index is out of bounce
+   */
   json& operator[](std::size_t i);
   const json& operator[](std::size_t i) const {
     if (type != e_array) {
@@ -151,6 +291,15 @@ public:
     return value_.array->at(i);
   }
 
+  /**
+   * Push back the given value to the json array
+   *
+   * If the current type of the json object isn't
+   * array the type is changed to array.
+   *
+   * @tparam T The type of the value to push back
+   * @param val The value to push back
+   */
   template < class T >
   void push_back(const T &val) {
     if (type != e_array) {
@@ -161,9 +310,36 @@ public:
     value_.array->push_back(val);
   }
 
+  /**
+   * Returns a reference to the last json object
+   * of the array.
+   *
+   * If the current type isn't array a json exception
+   * is thrown.
+   * @throws json_exception Throws a json_exception
+   * if the current type isn't of type array
+   * @return The reference of the last json object in the array
+   */
   json& back();
+
+  /**
+   * Returns a const reference to the last json object
+   * of the array.
+   *
+   * If the current type isn't array a json exception
+   * is thrown.
+   * @throws json_exception Throws a json_exception
+   * if the current type isn't of type array
+   * @return The const reference of the last json object in the array
+   */
   const json& back() const;
 
+  /**
+   * Resets the json value to a new integer (number) type value.
+   *
+   * @tparam T Type of the new value
+   * @param val Value to set
+   */
   template < class T >
   void reset(T val, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type * = 0)
   {
@@ -174,6 +350,12 @@ public:
     value_.integer = val;
   }
 
+  /**
+   * Resets the json value to a new floating point (number) type value.
+   *
+   * @tparam T Type of the new value
+   * @param val Value to set
+   */
   template < class T >
   void reset(T val, typename std::enable_if<std::is_floating_point<T>::value>::type * = 0)
   {
@@ -184,6 +366,12 @@ public:
     value_.real = val;
   }
 
+  /**
+   * Resets the json value to a new string type value.
+   *
+   * @tparam T Type of the new value
+   * @param val Value to set
+   */
   template < class T >
   void reset(T val, typename std::enable_if<std::is_convertible<T, std::string>::value>::type * = 0)
   {
@@ -198,13 +386,58 @@ public:
     }
   }
 
+  /**
+   * Resets the json value to a new boolean type value.
+   *
+   * @tparam T Type of the new value
+   * @param val Value to set
+   */
   void reset(bool b);
 
+  /**
+   * Returns either the size of the json array or
+   * the json object.
+   * If the type of isn't array or object a
+   * std::logic_error is thrown
+   *
+   * @throws std::logic_error If type isn't object or array
+   * @return The size (count of elements)
+   */
   std::size_t size() const;
 
+  /**
+   * Returns true if json of type array or
+   * json of type object is empty. Otherwise false
+   * id returned.
+   * 
+   * If the type of isn't array or object a
+   * std::logic_error is thrown
+   * 
+   * @throws std::logic_error If type isn't object or array
+   * @return True if array or object is empty
+   */
   bool empty() const;
 
+  /**
+   * Returns the begin iterator of the json array
+   * or the json object.
+   * If the json isn't of type array or object this
+   * json object is return in the iterator
+   * @sa json_iterator
+   * 
+   * @return The begin iterator
+   */
   iterator begin();
+
+  /**
+   * Returns the end iterator of the json array
+   * or the json object.
+   * If the json isn't of type array or object this
+   * json object is return in the iterator
+   * @sa json_iterator
+   * 
+   * @return The end iterator
+   */
   iterator end();
 
   template < class T >
@@ -305,6 +538,8 @@ public:
 
 private:
   void throw_on_wrong_type(json_type t) const;
+
+  void copy_from(const json &x);
 
   friend class json_iterator<json>;
 

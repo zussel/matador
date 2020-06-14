@@ -25,6 +25,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 struct json_cursor
 {
   json_cursor& operator=(const char *json_str)
@@ -60,6 +62,8 @@ struct json_cursor
   const char *json_cursor_ = nullptr;
 };
 
+/// @endcond
+
 template < class T >
 class generic_json_parser
 {
@@ -79,15 +83,14 @@ public:
     bool is_real = false;
   };
 
-  const json_cursor& cursor() const { return json_cursor_; }
-  json_cursor& cursor() { return json_cursor_; }
-
-//  const char* json_cursor() const;
 
 public:
   virtual ~generic_json_parser() = default;
 
 protected:
+  const json_cursor& cursor() const { return json_cursor_; }
+  json_cursor& cursor() { return json_cursor_; }
+
   void on_parse_object(bool check_for_eos);
   void on_parse_array(bool check_for_eos);
   void on_begin_object() {}
