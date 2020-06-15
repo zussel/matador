@@ -74,7 +74,6 @@ void json_mapper_serializer::serialize(const char *id, V &obj, typename std::ena
   json_mapper<V> mapper;
   mapper.object_from_string(runtime_data_.cursor.json_cursor_, &obj, false);
   runtime_data_.cursor.sync_cursor(mapper.cursor().json_cursor_);
-  //this->sync_cursor(mapper.json_cursor());
 }
 
 template<class V>

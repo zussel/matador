@@ -83,14 +83,15 @@ public:
     bool is_real = false;
   };
 
+/// @cond MATADOR_DEV
+  const json_cursor& cursor() const { return json_cursor_; }
+  json_cursor& cursor() { return json_cursor_; }
+/// @endcond
 
 public:
   virtual ~generic_json_parser() = default;
 
 protected:
-  const json_cursor& cursor() const { return json_cursor_; }
-  json_cursor& cursor() { return json_cursor_; }
-
   void on_parse_object(bool check_for_eos);
   void on_parse_array(bool check_for_eos);
   void on_begin_object() {}
