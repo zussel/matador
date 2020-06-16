@@ -20,6 +20,8 @@
 namespace matador {
 namespace os {
 
+/// @cond MATADOR_DEV
+
 #ifdef _WIN32
 OOS_UTILS_API extern char DIR_SEPARATOR;
 OOS_UTILS_API extern const char* DIR_SEPARATOR_STRING;
@@ -80,6 +82,8 @@ std::string build_path(const std::string &a, const std::string &b, T& ...arg)
 {
   return build_path(build_path(a, b), arg...);
 }
+
+/// @endcond
 
 }
 }

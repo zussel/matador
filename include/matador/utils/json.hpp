@@ -389,7 +389,6 @@ public:
   /**
    * Resets the json value to a new boolean type value.
    *
-   * @tparam T Type of the new value
    * @param val Value to set
    */
   void reset(bool b);
@@ -440,6 +439,14 @@ public:
    */
   iterator end();
 
+  /**
+   * Return the json value as an integral type
+   * 
+   * If json type isn't integer a std::logic_error is thrown
+   * 
+   * @throws std::logic_error If the type isn't integral
+   * @return The json value as requested integral type
+   */
   template < class T >
   typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value, T>::type
   as() const {
@@ -447,6 +454,14 @@ public:
     return static_cast<T>(value_.integer);
   }
 
+  /**
+   * Return the json value as a floating point type
+   * 
+   * If json type isn't a floating point a std::logic_error is thrown
+   * 
+   * @throws std::logic_error If the type isn't floating point
+   * @return The json value as requested floating point type
+   */
   template < class T >
   typename std::enable_if<std::is_floating_point<T>::value, T>::type
   as() const {
@@ -454,6 +469,14 @@ public:
     return static_cast<T>(value_.real);
   }
 
+  /**
+   * Return the json value as a boolean
+   * 
+   * If json type isn't boolean a std::logic_error is thrown
+   * 
+   * @throws std::logic_error If the type isn't boolean
+   * @return The json value as boolean
+   */
   template < class T >
   typename std::enable_if<std::is_same<bool, T>::value, T>::type
   as() const {
@@ -461,6 +484,14 @@ public:
     return static_cast<T>(value_.boolean);
   }
 
+  /**
+   * Return the json value as a string
+   * 
+   * If json type isn't string a std::logic_error is thrown
+   * 
+   * @throws std::logic_error If the type isn't of type string
+   * @return The json value as string
+   */
   template < class T >
   typename std::enable_if<std::is_convertible<T, std::string>::value, T>::type
   as() const {
@@ -468,42 +499,114 @@ public:
     return *value_.str;
   }
 
+  /**
+   * Returns true if the given type is an integral type
+   * 
+   * @return True if given type is an integral type
+   */
   template < class T >
   bool fits_to_type(typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type * = 0) const {
     return is_integer();
   }
 
+  /**
+   * Returns true if the given type is a floating point type
+   * 
+   * @return True if given type is a floating point type
+   */
   template < class T >
   bool fits_to_type(typename std::enable_if<std::is_floating_point<T>::value>::type * = 0) const {
     return is_real();
   }
 
+  /**
+   * Returns true if the given type is a boolean
+   * 
+   * @return True if given type is a boolean
+   */
   template < class T >
   bool fits_to_type(typename std::enable_if<std::is_same<bool, T>::value>::type * = 0) const {
     return is_boolean();
   }
 
+  /**
+   * Returns true if the given type is a string
+   * 
+   * @return True if given type is a string
+   */
   template < class T >
   bool fits_to_type(typename std::enable_if<std::is_convertible<T, std::string>::value>::type * = 0) const {
     return is_string();
   }
 
+  /**
+   * Returns true if json type is a number
+   * 
+   * @returns True if json type is a number
+   */
   bool is_number() const;
 
+  /**
+   * Returns true if json type is a floating point type
+   * 
+   * @returns True if json type is a floating point type
+   */
   bool is_real() const;
 
+  /**
+   * Returns true if json type is an integral type
+   * 
+   * @returns True if json type is a integral type
+   */
   bool is_integer() const;
 
+  /**
+   * Returns true if json type is a boolean
+   * 
+   * @returns True if json type is a boolean
+   */
   bool is_boolean() const;
 
+  /**
+   * Returns true if json type is a string
+   * 
+   * @returns True if json type is a string
+   */
   bool is_string() const;
 
+  /**
+   * Returns true if json type is an array
+   * 
+   * @returns True if json type is an array
+   */
   bool is_array() const;
 
+  /**
+   * Returns true if json type is an object
+   * 
+   * @returns True if json type is an object
+   */
   bool is_object() const;
 
+  /**
+   * Returns true if json type is null
+   * 
+   * @returns True if json type is null
+   */
   bool is_null() const;
 
+  /**
+   * Returns the json element at given position
+   * if the current json is of type array.
+   * 
+   * if current json isn't of type array an
+   * std::logic_error is thrown.
+   * 
+   * @param pos The position of the requested element
+   * 
+   * @throws std::logic_error If json isn't of type array
+   * @return json object at given position
+   */
   template < class T >
   T at(std::size_t pos) const {
     if (type != e_array) {
@@ -512,6 +615,12 @@ public:
     return value_.array->at(pos).as<T>();
   }
 
+  /**
+   * Clears the current json object.
+   * 
+   * All json values are deleted and the
+   * type is set to null
+   */
   void clear()
   {
     switch (type) {
@@ -533,7 +642,22 @@ public:
     value_ = {};
   }
 
+  /**
+   * Erases the json element with given key.
+   * If json isn't of type object nothing is done.
+   * 
+   * @param key The key of the element to erase
+   */
   void erase(const std::string &key);
+
+  /**
+   * Erases the json element at the given position.
+   * If json isn't of type array nothing is done.
+   * If the given position is out of bounce an
+   * appropriate std::logic_error is thrown
+   * 
+   * @param i The position of the element to erase
+   */
   void erase(std::size_t i);
 
 private:
@@ -563,6 +687,15 @@ private:
   json_type type = e_integer;
 };
 
+/**
+ * @brief An iterator for json array and objects
+ * 
+ * The iterator handles elements of json arrays
+ * and json objects.
+ * If initialized with a non array or object the
+ * iterator uses the given json as the element
+ * neither as begin or end.
+ */
 template < class JSON_TYPE >
 class json_iterator
 {
