@@ -53,7 +53,7 @@ void log_domain::log(log_level lvl, const std::string &source, const char *messa
   char buffer[1024];
 
 #ifdef _MSC_VER
-  int ret = sprintf_s(buffer, 1024, "%s [%-7s][%s]: %s\n", timestamp, level_strings[lvl].c_str(), source.c_str(), message);
+  int ret = sprintf_s(buffer, 1024, "%s [%-7s] [%s]: %s\n", timestamp, level_strings[lvl].c_str(), source.c_str(), message);
 #else
   int ret = sprintf(buffer, "%s [%-7s] [%s]: %s\n", timestamp, level_strings[lvl].c_str(), source.c_str(), message);
 #endif
