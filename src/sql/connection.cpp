@@ -37,6 +37,9 @@ connection::connection(connection &&x) noexcept
 
 connection &connection::operator=(const connection &x)
 {
+  if (this == &x) {
+    return *this;
+  }
   type_ = x.type_;
   dns_ = x.dns_;
 

@@ -42,7 +42,7 @@ public:
   /**
    * @brief Creates an empty connection
    */
-  connection(std::shared_ptr<basic_sql_logger> sqllogger);
+  explicit connection(std::shared_ptr<basic_sql_logger> sqllogger);
 
   /**
    * @brief Creates a database connection from a connection string.

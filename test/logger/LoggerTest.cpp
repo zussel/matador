@@ -232,7 +232,7 @@ void LoggerTest::validate_log_file_line(const std::string &filename, int line_in
     }
   } while (line_count++ < line_index);
 
-  const std::regex logline_regex(R"(^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d{3}.*\[([A-Z]+)\s*\]\[(.*)\]: (.*)$)");
+  const std::regex logline_regex(R"(^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d{3}.*\[([A-Z]+)\s*\] \[(.*)\]: (.*)$)");
   std::smatch match;
 
   UNIT_ASSERT_TRUE(std::regex_match(line, match, logline_regex));

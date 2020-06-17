@@ -1,8 +1,6 @@
 #include <thread>
-#include "matador/utils/memory.hpp"
 #include "matador/logger/logger.hpp"
 #include "matador/logger/log_manager.hpp"
-#include "matador/logger/file_sink.hpp"
 
 class MyClass
 {
