@@ -1,6 +1,6 @@
 ## Json
 
-Matador provides a simple lightweight json module including a parser, an object mapper for pod types and an object mapper for matador entities.
+Matador provides a simple and lightweight json module including a parser, an object mapper for pod types and an object mapper for matador type entities.
 
 ### Creating Json objects
 

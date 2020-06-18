@@ -17,7 +17,7 @@ struct person
   person(const std::string &n) : name(n) {}
 
   template < typename S >
-  void serialize(S &serializer) {
+  void serialize(S &s) {
     s.serialize("id", id);
     s.serialize("name", name);
   }
