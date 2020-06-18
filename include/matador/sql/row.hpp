@@ -46,10 +46,35 @@ class OOS_SQL_API row
 {
 public:
   row() = default;
-  row(const row &) = default;
-  row(row &&) = default;
-  row& operator=(const row &) = default;
-  row& operator=(row &&) = default;
+  /**
+   * Copy constructs a row from a given row
+   *
+   * @param r The roe to copy from
+   */
+  row(const row &r) = default;
+
+  /**
+   * Copy moves a row from a given row
+   *
+   * @param r The row to move from
+   */
+  row(row &&r) = default;
+
+  /**
+   * Copy assigns a row with a given row
+   *
+   * @param r Row to copy assign from
+   * @return Reference to assigned row
+   */
+  row& operator=(const row &r) = default;
+
+  /**
+   * Copy moves a row with a given row
+   *
+   * @param r Row to copy moves from
+   * @return Reference to moved row
+   */
+  row& operator=(row &&r) = default;
   ~row() = default;
 
   /**

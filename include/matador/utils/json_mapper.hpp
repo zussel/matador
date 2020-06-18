@@ -21,6 +21,9 @@
 
 namespace matador {
 
+/**
+ *
+ */
 class OOS_UTILS_API json_mapper_serializer
 {
 public:
@@ -58,8 +61,6 @@ public:
 
 private:
   details::mapper_runtime &runtime_data_;
-//  template < class V >
-//  friend class json_mapper;
 };
 
 template < class T >

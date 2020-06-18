@@ -77,13 +77,13 @@ protected:
   generic_json_parser() = default;
 
 public:
+/// @cond MATADOR_DEV
   struct number_t {
     double real = 0.0;
     long long integer = 0;
     bool is_real = false;
   };
 
-/// @cond MATADOR_DEV
   const json_cursor& cursor() const { return json_cursor_; }
   json_cursor& cursor() { return json_cursor_; }
 /// @endcond

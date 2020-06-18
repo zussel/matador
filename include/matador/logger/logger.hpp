@@ -24,36 +24,191 @@
 
 namespace matador {
 
+/**
+ * @brief logger to write log messages to log domains
+ *
+ * This class is used to write log messages to a connected
+ * log domain (@sa log_domain).
+ * Everywhere a logger is needed, it can be instantiated with
+ * @example matador::create_logger(<source name>)
+ *
+ * The interface provides methods to log to each relevant
+ * log level (@sa log_level)
+ *
+ * The message format syntax is like the printf syntax.
+ * If the message string contains placeholder (beginning with %)
+ * an argument is expected to be part of the argument list of the
+ * calling method.
+ */
 class OOS_LOGGER_API logger
 {
 public:
 
+  /**
+   * Creates a logger with the given source name and
+   * for the given log_domain
+   *
+   * @param source Name of the represented source
+   * @param log_domain Log domain to connect to
+   */
   logger(std::string source, std::shared_ptr<log_domain> log_domain);
 
+  /**
+   * Writes a log message string with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
   template<typename ... ARGS>
-  void info(const std::string &what, ARGS const &... args) { info(what.c_str(), args...); }
+  void fatal(const std::string &what, ARGS const &... args) { fatal(what.c_str(), args...); }
+
+  /**
+   * Writes a log message represented by a char pointer with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
   template<typename ... ARGS>
-  void info(const char *what, ARGS const &... args) { log(log_level::LVL_INFO, what, args...); }
-  template<typename ... ARGS>
-  void debug(const std::string &what, ARGS const &... args) { debug(what.c_str(), args...); }
-  template<typename ... ARGS>
-  void debug(const char *what, ARGS const &... args) { log(log_level::LVL_DEBUG, what, args...); }
-  template<typename ... ARGS>
-  void warn(const std::string &what, ARGS const &... args) { warn(what.c_str(), args...); }
-  template<typename ... ARGS>
-  void warn(const char *what, ARGS const &... args) { log(log_level::LVL_WARN, what, args...); }
+  void fatal(const char *what, ARGS const &... args) { log(log_level::LVL_FATAL, what, args...); }
+
+  /**
+   * Writes a log message string with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
   template<typename ... ARGS>
   void error(const std::string &what, ARGS const &... args) { error(what.c_str(), args...); }
+
+  /**
+   * Writes a log message represented by a char pointer with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
   template<typename ... ARGS>
   void error(const char *what, ARGS const &... args) { log(log_level::LVL_ERROR, what, args...); }
+
+  /**
+   * Writes a log message string with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
+  template<typename ... ARGS>
+  void warn(const std::string &what, ARGS const &... args) { warn(what.c_str(), args...); }
+
+  /**
+   * Writes a log message represented by a char pointer with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
+  template<typename ... ARGS>
+  void warn(const char *what, ARGS const &... args) { log(log_level::LVL_WARN, what, args...); }
+
+  /**
+   * Writes a log message string with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
+  template<typename ... ARGS>
+  void info(const std::string &what, ARGS const &... args) { info(what.c_str(), args...); }
+
+  /**
+   * Writes a log message represented by a char pointer with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
+  template<typename ... ARGS>
+  void info(const char *what, ARGS const &... args) { log(log_level::LVL_INFO, what, args...); }
+
+  /**
+   * Writes a log message string with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
+  template<typename ... ARGS>
+  void debug(const std::string &what, ARGS const &... args) { debug(what.c_str(), args...); }
+
+  /**
+   * Writes a log message represented by a char pointer with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
+  template<typename ... ARGS>
+  void debug(const char *what, ARGS const &... args) { log(log_level::LVL_DEBUG, what, args...); }
+
+  /**
+   * Writes a log message string with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
   template<typename ... ARGS>
   void trace(const std::string &what, ARGS const &... args) { trace(what.c_str(), args...); }
+
+  /**
+   * Writes a log message represented by a char pointer with log level LVL_FATAL
+   * to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
   template<typename ... ARGS>
   void trace(const char *what, ARGS const &... args) { log(log_level::LVL_TRACE, what, args...); }
+
+  /**
+   * Writes a log message represented by a char pointer
+   * with the given log level to the connected log_domain.
+   *
+   * @tparam ARGS Type of the arguments to replaced for the message placeholder
+   * @param lvl The log level
+   * @param what The message to log
+   * @param args The arguments to be replaced in the message
+   */
   template<typename ... ARGS>
   void log(log_level lvl, const char *what, ARGS const &... args);
 
+  /**
+   * Returns the name of the source the logger represents
+   *
+   * @return Represented log source name
+   */
   std::string source() const;
+
+  /**
+   * Returns the name of the connected log domain
+   *
+   * @return The name of the log domain
+   */
   std::string domain() const;
 
 private:

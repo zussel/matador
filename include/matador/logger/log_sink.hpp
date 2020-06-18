@@ -19,13 +19,38 @@
 
 namespace matador {
 
+/**
+ * @brief Base class for all log sinks
+ *
+ * This class must be the base class for all
+ * log sinks and provides their interface
+ *
+ * The main interface is the write(...) interface
+ * defining how the log message is written.
+ *
+ * The close() interface defines a way to close
+ * the concrete log sink
+ */
 class OOS_LOGGER_API log_sink
 {
 public:
+  /**
+   * Destroys the log sink
+   */
   virtual ~log_sink() = default;
 
+  /**
+   * Writes the given message with the given size
+   * to the concrete sink
+   *
+   * @param message The message to log
+   * @param size The size of the message
+   */
   virtual void write(const char *message, std::size_t size) = 0;
 
+  /**
+   * Closes the log sink
+   */
   virtual void close() = 0;
 };
 

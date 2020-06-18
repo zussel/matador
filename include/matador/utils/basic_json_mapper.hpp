@@ -23,6 +23,7 @@
 namespace matador {
 
 namespace details {
+/// @cond MATADOR_DEV
 struct OOS_UTILS_API mapper_runtime {
   explicit mapper_runtime(json_cursor &c) : cursor(c) {}
   json value;
@@ -32,7 +33,7 @@ struct OOS_UTILS_API mapper_runtime {
   json_cursor &cursor;
   const char *json_array_cursor = nullptr;
 };
-
+/// @endcond
 }
 
 template < class T, class S >

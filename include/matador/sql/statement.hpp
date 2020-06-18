@@ -59,6 +59,7 @@ public:
    * the implementation for the selected database
    *
    * @param impl The statement implementation object
+   * @param sqllogger The logger handler to write sql log messages to
    */
   explicit statement(detail::statement_impl *impl, std::shared_ptr<basic_sql_logger> sqllogger)
     : p(impl), logger_(std::move(sqllogger))
@@ -216,6 +217,7 @@ public:
    *
    * @param impl The statement implementation object
    * @param prototype Row object containing prototype columns
+   * @param sqllogger The logger handler to write sql log messages to
    */
   statement(detail::statement_impl *impl, row prototype, std::shared_ptr<basic_sql_logger> sqllogger)
     : p(impl)

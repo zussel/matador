@@ -281,6 +281,20 @@ public:
    * @throws std::logic_error If the index is out of bounce
    */
   json& operator[](std::size_t i);
+
+  /**
+   * Get the json object at given index i
+   * if the json if of type array.
+   *
+   * If the json isn't of type array a reference
+   * the this json is returned.
+   * If the index is out of bound a logic_error is
+   * thrown
+   *
+   * @param i Index of the requested value
+   * @return The requested value for the given index
+   * @throws std::logic_error If the index is out of bounce
+   */
   const json& operator[](std::size_t i) const {
     if (type != e_array) {
       return *this;
@@ -700,10 +714,19 @@ template < class JSON_TYPE >
 class json_iterator
 {
 public:
-  typedef JSON_TYPE json_type;
-  typedef typename json_type::array_type array_type;
-  typedef typename json_type::object_type object_type;
+  typedef JSON_TYPE json_type; /**< Shortcut for json */
+  typedef typename json_type::array_type array_type; /**< Shortcut for json array type */
+  typedef typename json_type::object_type object_type; /**< Shortcut for json object type */
 
+  /**
+   * Creates a json_iterator for the given json object.
+   * In case the json object isn't of type object or array
+   * the given flag as_begin tells the c'tor if the jsn value
+   * is treated like begin or end element.
+   *
+   * @param ptr Pointer to the json
+   * @param as_begin True if non array/object should be treated as begin iterator
+   */
   json_iterator(json_type *ptr, bool as_begin)
     : obj_(ptr)
   {

@@ -26,22 +26,72 @@
 
 namespace matador {
 
+/**
+ * @brief Manages all log domains
+ *
+ * The log_manager class is a singleton and
+ * manages all available log_domains
+ *
+ * There ist always a default log domain
+ * with the name "default"
+ * available for which sinks can be added
+ * and loggers can be created.
+ */
 class OOS_LOGGER_API log_manager : public singleton<log_manager>
 {
 public:
+  /**
+   * Creates a logger with the given source name
+   * for the default log domain
+   *
+   * @param source Name of the source
+   * @return The created logger
+   */
   logger create_logger(std::string source);
+
+  /**
+   * Creates a logger with the given source name
+   * for the log domain identified by the given
+   * log domain name.
+   *
+   * If the log domain with the given name doesn't exists
+   * the domain ist created
+   *
+   * @param source Name of the source
+   * @param domain_name The name of the log domain to connect to
+   * @return The created logger
+   */
   logger create_logger(std::string source, const std::string &domain_name);
 
+  /**
+   * Adds a log sink to the default log_domain
+   *
+   * @param sink Sink to add to the default log_domain
+   */
   void add_sink(sink_ptr sink);
+
+  /**
+   * Adds a log sink to the log_domain with the given name.
+   * If the log domain doesn't exists, it is automatically created.
+   *
+   * @param sink Sink to add
+   * @param domain_name Name of the log domain
+   */
   void add_sink(sink_ptr sink, const std::string &domain_name);
 
+  /**
+   * Remove all log domains but the default log domain.
+   * Clears all sinks from the default log domain.
+   */
   void clear();
 
 protected:
+  /// @cond MATADOR_DEV
   log_manager()
   {
     default_log_domain_ = log_domain_map.insert(std::make_pair("default", std::make_shared<log_domain>("default"))).first->second;
   }
+  /// @endcond
 
 private:
   std::shared_ptr<log_domain> acquire_domain(const std::string &name);

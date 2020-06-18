@@ -1,7 +1,3 @@
-//
-// Created by sascha on 12.05.20.
-//
-
 #ifndef MATADOR_SQL_LOGGER_HPP
 #define MATADOR_SQL_LOGGER_HPP
 
