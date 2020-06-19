@@ -92,6 +92,7 @@ public:
   virtual ~generic_json_parser() = default;
 
 protected:
+/// @cond MATADOR_DEV
   void on_parse_object(bool check_for_eos);
   void on_parse_array(bool check_for_eos);
   void on_begin_object() {}
@@ -106,13 +107,16 @@ protected:
   void on_real(double) {}
   void on_bool(bool) {}
   void on_null() {}
+/// @endcond
 
 protected:
+/// @cond MATADOR_DEV
   void parse_json(const char *json_str, bool check_for_eos = true);
   void parse_json_object(const char *json_str, bool check_for_eos = true);
   void parse_json_array(const char *json_str, bool check_for_eos = true);
 
   void sync_cursor(const char *cursor);
+/// @endcond
 
 private:
   void parse_json_object(bool check_for_eos);

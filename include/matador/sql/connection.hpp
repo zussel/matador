@@ -55,6 +55,7 @@ public:
    * @brief Creates a database connection from a connection string.
    *
    * @param dns The database connection string
+   * @param sqllogger The logger handler to write sql log messages to
    */
   connection(const std::string &dns, std::shared_ptr<basic_sql_logger> sqllogger);
 

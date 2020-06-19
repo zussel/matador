@@ -30,7 +30,9 @@ namespace matador {
  * This class is used to write log messages to a connected
  * log domain (@sa log_domain).
  * Everywhere a logger is needed, it can be instantiated with
- * @example matador::create_logger(<source name>)
+ * @code
+ * matador::create_logger(source name)
+ * @endcode
  *
  * The interface provides methods to log to each relevant
  * log level (@sa log_level)

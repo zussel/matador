@@ -24,6 +24,16 @@
 
 namespace matador {
 
+/**
+ * Joins a range of elements as string within a list
+ * with a given delimiter and writes it to the
+ * given stream
+ *
+ * @tparam R Type og the range (e.g. map, list, vector, etc)
+ * @param range The range with the elemets to join
+ * @param out The stream to write on
+ * @param delim The delimiter for the elements
+ */
 template < class R >
 void join(R &range, std::ostream &out, const std::string &delim)
 {
@@ -40,6 +50,20 @@ void join(R &range, std::ostream &out, const std::string &delim)
   }
 }
 
+/**
+ * Joins a map of key value pairs as string within
+ * a list with a given delimiter and writes it to
+ * the given stream.
+ *
+ * The key value pairs will be written in a
+ * json style: ("key": value)
+ *
+ * @tparam K Type of key
+ * @tparam V Type of value
+ * @param range The range with the elemets to join
+ * @param out The stream to write on
+ * @param delim The delimiter for the elements
+ */
 template < class K, class V >
 void join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
 //void join(std::unordered_map<K, V> &range, std::ostream &out, const std::string &delim)
@@ -403,7 +427,7 @@ public:
   /**
    * Resets the json value to a new boolean type value.
    *
-   * @param val Value to set
+   * @param b Value to set
    */
   void reset(bool b);
 
@@ -745,10 +769,22 @@ public:
     }
   }
 
+  /**
+   * Copy construct a json_iterator from given
+   * iterator
+   *
+   * @param x The iterator to copy from
+   */
   json_iterator(const json_iterator<JSON_TYPE> &x)
     : obj_(x.obj_), iter(x.iter)
   {}
 
+  /**
+   * Copy assigns a json_iterator from given
+   * iterator
+   *
+   * @param x The iterator to copy assign from
+   */
   json_iterator& operator=(const json_iterator<JSON_TYPE> &x)
   {
     if (this != &x) {
@@ -759,8 +795,11 @@ public:
   }
 
   /**
-   * (++i)
-   * @return
+   * Post increments (++i) the json_iterator
+   * step to next array element or next
+   * object element
+   *
+   * @return The incremented iterator
    */
   json_iterator operator++() {
     switch(obj_->type) {
@@ -875,6 +914,12 @@ private:
   std::size_t it = 0;
 };
 
+/**
+ * Creates a string from the given json object
+ *
+ * @param j Json to create a string from
+ * @return Json as string
+ */
 OOS_UTILS_API std::string to_string(const matador::json &j);
 
 }
