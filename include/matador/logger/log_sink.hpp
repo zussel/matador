@@ -40,7 +40,7 @@ public:
   virtual ~log_sink() = default;
 
   /**
-   * Writes the given message with the given size
+   * Writes the given log message with the given size
    * to the concrete sink
    *
    * @param message The message to log
@@ -49,12 +49,12 @@ public:
   virtual void write(const char *message, std::size_t size) = 0;
 
   /**
-   * Closes the log sink
+   * Closes the log sink if necessary.
    */
   virtual void close() = 0;
 };
 
-using sink_ptr = std::shared_ptr<log_sink>;
+using sink_ptr = std::shared_ptr<log_sink>; /**< Shortcut to log sink shared pointer */
 
 }
 

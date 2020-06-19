@@ -21,10 +21,11 @@
 namespace matador {
 
 /**
- * @brief basic file log sink
+ * @brief A base class for file stream based sinks
  *
- * Basic file log sink which writes the
- * message to an open file stream.
+ * This class acts like a base class for all
+ * concrete sinks working with a file stream to write
+ * the log message.
  */
 class OOS_LOGGER_API basic_file_sink : public log_sink
 {
@@ -40,15 +41,16 @@ protected:
 
 public:
   /**
-   * Writes the message to a internal file stream
+   * Writes the log message to the internal
+   * file stream.
    *
-   * @param message The message to log
+   * @param message The message to write
    * @param size The size of the message
    */
   void write(const char *message, size_t size) override;
 
   /**
-   * Closes the internal file stream
+   * Closes the internal file stream.
    */
   void close() override;
 

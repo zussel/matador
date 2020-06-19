@@ -39,17 +39,20 @@ namespace matador {
  * If the message string contains placeholder (beginning with %)
  * an argument is expected to be part of the argument list of the
  * calling method.
+ *
+ * All log messages are written through the internal
+ * log_domain object to the sinks.
  */
 class OOS_LOGGER_API logger
 {
 public:
 
   /**
-   * Creates a logger with the given source name and
-   * for the given log_domain
+   * Create a logger with a given source name connected
+   * to the given log_domain
    *
-   * @param source Name of the represented source
-   * @param log_domain Log domain to connect to
+   * @param source The name of the source
+   * @param log_domain The log_domain containing the log sinks
    */
   logger(std::string source, std::shared_ptr<log_domain> log_domain);
 

@@ -22,7 +22,9 @@
 namespace matador {
 
 /**
+ * @brief A json object mapper supporting all builtin types
  *
+ * This mapper class allows the user to
  */
 class OOS_UTILS_API json_mapper_serializer
 {
