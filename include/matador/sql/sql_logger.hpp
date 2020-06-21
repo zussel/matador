@@ -58,7 +58,7 @@ public:
 
   /**
    * Logs the statement when it is prepared
-   * 
+   *
    * @param stmt Statement to log
    */
   void on_prepare(const std::string &stmt) override;
