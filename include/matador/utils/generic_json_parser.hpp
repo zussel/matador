@@ -64,6 +64,15 @@ struct json_cursor
 
 /// @endcond
 
+/**
+ * @brief Parses a json string providing callbacks for json syntax
+ *
+ * The generic_json_parser parses a json string and
+ * provides an interface to get notified with current parsed
+ * json structure part (e.g. begin array, read boolean or end object)
+ *
+ * @tparam T Type of the class implementing the callbacks
+ */
 template < class T >
 class generic_json_parser
 {
@@ -92,31 +101,100 @@ public:
   virtual ~generic_json_parser() = default;
 
 protected:
-/// @cond MATADOR_DEV
+  /**
+   * Start to parse a json object. The check_for_eos
+   * flag indicates if at the end of the object an
+   * end of string check is done
+   *
+   * @param check_for_eos True if end of string at end of object
+   */
   void on_parse_object(bool check_for_eos);
+
+  /**
+   * Start to parse a json array. The check_for_eos
+   * flag indicates if at the end of the object an
+   * end of string check is done
+   *
+   * @param check_for_eos True if end of string at end of array
+   */
   void on_parse_array(bool check_for_eos);
+
+  /**
+   * Called when begin of json object is detected
+   */
   void on_begin_object() {}
-  void on_object_key(const std::string &) {}
+
+  /**
+   * Called when a key string of a key
+   * value relation of o json object
+   * is detected
+   *
+   * @param key The detected key
+   */
+  void on_object_key(const std::string &key) {}
+
+  /**
+   * Called when end of json object is detected
+   */
   void on_end_object() {}
 
+  /**
+   * Called when begin of json array is detected
+   */
   void on_begin_array() {}
+
+  /**
+   * Called when end of json array is detected
+   */
   void on_end_array() {}
 
-  void on_string(const std::string &) {}
-  void on_integer(long long) {}
-  void on_real(double) {}
-  void on_bool(bool) {}
+  /**
+   * Called when a json string value is detected
+   *
+   * @param str The detected json string value
+   */
+  void on_string(const std::string &str) {}
+
+  /**
+   * Called when a integral json value (number) is detected
+   *
+   * @param val The detected json integral value (number)
+   */
+  void on_integer(long long val) {}
+
+  /**
+   * Called when a floating point json value (number) is detected
+   *
+   * @param val The floating point json integral value (number)
+   */
+  void on_real(double val) {}
+
+  /**
+   * Called when a json boolean value is detected
+   *
+   * @param val The boolean json value
+   */
+  void on_bool(bool val) {}
+
+  /**
+   * Called when json null value is detected
+   */
   void on_null() {}
-/// @endcond
 
 protected:
 /// @cond MATADOR_DEV
   void parse_json(const char *json_str, bool check_for_eos = true);
   void parse_json_object(const char *json_str, bool check_for_eos = true);
   void parse_json_array(const char *json_str, bool check_for_eos = true);
-
-  void sync_cursor(const char *cursor);
 /// @endcond
+
+  /**
+   * Syncs the current cursor of the internal
+   * json string to the new cursor
+   *
+   * @param cursor The new cursor position
+   */
+  void sync_cursor(const char *cursor);
 
 private:
   void parse_json_object(bool check_for_eos);
@@ -147,9 +225,9 @@ template < class T > const char *generic_json_parser<T>::null_string = "null";
 template < class T > const char *generic_json_parser<T>::true_string = "true";
 template < class T > const char *generic_json_parser<T>::false_string = "false";
 
+/// @cond MATADOR_DEV
 template < class T >
-void
-generic_json_parser<T>::parse_json(const char *json_str, bool check_for_eos)
+void generic_json_parser<T>::parse_json(const char *json_str, bool check_for_eos)
 {
   json_cursor_ = json_str;
 
@@ -178,6 +256,7 @@ generic_json_parser<T>::parse_json(const char *json_str, bool check_for_eos)
     throw json_exception("no characters are allowed after closed root node");
   }
 }
+/// @endcond
 
 template<class T>
 void generic_json_parser<T>::parse_json_object(const char *json_str, bool check_for_eos)
@@ -230,12 +309,6 @@ void generic_json_parser<T>::parse_json_array(const char *json_str, bool check_f
     throw json_exception("no characters are allowed after closed root node");
   }
 }
-
-//template<class T>
-//const char *generic_json_parser<T>::json_cursor() const
-//{
-//  return json_cursor_();
-//}
 
 template<class T>
 void generic_json_parser<T>::sync_cursor(const char *cursor)
@@ -448,8 +521,10 @@ std::string generic_json_parser<T>::parse_json_string()
   return value;
 }
 
+/// @cond MATADOR_DEV
 OOS_UTILS_API bool is_error(const char *start, const char *end, long long value);
 OOS_UTILS_API bool is_error(const char *start, const char *end, double value);
+/// @endcond
 
 template<class T>
 typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_number()

@@ -5,9 +5,13 @@
 namespace matador {
 
 sql_logger::sql_logger()
+  : sql_logger(1000000, 5)
+{}
+
+sql_logger::sql_logger(size_t max_size, size_t file_count)
   : LOG(create_logger("sql"))
 {
-  add_log_sink(create_rotating_file_sink("log/sql.log", 1000000, 5));
+  add_log_sink(create_rotating_file_sink("log/sql.log", max_size, file_count));
   add_log_sink(create_stdout_sink());
 }
 

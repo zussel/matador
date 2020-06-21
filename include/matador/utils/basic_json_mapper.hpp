@@ -234,7 +234,6 @@ void basic_json_mapper<T, C>::on_end_array()
     access::serialize(serializer_, object_);
   }
 }
-/// @endcond
 
 template< class T, class V >
 void try_push_back(std::vector<T> &, json &jval, const V &value)
@@ -271,7 +270,6 @@ void try_push_back(std::vector<T> &, json&, std::nullptr_t)
 {
 }
 
-/// @cond OOS_DEV //
 template < class T, class C >
 void basic_json_mapper<T, C>::on_string(const std::string &value)
 {

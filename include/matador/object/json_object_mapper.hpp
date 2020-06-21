@@ -27,6 +27,7 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
 class MATADOR_OBJECT_API json_object_mapper_serializer
 {
 public:
@@ -59,10 +60,20 @@ public:
 private:
   details::mapper_runtime &runtime_data_;
 };
+/// @endcond
 
+/**
+ * @brief Shortcut to the json object mapper
+ *
+ * The json_object_mapper is used to map a json
+ * string to an matador typed object. This means it
+ * can contain relation objects like has_many, has_one
+ * or belongs_to.
+ */
 template < class T >
 using json_object_mapper = basic_json_mapper<T, json_object_mapper_serializer>;
 
+/// @cond MATADOR_DEV
 template<class V>
 void json_object_mapper_serializer::serialize(V &obj)
 {
@@ -163,6 +174,6 @@ void json_object_mapper_serializer::serialize(const char *id, basic_has_many<Val
   }
   runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
 }
-
+/// @endcond
 }
 #endif //MATADOR_JSON_MAPPER_HPP

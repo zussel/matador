@@ -104,15 +104,78 @@ private:
   std::map<std::string, std::shared_ptr<log_domain>> log_domain_map;
 };
 
+/**
+ * Shortcut to create a file log sink
+ * with the given path. If the path doesn't
+ * exists it is created.
+ *
+ * @param logfile Path to the logfile
+ * @return A shared_ptr to the file_sink
+ */
 OOS_LOGGER_API std::shared_ptr<file_sink> create_file_sink(const std::string &logfile);
+
+/**
+ * Shortcut to create a stderr log sink.
+ *
+ * @return A shared_ptr to the stderr_sink
+ */
 OOS_LOGGER_API std::shared_ptr<stderr_sink> create_stderr_sink();
+
+/**
+ * Shortcut to create a stdout log sink.
+ *
+ * @return A shared_ptr to the stdout_sink
+ */
 OOS_LOGGER_API std::shared_ptr<stdout_sink> create_stdout_sink();
+
+/**
+ * Shortcut to create a rotating file log sink
+ * with the given path, max log files and max
+ * log file size. If the path doesn't
+ * exists it is created.
+ *
+ * @param logfile Path to the log file
+ * @param max_size Max log file size
+ * @param file_count Max number of log files
+ * @return A shared_ptr to the rotating_file_sink
+ */
 OOS_LOGGER_API std::shared_ptr<rotating_file_sink> create_rotating_file_sink(const std::string &logfile, size_t max_size, size_t file_count);
 
+/**
+ * Adds a log sink to the default log domain
+ *
+ * @param sink The log sink to add
+ */
 OOS_LOGGER_API void add_log_sink(sink_ptr sink);
+
+/**
+ * Adds a log sink to the log domain
+ * with the given name. If the domain
+ * doesn't exists it is created.
+ *
+ * @param sink The log sink to add
+ * @param domain The log domain name to add
+ */
 OOS_LOGGER_API void add_log_sink(sink_ptr sink, const std::string &domain);
 
+/**
+ * Creates a logger with the given source name
+ * connected to the default log domain.
+ *
+ * @param source The name of the source
+ * @return The logger instance
+ */
 OOS_LOGGER_API logger create_logger(std::string source);
+
+/**
+ * Creates a logger with the given source name
+ * connected to the log domain with the given
+ * name. If the domain doesn't exists it is created
+ *
+ * @param source The name of the source
+ * @param domain The name of the log domain
+ * @return The logger instance
+ */
 OOS_LOGGER_API logger create_logger(std::string source, const std::string &domain);
 
 }

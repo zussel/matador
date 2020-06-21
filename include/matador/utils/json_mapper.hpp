@@ -21,11 +21,7 @@
 
 namespace matador {
 
-/**
- * @brief A json object mapper supporting all builtin types
- *
- * This mapper class allows the user to
- */
+/// @cond MATADOR_DEV
 class OOS_UTILS_API json_mapper_serializer
 {
 public:
@@ -64,10 +60,20 @@ public:
 private:
   details::mapper_runtime &runtime_data_;
 };
+/// @endcond
 
+/**
+ * @brief Shortcut to the json mapper
+ *
+ * The json_mapper is used to map a json
+ * string to an object of type T. All standard
+ * value types besides basic matador types
+ * like date, time and identifier are supported.
+ */
 template < class T >
 using json_mapper = basic_json_mapper<T, json_mapper_serializer>;
 
+/// @cond MATADOR_DEV
 template<class V>
 void json_mapper_serializer::serialize(const char *id, V &obj, typename std::enable_if<std::is_class<V>::value>::type *)
 {
@@ -202,6 +208,7 @@ void json_mapper_serializer::serialize(const char *id, std::set<V> &cont)
     cont.insert(val.template as<V>());
   }
 }
+/// @endcond
 
 }
 #endif //MATADOR_JSON_MAPPER_HPP

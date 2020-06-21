@@ -33,7 +33,6 @@ SET(HEADER
   ../../include/matador/utils/json.hpp
   ../../include/matador/utils/json_exception.hpp
   ../../include/matador/utils/json_parser.hpp
-    ../../include/matador/utils/generic_json_parser_cstring.hpp
   ../../include/matador/utils/string.hpp
   ../../include/matador/utils/strptime.hpp
   ../../include/matador/utils/enable_if.hpp

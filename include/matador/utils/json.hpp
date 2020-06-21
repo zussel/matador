@@ -817,8 +817,11 @@ public:
   }
 
   /**
-   * (i++)
-   * @return
+   * Pre increments (i++) the json_iterator
+   * step to next array element or next
+   * object element
+   *
+   * @return The incremented iterator
    */
   json_iterator operator++(int) {
     auto tmp = *this;
@@ -826,10 +829,13 @@ public:
     return tmp;
   }
 
-    /**
-     * (--i)
-     * @return
-     */
+  /**
+   * Post decrements (--i) the json_iterator
+   * step to previous array element or next
+   * object element
+   *
+   * @return The decremented iterator
+   */
   json_iterator operator--() {
     switch(obj_->type) {
       case json::e_object:
@@ -846,15 +852,25 @@ public:
   }
 
   /**
- * (i--)
- * @return
- */
+   * Pre decrements (i--) the json_iterator
+   * step to previous array element or next
+   * object element
+   *
+   * @return The decremented iterator
+   */
   json_iterator operator--(int) {
     auto tmp = *this;
     --(*this);
     return tmp;
   }
 
+  /**
+   * Indirection operator. Returns the reference to the
+   * json object represented by the iterator. If the json type
+   * is null a std::logic_error is thrown.
+   *
+   * @return The reference of the json object
+   */
   json& operator*() const {
     switch(obj_->type) {
       case json::e_object:
@@ -868,6 +884,13 @@ public:
     }
   }
 
+  /**
+   * Address of operator. Returns the pointer to the
+   * json object represented by the iterator. If the json type
+   * is null a std::logic_error is thrown.
+   *
+   * @return The pointer of the json object
+   */
   json* operator->() const {
     switch(obj_->type) {
       case json::e_object:
@@ -881,6 +904,13 @@ public:
     }
   }
 
+  /**
+   * Equal operator for json_iterator. Depending on
+   * the json type the values are compared.
+   *
+   * @param x The json_iterator to compare
+   * @return True if the values are the same
+   */
   bool operator==(const json_iterator<JSON_TYPE> &x) const
   {
     switch(obj_->type) {
@@ -893,6 +923,13 @@ public:
     }
   }
 
+  /**
+   * Not equal operator for json_iterator. Depending on
+   * the json type the values are compared.
+   *
+   * @param x The json_iterator to compare
+   * @return True if the values are the not same
+   */
   bool operator!=(const json_iterator<JSON_TYPE> &x) const
   {
     return !operator==(x);
