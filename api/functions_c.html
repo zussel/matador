@@ -30,6 +30,9 @@ $(function() {
 : <a class="el" href="classmatador_1_1any.html#ac55a55eeb92ad990b2017291ab1aa01a">matador::any</a>
 , <a class="el" href="classmatador_1_1has__many_3_01_t_00_01std_1_1list_01_4.html#a14ad74606cc0ff63790233d54f024f97">matador::has_many&lt; T, std::list &gt;</a>
 , <a class="el" href="classmatador_1_1has__many_3_01_t_00_01std_1_1vector_01_4.html#a715c7778c284b3900c1237083616e4e0">matador::has_many&lt; T, std::vector &gt;</a>
+, <a class="el" href="classmatador_1_1json.html#a0bfabfa54e8c8a169c3cbb56fe99f0b4">matador::json</a>
+, <a class="el" href="classmatador_1_1log__domain.html#a26f22d57a10388bd3783e2a99a9b5082">matador::log_domain</a>
+, <a class="el" href="classmatador_1_1log__manager.html#a017c4a5aa70af44ef835b5bb1d7bee91">matador::log_manager</a>
 , <a class="el" href="classmatador_1_1object__holder.html#a19ea94f33587dc5a6f36e41310ee0c13">matador::object_holder</a>
 , <a class="el" href="classmatador_1_1object__store.html#a95225e6f81d7b8b03b10960aef7aaaa1">matador::object_store</a>
 , <a class="el" href="classmatador_1_1persistence.html#aa93297e58286165e8fa2f0d5d244ff7d">matador::persistence</a>
@@ -46,6 +49,14 @@ $(function() {
 , <a class="el" href="classmatador_1_1identifier_3_01std_1_1string_01_4.html#a85eb389179542b213cfc250317b55da1">matador::identifier&lt; std::string &gt;</a>
 , <a class="el" href="classmatador_1_1identifier_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__integral_3_01ac55c3ae13e2b96964ac12d4879e9f2a.html#a447b4af7a8f509407d48a439953c614b">matador::identifier&lt; T, typename std::enable_if&lt; std::is_integral&lt; T &gt;::value &gt;::type &gt;</a>
 , <a class="el" href="classmatador_1_1identifier_3_01varchar_3_01_s_i_z_e_00_01_t_01_4_01_4.html#a6a7c275c584b03e19a2060b39c22ba26">matador::identifier&lt; varchar&lt; SIZE, T &gt; &gt;</a>
+</li>
+<li>close()
+: <a class="el" href="classmatador_1_1basic__file__sink.html#a934e13a45e766a61a7681d8f7ecbfad8">matador::basic_file_sink</a>
+, <a class="el" href="classmatador_1_1file.html#acabae025ae23494a3916bb76c27e656c">matador::file</a>
+, <a class="el" href="classmatador_1_1log__sink.html#a5f5e661aef2c3347b4784d3fb31b4ec0">matador::log_sink</a>
+, <a class="el" href="classmatador_1_1rotating__file__sink.html#a83710f571b20c2a2712ef9126398e503">matador::rotating_file_sink</a>
+, <a class="el" href="classmatador_1_1stderr__sink.html#a9aa4b1cdbeb35f2964627b9f7045e0ba">matador::stderr_sink</a>
+, <a class="el" href="classmatador_1_1stdout__sink.html#af0d932a43d70a707dd86cb8e4d7c6ce6">matador::stdout_sink</a>
 </li>
 <li>cmd
 : <a class="el" href="structmatador_1_1test__suite_1_1test__suite__args.html#aa0aa5bfd10deb30dd8a237492cf224bf">matador::test_suite::test_suite_args</a>
@@ -78,7 +89,7 @@ $(function() {
 : <a class="el" href="classmatador_1_1connection.html#adf5d630875bdc05782af9e2f4cc3739a">matador::connection</a>
 </li>
 <li>connection()
-: <a class="el" href="classmatador_1_1connection.html#a67537ebe2adbfd90b72fffa17e858fdf">matador::connection</a>
+: <a class="el" href="classmatador_1_1connection.html#a8ca293b5af5b1d09a1f375bc54e87eb4">matador::connection</a>
 </li>
 <li>const_container_iterator
 : <a class="el" href="classmatador_1_1const__has__many__iterator_3_01_t_00_01std_1_1list_01_4.html#aaa5dd3acf479edc64a7e626c0f39ac14">matador::const_has_many_iterator&lt; T, std::list &gt;</a>
@@ -87,7 +98,7 @@ $(function() {
 , <a class="el" href="classmatador_1_1has__many__iterator_3_01_t_00_01std_1_1vector_01_4.html#a5a2f908d0766542883c0840c8eb21c12">matador::has_many_iterator&lt; T, std::vector &gt;</a>
 </li>
 <li>const_has_many_iterator()
-: <a class="el" href="classmatador_1_1const__has__many__iterator_3_01_t_00_01std_1_1list_01_4.html#a58cb85e19d2700e4402069a8b97fc790">matador::const_has_many_iterator&lt; T, std::list &gt;</a>
+: <a class="el" href="classmatador_1_1const__has__many__iterator_3_01_t_00_01std_1_1list_01_4.html#a85df7ff116a53eb3b7a17a5e9fa8cfcf">matador::const_has_many_iterator&lt; T, std::list &gt;</a>
 , <a class="el" href="classmatador_1_1const__has__many__iterator_3_01_t_00_01std_1_1vector_01_4.html#ac467740657969d6fc431bec00a652e59">matador::const_has_many_iterator&lt; T, std::vector &gt;</a>
 </li>
 <li>const_iterator
@@ -123,12 +134,15 @@ $(function() {
 , <a class="el" href="classmatador_1_1persistence.html#ae014a1aebb382d9bf39e6a7063508031">matador::persistence</a>
 , <a class="el" href="classmatador_1_1prototype__node.html#ab0613c1805273a888612a18f845025c3">matador::prototype_node</a>
 , <a class="el" href="classmatador_1_1query.html#aa79b384a354e4de82848a0f831c00830">matador::query&lt; T &gt;</a>
-, <a class="el" href="classmatador_1_1query_3_01row_01_4.html#a78a167e328d0828e0b9b7e47ef25cc12">matador::query&lt; row &gt;</a>
+, <a class="el" href="classmatador_1_1query_3_01row_01_4.html#a60cbe8569efe3fb758ecf61c8ff6d370">matador::query&lt; row &gt;</a>
 , <a class="el" href="classmatador_1_1table_3_01_t_00_01typename_01std_1_1enable__if_3_9std_1_1is__base__of_3_01basic_1ba9ba9ff2e9ceebf34bdfe812e639da.html#ac49aa3fb64d8358c1193f908d147a720">matador::table&lt; T, typename std::enable_if&lt;!std::is_base_of&lt; basic_has_many_to_many_item, T &gt;::value &gt;::type &gt;</a>
 </li>
 <li>create_identifier()
 : <a class="el" href="classmatador_1_1identifiable__holder.html#ac9ac092f520d89d426047770ca5d3f10">matador::identifiable_holder</a>
 , <a class="el" href="classmatador_1_1object__pointer.html#acca46af05c708a307cab73e153a94c94">matador::object_pointer&lt; T, OPT &gt;</a>
+</li>
+<li>create_logger()
+: <a class="el" href="classmatador_1_1log__manager.html#a6693e35e6e3ca494b8cd58668a43c22d">matador::log_manager</a>
 </li>
 <li>creator()
 : <a class="el" href="classmatador_1_1result.html#a2df8444b3704931f64848d223357c4d8">matador::result&lt; T &gt;</a>

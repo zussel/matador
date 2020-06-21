@@ -25,64 +25,821 @@ $(function() {
 <div class="title">matador::logger Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>logger to write log messages to log domains  
+ <a href="classmatador_1_1logger.html#details">More...</a></p>
+
+<p><code>#include &lt;logger.hpp&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a418b596bfca5b8b4feb90673f7c4c4b8"><td class="memItemLeft" align="right" valign="top"><a id="a418b596bfca5b8b4feb90673f7c4c4b8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>logger</b> (std::string source, std::shared_ptr&lt; <a class="el" href="classmatador_1_1log__domain.html">log_domain</a> &gt; <a class="el" href="classmatador_1_1log__domain.html">log_domain</a>)</td></tr>
+<tr class="memitem:a418b596bfca5b8b4feb90673f7c4c4b8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a418b596bfca5b8b4feb90673f7c4c4b8">logger</a> (std::string <a class="el" href="classmatador_1_1logger.html#ac24b8f765a68a30005e1055000230c5c">source</a>, std::shared_ptr&lt; <a class="el" href="classmatador_1_1log__domain.html">log_domain</a> &gt; <a class="el" href="classmatador_1_1log__domain.html">log_domain</a>)</td></tr>
 <tr class="separator:a418b596bfca5b8b4feb90673f7c4c4b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa96f591ab4ad208d3d46b4dddebcce2e"><td class="memTemplParams" colspan="2"><a id="aa96f591ab4ad208d3d46b4dddebcce2e"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:aa96f591ab4ad208d3d46b4dddebcce2e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>info</b> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
-<tr class="separator:aa96f591ab4ad208d3d46b4dddebcce2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe56c17a1925a4cc0ebadd188d73e61e"><td class="memTemplParams" colspan="2"><a id="abe56c17a1925a4cc0ebadd188d73e61e"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:abe56c17a1925a4cc0ebadd188d73e61e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>info</b> (const char *what, ARGS const &amp;... args)</td></tr>
-<tr class="separator:abe56c17a1925a4cc0ebadd188d73e61e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82aae748cd2fa566a3f5cd1b052294ea"><td class="memTemplParams" colspan="2"><a id="a82aae748cd2fa566a3f5cd1b052294ea"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:a82aae748cd2fa566a3f5cd1b052294ea"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>debug</b> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
-<tr class="separator:a82aae748cd2fa566a3f5cd1b052294ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8fccb70383b4271194014946c8bfe297"><td class="memTemplParams" colspan="2"><a id="a8fccb70383b4271194014946c8bfe297"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:a8fccb70383b4271194014946c8bfe297"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>debug</b> (const char *what, ARGS const &amp;... args)</td></tr>
-<tr class="separator:a8fccb70383b4271194014946c8bfe297"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff1191070db660022022e639f0dbb9b8"><td class="memTemplParams" colspan="2"><a id="aff1191070db660022022e639f0dbb9b8"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:aff1191070db660022022e639f0dbb9b8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>warn</b> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
-<tr class="separator:aff1191070db660022022e639f0dbb9b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1152d7755498dd1b18b5dbde6690612c"><td class="memTemplParams" colspan="2"><a id="a1152d7755498dd1b18b5dbde6690612c"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:a1152d7755498dd1b18b5dbde6690612c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>warn</b> (const char *what, ARGS const &amp;... args)</td></tr>
-<tr class="separator:a1152d7755498dd1b18b5dbde6690612c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81c0ed1f4b1b57eda3624ee2a2beceb1"><td class="memTemplParams" colspan="2"><a id="a81c0ed1f4b1b57eda3624ee2a2beceb1"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:a81c0ed1f4b1b57eda3624ee2a2beceb1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>error</b> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
+<tr class="memitem:a45dfb2ef1aeb4e67162ca181f693be8b"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:a45dfb2ef1aeb4e67162ca181f693be8b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a45dfb2ef1aeb4e67162ca181f693be8b">fatal</a> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
+<tr class="separator:a45dfb2ef1aeb4e67162ca181f693be8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3173653645040686955185a599ce2b40"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:a3173653645040686955185a599ce2b40"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a3173653645040686955185a599ce2b40">fatal</a> (const char *what, ARGS const &amp;... args)</td></tr>
+<tr class="separator:a3173653645040686955185a599ce2b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81c0ed1f4b1b57eda3624ee2a2beceb1"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:a81c0ed1f4b1b57eda3624ee2a2beceb1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a81c0ed1f4b1b57eda3624ee2a2beceb1">error</a> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
 <tr class="separator:a81c0ed1f4b1b57eda3624ee2a2beceb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3bf2961eea1ddd655653245dfe9f38da"><td class="memTemplParams" colspan="2"><a id="a3bf2961eea1ddd655653245dfe9f38da"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:a3bf2961eea1ddd655653245dfe9f38da"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>error</b> (const char *what, ARGS const &amp;... args)</td></tr>
+<tr class="memitem:a3bf2961eea1ddd655653245dfe9f38da"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:a3bf2961eea1ddd655653245dfe9f38da"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a3bf2961eea1ddd655653245dfe9f38da">error</a> (const char *what, ARGS const &amp;... args)</td></tr>
 <tr class="separator:a3bf2961eea1ddd655653245dfe9f38da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7bc588b88d6c2fae45057a233c4765e5"><td class="memTemplParams" colspan="2"><a id="a7bc588b88d6c2fae45057a233c4765e5"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:a7bc588b88d6c2fae45057a233c4765e5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>trace</b> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
+<tr class="memitem:aff1191070db660022022e639f0dbb9b8"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:aff1191070db660022022e639f0dbb9b8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#aff1191070db660022022e639f0dbb9b8">warn</a> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
+<tr class="separator:aff1191070db660022022e639f0dbb9b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1152d7755498dd1b18b5dbde6690612c"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:a1152d7755498dd1b18b5dbde6690612c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a1152d7755498dd1b18b5dbde6690612c">warn</a> (const char *what, ARGS const &amp;... args)</td></tr>
+<tr class="separator:a1152d7755498dd1b18b5dbde6690612c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa96f591ab4ad208d3d46b4dddebcce2e"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:aa96f591ab4ad208d3d46b4dddebcce2e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#aa96f591ab4ad208d3d46b4dddebcce2e">info</a> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
+<tr class="separator:aa96f591ab4ad208d3d46b4dddebcce2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe56c17a1925a4cc0ebadd188d73e61e"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:abe56c17a1925a4cc0ebadd188d73e61e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#abe56c17a1925a4cc0ebadd188d73e61e">info</a> (const char *what, ARGS const &amp;... args)</td></tr>
+<tr class="separator:abe56c17a1925a4cc0ebadd188d73e61e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82aae748cd2fa566a3f5cd1b052294ea"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:a82aae748cd2fa566a3f5cd1b052294ea"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a82aae748cd2fa566a3f5cd1b052294ea">debug</a> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
+<tr class="separator:a82aae748cd2fa566a3f5cd1b052294ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fccb70383b4271194014946c8bfe297"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:a8fccb70383b4271194014946c8bfe297"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a8fccb70383b4271194014946c8bfe297">debug</a> (const char *what, ARGS const &amp;... args)</td></tr>
+<tr class="separator:a8fccb70383b4271194014946c8bfe297"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bc588b88d6c2fae45057a233c4765e5"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:a7bc588b88d6c2fae45057a233c4765e5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a7bc588b88d6c2fae45057a233c4765e5">trace</a> (const std::string &amp;what, ARGS const &amp;... args)</td></tr>
 <tr class="separator:a7bc588b88d6c2fae45057a233c4765e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5eac405adb07d68d887921887f2e7194"><td class="memTemplParams" colspan="2"><a id="a5eac405adb07d68d887921887f2e7194"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:a5eac405adb07d68d887921887f2e7194"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>trace</b> (const char *what, ARGS const &amp;... args)</td></tr>
+<tr class="memitem:a5eac405adb07d68d887921887f2e7194"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:a5eac405adb07d68d887921887f2e7194"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a5eac405adb07d68d887921887f2e7194">trace</a> (const char *what, ARGS const &amp;... args)</td></tr>
 <tr class="separator:a5eac405adb07d68d887921887f2e7194"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71948926e5b60dd5a3125040d0d5b930"><td class="memTemplParams" colspan="2"><a id="a71948926e5b60dd5a3125040d0d5b930"></a>
-template&lt;typename ... ARGS&gt; </td></tr>
-<tr class="memitem:a71948926e5b60dd5a3125040d0d5b930"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>log</b> (log_level lvl, const char *what, ARGS const &amp;... args)</td></tr>
+<tr class="memitem:a71948926e5b60dd5a3125040d0d5b930"><td class="memTemplParams" colspan="2">template&lt;typename ... ARGS&gt; </td></tr>
+<tr class="memitem:a71948926e5b60dd5a3125040d0d5b930"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a71948926e5b60dd5a3125040d0d5b930">log</a> (<a class="el" href="namespacematador.html#a0500a4dc292152300ff00f33e71d951f">log_level</a> lvl, const char *what, ARGS const &amp;... args)</td></tr>
 <tr class="separator:a71948926e5b60dd5a3125040d0d5b930"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac24b8f765a68a30005e1055000230c5c"><td class="memItemLeft" align="right" valign="top"><a id="ac24b8f765a68a30005e1055000230c5c"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>source</b> () const</td></tr>
+<tr class="memitem:ac24b8f765a68a30005e1055000230c5c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#ac24b8f765a68a30005e1055000230c5c">source</a> () const</td></tr>
 <tr class="separator:ac24b8f765a68a30005e1055000230c5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a569de69328cdff04cb4757d8eb3717ab"><td class="memItemLeft" align="right" valign="top"><a id="a569de69328cdff04cb4757d8eb3717ab"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>domain</b> () const</td></tr>
+<tr class="memitem:a569de69328cdff04cb4757d8eb3717ab"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1logger.html#a569de69328cdff04cb4757d8eb3717ab">domain</a> () const</td></tr>
 <tr class="separator:a569de69328cdff04cb4757d8eb3717ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>logger to write log messages to log domains </p>
+<p>This class is used to write log messages to a connected log domain (</p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>). Everywhere a <a class="el" href="classmatador_1_1logger.html" title="logger to write log messages to log domains">logger</a> is needed, it can be instantiated with <div class="fragment"><div class="line"><a class="code" href="namespacematador.html#ab0af4c999a1c2d8a05a1e24d84602e70">matador::create_logger</a>(<a class="code" href="classmatador_1_1logger.html#ac24b8f765a68a30005e1055000230c5c">source</a> name)</div>
+</div><!-- fragment --></dd></dl>
+<p>The interface provides methods to log to each relevant log level (</p><dl class="section see"><dt>See also</dt><dd><a class="el" href="namespacematador.html#a0500a4dc292152300ff00f33e71d951f">log_level</a>)</dd></dl>
+<p>The message format syntax is like the printf syntax. If the message string contains placeholder (beginning with %) an argument is expected to be part of the argument list of the calling method.</p>
+<p>All log messages are written through the internal <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a> object to the sinks. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a418b596bfca5b8b4feb90673f7c4c4b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a418b596bfca5b8b4feb90673f7c4c4b8">&#9670;&nbsp;</a></span>logger()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">matador::logger::logger </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>source</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classmatador_1_1log__domain.html">log_domain</a> &gt;&#160;</td>
+          <td class="paramname"><em>log_domain</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Create a logger with a given source name connected to the given <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a></p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td>The name of the source </td></tr>
+    <tr><td class="paramname"><a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a></td><td>The <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a> containing the log sinks </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a8fccb70383b4271194014946c8bfe297"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fccb70383b4271194014946c8bfe297">&#9670;&nbsp;</a></span>debug() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::debug </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message represented by a char pointer with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a82aae748cd2fa566a3f5cd1b052294ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82aae748cd2fa566a3f5cd1b052294ea">&#9670;&nbsp;</a></span>debug() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::debug </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message string with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a569de69328cdff04cb4757d8eb3717ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a569de69328cdff04cb4757d8eb3717ab">&#9670;&nbsp;</a></span>domain()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string matador::logger::domain </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the name of the connected log domain</p>
+<dl class="section return"><dt>Returns</dt><dd>The name of the log domain </dd></dl>
+
+</div>
+</div>
+<a id="a3bf2961eea1ddd655653245dfe9f38da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bf2961eea1ddd655653245dfe9f38da">&#9670;&nbsp;</a></span>error() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::error </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message represented by a char pointer with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a81c0ed1f4b1b57eda3624ee2a2beceb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81c0ed1f4b1b57eda3624ee2a2beceb1">&#9670;&nbsp;</a></span>error() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::error </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message string with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3173653645040686955185a599ce2b40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3173653645040686955185a599ce2b40">&#9670;&nbsp;</a></span>fatal() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::fatal </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message represented by a char pointer with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a45dfb2ef1aeb4e67162ca181f693be8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45dfb2ef1aeb4e67162ca181f693be8b">&#9670;&nbsp;</a></span>fatal() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::fatal </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message string with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="abe56c17a1925a4cc0ebadd188d73e61e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe56c17a1925a4cc0ebadd188d73e61e">&#9670;&nbsp;</a></span>info() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::info </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message represented by a char pointer with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa96f591ab4ad208d3d46b4dddebcce2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa96f591ab4ad208d3d46b4dddebcce2e">&#9670;&nbsp;</a></span>info() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::info </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message string with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a71948926e5b60dd5a3125040d0d5b930"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71948926e5b60dd5a3125040d0d5b930">&#9670;&nbsp;</a></span>log()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename... ARGS&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::log </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespacematador.html#a0500a4dc292152300ff00f33e71d951f">log_level</a>&#160;</td>
+          <td class="paramname"><em>lvl</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Writes a log message represented by a char pointer with the given log level to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lvl</td><td>The log level </td></tr>
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac24b8f765a68a30005e1055000230c5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac24b8f765a68a30005e1055000230c5c">&#9670;&nbsp;</a></span>source()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string matador::logger::source </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the name of the source the logger represents</p>
+<dl class="section return"><dt>Returns</dt><dd>Represented log source name </dd></dl>
+
+</div>
+</div>
+<a id="a5eac405adb07d68d887921887f2e7194"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5eac405adb07d68d887921887f2e7194">&#9670;&nbsp;</a></span>trace() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::trace </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message represented by a char pointer with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7bc588b88d6c2fae45057a233c4765e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bc588b88d6c2fae45057a233c4765e5">&#9670;&nbsp;</a></span>trace() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::trace </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message string with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1152d7755498dd1b18b5dbde6690612c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1152d7755498dd1b18b5dbde6690612c">&#9670;&nbsp;</a></span>warn() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::warn </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message represented by a char pointer with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aff1191070db660022022e639f0dbb9b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff1191070db660022022e639f0dbb9b8">&#9670;&nbsp;</a></span>warn() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ... ARGS&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::logger::warn </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>what</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ARGS const &amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes a log message string with log level LVL_FATAL to the connected <a class="el" href="classmatador_1_1log__domain.html" title="Connection to a set of log sinks.">log_domain</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ARGS</td><td>Type of the arguments to replaced for the message placeholder </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">what</td><td>The message to log </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to be replaced in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>matador/logger/logger.hpp</li>
 </ul>
 </div><!-- contents -->
+<div class="ttc" id="aclassmatador_1_1logger_html_ac24b8f765a68a30005e1055000230c5c"><div class="ttname"><a href="classmatador_1_1logger.html#ac24b8f765a68a30005e1055000230c5c">matador::logger::source</a></div><div class="ttdeci">std::string source() const</div></div>
+<div class="ttc" id="anamespacematador_html_ab0af4c999a1c2d8a05a1e24d84602e70"><div class="ttname"><a href="namespacematador.html#ab0af4c999a1c2d8a05a1e24d84602e70">matador::create_logger</a></div><div class="ttdeci">OOS_LOGGER_API logger create_logger(std::string source)</div></div>

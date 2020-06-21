@@ -26,17 +26,127 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Base class for all log sinks.  
+ <a href="classmatador_1_1log__sink.html#details">More...</a></p>
+
+<p><code>#include &lt;log_sink.hpp&gt;</code></p>
+
 <p>Inherited by <a class="el" href="classmatador_1_1basic__file__sink.html">matador::basic_file_sink</a>, and <a class="el" href="classmatador_1_1rotating__file__sink.html">matador::rotating_file_sink</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aecdaf08f9085396d79b23388b65976af"><td class="memItemLeft" align="right" valign="top"><a id="aecdaf08f9085396d79b23388b65976af"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (const char *message, std::size_t size)=0</td></tr>
+<tr class="memitem:a701c80af52d81aecdec9ad6060833486"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1log__sink.html#a701c80af52d81aecdec9ad6060833486">~log_sink</a> ()=default</td></tr>
+<tr class="separator:a701c80af52d81aecdec9ad6060833486"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecdaf08f9085396d79b23388b65976af"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1log__sink.html#aecdaf08f9085396d79b23388b65976af">write</a> (const char *message, std::size_t size)=0</td></tr>
 <tr class="separator:aecdaf08f9085396d79b23388b65976af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f5e661aef2c3347b4784d3fb31b4ec0"><td class="memItemLeft" align="right" valign="top"><a id="a5f5e661aef2c3347b4784d3fb31b4ec0"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()=0</td></tr>
+<tr class="memitem:a5f5e661aef2c3347b4784d3fb31b4ec0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1log__sink.html#a5f5e661aef2c3347b4784d3fb31b4ec0">close</a> ()=0</td></tr>
 <tr class="separator:a5f5e661aef2c3347b4784d3fb31b4ec0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Base class for all log sinks. </p>
+<p>This class must be the base class for all log sinks and provides their interface</p>
+<p>The main interface is the write(...) interface defining how the log message is written.</p>
+<p>The <a class="el" href="classmatador_1_1log__sink.html#a5f5e661aef2c3347b4784d3fb31b4ec0">close()</a> interface defines a way to close the concrete log sink </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a701c80af52d81aecdec9ad6060833486"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a701c80af52d81aecdec9ad6060833486">&#9670;&nbsp;</a></span>~log_sink()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual matador::log_sink::~log_sink </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destroys the log sink </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a5f5e661aef2c3347b4784d3fb31b4ec0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f5e661aef2c3347b4784d3fb31b4ec0">&#9670;&nbsp;</a></span>close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void matador::log_sink::close </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Closes the log sink if necessary. </p>
+
+<p>Implemented in <a class="el" href="classmatador_1_1stderr__sink.html#a9aa4b1cdbeb35f2964627b9f7045e0ba">matador::stderr_sink</a>, <a class="el" href="classmatador_1_1stdout__sink.html#af0d932a43d70a707dd86cb8e4d7c6ce6">matador::stdout_sink</a>, <a class="el" href="classmatador_1_1rotating__file__sink.html#a83710f571b20c2a2712ef9126398e503">matador::rotating_file_sink</a>, and <a class="el" href="classmatador_1_1basic__file__sink.html#a934e13a45e766a61a7681d8f7ecbfad8">matador::basic_file_sink</a>.</p>
+
+</div>
+</div>
+<a id="aecdaf08f9085396d79b23388b65976af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecdaf08f9085396d79b23388b65976af">&#9670;&nbsp;</a></span>write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void matador::log_sink::write </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes the given log message with the given size to the concrete sink</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>The message to log </td></tr>
+    <tr><td class="paramname">size</td><td>The size of the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>matador/logger/log_sink.hpp</li>
 </ul>
