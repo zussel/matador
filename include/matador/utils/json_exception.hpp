@@ -5,6 +5,14 @@
 #include <stdexcept>
 
 namespace matador {
+
+/**
+ * @brief Exception representing json errors
+ * 
+ * The exception class represents all kind of
+ * json errors occuring while parsing a json
+ * string.
+ */
 class json_exception : public std::logic_error
 {
 public:
@@ -17,7 +25,12 @@ public:
     : std::logic_error(what)
   {}
 
+  /**
+   * Destroys the json exception
+   */
   ~json_exception() noexcept override = default;
 };
+
 }
+
 #endif //REACTOR_JSON_EXCEPTION_HPP

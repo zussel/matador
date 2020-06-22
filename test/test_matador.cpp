@@ -19,15 +19,19 @@
 
 #include "unit/TestSuiteTestUnit.hpp"
 
+#include "logger/LoggerTest.hpp"
+
 #include "utils/AnyTestUnit.hpp"
 #include "utils/BlobTestUnit.hpp"
 #include "utils/DateTestUnit.hpp"
+#include "utils/FileTestUnit.hpp"
 #include "utils/JsonTestUnit.hpp"
 #include "utils/JsonMapperTestUnit.hpp"
 #include "utils/TimeTestUnit.hpp"
 #include "utils/FactoryTestUnit.hpp"
 #include "utils/StringTestUnit.hpp"
 #include "utils/SequencerTestUnit.hpp"
+#include "utils/OSTest.hpp"
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
@@ -55,6 +59,7 @@
 #include "sql/PostgreSQLDialectTestUnit.hpp"
 #include "sql/SQLiteDialectTestUnit.hpp"
 #include "sql/ValueUnitTest.hpp"
+#include "sql/SqlLoggerTest.hpp"
 
 #include "connections.hpp"
 
@@ -83,12 +88,16 @@ int main(int argc, char *argv[])
   suite.register_unit(new AnyTestUnit);
   suite.register_unit(new DateTestUnit);
   suite.register_unit(new TimeTestUnit);
+  suite.register_unit(new FileTestUnit);
   suite.register_unit(new BlobTestUnit);
   suite.register_unit(new JsonTestUnit);
   suite.register_unit(new JsonMapperTestUnit);
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);
+  suite.register_unit(new OSTest);
+
+  suite.register_unit(new LoggerTest);
 
   suite.register_unit(new PrimaryKeyUnitTest);
   suite.register_unit(new PrototypeTreeTestUnit);
@@ -103,6 +112,7 @@ int main(int argc, char *argv[])
 
   suite.register_unit(new ConditionUnitTest);
   suite.register_unit(new DialectTestUnit);
+  suite.register_unit(new SqlLoggerTest);
   suite.register_unit(new ValueUnitTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)

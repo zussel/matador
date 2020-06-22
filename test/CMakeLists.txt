@@ -17,7 +17,14 @@ SET (TEST_TOOLS_SOURCES
   utils/JsonTestUnit.hpp
   utils/JsonMapperTestUnit.cpp
   utils/JsonMapperTestUnit.hpp
-)
+  utils/OSTest.cpp
+  utils/OSTest.hpp
+  utils/FileTestUnit.cpp utils/FileTestUnit.hpp)
+
+SET (TEST_LOGGER_SOURCES
+  logger/LoggerTest.cpp
+  logger/LoggerTest.hpp
+    logger/file.cpp logger/file.hpp)
 
 SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 
@@ -66,7 +73,7 @@ SET (TEST_SQL_SOURCES
   sql/ValueUnitTest.cpp
   sql/ValueUnitTest.hpp
   sql/PostgreSQLDialectTestUnit.cpp
-  sql/PostgreSQLDialectTestUnit.hpp)
+  sql/PostgreSQLDialectTestUnit.hpp sql/SqlLoggerTest.cpp sql/SqlLoggerTest.hpp)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp
@@ -92,6 +99,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
+  ${TEST_LOGGER_SOURCES}
   ${TEST_SQL_SOURCES}
 )
 
@@ -138,6 +146,7 @@ ENDIF()
 TARGET_LINK_LIBRARIES(test_matador
   matador-unit
   matador-utils
+  matador-logger
   matador-object
   matador-sql
   matador-orm

@@ -28,6 +28,7 @@ ENDIF()
 TARGET_LINK_LIBRARIES(sandbox
     matador-unit
     matador-utils
+    matador-logger
     matador-object
     matador-sql
     matador-orm

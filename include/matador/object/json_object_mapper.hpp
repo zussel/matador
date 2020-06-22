@@ -2,16 +2,17 @@
 #define MATADOR_JSON_MAPPER_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
+#ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
+    #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
+    #define MATADOR_OBJECT_API __declspec(dllimport)
+    #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
+  #pragma warning(disable: 4275)
 #else
-#define OOS_UTILS_API
+#define MATADOR_OBJECT_API
 #endif
 
 #include "matador/utils/basic_json_mapper.hpp"
@@ -26,7 +27,8 @@
 
 namespace matador {
 
-class OOS_UTILS_API json_object_mapper_serializer
+/// @cond MATADOR_DEV
+class MATADOR_OBJECT_API json_object_mapper_serializer
 {
 public:
   explicit json_object_mapper_serializer(details::mapper_runtime &runtime_data);
@@ -58,10 +60,20 @@ public:
 private:
   details::mapper_runtime &runtime_data_;
 };
+/// @endcond
 
+/**
+ * @brief Shortcut to the json object mapper
+ *
+ * The json_object_mapper is used to map a json
+ * string to an matador typed object. This means it
+ * can contain relation objects like has_many, has_one
+ * or belongs_to.
+ */
 template < class T >
 using json_object_mapper = basic_json_mapper<T, json_object_mapper_serializer>;
 
+/// @cond MATADOR_DEV
 template<class V>
 void json_object_mapper_serializer::serialize(V &obj)
 {
@@ -162,6 +174,6 @@ void json_object_mapper_serializer::serialize(const char *id, basic_has_many<Val
   }
   runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
 }
-
+/// @endcond
 }
 #endif //MATADOR_JSON_MAPPER_HPP

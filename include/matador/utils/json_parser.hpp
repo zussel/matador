@@ -42,18 +42,6 @@ public:
   json_parser() = default;
 
   /**
-   * @brief parse an input stream.
-   *
-   * Parses an input stream and returns
-   * a json_value serializable representing
-   * the json structure.
-   *
-   * @param in The json input stream.
-   * @return A json_value structure.
-   */
-//  json parse(std::istream &in);
-
-  /**
    * @brief parse a const character string.
    *
    * Parses a const character string and

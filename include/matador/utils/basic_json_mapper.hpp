@@ -1,6 +1,19 @@
 #ifndef MATADOR_BASIC_JSON_MAPPER_HPP
 #define MATADOR_BASIC_JSON_MAPPER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_UTILS_API __declspec(dllexport)
+    #define EXPIMP_UTILS_TEMPLATE
+  #else
+    #define OOS_UTILS_API __declspec(dllimport)
+    #define EXPIMP_UTILS_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_UTILS_API
+#endif
+
 #include "matador/utils/json.hpp"
 #include "matador/utils/json_parser.hpp"
 #include "matador/utils/identifier.hpp"
@@ -10,7 +23,8 @@
 namespace matador {
 
 namespace details {
-struct mapper_runtime {
+/// @cond MATADOR_DEV
+struct OOS_UTILS_API mapper_runtime {
   explicit mapper_runtime(json_cursor &c) : cursor(c) {}
   json value;
   std::string key;
@@ -19,26 +33,80 @@ struct mapper_runtime {
   json_cursor &cursor;
   const char *json_array_cursor = nullptr;
 };
-
+/// @endcond
 }
 
+/**
+ * @brief A base class for all kind of json mapping
+ *
+ * The class acts as a boilerplate for all concrete
+ * json mapping classes (@sa json_mapper and @sa json_object_mapper)
+ *
+ * It uses internally a generic json parser in combination
+ * with a given serialization class type S to map a json
+ * string to an object of type T.
+ *
+ * @tparam T Type of the object to which the json string is mapped
+ * @tparam S The internally used serialization class type
+ */
 template < class T, class S >
 class basic_json_mapper : public generic_json_parser<basic_json_mapper<T, S> >
 {
 public:
-  typedef generic_json_parser<basic_json_mapper<T, S> > base;
+  typedef generic_json_parser<basic_json_mapper<T, S> > base; /**< Shortcut to this base class */
 
+  /**
+   * Creates the basic json mapper
+   */
   basic_json_mapper()
     : mapper_runtime_(this->cursor())
     , serializer_(mapper_runtime_)
   {}
 
-  T object_from_string(const char *str, bool check_for_eos = true);
-  void object_from_string(const char *str, T *obj, bool check_for_eos = true);
+  /**
+   * Maps a given json string to an new object
+   * of type T.
+   *
+   * @param str Json string to parse and map
+   * @return The mapped object
+   */
+  T object_from_string(const char *str)
+  {
+    return object_from_string(str, true);
+  }
 
-  std::vector<T> array_from_string(const char *str, bool check_for_eos = true);
+  /**
+   * Maps a given json string to the given
+   * object of type T.
+   *
+   * @param str Json string to parse and map
+   * @param obj The object to map
+   */
+  void object_from_string(const char *str, T *obj)
+  {
+    object_from_string(str, obj, true);
+  }
 
-  /// @cond OOS_DEV //
+  /**
+   * Maps a given json string to an array of
+   * objects of type type.
+   * if the json string doesn't contain an array
+   * a @sa json_exception is thrown
+   *
+   * @param str The json array string to parse
+   * @return List of mapped objects
+   */
+  std::vector<T> array_from_string(const char *str)
+  {
+    return std::move(array_from_string(str, true));
+  }
+
+  /// @cond OOS_DEV
+  T object_from_string(const char *str, bool check_for_eos);
+  void object_from_string(const char *str, T *obj, bool check_for_eos);
+
+  std::vector<T> array_from_string(const char *str, bool check_for_eos);
+
   void on_parse_object(bool check_for_eos);
   void on_begin_object();
   void on_object_key(const std::string &key);
@@ -52,14 +120,15 @@ public:
   void on_real(double value);
   void on_bool(bool value);
   void on_null();
-  /// @endcond OOS_DEV //
 
   const details::mapper_runtime& runtime_data() const
   {
     return mapper_runtime_;
   }
+  /// @endcond OOS_DEV
 protected:
 
+  /// @cond OOS_DEV
   T object_;
   std::vector<T> array_;
 
@@ -69,8 +138,10 @@ protected:
   bool is_object_ = false;
 
   S serializer_;
+  /// @endcond
 };
 
+/// @cond MATADOR_DEV
 template<class T, class C>
 T basic_json_mapper<T, C>::object_from_string(const char *str, bool check_for_eos)
 {
@@ -278,7 +349,7 @@ void basic_json_mapper<T, C>::on_null()
     access::serialize(serializer_, object_);
   }
 }
-
+/// @endcond
 }
 
 #endif //MATADOR_BASIC_JSON_MAPPER_HPP

@@ -11,6 +11,17 @@ connection::connection(const std::string &dns)
   impl_.reset(create_connection(type_));
 }
 
+connection::connection(std::shared_ptr<basic_sql_logger> sqllogger)
+  : logger_(std::move(sqllogger))
+{}
+
+connection::connection(const std::string &dns, std::shared_ptr<basic_sql_logger> sqllogger)
+  : logger_(std::move(sqllogger))
+{
+  parse_dns(dns);
+  impl_.reset(create_connection(type_));
+}
+
 connection::connection(const connection &x)
   : type_(x.type_)
   , dns_(x.dns_)
@@ -26,6 +37,9 @@ connection::connection(connection &&x) noexcept
 
 connection &connection::operator=(const connection &x)
 {
+  if (this == &x) {
+    return *this;
+  }
   type_ = x.type_;
   dns_ = x.dns_;
 
@@ -57,6 +71,7 @@ void connection::connect(const std::string &dns)
     return;
   } else {
     parse_dns(dns);
+    logger_->on_connect();
     impl_->open(dns_);
   }
 }
@@ -70,6 +85,7 @@ void connection::connect()
       connection_factory::instance().destroy(type_, impl_.release());
       impl_.reset(create_connection(type_));
     }
+    logger_->on_connect();
     impl_->open(dns_);
   }
 }
@@ -77,8 +93,10 @@ void connection::connect()
 void connection::reconnect()
 {
   if (is_connected()) {
+    logger_->on_close();
     impl_->close();
   }
+  logger_->on_connect();
   impl_->open(dns_);
 }
 
@@ -89,6 +107,7 @@ bool connection::is_connected() const
 
 void connection::disconnect()
 {
+  logger_->on_close();
   impl_->close();
 }
 
@@ -142,12 +161,12 @@ bool connection::is_valid() const
 
 value* create_default_value(database_type type);
 
-void connection::prepare_prototype_row(row &prototype, const std::string &tablename)
+void connection::prepare_prototype_row(row &prototype, const std::string &table_name)
 {
-  if (!impl_->exists(tablename)) {
+  if (!impl_->exists(table_name)) {
     return;
   }
-  auto fields = impl_->describe(tablename);
+  auto fields = impl_->describe(table_name);
   for (auto &&f : fields) {
     if (!prototype.has_column(f.name())) {
       continue;
@@ -193,7 +212,7 @@ value* create_default_value(database_type type)
   }
 }
 
-connection_impl *connection::create_connection(const std::string &type) const
+connection_impl *connection::create_connection(const std::string &type)
 {
   // try to create sql implementation
   return connection_factory::instance().create(type);
@@ -217,17 +236,10 @@ void connection::parse_dns(const std::string &dns)
   dns_ = dns.substr(pos + 3);
 }
 
-void connection::log(const std::string &msg) const
-{
-  if (impl_->is_log_enabled()) {
-    std::cout << "SQL: " << msg << "\n";
-  }
-}
-
 void connection::log_token(detail::token::t_token tok)
 {
   if (impl_->is_log_enabled()) {
-    std::cout << "SQL: " << dialect()->token_at(tok) << "\n";
+    logger_->on_execute("SQL: " + dialect()->token_at(tok));
   }
 }
 

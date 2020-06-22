@@ -9,6 +9,7 @@
 #include "matador/object/object_proxy_accessor.hpp"
 
 #include <functional>
+#include <string>
 
 #ifdef _MSC_VER
 #ifdef matador_object_EXPORTS
