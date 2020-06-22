@@ -46,6 +46,10 @@ void SqlLoggerTest::test_sql_logger()
     sqllogger.on_prepare("SELECT * FROM person WHERE id=5");
   }
 
+  matador::os::remove("stdout.txt");
+
+  UNIT_ASSERT_FALSE(matador::os::exists("stdout.txt"));
+
   matador::os::remove(path);
 
   UNIT_ASSERT_FALSE(matador::os::exists(path));
