@@ -24,7 +24,12 @@ SET (TEST_TOOLS_SOURCES
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
   logger/LoggerTest.hpp
-    logger/file.cpp logger/file.hpp)
+  logger/file.cpp
+  logger/file.hpp)
+
+SET (TEST_NET_SOURCES
+  net/IPTestUnit.cpp
+  net/IPTestUnit.hpp)
 
 SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 
@@ -100,6 +105,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
   ${TEST_LOGGER_SOURCES}
+  ${TEST_NET_SOURCES}
   ${TEST_SQL_SOURCES}
 )
 
@@ -147,6 +153,7 @@ TARGET_LINK_LIBRARIES(test_matador
   matador-unit
   matador-utils
   matador-logger
+  matador-net
   matador-object
   matador-sql
   matador-orm
@@ -156,6 +163,8 @@ TARGET_LINK_LIBRARIES(test_matador
 
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
+SOURCE_GROUP("logger" FILES ${TEST_LOGGER_SOURCES})
+SOURCE_GROUP("net" FILES ${TEST_NET_SOURCES})
 SOURCE_GROUP("utils" FILES ${TEST_TOOLS_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})
