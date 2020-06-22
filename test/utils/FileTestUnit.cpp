@@ -17,6 +17,8 @@ void FileTestUnit::test_file()
 
   UNIT_ASSERT_TRUE(matador::os::exists("test.txt"));
 
+  f.close();
+
   matador::os::remove("test.txt");
 
   UNIT_ASSERT_FALSE(matador::os::exists("test.txt"));
