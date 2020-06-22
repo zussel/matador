@@ -32,12 +32,13 @@ void SqlLoggerTest::test_null_logger()
 
 void SqlLoggerTest::test_sql_logger()
 {
+  auto path = matador::os::build_path("log", "sql.log");
   // Redirect stdout
   {
     filehelper::std_stream_switcher stdout_switcher(stdout, "stdout.txt");
     sql_logger sqllogger;
 
-    UNIT_ASSERT_FALSE(matador::os::exists("log/sql.log"));
+    UNIT_ASSERT_FALSE(matador::os::exists(path));
 
     sqllogger.on_connect();
     sqllogger.on_close();
@@ -45,9 +46,9 @@ void SqlLoggerTest::test_sql_logger()
     sqllogger.on_prepare("SELECT * FROM person WHERE id=5");
   }
 
-  matador::os::remove("log/sql.log");
+  matador::os::remove(path);
 
-  UNIT_ASSERT_FALSE(matador::os::exists("log/sql.log"));
+  UNIT_ASSERT_FALSE(matador::os::exists(path));
 
   matador::log_manager::instance().clear();
 }

@@ -1,5 +1,7 @@
 #include "matador/sql/sql_logger.hpp"
 
+#include "matador/utils/os.hpp"
+
 #include "matador/logger/log_manager.hpp"
 
 namespace matador {
@@ -11,7 +13,8 @@ sql_logger::sql_logger()
 sql_logger::sql_logger(size_t max_size, size_t file_count)
   : LOG(create_logger("sql"))
 {
-  add_log_sink(create_rotating_file_sink("log/sql.log", max_size, file_count));
+  auto path = matador::os::build_path("log", "sql.log");
+  add_log_sink(create_rotating_file_sink(path, max_size, file_count));
   add_log_sink(create_stdout_sink());
 }
 
