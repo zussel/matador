@@ -24,6 +24,7 @@
 #include "utils/AnyTestUnit.hpp"
 #include "utils/BlobTestUnit.hpp"
 #include "utils/DateTestUnit.hpp"
+#include "utils/FileTestUnit.hpp"
 #include "utils/JsonTestUnit.hpp"
 #include "utils/JsonMapperTestUnit.hpp"
 #include "utils/TimeTestUnit.hpp"
@@ -87,6 +88,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new AnyTestUnit);
   suite.register_unit(new DateTestUnit);
   suite.register_unit(new TimeTestUnit);
+  suite.register_unit(new FileTestUnit);
   suite.register_unit(new BlobTestUnit);
   suite.register_unit(new JsonTestUnit);
   suite.register_unit(new JsonMapperTestUnit);

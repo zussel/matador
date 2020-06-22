@@ -71,6 +71,7 @@ void connection::connect(const std::string &dns)
     return;
   } else {
     parse_dns(dns);
+    logger_->on_connect();
     impl_->open(dns_);
   }
 }
@@ -84,6 +85,7 @@ void connection::connect()
       connection_factory::instance().destroy(type_, impl_.release());
       impl_.reset(create_connection(type_));
     }
+    logger_->on_connect();
     impl_->open(dns_);
   }
 }
@@ -91,8 +93,10 @@ void connection::connect()
 void connection::reconnect()
 {
   if (is_connected()) {
+    logger_->on_close();
     impl_->close();
   }
+  logger_->on_connect();
   impl_->open(dns_);
 }
 
@@ -103,6 +107,7 @@ bool connection::is_connected() const
 
 void connection::disconnect()
 {
+  logger_->on_close();
   impl_->close();
 }
 

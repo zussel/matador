@@ -1,7 +1,13 @@
-#include <matador/sql/sql_logger.hpp>
 #include "SqlLoggerTest.hpp"
 
+#include "matador/utils/os.hpp"
+
+#include "matador/logger/log_manager.hpp"
+
+#include "matador/sql/sql_logger.hpp"
 #include "matador/sql/basic_sql_logger.hpp"
+
+#include "../logger/file.hpp"
 
 using namespace matador;
 
@@ -10,7 +16,6 @@ SqlLoggerTest::SqlLoggerTest()
 {
   add_test("null_logger", std::bind(&SqlLoggerTest::test_null_logger, this), "test null logger");
   add_test("sql_logger", std::bind(&SqlLoggerTest::test_sql_logger, this), "test sql logger");
-
 }
 
 void SqlLoggerTest::test_null_logger()
@@ -27,6 +32,22 @@ void SqlLoggerTest::test_null_logger()
 
 void SqlLoggerTest::test_sql_logger()
 {
-  sql_logger sqlLogger;
+  // Redirect stdout
+  {
+    filehelper::std_stream_switcher stdout_switcher(stdout, "stdout.txt");
+    sql_logger sqllogger;
 
+    UNIT_ASSERT_FALSE(matador::os::exists("log/sql.log"));
+
+    sqllogger.on_connect();
+    sqllogger.on_close();
+    sqllogger.on_execute("SELECT * FROM person");
+    sqllogger.on_prepare("SELECT * FROM person WHERE id=5");
+  }
+
+  matador::os::remove("log/sql.log");
+
+  UNIT_ASSERT_FALSE(matador::os::exists("log/sql.log"));
+
+  matador::log_manager::instance().clear();
 }

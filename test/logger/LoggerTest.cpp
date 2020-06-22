@@ -2,7 +2,6 @@
 #include "file.hpp"
 
 #include "matador/logger/file_sink.hpp"
-#include "matador/logger/rotating_file_sink.hpp"
 #include "matador/logger/log_manager.hpp"
 
 #include "matador/utils/os.hpp"
@@ -15,8 +14,7 @@
 #include <io.h>
 #else
 #include <unistd.h>
-#include <matador/logger/rotating_file_sink.hpp>
-
+#include "matador/logger/rotating_file_sink.hpp"
 #endif
 
 LoggerTest::LoggerTest()

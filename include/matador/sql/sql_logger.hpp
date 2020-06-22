@@ -1,6 +1,20 @@
 #ifndef MATADOR_SQL_LOGGER_HPP
 #define MATADOR_SQL_LOGGER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_sql_EXPORTS
+    #define OOS_SQL_API __declspec(dllexport)
+    #define EXPIMP_SQL_TEMPLATE
+  #else
+    #define OOS_SQL_API __declspec(dllimport)
+    #define EXPIMP_SQL_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_SQL_API
+#endif
+
 #include "matador/sql/basic_sql_logger.hpp"
 #include "matador/logger/logger.hpp"
 
@@ -11,7 +25,7 @@ namespace matador {
  * logging mechanism with two sink. A rotating
  * file sink besides a stdout sink.
  */
-class sql_logger : public basic_sql_logger
+class OOS_SQL_API sql_logger : public basic_sql_logger
 {
 public:
   /**
