@@ -29,7 +29,7 @@ SET (TEST_LOGGER_SOURCES
 
 SET (TEST_NET_SOURCES
   net/IPTestUnit.cpp
-  net/IPTestUnit.hpp)
+  net/IPTestUnit.hpp net/AddressTest.cpp net/AddressTest.hpp net/SocketTest.cpp net/SocketTest.hpp)
 
 SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 

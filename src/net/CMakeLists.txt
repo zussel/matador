@@ -2,7 +2,10 @@ SET(SOURCES
   socket.cpp address.cpp)
 
 SET(HEADER
-  ../../include/matador/net/socket.hpp ../../include/matador/net/peer.hpp ../../include/matador/net/address.hpp)
+  ../../include/matador/net/socket.hpp
+  ../../include/matador/net/socket.tpp
+  ../../include/matador/net/peer.hpp
+  ../../include/matador/net/address.hpp)
 
 ADD_LIBRARY(matador-net SHARED ${SOURCES} ${HEADER})
 
