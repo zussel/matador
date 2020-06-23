@@ -161,6 +161,10 @@ TARGET_LINK_LIBRARIES(test_matador
   ${DB_LIBRARIES}
 )
 
+if(WIN32)
+  target_link_libraries(test_matador wsock32 ws2_32)
+endif()
+
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("logger" FILES ${TEST_LOGGER_SOURCES})
