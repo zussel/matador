@@ -4,6 +4,7 @@
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
+#include <libnet.h>
 #endif
 
 #include <cstring>
