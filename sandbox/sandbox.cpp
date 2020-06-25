@@ -1,49 +1,77 @@
-#include <thread>
+#include "matador/net/acceptor.hpp"
+#include "matador/net/reactor.hpp"
 #include "matador/logger/logger.hpp"
 #include "matador/logger/log_manager.hpp"
 
-class MyClass
+using namespace matador;
+
+class echo_handler : public handler
 {
 public:
-  static matador::logger LOG;
-
-  MyClass() {
-    LOG.info("created");
-  }
-
-  ~MyClass()
+  void open() override
   {
-    LOG.info("destroyed");
-  }
-};
 
-matador::logger MyClass::LOG = matador::create_logger("MyClass");
+  }
+
+  int handle() const override
+  {
+    return 0;
+  }
+
+  void on_input() override
+  {
+
+  }
+
+  void on_output() override
+  {
+
+  }
+
+  void on_except() override
+  {
+
+  }
+
+  void on_timeout() override
+  {
+
+  }
+
+  void on_close() override
+  {
+
+  }
+
+  void close() override
+  {
+
+  }
+
+  bool is_ready_write() const override
+  {
+    return false;
+  }
+
+  bool is_ready_read() const override
+  {
+    return false;
+  }
+
+private:
+  tcp::socket stream_;
+};
 
 int main()
 {
-  std::thread::id this_id = std::this_thread::get_id();
+  tcp::peer endpoint(tcp::v4(), 7090);
 
-  auto logsink = matador::create_file_sink("log.txt");
-  auto stdoutsink = matador::create_stdout_sink();
+  auto acceptor_7090 = std::make_shared<acceptor>([]() {return new echo_handler;});
 
-  matador::add_log_sink(stdoutsink);
-  matador::add_log_sink(logsink);
+  acceptor_7090->open();
 
-  auto log = matador::create_logger("test");
+  reactor rctr;
+  rctr.register_handler(acceptor_7090, event_type::ACCEPT_MASK);
 
-  log.info("hello info %d [%d]", 6, this_id);
-  log.debug("hello debug bug bug bug");
-  log.error("hello error -> fatal");
-  log.warn("hello warn: attention");
-  log.trace("hello trace: what happens here");
-
-  MyClass my1;
-  MyClass my2;
-
-  auto netsink = matador::create_file_sink("netlog.txt");
-  matador::add_log_sink(netsink, "net");
-
-  auto another_log = matador::create_logger("side", "net");
-
-  another_log.warn("another net log");
+  rctr.run();
 }

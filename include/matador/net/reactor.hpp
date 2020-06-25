@@ -5,6 +5,7 @@
 #include "matador/net/select_fdsets.hpp"
 
 #include <vector>
+#include <memory>
 
 namespace matador {
 
@@ -12,8 +13,8 @@ class handler;
 
 class reactor {
 public:
-  void register_handler(handler *h, event_type type);
-  void unregister_handler(handler *h, event_type type);
+  void register_handler(std::shared_ptr<handler> h, event_type type);
+  void unregister_handler(std::shared_ptr<handler> h, event_type type);
 
   void run();
   void shutdown();
@@ -35,7 +36,7 @@ private:
 private:
 //  std::unordered_map<int, handler*> handler_map_;
 
-  std::vector<handler*> handlers_;
+  std::vector<std::shared_ptr<handler>> handlers_;
 
   select_fdsets fdsets_;
 

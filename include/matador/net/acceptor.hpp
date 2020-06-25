@@ -18,6 +18,7 @@ public:
   acceptor(tcp::peer peer, std::function<handler*()> on_new_connection);
 
   void open() override;
+  void open() override;
   int handle() const override;
   void on_input() override;
   void on_output() override {}

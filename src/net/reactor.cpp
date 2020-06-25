@@ -7,7 +7,7 @@
 
 namespace matador {
 
-void reactor::register_handler(handler *h, event_type)
+void reactor::register_handler(std::shared_ptr<handler> h, event_type)
 {
   h->open();
 
@@ -20,7 +20,7 @@ void reactor::register_handler(handler *h, event_type)
   }
 }
 
-void reactor::unregister_handler(handler *h, event_type)
+void reactor::unregister_handler(std::shared_ptr<handler> h, event_type)
 {
   auto it = std::find(handlers_.begin(), handlers_.end(), h);
 
