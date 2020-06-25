@@ -1,11 +1,17 @@
 SET(SOURCES
-  socket.cpp address.cpp)
+  socket.cpp address.cpp fdset.cpp select_fdsets.cpp handler.cpp acceptor.cpp reactor.cpp)
 
 SET(HEADER
   ../../include/matador/net/socket.hpp
   ../../include/matador/net/socket.tpp
   ../../include/matador/net/peer.hpp
-  ../../include/matador/net/address.hpp)
+  ../../include/matador/net/address.hpp
+  ../../include/matador/net/fdset.hpp
+  ../../include/matador/net/select_fdsets.hpp
+  ../../include/matador/net/handler.hpp
+  ../../include/matador/net/acceptor.hpp
+  ../../include/matador/net/reactor.hpp
+  ../../include/matador/net/event_type.hpp)
 
 ADD_LIBRARY(matador-net SHARED ${SOURCES} ${HEADER})
 

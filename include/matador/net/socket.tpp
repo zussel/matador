@@ -294,11 +294,16 @@ int socket_acceptor<P>::reuse_address(bool reuse)
 template < class P >
 int socket_acceptor<P>::reuse_address() const
 {
-  int option {};
-  getsockopt(this->id(), SOL_SOCKET, SO_REUSEADDR, option, sizeof(option));
+  size_t option {};
+  socklen_t i;
+  i = sizeof(option);
+  getsockopt(this->id(), SOL_SOCKET, SO_REUSEADDR, &option, &i);
   return option;
 }
 
+/*
+ * socket connector
+ */
 template < class P >
 socket_connector<P>::socket_connector(const char* hostname, unsigned short port)
 {

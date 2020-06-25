@@ -46,10 +46,9 @@ void SocketTest::test_acceptor_v4()
   UNIT_ASSERT_TRUE(acceptor.is_open());
   UNIT_ASSERT_TRUE(acceptor.id() > 0);
 
-  // TODO: implement get reuse_address
-  //UNIT_ASSERT_FALSE(acceptor.reuse_address());
+  UNIT_ASSERT_FALSE(acceptor.reuse_address());
   UNIT_ASSERT_EQUAL(0, acceptor.reuse_address(true));
-  //UNIT_ASSERT_TRUE(acceptor.reuse_address());
+  UNIT_ASSERT_TRUE(acceptor.reuse_address());
 
   tcp::peer local(address::any(), 12345);
   UNIT_ASSERT_EQUAL(0, acceptor.bind(local));

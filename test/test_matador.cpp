@@ -64,6 +64,7 @@
 #include "net/IPTestUnit.hpp"
 #include "net/AddressTest.hpp"
 #include "net/SocketTest.hpp"
+#include "net/FDSetTest.hpp"
 
 #include "connections.hpp"
 
@@ -122,6 +123,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new IPTestUnit);
   suite.register_unit(new AddressTest);
   suite.register_unit(new SocketTest);
+  suite.register_unit(new FDSetTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
