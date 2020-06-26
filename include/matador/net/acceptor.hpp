@@ -13,11 +13,10 @@ namespace matador {
 class acceptor : public handler
 {
 public:
-  acceptor(std::function<handler*()> on_new_connection);
-  acceptor(const char *hostname, unsigned short port, std::function<handler*()> on_new_connection);
-  acceptor(tcp::peer peer, std::function<handler*()> on_new_connection);
+  typedef std::function<std::shared_ptr<handler>(tcp::socket sock, acceptor *accptr)> make_handler_func;
 
-  void open() override;
+  explicit acceptor(make_handler_func on_new_connection);
+
   void open() override;
   int handle() const override;
   void on_input() override;
@@ -34,7 +33,7 @@ public:
 private:
   tcp::acceptor acceptor_;
 
-  std::function<handler*()> on_new_connection_;
+  make_handler_func make_handler_;
 
   logger log_;
 };

@@ -22,6 +22,9 @@ public:
   virtual bool is_ready_write() const = 0;
   virtual bool is_ready_read() const = 0;
 
+protected:
+  reactor* get_reactor() const;
+
 private:
   friend class reactor;
 

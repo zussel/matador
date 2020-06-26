@@ -1,22 +1,11 @@
 #include "matador/net/acceptor.hpp"
+#include "matador/net/reactor.hpp"
 
 #include "matador/logger/log_manager.hpp"
 
 namespace matador {
-acceptor::acceptor(std::function<handler *()> on_new_connection)
-  : on_new_connection_(std::move(on_new_connection))
-  , log_(matador::create_logger("Acceptor"))
-{}
-
-acceptor::acceptor(const char *hostname, unsigned short port, std::function<handler*()> on_new_connection)
-  : acceptor_(hostname, port)
-  , on_new_connection_(std::move(on_new_connection))
-  , log_(matador::create_logger("Acceptor"))
-{}
-
-acceptor::acceptor(tcp::peer peer, std::function<handler*()> on_new_connection)
-  : acceptor_(peer)
-  , on_new_connection_(std::move(on_new_connection))
+acceptor::acceptor(make_handler_func make_handler)
+  : make_handler_(std::move(make_handler))
   , log_(matador::create_logger("Acceptor"))
 {}
 
@@ -37,7 +26,11 @@ void acceptor::on_input()
   acceptor_.accept(sock);
 
   // create new client handler
-  on_new_connection_();
+  auto h = make_handler_(sock, this);
+
+  h->open();
+
+  get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
   log_.debug("accepted socket id %d", sock.id());
 }
 
