@@ -30,6 +30,7 @@ TARGET_LINK_LIBRARIES(sandbox
     matador-utils
     matador-logger
     matador-object
+    matador-net
     matador-sql
     matador-orm
     ${CMAKE_DL_LIBS}

@@ -8,6 +8,8 @@ using namespace matador;
 class echo_handler : public handler
 {
 public:
+  echo_handler(tcp::socket sock, acceptor *accptr);
+
   void open() override;
 
   int handle() const override;
@@ -30,13 +32,18 @@ public:
 
 private:
   tcp::socket stream_;
+  acceptor *acceptor_ = nullptr;
 };
 
 int main()
 {
+  auto s = matador::create_file_sink("log/net.log");
+  matador::add_log_sink(s);
+  matador::add_log_sink(matador::create_stdout_sink());
+
   tcp::peer endpoint(tcp::v4(), 7090);
 
-  auto acceptor_7090 = std::make_shared<acceptor>([](tcp::socket sock, acceptor *accptr) {return new echo_handler;});
+  auto acceptor_7090 = std::make_shared<acceptor>([](tcp::socket sock, acceptor *accptr) {return std::make_shared<echo_handler>(sock, accptr);});
 
   acceptor_7090->open();
 
@@ -44,6 +51,12 @@ int main()
   rctr.register_handler(acceptor_7090, event_type::ACCEPT_MASK);
 
   rctr.run();
+}
+
+echo_handler::echo_handler(tcp::socket sock, acceptor *accptr)
+  : stream_(sock), acceptor_(accptr)
+{
+
 }
 
 void echo_handler::open()

@@ -11,6 +11,7 @@ acceptor::acceptor(make_handler_func make_handler)
 
 void acceptor::open()
 {
+  acceptor_.bind()
   acceptor_.listen(10);
 }
 
@@ -31,6 +32,7 @@ void acceptor::on_input()
   h->open();
 
   get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
+
   log_.debug("accepted socket id %d", sock.id());
 }
 

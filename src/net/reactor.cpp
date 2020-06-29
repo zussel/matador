@@ -1,11 +1,19 @@
 #include "matador/net/reactor.hpp"
 #include "matador/net/handler.hpp"
 
+#include "matador/logger/log_manager.hpp"
+
 #include <algorithm>
 #include <cerrno>
 #include <cstring>
 
 namespace matador {
+
+reactor::reactor()
+  : log_(create_logger("reactor"))
+{
+
+}
 
 void reactor::register_handler(std::shared_ptr<handler> h, event_type)
 {
@@ -32,10 +40,11 @@ void reactor::unregister_handler(std::shared_ptr<handler> h, event_type)
 
 void reactor::run()
 {
-//  std::cout << "fds [r: "
-//            << fdsets_.read_set().count() << ", w: "
-//            << fdsets_.write_set().count() << ", e:"
-//            << fdsets_.except_set().count() << "]\n";
+  log_.info("starting reactor");
+  log_.info("fds [r: %d, w: %d, e: %d]",
+    fdsets_.read_set().count(),
+    fdsets_.write_set().count(),
+    fdsets_.except_set().count());
 
   running_ = true;
   while (running_) {
@@ -56,7 +65,7 @@ void reactor::run()
     switch (ret) {
       case -1:
         if (errno != EINTR) {
-          //std::cout << "select failed: " << strerror(errno) << "\n";
+          log_.error("select failed: %s", strerror(errno));
           shutdown();
         } else {
           continue;
@@ -85,9 +94,12 @@ void reactor::shutdown()
 void reactor::prepare_fdsets()
 {
   fdsets_.reset();
-  for (auto h : handlers_) {
+  for (const auto &h : handlers_) {
     if (h->is_ready_read()) {
       fdsets_.read_set().set(h->handle());
+    }
+    if (h->is_ready_write()) {
+      fdsets_.write_set().set(h->handle());
     }
   }
 }

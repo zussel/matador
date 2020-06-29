@@ -4,6 +4,8 @@
 #include "matador/net/event_type.hpp"
 #include "matador/net/select_fdsets.hpp"
 
+#include "matador/logger/logger.hpp"
+
 #include <vector>
 #include <memory>
 
@@ -13,6 +15,8 @@ class handler;
 
 class reactor {
 public:
+  reactor();
+
   void register_handler(std::shared_ptr<handler> h, event_type type);
   void unregister_handler(std::shared_ptr<handler> h, event_type type);
 
@@ -41,6 +45,8 @@ private:
   select_fdsets fdsets_;
 
   bool running_ = false;
+
+  logger log_;
 };
 
 }
