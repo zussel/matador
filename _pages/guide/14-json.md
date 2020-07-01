@@ -82,5 +82,81 @@ ja.is_array(); // checks on array type
 jnill.is_null();
 {% endhighlight %}
 
-### Retrieving json values
+### Accessing json values
+
+The value of the json can be accessed via the ```as<T>()``` method. The requested type is passed with template
+parameter. If the json type doesn't match the requested type and exception ist thrown.
+
+{% highlight cpp linenos %}
+auto i = js.as<int>();
+auto s = js.as<std::string>();
+{% endhighlight %}
+
+In case the json is an object one can use the ```[]``` operator with the key string of the requested json value.
+If the key leads to a valid json this is returned otherwise a json null value is created and returned for the given key.
+
+{% highlight cpp linenos %}
+auto jo = json::object();
+jo["name"] = "george";
+
+// string "george" is returned
+auto s = jo["name"];
+
+// a json of type null is returned
+auto n = jo["age"];
+{% endhighlight %}
+
+In case the json is an array one can also use the ```[]``` operator but with the index of the requested json value. If the index leads to a valid json this is returned otherwise am exception is thrown.
+
+{% highlight cpp linenos %}
+auto jo = json::array();
+jo.push_back("george");
+
+// string "george" is returned
+auto s = jo[0];
+
+// throws an exception
+auto n = jo[1];
+{% endhighlight %}
+
+### Object Mapping
+
+Matador comes with a builtin simple json object mapping mechanism. To be able to use it, the object to create must have the ```serialize()``` interface implemented.
+
+{% highlight cpp linenos %}
+struct person
+{
+    identifier<long> id;
+    std::string name;
+    matador birthday;
+
+    template < class SERIALIZER >
+    void serialize(SERIALIZER &serializer)
+    {
+        serializer.serialize("id", id);
+        serializer.serialize("name", name);
+        serializer.serialize("birthday", birthday);
+    }
+};
+{% endhighlight %}
+
+Now an object mapper can be created and an object or array can be serialized
+
+{% highlight cpp linenos %}
+json_mapper<person> mapper;
+
+auto p = mapper.object_from_string(R"({
+    "id": 8,
+    "name": "george",
+    "birthday": "1987-09-27"
+})")
+
+std::cout << p.name << "\n";
+{% endhighlight %}
+
+The ```json_mapper``` supports all default types and the matador types ```identifier```, ```date``` and ```time```. If an error occurrs while parsing the string an ```json_exception``` is thrown.
+
+### Matador Object Mapping
+
+Matador also provides an json object mapper supporting the matador relation types ```has_one```, ```belongs_to``` and ```has_many```. Therefor a special mapper ```json_object_mapper``` is available.
 
