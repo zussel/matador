@@ -26,23 +26,155 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Base class for sql logging.  
+ <a href="classmatador_1_1basic__sql__logger.html#details">More...</a></p>
+
+<p><code>#include &lt;basic_sql_logger.hpp&gt;</code></p>
+
 <p>Inherited by <a class="el" href="classmatador_1_1null__sql__logger.html">matador::null_sql_logger</a>, and <a class="el" href="classmatador_1_1sql__logger.html">matador::sql_logger</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad88e1ad0b10405b5e29a5de6c6951233"><td class="memItemLeft" align="right" valign="top"><a id="ad88e1ad0b10405b5e29a5de6c6951233"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>on_connect</b> ()=0</td></tr>
+<tr class="memitem:ad88e1ad0b10405b5e29a5de6c6951233"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__sql__logger.html#ad88e1ad0b10405b5e29a5de6c6951233">on_connect</a> ()=0</td></tr>
 <tr class="separator:ad88e1ad0b10405b5e29a5de6c6951233"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae73a4ceeaaa6f51dd7592f1564c0f65c"><td class="memItemLeft" align="right" valign="top"><a id="ae73a4ceeaaa6f51dd7592f1564c0f65c"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>on_close</b> ()=0</td></tr>
+<tr class="memitem:ae73a4ceeaaa6f51dd7592f1564c0f65c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__sql__logger.html#ae73a4ceeaaa6f51dd7592f1564c0f65c">on_close</a> ()=0</td></tr>
 <tr class="separator:ae73a4ceeaaa6f51dd7592f1564c0f65c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26c89a667e053b3a4a249f819aa3a4d8"><td class="memItemLeft" align="right" valign="top"><a id="a26c89a667e053b3a4a249f819aa3a4d8"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>on_execute</b> (const std::string &amp;stmt)=0</td></tr>
+<tr class="memitem:a26c89a667e053b3a4a249f819aa3a4d8"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__sql__logger.html#a26c89a667e053b3a4a249f819aa3a4d8">on_execute</a> (const std::string &amp;stmt)=0</td></tr>
 <tr class="separator:a26c89a667e053b3a4a249f819aa3a4d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9cc0203fa0b2b0dd8c92486cc6faef4"><td class="memItemLeft" align="right" valign="top"><a id="aa9cc0203fa0b2b0dd8c92486cc6faef4"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>on_prepare</b> (const std::string &amp;stmt)=0</td></tr>
+<tr class="memitem:aa9cc0203fa0b2b0dd8c92486cc6faef4"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__sql__logger.html#aa9cc0203fa0b2b0dd8c92486cc6faef4">on_prepare</a> (const std::string &amp;stmt)=0</td></tr>
 <tr class="separator:aa9cc0203fa0b2b0dd8c92486cc6faef4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Base class for sql logging. </p>
+<p>Thsi class acts as a base class to implement a concrete logger for sql statements.</p>
+<p>It provides interfaces to handle the establishing and closing of a database connection as well as when an sql statement is about to execute or going to prepared. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae73a4ceeaaa6f51dd7592f1564c0f65c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae73a4ceeaaa6f51dd7592f1564c0f65c">&#9670;&nbsp;</a></span>on_close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void matador::basic_sql_logger::on_close </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Is called when a connection is going to be closed </p>
+
+<p>Implemented in <a class="el" href="classmatador_1_1null__sql__logger.html#ab8254d496aaee1bb4a84a14d6257a580">matador::null_sql_logger</a>, and <a class="el" href="classmatador_1_1sql__logger.html#a057579420c667331c39398ea37d64cfe">matador::sql_logger</a>.</p>
+
+</div>
+</div>
+<a id="ad88e1ad0b10405b5e29a5de6c6951233"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad88e1ad0b10405b5e29a5de6c6951233">&#9670;&nbsp;</a></span>on_connect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void matador::basic_sql_logger::on_connect </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Is called when a connection to a database is going to be established </p>
+
+<p>Implemented in <a class="el" href="classmatador_1_1null__sql__logger.html#ad98981cafcb252c32e489f7948d43f23">matador::null_sql_logger</a>, and <a class="el" href="classmatador_1_1sql__logger.html#ab5a03db30caf8ef6770dd4cc33ba6943">matador::sql_logger</a>.</p>
+
+</div>
+</div>
+<a id="a26c89a667e053b3a4a249f819aa3a4d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26c89a667e053b3a4a249f819aa3a4d8">&#9670;&nbsp;</a></span>on_execute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void matador::basic_sql_logger::on_execute </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>stmt</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Is called when a sql statement is going to be executed</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stmt</td><td>SQL statement to be executed </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classmatador_1_1sql__logger.html#a886b3c14d9a3a690c6b88313fceb44e5">matador::sql_logger</a>, and <a class="el" href="classmatador_1_1null__sql__logger.html#aedbc1cda03ca542b95765c993cc1d368">matador::null_sql_logger</a>.</p>
+
+</div>
+</div>
+<a id="aa9cc0203fa0b2b0dd8c92486cc6faef4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9cc0203fa0b2b0dd8c92486cc6faef4">&#9670;&nbsp;</a></span>on_prepare()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void matador::basic_sql_logger::on_prepare </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>stmt</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Is called when a sql statement is going to be prepared</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stmt</td><td>SQL statement to be prepared </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classmatador_1_1sql__logger.html#a0f4d003df4b2a58040f3efd72f398048">matador::sql_logger</a>, and <a class="el" href="classmatador_1_1null__sql__logger.html#ac47e79c4cd85372c4e6d6e01b3f832f8">matador::null_sql_logger</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>matador/sql/basic_sql_logger.hpp</li>
 </ul>

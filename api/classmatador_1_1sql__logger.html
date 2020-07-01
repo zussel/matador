@@ -26,23 +26,211 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p><code>#include &lt;sql_logger.hpp&gt;</code></p>
+
 <p>Inherits <a class="el" href="classmatador_1_1basic__sql__logger.html">matador::basic_sql_logger</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab5a03db30caf8ef6770dd4cc33ba6943"><td class="memItemLeft" align="right" valign="top"><a id="ab5a03db30caf8ef6770dd4cc33ba6943"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>on_connect</b> () override</td></tr>
+<tr class="memitem:aad80581c7ae8f416550ee9ea9ddac1d5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1sql__logger.html#aad80581c7ae8f416550ee9ea9ddac1d5">sql_logger</a> ()</td></tr>
+<tr class="separator:aad80581c7ae8f416550ee9ea9ddac1d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5102be35fc2a900daa06c2d7778529e3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1sql__logger.html#a5102be35fc2a900daa06c2d7778529e3">sql_logger</a> (size_t max_size, size_t file_count)</td></tr>
+<tr class="separator:a5102be35fc2a900daa06c2d7778529e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5a03db30caf8ef6770dd4cc33ba6943"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1sql__logger.html#ab5a03db30caf8ef6770dd4cc33ba6943">on_connect</a> () override</td></tr>
 <tr class="separator:ab5a03db30caf8ef6770dd4cc33ba6943"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a057579420c667331c39398ea37d64cfe"><td class="memItemLeft" align="right" valign="top"><a id="a057579420c667331c39398ea37d64cfe"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>on_close</b> () override</td></tr>
+<tr class="memitem:a057579420c667331c39398ea37d64cfe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1sql__logger.html#a057579420c667331c39398ea37d64cfe">on_close</a> () override</td></tr>
 <tr class="separator:a057579420c667331c39398ea37d64cfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a886b3c14d9a3a690c6b88313fceb44e5"><td class="memItemLeft" align="right" valign="top"><a id="a886b3c14d9a3a690c6b88313fceb44e5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>on_execute</b> (const std::string &amp;stmt) override</td></tr>
+<tr class="memitem:a886b3c14d9a3a690c6b88313fceb44e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1sql__logger.html#a886b3c14d9a3a690c6b88313fceb44e5">on_execute</a> (const std::string &amp;stmt) override</td></tr>
 <tr class="separator:a886b3c14d9a3a690c6b88313fceb44e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f4d003df4b2a58040f3efd72f398048"><td class="memItemLeft" align="right" valign="top"><a id="a0f4d003df4b2a58040f3efd72f398048"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>on_prepare</b> (const std::string &amp;stmt) override</td></tr>
+<tr class="memitem:a0f4d003df4b2a58040f3efd72f398048"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1sql__logger.html#a0f4d003df4b2a58040f3efd72f398048">on_prepare</a> (const std::string &amp;stmt) override</td></tr>
 <tr class="separator:a0f4d003df4b2a58040f3efd72f398048"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The sql logger uses the matador logging mechanism with two sink. A rotating file sink besides a stdout sink. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aad80581c7ae8f416550ee9ea9ddac1d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad80581c7ae8f416550ee9ea9ddac1d5">&#9670;&nbsp;</a></span>sql_logger() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">matador::sql_logger::sql_logger </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Creates a sql logger using the matador logging mechanism. Internally a rotating file sink is used. The path is "log/sql.log" with a max file size of 1mb and maximum log file count of 5.</p>
+<p>In addition a stdout log sink is used. </p>
+
+</div>
+</div>
+<a id="a5102be35fc2a900daa06c2d7778529e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5102be35fc2a900daa06c2d7778529e3">&#9670;&nbsp;</a></span>sql_logger() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">matador::sql_logger::sql_logger </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>max_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>file_count</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Creates a sql logger using the matador logging mechanism. Internally a rotating file sink is used. The path is "log/sql.log" with the given max file size and the given maximum log file count</p>
+<p>In addition a stdout log sink is used.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">max_size</td><td>Max file size </td></tr>
+    <tr><td class="paramname">file_count</td><td>Max log file number </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a057579420c667331c39398ea37d64cfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a057579420c667331c39398ea37d64cfe">&#9670;&nbsp;</a></span>on_close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::sql_logger::on_close </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>No log on disconnect </p>
+
+<p>Implements <a class="el" href="classmatador_1_1basic__sql__logger.html#ae73a4ceeaaa6f51dd7592f1564c0f65c">matador::basic_sql_logger</a>.</p>
+
+</div>
+</div>
+<a id="ab5a03db30caf8ef6770dd4cc33ba6943"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5a03db30caf8ef6770dd4cc33ba6943">&#9670;&nbsp;</a></span>on_connect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::sql_logger::on_connect </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>No log on connect </p>
+
+<p>Implements <a class="el" href="classmatador_1_1basic__sql__logger.html#ad88e1ad0b10405b5e29a5de6c6951233">matador::basic_sql_logger</a>.</p>
+
+</div>
+</div>
+<a id="a886b3c14d9a3a690c6b88313fceb44e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a886b3c14d9a3a690c6b88313fceb44e5">&#9670;&nbsp;</a></span>on_execute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::sql_logger::on_execute </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>stmt</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Logs the statement when it is executed</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stmt</td><td>Statement to log </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classmatador_1_1basic__sql__logger.html#a26c89a667e053b3a4a249f819aa3a4d8">matador::basic_sql_logger</a>.</p>
+
+</div>
+</div>
+<a id="a0f4d003df4b2a58040f3efd72f398048"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f4d003df4b2a58040f3efd72f398048">&#9670;&nbsp;</a></span>on_prepare()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::sql_logger::on_prepare </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>stmt</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Logs the statement when it is prepared</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stmt</td><td>Statement to log </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classmatador_1_1basic__sql__logger.html#aa9cc0203fa0b2b0dd8c92486cc6faef4">matador::basic_sql_logger</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>matador/sql/sql_logger.hpp</li>
 </ul>

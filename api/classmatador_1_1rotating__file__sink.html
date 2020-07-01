@@ -26,24 +26,150 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A rotating log file sink.  
+ <a href="classmatador_1_1rotating__file__sink.html#details">More...</a></p>
+
+<p><code>#include &lt;rotating_file_sink.hpp&gt;</code></p>
+
 <p>Inherits <a class="el" href="classmatador_1_1log__sink.html">matador::log_sink</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afedd423bf5912785a9a88293fb53733e"><td class="memItemLeft" align="right" valign="top"><a id="afedd423bf5912785a9a88293fb53733e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>rotating_file_sink</b> (const std::string &amp;path, size_t max_size, size_t file_count)</td></tr>
+<tr class="memitem:afedd423bf5912785a9a88293fb53733e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1rotating__file__sink.html#afedd423bf5912785a9a88293fb53733e">rotating_file_sink</a> (const std::string &amp;path, size_t max_size, size_t file_count)</td></tr>
 <tr class="separator:afedd423bf5912785a9a88293fb53733e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabca7aa4a8d12e3f4c4f785d8c71422a"><td class="memItemLeft" align="right" valign="top"><a id="aabca7aa4a8d12e3f4c4f785d8c71422a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (const char *message, size_t size) override</td></tr>
+<tr class="memitem:aabca7aa4a8d12e3f4c4f785d8c71422a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1rotating__file__sink.html#aabca7aa4a8d12e3f4c4f785d8c71422a">write</a> (const char *message, size_t size) override</td></tr>
 <tr class="separator:aabca7aa4a8d12e3f4c4f785d8c71422a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83710f571b20c2a2712ef9126398e503"><td class="memItemLeft" align="right" valign="top"><a id="a83710f571b20c2a2712ef9126398e503"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> () override</td></tr>
+<tr class="memitem:a83710f571b20c2a2712ef9126398e503"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1rotating__file__sink.html#a83710f571b20c2a2712ef9126398e503">close</a> () override</td></tr>
 <tr class="separator:a83710f571b20c2a2712ef9126398e503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classmatador_1_1log__sink"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classmatador_1_1log__sink')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classmatador_1_1log__sink.html">matador::log_sink</a></td></tr>
-<tr class="memitem:aecdaf08f9085396d79b23388b65976af inherit pub_methods_classmatador_1_1log__sink"><td class="memItemLeft" align="right" valign="top"><a id="aecdaf08f9085396d79b23388b65976af"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (const char *message, std::size_t size)=0</td></tr>
+<tr class="memitem:a701c80af52d81aecdec9ad6060833486 inherit pub_methods_classmatador_1_1log__sink"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1log__sink.html#a701c80af52d81aecdec9ad6060833486">~log_sink</a> ()=default</td></tr>
+<tr class="separator:a701c80af52d81aecdec9ad6060833486 inherit pub_methods_classmatador_1_1log__sink"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecdaf08f9085396d79b23388b65976af inherit pub_methods_classmatador_1_1log__sink"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1log__sink.html#aecdaf08f9085396d79b23388b65976af">write</a> (const char *message, std::size_t size)=0</td></tr>
 <tr class="separator:aecdaf08f9085396d79b23388b65976af inherit pub_methods_classmatador_1_1log__sink"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A rotating log file sink. </p>
+<p>This log sink provides a possibility to rotate several log files if the current log file reaches the maximum size.</p>
+<p>The user can define the maximum number of log files and the maximum size of the current log file</p>
+<p>The name of the current log file is defined within the given logfile path. Each rotated (moved) log file gets an incremented number extension right before the file extension, e.g.:</p>
+<p>Log file name is 'log.txt' the first rotated log file is named 'log-1.txt' and so on until the maximum number of log files is reached. Then it starts from the beginning. Keep in mind that the log file to which is currently written to is always named like the file name given within the path. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="afedd423bf5912785a9a88293fb53733e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afedd423bf5912785a9a88293fb53733e">&#9670;&nbsp;</a></span>rotating_file_sink()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">matador::rotating_file_sink::rotating_file_sink </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>max_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>file_count</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Creates a rotating log file sink within the given path with the given maximum number of rotating log files where each file size is never greater than the given max file size.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>Path of the log file </td></tr>
+    <tr><td class="paramname">max_size</td><td>Max log file size </td></tr>
+    <tr><td class="paramname">file_count</td><td>Max log file count </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a83710f571b20c2a2712ef9126398e503"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83710f571b20c2a2712ef9126398e503">&#9670;&nbsp;</a></span>close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::rotating_file_sink::close </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Close all open log files </p>
+
+<p>Implements <a class="el" href="classmatador_1_1log__sink.html#a5f5e661aef2c3347b4784d3fb31b4ec0">matador::log_sink</a>.</p>
+
+</div>
+</div>
+<a id="aabca7aa4a8d12e3f4c4f785d8c71422a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabca7aa4a8d12e3f4c4f785d8c71422a">&#9670;&nbsp;</a></span>write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::rotating_file_sink::write </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Write the message to current log file. If the actual size exceeds the file size limit the log files are rotated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>Log message to write </td></tr>
+    <tr><td class="paramname">size</td><td>The size of the log message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>matador/logger/rotating_file_sink.hpp</li>
 </ul>

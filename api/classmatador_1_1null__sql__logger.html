@@ -26,23 +26,138 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p><code>#include &lt;basic_sql_logger.hpp&gt;</code></p>
+
 <p>Inherits <a class="el" href="classmatador_1_1basic__sql__logger.html">matador::basic_sql_logger</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad98981cafcb252c32e489f7948d43f23"><td class="memItemLeft" align="right" valign="top"><a id="ad98981cafcb252c32e489f7948d43f23"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>on_connect</b> () override</td></tr>
+<tr class="memitem:ad98981cafcb252c32e489f7948d43f23"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1null__sql__logger.html#ad98981cafcb252c32e489f7948d43f23">on_connect</a> () override</td></tr>
 <tr class="separator:ad98981cafcb252c32e489f7948d43f23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8254d496aaee1bb4a84a14d6257a580"><td class="memItemLeft" align="right" valign="top"><a id="ab8254d496aaee1bb4a84a14d6257a580"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>on_close</b> () override</td></tr>
+<tr class="memitem:ab8254d496aaee1bb4a84a14d6257a580"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1null__sql__logger.html#ab8254d496aaee1bb4a84a14d6257a580">on_close</a> () override</td></tr>
 <tr class="separator:ab8254d496aaee1bb4a84a14d6257a580"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedbc1cda03ca542b95765c993cc1d368"><td class="memItemLeft" align="right" valign="top"><a id="aedbc1cda03ca542b95765c993cc1d368"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>on_execute</b> (const std::string &amp;) override</td></tr>
+<tr class="memitem:aedbc1cda03ca542b95765c993cc1d368"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1null__sql__logger.html#aedbc1cda03ca542b95765c993cc1d368">on_execute</a> (const std::string &amp;) override</td></tr>
 <tr class="separator:aedbc1cda03ca542b95765c993cc1d368"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac47e79c4cd85372c4e6d6e01b3f832f8"><td class="memItemLeft" align="right" valign="top"><a id="ac47e79c4cd85372c4e6d6e01b3f832f8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>on_prepare</b> (const std::string &amp;) override</td></tr>
+<tr class="memitem:ac47e79c4cd85372c4e6d6e01b3f832f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1null__sql__logger.html#ac47e79c4cd85372c4e6d6e01b3f832f8">on_prepare</a> (const std::string &amp;) override</td></tr>
 <tr class="separator:ac47e79c4cd85372c4e6d6e01b3f832f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Implements the <a class="el" href="classmatador_1_1basic__sql__logger.html" title="Base class for sql logging.">basic_sql_logger</a> to do no logging at all. This is used as the default logger for all connections and statements. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab8254d496aaee1bb4a84a14d6257a580"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8254d496aaee1bb4a84a14d6257a580">&#9670;&nbsp;</a></span>on_close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::null_sql_logger::on_close </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>No logging on closing a connection. </p>
+
+<p>Implements <a class="el" href="classmatador_1_1basic__sql__logger.html#ae73a4ceeaaa6f51dd7592f1564c0f65c">matador::basic_sql_logger</a>.</p>
+
+</div>
+</div>
+<a id="ad98981cafcb252c32e489f7948d43f23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad98981cafcb252c32e489f7948d43f23">&#9670;&nbsp;</a></span>on_connect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::null_sql_logger::on_connect </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>No logging on establishing a connection. </p>
+
+<p>Implements <a class="el" href="classmatador_1_1basic__sql__logger.html#ad88e1ad0b10405b5e29a5de6c6951233">matador::basic_sql_logger</a>.</p>
+
+</div>
+</div>
+<a id="aedbc1cda03ca542b95765c993cc1d368"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedbc1cda03ca542b95765c993cc1d368">&#9670;&nbsp;</a></span>on_execute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::null_sql_logger::on_execute </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>No logging on executing a statement. </p>
+
+<p>Implements <a class="el" href="classmatador_1_1basic__sql__logger.html#a26c89a667e053b3a4a249f819aa3a4d8">matador::basic_sql_logger</a>.</p>
+
+</div>
+</div>
+<a id="ac47e79c4cd85372c4e6d6e01b3f832f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac47e79c4cd85372c4e6d6e01b3f832f8">&#9670;&nbsp;</a></span>on_prepare()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::null_sql_logger::on_prepare </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>No logging on preparing a statement. </p>
+
+<p>Implements <a class="el" href="classmatador_1_1basic__sql__logger.html#aa9cc0203fa0b2b0dd8c92486cc6faef4">matador::basic_sql_logger</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>matador/sql/basic_sql_logger.hpp</li>
 </ul>

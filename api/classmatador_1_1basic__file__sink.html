@@ -21,12 +21,16 @@ $(function() {
   <div class="summary">
 <a href="classmatador_1_1basic__file__sink-members.html">List of all members</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a>  </div>
+<a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">matador::basic_file_sink Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A base class for file stream based sinks.  
+ <a href="classmatador_1_1basic__file__sink.html#details">More...</a></p>
+
+<p><code>#include &lt;basic_file_sink.hpp&gt;</code></p>
 
 <p>Inherits <a class="el" href="classmatador_1_1log__sink.html">matador::log_sink</a>.</p>
 
@@ -34,29 +38,133 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aef8bb02af9b0a652ca08225ea23a2aee"><td class="memItemLeft" align="right" valign="top"><a id="aef8bb02af9b0a652ca08225ea23a2aee"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (const char *message, size_t size) override</td></tr>
+<tr class="memitem:aef8bb02af9b0a652ca08225ea23a2aee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__file__sink.html#aef8bb02af9b0a652ca08225ea23a2aee">write</a> (const char *message, size_t size) override</td></tr>
 <tr class="separator:aef8bb02af9b0a652ca08225ea23a2aee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a934e13a45e766a61a7681d8f7ecbfad8"><td class="memItemLeft" align="right" valign="top"><a id="a934e13a45e766a61a7681d8f7ecbfad8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> () override</td></tr>
+<tr class="memitem:a934e13a45e766a61a7681d8f7ecbfad8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__file__sink.html#a934e13a45e766a61a7681d8f7ecbfad8">close</a> () override</td></tr>
 <tr class="separator:a934e13a45e766a61a7681d8f7ecbfad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classmatador_1_1log__sink"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classmatador_1_1log__sink')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classmatador_1_1log__sink.html">matador::log_sink</a></td></tr>
-<tr class="memitem:aecdaf08f9085396d79b23388b65976af inherit pub_methods_classmatador_1_1log__sink"><td class="memItemLeft" align="right" valign="top"><a id="aecdaf08f9085396d79b23388b65976af"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (const char *message, std::size_t size)=0</td></tr>
+<tr class="memitem:a701c80af52d81aecdec9ad6060833486 inherit pub_methods_classmatador_1_1log__sink"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1log__sink.html#a701c80af52d81aecdec9ad6060833486">~log_sink</a> ()=default</td></tr>
+<tr class="separator:a701c80af52d81aecdec9ad6060833486 inherit pub_methods_classmatador_1_1log__sink"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecdaf08f9085396d79b23388b65976af inherit pub_methods_classmatador_1_1log__sink"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1log__sink.html#aecdaf08f9085396d79b23388b65976af">write</a> (const char *message, std::size_t size)=0</td></tr>
 <tr class="separator:aecdaf08f9085396d79b23388b65976af inherit pub_methods_classmatador_1_1log__sink"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a1c04637ed3c2b009d005eef373cb46a5"><td class="memItemLeft" align="right" valign="top"><a id="a1c04637ed3c2b009d005eef373cb46a5"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>basic_file_sink</b> (FILE *f)</td></tr>
+<tr class="memitem:a1c04637ed3c2b009d005eef373cb46a5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmatador_1_1basic__file__sink.html#a1c04637ed3c2b009d005eef373cb46a5">basic_file_sink</a> (FILE *f)</td></tr>
 <tr class="separator:a1c04637ed3c2b009d005eef373cb46a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:aa48fd2d0cc1ab1cc5ed1370b06d4a146"><td class="memItemLeft" align="right" valign="top"><a id="aa48fd2d0cc1ab1cc5ed1370b06d4a146"></a>
-FILE *&#160;</td><td class="memItemRight" valign="bottom"><b>stream</b> = nullptr</td></tr>
-<tr class="separator:aa48fd2d0cc1ab1cc5ed1370b06d4a146"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A base class for file stream based sinks. </p>
+<p>This class acts like a base class for all concrete sinks working with a file stream to write the log message. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a1c04637ed3c2b009d005eef373cb46a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c04637ed3c2b009d005eef373cb46a5">&#9670;&nbsp;</a></span>basic_file_sink()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">matador::basic_file_sink::basic_file_sink </td>
+          <td>(</td>
+          <td class="paramtype">FILE *&#160;</td>
+          <td class="paramname"><em>f</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Creates a <a class="el" href="classmatador_1_1basic__file__sink.html" title="A base class for file stream based sinks.">basic_file_sink</a> with a given file stream</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f</td><td>File stream to write on </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a934e13a45e766a61a7681d8f7ecbfad8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a934e13a45e766a61a7681d8f7ecbfad8">&#9670;&nbsp;</a></span>close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::basic_file_sink::close </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Closes the internal file stream. </p>
+
+<p>Implements <a class="el" href="classmatador_1_1log__sink.html#a5f5e661aef2c3347b4784d3fb31b4ec0">matador::log_sink</a>.</p>
+
+<p>Reimplemented in <a class="el" href="classmatador_1_1stderr__sink.html#a9aa4b1cdbeb35f2964627b9f7045e0ba">matador::stderr_sink</a>, and <a class="el" href="classmatador_1_1stdout__sink.html#af0d932a43d70a707dd86cb8e4d7c6ce6">matador::stdout_sink</a>.</p>
+
+</div>
+</div>
+<a id="aef8bb02af9b0a652ca08225ea23a2aee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef8bb02af9b0a652ca08225ea23a2aee">&#9670;&nbsp;</a></span>write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void matador::basic_file_sink::write </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Writes the log message to the internal file stream.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>The message to write </td></tr>
+    <tr><td class="paramname">size</td><td>The size of the message </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>matador/logger/basic_file_sink.hpp</li>
 </ul>
