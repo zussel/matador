@@ -3,7 +3,7 @@ matador
 
 Take your database by the horns.
 
-[![Version 0.6.1](https://badge.fury.io/gh/zussel%2Fmatador.svg)](https://badge.fury.io/gh/zussel%2Fmatador)
+[![Version 0.7.0](https://badge.fury.io/gh/zussel%2Fmatador.svg)](https://badge.fury.io/gh/zussel%2Fmatador)
 [![GPLv3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://raw.githubusercontent.com/zussel/matador/develop/License)
 [![C++11](https://img.shields.io/badge/language-C%2B%2B11-yellow.svg)](https://en.wikipedia.org/wiki/C%2B%2B11)
 
@@ -63,8 +63,11 @@ struct person
     serializer.serialize("id", id);
     serializer.serialize("name", name, 255);
     serializer.serialize("age", age);
-    serializer.serialize("person_color", colors, "person_id",   "color",      matador::cascade_type::ALL);
-    //                    table name     member   left column   right column  cascade type
+    serializer.serialize("person_color",  // relation table name
+                         colors,          // class member
+                         "person_id",     // left column in relation table
+                         "color",         // right column in relation table
+                         matador::cascade_type::ALL); // cascade type
   }
 };
 
