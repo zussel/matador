@@ -27,6 +27,36 @@
 namespace matador {
 
 /**
+ * Multi platform version of localtime
+ *
+ * @param in time_t value to be converted
+ * @param out converted value
+ */
+OOS_UTILS_API void localtime(const time_t &in, struct tm &out);
+
+/**
+ * Formats a given timeval struct as a string
+ * within the given buffer. It is possible to format the
+ * string with fractional seconds using the format
+ * token '%f'.
+ *
+ * @param buffer Buffer to write the time string to
+ * @param size Size of the buffer
+ * @param format Format of the time string
+ * @param tv timeval struct containing the time to format
+ * @return The length of the buffer string
+ */
+OOS_UTILS_API int strftime(char *buffer, size_t size, const char *format, const struct timeval *tv);
+
+/**
+ * Multi platform version of gettimeofday
+ *
+ * @param tp Timeval struct where the result ist stored
+ * @return Returns 0 on success
+ */
+OOS_UTILS_API int gettimeofday(struct timeval *tp);
+
+/**
  * @class time
  *
  * @brief Simple time class with milliseconds
@@ -208,6 +238,15 @@ public:
    * @param millis The milliseconds part of the time.
    */
   void set(int year, int month, int day, int hour, int min, int sec, long millis);
+
+  /**
+   * Sets the date from a given date/time
+   * string and a format string
+   *
+   * @param timestr The date/time string to parse
+   * @param format The format to use for parsing
+   */
+  void set(const char *timestr, const char *format = "%Y-%m-%d %H:%M%S");
 
   /**
    * Sets the time from a given time_t and milliseconds
@@ -425,6 +464,8 @@ private:
   void sync_second(int s);
   void sync_milli_second(int ms);
   void sync_time(int y, int m, int d, int h, int min, int s, long ms);
+
+  static timeval parse_time_string(const std::string &tstr, const char *format);
 
 private:
   struct timeval time_ = {0,0 };

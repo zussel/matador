@@ -124,4 +124,16 @@ std::string to_string(const matador::date &x, const char *format)
   return buffer;
 }
 
+const char *skip_ws(const char *str)
+{
+  while(isspace(*str)) {
+    str++;
+  }
+  return str;
+}
+
+bool is_eos(char c)
+{
+  return c == '\0';
+}
 }

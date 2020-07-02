@@ -14,40 +14,86 @@ namespace matador {
 
 namespace detail {
 
-  void localtime(const time_t &in, struct tm &out)
-  {
 #ifdef _MSC_VER
-    errno_t err = localtime_s(&out, &in);
-#else
-    localtime_r(&in, &out);
-#endif
-  }
-
-#ifdef _MSC_VER
-  /* FILETIME of Jan 1 1970 00:00:00. */
+/* FILETIME of Jan 1 1970 00:00:00. */
   static const unsigned __int64 epoch = ((unsigned __int64)116444736000000000ULL);
 #endif
+}
 
-  int gettimeofday(struct timeval * tp, struct timezone *)
-  {
+void localtime(const time_t &in, struct tm &out)
+{
 #ifdef _MSC_VER
-    FILETIME    file_time;
-    SYSTEMTIME  system_time;
-    ULARGE_INTEGER ularge;
-
-    GetSystemTime(&system_time);
-    SystemTimeToFileTime(&system_time, &file_time);
-    ularge.LowPart = file_time.dwLowDateTime;
-    ularge.HighPart = file_time.dwHighDateTime;
-
-    tp->tv_sec = (long)((ularge.QuadPart - epoch) / 10000000L);
-    tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
-
-    return 0;
+  errno_t err = localtime_s(&out, &in);
 #else
-    return ::gettimeofday(tp, nullptr);
+  localtime_r(&in, &out);
 #endif
+}
+
+int strftime(char *buffer, size_t size, const char *format, const struct timeval *tv)
+{
+  struct tm timeinfo = {};
+  localtime(tv->tv_sec, timeinfo);
+  // find position of "%f" for milliseconds
+  const char *fpos = strstr(format, "%f");
+  if (fpos != nullptr) {
+    // split format string (exclude %f)
+    size_t len = fpos - format;
+    if (len > 64) {
+      throw std::logic_error("couldn't format date string");
+    }
+    char first_part[64];
+#ifdef _MSC_VER
+    strncpy_s(first_part, 64, format, len);
+#else
+    strncpy(first_part, format, len);
+#endif
+    first_part[len] = '\0';
+    int s = ::strftime(buffer, size, first_part, &timeinfo);
+    if (s == 0) {
+      throw std::logic_error("couldn't format date string");
+    }
+
+    s += snprintf(buffer + s, size - s, "%03ld", tv->tv_usec / 1000);
+
+    const char *last_part = fpos + 2;
+    // check if last part is valid
+    if (last_part < format + strlen(format)) {
+      s = ::strftime(buffer + s, size - s, last_part, &timeinfo);
+      if (s == 0) {
+        throw std::logic_error("couldn't format date string");
+      }
+    }
+    return s;
+  } else {
+    // "%f" not found; call usual strftime
+    int s = ::strftime(buffer, size, format, &timeinfo);
+    if (s == 0) {
+      throw std::logic_error("couldn't format date string");
+    }
+    return s;
   }
+  return 0;
+}
+
+int gettimeofday(struct timeval *tp)
+{
+#ifdef _MSC_VER
+  FILETIME    file_time;
+  SYSTEMTIME  system_time;
+  ULARGE_INTEGER ularge;
+
+  GetSystemTime(&system_time);
+  SystemTimeToFileTime(&system_time, &file_time);
+  ularge.LowPart = file_time.dwLowDateTime;
+  ularge.HighPart = file_time.dwHighDateTime;
+
+  tp->tv_sec = (long)((ularge.QuadPart - detail::epoch) / 10000000L);
+  tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
+
+  return 0;
+#else
+  return ::gettimeofday(tp, nullptr);
+#endif
 }
 
 void throw_invalid_time(int h, int m, int s, long ms)
@@ -59,11 +105,11 @@ void throw_invalid_time(int h, int m, int s, long ms)
 
 time::time()
 {
-  if (detail::gettimeofday(&time_, nullptr) != 0) {
+  if (matador::gettimeofday(&time_) != 0) {
     throw std::logic_error("couldn' get time of day");
   }
   auto temp = this->time_.tv_sec;
-  detail::localtime(temp, tm_);
+  localtime(temp, tm_);
 }
 
 time::time(time_t t)
@@ -139,41 +185,7 @@ bool time::is_valid_time(int hour, int min, int sec, long millis) {
 
 time time::parse(const std::string &tstr, const char *format)
 {
-  /*
-  * find the %f format token
-  * and split the string to parse
-  */
-  const char *pch = strstr(format, "%f");
-
-  std::string part(format, (pch ? pch-format : strlen(format)));
-  struct tm tm{};
-  memset(&tm, 0, sizeof(struct tm));
-  const char *endptr = detail::strptime(tstr.c_str(), part.c_str(), &tm);
-  unsigned long usec = 0;
-  if (endptr == nullptr && pch != nullptr) {
-    // parse error
-    throw std::logic_error("error parsing time");
-  } else if (pch != nullptr) {
-    char *next;
-    usec = std::strtoul(endptr, &next, 10);
-    // calculate precision
-    auto digits = (unsigned int) (next - endptr);
-    usec *= (unsigned long)pow(10.0, 6 - digits);
-    if ((size_t)(next - format) != strlen(format)) {
-      // still time string to parse
-      detail::strptime(next, pch+2, &tm);
-    }
-  }
-
-  tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
-  struct timeval tv{};
-#ifdef _MSC_VER
-  tv.tv_sec = (long)mktime(&tm);
-  tv.tv_usec = usec;
-#else
-  tv.tv_sec = mktime(&tm);
-  tv.tv_usec = usec;
-#endif
+  struct timeval tv = parse_time_string(tstr, format);
   return matador::time(tv);
 }
 
@@ -186,7 +198,7 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   ::time(&rawtime);
 
   struct tm t{};
-  detail::localtime(rawtime, t);
+  localtime(rawtime, t);
   t.tm_year = year - 1900;
   t.tm_mon = month - 1;
   t.tm_mday = day;
@@ -204,7 +216,12 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   this->time_.tv_usec = millis * 1000;
 
   auto temp = this->time_.tv_sec;
-  detail::localtime(temp, this->tm_);
+  localtime(temp, this->tm_);
+}
+
+void time::set(const char *timestr, const char *format)
+{
+  set(parse_time_string(timestr, format));
 }
 
 void time::set(time_t t, long millis)
@@ -216,7 +233,7 @@ void time::set(time_t t, long millis)
 #endif
   time_.tv_usec = millis * 1000;
   auto temp = this->time_.tv_sec;
-  detail::localtime(temp, tm_);
+  localtime(temp, tm_);
 }
 
 void time::set(const date &d)
@@ -228,7 +245,7 @@ void time::set(timeval tv)
 {
   time_ = tv;
   auto temp = this->time_.tv_sec;
-  detail::localtime(temp, tm_);
+  localtime(temp, tm_);
 }
 
 int time::year() const
@@ -389,4 +406,43 @@ void time::sync_time(int y, int m, int d, int h, int min, int s, long ms)
   set(y, m, d, h, min, s, ms);
 }
 
+timeval time::parse_time_string(const std::string &tstr, const char *format)
+{
+  /*
+  * find the %f format token
+  * and split the string to parse
+  */
+  const char *pch = strstr(format, "%f");
+
+  std::string part(format, (pch ? pch-format : strlen(format)));
+  struct tm tm{};
+  memset(&tm, 0, sizeof(struct tm));
+  const char *endptr = detail::strptime(tstr.c_str(), part.c_str(), &tm);
+  unsigned long usec = 0;
+  if (endptr == nullptr && pch != nullptr) {
+    // parse error
+    throw std::logic_error("error parsing time");
+  } else if (pch != nullptr) {
+    char *next;
+    usec = std::strtoul(endptr, &next, 10);
+    // calculate precision
+    auto digits = (unsigned int) (next - endptr);
+    usec *= (unsigned long)pow(10.0, 6 - digits);
+    if ((size_t)(next - format) != strlen(format)) {
+      // still time string to parse
+      detail::strptime(next, pch+2, &tm);
+    }
+  }
+
+  tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+  struct timeval tv{};
+#ifdef _MSC_VER
+  tv.tv_sec = (long)mktime(&tm);
+  tv.tv_usec = usec;
+#else
+  tv.tv_sec = mktime(&tm);
+  tv.tv_usec = usec;
+#endif
+  return tv;
+}
 }

@@ -141,6 +141,23 @@ std::string to_string(T x, size_t precision = 0, typename std::enable_if<std::is
   }
 }
 
+/**
+ * Skip all whitespace characters (tab, spaces, etc.)
+ * for the given string and return the new position
+ *
+ * @param str String to skip whitespace characters in
+ * @return First non whitespace positon of string
+ */
+OOS_UTILS_API const char* skip_ws(const char *str);
+
+/**
+ * Checks if the given character is end of string.
+ *
+ * @param c Character to check
+ * @return True if character is end of string
+ */
+OOS_UTILS_API bool is_eos(char c);
+
 }
 
 #endif /* STRING_HPP */

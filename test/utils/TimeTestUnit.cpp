@@ -20,6 +20,7 @@ TimeTestUnit::TimeTestUnit()
   add_test("parse", std::bind(&TimeTestUnit::test_parse, this), "parse time");
   add_test("format", std::bind(&TimeTestUnit::test_format, this), "format time");
   add_test("to_date", std::bind(&TimeTestUnit::test_to_date, this), "time to date");
+  add_test("strftime", std::bind(&TimeTestUnit::test_strftime, this), "test strftime");
 }
 
 void TimeTestUnit::test_create()
@@ -303,4 +304,21 @@ void TimeTestUnit::test_to_date()
   UNIT_ASSERT_EQUAL(2014, d1.year());
   UNIT_ASSERT_EQUAL(12, d1.month());
   UNIT_ASSERT_EQUAL(3, d1.day());
+}
+
+void TimeTestUnit::test_strftime()
+{
+  matador::time t(2019, 8, 29, 14, 43, 57, 123);
+
+  struct timeval tv = t.get_timeval();
+
+  char buffer[64];
+
+  strftime(buffer, 64, "%H:%M:%S.%f", &tv);
+
+  UNIT_EXPECT_EQUAL("14:43:57.123", buffer);
+
+  strftime(buffer, 64, "%H:%M:%S.%f %Y", &tv);
+
+  UNIT_EXPECT_EQUAL("14:43:57.123 2019", buffer);
 }

@@ -19,19 +19,26 @@
 
 #include "unit/TestSuiteTestUnit.hpp"
 
+#include "logger/LoggerTest.hpp"
+
 #include "utils/AnyTestUnit.hpp"
 #include "utils/BlobTestUnit.hpp"
 #include "utils/DateTestUnit.hpp"
+#include "utils/FileTestUnit.hpp"
+#include "utils/JsonTestUnit.hpp"
+#include "utils/JsonMapperTestUnit.hpp"
 #include "utils/TimeTestUnit.hpp"
 #include "utils/FactoryTestUnit.hpp"
 #include "utils/StringTestUnit.hpp"
 #include "utils/SequencerTestUnit.hpp"
+#include "utils/OSTest.hpp"
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
-#include "object/ObjectTransactiontestUnit.hpp"
+#include "object/ObjectTransactionTestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
 #include "object/PrimaryKeyUnitTest.hpp"
+#include "object/JsonObjectMapperTest.hpp"
 #include "object/HasManyUnitTest.hpp"
 #include "object/HasManyVectorUnitTest.hpp"
 #include "object/HasManyListUnitTest.hpp"
@@ -52,6 +59,7 @@
 #include "sql/PostgreSQLDialectTestUnit.hpp"
 #include "sql/SQLiteDialectTestUnit.hpp"
 #include "sql/ValueUnitTest.hpp"
+#include "sql/SqlLoggerTest.hpp"
 
 #include "connections.hpp"
 
@@ -80,23 +88,31 @@ int main(int argc, char *argv[])
   suite.register_unit(new AnyTestUnit);
   suite.register_unit(new DateTestUnit);
   suite.register_unit(new TimeTestUnit);
+  suite.register_unit(new FileTestUnit);
   suite.register_unit(new BlobTestUnit);
+  suite.register_unit(new JsonTestUnit);
+  suite.register_unit(new JsonMapperTestUnit);
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);
+  suite.register_unit(new OSTest);
+
+  suite.register_unit(new LoggerTest);
 
   suite.register_unit(new PrimaryKeyUnitTest);
   suite.register_unit(new PrototypeTreeTestUnit);
   suite.register_unit(new ObjectPrototypeTestUnit);
   suite.register_unit(new ObjectStoreTestUnit);
-  suite.register_unit(new ObjectTransactiontestUnit);
+  suite.register_unit(new ObjectTransactionTestUnit);
   suite.register_unit(new HasManyUnitTest);
+  suite.register_unit(new JsonObjectMapperTest);
   suite.register_unit(new HasManyVectorUnitTest);
   suite.register_unit(new HasManyListUnitTest);
   suite.register_unit(new RelationTestUnit);
 
   suite.register_unit(new ConditionUnitTest);
   suite.register_unit(new DialectTestUnit);
+  suite.register_unit(new SqlLoggerTest);
   suite.register_unit(new ValueUnitTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)

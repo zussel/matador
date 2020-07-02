@@ -51,12 +51,10 @@ public:
     static value_type instance_;
     return instance_;
   }
-  virtual ~singleton ()
-  {
-  }
+  virtual ~singleton() = default;
 
 protected:
-  singleton() { }
+  singleton() = default;
 };
 
 }

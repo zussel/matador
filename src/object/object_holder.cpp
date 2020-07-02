@@ -21,7 +21,13 @@ object_holder::object_holder(const object_holder &x)
 object_holder::object_holder(object_holder &&x) noexcept
 {
   object_proxy *proxy = x.proxy_;
-  x.reset(nullptr, x.cascade_, false);
+  if (proxy) {
+    proxy->remove(&x);
+    if (x.is_internal() && x.is_inserted_ && proxy->ostore_) {
+      --(*proxy);
+    }
+  }
+  x.proxy_ = nullptr;
   reset(proxy, x.cascade_, true);
   cascade_ = x.cascade_;
   x.owner_ = nullptr;
@@ -41,7 +47,12 @@ object_holder &object_holder::operator=(object_holder &&x) noexcept
 {
   if (this != &x) {
     object_proxy *proxy = x.proxy_;
-    x.reset(nullptr, x.cascade_, false);
+    if (proxy) {
+      proxy->remove(&x);
+      if (x.is_internal() && x.is_inserted_ && proxy->ostore_) {
+        --(*proxy);
+      }
+    }
     reset(proxy, x.cascade_, true);
     cascade_ = x.cascade_;
     x.owner_ = nullptr;

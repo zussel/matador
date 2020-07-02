@@ -221,7 +221,7 @@ public:
    */
   bool empty () const
   {
-    return false;
+    return p->result_rows() == 0;
   }
 
   /**
