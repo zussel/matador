@@ -352,9 +352,9 @@ public:
    * Returns a reference to the last json object
    * of the array.
    *
-   * If the current type isn't array a json exception
+   * If the current type isn't array an exception
    * is thrown.
-   * @throws json_exception Throws a json_exception
+   * @throws std::logic_error Throws a std::logic_error
    * if the current type isn't of type array
    * @return The reference of the last json object in the array
    */
@@ -364,9 +364,9 @@ public:
    * Returns a const reference to the last json object
    * of the array.
    *
-   * If the current type isn't array a json exception
+   * If the current type isn't array an exception
    * is thrown.
-   * @throws json_exception Throws a json_exception
+   * @throws std::logic_error Throws a std::logic_error
    * if the current type isn't of type array
    * @return The const reference of the last json object in the array
    */
