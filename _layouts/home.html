@@ -48,7 +48,7 @@ layout: default
           <h2 class="centered">Unique Container</h2>
       </div>
       <div class="col-md-6">
-        <p>
+        <p class="centered large">
           matador comes with a unique kind of container where you can store all your objects
           in. Once the hierarchy of your entities is set up you can perform all CRUD operations
           on the container plus filtering and using views.
@@ -95,7 +95,7 @@ for (auto p in res) {
 {% endhighlight %}
       </div>
       <div class="col-md-6">
-        <p>
+        <p class="centered large">
           The sql query module provides simple fluent interface to build sql queries. A query
           can be typed or just work on a anonymous row object. Once a query is setup it can be executed
           directly or be captured in a prepared statement.
@@ -108,7 +108,7 @@ for (auto p in res) {
           <h2 class="centered">Real Relations</h2>
       </div>
       <div class="col-md-6">
-        <p>
+        <p class="centered large">
           matador comes with real relation handling (one to one, one to many and
           many to many). Once one relation side changes the other side of the relation is
           updated automatically. This works with plain object store as well as with
@@ -157,7 +157,7 @@ try {
 {% endhighlight %}
       </div>
       <div class="col-md-6">
-        <p>
+        <p class="centered large">
           With transcations the user has the possibility to pack a couple of changes into a logical
           unit which can be rolled back if one of the changes fails. They can be used within the object store
           and the ORM layer.
@@ -170,7 +170,7 @@ try {
           <h2 class="centered">ORM Layer</h2>
       </div>
       <div class="col-md-6">
-        <p>
+        <p class="centered large">
           The ORM layer finally combines the unique container, the fluent query interface and the
           relation handling. It hides all the database work, takes care of transaction handling and
           object serialization, handles all types of relationships and provides the usera simple interface.

@@ -41,6 +41,10 @@ a.anchor {
   text-align: center;
 }
 
+.large {
+  font-size: large;
+}
+
 pre {
   background-color: transparent;
   font-size: 14px;
