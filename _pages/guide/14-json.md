@@ -154,9 +154,91 @@ auto p = mapper.object_from_string(R"({
 std::cout << p.name << "\n";
 {% endhighlight %}
 
-The ```json_mapper``` supports all default types and the matador types ```identifier```, ```date``` and ```time```. If an error occurrs while parsing the string an ```json_exception``` is thrown.
+The ```json_mapper``` provides also an interface to serialize an array of objects. The returned
+value is a ```std::vector``` of the serialized objects.
+
+{% highlight cpp lineos %}
+auto vec = mapper.array_from_string(R"(  [...]  )");
+
+std::cout << vec.size() << "\n";
+{% endhighlight %}
+
+The ```json_mapper``` supports all default types and the matador types ```identifier```, ```date``` and ```time```. If an error occurs while parsing the string an ```json_exception``` is thrown.
 
 ### Matador Object Mapping
 
-Matador also provides an json object mapper supporting the matador relation types ```has_one```, ```belongs_to``` and ```has_many```. Therefor a special mapper ```json_object_mapper``` is available.
+Matador also provides a json object mapper supporting the matador relation types ```has_one```, ```belongs_to``` and ```has_many```. Therefor a special mapper ```json_object_mapper``` is available.
 
+Asume there is a simple class ```address```
+
+{% highlight cpp lineos %}
+struct address
+{
+    matador::identifier<unsigned long> id;
+    std::string street;
+    std::string city;
+    matador::belongs_to<citizen> citizen_;
+
+    address() = default;
+    address(const std::string &str, const std::string &c)
+        : street(str), city(c)
+    {}
+
+    template < class SERIALIZER >
+    void serialize(SERIALIZER &serializer)
+    {
+        serializer.serialize("id", id);
+        serializer.serialize("street", street, 255);
+        serializer.serialize("city", city, 255);
+        serializer.serialize("citizen", citizen_, matador::cascade_type::NONE);
+    }
+};
+{% endhighlight %}
+
+This address is used in a ```citizen``` class which is derived from the ```person``` class:
+
+{% highlight cpp lineos %}
+struct citizen : public person
+{
+    citizen() = default;
+    explicit citizen(const std::string &name, const matador::date &bdate, unsigned h
+        : person(name, bdate, h) {}
+
+    matador::has_one<address> address_;
+
+    template < class SERIALIZER >
+    void serialize(SERIALIZER &serializer)
+    {
+        serializer.serialize(*matador::base_class<person>(this));
+        serializer.serialize("address", address_, matador::cascade_type::ALL);
+    }
+};
+{% endhighlight %}
+
+There we have a relationship between both classes. Now the ```json_object_mapper``` can serialize a
+json string of this relationship:
+
+{% highlight cpp lineos %}
+json_object_mapper<citizen> mapper;
+
+auto p = mapper.object_from_string(R"(  {
+    "id":  5, "name": "george", "height": 185,
+    "birthdate": "2001-11-27", "address": {
+        "id": 4, "street": "east-street",
+        "city": "east-city", "citizen": 5
+    } 
+} )");
+
+std::cout << p.address_->city << "\n";
+{% endhighlight %}
+
+The ```json_object_mapper``` provides also an interface to serialize an array of objects. The returned
+value is a ```std::vector``` of the serialized objects.
+
+{% highlight cpp lineos %}
+auto vec = mapper.array_from_string(R"(  [...]  )");
+
+std::cout << vec.size() << "\n";
+{% endhighlight %}
+
+If an error occurs a ```json_exception``` is thrown.
