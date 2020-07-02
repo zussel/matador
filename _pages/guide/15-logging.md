@@ -109,7 +109,7 @@ The class ```logger``` provides also an interface to write log messages with an 
 - Debug messages (```log_level::LVL_DEBUG```)
 - Trace messages (```log_level::LVL_TRACE```)
 
-Lets asume there is a class ```NetworkManager``` with a method ```send_data(...)```. When this method is called a debug log message should be written. Therefor place one could a logger as a member
+Lets asume there is a class ```NetworkManager``` with a method ```send_data(...)```. When this method is called a debug log message should be written. Therefor one could place a logger as a member
 of the class.
 
 {% highlight cpp linenos %}
