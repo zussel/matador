@@ -217,9 +217,23 @@ int socket_acceptor<P>::bind(const char* hostname, unsigned short port)
 template < class P >
 int socket_acceptor<P>::bind(peer_type &peer)
 {
-  int ret = ::bind(this->id(), peer.data(), peer.size());
-  if (ret != 0) {
-    return ret;
+  int listenfd = ::socket(peer.protocol().family(), peer.protocol().type(), peer.protocol().protocol());
+  if (listenfd < 0) {
+    // error, try next one
+    return listenfd;
+  }
+
+  const int on = 1;
+  if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
+    throw std::logic_error(strerror(errno));
+  }
+
+  int ret = ::bind(listenfd, peer.data(), peer.size());
+  if (ret == 0) {
+    // success
+    this->assign(listenfd);
+  } else {
+    throw_logic_error("couldn't bind: " << strerror(errno));
   }
   size_t s = peer.size();
   ret = getsockname(this->id(), peer.data(), (socklen_t*)&s);
@@ -279,7 +293,7 @@ int socket_acceptor<P>::accept(socket_base<protocol_type> &sock)
     sock.non_blocking(true);
   }
 
-//    printf("server: got connection from %s\n", get_remote_address(remote_addr).c_str());
+  printf("server: got connection from %s\n", get_remote_address(remote_addr).c_str());
 
   return fd;
 }
