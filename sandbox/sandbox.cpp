@@ -6,7 +6,7 @@
 
 using namespace matador;
 
-class echo_handler : public handler
+class echo_handler : public handler, std::enable_shared_from_this<echo_handler>
 {
 public:
   echo_handler(tcp::socket sock, acceptor *accptr);
@@ -131,7 +131,9 @@ void echo_handler::on_close()
 {
   log_.info("fd %d: closing connection", handle());
   stream_.close();
-  //get_reactor()->unregister_handler(this);
+  auto self = shared_from_this();
+  get_reactor()->mark_handler_for_delete(self);
+  get_reactor()->unregister_handler(self, event_type::READ_WRITE_MASK);
 }
 
 void echo_handler::close()
