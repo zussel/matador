@@ -113,8 +113,9 @@ void reactor::cleanup()
 
 }
 
-void reactor::process_handler(int)
+void reactor::process_handler(int ret)
 {
+  log_.info("process %d handlers", ret);
   handlers_.push_back(sentinel_);
   while (handlers_.front().get() != nullptr) {
     auto h = handlers_.front();

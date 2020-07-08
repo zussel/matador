@@ -25,7 +25,7 @@ int acceptor::handle() const
 void acceptor::on_input()
 {
   tcp::socket sock;
-  log_.debug("accepting connection ...");
+  log_.debug("fd %d: accepting connection ...", handle());
   acceptor_.accept(sock);
 
   // create new client handler
@@ -33,7 +33,7 @@ void acceptor::on_input()
 
   get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
 
-  log_.debug("accepted socket id %d", sock.id());
+  log_.debug("fd %d: accepted socket id %d", handle(), sock.id());
 }
 
 void acceptor::close()

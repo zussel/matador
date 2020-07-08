@@ -6,7 +6,7 @@
 
 using namespace matador;
 
-class echo_handler : public handler, std::enable_shared_from_this<echo_handler>
+class echo_handler : public handler
 {
 public:
   echo_handler(tcp::socket sock, acceptor *accptr);
@@ -92,23 +92,32 @@ void echo_handler::on_input()
     on_close();
   } else {
     log_.info("received %d bytes", len);
-    log_.info("received data: %s", buf);
+//    log_.info("received data: %s", buf);
     data_.assign(buf, len);
+    log_.info("end of data");
   }
 }
 
 void echo_handler::on_output()
 {
-/*
-  HTTP/1.1 200 OK
-  Server: Apache/1.3.29 (Unix) PHP/4.3.4
-  Content-Length: 123456 (Größe von infotext.html in Byte)
-  Content-Language: de (nach RFC 3282 sowie RFC 1766)
-  Connection: close
-  Content-Type: text/html
-*/
+  std::string ret = R"(HTTP/1.1 200 OK
+Server: Matador/0.7.0
+Content-Length: 111
+Content-Language: de
+Connection: close
+Content-Type: text/html
 
-  std::string ret("<a>Hallo</a>");
+<!doctype html>
+<html>
+  <head>
+    <title>Dummy!</title>
+  </head>
+  <body>
+    <p>Help!</p>
+  </body>
+</html>
+)";
+
   char buf[16384];
   buffer chunk(buf, 16384);
   chunk.append(ret.c_str(), ret.size());

@@ -1,11 +1,13 @@
 #ifndef MATADOR_HANDLER_HPP
 #define MATADOR_HANDLER_HPP
 
+#include <memory>
+
 namespace matador {
 
 class reactor;
 
-class handler
+class handler : public std::enable_shared_from_this<handler>
 {
 public:
   virtual void open() = 0;
