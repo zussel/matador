@@ -10,7 +10,8 @@
 namespace matador {
 
 reactor::reactor()
-  : log_(create_logger("reactor"))
+  : sentinel_(std::shared_ptr<handler>(nullptr))
+  , log_(create_logger("reactor"))
 {
 
 }
@@ -95,6 +96,9 @@ void reactor::prepare_fdsets()
 {
   fdsets_.reset();
   for (const auto &h : handlers_) {
+    if (h == nullptr) {
+      continue;
+    }
     if (h->is_ready_read()) {
       fdsets_.read_set().set(h->handle());
     }
@@ -111,15 +115,21 @@ void reactor::cleanup()
 
 void reactor::process_handler(int)
 {
-  for (auto h : handlers_) {
+  handlers_.push_back(sentinel_);
+  while (handlers_.front().get() != nullptr) {
+    auto h = handlers_.front();
+    handlers_.pop_front();
+    handlers_.push_back(h);
     // check for read/accept
-    if (h->handle() > 0 && fdsets_.read_set().is_set(h->handle())) {
-      h->on_input();
-    }
     if (h->handle() > 0 && fdsets_.write_set().is_set(h->handle())) {
       h->on_output();
     }
+    if (h->handle() > 0 && fdsets_.read_set().is_set(h->handle())) {
+      h->on_input();
+    }
+    handlers_to_delete_.clear();
   }
+  handlers_.pop_front();
 }
 
 void reactor::process_timeout()
@@ -147,4 +157,8 @@ const select_fdsets &reactor::fdsets() const
   return fdsets_;
 }
 
+void reactor::mark_handler_for_delete(const std::shared_ptr<handler>& h)
+{
+  handlers_to_delete_.push_back(h);
+}
 }

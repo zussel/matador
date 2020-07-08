@@ -6,7 +6,7 @@
 
 #include "matador/logger/logger.hpp"
 
-#include <vector>
+#include <list>
 #include <memory>
 
 namespace matador {
@@ -25,6 +25,8 @@ public:
 
   const select_fdsets& fdsets() const;
 
+  void mark_handler_for_delete(const std::shared_ptr<handler>& h);
+
 private:
   void process_handler(int num);
   void process_timeout();
@@ -38,9 +40,9 @@ private:
   void cleanup();
 
 private:
-//  std::unordered_map<int, handler*> handler_map_;
-
-  std::vector<std::shared_ptr<handler>> handlers_;
+  std::shared_ptr<handler> sentinel_;
+  std::list<std::shared_ptr<handler>> handlers_;
+  std::list<std::shared_ptr<handler>> handlers_to_delete_;
 
   select_fdsets fdsets_;
 

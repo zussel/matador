@@ -15,7 +15,7 @@ class acceptor : public handler
 public:
   typedef std::function<std::shared_ptr<handler>(tcp::socket sock, acceptor *accptr)> make_handler_func;
 
-  explicit acceptor(make_handler_func on_new_connection);
+  explicit acceptor(const tcp::peer& endpoint, make_handler_func on_new_connection);
 
   void open() override;
   int handle() const override;
@@ -32,6 +32,7 @@ public:
 
 private:
   tcp::acceptor acceptor_;
+  tcp::peer endpoint_;
 
   make_handler_func make_handler_;
 

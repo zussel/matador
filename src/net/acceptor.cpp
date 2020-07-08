@@ -4,15 +4,17 @@
 #include "matador/logger/log_manager.hpp"
 
 namespace matador {
-acceptor::acceptor(make_handler_func make_handler)
-  : make_handler_(std::move(make_handler))
+acceptor::acceptor(const tcp::peer& endpoint, make_handler_func make_handler)
+  : endpoint_(endpoint)
+  , make_handler_(std::move(make_handler))
   , log_(matador::create_logger("Acceptor"))
 {}
 
 void acceptor::open()
 {
-  acceptor_.bind()
+  acceptor_.bind(endpoint_);
   acceptor_.listen(10);
+  log_.info("fd %d: accepting connections", handle());
 }
 
 int acceptor::handle() const
@@ -28,8 +30,6 @@ void acceptor::on_input()
 
   // create new client handler
   auto h = make_handler_(sock, this);
-
-  h->open();
 
   get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
 
