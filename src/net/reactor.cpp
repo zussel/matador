@@ -39,6 +39,16 @@ void reactor::unregister_handler(std::shared_ptr<handler> h, event_type)
   }
 }
 
+void reactor::schedule_timer(std::shared_ptr<handler> h, time_t offset, time_t interval)
+{
+
+}
+
+void reactor::cancel_timer(std::shared_ptr<handler> h)
+{
+
+}
+
 void reactor::run()
 {
   log_.info("starting reactor");
