@@ -92,8 +92,8 @@ void echo_handler::on_input()
     on_close();
   } else {
     log_.info("received %d bytes", len);
-//    log_.info("received data: %s", buf);
     data_.assign(buf, len);
+    log_.info("received data: %s", data_.c_str());
     log_.info("end of data");
   }
 }
