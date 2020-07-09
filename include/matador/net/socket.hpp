@@ -36,6 +36,10 @@ public:
 
   bool non_blocking() const;
 
+  void cloexec(bool nb);
+
+  bool cloexec() const;
+
   int options(int name, bool value);
 
   int id() const;
@@ -49,6 +53,7 @@ protected:
   int open(int family, int type, int protocol);
 
   int sock_ = 0;
+  std::string name_;
 };
 
 /*

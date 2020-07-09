@@ -94,6 +94,46 @@ bool socket_base<P>::non_blocking() const
 }
 
 template < class P >
+void socket_base<P>::cloexec(bool nb)
+{
+#ifdef WIN32
+  unsigned long cloexec = 1;
+    switch(flags) {
+    case FD_CLOEXEC:
+      // fcntl doesn't do the right thing, but the simular ioctl does
+      // warning: is that still true? and does it the right thing for
+      // set blocking as well?
+      return ioctlsocket(fd, FIONBIO, &cloexec);
+    default:
+      return 0;
+    }
+#else
+  int val = fcntl(sock_, F_GETFL, 0);
+  if (val < 0) {
+    throw std::logic_error("fcntl: couldn't get flags");
+  }
+
+  int flag = (nb ? FD_CLOEXEC : 0);
+  if (fcntl(sock_, F_SETFL, val | flag) < 0) {
+    std::string err(strerror(errno));
+    throw std::logic_error("fcntl: couldn't set flags (" + err + ")");
+  }
+#endif
+}
+
+template < class P >
+bool socket_base<P>::cloexec() const
+{
+  int val = fcntl(sock_, F_GETFL, 0);
+  if (val < 0) {
+    std::string err(strerror(errno));
+    throw std::logic_error("fcntl: couldn't get flags (" + err + ")");
+  }
+  return (val & FD_CLOEXEC) > 0;
+
+}
+
+template < class P >
 int socket_base<P>::options(int name, bool value)
 {
   int flag = (value ? 1 : 0);
@@ -112,6 +152,15 @@ void socket_base<P>::assign(int sock)
   if (is_open()) {
     throw std::logic_error("couldn't assign: socket already opened");
   }
+
+  struct sockaddr_in addr{};
+  socklen_t addr_size = sizeof(struct sockaddr_in);
+  int res = getpeername(sock, (struct sockaddr *)&addr, &addr_size);
+  char *clientip = new char[20];
+  char s[INET6_ADDRSTRLEN];
+  inet_ntop(addr.sin_family, &addr.sin_addr, s, sizeof s);
+  strcpy(clientip, inet_ntoa(addr.sin_addr));
+
   sock_ = sock;
 }
 
@@ -291,6 +340,7 @@ int socket_acceptor<P>::accept(socket_base<protocol_type> &sock)
   if (fd > 0) {
     sock.assign(fd);
     sock.non_blocking(true);
+    sock.cloexec(true);
   }
 
   printf("server: got connection from %s\n", get_remote_address(remote_addr).c_str());

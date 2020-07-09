@@ -28,6 +28,7 @@ void acceptor::on_input()
   log_.debug("fd %d: accepting connection ...", handle());
   acceptor_.accept(sock);
 
+  sock.cloexec(true);
   // create new client handler
   auto h = make_handler_(sock, this);
 
