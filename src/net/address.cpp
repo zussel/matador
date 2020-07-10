@@ -12,6 +12,7 @@
 
 namespace matador {
 
+address_router address::v4 = address_router(IN)
 address::address()
 {
   memset(&addr_, 0, sizeof(addr_));
