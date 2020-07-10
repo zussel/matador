@@ -1,4 +1,5 @@
 #include <matador/utils/buffer.hpp>
+#include <utility>
 #include "matador/net/acceptor.hpp"
 #include "matador/net/reactor.hpp"
 #include "matador/logger/logger.hpp"
@@ -47,12 +48,16 @@ int main()
 
   tcp::peer endpoint(tcp::v4(), 7090);
 
-  auto acceptor_7090 = std::make_shared<acceptor>(endpoint, [](tcp::socket sock, acceptor *accptr) {return std::make_shared<echo_handler>(sock, accptr);});
+  auto acceptor_7090 = std::make_shared<acceptor>(endpoint, [](const tcp::socket& sock, acceptor *accptr) {
+    return std::make_shared<echo_handler>(sock, accptr);
+  });
 
   reactor rctr;
   rctr.register_handler(acceptor_7090, event_type::ACCEPT_MASK);
 
   rctr.run();
+
+
 
 //  http::server serv;
 //
@@ -64,7 +69,7 @@ int main()
 }
 
 echo_handler::echo_handler(tcp::socket sock, acceptor *accptr)
-  : stream_(sock), acceptor_(accptr)
+  : stream_(std::move(sock)), acceptor_(accptr)
   , log_(create_logger("EchoHandler"))
 {
 
