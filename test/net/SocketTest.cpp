@@ -50,11 +50,11 @@ void SocketTest::test_acceptor_v4()
   UNIT_ASSERT_EQUAL(0, acceptor.reuse_address(true));
   UNIT_ASSERT_TRUE(acceptor.reuse_address());
 
-  tcp::peer local(address::any(), 12345);
+  tcp::peer local(address::v4::any(), 12345);
   UNIT_ASSERT_EQUAL(0, acceptor.bind(local));
   UNIT_ASSERT_EQUAL(0, acceptor.listen(5));
 
-  tcp::peer localhost12345(address::loopback(), 12345);
+  tcp::peer localhost12345(address::v4::loopback(), 12345);
   tcp::socket s(tcp::v4());
   UNIT_ASSERT_EQUAL(0, s.connect(localhost12345));
 

@@ -7,120 +7,90 @@
 #include <libnet.h>
 #endif
 
-#include <cstring>
 #include <stdexcept>
 
 namespace matador {
 
-address_router address::v4 = address_router(IN)
+const char* address_router<V6>::IP6ADDR_MULTICAST_ALLNODES = "FF02::1";
+
 address::address()
 {
-  memset(&addr_, 0, sizeof(addr_));
-  addr_.sin_family = PF_INET;
+//  memset(&addr_, 0, sizeof(addr_));
+//  addr_.sin_family = PF_INET;
 }
 
-address::address(unsigned int addr)
-{
-  memset(&addr_, 0, sizeof(addr_));
-  addr_.sin_family = PF_INET;
-  addr_.sin_addr.s_addr = htonl(addr);
-}
+address::address(const sockaddr_in *addr)
+  : addr_((struct sockaddr*)addr)
+  , size_(sizeof(sockaddr_in))
+{}
 
-address address::any()
-{
-  return address(static_cast<unsigned int>(INADDR_ANY));
-}
-
-address address::loopback()
-{
-  return address(static_cast<unsigned int>(INADDR_LOOPBACK));
-}
-
-address address::broadcast()
-{
-  return address(static_cast<unsigned int>(INADDR_BROADCAST));
-}
-
-address address::from_ip(const std::string &str)
-{
-  return address::from_ip(str.c_str());
-}
-
-address address::from_ip(const char *str)
-{
-  // now fill in the address info struct
-  // create and fill the hints struct
-  if (str == nullptr) {
-    return address();
-  }
-  // get address from string
-  address tmp;
-  inet_pton(PF_INET, str, &(tmp.addr_.sin_addr));
-
-  /*
-  unsigned long ip = inet_addr(str);
-  if (ip != INADDR_NONE) {
-    tmp.addr_.sin_addr.s_addr = ip;
-  } else {
-	  struct hostent *he;
-	  if ((he=gethostbyname(str)) == NULL) {  // get the host info
-      return address();
-      //throw new std::exception("error: gethostbyname failed", WSAGetLastError());
-	  }
-	  tmp.addr_.sin_addr = *((struct in_addr *)he->h_addr);
-  }
-  tmp.addr_.sin_family = PF_INET;
-  memset(tmp.addr_.sin_zero, '\0', sizeof(tmp.addr_.sin_zero));
-  */
-  return tmp;
-}
-
-address address::from_hostname(const std::string &str)
-{
-  return address::from_hostname(str.c_str());
-}
-
-address address::from_hostname(const char *str)
-{
-  // now fill in the address info struct
-  // create and fill the hints struct
-  if (str == nullptr) {
-    return address();
-  }
-  // get address from string
-  address tmp;
-  unsigned int ip = inet_addr(str);
-  if (ip != INADDR_NONE) {
-    tmp.addr_.sin_addr.s_addr = ip;
-  } else {
-    struct hostent *he;
-    if ((he=gethostbyname(str)) == nullptr) {  // get the host info
-      return address();
-      //throw new std::exception("error: gethostbyname failed", WSAGetLastError());
-    }
-    tmp.addr_.sin_addr = *((struct in_addr *)he->h_addr);
-  }
-  tmp.addr_.sin_family = PF_INET;
-  memset(tmp.addr_.sin_zero, '\0', sizeof(tmp.addr_.sin_zero));
-  return tmp;
-}
+address::address(const sockaddr_in6 *addr)
+  : addr_((struct sockaddr*)addr)
+  , size_(sizeof(sockaddr_in6))
+{}
 
 unsigned int address::to_ulong() const
 {
-  return addr_.sin_addr.s_addr;
-//  return ntohl(addr_.sin_addr.s_addr);
+  if (addr_->sa_family == PF_INET) {
+    return reinterpret_cast<const sockaddr_in *>(addr_)->sin_addr.s_addr;
+  } else {
+    return 0;
+    //return reinterpret_cast<sockaddr_in6 *>(addr_)->sin6_addr;
+  }
 }
 
 std::string address::to_string() const
 {
-  char addstr[INET_ADDRSTRLEN];
-  const char *str = inet_ntop(addr_.sin_family, &(addr_.sin_addr), addstr, INET_ADDRSTRLEN);
-  if (str == nullptr) {
-    throw std::logic_error("inet_ntop error");
+  if (addr_->sa_family == PF_INET) {
+    char addstr[INET_ADDRSTRLEN];
+    auto addr6 = reinterpret_cast<const sockaddr_in *>(addr_);
+    const char *str = inet_ntop(addr6->sin_family, &(addr6->sin_addr), addstr, INET_ADDRSTRLEN);
+    if (str == nullptr) {
+      throw std::logic_error("inet_ntop error");
+    }
+    return str;
+  } else {
+    return std::string();
   }
-  return str;
 
 //  return inet_ntoa(addr_.sin_addr);
 }
 
+void address::port(in_port_t pn)
+{
+  if (addr_->sa_family == PF_INET) {
+    reinterpret_cast<sockaddr_in*>(addr_)->sin_port = htons(pn);
+  } else {
+    reinterpret_cast<sockaddr_in6*>(addr_)->sin6_port = htons(pn);
+  }
+}
+
+in_port_t address::port() const
+{
+  if (addr_->sa_family == PF_INET) {
+    return reinterpret_cast<sockaddr_in*>(addr_)->sin_port;
+  } else {
+    return reinterpret_cast<sockaddr_in6*>(addr_)->sin6_port;
+  }
+}
+
+bool address::is_v4() const
+{
+  return addr_->sa_family == PF_INET;
+}
+
+bool address::is_v6() const
+{
+  return addr_->sa_family == PF_INET6;
+}
+
+sockaddr *address::addr() const
+{
+  return addr_;
+}
+
+socklen_t address::size() const
+{
+  return size_;
+}
 }

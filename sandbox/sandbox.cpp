@@ -46,7 +46,7 @@ int main()
   matador::add_log_sink(s);
   matador::add_log_sink(matador::create_stdout_sink());
 
-  tcp::peer endpoint(tcp::v4(), 7090);
+  tcp::peer endpoint(address::v4::any() , 7090);
 
   auto acceptor_7090 = std::make_shared<acceptor>(endpoint, [](const tcp::socket& sock, acceptor *accptr) {
     return std::make_shared<echo_handler>(sock, accptr);

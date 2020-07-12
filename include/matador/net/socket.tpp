@@ -155,7 +155,9 @@ void socket_base<P>::assign(int sock)
 
   struct sockaddr_in addr{};
   socklen_t addr_size = sizeof(struct sockaddr_in);
-  int res = getpeername(sock, (struct sockaddr *)&addr, &addr_size);
+  if (getpeername(sock, (struct sockaddr *)&addr, &addr_size) == -1) {
+    //throw std::logic_error(strerror(errno));
+  }
   char *clientip = new char[20];
   char s[INET6_ADDRSTRLEN];
   inet_ntop(addr.sin_family, &addr.sin_addr, s, sizeof s);

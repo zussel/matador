@@ -2,11 +2,14 @@
 #define MATADOR_ADDRESS_HPP
 
 #include <string>
+#include <cstring>
 
 #ifdef _WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
+#include <libnet.h>
+
 #endif
 
 namespace matador {
@@ -15,67 +18,143 @@ enum protocol_family {
   V4, V6
 };
 
-template < protocol_family pf >
+template < protocol_family PF >
 class address_router;
 
 class address
 {
-public:
+private:
   address();
-  explicit address(unsigned int addr);
-  address(const address &x) = default;
 
-  static address any();
-  static address loopback();
-  static address broadcast();
-  static address from_ip(const std::string &str);
-  static address from_ip(const char *str);
-  static address from_hostname(const std::string &str);
-  static address from_hostname(const char *str);
+public:
+  explicit address(const sockaddr_in *addr);
+  explicit address(const sockaddr_in6 *addr);
+
+  address(const address &x) = default;
 
   unsigned int to_ulong() const;
   std::string to_string() const;
 
-  static const address_router<V4> v4;
-  static const address_router<V6> v6;
+  void port(in_port_t pn);
+  in_port_t port() const;
+
+  bool is_v4() const;
+  bool is_v6() const;
+
+
+  sockaddr* addr() const;
+  socklen_t size() const;
+
+  typedef address_router<V4> v4;
+  typedef address_router<V6> v6;
 
 private:
-  sockaddr_in addr_ = {};
+  template < protocol_family PF >
+  friend class address_router;
+
+  sockaddr *addr_ = nullptr;
+  socklen_t size_ = 0;
 };
 
 template <>
 class address_router<V4>
 {
 public:
-  address_router() = default;
+  address_router() = delete;
   address_router& operator=(const address_router&) = delete;
   address_router(const address_router&) = delete;
   address_router& operator=(address_router&&) = delete;
   address_router(address_router&&) = delete;
 
-  address any() { return address(static_cast<unsigned int>(INADDR_ANY)); }
-  address loopback() { return address(static_cast<unsigned int>(INADDR_LOOPBACK)); }
-  address broadcast() {return address(static_cast<unsigned int>(INADDR_BROADCAST)); }
-//  address from_ip(const std::string &str);
-//  address from_ip(const char *str);
-//  address from_hostname(const std::string &str);
-//  address from_hostname(const char *str);
+  static address any() { return mk_address(INADDR_ANY); }
+  static address loopback() { return mk_address(INADDR_LOOPBACK); }
+  static address broadcast() {return mk_address(INADDR_BROADCAST); }
+  static address from_ip(const std::string &str) { return from_ip(str.c_str()); }
+  static address from_ip(const char *str)
+  {
+    // now fill in the address info struct
+    // create and fill the hints struct
+    if (str == nullptr) {
+      return address();
+    }
+    // get address from string
 
+    auto *addr = new sockaddr_in;
+    inet_pton(PF_INET, str, &(addr->sin_addr));
+    addr->sin_family = PF_INET;
+    return address(addr);
+  }
+  static address from_hostname(const std::string &str) { return from_hostname(str.c_str()); }
+  static address from_hostname(const char *str)
+  {
+    // now fill in the address info struct
+    // create and fill the hints struct
+    if (str == nullptr) {
+      return address();
+    }
+    // get address from string
+    auto *addr = new sockaddr_in;
+    unsigned int ip = inet_addr(str);
+    if (ip != INADDR_NONE) {
+      addr->sin_addr.s_addr = ip;
+    } else {
+      struct hostent *he;
+      if ((he=gethostbyname(str)) == nullptr) {  // get the host info
+        return address();
+        //throw new std::exception("error: gethostbyname failed", WSAGetLastError());
+      }
+      addr->sin_addr = *((struct in_addr *)he->h_addr);
+    }
+    addr->sin_family = PF_INET;
+    memset(addr->sin_zero, '\0', sizeof(addr->sin_zero));
+    return address(addr);
+  }
+
+private:
+  static address mk_address(unsigned int inaddr)
+  {
+    auto *addr = new sockaddr_in;
+    memset(addr, 0, sizeof(*addr));
+    addr->sin_family = PF_INET;
+    addr->sin_addr.s_addr = htonl(inaddr);
+    return address(addr);
+  }
 };
 
 template <>
 class address_router<V6>
 {
 public:
-  address_router() = default;
+  address_router() = delete;
   address_router& operator=(const address_router&) = delete;
   address_router(const address_router&) = delete;
   address_router& operator=(address_router&&) = delete;
   address_router(address_router&&) = delete;
 
-  address any() { return address(static_cast<unsigned int>(INADDR_ANY)); }
-  address loopback() { return address(static_cast<unsigned int>(INADDR_LOOPBACK)); }
-  address broadcast() {return address(static_cast<unsigned int>(INADDR_BROADCAST)); }
+  static address any() { return mk_address(in6addr_any); }
+  static address loopback() { return mk_address(in6addr_loopback); }
+  static address broadcast() {return mk_multicast_address(); }
+
+private:
+  static const char *IP6ADDR_MULTICAST_ALLNODES;
+
+  static address mk_address(in6_addr in6addr)
+  {
+    auto *addr = new sockaddr_in6;
+    memset(addr, 0, sizeof(*addr));
+    addr->sin6_family = PF_INET6;
+    addr->sin6_addr = in6addr;
+    return address(addr);
+  }
+
+  static address mk_multicast_address()
+  {
+    auto *addr = new sockaddr_in6;
+    memset(addr, 0, sizeof(*addr));
+    addr->sin6_family = PF_INET6;
+    inet_pton(AF_INET6, IP6ADDR_MULTICAST_ALLNODES, &addr->sin6_addr);
+    return address(addr);
+  }
 //  address from_ip(const std::string &str);
 //  address from_ip(const char *str);
 //  address from_hostname(const std::string &str);
