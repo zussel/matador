@@ -235,6 +235,33 @@ void logger::log(log_level lvl, const char *what, ARGS const &... args)
   logger_domain_->log(lvl, source_, message_buffer);
 }
 
+/*
+
+ template<typename T>
+decltype(auto) myForward(T&& t)
+{
+    return t;
+}
+
+template<>
+decltype(auto) myForward(std::string& t)
+{
+    return t.c_str();
+}
+
+template<>
+decltype(auto) myForward(std::string&& t)
+{
+    return t.c_str();
+}
+
+template<typename... Args>
+static void log(const char* pszFmt, Args&&... args)
+{
+    doSomething(pszFmt, myForward<Args>(std::forward<Args>(args))...);
+}
+
+ */
 }
 
 #endif //MATADOR_LOGGER_HPP
