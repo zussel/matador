@@ -39,7 +39,7 @@ int fdset::max() const
 
 size_t fdset::count() const
 {
-  return max_fd_set_.size();
+  return max_fd_set_.size() - 1;
 }
 
 bool fdset::empty() const

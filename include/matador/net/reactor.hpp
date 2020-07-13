@@ -20,8 +20,8 @@ public:
   void register_handler(const std::shared_ptr<handler>& h, event_type type);
   void unregister_handler(const std::shared_ptr<handler>& h, event_type type);
 
-  void schedule_timer(std::shared_ptr<handler> h, time_t offset, time_t interval);
-  void cancel_timer(std::shared_ptr<handler> h);
+  void schedule_timer(const std::shared_ptr<handler>& h, time_t offset, time_t interval);
+  void cancel_timer(const std::shared_ptr<handler>& h);
 
   void run();
   void shutdown();
@@ -32,17 +32,18 @@ public:
 
 private:
   void process_handler(int num);
-  void process_timeout();
 
   void on_read_mask();
   void on_write_mask();
   void on_except_mask();
 
-  void prepare_fdsets();
+  void prepare_select_bits(time_t& timeout);
 
   void remove_deleted();
 
   void cleanup();
+
+  int select(struct timeval* timeout);
 
 private:
   std::shared_ptr<handler> sentinel_;

@@ -52,8 +52,10 @@ int main()
     return std::make_shared<echo_handler>(sock, accptr);
   });
 
+  auto ht = std::make_shared<echo_handler>(tcp::socket(), nullptr);
   reactor rctr;
   rctr.register_handler(acceptor_7090, event_type::ACCEPT_MASK);
+  rctr.schedule_timer(ht, 2, 3);
 
   rctr.run();
 
@@ -144,7 +146,7 @@ void echo_handler::on_except()
 
 void echo_handler::on_timeout()
 {
-
+  log_.info("hello from the timeout");
 }
 
 void echo_handler::on_close()
