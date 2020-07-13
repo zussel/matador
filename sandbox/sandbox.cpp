@@ -87,6 +87,12 @@ int echo_handler::handle() const
 
 void echo_handler::on_input()
 {
+    /*
+    GET / HTTP/1.1
+    Host: localhost:7090
+    User-Agent: curl/7.70.0
+    Accept: * / *
+    */
   char buf[16384];
   buffer chunk(buf, 16384);
   auto len = stream_.receive(chunk);
@@ -152,7 +158,8 @@ void echo_handler::on_close()
 
 void echo_handler::close()
 {
-
+    log_.info("fd %d: closing connection", handle());
+    stream_.close();
 }
 
 bool echo_handler::is_ready_write() const

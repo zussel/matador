@@ -4,7 +4,8 @@
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
-#include <libnet.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 #endif
 
 #include <stdexcept>

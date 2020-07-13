@@ -17,8 +17,8 @@ class reactor {
 public:
   reactor();
 
-  void register_handler(std::shared_ptr<handler> h, event_type type);
-  void unregister_handler(std::shared_ptr<handler> h, event_type type);
+  void register_handler(const std::shared_ptr<handler>& h, event_type type);
+  void unregister_handler(const std::shared_ptr<handler>& h, event_type type);
 
   void schedule_timer(std::shared_ptr<handler> h, time_t offset, time_t interval);
   void cancel_timer(std::shared_ptr<handler> h);
@@ -39,6 +39,8 @@ private:
   void on_except_mask();
 
   void prepare_fdsets();
+
+  void remove_deleted();
 
   void cleanup();
 

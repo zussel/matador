@@ -16,7 +16,7 @@ reactor::reactor()
 
 }
 
-void reactor::register_handler(std::shared_ptr<handler> h, event_type)
+void reactor::register_handler(const std::shared_ptr<handler>& h, event_type)
 {
   h->open();
 
@@ -29,7 +29,7 @@ void reactor::register_handler(std::shared_ptr<handler> h, event_type)
   }
 }
 
-void reactor::unregister_handler(std::shared_ptr<handler> h, event_type)
+void reactor::unregister_handler(const std::shared_ptr<handler>& h, event_type)
 {
   auto it = std::find(handlers_.begin(), handlers_.end(), h);
 
@@ -91,6 +91,8 @@ void reactor::run()
         process_handler(ret);
         break;
     }
+
+    remove_deleted();
   }
 
   cleanup();
@@ -116,6 +118,10 @@ void reactor::prepare_fdsets()
       fdsets_.write_set().set(h->handle());
     }
   }
+}
+
+void reactor::remove_deleted() {
+
 }
 
 void reactor::cleanup()
