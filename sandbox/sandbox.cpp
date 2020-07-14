@@ -42,8 +42,7 @@ private:
 
 int main()
 {
-  auto s = matador::create_file_sink("log/net.log");
-  matador::add_log_sink(s);
+  matador::add_log_sink(matador::create_file_sink("log/net.log"));
   matador::add_log_sink(matador::create_stdout_sink());
 
   tcp::peer endpoint(address::v4::any() , 7090);
@@ -53,11 +52,11 @@ int main()
   });
 
   auto ht = std::make_shared<echo_handler>(tcp::socket(), nullptr);
-  reactor rctr;
-  rctr.register_handler(acceptor_7090, event_type::ACCEPT_MASK);
-  rctr.schedule_timer(ht, 2, 3);
+  reactor r;
+  r.register_handler(acceptor_7090, event_type::ACCEPT_MASK);
+  r.schedule_timer(ht, 2, 3);
 
-  rctr.run();
+  r.run();
 
 
 

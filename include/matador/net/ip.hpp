@@ -1,12 +1,25 @@
 #ifndef MATADOR_IP_HPP
 #define MATADOR_IP_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_net_EXPORTS
+    #define OOS_NET_API __declspec(dllexport)
+    #define EXPIMP_NET_TEMPLATE
+  #else
+    #define OOS_NET_API __declspec(dllimport)
+    #define EXPIMP_NET_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_NET_API
+#endif
+
 #include "matador/net/peer.hpp"
 #include "matador/net/socket.hpp"
 
 namespace matador {
 
-class tcp
+class OOS_NET_API tcp
 {
 public:
   typedef peer_base<tcp> peer;
@@ -29,7 +42,7 @@ private:
   int family_;
 };
 
-class udp
+class OOS_NET_API udp
 {
 public:
   typedef peer_base<udp> peer;
