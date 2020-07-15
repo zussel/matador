@@ -28,7 +28,7 @@ public:
 //    sockaddr_.sin_addr.s_addr = INADDR_ANY;
 //  }
 
-  explicit peer_base(const address &addr, in_port_t port = 0)
+  explicit peer_base(const address &addr, unsigned short port = 0)
     : addr_(addr)
   {
     addr_.port(port);

@@ -18,7 +18,11 @@
 
 #include <cstddef>
 
+#ifdef _WIN32
+#include <winsock2.h>
+#else
 #include <sys/select.h>
+#endif
 
 namespace matador {
 
@@ -39,7 +43,7 @@ public:
   void clear(int fd);
   void set(int fd);
 
-  int max() const;
+  int maxp1() const;
 
   size_t count() const;
 

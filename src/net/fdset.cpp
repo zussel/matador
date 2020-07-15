@@ -32,7 +32,7 @@ void fdset::set(int fd)
   max_fd_set_.insert(fd);
 }
 
-int fdset::max() const
+int fdset::maxp1() const
 {
   return *max_fd_set_.begin();
 }

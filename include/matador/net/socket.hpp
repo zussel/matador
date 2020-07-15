@@ -4,10 +4,15 @@
 #include <stdexcept>
 #include <sstream>
 
+#ifdef _WIN32
+#include <winsock.h>
+#else
 #include <sys/socket.h>
 #include <fcntl.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#endif
+
 #include <cstring>
 
 namespace matador {
@@ -72,10 +77,10 @@ public:
   explicit socket_stream(const protocol_type &protocol);
 
   template < class Buffer >
-  ssize_t receive(Buffer &buffer);
+  long receive(Buffer &buffer);
 
   template < class Buffer >
-  ssize_t send(const Buffer &buffer);
+  long send(const Buffer &buffer);
 };
 
 /*

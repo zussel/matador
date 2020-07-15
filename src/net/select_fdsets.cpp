@@ -1,10 +1,12 @@
 #include "matador/net/select_fdsets.hpp"
 
+#include <algorithm>
+
 namespace matador {
 
-int select_fdsets::max() const
+int select_fdsets::maxp1() const
 {
-  return std::max(fdsets_[0].max(), std::max(fdsets_[1].max(), fdsets_[2].max()));
+  return (std::max)(fdsets_[0].maxp1(), (std::max)(fdsets_[1].maxp1(), fdsets_[2].maxp1()));
 }
 
 fdset& select_fdsets::fd_set(fdset_type type)

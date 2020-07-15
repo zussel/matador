@@ -1,5 +1,7 @@
 #include "matador/net/handler.hpp"
 
+#include <ctime>
+
 namespace matador {
 
 time_t handler::next_timeout() const

@@ -57,7 +57,7 @@ std::string address::to_string() const
 //  return inet_ntoa(addr_.sin_addr);
 }
 
-void address::port(in_port_t pn)
+void address::port(unsigned short pn)
 {
   if (addr_->sa_family == PF_INET) {
     reinterpret_cast<sockaddr_in*>(addr_)->sin_port = htons(pn);
@@ -66,7 +66,7 @@ void address::port(in_port_t pn)
   }
 }
 
-in_port_t address::port() const
+unsigned short address::port() const
 {
   if (addr_->sa_family == PF_INET) {
     return reinterpret_cast<sockaddr_in*>(addr_)->sin_port;

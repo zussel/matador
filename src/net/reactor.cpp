@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cerrno>
 #include <cstring>
+#include <ctime>
 
 namespace matador {
 
@@ -72,13 +73,13 @@ void reactor::run()
     log_.info("next timeout in %d sec", timeout);
     struct timeval tselect{};
     struct timeval* p = nullptr;
-    if (timeout < std::numeric_limits<time_t>::max()) {
+    if (timeout < (std::numeric_limits<time_t>::max)()) {
       tselect.tv_sec = timeout;
       tselect.tv_usec = 0;
       p = &tselect;
     }
 
-    if (fdsets_.max() < 1) {
+    if (fdsets_.maxp1() < 1) {
       return;
     }
 
@@ -108,7 +109,7 @@ void reactor::prepare_select_bits(time_t& timeout)
 {
   fdsets_.reset();
   time_t now = ::time(nullptr);
-  timeout = std::numeric_limits<time_t>::max();
+  timeout = (std::numeric_limits<time_t>::max)();
   for (const auto &h : handlers_) {
     if (h == nullptr) {
       continue;
@@ -120,7 +121,7 @@ void reactor::prepare_select_bits(time_t& timeout)
       fdsets_.write_set().set(h->handle());
     }
     if (h->next_timeout() > 0) {
-      timeout = std::min(timeout, h->next_timeout() <= now ? 0 : (h->next_timeout() - now));
+      timeout = (std::min)(timeout, h->next_timeout() <= now ? 0 : (h->next_timeout() - now));
     }
   }
 }
@@ -137,7 +138,7 @@ void reactor::cleanup()
 int reactor::select(struct timeval *timeout)
 {
   return ::select(
-    fdsets_.max() + 1,
+    fdsets_.maxp1() + 1,
     fdsets_.read_set().get(),
     fdsets_.write_set().get(),
     fdsets_.except_set().get(),

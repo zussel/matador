@@ -27,7 +27,7 @@ public:
     except_type
   } fdset_type;
 
-  int max() const;
+  int maxp1() const;
 
   fdset& fd_set(fdset_type type);
 

@@ -19,6 +19,8 @@
 
 #ifdef _WIN32
 #include <winsock2.h>
+#include <ws2ipdef.h>
+#include <WS2tcpip.h>
 #else
 #include <netinet/in.h>
 #include <libnet.h>
@@ -48,8 +50,8 @@ public:
   unsigned int to_ulong() const;
   std::string to_string() const;
 
-  void port(in_port_t pn);
-  in_port_t port() const;
+  void port(unsigned short pn);
+  unsigned short port() const;
 
   bool is_v4() const;
   bool is_v6() const;
@@ -107,7 +109,9 @@ public:
     }
     // get address from string
     auto *addr = new sockaddr_in;
+    unsigned int ip = InetPton(AF_INET, str, )
     unsigned int ip = inet_addr(str);
+
     if (ip != INADDR_NONE) {
       addr->sin_addr.s_addr = ip;
     } else {

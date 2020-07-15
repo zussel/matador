@@ -183,14 +183,14 @@ socket_stream<P>::socket_stream(const protocol_type &protocol)
 
 template < class P >
 template < class Buffer >
-ssize_t socket_stream<P>::receive(Buffer &buffer)
+long socket_stream<P>::receive(Buffer &buffer)
 {
   return ::recv(this->id(), buffer.data(), buffer.capacity(), 0);
 }
 
 template < class P >
 template < class Buffer >
-ssize_t socket_stream<P>::send(const Buffer &buffer)
+long socket_stream<P>::send(const Buffer &buffer)
 {
   return ::send(this->id(), buffer.data(), buffer.size(), 0);
 }
