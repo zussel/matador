@@ -1,4 +1,4 @@
-SET (SANDBOX_SOURCES sandbox.cpp)
+SET (SANDBOX_SOURCES sandbox.cpp ../include/matador/net/os.hpp)
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 

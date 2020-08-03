@@ -1,5 +1,5 @@
 SET(SOURCES
-  socket.cpp address.cpp fdset.cpp select_fdsets.cpp handler.cpp acceptor.cpp reactor.cpp)
+  socket.cpp address.cpp fdset.cpp select_fdsets.cpp handler.cpp acceptor.cpp reactor.cpp os.cpp)
 
 SET(HEADER
   ../../include/matador/net/socket.hpp

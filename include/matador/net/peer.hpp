@@ -28,8 +28,8 @@ public:
 //    sockaddr_.sin_addr.s_addr = INADDR_ANY;
 //  }
 
-  explicit peer_base(const address &addr, unsigned short port = 0)
-    : addr_(addr)
+  explicit peer_base(address addr, unsigned short port = 0)
+    : addr_(std::move(addr))
   {
     addr_.port(port);
   }

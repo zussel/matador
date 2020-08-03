@@ -27,7 +27,7 @@ void FDSetTest::test_fdset()
   fset.set(5);
 
   UNIT_ASSERT_EQUAL(filled_count, fset.count());
-  UNIT_ASSERT_EQUAL(7, fset.max());
+  UNIT_ASSERT_EQUAL(7, fset.maxp1());
   UNIT_ASSERT_TRUE(fset.is_set(3));
   UNIT_ASSERT_TRUE(fset.is_set(5));
   UNIT_ASSERT_TRUE(fset.is_set(7));
@@ -58,7 +58,7 @@ void FDSetTest::test_select_fdsets()
   size_t read_set_count(4);
   size_t write_set_count(4);
   size_t except_set_count(4);
-  UNIT_ASSERT_EQUAL(8, selectfds.max());
+  UNIT_ASSERT_EQUAL(8, selectfds.maxp1());
   UNIT_ASSERT_EQUAL(read_set_count, selectfds.read_set().count());
   UNIT_ASSERT_EQUAL(write_set_count, selectfds.read_set().count());
   UNIT_ASSERT_EQUAL(except_set_count, selectfds.read_set().count());

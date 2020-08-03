@@ -10,6 +10,8 @@ public:
 
   void test_address_v4();
   void test_peer_v4();
+
+  void test_ip();
 };
 
 

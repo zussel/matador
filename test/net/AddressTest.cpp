@@ -8,6 +8,7 @@ AddressTest::AddressTest()
 {
   add_test("address_v4", std::bind(&AddressTest::test_address_v4, this), "ip address v4 test");
   add_test("peer_v4", std::bind(&AddressTest::test_peer_v4, this), "ip peer v4 test");
+  add_test("ip", std::bind(&AddressTest::test_ip, this), "ip test");
 }
 
 using namespace matador;
@@ -69,4 +70,22 @@ void AddressTest::test_peer_v4()
   UNIT_ASSERT_EQUAL(tcp::v4().protocol(), localhost8080.protocol().protocol());
   UNIT_ASSERT_EQUAL(tcp::v4().type(), localhost8080.protocol().type());
   UNIT_ASSERT_EQUAL(peer_size, localhost8080.size());
+}
+
+void AddressTest::test_ip()
+{
+  auto *addr = new sockaddr_in;
+  auto ret = os::inet_pton(AF_INET, "127.0.0.1", &addr->sin_addr);
+
+  UNIT_ASSERT_EQUAL(1, ret);
+
+  ret = os::inet_pton(AF_INET, "127.0.0.1.0", &addr->sin_addr);
+
+  UNIT_ASSERT_EQUAL(0, ret);
+
+  ret = os::inet_pton(90, "192.168.178.13", &addr->sin_addr);
+
+  UNIT_ASSERT_EQUAL(-1, ret);
+
+  delete addr;
 }
