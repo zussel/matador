@@ -14,7 +14,9 @@
 #define OOS_NET_API
 #endif
 
+#include "matador/utils/os.hpp"
 #include "matador/net/os.hpp"
+#include "matador/net/error.hpp"
 
 #include <string>
 #include <cstring>
@@ -124,13 +126,13 @@ public:
       addr.sin_family = PF_INET;
       return address(addr);
     } else if (ret == 0) {
-      throw std::logic_error("invalid ip address");
+      detail::throw_logic_error("invalid ip address");
     } else {
-      char buffer[1024];
-      sprintf(buffer, "invalid ip address: %s", strerror(errno));
-      throw std::logic_error(buffer);
+      detail::throw_logic_error_with_errno("invalid ip address: %s", errno);
     }
+    return address();
   }
+
   static address from_hostname(const std::string &str) { return from_hostname(str.c_str()); }
   static address from_hostname(const char *str)
   {
@@ -147,9 +149,7 @@ public:
     if ((ret = os::inet_pton(AF_INET, str, &addr.sin_addr)) == 1) {
       addr.sin_family = PF_INET;
     } else if (ret == -1) {
-      char buffer[1024];
-      sprintf(buffer, "invalid address: %s", strerror(errno));
-      throw std::logic_error(buffer);
+      detail::throw_logic_error_with_errno("invalid address: %s", errno);
     } else { /* 0 == try name */
       struct addrinfo hints{};
       struct addrinfo *result = nullptr;
@@ -165,9 +165,7 @@ public:
 
       int s = getaddrinfo(str, nullptr, &hints, &result);
       if (s != 0) {
-        char buffer[1024];
-        sprintf(buffer, "invalid ip address (getaddrinfo): %s", gai_strerror(s));
-        throw std::logic_error(buffer);
+        detail::throw_logic_error_with_gai_errno("invalid ip address (getaddrinfo): %s", s);
       }
 
       /* getaddrinfo() returns a list of address structures.

@@ -275,5 +275,14 @@ std::string build_path(const std::string &a, const std::string &b)
   return a + DIR_SEPARATOR_STRING + b;
 }
 
+int strerror(int err, char* errbuf, size_t bufsize)
+{
+#ifdef _WIN32
+    return ::strerror_s(errbuf, bufsize, err);
+#else
+    return 0;
+#endif
+}
+
 }
 }

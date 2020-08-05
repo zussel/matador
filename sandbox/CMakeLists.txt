@@ -25,6 +25,13 @@ IF(POSTGRESQL_FOUND)
   LIST(APPEND DB_LIBRARIES ${POSTGRESQL_LIBRARIES})
 ENDIF()
 
+SET(NET_LIBRARIES)
+
+IF(WIN32)
+  MESSAGE(STATUS "Appendig Windows Socket libs: wsock32 ws2_32")
+  LIST(APPEND NET_LIBRARIES wsock32 ws2_32)
+ENDIF()
+
 TARGET_LINK_LIBRARIES(sandbox
     matador-unit
     matador-utils
@@ -35,4 +42,5 @@ TARGET_LINK_LIBRARIES(sandbox
     matador-orm
     ${CMAKE_DL_LIBS}
     ${DB_LIBRARIES}
+    ${NET_LIBRARIES}
 )

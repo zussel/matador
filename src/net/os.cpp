@@ -1,6 +1,8 @@
 #include "matador/net/os.hpp"
 
 #ifdef _WIN32
+#include <WinSock2.h>
+#include < Ws2tcpip.h>
 #else
 #include <arpa/inet.h>
 #endif
@@ -11,11 +13,29 @@ namespace os {
 int inet_pton(int af, const char *src, void *dst)
 {
 #ifdef _WIN32
+  return ::InetPton(af, src, dst);
 #else
   return ::inet_pton(af, src, dst);
 #endif
 }
 
+const char* inet_ntop(int af, const void* src, char* dst, size_t size)
+{
+#ifdef _WIN32
+    return ::InetNtop(af, src, dst, size);
+#else
+    return ::inet_ntop(af, src, dst, size);
+#endif
+}
+
+int shutdown(int fd, shutdown_type type)
+{
+#ifdef _WIN32
+    return ::shutdown(fd, static_cast<int>(type));
+#else
+    return ::shutdown(fd, static_cast<int>(type));
+#endif
+}
 
 }
 }

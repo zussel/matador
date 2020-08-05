@@ -1,5 +1,5 @@
 SET(SOURCES
-  socket.cpp address.cpp fdset.cpp select_fdsets.cpp handler.cpp acceptor.cpp reactor.cpp os.cpp)
+  socket.cpp address.cpp fdset.cpp select_fdsets.cpp handler.cpp acceptor.cpp reactor.cpp os.cpp error.cpp)
 
 SET(HEADER
   ../../include/matador/net/socket.hpp
@@ -11,11 +11,17 @@ SET(HEADER
   ../../include/matador/net/handler.hpp
   ../../include/matador/net/acceptor.hpp
   ../../include/matador/net/reactor.hpp
+  ../../include/matador/net/os.hpp
+  ../../include/matador/net/error.hpp
   ../../include/matador/net/event_type.hpp)
 
 ADD_LIBRARY(matador-net SHARED ${SOURCES} ${HEADER})
 
-TARGET_LINK_LIBRARIES(matador-net matador-logger matador-utils)
+if(WIN32)
+  TARGET_LINK_LIBRARIES(matador-net matador-logger matador-utils wsock32 ws2_32)
+else()
+  TARGET_LINK_LIBRARIES(matador-net matador-logger matador-utils)
+endif()
 
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-net

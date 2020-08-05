@@ -5,7 +5,8 @@
 #include <sstream>
 
 #ifdef _WIN32
-#include <winsock.h>
+#include <winsock2.h>
+#include <Ws2tcpip.h>
 #else
 #include <sys/socket.h>
 #include <fcntl.h>
@@ -59,6 +60,9 @@ protected:
 
   int sock_ = 0;
   std::string name_;
+#ifdef _WIN32
+  bool is_nonblocking_ = false;
+#endif
 };
 
 /*

@@ -1,4 +1,8 @@
 #include "matador/net/socket.hpp"
+#include "matador/net/os.hpp"
+#include "matador/net/error.hpp"
+
+#include <string.h>
 
 namespace matador {
 
@@ -30,7 +34,7 @@ int socket_base<P>::open(const protocol_type &protocol)
 template < class P >
 void socket_base<P>::close()
 {
-  ::shutdown(sock_, SHUT_RDWR);
+  os::shutdown(sock_, os::shutdown_type::READ_WRITE);
   sock_ = 0;
 }
 
@@ -58,16 +62,14 @@ template < class P >
 void socket_base<P>::non_blocking(bool nb)
 {
 #ifdef WIN32
-  unsigned long nonblock = 1;
-    switch(flags) {
-    case O_NONBLOCK:
-      // fcntl doesn't do the right thing, but the simular ioctl does
-      // warning: is that still true? and does it the right thing for
-      // set blocking as well?
-      return ioctlsocket(fd, FIONBIO, &nonblock);
-    default:
-      return 0;
-    }
+  unsigned long nonblock = nb ? 0 : 1;
+  // fcntl doesn't do the right thing, but the simular ioctl does
+  // warning: is that still true? and does it the right thing for
+  // set blocking as well?
+  if (ioctlsocket(sock_, FIONBIO, &nonblock) != 0) {
+    throw std::logic_error("ioctlsocket: couldn't set flags");
+  }
+  is_nonblocking_ = nb;
 #else
   int val = fcntl(sock_, F_GETFL, 0);
   if (val < 0) {
@@ -85,12 +87,16 @@ void socket_base<P>::non_blocking(bool nb)
 template < class P >
 bool socket_base<P>::non_blocking() const
 {
+#ifdef _WIN32
+  return is_nonblocking_;
+#else
   int val = fcntl(sock_, F_GETFL, 0);
   if (val < 0) {
     std::string err(strerror(errno));
     throw std::logic_error("fcntl: couldn't get flags (" + err + ")");
   }
   return (val & O_NONBLOCK) > 0;
+#endif
 }
 
 template < class P >
@@ -98,15 +104,12 @@ void socket_base<P>::cloexec(bool nb)
 {
 #ifdef WIN32
   unsigned long cloexec = 1;
-    switch(flags) {
-    case FD_CLOEXEC:
-      // fcntl doesn't do the right thing, but the simular ioctl does
-      // warning: is that still true? and does it the right thing for
-      // set blocking as well?
-      return ioctlsocket(fd, FIONBIO, &cloexec);
-    default:
-      return 0;
-    }
+  // fcntl doesn't do the right thing, but the simular ioctl does
+  // warning: is that still true? and does it the right thing for
+  // set blocking as well?
+  if (ioctlsocket(sock_, FIONBIO, &cloexec) != 0) {
+    throw std::logic_error("ioctlsocket: couldn't set flags");
+  }
 #else
   int val = fcntl(sock_, F_GETFL, 0);
   if (val < 0) {
@@ -130,7 +133,6 @@ bool socket_base<P>::cloexec() const
     throw std::logic_error("fcntl: couldn't get flags (" + err + ")");
   }
   return (val & FD_CLOEXEC) > 0;
-
 }
 
 template < class P >
@@ -160,8 +162,12 @@ void socket_base<P>::assign(int sock)
   }
   char *clientip = new char[20];
   char s[INET6_ADDRSTRLEN];
-  inet_ntop(addr.sin_family, &addr.sin_addr, s, sizeof s);
-  strcpy(clientip, inet_ntoa(addr.sin_addr));
+  os::inet_ntop(addr.sin_family, &addr.sin_addr, s, sizeof s);
+#ifdef _WIN32
+  strcpy_s(clientip, 20, s);
+#else
+  strcpy(clientip, 20, s);
+#endif
 
   sock_ = sock;
 }
@@ -274,9 +280,13 @@ int socket_acceptor<P>::bind(peer_type &peer)
     return listenfd;
   }
 
+  #ifdef _WIN32
+  const char on = 1;
+  #else
   const int on = 1;
+  #endif
   if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
-    throw std::logic_error(strerror(errno));
+      detail::throw_logic_error_with_errno("setsockopt error: %s", errno);
   }
 
   int ret = ::bind(listenfd, peer.data(), peer.size());
@@ -284,7 +294,7 @@ int socket_acceptor<P>::bind(peer_type &peer)
     // success
     this->assign(listenfd);
   } else {
-    throw_logic_error("couldn't bind: " << strerror(errno));
+    detail::throw_logic_error_with_errno("couldn't bind fd: %s", errno);
   }
   size_t s = peer.size();
   ret = getsockname(this->id(), peer.data(), (socklen_t*)&s);
@@ -354,7 +364,7 @@ template < class P >
 int socket_acceptor<P>::reuse_address(bool reuse)
 {
   const int option(reuse ? 1 : 0);
-  return setsockopt(this->id(), SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+  return setsockopt(this->id(), SOL_SOCKET, SO_REUSEADDR, (char*)&option, sizeof(option));
 }
 
 template < class P >
@@ -363,7 +373,7 @@ int socket_acceptor<P>::reuse_address() const
   size_t option {};
   socklen_t i;
   i = sizeof(option);
-  getsockopt(this->id(), SOL_SOCKET, SO_REUSEADDR, &option, &i);
+  getsockopt(this->id(), SOL_SOCKET, SO_REUSEADDR, (char*)&option, &i);
   return option;
 }
 
@@ -390,7 +400,7 @@ int socket_connector<P>::connect(const char* hostname, unsigned short port)
   struct addrinfo* head = nullptr;
   int err = getaddrinfo(hostname, portstr, &hints, &res);
   if (err != 0) {
-    throw_logic_error("failed to resolve local socket address (error: " << err << ")");
+    detail::throw_logic_error_with_gai_errno("failed to resolve local socket address: %s", err);
   }
 
   head = res;
