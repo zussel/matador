@@ -16,8 +16,8 @@ void FDSetTest::test_fdset()
 {
   fdset fset;
 
-  size_t empty_count(1);
-  size_t filled_count(4);
+  size_t empty_count(0);
+  size_t filled_count(3);
 
   UNIT_ASSERT_EQUAL(empty_count, fset.count());
   UNIT_ASSERT_TRUE(fset.empty());
@@ -55,9 +55,9 @@ void FDSetTest::test_select_fdsets()
   selectfds.set(select_fdsets::except_type, 1);
   selectfds.set(select_fdsets::except_type, 8);
 
-  size_t read_set_count(4);
-  size_t write_set_count(4);
-  size_t except_set_count(4);
+  size_t read_set_count(3);
+  size_t write_set_count(3);
+  size_t except_set_count(3);
   UNIT_ASSERT_EQUAL(8, selectfds.maxp1());
   UNIT_ASSERT_EQUAL(read_set_count, selectfds.read_set().count());
   UNIT_ASSERT_EQUAL(write_set_count, selectfds.read_set().count());

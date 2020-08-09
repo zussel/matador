@@ -5,6 +5,8 @@
 
 #ifdef _WIN32
 #include <WS2tcpip.h>
+#else
+#include <netdb.h>
 #endif
 
 namespace matador {
@@ -18,7 +20,7 @@ void throw_logic_error(const char* msg)
 void throw_logic_error_with_errno(const char* msg, int err)
 {
   char error_buffer[1024];
-  os::strerror(errno, error_buffer, 1024);
+  os::strerror(err, error_buffer, 1024);
 
   char message_buffer[1024];
   os::sprintf(message_buffer, 1024, msg, error_buffer);

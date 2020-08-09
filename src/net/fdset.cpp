@@ -44,7 +44,7 @@ size_t fdset::count() const
 
 bool fdset::empty() const
 {
-  return count() == 1;
+  return count() == 0;
 }
 
 fd_set* fdset::get()

@@ -157,18 +157,16 @@ void socket_base<P>::assign(int sock)
 
   struct sockaddr_in addr{};
   socklen_t addr_size = sizeof(struct sockaddr_in);
-  if (getpeername(sock, (struct sockaddr *)&addr, &addr_size) == -1) {
-    //throw std::logic_error(strerror(errno));
-  }
-  char *clientip = new char[20];
-  char s[INET6_ADDRSTRLEN];
-  os::inet_ntop(addr.sin_family, &addr.sin_addr, s, sizeof s);
+  if (getpeername(sock, (struct sockaddr *)&addr, &addr_size) == 0) {
+    //char *clientip = new char[20];
+    char s[INET6_ADDRSTRLEN];
+    os::inet_ntop(addr.sin_family, &addr.sin_addr, s, sizeof s);
 #ifdef _WIN32
-  strcpy_s(clientip, 20, s);
+//    strcpy_s(clientip, 20, s);
 #else
-  strcpy(clientip, 20, s);
+//    strcpy(clientip, s);
 #endif
-
+  }
   sock_ = sock;
 }
 
@@ -355,7 +353,7 @@ int socket_acceptor<P>::accept(socket_base<protocol_type> &sock)
     sock.cloexec(true);
   }
 
-  printf("server: got connection from %s\n", get_remote_address(remote_addr).c_str());
+  //printf("server: got connection from %s\n", get_remote_address(remote_addr).c_str());
 
   return fd;
 }

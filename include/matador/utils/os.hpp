@@ -89,11 +89,11 @@ int sprintf(char* str, size_t s, const char* format, ARGS const&... args)
 #ifdef _WIN32
     return sprintf_s(str, s, format, args...);
 #else
-    return sprintf(str, format, args...);
+    return ::sprintf(str, format, args...);
 #endif
 }
 
-OOS_UTILS_API int strerror(int err, char* errbuf, size_t bufsize);
+OOS_UTILS_API char* strerror(int err, char* errbuf, size_t bufsize);
 
 /// @endcond
 

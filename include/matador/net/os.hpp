@@ -1,6 +1,8 @@
 #ifndef MATADOR_NET_OS_HPP
 #define MATADOR_NET_OS_HPP
 
+#include <cstdio>
+
 #ifdef _MSC_VER
 #ifdef matador_net_EXPORTS
 #define OOS_NET_API __declspec(dllexport)

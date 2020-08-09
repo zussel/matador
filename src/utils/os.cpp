@@ -275,12 +275,20 @@ std::string build_path(const std::string &a, const std::string &b)
   return a + DIR_SEPARATOR_STRING + b;
 }
 
-int strerror(int err, char* errbuf, size_t bufsize)
+char* strerror(int err, char* errbuf, size_t bufsize)
 {
 #ifdef _WIN32
-    return ::strerror_s(errbuf, bufsize, err);
+    ::strerror_s(errbuf, bufsize, err);
+    return errbuf;
 #else
-    return 0;
+    auto msg = ::strerror(err);
+    auto s = strlen(msg);
+    if (s < bufsize - 1) {
+      return strcpy(errbuf, msg);
+    } else {
+      errbuf[bufsize - 1] = '\0';
+      return strncpy(errbuf, msg, bufsize - 1);
+    }
 #endif
 }
 
