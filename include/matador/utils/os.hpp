@@ -89,7 +89,7 @@ int sprintf(char* str, size_t s, const char* format, ARGS const&... args)
 #ifdef _WIN32
     return sprintf_s(str, s, format, args...);
 #else
-    return ::sprintf(str, format, args...);
+    return ::snprintf(str, s, format, args...);
 #endif
 }
 

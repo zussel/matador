@@ -17,6 +17,13 @@
 #endif
 
 namespace matador {
+namespace net {
+
+OOS_NET_API void init();
+OOS_NET_API void cleanup();
+
+}
+
 namespace os {
 
 OOS_NET_API int inet_pton(int af, const char *src, void *dst);

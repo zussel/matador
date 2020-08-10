@@ -42,6 +42,8 @@ private:
 
 int main()
 {
+  net::init();
+
   matador::add_log_sink(matador::create_file_sink("log/net.log"));
   matador::add_log_sink(matador::create_stdout_sink());
 
@@ -54,11 +56,11 @@ int main()
   auto ht = std::make_shared<echo_handler>(tcp::socket(), nullptr);
   reactor r;
   r.register_handler(acceptor_7090, event_type::ACCEPT_MASK);
-  r.schedule_timer(ht, 2, 3);
+//  r.schedule_timer(ht, 2, 3);
 
   r.run();
 
-
+  net::cleanup();
 
 //  http::server serv;
 //

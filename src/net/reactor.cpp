@@ -70,7 +70,9 @@ void reactor::run()
               fdsets_.write_set().count(),
               fdsets_.except_set().count());
 
-    log_.info("next timeout in %d sec", timeout);
+    if (timeout != (std::numeric_limits<time_t>::max)()) {
+      log_.info("next timeout in %d sec", timeout);
+    }
     struct timeval tselect{};
     struct timeval* p = nullptr;
     if (timeout < (std::numeric_limits<time_t>::max)()) {

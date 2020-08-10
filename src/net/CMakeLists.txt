@@ -14,6 +14,7 @@ SET(HEADER
   ../../include/matador/net/os.hpp
   ../../include/matador/net/error.hpp
   ../../include/matador/net/event_type.hpp)
+#  ../../include/matador/net/interrupter.hpp)
 
 ADD_LIBRARY(matador-net SHARED ${SOURCES} ${HEADER})
 
