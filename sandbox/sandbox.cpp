@@ -1,9 +1,11 @@
-#include <matador/utils/buffer.hpp>
-#include <utility>
+#include "matador/utils/buffer.hpp"
+#include "matador/utils/os.hpp"
 #include "matador/net/acceptor.hpp"
 #include "matador/net/reactor.hpp"
 #include "matador/logger/logger.hpp"
 #include "matador/logger/log_manager.hpp"
+
+#include <utility>
 
 using namespace matador;
 
@@ -44,7 +46,9 @@ int main()
 {
   net::init();
 
-  matador::add_log_sink(matador::create_file_sink("log/net.log"));
+  auto logpath = os::build_path("log", "net.log");
+
+  matador::add_log_sink(matador::create_file_sink(logpath));
   matador::add_log_sink(matador::create_stdout_sink());
 
   tcp::peer endpoint(address::v4::any() , 7090);
