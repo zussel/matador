@@ -18,7 +18,6 @@ class peer_base
 {
 public:
   typedef P protocol_type;
-  typedef sockaddr_in address_type;
 
 //  explicit peer_base(const protocol_type &protocol, unsigned short port = 0)
 //  {
@@ -27,6 +26,7 @@ public:
 //    sockaddr_.sin_port = htons(port);
 //    sockaddr_.sin_addr.s_addr = INADDR_ANY;
 //  }
+  peer_base() = default;
 
   explicit peer_base(address addr, unsigned short port = 0)
     : addr_(std::move(addr))
@@ -41,6 +41,7 @@ public:
   ~peer_base() = default;
 
   int port() const { return addr_.port(); }
+
   protocol_type protocol() const
   {
     if (addr_.is_v4()) {
@@ -65,9 +66,24 @@ public:
     return addr_.size();
   }
 
+  std::string name() const
+  {
+    return name_;
+  }
+
+  address& addr()
+  {
+    return addr_;
+  }
+
+  const address& addr() const
+  {
+    return addr_;
+  }
 
 private:
   address addr_;
+  std::string name_;
 };
 
 }

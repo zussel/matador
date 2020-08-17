@@ -50,6 +50,8 @@ private:
   make_handler_func make_handler_;
 
   logger log_;
+
+  tcp::peer create_client_endpoint() const;
 };
 
 }

@@ -49,4 +49,8 @@ size_t buffer::size() const
   return size_;
 }
 
+void buffer::reset()
+{
+  size_ = 0;
+}
 }

@@ -16,6 +16,9 @@
 
 #include "matador/net/peer.hpp"
 #include "matador/net/socket.hpp"
+#include "matador/net/socket_stream.hpp"
+#include "matador/net/socket_acceptor.hpp"
+#include "matador/net/socket_connector.hpp"
 
 namespace matador {
 

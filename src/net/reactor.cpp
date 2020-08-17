@@ -94,6 +94,7 @@ void reactor::run()
         return;
       }
     }
+
     process_handler(ret);
     remove_deleted();
   }

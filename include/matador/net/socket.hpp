@@ -38,8 +38,19 @@ public:
 
   int connect(const typename protocol_type::peer &p);
 
+  /**
+   * Sets the socket either blocking (false) or
+   * non blocking (true).
+   *
+   * @param nb True sets the socket non blocking false blocking
+   */
   void non_blocking(bool nb);
 
+  /**
+   * Returns true if the socket is non blocking
+   * otherwise returns false
+   * @return True if socket is non blocking
+   */
   bool non_blocking() const;
 
   void cloexec(bool nb);
@@ -63,81 +74,6 @@ protected:
 #ifdef _WIN32
   bool is_nonblocking_ = false;
 #endif
-};
-
-/*
- * socket stream
- */
-template < class P >
-class socket_stream : public socket_base<P>
-{
-public:
-  typedef socket_base<P> base;
-  typedef typename base::protocol_type protocol_type;
-  typedef typename base::peer_type peer_type;
-
-  socket_stream() = default;
-
-  explicit socket_stream(const protocol_type &protocol);
-
-  template < class Buffer >
-  long receive(Buffer &buffer);
-
-  template < class Buffer >
-  long send(const Buffer &buffer);
-};
-
-/*
- * socket acceptor
- */
-template < class P >
-class socket_acceptor : public socket_base<P>
-{
-public:
-  typedef socket_base<P> base;
-  typedef typename base::protocol_type protocol_type;
-  typedef typename base::peer_type peer_type;
-  typedef typename peer_type::address_type address_type;
-
-  socket_acceptor() = default;
-
-  explicit socket_acceptor(peer_type &peer);
-
-  socket_acceptor(const char* hostname, unsigned short port);
-
-  int bind(const char* hostname, unsigned short port);
-
-  int bind(peer_type &peer);
-
-  int listen(int backlog);
-
-  void* get_in_addr(struct sockaddr *sa);
-
-  unsigned short get_port(struct sockaddr *sa);
-
-  std::string get_remote_address(struct sockaddr_storage &remote_addr);
-
-  int accept(socket_base<protocol_type> &sock);
-
-  int reuse_address(bool reuse);
-
-  int reuse_address() const;
-};
-
-template < class P >
-class socket_connector : public socket_base<P>
-{
-public:
-  typedef socket_base<P> base;
-  typedef typename base::protocol_type protocol_type;
-  typedef typename base::peer_type peer_type;
-  typedef typename peer_type::address_type address_type;
-
-  socket_connector() = default;
-
-  socket_connector(const char* hostname, unsigned short port);
-
-  int connect(const char* hostname, unsigned short port);
 };
 
 }

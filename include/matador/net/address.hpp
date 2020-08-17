@@ -48,6 +48,8 @@ private:
 public:
   explicit address(const sockaddr_in &addr);
   explicit address(const sockaddr_in6 &addr);
+  explicit address(sockaddr_in &&addr);
+  explicit address(sockaddr_in6 &&addr);
 
   address(const address &x) = default;
   address& operator=(const address &x);
@@ -107,6 +109,7 @@ public:
   address_router& operator=(address_router&&) = delete;
   address_router(address_router&&) = delete;
 
+  static address empty() { return mk_address(INADDR_ANY); };
   static address any() { return mk_address(INADDR_ANY); }
   static address loopback() { return mk_address(INADDR_LOOPBACK); }
   static address broadcast() {return mk_address(INADDR_BROADCAST); }
@@ -204,6 +207,7 @@ public:
   address_router& operator=(address_router&&) = delete;
   address_router(address_router&&) = delete;
 
+  static address empty() { return mk_address(in6addr_any); }
   static address any() { return mk_address(in6addr_any); }
   static address loopback() { return mk_address(in6addr_loopback); }
   static address broadcast() {return mk_multicast_address(); }

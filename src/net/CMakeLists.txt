@@ -13,7 +13,7 @@ SET(HEADER
   ../../include/matador/net/reactor.hpp
   ../../include/matador/net/os.hpp
   ../../include/matador/net/error.hpp
-  ../../include/matador/net/event_type.hpp)
+  ../../include/matador/net/event_type.hpp ../../include/matador/net/socket_acceptor.hpp ../../include/matador/net/socket_connector.hpp ../../include/matador/net/socket_stream.hpp)
 #  ../../include/matador/net/interrupter.hpp)
 
 ADD_LIBRARY(matador-net SHARED ${SOURCES} ${HEADER})

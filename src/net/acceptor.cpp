@@ -1,5 +1,6 @@
 #include "matador/net/acceptor.hpp"
 #include "matador/net/reactor.hpp"
+#include "matador/net/error.hpp"
 
 #include "matador/logger/log_manager.hpp"
 
@@ -25,10 +26,19 @@ int acceptor::handle() const
 void acceptor::on_input()
 {
   tcp::socket sock;
-  log_.debug("fd %d: accepting connection ...", handle());
-  acceptor_.accept(sock);
 
-  sock.cloexec(true);
+  tcp::peer endpoint = create_client_endpoint();
+  log_.debug("fd %d: accepting connection ...", handle());
+  int fd = acceptor_.accept(endpoint);
+
+  if (fd > 0) {
+    sock.assign(fd);
+    sock.non_blocking(true);
+    sock.cloexec(true);
+  } else {
+    detail::throw_logic_error_with_errno("accept failed: ", errno);
+  }
+
   // create new client handler
   auto h = make_handler_(sock, this);
 
@@ -53,4 +63,14 @@ bool acceptor::is_ready_read() const
 {
   return handle() > 0;
 }
+
+tcp::peer acceptor::create_client_endpoint() const
+{
+  if (endpoint_.addr().is_v4()) {
+    return matador::tcp::peer(address::v4::empty());
+  } else {
+    return matador::tcp::peer(address::v6::empty());
+  }
+}
+
 }

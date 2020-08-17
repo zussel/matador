@@ -1,16 +1,21 @@
 #include <matador/utils/buffer.hpp>
-#include <utility>
+
 #include "matador/net/acceptor.hpp"
+#include "matador/net/ip.hpp"
 #include "matador/net/reactor.hpp"
+
 #include "matador/logger/logger.hpp"
 #include "matador/logger/log_manager.hpp"
 
+#include <utility>
+#include <iostream>
+
 using namespace matador;
 
-class echo_handler : public handler
+class echo_server_handler : public handler
 {
 public:
-  echo_handler(tcp::socket sock, acceptor *accptr);
+  echo_server_handler(tcp::socket sock, acceptor *accptr);
 
   void open() override;
 
@@ -40,27 +45,69 @@ private:
   logger log_;
 };
 
-int main()
+//class service
+//class echo_server
+//{
+//public:
+//  explicit echo_server(reactor &r, unsigned short port)
+//    : service_(r)
+//    , acceptor_()
+//  {}
+//
+//  void run() {}
+//
+//
+//private:
+//  reactor &service_;
+//  std::shared_ptr<acceptor> acceptor_;
+//};
+//
+//class echo_client
+//{
+//public:
+//  void run() {}
+//};
+//
+//void server() {
+//  reactor r;
+//  echo_server server(r, 7090);
+//
+//  server.run();
+//}
+//
+//void client()
+//{
+//  echo_client client;
+//
+//  client.run();
+//}
+
+void start_client(unsigned short port);
+void start_server(unsigned short port);
+
+int main(int argc, char* argv[])
 {
-  net::init();
+  if (argc < 3 || (strcmp("server", argv[1]) != 0 && strcmp("client", argv[1]) != 0)) {
+    std::cout << "usage: sandbox [server|client] [port]\n";
+    return 1;
+  } else {
+    unsigned short port = 0;
+    try {
+      port = std::stoi(argv[2]);
+    } catch (std::exception&) {
+      std::cout << "usage: sandbox [server|client] [port]\n";
+      return 1;
+    }
 
-  matador::add_log_sink(matador::create_file_sink("log/net.log"));
-  matador::add_log_sink(matador::create_stdout_sink());
 
-  tcp::peer endpoint(address::v4::any() , 7090);
+    std::string type = argv[1];
 
-  auto acceptor_7090 = std::make_shared<acceptor>(endpoint, [](const tcp::socket& sock, acceptor *accptr) {
-    return std::make_shared<echo_handler>(sock, accptr);
-  });
-
-  auto ht = std::make_shared<echo_handler>(tcp::socket(), nullptr);
-  reactor r;
-  r.register_handler(acceptor_7090, event_type::ACCEPT_MASK);
-//  r.schedule_timer(ht, 2, 3);
-
-  r.run();
-
-  net::cleanup();
+    if (type == "client") {
+      start_client(port);
+    } else {
+      start_server(port);
+    }
+  }
 
 //  http::server serv;
 //
@@ -71,24 +118,82 @@ int main()
 //  serv.listen(7090);
 }
 
-echo_handler::echo_handler(tcp::socket sock, acceptor *accptr)
+void start_client(unsigned short port)
+{
+  net::init();
+
+  matador::add_log_sink(matador::create_file_sink("log/client.log"));
+  matador::add_log_sink(matador::create_stdout_sink());
+
+  tcp::socket s;
+  connect(s, "localhost", port);
+  s.non_blocking(false);
+
+  std::string message;
+  while (true) {
+    std::cout << "Message: ";
+    std::cin >> message;
+    if (message == "exit") {
+      s.close();
+      break;
+    }
+    char buf[16384];
+    buffer chunk(buf, 16384);
+
+    chunk.append(message.c_str(), message.size());
+    s.send(chunk);
+    chunk.reset();
+
+    int ret = s.receive(chunk);
+    message.assign(chunk.data(), ret);
+    chunk.reset();
+
+    std::cout << "Answer: " << message << "\n";
+  }
+  net::cleanup();
+}
+
+void start_server(unsigned short port)
+{
+  net::init();
+
+  matador::add_log_sink(matador::create_file_sink("log/server.log"));
+  matador::add_log_sink(matador::create_stdout_sink());
+
+  tcp::peer endpoint(address::v4::any() , port);
+
+  auto echo_acceptor = std::make_shared<acceptor>(endpoint, [](const tcp::socket& sock, acceptor *accptr) {
+    return std::make_shared<echo_server_handler>(sock, accptr);
+  });
+
+  auto ht = std::make_shared<echo_server_handler>(tcp::socket(), nullptr);
+  reactor r;
+  r.register_handler(echo_acceptor, event_type::ACCEPT_MASK);
+//  r.schedule_timer(ht, 2, 3);
+
+  r.run();
+
+  net::cleanup();
+}
+
+echo_server_handler::echo_server_handler(tcp::socket sock, acceptor *accptr)
   : stream_(std::move(sock)), acceptor_(accptr)
   , log_(create_logger("EchoHandler"))
 {
 
 }
 
-void echo_handler::open()
+void echo_server_handler::open()
 {
 
 }
 
-int echo_handler::handle() const
+int echo_server_handler::handle() const
 {
   return stream_.id();
 }
 
-void echo_handler::on_input()
+void echo_server_handler::on_input()
 {
     /*
     GET / HTTP/1.1
@@ -112,7 +217,7 @@ void echo_handler::on_input()
   }
 }
 
-void echo_handler::on_output()
+void echo_server_handler::on_output()
 {
   std::string ret = R"(HTTP/1.1 200 OK
 Server: Matador/0.7.0
@@ -134,23 +239,25 @@ Content-Type: text/html
 
   char buf[16384];
   buffer chunk(buf, 16384);
-  chunk.append(ret.c_str(), ret.size());
+
+  chunk.append(data_.c_str(), data_.size());
+//  chunk.append(ret.c_str(), ret.size());
   auto len = stream_.send(chunk);
   log_.info("sent %d bytes", len);
   data_.clear();
 }
 
-void echo_handler::on_except()
+void echo_server_handler::on_except()
 {
 
 }
 
-void echo_handler::on_timeout()
+void echo_server_handler::on_timeout()
 {
   log_.info("hello from the timeout");
 }
 
-void echo_handler::on_close()
+void echo_server_handler::on_close()
 {
   log_.info("fd %d: closing connection", handle());
   stream_.close();
@@ -159,18 +266,18 @@ void echo_handler::on_close()
   get_reactor()->unregister_handler(self, event_type::READ_WRITE_MASK);
 }
 
-void echo_handler::close()
+void echo_server_handler::close()
 {
     log_.info("fd %d: closing connection", handle());
     stream_.close();
 }
 
-bool echo_handler::is_ready_write() const
+bool echo_server_handler::is_ready_write() const
 {
   return !data_.empty();
 }
 
-bool echo_handler::is_ready_read() const
+bool echo_server_handler::is_ready_read() const
 {
   return data_.empty();
 }

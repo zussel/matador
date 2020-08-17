@@ -1,8 +1,0 @@
-//
-// Created by sascha on 14.07.20.
-//
-
-#ifndef MATADOR_INTERRUPTER_HPP
-#define MATADOR_INTERRUPTER_HPP
-
-#endif //MATADOR_INTERRUPTER_HPP
