@@ -66,11 +66,6 @@ public:
     return addr_.size();
   }
 
-  std::string name() const
-  {
-    return name_;
-  }
-
   address& addr()
   {
     return addr_;
@@ -81,9 +76,24 @@ public:
     return addr_;
   }
 
+  std::string to_string() const
+  {
+    char addstr[INET6_ADDRSTRLEN + 8];
+    const char *name;
+    if (addr().is_v4()) {
+      name = os::inet_ntop(addr_.addr()->sa_family, &addr_.addr_v4()->sin_addr, addstr, INET6_ADDRSTRLEN);
+    } else {
+      name = os::inet_ntop(addr_.addr()->sa_family, &addr_.addr_v6()->sin6_addr, addstr, INET6_ADDRSTRLEN);
+    }
+
+    size_t pos = strlen(name);
+
+    snprintf(addstr+pos, INET6_ADDRSTRLEN+8-pos, ":%d", addr_.port());
+    return addstr;
+  }
+
 private:
   address addr_;
-  std::string name_;
 };
 
 }

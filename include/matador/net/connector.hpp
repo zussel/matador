@@ -1,5 +1,5 @@
-#ifndef MATADOR_ACCEPTOR_HPP
-#define MATADOR_ACCEPTOR_HPP
+#ifndef MATADOR_CONNECTOR_HPP
+#define MATADOR_CONNECTOR_HPP
 
 #ifdef _MSC_VER
 #ifdef matador_net_EXPORTS
@@ -23,12 +23,12 @@
 
 namespace matador {
 
-class OOS_NET_API acceptor : public handler
+class OOS_NET_API connector : public handler
 {
 public:
-  typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, acceptor *accptr)> make_handler_func;
+  typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, connector *cnnctr)> make_handler_func;
 
-  explicit acceptor(const tcp::peer& endpoint, make_handler_func on_new_connection);
+  explicit connector(make_handler_func on_new_connection);
 
   void open() override;
   int handle() const override;
@@ -44,15 +44,9 @@ public:
   bool is_ready_read() const override;
 
 private:
-  tcp::acceptor acceptor_;
-  tcp::peer endpoint_;
-
-  make_handler_func make_handler_;
-
   logger log_;
-
-  tcp::peer create_client_endpoint() const;
 };
 
 }
-#endif //MATADOR_ACCEPTOR_HPP
+
+#endif //MATADOR_CONNECTOR_HPP

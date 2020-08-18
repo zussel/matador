@@ -1,6 +1,6 @@
+#include <iostream>
 #include "matador/net/acceptor.hpp"
 #include "matador/net/reactor.hpp"
-#include "matador/net/error.hpp"
 
 #include "matador/logger/log_manager.hpp"
 
@@ -29,18 +29,12 @@ void acceptor::on_input()
 
   tcp::peer endpoint = create_client_endpoint();
   log_.debug("fd %d: accepting connection ...", handle());
-  int fd = acceptor_.accept(endpoint);
-
-  if (fd > 0) {
-    sock.assign(fd);
-    sock.non_blocking(true);
-    sock.cloexec(true);
-  } else {
-    detail::throw_logic_error_with_errno("accept failed: ", errno);
-  }
+  acceptor_.accept(sock, endpoint);
 
   // create new client handler
-  auto h = make_handler_(sock, this);
+  log_.info("connection from %s", endpoint.to_string().c_str());
+
+  auto h = make_handler_(sock, endpoint, this);
 
   get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
 

@@ -10,6 +10,7 @@ class socket_acceptor : public socket_base<P>
 {
 public:
   typedef socket_base<P> base;
+  typedef socket_stream<P> stream_type;
   typedef typename base::protocol_type protocol_type;
   typedef typename base::peer_type peer_type;
 
@@ -31,8 +32,8 @@ public:
 
   std::string get_remote_address(struct sockaddr_storage &remote_addr);
 
-  int accept();
-  int accept(peer_type &endpoint);
+  int accept(stream_type &stream);
+  int accept(stream_type &stream, peer_type &endpoint);
 
   int reuse_address(bool reuse);
 
@@ -181,21 +182,40 @@ std::string socket_acceptor<P>::get_remote_address(struct sockaddr_storage &remo
 }
 
 template < class P >
-int socket_acceptor<P>::accept()
+int socket_acceptor<P>::accept(stream_type &stream)
 {
   struct sockaddr_storage remote_addr = {};
 //    address_type remote_addr;
   socklen_t addrlen = sizeof(remote_addr);
-  return ::accept(this->id(), (struct sockaddr *)&remote_addr, &addrlen);
+  int fd =  ::accept(this->id(), (struct sockaddr *)&remote_addr, &addrlen);
 
+  if (fd > 0) {
+    stream.assign(fd);
+    stream.non_blocking(true);
+    stream.cloexec(true);
+  } else {
+    detail::throw_logic_error_with_errno("accept failed: ", errno);
+  }
+
+  return fd;
   //printf("server: got connection from %s\n", get_remote_address(remote_addr).c_str());
 }
 
 template<class P>
-int socket_acceptor<P>::accept(peer_type &endpoint)
+int socket_acceptor<P>::accept(stream_type &stream, peer_type &endpoint)
 {
   socklen_t addrlen = endpoint.size();
-  return ::accept(this->id(), endpoint.data(), &addrlen);
+  int fd = ::accept(this->id(), endpoint.data(), &addrlen);
+
+  if (fd > 0) {
+    stream.assign(fd);
+    stream.non_blocking(true);
+    stream.cloexec(true);
+  } else {
+    detail::throw_logic_error_with_errno("accept failed: ", errno);
+  }
+
+  return fd;
 }
 
 template < class P >

@@ -84,16 +84,13 @@ unsigned int address::to_ulong() const
 
 std::string address::to_string() const
 {
+  char addstr[INET6_ADDRSTRLEN];
   if (is_v4()) {
-    char addstr[INET_ADDRSTRLEN];
-    const char *str = inet_ntop(socket_address_.sa_in.sin_family, &(socket_address_.sa_in.sin_addr), addstr, INET_ADDRSTRLEN);
-    if (str == nullptr) {
-      throw std::logic_error("inet_ntop error");
-    }
-    return str;
+    os::inet_ntop(socket_address_.sa_raw.sa_family, &socket_address_.sa_in.sin_addr, addstr, INET6_ADDRSTRLEN);
   } else {
-    return std::string();
+    os::inet_ntop(socket_address_.sa_raw.sa_family, &socket_address_.sa_in6.sin6_addr, addstr, INET6_ADDRSTRLEN);
   }
+  return std::string(addstr);
 }
 
 void address::port(unsigned short pn)

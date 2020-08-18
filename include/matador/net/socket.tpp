@@ -1,8 +1,9 @@
 #include "matador/net/socket.hpp"
+#include "matador/net/socket_stream.hpp"
 #include "matador/net/os.hpp"
 #include "matador/net/error.hpp"
 
-#include <string.h>
+#include <cstring>
 
 namespace matador {
 
@@ -175,6 +176,56 @@ int socket_base<P>::open(int family, int type, int protocol)
 {
   sock_ = ::socket(family, type, protocol);
   return sock_;
+}
+
+template < class P >
+int connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
+{
+  char portstr[6];
+  sprintf(portstr, "%d", port);
+//    const char* portname = "daytime";
+  struct addrinfo hints = {};
+  memset(&hints,0,sizeof(hints));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  struct addrinfo* res = nullptr;
+  struct addrinfo* head = nullptr;
+  int err = getaddrinfo(hostname, portstr, &hints, &res);
+  if (err != 0) {
+    detail::throw_logic_error_with_gai_errno("failed to resolve local socket address: %s", err);
+  }
+
+  head = res;
+
+  int connfd = 0;
+  int ret = 0;
+  do {
+    connfd = ::socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    if (connfd < 0) {
+      // error, try next one
+      continue;
+    }
+
+    ret = ::connect(connfd, res->ai_addr, res->ai_addrlen);
+    if (ret == 0) {
+      // success
+      stream.assign(connfd);
+      break;
+//      } else {
+//        throw_logic_error("couldn't connect: " << strerror(errno));
+    }
+
+    // bind error, close and try next one
+    os::shutdown(connfd, os::shutdown_type::READ_WRITE);
+  } while ( (res = res->ai_next) != nullptr);
+
+  if (res == nullptr) {
+    throw_logic_error("couldn't connect to " << hostname << ":" << port);
+  }
+
+  freeaddrinfo(head);
+
+  return ret;
 }
 
 }

@@ -1,6 +1,8 @@
 #include "matador/utils/buffer.hpp"
 #include "matador/utils/os.hpp"
 #include "matador/net/acceptor.hpp"
+#include "matador/net/connector.hpp"
+#include "matador/net/socket.hpp"
 #include "matador/net/ip.hpp"
 #include "matador/net/reactor.hpp"
 
@@ -15,72 +17,58 @@ using namespace matador;
 class echo_server_handler : public handler
 {
 public:
-  echo_server_handler(tcp::socket sock, acceptor *accptr);
+  echo_server_handler(tcp::socket sock, const tcp::peer& endpoint, acceptor *accptr);
 
   void open() override;
 
   int handle() const override;
 
   void on_input() override;
-
   void on_output() override;
-
-  void on_except() override;
-
+  void on_except() override {}
   void on_timeout() override;
-
   void on_close() override;
-
   void close() override;
 
   bool is_ready_write() const override;
-
   bool is_ready_read() const override;
 
 private:
   tcp::socket stream_;
+  tcp::peer endpoint_;
   acceptor *acceptor_ = nullptr;
 
   std::string data_;
   logger log_;
 };
 
-//class service
-//class echo_server
-//{
-//public:
-//  explicit echo_server(reactor &r, unsigned short port)
-//    : service_(r)
-//    , acceptor_()
-//  {}
-//
-//  void run() {}
-//
-//
-//private:
-//  reactor &service_;
-//  std::shared_ptr<acceptor> acceptor_;
-//};
-//
-//class echo_client
-//{
-//public:
-//  void run() {}
-//};
-//
-//void server() {
-//  reactor r;
-//  echo_server server(r, 7090);
-//
-//  server.run();
-//}
-//
-//void client()
-//{
-//  echo_client client;
-//
-//  client.run();
-//}
+class echo_client_handler : public handler
+{
+public:
+  echo_client_handler(tcp::socket sock, const tcp::peer& endpoint, connector *cnnctr);
+
+  void open() override;
+
+  int handle() const override;
+
+  void on_input() override;
+  void on_output() override;
+  void on_except() override {}
+  void on_timeout() override;
+  void on_close() override;
+  void close() override;
+
+  bool is_ready_write() const override;
+  bool is_ready_read() const override;
+
+private:
+  tcp::socket stream_;
+  tcp::peer endpoint_;
+  connector *connector_ = nullptr;
+
+  std::string data_;
+  logger log_;
+};
 
 void start_client(unsigned short port);
 void start_server(unsigned short port);
@@ -125,6 +113,15 @@ void start_client(unsigned short port)
   matador::add_log_sink(matador::create_file_sink("log/client.log"));
   matador::add_log_sink(matador::create_stdout_sink());
 
+  auto echo_connector = std::make_shared<connector>([](const tcp::socket& sock, const tcp::peer &p, connector *cnnctr) {
+    return std::make_shared<echo_client_handler>(sock, p, cnnctr);
+  });
+
+  reactor r;
+  echo_connector->connect(r, "localhost", port);
+
+  r.run();
+
   tcp::socket s;
   connect(s, "localhost", port);
   s.non_blocking(false);
@@ -162,22 +159,22 @@ void start_server(unsigned short port)
 
   tcp::peer endpoint(address::v4::any() , port);
 
-  auto echo_acceptor = std::make_shared<acceptor>(endpoint, [](const tcp::socket& sock, acceptor *accptr) {
-    return std::make_shared<echo_server_handler>(sock, accptr);
+  auto echo_acceptor = std::make_shared<acceptor>(endpoint, [](const tcp::socket& sock, const tcp::peer &p, acceptor *accptr) {
+    return std::make_shared<echo_server_handler>(sock, p, accptr);
   });
 
-  auto ht = std::make_shared<echo_server_handler>(tcp::socket(), nullptr);
   reactor r;
   r.register_handler(echo_acceptor, event_type::ACCEPT_MASK);
-//  r.schedule_timer(ht, 2, 3);
 
   r.run();
 
   net::cleanup();
 }
 
-echo_server_handler::echo_server_handler(tcp::socket sock, acceptor *accptr)
-  : stream_(std::move(sock)), acceptor_(accptr)
+echo_server_handler::echo_server_handler(tcp::socket sock, const tcp::peer& endpoint, acceptor *accptr)
+  : stream_(std::move(sock))
+  , endpoint_(endpoint)
+  , acceptor_(accptr)
   , log_(create_logger("EchoHandler"))
 {
 
@@ -245,11 +242,6 @@ Content-Type: text/html
   auto len = stream_.send(chunk);
   log_.info("sent %d bytes", len);
   data_.clear();
-}
-
-void echo_server_handler::on_except()
-{
-
 }
 
 void echo_server_handler::on_timeout()
