@@ -118,6 +118,8 @@ void start_client(unsigned short port)
   });
 
   reactor r;
+
+  r.register_handler(echo_connector)
   echo_connector->connect(r, "localhost", port);
 
   r.run();

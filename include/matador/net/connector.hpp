@@ -30,6 +30,7 @@ public:
 
   explicit connector(make_handler_func on_new_connection);
 
+  void connect(reactor &r, )
   void open() override;
   int handle() const override;
   void on_input() override;

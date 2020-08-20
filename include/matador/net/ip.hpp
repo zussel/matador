@@ -15,6 +15,7 @@
 #endif
 
 #include "matador/net/peer.hpp"
+#include "matador/net/address_resolver.hpp"
 #include "matador/net/socket.hpp"
 #include "matador/net/socket_stream.hpp"
 #include "matador/net/socket_acceptor.hpp"
@@ -27,6 +28,7 @@ public:
   typedef peer_base<tcp> peer;
   typedef socket_stream<tcp> socket;
   typedef socket_acceptor<tcp> acceptor;
+  typedef address_resolver<tcp> address_resolver;
 
   int type() const { return SOCK_STREAM; }
   int protocol() const { return IPPROTO_TCP; }
@@ -49,6 +51,7 @@ public:
   typedef peer_base<udp> peer;
   typedef socket_stream<udp> socket;
   typedef socket_acceptor<udp> acceptor;
+  typedef address_resolver<udp> address_resolver;
 
   int type() const { return SOCK_DGRAM; }
   int protocol() const { return IPPROTO_UDP; }
