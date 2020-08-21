@@ -30,7 +30,7 @@ public:
 
   explicit connector(make_handler_func on_new_connection);
 
-  void connect(reactor &r, )
+  void connect(reactor &r, const std::vector<tcp::peer> &endpoints);
   void open() override;
   int handle() const override;
   void on_input() override;

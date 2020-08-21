@@ -28,7 +28,7 @@ public:
   typedef peer_base<tcp> peer;
   typedef socket_stream<tcp> socket;
   typedef socket_acceptor<tcp> acceptor;
-  typedef address_resolver<tcp> address_resolver;
+  typedef address_resolver<tcp> resolver;
 
   int type() const { return SOCK_STREAM; }
   int protocol() const { return IPPROTO_TCP; }
@@ -51,7 +51,7 @@ public:
   typedef peer_base<udp> peer;
   typedef socket_stream<udp> socket;
   typedef socket_acceptor<udp> acceptor;
-  typedef address_resolver<udp> address_resolver;
+  typedef address_resolver<udp> resolver;
 
   int type() const { return SOCK_DGRAM; }
   int protocol() const { return IPPROTO_UDP; }
@@ -67,6 +67,7 @@ private:
 
   int family_;
 };
+
 
 }
 

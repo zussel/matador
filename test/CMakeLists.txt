@@ -38,7 +38,7 @@ SET (TEST_NET_SOURCES
   net/SocketTest.cpp
   net/SocketTest.hpp
   net/FDSetTest.cpp
-  net/FDSetTest.hpp)
+  net/FDSetTest.hpp net/AddressResolverTest.cpp net/AddressResolverTest.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp

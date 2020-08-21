@@ -119,8 +119,9 @@ void start_client(unsigned short port)
 
   reactor r;
 
-  r.register_handler(echo_connector)
-  echo_connector->connect(r, "localhost", port);
+  tcp::resolver resolver;
+  auto endpoints = resolver.resolve("localhost", std::to_string(port));
+  echo_connector->connect(r, endpoints);
 
   r.run();
 

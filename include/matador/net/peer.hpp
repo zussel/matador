@@ -28,7 +28,11 @@ public:
 //  }
   peer_base() = default;
 
-  explicit peer_base(address addr, unsigned short port = 0)
+  explicit peer_base(address addr)
+    : addr_(std::move(addr))
+  {}
+
+  peer_base(address addr, unsigned short port)
     : addr_(std::move(addr))
   {
     addr_.port(port);
