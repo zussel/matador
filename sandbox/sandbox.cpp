@@ -54,7 +54,7 @@ public:
   void on_input() override;
   void on_output() override;
   void on_except() override {}
-  void on_timeout() override;
+  void on_timeout() override {}
   void on_close() override;
   void close() override;
 
@@ -125,31 +125,31 @@ void start_client(unsigned short port)
 
   r.run();
 
-  tcp::socket s;
-  connect(s, "localhost", port);
-  s.non_blocking(false);
-
-  std::string message;
-  while (true) {
-    std::cout << "Message: ";
-    std::cin >> message;
-    if (message == "exit") {
-      s.close();
-      break;
-    }
-    char buf[16384];
-    buffer chunk(buf, 16384);
-
-    chunk.append(message.c_str(), message.size());
-    s.send(chunk);
-    chunk.reset();
-
-    int ret = s.receive(chunk);
-    message.assign(chunk.data(), ret);
-    chunk.reset();
-
-    std::cout << "Answer: " << message << "\n";
-  }
+//  tcp::socket s;
+//  connect(s, "localhost", port);
+//  s.non_blocking(false);
+//
+//  std::string message;
+//  while (true) {
+//    std::cout << "Message: ";
+//    std::cin >> message;
+//    if (message == "exit") {
+//      s.close();
+//      break;
+//    }
+//    char buf[16384];
+//    buffer chunk(buf, 16384);
+//
+//    chunk.append(message.c_str(), message.size());
+//    s.send(chunk);
+//    chunk.reset();
+//
+//    int ret = s.receive(chunk);
+//    message.assign(chunk.data(), ret);
+//    chunk.reset();
+//
+//    std::cout << "Answer: " << message << "\n";
+//  }
   net::cleanup();
 }
 
@@ -178,7 +178,7 @@ echo_server_handler::echo_server_handler(tcp::socket sock, const tcp::peer& endp
   : stream_(std::move(sock))
   , endpoint_(endpoint)
   , acceptor_(accptr)
-  , log_(create_logger("EchoHandler"))
+  , log_(create_logger("EchoServerHandler"))
 {
 
 }
@@ -275,4 +275,58 @@ bool echo_server_handler::is_ready_write() const
 bool echo_server_handler::is_ready_read() const
 {
   return data_.empty();
+}
+
+echo_client_handler::echo_client_handler(tcp::socket sock, const tcp::peer &endpoint, connector *cnnctr)
+  : stream_(std::move(sock))
+  , endpoint_(endpoint)
+  , connector_(cnnctr)
+  , log_(create_logger("EchoClientHandler"))
+{
+
+}
+
+void echo_client_handler::open()
+{
+
+}
+
+int echo_client_handler::handle() const
+{
+  return stream_.id();
+}
+
+void echo_client_handler::on_input()
+{
+
+}
+
+void echo_client_handler::on_output()
+{
+
+}
+
+void echo_client_handler::on_close()
+{
+  log_.info("fd %d: closing connection", handle());
+  stream_.close();
+  auto self = shared_from_this();
+  get_reactor()->mark_handler_for_delete(self);
+  get_reactor()->unregister_handler(self, event_type::READ_WRITE_MASK);
+}
+
+void echo_client_handler::close()
+{
+  log_.info("fd %d: closing connection", handle());
+  stream_.close();
+}
+
+bool echo_client_handler::is_ready_write() const
+{
+  return false;
+}
+
+bool echo_client_handler::is_ready_read() const
+{
+  return false;
 }

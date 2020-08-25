@@ -2,6 +2,7 @@
 #include "matador/net/socket_stream.hpp"
 #include "matador/net/os.hpp"
 #include "matador/net/error.hpp"
+#include "matador/net/ip.hpp"
 
 #include <cstring>
 
@@ -224,6 +225,27 @@ int connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
   }
 
   freeaddrinfo(head);
+
+  return ret;
+}
+
+template < class P >
+int connect(socket_stream<P> &stream, peer_base<P> endpoint)
+{
+  auto pt = endpoint.protocol();
+
+  int fd = ::socket(pt.family(), pt.type(), pt.protocol());
+
+  if (fd < 0) {
+    return fd;
+  }
+
+  int ret = ::connect(fd, endpoint.data(), endpoint.size());
+  if (ret == 0) {
+    stream.assign(fd);
+  } else {
+    os::shutdown(fd, os::shutdown_type::READ_WRITE);
+  }
 
   return ret;
 }

@@ -36,7 +36,7 @@ public:
   void on_input() override;
   void on_output() override {}
   void on_except() override {}
-  void on_timeout() override {}
+  void on_timeout() override;
   void on_close() override {}
 
   void close() override;
@@ -45,7 +45,11 @@ public:
   bool is_ready_read() const override;
 
 private:
+  make_handler_func make_handler_;
+
   logger log_;
+
+  std::vector<tcp::peer> endpoints_;
 };
 
 }
