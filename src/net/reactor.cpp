@@ -42,6 +42,8 @@ void reactor::unregister_handler(const std::shared_ptr<handler>& h, event_type)
 
 void reactor::schedule_timer(const std::shared_ptr<handler>& h, time_t offset, time_t interval)
 {
+  h->register_reactor(this);
+
   auto it = std::find(handlers_.begin(), handlers_.end(), h);
 
   if (it == handlers_.end()) {
@@ -81,7 +83,8 @@ void reactor::run()
       p = &tselect;
     }
 
-    if (fdsets_.maxp1() < 1) {
+    if (fdsets_.maxp1() < 1 && timeout == (std::numeric_limits<time_t>::max)()) {
+      log_.info("no clients to handle, exiting");
       return;
     }
 

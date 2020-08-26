@@ -41,9 +41,10 @@ void connector::on_timeout()
   for (const auto &ep : endpoints_) {
     int ret = matador::connect(stream, ep);
     if (ret != 0) {
-      log_.error("couldn't establish connection: %s", ::strerror(errno));
+      log_.error("couldn't establish connection to $s: %s", ep.to_string().c_str(), ::strerror(errno));
+      continue;
     } else {
-      log_.info("connection established to ", ep.to_string().c_str());
+      log_.info("connection established to %s", ep.to_string().c_str());
     }
 
     stream.non_blocking(true);
