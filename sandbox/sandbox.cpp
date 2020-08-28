@@ -1,49 +1,36 @@
-#include <thread>
-#include "matador/logger/logger.hpp"
-#include "matador/logger/log_manager.hpp"
+#include "matador/utils/stream.hpp"
 
-class MyClass
-{
-public:
-  static matador::logger LOG;
+#include <string>
+#include <iostream>
 
-  MyClass() {
-    LOG.info("created");
-  }
+using namespace matador;
 
-  ~MyClass()
-  {
-    LOG.info("destroyed");
-  }
-};
-
-matador::logger MyClass::LOG = matador::create_logger("MyClass");
+bool is_even(int i) { return i % 2 == 0; }
+std::string to_string(int i) { return typeid(i).name() + std::to_string(i); }
 
 int main()
 {
-  std::thread::id this_id = std::this_thread::get_id();
+  std::list<int> ints { 1, 2, 3, 4, };
 
-  auto logsink = matador::create_file_sink("log.txt");
-  auto stdoutsink = matador::create_stdout_sink();
+  auto range = make_range<int>(std::begin(ints), std::end(ints));
 
-  matador::add_log_sink(stdoutsink);
-  matador::add_log_sink(logsink);
+  auto filter = make_filter([](const int &in) {
+    return in % 2 == 0;
+  }, range);
 
-  auto log = matador::create_logger("test");
+  auto mapper = make_mapper([](const int &in) {
+    return typeid(in).name() + std::to_string(in);
+  }, filter);
 
-  log.info("hello info %d [%d]", 6, this_id);
-  log.debug("hello debug bug bug bug");
-  log.error("hello error -> fatal");
-  log.warn("hello warn: attention");
-  log.trace("hello trace: what happens here");
+  mapper->process();
+  std::cout << "Mapper: " << *mapper->value() << "\n";
 
-  MyClass my1;
-  MyClass my2;
+  auto s = make_stream(ints);
 
-  auto netsink = matador::create_file_sink("netlog.txt");
-  matador::add_log_sink(netsink, "net");
+  auto s2 = s.filter(is_even);
+//  .map(to_string);
 
-  auto another_log = matador::create_logger("side", "net");
+  auto result = s2.to_vector();
 
-  another_log.warn("another net log");
+  return 0;
 }
