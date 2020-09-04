@@ -68,7 +68,7 @@ stream<T> make_stream(std::list<T> &&container)
 }
 
 template < class T >
-stream<T> make_stream(const std::list<T> &container)
+stream<T> make_stream(std::list<T> &container)
 {
   return stream<T>(make_range<int>(std::begin(container), std::end(container)));
 }

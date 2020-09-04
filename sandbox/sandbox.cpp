@@ -27,8 +27,9 @@ int main()
 
   auto s = make_stream(ints);
 
-  auto s2 = s.filter(is_even);
-//  .map(to_string);
+  auto s2 = s
+    .filter(is_even)
+    .map(to_string);
 
   auto result = s2.to_vector();
 

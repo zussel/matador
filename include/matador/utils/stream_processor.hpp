@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include "matador/utils/memory.hpp"
+
 namespace matador {
 
 template < class T >
@@ -13,9 +15,10 @@ class stream_element_processor
 {
 public:
   typedef stream_element_processor_iterator<Out> iterator;
+  typedef Out value_type;
 
   virtual ~stream_element_processor() = default;
-  virtual std::shared_ptr<Out> value() = 0;
+  virtual value_type* value() = 0;
   bool process()
   {
     return process_impl();
@@ -26,9 +29,10 @@ public:
     process_impl();
     return iterator(this, value());
   }
+
   iterator end()
   {
-    return iterator(nullptr, value());
+    return iterator(nullptr, nullptr);
   }
 
 protected:
@@ -44,18 +48,17 @@ class stream_element_processor_iterator : public std::iterator<std::forward_iter
 public:
   typedef stream_element_processor_iterator<T> self;      /**< Shortcut for this class. */
   typedef T value_type;                                   /**< Shortcut for the value type. */
-  typedef std::shared_ptr<T> value_type_ptr;              /**< Shortcut for the value type pointer. */
   typedef value_type* pointer;                            /**< Shortcut for the pointer type. */
   typedef value_type& reference;                          /**< Shortcut for the reference type */
 
-  explicit stream_element_processor_iterator(stream_element_processor<T> *processor, value_type_ptr value)
+  explicit stream_element_processor_iterator(stream_element_processor<T> *processor, pointer value)
     : processor_(std::move(processor))
     , value_(value)
   {}
 
   bool operator==(const self &i) const
   {
-    return (*value_ == *i.value_);
+    return (value_ == i.value_);
   }
   bool operator!=(const self &i) const
   {
@@ -80,34 +83,36 @@ public:
     return temp;
   }
 
-  T* operator->() const
+  pointer operator->() const
   {
-    return value_.get();
+    return value_;
   }
 
-  T& operator*() const
+  reference operator*() const
   {
     return *value_;
   }
 
 private:
   stream_element_processor<T> *processor_ = nullptr;
-  std::shared_ptr<T> value_;
+  pointer value_;
 };
 
 template < class Out, typename Iterator >
 class iterator_element_processor : public stream_element_processor<Out>
 {
 public:
+  typedef stream_element_processor<Out> base;
+  typedef typename base::value_type value_type;
   typedef Iterator iterator_type;
 
   iterator_element_processor(iterator_type begin, iterator_type end)
   : value_(begin), end_(end)
   {}
 
-  std::shared_ptr<Out> value() override
+  value_type* value() override
   {
-    return std::make_shared<Out>(*value_);
+    return &(*value_);
   }
 
 protected:
@@ -131,12 +136,15 @@ template < class Out, typename Predicate >
 class filter_element_processor : public stream_element_processor<Out>
 {
 public:
+  typedef stream_element_processor<Out> base;
+  typedef typename base::value_type value_type;
+
   explicit filter_element_processor(std::shared_ptr<stream_element_processor<Out>> successor, Predicate pred)
   : successor_(std::move(successor))
   , pred_(pred)
   {}
 
-  std::shared_ptr<Out> value() override
+  value_type* value() override
   {
     return value_;
   }
@@ -149,7 +157,7 @@ protected:
       if (pred_(*value_)) {
         return true;
       }
-      value_.reset();
+      value_ = nullptr;
     }
     return false;
   }
@@ -157,29 +165,38 @@ protected:
 private:
   std::shared_ptr<stream_element_processor<Out>> successor_;
   Predicate pred_;
-  std::shared_ptr<Out> value_;
+  value_type* value_;
 };
 
 template < class In, class Out, typename Predicate >
 class map_element_processor : public stream_element_processor<Out>
 {
 public:
+  typedef stream_element_processor<Out> base;
+  typedef typename base::value_type value_type;
+  typedef In input_value_type;
+
   explicit map_element_processor(std::shared_ptr<stream_element_processor<In>> successor, Predicate pred)
   : successor_(std::move(successor))
   , pred_(pred)
   {}
 
-  std::shared_ptr<Out> value() override
+  value_type* value() override
   {
-    return value_;
+    return value_.get();
   }
 
 protected:
   bool process_impl() override
   {
+//    input_value_type *val = successor_->process();
+//    if (val != nullptr) {
+//      value_type* result = pred_(*val);
+//
+//    }
     if (successor_->process()) {
-      std::shared_ptr<In> val = successor_->value();
-      value_ = std::make_shared<Out>(pred_(*val));
+      input_value_type* val = successor_->value();
+      value_ = matador::make_unique<value_type>(pred_(*val));
       return true;
     }
     value_.reset();
@@ -189,7 +206,7 @@ protected:
 private:
   std::shared_ptr<stream_element_processor<In>> successor_;
   Predicate pred_;
-  std::shared_ptr<Out> value_;
+  std::unique_ptr<value_type> value_;
 };
 
 
