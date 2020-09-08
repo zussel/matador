@@ -5,6 +5,7 @@
 #include "matador/net/socket.hpp"
 #include "matador/net/ip.hpp"
 #include "matador/net/reactor.hpp"
+#include "matador/net/io_service.hpp"
 
 #include "matador/logger/logger.hpp"
 #include "matador/logger/log_manager.hpp"
@@ -72,6 +73,27 @@ private:
   std::string message_;
 };
 
+class echo_server
+{
+public:
+  echo_server(const std::string &host, const std::string &port) {
+    matador::add_log_sink(matador::create_file_sink("log/server.log"));
+    matador::add_log_sink(matador::create_stdout_sink());
+  }
+
+  void run();
+
+private:
+  io_service service_;
+  acceptor acceptor_;
+};
+
+class server_connection
+{
+public:
+  server_connection();
+};
+
 void start_client(unsigned short port);
 void start_server(unsigned short port);
 
@@ -127,31 +149,6 @@ void start_client(unsigned short port)
 
   r.run();
 
-//  tcp::socket s;
-//  connect(s, "localhost", port);
-//  s.non_blocking(false);
-//
-//  std::string message;
-//  while (true) {
-//    std::cout << "Message: ";
-//    std::cin >> message;
-//    if (message == "exit") {
-//      s.close();
-//      break;
-//    }
-//    char buf[16384];
-//    buffer chunk(buf, 16384);
-//
-//    chunk.append(message.c_str(), message.size());
-//    s.send(chunk);
-//    chunk.reset();
-//
-//    int ret = s.receive(chunk);
-//    message.assign(chunk.data(), ret);
-//    chunk.reset();
-//
-//    std::cout << "Answer: " << message << "\n";
-//  }
   net::cleanup();
 }
 

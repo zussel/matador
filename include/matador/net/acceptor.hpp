@@ -28,7 +28,10 @@ class OOS_NET_API acceptor : public handler
 public:
   typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, acceptor *accptr)> make_handler_func;
 
-  explicit acceptor(const tcp::peer& endpoint, make_handler_func on_new_connection);
+  acceptor();
+  acceptor(const tcp::peer& endpoint, make_handler_func on_new_connection);
+
+  void accecpt(const tcp::peer& endpoint, make_handler_func on_new_connection);
 
   void open() override;
   int handle() const override;

@@ -42,10 +42,8 @@ class address_router;
 
 class OOS_NET_API address
 {
-private:
-  address() = default;
-
 public:
+  address() = default;
   explicit address(const sockaddr_in &addr);
   explicit address(const sockaddr_in6 &addr);
   explicit address(sockaddr_in &&addr);

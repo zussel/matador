@@ -1,15 +1,29 @@
 #include <iostream>
+#include <utility>
 #include "matador/net/acceptor.hpp"
 #include "matador/net/reactor.hpp"
 
 #include "matador/logger/log_manager.hpp"
 
 namespace matador {
+
+acceptor::acceptor()
+  : log_(matador::create_logger("Acceptor"))
+{
+
+}
+
 acceptor::acceptor(const tcp::peer& endpoint, make_handler_func make_handler)
   : endpoint_(endpoint)
   , make_handler_(std::move(make_handler))
   , log_(matador::create_logger("Acceptor"))
 {}
+
+void acceptor::accecpt(const tcp::peer &endpoint, acceptor::make_handler_func on_new_connection)
+{
+  endpoint_ = endpoint;
+  make_handler_ = std::move(on_new_connection);
+}
 
 void acceptor::open()
 {
