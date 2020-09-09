@@ -1,4 +1,3 @@
-#include <iostream>
 #include <utility>
 #include "matador/net/acceptor.hpp"
 #include "matador/net/reactor.hpp"

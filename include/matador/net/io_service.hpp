@@ -10,8 +10,14 @@ class io_service
 public:
   io_service() = default;
 
-  void read();
-  void write()
+  template < typename AC >
+  void on_accept(AC ac)
+  {
+
+  }
+  void on_read();
+  void on_write();
+
 private:
   reactor reactor_;
 };

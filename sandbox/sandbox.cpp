@@ -76,13 +76,25 @@ private:
 class echo_server
 {
 public:
-  echo_server(const std::string &host, const std::string &port) {
+  echo_server(const std::string &host, const std::string &port)
+  {
     matador::add_log_sink(matador::create_file_sink("log/server.log"));
     matador::add_log_sink(matador::create_stdout_sink());
+
+    prepare_accept();
   }
 
-  void run();
+  void run() {
+    io_service.run()
+  }
 
+private:
+  void prepare_accept()
+  {
+    service_.on_accept([this](int ec, matador::tcp::socket socket, matador::tcp::peer peer) {
+
+    });
+  }
 private:
   io_service service_;
   acceptor acceptor_;
@@ -91,7 +103,9 @@ private:
 class server_connection
 {
 public:
-  server_connection();
+  server_connection() = default;
+
+
 };
 
 void start_client(unsigned short port);
