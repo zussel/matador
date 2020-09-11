@@ -85,14 +85,15 @@ public:
   }
 
   void run() {
-    io_service.run()
+    service_.run();
   }
 
 private:
   void prepare_accept()
   {
-    service_.on_accept([this](int ec, matador::tcp::socket socket, matador::tcp::peer peer) {
-
+    matador::tcp::peer ep;
+    service_.on_accept(acceptor_, ep, [this](int ec, matador::tcp::peer ep, matador::tcp::socket socket) {
+      // create echo server connection
     });
   }
 private:
