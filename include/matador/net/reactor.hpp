@@ -59,8 +59,9 @@ private:
   int select(struct timeval* timeout);
 
 private:
+  typedef std::pair<std::shared_ptr<handler>, event_type> t_handler_type;
   std::shared_ptr<handler> sentinel_;
-  std::list<std::shared_ptr<handler>> handlers_;
+  std::list<t_handler_type> handlers_;
   std::list<std::shared_ptr<handler>> handlers_to_delete_;
 
   select_fdsets fdsets_;

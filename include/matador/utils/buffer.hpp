@@ -14,6 +14,7 @@
   #define OOS_UTILS_API
 #endif
 
+#include <array>
 #include <cstddef>
 
 namespace matador {
@@ -21,13 +22,10 @@ namespace matador {
 class OOS_UTILS_API buffer
 {
 public:
-  buffer() = delete;
-
-public:
+  buffer() = default;
   buffer(const buffer &x) = default;
   buffer& operator=(const buffer &x) = default;
-  buffer(char *buf, std::size_t capacity);
-  ~buffer();
+  ~buffer() = default;
 
   void append(const char *chunk, std::size_t size);
   void append(const buffer &buf);
@@ -41,9 +39,8 @@ public:
   void reset();
 
 private:
-  char *buf_;
-  std::size_t size_;
-  std::size_t capacity_;
+  std::array<char, 16384> buf_{};
+  std::size_t size_ = 0;
 };
 
 }

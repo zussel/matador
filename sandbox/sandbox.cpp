@@ -5,6 +5,7 @@
 #include "matador/net/socket.hpp"
 #include "matador/net/ip.hpp"
 #include "matador/net/reactor.hpp"
+#include "matador/net/address_resolver.hpp"
 #include "matador/net/io_service.hpp"
 
 #include "matador/logger/logger.hpp"
@@ -81,7 +82,10 @@ public:
     matador::add_log_sink(matador::create_file_sink("log/server.log"));
     matador::add_log_sink(matador::create_stdout_sink());
 
-    prepare_accept();
+    tcp::resolver r;
+    auto endpoints = r.resolve(host, port);
+
+    prepare_accept(endpoints);
   }
 
   void run() {
@@ -89,7 +93,7 @@ public:
   }
 
 private:
-  void prepare_accept()
+  void prepare_accept(std::vector<peer_base<tcp>> vector)
   {
     matador::tcp::peer ep;
     service_.on_accept(acceptor_, ep, [this](int ec, matador::tcp::peer ep, matador::tcp::socket socket) {
@@ -215,8 +219,7 @@ void echo_server_handler::on_input()
     User-Agent: curl/7.70.0
     Accept: * / *
     */
-  char buf[16384];
-  buffer chunk(buf, 16384);
+  buffer chunk;
   auto len = stream_.receive(chunk);
   if (len == 0) {
     on_close();
@@ -225,7 +228,7 @@ void echo_server_handler::on_input()
     on_close();
   } else {
     log_.info("received %d bytes", len);
-    data_.assign(buf, len);
+    data_.assign(chunk.data(), len);
     log_.info("received data: %s", data_.c_str());
     log_.info("end of data");
   }
@@ -251,8 +254,7 @@ Content-Type: text/html
 </html>
 )";
 
-  char buf[16384];
-  buffer chunk(buf, 16384);
+  buffer chunk;
 
   chunk.append(data_.c_str(), data_.size());
 //  chunk.append(ret.c_str(), ret.size());
@@ -312,8 +314,7 @@ int echo_client_handler::handle() const
 
 void echo_client_handler::on_input()
 {
-  char buf[16384];
-  buffer chunk(buf, 16384);
+  buffer chunk;
   int ret = stream_.receive(chunk);
   message_.clear();
   message_.assign(chunk.data(), ret);
@@ -331,8 +332,7 @@ void echo_client_handler::on_output()
     close();
     return;
   }
-  char buf[16384];
-  buffer chunk(buf, 16384);
+  buffer chunk;
 
   chunk.append(message_.c_str(), message_.size());
   size_t len = stream_.send(chunk);

@@ -13,5 +13,20 @@ enum class event_type {
   ALL_MASK = READ_MASK | WRITE_MASK | EXCEPT_MASK | ACCEPT_MASK
 };
 
+inline event_type operator|(event_type a, event_type b)
+{
+  return static_cast<event_type>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline event_type operator&(event_type a, event_type b)
+{
+  return static_cast<event_type>(static_cast<int>(a) & static_cast<int>(b));
+}
+
+inline bool is_event_type_set(event_type source, event_type needle)
+{
+  return static_cast<int>(source & needle) > 0;
+}
+
 }
 #endif //MATADOR_EVENT_TYPE_HPP

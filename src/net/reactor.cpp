@@ -17,25 +17,33 @@ reactor::reactor()
 
 }
 
-void reactor::register_handler(const std::shared_ptr<handler>& h, event_type)
+void reactor::register_handler(const std::shared_ptr<handler>& h, event_type et)
 {
   h->open();
 
   h->register_reactor(this);
 
-  auto it = std::find(handlers_.begin(), handlers_.end(), h);
+  auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &val) {
+    return val.first == h;
+  });
 
   if (it == handlers_.end()) {
-    handlers_.push_back(h);
+    handlers_.emplace_back(h, et);
+  } else if (it->first != h) {
+    throw std::logic_error("given handler isn't expected handler");
+  } else {
+    it->second = it->second | et;
   }
 }
 
 void reactor::unregister_handler(const std::shared_ptr<handler>& h, event_type)
 {
-  auto it = std::find(handlers_.begin(), handlers_.end(), h);
+  auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
+    return ht.first == h;
+  });
 
   if (it != handlers_.end()) {
-    (*it)->close();
+    (*it).first->close();
     handlers_.erase(it);
   }
 }
@@ -44,10 +52,12 @@ void reactor::schedule_timer(const std::shared_ptr<handler>& h, time_t offset, t
 {
   h->register_reactor(this);
 
-  auto it = std::find(handlers_.begin(), handlers_.end(), h);
+  auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
+    return ht.first == h;
+  });
 
   if (it == handlers_.end()) {
-    handlers_.push_back(h);
+    handlers_.emplace_back(h, event_type::NONE_MASK);
   }
 
   h->schedule(offset, interval);
@@ -55,6 +65,14 @@ void reactor::schedule_timer(const std::shared_ptr<handler>& h, time_t offset, t
 
 void reactor::cancel_timer(const std::shared_ptr<handler>& h)
 {
+  auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
+    return ht.first == h;
+  });
+
+  if (it != handlers_.end()) {
+    handlers_.erase(it);
+  }
+
   h->cancel_timer();
 }
 
@@ -117,17 +135,17 @@ void reactor::prepare_select_bits(time_t& timeout)
   time_t now = ::time(nullptr);
   timeout = (std::numeric_limits<time_t>::max)();
   for (const auto &h : handlers_) {
-    if (h == nullptr) {
+    if (h.first == nullptr) {
       continue;
     }
-    if (h->is_ready_read()) {
-      fdsets_.read_set().set(h->handle());
+    if (h.first->is_ready_read() && is_event_type_set(h.second, event_type::READ_MASK)) {
+      fdsets_.read_set().set(h.first->handle());
     }
-    if (h->is_ready_write()) {
-      fdsets_.write_set().set(h->handle());
+    if (h.first->is_ready_write() && is_event_type_set(h.second, event_type::WRITE_MASK)) {
+      fdsets_.write_set().set(h.first->handle());
     }
-    if (h->next_timeout() > 0) {
-      timeout = (std::min)(timeout, h->next_timeout() <= now ? 0 : (h->next_timeout() - now));
+    if (h.first->next_timeout() > 0) {
+      timeout = (std::min)(timeout, h.first->next_timeout() <= now ? 0 : (h.first->next_timeout() - now));
     }
   }
 }
@@ -155,22 +173,22 @@ int reactor::select(struct timeval *timeout)
 void reactor::process_handler(int ret)
 {
   log_.info("process %d handlers", ret);
-  handlers_.push_back(sentinel_);
+  handlers_.emplace_back(sentinel_, event_type::NONE_MASK);
   time_t now = ::time(nullptr);
-  while (handlers_.front().get() != nullptr) {
+  while (handlers_.front().first != nullptr) {
     auto h = handlers_.front();
     handlers_.pop_front();
     handlers_.push_back(h);
     // check for read/accept
-    if (h->handle() > 0 && fdsets_.write_set().is_set(h->handle())) {
-      h->on_output();
+    if (h.first->handle() > 0 && fdsets_.write_set().is_set(h.first->handle())) {
+      h.first->on_output();
     }
-    if (h->handle() > 0 && fdsets_.read_set().is_set(h->handle())) {
-      h->on_input();
+    if (h.first->handle() > 0 && fdsets_.read_set().is_set(h.first->handle())) {
+      h.first->on_input();
     }
-    if (h->next_timeout() > 0 && h->next_timeout() <= now) {
-      h->calculate_next_timeout(now);
-      h->on_timeout();
+    if (h.first->next_timeout() > 0 && h.first->next_timeout() <= now) {
+      h.first->calculate_next_timeout(now);
+      h.first->on_timeout();
     }
     handlers_to_delete_.clear();
   }

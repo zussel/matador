@@ -6,21 +6,12 @@ namespace matador {
 
 using namespace std;
 
-buffer::buffer(char *buf, size_t capacity)
-  : buf_(buf)
-  , size_(0)
-  , capacity_(capacity)
-{}
-
-buffer::~buffer()
-{}
-
 void buffer::append(const char *chunk, size_t size)
 {
-  if (size_ + size > capacity_) {
+  if (size_ + size > buf_.max_size()) {
     throw std::out_of_range("size exceeds buffer capacity");
   }
-  memcpy((void*)(buf_ + size_), chunk, size);
+  memcpy((void*)(buf_.data() + size_), chunk, size);
   size_ += size;
 }
 
@@ -31,17 +22,17 @@ void buffer::append(const buffer &buf)
 
 char* buffer::data()
 {
-  return buf_;
+  return buf_.data();
 }
 
 const char* buffer::data() const
 {
-  return buf_;
+  return buf_.data();
 }
 
 size_t buffer::capacity() const
 {
-  return capacity_;
+  return buf_.max_size();
 }
 
 size_t buffer::size() const
