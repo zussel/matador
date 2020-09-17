@@ -42,6 +42,20 @@ public:
     : addr_(x.addr_)
   {}
 
+  peer_base(peer_base &&pb)  noexcept = default;
+
+  peer_base& operator=(const peer_base &x)
+  {
+    addr_ = x.addr_;
+    return *this;
+  }
+
+  peer_base& operator=(peer_base &&x)
+  {
+    addr_ = std::move(x.addr_);
+    return *this;
+  }
+
   ~peer_base() = default;
 
   int port() const { return addr_.port(); }

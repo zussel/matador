@@ -1,10 +1,13 @@
 #ifndef MATADOR_STREAM_HANDLER_HPP
 #define MATADOR_STREAM_HANDLER_HPP
 
+#include "matador/utils/buffer.hpp"
+
 #include "matador/logger/logger.hpp"
 
 #include "matador/net/handler.hpp"
 #include "matador/net/ip.hpp"
+#include "matador/net/io_stream.hpp"
 
 #ifdef _MSC_VER
 #ifdef matador_net_EXPORTS
@@ -21,10 +24,15 @@
 
 namespace matador {
 
-class OOS_NET_API stream_handler : public handler
+class acceptor;
+
+class OOS_NET_API stream_handler : public handler, io_stream
 {
 public:
-  stream_handler();
+  typedef std::function<void(tcp::peer, io_stream &)> t_init_handler;
+
+public:
+  stream_handler(tcp::socket sock, tcp::peer endpoint, acceptor *accptr, t_init_handler init_handler);
 
   void open() override;
   int handle() const override;
@@ -37,10 +45,24 @@ public:
   bool is_ready_write() const override;
   bool is_ready_read() const override;
 
+  void read(buffer &buf, t_read_handler read_handler) override;
+  void write(buffer &buf, t_write_handler write_handler) override;
+  tcp::socket &stream() override;
+
 private:
-  tcp::socket stream_;
   logger log_;
-//  std::function<void
+  tcp::socket stream_;
+  tcp::peer endpoint_;
+  buffer buffer_;
+
+  acceptor *acceptor_ = nullptr;
+
+  t_init_handler init_handler_;
+  t_read_handler on_read_;
+  t_write_handler on_write_;
+
+  bool is_ready_to_read_ = false;
+  bool is_ready_to_write_ = false;
 };
 
 }

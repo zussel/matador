@@ -40,6 +40,11 @@ size_t buffer::size() const
   return size_;
 }
 
+bool buffer::empty() const
+{
+  return size_ == 0;
+}
+
 void buffer::reset()
 {
   size_ = 0;

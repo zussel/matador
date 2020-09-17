@@ -198,7 +198,6 @@ int socket_acceptor<P>::accept(stream_type &stream)
   }
 
   return fd;
-  //printf("server: got connection from %s\n", get_remote_address(remote_addr).c_str());
 }
 
 template<class P>

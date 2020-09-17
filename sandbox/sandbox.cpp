@@ -7,6 +7,7 @@
 #include "matador/net/reactor.hpp"
 #include "matador/net/address_resolver.hpp"
 #include "matador/net/io_service.hpp"
+#include "matador/net/io_stream.hpp"
 
 #include "matador/logger/logger.hpp"
 #include "matador/logger/log_manager.hpp"
@@ -15,6 +16,41 @@
 #include <iostream>
 
 using namespace matador;
+
+class echo_server_connection : std::enable_shared_from_this<echo_server_connection>
+{
+public:
+  explicit echo_server_connection(io_stream &stream, tcp::peer endpoint)
+    : stream_(stream)
+    , endpoint_(std::move(endpoint))
+  {}
+
+  void start() {
+    read();
+  }
+
+  void read() {
+    stream_.read(buf_, [this](int ec, int nread) {
+      if (ec == 0) {
+        std::cout << endpoint_.to_string() << " read (bytes: " << nread << ")> " << buf_.data() << "\n";
+        write();
+      }
+    });
+  }
+  void write() {
+    stream_.write(buf_, [this](int ec, int nwrite) {
+      if (ec == 0) {
+        std::cout << endpoint_.to_string() << " sent (bytes: " << nwrite << ")\n";
+        read();
+      }
+    });
+  }
+
+private:
+  buffer buf_;
+  io_stream &stream_;
+  tcp::peer endpoint_;
+};
 
 class echo_server_handler : public handler
 {
@@ -78,6 +114,7 @@ class echo_server
 {
 public:
   echo_server(const std::string &host, const std::string &port)
+    : acceptor_(std::make_shared<acceptor>())
   {
     matador::add_log_sink(matador::create_file_sink("log/server.log"));
     matador::add_log_sink(matador::create_stdout_sink());
@@ -93,28 +130,22 @@ public:
   }
 
 private:
-  void prepare_accept(std::vector<peer_base<tcp>> vector)
+  void prepare_accept(std::vector<peer_base<tcp>> endpoints)
   {
-    matador::tcp::peer ep;
-    service_.on_accept(acceptor_, ep, [this](int ec, matador::tcp::peer ep, matador::tcp::socket socket) {
+
+    service_.on_accept(acceptor_, endpoints.front(), [](tcp::peer ep, io_stream &stream) {
       // create echo server connection
+      auto conn = std::make_shared<echo_server_connection>(stream, std::move(ep));
+      conn->start();
     });
   }
 private:
   io_service service_;
-  acceptor acceptor_;
+  std::shared_ptr<acceptor> acceptor_;
 };
 
-class server_connection
-{
-public:
-  server_connection() = default;
-
-
-};
-
-void start_client(unsigned short port);
-void start_server(unsigned short port);
+void start_client(const std::string &port);
+void start_server(const std::string &port);
 
 int main(int argc, char* argv[])
 {
@@ -122,21 +153,14 @@ int main(int argc, char* argv[])
     std::cout << "usage: sandbox [server|client] [port]\n";
     return 1;
   } else {
-    unsigned short port = 0;
-    try {
-      port = std::stoi(argv[2]);
-    } catch (std::exception&) {
-      std::cout << "usage: sandbox [server|client] [port]\n";
-      return 1;
-    }
 
 
     std::string type = argv[1];
 
     if (type == "client") {
-      start_client(port);
+      start_client(argv[2]);
     } else {
-      start_server(port);
+      start_server(argv[2]);
     }
   }
 
@@ -149,7 +173,7 @@ int main(int argc, char* argv[])
 //  serv.listen(7090);
 }
 
-void start_client(unsigned short port)
+void start_client(const std::string &port)
 {
   net::init();
 
@@ -163,7 +187,7 @@ void start_client(unsigned short port)
   reactor r;
 
   tcp::resolver resolver;
-  auto endpoints = resolver.resolve("localhost", std::to_string(port));
+  auto endpoints = resolver.resolve("localhost", port);
   echo_connector->connect(r, endpoints);
 
   r.run();
@@ -171,23 +195,28 @@ void start_client(unsigned short port)
   net::cleanup();
 }
 
-void start_server(unsigned short port)
+void start_server(const std::string &port)
 {
   net::init();
 
-  matador::add_log_sink(matador::create_file_sink("log/server.log"));
-  matador::add_log_sink(matador::create_stdout_sink());
+//  tcp::peer endpoint(address::v4::any() , port);
 
-  tcp::peer endpoint(address::v4::any() , port);
+  echo_server server("localhost", port);
 
-  auto echo_acceptor = std::make_shared<acceptor>(endpoint, [](const tcp::socket& sock, const tcp::peer &p, acceptor *accptr) {
-    return std::make_shared<echo_server_handler>(sock, p, accptr);
-  });
+  server.run();
 
-  reactor r;
-  r.register_handler(echo_acceptor, event_type::ACCEPT_MASK);
-
-  r.run();
+//  matador::add_log_sink(matador::create_file_sink("log/server.log"));
+//  matador::add_log_sink(matador::create_stdout_sink());
+//
+//
+//  auto echo_acceptor = std::make_shared<acceptor>(endpoint, [](const tcp::socket& sock, const tcp::peer &p, acceptor *accptr) {
+//    return std::make_shared<echo_server_handler>(sock, p, accptr);
+//  });
+//
+//  reactor r;
+//  r.register_handler(echo_acceptor, event_type::ACCEPT_MASK);
+//
+//  r.run();
 
   net::cleanup();
 }

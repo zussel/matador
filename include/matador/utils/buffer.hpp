@@ -36,6 +36,8 @@ public:
   std::size_t capacity() const;
   std::size_t size() const;
 
+  bool empty() const;
+
   void reset();
 
 private:

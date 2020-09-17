@@ -10,15 +10,17 @@
 
 namespace matador {
 
-stream_handler::stream_handler()
+stream_handler::stream_handler(tcp::socket sock, tcp::peer endpoint, acceptor *accptr, t_init_handler init_handler)
   : log_(create_logger("StreamHandler"))
-{
-
-}
+  , stream_(std::move(sock))
+  , endpoint_(std::move(endpoint))
+  , acceptor_(accptr)
+  , init_handler_(std::move(init_handler))
+{}
 
 void stream_handler::open()
 {
-
+  init_handler_(endpoint_, *this);
 }
 
 int stream_handler::handle() const
@@ -34,18 +36,34 @@ void stream_handler::on_input()
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
     log_.error("fd %d: error on read: %s", handle(), strerror(errno));
+    is_ready_to_read_ = false;
+    on_read_(len, len);
     on_close();
   } else {
     log_.info("received %d bytes", len);
-//    data_.assign(chunk.data(), len);
-//    log_.info("received data: %s", data_.c_str());
+    is_ready_to_read_ = false;
+    on_read_(0, len);
     log_.info("end of data");
   }
 }
 
 void stream_handler::on_output()
 {
-
+  buffer chunk;
+  int len = stream_.receive(chunk);
+  if (len == 0) {
+    on_close();
+  } else if (len < 0 && errno != EWOULDBLOCK) {
+    log_.error("fd %d: error on write: %s", handle(), strerror(errno));
+    on_close();
+    is_ready_to_write_ = false;
+    on_write_(len, len);
+  } else {
+    log_.info("sent %d bytes", len);
+    is_ready_to_write_ = false;
+    on_write_(0, len);
+    log_.info("end of data");
+  }
 }
 
 void stream_handler::on_close()
@@ -65,11 +83,31 @@ void stream_handler::close()
 
 bool stream_handler::is_ready_write() const
 {
-  return false;
+  return is_ready_to_write_ && !buffer_.empty();
 }
 
 bool stream_handler::is_ready_read() const
 {
-  return false;
+  return is_ready_to_read_ && buffer_.empty() && buffer_.capacity() > 0;
 }
+
+void stream_handler::read(buffer &buf, t_read_handler read_handler)
+{
+  on_read_ = std::move(read_handler);
+  buffer_ = buf;
+  is_ready_to_read_ = true;
+}
+
+void stream_handler::write(buffer &buf, t_write_handler write_handler)
+{
+  on_write_ = std::move(write_handler);
+  buffer_ = buf;
+  is_ready_to_write_ = true;
+}
+
+tcp::socket &stream_handler::stream()
+{
+  return stream_;
+}
+
 }

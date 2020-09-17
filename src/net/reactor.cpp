@@ -19,9 +19,9 @@ reactor::reactor()
 
 void reactor::register_handler(const std::shared_ptr<handler>& h, event_type et)
 {
-  h->open();
-
   h->register_reactor(this);
+
+  h->open();
 
   auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &val) {
     return val.first == h;
