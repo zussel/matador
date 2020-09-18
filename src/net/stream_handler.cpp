@@ -16,7 +16,19 @@ stream_handler::stream_handler(tcp::socket sock, tcp::peer endpoint, acceptor *a
   , endpoint_(std::move(endpoint))
   , acceptor_(accptr)
   , init_handler_(std::move(init_handler))
-{}
+{
+  log_.info("created stream handler with endpoint %s", endpoint.to_string().c_str());
+}
+
+stream_handler::stream_handler(tcp::socket sock, tcp::peer endpoint, connector *cnnctr, t_init_handler init_handler)
+  : log_(create_logger("StreamHandler"))
+  , stream_(std::move(sock))
+  , endpoint_(std::move(endpoint))
+  , connector_(cnnctr)
+  , init_handler_(std::move(init_handler))
+{
+  log_.info("created stream handler with endpoint %s", endpoint.to_string().c_str());
+}
 
 void stream_handler::open()
 {
@@ -40,8 +52,10 @@ void stream_handler::on_input()
     on_read_(len, len);
     on_close();
   } else {
+    chunk.size(len);
     log_.info("received %d bytes", len);
     is_ready_to_read_ = false;
+    read_buffer_->append(chunk);
     on_read_(0, len);
     log_.info("end of data");
   }
@@ -49,8 +63,7 @@ void stream_handler::on_input()
 
 void stream_handler::on_output()
 {
-  buffer chunk;
-  int len = stream_.receive(chunk);
+  int len = stream_.send(*write_buffer_);
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
@@ -83,26 +96,36 @@ void stream_handler::close()
 
 bool stream_handler::is_ready_write() const
 {
-  return is_ready_to_write_ && !buffer_.empty();
+  return is_ready_to_write_ &&
+    write_buffer_ != nullptr &&
+    !write_buffer_->empty();
 }
 
 bool stream_handler::is_ready_read() const
 {
-  return is_ready_to_read_ && buffer_.empty() && buffer_.capacity() > 0;
+  return is_ready_to_read_ &&
+    read_buffer_ != nullptr &&
+    read_buffer_->empty() &&
+    read_buffer_->capacity() > 0;
 }
 
 void stream_handler::read(buffer &buf, t_read_handler read_handler)
 {
   on_read_ = std::move(read_handler);
-  buffer_ = buf;
+  read_buffer_ = &buf;
   is_ready_to_read_ = true;
 }
 
 void stream_handler::write(buffer &buf, t_write_handler write_handler)
 {
   on_write_ = std::move(write_handler);
-  buffer_ = buf;
+  write_buffer_ = &buf;
   is_ready_to_write_ = true;
+}
+
+void stream_handler::close_stream()
+{
+  close();
 }
 
 tcp::socket &stream_handler::stream()

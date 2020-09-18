@@ -7,15 +7,24 @@
 
 namespace matador {
 
+connector::connector()
+  : log_(matador::create_logger("Connector"))
+{}
+
 connector::connector(connector::make_handler_func on_new_connection)
   : make_handler_(std::move(on_new_connection))
   , log_(matador::create_logger("Connector"))
-{
-
-}
+{}
 
 void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints)
 {
+  endpoints_ = endpoints;
+  r.schedule_timer(shared_from_this(), 0, 3);
+}
+
+void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints, make_handler_func on_new_connection)
+{
+  make_handler_ = std::move(on_new_connection);
   endpoints_ = endpoints;
   r.schedule_timer(shared_from_this(), 0, 3);
 }

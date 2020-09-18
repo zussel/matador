@@ -15,12 +15,12 @@ enum class event_type {
 
 inline event_type operator|(event_type a, event_type b)
 {
-  return static_cast<event_type>(static_cast<int>(a) | static_cast<int>(b));
+  return static_cast<event_type>(static_cast<unsigned int>(a) | static_cast<unsigned int>(b));
 }
 
 inline event_type operator&(event_type a, event_type b)
 {
-  return static_cast<event_type>(static_cast<int>(a) & static_cast<int>(b));
+  return static_cast<event_type>(static_cast<unsigned int>(a) & static_cast<int>(b));
 }
 
 inline bool is_event_type_set(event_type source, event_type needle)

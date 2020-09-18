@@ -25,6 +25,7 @@
 namespace matador {
 
 class acceptor;
+class connector;
 
 class OOS_NET_API stream_handler : public handler, io_stream
 {
@@ -33,6 +34,7 @@ public:
 
 public:
   stream_handler(tcp::socket sock, tcp::peer endpoint, acceptor *accptr, t_init_handler init_handler);
+  stream_handler(tcp::socket sock, tcp::peer endpoint, connector *cnnctr, t_init_handler init_handler);
 
   void open() override;
   int handle() const override;
@@ -47,15 +49,21 @@ public:
 
   void read(buffer &buf, t_read_handler read_handler) override;
   void write(buffer &buf, t_write_handler write_handler) override;
+  void close_stream() override;
+
   tcp::socket &stream() override;
 
 private:
   logger log_;
   tcp::socket stream_;
   tcp::peer endpoint_;
-  buffer buffer_;
+//  buffer buffer_;
+
+  buffer *read_buffer_ = nullptr;
+  buffer *write_buffer_ = nullptr;
 
   acceptor *acceptor_ = nullptr;
+  connector *connector_ = nullptr;
 
   t_init_handler init_handler_;
   t_read_handler on_read_;

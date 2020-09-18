@@ -29,8 +29,10 @@ public:
   typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, acceptor *accptr)> make_handler_func;
 
   acceptor();
-  acceptor(const tcp::peer& endpoint, make_handler_func on_new_connection);
+  explicit acceptor(tcp::peer endpoint);
+  acceptor(tcp::peer endpoint, make_handler_func on_new_connection);
 
+  void accecpt(make_handler_func on_new_connection);
   void accecpt(const tcp::peer& endpoint, make_handler_func on_new_connection);
 
   void open() override;
@@ -45,6 +47,8 @@ public:
 
   bool is_ready_write() const override ;
   bool is_ready_read() const override;
+
+  const tcp::peer& endpoint() const;
 
 private:
   tcp::acceptor acceptor_;

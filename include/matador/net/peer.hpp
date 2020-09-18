@@ -42,7 +42,9 @@ public:
     : addr_(x.addr_)
   {}
 
-  peer_base(peer_base &&pb)  noexcept = default;
+  peer_base(peer_base &&x) noexcept
+    : addr_(std::move(x.addr_))
+  {}
 
   peer_base& operator=(const peer_base &x)
   {
@@ -50,7 +52,7 @@ public:
     return *this;
   }
 
-  peer_base& operator=(peer_base &&x)
+  peer_base& operator=(peer_base &&x) noexcept
   {
     addr_ = std::move(x.addr_);
     return *this;

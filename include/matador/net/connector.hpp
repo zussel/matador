@@ -28,9 +28,11 @@ class OOS_NET_API connector : public handler
 public:
   typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, connector *cnnctr)> make_handler_func;
 
+  connector();
   explicit connector(make_handler_func on_new_connection);
 
   void connect(reactor &r, const std::vector<tcp::peer> &endpoints);
+  void connect(reactor &r, const std::vector<tcp::peer> &endpoints, make_handler_func on_new_connection);
   void open() override;
   int handle() const override;
   void on_input() override;

@@ -35,6 +35,7 @@ public:
 
   std::size_t capacity() const;
   std::size_t size() const;
+  void size(std::size_t s);
 
   bool empty() const;
 

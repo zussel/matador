@@ -8,15 +8,23 @@ namespace matador {
 
 acceptor::acceptor()
   : log_(matador::create_logger("Acceptor"))
-{
+{}
 
-}
+acceptor::acceptor(tcp::peer endpoint)
+: endpoint_(std::move(endpoint))
+, log_(matador::create_logger("Acceptor"))
+{}
 
-acceptor::acceptor(const tcp::peer& endpoint, make_handler_func make_handler)
-  : endpoint_(endpoint)
+acceptor::acceptor(tcp::peer  endpoint, make_handler_func make_handler)
+  : endpoint_(std::move(endpoint))
   , make_handler_(std::move(make_handler))
   , log_(matador::create_logger("Acceptor"))
 {}
+
+void acceptor::accecpt(acceptor::make_handler_func on_new_connection)
+{
+  make_handler_ = std::move(on_new_connection);
+}
 
 void acceptor::accecpt(const tcp::peer &endpoint, acceptor::make_handler_func on_new_connection)
 {
@@ -69,6 +77,11 @@ bool acceptor::is_ready_write() const
 bool acceptor::is_ready_read() const
 {
   return handle() > 0;
+}
+
+const tcp::peer &acceptor::endpoint() const
+{
+  return endpoint_;
 }
 
 tcp::peer acceptor::create_client_endpoint() const

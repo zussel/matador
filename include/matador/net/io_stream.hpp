@@ -15,6 +15,7 @@ public:
 
   virtual void read(buffer &buf, t_read_handler read_handler) = 0;
   virtual void write(buffer &buf, t_write_handler write_handler) = 0;
+  virtual void close_stream() = 0;
 
   virtual tcp::socket& stream() = 0;
 };
