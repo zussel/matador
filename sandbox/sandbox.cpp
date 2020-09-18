@@ -179,7 +179,6 @@ int main(int argc, char* argv[])
     return 1;
   } else {
 
-
     std::string type = argv[1];
 
     if (type == "client") {
@@ -188,6 +187,7 @@ int main(int argc, char* argv[])
       start_server(argv[2]);
     }
   }
+}
 
 //  http::server serv;
 //
@@ -196,7 +196,6 @@ int main(int argc, char* argv[])
 //  });
 //
 //  serv.listen(7090);
-}
 
 void start_client(const std::string &port)
 {
@@ -220,19 +219,16 @@ void start_server(const std::string &port)
   net::cleanup();
 }
 
-//void echo_server_handler::on_input()
-//{
-    /*
-    GET / HTTP/1.1
-    Host: localhost:7090
-    User-Agent: curl/7.70.0
-    Accept: * / *
-    */
-//}
+// server
+  /*
+  GET / HTTP/1.1
+  Host: localhost:7090
+  User-Agent: curl/7.70.0
+  Accept: * / *
+  */
 
-//void echo_server_handler::on_output()
-//{
-//  std::string ret = R"(HTTP/1.1 200 OK
+// client
+//(HTTP/1.1 200 OK
 //Server: Matador/0.7.0
 //Content-Length: 111
 //Content-Language: de
@@ -248,13 +244,3 @@ void start_server(const std::string &port)
 //    <p>Help!</p>
 //  </body>
 //</html>
-//)";
-//
-//  buffer chunk;
-//
-//  chunk.append(data_.c_str(), data_.size());
-////  chunk.append(ret.c_str(), ret.size());
-//  auto len = stream_.send(chunk);
-//  log_.info("sent %d bytes", len);
-//  data_.clear();
-//}
