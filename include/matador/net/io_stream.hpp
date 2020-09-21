@@ -3,6 +3,8 @@
 
 #include <functional>
 
+#include "matador/net/ip.hpp"
+
 namespace matador {
 
 class buffer;

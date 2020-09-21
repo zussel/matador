@@ -10,6 +10,7 @@ namespace matador {
 file_sink::file_sink(const std::string &path)
   : path_(path)
 {
+  std::string filename(path);
   // find last dir delimiter
   const char *last = strrchr(path.c_str(), matador::os::DIR_SEPARATOR);
   if (last != nullptr) {
@@ -18,7 +19,9 @@ file_sink::file_sink(const std::string &path)
     path_.clear();
   }
 
-  std::string filename(last+1);
+  if (last != nullptr) {
+    filename = (last + 1);
+  }
   // extract base path and extension
   std::vector<std::string> result;
   if (matador::split(filename, '.', result) != 2) {

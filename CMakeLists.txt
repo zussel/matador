@@ -80,7 +80,7 @@ if (NOT MSVC AND (COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_
   SET(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} ${GCOV_ADDITIONAL_FLAGS}")
   SET(CMAKE_EXE_LINKER_FLAGS "${GCOV_ADDITIONAL_FLAGS}")
 
-  SETUP_TARGET_FOR_COVERAGE(coverage test_matador src coverage "exec;all")
+  SETUP_TARGET_FOR_COVERAGE(coverage test_matador src coverage "exec;address,address_resolver,fdset,ip,socket")
 else()
   MESSAGE(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
 endif()
@@ -167,10 +167,10 @@ MESSAGE( STATUS "CMAKE_BINARY_DIR: " ${CMAKE_BINARY_DIR} )
 
 ENABLE_TESTING()
 
-
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(examples)
 ADD_SUBDIRECTORY(sandbox)
 
 INSTALL(

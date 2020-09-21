@@ -32,7 +32,9 @@ void LoggerTest::test_file_sink()
 {
   matador::file_sink test("test.txt");
 
-  UNIT_ASSERT_EQUAL("test.txt", test.path());
+  UNIT_ASSERT_TRUE(matador::os::exists("test.txt"));
+
+//  UNIT_ASSERT_EQUAL("test.txt", test.path());
 
   test.close();
 

@@ -38,7 +38,9 @@ SET (TEST_NET_SOURCES
   net/SocketTest.cpp
   net/SocketTest.hpp
   net/FDSetTest.cpp
-  net/FDSetTest.hpp net/AddressResolverTest.cpp net/AddressResolverTest.hpp)
+  net/FDSetTest.hpp
+  net/AddressResolverTest.cpp
+  net/AddressResolverTest.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp
@@ -111,7 +113,7 @@ SET (TEST_ORM_SOURCES
   orm/PrimaryKeyTestUnit.hpp
 )
 
-SET (TEST_SOURCES test_matador.cpp)
+SET (TEST_SOURCES test_matador.cpp net/ReactorTest.cpp net/ReactorTest.hpp)
 
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
@@ -165,6 +167,8 @@ IF(POSTGRESQL_FOUND)
   LIST(APPEND DB_LIBRARIES ${POSTGRESQL_LIBRARIES})
 ENDIF()
 
+FIND_PACKAGE( Threads )
+
 TARGET_LINK_LIBRARIES(test_matador
   matador-unit
   matador-utils
@@ -175,6 +179,7 @@ TARGET_LINK_LIBRARIES(test_matador
   matador-orm
   ${CMAKE_DL_LIBS}
   ${DB_LIBRARIES}
+  ${CMAKE_THREAD_LIBS_INIT}
 )
 
 if(WIN32)
