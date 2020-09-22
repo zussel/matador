@@ -68,6 +68,7 @@
 #include "net/FDSetTest.hpp"
 #include "net/ReactorTest.hpp"
 #include "net/AddressResolverTest.hpp"
+#include "net/SocketInterrupterTest.hpp"
 
 #include "connections.hpp"
 
@@ -130,6 +131,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new FDSetTest);
   suite.register_unit(new ReactorTest);
   suite.register_unit(new AddressResolverTest);
+  suite.register_unit(new SocketInterrupterTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));

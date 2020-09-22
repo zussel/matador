@@ -40,7 +40,11 @@ SET (TEST_NET_SOURCES
   net/FDSetTest.cpp
   net/FDSetTest.hpp
   net/AddressResolverTest.cpp
-  net/AddressResolverTest.hpp)
+  net/AddressResolverTest.hpp
+  net/SocketInterrupterTest.cpp
+  net/ReactorTest.cpp
+  net/ReactorTest.hpp
+  net/SocketInterrupterTest.hpp net/EchoServer.cpp net/EchoServer.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp
@@ -113,7 +117,7 @@ SET (TEST_ORM_SOURCES
   orm/PrimaryKeyTestUnit.hpp
 )
 
-SET (TEST_SOURCES test_matador.cpp net/ReactorTest.cpp net/ReactorTest.hpp)
+SET (TEST_SOURCES test_matador.cpp)
 
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}

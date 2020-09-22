@@ -78,6 +78,8 @@ void reactor::cancel_timer(const std::shared_ptr<handler>& h)
 
 void reactor::run()
 {
+  // prepare interrupter
+
   log_.info("starting reactor");
 
   running_ = true;
@@ -116,8 +118,14 @@ void reactor::run()
       }
     }
 
-    process_handler(ret);
-    remove_deleted();
+    bool interrupted = is_interrupted();
+
+    if (interrupted) {
+      cleanup();
+    } else {
+      process_handler(ret);
+      remove_deleted();
+    }
   }
 
   cleanup();
@@ -126,7 +134,14 @@ void reactor::run()
 void reactor::shutdown()
 {
   // shutdown the reactor properly
+  log_.info("shutting down reactor");
   running_ = false;
+  interrupter_.interrupt();
+}
+
+bool reactor::is_running() const
+{
+  return running_;
 }
 
 void reactor::prepare_select_bits(time_t& timeout)
@@ -134,6 +149,10 @@ void reactor::prepare_select_bits(time_t& timeout)
   fdsets_.reset();
   time_t now = ::time(nullptr);
   timeout = (std::numeric_limits<time_t>::max)();
+
+  // set interrupter fd
+  fdsets_.read_set().set(interrupter_.socket_id());
+
   for (const auto &h : handlers_) {
     if (h.first == nullptr) {
       continue;
@@ -150,13 +169,14 @@ void reactor::prepare_select_bits(time_t& timeout)
   }
 }
 
-void reactor::remove_deleted() {
+void reactor::remove_deleted()
+{
 
 }
 
 void reactor::cleanup()
 {
-
+  log_.info("cleanup reactor");
 }
 
 int reactor::select(struct timeval *timeout)
@@ -219,4 +239,13 @@ void reactor::mark_handler_for_delete(const std::shared_ptr<handler>& h)
 {
   handlers_to_delete_.push_back(h);
 }
+
+bool reactor::is_interrupted()
+{
+  if (fdsets_.read_set().is_set(interrupter_.socket_id())) {
+    return interrupter_.reset();
+  }
+  return false;
+}
+
 }

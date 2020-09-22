@@ -177,8 +177,12 @@ bool mkpath(const char *path)
 
   snprintf(tmp, sizeof(tmp),"%s",path);
   len = strlen(tmp);
-  if(tmp[len - 1] == DIR_SEPARATOR)
+  if (len == 0) {
+    return true;
+  }
+  if(tmp[len - 1] == DIR_SEPARATOR) {
     tmp[len - 1] = 0;
+  }
   for(p = tmp + 1; *p; p++) {
     if (*p == DIR_SEPARATOR) {
       *p = 0;

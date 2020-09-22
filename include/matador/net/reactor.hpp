@@ -16,6 +16,7 @@
 
 #include "matador/net/event_type.hpp"
 #include "matador/net/select_fdsets.hpp"
+#include "matador/net/socket_interrupter.hpp"
 
 #include "matador/logger/logger.hpp"
 
@@ -39,6 +40,8 @@ public:
   void run();
   void shutdown();
 
+  bool is_running() const;
+
   const select_fdsets& fdsets() const;
 
   void mark_handler_for_delete(const std::shared_ptr<handler>& h);
@@ -58,6 +61,8 @@ private:
 
   int select(struct timeval* timeout);
 
+  bool is_interrupted();
+
 private:
   typedef std::pair<std::shared_ptr<handler>, event_type> t_handler_type;
   std::shared_ptr<handler> sentinel_;
@@ -69,6 +74,8 @@ private:
   bool running_ = false;
 
   logger log_;
+
+  socket_interrupter interrupter_;
 };
 
 }
