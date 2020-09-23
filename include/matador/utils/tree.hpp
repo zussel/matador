@@ -10,16 +10,16 @@
 namespace matador {
 
 struct t_tree_node_base {
-	t_tree_node_base *parent;
-	t_tree_node_base *prev;
-	t_tree_node_base *next;
-	t_tree_node_base *first;
-	t_tree_node_base *last;
+	t_tree_node_base *parent = nullptr;
+	t_tree_node_base *prev = nullptr;
+	t_tree_node_base *next = nullptr;
+	t_tree_node_base *first = nullptr;
+	t_tree_node_base *last = nullptr;
 };
 
 template < class T >
 struct t_tree_node : public t_tree_node_base {
-	T data;
+	T data{};
 };
 
 template < class T >
@@ -389,6 +389,18 @@ public:
 	 * @return reverse begin iterator of the tree
 	 */
 	reverse_iterator rbegin() {
+//    auto *node = end_->prev;
+//    if (node) {
+//      std::cout << "node: " << node << "(data: " << static_cast_node_type(node)->data << ")\n";
+//      while (node->last) {
+//        node = node->last;
+//        std::cout << "node: " << node << "(data: " << static_cast_node_type(node)->data << ")\n";
+//      }
+//      // if there is no previous sibling, our next iterator
+//      // is the parent of the node
+//    } else {
+//      node = end_;
+//    }
 		return reverse_iterator(end());
 	}
 	/**
@@ -578,14 +590,14 @@ public:
 	 * @param x new node of type T
 	 * @return new iterator of node x
 	 */
-	template <typename iter> iter push_back_child(iter i, const T &x);
+	template <typename iter> iter push_back_child(iter i, const T &v);
 	/**
 	 * Insert as first child of i and returns new node iterator
 	 * @param i parent children of new node of type T
 	 * @param x new node of type T
 	 * @return new iterator of node x
 	 */
-	template <typename iter> iter push_front_child(iter i, const T &x);
+	template <typename iter> iter push_front_child(iter i, const T &v);
 	/**
 	 * Sort children of iterator node i with standard compare operator
 	 * @param i parent node of children to sort
@@ -691,31 +703,19 @@ void
 tree<T>::init() {
   root_ = new t_node;
   end_ = new t_node;
-  root_->parent = 0;
-  end_->parent = 0;
   root_->next = end_;
   end_->prev = root_;
-  root_->first = 0;
-  root_->last = 0;
-  end_->first = 0;
-  end_->last = 0;
 }
 
 template < class T >
 void
 tree<T>::init_children(t_node *node) {
-  t_node *f = new t_node;
-  t_node *l = new t_node;
+  auto f = new t_node;
+  auto l = new t_node;
   f->parent = node;
-  f->first = 0;
-  f->last = 0;
   l->parent = node;
-  l->first = 0;
-  l->last = 0;
-  f->prev = 0;
   f->next = l;
   l->prev = f;
-  l->next = 0;
   node->first = f;
   node->last = l;
 }
@@ -724,8 +724,8 @@ template < class T >
 void
 tree<T>::clear_children(t_node *node) {
   t_node *tmp;
-  t_node *first = static_cast_node_type(node->first->next);
-  t_node *last = static_cast_node_type(node->last);
+  auto first = static_cast_node_type(node->first->next);
+  auto last = static_cast_node_type(node->last);
   // only clear nodes between first and last
   while (first != last) {
     tmp = first;
@@ -749,7 +749,7 @@ tree<T>::clear_children(t_node *node) {
 template < class T >
 void
 tree<T>::clear() {
-  t_node *first = static_cast_node_type(root_->next);
+  auto first = static_cast_node_type(root_->next);
   t_node *tmp;
   while (first != end_) {
     tmp = first;
@@ -806,7 +806,7 @@ template <class T>
 template <typename iter>
 iter
 tree<T>::insert(iter i, const T& x) {
-  t_node *node = new t_node;
+  auto node = new t_node;
   node->data = x;
   // set proper children "list"
   init_children(node);

@@ -13,7 +13,6 @@ SET(APP_VERSION "${APP_MAJOR_VERSION}.${APP_MINOR_VERSION}.${APP_PATCH_LEVEL}")
 
 MESSAGE(STATUS "${PROJECT_NAME_UPPER} ${APP_VERSION}")
 
-
 # Common compiler flags
 # These are defined for clang/gcc compatibility.
 # When non-compatible flags are implemented then we must specify them separately.
@@ -46,7 +45,6 @@ ELSEIF(MSVC)
     SET(CMAKE_CXX_FLAGS_RELEASE "/O1 /DNDEBUG")
 ENDIF()
 
-
 MESSAGE(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR} ${CMAKE_SYSTEM_NAME}")
 
 SET(SYSTEM_NAME_LOWER)
@@ -63,10 +61,15 @@ ELSE()
 ENDIF()
 
 OPTION(COVERAGE "Enable generation of code coverage" false)
+IF (NOT COVERAGE_TESTS)
+  SET(COVERAGE_TESTS "all")
+ENDIF()
+
 OPTION(ARCH "Compiler architecture for Clang/GCC" "")
 
 if (NOT MSVC AND (COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CXX_COMPILER MATCHES "clang")
   MESSAGE(STATUS "coverage for compiler ${CMAKE_CXX_COMPILER}")
+  MESSAGE(STATUS "coverage tests are: ${COVERAGE_TESTS}")
 
   SET(GCOV_BINARY "gcov" CACHE STRING "gcov binary")
 
@@ -80,7 +83,8 @@ if (NOT MSVC AND (COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_
   SET(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} ${GCOV_ADDITIONAL_FLAGS}")
   SET(CMAKE_EXE_LINKER_FLAGS "${GCOV_ADDITIONAL_FLAGS}")
 
-  SETUP_TARGET_FOR_COVERAGE(coverage test_matador src coverage "exec;address,address_resolver,fdset,ip,socket")
+  SETUP_TARGET_FOR_COVERAGE(coverage test_matador src coverage "exec;${COVERAGE_TESTS}")
+#  SETUP_TARGET_FOR_COVERAGE(coverage test_matador src coverage "exec;address,address_resolver,fdset,ip,socket")
 else()
   MESSAGE(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
 endif()

@@ -48,9 +48,9 @@ void TreeTest::test_tree()
   // add first node
   j = stringtree.insert(stringtree.end(), "hallo");
 
+  UNIT_ASSERT_EQUAL("hallo", *j);
   l = j;
-
-  cout << "added node <" << *j << ">\n";
+  UNIT_ASSERT_EQUAL("hallo", *l);
 
   // build up a tree
   stringtree.push_back_child(j, "welt");
@@ -65,23 +65,50 @@ void TreeTest::test_tree()
   p = stringtree.push_back_child(j, "ring 2");
   stringtree.push_back_child(j, "ring 3");
 
-  cout << "size of tree: " << distance(stringtree.begin(), stringtree.end()) << endl;
+  for (auto it = stringtree.begin(); it != stringtree.end(); ++it) {
+    std::cout << "node " << it.node << " (data: " << *it << ", depth: " << stringtree.depth(it) << ")\n";
+  }
+
+  UNIT_ASSERT_EQUAL(12, distance(stringtree.begin(), stringtree.end()));
 
   // depth counter
-  int d = 0;
+  int d;
 
-  for (auto i = stringtree.begin(); i != stringtree.end(); ++i)	{
-    d = stringtree.depth(i);
-    for (int k = 0; k < d; ++k) cerr << "  ";
-    cout << "node (depth " << stringtree.depth(i) << "): " << *i << endl;
-  }
+  auto it = stringtree.begin();
+
+  UNIT_ASSERT_EQUAL(0UL, stringtree.depth(it));
+  UNIT_ASSERT_EQUAL("hallo", *it);
+
+  ++it;
+
+  UNIT_ASSERT_EQUAL(1UL, stringtree.depth(it));
+  UNIT_ASSERT_EQUAL("welt", *it);
+
+  int itcount = 0;
+  std::for_each(stringtree.begin(), stringtree.end(), [&itcount](const std::string &) {++itcount;});
+
+  UNIT_ASSERT_EQUAL(12, itcount);
 
   for (t_stringtree::reverse_iterator i = stringtree.rbegin(); i != stringtree.rend(); ++i)	{
-    d = stringtree.depth(i.base());
+    d = stringtree.depth(i);
     for (int k = 0; k < d; ++k) cerr << "  ";
     //cout << "node: " << *i << endl;
-    cout << "node (depth " << d << "): " << *i << endl;
+    cout << "node " << i.base().node << " (depth " << d << "): " << *i << endl;
   }
+
+  auto rit = stringtree.rbegin();
+
+//  UNIT_ASSERT_EQUAL(2UL, stringtree.depth(rit));
+  UNIT_ASSERT_EQUAL("ring 3", *rit);
+
+  ++rit;
+
+  UNIT_ASSERT_EQUAL(2UL, stringtree.depth(rit));
+  UNIT_ASSERT_EQUAL("ring 2", *rit);
+
+  itcount = 0;
+  std::for_each(stringtree.rbegin(), stringtree.rend(), [&itcount](const std::string &) {++itcount;});
+  UNIT_ASSERT_EQUAL(12, itcount);
 
   cout << "siblings of node <" << *j << ">\n";
   for (auto i = stringtree.begin(j); i != stringtree.end(j); ++i) {

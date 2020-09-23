@@ -172,6 +172,7 @@ IF(POSTGRESQL_FOUND)
 ENDIF()
 
 FIND_PACKAGE( Threads )
+MESSAGE(STATUS "Appending thread libs: ${CMAKE_THREAD_LIBS_INIT}")
 
 TARGET_LINK_LIBRARIES(test_matador
   matador-unit
