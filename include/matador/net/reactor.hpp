@@ -22,11 +22,17 @@
 
 #include <list>
 #include <memory>
+#include <atomic>
 
 namespace matador {
 
 class handler;
 
+/**
+ * @brief Implementation of the reactor pattern
+ *
+ * The reactor class implements
+ */
 class OOS_NET_API reactor {
 public:
   reactor();
@@ -71,7 +77,7 @@ private:
 
   select_fdsets fdsets_;
 
-  bool running_ = false;
+  std::atomic<bool> running_ {false};
 
   logger log_;
 
