@@ -89,15 +89,16 @@ void TreeTest::test_tree()
 
   UNIT_ASSERT_EQUAL(12, itcount);
 
-  for (t_stringtree::reverse_iterator i = stringtree.rbegin(); i != stringtree.rend(); ++i)	{
-    d = stringtree.depth(i);
-    for (int k = 0; k < d; ++k) cerr << "  ";
-    //cout << "node: " << *i << endl;
-    cout << "node " << i.base().node << " (depth " << d << "): " << *i << endl;
-  }
+//  for (t_stringtree::reverse_iterator i = stringtree.rbegin(); i != stringtree.rend(); ++i)	{
+//    d = stringtree.depth(i);
+//    for (int k = 0; k < d; ++k) cerr << "  ";
+//    //cout << "node: " << *i << endl;
+//    cout << "node " << i.base().node << " (depth " << d << "): " << *i << endl;
+//  }
 
   auto rit = stringtree.rbegin();
 
+  // Todo: fix tree reverse iterator
 //  UNIT_ASSERT_EQUAL(2UL, stringtree.depth(rit));
   UNIT_ASSERT_EQUAL("ring 3", *rit);
 
@@ -110,21 +111,33 @@ void TreeTest::test_tree()
   std::for_each(stringtree.rbegin(), stringtree.rend(), [&itcount](const std::string &) {++itcount;});
   UNIT_ASSERT_EQUAL(12, itcount);
 
-  cout << "siblings of node <" << *j << ">\n";
-  for (auto i = stringtree.begin(j); i != stringtree.end(j); ++i) {
-    cout << "sibling node (depth " << stringtree.depth(i) << "): " << *i << endl;
-  }
+  auto sj = stringtree.begin(j);
+
+  UNIT_ASSERT_EQUAL(2UL, stringtree.depth(sj));
+  UNIT_ASSERT_EQUAL("ring 1", *sj);
+
+  ++sj;
+
+  UNIT_ASSERT_EQUAL(2UL, stringtree.depth(sj));
+  UNIT_ASSERT_EQUAL("ring 2", *sj);
+
+//  cout << "siblings of node <" << *j << ">\n";
+//  for (auto i = stringtree.begin(j); i != stringtree.end(j); ++i) {
+//    cout << "sibling node (depth " << stringtree.depth(i) << "): " << *i << endl;
+//  }
 
   // remove last "mond" node
-  cout << "erasing node <" << *m << "> ... ";
+//  cout << "erasing node <" << *m << "> ... ";
   stringtree.erase(m);
-  cout << "done.\n";
+//  cout << "done.\n";
 
-  for (auto i = stringtree.begin(); i != stringtree.end(); ++i)	{
-    d = stringtree.depth(i);
-    for (int k = 0; k < d; ++k) cerr << "  ";
-    cout << "node (depth " << stringtree.depth(i) << "): " << *i << endl;
-  }
+  UNIT_ASSERT_EQUAL(11UL, stringtree.size());
+
+//  for (auto i = stringtree.begin(); i != stringtree.end(); ++i)	{
+//    d = stringtree.depth(i);
+//    for (int k = 0; k < d; ++k) cerr << "  ";
+//    cout << "node (depth " << stringtree.depth(i) << "): " << *i << endl;
+//  }
 
   // moving node "mond" before node "ring 2"
   cout << "moving node <" << *o << "> ... ";
