@@ -9,16 +9,13 @@
 
 namespace matador {
 
-struct t_tree_node_base {
-	t_tree_node_base *parent = nullptr;
-	t_tree_node_base *prev = nullptr;
-	t_tree_node_base *next = nullptr;
-	t_tree_node_base *first = nullptr;
-	t_tree_node_base *last = nullptr;
-};
-
 template < class T >
-struct t_tree_node : public t_tree_node_base {
+struct t_tree_node {
+  t_tree_node<T> *parent = nullptr;
+  t_tree_node<T> *prev = nullptr;
+  t_tree_node<T> *next = nullptr;
+  t_tree_node<T> *first = nullptr;
+  t_tree_node<T> *last = nullptr;
 	T data{};
 };
 
@@ -28,8 +25,6 @@ operator<(const t_tree_node<T> &a, const t_tree_node<T> &b) {
 	return a.data < b.data;
 }
 
-#define static_cast_node_type(x) static_cast<t_node*>(x)
-
 template < class T > class tree;
 
 template < class T >
@@ -37,14 +32,13 @@ class tree_iterator_base : public std::iterator<std::bidirectional_iterator_tag,
 public:
 	typedef tree_iterator_base<T> self;
 	typedef t_tree_node<T>     t_node;
-	typedef t_tree_node_base   t_node_base;
 
 	typedef T  value_type;
 	typedef T* pointer;
 	typedef T& reference ;
 
-	tree_iterator_base() : node(nullptr) {}
-	explicit tree_iterator_base(t_node_base *n) : node(n) {}
+	tree_iterator_base() = default;
+	explicit tree_iterator_base(t_node *n) : node(n) {}
 	tree_iterator_base<T>& operator=(const tree_iterator_base<T> &x) = default;
 	tree_iterator_base<T>& operator=(tree_iterator_base<T> &&x) noexcept = default;
 	virtual ~tree_iterator_base() = default;
@@ -93,7 +87,7 @@ public:
 	virtual void decrement() {}
 	virtual void increment() {}
 
-	t_node_base *node;
+	t_node *node = nullptr;
 };
 
 
@@ -103,7 +97,6 @@ public:
 	typedef const_tree_iterator_base<T> self;
 	typedef tree_iterator_base<T>       iterator;
 	typedef t_tree_node<T>           t_node;
-	typedef t_tree_node_base         t_node_base;
 
 	typedef T  value_type;
 	typedef const T* pointer;
@@ -111,7 +104,7 @@ public:
 
 	const_tree_iterator_base() : node(nullptr) {}
 	explicit const_tree_iterator_base(const iterator &x) : node(x.node) {}
-	explicit const_tree_iterator_base(t_node_base *n) : node(n) {}
+	explicit const_tree_iterator_base(t_node *n) : node(n) {}
 	virtual ~const_tree_iterator_base() = default;
 
 	bool operator==(const self &i) const {
@@ -147,19 +140,25 @@ public:
 	virtual void decrement() {}
 	virtual void increment() {}
 
-	t_node_base *node;
+	t_node *node = nullptr;
 };
 
+/**
+ * Default tree iterator iterates
+ * tree level by level from left to right
+ * starting with the root node
+ *
+ * @tparam T Type of the tree
+ */
 template < typename T >
 class tree_iterator : public tree_iterator_base<T> {
 public:
 	typedef typename tree_iterator_base<T>::t_node t_node;
-	typedef typename tree_iterator_base<T>::t_node_base t_nodebase;
 
 	tree_iterator() : tree_iterator_base<T>() {}
 	tree_iterator(const tree_iterator<T> &x) : tree_iterator_base<T>(x.node) {}
 	tree_iterator(const tree_iterator_base<T> &x) : tree_iterator_base<T>(x.node) {}
-	explicit tree_iterator(t_nodebase *n) : tree_iterator_base<T>(n) {}
+	explicit tree_iterator(t_node *n) : tree_iterator_base<T>(n) {}
 
 	tree_iterator<T>& operator=(const tree_iterator<T> &x)
   {
@@ -179,16 +178,22 @@ protected:
 	virtual void increment();
 };
 
+/**
+ * Default const tree iterator iterates
+ * tree level by level from left to right
+ * starting with the root node
+ *
+ * @tparam T Type of the tree
+ */
 template < typename T >
 class const_tree_iterator : public const_tree_iterator_base<T> {
 public:
 	typedef typename const_tree_iterator_base<T>::t_node t_node;
-	typedef typename const_tree_iterator_base<T>::t_node_base t_nodebase;
 
 	const_tree_iterator() : const_tree_iterator_base<T>() {}
   explicit const_tree_iterator(const const_tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node) {}
   explicit const_tree_iterator(const tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x) {}
-	explicit const_tree_iterator(t_nodebase *n) : const_tree_iterator_base<T>(n) {}
+	explicit const_tree_iterator(t_node *n) : const_tree_iterator_base<T>(n) {}
 
 protected:
 
@@ -200,12 +205,11 @@ template < typename T >
 class tree_sibling_iterator : public tree_iterator_base<T> {
 public:
 	typedef typename tree_iterator_base<T>::t_node t_node;
-	typedef typename tree_iterator_base<T>::t_node_base t_nodebase;
 
 	tree_sibling_iterator() : tree_iterator_base<T>() {}
   tree_sibling_iterator(const tree_sibling_iterator<T> &x) : tree_iterator_base<T>(x.node) {}
   explicit tree_sibling_iterator(const tree_iterator_base<T> &x) : tree_iterator_base<T>(x.node) {}
-	explicit tree_sibling_iterator(t_nodebase *n) : tree_iterator_base<T>(n) {}
+	explicit tree_sibling_iterator(t_node *n) : tree_iterator_base<T>(n) {}
 
 protected:
 	virtual void decrement() {
@@ -223,12 +227,11 @@ template < typename T >
 class const_tree_sibling_iterator : public const_tree_iterator_base<T> {
 public:
 	typedef typename const_tree_iterator_base<T>::t_node t_node;
-	typedef typename const_tree_iterator_base<T>::t_node_base t_nodebase;
 
 	const_tree_sibling_iterator() : const_tree_iterator_base<T>() {}
   explicit const_tree_sibling_iterator(const const_tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node) {}
   explicit const_tree_sibling_iterator(const tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node) {}
-	explicit const_tree_sibling_iterator(t_nodebase *n) : const_tree_iterator_base<T>(n) {}
+	explicit const_tree_sibling_iterator(t_node *n) : const_tree_iterator_base<T>(n) {}
 
 protected:
 	virtual void decrement() {
@@ -246,15 +249,14 @@ template < typename T >
 class tree_subtree_iterator : public tree_iterator_base<T> {
 public:
 	typedef typename tree_iterator_base<T>::t_node t_node;
-	typedef typename tree_iterator_base<T>::t_node_base t_nodebase;
 
-	tree_subtree_iterator() : tree_iterator_base<T>(), root(0) {}
-  tree_subtree_iterator(const tree_subtree_iterator<T> &x) : tree_iterator_base<T>(x.node), root(0) {}
-  explicit tree_subtree_iterator(const tree_iterator_base<T> &x) : tree_iterator_base<T>(x.node), root(0) {}
-	explicit tree_subtree_iterator(t_nodebase *n) : tree_iterator_base<T>(n), root(n->parent) {}
+	tree_subtree_iterator() : tree_iterator_base<T>(), root(nullptr) {}
+  tree_subtree_iterator(const tree_subtree_iterator<T> &x) : tree_iterator_base<T>(x.node), root(nullptr) {}
+  explicit tree_subtree_iterator(const tree_iterator_base<T> &x) : tree_iterator_base<T>(x.node), root(nullptr) {}
+	explicit tree_subtree_iterator(t_node *n) : tree_iterator_base<T>(n), root(n->parent) {}
 
 protected:
-	t_nodebase *root;
+	t_node *root = nullptr;
 
 	virtual void decrement();        
 	virtual void increment();
@@ -264,33 +266,39 @@ template < typename T >
 class const_tree_subtree_iterator : public const_tree_iterator_base<T> {
 public:
 	typedef typename const_tree_iterator_base<T>::t_node t_node;
-	typedef typename const_tree_iterator_base<T>::t_node_base t_nodebase;
 
-	const_tree_subtree_iterator() : const_tree_iterator_base<T>(), root(0) {}
-  explicit const_tree_subtree_iterator(const const_tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node), root(0) {}
-  explicit const_tree_subtree_iterator(const tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node), root(0) {}
-	explicit const_tree_subtree_iterator(t_nodebase *n) : const_tree_iterator_base<T>(n), root(n->parent) {}
+	const_tree_subtree_iterator() : const_tree_iterator_base<T>(), root(nullptr) {}
+  explicit const_tree_subtree_iterator(const const_tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node), root(nullptr) {}
+  explicit const_tree_subtree_iterator(const tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node), root(nullptr) {}
+	explicit const_tree_subtree_iterator(t_node *n) : const_tree_iterator_base<T>(n), root(n->parent) {}
 
 protected:
-	t_nodebase *root;
+	t_node *root = nullptr;
 
 	virtual void decrement();        
 	virtual void increment();
 };
 
+/**
+ * Leaf iterator only iterates over leafs
+ * of the tree.
+ *
+ * @tparam T Type of the tree
+ */
 template < typename T >
 class tree_leaf_iterator : public tree_iterator_base<T> {
 public:
 	typedef typename tree_iterator_base<T>::t_node t_node;
-	typedef typename tree_iterator_base<T>::t_node_base t_nodebase;
 
 	tree_leaf_iterator() : tree_iterator_base<T>() {}
   tree_leaf_iterator(const tree_leaf_iterator<T> &x) : tree_iterator_base<T>(x.node) {}
   explicit tree_leaf_iterator(const tree_iterator_base<T> &x) : tree_iterator_base<T>(x.node) {}
-	explicit tree_leaf_iterator(t_nodebase *n) : tree_iterator_base<T>(n) {
-		while (this->node->first && this->node->first->next != this->node->last) {
-			this->node = this->node->first->next;
-		}
+	tree_leaf_iterator(t_node *n, bool as_begin) : tree_iterator_base<T>(n) {
+	  if (as_begin) {
+      while (this->node->first && this->node->first->next != this->node->last) {
+        this->node = this->node->first->next;
+      }
+	  }
 	}
 
 protected:
@@ -298,16 +306,21 @@ protected:
 	virtual void increment();
 };
 
+/**
+ * Leaf const iterator only iterates over leafs
+ * of the tree.
+ *
+ * @tparam T Type of the tree
+ */
 template < typename T >
 class const_tree_leaf_iterator : public const_tree_iterator_base<T> {
 public:
 	typedef typename const_tree_iterator_base<T>::t_node t_node;
-	typedef typename const_tree_iterator_base<T>::t_node_base t_nodebase;
 
 	const_tree_leaf_iterator() : const_tree_iterator_base<T>() {}
   explicit const_tree_leaf_iterator(const const_tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node) {}
   explicit const_tree_leaf_iterator(const tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node) {}
-	explicit const_tree_leaf_iterator(t_nodebase *n) : const_tree_iterator_base<T>(n) {}
+	explicit const_tree_leaf_iterator(t_node *n) : const_tree_iterator_base<T>(n) {}
 
 protected:
 	virtual void decrement();        
@@ -327,7 +340,7 @@ template < class T >
 class tree {
 public:
 	typedef t_tree_node<T> t_node;
-	typedef T pointer_type;
+	typedef T value_type;
 
 	/**
 	 * Creates an empty tree of type T.
@@ -350,7 +363,6 @@ public:
 	typedef std::reverse_iterator<iterator> reverse_iterator;
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-	typedef T value_type;
 	typedef T& reference;
 	typedef T* pointer;
 	typedef const T& const_reference;
@@ -361,7 +373,7 @@ public:
 	 * @return begin iterator of the tree
 	 */
 	iterator begin() {
-		return iterator(static_cast_node_type(root_->next));
+		return iterator(root_->next);
 	}
 	/**
 	 * Returns the end iterator of the tree
@@ -375,7 +387,7 @@ public:
 	 * @return constant begin iterator of the tree
 	 */
 	const_iterator begin() const {
-		return const_iterator(static_cast_node_type(root_->next));
+		return const_iterator(root_->next);
 	}
 	/**
 	 * Returns the constant end iterator of the tree
@@ -389,18 +401,6 @@ public:
 	 * @return reverse begin iterator of the tree
 	 */
 	reverse_iterator rbegin() {
-//    auto *node = end_->prev;
-//    if (node) {
-//      std::cout << "node: " << node << "(data: " << static_cast_node_type(node)->data << ")\n";
-//      while (node->last) {
-//        node = node->last;
-//        std::cout << "node: " << node << "(data: " << static_cast_node_type(node)->data << ")\n";
-//      }
-//      // if there is no previous sibling, our next iterator
-//      // is the parent of the node
-//    } else {
-//      node = end_;
-//    }
 		return reverse_iterator(end());
 	}
 	/**
@@ -430,8 +430,7 @@ public:
 	 * @return sibling begin iterator
 	 */
 	sibling_iterator begin(const tree_iterator_base<T> &i) {
-		t_tree_node_base *node = i.node->first->next;
-		return sibling_iterator(node);
+		return sibling_iterator(i.node->first->next);
 	}
 	/**
 	 * Returns the sibling end iterator for a node (iterator)
@@ -439,8 +438,7 @@ public:
 	 * @return sibling end iterator
 	 */
 	sibling_iterator end(const tree_iterator_base<T> &i) {
-		t_tree_node_base *node = i.node->last;
-		return sibling_iterator(node);
+		return sibling_iterator(i.node->last);
 	}
 	/**
 	 * Returns the constant sibling begin iterator for a node (iterator)
@@ -448,8 +446,7 @@ public:
 	 * @return constant sibling begin iterator
 	 */
 	const_sibling_iterator begin(const tree_iterator_base<T> &i) const {
-		t_tree_node_base *node = i.node->first->next;
-		return const_sibling_iterator(node);
+		return const_sibling_iterator(i.node->first->next);
 	}
 	/**
 	 * Returns the constant sibling end iterator for a node (iterator)
@@ -457,8 +454,7 @@ public:
 	 * @return constant sibling end iterator
 	 */
 	const_sibling_iterator end(const tree_iterator_base<T> &i) const {
-		t_tree_node_base *node = i.node->last;
-		return const_sibling_iterator(node);
+		return const_sibling_iterator(i.node->last);
 	}
 	/**
 	 * Returns the subtree begin iterator for a node (iterator)
@@ -466,8 +462,7 @@ public:
 	 * @return subtree begin iterator
 	 */
 	subtree_iterator begin_subtree(const tree_iterator_base<T> &i) {
-		t_tree_node_base *node = i.node->first->next;
-		return subtree_iterator(node);
+		return subtree_iterator(i.node->first->next);
 	}
 	/**
 	 * Returns the subtree end iterator for a node (iterator)
@@ -475,8 +470,7 @@ public:
 	 * @return subtree end iterator
 	 */
 	subtree_iterator end_subtree(const tree_iterator_base<T> &i) {
-		t_tree_node_base *node = i.node->last;
-		return subtree_iterator(node);
+		return subtree_iterator(i.node->last);
 	}
 	/**
 	 * Returns the constant subtree begin iterator for a node (iterator)
@@ -484,8 +478,7 @@ public:
 	 * @return constant subtree begin iterator
 	 */
 	const_subtree_iterator begin_subtree(const const_tree_iterator_base<T> &i) {
-		t_tree_node_base *node = i.node->first->next;
-		return const_subtree_iterator(node);
+		return const_subtree_iterator(i.node->first->next);
 	}
 	/**
 	 * Returns the constant subtree end iterator for a node (iterator)
@@ -493,29 +486,29 @@ public:
 	 * @return constant subtree end iterator
 	 */
 	const_subtree_iterator end_subtree(const const_tree_iterator_base<T> &i) {
-		t_tree_node_base *node = i.node->last;
-		return const_subtree_iterator(node);
+		return const_subtree_iterator(i.node->last);
 	}
 	/**
 	 * Return the first leaf node as iterator
 	 * @return leaf begin iterator
 	 */
 	leaf_iterator begin_leaf() {
-		return leaf_iterator(static_cast_node_type(root_->next));
+		return leaf_iterator(root_->next, true);
 	}
 	/**
 	 * Return the first leaf node as constant iterator
 	 * @return constant leaf begin iterator
 	 */
 	const_leaf_iterator begin_leaf() const {
-		return const_leaf_iterator(static_cast_node_type(root_->next));
+		return const_leaf_iterator(root_->next);
 	}
 	/**
 	 * Return the end leaf node as iterator
 	 * @return leaf end iterator
 	 */
 	leaf_iterator end_leaf() {
-		return leaf_iterator(end_);
+//		return leaf_iterator(end_, false);
+		return leaf_iterator(end_, false);
 	}
 	/**
 	 * Return the first leaf node as constant iterator
@@ -724,8 +717,8 @@ template < class T >
 void
 tree<T>::clear_children(t_node *node) {
   t_node *tmp;
-  auto first = static_cast_node_type(node->first->next);
-  auto last = static_cast_node_type(node->last);
+  auto first = node->first->next;
+  auto last = node->last;
   // only clear nodes between first and last
   while (first != last) {
     tmp = first;
@@ -733,13 +726,13 @@ tree<T>::clear_children(t_node *node) {
       // clear children
       clear_children(tmp);
       // delete first and last of current child
-      delete static_cast_node_type(tmp->first);
-      delete static_cast_node_type(tmp->last);
+      delete tmp->first;
+      delete tmp->last;
     }
     // choose next child
-    first = static_cast_node_type(first->next);
+    first = first->next;
     // delete old child
-    delete static_cast_node_type(tmp);
+    delete tmp;
   }
   // finally link first to last and vice versa
   node->first->next = node->last;
@@ -749,14 +742,14 @@ tree<T>::clear_children(t_node *node) {
 template < class T >
 void
 tree<T>::clear() {
-  auto first = static_cast_node_type(root_->next);
+  auto first = root_->next;
   t_node *tmp;
   while (first != end_) {
     tmp = first;
     clear_children(tmp);
-    delete static_cast_node_type(tmp->first);
-    delete static_cast_node_type(tmp->last);
-    first = static_cast_node_type(first->next);
+    delete tmp->first;
+    delete tmp->last;
+    first = first->next;
     delete tmp;
   }
   root_->next = end_;
@@ -767,18 +760,18 @@ template < class T >
 template <typename iter>
 iter
 tree<T>::erase(iter i) {
-  clear_children(static_cast_node_type(i.node));
+  clear_children(i.node);
 
   // relink
   i.node->prev->next = i.node->next;
   i.node->next->prev = i.node->prev;
 
   // finally delete it
-  delete static_cast_node_type(i.node->first);
-  delete static_cast_node_type(i.node->last);
+  delete i.node->first;
+  delete i.node->last;
 
 	iter ret(i.node->next);
-  delete static_cast_node_type(i.node);
+  delete i.node;
   
   return ret;
 }
@@ -810,7 +803,7 @@ tree<T>::insert(iter i, const T& x) {
   node->data = x;
   // set proper children "list"
   init_children(node);
-  node->parent = static_cast_node_type(i.node->parent);
+  node->parent = i.node->parent;
   node->next = i.node;
   node->prev = i.node->prev;
   // link previous sibling of i to us
@@ -824,7 +817,7 @@ template <typename iter>
 iter
 tree<T>::push_back_child(iter i, const T& v) {
   assert(i.node->parent != root_);
-  return insert(iter(static_cast_node_type(i.node->last)), v);
+  return insert(iter(i.node->last), v);
 }
 
 template <class T>
@@ -841,20 +834,20 @@ tree<T>::sort_children(tree_iterator_base<T> &i) {
   // copy children to array
   size_t size = std::distance(begin(i), end(i));
   auto *a = new t_node[size];
-  auto *first = static_cast_node_type(i.node->first->next);
+  auto *first = i.node->first->next;
   int j = 0;
   while (first != i.node->last) {
     a[j++] = *first;
-    first = static_cast_node_type(first->next);
+    first = first->next;
   }
   // sort array with compare function
   std::sort(a, a+size);
   // relink children
-  first = static_cast_node_type(i.node->first->next);
+  first = i.node->first->next;
   j = 0;
   while (first != i.node->last) {
     first->data = a[j++].data;
-    first = static_cast_node_type(first->next);
+    first = first->next;
   }
   delete [] a;
 }
@@ -912,7 +905,7 @@ template < typename Predicate >
 typename
 tree<T>::range_pair
 tree<T>::equal_range(const tree_iterator_base<T> &i, Predicate predicate) const {
-  auto *j = static_cast_node_type(i.node->first->next);
+  auto *j = i.node->first->next;
   t_node *last, *first;
   first = last = j;
 
@@ -921,7 +914,7 @@ tree<T>::equal_range(const tree_iterator_base<T> &i, Predicate predicate) const 
     if (found) {
       // find last node fitting the predicate
       if (predicate(j->data)) {
-        j = static_cast_node_type(j->next);
+        j = j->next;
       } else {
         last = j;
         break;
@@ -929,7 +922,7 @@ tree<T>::equal_range(const tree_iterator_base<T> &i, Predicate predicate) const 
     } else {
       // find first node which fits the predicate
       if (!predicate(j->data)) {
-        j = static_cast_node_type(j->next);
+        j = j->next;
       } else {
         first = j;
         found = true;
@@ -978,7 +971,7 @@ tree<T>::find_in_path(iter pfirst, iter plast, Predicate) {
 template < class T >
 size_t
 tree<T>::depth(const tree_iterator_base<T> &i) const {
-  t_tree_node_base *node = i.node;
+  t_tree_node<T> *node = i.node;
   assert(node);
   size_t d = 0;
   while(node->parent) {
@@ -991,7 +984,7 @@ tree<T>::depth(const tree_iterator_base<T> &i) const {
 template < class T >
 size_t
 tree<T>::depth(const const_tree_iterator_base<T> &i) const {
-  t_tree_node_base *node = i.node;
+  t_tree_node<T> *node = i.node;
   assert(node);
   size_t d = 0;
   while(node->parent) {
@@ -1164,7 +1157,7 @@ tree_leaf_iterator<T>::increment() {
   assert(this->node);
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
-  if (this->node->first->next != this->node->last)
+  if (this->node->first && this->node->first->next != this->node->last)
     this->node = this->node->first->next;
   else {
     // if there is no child, we check for sibling
@@ -1187,32 +1180,34 @@ tree_leaf_iterator<T>::decrement() {
   // if node hasn't a previous sibling we set the
   // node to the previous sibling of the first parent which
   // has a previous sibling
-  if (!this->node->prev || (this->node->prev && !this->node->prev->prev)) {
-		do {
-  		this->node = this->node->parent;
-		} while (this->node->parent && !this->node->parent->prev);
-	}
-  this->node = this->node->prev;
+//  if (!this->node->prev || (this->node->prev && !this->node->prev->prev)) {
+//		do {
+//  		this->node = this->node->parent;
+//		} while (this->node->parent && !this->node->parent->prev);
+//	}
+//  this->node = this->node->prev;
   // if node has a previous sibling, we set it
   // as our next iterator. then we check if there
   // are last childs. if so, we set the last last
   // child as our iterator
-  /*
-  if (this->node->prev && this->node->prev->prev) {
-    this->node = this->node->prev;
-    while (this->node->last && this->node->first->next != this->node->last)
-      this->node = this->node->last->prev;
-    // if there is no previous sibling, our next iterator
-    // is the parent of the node
-  } else {
-		do {
-  		this->node = this->node->parent;
-		} while (this->node->parent && !this->node->parent->prev);
+//	while (this->node->last && this->node->first->next != this->node->last)
+//		this->node = this->node->last->prev;
+
+  if (this->node->last && this->node->last->prev != this->node->first)
+    this->node = this->node->last->prev;
+  else {
+    // if there is no child, we check for sibling
+    // if there is a sibling, this is our next iterator to return
+    // if not, we go back to the parent
+    while (this->node->parent && this->node->prev == this->node->parent->first) {
+      this->node = this->node->parent;
+    }
     this->node = this->node->prev;
   }
-  */
-	while (this->node->last && this->node->first->next != this->node->last)
-		this->node = this->node->last->prev;
+  while (this->node->last && this->node->last->prev != this->node->first) {
+    this->node = this->node->last->prev;
+  }
+
 }
 
 template < class T >

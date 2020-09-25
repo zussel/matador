@@ -89,12 +89,12 @@ void TreeTest::test_tree()
 
   UNIT_ASSERT_EQUAL(12, itcount);
 
-//  for (t_stringtree::reverse_iterator i = stringtree.rbegin(); i != stringtree.rend(); ++i)	{
-//    d = stringtree.depth(i);
-//    for (int k = 0; k < d; ++k) cerr << "  ";
-//    //cout << "node: " << *i << endl;
-//    cout << "node " << i.base().node << " (depth " << d << "): " << *i << endl;
-//  }
+  for (auto i = stringtree.begin(); i != stringtree.end(); ++i)	{
+    d = stringtree.depth(i);
+    for (int k = 0; k < d; ++k) cerr << "  ";
+    //cout << "node: " << *i << endl;
+    cout << "node " << i.node << " (depth " << d << "): " << *i << endl;
+  }
 
   auto rit = stringtree.rbegin();
 
@@ -206,6 +206,9 @@ void TreeTest::test_tree()
 
   // clear tree
   stringtree.clear();
+
+  UNIT_ASSERT_TRUE(stringtree.empty());
+
   // insert root
   j = stringtree.insert(stringtree.begin(), "root 1");
 
@@ -233,25 +236,30 @@ void TreeTest::test_tree()
   stringtree.push_back_child(p, "leaf 1.3.2.1.2.1");
   stringtree.push_back_child(m, "leaf 1.3.2.2");
 
-  // print tree
-  cout << "New tree:\n";
-  for (auto i = stringtree.begin(); i != stringtree.end(); ++i)	{
-    d = stringtree.depth(i);
-    for (int k = 0; k < d; ++k) cerr << "  ";
-    cout << "node " << &*i << " (depth " << stringtree.depth(i) << "): " << *i << endl;
-  }
+  UNIT_ASSERT_EQUAL(23UL, stringtree.size());
 
   cout << "\nIterating over leafs:\n";
-  for (auto i = stringtree.begin_leaf(); i != stringtree.end_leaf(); ++i) {
+  auto leaf_end = stringtree.end_leaf();
+  for (auto i = stringtree.begin_leaf(); i != leaf_end; ++i) {
+    ++itcount;
     d = stringtree.depth(i);
     for (int k = 0; k < d; ++k) cerr << "  ";
     cout << "leaf node " << &*i << " (depth " << stringtree.depth(i) << "): " << *i << endl;
   }
 
+  cout << "\n\n";
+
+  itcount = 0;
   cout << "\nIterating backwards over leafs:\n";
-  for (auto i = stringtree.end_leaf(); i != stringtree.begin_leaf(); --i) {
+  auto leaf_begin = stringtree.begin_leaf();
+  for (auto i = stringtree.end_leaf(); i != leaf_begin; --i) {
+    ++itcount;
     d = stringtree.depth(i);
     for (int k = 0; k < d; ++k) cerr << "  ";
     cout << "leaf node " << &*i << " (depth " << stringtree.depth(i) << "): " << *i << endl;
   }
+
+  UNIT_ASSERT_EQUAL(12, std::distance(stringtree.begin_leaf(), stringtree.end_leaf()));
+
+  UNIT_ASSERT_EQUAL(12, itcount);
 }
