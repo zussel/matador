@@ -1,6 +1,12 @@
 #ifndef MATADOR_SOCKET_STREAM_HPP
 #define MATADOR_SOCKET_STREAM_HPP
 
+#ifdef _WIN64
+#define ssize_t __int64
+#elif _WIN32
+#define ssize_t long
+#endif
+
 #include "matador/net/socket.hpp"
 
 namespace matador {

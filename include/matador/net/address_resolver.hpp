@@ -1,6 +1,19 @@
 #ifndef MATADOR_ADDRESS_RESOLVER_HPP
 #define MATADOR_ADDRESS_RESOLVER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_net_EXPORTS
+#define OOS_NET_API __declspec(dllexport)
+#define EXPIMP_NET_TEMPLATE
+#else
+#define OOS_NET_API __declspec(dllimport)
+#define EXPIMP_NET_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_NET_API
+#endif
+
 #include "matador/net/peer.hpp"
 #include "matador/net/error.hpp"
 
@@ -17,10 +30,10 @@ template < class P >
 int determine_socktype();
 
 template <>
-int determine_socktype<tcp>();
+OOS_NET_API int determine_socktype<tcp>();
 
 template <>
-int determine_socktype<udp>();
+OOS_NET_API int determine_socktype<udp>();
 
 template < class P >
 void initialize_hints(struct addrinfo &hints, int flags) {

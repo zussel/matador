@@ -102,6 +102,9 @@ bool mkdir(const std::string &dirname)
 
 bool mkdir(const char *dirname)
 {
+  if (dirname == nullptr || strlen(dirname) == 0) {
+    return true;
+  }
 #ifdef _WIN32
   return ::_mkdir(dirname) == 0;
 #else
@@ -116,6 +119,9 @@ bool chdir(const std::string &dirname)
 
 bool chdir(const char *dirname)
 {
+  if (dirname == nullptr || strlen(dirname) == 0) {
+    return true;
+  }
 #ifdef _WIN32
   return _chdir(dirname) == 0;
 #else

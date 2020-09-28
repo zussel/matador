@@ -5,8 +5,9 @@
 
 #include "EchoServer.hpp"
 
+#include "matador/logger/log_manager.hpp"
+
 #include <thread>
-#include <matador/logger/log_manager.hpp>
 #include <utility>
 
 using namespace matador;
@@ -21,7 +22,11 @@ ReactorTest::ReactorTest()
 bool wait_until_running(reactor &r, int retries = 10)
 {
   while (!r.is_running() && retries-- > 0) {
+#ifdef _WIN32
+    ::Sleep(1000);
+#else
     ::usleep(1000);
+#endif
   }
 
   return r.is_running();
@@ -29,7 +34,10 @@ bool wait_until_running(reactor &r, int retries = 10)
 
 void ReactorTest::test_shutdown()
 {
-  matador::add_log_sink(matador::create_file_sink("reactor.log"));
+  auto logsink = matador::create_file_sink("reactor.log");
+  matador::add_log_sink(logsink);
+
+  net::init();
 
   reactor r;
 
@@ -53,11 +61,21 @@ void ReactorTest::test_shutdown()
   server_thread.join();
 
   ac->close();
+
+  net::cleanup();
+
+  logsink->close();
+  matador::os::remove("reactor.log");
+
+  log_manager::instance().clear();
 }
 
 void ReactorTest::test_send_receive()
 {
-  matador::add_log_sink(matador::create_file_sink("reactor.log"));
+  auto logsink = matador::create_file_sink("reactor.log");
+  matador::add_log_sink(logsink);
+
+  net::init();
 
   auto echo_conn = std::make_shared<EchoServer>();
 
@@ -98,4 +116,11 @@ void ReactorTest::test_send_receive()
   server_thread.join();
 
   ac->close();
+
+  net::cleanup();
+
+  logsink->close();
+  matador::os::remove("reactor.log");
+ 
+  log_manager::instance().clear();
 }

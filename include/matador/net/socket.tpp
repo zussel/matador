@@ -140,7 +140,7 @@ bool socket_base<P>::cloexec() const
 template < class P >
 int socket_base<P>::options(int name, bool value)
 {
-  int flag = (value ? 1 : 0);
+  const char flag = static_cast<char>(value ? 1 : 0);
   return setsockopt(sock_, IPPROTO_TCP, name, &flag, sizeof(flag));
 }
 

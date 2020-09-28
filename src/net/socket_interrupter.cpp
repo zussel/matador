@@ -2,8 +2,11 @@
 
 #include "matador/utils/buffer.hpp"
 
+#include "matador/logger/log_manager.hpp"
+
+#ifndef _WIN32
 #include <netinet/tcp.h>
-#include <matador/logger/log_manager.hpp>
+#endif
 
 namespace matador {
 
