@@ -20,8 +20,7 @@ struct t_tree_node {
 };
 
 template < class T >
-bool
-operator<(const t_tree_node<T> &a, const t_tree_node<T> &b) {
+bool operator<(const t_tree_node<T> &a, const t_tree_node<T> &b) {
 	return a.data < b.data;
 }
 
@@ -96,7 +95,7 @@ class const_tree_iterator_base : public std::iterator<std::bidirectional_iterato
 public:
 	typedef const_tree_iterator_base<T> self;
 	typedef tree_iterator_base<T>       iterator;
-	typedef t_tree_node<T>           t_node;
+	typedef t_tree_node<T>              t_node;
 
 	typedef T  value_type;
 	typedef const T* pointer;
@@ -380,7 +379,7 @@ public:
 	 * @return end iterator of the tree
 	 */
 	iterator end() {
-		return iterator(end_);
+		return iterator(root_);
 	}
 	/**
 	 * Returns the constant begin iterator of the tree
@@ -394,7 +393,7 @@ public:
 	 * @return constant end iterator of the tree
 	 */
 	const_iterator end() const {
-		return const_iterator(end_);
+		return const_iterator(root_);
 	}
 	/**
 	 * Returns the reverse begin iterator of the tree
@@ -477,7 +476,15 @@ public:
 	 * @param i
 	 * @return constant subtree begin iterator
 	 */
-	const_subtree_iterator begin_subtree(const const_tree_iterator_base<T> &i) {
+	const_subtree_iterator begin_subtree(const const_tree_iterator_base<T> &i) const {
+		return const_subtree_iterator(i.node->first->next);
+	}
+	/**
+	 * Returns the constant subtree begin iterator for a node (iterator)
+	 * @param i
+	 * @return constant subtree begin iterator
+	 */
+	const_subtree_iterator begin_subtree(const tree_iterator_base<T> &i) const {
 		return const_subtree_iterator(i.node->first->next);
 	}
 	/**
@@ -485,7 +492,15 @@ public:
 	 * @param i
 	 * @return constant subtree end iterator
 	 */
-	const_subtree_iterator end_subtree(const const_tree_iterator_base<T> &i) {
+	const_subtree_iterator end_subtree(const const_tree_iterator_base<T> &i) const {
+		return const_subtree_iterator(i.node->last);
+	}
+	/**
+	 * Returns the constant subtree end iterator for a node (iterator)
+	 * @param i
+	 * @return constant subtree end iterator
+	 */
+	const_subtree_iterator end_subtree(const tree_iterator_base<T> &i) const {
 		return const_subtree_iterator(i.node->last);
 	}
 	/**
@@ -508,14 +523,14 @@ public:
 	 */
 	leaf_iterator end_leaf() {
 //		return leaf_iterator(end_, false);
-		return leaf_iterator(end_, false);
+		return leaf_iterator(root_, false);
 	}
 	/**
 	 * Return the first leaf node as constant iterator
 	 * @return constant leaf begin iterator
 	 */
 	const_leaf_iterator end_leaf() const {
-		return const_leaf_iterator(end_);
+		return const_leaf_iterator(root_);
 	}
 	/**
 	 * Returns the current size of the tree (takes linear amount of time)
@@ -530,14 +545,14 @@ public:
 	 * @return size of children under node
 	 */
 	size_t size(const tree_iterator_base<T> &i) const {
-		return std::distance(begin(i), end(i));
+		return std::distance(begin_subtree(i), end_subtree(i));
 	}
 	/**
 	 * Returns wether the tree is empty or not
 	 * @return wether the tree is empty
 	 */
 	bool empty() const {
-		return root_->next == end_;
+		return root_->next == root_;
 	}
 	/**
 	 * Returns if iterator has children
@@ -661,13 +676,13 @@ public:
 	 * @param i reverse iterator for which the depth is returned
 	 * @return depth of iterator (root is 0 (zero))
 	 */
-	size_t depth(const reverse_iterator &i) const { return this->depth(i.base()); }
+	size_t depth(const reverse_iterator &i) const { return this->depth(--i.base()); }
 	/**
 	 * Returns the depth of the given node constant reverse iterator i
 	 * @param i constant reverse iterator for which the depth is returned
 	 * @return depth of iterator (root is 0 (zero))
 	 */
-	size_t depth(const const_reverse_iterator &i) const { return this->depth(i.base()); }
+	size_t depth(const const_reverse_iterator &i) const { return this->depth(--i.base()); }
 private:
 	void init();
 	void init_children(t_node *node);
@@ -676,7 +691,7 @@ private:
 
 private:
 	t_node *root_;
-	t_node *end_;
+//	t_node *end_;
 };
 
 template < class T >
@@ -688,21 +703,21 @@ template < class T >
 tree<T>::~tree() {
   clear();
   delete root_;
-  delete end_;
+//  delete end_;
 }
 
 template < class T >
 void
 tree<T>::init() {
   root_ = new t_node;
-  end_ = new t_node;
-  root_->next = end_;
-  end_->prev = root_;
+  //end_ = new t_node;
+  root_->next = root_;
+  root_->prev = root_;
+  //end_->prev = root_;
 }
 
 template < class T >
-void
-tree<T>::init_children(t_node *node) {
+void tree<T>::init_children(t_node *node) {
   auto f = new t_node;
   auto l = new t_node;
   f->parent = node;
@@ -714,8 +729,7 @@ tree<T>::init_children(t_node *node) {
 }
 
 template < class T >
-void
-tree<T>::clear_children(t_node *node) {
+void tree<T>::clear_children(t_node *node) {
   t_node *tmp;
   auto first = node->first->next;
   auto last = node->last;
@@ -740,11 +754,10 @@ tree<T>::clear_children(t_node *node) {
 }
 
 template < class T >
-void
-tree<T>::clear() {
+void tree<T>::clear() {
   auto first = root_->next;
   t_node *tmp;
-  while (first != end_) {
+  while (first != root_) {
     tmp = first;
     clear_children(tmp);
     delete tmp->first;
@@ -752,14 +765,14 @@ tree<T>::clear() {
     first = first->next;
     delete tmp;
   }
-  root_->next = end_;
-  end_->prev = root_;
+  root_->next = root_;
+  root_->prev = root_;
+//  end_->prev = root_;
 }
 
 template < class T >
 template <typename iter>
-iter
-tree<T>::erase(iter i) {
+iter tree<T>::erase(iter i) {
   clear_children(i.node);
 
   // relink
@@ -778,8 +791,7 @@ tree<T>::erase(iter i) {
 
 template <class T>
 template <typename iter>
-void
-tree<T>::move(iter a, iter b) {
+void tree<T>::move(iter a, iter b) {
   // relink
   a.node->prev->next = a.node->next;
   a.node->next->prev = a.node->prev;
@@ -790,15 +802,14 @@ tree<T>::move(iter a, iter b) {
   // a is now predeccessor of b
   a.node->prev = b.node->prev;
   a.node->prev->next = a.node;
-  // a is now successor of bs former predeccessor
+  // a is now successor of bs former predecessor
   a.node->next = b.node;
   b.node->prev = a.node;
 }
 
 template <class T>
 template <typename iter>
-iter
-tree<T>::insert(iter i, const T& x) {
+iter tree<T>::insert(iter i, const T& x) {
   auto node = new t_node;
   node->data = x;
   // set proper children "list"
@@ -814,23 +825,20 @@ tree<T>::insert(iter i, const T& x) {
 
 template <class T>
 template <typename iter>
-iter
-tree<T>::push_back_child(iter i, const T& v) {
+iter tree<T>::push_back_child(iter i, const T& v) {
   assert(i.node->parent != root_);
   return insert(iter(i.node->last), v);
 }
 
 template <class T>
 template <typename iter>
-iter
-tree<T>::push_front_child(iter i, const T& v) {
+iter tree<T>::push_front_child(iter i, const T& v) {
   assert(i.node->parent != root_);
   return insert(iter(i.node->first->next), v);
 }
 
 template < class T >
-void
-tree<T>::sort_children(tree_iterator_base<T> &i) {
+void tree<T>::sort_children(tree_iterator_base<T> &i) {
   // copy children to array
   size_t size = std::distance(begin(i), end(i));
   auto *a = new t_node[size];
@@ -854,8 +862,7 @@ tree<T>::sort_children(tree_iterator_base<T> &i) {
 
 template < class T >
 template < typename Compare >
-void
-tree<T>::sort_children(tree_iterator_base<T> &i, Compare cmp) {
+void tree<T>::sort_children(tree_iterator_base<T> &i, Compare cmp) {
   // copy children to array
   size_t size = std::distance(begin(i), end(i));
   auto *a = new t_node[size];
@@ -878,8 +885,7 @@ tree<T>::sort_children(tree_iterator_base<T> &i, Compare cmp) {
 }
 
 template < class T >
-void
-tree<T>::sort() {
+void tree<T>::sort() {
 	iterator first = this->begin();
 	iterator last = this->end();
 	while (first != last) {
@@ -890,8 +896,7 @@ tree<T>::sort() {
 
 template < class T >
 template < typename Compare >
-void
-tree<T>::sort(Compare cmp) {
+void tree<T>::sort(Compare cmp) {
 	iterator first = this->begin();
 	iterator last = this->end();
 	while (first != last) {
@@ -902,9 +907,7 @@ tree<T>::sort(Compare cmp) {
 
 template < typename T >
 template < typename Predicate >
-typename
-tree<T>::range_pair
-tree<T>::equal_range(const tree_iterator_base<T> &i, Predicate predicate) const {
+typename tree<T>::range_pair tree<T>::equal_range(const tree_iterator_base<T> &i, Predicate predicate) const {
   auto *j = i.node->first->next;
   t_node *last, *first;
   first = last = j;
@@ -934,19 +937,16 @@ tree<T>::equal_range(const tree_iterator_base<T> &i, Predicate predicate) const 
 }
 
 template< class T >
-typename
-tree<T>::iterator
-tree<T>::parent(const tree_iterator_base<T> &i) const {
-  if (i.node->parent)
+typename tree<T>::iterator tree<T>::parent(const tree_iterator_base<T> &i) const {
+  if (i.node->parent) {
     return iterator(i.node->parent);
-  return iterator(end_);
+  }
+  return iterator(root_->next);
 }
 
 template<class T>
 template<typename iter, typename Predicate>
-typename
-tree<T>::iterator
-tree<T>::find_in_path(iter pfirst, iter plast, Predicate) {
+typename tree<T>::iterator tree<T>::find_in_path(iter pfirst, iter plast, Predicate) {
   if (pfirst == plast)
     return end();
 
@@ -969,8 +969,7 @@ tree<T>::find_in_path(iter pfirst, iter plast, Predicate) {
 }
 
 template < class T >
-size_t
-tree<T>::depth(const tree_iterator_base<T> &i) const {
+size_t tree<T>::depth(const tree_iterator_base<T> &i) const {
   t_tree_node<T> *node = i.node;
   assert(node);
   size_t d = 0;
@@ -982,8 +981,7 @@ tree<T>::depth(const tree_iterator_base<T> &i) const {
 }
 
 template < class T >
-size_t
-tree<T>::depth(const const_tree_iterator_base<T> &i) const {
+size_t tree<T>::depth(const const_tree_iterator_base<T> &i) const {
   t_tree_node<T> *node = i.node;
   assert(node);
   size_t d = 0;
@@ -995,8 +993,7 @@ tree<T>::depth(const const_tree_iterator_base<T> &i) const {
 }
 
 template < class T >
-void
-tree_iterator<T>::decrement() {
+void tree_iterator<T>::decrement() {
   assert(this->node);
   // if node has a previous sibling, we set it
   // as our next iterator. then we check if there
@@ -1014,8 +1011,7 @@ tree_iterator<T>::decrement() {
 }
 
 template < class T >
-void
-tree_iterator<T>::increment() {
+void tree_iterator<T>::increment() {
   assert(this->node);
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
@@ -1033,8 +1029,7 @@ tree_iterator<T>::increment() {
 }
 
 template < class T >
-void
-const_tree_iterator<T>::decrement() {
+void const_tree_iterator<T>::decrement() {
   assert(this->node);
   // if node has a previous sibling, we set it
   // as our next iterator. then we check if there
@@ -1052,8 +1047,7 @@ const_tree_iterator<T>::decrement() {
 }
 
 template < class T >
-void
-const_tree_iterator<T>::increment() {
+void const_tree_iterator<T>::increment() {
   assert(this->node);
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
@@ -1071,8 +1065,7 @@ const_tree_iterator<T>::increment() {
 }
 
 template < class T >
-void
-tree_subtree_iterator<T>::increment() {
+void tree_subtree_iterator<T>::increment() {
   assert(this->node);
   assert(root);
   // if we have a child, child is the next iterator to return
@@ -1091,8 +1084,7 @@ tree_subtree_iterator<T>::increment() {
 }
 
 template < class T >
-void
-tree_subtree_iterator<T>::decrement() {
+void tree_subtree_iterator<T>::decrement() {
   assert(this->node);
   // if node has a previous sibling, we set it
   // as our next iterator. then we check if there
@@ -1110,8 +1102,7 @@ tree_subtree_iterator<T>::decrement() {
 }
 
 template < class T >
-void
-const_tree_subtree_iterator<T>::increment() {
+void const_tree_subtree_iterator<T>::increment() {
   assert(this->node);
   assert(root);
   // if we have a child, child is the next iterator to return
@@ -1133,8 +1124,7 @@ const_tree_subtree_iterator<T>::increment() {
 }
 
 template < class T >
-void
-const_tree_subtree_iterator<T>::decrement() {
+void const_tree_subtree_iterator<T>::decrement() {
   assert(this->node);
   // if node has a previous sibling, we set it
   // as our next iterator. then we check if there
@@ -1152,8 +1142,7 @@ const_tree_subtree_iterator<T>::decrement() {
 }
 
 template < class T >
-void
-tree_leaf_iterator<T>::increment() {
+void tree_leaf_iterator<T>::increment() {
   assert(this->node);
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
@@ -1174,8 +1163,7 @@ tree_leaf_iterator<T>::increment() {
 }
 
 template < class T >
-void
-tree_leaf_iterator<T>::decrement() {
+void tree_leaf_iterator<T>::decrement() {
   assert(this->node);
   // if node hasn't a previous sibling we set the
   // node to the previous sibling of the first parent which
@@ -1211,8 +1199,7 @@ tree_leaf_iterator<T>::decrement() {
 }
 
 template < class T >
-void
-const_tree_leaf_iterator<T>::increment() {
+void const_tree_leaf_iterator<T>::increment() {
   assert(this->node);
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
@@ -1233,8 +1220,7 @@ const_tree_leaf_iterator<T>::increment() {
 }
 
 template < class T >
-void
-const_tree_leaf_iterator<T>::decrement() {
+void const_tree_leaf_iterator<T>::decrement() {
   assert(this->node);
   // if node has a previous sibling, we set it
   // as our next iterator. then we check if there
