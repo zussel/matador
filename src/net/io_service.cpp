@@ -3,8 +3,9 @@
 #include "matador/logger/log_manager.hpp"
 
 namespace matador {
+
 io_service::io_service()
-: log_(matador::create_logger("IOService"))
+  : log_(matador::create_logger("IOService"))
 {}
 
 void io_service::run()
