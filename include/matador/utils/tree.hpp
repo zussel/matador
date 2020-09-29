@@ -9,6 +9,7 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
 template < class T >
 struct t_tree_node {
   t_tree_node<T> *parent = nullptr;
@@ -25,121 +26,295 @@ bool operator<(const t_tree_node<T> &a, const t_tree_node<T> &b) {
 }
 
 template < class T > class tree;
+template < class T > class tree_iterator;
 
+/// @endcond
+
+/**
+ * Base class for tree iterator types
+ *
+ * @tparam T Type of the tree containing data
+ */
 template < class T >
 class tree_iterator_base : public std::iterator<std::bidirectional_iterator_tag, T> {
 public:
-	typedef tree_iterator_base<T> self;
-	typedef t_tree_node<T>     t_node;
+	typedef tree_iterator_base<T> self; /**< Shortcut to self */
+	typedef t_tree_node<T> t_node;      /**< Shortcut to node class */
 
-	typedef T  value_type;
-	typedef T* pointer;
-	typedef T& reference ;
+	typedef T  value_type;  /**< Shortcut to value type */
+	typedef T* pointer;     /**< Shortcut to pointer of value type */
+	typedef T& reference ;  /**< Shortcut to reference of value type */
 
+	/**
+	 * Default constructor
+	 */
 	tree_iterator_base() = default;
+
+	/**
+	 * Initialize the base iterator with a
+	 * given node
+	 *
+	 * @param n Initial node for the iterator
+	 */
 	explicit tree_iterator_base(t_node *n) : node(n) {}
+
+	/**
+	 * Assign another iterator x to this iterator
+	 *
+	 * @param x Iterator to copy assign
+	 * @return The copied iterator
+	 */
 	tree_iterator_base<T>& operator=(const tree_iterator_base<T> &x) = default;
+
+	/**
+	 * Move assign another iterator to the iterator
+	 * @param x Iterator to move assign
+	 * @return The moved iterator
+	 */
 	tree_iterator_base<T>& operator=(tree_iterator_base<T> &&x) noexcept = default;
+
+	/**
+	 * Default destructor
+	 */
 	virtual ~tree_iterator_base() = default;
 
-	bool operator==(const self &i) const {
+	/**
+	 * Equal compares another iterator with this
+	 *
+	 * @param i The iterator to compare
+	 * @return True if the iterators are the same
+	 */
+	bool operator==(const self &i) const
+	{
 		return (node == i.node);
 	}
-  
-	bool operator!=(const self &i) const {
+
+	/**
+	 * Not equal compares another iterator with this
+	 *
+	 * @param i The iterator to compare
+	 * @return True if the iterators are not the same
+	 */
+	bool operator!=(const self &i) const
+	{
 		return (node != i.node);
 	}
 
-	virtual reference operator*() const { return static_cast<t_node*>(this->node)->data; }
-	virtual pointer operator->() const { return &(operator*()); }
+	/**
+	 * Returns a reference nodes data
+	 *
+	 * @return Reference to nodes data
+	 */
+	reference operator*() const { return static_cast<t_node*>(this->node)->data; }
 
-	self& operator++() {
+  /**
+   * Returns a reference nodes data
+   *
+   * @return Reference to nodes data
+   */
+	pointer operator->() const { return &(operator*()); }
+
+  /**
+   * @brief Pre increments self
+   *
+   * @return A reference to incremented self
+   */
+	self& operator++()
+	{
 		increment();
 		return (*this);
 	}
-	self& operator--() {
+
+  /**
+   * @brief Pre decrements self
+   *
+   * @return A reference to decremented self
+   */
+	self& operator--()
+	{
 		decrement();
 		return (*this);
 	}
-	self operator++(int) {
+
+  /**
+   * @brief Post increments iterator
+   *
+   * Post increments iterator and returns a
+   * new iterator object.
+   *
+   * @return Returns new incremented iterator
+   */
+	self operator++(int)
+	{
 		self tmp = *this;
 		increment();
 		return tmp;
 	}
+
+  /**
+   * @brief Post decrements iterator
+   *
+   * Post decrements iterator and returns a
+   * new iterator object.
+   *
+   * @return Returns new decremented iterator
+   */
 	self operator--(int) {
 		self tmp = *this;
 		decrement();
 		return tmp;
 	}
 
-  self next() {
-    self tmp = *this;
-    tmp.increment();
-    return tmp;
-  }
-  self previous() {
-    self tmp = *this;
-    tmp.decrement();
-    return tmp;
-  }
+protected:
+  friend class tree<T>;
+  friend class tree_iterator<T>;
 
+/// @cond MATADOR_DEV
 	virtual void decrement() {}
 	virtual void increment() {}
 
 	t_node *node = nullptr;
+/// @endcond
 };
 
 
+/**
+ * Base class for const tree iterator types
+ *
+ * @tparam T Type of the tree containing data
+ */
 template < class T >
 class const_tree_iterator_base : public std::iterator<std::bidirectional_iterator_tag, T, ptrdiff_t, const T&, const T*> {
 public:
-	typedef const_tree_iterator_base<T> self;
-	typedef tree_iterator_base<T>       iterator;
-	typedef t_tree_node<T>              t_node;
+  typedef const_tree_iterator_base<T> self;   /**< Shortcut to self */
+  typedef tree_iterator_base<T> iterator;     /**< Shortcut to non const tree iterator */
+  typedef t_tree_node<T> t_node;              /**< Shortcut to node class */
 
-	typedef T  value_type;
-	typedef const T* pointer;
-	typedef const T& reference ;
+  typedef T  value_type;  /**< Shortcut to value type */
+  typedef T* pointer;     /**< Shortcut to pointer of value type */
+  typedef T& reference ;  /**< Shortcut to reference of value type */
 
-	const_tree_iterator_base() : node(nullptr) {}
+  /**
+   * Default constructor
+   */
+	const_tree_iterator_base() = default;
+
+  /**
+   * Copy from iterator class
+   *
+   * @param x Iterator to copy from
+   */
 	explicit const_tree_iterator_base(const iterator &x) : node(x.node) {}
+
+  /**
+   * Initializes the iterator with the given node
+   *
+   * @param n Initial node of the iterator
+   */
 	explicit const_tree_iterator_base(t_node *n) : node(n) {}
+
+	/**
+	 * Default destructor
+	 */
 	virtual ~const_tree_iterator_base() = default;
 
-	bool operator==(const self &i) const {
-		return (node == i.node);
-	}
-  
-	bool operator!=(const self &i) const {
-		return (node != i.node);
-	}
+  /**
+   * Equal compares another iterator with this
+   *
+   * @param i The iterator to compare
+   * @return True if the iterators are the same
+   */
+  bool operator==(const self &i) const
+  {
+    return (node == i.node);
+  }
 
-	virtual reference operator*() const { return static_cast<t_node*>(this->node)->data; }
-	virtual pointer operator->() const { return &(operator*()); }
+  /**
+   * Not equal compares another iterator with this
+   *
+   * @param i The iterator to compare
+   * @return True if the iterators are not the same
+   */
+  bool operator!=(const self &i) const
+  {
+    return (node != i.node);
+  }
 
-	self& operator++() {
-		increment();
-		return (*this);
-	}
-	self& operator--() {
-		decrement();
-		return (*this);
-	}
-	self operator++(int) {
-		self tmp = *this;
-		increment();
-		return tmp;
-	}
-	self operator--(int) {
-		self tmp = *this;
-		decrement();
-		return tmp;
-	}
+  /**
+   * Returns a reference nodes data
+   *
+   * @return Reference to nodes data
+   */
+  reference operator*() const { return static_cast<t_node*>(this->node)->data; }
 
+  /**
+   * Returns a reference nodes data
+   *
+   * @return Reference to nodes data
+   */
+  pointer operator->() const { return &(operator*()); }
+
+  /**
+   * @brief Pre increments self
+   *
+   * @return A reference to incremented self
+   */
+  self& operator++()
+  {
+    increment();
+    return (*this);
+  }
+
+  /**
+   * @brief Pre decrements self
+   *
+   * @return A reference to decremented self
+   */
+  self& operator--()
+  {
+    decrement();
+    return (*this);
+  }
+
+  /**
+   * @brief Post increments iterator
+   *
+   * Post increments iterator and returns a
+   * new iterator object.
+   *
+   * @return Returns new incremented iterator
+   */
+  self operator++(int)
+  {
+    self tmp = *this;
+    increment();
+    return tmp;
+  }
+
+  /**
+   * @brief Post decrements iterator
+   *
+   * Post decrements iterator and returns a
+   * new iterator object.
+   *
+   * @return Returns new decremented iterator
+   */
+  self operator--(int) {
+    self tmp = *this;
+    decrement();
+    return tmp;
+  }
+
+protected:
+  friend class tree<T>;
+  friend class tree_iterator<T>;
+
+/// @cond MATADOR_DEV
 	virtual void decrement() {}
 	virtual void increment() {}
 
 	t_node *node = nullptr;
+/// @endcond
 };
 
 /**
@@ -152,19 +327,52 @@ public:
 template < typename T >
 class tree_iterator : public tree_iterator_base<T> {
 public:
-	typedef typename tree_iterator_base<T>::t_node t_node;
+	typedef typename tree_iterator_base<T>::t_node node_type; /**< Shortcut to node class */
 
-	tree_iterator() : tree_iterator_base<T>() {}
+	/**
+	 * Default constructor
+	 */
+	tree_iterator() = default;
+
+	/**
+	 * Copy constructor
+	 *
+	 * @param x Iterator to copy from
+	 */
 	tree_iterator(const tree_iterator<T> &x) : tree_iterator_base<T>(x.node) {}
-	tree_iterator(const tree_iterator_base<T> &x) : tree_iterator_base<T>(x.node) {}
-	explicit tree_iterator(t_node *n) : tree_iterator_base<T>(n) {}
 
+	/**
+	 * Copy from base iterator class
+	 *
+	 * @param x Iterator to copy from
+	 */
+	tree_iterator(const tree_iterator_base<T> &x) : tree_iterator_base<T>(x.node) {}
+
+	/**
+	 * Initializes the iterator with the given node
+	 *
+	 * @param n Initial node of the iterator
+	 */
+	explicit tree_iterator(node_type *n) : tree_iterator_base<T>(n) {}
+
+	/**
+	 * Copy assign constructor
+	 *
+	 * @param x Iterator to copy from
+	 * @return The assign iterator
+	 */
 	tree_iterator<T>& operator=(const tree_iterator<T> &x)
   {
 	  tree_iterator_base<T>::operator=(x);
 	  return *this;
   }
 
+  /**
+   * Move assign constructor
+   *
+   * @param x Iterator to move assign from
+   * @return The moved iterator
+   */
 	tree_iterator<T>& operator=(tree_iterator<T> &&x) noexcept
   {
 	  tree_iterator_base<T>::operator=(x);
@@ -172,9 +380,10 @@ public:
   }
 
 protected:
-
+/// @cond MATADOR_DEV
 	virtual void decrement();
 	virtual void increment();
+/// @endcond
 };
 
 /**
@@ -187,30 +396,80 @@ protected:
 template < typename T >
 class const_tree_iterator : public const_tree_iterator_base<T> {
 public:
-	typedef typename const_tree_iterator_base<T>::t_node t_node;
+	typedef typename const_tree_iterator_base<T>::t_node t_node; /**< Shortcut to node type */
 
-	const_tree_iterator() : const_tree_iterator_base<T>() {}
+	/**
+	 * Default constructor
+	 */
+	const_tree_iterator() = default;
+
+	/**
+	 * Copy constructs from given const tree base iterator
+	 *
+	 * @param x Iterator to copy from
+	 */
   explicit const_tree_iterator(const const_tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node) {}
+
+  /**
+   * Copy constructs from given tree base iterator
+   *
+   * @param x Iterator to copy from
+   */
   explicit const_tree_iterator(const tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x) {}
+
+  /**
+   * Initializes the iterator with the given node
+   *
+   * @param n Initial node of the iterator
+   */
 	explicit const_tree_iterator(t_node *n) : const_tree_iterator_base<T>(n) {}
 
 protected:
-
+/// @cond MATADOR_DEV
 	virtual void decrement();
 	virtual void increment();
+/// @endcond
 };
 
+/**
+ * Sibling iterator iterates only the sibling
+ * of another iterator
+ *
+ * @tparam T Type of the tree
+ */
 template < typename T >
 class tree_sibling_iterator : public tree_iterator_base<T> {
 public:
-	typedef typename tree_iterator_base<T>::t_node t_node;
+	typedef typename tree_iterator_base<T>::t_node t_node; /**< Shortcut to the node type */
 
-	tree_sibling_iterator() : tree_iterator_base<T>() {}
+  /**
+   * Default constructor
+   */
+	tree_sibling_iterator() = default;
+
+  /**
+   * Copy constructs from given iterator
+   *
+   * @param x Iterator to copy from
+   */
   tree_sibling_iterator(const tree_sibling_iterator<T> &x) : tree_iterator_base<T>(x.node) {}
+
+  /**
+   * Copy constructs from given tree base iterator
+   *
+   * @param x Iterator to copy from
+   */
   explicit tree_sibling_iterator(const tree_iterator_base<T> &x) : tree_iterator_base<T>(x.node) {}
+
+  /**
+   * Initializes the iterator with the given node
+   *
+   * @param n Initial node of the iterator
+   */
 	explicit tree_sibling_iterator(t_node *n) : tree_iterator_base<T>(n) {}
 
 protected:
+/// @cond MATADOR_DEV
 	virtual void decrement() {
 		assert(this->node);
 		this->node = this->node->prev;
@@ -220,19 +479,48 @@ protected:
 		assert(this->node);
 		this->node = this->node->next;
 	}
+/// @endcond
 };
 
+/**
+ * Sibling iterator iterates only the sibling
+ * of another iterator
+ *
+ * @tparam T Type of the tree
+ */
 template < typename T >
 class const_tree_sibling_iterator : public const_tree_iterator_base<T> {
 public:
-	typedef typename const_tree_iterator_base<T>::t_node t_node;
+	typedef typename const_tree_iterator_base<T>::t_node t_node; /**< Shortcut to the node type */
 
-	const_tree_sibling_iterator() : const_tree_iterator_base<T>() {}
+	/**
+	 * Default constructor
+	 */
+	const_tree_sibling_iterator() = default;
+
+  /**
+   * Copy constructs from given const tree base iterator
+   *
+   * @param x Iterator to copy from
+   */
   explicit const_tree_sibling_iterator(const const_tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node) {}
+
+  /**
+   * Copy constructs from given tree base iterator
+   *
+   * @param x Iterator to copy from
+   */
   explicit const_tree_sibling_iterator(const tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node) {}
+
+  /**
+   * Initializes the iterator with the given node
+   *
+   * @param n Initial node of the iterator
+   */
 	explicit const_tree_sibling_iterator(t_node *n) : const_tree_iterator_base<T>(n) {}
 
 protected:
+/// @cond MATADOR_DEV
 	virtual void decrement() {
 		assert(this->node);
 		this->node = this->node->prev;
@@ -242,40 +530,99 @@ protected:
 		assert(this->node);
 		this->node = this->node->next;
 	}
+/// @endcond
 };
 
+/**
+ * A subtree iterator iterates over all
+ * elements below a given node.
+ *
+ * @tparam T Type of the iterator
+ */
 template < typename T >
 class tree_subtree_iterator : public tree_iterator_base<T> {
 public:
-	typedef typename tree_iterator_base<T>::t_node t_node;
+	typedef typename tree_iterator_base<T>::t_node t_node; /**< Shortcut to the node type */
 
-	tree_subtree_iterator() : tree_iterator_base<T>(), root(nullptr) {}
+  /**
+   * Default constructor
+   */
+	tree_subtree_iterator() = default;
+
+  /**
+   * Copy constructs from given iterator
+   *
+   * @param x Iterator to copy from
+   */
   tree_subtree_iterator(const tree_subtree_iterator<T> &x) : tree_iterator_base<T>(x.node), root(nullptr) {}
+
+  /**
+   * Copy constructs from given tree base iterator
+   *
+   * @param x Iterator to copy from
+   */
   explicit tree_subtree_iterator(const tree_iterator_base<T> &x) : tree_iterator_base<T>(x.node), root(nullptr) {}
+
+  /**
+   * Initializes the iterator with the given node
+   *
+   * @param n Initial node of the iterator
+   */
 	explicit tree_subtree_iterator(t_node *n) : tree_iterator_base<T>(n), root(n->parent) {}
 
 protected:
+/// @cond MATADOR_DEV
 	t_node *root = nullptr;
 
 	virtual void decrement();        
 	virtual void increment();
+/// @endcond
 };
 
+/**
+ * A subtree iterator iterates over all
+ * elements below a given node.
+ *
+ * @tparam T Type of the iterator
+ */
 template < typename T >
 class const_tree_subtree_iterator : public const_tree_iterator_base<T> {
 public:
-	typedef typename const_tree_iterator_base<T>::t_node t_node;
+	typedef typename const_tree_iterator_base<T>::t_node t_node; /**< Shortcut to the node type */
 
-	const_tree_subtree_iterator() : const_tree_iterator_base<T>(), root(nullptr) {}
+  /**
+   * Default constructor
+   */
+	const_tree_subtree_iterator() = default;
+
+  /**
+   * Copy constructs from given const tree base iterator
+   *
+   * @param x Iterator to copy from
+   */
   explicit const_tree_subtree_iterator(const const_tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node), root(nullptr) {}
+
+  /**
+   * Copy constructs from given tree base iterator
+   *
+   * @param x Iterator to copy from
+   */
   explicit const_tree_subtree_iterator(const tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node), root(nullptr) {}
+
+  /**
+   * Initializes the iterator with the given node
+   *
+   * @param n Initial node of the iterator
+   */
 	explicit const_tree_subtree_iterator(t_node *n) : const_tree_iterator_base<T>(n), root(n->parent) {}
 
 protected:
+/// @cond MATADOR_DEV
 	t_node *root = nullptr;
 
 	virtual void decrement();        
 	virtual void increment();
+/// @endcond
 };
 
 /**
@@ -287,12 +634,35 @@ protected:
 template < typename T >
 class tree_leaf_iterator : public tree_iterator_base<T> {
 public:
-	typedef typename tree_iterator_base<T>::t_node t_node;
+	typedef typename tree_iterator_base<T>::t_node t_node; /**< Shortcut to the node type */
 
-	tree_leaf_iterator() : tree_iterator_base<T>() {}
+  /**
+   * Default constructor
+   */
+	tree_leaf_iterator() = default;
+
+  /**
+   * Copy constructs from given iterator
+   *
+   * @param x Iterator to copy from
+   */
   tree_leaf_iterator(const tree_leaf_iterator<T> &x) : tree_iterator_base<T>(x.node) {}
+
+  /**
+   * Copy constructs from given tree base iterator
+   *
+   * @param x Iterator to copy from
+   */
   explicit tree_leaf_iterator(const tree_iterator_base<T> &x) : tree_iterator_base<T>(x.node) {}
-	tree_leaf_iterator(t_node *n, bool as_begin) : tree_iterator_base<T>(n) {
+
+  /**
+   * Initializes the iterator with the given node
+   *
+   * @param n Initial node of the iterator
+   * @param as_begin Indicates that the given node is the beginning node
+   */
+	tree_leaf_iterator(t_node *n, bool as_begin) : tree_iterator_base<T>(n)
+	{
 	  if (as_begin) {
       while (this->node->first && this->node->first->next != this->node->last) {
         this->node = this->node->first->next;
@@ -301,8 +671,10 @@ public:
 	}
 
 protected:
-	virtual void decrement();        
+/// @cond MATADOR_DEV
+	virtual void decrement();
 	virtual void increment();
+/// @endcond
 };
 
 /**
@@ -314,16 +686,47 @@ protected:
 template < typename T >
 class const_tree_leaf_iterator : public const_tree_iterator_base<T> {
 public:
-	typedef typename const_tree_iterator_base<T>::t_node t_node;
+	typedef typename const_tree_iterator_base<T>::t_node t_node; /**< Shortcut to the node type */
 
-	const_tree_leaf_iterator() : const_tree_iterator_base<T>() {}
+  /**
+   * Default constructor
+   */
+	const_tree_leaf_iterator() = default;
+
+  /**
+   * Copy constructs from given const tree base iterator
+   *
+   * @param x Iterator to copy from
+   */
   explicit const_tree_leaf_iterator(const const_tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node) {}
+
+  /**
+   * Copy constructs from given tree base iterator
+   *
+   * @param x Iterator to copy from
+   */
   explicit const_tree_leaf_iterator(const tree_iterator_base<T> &x) : const_tree_iterator_base<T>(x.node) {}
-	explicit const_tree_leaf_iterator(t_node *n) : const_tree_iterator_base<T>(n) {}
+
+  /**
+   * Initializes the iterator with the given node
+   *
+   * @param n Initial node of the iterator
+   * @param as_begin Indicates that the given node is the beginning node
+   */
+	const_tree_leaf_iterator(t_node *n, bool as_begin) : const_tree_iterator_base<T>(n)
+	{
+    if (as_begin) {
+      while (this->node->first && this->node->first->next != this->node->last) {
+        this->node = this->node->first->next;
+      }
+    }
+	}
 
 protected:
-	virtual void decrement();        
+/// @cond MATADOR_DEV
+	virtual void decrement();
 	virtual void increment();
+/// @endcond
 };
 
 /**
@@ -338,8 +741,8 @@ protected:
 template < class T >
 class tree {
 public:
-	typedef t_tree_node<T> t_node;
-	typedef T value_type;
+	typedef t_tree_node<T> t_node;  /**< Shortcut to node type */
+	typedef T value_type;           /**< Shortcut to value type */
 
 	/**
 	 * Creates an empty tree of type T.
@@ -351,21 +754,21 @@ public:
 	~tree();
 
 public:
-	typedef tree_iterator<T> iterator;
-	typedef const_tree_iterator<T> const_iterator;
-	typedef tree_sibling_iterator<T> sibling_iterator;
-	typedef const_tree_sibling_iterator<T> const_sibling_iterator;
-	typedef tree_subtree_iterator<T> subtree_iterator;
-	typedef const_tree_subtree_iterator<T> const_subtree_iterator;
-	typedef tree_leaf_iterator<T> leaf_iterator;
-	typedef const_tree_leaf_iterator<T> const_leaf_iterator;
-	typedef std::reverse_iterator<iterator> reverse_iterator;
-	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+	typedef tree_iterator<T> iterator;                            /**< Shortcut to default iterator type */
+	typedef const_tree_iterator<T> const_iterator;                /**< Shortcut to default const iterator type */
+	typedef tree_sibling_iterator<T> sibling_iterator;            /**< Shortcut to sibling iterator type */
+	typedef const_tree_sibling_iterator<T> const_sibling_iterator;/**< Shortcut to const sibling iterator type */
+	typedef tree_subtree_iterator<T> subtree_iterator;            /**< Shortcut to subtree iterator type */
+	typedef const_tree_subtree_iterator<T> const_subtree_iterator;/**< Shortcut to const subtree iterator type */
+	typedef tree_leaf_iterator<T> leaf_iterator;                  /**< Shortcut to leaf iterator type */
+	typedef const_tree_leaf_iterator<T> const_leaf_iterator;      /**< Shortcut to const leaf iterator type */
+	typedef std::reverse_iterator<iterator> reverse_iterator;     /**< Shortcut to reverse iterator type */
+	typedef std::reverse_iterator<const_iterator> const_reverse_iterator; /**< Shortcut to const reverse iterator type */
 
-	typedef T& reference;
-	typedef T* pointer;
-	typedef const T& const_reference;
-	typedef const T* const_pointer;
+	typedef T& reference; /**< Shortcut to value reference type */
+	typedef T* pointer;   /**< Shortcut to value pointer type */
+	typedef const T& const_reference; /**< Shortcut to value const reference type */
+	typedef const T* const_pointer;   /**< Shortcut to value const pointer type */
 
 	/**
 	 * Returns the begin iterator of the tree
@@ -595,14 +998,14 @@ public:
 	/**
 	 * Insert as last child of i and returns new node iterator
 	 * @param i parent children of new node of type T
-	 * @param x new node of type T
+	 * @param v new node of type T
 	 * @return new iterator of node x
 	 */
 	template <typename iter> iter push_back_child(iter i, const T &v);
 	/**
 	 * Insert as first child of i and returns new node iterator
 	 * @param i parent children of new node of type T
-	 * @param x new node of type T
+	 * @param v new node of type T
 	 * @return new iterator of node x
 	 */
 	template <typename iter> iter push_front_child(iter i, const T &v);
@@ -630,7 +1033,9 @@ public:
 	 */
 	template < typename CMP >
 	void sort(CMP cmp);
-	typedef std::pair<sibling_iterator, sibling_iterator> range_pair;
+
+	typedef std::pair<sibling_iterator, sibling_iterator> range_pair; /**< Shortcut to a range pair type */
+
 	/**
 	 * Returns two iterators representing a range of children nodes
 	 * which equals a given predicate (e.g. same name)
@@ -693,6 +1098,8 @@ private:
 	t_node *root_;
 //	t_node *end_;
 };
+
+/// @cond MATADOR_DEV
 
 template < class T >
 tree<T>::tree() {
@@ -1240,6 +1647,7 @@ void const_tree_leaf_iterator<T>::decrement() {
 	}
 }
 
+/// @endcond
 }
 
 #endif /* MATADOR_TREE_HPP */

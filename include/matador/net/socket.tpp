@@ -55,9 +55,9 @@ int socket_base<P>::release()
 }
 
 template < class P >
-int socket_base<P>::connect(const typename protocol_type::peer &p)
+bool socket_base<P>::connect(const typename protocol_type::peer &p)
 {
-  return ::connect(sock_, p.data(), p.size());
+  return ::connect(sock_, p.data(), p.size()) == 0;
 }
 
 template < class P >

@@ -20,7 +20,7 @@
 #include <vector>
 
 namespace matador {
-
+/// @cond MATADOR_DEV
 class tcp;
 class udp;
 
@@ -43,22 +43,51 @@ void initialize_hints(struct addrinfo &hints, int flags) {
   hints.ai_protocol = 0;
   hints.ai_flags = flags;
 }
-
+/// @endcond
 }
 
+/**
+ * The address resolver resolves a given host and port
+ * to a peer object representing the given address
+ *
+ * @tparam P Type of protocol
+ */
 template < class P >
 class address_resolver
 {
 public:
-  typedef typename P::peer peer;
+  typedef typename P::peer peer; /**< Shortcut to peer type */
 
+  /**
+   * Default constructor
+   */
   address_resolver() = default;
 
+  /**
+   * Resolves the given host and port to a list
+   * of valid peers representing the ip addresses
+   * of the host either in IPv4 or IPv6 format
+   *
+   * @param hostname Hostname to resolve
+   * @param port Port to resolve
+   * @return A list of peers representing the host and port
+   */
   std::vector<peer> resolve(const std::string &hostname, const std::string &port);
+
+  /**
+   * Resolves the given host and port to a list
+   * of valid peers representing the ip addresses
+   * of the host either in IPv4 or IPv6 format
+   *
+   * @param hostname Hostname to resolve
+   * @param port Port to resolve
+   * @return A list of peers representing the host and port
+   */
   std::vector<peer> resolve(const char *hostname, const char *port);
 
 };
 
+/// @cond MATADOR_DEV
 template<class P>
 std::vector<typename address_resolver<P>::peer> address_resolver<P>::resolve(const std::string &hostname, const std::string &port)
 {
@@ -93,6 +122,6 @@ std::vector<typename address_resolver<P>::peer> address_resolver<P>::resolve(con
 
   return peers;
 }
-
+/// @endcond
 }
 #endif //MATADOR_ADDRESS_RESOLVER_HPP

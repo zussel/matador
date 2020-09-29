@@ -22,7 +22,6 @@ void echo_server::run()
 
 void echo_server::prepare_accept()
 {
-
   service_.accept(acceptor_, [](tcp::peer ep, io_stream &stream) {
     // create echo server connection
     auto conn = std::make_shared<echo_server_connection>(stream, std::move(ep));
