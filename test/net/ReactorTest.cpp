@@ -106,7 +106,7 @@ void ReactorTest::test_send_receive()
   data.append("hallo", 5);
   size_t len = client.send(data);
   UNIT_ASSERT_EQUAL(5UL, len);
-  data.reset();
+  data.clear();
   len = client.receive(data);
   UNIT_ASSERT_EQUAL(5UL, len);
   client.close();

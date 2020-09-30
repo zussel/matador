@@ -5,33 +5,120 @@
 
 namespace matador {
 
+/**
+ * The socket acceptor class provides the
+ * base functionality of the socket base class
+ * plus acceptor specific functions like
+ * listen, bind or accept
+ *
+ * @tparam P Socket protocol type
+ */
 template < class P >
 class socket_acceptor : public socket_base<P>
 {
 public:
-  typedef socket_base<P> base;
-  typedef socket_stream<P> stream_type;
-  typedef typename base::protocol_type protocol_type;
-  typedef typename base::peer_type peer_type;
+  typedef socket_base<P> base;                        /**< Shortcut to base socket type */
+  typedef socket_stream<P> stream_type;               /**< Shortcut to socket stream type */
+  typedef typename base::protocol_type protocol_type; /**< Shortcut to protocol type */
+  typedef typename base::peer_type peer_type;         /**< Shortcut to peer type */
 
+  /**
+   * Default constructor
+   */
   socket_acceptor() = default;
 
+  /**
+   * Constructs a socket acceptor for
+   * the given peer
+   *
+   * @param peer Peer to construct an acceptor  from
+   */
   explicit socket_acceptor(peer_type &peer);
 
+  /**
+   * Constructs an acceptor for given hostname and port
+   *
+   * @param hostname Hostname of the accepting endpoint
+   * @param port Portnumber of the accepting endpoint
+   */
   socket_acceptor(const char* hostname, unsigned short port);
 
+  /**
+   * Creates a listening socket and binds
+   * the given hostname and port to it
+   *
+   * Returns zero (0) on success and -1 on error
+   * with errno set
+   *
+   * @param hostname Hostname to bind
+   * @param port Portnumber to bind
+   * @return Returns zero (0) on success.
+   */
   int bind(const char* hostname, unsigned short port);
 
+  /**
+   * Creates a listening socket and binds
+   * the given peer endpoint to it
+   *
+   * Returns zero (0) on success and -1 on error
+   * with errno set
+   *
+   * @param hostname Hostname to bind
+   * @param port Portnumber to bind
+   * @return Returns zero (0) on success.
+   */
   int bind(peer_type &peer);
 
+  /**
+   * Start listening to the bound endpoint using
+   * the internally created socket.
+   *
+   * Returns zero (0) on success and -1 on error
+   * with errno set
+   *
+   * @param backlog Number of backlog
+   * @return Returns zero (0) on success.
+   */
   int listen(int backlog);
 
+  /**
+   * Returns a pointer to the underlying
+   * concrete internet address of the given
+   * socket address structure
+   *
+   * @param sa Socket address
+   * @return Pointer to the internet address
+   */
   void* get_in_addr(struct sockaddr *sa);
 
+  /**
+   * Returns the port number of the given
+   * socket address structure
+   *
+   * @param sa Socket address
+   * @return The port number
+   */
   unsigned short get_port(struct sockaddr *sa);
 
+  /**
+   * Get the remote address and port as string
+   * representation.
+   *
+   * @param remote_addr Remote socket address structure
+   * @return String representation of the remote address
+   */
   std::string get_remote_address(struct sockaddr_storage &remote_addr);
 
+  /**
+   * Accept a connection and assign the socket descriptor
+   * to the given socket stream.
+   *
+   * Once the descriptor is assigned to the stream it
+   * can be used to read and write data to it.
+   *
+   * @param stream
+   * @return
+   */
   int accept(stream_type &stream);
   int accept(stream_type &stream, peer_type &endpoint);
 
@@ -40,6 +127,7 @@ public:
   int reuse_address() const;
 };
 
+/// @cond MATADOR_DEV
 template < class P >
 socket_acceptor<P>::socket_acceptor(peer_type &peer)
 : socket_base<P>(peer)
@@ -233,6 +321,8 @@ int socket_acceptor<P>::reuse_address() const
   getsockopt(this->id(), SOL_SOCKET, SO_REUSEADDR, (char*)&option, &i);
   return option;
 }
+
+/// @endcond
 
 }
 

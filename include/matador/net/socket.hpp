@@ -106,11 +106,31 @@ public:
    */
   bool non_blocking() const;
 
+  /**
+   * Set or unset the cose on exec flag
+   * for the socket
+   *
+   * @param nb Flag to set or unset cloexec option
+   */
   void cloexec(bool nb);
 
+  /**
+   * Returns true if close on exec option is set
+   *
+   * @return True on set cloexec option
+   */
   bool cloexec() const;
 
-  int options(int name, bool value);
+  /**
+   * Sets a socket option represented by name. If option
+   * was successfully set true is returned. Otherwise false
+   * and errno ist set.
+   *
+   * @param name Option name
+   * @param value Flag to set or unset the option
+   * @return True on success
+   */
+  bool options(int name, bool value);
 
   /**
    * Returns the underlying socket fd

@@ -37,29 +37,127 @@ enum protocol_family {
   V4, V6
 };
 
+/// @cond MATADOR_DEV
 template < protocol_family PF >
 class address_router;
+/// @endcond
 
+/**
+ * The address class represents a IPv4 or
+ * IPv6 address.
+ */
 class OOS_NET_API address
 {
 public:
+  /**
+   * Default consstructor
+   */
   address() = default;
+
+  /**
+   * Constructs an address from the given
+   * addr representing a IPv4 socket address
+   * structure
+   *
+   * @param addr Initial IPv4 Socket address
+   */
   explicit address(const sockaddr_in &addr);
+
+  /**
+   * Constructs an address from the given
+   * addr representing a IPv6 socket address
+   * structure
+   *
+   * @param addr Initial IPv6 Socket address
+   */
   explicit address(const sockaddr_in6 &addr);
+
+  /**
+   * Move constructs an address from the given
+   * addr representing a IPv4 socket address
+   * structure
+   *
+   * @param addr Initial IPv4 Socket address
+   */
   explicit address(sockaddr_in &&addr);
+
+  /**
+   * Move constructs an address from the given
+   * addr representing a IPv6 socket address
+   * structure
+   *
+   * @param addr Initial IPv6 Socket address
+   */
   explicit address(sockaddr_in6 &&addr);
 
+  /**
+   * Copy constructs an address from the
+   * given address x
+   *
+   * @param x Address to copy from
+   */
   address(const address &x) = default;
+
+  /**
+   * Copy assign an address from the
+   * given address x
+   *
+   * @param x Address to assign from
+   * @return The assigned address
+   */
   address& operator=(const address &x);
 
+  /**
+   * Move copy constructs an address from the
+   * given address x
+   *
+   * @param x Address to move copy from
+   */
   address(address &&x) noexcept;
+
+  /**
+   * Move assign an address from the
+   * given address x
+   *
+   * @param x Address to move assign from
+   * @return The moved address
+   */
   address& operator=(address &&x) noexcept;
+
+  /**
+   * Destructs the address
+   */
   ~address();
 
+  /**
+   * Returns the address as unsigned long value
+   *
+   * @return The address as unsigned long value
+   */
   unsigned int to_ulong() const;
+
+  /**
+   * Return the address in string format either
+   * in IPv4 dotted format or in IPv6 colon based
+   * format
+   *
+   * @return The address as string
+   */
   std::string to_string() const;
 
+  /**
+   * Sets the port number
+   *
+   * @param pn Port number to set
+   */
   void port(unsigned short pn);
+
+  /**
+   * Returns the current port number of the
+   * address.
+   *
+   * @return The current port number
+   */
   unsigned short port() const;
 
   bool is_v4() const;
@@ -97,6 +195,7 @@ private:
   socklen_t size_ = 0;
 };
 
+/// @cond MATADOR_DEV
 template <>
 class address_router<V4>
 {
@@ -237,6 +336,7 @@ private:
 
 };
 
+/// @endcond
 
 }
 #endif //MATADOR_ADDRESS_HPP

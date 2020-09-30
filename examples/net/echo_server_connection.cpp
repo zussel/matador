@@ -33,7 +33,7 @@ void echo_server_connection::write()
   stream_.write(buf_, [this, self](int ec, int nwrite) {
     if (ec == 0) {
       log_.info("%s sent (bytes: %d)", endpoint_.to_string().c_str(), nwrite);
-      buf_.reset();
+      buf_.clear();
       read();
     }
   });

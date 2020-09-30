@@ -27,7 +27,7 @@ void EchoServer::on_input()
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
     // error
-    message_.reset();
+    message_.clear();
     on_close();
   } else {
     message_.size(len);
@@ -40,10 +40,10 @@ void EchoServer::on_output()
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
-    message_.reset();
+    message_.clear();
     on_close();
   } else {
-    message_.reset();
+    message_.clear();
   }
 }
 

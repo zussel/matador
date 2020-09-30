@@ -20,6 +20,11 @@ void buffer::append(const buffer &buf)
   append(buf.data(), buf.size());
 }
 
+void buffer::append(const string &str)
+{
+  append(str.data(), str.size());
+}
+
 char* buffer::data()
 {
   return buf_.data();
@@ -50,7 +55,7 @@ bool buffer::empty() const
   return size_ == 0;
 }
 
-void buffer::reset()
+void buffer::clear()
 {
   size_ = 0;
 }
