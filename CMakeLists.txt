@@ -67,6 +67,8 @@ ENDIF()
 
 OPTION(ARCH "Compiler architecture for Clang/GCC" "")
 
+FIND_PACKAGE( Threads REQUIRED )
+
 if (NOT MSVC AND (COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CXX_COMPILER MATCHES "clang")
   MESSAGE(STATUS "coverage for compiler ${CMAKE_CXX_COMPILER}")
   MESSAGE(STATUS "coverage tests are: ${COVERAGE_TESTS}")
@@ -77,14 +79,12 @@ if (NOT MSVC AND (COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_
 
   INCLUDE(CodeCoverage)
   MESSAGE(STATUS "will generate coverage data")
-  SET(CMAKE_BUILD_TYPE "Debug")
   SET(GCOV_ADDITIONAL_FLAGS "-fprofile-arcs -ftest-coverage")
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCOV_ADDITIONAL_FLAGS}")
   SET(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} ${GCOV_ADDITIONAL_FLAGS}")
-  SET(CMAKE_EXE_LINKER_FLAGS "${GCOV_ADDITIONAL_FLAGS}")
+  SET(CMAKE_EXE_LINKER_FLAGS "${GCOV_ADDITIONAL_FLAGS} ")
 
   SETUP_TARGET_FOR_COVERAGE(coverage test_matador src coverage "exec;${COVERAGE_TESTS}")
-#  SETUP_TARGET_FOR_COVERAGE(coverage test_matador src coverage "exec;address,address_resolver,fdset,ip,socket")
 else()
   MESSAGE(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
 endif()
