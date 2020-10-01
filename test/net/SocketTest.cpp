@@ -53,7 +53,7 @@ void SocketTest::test_acceptor_v4()
 
   tcp::peer localhost12345(address::v4::loopback(), 12345);
   tcp::socket s(tcp::v4());
-  UNIT_ASSERT_EQUAL(0, s.connect(localhost12345));
+  UNIT_ASSERT_TRUE(s.connect(localhost12345));
 
   tcp::socket remote;
   UNIT_ASSERT_TRUE(acceptor.accept(remote) > 0);
