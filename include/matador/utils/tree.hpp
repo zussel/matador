@@ -184,7 +184,7 @@ protected:
  * @tparam T Type of the tree containing data
  */
 template < class T >
-class const_tree_iterator_base : public std::iterator<std::bidirectional_iterator_tag, T, ptrdiff_t, const T&, const T*> {
+class const_tree_iterator_base : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T&, const T*> {
 public:
   typedef const_tree_iterator_base<T> self;   /**< Shortcut to self */
   typedef tree_iterator_base<T> iterator;     /**< Shortcut to non const tree iterator */

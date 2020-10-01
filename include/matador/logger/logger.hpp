@@ -201,6 +201,7 @@ public:
    */
   template<typename ... ARGS>
   void log(log_level lvl, const char *what, ARGS const &... args);
+  void log(log_level lvl, const char *what);
 
   /**
    * Returns the name of the source the logger represents
