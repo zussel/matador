@@ -28,7 +28,9 @@
 #include <WS2tcpip.h>
 #else
 #include <netinet/in.h>
-#include <libnet.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #endif
 
 namespace matador {
@@ -326,7 +328,7 @@ private:
     sockaddr_in6 addr{};
     memset(&addr, 0, sizeof(addr));
     addr.sin6_family = PF_INET6;
-    inet_pton(AF_INET6, IP6ADDR_MULTICAST_ALLNODES, &addr.sin6_addr);
+    os::inet_pton(AF_INET6, IP6ADDR_MULTICAST_ALLNODES, &addr.sin6_addr);
     return address(addr);
   }
 //  address from_ip(const std::string &str);
