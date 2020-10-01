@@ -41,6 +41,19 @@ public:
   void run();
 
   /**
+   * Returns true if the io service is
+   * running
+   *
+   * @return True if service is running
+   */
+  bool is_running() const;
+
+  /**
+   * Shuts down a running service
+   */
+  void shutdown();
+
+  /**
    * Adds the given acceptor for the
    * given peer endpoint and callback.
    *

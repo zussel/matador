@@ -13,4 +13,14 @@ void io_service::run()
   reactor_.run();
 }
 
+bool io_service::is_running() const
+{
+  return reactor_.is_running();
+}
+
+void io_service::shutdown()
+{
+  reactor_.shutdown();
+}
+
 }

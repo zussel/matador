@@ -31,6 +31,7 @@ public:
   acceptor();
   explicit acceptor(tcp::peer endpoint);
   acceptor(tcp::peer endpoint, make_handler_func on_new_connection);
+  ~acceptor() override;
 
   void accecpt(make_handler_func on_new_connection);
   void accecpt(const tcp::peer& endpoint, make_handler_func on_new_connection);

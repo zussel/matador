@@ -21,6 +21,11 @@ acceptor::acceptor(tcp::peer  endpoint, make_handler_func make_handler)
   , log_(matador::create_logger("Acceptor"))
 {}
 
+acceptor::~acceptor()
+{
+  acceptor_.close();
+}
+
 void acceptor::accecpt(acceptor::make_handler_func on_new_connection)
 {
   make_handler_ = std::move(on_new_connection);

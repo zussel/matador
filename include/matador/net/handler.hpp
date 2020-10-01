@@ -23,6 +23,7 @@ class reactor;
 class OOS_NET_API handler : public std::enable_shared_from_this<handler>
 {
 public:
+  virtual ~handler() = default;
   virtual void open() = 0;
   virtual int handle() const = 0;
 

@@ -67,6 +67,7 @@
 #include "net/SocketTest.hpp"
 #include "net/FDSetTest.hpp"
 #include "net/ReactorTest.hpp"
+#include "net/IOServiceTest.hpp"
 #include "net/AddressResolverTest.hpp"
 #include "net/SocketInterrupterTest.hpp"
 
@@ -130,6 +131,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new SocketTest);
   suite.register_unit(new FDSetTest);
   suite.register_unit(new ReactorTest);
+  suite.register_unit(new IOServiceTest);
   suite.register_unit(new AddressResolverTest);
   suite.register_unit(new SocketInterrupterTest);
 

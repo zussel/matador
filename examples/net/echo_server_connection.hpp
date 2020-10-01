@@ -11,7 +11,7 @@
 class echo_server_connection : public std::enable_shared_from_this<echo_server_connection>
 {
 public:
-  explicit echo_server_connection(matador::io_stream &stream, matador::tcp::peer endpoint);
+  echo_server_connection(matador::io_stream &stream, matador::tcp::peer endpoint);
 
   void start();
   void read();
@@ -22,7 +22,6 @@ private:
   matador::buffer buf_;
   matador::io_stream &stream_;
   matador::tcp::peer endpoint_;
-
 };
 
 
