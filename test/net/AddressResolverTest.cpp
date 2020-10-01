@@ -17,7 +17,7 @@ void AddressResolverTest::test_resolver_v4()
   auto peers = resolver.resolve(std::string("localhost"), std::string("80"));
 
   UNIT_ASSERT_FALSE(peers.empty());
-  UNIT_ASSERT_GREATER(0UL, peers.size());
+  UNIT_ASSERT_GREATER(peers.size(), 0UL);
 
 //  for (const auto &p : peers) {
 //    if (p.addr().is_v4()) {
