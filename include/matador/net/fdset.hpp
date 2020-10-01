@@ -15,7 +15,7 @@
 #endif
 
 #include <set>
-
+#include <functional>
 #include <cstddef>
 
 #ifdef _WIN32
