@@ -47,7 +47,8 @@ void stream_handler::on_input()
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
-    log_.error("fd %d: error on read: %s", handle(), strerror(errno));
+    char error_buffer[1024];
+    log_.error("fd %d: error on read: %s", handle(), os::strerror(errno, error_buffer, 1024));
     is_ready_to_read_ = false;
     on_read_(len, len);
     on_close();
@@ -67,7 +68,8 @@ void stream_handler::on_output()
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
-    log_.error("fd %d: error on write: %s", handle(), strerror(errno));
+    char error_buffer[1024];
+    log_.error("fd %d: error on write: %s", handle(), os::strerror(errno, error_buffer, 1024));
     on_close();
     is_ready_to_write_ = false;
     on_write_(len, len);

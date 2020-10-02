@@ -111,7 +111,8 @@ void reactor::run()
     int ret;
     while ((ret = select(p)) < 0) {
       if(errno != EINTR) {
-        log_.warn("select failed: %s", strerror(errno));
+        char error_buffer[1024];
+        log_.warn("select failed: %s", os::strerror(errno, error_buffer, 1024));
         shutdown();
       } else {
         return;
@@ -242,6 +243,7 @@ void reactor::mark_handler_for_delete(const std::shared_ptr<handler>& h)
 
 bool reactor::is_interrupted()
 {
+  log_.info("checking if reactor was interrupted (interrupter fd: %d)", interrupter_.socket_id());
   if (fdsets_.read_set().is_set(interrupter_.socket_id())) {
     return interrupter_.reset();
   }

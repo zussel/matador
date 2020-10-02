@@ -27,6 +27,8 @@ socket_interrupter::socket_interrupter()
   tcp::peer local(address::v4::loopback());
   acceptor.bind(local);
   acceptor.listen(SOMAXCONN);
+
+  log_.info("listening for interruptions at %d", acceptor.id());
   /*
    * setup connection
    * - connect to server
@@ -49,7 +51,7 @@ void socket_interrupter::interrupt()
   char val = 0;
   buffer buf;
   buf.append(&val, 1);
-  log_.info("sending interrupt");
+  log_.info("fd %d: sending interrupt", client_.id());
   client_.send(buf);
 }
 

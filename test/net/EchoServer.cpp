@@ -4,6 +4,10 @@
 
 using namespace matador;
 
+EchoServer::EchoServer()
+  : log_(create_logger("EchoServer"))
+{}
+
 void EchoServer::init(matador::tcp::socket sock, matador::tcp::peer endpoint)
 {
   stream_ = std::move(sock);
@@ -23,6 +27,7 @@ int EchoServer::handle() const
 void EchoServer::on_input()
 {
   auto len = stream_.receive(message_);
+  log_.info("received %d bytes", len);
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
@@ -37,6 +42,7 @@ void EchoServer::on_input()
 void EchoServer::on_output()
 {
   int len = stream_.send(message_);
+  log_.info("sent %d bytes", len);
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {

@@ -40,6 +40,7 @@ void ReactorTest::test_shutdown()
 {
   auto logsink = matador::create_file_sink("reactor.log");
   matador::add_log_sink(logsink);
+  matador::add_log_sink(matador::create_stdout_sink());
 
   net::init();
 
@@ -78,6 +79,7 @@ void ReactorTest::test_send_receive()
 {
   auto logsink = matador::create_file_sink("reactor.log");
   matador::add_log_sink(logsink);
+  matador::add_log_sink(matador::create_stdout_sink());
 
   net::init();
 
