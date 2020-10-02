@@ -47,7 +47,7 @@ int inet_pton(int af, const char *src, void *dst)
 const char* inet_ntop(int af, const void* src, char* dst, size_t size)
 {
 #ifdef _WIN32
-    return ::InetNtop(af, src, dst, size);
+    return ::InetNtop(af, const_cast<void*>(src), dst, size);
 #else
     return ::inet_ntop(af, src, dst, size);
 #endif

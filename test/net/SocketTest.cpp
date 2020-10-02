@@ -40,12 +40,12 @@ void SocketTest::test_acceptor_v4()
   tcp::acceptor acceptor;
 
   UNIT_ASSERT_FALSE(acceptor.is_open());
-  UNIT_ASSERT_FALSE(acceptor.reuse_address());
+  UNIT_ASSERT_EQUAL(0, acceptor.reuse_address());
 
   tcp::peer local(address::v4::any(), 12345);
   UNIT_ASSERT_EQUAL(0, acceptor.bind(local));
 
-  UNIT_ASSERT_TRUE(acceptor.reuse_address());
+  UNIT_ASSERT_EQUAL(1, acceptor.reuse_address());
   UNIT_ASSERT_TRUE(acceptor.is_open());
   UNIT_ASSERT_TRUE(acceptor.id() > 0);
 

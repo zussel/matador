@@ -17,7 +17,7 @@ void fdset::reset()
 
 bool fdset::is_set(int fd) const
 {
-  return FD_ISSET(fd, &fd_set_);
+  return FD_ISSET(fd, &fd_set_) > 0;
 }
 
 void fdset::clear(int fd)
