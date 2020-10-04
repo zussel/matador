@@ -19,7 +19,7 @@ using namespace matador;
 ReactorTest::ReactorTest()
   : matador::unit_test("reactor", "reactor test unit")
 {
-  add_test("shutdown", std::bind(&ReactorTest::test_shutdown, this), "reactor shutdown test");
+  //add_test("shutdown", std::bind(&ReactorTest::test_shutdown, this), "reactor shutdown test");
   add_test("send_receive", std::bind(&ReactorTest::test_send_receive, this), "reactor send and receive test");
 }
 
