@@ -24,7 +24,7 @@ class OOS_NET_API socket_interrupter
 {
 public:
   socket_interrupter();
-  ~socket_interrupter() = default;
+  ~socket_interrupter();
 
   int socket_id();
 

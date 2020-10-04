@@ -41,6 +41,12 @@ socket_interrupter::socket_interrupter()
   client_.options(TCP_NODELAY, true);
 }
 
+socket_interrupter::~socket_interrupter()
+{
+  client_.close();
+  server_.close();
+}
+
 int socket_interrupter::socket_id()
 {
   return server_.id();
@@ -51,7 +57,7 @@ void socket_interrupter::interrupt()
   char val = 0;
   buffer buf;
   buf.append(&val, 1);
-  log_.info("fd %d: sending interrupt", client_.id());
+  log_.info("fd %d: sending interrupt to fd %d", client_.id(), server_.id());
   client_.send(buf);
 }
 

@@ -119,6 +119,8 @@ void reactor::run()
       }
     }
 
+    log_.info("select returned with %d", ret);
+
     bool interrupted = is_interrupted();
 
     if (interrupted) {
@@ -178,6 +180,11 @@ void reactor::remove_deleted()
 void reactor::cleanup()
 {
   log_.info("cleanup reactor");
+  while (!handlers_.empty()) {
+    auto hndlr = handlers_.front();
+    handlers_.pop_front();
+    hndlr.first->close();
+  }
 }
 
 int reactor::select(struct timeval *timeout)
@@ -202,12 +209,15 @@ void reactor::process_handler(int ret)
     handlers_.push_back(h);
     // check for read/accept
     if (h.first->handle() > 0 && fdsets_.write_set().is_set(h.first->handle())) {
+      log_.info("write bit for handler %d is set; handle output", h.first->handle());
       h.first->on_output();
     }
     if (h.first->handle() > 0 && fdsets_.read_set().is_set(h.first->handle())) {
+      log_.info("read bit for handler %d is set; handle input", h.first->handle());
       h.first->on_input();
     }
     if (h.first->next_timeout() > 0 && h.first->next_timeout() <= now) {
+      log_.info("timeout expired for handler %d; handle timeout", h.first->handle());
       h.first->calculate_next_timeout(now);
       h.first->on_timeout();
     }
@@ -245,6 +255,7 @@ bool reactor::is_interrupted()
 {
   log_.info("checking if reactor was interrupted (interrupter fd: %d)", interrupter_.socket_id());
   if (fdsets_.read_set().is_set(interrupter_.socket_id())) {
+    log_.info("interrupt byte received; resetting interrupter");
     return interrupter_.reset();
   }
   return false;
