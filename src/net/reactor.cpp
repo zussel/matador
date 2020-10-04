@@ -138,7 +138,7 @@ void reactor::shutdown()
 {
   // shutdown the reactor properly
   log_.info("shutting down reactor");
-  running_ = false;
+  shutdown_requested_ = true;
   interrupter_.interrupt();
 }
 
@@ -256,6 +256,9 @@ bool reactor::is_interrupted()
   log_.info("checking if reactor was interrupted (interrupter fd: %d)", interrupter_.socket_id());
   if (fdsets_.read_set().is_set(interrupter_.socket_id())) {
     log_.info("interrupt byte received; resetting interrupter");
+    if (shutdown_requested_) {
+      running_ = false;
+    }
     return interrupter_.reset();
   }
   return false;
