@@ -38,8 +38,8 @@ bool wait_until_running(reactor &r, int retries = 10)
 
 void ReactorTest::test_shutdown()
 {
-  auto logsink = matador::create_file_sink("reactor.log");
-  matador::add_log_sink(logsink);
+//  auto logsink = matador::create_file_sink("reactor.log");
+//  matador::add_log_sink(logsink);
   matador::add_log_sink(matador::create_stdout_sink());
 
   reactor r;
@@ -65,17 +65,26 @@ void ReactorTest::test_shutdown()
 
   ac->close();
 
-  logsink->close();
-  matador::os::remove("reactor.log");
+//  logsink->close();
+//  matador::os::remove("reactor.log");
 
   log_manager::instance().clear();
 }
 
+void log_errno(logger &log, const char *msg, int err)
+{
+  char error_buffer[1024];
+  os::strerror(err, error_buffer, 1024);
+  log.error(msg, error_buffer);
+}
+
 void ReactorTest::test_send_receive()
 {
-  auto logsink = matador::create_file_sink("reactor.log");
-  matador::add_log_sink(logsink);
+//  auto logsink = matador::create_file_sink("reactor.log");
+//  matador::add_log_sink(logsink);
   matador::add_log_sink(matador::create_stdout_sink());
+
+  logger log(create_logger("Main"));
 
   auto echo_conn = std::make_shared<EchoServer>();
 
@@ -98,18 +107,26 @@ void ReactorTest::test_send_receive()
   // send and verify received data
   tcp::socket client;
 
-  client.open(tcp::v4());
-  auto srv = tcp::peer(address::v4::loopback(), 7777);
-  client.connect(srv);
-
-  buffer data;
-  data.append("hallo", 5);
-  size_t len = client.send(data);
-  UNIT_ASSERT_EQUAL(5UL, len);
-  data.clear();
-  len = client.receive(data);
-  UNIT_ASSERT_EQUAL(5UL, len);
-  client.close();
+  int ret = client.open(tcp::v4());
+  if (ret < 0) {
+    log_errno(log, "Error while opening client: %s", errno);
+  } else {
+    auto srv = tcp::peer(address::v4::loopback(), 7777);
+    ret = client.connect(srv);
+    if (ret < 0) {
+      log_errno(log, "Error while connecting to server: %s", errno);
+      client.close();
+    } else {
+      buffer data;
+      data.append("hallo", 5);
+      size_t len = client.send(data);
+      UNIT_ASSERT_EQUAL(5UL, len);
+      data.clear();
+      len = client.receive(data);
+      UNIT_ASSERT_EQUAL(5UL, len);
+      client.close();
+    }
+  }
 
   r.shutdown();
 
@@ -117,8 +134,8 @@ void ReactorTest::test_send_receive()
 
   ac->close();
 
-  logsink->close();
-  matador::os::remove("reactor.log");
+//  logsink->close();
+//  matador::os::remove("reactor.log");
  
   log_manager::instance().clear();
 }
