@@ -19,7 +19,7 @@ using namespace matador;
 ReactorTest::ReactorTest()
   : matador::unit_test("reactor", "reactor test unit")
 {
-  //add_test("shutdown", std::bind(&ReactorTest::test_shutdown, this), "reactor shutdown test");
+  add_test("shutdown", std::bind(&ReactorTest::test_shutdown, this), "reactor shutdown test");
   add_test("send_receive", std::bind(&ReactorTest::test_send_receive, this), "reactor send and receive test");
 }
 
@@ -29,7 +29,7 @@ bool wait_until_running(reactor &r, int retries = 10)
 #ifdef _WIN32
     ::Sleep(1000);
 #else
-    ::usleep(1000);
+    ::usleep(500);
 #endif
   }
 
