@@ -19,7 +19,7 @@ using namespace matador;
 ReactorTest::ReactorTest()
   : matador::unit_test("reactor", "reactor test unit")
 {
-  add_test("shutdown", std::bind(&ReactorTest::test_shutdown, this), "reactor shutdown test");
+  //add_test("shutdown", std::bind(&ReactorTest::test_shutdown, this), "reactor shutdown test");
   add_test("send_receive", std::bind(&ReactorTest::test_send_receive, this), "reactor send and receive test");
 }
 
@@ -40,6 +40,7 @@ void ReactorTest::test_shutdown()
 {
   auto logsink = matador::create_file_sink("reactor.log");
   matador::add_log_sink(logsink);
+  matador::add_log_sink(matador::create_stdout_sink());
 
   reactor r;
 
@@ -74,6 +75,7 @@ void ReactorTest::test_send_receive()
 {
   auto logsink = matador::create_file_sink("reactor.log");
   matador::add_log_sink(logsink);
+  matador::add_log_sink(matador::create_stdout_sink());
 
   auto echo_conn = std::make_shared<EchoServer>();
 
