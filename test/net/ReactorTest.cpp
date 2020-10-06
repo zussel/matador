@@ -84,7 +84,7 @@ void ReactorTest::test_send_receive()
 //  matador::add_log_sink(logsink);
   matador::add_log_sink(matador::create_stdout_sink());
 
-  logger log(create_logger("Main"));
+  logger log(create_logger("Client"));
 
   auto echo_conn = std::make_shared<EchoServer>();
 
@@ -112,17 +112,20 @@ void ReactorTest::test_send_receive()
     log_errno(log, "Error while opening client: %s", errno);
   } else {
     auto srv = tcp::peer(address::v4::loopback(), 7777);
+    log.info("client socket open (fd: %d), connecting to %s", client.id(), srv.to_string().c_str());
     ret = client.connect(srv);
     if (ret < 0) {
       log_errno(log, "Error while connecting to server: %s", errno);
       client.close();
     } else {
+      log.info("client connection established, sending data");
       buffer data;
       data.append("hallo", 5);
       size_t len = client.send(data);
       UNIT_ASSERT_EQUAL(5UL, len);
       data.clear();
       len = client.receive(data);
+      log.info("receveived data (size: %d)", len);
       UNIT_ASSERT_EQUAL(5UL, len);
       client.close();
     }

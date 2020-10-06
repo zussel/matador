@@ -189,6 +189,7 @@ void reactor::cleanup()
 
 int reactor::select(struct timeval *timeout)
 {
+  log_.info("calling select; waiting for io events");
   return ::select(
     fdsets_.maxp1() + 1,
     fdsets_.read_set().get(),
