@@ -25,7 +25,7 @@ bool wait_until_running(io_service &srv, int retries = 10)
 #ifdef _WIN32
     ::Sleep(1000);
 #else
-    ::usleep(1000);
+    ::usleep(500);
 #endif
   }
 
@@ -34,10 +34,8 @@ bool wait_until_running(io_service &srv, int retries = 10)
 
 void IOServiceTest::test_service()
 {
-  auto logsink = matador::create_file_sink("reactor.log");
+  auto logsink = matador::create_file_sink("io_service.log");
   matador::add_log_sink(logsink);
-
-  net::init();
 
   IOEchoServer server(7777);
 
@@ -50,6 +48,4 @@ void IOServiceTest::test_service()
   server.service().shutdown();
 
   server_thread.join();
-
-  net::cleanup();
 }

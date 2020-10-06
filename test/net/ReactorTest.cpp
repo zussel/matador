@@ -41,8 +41,6 @@ void ReactorTest::test_shutdown()
   auto logsink = matador::create_file_sink("reactor.log");
   matador::add_log_sink(logsink);
 
-  net::init();
-
   reactor r;
 
   auto ep = tcp::peer(address::v4::any(), 7777);
@@ -66,8 +64,6 @@ void ReactorTest::test_shutdown()
 
   ac->close();
 
-  net::cleanup();
-
   logsink->close();
   matador::os::remove("reactor.log");
 
@@ -78,8 +74,6 @@ void ReactorTest::test_send_receive()
 {
   auto logsink = matador::create_file_sink("reactor.log");
   matador::add_log_sink(logsink);
-
-  net::init();
 
   auto echo_conn = std::make_shared<EchoServer>();
 
@@ -120,8 +114,6 @@ void ReactorTest::test_send_receive()
   server_thread.join();
 
   ac->close();
-
-  net::cleanup();
 
   logsink->close();
   matador::os::remove("reactor.log");
