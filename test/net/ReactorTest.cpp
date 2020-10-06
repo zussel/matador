@@ -90,7 +90,7 @@ void ReactorTest::test_send_receive()
 
   reactor r;
 
-  auto ep = tcp::peer(address::v4::any(), 7777);
+  auto ep = tcp::peer(address::v4::any(), 7778);
   auto ac = std::make_shared<acceptor>(ep, [echo_conn](tcp::socket sock, tcp::peer p, acceptor *) {
     echo_conn->init(std::move(sock), std::move(p));
     return echo_conn;
@@ -111,7 +111,7 @@ void ReactorTest::test_send_receive()
   if (ret < 0) {
     log_errno(log, "Error while opening client: %s", errno);
   } else {
-    auto srv = tcp::peer(address::v4::loopback(), 7777);
+    auto srv = tcp::peer(address::v4::loopback(), 7778);
     log.info("client socket open (fd: %d), connecting to %s", client.id(), srv.to_string().c_str());
     ret = client.connect(srv);
     if (ret < 0) {
@@ -122,6 +122,7 @@ void ReactorTest::test_send_receive()
       buffer data;
       data.append("hallo", 5);
       size_t len = client.send(data);
+      log.info("send %d bytes of data", len);
       UNIT_ASSERT_EQUAL(5UL, len);
       data.clear();
       len = client.receive(data);
