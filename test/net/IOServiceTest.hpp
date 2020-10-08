@@ -8,7 +8,8 @@ class IOServiceTest : public matador::unit_test
 public:
   IOServiceTest();
 
-  void test_service();
+  void test_shutdown();
+  void test_send_receive();
 };
 
 

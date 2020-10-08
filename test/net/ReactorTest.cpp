@@ -28,10 +28,6 @@ ReactorTest::ReactorTest()
 
 void ReactorTest::test_shutdown()
 {
-//  auto logsink = matador::create_file_sink("reactor.log");
-//  matador::add_log_sink(logsink);
-//  matador::add_log_sink(matador::create_stdout_sink());
-
   reactor r;
 
   auto ep = tcp::peer(address::v4::any(), 7777);
@@ -58,28 +54,10 @@ void ReactorTest::test_shutdown()
   }
 
   ac->close();
-
-//  logsink->close();
-//  matador::os::remove("reactor.log");
-
-//  log_manager::instance().clear();
-}
-
-void log_errno(logger &log, const char *msg, int err)
-{
-  char error_buffer[1024];
-  os::strerror(err, error_buffer, 1024);
-  log.error(msg, error_buffer);
 }
 
 void ReactorTest::test_send_receive()
 {
-//  auto logsink = matador::create_file_sink("reactor.log");
-//  matador::add_log_sink(logsink);
-//  matador::add_log_sink(matador::create_stdout_sink());
-
-//  logger log(create_logger("Client"));
-
   auto echo_conn = std::make_shared<EchoServer>();
 
   reactor r;
@@ -102,29 +80,18 @@ void ReactorTest::test_send_receive()
   tcp::socket client;
 
   int ret = client.open(tcp::v4());
-  if (ret < 0) {
-//    log_errno(log, "Error while opening client: %s", errno);
-  } else {
-    auto srv = tcp::peer(address::v4::loopback(), 7778);
-//    log.info("client socket open (fd: %d), connecting to %s", client.id(), srv.to_string().c_str());
-    ret = client.connect(srv);
-    if (ret < 0) {
-//      log_errno(log, "Error while connecting to server: %s", errno);
-      client.close();
-    } else {
-//      log.info("client connection established, sending data");
-      buffer data;
-      data.append("hallo", 5);
-      size_t len = client.send(data);
-//      log.info("send %d bytes of data", len);
-      UNIT_ASSERT_EQUAL(5UL, len);
-      data.clear();
-      len = client.receive(data);
-//      log.info("receveived data (size: %d)", len);
-      UNIT_ASSERT_EQUAL(5UL, len);
-      client.close();
-    }
-  }
+  UNIT_ASSERT_FALSE(ret < 0);
+  auto srv = tcp::peer(address::v4::loopback(), 7778);
+  ret = client.connect(srv);
+  UNIT_ASSERT_FALSE(ret < 0);
+  buffer data;
+  data.append("hallo");
+  size_t len = client.send(data);
+  UNIT_ASSERT_EQUAL(5UL, len);
+  data.clear();
+  len = client.receive(data);
+  UNIT_ASSERT_EQUAL(5UL, len);
+  client.close();
 
   r.shutdown();
 
