@@ -55,9 +55,10 @@ public:
 private:
   void process_handler(int num);
 
-  void on_read_mask();
-  void on_write_mask();
-  void on_except_mask();
+  void on_read_mask(const std::shared_ptr<handler>& h);
+  void on_write_mask(const std::shared_ptr<handler>& h);
+  void on_except_mask(const std::shared_ptr<handler>& h);
+  void on_timeout(const std::shared_ptr<handler> &h, time_t i);
 
   void prepare_select_bits(time_t& timeout);
 

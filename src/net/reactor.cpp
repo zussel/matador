@@ -210,36 +210,41 @@ void reactor::process_handler(int ret)
     handlers_.push_back(h);
     // check for read/accept
     if (h.first->handle() > 0 && fdsets_.write_set().is_set(h.first->handle())) {
-      log_.info("write bit for handler %d is set; handle output", h.first->handle());
-      h.first->on_output();
+      on_write_mask(h.first);
     }
     if (h.first->handle() > 0 && fdsets_.read_set().is_set(h.first->handle())) {
-      log_.info("read bit for handler %d is set; handle input", h.first->handle());
-      h.first->on_input();
+      on_read_mask(h.first);
     }
     if (h.first->next_timeout() > 0 && h.first->next_timeout() <= now) {
-      log_.info("timeout expired for handler %d; handle timeout", h.first->handle());
-      h.first->calculate_next_timeout(now);
-      h.first->on_timeout();
+      on_timeout(h.first, now);
     }
     handlers_to_delete_.clear();
   }
   handlers_.pop_front();
 }
 
-void reactor::on_read_mask()
+void reactor::on_read_mask(const std::shared_ptr<handler>& h)
+{
+  log_.info("read bit for handler %d is set; handle input", h->handle());
+  h->on_input();
+}
+
+void reactor::on_write_mask(const std::shared_ptr<handler>& h)
+{
+  log_.info("write bit for handler %d is set; handle output", h->handle());
+  h->on_output();
+}
+
+void reactor::on_except_mask(const std::shared_ptr<handler>&)
 {
 
 }
 
-void reactor::on_write_mask()
+void reactor::on_timeout(const std::shared_ptr<handler> &h, time_t now)
 {
-
-}
-
-void reactor::on_except_mask()
-{
-
+  log_.info("timeout expired for handler %d; handle timeout", h->handle());
+  h->calculate_next_timeout(now);
+  h->on_timeout();
 }
 
 const select_fdsets &reactor::fdsets() const
