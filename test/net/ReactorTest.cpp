@@ -1,4 +1,5 @@
 #include "ReactorTest.hpp"
+#include "NetUtils.hpp"
 
 #include "matador/net/reactor.hpp"
 #include "matador/net/acceptor.hpp"
@@ -15,6 +16,7 @@
 #endif
 
 using namespace matador;
+using namespace ::detail;
 
 ReactorTest::ReactorTest()
   : matador::unit_test("reactor", "reactor test unit")
@@ -23,18 +25,6 @@ ReactorTest::ReactorTest()
   add_test("send_receive", std::bind(&ReactorTest::test_send_receive, this), "reactor send and receive test");
 }
 
-bool wait_until_running(reactor &r, int retries = 10)
-{
-  while (!r.is_running() && retries-- > 0) {
-#ifdef _WIN32
-    ::Sleep(1000);
-#else
-    ::usleep(500);
-#endif
-  }
-
-  return r.is_running();
-}
 
 void ReactorTest::test_shutdown()
 {
@@ -57,11 +47,13 @@ void ReactorTest::test_shutdown()
     r.run();
   });
 
-  UNIT_ASSERT_TRUE(wait_until_running(r));
+  UNIT_ASSERT_TRUE(utils::wait_until_running(r));
 
   r.shutdown();
 
   server_thread.join();
+
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
 
   ac->close();
 
@@ -102,7 +94,7 @@ void ReactorTest::test_send_receive()
     r.run();
   });
 
-  UNIT_ASSERT_TRUE(wait_until_running(r));
+  UNIT_ASSERT_TRUE(utils::wait_until_running(r));
 
   // send and verify received data
   tcp::socket client;
@@ -135,6 +127,8 @@ void ReactorTest::test_send_receive()
   r.shutdown();
 
   server_thread.join();
+
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
 
   ac->close();
 

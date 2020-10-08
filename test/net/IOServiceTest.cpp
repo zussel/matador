@@ -1,5 +1,6 @@
 #include "IOServiceTest.hpp"
 #include "IOEchoServer.hpp"
+#include "NetUtils.hpp"
 
 #include "matador/net/io_service.hpp"
 
@@ -12,24 +13,12 @@
 #endif
 
 using namespace matador;
+using namespace ::detail;
 
 IOServiceTest::IOServiceTest()
   : matador::unit_test("io_service", "io service test unit")
 {
   add_test("service", std::bind(&IOServiceTest::test_service, this), "io service test");
-}
-
-bool wait_until_running(io_service &srv, int retries = 10)
-{
-  while (!srv.is_running() && retries-- > 0) {
-#ifdef _WIN32
-    ::Sleep(1000);
-#else
-    ::usleep(500);
-#endif
-  }
-
-  return srv.is_running();
 }
 
 void IOServiceTest::test_service()
@@ -43,9 +32,11 @@ void IOServiceTest::test_service()
     server.run();
   });
 
-  UNIT_ASSERT_TRUE(wait_until_running(server.service()));
+  UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
 
   server.service().shutdown();
 
   server_thread.join();
+
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
 }
