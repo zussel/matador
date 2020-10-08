@@ -51,9 +51,11 @@ void ReactorTest::test_shutdown()
 
   r.shutdown();
 
-  server_thread.join();
-
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
+
+  if (server_thread.joinable()) {
+    server_thread.join();
+  }
 
   ac->close();
 
@@ -126,9 +128,11 @@ void ReactorTest::test_send_receive()
 
   r.shutdown();
 
-  server_thread.join();
-
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
+
+  if (server_thread.joinable()) {
+    server_thread.join();
+  }
 
   ac->close();
 

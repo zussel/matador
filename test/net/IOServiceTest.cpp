@@ -36,7 +36,9 @@ void IOServiceTest::test_service()
 
   server.service().shutdown();
 
-  server_thread.join();
-
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
+
+  if (server_thread.joinable()) {
+    server_thread.join();
+  }
 }
