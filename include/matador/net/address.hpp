@@ -363,7 +363,9 @@ public:
     if (ret == 1) {
       addr.sin6_family = PF_INET6;
     } else if (ret == -1) {
-      detail::throw_logic_error_with_errno("invalid address: %s", errno);
+      char message_buffer[1024];
+      os::sprintf(message_buffer, 1024, "invalid ip address [%s]: %%s", str);
+      detail::throw_logic_error_with_errno(message_buffer, errno);
     } else { /* 0 == try name */
       struct addrinfo hints{};
       struct addrinfo *result = nullptr;
@@ -379,7 +381,9 @@ public:
 
       int s = getaddrinfo(str, nullptr, &hints, &result);
       if (s != 0) {
-        detail::throw_logic_error_with_gai_errno("invalid ip address (getaddrinfo): %s", s);
+        char message_buffer[1024];
+        os::sprintf(message_buffer, 1024, "invalid ip address [%s]: %%s", str);
+        detail::throw_logic_error_with_errno(message_buffer, errno);
       }
 
       /* getaddrinfo() returns a list of address structures.
@@ -397,7 +401,7 @@ public:
   }
 
 private:
-  static const char *IP6ADDR_MULTICAST_ALLNODES;
+  static OOS_NET_API const char *IP6ADDR_MULTICAST_ALLNODES;
 
   static address mk_address(in6_addr in6addr)
   {

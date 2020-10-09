@@ -25,7 +25,7 @@ void IOServiceTest::test_shutdown()
   std::thread server_thread([&server] {
     server.run();
     // sleep for some seconds to ensure valid thread join
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::seconds (5));
   });
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
@@ -44,7 +44,7 @@ void IOServiceTest::test_send_receive()
   std::thread server_thread([&server] {
     server.run();
     // sleep for some seconds to ensure valid thread join
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::seconds (5));
   });
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
