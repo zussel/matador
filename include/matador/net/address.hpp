@@ -382,8 +382,9 @@ public:
       int s = getaddrinfo(str, nullptr, &hints, &result);
       if (s != 0) {
         char message_buffer[1024];
+        int err = errno;
         os::sprintf(message_buffer, 1024, "invalid ip address [%s]: %%s", str);
-        detail::throw_logic_error_with_errno(message_buffer, errno);
+        detail::throw_logic_error_with_errno(message_buffer, err);
       }
 
       /* getaddrinfo() returns a list of address structures.
