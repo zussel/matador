@@ -332,9 +332,13 @@ public:
       addr.sin6_family = PF_INET6;
       return address(addr);
     } else if (ret == 0) {
-      detail::throw_logic_error("invalid ip address");
+      char message_buffer[1024];
+      os::sprintf(message_buffer, 1024, "invalid ip address [%s]", str);
+      detail::throw_logic_error(message_buffer);
     } else {
-      detail::throw_logic_error_with_errno("invalid ip address: %s", errno);
+      char message_buffer[1024];
+      os::sprintf(message_buffer, 1024, "invalid ip address [%s]: %%s", str);
+      detail::throw_logic_error_with_errno(message_buffer, errno);
     }
     return address();
   }
