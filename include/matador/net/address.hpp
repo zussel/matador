@@ -15,6 +15,7 @@
 #endif
 
 #include "matador/utils/os.hpp"
+
 #include "matador/net/os.hpp"
 #include "matador/net/error.hpp"
 
@@ -311,6 +312,86 @@ public:
   static address loopback() { return mk_address(in6addr_loopback); }
   static address broadcast() {return mk_multicast_address(); }
 
+  static address from_ip(const std::string &str)
+  {
+    return from_ip(str.c_str());
+  }
+
+  static address from_ip(const char *str)
+  {
+    // now fill in the address info struct
+    // create and fill the hints struct
+    if (str == nullptr) {
+      return address();
+    }
+    // get address from string
+
+    sockaddr_in6 addr{};
+    int ret = os::inet_pton(PF_INET6, str, &(addr.sin6_addr));
+    if (ret == 1) {
+      addr.sin6_family = PF_INET6;
+      return address(addr);
+    } else if (ret == 0) {
+      detail::throw_logic_error("invalid ip address");
+    } else {
+      detail::throw_logic_error_with_errno("invalid ip address: %s", errno);
+    }
+    return address();
+  }
+
+  static address from_hostname(const std::string &str)
+  {
+    return from_hostname(str.c_str());
+  }
+
+  static address from_hostname(const char *str)
+  {
+    // now fill in the address info struct
+    // create and fill the hints struct
+    if (str == nullptr) {
+      return address();
+    }
+    // get address from string
+    sockaddr_in6 addr{};
+
+    int ret = os::inet_pton(PF_INET6, str, &addr.sin6_addr);
+
+    if (ret == 1) {
+      addr.sin6_family = PF_INET6;
+    } else if (ret == -1) {
+      detail::throw_logic_error_with_errno("invalid address: %s", errno);
+    } else { /* 0 == try name */
+      struct addrinfo hints{};
+      struct addrinfo *result = nullptr;
+
+      memset(&hints, 0, sizeof(struct addrinfo));
+      hints.ai_family = AF_INET6;    /* Allow IPv4 or IPv6 */
+      hints.ai_socktype = SOCK_STREAM; /* Stream socket */
+      hints.ai_flags = AI_PASSIVE;    /* Numeric or net network hostname */
+      hints.ai_protocol = 0;          /* Any protocol */
+      hints.ai_canonname = nullptr;
+      hints.ai_addr = nullptr;
+      hints.ai_next = nullptr;
+
+      int s = getaddrinfo(str, nullptr, &hints, &result);
+      if (s != 0) {
+        detail::throw_logic_error_with_gai_errno("invalid ip address (getaddrinfo): %s", s);
+      }
+
+      /* getaddrinfo() returns a list of address structures.
+         Try each address until we successfully bind(2).
+         If socket(2) (or bind(2)) fails, we (close the socket
+         and) try the next address. */
+
+      // take first address
+      memcpy(&addr, result->ai_addr, result->ai_addrlen);
+
+      freeaddrinfo(result);           /* No longer needed */
+    }
+    addr.sin6_family = PF_INET6;
+    return address(addr);
+  }
+
 private:
   static const char *IP6ADDR_MULTICAST_ALLNODES;
 
@@ -331,11 +412,6 @@ private:
     os::inet_pton(AF_INET6, IP6ADDR_MULTICAST_ALLNODES, &addr.sin6_addr);
     return address(addr);
   }
-//  address from_ip(const std::string &str);
-//  address from_ip(const char *str);
-//  address from_hostname(const std::string &str);
-//  address from_hostname(const char *str);
-
 };
 
 /// @endcond

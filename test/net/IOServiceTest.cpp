@@ -22,7 +22,7 @@ IOServiceTest::IOServiceTest()
 
 void IOServiceTest::test_shutdown()
 {
-  IOEchoServer server(7777);
+  IOEchoServer server(7779);
 
   std::thread server_thread([&server] {
     server.run();
@@ -34,14 +34,12 @@ void IOServiceTest::test_shutdown()
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
 
-  if (server_thread.joinable()) {
-    server_thread.join();
-  }
+  server_thread.join();
 }
 
 void IOServiceTest::test_send_receive()
 {
-  IOEchoServer server(7778);
+  IOEchoServer server(7780);
 
   std::thread server_thread([&server] {
     server.run();
@@ -54,7 +52,7 @@ void IOServiceTest::test_send_receive()
 
   int ret = client.open(tcp::v4());
   UNIT_ASSERT_FALSE(ret < 0);
-  auto srv = tcp::peer(address::v4::loopback(), 7778);
+  auto srv = tcp::peer(address::v4::loopback(), 7780);
   ret = client.connect(srv);
   UNIT_ASSERT_FALSE(ret < 0);
   buffer data;
@@ -70,7 +68,5 @@ void IOServiceTest::test_send_receive()
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
 
-  if (server_thread.joinable()) {
-    server_thread.join();
-  }
+  server_thread.join();
 }

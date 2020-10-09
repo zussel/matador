@@ -11,6 +11,7 @@ public:
   void test_address_v4();
   void test_address_v6();
   void test_peer_v4();
+  void test_peer_v6();
 
   void test_ip();
 };

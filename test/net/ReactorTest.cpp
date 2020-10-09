@@ -49,9 +49,7 @@ void ReactorTest::test_shutdown()
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
 
-  if (server_thread.joinable()) {
-    server_thread.join();
-  }
+  server_thread.join();
 
   ac->close();
 }
@@ -97,14 +95,7 @@ void ReactorTest::test_send_receive()
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
 
-  if (server_thread.joinable()) {
-    server_thread.join();
-  }
+  server_thread.join();
 
   ac->close();
-
-//  logsink->close();
-//  matador::os::remove("reactor.log");
- 
-//  log_manager::instance().clear();
 }

@@ -9,6 +9,7 @@ AddressTest::AddressTest()
   add_test("address_v4", std::bind(&AddressTest::test_address_v4, this), "ip address v4 test");
   add_test("address_v6", std::bind(&AddressTest::test_address_v6, this), "ip address v6 test");
   add_test("peer_v4", std::bind(&AddressTest::test_peer_v4, this), "ip peer v4 test");
+  add_test("peer_v6", std::bind(&AddressTest::test_peer_v6, this), "ip peer v6 test");
   add_test("ip", std::bind(&AddressTest::test_ip, this), "ip test");
 }
 
@@ -62,7 +63,28 @@ void AddressTest::test_address_v4()
 
 void AddressTest::test_address_v6()
 {
+  address localhost = address::v6::from_hostname("localhost");
+  address lh127 = address::v6::from_ip("::1");
 
+  auto str_l = localhost.to_string();
+  auto str_127 = lh127.to_string();
+
+  UNIT_ASSERT_EQUAL(localhost.to_string(), lh127.to_string());
+
+  address loopback = address::v6::loopback();
+
+  UNIT_ASSERT_EQUAL("::1", loopback.to_string());
+
+  address multicast = address::v6::broadcast();
+
+  auto str_mc = multicast.to_string();
+
+  UNIT_ASSERT_EQUAL("ff02::1", str_mc);
+
+  address any = address::v6::any();
+  auto str_any = any.to_string();
+
+  UNIT_ASSERT_EQUAL("::", str_any);
 }
 
 void AddressTest::test_peer_v4()
@@ -78,19 +100,29 @@ void AddressTest::test_peer_v4()
   UNIT_ASSERT_EQUAL(peer_size, localhost8080.size());
 }
 
+void AddressTest::test_peer_v6()
+{
+  address localhost = address::v6::loopback();
+  tcp::peer localhost8080(localhost, 8080);
+  size_t peer_size(28);
+
+  UNIT_ASSERT_EQUAL(8080, localhost8080.port());
+  UNIT_ASSERT_EQUAL(tcp::v6().family(), localhost8080.protocol().family());
+  UNIT_ASSERT_EQUAL(tcp::v6().protocol(), localhost8080.protocol().protocol());
+  UNIT_ASSERT_EQUAL(tcp::v6().type(), localhost8080.protocol().type());
+  UNIT_ASSERT_EQUAL(peer_size, localhost8080.size());
+}
+
 void AddressTest::test_ip()
 {
   auto *addr = new sockaddr_in;
   auto ret = os::inet_pton(AF_INET, "127.0.0.1", &addr->sin_addr);
-
   UNIT_ASSERT_EQUAL(1, ret);
 
   ret = os::inet_pton(AF_INET, "127.0.0.1.0", &addr->sin_addr);
-
   UNIT_ASSERT_EQUAL(0, ret);
 
   ret = os::inet_pton(90, "192.168.178.13", &addr->sin_addr);
-
   UNIT_ASSERT_EQUAL(-1, ret);
 
   delete addr;
