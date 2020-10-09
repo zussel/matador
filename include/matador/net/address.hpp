@@ -333,12 +333,13 @@ public:
       return address(addr);
     } else if (ret == 0) {
       char message_buffer[1024];
-      os::sprintf(message_buffer, 1024, "invalid ip address [%s]", str);
+      os::sprintf(message_buffer, 1024, "INET_PTON (ip): invalid ip address [%s]", str);
       detail::throw_logic_error(message_buffer);
     } else {
       char message_buffer[1024];
-      os::sprintf(message_buffer, 1024, "invalid ip address [%s]: %%s", str);
-      detail::throw_logic_error_with_errno(message_buffer, errno);
+      int err = errno;
+      os::sprintf(message_buffer, 1024, "INET_PTON (ip): invalid ip address [%s]: %%s", str);
+      detail::throw_logic_error_with_errno(message_buffer, err);
     }
     return address();
   }
@@ -364,8 +365,9 @@ public:
       addr.sin6_family = PF_INET6;
     } else if (ret == -1) {
       char message_buffer[1024];
-      os::sprintf(message_buffer, 1024, "invalid ip address [%s]: %%s", str);
-      detail::throw_logic_error_with_errno(message_buffer, errno);
+      int err = errno;
+      os::sprintf(message_buffer, 1024, "INET_PTON (host): invalid ip address [%s] (errno: %d): %%s", str, err);
+      detail::throw_logic_error_with_errno(message_buffer, err);
     } else { /* 0 == try name */
       struct addrinfo hints{};
       struct addrinfo *result = nullptr;
@@ -383,7 +385,7 @@ public:
       if (s != 0) {
         char message_buffer[1024];
         int err = errno;
-        os::sprintf(message_buffer, 1024, "invalid ip address [%s]: %%s", str);
+        os::sprintf(message_buffer, 1024, "GETADDRINFO (host): invalid ip address [%s] (errno: %d): %%s", str, err);
         detail::throw_logic_error_with_errno(message_buffer, err);
       }
 
