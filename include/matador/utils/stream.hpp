@@ -12,9 +12,22 @@ template < class T >
 class stream
 {
 public:
+  typedef stream_element_processor_iterator<T> iterator;
+
   explicit stream(std::shared_ptr<stream_element_processor<T>> processor)
-  : processor_(std::move(processor))
+    : processor_(std::move(processor))
   {}
+
+  iterator begin()
+  {
+    return processor_->begin();
+  }
+
+  iterator end()
+  {
+    return processor_->end();
+  }
+
   stream<T>& skip(size_t val)
   {
     return *this;
@@ -37,10 +50,10 @@ public:
   {
     std::vector<T> result;
 
-    auto first = processor_->begin();
-    auto last = processor_->end();
-    while (first++ != last) {
-      result.push_back(*first);
+    auto first = begin();
+    auto last = end();
+    while (first != last) {
+      result.push_back(*first++);
     }
 
     return result;
@@ -70,7 +83,7 @@ stream<T> make_stream(std::list<T> &&container)
 template < class T >
 stream<T> make_stream(std::list<T> &container)
 {
-  return stream<T>(make_range<int>(std::begin(container), std::end(container)));
+  return stream<T>(make_range<T>(std::begin(container), std::end(container)));
 }
 
 }

@@ -10,28 +10,33 @@ std::string to_string(int i) { return typeid(i).name() + std::to_string(i); }
 
 int main()
 {
-  std::list<int> ints { 1, 2, 3, 4, };
+  std::list<int> ints { 1,2 };
 
-  auto range = make_range<int>(std::begin(ints), std::end(ints));
-
-  auto filter = make_filter([](const int &in) {
-    return in % 2 == 0;
-  }, range);
-
-  auto mapper = make_mapper([](const int &in) {
-    return typeid(in).name() + std::to_string(in);
-  }, filter);
-
-  mapper->process();
-  std::cout << "Mapper: " << *mapper->value() << "\n";
+//  auto range = make_range<int>(std::begin(ints), std::end(ints));
+//
+//  auto filter = make_filter([](const int &in) {
+//    return in % 2 == 0;
+//  }, range);
+//
+//  auto mapper = make_mapper([](const int &in) {
+//    return typeid(in).name() + std::to_string(in);
+//  }, filter);
+//
+//  mapper->process();
+//  std::cout << "Mapper: " << *mapper->value() << "\n";
 
   auto s = make_stream(ints);
 
-  auto s2 = s
-    .filter(is_even)
-    .map(to_string);
+  auto l = s.to_vector();
 
-  auto result = s2.to_vector();
+  for (const auto &i : l) {
+    std::cout << "i: " << i << "\n";
+  }
+//  auto s2 = s
+//    .filter(is_even)
+//    .map(to_string);
+//
+//  auto result = s2.to_vector();
 
   return 0;
 }
