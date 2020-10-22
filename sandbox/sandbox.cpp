@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 
 using namespace matador;
 
@@ -18,6 +19,7 @@ struct person
 
 int main()
 {
+
   std::list<int> ints = { 1, 2, 3, 4 };
 
   auto range = detail::make_from<int>(std::begin(ints), std::end(ints));
@@ -52,6 +54,56 @@ int main()
   for (const auto &i : s2) {
     std::cout << "i: " << i << "\n";
   }
+
+  std::cout << "done\n";
+
+  auto first_value = make_stream(ints).filter(is_even).first();
+
+  std::cout << "optional first has value: " << std::boolalpha << first_value.has_value() << "\n";
+  std::cout << "optional first value: " << first_value.value() << "\n";
+
+  first_value = make_stream(ints).filter([](const int &val) { return val > 4; }).first();
+
+  std::cout << "optional first has value: " << std::boolalpha << first_value.has_value() << "\n";
+  try {
+    std::cout << "optional first value: " << first_value.value() << "\n";
+  } catch (bad_optional_access &ex) {
+    std::cout << "caught exception: " << ex.what() << "\n";
+  }
+
+  auto value_at_index = make_stream(1, 8).at(4);
+
+  std::cout << "optional at index has value: " << std::boolalpha << value_at_index.has_value() << "\n";
+  std::cout << "optional at index value: " << value_at_index.value() << "\n";
+
+  value_at_index = make_stream(1, 8).at(9);
+
+  std::cout << "optional at index has value: " << std::boolalpha << value_at_index.has_value() << "\n";
+  try {
+    std::cout << "optional at index value: " << value_at_index.value() << "\n";
+  } catch (bad_optional_access &ex) {
+    std::cout << "caught exception: " << ex.what() << "\n";
+  }
+
+  auto last_value = make_stream(ints).filter(is_even).last();
+
+  std::cout << "optional last has value: " << std::boolalpha << last_value.has_value() << "\n";
+  std::cout << "optional last value: " << last_value.value() << "\n";
+
+  last_value = make_stream(ints).filter([](const int &val) { return val > 4; }).last();
+
+  std::cout << "optional last has value: " << std::boolalpha << last_value.has_value() << "\n";
+  try {
+    std::cout << "optional last value: " << last_value.value() << "\n";
+  } catch (bad_optional_access &ex) {
+    std::cout << "caught exception: " << ex.what() << "\n";
+  }
+
+  auto pc = make_stream(ints)
+    .peek([](const int &val) { std::cout << val <<  " (peek)\n";})
+    .count();
+
+  std::cout << "peek count: " << pc << "\n";
 
   std::cout << "done\n";
 
@@ -119,6 +171,36 @@ int main()
   std::cout << "any even in range(1, 6): " << std::boolalpha << make_stream(1, 6).any(is_even) << "\n";
   std::cout << "all less 7 range(1, 6): " << std::boolalpha << make_stream(1, 6).all([](const int &val) { return val < 7; }) << "\n";
   std::cout << "all less 7 range(1, 8): " << std::boolalpha << make_stream(1, 8).all([](const int &val) { return val < 7; }) << "\n";
+  std::cout << "none less 7 range(8, 11): " << std::boolalpha << make_stream(8, 11).none([](const int &val) { return val < 7; }) << "\n";
+  std::cout << "none less 7 range(1, 8): " << std::boolalpha << make_stream(1, 8).none([](const int &val) { return val < 7; }) << "\n";
+
+  auto reduce_result = make_stream(1, 8).reduce(std::plus<int>());
+
+  std::cout << "reduce(1, 8): " << reduce_result.value() << "\n";
+
+  auto reduce_identity_result = make_stream(1, 8).reduce(std::string(), [](const std::string &result, int i) {
+    std::stringstream istr;
+    if (!result.empty()) {
+      istr << ",";
+    }
+    istr << i;
+    return result + istr.str();
+  });
+
+  std::cout << "reduce identity(1,8): " << reduce_identity_result << "\n";
+
+  auto reduce_identity_result_2 = make_stream(1, 8).reduce([](const int &val) {
+    return "";
+  }, [](const std::string &result, int i) {
+    std::stringstream istr;
+    if (!result.empty()) {
+      istr << ",";
+    }
+    istr << i;
+    return result + istr.str();
+  });
+
+  std::cout << "reduce identity(1,8): " << reduce_identity_result_2 << "\n";
 
   return 0;
 }

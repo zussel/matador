@@ -2,6 +2,7 @@
 #define MATADOR_STREAM_HPP
 
 #include "matador/utils/stream_processor.hpp"
+#include "matador/utils/optional.hpp"
 
 #include <list>
 #include <vector>
@@ -69,6 +70,36 @@ public:
   }
 
   template < typename Predicate >
+  stream<T>& peek(Predicate &&pred)
+  {
+    processor_ = make_peek(std::forward<Predicate>(pred), processor_);
+    return *this;
+  }
+
+  /*
+   * Termination methods
+   */
+  optional<T> first()
+  {
+    auto first = begin();
+    if (first != end()) {
+      return make_optional(*first);
+    } else {
+      return optional<T>();
+    }
+  }
+
+  optional<T> last()
+  {
+    return reduce([](const T &, const T &next) { return next; });
+  }
+
+  optional<T> at(std::size_t index)
+  {
+    return skip(index).first();
+  }
+
+  template < typename Predicate >
   bool any(Predicate &&pred)
   {
     bool result = false;
@@ -96,9 +127,68 @@ public:
     return result;
   }
 
+  template < typename Predicate >
+  bool none(Predicate &&pred)
+  {
+    bool result = true;
+
+    for (const T &val : *this) {
+      if (pred(val)) {
+        result = false;
+        break;
+      }
+    }
+    return result;
+  }
+
   std::size_t count()
   {
     return std::distance(begin(), end());
+  }
+
+  template < typename Accumulator >
+  optional<T> reduce(Accumulator &&accu)
+  {
+    auto first = begin();
+    auto last = end();
+    if (first == last) {
+      return optional<T>();
+    }
+
+    auto result = *first++;
+    while (first != last) {
+      result = accu(result, *first++);
+    }
+    return result;
+  }
+
+//  template < typename U, typename Accumulator, typename R >
+//  R reduce(const U &identity, Accumulator &&accu);
+
+  template < typename U, typename Accumulator, typename R = U >
+  R reduce(const U &identity, Accumulator &&accu, typename std::enable_if<!std::is_function<U>::value>::type* = 0)
+  {
+    auto first = begin();
+    auto last = end();
+    auto result = identity;
+    while (first != last) {
+      result = accu(result, *first);
+      ++first;
+    }
+    return result;
+  }
+
+  template < typename U, typename Accumulator, typename R = typename std::result_of<U&(T)>::type >
+  R reduce(const U &identity_fun, Accumulator &&accu, typename std::enable_if<std::is_function<U>::value>::type* = 0)
+  {
+    auto first = begin();
+    auto last = end();
+    auto result = *first;
+    while (first != last) {
+      result = accu(result, *first);
+      ++first;
+    }
+    return result;
   }
 
   void print_to(std::ostream &out, const char *delim = " ")
@@ -107,7 +197,6 @@ public:
       out << val << delim;
     });
   }
-
 
   std::vector<T> to_vector()
   {

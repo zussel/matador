@@ -304,6 +304,39 @@ private:
   value_type_ptr value_;
 };
 
+template <class Out, typename Predicate>
+class peek_element_processor : public stream_element_processor<Out>
+{
+public:
+  typedef stream_element_processor<Out> base;
+  typedef typename base::value_type_ptr value_type_ptr;
+
+  peek_element_processor(std::shared_ptr<stream_element_processor<Out>> successor, Predicate &&pred)
+    : successor_(std::move(successor)), pred_(pred)
+  {}
+
+  value_type_ptr value() override
+  {
+    return value_;
+  }
+
+protected:
+  stream_process_state process_impl() override
+  {
+    while (is_stream_process_state_set(successor_->process(), stream_process_state::VALID)) {
+      value_ = successor_->value();
+      pred_(*value_);
+      return stream_process_state::VALID;
+    }
+    return stream_process_state::FINISHED;
+  }
+
+private:
+  std::shared_ptr<stream_element_processor<Out>> successor_;
+  Predicate pred_;
+  value_type_ptr value_;
+};
+
 template<class Out>
 class take_element_processor : public stream_element_processor<Out>
 {
@@ -514,43 +547,43 @@ std::shared_ptr<stream_element_processor<Out>> make_counter(Out &&from, const U&
 }
 
 template<class Out, typename Predicate, typename R = Out>
-std::shared_ptr<stream_element_processor<R>>
-make_filter(Predicate &&pred, std::shared_ptr<stream_element_processor<Out>> successor)
+std::shared_ptr<stream_element_processor<R>> make_filter(Predicate &&pred, std::shared_ptr<stream_element_processor<Out>> successor)
 {
   return std::make_shared<filter_element_processor<Out, Predicate>>(successor, std::forward<Predicate>(pred));
 }
 
+template<class Out, typename Predicate, typename R = Out>
+std::shared_ptr<stream_element_processor<R>> make_peek(Predicate &&pred, std::shared_ptr<stream_element_processor<Out>> successor)
+{
+  return std::make_shared<peek_element_processor<Out, Predicate>>(successor, std::forward<Predicate>(pred));
+}
+
 template<class Out, typename R = Out>
-std::shared_ptr<stream_element_processor<R>>
-make_take(std::size_t count, std::shared_ptr<stream_element_processor<Out>> successor)
+std::shared_ptr<stream_element_processor<R>> make_take(std::size_t count, std::shared_ptr<stream_element_processor<Out>> successor)
 {
   return std::make_shared<take_element_processor<Out>>(successor, count);
 }
 
 template<class Out, typename Predicate, typename R = Out>
-std::shared_ptr<stream_element_processor<R>>
-make_take_while(Predicate pred, std::shared_ptr<stream_element_processor<Out>> successor)
+std::shared_ptr<stream_element_processor<R>> make_take_while(Predicate pred, std::shared_ptr<stream_element_processor<Out>> successor)
 {
   return std::make_shared<take_while_element_processor<Out, Predicate>>(successor, pred);
 }
 
 template<class Out, typename R = Out>
-std::shared_ptr<stream_element_processor<R>>
-make_skip(std::size_t count, std::shared_ptr<stream_element_processor<Out>> successor)
+std::shared_ptr<stream_element_processor<R>> make_skip(std::size_t count, std::shared_ptr<stream_element_processor<Out>> successor)
 {
   return std::make_shared<skip_element_processor<Out>>(successor, count);
 }
 
 template<class Out, typename Predicate, typename R = Out>
-std::shared_ptr<stream_element_processor<R>>
-make_skip_while(Predicate pred, std::shared_ptr<stream_element_processor<Out>> successor)
+std::shared_ptr<stream_element_processor<R>> make_skip_while(Predicate pred, std::shared_ptr<stream_element_processor<Out>> successor)
 {
   return std::make_shared<skip_while_element_processor<Out, Predicate>>(successor, pred);
 }
 
 template<class In, typename Predicate, typename Out = typename std::result_of<Predicate &(In)>::type>
-std::shared_ptr<stream_element_processor<Out>>
-make_mapper(Predicate &&pred, std::shared_ptr<stream_element_processor<In>> successor)
+std::shared_ptr<stream_element_processor<Out>> make_mapper(Predicate &&pred, std::shared_ptr<stream_element_processor<In>> successor)
 {
   return std::make_shared<map_element_processor<In, Out, Predicate>>(successor, std::forward<Predicate>(pred));
 }
