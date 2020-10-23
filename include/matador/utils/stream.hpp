@@ -162,11 +162,8 @@ public:
     return result;
   }
 
-//  template < typename U, typename Accumulator, typename R >
-//  R reduce(const U &identity, Accumulator &&accu);
-
-  template < typename U, typename Accumulator, typename R = U >
-  R reduce(const U &identity, Accumulator &&accu, typename std::enable_if<!std::is_function<U>::value>::type* = 0)
+  template < typename U, typename Accumulator >
+  U reduce(const U &identity, Accumulator &&accu)
   {
     auto first = begin();
     auto last = end();
@@ -179,14 +176,13 @@ public:
   }
 
   template < typename U, typename Accumulator, typename R = typename std::result_of<U&(T)>::type >
-  R reduce(const U &identity_fun, Accumulator &&accu, typename std::enable_if<std::is_function<U>::value>::type* = 0)
+  R reduce_idfunc(const U &identity_fun, Accumulator &&accu)
   {
     auto first = begin();
     auto last = end();
-    auto result = *first;
-    while (first != last) {
+    auto result = identity_fun(*first);
+    while (++first != last) {
       result = accu(result, *first);
-      ++first;
     }
     return result;
   }
@@ -202,8 +198,8 @@ public:
   {
     std::vector<T> result;
 
-    std::for_each(begin(), end(), [&result](const T &val) {
-      result.push_back(val);
+    std::for_each(begin(), end(), [&result](T &&val) {
+      result.push_back(std::forward<T>(val));
     });
 
     return result;
@@ -211,7 +207,13 @@ public:
 
   std::list<T> to_list()
   {
-    return std::list<T>();
+    std::list<T> result;
+
+    std::for_each(begin(), end(), [&result](T &&val) {
+      result.push_back(std::forward<T>(val));
+    });
+
+    return result;
   }
 
 private:

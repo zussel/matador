@@ -189,14 +189,13 @@ int main()
 
   std::cout << "reduce identity(1,8): " << reduce_identity_result << "\n";
 
-  auto reduce_identity_result_2 = make_stream(1, 8).reduce([](const int &val) {
-    return "";
+  auto reduce_identity_result_2 = make_stream(1, 8).reduce_idfunc([](const int &val) {
+    std::stringstream istr;
+    istr << val;
+    return istr.str();
   }, [](const std::string &result, int i) {
     std::stringstream istr;
-    if (!result.empty()) {
-      istr << ",";
-    }
-    istr << i;
+    istr << " <-> " << i;
     return result + istr.str();
   });
 
