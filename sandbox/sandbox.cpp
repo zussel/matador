@@ -37,7 +37,7 @@ int main()
 
   auto s = make_stream(ints);
 
-  auto l = s.to_vector();
+  auto l = s.collect<std::vector>();
 
   for (const auto &i : l) {
     std::cout << "i: " << i << "\n";
@@ -49,13 +49,16 @@ int main()
     .filter(is_even)
     .map(to_string);
 
-  auto result = s2.to_vector();
+  auto result = s2.collect<std::list>();
 
   for (const auto &i : s2) {
     std::cout << "i: " << i << "\n";
   }
 
   std::cout << "done\n";
+
+
+  auto res = collect<std::string, std::vector>(s2);
 
   auto first_value = make_stream(ints).filter(is_even).first();
 
@@ -200,6 +203,10 @@ int main()
   });
 
   std::cout << "reduce identity(1,8): " << reduce_identity_result_2 << "\n";
+
+  auto minval = make_stream(1, 8).min();
+
+  std::cout << "min (1,8): " << minval.value() << "\n";
 
   return 0;
 }

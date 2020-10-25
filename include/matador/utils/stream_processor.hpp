@@ -148,7 +148,7 @@ public:
 
   value_type_ptr value() override
   {
-    return std::make_shared<Out>(*value_);
+    return std::make_shared<Out>(std::move(*value_));
   }
 
 protected:

@@ -11,6 +11,12 @@
 namespace matador {
 
 template < class T >
+class stream;
+
+template < class T, template < class ... > class C, class Allocator = std::allocator<T> >
+C<T, Allocator> collect(stream<T> &s);
+
+template < class T >
 class stream
 {
 public:
@@ -94,6 +100,14 @@ public:
     return reduce([](const T &, const T &next) { return next; });
   }
 
+  optional<T> min()
+  {
+    std::less<T> less_func;
+    return reduce([=](const T &x, const T &next) {
+      return less_func(x, next) ? x : next;
+    });
+  }
+
   optional<T> at(std::size_t index)
   {
     return skip(index).first();
@@ -155,7 +169,8 @@ public:
       return optional<T>();
     }
 
-    auto result = *first++;
+    auto result = *first;
+    ++first;
     while (first != last) {
       result = accu(result, *first++);
     }
@@ -194,31 +209,28 @@ public:
     });
   }
 
-  std::vector<T> to_vector()
+  template < template < class ... > class C, class Allocator = std::allocator<T>>
+  C<T, Allocator> collect()
   {
-    std::vector<T> result;
-
-    std::for_each(begin(), end(), [&result](T &&val) {
-      result.push_back(std::forward<T>(val));
-    });
-
-    return result;
-  }
-
-  std::list<T> to_list()
-  {
-    std::list<T> result;
-
-    std::for_each(begin(), end(), [&result](T &&val) {
-      result.push_back(std::forward<T>(val));
-    });
-
-    return result;
+    return matador::collect<T, C>(*this);
   }
 
 private:
   std::shared_ptr<detail::stream_element_processor<T>> processor_;
 };
+
+template < class T, template < class ... > class C, class Allocator>
+C<T, Allocator> collect(stream<T> &s)
+{
+  using container_type = C<T, Allocator>;
+  container_type result;
+
+  std::for_each(s.begin(), s.end(), [&result](T &&val) {
+    result.push_back(std::forward<T>(val));
+  });
+
+  return result;
+}
 
 template < class T, template < class ... > class C >
 stream<T> make_stream(C<T> &&container)
