@@ -19,14 +19,23 @@ SET (TEST_TOOLS_SOURCES
   utils/JsonMapperTestUnit.hpp
   utils/OSTest.cpp
   utils/OSTest.hpp
-  utils/FileTestUnit.cpp utils/FileTestUnit.hpp)
+  utils/FileTestUnit.cpp
+  utils/FileTestUnit.hpp
+  utils/StreamsTest.cpp
+  utils/StreamsTest.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
   logger/LoggerTest.hpp
-    logger/file.cpp logger/file.hpp)
+  logger/file.cpp
+  logger/file.hpp)
 
-SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
+SET (TEST_HEADER
+  datatypes.hpp
+  entities.hpp
+  person.hpp
+  has_many_list.hpp
+  Blog.hpp)
 
 SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.cpp
@@ -73,7 +82,9 @@ SET (TEST_SQL_SOURCES
   sql/ValueUnitTest.cpp
   sql/ValueUnitTest.hpp
   sql/PostgreSQLDialectTestUnit.cpp
-  sql/PostgreSQLDialectTestUnit.hpp sql/SqlLoggerTest.cpp sql/SqlLoggerTest.hpp)
+  sql/PostgreSQLDialectTestUnit.hpp
+  sql/SqlLoggerTest.cpp
+  sql/SqlLoggerTest.hpp)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp

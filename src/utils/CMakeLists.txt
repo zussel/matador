@@ -50,8 +50,14 @@ SET(HEADER
   ../../include/matador/utils/memory.hpp
   ../../include/matador/utils/is_varchar.hpp
   ../../include/matador/utils/varchar.hpp
-    ../../include/matador/utils/generic_json_parser.hpp
-    ../../include/matador/utils/json_mapper.hpp ../../include/matador/utils/basic_json_mapper.hpp ../../include/matador/utils/file.hpp ../../include/matador/utils/os.hpp ../../include/matador/utils/stream_processor.hpp ../../include/matador/utils/stream.hpp)
+  ../../include/matador/utils/generic_json_parser.hpp
+  ../../include/matador/utils/json_mapper.hpp
+  ../../include/matador/utils/basic_json_mapper.hpp
+  ../../include/matador/utils/file.hpp
+  ../../include/matador/utils/os.hpp
+  ../../include/matador/utils/stream_processor.hpp
+  ../../include/matador/utils/stream.hpp
+  ../../include/matador/utils/optional.hpp)
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
 

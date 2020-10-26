@@ -19,7 +19,6 @@ struct person
 
 int main()
 {
-
   std::list<int> ints = { 1, 2, 3, 4 };
 
   auto range = detail::make_from<int>(std::begin(ints), std::end(ints));
