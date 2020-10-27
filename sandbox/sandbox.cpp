@@ -21,71 +21,7 @@ int main()
 {
   std::list<int> ints = { 1, 2, 3, 4 };
 
-  auto range = detail::make_from<int>(std::begin(ints), std::end(ints));
-
-  auto filter = make_filter([](const int &in) {
-    return in % 2 == 0;
-  }, range);
-
-  auto mapper = detail::make_mapper([](const int &in) {
-    return typeid(in).name() + std::to_string(in);
-  }, filter);
-
-  mapper->process();
-  std::cout << "Mapper: " << *mapper->value() << "\n";
-
   auto s = make_stream(ints);
-
-  auto l = s.collect<std::vector>();
-
-  for (const auto &i : l) {
-    std::cout << "i: " << i << "\n";
-  }
-
-  std::cout << "done\n";
-
-  auto s2 = s
-    .filter(is_even)
-    .map(to_string);
-
-  auto result = s2.collect<std::list>();
-
-  for (const auto &i : s2) {
-    std::cout << "i: " << i << "\n";
-  }
-
-  std::cout << "done\n";
-
-
-  auto res = collect<std::string, std::vector>(s2);
-
-  auto first_value = make_stream(ints).filter(is_even).first();
-
-  std::cout << "optional first has value: " << std::boolalpha << first_value.has_value() << "\n";
-  std::cout << "optional first value: " << first_value.value() << "\n";
-
-  first_value = make_stream(ints).filter([](const int &val) { return val > 4; }).first();
-
-  std::cout << "optional first has value: " << std::boolalpha << first_value.has_value() << "\n";
-  try {
-    std::cout << "optional first value: " << first_value.value() << "\n";
-  } catch (bad_optional_access &ex) {
-    std::cout << "caught exception: " << ex.what() << "\n";
-  }
-
-  auto value_at_index = make_stream(1, 8).at(4);
-
-  std::cout << "optional at index has value: " << std::boolalpha << value_at_index.has_value() << "\n";
-  std::cout << "optional at index value: " << value_at_index.value() << "\n";
-
-  value_at_index = make_stream(1, 8).at(9);
-
-  std::cout << "optional at index has value: " << std::boolalpha << value_at_index.has_value() << "\n";
-  try {
-    std::cout << "optional at index value: " << value_at_index.value() << "\n";
-  } catch (bad_optional_access &ex) {
-    std::cout << "caught exception: " << ex.what() << "\n";
-  }
 
   auto last_value = make_stream(ints).filter(is_even).last();
 
