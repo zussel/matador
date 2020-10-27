@@ -62,6 +62,12 @@ public:
     return *this;
   }
 
+  stream<T>& every(std::size_t count)
+  {
+    processor_ = make_every(count, processor_);
+    return *this;
+  }
+
   template < typename Predicate >
   stream<T>& filter(Predicate &&pred)
   {
@@ -248,6 +254,12 @@ template < typename T >
 stream<T> make_stream(T &&from, T &&to)
 {
   return stream<T>(detail::make_range<T>(std::forward<T>(from), std::forward<T>(to), 1));
+}
+
+template < typename T >
+stream<T> make_stream(std::initializer_list<T> elems)
+{
+  return stream<T>(detail::make_from<T>(std::begin(elems), std::end(elems)));
 }
 
 template < typename T >

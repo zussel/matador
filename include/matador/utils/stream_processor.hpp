@@ -194,25 +194,24 @@ public:
   typedef typename base::value_type_ptr value_type_ptr;
 
   range_element_processor(value_type &&from, value_type &&to, const U& increment)
-    : to_(to), incr_(increment)
-  {
-    value_ = std::make_shared<value_type>(from);
-  }
+    : to_(to), current_(from), incr_(increment)
+  {}
 
   value_type_ptr value() override
   {
-    return value_;
+    return std::make_shared<value_type>(current_);
   }
 
 protected:
   stream_process_state process_impl() override
   {
-    if (first_ && *value_ < to_) {
+    if (first_ && current_ < to_) {
       first_ = false;
       return stream_process_state::VALID;
     } else if (!first_) {
-      *value_ = *value_ + incr_;
-      if (*value_ <= to_) {
+
+      current_ += incr_;
+      if (current_ <= to_) {
         return stream_process_state::VALID;
       }
     }
@@ -222,8 +221,8 @@ protected:
 private:
   bool first_ = true;
   value_type to_;
+  value_type current_;
   U incr_ = 1;
-  value_type_ptr value_;
 };
 
 template < class Out, class U, class Enable = void >
@@ -334,6 +333,43 @@ protected:
 private:
   std::shared_ptr<stream_element_processor<Out>> successor_;
   Predicate pred_;
+  value_type_ptr value_;
+};
+
+template<class Out>
+class every_element_processor : public stream_element_processor<Out>
+{
+public:
+  typedef stream_element_processor<Out> base;
+  typedef typename base::value_type_ptr value_type_ptr;
+
+  explicit every_element_processor(std::shared_ptr<stream_element_processor<Out>> successor, std::size_t every)
+  : successor_(std::move(successor)), every_(every)
+  {}
+
+  value_type_ptr value() override
+  {
+    return value_;
+  }
+
+protected:
+  stream_process_state process_impl() override
+  {
+    while (is_stream_process_state_set(successor_->process(), stream_process_state::VALID)) {
+      if (++current_count_ % every_ == 0) {
+        value_ = successor_->value();
+        return stream_process_state::VALID;
+      } else {
+        value_ = nullptr;
+      }
+    }
+    return stream_process_state::FINISHED;
+  }
+
+private:
+  std::shared_ptr<stream_element_processor<Out>> successor_;
+  std::size_t every_ = 0;
+  std::size_t current_count_ = 0;
   value_type_ptr value_;
 };
 
@@ -562,6 +598,12 @@ template<class Out, typename R = Out>
 std::shared_ptr<stream_element_processor<R>> make_take(std::size_t count, std::shared_ptr<stream_element_processor<Out>> successor)
 {
   return std::make_shared<take_element_processor<Out>>(successor, count);
+}
+
+template<class Out, typename R = Out>
+std::shared_ptr<stream_element_processor<R>> make_every(std::size_t every, std::shared_ptr<stream_element_processor<Out>> successor)
+{
+  return std::make_shared<every_element_processor<Out>>(successor, every);
 }
 
 template<class Out, typename Predicate, typename R = Out>

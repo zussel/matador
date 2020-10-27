@@ -207,5 +207,6 @@ int main()
 
   std::cout << "min (1,8): " << minval.value() << "\n";
 
+  make_stream(1, 12).every(3).print_to(std::cout, " (every 3)\n");
   return 0;
 }

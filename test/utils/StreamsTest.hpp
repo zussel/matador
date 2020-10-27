@@ -9,6 +9,12 @@ public:
   StreamsTest();
 
   void test_iterate();
+  void test_min();
+  void test_filter();
+  void test_map();
+  void test_take();
+  void test_skip();
+  void test_every();
 };
 
 
