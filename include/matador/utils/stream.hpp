@@ -114,6 +114,14 @@ public:
     });
   }
 
+  optional<T> max()
+  {
+    std::greater<T> greater_func;
+    return reduce([=](const T &x, const T &next) {
+      return greater_func(x, next) ? x : next;
+    });
+  }
+
   optional<T> at(std::size_t index)
   {
     return skip(index).first();

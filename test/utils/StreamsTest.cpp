@@ -9,8 +9,10 @@ using namespace matador;
 StreamsTest::StreamsTest()
   : unit_test("streams", "streams test")
 {
+  add_test("generate", std::bind(&StreamsTest::test_generate, this), "streams generate test");
   add_test("iterate", std::bind(&StreamsTest::test_iterate, this), "streams iterate test");
   add_test("min", std::bind(&StreamsTest::test_min, this), "streams find minimum test");
+  add_test("max", std::bind(&StreamsTest::test_min, this), "streams find maximum test");
   add_test("filter", std::bind(&StreamsTest::test_filter, this), "streams filter elements test");
   add_test("map", std::bind(&StreamsTest::test_map, this), "streams map elements test");
   add_test("take", std::bind(&StreamsTest::test_take, this), "streams take elements test");
@@ -22,6 +24,11 @@ StreamsTest::StreamsTest()
   add_test("first", std::bind(&StreamsTest::test_first, this), "streams first element test");
   add_test("last", std::bind(&StreamsTest::test_last, this), "streams last element test");
   add_test("at", std::bind(&StreamsTest::test_at, this), "streams element at test");
+  add_test("any", std::bind(&StreamsTest::test_any, this), "streams any element test");
+  add_test("all", std::bind(&StreamsTest::test_all, this), "streams all elements test");
+  add_test("none", std::bind(&StreamsTest::test_none, this), "streams none element test");
+  add_test("count", std::bind(&StreamsTest::test_count, this), "streams element count test");
+  add_test("reduce", std::bind(&StreamsTest::test_reduce, this), "streams reduce elements test");
 }
 
 bool is_even(int val) { return val % 2 == 0; }
@@ -36,6 +43,43 @@ struct person
   std::string name;
   int age = 0;
 };
+}
+
+void StreamsTest::test_generate()
+{
+  auto result = make_stream(3, 17)
+    .collect<std::vector>();
+
+  std::vector<int> expected_result = { 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 };
+
+  UNIT_ASSERT_EQUAL(15UL, result.size());
+  UNIT_ASSERT_TRUE(expected_result == result);
+
+  result = make_stream(3, 17, 2)
+    .collect<std::vector>();
+
+  expected_result = { 3,5,7,9,11,13,15,17 };
+
+  UNIT_ASSERT_EQUAL(8UL, result.size());
+  UNIT_ASSERT_TRUE(expected_result == result);
+
+  result = make_stream_counter(1)
+    .take(5)
+    .collect<std::vector>();
+
+  expected_result = { 1,2,3,4,5 };
+
+  UNIT_ASSERT_EQUAL(5UL, result.size());
+  UNIT_ASSERT_TRUE(expected_result == result);
+
+  result = make_stream_counter(1, 2)
+    .take(5)
+    .collect<std::vector>();
+
+  expected_result = { 1,3,5,7,9 };
+
+  UNIT_ASSERT_EQUAL(5UL, result.size());
+  UNIT_ASSERT_TRUE(expected_result == result);
 }
 
 void StreamsTest::test_iterate()
@@ -69,6 +113,14 @@ void StreamsTest::test_min()
 
   UNIT_ASSERT_TRUE(minval.has_value());
   UNIT_ASSERT_EQUAL(1, minval.value());
+}
+
+void StreamsTest::test_max()
+{
+  auto maxval = make_stream({1, 2, 3, 4, 9, 4, 2, 6}).max();
+
+  UNIT_ASSERT_TRUE(maxval.has_value());
+  UNIT_ASSERT_EQUAL(9, maxval.value());
 }
 
 void StreamsTest::test_filter()
@@ -200,7 +252,7 @@ void StreamsTest::test_last()
     .last();
 
   UNIT_ASSERT_TRUE(last_value.has_value());
-  UNIT_ASSERT_EQUAL(9, last_value.value());
+  UNIT_ASSERT_EQUAL(8, last_value.value());
 
   last_value = make_stream(1, 4)
     .filter([](const int &val) { return val > 4; })
@@ -211,12 +263,82 @@ void StreamsTest::test_last()
 
 void StreamsTest::test_at()
 {
-  auto value_at_index = make_stream(1, 8).at(4);
+  auto value_at_index = make_stream(1, 8)
+    .at(4);
 
   UNIT_ASSERT_TRUE(value_at_index.has_value());
   UNIT_ASSERT_EQUAL(5, value_at_index.value());
 
-  value_at_index = make_stream(1, 8).at(9);
+  value_at_index = make_stream(1, 8)
+    .at(9);
 
   UNIT_ASSERT_FALSE(value_at_index.has_value());
+}
+
+void StreamsTest::test_any()
+{
+  UNIT_ASSERT_TRUE(make_stream(1, 6).any(is_even));
+  UNIT_ASSERT_FALSE(make_stream(1, 6).any([](const int &val) { return val > 7; }));
+}
+
+void StreamsTest::test_all()
+{
+  UNIT_ASSERT_TRUE(make_stream(1, 6).all([](const int &val) { return val < 7; }));
+  UNIT_ASSERT_FALSE(make_stream(1, 8).all([](const int &val) { return val < 7; }));
+
+}
+
+void StreamsTest::test_none()
+{
+  UNIT_ASSERT_TRUE(make_stream(8, 11).none([](const int &val) { return val < 7; }));
+  UNIT_ASSERT_FALSE(make_stream(1, 8).none([](const int &val) { return val < 7; }));
+
+}
+
+void StreamsTest::test_count()
+{
+  UNIT_ASSERT_EQUAL(4UL, make_stream(8, 11).count());
+  UNIT_ASSERT_EQUAL(20UL, make_stream(-8, 11).count());
+}
+
+void StreamsTest::test_reduce()
+{
+  auto reduce_result = make_stream(1, 8).reduce(std::plus<int>());
+
+  UNIT_ASSERT_TRUE(reduce_result.has_value());
+  UNIT_ASSERT_EQUAL(36, reduce_result.value());
+
+  auto reduce_identity_result = make_stream(1, 8).reduce(std::string(), [](const std::string &result, int i) {
+    std::stringstream istr;
+    if (!result.empty()) {
+      istr << ",";
+    }
+    istr << i;
+    return result + istr.str();
+  });
+
+  UNIT_ASSERT_EQUAL("1,2,3,4,5,6,7,8", reduce_identity_result);
+
+  reduce_identity_result = make_stream<int>({}).reduce(std::string(), [](const std::string &result, int i) {
+    std::stringstream istr;
+    if (!result.empty()) {
+      istr << ",";
+    }
+    istr << i;
+    return result + istr.str();
+  });
+
+  UNIT_ASSERT_TRUE(reduce_identity_result.empty());
+
+  auto reduce_identity_func_result = make_stream(1, 8).reduce_idfunc([](const int &val) {
+    std::stringstream istr;
+    istr << val;
+    return istr.str();
+  }, [](const std::string &result, int i) {
+    std::stringstream istr;
+    istr << " <-> " << i;
+    return result + istr.str();
+  });
+
+  UNIT_ASSERT_EQUAL("1 <-> 2 <-> 3 <-> 4 <-> 5 <-> 6 <-> 7 <-> 8", reduce_identity_func_result);
 }

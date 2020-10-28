@@ -52,7 +52,8 @@ public:
 
   iterator begin()
   {
-    return iterator(this, value(), process_impl());
+//    return iterator(this, value(), process_impl());
+    return iterator(this, nullptr, stream_process_state::INITIAL);
   }
 
   iterator end()

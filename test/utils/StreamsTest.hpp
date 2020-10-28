@@ -8,8 +8,10 @@ class StreamsTest : public matador::unit_test
 public:
   StreamsTest();
 
+  void test_generate();
   void test_iterate();
   void test_min();
+  void test_max();
   void test_filter();
   void test_map();
   void test_take();
@@ -21,6 +23,11 @@ public:
   void test_first();
   void test_last();
   void test_at();
+  void test_any();
+  void test_all();
+  void test_none();
+  void test_count();
+  void test_reduce();
 };
 
 
