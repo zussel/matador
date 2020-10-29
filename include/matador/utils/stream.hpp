@@ -22,71 +22,40 @@ class stream
 public:
   typedef detail::stream_element_processor_iterator<T> iterator;
 
-  explicit stream(std::shared_ptr<detail::stream_element_processor<T>> processor)
-    : processor_(std::move(processor))
-  {}
+  explicit stream(std::shared_ptr<detail::stream_element_processor<T>> processor);
 
-  iterator begin()
-  {
-    return processor_->begin();
-  }
+  stream& operator=(const std::shared_ptr<detail::stream_element_processor<T>> &processor);
 
-  iterator end()
-  {
-    return processor_->end();
-  }
+  iterator begin();
 
-  stream<T>& take(std::size_t count)
-  {
-    processor_ = make_take(count, processor_);
-    return *this;
-  }
+  iterator end();
+
+  stream<T>& take(std::size_t count);
 
   template < typename Predicate >
-  stream<T>& take_while(Predicate pred)
-  {
-    processor_ = make_take_while(pred, processor_);
-    return *this;
-  }
+  stream<T>& take_while(Predicate pred);
 
-  stream<T>& skip(std::size_t count)
-  {
-    processor_ = make_skip(count, processor_);
-    return *this;
-  }
+  stream<T>& skip(std::size_t count);
 
   template < typename Predicate >
-  stream<T>& skip_while(Predicate pred)
-  {
-    processor_ = make_skip_while(pred, processor_);
-    return *this;
-  }
+  stream<T>& skip_while(Predicate pred);
 
-  stream<T>& every(std::size_t count)
-  {
-    processor_ = make_every(count, processor_);
-    return *this;
-  }
+  stream<T>& every(std::size_t count);
 
   template < typename Predicate >
-  stream<T>& filter(Predicate &&pred)
-  {
-    processor_ = make_filter(std::forward<Predicate>(pred), processor_);
-    return *this;
-  }
+  stream<T>& filter(Predicate &&pred);
 
   template < typename Predicate, typename R = typename std::result_of<Predicate&(T)>::type>
-  stream<R> map(Predicate &&pred)
-  {
-    return stream<R>(make_mapper(std::forward<Predicate>(pred), processor_));
-  }
+  stream<R> map(Predicate &&pred);
+
+  template < typename Predicate, typename R = typename std::result_of<Predicate&(T)>::type::value_type>
+  stream<R> flatmap(Predicate &&pred);
 
   template < typename Predicate >
-  stream<T>& peek(Predicate &&pred)
-  {
-    processor_ = make_peek(std::forward<Predicate>(pred), processor_);
-    return *this;
-  }
+  stream<T>& peek(Predicate &&pred);
+
+  stream<T>& concat(const stream<T> &other);
+
 
   /*
    * Termination methods
@@ -224,14 +193,110 @@ public:
   }
 
   template < template < class ... > class C, class Allocator = std::allocator<T>>
-  C<T, Allocator> collect()
-  {
-    return matador::collect<T, C>(*this);
-  }
+  C<T, Allocator> collect();
 
 private:
   std::shared_ptr<detail::stream_element_processor<T>> processor_;
 };
+
+template<class T>
+stream<T>::stream(std::shared_ptr<detail::stream_element_processor<T>> processor)
+  : processor_(std::move(processor))
+{}
+
+template<class T>
+stream<T>& stream<T>::operator=(const std::shared_ptr<detail::stream_element_processor<T>> &processor)
+{
+  processor_ = processor;
+  return *this;
+}
+
+
+template<class T>
+typename stream<T>::iterator stream<T>::begin()
+{
+  return processor_->begin();
+}
+
+template<class T>
+typename stream<T>::iterator stream<T>::end()
+{
+  return processor_->end();
+}
+
+template<class T>
+stream<T> &stream<T>::take(std::size_t count)
+{
+  processor_ = make_take(count, processor_);
+  return *this;
+}
+
+template<class T>
+template<typename Predicate>
+stream<T> &stream<T>::take_while(Predicate pred)
+{
+  processor_ = make_take_while(pred, processor_);
+  return *this;
+}
+
+template<class T>
+stream<T> &stream<T>::skip(std::size_t count)
+{
+  processor_ = make_skip(count, processor_);
+  return *this;
+}
+
+template<class T>
+template<typename Predicate>
+stream<T> &stream<T>::skip_while(Predicate pred)
+{
+  processor_ = make_skip_while(pred, processor_);
+  return *this;
+}
+
+template<class T>
+stream<T> &stream<T>::every(std::size_t count)
+{
+  processor_ = make_every(count, processor_);
+  return *this;
+}
+
+template<class T>
+template<typename Predicate>
+stream<T> &stream<T>::filter(Predicate &&pred)
+{
+  processor_ = make_filter(std::forward<Predicate>(pred), processor_);
+  return *this;
+}
+
+template<class T>
+template<typename Predicate, typename R>
+stream<R> stream<T>::map(Predicate &&pred)
+{
+  return stream<R>(make_mapper(std::forward<Predicate>(pred), processor_));
+}
+
+template<class T>
+template<typename Predicate, typename R>
+stream<R> stream<T>::flatmap(Predicate &&pred)
+{
+  return stream<R>(make_flatmap(std::forward<Predicate>(pred), processor_));
+}
+
+template<class T>
+template<typename Predicate>
+stream<T> &stream<T>::peek(Predicate &&pred)
+{
+  processor_ = make_peek(std::forward<Predicate>(pred), processor_);
+  return *this;
+}
+
+template<class T>
+stream<T> &stream<T>::concat(const stream<T> &other)
+{
+  processor_ = make_concat(processor_, other.processor_);
+  return *this;
+}
 
 template < class T, template < class ... > class C, class Allocator>
 C<T, Allocator> collect(stream<T> &s)
@@ -239,16 +304,18 @@ C<T, Allocator> collect(stream<T> &s)
   using container_type = C<T, Allocator>;
   container_type result;
 
-  auto first = s.begin();
-  auto last = s.end();
-  while (first != last) {
-    result.push_back(std::forward<T>(*first++));
-  }
-//  std::for_each(s.begin(), s.end(), [&result](T &&val) {
-//    result.push_back(std::forward<T>(val));
-//  });
+  std::for_each(s.begin(), s.end(), [&result](T &&val) {
+    result.push_back(std::forward<T>(val));
+  });
 
   return result;
+}
+
+template<class T>
+template < template < class ... > class C, class Allocator >
+C<T, Allocator> stream<T>::collect()
+{
+  return matador::collect<T, C>(*this);
 }
 
 template < class T, template < class ... > class C >

@@ -12,15 +12,17 @@ StreamsTest::StreamsTest()
   add_test("generate", std::bind(&StreamsTest::test_generate, this), "streams generate test");
   add_test("iterate", std::bind(&StreamsTest::test_iterate, this), "streams iterate test");
   add_test("min", std::bind(&StreamsTest::test_min, this), "streams find minimum test");
-  add_test("max", std::bind(&StreamsTest::test_min, this), "streams find maximum test");
+  add_test("max", std::bind(&StreamsTest::test_max, this), "streams find maximum test");
   add_test("filter", std::bind(&StreamsTest::test_filter, this), "streams filter elements test");
   add_test("map", std::bind(&StreamsTest::test_map, this), "streams map elements test");
+  add_test("flatmap", std::bind(&StreamsTest::test_flatmap, this), "streams flatmap elements test");
   add_test("take", std::bind(&StreamsTest::test_take, this), "streams take elements test");
   add_test("take_while", std::bind(&StreamsTest::test_take_while, this), "streams take while elements test");
   add_test("skip", std::bind(&StreamsTest::test_skip, this), "streams skip elements test");
   add_test("skip_while", std::bind(&StreamsTest::test_skip_while, this), "streams skip while elements test");
   add_test("every", std::bind(&StreamsTest::test_every, this), "streams every elements test");
   add_test("peek", std::bind(&StreamsTest::test_peek, this), "streams peek element test");
+  add_test("concat", std::bind(&StreamsTest::test_concat, this), "streams concat stream test");
   add_test("first", std::bind(&StreamsTest::test_first, this), "streams first element test");
   add_test("last", std::bind(&StreamsTest::test_last, this), "streams last element test");
   add_test("at", std::bind(&StreamsTest::test_at, this), "streams element at test");
@@ -37,12 +39,17 @@ namespace testing {
 
 struct person
 {
-  person(std::string n, int a) : name(std::move(n)), age(a)
+  person(std::string n, int a) : name(std::move(n)), age(a) {}
+
+  person(std::string n, int a, std::initializer_list<std::string> c)
+    : name(std::move(n)), age(a), colors(c)
   {}
 
   std::string name;
   int age = 0;
+  std::vector<std::string> colors;
 };
+
 }
 
 void StreamsTest::test_generate()
@@ -156,6 +163,24 @@ void StreamsTest::test_map()
   UNIT_ASSERT_EQUAL("bobby", result.at(3));
 }
 
+void StreamsTest::test_flatmap()
+{
+  auto result = make_stream<::testing::person>({
+    {"otto",   34, { "red", "green" }},
+    {"jane",   27, { "blue"}},
+    {"george", 56, { "brown", "purple" }},
+    {"bobby",  15, { "yellow", "gold", "silver" }}
+  }).flatmap([](const ::testing::person &p) {
+    return p.colors;
+  }).collect<std::vector>();
+
+  UNIT_ASSERT_EQUAL(8UL, result.size());
+//  UNIT_ASSERT_EQUAL("otto", result.at(0));
+//  UNIT_ASSERT_EQUAL("jane", result.at(1));
+//  UNIT_ASSERT_EQUAL("george", result.at(2));
+//  UNIT_ASSERT_EQUAL("bobby", result.at(3));
+}
+
 void StreamsTest::test_take()
 {
   auto result = make_stream_counter(6)
@@ -229,6 +254,19 @@ void StreamsTest::test_peek()
     .count();
 
   UNIT_ASSERT_EQUAL(3, result);
+}
+
+void StreamsTest::test_concat()
+{
+  auto s = make_stream(6, 10);
+  auto result = make_stream(1, 5)
+    .concat(s)
+    .collect<std::vector>();
+
+  std::vector<int> expected_result = { 1,2,3,4,5,6,7,8,9,10 };
+
+  UNIT_ASSERT_EQUAL(10UL, result.size());
+  UNIT_ASSERT_TRUE(expected_result == result);
 }
 
 void StreamsTest::test_first()

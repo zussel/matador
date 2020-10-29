@@ -1,13 +1,17 @@
 #ifndef MATADOR_STREAM_PROCESSOR_HPP
 #define MATADOR_STREAM_PROCESSOR_HPP
 
-#include <memory>
-
 #include "matador/utils/memory.hpp"
+
+#include <memory>
+#include <list>
 
 namespace matador {
 
 /// @cond MATADOR_DEV
+
+template < class T >
+class stream;
 
 namespace detail {
 
@@ -268,6 +272,48 @@ private:
   bool first_ = true;
   U incr_ = 1;
   value_type current_;
+};
+
+template < class Out >
+class concat_element_processor : public stream_element_processor<Out>
+{
+public:
+  typedef stream_element_processor<Out> base;
+  typedef typename base::value_type_ptr value_type_ptr;
+
+  concat_element_processor(std::shared_ptr<stream_element_processor<Out>> successor, std::shared_ptr<stream_element_processor<Out>> next)
+  {
+    processors_.push_back(std::move(successor));
+    processors_.push_back(std::move(next));
+  }
+
+  value_type_ptr value() override
+  {
+    return value_;
+  }
+
+protected:
+  stream_process_state process_impl() override
+  {
+    while (!processors_.empty()) {
+      auto state = processors_.front()->process();
+      if (state  == stream_process_state::VALID) {
+        value_ = processors_.front()->value();
+      } else if (state == stream_process_state::FINISHED) {
+        processors_.pop_front();
+        continue;
+      } else if (state == stream_process_state::INVALID) {
+        continue;
+      }
+      return state;
+    }
+    value_.reset();
+    return stream_process_state::FINISHED;
+  }
+
+private:
+  std::list<std::shared_ptr<stream_element_processor<Out>>> processors_;
+  value_type_ptr value_;
 };
 
 template <class Out, typename Predicate>
@@ -566,6 +612,37 @@ private:
   value_type_ptr value_;
 };
 
+template<class In, class Out, typename Predicate>
+class flatmap_element_processor : public stream_element_processor<Out>
+{
+public:
+  typedef stream_element_processor<Out> base;
+  typedef typename base::value_type value_type;
+  typedef typename base::value_type_ptr value_type_ptr;
+  typedef In input_value_type;
+
+  explicit flatmap_element_processor(std::shared_ptr<stream_element_processor<In>> successor, Predicate &&pred)
+  : successor_(std::move(successor)), pred_(pred)
+  {}
+
+  value_type_ptr value() override
+  {
+    return value_;
+  }
+
+protected:
+  stream_process_state process_impl() override
+  {
+    return stream_process_state::FINISHED;
+  }
+
+private:
+  std::shared_ptr<stream_element_processor<In>> successor_;
+  Predicate pred_;
+  value_type_ptr value_;
+  bool first_ = true;
+//  stream<Out> current_stream_;
+};
 
 template<class Out, typename Iterator>
 std::shared_ptr<stream_element_processor<Out>> make_from(Iterator begin, Iterator end)
@@ -631,6 +708,18 @@ template<class In, typename Predicate, typename Out = typename std::result_of<Pr
 std::shared_ptr<stream_element_processor<Out>> make_mapper(Predicate &&pred, std::shared_ptr<stream_element_processor<In>> successor)
 {
   return std::make_shared<map_element_processor<In, Out, Predicate>>(successor, std::forward<Predicate>(pred));
+}
+
+template<class In, typename Predicate, typename Out = typename std::result_of<Predicate &(In)>::type::value_type>
+std::shared_ptr<stream_element_processor<Out>> make_flatmap(Predicate &&pred, std::shared_ptr<stream_element_processor<In>> successor)
+{
+  return std::make_shared<flatmap_element_processor<In, Out, Predicate>>(successor, std::forward<Predicate>(pred));
+}
+
+template<class Out, typename R = Out>
+std::shared_ptr<stream_element_processor<R>> make_concat(std::shared_ptr<stream_element_processor<Out>> successor, std::shared_ptr<stream_element_processor<Out>> next)
+{
+  return std::make_shared<concat_element_processor<Out>>(successor, next);
 }
 
 }
