@@ -239,9 +239,14 @@ C<T, Allocator> collect(stream<T> &s)
   using container_type = C<T, Allocator>;
   container_type result;
 
-  std::for_each(s.begin(), s.end(), [&result](T &&val) {
-    result.push_back(std::forward<T>(val));
-  });
+  auto first = s.begin();
+  auto last = s.end();
+  while (first != last) {
+    result.push_back(std::forward<T>(*first++));
+  }
+//  std::for_each(s.begin(), s.end(), [&result](T &&val) {
+//    result.push_back(std::forward<T>(val));
+//  });
 
   return result;
 }

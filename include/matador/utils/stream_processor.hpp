@@ -52,8 +52,12 @@ public:
 
   iterator begin()
   {
-//    return iterator(this, value(), process_impl());
-    return iterator(this, nullptr, stream_process_state::INITIAL);
+    auto state = process_impl();
+    if (state == stream_process_state::FINISHED) {
+      return iterator(this, std::shared_ptr<Out>(nullptr), state);
+    } else {
+      return iterator(this, value(), state);
+    }
   }
 
   iterator end()
@@ -144,7 +148,7 @@ public:
   typedef Iterator iterator_type;
 
   iterator_element_processor(iterator_type begin, iterator_type end)
-  : value_(begin), end_(end)
+    : value_(begin), end_(end)
   {}
 
   value_type_ptr value() override
@@ -241,14 +245,12 @@ public:
   typedef typename base::value_type_ptr value_type_ptr;
 
   counter_element_processor(value_type &&from, const U& increment)
-    : incr_(increment)
-  {
-    value_ = std::make_shared<value_type>(from);
-  }
+    : incr_(increment), current_(from)
+  {}
 
   value_type_ptr value() override
   {
-    return value_;
+    return std::make_shared<Out>(current_);
   }
 
 protected:
@@ -258,14 +260,14 @@ protected:
       first_ = false;
       return stream_process_state::VALID;
     }
-    *value_ = *value_ + incr_;
+    current_ += incr_;
     return stream_process_state::VALID;
   }
 
 private:
   bool first_ = true;
   U incr_ = 1;
-  value_type_ptr value_;
+  value_type current_;
 };
 
 template <class Out, typename Predicate>

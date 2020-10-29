@@ -47,7 +47,9 @@ struct person
 
 void StreamsTest::test_generate()
 {
-  auto result = make_stream(3, 17)
+  auto result = make_stream<int>({}).collect<std::vector>();
+
+  result = make_stream(3, 17)
     .collect<std::vector>();
 
   std::vector<int> expected_result = { 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 };
