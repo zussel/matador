@@ -2,6 +2,7 @@
 #define MATADOR_STREAM_PROCESSOR_HPP
 
 #include "matador/utils/memory.hpp"
+#include "matador/utils/stream.hpp"
 
 #include <memory>
 #include <list>
@@ -22,24 +23,8 @@ enum class stream_process_state : unsigned int
 {
   INITIAL = 0,
   VALID = 1,
-  INVALID = 2,
-  FINISHED = 4
+  FINISHED = 2
 };
-
-inline stream_process_state operator|(stream_process_state a, stream_process_state b)
-{
-  return static_cast<stream_process_state>(static_cast<unsigned int>(a) | static_cast<unsigned int>(b));
-}
-
-inline stream_process_state operator&(stream_process_state a, stream_process_state b)
-{
-  return static_cast<stream_process_state>(static_cast<unsigned int>(a) & static_cast<unsigned int>(b));
-}
-
-inline bool is_stream_process_state_set(stream_process_state source, stream_process_state needle)
-{
-  return static_cast<int>(source & needle) > 0;
-}
 
 template<class Out>
 class stream_element_processor
@@ -56,11 +41,10 @@ public:
 
   iterator begin()
   {
-    auto state = process_impl();
-    if (state == stream_process_state::FINISHED) {
-      return iterator(this, std::shared_ptr<Out>(nullptr), state);
+    if (!process_impl()) {
+      return iterator(this, std::shared_ptr<Out>(nullptr), stream_process_state::FINISHED);
     } else {
-      return iterator(this, value(), state);
+      return iterator(this, value(), stream_process_state::VALID);
     }
   }
 
@@ -69,13 +53,13 @@ public:
     return iterator(this, nullptr, stream_process_state::FINISHED);
   }
 
-  stream_process_state process()
+  bool process()
   {
     return process_impl();
   }
 
 protected:
-  virtual stream_process_state process_impl() = 0;
+  virtual bool process_impl() = 0;
 };
 
 //template<class T>
@@ -97,8 +81,8 @@ public:
   bool operator==(const self &i) const
   {
     return (i.state_ == state_ && value_ == i.value_) ||
-           (is_stream_process_state_set(state_, stream_process_state::FINISHED) &&
-            is_stream_process_state_set(i.state_, stream_process_state::FINISHED));
+           (state_ == stream_process_state::FINISHED &&
+            i.state_ ==  stream_process_state::FINISHED);
   }
 
   bool operator!=(const self &i) const
@@ -109,9 +93,11 @@ public:
   // pre inc
   self &operator++()
   {
-    state_ = processor_->process();
-    if (is_stream_process_state_set(state_, stream_process_state::VALID)) {
+    if (processor_->process()) {
+      state_ = stream_process_state::VALID;
       value_ = processor_->value();
+    } else {
+      state_ = stream_process_state::FINISHED;
     }
     return *this;
   }
@@ -120,9 +106,11 @@ public:
   self operator++(int)
   {
     self temp = self(processor_, value_, state_);
-    state_ = processor_->process();
-    if (is_stream_process_state_set(state_, stream_process_state::VALID)) {
+    if (processor_->process()) {
+      state_ = stream_process_state::VALID;
       value_ = processor_->value();
+    } else {
+      state_ = stream_process_state::FINISHED;
     }
     return temp;
   }
@@ -143,6 +131,46 @@ private:
   stream_process_state state_ = stream_process_state::INITIAL;
 };
 
+template < class Out, typename Container >
+class container_element_processor : public stream_element_processor<Out>
+{
+private:
+  using iterator_type = decltype(std::begin(std::declval<Container>()));
+
+public:
+  typedef stream_element_processor<Out> base;
+  typedef typename base::value_type_ptr value_type_ptr;
+
+  explicit container_element_processor(Container &&container)
+    : container_{container}
+    , value_{std::begin(container_)}
+    , end_{std::end(container_)}
+  {}
+
+  value_type_ptr value() override
+  {
+    return std::make_shared<Out>(std::move(*value_));
+  }
+
+protected:
+  bool process_impl() override
+  {
+    if (first_) {
+      first_ = false;
+      return value_ != end_;
+    }
+    ++value_;
+    return value_ != end_;
+  }
+
+private:
+  bool first_ = true;
+
+  Container container_;
+  iterator_type value_;
+  iterator_type end_;
+};
+
 template<class Out, typename Iterator>
 class iterator_element_processor : public stream_element_processor<Out>
 {
@@ -161,24 +189,14 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
     if (first_) {
       first_ = false;
-      return valid_or_completed();
+      return value_ != end_;
     }
     ++value_;
-    return valid_or_completed();
-  }
-
-private:
-  stream_process_state valid_or_completed() const
-  {
-    if (value_ == end_) {
-      return stream_process_state::FINISHED;
-    } else {
-      return stream_process_state::VALID;
-    }
+    return value_ != end_;
   }
 
 private:
@@ -212,19 +230,19 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
     if (first_ && current_ < to_) {
       first_ = false;
-      return stream_process_state::VALID;
+      return true;
     } else if (!first_) {
 
       current_ += incr_;
       if (current_ <= to_) {
-        return stream_process_state::VALID;
+        return true;
       }
     }
-    return stream_process_state::FINISHED;
+    return false;
   }
 
 private:
@@ -258,14 +276,14 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
     if (first_) {
       first_ = false;
-      return stream_process_state::VALID;
+      return true;
     }
     current_ += incr_;
-    return stream_process_state::VALID;
+    return true;
   }
 
 private:
@@ -293,22 +311,19 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
     while (!processors_.empty()) {
-      auto state = processors_.front()->process();
-      if (state  == stream_process_state::VALID) {
+      if (processors_.front()->process()) {
         value_ = processors_.front()->value();
-      } else if (state == stream_process_state::FINISHED) {
+        return true;
+      } else {
         processors_.pop_front();
         continue;
-      } else if (state == stream_process_state::INVALID) {
-        continue;
       }
-      return state;
     }
     value_.reset();
-    return stream_process_state::FINISHED;
+    return false;
   }
 
 private:
@@ -333,17 +348,17 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
-    while (is_stream_process_state_set(successor_->process(), stream_process_state::VALID)) {
+    while (successor_->process()) {
       value_ = successor_->value();
       if (pred_(*value_)) {
-        return stream_process_state::VALID;
+        return true;
       } else {
         value_ = nullptr;
       }
     }
-    return stream_process_state::FINISHED;
+    return false;
   }
 
 private:
@@ -369,14 +384,14 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
-    while (is_stream_process_state_set(successor_->process(), stream_process_state::VALID)) {
+    while (successor_->process()) {
       value_ = successor_->value();
       pred_(*value_);
-      return stream_process_state::VALID;
+      return true;
     }
-    return stream_process_state::FINISHED;
+    return false;
   }
 
 private:
@@ -402,17 +417,17 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
-    while (is_stream_process_state_set(successor_->process(), stream_process_state::VALID)) {
+    while (successor_->process()) {
       if (++current_count_ % every_ == 0) {
         value_ = successor_->value();
-        return stream_process_state::VALID;
+        return true;
       } else {
         value_ = nullptr;
       }
     }
-    return stream_process_state::FINISHED;
+    return false;
   }
 
 private:
@@ -439,17 +454,17 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
-    while (is_stream_process_state_set(successor_->process(), stream_process_state::VALID)) {
+    while (successor_->process()) {
       if (current_count_++ < count_) {
         value_ = successor_->value();
-        return stream_process_state::VALID;
+        return true;
       } else {
         break;
       }
     }
-    return stream_process_state::FINISHED;
+    return false;
   }
 
 private:
@@ -476,18 +491,18 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
-    while (is_stream_process_state_set(successor_->process(), stream_process_state::VALID)) {
+    while (successor_->process()) {
       value_ = successor_->value();
       if (!pred_(*value_)) {
         continue;
       } else {
         value_ = successor_->value();
-        return stream_process_state::VALID;
+        return true;
       }
     }
-    return stream_process_state::FINISHED;
+    return false;
   }
 
 private:
@@ -513,17 +528,17 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
-    while (is_stream_process_state_set(successor_->process(), stream_process_state::VALID)) {
+    while (successor_->process()) {
       if (current_count_++ < count_) {
         continue;
       } else {
         value_ = successor_->value();
-        return stream_process_state::VALID;
+        return true;
       }
     }
-    return stream_process_state::FINISHED;
+    return false;
   }
 
 private:
@@ -550,18 +565,18 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
-    while (is_stream_process_state_set(successor_->process(), stream_process_state::VALID)) {
+    while (successor_->process()) {
       value_ = successor_->value();
       if (pred_(*value_)) {
         continue;
       } else {
         value_ = successor_->value();
-        return stream_process_state::VALID;
+        return true;
       }
     }
-    return stream_process_state::FINISHED;
+    return false;
   }
 
 private:
@@ -589,21 +604,16 @@ public:
   }
 
 protected:
-  stream_process_state process_impl() override
+  bool process_impl() override
   {
     std::shared_ptr<input_value_type> val;
-    auto state = successor_->process();
-    switch (state) {
-      case stream_process_state::VALID:
-        val = successor_->value();
-        value_ = std::make_shared<value_type>(pred_(*val));
-        return stream_process_state::VALID;
-      case stream_process_state::INVALID:
-      case stream_process_state::FINISHED:
-      default:
-        value_.reset();
-        return state;
+    if (successor_->process()) {
+      val = successor_->value();
+      value_ = std::make_shared<value_type>(pred_(*val));
+      return true;
     }
+    value_.reset();
+    return false;
   }
 
 private:
@@ -621,33 +631,31 @@ public:
   typedef typename base::value_type_ptr value_type_ptr;
   typedef In input_value_type;
 
-  explicit flatmap_element_processor(std::shared_ptr<stream_element_processor<In>> successor, Predicate &&pred)
-  : successor_(std::move(successor)), pred_(pred)
-  {}
+  flatmap_element_processor(std::shared_ptr<stream_element_processor<In>> successor, Predicate &&pred);
 
-  value_type_ptr value() override
-  {
-    return value_;
-  }
+  value_type_ptr value() override;
 
 protected:
-  stream_process_state process_impl() override
-  {
-    return stream_process_state::FINISHED;
-  }
+  bool process_impl() override;
 
 private:
   std::shared_ptr<stream_element_processor<In>> successor_;
   Predicate pred_;
   value_type_ptr value_;
   bool first_ = true;
-//  stream<Out> current_stream_;
+  stream<Out> current_stream_;
 };
 
 template<class Out, typename Iterator>
 std::shared_ptr<stream_element_processor<Out>> make_from(Iterator begin, Iterator end)
 {
   return std::make_shared<iterator_element_processor<Out, Iterator>>(begin, end);
+}
+
+template<class Out, typename Container>
+std::shared_ptr<stream_element_processor<Out>> make_from(Container &&container)
+{
+  return std::make_shared<container_element_processor<Out, Container>>(std::forward<Container>(container));
 }
 
 template < class Out, typename U >
@@ -711,10 +719,7 @@ std::shared_ptr<stream_element_processor<Out>> make_mapper(Predicate &&pred, std
 }
 
 template<class In, typename Predicate, typename Out = typename std::result_of<Predicate &(In)>::type::value_type>
-std::shared_ptr<stream_element_processor<Out>> make_flatmap(Predicate &&pred, std::shared_ptr<stream_element_processor<In>> successor)
-{
-  return std::make_shared<flatmap_element_processor<In, Out, Predicate>>(successor, std::forward<Predicate>(pred));
-}
+std::shared_ptr<stream_element_processor<Out>> make_flatmap(Predicate &&pred, std::shared_ptr<stream_element_processor<In>> successor);
 
 template<class Out, typename R = Out>
 std::shared_ptr<stream_element_processor<R>> make_concat(std::shared_ptr<stream_element_processor<Out>> successor, std::shared_ptr<stream_element_processor<Out>> next)

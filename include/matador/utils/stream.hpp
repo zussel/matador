@@ -1,26 +1,23 @@
 #ifndef MATADOR_STREAM_HPP
 #define MATADOR_STREAM_HPP
 
-#include "matador/utils/stream_processor.hpp"
 #include "matador/utils/optional.hpp"
+#include "matador/utils/stream_processor.hpp"
 
 #include <list>
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 namespace matador {
-
-template < class T >
-class stream;
-
-template < class T, template < class ... > class C, class Allocator = std::allocator<T> >
-C<T, Allocator> collect(stream<T> &s);
 
 template < class T >
 class stream
 {
 public:
   typedef detail::stream_element_processor_iterator<T> iterator;
+
+  stream() = default;
 
   explicit stream(std::shared_ptr<detail::stream_element_processor<T>> processor);
 
@@ -195,22 +192,48 @@ public:
   template < template < class ... > class C, class Allocator = std::allocator<T>>
   C<T, Allocator> collect();
 
+  std::shared_ptr<detail::stream_element_processor<T>>& processor()
+  {
+    return processor_;
+  }
+
 private:
+
   std::shared_ptr<detail::stream_element_processor<T>> processor_;
 };
 
+template < class T, template < class ... > class C >
+stream<T> make_stream(C<T> &&container);
+
+//template < class T, template < class ... > class C >
+//stream<T> make_stream(const C<T> &container);
+//
+template < typename T >
+stream<T> make_stream(T &&from, T &&to);
+
+template < typename T >
+stream<T> make_stream(std::initializer_list<T> elems);
+
+template < typename T >
+stream<T> make_stream_counter(T &&from);
+
+template < typename T, typename U >
+stream<T> make_stream(T &&from, T &&to, const U& increment);
+
+template < typename T, typename U >
+stream<T> make_stream_counter(T &&from, const U& increment);
+
 template<class T>
-stream<T>::stream(std::shared_ptr<detail::stream_element_processor<T>> processor)
+stream<T>::stream(std::shared_ptr <detail::stream_element_processor<T>> processor)
   : processor_(std::move(processor))
 {}
 
 template<class T>
-stream<T>& stream<T>::operator=(const std::shared_ptr<detail::stream_element_processor<T>> &processor)
+stream <T> &stream<T>::operator=(const std::shared_ptr <detail::stream_element_processor<T>> &processor)
 {
   processor_ = processor;
   return *this;
 }
-
 
 template<class T>
 typename stream<T>::iterator stream<T>::begin()
@@ -225,7 +248,7 @@ typename stream<T>::iterator stream<T>::end()
 }
 
 template<class T>
-stream<T> &stream<T>::take(std::size_t count)
+stream <T> &stream<T>::take(std::size_t count)
 {
   processor_ = make_take(count, processor_);
   return *this;
@@ -233,14 +256,14 @@ stream<T> &stream<T>::take(std::size_t count)
 
 template<class T>
 template<typename Predicate>
-stream<T> &stream<T>::take_while(Predicate pred)
+stream <T> &stream<T>::take_while(Predicate pred)
 {
   processor_ = make_take_while(pred, processor_);
   return *this;
 }
 
 template<class T>
-stream<T> &stream<T>::skip(std::size_t count)
+stream <T> &stream<T>::skip(std::size_t count)
 {
   processor_ = make_skip(count, processor_);
   return *this;
@@ -248,14 +271,14 @@ stream<T> &stream<T>::skip(std::size_t count)
 
 template<class T>
 template<typename Predicate>
-stream<T> &stream<T>::skip_while(Predicate pred)
+stream <T> &stream<T>::skip_while(Predicate pred)
 {
   processor_ = make_skip_while(pred, processor_);
   return *this;
 }
 
 template<class T>
-stream<T> &stream<T>::every(std::size_t count)
+stream <T> &stream<T>::every(std::size_t count)
 {
   processor_ = make_every(count, processor_);
   return *this;
@@ -263,7 +286,7 @@ stream<T> &stream<T>::every(std::size_t count)
 
 template<class T>
 template<typename Predicate>
-stream<T> &stream<T>::filter(Predicate &&pred)
+stream <T> &stream<T>::filter(Predicate &&pred)
 {
   processor_ = make_filter(std::forward<Predicate>(pred), processor_);
   return *this;
@@ -271,35 +294,35 @@ stream<T> &stream<T>::filter(Predicate &&pred)
 
 template<class T>
 template<typename Predicate, typename R>
-stream<R> stream<T>::map(Predicate &&pred)
+stream <R> stream<T>::map(Predicate &&pred)
 {
   return stream<R>(make_mapper(std::forward<Predicate>(pred), processor_));
 }
 
 template<class T>
 template<typename Predicate, typename R>
-stream<R> stream<T>::flatmap(Predicate &&pred)
+stream <R> stream<T>::flatmap(Predicate &&pred)
 {
   return stream<R>(make_flatmap(std::forward<Predicate>(pred), processor_));
 }
 
 template<class T>
 template<typename Predicate>
-stream<T> &stream<T>::peek(Predicate &&pred)
+stream <T> &stream<T>::peek(Predicate &&pred)
 {
   processor_ = make_peek(std::forward<Predicate>(pred), processor_);
   return *this;
 }
 
 template<class T>
-stream<T> &stream<T>::concat(const stream<T> &other)
+stream <T> &stream<T>::concat(const stream <T> &other)
 {
   processor_ = make_concat(processor_, other.processor_);
   return *this;
 }
 
-template < class T, template < class ... > class C, class Allocator>
-C<T, Allocator> collect(stream<T> &s)
+template<class T, template<class ...> class C, class Allocator = std::allocator <T> >
+C<T, Allocator> collect(stream <T> &s)
 {
   using container_type = C<T, Allocator>;
   container_type result;
@@ -312,7 +335,7 @@ C<T, Allocator> collect(stream<T> &s)
 }
 
 template<class T>
-template < template < class ... > class C, class Allocator >
+template<template<class ...> class C, class Allocator>
 C<T, Allocator> stream<T>::collect()
 {
   return matador::collect<T, C>(*this);
@@ -321,14 +344,14 @@ C<T, Allocator> stream<T>::collect()
 template < class T, template < class ... > class C >
 stream<T> make_stream(C<T> &&container)
 {
-  return stream<T>(detail::make_from<T>(std::begin(container), std::end(container)));
+  return stream<T>(detail::make_from<T>(std::forward<C<T>>(container)));
 }
 
-template < class T, template < class ... > class C >
-stream<T> make_stream(const C<T> &container)
-{
-  return stream<T>(detail::make_from<T>(std::begin(container), std::end(container)));
-}
+//template < class T, template < class ... > class C >
+//stream<T> make_stream(C<T> container)
+//{
+//  return stream<T>(detail::make_from<T>(std::begin(container), std::end(container)));
+//}
 
 template < typename T >
 stream<T> make_stream(T &&from, T &&to)
@@ -361,4 +384,7 @@ stream<T> make_stream_counter(T &&from, const U& increment)
 }
 
 }
+
+#include "matador/utils/stream_processor.tpp"
+
 #endif //MATADOR_STREAM_HPP

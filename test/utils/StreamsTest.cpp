@@ -93,9 +93,7 @@ void StreamsTest::test_generate()
 
 void StreamsTest::test_iterate()
 {
-  std::list<int> ints = { 1, 2, 3, 4 };
-
-  auto s = make_stream(ints);
+  auto s = make_stream({ 1, 2, 3, 4 });
 
   auto result = s.collect<std::list>();
 
@@ -174,11 +172,9 @@ void StreamsTest::test_flatmap()
     return p.colors;
   }).collect<std::vector>();
 
+  std::vector<std::string> expected_result = { "red", "green", "blue", "brown", "purple", "yellow", "gold", "silver" };
   UNIT_ASSERT_EQUAL(8UL, result.size());
-//  UNIT_ASSERT_EQUAL("otto", result.at(0));
-//  UNIT_ASSERT_EQUAL("jane", result.at(1));
-//  UNIT_ASSERT_EQUAL("george", result.at(2));
-//  UNIT_ASSERT_EQUAL("bobby", result.at(3));
+  UNIT_ASSERT_TRUE(expected_result == result);
 }
 
 void StreamsTest::test_take()

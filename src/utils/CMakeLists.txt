@@ -56,6 +56,7 @@ SET(HEADER
   ../../include/matador/utils/file.hpp
   ../../include/matador/utils/os.hpp
   ../../include/matador/utils/stream_processor.hpp
+  ../../include/matador/utils/stream_processor.tpp
   ../../include/matador/utils/stream.hpp
   ../../include/matador/utils/optional.hpp)
 
