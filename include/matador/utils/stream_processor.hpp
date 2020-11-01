@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <list>
+#include <vector>
 
 namespace matador {
 
