@@ -213,8 +213,8 @@ private:
   std::shared_ptr<detail::stream_element_processor<T>> processor_;
 };
 
-template < class T, template < class ... > class C >
-stream<T> make_stream(C<T> &&container);
+template < class T, template < class ... > class C, class Allocator = std::allocator<T> >
+stream<T> make_stream(C<T, Allocator> &&container);
 
 //template < class T, template < class ... > class C >
 //stream<T> make_stream(const C<T> &container);
@@ -358,10 +358,10 @@ C<T, Allocator> stream<T>::collect()
   return matador::collect<T, C>(*this);
 }
 
-template < class T, template < class ... > class C >
-stream<T> make_stream(C<T> &&container)
+template < class T, template < class ... > class C, class Allocator >
+stream<T> make_stream(C<T, Allocator> &&container)
 {
-  return stream<T>(detail::make_from<T>(std::forward<C<T>>(container)));
+  return stream<T>(detail::make_from<T>(std::forward<C<T, Allocator>>(container)));
 }
 
 //template < class T, template < class ... > class C >
