@@ -18,6 +18,10 @@ public:
   typedef detail::stream_element_processor_iterator<T> iterator;
 
   stream() = default;
+  stream(const stream &x) = default;
+  stream(stream &&x) noexcept = default;
+  stream& operator=(const stream &x) = default;
+  stream& operator=(stream &&x) noexcept = default;
 
   explicit stream(std::shared_ptr<detail::stream_element_processor<T>> processor);
 
@@ -53,6 +57,7 @@ public:
 
   stream<T>& concat(const stream<T> &other);
 
+  stream<std::vector<T>> pack_every(std::size_t packsize);
 
   /*
    * Termination methods
@@ -138,6 +143,12 @@ public:
   std::size_t count()
   {
     return std::distance(begin(), end());
+  }
+
+  template < typename Predicate >
+  std::size_t count(Predicate &&pred)
+  {
+    return filter(std::forward<Predicate>(pred)).count();
   }
 
   template < typename Accumulator >
@@ -294,14 +305,14 @@ stream <T> &stream<T>::filter(Predicate &&pred)
 
 template<class T>
 template<typename Predicate, typename R>
-stream <R> stream<T>::map(Predicate &&pred)
+stream<R> stream<T>::map(Predicate &&pred)
 {
   return stream<R>(make_mapper(std::forward<Predicate>(pred), processor_));
 }
 
 template<class T>
 template<typename Predicate, typename R>
-stream <R> stream<T>::flatmap(Predicate &&pred)
+stream<R> stream<T>::flatmap(Predicate &&pred)
 {
   return stream<R>(make_flatmap(std::forward<Predicate>(pred), processor_));
 }
@@ -319,6 +330,12 @@ stream <T> &stream<T>::concat(const stream <T> &other)
 {
   processor_ = make_concat(processor_, other.processor_);
   return *this;
+}
+
+template<class T>
+stream<std::vector<T>> stream<T>::pack_every(std::size_t packsize)
+{
+  return stream<std::vector<T>>(make_pack_every(processor_, packsize));
 }
 
 template<class T, template<class ...> class C, class Allocator = std::allocator <T> >

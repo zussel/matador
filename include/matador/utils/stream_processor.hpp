@@ -646,6 +646,48 @@ private:
   stream<Out> current_stream_;
 };
 
+template<class In, class Out = std::vector<In>>
+class pack_every_element_processor : public stream_element_processor<Out>
+{
+public:
+  typedef stream_element_processor<Out> base;
+  typedef typename base::value_type value_type;
+  typedef typename base::value_type_ptr value_type_ptr;
+  typedef In input_value_type;
+
+  pack_every_element_processor(std::shared_ptr<stream_element_processor<In>> successor, std::size_t packsize)
+    : successor_(std::move(successor)), packsize_(packsize), current_packsize_(packsize)
+  {}
+
+  value_type_ptr value() override
+  {
+    return value_;
+  }
+
+protected:
+  bool process_impl() override
+  {
+    if (current_packsize_ >= packsize_) {
+      current_packsize_ = 0;
+      value_ = std::make_shared<Out>();
+    }
+
+    while (current_packsize_++ < packsize_) {
+      if (!successor_->process()) {
+        return false;
+      }
+      value_->push_back(*successor_->value());
+    }
+    return true;
+  }
+
+private:
+  std::shared_ptr<stream_element_processor<In>> successor_;
+  std::size_t packsize_ {};
+  std::size_t current_packsize_ {};
+  value_type_ptr value_;
+};
+
 template<class Out, typename Iterator>
 std::shared_ptr<stream_element_processor<Out>> make_from(Iterator begin, Iterator end)
 {
@@ -725,6 +767,12 @@ template<class Out, typename R = Out>
 std::shared_ptr<stream_element_processor<R>> make_concat(std::shared_ptr<stream_element_processor<Out>> successor, std::shared_ptr<stream_element_processor<Out>> next)
 {
   return std::make_shared<concat_element_processor<Out>>(successor, next);
+}
+
+template<class In, class Out = std::vector<In>>
+std::shared_ptr<stream_element_processor<Out>> make_pack_every(std::shared_ptr<stream_element_processor<In>> successor, std::size_t packsize)
+{
+  return std::make_shared<pack_every_element_processor<In, Out>>(successor, packsize);
 }
 
 }

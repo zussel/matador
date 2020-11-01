@@ -23,6 +23,7 @@ StreamsTest::StreamsTest()
   add_test("every", std::bind(&StreamsTest::test_every, this), "streams every elements test");
   add_test("peek", std::bind(&StreamsTest::test_peek, this), "streams peek element test");
   add_test("concat", std::bind(&StreamsTest::test_concat, this), "streams concat stream test");
+  add_test("pack_every", std::bind(&StreamsTest::test_pack_every, this), "streams pack every stream test");
   add_test("first", std::bind(&StreamsTest::test_first, this), "streams first element test");
   add_test("last", std::bind(&StreamsTest::test_last, this), "streams last element test");
   add_test("at", std::bind(&StreamsTest::test_at, this), "streams element at test");
@@ -265,6 +266,20 @@ void StreamsTest::test_concat()
   UNIT_ASSERT_TRUE(expected_result == result);
 }
 
+void StreamsTest::test_pack_every()
+{
+  auto result = make_stream(1, 13)
+    .pack_every(3)
+    .collect<std::vector>();
+
+  std::vector<std::vector<int>> expected_result = { {1,2,3},{4,5,6},{7,8,9},{10,11,12},{13} };
+
+  UNIT_ASSERT_EQUAL(4UL, result.size());
+  for (auto i = 0UL; i < result.size(); ++i) {
+    UNIT_ASSERT_TRUE(expected_result.at(i) == result.at(i));
+  }
+}
+
 void StreamsTest::test_first()
 {
   auto first_value = make_stream(1, 8)
@@ -335,6 +350,7 @@ void StreamsTest::test_count()
 {
   UNIT_ASSERT_EQUAL(4UL, make_stream(8, 11).count());
   UNIT_ASSERT_EQUAL(20UL, make_stream(-8, 11).count());
+  UNIT_ASSERT_EQUAL(10UL, make_stream(-8, 11).count(is_even));
 }
 
 void StreamsTest::test_reduce()

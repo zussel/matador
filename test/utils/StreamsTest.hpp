@@ -22,6 +22,7 @@ public:
   void test_every();
   void test_peek();
   void test_concat();
+  void test_pack_every();
   void test_first();
   void test_last();
   void test_at();
