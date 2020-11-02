@@ -10,7 +10,7 @@ namespace detail {
 struct nullopt_t
 {
   struct init{};
-  nullopt_t( init ) {}
+  explicit nullopt_t( init ) {}
 };
 
 const nullopt_t nullopt(( nullopt_t::init() ));
@@ -151,6 +151,30 @@ template< typename T, typename U >
 inline bool operator>=( optional<T> const & x, optional<U> const & y )
 {
   return !(x < y);
+}
+
+template< typename T>
+inline bool operator==(optional<T> const &x, detail::nullopt_t)
+{
+  return (!x);
+}
+
+template< typename T>
+inline bool operator==(detail::nullopt_t, optional<T> const &x)
+{
+  return (!x);
+}
+
+template< typename T>
+inline bool operator!=(optional<T> const &x, detail::nullopt_t)
+{
+  return bool(x);
+}
+
+template< typename T>
+inline bool operator!=(detail::nullopt_t, optional<T> const &x)
+{
+  return bool(x);
 }
 
 template< typename T >

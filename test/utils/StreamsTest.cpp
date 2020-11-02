@@ -193,7 +193,7 @@ void StreamsTest::test_take()
 
 void StreamsTest::test_take_while()
 {
-  auto result = make_stream(1, 6)
+  auto result = make_stream({1, 2, 3, 4, 5, 4, 3, 2, 1})
     .filter(is_even)
     .take_while([](const int &i) { return i > 1 && i < 4; })
     .collect<std::list>();
@@ -219,14 +219,14 @@ void StreamsTest::test_skip()
 
 void StreamsTest::test_skip_while()
 {
-  auto result = make_stream(1, 6)
+  auto result = make_stream({1, 2, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1})
     .filter(is_even)
     .skip_while([](const int &i) { return i > 1 && i < 4; })
     .collect<std::list>();
 
-  auto expected_result = std::list<int>({4,6});
+  auto expected_result = std::list<int>({4,6,4,2});
 
-  UNIT_ASSERT_EQUAL(2UL, result.size());
+  UNIT_ASSERT_EQUAL(4UL, result.size());
   UNIT_ASSERT_TRUE(expected_result == result);
 }
 
@@ -392,5 +392,6 @@ void StreamsTest::test_reduce()
     return result + istr.str();
   });
 
-  UNIT_ASSERT_EQUAL("1 <-> 2 <-> 3 <-> 4 <-> 5 <-> 6 <-> 7 <-> 8", reduce_identity_func_result);
+  UNIT_ASSERT_TRUE(reduce_identity_func_result.has_value());
+  UNIT_ASSERT_EQUAL("1 <-> 2 <-> 3 <-> 4 <-> 5 <-> 6 <-> 7 <-> 8", reduce_identity_func_result.value());
 }

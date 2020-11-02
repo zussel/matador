@@ -497,9 +497,8 @@ protected:
     while (successor_->process()) {
       value_ = successor_->value();
       if (!pred_(*value_)) {
-        continue;
+        return false;
       } else {
-        value_ = successor_->value();
         return true;
       }
     }
@@ -570,10 +569,10 @@ protected:
   {
     while (successor_->process()) {
       value_ = successor_->value();
-      if (pred_(*value_)) {
+      if (should_skip_ && pred_(*value_)) {
         continue;
       } else {
-        value_ = successor_->value();
+        should_skip_ = false;
         return true;
       }
     }
@@ -584,6 +583,7 @@ private:
   std::shared_ptr<stream_element_processor<Out>> successor_;
   Predicate pred_;
   value_type_ptr value_;
+  bool should_skip_= true;
 };
 
 template<class In, class Out, typename Predicate>

@@ -11,198 +11,392 @@
 
 namespace matador {
 
+/**
+ * The stream class allows stream like
+ * data processing with lazy evaluation.
+ *
+ * It provides a couple of stream element
+ * processors like "filter", "map" or "skip".
+ *
+ * There are also some stream terminators allowing
+ * to get a single result based on the evaluated stream
+ * like "min", "max" or "any".
+ *
+ * Once a steam is completely processed it can't be
+ * processed again.
+ *
+ * @tparam T Type of the stream elements
+ */
 template < class T >
 class stream
 {
 public:
-  typedef detail::stream_element_processor_iterator<T> iterator;
+  typedef detail::stream_element_processor_iterator<T> iterator; /**< Shortcut to stream iterator type */
 
+  /**
+   * Default constructor
+   */
   stream() = default;
+
+  /**
+   * Copys the steam from given stream x
+   *
+   * @param x Stream to copy from
+   */
   stream(const stream &x) = default;
+
+  /**
+   * Copy move stream from given stream x
+   *
+   * @param x Stream to copy move from
+   */
   stream(stream &&x) noexcept = default;
+
+  /**
+   * Copy assigns stream from given stream x
+   *
+   * @param x Stream to copy assign from
+   * @return The copy assigned stream
+   */
   stream& operator=(const stream &x) = default;
+
+  /**
+   * Assign move stream from given stream x
+   *
+   * @param x Stream to assign move from
+   * @return The assign moved stream
+   */
   stream& operator=(stream &&x) noexcept = default;
 
+  /**
+   * Initialize a new stream with the given stream processor
+   *
+   * @param processor The initial stream processor
+   */
   explicit stream(std::shared_ptr<detail::stream_element_processor<T>> processor);
 
+  /**
+   * Creates a new stream by assigning a given stream processor
+   *
+   * @param processor Stream processor to assign from
+   * @return The assigned stream
+   */
   stream& operator=(const std::shared_ptr<detail::stream_element_processor<T>> &processor);
 
+  /**
+   * Returns the begin iterator of the stream
+   *
+   * @return Begin iterator of the stream
+   */
   iterator begin();
 
+  /**
+   * Returns the end iterator of the stream
+   *
+   * @return End iterator of the stream
+   */
   iterator end();
 
+  /**
+   * Take only count elements of the data stream.
+   * Than the stream id finished.
+   *
+   * @param count Number of elements to be taken
+   * @return The stream enhanced with the take processor.
+   */
   stream<T>& take(std::size_t count);
 
+  /**
+   * Take only elements of the stream
+   * as long as the given predicate if true
+   *
+   * @tparam Predicate Type of the predicate
+   * @param pred Condition to check
+   * @return The enhanced stream
+   */
   template < typename Predicate >
   stream<T>& take_while(Predicate pred);
 
+  /**
+   * Skip the first number elements of the
+   * stream defined by the given count.
+   *
+   * @param count Number of  elements to skip
+   * @return The enhanced stream
+   */
   stream<T>& skip(std::size_t count);
 
+  /**
+   * Skip elements of the stream while given
+   * predicate is true. Once the predicate gets false
+   * the remaining elements are valid.
+   *
+   * @tparam Predicate Type of the predicate
+   * @param pred Condition to check
+   * @return The enhanced stream
+   */
   template < typename Predicate >
   stream<T>& skip_while(Predicate pred);
 
+  /**
+   * Returns every nth elements of the stream
+   * identified by the given count
+   *
+   * @param count Identifies which elements are valid
+   * @return The enhanced stream
+   */
   stream<T>& every(std::size_t count);
 
+  /**
+   * Filters the stream by the given predicate. Only
+   * if the predicate called with the current element evaluates
+   * to true the element is valid
+   *
+   * @tparam Predicate Type of the predicate
+   * @param pred Condition to check
+   * @return The enhanced stream
+   */
   template < typename Predicate >
   stream<T>& filter(Predicate &&pred);
 
+  /**
+   * Maps each element of stream to new element creating
+   * a new stream of elements. This stream could be of the same
+   * type as the origin stream or of a new type.
+   *
+   * @tparam Predicate Type of the predicate
+   * @tparam R Return type of the predicate and type of the new stream
+   * @param pred Predicate to apply on every stream element
+   * @return New stream created of the result of given predicate
+   */
   template < typename Predicate, typename R = typename std::result_of<Predicate&(T)>::type>
   stream<R> map(Predicate &&pred);
 
+  /**
+   * Flattens a nested container (list, vectors, i.e.)
+   * of an element type into one new stream containing
+   * all elements of the container
+   *
+   * @tparam Predicate Type of the predicate
+   * @tparam R Return type of the predicate and type of the new stream
+   * @param pred Predicate to apply on every stream element
+   * @return New stream created of the result of given predicate
+   */
   template < typename Predicate, typename R = typename std::result_of<Predicate&(T)>::type::value_type>
   stream<R> flatmap(Predicate &&pred);
 
+  /**
+   * Peeks each valid element with the given predicate. This
+   * processor can be used to check or debug each stream element.
+   *
+   * @tparam Predicate Type of the predicate
+   * @param pred Condition to check
+   * @return The enhanced stream
+   */
   template < typename Predicate >
   stream<T>& peek(Predicate &&pred);
 
+  /**
+   * Concatenates the current stream with the
+   * given stream of the same type. Once the current
+   * stream finishes the elements of the next stream are
+   * processed seamlessly.
+   *
+   * @param other The stream to concatenate
+   * @return The enhanced stream
+   */
   stream<T>& concat(const stream<T> &other);
 
+  /**
+   * Pack every n elemets of the stream into a container (vector)
+   * and create a ne wstream of it.
+   *
+   * @param packsize Number of elements to pack
+   * @return Stream of packed elements
+   */
   stream<std::vector<T>> pack_every(std::size_t packsize);
 
   /*
    * Termination methods
    */
-  optional<T> first()
-  {
-    auto first = begin();
-    if (first != end()) {
-      return make_optional(*first);
-    } else {
-      return optional<T>();
-    }
-  }
 
-  optional<T> last()
-  {
-    return reduce([](const T &, const T &next) { return next; });
-  }
+  /**
+   * Return the first element of the current processed
+   * stream. The element is returned as an optional because
+   * it can be not available.
+   *
+   * @return An optional possibly containing the first element.
+   */
+  optional<T> first();
 
-  optional<T> min()
-  {
-    std::less<T> less_func;
-    return reduce([=](const T &x, const T &next) {
-      return less_func(x, next) ? x : next;
-    });
-  }
+  /**
+   * Return the last element of the current processed
+   * stream. The element is returned as an optional because
+   * it can be not available.
+   *
+   * @return An optional possibly containing the last element.
+   */
+  optional<T> last();
 
-  optional<T> max()
-  {
-    std::greater<T> greater_func;
-    return reduce([=](const T &x, const T &next) {
-      return greater_func(x, next) ? x : next;
-    });
-  }
+  /**
+   * Returns the minimum of the stream. This value is calculated
+   * using the std::less algorithm. The return value is an optional
+   * because the stream could be empty.
+   *
+   * @return An optional possibly containing the minimum value.
+   */
+  optional<T> min();
 
-  optional<T> at(std::size_t index)
-  {
-    return skip(index).first();
-  }
+  /**
+   * Returns the maximum of the stream. This value is calculated
+   * using the std::less algorithm. The return value is an optional
+   * because the stream could be empty.
+   *
+   * @return An optional possibly containing the maximum value.
+   */
+  optional<T> max();
 
+  /**
+   * Returns an element at the given position index. The value is returned
+   * as an optional because the requested position could be invalid
+   *
+   * @param index Position of the requested element
+   * @return An optional possibly containing the value.
+   */
+  optional<T> at(std::size_t index);
+
+  /**
+   * Returns true if any element of the stream matches the
+   * given predicate.
+   *
+   * @tparam Predicate Type of the predicate
+   * @param pred Condition to check
+   * @return True if any element matches
+   */
   template < typename Predicate >
-  bool any(Predicate &&pred)
-  {
-    bool result = false;
+  bool any(Predicate &&pred);
 
-    for (const T &val : *this) {
-      if (pred(val)) {
-        result = true;
-        break;
-      }
-    }
-    return result;
-  }
-
+  /**
+   * Returns true if all elements of the stream matches the
+   * given predicate.
+   *
+   * @tparam Predicate Type of the predicate
+   * @param pred Condition to check
+   * @return True if all elements matches
+   */
   template < typename Predicate >
-  bool all(Predicate &&pred)
-  {
-    bool result = true;
+  bool all(Predicate &&pred);
 
-    for (const T &val : *this) {
-      if (!pred(val)) {
-        result = false;
-        break;
-      }
-    }
-    return result;
-  }
-
+  /**
+   * Returns true if none of the elements of the
+   * stream matches the given predicate.
+   *
+   * @tparam Predicate Type of the predicate
+   * @param pred Condition to check
+   * @return True if none element matches
+   */
   template < typename Predicate >
-  bool none(Predicate &&pred)
-  {
-    bool result = true;
+  bool none(Predicate &&pred);
 
-    for (const T &val : *this) {
-      if (pred(val)) {
-        result = false;
-        break;
-      }
-    }
-    return result;
-  }
+  /**
+   * Returns the number of elements in the stream
+   *
+   * @return The number of elements
+   */
+  std::size_t count();
 
-  std::size_t count()
-  {
-    return std::distance(begin(), end());
-  }
-
+  /**
+   * Returns the number of elements matching the
+   * given predicate.
+   *
+   * @tparam Predicate Type of the predicate
+   * @param pred Condition to check
+   * @return Number of matching elements
+   */
   template < typename Predicate >
-  std::size_t count(Predicate &&pred)
-  {
-    return filter(std::forward<Predicate>(pred)).count();
-  }
+  std::size_t count(Predicate &&pred);
 
+  /**
+   * All elements of the stream are reduced to one element
+   * using the given accumulator function. This function takes
+   * the current element and the current accumulated value
+   * and returns the new accumulated value.
+   * The returned value is an optional because the stream could
+   * be empty and thus the result.
+   *
+   * @tparam Accumulator Type of the accumulator
+   * @param accu The accumulator function to be applied
+   * @return An optional possibly containing the accumulated value.
+   */
   template < typename Accumulator >
-  optional<T> reduce(Accumulator &&accu)
-  {
-    auto first = begin();
-    auto last = end();
-    if (first == last) {
-      return optional<T>();
-    }
+  optional<T> reduce(Accumulator &&accu);
 
-    auto result = *first;
-    ++first;
-    while (first != last) {
-      result = accu(result, *first++);
-    }
-    return result;
-  }
-
+  /**
+   * All elements of the stream are reduced to one element
+   * using the given accumulator function. This function takes
+   * the current element and the current accumulated value
+   * and returns the new accumulated value. The initial value for
+   * this reduction is the given identity value. If the stream is empty,
+   * at least this value is returned.
+   *
+   * @tparam U Type of the return and identity value
+   * @tparam Accumulator Type of the accumulator function
+   * @param identity Initial value
+   * @param accu The accumulator function to be applied
+   * @return The reduced value, at least the given identity value
+   */
   template < typename U, typename Accumulator >
-  U reduce(const U &identity, Accumulator &&accu)
-  {
-    auto first = begin();
-    auto last = end();
-    auto result = identity;
-    while (first != last) {
-      result = accu(result, *first);
-      ++first;
-    }
-    return result;
-  }
+  U reduce(const U &identity, Accumulator &&accu);
 
+  /**
+   * All elements of the stream are reduced to one element
+   * using the given accumulator function. This function takes
+   * the current element and the current accumulated value
+   * and returns the new accumulated value.
+   * To create the initial value the given identity function is
+   * used. The returned value is an optional because the stream could
+   * be empty and thus the result.
+   *
+   * @tparam U Type of the identity function
+   * @tparam Accumulator Type of the accumulator function
+   * @tparam R Type of the returned value
+   * @param identity_fun Function to create the initial value
+   * @param accu The accumulator function to be applied
+   * @return An optional possibly containing the accumulated value.
+   */
   template < typename U, typename Accumulator, typename R = typename std::result_of<U&(T)>::type >
-  R reduce_idfunc(const U &identity_fun, Accumulator &&accu)
-  {
-    auto first = begin();
-    auto last = end();
-    auto result = identity_fun(*first);
-    while (++first != last) {
-      result = accu(result, *first);
-    }
-    return result;
-  }
+  optional<R> reduce_idfunc(const U &identity_fun, Accumulator &&accu);
 
-  void print_to(std::ostream &out, const char *delim = " ")
-  {
-    std::for_each(begin(), end(), [&out, delim](const T &val) {
-      out << val << delim;
-    });
-  }
+  /**
+   * Prints all elements of the stream to the given std::ostream. The elements are
+   * separated by the given delimiter string. The default delimiter is a blank.
+   *
+   * @param out The ostream to write to
+   * @param delim The delimiter for the elements
+   */
+  void print_to(std::ostream &out, const char *delim = " ");
 
+  /**
+   * The collect method collects all elements into new
+   * container of type C. The containers template
+   * parameters are the type T and an allocator type Allocator.
+   * The default for the allocator is std::allocator<T>
+   *
+   * @tparam C Type of the container
+   * @tparam Allocator Allocator type
+   * @return The container containing all elements
+   */
   template < template < class ... > class C, class Allocator = std::allocator<T>>
   C<T, Allocator> collect();
 
+  /**
+   * Returns the current sentinel processor of the stream
+   * This processor represents the last stream processor
+   * and contains its successor to ensure a valid
+   * processing chain for each element.
+   *
+   * @return The sentinel stream element processor
+   */
   std::shared_ptr<detail::stream_element_processor<T>>& processor()
   {
     return processor_;
@@ -213,12 +407,30 @@ private:
   std::shared_ptr<detail::stream_element_processor<T>> processor_;
 };
 
+/**
+ * Creates a new stream of the given container.
+ *
+ * @tparam T Type of the stream elements
+ * @tparam C Type of the container
+ * @tparam Allocator Type of the allocator
+ * @param container Container to create the stream from
+ * @return The created stream
+ */
 template < class T, template < class ... > class C, class Allocator = std::allocator<T> >
 stream<T> make_stream(C<T, Allocator> &&container);
 
 //template < class T, template < class ... > class C >
 //stream<T> make_stream(const C<T> &container);
 //
+
+/**
+ * Creates a stream of given begin an end iterator.
+ *
+ * @tparam T Type of the iterator
+ * @param from begin iterator
+ * @param to end iterator
+ * @return The created stream
+ */
 template < typename T >
 stream<T> make_stream(T &&from, T &&to);
 
@@ -356,6 +568,162 @@ template<template<class ...> class C, class Allocator>
 C<T, Allocator> stream<T>::collect()
 {
   return matador::collect<T, C>(*this);
+}
+
+template<class T>
+optional<T> stream<T>::first()
+{
+  auto first = begin();
+  if (first != end()) {
+    return make_optional(*first);
+  } else {
+    return optional<T>();
+  }
+}
+
+template<class T>
+optional<T> stream<T>::last()
+{
+  return reduce([](const T &, const T &next) { return next; });
+}
+
+template<class T>
+optional<T> stream<T>::min()
+{
+  std::less<T> less_func;
+  return reduce([=](const T &x, const T &next) {
+    return less_func(x, next) ? x : next;
+  });
+}
+
+template<class T>
+optional<T> stream<T>::max()
+{
+  std::greater<T> greater_func;
+  return reduce([=](const T &x, const T &next) {
+    return greater_func(x, next) ? x : next;
+  });
+}
+
+template<class T>
+optional<T> stream<T>::at(std::size_t index)
+{
+  return skip(index).first();
+}
+
+template<class T>
+template<typename Predicate>
+bool stream<T>::any(Predicate &&pred)
+{
+  bool result = false;
+
+  for (const T &val : *this) {
+    if (pred(val)) {
+      result = true;
+      break;
+    }
+  }
+  return result;
+}
+
+template<class T>
+template<typename Predicate>
+bool stream<T>::all(Predicate &&pred)
+{
+  bool result = true;
+
+  for (const T &val : *this) {
+    if (!pred(val)) {
+      result = false;
+      break;
+    }
+  }
+  return result;
+}
+
+template<class T>
+template<typename Predicate>
+bool stream<T>::none(Predicate &&pred)
+{
+  bool result = true;
+
+  for (const T &val : *this) {
+    if (pred(val)) {
+      result = false;
+      break;
+    }
+  }
+  return result;
+}
+
+template<class T>
+std::size_t stream<T>::count()
+{
+  return std::distance(begin(), end());
+}
+
+template<class T>
+template<typename Predicate>
+std::size_t stream<T>::count(Predicate &&pred)
+{
+  return filter(std::forward<Predicate>(pred)).count();
+}
+
+template<class T>
+template<typename Accumulator>
+optional<T> stream<T>::reduce(Accumulator &&accu)
+{
+  auto first = begin();
+  auto last = end();
+  if (first == last) {
+    return optional<T>();
+  }
+
+  auto result = *first;
+  ++first;
+  while (first != last) {
+    result = accu(result, *first++);
+  }
+  return result;
+}
+
+template<class T>
+template<typename U, typename Accumulator>
+U stream<T>::reduce(const U &identity, Accumulator &&accu)
+{
+  auto first = begin();
+  auto last = end();
+  auto result = identity;
+  while (first != last) {
+    result = accu(result, *first);
+    ++first;
+  }
+  return result;
+}
+
+template<class T>
+template<typename U, typename Accumulator, typename R>
+optional<R> stream<T>::reduce_idfunc(const U &identity_fun, Accumulator &&accu)
+{
+  auto first = begin();
+  auto last = end();
+  if (first == last) {
+    return optional<R>();
+  }
+
+  auto result = identity_fun(*first);
+  while (++first != last) {
+    result = accu(result, *first);
+  }
+  return result;
+}
+
+template<class T>
+void stream<T>::print_to(std::ostream &out, const char *delim)
+{
+  std::for_each(begin(), end(), [&out, delim](const T &val) {
+    out << val << delim;
+  });
 }
 
 template < class T, template < class ... > class C, class Allocator >
