@@ -24,13 +24,28 @@ public:
     : logic_error( "bad optional access" ) {}
 };
 
+/**
+ * The optional class provides an object
+ * holding a value of type T or not. The
+ * value is optional.
+ *
+ * @tparam T Type of the hold optional value
+ */
 template < typename T >
 class optional
 {
 public:
-  typedef T value_type;
+  typedef T value_type; /**< Shortcut to the value type */
 
+  /**
+   * Default constructor
+   */
   optional() = default;
+
+  /**
+   * Initializes the optional with a null
+   * type.
+   */
   optional(detail::nullopt_t) : has_value_(false) { };
   optional(const T &value)
     : has_value_(true), value_(value)

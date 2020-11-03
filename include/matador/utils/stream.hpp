@@ -434,15 +434,53 @@ stream<T> make_stream(C<T, Allocator> &&container);
 template < typename T >
 stream<T> make_stream(T &&from, T &&to);
 
+/**
+ * Creates a stream fro an initializer list of elements
+ *
+ * @tparam T Type of elements
+ * @param elems Elements to create the stream from
+ * @return The created stream
+ */
 template < typename T >
 stream<T> make_stream(std::initializer_list<T> elems);
 
+/**
+ * Creates a continuing stream source of type T.
+ * Value of T is increased with the ++ operator so
+ * T must provide this operator.
+ *
+ * @tparam T Type of elements
+ * @param from Starting value of elements
+ * @return The created stream
+ */
 template < typename T >
 stream<T> make_stream_counter(T &&from);
 
+/**
+ * Creates a stream range given limits from and
+ * to and an incrementing value. Once the to value
+ * is reached or exceeded the stream is finished.
+ *
+ * @tparam T Type of elements
+ * @tparam U Type of increment value
+ * @param from Starting value of stream
+ * @param to Closing value of stream
+ * @param increment Incrementing value
+ * @return The created stream
+ */
 template < typename T, typename U >
 stream<T> make_stream(T &&from, T &&to, const U& increment);
 
+/**
+ * Creates a continuing stream source of type T beginning
+ * with from and incremented by the given incrementing value.
+ *
+ * @tparam T Type of elements
+ * @tparam U Type of increment value
+ * @param from Starting value of elements
+ * @param increment Incrementing value
+ * @return The created stream
+ */
 template < typename T, typename U >
 stream<T> make_stream_counter(T &&from, const U& increment);
 
@@ -550,6 +588,8 @@ stream<std::vector<T>> stream<T>::pack_every(std::size_t packsize)
   return stream<std::vector<T>>(make_pack_every(processor_, packsize));
 }
 
+/// @cond MATADOR_DEV
+
 template<class T, template<class ...> class C, class Allocator = std::allocator <T> >
 C<T, Allocator> collect(stream <T> &s)
 {
@@ -562,6 +602,8 @@ C<T, Allocator> collect(stream <T> &s)
 
   return result;
 }
+
+/// @endcond
 
 template<class T>
 template<template<class ...> class C, class Allocator>
