@@ -47,10 +47,25 @@ public:
    * type.
    */
   optional(detail::nullopt_t) : has_value_(false) { };
+
+  /**
+   * Initializes a new optional with
+   * the given value.
+   *
+   * @param value Value of optional
+   */
   optional(const T &value)
     : has_value_(true), value_(value)
   {}
 
+  /**
+   * Copies given optional value x of type U to
+   * new optional value of type T. A value of
+   * type U must be convertible to type T.
+   *
+   * @tparam U Type of other optional
+   * @param x Other optional value
+   */
   template< class U >
   optional(const optional<U>& x)
     : has_value_(x.has_value()) , value_(x.value())
@@ -70,31 +85,69 @@ public:
     return *this;
   }
 
+  /**
+   * Access the underlying value as pointer.
+   * The value is checked on validity with assert
+   *
+   * @return The value as pointer
+   */
   const value_type* operator->() const
   {
     return assert( has_value() ), &value_;
   }
 
+  /**
+   * Access the underlying value as pointer.
+   * The value is checked on validity with assert
+   *
+   * @return The value as pointer
+   */
   value_type* operator->()
   {
     return assert( has_value() ), &value_;
   }
 
+  /**
+   * Access the underlying value as reference.
+   * The value is checked on validity with assert
+   *
+   * @return The value as reference
+   */
   const value_type& operator*() const
   {
     return assert( has_value() ), value_;
   }
 
+  /**
+   * Access the underlying value as reference.
+   * The value is checked on validity with assert
+   *
+   * @return The value as reference
+   */
   value_type& operator*()
   {
     return assert( has_value() ), value_;
   }
 
+  /**
+   * Boolean operator returns true if
+   * optional has a value
+   *
+   * @return True if valueis available
+   */
   explicit operator bool() const
   {
     return has_value();
   }
 
+  /**
+   * Returns a const reference to the value.
+   * If value isn't available a bad_optional_exception
+   * is thrown
+   *
+   * @throws bad_optional_exception If not available
+   * @return Const reference to the value
+   */
   const value_type& value() const
   {
     if (!has_value()) {
@@ -103,6 +156,14 @@ public:
     return value_;
   }
 
+  /**
+   * Returns a reference to the value.
+   * If value isn't available a bad_optional_exception
+   * is thrown
+   *
+   * @throws bad_optional_exception If not available
+   * @return Reference to the value
+   */
   value_type& value()
   {
     if (!has_value()) {
@@ -111,17 +172,36 @@ public:
     return value_;
   }
 
+  /**
+   * Return a copy of the value or in case
+   * value is not set return the given value
+   *
+   * This default value is of type U and must be
+   * convertible to type T.
+   *
+   * @tparam U Type of default value
+   * @param v Default value if optional value is not set
+   * @return Optional value or default value
+   */
   template< class U >
   value_type value_or( U const & v ) const
   {
     return has_value() ? value() : static_cast<value_type>( v );
   }
 
+  /**
+   * Returns true if value is set.
+   *
+   * @return True if value is set
+   */
   bool has_value() const
   {
     return has_value_;
   }
 
+  /**
+   * Resets optional to empty (no value set)
+   */
   void reset()
   {
     has_value_ = false;
