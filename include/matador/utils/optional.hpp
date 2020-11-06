@@ -7,19 +7,32 @@ namespace matador {
 
 namespace detail {
 
+/// @cond MATADOR_DEV
+
 struct nullopt_t
 {
   struct init{};
   explicit nullopt_t( init ) {}
 };
 
-const nullopt_t nullopt(( nullopt_t::init() ));
+/// @endcond
 
 }
 
+/**
+ * Null value for optionals
+ */
+const detail::nullopt_t nullopt(( detail::nullopt_t::init() ));
+
+/**
+ * Excpetion class for optional
+ */
 class bad_optional_access : public std::logic_error
 {
 public:
+  /**
+   * Default constructor
+   */
   explicit bad_optional_access()
     : logic_error( "bad optional access" ) {}
 };
@@ -71,12 +84,27 @@ public:
     : has_value_(x.has_value()) , value_(x.value())
   {}
 
+  /**
+   * Assigns a null optional value to this
+   * optional. Optional will be set to nullopt.
+   *
+   * @return The assigned optional
+   */
   optional& operator=(detail::nullopt_t)
   {
     reset();
     return *this;
   }
 
+  /**
+   * Assigns an other optional of type U to this
+   * optional. Type U must be convertible to
+   * type T.
+   *
+   * @tparam U Type of other optional
+   * @param x Other optional to be assigned
+   * @return The assigned optional
+   */
   template< class U >
   optional& operator=(const optional<U>& x)
   {
@@ -212,66 +240,155 @@ private:
   T value_;
 };
 
+/**
+ * Equal compare operator for optionals.
+ *
+ * @tparam T Type of left optional
+ * @tparam U Type of right optional
+ * @param x Left optional to compare
+ * @param y Right optional to compare
+ * @return True if optional are equal
+ */
 template< typename T, typename U >
 inline bool operator==( optional<T> const & x, optional<U> const & y )
 {
   return bool(x) == bool(y) && (!bool(x) || *x == *y);
 }
 
+/**
+ * Not equal compare operator for optionals.
+ *
+ * @tparam T Type of left optional
+ * @tparam U Type of right optional
+ * @param x Left optional to compare
+ * @param y Right optional to compare
+ * @return True if optional are not equal
+ */
 template< typename T, typename U >
 inline bool operator!=( optional<T> const & x, optional<U> const & y )
 {
   return !(x == y);
 }
 
+/**
+ * Less operator for optionals
+ *
+ * @tparam T Type of left optional
+ * @tparam U Type of right optional
+ * @param x Left optional to compare
+ * @param y Right optional to compare
+ * @return True if left optional is less than right optional
+ */
 template< typename T, typename U >
 inline bool operator<( optional<T> const & x, optional<U> const & y )
 {
   return y && ((!x) || *x < *y);
 }
 
+/**
+ * Greater operator for optionals
+ *
+ * @tparam T Type of left optional
+ * @tparam U Type of right optional
+ * @param x Left optional to compare
+ * @param y Right optional to compare
+ * @return True if left optional is greater than right optional
+ */
 template< typename T, typename U >
 inline bool operator>( optional<T> const & x, optional<U> const & y )
 {
   return (y < x);
 }
 
+/**
+ * Less equal operator for optionals
+ *
+ * @tparam T Type of left optional
+ * @tparam U Type of right optional
+ * @param x Left optional to compare
+ * @param y Right optional to compare
+ * @return True if left optional is less equal than right optional
+ */
 template< typename T, typename U >
 inline bool operator<=( optional<T> const & x, optional<U> const & y )
 {
   return !(y < x);
 }
 
+/**
+ * Greater equal operator for optionals
+ *
+ * @tparam T Type of left optional
+ * @tparam U Type of right optional
+ * @param x Left optional to compare
+ * @param y Right optional to compare
+ * @return True if left optional is greater equal than right optional
+ */
 template< typename T, typename U >
 inline bool operator>=( optional<T> const & x, optional<U> const & y )
 {
   return !(x < y);
 }
 
+/**
+ * Equal to null value for optionals
+ *
+ * @tparam T Type of left optional
+ * @param x Left optional to compare
+ * @return True if optional is null
+ */
 template< typename T>
 inline bool operator==(optional<T> const &x, detail::nullopt_t)
 {
   return (!x);
 }
 
+/**
+ * Equal to null value for optionals
+ *
+ * @tparam T Type of right optional
+ * @param x Right optional to compare
+ * @return True if optional is null
+ */
 template< typename T>
 inline bool operator==(detail::nullopt_t, optional<T> const &x)
 {
   return (!x);
 }
 
+/**
+ * Not equal to null value for optionals
+ *
+ * @tparam T Type of left optional
+ * @param x Left optional to compare
+ * @return True if optional is not null
+ */
 template< typename T>
 inline bool operator!=(optional<T> const &x, detail::nullopt_t)
 {
   return bool(x);
 }
 
+/**
+ * Not equal to null value for optionals
+ *
+ * @tparam T Type of right optional
+ * @param x Right optional to compare
+ * @return True if optional is not null
+ */
 template< typename T>
 inline bool operator!=(detail::nullopt_t, optional<T> const &x)
 {
   return bool(x);
 }
 
+/**
+ * Creates an optional from the given value.
+ *
+ * @tparam T Type of optional value
+ * @param v Value for optional
+ * @return The created optional.
+ */
 template< typename T >
 inline optional<T> make_optional(const T& v)
 {
