@@ -35,6 +35,7 @@
 #include "utils/SequencerTestUnit.hpp"
 #include "utils/OSTest.hpp"
 #include "utils/TreeTest.hpp"
+#include "utils/StreamsTest.hpp"
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
@@ -109,6 +110,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new SequencerTestUnit);
   suite.register_unit(new OSTest);
   suite.register_unit(new TreeTest);
+  suite.register_unit(new StreamsTest);
 
   suite.register_unit(new LoggerTest);
 

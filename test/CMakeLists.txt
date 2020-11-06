@@ -22,7 +22,9 @@ SET (TEST_TOOLS_SOURCES
   utils/FileTestUnit.cpp
   utils/FileTestUnit.hpp
   utils/TreeTest.cpp
-  utils/TreeTest.hpp)
+  utils/TreeTest.hpp
+  utils/StreamsTest.cpp
+  utils/StreamsTest.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
@@ -44,7 +46,16 @@ SET (TEST_NET_SOURCES
   net/SocketInterrupterTest.cpp
   net/ReactorTest.cpp
   net/ReactorTest.hpp
-  net/SocketInterrupterTest.hpp net/EchoServer.cpp net/EchoServer.hpp net/IOServiceTest.cpp net/IOServiceTest.hpp net/IOEchoServerConnection.cpp net/IOEchoServerConnection.hpp net/IOEchoServer.cpp net/IOEchoServer.hpp net/NetUtils.hpp)
+  net/SocketInterrupterTest.hpp
+  net/EchoServer.cpp
+  net/EchoServer.hpp
+  net/IOServiceTest.cpp
+  net/IOServiceTest.hpp
+  net/IOEchoServerConnection.cpp
+  net/IOEchoServerConnection.hpp
+  net/IOEchoServer.cpp
+  net/IOEchoServer.hpp
+  net/NetUtils.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp
