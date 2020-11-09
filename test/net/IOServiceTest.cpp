@@ -30,11 +30,13 @@ void IOServiceTest::test_shutdown()
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
 
+  server_thread.detach();
+
   server.service().shutdown();
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
 
-  server_thread.join();
+//  server_thread.join();
 }
 
 void IOServiceTest::test_send_receive()
@@ -48,6 +50,8 @@ void IOServiceTest::test_send_receive()
   });
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
+
+  server_thread.detach();
 
   // send and verify received data
   tcp::socket client;
@@ -70,5 +74,5 @@ void IOServiceTest::test_send_receive()
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
 
-  server_thread.join();
+  //server_thread.join();
 }
