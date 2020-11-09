@@ -8,8 +8,10 @@ class ReactorTest : public matador::unit_test
 public:
   ReactorTest();
 
+  void test_event_types();
   void test_shutdown();
   void test_send_receive();
+  void test_timeout();
 };
 
 

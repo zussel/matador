@@ -6,8 +6,6 @@
 
 #include "EchoServer.hpp"
 
-#include "matador/logger/log_manager.hpp"
-
 #include <thread>
 #include <utility>
 
@@ -21,10 +19,20 @@ using namespace ::detail;
 ReactorTest::ReactorTest()
   : matador::unit_test("reactor", "reactor test unit")
 {
+  add_test("event_types", std::bind(&ReactorTest::test_event_types, this), "event types test");
   add_test("shutdown", std::bind(&ReactorTest::test_shutdown, this), "reactor shutdown test");
   add_test("send_receive", std::bind(&ReactorTest::test_send_receive, this), "reactor send and receive test");
+  add_test("timeout", std::bind(&ReactorTest::test_timeout, this), "reactor schedule timeout test");
+
 }
 
+void ReactorTest::test_event_types()
+{
+  event_type et = matador::event_type::WRITE_MASK | matador::event_type::READ_MASK;
+
+  UNIT_ASSERT_TRUE(is_event_type_set(et, matador::event_type::WRITE_MASK));
+  UNIT_ASSERT_TRUE(is_event_type_set(et, matador::event_type::READ_MASK));
+}
 
 void ReactorTest::test_shutdown()
 {
@@ -102,4 +110,39 @@ void ReactorTest::test_send_receive()
   server_thread.join();
 
   ac->close();
+}
+
+void ReactorTest::test_timeout()
+{
+  auto echo_conn = std::make_shared<EchoServer>();
+
+  reactor r;
+
+  r.schedule_timer(echo_conn, 1, 1);
+
+  UNIT_ASSERT_EQUAL(1, echo_conn->interval());
+  UNIT_ASSERT_GREATER(echo_conn->next_timeout(), 0);
+
+  std::thread server_thread([&r] {
+    r.run();
+    // sleep for some seconds to ensure valid thread join
+    std::this_thread::sleep_for(std::chrono::seconds (3));
+  });
+
+  UNIT_ASSERT_TRUE(utils::wait_until_running(r));
+
+  std::this_thread::sleep_for(std::chrono::seconds (2));
+
+  r.cancel_timer(echo_conn);
+
+  UNIT_ASSERT_EQUAL(0, echo_conn->interval());
+  UNIT_ASSERT_EQUAL(0, echo_conn->next_timeout());
+
+  r.shutdown();
+
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
+
+  server_thread.join();
+
+  UNIT_ASSERT_TRUE(echo_conn->timeout_called());
 }

@@ -54,6 +54,11 @@ void EchoServer::on_output()
   }
 }
 
+void EchoServer::on_timeout()
+{
+  on_timeout_called_ = true;
+}
+
 void EchoServer::on_close()
 {
   close();
@@ -79,4 +84,9 @@ bool EchoServer::is_ready_write() const
 bool EchoServer::is_ready_read() const
 {
   return message_.empty();
+}
+
+bool EchoServer::timeout_called() const
+{
+  return on_timeout_called_;
 }

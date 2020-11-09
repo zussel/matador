@@ -22,7 +22,7 @@ public:
   void on_input() override;
   void on_output() override;
   void on_except() override {}
-  void on_timeout() override {}
+  void on_timeout() override;
 
   void on_close() override;
   void close() override;
@@ -30,7 +30,10 @@ public:
   bool is_ready_write() const override;
   bool is_ready_read() const override;
 
+  bool timeout_called() const;
+
 private:
+  bool on_timeout_called_ = false;
   matador::tcp::socket stream_;
   matador::tcp::peer endpoint_;
 
