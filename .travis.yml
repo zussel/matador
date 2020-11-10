@@ -1,5 +1,4 @@
 language: cpp
-sudo: false
 dist: xenial
 
 os: linux
@@ -75,7 +74,7 @@ matrix:
   - env: CLANG_VERSION=6.0 BUILD_TYPE=Release ARCH=64
     compiler: clang
     addons: *clang6_64
-  - env: CLANG_VERSION=7 BUILD_TYPE=Release ARCH=64
+  - env: CLANG_VERSION=7.0 BUILD_TYPE=Release ARCH=64
     compiler: clang
     addons: { apt: {packages: [clang-7], sources: [llvm-toolchain-xenial-7]}}
 branches:
@@ -169,7 +168,6 @@ deploy:
   - "${RELEASE_TGZ_FILE}"
   - "${RELEASE_DEB_FILE}"
   - "${RELEASE_RPM_FILE}"
-  skip_cleanup: true
   on:
     tags: true
     condition: "$GCC_VERSION = 7 && $BUILD_TYPE = Release"
