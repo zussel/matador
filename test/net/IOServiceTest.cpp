@@ -18,40 +18,41 @@ IOServiceTest::IOServiceTest()
   add_test("send_receive", std::bind(&IOServiceTest::test_send_receive, this), "io service send and receive test");
 }
 
+void IOServiceTest::finalize()
+{
+  if (worker_thread_.joinable()) {
+    worker_thread_.join();
+  }
+}
+
 void IOServiceTest::test_shutdown()
 {
   IOEchoServer server(7779);
 
-  std::thread server_thread([&server] {
+  worker_thread_ = std::thread([&server] {
     server.run();
     // sleep for some seconds to ensure valid thread join
-    std::this_thread::sleep_for(std::chrono::seconds (5));
+    std::this_thread::sleep_for(std::chrono::seconds (2));
   });
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
 
-  server_thread.detach();
-
   server.service().shutdown();
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
-
-//  server_thread.join();
 }
 
 void IOServiceTest::test_send_receive()
 {
   IOEchoServer server(7780);
 
-  std::thread server_thread([&server] {
+  worker_thread_ = std::thread([&server] {
     server.run();
     // sleep for some seconds to ensure valid thread join
-    std::this_thread::sleep_for(std::chrono::seconds (5));
+    std::this_thread::sleep_for(std::chrono::seconds (2));
   });
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
-
-  server_thread.detach();
 
   // send and verify received data
   tcp::socket client;
@@ -73,6 +74,4 @@ void IOServiceTest::test_send_receive()
   server.service().shutdown();
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
-
-  //server_thread.join();
 }

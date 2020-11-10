@@ -27,6 +27,13 @@ ReactorTest::ReactorTest()
 
 }
 
+void ReactorTest::finalize()
+{
+  if (worker_thread_.joinable()) {
+    worker_thread_.join();
+  }
+}
+
 void ReactorTest::test_event_types()
 {
   event_type et = matador::event_type::WRITE_MASK | matador::event_type::READ_MASK;
@@ -57,21 +64,17 @@ void ReactorTest::test_shutdown()
 
   r.register_handler(ac, event_type::ACCEPT_MASK);
 
-  std::thread server_thread([&r] {
+  worker_thread_ = std::thread([&r] {
     r.run();
     // sleep for some seconds to ensure valid thread join
-//    std::this_thread::sleep_for(std::chrono::seconds (2));
+    std::this_thread::sleep_for(std::chrono::seconds (2));
   });
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(r));
 
-  server_thread.detach();
-
   r.shutdown();
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
-
-  //server_thread.join();
 
   ac->close();
 }
@@ -90,15 +93,13 @@ void ReactorTest::test_send_receive()
 
   r.register_handler(ac, event_type::ACCEPT_MASK);
 
-  std::thread server_thread([&r] {
+  worker_thread_ = std::thread([&r] {
     r.run();
     // sleep for some seconds to ensure valid thread join
-//    std::this_thread::sleep_for(std::chrono::seconds (2));
+    std::this_thread::sleep_for(std::chrono::seconds (2));
   });
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(r));
-
-  server_thread.detach();
 
   // send and verify received data
   tcp::socket client;
@@ -121,8 +122,6 @@ void ReactorTest::test_send_receive()
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
 
-  //server_thread.join();
-
   ac->close();
 }
 
@@ -137,15 +136,13 @@ void ReactorTest::test_timeout()
   UNIT_ASSERT_EQUAL(1, echo_conn->interval());
   UNIT_ASSERT_GREATER(echo_conn->next_timeout(), 0);
 
-  std::thread server_thread([&r] {
+  worker_thread_ = std::thread([&r] {
     r.run();
     // sleep for some seconds to ensure valid thread join
-//    std::this_thread::sleep_for(std::chrono::seconds (3));
+    std::this_thread::sleep_for(std::chrono::seconds (3));
   });
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(r));
-
-  server_thread.detach();
 
   std::this_thread::sleep_for(std::chrono::seconds (2));
 
@@ -157,8 +154,5 @@ void ReactorTest::test_timeout()
   r.shutdown();
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
-
-  //server_thread.join();
-
   UNIT_ASSERT_TRUE(echo_conn->timeout_called());
 }
