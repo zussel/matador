@@ -78,7 +78,7 @@ private:
 
   select_fdsets fdsets_;
 
-  bool running_ {false};
+  std::atomic<bool> running_ {false};
   std::atomic<bool> shutdown_requested_ {false};
 
   logger log_;
