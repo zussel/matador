@@ -27,6 +27,13 @@ ReactorTest::ReactorTest()
 
 }
 
+ReactorTest::~ReactorTest()
+{
+  if (worker_thread_.joinable()) {
+    worker_thread_.join();
+  }
+}
+
 void ReactorTest::finalize()
 {
   if (worker_thread_.joinable()) {

@@ -9,6 +9,7 @@ class ReactorTest : public matador::unit_test
 {
 public:
   ReactorTest();
+  ~ReactorTest() override;
 
   void finalize() override;
 

@@ -21,6 +21,8 @@ namespace matador {
 class basic_sql_logger
 {
 public:
+
+  virtual ~basic_sql_logger() = default;
   /**
    * Is called when a connection to a database is
    * going to be established

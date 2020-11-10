@@ -18,6 +18,13 @@ IOServiceTest::IOServiceTest()
   add_test("send_receive", std::bind(&IOServiceTest::test_send_receive, this), "io service send and receive test");
 }
 
+IOServiceTest::~IOServiceTest()
+{
+  if (worker_thread_.joinable()) {
+    worker_thread_.join();
+  }
+}
+
 void IOServiceTest::finalize()
 {
   if (worker_thread_.joinable()) {

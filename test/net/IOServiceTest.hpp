@@ -9,6 +9,7 @@ class IOServiceTest : public matador::unit_test
 {
 public:
   IOServiceTest();
+  ~IOServiceTest() override;
 
   void finalize() override;
 
