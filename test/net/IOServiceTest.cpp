@@ -11,32 +11,63 @@
 using namespace matador;
 using namespace ::detail;
 
+//class IOServiceThreadWrapper
+//{
+//public:
+//  IOServiceThreadWrapper(unsigned short port)
+//    : service_(port)
+//  {}
+//
+//  ~IOServiceThreadWrapper()
+//  {
+//    if (service_.is_running()) {
+//      stop();
+//    }
+//    if (reactor_thread_.joinable()) {
+//      reactor_thread_.join();
+//    }
+//  }
+//
+//  void add(const std::shared_ptr<acceptor> &ac)
+//  {
+//    service_.register_handler(ac, event_type::ACCEPT_MASK);
+//  }
+//
+//  void start()
+//  {
+//    reactor_thread_ = std::thread([this] {
+//      service_.run();
+//      // sleep for some seconds to ensure valid thread join
+//      std::this_thread::sleep_for(std::chrono::seconds (2));
+//    });
+//  }
+//  void stop()
+//  {
+//    service_.shutdown();
+//  }
+//
+//  io_service& get()
+//  {
+//    return service_;
+//  }
+//
+//private:
+//  std::thread reactor_thread_;
+//  io_service service_;
+//};
+
 IOServiceTest::IOServiceTest()
   : matador::unit_test("io_service", "io service test unit")
 {
-  add_test("shutdown", std::bind(&IOServiceTest::test_shutdown, this), "io service shutdown test");
-  add_test("send_receive", std::bind(&IOServiceTest::test_send_receive, this), "io service send and receive test");
-}
-
-IOServiceTest::~IOServiceTest()
-{
-  if (worker_thread_.joinable()) {
-    worker_thread_.join();
-  }
-}
-
-void IOServiceTest::finalize()
-{
-  if (worker_thread_.joinable()) {
-    worker_thread_.join();
-  }
+//  add_test("shutdown", std::bind(&IOServiceTest::test_shutdown, this), "io service shutdown test");
+//  add_test("send_receive", std::bind(&IOServiceTest::test_send_receive, this), "io service send and receive test");
 }
 
 void IOServiceTest::test_shutdown()
 {
   IOEchoServer server(7779);
 
-  worker_thread_ = std::thread([&server] {
+  std::thread([&server] {
     server.run();
     // sleep for some seconds to ensure valid thread join
     std::this_thread::sleep_for(std::chrono::seconds (2));
@@ -53,7 +84,7 @@ void IOServiceTest::test_send_receive()
 {
   IOEchoServer server(7780);
 
-  worker_thread_ = std::thread([&server] {
+  std::thread([&server] {
     server.run();
     // sleep for some seconds to ensure valid thread join
     std::this_thread::sleep_for(std::chrono::seconds (2));

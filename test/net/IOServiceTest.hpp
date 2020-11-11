@@ -9,15 +9,9 @@ class IOServiceTest : public matador::unit_test
 {
 public:
   IOServiceTest();
-  ~IOServiceTest() override;
-
-  void finalize() override;
 
   void test_shutdown();
   void test_send_receive();
-
-private:
-  std::thread worker_thread_;
 };
 
 
