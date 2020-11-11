@@ -11,7 +11,8 @@ public:
   explicit IOEchoServer(unsigned short port);
   ~IOEchoServer();
 
-  void run();
+  void start();
+  void stop();
 
   matador::io_service& service();
 

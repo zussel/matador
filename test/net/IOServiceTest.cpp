@@ -20,11 +20,11 @@ void IOServiceTest::test_shutdown()
 {
   IOEchoServer server(7779);
 
-  server.run();
+  server.start();
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
 
-  server.service().shutdown();
+  server.stop();
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
 }
@@ -33,7 +33,7 @@ void IOServiceTest::test_send_receive()
 {
   IOEchoServer server(7780);
 
-  server.run();
+  server.start();
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
 
@@ -54,7 +54,7 @@ void IOServiceTest::test_send_receive()
   UNIT_ASSERT_EQUAL(5UL, len);
   client.close();
 
-  server.service().shutdown();
+  server.stop();
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
 }
