@@ -16,6 +16,58 @@
 using namespace matador;
 using namespace ::detail;
 
+class ReactorThreadWrapper
+{
+public:
+  ReactorThreadWrapper() = default;
+  ~ReactorThreadWrapper()
+  {
+    if (reactor_.is_running()) {
+      stop();
+    }
+    if (reactor_thread_.joinable()) {
+      reactor_thread_.join();
+    }
+  }
+
+  void add(const std::shared_ptr<acceptor> &ac)
+  {
+    reactor_.register_handler(ac, event_type::ACCEPT_MASK);
+  }
+
+  void schedule(const std::shared_ptr<handler> &hndlr, std::time_t offset, std::time_t interval)
+  {
+    reactor_.schedule_timer(hndlr, offset, interval);
+  }
+
+  void cancel(const std::shared_ptr<handler> &hndlr)
+  {
+    reactor_.cancel_timer(hndlr);
+  }
+
+  void start()
+  {
+    reactor_thread_ = std::thread([this] {
+      reactor_.run();
+      // sleep for some seconds to ensure valid thread join
+      std::this_thread::sleep_for(std::chrono::seconds (2));
+    });
+  }
+  void stop()
+  {
+    reactor_.shutdown();
+  }
+
+  reactor& get()
+  {
+    return reactor_;
+  }
+
+private:
+  std::thread reactor_thread_;
+  reactor reactor_;
+};
+
 ReactorTest::ReactorTest()
   : matador::unit_test("reactor", "reactor test unit")
 {
@@ -25,20 +77,6 @@ ReactorTest::ReactorTest()
   add_test("send_receive", std::bind(&ReactorTest::test_send_receive, this), "reactor send and receive test");
   add_test("timeout", std::bind(&ReactorTest::test_timeout, this), "reactor schedule timeout test");
 
-}
-
-ReactorTest::~ReactorTest()
-{
-  if (worker_thread_.joinable()) {
-    worker_thread_.join();
-  }
-}
-
-void ReactorTest::finalize()
-{
-  if (worker_thread_.joinable()) {
-    worker_thread_.join();
-  }
 }
 
 void ReactorTest::test_event_types()
@@ -60,7 +98,7 @@ void ReactorTest::test_fdset()
 
 void ReactorTest::test_shutdown()
 {
-  reactor r;
+//  reactor r;
 
   auto ep = tcp::peer(address::v4::any(), 7777);
   auto ac = std::make_shared<acceptor>(ep, [](tcp::socket sock, tcp::peer p, acceptor *) {
@@ -69,28 +107,34 @@ void ReactorTest::test_shutdown()
     return cl;
   });
 
-  r.register_handler(ac, event_type::ACCEPT_MASK);
+  ReactorThreadWrapper wrapper;
 
-  worker_thread_ = std::thread([&r] {
-    r.run();
-    // sleep for some seconds to ensure valid thread join
-    std::this_thread::sleep_for(std::chrono::seconds (2));
-  });
+  wrapper.add(ac);
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(r));
+  wrapper.start();
 
-  r.shutdown();
+//  r.register_handler(ac, event_type::ACCEPT_MASK);
+//
+//  worker_thread_ = std::thread([&r] {
+//    r.run();
+//    // sleep for some seconds to ensure valid thread join
+//    std::this_thread::sleep_for(std::chrono::seconds (2));
+//  });
 
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
+  UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
-  ac->close();
+  wrapper.stop();
+
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
+
+//  ac->close();
 }
 
 void ReactorTest::test_send_receive()
 {
   auto echo_conn = std::make_shared<EchoServer>();
 
-  reactor r;
+//  reactor r;
 
   auto ep = tcp::peer(address::v4::any(), 7778);
   auto ac = std::make_shared<acceptor>(ep, [echo_conn](tcp::socket sock, tcp::peer p, acceptor *) {
@@ -98,15 +142,20 @@ void ReactorTest::test_send_receive()
     return echo_conn;
   });
 
-  r.register_handler(ac, event_type::ACCEPT_MASK);
+  ReactorThreadWrapper wrapper;
 
-  worker_thread_ = std::thread([&r] {
-    r.run();
-    // sleep for some seconds to ensure valid thread join
-    std::this_thread::sleep_for(std::chrono::seconds (2));
-  });
+  wrapper.add(ac);
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(r));
+  wrapper.start();
+//  r.register_handler(ac, event_type::ACCEPT_MASK);
+//
+//  worker_thread_ = std::thread([&r] {
+//    r.run();
+//    // sleep for some seconds to ensure valid thread join
+//    std::this_thread::sleep_for(std::chrono::seconds (2));
+//  });
+
+  UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
   // send and verify received data
   tcp::socket client;
@@ -125,41 +174,47 @@ void ReactorTest::test_send_receive()
   UNIT_ASSERT_EQUAL(5UL, len);
   client.close();
 
-  r.shutdown();
+  wrapper.stop();
+//  r.shutdown();
 
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
 
-  ac->close();
+//  ac->close();
 }
 
 void ReactorTest::test_timeout()
 {
   auto echo_conn = std::make_shared<EchoServer>();
 
-  reactor r;
+  ReactorThreadWrapper wrapper;
 
-  r.schedule_timer(echo_conn, 1, 1);
+  wrapper.schedule(echo_conn, 1, 1);
+//  reactor r;
+
+//  r.schedule_timer(echo_conn, 1, 1);
 
   UNIT_ASSERT_EQUAL(1, echo_conn->interval());
   UNIT_ASSERT_GREATER(echo_conn->next_timeout(), 0);
 
-  worker_thread_ = std::thread([&r] {
-    r.run();
-    // sleep for some seconds to ensure valid thread join
-    std::this_thread::sleep_for(std::chrono::seconds (3));
-  });
+  wrapper.start();
+//  worker_thread_ = std::thread([&r] {
+//    r.run();
+//    // sleep for some seconds to ensure valid thread join
+//    std::this_thread::sleep_for(std::chrono::seconds (3));
+//  });
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(r));
+  UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
   std::this_thread::sleep_for(std::chrono::seconds (2));
 
-  r.cancel_timer(echo_conn);
+  wrapper.cancel(echo_conn);
 
   UNIT_ASSERT_EQUAL(0, echo_conn->interval());
   UNIT_ASSERT_EQUAL(0, echo_conn->next_timeout());
 
-  r.shutdown();
+  wrapper.stop();
+//  r.shutdown();
 
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
   UNIT_ASSERT_TRUE(echo_conn->timeout_called());
 }
