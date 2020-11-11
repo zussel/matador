@@ -9,9 +9,23 @@ IOEchoServer::IOEchoServer(unsigned short port)
   prepare_accept();
 }
 
+IOEchoServer::~IOEchoServer()
+{
+  if (service_.is_running()) {
+    service_.shutdown();
+  }
+  if (service_thread_.joinable()) {
+    service_thread_.join();
+  }
+}
+
 void IOEchoServer::run()
 {
-  service_.run();
+  service_thread_ = std::thread([this] {
+    service_.run();
+    // sleep for some seconds to ensure valid thread join
+    std::this_thread::sleep_for(std::chrono::seconds (2));
+  });
 }
 
 matador::io_service &IOEchoServer::service()
