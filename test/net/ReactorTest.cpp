@@ -35,7 +35,7 @@ public:
     reactor_.register_handler(ac, event_type::ACCEPT_MASK);
   }
 
-  void schedule(const std::shared_ptr<handler> &hndlr, std::time_t offset, std::time_t interval)
+  void schedule(const std::shared_ptr<handler> &hndlr, time_t offset, time_t interval)
   {
     reactor_.schedule_timer(hndlr, offset, interval);
   }
