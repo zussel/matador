@@ -58,15 +58,24 @@ void AddressTest::test_address_v4()
   lh127 = address::v4::from_ip(std::string("127.0.0.1"));
 
   UNIT_ASSERT_EQUAL(localhost.to_ulong(), lh127.to_ulong());
-  UNIT_ASSERT_EQUAL(localhost.to_ulong(), lh127.to_ulong());
+  UNIT_ASSERT_FALSE(localhost.is_v6());
+  UNIT_ASSERT_NOT_NULL(localhost.addr_v4());
+
+  address assigned_address;
+  assigned_address = lh127;
+  UNIT_ASSERT_EQUAL(assigned_address.to_ulong(), lh127.to_ulong());
+
+  auto nulladdr = address::v4::from_hostname(nullptr);
+  UNIT_ASSERT_EQUAL(0UL, nulladdr.size());
+
+  nulladdr = address::v4::from_ip(nullptr);
+  UNIT_ASSERT_EQUAL(0UL, nulladdr.size());
 }
 
 void AddressTest::test_address_v6()
 {
-//  address localhost = address::v6::from_hostname("localhost");
   address lh127 = address::v6::from_ip("::1");
 
-//  auto str_l = localhost.to_string();
   auto str_127 = lh127.to_string();
 
   UNIT_ASSERT_EQUAL("::1", lh127.to_string());
@@ -85,6 +94,7 @@ void AddressTest::test_address_v6()
   auto str_any = any.to_string();
 
   UNIT_ASSERT_EQUAL("::", str_any);
+  UNIT_ASSERT_NOT_NULL(lh127.addr_v6());
 }
 
 void AddressTest::test_peer_v4()
@@ -98,6 +108,7 @@ void AddressTest::test_peer_v4()
   UNIT_ASSERT_EQUAL(tcp::v4().protocol(), localhost8080.protocol().protocol());
   UNIT_ASSERT_EQUAL(tcp::v4().type(), localhost8080.protocol().type());
   UNIT_ASSERT_EQUAL(peer_size, localhost8080.size());
+  UNIT_ASSERT_EQUAL("127.0.0.1:8080", localhost8080.to_string());
 }
 
 void AddressTest::test_peer_v6()
@@ -111,6 +122,7 @@ void AddressTest::test_peer_v6()
   UNIT_ASSERT_EQUAL(tcp::v6().protocol(), localhost8080.protocol().protocol());
   UNIT_ASSERT_EQUAL(tcp::v6().type(), localhost8080.protocol().type());
   UNIT_ASSERT_EQUAL(peer_size, localhost8080.size());
+  UNIT_ASSERT_EQUAL("::1:8080", localhost8080.to_string());
 }
 
 void AddressTest::test_ip()

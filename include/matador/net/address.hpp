@@ -76,24 +76,6 @@ public:
   explicit address(const sockaddr_in6 &addr);
 
   /**
-   * Move constructs an address from the given
-   * addr representing a IPv4 socket address
-   * structure
-   *
-   * @param addr Initial IPv4 Socket address
-   */
-  explicit address(sockaddr_in &&addr);
-
-  /**
-   * Move constructs an address from the given
-   * addr representing a IPv6 socket address
-   * structure
-   *
-   * @param addr Initial IPv6 Socket address
-   */
-  explicit address(sockaddr_in6 &&addr);
-
-  /**
    * Copy constructs an address from the
    * given address x
    *

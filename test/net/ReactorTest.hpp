@@ -14,6 +14,7 @@ public:
   void test_fdset();
   void test_shutdown();
   void test_send_receive();
+  void test_connector();
   void test_timeout();
 };
 

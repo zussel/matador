@@ -19,13 +19,6 @@ class peer_base
 public:
   typedef P protocol_type;
 
-//  explicit peer_base(const protocol_type &protocol, unsigned short port = 0)
-//  {
-//    memset(&sockaddr_, 0, sizeof(sockaddr_));
-//    sockaddr_.sin_family = protocol.family();
-//    sockaddr_.sin_port = htons(port);
-//    sockaddr_.sin_addr.s_addr = INADDR_ANY;
-//  }
   peer_base() = default;
 
   explicit peer_base(address addr)

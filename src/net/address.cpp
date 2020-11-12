@@ -25,18 +25,6 @@ address::address(const sockaddr_in6 &addr)
   socket_address_.sa_in6 = addr;
 }
 
-address::address(sockaddr_in &&addr)
-  : size_(sizeof(sockaddr_in))
-{
-  socket_address_.sa_in = addr;
-}
-
-address::address(sockaddr_in6 &&addr)
- : size_(sizeof(sockaddr_in6))
-{
-  socket_address_.sa_in6 = addr;
-}
-
 address& address::operator=(const address &x)
 {
   if (this == &x) {
