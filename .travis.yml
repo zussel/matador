@@ -74,7 +74,7 @@ matrix:
   - env: CLANG_VERSION=6.0 BUILD_TYPE=Release ARCH=64
     compiler: clang
     addons: *clang6_64
-  - env: CLANG_VERSION=7.0 BUILD_TYPE=Release ARCH=64
+  - env: CLANG_VERSION=7 BUILD_TYPE=Release ARCH=64
     compiler: clang
     addons: { apt: {packages: [clang-7], sources: [llvm-toolchain-xenial-7]}}
 branches:
