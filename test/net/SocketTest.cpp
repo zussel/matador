@@ -7,8 +7,8 @@ using namespace matador;
 SocketTest::SocketTest()
   : matador::unit_test("socket", "socket test unit")
 {
-  add_test("socket_v4", std::bind(&SocketTest::test_socket_v4, this), "socket v4 test");
-  add_test("acceptor_v4", std::bind(&SocketTest::test_acceptor_v4, this), "acceptor v4 test");
+  add_test("socket_v4", [this] { test_socket_v4(); }, "socket v4 test");
+  add_test("acceptor_v4", [this] { test_acceptor_v4(); }, "acceptor v4 test");
 }
 
 void SocketTest::test_socket_v4()

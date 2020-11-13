@@ -7,7 +7,7 @@ using namespace matador;
 SocketInterrupterTest::SocketInterrupterTest()
   : unit_test("socket_interrupter", "socket interrupter test")
 {
-  add_test("interrupter", std::bind(&SocketInterrupterTest::test_interrupter, this), "socket interrupter test");
+  add_test("interrupter", [this] { test_interrupter(); }, "socket interrupter test");
 }
 
 void SocketInterrupterTest::test_interrupter()

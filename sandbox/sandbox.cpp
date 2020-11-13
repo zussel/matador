@@ -1,5 +1,26 @@
+#include <type_traits>
+#include <iostream>
+
+
+struct Foo
+{
+  void bar() {
+    std::cout << "Foo::bar called\n";
+  }
+
+  template < typename FN, typename std::enable_if<std::is_member_function_pointer<FN>::value>::type* = nullptr >
+  void doit(FN fn)
+  {
+    (this->*fn)();
+  }
+};
+
 int main(int /*argc*/, char* /*argv*/[])
 {
+  Foo foo;
+
+  foo.doit(&Foo::bar);
+
   return 0;
 }
 

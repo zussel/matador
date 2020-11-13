@@ -80,12 +80,12 @@ private:
 ReactorTest::ReactorTest()
   : matador::unit_test("reactor", "reactor test unit")
 {
-  add_test("event_types", std::bind(&ReactorTest::test_event_types, this), "event types test");
-  add_test("fdsets", std::bind(&ReactorTest::test_fdset, this), "reactor fdsets test");
-  add_test("shutdown", std::bind(&ReactorTest::test_shutdown, this), "reactor shutdown test");
-  add_test("send_receive", std::bind(&ReactorTest::test_send_receive, this), "reactor send and receive test");
-//  add_test("connector", std::bind(&ReactorTest::test_connector, this), "reactor connector test");
-  add_test("timeout", std::bind(&ReactorTest::test_timeout, this), "reactor schedule timeout test");
+  add_test("event_types", [this] { test_event_types(); }, "event types test");
+  add_test("fdsets", [this] { test_fdset(); }, "reactor fdsets test");
+  add_test("shutdown", [this] { test_shutdown(); }, "reactor shutdown test");
+  add_test("acceptor", [this] { test_acceptor(); }, "reactor acceptor send and receive test");
+  add_test("connector", [this] { test_connector(); }, "reactor connector send and receive test");
+  add_test("timeout", [this] { test_timeout(); }, "reactor schedule timeout test");
 
 }
 
@@ -128,7 +128,7 @@ void ReactorTest::test_shutdown()
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
 }
 
-void ReactorTest::test_send_receive()
+void ReactorTest::test_acceptor()
 {
   auto echo_conn = std::make_shared<EchoServer>();
 
@@ -170,13 +170,15 @@ void ReactorTest::test_send_receive()
 
 void ReactorTest::test_connector()
 {
+  matador::add_log_sink(matador::create_stdout_sink());
+
   // setup acceptor
   tcp::acceptor acceptor;
 
   UNIT_ASSERT_FALSE(acceptor.is_open());
   UNIT_ASSERT_EQUAL(0, acceptor.reuse_address());
 
-  tcp::peer local(address::v4::any(), 12345);
+  tcp::peer local(address::v4::any(), 7890);
   UNIT_ASSERT_EQUAL(0, acceptor.bind(local));
 
   UNIT_ASSERT_EQUAL(1, acceptor.reuse_address());
@@ -188,7 +190,7 @@ void ReactorTest::test_connector()
   // setup connector in reactor wrapper
   auto echo_conn = std::make_shared<EchoServer>();
 
-  auto echo_connector = std::make_shared<connector>([echo_conn](const tcp::socket& sock, const tcp::peer &p, connector *cnnctr) {
+  auto echo_connector = std::make_shared<connector>([echo_conn](const tcp::socket& sock, const tcp::peer &p, connector *) {
     echo_conn->init(sock, p);
     return echo_conn;
   });
@@ -203,8 +205,23 @@ void ReactorTest::test_connector()
   UNIT_ASSERT_TRUE(acceptor.accept(remote) > 0);
   UNIT_ASSERT_TRUE(remote.id() > 0);
 
-//  remote.send()
+  remote.non_blocking(false);
 
+  buffer data;
+  data.append("hallo");
+  size_t len = remote.send(data);
+  UNIT_ASSERT_EQUAL(5UL, len);
+  data.clear();
+
+  std::this_thread::sleep_for(std::chrono::seconds (1));
+
+  len = remote.receive(data);
+  UNIT_ASSERT_EQUAL(5UL, len);
+  remote.close();
+
+  wrapper.stop();
+
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
 }
 
 void ReactorTest::test_timeout()
