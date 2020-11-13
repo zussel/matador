@@ -12,13 +12,15 @@ using namespace ::detail;
 IOServiceTest::IOServiceTest()
   : matador::unit_test("io_service", "io service test unit")
 {
-  add_test("shutdown", std::bind(&IOServiceTest::test_shutdown, this), "io service shutdown test");
-  add_test("send_receive", std::bind(&IOServiceTest::test_send_receive, this), "io service send and receive test");
+  add_test("shutdown", [this] { test_shutdown(); }, "io service shutdown test");
+  add_test("acceptor", [this] { test_acceptor(); }, "io service acceptor send and receive test");
+  add_test("connector", [this] { test_connector(); }, "io service connector send and receive test");
 }
 
 void IOServiceTest::test_shutdown()
 {
   IOEchoServer server(7779);
+  server.accept();
 
   server.start();
 
@@ -29,9 +31,10 @@ void IOServiceTest::test_shutdown()
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
 }
 
-void IOServiceTest::test_send_receive()
+void IOServiceTest::test_acceptor()
 {
   IOEchoServer server(7780);
+  server.accept();
 
   server.start();
 
@@ -53,6 +56,52 @@ void IOServiceTest::test_send_receive()
   len = client.receive(data);
   UNIT_ASSERT_EQUAL(5UL, len);
   client.close();
+
+  server.stop();
+
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
+}
+
+void IOServiceTest::test_connector()
+{
+  // setup acceptor
+  tcp::acceptor acceptor;
+
+  UNIT_ASSERT_FALSE(acceptor.is_open());
+  UNIT_ASSERT_EQUAL(0, acceptor.reuse_address());
+
+  tcp::peer local(address::v4::any(), 7891);
+  UNIT_ASSERT_EQUAL(0, acceptor.bind(local));
+
+  UNIT_ASSERT_EQUAL(1, acceptor.reuse_address());
+  UNIT_ASSERT_TRUE(acceptor.is_open());
+  UNIT_ASSERT_TRUE(acceptor.id() > 0);
+
+  UNIT_ASSERT_EQUAL(0, acceptor.listen(5));
+
+  IOEchoServer server(7891);
+  server.connect();
+
+  server.start();
+
+  // accept connection
+  tcp::socket remote;
+  UNIT_ASSERT_TRUE(acceptor.accept(remote) > 0);
+  UNIT_ASSERT_TRUE(remote.id() > 0);
+
+  remote.non_blocking(false);
+
+  buffer data;
+  data.append("hallo");
+  size_t len = remote.send(data);
+  UNIT_ASSERT_EQUAL(5UL, len);
+  data.clear();
+
+  std::this_thread::sleep_for(std::chrono::seconds (1));
+
+  len = remote.receive(data);
+  UNIT_ASSERT_EQUAL(5UL, len);
+  remote.close();
 
   server.stop();
 

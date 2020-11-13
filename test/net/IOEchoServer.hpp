@@ -14,15 +14,17 @@ public:
   void start();
   void stop();
 
-  matador::io_service& service();
+  void accept();
+  void connect();
 
-private:
-  void prepare_accept();
+  matador::io_service& service();
 
 private:
   matador::io_service service_;
   std::shared_ptr<matador::acceptor> acceptor_;
+  std::shared_ptr<matador::connector> connector_;
   std::thread service_thread_;
+  unsigned short port_;
 };
 
 

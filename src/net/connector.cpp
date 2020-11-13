@@ -53,7 +53,7 @@ void connector::on_timeout()
     int ret = matador::connect(stream, ep);
     if (ret != 0) {
 	  char error_buffer[1024];
-      log_.error("couldn't establish connection to $s: %s", ep.to_string().c_str(), os::strerror(errno, error_buffer, 1024));
+      log_.error("couldn't establish connection to: %s", ep.to_string().c_str(), os::strerror(errno, error_buffer, 1024));
       continue;
     } else {
       log_.info("connection established to %s", ep.to_string().c_str());

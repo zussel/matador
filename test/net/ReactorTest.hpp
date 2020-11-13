@@ -12,9 +12,10 @@ public:
 
   void test_event_types();
   void test_fdset();
-  void test_shutdown();
-  void test_acceptor();
   void test_connector();
+  void test_shutdown();
+  void test_reactor_acceptor();
+  void test_reactor_connector();
   void test_timeout();
 };
 

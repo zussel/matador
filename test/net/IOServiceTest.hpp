@@ -11,7 +11,8 @@ public:
   IOServiceTest();
 
   void test_shutdown();
-  void test_send_receive();
+  void test_acceptor();
+  void test_connector();
 };
 
 

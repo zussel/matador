@@ -82,9 +82,10 @@ ReactorTest::ReactorTest()
 {
   add_test("event_types", [this] { test_event_types(); }, "event types test");
   add_test("fdsets", [this] { test_fdset(); }, "reactor fdsets test");
+  add_test("connector", [this] { test_connector(); }, "connector test");
   add_test("shutdown", [this] { test_shutdown(); }, "reactor shutdown test");
-  add_test("acceptor", [this] { test_acceptor(); }, "reactor acceptor send and receive test");
-  add_test("connector", [this] { test_connector(); }, "reactor connector send and receive test");
+  add_test("reactor_acceptor", [this] { test_reactor_acceptor(); }, "reactor acceptor send and receive test");
+  add_test("reactor_connector", [this] { test_reactor_connector(); }, "reactor connector send and receive test");
   add_test("timeout", [this] { test_timeout(); }, "reactor schedule timeout test");
 
 }
@@ -104,6 +105,21 @@ void ReactorTest::test_fdset()
   const auto &fds = r.fdsets();
 
   UNIT_ASSERT_EQUAL(0, fds.maxp1());
+}
+
+void ReactorTest::test_connector()
+{
+  connector c;
+
+  UNIT_ASSERT_EQUAL(0, c.handle());
+
+  c.open();
+
+  UNIT_ASSERT_EQUAL(0, c.handle());
+
+  c.close();
+
+  UNIT_ASSERT_EQUAL(0, c.handle());
 }
 
 void ReactorTest::test_shutdown()
@@ -128,7 +144,7 @@ void ReactorTest::test_shutdown()
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
 }
 
-void ReactorTest::test_acceptor()
+void ReactorTest::test_reactor_acceptor()
 {
   auto echo_conn = std::make_shared<EchoServer>();
 
@@ -168,10 +184,8 @@ void ReactorTest::test_acceptor()
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
 }
 
-void ReactorTest::test_connector()
+void ReactorTest::test_reactor_connector()
 {
-  matador::add_log_sink(matador::create_stdout_sink());
-
   // setup acceptor
   tcp::acceptor acceptor;
 
