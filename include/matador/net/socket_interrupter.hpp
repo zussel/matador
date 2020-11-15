@@ -20,6 +20,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 class OOS_NET_API socket_interrupter
 {
 public:
@@ -37,6 +39,7 @@ private:
 
   matador::logger log_;
 };
+/// @endcond
 
 }
 

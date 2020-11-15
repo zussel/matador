@@ -13,48 +13,107 @@
 
 namespace matador {
 
+/**
+ * The peer_base class acts like the holder
+ * of network endpoint information like socket
+ * address and port. The template argument
+ * sets the protocol type either TCP or UDP.
+ *
+ * @tparam P Protocol type
+ */
 template < class P >
 class peer_base
 {
 public:
-  typedef P protocol_type;
+  typedef P protocol_type; /**< Short to protocol type */
 
+  /**
+   * Default constructor
+   */
   peer_base() = default;
 
+  /**
+   * Creates a peer from a given address. Port is set
+   * to zero.
+   *
+   * @param addr Address to create the peer from
+   */
   explicit peer_base(address addr)
     : addr_(std::move(addr))
   {}
 
+  /**
+   * Creates a peer from a given address and port
+   *
+   * @param addr Address to create the peer from
+   * @param port Port of the endpoint
+   */
   peer_base(address addr, unsigned short port)
     : addr_(std::move(addr))
   {
     addr_.port(port);
   }
 
+  /**
+   * Copy creates a peer from the given peer
+   *
+   * @param x Peer to copy from
+   */
   peer_base(const peer_base &x)
     : addr_(x.addr_)
   {}
 
+  /**
+   * Move creates a peer from a given peer
+   *
+   * @param x Peer to move from
+   */
   peer_base(peer_base &&x) noexcept
     : addr_(std::move(x.addr_))
   {}
 
+  /**
+   * Copy assigns a given peer to this peer
+   *
+   * @param x Peer to assign
+   * @return The assigned peer
+   */
   peer_base& operator=(const peer_base &x)
   {
     addr_ = x.addr_;
     return *this;
   }
 
+  /**
+   * Assign moves the given peer to this peer
+   *
+   * @param x The peer to move assign
+   * @return The moved peer
+   */
   peer_base& operator=(peer_base &&x) noexcept
   {
     addr_ = std::move(x.addr_);
     return *this;
   }
 
+  /**
+   * Destructor
+   */
   ~peer_base() = default;
 
+  /**
+   * Returns the current port of the peer.
+   *
+   * @return The current port
+   */
   int port() const { return addr_.port(); }
 
+  /**
+   * Returns the current IP protocol of the peer
+   * address which is either IPv4 or IPv6
+   *
+   * @return The current IP protocol
+   */
   protocol_type protocol() const
   {
     if (addr_.is_v4()) {
@@ -64,6 +123,10 @@ public:
     }
   }
 
+  /**
+   * Returns the
+   * @return
+   */
   sockaddr* data()
   {
     return addr_.addr();
