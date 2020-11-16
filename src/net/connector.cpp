@@ -27,23 +27,12 @@ void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints)
 void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints, make_handler_func on_new_connection)
 {
   make_handler_ = std::move(on_new_connection);
-  endpoints_ = endpoints;
-  r.schedule_timer(shared_from_this(), 0, 3);
-}
-
-void connector::open()
-{
-
+  connect(r, endpoints);
 }
 
 int connector::handle() const
 {
   return 0;
-}
-
-void connector::on_input()
-{
-
 }
 
 void connector::on_timeout()
@@ -68,11 +57,6 @@ void connector::on_timeout()
     endpoints_.clear();
     get_reactor()->cancel_timer(shared_from_this());
   }
-}
-
-void connector::close()
-{
-
 }
 
 bool connector::is_ready_write() const

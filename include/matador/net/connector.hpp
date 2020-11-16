@@ -23,27 +23,114 @@
 
 namespace matador {
 
+/**
+ * Connector which initiates a reactor based connection
+ * to a remote network host identified by a list
+ * of endpoints.
+ *
+ * Once a connection is established a handler is created
+ * with the given create handler function. The socket
+ * is passed to the created handler.
+ */
 class OOS_NET_API connector : public handler
 {
 public:
-  typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, connector *cnnctr)> make_handler_func;
+  typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, connector *cnnctr)> make_handler_func; /**< Shortcut to a function creating a handler on successfully connect to a host */
 
+  /**
+   * Default constructor
+   */
   connector();
+
+  /**
+   * Creates a new connector with the given
+   * create handler function
+   *
+   * @param on_new_connection Function which creates a handler on new connection
+   */
   explicit connector(make_handler_func on_new_connection);
 
+  /**
+   * Initiates a connect to one of the given endpoints within the
+   * given reactor. Once a connection is established a new handler
+   * for this connection is created. The new connection is dispatched
+   * by the reactor.
+   *
+   * @param r Reactor to handle the connector and the created connection
+   * @param endpoints List of endpoints to
+   */
   void connect(reactor &r, const std::vector<tcp::peer> &endpoints);
+  /**
+   * Initiates a connect to one of the given endpoints within the
+   * given reactor. Once a connection is established a new handler
+   * for this connection is created with the given function. The new
+   * connection is dispatched by the reactor.
+   *
+   * @param r Reactor to handle the connector and the created connection
+   * @param endpoints List of endpoints to
+   * @param on_new_connection Function creating a new handler on new connection
+   */
   void connect(reactor &r, const std::vector<tcp::peer> &endpoints, make_handler_func on_new_connection);
-  void open() override;
+
+  /**
+   * Opens the connector. Actually this does
+   * nothing at all.
+   */
+  void open() override {}
+
+  /**
+   * Returns the handle of the connector. The result will
+   * always be zero, because the connector doesn't has a socket
+   *
+   * @return Always zero
+   */
   int handle() const override;
-  void on_input() override;
+
+  /**
+   * Does nothing
+   */
+  void on_input() override {}
+
+  /**
+   * Does nothing
+   */
   void on_output() override {}
+
+  /**
+   * Does nothing
+   */
   void on_except() override {}
+
+  /**
+   * The timeout call is used to establish the connection.
+   * Once the connection could be established within this call
+   * the timeout is canceled otherwise it will be tried again
+   * after three seconds
+   */
   void on_timeout() override;
+
+  /**
+   * Does nothing
+   */
   void on_close() override {}
 
-  void close() override;
+  /**
+   * Does nothing
+   */
+  void close() override {}
 
-  bool is_ready_write() const override ;
+  /**
+   * Always false because connection is established via timeout
+   *
+   * @return Always false
+   */
+  bool is_ready_write() const override;
+
+  /**
+   * Always false because connection is established via timeout
+   *
+   * @return Always false
+   */
   bool is_ready_read() const override;
 
 private:

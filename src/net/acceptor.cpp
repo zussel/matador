@@ -34,7 +34,7 @@ void acceptor::accecpt(acceptor::make_handler_func on_new_connection)
 void acceptor::accecpt(const tcp::peer &endpoint, acceptor::make_handler_func on_new_connection)
 {
   endpoint_ = endpoint;
-  make_handler_ = std::move(on_new_connection);
+  accecpt(std::move(on_new_connection));
 }
 
 void acceptor::open()

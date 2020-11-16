@@ -24,6 +24,8 @@ void IOServiceTest::test_shutdown()
 
   server.start();
 
+  ::usleep(500);
+
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
 
   server.stop();
@@ -37,6 +39,8 @@ void IOServiceTest::test_acceptor()
   server.accept();
 
   server.start();
+
+  ::usleep(500);
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
 
@@ -83,6 +87,8 @@ void IOServiceTest::test_connector()
   server.connect();
 
   server.start();
+
+  ::usleep(500);
 
   // accept connection
   tcp::socket remote;

@@ -145,22 +145,72 @@ public:
    */
   unsigned short port() const;
 
+  /**
+   * Returns true if address is IPv4
+   *
+   * @return True if IPv4 address
+   */
   bool is_v4() const;
+
+  /**
+   * Returns true if address is IPv4
+   *
+   * @return True if IPv4 address
+   */
   bool is_v6() const;
 
+  /**
+   * Returns the raw sockaddr structure
+   *
+   * @return The raw sockaddr structure
+   */
   sockaddr* addr();
+
+  /**
+   * Returns the raw sockaddr structure
+   *
+   * @return The raw sockaddr structure
+   */
   const sockaddr* addr() const;
 
+  /**
+   * Returns the IPv4 sockaddr_in structure
+   *
+   * @return The IPv4 sockaddr_in structure
+   */
   sockaddr_in* addr_v4();
+
+  /**
+   * Returns the IPv4 sockaddr_in structure
+   *
+   * @return The IPv4 sockaddr_in structure
+   */
   const sockaddr_in* addr_v4() const;
 
+  /**
+   * Returns the IPv6 sockaddr_in6 structure
+   *
+   * @return The IPv6 sockaddr_in6 structure
+   */
   sockaddr_in6* addr_v6();
+
+  /**
+   * Returns the IPv6 sockaddr_in6 structure
+   *
+   * @return The IPv6 sockaddr_in6 structure
+   */
   const sockaddr_in6* addr_v6() const;
 
+  /**
+   * Returns the size of the underlying
+   * address structure.
+   *
+   * @return Size of the underlying address structure
+   */
   socklen_t size() const;
 
-  typedef address_router<V4> v4;
-  typedef address_router<V6> v6;
+  typedef address_router<V4> v4; /**< Shortcut to the internal IPv4 address router */
+  typedef address_router<V6> v6; /**< Shortcut to the internal IPv6 address router */
 
 private:
   void clear();

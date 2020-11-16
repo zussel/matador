@@ -3,7 +3,7 @@
 
 namespace matador {
 
-enum class event_type {
+enum class event_type : unsigned {
   NONE_MASK =   0,
   READ_MASK =   1 << 0,
   WRITE_MASK =  1 << 1,
@@ -20,7 +20,7 @@ inline event_type operator|(event_type a, event_type b)
 
 inline event_type operator&(event_type a, event_type b)
 {
-  return static_cast<event_type>(static_cast<unsigned int>(a) & static_cast<int>(b));
+  return static_cast<event_type>(static_cast<unsigned int>(a) & static_cast<unsigned int>(b));
 }
 
 inline bool is_event_type_set(event_type source, event_type needle)
