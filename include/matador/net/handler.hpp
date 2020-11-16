@@ -20,28 +20,105 @@ namespace matador {
 
 class reactor;
 
+/**
+ * Base class for all handlers used
+ * with the reactor. The handler must implement its
+ * interface to handle input, output, exceptional and
+ * timeout data.
+ */
 class OOS_NET_API handler : public std::enable_shared_from_this<handler>
 {
 public:
+  /**
+   * Virtual destructor
+   */
   virtual ~handler() = default;
+
+  /**
+   * Interface to open a handler. This
+   * is called when a handler is registered
+   * within the reactor
+   */
   virtual void open() = 0;
+
+  /**
+   * Interface to returns the socket handle
+   * of the concrete handler implementation.
+   *
+   * @return The socket fd
+   */
   virtual int handle() const = 0;
 
+  /**
+   * Interface handling incoming data
+   */
   virtual void on_input() = 0;
+
+  /**
+   * Interface handling outgoing data
+   */
   virtual void on_output() = 0;
+
+  /**
+   * Interface handling exceptional data
+   */
   virtual void on_except() = 0;
+
+  /**
+   * Interface handling timout data
+   */
   virtual void on_timeout() = 0;
+
+  /**
+   * Interface called when the handler is closed
+   */
   virtual void on_close() = 0;
 
+  /**
+   * Interface implementation should close
+   * the handle gracefully
+   */
   virtual void close() = 0;
 
+  /**
+   * Interface should return true if there
+   * is outgoing data
+   *
+   * @return True if there is outgoing data
+   */
   virtual bool is_ready_write() const = 0;
+
+  /**
+   * Interface should return true if there
+   * is incoming data
+   *
+   * @return True if there is incoming data
+   */
   virtual bool is_ready_read() const = 0;
 
+  /**
+   * Returns the next timeout scheduled
+   * in the reactor
+   *
+   * @return Next timeout
+   */
   time_t next_timeout() const;
+
+  /**
+   * Returns the timeout interval in
+   * seconds
+   *
+   * @return Timeout interval
+   */
   time_t interval() const;
 
 protected:
+
+  /**
+   * Gets the underlying reactor
+   *
+   * @return The underlying reactor
+   */
   reactor* get_reactor() const;
 
 private:

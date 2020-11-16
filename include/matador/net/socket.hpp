@@ -30,8 +30,8 @@ template < class P >
 class socket_base
 {
 public:
-  typedef P protocol_type;            /** Shortcut to the protocol type */
-  typedef typename P::peer peer_type; /** Shortcut to the peer type */
+  typedef P protocol_type;            /**< Shortcut to the protocol type */
+  typedef typename P::peer peer_type; /**< Shortcut to the peer type */
 
   /**
    * Creates a socket for a specific given

@@ -26,33 +26,88 @@
 
 namespace matador {
 
+/**
+ * This class represents a fd set
+ * used by the reactor class. There it
+ * is used in combination with a call
+ * to select.
+ */
 class OOS_NET_API fdset
 {
 public:
   fdset(const fdset&) = delete;
   fdset& operator=(const fdset&) = delete;
 
-public:
+  /**
+   * Default constructor creates
+   * an empty fd set
+   */
   fdset();
+
+  /**
+   * Destroys the fd set
+   */
   ~fdset() = default;
 
-  // set all bits to zero
+  /**
+   * Reset all bits to zero
+   */
   void reset();
 
+  /**
+   * Checks if the given fd is set
+   * in the fd set.
+   *
+   * @param fd Requested fd
+   * @return True if fd is set
+   */
   bool is_set(int fd) const;
+
+  /**
+   * Clears the giveb fd from the set.
+   *
+   * @param fd fd to clear
+   */
   void clear(int fd);
+
+  /**
+   * Sets the given fd in the fd set.
+   *
+   * @param fd fd to set
+   */
   void set(int fd);
 
+  /**
+   * Returns the highest fd plus one.
+   * This is needed for the call to select
+   *
+   * @return Highest fd plus one
+   */
   int maxp1() const;
 
+  /**
+   * Returns the current number of fd in the set
+   *
+   * @return Number of fd in set
+   */
   size_t count() const;
 
+  /**
+   * Checks if the set is empty
+   *
+   * @return True if the fd set is empty
+   */
   bool empty() const;
 
+  /**
+   * Returns a pointer to the underlying fd_set structure
+   *
+   * @return Pointer to the underlying fd_set structure
+   */
   fd_set* get();
 
 private:
-  typedef std::set<int, std::greater<int> > int_set_t;
+  typedef std::set<int, std::greater<> > int_set_t;
   int_set_t max_fd_set_;
 
   fd_set fd_set_ = {};

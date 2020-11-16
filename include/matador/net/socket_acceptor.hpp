@@ -63,8 +63,7 @@ public:
    * Returns zero (0) on success and -1 on error
    * with errno set
    *
-   * @param hostname Hostname to bind
-   * @param port Portnumber to bind
+   * @param peer Binds the given peer endpoint to the socket
    * @return Returns zero (0) on success.
    */
   int bind(peer_type &peer);
@@ -116,15 +115,44 @@ public:
    * Once the descriptor is assigned to the stream it
    * can be used to read and write data to it.
    *
-   * @param stream
-   * @return
+   * @param stream Stream to use after connection was accepted
+   * @return The fd of the new connection
    */
   int accept(stream_type &stream);
+
+  /**
+   * Accept a connection and assign the socket descriptor
+   * to the given socket stream.
+   *
+   * Once the descriptor is assigned to the stream it
+   * can be used to read and write data to it.
+   *
+   * The given peer endpoint is filled with the
+   * address information of the remote endpoint.
+   *
+   * @param stream Stream to use after connection was accepted
+   * @param endpoint Will be filled with the remote endpoint information
+   * @return The fd of the new connection
+   */
   int accept(stream_type &stream, peer_type &endpoint);
 
+  /**
+   * Sets or clears the reuse address flag. If the
+   * given value is true the flag is set otherwise the
+   * flag is cleared.
+   *
+   * @param reuse Indicates if the reuse address flag should be set
+   * @return 0 if setting was successful, -1 on error
+   */
   int reuse_address(bool reuse);
 
-  int reuse_address() const;
+  /**
+   * Returns true if the flag is set otherwise
+   * false is returned.
+   *
+   * @return True if flag is set
+   */
+  bool reuse_address() const;
 };
 
 /// @cond MATADOR_DEV
@@ -313,13 +341,13 @@ int socket_acceptor<P>::reuse_address(bool reuse)
 }
 
 template < class P >
-int socket_acceptor<P>::reuse_address() const
+bool socket_acceptor<P>::reuse_address() const
 {
   size_t option {};
   socklen_t i;
   i = sizeof(option);
   getsockopt(this->id(), SOL_SOCKET, SO_REUSEADDR, (char*)&option, &i);
-  return option;
+  return option > 0;
 }
 
 /// @endcond

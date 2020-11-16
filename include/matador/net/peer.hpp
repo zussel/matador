@@ -124,34 +124,61 @@ public:
   }
 
   /**
-   * Returns the
-   * @return
+   * Returns the raw pointer to the sockaddr structure
+   *
+   * @return The raw pointer to the sockaddr structure
    */
   sockaddr* data()
   {
     return addr_.addr();
   }
 
+  /**
+   * Returns the raw pointer to the sockaddr structure
+   *
+   * @return The raw pointer to the sockaddr structure
+   */
   const sockaddr* data() const
   {
     return addr_.addr();
   }
 
+  /**
+   * Returns the size of the underlying sockaddr structure
+   *
+   * @return The size of the underlying sockaddr structure
+   */
   size_t size() const
   {
     return addr_.size();
   }
 
+  /**
+   * Returns a reference to the address
+   *
+   * @return A reference to the address
+   */
   address& addr()
   {
     return addr_;
   }
 
+  /**
+   * Returns a reference to the address
+   *
+   * @return A reference to the address
+   */
   const address& addr() const
   {
     return addr_;
   }
 
+  /**
+   * Converts the peer endpoint to a string in
+   * the format [ip]:[port]
+   *
+   * @return Returns a string representation of the peer
+   */
   std::string to_string() const
   {
     char addstr[INET6_ADDRSTRLEN + 8];

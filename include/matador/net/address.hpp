@@ -36,8 +36,13 @@
 
 namespace matador {
 
+/**
+ * Enum representing the protocol
+ * family IPv4 and IPv6
+ */
 enum protocol_family {
-  V4, V6
+  V4, /**< IPv4 enum value */
+  V6  /**< IPv6 enum value */
 };
 
 /// @cond MATADOR_DEV

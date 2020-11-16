@@ -201,6 +201,14 @@ public:
    */
   template<typename ... ARGS>
   void log(log_level lvl, const char *what, ARGS const &... args);
+
+  /**
+   * Writes a log message represented by a char pointer
+   * with the given log level to the connected log_domain.
+   *
+   * @param lvl The log level
+   * @param what The message to log
+   */
   void log(log_level lvl, const char *what);
 
   /**
