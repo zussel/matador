@@ -137,7 +137,7 @@ void ReactorTest::test_shutdown()
 
   wrapper.start();
 
-  ::usleep(500);
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
@@ -162,7 +162,7 @@ void ReactorTest::test_reactor_acceptor()
 
   wrapper.start();
 
-  ::usleep(500);
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
@@ -218,7 +218,7 @@ void ReactorTest::test_reactor_connector()
 
   wrapper.start();
 
-  ::usleep(500);
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
   // accept connection
   tcp::socket remote;
@@ -257,7 +257,7 @@ void ReactorTest::test_timeout()
 
   wrapper.start();
 
-  ::usleep(500);
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 

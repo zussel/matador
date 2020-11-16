@@ -24,7 +24,7 @@ void IOServiceTest::test_shutdown()
 
   server.start();
 
-  ::usleep(500);
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
 
@@ -40,7 +40,7 @@ void IOServiceTest::test_acceptor()
 
   server.start();
 
-  ::usleep(500);
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
 
@@ -88,7 +88,7 @@ void IOServiceTest::test_connector()
 
   server.start();
 
-  ::usleep(500);
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
   // accept connection
   tcp::socket remote;
