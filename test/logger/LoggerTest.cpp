@@ -32,9 +32,7 @@ void LoggerTest::test_file_sink()
 {
   matador::file_sink test("test.txt");
 
-  UNIT_ASSERT_TRUE(matador::os::exists("test.txt"));
-
-//  UNIT_ASSERT_EQUAL("test.txt", test.path());
+  UNIT_ASSERT_EQUAL("test.txt", test.path());
 
   test.close();
 
@@ -144,28 +142,18 @@ void LoggerTest::test_logging()
   matador::add_log_sink(logsink);
 
   logger.info("information");
-  logger.info("information %s", "important");
   logger.warn("warning");
-  logger.warn("warning %s", "important");
   logger.debug("debugging");
-  logger.debug("debugging %s", "important");
   logger.trace("tracing something");
-  logger.trace("tracing something %s", "important");
   logger.error("big error");
-  logger.error("big error %s", "important");
 
   logsink->close();
 
   validate_log_file_line("log.txt", 0, "INFO", "test", "information");
-  validate_log_file_line("log.txt", 1, "INFO", "test", "information important");
-  validate_log_file_line("log.txt", 2, "WARN", "test", "warning");
-  validate_log_file_line("log.txt", 3, "WARN", "test", "warning important");
-  validate_log_file_line("log.txt", 4, "DEBUG", "test", "debugging");
-  validate_log_file_line("log.txt", 5, "DEBUG", "test", "debugging important");
-  validate_log_file_line("log.txt", 6, "TRACE", "test", "tracing something");
-  validate_log_file_line("log.txt", 7, "TRACE", "test", "tracing something important");
-  validate_log_file_line("log.txt", 8, "ERROR", "test", "big error");
-  validate_log_file_line("log.txt", 9, "ERROR", "test", "big error important");
+  validate_log_file_line("log.txt", 1, "WARN", "test", "warning");
+  validate_log_file_line("log.txt", 2, "DEBUG", "test", "debugging");
+  validate_log_file_line("log.txt", 3, "TRACE", "test", "tracing something");
+  validate_log_file_line("log.txt", 4, "ERROR", "test", "big error");
 
   matador::os::remove("log.txt");
 

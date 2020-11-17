@@ -1,20 +1,6 @@
 #ifndef MATADOR_BASIC_SQL_LOGGER_HPP
 #define MATADOR_BASIC_SQL_LOGGER_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_sql_EXPORTS
-    #define OOS_SQL_API __declspec(dllexport)
-    #define EXPIMP_SQL_TEMPLATE
-  #else
-    #define OOS_SQL_API __declspec(dllimport)
-    #define EXPIMP_SQL_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-  #pragma warning(disable: 4355)
-#else
-#define OOS_SQL_API
-#endif
-
 #include <string>
 
 namespace matador {
@@ -32,11 +18,9 @@ namespace matador {
  * when an sql statement is about to
  * execute or going to prepared.
  */
-class OOS_SQL_API basic_sql_logger
+class basic_sql_logger
 {
 public:
-
-  virtual ~basic_sql_logger() = default;
   /**
    * Is called when a connection to a database is
    * going to be established
@@ -71,7 +55,7 @@ public:
  * This is used as the default logger for all
  * connections and statements.
  */
-class OOS_SQL_API null_sql_logger : public basic_sql_logger
+class null_sql_logger : public basic_sql_logger
 {
 public:
   /**

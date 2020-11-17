@@ -10,7 +10,7 @@ using namespace matador;
 using namespace std;
 
 PrototypeTreeTestUnit::PrototypeTreeTestUnit()
-  : unit_test("prototype_tree", "Prototype Tree Test Unit")
+  : unit_test("tree", "Prototype Tree Test Unit")
 {
   add_test("empty", std::bind(&PrototypeTreeTestUnit::test_empty, this), "test empty prototype tree");
   add_test("insert", std::bind(&PrototypeTreeTestUnit::test_insert, this), "test insert element by template arguments");

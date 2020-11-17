@@ -83,18 +83,6 @@ std::string build_path(const std::string &a, const std::string &b, T& ...arg)
   return build_path(build_path(a, b), arg...);
 }
 
-template<typename... ARGS>
-int sprintf(char* str, size_t s, const char* format, ARGS const&... args)
-{
-#ifdef _WIN32
-    return sprintf_s(str, s, format, args...);
-#else
-    return ::snprintf(str, s, format, args...);
-#endif
-}
-
-OOS_UTILS_API char* strerror(int err, char* errbuf, size_t bufsize);
-
 /// @endcond
 
 }

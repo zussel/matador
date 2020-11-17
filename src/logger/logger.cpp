@@ -17,8 +17,4 @@ std::string logger::domain() const
   return logger_domain_->name();
 }
 
-void logger::log(log_level lvl, const char *what)
-{
-  logger_domain_->log(lvl, source_, what);
-}
 }

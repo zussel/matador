@@ -19,50 +19,14 @@ SET (TEST_TOOLS_SOURCES
   utils/JsonMapperTestUnit.hpp
   utils/OSTest.cpp
   utils/OSTest.hpp
-  utils/FileTestUnit.cpp
-  utils/FileTestUnit.hpp
-  utils/TreeTest.cpp
-  utils/TreeTest.hpp
-  utils/StreamsTest.cpp
-  utils/StreamsTest.hpp utils/OptionalTest.cpp utils/OptionalTest.hpp)
+  utils/FileTestUnit.cpp utils/FileTestUnit.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
   logger/LoggerTest.hpp
-  logger/file.cpp
-  logger/file.hpp)
+    logger/file.cpp logger/file.hpp)
 
-SET (TEST_NET_SOURCES
-  net/IPTestUnit.cpp
-  net/IPTestUnit.hpp
-  net/AddressTest.cpp
-  net/AddressTest.hpp
-  net/SocketTest.cpp
-  net/SocketTest.hpp
-  net/FDSetTest.cpp
-  net/FDSetTest.hpp
-  net/AddressResolverTest.cpp
-  net/AddressResolverTest.hpp
-  net/SocketInterrupterTest.cpp
-  net/ReactorTest.cpp
-  net/ReactorTest.hpp
-  net/SocketInterrupterTest.hpp
-  net/EchoServer.cpp
-  net/EchoServer.hpp
-  net/IOServiceTest.cpp
-  net/IOServiceTest.hpp
-  net/IOEchoServerConnection.cpp
-  net/IOEchoServerConnection.hpp
-  net/IOEchoServer.cpp
-  net/IOEchoServer.hpp
-  net/NetUtils.hpp)
-
-SET (TEST_HEADER
-  datatypes.hpp
-  entities.hpp
-  person.hpp
-  has_many_list.hpp
-  Blog.hpp)
+SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
 
 SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.cpp
@@ -109,9 +73,7 @@ SET (TEST_SQL_SOURCES
   sql/ValueUnitTest.cpp
   sql/ValueUnitTest.hpp
   sql/PostgreSQLDialectTestUnit.cpp
-  sql/PostgreSQLDialectTestUnit.hpp
-  sql/SqlLoggerTest.cpp
-  sql/SqlLoggerTest.hpp)
+  sql/PostgreSQLDialectTestUnit.hpp sql/SqlLoggerTest.cpp sql/SqlLoggerTest.hpp)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp
@@ -138,7 +100,6 @@ ADD_EXECUTABLE(test_matador
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
   ${TEST_LOGGER_SOURCES}
-  ${TEST_NET_SOURCES}
   ${TEST_SQL_SOURCES}
 )
 
@@ -182,29 +143,19 @@ IF(POSTGRESQL_FOUND)
   LIST(APPEND DB_LIBRARIES ${POSTGRESQL_LIBRARIES})
 ENDIF()
 
-MESSAGE(STATUS "Appending thread libs: ${CMAKE_THREAD_LIBS_INIT}")
-
 TARGET_LINK_LIBRARIES(test_matador
   matador-unit
   matador-utils
   matador-logger
-  matador-net
   matador-object
   matador-sql
   matador-orm
   ${CMAKE_DL_LIBS}
   ${DB_LIBRARIES}
-  ${CMAKE_THREAD_LIBS_INIT}
 )
-
-if(WIN32)
-  target_link_libraries(test_matador wsock32 ws2_32)
-endif()
 
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
-SOURCE_GROUP("logger" FILES ${TEST_LOGGER_SOURCES})
-SOURCE_GROUP("net" FILES ${TEST_NET_SOURCES})
 SOURCE_GROUP("utils" FILES ${TEST_TOOLS_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})

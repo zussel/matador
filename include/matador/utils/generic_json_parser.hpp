@@ -129,10 +129,9 @@ protected:
    * value relation of o json object
    * is detected
    *
-   * @fn void on_object_key(const std::string &key)
    * @param key The detected key
    */
-  void on_object_key(const std::string &) {}
+  void on_object_key(const std::string &key) {}
 
   /**
    * Called when end of json object is detected
@@ -152,34 +151,30 @@ protected:
   /**
    * Called when a json string value is detected
    *
-   * @fn void on_string(const std::string &str)
    * @param str The detected json string value
    */
-  void on_string(const std::string &) {}
+  void on_string(const std::string &str) {}
 
   /**
    * Called when a integral json value (number) is detected
    *
-   * @fn void on_integer(long long val)
    * @param val The detected json integral value (number)
    */
-  void on_integer(long long) {}
+  void on_integer(long long val) {}
 
   /**
    * Called when a floating point json value (number) is detected
    *
-   * @fn void on_real(double val)
    * @param val The floating point json integral value (number)
    */
-  void on_real(double) {}
+  void on_real(double val) {}
 
   /**
    * Called when a json boolean value is detected
    *
-   * @fn void on_bool(bool val)
    * @param val The boolean json value
    */
-  void on_bool(bool) {}
+  void on_bool(bool val) {}
 
   /**
    * Called when json null value is detected

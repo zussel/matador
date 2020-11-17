@@ -1,4 +1,4 @@
-SET (SANDBOX_SOURCES sandbox.cpp ../include/matador/net/os.hpp)
+SET (SANDBOX_SOURCES sandbox.cpp)
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 
@@ -25,22 +25,13 @@ IF(POSTGRESQL_FOUND)
   LIST(APPEND DB_LIBRARIES ${POSTGRESQL_LIBRARIES})
 ENDIF()
 
-SET(NET_LIBRARIES)
-
-IF(WIN32)
-  MESSAGE(STATUS "Appending Windows Socket libs: wsock32 ws2_32")
-  LIST(APPEND NET_LIBRARIES wsock32 ws2_32)
-ENDIF()
-
 TARGET_LINK_LIBRARIES(sandbox
     matador-unit
     matador-utils
     matador-logger
     matador-object
-    matador-net
     matador-sql
     matador-orm
     ${CMAKE_DL_LIBS}
     ${DB_LIBRARIES}
-    ${NET_LIBRARIES}
 )

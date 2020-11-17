@@ -28,8 +28,6 @@ Features:
  * Filter with simple expressions
  * Transactions
  * STL like interface and iterators
- * Json support including parser and object mapper
- * Simple Logging mechanism
 
 Supported databases:
  * PostgreSQL

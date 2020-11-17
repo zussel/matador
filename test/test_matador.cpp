@@ -17,8 +17,6 @@
 
 #include "matador/unit/test_suite.hpp"
 
-#include "matador/net/os.hpp"
-
 #include "unit/TestSuiteTestUnit.hpp"
 
 #include "logger/LoggerTest.hpp"
@@ -34,9 +32,6 @@
 #include "utils/StringTestUnit.hpp"
 #include "utils/SequencerTestUnit.hpp"
 #include "utils/OSTest.hpp"
-#include "utils/TreeTest.hpp"
-#include "utils/StreamsTest.hpp"
-#include "utils/OptionalTest.hpp"
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
@@ -65,15 +60,6 @@
 #include "sql/SQLiteDialectTestUnit.hpp"
 #include "sql/ValueUnitTest.hpp"
 #include "sql/SqlLoggerTest.hpp"
-
-#include "net/IPTestUnit.hpp"
-#include "net/AddressTest.hpp"
-#include "net/SocketTest.hpp"
-#include "net/FDSetTest.hpp"
-#include "net/ReactorTest.hpp"
-#include "net/IOServiceTest.hpp"
-#include "net/AddressResolverTest.hpp"
-#include "net/SocketInterrupterTest.hpp"
 
 #include "connections.hpp"
 
@@ -110,9 +96,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);
   suite.register_unit(new OSTest);
-  suite.register_unit(new TreeTest);
-  suite.register_unit(new StreamsTest);
-  suite.register_unit(new OptionalTest);
+
   suite.register_unit(new LoggerTest);
 
   suite.register_unit(new PrimaryKeyUnitTest);
@@ -130,15 +114,6 @@ int main(int argc, char *argv[])
   suite.register_unit(new DialectTestUnit);
   suite.register_unit(new SqlLoggerTest);
   suite.register_unit(new ValueUnitTest);
-
-  suite.register_unit(new IPTestUnit);
-  suite.register_unit(new AddressTest);
-  suite.register_unit(new SocketTest);
-  suite.register_unit(new FDSetTest);
-  suite.register_unit(new ReactorTest);
-  suite.register_unit(new IOServiceTest);
-  suite.register_unit(new AddressResolverTest);
-  suite.register_unit(new SocketInterrupterTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
@@ -185,10 +160,6 @@ int main(int argc, char *argv[])
 
   //suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 
-  net::init();
-
   result = suite.run();
-
-  net::cleanup();
   return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }

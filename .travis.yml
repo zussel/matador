@@ -1,4 +1,5 @@
 language: cpp
+sudo: false
 dist: xenial
 
 os: linux
@@ -11,11 +12,9 @@ matrix:
   include:
 #  - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=32
 #    addons: { postgresql: "10" , apt: {packages: [g++-4.9-multilib,"linux-libc-dev:i386",postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test]}}
-
   - env: GCC_VERSION=4.9 BUILD_TYPE=Debug ARCH=64
     compiler: gcc
     addons: { apt: {packages: [g++-4.9] , sources: [ubuntu-toolchain-r-test]}}
-
 #  - env: GCC_VERSION=5 BUILD_TYPE=Debug ARCH=32
 #    addons: { postgresql: "10" , apt: {packages: [g++-5-multilib,"linux-libc-dev:i386",postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=5 BUILD_TYPE=Debug ARCH=64
@@ -23,65 +22,49 @@ matrix:
     addons: { apt: {packages: [g++-5] , sources: [ubuntu-toolchain-r-test]}}
 #  - env: GCC_VERSION=6 BUILD_TYPE=Debug ARCH=32
 #    addons: { postgresql: "10" , apt: {packages: [g++-6-multilib,"linux-libc-dev:i386",postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test]}}
-
   - env: GCC_VERSION=6 BUILD_TYPE=Debug ARCH=64
     compiler: gcc
     addons: { apt: {packages: [g++-6] , sources: [ubuntu-toolchain-r-test]}}
-
 #  - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=32
 #    addons: &gcc7_32 { postgresql: "10" , apt: {packages: [g++-7-multilib,rpm,doxygen,"linux-libc-dev:i386",postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test]}}
 #  - env: GCC_VERSION=7 BUILD_TYPE=Release ARCH=32
 #    addons: *gcc7_32
-
   - env: GCC_VERSION=7 BUILD_TYPE=Debug ARCH=64
     compiler: gcc
     addons: &gcc7_64 { apt: {packages: [g++-7,rpm,doxygen] , sources: [ubuntu-toolchain-r-test]}}
   - env: GCC_VERSION=7 BUILD_TYPE=Release ARCH=64
     compiler: gcc
     addons: *gcc7_64
-
 #  - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=32
 #    addons: { postgresql: "10" , apt: {packages: [clang-3.6,libstdc++-6-dev,postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test]}}
-
   - env: CLANG_VERSION=3.6 BUILD_TYPE=Release ARCH=64
     compiler: clang
     addons: { apt: {packages: [clang-3.6]}}
-
 #  - env: CLANG_VERSION=3.7 BUILD_TYPE=Release ARCH=32
 #    addons: { postgresql: "10" , apt: {packages: [clang-3.7,libstdc++-6-dev,postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-precise-3.7]}}
-
   - env: CLANG_VERSION=3.7 BUILD_TYPE=Release ARCH=64
     compiler: clang
     addons: { apt: {packages: [clang-3.7]}}
-
 #  - env: CLANG_VERSION=3.8 BUILD_TYPE=Release ARCH=32
 #    addons: { postgresql: "10" , apt: {packages: [clang-3.8,libstdc++-6-dev,postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test]}}
-
   - env: CLANG_VERSION=3.8 BUILD_TYPE=Release ARCH=64
     compiler: clang
     addons: { apt: {packages: [clang-3.8]}}
-
 #  - env: CLANG_VERSION=3.9 BUILD_TYPE=Release ARCH=32
 #    addons: { postgresql: "10" , apt: {packages: [clang-3.9,libstdc++-6-dev,postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-3.9]}}
-
   - env: CLANG_VERSION=3.9 BUILD_TYPE=Release ARCH=64
     compiler: clang
     addons: { apt: {packages: [clang-3.9]}}
-
 #  - env: CLANG_VERSION=4.0 BUILD_TYPE=Release ARCH=32
 #    addons: { postgresql: "10" , apt: {packages: [clang-4.0,libstdc++-6-dev,postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-4.0]}}
-
   - env: CLANG_VERSION=4.0 BUILD_TYPE=Release ARCH=64
     compiler: clang
     addons: { apt: {packages: [clang-4.0]}}
-
 #  - env: CLANG_VERSION=5.0 BUILD_TYPE=Release ARCH=32
 #    addons: { postgresql: "10" , apt: {packages: [clang-5.0,libstdc++-6-dev,postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-5.0]}}
-
   - env: CLANG_VERSION=5.0 BUILD_TYPE=Release ARCH=64
     compiler: clang
     addons: { apt: {packages: [clang-5.0]}}
-
 #  - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug ARCH=32
 #    addons: &clang6_32 { postgresql: "10" , apt: {packages: [clang-6.0,libstdc++-6-dev,postgresql-10,postgresql-client-10] , sources: [ubuntu-toolchain-r-test,llvm-toolchain-trusty-6.0]}}
 #  - env: CLANG_VERSION=6.0 BUILD_TYPE=Release ARCH=32
@@ -186,6 +169,7 @@ deploy:
   - "${RELEASE_TGZ_FILE}"
   - "${RELEASE_DEB_FILE}"
   - "${RELEASE_RPM_FILE}"
+  skip_cleanup: true
   on:
     tags: true
     condition: "$GCC_VERSION = 7 && $BUILD_TYPE = Release"

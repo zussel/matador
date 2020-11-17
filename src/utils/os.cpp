@@ -102,9 +102,6 @@ bool mkdir(const std::string &dirname)
 
 bool mkdir(const char *dirname)
 {
-  if (dirname == nullptr || strlen(dirname) == 0) {
-    return true;
-  }
 #ifdef _WIN32
   return ::_mkdir(dirname) == 0;
 #else
@@ -119,9 +116,6 @@ bool chdir(const std::string &dirname)
 
 bool chdir(const char *dirname)
 {
-  if (dirname == nullptr || strlen(dirname) == 0) {
-    return true;
-  }
 #ifdef _WIN32
   return _chdir(dirname) == 0;
 #else
@@ -183,12 +177,8 @@ bool mkpath(const char *path)
 
   snprintf(tmp, sizeof(tmp),"%s",path);
   len = strlen(tmp);
-  if (len == 0) {
-    return true;
-  }
-  if(tmp[len - 1] == DIR_SEPARATOR) {
+  if(tmp[len - 1] == DIR_SEPARATOR)
     tmp[len - 1] = 0;
-  }
   for(p = tmp + 1; *p; p++) {
     if (*p == DIR_SEPARATOR) {
       *p = 0;
@@ -283,23 +273,6 @@ size_t file_size(FILE *stream)
 std::string build_path(const std::string &a, const std::string &b)
 {
   return a + DIR_SEPARATOR_STRING + b;
-}
-
-char* strerror(int err, char* errbuf, size_t bufsize)
-{
-#ifdef _WIN32
-    ::strerror_s(errbuf, bufsize, err);
-    return errbuf;
-#else
-    auto msg = ::strerror(err);
-    auto s = strlen(msg);
-    if (s < bufsize - 1) {
-      return strcpy(errbuf, msg);
-    } else {
-      errbuf[bufsize - 1] = '\0';
-      return strncpy(errbuf, msg, bufsize - 1);
-    }
-#endif
 }
 
 }
