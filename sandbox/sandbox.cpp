@@ -1,25 +1,26 @@
 #include <type_traits>
 #include <iostream>
 
+#include "matador/net/io_service.hpp"
 
-struct Foo
+using namespace matador;
+
+struct http_server
 {
-  void bar() {
-    std::cout << "Foo::bar called\n";
-  }
+  http_server(unsigned port);
 
-  template < typename FN, typename std::enable_if<std::is_member_function_pointer<FN>::value>::type* = nullptr >
-  void doit(FN fn)
-  {
-    (this->*fn)();
-  }
+  template < typename CB >
+  void get(const std::string &route, CB callback);
+
+  void run();
+
+  io_service service_;
 };
 
 int main(int /*argc*/, char* /*argv*/[])
 {
-  Foo foo;
 
-  foo.doit(&Foo::bar);
+  http_server server(8081);
 
   return 0;
 }

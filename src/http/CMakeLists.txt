@@ -1,0 +1,39 @@
+SET(SOURCES
+  http_client.cpp
+  http_server.cpp)
+
+SET(HEADER
+  ../../include/matador/http/http_client.hpp
+  ../../include/matador/http/http_server.hpp ../../include/matador/http/response_header.hpp ../../include/matador/http/response.hpp ../../include/matador/http/http.hpp)
+
+ADD_LIBRARY(matador-http SHARED ${SOURCES} ${HEADER})
+
+TARGET_LINK_LIBRARIES(matador-http matador-net matador-logger matador-utils)
+
+# Set the build version (VERSION) and the API version (SOVERSION)
+SET_TARGET_PROPERTIES(matador-http
+                      PROPERTIES
+                      VERSION ${APP_VERSION}
+                      SOVERSION ${APP_MAJOR_VERSION})
+
+SOURCE_GROUP("include\\matador\\http" FILES ${HEADER})
+SOURCE_GROUP("src\\matador\\http" FILES ${SOURCES})
+
+INSTALL(
+  TARGETS matador-http
+  ARCHIVE  DESTINATION lib
+  LIBRARY DESTINATION lib
+  COMPONENT libraries
+)
+
+INSTALL(
+  TARGETS matador-http
+  DESTINATION lib
+  COMPONENT libraries
+)
+
+INSTALL(
+  FILES ${HEADER}
+  DESTINATION include/matador/logger
+  COMPONENT headers
+)
