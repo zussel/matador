@@ -27,13 +27,49 @@ namespace matador {
 class acceptor;
 class connector;
 
+/**
+ * The stream_handler class implements the
+ * handler and io_stream interface and is
+ * used with the io_service to handle socket
+ * connections more easily in comparison
+ * with the plain reactor boilerplate.
+ *
+ * Instances of the class are used internally
+ * within the io_service hiding the read and write
+ * wiring. The user just use the interface
+ * provided by the io_service to setup
+ * a server.
+ */
 class OOS_NET_API stream_handler : public handler, io_stream
 {
 public:
-  typedef std::function<void(tcp::peer, io_stream &)> t_init_handler;
+  typedef std::function<void(tcp::peer, io_stream &)> t_init_handler; /**< Shortcut to the initialize function */
 
 public:
+  /**
+   * Creates a new stream_handler for the given socket.
+   * The acceptor is the link to the creation source where
+   * the given init function is called when the handler
+   * is initialized
+   *
+   * @param sock Socket to read and write on
+   * @param endpoint Endpoint of the connection
+   * @param accptr Pointer to the creating acceptor class
+   * @param init_handler Initialize function
+   */
   stream_handler(tcp::socket sock, tcp::peer endpoint, acceptor *accptr, t_init_handler init_handler);
+
+  /**
+   * Creates a new stream_handler for the given socket.
+   * The connector is the link to the creation source where
+   * the given init function is called when the handler
+   * is initialized
+   *
+   * @param sock Socket to read and write on
+   * @param endpoint Endpoint of the connection
+   * @param cnnctr Pointer to the creating connector class
+   * @param init_handler Initialize function
+   */
   stream_handler(tcp::socket sock, tcp::peer endpoint, connector *cnnctr, t_init_handler init_handler);
 
   void open() override;

@@ -81,16 +81,63 @@ public:
    */
   void unregister_handler(const std::shared_ptr<handler>& h, event_type type);
 
+  /**
+   * Schedules a timer handler within the reactor.
+   * The handler is registered with a given offset and
+   * a given interval.
+   * If the interval is zero the timer is only
+   * schedules once.
+   *
+   * @param h Handler to schedule.
+   * @param offset Offset for first schedule in seconds.
+   * @param interval Interval of the schedule.
+   */
   void schedule_timer(const std::shared_ptr<handler>& h, time_t offset, time_t interval);
+
+  /**
+   * Cancels all timer for a given handler.
+   *
+   * @param h Handler to cancel the timer for
+   */
   void cancel_timer(const std::shared_ptr<handler>& h);
 
+  /**
+   * Starts the dispatching process of the
+   * reactor. The call to this method only
+   * terminates if the handler list is empty
+   * and there are no timers scheduled or
+   * shutdown ist called.
+   */
   void run();
+
+  /**
+   * Shutdown the dispatching process of the
+   * reactor.
+   */
   void shutdown();
 
+  /**
+   * Return true if reactor was started and run was called.
+   *
+   * @return True if reactor is running
+   */
   bool is_running() const;
 
+  /**
+   * Returns the internal fd sets for
+   * reading, writing and exceptions.
+   *
+   * @return The internal select fd sets
+   */
   const select_fdsets& fdsets() const;
 
+  /**
+   * Marks the given handler to be deleted
+   * from the reactor. That means the handler
+   * was closed.
+   *
+   * @param h Handler to be marked for deletion
+   */
   void mark_handler_for_delete(const std::shared_ptr<handler>& h);
 
 private:
