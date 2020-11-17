@@ -1,49 +1,59 @@
-#include <thread>
-#include "matador/logger/logger.hpp"
-#include "matador/logger/log_manager.hpp"
+#include <type_traits>
+#include <iostream>
 
-class MyClass
+
+struct Foo
 {
-public:
-  static matador::logger LOG;
-
-  MyClass() {
-    LOG.info("created");
+  void bar() {
+    std::cout << "Foo::bar called\n";
   }
 
-  ~MyClass()
+  template < typename FN, typename std::enable_if<std::is_member_function_pointer<FN>::value>::type* = nullptr >
+  void doit(FN fn)
   {
-    LOG.info("destroyed");
+    (this->*fn)();
   }
 };
 
-matador::logger MyClass::LOG = matador::create_logger("MyClass");
-
-int main()
+int main(int /*argc*/, char* /*argv*/[])
 {
-  std::thread::id this_id = std::this_thread::get_id();
+  Foo foo;
 
-  auto logsink = matador::create_file_sink("log.txt");
-  auto stdoutsink = matador::create_stdout_sink();
+  foo.doit(&Foo::bar);
 
-  matador::add_log_sink(stdoutsink);
-  matador::add_log_sink(logsink);
-
-  auto log = matador::create_logger("test");
-
-  log.info("hello info %d [%d]", 6, this_id);
-  log.debug("hello debug bug bug bug");
-  log.error("hello error -> fatal");
-  log.warn("hello warn: attention");
-  log.trace("hello trace: what happens here");
-
-  MyClass my1;
-  MyClass my2;
-
-  auto netsink = matador::create_file_sink("netlog.txt");
-  matador::add_log_sink(netsink, "net");
-
-  auto another_log = matador::create_logger("side", "net");
-
-  another_log.warn("another net log");
+  return 0;
 }
+
+//  http::server serv;
+//
+//  serv.on_get("/", [](http::request &request) {
+//    return http::response;
+//  });
+//
+//  serv.listen(7090);
+
+// server
+  /*
+  GET / HTTP/1.1
+  Host: localhost:7090
+  User-Agent: curl/7.70.0
+  Accept: * / *
+  */
+
+// client
+//(HTTP/1.1 200 OK
+//Server: Matador/0.7.0
+//Content-Length: 111
+//Content-Language: de
+//Connection: close
+//Content-Type: text/html
+//
+//<!doctype html>
+//<html>
+//  <head>
+//    <title>Dummy!</title>
+//  </head>
+//  <body>
+//    <p>Help!</p>
+//  </body>
+//</html>
