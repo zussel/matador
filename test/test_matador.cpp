@@ -75,6 +75,8 @@
 #include "net/AddressResolverTest.hpp"
 #include "net/SocketInterrupterTest.hpp"
 
+#include "http/RequestParserTest.hpp"
+
 #include "connections.hpp"
 
 #include <cstdlib> // EXIT_SUCCESS
@@ -139,6 +141,8 @@ int main(int argc, char *argv[])
   suite.register_unit(new IOServiceTest);
   suite.register_unit(new AddressResolverTest);
   suite.register_unit(new SocketInterrupterTest);
+
+  suite.register_unit(new RequestParserTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));

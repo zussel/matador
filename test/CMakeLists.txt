@@ -57,6 +57,10 @@ SET (TEST_NET_SOURCES
   net/IOEchoServer.hpp
   net/NetUtils.hpp)
 
+SET (TEST_HTTP_SOURCES
+  http/RequestParserTest.cpp
+  http/RequestParserTest.hpp http/RequestData.hpp)
+
 SET (TEST_HEADER
   datatypes.hpp
   entities.hpp
@@ -138,6 +142,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
   ${TEST_LOGGER_SOURCES}
+  ${TEST_HTTP_SOURCES}
   ${TEST_NET_SOURCES}
   ${TEST_SQL_SOURCES}
 )
@@ -189,6 +194,7 @@ TARGET_LINK_LIBRARIES(test_matador
   matador-utils
   matador-logger
   matador-net
+  matador-http
   matador-object
   matador-sql
   matador-orm
@@ -205,6 +211,7 @@ endif()
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("logger" FILES ${TEST_LOGGER_SOURCES})
 SOURCE_GROUP("net" FILES ${TEST_NET_SOURCES})
+SOURCE_GROUP("http" FILES ${TEST_HTTP_SOURCES})
 SOURCE_GROUP("utils" FILES ${TEST_TOOLS_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})
