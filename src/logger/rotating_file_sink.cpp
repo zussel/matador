@@ -93,11 +93,15 @@ void rotating_file_sink::prepare(const std::string &path)
   }
   base_path_ = result.at(0);
   extension_ = result.at(1);
+  // get current path
+  auto pwd = os::get_current_dir();
   // make path
   os::mkpath(path_);
   // change into path
   os::chdir(path_);
   // create file
   logfile_.open(filename, "a");
+  // change back to origin path
+  os::chdir(pwd);
 }
 }

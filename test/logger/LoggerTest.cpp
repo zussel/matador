@@ -53,9 +53,12 @@ void LoggerTest::test_file_sink()
 
 void LoggerTest::test_rotating_file_sink()
 {
-  auto path = matador::os::build_path("my", "log", "log.txt");
+  auto dir = matador::os::build_path("my", "log");
+  auto path = matador::os::build_path(dir, "log.txt");
 
   auto logsink = matador::create_rotating_file_sink(path, 30, 3);
+
+  matador::os::chdir(dir);
 
   UNIT_ASSERT_TRUE(matador::os::is_readable("log.txt"));
   UNIT_ASSERT_TRUE(matador::os::is_writable("log.txt"));
