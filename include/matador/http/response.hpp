@@ -27,10 +27,16 @@ class response
     std::size_t length;
     std::string type;
     std::string md5;
+    std::string language;
   };
 
 public:
-  http::method_t method;
+
+  std::string to_string() const;
+
+  version_t version;
+  content_t content_type;
+
   status_t status;
 
   string_map_t headers;

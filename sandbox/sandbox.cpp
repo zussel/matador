@@ -1,26 +1,15 @@
 #include <type_traits>
 #include <iostream>
 
-#include "matador/net/io_service.hpp"
+#include "matador/http/http_server.hpp"
 
 using namespace matador;
 
-struct http_server
-{
-  http_server(unsigned port);
-
-  template < typename CB >
-  void get(const std::string &route, CB callback);
-
-  void run();
-
-  io_service service_;
-};
-
 int main(int /*argc*/, char* /*argv*/[])
 {
+  http::server server(8081);
 
-  http_server server(8081);
+  server.run();
 
   return 0;
 }

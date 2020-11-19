@@ -37,6 +37,7 @@ TARGET_LINK_LIBRARIES(sandbox
     matador-utils
     matador-logger
     matador-object
+    matador-http
     matador-net
     matador-sql
     matador-orm

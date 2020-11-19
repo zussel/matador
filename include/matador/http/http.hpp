@@ -18,6 +18,8 @@ public:
   };
 };
 
+const char* to_string(http::method_t method);
+
 }
 }
 

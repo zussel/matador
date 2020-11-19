@@ -7,7 +7,7 @@
 using namespace matador;
 
 echo_server::echo_server(unsigned short port)
-: acceptor_(std::make_shared<acceptor>(tcp::peer(address::v4::any(), port)))
+  : acceptor_(std::make_shared<acceptor>(tcp::peer(address::v4::any(), port)))
 {
   matador::add_log_sink(matador::create_file_sink("log/server.log"));
   matador::add_log_sink(matador::create_stdout_sink());

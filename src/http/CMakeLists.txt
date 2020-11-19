@@ -1,10 +1,24 @@
 SET(SOURCES
   http_client.cpp
-  http_server.cpp request.cpp request_parser.cpp)
+  http_server.cpp
+  request.cpp
+  request_parser.cpp
+  http_connection.cpp
+  http.cpp
+  response.cpp
+  response_header.cpp)
 
 SET(HEADER
   ../../include/matador/http/http_client.hpp
-  ../../include/matador/http/http_server.hpp ../../include/matador/http/response_header.hpp ../../include/matador/http/response.hpp ../../include/matador/http/http.hpp ../../include/matador/http/request.hpp ../../include/matador/http/request_header.hpp ../../include/matador/http/request_parser.hpp)
+  ../../include/matador/http/http_server.hpp
+  ../../include/matador/http/response_header.hpp
+  ../../include/matador/http/response.hpp
+  ../../include/matador/http/http.hpp
+  ../../include/matador/http/request.hpp
+  ../../include/matador/http/request_header.hpp
+  ../../include/matador/http/request_parser.hpp
+  ../../include/matador/http/http_connection.hpp
+)
 
 ADD_LIBRARY(matador-http SHARED ${SOURCES} ${HEADER})
 
