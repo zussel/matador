@@ -105,7 +105,7 @@ std::string to_string(const matador::time &x, const char *format)
 std::string to_string(const matador::date &x, const char *format)
 {
   time_t now = std::time(nullptr);
-  struct tm timeinfo{0};
+  struct tm timeinfo{};
 
 #ifdef _MSC_VER
   localtime_s(&timeinfo, &now);

@@ -31,7 +31,7 @@ void server::run()
 
 void server::get(const std::string &route, server::t_request_handler handler)
 {
-  method_route_map_.at(http::GET).
+//  method_route_map_.at(http::GET).
 }
 
 void server::post(const std::string &route, server::t_request_handler handler)

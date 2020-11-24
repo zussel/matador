@@ -10,7 +10,8 @@ std::unordered_map<http::method_t, std::string> http::method_string_map_({ /* NO
   { http::method_t::PUT, "PUT" },
   { http::method_t::DELETE, "DELETE" },
   { http::method_t::OPTIONS, "OPTIONS" },
-  { http::method_t::HEAD, "HEAD" }
+  { http::method_t::HEAD, "HEAD" },
+  { http::method_t::UNKNOWN, "UNKNOWN" }
 });
 
 std::unordered_map<http::status_t, std::string> http::status_string_map_({ /* NOLINT */

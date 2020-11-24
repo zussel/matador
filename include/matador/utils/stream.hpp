@@ -390,6 +390,16 @@ public:
   C<T, Allocator> collect();
 
   /**
+   * Iterates over all stream elements and
+   * applies the given predicate to each element.
+   *
+   * @tparam Predicate Type of predicate
+   * @param pred Function to apply
+   */
+  template < typename Predicate >
+  void for_each(Predicate &&pred);
+
+  /**
    * Returns the current sentinel processor of the stream
    * This processor represents the last stream processor
    * and contains its successor to ensure a valid
@@ -613,6 +623,13 @@ C<T, Allocator> stream<T>::collect()
 }
 
 template<class T>
+template<typename Predicate>
+void stream<T>::for_each(Predicate &&pred)
+{
+  std::for_each(begin(), end(), pred);
+}
+
+template<class T>
 optional<T> stream<T>::first()
 {
   auto first = begin();
@@ -774,16 +791,23 @@ stream<T> make_stream(C<T, Allocator> &&container)
   return stream<T>(detail::make_from<T>(std::forward<C<T, Allocator>>(container)));
 }
 
-//template < class T, template < class ... > class C >
-//stream<T> make_stream(C<T> container)
-//{
+template < class T, template < class ... > class C >
+stream<T> make_stream(const C<T> &container)
+{
+  return stream<T>(detail::make_from<T>(container.begin(), container.end()));
 //  return stream<T>(detail::make_from<T>(std::begin(container), std::end(container)));
-//}
+}
 
 template < typename T >
-stream<T> make_stream(T &&from, T &&to)
+stream<T> make_streamx(T &&from, T &&to)
 {
   return stream<T>(detail::make_range<T>(std::forward<T>(from), std::forward<T>(to), 1));
+}
+
+template < class T, template < class U = T > class C >
+stream<T> make_stream(C<T> &&container)
+{
+  return stream<T>(detail::make_from<T>(std::forward<C<T>>(container)));
 }
 
 template < typename T >
