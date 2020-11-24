@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <cstring>
 
-#include <time.h>
+#include <ctime>
 
 namespace matador {
 
@@ -105,7 +105,7 @@ std::string to_string(const matador::time &x, const char *format)
 std::string to_string(const matador::date &x, const char *format)
 {
   time_t now = std::time(nullptr);
-  struct tm timeinfo;
+  struct tm timeinfo{0};
 
 #ifdef _MSC_VER
   localtime_s(&timeinfo, &now);

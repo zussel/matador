@@ -51,4 +51,10 @@ FILE *file::stream() const
 {
   return stream_;
 }
+
+bool file::is_open() const
+{
+  return stream_ != nullptr;
+}
+
 }

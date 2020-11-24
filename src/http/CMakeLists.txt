@@ -6,7 +6,7 @@ SET(SOURCES
   http_connection.cpp
   http.cpp
   response.cpp
-  response_header.cpp)
+  response_header.cpp request_header.cpp route_endpoint.cpp)
 
 SET(HEADER
   ../../include/matador/http/http_client.hpp
@@ -18,7 +18,7 @@ SET(HEADER
   ../../include/matador/http/request_header.hpp
   ../../include/matador/http/request_parser.hpp
   ../../include/matador/http/http_connection.hpp
-)
+  ../../include/matador/http/route_endpoint.hpp)
 
 ADD_LIBRARY(matador-http SHARED ${SOURCES} ${HEADER})
 

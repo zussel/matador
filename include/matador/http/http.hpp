@@ -1,6 +1,9 @@
 #ifndef MATADOR_HTTP_HPP
 #define MATADOR_HTTP_HPP
 
+#include <unordered_map>
+#include <string>
+
 namespace matador {
 namespace http {
 
@@ -16,9 +19,34 @@ public:
     OPTIONS,
     HEAD
   };
-};
 
-const char* to_string(http::method_t method);
+  static std::string to_string(method_t m);
+
+  enum status_t {
+    OK = 200,
+    CREATED = 201,
+    ACCEPTED = 202,
+    NO_CONTENT = 204,
+    MULTIPLE_CHOICES = 300,
+    MOVED_PERMANENTLY = 301,
+    MOVED_TEMPORARILY = 302,
+    NOT_MODIFIED = 304,
+    BAD_REQUEST = 400,
+    UNAUTHORIZED = 401,
+    FORBIDDEN = 403,
+    NOT_FOUND = 404,
+    INTERNAL_SERVER_ERROR = 500,
+    NOT_IMPLEMENTED = 501,
+    BAD_GATEWAY = 502,
+    SERVICE_UNAVAILABLE = 503
+  };
+
+  static std::string to_string(status_t status);
+
+private:
+  static std::unordered_map<method_t, std::string> method_string_map_;
+  static std::unordered_map<status_t, std::string> status_string_map_;
+};
 
 }
 }

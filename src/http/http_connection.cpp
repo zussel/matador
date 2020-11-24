@@ -42,7 +42,7 @@ void http_connection::read()
 
       if (result == request_parser::FINISH) {
         log_.info("finished request parsing");
-        log_.info("%s %s HTTP/%d.%d", to_string(req.method), req.url.c_str(), req.version.major, req.version.minor);
+        log_.info("%s %s HTTP/%d.%d", http::to_string(req.method).c_str(), req.url.c_str(), req.version.major, req.version.minor);
 
         response resp = execute(req);
 
@@ -74,6 +74,10 @@ response http_connection::execute(const request &)
   response resp;
 
   file f("index.html", "r");
+
+  if (!f.is_open()) {
+
+  }
 
   // obtain file size:
   fseek (f.stream() , 0 , SEEK_END);

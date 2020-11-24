@@ -1,17 +1,67 @@
 #include <type_traits>
 #include <iostream>
 
-#include "matador/http/http_server.hpp"
+#include "matador/utils/tree.hpp"
+#include "matador/utils/string.hpp"
+
+#include "matador/http/route_endpoint.hpp"
 
 using namespace matador;
 
+class route_store
+{
+public:
+  route_store() = default;
+
+  void add(const std::string& path)
+  {
+    std::vector<std::string> route_path_elements;
+    split(path, '/', route_path_elements);
+
+    if (route_path_elements.empty()) {
+      return;
+    }
+    if (route_path_elements.at(0).empty()) {
+      route_path_elements[0] = "root";
+    }
+
+    auto parent = route_tree_.begin();
+    for (const auto &elem : route_path_elements) {
+      auto rit = std::find_if(route_tree_.begin(parent), route_tree_.end(parent), [&elem](const http::route_endpoint &route) {
+        return route.endpoint_name() == elem;
+      });
+      if (rit == route_tree_.end(parent)) {
+
+      } else {
+
+      }
+    }
+  }
+
+  http::route_endpoint find(const std::string &route)
+  {
+    return http::route_endpoint();
+  }
+
+private:
+  tree<http::route_endpoint> route_tree_;
+};
+
 int main(int /*argc*/, char* /*argv*/[])
 {
-  http::server server(8081);
 
-  server.run();
+  route_store rs;
 
-  return 0;
+  rs.add("/login");
+
+//  http::route_endpoint rr(root, http::http::GET);
+//
+//  std::vector<std::string> route_path_elements;
+//
+//  split(root, '/', route_path_elements);
+//  split(login, '/', route_path_elements);
+//  split(person, '/', route_path_elements);
+
 }
 
 //  http::server serv;

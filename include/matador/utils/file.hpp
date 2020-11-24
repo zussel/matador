@@ -114,6 +114,13 @@ public:
    */
   FILE* stream() const;
 
+  /**
+   * Returns true if file is open.
+   *
+   * @return True if file is open
+   */
+  bool is_open() const;
+
 private:
   std::string path_;
   FILE *stream_ = nullptr;

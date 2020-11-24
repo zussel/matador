@@ -1023,12 +1023,12 @@ public:
 	void sort_children(tree_iterator_base<T> &i, CMP cmp);
 	/**
 	 * Sorts the complete tree with the standard compare method. But
-	 * the sorting is done for all siblings (children of a node) discretly
+	 * the sorting is done for all siblings (children of a node) discretely
 	 */
 	void sort();
 	/**
 	 * Sorts the complete tree with the given compare method. But
-	 * the sorting is done for all siblings (children of a node) discretly
+	 * the sorting is done for all siblings (children of a node) discretely
 	 * @param cmp compare operator
 	 */
 	template < typename CMP >
