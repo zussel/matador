@@ -31,10 +31,10 @@ ConnectionTestUnit::ConnectionTestUnit(const std::string &prefix, std::string dn
   , dns_(std::move(dns))
   , db_vendor_(prefix)
 {
-  add_test("open_close", std::bind(&ConnectionTestUnit::test_open_close, this), "connect sql test");
-  add_test("reopen", std::bind(&ConnectionTestUnit::test_reopen, this), "reopen sql test");
-  add_test("reconnect", std::bind(&ConnectionTestUnit::test_reconnect, this), "reconnect sql test");
-  add_test("connection_failed", std::bind(&ConnectionTestUnit::test_connection_failed, this), "connection failed test");
+  add_test("open_close", [this] { test_open_close(); }, "connect sql test");
+  add_test("reopen", [this] { test_reopen(); }, "reopen sql test");
+  add_test("reconnect", [this] { test_reconnect(); }, "reconnect sql test");
+  add_test("connection_failed", [this] { test_connection_failed(); }, "connection failed test");
 }
 
 void ConnectionTestUnit::test_open_close()

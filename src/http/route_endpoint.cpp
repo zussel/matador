@@ -11,6 +11,13 @@ route_endpoint::route_endpoint(std::string endpoint_name, std::string endpoint_p
   , method_(method)
 {}
 
+route_endpoint::route_endpoint(std::string endpoint_name, std::string endpoint_path, http::method_t method, t_request_handler request_handler)
+  : endpoint_name_(std::move(endpoint_name))
+  , endpoint_path_(std::move(endpoint_path))
+  , method_(method)
+  , request_handler_(std::move(request_handler))
+{}
+
 std::string route_endpoint::endpoint_name() const
 {
   return endpoint_name_;

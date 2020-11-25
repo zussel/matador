@@ -8,33 +8,66 @@
 
 #include "matador/http/http.hpp"
 #include "matador/http/route_endpoint.hpp"
+#include "matador/http/route_store.hpp"
 
 namespace matador {
 namespace http {
 
-class request;
-class response;
-
 class server
 {
 public:
-  typedef std::function<void(const request&, response&)> t_request_handler;
-
-  explicit server(unsigned short port);
+  server(unsigned short port, std::string context_route);
 
   void run();
 
-  void get(const std::string &route, t_request_handler handler);
-  void post(const std::string &route, t_request_handler handler);
-  void put(const std::string &route, t_request_handler handler);
-  void remove(const std::string &route, t_request_handler handler);
+  template < class RequestHandler >
+  void on_get(const std::string &route, RequestHandler request_handler)
+  {
+    if (contains_route(route, http::GET)) {
+      return;
+    }
+
+    route_store_.add(route, http::GET, request_handler);
+  }
+
+  template < class RequestHandler >
+  void on_post(const std::string &route, RequestHandler request_handler)
+  {
+    if (contains_route(route, http::POST)) {
+      return;
+    }
+
+    route_store_.add(route, http::POST, request_handler);
+  }
+
+  template < class RequestHandler >
+  void on_put(const std::string &route, RequestHandler request_handler)
+  {
+    if (contains_route(route, http::PUT)) {
+      return;
+    }
+
+    route_store_.add(route, http::PUT, request_handler);
+  }
+
+  template < class RequestHandler >
+  void on_remove(const std::string &route, RequestHandler request_handler)
+  {
+    if (contains_route(route, http::DELETE)) {
+      return;
+    }
+
+    route_store_.add(route, http::DELETE, request_handler);
+  }
+
+private:
+  bool contains_route(const std::string &route, http::method_t method);
 
 private:
   matador::io_service service_;
   std::shared_ptr<matador::acceptor> acceptor_;
 
-  typedef std::map<http::method_t, tree<route_endpoint>> t_method_route_map;
-  t_method_route_map method_route_map_;
+  route_store route_store_;
 };
 }
 
