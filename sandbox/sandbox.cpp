@@ -8,10 +8,35 @@
 #include "matador/http/request.hpp"
 #include "matador/http/response.hpp"
 #include "matador/http/route_endpoint.hpp"
-#include "matador/http/route_store.hpp"
+#include "matador/http/route_engine.hpp"
 
 using namespace matador::http;
 using namespace std::placeholders;
+
+class response_builder
+{
+public:
+
+  response_builder& ok() {
+
+    return *this;
+  }
+  response_builder& status(http::status_t stat);
+  response_builder& body(const std::string &b);
+  response_builder& content_type(const std::string &ct);
+  response_builder& accept_encoding(const std::string ae);
+  response_builder& add_header(const std::string &key, const std::string &value);
+  response build();
+
+  void reset()
+  {
+    response_ = response();
+    response_.version.major = 1;
+    response_.version.minor = 1;
+  }
+private:
+  response response_;
+};
 
 class auth_service
 {
@@ -26,6 +51,7 @@ public:
     // extract username and password from headers
     req.headers.at("Authentication");
 
+    response resp;
     return response();
   }
 
@@ -49,8 +75,10 @@ int main(int /*argc*/, char* /*argv*/[])
   server s(7091, "api");
 
   auth_service auth(s);
-  
-//  route_store rs("api");
+
+  s.run();
+
+//  route_engine rs("api");
 //
 //  rs.add("/v1/auth/login", http::http::POST);
 //  rs.add("/v1/auth/logout", http::http::POST);

@@ -22,6 +22,16 @@ size_t split(const std::string &str, char delim, std::vector<std::string> &value
   return values.size();
 }
 
+size_t split(const std::string &str, char delim, std::list<std::string> &values)
+{
+  std::stringstream ss(str);
+  std::string item;
+  while (std::getline(ss, item, delim)) {
+    values.push_back(item);
+  }
+  return values.size();
+}
+
 #ifdef _MSC_VER
 const char* date_format::ISO8601 = "%Y-%m-%d";
 const char* time_format::ISO8601 = "%Y-%m-%d %H:%M:%S";

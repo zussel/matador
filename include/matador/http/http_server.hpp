@@ -8,7 +8,7 @@
 
 #include "matador/http/http.hpp"
 #include "matador/http/route_endpoint.hpp"
-#include "matador/http/route_store.hpp"
+#include "matador/http/route_engine.hpp"
 
 namespace matador {
 namespace http {
@@ -67,7 +67,7 @@ private:
   matador::io_service service_;
   std::shared_ptr<matador::acceptor> acceptor_;
 
-  route_store route_store_;
+  route_engine route_store_;
 };
 }
 

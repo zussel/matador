@@ -14,7 +14,7 @@ class response;
 class route_endpoint
 {
 public:
-  typedef std::function<response(const request&&)> t_request_handler;
+  typedef std::function<response(const request&)> t_request_handler;
 
   route_endpoint() = default;
   route_endpoint(std::string endpoint_name, std::string endpoint_path, http::method_t method);

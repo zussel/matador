@@ -798,6 +798,12 @@ stream<T> make_stream(const C<T> &container)
 //  return stream<T>(detail::make_from<T>(std::begin(container), std::end(container)));
 }
 
+template < typename T >
+stream<T> make_stream(T &&from, T &&to)
+{
+  return stream<T>(detail::make_range<T>(std::forward<T>(from), std::forward<T>(to), 1));
+}
+
 template < class T, template < class U = T > class C >
 stream<T> make_stream(C<T> &&container)
 {

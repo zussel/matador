@@ -59,7 +59,7 @@ SET (TEST_NET_SOURCES
 
 SET (TEST_HTTP_SOURCES
   http/RequestParserTest.cpp
-  http/RequestParserTest.hpp http/RequestData.hpp)
+  http/RequestParserTest.hpp http/RequestData.hpp http/RouteEngineTest.cpp http/RouteEngineTest.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp

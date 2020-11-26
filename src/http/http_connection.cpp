@@ -1,6 +1,7 @@
 #include "matador/http/http_connection.hpp"
 #include "matador/http/request.hpp"
 #include "matador/http/response_header.hpp"
+#include "matador/http/mime_types.hpp"
 
 #include "matador/logger/log_manager.hpp"
 #include "matador/logger/logger.hpp"
@@ -90,12 +91,11 @@ response http_connection::execute(const request &)
 
   f.close();
 
-  resp.status.value = 200;
-  resp.status.message = "OK";
+  resp.status = http::OK;
 
-  resp.content_type.type = "text/html";
+  resp.content_type.type = mime_types::TEXT_HTML;
   resp.content_type.length = size;
-  resp.content_type.language = "de";
+//  resp.content_type.language = "de";
 
   resp.version.major = 1;
   resp.version.minor = 1;

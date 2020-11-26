@@ -18,16 +18,9 @@ class response
     int minor = 0;
   };
 
-  struct status_t {
-    int value = 0;
-    std::string message;
-  };
-
   struct content_t {
-    std::size_t length;
+    std::size_t length = 0;
     std::string type;
-    std::string md5;
-    std::string language;
   };
 
 public:
@@ -37,7 +30,7 @@ public:
   version_t version;
   content_t content_type;
 
-  status_t status;
+  http::status_t status = http::OK;
 
   string_map_t headers;
 

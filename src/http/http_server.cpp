@@ -8,7 +8,7 @@ namespace http {
 
 server::server(unsigned short port, std::string context_route)
   : acceptor_(std::make_shared<acceptor>(tcp::peer(address::v4::any(), port)))
-  , route_store_(std::move(context_route))
+  , route_store_()
 {
   matador::add_log_sink(matador::create_file_sink("log/server.log"));
   matador::add_log_sink(matador::create_stdout_sink());

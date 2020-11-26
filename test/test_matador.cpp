@@ -76,6 +76,7 @@
 #include "net/SocketInterrupterTest.hpp"
 
 #include "http/RequestParserTest.hpp"
+#include "http/RouteEngineTest.hpp"
 
 #include "connections.hpp"
 
@@ -143,6 +144,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new SocketInterrupterTest);
 
   suite.register_unit(new RequestParserTest);
+  suite.register_unit(new RouteEngineTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
