@@ -23,7 +23,7 @@ void RouteEngineTest::test_routes()
   // path param type
   re.add("/api/find/{type}/all", http::http::GET, [](const http::request &req) { return http::response(); });
   // path param type and id only numbers
-  re.add("/api/find/{type}/{id \\+}", http::http::GET, [](const http::request &req) { return http::response(); });
+  re.add("/api/find/{type}/{id: \\d+}", http::http::GET, [](const http::request &req) { return http::response(); });
 
 //  re.dump(std::cout);
 
@@ -34,7 +34,7 @@ void RouteEngineTest::test_routes()
 
   UNIT_ASSERT_TRUE(http::is_path_param("{type}"));
   UNIT_ASSERT_TRUE(http::is_path_param("{id: \\d+}"));
-  UNIT_ASSERT_FALSE(http::is_path_param("user"));
+  UNIT_ASSERT_TRUE(http::is_path_param("user"));
   // /api/user/a1
   // /api/role/1234
   // /api/find/post/all

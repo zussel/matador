@@ -1,6 +1,7 @@
 #include "matador/http/route_endpoint.hpp"
 
 #include <utility>
+#include <regex>
 
 namespace matador {
 namespace http {
@@ -9,7 +10,22 @@ route_endpoint::route_endpoint(std::string endpoint_name, std::string endpoint_p
   : endpoint_name_(std::move(endpoint_name))
   , endpoint_path_(std::move(endpoint_path))
   , method_(method)
-{}
+{
+  if (endpoint_name_.empty()) {
+    return;
+  }
+  std::regex re(R"(\{(\w+)(:\s*(.*))?\}|([a-zA-Z0-9-_]+))");
+
+  std::smatch what;
+
+  if (!std::regex_match(endpoint_name_, what, re)) {
+    throw std::logic_error("invalid route path segment: " + endpoint_name_);
+  }
+
+  // group 1 -> path param
+  // group 1 + 2 -> path param restricted with regex
+  // group 4 -> plain path element
+}
 
 route_endpoint::route_endpoint(std::string endpoint_name, std::string endpoint_path, http::method_t method, t_request_handler request_handler)
   : endpoint_name_(std::move(endpoint_name))

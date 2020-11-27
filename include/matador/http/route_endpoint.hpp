@@ -20,10 +20,6 @@ public:
   route_endpoint(std::string endpoint_name, std::string endpoint_path, http::method_t method);
   route_endpoint(std::string endpoint_name, std::string endpoint_path, http::method_t method, t_request_handler request_handler);
 
-//  route_endpoint(const route_endpoint &x) = default;
-//  route_endpoint(route_endpoint &&x) = default;
-//  route_endpoint& operator=(const route_endpoint &x) = default;
-//  route_endpoint& operator=(route_endpoint &&x) = default;
   ~route_endpoint() = default;
 
   std::string endpoint_name() const;
@@ -48,10 +44,15 @@ public:
   friend bool operator>=(const route_endpoint &a, const route_endpoint &b);
 
 private:
+  enum t_route_type {
+    PLAIN, PLACEHOLDER, REGEX_PLACEHOLDER
+  };
+
   std::string endpoint_name_;
   std::string endpoint_path_;
   http::method_t method_ = http::UNKNOWN;
   t_request_handler request_handler_;
+  t_route_type route_type_ = PLAIN;
 };
 
 

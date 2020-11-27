@@ -142,6 +142,33 @@ bool is_path_param(const std::string &elem)
   if (!std::regex_match(elem, what, re)) {
     return false;
   } else {
+    // group 1 -> path param
+    // group 1 + 2 -> path param restricted with regex
+    // group 4 -> plain path element
+    if (what[4].matched) {
+      std::cout << "got plain path element (" << elem << ")\n";
+    } else if (what[3].matched) {
+      std::cout << "got path param restricted with regex (" << elem << ")\n";
+      std::regex pre(what[3].str());
+
+      std::smatch m;
+      std::string val1("123");
+      std::string val2("a1");
+      auto matched = std::regex_match(val1, m, pre);
+
+      std::cout << "val1: " << val1 << " matched? " << std::boolalpha << matched << "\n";
+
+      matched = std::regex_match(val2, m, pre);
+
+      std::cout << "val2: " << val2 << " matched? " << std::boolalpha << matched << "\n";
+
+    } else if (what[1].matched) {
+      std::cout << "got path param (" << elem << ")\n";
+    } else {
+      std::cout << "got invalid path element (" << elem << ")\n";
+    }
+
+    std::cout << "size: " << what.size() << "\n";
     return true;
   }
 }
