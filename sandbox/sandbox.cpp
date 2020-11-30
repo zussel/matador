@@ -7,8 +7,8 @@
 #include "matador/http/http_server.hpp"
 #include "matador/http/request.hpp"
 #include "matador/http/response.hpp"
-#include "matador/http/route_endpoint.hpp"
-#include "matador/http/route_engine.hpp"
+#include "matador/http/route_path.hpp"
+#include "matador/http/routing_engine.hpp"
 
 using namespace matador::http;
 using namespace std::placeholders;
@@ -78,7 +78,7 @@ int main(int /*argc*/, char* /*argv*/[])
 
   s.run();
 
-//  route_engine rs("api");
+//  routing_engine rs("api");
 //
 //  rs.add("/v1/auth/login", http::http::POST);
 //  rs.add("/v1/auth/logout", http::http::POST);

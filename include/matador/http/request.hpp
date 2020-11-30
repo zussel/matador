@@ -31,6 +31,8 @@ public:
 public:
   void execute(response &resp);
 
+  void add_path_param(const std::string &name, const std::string &param);
+
 //  method_t method() const;
 //  std::string url() const;
 //  version_t version() const;
@@ -50,6 +52,9 @@ public:
   string_map_t headers;
 
   std::string body;
+
+  typedef std::unordered_map<std::string, std::string> t_string_string_map;
+  t_string_string_map path_param_map_;
 };
 
 }

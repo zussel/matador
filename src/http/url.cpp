@@ -1,5 +1,7 @@
 #include "matador/http/url.hpp"
 
+#include "matador/utils/stream.hpp"
+
 namespace matador {
 namespace http {
 
@@ -37,12 +39,41 @@ std::unordered_map<char, const char *> url::char_to_enc_map_({ /* NOLINT */
 
 std::string url::encode(const std::string &str)
 {
-  return std::string();
+  std::string result;
+  // replace special characters with html characters
+  for (char i : str) {
+    auto c = char_to_enc_map_.find(i);
+    if (c == char_to_enc_map_.end()) {
+      result += i;
+    } else {
+      result.append(c->second);
+    }
+  }
+  return result;
 }
 
 std::string url::decode(const std::string &str)
 {
-  return std::string();
+  std::string result;
+  // replace html
+  for (size_t i = 0; i < str.size(); ++i) {
+    if (str[i] != '%') {
+      result += str[i];
+    } else if (str[i] == '+') {
+      result += ' ';
+    } else {
+      if (i + 2 >= str.size()) {
+        throw std::logic_error("invalid html string: " + str);
+      }
+      // get hex string
+      auto hexstr = str.substr(i + 1, 2);
+      char *err;
+      char c = static_cast<char>(std::strtol(hexstr.c_str(), &err, 16));
+      result += c;
+      i += 2;
+    }
+  }
+  return result;
 }
 }
 }

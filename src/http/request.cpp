@@ -12,5 +12,10 @@ void request::execute(response &) {
   //
 }
 
+void request::add_path_param(const std::string &name, const std::string &param)
+{
+  path_param_map_.insert(std::make_pair(name, param));
+}
+
 }
 }
