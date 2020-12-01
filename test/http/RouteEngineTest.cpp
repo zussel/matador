@@ -28,66 +28,70 @@ void RouteEngineTest::test_routes()
 
 //  re.dump(std::cout);
 
-  http::request req;
-
+  http::route_path::t_path_param_map path_params;
   // valid routes
   // /api/user
-  auto rep = re.find("/api/user", http::http::GET, req);
-  UNIT_ASSERT_EQUAL("user", rep->endpoint_name());
-  UNIT_ASSERT_TRUE(req.path_param_map_.empty());
+  auto rep = re.find("/api/user", http::http::GET, path_params);
+  UNIT_ASSERT_TRUE(re.valid(rep));
+  UNIT_ASSERT_EQUAL("user", (*rep)->endpoint_name());
+  UNIT_ASSERT_TRUE(path_params.empty());
 
   // /api/user/a1
-  rep = re.find("/api/user/a1", http::http::GET, req);
-  UNIT_ASSERT_EQUAL("{id}", rep->endpoint_name());
-  UNIT_ASSERT_FALSE(req.path_param_map_.empty());
-  UNIT_ASSERT_EQUAL(1UL, req.path_param_map_.size());
-  UNIT_ASSERT_TRUE(req.path_param_map_.find("id") != req.path_param_map_.end());
-  UNIT_ASSERT_EQUAL("a1", req.path_param_map_["id"]);
+  rep = re.find("/api/user/a1", http::http::GET, path_params);
+  UNIT_ASSERT_TRUE(re.valid(rep));
+  UNIT_ASSERT_EQUAL("{id}", (*rep)->endpoint_name());
+  UNIT_ASSERT_FALSE(path_params.empty());
+  UNIT_ASSERT_EQUAL(1UL, path_params.size());
+  UNIT_ASSERT_TRUE(path_params.find("id") != path_params.end());
+  UNIT_ASSERT_EQUAL("a1", path_params["id"]);
 
   // /api/role/1234
-  rep = re.find("/api/role/1234", http::http::GET, req);
-  UNIT_ASSERT_EQUAL("{id: \\d+}", rep->endpoint_name());
-  UNIT_ASSERT_FALSE(req.path_param_map_.empty());
-  UNIT_ASSERT_EQUAL(1UL, req.path_param_map_.size());
-  UNIT_ASSERT_TRUE(req.path_param_map_.find("id") != req.path_param_map_.end());
-  UNIT_ASSERT_EQUAL("1234", req.path_param_map_["id"]);
+  rep = re.find("/api/role/1234", http::http::GET, path_params);
+  UNIT_ASSERT_TRUE(re.valid(rep));
+  UNIT_ASSERT_EQUAL("{id: \\d+}", (*rep)->endpoint_name());
+  UNIT_ASSERT_FALSE(path_params.empty());
+  UNIT_ASSERT_EQUAL(1UL, path_params.size());
+  UNIT_ASSERT_TRUE(path_params.find("id") != path_params.end());
+  UNIT_ASSERT_EQUAL("1234", path_params["id"]);
 
   // /api/find/post/all
-  rep = re.find("/api/find/post/all", http::http::GET, req);
-  UNIT_ASSERT_EQUAL("all", rep->endpoint_name());
-  UNIT_ASSERT_FALSE(req.path_param_map_.empty());
-  UNIT_ASSERT_EQUAL(1UL, req.path_param_map_.size());
-  UNIT_ASSERT_TRUE(req.path_param_map_.find("type") != req.path_param_map_.end());
-  UNIT_ASSERT_EQUAL("post", req.path_param_map_["type"]);
+  rep = re.find("/api/find/post/all", http::http::GET, path_params);
+  UNIT_ASSERT_TRUE(re.valid(rep));
+  UNIT_ASSERT_EQUAL("all", (*rep)->endpoint_name());
+  UNIT_ASSERT_FALSE(path_params.empty());
+  UNIT_ASSERT_EQUAL(1UL, path_params.size());
+  UNIT_ASSERT_TRUE(path_params.find("type") != path_params.end());
+  UNIT_ASSERT_EQUAL("post", path_params["type"]);
 
   // /api/find/post/17
-  rep = re.find("/api/find/post/17", http::http::GET, req);
-  UNIT_ASSERT_EQUAL("{id: \\d+}", rep->endpoint_name());
-  UNIT_ASSERT_FALSE(req.path_param_map_.empty());
-  UNIT_ASSERT_EQUAL(2UL, req.path_param_map_.size());
-  UNIT_ASSERT_TRUE(req.path_param_map_.find("type") != req.path_param_map_.end());
-  UNIT_ASSERT_EQUAL("post", req.path_param_map_["type"]);
-  UNIT_ASSERT_TRUE(req.path_param_map_.find("id") != req.path_param_map_.end());
-  UNIT_ASSERT_EQUAL("17", req.path_param_map_["id"]);
+  rep = re.find("/api/find/post/17", http::http::GET, path_params);
+  UNIT_ASSERT_TRUE(re.valid(rep));
+  UNIT_ASSERT_EQUAL("{id: \\d+}", (*rep)->endpoint_name());
+  UNIT_ASSERT_FALSE(path_params.empty());
+  UNIT_ASSERT_EQUAL(2UL, path_params.size());
+  UNIT_ASSERT_TRUE(path_params.find("type") != path_params.end());
+  UNIT_ASSERT_EQUAL("post", path_params["type"]);
+  UNIT_ASSERT_TRUE(path_params.find("id") != path_params.end());
+  UNIT_ASSERT_EQUAL("17", path_params["id"]);
 
   // invalid routes
   // /api/users
-  rep = re.find("/api/users", http::http::GET, req);
-  UNIT_ASSERT_EQUAL(http::http::UNKNOWN, rep->method());
+  rep = re.find("/api/users", http::http::GET, path_params);
+  UNIT_ASSERT_FALSE(re.valid(rep));
 
   // /api/user/a1/team
-  rep = re.find("/api/user/a1/team", http::http::GET, req);
-  UNIT_ASSERT_EQUAL(http::http::UNKNOWN, rep->method());
+  rep = re.find("/api/user/a1/team", http::http::GET, path_params);
+  UNIT_ASSERT_FALSE(re.valid(rep));
 
   // /api/role/a1234
-  rep = re.find("/api/role/a1234", http::http::GET, req);
-  UNIT_ASSERT_EQUAL(http::http::UNKNOWN, rep->method());
+  rep = re.find("/api/role/a1234", http::http::GET, path_params);
+  UNIT_ASSERT_FALSE(re.valid(rep));
 
   // /api/find/post/first
-  rep = re.find("/api/find/post/first", http::http::GET, req);
-  UNIT_ASSERT_EQUAL(http::http::UNKNOWN, rep->method());
+  rep = re.find("/api/find/post/first", http::http::GET, path_params);
+  UNIT_ASSERT_FALSE(re.valid(rep));
 
   // /api/find/post/a17
-  rep = re.find("/api/find/post/a17", http::http::GET, req);
-  UNIT_ASSERT_EQUAL(http::http::UNKNOWN, rep->method());
+  rep = re.find("/api/find/post/a17", http::http::GET, path_params);
+  UNIT_ASSERT_FALSE(re.valid(rep));
 }

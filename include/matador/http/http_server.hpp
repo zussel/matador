@@ -23,45 +23,45 @@ public:
   template < class RequestHandler >
   void on_get(const std::string &route, RequestHandler request_handler)
   {
-    if (contains_route(route, http::GET)) {
-      return;
-    }
-
+//    if (contains_route(route, http::GET)) {
+//      return;
+//    }
+//
     route_store_.add(route, http::GET, request_handler);
   }
 
   template < class RequestHandler >
   void on_post(const std::string &route, RequestHandler request_handler)
   {
-    if (contains_route(route, http::POST)) {
-      return;
-    }
-
+//    if (contains_route(route, http::POST)) {
+//      return;
+//    }
+//
     route_store_.add(route, http::POST, request_handler);
   }
 
   template < class RequestHandler >
   void on_put(const std::string &route, RequestHandler request_handler)
   {
-    if (contains_route(route, http::PUT)) {
-      return;
-    }
-
+//    if (contains_route(route, http::PUT)) {
+//      return;
+//    }
+//
     route_store_.add(route, http::PUT, request_handler);
   }
 
   template < class RequestHandler >
   void on_remove(const std::string &route, RequestHandler request_handler)
   {
-    if (contains_route(route, http::DELETE)) {
-      return;
-    }
-
+//    if (contains_route(route, http::DELETE)) {
+//      return;
+//    }
+//
     route_store_.add(route, http::DELETE, request_handler);
   }
 
 private:
-  bool contains_route(const std::string &route, http::method_t method);
+//  bool contains_route(const std::string &route, http::method_t method);
 
 private:
   matador::io_service service_;

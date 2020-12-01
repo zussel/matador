@@ -59,20 +59,10 @@ void routing_engine::add(const std::string &path, http::http::method_t method, c
   *parent = make_route_path((*parent)->endpoint_name(), method, path, request_handler);
 }
 
-routing_engine::route_path_ptr routing_engine::find(const std::string &path, http::http::method_t method, request &req)
+routing_engine::iterator routing_engine::find(const std::string &path, http::http::method_t method, route_path::t_path_param_map &path_params)
 {
-  req.path_param_map_.clear();
-  auto i = find_internal(path, method, req);
-  if (i == route_tree_.end()) {
-    return std::make_shared<route_path>("", path, http::http::UNKNOWN);
-  }
-  return *i;
-}
-
-bool routing_engine::contains(const std::string &path, http::http::method_t method)
-{
-  request req;
-  return find_internal(path, method, req) == route_tree_.end();
+  path_params.clear();
+  return find_internal(path, method, path_params);
 }
 
 void routing_engine::dump(std::ostream &out)
@@ -88,7 +78,16 @@ void routing_engine::dump(std::ostream &out)
 //  });
 }
 
-routing_engine::t_route_tree::iterator routing_engine::find_internal(const std::string &path, http::http::method_t method, request &req)
+bool routing_engine::valid(const routing_engine::iterator& it) const
+{
+  return it != route_tree_.end();
+}
+
+routing_engine::iterator routing_engine::find_internal(
+  const std::string &path,
+  http::http::method_t method,
+  route_path::t_path_param_map &path_params
+)
 {
   // split path into segments
   std::list<std::string> route_path_elements;
@@ -107,8 +106,8 @@ routing_engine::t_route_tree::iterator routing_engine::find_internal(const std::
       first = false;
     } else {
       auto rit = std::find_if(route_tree_.begin(parent), route_tree_.end(parent),
-                              [&elem, &req](const route_path_ptr &route) {
-                                return route->match(elem, req);
+                              [&elem, &path_params](const route_path_ptr &route) {
+                                return route->match(elem, path_params);
                               });
       if (rit == route_tree_.end(parent)) {
         // unknown element, create new

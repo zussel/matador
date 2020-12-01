@@ -35,7 +35,7 @@ route_path::route_path(std::string endpoint_name, std::string endpoint_path, htt
   , request_handler_(std::move(request_handler))
 {}
 
-bool route_path::match(const std::string &path, request &)
+bool route_path::match(const std::string &path, t_path_param_map &)
 {
   return endpoint_name() == path;
 }
@@ -102,9 +102,9 @@ path_param_route_path::path_param_route_path(std::string param_name, std::string
   , param_name_(std::move(param_name))
 {}
 
-bool path_param_route_path::match(const std::string &path, request &req)
+bool path_param_route_path::match(const std::string &path, t_path_param_map &path_params)
 {
-  req.add_path_param(param_name_, path);
+  path_params.insert(std::make_pair(param_name_, path));
   return true;
 }
 
@@ -118,14 +118,15 @@ regex_path_param_route_path::regex_path_param_route_path(const std::string& reg,
 
 }
 
-bool regex_path_param_route_path::match(const std::string &path, request &req)
+bool regex_path_param_route_path::match(const std::string &path, t_path_param_map &path_params)
 {
   std::smatch m;
 
   if (!std::regex_match(path, m, param_regex_)) {
     return false;
   }
-  req.add_path_param(param_name_, m[1].str());
+  path_params.insert(std::make_pair(param_name_, m[1].str()));
+
   return true;
 }
 

@@ -16,6 +16,8 @@ class route_path
 {
 public:
   typedef std::function<response(const request&)> t_request_handler;
+  typedef std::unordered_map<std::string, std::string> t_path_param_map;
+
 
   route_path() = default;
   route_path(std::string endpoint_name, std::string endpoint_path, http::method_t method);
@@ -23,7 +25,7 @@ public:
 
   virtual ~route_path() = default;
 
-  virtual bool match(const std::string &path, request &req);
+  virtual bool match(const std::string &path, t_path_param_map &path_params);
 
   std::string endpoint_name() const;
 
@@ -64,7 +66,7 @@ public:
     t_request_handler request_handler
   );
 
-  bool match(const std::string &path, request &req) override;
+  bool match(const std::string &path, t_path_param_map &path_params) override;
 
 protected:
   std::string param_name_;
@@ -82,7 +84,7 @@ public:
     t_request_handler request_handler
   );
 
-  bool match(const std::string &path, request &req) override;
+  bool match(const std::string &path, t_path_param_map &path_params) override;
 
 private:
   std::regex param_regex_;

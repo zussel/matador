@@ -25,10 +25,10 @@ void server::run()
   service_.run();
 }
 
-bool server::contains_route(const std::string &route, http::method_t method)
-{
-  return route_store_.contains(route, method);
-}
+//bool server::contains_route(const std::string &route, http::method_t method)
+//{
+//  return route_store_.contains(route, method);
+//}
 
 }
 }

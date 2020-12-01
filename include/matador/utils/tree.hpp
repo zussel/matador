@@ -27,6 +27,8 @@ bool operator<(const t_tree_node<T> &a, const t_tree_node<T> &b) {
 
 template < class T > class tree;
 template < class T > class tree_iterator;
+template < class T >
+class const_tree_iterator_base;
 
 /// @endcond
 
@@ -89,6 +91,8 @@ public:
 		return (node == i.node);
 	}
 
+	bool operator==(const const_tree_iterator_base<T> &i) const;
+
 	/**
 	 * Not equal compares another iterator with this
 	 *
@@ -100,7 +104,9 @@ public:
 		return (node != i.node);
 	}
 
-	/**
+  bool operator!=(const const_tree_iterator_base<T> &i) const;
+
+  /**
 	 * Returns a reference nodes data
 	 *
 	 * @return Reference to nodes data
@@ -168,6 +174,7 @@ public:
 protected:
   friend class tree<T>;
   friend class tree_iterator<T>;
+  friend class const_tree_iterator_base<T>;
 
 /// @cond MATADOR_DEV
 	virtual void decrement() {}
@@ -229,6 +236,11 @@ public:
     return (node == i.node);
   }
 
+  bool operator==(const tree_iterator_base<T> &i) const
+  {
+    return (node == i.node);
+  }
+
   /**
    * Not equal compares another iterator with this
    *
@@ -236,6 +248,11 @@ public:
    * @return True if the iterators are not the same
    */
   bool operator!=(const self &i) const
+  {
+    return (node != i.node);
+  }
+
+  bool operator!=(const tree_iterator_base<T> &i) const
   {
     return (node != i.node);
   }
@@ -308,6 +325,7 @@ public:
 protected:
   friend class tree<T>;
   friend class tree_iterator<T>;
+  friend class tree_iterator_base<T>;
 
 /// @cond MATADOR_DEV
 	virtual void decrement() {}
@@ -316,6 +334,18 @@ protected:
 	t_node *node = nullptr;
 /// @endcond
 };
+
+template < class T >
+bool tree_iterator_base<T>::operator==(const const_tree_iterator_base<T> &i) const
+{
+  return (node == i.node);
+}
+
+template < class T >
+bool tree_iterator_base<T>::operator!=(const const_tree_iterator_base<T> &i) const
+{
+  return (node != i.node);
+}
 
 /**
  * Default tree iterator iterates

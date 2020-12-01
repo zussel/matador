@@ -69,8 +69,20 @@ private:
 };
 
 
+class application
+{
+public:
+  explicit application(unsigned short port);
+};
+
+
 int main(int /*argc*/, char* /*argv*/[])
 {
+  // creates a web application at port 7091
+  application app(7091);
+
+  app.
+
 
   server s(7091, "api");
 

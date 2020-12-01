@@ -24,7 +24,7 @@ SET (TEST_TOOLS_SOURCES
   utils/TreeTest.cpp
   utils/TreeTest.hpp
   utils/StreamsTest.cpp
-  utils/StreamsTest.hpp utils/OptionalTest.cpp utils/OptionalTest.hpp)
+  utils/StreamsTest.hpp utils/OptionalTest.cpp utils/OptionalTest.hpp utils/ThreadPoolTest.cpp utils/ThreadPoolTest.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp

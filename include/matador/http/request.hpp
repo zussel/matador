@@ -14,8 +14,7 @@ class response;
 class request
 {
 public:
-
-  typedef std::unordered_map<std::string, std::string> string_map_t;
+  typedef std::unordered_map<std::string, std::string> t_string_string_map;
 
   struct version_t {
     int major = 0;
@@ -30,8 +29,6 @@ public:
 
 public:
   void execute(response &resp);
-
-  void add_path_param(const std::string &name, const std::string &param);
 
 //  method_t method() const;
 //  std::string url() const;
@@ -49,12 +46,9 @@ public:
 
   content_t content;
 
-  string_map_t headers;
+  t_string_string_map headers;
 
   std::string body;
-
-  typedef std::unordered_map<std::string, std::string> t_string_string_map;
-  t_string_string_map path_param_map_;
 };
 
 }

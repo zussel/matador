@@ -11,7 +11,7 @@ namespace http {
 
 class response
 {
-  typedef std::unordered_map<std::string, std::string> string_map_t;
+  typedef std::unordered_map<std::string, std::string> t_string_string_map;
 
   struct version_t {
     int major = 0;
@@ -32,7 +32,7 @@ public:
 
   http::status_t status = http::OK;
 
-  string_map_t headers;
+  t_string_string_map headers;
 
   std::string body;
 };
