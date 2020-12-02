@@ -48,7 +48,7 @@ void routing_engine::add(const std::string &path, http::http::method_t method, c
                               });
       if (rit == route_tree_.end(parent)) {
         // unknown element, create new
-        parent = route_tree_.push_back_child(parent, make_route_path(elem, method, path, [](const request&) { return response(); }));
+        parent = route_tree_.push_back_child(parent, make_route_path(elem, method, path, [](const request&, const route_path::t_path_param_map&) { return response(); }));
       } else {
         // element exists already
         parent = rit;

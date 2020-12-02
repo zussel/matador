@@ -15,8 +15,8 @@ class response;
 class route_path
 {
 public:
-  typedef std::function<response(const request&)> t_request_handler;
   typedef std::unordered_map<std::string, std::string> t_path_param_map;
+  typedef std::function<response(const request&, const t_path_param_map &path_params)> t_request_handler;
 
 
   route_path() = default;
