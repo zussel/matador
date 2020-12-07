@@ -63,7 +63,7 @@ SET(HEADER
   ../../include/matador/utils/stream_processor.hpp
   ../../include/matador/utils/stream_processor.tpp
   ../../include/matador/utils/stream.hpp
-  ../../include/matador/utils/optional.hpp ../../include/matador/utils/thread_pool.hpp)
+  ../../include/matador/utils/optional.hpp ../../include/matador/utils/thread_pool.hpp ../../include/matador/utils/json_serializer.hpp)
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
 
