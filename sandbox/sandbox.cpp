@@ -42,12 +42,13 @@ class auth_service
 {
 public:
   explicit auth_service(server &s) : server_(s) {
-    s.on_post("/v1/auth/login", [this](const request &req) { return login(req); });
-    s.on_post("/v1/auth/logout", [this](const request &req) { return login(req); });
+    s.on_post("/v1/auth/login", [this](const request &req, const route_path::t_path_param_map &path_params) { return login(req, path_params); });
+    s.on_post("/v1/auth/logout", [this](const request &req, const route_path::t_path_param_map &path_params) { return login(req, path_params); });
   }
 
-  response login(const request &req)
+  response login(const request &req, const route_path::t_path_param_map &path_params)
   {
+    //auto credentials = json_to_object<credential>(req.body);
     // extract username and password from headers
     req.headers.at("Authentication");
 
@@ -55,7 +56,7 @@ public:
     return response();
   }
 
-  response logout(const request &request)
+  response logout(const request &request, const route_path::t_path_param_map &path_params)
   {
     return response();
   }
@@ -79,9 +80,9 @@ public:
 int main(int /*argc*/, char* /*argv*/[])
 {
   // creates a web application at port 7091
-  application app(7091);
+  //application app(7091);
 
-  app.
+//  app.
 
 
   server s(7091, "api");
