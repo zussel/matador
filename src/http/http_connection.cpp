@@ -4,7 +4,6 @@
 #include "matador/http/mime_types.hpp"
 
 #include "matador/logger/log_manager.hpp"
-#include "matador/logger/logger.hpp"
 
 #include "matador/net/io_stream.hpp"
 
@@ -14,13 +13,12 @@
 namespace matador {
 namespace http {
 
-http_connection::http_connection(io_stream &stream, matador::tcp::peer endpoint)
+http_connection::http_connection(routing_engine &router, io_stream &stream, matador::tcp::peer endpoint)
   : log_(matador::create_logger("HttpConnection"))
   , stream_(stream)
   , endpoint_(std::move(endpoint))
-{
-
-}
+  , router_(router)
+{}
 
 void http_connection::start()
 {
@@ -70,9 +68,15 @@ void http_connection::write()
   });
 }
 
-response http_connection::execute(const request &)
+response http_connection::execute(const request &req)
 {
   response resp;
+
+  route_path::t_path_param_map path_params;
+
+  auto r = router_.find(req.url, req.method, path_params);
+
+  router_.valid(r);
 
   file f("index.html", "r");
 

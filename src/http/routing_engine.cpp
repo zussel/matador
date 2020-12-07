@@ -89,6 +89,10 @@ routing_engine::iterator routing_engine::find_internal(
   route_path::t_path_param_map &path_params
 )
 {
+  if (route_tree_.empty()) {
+    return route_tree_.end();
+  }
+
   // split path into segments
   std::list<std::string> route_path_elements;
   if (!prepare_route_path_elements(path, route_path_elements)) {

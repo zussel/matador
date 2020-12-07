@@ -18,5 +18,6 @@ TARGET_LINK_LIBRARIES(http_server
   matador-http
   matador-net
   ${CMAKE_DL_LIBS}
+  ${CMAKE_THREAD_LIBS_INIT}
   ${NET_LIBRARIES}
 )

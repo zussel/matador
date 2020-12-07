@@ -24,7 +24,11 @@ SET (TEST_TOOLS_SOURCES
   utils/TreeTest.cpp
   utils/TreeTest.hpp
   utils/StreamsTest.cpp
-  utils/StreamsTest.hpp utils/OptionalTest.cpp utils/OptionalTest.hpp utils/ThreadPoolTest.cpp utils/ThreadPoolTest.hpp)
+  utils/StreamsTest.hpp
+  utils/OptionalTest.cpp
+  utils/OptionalTest.hpp
+  utils/ThreadPoolTest.cpp
+  utils/ThreadPoolTest.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
@@ -59,7 +63,12 @@ SET (TEST_NET_SOURCES
 
 SET (TEST_HTTP_SOURCES
   http/RequestParserTest.cpp
-  http/RequestParserTest.hpp http/RequestData.hpp http/RouteEngineTest.cpp http/RouteEngineTest.hpp http/UrlTest.cpp http/UrlTest.hpp)
+  http/RequestParserTest.hpp
+  http/RequestData.hpp
+  http/RouteEngineTest.cpp
+  http/RouteEngineTest.hpp
+  http/UrlTest.cpp
+  http/UrlTest.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp

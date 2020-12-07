@@ -9,6 +9,7 @@
 
 #include "matador/http/request_parser.hpp"
 #include "matador/http/response.hpp"
+#include "matador/http/routing_engine.hpp"
 
 #include <memory>
 
@@ -21,7 +22,7 @@ namespace http {
 class http_connection : public std::enable_shared_from_this<http_connection>
 {
 public:
-  http_connection(matador::io_stream &stream, matador::tcp::peer endpoint);
+  http_connection(routing_engine &router, matador::io_stream &stream, matador::tcp::peer endpoint);
 
   void start();
   void read();
@@ -37,6 +38,8 @@ private:
   matador::tcp::peer endpoint_;
 
   matador::http::request_parser parser_;
+
+  matador::http::routing_engine &router_;
 };
 
 }
