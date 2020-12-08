@@ -11,8 +11,8 @@ using namespace matador;
 JsonTestUnit::JsonTestUnit()
   : unit_test("json", "json test")
 {
-  add_test("simple", std::bind(&JsonTestUnit::test_simple, this), "test simple json");
-  add_test("parser", std::bind(&JsonTestUnit::test_parser, this), "test json parser");
+  add_test("simple", [this] { test_simple(); }, "test simple json");
+  add_test("parser", [this] { test_parser(); }, "test json parser");
 }
 
 void JsonTestUnit::test_simple()

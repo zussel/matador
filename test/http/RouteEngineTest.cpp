@@ -12,19 +12,24 @@ RouteEngineTest::RouteEngineTest()
   add_test("routes", [this] { test_routes(); }, "test route engine");
 }
 
+http::response dummy(const http::request &, const http::route_path::t_path_param_map &)
+{
+  return http::response();
+}
+
 void RouteEngineTest::test_routes()
 {
   http::routing_engine re;
 
-  re.add("/api/user", http::http::GET, [](const http::request &) { return http::response(); });
+  re.add("/api/user", http::http::GET, dummy);
   // sentinel path param id
-  re.add("/api/user/{id}", http::http::GET, [](const http::request &) { return http::response(); });
+  re.add("/api/user/{id}", http::http::GET, dummy);
   // sentinel path param id only numbers
-  re.add("/api/role/{id: \\d+}", http::http::GET, [](const http::request &) { return http::response(); });
+  re.add("/api/role/{id: \\d+}", http::http::GET, dummy);
   // path param type
-  re.add("/api/find/{type}/all", http::http::GET, [](const http::request &) { return http::response(); });
+  re.add("/api/find/{type}/all", http::http::GET, dummy);
   // path param type and id only numbers
-  re.add("/api/find/{type}/{id: \\d+}", http::http::GET, [](const http::request &) { return http::response(); });
+  re.add("/api/find/{type}/{id: \\d+}", http::http::GET, [](const http::request &, const http::route_path::t_path_param_map &) { return http::response(); });
 
 //  re.dump(std::cout);
 

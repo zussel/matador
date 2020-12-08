@@ -1,19 +1,11 @@
-//
-// Created by sascha on 27.02.20.
-//
-
 #include "JsonMapperTestUnit.hpp"
 
-#include "matador/utils/varchar.hpp"
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/date.hpp"
-#include "matador/utils/time.hpp"
 
 #include "matador/utils/json_mapper.hpp"
-#include "../person.hpp"
 
-#include <set>
-#include <unordered_set>
+#include "../person.hpp"
+#include "../dto.hpp"
 
 using namespace matador;
 
@@ -30,54 +22,6 @@ JsonMapperTestUnit::JsonMapperTestUnit()
   add_test("false_types", [this] { test_false_types(); }, "test mapping with false types");
   add_test("special_chars", [this] { test_special_chars(); }, "test mapping special characters");
 }
-
-struct bounding_box
-{
-  long length = 0;
-  long width = 0;
-  long height = 0;
-
-  template < class S >
-  void serialize(S &s)
-  {
-    s.serialize("length", length);
-    s.serialize("width", width);
-    s.serialize("height", height);
-  }
-};
-
-struct dto
-{
-  identifier<varchar<255>> id;
-  std::string name;
-  date birthday;
-  matador::time created;
-  bool flag = false;
-  long height = 0;
-  std::vector<double> doubles;
-  std::list<bool> bits;
-  std::set<std::string> names;
-  std::unordered_set<int> values;
-  bounding_box dimension;
-  std::vector<bounding_box> dimensions;
-
-  template < class S >
-  void serialize(S &s)
-  {
-    s.serialize("id", id);
-    s.serialize("name", name);
-    s.serialize("birthday", birthday);
-    s.serialize("created", created);
-    s.serialize("flag", flag);
-    s.serialize("height", height);
-    s.serialize("doubles", doubles);
-    s.serialize("bits", bits);
-    s.serialize("names", names);
-    s.serialize("values", values);
-    s.serialize("dimension", dimension);
-    s.serialize("dimensions", dimensions);
-  }
-};
 
 void JsonMapperTestUnit::test_fields()
 {

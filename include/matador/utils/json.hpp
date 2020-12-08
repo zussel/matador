@@ -33,9 +33,10 @@ namespace matador {
  * @param range The range with the elemets to join
  * @param out The stream to write on
  * @param delim The delimiter for the elements
+ * @return The ostream reference
  */
 template < class R >
-void join(R &range, std::ostream &out, const std::string &delim)
+std::ostream& join(R &range, std::ostream &out, const std::string &delim)
 {
   if (range.size() < 2) {
     for (auto &i : range) {
@@ -48,6 +49,7 @@ void join(R &range, std::ostream &out, const std::string &delim)
       out << delim << *it;
     }
   }
+  return out;
 }
 
 /**
@@ -63,9 +65,10 @@ void join(R &range, std::ostream &out, const std::string &delim)
  * @param range The range with the elemets to join
  * @param out The stream to write on
  * @param delim The delimiter for the elements
+ * @return The ostream reference
  */
 template < class K, class V >
-void join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
+std::ostream& join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
 //void join(std::unordered_map<K, V> &range, std::ostream &out, const std::string &delim)
 {
   if (range.size() < 2) {
@@ -79,6 +82,7 @@ void join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
       out << delim << "\"" << it->first << "\": " << it->second;
     }
   }
+  return out;
 }
 
 template < class JSON_TYPE >

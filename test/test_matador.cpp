@@ -29,6 +29,7 @@
 #include "utils/FileTestUnit.hpp"
 #include "utils/JsonTestUnit.hpp"
 #include "utils/JsonMapperTestUnit.hpp"
+#include "utils/JsonSerializerTest.hpp"
 #include "utils/TimeTestUnit.hpp"
 #include "utils/FactoryTestUnit.hpp"
 #include "utils/StringTestUnit.hpp"
@@ -111,6 +112,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new BlobTestUnit);
   suite.register_unit(new JsonTestUnit);
   suite.register_unit(new JsonMapperTestUnit);
+  suite.register_unit(new JsonSerializerTest);
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);

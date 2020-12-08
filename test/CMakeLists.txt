@@ -28,7 +28,7 @@ SET (TEST_TOOLS_SOURCES
   utils/OptionalTest.cpp
   utils/OptionalTest.hpp
   utils/ThreadPoolTest.cpp
-  utils/ThreadPoolTest.hpp)
+  utils/ThreadPoolTest.hpp utils/JsonSerializerTest.cpp utils/JsonSerializerTest.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
@@ -141,7 +141,7 @@ SET (TEST_ORM_SOURCES
   orm/PrimaryKeyTestUnit.hpp
 )
 
-SET (TEST_SOURCES test_matador.cpp)
+SET (TEST_SOURCES test_matador.cpp dto.hpp)
 
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}

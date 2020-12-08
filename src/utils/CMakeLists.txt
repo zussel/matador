@@ -17,7 +17,7 @@ SET(SOURCES
   generic_json_parser.cpp
   json_mapper.cpp
   file.cpp os.cpp
-  buffer.cpp thread_pool.cpp)
+  buffer.cpp thread_pool.cpp json_serializer.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
