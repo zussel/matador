@@ -5,6 +5,7 @@
 #include < Ws2tcpip.h>
 #else
 #include <arpa/inet.h>
+#include <unistd.h>
 #endif
 
 namespace matador {
@@ -51,6 +52,11 @@ const char* inet_ntop(int af, const void* src, char* dst, size_t size)
 #else
     return ::inet_ntop(af, src, dst, size);
 #endif
+}
+
+int close(int fd)
+{
+  return ::close(fd);
 }
 
 int shutdown(int fd, shutdown_type type)

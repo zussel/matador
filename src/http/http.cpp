@@ -15,7 +15,7 @@ std::unordered_map<http::method_t, std::string> http::method_string_map_({ /* NO
 });
 
 std::unordered_map<http::status_t, std::string> http::status_string_map_({ /* NOLINT */
-  { http::status_t::OK, "HTTP/1.1 200 OK\\r\\n" },
+  { http::status_t::OK, "HTTP/1.1 200 OK\r\n" },
   { http::status_t::CREATED, "HTTP/1.1 201 Created\\r\\n" },
   { http::status_t::ACCEPTED, "HTTP/1.1 202 Accepted\\r\\n" },
   { http::status_t::NO_CONTENT, "HTTP/1.1 204 No Content\\r\\n" },

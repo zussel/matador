@@ -2,6 +2,8 @@
 #include <iostream>
 #include <utility>
 
+#include "matador/logger/log_manager.hpp"
+
 #include "matador/utils/string.hpp"
 
 #include "matador/http/http_server.hpp"
@@ -46,7 +48,7 @@ public:
     s.on_post("/v1/auth/logout", [this](const request &req, const route_path::t_path_param_map &path_params) { return login(req, path_params); });
   }
 
-  response login(const request &req, const route_path::t_path_param_map &path_params)
+  response login(const request &req, const route_path::t_path_param_map &)
   {
     //auto credentials = json_to_object<credential>(req.body);
     // extract username and password from headers
@@ -73,59 +75,32 @@ private:
 class application
 {
 public:
-  explicit application(unsigned short port);
+  explicit application(unsigned short port)
+    : server_(port)
+    , auth_(server_)
+  {}
+
+  void run()
+  {
+    server_.run();
+  }
+
+private:
+  server server_;
+  auth_service auth_;
 };
 
 
 int main(int /*argc*/, char* /*argv*/[])
 {
+//  matador::add_log_sink(matador::create_file_sink("log/server.log"));
+  matador::add_log_sink(matador::create_stdout_sink());
+
   // creates a web application at port 7091
-  //application app(7091);
+  application app(7091);
 
-//  app.
-
-
-  server s(7091, "api");
-
-  auth_service auth(s);
-
-  s.run();
-
-//  routing_engine rs("api");
-//
-//  rs.add("/v1/auth/login", http::http::POST);
-//  rs.add("/v1/auth/logout", http::http::POST);
-//  rs.add("/v1/user/create", http::http::POST);
-//  rs.add("/v1/user", http::http::GET);
-//  rs.add("/v1/user/edit", http::http::PUT);
-//  rs.add("/v1/user/delete", http::http::DELETE);
-//  rs.add("/v1/role/create", http::http::POST);
-//  rs.add("/v1/role", http::http::GET);
-//  rs.add("/v1/role/edit", http::http::PUT);
-//  rs.add("/v1/role/delete", http::http::DELETE);
-
-//  std::vector<std::string> strvec = {"eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben"};
-
-//  make_stream(strvec).filter([](const std::string &val) {
-//    return val[0] == 's';
-//  }).for_each([](const std::string &val) {
-//    std::cout << "value: " << val << "\n";
-//  });
-
-//  rs.dump(std::cout);
-
-//  auto ret = rs.find("/v1/user/edit", http::PUT);
-
-//  std::cout << "found endpoint: " << ret.endpoint_name() << " (path: " << ret.endpoint_path() << ", method: " << http::http::to_string(ret.method()) << ")\n";
+  app.run();
 }
-
-//  http::server serv;
-//
-//  serv.on_get("/", [](http::request &request) {
-//    return http::response;
-//  });
-//
-//  serv.listen(7090);
 
 // server
   /*

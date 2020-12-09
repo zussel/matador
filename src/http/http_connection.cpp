@@ -9,6 +9,8 @@
 
 #include "matador/utils/file.hpp"
 #include "matador/utils/os.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/string.hpp"
 
 namespace matador {
 namespace http {
@@ -63,7 +65,8 @@ void http_connection::write()
       log_.info("data to send: %s", std::string(buf_.data(), buf_.size()).c_str());
       log_.info("%s sent (bytes: %d)", endpoint_.to_string().c_str(), nwrite);
       buf_.clear();
-      read();
+      stream_.close_stream();
+//      read();
     }
   });
 }
@@ -98,14 +101,14 @@ response http_connection::execute(const request &req)
   resp.status = http::OK;
 
   resp.content_type.type = mime_types::TEXT_HTML;
-  resp.content_type.length = size;
-//  resp.content_type.language = "de";
+  resp.content_type.length = size + 2;
 
   resp.version.major = 1;
   resp.version.minor = 1;
 
+  resp.headers.insert(std::make_pair(response_header::DATE, to_string(time::now(), "%a, %d %b %Y %H:%M:%S %Z")));
   resp.headers.insert(std::make_pair(response_header::SERVER, "Matador/0.7.0"));
-  resp.headers.insert(std::make_pair(response_header::CONNECTION, "close"));
+  resp.headers.insert(std::make_pair(response_header::CONNECTION, "Closed"));
 
   return resp;
 }

@@ -174,7 +174,20 @@ void reactor::prepare_select_bits(time_t& timeout)
 
 void reactor::remove_deleted()
 {
+  log_.info("remove %d deleted handlers", handlers_to_delete_.size());
 
+  while (!handlers_to_delete_.empty()) {
+    auto h = handlers_to_delete_.front();
+    handlers_to_delete_.pop_front();
+    auto fi = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
+      return ht.first.get() == h.get();
+    });
+
+    if (fi != handlers_.end()) {
+      log_.info("removing handler %d", fi->first->handle());
+      handlers_.erase(fi);
+    }
+  }
 }
 
 void reactor::cleanup()
@@ -218,7 +231,7 @@ void reactor::process_handler(int ret)
     if (h.first->next_timeout() > 0 && h.first->next_timeout() <= now) {
       on_timeout(h.first, now);
     }
-    handlers_to_delete_.clear();
+//    handlers_to_delete_.clear();
   }
   handlers_.pop_front();
 }

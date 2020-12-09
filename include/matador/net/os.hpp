@@ -37,6 +37,7 @@ enum class shutdown_type
 };
 
 OOS_NET_API int shutdown(int fd, shutdown_type type);
+OOS_NET_API int close(int fd);
 
 }
 }

@@ -72,6 +72,8 @@ public:
    */
   stream_handler(tcp::socket sock, tcp::peer endpoint, connector *cnnctr, t_init_handler init_handler);
 
+  ~stream_handler() override;
+
   void open() override;
   int handle() const override;
   void on_input() override;

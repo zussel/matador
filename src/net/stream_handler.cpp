@@ -30,6 +30,11 @@ stream_handler::stream_handler(tcp::socket sock, tcp::peer endpoint, connector *
   log_.info("created stream handler with endpoint %s", endpoint.to_string().c_str());
 }
 
+stream_handler::~stream_handler()
+{
+  log_.info("destroying handler");
+}
+
 void stream_handler::open()
 {
   init_handler_(endpoint_, *this);
@@ -127,7 +132,7 @@ void stream_handler::write(buffer &buf, t_write_handler write_handler)
 
 void stream_handler::close_stream()
 {
-  close();
+  on_close();
 }
 
 tcp::socket &stream_handler::stream()
