@@ -1,6 +1,7 @@
 #ifndef MATADOR_DTO_HPP
 #define MATADOR_DTO_HPP
 
+#include "matador/utils/base_class.hpp"
 #include "matador/utils/varchar.hpp"
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/date.hpp"
@@ -54,6 +55,29 @@ struct dto
     s.serialize("values", values);
     s.serialize("dimension", dimension);
     s.serialize("dimensions", dimensions);
+  }
+};
+
+struct base
+{
+  long id;
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("id", id);
+  }
+};
+
+struct derived : public base
+{
+  std::string name;
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize(*matador::base_class<base>(this));
+    s.serialize("name", name);
   }
 };
 

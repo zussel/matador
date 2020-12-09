@@ -6,45 +6,40 @@ json_serializer::json_serializer(json_format format)
   : format_(format)
 {}
 
-void json_serializer::serialize(const char *id, identifier<std::string> &pk)
-{
-  write_id(id).append("\"").append(pk).append("\",");
-  newline();
-}
-
-void json_serializer::serialize(const char *id, bool &val)
-{
-  write_id(id);
-  if (val) {
-    json_.append("true");
-  } else {
-    json_.append("false");
-  }
-  json_.append(",");
-  newline();
-}
-
 void json_serializer::serialize(const char *id, std::string &val, size_t)
 {
-  write_id(id).append("\"").append(val).append("\",");
+  write_id(id);
+  append(val).append(",");
   newline();
 }
 
-void json_serializer::serialize(const char *id, std::string &val)
+void json_serializer::write_value(identifier<std::string> &pk)
 {
-  write_id(id).append("\"").append(val).append("\",");
+  append(pk.value()).append(",");
   newline();
 }
 
-void json_serializer::serialize(const char *id, date &d)
+void json_serializer::write_value(bool &val)
 {
-  write_id(id).append(matador::to_string(d)).append(",");
+  append(val).append(",");
   newline();
 }
 
-void json_serializer::serialize(const char *id, time &t)
+void json_serializer::write_value(std::string &val)
 {
-  write_id(id).append(matador::to_string(t)).append(",");
+  append(val).append(",");
+  newline();
+}
+
+void json_serializer::write_value(date &d)
+{
+  append(matador::to_string(d)).append(",");
+  newline();
+}
+
+void json_serializer::write_value(time &t)
+{
+  append(matador::to_string(t)).append(",");
   newline();
 }
 
@@ -70,7 +65,6 @@ void json_serializer::end_object()
   if (depth_ > 0) {
     json_.append(",");
   }
-  newline();
 }
 
 void json_serializer::indent()
@@ -83,6 +77,33 @@ void json_serializer::newline()
   if (format_.show_line_break()) {
     json_.append("\n");
   }
+}
+
+std::string &json_serializer::append(const char *str)
+{
+  json_.append("\"").append(str).append("\"");
+  return json_;
+}
+
+std::string &json_serializer::append(const std::string &str)
+{
+  json_.append("\"").append(str).append("\"");
+  return json_;
+}
+
+std::string &json_serializer::append(std::string &val, size_t)
+{
+  return append(val);
+}
+
+constexpr char const* bool_to_string(bool b)
+{
+  return b ? "true" : "false";
+}
+
+std::string &json_serializer::append(const bool &value)
+{
+  return json_.append(bool_to_string(value));
 }
 
 }
