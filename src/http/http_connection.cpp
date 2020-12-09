@@ -34,8 +34,8 @@ void http_connection::read()
     if (ec == 0) {
       std::string request_string(buf_.data(), buf_.size());
       log_.info(
-        "%s read (bytes: %d)> %s",
-        endpoint_.to_string().c_str(), nread, request_string.c_str()
+        "%s read (bytes: %d)",
+        endpoint_.to_string().c_str(), nread
       );
       // parse request and prepare response
       request req;
@@ -62,7 +62,7 @@ void http_connection::write()
   auto self(shared_from_this());
   stream_.write(buf_, [this, self](int ec, int nwrite) {
     if (ec == 0) {
-      log_.info("data to send: %s", std::string(buf_.data(), buf_.size()).c_str());
+//      log_.info("data to send: %s", std::string(buf_.data(), buf_.size()).c_str());
       log_.info("%s sent (bytes: %d)", endpoint_.to_string().c_str(), nwrite);
       buf_.clear();
       stream_.close_stream();

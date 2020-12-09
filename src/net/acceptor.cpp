@@ -69,6 +69,7 @@ void acceptor::on_input()
 
 void acceptor::close()
 {
+  log_.debug("closing acceptor %d", acceptor_.id());
   acceptor_.close();
   // Todo: unregister from reactor (maybe observer pattern?)
   // notify()
