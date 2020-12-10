@@ -66,7 +66,6 @@ void http_connection::write()
       log_.info("%s sent (bytes: %d)", endpoint_.to_string().c_str(), nwrite);
       buf_.clear();
       stream_.close_stream();
-//      read();
     }
   });
 }
@@ -77,40 +76,17 @@ response http_connection::execute(const request &req)
 
   route_path::t_path_param_map path_params;
 
+  log_.info("checking for %s route %s", http::to_string(req.method).c_str(), req.url.c_str());
   auto r = router_.find(req.url, req.method, path_params);
 
-  router_.valid(r);
+  if (!router_.valid(r)) {
+    log_.info("route isn't valid");
+    return response::not_found();
+  } else {
+    log_.info("route is valid");
 
-  file f("index.html", "r");
-
-  if (!f.is_open()) {
-
+    return (*r)->execute(req, path_params);
   }
-
-  // obtain file size:
-  fseek (f.stream() , 0 , SEEK_END);
-  size_t size = ftell (f.stream());
-  rewind (f.stream());
-
-  resp.body.resize(size);
-
-  fread(const_cast<char*>(resp.body.data()), 1, size, f.stream());
-
-  f.close();
-
-  resp.status = http::OK;
-
-  resp.content_type.type = mime_types::TEXT_HTML;
-  resp.content_type.length = size + 2;
-
-  resp.version.major = 1;
-  resp.version.minor = 1;
-
-  resp.headers.insert(std::make_pair(response_header::DATE, to_string(time::now(), "%a, %d %b %Y %H:%M:%S %Z")));
-  resp.headers.insert(std::make_pair(response_header::SERVER, "Matador/0.7.0"));
-  resp.headers.insert(std::make_pair(response_header::CONNECTION, "Closed"));
-
-  return resp;
 }
 }
 }

@@ -2,6 +2,9 @@
 
 namespace matador {
 
+json_format json_format::compact { false, 0 }; /* NOLINT */
+json_format json_format::pretty { true, 2 }; /* NOLINT */
+
 json_serializer::json_serializer(json_format format)
   : format_(format)
 {}

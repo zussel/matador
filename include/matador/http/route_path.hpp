@@ -41,6 +41,8 @@ public:
     request_handler_ = rh;
   }
 
+  response execute(const request &req, const t_path_param_map &path_params);
+
   friend bool operator==(const route_path &a, const route_path &b);
   friend bool operator!=(const route_path &a, const route_path &b);
   friend bool operator<(const route_path &a, const route_path &b);
@@ -89,6 +91,24 @@ public:
 private:
   std::regex param_regex_;
 };
+
+class static_file_path : public route_path
+{
+public:
+  static_file_path(
+    std::string file_pattern,
+    std::string endpoint_name,
+    std::string endpoint_path,
+    http::method_t method,
+    t_request_handler request_handler
+  );
+
+  bool match(const std::string &path, t_path_param_map &path_params) override;
+
+private:
+  std::string file_pattern_;
+};
+
 }
 }
 #endif //MATADOR_ROUTE_PATH_HPP

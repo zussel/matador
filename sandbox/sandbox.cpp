@@ -1,16 +1,11 @@
-#include <type_traits>
-#include <iostream>
-#include <utility>
-
 #include "matador/logger/log_manager.hpp"
-
-#include "matador/utils/string.hpp"
 
 #include "matador/http/http_server.hpp"
 #include "matador/http/request.hpp"
 #include "matador/http/response.hpp"
 #include "matador/http/route_path.hpp"
-#include "matador/http/routing_engine.hpp"
+
+#include "matador/utils/time.hpp"
 
 using namespace matador::http;
 using namespace std::placeholders;
@@ -40,26 +35,53 @@ private:
   response response_;
 };
 
+struct user
+{
+  long id;
+  std::string username;
+  std::string password;
+  std::string first_name;
+  std::string last_name;
+
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("username", username);
+    serializer.serialize("password", password);
+    serializer.serialize("first_name", first_name);
+    serializer.serialize("last_name", last_name);
+  }
+};
+
 class auth_service
 {
 public:
-  explicit auth_service(server &s) : server_(s) {
-    s.on_post("/v1/auth/login", [this](const request &req, const route_path::t_path_param_map &path_params) { return login(req, path_params); });
-    s.on_post("/v1/auth/logout", [this](const request &req, const route_path::t_path_param_map &path_params) { return login(req, path_params); });
+  explicit auth_service(server &s)
+    : server_(s)
+    , log_(matador::create_logger("AuthService"))
+  {
+    s.on_post("/api/v1/auth/login", [this](const request &req, const route_path::t_path_param_map &path_params) { return login(req, path_params); });
+    s.on_post("/api/v1/auth/logout", [this](const request &req, const route_path::t_path_param_map &path_params) { return logout(req, path_params); });
   }
 
   response login(const request &req, const route_path::t_path_param_map &)
   {
+    log_.info("login");
+
+    req.body
     //auto credentials = json_to_object<credential>(req.body);
     // extract username and password from headers
-    req.headers.at("Authentication");
+//    req.headers.at("Authentication");
 
-    response resp;
-    return response();
+    user u { 0, "herb", "herb123", "Herbert",  "Grönemeyer"};
+
+    return response::json(u);
   }
 
   response logout(const request &request, const route_path::t_path_param_map &path_params)
   {
+    log_.info("logout");
     return response();
   }
 
@@ -69,8 +91,63 @@ public:
 
 private:
   server& server_;
+
+  matador::logger log_;
 };
 
+class app_service
+{
+public:
+  explicit app_service(server &s)
+    : server_(s)
+    , log_(matador::create_logger("AppService"))
+  {
+    s.on_get("/app/*.*", [this](const request &req, const route_path::t_path_param_map&) { return serve(req); });
+  }
+
+private:
+  response serve(const request &req)
+  {
+    log_.info("serving file %s", req.url.c_str());
+
+    matador::file f("." + req.url, "r");
+
+    if (!f.is_open()) {
+
+    }
+
+    // obtain file size:
+    fseek (f.stream() , 0 , SEEK_END);
+    size_t size = ftell (f.stream());
+    rewind (f.stream());
+
+    response resp;
+    resp.body.resize(size);
+
+    fread(const_cast<char*>(resp.body.data()), 1, size, f.stream());
+
+    f.close();
+
+    resp.status = http::OK;
+
+    resp.content_type.type = mime_types::TEXT_HTML;
+    resp.content_type.length = size;
+
+    resp.version.major = 1;
+    resp.version.minor = 1;
+
+    resp.headers.insert(std::make_pair(response_header::DATE, to_string(matador::time::now(), "%a, %d %b %Y %H:%M:%S %Z")));
+    resp.headers.insert(std::make_pair(response_header::SERVER, "Matador/0.7.0"));
+    resp.headers.insert(std::make_pair(response_header::CONNECTION, "Closed"));
+
+    return resp;
+  }
+
+private:
+  server& server_;
+
+  matador::logger log_;
+};
 
 class application
 {
@@ -78,6 +155,7 @@ public:
   explicit application(unsigned short port)
     : server_(port)
     , auth_(server_)
+    , app_(server_)
   {}
 
   void run()
@@ -88,6 +166,7 @@ public:
 private:
   server server_;
   auth_service auth_;
+  app_service app_;
 };
 
 

@@ -46,9 +46,6 @@ private:
   unsigned indentation_ = 2;
 };
 
-json_format json_format::compact { false, 0 }; /* NOLINT */
-json_format json_format::pretty { true, 2 }; /* NOLINT */
-
 class json_serializer
 {
 public:

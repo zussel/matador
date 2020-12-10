@@ -1383,11 +1383,14 @@ typename tree<T>::iterator tree<T>::parent(const tree_iterator_base<T> &i) const
 
 template<class T>
 template<typename iter, typename Predicate>
-typename tree<T>::iterator tree<T>::find_in_path(iter pfirst, iter plast, Predicate) {
+typename tree<T>::iterator tree<T>::find_in_path(iter pfirst, iter plast, Predicate predicate) {
   if (pfirst == plast)
     return end();
 
-  iterator current = std::find_if(begin(), end(), Predicate(*pfirst));
+  iterator current = std::find_if(begin(), end(), [&pfirst, &predicate](const T &item) {
+    return predicate(*pfirst, item);
+  });
+
   if (current == end())
     return end();
 
@@ -1396,7 +1399,10 @@ typename tree<T>::iterator tree<T>::find_in_path(iter pfirst, iter plast, Predic
 
   while (pfirst != plast) {
     last = end(current);
-    current = std::find_if(begin(current), end(current), Predicate(*pfirst));
+    current = std::find_if(begin(current), end(current), [&pfirst, &predicate](const T &item) {
+      return predicate(*pfirst, item);
+    });
+
     if (current == last)
       return end();
 

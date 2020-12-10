@@ -5,6 +5,11 @@
 #include <string>
 
 #include "matador/http/http.hpp"
+#include "matador/http/mime_types.hpp"
+#include "matador/http/response_header.hpp"
+
+#include "matador/utils/json_serializer.hpp"
+#include "matador/utils/string.hpp"
 
 namespace matador {
 namespace http {
@@ -25,8 +30,24 @@ class response
 
 public:
 
+  template < class T >
+  static response json(const T &obj);
+
+  template < class T >
+  static response json(http::status_t status, const T &obj);
+
+  static response no_content();
+  static response not_found();
+
+  template < class T >
+  static response not_found(const T &obj);
+
   std::string to_string() const;
 
+private:
+  static response create(http::status_t status);
+
+public:
   version_t version;
   content_t content_type;
 
@@ -36,6 +57,33 @@ public:
 
   std::string body;
 };
+
+template<class T>
+response response::json(const T &obj)
+{
+  return json(http::OK, obj);
+}
+
+template<class T>
+response response::json(http::status_t status, const T &obj)
+{
+  response resp = create(status);
+
+  json_serializer js(json_format::compact);
+
+  resp.body = js.to_json(obj);
+  resp.content_type.type = mime_types::APPLICATION_JSON;
+
+  resp.content_type.length = resp.body.size();
+
+  return resp;
+}
+
+template<class T>
+response response::not_found(const T &obj)
+{
+  return json(http::NOT_FOUND, obj);
+}
 
 }
 }

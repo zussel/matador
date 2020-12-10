@@ -40,6 +40,8 @@ private:
   t_route_tree route_tree_;
 
   std::regex route_regex_;
+
+  std::vector<route_path_ptr> routes_;
 };
 
 }

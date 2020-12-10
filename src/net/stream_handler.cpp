@@ -30,11 +30,6 @@ stream_handler::stream_handler(tcp::socket sock, tcp::peer endpoint, connector *
   log_.info("created stream handler with endpoint %s", endpoint.to_string().c_str());
 }
 
-stream_handler::~stream_handler()
-{
-  log_.info("destroying handler");
-}
-
 void stream_handler::open()
 {
   init_handler_(endpoint_, *this);
@@ -97,6 +92,9 @@ void stream_handler::on_close()
 
 void stream_handler::close()
 {
+  if (!stream_.is_open()) {
+    return;
+  }
   log_.info("fd %d: closing connection", handle());
   stream_.close();
 }

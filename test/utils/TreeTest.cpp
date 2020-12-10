@@ -36,7 +36,7 @@ public:
 TreeTest::TreeTest()
   : unit_test("tree", "tree test")
 {
-  add_test("tree", std::bind(&TreeTest::test_tree, this), "tree test");
+  add_test("tree", [this] { test_tree(); }, "tree test");
 }
 
 void TreeTest::test_tree()
@@ -131,7 +131,9 @@ void TreeTest::test_tree()
   sl.push_back("saturn");
   sl.push_back("ring 2");
 
-  j = stringtree.find_in_path(sl.begin(), sl.end(), equal_node_name<string>());
+  j = stringtree.find_in_path(sl.begin(), sl.end(), [](const std::string &elem, const std::string &path_elem) {
+    return elem == path_elem;
+  });
 
   UNIT_ASSERT_FALSE(j == stringtree.end());
 

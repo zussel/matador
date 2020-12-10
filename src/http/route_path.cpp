@@ -1,5 +1,6 @@
 #include "matador/http/route_path.hpp"
 #include "matador/http/request.hpp"
+#include "matador/http/response.hpp"
 
 #include <utility>
 #include <regex>
@@ -65,6 +66,11 @@ void route_path::method(http::method_t method)
   method_ = method;
 }
 
+response route_path::execute(const request &req, const route_path::t_path_param_map &path_params)
+{
+  return request_handler_(req, path_params);
+}
+
 bool operator==(const route_path &a, const route_path &b)
 {
   return a.endpoint_name_ == b.endpoint_name_ && a.method_ == b.method_;
@@ -127,6 +133,18 @@ bool regex_path_param_route_path::match(const std::string &path, t_path_param_ma
   }
   path_params.insert(std::make_pair(param_name_, m[1].str()));
 
+  return true;
+}
+
+static_file_path::static_file_path(std::string file_pattern, std::string endpoint_name,
+                                   std::string endpoint_path, http::method_t method,
+                                   route_path::t_request_handler request_handler)
+  : route_path(std::move(endpoint_name), std::move(endpoint_path), method, std::move(request_handler))
+  , file_pattern_(std::move(file_pattern))
+{ }
+
+bool static_file_path::match(const std::string &path, route_path::t_path_param_map &path_params)
+{
   return true;
 }
 

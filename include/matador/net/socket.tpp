@@ -36,6 +36,9 @@ int socket_base<P>::open(const protocol_type &protocol)
 template < class P >
 void socket_base<P>::close()
 {
+  if (sock_ <= 0) {
+    return;
+  }
   os::shutdown(sock_, os::shutdown_type::READ_WRITE);
   os::close(sock_);
   sock_ = 0;

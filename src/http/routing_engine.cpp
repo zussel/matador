@@ -13,7 +13,7 @@ namespace http {
 bool prepare_route_path_elements(const std::string &path, std::list<std::string> &rpe);
 
 routing_engine::routing_engine()
-  : route_regex_(R"(\{(\w+)(:\s*(.*))?\}|([a-zA-Z0-9-_]+))")
+  : route_regex_(R"((\*\.\*)|\{(\w+)(:\s*(.*))?\}|([a-zA-Z0-9-_]+))")
 {}
 
 void routing_engine::add(const std::string &path, http::http::method_t method, const route_path::t_request_handler& request_handler)
@@ -99,6 +99,10 @@ routing_engine::iterator routing_engine::find_internal(
     return route_tree_.end();
   }
 
+  auto itt = route_tree_.find_in_path(route_path_elements.begin(), route_path_elements.end(), [&path_params](const std::string &elem, const route_path_ptr &route) {
+    return route->match(elem, path_params);
+  });
+
   auto parent = route_tree_.begin();
   bool first = true;
   for (const auto &elem : route_path_elements) {
@@ -138,18 +142,20 @@ routing_engine::make_route_path(const std::string &name, http::method_t method, 
   if (!std::regex_match(name, what, route_regex_)) {
     throw std::logic_error("invalid route path: " + name);
   } else {
-    // group 1 -> path param
-    // group 1 + 2 -> path param restricted with regex
-    // group 4 -> plain path element
-    if (what[4].matched) {
-
+    // group 1 -> static file route
+    // group 2 -> path param
+    // group 2 + 4 -> path param restricted with regex
+    // group 5 -> plain path element
+    if (what[1].matched) {
+      return std::make_shared<static_file_path>(what[1].str(), name, path, method, request_handler);
+    } else if (what[5].matched) {
       return std::make_shared<route_path>(name, path, method, request_handler);
-    } else if (what[3].matched) {
+    } else if (what[4].matched) {
       return std::make_shared<regex_path_param_route_path>(
-        what[3].str(), what[1].str(), name, path, method, request_handler
+        what[4].str(), what[2].str(), name, path, method, request_handler
       );
-    } else if (what[1].matched) {
-      return std::make_shared<path_param_route_path>(what[1].str(), name, path, method, request_handler);
+    } else if (what[2].matched) {
+      return std::make_shared<path_param_route_path>(what[2].str(), name, path, method, request_handler);
     } else {
       throw std::logic_error("invalid route path: " + name);
     }
