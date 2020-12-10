@@ -8,6 +8,20 @@
 namespace matador {
 namespace http {
 
+route_endpoint::route_endpoint(std::string path, http::method_t method, t_request_handler request_handler)
+  : path_(std::move(path))
+  , method_(method)
+  , request_handler_(std::move(request_handler))
+{
+  // prepare regex
+
+}
+
+bool route_endpoint::match(const std::string &path, t_path_param_map &path_params)
+{
+  return false;
+}
+
 route_path::route_path(std::string endpoint_name, std::string endpoint_path, http::method_t method)
   : endpoint_name_(std::move(endpoint_name))
   , endpoint_path_(std::move(endpoint_path))

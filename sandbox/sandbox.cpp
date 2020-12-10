@@ -69,7 +69,7 @@ public:
   {
     log_.info("login");
 
-    req.body
+    //req.body
     //auto credentials = json_to_object<credential>(req.body);
     // extract username and password from headers
 //    req.headers.at("Authentication");
@@ -180,6 +180,14 @@ int main(int /*argc*/, char* /*argv*/[])
 
   app.run();
 }
+
+//  http::server serv;
+//
+//  serv.on_get("/", [](http::request &request) {
+//    return http::response;
+//  });
+//
+//  serv.listen(7090);
 
 // server
   /*
