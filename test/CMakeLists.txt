@@ -68,7 +68,7 @@ SET (TEST_HTTP_SOURCES
   http/RouteEngineTest.cpp
   http/RouteEngineTest.hpp
   http/UrlTest.cpp
-  http/UrlTest.hpp)
+  http/UrlTest.hpp http/RouteEndpointTest.cpp http/RouteEndpointTest.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp

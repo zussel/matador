@@ -23,12 +23,12 @@ typedef std::function<response(const request&, const t_path_param_map &path_para
 class route_endpoint
 {
 public:
-
-  route_endpoint(std::string path, http::method_t method, t_request_handler request_handler);
+  route_endpoint(std::string path_spec, http::method_t method, t_request_handler request_handler);
 
   bool match(const std::string &path, t_path_param_map &path_params);
+
 private:
-  std::string path_;
+  std::string path_spec_;
   std::regex path_regex_;
   http::method_t method_;
   t_request_handler request_handler_;

@@ -79,6 +79,7 @@
 
 #include "http/RequestParserTest.hpp"
 #include "http/RouteEngineTest.hpp"
+#include "http/RouteEndpointTest.hpp"
 #include "http/UrlTest.hpp"
 
 #include "connections.hpp"
@@ -150,6 +151,7 @@ int main(int argc, char *argv[])
 
   suite.register_unit(new RequestParserTest);
   suite.register_unit(new RouteEngineTest);
+  suite.register_unit(new RouteEndpointTest);
   suite.register_unit(new UrlTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
