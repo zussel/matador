@@ -21,7 +21,7 @@ response static_file_service::serve(const request &req)
   }
 
   // check if there is '..' in path
-  if (path.find("..") != std::string::npos) {
+  if (path.empty() || path[0] != '/' || path.find("..") != std::string::npos) {
     return response::bad_request();
   }
 
@@ -30,8 +30,8 @@ response static_file_service::serve(const request &req)
   }
 
   // Determine the file extension.
-  std::size_t last_slash_pos = path.find_last_of("/");
-  std::size_t last_dot_pos = path.find_last_of(".");
+  std::size_t last_slash_pos = path.find_last_of('/');
+  std::size_t last_dot_pos = path.find_last_of('.');
   std::string extension;
   if (last_dot_pos != std::string::npos && last_dot_pos > last_slash_pos)
   {
