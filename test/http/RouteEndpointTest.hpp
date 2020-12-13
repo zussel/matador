@@ -12,7 +12,7 @@ public:
 
 private:
   void check_route(
-    const std::string &route_spec, size_t numparts,
+    const std::string &route_spec, size_t num_parts,
     const std::string &expected_regex_result, const std::string &valid_route,
     size_t num_path_params
   );

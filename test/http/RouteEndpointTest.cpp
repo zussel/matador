@@ -24,7 +24,7 @@ void RouteEndpointTest::test_route_endpoint()
 
 void RouteEndpointTest::check_route(
   const std::string &route_spec,
-  size_t numparts,
+  size_t num_parts,
   const std::string &expected_regex_result,
   const std::string &valid_route,
   size_t num_path_params
@@ -36,7 +36,7 @@ void RouteEndpointTest::check_route(
   std::unordered_map<std::string, size_t> path_param_to_index_map;
   std::vector<std::string> parts;
 
-  UNIT_ASSERT_EQUAL(numparts, split(route_spec, '/', parts));
+  UNIT_ASSERT_EQUAL(num_parts, split(route_spec, '/', parts));
 
   std::string result_regex;
 

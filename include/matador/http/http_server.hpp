@@ -46,16 +46,15 @@ public:
 
 private:
   template < class RequestHandler >
-  void add_route(const std::string &route, http::method_t method, RequestHandler request_handler)
+  void add_route(const std::string &path_spec, http::method_t method, RequestHandler request_handler)
   {
-    route_path::t_path_param_map path_params;
-    auto r = router_.find(route, method, path_params);
+    auto r = router_.find(path_spec, method);
     if (router_.valid(r)) {
-      log_.warn("route <%s> already registered for method <%s>", route.c_str(), http::to_string(method).c_str());
+      log_.warn("path_spec <%s> already registered for method <%s>", path_spec.c_str(), http::to_string(method).c_str());
       return;
     }
-    log_.info("adding route <%s> for method <%s>", route.c_str(), http::to_string(method).c_str());
-    router_.add(route, method, request_handler);
+    log_.info("adding path_spec <%s> for method <%s>", path_spec.c_str(), http::to_string(method).c_str());
+    router_.add(path_spec, method, request_handler);
   }
 
 private:

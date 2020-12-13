@@ -74,10 +74,10 @@ response http_connection::execute(const request &req)
 {
   response resp;
 
-  route_path::t_path_param_map path_params;
+  t_path_param_map path_params;
 
   log_.info("checking for %s route %s", http::to_string(req.method).c_str(), req.url.c_str());
-  auto r = router_.find(req.url, req.method, path_params);
+  auto r = router_.match(req.url, req.method, path_params);
 
   if (!router_.valid(r)) {
     log_.info("route isn't valid");

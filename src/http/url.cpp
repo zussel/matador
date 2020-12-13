@@ -52,28 +52,28 @@ std::string url::encode(const std::string &str)
   return result;
 }
 
-std::string url::decode(const std::string &str)
+bool url::decode(const std::string &str, std::string &decoded)
 {
-  std::string result;
+  decoded.clear();
   // replace html
   for (size_t i = 0; i < str.size(); ++i) {
     if (str[i] != '%') {
-      result += str[i];
+      decoded += str[i];
     } else if (str[i] == '+') {
-      result += ' ';
+      decoded += ' ';
     } else {
       if (i + 2 >= str.size()) {
-        throw std::logic_error("invalid html string: " + str);
+        return false;
       }
       // get hex string
       auto hexstr = str.substr(i + 1, 2);
       char *err;
       char c = static_cast<char>(std::strtol(hexstr.c_str(), &err, 16));
-      result += c;
+      decoded += c;
       i += 2;
     }
   }
-  return result;
+  return true;
 }
 }
 }

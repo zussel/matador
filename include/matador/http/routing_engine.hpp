@@ -14,16 +14,19 @@ namespace http {
 class routing_engine
 {
 public:
-  typedef std::shared_ptr<route_path> route_path_ptr;
-  typedef tree<route_path_ptr> t_route_tree;
-  typedef t_route_tree::iterator iterator;
+  typedef std::shared_ptr<route_endpoint> route_endpoint_ptr;
+  typedef std::vector<route_endpoint_ptr> t_route_vector;
+
+  typedef t_route_vector::iterator iterator;
 
 public:
   routing_engine();
 
-  void add(const std::string& path, http::http::method_t method, const route_path::t_request_handler& request_handler);
+  void add(const std::string& path, http::http::method_t method, const t_request_handler& request_handler);
 
-  iterator find(const std::string &path, http::http::method_t method, route_path::t_path_param_map &path_params);
+  iterator find(const std::string &path, http::http::method_t method);
+
+  iterator match(const std::string &path, http::http::method_t method, t_path_param_map &path_params);
 
   void dump(std::ostream &out);
 
@@ -31,17 +34,18 @@ public:
 
 private:
 
-  iterator find_internal(const std::string &path, http::http::method_t method, route_path::t_path_param_map &path_params);
+  iterator find_internal(const std::string &path, http::http::method_t method);
 
-  route_path_ptr make_route_path(const std::string &name, http::method_t method, const std::string &path,
-                                 const route_path::t_request_handler &request_handler);
+  route_endpoint_ptr create_route_endpoint(
+    const std::string &path_spec,
+    http::method_t method,
+    const t_request_handler &request_handler
+  );
 
 private:
-  t_route_tree route_tree_;
-
   std::regex route_regex_;
 
-  std::vector<route_path_ptr> routes_;
+  std::vector<route_endpoint_ptr> routes_;
 };
 
 }

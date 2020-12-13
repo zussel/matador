@@ -16,59 +16,37 @@ routing_engine::routing_engine()
   : route_regex_(R"((\*\.\*)|\{(\w+)(:\s*(.*))?\}|([a-zA-Z0-9-_]+))")
 {}
 
-void routing_engine::add(const std::string &path, http::http::method_t method, const route_path::t_request_handler& request_handler)
+void routing_engine::add(const std::string &path, http::http::method_t method, const t_request_handler& request_handler)
 {
-  // split path into segments
-  std::list<std::string> route_path_elements;
-  if (!prepare_route_path_elements(path, route_path_elements)) {
+  auto it = find_internal(path, method);
+
+  if (it != routes_.end()) {
     return;
   }
 
-  auto parent = route_tree_.begin();
-  bool first = true;
-  for (const auto &elem : route_path_elements) {
-    if (first) {
-      auto rit = std::find_if(route_tree_.begin(), route_tree_.end(),
-                              [&elem](const route_path_ptr &route) {
-                                return route->endpoint_name() == elem;
-                              });
-      if (rit == route_tree_.end()) {
-        // unknown element, create new
-        parent = route_tree_.insert(parent, std::make_shared<route_path>(elem, path, http::http::UNKNOWN));
-      } else {
-        // element exists already
-        parent = rit;
-      }
+  auto endpoint = create_route_endpoint(path, method, request_handler);
 
-      first = false;
-    } else {
-      auto rit = std::find_if(route_tree_.begin(parent), route_tree_.end(parent),
-                              [&elem](const route_path_ptr &route) {
-                                return route->endpoint_name() == elem;
-                              });
-      if (rit == route_tree_.end(parent)) {
-        // unknown element, create new
-        parent = route_tree_.push_back_child(parent, make_route_path(elem, method, path, [](const request&, const route_path::t_path_param_map&) { return response(); }));
-      } else {
-        // element exists already
-        parent = rit;
-      }
-    }
-  }
-
-  *parent = make_route_path((*parent)->endpoint_name(), method, path, request_handler);
+  routes_.push_back(endpoint);
 }
 
-routing_engine::iterator routing_engine::find(const std::string &path, http::http::method_t method, route_path::t_path_param_map &path_params)
+routing_engine::iterator routing_engine::find(const std::string &path, http::http::method_t method)
 {
-  path_params.clear();
-  return find_internal(path, method, path_params);
+  return find_internal(path, method);
+}
+
+routing_engine::iterator
+routing_engine::match(const std::string &path, http::http::method_t method, t_path_param_map &path_params)
+{
+  auto it = std::find_if(routes_.begin(), routes_.end(), [method, &path, &path_params](const route_endpoint_ptr &ep) {
+    return ep->match(path, method, path_params);
+  });
+  return it;
 }
 
 void routing_engine::dump(std::ostream &out)
 {
-  for (const auto &it : route_tree_) {
-    out << "endpoint: " << it->endpoint_name() << " (path: " << it->endpoint_path() << ", method: " << http::http::to_string(it->method()) << ")\n";
+  for (const auto &it : routes_) {
+    //out << "endpoint: " << it->endpoint_name() << " (path: " << it->endpoint_path() << ", method: " << http::http::to_string(it->method()) << ")\n";
   }
 
 //  make_stream(route_tree_).filter([](const route_path_ptr &ep) {
@@ -80,86 +58,64 @@ void routing_engine::dump(std::ostream &out)
 
 bool routing_engine::valid(const routing_engine::iterator& it) const
 {
-  return it != route_tree_.end();
+  return it != routes_.end();
 }
 
 routing_engine::iterator routing_engine::find_internal(
   const std::string &path,
-  http::http::method_t method,
-  route_path::t_path_param_map &path_params
-)
+  http::http::method_t method)
 {
-  if (route_tree_.empty()) {
-    return route_tree_.end();
-  }
-
-  // split path into segments
-  std::list<std::string> route_path_elements;
-  if (!prepare_route_path_elements(path, route_path_elements)) {
-    return route_tree_.end();
-  }
-
-  auto itt = route_tree_.find_in_path(route_path_elements.begin(), route_path_elements.end(), [&path_params](const std::string &elem, const route_path_ptr &route) {
-    return route->match(elem, path_params);
+  auto it = std::find_if(routes_.begin(), routes_.end(), [method, &path](const route_endpoint_ptr &ep) {
+    return ep->method() == method && ep->path_spec() == path;
   });
-
-  auto parent = route_tree_.begin();
-  bool first = true;
-  for (const auto &elem : route_path_elements) {
-    if (first) {
-      if ((*parent)->endpoint_name() != elem) {
-        // invalid parent node
-        return route_tree_.end();
-      }
-      first = false;
-    } else {
-      auto rit = std::find_if(route_tree_.begin(parent), route_tree_.end(parent),
-                              [&elem, &path_params](const route_path_ptr &route) {
-                                return route->match(elem, path_params);
-                              });
-      if (rit == route_tree_.end(parent)) {
-        // unknown element, create new
-        return route_tree_.end();
-      } else {
-        // element exists already
-        parent = rit;
-      }
-    }
-  }
-
-  if ((*parent)->method() != method) {
-    return route_tree_.end();
-  }
-  return parent;
 }
 
-routing_engine::route_path_ptr
-routing_engine::make_route_path(const std::string &name, http::method_t method, const std::string &path,
-                                const route_path::t_request_handler &request_handler)
+routing_engine::route_endpoint_ptr routing_engine::create_route_endpoint(
+  const std::string &path_spec, http::method_t method,
+  const t_request_handler &request_handler
+)
 {
   std::smatch what;
 
-  if (!std::regex_match(name, what, route_regex_)) {
-    throw std::logic_error("invalid route path: " + name);
-  } else {
-    // group 1 -> static file route
-    // group 2 -> path param
-    // group 2 + 4 -> path param restricted with regex
-    // group 5 -> plain path element
+  std::unordered_map<std::string, size_t> path_param_to_index_map;
+  std::list<std::string> parts;
+
+  prepare_route_path_elements(path_spec, parts);
+
+  std::string result_regex;
+
+  size_t index = 0;
+  for (const auto &part : parts) {
+    if (part.empty()) {
+      continue;
+    }
+
+    if (!std::regex_match(part, what, route_regex_)) {
+      throw std::logic_error("invalid route spec part: " + part);
+    }
+
+    result_regex += R"(\/)";
     if (what[1].matched) {
-      return std::make_shared<static_file_path>(what[1].str(), name, path, method, request_handler);
+      // static files
+      result_regex += "(.*)";
     } else if (what[5].matched) {
-      return std::make_shared<route_path>(name, path, method, request_handler);
+      // plain path element
+      result_regex += what[5].str();
     } else if (what[4].matched) {
-      return std::make_shared<regex_path_param_route_path>(
-        what[4].str(), what[2].str(), name, path, method, request_handler
-      );
+      // path param with regex
+      result_regex += "(" + what[4].str() + ")";
+      // what[2] is path name
+      path_param_to_index_map.insert(std::make_pair(what[2].str(), index++));
     } else if (what[2].matched) {
-      return std::make_shared<path_param_route_path>(what[2].str(), name, path, method, request_handler);
+      // path param
+      result_regex += R"((\w+))";
+      path_param_to_index_map.insert(std::make_pair(what[2].str(), index++));
     } else {
-      throw std::logic_error("invalid route path: " + name);
+      throw std::logic_error("invalid route spec pattern match");
     }
   }
+
+  return std::make_shared<route_endpoint>(path_spec, std::regex(result_regex), method, request_handler);
 }
 
 bool prepare_route_path_elements(const std::string &path, std::list<std::string> &rpe)
@@ -170,8 +126,6 @@ bool prepare_route_path_elements(const std::string &path, std::list<std::string>
   if (rpe.empty()) {
     return false;
   }
-
-  // if first segment is empty set its name to "root"
   if (rpe.front().empty()) {
     rpe.pop_front();
   }

@@ -48,9 +48,12 @@ response response::no_content()
 
 response response::not_found()
 {
-  response resp = create(http::NOT_FOUND);
+  return create(http::NOT_FOUND);
+}
 
-  return resp;
+response response::bad_request()
+{
+  return create(http::BAD_REQUEST);
 }
 
 }

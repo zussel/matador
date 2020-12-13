@@ -11,7 +11,7 @@ class url
 {
 public:
   static std::string encode(const std::string &str);
-  static std::string decode(const std::string &str);
+  static bool decode(const std::string &str, std::string &decoded);
 
 private:
   static std::unordered_map<char, const char *> char_to_enc_map_;

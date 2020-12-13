@@ -38,6 +38,7 @@ public:
 
   static response no_content();
   static response not_found();
+  static response bad_request();
 
   template < class T >
   static response not_found(const T &obj);
