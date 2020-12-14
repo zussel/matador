@@ -16,6 +16,7 @@ public:
   static const char *TEXT_HTML;
   static const char *TEXT_PLAIN;
   static const char *TEXT_XML;
+  static const char *TEXT_CSS;
   static const char *APPLICATION_JSON;
   static const char *APPLICATION_GZIP;
   static const char *APPLICATION_ZIP;

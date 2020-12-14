@@ -7,8 +7,9 @@ const char *mime_types::IMAGE_GIF = "image/gif";
 const char *mime_types::IMAGE_JPEG = "image/jpeg";
 const char *mime_types::IMAGE_PNG = "image/png";
 const char *mime_types::TEXT_HTML = "text/html";
-const char *mime_types::TEXT_PLAIN = "test/plain";
-const char *mime_types::TEXT_XML = "test/xml";
+const char *mime_types::TEXT_PLAIN = "text/plain";
+const char *mime_types::TEXT_XML = "text/xml";
+const char *mime_types::TEXT_CSS = "text/css";
 const char *mime_types::APPLICATION_JSON = "application/json";
 const char *mime_types::APPLICATION_GZIP = "application/gzip";
 const char *mime_types::APPLICATION_ZIP = "application/zip";
@@ -25,6 +26,7 @@ std::unordered_map<std::string, const char*> mime_types::extension_mime_type_map
   { "shtml", TEXT_HTML },
   { "txt", TEXT_PLAIN },
   { "xml", TEXT_XML },
+  { "css", TEXT_CSS },
   { "json", APPLICATION_JSON },
   { "gz", APPLICATION_GZIP },
   { "zip", APPLICATION_ZIP },

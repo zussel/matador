@@ -87,7 +87,7 @@ public:
     return response();
   }
 
-  void login(const std::string username, const std::string &passwd)
+  void login(const std::string &username, const std::string &passwd)
   {
   }
 

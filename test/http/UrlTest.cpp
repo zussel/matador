@@ -26,7 +26,8 @@ void UrlTest::test_decode()
   std::string input("%3C%3D%3E%20hello%20%21%20%28backslash%3A%20%5C%29%20%25%25");
   std::string expected_result("<=> hello ! (backslash: \\) %%");
 
-  auto output = url::decode(input);
+  std::string output;
+  UNIT_ASSERT_TRUE(url::decode(input, output));
 
   UNIT_EXPECT_EQUAL(expected_result, output);
 }
