@@ -5,10 +5,10 @@
 using namespace matador::http;
 
 UrlTest::UrlTest()
-  : matador::unit_test("url", "url test")
+  : matador::unit_test("url_", "url_ test")
 {
-  add_test("encode", [this] { test_encode(); }, "test url encode");
-  add_test("decode", [this] { test_decode(); }, "test url decode");
+  add_test("encode", [this] { test_encode(); }, "test url_ encode");
+  add_test("decode", [this] { test_decode(); }, "test url_ decode");
 }
 
 void UrlTest::test_encode()

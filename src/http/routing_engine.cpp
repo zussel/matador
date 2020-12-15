@@ -35,25 +35,21 @@ routing_engine::iterator routing_engine::find(const std::string &path, http::htt
 }
 
 routing_engine::iterator
-routing_engine::match(const std::string &path, http::http::method_t method, t_path_param_map &path_params)
+routing_engine::match(request &req)
 {
-  auto it = std::find_if(routes_.begin(), routes_.end(), [method, &path, &path_params](const route_endpoint_ptr &ep) {
-    return ep->match(path, method, path_params);
+  auto it = std::find_if(routes_.begin(), routes_.end(), [&req](const route_endpoint_ptr &ep) {
+    return ep->match(req);
   });
   return it;
 }
 
 void routing_engine::dump(std::ostream &out)
 {
-  for (const auto &it : routes_) {
-    //out << "endpoint: " << it->endpoint_name() << " (path: " << it->endpoint_path() << ", method: " << http::http::to_string(it->method()) << ")\n";
-  }
-
-//  make_stream(route_tree_).filter([](const route_path_ptr &ep) {
-//    return ep->method() != http::http::UNKNOWN;
-//  }).for_each([&out](const route_path_ptr &ep) {
-//    out << "endpoint: " << ep->endpoint_name() << " (path: " << ep->endpoint_path() << ", method: " << http::http::to_string(ep->method()) << ")\n";
-//  });
+  make_stream(routes_).filter([](const auto &ep) {
+    return ep->method() != http::http::UNKNOWN;
+  }).for_each([&out](const route_endpoint_ptr &ep) {
+    out << "endpoint: " << ep->path_spec() << " (method: " << http::http::to_string(ep->method()) << ")\n";
+  });
 }
 
 bool routing_engine::valid(const routing_engine::iterator& it) const
@@ -68,6 +64,8 @@ routing_engine::iterator routing_engine::find_internal(
   auto it = std::find_if(routes_.begin(), routes_.end(), [method, &path](const route_endpoint_ptr &ep) {
     return ep->method() == method && ep->path_spec() == path;
   });
+
+  return it;
 }
 
 routing_engine::route_endpoint_ptr routing_engine::create_route_endpoint(
@@ -77,7 +75,7 @@ routing_engine::route_endpoint_ptr routing_engine::create_route_endpoint(
 {
   std::smatch what;
 
-  std::unordered_map<std::string, size_t> path_param_to_index_map;
+  t_size_string_map path_param_to_index_map;
   std::list<std::string> parts;
 
   prepare_route_path_elements(path_spec, parts);
@@ -97,7 +95,7 @@ routing_engine::route_endpoint_ptr routing_engine::create_route_endpoint(
     result_regex += R"(\/)";
     if (what[1].matched) {
       // static files
-      result_regex += "(.*)";
+      result_regex += R"(([^?]*))";
     } else if (what[5].matched) {
       // plain path element
       result_regex += what[5].str();
@@ -105,17 +103,17 @@ routing_engine::route_endpoint_ptr routing_engine::create_route_endpoint(
       // path param with regex
       result_regex += "(" + what[4].str() + ")";
       // what[2] is path name
-      path_param_to_index_map.insert(std::make_pair(what[2].str(), index++));
+      path_param_to_index_map.insert(std::make_pair(++index, what[2].str()));
     } else if (what[2].matched) {
       // path param
       result_regex += R"((\w+))";
-      path_param_to_index_map.insert(std::make_pair(what[2].str(), index++));
+      path_param_to_index_map.insert(std::make_pair(++index, what[2].str()));
     } else {
       throw std::logic_error("invalid route spec pattern match");
     }
   }
 
-  return std::make_shared<route_endpoint>(path_spec, std::regex(result_regex), method, request_handler);
+  return std::make_shared<route_endpoint>(path_spec, result_regex, method, request_handler, path_param_to_index_map);
 }
 
 bool prepare_route_path_elements(const std::string &path, std::list<std::string> &rpe)

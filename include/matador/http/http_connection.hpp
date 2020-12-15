@@ -29,7 +29,7 @@ public:
   void write();
 
 private:
-  response execute(const request &req);
+  response execute(request &req);
 
 private:
   matador::logger log_;

@@ -4,10 +4,7 @@
 #include "matador/http/http_server.hpp"
 #include "matador/http/request.hpp"
 #include "matador/http/response.hpp"
-#include "matador/http/route_path.hpp"
 #include "matador/http/url.hpp"
-
-#include "matador/utils/time.hpp"
 
 using namespace matador::http;
 using namespace std::placeholders;
@@ -63,11 +60,11 @@ public:
     : server_(s)
     , log_(matador::create_logger("AuthService"))
   {
-    s.on_post("/api/v1/auth/login", [this](const request &req, const t_path_param_map &path_params) { return login(req, path_params); });
-    s.on_post("/api/v1/auth/logout", [this](const request &req, const t_path_param_map &path_params) { return logout(req, path_params); });
+    s.on_post("/api/v1/auth/login", [this](const request &req) { return login(req); });
+    s.on_post("/api/v1/auth/logout", [this](const request &req) { return logout(req); });
   }
 
-  response login(const request &req, const t_path_param_map &)
+  response login(const request &req)
   {
     log_.info("login");
 
@@ -81,7 +78,7 @@ public:
     return response::json(u);
   }
 
-  response logout(const request &request, const t_path_param_map &path_params)
+  response logout(const request &request)
   {
     log_.info("logout");
     return response();

@@ -1,16 +1,11 @@
 #include "matador/http/http_connection.hpp"
 #include "matador/http/request.hpp"
-#include "matador/http/response_header.hpp"
-#include "matador/http/mime_types.hpp"
 
 #include "matador/logger/log_manager.hpp"
 
 #include "matador/net/io_stream.hpp"
 
-#include "matador/utils/file.hpp"
 #include "matador/utils/os.hpp"
-#include "matador/utils/time.hpp"
-#include "matador/utils/string.hpp"
 
 namespace matador {
 namespace http {
@@ -43,7 +38,7 @@ void http_connection::read()
 
       if (result == request_parser::FINISH) {
         log_.info("finished request parsing");
-        log_.info("%s %s HTTP/%d.%d", http::to_string(req.method).c_str(), req.url.c_str(), req.version.major, req.version.minor);
+        log_.info("%s %s HTTP/%d.%d", http::to_string(req.method()).c_str(), req.url().c_str(), req.version().major, req.version().minor);
 
         response resp = execute(req);
 
@@ -70,22 +65,18 @@ void http_connection::write()
   });
 }
 
-response http_connection::execute(const request &req)
+response http_connection::execute(request &req)
 {
-  response resp;
-
-  t_path_param_map path_params;
-
-  log_.info("checking for %s route %s", http::to_string(req.method).c_str(), req.url.c_str());
-  auto r = router_.match(req.url, req.method, path_params);
+  log_.info("checking for %s route %s", http::to_string(req.method()).c_str(), req.url().c_str());
+  auto r = router_.match(req);
 
   if (!router_.valid(r)) {
     log_.info("route isn't valid");
     return response::not_found();
   } else {
     log_.info("route is valid");
-
-    return (*r)->execute(req, path_params);
+    log_.debug("route spec: %s (regex: %s)", (*r)->path_spec().c_str(), (*r)->path_regex().c_str());
+    return (*r)->execute(req);
   }
 }
 }

@@ -6,7 +6,7 @@ SET(SOURCES
   http_connection.cpp
   http.cpp
   response.cpp
-  response_header.cpp request_header.cpp route_path.cpp routing_engine.cpp default_responses.cpp mime_types.cpp url.cpp static_file_service.cpp)
+  response_header.cpp request_header.cpp route_endpoint.cpp routing_engine.cpp default_responses.cpp mime_types.cpp url.cpp static_file_service.cpp)
 
 SET(HEADER
   ../../include/matador/http/http_client.hpp
@@ -18,7 +18,7 @@ SET(HEADER
   ../../include/matador/http/request_header.hpp
   ../../include/matador/http/request_parser.hpp
   ../../include/matador/http/http_connection.hpp
-  ../../include/matador/http/route_path.hpp
+  ../../include/matador/http/route_endpoint.hpp
   ../../include/matador/http/routing_engine.hpp
   ../../include/matador/http/default_responses.hpp
   ../../include/matador/http/mime_types.hpp

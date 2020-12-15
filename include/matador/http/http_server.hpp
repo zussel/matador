@@ -7,7 +7,7 @@
 #include "matador/net/io_service.hpp"
 
 #include "matador/http/http.hpp"
-#include "matador/http/route_path.hpp"
+#include "matador/http/route_endpoint.hpp"
 #include "matador/http/routing_engine.hpp"
 
 namespace matador {

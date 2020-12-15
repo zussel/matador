@@ -12,7 +12,7 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
   /*
    * parse first line and extract
    * - http method
-   * - url
+   * - url_
    * - http version
    *
    * parse header until double CR/LF
@@ -21,6 +21,8 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
    */
 
   return_t result = PARTIAL;
+  state_ = METHOD;
+  http_prefix_index_ = 0;
   std::string::size_type pos;
   for (pos = 0; pos < msg.size(); ++pos) {
     std::string::value_type c = msg.at(pos);
@@ -79,11 +81,11 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
    * content length (if available) or
    * available data
    */
-  if (result == FINISH && (req.method == http::POST || req.method == http::PUT)) {
-    if (req.content.length > 0) {
-      req.body = msg.substr(++pos, req.content.length);
+  if (result == FINISH && (req.method() == http::POST || req.method() == http::PUT)) {
+    if (req.content_.length > 0) {
+      req.body_.assign(msg.substr(++pos, req.content_.length));
     } else {
-      req.body = msg.substr(++pos);
+      req.body_.assign(msg.substr(++pos));
     }
   }
 
@@ -108,7 +110,7 @@ bool request_parser::parse_method(char c, request &req)
 bool request_parser::parse_url(char c, request &req)
 {
   if (isurlchar(c)) {
-    req.url.push_back(c);
+    req.url_.push_back(c);
     return true;
   } else if (c == ' ') {
     http_prefix_index_ = 0;
@@ -134,7 +136,7 @@ bool request_parser::parse_version(char c)
 bool request_parser::parse_major_version(char c, request &req)
 {
   if (isdigit(c)) {
-    req.version.major = c - '0';
+    req.version_.major = c - '0';
     return true;
   } else if (c == '.') {
     state_ = MINOR_VERSION;
@@ -147,7 +149,7 @@ bool request_parser::parse_major_version(char c, request &req)
 bool request_parser::parse_minor_version(char c, request &req)
 {
   if (isdigit(c)) {
-    req.version.minor = c - '0';
+    req.version_.minor = c - '0';
     return true;
   } else if (c == '\r') {
     state_ = HEADER;
@@ -250,36 +252,22 @@ bool request_parser::isurlchar(char c) const
 
 void request_parser::insert_header(const std::string &key, const std::string &value, request &req)
 {
-  req.headers.insert(std::make_pair(key, value));
+  req.headers_.insert(std::make_pair(key, value));
   if (strcasecmp(key.c_str(), request_header::CONTENT_TYPE) == 0) {
-    req.content.type = value;
+    req.content_.type = value;
   } else if (strcasecmp(key.c_str(), request_header::CONTENT_LENGTH) == 0) {
     char *end;
-    req.content.length = strtoul(value.c_str(), &end, 10);
+    req.content_.length = strtoul(value.c_str(), &end, 10);
   } else if (strcasecmp(key.c_str(), request_header::CONTENT_MD5) == 0) {
-    req.content.md5 = value;
+    req.content_.md5 = value;
   } else if (strcasecmp(key.c_str(), request_header::HOST) == 0) {
-    req.host = value;
+    req.host_ = value;
   }
 }
 
 void request_parser::apply_method(const std::string &method, request &req)
 {
-  if (strcasecmp(method.c_str(), "GET") == 0) {
-    req.method = http::GET;
-  } else if (strcasecmp(method.c_str(), "POST") == 0) {
-    req.method = http::POST;
-  } else if (strcasecmp(method.c_str(), "PUT") == 0) {
-    req.method = http::PUT;
-  } else if (strcasecmp(method.c_str(), "DELETE") == 0) {
-    req.method = http::DELETE;
-  } else if (strcasecmp(method.c_str(), "HEAD") == 0) {
-    req.method = http::HEAD;
-  } else if (strcasecmp(method.c_str(), "OPTIONS") == 0) {
-    req.method = http::OPTIONS;
-  } else {
-    req.method = http::UNKNOWN;
-  }
+  req.method_ = http::to_method(method);
 }
 
 void request_parser::reset()

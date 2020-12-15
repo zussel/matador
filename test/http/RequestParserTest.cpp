@@ -34,12 +34,12 @@ void RequestParserTest::test_reset_request_parser()
   size_t expected_header_size(1);
 
   UNIT_ASSERT_EQUAL(request_parser::FINISH, parser.parse(RequestData::GET_SHORT, req2));
-  UNIT_ASSERT_EQUAL(http::GET, req2.method);
-  UNIT_ASSERT_EQUAL("/api", req2.url);
-  UNIT_ASSERT_EQUAL(1, req2.version.major);
-  UNIT_ASSERT_EQUAL(1, req2.version.minor);
-  UNIT_ASSERT_EQUAL(expected_header_size, req2.headers.size());
-  UNIT_ASSERT_EQUAL("de.wikipedia.org", req2.host);
+  UNIT_ASSERT_EQUAL(http::GET, req2.method());
+  UNIT_ASSERT_EQUAL("/api", req2.url());
+  UNIT_ASSERT_EQUAL(1, req2.version().major);
+  UNIT_ASSERT_EQUAL(1, req2.version().minor);
+  UNIT_ASSERT_EQUAL(expected_header_size, req2.headers().size());
+  UNIT_ASSERT_EQUAL("de.wikipedia.org", req2.host());
 }
 
 void RequestParserTest::test_common_get_request()
@@ -48,15 +48,15 @@ void RequestParserTest::test_common_get_request()
   request req;
   size_t expected_header_size(4);
   UNIT_ASSERT_EQUAL(request_parser::FINISH, parser.parse(RequestData::GET_COMMON, req));
-  UNIT_ASSERT_EQUAL(http::GET, req.method);
-  UNIT_ASSERT_EQUAL("/api", req.url);
-  UNIT_ASSERT_EQUAL(1, req.version.major);
-  UNIT_ASSERT_EQUAL(1, req.version.minor);
-  UNIT_ASSERT_EQUAL(expected_header_size, req.headers.size());
-  UNIT_ASSERT_EQUAL("de.wikipedia.org", req.host);
-  UNIT_ASSERT_EQUAL("application/x-www-form-urlencoded", req.content.type);
-  UNIT_ASSERT_EQUAL("frog@jmarshall.com", req.headers[request_header::FROM]);
-  UNIT_ASSERT_EQUAL("HTTPTool/1.0", req.headers[request_header::USER_AGENT]);
+  UNIT_ASSERT_EQUAL(http::GET, req.method());
+  UNIT_ASSERT_EQUAL("/api", req.url());
+  UNIT_ASSERT_EQUAL(1, req.version().major);
+  UNIT_ASSERT_EQUAL(1, req.version().minor);
+  UNIT_ASSERT_EQUAL(expected_header_size, req.headers().size());
+  UNIT_ASSERT_EQUAL("de.wikipedia.org", req.host());
+  UNIT_ASSERT_EQUAL("application/x-www-form-urlencoded", req.content().type);
+  UNIT_ASSERT_EQUAL("frog@jmarshall.com", req.headers().at(request_header::FROM));
+  UNIT_ASSERT_EQUAL("HTTPTool/1.0", req.headers().at(request_header::USER_AGENT));
 }
 
 void RequestParserTest::test_short_get_request()
@@ -66,12 +66,12 @@ void RequestParserTest::test_short_get_request()
   size_t expected_header_size(1);
 
   UNIT_ASSERT_EQUAL(request_parser::FINISH, parser.parse(RequestData::GET_SHORT, req));
-  UNIT_ASSERT_EQUAL(http::GET, req.method);
-  UNIT_ASSERT_EQUAL("/api", req.url);
-  UNIT_ASSERT_EQUAL(1, req.version.major);
-  UNIT_ASSERT_EQUAL(1, req.version.minor);
-  UNIT_ASSERT_EQUAL(expected_header_size, req.headers.size());
-  UNIT_ASSERT_EQUAL("de.wikipedia.org", req.host);
+  UNIT_ASSERT_EQUAL(http::GET, req.method());
+  UNIT_ASSERT_EQUAL("/api", req.url());
+  UNIT_ASSERT_EQUAL(1, req.version().major);
+  UNIT_ASSERT_EQUAL(1, req.version().minor);
+  UNIT_ASSERT_EQUAL(expected_header_size, req.headers().size());
+  UNIT_ASSERT_EQUAL("de.wikipedia.org", req.host());
 }
 
 void RequestParserTest::test_query_post_request()
@@ -82,16 +82,16 @@ void RequestParserTest::test_query_post_request()
   size_t expected_content_length(32);
 
   UNIT_ASSERT_EQUAL(request_parser::FINISH, parser.parse(RequestData::POST_QUERY_BODY, req));
-  UNIT_ASSERT_EQUAL(http::POST, req.method);
-  UNIT_ASSERT_EQUAL("/enlighten/rest", req.url);
-  UNIT_ASSERT_EQUAL(1, req.version.major);
-  UNIT_ASSERT_EQUAL(1, req.version.minor);
-  UNIT_ASSERT_EQUAL(expected_header_size, req.headers.size());
-  UNIT_ASSERT_EQUAL("api.opencalais.com", req.host);
-  UNIT_ASSERT_EQUAL("application/x-www-form-urlencoded", req.content.type);
-  UNIT_ASSERT_EQUAL(expected_content_length, req.content.length);
-  UNIT_ASSERT_EQUAL(expected_content_length, req.body.size());
-  UNIT_ASSERT_EQUAL("home=Cosby&favorite+flavor=flies", req.body);
+  UNIT_ASSERT_EQUAL(http::POST, req.method());
+  UNIT_ASSERT_EQUAL("/enlighten/rest", req.url());
+  UNIT_ASSERT_EQUAL(1, req.version().major);
+  UNIT_ASSERT_EQUAL(1, req.version().minor);
+  UNIT_ASSERT_EQUAL(expected_header_size, req.headers().size());
+  UNIT_ASSERT_EQUAL("api.opencalais.com", req.host());
+  UNIT_ASSERT_EQUAL("application/x-www-form-urlencoded", req.content().type);
+  UNIT_ASSERT_EQUAL(expected_content_length, req.content().length);
+  UNIT_ASSERT_EQUAL(expected_content_length, req.body().size());
+  UNIT_ASSERT_EQUAL("home=Cosby&favorite+flavor=flies", req.body());
 }
 
 void RequestParserTest::test_xml_post_request()
@@ -102,18 +102,18 @@ void RequestParserTest::test_xml_post_request()
   size_t expected_content_length(254);
 
   UNIT_ASSERT_EQUAL(request_parser::FINISH, parser.parse(RequestData::POST_XML_BODY, req));
-  UNIT_ASSERT_EQUAL(http::POST, req.method);
-  UNIT_ASSERT_EQUAL("/experiments", req.url);
-  UNIT_ASSERT_EQUAL(1, req.version.major);
-  UNIT_ASSERT_EQUAL(1, req.version.minor);
-  UNIT_ASSERT_EQUAL(expected_header_size, req.headers.size());
-  UNIT_ASSERT_EQUAL("api.bonfire-project.eu:444", req.host);
-  UNIT_ASSERT_EQUAL("*/*", req.headers[request_header::ACCEPT]);
-  UNIT_ASSERT_EQUAL("Basic XXX", req.headers[request_header::AUTHORIZATION]);
-  UNIT_ASSERT_EQUAL("gzip, deflate", req.headers[request_header::ACCEPT_ENCODING]);
-  UNIT_ASSERT_EQUAL("application/vnd.bonfire+xml;charset=utf-8", req.content.type);
-  UNIT_ASSERT_EQUAL(expected_content_length, req.content.length);
-  UNIT_ASSERT_EQUAL(expected_content_length, req.body.size());
+  UNIT_ASSERT_EQUAL(http::POST, req.method());
+  UNIT_ASSERT_EQUAL("/experiments", req.url());
+  UNIT_ASSERT_EQUAL(1, req.version().major);
+  UNIT_ASSERT_EQUAL(1, req.version().minor);
+  UNIT_ASSERT_EQUAL(expected_header_size, req.headers().size());
+  UNIT_ASSERT_EQUAL("api.bonfire-project.eu:444", req.host());
+  UNIT_ASSERT_EQUAL("*/*", req.headers().at(request_header::ACCEPT));
+  UNIT_ASSERT_EQUAL("Basic XXX", req.headers().at(request_header::AUTHORIZATION));
+  UNIT_ASSERT_EQUAL("gzip, deflate", req.headers().at(request_header::ACCEPT_ENCODING));
+  UNIT_ASSERT_EQUAL("application/vnd.bonfire+xml;charset=utf-8", req.content().type);
+  UNIT_ASSERT_EQUAL(expected_content_length, req.content().length);
+  UNIT_ASSERT_EQUAL(expected_content_length, req.body().size());
 //  UNIT_ASSERT_EQUAL("home=Cosby&favorite+flavor=flies", req.body);
 }
 
@@ -129,22 +129,22 @@ void RequestParserTest::test_xml_post_partial_request()
    * read in first part
    */
   UNIT_ASSERT_EQUAL(request_parser::PARTIAL, parser.parse(RequestData::POST_PARTIAL_BEGIN, req));
-  UNIT_ASSERT_EQUAL(http::POST, req.method);
-  UNIT_ASSERT_EQUAL("/experiments", req.url);
-  UNIT_ASSERT_EQUAL(1, req.version.major);
-  UNIT_ASSERT_EQUAL(1, req.version.minor);
-  UNIT_ASSERT_EQUAL(expected_header_size_begin, req.headers.size());
-  UNIT_ASSERT_EQUAL("api.bonfire-project.eu:444", req.host);
+  UNIT_ASSERT_EQUAL(http::POST, req.method());
+  UNIT_ASSERT_EQUAL("/experiments", req.url());
+  UNIT_ASSERT_EQUAL(1, req.version().major);
+  UNIT_ASSERT_EQUAL(1, req.version().minor);
+  UNIT_ASSERT_EQUAL(expected_header_size_begin, req.headers().size());
+  UNIT_ASSERT_EQUAL("api.bonfire-project.eu:444", req.host());
 
   /*
    * read in last part
    */
   UNIT_ASSERT_EQUAL(request_parser::FINISH, parser.parse(RequestData::POST_PARTIAL_END, req));
-  UNIT_ASSERT_EQUAL(expected_header_size_end, req.headers.size());
-  UNIT_ASSERT_EQUAL("*/*", req.headers[request_header::ACCEPT]);
-  UNIT_ASSERT_EQUAL("Basic XXX", req.headers[request_header::AUTHORIZATION]);
-  UNIT_ASSERT_EQUAL("gzip, deflate", req.headers[request_header::ACCEPT_ENCODING]);
-  UNIT_ASSERT_EQUAL("application/vnd.bonfire+xml; charset=utf-8", req.content.type);
-  UNIT_ASSERT_EQUAL(expected_content_length, req.content.length);
-  UNIT_ASSERT_EQUAL(expected_content_length, req.body.size());
+  UNIT_ASSERT_EQUAL(expected_header_size_end, req.headers().size());
+  UNIT_ASSERT_EQUAL("*/*", req.headers().at(request_header::ACCEPT));
+  UNIT_ASSERT_EQUAL("Basic XXX", req.headers().at(request_header::AUTHORIZATION));
+  UNIT_ASSERT_EQUAL("gzip, deflate", req.headers().at(request_header::ACCEPT_ENCODING));
+  UNIT_ASSERT_EQUAL("application/vnd.bonfire+xml; charset=utf-8", req.content().type);
+  UNIT_ASSERT_EQUAL(expected_content_length, req.content().length);
+  UNIT_ASSERT_EQUAL(expected_content_length, req.body().size());
 }

@@ -7,6 +7,8 @@
 namespace matador {
 namespace http {
 
+typedef std::unordered_map<std::string, std::string> t_string_param_map;
+
 class http
 {
 public:
@@ -21,6 +23,7 @@ public:
   };
 
   static std::string to_string(method_t m);
+  static method_t to_method(const std::string &str);
 
   enum status_t {
     OK = 200,
@@ -45,6 +48,7 @@ public:
 
 private:
   static std::unordered_map<method_t, std::string> method_string_map_;
+  static std::unordered_map<std::string, method_t> string_method_map_;
   static std::unordered_map<status_t, std::string> status_string_map_;
 };
 

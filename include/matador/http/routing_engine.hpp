@@ -1,7 +1,7 @@
 #ifndef MATADOR_ROUTING_ENGINE_HPP
 #define MATADOR_ROUTING_ENGINE_HPP
 
-#include "matador/http/route_path.hpp"
+#include "matador/http/route_endpoint.hpp"
 
 #include "matador/utils/tree.hpp"
 
@@ -10,6 +10,8 @@
 
 namespace matador {
 namespace http {
+
+class request;
 
 class routing_engine
 {
@@ -26,7 +28,7 @@ public:
 
   iterator find(const std::string &path, http::http::method_t method);
 
-  iterator match(const std::string &path, http::http::method_t method, t_path_param_map &path_params);
+  iterator match(request &req);
 
   void dump(std::ostream &out);
 

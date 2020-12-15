@@ -90,29 +90,29 @@ void test_suite::init(int argc, char *argv[])
 
     std::string val(argv[2]);
     if (val == "all") {
-    } else {
-      std::stringstream sval(val);
-      std::string part;
-      while (std::getline(sval, part, ',')) {
-        size_t pos = part.find(':');
+      return;
+    }
+    std::stringstream sval(val);
+    std::string part;
+    while (std::getline(sval, part, ',')) {
+      size_t pos = part.find(':');
 
-        test_unit_args unit_args;
+      test_unit_args unit_args;
 
-        if (pos == std::string::npos) {
-          // execute all test of a unit class
-          unit_args.unit = part;
-        } else {
-          // extract unit and test name
-          unit_args.unit = part.substr(0, pos);
-          std::stringstream tests(part.substr(pos+1));
-          std::string test;
-          while (std::getline(tests, test, ':')) {
-            unit_args.tests.push_back(test);
-          }
+      if (pos == std::string::npos) {
+        // execute all test of a unit class
+        unit_args.unit = part;
+      } else {
+        // extract unit and test name
+        unit_args.unit = part.substr(0, pos);
+        std::stringstream tests(part.substr(pos+1));
+        std::string test;
+        while (std::getline(tests, test, ':')) {
+          unit_args.tests.push_back(test);
         }
-
-        args_.unit_args.push_back(unit_args);
       }
+
+      args_.unit_args.push_back(unit_args);
     }
   } else {
     return;

@@ -10,13 +10,13 @@ static_file_service::static_file_service(const std::string &path, server &s)
   : server_(s)
   , log_(matador::create_logger("StaticFileService"))
 {
-  s.on_get(path, [this](const request &req, const t_path_param_map&) { return serve(req); });
+  s.on_get(path, [this](const request &req) { return serve(req); });
 }
 
 response static_file_service::serve(const request &req)
 {
   std::string path;
-  if (!url::decode(req.url, path)) {
+  if (!url::decode(req.url(), path)) {
     return response::bad_request();
   }
 

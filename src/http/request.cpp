@@ -3,13 +3,49 @@
 namespace matador {
 namespace http {
 
-void request::execute(response &) {
+http::method_t request::method() const
+{
+  return method_;
+}
 
-  // encode the url (replace %## with its value)
+std::string request::url() const
+{
+  return url_;
+}
 
-  // check path
+request::version_t request::version() const
+{
+  return version_;
+}
 
-  //
+std::string request::host() const
+{
+  return host_;
+}
+
+const request::content_t& request::content() const
+{
+  return content_;
+}
+
+const t_string_param_map& request::headers() const
+{
+  return headers_;
+}
+
+const t_string_param_map& request::path_params() const
+{
+  return path_params_;
+}
+
+const t_string_param_map& request::query_params() const
+{
+  return query_params_;
+}
+
+const std::string& request::body() const
+{
+  return body_;
 }
 
 }

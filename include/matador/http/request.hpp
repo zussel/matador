@@ -14,8 +14,6 @@ class response;
 class request
 {
 public:
-  typedef std::unordered_map<std::string, std::string> t_string_string_map;
-
   struct version_t {
     int major = 0;
     int minor = 0;
@@ -25,30 +23,40 @@ public:
     std::size_t length;
     std::string type;
     std::string md5;
+    std::string language;
   };
 
 public:
-  void execute(response &resp);
+  http::method_t method() const;
+  std::string url() const;
+  version_t version() const;
+  std::string host() const;
 
-//  method_t method() const;
-//  std::string url() const;
-//  version_t version() const;
-//  std::string host() const;
+  const content_t& content() const;
+
+  const t_string_param_map& headers() const;
+  const t_string_param_map& path_params() const;
+  const t_string_param_map& query_params() const;
+
+  const std::string& body() const;
 
 private:
   friend class request_parser;
+  friend class route_endpoint;
 
-public:
-  http::method_t method;
-  std::string url;
-  version_t version;
-  std::string host;
+private:
+  http::method_t method_;
+  std::string url_;
+  version_t version_;
+  std::string host_;
 
-  content_t content;
+  content_t content_;
 
-  t_string_string_map headers;
+  t_string_param_map headers_;
+  t_string_param_map path_params_;
+  t_string_param_map query_params_;
 
-  std::string body;
+  std::string body_;
 };
 
 }
