@@ -20,12 +20,28 @@ const char *code_base[2] = {
 
 std::string base64::encode(const std::string &str)
 {
-  return str;
+  return encode(str.c_str(), str.size());
+}
+
+std::string base64::encode(const char *str, size_t size)
+{
+  std::string result;
+  char pack3[3];
+  char pack4[4];
+  // 3 byte to 4 chars (3 x 8 bits -> 4 x 6 bits)
+  for (size_t i = 0; i < size; ++i) {
+
+  }
+  return result;
 }
 
 std::string base64::decode(const std::string &str)
 {
-  return str;
+  return decode(str.c_str(), str.size());
 }
 
+std::string base64::decode(const char *str, size_t size)
+{
+  return str;
+}
 }
