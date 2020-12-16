@@ -69,8 +69,8 @@ private:
   bool parse_header_newline(char c, request &req);
   bool parse_header_finish(char c);
 
-  bool isurlchar(char c) const;
-  bool ishexchar(char c) const;
+  bool is_url_char(char c) const;
+  bool is_hex_char(char c) const;
 
   void insert_header(const std::string &key, const std::string &value, request &req);
   void apply_method(const std::string &method, request &req);

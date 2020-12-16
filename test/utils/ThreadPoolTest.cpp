@@ -10,7 +10,7 @@ ThreadPoolTest::ThreadPoolTest()
   add_test("thread_pool", [this] { test_threadpool(); }, "thread pool test");
 }
 
-void task(int num)
+void task(int )
 {
 //  std::cout << "thread: starting task " << num << "\n";
   std::this_thread::sleep_for(std::chrono::seconds (1));

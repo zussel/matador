@@ -122,7 +122,7 @@ bool request_parser::parse_method(char c, request &req)
 
 bool request_parser::parse_url(char c, request &req)
 {
-  if (isurlchar(c)) {
+  if (is_url_char(c)) {
     req.url_.push_back(c);
     return true;
   } else if (c == ' ') {
@@ -140,7 +140,7 @@ bool request_parser::parse_url_path(char c, request &req)
     current_query_field_.clear();
     state_ = URL_QUERY_FIELD;
     return true;
-  } else if (isurlchar(c)) {
+  } else if (is_url_char(c)) {
     req.url_.push_back(c);
     return true;
   } else if (c == ' ') {
@@ -155,14 +155,14 @@ bool request_parser::parse_url_path(char c, request &req)
 bool request_parser::parse_url_query_field(char c)
 {
   if (hex_parse_state_ == HEX_FIRST) {
-    if (!ishexchar(c)) {
+    if (!is_hex_char(c)) {
       return false;
     }
     hex_str_.push_back(c);
     hex_parse_state_ = HEX_SECOND;
     return true;
   } else if (hex_parse_state_ == HEX_SECOND) {
-    if (!ishexchar(c)) {
+    if (!is_hex_char(c)) {
       return false;
     }
     hex_str_.push_back(c);
@@ -181,7 +181,7 @@ bool request_parser::parse_url_query_field(char c)
     }
     state_ = URL_QUERY_VALUE;
     return true;
-  } else if (isurlchar(c) && c != '?') {
+  } else if (is_url_char(c) && c != '?') {
     current_query_field_.push_back(c);
     return true;
   } else {
@@ -192,14 +192,14 @@ bool request_parser::parse_url_query_field(char c)
 bool request_parser::parse_url_query_value(char c, request &req)
 {
   if (hex_parse_state_ == HEX_FIRST) {
-    if (!ishexchar(c)) {
+    if (!is_hex_char(c)) {
       return false;
     }
     hex_str_.push_back(c);
     hex_parse_state_ = HEX_SECOND;
     return true;
   } else if (hex_parse_state_ == HEX_SECOND) {
-    if (!ishexchar(c)) {
+    if (!is_hex_char(c)) {
       return false;
     }
     hex_str_.push_back(c);
@@ -230,7 +230,7 @@ bool request_parser::parse_url_query_value(char c, request &req)
     current_query_value_.clear();
     state_ = URL_FRAGMENT;
     return true;
-  } else if (isurlchar(c) && c != '?') {
+  } else if (is_url_char(c) && c != '?') {
     current_query_value_.push_back(c);
     return true;
   } else if (c == ' ') {
@@ -250,7 +250,7 @@ bool request_parser::parse_url_query_value(char c, request &req)
 
 bool request_parser::parse_url_fragment(char c, request &req)
 {
-  if (isurlchar(c)) {
+  if (is_url_char(c)) {
     req.fragment_.push_back(c);
     return true;
   } else if (c == ' ') {
@@ -385,12 +385,12 @@ bool request_parser::parse_header_finish(char c) {
   return c == '\n';
 }
 
-bool request_parser::isurlchar(char c) const
+bool request_parser::is_url_char(char c) const
 {
   return isalnum(c) || strchr(URL_SPECIAL_CHAR, c) != 0;
 }
 
-bool request_parser::ishexchar(char c) const
+bool request_parser::is_hex_char(char c) const
 {
   return isalnum(c) || strchr(HEX_CHAR, c) != 0;
 }
