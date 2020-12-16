@@ -29,6 +29,8 @@ public:
 public:
   http::method_t method() const;
   std::string url() const;
+  std::string query() const;
+  std::string fragment() const;
   version_t version() const;
   std::string host() const;
 
@@ -47,6 +49,8 @@ private:
 private:
   http::method_t method_;
   std::string url_;
+  std::string query_;
+  std::string fragment_;
   version_t version_;
   std::string host_;
 

@@ -6,9 +6,11 @@
 #include "matador/logger/logger.hpp"
 
 #include "matador/utils/buffer.hpp"
+#include "matador/utils/optional.hpp"
 
 #include "matador/http/request_parser.hpp"
 #include "matador/http/response.hpp"
+#include "matador/http/request.hpp"
 #include "matador/http/routing_engine.hpp"
 
 #include <memory>
@@ -29,7 +31,8 @@ public:
   void write();
 
 private:
-  response execute(request &req);
+  optional<routing_engine::route_endpoint_ptr> match(request &req);
+  response execute(const request &req, const routing_engine::route_endpoint_ptr &route);
 
 private:
   matador::logger log_;
@@ -40,6 +43,9 @@ private:
   matador::http::request_parser parser_;
 
   matador::http::routing_engine &router_;
+
+  request request_;
+  response response_;
 };
 
 }

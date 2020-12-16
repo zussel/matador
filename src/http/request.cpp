@@ -13,6 +13,16 @@ std::string request::url() const
   return url_;
 }
 
+std::string request::query() const
+{
+  return query_;
+}
+
+std::string request::fragment() const
+{
+  return fragment_;
+}
+
 request::version_t request::version() const
 {
   return version_;

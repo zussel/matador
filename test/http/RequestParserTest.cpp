@@ -12,6 +12,7 @@ RequestParserTest::RequestParserTest()
 {
   add_test("reset", [this] { test_reset_request_parser(); }, "test reset request parser");
   add_test("get_common", [this] { test_common_get_request(); }, "parse common get request");
+  add_test("get_common_query", [this] { test_common_get_query_request(); }, "parse common get query request");
   add_test("get_short", [this] { test_short_get_request(); }, "parse short get request");
   add_test("post_query", [this] { test_query_post_request(); }, "parse post query request");
   add_test("post_xml", [this] { test_xml_post_request(); }, "parse post xml request");
@@ -53,6 +54,26 @@ void RequestParserTest::test_common_get_request()
   UNIT_ASSERT_EQUAL(1, req.version().major);
   UNIT_ASSERT_EQUAL(1, req.version().minor);
   UNIT_ASSERT_EQUAL(expected_header_size, req.headers().size());
+  UNIT_ASSERT_EQUAL("de.wikipedia.org", req.host());
+  UNIT_ASSERT_EQUAL("application/x-www-form-urlencoded", req.content().type);
+  UNIT_ASSERT_EQUAL("frog@jmarshall.com", req.headers().at(request_header::FROM));
+  UNIT_ASSERT_EQUAL("HTTPTool/1.0", req.headers().at(request_header::USER_AGENT));
+}
+
+void RequestParserTest::test_common_get_query_request()
+{
+  request_parser parser;
+  request req;
+  size_t expected_header_size(4);
+  UNIT_ASSERT_EQUAL(request_parser::FINISH, parser.parse(RequestData::GET_COMMON_QUERY, req));
+  UNIT_ASSERT_EQUAL(http::GET, req.method());
+  UNIT_ASSERT_EQUAL("/api", req.url());
+  UNIT_ASSERT_EQUAL(1, req.version().major);
+  UNIT_ASSERT_EQUAL(1, req.version().minor);
+  UNIT_ASSERT_EQUAL(expected_header_size, req.headers().size());
+  UNIT_ASSERT_EQUAL(2UL, req.query_params().size());
+  UNIT_ASSERT_EQUAL("a==3&&c<=9", req.query_params().at("field"));
+  UNIT_ASSERT_EQUAL("name", req.query_params().at("orderby"));
   UNIT_ASSERT_EQUAL("de.wikipedia.org", req.host());
   UNIT_ASSERT_EQUAL("application/x-www-form-urlencoded", req.content().type);
   UNIT_ASSERT_EQUAL("frog@jmarshall.com", req.headers().at(request_header::FROM));

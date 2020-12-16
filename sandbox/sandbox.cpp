@@ -64,7 +64,7 @@ public:
     s.on_post("/api/v1/auth/logout", [this](const request &req) { return logout(req); });
   }
 
-  response login(const request &req)
+  response login(const request &)
   {
     log_.info("login");
 
@@ -78,14 +78,10 @@ public:
     return response::json(u);
   }
 
-  response logout(const request &request)
+  response logout(const request &)
   {
     log_.info("logout");
-    return response();
-  }
-
-  void login(const std::string &username, const std::string &passwd)
-  {
+    return response::no_content();
   }
 
 private:

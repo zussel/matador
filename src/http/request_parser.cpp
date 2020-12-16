@@ -7,6 +7,9 @@ using namespace std;
 namespace matador {
 namespace http {
 
+const std::size_t request_parser::CRLF_LEN = strlen(request_parser::CRLF);
+const std::size_t request_parser::HTTP_VERSION_PREFIX_LEN = strlen(request_parser::HTTP_VERSION_PREFIX);
+
 request_parser::return_t request_parser::parse(const std::string &msg, request &req)
 {
   /*
@@ -19,9 +22,7 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
    *
    * check for body data
    */
-
   return_t result = PARTIAL;
-  state_ = METHOD;
   http_prefix_index_ = 0;
   std::string::size_type pos;
   for (pos = 0; pos < msg.size(); ++pos) {
@@ -34,6 +35,18 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
         break;
       case URL:
         ret = parse_url(c, req);
+        break;
+      case URL_PATH:
+        ret = parse_url_path(c, req);
+        break;
+      case URL_QUERY_FIELD:
+        ret = parse_url_query_field(c);
+        break;
+      case URL_QUERY_VALUE:
+        ret = parse_url_query_value(c, req);
+        break;
+      case URL_FRAGMENT:
+        ret = parse_url_fragment(c, req);
         break;
       case VERSION:
         ret = parse_version(c);
@@ -100,7 +113,7 @@ bool request_parser::parse_method(char c, request &req)
   } else if (c == ' ') {
     apply_method(current_method_, req);
     current_method_.clear();
-    state_ = URL;
+    state_ = URL_PATH;
     return true;
   } else {
     return false;
@@ -119,6 +132,133 @@ bool request_parser::parse_url(char c, request &req)
   } else {
     return false;
   }
+}
+
+bool request_parser::parse_url_path(char c, request &req)
+{
+  if (c == '?') {
+    current_query_field_.clear();
+    state_ = URL_QUERY_FIELD;
+    return true;
+  } else if (isurlchar(c)) {
+    req.url_.push_back(c);
+    return true;
+  } else if (c == ' ') {
+    http_prefix_index_ = 0;
+    state_ = VERSION;
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool request_parser::parse_url_query_field(char c)
+{
+  if (hex_parse_state_ == HEX_FIRST) {
+    if (!ishexchar(c)) {
+      return false;
+    }
+    hex_str_.push_back(c);
+    hex_parse_state_ = HEX_SECOND;
+    return true;
+  } else if (hex_parse_state_ == HEX_SECOND) {
+    if (!ishexchar(c)) {
+      return false;
+    }
+    hex_str_.push_back(c);
+    char *err;
+    char hex = static_cast<char>(std::strtol(hex_str_.c_str(), &err, 16));
+    current_query_field_.push_back(hex);
+    hex_parse_state_ = HEX_FINISHED;
+    return true;
+  } else if (c == '%') {
+    hex_str_.clear();
+    hex_parse_state_ = HEX_FIRST;
+    return true;
+  } else if (c == '=') {
+    if (hex_parse_state_ != HEX_FINISHED) {
+      return false;
+    }
+    state_ = URL_QUERY_VALUE;
+    return true;
+  } else if (isurlchar(c) && c != '?') {
+    current_query_field_.push_back(c);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool request_parser::parse_url_query_value(char c, request &req)
+{
+  if (hex_parse_state_ == HEX_FIRST) {
+    if (!ishexchar(c)) {
+      return false;
+    }
+    hex_str_.push_back(c);
+    hex_parse_state_ = HEX_SECOND;
+    return true;
+  } else if (hex_parse_state_ == HEX_SECOND) {
+    if (!ishexchar(c)) {
+      return false;
+    }
+    hex_str_.push_back(c);
+    char *err;
+    char hex = static_cast<char>(std::strtol(hex_str_.c_str(), &err, 16));
+    current_query_value_.push_back(hex);
+    hex_parse_state_ = HEX_FINISHED;
+    return true;
+  } else if (c == '%') {
+    hex_str_.clear();
+    hex_parse_state_ = HEX_FIRST;
+    return true;
+  } else if (c == '&') {
+    if (hex_parse_state_ != HEX_FINISHED) {
+      return false;
+    }
+    req.query_params_.insert(std::make_pair(current_query_field_, current_query_value_));
+    current_query_field_.clear();
+    current_query_value_.clear();
+    state_ = URL_QUERY_FIELD;
+    return true;
+  } else if (c == '#') {
+    if (hex_parse_state_ != HEX_FINISHED) {
+      return false;
+    }
+    req.query_params_.insert(std::make_pair(current_query_field_, current_query_value_));
+    current_query_field_.clear();
+    current_query_value_.clear();
+    state_ = URL_FRAGMENT;
+    return true;
+  } else if (isurlchar(c) && c != '?') {
+    current_query_value_.push_back(c);
+    return true;
+  } else if (c == ' ') {
+    if (hex_parse_state_ != HEX_FINISHED) {
+      return false;
+    }
+    req.query_params_.insert(std::make_pair(current_query_field_, current_query_value_));
+    current_query_field_.clear();
+    current_query_value_.clear();
+    http_prefix_index_ = 0;
+    state_ = VERSION;
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool request_parser::parse_url_fragment(char c, request &req)
+{
+  if (isurlchar(c)) {
+    req.fragment_.push_back(c);
+    return true;
+  } else if (c == ' ') {
+    http_prefix_index_ = 0;
+    state_ = VERSION;
+    return true;
+  }
+  return false;
 }
 
 bool request_parser::parse_version(char c)
@@ -248,6 +388,11 @@ bool request_parser::parse_header_finish(char c) {
 bool request_parser::isurlchar(char c) const
 {
   return isalnum(c) || strchr(URL_SPECIAL_CHAR, c) != 0;
+}
+
+bool request_parser::ishexchar(char c) const
+{
+  return isalnum(c) || strchr(HEX_CHAR, c) != 0;
 }
 
 void request_parser::insert_header(const std::string &key, const std::string &value, request &req)

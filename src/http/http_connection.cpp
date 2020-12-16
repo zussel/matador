@@ -33,16 +33,23 @@ void http_connection::read()
         endpoint_.to_string().c_str(), nread
       );
       // parse request and prepare response
-      request req;
-      auto result = parser_.parse(request_string, req);
+      auto result = parser_.parse(request_string, request_);
 
       if (result == request_parser::FINISH) {
         log_.info("finished request parsing");
-        log_.info("%s %s HTTP/%d.%d", http::to_string(req.method()).c_str(), req.url().c_str(), req.version().major, req.version().minor);
+        log_.info("%s %s HTTP/%d.%d", http::to_string(request_.method()).c_str(), request_.url().c_str(), request_.version().major, request_.version().minor);
 
-        response resp = execute(req);
+        auto route = match(request_);
 
-        auto data = resp.to_string();
+        if (!route.has_value()) {
+          log_.info("route %s isn't valid", request_.url().c_str());
+          response_ = response::not_found();
+        } else {
+          response_ = execute(request_, route.value());
+        }
+
+        parser_.reset();
+        auto data = response_.to_string();
         buf_.clear();
         buf_.append(data.c_str(), data.size());
       }
@@ -65,19 +72,23 @@ void http_connection::write()
   });
 }
 
-response http_connection::execute(request &req)
+optional<routing_engine::route_endpoint_ptr> http_connection::match(request &req)
 {
   log_.info("checking for %s route %s", http::to_string(req.method()).c_str(), req.url().c_str());
-  auto r = router_.match(req);
+  auto route = router_.match(req);
 
-  if (!router_.valid(r)) {
-    log_.info("route isn't valid");
-    return response::not_found();
+  if (router_.valid(route)) {
+    return make_optional(*route);
   } else {
-    log_.info("route is valid");
-    log_.debug("route spec: %s (regex: %s)", (*r)->path_spec().c_str(), (*r)->path_regex().c_str());
-    return (*r)->execute(req);
+    return nullopt;
   }
 }
+
+response http_connection::execute(const request &req, const routing_engine::route_endpoint_ptr &route)
+{
+    log_.debug("route spec: %s (regex: %s)", route->path_spec().c_str(), route->path_regex().c_str());
+    return route->execute(req);
+}
+
 }
 }

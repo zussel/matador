@@ -11,6 +11,13 @@ public:
     "User-Agent: HTTPTool/1.0\r\n" \
     "Content-Type: application/x-www-form-urlencoded\r\n\r\n";
 
+  static constexpr const char* GET_COMMON_QUERY = \
+    "GET /api?field=a%3D%3D3%26%26c%3C%3D9&orderby=name HTTP/1.1\r\n" \
+    "Host: de.wikipedia.org\r\n" \
+    "From: frog@jmarshall.com\r\n" \
+    "User-Agent: HTTPTool/1.0\r\n" \
+    "Content-Type: application/x-www-form-urlencoded\r\n\r\n";
+
   static constexpr const char* GET_SHORT = \
     "GET /api HTTP/1.1\r\n" \
     "Host: de.wikipedia.org\r\n\r\n";

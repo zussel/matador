@@ -23,6 +23,10 @@ private:
   enum state_t {
     METHOD,
     URL,
+    URL_PATH,
+    URL_QUERY_FIELD,
+    URL_QUERY_VALUE,
+    URL_FRAGMENT,
     VERSION,
     MAJOR_VERSION,
     MINOR_VERSION,
@@ -34,8 +38,14 @@ private:
     HEADER_FINISH
   };
 
+  enum hex_parse_t {
+    HEX_FIRST,
+    HEX_SECOND,
+    HEX_FINISHED
+  };
+
   static constexpr const char* CRLF = "\r\n";
-  static constexpr const std::size_t CRLF_LEN = strlen("\r\n");
+  static const std::size_t CRLF_LEN;
 
 public:
   return_t parse(const std::string &msg, request &r);
@@ -45,6 +55,10 @@ public:
 private:
   bool parse_method(char c, request &req);
   bool parse_url(char c, request &req);
+  bool parse_url_path(char c, request &req);
+  bool parse_url_query_field(char c);
+  bool parse_url_query_value(char c, request &req);
+  bool parse_url_fragment(char c, request &req);
   bool parse_version(char c);
   bool parse_major_version(char c, request &req);
   bool parse_minor_version(char c, request &req);
@@ -56,6 +70,7 @@ private:
   bool parse_header_finish(char c);
 
   bool isurlchar(char c) const;
+  bool ishexchar(char c) const;
 
   void insert_header(const std::string &key, const std::string &value, request &req);
   void apply_method(const std::string &method, request &req);
@@ -67,16 +82,19 @@ private:
   std::string current_method_;
   std::string current_key_;
   std::string current_value_;
+  std::string current_query_field_;
+  std::string current_query_value_;
   std::string blanks_;
 
   bool skip_blanks_ = false;
 
-  static constexpr const char* URL_SPECIAL_CHAR    = "-._~:/?#[]@!$&'()*+,;=";
-  static constexpr const char* HTTP_VERSION_PREFIX = "HTTP";
-  static constexpr const std::size_t HTTP_VERSION_PREFIX_LEN = strlen("HTTP");
+  hex_parse_t hex_parse_state_ = HEX_FINISHED;
+  std::string hex_str_;
 
-//  struct delete_char_array { void operator()(char *p) { free(p); }};
-//  std::unique_ptr<char[], delete_char_array> line_;
+  static constexpr const char* URL_SPECIAL_CHAR    = "-._~:/?#[]@!$&'()*+,;=";
+  static constexpr const char* HEX_CHAR            = "ABCDEF0123456789";
+  static constexpr const char* HTTP_VERSION_PREFIX = "HTTP";
+  static const std::size_t HTTP_VERSION_PREFIX_LEN;
 };
 
 }
