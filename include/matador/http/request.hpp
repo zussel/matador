@@ -1,6 +1,19 @@
 #ifndef MATADOR_REQUEST_HPP
 #define MATADOR_REQUEST_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_HTTP_API __declspec(dllexport)
+    #define EXPIMP_HTTP_TEMPLATE
+  #else
+    #define OOS_HTTP_API __declspec(dllimport)
+    #define EXPIMP_HTTP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_HTTP_API
+#endif
+
 #include "matador/http/http.hpp"
 
 #include <string>
@@ -11,7 +24,7 @@ namespace http {
 
 class response;
 
-class request
+class OOS_HTTP_API request
 {
 public:
   struct version_t {

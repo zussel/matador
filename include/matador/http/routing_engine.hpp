@@ -1,6 +1,19 @@
 #ifndef MATADOR_ROUTING_ENGINE_HPP
 #define MATADOR_ROUTING_ENGINE_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_HTTP_API __declspec(dllexport)
+    #define EXPIMP_HTTP_TEMPLATE
+  #else
+    #define OOS_HTTP_API __declspec(dllimport)
+    #define EXPIMP_HTTP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_HTTP_API
+#endif
+
 #include "matador/http/route_endpoint.hpp"
 
 #include "matador/utils/tree.hpp"
@@ -13,7 +26,7 @@ namespace http {
 
 class request;
 
-class routing_engine
+class OOS_HTTP_API routing_engine
 {
 public:
   typedef std::shared_ptr<route_endpoint> route_endpoint_ptr;

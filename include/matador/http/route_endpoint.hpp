@@ -1,6 +1,19 @@
 #ifndef MATADOR_ROUTE_ENDPOINT_HPP
 #define MATADOR_ROUTE_ENDPOINT_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_HTTP_API __declspec(dllexport)
+    #define EXPIMP_HTTP_TEMPLATE
+  #else
+    #define OOS_HTTP_API __declspec(dllimport)
+    #define EXPIMP_HTTP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_HTTP_API
+#endif
+
 #include "matador/http/http.hpp"
 
 #include <functional>
@@ -20,7 +33,7 @@ typedef std::unordered_map<size_t, std::string> t_size_string_map;
  * path_regex
  * method
  */
-class route_endpoint
+class OOS_HTTP_API route_endpoint
 {
 public:
   route_endpoint(std::string path_spec, const std::string& path_regex, http::method_t method, t_request_handler request_handler, t_size_string_map param_index_map);

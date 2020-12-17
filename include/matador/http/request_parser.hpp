@@ -1,6 +1,19 @@
 #ifndef MATADOR_REQUEST_PARSER_HPP
 #define MATADOR_REQUEST_PARSER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_HTTP_API __declspec(dllexport)
+    #define EXPIMP_HTTP_TEMPLATE
+  #else
+    #define OOS_HTTP_API __declspec(dllimport)
+    #define EXPIMP_HTTP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_HTTP_API
+#endif
+
 #include <string>
 #include <cstring>
 #include <cstdlib>
@@ -11,7 +24,7 @@ namespace http {
 
 class request;
 
-class request_parser {
+class OOS_HTTP_API request_parser {
 public:
   enum return_t {
     INVALID,
