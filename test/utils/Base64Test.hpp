@@ -9,7 +9,9 @@ public:
   Base64Test();
 
   void test_encode();
+  void test_encode_url();
   void test_decode();
+  void test_complete();
 };
 
 

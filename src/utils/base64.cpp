@@ -2,10 +2,6 @@
 
 namespace matador {
 
-enum base64_type {
-  BASE64, BASE64URL
-};
-
 const char *code_base[2] = {
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
   "abcdefghijklmnopqrstuvwxyz"
@@ -38,10 +34,25 @@ std::string base64::encode(const std::string &str)
   return encode(str.c_str(), str.size());
 }
 
-void encode_pack(const unsigned char *in, int range_max, std::string &result);
+std::string base64::encode(const char *str, size_t size)
+{
+  return encode(str, size, base64_type::BASE64);
+}
+
+std::string base64::encode_url(const std::string &str)
+{
+  return encode_url(str.c_str(), str.size());
+}
+
+std::string base64::encode_url(const char *str, size_t size)
+{
+  return encode(str, size, base64_type::BASE64URL);
+}
+
+void encode_pack(const unsigned char *in, int range_max, const char *codebase, std::string &result);
 void decode_pack(const unsigned char *in, std::string &result);
 
-std::string base64::encode(const char *str, size_t size)
+std::string base64::encode(const char *str, size_t size, base64_type type)
 {
   std::string result;
   unsigned char pack3[3];
@@ -51,7 +62,7 @@ std::string base64::encode(const char *str, size_t size)
     pack3[pack_count++] = str[i];
 
     if (pack_count == 3) {
-      encode_pack(pack3, 4, result);
+      encode_pack(pack3, 4, code_base[type], result);
       pack_count = 0;
     }
 
@@ -62,10 +73,11 @@ std::string base64::encode(const char *str, size_t size)
       pack3[i++] = '\0';
     }
 
-    encode_pack(pack3, pack_count + 1, result);
+    encode_pack(pack3, pack_count + 1, code_base[type], result);
 
+    unsigned char fill_char = type == base64_type::BASE64 ? '=' : '.';
     while (pack_count++ < 3) {
-      result += '=';
+      result += fill_char;
     }
   }
   return result;
@@ -95,7 +107,7 @@ std::string base64::decode(const char *str, size_t size)
   return result;
 }
 
-void encode_pack(const unsigned char *in, int range_max, std::string &result)
+void encode_pack(const unsigned char *in, int range_max, const char *codebase, std::string &result)
 {
   unsigned char out[4];
   out[0] = (in[0] & 0xfc) >> 2;
@@ -104,7 +116,7 @@ void encode_pack(const unsigned char *in, int range_max, std::string &result)
   out[3] = (in[2] & 0x3f);
 
   for (auto i = 0; i < range_max; ++i) {
-    result += code_base[0][out[i]];
+    result += codebase[out[i]];
   }
 }
 
