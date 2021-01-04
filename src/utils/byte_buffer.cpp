@@ -35,7 +35,7 @@ void byte_buffer::append(const void *bytes, byte_buffer::size_type size)
     buffer_chunk &chunk = chunk_list_.back();
     // copy first part of bytes
     std::copy(ptr+bytes_written, ptr+bytes_written+chunk.available(), &chunk.data[chunk.write_cursor]);
-    // adjust remaining size
+    // adjust capacity size
     size -= chunk.available();
     // adjust written bytes
     bytes_written += chunk.available();
@@ -46,7 +46,7 @@ void byte_buffer::append(const void *bytes, byte_buffer::size_type size)
   }
   if (size > 0) {
     buffer_chunk &chunk = chunk_list_.back();
-    // append remaining bytes
+    // append capacity bytes
     std::copy(ptr+bytes_written, ptr+bytes_written+size, &chunk.data[chunk.write_cursor]);
     chunk.write_cursor += size;
   }
@@ -61,7 +61,7 @@ void byte_buffer::release(void *bytes, byte_buffer::size_type size)
     // available bytes are not enough
     // copy first part
     std::copy(chunk.data.begin()+chunk.read_cursor, chunk.data.begin()+chunk.read_cursor+chunk.used(), ptr+bytes_read);
-    // adjust remaining size
+    // adjust capacity size
     size -= chunk.used();
     // adjust bytes read
     bytes_read += chunk.used();

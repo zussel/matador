@@ -61,7 +61,7 @@ response static_file_service::serve(const request &req)
   resp.status = http::OK;
 
   resp.content_type.type = mime_types::from_file_extension(extension);
-  resp.content_type.length = size;
+  resp.content_type.length = std::to_string(size);
 
   resp.version.major = 1;
   resp.version.minor = 1;

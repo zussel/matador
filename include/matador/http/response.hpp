@@ -23,6 +23,7 @@
 
 #include "matador/utils/json_serializer.hpp"
 #include "matador/utils/string.hpp"
+#include "matador/utils/buffer_view.hpp"
 
 namespace matador {
 namespace http {
@@ -37,7 +38,7 @@ class OOS_HTTP_API response
   };
 
   struct content_t {
-    std::size_t length = 0;
+    std::string length {"0"};
     std::string type;
   };
 
@@ -58,6 +59,8 @@ public:
 
   std::string to_string() const;
 
+  std::list<matador::buffer_view> to_buffers() const;
+
 private:
   static response create(http::status_t status);
 
@@ -67,7 +70,7 @@ public:
 
   http::status_t status = http::OK;
 
-  t_string_string_map headers;
+  t_string_string_map   headers;
 
   std::string body;
 };
@@ -88,7 +91,7 @@ response response::json(http::status_t status, const T &obj)
   resp.body = js.to_json(obj);
   resp.content_type.type = mime_types::APPLICATION_JSON;
 
-  resp.content_type.length = resp.body.size();
+  resp.content_type.length = std::to_string(resp.body.size());
 
   return resp;
 }

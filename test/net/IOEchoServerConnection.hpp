@@ -3,7 +3,6 @@
 
 #include <matador/net/io_stream.hpp>
 #include <matador/net/ip.hpp>
-#include <matador/utils/buffer.hpp>
 
 #include <memory>
 
@@ -17,7 +16,8 @@ public:
   void write();
 
 private:
-  matador::buffer buf_;
+  std::array<char, 16384> buf_;
+  std::string echo_;
   matador::io_stream &stream_;
   matador::tcp::peer endpoint_;
 

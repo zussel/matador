@@ -28,7 +28,7 @@ SET (TEST_TOOLS_SOURCES
   utils/OptionalTest.cpp
   utils/OptionalTest.hpp
   utils/ThreadPoolTest.cpp
-  utils/ThreadPoolTest.hpp utils/JsonSerializerTest.cpp utils/JsonSerializerTest.hpp utils/Base64Test.cpp utils/Base64Test.hpp)
+  utils/ThreadPoolTest.hpp utils/JsonSerializerTest.cpp utils/JsonSerializerTest.hpp utils/Base64Test.cpp utils/Base64Test.hpp utils/BufferViewTest.cpp utils/BufferViewTest.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp

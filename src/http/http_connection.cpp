@@ -6,6 +6,7 @@
 #include "matador/net/io_stream.hpp"
 
 #include "matador/utils/os.hpp"
+#include "matador/utils/buffer_view.hpp"
 
 namespace matador {
 namespace http {
@@ -25,7 +26,7 @@ void http_connection::start()
 void http_connection::read()
 {
   auto self(shared_from_this());
-  stream_.read(buf_, [this, self](int ec, int nread) {
+  stream_.read(matador::buffer_view(buf_), [this, self](int ec, int nread) {
     if (ec == 0) {
       std::string request_string(buf_.data(), buf_.size());
       log_.info(
@@ -49,9 +50,9 @@ void http_connection::read()
         }
 
         parser_.reset();
-        auto data = response_.to_string();
-        buf_.clear();
-        buf_.append(data.c_str(), data.size());
+//        auto data = response_.to_string();
+//        buf_.clear();
+//        buf_.append(data.c_str(), data.size());
       }
 
       write();
@@ -62,11 +63,14 @@ void http_connection::read()
 void http_connection::write()
 {
   auto self(shared_from_this());
-  stream_.write(buf_, [this, self](int ec, int nwrite) {
+
+  std::list<buffer_view> data = response_.to_buffers();
+
+  stream_.write(data, [this, self](int ec, int nwrite) {
     if (ec == 0) {
 //      log_.info("data to send: %s", std::string(buf_.data(), buf_.size()).c_str());
       log_.info("%s sent (bytes: %d)", endpoint_.to_string().c_str(), nwrite);
-      buf_.clear();
+      //buf_.clear();
       stream_.close_stream();
     }
   });
@@ -92,3 +96,5 @@ response http_connection::execute(const request &req, const routing_engine::rout
 
 }
 }
+
+#include "matador/utils/os.hpp"

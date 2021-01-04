@@ -236,7 +236,7 @@ public:
    * if recursive flag is set, delete all
    * objects below this node as well.
    * To adjust the serializable proxy marker for the
-   * remaining objects the corresponding
+   * capacity objects the corresponding
    * prototype tree must be passed
    *
    * @param recursive Indicates wether all or only nodes objects are deleted

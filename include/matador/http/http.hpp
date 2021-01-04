@@ -1,6 +1,8 @@
 #ifndef MATADOR_HTTP_HPP
 #define MATADOR_HTTP_HPP
 
+#include "matador/utils/buffer_view.hpp"
+
 #ifdef _MSC_VER
 #ifdef matador_utils_EXPORTS
     #define OOS_HTTP_API __declspec(dllexport)
@@ -58,6 +60,7 @@ public:
   };
 
   static std::string to_string(status_t status);
+  static matador::buffer_view to_buffer(status_t status);
 
 private:
   static std::unordered_map<method_t, std::string> method_string_map_;

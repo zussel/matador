@@ -129,7 +129,7 @@ public:
   /**
    * Skip elements of the stream while given
    * predicate is true. Once the predicate gets false
-   * the remaining elements are valid.
+   * the capacity elements are valid.
    *
    * @tparam Predicate Type of the predicate
    * @param pred Condition to check

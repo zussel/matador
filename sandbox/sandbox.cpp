@@ -9,31 +9,6 @@
 using namespace matador::http;
 using namespace std::placeholders;
 
-class response_builder
-{
-public:
-
-  response_builder& ok() {
-
-    return *this;
-  }
-  response_builder& status(http::status_t stat);
-  response_builder& body(const std::string &b);
-  response_builder& content_type(const std::string &ct);
-  response_builder& accept_encoding(const std::string ae);
-  response_builder& add_header(const std::string &key, const std::string &value);
-  response build();
-
-  void reset()
-  {
-    response_ = response();
-    response_.version.major = 1;
-    response_.version.minor = 1;
-  }
-private:
-  response response_;
-};
-
 struct user
 {
   long id;

@@ -25,6 +25,7 @@
 
 #include "utils/AnyTestUnit.hpp"
 #include "utils/Base64Test.hpp"
+#include "utils/BufferViewTest.hpp"
 #include "utils/BlobTestUnit.hpp"
 #include "utils/DateTestUnit.hpp"
 #include "utils/FileTestUnit.hpp"
@@ -109,6 +110,7 @@ int main(int argc, char *argv[])
 
   suite.register_unit(new AnyTestUnit);
   suite.register_unit(new Base64Test);
+  suite.register_unit(new BufferViewTest);
   suite.register_unit(new DateTestUnit);
   suite.register_unit(new TimeTestUnit);
   suite.register_unit(new FileTestUnit);

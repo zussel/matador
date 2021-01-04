@@ -14,7 +14,7 @@ std::string response::to_string() const
   }
 
   if (!body.empty()) {
-    result += response_header::CONTENT_LENGTH + std::string(": ") + ::to_string(content_type.length) + "\r\n";
+    result += response_header::CONTENT_LENGTH + std::string(": ") + content_type.length + "\r\n";
     result += response_header::CONTENT_TYPE + std::string(": ") + content_type.type;
   }
 //  result += response_header::CONTENT_LANGUAGE + std::string(": ") + content_type.language + "\r\n\r\n";
@@ -25,6 +25,38 @@ std::string response::to_string() const
   return result;
 }
 
+const char name_value_separator[] = { ':', ' ' };
+const char crlf[] = { '\r', '\n' };
+
+std::list<matador::buffer_view> response::to_buffers() const
+{
+  std::list<buffer_view> buffers;
+  buffers.push_back(http::to_buffer(status));
+
+  for(const auto &p : headers) {
+    buffers.emplace_back(p.first);
+    buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
+    buffers.emplace_back(p.second);
+    buffers.emplace_back(matador::buffer_view(crlf, 2));
+  }
+
+  if (!body.empty()) {
+    buffers.emplace_back(response_header::CONTENT_LENGTH);
+    buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
+    buffers.emplace_back(content_type.length);
+    buffers.emplace_back(matador::buffer_view(crlf, 2));
+    buffers.emplace_back(response_header::CONTENT_TYPE);
+    buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
+    buffers.emplace_back(content_type.type);
+    buffers.emplace_back(matador::buffer_view(crlf, 2));
+  }
+
+  buffers.emplace_back(matador::buffer_view(crlf, 2));
+
+  buffers.emplace_back(body);
+
+  return buffers;
+}
 
 response response::create(http::status_t status)
 {

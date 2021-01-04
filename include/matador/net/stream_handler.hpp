@@ -1,7 +1,7 @@
 #ifndef MATADOR_STREAM_HANDLER_HPP
 #define MATADOR_STREAM_HANDLER_HPP
 
-#include "matador/utils/buffer.hpp"
+#include "matador/utils/buffer_view.hpp"
 
 #include "matador/logger/logger.hpp"
 
@@ -83,8 +83,9 @@ public:
   bool is_ready_write() const override;
   bool is_ready_read() const override;
 
-  void read(buffer &buf, t_read_handler read_handler) override;
-  void write(buffer &buf, t_write_handler write_handler) override;
+  void read(const buffer_view &buf, t_read_handler read_handler) override;
+
+  void write(std::list<buffer_view> &buffers, t_write_handler write_handler) override;
   void close_stream() override;
 
   tcp::socket &stream() override;
@@ -93,10 +94,10 @@ private:
   logger log_;
   tcp::socket stream_;
   tcp::peer endpoint_;
-//  buffer buffer_;
 
-  buffer *read_buffer_ = nullptr;
-  buffer *write_buffer_ = nullptr;
+  buffer_view read_buffer_;
+
+  std::list<buffer_view> write_buffers_;
 
   acceptor *acceptor_ = nullptr;
   connector *connector_ = nullptr;

@@ -49,7 +49,7 @@ private:
 
 private:
   matador::logger log_;
-  matador::buffer buf_;
+  std::array<char, 16384> buf_{};
   matador::io_stream &stream_;
   matador::tcp::peer endpoint_;
 

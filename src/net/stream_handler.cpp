@@ -2,11 +2,12 @@
 #include "matador/net/reactor.hpp"
 
 #include "matador/utils/buffer.hpp"
+#include "matador/utils/buffer_view.hpp"
 
 #include "matador/logger/log_manager.hpp"
 
 #include <cerrno>
-#include <cstring>
+#include <chrono>
 
 namespace matador {
 
@@ -42,8 +43,7 @@ int stream_handler::handle() const
 
 void stream_handler::on_input()
 {
-  buffer chunk;
-  auto len = stream_.receive(chunk);
+  auto len = stream_.receive(read_buffer_);
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
@@ -53,32 +53,46 @@ void stream_handler::on_input()
     on_read_(len, len);
     on_close();
   } else {
-    chunk.size(len);
+    read_buffer_.bump(len);
     log_.info("received %d bytes", len);
     is_ready_to_read_ = false;
-    read_buffer_->append(chunk);
     on_read_(0, len);
-    log_.info("end of data");
   }
 }
 
 void stream_handler::on_output()
 {
-  int len = stream_.send(*write_buffer_);
-  if (len == 0) {
-    on_close();
-  } else if (len < 0 && errno != EWOULDBLOCK) {
-    char error_buffer[1024];
-    log_.error("fd %d: error on write: %s", handle(), os::strerror(errno, error_buffer, 1024));
-    on_close();
-    is_ready_to_write_ = false;
-    on_write_(len, len);
-  } else {
-    log_.info("sent %d bytes", len);
-    is_ready_to_write_ = false;
-    on_write_(0, len);
-    log_.info("end of data");
+  ssize_t bytes_total = 0;
+  auto start = std::chrono::high_resolution_clock::now();
+  while (!write_buffers_.empty()) {
+    buffer_view &bv = write_buffers_.front();
+
+    auto len = stream_.send(bv);
+
+    if (len == 0) {
+      on_close();
+    } else if (len < 0 && errno != EWOULDBLOCK) {
+      char error_buffer[1024];
+      log_.error("fd %d: error on write: %s", handle(), os::strerror(errno, error_buffer, 1024));
+      on_close();
+      is_ready_to_write_ = false;
+      on_write_(len, len);
+      exit(1);
+    } else if (len < 0 && errno == EWOULDBLOCK) {
+      log_.info("sent %d bytes (blocked)", bytes_total);
+    } else {
+      bytes_total += len;
+      bv.bump(len);
+      if (bv.full()) {
+        write_buffers_.pop_front();
+      }
+    }
   }
+  auto end = std::chrono::high_resolution_clock::now();
+  auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+  log_.info("sent %d bytes (%dµs)", bytes_total, elapsed);
+  is_ready_to_write_ = false;
+  on_write_(0, bytes_total);
 }
 
 void stream_handler::on_close()
@@ -101,30 +115,25 @@ void stream_handler::close()
 
 bool stream_handler::is_ready_write() const
 {
-  return is_ready_to_write_ &&
-    write_buffer_ != nullptr &&
-    !write_buffer_->empty();
+  return is_ready_to_write_ && !write_buffers_.empty();
 }
 
 bool stream_handler::is_ready_read() const
 {
-  return is_ready_to_read_ &&
-    read_buffer_ != nullptr &&
-    read_buffer_->empty() &&
-    read_buffer_->capacity() > 0;
+  return is_ready_to_read_ && !read_buffer_.full();
 }
 
-void stream_handler::read(buffer &buf, t_read_handler read_handler)
+void stream_handler::read(const buffer_view &buf, t_read_handler read_handler)
 {
   on_read_ = std::move(read_handler);
-  read_buffer_ = &buf;
+  read_buffer_ = buf;
   is_ready_to_read_ = true;
 }
 
-void stream_handler::write(buffer &buf, t_write_handler write_handler)
+void stream_handler::write(std::list<buffer_view> &buffers, io_stream::t_write_handler write_handler)
 {
   on_write_ = std::move(write_handler);
-  write_buffer_ = &buf;
+  write_buffers_ = std::move(buffers);
   is_ready_to_write_ = true;
 }
 

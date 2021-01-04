@@ -61,5 +61,11 @@ std::string http::to_string(http::status_t status)
 {
   return status_string_map_.at(status);
 }
+
+matador::buffer_view http::to_buffer(http::status_t status)
+{
+  return matador::buffer_view(status_string_map_.at(status));
+}
+
 }
 }
