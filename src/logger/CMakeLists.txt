@@ -4,7 +4,7 @@ SET(SOURCES
   basic_file_sink.cpp
   file_sink.cpp
   log_domain.cpp
-  rotating_file_sink.cpp)
+  rotating_file_sink.cpp log_level.cpp)
 
 SET(HEADER
   ../../include/matador/logger/logger.hpp

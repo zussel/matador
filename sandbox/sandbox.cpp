@@ -43,6 +43,7 @@ public:
   {
     log_.info("login");
 
+
     //req.body
     //auto credentials = json_to_object<credential>(req.body);
     // extract username and password from headers
@@ -89,6 +90,7 @@ private:
 int main(int /*argc*/, char* /*argv*/[])
 {
 //  matador::add_log_sink(matador::create_file_sink("log/server.log"));
+//  matador::default_min_log_level(matador::log_level::LVL_DEBUG);
   matador::add_log_sink(matador::create_stdout_sink());
 
   // creates a web application at port 7091

@@ -54,7 +54,7 @@ void stream_handler::on_input()
     on_close();
   } else {
     read_buffer_.bump(len);
-    log_.info("received %d bytes", len);
+    log_.info("%s: received %d bytes", endpoint_.to_string().c_str(), len);
     is_ready_to_read_ = false;
     on_read_(0, len);
   }
@@ -77,9 +77,8 @@ void stream_handler::on_output()
       on_close();
       is_ready_to_write_ = false;
       on_write_(len, len);
-      exit(1);
     } else if (len < 0 && errno == EWOULDBLOCK) {
-      log_.info("sent %d bytes (blocked)", bytes_total);
+      log_.info("%s: sent %d bytes (blocked)", endpoint_.to_string().c_str(), bytes_total);
     } else {
       bytes_total += len;
       bv.bump(len);
@@ -90,7 +89,7 @@ void stream_handler::on_output()
   }
   auto end = std::chrono::high_resolution_clock::now();
   auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-  log_.info("sent %d bytes (%dµs)", bytes_total, elapsed);
+  log_.info("%s: sent %d bytes (%dµs)", endpoint_.to_string().c_str(), bytes_total, elapsed);
   is_ready_to_write_ = false;
   on_write_(0, bytes_total);
 }

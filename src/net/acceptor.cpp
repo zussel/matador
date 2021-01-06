@@ -41,7 +41,7 @@ void acceptor::open()
 {
   acceptor_.bind(endpoint_);
   acceptor_.listen(10);
-  log_.info("fd %d: accepting connections", handle());
+  log_.debug("fd %d: accepting connections", handle());
 }
 
 int acceptor::handle() const

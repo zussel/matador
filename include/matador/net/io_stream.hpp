@@ -51,10 +51,9 @@ public:
    * to a socket. Once the data was written the given
    * write handler is called.
    *
-   * @param buf Buffer containing the data to write
+   * @param buffers List of buffers containing the data to write
    * @param write_handler Handler to be called when the data was written
    */
-  //virtual void write(buffer &buf, t_write_handler write_handler) = 0;
   virtual void write(std::list<buffer_view> &buffers, t_write_handler write_handler) = 0;
 
   /**

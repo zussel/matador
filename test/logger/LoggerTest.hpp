@@ -8,6 +8,7 @@ class LoggerTest : public matador::unit_test
 public:
   LoggerTest();
 
+  void test_log_level_range();
   void test_file_sink();
   void test_rotating_file_sink();
   void test_logger();

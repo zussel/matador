@@ -13,19 +13,30 @@
 #ifdef _MSC_VER
 #include <io.h>
 #else
-#include <unistd.h>
-#include "matador/logger/rotating_file_sink.hpp"
 #endif
 
 LoggerTest::LoggerTest()
   : unit_test("logger", "logger test")
 {
-  add_test("file_sink", std::bind(&LoggerTest::test_file_sink, this), "logger file sink test");
-  add_test("rotating_file_sink", std::bind(&LoggerTest::test_rotating_file_sink, this), "logger rotating file sink test");
-  add_test("logger", std::bind(&LoggerTest::test_logger, this), "logger test");
-  add_test("logging", std::bind(&LoggerTest::test_logging, this), "logger logging test");
-  add_test("stdout", std::bind(&LoggerTest::test_stdout, this), "logger stdout logging test");
-  add_test("stderr", std::bind(&LoggerTest::test_stderr, this), "logger stderr logging test");
+  add_test("log_level_range", [this] { test_log_level_range(); }, "logger log level range test");
+  add_test("file_sink", [this] { test_file_sink(); }, "logger file sink test");
+  add_test("rotating_file_sink", [this] { test_rotating_file_sink(); }, "logger rotating file sink test");
+  add_test("logger", [this] { test_logger(); }, "logger test");
+  add_test("logging", [this] { test_logging(); }, "logger logging test");
+  add_test("stdout", [this] { test_stdout(); }, "logger stdout logging test");
+  add_test("stderr", [this] { test_stderr(); }, "logger stderr logging test");
+}
+
+void LoggerTest::test_log_level_range()
+{
+  UNIT_ASSERT_EQUAL(matador::log_level::LVL_INFO, matador::log_manager::min_default_log_level());
+  UNIT_ASSERT_EQUAL(matador::log_level::LVL_FATAL, matador::log_manager::max_default_log_level());
+
+  matador::default_min_log_level(matador::log_level::LVL_DEBUG);
+  matador::default_max_log_level(matador::log_level::LVL_ERROR);
+
+  UNIT_ASSERT_EQUAL(matador::log_level::LVL_DEBUG, matador::log_manager::min_default_log_level());
+  UNIT_ASSERT_EQUAL(matador::log_level::LVL_ERROR, matador::log_manager::max_default_log_level());
 }
 
 void LoggerTest::test_file_sink()
@@ -134,6 +145,9 @@ void LoggerTest::test_logger()
 
 void LoggerTest::test_logging()
 {
+  matador::domain_min_log_level("default", matador::log_level::LVL_FATAL);
+  matador::domain_max_log_level("default", matador::log_level::LVL_TRACE);
+
   auto logger = matador::create_logger("test");
 
   UNIT_ASSERT_EQUAL("test", logger.source());

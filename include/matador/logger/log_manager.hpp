@@ -85,11 +85,47 @@ public:
    */
   void clear();
 
+  /**
+   * Sets the max default log level. Default
+   * max leven is LVL_FATAL. All log domains
+   * will start with this default max log range
+   *
+   * @param max_level max log level
+   */
+  static void max_default_log_level(log_level max_level);
+
+  /**
+   * Returns the default max log level
+   *
+   * @return The max log level
+   */
+  static log_level max_default_log_level();
+
+  /**
+   * Sets the default min log level. Default
+   * min leven is LVL_INFO. All log domains
+   * will start with this default max log range
+   *
+   * @param max_level min log level
+   */
+  static void min_default_log_level(log_level min_level);
+
+  /**
+   * Returns the default min log level
+   *
+   * @return The min log level
+   */
+  static log_level min_default_log_level();
+
+  /// @cond MATADOR_DEV
+  std::shared_ptr<log_domain> find_domain(const std::string &name);
+  /// @endcond
+
 protected:
   /// @cond MATADOR_DEV
   log_manager()
   {
-    default_log_domain_ = log_domain_map.insert(std::make_pair("default", std::make_shared<log_domain>("default"))).first->second;
+    default_log_domain_ = log_domain_map.insert(std::make_pair("default", std::make_shared<log_domain>("default", default_log_level_range_))).first->second;
   }
   /// @endcond
 
@@ -102,6 +138,8 @@ private:
   std::shared_ptr<log_domain> default_log_domain_;
 
   std::map<std::string, std::shared_ptr<log_domain>> log_domain_map;
+
+  static log_level_range default_log_level_range_;
 };
 
 /**
@@ -140,6 +178,38 @@ OOS_LOGGER_API std::shared_ptr<stdout_sink> create_stdout_sink();
  * @return A shared_ptr to the rotating_file_sink
  */
 OOS_LOGGER_API std::shared_ptr<rotating_file_sink> create_rotating_file_sink(const std::string &logfile, size_t max_size, size_t file_count);
+
+/**
+ * Sets the default min log level.
+ *
+ * @param min_lvl Default min log level
+ */
+OOS_LOGGER_API void default_min_log_level(log_level min_lvl);
+
+/**
+ * Sets the default max log level.
+ *
+ * @param max_lvl Default max log level
+ */
+OOS_LOGGER_API void default_max_log_level(log_level max_lvl);
+
+/**
+ * Sets the domain min log level for the
+ * domain with the given name.
+ *
+ * @param name Log domain name
+ * @param min_lvl Default min log level
+ */
+OOS_LOGGER_API void domain_min_log_level(const std::string &name, log_level min_lvl);
+
+/**
+ * Sets the default max log level for the
+ * domain with the given name.
+ *
+ * @param name Log domain name
+ * @param max_lvl Default max log level
+ */
+OOS_LOGGER_API void domain_max_log_level(const std::string &name, log_level max_lvl);
 
 /**
  * Adds a log sink to the default log domain
