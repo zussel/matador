@@ -79,6 +79,7 @@
 #include "net/AddressResolverTest.hpp"
 #include "net/SocketInterrupterTest.hpp"
 
+#include "http/HttpServerTest.hpp"
 #include "http/RequestParserTest.hpp"
 #include "http/RouteEngineTest.hpp"
 #include "http/RouteEndpointTest.hpp"
@@ -154,6 +155,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new AddressResolverTest);
   suite.register_unit(new SocketInterrupterTest);
 
+  suite.register_unit(new HttpServerTest);
   suite.register_unit(new RequestParserTest);
   suite.register_unit(new RouteEngineTest);
   suite.register_unit(new RouteEndpointTest);

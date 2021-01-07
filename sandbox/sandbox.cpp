@@ -1,10 +1,16 @@
 #include "matador/logger/log_manager.hpp"
 
+#include "matador/utils/json_mapper.hpp"
+
 #include "matador/http/static_file_service.hpp"
 #include "matador/http/http_server.hpp"
 #include "matador/http/request.hpp"
 #include "matador/http/response.hpp"
 #include "matador/http/url.hpp"
+
+/*
+ * curl -v -H "Content-Type: application/json" --data '{"username":"otto","password":"otto123"}' -X POST http://localhost:7091/api/v1/auth/login?query=9
+ */
 
 using namespace matador::http;
 using namespace std::placeholders;
@@ -28,6 +34,19 @@ struct user
   }
 };
 
+struct credential
+{
+  std::string username;
+  std::string password;
+
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("username", username);
+    serializer.serialize("password", password);
+  }
+};
+
 class auth_service
 {
 public:
@@ -39,13 +58,16 @@ public:
     s.on_post("/api/v1/auth/logout", [this](const request &req) { return logout(req); });
   }
 
-  response login(const request &)
+  response login(const request &req)
   {
     log_.info("login");
 
+    matador::json_mapper<credential> mapper;
 
-    //req.body
-    //auto credentials = json_to_object<credential>(req.body);
+    auto credentials = mapper.object_from_string(req.body().c_str());
+
+    log_.info("user %s logging in", credentials.username.c_str());
+
     // extract username and password from headers
 //    req.headers.at("Authentication");
 
@@ -89,8 +111,6 @@ private:
 
 int main(int /*argc*/, char* /*argv*/[])
 {
-//  matador::add_log_sink(matador::create_file_sink("log/server.log"));
-//  matador::default_min_log_level(matador::log_level::LVL_DEBUG);
   matador::add_log_sink(matador::create_stdout_sink());
 
   // creates a web application at port 7091
