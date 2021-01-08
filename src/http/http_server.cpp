@@ -24,5 +24,15 @@ void server::run()
   service_.run();
 }
 
+void server::shutdown()
+{
+  service_.shutdown();
+}
+
+bool server::is_running() const
+{
+  return service_.is_running();
+}
+
 }
 }

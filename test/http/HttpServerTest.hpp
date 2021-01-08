@@ -8,6 +8,7 @@ class HttpServerTest : public matador::unit_test
 public:
   HttpServerTest();
 
+  void test_shutdown();
   void test_get();
 };
 

@@ -32,6 +32,9 @@ public:
   explicit server(unsigned short port);
 
   void run();
+  void shutdown();
+
+  bool is_running() const;
 
   template < class RequestHandler >
   void on_get(const std::string &route, RequestHandler request_handler)
