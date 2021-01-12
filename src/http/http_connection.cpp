@@ -45,6 +45,8 @@ void http_connection::read()
         }
 
         parser_.reset();
+      } else if (result == request_parser::INVALID) {
+        response_ = response::bad_request();
       }
 
       write();

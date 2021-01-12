@@ -43,6 +43,25 @@ std::unordered_map<http::status_t, std::string> http::status_string_map_({ /* NO
   { http::status_t::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service unavailable\r\n" }
 });
 
+std::unordered_map<std::string, http::status_t> http::string_status_map_({ /* NOLINT */
+  { "200", http::OK },
+  { "201", http::CREATED },
+  { "202", http::ACCEPTED },
+  { "204", http::NO_CONTENT },
+  { "300", http::MULTIPLE_CHOICES },
+  { "301", http::MOVED_PERMANENTLY },
+  { "302", http::MOVED_TEMPORARILY },
+  { "304", http::NOT_MODIFIED },
+  { "400", http::BAD_REQUEST },
+  { "401", http::UNAUTHORIZED },
+  { "403", http::FORBIDDEN },
+  { "404", http::NOT_FOUND },
+  { "500", http::INTERNAL_SERVER_ERROR },
+  { "501", http::NOT_IMPLEMENTED },
+  { "502", http::BAD_GATEWAY },
+  { "503", http::SERVICE_UNAVAILABLE }
+});
+
 std::string http::to_string(http::method_t method)
 {
   return method_string_map_.at(method);
@@ -65,6 +84,11 @@ std::string http::to_string(http::status_t status)
 matador::buffer_view http::to_buffer(http::status_t status)
 {
   return matador::buffer_view(status_string_map_.at(status));
+}
+
+http::status_t http::to_status(const std::string &str)
+{
+  return string_status_map_.at(str);
 }
 
 }

@@ -52,6 +52,7 @@ void connector::on_timeout()
     auto h = make_handler_(stream, ep, this);
 
     get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
+    break;
   }
   if (stream.is_open()) {
     endpoints_.clear();

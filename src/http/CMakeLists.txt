@@ -6,7 +6,15 @@ SET(SOURCES
   http_connection.cpp
   http.cpp
   response.cpp
-  response_header.cpp request_header.cpp route_endpoint.cpp routing_engine.cpp default_responses.cpp mime_types.cpp url.cpp static_file_service.cpp)
+  response_header.cpp
+  request_header.cpp
+  route_endpoint.cpp
+  routing_engine.cpp
+  default_responses.cpp
+  mime_types.cpp
+  url.cpp
+  static_file_service.cpp
+  response_parser.cpp)
 
 SET(HEADER
   ../../include/matador/http/http_client.hpp
@@ -23,7 +31,8 @@ SET(HEADER
   ../../include/matador/http/default_responses.hpp
   ../../include/matador/http/mime_types.hpp
   ../../include/matador/http/url.hpp
-  ../../include/matador/http/static_file_service.hpp)
+  ../../include/matador/http/static_file_service.hpp
+  ../../include/matador/http/response_parser.hpp)
 
 ADD_LIBRARY(matador-http SHARED ${SOURCES} ${HEADER})
 

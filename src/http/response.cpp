@@ -6,21 +6,46 @@ using namespace std;
 namespace matador {
 namespace http {
 
+http::status_t response::status() const
+{
+  return status_;
+}
+
+http::version response::version() const
+{
+  return version_;
+}
+
+const http::content &response::content() const
+{
+  return content_;
+}
+
+const t_string_param_map &response::headers() const
+{
+  return headers_;
+}
+
+const std::string &response::body() const
+{
+  return body_;
+}
+
 std::string response::to_string() const
 {
-  std::string result(http::to_string(status));
-  for(const auto &p : headers) {
+  std::string result(http::to_string(status_));
+  for(const auto &p : headers_) {
     result += p.first + ": " + p.second + "\r\n";
   }
 
-  if (!body.empty()) {
-    result += response_header::CONTENT_LENGTH + std::string(": ") + content_type.length + "\r\n";
-    result += response_header::CONTENT_TYPE + std::string(": ") + content_type.type;
+  if (!body_.empty()) {
+    result += response_header::CONTENT_LENGTH + std::string(": ") + std::to_string(content_.length) + "\r\n";
+    result += response_header::CONTENT_TYPE + std::string(": ") + content_.type;
   }
 //  result += response_header::CONTENT_LANGUAGE + std::string(": ") + content_type.language + "\r\n\r\n";
 
   result += "\r\n\r\n";
-  result += body;
+  result += body_;
 
   return result;
 }
@@ -31,29 +56,31 @@ const char crlf[] = { '\r', '\n' };
 std::list<matador::buffer_view> response::to_buffers() const
 {
   std::list<buffer_view> buffers;
-  buffers.push_back(http::to_buffer(status));
+  buffers.push_back(http::to_buffer(status_));
 
-  for(const auto &p : headers) {
+  for(const auto &p : headers_) {
     buffers.emplace_back(p.first);
     buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
     buffers.emplace_back(p.second);
     buffers.emplace_back(matador::buffer_view(crlf, 2));
   }
 
-  if (!body.empty()) {
+  if (!body_.empty()) {
     buffers.emplace_back(response_header::CONTENT_LENGTH);
     buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
-    buffers.emplace_back(content_type.length);
+    buffers.emplace_back(std::to_string(content_.length));
     buffers.emplace_back(matador::buffer_view(crlf, 2));
     buffers.emplace_back(response_header::CONTENT_TYPE);
     buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
-    buffers.emplace_back(content_type.type);
+    buffers.emplace_back(content_.type);
     buffers.emplace_back(matador::buffer_view(crlf, 2));
   }
 
   buffers.emplace_back(matador::buffer_view(crlf, 2));
 
-  buffers.emplace_back(body);
+  if (!body_.empty()) {
+    buffers.emplace_back(body_);
+  }
 
   return buffers;
 }
@@ -61,14 +88,59 @@ std::list<matador::buffer_view> response::to_buffers() const
 response response::create(http::status_t status)
 {
   response resp;
-  resp.status = status;
+  resp.status_ = status;
 
-  resp.version.major = 1;
-  resp.version.minor = 1;
+  resp.version_.major = 1;
+  resp.version_.minor = 1;
 
-  resp.headers.insert(std::make_pair(response_header::DATE, matador::to_string(time::now(), "%a, %d %b %Y %H:%M:%S %Z")));
-  resp.headers.insert(std::make_pair(response_header::SERVER, "Matador/0.7.0"));
-  resp.headers.insert(std::make_pair(response_header::CONNECTION, "Closed"));
+  resp.headers_.insert(std::make_pair(response_header::DATE, matador::to_string(time::now(), "%a, %d %b %Y %H:%M:%S %Z")));
+  resp.headers_.insert(std::make_pair(response_header::SERVER, "Matador/0.7.0"));
+  resp.headers_.insert(std::make_pair(response_header::CONNECTION, "Closed"));
+
+  return resp;
+}
+
+response response::from_file(const std::string &file_path)
+{
+  response resp;
+
+  // Determine the file extension.
+  std::size_t last_slash_pos = file_path.find_last_of('/');
+  std::size_t last_dot_pos = file_path.find_last_of('.');
+  std::string extension;
+  if (last_dot_pos != std::string::npos && last_dot_pos > last_slash_pos)
+  {
+    extension = file_path.substr(last_dot_pos + 1);
+  }
+
+  matador::file f("." + file_path, "r");
+
+  if (!f.is_open()) {
+    return response::not_found();
+  }
+
+  // obtain file size:
+  fseek (f.stream() , 0 , SEEK_END);
+  size_t size = ftell (f.stream());
+  rewind (f.stream());
+
+  resp.body_.resize(size);
+
+  fread(const_cast<char*>(resp.body_.data()), 1, size, f.stream());
+
+  f.close();
+
+  resp.status_ = http::OK;
+
+  resp.content_.type = mime_types::from_file_extension(extension);
+  resp.content_.length = size;
+
+  resp.version_.major = 1;
+  resp.version_.minor = 1;
+
+  resp.headers_.insert(std::make_pair(response_header::DATE, matador::to_string(matador::time::now(), "%a, %d %b %Y %H:%M:%S %Z")));
+  resp.headers_.insert(std::make_pair(response_header::SERVER, "Matador/0.7.0"));
+  resp.headers_.insert(std::make_pair(response_header::CONNECTION, "Closed"));
 
   return resp;
 }

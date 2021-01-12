@@ -5,7 +5,7 @@
 AddressResolverTest::AddressResolverTest()
   : matador::unit_test("address_resolver", "ip address resolver test unit")
 {
-  add_test("resolver_v4", std::bind(&AddressResolverTest::test_resolver_v4, this), "ip address resolver v4 test");
+  add_test("resolver_v4", [this] { test_resolver_v4(); }, "ip address resolver v4 test");
 
 }
 

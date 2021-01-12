@@ -27,27 +27,22 @@ class response;
 class OOS_HTTP_API request
 {
 public:
-  struct version_t {
-    int major = 0;
-    int minor = 0;
-  };
+  request() = default;
+  request(http::method_t method, std::string host, std::string url);
+  request(const request &) = default;
+  request& operator=(const request &) = default;
+  request(request &&) = default;
+  request& operator=(request &&) = default;
+  ~request() = default;
 
-  struct content_t {
-    std::size_t length;
-    std::string type;
-    std::string md5;
-    std::string language;
-  };
-
-public:
   http::method_t method() const;
   std::string url() const;
   std::string query() const;
   std::string fragment() const;
-  version_t version() const;
+  http::version version() const;
   std::string host() const;
 
-  const content_t& content() const;
+  const http::content& content() const;
 
   const t_string_param_map& headers() const;
   const t_string_param_map& path_params() const;
@@ -60,14 +55,14 @@ private:
   friend class route_endpoint;
 
 private:
-  http::method_t method_;
+  http::method_t method_ = http::UNKNOWN;
   std::string url_;
   std::string query_;
   std::string fragment_;
-  version_t version_;
+  http::version version_;
   std::string host_;
 
-  content_t content_;
+  http::content content_;
 
   t_string_param_map headers_;
   t_string_param_map path_params_;

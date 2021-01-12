@@ -77,8 +77,8 @@ void HttpServerTest::test_shutdown()
 
 void HttpServerTest::test_get()
 {
-  matador::default_min_log_level(log_level::LVL_DEBUG);
-  matador::add_log_sink(matador::create_stdout_sink());
+//  matador::default_min_log_level(log_level::LVL_DEBUG);
+//  matador::add_log_sink(matador::create_stdout_sink());
 
   http::server s(7778);
 
@@ -103,18 +103,27 @@ void HttpServerTest::test_get()
   ret = client.connect(srv);
   UNIT_ASSERT_FALSE(ret < 0);
   buffer data;
-  data.append("GET http://localhost:7778/test HTTP/1.1");
-  size_t len = client.send(data);
-  UNIT_ASSERT_EQUAL(39UL, len);
+  data.append("GET /test HTTP/1.1\r\nHost: localhost:7778\r\n\r\n");
+  ssize_t len = client.send(data);
+  UNIT_ASSERT_EQUAL(44L, len);
   data.clear();
-  len = client.receive(data);
-  data.size(len);
 
-  std::string resp(data.data(), data.size());
+  std::string resp;
+  do {
+    len = client.receive(data);
 
-  std::cout << "response: " << resp << "\n";
+    if (len < 0) {
+      UNIT_FAIL("error on receive");
+    } else if (len == 0) {
+      break;
+    }
+    resp.append(data.data(), len);
+    data.clear();
+  } while (len > 0);
 
-  UNIT_ASSERT_EQUAL(17UL, len);
+//  std::cout << "response: " << resp << "\n";
+
+  UNIT_ASSERT_EQUAL(107UL, resp.size());
   client.close();
 
   wrapper.stop();

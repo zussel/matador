@@ -8,7 +8,7 @@ using namespace matador;
 FileTestUnit::FileTestUnit()
 : unit_test("file", "file test unit")
 {
-  add_test("file", std::bind(&FileTestUnit::test_file, this), "test file");
+  add_test("file", [this] { test_file(); }, "test file");
 }
 
 void FileTestUnit::test_file()

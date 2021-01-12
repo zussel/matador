@@ -28,7 +28,13 @@ SET (TEST_TOOLS_SOURCES
   utils/OptionalTest.cpp
   utils/OptionalTest.hpp
   utils/ThreadPoolTest.cpp
-  utils/ThreadPoolTest.hpp utils/JsonSerializerTest.cpp utils/JsonSerializerTest.hpp utils/Base64Test.cpp utils/Base64Test.hpp utils/BufferViewTest.cpp utils/BufferViewTest.hpp)
+  utils/ThreadPoolTest.hpp
+  utils/JsonSerializerTest.cpp
+  utils/JsonSerializerTest.hpp
+  utils/Base64Test.cpp
+  utils/Base64Test.hpp
+  utils/BufferViewTest.cpp
+  utils/BufferViewTest.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
@@ -68,7 +74,14 @@ SET (TEST_HTTP_SOURCES
   http/RouteEngineTest.cpp
   http/RouteEngineTest.hpp
   http/UrlTest.cpp
-  http/UrlTest.hpp http/RouteEndpointTest.cpp http/RouteEndpointTest.hpp http/HttpServerTest.cpp http/HttpServerTest.hpp)
+  http/UrlTest.hpp
+  http/RouteEndpointTest.cpp
+  http/RouteEndpointTest.hpp
+  http/HttpServerTest.cpp
+  http/HttpServerTest.hpp
+  http/ResponseParserTest.cpp
+  http/ResponseParserTest.hpp
+  http/ResponseData.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp

@@ -61,11 +61,25 @@ public:
 
   static std::string to_string(status_t status);
   static matador::buffer_view to_buffer(status_t status);
+  static status_t to_status(const std::string &str);
+
+  struct version {
+    int major = 0;
+    int minor = 0;
+  };
+
+  struct content {
+    std::size_t length {};
+    std::string type;
+    std::string md5;
+    std::string language;
+  };
 
 private:
   static std::unordered_map<method_t, std::string> method_string_map_;
   static std::unordered_map<std::string, method_t> string_method_map_;
   static std::unordered_map<status_t, std::string> status_string_map_;
+  static std::unordered_map<std::string, status_t> string_status_map_;
 };
 
 }
