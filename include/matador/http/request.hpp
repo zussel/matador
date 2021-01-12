@@ -17,6 +17,7 @@
 #include "matador/http/http.hpp"
 
 #include <string>
+#include <list>
 #include <unordered_map>
 
 namespace matador {
@@ -42,6 +43,9 @@ public:
   http::version version() const;
   std::string host() const;
 
+  bool add_header(const std::string &header, const std::string &value);
+  bool remove_header(const std::string &header);
+
   const http::content& content() const;
 
   const t_string_param_map& headers() const;
@@ -49,6 +53,8 @@ public:
   const t_string_param_map& query_params() const;
 
   const std::string& body() const;
+
+  std::list<matador::buffer_view> to_buffers() const;
 
 private:
   friend class request_parser;

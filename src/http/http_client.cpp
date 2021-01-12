@@ -1,7 +1,10 @@
 #include "matador/http/http_client.hpp"
 #include "matador/http/request.hpp"
+#include "matador/http/request_header.hpp"
 
 #include "matador/logger/log_manager.hpp"
+
+#include <chrono>
 
 namespace matador {
 namespace http {
@@ -37,8 +40,36 @@ response client::get(const std::string &route)
   }
 
   request req(http::GET, route, host_);
+  req.add_header(request_header::HOST, host_);
 
+  auto buffers = req.to_buffers();
 
+  ssize_t bytes_total = 0;
+  auto start = std::chrono::high_resolution_clock::now();
+  while (!buffers.empty()) {
+    buffer_view &bv = buffers.front();
+
+    auto len = stream_.send(bv);
+
+    if (len == 0) {
+      close();
+    } else if (len < 0 && errno != EWOULDBLOCK) {
+      char error_buffer[1024];
+      log_.error("fd %d: error on write: %s", stream_.id(), os::strerror(errno, error_buffer, 1024));
+      close();
+    } else if (len < 0 && errno == EWOULDBLOCK) {
+      log_.info("%s: sent %d bytes (blocked)", endpoint_.to_string().c_str(), bytes_total);
+    } else {
+      bytes_total += len;
+      bv.bump(len);
+      if (bv.full()) {
+        buffers.pop_front();
+      }
+    }
+  }
+  auto end = std::chrono::high_resolution_clock::now();
+  auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+  log_.info("%s: sent %d bytes (%dµs)", endpoint_.to_string().c_str(), bytes_total, elapsed);
 
   stream_.close();
   return response::no_content();
@@ -73,7 +104,15 @@ void client::connect()
     }
 
     stream_.non_blocking(false);
+    endpoint_ = ep;
     break;
+  }
+}
+
+void client::close()
+{
+  if (stream_.is_open()) {
+    stream_.close();
   }
 }
 

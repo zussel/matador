@@ -4,6 +4,7 @@
 #include "matador/http/response.hpp"
 
 #include "matador/net/ip.hpp"
+#include "matador/net/io_service.hpp"
 
 #include "matador/logger/logger.hpp"
 
@@ -25,10 +26,14 @@ public:
 
 private:
   void connect();
-
+  void close();
 private:
   std::string host_;
+  matador::io_service service_;
+  std::shared_ptr<matador::connector> connector_;
+
   std::vector<tcp::peer> endpoints_;
+  tcp::peer endpoint_;
   tcp::socket stream_;
 
   logger log_;

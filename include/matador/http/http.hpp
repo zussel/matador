@@ -38,6 +38,7 @@ public:
   };
 
   static std::string to_string(method_t m);
+  static matador::buffer_view to_buffer(method_t m);
   static method_t to_method(const std::string &str);
 
   enum status_t {

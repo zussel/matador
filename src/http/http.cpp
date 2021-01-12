@@ -67,6 +67,11 @@ std::string http::to_string(http::method_t method)
   return method_string_map_.at(method);
 }
 
+matador::buffer_view http::to_buffer(http::method_t method)
+{
+  return matador::buffer_view(method_string_map_.at(method));
+}
+
 http::method_t http::to_method(const std::string &str)
 {
   auto it = string_method_map_.find(str);
