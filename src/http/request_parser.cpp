@@ -423,6 +423,7 @@ void request_parser::reset()
   current_value_.clear();
   current_method_.clear();
   blanks_.clear();
+  skip_blanks_ = false;
 }
 
 }

@@ -13,6 +13,8 @@ class response_parser
 public:
   bool parse(const std::string &msg, response &resp);
 
+  void reset();
+
 private:
   enum state_t {
     METHOD,

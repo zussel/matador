@@ -259,5 +259,15 @@ void response_parser::insert_header(const std::string &key, const std::string &v
   }
 }
 
+void response_parser::reset()
+{
+  state_ = VERSION;
+  http_prefix_index_ = 0;
+  current_key_.clear();
+  current_value_.clear();
+  blanks_.clear();
+  skip_blanks_ = false;
+}
+
 }
 }

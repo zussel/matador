@@ -217,7 +217,7 @@ int connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
       stream.assign(connfd);
       break;
 //      } else {
-//        throw_logic_error("couldn't connect: " << strerror(errno));
+//        throw_logic_error("couldn't execute: " << strerror(errno));
     }
 
     // bind error, close and try next one
@@ -225,7 +225,7 @@ int connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
   } while ( (res = res->ai_next) != nullptr);
 
   if (res == nullptr) {
-    throw_logic_error("couldn't connect to " << hostname << ":" << port);
+    throw_logic_error("couldn't execute to " << hostname << ":" << port);
   }
 
   freeaddrinfo(head);

@@ -1,4 +1,5 @@
 #include "matador/http/http_client.hpp"
+#include "matador/http/http_client_connection.hpp"
 #include "matador/http/request.hpp"
 #include "matador/http/request_header.hpp"
 
@@ -11,6 +12,7 @@ namespace http {
 
 client::client(const std::string &host)
   : host_(host)
+  , connector_(std::make_shared<connector>())
   , log_(matador::create_logger("HttpClient"))
 {
   // split host from port (default port is 80)
@@ -21,58 +23,19 @@ client::client(const std::string &host)
     throw_logic_error("invalid host string");
   }
 
-  std::string port { "80" };
   if (count == 2) {
-    port = parts.at(1);
+    host_ = parts.at(0);
+    port_ = parts.at(1);
   }
-
-  matador::tcp::resolver resolver;
-
-  endpoints_ = resolver.resolve(parts.front(), port);
 }
 
 response client::get(const std::string &route)
 {
-  connect();
+  request_ = request(http::GET, route, host_);
 
-  if (stream_.is_open()) {
-    throw_logic_error("couldn't connect to " + host_);
-  }
+  execute();
 
-  request req(http::GET, route, host_);
-  req.add_header(request_header::HOST, host_);
-
-  auto buffers = req.to_buffers();
-
-  ssize_t bytes_total = 0;
-  auto start = std::chrono::high_resolution_clock::now();
-  while (!buffers.empty()) {
-    buffer_view &bv = buffers.front();
-
-    auto len = stream_.send(bv);
-
-    if (len == 0) {
-      close();
-    } else if (len < 0 && errno != EWOULDBLOCK) {
-      char error_buffer[1024];
-      log_.error("fd %d: error on write: %s", stream_.id(), os::strerror(errno, error_buffer, 1024));
-      close();
-    } else if (len < 0 && errno == EWOULDBLOCK) {
-      log_.info("%s: sent %d bytes (blocked)", endpoint_.to_string().c_str(), bytes_total);
-    } else {
-      bytes_total += len;
-      bv.bump(len);
-      if (bv.full()) {
-        buffers.pop_front();
-      }
-    }
-  }
-  auto end = std::chrono::high_resolution_clock::now();
-  auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-  log_.info("%s: sent %d bytes (%dµs)", endpoint_.to_string().c_str(), bytes_total, elapsed);
-
-  stream_.close();
-  return response::no_content();
+  return response_;
 }
 
 response client::post(const std::string &route, const std::string &body)
@@ -90,30 +53,15 @@ response client::remove(const std::string &route)
   return response();
 }
 
-void client::connect()
+void client::execute()
 {
-  for (const auto &ep : endpoints_) {
-    int ret = matador::connect(stream_, ep);
-    if (ret != 0) {
-      char error_buffer[1024];
-      log_.error("couldn't establish connection to %s: %s", ep.to_string().c_str(),
-                 os::strerror(errno, error_buffer, 1024));
-      continue;
-    } else {
-      log_.info("connection established to %s", ep.to_string().c_str());
-    }
+  service_.connect(connector_, port_, [this](tcp::peer ep, io_stream &stream) {
+    // create echo server connection
+    auto conn = std::make_shared<http_client_connection>(/*request_, response_, */stream, std::move(ep));
+    conn->execute(request_);
+  });
 
-    stream_.non_blocking(false);
-    endpoint_ = ep;
-    break;
-  }
-}
-
-void client::close()
-{
-  if (stream_.is_open()) {
-    stream_.close();
-  }
+  service_.run();
 }
 
 }

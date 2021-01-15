@@ -9,7 +9,7 @@ request::request(http::method_t method, std::string host, std::string url)
   , url_(std::move(url))
   , host_(std::move(host))
 {
-  headers_.insert(std::make_pair(request_header::HOST, host));
+  headers_.insert(std::make_pair(request_header::HOST, host_));
 }
 
 http::method_t request::method() const

@@ -35,7 +35,7 @@ namespace matador {
 class OOS_NET_API connector : public handler
 {
 public:
-  typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, connector *cnnctr)> make_handler_func; /**< Shortcut to a function creating a handler on successfully connect to a host */
+  typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, connector *cnnctr)> t_connect_handler; /**< Shortcut to a function creating a handler on successfully execute to a host */
 
   /**
    * Default constructor
@@ -48,10 +48,10 @@ public:
    *
    * @param on_new_connection Function which creates a handler on new connection
    */
-  explicit connector(make_handler_func on_new_connection);
+  explicit connector(t_connect_handler on_new_connection);
 
   /**
-   * Initiates a connect to one of the given endpoints within the
+   * Initiates a execute to one of the given endpoints within the
    * given reactor. Once a connection is established a new handler
    * for this connection is created. The new connection is dispatched
    * by the reactor.
@@ -61,7 +61,7 @@ public:
    */
   void connect(reactor &r, const std::vector<tcp::peer> &endpoints);
   /**
-   * Initiates a connect to one of the given endpoints within the
+   * Initiates a execute to one of the given endpoints within the
    * given reactor. Once a connection is established a new handler
    * for this connection is created with the given function. The new
    * connection is dispatched by the reactor.
@@ -70,7 +70,7 @@ public:
    * @param endpoints List of endpoints to
    * @param on_new_connection Function creating a new handler on new connection
    */
-  void connect(reactor &r, const std::vector<tcp::peer> &endpoints, make_handler_func on_new_connection);
+  void connect(reactor &r, const std::vector<tcp::peer> &endpoints, t_connect_handler on_new_connection);
 
   /**
    * Opens the connector. Actually this does
@@ -134,7 +134,7 @@ public:
   bool is_ready_read() const override;
 
 private:
-  make_handler_func make_handler_;
+  t_connect_handler connect_handler_;
 
   logger log_;
 

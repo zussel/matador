@@ -13,8 +13,8 @@ connector::connector()
   : log_(matador::create_logger("Connector"))
 {}
 
-connector::connector(connector::make_handler_func on_new_connection)
-  : make_handler_(std::move(on_new_connection))
+connector::connector(connector::t_connect_handler on_new_connection)
+  : connect_handler_(std::move(on_new_connection))
   , log_(matador::create_logger("Connector"))
 {}
 
@@ -24,9 +24,9 @@ void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints)
   r.schedule_timer(shared_from_this(), 0, 3);
 }
 
-void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints, make_handler_func on_new_connection)
+void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints, t_connect_handler on_new_connection)
 {
-  make_handler_ = std::move(on_new_connection);
+  connect_handler_ = std::move(on_new_connection);
   connect(r, endpoints);
 }
 
@@ -49,7 +49,7 @@ void connector::on_timeout()
     }
 
     stream.non_blocking(true);
-    auto h = make_handler_(stream, ep, this);
+    auto h = connect_handler_(stream, ep, this);
 
     get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
     break;

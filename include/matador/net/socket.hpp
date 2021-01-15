@@ -86,7 +86,7 @@ public:
    * could be established true is returned,
    * otherwise false is returned and errno is set.
    *
-   * @param p Peer to connect to
+   * @param p Peer to execute to
    * @return True on successful connection
    */
   bool connect(const typename protocol_type::peer &p);

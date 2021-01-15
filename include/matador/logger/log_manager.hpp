@@ -58,7 +58,7 @@ public:
    * the domain ist created
    *
    * @param source Name of the source
-   * @param domain_name The name of the log domain to connect to
+   * @param domain_name The name of the log domain to execute to
    * @return The created logger
    */
   logger create_logger(std::string source, const std::string &domain_name);

@@ -50,7 +50,7 @@ class handler;
  * The type can be changed while the reactor is running.
  *
  * There is also an acceptor class to handle incoming
- * connections and a connector class to connect actively
+ * connections and a connector class to execute actively
  * to a remote service.
  *
  * It's also possible to handle timeouts on a regularly base.

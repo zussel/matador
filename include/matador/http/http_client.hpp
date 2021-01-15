@@ -2,6 +2,7 @@
 #define MATADOR_HTTP_CLIENT_HPP
 
 #include "matador/http/response.hpp"
+#include "matador/http/request.hpp"
 
 #include "matador/net/ip.hpp"
 #include "matador/net/io_service.hpp"
@@ -25,18 +26,19 @@ public:
   response remove(const std::string &route);
 
 private:
-  void connect();
+  void execute();
   void close();
 private:
   std::string host_;
+  std::string port_ { "80" };
+
   matador::io_service service_;
   std::shared_ptr<matador::connector> connector_;
 
-  std::vector<tcp::peer> endpoints_;
-  tcp::peer endpoint_;
-  tcp::socket stream_;
-
   logger log_;
+
+  request request_;
+  response response_;
 };
 
 }
