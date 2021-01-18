@@ -1,5 +1,5 @@
-#ifndef MATADOR_HTTP_CONNECTION_HPP
-#define MATADOR_HTTP_CONNECTION_HPP
+#ifndef MATADOR_HTTP_SERVER_CONNECTION_HPP
+#define MATADOR_HTTP_SERVER_CONNECTION_HPP
 
 #ifdef _MSC_VER
 #ifdef matador_utils_EXPORTS
@@ -34,10 +34,10 @@ class io_stream;
 
 namespace http {
 
-class OOS_HTTP_API http_connection : public std::enable_shared_from_this<http_connection>
+class OOS_HTTP_API http_server_connection : public std::enable_shared_from_this<http_server_connection>
 {
 public:
-  http_connection(routing_engine &router, matador::io_stream &stream, matador::tcp::peer endpoint);
+  http_server_connection(routing_engine &router, matador::io_stream &stream, matador::tcp::peer endpoint);
 
   void start();
   void read();
@@ -64,4 +64,4 @@ private:
 }
 }
 
-#endif //MATADOR_HTTP_CONNECTION_HPP
+#endif //MATADOR_HTTP_SERVER_CONNECTION_HPP

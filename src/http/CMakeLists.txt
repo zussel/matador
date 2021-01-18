@@ -3,7 +3,7 @@ SET(SOURCES
   http_server.cpp
   request.cpp
   request_parser.cpp
-  http_connection.cpp
+  http_server_connection.cpp
   http.cpp
   response.cpp
   response_header.cpp
@@ -25,7 +25,7 @@ SET(HEADER
   ../../include/matador/http/request.hpp
   ../../include/matador/http/request_header.hpp
   ../../include/matador/http/request_parser.hpp
-  ../../include/matador/http/http_connection.hpp
+  ../../include/matador/http/http_server_connection.hpp
   ../../include/matador/http/route_endpoint.hpp
   ../../include/matador/http/routing_engine.hpp
   ../../include/matador/http/default_responses.hpp

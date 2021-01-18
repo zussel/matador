@@ -22,7 +22,7 @@ SET(HEADER
   ../../include/matador/net/stream_handler.hpp
   ../../include/matador/net/io_stream.hpp
   ../../include/matador/net/socket_interrupter.hpp
-  ../../include/matador/net/os.hpp)
+  ../../include/matador/net/os.hpp ../../include/matador/net/handler_creator.hpp)
 
 ADD_LIBRARY(matador-net SHARED ${SOURCES} ${HEADER})
 

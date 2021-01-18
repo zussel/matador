@@ -102,7 +102,7 @@ std::list<matador::buffer_view> request::to_buffers() const
   if (!body_.empty()) {
     buffers.emplace_back(request_header::CONTENT_LENGTH);
     buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
-    buffers.emplace_back(std::to_string(content_.length));
+    buffers.emplace_back(content_.length);
     buffers.emplace_back(matador::buffer_view(crlf, 2));
     buffers.emplace_back(request_header::CONTENT_TYPE);
     buffers.emplace_back(matador::buffer_view(name_value_separator, 2));

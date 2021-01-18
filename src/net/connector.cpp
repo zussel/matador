@@ -13,7 +13,7 @@ connector::connector()
   : log_(matador::create_logger("Connector"))
 {}
 
-connector::connector(connector::t_connect_handler on_new_connection)
+connector::connector(t_connect_handler on_new_connection)
   : connect_handler_(std::move(on_new_connection))
   , log_(matador::create_logger("Connector"))
 {}
@@ -45,7 +45,7 @@ void connector::on_timeout()
       log_.error("couldn't establish connection to: %s", ep.to_string().c_str(), os::strerror(errno, error_buffer, 1024));
       continue;
     } else {
-      log_.info("connection established to %s", ep.to_string().c_str());
+      log_.info("connection established to %s (fd: %d)", ep.to_string().c_str(), stream.id());
     }
 
     stream.non_blocking(true);
@@ -69,4 +69,15 @@ bool connector::is_ready_read() const
 {
   return false;
 }
+
+void connector::notify_close(handler */*hndlr*/)
+{
+
+}
+
+std::string connector::name() const
+{
+  return "connector";
+}
+
 }

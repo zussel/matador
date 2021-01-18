@@ -39,7 +39,7 @@ std::string response::to_string() const
   }
 
   if (!body_.empty()) {
-    result += response_header::CONTENT_LENGTH + std::string(": ") + std::to_string(content_.length) + "\r\n";
+    result += response_header::CONTENT_LENGTH + std::string(": ") + content_.length + "\r\n";
     result += response_header::CONTENT_TYPE + std::string(": ") + content_.type;
   }
 //  result += response_header::CONTENT_LANGUAGE + std::string(": ") + content_type.language + "\r\n\r\n";
@@ -68,7 +68,7 @@ std::list<matador::buffer_view> response::to_buffers() const
   if (!body_.empty()) {
     buffers.emplace_back(response_header::CONTENT_LENGTH);
     buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
-    buffers.emplace_back(std::to_string(content_.length));
+    buffers.emplace_back(content_.length);
     buffers.emplace_back(matador::buffer_view(crlf, 2));
     buffers.emplace_back(response_header::CONTENT_TYPE);
     buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
@@ -133,7 +133,7 @@ response response::from_file(const std::string &file_path)
   resp.status_ = http::OK;
 
   resp.content_.type = mime_types::from_file_extension(extension);
-  resp.content_.length = size;
+  resp.content_.length = std::to_string(size);
 
   resp.version_.major = 1;
   resp.version_.minor = 1;
@@ -142,6 +142,15 @@ response response::from_file(const std::string &file_path)
   resp.headers_.insert(std::make_pair(response_header::SERVER, "Matador/0.7.0"));
   resp.headers_.insert(std::make_pair(response_header::CONNECTION, "Closed"));
 
+  return resp;
+}
+
+response response::ok(const string &body, mime_types::types type)
+{
+  response resp = create(http::OK);
+  resp.body_ = body;
+  resp.content_.length = std::to_string(body.size());
+  resp.content_.type = mime_types::TEXT_HTML;
   return resp;
 }
 

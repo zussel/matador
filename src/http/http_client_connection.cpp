@@ -7,17 +7,17 @@
 namespace matador {
 namespace http {
 
-http_client_connection::http_client_connection(/*request req, response &resp, */io_stream &stream, matador::tcp::peer endpoint)
+http_client_connection::http_client_connection(request req, response &resp, io_stream &stream, matador::tcp::peer endpoint)
   : log_(matador::create_logger("HttpClientConnection"))
   , stream_(stream)
   , endpoint_(std::move(endpoint))
-//  , request_(std::move(req))
-//  , response_(resp)
+  , request_(std::move(req))
+  , response_(resp)
 {}
 
-void http_client_connection::execute(const request &req)
+void http_client_connection::execute()
 {
-  write(req);
+  write();
 }
 
 void http_client_connection::read()
@@ -30,7 +30,7 @@ void http_client_connection::read()
       auto result = parser_.parse(request_string, response_);
 
       if (result == response_parser::FINISH) {
-        log_.info("%d %s HTTP/%d.%d", response_.status(), http::to_string(response_.status()).c_str(),
+        log_.info("%s: %d %s HTTP/%d.%d", stream_.name().c_str(), response_.status(), http::to_string(response_.status()).c_str(),
                   response_.version().major, response_.version().minor);
 
         parser_.reset();
@@ -51,11 +51,11 @@ void http_client_connection::read()
   });
 }
 
-void http_client_connection::write(const request &req)
+void http_client_connection::write()
 {
   auto self(shared_from_this());
 
-  std::list<buffer_view> data = req.to_buffers();
+  std::list<buffer_view> data = request_.to_buffers();
 
   stream_.write(data, [this, self](int ec, int) {
     if (ec == 0) {

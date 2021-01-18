@@ -15,6 +15,7 @@
 #endif
 
 #include "matador/net/handler.hpp"
+#include "matador/net/handler_creator.hpp"
 #include "matador/net/ip.hpp"
 
 #include "matador/logger/logger.hpp"
@@ -32,7 +33,7 @@ namespace matador {
  * with the given create handler function. The socket
  * is passed to the created handler.
  */
-class OOS_NET_API connector : public handler
+class OOS_NET_API connector : public handler, public handler_creator
 {
 public:
   typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, connector *cnnctr)> t_connect_handler; /**< Shortcut to a function creating a handler on successfully execute to a host */
@@ -49,6 +50,7 @@ public:
    * @param on_new_connection Function which creates a handler on new connection
    */
   explicit connector(t_connect_handler on_new_connection);
+
 
   /**
    * Initiates a execute to one of the given endpoints within the
@@ -132,6 +134,10 @@ public:
    * @return Always false
    */
   bool is_ready_read() const override;
+
+  void notify_close(handler *hndlr) override;
+
+  std::string name() const override;
 
 private:
   t_connect_handler connect_handler_;

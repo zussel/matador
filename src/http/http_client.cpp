@@ -57,8 +57,8 @@ void client::execute()
 {
   service_.connect(connector_, port_, [this](tcp::peer ep, io_stream &stream) {
     // create echo server connection
-    auto conn = std::make_shared<http_client_connection>(/*request_, response_, */stream, std::move(ep));
-    conn->execute(request_);
+    auto conn = std::make_shared<http_client_connection>(request_, response_, stream, std::move(ep));
+    conn->execute();
   });
 
   service_.run();

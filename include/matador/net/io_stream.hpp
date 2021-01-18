@@ -66,6 +66,8 @@ public:
    * @return
    */
   virtual tcp::socket& stream() = 0;
+
+  virtual std::string name() const = 0;
 };
 
 }

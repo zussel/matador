@@ -23,6 +23,20 @@ namespace http {
 class OOS_HTTP_API mime_types
 {
 public:
+  enum types {
+    TYPE_IMAGE_GIF,
+    TYPE_IMAGE_JPEG,
+    TYPE_IMAGE_PNG,
+    TYPE_TEXT_HTML,
+    TYPE_TEXT_PLAIN,
+    TYPE_TEXT_XML,
+    TYPE_TEXT_CSS,
+    TYPE_APPLICATION_JSON,
+    TYPE_APPLICATION_GZIP,
+    TYPE_APPLICATION_ZIP,
+    TYPE_APPLICATION_JAVASCRIPT
+  };
+
   static const char *IMAGE_GIF;
   static const char *IMAGE_JPEG;
   static const char *IMAGE_PNG;

@@ -1,5 +1,5 @@
 #include "matador/http/http_server.hpp"
-#include "matador/http/http_connection.hpp"
+#include "matador/http/http_server_connection.hpp"
 
 #include "matador/logger/log_manager.hpp"
 
@@ -14,7 +14,7 @@ server::server(unsigned short port)
   log_.info("creating http server at port %d", port);
   service_.accept(acceptor_, [this](tcp::peer ep, io_stream &stream) {
     // create echo server connection
-    auto conn = std::make_shared<http_connection>(router_, stream, std::move(ep));
+    auto conn = std::make_shared<http_server_connection>(router_, stream, std::move(ep));
     conn->start();
   });
 }

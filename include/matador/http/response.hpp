@@ -51,6 +51,7 @@ public:
   template < class T >
   static response json(http::status_t status, const T &obj);
 
+  static response ok(const std::string &body, mime_types::types type);
   static response no_content();
   static response not_found();
   static response bad_request();
@@ -96,7 +97,7 @@ response response::json(http::status_t status, const T &obj)
   resp.body_ = js.to_json(obj);
   resp.content_.type = mime_types::APPLICATION_JSON;
 
-  resp.content_.length = resp.body_.size();
+  resp.content_.length = std::to_string(resp.body_.size());
 
   return resp;
 }

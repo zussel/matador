@@ -14,8 +14,6 @@
 #define OOS_HTTP_API
 #endif
 
-#include "matador/utils/tree.hpp"
-
 #include "matador/net/acceptor.hpp"
 #include "matador/net/io_service.hpp"
 

@@ -1,4 +1,5 @@
 #include "matador/net/stream_handler.hpp"
+#include "matador/net/handler_creator.hpp"
 #include "matador/net/reactor.hpp"
 
 #include "matador/utils/buffer.hpp"
@@ -11,24 +12,16 @@
 
 namespace matador {
 
-stream_handler::stream_handler(tcp::socket sock, tcp::peer endpoint, acceptor *accptr, t_init_handler init_handler)
+stream_handler::stream_handler(tcp::socket sock, tcp::peer endpoint, handler_creator *creator, t_init_handler init_handler)
   : log_(create_logger("StreamHandler"))
   , stream_(std::move(sock))
   , endpoint_(std::move(endpoint))
-  , acceptor_(accptr)
+  , name_(endpoint.to_string() + " (fd: " + std::to_string(stream_.id()) + ")")
+  , creator_(creator)
   , init_handler_(std::move(init_handler))
 {
-  log_.info("created stream handler with endpoint %s", endpoint.to_string().c_str());
-}
 
-stream_handler::stream_handler(tcp::socket sock, tcp::peer endpoint, connector *cnnctr, t_init_handler init_handler)
-  : log_(create_logger("StreamHandler"))
-  , stream_(std::move(sock))
-  , endpoint_(std::move(endpoint))
-  , connector_(cnnctr)
-  , init_handler_(std::move(init_handler))
-{
-  log_.info("created stream handler with endpoint %s", endpoint.to_string().c_str());
+  log_.info("%s: created stream handler", name().c_str());
 }
 
 void stream_handler::open()
@@ -44,18 +37,18 @@ int stream_handler::handle() const
 void stream_handler::on_input()
 {
   auto len = stream_.receive(read_buffer_);
-  log_.debug("read %d bytes", len);
+  log_.debug("%s: read %d bytes", name().c_str(), len);
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
     char error_buffer[1024];
-    log_.error("fd %d: error on read: %s", handle(), os::strerror(errno, error_buffer, 1024));
+    log_.error("%s: error on read: %s", name().c_str(), os::strerror(errno, error_buffer, 1024));
     is_ready_to_read_ = false;
     on_read_(len, len);
     on_close();
   } else {
     read_buffer_.bump(len);
-    log_.info("%s: received %d bytes", endpoint_.to_string().c_str(), len);
+    log_.info("%s: received %d bytes", name().c_str(), len);
     is_ready_to_read_ = false;
     on_read_(0, len);
   }
@@ -68,20 +61,19 @@ void stream_handler::on_output()
   while (!write_buffers_.empty()) {
     buffer_view &bv = write_buffers_.front();
 
-    log_.debug("sending %d bytes", bv.size());
     auto len = stream_.send(bv);
-    log_.debug("sent %d bytes", len);
+    log_.debug("%s: sent %d bytes", name().c_str(), len);
 
     if (len == 0) {
       on_close();
     } else if (len < 0 && errno != EWOULDBLOCK) {
       char error_buffer[1024];
-      log_.error("fd %d: error on write: %s", handle(), os::strerror(errno, error_buffer, 1024));
+      log_.error("%s: error on write: %s", name().c_str(), os::strerror(errno, error_buffer, 1024));
       on_close();
       is_ready_to_write_ = false;
       on_write_(len, len);
     } else if (len < 0 && errno == EWOULDBLOCK) {
-      log_.info("%s: sent %d bytes (blocked)", endpoint_.to_string().c_str(), bytes_total);
+      log_.info("%s: sent %d bytes (blocked)", name().c_str(), bytes_total);
     } else {
       bytes_total += len;
       bv.bump(len);
@@ -92,14 +84,14 @@ void stream_handler::on_output()
   }
   auto end = std::chrono::high_resolution_clock::now();
   auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-  log_.info("%s: sent %d bytes (%dµs)", endpoint_.to_string().c_str(), bytes_total, elapsed);
+  log_.info("%s: sent %d bytes (%dµs)", name().c_str(), bytes_total, elapsed);
   is_ready_to_write_ = false;
   on_write_(0, bytes_total);
 }
 
 void stream_handler::on_close()
 {
-  log_.info("fd %d: closing connection", handle());
+  log_.info("%s: closing connection", name().c_str(), handle());
   stream_.close();
   auto self = shared_from_this();
   get_reactor()->mark_handler_for_delete(self);
@@ -111,7 +103,7 @@ void stream_handler::close()
   if (!stream_.is_open()) {
     return;
   }
-  log_.info("fd %d: closing connection", handle());
+  log_.info("%s: closing connection", name().c_str(), handle());
   stream_.close();
 }
 
@@ -147,6 +139,11 @@ void stream_handler::close_stream()
 tcp::socket &stream_handler::stream()
 {
   return stream_;
+}
+
+std::string stream_handler::name() const
+{
+  return name_;
 }
 
 }

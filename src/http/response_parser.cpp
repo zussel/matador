@@ -76,8 +76,9 @@ response_parser::return_t response_parser::parse(const std::string &msg, respons
     }
   }
 
-  if (resp.content_.length > 0) {
-    resp.body_.assign(msg.substr(++pos, resp.content_.length));
+  auto length = std::stoul(resp.content_.length);
+  if (length > 0) {
+    resp.body_.assign(msg.substr(++pos, length));
   } else if (msg.size() > pos) {
     resp.body_.assign(msg.substr(++pos));
   }
@@ -254,8 +255,7 @@ void response_parser::insert_header(const std::string &key, const std::string &v
   if (strcasecmp(key.c_str(), response_header::CONTENT_TYPE) == 0) {
     resp.content_.type = value;
   } else if (strcasecmp(key.c_str(), response_header::CONTENT_LENGTH) == 0) {
-    char *end;
-    resp.content_.length = strtoul(value.c_str(), &end, 10);
+    resp.content_.length = value;
   } else if (strcasecmp(key.c_str(), response_header::CONTENT_MD5) == 0) {
     resp.content_.md5 = value;
   }

@@ -95,8 +95,9 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
    * available data
    */
   if (result == FINISH && (req.method() == http::POST || req.method() == http::PUT)) {
-    if (req.content_.length > 0) {
-      req.body_.assign(msg.substr(++pos, req.content_.length));
+    auto length = std::stoul(req.content_.length);
+    if (length > 0) {
+      req.body_.assign(msg.substr(++pos, length));
     } else {
       req.body_.assign(msg.substr(++pos));
     }
@@ -401,8 +402,7 @@ void request_parser::insert_header(const std::string &key, const std::string &va
   if (strcasecmp(key.c_str(), request_header::CONTENT_TYPE) == 0) {
     req.content_.type = value;
   } else if (strcasecmp(key.c_str(), request_header::CONTENT_LENGTH) == 0) {
-    char *end;
-    req.content_.length = strtoul(value.c_str(), &end, 10);
+    req.content_.length = value;
   } else if (strcasecmp(key.c_str(), request_header::CONTENT_MD5) == 0) {
     req.content_.md5 = value;
   } else if (strcasecmp(key.c_str(), request_header::HOST) == 0) {

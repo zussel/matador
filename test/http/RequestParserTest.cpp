@@ -110,7 +110,7 @@ void RequestParserTest::test_query_post_request()
   UNIT_ASSERT_EQUAL(expected_header_size, req.headers().size());
   UNIT_ASSERT_EQUAL("api.opencalais.com", req.host());
   UNIT_ASSERT_EQUAL("application/x-www-form-urlencoded", req.content().type);
-  UNIT_ASSERT_EQUAL(expected_content_length, req.content().length);
+  UNIT_ASSERT_EQUAL("32", req.content().length);
   UNIT_ASSERT_EQUAL(expected_content_length, req.body().size());
   UNIT_ASSERT_EQUAL("home=Cosby&favorite+flavor=flies", req.body());
 }
@@ -133,7 +133,7 @@ void RequestParserTest::test_xml_post_request()
   UNIT_ASSERT_EQUAL("Basic XXX", req.headers().at(request_header::AUTHORIZATION));
   UNIT_ASSERT_EQUAL("gzip, deflate", req.headers().at(request_header::ACCEPT_ENCODING));
   UNIT_ASSERT_EQUAL("application/vnd.bonfire+xml;charset=utf-8", req.content().type);
-  UNIT_ASSERT_EQUAL(expected_content_length, req.content().length);
+  UNIT_ASSERT_EQUAL("254", req.content().length);
   UNIT_ASSERT_EQUAL(expected_content_length, req.body().size());
 //  UNIT_ASSERT_EQUAL("home=Cosby&favorite+flavor=flies", req.body);
 }
@@ -166,6 +166,6 @@ void RequestParserTest::test_xml_post_partial_request()
   UNIT_ASSERT_EQUAL("Basic XXX", req.headers().at(request_header::AUTHORIZATION));
   UNIT_ASSERT_EQUAL("gzip, deflate", req.headers().at(request_header::ACCEPT_ENCODING));
   UNIT_ASSERT_EQUAL("application/vnd.bonfire+xml; charset=utf-8", req.content().type);
-  UNIT_ASSERT_EQUAL(expected_content_length, req.content().length);
+  UNIT_ASSERT_EQUAL("254", req.content().length);
   UNIT_ASSERT_EQUAL(expected_content_length, req.body().size());
 }

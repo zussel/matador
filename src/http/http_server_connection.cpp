@@ -1,4 +1,4 @@
-#include "matador/http/http_connection.hpp"
+#include "matador/http/http_server_connection.hpp"
 #include "matador/http/request.hpp"
 
 #include "matador/logger/log_manager.hpp"
@@ -11,19 +11,19 @@
 namespace matador {
 namespace http {
 
-http_connection::http_connection(routing_engine &router, io_stream &stream, matador::tcp::peer endpoint)
-  : log_(matador::create_logger("HttpConnection"))
+http_server_connection::http_server_connection(routing_engine &router, io_stream &stream, matador::tcp::peer endpoint)
+  : log_(matador::create_logger("HttpServerConnection"))
   , stream_(stream)
   , endpoint_(std::move(endpoint))
   , router_(router)
 {}
 
-void http_connection::start()
+void http_server_connection::start()
 {
   read();
 }
 
-void http_connection::read()
+void http_server_connection::read()
 {
   auto self(shared_from_this());
   stream_.read(matador::buffer_view(buf_), [this, self](int ec, int nread) {
@@ -33,12 +33,19 @@ void http_connection::read()
       auto result = parser_.parse(request_string, request_);
 
       if (result == request_parser::FINISH) {
-        log_.info("%s %s HTTP/%d.%d", http::to_string(request_.method()).c_str(), request_.url().c_str(), request_.version().major, request_.version().minor);
+        log_.info(
+          "%s: %s %s HTTP/%d.%d",
+          stream_.name().c_str(),
+          http::to_string(request_.method()).c_str(),
+          request_.url().c_str(),
+          request_.version().major,
+          request_.version().minor
+        );
 
         auto route = match(request_);
 
         if (!route.has_value()) {
-          log_.info("route %s isn't valid", request_.url().c_str());
+          log_.info("%s: route %s isn't valid", stream_.name().c_str(), request_.url().c_str());
           response_ = response::not_found();
         } else {
           response_ = execute(request_, route.value());
@@ -59,7 +66,7 @@ void http_connection::read()
   });
 }
 
-void http_connection::write()
+void http_server_connection::write()
 {
   auto self(shared_from_this());
 
@@ -72,7 +79,7 @@ void http_connection::write()
   });
 }
 
-optional<routing_engine::route_endpoint_ptr> http_connection::match(request &req)
+optional<routing_engine::route_endpoint_ptr> http_server_connection::match(request &req)
 {
   auto route = router_.match(req);
 
@@ -83,9 +90,9 @@ optional<routing_engine::route_endpoint_ptr> http_connection::match(request &req
   }
 }
 
-response http_connection::execute(const request &req, const routing_engine::route_endpoint_ptr &route)
+response http_server_connection::execute(const request &req, const routing_engine::route_endpoint_ptr &route)
 {
-    log_.debug("executing route spec: %s (regex: %s)", route->path_spec().c_str(), route->path_regex().c_str());
+    log_.info("%s: executing route spec: %s (regex: %s)", stream_.name().c_str(), route->path_spec().c_str(), route->path_regex().c_str());
     return route->execute(req);
 }
 

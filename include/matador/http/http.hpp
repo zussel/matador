@@ -71,7 +71,7 @@ public:
   };
 
   struct content {
-    std::size_t length {};
+    std::string length {"0" };
     std::string type;
     std::string md5;
     std::string language;

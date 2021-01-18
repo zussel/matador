@@ -15,6 +15,7 @@
 #endif
 
 #include "matador/net/handler.hpp"
+#include "matador/net/handler_creator.hpp"
 #include "matador/net/ip.hpp"
 
 #include "matador/logger/logger.hpp"
@@ -31,7 +32,7 @@ namespace matador {
  * new handler is created and registered within the reactor
  * to handle the established connection
  */
-class OOS_NET_API acceptor : public handler
+class OOS_NET_API acceptor : public handler, public handler_creator
 {
 public:
   typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, acceptor *accptr)> t_accept_handler; /**< Shortcut to a function creating a handler on successfully accepted a new connection */
@@ -150,6 +151,11 @@ public:
    */
   bool is_ready_read() const override;
 
+  void notify_close(handler *hndlr) override;
+
+  std::string name() const override;
+
+public:
   /**
    * Returns the current endpoint accepting new connection.
    *
