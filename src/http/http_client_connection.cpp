@@ -23,24 +23,31 @@ void http_client_connection::execute(const request &req)
 void http_client_connection::read()
 {
   auto self(shared_from_this());
-  stream_.read(matador::buffer_view(buf_), [this, self](int ec, int) {
+  stream_.read(matador::buffer_view(buf_), [this, self](int ec, int nread) {
     if (ec == 0) {
-      std::string request_string(buf_.data(), buf_.size());
+      std::string request_string(buf_.data(), nread);
       // parse request and prepare response
       auto result = parser_.parse(request_string, response_);
 
-      if (result) {
+      if (result == response_parser::FINISH) {
         log_.info("%d %s HTTP/%d.%d", response_.status(), http::to_string(response_.status()).c_str(),
                   response_.version().major, response_.version().minor);
 
         parser_.reset();
-      } else {
+        stream_.close_stream();
+      } else if (result == response_parser::INVALID){
+        log_.debug("invalid response; closing stream");
         response_ = response::bad_request();
+        stream_.close_stream();
+      } else {
+        // not all data read
+        log_.debug("not all data was read; continue reading");
+        read();
       }
     } else {
       log_.error("error on reading response: %d", ec);
+      stream_.close_stream();
     }
-    stream_.close_stream();
   });
 }
 

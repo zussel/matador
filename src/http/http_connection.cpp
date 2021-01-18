@@ -26,9 +26,9 @@ void http_connection::start()
 void http_connection::read()
 {
   auto self(shared_from_this());
-  stream_.read(matador::buffer_view(buf_), [this, self](int ec, int) {
+  stream_.read(matador::buffer_view(buf_), [this, self](int ec, int nread) {
     if (ec == 0) {
-      std::string request_string(buf_.data(), buf_.size());
+      std::string request_string(buf_.data(), nread);
       // parse request and prepare response
       auto result = parser_.parse(request_string, request_);
 
@@ -45,11 +45,16 @@ void http_connection::read()
         }
 
         parser_.reset();
+        write();
       } else if (result == request_parser::INVALID) {
+        log_.debug("invalid request; returning bad request");
         response_ = response::bad_request();
+        write();
+      } else {
+        // not all data read
+        log_.debug("not all data was read; continue reading");
+        read();
       }
-
-      write();
     }
   });
 }

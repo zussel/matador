@@ -44,6 +44,7 @@ int stream_handler::handle() const
 void stream_handler::on_input()
 {
   auto len = stream_.receive(read_buffer_);
+  log_.debug("read %d bytes", len);
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
@@ -67,7 +68,9 @@ void stream_handler::on_output()
   while (!write_buffers_.empty()) {
     buffer_view &bv = write_buffers_.front();
 
+    log_.debug("sending %d bytes", bv.size());
     auto len = stream_.send(bv);
+    log_.debug("sent %d bytes", len);
 
     if (len == 0) {
       on_close();

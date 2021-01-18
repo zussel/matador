@@ -78,7 +78,7 @@ void HttpServerTest::test_shutdown()
 
 void HttpServerTest::test_get()
 {
-//  matador::default_min_log_level(log_level::LVL_DEBUG);
+  matador::default_min_log_level(log_level::LVL_DEBUG);
   matador::add_log_sink(matador::create_stdout_sink());
 
   http::server s(7778);
@@ -91,7 +91,7 @@ void HttpServerTest::test_get()
 
   wrapper.start();
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (500));
+  std::this_thread::sleep_for(std::chrono::milliseconds (1000));
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
@@ -100,10 +100,7 @@ void HttpServerTest::test_get()
 
   std::this_thread::sleep_for(std::chrono::seconds (1));
 
-//  UNIT_ASSERT_EQUAL(107UL, resp.size());
-//  client.close();
-
-//  wrapper.stop();
+  wrapper.stop();
 
   UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
 }

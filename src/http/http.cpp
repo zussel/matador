@@ -24,7 +24,7 @@ std::unordered_map<std::string, http::method_t> http::string_method_map_({ /* NO
   { "UNKNOWN", http::method_t::UNKNOWN, }
 });
 
-std::unordered_map<http::status_t, std::string> http::status_string_map_({ /* NOLINT */
+std::unordered_map<http::status_t, std::string> http::request_status_string_map_({ /* NOLINT */
   { http::status_t::OK, "HTTP/1.1 200 OK\r\n" },
   { http::status_t::CREATED, "HTTP/1.1 201 Created\r\n" },
   { http::status_t::ACCEPTED, "HTTP/1.1 202 Accepted\r\n" },
@@ -41,6 +41,25 @@ std::unordered_map<http::status_t, std::string> http::status_string_map_({ /* NO
   { http::status_t::NOT_IMPLEMENTED, "HTTP/1.1 501 Not Implemented\r\n" },
   { http::status_t::BAD_GATEWAY, "HTTP/1.1 502 Bad Gateway\r\n" },
   { http::status_t::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service unavailable\r\n" }
+});
+
+std::unordered_map<http::status_t, std::string> http::status_string_map_({ /* NOLINT */
+  { http::status_t::OK, "OK" },
+  { http::status_t::CREATED, "Created" },
+  { http::status_t::ACCEPTED, "Accepted" },
+  { http::status_t::NO_CONTENT, "No Content" },
+  { http::status_t::MULTIPLE_CHOICES, "Multiple Choices" },
+  { http::status_t::MOVED_PERMANENTLY, "Moved Permanently" },
+  { http::status_t::MOVED_TEMPORARILY, "Moved Temporarily" },
+  { http::status_t::NOT_MODIFIED, "Not Modified" },
+  { http::status_t::BAD_REQUEST, "Bad Request" },
+  { http::status_t::UNAUTHORIZED, "Unauthorized" },
+  { http::status_t::FORBIDDEN, "Forbidden" },
+  { http::status_t::NOT_FOUND, "Not Found" },
+  { http::status_t::INTERNAL_SERVER_ERROR, "Internal Server error" },
+  { http::status_t::NOT_IMPLEMENTED, "Not Implemented" },
+  { http::status_t::BAD_GATEWAY, "Bad Gateway" },
+  { http::status_t::SERVICE_UNAVAILABLE, "Service unavailable" }
 });
 
 std::unordered_map<std::string, http::status_t> http::string_status_map_({ /* NOLINT */
@@ -81,6 +100,11 @@ http::method_t http::to_method(const std::string &str)
   return it->second;
 }
 
+std::string http::to_request_string(http::status_t status)
+{
+  return request_status_string_map_.at(status);
+}
+
 std::string http::to_string(http::status_t status)
 {
   return status_string_map_.at(status);
@@ -88,7 +112,7 @@ std::string http::to_string(http::status_t status)
 
 matador::buffer_view http::to_buffer(http::status_t status)
 {
-  return matador::buffer_view(status_string_map_.at(status));
+  return matador::buffer_view(request_status_string_map_.at(status));
 }
 
 http::status_t http::to_status(const std::string &str)

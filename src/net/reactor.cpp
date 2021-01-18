@@ -125,6 +125,11 @@ void reactor::run()
       process_handler(ret);
       remove_deleted();
     }
+
+    if (handlers_.empty() && timeout == (std::numeric_limits<time_t>::max)()) {
+      log_.info("no clients to handle, exiting");
+      running_ = false;
+    }
   }
 
   cleanup();

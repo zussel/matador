@@ -31,7 +31,7 @@ client::client(const std::string &host)
 
 response client::get(const std::string &route)
 {
-  request_ = request(http::GET, route, host_);
+  request_ = request(http::GET, host_, route);
 
   execute();
 

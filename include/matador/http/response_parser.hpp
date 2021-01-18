@@ -11,7 +11,14 @@ class response;
 class response_parser
 {
 public:
-  bool parse(const std::string &msg, response &resp);
+  enum return_t {
+    INVALID,
+    PARTIAL,
+    FINISH
+  };
+
+public:
+  return_t parse(const std::string &msg, response &resp);
 
   void reset();
 

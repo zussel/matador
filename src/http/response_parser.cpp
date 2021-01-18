@@ -9,7 +9,7 @@ namespace http {
 const std::size_t response_parser::CRLF_LEN = strlen(response_parser::CRLF);
 const std::size_t response_parser::HTTP_VERSION_PREFIX_LEN = strlen(response_parser::HTTP_VERSION_PREFIX);
 
-bool response_parser::parse(const std::string &msg, response &resp)
+response_parser::return_t response_parser::parse(const std::string &msg, response &resp)
 {
   /*
    * parse first line and extract
@@ -21,6 +21,7 @@ bool response_parser::parse(const std::string &msg, response &resp)
    *
    * check for body data
    */
+  return_t result = PARTIAL;
   http_prefix_index_ = 0;
   std::string::size_type pos;
   for (pos = 0; pos < msg.size(); ++pos) {
@@ -68,8 +69,9 @@ bool response_parser::parse(const std::string &msg, response &resp)
         break;
     }
     if (!ret) {
-      return false;
+      return INVALID;
     } else if (finished) {
+      result = FINISH;
       break;
     }
   }
@@ -80,7 +82,7 @@ bool response_parser::parse(const std::string &msg, response &resp)
     resp.body_.assign(msg.substr(++pos));
   }
 
-  return true;
+  return result;
 }
 
 bool response_parser::parse_version(char c)

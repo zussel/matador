@@ -60,6 +60,7 @@ public:
     SERVICE_UNAVAILABLE = 503
   };
 
+  static std::string to_request_string(status_t status);
   static std::string to_string(status_t status);
   static matador::buffer_view to_buffer(status_t status);
   static status_t to_status(const std::string &str);
@@ -79,8 +80,9 @@ public:
 private:
   static std::unordered_map<method_t, std::string> method_string_map_;
   static std::unordered_map<std::string, method_t> string_method_map_;
-  static std::unordered_map<status_t, std::string> status_string_map_;
+  static std::unordered_map<status_t, std::string> request_status_string_map_;
   static std::unordered_map<std::string, status_t> string_status_map_;
+  static std::unordered_map<status_t, std::string> status_string_map_;
 };
 
 }
