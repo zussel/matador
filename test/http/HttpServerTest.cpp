@@ -57,6 +57,7 @@ HttpServerTest::HttpServerTest()
 {
   add_test("shutdown", [this]() { test_shutdown(); }, "http server shutdown test");
   add_test("get", [this]() { test_get(); }, "http server get test");
+  add_test("post", [this]() { test_post(); }, "http server post test");
 }
 
 void HttpServerTest::test_shutdown()
@@ -97,6 +98,38 @@ void HttpServerTest::test_get()
 
   http::client c("localhost:7778");
   auto resp = c.get("/test/world");
+
+  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
+  UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
+
+  std::this_thread::sleep_for(std::chrono::seconds (1));
+
+  wrapper.stop();
+
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
+}
+
+void HttpServerTest::test_post()
+{
+//  matador::default_min_log_level(log_level::LVL_DEBUG);
+//  matador::add_log_sink(matador::create_stdout_sink());
+
+  http::server s(7778);
+
+  s.on_post("/test/{name}", [](const http::request &req) {
+    return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
+  });
+
+  ThreadWrapper<http::server> wrapper(s);
+
+  wrapper.start();
+
+  std::this_thread::sleep_for(std::chrono::milliseconds (400));
+
+  UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
+
+  http::client c("localhost:7778");
+  auto resp = c.post("/test/world", "hello");
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
   UNIT_ASSERT_EQUAL(http::http::OK, resp.status());

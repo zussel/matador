@@ -53,8 +53,10 @@ public:
   const t_string_param_map& query_params() const;
 
   const std::string& body() const;
+  void body(const std::string &content);
 
   std::list<matador::buffer_view> to_buffers() const;
+
 
 private:
   friend class request_parser;

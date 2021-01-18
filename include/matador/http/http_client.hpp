@@ -26,8 +26,8 @@ public:
   response remove(const std::string &route);
 
 private:
-  void execute();
-  void close();
+  response execute(request req);
+
 private:
   std::string host_;
   std::string port_ { "80" };

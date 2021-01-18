@@ -31,16 +31,15 @@ client::client(const std::string &host)
 
 response client::get(const std::string &route)
 {
-  request_ = request(http::GET, host_, route);
-
-  execute();
-
-  return response_;
+  return execute(request(http::GET, host_, route));
 }
 
 response client::post(const std::string &route, const std::string &body)
 {
-  return response();
+  auto req = request(http::POST, host_, route);
+  req.body(body);
+
+  return execute(req);
 }
 
 response client::put(const std::string &route, const std::string &body)
@@ -53,8 +52,9 @@ response client::remove(const std::string &route)
   return response();
 }
 
-void client::execute()
+response client::execute(request req)
 {
+  request_ = std::move(req);
   service_.connect(connector_, port_, [this](tcp::peer ep, io_stream &stream) {
     // create echo server connection
     auto conn = std::make_shared<http_client_connection>(request_, response_, stream, std::move(ep));
@@ -62,6 +62,8 @@ void client::execute()
   });
 
   service_.run();
+
+  return response_;
 }
 
 }

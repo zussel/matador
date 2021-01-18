@@ -1,5 +1,6 @@
 #include "matador/http/request.hpp"
 #include "matador/http/request_header.hpp"
+#include "matador/http/mime_types.hpp"
 
 namespace matador {
 namespace http {
@@ -75,6 +76,13 @@ const t_string_param_map& request::query_params() const
 const std::string& request::body() const
 {
   return body_;
+}
+
+void request::body(const std::string &content)
+{
+  body_ = content;
+  content_.type = mime_types::TEXT_PLAIN;
+  content_.length = std::to_string(content.length());
 }
 
 const char blank[] = { ' ' };

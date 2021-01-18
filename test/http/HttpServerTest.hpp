@@ -10,6 +10,7 @@ public:
 
   void test_shutdown();
   void test_get();
+  void test_post();
 };
 
 
