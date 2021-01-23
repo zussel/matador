@@ -3,6 +3,8 @@
 
 #include <cstring>
 
+#include "matador/logger/log_manager.hpp"
+
 namespace matador {
 namespace http {
 
@@ -11,6 +13,7 @@ const std::size_t response_parser::HTTP_VERSION_PREFIX_LEN = strlen(response_par
 
 response_parser::return_t response_parser::parse(const std::string &msg, response &resp)
 {
+  logger log(create_logger("ResponseParser"));
   /*
    * parse first line and extract
    * - http version
@@ -78,6 +81,7 @@ response_parser::return_t response_parser::parse(const std::string &msg, respons
 
   auto length = std::stoul(resp.content_.length);
   if (length > 0) {
+    log.info("length: %d, pos+1: %d, msg.length: %d", length, pos+1, msg.size());
     resp.body_.assign(msg.substr(++pos, length));
   } else if (msg.size() > pos) {
     resp.body_.assign(msg.substr(++pos));

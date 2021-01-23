@@ -44,12 +44,15 @@ response client::post(const std::string &route, const std::string &body)
 
 response client::put(const std::string &route, const std::string &body)
 {
-  return response();
+  auto req = request(http::PUT, host_, route);
+  req.body(body);
+
+  return execute(req);
 }
 
 response client::remove(const std::string &route)
 {
-  return response();
+  return execute(request(http::DELETE, host_, route));
 }
 
 response client::execute(request req)
