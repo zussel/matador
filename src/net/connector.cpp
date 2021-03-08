@@ -70,7 +70,7 @@ bool connector::is_ready_read() const
   return false;
 }
 
-void connector::notify_close(handler */*hndlr*/)
+void connector::notify_close(handler *)
 {
 
 }

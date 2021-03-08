@@ -17,42 +17,42 @@
 namespace matador {
 namespace http {
 
-class OOS_HTTP_API response_header
+class response_header
 {
 public:
-  static const char *ACCEPT_RANGES;
-  static const char *AGE;
-  static const char *ALLOW;
-  static const char *CACHE_CONTROL;
-  static const char *CONNECTION;
-  static const char *CONTENT_ENCODING;
-  static const char *CONTENT_LANGUAGE;
-  static const char *CONTENT_LENGTH;
-  static const char *CONTENT_LOCATION;
-  static const char *CONTENT_MD5;
-  static const char *CONTENT_DISPOSITION;
-  static const char *CONTENT_RANGE;
-  static const char *CONTENT_SECURITY_POLICY;
-  static const char *CONTENT_TYPE;
-  static const char *DATE;
-  static const char *ETAG;
-  static const char *EXPIRES;
-  static const char *LAST_MODIFIED;
-  static const char *LINK;
-  static const char *LOCATION;
-  static const char *P3P;
-  static const char *PRAGMA;
-  static const char *PROXY_AUTHORIZATION;
-  static const char *REFRESH;
-  static const char *RETRY_AFTER;
-  static const char *SERVER;
-  static const char *SET_COOKIE;
-  static const char *TRAILER;
-  static const char *TRANSFER_ENCODING;
-  static const char *VARY;
-  static const char *VIA;
-  static const char *WARNING;
-  static const char *WWW_AUTHENTICATE;
+  static OOS_HTTP_API const char *ACCEPT_RANGES;
+  static OOS_HTTP_API const char *AGE;
+  static OOS_HTTP_API const char *ALLOW;
+  static OOS_HTTP_API const char *CACHE_CONTROL;
+  static OOS_HTTP_API const char *CONNECTION;
+  static OOS_HTTP_API const char *CONTENT_ENCODING;
+  static OOS_HTTP_API const char *CONTENT_LANGUAGE;
+  static OOS_HTTP_API const char *CONTENT_LENGTH;
+  static OOS_HTTP_API const char *CONTENT_LOCATION;
+  static OOS_HTTP_API const char *CONTENT_MD5;
+  static OOS_HTTP_API const char *CONTENT_DISPOSITION;
+  static OOS_HTTP_API const char *CONTENT_RANGE;
+  static OOS_HTTP_API const char *CONTENT_SECURITY_POLICY;
+  static OOS_HTTP_API const char *CONTENT_TYPE;
+  static OOS_HTTP_API const char *DATE;
+  static OOS_HTTP_API const char *ETAG;
+  static OOS_HTTP_API const char *EXPIRES;
+  static OOS_HTTP_API const char *LAST_MODIFIED;
+  static OOS_HTTP_API const char *LINK;
+  static OOS_HTTP_API const char *LOCATION;
+  static OOS_HTTP_API const char *P3P;
+  static OOS_HTTP_API const char *PRAGMA;
+  static OOS_HTTP_API const char *PROXY_AUTHORIZATION;
+  static OOS_HTTP_API const char *REFRESH;
+  static OOS_HTTP_API const char *RETRY_AFTER;
+  static OOS_HTTP_API const char *SERVER;
+  static OOS_HTTP_API const char *SET_COOKIE;
+  static OOS_HTTP_API const char *TRAILER;
+  static OOS_HTTP_API const char *TRANSFER_ENCODING;
+  static OOS_HTTP_API const char *VARY;
+  static OOS_HTTP_API const char *VIA;
+  static OOS_HTTP_API const char *WARNING;
+  static OOS_HTTP_API const char *WWW_AUTHENTICATE;
 };
 
 }

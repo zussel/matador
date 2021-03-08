@@ -1,8 +1,8 @@
 #include "matador/net/os.hpp"
 
 #ifdef _WIN32
-#include <WinSock2.h>
-#include < Ws2tcpip.h>
+//#include <WinSock2.h>
+#include <Ws2tcpip.h>
 #else
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -56,7 +56,7 @@ const char* inet_ntop(int af, const void* src, char* dst, size_t size)
 
 int close(int fd)
 {
-  return ::close(fd);
+  return ::closesocket(fd);
 }
 
 int shutdown(int fd, shutdown_type type)

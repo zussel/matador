@@ -21,7 +21,7 @@
 #include <string>
 
 #ifdef _MSC_VER
-#include <windows.h>
+#include <winsock2.h>
 #endif
 
 namespace matador {

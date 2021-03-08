@@ -52,7 +52,7 @@ response client::put(const std::string &route, const std::string &body)
 
 response client::remove(const std::string &route)
 {
-  return execute(request(http::DELETE, host_, route));
+  return execute(request(http::DEL, host_, route));
 }
 
 response client::execute(request req)

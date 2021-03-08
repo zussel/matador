@@ -24,7 +24,7 @@ namespace http {
 
 typedef std::unordered_map<std::string, std::string> t_string_param_map;
 
-class OOS_HTTP_API http
+class http
 {
 public:
   enum method_t {
@@ -32,14 +32,14 @@ public:
     GET,
     POST,
     PUT,
-    DELETE,
+    DEL,
     OPTIONS,
     HEAD
   };
 
-  static std::string to_string(method_t m);
-  static matador::buffer_view to_buffer(method_t m);
-  static method_t to_method(const std::string &str);
+  static OOS_HTTP_API std::string to_string(method_t m);
+  static OOS_HTTP_API matador::buffer_view to_buffer(method_t m);
+  static OOS_HTTP_API method_t to_method(const std::string &str);
 
   enum status_t {
     OK = 200,
@@ -60,10 +60,10 @@ public:
     SERVICE_UNAVAILABLE = 503
   };
 
-  static std::string to_request_string(status_t status);
-  static std::string to_string(status_t status);
-  static matador::buffer_view to_buffer(status_t status);
-  static status_t to_status(const std::string &str);
+  static OOS_HTTP_API std::string to_request_string(status_t status);
+  static OOS_HTTP_API std::string to_string(status_t status);
+  static OOS_HTTP_API matador::buffer_view to_buffer(status_t status);
+  static OOS_HTTP_API status_t to_status(const std::string &str);
 
   struct version {
     int major = 0;

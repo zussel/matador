@@ -15,6 +15,7 @@
 #endif
 
 #include <memory>
+#include <string>
 
 namespace matador {
 

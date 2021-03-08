@@ -17,39 +17,39 @@
 namespace matador {
 namespace http {
 
-class OOS_HTTP_API request_header {
+class request_header {
 public:
-  static const char* ACCEPT;
-  static const char* ACCEPT_CHARSET;
-  static const char* ACCEPT_ENCODING;
-  static const char* ACCEPT_LANGUAGE;
-  static const char* AUTHORIZATION;
-  static const char* CACHE_CONTROL;
-  static const char* CONNECTION;
-  static const char* COOKIE;
-  static const char* CONTENT_LENGTH;
-  static const char* CONTENT_MD5;
-  static const char* CONTENT_TYPE;
-  static const char* DATE;
-  static const char* EXPECT;
-  static const char* FROM;
-  static const char* HOST;
-  static const char* IF_MATCH;
-  static const char* IF_MODIFIED_SINCE;
-  static const char* IF_NONE_MATCH;
-  static const char* IF_RANGE;
-  static const char* IF_UNMODIFIED_SINCE;
-  static const char* MAX_FORWARDS;
-  static const char* PRAGMA;
-  static const char* PROXY_AUTHORIZATION;
-  static const char* RANGE;
-  static const char* REFERER;
-  static const char* TE;
-  static const char* TRANSFER_ENCODING;
-  static const char* UPGRADE;
-  static const char* USER_AGENT;
-  static const char* VIA;
-  static const char* WARNING;
+  static OOS_HTTP_API const char* ACCEPT;
+  static OOS_HTTP_API const char* ACCEPT_CHARSET;
+  static OOS_HTTP_API const char* ACCEPT_ENCODING;
+  static OOS_HTTP_API const char* ACCEPT_LANGUAGE;
+  static OOS_HTTP_API const char* AUTHORIZATION;
+  static OOS_HTTP_API const char* CACHE_CONTROL;
+  static OOS_HTTP_API const char* CONNECTION;
+  static OOS_HTTP_API const char* COOKIE;
+  static OOS_HTTP_API const char* CONTENT_LENGTH;
+  static OOS_HTTP_API const char* CONTENT_MD5;
+  static OOS_HTTP_API const char* CONTENT_TYPE;
+  static OOS_HTTP_API const char* DATE;
+  static OOS_HTTP_API const char* EXPECT;
+  static OOS_HTTP_API const char* FROM;
+  static OOS_HTTP_API const char* HOST;
+  static OOS_HTTP_API const char* IF_MATCH;
+  static OOS_HTTP_API const char* IF_MODIFIED_SINCE;
+  static OOS_HTTP_API const char* IF_NONE_MATCH;
+  static OOS_HTTP_API const char* IF_RANGE;
+  static OOS_HTTP_API const char* IF_UNMODIFIED_SINCE;
+  static OOS_HTTP_API const char* MAX_FORWARDS;
+  static OOS_HTTP_API const char* PRAGMA;
+  static OOS_HTTP_API const char* PROXY_AUTHORIZATION;
+  static OOS_HTTP_API const char* RANGE;
+  static OOS_HTTP_API const char* REFERER;
+  static OOS_HTTP_API const char* TE;
+  static OOS_HTTP_API const char* TRANSFER_ENCODING;
+  static OOS_HTTP_API const char* UPGRADE;
+  static OOS_HTTP_API const char* USER_AGENT;
+  static OOS_HTTP_API const char* VIA;
+  static OOS_HTTP_API const char* WARNING;
 };
 
 }

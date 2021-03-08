@@ -8,7 +8,7 @@ std::unordered_map<http::method_t, std::string> http::method_string_map_({ /* NO
   { http::method_t::GET, "GET" },
   { http::method_t::POST, "POST" },
   { http::method_t::PUT, "PUT" },
-  { http::method_t::DELETE, "DELETE" },
+  { http::method_t::DEL, "DELETE" },
   { http::method_t::OPTIONS, "OPTIONS" },
   { http::method_t::HEAD, "HEAD" },
   { http::method_t::UNKNOWN, "UNKNOWN" }
@@ -18,7 +18,7 @@ std::unordered_map<std::string, http::method_t> http::string_method_map_({ /* NO
   { "GET", http::method_t::GET },
   { "POST", http::method_t::POST, },
   { "PUT", http::method_t::PUT, },
-  { "DELETE", http::method_t::DELETE, },
+  { "DELETE", http::method_t::DEL, },
   { "OPTIONS", http::method_t::OPTIONS, },
   { "HEAD", http::method_t::HEAD, },
   { "UNKNOWN", http::method_t::UNKNOWN, }

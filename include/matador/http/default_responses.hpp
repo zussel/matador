@@ -17,25 +17,25 @@
 namespace matador {
 namespace http {
 
-class OOS_HTTP_API default_responses
+class default_responses
 {
 public:
-  static const char *OK;
-  static const char *CREATED;
-  static const char *ACCEPTED;
-  static const char *NO_CONTENT;
-  static const char *MULTIPLE_CHOICES;
-  static const char *MOVED_PERMANENTLY;
-  static const char *MOVED_TEMPORARILY;
-  static const char *NOT_MODIFIED;
-  static const char *BAD_REQUEST;
-  static const char *UNAUTHORIZED;
-  static const char *FORBIDDEN;
-  static const char *NOT_FOUND;
-  static const char *INTERNAL_SERVER_ERROR;
-  static const char *NOT_IMPLEMENTED;
-  static const char *BAD_GATEWAY;
-  static const char *SERVICE_UNAVAILABLE;
+  static OOS_HTTP_API const char *OK;
+  static OOS_HTTP_API const char *CREATED;
+  static OOS_HTTP_API const char *ACCEPTED;
+  static OOS_HTTP_API const char *NO_CONTENT;
+  static OOS_HTTP_API const char *MULTIPLE_CHOICES;
+  static OOS_HTTP_API const char *MOVED_PERMANENTLY;
+  static OOS_HTTP_API const char *MOVED_TEMPORARILY;
+  static OOS_HTTP_API const char *NOT_MODIFIED;
+  static OOS_HTTP_API const char *BAD_REQUEST;
+  static OOS_HTTP_API const char *UNAUTHORIZED;
+  static OOS_HTTP_API const char *FORBIDDEN;
+  static OOS_HTTP_API const char *NOT_FOUND;
+  static OOS_HTTP_API const char *INTERNAL_SERVER_ERROR;
+  static OOS_HTTP_API const char *NOT_IMPLEMENTED;
+  static OOS_HTTP_API const char *BAD_GATEWAY;
+  static OOS_HTTP_API const char *SERVICE_UNAVAILABLE;
 };
 }
 }

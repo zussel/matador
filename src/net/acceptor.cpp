@@ -105,7 +105,7 @@ tcp::peer acceptor::create_client_endpoint() const
   }
 }
 
-void acceptor::notify_close(handler */*hndlr*/)
+void acceptor::notify_close(handler *)
 {
 
 }

@@ -20,7 +20,7 @@
 namespace matador {
 namespace http {
 
-class OOS_HTTP_API mime_types
+class mime_types
 {
 public:
   enum types {
@@ -37,20 +37,20 @@ public:
     TYPE_APPLICATION_JAVASCRIPT
   };
 
-  static const char *IMAGE_GIF;
-  static const char *IMAGE_JPEG;
-  static const char *IMAGE_PNG;
-  static const char *TEXT_HTML;
-  static const char *TEXT_PLAIN;
-  static const char *TEXT_XML;
-  static const char *TEXT_CSS;
-  static const char *APPLICATION_JSON;
-  static const char *APPLICATION_GZIP;
-  static const char *APPLICATION_ZIP;
-  static const char *APPLICATION_JAVASCRIPT;
+  static OOS_HTTP_API const char *IMAGE_GIF;
+  static OOS_HTTP_API const char *IMAGE_JPEG;
+  static OOS_HTTP_API const char *IMAGE_PNG;
+  static OOS_HTTP_API const char *TEXT_HTML;
+  static OOS_HTTP_API const char *TEXT_PLAIN;
+  static OOS_HTTP_API const char *TEXT_XML;
+  static OOS_HTTP_API const char *TEXT_CSS;
+  static OOS_HTTP_API const char *APPLICATION_JSON;
+  static OOS_HTTP_API const char *APPLICATION_GZIP;
+  static OOS_HTTP_API const char *APPLICATION_ZIP;
+  static OOS_HTTP_API const char *APPLICATION_JAVASCRIPT;
 
-  static const char* from_file_extension(const std::string &ext);
-  static const char* from_file_extension(const char *ext);
+  static OOS_HTTP_API const char* from_file_extension(const std::string &ext);
+  static OOS_HTTP_API const char* from_file_extension(const char *ext);
 
 private:
   static std::unordered_map<std::string, const char*> extension_mime_type_map_;

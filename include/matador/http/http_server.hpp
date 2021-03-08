@@ -55,7 +55,7 @@ public:
   template < class RequestHandler >
   void on_remove(const std::string &route, RequestHandler request_handler)
   {
-    add_route(route, http::DELETE, request_handler);
+    add_route(route, http::DEL, request_handler);
   }
 
 private:
