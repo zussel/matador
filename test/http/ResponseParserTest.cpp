@@ -26,7 +26,7 @@ void ResponseParserTest::test_empty_response()
 
   auto result = parser.parse(ResponseData::EMPTY_BODY, resp);
 
-  UNIT_ASSERT_TRUE(result);
+  UNIT_ASSERT_EQUAL(http::response_parser::FINISH, result);
   UNIT_ASSERT_EQUAL(http::http::NO_CONTENT, resp.status());
   UNIT_ASSERT_EQUAL(1, resp.version().major);
   UNIT_ASSERT_EQUAL(1, resp.version().minor);
@@ -56,7 +56,7 @@ void ResponseParserTest::test_body_response()
 
   auto result = parser.parse(ResponseData::FILLED_BODY, resp);
 
-  UNIT_ASSERT_TRUE(result);
+  UNIT_ASSERT_EQUAL(http::response_parser::FINISH, result);
   UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
   UNIT_ASSERT_EQUAL(3UL, resp.headers().size());
   UNIT_ASSERT_EQUAL(1, resp.version().major);

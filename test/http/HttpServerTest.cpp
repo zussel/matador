@@ -84,7 +84,7 @@ void HttpServerTest::test_get()
   matador::default_min_log_level(log_level::LVL_DEBUG);
   matador::add_log_sink(matador::create_stdout_sink());
 
-  http::server s(7778);
+  http::server s(7779);
 
   s.on_get("/test/{name}", [](const http::request &req) {
     return http::response::ok("<h1>hello " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
@@ -98,7 +98,7 @@ void HttpServerTest::test_get()
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
-  http::client c("localhost:7778");
+  http::client c("localhost:7779");
   auto resp = c.get("/test/world");
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
@@ -116,7 +116,7 @@ void HttpServerTest::test_post()
   matador::default_min_log_level(log_level::LVL_DEBUG);
   matador::add_log_sink(matador::create_stdout_sink());
 
-  http::server s(7778);
+  http::server s(7779);
 
   s.on_post("/test/{name}", [](const http::request &req) {
     return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
@@ -130,7 +130,7 @@ void HttpServerTest::test_post()
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
-  http::client c("localhost:7778");
+  http::client c("localhost:7779");
   auto resp = c.post("/test/world", "hello");
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
@@ -148,7 +148,7 @@ void HttpServerTest::test_put()
   matador::default_min_log_level(log_level::LVL_DEBUG);
   matador::add_log_sink(matador::create_stdout_sink());
 
-  http::server s(7778);
+  http::server s(7779);
 
   s.on_put("/test/{name}", [](const http::request &req) {
     return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
@@ -162,7 +162,7 @@ void HttpServerTest::test_put()
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
-  http::client c("localhost:7778");
+  http::client c("localhost:7779");
   auto resp = c.put("/test/world", "hello");
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
@@ -180,7 +180,7 @@ void HttpServerTest::test_delete()
   matador::default_min_log_level(log_level::LVL_DEBUG);
   matador::add_log_sink(matador::create_stdout_sink());
 
-  http::server s(7778);
+  http::server s(7779);
 
   s.on_remove("/test/{name}", [](const http::request &req) {
     return http::response::ok("<h1>hello " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
@@ -194,7 +194,7 @@ void HttpServerTest::test_delete()
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
-  http::client c("localhost:7778");
+  http::client c("localhost:7779");
   auto resp = c.remove("/test/world");
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
