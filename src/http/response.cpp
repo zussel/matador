@@ -150,7 +150,7 @@ response response::ok(const string &body, mime_types::types type)
   response resp = create(http::OK);
   resp.body_ = body;
   resp.content_.length = std::to_string(body.size());
-  resp.content_.type = mime_types::TEXT_HTML;
+  resp.content_.type = type;
   return resp;
 }
 
