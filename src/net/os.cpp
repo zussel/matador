@@ -56,7 +56,11 @@ const char* inet_ntop(int af, const void* src, char* dst, size_t size)
 
 int close(int fd)
 {
+#ifdef _WIN32
   return ::closesocket(fd);
+#else
+  return ::close(fd);
+#endif
 }
 
 int shutdown(int fd, shutdown_type type)
