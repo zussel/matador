@@ -129,7 +129,7 @@ public:
   void clear();
 
 private:
-  std::array<char, 1638400> buf_{};
+  std::array<char, 16384> buf_{};
   std::size_t size_ = 0;
 };
 
