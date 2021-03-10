@@ -5,6 +5,8 @@
 #include "matador/net/acceptor.hpp"
 #include "matador/net/connector.hpp"
 
+#include "matador/logger/log_manager.hpp"
+
 #include "EchoServer.hpp"
 
 #include <thread>
@@ -124,6 +126,8 @@ void ReactorTest::test_connector()
 
 void ReactorTest::test_shutdown()
 {
+  matador::default_min_log_level(log_level::LVL_DEBUG);
+  matador::add_log_sink(matador::create_stdout_sink());
   auto ep = tcp::peer(address::v4::any(), 7777);
   auto ac = std::make_shared<acceptor>(ep, [](tcp::socket sock, tcp::peer p, acceptor *) {
     auto cl = std::make_shared<EchoServer>();

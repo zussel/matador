@@ -16,6 +16,10 @@ reactor::reactor()
 {
 
 }
+reactor::~reactor()
+{
+    log_.debug("destroying reactor");
+}
 
 void reactor::register_handler(const std::shared_ptr<handler>& h, event_type et)
 {

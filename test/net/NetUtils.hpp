@@ -28,7 +28,7 @@ bool wait_until(T &service, bool running, int retries)
 {
   while (service.is_running() != running && retries-- > 0) {
 #ifdef _WIN32
-    ::Sleep(1000);
+    ::Sleep(500);
 #else
     ::usleep(500);
 #endif

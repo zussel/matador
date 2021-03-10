@@ -62,6 +62,7 @@ public:
    */
   reactor();
 
+  ~reactor();
   /**
    * Registers a new handler with the reactor for
    * the given event type.
