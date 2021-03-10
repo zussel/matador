@@ -50,6 +50,8 @@ public:
   bool empty() const;
   bool full() const;
 
+  void clear();
+
 private:
   const char *start_ = nullptr;
   char *cursor_ = nullptr;

@@ -5,6 +5,7 @@
 #include <matador/net/ip.hpp>
 
 #include <memory>
+#include <array>
 
 class IOEchoServerConnection : public std::enable_shared_from_this<IOEchoServerConnection>
 {
@@ -16,11 +17,10 @@ public:
   void write();
 
 private:
-  std::array<char, 16384> buf_;
+  std::array<char, 16384> buf_ = {};
   std::string echo_;
   matador::io_stream &stream_;
   matador::tcp::peer endpoint_;
-
 };
 
 

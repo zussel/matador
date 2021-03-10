@@ -123,7 +123,7 @@ public:
 private:
   std::string lib_;
 
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#if defined(_WIN32) || defined(__MINGW32__)
   HMODULE handle_ = nullptr;
 #else
   void *handle_ = nullptr;

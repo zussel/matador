@@ -76,4 +76,10 @@ bool buffer_view::full() const
 {
   return capacity() == 0;
 }
+
+void buffer_view::clear()
+{
+	cursor_ = const_cast<char*>(start_);
+}
+
 }

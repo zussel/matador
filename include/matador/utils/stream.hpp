@@ -9,6 +9,11 @@
 #include <algorithm>
 #include <memory>
 
+#ifdef _WIN32
+#undef min
+#undef max
+#endif
+
 namespace matador {
 
 /**
@@ -791,8 +796,8 @@ stream<T> make_stream(C<T, Allocator> &&container)
   return stream<T>(detail::make_from<T>(std::forward<C<T, Allocator>>(container)));
 }
 
-template < class T, template < class ... > class C >
-stream<T> make_stream(const C<T> &container)
+template < class T, template < class ... > class C, class Allocator >
+stream<T> make_stream(const C<T, Allocator> &container)
 {
   return stream<T>(detail::make_from<T>(container.begin(), container.end()));
 //  return stream<T>(detail::make_from<T>(std::begin(container), std::end(container)));

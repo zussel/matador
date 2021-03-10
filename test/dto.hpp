@@ -16,6 +16,12 @@ struct bounding_box
   long width = 0;
   long height = 0;
 
+  bounding_box() = default;
+
+  bounding_box(long l, long w, long h)
+    : length(l), width(w), height(h)
+  {}
+
   template < class S >
   void serialize(S &s)
   {

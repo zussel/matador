@@ -2,16 +2,16 @@
 #define MATADOR_URL_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
+#ifdef matador_http_EXPORTS
+    #define OOS_HTTP_API __declspec(dllexport)
+    #define EXPIMP_HTTP_TEMPLATE
   #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
+    #define OOS_HTTP_API __declspec(dllimport)
+    #define EXPIMP_HTTP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_UTILS_API
+#define OOS_HTTP_API
 #endif
 
 #include <string>
@@ -20,7 +20,7 @@
 namespace matador {
 namespace http {
 
-class OOS_UTILS_API url
+class OOS_HTTP_API url
 {
 public:
   static std::string encode(const std::string &str);

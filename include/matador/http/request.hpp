@@ -2,7 +2,7 @@
 #define MATADOR_REQUEST_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
+#ifdef matador_http_EXPORTS
     #define OOS_HTTP_API __declspec(dllexport)
     #define EXPIMP_HTTP_TEMPLATE
   #else

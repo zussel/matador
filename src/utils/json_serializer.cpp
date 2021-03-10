@@ -5,6 +5,29 @@ namespace matador {
 json_format json_format::compact { false, 0 }; /* NOLINT */
 json_format json_format::pretty { true, 2 }; /* NOLINT */
 
+inline json_format::json_format(bool enable_line_break)
+    : enable_line_break_(enable_line_break)
+{}
+
+inline json_format::json_format(unsigned indentation)
+    : indentation_(indentation)
+{}
+
+inline json_format::json_format(bool enable_line_break, unsigned indentation)
+    : enable_line_break_(enable_line_break)
+    , indentation_(indentation)
+{}
+
+inline bool json_format::show_line_break() const
+{
+    return enable_line_break_;
+}
+
+inline unsigned json_format::indentation() const
+{
+    return indentation_;
+}
+
 json_serializer::json_serializer(json_format format)
   : format_(format)
 {}

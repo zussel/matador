@@ -1,6 +1,19 @@
 #ifndef MATADOR_JSON_SERIALIZER_HPP
 #define MATADOR_JSON_SERIALIZER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+#define OOS_UTILS_API __declspec(dllexport)
+#define EXPIMP_UTILS_TEMPLATE
+#else
+#define OOS_UTILS_API __declspec(dllimport)
+#define EXPIMP_UTILS_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_UTILS_API
+#endif
+
 #include "matador/utils/access.hpp"
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/string.hpp"
@@ -13,30 +26,17 @@
 
 namespace matador {
 
-struct json_format
+struct OOS_UTILS_API json_format
 {
 public:
   json_format() = default;
-  explicit json_format(bool enable_line_break)
-    : enable_line_break_(enable_line_break)
-  {}
-  explicit json_format(unsigned indentation)
-    : indentation_(indentation)
-  {}
-  json_format(bool enable_line_break, unsigned indentation)
-    : enable_line_break_(enable_line_break)
-    , indentation_(indentation)
-  {}
+  explicit json_format(bool enable_line_break);
+  explicit json_format(unsigned indentation);
+  json_format(bool enable_line_break, unsigned indentation);
 
-  bool show_line_break() const
-  {
-    return enable_line_break_;
-  }
+  bool show_line_break() const;
 
-  unsigned indentation() const
-  {
-    return indentation_;
-  }
+  unsigned indentation() const;
 
   static json_format compact;
   static json_format pretty;
@@ -46,7 +46,7 @@ private:
   unsigned indentation_ = 2;
 };
 
-class json_serializer
+class OOS_UTILS_API json_serializer
 {
 public:
 
