@@ -1,6 +1,6 @@
 #include "matador/net/socket_interrupter.hpp"
 
-#include "matador/utils/buffer.hpp"
+#include "matador/utils/buffer_view.hpp"
 
 #include "matador/logger/log_manager.hpp"
 
@@ -54,16 +54,14 @@ int socket_interrupter::socket_id()
 
 void socket_interrupter::interrupt()
 {
-  char val = 0;
-  buffer buf;
-  buf.append(&val, 1);
+  buffer_view buf(indicator_);
   log_.info("fd %d: sending interrupt to fd %d", client_.id(), server_.id());
   client_.send(buf);
 }
 
 bool socket_interrupter::reset()
 {
-  buffer buf;
+  buffer_view buf(consumer_);
   log_.info("reading interrupt byte");
   int nread = server_.receive(buf);
   bool interrupted = nread > 0;

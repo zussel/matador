@@ -61,7 +61,7 @@ public:
     reactor_thread_ = std::thread([this] {
       reactor_.run();
       // sleep for some seconds to ensure valid thread join
-      std::this_thread::sleep_for(std::chrono::seconds (2));
+      std::this_thread::sleep_for(std::chrono::seconds (1));
     });
   }
   void stop()
