@@ -24,7 +24,7 @@ FILE* fopen(const char *path, const char *modes)
 {
 #ifdef _WIN32
   FILE *stream;
-  fopen_s(&stream, path, "a");
+  fopen_s(&stream, path, modes);
   return stream;
 #else
   return ::fopen(path, modes);
