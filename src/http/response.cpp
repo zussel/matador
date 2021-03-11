@@ -121,12 +121,18 @@ response response::from_file(const std::string &file_path)
 
   // obtain file size:
   fseek (f.stream() , 0 , SEEK_END);
-  size_t size = ftell (f.stream());
+  size_t size = ftell(f.stream());
   rewind (f.stream());
 
   resp.body_.resize(size);
 
-  fread(const_cast<char*>(resp.body_.data()), 1, size, f.stream());
+  int ret = fread(const_cast<char*>(resp.body_.data()), 1, size, f.stream());
+
+  if (ret == 0) {
+      perror("fread");
+      f.close();
+      return response::bad_request();
+  }
 
   f.close();
 

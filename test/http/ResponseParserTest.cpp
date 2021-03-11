@@ -77,7 +77,7 @@ void ResponseParserTest::test_from_file_response()
 
   UNIT_ASSERT_TRUE(matador::os::exists(filename));
 
-  const std::string data { "<body><h1>hello world</h1></body>"};
+  const std::string data { "<body><h1>hello world</h1></body>" };
   ::fwrite(data.c_str(), sizeof(char), data.size(), f.stream());
   f.close();
 
