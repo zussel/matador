@@ -3,6 +3,7 @@
 //
 
 #include "matador/utils/json.hpp"
+#include "matador/utils/string.hpp"
 
 #include <sstream>
 #include <iostream>
@@ -278,6 +279,41 @@ bool json::is_object() const
 bool json::is_null() const
 {
   return type == e_null;
+}
+
+json& json::at_path(const std::string &path, char delimiter)
+{
+  std::vector<std::string> parts;
+  matador::split(path, delimiter, parts);
+
+  if (parts.empty()) {
+    return *this;
+  }
+
+  json& result = (*this)[parts[0]];
+
+  for (size_t i = 1; i < parts.size(); ++i) {
+    result = result[parts[i]];
+  }
+
+  return result;
+}
+
+const json& json::at_path(const std::string &path, char delimiter) const
+{
+  std::vector<std::string> parts;
+  matador::split(path, delimiter, parts);
+
+  if (parts.empty()) {
+    return *this;
+  }
+
+  json& result = const_cast<json&>(*this)[parts[0]];
+
+  for (size_t i = 1; i < parts.size(); ++i) {
+    result = result[parts[i]];
+  }
+  return result;
 }
 
 void json::throw_on_wrong_type(json::json_type t) const

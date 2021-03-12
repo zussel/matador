@@ -285,7 +285,8 @@ public:
    * @param key The key of the requested value
    * @return The requested value for the given key
    */
-  json& operator[](const std::string &key) {
+  json& operator[](const std::string &key)
+  {
     if (type != e_object) {
       clear();
       value_.object = new object_type;
@@ -293,6 +294,28 @@ public:
     }
     auto it = value_.object->insert(std::make_pair(key, json())).first;
     return it->second;
+  }
+
+  /**
+   * Get the json object of the given key.
+   * If the json type isn't object the type
+   * the object itself is returned (this)
+   *
+   * @param key The key of the requested value
+   * @return The requested value for the given key
+   */
+  const json& operator[](const std::string &key) const
+  {
+    if (type != e_object) {
+      return *this;
+    }
+
+    auto it = value_.object->find(key);
+    if (it == value_.object->end()) {
+      return *this;
+    } else {
+      return it->second;
+    }
   }
 
   /**
@@ -656,6 +679,9 @@ public:
     }
     return value_.array->at(pos).as<T>();
   }
+
+  json& at_path(const std::string &path, char delimiter);
+  const json& at_path(const std::string &path, char delimiter) const;
 
   /**
    * Clears the current json object.

@@ -14,7 +14,7 @@ SET(SOURCES
   mime_types.cpp
   url.cpp
   static_file_service.cpp
-  response_parser.cpp http_client_connection.cpp http_client_connection.cpp)
+  response_parser.cpp http_client_connection.cpp http_client_connection.cpp template_engine.cpp)
 
 SET(HEADER
   ../../include/matador/http/http_client.hpp
@@ -32,7 +32,7 @@ SET(HEADER
   ../../include/matador/http/mime_types.hpp
   ../../include/matador/http/url.hpp
   ../../include/matador/http/static_file_service.hpp
-  ../../include/matador/http/response_parser.hpp ../../include/matador/http/http_client_connection.hpp ../../include/matador/http/http_client_connection.hpp)
+  ../../include/matador/http/response_parser.hpp ../../include/matador/http/http_client_connection.hpp ../../include/matador/http/http_client_connection.hpp ../../include/matador/http/template_engine.hpp)
 
 ADD_LIBRARY(matador-http SHARED ${SOURCES} ${HEADER})
 
