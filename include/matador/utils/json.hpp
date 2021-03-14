@@ -285,16 +285,7 @@ public:
    * @param key The key of the requested value
    * @return The requested value for the given key
    */
-  json& operator[](const std::string &key)
-  {
-    if (type != e_object) {
-      clear();
-      value_.object = new object_type;
-      type = e_object;
-    }
-    auto it = value_.object->insert(std::make_pair(key, json())).first;
-    return it->second;
-  }
+  json& operator[](const std::string &key);
 
   /**
    * Get the json object of the given key.
@@ -304,19 +295,7 @@ public:
    * @param key The key of the requested value
    * @return The requested value for the given key
    */
-  const json& operator[](const std::string &key) const
-  {
-    if (type != e_object) {
-      return *this;
-    }
-
-    auto it = value_.object->find(key);
-    if (it == value_.object->end()) {
-      return *this;
-    } else {
-      return it->second;
-    }
-  }
+  const json& operator[](const std::string &key) const;
 
   /**
    * Get the json object at given index i
@@ -346,15 +325,7 @@ public:
    * @return The requested value for the given index
    * @throws std::logic_error If the index is out of bounce
    */
-  const json& operator[](std::size_t i) const {
-    if (type != e_array) {
-      return *this;
-    }
-    if (i >= value_.array->size()) {
-      throw std::logic_error("index out of bounce");
-    }
-    return value_.array->at(i);
-  }
+  const json& operator[](std::size_t i) const;
 
   /**
    * Push back the given value to the json array
@@ -679,6 +650,9 @@ public:
     }
     return value_.array->at(pos).as<T>();
   }
+
+  json& get(const std::string &key);
+  const json& get(const std::string &key) const;
 
   json& at_path(const std::string &path, char delimiter);
   const json& at_path(const std::string &path, char delimiter) const;

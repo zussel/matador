@@ -281,6 +281,37 @@ bool json::is_null() const
   return type == e_null;
 }
 
+json &json::get(const std::string &key)
+{
+  if (type != e_object) {
+    throw std::logic_error("type isn't object");
+  }
+
+  auto it = value_.object->find(key);
+  if (it == value_.object->end()) {
+    throw std::logic_error("object doesn't contain key " + key);
+  } else {
+    return value_.object->at(key);
+    //return it->second;
+  }
+}
+
+const json &json::get(const std::string &key) const
+{
+  if (type != e_object) {
+    throw std::logic_error("type isn't object");
+  }
+
+  auto it = value_.object->find(key);
+  if (it == value_.object->end()) {
+    throw std::logic_error("object doesn't contain key " + key);
+  } else {
+    return it->second;
+  }
+}
+
+json& func(json &parent, const std::vector<std::string> &parts, size_t index);
+
 json& json::at_path(const std::string &path, char delimiter)
 {
   std::vector<std::string> parts;
@@ -290,13 +321,27 @@ json& json::at_path(const std::string &path, char delimiter)
     return *this;
   }
 
-  json& result = (*this)[parts[0]];
+  return func((*this).get(parts[0]), parts, 1);
 
-  for (size_t i = 1; i < parts.size(); ++i) {
-    result = result[parts[i]];
+//  json& result = (*this)[parts[0]];
+//
+//  for (size_t i = 1; i < parts.size(); ++i) {
+//    if (!result.is_object()) {
+//      throw std::logic_error("couldn't find json at path " + path);
+//    }
+//    result = result.get(parts[i]);
+//  }
+//
+//  return result;
+}
+
+json& func(json &parent, const std::vector<std::string> &parts, size_t index)
+{
+  if (index < parts.size()) {
+    return func(parent.get(parts[index]), parts, index+1);
+  } else {
+    return parent;
   }
-
-  return result;
 }
 
 const json& json::at_path(const std::string &path, char delimiter) const
@@ -308,12 +353,17 @@ const json& json::at_path(const std::string &path, char delimiter) const
     return *this;
   }
 
-  json& result = const_cast<json&>(*this)[parts[0]];
+  return func(const_cast<json&>(*this).get(parts[0]), parts, 1);
 
-  for (size_t i = 1; i < parts.size(); ++i) {
-    result = result[parts[i]];
-  }
-  return result;
+//  json& result = const_cast<json&>(*this).get(parts[0]);
+//
+//  for (size_t i = 1; i < parts.size(); ++i) {
+//    if (!result.is_object()) {
+//      throw std::logic_error("couldn't find json at path " + path);
+//    }
+//    result = result.get(parts[i]);
+//  }
+//  return result;
 }
 
 void json::throw_on_wrong_type(json::json_type t) const
@@ -331,6 +381,42 @@ json::iterator json::begin()
 json::iterator json::end()
 {
   return iterator(this, false);
+}
+
+json &json::operator[](const std::string &key)
+{
+  if (type != e_object) {
+    clear();
+    value_.object = new object_type;
+    type = e_object;
+  }
+  auto it = value_.object->insert(std::make_pair(key, json())).first;
+  return it->second;
+}
+
+const json &json::operator[](const std::string &key) const
+{
+  if (type != e_object) {
+    return *this;
+  }
+
+  auto it = value_.object->find(key);
+  if (it == value_.object->end()) {
+    return *this;
+  } else {
+    return it->second;
+  }
+}
+
+const json &json::operator[](std::size_t i) const
+{
+  if (type != e_array) {
+    return *this;
+  }
+  if (i >= value_.array->size()) {
+    throw std::logic_error("index out of bounce");
+  }
+  return value_.array->at(i);
 }
 
 std::string to_string(const matador::json &j)
