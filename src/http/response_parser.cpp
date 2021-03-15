@@ -32,64 +32,70 @@ response_parser::return_t response_parser::parse(const std::string &msg, respons
    * check for body data
    */
   return_t result = PARTIAL;
-  http_prefix_index_ = 0;
-  std::string::size_type pos;
-  for (pos = 0; pos < msg.size(); ++pos) {
-    std::string::value_type c = msg.at(pos);
-    bool ret = false;
-    bool finished = false;
-    switch (state_) {
-      case VERSION:
-        ret = parse_version(c);
+  std::string::size_type pos = -1;
+  if (state_ != BODY) {
+    http_prefix_index_ = 0;
+    for (pos = 0; pos < msg.size(); ++pos) {
+      std::string::value_type c = msg.at(pos);
+      bool ret = false;
+      bool finished = false;
+      switch (state_) {
+        case VERSION:
+          ret = parse_version(c);
+          break;
+        case MAJOR_VERSION:
+          ret = parse_major_version(c, resp);
+          break;
+        case MINOR_VERSION:
+          ret = parse_minor_version(c, resp);
+          break;
+        case STATUS_CODE:
+          ret = parse_status_code(c, resp);
+          break;
+        case STATUS_TEXT:
+          ret = parse_status_text(c, resp);
+          break;
+        case HEADER:
+          ret = parse_header(c);
+          break;
+        case HEADER_KEY:
+          ret = parse_header_key(c);
+          break;
+        case HEADER_VALUE_BEGIN:
+          ret = parse_header_value_begin(c);
+          break;
+        case HEADER_VALUE:
+          ret = parse_header_value(c);
+          break;
+        case HEADER_NEWLINE:
+          ret = parse_header_newline(c, resp);
+          break;
+        case HEADER_FINISH:
+          ret = parse_header_finish(c);
+          if (ret) {
+            finished = true;
+          }
+          break;
+        default:
+          break;
+      }
+      if (!ret) {
+        return INVALID;
+      } else if (finished) {
+        result = FINISH;
         break;
-      case MAJOR_VERSION:
-        ret = parse_major_version(c, resp);
-        break;
-      case MINOR_VERSION:
-        ret = parse_minor_version(c, resp);
-        break;
-      case STATUS_CODE:
-        ret = parse_status_code(c, resp);
-        break;
-      case STATUS_TEXT:
-        ret = parse_status_text(c, resp);
-        break;
-      case HEADER:
-        ret = parse_header(c);
-        break;
-      case HEADER_KEY:
-        ret = parse_header_key(c);
-        break;
-      case HEADER_VALUE_BEGIN:
-        ret = parse_header_value_begin(c);
-        break;
-      case HEADER_VALUE:
-        ret = parse_header_value(c);
-        break;
-      case HEADER_NEWLINE:
-        ret = parse_header_newline(c, resp);
-        break;
-      case HEADER_FINISH:
-        ret = parse_header_finish(c);
-        if (ret) {
-          finished = true;
-        }
-        break;
-      default:
-        break;
-    }
-    if (!ret) {
-      return INVALID;
-    } else if (finished) {
-      result = FINISH;
-      break;
+      }
     }
   }
-
   auto length = std::stoul(resp.content_.length);
   if (length > 0) {
     log.info("length: %d, pos+1: %d, msg.length: %d", length, pos+1, msg.size());
-    resp.body_.assign(msg.substr(++pos, length));
+    resp.body_.append(msg.substr(++pos, length));
+    if (resp.body_.size() < length) {
+      result = PARTIAL;
+    } else {
+      result = FINISH;
+    }
   } else if (msg.size() > pos) {
     resp.body_.assign(msg.substr(++pos));
   }
@@ -247,7 +253,11 @@ bool response_parser::parse_header_newline(char c, response &resp)
 }
 
 bool response_parser::parse_header_finish(char c) {
-  return c == '\n';
+  auto header_finished = c == '\n';
+  if (header_finished) {
+    state_ = BODY;
+  }
+  return header_finished;
 }
 
 bool response_parser::is_url_char(char c) const
