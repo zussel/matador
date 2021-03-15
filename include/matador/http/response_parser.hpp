@@ -53,7 +53,10 @@ private:
     HEADER_VALUE_BEGIN,
     HEADER_VALUE,
     HEADER_NEWLINE,
-    HEADER_FINISH
+    HEADER_FINISH,
+    BODY,
+    CHUNKED_BODY,
+    CHUNKED_BODY_FINISHED
   };
 
   static constexpr const char* CRLF = "\r\n";

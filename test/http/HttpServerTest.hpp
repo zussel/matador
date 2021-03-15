@@ -8,6 +8,9 @@ class HttpServerTest : public matador::unit_test
 public:
   HttpServerTest();
 
+  void initialize() override;
+  void finalize() override;
+
   void test_shutdown();
   void test_get();
   void test_post();

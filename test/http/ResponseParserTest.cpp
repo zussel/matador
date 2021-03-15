@@ -16,6 +16,7 @@ ResponseParserTest::ResponseParserTest()
   add_test("empty_body", [this]() { test_empty_response(); }, "test empty body response");
   add_test("body", [this]() { test_body_response(); }, "test filled body response");
   add_test("from_file", [this]() { test_from_file_response(); }, "test from file response");
+  add_test("partial_body", [this]() { test_partial_response_body(); }, "test partial body response");
 }
 
 void ResponseParserTest::test_empty_response()
@@ -93,4 +94,30 @@ void ResponseParserTest::test_from_file_response()
   matador::os::remove(filename);
 
   UNIT_ASSERT_FALSE(matador::os::exists(filename));
+}
+
+void ResponseParserTest::test_partial_response_body()
+{
+  http::response_parser parser;
+
+  http::response resp;
+
+  auto result = parser.parse(ResponseData::FILLED_PARTIAL_BODY_BEGIN, resp);
+
+  UNIT_ASSERT_EQUAL(http::response_parser::PARTIAL, result);
+
+  result = parser.parse(ResponseData::FILLED_PARTIAL_BODY_END, resp);
+
+  UNIT_ASSERT_EQUAL(http::response_parser::FINISH, result);
+  UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
+  UNIT_ASSERT_EQUAL(3UL, resp.headers().size());
+  UNIT_ASSERT_EQUAL(1, resp.version().major);
+  UNIT_ASSERT_EQUAL(1, resp.version().minor);
+
+  json_mapper<response_detail::person> mapper;
+  auto obj = mapper.object_from_string(resp.body().c_str());
+
+  UNIT_ASSERT_EQUAL("George", obj.name);
+  UNIT_ASSERT_EQUAL(37, obj.age);
+
 }

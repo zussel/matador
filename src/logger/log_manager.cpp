@@ -28,6 +28,19 @@ void log_manager::add_sink(sink_ptr sink, const std::string &domain_name)
   log_domain->add_sink(std::move(sink));
 }
 
+void log_manager::clear_all_sinks()
+{
+  default_log_domain_->clear();
+}
+
+void log_manager::clear_all_sinks(const std::string &domain_name)
+{
+  auto it = log_domain_map.find(domain_name);
+  if (it != log_domain_map.end()) {
+    it->second->clear();
+  }
+}
+
 void log_manager::clear()
 {
   log_domain_map.clear();
@@ -132,6 +145,16 @@ void add_log_sink(sink_ptr sink)
 void add_log_sink(sink_ptr sink, const std::string &domain)
 {
   log_manager::instance().add_sink(std::move(sink), domain);
+}
+
+void clear_all_log_sinks()
+{
+  log_manager::instance().clear_all_sinks();
+}
+
+void clear_all_log_sinks(const std::string &domain)
+{
+  log_manager::instance().clear_all_sinks(domain);
 }
 
 logger create_logger(std::string source)

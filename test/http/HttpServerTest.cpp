@@ -62,6 +62,17 @@ HttpServerTest::HttpServerTest()
   add_test("delete", [this]() { test_delete(); }, "http server delete test");
 }
 
+void HttpServerTest::initialize()
+{
+  matador::default_min_log_level(log_level::LVL_DEBUG);
+  matador::add_log_sink(matador::create_stdout_sink());
+}
+
+void HttpServerTest::finalize()
+{
+  matador::clear_all_log_sinks();
+}
+
 void HttpServerTest::test_shutdown()
 {
   http::server s(7777);
@@ -194,7 +205,7 @@ void HttpServerTest::test_delete()
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
-  http::client c("localhost:7779");
+  http::client c("localhost:7778");
   auto resp = c.remove("/test/world");
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());

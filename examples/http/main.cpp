@@ -13,10 +13,7 @@ int main(int /*argc*/, char* /*argv*/[])
   http::server server(8081);
 
   server.on_get("/api/user", [](const http::request &req) {
-
-
-
-    return http::response();
+    return http::response::ok("hello world", http::mime_types::TYPE_TEXT_PLAIN);
   });
   server.run();
 

@@ -80,6 +80,19 @@ public:
   void add_sink(sink_ptr sink, const std::string &domain_name);
 
   /**
+   * Clears all sinks from default log domain
+   */
+  void clear_all_sinks();
+
+  /**
+   * Clears all sinks from the log domain
+   * with the given name
+   *
+   * @param domain_name Domain name to clear all sinks from
+   */
+  void clear_all_sinks(const std::string &domain_name);
+
+  /**
    * Remove all log domains but the default log domain.
    * Clears all sinks from the default log domain.
    */
@@ -227,6 +240,20 @@ OOS_LOGGER_API void add_log_sink(sink_ptr sink);
  * @param domain The log domain name to add
  */
 OOS_LOGGER_API void add_log_sink(sink_ptr sink, const std::string &domain);
+
+/**
+ * Removes all sinks from the
+ * default domain
+ */
+OOS_LOGGER_API void clear_all_log_sinks();
+
+/**
+ * Removes all sinks from the log domain
+ * with given domain name
+ *
+ * @param domain Domain name to clear all sinks
+ */
+OOS_LOGGER_API void clear_all_log_sinks(const std::string &domain);
 
 /**
  * Creates a logger with the given source name
