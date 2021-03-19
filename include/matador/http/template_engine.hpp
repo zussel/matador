@@ -2,6 +2,8 @@
 #define MATADOR_TEMPLATE_ENGINE_HPP
 
 #include <string>
+#include <stack>
+#include <memory>
 
 namespace matador {
 
@@ -9,6 +11,11 @@ class json;
 
 namespace http {
 
+namespace detail {
+
+class template_state;
+
+}
 class string_cursor
 {
 public:
@@ -39,12 +46,16 @@ public:
   const std::string& str() const;
 
 private:
+  void handle_variable(const json &data);
+  void handle_command(const json &data);
   std::string parse_token();
 
 private:
   std::string rendered_;
 
   string_cursor cursor_;
+
+  std::stack<std::shared_ptr<detail::template_state>> state_stack_;
 };
 
 }

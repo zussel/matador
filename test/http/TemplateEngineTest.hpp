@@ -9,6 +9,7 @@ public:
   TemplateEngineTest();
 
   void test_replace_var();
+  void test_foreach();
 };
 
 

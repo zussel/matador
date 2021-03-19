@@ -8,6 +8,7 @@ TemplateEngineTest::TemplateEngineTest()
   : matador::unit_test("template_engine", "template engine test")
 {
   add_test("vars", [this] { test_replace_var(); }, "test replace variables");
+  add_test("foreach", [this] { test_foreach(); }, "test foreach loop");
 }
 
 using namespace matador;
@@ -40,4 +41,9 @@ void TemplateEngineTest::test_replace_var()
   engine.render(replace_one_cascade, data);
 
   UNIT_ASSERT_EQUAL("replace jane one", engine.str());
+}
+
+void TemplateEngineTest::test_foreach()
+{
+
 }

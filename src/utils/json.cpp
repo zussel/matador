@@ -160,6 +160,14 @@ void json::copy_from(const json &x)
   }
 }
 
+bool json::contains(const std::string &key) const
+{
+  if (!is_object()) {
+    return false;
+  }
+  return value_.object->find(key) != value_.object->end();
+}
+
 json &json::operator[](std::size_t i)
 {
   if (type != e_array) {

@@ -298,6 +298,15 @@ public:
   const json& operator[](const std::string &key) const;
 
   /**
+   * Returns true if json is of type object
+   * and contains the given key
+   *
+   * @param key Key to check
+   * @return True if key is available
+   */
+  bool contains(const std::string &key) const;
+
+  /**
    * Get the json object at given index i
    * if the json if of type array.
    * 

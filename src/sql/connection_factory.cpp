@@ -28,28 +28,25 @@ connection_factory::connection_factory()
   factory_.insert("memory", dbp.release());
 }
 
-connection_factory::~connection_factory()
-{}
-
 connection_impl* connection_factory::create(const std::string &name)
 {
-  factory_t::iterator i = factory_.find(name);
+  auto i = factory_.find(name);
   if (i == factory_.end()) {
     std::unique_ptr<factory_t::producer_base> producer(new dynamic_connection_producer(name));
     i = factory_.insert(name, producer.release()).first;
   }
-  connection_producer *producer = static_cast<connection_producer*>(i->second.get());
+  auto *producer = static_cast<connection_producer*>(i->second.get());
   return producer->create();
 }
 
 bool connection_factory::destroy(const std::string &name, connection_impl* impl)
 {
-  factory_t::iterator i = factory_.find(name);
+  auto i = factory_.find(name);
   if (i == factory_.end()) {
     // couldn't find sql backend
     return false;
   }
-  connection_producer *producer = static_cast<connection_producer*>(i->second.get());
+  auto *producer = static_cast<connection_producer*>(i->second.get());
   producer->destroy(impl);
   return true;
 }
@@ -68,7 +65,7 @@ connection_factory::dynamic_connection_producer::dynamic_connection_producer(con
 {
   // load matador driver library
   // create instance
-  if (!loader_.load(("matador-"+name).c_str())) {
+  if (!loader_.load(("matador-"+name))) {
     throw std::runtime_error("couldn't find library [" + name + "]");
   }
   // get create function
