@@ -88,6 +88,9 @@ std::ostream& join(std::map<K, V> &range, std::ostream &out, const std::string &
 template < class JSON_TYPE >
 class json_iterator;
 
+template < class JSON_TYPE >
+class const_json_iterator;
+
 /**
  * @brief This class represents either a json value an object or an array
  *
@@ -104,6 +107,7 @@ class OOS_UTILS_API json
 {
 public:
   typedef json_iterator<json> iterator;             /**< Shortcut to json iterator type */
+  typedef const_json_iterator<json> const_iterator; /**< Shortcut to json const iterator type */
   typedef std::map<std::string, json> object_type;  /**< Shortcut to json object map type */
   typedef std::vector<json> array_type;             /**< Shortcut to json array vector type */
 
@@ -474,6 +478,17 @@ public:
   iterator begin();
 
   /**
+   * Returns the begin iterator of the json array
+   * or the json object.
+   * If the json isn't of type array or object this
+   * json object is return in the iterator
+   * @sa json_iterator
+   *
+   * @return The begin iterator
+   */
+  const_iterator begin() const;
+
+  /**
    * Returns the end iterator of the json array
    * or the json object.
    * If the json isn't of type array or object this
@@ -483,6 +498,17 @@ public:
    * @return The end iterator
    */
   iterator end();
+
+  /**
+   * Returns the end iterator of the json array
+   * or the json object.
+   * If the json isn't of type array or object this
+   * json object is return in the iterator
+   * @sa json_iterator
+   *
+   * @return The end iterator
+   */
+  const_iterator end() const;
 
   /**
    * Return the json value as an integral type
@@ -717,6 +743,7 @@ private:
   void copy_from(const json &x);
 
   friend class json_iterator<json>;
+  friend class const_json_iterator<json>;
 
   union json_value {
     json_value() : integer(0) {}
@@ -953,6 +980,232 @@ private:
   static const std::size_t end_ = 1;
 
   json *obj_;
+
+  struct iter_type {
+    typename object_type::iterator object_iterator;
+    typename array_type::iterator array_iterator;
+  };
+
+  iter_type iter;
+  // for builtin types (number, bool, string)
+  std::size_t it = 0;
+};
+
+/**
+ * @brief An iterator for json array and objects
+ *
+ * The iterator handles elements of json arrays
+ * and json objects.
+ * If initialized with a non array or object the
+ * iterator uses the given json as the element
+ * neither as begin or end.
+ */
+template < class JSON_TYPE >
+class const_json_iterator
+{
+public:
+  typedef JSON_TYPE json_type; /**< Shortcut for json */
+  typedef typename json_type::array_type array_type; /**< Shortcut for json array type */
+  typedef typename json_type::object_type object_type; /**< Shortcut for json object type */
+
+  /**
+   * Creates a json_iterator for the given json object.
+   * In case the json object isn't of type object or array
+   * the given flag as_begin tells the c'tor if the jsn value
+   * is treated like begin or end element.
+   *
+   * @param ptr Pointer to the json
+   * @param as_begin True if non array/object should be treated as begin iterator
+   */
+  const_json_iterator(const json_type *ptr, bool as_begin)
+    : obj_(ptr)
+  {
+    switch(obj_->type) {
+      case json::e_object:
+        iter.object_iterator = typename object_type::iterator();
+        iter.object_iterator = (as_begin ? obj_->value_.object->begin() : obj_->value_.object->end());
+        break;
+      case json::e_array:
+        iter.array_iterator = typename array_type::iterator();
+        iter.array_iterator = (as_begin ? obj_->value_.array->begin() : obj_->value_.array->end());
+        break;
+      default:
+        it = as_begin ? begin_ : end_;
+        break;
+    }
+  }
+
+  /**
+   * Copy construct a json_iterator from given
+   * iterator
+   *
+   * @param x The iterator to copy from
+   */
+  const_json_iterator(const const_json_iterator<JSON_TYPE> &x)
+    : obj_(x.obj_), iter(x.iter)
+  {}
+
+  /**
+   * Copy assigns a json_iterator from given
+   * iterator
+   *
+   * @param x The iterator to copy assign from
+   */
+  const_json_iterator& operator=(const const_json_iterator<JSON_TYPE> &x)
+  {
+    if (this != &x) {
+      obj_ = x.obj_;
+      iter = x.iter;
+    }
+    return *this;
+  }
+
+  /**
+   * Post increments (++i) the json_iterator
+   * step to next array element or next
+   * object element
+   *
+   * @return The incremented iterator
+   */
+  const_json_iterator operator++() {
+    switch(obj_->type) {
+      case json::e_object:
+        ++iter.object_iterator;
+        break;
+      case json::e_array:
+        ++iter.array_iterator;
+        break;
+      default:
+        ++it;
+        break;
+    }
+    return *this;
+  }
+
+  /**
+   * Pre increments (i++) the json_iterator
+   * step to next array element or next
+   * object element
+   *
+   * @return The incremented iterator
+   */
+  const_json_iterator operator++(int) {
+    auto tmp = *this;
+    ++(*this);
+    return tmp;
+  }
+
+  /**
+   * Post decrements (--i) the json_iterator
+   * step to previous array element or next
+   * object element
+   *
+   * @return The decremented iterator
+   */
+  const_json_iterator operator--() {
+    switch(obj_->type) {
+      case json::e_object:
+        --iter.object_iterator;
+        break;
+      case json::e_array:
+        --iter.array_iterator;
+        break;
+      default:
+        --it;
+        break;
+    }
+    return *this;
+  }
+
+  /**
+   * Pre decrements (i--) the json_iterator
+   * step to previous array element or next
+   * object element
+   *
+   * @return The decremented iterator
+   */
+  const_json_iterator operator--(int) {
+    auto tmp = *this;
+    --(*this);
+    return tmp;
+  }
+
+  /**
+   * Indirection operator. Returns the reference to the
+   * json object represented by the iterator. If the json type
+   * is null a std::logic_error is thrown.
+   *
+   * @return The reference of the json object
+   */
+  const json& operator*() const {
+    switch(obj_->type) {
+      case json::e_object:
+        return iter.object_iterator->second;
+      case json::e_array:
+        return *iter.array_iterator;
+      case json::e_null:
+        throw std::logic_error("json null hasn't a value");
+      default:
+        return *obj_;
+    }
+  }
+
+  /**
+   * Address of operator. Returns the pointer to the
+   * json object represented by the iterator. If the json type
+   * is null a std::logic_error is thrown.
+   *
+   * @return The pointer of the json object
+   */
+  const json* operator->() const {
+    switch(obj_->type) {
+      case json::e_object:
+        return &(iter.object_iterator->second);
+      case json::e_array:
+        return &*iter.array_iterator;
+      case json::e_null:
+        throw std::logic_error("json null hasn't a value");
+      default:
+        return obj_;
+    }
+  }
+
+  /**
+   * Equal operator for json_iterator. Depending on
+   * the json type the values are compared.
+   *
+   * @param x The json_iterator to compare
+   * @return True if the values are the same
+   */
+  bool operator==(const const_json_iterator<JSON_TYPE> &x) const
+  {
+    switch(obj_->type) {
+      case json::e_object:
+        return iter.object_iterator == x.iter.object_iterator;
+      case json::e_array:
+        return iter.array_iterator == x.iter.array_iterator;
+      default:
+        return it == x.it;
+    }
+  }
+
+  /**
+   * Not equal operator for json_iterator. Depending on
+   * the json type the values are compared.
+   *
+   * @param x The json_iterator to compare
+   * @return True if the values are the not same
+   */
+  bool operator!=(const const_json_iterator<JSON_TYPE> &x) const
+  {
+    return !operator==(x);
+  }
+
+private:
+  static const std::size_t begin_ = 0;
+  static const std::size_t end_ = 1;
+
+  const json *obj_;
 
   struct iter_type {
     typename object_type::iterator object_iterator;

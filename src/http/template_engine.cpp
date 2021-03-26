@@ -1,6 +1,8 @@
 #include "matador/http/template_engine.hpp"
 
 #include "matador/http/detail/template_state_factory.hpp"
+#include "matador/http/detail/template_parser.hpp"
+#include "matador/http/detail/template_state.hpp"
 
 #include "matador/utils/json.hpp"
 #include "matador/utils/string.hpp"
@@ -43,6 +45,7 @@ void template_engine::render(const char *format, size_t len, const json &data)
     // find begin of variable/command tag
     while (c != '{') {
       if (is_eos(c)) {
+        rendered_ = state_stack_.top()->str();
         return;
       }
       state_stack_.top()->append(c);
@@ -77,7 +80,7 @@ void template_engine::handle_variable(const json &data)
 {
   // start variable evaluation
   cursor_.next_char();
-  std::string token = parse_token();
+  std::string token = detail::parse_token(cursor_);
 
   const auto &j = data.at_path(token, '.');
   state_stack_.top()->append(j.as<std::string>());
@@ -91,85 +94,23 @@ void template_engine::handle_command(const json &data)
 {
   cursor_.next_char();
   // assume for loop
-  std::string cmd = parse_token();
+  std::string cmd = detail::parse_token(cursor_);
 
-  cursor_.skip_whitespace();
+  if (state_stack_.top()->is_end_tag(cmd)) {
+    state_stack_.top()->execute(data);
+  } else {
+    auto cmdptr = detail::template_state_factory::instance().produce(cmd);
 
-  std::string elem_name = parse_token();
+    if (!cmdptr) {
+      throw std::logic_error("unknown command '" + cmd + "'");
+    }
 
-  cursor_.skip_whitespace();
-
-  std::string in = parse_token();
-
-  if (in != "in") {
-    throw std::logic_error("expected keyword 'in' for for loop");
+    cmdptr->configure(cursor_);
   }
-
-  cursor_.skip_whitespace();
-
-  std::string list_name = parse_token();
-
-  const json &cont = data.get(elem_name);
-
-  if (!cont.is_object() || !cont.is_array()) {
-    throw std::logic_error("json object isn't of type array or object");
-  }
-
-
-  // validate
-
-
-  // store foreach content
-
-  // after endfor execute command
 }
 
 void execute_foreach(const json &data) {
 
-}
-
-std::string template_engine::parse_token()
-{
-  std::string token;
-  char c = cursor_.skip_whitespace();
-
-  while(!is_eos(c)) {
-    if (isspace(c)) {
-      // token is finish
-      break;
-    } else if (isalnum(c) || c == '.') {
-      token.push_back(c);
-    }
-    c = cursor_.next_char();
-  }
-
-  cursor_.skip_whitespace();
-  return token;
-}
-
-string_cursor &string_cursor::operator=(const char *str)
-{
-  cursor_ = str;
-  return *this;
-}
-
-char string_cursor::skip_whitespace()
-{
-  cursor_ = skip_ws(cursor_);
-  return cursor_[0];
-}
-
-char string_cursor::next_char()
-{
-  if (is_null()) {
-    throw std::logic_error("no current string");
-  }
-  return (++cursor_)[0];
-}
-
-char string_cursor::current_char() const
-{
-  return cursor_[0];
 }
 
 }

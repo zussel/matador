@@ -386,9 +386,19 @@ json::iterator json::begin()
   return iterator(this, true);
 }
 
+json::const_iterator json::begin() const
+{
+  return const_iterator(this, true);
+}
+
 json::iterator json::end()
 {
   return iterator(this, false);
+}
+
+json::const_iterator json::end() const
+{
+  return const_iterator(this, false);
 }
 
 json &json::operator[](const std::string &key)

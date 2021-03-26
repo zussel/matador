@@ -45,5 +45,5 @@ void TemplateEngineTest::test_replace_var()
 
 void TemplateEngineTest::test_foreach()
 {
-
+  std::string simple_foreach { "List [{% for item in list %}Name: {{ item.name }}{% endfor &}]" };
 }

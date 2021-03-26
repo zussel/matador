@@ -1,6 +1,8 @@
 #ifndef MATADOR_TEMPLATE_ENGINE_HPP
 #define MATADOR_TEMPLATE_ENGINE_HPP
 
+#include "matador/utils/string_cursor.hpp"
+
 #include <string>
 #include <stack>
 #include <memory>
@@ -16,25 +18,6 @@ namespace detail {
 class template_state;
 
 }
-class string_cursor
-{
-public:
-  string_cursor& operator=(const char *str);
-
-  char operator[](int i) const { return cursor_[i]; }
-  bool is_null() const { return cursor_ == nullptr; }
-  const char* operator()() const { return cursor_; }
-  void sync_cursor(const char *cursor) { cursor_ = cursor; }
-
-  char skip_whitespace();
-
-  char next_char();
-
-  char current_char() const;
-
-private:
-  const char *cursor_ = nullptr;
-};
 
 class template_engine
 {
@@ -48,7 +31,6 @@ public:
 private:
   void handle_variable(const json &data);
   void handle_command(const json &data);
-  std::string parse_token();
 
 private:
   std::string rendered_;
