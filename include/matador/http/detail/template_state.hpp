@@ -22,6 +22,7 @@ public:
   virtual void execute(const json &data) = 0;
   virtual void append(const std::string &part) = 0;
   virtual void append(char c) = 0;
+  virtual void on_variable(const std::string &variable, const json &data) = 0;
   virtual std::string str() const = 0;
 };
 
@@ -39,6 +40,8 @@ public:
   void append(const std::string &part) override;
 
   void append(char c) override;
+
+  void on_variable(const std::string &variable, const json &data) override;
 
   std::string str() const override;
 
@@ -61,11 +64,15 @@ public:
 
   void append(char c) override;
 
+  void on_variable(const std::string &variable, const json &) override;
+
   std::string str() const override;
 
 private:
   std::string elem_name_;
   std::string list_name_;
+  std::string repeatable_;
+  std::string content_;
 };
 
 }

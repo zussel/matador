@@ -69,6 +69,8 @@ void template_engine::render(const char *format, size_t len, const json &data)
 
     c = cursor_.next_char();
   }
+
+  rendered_ = state_stack_.top()->str();
 }
 
 const std::string &template_engine::str() const
@@ -82,12 +84,12 @@ void template_engine::handle_variable(const json &data)
   cursor_.next_char();
   std::string token = detail::parse_token(cursor_);
 
-  const auto &j = data.at_path(token, '.');
-  state_stack_.top()->append(j.as<std::string>());
   char c = cursor_.current_char();
   if (c != '}') {
     throw std::logic_error("not a valid token closing bracket");
   }
+
+  state_stack_.top()->on_variable(token, data);
 }
 
 void template_engine::handle_command(const json &data)
@@ -98,6 +100,7 @@ void template_engine::handle_command(const json &data)
 
   if (state_stack_.top()->is_end_tag(cmd)) {
     state_stack_.top()->execute(data);
+    state_stack_.pop();
   } else {
     auto cmdptr = detail::template_state_factory::instance().produce(cmd);
 
@@ -106,6 +109,8 @@ void template_engine::handle_command(const json &data)
     }
 
     cmdptr->configure(cursor_);
+
+    state_stack_.push(cmdptr);
   }
 }
 

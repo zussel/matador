@@ -45,5 +45,23 @@ void TemplateEngineTest::test_replace_var()
 
 void TemplateEngineTest::test_foreach()
 {
-  std::string simple_foreach { "List [{% for item in list %}Name: {{ item.name }}{% endfor &}]" };
+  std::string simple_foreach { "List [{% for item in list %}Color: {{ item.name }} (Shortcut: {{ item.shortcut}}){% endfor &}]" };
+
+  json data {
+    { "list", { {
+      {"name", "green"},
+      {"shortcut", "GR"}
+    }, {
+      {"name", "red"},
+      {"shortcut", "RE"}
+    } } }
+  };
+
+  http::template_engine engine;
+
+  engine.render(simple_foreach, data);
+
+  auto result = engine.str();
+
+  std::cout << "Result: " << result << "\n";
 }

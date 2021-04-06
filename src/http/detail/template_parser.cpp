@@ -13,11 +13,10 @@ std::string parse_token(string_cursor &cursor)
   char c = cursor.skip_whitespace();
 
   while(!is_eos(c)) {
-    if (isspace(c)) {
-      // token is finish
-      break;
-    } else if (isalnum(c) || c == '.') {
+    if (isalnum(c) || c == '.') {
       token.push_back(c);
+    } else {
+      break;
     }
     c = cursor.next_char();
   }

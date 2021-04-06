@@ -62,7 +62,7 @@ response static_file_service::serve(const request &req)
 //
 //  resp.status = http::OK;
 //
-//  resp.content_.type = mime_types::from_file_extension(extension);
+//  resp.repeatable_.type = mime_types::from_file_extension(extension);
 //  resp.content_type.length = size;
 //
 //  resp.version.major = 1;
