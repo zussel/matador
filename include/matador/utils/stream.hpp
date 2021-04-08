@@ -417,6 +417,10 @@ public:
     return processor_;
   }
 
+  std::string join();
+  std::string join(const std::string &delimiter);
+  std::string join(const std::string &delimiter, const std::string &prefix, const std::string &suffix);
+
 private:
 
   std::shared_ptr<detail::stream_element_processor<T>> processor_;
@@ -618,6 +622,38 @@ C<T, Allocator> collect(stream <T> &s)
   return result;
 }
 
+template < class T >
+std::string join(stream<T> &s)
+{
+  std::string result;
+
+  std::for_each(s.begin(), s.end(), [&result](T &&val) {
+    result.append(std::forward<T>(val));
+  });
+
+  return result;
+}
+
+template < class T >
+std::string join(stream<T> &s, const std::string &delimiter, const std::string &prefix, const std::string &suffix)
+{
+  std::string result(prefix);
+
+  auto first = s.begin();
+  auto last = s.end();
+  result.append(*first);
+  ++first;
+  if (first != last) {
+    std::for_each(first, last, [&result, &delimiter](T &&val) {
+      result.append(delimiter);
+      result.append(std::forward<T>(val));
+    });
+  }
+
+  result.append(suffix);
+  return result;
+}
+
 /// @endcond
 
 template<class T>
@@ -625,6 +661,24 @@ template<template<class ...> class C, class Allocator>
 C<T, Allocator> stream<T>::collect()
 {
   return matador::collect<T, C>(*this);
+}
+
+template<class T>
+std::string stream<T>::join()
+{
+  return matador::join<T>(*this);
+}
+
+template<class T>
+std::string stream<T>::join(const std::string &delimiter)
+{
+  return matador::join<T>(*this, delimiter, "", "");
+}
+
+template<class T>
+std::string stream<T>::join(const std::string &delimiter, const std::string &prefix, const std::string &suffix)
+{
+  return matador::join<T>(*this, delimiter, prefix, suffix);
 }
 
 template<class T>

@@ -32,6 +32,7 @@ StreamsTest::StreamsTest()
   add_test("none", [this] { test_none(); }, "streams none element test");
   add_test("count", [this] { test_count(); }, "streams element count test");
   add_test("reduce", [this] { test_reduce(); }, "streams reduce elements test");
+  add_test("join", [this] { test_join(); }, "streams join to string elements test");
 }
 
 bool is_even(int val) { return val % 2 == 0; }
@@ -408,4 +409,19 @@ void StreamsTest::test_reduce()
 
   UNIT_ASSERT_TRUE(reduce_identity_func_result.has_value());
   UNIT_ASSERT_EQUAL("1 <-> 2 <-> 3 <-> 4 <-> 5 <-> 6 <-> 7 <-> 8", reduce_identity_func_result.value());
+}
+
+void StreamsTest::test_join()
+{
+  auto result = make_stream({"one", "two", "three", "four"}).join();
+
+  UNIT_ASSERT_EQUAL("onetwothreefour", result);
+
+  result = make_stream({"one", "two", "three", "four"}).join(", ");
+
+  UNIT_ASSERT_EQUAL("one, two, three, four", result);
+
+  result = make_stream({"one", "two", "three", "four"}).join(", ", "[", "]");
+
+  UNIT_ASSERT_EQUAL("[one, two, three, four]", result);
 }
