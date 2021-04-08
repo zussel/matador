@@ -1,7 +1,11 @@
 #ifndef MATADOR_TEMPLATE_STATE_HPP
 #define MATADOR_TEMPLATE_STATE_HPP
 
+#include "matador/utils/json.hpp"
+
 #include <string>
+#include <utility>
+#include <list>
 
 namespace matador {
 
@@ -10,6 +14,67 @@ class json;
 
 namespace http {
 namespace detail {
+
+class template_part
+{
+public:
+  virtual ~template_part() = default;
+
+  virtual std::string render(const json &data) = 0;
+};
+
+using template_part_ptr = std::shared_ptr<template_part>;
+
+class static_part : public template_part
+{
+public:
+  explicit static_part(std::string str)
+    : str_(std::move(str))
+  {}
+
+  std::string render(const json &) override
+  {
+    return str_;
+  }
+
+private:
+  std::string str_;
+};
+
+class variable_part : public template_part
+{
+public:
+  explicit variable_part(std::string str)
+    : str_(std::move(str))
+  {}
+
+  std::string render(const json &data) override
+  {
+    return data[str_].as<std::string>();
+  }
+
+private:
+  std::string str_;
+};
+
+class multi_template_part : public template_part
+{
+public:
+  std::string render(const json &data) override
+  {
+    // Todo: provide a steam method to concat strings
+    // auto str = make_stream(parts).join();
+    std::string result;
+    for (const auto &part : parts_) {
+      result += part->render(data);
+    }
+    return result;
+  }
+
+private:
+  std::list<template_part_ptr> parts_;
+};
+
 
 class template_state
 {

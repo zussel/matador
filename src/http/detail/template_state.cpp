@@ -7,7 +7,6 @@
 #include "matador/utils/json.hpp"
 
 #include <stdexcept>
-#include <iostream>
 
 namespace matador {
 namespace http {
@@ -49,59 +48,8 @@ void global_state::configure(string_cursor &)
 
 void global_state::on_variable(const std::string &variable, const json &data)
 {
-  std::cout << "global handling var: " << variable << "\n";
   const auto &j = data.at_path(variable, '.');
-  std::cout << "global handling var value: " << j << "\n";
   append(j.as<std::string>());
-  std::cout << "current rendered: " << rendered_ << "\n";
-}
-
-bool foreach_state::is_executable() const
-{
-  return false;
-}
-
-bool foreach_state::is_end_tag(const std::string &tag) const
-{
-  return tag == "endfor";
-}
-
-void foreach_state::execute(const json &data)
-{
-  const json &cont = data.get(list_name_);
-
-  if (!cont.is_object() && !cont.is_array()) {
-    throw std::logic_error("json object isn't of type array or object");
-  }
-
-  std::cout << "got repeatable content: " << repeatable_ << "\n";
-
-  template_engine engine;
-
-  for(const auto &elem : cont) {
-
-    json item = json::object();
-    item["item"] = elem;
-
-    std::cout << "item " << elem << "\n";
-    engine.render(repeatable_, item);
-    std::cout << "rendered repeatable: " + engine.str() << "\n";
-  }
-}
-
-void foreach_state::append(const std::string &str)
-{
-  repeatable_.append(str);
-}
-
-void foreach_state::append(char c)
-{
-  repeatable_ += c;
-}
-
-std::string foreach_state::str() const
-{
-  return content_;
 }
 
 void foreach_state::configure(string_cursor &cursor)
@@ -124,6 +72,51 @@ void foreach_state::configure(string_cursor &cursor)
   cursor.skip_whitespace();
 
   list_name_ = detail::parse_token(cursor);
+}
+
+bool foreach_state::is_executable() const
+{
+  return false;
+}
+
+bool foreach_state::is_end_tag(const std::string &tag) const
+{
+  return tag == "endfor";
+}
+
+void foreach_state::execute(const json &data)
+{
+  const json &cont = data.get(list_name_);
+
+  if (!cont.is_object() && !cont.is_array()) {
+    throw std::logic_error("json object isn't of type array or object");
+  }
+
+  template_engine engine;
+
+  for(const auto &elem : cont) {
+
+    json item = json::object();
+    item[elem_name_] = elem;
+
+    engine.render(repeatable_, item);
+    content_ += engine.str();
+  }
+}
+
+void foreach_state::append(const std::string &str)
+{
+  repeatable_.append(str);
+}
+
+void foreach_state::append(char c)
+{
+  repeatable_ += c;
+}
+
+std::string foreach_state::str() const
+{
+  return content_;
 }
 
 void foreach_state::on_variable(const std::string &variable, const json &)

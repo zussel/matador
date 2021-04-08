@@ -100,7 +100,9 @@ void template_engine::handle_command(const json &data)
 
   if (state_stack_.top()->is_end_tag(cmd)) {
     state_stack_.top()->execute(data);
+    auto result = state_stack_.top()->str();
     state_stack_.pop();
+    state_stack_.top()->append(result);
   } else {
     auto cmdptr = detail::template_state_factory::instance().produce(cmd);
 
