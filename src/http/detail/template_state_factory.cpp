@@ -6,7 +6,6 @@ namespace detail {
 
 template_state_factory::template_state_factory()
 {
-  factory_.insert("global", new factory_type::default_producer<global_state>());
   factory_.insert("for", new factory_type::default_producer<foreach_state>());
 }
 

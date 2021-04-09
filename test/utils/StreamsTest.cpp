@@ -370,7 +370,7 @@ void StreamsTest::test_count()
 
 void StreamsTest::test_reduce()
 {
-  auto reduce_result = make_stream(1, 8).reduce(std::plus<int>());
+  auto reduce_result = make_stream(1, 8).reduce(std::plus<>());
 
   UNIT_ASSERT_TRUE(reduce_result.has_value());
   UNIT_ASSERT_EQUAL(36, reduce_result.value());

@@ -1,10 +1,7 @@
 #include "matador/http/detail/template_state.hpp"
 #include "matador/http/detail/template_parser.hpp"
 
-#include "matador/http/template_engine.hpp"
-
 #include "matador/utils/string_cursor.hpp"
-#include "matador/utils/json.hpp"
 
 #include <stdexcept>
 
@@ -12,54 +9,12 @@ namespace matador {
 namespace http {
 namespace detail {
 
-void global_state::execute(const json&)
+std::shared_ptr<template_part> foreach_state::parse(string_cursor &cursor)
 {
-}
-
-bool global_state::is_executable() const
-{
-  return false;
-}
-
-bool global_state::is_end_tag(const std::string&) const
-{
-  return false;
-}
-
-void global_state::append(const std::string &part)
-{
-  rendered_.append(part);
-}
-
-void global_state::append(char c)
-{
-  rendered_ += c;
-}
-
-std::string global_state::str() const
-{
-  return rendered_;
-}
-
-void global_state::configure(string_cursor &)
-{
-  rendered_.clear();
-}
-
-void global_state::on_variable(const std::string &variable, const json &data)
-{
-  const auto &j = data.at_path(variable, '.');
-  append(j.as<std::string>());
-}
-
-void foreach_state::configure(string_cursor &cursor)
-{
-  repeatable_.clear();
-  content_.clear();
-
+  // parse until closing tag 'endfor' is read
   cursor.skip_whitespace();
 
-  elem_name_ = detail::parse_token(cursor);
+  std::string elem_name = detail::parse_token(cursor);
 
   cursor.skip_whitespace();
 
@@ -71,59 +26,17 @@ void foreach_state::configure(string_cursor &cursor)
 
   cursor.skip_whitespace();
 
-  list_name_ = detail::parse_token(cursor);
-}
+  std::string list_name = detail::parse_token(cursor);
 
-bool foreach_state::is_executable() const
-{
-  return false;
-}
-
-bool foreach_state::is_end_tag(const std::string &tag) const
-{
-  return tag == "endfor";
-}
-
-void foreach_state::execute(const json &data)
-{
-  const json &cont = data.get(list_name_);
-
-  if (!cont.is_object() && !cont.is_array()) {
-    throw std::logic_error("json object isn't of type array or object");
+  if (!detail::parse_end_of_command_tag(cursor)) {
+    throw std::logic_error("couldn't read expected command end tag '%}'");
   }
 
-  template_engine engine;
+  template_parser parser;
 
-  for(const auto &elem : cont) {
+  auto part = parser.parse_until_command(cursor, "endfor");
 
-    json item = json::object();
-    item[elem_name_] = elem;
-
-    engine.render(repeatable_, item);
-    content_ += engine.str();
-  }
-}
-
-void foreach_state::append(const std::string &str)
-{
-  repeatable_.append(str);
-}
-
-void foreach_state::append(char c)
-{
-  repeatable_ += c;
-}
-
-std::string foreach_state::str() const
-{
-  return content_;
-}
-
-void foreach_state::on_variable(const std::string &variable, const json &)
-{
-  append("{{");
-  append(variable);
-  append("}}");
+  return std::make_shared<loop_template_part>(part, list_name, elem_name);
 }
 
 }

@@ -5,6 +5,7 @@
 
 #include <string>
 #include <stack>
+#include <list>
 #include <memory>
 
 namespace matador {
@@ -16,6 +17,7 @@ namespace http {
 namespace detail {
 
 class template_state;
+class template_part;
 
 }
 
@@ -37,7 +39,7 @@ private:
 
   string_cursor cursor_;
 
-  std::stack<std::shared_ptr<detail::template_state>> state_stack_;
+  std::list<std::shared_ptr<detail::template_part>> parts_;
 };
 
 }

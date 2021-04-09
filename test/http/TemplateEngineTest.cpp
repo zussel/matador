@@ -47,7 +47,7 @@ void TemplateEngineTest::test_replace_var()
 void TemplateEngineTest::test_foreach()
 {
   std::string simple_foreach { "List [{% for item in list %}Color: {{ item.name }} (Shortcut: {{ item.shortcut}}){% endfor %}]" };
-
+  std::string expected_result = "List [Color: green (Shortcut: GR)Color: red (Shortcut: RE)]";
   json data {
     { "list", { {
       {"name", "green"},
@@ -64,12 +64,13 @@ void TemplateEngineTest::test_foreach()
 
   auto result = engine.str();
 
-  UNIT_ASSERT_EQUAL("List [Color: green (Shortcut: GR)Color: red (Shortcut: RE)]", engine.str());
+  UNIT_ASSERT_EQUAL(expected_result, engine.str());
 }
 
 void TemplateEngineTest::test_foreach_nested()
 {
   std::string nested_foreach { "<ul>{% for number in numbers %}<li><h2>{{ number.name }}</h2><ol>{% for i in number.items %}<li>{{ i }}</li>{% endfor %}</ol></li>{% endfor %}</ul>" };
+  std::string expected_result = "<ul><li><h2>first</h2><ol><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li></ol></li><li><h2>second</h2><ol><li>10</li><li>20</li><li>30</li><li>40</li><li>50</li><li>60</li><li>70</li></ol></li></ul>";
 
   json data {
     { "numbers", { {
@@ -87,5 +88,5 @@ void TemplateEngineTest::test_foreach_nested()
 
   auto result = engine.str();
 
-  std::cout << "result: " << result << "\n";
+  UNIT_ASSERT_EQUAL(expected_result, result);
 }
