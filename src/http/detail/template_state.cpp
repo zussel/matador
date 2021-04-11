@@ -34,9 +34,21 @@ std::shared_ptr<template_part> foreach_state::parse(string_cursor &cursor)
 
   template_parser parser;
 
-  auto part = parser.parse_until_command(cursor, "endfor");
+  //on_empty_part_ = std::make_shared<multi_template_part>();
+  auto part = parser.parse(cursor, [this](const std::string &cmd, std::unique_ptr<detail::multi_template_part> &part) {
+    if (cmd == "empty") {
 
-  return std::make_shared<loop_template_part>(part, list_name, elem_name);
+//      while (!part->parts().empty()) {
+//        on_empty_part_->push_back(part->parts().front());
+//        part->parts().pop_front();
+//      }
+      return false;
+    } else {
+      return cmd == "endfor";
+    }
+  });
+
+  return std::make_shared<loop_template_part>(part, on_empty_part_, list_name, elem_name);
 }
 
 }

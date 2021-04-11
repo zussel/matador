@@ -10,6 +10,7 @@ TemplateEngineTest::TemplateEngineTest()
   add_test("vars", [this] { test_replace_var(); }, "test replace variables");
   add_test("foreach", [this] { test_foreach(); }, "test foreach loop");
   add_test("foreach_nested", [this] { test_foreach_nested(); }, "test foreach loop with nested foreach");
+  add_test("foreach_empty", [this] { test_foreach_empty(); }, "test foreach loop with empty foreach data");
 }
 
 using namespace matador;
@@ -29,19 +30,17 @@ void TemplateEngineTest::test_replace_var()
     }}
   };
 
-  http::template_engine engine;
+  auto result = http::template_engine::render(no_replace, data);
 
-  engine.render(no_replace, data);
+  UNIT_ASSERT_EQUAL(no_replace, result);
 
-  UNIT_ASSERT_EQUAL(no_replace, engine.str());
+  result = http::template_engine::render(replace_one, data);
 
-  engine.render(replace_one, data);
+  UNIT_ASSERT_EQUAL("replace george one", result);
 
-  UNIT_ASSERT_EQUAL("replace george one", engine.str());
+  result = http::template_engine::render(replace_one_cascade, data);
 
-  engine.render(replace_one_cascade, data);
-
-  UNIT_ASSERT_EQUAL("replace jane one", engine.str());
+  UNIT_ASSERT_EQUAL("replace jane one", result);
 }
 
 void TemplateEngineTest::test_foreach()
@@ -58,13 +57,9 @@ void TemplateEngineTest::test_foreach()
     } } }
   };
 
-  http::template_engine engine;
+  auto result = http::template_engine::render(simple_foreach, data);
 
-  engine.render(simple_foreach, data);
-
-  auto result = engine.str();
-
-  UNIT_ASSERT_EQUAL(expected_result, engine.str());
+  UNIT_ASSERT_EQUAL(expected_result, result);
 }
 
 void TemplateEngineTest::test_foreach_nested()
@@ -82,11 +77,20 @@ void TemplateEngineTest::test_foreach_nested()
    } } }
   };
 
-  http::template_engine engine;
-
-  engine.render(nested_foreach, data);
-
-  auto result = engine.str();
+  auto result = http::template_engine::render(nested_foreach, data);
 
   UNIT_ASSERT_EQUAL(expected_result, result);
+}
+
+void TemplateEngineTest::test_foreach_empty()
+{
+  std::string empty_foreach {"List [{% for item in list %}Color: {{ item.name }} (Shortcut: {{ item.shortcut}}){% empty %}Liste leer{% endfor %}]" };
+  std::string expected_result = "List [Liste leer]";
+  json data = json::object();
+  data["list"] = json::array();
+
+  auto result = http::template_engine::render(empty_foreach, data);
+
+  UNIT_ASSERT_EQUAL(expected_result, result);
+
 }

@@ -11,6 +11,7 @@ public:
   void test_replace_var();
   void test_foreach();
   void test_foreach_nested();
+  void test_foreach_empty();
 };
 
 

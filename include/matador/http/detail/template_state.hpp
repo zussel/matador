@@ -17,6 +17,7 @@ namespace http {
 namespace detail {
 
 class template_part;
+class multi_template_part;
 
 class template_state
 {
@@ -29,7 +30,10 @@ public:
 class foreach_state : public template_state
 {
 public:
-  std::shared_ptr<template_part> parse(string_cursor &cursor);
+  std::shared_ptr<template_part> parse(string_cursor &cursor) override;
+
+private:
+  std::shared_ptr<multi_template_part> on_empty_part_;
 };
 
 }

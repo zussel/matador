@@ -1,8 +1,6 @@
 #ifndef MATADOR_TEMPLATE_ENGINE_HPP
 #define MATADOR_TEMPLATE_ENGINE_HPP
 
-#include "matador/utils/string_cursor.hpp"
-
 #include <string>
 #include <stack>
 #include <list>
@@ -24,22 +22,15 @@ class template_part;
 class template_engine
 {
 public:
-  void render(const std::string &format, const matador::json &data);
+  template_engine() = delete;
 
-  void render(const char *format, size_t len, const matador::json &data);
+  static std::shared_ptr<detail::template_part> build(const std::string &format);
+  static std::shared_ptr<detail::template_part> build(const char *format, size_t len);
 
-  const std::string& str() const;
+  static std::string render(const std::shared_ptr<detail::template_part>& part, const matador::json &data);
 
-private:
-  void handle_variable(const json &data);
-  void handle_command(const json &data);
-
-private:
-  std::string rendered_;
-
-  string_cursor cursor_;
-
-  std::list<std::shared_ptr<detail::template_part>> parts_;
+  static std::string render(const std::string &format, const matador::json &data);
+  static std::string render(const char *format, size_t len, const matador::json &data);
 };
 
 }

@@ -2,7 +2,11 @@
 #define MATADOR_TEMPLATE_PARSER_HPP
 
 #include "matador/http/detail/template_part.hpp"
+#include "matador/http/detail/template_state_factory.hpp"
 
+#include "matador/utils/string_cursor.hpp"
+
+#include "matador/utils/string.hpp"
 #include <string>
 #include <memory>
 
@@ -24,11 +28,8 @@ class template_parser
 public:
   template_parser() = default;
 
-  std::shared_ptr<template_part> parse(string_cursor &cursor);
-  std::shared_ptr<template_part> parse_until_command(string_cursor &cursor, const std::string &stop_cmd);
-
-private:
-  void handle_command(string_cursor &cursor, const std::string &cmd);
+  template < typename Function >
+  std::shared_ptr<template_part> parse(string_cursor &cursor, Function &&on_command);
 
 private:
   enum state_t {
@@ -46,6 +47,64 @@ private:
 
   state_t state_ = UNKNOWN;
 };
+
+template<typename Function>
+std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Function &&on_command)
+{
+  parts_ = std::make_unique<multi_template_part>();
+
+  state_ = STATIC_TEXT;
+  std::string current_part;
+  // copy until next '{' is found
+  char c = cursor.current_char();
+  while (!is_eos(c)) {
+    // find begin of variable/command tag
+    if (c == '{' && state_ == STATIC_TEXT) {
+      parts_->push_back(std::make_shared<detail::static_part>(current_part));
+      current_part.clear();
+      // initiate template handling
+      state_ = INITIATE_TEMPLATE;
+    } else if (c == '{' && state_ == INITIATE_TEMPLATE) {
+      state_ = PROCESS_VARIABLE;
+    } else if (c == '%' && state_ == INITIATE_TEMPLATE) {
+      state_ = PROCESS_COMMAND;
+    } else if (c == '}' && state_ == PROCESS_VARIABLE) {
+      // process variable
+      state_ = PROCESS_VARIABLE_FINISH;
+    } else if (c == '%' && state_ == PROCESS_COMMAND) {
+      // process command
+      state_ = PROCESS_COMMAND_FINISH;
+    } else if (c == '}' && (state_ == PROCESS_VARIABLE_FINISH || state_ == PROCESS_COMMAND_FINISH)) {
+      state_ = STATIC_TEXT;
+    } else if (state_ == PROCESS_VARIABLE) {
+      std::string var = detail::parse_token(cursor);
+      parts_->push_back(std::make_shared<detail::variable_part>(var));
+    } else if (state_ == PROCESS_COMMAND) {
+      std::string cmd = detail::parse_token(cursor);
+
+      if (on_command(cmd, parts_)) {
+        return std::shared_ptr<template_part>(parts_.release());;
+      }
+
+      auto cmdptr = detail::template_state_factory::instance().produce(cmd);
+      parts_->push_back(cmdptr->parse(cursor));
+      c = cursor.current_char();
+      continue;
+    } else if (state_ == STATIC_TEXT) {
+      current_part += c;
+    } else {
+      // not expected state -> reset to STATIC_TEXT
+      state_ = STATIC_TEXT;
+      current_part += c;
+    }
+
+    c = cursor.next_char();
+  }
+
+  parts_->push_back(std::make_shared<detail::static_part>(current_part));
+
+  return std::shared_ptr<template_part>(parts_.release());
+}
 }
 }
 }

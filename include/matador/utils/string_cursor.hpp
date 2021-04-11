@@ -19,6 +19,7 @@ namespace matador {
 class OOS_UTILS_API string_cursor
 {
 public:
+  explicit string_cursor(const char *str);
   string_cursor& operator=(const char *str);
 
   char operator[](int i) const { return cursor_[i]; }

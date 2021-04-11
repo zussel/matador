@@ -51,19 +51,22 @@ public:
 
   std::string render(const json &data) override;
 
+  std::list<template_part_ptr>& parts();
+
 private:
-  std::list <template_part_ptr> parts_;
+  std::list<template_part_ptr> parts_;
 };
 
 class loop_template_part : public template_part
 {
 public:
-  loop_template_part(template_part_ptr part, std::string list_name, std::string elem_name);
+  loop_template_part(template_part_ptr part, template_part_ptr on_empty_part, std::string list_name, std::string elem_name);
 
   std::string render(const json &data) override;
 
 private:
   template_part_ptr part_;
+  template_part_ptr on_empty_part_;
   std::string list_name_;
   std::string elem_name_;
 };

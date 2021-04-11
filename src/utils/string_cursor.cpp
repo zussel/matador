@@ -3,6 +3,10 @@
 
 namespace matador {
 
+string_cursor::string_cursor(const char *str)
+  : cursor_(str)
+{}
+
 string_cursor &string_cursor::operator=(const char *str)
 {
   cursor_ = str;

@@ -1,12 +1,10 @@
 #include "matador/http/template_engine.hpp"
 
-#include "matador/http/detail/template_state_factory.hpp"
 #include "matador/http/detail/template_parser.hpp"
-#include "matador/http/detail/template_state.hpp"
 #include "matador/http/detail/template_part.hpp"
 
 #include "matador/utils/json.hpp"
-#include "matador/utils/string.hpp"
+#include "matador/utils/string_cursor.hpp"
 
 namespace matador {
 namespace http {
@@ -25,29 +23,41 @@ namespace http {
 // copy ...
 // {% endfor %}
 
+// {% if expression %}
+// do this
+// {% elif expression %}
+// do that
+// {% else %}
+// do this
+// {% fi %}
 
-void template_engine::render(const std::string &format, const json &data)
+std::shared_ptr<detail::template_part> template_engine::build(const std::string &format)
 {
-  render(format.c_str(), format.size(), data);
+  return build(format.c_str(), format.size());
 }
 
-void template_engine::render(const char *format, size_t len, const json &data)
+std::shared_ptr<detail::template_part> template_engine::build(const char *format, size_t len)
 {
   detail::template_parser parser;
 
-  parts_.clear();
+  string_cursor cursor(format);
 
-  rendered_.clear();
-  cursor_ = format;
-
-  auto part = parser.parse(cursor_);
-
-  rendered_ = part->render(data);
+  return parser.parse(cursor, [](const std::string&, std::unique_ptr<detail::multi_template_part>&) { return false; });
 }
 
-const std::string &template_engine::str() const
+std::string template_engine::render(const std::shared_ptr<detail::template_part>& part, const json &data)
 {
-  return rendered_;
+  return part->render(data);
+}
+
+std::string template_engine::render(const std::string &format, const json &data)
+{
+  return render(build(format), data);
+}
+
+std::string template_engine::render(const char *format, size_t len, const json &data)
+{
+  return render(build(format, len), data);
 }
 
 }

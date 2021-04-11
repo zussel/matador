@@ -62,11 +62,19 @@ std::string multi_template_part::render(const json &data)
     .join();
 }
 
+std::list<template_part_ptr> &multi_template_part::parts()
+{
+  return parts_;
+}
+
 /*
  * multi part implementation
  */
-loop_template_part::loop_template_part(template_part_ptr part, std::string list_name, std::string elem_name)
-  : part_(std::move(part)), list_name_(std::move(list_name)), elem_name_(std::move(elem_name))
+loop_template_part::loop_template_part(template_part_ptr part, template_part_ptr on_empty_part, std::string list_name, std::string elem_name)
+  : part_(std::move(part))
+  , on_empty_part_(std::move(on_empty_part))
+  , list_name_(std::move(list_name))
+  , elem_name_(std::move(elem_name))
 {
 }
 
@@ -78,16 +86,19 @@ std::string loop_template_part::render(const json &data)
     throw std::logic_error("json object isn't of type array or object");
   }
 
-  std::string result;
-  for(const auto &elem : cont) {
+  if (cont.empty()) {
+    return on_empty_part_->render(data);
+  } else {
+    std::string result;
+    for(const auto &elem : cont) {
 
-    json item = json::object();
-    item[elem_name_] = elem;
+      json item = json::object();
+      item[elem_name_] = elem;
 
-    result.append(part_->render(item));
+      result.append(part_->render(item));
+    }
+    return result;
   }
-
-  return result;
 }
 
 }
