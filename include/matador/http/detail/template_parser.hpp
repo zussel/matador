@@ -5,8 +5,8 @@
 #include "matador/http/detail/template_state_factory.hpp"
 
 #include "matador/utils/string_cursor.hpp"
-
 #include "matador/utils/string.hpp"
+
 #include <string>
 #include <memory>
 
@@ -18,10 +18,13 @@ namespace http {
 namespace detail {
 
 class template_part;
+class template_expression;
 class multi_template_part;
 
 std::string parse_token(string_cursor &cursor);
 bool parse_end_of_command_tag(string_cursor &cursor);
+std::shared_ptr<template_expression> parse_expression(string_cursor &cursor);
+std::string parse_operator(string_cursor &cursor);
 
 class template_parser
 {
@@ -30,6 +33,12 @@ public:
 
   template < typename Function >
   std::shared_ptr<template_part> parse(string_cursor &cursor, Function &&on_command);
+
+  enum on_command_result_t {
+    FINISHED,
+    INTERMEDIATE,
+    NEXT_COMMAND
+  };
 
 private:
   enum state_t {
@@ -82,14 +91,18 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
     } else if (state_ == PROCESS_COMMAND) {
       std::string cmd = detail::parse_token(cursor);
 
-      if (on_command(cmd, parts_)) {
+      auto res = on_command(cmd, parts_);
+      if (res == FINISHED) {
         return std::shared_ptr<template_part>(parts_.release());;
+      } else {
+        if (res == NEXT_COMMAND) {
+          auto cmdptr = detail::template_state_factory::instance().produce(cmd);
+          parts_->push_back(cmdptr->parse(cursor));
+        }
+        c = cursor.current_char();
+        continue;
       }
 
-      auto cmdptr = detail::template_state_factory::instance().produce(cmd);
-      parts_->push_back(cmdptr->parse(cursor));
-      c = cursor.current_char();
-      continue;
     } else if (state_ == STATIC_TEXT) {
       current_part += c;
     } else {

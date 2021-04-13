@@ -12,6 +12,7 @@ public:
   void test_foreach();
   void test_foreach_nested();
   void test_foreach_empty();
+  void test_if_else();
 };
 
 

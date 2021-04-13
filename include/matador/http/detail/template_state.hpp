@@ -33,9 +33,14 @@ public:
   std::shared_ptr<template_part> parse(string_cursor &cursor) override;
 
 private:
-  std::shared_ptr<multi_template_part> on_empty_part_;
+  std::shared_ptr<multi_template_part> loop_part_;
 };
 
+class if_else_state : public template_state
+{
+public:
+  std::shared_ptr<template_part> parse(string_cursor &cursor) override;
+};
 }
 }
 }

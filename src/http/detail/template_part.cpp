@@ -1,4 +1,5 @@
 #include "matador/http/detail/template_part.hpp"
+#include "matador/http/detail/template_expression.hpp"
 
 #include <utility>
 #include <iostream>
@@ -72,7 +73,7 @@ std::list<template_part_ptr> &multi_template_part::parts()
  */
 loop_template_part::loop_template_part(template_part_ptr part, template_part_ptr on_empty_part, std::string list_name, std::string elem_name)
   : part_(std::move(part))
-  , on_empty_part_(std::move(on_empty_part))
+  , loop_part_(std::move(on_empty_part))
   , list_name_(std::move(list_name))
   , elem_name_(std::move(elem_name))
 {
@@ -87,7 +88,7 @@ std::string loop_template_part::render(const json &data)
   }
 
   if (cont.empty()) {
-    return on_empty_part_->render(data);
+    return part_->render(data);
   } else {
     std::string result;
     for(const auto &elem : cont) {
@@ -95,10 +96,25 @@ std::string loop_template_part::render(const json &data)
       json item = json::object();
       item[elem_name_] = elem;
 
-      result.append(part_->render(item));
+      result.append(loop_part_->render(item));
     }
     return result;
   }
+}
+
+if_template_part::if_template_part(t_expression_list expression_list, template_part_ptr else_part)
+  : expression_list_(std::move(expression_list))
+  , else_part_(std::move(else_part))
+{}
+
+std::string if_template_part::render(const json &data)
+{
+  for (const auto &p : expression_list_) {
+    if (p.first->evaluate(data)) {
+      return p.second->render(data);
+    }
+  }
+  return else_part_->render(data);
 }
 
 }

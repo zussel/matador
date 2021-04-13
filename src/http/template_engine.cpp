@@ -20,7 +20,9 @@ namespace http {
 // {% block <name> %}...{% endblock %}
 
 // {% for elem in list %}
-// copy ...
+// loop over elements ...
+// {% empty %}
+// on empty list
 // {% endfor %}
 
 // {% if expression %}
@@ -42,7 +44,7 @@ std::shared_ptr<detail::template_part> template_engine::build(const char *format
 
   string_cursor cursor(format);
 
-  return parser.parse(cursor, [](const std::string&, std::unique_ptr<detail::multi_template_part>&) { return false; });
+  return parser.parse(cursor, [](const std::string&, std::unique_ptr<detail::multi_template_part>&) { return detail::template_parser::NEXT_COMMAND; });
 }
 
 std::string template_engine::render(const std::shared_ptr<detail::template_part>& part, const json &data)

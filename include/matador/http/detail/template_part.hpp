@@ -12,6 +12,8 @@ class json;
 namespace http {
 namespace detail {
 
+class template_expression;
+
 class template_part
 {
 public:
@@ -66,10 +68,25 @@ public:
 
 private:
   template_part_ptr part_;
-  template_part_ptr on_empty_part_;
+  template_part_ptr loop_part_;
   std::string list_name_;
   std::string elem_name_;
 };
+
+class if_template_part : public template_part
+{
+public:
+  using t_expression_list = std::list<std::pair<std::shared_ptr<template_expression>, template_part_ptr>>;
+  if_template_part(t_expression_list expression_list, template_part_ptr else_part);
+
+  std::string render(const json &data) override;
+
+private:
+  t_expression_list expression_list_;
+
+  template_part_ptr else_part_;
+};
+
 }
 }
 }

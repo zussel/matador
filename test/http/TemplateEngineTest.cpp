@@ -11,6 +11,7 @@ TemplateEngineTest::TemplateEngineTest()
   add_test("foreach", [this] { test_foreach(); }, "test foreach loop");
   add_test("foreach_nested", [this] { test_foreach_nested(); }, "test foreach loop with nested foreach");
   add_test("foreach_empty", [this] { test_foreach_empty(); }, "test foreach loop with empty foreach data");
+  add_test("if_else", [this] { test_if_else(); }, "test if else");
 }
 
 using namespace matador;
@@ -92,5 +93,32 @@ void TemplateEngineTest::test_foreach_empty()
   auto result = http::template_engine::render(empty_foreach, data);
 
   UNIT_ASSERT_EQUAL(expected_result, result);
+}
 
+void TemplateEngineTest::test_if_else()
+{
+  std::string if_else { "<h1>Header</h1>"
+                        "{% if person %}<p>Details of {{ person.name }}</p>"
+                        "{% else %}<p>No details</p>"};
+
+  std::string expected_result = { "<h1>Header</h1>"
+                                  "<p>Details of George</p>" };
+
+  std::string expected_result_no_details = { "<h1>Header</h1>"
+                                             "<p>No details</p>" };
+
+  json data {
+    { "person", {
+      { "id", 4711 },
+      { "name", "George" }
+    }}
+  };
+
+  auto result = http::template_engine::render(if_else, data);
+
+  UNIT_ASSERT_EQUAL(expected_result, result);
+
+  result = http::template_engine::render(if_else, json::object());
+
+  UNIT_ASSERT_EQUAL(expected_result_no_details, result);
 }

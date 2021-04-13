@@ -7,6 +7,7 @@ namespace detail {
 template_state_factory::template_state_factory()
 {
   factory_.insert("for", new factory_type::default_producer<foreach_state>());
+  factory_.insert("if", new factory_type::default_producer<if_else_state>());
 }
 
 std::shared_ptr<template_state> template_state_factory::produce(const std::string &key) const
