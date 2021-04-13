@@ -12,6 +12,7 @@ JsonTestUnit::JsonTestUnit()
   : unit_test("json", "json test")
 {
   add_test("simple", [this] { test_simple(); }, "test simple json");
+  add_test("compare", [this] { test_compare(); }, "test json compare");
   add_test("parser", [this] { test_parser(); }, "test json parser");
 }
 
@@ -201,6 +202,28 @@ void JsonTestUnit::test_simple()
   UNIT_ASSERT_FALSE(jnull.is_number());
 }
 
+void JsonTestUnit::test_compare()
+{
+  json a = 7;
+
+  UNIT_ASSERT_TRUE(a < 9);
+  UNIT_ASSERT_FALSE(9 < a);
+
+  json f = 7.2;
+
+  UNIT_ASSERT_TRUE(a < f);
+  UNIT_ASSERT_FALSE(f < a);
+
+  json s = "hello";
+
+  UNIT_ASSERT_TRUE(s == "hello");
+  UNIT_ASSERT_FALSE(s != "hello");
+  UNIT_ASSERT_FALSE(s == "world");
+  UNIT_ASSERT_TRUE(s != "world");
+
+  UNIT_ASSERT_FALSE(f == s);
+}
+
 void JsonTestUnit::test_parser()
 {
   json_parser parser;
@@ -270,5 +293,10 @@ void JsonTestUnit::test_parser()
 
   UNIT_ASSERT_FALSE(j.is_null());
   UNIT_ASSERT_EQUAL(result, to_string(j));
+
+  j = parser.parse("7");
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_TRUE(j.is_number());
 }
 

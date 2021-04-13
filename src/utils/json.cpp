@@ -103,6 +103,99 @@ json &json::operator=(const json &x)
   return *this;
 }
 
+bool operator==(const json &a, const json &b)
+{
+  if (a.type != b.type) {
+    return false;
+  }
+  switch (a.type) {
+    case json::e_object:
+      return *a.value_.object == *b.value_.object;
+    case json::e_array:
+      return *a.value_.array == *b.value_.array;
+    case json::e_null:
+      return true;
+    case json::e_boolean:
+      return a.value_.boolean == b.value_.boolean;
+    case json::e_string:
+      return *a.value_.str == *b.value_.str;
+    case json::e_real:
+      return a.value_.real == b.value_.real;
+    case json::e_integer:
+      return a.value_.integer == b.value_.integer;
+  }
+  return false;
+}
+
+bool operator!=(const json &a, const json &b)
+{
+  return !operator==(a, b);
+}
+
+bool operator<(json::json_type a, json::json_type b);
+
+bool operator<(const json &a, const json &b)
+{
+  if (a.type == b.type) {
+    switch (a.type) {
+      case json::e_object:
+        return (*a.value_.object) < (*b.value_.object);
+      case json::e_array:
+        return (*a.value_.array) < (*b.value_.array);
+      case json::e_null:
+        return false;
+      case json::e_boolean:
+        return (a.value_.boolean) < (b.value_.boolean);
+      case json::e_string:
+        return (*a.value_.str) < (*b.value_.str);
+      case json::e_real:
+        return (a.value_.real) < (b.value_.real);
+      case json::e_integer:
+        return (a.value_.integer) < (b.value_.integer);
+    }
+  } else if (a.type == json::e_integer && b.type == json::e_real) {
+    return static_cast<double>(a.value_.integer) < b.value_.real;
+  } else if (a.type == json::e_real && b.type == json::e_integer) {
+    return a.value_.real < static_cast<double>(b.value_.integer);
+  }
+
+  return operator<(a.type, b.type);
+}
+
+/*
+ * When ordering by json type the following ordering is used
+ * null < boolean < number < object < array < string
+ */
+bool operator<(json::json_type a, json::json_type b)
+{
+  static constexpr std::array<unsigned char, 7> order = {{
+    0 /* null */,
+    2 /* integer */,
+    2 /* real */,
+    1 /* boolean */,
+    5 /* string */,
+    3 /* object */,
+    4 /* array */
+  }};
+
+  return (size_t)a < order.size() && (size_t)b < order.size() && order[a] < order[b];
+}
+
+bool operator<=(const json &a, const json &b)
+{
+  return !(b < a);
+}
+
+bool operator>(const json &a, const json &b)
+{
+  return !(a <= b);
+}
+
+bool operator>=(const json &a, const json &b)
+{
+  return !(a < b);
+}
+
 std::ostream &operator<<(std::ostream &out, const json &val)
 {
   val.dump(out);
@@ -195,8 +288,10 @@ std::size_t json::size() const
       return value_.array->size();
     case e_object:
       return value_.object->size();
+    case e_null:
+      return 0;
     default:
-      throw std::logic_error("type doesn't have size()");
+      return 1;
   }
 }
 
@@ -207,8 +302,10 @@ bool json::empty() const
       return value_.array->empty();
     case e_object:
       return value_.object->empty();
+    case e_null:
+      return true;
     default:
-      throw std::logic_error("type doesn't have empty()");
+      return false;
   }
 }
 
@@ -362,16 +459,6 @@ const json& json::at_path(const std::string &path, char delimiter) const
   }
 
   return func(const_cast<json&>(*this).get(parts[0]), parts, 1);
-
-//  json& result = const_cast<json&>(*this).get(parts[0]);
-//
-//  for (size_t i = 1; i < parts.size(); ++i) {
-//    if (!result.is_object()) {
-//      throw std::logic_error("couldn't find json at path " + path);
-//    }
-//    result = result.get(parts[i]);
-//  }
-//  return result;
 }
 
 void json::throw_on_wrong_type(json::json_type t) const

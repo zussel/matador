@@ -264,6 +264,33 @@ public:
    */
   json& operator=(const json &x);
 
+  friend bool operator==(const json &a, const json &b);
+  friend bool operator!=(const json &a, const json &b);
+  friend bool operator<(const json &a, const json &b);
+  friend bool operator<=(const json &a, const json &b);
+  friend bool operator>(const json &a, const json &b);
+  friend bool operator>=(const json &a, const json &b);
+
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator<(const json &a, const T &b);
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator<(const T &a, const json &b);
+
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator<=(const json &a, const T &b);
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator<=(const T &a, const json &b);
+
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator>(const json &a, const T &b);
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator>(const T &a, const json &b);
+
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator>=(const json &a, const T &b);
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator>=(const T &a, const json &b);
+
   /**
    * Print the json object to the given ostream
    *
@@ -444,24 +471,20 @@ public:
 
   /**
    * Returns either the size of the json array or
-   * the json object.
-   * If the type of isn't array or object a
-   * std::logic_error is thrown
+   * the size of a json object. If the type is null then
+   * 0 (zero) is returned. For all other types 1 (one)
+   * is returned
    *
-   * @throws std::logic_error If type isn't object or array
    * @return The size (count of elements)
    */
   std::size_t size() const;
 
   /**
-   * Returns true if json of type array or
-   * json of type object is empty. Otherwise false
-   * id returned.
-   * 
-   * If the type of isn't array or object a
-   * std::logic_error is thrown
-   * 
-   * @throws std::logic_error If type isn't object or array
+   * Returns the corresponding result of empty()
+   * if json is of type array or of type object.
+   * If json is of type null then false is returned.
+   * For all other types true is returned.
+   *
    * @return True if array or object is empty
    */
   bool empty() const;
@@ -764,6 +787,54 @@ private:
   json_value value_;
   json_type type = e_integer;
 };
+
+template<class T>
+bool operator<(const json &a, const T &b)
+{
+  return a < json(b);
+}
+
+template<class T>
+bool operator<(const T &a, const json &b)
+{
+  return json(a) < b;
+}
+
+template<class T>
+bool operator<=(const json &a, const T &b)
+{
+  return a <= json(b);
+}
+
+template<class T>
+bool operator<=(const T &a, const json &b)
+{
+  return json(a) <= b;
+}
+
+template<class T>
+bool operator>(const json &a, const T &b)
+{
+  return a > json(b);
+}
+
+template<class T>
+bool operator>(const T &a, const json &b)
+{
+  return json(a) > b;
+}
+
+template<class T>
+bool operator>=(const json &a, const T &b)
+{
+  return a >= json(b);
+}
+
+template<class T>
+bool operator>=(const T &a, const json &b)
+{
+  return json(a) >= b;
+}
 
 /**
  * @brief An iterator for json array and objects
