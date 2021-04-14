@@ -94,6 +94,7 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
       auto res = on_command(cmd, parts_);
       if (res == FINISHED) {
         return std::shared_ptr<template_part>(parts_.release());;
+//      } else if (res == INTERMEDIATE) {
       } else {
         if (res == NEXT_COMMAND) {
           auto cmdptr = detail::template_state_factory::instance().produce(cmd);

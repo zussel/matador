@@ -221,6 +221,15 @@ void JsonTestUnit::test_compare()
   UNIT_ASSERT_FALSE(s == "world");
   UNIT_ASSERT_TRUE(s != "world");
 
+  json b("hello");
+
+  UNIT_ASSERT_TRUE(s == b);
+
+  json_parser parser;
+  json c = parser.parse("\"hello\"");
+
+  UNIT_ASSERT_TRUE(s == c);
+
   UNIT_ASSERT_FALSE(f == s);
 }
 
@@ -298,5 +307,25 @@ void JsonTestUnit::test_parser()
 
   UNIT_ASSERT_FALSE(j.is_null());
   UNIT_ASSERT_TRUE(j.is_number());
+
+  j = parser.parse("7.67");
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_TRUE(j.is_number());
+
+  j = parser.parse("true");
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_TRUE(j.is_boolean());
+
+  j = parser.parse("\"hallo\"");
+
+  UNIT_ASSERT_FALSE(j.is_null());
+  UNIT_ASSERT_TRUE(j.is_string());
+  UNIT_ASSERT_EQUAL("hallo", j.as<std::string>());
+
+  j = parser.parse("null");
+
+  UNIT_ASSERT_TRUE(j.is_null());
 }
 

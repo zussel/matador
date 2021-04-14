@@ -3,6 +3,7 @@
 #include "matador/http/detail/template_expression.hpp"
 
 #include "matador/utils/string.hpp"
+#include "matador/utils/json_parser.hpp"
 
 #include <set>
 
@@ -28,6 +29,24 @@ std::string parse_token(string_cursor &cursor)
   return token;
 }
 
+std::string parse_operand(string_cursor &cursor)
+{
+  std::string token;
+  char c = cursor.skip_whitespace();
+
+  while(!is_eos(c)) {
+    if (isalnum(c) || c == '.' || c == '"') {
+      token.push_back(c);
+    } else {
+      break;
+    }
+    c = cursor.next_char();
+  }
+
+  cursor.skip_whitespace();
+  return token;
+}
+
 bool parse_end_of_command_tag(string_cursor &cursor)
 {
   if (cursor.skip_whitespace() != '%') {
@@ -39,6 +58,8 @@ bool parse_end_of_command_tag(string_cursor &cursor)
   }
   return true;
 }
+
+std::function<bool(const json&)> build_compare_function(const std::string &op, const json &operand);
 
 std::shared_ptr<template_expression> parse_expression(string_cursor &cursor)
 {
@@ -60,9 +81,50 @@ std::shared_ptr<template_expression> parse_expression(string_cursor &cursor)
 
     // parse operand
     // if operand is in double quotes it is treated as a string
-    //
-    return std::make_shared<json_value_expression>(token);
+    auto operand = parse_operand(cursor);
+    json_parser parser;
+    auto j = parser.parse(operand);
 
+    return std::make_shared<json_compare_expression>(token, build_compare_function(op, j));
+  }
+}
+
+std::function<bool(const json&)> build_compare_function(const std::string &op, const json &operand)
+{
+  if (op == "==") {
+    return [operand](const json &value) {
+      //std::cout << "comparing: " << value << " == " << operand << "\n";
+      return value == operand;
+    };
+  } else if (op == "!=") {
+    return [operand](const json &value) {
+      //std::cout << "comparing: " << value << " != " << operand << "\n";
+      return value != operand;
+    };
+  } else if (op == "<") {
+    return [operand](const json &value) {
+      //std::cout << "comparing: " << value << " < " << operand << "\n";
+      return value < operand;
+    };
+  } else if (op == "<=") {
+    return [operand](const json &value) {
+      //std::cout << "comparing: " << value << " <= " << operand << "\n";
+      return value <= operand;
+    };
+  } else if (op == ">") {
+    return [operand](const json &value) {
+      //std::cout << "comparing: " << value << " > " << operand << "\n";
+      return value > operand;
+    };
+  } else if (op == ">=") {
+    return [operand](const json &value) {
+      //std::cout << "comparing: " << value << " >= " << operand << "\n";
+      return value >= operand;
+    };
+  } else {
+    return [](const json &) {
+      return false;
+    };
   }
 }
 

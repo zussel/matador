@@ -90,46 +90,40 @@ void json_parser::on_end_array()
 
 void json_parser::on_string(const std::string &value)
 {
-  if (state_stack_.top()->is_object()) {
-    state_stack_.top()->operator[](key_) = value;
-  } else {
-    state_stack_.top()->push_back(value);
-  }
+  on_value(value);
 }
 
 void json_parser::on_real(double value)
 {
-  if (state_stack_.top()->is_object()) {
-    state_stack_.top()->operator[](key_) = value;
-  } else {
-    state_stack_.top()->push_back(value);
-  }
+  on_value(value);
 }
 
 void json_parser::on_integer(long long value)
 {
-  if (state_stack_.top()->is_object()) {
-    state_stack_.top()->operator[](key_) = value;
-  } else {
-    state_stack_.top()->push_back(value);
-  }
+  on_value(value);
 }
 
 void json_parser::on_bool(bool value)
 {
-  if (state_stack_.top()->is_object()) {
-    state_stack_.top()->operator[](key_) = value;
-  } else {
-    state_stack_.top()->push_back(value);
-  }
+  on_value(value);
 }
 
 void json_parser::on_null()
 {
-  if (state_stack_.top()->is_object()) {
-    state_stack_.top()->operator[](key_) = json();
+  on_value(json());
+}
+
+void json_parser::on_value(const json &value)
+{
+  if (state_stack_.empty()) {
+    value_ = value;
+  } else if (state_stack_.top()->is_object()) {
+    state_stack_.top()->operator[](key_) = value;
+  } else if (state_stack_.top()->is_array()) {
+    state_stack_.top()->push_back(value);
   } else {
-    state_stack_.top()->push_back(json());
+    throw std::logic_error("invalid json error");
   }
 }
+
 }

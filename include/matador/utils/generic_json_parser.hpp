@@ -561,6 +561,7 @@ typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_num
 
   switch (c) {
     case '\n':
+    case '\0':
     case ' ':
     case ',':
     case ']':

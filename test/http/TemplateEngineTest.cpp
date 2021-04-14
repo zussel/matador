@@ -99,7 +99,7 @@ void TemplateEngineTest::test_if_else()
 {
   std::string if_else { "<h1>Header</h1>"
                         "{% if person %}<p>Details of {{ person.name }}</p>"
-                        "{% else %}<p>No details</p>"};
+                        "{% else %}<p>No details</p>{% endif %}"};
 
   std::string expected_result = { "<h1>Header</h1>"
                                   "<p>Details of George</p>" };
@@ -121,4 +121,42 @@ void TemplateEngineTest::test_if_else()
   result = http::template_engine::render(if_else, json::object());
 
   UNIT_ASSERT_EQUAL(expected_result_no_details, result);
+
+  std::string if_compare_else { "<h1>Header</h1>"
+                        "{% if person.name == \"George\" %}<p>Details of {{ person.name }}</p>"
+                        "{% else %}<p>No details</p>{% endif %}" };
+
+  result = http::template_engine::render(if_compare_else, data);
+
+  UNIT_ASSERT_EQUAL(expected_result, result);
+
+  data = {
+    { "persons", { {
+      {"name", "George"},
+      {"id", 2 }
+    }, {
+      {"name", "Jane"},
+      {"id",  1 }
+    }, {
+      {"name", "Otto"},
+      {"id", 3 }
+    } } }
+  };
+
+  std::string if_elif { "<h1>Header</h1>{% for person in persons %}"
+                        "{% if person.id == 2 %}<p>1 Details of {{ person.name }}</p>"
+                        "{% elif person.id < 2 %}<p>2 Details of {{ person.name }}</p>"
+                        "{% elif person.id >= 3 %}<p>3 Details of {{ person.name }}</p>"
+                        "{% else %}<p>No details</p>{% endif %}{% endfor %}"};
+
+  std::string expected_result_elif = { "<h1>Header</h1>"
+                                  "<p>1 Details of George</p>"
+                                  "<p>2 Details of Jane</p>"
+                                  "<p>3 Details of Otto</p>"
+  };
+
+  result = http::template_engine::render(if_elif, data);
+
+  UNIT_ASSERT_EQUAL(expected_result_elif, result);
+
 }

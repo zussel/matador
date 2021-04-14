@@ -77,12 +77,18 @@ std::shared_ptr<template_part> if_else_state::parse(string_cursor &cursor)
   std::list<std::pair<std::shared_ptr<template_expression>, template_part_ptr>> expression_list;
   template_parser parser;
   bool has_else = false;
-  auto part = parser.parse(cursor, [&has_else, &expression_list, &expr](const std::string &cmd, std::unique_ptr<detail::multi_template_part> &part) {
+  auto part = parser.parse(cursor, [&cursor, &has_else, &expression_list, &expr](const std::string &cmd, std::unique_ptr<detail::multi_template_part> &part) {
     if (cmd == "else") {
       std::shared_ptr<multi_template_part> condition_part;
       move_parts(condition_part, part);
       expression_list.push_back(std::make_pair(expr, condition_part));
       has_else = true;
+      return template_parser::INTERMEDIATE;
+    } else if (cmd == "elif") {
+      std::shared_ptr<multi_template_part> condition_part;
+      move_parts(condition_part, part);
+      expression_list.push_back(std::make_pair(expr, condition_part));
+      expr = detail::parse_expression(cursor);
       return template_parser::INTERMEDIATE;
     } else if (cmd == "endif") {
       if (!has_else) {
