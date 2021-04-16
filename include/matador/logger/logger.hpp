@@ -233,7 +233,7 @@ private:
 template<typename... ARGS>
 void logger::log(log_level lvl, const char *what, ARGS const &... args)
 {
-  char message_buffer[912];
+  char message_buffer[16384];
 
 #ifdef _MSC_VER
   sprintf_s(message_buffer, 912, what, args...);
