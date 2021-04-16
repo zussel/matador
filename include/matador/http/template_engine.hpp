@@ -14,7 +14,7 @@ namespace http {
 
 namespace detail {
 
-class template_state;
+class template_command;
 class template_part;
 
 }

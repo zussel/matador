@@ -125,5 +125,8 @@ private:
   std::string path_;
   FILE *stream_ = nullptr;
 };
+
+OOS_UTILS_API std::string read_as_text(const file &f);
+
 }
 #endif //MATADOR_FILE_HPP

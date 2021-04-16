@@ -29,6 +29,24 @@ std::string parse_token(string_cursor &cursor)
   return token;
 }
 
+std::string parse_filepath(string_cursor &cursor)
+{
+  std::string token;
+  char c = cursor.skip_whitespace();
+
+  while(!is_eos(c)) {
+    if (isalnum(c) || c == '.' || c == '_' || c == '/') {
+      token.push_back(c);
+    } else {
+      break;
+    }
+    c = cursor.next_char();
+  }
+
+  cursor.skip_whitespace();
+  return token;
+}
+
 std::string parse_operand(string_cursor &cursor)
 {
   std::string token;

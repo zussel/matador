@@ -65,7 +65,6 @@ HttpServerTest::HttpServerTest()
 void HttpServerTest::initialize()
 {
   matador::default_min_log_level(log_level::LVL_DEBUG);
-  matador::add_log_sink(matador::create_stdout_sink());
 }
 
 void HttpServerTest::finalize()

@@ -1,6 +1,8 @@
 #include "TemplateEngineTest.hpp"
 
 #include "matador/utils/json.hpp"
+#include "matador/utils/file.hpp"
+#include "matador/utils/os.hpp"
 
 #include "matador/http/template_engine.hpp"
 
@@ -12,6 +14,7 @@ TemplateEngineTest::TemplateEngineTest()
   add_test("foreach_nested", [this] { test_foreach_nested(); }, "test foreach loop with nested foreach");
   add_test("foreach_empty", [this] { test_foreach_empty(); }, "test foreach loop with empty foreach data");
   add_test("if_else", [this] { test_if_else(); }, "test if else");
+  add_test("include", [this] { test_include(); }, "test include");
 }
 
 using namespace matador;
@@ -158,5 +161,51 @@ void TemplateEngineTest::test_if_else()
   result = http::template_engine::render(if_elif, data);
 
   UNIT_ASSERT_EQUAL(expected_result_elif, result);
+}
 
+void TemplateEngineTest::test_include()
+{
+  const std::string filename { "header.html" };
+
+  file f(filename, "w");
+
+  UNIT_ASSERT_TRUE(matador::os::exists(filename));
+
+  const std::string content { "<title>{{ title }}</title>" };
+  ::fwrite(content.c_str(), sizeof(char), content.size(), f.stream());
+  f.close();
+
+  std::string incl { R"(
+<html>
+<head>
+  {% include "header.html" %}
+</head>
+<body>
+<h1>Hello {{ user.name }}</h1>
+</body>
+</html>)" };
+
+  std::string expected_result { R"(
+<html>
+<head>
+  <title>My first Page</title>
+</head>
+<body>
+<h1>Hello George</h1>
+</body>
+</html>)" };
+
+  json data {
+    { "user", {
+      { "id", 4711 },
+      { "name", "George" }
+    }},
+    { "title", "My first Page"}
+  };
+
+  auto result = http::template_engine::render(incl, data);
+
+  UNIT_ASSERT_EQUAL(expected_result, result);
+
+  matador::os::remove(filename);
 }

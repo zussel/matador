@@ -126,7 +126,7 @@ response response::from_file(const std::string &file_path)
 
   resp.body_.resize(size);
 
-  int ret = fread(const_cast<char*>(resp.body_.data()), 1, size, f.stream());
+  auto ret = fread(const_cast<char*>(resp.body_.data()), 1, size, f.stream());
 
   if (ret == 0) {
       perror("fread");

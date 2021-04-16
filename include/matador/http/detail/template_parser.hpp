@@ -2,7 +2,7 @@
 #define MATADOR_TEMPLATE_PARSER_HPP
 
 #include "matador/http/detail/template_part.hpp"
-#include "matador/http/detail/template_state_factory.hpp"
+#include "matador/http/detail/template_command_factory.hpp"
 
 #include "matador/utils/string_cursor.hpp"
 #include "matador/utils/string.hpp"
@@ -22,6 +22,7 @@ class template_expression;
 class multi_template_part;
 
 std::string parse_token(string_cursor &cursor);
+std::string parse_filepath(string_cursor &cursor);
 bool parse_end_of_command_tag(string_cursor &cursor);
 std::shared_ptr<template_expression> parse_expression(string_cursor &cursor);
 std::string parse_operator(string_cursor &cursor);
@@ -93,11 +94,11 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
 
       auto res = on_command(cmd, parts_);
       if (res == FINISHED) {
-        return std::shared_ptr<template_part>(parts_.release());;
+        return std::shared_ptr<template_part>(parts_.release());
 //      } else if (res == INTERMEDIATE) {
       } else {
         if (res == NEXT_COMMAND) {
-          auto cmdptr = detail::template_state_factory::instance().produce(cmd);
+          auto cmdptr = detail::template_command_factory::instance().produce(cmd);
           parts_->push_back(cmdptr->parse(cursor));
         }
         c = cursor.current_char();
