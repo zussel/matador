@@ -28,7 +28,7 @@ void http_server_connection::read()
   auto self(shared_from_this());
   stream_.read(matador::buffer_view(buf_), [this, self](int ec, int nread) {
     if (ec == 0) {
-      std::string request_string(buf_.data(), nread + 1);
+      std::string request_string(buf_.data(), nread);
       // parse request and prepare response
       log_.debug("%s: request [%s]", stream_.name().c_str(), request_string.c_str());
       auto result = parser_.parse(request_string, request_);

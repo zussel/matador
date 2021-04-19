@@ -52,8 +52,11 @@ public:
   static OOS_HTTP_API const char* from_file_extension(const std::string &ext);
   static OOS_HTTP_API const char* from_file_extension(const char *ext);
 
+  static OOS_HTTP_API const char* from_type(types type);
+
 private:
   static std::unordered_map<std::string, const char*> extension_mime_type_map_;
+  static std::unordered_map<types, const char*> mime_type_map_;
 };
 
 }

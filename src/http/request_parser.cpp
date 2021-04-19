@@ -34,6 +34,9 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
   std::string::size_type pos;
   for (pos = 0; pos < msg.size(); ++pos) {
     std::string::value_type c = msg.at(pos);
+    if (c == '\0') {
+      return result;
+    }
     bool ret = false;
     bool finished = false;
     switch (state_) {

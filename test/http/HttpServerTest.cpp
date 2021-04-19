@@ -204,7 +204,7 @@ void HttpServerTest::test_delete()
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
-  http::client c("localhost:7778");
+  http::client c("localhost:7779");
   auto resp = c.remove("/test/world");
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
