@@ -1,6 +1,8 @@
 #include "matador/http/http_server.hpp"
 #include "matador/http/http_server_connection.hpp"
 
+#include "matador/http/middleware/routing_middleware.hpp"
+
 #include "matador/logger/log_manager.hpp"
 
 namespace matador {
@@ -14,7 +16,7 @@ server::server(unsigned short port)
   log_.info("creating http server at port %d", port);
   service_.accept(acceptor_, [this](tcp::peer ep, io_stream &stream) {
     // create echo server connection
-    auto conn = std::make_shared<http_server_connection>(router_, stream, std::move(ep));
+    auto conn = std::make_shared<http_server_connection>(pipeline_, stream, std::move(ep));
     conn->start();
   });
 }
@@ -34,5 +36,9 @@ bool server::is_running() const
   return service_.is_running();
 }
 
+void server::add_routing_middleware()
+{
+  pipeline_.add(std::make_shared<middlewares::routing_middleware>(router_));
+}
 }
 }

@@ -34,8 +34,8 @@ routing_engine::iterator routing_engine::find(const std::string &path, http::htt
   return find_internal(path, method);
 }
 
-routing_engine::iterator
-routing_engine::match(request &req)
+routing_engine::const_iterator
+routing_engine::match(request &req) const
 {
   auto it = std::find_if(routes_.begin(), routes_.end(), [&req](const route_endpoint_ptr &ep) {
     return ep->match(req);
@@ -52,7 +52,7 @@ void routing_engine::dump(std::ostream &out)
   });
 }
 
-bool routing_engine::valid(const routing_engine::iterator& it) const
+bool routing_engine::valid(const routing_engine::const_iterator& it) const
 {
   return it != routes_.end();
 }

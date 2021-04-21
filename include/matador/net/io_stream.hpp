@@ -33,8 +33,8 @@ class buffer_view;
 class OOS_NET_API io_stream
 {
 public:
-  typedef std::function<void(int ec, int nread)> t_read_handler;    /**< Short for function to process read data */
-  typedef std::function<void(int ec, int nwrite)> t_write_handler;  /**< Short for function to prepare data to write */
+  typedef std::function<void(int ec, long nread)> t_read_handler;    /**< Short for function to process read data */
+  typedef std::function<void(int ec, long nwrite)> t_write_handler;  /**< Short for function to prepare data to write */
 
   /**
    * This interface is called when data should

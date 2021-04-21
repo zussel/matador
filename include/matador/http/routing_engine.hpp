@@ -16,8 +16,6 @@
 
 #include "matador/http/route_endpoint.hpp"
 
-//#include "matador/utils/tree.hpp"
-
 #include <memory>
 #include <string>
 #include <list>
@@ -34,6 +32,7 @@ public:
   typedef std::vector<route_endpoint_ptr> t_route_vector;
 
   typedef t_route_vector::iterator iterator;
+  typedef t_route_vector::const_iterator const_iterator;
 
 public:
   routing_engine();
@@ -42,11 +41,11 @@ public:
 
   iterator find(const std::string &path, http::http::method_t method);
 
-  iterator match(request &req);
+  const_iterator match(request &req) const;
 
   void dump(std::ostream &out);
 
-  bool valid(const iterator& it) const;
+  bool valid(const const_iterator& it) const;
 
 private:
 

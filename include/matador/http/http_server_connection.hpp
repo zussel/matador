@@ -24,7 +24,7 @@
 #include "matador/http/request_parser.hpp"
 #include "matador/http/response.hpp"
 #include "matador/http/request.hpp"
-#include "matador/http/routing_engine.hpp"
+#include "matador/http/middleware.hpp"
 
 #include <memory>
 
@@ -37,15 +37,14 @@ namespace http {
 class OOS_HTTP_API http_server_connection : public std::enable_shared_from_this<http_server_connection>
 {
 public:
-  http_server_connection(routing_engine &router, matador::io_stream &stream, matador::tcp::peer endpoint);
+  http_server_connection(middleware_pipeline &pipeline, matador::io_stream &stream, matador::tcp::peer endpoint);
 
   void start();
   void read();
   void write();
 
 private:
-  optional<routing_engine::route_endpoint_ptr> match(request &req);
-  response execute(const request &req, const routing_engine::route_endpoint_ptr &route);
+  response process(request &req) const;
 
 private:
   matador::logger log_;
@@ -55,7 +54,7 @@ private:
 
   matador::http::request_parser parser_;
 
-  matador::http::routing_engine &router_;
+  middleware_pipeline &pipeline_;
 
   request request_;
   response response_;

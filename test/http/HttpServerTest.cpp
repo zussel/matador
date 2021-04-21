@@ -95,6 +95,7 @@ void HttpServerTest::test_get()
   matador::add_log_sink(matador::create_stdout_sink());
 
   http::server s(7779);
+  s.add_routing_middleware();
 
   s.on_get("/test/{name}", [](const http::request &req) {
     return http::response::ok("<h1>hello " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
@@ -127,6 +128,7 @@ void HttpServerTest::test_post()
   matador::add_log_sink(matador::create_stdout_sink());
 
   http::server s(7779);
+  s.add_routing_middleware();
 
   s.on_post("/test/{name}", [](const http::request &req) {
     return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
@@ -159,6 +161,7 @@ void HttpServerTest::test_put()
   matador::add_log_sink(matador::create_stdout_sink());
 
   http::server s(7779);
+  s.add_routing_middleware();
 
   s.on_put("/test/{name}", [](const http::request &req) {
     return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
@@ -191,6 +194,7 @@ void HttpServerTest::test_delete()
   matador::add_log_sink(matador::create_stdout_sink());
 
   http::server s(7779);
+  s.add_routing_middleware();
 
   s.on_remove("/test/{name}", [](const http::request &req) {
     return http::response::ok("<h1>hello " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);

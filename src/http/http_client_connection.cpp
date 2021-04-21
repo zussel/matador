@@ -27,7 +27,7 @@ void http_client_connection::read()
     if (ec == 0) {
       std::string response_string(buf_.data(), nread);
       // parse request and prepare response
-      log_.debug("%s: response [%s]", stream_.name().c_str(), response_string.c_str());
+      log_.trace("%s: response [%s]", stream_.name().c_str(), response_string.c_str());
       auto result = parser_.parse(response_string, response_);
 
       if (result == response_parser::FINISH) {

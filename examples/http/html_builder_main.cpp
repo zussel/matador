@@ -45,6 +45,7 @@ int main(int /*argc*/, char* /*argv*/[])
   };
 
   http::server server(9081);
+  server.add_routing_middleware();
 
   server.on_get("/page", [&data](const http::request &req) {
     auto page = http::template_engine::render(index_html, data);

@@ -20,6 +20,7 @@
 #include "matador/http/http.hpp"
 #include "matador/http/route_endpoint.hpp"
 #include "matador/http/routing_engine.hpp"
+#include "matador/http/middleware.hpp"
 
 namespace matador {
 namespace http {
@@ -58,6 +59,8 @@ public:
     add_route(route, http::DEL, request_handler);
   }
 
+  void add_routing_middleware();
+
 private:
   template < class RequestHandler >
   void add_route(const std::string &path_spec, http::method_t method, RequestHandler request_handler)
@@ -77,6 +80,8 @@ private:
   std::shared_ptr<matador::acceptor> acceptor_;
 
   routing_engine router_;
+
+  middleware_pipeline pipeline_;
 };
 }
 

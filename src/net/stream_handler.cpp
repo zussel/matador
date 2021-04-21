@@ -21,7 +21,7 @@ stream_handler::stream_handler(tcp::socket sock, tcp::peer endpoint, handler_cre
   , init_handler_(std::move(init_handler))
 {
 
-  log_.info("%s: created stream handler", name().c_str());
+  log_.info("%s: created stream handler", name_.c_str());
 }
 
 void stream_handler::open()
@@ -37,14 +37,14 @@ int stream_handler::handle() const
 void stream_handler::on_input()
 {
   auto len = stream_.receive(read_buffer_);
-  log_.debug("%s: read %d bytes", name().c_str(), len);
+  log_.trace("%s: read %d bytes", name().c_str(), len);
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
     char error_buffer[1024];
     log_.error("%s: error on read: %s", name().c_str(), os::strerror(errno, error_buffer, 1024));
     is_ready_to_read_ = false;
-    on_read_(len, len);
+    on_read_((int)len, len);
     on_close();
   } else {
     read_buffer_.bump(len);
@@ -62,7 +62,7 @@ void stream_handler::on_output()
     buffer_view &bv = write_buffers_.front();
 
     auto len = stream_.send(bv);
-    log_.debug("%s: sent %d bytes", name().c_str(), len);
+    log_.trace("%s: sent %d bytes", name().c_str(), len);
 
     if (len == 0) {
       on_close();
@@ -71,7 +71,7 @@ void stream_handler::on_output()
       log_.error("%s: error on write: %s", name().c_str(), os::strerror(errno, error_buffer, 1024));
       on_close();
       is_ready_to_write_ = false;
-      on_write_(len, len);
+      on_write_((int)len, len);
     } else if (len < 0 && errno == EWOULDBLOCK) {
       log_.info("%s: sent %d bytes (blocked)", name().c_str(), bytes_total);
     } else {

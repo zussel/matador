@@ -11,11 +11,11 @@
 namespace matador {
 namespace http {
 
-http_server_connection::http_server_connection(routing_engine &router, io_stream &stream, matador::tcp::peer endpoint)
+http_server_connection::http_server_connection(middleware_pipeline &pipeline, io_stream &stream, matador::tcp::peer endpoint)
   : log_(matador::create_logger("HttpServerConnection"))
   , stream_(stream)
   , endpoint_(std::move(endpoint))
-  , router_(router)
+  , pipeline_(pipeline)
 {}
 
 void http_server_connection::start()
@@ -30,7 +30,7 @@ void http_server_connection::read()
     if (ec == 0) {
       std::string request_string(buf_.data(), nread);
       // parse request and prepare response
-      log_.debug("%s: request [%s]", stream_.name().c_str(), request_string.c_str());
+      log_.trace("%s: request [%s]", stream_.name().c_str(), request_string.c_str());
       auto result = parser_.parse(request_string, request_);
 
       if (result == request_parser::FINISH) {
@@ -43,14 +43,7 @@ void http_server_connection::read()
           request_.version().minor
         );
 
-        auto route = match(request_);
-
-        if (!route.has_value()) {
-          log_.info("%s: route %s isn't valid", stream_.name().c_str(), request_.url().c_str());
-          response_ = response::not_found();
-        } else {
-          response_ = execute(request_, route.value());
-        }
+        response_ = process(request_);
 
         parser_.reset();
         write();
@@ -80,21 +73,9 @@ void http_server_connection::write()
   });
 }
 
-optional<routing_engine::route_endpoint_ptr> http_server_connection::match(request &req)
+response http_server_connection::process(request &req) const
 {
-  auto route = router_.match(req);
-
-  if (router_.valid(route)) {
-    return make_optional(*route);
-  } else {
-    return nullopt;
-  }
-}
-
-response http_server_connection::execute(const request &req, const routing_engine::route_endpoint_ptr &route)
-{
-    log_.info("%s: executing route spec: %s (regex: %s)", stream_.name().c_str(), route->path_spec().c_str(), route->path_regex().c_str());
-    return route->execute(req);
+  return pipeline_.process(req);
 }
 
 }
