@@ -51,6 +51,7 @@ public:
   const t_string_param_map& headers() const;
   const t_string_param_map& path_params() const;
   const t_string_param_map& query_params() const;
+  const t_string_param_map& form_data() const;
 
   const std::string& body() const;
   void body(const std::string &content);
@@ -75,6 +76,7 @@ private:
   t_string_param_map headers_;
   t_string_param_map path_params_;
   t_string_param_map query_params_;
+  t_string_param_map form_data_;
 
   std::string body_;
 };

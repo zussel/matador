@@ -175,5 +175,11 @@ response response::bad_request()
   return create(http::BAD_REQUEST);
 }
 
+response response::redirect(const string &location)
+{
+  auto resp = create(http::MOVED_TEMPORARILY);
+  resp.headers_.insert(std::make_pair("Location", location));
+  return resp;
+}
 }
 }

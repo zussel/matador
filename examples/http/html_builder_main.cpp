@@ -6,7 +6,12 @@
 
 using namespace matador;
 
-static std::string index_html { R"(
+int main(int /*argc*/, char* /*argv*/[])
+{
+  matador::add_log_sink(matador::create_file_sink("log/server.log"));
+  matador::add_log_sink(matador::create_stdout_sink());
+
+  static std::string index_html { R"(
 <html>
 <head>
   <title>{{title}}</title>
@@ -20,11 +25,6 @@ static std::string index_html { R"(
 </ul>
 </body>
 </html>)" };
-
-int main(int /*argc*/, char* /*argv*/[])
-{
-  matador::add_log_sink(matador::create_file_sink("log/server.log"));
-  matador::add_log_sink(matador::create_stdout_sink());
 
   json data = {
     { "title", "My first dynamic page" },

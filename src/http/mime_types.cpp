@@ -14,6 +14,7 @@ const char *mime_types::APPLICATION_JSON = "application/json";
 const char *mime_types::APPLICATION_GZIP = "application/gzip";
 const char *mime_types::APPLICATION_ZIP = "application/zip";
 const char *mime_types::APPLICATION_JAVASCRIPT = "application/javascript";
+const char *mime_types::APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
 std::unordered_map<std::string, const char*> mime_types::extension_mime_type_map_({ /* NOLINT */
   { "gif", IMAGE_GIF },

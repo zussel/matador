@@ -73,6 +73,11 @@ const t_string_param_map& request::query_params() const
   return query_params_;
 }
 
+const t_string_param_map &request::form_data() const
+{
+  return form_data_;
+}
+
 const std::string& request::body() const
 {
   return body_;

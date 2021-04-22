@@ -36,6 +36,11 @@ bool server::is_running() const
   return service_.is_running();
 }
 
+void server::add_middleware(const std::shared_ptr<middleware>& mware)
+{
+  pipeline_.add(mware);
+}
+
 void server::add_routing_middleware()
 {
   pipeline_.add(std::make_shared<middlewares::routing_middleware>(router_));

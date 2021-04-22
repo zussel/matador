@@ -1,6 +1,9 @@
+#include "matador/logger/log_manager.hpp"
+
 #include "matador/http/request_parser.hpp"
 #include "matador/http/request.hpp"
 #include "matador/http/request_header.hpp"
+#include "matador/http/mime_types.hpp"
 
 #if defined(_WIN32) || defined(_WIN64)
 #define snprintf _snprintf
@@ -19,6 +22,7 @@ const std::size_t request_parser::HTTP_VERSION_PREFIX_LEN = strlen(request_parse
 
 request_parser::return_t request_parser::parse(const std::string &msg, request &req)
 {
+  logger log(create_logger("RequestParser"));
   /*
    * parse first line and extract
    * - http method
@@ -53,7 +57,7 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
         ret = parse_url_query_field(c);
         break;
       case URL_QUERY_VALUE:
-        ret = parse_url_query_value(c, req);
+        ret = parse_url_query_value(c, req.query_params_);
         break;
       case URL_FRAGMENT:
         ret = parse_url_fragment(c, req);
@@ -106,8 +110,15 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
    */
   if (result == FINISH && (req.method() == http::POST || req.method() == http::PUT)) {
     auto length = std::stoul(req.content_.length);
+    log.info("length: %d, pos+1: %d, msg.length: %d", length, pos+1, msg.size());
     if (length > 0) {
       req.body_.assign(msg.substr(++pos, length));
+      if (req.body_.size() < length) {
+        result = PARTIAL;
+      } else {
+        process_body(req);
+        result = FINISH;
+      }
     } else {
       req.body_.assign(msg.substr(++pos));
     }
@@ -200,7 +211,7 @@ bool request_parser::parse_url_query_field(char c)
   }
 }
 
-bool request_parser::parse_url_query_value(char c, request &req)
+bool request_parser::parse_url_query_value(char c, t_string_param_map &params)
 {
   if (hex_parse_state_ == HEX_FIRST) {
     if (!is_hex_char(c)) {
@@ -227,7 +238,7 @@ bool request_parser::parse_url_query_value(char c, request &req)
     if (hex_parse_state_ != HEX_FINISHED) {
       return false;
     }
-    req.query_params_.insert(std::make_pair(current_query_field_, current_query_value_));
+    params.insert(std::make_pair(current_query_field_, current_query_value_));
     current_query_field_.clear();
     current_query_value_.clear();
     state_ = URL_QUERY_FIELD;
@@ -236,7 +247,7 @@ bool request_parser::parse_url_query_value(char c, request &req)
     if (hex_parse_state_ != HEX_FINISHED) {
       return false;
     }
-    req.query_params_.insert(std::make_pair(current_query_field_, current_query_value_));
+    params.insert(std::make_pair(current_query_field_, current_query_value_));
     current_query_field_.clear();
     current_query_value_.clear();
     state_ = URL_FRAGMENT;
@@ -248,7 +259,7 @@ bool request_parser::parse_url_query_value(char c, request &req)
     if (hex_parse_state_ != HEX_FINISHED) {
       return false;
     }
-    req.query_params_.insert(std::make_pair(current_query_field_, current_query_value_));
+    params.insert(std::make_pair(current_query_field_, current_query_value_));
     current_query_field_.clear();
     current_query_value_.clear();
     http_prefix_index_ = 0;
@@ -423,6 +434,53 @@ void request_parser::insert_header(const std::string &key, const std::string &va
 void request_parser::apply_method(const std::string &method, request &req)
 {
   req.method_ = http::to_method(method);
+}
+
+void request_parser::process_body(request &req)
+{
+  if (req.content_.type == mime_types::APPLICATION_X_WWW_FORM_URLENCODED) {
+    // parse body as form data
+    // and fill form data map in request
+    parse_form_data(req);
+  }
+}
+
+bool request_parser::parse_form_data(request &req)
+{
+  state_ = URL_QUERY_FIELD;
+  std::string::size_type pos;
+  bool ret = false;
+  for (pos = 0; pos < req.body_.size(); ++pos) {
+    std::string::value_type c = req.body_.at(pos);
+    if (c == '\0') {
+      break;
+    }
+    bool finished = false;
+    ret = false;
+    switch (state_) {
+      case URL_QUERY_FIELD:
+        ret = parse_url_query_field(c);
+        break;
+      case URL_QUERY_VALUE:
+        ret = parse_url_query_value(c, req.form_data_);
+        break;
+      case VERSION:
+        finished = true;
+        break;
+      default:
+        break;
+    }
+    if (!ret || finished) {
+      break;
+    }
+  }
+  if (ret && !current_query_field_.empty()) {
+    req.form_data_.insert(std::make_pair(current_query_field_, current_query_value_));
+  }
+  current_query_field_.clear();
+  current_query_field_.clear();
+  state_ = METHOD;
+  return ret;
 }
 
 void request_parser::reset()

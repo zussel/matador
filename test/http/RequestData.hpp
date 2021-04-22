@@ -47,6 +47,17 @@ public:
     "    <description>Demo of scenario1 using Restfully</description>\r\n" \
     "   </experiment>\r\n";
 
+  static constexpr const char* POST_FORM_DATA = \
+    "POST /experiments HTTP/1.1\r\n" \
+    "Host: api.bonfire-project.eu:444\r\n" \
+    "Accept: */*\r\n" \
+    "Authorization: Basic XXX   \r\n" \
+    "Accept-Encoding: gzip, deflate\r\n" \
+    "Content-Type: application/x-www-form-urlencoded\r\n" \
+    "Content-Length: 32\r\n" \
+    "\r\n" \
+    "username=carl&password=secret123\r\n";
+
   static constexpr const char* POST_PARTIAL_BEGIN = \
     "POST /experiments HTTP/1.1\r\n" \
     "Host: api.bonfire-project.eu:444\r\n" \

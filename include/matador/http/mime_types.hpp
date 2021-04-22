@@ -34,7 +34,8 @@ public:
     TYPE_APPLICATION_JSON,
     TYPE_APPLICATION_GZIP,
     TYPE_APPLICATION_ZIP,
-    TYPE_APPLICATION_JAVASCRIPT
+    TYPE_APPLICATION_JAVASCRIPT,
+    TYPE_APPLICATION_X_WWW_FORM_URLENCODED
   };
 
   static OOS_HTTP_API const char *IMAGE_GIF;
@@ -48,6 +49,7 @@ public:
   static OOS_HTTP_API const char *APPLICATION_GZIP;
   static OOS_HTTP_API const char *APPLICATION_ZIP;
   static OOS_HTTP_API const char *APPLICATION_JAVASCRIPT;
+  static OOS_HTTP_API const char *APPLICATION_X_WWW_FORM_URLENCODED;
 
   static OOS_HTTP_API const char* from_file_extension(const std::string &ext);
   static OOS_HTTP_API const char* from_file_extension(const char *ext);

@@ -4,6 +4,7 @@
 #include "matador/http/request_parser.hpp"
 #include "matador/http/request_header.hpp"
 #include "matador/http/request.hpp"
+#include "matador/http/mime_types.hpp"
 
 using namespace matador::http;
 
@@ -15,6 +16,7 @@ RequestParserTest::RequestParserTest()
   add_test("get_common_query", [this] { test_common_get_query_request(); }, "parse common get query request");
   add_test("get_short", [this] { test_short_get_request(); }, "parse short get request");
   add_test("post_query", [this] { test_query_post_request(); }, "parse post query request");
+  add_test("post_form_data", [this] { test_post_form_data_request(); }, "parse post form data request");
   add_test("post_xml", [this] { test_xml_post_request(); }, "parse post xml request");
   add_test("post_xml_partial", [this] { test_xml_post_partial_request(); }, "parse post xml partial request");
 }
@@ -113,6 +115,34 @@ void RequestParserTest::test_query_post_request()
   UNIT_ASSERT_EQUAL("32", req.content().length);
   UNIT_ASSERT_EQUAL(expected_content_length, req.body().size());
   UNIT_ASSERT_EQUAL("home=Cosby&favorite+flavor=flies", req.body());
+}
+
+void RequestParserTest::test_post_form_data_request()
+{
+  request_parser parser;
+  request req;
+  size_t expected_header_size {6};
+  size_t expected_content_length {32};
+  size_t expected_form_data_size {2};
+
+  UNIT_ASSERT_EQUAL(request_parser::FINISH, parser.parse(RequestData::POST_FORM_DATA, req));
+  UNIT_ASSERT_EQUAL(http::POST, req.method());
+  UNIT_ASSERT_EQUAL("/experiments", req.url());
+  UNIT_ASSERT_EQUAL(1, req.version().major);
+  UNIT_ASSERT_EQUAL(1, req.version().minor);
+  UNIT_ASSERT_EQUAL(expected_header_size, req.headers().size());
+  UNIT_ASSERT_EQUAL("api.bonfire-project.eu:444", req.host());
+  UNIT_ASSERT_EQUAL("*/*", req.headers().at(request_header::ACCEPT));
+  UNIT_ASSERT_EQUAL("Basic XXX", req.headers().at(request_header::AUTHORIZATION));
+  UNIT_ASSERT_EQUAL("gzip, deflate", req.headers().at(request_header::ACCEPT_ENCODING));
+  UNIT_ASSERT_EQUAL(mime_types::APPLICATION_X_WWW_FORM_URLENCODED, req.content().type);
+  UNIT_ASSERT_EQUAL("32", req.content().length);
+  UNIT_ASSERT_EQUAL(expected_form_data_size, req.form_data().size());
+  UNIT_ASSERT_EQUAL("carl", req.form_data().at("username"));
+  UNIT_ASSERT_EQUAL("secret123", req.form_data().at("password"));
+  UNIT_ASSERT_EQUAL(expected_content_length, req.body().size());
+  UNIT_ASSERT_EQUAL("username=carl&password=secret123", req.body());
+
 }
 
 void RequestParserTest::test_xml_post_request()

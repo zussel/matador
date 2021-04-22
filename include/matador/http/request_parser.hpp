@@ -14,6 +14,8 @@
 #define OOS_HTTP_API
 #endif
 
+#include "matador/http/http.hpp"
+
 #include <string>
 #include <cstring>
 #include <cstdlib>
@@ -70,7 +72,7 @@ private:
   bool parse_url(char c, request &req);
   bool parse_url_path(char c, request &req);
   bool parse_url_query_field(char c);
-  bool parse_url_query_value(char c, request &req);
+  bool parse_url_query_value(char c, t_string_param_map &params);
   bool parse_url_fragment(char c, request &req);
   bool parse_version(char c);
   bool parse_major_version(char c, request &req);
@@ -87,6 +89,10 @@ private:
 
   void insert_header(const std::string &key, const std::string &value, request &req);
   void apply_method(const std::string &method, request &req);
+
+  void process_body(request &req);
+
+  bool parse_form_data(request &req);
 
 private:
   state_t state_ = METHOD;

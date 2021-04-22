@@ -59,6 +59,7 @@ public:
     add_route(route, http::DEL, request_handler);
   }
 
+  void add_middleware(const std::shared_ptr<middleware>& mware);
   void add_routing_middleware();
 
 private:
