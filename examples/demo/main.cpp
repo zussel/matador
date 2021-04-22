@@ -14,7 +14,7 @@ class authentication_middleware : public http::middleware
 public:
   http::response process(http::request &req, const next_func_t &next) override
   {
-    return http::response::redirect("secret");
+    //return http::response::redirect("index");
     return next();
   }
 };
@@ -29,6 +29,18 @@ int main(int /*argc*/, char* /*argv*/[])
   server.add_middleware(std::make_shared<authentication_middleware>());
 
   server.on_get("/index", [](const http::request &) {
+    file f("html/index.html", "r");
+
+    if (!f.is_open()) {
+      return http::response::not_found();
+    }
+
+    auto content = read_as_text(f);
+
+    return http::response::ok(content, http::mime_types::TYPE_TEXT_HTML);
+  });
+
+  server.on_get("/login", [](const http::request &) {
     file f("html/login.html", "r");
 
     if (!f.is_open()) {
@@ -54,10 +66,10 @@ int main(int /*argc*/, char* /*argv*/[])
 
   server.on_post("/login", [](const http::request &req) {
 
-    auto username = req.form_data().at("username");
-    auto password = req.form_data().at("password");
+    auto username = req.form_data().at("uname");
+    auto password = req.form_data().at("pwd");
 
-    return http::response::not_found();
+    return http::response::redirect("secret");
   });
 
   server.run();
