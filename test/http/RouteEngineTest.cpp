@@ -8,7 +8,7 @@
 using namespace matador;
 
 RouteEngineTest::RouteEngineTest()
-  : matador::unit_test("routing_engine", "route engine test")
+  : matador::unit_test("route_engine", "route engine test")
 {
   add_test("routes", [this] { test_routes(); }, "test route engine");
 }
@@ -22,6 +22,7 @@ void RouteEngineTest::test_routes()
 {
   http::routing_engine re;
 
+  re.add("/", http::http::GET, dummy);
   re.add("/api/user", http::http::GET, dummy);
   // sentinel path param id
   re.add("/api/user/{id}", http::http::GET, dummy);
@@ -31,8 +32,6 @@ void RouteEngineTest::test_routes()
   re.add("/api/find/{type}/all", http::http::GET, dummy);
   // path param type and id only numbers
   re.add("/api/find/{type}/{id: \\d+}", http::http::GET, [](const http::request &) { return http::response(); });
-
-//  re.dump(std::cout);
 
   // valid routes
   // /api/user
@@ -63,6 +62,13 @@ void RouteEngineTest::test_routes()
   UNIT_ASSERT_EQUAL(1UL, req.path_params().size());
   UNIT_ASSERT_TRUE(req.path_params().find("id") != req.path_params().end());
   UNIT_ASSERT_EQUAL("1234", req.path_params().at("id"));
+
+  // /
+  req = http::request();
+  UNIT_ASSERT_EQUAL(http::request_parser::FINISH, parser.parse("GET / HTTP/1.1\r\nHost: de.wikipedia.org\r\n\r\n", req));
+  rep = re.match(req);
+  UNIT_ASSERT_TRUE(re.valid(rep));
+  UNIT_ASSERT_TRUE(req.path_params().empty());
 
   // /api/find/post/all
   req = http::request();

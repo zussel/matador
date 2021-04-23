@@ -124,6 +124,9 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
     }
   }
 
+  if (result == FINISH) {
+    state_ = METHOD;
+  }
   return result;
 }
 
@@ -479,7 +482,6 @@ bool request_parser::parse_form_data(request &req)
   }
   current_query_field_.clear();
   current_query_field_.clear();
-  state_ = METHOD;
   return ret;
 }
 

@@ -113,7 +113,8 @@ response response::from_file(const std::string &file_path)
     extension = file_path.substr(last_dot_pos + 1);
   }
 
-  matador::file f("." + file_path, "r");
+  matador::file f(file_path, "r");
+//  matador::file f("." + file_path, "r");
 
   if (!f.is_open()) {
     return response::not_found();

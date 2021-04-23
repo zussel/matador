@@ -43,6 +43,7 @@ public:
   http::method_t method() const;
   const std::string& path_spec() const;
   const std::string& path_regex() const;
+  const t_size_string_map& param_map() const;
 
   response execute(const request &req);
 

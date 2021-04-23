@@ -12,9 +12,7 @@ namespace http {
 
 bool prepare_route_path_elements(const std::string &path, std::list<std::string> &rpe);
 
-routing_engine::routing_engine()
-  : route_regex_(R"((\*\.\*)|\{(\w+)(:\s*(.*))?\}|([a-zA-Z0-9-_]+))")
-{}
+// ^(\/(([\w]+)|(\{[\w\: \\\+]+\}))*)(\/(([\w]+)|(\{[\w \\\:\+]+\}))+)*\/?
 
 void routing_engine::add(const std::string &path, http::http::method_t method, const t_request_handler& request_handler)
 {
@@ -48,7 +46,7 @@ void routing_engine::dump(std::ostream &out)
   make_stream(routes_).filter([](const auto &ep) {
     return ep->method() != http::http::UNKNOWN;
   }).for_each([&out](const route_endpoint_ptr &ep) {
-    out << "endpoint: " << ep->path_spec() << " (method: " << http::http::to_string(ep->method()) << ")\n";
+    out << "endpoint: " << ep->path_spec() << " (method: " << http::http::to_string(ep->method()) << ", regex: " << ep->path_regex() << ")\n";
   });
 }
 
@@ -68,14 +66,22 @@ routing_engine::iterator routing_engine::find_internal(
   return it;
 }
 
-routing_engine::route_endpoint_ptr routing_engine::create_route_endpoint(
+routing_engine::route_endpoint_ptr create_route_endpoint(
   const std::string &path_spec, http::method_t method,
   const t_request_handler &request_handler
 )
 {
-  std::smatch what;
+  static std::regex route_regex { R"((\*\.\*)|\{(\w+)(:\s*(.*))?\}|([a-zA-Z0-9-_]+))" };
 
   t_size_string_map path_param_to_index_map;
+
+  // check for root path explicitly
+  if (path_spec == "/") {
+    return std::make_shared<route_endpoint>(path_spec, R"(\/)", method, request_handler, path_param_to_index_map);
+  }
+
+  std::smatch what;
+
   std::list<std::string> parts;
 
   prepare_route_path_elements(path_spec, parts);
@@ -88,7 +94,7 @@ routing_engine::route_endpoint_ptr routing_engine::create_route_endpoint(
       continue;
     }
 
-    if (!std::regex_match(part, what, route_regex_)) {
+    if (!std::regex_match(part, what, route_regex)) {
       throw std::logic_error("invalid route spec part: " + part);
     }
 

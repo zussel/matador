@@ -54,6 +54,11 @@ const std::string &route_endpoint::path_regex() const
   return path_regex_str_;
 }
 
+const t_size_string_map& route_endpoint::param_map() const
+{
+  return param_index_map_;
+}
+
 response route_endpoint::execute(const request &req)
 {
   return request_handler_(req);

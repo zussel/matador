@@ -6,17 +6,27 @@
 #include "matador/http/response.hpp"
 #include "matador/http/request.hpp"
 #include "matador/http/middleware.hpp"
+#include "matador/http/static_file_service.hpp"
 
 using namespace matador;
 
 class authentication_middleware : public http::middleware
 {
 public:
+  authentication_middleware()
+  {
+    usermap_.insert(std::make_pair("hans", "hans123"));
+    usermap_.insert(std::make_pair("otto", "otto123"));
+  }
+
   http::response process(http::request &req, const next_func_t &next) override
   {
     //return http::response::redirect("index");
     return next();
   }
+
+private:
+  std::map<std::string, std::string> usermap_;
 };
 
 int main(int /*argc*/, char* /*argv*/[])
@@ -28,40 +38,18 @@ int main(int /*argc*/, char* /*argv*/[])
   server.add_routing_middleware();
   server.add_middleware(std::make_shared<authentication_middleware>());
 
-  server.on_get("/index", [](const http::request &) {
-    file f("html/index.html", "r");
+  http::static_file_service css_files_("/html/css/*.*", server);
 
-    if (!f.is_open()) {
-      return http::response::not_found();
-    }
-
-    auto content = read_as_text(f);
-
-    return http::response::ok(content, http::mime_types::TYPE_TEXT_HTML);
+  server.on_get("/", [](const http::request &) {
+    return http::response::from_file("html/index.html");
   });
 
   server.on_get("/login", [](const http::request &) {
-    file f("html/login.html", "r");
-
-    if (!f.is_open()) {
-      return http::response::not_found();
-    }
-
-    auto content = read_as_text(f);
-
-    return http::response::ok(content, http::mime_types::TYPE_TEXT_HTML);
+    return http::response::from_file("html/login.html");
   });
 
   server.on_get("/secret", [](const http::request &) {
-    file f("html/secret.html", "r");
-
-    if (!f.is_open()) {
-      return http::response::not_found();
-    }
-
-    auto content = read_as_text(f);
-
-    return http::response::ok(content, http::mime_types::TYPE_TEXT_HTML);
+    return http::response::from_file("html/secret.html");
   });
 
   server.on_post("/login", [](const http::request &req) {

@@ -35,7 +35,7 @@ public:
   typedef t_route_vector::const_iterator const_iterator;
 
 public:
-  routing_engine();
+  routing_engine() = default;
 
   void add(const std::string& path, http::http::method_t method, const t_request_handler& request_handler);
 
@@ -51,17 +51,16 @@ private:
 
   iterator find_internal(const std::string &path, http::http::method_t method);
 
-  route_endpoint_ptr create_route_endpoint(
-    const std::string &path_spec,
-    http::method_t method,
-    const t_request_handler &request_handler
-  );
-
 private:
-  std::regex route_regex_;
 
   std::vector<route_endpoint_ptr> routes_;
 };
+
+routing_engine::route_endpoint_ptr create_route_endpoint(
+  const std::string &path_spec,
+  http::method_t method,
+  const t_request_handler &request_handler
+);
 
 }
 }
