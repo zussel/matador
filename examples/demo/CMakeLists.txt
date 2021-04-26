@@ -12,7 +12,7 @@ ADD_EXECUTABLE(demo ${DEMO_SOURCES})
 
 CONFIGURE_FILE(html/css/bulma.min.css  ${PROJECT_BINARY_DIR}/bin/html/css/bulma.min.css COPYONLY)
 CONFIGURE_FILE(html/login.html ${PROJECT_BINARY_DIR}/bin/html/login.html COPYONLY)
-CONFIGURE_FILE(html/secret.html ${PROJECT_BINARY_DIR}/bin/html/secret.html COPYONLY)
+CONFIGURE_FILE(html/secure.html ${PROJECT_BINARY_DIR}/bin/html/secret.html COPYONLY)
 CONFIGURE_FILE(html/index.html ${PROJECT_BINARY_DIR}/bin/html/index.html COPYONLY)
 
 TARGET_LINK_LIBRARIES(demo

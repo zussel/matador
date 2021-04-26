@@ -49,7 +49,7 @@ int main(int /*argc*/, char* /*argv*/[])
   });
 
   server.on_get("/secret", [](const http::request &) {
-    return http::response::from_file("html/secret.html");
+    return http::response::from_file("html/secure.html");
   });
 
   server.on_post("/login", [](const http::request &req) {
@@ -57,7 +57,7 @@ int main(int /*argc*/, char* /*argv*/[])
     auto username = req.form_data().at("uname");
     auto password = req.form_data().at("pwd");
 
-    return http::response::redirect("secret");
+    return http::response::redirect("secure");
   });
 
   server.run();
