@@ -23,6 +23,7 @@ server::server(unsigned short port)
 
 void server::run()
 {
+  log_.info("serving content at http://localhost:%d", acceptor_->endpoint().port());
   service_.run();
 }
 

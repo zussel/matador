@@ -17,7 +17,8 @@
  */
 
 using namespace matador::http;
-using namespace std::placeholders;
+using namespace std::
+;
 
 struct user
 {

@@ -41,6 +41,7 @@
 #include "utils/ThreadPoolTest.hpp"
 #include "utils/StreamsTest.hpp"
 #include "utils/OptionalTest.hpp"
+#include "utils/EncryptionTest.hpp"
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
@@ -129,6 +130,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ThreadPoolTest);
   suite.register_unit(new StreamsTest);
   suite.register_unit(new OptionalTest);
+  suite.register_unit(new EncryptionTest);
 
   suite.register_unit(new LoggerTest);
 

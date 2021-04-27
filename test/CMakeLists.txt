@@ -34,7 +34,7 @@ SET (TEST_TOOLS_SOURCES
   utils/Base64Test.cpp
   utils/Base64Test.hpp
   utils/BufferViewTest.cpp
-  utils/BufferViewTest.hpp)
+  utils/BufferViewTest.hpp utils/EncryptionTest.cpp utils/EncryptionTest.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp

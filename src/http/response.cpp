@@ -108,6 +108,9 @@ response response::from_file(const std::string &file_path)
   std::size_t last_slash_pos = file_path.find_last_of('/');
   std::size_t last_dot_pos = file_path.find_last_of('.');
   std::string extension;
+  if (last_slash_pos == std::string::npos) {
+    last_slash_pos = 0;
+  }
   if (last_dot_pos != std::string::npos && last_dot_pos > last_slash_pos)
   {
     extension = file_path.substr(last_dot_pos + 1);
