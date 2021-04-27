@@ -1,3 +1,6 @@
+#include "services/auth_service.hpp"
+#include "pages/main_page.hpp"
+
 #include "matador/logger/log_manager.hpp"
 
 #include "matador/utils/file.hpp"
@@ -19,7 +22,7 @@ public:
     usermap_.insert(std::make_pair("otto", "otto123"));
   }
 
-  http::response process(http::request &req, const next_func_t &next) override
+  http::response process(http::request &, const next_func_t &next) override
   {
     //return http::response::redirect("index");
     return next();
@@ -38,27 +41,13 @@ int main(int /*argc*/, char* /*argv*/[])
   server.add_routing_middleware();
   server.add_middleware(std::make_shared<authentication_middleware>());
 
-  http::static_file_service css_files_("/html/css/*.*", server);
+  os::chdir("web");
 
-  server.on_get("/", [](const http::request &) {
-    return http::response::from_file("html/index.html");
-  });
+  http::static_file_service css_files("/css/*.*", server);
+  http::static_file_service js_files("/js/*.*", server);
 
-  server.on_get("/login", [](const http::request &) {
-    return http::response::from_file("html/login.html");
-  });
-
-  server.on_get("/secret", [](const http::request &) {
-    return http::response::from_file("html/secure.html");
-  });
-
-  server.on_post("/login", [](const http::request &req) {
-
-    auto username = req.form_data().at("uname");
-    auto password = req.form_data().at("pwd");
-
-    return http::response::redirect("secure");
-  });
+  auth_service auth(server);
+  main_page mpage(server);
 
   server.run();
 

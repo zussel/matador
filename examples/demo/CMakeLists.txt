@@ -6,14 +6,23 @@ IF(WIN32)
 ENDIF()
 
 SET (DEMO_SOURCES
-  main.cpp)
+  main.cpp
+  services/auth_service.cpp
+  services/auth_service.hpp
+  models/credential.hpp
+  models/user.hpp
+  pages/main_page.cpp
+  pages/main_page.hpp
+)
 
 ADD_EXECUTABLE(demo ${DEMO_SOURCES})
 
-CONFIGURE_FILE(html/css/bulma.min.css  ${PROJECT_BINARY_DIR}/bin/html/css/bulma.min.css COPYONLY)
-CONFIGURE_FILE(html/login.html ${PROJECT_BINARY_DIR}/bin/html/login.html COPYONLY)
-CONFIGURE_FILE(html/secure.html ${PROJECT_BINARY_DIR}/bin/html/secret.html COPYONLY)
-CONFIGURE_FILE(html/index.html ${PROJECT_BINARY_DIR}/bin/html/index.html COPYONLY)
+CONFIGURE_FILE(web/css/bulma.min.css ${PROJECT_BINARY_DIR}/bin/web/css/bulma.min.css COPYONLY)
+CONFIGURE_FILE(web/js/axios.min-0.21.1.js ${PROJECT_BINARY_DIR}/bin/web/js/axios.min-0.21.1.js COPYONLY)
+CONFIGURE_FILE(web/js/demo.js ${PROJECT_BINARY_DIR}/bin/web/js/demo.js COPYONLY)
+CONFIGURE_FILE(web/login.html ${PROJECT_BINARY_DIR}/bin/web/login.html COPYONLY)
+CONFIGURE_FILE(web/secure.html ${PROJECT_BINARY_DIR}/bin/web/secure.html COPYONLY)
+CONFIGURE_FILE(web/index.html ${PROJECT_BINARY_DIR}/bin/web/index.html COPYONLY)
 
 TARGET_LINK_LIBRARIES(demo
   matador-unit
