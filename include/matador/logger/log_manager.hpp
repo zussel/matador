@@ -132,6 +132,7 @@ public:
 
   /// @cond MATADOR_DEV
   std::shared_ptr<log_domain> find_domain(const std::string &name);
+  void log_default(log_level lvl, const std::string &source, const char *message);
   /// @endcond
 
 protected:
@@ -274,6 +275,22 @@ OOS_LOGGER_API logger create_logger(std::string source);
  * @return The logger instance
  */
 OOS_LOGGER_API logger create_logger(std::string source, const std::string &domain);
+
+void log_default(log_level lvl, const std::string &source, const char *message);
+
+template<typename... ARGS>
+void log(log_level lvl, const std::string &source, const char *what, ARGS const &... args)
+{
+  char message_buffer[16384];
+
+#ifdef _MSC_VER
+  sprintf_s(message_buffer, 912, what, args...);
+#else
+  sprintf(message_buffer, what, args...);
+#endif
+
+  log_default(lvl, source, message_buffer);
+}
 
 }
 

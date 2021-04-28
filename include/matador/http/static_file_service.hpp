@@ -21,6 +21,8 @@
 namespace matador {
 namespace http {
 
+OOS_HTTP_API void serve_static_files_at(const std::string &path, server &s);
+
 class OOS_HTTP_API static_file_service
 {
 public:
@@ -30,8 +32,6 @@ private:
   response serve(const request &req);
 
 private:
-  server& server_;
-
   matador::logger log_;
 };
 

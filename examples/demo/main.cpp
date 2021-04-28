@@ -43,8 +43,8 @@ int main(int /*argc*/, char* /*argv*/[])
 
   os::chdir("web");
 
-  http::static_file_service css_files("/css/*.*", server);
-  http::static_file_service js_files("/js/*.*", server);
+  http::serve_static_files_at("/css/*.*", server);
+  http::serve_static_files_at("/js/*.*", server);
 
   auth_service auth(server);
   main_page mpage(server);

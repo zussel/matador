@@ -2,11 +2,159 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Main page</title>
+<!--    <link rel="stylesheet" href="css/font-awesome-4.7.0.min.css">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/bulma.min.css">
+    <style>
+        div.columns {
+            margin-top: 50px;
+        }
+
+        .modal-content {
+            margin-top: 100px;
+            width: 450px;
+        }
+
+        .buttons {
+            margin-top: 12px;
+        }
+    </style>
 </head>
 <body>
-    <a class="button" href="login">Login</a>
+    <section class="hero is-info is-fullheight">
+        <div class="hero-head">
+            <nav class="navbar">
+                <div class="container">
+                    <div class="navbar-brand">
+                        <a class="navbar-item" href="../">
+                            <img src="http://bulma.io/images/bulma-type-white.png" alt="Logo">
+                        </a>
+                        <span class="navbar-burger burger" data-target="navbarMenu">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </div>
+                    <div id="navbarMenu" class="navbar-menu">
+                        <div class="navbar-end">
+                            <span class="navbar-item">
+                                <a class="button is-white is-outlined" href="#">
+                                    <span class="icon">
+                                        <i class="fa fa-home"></i>
+                                    </span>
+                                    <span>Home</span>
+                                </a>
+                            </span>
+                            <span class="navbar-item">
+                                <a class="button is-white is-outlined" href="#">
+                                    <span class="icon">
+                                        <i class="fa fa-lock"></i>
+                                    </span>
+                                    <span>Login</span>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <div class="column is-6 is-offset-3">
+                    <h1 class="title">
+                        Login to view list
+                    </h1>
+                    <h2 class="subtitle">
+                        Login to view the data table and add new data, edit data or delete data.
+                    </h2>
+                    <div class="box has-text-centered">
+                        <button class="button is-info" id="login">Login</button>
+                    </div>
+                    <div class="modal">
+                        <div class="modal-background"></div>
+                        <div class="modal-card">
+                            <div class="box">
+                                <div>
+                                    <h1 class='title has-text-centered'>
+                                        Login
+                                    </h1>
+                                </div>
+                                <form action='#' method='post'>
+                                    <div class='field'>
+                                        <label class='label'
+                                               id='username'>
+                                            Username
+                                        </label>
+                                        <div class='control has-icons-left'>
+                                            <input class='input'
+                                                   type='text'
+                                                   for='username'
+                                                   placeholder='Username'>
+                                            <span class="icon is-small is-left">
+                                              <i class="fas fa-user"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class='field'>
+                                        <label class='label'
+                                               id='password'>
+                                            Password
+                                        </label>
+                                        <div class='control has-icons-left'>
+                                            <input class='input'
+                                                   type='password'
+                                                   for='password'
+                                                   placeholder='Password'>
+                                            <span class="icon is-small is-left">
+                                              <i class="fas fa-lock"></i>
+                                            </span>
+                                        </div>
+
+                                        <div class='buttons'>
+                                            <button class='button is-link'>
+                                                Login
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <button class="modal-close is-large" aria-label="close">Model</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        // Bulma does not have JavaScript included,
+        // hence custom JavaScript has to be
+        // written to open or close the modal
+        const modal = document.querySelector('.modal');
+        const btn = document.querySelector('#login')
+        const close = document.querySelector('.modal-close')
+
+        btn.addEventListener('click',
+            function () {
+                modal.style.display = 'block'
+            })
+
+        close.addEventListener('click',
+            function () {
+                modal.style.display = 'none'
+            })
+
+        window.addEventListener('click',
+            function (event) {
+                if (event.target.className ===
+                    'modal-background') {
+                    modal.style.display = 'none'
+                }
+            })
+    </script>
 </body>
 </html>

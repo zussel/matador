@@ -91,6 +91,11 @@ std::shared_ptr<log_domain> log_manager::find_domain(const std::string &name)
   return std::shared_ptr<log_domain>();
 }
 
+void log_manager::log_default(log_level lvl, const std::string &source, const char *message)
+{
+  default_log_domain_->log(lvl, source, message);
+}
+
 std::shared_ptr<file_sink> create_file_sink(const std::string &logfile)
 {
   return std::make_shared<file_sink>(logfile);
@@ -165,6 +170,11 @@ logger create_logger(std::string source)
 logger create_logger(std::string source, const std::string &domain)
 {
   return log_manager::instance().create_logger(std::move(source), domain);
+}
+
+void log_default(log_level lvl, const std::string &source, const char *message)
+{
+  log_manager::instance().log_default(lvl, source, message);
 }
 
 }

@@ -18,6 +18,7 @@ SET (DEMO_SOURCES
 ADD_EXECUTABLE(demo ${DEMO_SOURCES})
 
 CONFIGURE_FILE(web/css/bulma.min.css ${PROJECT_BINARY_DIR}/bin/web/css/bulma.min.css COPYONLY)
+CONFIGURE_FILE(web/css/font-awesome-4.7.0.min.css ${PROJECT_BINARY_DIR}/bin/web/css/font-awesome-4.7.0.min.css COPYONLY)
 CONFIGURE_FILE(web/js/axios.min-0.21.1.js ${PROJECT_BINARY_DIR}/bin/web/js/axios.min-0.21.1.js COPYONLY)
 CONFIGURE_FILE(web/js/demo.js ${PROJECT_BINARY_DIR}/bin/web/js/demo.js COPYONLY)
 CONFIGURE_FILE(web/login.html ${PROJECT_BINARY_DIR}/bin/web/login.html COPYONLY)
