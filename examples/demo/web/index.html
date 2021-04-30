@@ -5,23 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Main page</title>
+
 <!--    <link rel="stylesheet" href="css/font-awesome-4.7.0.min.css">-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/bulma.min.css">
-    <style>
-        div.columns {
-            margin-top: 50px;
-        }
-
-        .modal-content {
-            margin-top: 100px;
-            width: 450px;
-        }
-
-        .buttons {
-            margin-top: 12px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/bulma.min-0.9.2.css">
+    <link rel="stylesheet" href="css/demo.css">
 </head>
 <body>
     <section class="hero is-info is-fullheight">
@@ -77,84 +65,45 @@
                     <div class="modal">
                         <div class="modal-background"></div>
                         <div class="modal-card">
-                            <div class="box">
-                                <div>
-                                    <h1 class='title has-text-centered'>
-                                        Login
-                                    </h1>
-                                </div>
+                            <header class="modal-card-head">
+                                <p class="modal-card-title">Login</p>
+                                <button class="delete" aria-label="close"></button>
+                            </header>
+                            <section class="modal-card-body">
                                 <form action='#' method='post'>
                                     <div class='field'>
-                                        <label class='label'
-                                               id='username'>
-                                            Username
-                                        </label>
+                                        <label class='label' id='username'>Username</label>
                                         <div class='control has-icons-left'>
-                                            <input class='input'
-                                                   type='text'
-                                                   for='username'
-                                                   placeholder='Username'>
+                                            <input class='input' type='text' name="username" for='username' placeholder='Username'>
                                             <span class="icon is-small is-left">
-                                              <i class="fas fa-user"></i>
+                                              <i class="fa fa-user"></i>
                                             </span>
                                         </div>
                                     </div>
 
                                     <div class='field'>
-                                        <label class='label'
-                                               id='password'>
-                                            Password
-                                        </label>
+                                        <label class='label' id='password'>Password</label>
                                         <div class='control has-icons-left'>
-                                            <input class='input'
-                                                   type='password'
-                                                   for='password'
-                                                   placeholder='Password'>
+                                            <input class='input' type='password' name="password" for='password' placeholder='Password'>
                                             <span class="icon is-small is-left">
-                                              <i class="fas fa-lock"></i>
+                                              <i class="fa fa-lock"></i>
                                             </span>
-                                        </div>
-
-                                        <div class='buttons'>
-                                            <button class='button is-link'>
-                                                Login
-                                            </button>
                                         </div>
                                     </div>
                                 </form>
-                            </div>
+                            </section>
+                            <footer class="modal-card-foot">
+                                <button class="button is-success" id="submit">Login</button>
+                                <button class="button" id="cancel">Cancel</button>
+                            </footer>
                         </div>
-                        <button class="modal-close is-large" aria-label="close">Model</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <script>
-        // Bulma does not have JavaScript included,
-        // hence custom JavaScript has to be
-        // written to open or close the modal
-        const modal = document.querySelector('.modal');
-        const btn = document.querySelector('#login')
-        const close = document.querySelector('.modal-close')
-
-        btn.addEventListener('click',
-            function () {
-                modal.style.display = 'block'
-            })
-
-        close.addEventListener('click',
-            function () {
-                modal.style.display = 'none'
-            })
-
-        window.addEventListener('click',
-            function (event) {
-                if (event.target.className ===
-                    'modal-background') {
-                    modal.style.display = 'none'
-                }
-            })
-    </script>
+    <script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="js/axios.min-0.21.1.js"></script>
+    <script type="text/javascript" src="js/demo.js"></script>
 </body>
 </html>

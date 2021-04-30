@@ -17,10 +17,12 @@ SET (DEMO_SOURCES
 
 ADD_EXECUTABLE(demo ${DEMO_SOURCES})
 
-CONFIGURE_FILE(web/css/bulma.min.css ${PROJECT_BINARY_DIR}/bin/web/css/bulma.min.css COPYONLY)
+CONFIGURE_FILE(web/css/bulma.min-0.9.2.css ${PROJECT_BINARY_DIR}/bin/web/css/bulma.min-0.9.2.css COPYONLY)
+CONFIGURE_FILE(web/css/demo.css ${PROJECT_BINARY_DIR}/bin/web/css/demo.css COPYONLY)
 CONFIGURE_FILE(web/css/font-awesome-4.7.0.min.css ${PROJECT_BINARY_DIR}/bin/web/css/font-awesome-4.7.0.min.css COPYONLY)
 CONFIGURE_FILE(web/js/axios.min-0.21.1.js ${PROJECT_BINARY_DIR}/bin/web/js/axios.min-0.21.1.js COPYONLY)
 CONFIGURE_FILE(web/js/demo.js ${PROJECT_BINARY_DIR}/bin/web/js/demo.js COPYONLY)
+CONFIGURE_FILE(web/js/jquery-3.6.0.min.js ${PROJECT_BINARY_DIR}/bin/web/js/jquery-3.6.0.min.js COPYONLY)
 CONFIGURE_FILE(web/login.html ${PROJECT_BINARY_DIR}/bin/web/login.html COPYONLY)
 CONFIGURE_FILE(web/secure.html ${PROJECT_BINARY_DIR}/bin/web/secure.html COPYONLY)
 CONFIGURE_FILE(web/index.html ${PROJECT_BINARY_DIR}/bin/web/index.html COPYONLY)

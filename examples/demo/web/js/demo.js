@@ -1,9 +1,9 @@
-(function () {
-    const output = document.getElementById('output');
-    document.getElementById('login').onclick = function () {
+$(document).ready(function() {
+    let modal = $('.modal');
+    $('#submit').click(() => {
         const credentials = {
-            username: document.getElementById('uname').value,
-            password: document.getElementById('pwd').value
+            username: $('input[name=username]').val(),
+            password: $('input[name=password]').val()
         };
 
         axios.post('/api/v1/auth/login', credentials)
@@ -18,5 +18,11 @@
 //                output.className = 'container text-danger';
 //                output.innerHTML = err.message;
             });
-    };
-})();
+    });
+    $('#cancel').click(() => {
+        modal.hide();
+    });
+    $('#login').click(() => {
+        modal.show();
+    });
+});
