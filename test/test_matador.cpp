@@ -81,6 +81,7 @@
 #include "net/SocketInterrupterTest.hpp"
 
 #include "http/HttpServerTest.hpp"
+#include "http/JwtTest.hpp"
 #include "http/RequestParserTest.hpp"
 #include "http/ResponseParserTest.hpp"
 #include "http/RouteEngineTest.hpp"
@@ -160,6 +161,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new SocketInterrupterTest);
 
   suite.register_unit(new HttpServerTest);
+  suite.register_unit(new JwtTest);
   suite.register_unit(new RequestParserTest);
   suite.register_unit(new ResponseParserTest);
   suite.register_unit(new RouteEngineTest);

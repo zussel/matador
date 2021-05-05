@@ -81,7 +81,7 @@ SET (TEST_HTTP_SOURCES
   http/HttpServerTest.hpp
   http/ResponseParserTest.cpp
   http/ResponseParserTest.hpp
-  http/ResponseData.hpp http/TemplateEngineTest.cpp http/TemplateEngineTest.hpp)
+  http/ResponseData.hpp http/TemplateEngineTest.cpp http/TemplateEngineTest.hpp http/JwtTest.cpp http/JwtTest.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp

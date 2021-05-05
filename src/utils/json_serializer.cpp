@@ -2,8 +2,8 @@
 
 namespace matador {
 
-json_format json_format::compact { false, 0 }; /* NOLINT */
-json_format json_format::pretty { true, 2 }; /* NOLINT */
+json_format json_format::compact { false, true, 0 }; /* NOLINT */
+json_format json_format::pretty { true, false, 2 }; /* NOLINT */
 
 inline json_format::json_format(bool enable_line_break)
     : enable_line_break_(enable_line_break)
@@ -13,14 +13,20 @@ inline json_format::json_format(unsigned indentation)
     : indentation_(indentation)
 {}
 
-inline json_format::json_format(bool enable_line_break, unsigned indentation)
+inline json_format::json_format(bool enable_line_break, bool skip_empty, unsigned indentation)
     : enable_line_break_(enable_line_break)
+    , skip_empty_(skip_empty)
     , indentation_(indentation)
 {}
 
 inline bool json_format::show_line_break() const
 {
     return enable_line_break_;
+}
+
+bool json_format::skip_empty()
+{
+  return skip_empty_;
 }
 
 inline unsigned json_format::indentation() const
@@ -34,37 +40,54 @@ json_serializer::json_serializer(json_format format)
 
 void json_serializer::serialize(const char *id, std::string &val, size_t)
 {
+  if (val.empty()) {
+    return;
+  }
   write_id(id);
   append(val).append(",");
   newline();
 }
 
-void json_serializer::write_value(identifier<std::string> &pk)
+void json_serializer::serialize(const char *id, identifier<std::string> &pk)
 {
+  write_id(id);
   append(pk.value()).append(",");
   newline();
 }
 
-void json_serializer::write_value(bool &val)
+void json_serializer::serialize(const char *id, bool &val)
 {
+  write_id(id);
   append(val).append(",");
   newline();
 }
 
-void json_serializer::write_value(std::string &val)
+void json_serializer::serialize(const char *id, std::string &val)
 {
+  if (val.empty()) {
+    return;
+  }
+  write_id(id);
   append(val).append(",");
   newline();
 }
 
-void json_serializer::write_value(date &d)
+void json_serializer::serialize(const char *id, date &d)
 {
+  if (d.julian_date() == 0) {
+    return;
+  }
+  write_id(id);
   append(matador::to_string(d)).append(",");
   newline();
 }
 
-void json_serializer::write_value(time &t)
+void json_serializer::serialize(const char *id, time &t)
 {
+  if (t.get_timeval().tv_sec == 0 || t.get_timeval().tv_usec == 0) {
+    return;
+  }
+  write_id(id);
   append(matador::to_string(t)).append(",");
   newline();
 }

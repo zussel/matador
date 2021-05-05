@@ -32,7 +32,7 @@ SET(HEADER
   ../../include/matador/http/mime_types.hpp
   ../../include/matador/http/url.hpp
   ../../include/matador/http/static_file_service.hpp
-  ../../include/matador/http/response_parser.hpp ../../include/matador/http/http_client_connection.hpp ../../include/matador/http/http_client_connection.hpp ../../include/matador/http/template_engine.hpp ../../include/matador/http/detail/template_command.hpp ../../include/matador/http/detail/template_command_factory.hpp ../../include/matador/http/detail/template_parser.hpp ../../include/matador/http/detail/template_part.hpp detail/template_expression.cpp ../../include/matador/http/detail/template_expression.hpp ../../include/matador/http/middleware.hpp ../../include/matador/http/middleware/routing_middleware.hpp)
+  ../../include/matador/http/response_parser.hpp ../../include/matador/http/http_client_connection.hpp ../../include/matador/http/http_client_connection.hpp ../../include/matador/http/template_engine.hpp ../../include/matador/http/detail/template_command.hpp ../../include/matador/http/detail/template_command_factory.hpp ../../include/matador/http/detail/template_parser.hpp ../../include/matador/http/detail/template_part.hpp detail/template_expression.cpp ../../include/matador/http/detail/template_expression.hpp ../../include/matador/http/middleware.hpp ../../include/matador/http/middleware/routing_middleware.hpp ../../include/matador/http/auth/jwt_token.hpp)
 
 ADD_LIBRARY(matador-http SHARED ${SOURCES} ${HEADER})
 

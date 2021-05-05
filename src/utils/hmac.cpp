@@ -2,6 +2,7 @@
 #include "matador/utils/sha256.hpp"
 
 #include <cstring>
+#include <vector>
 
 namespace matador {
 
@@ -39,13 +40,14 @@ std::string hmac(const char *key, size_t keylen, const char *message, size_t msg
   }
 
   const size_t tmplen = BLOCK_SIZE + msglen;
-  char tmp1[BLOCK_SIZE + tmplen];
+  std::vector<char> tmp1(BLOCK_SIZE + tmplen);
+  //char tmp1[BLOCK_SIZE + tmplen];
 
-  memcpy(tmp1, i_key_pad, BLOCK_SIZE);
-  memcpy(tmp1 + BLOCK_SIZE, message, msglen);
+  memcpy(tmp1.data(), i_key_pad, BLOCK_SIZE);
+  memcpy(tmp1.data() + BLOCK_SIZE, message, msglen);
 
   unsigned char h1[HASH_SIZE] {};
-  ext::sha256(tmp1, tmplen, h1, HASH_SIZE);
+  ext::sha256(tmp1.data(), tmplen, h1, HASH_SIZE);
 
   char tmp2[BLOCK_SIZE * HASH_SIZE];
 
