@@ -1,5 +1,6 @@
 #include <utility>
 #include <chrono>
+#include <locale>
 
 #include "matador/logger/log_manager.hpp"
 
@@ -17,8 +18,7 @@
  */
 
 using namespace matador::http;
-using namespace std::
-;
+using namespace std;
 
 struct user
 {
@@ -158,6 +158,17 @@ private:
 
 int main(int /*argc*/, char* /*argv*/[])
 {
+  std::string umlaut{ "aeiäöü" };
+
+  unsigned char comp = 128;
+  for (unsigned char c : umlaut) {
+      bool is_ascii = (c & comp) == 0;
+      auto b = isalnum((int)c);
+      std::cout << "'" << c << "' isalnum: " << b << ", is ascii: " << is_ascii << "\n";
+  }
+
+  return 0;
+
   matador::add_log_sink(matador::create_stdout_sink());
 
   middleware_pipeline pipeline;

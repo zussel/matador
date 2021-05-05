@@ -207,12 +207,21 @@ bool response_parser::parse_header_value_begin(char c)
   return false;
 }
 
+bool isutf8(char c)
+{
+    static const unsigned char comp = 128;
+    return (c & comp) > 0;
+}
+
 bool response_parser::parse_header_value(char c)
 {
   if (c == ' ' || c == '\t') {
     blanks_.push_back(c);
     return true;
-  } else if (isalnum(c) || ispunct(c)) {
+  } else if (c == '\r') {
+      state_ = HEADER_NEWLINE;
+      return true;
+  } else if (isutf8(c) || isalnum(c) || ispunct(c)) {
     if (!blanks_.empty() && !skip_blanks_) {
       current_value_.append(blanks_);
       blanks_.clear();
@@ -221,9 +230,6 @@ bool response_parser::parse_header_value(char c)
       skip_blanks_ = false;
     }
     current_value_.push_back(c);
-    return true;
-  } else if (c == '\r') {
-    state_ = HEADER_NEWLINE;
     return true;
   }
   return false;

@@ -276,7 +276,7 @@ OOS_LOGGER_API logger create_logger(std::string source);
  */
 OOS_LOGGER_API logger create_logger(std::string source, const std::string &domain);
 
-void log_default(log_level lvl, const std::string &source, const char *message);
+OOS_LOGGER_API void log_default(log_level lvl, const std::string &source, const char *message);
 
 template<typename... ARGS>
 void log(log_level lvl, const std::string &source, const char *what, ARGS const &... args)

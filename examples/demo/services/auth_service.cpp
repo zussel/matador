@@ -38,7 +38,14 @@ response auth_service::login(const request &req)
   // extract username and password from headers
 //    req.headers.at("Authentication");
 
-  user u { 0, "herb", "herb123", "Herbert",  "Grönemeyer"};
+  // doesn't work under win
+  //user u { 0, "herb", "herb123", "Herbert",  "Grönemeyer"};
+  user u;
+  u.id = 0;
+  u.username = "herb";
+  u.password = "herb123";
+  u.first_name = "Herbert";
+  u.last_name = "Grönemeyer";
 
   return response::json(u);
 }

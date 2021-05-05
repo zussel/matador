@@ -1,6 +1,19 @@
 #ifndef MATADOR_MIDDLEWARE_HPP
 #define MATADOR_MIDDLEWARE_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_http_EXPORTS
+#define OOS_HTTP_API __declspec(dllexport)
+#define EXPIMP_HTTP_TEMPLATE
+#else
+#define OOS_HTTP_API __declspec(dllimport)
+#define EXPIMP_HTTP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_HTTP_API
+#endif
+
 #include "matador/http/response.hpp"
 
 #include <functional>
@@ -11,7 +24,7 @@ namespace http {
 
 class request;
 
-class middleware
+class OOS_HTTP_API middleware
 {
 public:
   using next_func_t = std::function<matador::http::response()>;
@@ -22,7 +35,7 @@ public:
 
 using middleware_ptr = std::shared_ptr<middleware>;
 
-class middleware_processor
+class OOS_HTTP_API middleware_processor
 {
 public:
   explicit middleware_processor(middleware_ptr current, std::shared_ptr<middleware_processor> next);
@@ -34,13 +47,13 @@ private:
   std::shared_ptr<middleware_processor> next_;
 };
 
-class sentinel_middleware : public middleware
+class OOS_HTTP_API sentinel_middleware : public middleware
 {
 public:
   matador::http::response process(request &, const next_func_t &) override;
 };
 
-class middleware_pipeline
+class OOS_HTTP_API middleware_pipeline
 {
 private:
   using middleware_processor_ptr = std::shared_ptr<middleware_processor>;

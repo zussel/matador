@@ -142,7 +142,11 @@ std::string sha256(const char *input, size_t length)
   char buf[2*SHA256::DIGEST_SIZE+1];
   buf[2*SHA256::DIGEST_SIZE] = 0;
   for (unsigned int i = 0; i < SHA256::DIGEST_SIZE; i++) {
-    sprintf(buf + i * 2, "%02x", digest[i]);
+#ifdef _MSC_VER
+      sprintf_s(buf + i * 2, 2 * SHA256::DIGEST_SIZE + 1, "%02x", digest[i]);
+#else
+      sprintf(buf + i * 2, "%02x", digest[i]);
+#endif
   }
   return buf;
 }

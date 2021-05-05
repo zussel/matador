@@ -56,7 +56,7 @@ private:
   std::vector<route_endpoint_ptr> routes_;
 };
 
-routing_engine::route_endpoint_ptr create_route_endpoint(
+OOS_HTTP_API routing_engine::route_endpoint_ptr create_route_endpoint(
   const std::string &path_spec,
   http::method_t method,
   const t_request_handler &request_handler

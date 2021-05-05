@@ -24,7 +24,9 @@ void JwtTest::test_jwt_token()
 
   UNIT_ASSERT_EQUAL(R"({"alg": "HSA256","typ": "JWT"})", result);
 
-  jwt_payload p = { "www.example.com", "123456789" };
+  jwt_payload p;
+  p.issuer = "www.example.com";
+  p.subject = "123456789";
   p.name = "John Doe";
 
   result = js.to_json(p);

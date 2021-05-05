@@ -7,6 +7,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <array>
 
 namespace matador {
 

@@ -13,6 +13,11 @@ public:
   std::string algorithm {};
   std::string type {};
 
+  jwt_header() = default;
+  jwt_header(std::string algo, std::string typ)
+    : algorithm(std::move(algo)), type(std::move(typ))
+  {}
+
   template<class Serializer>
   void serialize(Serializer &serializer)
   {

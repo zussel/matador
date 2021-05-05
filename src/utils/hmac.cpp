@@ -18,12 +18,16 @@ std::string hmac(const char *key, size_t keylen, const char *message, size_t msg
 
   char keystr[BLOCK_SIZE] {};
 
-  // prepare key
+  // prepare keystati
   if (keylen > BLOCK_SIZE) {
     auto enc = ext::sha256(key);
     memcpy(keystr, enc.data(), BLOCK_SIZE);
   } else if (keylen < BLOCK_SIZE) {
+#ifdef _MSC_VER
+    strcpy_s(keystr, BLOCK_SIZE, key);
+#else
     strcpy(keystr, key);
+#endif
     memset(keystr + keylen, '\0', BLOCK_SIZE - keylen);
   } else {
     memcpy(keystr, key, keylen);

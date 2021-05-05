@@ -264,12 +264,12 @@ public:
    */
   json& operator=(const json &x);
 
-  friend bool operator==(const json &a, const json &b);
-  friend bool operator!=(const json &a, const json &b);
-  friend bool operator<(const json &a, const json &b);
-  friend bool operator<=(const json &a, const json &b);
-  friend bool operator>(const json &a, const json &b);
-  friend bool operator>=(const json &a, const json &b);
+  friend OOS_UTILS_API bool operator==(const json &a, const json &b);
+  friend OOS_UTILS_API bool operator!=(const json &a, const json &b);
+  friend OOS_UTILS_API bool operator<(const json &a, const json &b);
+  friend OOS_UTILS_API bool operator<=(const json &a, const json &b);
+  friend OOS_UTILS_API bool operator>(const json &a, const json &b);
+  friend OOS_UTILS_API bool operator>=(const json &a, const json &b);
 
   template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
   friend bool operator<(const json &a, const T &b);

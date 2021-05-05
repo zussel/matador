@@ -64,7 +64,6 @@ HttpServerTest::HttpServerTest()
 
 void HttpServerTest::initialize()
 {
-  matador::default_min_log_level(log_level::LVL_DEBUG);
 }
 
 void HttpServerTest::finalize()
@@ -74,7 +73,7 @@ void HttpServerTest::finalize()
 
 void HttpServerTest::test_shutdown()
 {
-  http::server s(7777);
+  http::server s(8123);
 
   ThreadWrapper<http::server> wrapper(s);
 
@@ -91,10 +90,7 @@ void HttpServerTest::test_shutdown()
 
 void HttpServerTest::test_get()
 {
-  matador::default_min_log_level(log_level::LVL_DEBUG);
-  matador::add_log_sink(matador::create_stdout_sink());
-
-  http::server s(7779);
+  http::server s(8123);
   s.add_routing_middleware();
 
   s.on_get("/test/{name}", [](const http::request &req) {
@@ -109,7 +105,7 @@ void HttpServerTest::test_get()
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
-  http::client c("localhost:7779");
+  http::client c("localhost:8123");
   auto resp = c.get("/test/world");
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
@@ -124,9 +120,6 @@ void HttpServerTest::test_get()
 
 void HttpServerTest::test_post()
 {
-  matador::default_min_log_level(log_level::LVL_DEBUG);
-  matador::add_log_sink(matador::create_stdout_sink());
-
   http::server s(7779);
   s.add_routing_middleware();
 
@@ -157,9 +150,6 @@ void HttpServerTest::test_post()
 
 void HttpServerTest::test_put()
 {
-  matador::default_min_log_level(log_level::LVL_DEBUG);
-  matador::add_log_sink(matador::create_stdout_sink());
-
   http::server s(7779);
   s.add_routing_middleware();
 
@@ -190,9 +180,6 @@ void HttpServerTest::test_put()
 
 void HttpServerTest::test_delete()
 {
-  matador::default_min_log_level(log_level::LVL_DEBUG);
-  matador::add_log_sink(matador::create_stdout_sink());
-
   http::server s(7779);
   s.add_routing_middleware();
 
