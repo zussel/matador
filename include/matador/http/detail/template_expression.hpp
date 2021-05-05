@@ -1,6 +1,19 @@
 #ifndef MATADOR_TEMPLATE_EXPRESSION_HPP
 #define MATADOR_TEMPLATE_EXPRESSION_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_http_EXPORTS
+    #define OOS_HTTP_API __declspec(dllexport)
+    #define EXPIMP_HTTP_TEMPLATE
+  #else
+    #define OOS_HTTP_API __declspec(dllimport)
+    #define EXPIMP_HTTP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_HTTP_API
+#endif
+
 #include <string>
 #include <functional>
 
@@ -11,7 +24,7 @@ class json;
 namespace http {
 namespace detail {
 
-class template_expression
+class OOS_HTTP_API template_expression
 {
 public:
   virtual ~template_expression() = default;
@@ -19,10 +32,10 @@ public:
   virtual bool evaluate(const json &data) const = 0;
 };
 
-bool operator==(const json &a, const std::string &b);
-bool operator!=(const json &a, const std::string &b);
+OOS_HTTP_API bool operator==(const json &a, const std::string &b);
+OOS_HTTP_API bool operator!=(const json &a, const std::string &b);
 
-class json_value_expression : public template_expression
+class OOS_HTTP_API json_value_expression : public template_expression
 {
 public:
   explicit json_value_expression(std::string value_name);
@@ -33,7 +46,7 @@ private:
   std::string value_name_;
 };
 
-class json_compare_expression : public template_expression
+class OOS_HTTP_API json_compare_expression : public template_expression
 {
 public:
   template < typename Function >

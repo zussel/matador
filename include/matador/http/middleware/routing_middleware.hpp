@@ -1,6 +1,19 @@
 #ifndef MATADOR_ROUTING_MIDDLEWARE_HPP
 #define MATADOR_ROUTING_MIDDLEWARE_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_http_EXPORTS
+    #define OOS_HTTP_API __declspec(dllexport)
+    #define EXPIMP_HTTP_TEMPLATE
+  #else
+    #define OOS_HTTP_API __declspec(dllimport)
+    #define EXPIMP_HTTP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_HTTP_API
+#endif
+
 #include "matador/logger/log_manager.hpp"
 
 #include "matador/utils/optional.hpp"
@@ -12,7 +25,7 @@ namespace matador {
 namespace http {
 namespace middlewares {
 
-class routing_middleware : public middleware
+class OOS_HTTP_API routing_middleware : public middleware
 {
 public:
   explicit routing_middleware(const routing_engine &router);

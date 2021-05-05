@@ -32,9 +32,11 @@ public:
   json_format() = default;
   explicit json_format(bool enable_line_break);
   explicit json_format(unsigned indentation);
-  json_format(bool enable_line_break, unsigned indentation);
+  json_format(bool enable_line_break, bool skip_empty, unsigned indentation);
 
   bool show_line_break() const;
+
+  bool skip_empty();
 
   unsigned indentation() const;
 
@@ -43,6 +45,7 @@ public:
 
 private:
   bool enable_line_break_ = true;
+  bool skip_empty_ = true;
   unsigned indentation_ = 2;
 };
 
@@ -58,16 +61,18 @@ public:
   std::string to_json(const T &obj)
   {
     json_.clear();
-    write_value(obj);
+    append(obj);
+    newline();
+    //serialize(obj);
     return json_;
   }
 
-  template < class V >
-  void serialize(const char *id, V &value)
-  {
-    write_id(id);
-    write_value(value);
-  }
+//  template < class V >
+//  void serialize(const char *id, V &value)
+//  {
+//    write_id(id);
+//    write_value(value);
+//  }
 
   // string
   void serialize(const char *id, std::string &val, size_t);
@@ -80,58 +85,64 @@ public:
   }
 
   template< class V >
-  void write_value(identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void serialize(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
+    write_id(id);
     append(pk).append(",");
     newline();
   }
 
   template < class V >
-  void write_value(V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
+  void serialize(const char *id, V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
+    write_id(id);
     append(obj);
     newline();
   }
 
-  void write_value(identifier<std::string> &pk);
+  void serialize(const char *id, identifier<std::string> &pk);
 
   template < int SIZE, class V >
-  void write_value(identifier<varchar<SIZE, V>> &pk)
+  void serialize(const char *id, identifier<varchar<SIZE, V>> &pk)
   {
+    write_id(id);
     append(pk.value()).append(",");
     newline();
   }
 
   // numbers
   template < class V >
-  void write_value(V &val, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void serialize(const char *id, V &val, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
+    write_id(id);
     append(val).append(",");
     newline();
   }
 
   // boolean
-  void write_value(bool &val);
+  void serialize(const char *id, bool &val);
 
   // string
-  void write_value(std::string &val);
+  void serialize(const char *id, std::string &val);
 
   // date
-  void write_value(date &d);
+  void serialize(const char *id, date &d);
 
   // time
-  void write_value(time &t);
+  void serialize(const char *id, time &t);
 
   template < class V >
-  void write_value(std::list<V> &cont, typename std::enable_if<!std::is_class<V>::value>::type* = 0)
+  void serialize(const char *id, std::list<V> &cont, typename std::enable_if<!std::is_class<V>::value>::type* = 0)
   {
+    write_id(id);
     json_.append("[");
     join(cont, ", ").append("],");
     newline();
   }
   template < class V >
-  void write_value(std::list<V> &cont, typename std::enable_if<std::is_class<V>::value>::type* = 0)
+  void serialize(const char *id, std::list<V> &cont, typename std::enable_if<std::is_class<V>::value>::type* = 0)
   {
+    write_id(id);
     json_.append("[");
     join(cont, "");
     auto idx = json_.find_last_of(',');
@@ -141,15 +152,17 @@ public:
   }
 
   template < class V >
-  void write_value(std::vector<V> &cont, typename std::enable_if<!std::is_class<V>::value>::type* = 0)
+  void serialize(const char *id, std::vector<V> &cont, typename std::enable_if<!std::is_class<V>::value>::type* = 0)
   {
+    write_id(id);
     json_.append("[");
     join(cont, ", ").append("],");
     newline();
   }
   template < class V >
-  void write_value(std::vector<V> &cont, typename std::enable_if<std::is_class<V>::value>::type* = 0)
+  void serialize(const char *id, std::vector<V> &cont, typename std::enable_if<std::is_class<V>::value>::type* = 0)
   {
+    write_id(id);
     json_.append("[");
     join(cont, "");
     auto idx = json_.find_last_of(',');
@@ -159,15 +172,17 @@ public:
   }
 
   template < class V >
-  void write_value(std::set<V> &cont)
+  void serialize(const char *id, std::set<V> &cont)
   {
+    write_id(id);
     json_.append("[");
     join(cont, ", ").append("],\n");
   }
 
   template < class V >
-  void write_value(std::unordered_set<V> &cont)
+  void serialize(const char *id, std::unordered_set<V> &cont)
   {
+    write_id(id);
     json_.append("[");
     join(cont, ", ").append("],");
     newline();
@@ -230,7 +245,7 @@ private:
 
 private:
   std::string json_;
-  json_format format_;
+  json_format format_ {};
   unsigned depth_ = 0;
 };
 

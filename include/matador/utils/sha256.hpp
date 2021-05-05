@@ -13,12 +13,25 @@
 #ifndef MATADOR_SHA256_HPP
 #define MATADOR_SHA256_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_utils_EXPORTS
+    #define OOS_UTILS_API __declspec(dllexport)
+    #define EXPIMP_UTILS_TEMPLATE
+  #else
+    #define OOS_UTILS_API __declspec(dllimport)
+    #define EXPIMP_UTILS_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_UTILS_API
+#endif
+
 #include <string>
 
 namespace matador {
 namespace ext {
 
-class SHA256
+class OOS_UTILS_API SHA256
 {
 protected:
   typedef unsigned char uint8;
@@ -41,9 +54,9 @@ protected:
   uint32 m_h[8];
 };
 
-std::string sha256(const std::string& input);
-std::string sha256(const char *input, size_t length);
-void sha256(const char *input, size_t length, unsigned char *digest, size_t hash_size);
+OOS_UTILS_API std::string sha256(const std::string& input);
+OOS_UTILS_API std::string sha256(const char *input, size_t length);
+OOS_UTILS_API void sha256(const char *input, size_t length, unsigned char *digest, size_t hash_size);
 
 #define SHA2_SHFR(x, n)    ((x) >> (n))
 #define SHA2_ROTR(x, n)   (((x) >> (n)) | ((x) << ((sizeof(x) << 3) - (n))))

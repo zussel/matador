@@ -1,6 +1,19 @@
 #ifndef MATADOR_TEMPLATE_PARSER_HPP
 #define MATADOR_TEMPLATE_PARSER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_http_EXPORTS
+    #define OOS_HTTP_API __declspec(dllexport)
+    #define EXPIMP_HTTP_TEMPLATE
+  #else
+    #define OOS_HTTP_API __declspec(dllimport)
+    #define EXPIMP_HTTP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_HTTP_API
+#endif
+
 #include "matador/http/detail/template_part.hpp"
 #include "matador/http/detail/template_command_factory.hpp"
 
@@ -21,13 +34,13 @@ class template_part;
 class template_expression;
 class multi_template_part;
 
-std::string parse_token(string_cursor &cursor);
-std::string parse_filepath(string_cursor &cursor);
-bool parse_end_of_command_tag(string_cursor &cursor);
-std::shared_ptr<template_expression> parse_expression(string_cursor &cursor);
-std::string parse_operator(string_cursor &cursor);
+OOS_HTTP_API std::string parse_token(string_cursor &cursor);
+OOS_HTTP_API std::string parse_filepath(string_cursor &cursor);
+OOS_HTTP_API bool parse_end_of_command_tag(string_cursor &cursor);
+OOS_HTTP_API std::shared_ptr<template_expression> parse_expression(string_cursor &cursor);
+OOS_HTTP_API std::string parse_operator(string_cursor &cursor);
 
-class template_parser
+class OOS_HTTP_API template_parser
 {
 public:
   template_parser() = default;

@@ -1,6 +1,19 @@
 #ifndef MATADOR_TEMPLATE_PART_HPP
 #define MATADOR_TEMPLATE_PART_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_http_EXPORTS
+    #define OOS_HTTP_API __declspec(dllexport)
+    #define EXPIMP_HTTP_TEMPLATE
+  #else
+    #define OOS_HTTP_API __declspec(dllimport)
+    #define EXPIMP_HTTP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_HTTP_API
+#endif
+
 #include <string>
 #include <memory>
 #include <list>
@@ -14,7 +27,7 @@ namespace detail {
 
 class template_expression;
 
-class template_part
+class OOS_HTTP_API template_part
 {
 public:
   virtual ~template_part() = default;
@@ -24,7 +37,7 @@ public:
 
 using template_part_ptr = std::shared_ptr<template_part>;
 
-class static_part : public template_part
+class OOS_HTTP_API static_part : public template_part
 {
 public:
   explicit static_part(std::string str);
@@ -35,7 +48,7 @@ private:
   std::string str_;
 };
 
-class variable_part : public template_part
+class OOS_HTTP_API variable_part : public template_part
 {
 public:
   explicit variable_part(std::string str);
@@ -46,7 +59,7 @@ private:
   std::string str_;
 };
 
-class multi_template_part : public template_part
+class OOS_HTTP_API multi_template_part : public template_part
 {
 public:
   void push_back(const template_part_ptr &part);
@@ -59,7 +72,7 @@ private:
   std::list<template_part_ptr> parts_;
 };
 
-class loop_template_part : public template_part
+class OOS_HTTP_API loop_template_part : public template_part
 {
 public:
   loop_template_part(template_part_ptr part, template_part_ptr on_empty_part, std::string list_name, std::string elem_name);
@@ -73,7 +86,7 @@ private:
   std::string elem_name_;
 };
 
-class if_template_part : public template_part
+class OOS_HTTP_API if_template_part : public template_part
 {
 public:
   using t_expression_list = std::list<std::pair<std::shared_ptr<template_expression>, template_part_ptr>>;
