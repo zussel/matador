@@ -93,7 +93,8 @@ response response::create(http::status_t status)
   resp.version_.major = 1;
   resp.version_.minor = 1;
 
-  resp.headers_.insert(std::make_pair(response_header::DATE, matador::to_string(time::now(), "%a, %d %b %Y %H:%M:%S %Z")));
+  resp.headers_.insert(std::make_pair(response_header::DATE, matador::to_string(time::now(), "%a, %d %b %Y %H:%M:%S")));
+//  resp.headers_.insert(std::make_pair(response_header::DATE, matador::to_string(time::now(), "%a, %d %b %Y %H:%M:%S %Z")));
   resp.headers_.insert(std::make_pair(response_header::SERVER, "Matador/0.7.0"));
   resp.headers_.insert(std::make_pair(response_header::CONNECTION, "Closed"));
 
@@ -148,7 +149,8 @@ response response::from_file(const std::string &file_path)
   resp.version_.major = 1;
   resp.version_.minor = 1;
 
-  resp.headers_.insert(std::make_pair(response_header::DATE, matador::to_string(matador::time::now(), "%a, %d %b %Y %H:%M:%S %Z")));
+  resp.headers_.insert(std::make_pair(response_header::DATE, matador::to_string(matador::time::now(), "%a, %d %b %Y %H:%M:%S")));
+//  resp.headers_.insert(std::make_pair(response_header::DATE, matador::to_string(matador::time::now(), "%a, %d %b %Y %H:%M:%S %Z")));
   resp.headers_.insert(std::make_pair(response_header::SERVER, "Matador/0.7.0"));
   resp.headers_.insert(std::make_pair(response_header::CONNECTION, "Closed"));
 
