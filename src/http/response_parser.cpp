@@ -20,7 +20,6 @@ const std::size_t response_parser::HTTP_VERSION_PREFIX_LEN = strlen(response_par
 
 response_parser::return_t response_parser::parse(const std::string &msg, response &resp)
 {
-  logger log(create_logger("ResponseParser"));
   /*
    * parse first line and extract
    * - http version
@@ -87,19 +86,31 @@ response_parser::return_t response_parser::parse(const std::string &msg, respons
       }
     }
   }
-  auto length = std::stoul(resp.content_.length);
-  if (length > 0) {
-    log.info("length: %d, pos+1: %d, msg.length: %d", length, pos+1, msg.size());
-    resp.body_.append(msg.substr(++pos, length));
-    if (resp.body_.size() < length) {
-      result = PARTIAL;
-    } else {
-      result = FINISH;
-    }
-  } else if (msg.size() > pos) {
-    resp.body_.assign(msg.substr(++pos));
+  if (result == PARTIAL) {
+    return result;
   }
-
+  auto length = std::stoul(resp.content_.length) - resp.body_.size();;
+  try {
+    ++pos;
+    if (length > 0) {
+      //log_default(log_level::LVL_INFO, "ResponseParser", "length: %d, pos+1: %d, msg.length: %d", length, pos + 1, msg.size());
+      // determine body size of message
+      auto remaining_msg_size = msg.size() - pos;
+      resp.body_.append(msg.substr(pos, remaining_msg_size));
+      if (remaining_msg_size == length) {
+        result = FINISH;
+      } else if (remaining_msg_size < length) {
+        result = PARTIAL;
+      } else {
+        // should not happen
+      }
+    } else if (msg.size() > pos) {
+      resp.body_.assign(msg.substr(pos));
+    }
+  } catch (std::exception& ex) {
+    log_default(log_level::LVL_ERROR, "ResponseParser", ex.what());
+    return result;
+  }
   return result;
 }
 
