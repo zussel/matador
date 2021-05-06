@@ -84,7 +84,7 @@ void stream_handler::on_output()
   }
   auto end = std::chrono::high_resolution_clock::now();
   auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-  log_.info("%s: sent %d bytes (%dµs)", name().c_str(), bytes_total, elapsed);
+  log_.info("%s: sent %d bytes (%dms)", name().c_str(), bytes_total, elapsed);
   is_ready_to_write_ = false;
   on_write_(0, bytes_total);
 }
