@@ -82,7 +82,7 @@ void ResponseParserTest::test_from_file_response()
   ::fwrite(data.c_str(), sizeof(char), data.size(), f.stream());
   f.close();
 
-  http::response resp = http::response::from_file("/" + filename);
+  http::response resp = http::response::from_file(filename);
 
   UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
   UNIT_ASSERT_EQUAL(3UL, resp.headers().size());
