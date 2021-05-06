@@ -12,6 +12,7 @@ public:
   void test_body_response();
   void test_from_file_response();
   void test_partial_response_body();
+  void test_partial_response_body_2();
 };
 
 
