@@ -64,6 +64,7 @@ HttpServerTest::HttpServerTest()
 
 void HttpServerTest::initialize()
 {
+  add_log_sink(create_stdout_sink());
 }
 
 void HttpServerTest::finalize()
