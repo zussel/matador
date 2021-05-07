@@ -86,11 +86,9 @@ response_parser::return_t response_parser::parse(const std::string &msg, respons
       }
     }
   }
-  if (result == PARTIAL) {
-    return result;
-  }
-  auto length = std::stoul(resp.content_.length) - resp.body_.size();;
-  try {
+
+  if (state_ == BODY) {
+    auto length = std::stoul(resp.content_.length) - resp.body_.size();
     ++pos;
     if (length > 0) {
       //log_default(log_level::LVL_INFO, "ResponseParser", "length: %d, pos+1: %d, msg.length: %d", length, pos + 1, msg.size());
@@ -98,6 +96,7 @@ response_parser::return_t response_parser::parse(const std::string &msg, respons
       auto remaining_msg_size = msg.size() - pos;
       resp.body_.append(msg.substr(pos, remaining_msg_size));
       if (remaining_msg_size == length) {
+        state_ = VERSION;
         result = FINISH;
       } else if (remaining_msg_size < length) {
         result = PARTIAL;
@@ -106,10 +105,9 @@ response_parser::return_t response_parser::parse(const std::string &msg, respons
       }
     } else if (msg.size() > pos) {
       resp.body_.assign(msg.substr(pos));
+      state_ = VERSION;
+      result = FINISH;
     }
-  } catch (std::exception& ex) {
-    log_default(log_level::LVL_ERROR, "ResponseParser", ex.what());
-    return result;
   }
   return result;
 }
@@ -269,7 +267,8 @@ bool response_parser::parse_header_newline(char c, response &resp)
   return false;
 }
 
-bool response_parser::parse_header_finish(char c) {
+bool response_parser::parse_header_finish(char c)
+{
   auto header_finished = c == '\n';
   if (header_finished) {
     state_ = BODY;

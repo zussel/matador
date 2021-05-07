@@ -19,6 +19,7 @@ RequestParserTest::RequestParserTest()
   add_test("post_form_data", [this] { test_post_form_data_request(); }, "parse post form data request");
   add_test("post_xml", [this] { test_xml_post_request(); }, "parse post xml request");
   add_test("post_xml_partial", [this] { test_xml_post_partial_request(); }, "parse post xml partial request");
+  add_test("post_xml_partial_2", [this] { test_xml_post_partial_request_2(); }, "parse post xml partial request 2");
 }
 
 void RequestParserTest::test_reset_request_parser()
@@ -197,5 +198,42 @@ void RequestParserTest::test_xml_post_partial_request()
   UNIT_ASSERT_EQUAL("gzip, deflate", req.headers().at(request_header::ACCEPT_ENCODING));
   UNIT_ASSERT_EQUAL("application/vnd.bonfire+xml; charset=utf-8", req.content().type);
   UNIT_ASSERT_EQUAL("254", req.content().length);
+  UNIT_ASSERT_EQUAL(expected_content_length, req.body().size());
+}
+
+void RequestParserTest::test_xml_post_partial_request_2()
+{
+  request_parser parser;
+  request req;
+  size_t expected_header_size_begin(1);
+  size_t expected_header_size_end(6);
+  size_t expected_content_length(254);
+
+  /*
+   * read in first part
+   */
+  UNIT_ASSERT_EQUAL(request_parser::PARTIAL, parser.parse(RequestData::POST_PARTIAL_BEGIN_2, req));
+  UNIT_ASSERT_EQUAL(http::POST, req.method());
+  UNIT_ASSERT_EQUAL("/experiments", req.url());
+  UNIT_ASSERT_EQUAL(1, req.version().major);
+  UNIT_ASSERT_EQUAL(1, req.version().minor);
+  UNIT_ASSERT_EQUAL(expected_header_size_begin, req.headers().size());
+  UNIT_ASSERT_EQUAL("api.bonfire-project.eu:444", req.host());
+
+  /*
+   * read in middle part
+   */
+  UNIT_ASSERT_EQUAL(request_parser::PARTIAL, parser.parse(RequestData::POST_PARTIAL_MIDDLE_2, req));
+  UNIT_ASSERT_EQUAL(expected_header_size_end, req.headers().size());
+  UNIT_ASSERT_EQUAL("*/*", req.headers().at(request_header::ACCEPT));
+  UNIT_ASSERT_EQUAL("Basic XXX", req.headers().at(request_header::AUTHORIZATION));
+  UNIT_ASSERT_EQUAL("gzip, deflate", req.headers().at(request_header::ACCEPT_ENCODING));
+  UNIT_ASSERT_EQUAL("application/vnd.bonfire+xml; charset=utf-8", req.content().type);
+  UNIT_ASSERT_EQUAL("254", req.content().length);
+
+  /*
+   * read in last part
+   */
+  UNIT_ASSERT_EQUAL(request_parser::FINISH, parser.parse(RequestData::POST_PARTIAL_END_2, req));
   UNIT_ASSERT_EQUAL(expected_content_length, req.body().size());
 }

@@ -16,6 +16,7 @@ public:
   void test_post_form_data_request();
   void test_xml_post_request();
   void test_xml_post_partial_request();
+  void test_xml_post_partial_request_2();
 };
 
 

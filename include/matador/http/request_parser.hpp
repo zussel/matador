@@ -50,7 +50,8 @@ private:
     HEADER_VALUE_BEGIN,
     HEADER_VALUE,
     HEADER_NEWLINE,
-    HEADER_FINISH
+    HEADER_FINISH,
+    BODY
   };
 
   enum hex_parse_t {

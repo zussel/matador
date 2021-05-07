@@ -35,71 +35,73 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
    */
   return_t result = PARTIAL;
   http_prefix_index_ = 0;
-  std::string::size_type pos;
-  for (pos = 0; pos < msg.size(); ++pos) {
-    std::string::value_type c = msg.at(pos);
-    if (c == '\0') {
-      return result;
-    }
-    bool ret = false;
-    bool finished = false;
-    switch (state_) {
-      case METHOD:
-        ret = parse_method(c, req);
+  std::string::size_type pos = -1;
+  if (state_ != BODY) {
+    for (pos = 0; pos < msg.size(); ++pos) {
+      std::string::value_type c = msg.at(pos);
+      if (c == '\0') {
+        return result;
+      }
+      bool ret = false;
+      bool finished = false;
+      switch (state_) {
+        case METHOD:
+          ret = parse_method(c, req);
+          break;
+        case URL:
+          ret = parse_url(c, req);
+          break;
+        case URL_PATH:
+          ret = parse_url_path(c, req);
+          break;
+        case URL_QUERY_FIELD:
+          ret = parse_url_query_field(c);
+          break;
+        case URL_QUERY_VALUE:
+          ret = parse_url_query_value(c, req.query_params_);
+          break;
+        case URL_FRAGMENT:
+          ret = parse_url_fragment(c, req);
+          break;
+        case VERSION:
+          ret = parse_version(c);
+          break;
+        case MAJOR_VERSION:
+          ret = parse_major_version(c, req);
+          break;
+        case MINOR_VERSION:
+          ret = parse_minor_version(c, req);
+          break;
+        case HEADER:
+          ret = parse_header(c);
+          break;
+        case HEADER_KEY:
+          ret = parse_header_key(c);
+          break;
+        case HEADER_VALUE_BEGIN:
+          ret = parse_header_value_begin(c);
+          break;
+        case HEADER_VALUE:
+          ret = parse_header_value(c);
+          break;
+        case HEADER_NEWLINE:
+          ret = parse_header_newline(c, req);
+          break;
+        case HEADER_FINISH:
+          ret = parse_header_finish(c);
+          if (ret) {
+            finished = true;
+          }
+          break;
+        default:
+          break;
+      }
+      if (!ret) {
+        return INVALID;
+      } else if (finished) {
+        result = FINISH;
         break;
-      case URL:
-        ret = parse_url(c, req);
-        break;
-      case URL_PATH:
-        ret = parse_url_path(c, req);
-        break;
-      case URL_QUERY_FIELD:
-        ret = parse_url_query_field(c);
-        break;
-      case URL_QUERY_VALUE:
-        ret = parse_url_query_value(c, req.query_params_);
-        break;
-      case URL_FRAGMENT:
-        ret = parse_url_fragment(c, req);
-        break;
-      case VERSION:
-        ret = parse_version(c);
-        break;
-      case MAJOR_VERSION:
-        ret = parse_major_version(c, req);
-        break;
-      case MINOR_VERSION:
-        ret = parse_minor_version(c, req);
-        break;
-      case HEADER:
-        ret = parse_header(c);
-        break;
-      case HEADER_KEY:
-        ret = parse_header_key(c);
-        break;
-      case HEADER_VALUE_BEGIN:
-        ret = parse_header_value_begin(c);
-        break;
-      case HEADER_VALUE:
-        ret = parse_header_value(c);
-        break;
-      case HEADER_NEWLINE:
-        ret = parse_header_newline(c, req);
-        break;
-      case HEADER_FINISH:
-        ret = parse_header_finish(c);
-        if (ret) {
-          finished = true;
-        }
-        break;
-      default:
-        break;
-    }
-    if (!ret) {
-      return INVALID;
-    } else if (finished) {
-      result = FINISH;
-      break;
+      }
     }
   }
   /*
@@ -108,20 +110,41 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
    * content length (if available) or
    * available data
    */
-  if (result == FINISH && (req.method() == http::POST || req.method() == http::PUT)) {
-    auto length = std::stoul(req.content_.length);
-    log.info("length: %d, pos+1: %d, msg.length: %d", length, pos+1, msg.size());
+  if (state_ == BODY && (req.method() == http::POST || req.method() == http::PUT)) {
+    auto length = std::stoul(req.content_.length) - req.body_.size();
+    ++pos;
     if (length > 0) {
-      req.body_.assign(msg.substr(++pos, length));
-      if (req.body_.size() < length) {
+      //log_default(log_level::LVL_INFO, "RequestParser", "length: %d, pos+1: %d, msg.length: %d", length, pos + 1, msg.size());
+      // determine body size of message
+      auto remaining_msg_size = msg.size() - pos;
+      req.body_.append(msg.substr(pos, remaining_msg_size));
+      if (remaining_msg_size == length) {
+        process_body(req);
+        state_ = METHOD;
+        result = FINISH;
+      } else if (remaining_msg_size < length) {
         result = PARTIAL;
       } else {
-        process_body(req);
-        result = FINISH;
+        // should not happen
       }
-    } else {
-      req.body_.assign(msg.substr(++pos));
+    } else if (msg.size() > pos) {
+      req.body_.assign(msg.substr(pos));
+      state_ = METHOD;
+      result = FINISH;
     }
+//    auto length = std::stoul(req.content_.length);
+//    log.info("length: %d, pos+1: %d, msg.length: %d", length, pos+1, msg.size());
+//    if (length > 0) {
+//      req.body_.assign(msg.substr(++pos, length));
+//      if (req.body_.size() < length) {
+//        result = PARTIAL;
+//      } else {
+//        process_body(req);
+//        result = FINISH;
+//      }
+//    } else {
+//      req.body_.assign(msg.substr(++pos));
+//    }
   }
 
   if (result == FINISH) {
@@ -406,8 +429,13 @@ bool request_parser::parse_header_newline(char c, request &req)
   return false;
 }
 
-bool request_parser::parse_header_finish(char c) {
-  return c == '\n';
+bool request_parser::parse_header_finish(char c)
+{
+  auto header_finished = c == '\n';
+  if (header_finished) {
+    state_ = BODY;
+  }
+  return header_finished;
 }
 
 bool request_parser::is_url_char(char c) const
