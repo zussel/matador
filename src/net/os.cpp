@@ -1,7 +1,6 @@
 #include "matador/net/os.hpp"
 
 #ifdef _WIN32
-//#include <WinSock2.h>
 #include <Ws2tcpip.h>
 #else
 #include <arpa/inet.h>

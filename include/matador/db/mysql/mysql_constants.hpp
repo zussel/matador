@@ -2,7 +2,6 @@
 #define MYSQL_CONSTANTS_HPP
 
 #ifdef _MSC_VER
-//#include <winsock2.h>
 #include <mysql.h>
 #else
 #include <mysql/mysql.h>

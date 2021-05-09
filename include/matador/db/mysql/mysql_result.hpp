@@ -21,7 +21,6 @@
 #include "matador/sql/result_impl.hpp"
 
 #ifdef _MSC_VER
-//#include <winsock2.h>
 #include <mysql.h>
 #else
 #include <mysql/mysql.h>
