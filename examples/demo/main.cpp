@@ -37,6 +37,8 @@ int main(int /*argc*/, char* /*argv*/[])
   matador::add_log_sink(matador::create_file_sink("log/server.log"));
   matador::add_log_sink(matador::create_stdout_sink());
 
+  net::init();
+
   http::server server(19082);
   server.add_routing_middleware();
   server.add_middleware(std::make_shared<authentication_middleware>());
@@ -50,6 +52,8 @@ int main(int /*argc*/, char* /*argv*/[])
   main_page mpage(server);
 
   server.run();
+
+  net::cleanup();
 
   return 0;
 }
