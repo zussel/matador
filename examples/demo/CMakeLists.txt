@@ -28,11 +28,10 @@ CONFIGURE_FILE(web/secure.html ${PROJECT_BINARY_DIR}/bin/web/secure.html COPYONL
 CONFIGURE_FILE(web/index.html ${PROJECT_BINARY_DIR}/bin/web/index.html COPYONLY)
 
 TARGET_LINK_LIBRARIES(demo
-  matador-unit
   matador-utils
   matador-logger
-  matador-http
   matador-net
+  matador-http
   ${CMAKE_DL_LIBS}
   ${CMAKE_THREAD_LIBS_INIT}
   ${NET_LIBRARIES}
