@@ -5,15 +5,24 @@
 
 #include "matador/logger/log_manager.hpp"
 
+#include "matador/utils/os.hpp"
+
 namespace matador {
 namespace http {
 
 server::server(unsigned short port)
+  : server(port, "")
+{ }
+
+server::server(unsigned short port, const std::string &dir)
   : log_(matador::create_logger("HttpServer"))
   , acceptor_(std::make_shared<acceptor>(tcp::peer(address::v4::any(), port)))
   , router_()
 {
-  log_.info("creating http server at port %d", port);
+  log_.info("creating http server at port %d serving from [%s]", port, dir.c_str());
+  if (!dir.empty()) {
+    os::chdir(dir);
+  }
   service_.accept(acceptor_, [this](tcp::peer ep, io_stream &stream) {
     // create echo server connection
     auto conn = std::make_shared<http_server_connection>(pipeline_, stream, std::move(ep));

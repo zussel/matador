@@ -39,11 +39,10 @@ int main(int /*argc*/, char* /*argv*/[])
 
   net::init();
 
-  http::server server(19082);
+  http::server server(19082, "web");
+
   server.add_routing_middleware();
   server.add_middleware(std::make_shared<authentication_middleware>());
-
-  os::chdir("web");
 
   http::serve_static_files_at("/css/*.*", server);
   http::serve_static_files_at("/js/*.*", server);

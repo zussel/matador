@@ -158,15 +158,32 @@ private:
 
 int main(int /*argc*/, char* /*argv*/[])
 {
-  std::string umlaut{ "aeiäöü" };
+//  std::string umlaut{ "aeiäöü" };
+//
+//  unsigned char comp = 128;
+//  for (unsigned char c : umlaut) {
+//      bool is_ascii = (c & comp) == 0;
+//      auto b = isalnum((int)c);
+//      std::cout << "'" << c << "' isalnum: " << b << ", is ascii: " << is_ascii << "\n";
+//  }
 
-  unsigned char comp = 128;
-  for (unsigned char c : umlaut) {
-      bool is_ascii = (c & comp) == 0;
-      auto b = isalnum((int)c);
-      std::cout << "'" << c << "' isalnum: " << b << ", is ascii: " << is_ascii << "\n";
+  matador::file f("timo.json", "r");
+
+  auto text = matador::read_as_text(f);
+
+  f.close();
+
+  matador::json_parser p;
+
+  auto timo = p.parse(text);
+
+  auto alter = timo["alter"].as<int>();
+
+  auto freunde = timo["freunde"];
+
+  for (const auto &ff : freunde) {
+    std::cout << "freund: " << ff.as<std::string>() << "\n";
   }
-
   return 0;
 
   matador::add_log_sink(matador::create_stdout_sink());

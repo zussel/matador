@@ -29,6 +29,7 @@ class OOS_HTTP_API server
 {
 public:
   explicit server(unsigned short port);
+  server(unsigned short port, const std::string &dir);
 
   void run();
   void shutdown();
