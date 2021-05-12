@@ -9,7 +9,8 @@ using namespace matador;
 JsonSerializerTest::JsonSerializerTest()
   : unit_test("json_serializer", "json serializer test")
 {
-  add_test("to_string", [this] { test_to_string(); }, "test serialize object to json string");
+  add_test("to_string_object", [this] { test_to_string_object(); }, "test serialize object to json string");
+  add_test("to_string_array", [this] { test_to_string_array(); }, "test serialize array to json string");
 }
 
 std::string expected_dto_result = R"({
@@ -53,7 +54,7 @@ std::string expected_derived_result = R"({
 }
 )";
 
-void JsonSerializerTest::test_to_string()
+void JsonSerializerTest::test_to_string_object()
 {
   dto d;
   d.id = "pk11";
@@ -93,3 +94,7 @@ void JsonSerializerTest::test_to_string()
   UNIT_ASSERT_EQUAL(expected_derived_result, result);
 }
 
+void JsonSerializerTest::test_to_string_array()
+{
+
+}

@@ -67,17 +67,6 @@ public:
     return json_;
   }
 
-//  template < class V >
-//  void serialize(const char *id, V &value)
-//  {
-//    write_id(id);
-//    write_value(value);
-//  }
-
-  // string
-  void serialize(const char *id, std::string &val, size_t);
-
-
   template < class V >
   void serialize(V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
@@ -124,6 +113,9 @@ public:
 
   // string
   void serialize(const char *id, std::string &val);
+
+  // string
+  void serialize(const char *id, std::string &val, size_t);
 
   // date
   void serialize(const char *id, date &d);

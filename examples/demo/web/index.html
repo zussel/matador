@@ -6,104 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Main page</title>
 
-<!--    <link rel="stylesheet" href="css/font-awesome-4.7.0.min.css">-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/bulma.min-0.9.2.css">
+    <link rel="stylesheet" href="css/simple-line-icons-2.4.0.css">
+    <link rel="stylesheet" href="css/pure-2.0.6.min.css">
     <link rel="stylesheet" href="css/demo.css">
 </head>
 <body>
-    <section class="hero is-info is-fullheight">
-        <div class="hero-head">
-            <nav class="navbar">
-                <div class="container">
-                    <div class="navbar-brand">
-                        <a class="navbar-item" href="../">
-                            <img src="http://bulma.io/images/bulma-type-white.png" alt="Logo">
-                        </a>
-                        <span class="navbar-burger burger" data-target="navbarMenu">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div id="navbarMenu" class="navbar-menu">
-                        <div class="navbar-end">
-                            <span class="navbar-item">
-                                <a class="button is-white is-outlined" href="#">
-                                    <span class="icon">
-                                        <i class="fa fa-home"></i>
-                                    </span>
-                                    <span>Home</span>
-                                </a>
-                            </span>
-                            <span class="navbar-item">
-                                <a class="button is-white is-outlined" href="#">
-                                    <span class="icon">
-                                        <i class="fa fa-lock"></i>
-                                    </span>
-                                    <span>Login</span>
-                                </a>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
+<div class="header">
+    <h1>Page Title</h1>
+    <h2>A subtitle for your page goes here</h2>
+</div>
 
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <div class="column is-6 is-offset-3">
-                    <h1 class="title">
-                        Login to view list
-                    </h1>
-                    <h2 class="subtitle">
-                        Login to view the data table and add new data, edit data or delete data.
-                    </h2>
-                    <div class="box has-text-centered">
-                        <button class="button is-info" id="login">Login</button>
-                    </div>
-                    <div class="modal">
-                        <div class="modal-background"></div>
-                        <div class="modal-card">
-                            <header class="modal-card-head">
-                                <p class="modal-card-title">Login</p>
-                                <button class="delete" aria-label="close"></button>
-                            </header>
-                            <section class="modal-card-body">
-                                <form action='#' method='post'>
-                                    <div class='field'>
-                                        <label class='label' id='username'>Username</label>
-                                        <div class='control has-icons-left'>
-                                            <input class='input' type='text' name="username" for='username' placeholder='Username'>
-                                            <span class="icon is-small is-left">
-                                              <i class="fa fa-user"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div class='field'>
-                                        <label class='label' id='password'>Password</label>
-                                        <div class='control has-icons-left'>
-                                            <input class='input' type='password' name="password" for='password' placeholder='Password'>
-                                            <span class="icon is-small is-left">
-                                              <i class="fa fa-lock"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </form>
-                            </section>
-                            <footer class="modal-card-foot">
-                                <button class="button is-success" id="submit">Login</button>
-                                <button class="button" id="cancel">Cancel</button>
-                            </footer>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="content">
+    <div class="pure-g">
+        <div class="pure-u-1">
+            <table class="pure-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Year</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{ movie.id }}</td>
+                    <td>{{ movie.title }}</td>
+                    <td>{{ movie.year }}</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-    </section>
-    <script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" src="js/axios.min-0.21.1.js"></script>
-    <script type="text/javascript" src="js/demo.js"></script>
+    </div>
+</div>
 </body>
 </html>

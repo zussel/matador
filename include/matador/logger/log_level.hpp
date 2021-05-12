@@ -32,6 +32,14 @@ enum class log_level
   LVL_ALL     /**< This level represents all log levels and should be used for logging */
 };
 
+/**
+ * Write log level in human readable string
+ * to a given std::ostream.
+ *
+ * @param os std::stream to write to
+ * @param lvl Log level to write
+ * @return The std::ostream
+ */
 OOS_LOGGER_API std::ostream& operator<<(std::ostream &os, log_level lvl);
 
 /// @cond MATADOR_DEV

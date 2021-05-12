@@ -1,12 +1,18 @@
 #ifndef MATADOR_MAIN_PAGE_HPP
 #define MATADOR_MAIN_PAGE_HPP
 
+#include "matador/orm/persistence.hpp"
+
 #include "matador/http/response.hpp"
 
 #include "matador/logger/logger.hpp"
 
 namespace matador {
 namespace http {
+
+namespace detail {
+class template_part;
+}
 
 class server;
 class request;
@@ -17,12 +23,16 @@ class request;
 class main_page
 {
 public:
-  explicit main_page(matador::http::server &s);
+  main_page(matador::http::server &s, matador::persistence &p);
 
-
+  matador::http::response get_index(const matador::http::request &p);
 
 private:
   matador::logger log_;
+
+  matador::persistence& persistence_;
+
+  std::shared_ptr<matador::http::detail::template_part> index_template_;
 };
 
 
