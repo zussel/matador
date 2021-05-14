@@ -13,29 +13,33 @@ struct di_item
     }
   }
 
-  template<typename T>
-  void use(T &obj)
-  {
-    // Todo: type id checking
-    object = &obj;
-  }
-
-  template<typename T, typename ...Args>
-  void to_singleton_move(Args&& ...args)
-  {
-    creator_ = [&args...]() {
+  template< typename T >
+  void to() {
+    creator_ = [](void *) {
       std::cout << "creating " << typeid(T).name() << "\n";
-      return (void*)(new T(std::forward<Args>(args)...));
+      return (void*)(new T);
     };
-    deleter_ = &destroy<T>;
+  }
+
+  template<typename T>
+  void to_instance(T &&obj)
+  {
+    creator_ = [&obj](void *) {
+      return (void*)&std::forward<T&&>(obj);
+    };
+    // Todo: type id checking
+//    object = &obj;
   }
 
   template<typename T, typename ...Args>
-  void to_singleton_copy(Args ...args)
+  void to_singleton(Args&& ...args)
   {
-    creator_ = [&args...]() {
+    creator_ = [&args...](void *obj) {
+      if (obj) {
+        return obj;
+      }
       std::cout << "creating " << typeid(T).name() << "\n";
-      return (void*)(new T(args...));
+      return (void*)(new T(std::forward<Args&&>(args)...));
     };
     deleter_ = &destroy<T>;
   }
@@ -43,13 +47,7 @@ struct di_item
   template<typename T>
   T& get()
   {
-    if (!object) {
-      if (!creator_) {
-        throw std::logic_error("no creator function set");
-      }
-      object = creator_();
-    }
-    return *static_cast<T*>(object);
+    return *static_cast<T*>(creator_(object));
   }
 
   template <typename T>
@@ -60,7 +58,7 @@ struct di_item
 
   typedef void (*deleter)(void*);
 
-  std::function<void*()> creator_ {};
+  std::function<void*(void*)> creator_ {};
   deleter deleter_ = nullptr;
 
   void *object = nullptr;
@@ -68,14 +66,28 @@ struct di_item
 
 struct di {
 
+  struct di_bind_mediator
+  {
+    explicit di_bind_mediator(di &d) : di_(d) {}
+
+    void to()
+    {
+
+    }
+
+    void to_singleton() {}
+
+    di &di_;
+  };
+
   template < typename T >
-  static di_item& bind() {
+  di_item& bind() {
     auto i = item_map.insert(std::make_pair(std::type_index(typeid(T)), di_item{}));
     return i.first->second;
   }
 
   template < typename T >
-  static T& resolve()
+  T& resolve()
   {
     auto i = item_map.find(std::type_index(typeid(T)));
     if (i == item_map.end()) {
@@ -84,16 +96,16 @@ struct di {
     return i->second.get<T>();
 
   }
-  static std::unordered_map<std::type_index, di_item> item_map;
+  std::unordered_map<std::type_index, di_item> item_map {};
 };
 
-std::unordered_map<std::type_index, di_item> di::item_map = {};
+static di mydi;
 
 template < class T >
 struct inject
 {
   inject()
-    : obj(di::resolve<T>())
+    : obj(mydi.resolve<T>())
   {
 
   }
@@ -148,17 +160,36 @@ struct client
   inject<service> s;
 };
 
+struct icar
+{
+    virtual ~icar() = default;
+
+    virtual void print() = 0;
+};
+struct car : public icar
+{
+    void print() override {
+      std::cout << "I'm car " << this << "\n";
+
+    }
+};
+
 int main()
 {
-  another_service s {};
-  di::bind<another_service>().use(s);
-  di::bind<service>().to_singleton_move<service>("test", 3);
+  {
+    another_service s{};
+    mydi.bind<another_service>().to_instance(s);
+  }
+  mydi.bind<service>().to_singleton<service>("test", 3);
 
-  std::string name { "super "};
-  long id { 2 };
+  {
+    std::string name{"super "};
+    long id{2};
 
-  di::bind<super_service>().to_singleton_copy<super_service>(name, id);
+    mydi.bind<super_service>().to_singleton<super_service>(name, id);
+  }
 
+  mydi.bind<icar>().to<car>();
   inject<service> si;
   inject<another_service> asi;
   inject<super_service> ssi;
@@ -172,4 +203,9 @@ int main()
   client c;
 
   c.s->print();
+
+  inject<icar> car1;
+  inject<icar> car2;
+  car1->print();
+  car2->print();
 }
