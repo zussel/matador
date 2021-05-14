@@ -111,9 +111,24 @@ void json_serializer::end_object()
   --depth_;
   indent();
   json_.append("}");
+  if (depth_ > 0 && !is_array) {
+    json_.append(",");
+  }
+}
+
+void json_serializer::begin_array()
+{
+  json_.append("[");
+  is_array = true;
+}
+
+void json_serializer::end_array()
+{
+  json_.append("]");
   if (depth_ > 0) {
     json_.append(",");
   }
+  is_array = false;
 }
 
 void json_serializer::indent()

@@ -20,10 +20,10 @@ std::string expected_dto_result = R"({
   "created": "1988-10-25T10:55:46",
   "flag": true,
   "height": 23,
-  "doubles": [13.500000, 123.900000, 0.732000],
-  "bits": [true, false, false, true, false],
-  "names": ["blue", "green", "red", "yellow"],
-  "values": [7, 6, 5, 4, 3, 2, 1],
+  "doubles": [13.500000,123.900000,0.732000],
+  "bits": [true,false,false,true,false],
+  "names": ["blue","green","red","yellow"],
+  "values": [7,6,5,4,3,2,1],
   "dimension": {
     "length": 750,
     "width": 1200,
@@ -96,5 +96,29 @@ void JsonSerializerTest::test_to_string_object()
 
 void JsonSerializerTest::test_to_string_array()
 {
+  dto d;
+  d.id = "pk11";
+  d.name = "saturn";
+  d.flag = true;
+  d.height = 23;
+  d.birthday.set(13, 7, 2001);
+  d.created.set(1988, 10, 25, 11, 55, 46, 123);
+  d.doubles.assign({13.5, 123.9, 0.732});
+  d.bits.assign({true, false, false, true, false});
+  d.names = { "green", "red", "yellow", "blue" };
+  d.dimension.height = 200;
+  d.dimension.width = 1200;
+  d.dimension.length = 750;
+  d.values = { 1,2,3,4,5,6,7 };
+
+  d.dimensions.assign({{200, 122, 345}, { 800, 900, 450 }});
+
+  std::vector<dto> dtos { d, d };
+
+  json_serializer js(json_format::pretty);
+
+  std::string result = js.to_json_array(dtos);
+
+  UNIT_ASSERT_EQUAL(expected_dto_result, result);
 
 }
