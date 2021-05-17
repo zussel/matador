@@ -3,8 +3,7 @@
 {% include "../templates/header.matador" %}
 <body>
     <div class="header">
-        <h1>Page Title</h1>
-        <h2>A subtitle for your page goes here</h2>
+        <h1>{{title}}</h1>
     </div>
 
     <div class="content">
@@ -16,14 +15,16 @@
                             <th>ID</th>
                             <th>Title</th>
                             <th>Year</th>
+                            <th>Director</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for movie in movies %}
                         <tr>
-                            <td>{{ movie.id }}</td>
-                            <td>{{ movie.title }}</td>
+                            <td><a href="/movie/{{movie.id}}">{{ movie.id }}</a></td>
+                            <td><a href="/movie/{{movie.id}}">{{ movie.title }}</a></td>
                             <td>{{ movie.year }}</td>
+                            <td>{{ movie.director.name }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

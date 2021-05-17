@@ -9,6 +9,8 @@
 #include <string>
 #include <utility>
 
+#include "person.hpp"
+
 struct movie
 {
   enum e_genre {
@@ -21,8 +23,8 @@ struct movie
   };
 
   movie() = default;
-  movie(std::string t, unsigned short y)
-    : title(std::move(t)), year(y)
+  movie(std::string t, unsigned short y, const matador::object_ptr<person>& dir)
+    : title(std::move(t)), year(y), director(dir)
   {}
 
   matador::identifier<unsigned long> id;
