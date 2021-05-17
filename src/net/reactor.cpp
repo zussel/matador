@@ -4,8 +4,8 @@
 #include "matador/logger/log_manager.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <cerrno>
-#include <cstring>
 #include <ctime>
 
 namespace matador {

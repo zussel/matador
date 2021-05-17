@@ -18,6 +18,7 @@
 #include "matador/utils/json_serializer.hpp"
 
 #include "matador/object/object_ptr.hpp"
+#include "matador/object/object_view.hpp"
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/belongs_to.hpp"
 #include "matador/object/has_one.hpp"
@@ -37,7 +38,30 @@ public:
     json_.clear();
     append(*obj);
     newline();
-    //serialize(obj);
+    return json_;
+  }
+
+  template< typename T >
+  std::string to_json(const object_view<T> &objects)
+  {
+    json result = json::array();
+
+    json_.append("[");
+    if (objects.size() < 2) {
+      for (const auto &i : objects) {
+        append(*i);
+      }
+    } else {
+      auto it = objects.begin();
+      append(*it.optr());
+      ++it;
+      for (;it != objects.end(); ++it) {
+        json_.append(",");
+        append(*it.optr());
+      }
+    }
+    json_.append("]");
+
     return json_;
   }
 
@@ -117,6 +141,7 @@ private:
     auto idx = json_.find_last_of(',');
     json_.erase(idx, 1);
     end_object();
+    newline();
     return json_;
   }
 
@@ -130,9 +155,7 @@ template<class Value>
 void json_object_serializer::serialize(const char *id, belongs_to<Value> &x, cascade_type)
 {
   write_id(id);
-  begin_object();
   append(*x);
-  end_object();
 }
 
 template<class Value>
@@ -142,9 +165,7 @@ void json_object_serializer::serialize(const char *id, has_one<Value> &x, cascad
     return;
   }
   write_id(id);
-  begin_object();
   append(*x);
-  end_object();
 }
 
 template<class Value, template <class ...> class Container>
@@ -152,7 +173,7 @@ void json_object_serializer::serialize(const char *id, basic_has_many<Value, Con
                                        const char *, cascade_type)
 {
   write_id(id);
-  append("[],");
+  json_.append("[],");
   newline();
 }
 

@@ -1,7 +1,3 @@
-//
-// Created by sascha on 30.08.19.
-//
-
 #ifndef MATADOR_PARAMETER_BINDER_HPP
 #define MATADOR_PARAMETER_BINDER_HPP
 

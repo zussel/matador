@@ -120,7 +120,7 @@ public:
     : log_(matador::create_logger("LogMiddleware"))
   {}
 
-  matador::http::response process(request &req, const next_func_t &next) override
+  matador::http::response process(request &, const next_func_t &next) override
   {
     log_.info("before LogMiddleware");
     auto resp = next();
@@ -139,7 +139,7 @@ public:
     : log_(matador::create_logger("TimeMeasureMiddleware"))
   {}
 
-  matador::http::response process(request &req, const next_func_t &next) override
+  matador::http::response process(request &, const next_func_t &next) override
   {
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -156,6 +156,12 @@ private:
   matador::logger log_;
 };
 
+enum e_numbers { ONE, TWO, THREE };
+
+void s(int e) {
+
+}
+
 int main(int /*argc*/, char* /*argv*/[])
 {
 //  std::string umlaut{ "aeiäöü" };
@@ -166,6 +172,10 @@ int main(int /*argc*/, char* /*argv*/[])
 //      auto b = isalnum((int)c);
 //      std::cout << "'" << c << "' isalnum: " << b << ", is ascii: " << is_ascii << "\n";
 //  }
+
+  e_numbers en = ONE;
+
+  s(en);
 
   matador::file f("timo.json", "r");
 
