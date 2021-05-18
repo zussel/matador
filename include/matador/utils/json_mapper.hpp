@@ -13,13 +13,56 @@
 #else
 #define OOS_UTILS_API
 #endif
+
 #include "matador/utils/basic_json_mapper.hpp"
+#include "matador/utils/json_serializer.hpp"
 
 #include <set>
 #include <unordered_set>
 #include <cstddef>
 
+
 namespace matador {
+
+/**
+ * @class json_mapper
+ *
+ * conversions
+ * string   <->    json    <->    object
+ *
+ * string to_string(json)
+ * string to_string(object)
+ * string to_string(array<object>)
+ *
+ * json to_json(object)
+ * json to_json(array<object>)
+ * json to_json(string)
+ *
+ * object to_object(json)
+ * object to_object(string)
+ * array<object> to_objects(json)
+ * array<object> to_objects(string)
+ *
+ *
+ */
+class json_mapper
+{
+public:
+  json_mapper() = default;
+
+  std::string to_string(const json &js, json_format format = json_format::compact);
+  template < class T >
+  std::string to_string(const T &obj);
+
+private:
+  json_serializer json_serializer_;
+};
+
+template < class T >
+std::string json_mapper::to_string(const T &obj)
+{
+  return std::string();
+}
 
 /// @cond MATADOR_DEV
 class OOS_UTILS_API json_mapper_serializer
@@ -70,8 +113,8 @@ private:
  * value types besides basic matador types
  * like date, time and identifier are supported.
  */
-template < class T >
-using json_mapper = basic_json_mapper<T, json_mapper_serializer>;
+//template < class T >
+//using json_mapper = basic_json_mapper<T, json_mapper_serializer>;
 
 /// @cond MATADOR_DEV
 template<class V>
@@ -80,7 +123,7 @@ void json_mapper_serializer::serialize(const char *id, V &obj, typename std::ena
   if (runtime_data_.object_key != id) {
     return;
   }
-  json_mapper<V> mapper;
+  basic_json_mapper<V, json_mapper_serializer> mapper;
   mapper.object_from_string(runtime_data_.cursor.json_cursor_, &obj, false);
   runtime_data_.cursor.sync_cursor(mapper.cursor().json_cursor_);
 }

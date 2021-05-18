@@ -144,17 +144,6 @@ public:
     end_array();
     newline();
   }
-//  template < class V >
-//  void serialize(const char *id, std::list<V> &cont, typename std::enable_if<std::is_class<V>::value>::type* = 0)
-//  {
-//    write_id(id);
-//    json_.append("[");
-//    join(cont, "");
-//    auto idx = json_.find_last_of(',');
-//    json_.erase(idx);
-//    json_.append("],");
-//    newline();
-//  }
 
   template < class V >
   void serialize(const char *id, std::vector<V> &cont)
@@ -165,17 +154,6 @@ public:
     end_array();
     newline();
   }
-//  template < class V >
-//  void serialize(const char *id, std::vector<V> &cont, typename std::enable_if<std::is_class<V>::value>::type* = 0)
-//  {
-//    write_id(id);
-//    json_.append("[");
-//    join(cont, "");
-//    auto idx = json_.find_last_of(',');
-//    json_.erase(idx);
-//    json_.append("],");
-//    newline();
-//  }
 
   template < class V >
   void serialize(const char *id, std::set<V> &cont)

@@ -1,6 +1,13 @@
 #include "matador/utils/json_mapper.hpp"
 
 namespace matador {
+
+std::string json_mapper::to_string(const json &js, json_format format)
+{
+
+  return std::string();
+}
+
 void json_mapper_serializer::serialize(const char *id, identifier<std::string> &pk)
 {
   if (runtime_data_.key != id) {
