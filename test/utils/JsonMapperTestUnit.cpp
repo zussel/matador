@@ -25,9 +25,9 @@ JsonMapperTestUnit::JsonMapperTestUnit()
 
 void JsonMapperTestUnit::test_fields()
 {
-  json_mapper<dto> mapper;
+  json_mapper mapper;
 
-  auto p = mapper.object_from_string(R"(  {
+  auto p = mapper.to_object<dto>(R"(  {
 "id":  "george@mail.net",
 "name": "george",
 "birthday": "1987-09-27",
@@ -47,9 +47,9 @@ void JsonMapperTestUnit::test_fields()
 
 void JsonMapperTestUnit::test_array_of_builtins()
 {
-  json_mapper<dto> mapper;
+  json_mapper mapper;
 
-  auto p = mapper.object_from_string(R"(  {
+  auto p = mapper.to_object<dto>(R"(  {
 "doubles": [1.2, 3.5, 6.9],
 "bits": [true, false, true],
 "names": ["hans", "clara", "james"],
@@ -68,9 +68,10 @@ void JsonMapperTestUnit::test_array_of_builtins()
 
 void JsonMapperTestUnit::test_array_of_objects()
 {
-  json_mapper<bounding_box> sub_mapper;
+  json_mapper sub_mapper;
 
-  auto subs = sub_mapper.array_from_string(R"( [ { "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 } ] )");
+  auto subs = sub_mapper.to_objects<bounding_box>(
+    R"( [ { "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 } ] )");
 
   UNIT_ASSERT_EQUAL(2UL, subs.size());
 
@@ -89,9 +90,9 @@ void JsonMapperTestUnit::test_array_of_objects()
 
 void JsonMapperTestUnit::test_nested_object()
 {
-  json_mapper<dto> mapper;
+  json_mapper mapper;
 
-  auto p = mapper.object_from_string(R"(  {
+  auto p = mapper.to_object<dto>(R"(  {
 "dimension": { "length": 200, "width":  300, "height":   100 }
 } )");
 
@@ -102,9 +103,9 @@ void JsonMapperTestUnit::test_nested_object()
 
 void JsonMapperTestUnit::test_nested_array_of_object()
 {
-  json_mapper<dto> mapper;
+  json_mapper mapper;
 
-  auto p = mapper.object_from_string(R"(  {
+  auto p = mapper.to_object<dto>(R"(  {
 "dimensions": [{ "length": 200, "width":  300, "height":   100 }, { "length": 900, "width":  800, "height":   700 }]
 } )");
 
@@ -113,9 +114,9 @@ void JsonMapperTestUnit::test_nested_array_of_object()
 
 void JsonMapperTestUnit::test_complex()
 {
-  json_mapper<dto> mapper;
+  json_mapper mapper;
 
-  auto p = mapper.object_from_string(R"(  {
+  auto p = mapper.to_object<dto>(R"(  {
 "id":  "george@mail.net",
 "name": "george",
 "birthday": "1987-09-27",
@@ -152,59 +153,59 @@ void JsonMapperTestUnit::test_complex()
 
 void JsonMapperTestUnit::test_failure()
 {
-  json_mapper<person> mapper;
+  json_mapper mapper;
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(    )"), json_exception, "invalid stream");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(    )"), json_exception, "invalid stream");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(    --)"), json_exception, "root must be object '{}'");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(    --)"), json_exception, "root must be object '{}'");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  key)"), json_exception, "expected string opening quotes");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  {  key)"), json_exception, "expected string opening quotes");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key)"), json_exception, "invalid stream");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  {  "key)"), json_exception, "invalid stream");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key  )"), json_exception, "invalid stream");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  {  "key  )"), json_exception, "invalid stream");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key" ; )"), json_exception, "character isn't colon");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  {  "key" ; )"), json_exception, "character isn't colon");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key": "value" )"), json_exception, "not a valid object closing bracket");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  {  "key": "value" )"), json_exception, "not a valid object closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key": "value" ]  )"), json_exception, "not a valid object closing bracket");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  {  "key": "value" ]  )"), json_exception, "not a valid object closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  {  "key": "value" } hhh  )"), json_exception, "no characters are allowed after closed root node");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  {  "key": "value" } hhh  )"), json_exception, "no characters are allowed after closed root node");
 
-  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  8)"), json_exception, "invalid json character");
+  UNIT_ASSERT_EXCEPTION(mapper.to_objects<person>(R"(  [  8)"), json_exception, "not a valid array closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  8 )"), json_exception, "not a valid array closing bracket");
+  UNIT_ASSERT_EXCEPTION(mapper.to_objects<person>(R"(  [  8 )"), json_exception, "not a valid array closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  8 fff)"), json_exception, "not a valid array closing bracket");
+  UNIT_ASSERT_EXCEPTION(mapper.to_objects<person>(R"(  [  8 fff)"), json_exception, "not a valid array closing bracket");
 
-  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  12345678901234567890123456789 ]   )"), json_exception, "errno integer error");
+  UNIT_ASSERT_EXCEPTION(mapper.to_objects<person>(R"(  [  12345678901234567890123456789 ]   )"), json_exception, "errno integer error");
 
-  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  1.79769e+309 ]   )"), json_exception, "errno double error");
+  UNIT_ASSERT_EXCEPTION(mapper.to_objects<person>(R"(  [  1.79769e+309 ]   )"), json_exception, "errno double error");
 
-  UNIT_ASSERT_EXCEPTION(mapper.array_from_string(R"(  [  1.79769e+308ddd ]   )"), json_exception, "invalid json character");
+  UNIT_ASSERT_EXCEPTION(mapper.to_objects<person>(R"(  [  1.79769e+308ddd ]   )"), json_exception, "invalid json character");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": t)"), json_exception, "unexpected end of string");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  { "key": t)"), json_exception, "unexpected end of string");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": tg)"), json_exception, "invalid character for bool value string");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  { "key": tg)"), json_exception, "invalid character for bool value string");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": f)"), json_exception, "unexpected end of string");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  { "key": f)"), json_exception, "unexpected end of string");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": fu)"), json_exception, "invalid character for bool value string");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  { "key": fu)"), json_exception, "invalid character for bool value string");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": w)"), json_exception, "unknown json type");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  { "key": w)"), json_exception, "unknown json type");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": n)"), json_exception, "unexpected end of string");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  { "key": n)"), json_exception, "unexpected end of string");
 
-  UNIT_ASSERT_EXCEPTION(mapper.object_from_string(R"(  { "key": na)"), json_exception, "invalid null character");
+  UNIT_ASSERT_EXCEPTION(mapper.to_object<person>(R"(  { "key": na)"), json_exception, "invalid null character");
 }
 
 void JsonMapperTestUnit::test_false_types()
 {
-  json_mapper<dto> mapper;
+  json_mapper mapper;
 
   // check false types
-  auto p = mapper.object_from_string(R"(  {     "id":  9, "name": true,
+  auto p = mapper.to_object<dto>(R"(  {     "id":  9, "name": true,
 "birthday": false, "created": false, "flag": 2.3, "height": "wrong",
 "doubles": false,
 "bits": "hallo",
@@ -227,9 +228,9 @@ void JsonMapperTestUnit::test_false_types()
 
 void JsonMapperTestUnit::test_special_chars()
 {
-  json_mapper<person> pmapper;
+  json_mapper pmapper;
 
-  person pp(pmapper.object_from_string(R"({ "name": "\r\ferik\tder\nwikinger\b\u0085"})"));
+  person pp(pmapper.to_object<person>(R"({ "name": "\r\ferik\tder\nwikinger\b\u0085"})"));
 
   UNIT_EXPECT_EQUAL("\r\ferik\tder\nwikinger\b\\u0085", pp.name());
 }

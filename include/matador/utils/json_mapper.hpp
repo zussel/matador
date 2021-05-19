@@ -16,6 +16,8 @@
 
 #include "matador/utils/basic_json_mapper.hpp"
 #include "matador/utils/json_serializer.hpp"
+#include "matador/utils/json_mapper_serializer.hpp"
+#include "matador/utils/json.hpp"
 
 #include <set>
 #include <unordered_set>
@@ -50,208 +52,84 @@ class json_mapper
 public:
   json_mapper() = default;
 
-  std::string to_string(const json &js, json_format format = json_format::compact);
+  std::string to_string(const json &js, const json_format &format = json_format::compact);
   template < class T >
   std::string to_string(const T &obj);
 
+  template < class T >
+  json to_json(const T &obj);
+  json to_json(const std::string &str);
+  json to_json(const char *str);
+
+  template < class T >
+  T to_object(const json &js);
+  template < class T >
+  std::vector<T> to_objects(const json &js);
+
+  template < class T >
+  T to_object(const std::string &str);
+  template < class T >
+  T to_object(const char *str);
+  template < class T >
+  std::vector<T> to_objects(const std::string &str);
+  template < class T >
+  std::vector<T> to_objects(const char *str);
+
+
 private:
   json_serializer json_serializer_;
+  json_parser json_parser_;
 };
 
 template < class T >
 std::string json_mapper::to_string(const T &obj)
 {
-  return std::string();
+  return json_serializer_.to_json(obj);
 }
 
-/// @cond MATADOR_DEV
-class OOS_UTILS_API json_mapper_serializer
+template < class T >
+json json_mapper::to_json(const T &obj)
 {
-public:
-  explicit json_mapper_serializer(details::mapper_runtime &runtime_data)
-    : runtime_data_(runtime_data)
-  {}
-
-public:
-  template < class V >
-  void serialize(const char *id, V &obj, typename std::enable_if<std::is_class<V>::value>::type* = 0);
-  template < class V >
-  void serialize(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
-  void serialize(const char *id, identifier<std::string> &pk);
-  template < int SIZE, class V >
-  void serialize(const char *id, identifier<varchar<SIZE, V>> &pk);
-  template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
-  template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
-  void serialize(const char *id, bool &to);
-  void serialize(const char *id, std::string &to);
-  void serialize(const char *id, std::string &to, size_t);
-  void serialize(const char *id, date &to);
-  void serialize(const char *id, time &to);
-  template < class V >
-  void serialize(const char *id, std::list<V> &cont);
-  template < class V >
-  void serialize(const char *id, std::vector<V> &cont, typename std::enable_if<!std::is_class<V>::value>::type* = 0);
-  template < class V >
-  void serialize(const char *id, std::vector<V> &cont, typename std::enable_if<std::is_class<V>::value>::type* = 0);
-  template < class V >
-  void serialize(const char *id, std::set<V> &cont);
-  template < class V >
-  void serialize(const char *id, std::unordered_set<V> &cont);
-
-private:
-  details::mapper_runtime &runtime_data_;
-};
-/// @endcond
-
-/**
- * @brief Shortcut to the json mapper
- *
- * The json_mapper is used to map a json
- * string to an object of type T. All standard
- * value types besides basic matador types
- * like date, time and identifier are supported.
- */
-//template < class T >
-//using json_mapper = basic_json_mapper<T, json_mapper_serializer>;
-
-/// @cond MATADOR_DEV
-template<class V>
-void json_mapper_serializer::serialize(const char *id, V &obj, typename std::enable_if<std::is_class<V>::value>::type *)
-{
-  if (runtime_data_.object_key != id) {
-    return;
-  }
-  basic_json_mapper<V, json_mapper_serializer> mapper;
-  mapper.object_from_string(runtime_data_.cursor.json_cursor_, &obj, false);
-  runtime_data_.cursor.sync_cursor(mapper.cursor().json_cursor_);
+  return to_json(to_string(obj));
 }
 
-template<class V>
-void json_mapper_serializer::serialize(const char *id, identifier<V> &pk, typename std::enable_if<
-std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
+template < class T >
+T json_mapper::to_object(const json &js)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_integer()) {
-    return;
-  }
-
-  pk.value(runtime_data_.value.as<V>());
+  return to_object<T>(js.str());
 }
 
-template<class V>
-void json_mapper_serializer::serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type *)
+template < class T >
+T json_mapper::to_object(const std::string &str)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_real()) {
-    return;
-  }
-  to = runtime_data_.value.as<V>();
+  return to_object<T>(str.c_str());
 }
 
-template<class V>
-void json_mapper_serializer::serialize(const char *id, V &to, typename std::enable_if<
-std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
+template < class T >
+T json_mapper::to_object(const char *str)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_integer()) {
-    return;
-  }
-  to = runtime_data_.value.as<V>();
+  basic_json_mapper<T, detail::json_mapper_serializer> mapper;
+  return mapper.object_from_string(str);
 }
 
-template<int SIZE, class V>
-void json_mapper_serializer::serialize(const char *id, identifier<varchar<SIZE, V>> &pk)
+template < class T >
+std::vector<T> json_mapper::to_objects(const json &js)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_string()) {
-    return;
-  }
-
-  pk.value(runtime_data_.value.as<std::string>());
+  return to_objects<T>(js.str());
 }
 
-template<class V>
-void json_mapper_serializer::serialize(const char *id, std::unordered_set<V> &cont)
+template < class T >
+std::vector<T> json_mapper::to_objects(const std::string &str)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-
-  for (auto &val : runtime_data_.value) {
-    if (!val.template fits_to_type<V>()) {
-      continue;
-    }
-    cont.insert(val.template as<V>());
-  }
+  return to_objects<T>(str.c_str());
 }
 
-template<class V>
-void json_mapper_serializer::serialize(const char *id, std::vector<V> &cont, typename std::enable_if<!std::is_class<V>::value>::type*)
+template < class T >
+std::vector<T> json_mapper::to_objects(const char *str)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-
-  for (auto &val : runtime_data_.value) {
-    if (!val.template fits_to_type<V>()) {
-      continue;
-    }
-    cont.push_back(val.template as<V>());
-  }
+  basic_json_mapper<T, detail::json_mapper_serializer> mapper;
+  return mapper.array_from_string(str);
 }
-
-template<class V>
-void json_mapper_serializer::serialize(const char *id, std::vector<V> &cont, typename std::enable_if<std::is_class<V>::value>::type*)
-{
-  if (runtime_data_.object_key != id) {
-    return;
-  }
-
-  json_mapper<V> mapper;
-  cont = mapper.array_from_string(runtime_data_.json_array_cursor, false);
-  runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
-}
-
-template<class V>
-void json_mapper_serializer::serialize(const char *id, std::list<V> &cont)
-{
-  if (runtime_data_.key != id) {
-    return;
-  }
-
-  for (auto &val : runtime_data_.value) {
-    if (!val.template fits_to_type<V>()) {
-      continue;
-    }
-    cont.push_back(val.template as<V>());
-  }
-}
-
-template<class V>
-void json_mapper_serializer::serialize(const char *id, std::set<V> &cont)
-{
-  if (runtime_data_.key != id) {
-    return;
-  }
-
-  for (auto &val : runtime_data_.value) {
-    if (!val.template fits_to_type<V>()) {
-      continue;
-    }
-    cont.insert(val.template as<V>());
-  }
-}
-/// @endcond
 
 }
 #endif //MATADOR_JSON_MAPPER_HPP

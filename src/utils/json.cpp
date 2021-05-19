@@ -1,7 +1,3 @@
-//
-// Created by sascha on 01.12.19.
-//
-
 #include "matador/utils/json.hpp"
 #include "matador/utils/string.hpp"
 
@@ -11,14 +7,51 @@
 
 namespace matador {
 
-json::json() : value_(), type(e_null) {}
+json_format json_format::compact { false, true, 0 }; /* NOLINT */
+json_format json_format::pretty { true, false, 2 }; /* NOLINT */
+
+inline json_format::json_format(bool enable_line_break)
+  : enable_line_break_(enable_line_break)
+{}
+
+inline json_format::json_format(unsigned indentation)
+  : indentation_(indentation)
+{}
+
+inline json_format::json_format(bool enable_line_break, bool skip_empty, unsigned indentation)
+  : enable_line_break_(enable_line_break)
+  , skip_empty_(skip_empty)
+  , indentation_(indentation)
+{}
+
+bool json_format::show_line_break() const
+{
+  return enable_line_break_;
+}
+
+bool json_format::skip_empty()
+{
+  return skip_empty_;
+}
+
+unsigned json_format::indentation() const
+{
+  return indentation_;
+}
+
+char json_format::indentation_char() const
+{
+  return indentation_char_;
+}
+
+json::json() : value_(), type_(e_null) {}
 
 json::json(bool b)
-  : value_(b), type(e_boolean)
+  : value_(b), type_(e_boolean)
 {}
 
 json::json(std::initializer_list<json> l)
-  : type(e_array)
+  : type_(e_array)
 {
   bool is_obj = std::all_of(l.begin(), l.end(), [](const json &j) {
     return j.is_array() && j.size() == 2 && j[0].is_string();
@@ -29,21 +62,21 @@ json::json(std::initializer_list<json> l)
       obj->insert(std::make_pair(i.value_.array->at(0).as<std::string>(), i[1]));
     }
     clear();
-    type = e_object;
+    type_ = e_object;
     value_.object = obj;
   } else {
     value_.array = new array_type(l);
   }
 }
 
-json::json(std::nullptr_t) : type(e_null)
+json::json(std::nullptr_t) : type_(e_null)
 {
 
 }
 
-json::json(json::json_type t) : value_(), type(t)
+json::json(json::json_type t) : value_(), type_(t)
 {
-  switch (type) {
+  switch (type_) {
     case e_string:
       value_.str = new std::string();
       break;
@@ -81,16 +114,16 @@ json::json(const json &x)
 json::json(json &&x) noexcept
 {
   value_ = x.value_;
-  type = x.type;
-  x.type = e_null;
+  type_ = x.type_;
+  x.type_ = e_null;
 }
 
 json &json::operator=(json &&x) noexcept
 {
   clear();
   value_ = x.value_;
-  type = x.type;
-  x.type = e_null;
+  type_ = x.type_;
+  x.type_ = e_null;
   return *this;
 }
 
@@ -106,10 +139,10 @@ json &json::operator=(const json &x)
 
 bool operator==(const json &a, const json &b)
 {
-  if (a.type != b.type) {
+  if (a.type_ != b.type_) {
     return false;
   }
-  switch (a.type) {
+  switch (a.type_) {
     case json::e_object:
       return *a.value_.object == *b.value_.object;
     case json::e_array:
@@ -137,8 +170,8 @@ bool operator<(json::json_type a, json::json_type b);
 
 bool operator<(const json &a, const json &b)
 {
-  if (a.type == b.type) {
-    switch (a.type) {
+  if (a.type_ == b.type_) {
+    switch (a.type_) {
       case json::e_object:
         return (*a.value_.object) < (*b.value_.object);
       case json::e_array:
@@ -154,13 +187,13 @@ bool operator<(const json &a, const json &b)
       case json::e_integer:
         return (a.value_.integer) < (b.value_.integer);
     }
-  } else if (a.type == json::e_integer && b.type == json::e_real) {
+  } else if (a.type_ == json::e_integer && b.type_ == json::e_real) {
     return static_cast<double>(a.value_.integer) < b.value_.real;
-  } else if (a.type == json::e_real && b.type == json::e_integer) {
+  } else if (a.type_ == json::e_real && b.type_ == json::e_integer) {
     return a.value_.real < static_cast<double>(b.value_.integer);
   }
 
-  return operator<(a.type, b.type);
+  return operator<(a.type_, b.type_);
 }
 
 /*
@@ -205,7 +238,7 @@ std::ostream &operator<<(std::ostream &out, const json &val)
 
 void json::dump(std::ostream &out) const
 {
-  switch (type) {
+  switch (type_) {
     case e_object:
       out << "{";
       join(*value_.object, out, ", ");
@@ -238,8 +271,8 @@ void json::dump(std::ostream &out) const
 
 void json::copy_from(const json &x)
 {
-  type = x.type;
-  switch (x.type) {
+  type_ = x.type_;
+  switch (x.type_) {
     case e_object:
       value_.object = new object_type(*x.value_.object);
       break;
@@ -264,7 +297,7 @@ bool json::contains(const std::string &key) const
 
 json &json::operator[](std::size_t i)
 {
-  if (type != e_array) {
+  if (type_ != e_array) {
     return *this;
   }
   if (i >= value_.array->size()) {
@@ -275,16 +308,16 @@ json &json::operator[](std::size_t i)
 
 void json::reset(bool b)
 {
-  if (type != e_boolean) {
+  if (type_ != e_boolean) {
     clear();
-    type = e_boolean;
+    type_ = e_boolean;
   }
   value_.boolean = b;
 }
 
 std::size_t json::size() const
 {
-  switch (type) {
+  switch (type_) {
     case e_array:
       return value_.array->size();
     case e_object:
@@ -298,7 +331,7 @@ std::size_t json::size() const
 
 bool json::empty() const
 {
-  switch (type) {
+  switch (type_) {
     case e_array:
       return value_.array->empty();
     case e_object:
@@ -312,7 +345,7 @@ bool json::empty() const
 
 json &json::back()
 {
-  if (type == e_array) {
+  if (type_ == e_array) {
     return value_.array->back();
   } else {
     throw std::logic_error("type doesn't have back()");
@@ -321,7 +354,7 @@ json &json::back()
 
 const json &json::back() const
 {
-  if (type == e_array) {
+  if (type_ == e_array) {
     return value_.array->back();
   } else {
     throw std::logic_error("type doesn't have back()");
@@ -330,7 +363,7 @@ const json &json::back() const
 
 void json::erase(const std::string &key)
 {
-  if (type != e_object) {
+  if (type_ != e_object) {
     return;
   }
   value_.object->erase(key);
@@ -338,7 +371,7 @@ void json::erase(const std::string &key)
 
 void json::erase(std::size_t i)
 {
-  if (type != e_array) {
+  if (type_ != e_array) {
     return;
   }
   if (i >= value_.array->size()) {
@@ -347,49 +380,54 @@ void json::erase(std::size_t i)
   value_.array->erase(value_.array->begin()+i);
 }
 
+json::json_type json::type() const
+{
+  return type_;
+}
+
 bool json::is_number() const
 {
-  return type == e_integer || type == e_real;
+  return type_ == e_integer || type_ == e_real;
 }
 
 bool json::is_real() const
 {
-  return type == e_real;
+  return type_ == e_real;
 }
 
 bool json::is_integer() const
 {
-  return type == e_integer;
+  return type_ == e_integer;
 }
 
 bool json::is_boolean() const
 {
-  return type == e_boolean;
+  return type_ == e_boolean;
 }
 
 bool json::is_string() const
 {
-  return type == e_string;
+  return type_ == e_string;
 }
 
 bool json::is_array() const
 {
-  return type == e_array;
+  return type_ == e_array;
 }
 
 bool json::is_object() const
 {
-  return type == e_object;
+  return type_ == e_object;
 }
 
 bool json::is_null() const
 {
-  return type == e_null;
+  return type_ == e_null;
 }
 
 json &json::get(const std::string &key)
 {
-  if (type != e_object) {
+  if (type_ != e_object) {
     throw std::logic_error("type isn't object");
   }
 
@@ -404,7 +442,7 @@ json &json::get(const std::string &key)
 
 const json &json::get(const std::string &key) const
 {
-  if (type != e_object) {
+  if (type_ != e_object) {
     throw std::logic_error("type isn't object");
   }
 
@@ -464,7 +502,7 @@ const json& json::at_path(const std::string &path, char delimiter) const
 
 void json::throw_on_wrong_type(json::json_type t) const
 {
-  if (type != t) {
+  if (type_ != t) {
     throw std::logic_error("wrong type; couldn't cast");
   }
 }
@@ -491,10 +529,10 @@ json::const_iterator json::end() const
 
 json &json::operator[](const std::string &key)
 {
-  if (type != e_object) {
+  if (type_ != e_object) {
     clear();
     value_.object = new object_type;
-    type = e_object;
+    type_ = e_object;
   }
   auto it = value_.object->insert(std::make_pair(key, json())).first;
   return it->second;
@@ -502,7 +540,7 @@ json &json::operator[](const std::string &key)
 
 const json &json::operator[](const std::string &key) const
 {
-  if (type != e_object) {
+  if (type_ != e_object) {
     return *this;
   }
 
@@ -516,7 +554,7 @@ const json &json::operator[](const std::string &key) const
 
 const json &json::operator[](std::size_t i) const
 {
-  if (type != e_array) {
+  if (type_ != e_array) {
     return *this;
   }
   if (i >= value_.array->size()) {
@@ -525,11 +563,51 @@ const json &json::operator[](std::size_t i) const
   return value_.array->at(i);
 }
 
-std::string to_string(const matador::json &j)
+std::string json::str() const
 {
-  std::stringstream out;
-  j.dump(out);
-  return out.str();
+  return str(json_format::compact);
 }
 
+std::string json::str(const json_format &format) const
+{
+  std::string result {};
+  switch (type_) {
+    case json::json_type::e_object:
+      result += "{";
+      if (format.show_line_break()) {
+        result += "\n";
+      }
+      result += join(*value_.object, ", ");
+      result += "}";
+      break;
+    case json::json_type::e_array:
+      result += "[";
+      result += join(*value_.array, ", ");
+      result += "]";
+      break;
+    case json::json_type::e_null:
+      result += "null";
+      break;
+    case json::json_type::e_integer:
+      result += std::to_string(value_.integer);
+      break;
+    case json::json_type::e_real:
+      result += std::to_string(value_.real);
+      break;
+    case json::json_type::e_string:
+      result += "\"" + *value_.str + "\"";
+      break;
+    case json::json_type::e_boolean:
+      result += (value_.boolean ? "true" : "false");
+      break;
+    default:
+      break;
+  }
+  return result;
+}
+
+std::string to_string(const json &j)
+{
+  return j.str();
+}
 }

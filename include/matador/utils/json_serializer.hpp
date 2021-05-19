@@ -26,29 +26,6 @@
 
 namespace matador {
 
-struct OOS_UTILS_API json_format
-{
-public:
-  json_format() = default;
-  explicit json_format(bool enable_line_break);
-  explicit json_format(unsigned indentation);
-  json_format(bool enable_line_break, bool skip_empty, unsigned indentation);
-
-  bool show_line_break() const;
-
-  bool skip_empty();
-
-  unsigned indentation() const;
-
-  static json_format compact;
-  static json_format pretty;
-
-private:
-  bool enable_line_break_ = true;
-  bool skip_empty_ = true;
-  unsigned indentation_ = 2;
-};
-
 class OOS_UTILS_API json_serializer
 {
 public:

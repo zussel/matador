@@ -64,8 +64,8 @@ void ResponseParserTest::test_body_response()
   UNIT_ASSERT_EQUAL(1, resp.version().major);
   UNIT_ASSERT_EQUAL(1, resp.version().minor);
 
-  json_mapper<response_detail::person> mapper;
-  auto obj = mapper.object_from_string(resp.body().c_str());
+  json_mapper mapper;
+  auto obj = mapper.to_object<response_detail::person>(resp.body());
 
   UNIT_ASSERT_EQUAL("George", obj.name);
   UNIT_ASSERT_EQUAL(37, obj.age);
@@ -115,8 +115,8 @@ void ResponseParserTest::test_partial_response_body()
   UNIT_ASSERT_EQUAL(1, resp.version().major);
   UNIT_ASSERT_EQUAL(1, resp.version().minor);
 
-  json_mapper<response_detail::person> mapper;
-  auto obj = mapper.object_from_string(resp.body().c_str());
+  json_mapper mapper;
+  auto obj = mapper.to_object<response_detail::person>(resp.body());
 
   UNIT_ASSERT_EQUAL("George", obj.name);
   UNIT_ASSERT_EQUAL(37, obj.age);
@@ -144,8 +144,8 @@ void ResponseParserTest::test_partial_response_body_2()
   UNIT_ASSERT_EQUAL(1, resp.version().major);
   UNIT_ASSERT_EQUAL(1, resp.version().minor);
 
-  json_mapper<response_detail::person> mapper;
-  auto obj = mapper.object_from_string(resp.body().c_str());
+  json_mapper mapper;
+  auto obj = mapper.to_object<response_detail::person>(resp.body());
 
   UNIT_ASSERT_EQUAL("George", obj.name);
   UNIT_ASSERT_EQUAL(37, obj.age);
