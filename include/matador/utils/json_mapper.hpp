@@ -44,8 +44,6 @@ namespace matador {
  * object to_object(string)
  * array<object> to_objects(json)
  * array<object> to_objects(string)
- *
- *
  */
 class json_mapper
 {
@@ -54,7 +52,9 @@ public:
 
   std::string to_string(const json &js, const json_format &format = json_format::compact);
   template < class T >
-  std::string to_string(const T &obj);
+  std::string to_string(const T &obj, const json_format &format = json_format::compact);
+  template < class T >
+  std::string to_string(const std::vector<T> &array, const json_format &format = json_format::compact);
 
   template < class T >
   json to_json(const T &obj);
@@ -75,16 +75,21 @@ public:
   template < class T >
   std::vector<T> to_objects(const char *str);
 
-
 private:
   json_serializer json_serializer_;
   json_parser json_parser_;
 };
 
 template < class T >
-std::string json_mapper::to_string(const T &obj)
+std::string json_mapper::to_string(const T &obj, const json_format &format)
 {
-  return json_serializer_.to_json(obj);
+  return json_serializer_.to_json(obj, format);
+}
+
+template < class T >
+std::string json_mapper::to_string(const std::vector<T> &array, const json_format &format)
+{
+  return json_serializer_.to_json_array(array, format);
 }
 
 template < class T >

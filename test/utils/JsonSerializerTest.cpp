@@ -1,6 +1,6 @@
 #include "JsonSerializerTest.hpp"
 
-#include "matador/utils/json_serializer.hpp"
+#include "matador/utils/json_mapper.hpp"
 
 #include "../dto.hpp"
 
@@ -38,8 +38,7 @@ std::string expected_dto_result = R"({
     "width": 900,
     "height": 450
   }]
-}
-)";
+})";
 
 std::string expected_bb_result = R"({
   "length": 100,
@@ -73,15 +72,15 @@ void JsonSerializerTest::test_to_string_object()
 
   d.dimensions.assign({{200, 122, 345}, { 800, 900, 450 }});
 
-  json_serializer js(json_format::pretty);
+  json_mapper mapper;
 
-  std::string result = js.to_json(d);
+  std::string result = mapper.to_string(d, json_format::pretty);
 
-  UNIT_ASSERT_EQUAL(expected_dto_result, result);
+  UNIT_ASSERT_EQUAL(expected_dto_result + "\n", result);
 
   bounding_box bb {100, 200, 300 };
 
-  result = js.to_json(bb);
+  result = mapper.to_string(bb, json_format::pretty);
 
   UNIT_ASSERT_EQUAL(expected_bb_result, result);
 
@@ -89,7 +88,7 @@ void JsonSerializerTest::test_to_string_object()
   de.id = 8;
   de.name = "james";
 
-  result = js.to_json(de);
+  result = mapper.to_string(de, json_format::pretty);
 
   UNIT_ASSERT_EQUAL(expected_derived_result, result);
 }
@@ -115,10 +114,11 @@ void JsonSerializerTest::test_to_string_array()
 
   std::vector<dto> dtos { d, d };
 
-  json_serializer js(json_format::pretty);
+  json_mapper mapper;
 
-  std::string result = js.to_json_array(dtos);
+  std::string result = mapper.to_string(dtos, json_format::pretty);
 
-  UNIT_ASSERT_EQUAL(expected_dto_result, result);
+  auto expected_dto_array_result = "[" + expected_dto_result + "," + expected_dto_result + "]\n";
+  UNIT_ASSERT_EQUAL(expected_dto_array_result, result);
 
 }

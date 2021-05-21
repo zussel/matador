@@ -21,6 +21,7 @@ JsonMapperTestUnit::JsonMapperTestUnit()
   add_test("failures", [this] { test_failure(); }, "test mapping failures");
   add_test("false_types", [this] { test_false_types(); }, "test mapping with false types");
   add_test("special_chars", [this] { test_special_chars(); }, "test mapping special characters");
+  add_test("json_to_string", [this] { test_json_to_string(); }, "test json to string");
 }
 
 void JsonMapperTestUnit::test_fields()
@@ -233,4 +234,48 @@ void JsonMapperTestUnit::test_special_chars()
   person pp(pmapper.to_object<person>(R"({ "name": "\r\ferik\tder\nwikinger\b\u0085"})"));
 
   UNIT_EXPECT_EQUAL("\r\ferik\tder\nwikinger\b\\u0085", pp.name());
+}
+
+void JsonMapperTestUnit::test_json_to_string()
+{
+  json js = json::object();
+
+  js["name"] = "Herb";
+  js["numbers"] = json::array();
+  js["numbers"].push_back(1);
+  js["numbers"].push_back(2);
+  js["numbers"].push_back(3);
+  js["question"] = true;
+  js["pi"] = 3.1415;
+  js["obj"] = {{ "type", "car" },{ "id", 17 }};
+
+  json_mapper mapper;
+
+  auto result = mapper.to_string(js);
+
+  std::string expected_result { R"({"name": "Herb", "numbers": [1, 2, 3], "obj": {"id": 17, "type": "car"}, "pi": 3.141500, "question": true})" };
+
+  UNIT_ASSERT_EQUAL(expected_result, result);
+
+  json js2 = mapper.to_json(result);
+
+  UNIT_ASSERT_EQUAL(js, js2);
+
+  js = json::array();
+  json j = {{"id", 17}, {"type", "car"}};
+  js.push_back(j);
+  j = {{"name", "Herb"}, {"numbers", {1, 2, 3}}};
+  js.push_back(j);
+  js.push_back(true);
+  js.push_back(3.1415);
+
+  result = mapper.to_string(js);
+
+  expected_result = R"([{"id": 17, "type": "car"}, {"name": "Herb", "numbers": [1, 2, 3]}, true, 3.141500])";
+
+  UNIT_ASSERT_EQUAL(expected_result, result);
+
+  js2 = mapper.to_json(result);
+
+  UNIT_ASSERT_EQUAL(js, js2);
 }

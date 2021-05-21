@@ -2,10 +2,6 @@
 
 namespace matador {
 
-json_object_serializer::json_object_serializer(json_format format)
-  : format_(format)
-{}
-
 void json_object_serializer::serialize(const char *id, identifier<std::string> &pk)
 {
   write_id(id);

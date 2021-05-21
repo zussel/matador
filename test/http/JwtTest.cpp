@@ -18,9 +18,9 @@ void JwtTest::test_jwt_token()
 {
   jwt_header h { "HSA256", "JWT" };
 
-  json_serializer js(json_format::compact);
+  json_mapper mapper;
 
-  auto result = js.to_json(h);
+  auto result = mapper.to_string(h);
 
   UNIT_ASSERT_EQUAL(R"({"alg": "HSA256","typ": "JWT"})", result);
 
@@ -29,7 +29,7 @@ void JwtTest::test_jwt_token()
   p.subject = "123456789";
   p.name = "John Doe";
 
-  result = js.to_json(p);
+  result = mapper.to_string(p);
 
   UNIT_ASSERT_EQUAL(R"({"iss": "www.example.com","sub": "123456789","name": "John Doe"})", result);
 }

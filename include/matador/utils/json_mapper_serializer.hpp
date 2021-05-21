@@ -32,6 +32,12 @@ public:
   {}
 
 public:
+  template < typename T >
+  T create();
+
+  template < class V >
+  void serialize(V &obj);
+
   template < class V >
   void serialize(const char *id, V &obj, typename std::enable_if<std::is_class<V>::value>::type* = 0);
   template < class V >
@@ -62,6 +68,18 @@ public:
 private:
   details::mapper_runtime &runtime_data_;
 };
+
+template<typename T>
+T json_mapper_serializer::create()
+{
+  return std::move(T());
+}
+
+template<class V>
+void json_mapper_serializer::serialize(V &obj)
+{
+  access::serialize(*this, obj);
+}
 
 template<class V>
 void json_mapper_serializer::serialize(const char *id, V &obj, typename std::enable_if<std::is_class<V>::value>::type *)

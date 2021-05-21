@@ -146,7 +146,7 @@ template<class T, class C>
 T basic_json_mapper<T, C>::object_from_string(const char *str, bool check_for_eos)
 {
   mapper_runtime_.key.clear();
-  object_ = T();
+  object_ = serializer_.template create<T>();
   this->parse_json_object(str, check_for_eos);
   return std::move(object_);
 }
@@ -155,7 +155,7 @@ template<class T, class C>
 void basic_json_mapper<T, C>::object_from_string(const char *str, T *obj, bool check_for_eos)
 {
   mapper_runtime_.key.clear();
-  object_ = T();
+  object_ = serializer_.template create<T>();
   this->parse_json_object(str, check_for_eos);
   *obj = std::move(object_);
 }
@@ -176,7 +176,7 @@ void basic_json_mapper<T, C>::on_parse_object(bool check_for_eos)
     base::on_parse_object(check_for_eos);
   } else {
     mapper_runtime_.object_key = mapper_runtime_.key;
-    access::serialize(serializer_, object_);
+    serializer_.serialize(object_);
     mapper_runtime_.object_key.clear();
   }
 }
@@ -186,7 +186,7 @@ void basic_json_mapper<T, C>::on_begin_object()
 {
   if (is_array_) {
     is_object_ = true;
-    object_ = T();
+    object_ = serializer_.template create<T>();
   } else {
     mapper_runtime_.object_key = mapper_runtime_.key;
   }
@@ -217,7 +217,7 @@ void basic_json_mapper<T, C>::on_begin_array()
   mapper_runtime_.array_key = mapper_runtime_.key;
   mapper_runtime_.json_array_cursor = this->cursor()();
   if (!mapper_runtime_.object_key.empty()) {
-    access::serialize(serializer_, object_);
+    serializer_.serialize(object_);
     this->sync_cursor(this->cursor()() - 1);
   } else {
     mapper_runtime_.value = json::array();
@@ -231,7 +231,7 @@ void basic_json_mapper<T, C>::on_end_array()
   mapper_runtime_.array_key.clear();
   mapper_runtime_.json_array_cursor = this->cursor()();
   if (!mapper_runtime_.key.empty()) {
-    access::serialize(serializer_, object_);
+    serializer_.serialize(object_);
   }
 }
 
@@ -278,11 +278,11 @@ void basic_json_mapper<T, C>::on_string(const std::string &value)
       try_push_back(array_, mapper_runtime_.value, value);
     } else /*if (is_array_ && is_object_)*/ {
       mapper_runtime_.value = value;
-      access::serialize(serializer_, object_);
+      serializer_.serialize(object_);
     }
   } else {
     mapper_runtime_.value = value;
-    access::serialize(serializer_, object_);
+    serializer_.serialize(object_);
   }
 }
 
@@ -294,11 +294,11 @@ void basic_json_mapper<T, C>::on_integer(long long value)
       try_push_back(array_, mapper_runtime_.value, value);
     } else /*if (is_array_ && is_object_)*/ {
       mapper_runtime_.value = value;
-      access::serialize(serializer_, object_);
+      serializer_.serialize(object_);
     }
   } else {
     mapper_runtime_.value = value;
-    access::serialize(serializer_, object_);
+    serializer_.serialize(object_);
   }
 }
 
@@ -310,11 +310,11 @@ void basic_json_mapper<T, C>::on_real(double value)
       try_push_back(array_, mapper_runtime_.value, value);
     } else /*if (is_array_ && is_object_)*/ {
       mapper_runtime_.value = value;
-      access::serialize(serializer_, object_);
+      serializer_.serialize(object_);
     }
   } else {
     mapper_runtime_.value = value;
-    access::serialize(serializer_, object_);
+    serializer_.serialize(object_);
   }
 }
 
@@ -326,11 +326,11 @@ void basic_json_mapper<T, C>::on_bool(bool value)
       try_push_back(array_, mapper_runtime_.value, value);
     } else /*if (is_array_ && is_object_)*/ {
       mapper_runtime_.value = value;
-      access::serialize(serializer_, object_);
+      serializer_.serialize(object_);
     }
   } else {
     mapper_runtime_.value = value;
-    access::serialize(serializer_, object_);
+    serializer_.serialize(object_);
   }
 }
 
@@ -342,11 +342,11 @@ void basic_json_mapper<T, C>::on_null()
       try_push_back(array_, mapper_runtime_.value, nullptr);
     } else {
       mapper_runtime_.value = nullptr;
-      access::serialize(serializer_, object_);
+      serializer_.serialize(object_);
     }
   } else {
     mapper_runtime_.value = nullptr;
-    access::serialize(serializer_, object_);
+    serializer_.serialize(object_);
   }
 }
 /// @endcond

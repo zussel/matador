@@ -2,10 +2,6 @@
 
 namespace matador {
 
-json_serializer::json_serializer(json_format format)
-  : format_(format)
-{}
-
 void json_serializer::serialize(const char *id, std::string &val, size_t)
 {
   if (val.empty()) {

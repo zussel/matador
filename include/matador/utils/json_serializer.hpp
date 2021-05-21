@@ -32,11 +32,10 @@ public:
 
   json_serializer() = default;
 
-  explicit json_serializer(json_format format);
-
   template < class T >
-  std::string to_json(const T &obj)
+  std::string to_json(const T &obj, const json_format &format = json_format::compact)
   {
+    format_ = format;
     json_.clear();
     append(obj);
     newline();
@@ -44,12 +43,22 @@ public:
   }
 
   template < class R >
-  std::string to_json_array(const R &range)
+  std::string to_json_array(const R &range, const json_format &format = json_format::compact)
   {
-    begin_array();
+    format_ = format;
     json_.clear();
-    for (const auto &val : range) {
-      append(val);
+    begin_array();
+    if (range.size() < 2) {
+      for (const auto &val : range) {
+        append(val);
+      }
+    } else {
+      auto it = range.begin();
+      append(*it++);
+      for (;it != range.end(); ++it) {
+        json_.append(",");
+        append(*it);
+      }
     }
     end_array();
     newline();

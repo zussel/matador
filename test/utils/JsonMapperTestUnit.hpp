@@ -21,6 +21,7 @@ public:
   void test_failure();
   void test_false_types();
   void test_special_chars();
+  void test_json_to_string();
 };
 
 
