@@ -45,7 +45,7 @@ namespace matador {
  * array<object> to_objects(json)
  * array<object> to_objects(string)
  */
-class json_mapper
+class OOS_UTILS_API json_mapper
 {
 public:
   json_mapper() = default;

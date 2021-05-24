@@ -1,5 +1,5 @@
-#ifndef MATADOR_JSON_MAPPER_HPP
-#define MATADOR_JSON_MAPPER_HPP
+#ifndef MATADOR_JSON_OBJECT_MAPPER_HPP
+#define MATADOR_JSON_OBJECT_MAPPER_HPP
 
 #ifdef _MSC_VER
 #ifdef matador_object_EXPORTS
@@ -47,6 +47,8 @@ public:
   std::string to_string(const object_pointer<T, OPT> &obj, const json_format &format = json_format::compact);
   template < class T >
   std::string to_string(const std::vector<T> &array, const json_format &format = json_format::compact);
+  template < class T >
+  std::string to_string(const object_view<T> &array, const json_format &format = json_format::compact);
 
   template< typename T, object_holder_type OPT >
   json to_json(const object_pointer<T, OPT> &obj);
@@ -80,6 +82,12 @@ std::string json_object_mapper::to_string(const object_pointer<T, OPT> &obj, con
 
 template<class T>
 std::string json_object_mapper::to_string(const std::vector<T> &array, const json_format &format)
+{
+  return json_object_serializer_.to_json(array, format);
+}
+
+template<class T>
+std::string json_object_mapper::to_string(const object_view<T> &array, const json_format &format)
 {
   return json_object_serializer_.to_json(array, format);
 }
@@ -135,4 +143,4 @@ std::vector<object_ptr<T>> json_object_mapper::to_objects(const char *str)
 }
 }
 
-#endif //MATADOR_JSON_MAPPER_HPP
+#endif //MATADOR_JSON_OBJECT_MAPPER_HPP

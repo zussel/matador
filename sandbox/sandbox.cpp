@@ -67,9 +67,9 @@ public:
   {
     log_.info("login");
 
-    matador::json_mapper<credential> mapper;
+    matador::json_mapper mapper;
 
-    auto credentials = mapper.object_from_string(req.body().c_str());
+    auto credentials = mapper.to_object<credential>(req.body().c_str());
 
     log_.info("user %s logging in", credentials.username.c_str());
 
@@ -158,7 +158,7 @@ private:
 
 enum e_numbers { ONE, TWO, THREE };
 
-void s(int e) {
+void s(int ) {
 
 }
 
@@ -187,7 +187,7 @@ int main(int /*argc*/, char* /*argv*/[])
 
   auto timo = p.parse(text);
 
-  auto alter = timo["alter"].as<int>();
+  //auto alter = timo["alter"].as<int>();
 
   auto freunde = timo["freunde"];
 

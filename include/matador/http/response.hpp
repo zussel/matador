@@ -21,7 +21,8 @@
 #include "matador/http/mime_types.hpp"
 #include "matador/http/response_header.hpp"
 
-#include "matador/utils/json_serializer.hpp"
+#include "matador/utils/json_mapper.hpp"
+#include "matador/utils/json_parser.hpp"
 #include "matador/utils/string.hpp"
 #include "matador/utils/file.hpp"
 #include "matador/utils/buffer_view.hpp"
@@ -93,9 +94,11 @@ response response::json(http::status_t status, const T &obj)
 {
   response resp = create(status);
 
-  json_serializer js(json_format::compact);
+  json_mapper mapper;
 
-  resp.body_ = js.to_json(obj);
+  json_parser parser;
+
+  resp.body_ = mapper.to_string(obj, json_format::compact);
   resp.content_.type = mime_types::APPLICATION_JSON;
 
   resp.content_.length = std::to_string(resp.body_.size());

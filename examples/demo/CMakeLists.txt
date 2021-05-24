@@ -14,7 +14,9 @@ SET (DEMO_SOURCES
   pages/main_page.cpp
   pages/main_page.hpp
   models/movie.hpp
-  models/person.hpp)
+  models/person.hpp
+  services/movie_service.cpp
+  services/movie_service.hpp)
 
 ADD_EXECUTABLE(demo ${DEMO_SOURCES})
 

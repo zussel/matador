@@ -24,14 +24,14 @@ response auth_service::login(const request &req)
 {
   log_.info("login");
 
-  matador::json_mapper<credential> mapper;
+  matador::json_mapper mapper;
 
 //  auto username = req.form_data().at("uname");
 //  auto password = req.form_data().at("pwd");
 
 //  return http::response::redirect("secure");
 
-  auto credentials = mapper.object_from_string(req.body().c_str());
+  auto credentials = mapper.to_object<credential>(req.body());
 
   log_.info("user %s logging in", credentials.username.c_str());
 
