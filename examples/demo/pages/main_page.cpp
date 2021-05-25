@@ -6,7 +6,7 @@
 
 #include "matador/logger/log_manager.hpp"
 
-#include "matador/object/object_json_serializer.hpp"
+#include "matador/object/json_object_mapper.hpp"
 
 #include "matador/orm/session.hpp"
 
@@ -31,20 +31,22 @@ main_page::main_page(matador::http::server &server, matador::persistence &p)
 
   details_template_ = template_engine::build(tmpl);
 
+  f.open("../templates/movie_create.matador", "r");
+  tmpl = read_as_text(f);
+  f.close();
+
+  create_template_ = template_engine::build(tmpl);
+
   server.on_get("/", [this](const request &req) {
     return get_index(req);
   });
 
-  server.on_get("/movie/{id}", [this](const request &req) {
+  server.on_get("/movie/{id: \\d+}", [this](const request &req) {
     return get_movie(req);
   });
 
-  server.on_get("/login", [](const request &) {
-    return response::from_file("login.html");
-  });
-
-  server.on_get("/secure", [](const request &) {
-    return response::from_file("secure.html");
+  server.on_get("/movie/create", [this](const request &req) {
+    return create_movie(req);
   });
 }
 
@@ -57,9 +59,11 @@ matador::http::response main_page::get_index(const request &)
 
   auto movies = s.select<movie>();
 
-  object_json_serializer ojs;
+  json_object_mapper mapper;
 
-  data["movies"] = ojs.to_json(movies);
+  data["movies"] = mapper.to_json(movies);
+
+  log_.info(mapper.to_string(movies));
 
   return response::ok(template_engine::render(index_template_, data), mime_types::TYPE_TEXT_HTML);
 }
@@ -83,10 +87,18 @@ matador::http::response main_page::get_movie(const request &p)
 
   }
 
-  object_json_serializer ojs;
+  json_object_mapper mapper;
 
   data["title"] = std::string("Movie: ") + (*it)->title;
-  data["movie"] = ojs.to_json(*it);
+  data["movie"] = mapper.to_json(*it);
 
   return response::ok(template_engine::render(details_template_, data), mime_types::TYPE_TEXT_HTML);
+}
+
+matador::http::response main_page::create_movie(const request &p)
+{
+  json data;
+  data["title"] = "Create Movie";
+
+  return response::ok(template_engine::render(create_template_, data), mime_types::TYPE_TEXT_HTML);
 }

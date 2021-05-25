@@ -31,6 +31,7 @@ public:
 //  void test_clear_type();
   void test_clear();
   void test_generic();
+  void test_get_by_primary_key();
   void test_structure();
   void test_structure_cyclic();
   void test_structure_container();

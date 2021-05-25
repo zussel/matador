@@ -23,11 +23,14 @@ movie_service::movie_service(matador::http::server &s, matador::persistence &p)
   s.on_get("/api/movie", [this](const request &req) {
     return list(req);
   });
-  s.on_get("/api/movie/{id}", [this](const request &req) {
+  s.on_get("/api/movie/{id: \\d+}", [this](const request &req) {
     return get_movie(req);
   });
   s.on_get("/api/movie/init", [this](const request &req) {
     return initialize(req);
+  });
+  s.on_post("/api/movie", [this](const request &req) {
+    return create_movie(req);
   });
 }
 
@@ -87,4 +90,30 @@ matador::http::response movie_service::get_movie(const matador::http::request &p
   std::string body = mapper.to_string(result, json_format::pretty);
 
   return response::ok(body, mime_types::TYPE_APPLICATION_JSON);
+}
+
+matador::http::response movie_service::create_movie(const request &p)
+{
+  for (const auto &fdata : p.form_data()) {
+    log_.info("form data %s: %s", fdata.first.c_str(), fdata.second.c_str());
+  }
+
+  
+  session s(persistence_);
+
+  auto dview = s.select<person>();
+  auto director = dview.begin().optr();
+
+  auto m = new movie;
+  m->title = p.form_data().at("title");
+  m->director = director;
+
+  auto tr = s.begin();
+  try {
+    s.insert(m);
+    tr.commit();
+  } catch (std::exception &ex) {
+    tr.rollback();
+  }
+  return matador::http::response::redirect("/");
 }

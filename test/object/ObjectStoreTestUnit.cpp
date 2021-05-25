@@ -17,37 +17,38 @@ using namespace std;
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
-  add_test("version", std::bind(&ObjectStoreTestUnit::test_version, this), "test matador version");
-  add_test("optr", std::bind(&ObjectStoreTestUnit::test_optr, this), "test optr behaviour");
-  add_test("expression", std::bind(&ObjectStoreTestUnit::test_expression, this), "test object expressions");
-  add_test("set", std::bind(&ObjectStoreTestUnit::test_set, this), "access object values via set interface");
-  add_test("get", std::bind(&ObjectStoreTestUnit::test_get, this), "access object values via get interface");
-  add_test("serializer", std::bind(&ObjectStoreTestUnit::test_serializer, this), "serializer test");
-  add_test("identifier_serializer", std::bind(&ObjectStoreTestUnit::test_identifier_serializer, this), "identifier serializer test");
-  add_test("reference_counter", std::bind(&ObjectStoreTestUnit::test_reference_counter, this), "reference counter test");
-  add_test("simple", std::bind(&ObjectStoreTestUnit::test_simple_object, this), "create and delete one object");
-  add_test("with_sub", std::bind(&ObjectStoreTestUnit::test_object_with_sub_object, this), "create and delete object with sub object");
-  add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::test_multiple_simple_objects, this), "create and delete multiple objects");
-  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::test_multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
-  add_test("delete", std::bind(&ObjectStoreTestUnit::test_delete_object, this), "object deletion test");
-  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::test_hierarchy, this), "object hierarchy test");
-  add_test("view", std::bind(&ObjectStoreTestUnit::test_view, this), "object view test");
+  add_test("version", [this] { test_version(); }, "test matador version");
+  add_test("optr", [this] { test_optr(); }, "test optr behaviour");
+  add_test("expression", [this] { test_expression(); }, "test object expressions");
+  add_test("set", [this] { test_set(); }, "access object values via set interface");
+  add_test("get", [this] { test_get(); }, "access object values via get interface");
+  add_test("serializer", [this] { test_serializer(); }, "serializer test");
+  add_test("identifier_serializer", [this] { test_identifier_serializer(); }, "identifier serializer test");
+  add_test("reference_counter", [this] { test_reference_counter(); }, "reference counter test");
+  add_test("simple", [this] { test_simple_object(); }, "create and delete one object");
+  add_test("with_sub", [this] { test_object_with_sub_object(); }, "create and delete object with sub object");
+  add_test("multiple_simple", [this] { test_multiple_simple_objects(); }, "create and delete multiple objects");
+  add_test("multiple_object_with_sub", [this] { test_multiple_object_with_sub_objects(); }, "create and delete multiple objects with sub object");
+  add_test("delete", [this] { test_delete_object(); }, "object deletion test");
+  add_test("hierarchy", [this] { test_hierarchy(); }, "object hierarchy test");
+  add_test("view", [this] { test_view(); }, "object view test");
 //  add_test("clear_type", std::bind(&ObjectStoreTestUnit::test_clear_type, this), "object store clear type test");
-  add_test("clear", std::bind(&ObjectStoreTestUnit::test_clear, this), "object store clear test");
-  add_test("generic", std::bind(&ObjectStoreTestUnit::test_generic, this), "generic object access test");
-  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object transient structure test");
-  add_test("structure_cyclic", std::bind(&ObjectStoreTestUnit::test_structure_cyclic, this), "object transient cyclic structure test");
-  add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "object transient container structure test");
-  add_test("transient_optr", std::bind(&ObjectStoreTestUnit::test_transient_optr, this), "test transient object pointer");
-  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
-  add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "object remove test");
-  add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
-  add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
-  add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
-  add_test("belongs_to_one", std::bind(&ObjectStoreTestUnit::test_belongs_to_one, this), "test belongs to one behaviour");
-  add_test("belongs_to_many", std::bind(&ObjectStoreTestUnit::test_belongs_to_many, this), "test belongs to many behaviour");
-  add_test("observer", std::bind(&ObjectStoreTestUnit::test_observer, this), "test observer functionality");
-  add_test("attach_has_many", std::bind(&ObjectStoreTestUnit::test_attach_has_many, this), "test attach has many");
+  add_test("clear", [this] { test_clear(); }, "object store clear test");
+  add_test("generic", [this] { test_generic(); }, "generic object access test");
+  add_test("get_by_pk", [this] { test_get_by_primary_key(); }, "get object by primary key test");
+  add_test("structure", [this] { test_structure(); }, "object transient structure test");
+  add_test("structure_cyclic", [this] { test_structure_cyclic(); }, "object transient cyclic structure test");
+  add_test("structure_container", [this] { test_structure_container(); }, "object transient container structure test");
+  add_test("transient_optr", [this] { test_transient_optr(); }, "test transient object pointer");
+  add_test("insert", [this] { test_insert(); }, "object insert test");
+  add_test("remove", [this] { test_remove(); }, "object remove test");
+  add_test("pk", [this] { test_primary_key(); }, "object proxy primary key test");
+  add_test("has_many", [this] { test_has_many(); }, "has many test");
+  add_test("has_many_to_many", [this] { test_has_many_to_many(); }, "has many to many test");
+  add_test("belongs_to_one", [this] { test_belongs_to_one(); }, "test belongs to one behaviour");
+  add_test("belongs_to_many", [this] { test_belongs_to_many(); }, "test belongs to many behaviour");
+  add_test("observer", [this] { test_observer(); }, "test observer functionality");
+  add_test("attach_has_many", [this] { test_attach_has_many(); }, "test attach has many");
 }
 
 struct basic_test_pair
@@ -905,6 +906,22 @@ void ObjectStoreTestUnit::test_generic()
 //  bool is_empty = matador::empty(cv);
 }
 
+void ObjectStoreTestUnit::test_get_by_primary_key()
+{
+  ostore_.attach<person>("person");
+
+  auto jane = ostore_.insert(new person("jane", date(31, 12, 1980), 176));
+  auto george = ostore_.insert(new person("george", date(6, 6, 1960), 183));
+  auto jim = ostore_.insert(new person("jim", date(27, 4, 1995), 179));
+
+  auto pk_george = make_identifier(george->id());
+  auto result = ostore_.get<person>(pk_george);
+
+  UNIT_ASSERT_EQUAL(george->id(), result->id());
+  UNIT_ASSERT_EQUAL(george->name(), result->name());
+  UNIT_ASSERT_EQUAL(george->height(), result->height());
+}
+
 void ObjectStoreTestUnit::test_structure()
 {
   ostore_.attach<datatypes>("item");
@@ -914,7 +931,7 @@ void ObjectStoreTestUnit::test_structure()
   typedef object_ptr<object_item_t> object_item_ptr;
   typedef object_ptr<datatypes> item_ptr;
   
-  object_item_t *oi = new object_item_t("object_item", 42);
+  auto *oi = new object_item_t("object_item", 42);
   
   item_ptr iptr(new datatypes);
   oi->ptr(iptr);

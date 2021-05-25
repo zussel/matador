@@ -24,6 +24,7 @@ public:
   matador::http::response initialize(const matador::http::request &p);
   matador::http::response list(const matador::http::request &p);
   matador::http::response get_movie(const matador::http::request &p);
+  matador::http::response create_movie(const matador::http::request &p);
 
 private:
   matador::logger log_;

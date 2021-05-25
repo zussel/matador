@@ -467,6 +467,20 @@ public:
   }
 
   /**
+   * @brief Get object by primary key
+   * @tparam Template type.
+   */
+  template < class T >
+  object_ptr<T> get(basic_identifier &pk)
+  {
+    auto node = find_prototype_node(typeid(T).name());
+    if (node == nullptr) {
+      return object_ptr<T>();
+    }
+    return object_ptr<T>(node->find_proxy(&pk));
+  }
+
+  /**
    * Return the first prototype node.
    *
    * @return The first prototype node iterator.
@@ -622,7 +636,7 @@ public:
   }
 
   /**
-   * Inserts an object of a specfic type. On successfull insertion
+   * Inserts an object of a specific type. On successful insertion
    * an object_ptr element with the inserted object is returned.
    *
    * @param o Object to be inserted.

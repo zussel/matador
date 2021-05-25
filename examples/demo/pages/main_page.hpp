@@ -28,6 +28,7 @@ public:
 private:
   matador::http::response get_index(const matador::http::request &p);
   matador::http::response get_movie(const matador::http::request &p);
+  matador::http::response create_movie(const matador::http::request &p);
 
 private:
   matador::logger log_;
@@ -36,6 +37,7 @@ private:
 
   std::shared_ptr<matador::http::detail::template_part> index_template_;
   std::shared_ptr<matador::http::detail::template_part> details_template_;
+  std::shared_ptr<matador::http::detail::template_part> create_template_;
 };
 
 

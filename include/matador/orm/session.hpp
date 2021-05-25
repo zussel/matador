@@ -106,15 +106,7 @@ public:
   {
     auto pk = make_identifier(id);
 
-    auto view = object_view<T>(store());
-
-    auto it = view.begin();
-    for (;it != view.end(); ++it) {
-      if (it.optr().primary_key()->equal_to(pk)) {
-        return it.optr();
-      }
-    }
-    return object_ptr<T>();
+    return store().get<T>(pk);
   }
 
   /**
