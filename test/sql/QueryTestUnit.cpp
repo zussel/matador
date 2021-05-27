@@ -28,40 +28,42 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   , db_vendor_(prefix)
   , time_val_(timeval)
 {
-  add_test("info", std::bind(&QueryTestUnit::print_datatypes, this), "print datatypes info");
-  add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
-  add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
-  add_test("quoted_identifier", std::bind(&QueryTestUnit::test_quoted_identifier, this), "test quoted identifier");
-  add_test("columns_with_quotes", std::bind(&QueryTestUnit::test_columns_with_quotes_in_name, this), "test columns with quotes in name");
-  add_test("quoted_literals", std::bind(&QueryTestUnit::test_quoted_literals, this), "test quoted literals");
-  add_test("bind_tablename", std::bind(&QueryTestUnit::test_bind_tablename, this), "test bind tablenames");
-  add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
-  add_test("unknown_table", std::bind(&QueryTestUnit::test_unknown_table, this), "test unknown table");
-  add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
-  add_test("identifier_prepared", std::bind(&QueryTestUnit::test_identifier_prepared, this), "test sql prepared identifier");
-  add_test("update", std::bind(&QueryTestUnit::test_update, this), "test direct sql update statement");
-  add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
-  add_test("create_anonymous", std::bind(&QueryTestUnit::test_anonymous_create, this), "test direct sql create statement via row (anonymous)");
-  add_test("insert_anonymous", std::bind(&QueryTestUnit::test_anonymous_insert, this), "test direct sql insert statement via row (anonymous)");
-  add_test("update_anonymous", std::bind(&QueryTestUnit::test_anonymous_update, this), "test direct sql update statement via row (anonymous)");
-  add_test("statement_insert", std::bind(&QueryTestUnit::test_statement_insert, this), "test prepared sql insert statement");
-  add_test("statement_update", std::bind(&QueryTestUnit::test_statement_update, this), "test prepared sql update statement");
-  add_test("delete", std::bind(&QueryTestUnit::test_delete, this), "test query delete");
+  add_test("info", [this] { print_datatypes(); }, "print datatypes info");
+  add_test("datatypes", [this] { test_datatypes(); }, "test sql datatypes");
+  add_test("qvc", [this] { test_query_value_creator(); }, "test query value creator");
+  add_test("quoted_identifier", [this] { test_quoted_identifier(); }, "test quoted identifier");
+  add_test("columns_with_quotes", [this] { test_columns_with_quotes_in_name(); }, "test columns with quotes in name");
+  add_test("quoted_literals", [this] { test_quoted_literals(); }, "test quoted literals");
+  add_test("bind_tablename", [this] { test_bind_tablename(); }, "test bind tablenames");
+  add_test("describe", [this] { test_describe(); }, "test describe table");
+  add_test("unknown_table", [this] { test_unknown_table(); }, "test unknown table");
+  add_test("identifier", [this] { test_identifier(); }, "test sql identifier");
+  add_test("identifier_prepared", [this] { test_identifier_prepared(); }, "test sql prepared identifier");
+  add_test("update", [this] { test_update(); }, "test direct sql update statement");
+  add_test("create", [this] { test_create(); }, "test direct sql create statement");
+  add_test("create_anonymous", [this] { test_anonymous_create(); }, "test direct sql create statement via row (anonymous)");
+  add_test("insert_anonymous", [this] { test_anonymous_insert(); }, "test direct sql insert statement via row (anonymous)");
+  add_test("update_anonymous", [this] { test_anonymous_update(); }, "test direct sql update statement via row (anonymous)");
+  add_test("statement_insert", [this] { test_statement_insert(); }, "test prepared sql insert statement");
+  add_test("statement_update", [this] { test_statement_update(); }, "test prepared sql update statement");
+  add_test("statement_delete", [this] { test_statement_delete(); }, "test prepared sql delete statement");
+  add_test("delete", [this] { test_delete(); }, "test query delete");
+  add_test("multiple_delete", [this] { test_multiple_delete(); }, "test query multiple delete");
 //  add_test("foreign_query", std::bind(&QueryTestUnit::test_foreign_query, this), "test query with foreign key");
-  add_test("query", std::bind(&QueryTestUnit::test_query, this), "test query");
-  add_test("result_range", std::bind(&QueryTestUnit::test_query_range_loop, this), "test result range loop");
-  add_test("select", std::bind(&QueryTestUnit::test_query_select, this), "test query select");
-  add_test("select_count", std::bind(&QueryTestUnit::test_query_select_count, this), "test query select count");
-  add_test("select_columns", std::bind(&QueryTestUnit::test_query_select_columns, this), "test query select columns");
-  add_test("select_like", std::bind(&QueryTestUnit::test_query_select_like, this), "test query select like");
-  add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
-  add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
-  add_test("prepared_statement", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
-  add_test("prepared_statement_creation", std::bind(&QueryTestUnit::test_prepared_statement_creation, this), "test query prepared statement creation");
-  add_test("object_result_twice", std::bind(&QueryTestUnit::test_prepared_object_result_twice, this), "test query prepared statement get object result twice");
-  add_test("scalar_result_twice", std::bind(&QueryTestUnit::test_prepared_scalar_result_twice, this), "test query prepared statement get scalar result twice");
-  add_test("rows", std::bind(&QueryTestUnit::test_rows, this), "test row value serialization");
-  add_test("log", std::bind(&QueryTestUnit::test_log, this), "test log behavior");
+  add_test("query", [this] { test_query(); }, "test query");
+  add_test("result_range", [this] { test_query_range_loop(); }, "test result range loop");
+  add_test("select", [this] { test_query_select(); }, "test query select");
+  add_test("select_count", [this] { test_query_select_count(); }, "test query select count");
+  add_test("select_columns", [this] { test_query_select_columns(); }, "test query select columns");
+  add_test("select_like", [this] { test_query_select_like(); }, "test query select like");
+  add_test("select_limit", [this] { test_select_limit(); }, "test query select limit");
+  add_test("update_limit", [this] { test_update_limit(); }, "test query update limit");
+  add_test("prepared_statement", [this] { test_prepared_statement(); }, "test query prepared statement");
+  add_test("prepared_statement_creation", [this] { test_prepared_statement_creation(); }, "test query prepared statement creation");
+  add_test("object_result_twice", [this] { test_prepared_object_result_twice(); }, "test query prepared statement get object result twice");
+  add_test("scalar_result_twice", [this] { test_prepared_scalar_result_twice(); }, "test query prepared statement get scalar result twice");
+  add_test("rows", [this] { test_rows(); }, "test row value serialization");
+  add_test("log", [this] { test_log(); }, "test log behavior");
 }
 
 template < class C, class T >
@@ -762,6 +764,52 @@ void QueryTestUnit::test_statement_update()
 
 }
 
+void QueryTestUnit::test_statement_delete()
+{
+  connection_.connect();
+
+  query<person> q("person");
+
+  statement<person> stmt(q.create().prepare(connection_));
+
+  result<person> res(stmt.execute());
+
+  std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
+
+  unsigned long id(0);
+  for (const auto &name : names) {
+    person p(name, matador::date(12, 3, 1980), 180);
+    p.id(++id);
+    stmt = q.insert(p).prepare(connection_);
+    stmt.bind(0, &p);
+    stmt.execute();
+  }
+
+  stmt = q.select().where("name"_col == "").prepare(connection_);
+  std::string name("hans");
+  stmt.bind(0, name);
+  res = stmt.execute();
+
+  for (auto const &p : res) {
+    UNIT_EXPECT_EQUAL(p->id(), 1UL);
+    UNIT_EXPECT_EQUAL(p->name(), "hans");
+    UNIT_EXPECT_EQUAL(p->height(), 180U);
+    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980));
+  }
+
+  column idcol = "id"_col;
+  stmt = q.remove().where(idcol == 1).prepare(connection_);
+
+  std::string hans {"hans"};
+  stmt.bind(0, hans);
+  res = stmt.execute();
+
+  std::string georg {"georg"};
+  stmt.bind(0, georg);
+  res = stmt.execute();
+
+}
+
 void QueryTestUnit::test_delete()
 {
   connection_.connect();
@@ -801,6 +849,57 @@ void QueryTestUnit::test_delete()
   q.drop().execute(connection_);
 }
 
+void QueryTestUnit::test_multiple_delete()
+{
+  connection_.connect();
+
+  query<person> q("person");
+
+  // create item table and insert item
+  result<person> res(q.create().execute(connection_));
+
+  person hans("Hans", matador::date(12, 3, 1980), 180);
+  hans.id(1);
+  res = q.insert(hans).execute(connection_);
+
+  person george("George", matador::date(11, 7, 1979), 198);
+  george.id(2);
+  res = q.insert(george).execute(connection_);
+
+  column name("name");
+  res = q.select().where(name == "Hans").execute(connection_);
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  for (auto p : res) {
+    UNIT_EXPECT_EQUAL(p->name(), "Hans");
+    UNIT_EXPECT_EQUAL(p->height(), 180U);
+    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980));
+  }
+
+  q.remove().where(name == "Hans").execute(connection_);
+
+  res = q.select().where(name == "Hans").execute(connection_);
+
+  UNIT_ASSERT_TRUE(res.begin() == res.end());
+
+  res = q.select().where(name == "George").execute(connection_);
+
+  for (auto p : res) {
+    UNIT_EXPECT_EQUAL(p->name(), "George");
+    UNIT_EXPECT_EQUAL(p->height(), 198U);
+    UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(11, 7, 1979));
+  }
+
+  q.remove().where(name == "George").execute(connection_);
+
+  res = q.select().where(name == "George").execute(connection_);
+
+  UNIT_ASSERT_TRUE(res.begin() == res.end());
+
+  q.drop().execute(connection_);
+}
 //void QueryTestUnit::test_foreign_query()
 //{
 //  connection_.open();

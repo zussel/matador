@@ -3,13 +3,14 @@
 //
 
 #include "matador/orm/persistence.hpp"
+#include "matador/sql/sql_logger.hpp"
 
 namespace matador {
 
 
 
 persistence::persistence(const std::string &dns)
-  : connection_(dns)
+  : connection_(dns, std::make_shared<sql_logger>(5, 1000000))
 {
   proxy_change_action_to_string.insert(std::make_pair(proxy_change_action::INSERT, "INSERT"));
   proxy_change_action_to_string.insert(std::make_pair(proxy_change_action::UPDATE, "UPDATE"));

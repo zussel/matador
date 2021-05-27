@@ -5,6 +5,9 @@
 <div class="header">
     <h1>{{title}}</h1>
 </div>
+    <a class="pure-button pure-button-primary" href="/movie/edit/{{movie.id}}">Edit</a>
+    <a class="button-error pure-button" href="/movie/delete/{{movie.id}}">Delete</a>
+    <a class="button-secondary pure-button" href="/movie">List</a>
     <form class="pure-form pure-form-aligned">
         <fieldset>
             <div class="pure-control-group">

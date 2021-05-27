@@ -17,16 +17,17 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, std::string dns)
   : unit_test(prefix + "_orm", prefix + " orm test unit")
   , dns_(std::move(dns))
 {
-  add_test("demo", std::bind(&OrmTestUnit::test_demo, this), "test demo");
-  add_test("persistence", std::bind(&OrmTestUnit::test_persistence, this), "test persistence class");
-  add_test("table", std::bind(&OrmTestUnit::test_table, this), "test table class");
-  add_test("create", std::bind(&OrmTestUnit::test_create, this), "test create table");
-  add_test("insert", std::bind(&OrmTestUnit::test_insert, this), "test insert into table");
-  add_test("select", std::bind(&OrmTestUnit::test_select, this), "test select a table");
-  add_test("update", std::bind(&OrmTestUnit::test_update, this), "test update on table");
-  add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test delete from table");
-  add_test("save", std::bind(&OrmTestUnit::test_save, this), "test session save");
-  add_test("flush", std::bind(&OrmTestUnit::test_flush, this), "test session flush");
+  add_test("demo", [this] { test_demo(); }, "test demo");
+  add_test("persistence", [this] { test_persistence(); }, "test persistence class");
+  add_test("table", [this] { test_table(); }, "test table class");
+  add_test("create", [this] { test_create(); }, "test create table");
+  add_test("insert", [this] { test_insert(); }, "test insert into table");
+  add_test("select", [this] { test_select(); }, "test select a table");
+  add_test("update", [this] { test_update(); }, "test update on table");
+  add_test("delete", [this] { test_delete(); }, "test delete from table");
+  add_test("multiple_delete", [this] { test_multiple_delete(); }, "test multiple delete from table");
+  add_test("save", [this] { test_save(); }, "test session save");
+  add_test("flush", [this] { test_flush(); }, "test session flush");
 }
 
 namespace demo {
@@ -245,6 +246,7 @@ void OrmTestUnit::test_update()
 
   matador::date birthday(18, 5, 1980);
   auto hans = s.insert(new person("hans", birthday, 180));
+  auto george = s.insert(new person("george", birthday, 189));
 
   s.flush();
 
@@ -252,12 +254,23 @@ void OrmTestUnit::test_update()
   UNIT_EXPECT_EQUAL(hans->height(), 180U);
   UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
+  UNIT_EXPECT_GREATER(george->id(), 0UL);
+  UNIT_EXPECT_EQUAL(george->height(), 189U);
+  UNIT_EXPECT_EQUAL(george->birthdate(), birthday);
+
   hans.modify()->height(179);
 
   s.flush();
-//  hans = s.save(hans);
 
   UNIT_EXPECT_EQUAL(hans->height(), 179U);
+  UNIT_EXPECT_EQUAL(george->height(), 189U);
+
+  george.modify()->height(155);
+
+  s.flush();
+
+  UNIT_EXPECT_EQUAL(hans->height(), 179U);
+  UNIT_EXPECT_EQUAL(george->height(), 155U);
 
   matador::query<person> q("person");
   matador::connection c(dns_);
@@ -316,6 +329,60 @@ void OrmTestUnit::test_delete()
 
   UNIT_EXPECT_TRUE(first == res.end());
 //  UNIT_EXPECT_TRUE(res.empty());
+
+  p.drop();
+}
+
+void OrmTestUnit::test_multiple_delete()
+{
+  matador::persistence p(dns_);
+
+  p.attach<person>("person");
+
+  p.create();
+
+  matador::session s(p);
+
+  auto hans = s.insert(new person("hans", matador::date(18, 5, 1980), 180));
+  auto george = s.insert(new person("george", matador::date(23, 11, 1989), 175));
+
+  s.flush();
+
+  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+  UNIT_EXPECT_GREATER(george->id(), 0UL);
+
+  matador::query<person> q("person");
+  matador::connection c(dns_);
+  c.connect();
+  auto res = q.select().where(matador::column("name") == "hans").execute(c);
+
+  auto first = res.begin();
+
+  UNIT_ASSERT_TRUE(first != res.end());
+
+  std::unique_ptr<person> p1((first++).release());
+
+  UNIT_EXPECT_EQUAL("hans", p1->name());
+
+  s.remove(hans);
+
+  s.flush();
+
+  res = q.select().where(matador::column("name") == "hans").execute(c);
+
+  first = res.begin();
+
+  UNIT_EXPECT_TRUE(first == res.end());
+
+  s.remove(george);
+
+  s.flush();
+
+  res = q.select().where(matador::column("name") == "george").execute(c);
+
+  first = res.begin();
+
+  UNIT_EXPECT_TRUE(first == res.end());
 
   p.drop();
 }

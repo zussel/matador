@@ -31,6 +31,7 @@
 #include "matador/object/transaction.hpp"
 
 #include "matador/utils/sequencer.hpp"
+#include "matador/utils/sequence_synchronizer.hpp"
 #include "matador/utils/identifier_setter.hpp"
 
 #include <memory>
@@ -615,6 +616,8 @@ public:
       // if object has primary key of type short, int or long
       // set the id of proxy as value
       identifier_setter<unsigned long>::assign(proxy->id(), object);
+    } else if (object && proxy->has_identifier()) {
+      synchronizer_.sync(*proxy->pk());
     }
 
     node->insert(proxy);
@@ -925,6 +928,7 @@ private:
   t_object_proxy_map object_map_;
 
   sequencer seq_;
+  sequence_synchronizer synchronizer_;
 
   detail::object_deleter object_deleter_;
   detail::object_inserter object_inserter_;

@@ -17,14 +17,9 @@
 
 #include "matador/utils/sequencer.hpp"
 
+#include <utility>
+
 namespace matador {
-
-default_sequencer::default_sequencer()
-  : number_(0)
-{}
-
-default_sequencer::~default_sequencer()
-{}
 
 unsigned long default_sequencer::init()
 {
@@ -55,13 +50,10 @@ unsigned long default_sequencer::update(unsigned long id)
   return number_;
 }
 
-sequencer::sequencer(const sequencer_impl_ptr &impl)
-  : impl_(impl)
+sequencer::sequencer(sequencer_impl_ptr impl)
+  : impl_(std::move(impl))
 {
 }
-
-sequencer::~sequencer()
-{}
 
 sequencer_impl_ptr sequencer::exchange_sequencer(const sequencer_impl_ptr &impl)
 {

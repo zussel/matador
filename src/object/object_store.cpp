@@ -28,6 +28,7 @@ namespace matador {
 object_store::object_store()
   : first_(new prototype_node)
   , last_(new prototype_node)
+  , synchronizer_(seq_)
   , object_inserter_(*this)
 {
   // empty tree where first points to last and

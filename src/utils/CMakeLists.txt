@@ -17,7 +17,7 @@ SET(SOURCES
   generic_json_parser.cpp
   json_mapper.cpp
   file.cpp os.cpp
-  buffer.cpp thread_pool.cpp json_serializer.cpp base64.cpp buffer_view.cpp string_cursor.cpp sha256.cpp hmac.cpp json_mapper_serializer.cpp)
+  buffer.cpp thread_pool.cpp json_serializer.cpp base64.cpp buffer_view.cpp string_cursor.cpp sha256.cpp hmac.cpp json_mapper_serializer.cpp sequence_synchronizer.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -71,7 +71,7 @@ SET(HEADER
   ../../include/matador/utils/string_cursor.hpp
   ../../include/matador/utils/sha256.hpp
   ../../include/matador/utils/hmac.hpp
-  ../../include/matador/utils/json_mapper_serializer.hpp)
+  ../../include/matador/utils/json_mapper_serializer.hpp ../../include/matador/utils/sequence_synchronizer.hpp)
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
 

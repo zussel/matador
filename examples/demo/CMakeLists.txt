@@ -11,12 +11,12 @@ SET (DEMO_SOURCES
   services/auth_service.hpp
   models/credential.hpp
   models/user.hpp
-  pages/main_page.cpp
-  pages/main_page.hpp
+  pages/movie_page.cpp
+  pages/movie_page.hpp
   models/movie.hpp
   models/person.hpp
   services/movie_service.cpp
-  services/movie_service.hpp)
+  services/movie_service.hpp pages/main_page.cpp pages/main_page.hpp)
 
 ADD_EXECUTABLE(demo ${DEMO_SOURCES})
 

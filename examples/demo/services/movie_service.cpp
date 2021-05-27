@@ -32,9 +32,15 @@ movie_service::movie_service(matador::http::server &s, matador::persistence &p)
   s.on_post("/api/movie", [this](const request &req) {
     return create_movie(req);
   });
+  s.on_post("/api/movie/{id: \\d+}", [this](const request &req) {
+    return update_movie(req);
+  });
+  s.on_post("/api/movie/delete/{id: \\d+}", [this](const request &req) {
+    return delete_movie(req);
+  });
 }
 
-matador::http::response movie_service::initialize(const matador::http::request &p)
+matador::http::response movie_service::initialize(const matador::http::request &)
 {
   session s(persistence_);
 
@@ -62,7 +68,7 @@ matador::http::response movie_service::initialize(const matador::http::request &
   return response::ok("app initialized", mime_types::TYPE_TEXT_PLAIN);
 }
 
-matador::http::response movie_service::list(const matador::http::request &p)
+matador::http::response movie_service::list(const matador::http::request &)
 {
   session s(persistence_);
 
@@ -85,6 +91,9 @@ matador::http::response movie_service::get_movie(const matador::http::request &p
   session s(persistence_);
   auto result = s.get<movie>(id);
 
+  if (result.empty()) {
+    return response::not_found();
+  }
   json_object_mapper mapper;
 
   std::string body = mapper.to_string(result, json_format::pretty);
@@ -98,7 +107,6 @@ matador::http::response movie_service::create_movie(const request &p)
     log_.info("form data %s: %s", fdata.first.c_str(), fdata.second.c_str());
   }
 
-  
   session s(persistence_);
 
   auto dview = s.select<person>();
@@ -106,6 +114,7 @@ matador::http::response movie_service::create_movie(const request &p)
 
   auto m = new movie;
   m->title = p.form_data().at("title");
+  m->year = std::stoul(p.form_data().at("year"));
   m->director = director;
 
   auto tr = s.begin();
@@ -113,7 +122,58 @@ matador::http::response movie_service::create_movie(const request &p)
     s.insert(m);
     tr.commit();
   } catch (std::exception &ex) {
+    log_.error("Error while creating movie '%s': %s", m->title.c_str(), ex.what());
     tr.rollback();
   }
+  return matador::http::response::redirect("/");
+}
+
+matador::http::response movie_service::update_movie(const request &p)
+{
+  auto id = std::stoul(p.path_params().at("id"));
+
+  session s(persistence_);
+  auto result = s.get<movie>(id);
+
+  if (result.empty()) {
+    return response::not_found();
+  }
+
+  auto tr = s.begin();
+  try {
+
+    result.modify()->title = p.form_data().at("title");
+    result.modify()->year = std::stoul(p.form_data().at("year"));
+
+    tr.commit();
+  } catch (std::exception &ex) {
+    tr.rollback();
+  }
+
+  return matador::http::response::redirect("/movie/" + p.path_params().at("id"));
+}
+
+matador::http::response movie_service::delete_movie(const request &p)
+{
+  auto id = std::stoul(p.path_params().at("id"));
+
+  session s(persistence_);
+  auto result = s.get<movie>(id);
+
+  if (result.empty()) {
+    return response::not_found();
+  }
+
+  auto tr = s.begin();
+  try {
+
+    s.remove(result);
+
+    tr.commit();
+  } catch (std::exception &ex) {
+    log_.error("Error while deleting movie '%s' (id: %d): %s", result->title.c_str(), result.id(), ex.what());
+    tr.rollback();
+  }
+
   return matador::http::response::redirect("/");
 }
