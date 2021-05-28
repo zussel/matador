@@ -28,7 +28,7 @@ socket_interrupter::socket_interrupter()
   acceptor.bind(local);
   acceptor.listen(SOMAXCONN);
 
-  log_.info("listening for interruptions at %d", acceptor.id());
+  log_.debug("listening for interruptions at %d", acceptor.id());
   /*
    * setup connection
    * - connect to server
@@ -55,14 +55,14 @@ int socket_interrupter::socket_id()
 void socket_interrupter::interrupt()
 {
   buffer_view buf(indicator_);
-  log_.info("fd %d: sending interrupt to fd %d", client_.id(), server_.id());
+  log_.debug("fd %d: sending interrupt to fd %d", client_.id(), server_.id());
   client_.send(buf);
 }
 
 bool socket_interrupter::reset()
 {
   buffer_view buf(consumer_);
-  log_.info("reading interrupt byte");
+  log_.debug("reading interrupt byte");
   int nread = server_.receive(buf);
   bool interrupted = nread > 0;
   while (nread == (int)buf.capacity()) {

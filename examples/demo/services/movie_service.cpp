@@ -107,10 +107,17 @@ matador::http::response movie_service::create_movie(const request &p)
     log_.info("form data %s: %s", fdata.first.c_str(), fdata.second.c_str());
   }
 
+  auto id = std::stoul(p.form_data().at("director"));
+
   session s(persistence_);
 
-  auto dview = s.select<person>();
-  auto director = dview.begin().optr();
+  auto director = s.get<person>(id);
+
+  if (director.empty()) {
+    return matador::http::response::not_found();
+  }
+
+  log_.info("found director %s (id: %d)", director->name.c_str(), id);
 
   auto m = new movie;
   m->title = p.form_data().at("title");
@@ -125,7 +132,7 @@ matador::http::response movie_service::create_movie(const request &p)
     log_.error("Error while creating movie '%s': %s", m->title.c_str(), ex.what());
     tr.rollback();
   }
-  return matador::http::response::redirect("/");
+  return matador::http::response::redirect("/movie");
 }
 
 matador::http::response movie_service::update_movie(const request &p)

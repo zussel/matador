@@ -21,7 +21,7 @@ stream_handler::stream_handler(tcp::socket sock, tcp::peer endpoint, handler_cre
   , init_handler_(std::move(init_handler))
 {
 
-  log_.info("%s: created stream handler", name_.c_str());
+  log_.debug("%s: created stream handler", name_.c_str());
 }
 
 void stream_handler::open()
@@ -48,7 +48,7 @@ void stream_handler::on_input()
     on_close();
   } else {
     read_buffer_.bump(len);
-    log_.info("%s: received %d bytes", name().c_str(), len);
+    log_.debug("%s: received %d bytes", name().c_str(), len);
     is_ready_to_read_ = false;
     on_read_(0, len);
   }
@@ -73,7 +73,7 @@ void stream_handler::on_output()
       is_ready_to_write_ = false;
       on_write_((int)len, len);
     } else if (len < 0 && errno == EWOULDBLOCK) {
-      log_.info("%s: sent %d bytes (blocked)", name().c_str(), bytes_total);
+      log_.debug("%s: sent %d bytes (blocked)", name().c_str(), bytes_total);
     } else {
       bytes_total += len;
       bv.bump(len);
@@ -84,14 +84,14 @@ void stream_handler::on_output()
   }
   auto end = std::chrono::high_resolution_clock::now();
   auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-  log_.info("%s: sent %d bytes (%dms)", name().c_str(), bytes_total, elapsed);
+  log_.debug("%s: sent %d bytes (%dms)", name().c_str(), bytes_total, elapsed);
   is_ready_to_write_ = false;
   on_write_(0, bytes_total);
 }
 
 void stream_handler::on_close()
 {
-  log_.info("%s: closing connection", name().c_str(), handle());
+  log_.debug("%s: closing connection", name().c_str(), handle());
   stream_.close();
   auto self = shared_from_this();
   get_reactor()->mark_handler_for_delete(self);
@@ -103,7 +103,7 @@ void stream_handler::close()
   if (!stream_.is_open()) {
     return;
   }
-  log_.info("%s: closing connection", name().c_str(), handle());
+  log_.debug("%s: closing connection", name().c_str(), handle());
   stream_.close();
 }
 

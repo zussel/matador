@@ -23,7 +23,7 @@ void serve_static_files_at(const std::string &path, server &s)
       path.append("index.html");
     }
 
-    matador::log(log_level::LVL_INFO, "StaticFileService", "serving file %s", path.c_str());
+    matador::log(log_level::LVL_DEBUG, "StaticFileService", "serving file %s", path.c_str());
 
     return response::from_file("." + path);
   });
@@ -52,7 +52,7 @@ response static_file_service::serve(const request &req)
     path.append("index.html");
   }
 
-  log_.info("serving file %s", path.c_str());
+  log_.debug("serving file %s", path.c_str());
 
   return response::from_file("." + path);
 }

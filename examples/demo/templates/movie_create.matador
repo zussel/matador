@@ -13,7 +13,11 @@
             </div>
             <div class="pure-control-group">
                 <label for="aligned-director">Director</label>
-                <input type="text" id="aligned-director" placeholder="Director" name="director" />
+                <select id="aligned-director" name="director">
+                    {% for director in directors %}
+                    <option value="{{director.id}}">{{director.name}}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="pure-control-group">
                 <label for="aligned-year">Year</label>

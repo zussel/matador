@@ -100,10 +100,13 @@ std::shared_ptr<template_expression> parse_expression(string_cursor &cursor)
     // parse operand
     // if operand is in double quotes it is treated as a string
     auto operand = parse_operand(cursor);
-    json_parser parser;
-    auto j = parser.parse(operand);
-
-    return std::make_shared<json_compare_expression>(token, build_compare_function(op, j));
+    if (isalpha(operand[0])) {
+      return std::make_shared<json_compare_expression>(token, build_compare_function(op, operand));
+    } else {
+      json_parser parser;
+      auto j = parser.parse(operand);
+      return std::make_shared<json_compare_expression>(token, build_compare_function(op, j));
+    }
   }
 }
 
@@ -111,7 +114,7 @@ std::function<bool(const json&)> build_compare_function(const std::string &op, c
 {
   if (op == "==") {
     return [operand](const json &value) {
-      //std::cout << "comparing: " << value << " == " << operand << "\n";
+      std::cout << "comparing: " << value << " == " << operand << "\n";
       return value == operand;
     };
   } else if (op == "!=") {

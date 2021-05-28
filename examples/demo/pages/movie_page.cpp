@@ -110,6 +110,14 @@ matador::http::response movie_page::create(const request &p)
   json data;
   data["title"] = "Create Movie";
 
+  session s(persistence_);
+
+  auto directors = s.select<person>();
+
+  json_object_mapper mapper;
+
+  data["directors"] = mapper.to_json(directors);
+
   return response::ok(template_engine::render(create_template_, data), mime_types::TYPE_TEXT_HTML);
 }
 

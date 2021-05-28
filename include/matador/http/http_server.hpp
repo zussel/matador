@@ -72,7 +72,7 @@ private:
       log_.warn("path_spec <%s> already registered for method <%s>", path_spec.c_str(), http::to_string(method).c_str());
       return;
     }
-    log_.info("adding path_spec <%s> for method <%s>", path_spec.c_str(), http::to_string(method).c_str());
+    log_.info("adding route <%s> (<%s>)", path_spec.c_str(), http::to_string(method).c_str());
     router_.add(path_spec, method, request_handler);
   }
 

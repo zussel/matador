@@ -11,10 +11,10 @@ response routing_middleware::process(request &req, const middleware::next_func_t
   auto route = match(req);
 
   if (!route.has_value()) {
-    log_.info("route %s isn't valid", req.url().c_str());
+    log_.error("route %s isn't valid", req.url().c_str());
     return response::not_found();
   } else {
-    log_.info("executing route spec: %s (regex: %s)", route.value()->path_spec().c_str(), route.value()->path_regex().c_str());
+    log_.debug("executing route spec: %s (regex: %s)", route.value()->path_spec().c_str(), route.value()->path_regex().c_str());
     return route.value()->execute(req);
   }
 }

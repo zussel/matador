@@ -4,6 +4,8 @@
 
 #include <utility>
 
+#include <iostream>
+
 namespace matador {
 namespace http {
 namespace detail {
@@ -48,6 +50,8 @@ bool json_value_expression::evaluate(const json &data) const
 bool json_compare_expression::evaluate(const json &data) const
 {
   const auto &value = data.at_path(value_name_, '.');
+
+  std::cout << "eval value " << value << "\n";
 
   return compare_func_(value);
 }

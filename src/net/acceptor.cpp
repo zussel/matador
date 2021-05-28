@@ -63,7 +63,7 @@ void acceptor::on_input()
     log_.error("accept failed: %s", error_buffer);
   } else {
     // create new client handler
-    log_.info("accepted connection from %s", endpoint.to_string().c_str());
+    log_.debug("accepted connection from %s", endpoint.to_string().c_str());
 
     auto h = accept_handler_(sock, endpoint, this);
 

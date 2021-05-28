@@ -161,6 +161,30 @@ void TemplateEngineTest::test_if_else()
   result = http::template_engine::render(if_elif, data);
 
   UNIT_ASSERT_EQUAL(expected_result_elif, result);
+
+  std::string if_json_equal_json { "<h1>Header</h1>"
+                                   "{% if person.name == current.name %}<p>Details of {{ person.name }}</p>"
+                                   "{% else %}<p>No details</p>{% endif %}" };
+
+  data = {
+    { "person", {
+      { "id", 4711 },
+      { "name", "George" }
+    }},
+    { "current", {
+      { "name", "George"}
+    }}
+  };
+
+  result = http::template_engine::render(if_json_equal_json, data);
+
+  UNIT_ASSERT_EQUAL(expected_result, result);
+
+  data["current"]["name"] = "Jane";
+
+  result = http::template_engine::render(if_json_equal_json, data);
+
+  UNIT_ASSERT_EQUAL(expected_result_no_details, result);
 }
 
 void TemplateEngineTest::test_include()
