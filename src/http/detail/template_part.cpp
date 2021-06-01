@@ -95,6 +95,7 @@ std::string loop_template_part::render(const json &data)
 
       json item = json::object();
       item[elem_name_] = elem;
+      item["forloop"]["parent"] = data;
 
       result.append(loop_part_->render(item));
     }

@@ -103,10 +103,6 @@ matador::http::response movie_service::get_movie(const matador::http::request &p
 
 matador::http::response movie_service::create_movie(const request &p)
 {
-  for (const auto &fdata : p.form_data()) {
-    log_.info("form data %s: %s", fdata.first.c_str(), fdata.second.c_str());
-  }
-
   auto id = std::stoul(p.form_data().at("director"));
 
   session s(persistence_);
@@ -146,11 +142,22 @@ matador::http::response movie_service::update_movie(const request &p)
     return response::not_found();
   }
 
+  auto director_id = std::stoul(p.form_data().at("director"));
+
+  auto director = s.get<person>(director_id);
+
+  if (director.empty()) {
+    return matador::http::response::not_found();
+  }
+
+  log_.info("found director %s (id: %d)", director->name.c_str(), id);
+
   auto tr = s.begin();
   try {
 
     result.modify()->title = p.form_data().at("title");
     result.modify()->year = std::stoul(p.form_data().at("year"));
+    result.modify()->director = director;
 
     tr.commit();
   } catch (std::exception &ex) {

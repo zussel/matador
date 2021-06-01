@@ -77,6 +77,7 @@ bool parse_end_of_command_tag(string_cursor &cursor)
   return true;
 }
 
+std::function<bool(const json&, const json&)> build_json_compare_function(const std::string &op);
 std::function<bool(const json&)> build_compare_function(const std::string &op, const json &operand);
 
 std::shared_ptr<template_expression> parse_expression(string_cursor &cursor)
@@ -101,7 +102,7 @@ std::shared_ptr<template_expression> parse_expression(string_cursor &cursor)
     // if operand is in double quotes it is treated as a string
     auto operand = parse_operand(cursor);
     if (isalpha(operand[0])) {
-      return std::make_shared<json_compare_expression>(token, build_compare_function(op, operand));
+      return std::make_shared<json_json_compare_expression>(token, operand, build_json_compare_function(op));
     } else {
       json_parser parser;
       auto j = parser.parse(operand);
@@ -114,7 +115,7 @@ std::function<bool(const json&)> build_compare_function(const std::string &op, c
 {
   if (op == "==") {
     return [operand](const json &value) {
-      std::cout << "comparing: " << value << " == " << operand << "\n";
+      //std::cout << "comparing: " << value << " == " << operand << "\n";
       return value == operand;
     };
   } else if (op == "!=") {
@@ -144,6 +145,45 @@ std::function<bool(const json&)> build_compare_function(const std::string &op, c
     };
   } else {
     return [](const json &) {
+      return false;
+    };
+  }
+}
+
+std::function<bool(const json&, const json&)> build_json_compare_function(const std::string &op)
+{
+  if (op == "==") {
+    return [](const json &left, const json &right) {
+      std::cout << "comparing: " << left << " == " << right << "\n";
+      return left == right;
+    };
+  } else if (op == "!=") {
+    return [](const json &left, const json &right) {
+      //std::cout << "comparing: " << value << " != " << right << "\n";
+      return left != right;
+    };
+  } else if (op == "<") {
+    return [](const json &left, const json &right) {
+      //std::cout << "comparing: " << left << " < " << right << "\n";
+      return left < right;
+    };
+  } else if (op == "<=") {
+    return [](const json &left, const json &right) {
+      //std::cout << "comparing: " << left << " <= " << right << "\n";
+      return left <= right;
+    };
+  } else if (op == ">") {
+    return [](const json &left, const json &right) {
+      //std::cout << "comparing: " << left << " > " << right << "\n";
+      return left > right;
+    };
+  } else if (op == ">=") {
+    return [](const json &left, const json &right) {
+      //std::cout << "comparing: " << left << " >= " << right << "\n";
+      return left >= right;
+    };
+  } else {
+    return [](const json &, const json &) {
       return false;
     };
   }

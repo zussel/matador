@@ -872,8 +872,8 @@ public:
   json& get(const std::string &key);
   const json& get(const std::string &key) const;
 
-  json& at_path(const std::string &path, char delimiter);
-  const json& at_path(const std::string &path, char delimiter) const;
+  json& at_path(const std::string &path, char delimiter = '.');
+  const json& at_path(const std::string &path, char delimiter = '.') const;
 
   /**
    * Clears the current json object.

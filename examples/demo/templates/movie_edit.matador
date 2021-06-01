@@ -19,7 +19,7 @@
                 <label for="aligned-director">Director</label>
                 <select id="aligned-director" name="director">
                     {% for director in directors %}
-                    <option value="{{director.id}}">{{director.name}}</option>
+                    <option value="{{director.id}}" {% if director.id == forloop.parent.movie.director.id %}selected{% endif %}>{{director.name}}</option>
                     {% endfor %}
                 </select>
 <!--                <input type="text" id="aligned-director" placeholder="Director" name="director" value="{{movie.director.name}}" />-->

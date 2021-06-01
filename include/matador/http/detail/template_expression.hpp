@@ -62,6 +62,24 @@ private:
   std::function<bool(const json &value)> compare_func_;
 };
 
+class OOS_HTTP_API json_json_compare_expression : public template_expression
+{
+public:
+  template < typename Function >
+  json_json_compare_expression(std::string left_name, std::string right_name, Function &&func)
+    : left_name_(std::move(left_name))
+    , right_name_(std::move(right_name))
+    , compare_func_(func)
+  {}
+
+  bool evaluate(const json &data) const override;
+
+private:
+  std::string left_name_;
+  std::string right_name_;
+  std::function<bool(const json &left, const json &right)> compare_func_;
+};
+
 }
 }
 }

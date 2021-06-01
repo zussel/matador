@@ -51,10 +51,17 @@ bool json_compare_expression::evaluate(const json &data) const
 {
   const auto &value = data.at_path(value_name_, '.');
 
-  std::cout << "eval value " << value << "\n";
-
   return compare_func_(value);
 }
+
+bool json_json_compare_expression::evaluate(const json &data) const
+{
+  const auto &left = data.at_path(left_name_);
+  const auto &right = data.at_path(right_name_);
+
+  return compare_func_(left, right);
+}
+
 }
 }
 }

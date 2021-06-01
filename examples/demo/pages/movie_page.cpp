@@ -137,6 +137,10 @@ matador::http::response movie_page::edit(const request &p)
   data["title"] = std::string("Edit Movie: ") + m->title;
   data["movie"] = mapper.to_json(m);
 
+  auto directors = s.select<person>();
+
+  data["directors"] = mapper.to_json(directors);
+
   return response::ok(template_engine::render(edit_template_, data), mime_types::TYPE_TEXT_HTML);
 }
 
