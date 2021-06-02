@@ -23,6 +23,8 @@ namespace matador {
 namespace http {
 namespace detail {
 
+/// @cond MATADOR_DEV
+
 class OOS_HTTP_API template_command_factory : public singleton<template_command_factory>
 {
 private:
@@ -36,6 +38,8 @@ public:
 private:
   factory_type factory_;
 };
+
+/// @endcond
 
 }
 }

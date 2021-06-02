@@ -7,6 +7,8 @@ namespace matador {
 namespace http {
 namespace auth {
 
+/// @cond MATADOR_DEV
+
 class jwt_header
 {
 public:
@@ -58,6 +60,8 @@ public:
   jwt_header header {};
   jwt_payload payload {};
 };
+
+/// @endcond
 
 }
 }

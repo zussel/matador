@@ -16,6 +16,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 class handler;
 
 class OOS_NET_API handler_creator
@@ -25,6 +27,8 @@ public:
 
   virtual void notify_close(handler *hndlr) = 0;
 };
+
+/// @endcond
 
 }
 #endif //MATADOR_HANDLER_CREATOR_HPP

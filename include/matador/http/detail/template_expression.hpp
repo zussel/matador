@@ -24,6 +24,8 @@ class json;
 namespace http {
 namespace detail {
 
+/// @cond MATADOR_DEV
+
 class OOS_HTTP_API template_expression
 {
 public:
@@ -79,6 +81,8 @@ private:
   std::string right_name_;
   std::function<bool(const json &left, const json &right)> compare_func_;
 };
+
+/// @endcond
 
 }
 }

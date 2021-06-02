@@ -31,6 +31,8 @@
 namespace matador {
 namespace ext {
 
+/// @cond MATADOR_DEV
+
 class OOS_UTILS_API SHA256
 {
 protected:
@@ -54,9 +56,45 @@ protected:
   uint32 m_h[8];
 };
 
+/// @endcond
+
+/**
+ * @brief SH256 encrypting function
+ *
+ * Encrypts a given string with sha256 algorithm
+ * and returns the encrypted data as string
+ *
+ * @param input String to encrypt
+ * @return The encrypted data as string
+ */
 OOS_UTILS_API std::string sha256(const std::string& input);
+
+/**
+ * @brief SH256 encrypting function
+ *
+ * Encrypts a given character string with sha256 algorithm
+ * and returns the encrypted data as string
+
+ * @param input Character string to encrypt
+ * @param length Length of the character string
+ * @return The encrypted data as string
+ */
 OOS_UTILS_API std::string sha256(const char *input, size_t length);
+
+/**
+ * @brief SH256 encrypting function
+ *
+ * Encrypts a given character string with sha256 algorithm
+ * and write the encrypted data into given array.
+
+ * @param input Character string to encrypt
+ * @param length Length of the character string
+ * @param digest Array to write the encrypted data to
+ * @param hash_size Size of the array
+ */
 OOS_UTILS_API void sha256(const char *input, size_t length, unsigned char *digest, size_t hash_size);
+
+/// @cond MATADOR_DEV
 
 #define SHA2_SHFR(x, n)    ((x) >> (n))
 #define SHA2_ROTR(x, n)   (((x) >> (n)) | ((x) << ((sizeof(x) << 3) - (n))))
@@ -81,6 +119,8 @@ OOS_UTILS_API void sha256(const char *input, size_t length, unsigned char *diges
            | ((uint32) *((str) + 1) << 16)    \
            | ((uint32) *((str) + 0) << 24);   \
 }
+
+/// @endcond
 
 }
 }

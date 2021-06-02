@@ -29,6 +29,8 @@ class json;
 namespace http {
 namespace detail {
 
+/// @cond MATADOR_DEV
+
 class template_part;
 class multi_template_part;
 
@@ -60,6 +62,9 @@ class OOS_HTTP_API include_command : public template_command
 public:
   std::shared_ptr<template_part> parse(string_cursor &cursor) override;
 };
+
+/// @endcond
+
 }
 }
 }

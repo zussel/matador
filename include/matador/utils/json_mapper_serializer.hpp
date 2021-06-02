@@ -216,6 +216,8 @@ void json_mapper_serializer::serialize(const char *id, std::set<V> &cont)
   }
 }
 
+/// @endcond
+
 }
 }
 #endif //MATADOR_JSON_MAPPER_SERIALIZER_HPP

@@ -30,6 +30,8 @@ class string_cursor;
 namespace http {
 namespace detail {
 
+/// @cond MATADOR_DEV
+
 class template_part;
 class template_expression;
 class multi_template_part;
@@ -133,6 +135,9 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
 
   return std::shared_ptr<template_part>(parts_.release());
 }
+
+/// @endcond
+
 }
 }
 }

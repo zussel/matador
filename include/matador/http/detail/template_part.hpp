@@ -25,6 +25,8 @@ class json;
 namespace http {
 namespace detail {
 
+/// @cond MATADOR_DEV
+
 class template_expression;
 
 class OOS_HTTP_API template_part
@@ -99,6 +101,8 @@ private:
 
   template_part_ptr else_part_;
 };
+
+/// @endcond
 
 }
 }

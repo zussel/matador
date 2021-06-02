@@ -34,6 +34,8 @@ class io_stream;
 
 namespace http {
 
+/// @cond MATADOR_DEV
+
 class OOS_HTTP_API http_client_connection : public std::enable_shared_from_this<http_client_connection>
 {
 public:
@@ -56,6 +58,8 @@ private:
   request request_;
   response &response_;
 };
+
+/// @endcond
 
 }
 }

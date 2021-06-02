@@ -17,6 +17,8 @@
 namespace matador {
 namespace http {
 
+/// @cond MATADOR_DEV
+
 class default_responses
 {
 public:
@@ -37,6 +39,9 @@ public:
   static OOS_HTTP_API const char *BAD_GATEWAY;
   static OOS_HTTP_API const char *SERVICE_UNAVAILABLE;
 };
+
+/// @endcond
+
 }
 }
 
