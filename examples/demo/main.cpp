@@ -14,8 +14,6 @@
 #include "matador/http/request.hpp"
 #include "matador/http/static_file_service.hpp"
 
-#include "matador\utils\os.hpp"
-
 using namespace matador;
 
 int main(int /*argc*/, char* /*argv*/[])
@@ -23,9 +21,6 @@ int main(int /*argc*/, char* /*argv*/[])
   // setup application logging
   matador::add_log_sink(matador::create_file_sink("log/server.log"));
   matador::add_log_sink(matador::create_stdout_sink());
-
-
-  matador::log(log_level::LVL_INFO, "Main", os::get_current_dir().c_str());
 
   // setup database
   matador::persistence p("sqlite://moviedb.sqlite");

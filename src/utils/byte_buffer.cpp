@@ -17,15 +17,14 @@
 
 #include "matador/utils/byte_buffer.hpp"
 
+#include <cstring>
+
 namespace matador {
 
 byte_buffer::byte_buffer()
 {
   chunk_list_.push_back(buffer_chunk());
 }
-
-byte_buffer::~byte_buffer()
-{}
 
 void byte_buffer::append(const void *bytes, byte_buffer::size_type size)
 {

@@ -61,7 +61,7 @@ private:
   template<class T>
   void sync_integral(T val)
   {
-    if (val > seq_.current()) {
+    if (val > (T)seq_.current()) {
       seq_.update(val);
     }
   }
