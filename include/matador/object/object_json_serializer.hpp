@@ -1,6 +1,20 @@
 #ifndef MATADOR_OBJECT_JSON_SERIALIZER_HPP
 #define MATADOR_OBJECT_JSON_SERIALIZER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_object_EXPORTS
+#define MATADOR_OBJECT_API __declspec(dllexport)
+#define EXPIMP_OBJECT_TEMPLATE
+#else
+#define MATADOR_OBJECT_API __declspec(dllimport)
+#define EXPIMP_OBJECT_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#pragma warning(disable: 4275)
+#else
+#define MATADOR_OBJECT_API
+#endif
+
 #include "matador/utils/json.hpp"
 #include "matador/utils/is_builtin.hpp"
 
@@ -14,7 +28,7 @@
 
 namespace matador {
 
-class object_json_serializer
+class MATADOR_OBJECT_API object_json_serializer
 {
 public:
   template< typename T, object_holder_type OPT >

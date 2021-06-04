@@ -117,7 +117,7 @@ matador::http::response movie_service::create_movie(const request &p)
 
   auto m = new movie;
   m->title = p.form_data().at("title");
-  m->year = std::stoul(p.form_data().at("year"));
+  m->year = (unsigned short)std::stoul(p.form_data().at("year"));
   m->director = director;
 
   auto tr = s.begin();
@@ -156,11 +156,12 @@ matador::http::response movie_service::update_movie(const request &p)
   try {
 
     result.modify()->title = p.form_data().at("title");
-    result.modify()->year = std::stoul(p.form_data().at("year"));
+    result.modify()->year = (unsigned short)std::stoul(p.form_data().at("year"));
     result.modify()->director = director;
 
     tr.commit();
   } catch (std::exception &ex) {
+    log_.error("couldn't modify movie %s (error %s)", director->name.c_str(), ex.what());
     tr.rollback();
   }
 

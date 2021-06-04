@@ -34,7 +34,13 @@ void byte_buffer::append(const void *bytes, byte_buffer::size_type size)
   while (chunk_list_.back().available() < size) {
     buffer_chunk &chunk = chunk_list_.back();
     // copy first part of bytes
-    std::copy(ptr+bytes_written, ptr+bytes_written+chunk.available(), &chunk.data[chunk.write_cursor]);
+
+#ifdef _WIN32
+    memcpy_s(&chunk.data[chunk.write_cursor], chunk.available(), ptr + bytes_written, chunk.available());
+#else
+    memcpy(&chunk.data[chunk.write_cursor], ptr + bytes_written, chunk.available());
+#endif
+    //std::copy(ptr+bytes_written, ptr+bytes_written+chunk.available(), &chunk.data[chunk.write_cursor]);
     // adjust capacity size
     size -= chunk.available();
     // adjust written bytes
