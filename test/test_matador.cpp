@@ -23,7 +23,6 @@
 
 #include "logger/LoggerTest.hpp"
 
-#include "matador/logger/log_manager.hpp"
 #include "matador/utils/os.hpp"
 
 #include "utils/AnyTestUnit.hpp"
@@ -100,9 +99,6 @@ using namespace matador;
 
 int main(int argc, char *argv[])
 {
-  matador::add_log_sink(matador::create_stdout_sink());
-  matador::log(log_level::LVL_INFO, "Main", os::get_current_dir().c_str());
-
   matador::test_suite suite;
 
   TestSuiteTestUnit test_suite_test;

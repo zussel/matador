@@ -89,8 +89,10 @@ void JsonTestUnit::test_simple()
   UNIT_EXPECT_EQUAL(9, jii.as<int>());
 
   // not an array
-  UNIT_ASSERT_EXCEPTION(jii.size(), std::logic_error, "type doesn't have size()");
-  UNIT_ASSERT_EXCEPTION(jii.empty(), std::logic_error, "type doesn't have empty()");
+  UNIT_ASSERT_EQUAL(1UL, jii.size());
+  UNIT_ASSERT_FALSE(jii.empty());
+  //UNIT_ASSERT_EXCEPTION(jii.size(), std::logic_error, "type doesn't have size()");
+  //UNIT_ASSERT_EXCEPTION(jii.empty(), std::logic_error, "type doesn't have empty()");
 
   auto ii = ji.at<int>(0);
   UNIT_ASSERT_EQUAL(9, ii);
@@ -260,14 +262,14 @@ void JsonTestUnit::test_parser()
 
   j = parser.parse(R"(  { "real"  : -5.66667, "number"  :   -123456789 })");
 
-  result = R"({"number": -123456789, "real": -5.66667})";
+  result = R"({"number": -123456789, "real": -5.666670})";
 
   UNIT_ASSERT_FALSE(j.is_null());
   UNIT_ASSERT_EQUAL(result, to_string(j));
 
   j = parser.parse(R"(           {      "text" :       "hello world!",     "bool" : false, "array" :  [   null, false, -5.66667,123456789    ], "serializable" :      { "found": true}      })");
 
-  result = R"({"array": [null, false, -5.66667, 123456789], "bool": false, "serializable": {"found": true}, "text": "hello world!"})";
+  result = R"({"array": [null, false, -5.666670, 123456789], "bool": false, "serializable": {"found": true}, "text": "hello world!"})";
 
   UNIT_ASSERT_FALSE(j.is_null());
   UNIT_ASSERT_EQUAL(result, to_string(j));

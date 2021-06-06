@@ -69,7 +69,6 @@ void HttpServerTest::initialize()
 
 void HttpServerTest::finalize()
 {
-  //matador::clear_all_log_sinks();
 }
 
 void HttpServerTest::test_shutdown()

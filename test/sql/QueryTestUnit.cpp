@@ -808,6 +808,9 @@ void QueryTestUnit::test_statement_delete()
   stmt.bind(0, georg);
   res = stmt.execute();
 
+  stmt = q.drop().prepare(connection_);
+
+  res = stmt.execute();
 }
 
 void QueryTestUnit::test_delete()
