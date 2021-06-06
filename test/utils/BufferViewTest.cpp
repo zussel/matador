@@ -19,28 +19,28 @@ void BufferViewTest::test_buffer_view()
   UNIT_ASSERT_EQUAL(11UL, bv.size());
   UNIT_ASSERT_EQUAL(11UL, bv.capacity());
   UNIT_ASSERT_EQUAL(bv.data(), str.c_str());
-  UNIT_ASSERT_FALSE(bv.empty());
+  UNIT_ASSERT_TRUE(bv.empty());
 
   bv.bump(6);
 
   UNIT_ASSERT_EQUAL(11UL, bv.size());
   UNIT_ASSERT_EQUAL(5UL, bv.capacity());
-  UNIT_ASSERT_EQUAL(bv.data(), "world");
+  UNIT_ASSERT_EQUAL(bv.data(), std::string("world"));
   UNIT_ASSERT_FALSE(bv.empty());
 
   bv.bump(11);
 
   UNIT_ASSERT_EQUAL(11UL, bv.size());
   UNIT_ASSERT_EQUAL(0UL, bv.capacity());
-  UNIT_ASSERT_EQUAL(bv.data(), "");
-  UNIT_ASSERT_TRUE(bv.empty());
+  UNIT_ASSERT_EQUAL(bv.data(), std::string(""));
+  UNIT_ASSERT_FALSE(bv.empty());
 
   bv = buffer_view("foobar", 6);
 
   UNIT_ASSERT_EQUAL(6UL, bv.size());
   UNIT_ASSERT_EQUAL(6UL, bv.capacity());
-  UNIT_ASSERT_EQUAL(bv.data(), "foobar");
-  UNIT_ASSERT_FALSE(bv.empty());
+  UNIT_ASSERT_EQUAL(bv.data(), std::string("foobar"));
+  UNIT_ASSERT_TRUE(bv.empty());
 }
 
 void BufferViewTest::test_array()

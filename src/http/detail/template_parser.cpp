@@ -154,7 +154,7 @@ std::function<bool(const json&, const json&)> build_json_compare_function(const 
 {
   if (op == "==") {
     return [](const json &left, const json &right) {
-      std::cout << "comparing: " << left << " == " << right << "\n";
+      //std::cout << "comparing: " << left << " == " << right << "\n";
       return left == right;
     };
   } else if (op == "!=") {
