@@ -41,8 +41,8 @@ private:
 
   matador::logger log_;
 
-  std::array<char, 1> indicator_ = { 0 };
-  std::array<char, 1> consumer_;
+  std::array<char, 1> indicator_ = { { 0 } };
+  std::array<char, 1> consumer_ = {};
 };
 /// @endcond
 
