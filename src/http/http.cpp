@@ -4,7 +4,7 @@
 namespace matador {
 namespace http {
 
-std::unordered_map<http::method_t, std::string> http::method_string_map_({ /* NOLINT */
+std::unordered_map<http::method_t, std::string> http::method_string_map_{{ /* NOLINT */
   { http::method_t::GET, "GET" },
   { http::method_t::POST, "POST" },
   { http::method_t::PUT, "PUT" },
@@ -12,9 +12,9 @@ std::unordered_map<http::method_t, std::string> http::method_string_map_({ /* NO
   { http::method_t::OPTIONS, "OPTIONS" },
   { http::method_t::HEAD, "HEAD" },
   { http::method_t::UNKNOWN, "UNKNOWN" }
-});
+}};
 
-std::unordered_map<std::string, http::method_t> http::string_method_map_({ /* NOLINT */
+std::unordered_map<std::string, http::method_t> http::string_method_map_{{ /* NOLINT */
   { "GET", http::method_t::GET },
   { "POST", http::method_t::POST, },
   { "PUT", http::method_t::PUT, },
@@ -22,9 +22,9 @@ std::unordered_map<std::string, http::method_t> http::string_method_map_({ /* NO
   { "OPTIONS", http::method_t::OPTIONS, },
   { "HEAD", http::method_t::HEAD, },
   { "UNKNOWN", http::method_t::UNKNOWN, }
-});
+}};
 
-std::unordered_map<http::status_t, std::string> http::request_status_string_map_({ /* NOLINT */
+std::unordered_map<http::status_t, std::string> http::request_status_string_map_{{ /* NOLINT */
   { http::status_t::OK, "HTTP/1.1 200 OK\r\n" },
   { http::status_t::CREATED, "HTTP/1.1 201 Created\r\n" },
   { http::status_t::ACCEPTED, "HTTP/1.1 202 Accepted\r\n" },
@@ -41,9 +41,9 @@ std::unordered_map<http::status_t, std::string> http::request_status_string_map_
   { http::status_t::NOT_IMPLEMENTED, "HTTP/1.1 501 Not Implemented\r\n" },
   { http::status_t::BAD_GATEWAY, "HTTP/1.1 502 Bad Gateway\r\n" },
   { http::status_t::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service unavailable\r\n" }
-});
+}};
 
-std::unordered_map<http::status_t, std::string> http::status_string_map_({ /* NOLINT */
+std::unordered_map<http::status_t, std::string> http::status_string_map_{{ /* NOLINT */
   { http::status_t::OK, "OK" },
   { http::status_t::CREATED, "Created" },
   { http::status_t::ACCEPTED, "Accepted" },
@@ -60,9 +60,9 @@ std::unordered_map<http::status_t, std::string> http::status_string_map_({ /* NO
   { http::status_t::NOT_IMPLEMENTED, "Not Implemented" },
   { http::status_t::BAD_GATEWAY, "Bad Gateway" },
   { http::status_t::SERVICE_UNAVAILABLE, "Service unavailable" }
-});
+}};
 
-std::unordered_map<std::string, http::status_t> http::string_status_map_({ /* NOLINT */
+std::unordered_map<std::string, http::status_t> http::string_status_map_{{ /* NOLINT */
   { "200", http::OK },
   { "201", http::CREATED },
   { "202", http::ACCEPTED },
@@ -79,7 +79,7 @@ std::unordered_map<std::string, http::status_t> http::string_status_map_({ /* NO
   { "501", http::NOT_IMPLEMENTED },
   { "502", http::BAD_GATEWAY },
   { "503", http::SERVICE_UNAVAILABLE }
-});
+}};
 
 std::string http::to_string(http::method_t method)
 {
