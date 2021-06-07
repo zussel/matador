@@ -16,6 +16,8 @@
 #define OOS_HTTP_API
 #endif
 
+#include "matador/http/enum_class_hash.hpp"
+
 #include <unordered_map>
 #include <string>
 
@@ -25,17 +27,6 @@ namespace http {
 /// @cond MATADOR_DEV
 
 typedef std::unordered_map<std::string, std::string> t_string_param_map;
-
-namespace detail {
-struct enum_class_hash
-{
-  template<typename T>
-  std::size_t operator()(T t) const
-  {
-    return static_cast<std::size_t>(t);
-  }
-};
-}
 
 /// @endcond
 

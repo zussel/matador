@@ -16,7 +16,7 @@ const char *mime_types::APPLICATION_ZIP = "application/zip";
 const char *mime_types::APPLICATION_JAVASCRIPT = "application/javascript";
 const char *mime_types::APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
-std::unordered_map<std::string, const char*> mime_types::extension_mime_type_map_({ /* NOLINT */
+std::unordered_map<std::string, const char*> mime_types::extension_mime_type_map_{{ /* NOLINT */
   { "gif", IMAGE_GIF },
   { "jpg", IMAGE_JPEG },
   { "jpeg", IMAGE_JPEG },
@@ -32,9 +32,9 @@ std::unordered_map<std::string, const char*> mime_types::extension_mime_type_map
   { "gz", APPLICATION_GZIP },
   { "zip", APPLICATION_ZIP },
   { "js", APPLICATION_JAVASCRIPT }
-});
+}};
 
-std::unordered_map<mime_types::types, const char*> mime_types::mime_type_map_({ /* NOLINT */
+std::unordered_map<mime_types::types, const char*, detail::enum_class_hash> mime_types::mime_type_map_{{ /* NOLINT */
   { TYPE_IMAGE_GIF, IMAGE_GIF },
   { TYPE_IMAGE_JPEG, IMAGE_JPEG },
   { TYPE_IMAGE_PNG, IMAGE_PNG },
@@ -46,7 +46,7 @@ std::unordered_map<mime_types::types, const char*> mime_types::mime_type_map_({ 
   { TYPE_APPLICATION_GZIP, APPLICATION_GZIP },
   { TYPE_APPLICATION_ZIP, APPLICATION_ZIP },
   { TYPE_APPLICATION_JAVASCRIPT, APPLICATION_JAVASCRIPT }
-});
+}};
 
 const char *mime_types::from_file_extension(const std::string &ext)
 {

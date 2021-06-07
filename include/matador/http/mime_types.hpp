@@ -14,6 +14,8 @@
 #define OOS_HTTP_API
 #endif
 
+#include "matador/http/enum_class_hash.hpp"
+
 #include <string>
 #include <unordered_map>
 
@@ -90,7 +92,7 @@ public:
 
 private:
   static std::unordered_map<std::string, const char*> extension_mime_type_map_;
-  static std::unordered_map<types, const char*> mime_type_map_;
+  static std::unordered_map<types, const char*, detail::enum_class_hash> mime_type_map_;
 };
 
 }
