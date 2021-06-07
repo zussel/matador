@@ -26,6 +26,17 @@ namespace http {
 
 typedef std::unordered_map<std::string, std::string> t_string_param_map;
 
+namespace detail {
+struct enum_class_hash
+{
+  template<typename T>
+  std::size_t operator()(T t) const
+  {
+    return static_cast<std::size_t>(t);
+  }
+};
+}
+
 /// @endcond
 
 /**
@@ -165,11 +176,11 @@ public:
   };
 
 private:
-  static std::unordered_map<method_t, std::string> method_string_map_;
+  static std::unordered_map<method_t, std::string, detail::enum_class_hash> method_string_map_;
   static std::unordered_map<std::string, method_t> string_method_map_;
-  static std::unordered_map<status_t, std::string> request_status_string_map_;
+  static std::unordered_map<status_t, std::string, detail::enum_class_hash> request_status_string_map_;
   static std::unordered_map<std::string, status_t> string_status_map_;
-  static std::unordered_map<status_t, std::string> status_string_map_;
+  static std::unordered_map<status_t, std::string, detail::enum_class_hash> status_string_map_;
 };
 
 }

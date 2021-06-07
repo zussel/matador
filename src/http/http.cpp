@@ -4,7 +4,7 @@
 namespace matador {
 namespace http {
 
-std::unordered_map<http::method_t, std::string> http::method_string_map_{{ /* NOLINT */
+std::unordered_map<http::method_t, std::string, detail::enum_class_hash> http::method_string_map_{{ /* NOLINT */
   { http::method_t::GET, "GET" },
   { http::method_t::POST, "POST" },
   { http::method_t::PUT, "PUT" },
@@ -24,7 +24,7 @@ std::unordered_map<std::string, http::method_t> http::string_method_map_{{ /* NO
   { "UNKNOWN", http::method_t::UNKNOWN, }
 }};
 
-std::unordered_map<http::status_t, std::string> http::request_status_string_map_{{ /* NOLINT */
+std::unordered_map<http::status_t, std::string, detail::enum_class_hash> http::request_status_string_map_{{ /* NOLINT */
   { http::status_t::OK, "HTTP/1.1 200 OK\r\n" },
   { http::status_t::CREATED, "HTTP/1.1 201 Created\r\n" },
   { http::status_t::ACCEPTED, "HTTP/1.1 202 Accepted\r\n" },
@@ -43,7 +43,7 @@ std::unordered_map<http::status_t, std::string> http::request_status_string_map_
   { http::status_t::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service unavailable\r\n" }
 }};
 
-std::unordered_map<http::status_t, std::string> http::status_string_map_{{ /* NOLINT */
+std::unordered_map<http::status_t, std::string, detail::enum_class_hash> http::status_string_map_{{ /* NOLINT */
   { http::status_t::OK, "OK" },
   { http::status_t::CREATED, "Created" },
   { http::status_t::ACCEPTED, "Accepted" },
