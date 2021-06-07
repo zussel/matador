@@ -35,6 +35,14 @@ namespace matador {
 OOS_UTILS_API void localtime(const time_t &in, struct tm &out);
 
 /**
+ * Multi platform version of gmtime
+ *
+ * @param in time_t value to be converted
+ * @param out converted value
+ */
+OOS_UTILS_API void gmtime(const time_t &in, struct tm &out);
+
+/**
  * Formats a given timeval struct as a string
  * within the given buffer. It is possible to format the
  * string with fractional seconds using the format

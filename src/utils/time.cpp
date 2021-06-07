@@ -29,6 +29,15 @@ void localtime(const time_t &in, struct tm &out)
 #endif
 }
 
+void gmtime(const time_t &in, tm &out)
+{
+#ifdef _MSC_VER
+  errno_t err = gmtime_s(&out, &in);
+#else
+  gmtime_r(&in, &out);
+#endif
+}
+
 int strftime(char *buffer, size_t size, const char *format, const struct timeval *tv)
 {
   struct tm timeinfo = {};
@@ -198,7 +207,7 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   ::time(&rawtime);
 
   struct tm t{};
-  localtime(rawtime, t);
+  gmtime(rawtime, t);
   t.tm_year = year - 1900;
   t.tm_mon = month - 1;
   t.tm_mday = day;
