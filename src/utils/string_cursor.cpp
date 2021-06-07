@@ -1,6 +1,8 @@
 #include "matador/utils/string_cursor.hpp"
 #include "matador/utils/string.hpp"
 
+#include <stdexcept>
+
 namespace matador {
 
 string_cursor::string_cursor(const char *str)
