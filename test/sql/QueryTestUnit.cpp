@@ -798,7 +798,7 @@ void QueryTestUnit::test_statement_delete()
   }
 
   column idcol = "name"_col;
-  stmt = q.remove().where(idcol == 1).prepare(connection_);
+  stmt = q.remove().where(idcol == "").prepare(connection_);
 
   std::string hans {"hans"};
   stmt.bind(0, hans);
