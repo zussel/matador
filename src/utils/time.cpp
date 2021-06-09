@@ -57,7 +57,7 @@ int strftime(char *buffer, size_t size, const char *format, const struct timeval
     strncpy(first_part, format, len);
 #endif
     first_part[len] = '\0';
-    int s = ::strftime(buffer, size, first_part, &timeinfo);
+    int s = (int)::strftime(buffer, size, first_part, &timeinfo);
     if (s == 0) {
       throw std::logic_error("couldn't format date string");
     }
