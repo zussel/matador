@@ -797,7 +797,7 @@ void QueryTestUnit::test_statement_delete()
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980));
   }
 
-  column idcol = "id"_col;
+  column idcol = "name"_col;
   stmt = q.remove().where(idcol == 1).prepare(connection_);
 
   std::string hans {"hans"};
