@@ -46,7 +46,8 @@ public:
   void init();
   void update(const unsigned char *message, unsigned int len);
   void final(unsigned char *digest);
-  static const unsigned int DIGEST_SIZE = ( 256 / 8);
+  static const unsigned int DIGEST_SIZE = (256 / 8);
+  static const unsigned int RESULT_SIZE = 65;
 
 protected:
   void transform(const unsigned char *message, unsigned int block_nb);
@@ -68,6 +69,7 @@ protected:
  * @return The encrypted data as string
  */
 OOS_UTILS_API std::string sha256(const std::string& input);
+OOS_UTILS_API std::string sha256(const char *input);
 
 /**
  * @brief SH256 encrypting function

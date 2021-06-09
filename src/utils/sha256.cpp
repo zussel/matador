@@ -134,21 +134,28 @@ std::string sha256(const std::string& input)
   return sha256(input.data(), input.size());
 }
 
+std::string sha256(const char *input)
+{
+  return sha256(input, strlen(input));
+}
+
 std::string sha256(const char *input, size_t length)
 {
   unsigned char digest[SHA256::DIGEST_SIZE];
   sha256(input, length, digest, SHA256::DIGEST_SIZE);
 
-  char buf[2*SHA256::DIGEST_SIZE+1];
+  char buf[SHA256::RESULT_SIZE];
   buf[2*SHA256::DIGEST_SIZE] = 0;
+  auto diff = input - buf;
   for (unsigned int i = 0; i < SHA256::DIGEST_SIZE; i++) {
+    auto offset = i * 2;
 #ifdef _MSC_VER
-      sprintf_s(buf + i * 2, 2 * SHA256::DIGEST_SIZE + 1, "%02x", digest[i]);
+    sprintf_s(buf + offset, SHA256::RESULT_SIZE - offset, "%02x", digest[i]);
 #else
-      sprintf(buf + i * 2, "%02x", digest[i]);
+    sprintf(buf + i * 2, "%02x", digest[i]);
 #endif
   }
-  return buf;
+  return std::string(buf, 2 * SHA256::DIGEST_SIZE);
 }
 
 void sha256(const char *input, size_t length, unsigned char *digest, size_t hash_size)
@@ -159,7 +166,6 @@ void sha256(const char *input, size_t length, unsigned char *digest, size_t hash
   ctx.init();
   ctx.update(reinterpret_cast<const unsigned char *>(input), length);
   ctx.final(digest);
-
 }
 
 }
