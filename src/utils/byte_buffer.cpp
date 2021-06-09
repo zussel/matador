@@ -52,7 +52,12 @@ void byte_buffer::append(const void *bytes, byte_buffer::size_type size)
   if (size > 0) {
     buffer_chunk &chunk = chunk_list_.back();
     // append capacity bytes
-    std::copy(ptr+bytes_written, ptr+bytes_written+size, &chunk.data[chunk.write_cursor]);
+#ifdef _WIN32
+    memcpy_s(&chunk.data[chunk.write_cursor], chunk.available(), ptr + bytes_written, size);
+#else
+    memcpy(&chunk.data[chunk.write_cursor], ptr + bytes_written, size);
+#endif
+//    std::copy(ptr+bytes_written, ptr+bytes_written+size, &chunk.data[chunk.write_cursor]);
     chunk.write_cursor += size;
   }
 }
