@@ -804,6 +804,8 @@ void QueryTestUnit::test_statement_delete()
   stmt.bind(0, hans);
   res = stmt.execute();
 
+  stmt.reset();
+
   std::string georg {"georg"};
   stmt.bind(0, georg);
   res = stmt.execute();
