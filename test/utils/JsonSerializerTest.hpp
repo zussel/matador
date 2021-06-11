@@ -8,6 +8,7 @@ class JsonSerializerTest : public matador::unit_test
 public:
   JsonSerializerTest();
 
+  void test_date_to_string_object();
   void test_to_string_object();
   void test_to_string_array();
 };

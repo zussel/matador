@@ -34,7 +34,7 @@ size_t split(const std::string &str, char delim, std::list<std::string> &values)
 
 #ifdef _MSC_VER
 const char* date_format::ISO8601 = "%Y-%m-%d";
-const char* time_format::ISO8601 = "%Y-%m-%d %H:%M:%S";
+const char* time_format::ISO8601 = "%Y-%m-%dT%H:%M:%S";
 #endif
 
 std::string trim(const std::string& str, const std::string& whitespace)

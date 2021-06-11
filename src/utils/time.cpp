@@ -203,29 +203,22 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   throw_invalid_date(day, month, year);
   throw_invalid_time(hour, min, sec, millis);
 
-  time_t rawtime{};
-  ::time(&rawtime);
-
-  struct tm t{};
-  gmtime(rawtime, t);
-  t.tm_year = year - 1900;
-  t.tm_mon = month - 1;
-  t.tm_mday = day;
-  t.tm_hour = hour;
-  t.tm_min = min;
-  t.tm_sec = sec;
-  t.tm_isdst = date::is_daylight_saving(year, month, day);
+  tm_ = {};
+  tm_.tm_year = year - 1900;
+  tm_.tm_mon = month - 1;
+  tm_.tm_mday = day;
+  tm_.tm_hour = hour;
+  tm_.tm_min = min;
+  tm_.tm_sec = sec;
+  tm_.tm_isdst = date::is_daylight_saving(year, month, day);
 
 #ifdef _MSC_VER
-  time_t tt = mktime(&t);
-  this->time_.tv_sec = (long)tt;
+  time_.tv_sec = (long)mktime(&tm_);
 #else
-  this->time_.tv_sec = mktime(&t);
+  time_.tv_sec = mktime(&tm_);
 #endif
-  this->time_.tv_usec = millis * 1000;
-
-  auto temp = this->time_.tv_sec;
-  localtime(temp, this->tm_);
+  time_.tv_usec = millis * 1000;
+  localtime(time_.tv_sec, tm_);
 }
 
 void time::set(const char *timestr, const char *format)

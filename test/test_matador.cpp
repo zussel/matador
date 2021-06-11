@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new BlobTestUnit);
   suite.register_unit(new JsonTestUnit);
   suite.register_unit(new JsonMapperTestUnit);
-//  suite.register_unit(new JsonSerializerTest);
+  suite.register_unit(new JsonSerializerTest);
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
   suite.register_unit(new SequencerTestUnit);
