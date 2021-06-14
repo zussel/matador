@@ -275,7 +275,7 @@ void JsonMapperTestUnit::test_json_to_string()
 
   UNIT_ASSERT_EQUAL(expected_result, result);
 
-  js2 = mapper.to_json(result);
+  js2 = mapper.to_json(result.c_str());
 
   UNIT_ASSERT_EQUAL(js, js2);
 }

@@ -33,7 +33,8 @@ const std::string &response::body() const
 
 std::string response::to_string() const
 {
-  std::string result(http::to_string(status_));
+  std::string result = "HTTP/" + std::to_string(version_.major) + "." +
+    std::to_string(version_.minor) + " " + std::to_string(status_) + " " + http::to_string(status_) + "\r\n";
   for(const auto &p : headers_) {
     result += p.first + ": " + p.second + "\r\n";
   }

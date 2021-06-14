@@ -33,6 +33,9 @@ void ResponseParserTest::test_empty_response()
   UNIT_ASSERT_EQUAL(1, resp.version().major);
   UNIT_ASSERT_EQUAL(1, resp.version().minor);
   UNIT_ASSERT_EQUAL(1UL, resp.headers().size());
+
+  auto str = resp.to_string();
+  UNIT_ASSERT_EQUAL(ResponseData::EMPTY_BODY, str);
 }
 
 namespace response_detail {

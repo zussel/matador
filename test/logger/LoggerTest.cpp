@@ -37,6 +37,17 @@ void LoggerTest::test_log_level_range()
 
   UNIT_ASSERT_EQUAL(matador::log_level::LVL_DEBUG, matador::log_manager::min_default_log_level());
   UNIT_ASSERT_EQUAL(matador::log_level::LVL_ERROR, matador::log_manager::max_default_log_level());
+
+  matador::log_domain ld("test", { matador::log_level::LVL_DEBUG, matador::log_level::LVL_TRACE });
+
+  UNIT_ASSERT_EQUAL(matador::log_level::LVL_DEBUG, ld.min_log_level());
+  UNIT_ASSERT_EQUAL(matador::log_level::LVL_TRACE, ld.max_log_level());
+
+  ld.min_log_level(matador::log_level::LVL_INFO);
+  ld.max_log_level(matador::log_level::LVL_ERROR);
+
+  UNIT_ASSERT_EQUAL(matador::log_level::LVL_INFO, ld.min_log_level());
+  UNIT_ASSERT_EQUAL(matador::log_level::LVL_ERROR, ld.max_log_level());
 }
 
 void LoggerTest::test_file_sink()
@@ -60,6 +71,33 @@ void LoggerTest::test_file_sink()
   }
 
   UNIT_ASSERT_FALSE(matador::os::exists("test.txt"));
+
+  {
+    auto path = matador::os::build_path("mylog", "test.txt");
+    matador::file_sink test2(path);
+
+    UNIT_ASSERT_EQUAL("mylog", test2.path());
+
+    matador::os::chdir("mylog");
+
+    UNIT_ASSERT_TRUE(matador::os::exists("test.txt"));
+
+  }
+  if (::remove("test.txt") == -1) {
+#ifdef _MSC_VER
+    char buf[1024];
+    strerror_s(buf, 1024, errno);
+    UNIT_FAIL(buf);
+#else
+    UNIT_FAIL(strerror(errno));
+#endif
+  }
+
+  UNIT_ASSERT_FALSE(matador::os::exists("test.txt"));
+
+  matador::os::chdir("..");
+
+  matador::os::rmdir("mylog");
 }
 
 void LoggerTest::test_rotating_file_sink()
@@ -170,6 +208,7 @@ void LoggerTest::test_logging()
   logger.trace("tracing something %s", "important");
   logger.error("big error");
   logger.error("big error %s", "important");
+  matador::log(matador::log_level::LVL_ERROR, "test", "global log test %d", 4711);
 
   logsink->close();
 
@@ -183,6 +222,7 @@ void LoggerTest::test_logging()
   validate_log_file_line("log.txt", 7, "TRACE", "test", "tracing something important");
   validate_log_file_line("log.txt", 8, "ERROR", "test", "big error");
   validate_log_file_line("log.txt", 9, "ERROR", "test", "big error important");
+  validate_log_file_line("log.txt", 10, "ERROR", "test", "global log test 4711");
 
   matador::os::remove("log.txt");
 
