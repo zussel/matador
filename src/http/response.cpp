@@ -41,11 +41,11 @@ std::string response::to_string() const
 
   if (!body_.empty()) {
     result += response_header::CONTENT_LENGTH + std::string(": ") + content_.length + "\r\n";
-    result += response_header::CONTENT_TYPE + std::string(": ") + content_.type;
+    result += response_header::CONTENT_TYPE + std::string(": ") + content_.type + "\r\n";
   }
 //  result += response_header::CONTENT_LANGUAGE + std::string(": ") + content_type.language + "\r\n\r\n";
 
-  result += "\r\n\r\n";
+  result += "\r\n";
   result += body_;
 
   return result;

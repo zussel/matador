@@ -38,7 +38,10 @@ void LoggerTest::test_log_level_range()
   UNIT_ASSERT_EQUAL(matador::log_level::LVL_DEBUG, matador::log_manager::min_default_log_level());
   UNIT_ASSERT_EQUAL(matador::log_level::LVL_ERROR, matador::log_manager::max_default_log_level());
 
-  matador::log_domain ld("test", { matador::log_level::LVL_DEBUG, matador::log_level::LVL_TRACE });
+  matador::log_level_range llr;
+  llr.min_level = matador::log_level::LVL_DEBUG;
+  llr.max_level = matador::log_level::LVL_TRACE;
+  matador::log_domain ld("test", llr);
 
   UNIT_ASSERT_EQUAL(matador::log_level::LVL_DEBUG, ld.min_log_level());
   UNIT_ASSERT_EQUAL(matador::log_level::LVL_TRACE, ld.max_log_level());
