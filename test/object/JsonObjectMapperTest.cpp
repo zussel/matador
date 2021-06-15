@@ -18,6 +18,7 @@ JsonObjectMapperTest::JsonObjectMapperTest()
   add_test("derived", [this] { test_derived(); }, "test derived json object mapper");
   add_test("has_many", [this] { test_has_many(); }, "test has many json object mapper");
   add_test("array", [this] { test_array(); }, "test array of objects json object mapper");
+  add_test("to_json", [this] { test_to_json(); }, "test object to json");
 }
 
 void JsonObjectMapperTest::test_simple()
@@ -87,4 +88,42 @@ void JsonObjectMapperTest::test_array()
   UNIT_ASSERT_EQUAL("jane", (*it)->name());
   UNIT_ASSERT_EQUAL(190U, (*it)->height());
 
+}
+
+void JsonObjectMapperTest::test_to_json()
+{
+  object_store store;
+
+  store.attach<person>("person");
+
+  auto bd = date(13, 2, 1999);
+
+  auto george = store.insert(new person(1, "george", bd, 185));
+
+  json_object_mapper mapper;
+
+  auto j = mapper.to_json(george);
+
+  json result = {
+    { "id", 1},
+    { "name", "george"},
+    { "birthdate", matador::to_string(bd) },
+    { "height", 185 }
+  };
+
+  auto str = to_string(result);
+
+  UNIT_ASSERT_EQUAL(result, j);
+  UNIT_ASSERT_EQUAL(1, j["id"].as<long>());
+
+  object_view<person> view(store);
+
+  j = mapper.to_json(view);
+
+  auto view_result = json::array();
+  view_result.push_back(result);
+
+  auto astr = to_string(view_result);
+
+  UNIT_ASSERT_EQUAL(view_result, j);
 }

@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <fstream>
 #include <regex>
+#include <sstream>
 
 #ifdef _MSC_VER
 #include <io.h>
@@ -25,6 +26,7 @@ LoggerTest::LoggerTest()
   add_test("logging", [this] { test_logging(); }, "logger logging test");
   add_test("stdout", [this] { test_stdout(); }, "logger stdout logging test");
   add_test("stderr", [this] { test_stderr(); }, "logger stderr logging test");
+  add_test("level", [this] { test_log_level(); }, "print log level test");
 }
 
 void LoggerTest::test_log_level_range()
@@ -286,6 +288,51 @@ void LoggerTest::test_stderr()
   UNIT_ASSERT_FALSE(matador::os::exists("stderr.txt"));
 
   matador::log_manager::instance().clear();
+}
+
+void LoggerTest::test_log_level()
+{
+  std::stringstream out;
+
+  out << matador::log_level::LVL_ERROR;
+
+  UNIT_ASSERT_EQUAL("ERROR", out.str().c_str());
+
+  out.str("");
+  out.clear();
+  out << matador::log_level::LVL_DEBUG;
+
+  UNIT_ASSERT_EQUAL("DEBUG", out.str().c_str());
+
+  out.str("");
+  out.clear();
+  out << matador::log_level::LVL_INFO;
+
+  UNIT_ASSERT_EQUAL("INFO", out.str().c_str());
+
+  out.str("");
+  out.clear();
+  out << matador::log_level::LVL_FATAL;
+
+  UNIT_ASSERT_EQUAL("FATAL", out.str().c_str());
+
+  out.str("");
+  out.clear();
+  out << matador::log_level::LVL_TRACE;
+
+  UNIT_ASSERT_EQUAL("TRACE", out.str().c_str());
+
+  out.str("");
+  out.clear();
+  out << matador::log_level::LVL_WARN;
+
+  UNIT_ASSERT_EQUAL("WARN", out.str().c_str());
+
+  out.str("");
+  out.clear();
+  out << matador::log_level::LVL_ALL;
+
+  UNIT_ASSERT_EQUAL("ALL", out.str().c_str());
 }
 
 void LoggerTest::validate_log_file_line(const std::string &filename, int line_index, const std::string &level, const std::string &src, const std::string &msg)
