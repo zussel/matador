@@ -1,5 +1,6 @@
 #include <list>
 #include <unordered_set>
+#include <sstream>
 
 #include "JsonTestUnit.hpp"
 
@@ -12,6 +13,7 @@ JsonTestUnit::JsonTestUnit()
   : unit_test("json", "json test")
 {
   add_test("simple", [this] { test_simple(); }, "test simple json");
+  add_test("access", [this] { test_access(); }, "test json access");
   add_test("compare", [this] { test_compare(); }, "test json compare");
   add_test("parser", [this] { test_parser(); }, "test json parser");
 }
@@ -204,6 +206,52 @@ void JsonTestUnit::test_simple()
   UNIT_ASSERT_FALSE(jnull.is_number());
 }
 
+void JsonTestUnit::test_access()
+{
+  json j = {
+    { "person", {
+                  { "name", "harry" },
+                  { "age", 30 }
+    }}
+  };
+
+  auto age = j.at_path("person.age");
+
+  UNIT_ASSERT_TRUE(age.is_number());
+  UNIT_ASSERT_TRUE(age == 30);
+
+  auto self = j.at_path("");
+
+  UNIT_ASSERT_EQUAL(self, j);
+
+  const json cj = { { "int", 8 } };
+
+  auto val = cj.get("int");
+
+  UNIT_ASSERT_TRUE(val.is_number());
+  UNIT_ASSERT_TRUE(val == 8);
+
+  val = cj["int"];
+
+  UNIT_ASSERT_TRUE(val.is_number());
+  UNIT_ASSERT_TRUE(val == 8);
+
+  json obj = {
+    { "type", "object" },
+    { "valid", true },
+    { "numbers", { 1, 2, 3} },
+    { "nope", nullptr }
+  };
+
+  std::stringstream out;
+
+  out << obj;
+
+  auto str = obj.str();
+
+  UNIT_ASSERT_EQUAL("{\"nope\": null, \"numbers\": [1, 2, 3], \"type\": \"object\", \"valid\": true}", str.c_str());
+}
+
 void JsonTestUnit::test_compare()
 {
   json a = 7;
@@ -233,6 +281,32 @@ void JsonTestUnit::test_compare()
   UNIT_ASSERT_TRUE(s == c);
 
   UNIT_ASSERT_FALSE(f == s);
+
+  json jnull = json();
+
+  UNIT_ASSERT_TRUE(jnull.is_null());
+
+  UNIT_ASSERT_TRUE(jnull == json());
+
+  UNIT_ASSERT_FALSE(jnull < json());
+  UNIT_ASSERT_TRUE(json(3) < json(7));
+  UNIT_ASSERT_TRUE(json(3.7) < json(7.8));
+  UNIT_ASSERT_TRUE(json(3) < json(7.8));
+  UNIT_ASSERT_TRUE(json(3.7) < json(7));
+  UNIT_ASSERT_TRUE(json(false) < json(true));
+  UNIT_ASSERT_TRUE(json("aa") < json("bb"));
+
+  json o1 = { { "int", 7 }};
+  json o2 = { { "int", 9 }};
+
+  UNIT_ASSERT_TRUE(o1 < o2);
+
+  json a1 = { 1,2,3 };
+  json a2 = { 7,8,9 };
+
+  UNIT_ASSERT_TRUE(a1 < a2);
+
+  UNIT_ASSERT_TRUE(json(true) < json("aaa"));
 }
 
 void JsonTestUnit::test_parser()
