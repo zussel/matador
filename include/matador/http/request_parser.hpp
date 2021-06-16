@@ -37,7 +37,6 @@ public:
 private:
   enum state_t {
     METHOD,
-    URL,
     URL_PATH,
     URL_QUERY_FIELD,
     URL_QUERY_VALUE,
@@ -70,7 +69,6 @@ public:
 
 private:
   bool parse_method(char c, request &req);
-  bool parse_url(char c, request &req);
   bool parse_url_path(char c, request &req);
   bool parse_url_query_field(char c);
   bool parse_url_query_value(char c, t_string_param_map &params);

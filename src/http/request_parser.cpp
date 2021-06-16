@@ -48,9 +48,6 @@ request_parser::return_t request_parser::parse(const std::string &msg, request &
         case METHOD:
           ret = parse_method(c, req);
           break;
-        case URL:
-          ret = parse_url(c, req);
-          break;
         case URL_PATH:
           ret = parse_url_path(c, req);
           break;
@@ -162,20 +159,6 @@ bool request_parser::parse_method(char c, request &req)
     apply_method(current_method_, req);
     current_method_.clear();
     state_ = URL_PATH;
-    return true;
-  } else {
-    return false;
-  }
-}
-
-bool request_parser::parse_url(char c, request &req)
-{
-  if (is_url_char(c)) {
-    req.url_.push_back(c);
-    return true;
-  } else if (c == ' ') {
-    http_prefix_index_ = 0;
-    state_ = VERSION;
     return true;
   } else {
     return false;
