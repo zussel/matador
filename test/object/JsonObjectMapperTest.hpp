@@ -14,7 +14,7 @@ public:
   void test_has_many();
   void test_array();
   void test_to_json();
-
+  void test_to_string();
 };
 
 

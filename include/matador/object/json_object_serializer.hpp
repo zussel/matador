@@ -30,8 +30,8 @@ class MATADOR_OBJECT_API json_object_serializer
 public:
   json_object_serializer() = default;
 
-  template < class T >
-  std::string to_json(const object_ptr<T> &obj, json_format format = json_format::compact)
+  template< typename T, object_holder_type OPT >
+  std::string to_json(const object_pointer<T, OPT> &obj, json_format format = json_format::compact)
   {
     format_ = format;
     json_.clear();
@@ -63,6 +63,12 @@ public:
     json_.append("]");
 
     return json_;
+  }
+
+  template < class V >
+  void serialize(V &obj)
+  {
+    matador::access::serialize(*this, obj);
   }
 
   template< class V >

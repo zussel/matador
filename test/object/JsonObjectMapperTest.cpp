@@ -19,6 +19,7 @@ JsonObjectMapperTest::JsonObjectMapperTest()
   add_test("has_many", [this] { test_has_many(); }, "test has many json object mapper");
   add_test("array", [this] { test_array(); }, "test array of objects json object mapper");
   add_test("to_json", [this] { test_to_json(); }, "test object to json");
+  //add_test("to_string", [this] { test_to_string(); }, "test object to string");
 }
 
 void JsonObjectMapperTest::test_simple()
@@ -126,4 +127,24 @@ void JsonObjectMapperTest::test_to_json()
   auto astr = to_string(view_result);
 
   UNIT_ASSERT_EQUAL(view_result, j);
+}
+
+void JsonObjectMapperTest::test_to_string()
+{
+  object_store store;
+  store.attach<address>("address");
+  store.attach_abstract<person>("person");
+  store.attach<citizen, person>("citizen");
+
+  auto bd = date(13, 2, 1999);
+
+  auto home = store.insert(new address("mystreet 4", "hometown"));
+  auto george = store.insert(new citizen("george", bd, 179));
+  george.modify()->address_ = home;
+
+  json_object_mapper mapper;
+
+  auto str = mapper.to_string(home);
+
+  UNIT_ASSERT_EQUAL("", str);
 }
