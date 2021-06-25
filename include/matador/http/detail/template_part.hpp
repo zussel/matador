@@ -14,6 +14,8 @@
 #define OOS_HTTP_API
 #endif
 
+#include "matador/http/detail/template_filter.hpp"
+
 #include <string>
 #include <memory>
 #include <list>
@@ -29,12 +31,21 @@ namespace detail {
 
 class template_expression;
 
+using template_filter_ptr = std::shared_ptr<template_filter>;
+
 class OOS_HTTP_API template_part
 {
 public:
   virtual ~template_part() = default;
 
   virtual std::string render(const json &data) = 0;
+
+  void append_filter(const template_filter_ptr &filter);
+
+protected:
+
+private:
+  template_filter_ptr filter_;
 };
 
 using template_part_ptr = std::shared_ptr<template_part>;

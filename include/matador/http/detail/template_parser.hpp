@@ -64,7 +64,10 @@ private:
     PROCESS_COMMAND,
     PROCESS_COMMAND_FINISH,
     PROCESS_VARIABLE,
-    PROCESS_VARIABLE_FINISH
+    PROCESS_VARIABLE_READ,
+    PROCESS_VARIABLE_FINISH,
+    PROCESS_FILTER,
+    PROCESS_FILTER_FINISHED
   };
 
 private:
@@ -93,7 +96,9 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
       state_ = PROCESS_VARIABLE;
     } else if (c == '%' && state_ == INITIATE_TEMPLATE) {
       state_ = PROCESS_COMMAND;
-    } else if (c == '}' && state_ == PROCESS_VARIABLE) {
+    } else if (c == '|' && (state_ == PROCESS_VARIABLE_READ || state_ == PROCESS_FILTER_FINISHED)) {
+      state_ = PROCESS_FILTER;
+    } else if (c == '}' && (state_ == PROCESS_VARIABLE_READ || state_ == PROCESS_FILTER_FINISHED)) {
       // process variable
       state_ = PROCESS_VARIABLE_FINISH;
     } else if (c == '%' && state_ == PROCESS_COMMAND) {
@@ -101,9 +106,13 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
       state_ = PROCESS_COMMAND_FINISH;
     } else if (c == '}' && (state_ == PROCESS_VARIABLE_FINISH || state_ == PROCESS_COMMAND_FINISH)) {
       state_ = STATIC_TEXT;
+    } else if (state_ == PROCESS_FILTER) {
+
+      state_ = PROCESS_FILTER_FINISHED;
     } else if (state_ == PROCESS_VARIABLE) {
       std::string var = detail::parse_token(cursor);
       parts_->push_back(std::make_shared<detail::variable_part>(var));
+      state_ = PROCESS_VARIABLE_READ;
     } else if (state_ == PROCESS_COMMAND) {
       std::string cmd = detail::parse_token(cursor);
 

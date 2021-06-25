@@ -34,7 +34,7 @@ SET (TEST_TOOLS_SOURCES
   utils/Base64Test.cpp
   utils/Base64Test.hpp
   utils/BufferViewTest.cpp
-  utils/BufferViewTest.hpp utils/EncryptionTest.cpp utils/EncryptionTest.hpp)
+  utils/BufferViewTest.hpp utils/EncryptionTest.cpp utils/EncryptionTest.hpp utils/HtmlTest.cpp utils/HtmlTest.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
@@ -73,8 +73,8 @@ SET (TEST_HTTP_SOURCES
   http/RequestData.hpp
   http/RouteEngineTest.cpp
   http/RouteEngineTest.hpp
-  http/UrlTest.cpp
-  http/UrlTest.hpp
+  utils/UrlTest.cpp
+  utils/UrlTest.hpp
   http/RouteEndpointTest.cpp
   http/RouteEndpointTest.hpp
   http/HttpServerTest.cpp

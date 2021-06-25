@@ -44,6 +44,7 @@
 #include "utils/StreamsTest.hpp"
 #include "utils/OptionalTest.hpp"
 #include "utils/EncryptionTest.hpp"
+#include "utils/HtmlTest.hpp"
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
@@ -89,7 +90,7 @@
 #include "http/RouteEngineTest.hpp"
 #include "http/RouteEndpointTest.hpp"
 #include "http/TemplateEngineTest.hpp"
-#include "http/UrlTest.hpp"
+#include "utils/UrlTest.hpp"
 
 #include "connections.hpp"
 
@@ -134,6 +135,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new StreamsTest);
   suite.register_unit(new OptionalTest);
   suite.register_unit(new EncryptionTest);
+  suite.register_unit(new HtmlTest);
 
   suite.register_unit(new LoggerTest);
 

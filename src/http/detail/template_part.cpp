@@ -11,6 +11,15 @@ namespace matador {
 namespace http {
 namespace detail {
 
+void template_part::append_filter(const template_filter_ptr &filter)
+{
+  if (filter_) {
+    filter_->append(filter);
+  } else {
+    filter_ = filter;
+  }
+}
+
 /*
  * static part implementation
  */

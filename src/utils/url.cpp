@@ -1,9 +1,7 @@
-#include "matador/http/url.hpp"
-
+#include "matador/utils/url.hpp"
 #include "matador/utils/stream.hpp"
 
 namespace matador {
-namespace http {
 
 std::unordered_map<char, const char *> url::char_to_enc_map_({ /* NOLINT */
   { ' ', "%20" },
@@ -74,6 +72,5 @@ bool url::decode(const std::string &str, std::string &decoded)
     }
   }
   return true;
-}
 }
 }

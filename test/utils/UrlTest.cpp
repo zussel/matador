@@ -1,8 +1,8 @@
 #include "UrlTest.hpp"
 
-#include "matador/http/url.hpp"
+#include "matador/utils/url.hpp"
 
-using namespace matador::http;
+using namespace matador;
 
 UrlTest::UrlTest()
   : matador::unit_test("url", "url test")

@@ -261,6 +261,9 @@ bool request_parser::parse_url_query_value(char c, t_string_param_map &params)
     current_query_value_.clear();
     state_ = URL_FRAGMENT;
     return true;
+  } else if (c == '+') {
+    current_query_value_.push_back(' ');
+    return true;
   } else if (is_url_char(c) && c != '?') {
     current_query_value_.push_back(c);
     return true;
