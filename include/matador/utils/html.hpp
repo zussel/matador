@@ -18,7 +18,7 @@
 
 namespace matador {
 
-class html
+class OOS_UTILS_API html
 {
 public:
   static std::string escape(const std::string &value);

@@ -20,6 +20,14 @@ void template_part::append_filter(const template_filter_ptr &filter)
   }
 }
 
+json template_part::apply_filter(const json &data)
+{
+  if (filter_) {
+    return filter_->apply(data);
+  }
+  return data;
+}
+
 /*
  * static part implementation
  */
@@ -41,7 +49,8 @@ variable_part::variable_part(std::string str)
 
 std::string variable_part::render(const json &data)
 {
-  const auto &val = data.at_path(str_, '.');
+  const auto &val = apply_filter(data.at_path(str_, '.'));
+
   if (val.is_integer()) {
     return std::to_string(val.as<int>());
   } else if (val.is_real()) {

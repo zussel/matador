@@ -39,6 +39,7 @@ class multi_template_part;
 OOS_HTTP_API std::string parse_token(string_cursor &cursor);
 OOS_HTTP_API std::string parse_filepath(string_cursor &cursor);
 OOS_HTTP_API bool parse_end_of_command_tag(string_cursor &cursor);
+OOS_HTTP_API std::shared_ptr<template_filter> parse_filter(string_cursor &cursor);
 OOS_HTTP_API std::shared_ptr<template_expression> parse_expression(string_cursor &cursor);
 OOS_HTTP_API std::string parse_operator(string_cursor &cursor);
 
@@ -83,6 +84,7 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
 
   state_ = STATIC_TEXT;
   std::string current_part;
+  bool needs_next_char = true;
   // copy until next '{' is found
   char c = cursor.current_char();
   while (!is_eos(c)) {
@@ -107,15 +109,17 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
     } else if (c == '}' && (state_ == PROCESS_VARIABLE_FINISH || state_ == PROCESS_COMMAND_FINISH)) {
       state_ = STATIC_TEXT;
     } else if (state_ == PROCESS_FILTER) {
-
+      std::shared_ptr<template_filter> filter_ptr = detail::parse_filter(cursor);
+      parts_->parts().back()->append_filter(filter_ptr);
       state_ = PROCESS_FILTER_FINISHED;
+      needs_next_char = false;
     } else if (state_ == PROCESS_VARIABLE) {
       std::string var = detail::parse_token(cursor);
       parts_->push_back(std::make_shared<detail::variable_part>(var));
       state_ = PROCESS_VARIABLE_READ;
+      needs_next_char = false;
     } else if (state_ == PROCESS_COMMAND) {
       std::string cmd = detail::parse_token(cursor);
-
       auto res = on_command(cmd, parts_);
       if (res == FINISHED) {
         return std::shared_ptr<template_part>(parts_.release());
@@ -128,7 +132,6 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
         c = cursor.current_char();
         continue;
       }
-
     } else if (state_ == STATIC_TEXT) {
       current_part += c;
     } else {
@@ -137,7 +140,12 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
       current_part += c;
     }
 
-    c = cursor.next_char();
+    if (needs_next_char) {
+      c = cursor.next_char();
+    } else {
+      c = cursor.current_char();
+      needs_next_char = true;
+    }
   }
 
   parts_->push_back(std::make_shared<detail::static_part>(current_part));

@@ -1,6 +1,7 @@
 #include "matador/http/detail/template_parser.hpp"
 #include "matador/http/detail/template_part.hpp"
 #include "matador/http/detail/template_expression.hpp"
+#include "matador/http/detail/template_filter_factory.hpp"
 
 #include "matador/utils/string.hpp"
 #include "matador/utils/json_parser.hpp"
@@ -79,6 +80,16 @@ bool parse_end_of_command_tag(string_cursor &cursor)
 
 std::function<bool(const json&, const json&)> build_json_compare_function(const std::string &op);
 std::function<bool(const json&)> build_compare_function(const std::string &op, const json &operand);
+
+std::shared_ptr<template_filter> parse_filter(string_cursor &cursor)
+{
+  // extract filter name
+  auto name = parse_token(cursor);
+
+  auto filter = template_filter_factory::instance().produce(name);
+
+  return filter;
+}
 
 std::shared_ptr<template_expression> parse_expression(string_cursor &cursor)
 {

@@ -15,6 +15,7 @@ TemplateEngineTest::TemplateEngineTest()
   add_test("foreach_empty", [this] { test_foreach_empty(); }, "test foreach loop with empty foreach data");
   add_test("if_else", [this] { test_if_else(); }, "test if else");
   add_test("include", [this] { test_include(); }, "test include");
+  add_test("filter", [this] { test_filter(); }, "test filter");
 }
 
 using namespace matador;
@@ -232,4 +233,27 @@ void TemplateEngineTest::test_include()
   UNIT_ASSERT_EQUAL(expected_result, result);
 
   matador::os::remove(filename);
+}
+
+void TemplateEngineTest::test_filter()
+{
+  std::string replace_with_filter { "replace {{ name|escape   }} one" };
+
+  json data {
+    { "name", "george" }
+  };
+
+  auto result = http::template_engine::render(replace_with_filter, data);
+
+  UNIT_ASSERT_EQUAL("replace george one", result);
+
+  data = {
+    { "formula", "1 < x && 3 > x" }
+  };
+
+  std::string replace_with_escape_filter { "replace {{ formula | escape   }} one" };
+
+  result = http::template_engine::render(replace_with_escape_filter, data);
+
+  UNIT_ASSERT_EQUAL("replace 1 &lt; x &amp;&amp; 3 &gt; x one", result);
 }

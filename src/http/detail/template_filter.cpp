@@ -14,10 +14,10 @@ void template_filter::append(const std::shared_ptr<template_filter> &filter)
   }
 }
 
-json template_filter::execute(const json &data)
+json template_filter::apply(const json &data)
 {
   if (next_) {
-    return next_->execute(evaluate(data));
+    return next_->apply(evaluate(data));
   } else {
     return evaluate(data);
   }

@@ -28,10 +28,11 @@ class OOS_HTTP_API template_filter
 public:
   virtual ~template_filter() = default;
 
-  virtual json evaluate(const json &data) = 0;
-
-  json execute(const json &data);
+  json apply(const json &data);
   void append(const std::shared_ptr<template_filter> &filter);
+
+protected:
+  virtual json evaluate(const json &data) = 0;
 
 private:
   std::shared_ptr<template_filter> next_;

@@ -14,6 +14,7 @@ public:
   void test_foreach_empty();
   void test_if_else();
   void test_include();
+  void test_filter();
 };
 
 

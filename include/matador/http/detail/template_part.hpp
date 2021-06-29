@@ -43,6 +43,7 @@ public:
   void append_filter(const template_filter_ptr &filter);
 
 protected:
+  json apply_filter(const json &data);
 
 private:
   template_filter_ptr filter_;
