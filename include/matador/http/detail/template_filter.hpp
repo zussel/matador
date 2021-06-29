@@ -1,6 +1,19 @@
 #ifndef MATADOR_TEMPLATE_FILTER_HPP
 #define MATADOR_TEMPLATE_FILTER_HPP
 
+#ifdef _MSC_VER
+#ifdef matador_http_EXPORTS
+    #define OOS_HTTP_API __declspec(dllexport)
+    #define EXPIMP_HTTP_TEMPLATE
+  #else
+    #define OOS_HTTP_API __declspec(dllimport)
+    #define EXPIMP_HTTP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_HTTP_API
+#endif
+
 #include "matador/utils/json.hpp"
 
 #include <string>
@@ -10,7 +23,7 @@ namespace matador {
 namespace http {
 namespace detail {
 
-class template_filter
+class OOS_HTTP_API template_filter
 {
 public:
   virtual ~template_filter() = default;
@@ -24,7 +37,7 @@ private:
   std::shared_ptr<template_filter> next_;
 };
 
-class escape_filter : public template_filter
+class OOS_HTTP_API escape_filter : public template_filter
 {
 public:
   json evaluate(const json &data) override;
