@@ -70,7 +70,7 @@ movie_page::movie_page(matador::http::server &server, matador::persistence &p)
   });
 }
 
-matador::http::response movie_page::list(const request &p)
+matador::http::response movie_page::list(const request &)
 {
   json data;
   data["title"] = "Movies";
@@ -105,7 +105,7 @@ matador::http::response movie_page::view(const request &p)
   return response::ok(template_engine::render(details_template_, data), mime_types::TYPE_TEXT_HTML);
 }
 
-matador::http::response movie_page::create(const request &p)
+matador::http::response movie_page::create(const request &)
 {
   json data;
   data["title"] = "Create Movie";

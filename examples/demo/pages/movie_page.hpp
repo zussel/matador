@@ -26,9 +26,9 @@ public:
   movie_page(matador::http::server &s, matador::persistence &p);
 
 private:
-  matador::http::response list(const matador::http::request &p);
+  matador::http::response list(const matador::http::request &);
   matador::http::response view(const matador::http::request &p);
-  matador::http::response create(const matador::http::request &p);
+  matador::http::response create(const matador::http::request &);
   matador::http::response edit(const matador::http::request &p);
   matador::http::response remove(const matador::http::request &p);
 
