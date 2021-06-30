@@ -1,5 +1,5 @@
-#ifndef OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
-#define OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
+#ifndef MATADOR_JSON_IDENTIFIER_SERIALIZER_HPP
+#define MATADOR_JSON_IDENTIFIER_SERIALIZER_HPP
 
 #ifdef _MSC_VER
 #ifdef matador_utils_EXPORTS
@@ -16,23 +16,17 @@
 #endif
 
 #include "matador/utils/serializer.hpp"
-#include "matador/utils/byte_buffer.hpp"
-
-#include <typeindex>
-#include <iostream>
 
 namespace matador {
 
-class byte_buffer;
+class basic_identifier;
 
-/// @cond MATADOR_DEV
-
-class OOS_UTILS_API basic_identifier_serializer : public serializer {
+class OOS_UTILS_API json_identifier_serializer : public serializer
+{
 public:
-  basic_identifier_serializer() = default;
+  json_identifier_serializer() = default;
 
-  void serialize(basic_identifier &x, byte_buffer &buffer);
-  void deserialize(basic_identifier &x, byte_buffer &buffer);
+  std::string serialize(basic_identifier &x);
 
   void serialize(const char*, char&) override;
   void serialize(const char*, short&) override;
@@ -50,31 +44,17 @@ public:
   void serialize(const char*, char *, size_t) override;
   void serialize(const char*, std::string&) override;
   void serialize(const char*, std::string&, size_t) override;
-  void serialize(const char*, matador::time&) override;
-  void serialize(const char*, matador::date&) override;
-  void serialize(const char*, matador::basic_identifier &x) override;
-  void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
+  void serialize(const char*, matador::time&) override {}
+  void serialize(const char*, matador::date&) override {}
+  void serialize(const char*, matador::basic_identifier &) override {}
+  void serialize(const char*, matador::identifiable_holder &, cascade_type) override {}
   void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
   void serialize(const char *, abstract_has_many &, cascade_type) override {}
 
 private:
-  template < class T >
-  void serialize_value(T &x)
-  {
-    if (restore_) {
-      buffer_->release(&x, sizeof(x));
-    } else {
-      buffer_->append(&x, sizeof(x));
-    }
-  }
-
-private:
-  byte_buffer *buffer_ = nullptr;
-  std::unique_ptr<basic_identifier> basic_identifier_;
-  bool restore_ = false;
+  std::string json_;
 };
 
-/// @endcond
-
 }
-#endif //OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
+
+#endif //MATADOR_JSON_IDENTIFIER_SERIALIZER_HPP

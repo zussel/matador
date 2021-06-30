@@ -5,14 +5,16 @@ namespace matador {
 void json_object_serializer::serialize(const char *id, identifier<std::string> &pk)
 {
   write_id(id);
-  append(pk.value()).append(",");
+  append(pk.value());
+  json_.append(",");
   newline();
 }
 
 void json_object_serializer::serialize(const char *id, bool &val)
 {
   write_id(id);
-  append(val).append(",");
+  append(val);
+  json_.append(",");
   newline();
 }
 
@@ -22,7 +24,8 @@ void json_object_serializer::serialize(const char *id, std::string &val)
     return;
   }
   write_id(id);
-  append(val).append(",");
+  append(val);
+  json_.append(",");
   newline();
 }
 
@@ -32,7 +35,8 @@ void json_object_serializer::serialize(const char *id, std::string &val, size_t)
     return;
   }
   write_id(id);
-  append(val).append(",");
+  append(val);
+  json_.append(",");
   newline();
 }
 
@@ -42,7 +46,8 @@ void json_object_serializer::serialize(const char *id, date &d)
     return;
   }
   write_id(id);
-  append(matador::to_string(d)).append(",");
+  append(matador::to_string(d));
+  json_.append(",");
   newline();
 }
 
@@ -52,15 +57,15 @@ void json_object_serializer::serialize(const char *id, time &t)
     return;
   }
   write_id(id);
-  append(matador::to_string(t)).append(",");
+  append(matador::to_string(t));
+  json_.append(",");
   newline();
 }
 
-std::string &json_object_serializer::write_id(const char *id)
+void json_object_serializer::write_id(const char *id)
 {
   indent();
   json_.append("\"").append(id).append("\": ");
-  return json_;
 }
 
 void json_object_serializer::begin_object()
@@ -92,21 +97,19 @@ void json_object_serializer::newline()
   }
 }
 
-std::string &json_object_serializer::append(const char *str)
+void json_object_serializer::append(const char *str)
 {
   json_.append("\"").append(str).append("\"");
-  return json_;
 }
 
-std::string &json_object_serializer::append(const std::string &str)
+void json_object_serializer::append(const std::string &str)
 {
   json_.append("\"").append(str).append("\"");
-  return json_;
 }
 
-std::string &json_object_serializer::append(std::string &val, size_t)
+void json_object_serializer::append(std::string &val, size_t)
 {
-  return append(val);
+  append(val);
 }
 
 constexpr char const* bool_to_string(bool b)
@@ -114,9 +117,9 @@ constexpr char const* bool_to_string(bool b)
   return b ? "true" : "false";
 }
 
-std::string &json_object_serializer::append(const bool &value)
+void json_object_serializer::append(const bool &value)
 {
-  return json_.append(bool_to_string(value));
+  json_.append(bool_to_string(value));
 }
 
 }

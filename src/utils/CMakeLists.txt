@@ -26,7 +26,8 @@ SET(SOURCES
   hmac.cpp
   json_mapper_serializer.cpp
   sequence_synchronizer.cpp
-  url.cpp html.cpp)
+  url.cpp html.cpp
+  json_identifier_serializer.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -82,7 +83,9 @@ SET(HEADER
   ../../include/matador/utils/hmac.hpp
   ../../include/matador/utils/json_mapper_serializer.hpp
   ../../include/matador/utils/sequence_synchronizer.hpp
-  ../../include/matador/utils/url.hpp ../../include/matador/utils/html.hpp)
+  ../../include/matador/utils/url.hpp
+  ../../include/matador/utils/html.hpp
+  ../../include/matador/utils/json_identifier_serializer.hpp)
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
 

@@ -16,6 +16,7 @@
 #endif
 
 #include "matador/utils/json_serializer.hpp"
+#include "matador/utils/json_identifier_serializer.hpp"
 
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/object_view.hpp"
@@ -30,12 +31,20 @@ class MATADOR_OBJECT_API json_object_serializer
 public:
   json_object_serializer() = default;
 
+//  using t_id_set = std::unordered_set<std::shared_ptr<basic_identifier>, detail::identifier_hash<std::shared_ptr<basic_identifier>>, detail::identifier_equal_shared>;
+  using t_id_set = std::unordered_set<basic_identifier*, detail::identifier_hash<basic_identifier>, detail::identifier_equal>;
+  using t_name_id_set_pair = std::pair<std::string, t_id_set>;
+  using t_type_id_map = std::unordered_map<std::type_index, t_name_id_set_pair>;
+
+  t_type_id_map type_id_map_;
+
   template< typename T, object_holder_type OPT >
   std::string to_json(const object_pointer<T, OPT> &obj, json_format format = json_format::compact)
   {
+    type_id_map_.clear();
     format_ = format;
     json_.clear();
-    append(*obj);
+    append(const_cast<object_pointer<T, OPT>&>(obj));
     newline();
     return json_;
   }
@@ -43,6 +52,7 @@ public:
   template< typename T >
   std::string to_json(const object_view<T> &objects, json_format format = json_format::compact)
   {
+    type_id_map_.clear();
     format_ = format;
     json result = json::array();
 
@@ -53,11 +63,11 @@ public:
       }
     } else {
       auto it = objects.begin();
-      append(*it.optr());
+      append(it.optr());
       ++it;
       for (;it != objects.end(); ++it) {
         json_.append(",");
-        append(*it.optr());
+        append(it.optr());
       }
     }
     json_.append("]");
@@ -76,15 +86,21 @@ public:
   {
     write_id(id);
     if (pk.is_valid()) {
-      append(pk.value()).append(",");
+
+      auto it = type_id_map_.find(*current_type_index_);
+      if (it != type_id_map_.end() && it->second.first.empty()) {
+        it->second.first.assign(id);
+      }
+      append(pk.value());
+      json_.append(",");
     } else {
-      append("null,");
+      json_.append("null,");
     }
     newline();
   }
 
   template < class V >
-  void serialize(const char *id, V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
+  void serialize(const char *id, V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = nullptr)
   {
     write_id(id);
     append(obj);
@@ -95,7 +111,8 @@ public:
   void serialize(const char *id, V &val, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     write_id(id);
-    append(val).append(",");
+    append(val);
+    json_.append(",");
     newline();
   }
 
@@ -114,33 +131,55 @@ public:
   void serialize(const char *id, basic_has_many<Value, Container> &x, const char *, const char *, cascade_type);
 
 private:
-  std::string& write_id(const char *id);
-
+  void write_id(const char *id);
   void begin_object();
-
   void end_object();
-
   void indent();
-
   void newline();
 
-  std::string& append(const char *str);
-
-  std::string& append(const bool &value);
-
-  std::string& append(const std::string &str);
-
-  std::string& append(std::string &val, size_t);
+  void append(const char *str);
+  void append(const bool &value);
+  void append(const std::string &str);
+  void append(std::string &val, size_t);
 
   template<class V>
-  std::string& append(const V &value, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void append(const V &value, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = nullptr)
   {
     json_.append(std::to_string(value));
-    return json_;
+  }
+
+  template< typename T, object_holder_type OPT >
+  void append(object_pointer<T, OPT> &x)
+  {
+    auto tindex = std::type_index(typeid(T));
+    auto it = type_id_map_.find(tindex);
+    if (it != type_id_map_.end()) {
+      auto id_it = it->second.second.find(x.primary_key());
+      if (id_it == it->second.second.end()) {
+        it->second.second.insert(x.primary_key());
+        current_type_index_ = &it->first;
+        append(*x);
+        current_type_index_ = nullptr;
+      } else {
+        // only serialize id
+        begin_object();
+        write_id(it->second.first.c_str());
+        json_.append(identifier_serializer_.serialize(*x.primary_key()));
+        end_object();
+        newline();
+        //x.primary_key();
+      }
+    } else {
+      auto ret = type_id_map_.insert(std::make_pair(tindex, t_name_id_set_pair("", t_id_set())));
+      current_type_index_ = &ret.first->first;
+      ret.first->second.second.insert(x.primary_key());
+      append(*x);
+      current_type_index_ = nullptr;
+    }
   }
 
   template < class V >
-  std::string& append(V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
+  void append(V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
     begin_object();
     matador::access::serialize(*this, obj);
@@ -148,20 +187,26 @@ private:
     json_.erase(idx, 1);
     end_object();
     newline();
-    return json_;
   }
 
 private:
   std::string json_;
   json_format format_ {};
   unsigned depth_ = 0;
+
+  const std::type_index *current_type_index_ = nullptr;
+
+  json_identifier_serializer identifier_serializer_;
 };
 
 template<class Value>
 void json_object_serializer::serialize(const char *id, belongs_to<Value> &x, cascade_type)
 {
+  if (x.empty()) {
+    return;
+  }
   write_id(id);
-  append(*x);
+  append(x);
 }
 
 template<class Value>
@@ -171,7 +216,7 @@ void json_object_serializer::serialize(const char *id, has_one<Value> &x, cascad
     return;
   }
   write_id(id);
-  append(*x);
+  append(x);
 }
 
 template<class Value, template <class ...> class Container>

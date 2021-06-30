@@ -1,4 +1,5 @@
 #include "matador/utils/url.hpp"
+#include "matador/utils/os.hpp"
 
 #include "matador/http/request.hpp"
 #include "matador/http/response.hpp"
@@ -16,11 +17,11 @@ void serve_static_files_at(const std::string &path, server &s)
     }
 
     // check if there is '..' in path
-    if (path.empty() || path[0] != '/' || path.find("..") != std::string::npos) {
+    if (path.empty() || path[0] != os::DIR_SEPARATOR || path.find("..") != std::string::npos) {
       return response::bad_request();
     }
 
-    if (path[path.size() - 1] == '/') {
+    if (path[path.size() - 1] == os::DIR_SEPARATOR) {
       path.append("index.html");
     }
 
@@ -45,11 +46,11 @@ response static_file_service::serve(const request &req)
   }
 
   // check if there is '..' in path
-  if (path.empty() || path[0] != '/' || path.find("..") != std::string::npos) {
+  if (path.empty() || path[0] != os::DIR_SEPARATOR || path.find("..") != std::string::npos) {
     return response::bad_request();
   }
 
-  if (path[path.size() - 1] == '/') {
+  if (path[path.size() - 1] == os::DIR_SEPARATOR) {
     path.append("index.html");
   }
 
