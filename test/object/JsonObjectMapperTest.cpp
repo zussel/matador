@@ -179,7 +179,7 @@ void JsonObjectMapperTest::test_to_string()
 
   str = mapper.to_string(dt_ptr);
 
-  res = R"({"id": 1,"val_char": 102,"val_float": 3.141500,"val_double": 4.567000,"val_short": -127,"val_int": -12345678,"val_long": -12345678000,"val_long_long": -123456780000,"val_unsigned_char": 1,"val_unsigned_short": 255,"val_unsigned_int": 12345678,"val_unsigned_long": 1234567800,"val_unsigned_long_long": 12345678000,"val_bool": true,"val_cstr": "lorem ipsum","val_string": "peter, paul and mary","val_varchar": "trains, plains and automobiles","val_date": "1999-02-13","val_time": "2012-09-17T12:56:12"})";
+  res = R"({"id": 1,"val_char": 102,"val_float": 3.141500,"val_double": 4.567000,"val_short": -127,"val_int": -12345678,"val_long": -1234567800,"val_long_long": -123456780000,"val_unsigned_char": 1,"val_unsigned_short": 255,"val_unsigned_int": 12345678,"val_unsigned_long": 1234567800,"val_unsigned_long_long": 12345678000,"val_bool": true,"val_cstr": "lorem ipsum","val_string": "peter, paul and mary","val_varchar": "trains, plains and automobiles","val_date": "1999-02-13","val_time": "2012-09-17T12:56:12"})";
 
   UNIT_ASSERT_EQUAL(res, str);
 }
