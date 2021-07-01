@@ -97,7 +97,7 @@ void json_identifier_serializer::serialize(const char*, std::string &x)
 
 void json_identifier_serializer::serialize(const char*, std::string &x, size_t len)
 {
-  json_.append(x, len);
+  json_.append(x.c_str(), len);
 }
 
 }
