@@ -117,11 +117,12 @@ public:
   }
 
   void serialize(const char *id, identifier<std::string> &pk);
-  void serialize(const char *id, bool &to);
-  void serialize(const char *id, std::string &to);
-  void serialize(const char *id, std::string &to, size_t);
-  void serialize(const char *id, date &to);
-  void serialize(const char *id, time &to);
+  void serialize(const char *id, bool &val);
+  void serialize(const char *id, std::string &val);
+  void serialize(const char *id, std::string &val, size_t len);
+  void serialize(const char *id, const char *val, size_t len);
+  void serialize(const char *id, date &val);
+  void serialize(const char *id, time &val);
 
   template<class Value>
   void serialize(const char *id, belongs_to<Value> &x, cascade_type);
@@ -141,6 +142,7 @@ private:
   void append(const bool &value);
   void append(const std::string &str);
   void append(std::string &val, size_t);
+  void append(const char *val, size_t);
 
   template<class V>
   void append(const V &value, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = nullptr)
