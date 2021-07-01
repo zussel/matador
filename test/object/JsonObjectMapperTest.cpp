@@ -162,7 +162,7 @@ void JsonObjectMapperTest::test_to_string()
   dt->set_char('f');
   dt->set_short(-127);
   dt->set_int(-12345678);
-  dt->set_long(-12345678000);
+  dt->set_long(-1234567800);
   dt->set_long_long(-123456780000);
   dt->set_unsigned_char(1);
   dt->set_unsigned_short(255);
