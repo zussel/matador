@@ -185,31 +185,7 @@ bool request_parser::parse_url_path(char c, request &req)
 
 bool request_parser::parse_url_query_field(char c)
 {
-  if (hex_parse_state_ == HEX_FIRST) {
-    if (!is_hex_char(c)) {
-      return false;
-    }
-    hex_str_.push_back(c);
-    hex_parse_state_ = HEX_SECOND;
-    return true;
-  } else if (hex_parse_state_ == HEX_SECOND) {
-    if (!is_hex_char(c)) {
-      return false;
-    }
-    hex_str_.push_back(c);
-    char *err;
-    char hex = static_cast<char>(std::strtol(hex_str_.c_str(), &err, 16));
-    current_query_field_.push_back(hex);
-    hex_parse_state_ = HEX_FINISHED;
-    return true;
-  } else if (c == '%') {
-    hex_str_.clear();
-    hex_parse_state_ = HEX_FIRST;
-    return true;
-  } else if (c == '=') {
-    if (hex_parse_state_ != HEX_FINISHED) {
-      return false;
-    }
+  if (c == '=') {
     state_ = URL_QUERY_VALUE;
     return true;
   } else if (is_url_char(c) && c != '?') {
@@ -426,12 +402,12 @@ bool request_parser::parse_header_finish(char c)
 
 bool request_parser::is_url_char(char c) const
 {
-  return isalnum(c) || strchr(URL_SPECIAL_CHAR, c) != 0;
+  return isalnum(c) || strchr(URL_SPECIAL_CHAR, c) != nullptr;
 }
 
 bool request_parser::is_hex_char(char c) const
 {
-  return isalnum(c) || strchr(HEX_CHAR, c) != 0;
+  return isalnum(c) || strchr(HEX_CHAR, c) != nullptr;
 }
 
 void request_parser::insert_header(const std::string &key, const std::string &value, request &req)
