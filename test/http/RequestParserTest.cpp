@@ -77,6 +77,7 @@ void RequestParserTest::test_common_get_query_request()
   UNIT_ASSERT_EQUAL(2UL, req.query_params().size());
   UNIT_ASSERT_EQUAL("a==3&&c<=9", req.query_params().at("field"));
   UNIT_ASSERT_EQUAL("name", req.query_params().at("orderby"));
+  UNIT_ASSERT_EQUAL("fragment", req.fragment());
   UNIT_ASSERT_EQUAL("de.wikipedia.org", req.host());
   UNIT_ASSERT_EQUAL("application/x-www-form-urlencoded", req.content().type);
   UNIT_ASSERT_EQUAL("frog@jmarshall.com", req.headers().at(request_header::FROM));

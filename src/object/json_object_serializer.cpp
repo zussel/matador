@@ -40,6 +40,17 @@ void json_object_serializer::serialize(const char *id, std::string &val, size_t)
   newline();
 }
 
+void json_object_serializer::serialize(const char *id, const char *val, size_t len)
+{
+  if (val == nullptr) {
+    return;
+  }
+  write_id(id);
+  append(val);
+  json_.append(",");
+  newline();
+}
+
 void json_object_serializer::serialize(const char *id, date &d)
 {
   if (d.julian_date() == 0) {
@@ -53,7 +64,7 @@ void json_object_serializer::serialize(const char *id, date &d)
 
 void json_object_serializer::serialize(const char *id, time &t)
 {
-  if (t.get_timeval().tv_sec == 0 || t.get_timeval().tv_usec == 0) {
+  if (t.get_timeval().tv_sec == 0 && t.get_timeval().tv_usec == 0) {
     return;
   }
   write_id(id);
@@ -108,6 +119,11 @@ void json_object_serializer::append(const std::string &str)
 }
 
 void json_object_serializer::append(std::string &val, size_t)
+{
+  append(val);
+}
+
+void json_object_serializer::append(const char *val, size_t)
 {
   append(val);
 }

@@ -34,6 +34,9 @@ matador::http::response middleware_pipeline::process(request &req)
 }
 
 matador::http::response sentinel_middleware::process(request &, const middleware::next_func_t &)
-{ return matador::http::response::bad_request(); }
+{
+  return matador::http::response::bad_request();
+}
+
 }
 }

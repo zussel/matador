@@ -1,0 +1,26 @@
+name: matador@linux
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - 'feature/*'
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMATADOR_ODBC_TEST=false -DMATADOR_POSTGRESQL_TEST=false -DMATADOR_MYSQL_TEST=false -DMATADOR_SQLITE3_TEST=false
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest --verbose -C ${{env.BUILD_TYPE}}
