@@ -152,6 +152,8 @@ void JsonObjectMapperTest::test_to_string()
 
   matador::time t(2012, 9, 17, 12, 56, 12);
 
+  std::cout << matador::to_string(t) << "\n";
+
   const char *cstr = "lorem ipsum";
 
   auto dt = std::make_unique<datatypes>();
