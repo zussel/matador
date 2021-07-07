@@ -166,17 +166,17 @@ SET (TEST_ORM_SOURCES
 
 SET (TEST_SOURCES test_matador.cpp dto.hpp)
 
-ADD_EXECUTABLE(test_matador utils/TimeTestUnit.cpp utils/TimeTestUnit.hpp
+ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
   ${TEST_HEADER}
   ${TEST_TOOLS_SOURCES}
-#  ${TEST_OBJECT_SOURCES}
+  ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
-#  ${TEST_ORM_SOURCES}
-#  ${TEST_LOGGER_SOURCES}
-#  ${TEST_HTTP_SOURCES}
-#  ${TEST_NET_SOURCES}
-#  ${TEST_SQL_SOURCES}
+  ${TEST_ORM_SOURCES}
+  ${TEST_LOGGER_SOURCES}
+  ${TEST_HTTP_SOURCES}
+  ${TEST_NET_SOURCES}
+  ${TEST_SQL_SOURCES}
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://sascha:sascha@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
@@ -224,12 +224,12 @@ MESSAGE(STATUS "Appending thread libs: ${CMAKE_THREAD_LIBS_INIT}")
 TARGET_LINK_LIBRARIES(test_matador
   matador-unit
   matador-utils
-#  matador-logger
-#  matador-net
-#  matador-http
-#  matador-object
-#  matador-sql
-#  matador-orm
+  matador-logger
+  matador-net
+  matador-http
+  matador-object
+  matador-sql
+  matador-orm
   ${CMAKE_DL_LIBS}
   ${DB_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
