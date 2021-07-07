@@ -102,6 +102,8 @@ using namespace matador;
 
 int main(int argc, char *argv[])
 {
+  setenv("TZ", "/usr/share/zoneinfo/Europe/Berlin", 1);
+
   time_t daylight_time, standard;
   struct tm timestr {};
   double diff;
