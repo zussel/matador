@@ -186,6 +186,8 @@ void TimeTestUnit::test_compare()
 
 void TimeTestUnit::test_modify()
 {
+  std::cout << "\n";
+  
   matador::time t(2015, 1, 31, 11, 35, 7);
 
   UNIT_ASSERT_EQUAL(2015, t.year());

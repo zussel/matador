@@ -27,6 +27,7 @@ void localtime(const time_t &in, struct tm &out)
 #else
 //  localtime_r(&in, &out);
   out = *(::localtime(&in));
+  std::cout << "localtime result year " << out.tm_year << "\n";
 #endif
 }
 
@@ -213,11 +214,14 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   tm_.tm_sec = sec;
   tm_.tm_isdst = date::is_daylight_saving(year, month, day);
 
+  std::cout << "set year " << tm_.tm_year << "\n";
+
 #ifdef _MSC_VER
   time_.tv_sec = (long)mktime(&tm_);
 #else
   time_.tv_sec = mktime(&tm_);
 #endif
+  std::cout << "mktime result year " << tm_.tm_year << "\n";
   time_.tv_usec = millis * 1000;
   localtime(time_.tv_sec, tm_);
 }
