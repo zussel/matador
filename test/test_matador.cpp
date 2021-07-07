@@ -117,13 +117,17 @@ int main(int argc, char *argv[])
   timestr.tm_isdst = 0;
   standard = mktime(&timestr);
 
+  printf("Standard time is %ld\n", standard);
+
   /* now with daylight time */
   timestr.tm_isdst = 1;
   daylight_time = mktime(&timestr);
 
+  printf("Daylight time is %ld\n", daylight_time);
+
   diff = difftime(standard, daylight_time);
 
-  printf("Difference is %f hour(s)", diff/60.0/60.0);
+  printf("Difference is %f hour(s)\n", diff/60.0/60.0);
 
   return 0;
 
