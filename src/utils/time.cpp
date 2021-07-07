@@ -25,7 +25,8 @@ void localtime(const time_t &in, struct tm &out)
 #ifdef _MSC_VER
   errno_t err = localtime_s(&out, &in);
 #else
-  localtime_r(&in, &out);
+//  localtime_r(&in, &out);
+  out = *(::localtime(&in));
 #endif
 }
 

@@ -25,7 +25,7 @@ TimeTestUnit::TimeTestUnit()
 
 void TimeTestUnit::test_create()
 {
-  time_t t = ::time(0);
+  time_t t = ::time(nullptr);
 #ifdef _MSC_VER
   struct tm *tt = new tm;
   localtime_s(tt, &t);
