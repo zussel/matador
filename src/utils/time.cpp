@@ -445,7 +445,7 @@ timeval time::parse_time_string(const std::string &tstr, const char *format)
 
   std::cout << "parsed DST " << tm.tm_isdst << "\n";
 
-  tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+  //tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
   struct timeval tv{};
 #ifdef _MSC_VER
   tv.tv_sec = (long)mktime(&tm);
