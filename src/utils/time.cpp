@@ -211,7 +211,7 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   temp_tm.tm_hour = hour;
   temp_tm.tm_min = min;
   temp_tm.tm_sec = sec;
-//  temp_tm.tm_isdst = date::is_daylight_saving(year, month, day);
+  temp_tm.tm_isdst = date::is_daylight_saving(year, month, day);
 
 #ifdef _MSC_VER
   time_.tv_sec = (long)mktime(&temp_tm);
@@ -438,7 +438,7 @@ timeval time::parse_time_string(const std::string &tstr, const char *format)
     }
   }
 
-  //tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+  tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
   struct timeval tv{};
 #ifdef _MSC_VER
   tv.tv_sec = (long)mktime(&tm);

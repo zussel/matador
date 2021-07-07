@@ -102,42 +102,8 @@ using namespace matador;
 
 int main(int argc, char *argv[])
 {
+  setenv("TZ", "/usr/share/zoneinfo/UTC", 1);
   tzset();
-  std::cerr << tzname[0] << "/" << tzname[1] << "\n";
-  setenv("TZ", "/usr/share/zoneinfo/Europe/Berlin", 1);
-
-  tzset();
-  std::cerr << tzname[0] << "/" << tzname[1] << "\n";
-
-  time_t daylight_time, standard;
-  struct tm timestr {};
-  double diff;
-
-  timestr.tm_year = 2012 - 1900;
-  timestr.tm_mon = 11 - 1;
-  timestr.tm_mday = 4;
-  timestr.tm_hour = 1;
-  timestr.tm_min = 30;
-  timestr.tm_sec = 0;
-
-  /* first with standard time */
-  timestr.tm_isdst = 0;
-  standard = mktime(&timestr);
-
-  printf("Standard time is %ld\n", standard);
-
-  /* now with daylight time */
-  timestr.tm_isdst = 1;
-  daylight_time = mktime(&timestr);
-
-  printf("Daylight time is %ld\n", daylight_time);
-
-  diff = difftime(standard, daylight_time);
-
-  printf("Difference is %f hour(s)\n", diff/60.0/60.0);
-
-  return 0;
-
 
   matador::test_suite suite;
 
