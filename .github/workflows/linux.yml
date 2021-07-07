@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Set GCC & G++ 10 compiler
+      run: echo "CC=gcc-10" >> $GITHUB_ENV && echo "CXX=g++-10" >> $GITHUB_ENV
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMATADOR_ODBC_TEST=false -DMATADOR_POSTGRESQL_TEST=false -DMATADOR_MYSQL_TEST=false -DMATADOR_SQLITE3_TEST=false
     - name: Build
