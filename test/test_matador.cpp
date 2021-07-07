@@ -102,7 +102,12 @@ using namespace matador;
 
 int main(int argc, char *argv[])
 {
+  tzset();
+  std::cerr << tzname[0] << "/" << tzname[1] << "\n";
   setenv("TZ", "/usr/share/zoneinfo/Europe/Berlin", 1);
+
+  tzset();
+  std::cerr << tzname[0] << "/" << tzname[1] << "\n";
 
   time_t daylight_time, standard;
   struct tm timestr {};
