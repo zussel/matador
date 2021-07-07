@@ -186,8 +186,6 @@ void TimeTestUnit::test_compare()
 
 void TimeTestUnit::test_modify()
 {
-  std::cout << "\n";
-
   matador::time t(2015, 1, 31, 11, 35, 7);
 
   UNIT_ASSERT_EQUAL(2015, t.year());
@@ -239,9 +237,6 @@ void TimeTestUnit::test_modify()
 
 void TimeTestUnit::test_parse()
 {
-  auto tz = getenv("TZ");
-  std::cout << "timezone: " << (tz == nullptr ? "null" : tz) << "\n";
-
   std::string tstr1("03.04.2015 12:55:12.123");
 
   matador::time t = matador::time::parse(tstr1, "%d.%m.%Y %H:%M:%S.%f");

@@ -213,18 +213,13 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   temp_tm.tm_sec = sec;
 //  temp_tm.tm_isdst = date::is_daylight_saving(year, month, day);
 
-  std::cout << "set year " << temp_tm.tm_year << "\n";
-  std::cout << "calling mktime with y: " << temp_tm.tm_year << ", m: " << temp_tm.tm_mon << ", d: " << temp_tm.tm_mday << ", H: " << temp_tm.tm_hour << ", M: " << temp_tm.tm_min << ", S: " << temp_tm.tm_sec << ", DST: " << temp_tm.tm_isdst << "\n";
-
 #ifdef _MSC_VER
   time_.tv_sec = (long)mktime(&temp_tm);
 #else
   time_.tv_sec = std::mktime(&temp_tm);
 #endif
-  std::cout << "mktime result year " << temp_tm.tm_year << " (tv_sec: " << time_.tv_sec << ")\n";
   time_.tv_usec = millis * 1000;
   temp_tm = *std::localtime(&time_.tv_sec);
-  std::cout << "local result year " << temp_tm.tm_year << " (tv_sec: " << time_.tv_sec << ")\n";
   tm_ = temp_tm;
 }
 
@@ -443,8 +438,6 @@ timeval time::parse_time_string(const std::string &tstr, const char *format)
     }
   }
 
-  std::cout << "parsed DST " << tm.tm_isdst << "\n";
-
   //tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
   struct timeval tv{};
 #ifdef _MSC_VER
@@ -454,7 +447,6 @@ timeval time::parse_time_string(const std::string &tstr, const char *format)
   tv.tv_sec = mktime(&tm);
   tv.tv_usec = usec;
 #endif
-  std::cout << "parsed DST " << tm.tm_isdst << "\n";
   return tv;
 }
 }
