@@ -204,27 +204,28 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   throw_invalid_date(day, month, year);
   throw_invalid_time(hour, min, sec, millis);
 
-  tm_ = {};
-  tm_.tm_year = year - 1900;
-  tm_.tm_mon = month - 1;
-  tm_.tm_mday = day;
-  tm_.tm_hour = hour;
-  tm_.tm_min = min;
-  tm_.tm_sec = sec;
-  tm_.tm_isdst = date::is_daylight_saving(year, month, day);
+  struct tm temp_tm = {};
+  temp_tm.tm_year = year - 1900;
+  temp_tm.tm_mon = month - 1;
+  temp_tm.tm_mday = day;
+  temp_tm.tm_hour = hour;
+  temp_tm.tm_min = min;
+  temp_tm.tm_sec = sec;
+  temp_tm.tm_isdst = date::is_daylight_saving(year, month, day);
 
-  std::cout << "set year " << tm_.tm_year << "\n";
-  std::cout << "calling mktime with y: " << tm_.tm_year << ", m: " << tm_.tm_mon << ", d: " << tm_.tm_mday << ", H: " << tm_.tm_hour << ", M: " << tm_.tm_min << ", S: " << tm_.tm_sec << ", DST: " << tm_.tm_isdst << "\n";
+  std::cout << "set year " << temp_tm.tm_year << "\n";
+  std::cout << "calling mktime with y: " << temp_tm.tm_year << ", m: " << temp_tm.tm_mon << ", d: " << temp_tm.tm_mday << ", H: " << temp_tm.tm_hour << ", M: " << temp_tm.tm_min << ", S: " << temp_tm.tm_sec << ", DST: " << temp_tm.tm_isdst << "\n";
 
 #ifdef _MSC_VER
-  time_.tv_sec = (long)mktime(&tm_);
+  time_.tv_sec = (long)mktime(&temp_tm);
 #else
-  time_.tv_sec = std::mktime(&tm_);
+  time_.tv_sec = std::mktime(&temp_tm);
 #endif
-  std::cout << "mktime result year " << tm_.tm_year << " (tv_sec: " << time_.tv_sec << ")\n";
+  std::cout << "mktime result year " << temp_tm.tm_year << " (tv_sec: " << time_.tv_sec << ")\n";
   time_.tv_usec = millis * 1000;
-  tm_ = *std::localtime(&time_.tv_sec);
-  std::cout << "local result year " << tm_.tm_year << " (tv_sec: " << time_.tv_sec << ")\n";
+  temp_tm = *std::localtime(&time_.tv_sec);
+  std::cout << "local result year " << temp_tm.tm_year << " (tv_sec: " << time_.tv_sec << ")\n";
+  tm_ = temp_tm;
 }
 
 void time::set(const char *timestr, const char *format)
