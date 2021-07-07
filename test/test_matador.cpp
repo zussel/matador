@@ -17,11 +17,11 @@
 
 #include "matador/unit/test_suite.hpp"
 
-#include "matador/net/os.hpp"
+//#include "matador/net/os.hpp"
 
 #include "unit/TestSuiteTestUnit.hpp"
 
-#include "logger/LoggerTest.hpp"
+//#include "logger/LoggerTest.hpp"
 
 #include "matador/utils/os.hpp"
 
@@ -222,10 +222,10 @@ int main(int argc, char *argv[])
 
   //suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 
-  net::init();
+//  net::init();
 
   auto result = suite.run();
 
-  net::cleanup();
+//  net::cleanup();
   return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }

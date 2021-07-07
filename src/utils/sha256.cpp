@@ -146,9 +146,7 @@ std::string sha256(const char *input, size_t length)
 
   char buf[SHA256::RESULT_SIZE];
   buf[2*SHA256::DIGEST_SIZE] = 0;
-  auto diff = input - buf;
   for (unsigned int i = 0; i < SHA256::DIGEST_SIZE; i++) {
-    auto offset = i * 2;
 #ifdef _MSC_VER
     sprintf_s(buf + offset, SHA256::RESULT_SIZE - offset, "%02x", digest[i]);
 #else
@@ -158,7 +156,7 @@ std::string sha256(const char *input, size_t length)
   return std::string(buf, 2 * SHA256::DIGEST_SIZE);
 }
 
-void sha256(const char *input, size_t length, unsigned char *digest, size_t hash_size)
+void sha256(const char *input, size_t length, unsigned char *digest, size_t)
 {
   memset(digest,0,SHA256::DIGEST_SIZE);
 
