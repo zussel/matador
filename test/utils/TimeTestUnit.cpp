@@ -200,9 +200,7 @@ void TimeTestUnit::test_modify()
   UNIT_ASSERT_FALSE(t.is_daylight_saving());
   UNIT_ASSERT_FALSE(t.is_leapyear());
 
-  t.year(2014);
-  t.month(8);
-  t.day(8);
+  t.year(2014).month(8).day(8);
 
   UNIT_ASSERT_EQUAL(2014, t.year());
   UNIT_ASSERT_EQUAL(8, t.month());
