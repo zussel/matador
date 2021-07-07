@@ -102,7 +102,7 @@ using namespace matador;
 
 int main(int argc, char *argv[])
 {
-  setenv("TZ", "/usr/share/zoneinfo/UTC", 1);
+  setenv("TZ", "/usr/share/zoneinfo/Europe/Berlin", 1);
   tzset();
 
   matador::test_suite suite;
@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new PostgreSQLDialectTestUnit());
 #endif
 
-  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
+//  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 
   net::init();
 
