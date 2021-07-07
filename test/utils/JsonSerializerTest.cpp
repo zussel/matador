@@ -18,7 +18,7 @@ std::string expected_dto_result = R"({
   "id": "pk11",
   "name": "saturn",
   "birthday": "2001-07-13",
-  "created": "1988-09-25T11:55:46",
+  "created": "1998-09-25T11:55:46",
   "flag": true,
   "height": 23,
   "doubles": [13.500000,123.900000,0.732000],
@@ -92,7 +92,7 @@ void JsonSerializerTest::test_to_string_object()
   d.flag = true;
   d.height = 23;
   d.birthday.set(13, 7, 2001);
-  d.created.set(1988, 9, 25, 11, 55, 46, 123);
+  d.created.set(1998, 9, 25, 11, 55, 46, 123);
   d.doubles.assign({13.5, 123.9, 0.732});
   d.bits.assign({true, false, false, true, false});
   d.names = { "green", "red", "yellow", "blue" };
@@ -132,7 +132,7 @@ void JsonSerializerTest::test_to_string_array()
   d.flag = true;
   d.height = 23;
   d.birthday.set(13, 7, 2001);
-  d.created.set(1988, 9, 25, 11, 55, 46, 123);
+  d.created.set(1998, 9, 25, 11, 55, 46, 123);
   d.doubles.assign({13.5, 123.9, 0.732});
   d.bits.assign({true, false, false, true, false});
   d.names = { "green", "red", "yellow", "blue" };
