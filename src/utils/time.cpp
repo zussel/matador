@@ -214,7 +214,8 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   tm_.tm_isdst = date::is_daylight_saving(year, month, day);
 
   std::cout << "set year " << tm_.tm_year << "\n";
-
+  std::cout << "calling mktime with y: " << tm_.tm_year << ", m: " << tm_.tm_mon << ", d: " << tm_.tm_mday << ", H: " << tm_.tm_hour << ", M: " << tm_.tm_min << ", S: " << tm_.tm_sec << ", DST: " << tm_.tm_isdst << "\n";
+  
 #ifdef _MSC_VER
   time_.tv_sec = (long)mktime(&tm_);
 #else
