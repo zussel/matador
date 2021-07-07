@@ -211,7 +211,7 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   temp_tm.tm_hour = hour;
   temp_tm.tm_min = min;
   temp_tm.tm_sec = sec;
-  temp_tm.tm_isdst = date::is_daylight_saving(year, month, day);
+//  temp_tm.tm_isdst = date::is_daylight_saving(year, month, day);
 
   std::cout << "set year " << temp_tm.tm_year << "\n";
   std::cout << "calling mktime with y: " << temp_tm.tm_year << ", m: " << temp_tm.tm_mon << ", d: " << temp_tm.tm_mday << ", H: " << temp_tm.tm_hour << ", M: " << temp_tm.tm_min << ", S: " << temp_tm.tm_sec << ", DST: " << temp_tm.tm_isdst << "\n";
