@@ -252,4 +252,4 @@ SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
-ADD_TEST(test_matador_all ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_matador exec sqlite_conn)
+ADD_TEST(NAME test_matador_all COMMAND test_matador exec sqlite_conn WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
