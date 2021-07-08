@@ -30,7 +30,7 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         -DMATADOR_ODBC_TEST=false
         -DMATADOR_POSTGRESQL_TEST=true
-        -DMATADOR_MYSQL_TEST=false
+        -DMATADOR_MYSQL_TEST=true
         -DMATADOR_SQLITE3_TEST=true
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
@@ -43,6 +43,12 @@ jobs:
         postgresql db: matador_test
         postgresql user: test
         postgresql password: test123
+    - uses: mirromutth/mysql-action@v1.1
+      with:
+        mysql database: 'matador_test'
+        mysql root password: 'root'
+        mysql user: 'test'
+        mysql password: 'test123'
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest --verbose -C ${{env.BUILD_TYPE}}
