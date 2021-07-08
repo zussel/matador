@@ -46,9 +46,6 @@ jobs:
     - uses: mirromutth/mysql-action@v1.1
       with:
         mysql database: 'matador_test'
-        mysql root password: 'root'
-        mysql user: 'test'
-        mysql password: 'test123'
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest --verbose -C ${{env.BUILD_TYPE}}
