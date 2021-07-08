@@ -13,12 +13,24 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler-version: [9]
     steps:
     - uses: actions/checkout@v2
-    - name: Set GCC & G++ 10 compiler
-      run: echo "CC=gcc-10" >> $GITHUB_ENV && echo "CXX=g++-10" >> $GITHUB_ENV
+    - name: CMake Version
+      run: cmake --version
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMATADOR_ODBC_TEST=false -DMATADOR_POSTGRESQL_TEST=false -DMATADOR_MYSQL_TEST=false -DMATADOR_SQLITE3_TEST=false
+      env:
+        CC: gcc-${{ matrix.compiler-version }}
+        CXX: g++-${{ matrix.compiler-version }}
+      run: >
+        cmake -B ${{github.workspace}}/build
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          -DMATADOR_ODBC_TEST=false
+          -DMATADOR_POSTGRESQL_TEST=false
+          -DMATADOR_MYSQL_TEST=false
+          -DMATADOR_SQLITE3_TEST=true
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Test
