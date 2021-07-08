@@ -37,4 +37,5 @@ jobs:
       run: ls -la ${{github.workspace}}/build/lib
     - name: Test
       working-directory: ${{github.workspace}}/build
-      run: ctest --debug -C ${{env.BUILD_TYPE}}
+#      run: ctest --debug -C ${{env.BUILD_TYPE}}
+      run: make && make test ARGS=-V
