@@ -24,7 +24,7 @@ jobs:
       env:
         CC: gcc-${{ matrix.compiler-version }}
         CXX: g++-${{ matrix.compiler-version }}
-      run: >
+      run: >-
         cmake -B ${{github.workspace}}/build
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DMATADOR_ODBC_TEST=false
