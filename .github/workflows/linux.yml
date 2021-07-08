@@ -19,6 +19,12 @@ jobs:
         compiler-version: [9]
     steps:
     - uses: actions/checkout@v2
+    - name: Create MySQL database
+      run: |
+        sudo systemctl start mysql.service
+        mysql --version
+        mysql -u root -p root -e "CREATE DATABASE matador_test;"
+      #        mysql -u root -p root -e "GRANT ALL PRIVILEGES ON matador_test.* TO 'root'@'%';";
     - name: CMake Version
       run: cmake --version
     - name: Configure CMake
@@ -43,11 +49,6 @@ jobs:
         postgresql db: matador_test
         postgresql user: test
         postgresql password: test123
-    - name: Create MySQL database
-      run: |
-        mysql --version
-        mysql -u root -p root -e "CREATE DATABASE matador_test;"
-#        mysql -u root -p root -e "GRANT ALL PRIVILEGES ON matador_test.* TO 'root'@'%';";
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest --verbose -C ${{env.BUILD_TYPE}}
