@@ -179,7 +179,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_SQL_SOURCES}
 )
 
-SET(MYSQL_CONNECTION_STRING "mysql://test:test123@localhost/matador_test" CACHE STRING "mysql connection string")
+SET(MYSQL_CONNECTION_STRING "mysql://test:test123@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
 IF (WIN32)
   SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\\\SQLEXPRESS/test_oos (SQL Server)" CACHE STRING "mssql connection string")
 ELSE()

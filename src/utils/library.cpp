@@ -16,10 +16,8 @@
  */
 
 #include "matador/utils/library.hpp"
-#include "matador/utils/os.hpp"
 
 #include <utility>
-#include <iostream>
 
 namespace matador {
 
@@ -34,9 +32,6 @@ library::~library()
 
 bool library::load()
 {
-  std::cout << "current dir: " << os::get_current_dir() << "\n";
-  std::cout << "loading lib: " << lib_.c_str() << "\n";
-
 #if defined(_MSC_VER) || defined(__MINGW32__)
   handle_ = LoadLibrary((lib_ + ".dll").c_str());
 #elif defined(__APPLE__)
