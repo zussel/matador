@@ -34,5 +34,5 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest --verbose -C ${{env.BUILD_TYPE}}
+      working-directory: ${{github.workspace}}/build/bin
+      run: ctest --verbose --debug -C ${{env.BUILD_TYPE}}
