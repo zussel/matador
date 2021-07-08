@@ -35,7 +35,10 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: List libs
       run: ls -la ${{github.workspace}}/build/lib
+    - name: Copy Matador SQlite libs
+      working-directory: ${{github.workspace}}/build
+      run: cp lib/libmatador-sqlite.* bin/
     - name: Test
       working-directory: ${{github.workspace}}/build
-#      run: ctest --debug -C ${{env.BUILD_TYPE}}
-      run: make && make test ARGS=-V
+      run: ctest --verbose -C ${{env.BUILD_TYPE}}
+
