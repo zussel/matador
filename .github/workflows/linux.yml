@@ -13,6 +13,17 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_DB: matador_test
+          MYSQL_USER: root
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_PASSWORD:
+        ports:
+          - "3306:3306"
     strategy:
       fail-fast: false
       matrix:
@@ -43,12 +54,14 @@ jobs:
         postgresql db: matador_test
         postgresql user: test
         postgresql password: test123
-    - uses: mirromutth/mysql-action@v1.1
-      with:
-        mysql database: 'matador_test'
-        mysql root password: 'root123'
-        mysql user: 'test'
-        mysql password: 'test123'
+    - name: Shutdown the Default MySQL
+      run: sudo systemctl stop mysql.service
+#    - uses: mirromutth/mysql-action@v1.1
+#      with:
+#        mysql database: 'matador_test'
+#        mysql root password: 'root123'
+#        mysql user: 'test'
+#        mysql password: 'test123'
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest --verbose -C ${{env.BUILD_TYPE}}
