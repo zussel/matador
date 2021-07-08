@@ -29,18 +29,20 @@ jobs:
         cmake -B ${{github.workspace}}/build
         -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         -DMATADOR_ODBC_TEST=false
-        -DMATADOR_POSTGRESQL_TEST=false
+        -DMATADOR_POSTGRESQL_TEST=true
         -DMATADOR_MYSQL_TEST=false
         -DMATADOR_SQLITE3_TEST=true
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-    - name: List libs
-      run: ls -la ${{github.workspace}}/build/lib
-#    - name: Copy Matador SQlite libs
-#      working-directory: ${{github.workspace}}/build
-#      run: cp lib/libmatador-sqlite.* bin/
-    - name: List bin
-      run: ls -la ${{github.workspace}}/build/bin
+    - name: Copy Matador Libs
+      working-directory: ${{github.workspace}}/build
+      run: cp lib/libmatador-*.* bin/
+    - uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '11'
+        postgresql db: matador_test
+        postgresql user: test
+        postgresql password: test123
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest --verbose -C ${{env.BUILD_TYPE}}
