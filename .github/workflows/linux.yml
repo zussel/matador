@@ -24,13 +24,13 @@ jobs:
       env:
         CC: gcc-${{ matrix.compiler-version }}
         CXX: g++-${{ matrix.compiler-version }}
-      run: >-
+      run: >
         cmake -B ${{github.workspace}}/build
-          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-          -DMATADOR_ODBC_TEST=false
-          -DMATADOR_POSTGRESQL_TEST=false
-          -DMATADOR_MYSQL_TEST=false
-          -DMATADOR_SQLITE3_TEST=true
+        -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        -DMATADOR_ODBC_TEST=false
+        -DMATADOR_POSTGRESQL_TEST=false
+        -DMATADOR_MYSQL_TEST=false
+        -DMATADOR_SQLITE3_TEST=true
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Test
