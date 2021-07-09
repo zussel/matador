@@ -1,4 +1,4 @@
-name: matador@linux
+name: matador@linux:coverage
 
 on:
   push:
