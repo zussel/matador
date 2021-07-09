@@ -10,10 +10,10 @@ Take your database by the horns.
 
 __Build Status__
 
-| Branches    | Travis-CI | AppVeyor-CI | Coveralls    |
-|-------------|-----------|-------------|--------------|
-| master      |[![Build Status](https://travis-ci.org/zussel/matador.png?branch=master)](https://travis-ci.org/zussel/matador?branch=master)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/master)|[![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=master)](https://coveralls.io/github/zussel/matador?branch=master)|
-| develop     |[![Build Status](https://travis-ci.org/zussel/matador.png?branch=develop)](https://travis-ci.org/zussel/matador)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/develop)|[![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=develop)](https://coveralls.io/github/zussel/matador?branch=develop)|
+| Branches    | Travis-CI | AppVeyor-CI | Coveralls    |  CodeCov  |
+|-------------|-----------|-------------|--------------|-----------|
+| master      |[![Build Status](https://travis-ci.org/zussel/matador.png?branch=master)](https://travis-ci.org/zussel/matador?branch=master)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/master)|[![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=master)](https://coveralls.io/github/zussel/matador?branch=master)|[![codecov](https://codecov.io/gh/zussel/matador/branch/master/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
+| develop     |[![Build Status](https://travis-ci.org/zussel/matador.png?branch=develop)](https://travis-ci.org/zussel/matador)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/develop)|[![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=develop)](https://coveralls.io/github/zussel/matador?branch=develop)|[![codecov](https://codecov.io/gh/zussel/matador/branch/develop/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
 
 matador is a ORM framework written in C++. It aims to encapsulate all database stuff
 (database backends, sql statements, serialization of objects) and provides the user an
