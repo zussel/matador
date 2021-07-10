@@ -102,8 +102,13 @@ using namespace matador;
 
 int main(int argc, char *argv[])
 {
+#ifdef _WIN32
+  _putenv_s("TZ", "/usr/share/zoneinfo/Europe/Berlin");
+  _tzset();
+#else
   setenv("TZ", "/usr/share/zoneinfo/Europe/Berlin", 1);
   tzset();
+#endif
 
   matador::test_suite suite;
 
