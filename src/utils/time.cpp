@@ -219,7 +219,7 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   time_.tv_sec = std::mktime(&temp_tm);
 #endif
   time_.tv_usec = millis * 1000;
-  temp_tm = *std::localtime((time_t*)&(time_.tv_sec));
+  localtime(time_.tv_sec, temp_tm);
   tm_ = temp_tm;
 }
 
