@@ -39,7 +39,7 @@ kramdown:
     block:
       line_numbers: true
 
-theme: minima
+#theme: minima
 gems:
   - jekyll-feed
 exclude:

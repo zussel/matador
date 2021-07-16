@@ -24,6 +24,12 @@ a.anchor {
   visibility: hidden;
 }
 
+svg
+{
+  width: 16px;
+  height: 16px;
+}
+
 /*.green-background {
   background-size: cover;
   background-image: url(../images/abstract-green-1920.jpg);
