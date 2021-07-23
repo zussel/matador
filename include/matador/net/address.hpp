@@ -56,7 +56,7 @@ class OOS_NET_API address
 {
 public:
   /**
-   * Default consstructor
+   * Default constructor
    */
   address() = default;
 
