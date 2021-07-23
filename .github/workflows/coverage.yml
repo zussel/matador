@@ -34,6 +34,7 @@ jobs:
           cmake -B ${{github.workspace}}/build
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DMATADOR_ODBC_TEST=false
+          -DMATADOR_ODBC=false
           -DMATADOR_POSTGRESQL_TEST=true
           -DMATADOR_MYSQL_TEST=true
           -DMATADOR_SQLITE3_TEST=true
