@@ -2,9 +2,9 @@
 
 The following documentation will give you an overview on matador. It will show you all main components of the library so that you can start building your own application with it.
 
-matador consists of three main parts: A container for any kind of objects, a sql query class providing a fluent interface and on top an ORM layer.
+matador consists of four main parts: A container for any kind of objects, a sql query class providing a fluent interface and on top an ORM layer.
 
-### The object store
+### The Object Store
 
 The [object store](#prototypes) is the central element. Once it is configured with an object hierarchy, one can insert, update or delete any of objects of the introduced types. Create a view to access all objects of a specific type or of a specific base type. Once the [view](#views) is created all objects can be iterated or filtered via a simple [expression](#expressions). As a special feature a [transaction](#transactions) mechanism is also integrated.
 
@@ -89,3 +89,7 @@ session s(p);
 
 s.load();
 {% endhighlight %}
+
+### The HTTP Server
+
+With the 
