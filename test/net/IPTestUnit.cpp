@@ -7,8 +7,8 @@ using namespace matador;
 IPTestUnit::IPTestUnit()
   : matador::unit_test("ip", "ip test unit")
 {
-  add_test("tcp", std::bind(&IPTestUnit::test_tcp, this), "tcp test");
-  add_test("udp", std::bind(&IPTestUnit::test_udp, this), "udp test");
+  add_test("tcp", [this] { test_tcp(); }, "tcp test");
+  add_test("udp", [this] { test_udp(); }, "udp test");
 }
 
 void IPTestUnit::test_tcp()
