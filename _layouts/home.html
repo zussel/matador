@@ -8,12 +8,13 @@ layout: default
       <div class="container">
         <h1>matador</h1>
         <p>
-          matador is an ORM framework written in C++. It
-          aims to encapsulate all database backend communication. You don't have
-          to deal with database backends or sql statements neither with mapping of
+          matador is an ORM and Web Application framework written in C++. It
+          encapsulates all database backend communication and offers a simple (web) server.
+          You don't have to deal with database backends or sql statements neither with mapping of
           data types or serialization of objects. It comes with relation handling out
           of the box, brings a unique container for all kind of objects and a fluent sql
-          query interface. On top all features are combined into an ORM layer.
+          query interface. All features are combined into an ORM layer. With the integrated web server
+          it is possible to write your own web application with database backend.
         </p>
         <p><a class="btn btn-primary btn-lg" href="guide#introduction" role="button">Learn more &raquo;</a></p>
       </div>
@@ -199,6 +200,32 @@ try {
 }
 {% endhighlight %}
       </div>
+    </div>
+    <div>
+      <div class="col-md-12">
+        <h2 class="centered">Web Server</h2>
+      </div>
+      <div class="col-md-6 nopadding">
+{% highlight cpp linenos %}
+http::server server(8081);
+// add routing middleware
+server.add_routing_middleware();
+
+server.on_get("/", [](const http::request &req) {
+  return http::response::ok("hello world", http::mime_types::TYPE_TEXT_PLAIN);
+});
+server.run();
+{% endhighlight %}
+      </div>
+      <div class="col-md-6">
+        <p>
+          A simple Web Servers finishes the matador setup and lets the
+          user create a web application with routing. Additionally a small
+          template engine is also available.
+        </p>
+        <p><a class="btn btn-warning" href="guide#http" role="button">View details &raquo;</a></p>
+      </div>
+    </div>
     </div>
   </div>
 </div>

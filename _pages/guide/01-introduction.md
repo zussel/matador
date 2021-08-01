@@ -2,7 +2,7 @@
 
 The following documentation will give you an overview on matador. It will show you all main components of the library so that you can start building your own application with it.
 
-matador consists of four main parts: A container for any kind of objects, a sql query class providing a fluent interface and on top an ORM layer.
+matador consists of four main parts: A container for any kind of objects, a sql query class providing a fluent interface, an ORM layer and top a simple web server.
 
 ### The Object Store
 
@@ -92,4 +92,4 @@ s.load();
 
 ### The HTTP Server
 
-With the 
+With the web server it is possible to write a web application and serve the data as REST Api or as full HTML pages. To make live a bit easier a template engine was added based on the [Django Template language](https://docs.djangoproject.com/en/3.2/ref/templates/language/).
