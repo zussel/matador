@@ -26,7 +26,6 @@ int main(int /*argc*/, char* /*argv*/[])
   matador::persistence p("sqlite://moviedb.sqlite");
   p.enable_log();
 
-
   p.attach<person>("person");
   p.attach<movie>("movie");
 
