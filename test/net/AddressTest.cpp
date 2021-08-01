@@ -6,11 +6,11 @@
 AddressTest::AddressTest()
   : matador::unit_test("address", "ip address test unit")
 {
-  add_test("address_v4", std::bind(&AddressTest::test_address_v4, this), "ip address v4 test");
-  add_test("address_v6", std::bind(&AddressTest::test_address_v6, this), "ip address v6 test");
-  add_test("peer_v4", std::bind(&AddressTest::test_peer_v4, this), "ip peer v4 test");
-  add_test("peer_v6", std::bind(&AddressTest::test_peer_v6, this), "ip peer v6 test");
-  add_test("ip", std::bind(&AddressTest::test_ip, this), "ip test");
+  add_test("address_v4", [this] { test_address_v4(); }, "ip address v4 test");
+  add_test("address_v6", [this] { test_address_v6(); }, "ip address v6 test");
+  add_test("peer_v4", [this] { test_peer_v4(); }, "ip peer v4 test");
+  add_test("peer_v6", [this] { test_peer_v6(); }, "ip peer v6 test");
+  add_test("ip", [this] { test_ip(); }, "ip test");
 }
 
 using namespace matador;
