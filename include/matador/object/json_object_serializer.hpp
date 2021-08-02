@@ -135,6 +135,8 @@ private:
   void write_id(const char *id);
   void begin_object();
   void end_object();
+  void begin_array();
+  void end_array();
   void indent();
   void newline();
 
@@ -148,6 +150,36 @@ private:
   void append(const V &value, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = nullptr)
   {
     json_.append(std::to_string(value));
+  }
+
+  template< typename T, object_holder_type OPT >
+  void append(const object_pointer<T, OPT> &x)
+  {
+    auto tindex = std::type_index(typeid(T));
+    auto it = type_id_map_.find(tindex);
+    if (it != type_id_map_.end()) {
+      auto id_it = it->second.second.find(x.primary_key());
+      if (id_it == it->second.second.end()) {
+        it->second.second.insert(x.primary_key());
+        current_type_index_ = &it->first;
+        append(*x);
+        current_type_index_ = nullptr;
+      } else {
+        // only serialize id
+        begin_object();
+        write_id(it->second.first.c_str());
+        json_.append(identifier_serializer_.serialize(*x.primary_key()));
+        end_object();
+        newline();
+        //x.primary_key();
+      }
+    } else {
+      auto ret = type_id_map_.insert(std::make_pair(tindex, t_name_id_set_pair("", t_id_set())));
+      current_type_index_ = &ret.first->first;
+      ret.first->second.second.insert(x.primary_key());
+      append(*x);
+      current_type_index_ = nullptr;
+    }
   }
 
   template< typename T, object_holder_type OPT >
@@ -196,6 +228,8 @@ private:
   json_format format_ {};
   unsigned depth_ = 0;
 
+  bool is_array = false;
+
   const std::type_index *current_type_index_ = nullptr;
 
   json_identifier_serializer identifier_serializer_;
@@ -222,11 +256,24 @@ void json_object_serializer::serialize(const char *id, has_one<Value> &x, cascad
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_serializer::serialize(const char *id, basic_has_many<Value, Container> &, const char *,
+void json_object_serializer::serialize(const char *id, basic_has_many<Value, Container> &c, const char *,
                                        const char *, cascade_type)
 {
   write_id(id);
-  json_.append("[],");
+  begin_array();
+  if (c.size() < 2) {
+    for (const auto &obj : c) {
+      append(obj);
+    }
+  } else {
+    auto it = c.begin();
+    append(*it++);
+    for (;it != c.end(); ++it) {
+      json_.append(",");
+      append(*it);
+    }
+  }
+  end_array();
   newline();
 }
 

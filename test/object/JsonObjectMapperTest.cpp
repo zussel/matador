@@ -1,7 +1,3 @@
-//
-// Created by sascha on 15.01.20.
-//
-
 #include "JsonObjectMapperTest.hpp"
 #include "../person.hpp"
 
@@ -17,6 +13,7 @@ JsonObjectMapperTest::JsonObjectMapperTest()
   add_test("simple", [this] { test_simple(); }, "test simple json object mapper");
   add_test("derived", [this] { test_derived(); }, "test derived json object mapper");
   add_test("has_many", [this] { test_has_many(); }, "test has many json object mapper");
+  add_test("has_many_builtin", [this] { test_has_many_builtin(); }, "test has many builtin json object mapper");
   add_test("array", [this] { test_array(); }, "test array of objects json object mapper");
   add_test("to_json", [this] { test_to_json(); }, "test object to json");
   add_test("to_string", [this] { test_to_string(); }, "test object to string");
@@ -71,6 +68,22 @@ void JsonObjectMapperTest::test_has_many()
   const auto &i = p->items.front();
   UNIT_ASSERT_EQUAL(13UL, i->id);
   UNIT_ASSERT_EQUAL("strawberry", i->name);
+}
+
+void JsonObjectMapperTest::test_has_many_builtin()
+{
+  json_object_mapper mapper;
+
+  auto p = mapper.to_object<many_ints>(R"(  {
+"id":  5,
+"elements": [1, 2, 3]
+} )");
+
+  UNIT_EXPECT_EQUAL(5UL, p->id);
+  UNIT_ASSERT_EQUAL(3UL, p->elements.size());
+
+  const auto &i = p->elements.front();
+  UNIT_ASSERT_EQUAL(1, i);
 }
 
 void JsonObjectMapperTest::test_array()
@@ -136,6 +149,7 @@ void JsonObjectMapperTest::test_to_string()
   store.attach_abstract<person>("person");
   store.attach<citizen, person>("citizen");
   store.attach<datatypes>("item");
+  store.attach<many_ints>("many_ints");
 
   auto bd = date(13, 2, 1999);
 
@@ -182,4 +196,14 @@ void JsonObjectMapperTest::test_to_string()
   res = R"({"id": 1,"val_char": 102,"val_float": 3.141500,"val_double": 4.567000,"val_short": -127,"val_int": -12345678,"val_long": -1234567800,"val_long_long": -123456780000,"val_unsigned_char": 1,"val_unsigned_short": 255,"val_unsigned_int": 12345678,"val_unsigned_long": 1234567800,"val_unsigned_long_long": 12345678000,"val_bool": true,"val_cstr": "lorem ipsum","val_string": "peter, paul and mary","val_varchar": "trains, plains and automobiles","val_date": "1999-02-13","val_time": "2012-09-17T12:56:12"})";
 
   UNIT_ASSERT_EQUAL(res, str);
+
+  object_ptr<many_ints> mptr = store.insert(new many_ints);
+
+  mptr.modify()->elements.push_back(1);
+  mptr.modify()->elements.push_back(2);
+  mptr.modify()->elements.push_back(3);
+
+  str = mapper.to_string(mptr);
+
+  UNIT_ASSERT_EQUAL(R"({"id": 4,"elements": [1,2,3]})", str);
 }

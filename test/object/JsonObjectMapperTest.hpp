@@ -12,6 +12,7 @@ public:
   void test_simple();
   void test_derived();
   void test_has_many();
+  void test_has_many_builtin();
   void test_array();
   void test_to_json();
   void test_to_string();

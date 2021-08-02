@@ -96,6 +96,21 @@ void json_object_serializer::end_object()
   }
 }
 
+void json_object_serializer::begin_array()
+{
+  json_.append("[");
+  is_array = true;
+}
+
+void json_object_serializer::end_array()
+{
+  json_.append("]");
+  if (depth_ > 0) {
+    json_.append(",");
+  }
+  is_array = false;
+}
+
 void json_object_serializer::indent()
 {
   json_.append(depth_ * format_.indentation(), ' ');
