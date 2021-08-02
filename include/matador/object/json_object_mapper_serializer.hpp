@@ -171,10 +171,10 @@ void json_object_mapper_serializer::serialize(const char *id, basic_has_many<Val
     return;
   }
 
-  basic_json_mapper<object_ptr<Value>, json_object_mapper_serializer> mapper;
+  basic_json_mapper<typename has_many_item_holder<Value>::object_type, json_object_mapper_serializer> mapper;
   auto elements = mapper.array_from_string(runtime_data_.json_array_cursor, false);
   for (auto &&item : elements) {
-    typename has_many_item_holder<Value>::object_type val(item);
+    typename has_many_item_holder<Value>::value_type val(item);
     x.append(has_many_item_holder<Value>(val, nullptr));
   }
   runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);

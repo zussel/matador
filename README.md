@@ -35,7 +35,8 @@ Features:
  * Simple Logging mechanism
  * Networking
  * Web Server
-
+ * Template Engine
+ 
 Supported databases:
  * PostgreSQL
  * SQLite
