@@ -61,7 +61,9 @@ public:
   template<class Value>
   void serialize(const char *id, has_one<Value> &x, cascade_type);
   template < class Value, template <class ...> class Container >
-  void serialize(const char *id, basic_has_many<Value, Container> &x, const char *, const char *, cascade_type);
+  void serialize(const char *id, basic_has_many<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  template < class Value, template <class ...> class Container >
+  void serialize(const char *id, basic_has_many<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
 
 private:
   details::mapper_runtime &runtime_data_;
@@ -165,7 +167,7 @@ void json_object_mapper_serializer::serialize(const char *id, has_one<Value> &x,
 
 template<class Value, template <class ...> class Container>
 void json_object_mapper_serializer::serialize(const char *id, basic_has_many<Value, Container> &x, const char *,
-                                              const char *, cascade_type)
+                                              const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.object_key != id) {
     return;
@@ -178,6 +180,23 @@ void json_object_mapper_serializer::serialize(const char *id, basic_has_many<Val
     x.append(has_many_item_holder<Value>(val, nullptr));
   }
   runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
+}
+
+template<class Value, template <class ...> class Container>
+void json_object_mapper_serializer::serialize(const char *id, basic_has_many<Value, Container> &x, const char *,
+                                              const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type*)
+{
+  if (runtime_data_.object_key != id) {
+    return;
+  }
+
+//  basic_json_mapper<typename has_many_item_holder<Value>::object_type, json_object_mapper_serializer> mapper;
+//  auto elements = mapper.array_from_string(runtime_data_.json_array_cursor, false);
+//  for (auto &&item : elements) {
+//    typename has_many_item_holder<Value>::value_type val(item);
+//    x.append(has_many_item_holder<Value>(val, nullptr));
+//  }
+//  runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
 }
 /// @endcond
 
