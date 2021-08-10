@@ -206,7 +206,8 @@ private:
     } else {
       auto ret = type_id_map_.insert(std::make_pair(tindex, t_name_id_set_pair("", t_id_set())));
       current_type_index_ = &ret.first->first;
-      ret.first->second.second.insert(x.primary_key());
+      auto pk = x.primary_key();
+      ret.first->second.second.insert(pk->clone());
       append(*x);
       current_type_index_ = nullptr;
     }

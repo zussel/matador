@@ -38,7 +38,7 @@ sqlite_statement::sqlite_statement(sqlite_connection &db, const matador::sql &sq
   // prepare sqlite statement
   int ret = sqlite3_prepare_v2(db_.handle(), str().c_str(), str().size(), &stmt_, nullptr);
   throw_database_error(ret, db_.handle(), "sqlite3_prepare_v2", str());
-  binder_ = matador::make_unique<sqlite_parameter_binder>(db.handle(), stmt_);
+  binder_ = std::make_unique<sqlite_parameter_binder>(db.handle(), stmt_);
 }
 
 sqlite_statement::~sqlite_statement()

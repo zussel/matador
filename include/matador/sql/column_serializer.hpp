@@ -42,7 +42,7 @@ public:
 
   template<class T>
   columns *execute(T &x) {
-    cols_ = matador::make_unique<columns>(brackets_);
+    cols_ = std::make_unique<columns>(brackets_);
     matador::access::serialize(*this, x);
     return cols_.release();
   }

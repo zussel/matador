@@ -1288,13 +1288,13 @@ void QueryTestUnit::test_select_limit()
   // create item table and insert item
   result<relation> res(q.create().execute(connection_));
 
-  auto r1 = matador::make_unique<relation>(1UL, 1UL);
+  auto r1 = std::make_unique<relation>(1UL, 1UL);
   res = q.insert(*r1).execute(connection_);
-  r1 = matador::make_unique<relation>(1UL, 1UL);
+  r1 = std::make_unique<relation>(1UL, 1UL);
   res = q.insert(*r1).execute(connection_);
-  r1 = matador::make_unique<relation>(1UL, 2UL);
+  r1 = std::make_unique<relation>(1UL, 2UL);
   res = q.insert(*r1).execute(connection_);
-  r1 = matador::make_unique<relation>(1UL, 3UL);
+  r1 = std::make_unique<relation>(1UL, 3UL);
   res = q.insert(*r1).execute(connection_);
 
   res = q.select().limit(1).execute(connection_);
@@ -1321,13 +1321,13 @@ void QueryTestUnit::test_update_limit()
   // create item table and insert item
   result<relation> res(q.create().execute(connection_));
 
-  auto r1 = matador::make_unique<relation>(1UL, 1UL);
+  auto r1 = std::make_unique<relation>(1UL, 1UL);
   res = q.insert(*r1).execute(connection_);
-  r1 = matador::make_unique<relation>(1UL, 1UL);
+  r1 = std::make_unique<relation>(1UL, 1UL);
   res = q.insert(*r1).execute(connection_);
-  r1 = matador::make_unique<relation>(1UL, 2UL);
+  r1 = std::make_unique<relation>(1UL, 2UL);
   res = q.insert(*r1).execute(connection_);
-  r1 = matador::make_unique<relation>(1UL, 3UL);
+  r1 = std::make_unique<relation>(1UL, 3UL);
   res = q.insert(*r1).execute(connection_);
 
   matador::column owner("owner_id");

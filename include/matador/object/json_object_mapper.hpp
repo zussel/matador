@@ -60,6 +60,11 @@ public:
   template < class T >
   std::vector<object_ptr<T>> to_objects(const json &js);
 
+  template<class T>
+  std::unique_ptr<T> to_ptr(const std::string &str);
+  template<class T>
+  std::unique_ptr<T> to_ptr(const char *str);
+
   template < class T >
   object_ptr<T> to_object(const std::string &str);
   template < class T >
@@ -114,6 +119,19 @@ template<class T>
 std::vector<object_ptr<T>> json_object_mapper::to_objects(const json &js)
 {
   return to_objects<T>(js.str());
+}
+
+template<class T>
+std::unique_ptr<T> json_object_mapper::to_ptr(const std::string &str)
+{
+  return to_ptr<T>(str.c_str());
+}
+
+template<class T>
+std::unique_ptr<T> json_object_mapper::to_ptr(const char *str)
+{
+  basic_json_mapper<object_ptr<T>, detail::json_object_mapper_serializer> mapper;
+  return std::unique_ptr<T>(mapper.object_from_string(str).get());
 }
 
 template<class T>

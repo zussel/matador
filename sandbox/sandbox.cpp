@@ -241,7 +241,7 @@ int main(int /*argc*/, char* /*argv*/[])
   net::init();
 
   // create server and add routing
-  http::server server(8000);
+  http::server server(8700);
   server.add_routing_middleware();
 
   // return all persons
@@ -254,11 +254,63 @@ int main(int /*argc*/, char* /*argv*/[])
     return http::response::ok(body, http::mime_types::TYPE_APPLICATION_JSON);
   });
 
+  // return one person
+  server.on_get("/person/{id: \\d+}", [&s](const http::request &req) {
+    auto id = std::stoul(req.path_params().at("id"));
+    auto result = s.get<person>(id);
+
+    if (result.empty()) {
+      return http::response::not_found();
+    }
+
+    json_object_mapper mapper;
+
+    std::string body = mapper.to_string(result, json_format::pretty);
+
+    return http::response::ok(body, http::mime_types::TYPE_APPLICATION_JSON);
+  });
+
   // insert person
   server.on_post("/person", [&s](const http::request &req) {
     json_object_mapper mapper;
 
+    auto p = mapper.to_ptr<person>(req.body());
+
+    auto optr = s.insert(p.release());
+
+    std::string body = mapper.to_string(optr, json_format::pretty);
+
+    return http::response::ok(body, http::mime_types::TYPE_APPLICATION_JSON);
+  });
+
+  // update person
+  server.on_put("/person/{id: \\d+}", [&s](const http::request &req) {
+    auto id = std::stoul(req.path_params().at("id"));
+    auto result = s.get<person>(id);
+
+    if (result.empty()) {
+      return http::response::not_found();
+    }
+
+    json_object_mapper mapper;
     auto p = mapper.to_object<person>(req.body());
+
+    // update entity
+    // ...
+
+    return http::response::no_content();
+  });
+
+  // delete person
+  server.on_remove("/person/{id: \\d+}", [&s](const http::request &req) {
+    auto id = std::stoul(req.path_params().at("id"));
+    auto result = s.get<person>(id);
+
+    if (result.empty()) {
+      return http::response::not_found();
+    }
+
+    s.remove(result);
 
     return http::response::no_content();
   });

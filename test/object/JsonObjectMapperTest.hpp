@@ -16,6 +16,7 @@ public:
   void test_array();
   void test_to_json();
   void test_to_string();
+  void test_to_ptr();
 };
 
 
