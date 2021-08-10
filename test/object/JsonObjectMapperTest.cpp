@@ -78,12 +78,12 @@ void JsonObjectMapperTest::test_has_many_builtin()
 "id":  5,
 "elements": [1, 2, 3]
 } )");
-//
-//  UNIT_EXPECT_EQUAL(5UL, p->id);
-//  UNIT_ASSERT_EQUAL(3UL, p->elements.size());
-//
-//  const auto &i = p->elements.front();
-//  UNIT_ASSERT_EQUAL(1, i);
+
+  UNIT_EXPECT_EQUAL(5UL, p->id);
+  UNIT_ASSERT_EQUAL(3UL, p->elements.size());
+
+  const auto &i = p->elements.front();
+  UNIT_ASSERT_EQUAL(1, i);
 }
 
 void JsonObjectMapperTest::test_array()

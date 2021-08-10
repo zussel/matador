@@ -17,6 +17,7 @@
 
 #include "matador/utils/basic_json_mapper.hpp"
 #include "matador/utils/json.hpp"
+#include "matador/utils/json_mapper_serializer.hpp"
 #include "matador/utils/json_parser.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/memory.hpp"
@@ -186,17 +187,17 @@ template<class Value, template <class ...> class Container>
 void json_object_mapper_serializer::serialize(const char *id, basic_has_many<Value, Container> &x, const char *,
                                               const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type*)
 {
-  if (runtime_data_.object_key != id) {
+  if (runtime_data_.key != id) {
     return;
   }
 
-//  basic_json_mapper<typename has_many_item_holder<Value>::object_type, json_object_mapper_serializer> mapper;
-//  auto elements = mapper.array_from_string(runtime_data_.json_array_cursor, false);
-//  for (auto &&item : elements) {
-//    typename has_many_item_holder<Value>::value_type val(item);
-//    x.append(has_many_item_holder<Value>(val, nullptr));
-//  }
-//  runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
+  for (auto &val : runtime_data_.value) {
+    if (!val.template fits_to_type<Value>()) {
+      continue;
+    }
+    typename has_many_item_holder<Value>::value_type v(val.template as<Value>());
+    x.append(has_many_item_holder<Value>(v, nullptr));
+  }
 }
 /// @endcond
 
