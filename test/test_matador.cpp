@@ -62,6 +62,7 @@
 #include "orm/BlogUnitTest.hpp"
 #include "orm/PrimaryKeyTestUnit.hpp"
 #include "orm/OrmTestUnit.hpp"
+#include "orm/JsonOrmTest.hpp"
 #include "orm/OrmReloadTestUnit.hpp"
 #include "orm/OrmRelationTestUnit.hpp"
 #include "orm/TransactionTestUnit.hpp"
@@ -190,6 +191,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new QueryTestUnit("mysql", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
   suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
   suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
+  suite.register_unit(new JsonOrmTest("mysql", ::connection::mysql));
   suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
   suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
 #endif
@@ -200,6 +202,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new QueryTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new BlogUnitTest("mssql", ::connection::mssql));
   suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new JsonOrmTest("mssql", ::connection::mssql));
   suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new OrmRelationTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new MSSQLDialectTestUnit());
@@ -212,6 +215,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
   suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new JsonOrmTest("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new SQLiteDialectTestUnit());
@@ -222,6 +226,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new QueryTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new JsonOrmTest("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new PostgreSQLDialectTestUnit());

@@ -1,7 +1,3 @@
-//
-// Created by sascha on 20.03.16.
-//
-
 #ifndef OOS_ORMTESTUNIT_HPP
 #define OOS_ORMTESTUNIT_HPP
 

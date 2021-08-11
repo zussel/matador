@@ -162,7 +162,7 @@ SET (TEST_ORM_SOURCES
   orm/BlogUnitTest.hpp
   orm/PrimaryKeyTestUnit.cpp
   orm/PrimaryKeyTestUnit.hpp
-)
+  orm/JsonOrmTest.cpp orm/JsonOrmTest.hpp)
 
 SET (TEST_SOURCES test_matador.cpp dto.hpp)
 
