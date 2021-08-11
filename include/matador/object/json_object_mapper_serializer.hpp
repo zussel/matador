@@ -41,6 +41,9 @@ public:
 
   template < class V >
   void serialize(V &obj);
+  template < class V >
+  void serialize(std::unique_ptr<V> &obj);
+
   template < class V, object_holder_type OPT >
   void serialize(object_pointer<V, OPT> &obj);
   template < class V >
@@ -70,17 +73,42 @@ private:
   details::mapper_runtime &runtime_data_;
 };
 
+template < class T >
+T create_object(T&)
+{
+  return T();
+}
+
+template < class T >
+std::unique_ptr<T> create_object(std::unique_ptr<T>&)
+{
+  return std::unique_ptr<T>(new T);
+}
+
+template < class T, object_holder_type OPT >
+object_pointer<T, OPT> create_object(object_pointer<T, OPT>&)
+{
+  auto *val = new typename object_pointer<T, OPT>::object_type;
+  return object_pointer<T, OPT>(val);
+}
+
 template< typename T >
 T json_object_mapper_serializer::create()
 {
-  auto *val = new typename T::object_type;
-  return T(val);
+  T t;
+  return create_object(t);
 }
 
 template<class V>
 void json_object_mapper_serializer::serialize(V &obj)
 {
   access::serialize(*this, obj);
+}
+
+template<class V>
+void json_object_mapper_serializer::serialize(std::unique_ptr<V> &obj)
+{
+  access::serialize(*this, *obj);
 }
 
 template<class V, object_holder_type OPT>

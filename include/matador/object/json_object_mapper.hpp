@@ -130,8 +130,8 @@ std::unique_ptr<T> json_object_mapper::to_ptr(const std::string &str)
 template<class T>
 std::unique_ptr<T> json_object_mapper::to_ptr(const char *str)
 {
-  basic_json_mapper<object_ptr<T>, detail::json_object_mapper_serializer> mapper;
-  return std::unique_ptr<T>(mapper.object_from_string(str).get());
+  basic_json_mapper<std::unique_ptr<T>, detail::json_object_mapper_serializer> mapper;
+  return mapper.object_from_string(str);
 }
 
 template<class T>

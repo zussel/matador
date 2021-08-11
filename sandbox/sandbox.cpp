@@ -276,10 +276,15 @@ int main(int /*argc*/, char* /*argv*/[])
 
     auto p = mapper.to_ptr<person>(req.body());
 
-    auto optr = s.insert(p.release());
-
-    std::string body = mapper.to_string(optr, json_format::pretty);
-
+    std::string body;
+    auto tr = s.begin();
+    try {
+      auto optr = s.insert(p.release());
+      tr.commit();
+      body = mapper.to_string(optr, json_format::pretty);
+    } catch (std::exception &ex) {
+      tr.rollback();
+    }
     return http::response::ok(body, http::mime_types::TYPE_APPLICATION_JSON);
   });
 

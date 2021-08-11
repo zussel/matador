@@ -8,7 +8,7 @@
 using namespace matador;
 
 JsonObjectMapperTest::JsonObjectMapperTest()
-  : unit_test("json_object", "Json Object Mapper Test")
+  : unit_test("json_object_mapper", "Json Object Mapper Test")
 {
   add_test("simple", [this] { test_simple(); }, "test simple json object mapper");
   add_test("derived", [this] { test_derived(); }, "test derived json object mapper");
@@ -211,5 +211,16 @@ void JsonObjectMapperTest::test_to_string()
 
 void JsonObjectMapperTest::test_to_ptr()
 {
+  json_object_mapper mapper;
 
+  auto p = mapper.to_ptr<many_ints>(R"(  {
+"id":  5,
+"elements": [1, 2, 3]
+  } )");
+
+  UNIT_EXPECT_EQUAL(5UL, p->id);
+  UNIT_ASSERT_EQUAL(3UL, p->elements.size());
+
+  const auto &i = p->elements.front();
+  UNIT_ASSERT_EQUAL(1, i);
 }
