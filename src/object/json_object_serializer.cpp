@@ -40,7 +40,7 @@ void json_object_serializer::serialize(const char *id, std::string &val, size_t)
   newline();
 }
 
-void json_object_serializer::serialize(const char *id, const char *val, size_t len)
+void json_object_serializer::serialize(const char *id, const char *val, size_t)
 {
   if (val == nullptr) {
     return;

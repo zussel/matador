@@ -194,6 +194,19 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, cascade_t
   if (i != node->endpoint_end()) {
     x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);
   }
+
+  auto first = x.begin();
+  auto last = x.end();
+
+  while (first != last) {
+    auto j = first++;
+
+    if (!j.holder_item().is_inserted()) {
+      x.relation_info_->insert_holder(ostore_, j.holder_item(), proxy);
+      j.holder_item().is_inserted_ = true;
+    }
+  }
+
 }
 
 }

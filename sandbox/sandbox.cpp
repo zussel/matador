@@ -44,7 +44,7 @@ struct user
 };
 
 struct person
-  {
+{
   identifier<long> id;   // primary key
   std::string name;
   date birthday;

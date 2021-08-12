@@ -11,7 +11,7 @@ class ObjectStoreTestUnit : public matador::unit_test
 public:
   ObjectStoreTestUnit();
 
-  virtual void finalize();
+  void finalize() override;
   
   void test_version();
   void test_optr();

@@ -1,7 +1,3 @@
-//
-// Created by sascha on 20.03.16.
-//
-
 #include "OrmTestUnit.hpp"
 
 #include "../person.hpp"
@@ -34,7 +30,7 @@ namespace demo {
 // a simple person class
 struct person
 {
-  identifier<long> id;   // primary key
+  identifier<unsigned long> id;   // primary key
   std::string name;
   std::string ip;
   unsigned int age = 0;
