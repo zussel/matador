@@ -59,7 +59,7 @@ public:
     json_.append("[");
     if (objects.size() < 2) {
       for (const auto &i : objects) {
-        append(*i);
+        append(i);
       }
     } else {
       auto it = objects.begin();

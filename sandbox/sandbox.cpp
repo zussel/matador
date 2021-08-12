@@ -45,7 +45,7 @@ struct user
 
 struct person
 {
-  identifier<long> id;   // primary key
+  identifier<unsigned long> id;   // primary key
   std::string name;
   date birthday;
   has_many<std::string> colors {};
@@ -298,10 +298,16 @@ int main(int /*argc*/, char* /*argv*/[])
     }
 
     json_object_mapper mapper;
-    auto p = mapper.to_object<person>(req.body());
+    auto p = mapper.to_ptr<person>(req.body());
 
     // update entity
-    // ...
+    result.modify()->name = p->name;
+    result.modify()->birthday = p->birthday;
+    result.modify()->colors.clear();
+    for (const auto &color : p->colors) {
+      result.modify()->colors.push_back(color);
+    }
+    s.flush();
 
     return http::response::no_content();
   });
