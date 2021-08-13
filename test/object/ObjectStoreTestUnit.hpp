@@ -21,6 +21,8 @@ public:
   void test_serializer();
   void test_identifier_serializer();
   void test_reference_counter();
+  void test_reference_counter_builtin();
+  void test_reference_counter_has_many();
   void test_simple_object();
   void test_object_with_sub_object();
   void test_multiple_simple_objects();

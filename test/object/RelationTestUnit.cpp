@@ -13,28 +13,28 @@
 RelationTestUnit::RelationTestUnit()
   : unit_test("relation", "Relation Test Unit")
 {
-  add_test("has_one", std::bind(&RelationTestUnit::test_has_one, this), "test has one relation");
+  add_test("has_one", [this] { test_has_one(); }, "test has one relation");
 
-  add_test("insert_belongs_to_one", std::bind(&RelationTestUnit::test_insert_belongs_to_one, this), "test belongs to one relation");
-  add_test("belongs_to_one", std::bind(&RelationTestUnit::test_belongs_to_one, this), "test belongs to one relation");
-  add_test("remove_belongs_to_one", std::bind(&RelationTestUnit::test_remove_belongs_to_one, this), "test remove belongs to one relation");
+  add_test("insert_belongs_to_one", [this] { test_insert_belongs_to_one(); }, "test belongs to one relation");
+  add_test("belongs_to_one", [this] { test_belongs_to_one(); }, "test belongs to one relation");
+  add_test("remove_belongs_to_one", [this] { test_remove_belongs_to_one(); }, "test remove belongs to one relation");
 
-  add_test("insert_belongs_to_many", std::bind(&RelationTestUnit::test_insert_belongs_to_many, this), "test insert belongs to many relation");
-  add_test("belongs_to_many", std::bind(&RelationTestUnit::test_belongs_to_many, this), "test belongs to many relation");
-  add_test("remove_belongs_to_many", std::bind(&RelationTestUnit::test_remove_belongs_to_many, this), "test remove belongs to many relation");
-  add_test("belongs_to_many_first_belongs_to", std::bind(&RelationTestUnit::test_belongs_to_many_first_belongs_to, this), "test belongs to many relation where belongs to is registered first");
+  add_test("insert_belongs_to_many", [this] { test_insert_belongs_to_many(); }, "test insert belongs to many relation");
+  add_test("belongs_to_many", [this] { test_belongs_to_many(); }, "test belongs to many relation");
+  add_test("remove_belongs_to_many", [this] { test_remove_belongs_to_many(); }, "test remove belongs to many relation");
+  add_test("belongs_to_many_first_belongs_to", [this] { test_belongs_to_many_first_belongs_to(); }, "test belongs to many relation where belongs to is registered first");
 
-  add_test("insert_has_many_vector", std::bind(&RelationTestUnit::test_insert_has_many_vector, this), "test insert has many vector relation");
-  add_test("has_many_vector", std::bind(&RelationTestUnit::test_has_many_vector, this), "test has many vector relation");
+  add_test("insert_has_many_vector", [this] { test_insert_has_many_vector(); }, "test insert has many vector relation");
+  add_test("has_many_vector", [this] { test_has_many_vector(); }, "test has many vector relation");
 
-  add_test("has_many_list", std::bind(&RelationTestUnit::test_has_many_list, this), "test has many list relation");
-  add_test("has_many_builtin", std::bind(&RelationTestUnit::test_has_many_builtin, this), "test has many relation with builtin");
+  add_test("has_many_list", [this] { test_has_many_list(); }, "test has many list relation");
+  add_test("has_many_builtin", [this] { test_has_many_builtin(); }, "test has many relation with builtin");
 
-  add_test("has_many_to_many", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to many relation");
-  add_test("remove_has_many_to_many", std::bind(&RelationTestUnit::test_remove_has_many_to_many, this), "test remove has many to many relation");
+  add_test("has_many_to_many", [this] { test_has_many_to_many(); }, "test has many to many relation");
+  add_test("remove_has_many_to_many", [this] { test_remove_has_many_to_many(); }, "test remove has many to many relation");
 
-  add_test("blog_single", std::bind(&RelationTestUnit::test_blog_single_post, this), "test blog single post relations");
-  add_test("blog_multi", std::bind(&RelationTestUnit::test_blog_multi_posts, this), "test blog multiple posts relations");
+  add_test("blog_single", [this] { test_blog_single_post(); }, "test blog single post relations");
+  add_test("blog_multi", [this] { test_blog_multi_posts(); }, "test blog multiple posts relations");
 }
 
 void RelationTestUnit::test_has_one()

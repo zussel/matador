@@ -79,6 +79,7 @@ void JsonOrmTest::test_insert_from_json()
 
   auto optr = s.insert(ptr.release());
   s.flush();
+
   auto body = mapper.to_string(optr, json_format::pretty);
 
   UNIT_ASSERT_EQUAL(expected_result, body);

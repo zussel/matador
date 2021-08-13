@@ -25,6 +25,8 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("serializer", [this] { test_serializer(); }, "serializer test");
   add_test("identifier_serializer", [this] { test_identifier_serializer(); }, "identifier serializer test");
   add_test("reference_counter", [this] { test_reference_counter(); }, "reference counter test");
+  add_test("reference_counter_builtins", [this] { test_reference_counter_builtin(); }, "reference counter with builtins test");
+  add_test("reference_counter_hasmany", [this] { test_reference_counter_has_many(); }, "reference counter with hasmany test");
   add_test("simple", [this] { test_simple_object(); }, "create and delete one object");
   add_test("with_sub", [this] { test_object_with_sub_object(); }, "create and delete object with sub object");
   add_test("multiple_simple", [this] { test_multiple_simple_objects(); }, "create and delete multiple objects");
@@ -312,7 +314,7 @@ void ObjectStoreTestUnit::test_reference_counter()
   ostore_.attach<datatypes>("item");
   ostore_.attach<ObjectItem<datatypes> >("object_item");
 
-  datatypes *i = new datatypes("datatypes", 7);
+  auto *i = new datatypes("datatypes", 7);
   
   typedef object_ptr<datatypes> item_ptr;
   typedef object_ptr<ObjectItem<datatypes> > object_item_ptr;
@@ -341,6 +343,48 @@ void ObjectStoreTestUnit::test_reference_counter()
   UNIT_ASSERT_EQUAL(a2.reference_count(), 2UL);
 }
 
+void ObjectStoreTestUnit::test_reference_counter_builtin()
+{
+  ostore_.attach<many_ints>("ints");
+
+  auto mptr = ostore_.insert(new many_ints);
+
+  UNIT_ASSERT_EQUAL(0UL, mptr.reference_count());
+
+  mptr.modify()->elements.push_back(1);
+
+  UNIT_ASSERT_EQUAL(1UL, mptr.reference_count());
+
+  ostore_.remove(mptr);
+
+  auto view = object_view<many_ints>(ostore_);
+
+  UNIT_ASSERT_TRUE(view.empty());
+}
+
+void ObjectStoreTestUnit::test_reference_counter_has_many()
+{
+  object_store ostore;
+  ostore.attach<child>("child");
+  ostore.attach<children_vector>("children_vector");
+
+  using childrens_ptr = object_ptr<children_vector>;
+
+  childrens_ptr childrens = ostore.insert(new children_vector("ch1"));
+
+  UNIT_ASSERT_GREATER(childrens.id(), 0UL);
+  UNIT_ASSERT_EQUAL(0UL, childrens.reference_count());
+
+  childrens.modify()->children.push_back(new child("heinz"));
+
+  UNIT_ASSERT_EQUAL(1UL, childrens.reference_count());
+
+  object_ptr<child> c1 = childrens->children.front();
+
+  UNIT_ASSERT_GREATER(c1.id(), 0UL);
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL);
+
+}
 
 void ObjectStoreTestUnit::test_set()
 {
@@ -1021,6 +1065,7 @@ void ObjectStoreTestUnit::test_structure_container()
 
   object_ptr<child> c1 = childrens->children.front();
 
+  UNIT_ASSERT_EQUAL(1UL, childrens.reference_count());
   UNIT_ASSERT_GREATER(c1.id(), 0UL);
   UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL);
 }
