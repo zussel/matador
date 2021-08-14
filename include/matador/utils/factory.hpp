@@ -36,7 +36,7 @@ namespace matador {
  * Once create is called a new serializable of value
  * type V is created and returned.
  * The class uses a producer interface of type
- * producer_base and a defualt producer class
+ * producer_base and a default producer class
  * default_producer is provided.
  */
 template < class K, class V >
@@ -64,7 +64,7 @@ public:
   class producer_base
   {
   public:
-    virtual ~producer_base() {}
+    virtual ~producer_base() = default;
     /**
      * Creates a new serializable of value_type
      *
@@ -86,7 +86,7 @@ public:
   template < class T >
   class default_producer : public producer_base
   {
-    virtual ~default_producer() {}
+    virtual ~default_producer() = default;
     /**
      * Returns a new serializable of value_type
      * by calling new T.
@@ -103,8 +103,8 @@ public:
   /**
    * Creates an empty factory.
    */
-  factory() {}
-  ~factory() {}
+  factory() = default;
+  ~factory() = default;
   
   /**
    * Inserts a new producer for a type
@@ -138,7 +138,7 @@ public:
   
   /**
    * Creates a new value for the given
-   * key. If the key is valid the underlaying
+   * key. If the key is valid the underlying
    * producer calls create and returns a new
    * serializable. If the key is invalid null is returned.
    *
@@ -149,7 +149,7 @@ public:
   {
     const_iterator i = container_.find(key);
     if (i == end()) {
-      return 0;
+      return nullptr;
     }
     return i->second->create();
   }

@@ -1,7 +1,3 @@
-//
-// Created by sascha on 21.03.16.
-//
-
 #include "matador/orm/session.hpp"
 
 namespace matador {

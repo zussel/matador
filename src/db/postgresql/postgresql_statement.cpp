@@ -22,7 +22,7 @@ postgresql_statement::postgresql_statement(postgresql_connection &db, const mata
   : statement_impl(db.dialect(), stmt)
   , db_(db)
 {
-  binder_ = matador::make_unique<postgresql_parameter_binder>(bind_vars().size());
+  binder_ = std::make_unique<postgresql_parameter_binder>(bind_vars().size());
   // parse sql to create result and host arrays
   name_ = generate_statement_name(stmt);
 

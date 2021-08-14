@@ -32,6 +32,8 @@ public:
 
   bool timeout_called() const;
 
+  std::string name() const override;
+
 private:
   bool on_timeout_called_ = false;
   matador::tcp::socket stream_;

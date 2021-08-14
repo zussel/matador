@@ -21,7 +21,7 @@
 #include <string>
 
 #ifdef _MSC_VER
-#include <windows.h>
+#include <winsock2.h>
 #endif
 
 namespace matador {
@@ -33,6 +33,14 @@ namespace matador {
  * @param out converted value
  */
 OOS_UTILS_API void localtime(const time_t &in, struct tm &out);
+
+/**
+ * Multi platform version of gmtime
+ *
+ * @param in time_t value to be converted
+ * @param out converted value
+ */
+OOS_UTILS_API void gmtime(const time_t &in, struct tm &out);
 
 /**
  * Formats a given timeval struct as a string
@@ -470,7 +478,8 @@ private:
 private:
   struct timeval time_ = {0,0 };
 //  struct tm tm_ = {0,0,0,0,0,0,0,0,0,0,nullptr};
-  struct tm tm_ = {};
+
+  std::tm tm_ = {};
 };
 
 }

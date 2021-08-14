@@ -24,9 +24,7 @@
 #include <stdexcept>
 
 #ifdef _WIN32
-#include <winsock2.h>
-#include <ws2ipdef.h>
-#include <WS2tcpip.h>
+#include <ws2tcpip.h>
 #else
 #include <netinet/in.h>
 #include <sys/types.h>
@@ -58,7 +56,7 @@ class OOS_NET_API address
 {
 public:
   /**
-   * Default consstructor
+   * Default constructor
    */
   address() = default;
 

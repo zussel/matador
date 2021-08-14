@@ -24,7 +24,23 @@ SET (TEST_TOOLS_SOURCES
   utils/TreeTest.cpp
   utils/TreeTest.hpp
   utils/StreamsTest.cpp
-  utils/StreamsTest.hpp utils/OptionalTest.cpp utils/OptionalTest.hpp)
+  utils/StreamsTest.hpp
+  utils/OptionalTest.cpp
+  utils/OptionalTest.hpp
+  utils/ThreadPoolTest.cpp
+  utils/ThreadPoolTest.hpp
+  utils/JsonSerializerTest.cpp
+  utils/JsonSerializerTest.hpp
+  utils/Base64Test.cpp
+  utils/Base64Test.hpp
+  utils/BufferViewTest.cpp
+  utils/BufferViewTest.hpp
+  utils/EncryptionTest.cpp
+  utils/EncryptionTest.hpp
+  utils/UrlTest.cpp
+  utils/UrlTest.hpp
+  utils/HtmlTest.cpp
+  utils/HtmlTest.hpp)
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
@@ -56,6 +72,26 @@ SET (TEST_NET_SOURCES
   net/IOEchoServer.cpp
   net/IOEchoServer.hpp
   net/NetUtils.hpp)
+
+SET (TEST_HTTP_SOURCES
+  http/RequestParserTest.cpp
+  http/RequestParserTest.hpp
+  http/RequestData.hpp
+  http/RouteEngineTest.cpp
+  http/RouteEngineTest.hpp
+  http/RouteEndpointTest.cpp
+  http/RouteEndpointTest.hpp
+  http/HttpServerTest.cpp
+  http/HttpServerTest.hpp
+  http/ResponseParserTest.cpp
+  http/ResponseParserTest.hpp
+  http/ResponseData.hpp
+  http/TemplateEngineTest.cpp
+  http/TemplateEngineTest.hpp
+  http/JwtTest.cpp
+  http/JwtTest.hpp
+  http/MiddlewareTest.cpp
+  http/MiddlewareTest.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp
@@ -126,9 +162,10 @@ SET (TEST_ORM_SOURCES
   orm/BlogUnitTest.hpp
   orm/PrimaryKeyTestUnit.cpp
   orm/PrimaryKeyTestUnit.hpp
-)
+  orm/JsonOrmTest.cpp
+  orm/JsonOrmTest.hpp)
 
-SET (TEST_SOURCES test_matador.cpp)
+SET (TEST_SOURCES test_matador.cpp dto.hpp)
 
 ADD_EXECUTABLE(test_matador
   ${TEST_SOURCES}
@@ -138,11 +175,12 @@ ADD_EXECUTABLE(test_matador
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
   ${TEST_LOGGER_SOURCES}
+  ${TEST_HTTP_SOURCES}
   ${TEST_NET_SOURCES}
   ${TEST_SQL_SOURCES}
 )
 
-SET(MYSQL_CONNECTION_STRING "mysql://sascha:sascha@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
+SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
 IF (WIN32)
   SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\\\SQLEXPRESS/test_oos (SQL Server)" CACHE STRING "mssql connection string")
 ELSE()
@@ -163,22 +201,22 @@ CONFIGURE_FILE(connections.hpp.in ${PROJECT_BINARY_DIR}/connections.hpp @ONLY IM
 SET(DB_LIBRARIES)
 
 IF(ODBC_FOUND)
-  MESSAGE(STATUS "Appendig ODBC libs: ${ODBC_LIBRARY}")
+  MESSAGE(STATUS "Appending ODBC libs: ${ODBC_LIBRARY}")
   LIST(APPEND DB_LIBRARIES ${ODBC_LIBRARY})
 ENDIF()
 
 IF(MYSQL_FOUND)
-  MESSAGE(STATUS "Appendig MySQL libs: ${MYSQL_LIBRARY}")
+  MESSAGE(STATUS "Appending MySQL libs: ${MYSQL_LIBRARY}")
   LIST(APPEND DB_LIBRARIES ${MYSQL_LIBRARY})
 ENDIF()
 
 IF(SQLITE3_FOUND)
-  MESSAGE(STATUS "Appendig SQLite3 libs: ${SQLITE3_LIBRARY}")
+  MESSAGE(STATUS "Appending SQLite3 libs: ${SQLITE3_LIBRARY}")
   LIST(APPEND DB_LIBRARIES ${SQLITE3_LIBRARY})
 ENDIF()
 
 IF(POSTGRESQL_FOUND)
-  MESSAGE(STATUS "Appendig PostgreSQL libs: ${POSTGRESQL_LIBRARIES}")
+  MESSAGE(STATUS "Appending PostgreSQL libs: ${POSTGRESQL_LIBRARIES}")
   LIST(APPEND DB_LIBRARIES ${POSTGRESQL_LIBRARIES})
 ENDIF()
 
@@ -189,6 +227,7 @@ TARGET_LINK_LIBRARIES(test_matador
   matador-utils
   matador-logger
   matador-net
+  matador-http
   matador-object
   matador-sql
   matador-orm
@@ -205,6 +244,7 @@ endif()
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("logger" FILES ${TEST_LOGGER_SOURCES})
 SOURCE_GROUP("net" FILES ${TEST_NET_SOURCES})
+SOURCE_GROUP("http" FILES ${TEST_HTTP_SOURCES})
 SOURCE_GROUP("utils" FILES ${TEST_TOOLS_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})
@@ -213,4 +253,4 @@ SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
-ADD_TEST(test_matador_all ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_matador exec all)
+ADD_TEST(NAME test_matador_all COMMAND test_matador exec all WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

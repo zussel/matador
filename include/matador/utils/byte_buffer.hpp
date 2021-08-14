@@ -67,7 +67,7 @@ public:
    * also created.
    */
   byte_buffer();
-  ~byte_buffer();
+  ~byte_buffer() = default;
 
   /**
    * @brief Append an amount of bytes.

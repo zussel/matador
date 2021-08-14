@@ -36,7 +36,11 @@ int socket_base<P>::open(const protocol_type &protocol)
 template < class P >
 void socket_base<P>::close()
 {
-  os::shutdown(sock_, os::shutdown_type::READ_WRITE);
+  if (sock_ <= 0) {
+    return;
+  }
+  //os::shutdown(sock_, os::shutdown_type::READ_WRITE);
+  os::close(sock_);
   sock_ = 0;
 }
 
@@ -213,7 +217,7 @@ int connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
       stream.assign(connfd);
       break;
 //      } else {
-//        throw_logic_error("couldn't connect: " << strerror(errno));
+//        throw_logic_error("couldn't execute: " << strerror(errno));
     }
 
     // bind error, close and try next one
@@ -221,7 +225,7 @@ int connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
   } while ( (res = res->ai_next) != nullptr);
 
   if (res == nullptr) {
-    throw_logic_error("couldn't connect to " << hostname << ":" << port);
+    throw_logic_error("couldn't execute to " << hostname << ":" << port);
   }
 
   freeaddrinfo(head);

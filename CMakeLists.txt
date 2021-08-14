@@ -7,7 +7,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
 STRING(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 
 SET(APP_MAJOR_VERSION 0)
-SET(APP_MINOR_VERSION 7)
+SET(APP_MINOR_VERSION 8)
 SET(APP_PATCH_LEVEL 0)
 SET(APP_VERSION "${APP_MAJOR_VERSION}.${APP_MINOR_VERSION}.${APP_PATCH_LEVEL}")
 
@@ -16,7 +16,7 @@ MESSAGE(STATUS "${PROJECT_NAME_UPPER} ${APP_VERSION}")
 # Common compiler flags
 # These are defined for clang/gcc compatibility.
 # When non-compatible flags are implemented then we must specify them separately.
-SET(GCC_CLANG_COMMON_FLAGS "-std=c++14 -Wall -Wextra -pedantic")
+SET(GCC_CLANG_COMMON_FLAGS "-std=c++14 -Wall -Wextra -pedantic -ftemplate-backtrace-limit=0")
 SET(GCC_CLANG_COMMON_FLAGS_DEBUG "-O0 -g -DDEBUG")
 SET(GCC_CLANG_COMMON_FLAGS_RELEASE "-O1 -DNDEBUG")
 SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -66,6 +66,7 @@ IF (NOT COVERAGE_TESTS)
 ENDIF()
 
 OPTION(ARCH "Compiler architecture for Clang/GCC" "")
+OPTION(EXAMPLES "Build examples" false)
 
 FIND_PACKAGE( Threads REQUIRED )
 
@@ -77,14 +78,14 @@ if (NOT MSVC AND (COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_
 
   MESSAGE(STATUS "gcov binary: ${GCOV_BINARY}")
 
-  INCLUDE(CodeCoverage)
+#  INCLUDE(CodeCoverage)
   MESSAGE(STATUS "will generate coverage data")
   SET(GCOV_ADDITIONAL_FLAGS "-fprofile-arcs -ftest-coverage")
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCOV_ADDITIONAL_FLAGS}")
   SET(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} ${GCOV_ADDITIONAL_FLAGS}")
   SET(CMAKE_EXE_LINKER_FLAGS "${GCOV_ADDITIONAL_FLAGS} ")
 
-  SETUP_TARGET_FOR_COVERAGE(coverage test_matador src coverage "exec;${COVERAGE_TESTS}")
+#  SETUP_TARGET_FOR_COVERAGE(coverage test_matador src coverage "exec;${COVERAGE_TESTS}")
 else()
   MESSAGE(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
 endif()
@@ -174,8 +175,10 @@ ENABLE_TESTING()
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(test)
-ADD_SUBDIRECTORY(examples)
-ADD_SUBDIRECTORY(sandbox)
+if (EXAMPLES)
+  ADD_SUBDIRECTORY(examples)
+  ADD_SUBDIRECTORY(sandbox)
+ENDIF()
 
 INSTALL(
   DIRECTORY ${PROJECT_BINARY_DIR}/doc/web/

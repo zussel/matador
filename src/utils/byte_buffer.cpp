@@ -17,15 +17,14 @@
 
 #include "matador/utils/byte_buffer.hpp"
 
+#include <cstring>
+
 namespace matador {
 
 byte_buffer::byte_buffer()
 {
   chunk_list_.push_back(buffer_chunk());
 }
-
-byte_buffer::~byte_buffer()
-{}
 
 void byte_buffer::append(const void *bytes, byte_buffer::size_type size)
 {
@@ -34,8 +33,14 @@ void byte_buffer::append(const void *bytes, byte_buffer::size_type size)
   while (chunk_list_.back().available() < size) {
     buffer_chunk &chunk = chunk_list_.back();
     // copy first part of bytes
-    std::copy(ptr+bytes_written, ptr+bytes_written+chunk.available(), &chunk.data[chunk.write_cursor]);
-    // adjust remaining size
+
+#ifdef _WIN32
+    memcpy_s(&chunk.data[chunk.write_cursor], chunk.available(), ptr + bytes_written, chunk.available());
+#else
+    memcpy(&chunk.data[chunk.write_cursor], ptr + bytes_written, chunk.available());
+#endif
+    //std::copy(ptr+bytes_written, ptr+bytes_written+chunk.available(), &chunk.data[chunk.write_cursor]);
+    // adjust capacity size
     size -= chunk.available();
     // adjust written bytes
     bytes_written += chunk.available();
@@ -46,8 +51,13 @@ void byte_buffer::append(const void *bytes, byte_buffer::size_type size)
   }
   if (size > 0) {
     buffer_chunk &chunk = chunk_list_.back();
-    // append remaining bytes
-    std::copy(ptr+bytes_written, ptr+bytes_written+size, &chunk.data[chunk.write_cursor]);
+    // append capacity bytes
+#ifdef _WIN32
+    memcpy_s(&chunk.data[chunk.write_cursor], chunk.available(), ptr + bytes_written, size);
+#else
+    memcpy(&chunk.data[chunk.write_cursor], ptr + bytes_written, size);
+#endif
+//    std::copy(ptr+bytes_written, ptr+bytes_written+size, &chunk.data[chunk.write_cursor]);
     chunk.write_cursor += size;
   }
 }
@@ -61,7 +71,7 @@ void byte_buffer::release(void *bytes, byte_buffer::size_type size)
     // available bytes are not enough
     // copy first part
     std::copy(chunk.data.begin()+chunk.read_cursor, chunk.data.begin()+chunk.read_cursor+chunk.used(), ptr+bytes_read);
-    // adjust remaining size
+    // adjust capacity size
     size -= chunk.used();
     // adjust bytes read
     bytes_read += chunk.used();

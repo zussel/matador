@@ -213,6 +213,16 @@ bool date::is_valid_date(int year, int month, int day)
 
 bool date::is_daylight_saving(int year, int month, int day)
 {
+#ifdef _WIN32
+  if (_daylight == 0) {
+    return false;
+  }
+#else
+  if (daylight == 0) {
+    return false;
+  }
+#endif
+
   /*
    * Calculate day of week in proleptic Gregorian calendar. Sunday == 0.
    */

@@ -2,13 +2,14 @@
 // Created by sascha on 06.09.19.
 //
 
-#include <cstring>
 #include "matador/db/mysql/mysql_parameter_binder.hpp"
 #include "matador/db/mysql/mysql_constants.hpp"
 
 #include "matador/utils/string.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
+
+#include <cstring>
 
 namespace matador {
 

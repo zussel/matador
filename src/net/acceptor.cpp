@@ -15,9 +15,9 @@ acceptor::acceptor(tcp::peer endpoint)
 , log_(matador::create_logger("Acceptor"))
 {}
 
-acceptor::acceptor(tcp::peer  endpoint, make_handler_func make_handler)
+acceptor::acceptor(tcp::peer  endpoint, t_accept_handler make_handler)
   : endpoint_(std::move(endpoint))
-  , make_handler_(std::move(make_handler))
+  , accept_handler_(std::move(make_handler))
   , log_(matador::create_logger("Acceptor"))
 {}
 
@@ -26,12 +26,12 @@ acceptor::~acceptor()
   acceptor_.close();
 }
 
-void acceptor::accecpt(acceptor::make_handler_func on_new_connection)
+void acceptor::accecpt(acceptor::t_accept_handler on_new_connection)
 {
-  make_handler_ = std::move(on_new_connection);
+  accept_handler_ = std::move(on_new_connection);
 }
 
-void acceptor::accecpt(const tcp::peer &endpoint, acceptor::make_handler_func on_new_connection)
+void acceptor::accecpt(const tcp::peer &endpoint, acceptor::t_accept_handler on_new_connection)
 {
   endpoint_ = endpoint;
   accecpt(std::move(on_new_connection));
@@ -41,7 +41,7 @@ void acceptor::open()
 {
   acceptor_.bind(endpoint_);
   acceptor_.listen(10);
-  log_.info("fd %d: accepting connections", handle());
+  log_.debug("fd %d: accepting connections", handle());
 }
 
 int acceptor::handle() const
@@ -55,20 +55,27 @@ void acceptor::on_input()
 
   tcp::peer endpoint = create_client_endpoint();
   log_.debug("fd %d: accepting connection ...", handle());
-  acceptor_.accept(sock, endpoint);
+  int ret = acceptor_.accept(sock, endpoint);
 
-  // create new client handler
-  log_.info("connection from %s", endpoint.to_string().c_str());
+  if (ret < 0) {
+    char error_buffer[1024];
+    os::strerror(errno, error_buffer, 1024);
+    log_.error("accept failed: %s", error_buffer);
+  } else {
+    // create new client handler
+    log_.debug("accepted connection from %s", endpoint.to_string().c_str());
 
-  auto h = make_handler_(sock, endpoint, this);
+    auto h = accept_handler_(sock, endpoint, this);
 
-  get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
+    get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
 
-  log_.debug("fd %d: accepted socket id %d", handle(), sock.id());
+    log_.debug("fd %d: accepted socket id %d", handle(), sock.id());
+  }
 }
 
 void acceptor::close()
 {
+  log_.debug("closing acceptor %d", acceptor_.id());
   acceptor_.close();
   // Todo: unregister from reactor (maybe observer pattern?)
   // notify()
@@ -96,6 +103,16 @@ tcp::peer acceptor::create_client_endpoint() const
   } else {
     return matador::tcp::peer(address::v6::empty());
   }
+}
+
+void acceptor::notify_close(handler *)
+{
+
+}
+
+std::string acceptor::name() const
+{
+  return "acceptor";
 }
 
 }

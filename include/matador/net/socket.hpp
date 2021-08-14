@@ -5,8 +5,6 @@
 #include <sstream>
 
 #ifdef _WIN32
-#include <winsock2.h>
-#include <Ws2tcpip.h>
 #else
 #include <sys/socket.h>
 #include <fcntl.h>
@@ -86,7 +84,7 @@ public:
    * could be established true is returned,
    * otherwise false is returned and errno is set.
    *
-   * @param p Peer to connect to
+   * @param p Peer to execute to
    * @return True on successful connection
    */
   bool connect(const typename protocol_type::peer &p);

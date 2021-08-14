@@ -31,6 +31,7 @@
 #include "matador/object/transaction.hpp"
 
 #include "matador/utils/sequencer.hpp"
+#include "matador/utils/sequence_synchronizer.hpp"
 #include "matador/utils/identifier_setter.hpp"
 
 #include <memory>
@@ -467,6 +468,20 @@ public:
   }
 
   /**
+   * @brief Get object by primary key
+   * @tparam Template type.
+   */
+  template < class T >
+  object_ptr<T> get(basic_identifier &pk)
+  {
+    auto node = find_prototype_node(typeid(T).name());
+    if (node == nullptr) {
+      return object_ptr<T>();
+    }
+    return object_ptr<T>(node->find_proxy(&pk));
+  }
+
+  /**
    * Return the first prototype node.
    *
    * @return The first prototype node iterator.
@@ -601,6 +616,8 @@ public:
       // if object has primary key of type short, int or long
       // set the id of proxy as value
       identifier_setter<unsigned long>::assign(proxy->id(), object);
+    } else if (object && proxy->has_identifier()) {
+      synchronizer_.sync(*proxy->pk());
     }
 
     node->insert(proxy);
@@ -622,7 +639,7 @@ public:
   }
 
   /**
-   * Inserts an object of a specfic type. On successfull insertion
+   * Inserts an object of a specific type. On successful insertion
    * an object_ptr element with the inserted object is returned.
    *
    * @param o Object to be inserted.
@@ -911,6 +928,7 @@ private:
   t_object_proxy_map object_map_;
 
   sequencer seq_;
+  sequence_synchronizer synchronizer_;
 
   detail::object_deleter object_deleter_;
   detail::object_inserter object_inserter_;

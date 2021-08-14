@@ -24,18 +24,44 @@
 
 namespace matador {
 
+class OOS_UTILS_API json_format
+{
+public:
+  json_format() = default;
+  explicit json_format(bool enable_line_break);
+  explicit json_format(unsigned indentation);
+  json_format(bool enable_line_break, bool skip_empty, unsigned indentation);
+
+  bool show_line_break() const;
+
+  bool skip_empty();
+
+  unsigned indentation() const;
+  char indentation_char() const;
+
+  static json_format compact;
+  static json_format pretty;
+
+private:
+  bool enable_line_break_ = true;
+  bool skip_empty_ = true;
+  unsigned indentation_ = 2;
+  char indentation_char_ = ' ';
+};
+
 /**
  * Joins a range of elements as string within a list
  * with a given delimiter and writes it to the
  * given stream
  *
  * @tparam R Type og the range (e.g. map, list, vector, etc)
- * @param range The range with the elemets to join
+ * @param range The range with the elements to join
  * @param out The stream to write on
  * @param delim The delimiter for the elements
+ * @return The ostream reference
  */
 template < class R >
-void join(R &range, std::ostream &out, const std::string &delim)
+std::ostream& join(R &range, std::ostream &out, const std::string &delim)
 {
   if (range.size() < 2) {
     for (auto &i : range) {
@@ -48,6 +74,36 @@ void join(R &range, std::ostream &out, const std::string &delim)
       out << delim << *it;
     }
   }
+  return out;
+}
+
+/**
+ * Joins a range of elements as string within a list
+ * with a given delimiter and writes it to the
+ * given stream
+ *
+ * @tparam R Type og the range (e.g. map, list, vector, etc)
+ * @param range The range with the elements to join
+ * @param out The stream to write on
+ * @param delim The delimiter for the elements
+ * @return The ostream reference
+ */
+template < class R >
+std::string join(R &range, const std::string &delim)
+{
+  std::string result {};
+  if (range.size() < 2) {
+    for (const auto &i : range) {
+      result += to_string(i);
+    }
+  } else {
+    auto it = range.begin();
+    result += to_string(*it++);
+    for (;it != range.end(); ++it) {
+      result += delim + to_string(*it);
+    }
+  }
+  return result;
 }
 
 /**
@@ -63,10 +119,10 @@ void join(R &range, std::ostream &out, const std::string &delim)
  * @param range The range with the elemets to join
  * @param out The stream to write on
  * @param delim The delimiter for the elements
+ * @return The ostream reference
  */
 template < class K, class V >
-void join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
-//void join(std::unordered_map<K, V> &range, std::ostream &out, const std::string &delim)
+std::ostream& join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
 {
   if (range.size() < 2) {
     for (auto &i : range) {
@@ -79,10 +135,47 @@ void join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
       out << delim << "\"" << it->first << "\": " << it->second;
     }
   }
+  return out;
+}
+
+/**
+ * Joins a map of key value pairs as string within
+ * a list with a given delimiter and writes it to
+ * the given stream.
+ *
+ * The key value pairs will be written in a
+ * json style: ("key": value)
+ *
+ * @tparam K Type of key
+ * @tparam V Type of value
+ * @param range The range with the elemets to join
+ * @param out The stream to write on
+ * @param delim The delimiter for the elements
+ * @return The ostream reference
+ */
+template < class K, class V >
+std::string join(std::map<K, V> &range, const std::string &delim)
+{
+  std::string result {};
+  if (range.size() < 2) {
+    for (auto &i : range) {
+      result += "\"" + i.first + "\": " + to_string(i.second);
+    }
+  } else {
+    auto it = range.begin();
+    result += "\"" + it->first + "\": " + to_string(it->second);
+    for (++it ;it != range.end(); ++it) {
+      result += delim + "\"" + it->first + "\": " + to_string(it->second);
+    }
+  }
+  return result;
 }
 
 template < class JSON_TYPE >
 class json_iterator;
+
+template < class JSON_TYPE >
+class const_json_iterator;
 
 /**
  * @brief This class represents either a json value an object or an array
@@ -100,6 +193,7 @@ class OOS_UTILS_API json
 {
 public:
   typedef json_iterator<json> iterator;             /**< Shortcut to json iterator type */
+  typedef const_json_iterator<json> const_iterator; /**< Shortcut to json const iterator type */
   typedef std::map<std::string, json> object_type;  /**< Shortcut to json object map type */
   typedef std::vector<json> array_type;             /**< Shortcut to json array vector type */
 
@@ -131,7 +225,7 @@ public:
    */
   template<class T>
   json(T val, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type * = 0)
-    : value_((long long)val), type(e_integer)
+    : value_((long long)val), type_(e_integer)
   {}
 
   /**
@@ -143,7 +237,7 @@ public:
    */
   template<class T>
   json(T val, typename std::enable_if<std::is_floating_point<T>::value>::type * = 0)
-   : value_(val), type(e_real)
+   : value_(val), type_(e_real)
   {}
 
   /**
@@ -155,7 +249,7 @@ public:
    */
   template<class T>
   json(T val, typename std::enable_if<std::is_convertible<T, std::string>::value>::type * = 0)
-   : value_(val), type(e_string)
+   : value_(val), type_(e_string)
   {}
 
   /**
@@ -257,6 +351,100 @@ public:
   json& operator=(const json &x);
 
   /**
+   * Compares equality of two json objects
+   *
+   * @param a First json object to compare
+   * @param b Second json object to compare
+   * @return True if both json objects are equal
+   */
+  friend OOS_UTILS_API bool operator==(const json &a, const json &b);
+
+  /**
+   * Compares equality of two json objects
+   *
+   * @param a First json object to compare
+   * @param b Second json object to compare
+   * @return True if both json objects are not equal
+   */
+  friend OOS_UTILS_API bool operator!=(const json &a, const json &b);
+
+  /**
+   * Compares two json objects if first object
+   * is less than second.
+   *
+   * @param a First json object to compare
+   * @param b Second json object to compare
+   * @return True if first json object is less than second
+   */
+  friend OOS_UTILS_API bool operator<(const json &a, const json &b);
+
+  /**
+   * Compares two json objects if first object
+   * is less than or equal second.
+   *
+   * @param a First json object to compare
+   * @param b Second json object to compare
+   * @return True if first json object is less than or equal second
+   */
+  friend OOS_UTILS_API bool operator<=(const json &a, const json &b);
+
+  /**
+   * Compares two json objects if first object
+   * is greater than second.
+   *
+   * @param a First json object to compare
+   * @param b Second json object to compare
+   * @return True if first json object is greater than second
+   */
+  friend OOS_UTILS_API bool operator>(const json &a, const json &b);
+
+  /**
+   * Compares two json objects if first object
+   * is greater than or equal second.
+   *
+   * @param a First json object to compare
+   * @param b Second json object to compare
+   * @return True if first json object is greater than or equal second
+   */
+  friend OOS_UTILS_API bool operator>=(const json &a, const json &b);
+
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator<(const json &a, const T &b);
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator<(const T &a, const json &b);
+
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator<=(const json &a, const T &b);
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator<=(const T &a, const json &b);
+
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator>(const json &a, const T &b);
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator>(const T &a, const json &b);
+
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator>=(const json &a, const T &b);
+  template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
+  friend bool operator>=(const T &a, const json &b);
+
+  /**
+   * Creates a string of the json object
+   *
+   * @return Json as string
+   */
+  std::string str() const;
+
+  /**
+   * Creates a string of the json object
+   * with the given json format
+   *
+   * @param format Format object defining the json output
+   * @return Json as string
+   */
+  std::string str(const json_format &format) const;
+
+  /**
    * Print the json object to the given ostream
    *
    * @param out The stream to write on
@@ -281,15 +469,26 @@ public:
    * @param key The key of the requested value
    * @return The requested value for the given key
    */
-  json& operator[](const std::string &key) {
-    if (type != e_object) {
-      clear();
-      value_.object = new object_type;
-      type = e_object;
-    }
-    auto it = value_.object->insert(std::make_pair(key, json())).first;
-    return it->second;
-  }
+  json& operator[](const std::string &key);
+
+  /**
+   * Get the json object of the given key.
+   * If the json type isn't object the type
+   * the object itself is returned (this)
+   *
+   * @param key The key of the requested value
+   * @return The requested value for the given key
+   */
+  const json& operator[](const std::string &key) const;
+
+  /**
+   * Returns true if json is of type object
+   * and contains the given key
+   *
+   * @param key Key to check
+   * @return True if key is available
+   */
+  bool contains(const std::string &key) const;
 
   /**
    * Get the json object at given index i
@@ -319,15 +518,7 @@ public:
    * @return The requested value for the given index
    * @throws std::logic_error If the index is out of bounce
    */
-  const json& operator[](std::size_t i) const {
-    if (type != e_array) {
-      return *this;
-    }
-    if (i >= value_.array->size()) {
-      throw std::logic_error("index out of bounce");
-    }
-    return value_.array->at(i);
-  }
+  const json& operator[](std::size_t i) const;
 
   /**
    * Push back the given value to the json array
@@ -340,10 +531,10 @@ public:
    */
   template < class T >
   void push_back(const T &val) {
-    if (type != e_array) {
+    if (type_ != e_array) {
       clear();
       value_.array = new std::vector<json>;
-      type = e_array;
+      type_ = e_array;
     }
     value_.array->push_back(val);
   }
@@ -381,9 +572,9 @@ public:
   template < class T >
   void reset(T val, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type * = 0)
   {
-    if (type != e_integer) {
+    if (type_ != e_integer) {
       clear();
-      type = e_integer;
+      type_ = e_integer;
     }
     value_.integer = val;
   }
@@ -397,9 +588,9 @@ public:
   template < class T >
   void reset(T val, typename std::enable_if<std::is_floating_point<T>::value>::type * = 0)
   {
-    if (type != e_real) {
+    if (type_ != e_real) {
       clear();
-      type = e_real;
+      type_ = e_real;
     }
     value_.real = val;
   }
@@ -413,9 +604,9 @@ public:
   template < class T >
   void reset(T val, typename std::enable_if<std::is_convertible<T, std::string>::value>::type * = 0)
   {
-    if (type != e_string) {
+    if (type_ != e_string) {
       clear();
-      type = e_string;
+      type_ = e_string;
     }
     if (value_.str == nullptr) {
       value_.str = new std::string(val);
@@ -433,24 +624,20 @@ public:
 
   /**
    * Returns either the size of the json array or
-   * the json object.
-   * If the type of isn't array or object a
-   * std::logic_error is thrown
+   * the size of a json object. If the type is null then
+   * 0 (zero) is returned. For all other types 1 (one)
+   * is returned
    *
-   * @throws std::logic_error If type isn't object or array
    * @return The size (count of elements)
    */
   std::size_t size() const;
 
   /**
-   * Returns true if json of type array or
-   * json of type object is empty. Otherwise false
-   * id returned.
-   * 
-   * If the type of isn't array or object a
-   * std::logic_error is thrown
-   * 
-   * @throws std::logic_error If type isn't object or array
+   * Returns the corresponding result of empty()
+   * if json is of type array or of type object.
+   * If json is of type null then false is returned.
+   * For all other types true is returned.
+   *
    * @return True if array or object is empty
    */
   bool empty() const;
@@ -467,6 +654,17 @@ public:
   iterator begin();
 
   /**
+   * Returns the begin iterator of the json array
+   * or the json object.
+   * If the json isn't of type array or object this
+   * json object is return in the iterator
+   * @sa json_iterator
+   *
+   * @return The begin iterator
+   */
+  const_iterator begin() const;
+
+  /**
    * Returns the end iterator of the json array
    * or the json object.
    * If the json isn't of type array or object this
@@ -476,6 +674,17 @@ public:
    * @return The end iterator
    */
   iterator end();
+
+  /**
+   * Returns the end iterator of the json array
+   * or the json object.
+   * If the json isn't of type array or object this
+   * json object is return in the iterator
+   * @sa json_iterator
+   *
+   * @return The end iterator
+   */
+  const_iterator end() const;
 
   /**
    * Return the json value as an integral type
@@ -578,6 +787,13 @@ public:
   }
 
   /**
+   * Returns the json type enum
+   *
+   * @returns Json type enum
+   */
+  json_type type() const;
+
+  /**
    * Returns true if json type is a number
    * 
    * @returns True if json type is a number
@@ -647,11 +863,17 @@ public:
    */
   template < class T >
   T at(std::size_t pos) const {
-    if (type != e_array) {
+    if (type_ != e_array) {
       throw std::logic_error("type doesn't provide at()");
     }
     return value_.array->at(pos).as<T>();
   }
+
+  json& get(const std::string &key);
+  const json& get(const std::string &key) const;
+
+  json& at_path(const std::string &path, char delimiter = '.');
+  const json& at_path(const std::string &path, char delimiter = '.') const;
 
   /**
    * Clears the current json object.
@@ -661,7 +883,7 @@ public:
    */
   void clear()
   {
-    switch (type) {
+    switch (type_) {
       case e_string:
         delete value_.str;
         break;
@@ -670,10 +892,10 @@ public:
         break;
       case e_array:
         delete value_.array;
-        type = e_null;
+        type_ = e_null;
         break;
       default:
-        type = e_null;
+        type_ = e_null;
         break;
     }
 
@@ -704,6 +926,7 @@ private:
   void copy_from(const json &x);
 
   friend class json_iterator<json>;
+  friend class const_json_iterator<json>;
 
   union json_value {
     json_value() : integer(0) {}
@@ -722,8 +945,56 @@ private:
   };
 
   json_value value_;
-  json_type type = e_integer;
+  json_type type_ = e_integer;
 };
+
+template<class T>
+bool operator<(const json &a, const T &b)
+{
+  return a < json(b);
+}
+
+template<class T>
+bool operator<(const T &a, const json &b)
+{
+  return json(a) < b;
+}
+
+template<class T>
+bool operator<=(const json &a, const T &b)
+{
+  return a <= json(b);
+}
+
+template<class T>
+bool operator<=(const T &a, const json &b)
+{
+  return json(a) <= b;
+}
+
+template<class T>
+bool operator>(const json &a, const T &b)
+{
+  return a > json(b);
+}
+
+template<class T>
+bool operator>(const T &a, const json &b)
+{
+  return json(a) > b;
+}
+
+template<class T>
+bool operator>=(const json &a, const T &b)
+{
+  return a >= json(b);
+}
+
+template<class T>
+bool operator>=(const T &a, const json &b)
+{
+  return json(a) >= b;
+}
 
 /**
  * @brief An iterator for json array and objects
@@ -754,7 +1025,7 @@ public:
   json_iterator(json_type *ptr, bool as_begin)
     : obj_(ptr)
   {
-    switch(obj_->type) {
+    switch(obj_->type_) {
       case json::e_object:
         iter.object_iterator = typename object_type::iterator();
         iter.object_iterator = (as_begin ? obj_->value_.object->begin() : obj_->value_.object->end());
@@ -802,7 +1073,7 @@ public:
    * @return The incremented iterator
    */
   json_iterator operator++() {
-    switch(obj_->type) {
+    switch(obj_->type_) {
       case json::e_object:
         ++iter.object_iterator;
         break;
@@ -837,7 +1108,7 @@ public:
    * @return The decremented iterator
    */
   json_iterator operator--() {
-    switch(obj_->type) {
+    switch(obj_->type_) {
       case json::e_object:
         --iter.object_iterator;
         break;
@@ -872,7 +1143,7 @@ public:
    * @return The reference of the json object
    */
   json& operator*() const {
-    switch(obj_->type) {
+    switch(obj_->type_) {
       case json::e_object:
         return iter.object_iterator->second;
       case json::e_array:
@@ -892,7 +1163,7 @@ public:
    * @return The pointer of the json object
    */
   json* operator->() const {
-    switch(obj_->type) {
+    switch(obj_->type_) {
       case json::e_object:
         return &(iter.object_iterator->second);
       case json::e_array:
@@ -913,7 +1184,7 @@ public:
    */
   bool operator==(const json_iterator<JSON_TYPE> &x) const
   {
-    switch(obj_->type) {
+    switch(obj_->type_) {
       case json::e_object:
         return iter.object_iterator == x.iter.object_iterator;
       case json::e_array:
@@ -952,12 +1223,232 @@ private:
 };
 
 /**
- * Creates a string from the given json object
+ * @brief An iterator for json array and objects
  *
- * @param j Json to create a string from
- * @return Json as string
+ * The iterator handles elements of json arrays
+ * and json objects.
+ * If initialized with a non array or object the
+ * iterator uses the given json as the element
+ * neither as begin or end.
  */
-OOS_UTILS_API std::string to_string(const matador::json &j);
+template < class JSON_TYPE >
+class const_json_iterator
+{
+public:
+  typedef JSON_TYPE json_type; /**< Shortcut for json */
+  typedef typename json_type::array_type array_type; /**< Shortcut for json array type */
+  typedef typename json_type::object_type object_type; /**< Shortcut for json object type */
+
+  /**
+   * Creates a json_iterator for the given json object.
+   * In case the json object isn't of type_ object or array
+   * the given flag as_begin tells the c'tor if the jsn value
+   * is treated like begin or end element.
+   *
+   * @param ptr Pointer to the json
+   * @param as_begin True if non array/object should be treated as begin iterator
+   */
+  const_json_iterator(const json_type *ptr, bool as_begin)
+    : obj_(ptr)
+  {
+    switch(obj_->type_) {
+      case json::e_object:
+        iter.object_iterator = typename object_type::iterator();
+        iter.object_iterator = (as_begin ? obj_->value_.object->begin() : obj_->value_.object->end());
+        break;
+      case json::e_array:
+        iter.array_iterator = typename array_type::iterator();
+        iter.array_iterator = (as_begin ? obj_->value_.array->begin() : obj_->value_.array->end());
+        break;
+      default:
+        it = as_begin ? begin_ : end_;
+        break;
+    }
+  }
+
+  /**
+   * Copy construct a json_iterator from given
+   * iterator
+   *
+   * @param x The iterator to copy from
+   */
+  const_json_iterator(const const_json_iterator<JSON_TYPE> &x)
+    : obj_(x.obj_), iter(x.iter)
+  {}
+
+  /**
+   * Copy assigns a json_iterator from given
+   * iterator
+   *
+   * @param x The iterator to copy assign from
+   */
+  const_json_iterator& operator=(const const_json_iterator<JSON_TYPE> &x)
+  {
+    if (this != &x) {
+      obj_ = x.obj_;
+      iter = x.iter;
+    }
+    return *this;
+  }
+
+  /**
+   * Post increments (++i) the json_iterator
+   * step to next array element or next
+   * object element
+   *
+   * @return The incremented iterator
+   */
+  const_json_iterator operator++() {
+    switch(obj_->type_) {
+      case json::e_object:
+        ++iter.object_iterator;
+        break;
+      case json::e_array:
+        ++iter.array_iterator;
+        break;
+      default:
+        ++it;
+        break;
+    }
+    return *this;
+  }
+
+  /**
+   * Pre increments (i++) the json_iterator
+   * step to next array element or next
+   * object element
+   *
+   * @return The incremented iterator
+   */
+  const_json_iterator operator++(int) {
+    auto tmp = *this;
+    ++(*this);
+    return tmp;
+  }
+
+  /**
+   * Post decrements (--i) the json_iterator
+   * step to previous array element or next
+   * object element
+   *
+   * @return The decremented iterator
+   */
+  const_json_iterator operator--() {
+    switch(obj_->type_) {
+      case json::e_object:
+        --iter.object_iterator;
+        break;
+      case json::e_array:
+        --iter.array_iterator;
+        break;
+      default:
+        --it;
+        break;
+    }
+    return *this;
+  }
+
+  /**
+   * Pre decrements (i--) the json_iterator
+   * step to previous array element or next
+   * object element
+   *
+   * @return The decremented iterator
+   */
+  const_json_iterator operator--(int) {
+    auto tmp = *this;
+    --(*this);
+    return tmp;
+  }
+
+  /**
+   * Indirection operator. Returns the reference to the
+   * json object represented by the iterator. If the json type
+   * is null a std::logic_error is thrown.
+   *
+   * @return The reference of the json object
+   */
+  const json& operator*() const {
+    switch(obj_->type_) {
+      case json::e_object:
+        return iter.object_iterator->second;
+      case json::e_array:
+        return *iter.array_iterator;
+      case json::e_null:
+        throw std::logic_error("json null hasn't a value");
+      default:
+        return *obj_;
+    }
+  }
+
+  /**
+   * Address of operator. Returns the pointer to the
+   * json object represented by the iterator. If the json type
+   * is null a std::logic_error is thrown.
+   *
+   * @return The pointer of the json object
+   */
+  const json* operator->() const {
+    switch(obj_->type_) {
+      case json::e_object:
+        return &(iter.object_iterator->second);
+      case json::e_array:
+        return &*iter.array_iterator;
+      case json::e_null:
+        throw std::logic_error("json null hasn't a value");
+      default:
+        return obj_;
+    }
+  }
+
+  /**
+   * Equal operator for json_iterator. Depending on
+   * the json type the values are compared.
+   *
+   * @param x The json_iterator to compare
+   * @return True if the values are the same
+   */
+  bool operator==(const const_json_iterator<JSON_TYPE> &x) const
+  {
+    switch(obj_->type_) {
+      case json::e_object:
+        return iter.object_iterator == x.iter.object_iterator;
+      case json::e_array:
+        return iter.array_iterator == x.iter.array_iterator;
+      default:
+        return it == x.it;
+    }
+  }
+
+  /**
+   * Not equal operator for json_iterator. Depending on
+   * the json type the values are compared.
+   *
+   * @param x The json_iterator to compare
+   * @return True if the values are the not same
+   */
+  bool operator!=(const const_json_iterator<JSON_TYPE> &x) const
+  {
+    return !operator==(x);
+  }
+
+private:
+  static const std::size_t begin_ = 0;
+  static const std::size_t end_ = 1;
+
+  const json *obj_;
+
+  struct iter_type {
+    typename object_type::iterator object_iterator;
+    typename array_type::iterator array_iterator;
+  };
+
+  iter_type iter;
+  // for builtin types (number, bool, string)
+  std::size_t it = 0;
+};
+
+OOS_UTILS_API std::string to_string(const json &j);
 
 }
 

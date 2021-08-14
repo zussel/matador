@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include "../templates/header.matador" %}
+<body>
+    <div class="header">
+        <h1>{{title}}</h1>
+    </div>
+
+    <a class="pure-button pure-button-primary" href="/">Home</a>
+
+    <div class="content">
+        <div class="pure-g">
+            <div class="pure-u-1">
+                <a class="pure-button" href="/movie/create">Create</a>
+                <table class="pure-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Year</th>
+                            <th>Director</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for movie in movies %}
+                        <tr>
+                            <td><a href="/movie/{{movie.id}}">{{ movie.id }}</a></td>
+                            <td><a href="/movie/{{movie.id}}">{{ movie.title }}</a></td>
+                            <td>{{ movie.year }}</td>
+                            <td>{{ movie.director.name }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

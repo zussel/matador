@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include "../templates/header.matador" %}
+<body>
+<div class="header">
+    <h1>{{title}}</h1>
+</div>
+    <form class="pure-form pure-form-aligned" action="/api/movie/{{movie.id}}" method="post">
+        <fieldset>
+            <div class="pure-control-group">
+                <label for="aligned-id">Id</label>
+                <input type="text" id="aligned-id" placeholder="id" readonly="" value="{{movie.id}}"/>
+            </div>
+            <div class="pure-control-group">
+                <label for="aligned-title">Title</label>
+                <input type="text" id="aligned-title" placeholder="Title" name="title" value="{{movie.title}}" />
+            </div>
+            <div class="pure-control-group">
+                <label for="aligned-director">Director</label>
+                <select id="aligned-director" name="director">
+                    {% for director in directors %}
+                    <option value="{{director.id}}" {% if director.id == forloop.parent.movie.director.id %}selected{% endif %}>{{director.name}}</option>
+                    {% endfor %}
+                </select>
+<!--                <input type="text" id="aligned-director" placeholder="Director" name="director" value="{{movie.director.name}}" />-->
+            </div>
+            <div class="pure-control-group">
+                <label for="aligned-year">Year</label>
+                <input type="number" id="aligned-year" placeholder="Year" name="year" value="{{movie.year}}" />
+            </div>
+            <div class="pure-controls">
+                <button type="submit" class="pure-button pure-button-primary">Update</button>
+                <a class="button-error pure-button" href="/movie/{{movie.id}}">Cancel</a>
+            </div>
+        </fieldset>
+    </form>
+</body>
+</html>

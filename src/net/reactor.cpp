@@ -4,8 +4,8 @@
 #include "matador/logger/log_manager.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <cerrno>
-#include <cstring>
 #include <ctime>
 
 namespace matador {
@@ -15,6 +15,10 @@ reactor::reactor()
   , log_(create_logger("Reactor"))
 {
 
+}
+reactor::~reactor()
+{
+    log_.debug("destroying reactor");
 }
 
 void reactor::register_handler(const std::shared_ptr<handler>& h, event_type et)
@@ -78,8 +82,6 @@ void reactor::cancel_timer(const std::shared_ptr<handler>& h)
 
 void reactor::run()
 {
-  // prepare interrupter
-
   log_.info("starting reactor");
 
   running_ = true;
@@ -87,13 +89,13 @@ void reactor::run()
   while (running_) {
     prepare_select_bits(timeout);
 
-    log_.info("fds [r: %d, w: %d, e: %d]",
+    log_.debug("fds [r: %d, w: %d, e: %d]",
               fdsets_.read_set().count(),
               fdsets_.write_set().count(),
               fdsets_.except_set().count());
 
     if (timeout != (std::numeric_limits<time_t>::max)()) {
-      log_.info("next timeout in %d sec", timeout);
+      log_.debug("next timeout in %d sec", timeout);
     }
     struct timeval tselect{};
     struct timeval* p = nullptr;
@@ -119,8 +121,6 @@ void reactor::run()
       }
     }
 
-    log_.info("select returned with %d", ret);
-
     bool interrupted = is_interrupted();
 
     if (interrupted) {
@@ -128,6 +128,11 @@ void reactor::run()
     } else {
       process_handler(ret);
       remove_deleted();
+    }
+
+    if (handlers_.empty() && timeout == (std::numeric_limits<time_t>::max)()) {
+      log_.info("no clients to handle, exiting");
+      running_ = false;
     }
   }
 
@@ -174,12 +179,22 @@ void reactor::prepare_select_bits(time_t& timeout)
 
 void reactor::remove_deleted()
 {
+  while (!handlers_to_delete_.empty()) {
+    auto h = handlers_to_delete_.front();
+    handlers_to_delete_.pop_front();
+    auto fi = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
+      return ht.first.get() == h.get();
+    });
 
+    if (fi != handlers_.end()) {
+      log_.debug("removing handler %d", fi->first->handle());
+      handlers_.erase(fi);
+    }
+  }
 }
 
 void reactor::cleanup()
 {
-  log_.info("cleanup reactor");
   while (!handlers_.empty()) {
     auto hndlr = handlers_.front();
     handlers_.pop_front();
@@ -189,7 +204,7 @@ void reactor::cleanup()
 
 int reactor::select(struct timeval *timeout)
 {
-  log_.info("calling select; waiting for io events");
+  log_.debug("calling select; waiting for io events");
   return ::select(
     fdsets_.maxp1() + 1,
     fdsets_.read_set().get(),
@@ -199,9 +214,8 @@ int reactor::select(struct timeval *timeout)
   );
 }
 
-void reactor::process_handler(int ret)
+void reactor::process_handler(int /*ret*/)
 {
-  log_.info("process %d handlers", ret);
   handlers_.emplace_back(sentinel_, event_type::NONE_MASK);
   time_t now = ::time(nullptr);
   while (handlers_.front().first != nullptr) {
@@ -218,20 +232,20 @@ void reactor::process_handler(int ret)
     if (h.first->next_timeout() > 0 && h.first->next_timeout() <= now) {
       on_timeout(h.first, now);
     }
-    handlers_to_delete_.clear();
+//    handlers_to_delete_.clear();
   }
   handlers_.pop_front();
 }
 
 void reactor::on_read_mask(const std::shared_ptr<handler>& h)
 {
-  log_.info("read bit for handler %d is set; handle input", h->handle());
+  log_.debug("read bit for handler %d is set; handle input", h->handle());
   h->on_input();
 }
 
 void reactor::on_write_mask(const std::shared_ptr<handler>& h)
 {
-  log_.info("write bit for handler %d is set; handle output", h->handle());
+  log_.debug("write bit for handler %d is set; handle output", h->handle());
   h->on_output();
 }
 
@@ -242,7 +256,7 @@ void reactor::on_except_mask(const std::shared_ptr<handler>&)
 
 void reactor::on_timeout(const std::shared_ptr<handler> &h, time_t now)
 {
-  log_.info("timeout expired for handler %d; handle timeout", h->handle());
+  log_.debug("timeout expired for handler %d; handle timeout", h->handle());
   h->calculate_next_timeout(now);
   h->on_timeout();
 }
@@ -259,9 +273,8 @@ void reactor::mark_handler_for_delete(const std::shared_ptr<handler>& h)
 
 bool reactor::is_interrupted()
 {
-  log_.info("checking if reactor was interrupted (interrupter fd: %d)", interrupter_.socket_id());
   if (fdsets_.read_set().is_set(interrupter_.socket_id())) {
-    log_.info("interrupt byte received; resetting interrupter");
+    log_.debug("interrupt byte received; resetting interrupter");
     if (shutdown_requested_) {
       running_ = false;
     }

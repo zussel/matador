@@ -40,7 +40,7 @@ public:
 
   template<class T>
   values *execute(T &x) {
-    values_ = matador::make_unique<values>();
+    values_ = std::make_unique<values>();
     matador::access::serialize(*this, x);
     return values_.release();
   }

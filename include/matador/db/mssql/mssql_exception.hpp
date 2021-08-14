@@ -32,7 +32,7 @@
 #include "matador/sql/sql_exception.hpp"
 
 #if defined(_MSC_VER)
-#include <windows.h>
+#include <WinSock2.h>
 #endif
 
 #include <sqltypes.h>

@@ -18,7 +18,7 @@ SET(SOURCES
   relation_field_endpoint.cpp
   abstract_has_many.cpp
   basic_has_many_to_many_item.cpp
-  prototype_info.cpp json_object_mapper.cpp)
+  prototype_info.cpp json_object_mapper.cpp json_object_serializer.cpp object_json_serializer.cpp json_object_mapper_serializer.cpp)
 
 SET(HEADER
   ../../include/matador/object/action.hpp
@@ -76,7 +76,7 @@ SET(HEADER
   ../../include/matador/object/relation_endpoint_value_remover.hpp
   ../../include/matador/object/relation_endpoint_value_remover.tpp
   ../../include/matador/object/to_many_endpoints.hpp
-  ../../include/matador/object/has_many_iterator_traits.hpp)
+  ../../include/matador/object/has_many_iterator_traits.hpp ../../include/matador/object/json_object_serializer.hpp ../../include/matador/object/object_json_serializer.hpp ../../include/matador/object/json_object_mapper_serializer.hpp)
 
 ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
 

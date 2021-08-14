@@ -15,6 +15,7 @@
 #endif
 
 #include <memory>
+#include <string>
 
 namespace matador {
 
@@ -111,6 +112,15 @@ public:
    * @return Timeout interval
    */
   time_t interval() const;
+
+  /**
+   * Get the name of the handler.
+   * The name don't need to be unique.
+   * It has only an informational purpose.
+   *
+   * @return The name of the handler
+   */
+  virtual std::string name() const = 0;
 
 protected:
 

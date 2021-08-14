@@ -18,6 +18,8 @@
 
 #include "matador/logger/logger.hpp"
 
+#include <array>
+
 namespace matador {
 
 /// @cond MATADOR_DEV
@@ -38,6 +40,9 @@ private:
   matador::tcp::socket client_;
 
   matador::logger log_;
+
+  std::array<char, 1> indicator_ = { { 0 } };
+  std::array<char, 1> consumer_ = {};
 };
 /// @endcond
 

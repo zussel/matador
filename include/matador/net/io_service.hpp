@@ -84,14 +84,14 @@ public:
 
   /**
    * Add the given connector for the given port
-   * and connect callback.
+   * and execute callback.
    *
    * Once a connection is established the callback
    * is called.
    *
    * @tparam ConnectCallback Type of the callback
    * @param co Connector Used to establish the connection
-   * @param port Port to connect to
+   * @param port Port to execute to
    * @param connect_callback Callback when connection was established
    */
   template < typename ConnectCallback >

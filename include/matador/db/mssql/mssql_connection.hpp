@@ -30,7 +30,7 @@
 #endif
 
 #if defined(_MSC_VER)
-#include <windows.h>
+#include <WinSock2.h>
 #endif
 
 #include "matador/db/mssql/mssql_dialect.hpp"

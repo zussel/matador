@@ -239,7 +239,7 @@ void connection::parse_dns(const std::string &dns)
 void connection::log_token(detail::token::t_token tok)
 {
   if (impl_->is_log_enabled()) {
-    logger_->on_execute("SQL: " + dialect()->token_at(tok));
+    logger_->on_execute(dialect()->token_at(tok));
   }
 }
 

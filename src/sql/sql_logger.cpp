@@ -11,11 +11,11 @@ sql_logger::sql_logger()
 {}
 
 sql_logger::sql_logger(size_t max_size, size_t file_count)
-  : LOG(create_logger("sql"))
+  : LOG(create_logger("SQL"))
 {
-  auto path = matador::os::build_path("log", "sql.log");
-  add_log_sink(create_rotating_file_sink(path, max_size, file_count));
-  add_log_sink(create_stdout_sink());
+//  auto path = matador::os::build_path("log", "sql.log");
+//  add_log_sink(create_rotating_file_sink(path, max_size, file_count));
+//  add_log_sink(create_stdout_sink());
 }
 
 void sql_logger::on_execute(const std::string &stmt)

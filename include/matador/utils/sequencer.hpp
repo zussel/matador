@@ -46,7 +46,7 @@ namespace matador {
 class OOS_UTILS_API sequencer_impl
 {
 public:
-  virtual ~sequencer_impl() {}
+  virtual ~sequencer_impl() = default;
   
   /**
    * Initialize the sequencer implementation.
@@ -104,20 +104,20 @@ typedef std::shared_ptr<sequencer_impl> sequencer_impl_ptr; /**< Shortcut for se
 class OOS_UTILS_API default_sequencer : public sequencer_impl
 {
 public:
-  default_sequencer();
-  virtual ~default_sequencer();
+  default_sequencer() = default;
+  ~default_sequencer() override = default;
 
-  virtual unsigned long init();
+  unsigned long init() override;
 
-  virtual unsigned long reset(unsigned long id);
+  unsigned long reset(unsigned long id) override;
 
-  virtual unsigned long next();
-  virtual unsigned long current() const;
+  unsigned long next() override;
+  unsigned long current() const override;
 
-  virtual unsigned long update(unsigned long id);
+  unsigned long update(unsigned long id) override;
 
 private:
-  unsigned long number_;
+  unsigned long number_ {0};
 };
 /// @endcond
 
@@ -145,8 +145,8 @@ public:
    * @param impl The sequence implementation serializable
    *             implementing the sequence strategy.
    */
-  sequencer(const sequencer_impl_ptr &impl = sequencer_impl_ptr(new default_sequencer));
-  ~sequencer();
+  explicit sequencer(sequencer_impl_ptr impl = sequencer_impl_ptr(new default_sequencer));
+  ~sequencer() = default;
 
   /**
    * Replace the current sequencer

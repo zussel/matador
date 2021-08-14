@@ -1,10 +1,10 @@
 #include "matador/net/os.hpp"
 
 #ifdef _WIN32
-#include <WinSock2.h>
-#include < Ws2tcpip.h>
+#include <Ws2tcpip.h>
 #else
 #include <arpa/inet.h>
+#include <unistd.h>
 #endif
 
 namespace matador {
@@ -50,6 +50,15 @@ const char* inet_ntop(int af, const void* src, char* dst, size_t size)
     return ::InetNtop(af, const_cast<void*>(src), dst, size);
 #else
     return ::inet_ntop(af, src, dst, size);
+#endif
+}
+
+int close(int fd)
+{
+#ifdef _WIN32
+  return ::closesocket(fd);
+#else
+  return ::close(fd);
 #endif
 }
 

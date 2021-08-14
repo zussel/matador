@@ -9,6 +9,8 @@ public:
   JsonTestUnit();
 
   void test_simple();
+  void test_access();
+  void test_compare();
   void test_parser();
 };
 

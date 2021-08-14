@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include "../templates/header.matador" %}
+<body>
+<div class="header">
+    <h1>{{title}}</h1>
+</div>
+    <form class="pure-form pure-form-aligned" action="/api/movie" method="post">
+        <fieldset>
+            <div class="pure-control-group">
+                <label for="aligned-title">Title</label>
+                <input type="text" id="aligned-title" placeholder="Title" name="title" />
+            </div>
+            <div class="pure-control-group">
+                <label for="aligned-director">Director</label>
+                <select id="aligned-director" name="director">
+                    {% for director in directors %}
+                    <option value="{{director.id}}">{{director.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="pure-control-group">
+                <label for="aligned-year">Year</label>
+                <input type="number" id="aligned-year" placeholder="Year" name="year" />
+            </div>
+            <div class="pure-controls">
+                <button type="submit" class="pure-button pure-button-primary">Submit</button>
+                <a class="button-error pure-button" href="/movie">Cancel</a>
+            </div>
+        </fieldset>
+    </form>
+</body>
+</html>

@@ -27,6 +27,8 @@ file_sink::file_sink(const std::string &path)
   if (matador::split(filename, '.', result) != 2) {
     throw std::logic_error("splitted path must consists of two elements");
   }
+  // get current path
+  auto pwd = os::get_current_dir();
   // make path
   os::mkpath(path_);
   // change into path
@@ -34,8 +36,10 @@ file_sink::file_sink(const std::string &path)
   // create file
   stream = os::fopen(filename, "a");
   if (stream == nullptr) {
+    os::chdir(pwd);
     throw std::logic_error("error opening file");
   }
+  os::chdir(pwd);
 }
 
 file_sink::file_sink(const char *path)

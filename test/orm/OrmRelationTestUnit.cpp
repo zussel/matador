@@ -17,13 +17,13 @@ OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, std::string 
   : unit_test(prefix + "_orm_relation", prefix + " orm relation test unit")
   , dns_(std::move(dns))
 {
-  add_test("has_many_varchars", std::bind(&OrmRelationTestUnit::test_has_many_varchars, this), "test has many builtin varchars item");
-  add_test("has_many_ints", std::bind(&OrmRelationTestUnit::test_has_many_ints, this), "test has many builtin ints item");
-  add_test("has_many_delete", std::bind(&OrmRelationTestUnit::test_has_many_delete, this), "test has many delete item");
-  add_test("belongs_to", std::bind(&OrmRelationTestUnit::test_belongs_to, this), "test belongs to");
-  add_test("has_many_to_many", std::bind(&OrmRelationTestUnit::test_many_to_many, this), "test has many to many");
-  add_test("save", std::bind(&OrmRelationTestUnit::test_save, this), "test save");
-  add_test("save_object", std::bind(&OrmRelationTestUnit::test_save_object, this), "test save object");
+  add_test("has_many_varchars", [this] { test_has_many_varchars(); }, "test has many builtin varchars item");
+  add_test("has_many_ints", [this] { test_has_many_ints(); }, "test has many builtin ints item");
+  add_test("has_many_delete", [this] { test_has_many_delete(); }, "test has many delete item");
+  add_test("belongs_to", [this] { test_belongs_to(); }, "test belongs to");
+  add_test("has_many_to_many", [this] { test_many_to_many(); }, "test has many to many");
+  add_test("save", [this] { test_save(); }, "test save");
+  add_test("save_object", [this] { test_save_object(); }, "test save object");
 }
 
 using many_list_varchars = many_builtins<varchar<255>, std::list>;

@@ -37,7 +37,7 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
     throw_stmt_error(stmt_, "mysql", str());
   }
 
-  binder_ = matador::make_unique<mysql_parameter_binder>(columns().size(), bind_vars().size());
+  binder_ = std::make_unique<mysql_parameter_binder>(columns().size(), bind_vars().size());
 }
 
 mysql_statement::~mysql_statement()

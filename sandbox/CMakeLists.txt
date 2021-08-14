@@ -1,7 +1,8 @@
-SET (SANDBOX_SOURCES sandbox.cpp ../include/matador/net/os.hpp)
+SET (SANDBOX_SOURCES sandbox.cpp)
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 
+ADD_EXECUTABLE(di di.cpp)
 
 SET(DB_LIBRARIES)
 
@@ -37,10 +38,12 @@ TARGET_LINK_LIBRARIES(sandbox
     matador-utils
     matador-logger
     matador-object
+    matador-http
     matador-net
     matador-sql
     matador-orm
     ${CMAKE_DL_LIBS}
     ${DB_LIBRARIES}
     ${NET_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
 )

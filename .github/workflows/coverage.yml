@@ -1,0 +1,57 @@
+name: matador@linux:coverage
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler-version: [9]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create MySQL database
+        run: |
+          sudo systemctl start mysql.service
+          mysql --version
+          mysql -u root -proot -e "CREATE DATABASE matador_test;"
+      - name: CMake Version
+        run: cmake --version
+      - name: Configure CMake
+        env:
+          CC: gcc-${{ matrix.compiler-version }}
+          CXX: g++-${{ matrix.compiler-version }}
+        run: >
+          cmake -B ${{github.workspace}}/build
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          -DMATADOR_ODBC_TEST=false
+          -DMATADOR_ODBC=false
+          -DMATADOR_POSTGRESQL_TEST=true
+          -DMATADOR_MYSQL_TEST=true
+          -DMATADOR_SQLITE3_TEST=true
+          -DCOVERAGE=true
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: Copy Matador Libs
+        working-directory: ${{github.workspace}}/build
+        run: cp lib/libmatador-*.* bin/
+      - uses: harmon758/postgresql-action@v1
+        with:
+          postgresql version: '11'
+          postgresql db: matador_test
+          postgresql user: test
+          postgresql password: test123
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest --verbose -C ${{env.BUILD_TYPE}}
+      - name: Code coverage using Codecov
+        run: bash <(curl -s https://codecov.io/bash)

@@ -81,6 +81,9 @@ public:
   /// @endcond OOS_DEV //
 
 private:
+  void on_value(const json &value);
+
+private:
   json value_;
 
   std::string key_;

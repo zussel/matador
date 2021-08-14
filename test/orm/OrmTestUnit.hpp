@@ -1,7 +1,3 @@
-//
-// Created by sascha on 20.03.16.
-//
-
 #ifndef OOS_ORMTESTUNIT_HPP
 #define OOS_ORMTESTUNIT_HPP
 
@@ -20,6 +16,7 @@ public:
   void test_select();
   void test_update();
   void test_delete();
+  void test_multiple_delete();
   void test_save();
   void test_flush();
 

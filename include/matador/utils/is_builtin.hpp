@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/15/17.
-//
-
 #ifndef MATADOR_IS_BUILTIN_HPP
 #define MATADOR_IS_BUILTIN_HPP
 

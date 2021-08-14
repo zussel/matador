@@ -1,6 +1,9 @@
-#include <matador/logger/log_manager.hpp>
-#include <iostream>
+#include "matador/logger/log_manager.hpp"
+#include "matador/utils/buffer_view.hpp"
+
 #include "echo_client_connection.hpp"
+
+#include <iostream>
 
 using namespace matador;
 
@@ -18,10 +21,9 @@ void echo_client_connection::start()
 void echo_client_connection::read()
 {
   auto self(shared_from_this());
-  stream_.read(buf_, [this, self](int ec, int nread) {
+  stream_.read(matador::buffer_view(buf_), [this, self](int ec, int nread) {
     if (ec == 0) {
       std::cout << "Answer (size " << nread << "): " << std::string(buf_.data(), buf_.size()) << "\n";
-      buf_.clear();
       write();
     }
   });
@@ -36,12 +38,12 @@ void echo_client_connection::write()
     stream_.close_stream();
     return;
   }
-  buf_.append(message.c_str(), message.size());
+  std::list<matador::buffer_view> data{ matador::buffer_view(message) };
+
   auto self(shared_from_this());
-  stream_.write(buf_, [this, self](int ec, int nwrite) {
+  stream_.write(data, [this, self](int ec, int nwrite) {
     if (ec == 0) {
       log_.info("%s sent (bytes: %d)", endpoint_.to_string().c_str(), nwrite);
-      buf_.clear();
       read();
     }
   });

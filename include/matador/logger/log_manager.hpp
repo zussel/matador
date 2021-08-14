@@ -58,7 +58,7 @@ public:
    * the domain ist created
    *
    * @param source Name of the source
-   * @param domain_name The name of the log domain to connect to
+   * @param domain_name The name of the log domain to execute to
    * @return The created logger
    */
   logger create_logger(std::string source, const std::string &domain_name);
@@ -80,16 +80,66 @@ public:
   void add_sink(sink_ptr sink, const std::string &domain_name);
 
   /**
+   * Clears all sinks from default log domain
+   */
+  void clear_all_sinks();
+
+  /**
+   * Clears all sinks from the log domain
+   * with the given name
+   *
+   * @param domain_name Domain name to clear all sinks from
+   */
+  void clear_all_sinks(const std::string &domain_name);
+
+  /**
    * Remove all log domains but the default log domain.
    * Clears all sinks from the default log domain.
    */
   void clear();
 
+  /**
+   * Sets the max default log level. Default
+   * max leven is LVL_FATAL. All log domains
+   * will start with this default max log range
+   *
+   * @param max_level max log level
+   */
+  static void max_default_log_level(log_level max_level);
+
+  /**
+   * Returns the default max log level
+   *
+   * @return The max log level
+   */
+  static log_level max_default_log_level();
+
+  /**
+   * Sets the default min log level. Default
+   * min leven is LVL_INFO. All log domains
+   * will start with this default max log range
+   *
+   * @param max_level min log level
+   */
+  static void min_default_log_level(log_level min_level);
+
+  /**
+   * Returns the default min log level
+   *
+   * @return The min log level
+   */
+  static log_level min_default_log_level();
+
+  /// @cond MATADOR_DEV
+  std::shared_ptr<log_domain> find_domain(const std::string &name);
+  void log_default(log_level lvl, const std::string &source, const char *message);
+  /// @endcond
+
 protected:
   /// @cond MATADOR_DEV
   log_manager()
   {
-    default_log_domain_ = log_domain_map.insert(std::make_pair("default", std::make_shared<log_domain>("default"))).first->second;
+    default_log_domain_ = log_domain_map.insert(std::make_pair("default", std::make_shared<log_domain>("default", default_log_level_range_))).first->second;
   }
   /// @endcond
 
@@ -102,6 +152,8 @@ private:
   std::shared_ptr<log_domain> default_log_domain_;
 
   std::map<std::string, std::shared_ptr<log_domain>> log_domain_map;
+
+  static log_level_range default_log_level_range_;
 };
 
 /**
@@ -142,6 +194,38 @@ OOS_LOGGER_API std::shared_ptr<stdout_sink> create_stdout_sink();
 OOS_LOGGER_API std::shared_ptr<rotating_file_sink> create_rotating_file_sink(const std::string &logfile, size_t max_size, size_t file_count);
 
 /**
+ * Sets the default min log level.
+ *
+ * @param min_lvl Default min log level
+ */
+OOS_LOGGER_API void default_min_log_level(log_level min_lvl);
+
+/**
+ * Sets the default max log level.
+ *
+ * @param max_lvl Default max log level
+ */
+OOS_LOGGER_API void default_max_log_level(log_level max_lvl);
+
+/**
+ * Sets the domain min log level for the
+ * domain with the given name.
+ *
+ * @param name Log domain name
+ * @param min_lvl Default min log level
+ */
+OOS_LOGGER_API void domain_min_log_level(const std::string &name, log_level min_lvl);
+
+/**
+ * Sets the default max log level for the
+ * domain with the given name.
+ *
+ * @param name Log domain name
+ * @param max_lvl Default max log level
+ */
+OOS_LOGGER_API void domain_max_log_level(const std::string &name, log_level max_lvl);
+
+/**
  * Adds a log sink to the default log domain
  *
  * @param sink The log sink to add
@@ -157,6 +241,20 @@ OOS_LOGGER_API void add_log_sink(sink_ptr sink);
  * @param domain The log domain name to add
  */
 OOS_LOGGER_API void add_log_sink(sink_ptr sink, const std::string &domain);
+
+/**
+ * Removes all sinks from the
+ * default domain
+ */
+OOS_LOGGER_API void clear_all_log_sinks();
+
+/**
+ * Removes all sinks from the log domain
+ * with given domain name
+ *
+ * @param domain Domain name to clear all sinks
+ */
+OOS_LOGGER_API void clear_all_log_sinks(const std::string &domain);
 
 /**
  * Creates a logger with the given source name
@@ -177,6 +275,22 @@ OOS_LOGGER_API logger create_logger(std::string source);
  * @return The logger instance
  */
 OOS_LOGGER_API logger create_logger(std::string source, const std::string &domain);
+
+OOS_LOGGER_API void log_default(log_level lvl, const std::string &source, const char *message);
+
+template<typename... ARGS>
+void log(log_level lvl, const std::string &source, const char *what, ARGS const &... args)
+{
+  char message_buffer[16384];
+
+#ifdef _MSC_VER
+  sprintf_s(message_buffer, 912, what, args...);
+#else
+  sprintf(message_buffer, what, args...);
+#endif
+
+  log_default(lvl, source, message_buffer);
+}
 
 }
 

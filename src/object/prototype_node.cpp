@@ -32,8 +32,8 @@ namespace matador {
 void prototype_node::initialize(object_store *tree, const char *type, bool abstract)
 {
   tree_ = tree;
-  first = matador::make_unique<prototype_node>();
-  last = matador::make_unique<prototype_node>();
+  first = std::make_unique<prototype_node>();
+  last = std::make_unique<prototype_node>();
   type_.assign(type);
   abstract_ = abstract;
   first->next = last.get();

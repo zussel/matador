@@ -52,7 +52,7 @@ private:
   connection_factory();
 
 public:
-  ~connection_factory() override;
+  ~connection_factory() override = default;
 
   connection_impl* create(const std::string &name);
   bool destroy(const std::string &name, connection_impl* impl);

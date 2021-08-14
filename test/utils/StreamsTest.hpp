@@ -31,6 +31,7 @@ public:
   void test_none();
   void test_count();
   void test_reduce();
+  void test_join();
 };
 
 

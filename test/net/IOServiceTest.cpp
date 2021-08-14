@@ -2,6 +2,8 @@
 #include "IOEchoServer.hpp"
 #include "NetUtils.hpp"
 
+#include "matador/logger/log_manager.hpp"
+
 #ifndef _WIN32
 #include <unistd.h>
 #endif
@@ -35,6 +37,7 @@ void IOServiceTest::test_shutdown()
 
 void IOServiceTest::test_acceptor()
 {
+  //matador::add_log_sink(matador::create_stdout_sink());
   IOEchoServer server(7780);
   server.accept();
 

@@ -634,7 +634,7 @@ public:
 
     std::unique_ptr<columns> cols(new matador::columns);
 
-    for (auto name : column_names) {
+    for (const auto& name : column_names) {
       cols->push_back(std::make_shared<matador::column>(name));
     }
 

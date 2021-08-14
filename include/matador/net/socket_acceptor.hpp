@@ -309,8 +309,8 @@ int socket_acceptor<P>::accept(stream_type &stream)
     stream.assign(fd);
     stream.non_blocking(true);
     stream.cloexec(true);
-  } else {
-    detail::throw_logic_error_with_errno("accept failed: ", errno);
+//  } else {
+//    detail::throw_logic_error_with_errno("accept failed: %s", errno);
   }
 
   return fd;
@@ -326,8 +326,8 @@ int socket_acceptor<P>::accept(stream_type &stream, peer_type &endpoint)
     stream.assign(fd);
     stream.non_blocking(true);
     stream.cloexec(true);
-  } else {
-    detail::throw_logic_error_with_errno("accept failed: ", errno);
+//  } else {
+//    detail::throw_logic_error_with_errno("accept failed: %s", errno);
   }
 
   return fd;

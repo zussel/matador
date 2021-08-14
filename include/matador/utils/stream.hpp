@@ -9,6 +9,11 @@
 #include <algorithm>
 #include <memory>
 
+#ifdef _WIN32
+#undef min
+#undef max
+#endif
+
 namespace matador {
 
 /**
@@ -129,7 +134,7 @@ public:
   /**
    * Skip elements of the stream while given
    * predicate is true. Once the predicate gets false
-   * the remaining elements are valid.
+   * the capacity elements are valid.
    *
    * @tparam Predicate Type of the predicate
    * @param pred Condition to check
@@ -390,6 +395,16 @@ public:
   C<T, Allocator> collect();
 
   /**
+   * Iterates over all stream elements and
+   * applies the given predicate to each element.
+   *
+   * @tparam Predicate Type of predicate
+   * @param pred Function to apply
+   */
+  template < typename Predicate >
+  void for_each(Predicate &&pred);
+
+  /**
    * Returns the current sentinel processor of the stream
    * This processor represents the last stream processor
    * and contains its successor to ensure a valid
@@ -401,6 +416,10 @@ public:
   {
     return processor_;
   }
+
+  std::string join();
+  std::string join(const std::string &delimiter);
+  std::string join(const std::string &delimiter, const std::string &prefix, const std::string &suffix);
 
 private:
 
@@ -603,6 +622,38 @@ C<T, Allocator> collect(stream <T> &s)
   return result;
 }
 
+template < class T >
+std::string join(stream<T> &s)
+{
+  std::string result;
+
+  std::for_each(s.begin(), s.end(), [&result](T &&val) {
+    result.append(std::forward<T>(val));
+  });
+
+  return result;
+}
+
+template < class T >
+std::string join(stream<T> &s, const std::string &delimiter, const std::string &prefix, const std::string &suffix)
+{
+  std::string result(prefix);
+
+  auto first = s.begin();
+  auto last = s.end();
+  result.append(*first);
+  ++first;
+  if (first != last) {
+    std::for_each(first, last, [&result, &delimiter](T &&val) {
+      result.append(delimiter);
+      result.append(std::forward<T>(val));
+    });
+  }
+
+  result.append(suffix);
+  return result;
+}
+
 /// @endcond
 
 template<class T>
@@ -610,6 +661,31 @@ template<template<class ...> class C, class Allocator>
 C<T, Allocator> stream<T>::collect()
 {
   return matador::collect<T, C>(*this);
+}
+
+template<class T>
+std::string stream<T>::join()
+{
+  return matador::join<T>(*this);
+}
+
+template<class T>
+std::string stream<T>::join(const std::string &delimiter)
+{
+  return matador::join<T>(*this, delimiter, "", "");
+}
+
+template<class T>
+std::string stream<T>::join(const std::string &delimiter, const std::string &prefix, const std::string &suffix)
+{
+  return matador::join<T>(*this, delimiter, prefix, suffix);
+}
+
+template<class T>
+template<typename Predicate>
+void stream<T>::for_each(Predicate &&pred)
+{
+  std::for_each(begin(), end(), pred);
 }
 
 template<class T>
@@ -774,16 +850,23 @@ stream<T> make_stream(C<T, Allocator> &&container)
   return stream<T>(detail::make_from<T>(std::forward<C<T, Allocator>>(container)));
 }
 
-//template < class T, template < class ... > class C >
-//stream<T> make_stream(C<T> container)
-//{
+template < class T, template < class ... > class C, class Allocator >
+stream<T> make_stream(const C<T, Allocator> &container)
+{
+  return stream<T>(detail::make_from<T>(container.begin(), container.end()));
 //  return stream<T>(detail::make_from<T>(std::begin(container), std::end(container)));
-//}
+}
 
 template < typename T >
 stream<T> make_stream(T &&from, T &&to)
 {
   return stream<T>(detail::make_range<T>(std::forward<T>(from), std::forward<T>(to), 1));
+}
+
+template < class T, template < class U = T > class C >
+stream<T> make_stream(C<T> &&container)
+{
+  return stream<T>(detail::make_from<T>(std::forward<C<T>>(container)));
 }
 
 template < typename T >

@@ -12,12 +12,12 @@ class SequencerTestUnit : public matador::unit_test
 {
 public:
   SequencerTestUnit();
-  ~SequencerTestUnit() override = default;
 
   void test_init();
   void test_inc();
   void test_reset();
   void test_exchange();
+  void test_sync();
 };
 
 

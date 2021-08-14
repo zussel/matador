@@ -15,6 +15,7 @@
 #endif
 
 #include "matador/net/handler.hpp"
+#include "matador/net/handler_creator.hpp"
 #include "matador/net/ip.hpp"
 
 #include "matador/logger/logger.hpp"
@@ -31,10 +32,10 @@ namespace matador {
  * new handler is created and registered within the reactor
  * to handle the established connection
  */
-class OOS_NET_API acceptor : public handler
+class OOS_NET_API acceptor : public handler, public handler_creator
 {
 public:
-  typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, acceptor *accptr)> make_handler_func; /**< Shortcut to a function creating a handler on successfully accpted a new connection */
+  typedef std::function<std::shared_ptr<handler>(tcp::socket sock, tcp::peer endpoint, acceptor *accptr)> t_accept_handler; /**< Shortcut to a function creating a handler on successfully accepted a new connection */
 
   /**
    * Default constructor
@@ -60,7 +61,7 @@ public:
    * @param endpoint Endpoint to listen for new connections
    * @param on_new_connection Function creating a new handler for each accepted new connection
    */
-  acceptor(tcp::peer endpoint, make_handler_func on_new_connection);
+  acceptor(tcp::peer endpoint, t_accept_handler on_new_connection);
 
   /**
    * Destructor
@@ -73,7 +74,7 @@ public:
    *
    * @param on_new_connection Function creating a new handler for the new connection
    */
-  void accecpt(make_handler_func on_new_connection);
+  void accecpt(t_accept_handler on_new_connection);
 
   /**
    * Accepts new connection at the given endpoint.
@@ -83,7 +84,7 @@ public:
    * @param endpoint Endpoint to listen for new connections
    * @param on_new_connection Function creating a new handler for the new connection
    */
-  void accecpt(const tcp::peer& endpoint, make_handler_func on_new_connection);
+  void accecpt(const tcp::peer& endpoint, t_accept_handler on_new_connection);
 
   /**
    * Opens the acceptor means the socket address of the
@@ -102,7 +103,7 @@ public:
 
   /**
    * Is called when a new connection wants to
-   * connect to the endpoint. Once the connection was accepted
+   * execute to the endpoint. Once the connection was accepted
    * a new connection handler is created and the socket is
    * passed to the handler. The handler is then registered
    * to the reactor to disptach its read and write events.
@@ -150,6 +151,11 @@ public:
    */
   bool is_ready_read() const override;
 
+  void notify_close(handler *hndlr) override;
+
+  std::string name() const override;
+
+public:
   /**
    * Returns the current endpoint accepting new connection.
    *
@@ -161,7 +167,7 @@ private:
   tcp::acceptor acceptor_;
   tcp::peer endpoint_;
 
-  make_handler_func make_handler_;
+  t_accept_handler accept_handler_;
 
   logger log_;
 

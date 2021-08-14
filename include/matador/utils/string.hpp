@@ -16,6 +16,7 @@
 
 #include <sstream>
 #include <vector>
+#include <list>
 #include <string>
 #include <type_traits>
 
@@ -35,6 +36,7 @@ class date;
  * @return The size of the vector.
  */
 OOS_UTILS_API size_t split(const std::string &str, char delim, std::vector<std::string> &values);
+OOS_UTILS_API size_t split(const std::string &str, char delim, std::list<std::string> &values);
 
 /**
  * @fn std::string trim(const std::string& str, const std::string&)

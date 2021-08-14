@@ -10,22 +10,22 @@ using namespace matador;
 TimeTestUnit::TimeTestUnit()
   : unit_test("time", "time test unit")
 {
-  add_test("create", std::bind(&TimeTestUnit::test_create, this), "create time");
-  add_test("init", std::bind(&TimeTestUnit::test_initialize, this), "init time");
-  add_test("invalid", std::bind(&TimeTestUnit::test_invalid, this), "invalid time");
-  add_test("copy", std::bind(&TimeTestUnit::test_copy, this), "copy time");
-  add_test("assign", std::bind(&TimeTestUnit::test_assign, this), "assign time");
-  add_test("compare", std::bind(&TimeTestUnit::test_compare, this), "compare time");
-  add_test("modify", std::bind(&TimeTestUnit::test_modify, this), "modify time");
-  add_test("parse", std::bind(&TimeTestUnit::test_parse, this), "parse time");
-  add_test("format", std::bind(&TimeTestUnit::test_format, this), "format time");
-  add_test("to_date", std::bind(&TimeTestUnit::test_to_date, this), "time to date");
-  add_test("strftime", std::bind(&TimeTestUnit::test_strftime, this), "test strftime");
+  add_test("create", [this] { test_create(); }, "create time");
+  add_test("init", [this] { test_initialize(); }, "init time");
+  add_test("invalid", [this] { test_invalid(); }, "invalid time");
+  add_test("copy", [this] { test_copy(); }, "copy time");
+  add_test("assign", [this] { test_assign(); }, "assign time");
+  add_test("compare", [this] { test_compare(); }, "compare time");
+  add_test("modify", [this] { test_modify(); }, "modify time");
+  add_test("parse", [this] { test_parse(); }, "parse time");
+  add_test("format", [this] { test_format(); }, "format time");
+  add_test("to_date", [this] { test_to_date(); }, "time to date");
+  add_test("strftime", [this] { test_strftime(); }, "test strftime");
 }
 
 void TimeTestUnit::test_create()
 {
-  time_t t = ::time(0);
+  time_t t = ::time(nullptr);
 #ifdef _MSC_VER
   struct tm *tt = new tm;
   localtime_s(tt, &t);

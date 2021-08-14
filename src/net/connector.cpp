@@ -13,8 +13,8 @@ connector::connector()
   : log_(matador::create_logger("Connector"))
 {}
 
-connector::connector(connector::make_handler_func on_new_connection)
-  : make_handler_(std::move(on_new_connection))
+connector::connector(t_connect_handler on_new_connection)
+  : connect_handler_(std::move(on_new_connection))
   , log_(matador::create_logger("Connector"))
 {}
 
@@ -24,9 +24,9 @@ void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints)
   r.schedule_timer(shared_from_this(), 0, 3);
 }
 
-void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints, make_handler_func on_new_connection)
+void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints, t_connect_handler on_new_connection)
 {
-  make_handler_ = std::move(on_new_connection);
+  connect_handler_ = std::move(on_new_connection);
   connect(r, endpoints);
 }
 
@@ -45,13 +45,14 @@ void connector::on_timeout()
       log_.error("couldn't establish connection to: %s", ep.to_string().c_str(), os::strerror(errno, error_buffer, 1024));
       continue;
     } else {
-      log_.info("connection established to %s", ep.to_string().c_str());
+      log_.info("connection established to %s (fd: %d)", ep.to_string().c_str(), stream.id());
     }
 
     stream.non_blocking(true);
-    auto h = make_handler_(stream, ep, this);
+    auto h = connect_handler_(stream, ep, this);
 
     get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
+    break;
   }
   if (stream.is_open()) {
     endpoints_.clear();
@@ -68,4 +69,15 @@ bool connector::is_ready_read() const
 {
   return false;
 }
+
+void connector::notify_close(handler *)
+{
+
+}
+
+std::string connector::name() const
+{
+  return "connector";
+}
+
 }

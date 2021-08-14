@@ -101,6 +101,14 @@ public:
     return object_view<T>(store());
   }
 
+  template < class T, class V >
+  object_ptr<T> get(V id)
+  {
+    auto pk = make_identifier(id);
+
+    return store().get<T>(pk);
+  }
+
   /**
    * @brief Saves an object to the database
    *

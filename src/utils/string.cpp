@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <cstring>
 
-#include <time.h>
+#include <ctime>
 
 namespace matador {
 
@@ -22,9 +22,19 @@ size_t split(const std::string &str, char delim, std::vector<std::string> &value
   return values.size();
 }
 
+size_t split(const std::string &str, char delim, std::list<std::string> &values)
+{
+  std::stringstream ss(str);
+  std::string item;
+  while (std::getline(ss, item, delim)) {
+    values.push_back(item);
+  }
+  return values.size();
+}
+
 #ifdef _MSC_VER
 const char* date_format::ISO8601 = "%Y-%m-%d";
-const char* time_format::ISO8601 = "%Y-%m-%d %H:%M:%S";
+const char* time_format::ISO8601 = "%Y-%m-%dT%H:%M:%S";
 #endif
 
 std::string trim(const std::string& str, const std::string& whitespace)
@@ -105,7 +115,7 @@ std::string to_string(const matador::time &x, const char *format)
 std::string to_string(const matador::date &x, const char *format)
 {
   time_t now = std::time(nullptr);
-  struct tm timeinfo;
+  struct tm timeinfo{};
 
 #ifdef _MSC_VER
   localtime_s(&timeinfo, &now);

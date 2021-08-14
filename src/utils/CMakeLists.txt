@@ -17,7 +17,17 @@ SET(SOURCES
   generic_json_parser.cpp
   json_mapper.cpp
   file.cpp os.cpp
-  buffer.cpp)
+  buffer.cpp thread_pool.cpp
+  json_serializer.cpp
+  base64.cpp
+  buffer_view.cpp
+  string_cursor.cpp
+  sha256.cpp
+  hmac.cpp
+  json_mapper_serializer.cpp
+  sequence_synchronizer.cpp
+  url.cpp html.cpp
+  json_identifier_serializer.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -63,7 +73,19 @@ SET(HEADER
   ../../include/matador/utils/stream_processor.hpp
   ../../include/matador/utils/stream_processor.tpp
   ../../include/matador/utils/stream.hpp
-  ../../include/matador/utils/optional.hpp)
+  ../../include/matador/utils/optional.hpp
+  ../../include/matador/utils/thread_pool.hpp
+  ../../include/matador/utils/json_serializer.hpp
+  ../../include/matador/utils/base64.hpp
+  ../../include/matador/utils/buffer_view.hpp
+  ../../include/matador/utils/string_cursor.hpp
+  ../../include/matador/utils/sha256.hpp
+  ../../include/matador/utils/hmac.hpp
+  ../../include/matador/utils/json_mapper_serializer.hpp
+  ../../include/matador/utils/sequence_synchronizer.hpp
+  ../../include/matador/utils/url.hpp
+  ../../include/matador/utils/html.hpp
+  ../../include/matador/utils/json_identifier_serializer.hpp)
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
 

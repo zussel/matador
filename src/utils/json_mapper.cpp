@@ -1,73 +1,20 @@
 #include "matador/utils/json_mapper.hpp"
 
 namespace matador {
-void json_mapper_serializer::serialize(const char *id, identifier<std::string> &pk)
-{
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_string()) {
-    return;
-  }
 
-  pk.value(runtime_data_.value.as<std::string>());
+std::string json_mapper::to_string(const json &js, const json_format &format)
+{
+  return js.str(format);
 }
 
-void json_mapper_serializer::serialize(const char *id, std::string &to)
+json json_mapper::to_json(const std::string &str)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_string()) {
-    return;
-  }
-  to = runtime_data_.value.as<std::string>();
+  return json_parser_.parse(str);
 }
 
-void json_mapper_serializer::serialize(const char *id, bool &to)
+json json_mapper::to_json(const char *str)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_boolean()) {
-    return;
-  }
-  to = runtime_data_.value.as<bool>();
-}
-
-void json_mapper_serializer::serialize(const char *id, std::string &to, size_t)
-{
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_string()) {
-    return;
-  }
-  to = runtime_data_.value.as<std::string>();
-}
-
-void json_mapper_serializer::serialize(const char *id, date &to)
-{
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_string()) {
-    return;
-  }
-
-  to = date::parse(runtime_data_.value.as<std::string>(), date_format::ISO8601);
-}
-
-void json_mapper_serializer::serialize(const char *id, time &to)
-{
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_string()) {
-    return;
-  }
-
-  to = time::parse(runtime_data_.value.as<std::string>(), "%Y-%m-%d %H:%M:%S");
+  return json_parser_.parse(str);
 }
 
 }

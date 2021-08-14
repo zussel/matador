@@ -250,7 +250,9 @@ void generic_json_parser<T>::parse_json(const char *json_str, bool check_for_eos
       parse_json_array(check_for_eos);
       break;
     default:
-      throw json_exception("root must be either array '[]' or object '{}'");
+      parse_json_value();
+      break;
+      //throw json_exception("root must be either array '[]' or object '{}'");
   }
 
   // skip white
@@ -559,6 +561,7 @@ typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_num
 
   switch (c) {
     case '\n':
+    case '\0':
     case ' ':
     case ',':
     case ']':

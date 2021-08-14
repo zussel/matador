@@ -5,6 +5,8 @@
 #include "matador/net/acceptor.hpp"
 #include "matador/net/connector.hpp"
 
+#include "matador/logger/log_manager.hpp"
+
 #include "EchoServer.hpp"
 
 #include <thread>
@@ -148,9 +150,12 @@ void ReactorTest::test_shutdown()
 
 void ReactorTest::test_reactor_acceptor()
 {
+  //matador::default_min_log_level(log_level::LVL_DEBUG);
+  //matador::add_log_sink(matador::create_stdout_sink());
+    
   auto echo_conn = std::make_shared<EchoServer>();
 
-  auto ep = tcp::peer(address::v4::any(), 7778);
+  auto ep = tcp::peer(address::v4::any(), 7779);
   auto ac = std::make_shared<acceptor>(ep, [echo_conn](tcp::socket sock, tcp::peer p, acceptor *) {
     echo_conn->init(std::move(sock), std::move(p));
     return echo_conn;
@@ -162,7 +167,7 @@ void ReactorTest::test_reactor_acceptor()
 
   wrapper.start();
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (300));
+  std::this_thread::sleep_for(std::chrono::milliseconds (800));
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
@@ -171,7 +176,7 @@ void ReactorTest::test_reactor_acceptor()
 
   int ret = client.open(tcp::v4());
   UNIT_ASSERT_FALSE(ret < 0);
-  auto srv = tcp::peer(address::v4::loopback(), 7778);
+  auto srv = tcp::peer(address::v4::loopback(), 7779);
   ret = client.connect(srv);
   UNIT_ASSERT_FALSE(ret < 0);
   buffer data;

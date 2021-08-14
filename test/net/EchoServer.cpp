@@ -90,3 +90,8 @@ bool EchoServer::timeout_called() const
 {
   return on_timeout_called_;
 }
+
+std::string EchoServer::name() const
+{
+  return "EchoServer";
+}

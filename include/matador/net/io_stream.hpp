@@ -15,12 +15,14 @@
 #endif
 
 #include <functional>
+#include <list>
 
 #include "matador/net/ip.hpp"
 
 namespace matador {
 
 class buffer;
+class buffer_view;
 
 /**
  * The io stream class is proposed
@@ -31,8 +33,8 @@ class buffer;
 class OOS_NET_API io_stream
 {
 public:
-  typedef std::function<void(int ec, int nread)> t_read_handler;    /**< Short for function to process read data */
-  typedef std::function<void(int ec, int nwrite)> t_write_handler;  /**< Short for function to prepare data to write */
+  typedef std::function<void(int ec, long nread)> t_read_handler;    /**< Short for function to process read data */
+  typedef std::function<void(int ec, long nwrite)> t_write_handler;  /**< Short for function to prepare data to write */
 
   /**
    * This interface is called when data should
@@ -42,17 +44,17 @@ public:
    * @param buf Buffer to read the data in
    * @param read_handler Handler to be called when data was read
    */
-  virtual void read(buffer &buf, t_read_handler read_handler) = 0;
+  virtual void read(const buffer_view &buf, t_read_handler read_handler) = 0;
 
   /**
    * This interface is called when data should be written
    * to a socket. Once the data was written the given
    * write handler is called.
    *
-   * @param buf Buffer containing the data to write
+   * @param buffers List of buffers containing the data to write
    * @param write_handler Handler to be called when the data was written
    */
-  virtual void write(buffer &buf, t_write_handler write_handler) = 0;
+  virtual void write(std::list<buffer_view> &buffers, t_write_handler write_handler) = 0;
 
   /**
    * Closes the stream
@@ -64,6 +66,8 @@ public:
    * @return
    */
   virtual tcp::socket& stream() = 0;
+
+  virtual std::string name() const = 0;
 };
 
 }

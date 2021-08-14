@@ -200,6 +200,12 @@ private:
   bool as_value_ = false;
 };
 
+template < class T >
+identifier<T> make_identifier(T val)
+{
+  return identifier<T>(val);
+}
+
 }
 
 #endif //OOS_BASIC_IDENTIFIER_HPP

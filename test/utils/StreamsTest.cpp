@@ -9,29 +9,30 @@ using namespace matador;
 StreamsTest::StreamsTest()
   : unit_test("streams", "streams test")
 {
-  add_test("generate", std::bind(&StreamsTest::test_generate, this), "streams generate test");
-  add_test("iterate", std::bind(&StreamsTest::test_iterate, this), "streams iterate test");
-  add_test("min", std::bind(&StreamsTest::test_min, this), "streams find minimum test");
-  add_test("max", std::bind(&StreamsTest::test_max, this), "streams find maximum test");
-  add_test("filter", std::bind(&StreamsTest::test_filter, this), "streams filter elements test");
-  add_test("map", std::bind(&StreamsTest::test_map, this), "streams map elements test");
-  add_test("flatmap", std::bind(&StreamsTest::test_flatmap, this), "streams flatmap elements test");
-  add_test("take", std::bind(&StreamsTest::test_take, this), "streams take elements test");
-  add_test("take_while", std::bind(&StreamsTest::test_take_while, this), "streams take while elements test");
-  add_test("skip", std::bind(&StreamsTest::test_skip, this), "streams skip elements test");
-  add_test("skip_while", std::bind(&StreamsTest::test_skip_while, this), "streams skip while elements test");
-  add_test("every", std::bind(&StreamsTest::test_every, this), "streams every elements test");
-  add_test("peek", std::bind(&StreamsTest::test_peek, this), "streams peek element test");
-  add_test("concat", std::bind(&StreamsTest::test_concat, this), "streams concat stream test");
-  add_test("pack_every", std::bind(&StreamsTest::test_pack_every, this), "streams pack every stream test");
-  add_test("first", std::bind(&StreamsTest::test_first, this), "streams first element test");
-  add_test("last", std::bind(&StreamsTest::test_last, this), "streams last element test");
-  add_test("at", std::bind(&StreamsTest::test_at, this), "streams element at test");
-  add_test("any", std::bind(&StreamsTest::test_any, this), "streams any element test");
-  add_test("all", std::bind(&StreamsTest::test_all, this), "streams all elements test");
-  add_test("none", std::bind(&StreamsTest::test_none, this), "streams none element test");
-  add_test("count", std::bind(&StreamsTest::test_count, this), "streams element count test");
-  add_test("reduce", std::bind(&StreamsTest::test_reduce, this), "streams reduce elements test");
+  add_test("generate", [this] { test_generate(); }, "streams generate test");
+  add_test("iterate", [this] { test_iterate(); }, "streams iterate test");
+  add_test("min", [this] { test_min(); }, "streams find minimum test");
+  add_test("max", [this] { test_max(); }, "streams find maximum test");
+  add_test("filter", [this] { test_filter(); }, "streams filter elements test");
+  add_test("map", [this] { test_map(); }, "streams map elements test");
+  add_test("flatmap", [this] { test_flatmap(); }, "streams flatmap elements test");
+  add_test("take", [this] { test_take(); }, "streams take elements test");
+  add_test("take_while", [this] { test_take_while(); }, "streams take while elements test");
+  add_test("skip", [this] { test_skip(); }, "streams skip elements test");
+  add_test("skip_while", [this] { test_skip_while(); }, "streams skip while elements test");
+  add_test("every", [this] { test_every(); }, "streams every elements test");
+  add_test("peek", [this] { test_peek(); }, "streams peek element test");
+  add_test("concat", [this] { test_concat(); }, "streams concat stream test");
+  add_test("pack_every", [this] { test_pack_every(); }, "streams pack every stream test");
+  add_test("first", [this] { test_first(); }, "streams first element test");
+  add_test("last", [this] { test_last(); }, "streams last element test");
+  add_test("at", [this] { test_at(); }, "streams element at test");
+  add_test("any", [this] { test_any(); }, "streams any element test");
+  add_test("all", [this] { test_all(); }, "streams all elements test");
+  add_test("none", [this] { test_none(); }, "streams none element test");
+  add_test("count", [this] { test_count(); }, "streams element count test");
+  add_test("reduce", [this] { test_reduce(); }, "streams reduce elements test");
+  add_test("join", [this] { test_join(); }, "streams join to string elements test");
 }
 
 bool is_even(int val) { return val % 2 == 0; }
@@ -113,6 +114,20 @@ void StreamsTest::test_iterate()
   auto current = first++;
 
   UNIT_ASSERT_EQUAL(2, *current);
+
+  std::vector<std::shared_ptr<std::string>> shared_string_vector {
+    std::make_shared<std::string>("hello"),
+    std::make_shared<std::string>("world"),
+    std::make_shared<std::string>("salut"),
+    std::make_shared<std::string>("stream")
+  };
+
+  auto res = make_stream(shared_string_vector)
+    .filter([](const auto &val){ return *val == "world"; })
+    .map([](const auto &val){ return *val; })
+    .collect<std::list>();
+
+  UNIT_ASSERT_EQUAL(1UL, res.size());
 }
 
 void StreamsTest::test_min()
@@ -355,7 +370,7 @@ void StreamsTest::test_count()
 
 void StreamsTest::test_reduce()
 {
-  auto reduce_result = make_stream(1, 8).reduce(std::plus<int>());
+  auto reduce_result = make_stream(1, 8).reduce(std::plus<>());
 
   UNIT_ASSERT_TRUE(reduce_result.has_value());
   UNIT_ASSERT_EQUAL(36, reduce_result.value());
@@ -394,4 +409,19 @@ void StreamsTest::test_reduce()
 
   UNIT_ASSERT_TRUE(reduce_identity_func_result.has_value());
   UNIT_ASSERT_EQUAL("1 <-> 2 <-> 3 <-> 4 <-> 5 <-> 6 <-> 7 <-> 8", reduce_identity_func_result.value());
+}
+
+void StreamsTest::test_join()
+{
+  auto result = make_stream({"one", "two", "three", "four"}).join();
+
+  UNIT_ASSERT_EQUAL("onetwothreefour", result);
+
+  result = make_stream({"one", "two", "three", "four"}).join(", ");
+
+  UNIT_ASSERT_EQUAL("one, two, three, four", result);
+
+  result = make_stream({"one", "two", "three", "four"}).join(", ", "[", "]");
+
+  UNIT_ASSERT_EQUAL("[one, two, three, four]", result);
 }
