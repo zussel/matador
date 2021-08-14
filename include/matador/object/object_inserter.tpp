@@ -19,7 +19,9 @@ void object_inserter::insert(object_proxy *proxy, T *o, bool notify)
   if (proxy->obj()) {
     matador::access::serialize(*this, *o);
   }
-  proxy_stack_.pop();
+  if (!proxy_stack_.empty()) {
+	 proxy_stack_.pop();
+  }
 }
 
 template<class T>
