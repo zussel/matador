@@ -77,9 +77,9 @@ void OrmTestUnit::test_demo()
 // add color
   george.modify()->colors.push_back("yellow");
   s.save(george);
-// delete george
-  s.remove(george);
 
+  // delete george
+  s.remove(george);
   s.flush();
 
   p.drop();

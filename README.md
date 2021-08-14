@@ -112,31 +112,74 @@ server.on_get("/person", [this](const request &req) {
   return response::ok(body, mime_types::TYPE_APPLICATION_JSON);
 });
 
-// insert person
-server.on_post("/person", [this](const request &req) {
+// return one person
+server.on_get("/person/{id: \\d+}", [&s](const http::request &req) {
+  auto id = std::stoul(req.path_params().at("id"));
+  auto result = s.get<person>(id);
+
+  if (result.empty()) {
+    return http::response::not_found();
+  }
+
   json_object_mapper mapper;
-  
-  auto p = mapper.to_object<person>(req.body());
-  
-  
+
+  std::string body = mapper.to_string(result, json_format::pretty);
+
+  return http::response::ok(body, http::mime_types::TYPE_APPLICATION_JSON);
 });
 
-// insert george
-// returns an matador::object_ptr<person>
-auto george = s.insert(new person(1, "george"));
-s.flush();
+// insert person
+server.on_post("/person", [&s](const http::request &req) {
+  json_object_mapper mapper;
 
-// modify george
-george.modify()->age = 35;
-s.save(george);
+  auto p = mapper.to_ptr<person>(req.body());
+  auto optr = s.insert(p.release());
+  s.flush();
 
-// add color
-george.modify()->colors.push_back("brown");
-s.save(george);
+  std::string body = mapper.to_string(optr, json_format::pretty);
+  return http::response::ok(body, http::mime_types::TYPE_APPLICATION_JSON);
+});
 
-// delete george
-s.remove(george);
-s.flush();
+// update person
+server.on_put("/person/{id: \\d+}", [&s](const http::request &req) {
+  auto id = std::stoul(req.path_params().at("id"));
+  auto result = s.get<person>(id);
+
+  if (result.empty()) {
+    return http::response::not_found();
+  }
+
+  json_object_mapper mapper;
+  auto p = mapper.to_ptr<person>(req.body());
+
+  // update entity
+  result.modify()->name = p->name;
+  result.modify()->birthday = p->birthday;
+  result.modify()->colors.clear();
+  for (const auto &color : p->colors) {
+    result.modify()->colors.push_back(color);
+  }
+  s.flush();
+
+  return http::response::no_content();
+});
+
+// delete person
+server.on_remove("/person/{id: \\d+}", [&s](const http::request &req) {
+  auto id = std::stoul(req.path_params().at("id"));
+  auto result = s.get<person>(id);
+
+  if (result.empty()) {
+   return http::response::not_found();
+  }
+
+  s.remove(result);
+
+  return http::response::no_content();
+});
+
+server.run();
+net::cleanup();
 ```
 Requirements
 ------------
