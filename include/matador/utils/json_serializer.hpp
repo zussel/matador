@@ -26,6 +26,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 class OOS_UTILS_API json_serializer
 {
 public:
@@ -224,6 +226,8 @@ private:
   unsigned depth_ = 0;
   bool is_array = false;
 };
+
+/// @endcond
 
 }
 #endif //MATADOR_JSON_SERIALIZER_HPP

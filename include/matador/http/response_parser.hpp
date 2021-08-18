@@ -21,6 +21,8 @@ namespace http {
 
 class response;
 
+/// @cond MATADOR_DEV
+
 class OOS_HTTP_API response_parser
 {
 public:
@@ -95,6 +97,8 @@ private:
   static constexpr const char* HTTP_VERSION_PREFIX = "HTTP";
   static const std::size_t HTTP_VERSION_PREFIX_LEN;
 };
+
+/// @endcond
 
 }
 }

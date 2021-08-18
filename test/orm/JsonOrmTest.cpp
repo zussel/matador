@@ -73,7 +73,7 @@ void JsonOrmTest::test_insert_from_json()
 
 )";
 
-  auto ptr = mapper.to_ptr<ormjson::person>(data);
+  auto ptr = mapper.to_object<ormjson::person>(data);
 
   session s(p);
 

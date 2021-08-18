@@ -43,6 +43,8 @@ public:
   void serialize(V &obj);
   template < class V >
   void serialize(std::unique_ptr<V> &obj);
+  template < class V >
+  void serialize(std::shared_ptr<V> &obj);
 
   template < class V, object_holder_type OPT >
   void serialize(object_pointer<V, OPT> &obj);
@@ -85,6 +87,12 @@ std::unique_ptr<T> create_object(std::unique_ptr<T>&)
   return std::unique_ptr<T>(new T);
 }
 
+template < class T >
+std::shared_ptr<T> create_object(std::shared_ptr<T>&)
+{
+  return std::shared_ptr<T>(new T);
+}
+
 template < class T, object_holder_type OPT >
 object_pointer<T, OPT> create_object(object_pointer<T, OPT>&)
 {
@@ -107,6 +115,12 @@ void json_object_mapper_serializer::serialize(V &obj)
 
 template<class V>
 void json_object_mapper_serializer::serialize(std::unique_ptr<V> &obj)
+{
+  access::serialize(*this, *obj);
+}
+
+template<class V>
+void json_object_mapper_serializer::serialize(std::shared_ptr<V> &obj)
 {
   access::serialize(*this, *obj);
 }

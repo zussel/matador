@@ -26,6 +26,8 @@ namespace http {
 
 class request;
 
+/// @cond MATADOR_DEV
+
 class OOS_HTTP_API request_parser {
 public:
   enum return_t {
@@ -114,6 +116,8 @@ private:
   static constexpr const char* HTTP_VERSION_PREFIX = "HTTP";
   static const std::size_t HTTP_VERSION_PREFIX_LEN;
 };
+
+/// @endcond
 
 }
 }

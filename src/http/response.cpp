@@ -158,6 +158,11 @@ response response::from_file(const std::string &file_path)
   return resp;
 }
 
+response response::ok(const matador::json &body)
+{
+  return ok(body.str(), mime_types::TYPE_APPLICATION_JSON);
+}
+
 response response::ok(const string &body, mime_types::types type)
 {
   response resp = create(http::OK);

@@ -42,7 +42,7 @@ void EchoServer::on_input()
 
 void EchoServer::on_output()
 {
-  int len = stream_.send(message_);
+  ssize_t len = stream_.send(message_);
   log_.info("sent %d bytes", len);
   if (len == 0) {
     on_close();

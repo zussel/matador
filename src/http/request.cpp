@@ -23,11 +23,6 @@ std::string request::url() const
   return url_;
 }
 
-std::string request::query() const
-{
-  return query_;
-}
-
 std::string request::fragment() const
 {
   return fragment_;

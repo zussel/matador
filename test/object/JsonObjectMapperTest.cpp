@@ -15,7 +15,7 @@ JsonObjectMapperTest::JsonObjectMapperTest()
   add_test("has_many", [this] { test_has_many(); }, "test has many json object mapper");
   add_test("has_many_builtin", [this] { test_has_many_builtin(); }, "test has many builtin json object mapper");
   add_test("array", [this] { test_array(); }, "test array of objects json object mapper");
-  add_test("to_json", [this] { test_to_json(); }, "test object to json");
+  add_test("to_json_string", [this] { test_to_json(); }, "test object to json");
   add_test("to_string", [this] { test_to_string(); }, "test object to string");
   add_test("to_ptr", [this] { test_to_ptr(); }, "test string to object pointer");
 }
@@ -213,7 +213,7 @@ void JsonObjectMapperTest::test_to_ptr()
 {
   json_object_mapper mapper;
 
-  auto p = mapper.to_ptr<many_ints>(R"(  {
+  auto p = mapper.to_object<many_ints>(R"(  {
 "id":  5,
 "elements": [1, 2, 3]
   } )");

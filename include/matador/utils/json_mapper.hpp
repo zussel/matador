@@ -36,9 +36,9 @@ namespace matador {
  * string to_string(object)
  * string to_string(array<object>)
  *
- * json to_json(object)
- * json to_json(array<object>)
- * json to_json(string)
+ * json to_json_string(object)
+ * json to_json_string(array<object>)
+ * json to_json_string(string)
  *
  * object to_object(json)
  * object to_object(string)

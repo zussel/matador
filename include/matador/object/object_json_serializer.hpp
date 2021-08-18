@@ -26,6 +26,8 @@
 
 #include <string>
 
+/// @cond MATADOR_DEV
+
 namespace matador {
 
 class MATADOR_OBJECT_API object_json_serializer
@@ -112,4 +114,7 @@ private:
 };
 
 }
+
+/// @endcond
+
 #endif //MATADOR_OBJECT_JSON_SERIALIZER_HPP
