@@ -274,7 +274,7 @@ int main(int /*argc*/, char* /*argv*/[])
   server.on_post("/person", [&s](const http::request &req) {
     json_object_mapper mapper;
 
-    auto p = mapper.to_ptr<person>(req.body());
+    auto p = mapper.to_object<person>(req.body());
     auto optr = s.insert(p.release());
     s.flush();
 
@@ -292,7 +292,7 @@ int main(int /*argc*/, char* /*argv*/[])
     }
 
     json_object_mapper mapper;
-    auto p = mapper.to_ptr<person>(req.body());
+    auto p = mapper.to_object<person>(req.body());
 
     // update entity
     result.modify()->name = p->name;

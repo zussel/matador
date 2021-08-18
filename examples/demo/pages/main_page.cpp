@@ -23,7 +23,7 @@ main_page::main_page(matador::http::server &s, matador::persistence &p)
   });
 }
 
-matador::http::response main_page::view(const matador::http::request &p)
+matador::http::response main_page::view(const matador::http::request &)
 {
   json data;
   data["title"] = "Movies";

@@ -13,7 +13,7 @@ int main(int /*argc*/, char* /*argv*/[])
   http::server server(8081);
   server.add_routing_middleware();
 
-  server.on_get("/api/user", [](const http::request &req) {
+  server.on_get("/api/user", [](const http::request &) {
     return http::response::ok("hello world", http::mime_types::TYPE_TEXT_PLAIN);
   });
   server.run();
