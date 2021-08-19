@@ -9,22 +9,32 @@ within a ```http::response```.
 When dealing with HTTP communication there is always a ```request``` object representing a
 specific HTTP request. In __matador__ there also a ```http::request```.
 
-The class bundles all request 
+Im most cases the request is either created by the ```http::client``` class or by the request
+parser called with the ```http::server```. When accessing and evaluating the request in a
+regsitered callback the user can access all neccessary information from the request object.
+
+The accessors of the request class are self explanatory:
+
 {% highlight cpp linenos %}
 class request
 {
   http::method_t method() const;
   std::string url() const;
-  std::string query() const;
   std::string fragment() const;
   http::version version() const;
   std::string host() const;
+  const http::content& content() const;
+  const t_string_param_map& headers() const;
+  const t_string_param_map& path_params() const;
+  const t_string_param_map& query_params() const;
+  const t_string_param_map& form_data() const;
+  const std::string& body() const;
 };
 {% endhighlight %}
 
-
 ### Response
 
+The ```http::response
 ### Http Server
 
 With the ```http::server``` class it is easy to create a simple HTTP server in a few lines of code.
@@ -61,7 +71,7 @@ like __GET__, __POST__, __PUT__ and __DELETE__. The client is by now synchronous
 of the remote side.
 
 {% highlight cpp linenos %}
-http::client cl(8000);
+http::client client("www.remote.net:8000");
 
 http::response resp =  client.get("/hello");
 {% endhighlight %}

@@ -46,135 +46,14 @@ layout: default
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-          <h2 class="centered">Unique Container</h2>
-      </div>
-      <div class="col-md-6">
-        <p>
-          matador comes with a unique kind of container where you can store all your objects
-          in. Once the hierarchy of your entities is set up you can perform all CRUD operations
-          on the container plus filtering and using views.
-        </p>
-        <p><a class="btn btn-warning" href="guide#objects" role="button">View details &raquo;</a></p>
-      </div>
-      <div class="col-md-6 nopadding">
-{% highlight cpp linenos %}
-object_store store;
-
-// prepare object store
-store.attach<person>("person");
-store.attach<employee, person>("employee");
-store.attach<department>("department");
-
-// insert instances of different object types
-auto george = store.insert(new employee("george"));
-auto jane = store.insert(new employee("jane"));
-
-auto dep = store.insert(new department("insurance"));
-{% endhighlight %}
-      </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2 class="centered">Fluent Query</h2>
-        </div>
-        <div class="col-md-6 nopadding">
-{% highlight cpp linenos %}
-connection conn("sqlite://db.sqlite");
-conn.connect();
-query<person> q("person", conn);
-
-column name("name");
-column age("age");
-auto res = q
-  .select()
-  .where(name != "george" && age > 35)
-  .execute();
-
-for (auto p in res) {
-  std::cout << "name: " p->name << "\n";
-}
-{% endhighlight %}
-      </div>
-      <div class="col-md-6">
-        <p>
-          The sql query module provides simple fluent interface to build sql queries. A query
-          can be typed or just work on a anonymous row object. Once a query is setup it can be executed
-          directly or be captured in a prepared statement.
-        </p>
-        <p><a class="btn btn-warning" href="guide#queries" role="button">View details &raquo;</a></p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-          <h2 class="centered">Real Relations</h2>
-      </div>
-      <div class="col-md-6">
-        <p>
-          matador comes with real relation handling (one to one, one to many and
-          many to many). Once one relation side changes the other side of the relation is
-          updated automatically. This works with plain object store as well as with
-          all supported database backends.
-        </p>
-        <p><a class="btn btn-warning" href="guide#relations" role="button">View details &raquo;</a></p>
-      </div>
-      <div class="col-md-6 nopadding">
-{% highlight cpp linenos %}
-object_store store;
-// prepare store ...
-
-auto george = store.insert(new employee("george"));
-auto jane = store.insert(new employee("jane"));
-auto dep = store.insert(new department("insurance"));
-
-dep->employees.push_back(jane);
-
-// janes department name is insurance
-std::cout << jane->department->name << "\n"
-
-george.modify()->department = dep;
-
-// second employee in department is george
-std::cout << dep->employees.size() << "\n"
-{% endhighlight %}
-      </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2 class="centered">Transactions</h2>
-        </div>
-        <div class="col-md-6 nopadding">
-{% highlight cpp linenos %}
-object_store store;
-// prepare store ...
-
-transaction tr(store);
-try {
-  store.insert(new author("john irwing"));
-  store.insert(new author("charles darwin"));
-  tr.commit();
-} catch (std::exception &ex) {
-  tr.rollback();
-}
-{% endhighlight %}
-      </div>
-      <div class="col-md-6">
-        <p>
-          With transcations the user has the possibility to pack a couple of changes into a logical
-          unit which can be rolled back if one of the changes fails. They can be used within the object store
-          and the ORM layer.
-        </p>
-        <p><a class="btn btn-warning" href="guide#transactions" role="button">View details &raquo;</a></p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
           <h2 class="centered">ORM Layer</h2>
       </div>
       <div class="col-md-6">
-        <p>
-          The ORM layer finally combines the unique container, the fluent query interface and the
-          relation handling. It hides all the database work, takes care of transaction handling and
-          object serialization, handles all types of relationships and provides the usera simple interface.
+        <h3 class="centered">Define your ORM layout</h3>
+        <p class="centered large">
+          The ORM layer lets you define your persistence entity schema. It hides
+          all the database work, takes care of transaction handling, relation handling and
+          object serialization and provides a simple interface.
         </p>
         <p><a class="btn btn-warning" href="guide#persistence" role="button">View details &raquo;</a></p>
       </div>
@@ -218,14 +97,141 @@ server.run();
 {% endhighlight %}
       </div>
       <div class="col-md-6">
-        <p>
-          A simple Web Servers finishes the matador setup and lets the
+        <h3 class="centered">Setup a HTTP server</h3>
+        <p class="centered large">
+          A simple Web Servers completes the matador setup and lets the
           user create a web application with routing. Additionally a small
           template engine is also available.
         </p>
         <p><a class="btn btn-warning" href="guide#http" role="button">View details &raquo;</a></p>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-12">
+          <h2 class="centered">Unique Container</h2>
+      </div>
+      <div class="col-md-6">
+        <h3 class="centered">One container for all kind of objects</h3>
+        <p class="centered large">
+          matador comes with a unique kind of container where you can store all your objects
+          in. Once the hierarchy of your entities is set up you can perform all CRUD operations
+          on the container plus filtering and using views. This container is used by the
+          ORM layer but can also used as a standalone container.
+        </p>
+        <p><a class="btn btn-warning" href="guide#objects" role="button">View details &raquo;</a></p>
+      </div>
+      <div class="col-md-6 nopadding">
+{% highlight cpp linenos %}
+object_store store;
+
+// prepare object store
+store.attach<person>("person");
+store.attach<employee, person>("employee");
+store.attach<department>("department");
+
+// insert instances of different object types
+auto george = store.insert(new employee("george"));
+auto jane = store.insert(new employee("jane"));
+
+auto dep = store.insert(new department("insurance"));
+{% endhighlight %}
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="centered">Fluent Query</h2>
+        </div>
+        <div class="col-md-6 nopadding">
+{% highlight cpp linenos %}
+connection conn("sqlite://db.sqlite");
+conn.connect();
+query<person> q("person", conn);
+
+column name("name");
+column age("age");
+auto res = q
+  .select()
+  .where(name != "george" && age > 35)
+  .execute();
+
+for (auto p in res) {
+  std::cout << "name: " p->name << "\n";
+}
+{% endhighlight %}
+      </div>
+      <div class="col-md-6">
+        <h3 class="centered">Easy SQL query building</h3>
+        <p class="centered large">
+          The sql query module provides simple fluent interface to build sql queries. A query
+          can be typed or just work on a anonymous row object. Once a query is setup it can be executed
+          directly or be captured in a prepared statement.
+        </p>
+        <p><a class="btn btn-warning" href="guide#queries" role="button">View details &raquo;</a></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+          <h2 class="centered">Real Relations</h2>
+      </div>
+      <div class="col-md-6">
+        <h3 class="centered">Relalationship handling</h3>
+        <p class="centered large">
+          matador comes with real relation handling (one to one, one to many and
+          many to many). Once one relation side changes the other side of the relation is
+          updated automatically. This works with plain object store as well as with
+          all supported database backends.
+        </p>
+        <p><a class="btn btn-warning" href="guide#relations" role="button">View details &raquo;</a></p>
+      </div>
+      <div class="col-md-6 nopadding">
+{% highlight cpp linenos %}
+object_store store;
+// prepare store ...
+
+auto george = store.insert(new employee("george"));
+auto jane = store.insert(new employee("jane"));
+auto dep = store.insert(new department("insurance"));
+
+dep->employees.push_back(jane);
+
+// janes department name is insurance
+std::cout << jane->department->name << "\n"
+
+george.modify()->department = dep;
+
+// second employee in department is george
+std::cout << dep->employees.size() << "\n"
+{% endhighlight %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h2 class="centered">Transactions</h2>
+      </div>
+      <div class="col-md-6 nopadding">
+{% highlight cpp linenos %}
+object_store store;
+// prepare store ...
+
+transaction tr(store);
+try {
+  store.insert(new author("john irwing"));
+  store.insert(new author("charles darwin"));
+  tr.commit();
+} catch (std::exception &ex) {
+  tr.rollback();
+}
+{% endhighlight %}
+      </div>
+      <div class="col-md-6">
+        <h3 class="centered">Secure your SQL statements</h3>
+        <p class="centered large">
+          With transcations the user has the possibility to pack a couple of changes into a logical
+          unit which can be rolled back if one of the changes fails. They can be used within the object store
+          and the ORM layer.
+        </p>
+        <p><a class="btn btn-warning" href="guide#transactions" role="button">View details &raquo;</a></p>
+      </div>
     </div>
   </div>
 </div>
