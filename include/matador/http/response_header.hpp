@@ -17,6 +17,9 @@
 namespace matador {
 namespace http {
 
+/**
+ * Shortcuts to response header keys
+ */
 class response_header
 {
 public:
@@ -45,14 +48,14 @@ public:
   static OOS_HTTP_API const char *PROXY_AUTHORIZATION;
   static OOS_HTTP_API const char *REFRESH;
   static OOS_HTTP_API const char *RETRY_AFTER;
-  static OOS_HTTP_API const char *SERVER;
-  static OOS_HTTP_API const char *SET_COOKIE;
-  static OOS_HTTP_API const char *TRAILER;
-  static OOS_HTTP_API const char *TRANSFER_ENCODING;
-  static OOS_HTTP_API const char *VARY;
-  static OOS_HTTP_API const char *VIA;
-  static OOS_HTTP_API const char *WARNING;
-  static OOS_HTTP_API const char *WWW_AUTHENTICATE;
+  static OOS_HTTP_API const char *SERVER;              /**< Server header */
+  static OOS_HTTP_API const char *SET_COOKIE;          /**< Set cookie header */
+  static OOS_HTTP_API const char *TRAILER;             /**< Trailer header */
+  static OOS_HTTP_API const char *TRANSFER_ENCODING;   /**< Transfer encoding header */
+  static OOS_HTTP_API const char *VARY;                /**< Vary header */
+  static OOS_HTTP_API const char* VIA;                 /**< Via header */
+  static OOS_HTTP_API const char* WARNING;             /**< Warning header */
+  static OOS_HTTP_API const char *WWW_AUTHENTICATE;    /**< WWW authenticate header */
 };
 
 }
