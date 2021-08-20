@@ -17,6 +17,10 @@
 #include <unordered_map>
 #include <string>
 
+#include "matador/object/object_ptr.hpp"
+#include "matador/object/object_view.hpp"
+#include "matador/object/json_object_mapper.hpp"
+
 #include "matador/http/http.hpp"
 #include "matador/http/mime_types.hpp"
 #include "matador/http/response_header.hpp"
@@ -93,7 +97,7 @@ public:
   const std::string& body() const;
 
   /**
-   * Creates a OK response with the given object
+   * Creates an OK response with the given object
    * converted to a json string as body
    *
    * @tparam T Type of the object
@@ -101,30 +105,102 @@ public:
    * @return The created OK response
    */
   template < class T >
-  static response json(const T &obj);
+  static response ok(const T &obj);
 
   /**
-   * Creates a response with the given status and
-   * object converted to a json string as body
+   * Creates an OK response with the give object_ptr
+   * converted into a json string as body
    *
    * @tparam T Type of the object
-   * @param status Status of the response to create
-   * @param obj Object to be converted as json body
-   * @return The created response
+   * @tparam OPT Type of the object_pointer
+   * @param obj Object to convert
+   * @return The created OK response
    */
-  template < class T >
-  static response json(http::status_t status, const T &obj);
+  template < class T, object_holder_type OPT >
+  static response ok(const object_pointer<T, OPT> &obj);
 
+  /**
+   * Creates an OK response with the give object_view
+   * of objects of type T converted into a json
+   * string as body
+   *
+   * @tparam T Type of the object in the view
+   * @param view The object view to convert
+   * @return The created OK response
+   */
+  template<class T>
+  static response ok(const object_view<T> &view);
+
+  /**
+   * Creates an OK response of the given json
+   * object as body.
+   *
+   * @param body The body data as json object
+   * @return The created OK response
+   */
   static response ok(const matador::json &body);
-  static response ok(const std::string &body, mime_types::types type);
-  static response no_content();
-  static response not_found();
-  static response bad_request();
-  static response redirect(const std::string &location);
 
+  /**
+   * Creates an OK response with the given body
+   * string and the given media type
+   *
+   * @param body Body as string
+   * @param type Media type of body
+   * @return The created OK response
+   */
+  static response ok(const std::string &body, mime_types::types type);
+
+  /**
+   * Creates a NO_CONTENT response
+   *
+   * @return The created NO_CONTENT response
+   */
+  static response no_content();
+
+  /**
+   * Creates a NOT_FOUND response
+   *
+   * @return The created NOT_FOUND response
+   */
+  static response not_found();
+
+  /**
+   * Creates a NOT_FOUND response with the
+   * given object converted to string as
+   * body
+   *
+   * @tparam T Type of the object
+   * @param obj Object to be converted
+   * @return The created NOT_FOUND response
+   */
   template < class T >
   static response not_found(const T &obj);
 
+  /**
+   * Creates a BAD_REQUEST response
+   *
+   * @return The created BAD_REQUEST response
+   */
+  static response bad_request();
+
+  /**
+   * Creates a REDIRECT response to the given
+   * location.
+   *
+   * @param location Location to redirect to
+   * @return The created REDIRECT response
+   */
+  static response redirect(const std::string &location);
+
+  /**
+   * Creates an OK response from a file
+   * at the given path. The media type is
+   * determined by the file extension. If unknown
+   * media type is PLAN_TEXT.
+   *
+   * @param file_path Path of the file
+   * @return The created OK response
+   */
   static response from_file(const std::string &file_path);
 
   /**
@@ -144,6 +220,7 @@ public:
 
 private:
   static response create(http::status_t status);
+  static response create(http::status_t status, const std::string &body, mime_types::types type);
 
 private:
   friend class response_parser;
@@ -159,30 +236,35 @@ private:
 };
 
 template<class T>
-response response::json(const T &obj)
+response response::ok(const T &obj)
 {
-  return json(http::OK, obj);
+  json_mapper mapper;
+
+  return create(http::OK, mapper.to_string(obj, json_format::compact), mime_types::TYPE_APPLICATION_JSON);
+}
+
+template<class T, object_holder_type OPT>
+response response::ok(const object_pointer <T, OPT> &obj)
+{
+  json_object_mapper mapper;
+
+  return create(http::OK, mapper.to_string(obj, json_format::compact), mime_types::TYPE_APPLICATION_JSON);
 }
 
 template<class T>
-response response::json(http::status_t status, const T &obj)
+response response::ok(const object_view<T> &view)
 {
-  response resp = create(status);
+  json_object_mapper mapper;
 
-  json_mapper mapper;
-
-  resp.body_ = mapper.to_string(obj, json_format::compact);
-  resp.content_.type = mime_types::APPLICATION_JSON;
-
-  resp.content_.length = std::to_string(resp.body_.size());
-
-  return resp;
+  return create(http::OK, mapper.to_string(view, json_format::compact), mime_types::TYPE_APPLICATION_JSON);
 }
 
 template<class T>
 response response::not_found(const T &obj)
 {
-  return json(http::NOT_FOUND, obj);
+  json_mapper mapper;
+
+  return create(http::NOT_FOUND, mapper.to_string(obj, json_format::compact), mime_types::APPLICATION_JSON);
 }
 
 }

@@ -107,7 +107,7 @@ public:
 
     user u { 0, "herb", "herb123", "Herbert",  "Grönemeyer"};
 
-    return http::response::json(u);
+    return http::response::ok(u);
   }
 
   http::response logout(const http::request &)
@@ -247,11 +247,8 @@ int main(int /*argc*/, char* /*argv*/[])
   // return all persons
   server.on_get("/person", [&s](const http::request &) {
     auto result = s.select<person>();
-    json_object_mapper mapper;
 
-    std::string body = mapper.to_string(result, json_format::pretty);
-
-    return http::response::ok(body, http::mime_types::TYPE_APPLICATION_JSON);
+    return http::response::ok(result);
   });
 
   // return one person
@@ -263,11 +260,7 @@ int main(int /*argc*/, char* /*argv*/[])
       return http::response::not_found();
     }
 
-    json_object_mapper mapper;
-
-    std::string body = mapper.to_string(result, json_format::pretty);
-
-    return http::response::ok(body, http::mime_types::TYPE_APPLICATION_JSON);
+    return http::response::ok(result);
   });
 
   // insert person
@@ -278,8 +271,7 @@ int main(int /*argc*/, char* /*argv*/[])
     auto optr = s.insert(p.release());
     s.flush();
 
-    std::string body = mapper.to_string(optr, json_format::pretty);
-    return http::response::ok(body, http::mime_types::TYPE_APPLICATION_JSON);
+    return http::response::ok(optr);
   });
 
   // update person

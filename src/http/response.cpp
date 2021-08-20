@@ -102,6 +102,17 @@ response response::create(http::status_t status)
   return resp;
 }
 
+response response::create(http::status_t status, const string &body, mime_types::types type)
+{
+  response resp = create(status);
+
+  resp.body_ = body;
+  resp.content_.type = mime_types::from_type(type);
+  resp.content_.length = std::to_string(resp.body_.size());
+
+  return resp;
+}
+
 response response::from_file(const std::string &file_path)
 {
   response resp;

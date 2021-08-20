@@ -47,7 +47,7 @@ response auth_service::login(const request &req)
   u.first_name = "Herbert";
   u.last_name = "Grönemeyer";
 
-  return response::json(u);
+  return response::ok(u);
 }
 
 response auth_service::logout(const request &)
