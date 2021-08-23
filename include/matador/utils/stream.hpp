@@ -417,8 +417,33 @@ public:
     return processor_;
   }
 
+  /**
+   * Joins all stream elements into one string.
+   *
+   * @return All stream elements in one string
+   */
   std::string join();
+
+  /**
+   * Joins all stream elements delimited by the
+   * given delimiter into one string.
+   *
+   * @param delimiter Delimiter for the elements
+   * @return All stream elements in one string
+   */
   std::string join(const std::string &delimiter);
+
+  /**
+   * Joins all stream elements delimited by the
+   * given delimiter into one string. Additionally
+   * a prefix and a suffix is prepended and appended
+   * to the string.
+   *
+   * @param delimiter Delimiter for the elements
+   * @param prefix Prefix for the string
+   * @param suffix Suffix for the string
+   * @return All stream elements in one string
+   */
   std::string join(const std::string &delimiter, const std::string &prefix, const std::string &suffix);
 
 private:
@@ -850,6 +875,15 @@ stream<T> make_stream(C<T, Allocator> &&container)
   return stream<T>(detail::make_from<T>(std::forward<C<T, Allocator>>(container)));
 }
 
+/**
+ * Creates a stream from the given container
+ *
+ * @tparam T Type of the elements in the container
+ * @tparam C Type of the container
+ * @tparam Allocator Type of the allocator class
+ * @param container The container
+ * @return Stream ready to iterate over the elements of the container
+ */
 template < class T, template < class ... > class C, class Allocator >
 stream<T> make_stream(const C<T, Allocator> &container)
 {
@@ -863,6 +897,14 @@ stream<T> make_stream(T &&from, T &&to)
   return stream<T>(detail::make_range<T>(std::forward<T>(from), std::forward<T>(to), 1));
 }
 
+/**
+ * Creates a stream from the given moved container.
+ *
+ * @tparam T Type of the elements in the container
+ * @tparam C Type of the container
+ * @param container The container
+ * @return Stream ready to iterate over the elements of the container
+ */
 template < class T, template < class U = T > class C >
 stream<T> make_stream(C<T> &&container)
 {

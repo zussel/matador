@@ -27,7 +27,7 @@ SET(SOURCES
   json_mapper_serializer.cpp
   sequence_synchronizer.cpp
   url.cpp html.cpp
-  json_identifier_serializer.cpp)
+  json_identifier_serializer.cpp json_format.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -85,7 +85,7 @@ SET(HEADER
   ../../include/matador/utils/sequence_synchronizer.hpp
   ../../include/matador/utils/url.hpp
   ../../include/matador/utils/html.hpp
-  ../../include/matador/utils/json_identifier_serializer.hpp)
+  ../../include/matador/utils/json_identifier_serializer.hpp ../../include/matador/utils/json_format.hpp ../../include/matador/utils/json_utils.hpp)
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
 

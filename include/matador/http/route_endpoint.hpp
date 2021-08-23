@@ -28,6 +28,8 @@ class response;
 typedef std::function<response(const request&)> t_request_handler;
 typedef std::unordered_map<size_t, std::string> t_size_string_map;
 
+/// @cond MATADOR_DEV
+
 /*
  * path
  * path_regex
@@ -56,6 +58,8 @@ private:
 
   t_size_string_map param_index_map_;
 };
+
+/// @endcond
 
 }
 }

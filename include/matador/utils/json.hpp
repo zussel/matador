@@ -14,162 +14,16 @@
 #define OOS_UTILS_API
 #endif
 
-#include <map>
+#include "matador/utils/json_format.hpp"
+#include "matador/utils/json_utils.hpp"
+
 #include <memory>
 #include <utility>
 #include <vector>
 #include <algorithm>
-#include <ostream>
 #include <vector>
 
 namespace matador {
-
-class OOS_UTILS_API json_format
-{
-public:
-  json_format() = default;
-  explicit json_format(bool enable_line_break);
-  explicit json_format(unsigned indentation);
-  json_format(bool enable_line_break, bool skip_empty, unsigned indentation);
-
-  bool show_line_break() const;
-
-  bool skip_empty();
-
-  unsigned indentation() const;
-  char indentation_char() const;
-
-  static json_format compact;
-  static json_format pretty;
-
-private:
-  bool enable_line_break_ = true;
-  bool skip_empty_ = true;
-  unsigned indentation_ = 2;
-  char indentation_char_ = ' ';
-};
-
-/**
- * Joins a range of elements as string within a list
- * with a given delimiter and writes it to the
- * given stream
- *
- * @tparam R Type og the range (e.g. map, list, vector, etc)
- * @param range The range with the elements to join
- * @param out The stream to write on
- * @param delim The delimiter for the elements
- * @return The ostream reference
- */
-template < class R >
-std::ostream& join(R &range, std::ostream &out, const std::string &delim)
-{
-  if (range.size() < 2) {
-    for (auto &i : range) {
-      out << i;
-    }
-  } else {
-    auto it = range.begin();
-    out << *it++;
-    for (;it != range.end(); ++it) {
-      out << delim << *it;
-    }
-  }
-  return out;
-}
-
-/**
- * Joins a range of elements as string within a list
- * with a given delimiter and writes it to the
- * given stream
- *
- * @tparam R Type og the range (e.g. map, list, vector, etc)
- * @param range The range with the elements to join
- * @param out The stream to write on
- * @param delim The delimiter for the elements
- * @return The ostream reference
- */
-template < class R >
-std::string join(R &range, const std::string &delim)
-{
-  std::string result {};
-  if (range.size() < 2) {
-    for (const auto &i : range) {
-      result += to_string(i);
-    }
-  } else {
-    auto it = range.begin();
-    result += to_string(*it++);
-    for (;it != range.end(); ++it) {
-      result += delim + to_string(*it);
-    }
-  }
-  return result;
-}
-
-/**
- * Joins a map of key value pairs as string within
- * a list with a given delimiter and writes it to
- * the given stream.
- *
- * The key value pairs will be written in a
- * json style: ("key": value)
- *
- * @tparam K Type of key
- * @tparam V Type of value
- * @param range The range with the elemets to join
- * @param out The stream to write on
- * @param delim The delimiter for the elements
- * @return The ostream reference
- */
-template < class K, class V >
-std::ostream& join(std::map<K, V> &range, std::ostream &out, const std::string &delim)
-{
-  if (range.size() < 2) {
-    for (auto &i : range) {
-      out << "\"" << i.first << "\": " << i.second;
-    }
-  } else {
-    auto it = range.begin();
-    out << "\"" << it->first << "\": " << it->second;
-    for (++it ;it != range.end(); ++it) {
-      out << delim << "\"" << it->first << "\": " << it->second;
-    }
-  }
-  return out;
-}
-
-/**
- * Joins a map of key value pairs as string within
- * a list with a given delimiter and writes it to
- * the given stream.
- *
- * The key value pairs will be written in a
- * json style: ("key": value)
- *
- * @tparam K Type of key
- * @tparam V Type of value
- * @param range The range with the elemets to join
- * @param out The stream to write on
- * @param delim The delimiter for the elements
- * @return The ostream reference
- */
-template < class K, class V >
-std::string join(std::map<K, V> &range, const std::string &delim)
-{
-  std::string result {};
-  if (range.size() < 2) {
-    for (auto &i : range) {
-      result += "\"" + i.first + "\": " + to_string(i.second);
-    }
-  } else {
-    auto it = range.begin();
-    result += "\"" + it->first + "\": " + to_string(it->second);
-    for (++it ;it != range.end(); ++it) {
-      result += delim + "\"" + it->first + "\": " + to_string(it->second);
-    }
-  }
-  return result;
-}
 
 template < class JSON_TYPE >
 class json_iterator;
@@ -408,23 +262,91 @@ public:
    */
   friend OOS_UTILS_API bool operator>=(const json &a, const json &b);
 
+  /**
+   * Less operator with a json value with a scalar value
+   *
+   * @tparam T Type of the scalar value
+   * @param a The json value to compare
+   * @param b The scalar value to compare
+   * @return True if the json value is less than the scalar value
+   */
   template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
   friend bool operator<(const json &a, const T &b);
+
+  /**
+   * Less operator with a scalar value with a json value
+   *
+   * @tparam T Type of the scalar value
+   * @param a The scalar value to compare
+   * @param b The json value to compare
+   * @return True if the scalar value is less than the json value
+   */
   template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
   friend bool operator<(const T &a, const json &b);
 
+  /**
+   * Less or equal to operator with a json value with a scalar value
+   *
+   * @tparam T Type of the scalar value
+   * @param a The json value to compare
+   * @param b The scalar value to compare
+   * @return True if the json value is less or equal to than the scalar value
+   */
   template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
   friend bool operator<=(const json &a, const T &b);
+
+  /**
+   * Less or equal to operator with a scalar value with a json value
+   *
+   * @tparam T Type of the scalar value
+   * @param a The scalar value to compare
+   * @param b The json value to compare
+   * @return True if the scalar value is less or equal to than the json value
+   */
   template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
   friend bool operator<=(const T &a, const json &b);
 
+  /**
+   * Greater operator with a json value with a scalar value
+   *
+   * @tparam T Type of the scalar value
+   * @param a The json value to compare
+   * @param b The scalar value to compare
+   * @return True if the json value is greater than the scalar value
+   */
   template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
   friend bool operator>(const json &a, const T &b);
+
+  /**
+   * Greater operator with a scalar value with a json value
+   *
+   * @tparam T Type of the scalar value
+   * @param a The scalar value to compare
+   * @param b The json value to compare
+   * @return True if the scalar value is greater than the json value
+   */
   template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
   friend bool operator>(const T &a, const json &b);
 
+  /**
+   * Greater or equal to operator with a json value with a scalar value
+   *
+   * @tparam T Type of the scalar value
+   * @param a The json value to compare
+   * @param b The scalar value to compare
+   * @return True if the json value is greater or equal to than the scalar value
+   */
   template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
   friend bool operator>=(const json &a, const T &b);
+
+  /**
+   * Greater or equal to operator with a scalar value with a json value
+   *
+   * @tparam T Type of the scalar value
+   * @param a The scalar value to compare
+   * @param b The json value to compare
+   * @return True if the scalar value is greater or equal to than the json value
+   */
   template < class T, typename std::enable_if<std::is_scalar<T>::value>::type>
   friend bool operator>=(const T &a, const json &b);
 
@@ -869,10 +791,44 @@ public:
     return value_.array->at(pos).as<T>();
   }
 
+  /**
+   * Gets the json value at the given key. If the
+   * key couldn't be found an exception is thrown
+   *
+   * @param key Key to find
+   * @return The json value with the given key
+   */
   json& get(const std::string &key);
+
+  /**
+   * Gets the json value at the given key. If the
+   * key couldn't be found an exception is thrown
+   *
+   * @param key Key to find
+   * @return The json value with the given key
+   */
   const json& get(const std::string &key) const;
 
+  /**
+   * Returns the json value at the given path. The
+   * path is a list of keys delimited by a delimiter
+   * char. The default delimiter is a "." (dot).
+   *
+   * @param path Path to find
+   * @param delimiter  Delimiter in the path
+   * @return The json value at the path
+   */
   json& at_path(const std::string &path, char delimiter = '.');
+
+  /**
+   * Returns the json value at the given path. The
+   * path is a list of keys delimited by a delimiter
+   * char. The default delimiter is a "." (dot).
+   *
+   * @param path Path to find
+   * @param delimiter  Delimiter in the path
+   * @return The json value at the path
+   */
   const json& at_path(const std::string &path, char delimiter = '.') const;
 
   /**
@@ -1448,6 +1404,12 @@ private:
   std::size_t it = 0;
 };
 
+/**
+ * Converts a json object into a string.
+ *
+ * @param j Json object to convert
+ * @return The string representation of the json object
+ */
 OOS_UTILS_API std::string to_string(const json &j);
 
 }

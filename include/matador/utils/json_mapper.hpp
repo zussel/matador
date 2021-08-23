@@ -48,30 +48,131 @@ namespace matador {
 class OOS_UTILS_API json_mapper
 {
 public:
+  /**
+   * Default constructor
+   */
   json_mapper() = default;
 
+  /**
+   * Converts a given json object into a string where
+   * the format is defined by the given json format object.
+   *
+   * @param js Json object to be converted
+   * @param format Format of the output string
+   * @return The json string
+   */
   std::string to_string(const json &js, const json_format &format = json_format::compact);
+
+  /**
+   * Converts the given object into a json string where
+   * the format is defined by the given json format object.
+   *
+   * @tparam T Type of the object to convert
+   * @param obj Object to convert
+   * @param format Format of the output string
+   * @return The json string
+   */
   template < class T >
   std::string to_string(const T &obj, const json_format &format = json_format::compact);
+
+  /**
+   * Converts the given array of objects into a json string where
+   * the format is defined by the given json format object.
+   *
+   * @tparam T Type of the objects to convert
+   * @param array Array of objects to convert
+   * @param format Format of the output string
+   * @return The json string
+   */
   template < class T >
   std::string to_string(const std::vector<T> &array, const json_format &format = json_format::compact);
 
+  /**
+   * Converts the given object into a json object.
+   *
+   * @tparam T Type of the object to convert
+   * @param obj Object to convert
+   * @return The json object
+   */
   template < class T >
   json to_json(const T &obj);
+
+  /**
+   * Converts the given json string into a json object.
+   *
+   * @param str Json string to convert
+   * @return The json object
+   */
   json to_json(const std::string &str);
+
+  /**
+   * Converts the given json string into a json object.
+   *
+   * @param str Json string to convert
+   * @return The json object
+   */
   json to_json(const char *str);
 
+  /**
+   * Converts a given json object into the concrete object.
+   *
+   * @tparam T Type of the object to create
+   * @param js Json object to convert
+   * @return The object created from the json object
+   */
   template < class T >
   T to_object(const json &js);
+
+  /**
+   * Converts a json object of type array into an
+   * array concrete objects.
+   *
+   * @tparam T Type of the objects to create
+   * @param js Json to convert
+   * @return The array of created objects
+   */
   template < class T >
   std::vector<T> to_objects(const json &js);
 
+  /**
+   * Convert a given json string into a concrete object
+   *
+   * @tparam T Type of the object to create
+   * @param str Json string to convert
+   * @return The created object
+   */
   template < class T >
   T to_object(const std::string &str);
+
+  /**
+   * Convert a given json string into a concrete object
+   *
+   * @tparam T Type of the object to create
+   * @param str Json string to convert
+   * @return The created object
+   */
   template < class T >
   T to_object(const char *str);
+
+  /**
+   * Converts a given json string representing
+   * an array into a vector of objects.
+   *
+   * @tparam T Type of the objects to create
+   * @param str Json array string to convert
+   * @return The array of created objects
+   */
   template < class T >
   std::vector<T> to_objects(const std::string &str);
+
+  /**
+   * Converts a given json string representing
+   * an array into a vector of objects.
+   *
+   * @tparam T Type of the objects to create
+   * @param str Json array string to convert
+   * @return The array of created objects
+   */
   template < class T >
   std::vector<T> to_objects(const char *str);
 

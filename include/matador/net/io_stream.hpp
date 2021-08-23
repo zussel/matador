@@ -67,6 +67,11 @@ public:
    */
   virtual tcp::socket& stream() = 0;
 
+  /**
+   * Returns a name for the io stream.
+   *
+   * @return Name of the io stream
+   */
   virtual std::string name() const = 0;
 };
 

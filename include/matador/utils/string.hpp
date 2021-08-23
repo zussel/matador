@@ -36,6 +36,17 @@ class date;
  * @return The size of the vector.
  */
 OOS_UTILS_API size_t split(const std::string &str, char delim, std::vector<std::string> &values);
+
+/**
+ * Splits a string by a delimiter and
+ * add the string tokens to a list. The
+ * size of the list is returned.
+ *
+ * @param str The string to split.
+ * @param delim The delimiter character.
+ * @param values The result list.
+ * @return The size of the list.
+ */
 OOS_UTILS_API size_t split(const std::string &str, char delim, std::list<std::string> &values);
 
 /**

@@ -43,8 +43,10 @@ public:
 
   /**
    * Creates a log_domain with the given name
+   * and the given log range
    *
    * @param name The name of the log domain
+   * @param log_range The log range of this domain
    */
   log_domain(std::string name, log_level_range log_range);
 
@@ -74,7 +76,7 @@ public:
    * Sets the min log level. Default
    * min leven is LVL_INFO
    *
-   * @param max_level min log level
+   * @param min_level min log level
    */
   void min_log_level(log_level min_level);
 
@@ -96,10 +98,12 @@ public:
   void add_sink(sink_ptr sink);
 
   /**
+   * Logs the given message for the given source and log level
+   * to this log domain.
    *
-   * @param lvl
-   * @param source
-   * @param message
+   * @param lvl Log level
+   * @param source Source of the log message
+   * @param message Message to log
    */
   void log(log_level lvl, const std::string &source, const char *message);
 

@@ -40,6 +40,7 @@ public:
    * Base64 encodes a given character string
    *
    * @param str String to encode
+   * @param size Length of the string
    * @return The encoded string
    */
   static std::string encode(const char *str, size_t size);
@@ -56,6 +57,7 @@ public:
    * Url base64 encodes a given character string
    *
    * @param str String to encode
+   * @param size Length of the string
    * @return The encoded string
    */
   static std::string encode_url(const char *str, size_t size);
@@ -72,6 +74,7 @@ public:
    * Base64 decodes a given character string
    *
    * @param str Base64 encoded string to decode
+   * @param size Length of the string
    * @return The decoded string
    */
   static std::string decode(const char *str, size_t size);

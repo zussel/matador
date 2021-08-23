@@ -91,6 +91,12 @@ public:
 		return (node == i.node);
 	}
 
+	/**
+	 * Equal compares another const iterator with this
+	 *
+	 * @param i The const iterator to compare
+	 * @return True if the iterators are the same
+	 */
 	bool operator==(const const_tree_iterator_base<T> &i) const;
 
 	/**
@@ -104,6 +110,12 @@ public:
 		return (node != i.node);
 	}
 
+	/**
+	 * Not equal compares another const iterator with this
+	 *
+	 * @param i The const iterator to compare
+	 * @return True if the iterators are not the same
+	 */
   bool operator!=(const const_tree_iterator_base<T> &i) const;
 
   /**
@@ -236,6 +248,12 @@ public:
     return (node == i.node);
   }
 
+  /**
+	 * Equal compares another tree iterator with this
+	 *
+	 * @param i The tree iterator to compare
+	 * @return True if the iterators are the same
+	 */
   bool operator==(const tree_iterator_base<T> &i) const
   {
     return (node == i.node);
@@ -252,6 +270,12 @@ public:
     return (node != i.node);
   }
 
+  /**
+	 * Not equal compares another tree iterator with this
+	 *
+	 * @param i The tree iterator to compare
+	 * @return True if the iterators are not the same
+	 */
   bool operator!=(const tree_iterator_base<T> &i) const
   {
     return (node != i.node);

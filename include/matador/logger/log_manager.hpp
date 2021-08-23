@@ -119,7 +119,7 @@ public:
    * min leven is LVL_INFO. All log domains
    * will start with this default max log range
    *
-   * @param max_level min log level
+   * @param min_level min log level
    */
   static void min_default_log_level(log_level min_level);
 
@@ -276,8 +276,28 @@ OOS_LOGGER_API logger create_logger(std::string source);
  */
 OOS_LOGGER_API logger create_logger(std::string source, const std::string &domain);
 
+/**
+ * Logs the given message for the given source and log level
+ * to the default log domain.
+ *
+ * @param lvl Log level
+ * @param source Source of the log message
+ * @param message Message to log
+ */
 OOS_LOGGER_API void log_default(log_level lvl, const std::string &source, const char *message);
 
+/**
+ * Log the given message with source and log level
+ * to the default domain. The message will be created
+ * from the what argument and the args while the preprocessed
+ * message uses the printf style to add the arguments.
+ *
+ * @tparam ARGS Type of the arguments
+ * @param lvl Log level
+ * @param source Source of the log message
+ * @param what The printf style message
+ * @param args The arguments for the message
+ */
 template<typename... ARGS>
 void log(log_level lvl, const std::string &source, const char *what, ARGS const &... args)
 {

@@ -19,6 +19,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 class basic_identifier;
 
 class OOS_UTILS_API json_identifier_serializer : public serializer
@@ -54,6 +56,8 @@ public:
 private:
   std::string json_;
 };
+
+/// @endcond
 
 }
 

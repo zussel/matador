@@ -469,7 +469,14 @@ public:
 
   /**
    * @brief Get object by primary key
-   * @tparam Template type.
+   *
+   * Gets an object of given type and given
+   * primary key. If the object can't be found
+   * an empty object is returned.
+   *
+   * @tparam T The type of the requested object.
+   * @param pk The primary key value
+   * @return The found object or an empty object
    */
   template < class T >
   object_ptr<T> get(basic_identifier &pk)

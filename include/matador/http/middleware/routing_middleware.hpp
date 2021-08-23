@@ -25,6 +25,8 @@ namespace matador {
 namespace http {
 namespace middlewares {
 
+/// @cond MATADOR_DEV
+
 class OOS_HTTP_API routing_middleware : public middleware
 {
 public:
@@ -40,6 +42,8 @@ private:
 
   const matador::http::routing_engine &router_;
 };
+
+/// @endcond
 
 }
 }

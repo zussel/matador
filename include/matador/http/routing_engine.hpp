@@ -25,6 +25,8 @@ namespace http {
 
 class request;
 
+/// @cond MATADOR_DEV
+
 class OOS_HTTP_API routing_engine
 {
 public:
@@ -61,6 +63,8 @@ OOS_HTTP_API routing_engine::route_endpoint_ptr create_route_endpoint(
   http::method_t method,
   const t_request_handler &request_handler
 );
+
+/// @endcond
 
 }
 }

@@ -23,6 +23,8 @@ namespace matador {
 namespace http {
 namespace detail {
 
+/// @cond MATADOR_DEV
+
 class OOS_HTTP_API template_filter
 {
 public:
@@ -43,6 +45,8 @@ class OOS_HTTP_API escape_filter : public template_filter
 public:
   json evaluate(const json &data) override;
 };
+
+/// @endcond
 
 }
 }
