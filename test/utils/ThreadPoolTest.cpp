@@ -21,12 +21,12 @@ void ThreadPoolTest::test_threadpool()
 {
   thread_pool tp(2);
 
+  UNIT_ASSERT_EQUAL(2UL, tp.size());
+
   for (int i = 0; i < 8; ++i) {
 //    std::cout << "schedule task " << i+1 << "\n";
     tp.schedule([num = i + 1] { return task(num); });
   }
-
-  UNIT_ASSERT_EQUAL(2UL, tp.size());
 
   std::this_thread::sleep_for(std::chrono::seconds (2));
 
