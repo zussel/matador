@@ -91,7 +91,10 @@ http::server server(8081);
 server.add_routing_middleware();
 
 server.on_get("/", [](const http::request &req) {
-  return http::response::ok("hello world", http::mime_types::TYPE_TEXT_PLAIN);
+  return http::response::ok(
+    "hello world",
+    http::mime_types::TYPE_TEXT_PLAIN
+  );
 });
 server.run();
 {% endhighlight %}

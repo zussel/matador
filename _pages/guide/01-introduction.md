@@ -1,8 +1,8 @@
 ## Introduction
 
-The following documentation will give you an overview on matador. It will show you all main components of the library so that you can start building your own application with it.
+The following documentation will give you an overview of matador. It will show you all main components of the library so that you can start building your own application with it.
 
-matador consists of four main parts: A container for any kind of objects, a sql query class providing a fluent interface, an ORM layer and top a simple web server.
+matador consists of four main parts: A container for any kind of objects, a sql query class providing a fluent interface, an ORM layer and on top a simple web server.
 
 ### The Object Store
 
