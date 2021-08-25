@@ -157,7 +157,7 @@ auto res = q
   .where(name != "george" && age > 35)
   .execute();
 
-for (auto p in res) {
+for (const auto &p in res) {
   std::cout << "name: " p->name << "\n";
 }
 {% endhighlight %}
