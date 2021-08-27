@@ -33,11 +33,13 @@ permalink: /guide/
 
 {% include_relative /guide/14-json.md %}
 
-{% include_relative /guide/15-logging.md %}
+{% include_relative /guide/15-streams.md %}
 
-{% include_relative /guide/16-networking.md %}
+{% include_relative /guide/16-logging.md %}
 
-{% include_relative /guide/17-http.md %}
+{% include_relative /guide/17-networking.md %}
+
+{% include_relative /guide/18-http.md %}
 
 </div>
 <div class="col-md-3 hidden-xs hidden-sm">
