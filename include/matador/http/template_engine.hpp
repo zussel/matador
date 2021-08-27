@@ -14,6 +14,10 @@
 #define OOS_HTTP_API
 #endif
 
+#include "matador/utils/json_mapper.hpp"
+
+#include "matador/object/json_object_mapper.hpp"
+
 #include <string>
 #include <stack>
 #include <list>
@@ -42,9 +46,29 @@ public:
 
   static std::string render(const std::shared_ptr<detail::template_part>& part, const matador::json &data);
 
+  template < class T >
+  static std::string render(const std::string &format, const T &data);
+
+  template< typename T, object_holder_type OPT >
+  static std::string render(const std::string &format, const object_pointer<T, OPT> &data);
+
   static std::string render(const std::string &format, const matador::json &data);
   static std::string render(const char *format, size_t len, const matador::json &data);
 };
+
+template<class T>
+std::string template_engine::render(const std::string &format, const T &data)
+{
+  json_mapper mapper;
+  return render(mapper.to_json(data));
+}
+
+template<typename T, object_holder_type OPT>
+std::string template_engine::render(const std::string &format, const object_pointer<T, OPT> &data)
+{
+  json_object_mapper mapper;
+  return render(mapper.to_json(data));
+}
 
 }
 }

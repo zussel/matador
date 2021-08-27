@@ -38,7 +38,7 @@ std::shared_ptr<detail::template_part> template_engine::build(const std::string 
   return build(format.c_str(), format.size());
 }
 
-std::shared_ptr<detail::template_part> template_engine::build(const char *format, size_t len)
+std::shared_ptr<detail::template_part> template_engine::build(const char *format, size_t)
 {
   detail::template_parser parser;
 
