@@ -154,4 +154,87 @@ srv.run();
 
 ### Template Engine
 
-More coming soon with the next release (0.8.0)
+Matador comes also with a small template engine. It uses the [Django Template language](https://docs.djangoproject.com/en/3.2/ref/templates/language/)
+syntax but by now not all tags and filters are implemented at all. The advantage is that the langauge isn't
+limited on XML/HTML content it can be used with any text based formats.
+
+Just call ```render``` with the content string to be processed and a json object containing the data:
+
+{% highlight cpp linenos %}
+std::string content { ... };
+json data { ... };
+
+auto result = http::template_engine::render(content, data);
+{% endhighlight %}
+
+The returned result string contains the processed content based on the json data.
+
+The engine handles variable and tags. Variables are indicated by two curly brackets __\{\{ \[var\] \}\}__ and
+the containing variable is replaced by its value. Tags are like logic commands and are indicated by
+one curly bracket and a percent sign __\{\% \[tag\] \%\}__.
+
+#### Tags
+The following tags are available:
+
+- ```for``` A for loop
+- ```if``` Conditions
+- ```include``` Include and parse other files
+
+#### For Loop
+
+The tag __for__ implements the loop functionallity. Loop scan be nested. In the exmaple
+below names and items of all persons are listed.
+
+{% highlight django linenos %}
+{% raw %}
+<ul>
+  {% for person in persons %}
+  <li>
+    <h2>{{ person.name }}</h2>
+    <ol>
+      {% for i in person.items %}
+      <li>{{ i }}</li>
+      {% endfor %}
+    </ol>
+  </li>
+  {% endfor %}
+</ul>
+{% endraw %}
+{% endhighlight %}
+
+#### If Condition
+
+The __if__ condition tag works as unary operator (the variable evaluates to true or false) or as
+binary operator (the expression evaluates to true or false).
+
+The common expression operators are available (__==__, __!=__, __<__, __<=__, __>__ and __>=__).
+
+{% highlight django linenos %}
+{% raw %}
+{% if person.id == 2 %}
+  <p>1 Details of {{ person.name }}</p>
+{% elif person.id < 2 %}
+  <p>2 Details of {{ person.name }}</p>
+{% elif person.id >= 3 %}
+  <p>3 Details of {{ person.name }}</p>
+{% else %}
+  <p>No details</p>
+{% endif %}
+{% endraw %}
+{% endhighlight %}
+
+#### Include File
+
+#### Filter
+
+And the following filters are available:
+
+- ```escape``` Escapes a string variable
+- ```capfirst``` Makes the first character of a string uppercase
+- ```upper``` Makes the string uppercase
+- ```lower``` Makes the string lowercase
+
+#### Escape filter
+#### Capfirst filter
+#### Upper filter
+#### Lower filter

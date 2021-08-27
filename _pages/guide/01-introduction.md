@@ -92,7 +92,10 @@ s.load();
 
 ### The HTTP Server
 
-With the web server it is possible to write a web application and serve the data as REST Api or as full HTML pages. To make live a bit easier a template engine was added based on the [Django Template language](https://docs.djangoproject.com/en/3.2/ref/templates/language/).
+With the web server it is possible to write a web application and serve the data as
+REST Api or as full HTML pages. To make life a bit easier a template engine based on
+the [Django Template language](https://docs.djangoproject.com/en/3.2/ref/templates/language/)
+was also added.
 
 {% highlight cpp linenos %}
 http::server server(8081);
