@@ -46,6 +46,24 @@ public:
   json evaluate(const json &data) override;
 };
 
+class OOS_HTTP_API capfirst_filter : public template_filter
+{
+public:
+  json evaluate(const json &data) override;
+};
+
+class OOS_HTTP_API upper_filter : public template_filter
+{
+public:
+  json evaluate(const json &data) override;
+};
+
+class OOS_HTTP_API lower_filter : public template_filter
+{
+public:
+  json evaluate(const json &data) override;
+};
+
 /// @endcond
 
 }

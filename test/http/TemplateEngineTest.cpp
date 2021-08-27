@@ -256,4 +256,28 @@ void TemplateEngineTest::test_filter()
   result = http::template_engine::render(replace_with_escape_filter, data);
 
   UNIT_ASSERT_EQUAL("replace 1 &lt; x &amp;&amp; 3 &gt; x one", result);
+
+  data = { { "name", "george" } };
+
+  std::string replace_with_capfirst_filter { "My name is {{ name | capfirst   }}." };
+
+  result = http::template_engine::render(replace_with_capfirst_filter, data);
+
+  UNIT_ASSERT_EQUAL("My name is George.", result);
+
+  data = { { "name", "george" } };
+
+  std::string replace_with_upper_filter { "My name is {{ name | upper   }}." };
+
+  result = http::template_engine::render(replace_with_upper_filter, data);
+
+  UNIT_ASSERT_EQUAL("My name is GEORGE.", result);
+
+  data = { { "name", "GEORGE" } };
+
+  std::string replace_with_lower_filter { "My name is {{ name | lower   }}." };
+
+  result = http::template_engine::render(replace_with_lower_filter, data);
+
+  UNIT_ASSERT_EQUAL("My name is george.", result);
 }

@@ -2,6 +2,8 @@
 
 #include "matador/utils/html.hpp"
 
+#include <algorithm>
+
 namespace matador {
 namespace http {
 namespace detail {
@@ -28,6 +30,39 @@ json escape_filter::evaluate(const json &data)
   return html::escape(data.as<std::string>());
 }
 
+json capfirst_filter::evaluate(const json &data)
+{
+  if (!data.is_string()) {
+    return data;
+  }
+  auto val = data.as<std::string>();
+  if (!val.empty()) {
+    val[0] = toupper(val[0]);
+    return val;
+  } else {
+    return data;
+  }
+}
+
+json upper_filter::evaluate(const json &data)
+{
+  if (!data.is_string()) {
+    return data;
+  }
+  auto val = data.as<std::string>();
+  std::transform(val.begin(), val.end(), val.begin(), ::toupper);
+  return val;
+}
+
+json lower_filter::evaluate(const json &data)
+{
+  if (!data.is_string()) {
+    return data;
+  }
+  auto val = data.as<std::string>();
+  std::transform(val.begin(), val.end(), val.begin(), ::tolower);
+  return val;
+}
 }
 }
 }
