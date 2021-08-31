@@ -87,12 +87,24 @@ The following interfaces might be implemented depending on the purpose of the co
 
 ### IO Service
 
-The ```io_service``` encapsulates 
+The ```io_service``` encapsulates the ```reactor``` and provides an easy to use interface
+to register callbacks for established connections either active ones (```connect()```) or
+passive ones (```accept()```).
+
 ### IO Stream
+
+The ```io_stream``` defines an interface used by the ```io_service```. There are two main
+interface methods ```read(buffer_view, read_handler)``` and ```write(buffer_view_list, write_handler)```.
+
+The first interface is called when data should be read from a socket. Once the date was read
+the given _read\_handler_ is called.
+
+The second nterface is called when data should be written to a socket. Once the data was
+written the given write handler is called.
 
 ### Stream Handler
 
 Finally the ```stream_handler``` class implements the ```handler``` and 
-the ```io_stream``` interface.
+the ```io_stream``` interface and is used by the ```io_stream``` class.
 
-More coming soon with the next release (0.8.0)
+It handles the reading and writing of data for every established connection.

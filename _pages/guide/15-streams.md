@@ -17,10 +17,75 @@ auto result = make_stream({1, 2, 3, 4, 9, 4, 2, 6})  // create a range of number
 
 ### Generators
 
+Generator functions helps creating streams from containers and initializer lists
+or defined ranges with start and end and optionally a step size.
+
+Furthermore an endless counter stream generator exists.
+
 #### Make stream
 
-With 
+With the ```make_stream(...)``` generator function it is possible to create several 
+kinds of streams.
+
+To create a stream from an existing container, just pass the container to the
+function ```make_stream(container)```.
+
+{% highlight cpp linenos %}
+std::vector<std::string> string_vec { "one", "two", "three", "four" };
+
+auto result = make_stream(string_vec);
+{% endhighlight %}
+
+
+The ```make_stream(initializer_list)``` can also directly take an initializing
+list of elements to create a stream.
+
+{% highlight cpp linenos %}
+auto result = make_stream({ "one", "two", "three", "four" });
+{% endhighlight %}
+
+
+It is also possible to create ranges with ```make_stream(from, to)```. Where _from_ and
+_to_ are included values in the generated stream.
+
+{% highlight cpp linenos %}
+// creates a stream of ints from 1 to 8
+auto result = make_stream(1, 8);
+
+// resulting stream: 1, 2, 3, 4, 5, 6, 7, 8
+{% endhighlight %}
+
+In an extended version of the ```make_stream(from, to, stepsize)``` generator function a
+stepsize value can be added indicating the incremental value for the generated stream.
+
+{% highlight cpp linenos %}
+// creates a stream of ints from 1 to 8 with a step of two
+auto result = make_stream(1, 8, 2);
+
+// resulting stream: 1, 3, 5, 7
+{% endhighlight %}
+
 #### Make stream counter
+
+The ```make_stream_counter(start)``` generator creates an endless steam starting from _start_.
+
+{% highlight cpp linenos %}
+auto result = make_stream_counter(1)
+    .take(5)
+    .collect<std::vector>();
+
+// result: 1, 2, 3, 4, 5
+{% endhighlight %}
+
+In an extended version of the ```make_stream(start, stepsize)``` generator the stepsize
+parameter defines the increment value of the endless stream.
+
+{% highlight cpp linenos %}
+auto result = make_stream_counter(1, 2)
+    .take(5)
+    .collect<std::vector>();
+// result: 1,3,5,7,9
+{% endhighlight %}
 
 ### Element processors
 
@@ -303,6 +368,64 @@ auto reduce_identity_result = make_stream(1, 8).reduce(std::string(), [](const s
   });
 {% endhighlight %}
 
+The third ```reduce_idfunc(initial_func, accumulator)``` terminator takes a function creating the
+initial value for the first stream element. 
+
+{% highlight cpp linenos %}
+auto reduce_identity_func_result = make_stream(1, 8).reduce_idfunc([](const int &val) {
+    std::stringstream istr;
+    istr << val;
+    return istr.str();
+  }, [](const std::string &result, int i) {
+    std::stringstream istr;
+    istr << " <-> " << i;
+    return result + istr.str();
+  });
+{% endhighlight %}
+
 #### Collect
+
+The ```collect<C>()``` terminator collects all resulting elements into a
+new container. The type of the container must be provided within the
+template type.
+
+{% highlight cpp linenos %}
+auto result = make_stream(3, 17)
+    .collect<std::vector>();
+{% endhighlight %}
+
 #### For each
+
+The ```for_each(predicate)``` terminator applies the given predicate function to
+each resulting element of the stream.
+
+{% highlight cpp linenos %}
+auto result = make_stream(3, 17)
+    .for_each([](const auto &val){
+        std::cout << "element: " << val << "\n";
+    });
+{% endhighlight %}
+
 #### Join
+
+The ```join()``` terminator concats all elements of a stream to a string and comes in
+three flavours. The first one takes no arguments and just concats all elements. The second
+```joind(delimiter)``` terminator takes a delimiter and inserts that delimiter between
+every stream element when concatenating.
+The third and last ```join(delimiter, suffix, prefix)``` terminator takes additionally
+to the delimiter string a suffix and prefix string which will be prepended and appended
+to the resulting string.
+
+{% highlight cpp linenos %}
+auto result = make_stream({"one", "two", "three", "four"}).join();
+
+// result: "onetwothreefour"
+
+result = make_stream({"one", "two", "three", "four"}).join(", ");
+
+// result: "one, two, three, four"
+
+result = make_stream({"one", "two", "three", "four"}).join(", ", "[", "]");
+
+// result: "[one, two, three, four]"
+{% endhighlight %}
