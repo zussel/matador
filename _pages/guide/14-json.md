@@ -84,3 +84,78 @@ jnill.is_null();
 
 ### Retrieving json values
 
+To retrieve a value from a json object the ```as<T>()``` can be used. It
+accesses the underlying concrete value und tries to convert it to the
+given type.
+There is a type checking with given template type defining that the
+type fits to the json type. Use the following table to find the
+corresponding convertion. If the type checking fails a ```logic_error```
+is thrown.
+
+|Template type   |Json type     |
+|----------------|--------------|
+|integral        |integer number|
+|floating point  |real number   |
+|bool            |boolean       |
+|string,char*    |string        |
+
+### Mapping of objects
+
+There are to classes providing json mapping functionality ```json_mapper``` and
+```json_object_mapper```. Where the first maps builtin types and std containers
+and the second one can handle matador types like ```has_one``` and ```has_many```.
+
+#### Json mapper
+
+The ```json_mapper``` class comes with three kind of interfaces. One to convert
+to a json formatted string. Another to convert to a json object and the third one
+to convert to a object or a list of objects.
+
+The following methods take a json, an object or a list of objects and as a second
+parameter a json format object and returns a formatted json string.
+
+- ```to_string(json, format)```
+- ```to_string<T>(object, format)```
+- ```to_string<T>(vector<object>, format)```
+
+The next set of methods takes a json string, an object or a list of objects and
+convert it into a json object.
+
+- ```to_json(string)```
+- ```to_json<T>(object)```
+- ```to_json<T>(vector<object>)```
+
+The last set of methods takes a json object or a json string and converts it into
+an object of the requested type of into a list of objects.
+
+- ```to_object<T>(json)```
+- ```to_object<T>(string)```
+- ```to_objects<T>(json)```
+- ```to_objects<T>(string)```
+
+#### Json object mapper
+
+The ```json_object_mapper``` class comes with the same three kind of interfaces as
+the ```json_mapper``` but with partially different arguments.
+
+The ```to_string``` methods converts an array of objects, an object pointer or an
+object view in combination with a json format definition into a json formatted
+string.
+
+- ```to_string<T>(array<objects>, format)```
+- ```to_string<T>(object_ptr, format)```
+- ```to_string<T>(object_view, format)```
+
+To convert an object pointer or an object view to a json object use the ```to_json(...)```
+methods.
+
+- ```to_json<T>(object_ptr)```
+- ```to_json<T>(object_view)```
+
+The last set of methods converts a json object or a string into one object or a list
+of objects of a specific type.
+
+- ```to_object<T>(json)```
+- ```to_object<T>(string)```
+- ```to_objects<T>(json)```
+- ```to_objects<T>(string)```

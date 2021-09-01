@@ -52,25 +52,10 @@ tcp::peer localhost8080(localhost, 8080);
 
 A socket represents a network connection between two network endpoints (peers). The connection can either be connected or closed.
 
-### Reactor
-
-The ```reactor``` class implements a __single threaded__ ```select()``` based reactor pattern.
-
-**Note:** In a future release the reactor will be multi threaded to increase performance.
-{: .bs-callout .bs-callout-warning}
-
-### Acceptor
-
-The ```acceptor``` class accepts a connection within the running reactor. It needs an endpoint to listen on and an accept handler which is called once a connection was established. It returns an implementation of
-the ```handler``` class which is then registered within the reactor.
-
-### Connector
-
-The ```connector``` class connects to a given connection endpoint and once the connection is established by the remote side a
-
 ### Handler
 
-The ```handler`` class provides an interface for an established connection which must be overwritten by the concrete implementation.
+The ```handler``` class provides an interface for all connection processors handled by the ```reactor```. The concrete implementation must
+overwrite interface
 
 The following interfaces might be implemented depending on the purpose of the concrete handler implementation:
 
@@ -84,6 +69,84 @@ The following interfaces might be implemented depending on the purpose of the co
 * ```is_ready_write()```: Called by the reactor to check if there is data ready to write
 * ```is_ready_read()```: Called by the reactor to check if there is data ready to read
 * ```name()```: Returns a name for this handler
+
+### Acceptor
+
+The ```acceptor``` class implements the ```handler``` interface and accepts a connection within the running
+reactor. It needs an endpoint to listen on and an accept handler which is called once a connection was established.
+It returns an implementation of the ```handler``` class which is then registered within the reactor.
+
+Assuming there is a class ```EchoHandler``` handling an established connection the creation
+of an acceptor could look like the code below:
+
+{% highlight cpp linenos %}
+// create an endpoint (listens on port 7777)
+auto ep = tcp::peer(address::v4::any(), 7777);
+
+// creates the acceptor with endpoint and handler callback
+auto ac = std::make_shared<acceptor>(ep, [](tcp::socket sock, tcp::peer p, acceptor *) {
+    auto cl = std::make_shared<EchoHandler>();
+    cl->init(std::move(sock), std::move(p));
+    return cl;
+  });
+{% endhighlight %}
+
+### Connector
+
+The ```connector``` class implements the ```handler``` interface and connects to a given connection endpoint and
+once the connection is established by the remote side a connect handler callback is called. It returns an implementation
+of the ```handler``` class which is then registered within the reactor.
+
+{% highlight cpp linenos %}
+// create the handler in advance
+auto echo_conn = std::make_shared<EchoHandler>();
+
+// creates the connector with handler callback
+auto echo_connector = std::make_shared<connector>([echo_conn](const tcp::socket& sock, const tcp::peer &p, connector *) {
+    echo_conn->init(sock, p);
+    return echo_conn;
+  });
+{% endhighlight %}
+
+### Reactor
+
+The ```reactor``` class implements a __single threaded__ ```select()``` based reactor pattern. Interally it deals with a list 
+of handlers for reading, writing and accepting io data or to schedule a call in a given interval.
+
+**Note:** In a future release the reactor will be multi threaded to increase performance.
+{: .bs-callout .bs-callout-warning}
+
+Once a ```reactor``` is instanciated handlers can be registered with ```register_handler(handler, event_type)``` where
+handler comes within a shared_ptr and the event type tells the reactor the use case of the handler (_reading_, _writing_,
+_accepting_, _exceptionell_).
+
+Most common usage is here to register an accetpor handler processing incoming connections.
+
+After the handler are registered the reactor can be started.
+
+{% highlight cpp linenos %}
+auto ac = std::make_shared<accpector>(...);
+
+reactor r;
+
+r.register_handler(ac, event_type::ACCEPT_MASK);
+
+r.run();
+{% endhighlight %}
+
+The ```reactor``` provides also the possibility to schedule a timer calling a handler on timeout. Therefor
+the ```schedule_timer(handler, offset, interval)``` method can be used. The scheduling starts once the
+reactor is started.
+
+{% highlight cpp linenos %}
+auto h = std::make_shared<TimeoutHandler>(...);
+
+reactor r;
+// calls on_timeout() after 1 second and than every 3 seconds
+r.schedule_timer(h, 1, 3);
+
+r.run();
+{% endhighlight %}
 
 ### IO Service
 
