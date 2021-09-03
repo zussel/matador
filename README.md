@@ -12,13 +12,13 @@ __Build Status__
 
 | Branches    | Linux-CI | Windows-CI | Coveralls    |  CodeCov  |
 |-------------|-----------|-------------|--------------|-----------|
-| master      |[![Build Status](https://travis-ci.org/zussel/matador.png?branch=master)](https://travis-ci.org/zussel/matador?branch=master)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/master)|[![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=master)](https://coveralls.io/github/zussel/matador?branch=master)|[![codecov](https://codecov.io/gh/zussel/matador/branch/master/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
+| master      |[![Build Status](https://travis-ci.org/zussel/matador.png?branch=master)](https://travis-ci.org/zussel/matador?branch=master)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/master?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/master)|[![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=master)](https://coveralls.io/github/zussel/matador?branch=master)|[![codecov](https://codecov.io/gh/zussel/matador/branch/master/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
 | develop     |[![Build Status](https://github.com/zussel/matador/actions/workflows/linux.yml/badge.svg?branch=develop)](https://travis-ci.org/zussel/matador)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/develop)|N/A|[![codecov](https://codecov.io/gh/zussel/matador/branch/develop/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
 
 matador is an ORM and Web Application framework written in C++. It
 encapsulates all database backend communication and offers a simple (web) server.
 You don't have to deal with database backends or sql statements neither with mapping of
-data types or serialization of objects. It comes with relation handling out
+data types nor serialization of objects. It comes with relation handling out
 of the box, brings a unique container for all kind of objects and a fluent sql
 query interface. All features are combined into an ORM layer. With the integrated web server
 it is possible to write your own web application with database backend.
