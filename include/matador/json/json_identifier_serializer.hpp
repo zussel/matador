@@ -2,17 +2,16 @@
 #define MATADOR_JSON_IDENTIFIER_SERIALIZER_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
+#ifdef matador_json_EXPORTS
+    #define OOS_JSON_API __declspec(dllexport)
+    #define EXPIMP_JSON_TEMPLATE
   #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
+    #define OOS_JSON_API __declspec(dllimport)
+    #define EXPIMP_JSON_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
-  #pragma warning(disable: 4355)
 #else
-#define OOS_UTILS_API
+#define OOS_JSON_API
 #endif
 
 #include "matador/utils/serializer.hpp"
@@ -23,7 +22,7 @@ namespace matador {
 
 class basic_identifier;
 
-class OOS_UTILS_API json_identifier_serializer : public serializer
+class OOS_JSON_API json_identifier_serializer : public serializer
 {
 public:
   json_identifier_serializer() = default;

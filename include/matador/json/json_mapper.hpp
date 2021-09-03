@@ -2,16 +2,16 @@
 #define MATADOR_JSON_MAPPER_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
+#ifdef matador_json_EXPORTS
+    #define OOS_JSON_API __declspec(dllexport)
+    #define EXPIMP_JSON_TEMPLATE
   #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
+    #define OOS_JSON_API __declspec(dllimport)
+    #define EXPIMP_JSON_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_UTILS_API
+#define OOS_JSON_API
 #endif
 
 #include "matador/json/basic_json_mapper.hpp"
@@ -45,7 +45,7 @@ namespace matador {
  * array<object> to_objects(json)
  * array<object> to_objects(string)
  */
-class OOS_UTILS_API json_mapper
+class OOS_JSON_API json_mapper
 {
 public:
   /**

@@ -2,16 +2,16 @@
 #define MATADOR_JSON_MAPPER_SERIALIZER_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
+#ifdef matador_json_EXPORTS
+    #define OOS_JSON_API __declspec(dllexport)
+    #define EXPIMP_JSON_TEMPLATE
   #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
+    #define OOS_JSON_API __declspec(dllimport)
+    #define EXPIMP_JSON_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_UTILS_API
+#define OOS_JSON_API
 #endif
 
 #include "matador/json/basic_json_mapper.hpp"
@@ -24,7 +24,7 @@ namespace matador {
 namespace detail {
 
 /// @cond MATADOR_DEV
-class OOS_UTILS_API json_mapper_serializer
+class OOS_JSON_API json_mapper_serializer
 {
 public:
   explicit json_mapper_serializer(details::mapper_runtime &runtime_data)

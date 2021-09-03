@@ -2,16 +2,16 @@
 #define REACTOR_JSON_HPP
 
 #ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
+#ifdef matador_json_EXPORTS
+    #define OOS_JSON_API __declspec(dllexport)
+    #define EXPIMP_JSON_TEMPLATE
   #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
+    #define OOS_JSON_API __declspec(dllimport)
+    #define EXPIMP_JSON_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_UTILS_API
+#define OOS_JSON_API
 #endif
 
 #include "json_format.hpp"
@@ -43,7 +43,7 @@ class const_json_iterator;
  *
  *
  */
-class OOS_UTILS_API json
+class OOS_JSON_API json
 {
 public:
   typedef json_iterator<json> iterator;             /**< Shortcut to json iterator type */
@@ -211,7 +211,7 @@ public:
    * @param b Second json object to compare
    * @return True if both json objects are equal
    */
-  friend OOS_UTILS_API bool operator==(const json &a, const json &b);
+  friend OOS_JSON_API bool operator==(const json &a, const json &b);
 
   /**
    * Compares equality of two json objects
@@ -220,7 +220,7 @@ public:
    * @param b Second json object to compare
    * @return True if both json objects are not equal
    */
-  friend OOS_UTILS_API bool operator!=(const json &a, const json &b);
+  friend OOS_JSON_API bool operator!=(const json &a, const json &b);
 
   /**
    * Compares two json objects if first object
@@ -230,7 +230,7 @@ public:
    * @param b Second json object to compare
    * @return True if first json object is less than second
    */
-  friend OOS_UTILS_API bool operator<(const json &a, const json &b);
+  friend OOS_JSON_API bool operator<(const json &a, const json &b);
 
   /**
    * Compares two json objects if first object
@@ -240,7 +240,7 @@ public:
    * @param b Second json object to compare
    * @return True if first json object is less than or equal second
    */
-  friend OOS_UTILS_API bool operator<=(const json &a, const json &b);
+  friend OOS_JSON_API bool operator<=(const json &a, const json &b);
 
   /**
    * Compares two json objects if first object
@@ -250,7 +250,7 @@ public:
    * @param b Second json object to compare
    * @return True if first json object is greater than second
    */
-  friend OOS_UTILS_API bool operator>(const json &a, const json &b);
+  friend OOS_JSON_API bool operator>(const json &a, const json &b);
 
   /**
    * Compares two json objects if first object
@@ -260,7 +260,7 @@ public:
    * @param b Second json object to compare
    * @return True if first json object is greater than or equal second
    */
-  friend OOS_UTILS_API bool operator>=(const json &a, const json &b);
+  friend OOS_JSON_API bool operator>=(const json &a, const json &b);
 
   /**
    * Less operator with a json value with a scalar value
@@ -373,7 +373,7 @@ public:
    * @param val The json object to write
    * @return The written on stream
    */
-  friend OOS_UTILS_API std::ostream& operator<<(std::ostream &out, const json &val);
+  friend OOS_JSON_API std::ostream& operator<<(std::ostream &out, const json &val);
 
   /**
    * Print the json object to the given ostream
@@ -1410,7 +1410,7 @@ private:
  * @param j Json object to convert
  * @return The string representation of the json object
  */
-OOS_UTILS_API std::string to_string(const json &j);
+OOS_JSON_API std::string to_string(const json &j);
 
 }
 
