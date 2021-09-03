@@ -1,4 +1,4 @@
-#include "matador/utils/json_serializer.hpp"
+#include "matador/json/json_serializer.hpp"
 
 namespace matador {
 

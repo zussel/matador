@@ -1,6 +1,6 @@
 #include "matador/http/detail/template_expression.hpp"
 
-#include "matador/utils/json.hpp"
+#include "matador/json/json.hpp"
 
 #include <utility>
 

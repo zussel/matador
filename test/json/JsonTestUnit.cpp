@@ -4,8 +4,8 @@
 
 #include "JsonTestUnit.hpp"
 
-#include "matador/utils/json.hpp"
-#include "matador/utils/json_parser.hpp"
+#include "matador/json/json.hpp"
+#include "matador/json/json_parser.hpp"
 
 using namespace matador;
 

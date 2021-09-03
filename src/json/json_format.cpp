@@ -1,4 +1,4 @@
-#include "matador/utils/json_format.hpp"
+#include "matador/json/json_format.hpp"
 
 namespace matador {
 

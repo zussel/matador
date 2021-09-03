@@ -15,10 +15,10 @@
 #define MATADOR_OBJECT_API
 #endif
 
-#include "matador/utils/basic_json_mapper.hpp"
-#include "matador/utils/json.hpp"
-#include "matador/utils/json_mapper_serializer.hpp"
-#include "matador/utils/json_parser.hpp"
+#include "matador/json/basic_json_mapper.hpp"
+#include "matador/json/json.hpp"
+#include "matador/json/json_mapper_serializer.hpp"
+#include "matador/json/json_parser.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/memory.hpp"
 

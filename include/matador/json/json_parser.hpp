@@ -18,8 +18,8 @@
 #define OOS_UTILS_API
 #endif
 
-#include "matador/utils/json.hpp"
-#include "matador/utils/generic_json_parser.hpp"
+#include "json.hpp"
+#include "generic_json_parser.hpp"
 
 #include <stack>
 

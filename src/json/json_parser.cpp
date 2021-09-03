@@ -2,7 +2,7 @@
 // Created by sascha on 22.12.19.
 //
 
-#include "matador/utils/json_parser.hpp"
+#include "matador/json/json_parser.hpp"
 
 #include <sstream>
 

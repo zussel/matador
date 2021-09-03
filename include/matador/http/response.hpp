@@ -25,7 +25,7 @@
 #include "matador/http/mime_types.hpp"
 #include "matador/http/response_header.hpp"
 
-#include "matador/utils/json_mapper.hpp"
+#include "matador/json/json_mapper.hpp"
 #include "matador/utils/string.hpp"
 #include "matador/utils/file.hpp"
 #include "matador/utils/buffer_view.hpp"

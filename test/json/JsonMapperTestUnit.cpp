@@ -2,7 +2,7 @@
 
 #include "matador/utils/date.hpp"
 
-#include "matador/utils/json_mapper.hpp"
+#include "matador/json/json_mapper.hpp"
 
 #include "../person.hpp"
 #include "../dto.hpp"

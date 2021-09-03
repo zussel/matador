@@ -15,7 +15,7 @@
 #endif
 
 #include "matador/utils/string.hpp"
-#include "matador/utils/json_exception.hpp"
+#include "matador/json/json_exception.hpp"
 
 #include <string>
 #include <cstring>

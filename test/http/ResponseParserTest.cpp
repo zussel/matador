@@ -4,7 +4,7 @@
 #include "matador/http/response_parser.hpp"
 #include "matador/http/response.hpp"
 
-#include "matador/utils/json_mapper.hpp"
+#include "matador/json/json_mapper.hpp"
 #include "matador/utils/file.hpp"
 #include "matador/utils/os.hpp"
 

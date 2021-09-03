@@ -8,7 +8,7 @@
 
 #include "matador/logger/log_manager.hpp"
 
-#include "matador/utils/json_mapper.hpp"
+#include "matador/json/json_mapper.hpp"
 
 using namespace matador;
 using namespace matador::http;

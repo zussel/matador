@@ -36,6 +36,7 @@ ENDIF()
 TARGET_LINK_LIBRARIES(sandbox
     matador-unit
     matador-utils
+    matador-json
     matador-logger
     matador-object
     matador-http

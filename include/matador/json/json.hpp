@@ -14,8 +14,8 @@
 #define OOS_UTILS_API
 #endif
 
-#include "matador/utils/json_format.hpp"
-#include "matador/utils/json_utils.hpp"
+#include "json_format.hpp"
+#include "json_utils.hpp"
 
 #include <memory>
 #include <utility>

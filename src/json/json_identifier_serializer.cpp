@@ -1,4 +1,4 @@
-#include "matador/utils/json_identifier_serializer.hpp"
+#include "matador/json/json_identifier_serializer.hpp"
 #include "matador/utils/basic_identifier.hpp"
 
 namespace matador {

@@ -3,7 +3,7 @@
 #include "matador/http/detail/template_parser.hpp"
 #include "matador/http/detail/template_part.hpp"
 
-#include "matador/utils/json.hpp"
+#include "matador/json/json.hpp"
 #include "matador/utils/string_cursor.hpp"
 
 namespace matador {

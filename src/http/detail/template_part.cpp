@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "matador/utils/stream.hpp"
-#include "matador/utils/json.hpp"
+#include "matador/json/json.hpp"
 
 namespace matador {
 namespace http {

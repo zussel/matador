@@ -13,6 +13,7 @@ ADD_EXECUTABLE(http_server ${HTTP_SERVER_SOURCES})
 TARGET_LINK_LIBRARIES(http_server
   matador-unit
   matador-utils
+  matador-json
   matador-logger
   matador-http
   matador-net
@@ -29,6 +30,7 @@ ADD_EXECUTABLE(html_builder_server ${HTML_BUILDER_SOURCES})
 TARGET_LINK_LIBRARIES(html_builder_server
   matador-unit
   matador-utils
+  matador-json
   matador-logger
   matador-http
   matador-net

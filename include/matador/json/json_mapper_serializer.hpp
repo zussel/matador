@@ -14,7 +14,7 @@
 #define OOS_UTILS_API
 #endif
 
-#include "matador/utils/basic_json_mapper.hpp"
+#include "matador/json/basic_json_mapper.hpp"
 
 #include <set>
 #include <unordered_set>

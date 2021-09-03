@@ -4,7 +4,7 @@
 #include "matador/http/detail/template_filter_factory.hpp"
 
 #include "matador/utils/string.hpp"
-#include "matador/utils/json_parser.hpp"
+#include "matador/json/json_parser.hpp"
 
 #include <set>
 

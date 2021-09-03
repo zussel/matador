@@ -14,7 +14,7 @@
 #define OOS_HTTP_API
 #endif
 
-#include "matador/utils/json.hpp"
+#include "matador/json/json.hpp"
 
 #include <string>
 #include <memory>

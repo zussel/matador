@@ -17,7 +17,7 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/string.hpp"
-#include "matador/utils/json.hpp"
+#include "json.hpp"
 #include "matador/utils/is_builtin.hpp"
 
 #include <set>

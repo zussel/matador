@@ -15,7 +15,7 @@
 #define MATADOR_OBJECT_API
 #endif
 
-#include "matador/utils/json.hpp"
+#include "matador/json/json.hpp"
 #include "matador/utils/is_builtin.hpp"
 
 #include "matador/object/object_ptr.hpp"

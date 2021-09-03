@@ -13,10 +13,6 @@ SET (TEST_TOOLS_SOURCES
   utils/AnyTestUnit.hpp
   utils/SequencerTestUnit.cpp
   utils/SequencerTestUnit.hpp
-  utils/JsonTestUnit.cpp
-  utils/JsonTestUnit.hpp
-  utils/JsonMapperTestUnit.cpp
-  utils/JsonMapperTestUnit.hpp
   utils/OSTest.cpp
   utils/OSTest.hpp
   utils/FileTestUnit.cpp
@@ -29,8 +25,6 @@ SET (TEST_TOOLS_SOURCES
   utils/OptionalTest.hpp
   utils/ThreadPoolTest.cpp
   utils/ThreadPoolTest.hpp
-  utils/JsonSerializerTest.cpp
-  utils/JsonSerializerTest.hpp
   utils/Base64Test.cpp
   utils/Base64Test.hpp
   utils/BufferViewTest.cpp
@@ -41,6 +35,15 @@ SET (TEST_TOOLS_SOURCES
   utils/UrlTest.hpp
   utils/HtmlTest.cpp
   utils/HtmlTest.hpp)
+
+SET (TEST_JSON_SOURCES
+  json/JsonTestUnit.cpp
+  json/JsonTestUnit.hpp
+  json/JsonMapperTestUnit.cpp
+  json/JsonMapperTestUnit.hpp
+  json/JsonSerializerTest.cpp
+  json/JsonSerializerTest.hpp
+  )
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
@@ -172,6 +175,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_HEADER}
   ${TEST_TOOLS_SOURCES}
   ${TEST_OBJECT_SOURCES}
+  ${TEST_JSON_SOURCES}
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
   ${TEST_LOGGER_SOURCES}
@@ -225,6 +229,7 @@ MESSAGE(STATUS "Appending thread libs: ${CMAKE_THREAD_LIBS_INIT}")
 TARGET_LINK_LIBRARIES(test_matador
   matador-unit
   matador-utils
+  matador-json
   matador-logger
   matador-net
   matador-http
@@ -243,6 +248,7 @@ endif()
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("logger" FILES ${TEST_LOGGER_SOURCES})
+SOURCE_GROUP("json" FILES ${TEST_JSON_SOURCES})
 SOURCE_GROUP("net" FILES ${TEST_NET_SOURCES})
 SOURCE_GROUP("http" FILES ${TEST_HTTP_SOURCES})
 SOURCE_GROUP("utils" FILES ${TEST_TOOLS_SOURCES})

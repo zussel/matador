@@ -14,10 +14,10 @@
 #define OOS_UTILS_API
 #endif
 
-#include "matador/utils/basic_json_mapper.hpp"
-#include "matador/utils/json_serializer.hpp"
-#include "matador/utils/json_mapper_serializer.hpp"
-#include "matador/utils/json.hpp"
+#include "matador/json/basic_json_mapper.hpp"
+#include "json_serializer.hpp"
+#include "json_mapper_serializer.hpp"
+#include "json.hpp"
 
 #include <set>
 #include <unordered_set>

@@ -23,7 +23,10 @@ SET(SOURCES
   detail/template_part.cpp
   detail/template_expression.cpp
   middleware.cpp
-  middleware/routing_middleware.cpp detail/template_filter.cpp detail/template_filter_factory.cpp)
+  middleware/routing_middleware.cpp
+  detail/template_filter.cpp
+  detail/template_filter_factory.cpp
+)
 
 SET(HEADER
   ../../include/matador/http/http_client.hpp
@@ -47,12 +50,15 @@ SET(HEADER
   ../../include/matador/http/detail/template_command.hpp
   ../../include/matador/http/detail/template_command_factory.hpp
   ../../include/matador/http/detail/template_parser.hpp
-  ../../include/matador/http/detail/template_part.hpp detail/template_expression.cpp
+  ../../include/matador/http/detail/template_part.hpp
   ../../include/matador/http/detail/template_expression.hpp
   ../../include/matador/http/middleware.hpp
   ../../include/matador/http/middleware/routing_middleware.hpp
   ../../include/matador/http/auth/jwt_token.hpp
-  ../../include/matador/http/enum_class_hash.hpp ../../include/matador/http/detail/template_filter.hpp ../../include/matador/http/detail/template_filter_factory.hpp)
+  ../../include/matador/http/enum_class_hash.hpp
+  ../../include/matador/http/detail/template_filter.hpp
+  ../../include/matador/http/detail/template_filter_factory.hpp
+)
 
 ADD_LIBRARY(matador-http SHARED ${SOURCES} ${HEADER})
 

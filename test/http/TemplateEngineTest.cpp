@@ -1,6 +1,6 @@
 #include "TemplateEngineTest.hpp"
 
-#include "matador/utils/json.hpp"
+#include "matador/json/json.hpp"
 #include "matador/utils/file.hpp"
 #include "matador/utils/os.hpp"
 

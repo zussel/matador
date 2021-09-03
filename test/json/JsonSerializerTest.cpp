@@ -1,6 +1,6 @@
 #include "JsonSerializerTest.hpp"
 
-#include "matador/utils/json_mapper.hpp"
+#include "matador/json/json_mapper.hpp"
 
 #include "../dto.hpp"
 

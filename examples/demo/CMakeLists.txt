@@ -30,6 +30,7 @@ add_custom_command(TARGET demo PRE_BUILD
 
 TARGET_LINK_LIBRARIES(demo
   matador-utils
+  matador-json
   matador-logger
   matador-sql
   matador-object

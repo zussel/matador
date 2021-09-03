@@ -18,9 +18,11 @@ ADD_EXECUTABLE(echo_server ${ECHO_SERVER_SOURCES})
 TARGET_LINK_LIBRARIES(echo_server
   matador-unit
   matador-utils
+  matador-json
   matador-logger
   matador-net
   ${CMAKE_DL_LIBS}
+  ${CMAKE_THREAD_LIBS_INIT}
   ${NET_LIBRARIES}
 )
 
@@ -34,8 +36,10 @@ ADD_EXECUTABLE(echo_client ${ECHO_CLIENT_SOURCES})
 TARGET_LINK_LIBRARIES(echo_client
   matador-unit
   matador-utils
+  matador-json
   matador-logger
   matador-net
   ${CMAKE_DL_LIBS}
+  ${CMAKE_THREAD_LIBS_INIT}
   ${NET_LIBRARIES}
 )

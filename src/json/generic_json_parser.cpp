@@ -2,7 +2,7 @@
 // Created by sascha on 21.01.20.
 //
 
-#include "matador/utils/generic_json_parser.hpp"
+#include "matador/json/generic_json_parser.hpp"
 
 namespace matador {
 bool is_error(const char *start, const char *end, long long value) {

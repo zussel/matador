@@ -2,7 +2,7 @@
 
 #include "matador/logger/log_manager.hpp"
 
-#include "matador/utils/json_mapper.hpp"
+#include "matador/json/json_mapper.hpp"
 #include "matador/utils/url.hpp"
 
 #include "matador/object/has_many.hpp"

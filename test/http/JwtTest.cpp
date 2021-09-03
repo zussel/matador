@@ -1,7 +1,7 @@
 #include "JwtTest.hpp"
 
-#include "matador/utils/json_mapper.hpp"
-#include "matador/utils/json_serializer.hpp"
+#include "matador/json/json_mapper.hpp"
+#include "matador/json/json_serializer.hpp"
 
 #include "matador/http/auth/jwt_token.hpp"
 
