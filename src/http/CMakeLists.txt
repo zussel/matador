@@ -62,7 +62,7 @@ SET(HEADER
 
 ADD_LIBRARY(matador-http SHARED ${SOURCES} ${HEADER})
 
-TARGET_LINK_LIBRARIES(matador-http matador-net matador-logger matador-utils)
+TARGET_LINK_LIBRARIES(matador-http matador-net matador-logger matador-utils matador-json)
 
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-http
