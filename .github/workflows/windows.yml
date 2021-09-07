@@ -1,0 +1,43 @@
+name: matador@windows
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+  INSTALL_LOCATION: ".local"
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: cache dependencies
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: ${{env.INSTALL_LOCATION}}
+          key: ${{runner.os}}-dependencies
+      - name: CMake Version
+        run: cmake --version
+      - name: Configure CMake
+        run: >
+          cmake -B ${{github.workspace}}/build
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          -DCMAKE_INSTALL_PREFIX="$HOME/$env:INSTALL_LOCATION"
+      - name: Build
+        run: >
+          cmake --build ${{github.workspace}}/build
+          --config ${{env.BUILD_TYPE}}
+      - name: Copy Matador Libs
+        working-directory: ${{github.workspace}}/build
+        run: cp lib/libmatador-*.* bin/
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest --verbose -C ${{env.BUILD_TYPE}}
