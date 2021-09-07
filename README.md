@@ -48,6 +48,15 @@ Documentation can be found [here](http://zussel.github.io/matador).
 Example
 -------
 
+The following example define an entity _person_, sets up orm backend and
+logging and creates a http server listening at port 8000. The server serves
+five REST apis at ```http://localhost:8000/person/```:
+- GET ```/``` (returns all person)
+- GET ```/id``` (return person with id where id must be numeric)
+- POST ```/``` (creates a person from the given json body)
+- PUT ```/id``` (updates a person with id from the given json body)
+- DELETE ```/id``` (deletes a person with id)
+
 ```cpp
 // use matador namespace
 using namespace matador
