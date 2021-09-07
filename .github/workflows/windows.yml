@@ -31,6 +31,11 @@ jobs:
           cmake -B ${{github.workspace}}/build
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DCMAKE_INSTALL_PREFIX="$HOME/$env:INSTALL_LOCATION"
+          -DMATADOR_ODBC_TEST=false
+          -DMATADOR_ODBC=false
+          -DMATADOR_POSTGRESQL_TEST=false
+          -DMATADOR_MYSQL_TEST=false
+          -DMATADOR_SQLITE3_TEST=false
       - name: Build
         run: >
           cmake --build ${{github.workspace}}/build
