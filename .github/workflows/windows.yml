@@ -35,9 +35,6 @@ jobs:
         run: >
           cmake --build ${{github.workspace}}/build
           --config ${{env.BUILD_TYPE}}
-      - name: Copy Matador Libs
-        working-directory: ${{github.workspace}}/build
-        run: cp lib/libmatador-*.* bin/
       - name: Test
         working-directory: ${{github.workspace}}/build
         run: ctest --verbose -C ${{env.BUILD_TYPE}}
