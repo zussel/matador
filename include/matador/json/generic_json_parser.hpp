@@ -529,8 +529,8 @@ std::string generic_json_parser<T>::parse_json_string()
 }
 
 /// @cond MATADOR_DEV
-OOS_UTILS_API bool is_error(const char *start, const char *end, long long value);
-OOS_UTILS_API bool is_error(const char *start, const char *end, double value);
+OOS_JSON_API bool is_error(const char *start, const char *end, long long value);
+OOS_JSON_API bool is_error(const char *start, const char *end, double value);
 /// @endcond
 
 template<class T>

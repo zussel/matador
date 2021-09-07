@@ -1,7 +1,3 @@
-//
-// Created by sascha on 21.01.20.
-//
-
 #include "matador/json/generic_json_parser.hpp"
 
 namespace matador {
