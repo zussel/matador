@@ -42,17 +42,17 @@ jobs:
           --config ${{env.BUILD_TYPE}}
       - name: Start PostgreSQL
         run: |
-        $pgService = Get-Service -Name postgresql*
-        Set-Service -InputObject $pgService -Status running -StartupType automatic
-        Start-Process -FilePath "$env:PGBIN\pg_isready" -Wait -PassThru
+          $pgService = Get-Service -Name postgresql*
+          Set-Service -InputObject $pgService -Status running -StartupType automatic
+          Start-Process -FilePath "$env:PGBIN\pg_isready" -Wait -PassThru
       - name: Create PostgreSQL User
         run: |
-        & $env:PGBIN\psql --command="CREATE USER test PASSWORD 'test123'" --command="\du"
+          & $env:PGBIN\psql --command="CREATE USER test PASSWORD 'test123'" --command="\du"
       - name: Create PostgreSQL TestDB
         run: |
-        & $env:PGBIN\createdb --owner=test matador_test
-        $env:PGPASSWORD = 'test123'
-        & $env:PGBIN\psql --username=test --host=localhost --list matador_test
+          & $env:PGBIN\createdb --owner=test matador_test
+          $env:PGPASSWORD = 'test123'
+          & $env:PGBIN\psql --username=test --host=localhost --list matador_test
       - name: Test
         working-directory: ${{github.workspace}}/build
         run: ctest --verbose -C ${{env.BUILD_TYPE}}
