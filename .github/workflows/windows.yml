@@ -24,6 +24,23 @@ jobs:
         with:
           path: ${{env.INSTALL_LOCATION}}
           key: ${{runner.os}}-dependencies
+      - name: Start PostgreSQL
+        run: |
+          $pgService = Get-Service -Name postgresql*
+          Set-Service -InputObject $pgService -Status running -StartupType automatic
+          Start-Process -FilePath "$env:PGBIN\pg_isready" -Wait -PassThru
+      - name: Create PostgreSQL User
+        run: |
+          & $env:PGBIN\psql --command="CREATE USER test PASSWORD 'test123'" --command="\du"
+      - name: Create PostgreSQL TestDB
+        run: |
+          & $env:PGBIN\createdb --owner=test matador_test
+          $env:PGPASSWORD = 'test123'
+          & $env:PGBIN\psql --username=test --host=localhost --list matador_test
+      - uses: ankane/setup-mysql@v1
+        with:
+          database: matador_test
+      - run: mysql -D matador_test -e 'SELECT VERSION()'
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake
@@ -40,19 +57,6 @@ jobs:
         run: >
           cmake --build ${{github.workspace}}/build
           --config ${{env.BUILD_TYPE}}
-      - name: Start PostgreSQL
-        run: |
-          $pgService = Get-Service -Name postgresql*
-          Set-Service -InputObject $pgService -Status running -StartupType automatic
-          Start-Process -FilePath "$env:PGBIN\pg_isready" -Wait -PassThru
-      - name: Create PostgreSQL User
-        run: |
-          & $env:PGBIN\psql --command="CREATE USER test PASSWORD 'test123'" --command="\du"
-      - name: Create PostgreSQL TestDB
-        run: |
-          & $env:PGBIN\createdb --owner=test matador_test
-          $env:PGPASSWORD = 'test123'
-          & $env:PGBIN\psql --username=test --host=localhost --list matador_test
       - name: Test
         working-directory: ${{github.workspace}}/build
         run: ctest --verbose -C ${{env.BUILD_TYPE}}
