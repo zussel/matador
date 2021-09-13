@@ -63,7 +63,8 @@ jobs:
           -DMATADOR_ODBC_TEST=false
           -DMATADOR_ODBC=false
           -DMATADOR_POSTGRESQL_TEST=true
-          -DMATADOR_MYSQL_TEST=false
+          -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
+          -DMATADOR_MYSQL_TEST=true
           -DMATADOR_SQLITE3_TEST=false
       - name: Build
         run: >
