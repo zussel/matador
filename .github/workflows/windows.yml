@@ -4,13 +4,15 @@ on:
   push:
     branches:
       - develop
-      paths-ignore:
-        - .github/workflows/linux.yml
-        - .github/workflows/coverage.yml
-  pull_request:
     paths-ignore:
       - .github/workflows/linux.yml
       - .github/workflows/coverage.yml
+  pull_request:
+    branches:
+      - develop
+    paths-ignore:
+      - .github/workflows/windows.yml
+      - appveyor.yml
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
