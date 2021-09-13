@@ -31,6 +31,11 @@ public:
   typedef P protocol_type;            /**< Shortcut to the protocol type */
   typedef typename P::peer peer_type; /**< Shortcut to the peer type */
 
+#if _WIN32
+  typedef SOCKET socket_type;
+#else
+  typedef int socket_type;
+#endif
   /**
    * Creates a socket for a specific given
    * protocol
@@ -54,7 +59,7 @@ public:
    * @param protocol Protocol for which a socket is created
    * @return The socket fd or -1 on error
    */
-  int open(const protocol_type &protocol);
+  socket_type open(const protocol_type &protocol);
 
   /**
    * Closes the open socket
@@ -77,7 +82,7 @@ public:
    *
    * @return The released socket fd
    */
-  int release();
+  socket_type release();
 
   /**
    * Connect to the given peer. If the connection
@@ -135,7 +140,7 @@ public:
    *
    * @return Underlying socket fd
    */
-  int id() const;
+  socket_type id() const;
 
   /**
    * Assigns the given socket fd to this
@@ -144,16 +149,16 @@ public:
    *
    * @param sock The socket fd to assign
    */
-  void assign(int sock);
+  void assign(socket_type sock);
 
 protected:
 /// @cond MATADOR_DEV
   socket_base() = default;
   ~socket_base() = default;
 
-  int open(int family, int type, int protocol);
+  socket_type open(int family, int type, int protocol);
 
-  int sock_ = 0;
+  socket_type sock_ = 0;
   std::string name_;
 #ifdef _WIN32
   bool is_nonblocking_ = false;

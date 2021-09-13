@@ -28,7 +28,7 @@ socket_base<P>::socket_base(const peer_type &peer)
 }
 
 template < class P >
-int socket_base<P>::open(const protocol_type &protocol)
+typename socket_base<P>::socket_type socket_base<P>::open(const protocol_type &protocol)
 {
   return open(protocol.family(), protocol.type(), protocol.protocol());
 }
@@ -51,7 +51,7 @@ bool socket_base<P>::is_open() const
 }
 
 template < class P >
-int socket_base<P>::release()
+typename socket_base<P>::socket_type socket_base<P>::release()
 {
   int tmp_fd = sock_;
   sock_ = 0;
@@ -149,13 +149,13 @@ bool socket_base<P>::options(int name, bool value)
 }
 
 template < class P >
-int socket_base<P>::id() const
+typename socket_base<P>::socket_type socket_base<P>::id() const
 {
   return sock_;
 }
 
 template < class P >
-void socket_base<P>::assign(int sock)
+void socket_base<P>::assign(socket_type sock)
 {
   if (is_open()) {
     throw std::logic_error("couldn't assign: socket already opened");
@@ -177,14 +177,14 @@ void socket_base<P>::assign(int sock)
 }
 
 template < class P >
-int socket_base<P>::open(int family, int type, int protocol)
+typename socket_base<P>::socket_type socket_base<P>::open(int family, int type, int protocol)
 {
   sock_ = ::socket(family, type, protocol);
   return sock_;
 }
 
 template < class P >
-int connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
+typename socket_base<P>::socket_type connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
 {
   char portstr[6];
   sprintf(portstr, "%d", port);
@@ -202,8 +202,8 @@ int connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
 
   head = res;
 
-  int connfd = 0;
-  int ret = 0;
+  typename socket_base<P>::socket_type connfd = 0;
+  typename socket_base<P>::socket_type ret = 0;
   do {
     connfd = ::socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     if (connfd < 0) {
@@ -234,17 +234,17 @@ int connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
 }
 
 template < class P >
-int connect(socket_stream<P> &stream, peer_base<P> endpoint)
+typename socket_base<P>::socket_type connect(socket_stream<P> &stream, peer_base<P> endpoint)
 {
   auto pt = endpoint.protocol();
 
-  int fd = ::socket(pt.family(), pt.type(), pt.protocol());
+  typename socket_base<P>::socket_type fd = ::socket(pt.family(), pt.type(), pt.protocol());
 
   if (fd < 0) {
     return fd;
   }
 
-  int ret = ::connect(fd, endpoint.data(), endpoint.size());
+  typename socket_base<P>::socket_type ret = ::connect(fd, endpoint.data(), endpoint.size());
   if (ret == 0) {
     stream.assign(fd);
   } else {
