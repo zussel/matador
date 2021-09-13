@@ -70,7 +70,7 @@ jobs:
           --config ${{env.BUILD_TYPE}}
       - name: List Debug
         working-directory: ${{github.workspace}}/build/bin/Debug
-        run: dir .
+        run: pwd & ls
       - name: Test
         working-directory: ${{github.workspace}}/build
         run: ctest --verbose -C ${{env.BUILD_TYPE}}
