@@ -69,7 +69,7 @@ jobs:
           cmake --build ${{github.workspace}}/build
           --config ${{env.BUILD_TYPE}}
       - name: List Debug
-        working-directory: ${{github.workspace}}/build/Debug/bin
+        working-directory: ${{github.workspace}}/build/Debug/bin/Debug
         run: dir
       - name: Test
         working-directory: ${{github.workspace}}/build
