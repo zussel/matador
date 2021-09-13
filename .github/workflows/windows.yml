@@ -50,8 +50,9 @@ jobs:
           database: matador_test
       - run: mysql -D matador_test -e 'SELECT VERSION()'
       - run: mysql -u root -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test123'"
-      - run: mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'test'@'localhost'
+      - run: mysql -u root -e "GRANT ALL PRIVILEGES ON matador_test.* TO 'test'@'localhost'"
       - run: mysql -u root -e "FLUSH PRIVILEGES"
+      - run: mysql -u root -e "SHOW GRANTS FOR 'test'@'localhost'"
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake
