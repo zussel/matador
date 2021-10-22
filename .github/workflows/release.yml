@@ -1,0 +1,55 @@
+name: matador@linux:release
+
+on:
+  push:
+    branches:
+      - develop
+    paths-ignore:
+      - .github/workflows/windows.yml
+      - appveyor.yml
+  pull_request:
+    branches:
+      - develop
+    paths-ignore:
+      - .github/workflows/windows.yml
+      - appveyor.yml
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler-version: [9]
+    steps:
+      - uses: actions/checkout@v2
+      - name: CMake Version
+        run: cmake --version
+      - name: Configure CMake
+        env:
+          CC: gcc-${{ matrix.compiler-version }}
+          CXX: g++-${{ matrix.compiler-version }}
+        run: >
+          cmake -B ${{github.workspace}}/build
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          -DMATADOR_ODBC_TEST=false
+          -DMATADOR_ODBC=true
+          -DMATADOR_POSTGRESQL_TEST=true
+          -DMATADOR_MYSQL_TEST=true
+          -DMATADOR_SQLITE3_TEST=true
+          -DCOVERAGE=false
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: Copy Matador Libs
+        working-directory: ${{github.workspace}}/build
+        run: cp lib/libmatador-*.* bin/
+      - name: Build Documentation
+        working-directory: ${{github.workspace}}/build
+        run: cmake --build ${{github.workspace}}/build --target web
+      - name: Build Packges
+        working-directory: ${{github.workspace}}/build
+        run: cmake --build ${{github.workspace}}/build --target package
