@@ -26,6 +26,10 @@ jobs:
       matrix:
         compiler-version: [9]
     steps:
+      - name: Install Doxygen
+        run: |
+          sudo apt-get -y install doxygen
+          which doxygen
       - uses: actions/checkout@v2
       - name: CMake Version
         run: cmake --version
