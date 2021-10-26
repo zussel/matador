@@ -54,6 +54,6 @@ jobs:
       - name: Build Documentation
         working-directory: ${{github.workspace}}/build
         run: cmake --build ${{github.workspace}}/build --target web
-      - name: Build Packges
+      - name: Build Packages
         working-directory: ${{github.workspace}}/build
         run: cmake --build ${{github.workspace}}/build --target package
