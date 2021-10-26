@@ -6,12 +6,14 @@ on:
       - develop
     paths-ignore:
       - .github/workflows/linux.yml
+      - .github/workflows/release.yml
       - .github/workflows/coverage.yml
   pull_request:
     branches:
       - develop
     paths-ignore:
       - .github/workflows/linux.yml
+      - .github/workflows/release.yml
       - .github/workflows/coverage.yml
 
 env:
