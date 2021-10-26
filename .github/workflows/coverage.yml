@@ -50,7 +50,7 @@ jobs:
           -DMATADOR_SQLITE3_TEST=true
           -DCOVERAGE=true
       - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target test_matador
       - name: Copy Matador Libs
         working-directory: ${{github.workspace}}/build
         run: cp lib/libmatador-*.* bin/

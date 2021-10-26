@@ -13,6 +13,7 @@ ADD_SUBDIRECTORY(unit)
 ADD_SUBDIRECTORY(db)
 
 ADD_CUSTOM_TARGET(matador
+  ALL
   COMMAND ${CMAKE_COMMAND} -E echo Building matador libs
   DEPENDS
   matador-unit

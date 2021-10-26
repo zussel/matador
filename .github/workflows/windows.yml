@@ -71,6 +71,7 @@ jobs:
         run: >
           cmake --build ${{github.workspace}}/build
           --config ${{env.BUILD_TYPE}}
+          --target test_matador
       - name: List Debug
         working-directory: ${{github.workspace}}/build/Debug/bin/Debug
         run: dir
