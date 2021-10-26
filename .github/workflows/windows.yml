@@ -45,7 +45,7 @@ jobs:
         run: |
           & $env:PGBIN\createdb --owner=test matador_test
           $env:PGPASSWORD = 'test123'
-          & $env:PGBIN\psql --username=test --host=localhost --list matador matador_test
+          & $env:PGBIN\psql --username=test --host=localhost --list matador_test
       - uses: ankane/setup-mysql@v1
         with:
           database: matador_test
@@ -70,7 +70,7 @@ jobs:
         run: >
           cmake --build ${{github.workspace}}/build
           --config ${{env.BUILD_TYPE}}
-          --target test_matador
+          --target matador test_matador
       - name: List Debug
         working-directory: ${{github.workspace}}/build/Debug/bin/Debug
         run: dir
