@@ -6,12 +6,16 @@ on:
       - develop
     paths-ignore:
       - .github/workflows/windows.yml
+      - .github/workflows/linux.yml
+      - .github/workflows/coverage.yml
       - appveyor.yml
   pull_request:
     branches:
       - develop
     paths-ignore:
       - .github/workflows/windows.yml
+      - .github/workflows/linux.yml
+      - .github/workflows/coverage.yml
       - appveyor.yml
 
 env:
