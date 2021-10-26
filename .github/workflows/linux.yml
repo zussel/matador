@@ -6,12 +6,14 @@ on:
       - develop
     paths-ignore:
       - .github/workflows/windows.yml
+      - .github/workflows/release.yml
       - appveyor.yml
   pull_request:
     branches:
       - develop
     paths-ignore:
       - .github/workflows/windows.yml
+      - .github/workflows/release.yml
       - appveyor.yml
 
 env:
@@ -48,7 +50,7 @@ jobs:
         -DMATADOR_MYSQL_TEST=true
         -DMATADOR_SQLITE3_TEST=true
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador test_matador
     - name: Copy Matador Libs
       working-directory: ${{github.workspace}}/build
       run: cp lib/libmatador-*.* bin/

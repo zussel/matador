@@ -6,12 +6,16 @@ on:
       - develop
     paths-ignore:
       - .github/workflows/windows.yml
+      - .github/workflows/linux.yml
+      - .github/workflows/coverage.yml
       - appveyor.yml
   pull_request:
     branches:
       - develop
     paths-ignore:
       - .github/workflows/windows.yml
+      - .github/workflows/linux.yml
+      - .github/workflows/coverage.yml
       - appveyor.yml
 
 env:
@@ -20,7 +24,8 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
@@ -30,6 +35,10 @@ jobs:
         run: |
           sudo apt-get -y install doxygen
           which doxygen
+      - name: Set version name
+        id: version
+        run: echo ::set-output name=name::6.6.6
+        #run: echo ::set-output name=name::${GITHUB_REF#refs/tags/}
       - uses: actions/checkout@v2
       - name: CMake Version
         run: cmake --version
@@ -47,7 +56,7 @@ jobs:
           -DMATADOR_SQLITE3_TEST=true
           -DCOVERAGE=false
       - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador
       - name: Copy Matador Libs
         working-directory: ${{github.workspace}}/build
         run: cp lib/libmatador-*.* bin/
@@ -57,3 +66,68 @@ jobs:
       - name: Build Packages
         working-directory: ${{github.workspace}}/build
         run: cmake --build ${{github.workspace}}/build --target package
+      - name: List Packages
+        working-directory: ${{github.workspace}}/Package
+        run: ls -la
+      - name: Upload Debian Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: matador-${{ steps.version.outputs.name }}-x86_64-${{ runner.os }}.deb
+          path: ${{github.workspace}}/Package/matador*.deb
+      - name: Upload RPM Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: matador-${{ steps.version.outputs.name }}-x86_64-${{ runner.os }}.rpm
+          path: ${{github.workspace}}/Package/matador*.rpm
+      - name: Upload TGZ Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: matador-${{ steps.version.outputs.name }}-x86_64-${{ runner.os }}.tar.gz
+          path: ${{github.workspace}}/Package/matador*.tar.gz
+
+  release:
+    if: contains(github.ref, 'tags/v')
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: set version name
+      id: version
+      run: echo ::set-output name=name::${GITHUB_REF#refs/tags/}
+
+    - name: create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ steps.version.outputs.name }}
+        # if needed, you can set the release body here
+        #body: "Release notes"
+        draft: false
+        prerelease: false
+
+    - name: Download Debian Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
+        path: ./
+    - name: Download RPM Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
+        path: ./
+    - name: Download TGZ Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
+        path: ./
+    - name: Upload DEB Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "artifact.tar.gz"
+        asset_name: "${{ env.PROJECT_NAME }}-Linux-${{ steps.version.outputs.name }}.tar.gz"
+        asset_content_type: application/x-tar

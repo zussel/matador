@@ -154,6 +154,8 @@ IF (POSTGRESQL_FOUND)
   INCLUDE_DIRECTORIES(${POSTGRESQL_INCLUDE_DIR})
 ENDIF ()
 
+INCLUDE(Matador)
+
 INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
 
 # https://cmake.org/Wiki/CMake_RPATH_handling
@@ -176,8 +178,8 @@ ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(test)
 if (EXAMPLES)
-  ADD_SUBDIRECTORY(examples)
-  ADD_SUBDIRECTORY(sandbox)
+  ADD_SUBDIRECTORY(examples EXCLUDE_FROM_ALL)
+  ADD_SUBDIRECTORY(sandbox EXCLUDE_FROM_ALL)
 ENDIF()
 
 INSTALL(
@@ -250,9 +252,7 @@ SET(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "${PROJECT_NAME} Headers")
 # the description will be shown in the "Description" box in the
 # installer. If no descriptions are provided, the "Description"
 # box will be removed.
-#SET(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION
-#  "Store all your objects in one container.")
-SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "Take your database by the horns")
+SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "Take your application by the horns")
 SET(CPACK_COMPONENT_HEADERS_DESCRIPTION "C/C++ header files for ${PROJECT_NAME}")
 
 # Put the components into two different groups: "Runtime" and "Development"

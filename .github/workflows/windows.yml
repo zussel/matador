@@ -6,12 +6,14 @@ on:
       - develop
     paths-ignore:
       - .github/workflows/linux.yml
+      - .github/workflows/release.yml
       - .github/workflows/coverage.yml
   pull_request:
     branches:
       - develop
     paths-ignore:
       - .github/workflows/linux.yml
+      - .github/workflows/release.yml
       - .github/workflows/coverage.yml
 
 env:
@@ -64,10 +66,12 @@ jobs:
           -DMATADOR_ODBC=false
           -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
           -DMATADOR_SQLITE3_TEST=false
+          -DMATADOR_MYSQL_TEST=false
       - name: Build
         run: >
           cmake --build ${{github.workspace}}/build
           --config ${{env.BUILD_TYPE}}
+          --target test_matador
       - name: List Debug
         working-directory: ${{github.workspace}}/build/Debug/bin/Debug
         run: dir
