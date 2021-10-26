@@ -68,8 +68,18 @@ jobs:
       - name: List Packages
         working-directory: ${{github.workspace}}/Package
         run: ls -la
-      - name: Upload Artifacts
+      - name: Upload Debian Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ runner.os }}-${{ steps.version.outputs.name }}
-          path: ${{github.workspace}}/Package/matador*.*
+          name: matador-${{ steps.version.outputs.name }}-x86_64-${{ runner.os }}.deb
+          path: ${{github.workspace}}/Package/matador*.deb
+      - name: Upload RPM Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: matador-${{ steps.version.outputs.name }}-x86_64-${{ runner.os }}.rpm
+          path: ${{github.workspace}}/Package/matador*.rpm
+      - name: Upload TGZ Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: matador-${{ steps.version.outputs.name }}-x86_64-${{ runner.os }}.tar.gz
+          path: ${{github.workspace}}/Package/matador*.tar.gz
