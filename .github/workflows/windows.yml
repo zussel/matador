@@ -64,6 +64,7 @@ jobs:
           -DMATADOR_ODBC=false
           -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
           -DMATADOR_SQLITE3_TEST=false
+          -DMATADOR_MYSQL_TEST=false
       - name: Build
         run: >
           cmake --build ${{github.workspace}}/build
