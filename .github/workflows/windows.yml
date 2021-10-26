@@ -46,7 +46,7 @@ jobs:
         run: |
           & $env:PGBIN\createdb --owner=test matador_test
           $env:PGPASSWORD = 'test123'
-          & $env:PGBIN\psql --username=test --host=localhost --list matador_test
+          & $env:PGBIN\psql --username=test --host=localhost --list matador matador_test
       - uses: ankane/setup-mysql@v1
         with:
           database: matador_test
