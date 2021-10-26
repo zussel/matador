@@ -2,21 +2,8 @@ name: matador@linux:release
 
 on:
   push:
-    branches:
-      - develop
-    paths-ignore:
-      - .github/workflows/windows.yml
-      - .github/workflows/linux.yml
-      - .github/workflows/coverage.yml
-      - appveyor.yml
-  pull_request:
-    branches:
-      - develop
-    paths-ignore:
-      - .github/workflows/windows.yml
-      - .github/workflows/linux.yml
-      - .github/workflows/coverage.yml
-      - appveyor.yml
+    tags:
+      - 'v*'
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -37,8 +24,7 @@ jobs:
           which doxygen
       - name: Set version name
         id: version
-        run: echo ::set-output name=name::6.6.6
-        #run: echo ::set-output name=name::${GITHUB_REF#refs/tags/}
+        run: echo ::set-output name=name::${GITHUB_REF#refs/tags/}
       - uses: actions/checkout@v2
       - name: CMake Version
         run: cmake --version
@@ -111,23 +97,41 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
-        path: ./
+        path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
     - name: Download RPM Artifact
       uses: actions/download-artifact@v2
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
-        path: ./
+        path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
     - name: Download TGZ Artifact
       uses: actions/download-artifact@v2
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
-        path: ./
-    - name: Upload DEB Asset
+        path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
+    - name: Upload Debian Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "artifact.tar.gz"
+        asset_path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
+        asset_name: "${{ env.PROJECT_NAME }}-Linux-${{ steps.version.outputs.name }}.deb"
+        asset_content_type: application/x-deb
+    - name: Upload RPM Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
+        asset_name: "${{ env.PROJECT_NAME }}-Linux-${{ steps.version.outputs.name }}.rpm"
+        asset_content_type: application/x-rpm
+    - name: Upload TGZ Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
         asset_name: "${{ env.PROJECT_NAME }}-Linux-${{ steps.version.outputs.name }}.tar.gz"
         asset_content_type: application/x-tar
