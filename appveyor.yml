@@ -39,7 +39,9 @@ branches:
   only:
     - master
     - develop
-    - /^v\d+\.\d+\.\d+$/
+    - /v\d+\.\d+\.\d+/
+  except:
+    - feature/gh-pages
 
 install:
   - git clone https://github.com/snikulov/sqlite.cmake.build.git C:\projects\sqlite\src
