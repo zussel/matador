@@ -72,7 +72,12 @@ jobs:
     - name: set version name
       id: version
       run: echo ::set-output name=name::${GITHUB_REF#refs/tags/}
-
+    - name: set matador version name
+      id: matador_version
+      run: |
+        ver=$(echo ${GITHUB_REF#refs/tags/} | cut -b 2-)
+        echo "::set-output name=id::$ver"
+    - run: echo "${{steps.matador_version.outputs.id}}"
     - name: create release
       id: create_release
       uses: actions/create-release@v1
@@ -99,7 +104,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
+        asset_path: "matador-${{ steps.matador_version.outputs.id }}-x86_64-linux.deb"
         asset_name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
         asset_content_type: application/x-deb
     - name: Download RPM Artifact
