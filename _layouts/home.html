@@ -8,12 +8,13 @@ layout: default
       <div class="container">
         <h1>matador</h1>
         <p>
-          matador is an ORM framework written in C++. It
-          aims to encapsulate all database backend communication. You don't have
-          to deal with database backends or sql statements neither with mapping of
+          matador is an ORM and Web Application framework written in C++. It
+          encapsulates all database backend communication and offers a simple (web) server.
+          You don't have to deal with database backends or sql statements neither with mapping of
           data types or serialization of objects. It comes with relation handling out
           of the box, brings a unique container for all kind of objects and a fluent sql
-          query interface. On top all features are combined into an ORM layer.
+          query interface. All features are combined into an ORM layer. With the integrated web server
+          it is possible to write your own web application with database backend.
         </p>
         <p><a class="btn btn-primary btn-lg" href="guide#introduction" role="button">Learn more &raquo;</a></p>
       </div>
@@ -45,13 +46,80 @@ layout: default
   <div class="container">
     <div class="row">
       <div class="col-md-12">
+          <h2 class="centered">ORM Layer</h2>
+      </div>
+      <div class="col-md-6">
+        <h3 class="centered">Define your ORM layout</h3>
+        <p class="centered large">
+          The ORM layer lets you define your persistence entity schema. It hides
+          all the database work, takes care of transaction handling, relation handling and
+          object serialization and provides a simple interface.
+        </p>
+        <p><a class="btn btn-warning" href="guide#persistence" role="button">View details &raquo;</a></p>
+      </div>
+      <div class="col-md-6 nopadding">
+{% highlight cpp linenos %}
+persistence p("sqlite://db.sqlite");
+
+p.attach<author>("author");
+p.attach<post>("post");
+
+// create schema
+p.create();
+
+session s(p);
+
+transaction tr = s.begin();
+try {
+  p.insert(new author("john irwing"));
+  p.insert(new author("charles darwin"));
+  tr.commit();
+} catch (std::exception &ex) {
+  tr.rollback();
+}
+{% endhighlight %}
+      </div>
+    </div>
+    <div>
+      <div class="col-md-12">
+        <h2 class="centered">Web Server</h2>
+      </div>
+      <div class="col-md-6 nopadding">
+{% highlight cpp linenos %}
+http::server server(8081);
+// add routing middleware
+server.add_routing_middleware();
+
+server.on_get("/", [](const http::request &req) {
+  return http::response::ok(
+    "hello world",
+    http::mime_types::TYPE_TEXT_PLAIN
+  );
+});
+server.run();
+{% endhighlight %}
+      </div>
+      <div class="col-md-6">
+        <h3 class="centered">Setup a HTTP server</h3>
+        <p class="centered large">
+          A simple Web Servers completes the matador setup and lets the
+          user create a web application with routing. Additionally a small
+          template engine is also available.
+        </p>
+        <p><a class="btn btn-warning" href="guide#http" role="button">View details &raquo;</a></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
           <h2 class="centered">Unique Container</h2>
       </div>
       <div class="col-md-6">
+        <h3 class="centered">One container for all kind of objects</h3>
         <p class="centered large">
           matador comes with a unique kind of container where you can store all your objects
           in. Once the hierarchy of your entities is set up you can perform all CRUD operations
-          on the container plus filtering and using views.
+          on the container plus filtering and using views. This container is used by the
+          ORM layer but can also used as a standalone container.
         </p>
         <p><a class="btn btn-warning" href="guide#objects" role="button">View details &raquo;</a></p>
       </div>
@@ -89,12 +157,13 @@ auto res = q
   .where(name != "george" && age > 35)
   .execute();
 
-for (auto p in res) {
+for (const auto &p in res) {
   std::cout << "name: " p->name << "\n";
 }
 {% endhighlight %}
       </div>
       <div class="col-md-6">
+        <h3 class="centered">Easy SQL query building</h3>
         <p class="centered large">
           The sql query module provides simple fluent interface to build sql queries. A query
           can be typed or just work on a anonymous row object. Once a query is setup it can be executed
@@ -108,6 +177,7 @@ for (auto p in res) {
           <h2 class="centered">Real Relations</h2>
       </div>
       <div class="col-md-6">
+        <h3 class="centered">Relalationship handling</h3>
         <p class="centered large">
           matador comes with real relation handling (one to one, one to many and
           many to many). Once one relation side changes the other side of the relation is
@@ -138,10 +208,10 @@ std::cout << dep->employees.size() << "\n"
       </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <h2 class="centered">Transactions</h2>
-        </div>
-        <div class="col-md-6 nopadding">
+      <div class="col-md-12">
+        <h2 class="centered">Transactions</h2>
+      </div>
+      <div class="col-md-6 nopadding">
 {% highlight cpp linenos %}
 object_store store;
 // prepare store ...
@@ -157,47 +227,13 @@ try {
 {% endhighlight %}
       </div>
       <div class="col-md-6">
+        <h3 class="centered">Secure your SQL statements</h3>
         <p class="centered large">
           With transcations the user has the possibility to pack a couple of changes into a logical
           unit which can be rolled back if one of the changes fails. They can be used within the object store
           and the ORM layer.
         </p>
         <p><a class="btn btn-warning" href="guide#transactions" role="button">View details &raquo;</a></p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-          <h2 class="centered">ORM Layer</h2>
-      </div>
-      <div class="col-md-6">
-        <p class="centered large">
-          The ORM layer finally combines the unique container, the fluent query interface and the
-          relation handling. It hides all the database work, takes care of transaction handling and
-          object serialization, handles all types of relationships and provides the usera simple interface.
-        </p>
-        <p><a class="btn btn-warning" href="guide#persistence" role="button">View details &raquo;</a></p>
-      </div>
-      <div class="col-md-6 nopadding">
-{% highlight cpp linenos %}
-persistence p("sqlite://db.sqlite");
-
-p.attach<author>("author");
-p.attach<post>("post");
-
-// create schema
-p.create();
-
-session s(p);
-
-transaction tr = s.begin();
-try {
-  p.insert(new author("john irwing"));
-  p.insert(new author("charles darwin"));
-  tr.commit();
-} catch (std::exception &ex) {
-  tr.rollback();
-}
-{% endhighlight %}
       </div>
     </div>
   </div>

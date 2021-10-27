@@ -9,7 +9,7 @@ permalink: /guide/
 
 {% include_relative /guide/02-objects.md %}
 
-{% include_relative /guide/03-datatypes.md %}
+{% include_relative /guide/03-serialization.md %}
 
 {% include_relative /guide/04-prototypes.md %}
 
@@ -29,11 +29,17 @@ permalink: /guide/
 
 {% include_relative /guide/12-sessions.md %}
 
-{% include_relative /guide/13-matador-datatypes.md %}
+{% include_relative /guide/13-datatypes.md %}
 
 {% include_relative /guide/14-json.md %}
 
-{% include_relative /guide/15-logging.md %}
+{% include_relative /guide/15-streams.md %}
+
+{% include_relative /guide/16-logging.md %}
+
+{% include_relative /guide/17-networking.md %}
+
+{% include_relative /guide/18-http.md %}
 
 </div>
 <div class="col-md-3 hidden-xs hidden-sm">

@@ -1,4 +1,4 @@
-## Datatypes
+## Serialization
 
 The following types are supported and can be used within the ```serialize()``` method:
 
