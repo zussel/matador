@@ -9,7 +9,6 @@
 #include "matador/sql/basic_dialect_linker.hpp"
 
 #ifdef _MSC_VER
-//#include <winsock2.h>
 #include <mysql.h>
 #else
 #include <mysql/mysql.h>

@@ -2,7 +2,7 @@ SET(SOURCES
   persistence.cpp
   session.cpp
   basic_table.cpp
-        )
+)
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence.hpp
@@ -21,7 +21,7 @@ SET(HEADER
 
 ADD_LIBRARY(matador-orm SHARED ${SOURCES} ${HEADER})
 
-TARGET_LINK_LIBRARIES(matador-orm matador-utils matador-sql matador-object)
+TARGET_LINK_LIBRARIES(matador-orm matador-utils matador-json matador-sql matador-object)
 
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-orm

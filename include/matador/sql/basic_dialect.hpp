@@ -86,7 +86,7 @@ struct dialect_traits {
  * The statement can be build for direct execution or
  * for a prepared statement.
  *
- * Internaly it helds a map of all sql dialect tokens
+ * Internally it held a map of all sql dialect tokens
  * which could eventually overwritten by the concrete
  * dialect.
  */

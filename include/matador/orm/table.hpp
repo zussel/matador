@@ -160,6 +160,7 @@ public:
    */
   void update(object_proxy *proxy) override
   {
+    update_.reset();
     auto it = persistence_.proxy_identifier_map_.find(proxy);
     if (it == persistence_.proxy_identifier_map_.end()) {
       throw_object_exception("couldn't find proxy " << proxy);
@@ -181,6 +182,7 @@ public:
    */
   void remove(object_proxy *proxy) override
   {
+    delete_.reset();
     binder_.bind(static_cast<table_type *>(proxy->obj()), &delete_, 0, proxy->pk());
     // Todo: check result
     delete_.execute();

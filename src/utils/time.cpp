@@ -25,7 +25,17 @@ void localtime(const time_t &in, struct tm &out)
 #ifdef _MSC_VER
   errno_t err = localtime_s(&out, &in);
 #else
-  localtime_r(&in, &out);
+//  localtime_r(&in, &out);
+  out = *std::localtime(&in);
+#endif
+}
+
+void gmtime(const time_t &in, tm &out)
+{
+#ifdef _MSC_VER
+  errno_t err = gmtime_s(&out, &in);
+#else
+  gmtime_r(&in, &out);
 #endif
 }
 
@@ -48,7 +58,7 @@ int strftime(char *buffer, size_t size, const char *format, const struct timeval
     strncpy(first_part, format, len);
 #endif
     first_part[len] = '\0';
-    int s = ::strftime(buffer, size, first_part, &timeinfo);
+    int s = (int)::strftime(buffer, size, first_part, &timeinfo);
     if (s == 0) {
       throw std::logic_error("couldn't format date string");
     }
@@ -194,29 +204,23 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   throw_invalid_date(day, month, year);
   throw_invalid_time(hour, min, sec, millis);
 
-  time_t rawtime{};
-  ::time(&rawtime);
-
-  struct tm t{};
-  localtime(rawtime, t);
-  t.tm_year = year - 1900;
-  t.tm_mon = month - 1;
-  t.tm_mday = day;
-  t.tm_hour = hour;
-  t.tm_min = min;
-  t.tm_sec = sec;
-  t.tm_isdst = date::is_daylight_saving(year, month, day);
+  struct tm temp_tm = {};
+  temp_tm.tm_year = year - 1900;
+  temp_tm.tm_mon = month - 1;
+  temp_tm.tm_mday = day;
+  temp_tm.tm_hour = hour;
+  temp_tm.tm_min = min;
+  temp_tm.tm_sec = sec;
+  temp_tm.tm_isdst = date::is_daylight_saving(year, month, day);
 
 #ifdef _MSC_VER
-  time_t tt = mktime(&t);
-  this->time_.tv_sec = (long)tt;
+  time_.tv_sec = (long)mktime(&temp_tm);
 #else
-  this->time_.tv_sec = mktime(&t);
+  time_.tv_sec = std::mktime(&temp_tm);
 #endif
-  this->time_.tv_usec = millis * 1000;
-
-  auto temp = this->time_.tv_sec;
-  localtime(temp, this->tm_);
+  time_.tv_usec = millis * 1000;
+  localtime(time_.tv_sec, temp_tm);
+  tm_ = temp_tm;
 }
 
 void time::set(const char *timestr, const char *format)

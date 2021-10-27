@@ -24,10 +24,6 @@
 #include "matador/db/mssql/mssql_exception.hpp"
 #include "mssql_parameter_binder.hpp"
 
-#if defined(_MSC_VER)
-#include <windows.h>
-#endif
-
 #include <sqltypes.h>
 #include <sql.h>
 #include <sqlext.h>

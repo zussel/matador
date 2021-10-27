@@ -18,7 +18,7 @@ namespace mssql {
 template < class T >
 mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, T val)
 {
-  auto v = matador::make_unique<mssql_parameter_binder::value_t>(sizeof(T));
+  auto v = std::make_unique<mssql_parameter_binder::value_t>(sizeof(T));
   if (is_null_value) {
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
@@ -31,7 +31,7 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, T val)
 
 mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, char val)
 {
-  auto v = matador::make_unique<mssql_parameter_binder::value_t>(2);
+  auto v = std::make_unique<mssql_parameter_binder::value_t>(2);
   if (is_null_value) {
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
@@ -45,7 +45,7 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, char val)
 
 mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, unsigned char val)
 {
-  auto v = matador::make_unique<mssql_parameter_binder::value_t>(2);
+  auto v = std::make_unique<mssql_parameter_binder::value_t>(2);
   if (is_null_value) {
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
@@ -59,7 +59,7 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, unsigned 
 
 mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, const std::string &val)
 {
-  auto v = matador::make_unique<mssql_parameter_binder::value_t>(SQL_NTS);
+  auto v = std::make_unique<mssql_parameter_binder::value_t>(SQL_NTS);
 
   size_t s = val.size();
 
@@ -84,7 +84,7 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, const std
 template < class T >
 mssql_parameter_binder::value_t* create_bind_value(bool is_null_value)
 {
-  auto v = matador::make_unique<mssql_parameter_binder::value_t>(sizeof(T));
+  auto v = std::make_unique<mssql_parameter_binder::value_t>(sizeof(T));
   if (is_null_value) {
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
@@ -98,7 +98,7 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, const cha
 {
   size_t val_size = strlen(val);
   val_size = (val_size < size ? val_size : size);
-  auto v = matador::make_unique<mssql_parameter_binder::value_t>(val_size + 1);
+  auto v = std::make_unique<mssql_parameter_binder::value_t>(val_size + 1);
 
   if (is_null_value) {
     v->data = nullptr;

@@ -162,7 +162,7 @@ public:
   }
 
   /**
-   * Returns the undelying type_index
+   * Returns the underlying type_index
    * object of ids type
    * 
    * @return The type_index object

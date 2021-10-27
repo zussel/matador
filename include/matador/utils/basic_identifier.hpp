@@ -200,6 +200,19 @@ private:
   bool as_value_ = false;
 };
 
+/**
+ * Creates an identifier object from the given value
+ *
+ * @tparam T Type of the value
+ * @param val The primary key value
+ * @return The created identifier
+ */
+template < class T >
+identifier<T> make_identifier(T val)
+{
+  return identifier<T>(val);
+}
+
 }
 
 #endif //OOS_BASIC_IDENTIFIER_HPP

@@ -43,10 +43,12 @@ public:
 
   /**
    * Creates a log_domain with the given name
+   * and the given log range
    *
    * @param name The name of the log domain
+   * @param log_range The log range of this domain
    */
-  explicit log_domain(std::string name);
+  log_domain(std::string name, log_level_range log_range);
 
   /**
    * Returns the name of the domain
@@ -54,6 +56,36 @@ public:
    * @return The name of the domain
    */
   std::string name() const;
+
+  /**
+   * Sets the max log level. Default
+   * max leven is LVL_FATAL
+   *
+   * @param max_level max log level
+   */
+  void max_log_level(log_level max_level);
+
+  /**
+   * Returns the max log level
+   *
+   * @return The max log level
+   */
+  log_level max_log_level() const;
+
+  /**
+   * Sets the min log level. Default
+   * min leven is LVL_INFO
+   *
+   * @param min_level min log level
+   */
+  void min_log_level(log_level min_level);
+
+  /**
+   * Returns the min log level
+   *
+   * @return The min log level
+   */
+  log_level min_log_level() const;
 
   /**
    * Add a sink to the domain.
@@ -66,10 +98,12 @@ public:
   void add_sink(sink_ptr sink);
 
   /**
+   * Logs the given message for the given source and log level
+   * to this log domain.
    *
-   * @param lvl
-   * @param source
-   * @param message
+   * @param lvl Log level
+   * @param source Source of the log message
+   * @param message Message to log
    */
   void log(log_level lvl, const std::string &source, const char *message);
 
@@ -84,6 +118,8 @@ private:
 
   std::string name_;
   std::list<sink_ptr> sinks;
+
+  log_level_range log_level_range_;
 };
 
 }

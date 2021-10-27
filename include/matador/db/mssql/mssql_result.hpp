@@ -25,10 +25,6 @@
 #include "matador/sql/result_impl.hpp"
 #include "matador/sql/types.hpp"
 
-#if defined(_MSC_VER)
-#include <windows.h>
-#endif
-
 #include <vector>
 
 #include <sqltypes.h>

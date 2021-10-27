@@ -22,6 +22,11 @@ SET(HEADER
 
 ADD_LIBRARY(matador-mysql SHARED ${SOURCES} ${HEADER})
 
+IF (MSVC)
+    target_compile_definitions(matador-mysql PUBLIC WIN32_LEAN_AND_MEAN)
+ENDIF()
+
+
 TARGET_LINK_LIBRARIES(matador-mysql matador-utils matador-sql ${MYSQL_LIBRARY})
 
 # Set the build version (VERSION) and the API version (SOVERSION)

@@ -148,7 +148,7 @@ public:
    */
   template < class T >
   prototype_node(object_store *tree, const char *type, T *proto, bool abstract = false)
-    : info_(matador::make_unique<detail::prototype_info<T>>(*this, proto))
+    : info_(std::make_unique<detail::prototype_info<T>>(*this, proto))
     , tree_(tree)
     , first(new prototype_node)
     , last(new prototype_node)
@@ -236,7 +236,7 @@ public:
    * if recursive flag is set, delete all
    * objects below this node as well.
    * To adjust the serializable proxy marker for the
-   * remaining objects the corresponding
+   * capacity objects the corresponding
    * prototype tree must be passed
    *
    * @param recursive Indicates wether all or only nodes objects are deleted

@@ -11,7 +11,7 @@ class ObjectStoreTestUnit : public matador::unit_test
 public:
   ObjectStoreTestUnit();
 
-  virtual void finalize();
+  void finalize() override;
   
   void test_version();
   void test_optr();
@@ -21,6 +21,8 @@ public:
   void test_serializer();
   void test_identifier_serializer();
   void test_reference_counter();
+  void test_reference_counter_builtin();
+  void test_reference_counter_has_many();
   void test_simple_object();
   void test_object_with_sub_object();
   void test_multiple_simple_objects();
@@ -31,6 +33,7 @@ public:
 //  void test_clear_type();
   void test_clear();
   void test_generic();
+  void test_get_by_primary_key();
   void test_structure();
   void test_structure_cyclic();
   void test_structure_container();

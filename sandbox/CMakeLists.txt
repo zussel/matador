@@ -2,36 +2,27 @@ SET (SANDBOX_SOURCES sandbox.cpp)
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 
+ADD_EXECUTABLE(di di.cpp)
 
-SET(DB_LIBRARIES)
+SET(NET_LIBRARIES)
 
-IF(ODBC_FOUND)
-  MESSAGE(STATUS "Appendig ODBC libs: ${ODBC_LIBRARY}")
-  LIST(APPEND DB_LIBRARIES ${ODBC_LIBRARY})
-ENDIF()
-
-IF(MYSQL_FOUND)
-  MESSAGE(STATUS "Appendig MySQL libs: ${MYSQL_LIBRARY}")
-  LIST(APPEND DB_LIBRARIES ${MYSQL_LIBRARY})
-ENDIF()
-
-IF(SQLITE3_FOUND)
-  MESSAGE(STATUS "Appendig SQLite3 libs: ${SQLITE3_LIBRARY}")
-  LIST(APPEND DB_LIBRARIES ${SQLITE3_LIBRARY})
-ENDIF()
-
-IF(POSTGRESQL_FOUND)
-  MESSAGE(STATUS "Appendig PostgreSQL libs: ${POSTGRESQL_LIBRARIES}")
-  LIST(APPEND DB_LIBRARIES ${POSTGRESQL_LIBRARIES})
+IF(WIN32)
+  MESSAGE(STATUS "Appending Windows Socket libs: wsock32 ws2_32")
+  LIST(APPEND NET_LIBRARIES wsock32 ws2_32)
 ENDIF()
 
 TARGET_LINK_LIBRARIES(sandbox
     matador-unit
     matador-utils
+    matador-json
     matador-logger
     matador-object
+    matador-http
+    matador-net
     matador-sql
     matador-orm
     ${CMAKE_DL_LIBS}
-    ${DB_LIBRARIES}
+    ${MATADOR_DB_LIBRARIES}
+    ${NET_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
 )

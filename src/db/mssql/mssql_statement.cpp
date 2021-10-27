@@ -113,7 +113,7 @@ void mssql_statement::create_statement()
   ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", str());
 
-  binder_ = matador::make_unique<mssql_parameter_binder>(stmt_);
+  binder_ = std::make_unique<mssql_parameter_binder>(stmt_);
 }
 
 detail::parameter_binder_impl* mssql_statement::binder() const

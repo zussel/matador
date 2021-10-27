@@ -123,7 +123,7 @@ public:
   template<class T, template<class ...> class Container>
   void serialize(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
   template<class T, template<class ...> class Container>
-  void serialize(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<is_builtin<T>::value>::type* = 0) {}
+  void serialize(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<is_builtin<T>::value>::type* = 0);
   template<class T>
   void serialize(const char *id, identifier<T> &x);
 

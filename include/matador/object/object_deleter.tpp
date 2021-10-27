@@ -130,6 +130,21 @@ void object_deleter::serialize(const char *, basic_has_many<T, C> &x, cascade_ty
   }
 }
 
+template<class T, template<class ...> class C>
+void object_deleter::serialize(const char *, basic_has_many<T, C> &x, cascade_type, typename std::enable_if<matador::is_builtin<T>::value>::type*)
+{
+  typename basic_has_many<T, C>::iterator first = x.begin();
+  typename basic_has_many<T, C>::iterator last = x.end();
+
+  while (first != last) {
+    auto curr_obj = visited_objects_.find(proxy_stack_.top());
+    if (curr_obj != visited_objects_.end()) {
+      --curr_obj->second;
+    }
+    ++first;
+  }
+}
+
 template<class T>
 void object_deleter::serialize(const char *id, identifier<T> &x)
 {

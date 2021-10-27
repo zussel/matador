@@ -1,5 +1,5 @@
-#ifndef MATADOR_JSON_MAPPER_HPP
-#define MATADOR_JSON_MAPPER_HPP
+#ifndef MATADOR_JSON_OBJECT_MAPPER_HPP
+#define MATADOR_JSON_OBJECT_MAPPER_HPP
 
 #ifdef _MSC_VER
 #ifdef matador_object_EXPORTS
@@ -15,165 +15,208 @@
 #define MATADOR_OBJECT_API
 #endif
 
-#include "matador/utils/basic_json_mapper.hpp"
-#include "matador/utils/json.hpp"
-#include "matador/utils/json_parser.hpp"
-#include "matador/utils/date.hpp"
-#include "matador/utils/memory.hpp"
-
-#include "matador/object/basic_has_many.hpp"
-#include "matador/object/belongs_to.hpp"
-#include "matador/object/has_one.hpp"
+#include "matador/object/json_object_serializer.hpp"
+#include "matador/object/json_object_mapper_serializer.hpp"
+#include "matador/object/object_json_serializer.hpp"
 
 namespace matador {
 
-/// @cond MATADOR_DEV
-class MATADOR_OBJECT_API json_object_mapper_serializer
+/**
+ * @class json_object_mapper
+ *
+ * conversions
+ * string   <->    json    <->    unique_ptr
+ *
+ * string to_string(object_ptr)
+ * string to_string(object_view)
+ *
+ * json to_json_string(object_ptr)
+ * json to_json_string(object_view)
+ *
+ * unique_ptr to_object(json)
+ * unique_ptr to_object(string)
+ * array<shared_ptr> to_objects(json)
+ * array<shared_ptr> to_objects(string)
+ */
+class json_object_mapper
 {
 public:
-  explicit json_object_mapper_serializer(details::mapper_runtime &runtime_data);
+  /**
+   * Default constructor
+   */
+  json_object_mapper() = default;
 
-public:
-  template < class V >
-  void serialize(V &obj);
-  template < class V >
-  void serialize(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
-  void serialize(const char *id, identifier<std::string> &pk);
-  template < int SIZE, class V >
-  void serialize(const char *id, identifier<varchar<SIZE, V>> &pk);
-  template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
-  template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
-  void serialize(const char *id, bool &to);
-  void serialize(const char *id, std::string &to);
-  void serialize(const char *id, std::string &to, size_t);
-  void serialize(const char *id, date &to);
-  void serialize(const char *id, time &to);
-  template<class Value>
-  void serialize(const char *id, belongs_to<Value> &x, cascade_type);
-  template<class Value>
-  void serialize(const char *id, has_one<Value> &x, cascade_type);
-  template < class Value, template <class ...> class Container >
-  void serialize(const char *id, basic_has_many<Value, Container> &x, const char *, const char *, cascade_type);
+  /**
+   * Converts an object_ptr, has_one or belongs_to object
+   * into a json string with the given json format
+   *
+   * @tparam T Type of the object_ptr
+   * @tparam OPT object_pointer type
+   * @param obj Object to convert
+   * @param format Json format object
+   * @return The json formatted string
+   */
+  template< typename T, object_holder_type OPT >
+  std::string to_string(const object_pointer<T, OPT> &obj, const json_format &format = json_format::compact);
+
+  /**
+   * Converts an array of objects
+   * into a json string with the given json format
+   *
+   * @tparam T Type of objects
+   * @param array Array to convert
+   * @param format Json format object
+   * @return The json formatted string
+   */
+  template < class T >
+  std::string to_string(const std::vector<T> &array, const json_format &format = json_format::compact);
+
+  /**
+   * Converts an object_view
+   * into a json string with the given json format
+   *
+   * @tparam T Type of objects
+   * @param array object_view to convert
+   * @param format Json format object
+   * @return The json formatted string
+   */
+  template < class T >
+  std::string to_string(const object_view<T> &array, const json_format &format = json_format::compact);
+
+  /**
+   * Convert an object_ptr, has_one or belongs_to object
+   * into an json object
+   *
+   * @tparam T Type of the object_ptr
+   * @tparam OPT object_pointer type
+   * @param obj Object to convert
+   * @return The json object
+   */
+  template< typename T, object_holder_type OPT >
+  json to_json(const object_pointer<T, OPT> &obj);
+
+  /**
+   * Convert the elements of on object_view
+   * into a json object
+   *
+   * @tparam T Type of objects
+   * @param objects object_view to convert
+   * @return The json object
+   */
+  template < class T >
+  json to_json(const object_view<T> &objects);
+
+  /**
+   * Converts the json object into an
+   * object of a specific type
+   *
+   * @tparam T Type of the object to create
+   * @param js json object to convert
+   * @return The newly created object as unique_ptr
+   */
+  template < class T >
+  std::unique_ptr<T> to_object(const json &js);
+
+  /**
+   * Converts a json object of type array
+   * into a vector of shared_ptr object of given type
+   *
+   * @tparam T Type of the objects to create
+   * @param js json object to convert
+   * @return The vector of created objects
+   */
+  template < class T >
+  std::vector<std::shared_ptr<T>> to_objects(const json &js);
+
+  /**
+   * Convert a json string into a new object
+   * wrapped into a unique_ptr
+   *
+   * @tparam T Type of the object to create
+   * @param str Json string to convert
+   * @return
+   */
+  template < class T >
+  std::unique_ptr<T> to_object(const std::string &str);
+  template < class T >
+  std::unique_ptr<T> to_object(const char *str);
+  template < class T >
+  std::vector<std::shared_ptr<T>> to_objects(const std::string &str);
+  template < class T >
+  std::vector<std::shared_ptr<T>> to_objects(const char *str);
 
 private:
-  details::mapper_runtime &runtime_data_;
+  json_object_serializer json_object_serializer_;
+  object_json_serializer object_json_serializer_;
 };
-/// @endcond
 
-/**
- * @brief Shortcut to the json object mapper
- *
- * The json_object_mapper is used to map a json
- * string to an matador typed object. This means it
- * can contain relation objects like has_many, has_one
- * or belongs_to.
- */
-template < class T >
-using json_object_mapper = basic_json_mapper<T, json_object_mapper_serializer>;
-
-/// @cond MATADOR_DEV
-template<class V>
-void json_object_mapper_serializer::serialize(V &obj)
+template<typename T, object_holder_type OPT>
+std::string json_object_mapper::to_string(const object_pointer<T, OPT> &obj, const json_format &format)
 {
-  access::serialize(*this, obj);
+  return json_object_serializer_.to_json_string(obj, format);
 }
 
-template<class V>
-void json_object_mapper_serializer::serialize(const char *id, identifier<V> &pk, typename std::enable_if<
-std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
+template<class T>
+std::string json_object_mapper::to_string(const std::vector<T> &array, const json_format &format)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_integer()) {
-    return;
-  }
-
-  pk.value(runtime_data_.value.as<V>());
+  return json_object_serializer_.to_json_string(array, format);
 }
 
-template<int SIZE, class V>
-void json_object_mapper_serializer::serialize(const char *id, identifier<varchar<SIZE, V>> &pk)
+template<class T>
+std::string json_object_mapper::to_string(const object_view<T> &array, const json_format &format)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_string()) {
-    return;
-  }
-
-  pk.value(runtime_data_.value.as<std::string>());
+  return json_object_serializer_.to_json_string(array, format);
 }
 
-template<class V>
-void json_object_mapper_serializer::serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
+template<typename T, object_holder_type OPT>
+json json_object_mapper::to_json(const object_pointer<T, OPT> &obj)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_integer()) {
-    return;
-  }
-  to = runtime_data_.value.as<V>();
+  return object_json_serializer_.to_json(obj);
 }
 
-template<class V>
-void json_object_mapper_serializer::serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type *)
+template<class T>
+json json_object_mapper::to_json(const object_view<T> &objects)
 {
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_real()) {
-    return;
-  }
-  to = runtime_data_.value.as<V>();
+  return object_json_serializer_.to_json(objects);
 }
 
-template<class Value>
-void json_object_mapper_serializer::serialize(const char *id, belongs_to<Value> &x, cascade_type)
+template<class T>
+std::unique_ptr<T> json_object_mapper::to_object(const json &js)
 {
-  if (runtime_data_.object_key != id) {
-    return;
-  }
-
-  json_object_mapper<Value> mapper;
-  x = new Value;
-  *x = mapper.object_from_string(runtime_data_.cursor.json_cursor_, false);
-  runtime_data_.cursor.sync_cursor(mapper.runtime_data().cursor());
+  return to_object<T>(js.str());
 }
 
-template<class Value>
-void json_object_mapper_serializer::serialize(const char *id, has_one<Value> &x, cascade_type)
+template<class T>
+std::vector<std::shared_ptr<T>> json_object_mapper::to_objects(const json &js)
 {
-  if (runtime_data_.object_key != id) {
-    return;
-  }
-
-  json_object_mapper<Value> mapper;
-  auto result = mapper.object_from_string(runtime_data_.cursor.json_cursor_, false);
-  x = new Value;
-  *x = std::move(result);
-  runtime_data_.cursor.sync_cursor(mapper.runtime_data().cursor());
+  return to_objects<T>(js.str());
 }
 
-template<class Value, template <class ...> class Container>
-void json_object_mapper_serializer::serialize(const char *id, basic_has_many<Value, Container> &x, const char *,
-                                              const char *, cascade_type)
+template<class T>
+std::unique_ptr<T> json_object_mapper::to_object(const std::string &str)
 {
-  if (runtime_data_.object_key != id) {
-    return;
-  }
+  return to_object<T>(str.c_str());
+}
 
-  json_object_mapper<Value> mapper;
-  auto elements = mapper.array_from_string(runtime_data_.json_array_cursor, false);
-  for (auto &&item : elements) {
-    typename has_many_item_holder<Value>::object_type val(new Value(item));
-    x.append(has_many_item_holder<Value>(val, nullptr));
-  }
-  runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
+template<class T>
+std::unique_ptr<T> json_object_mapper::to_object(const char *str)
+{
+basic_json_mapper<std::unique_ptr<T>, detail::json_object_mapper_serializer> mapper;
+  return mapper.object_from_string(str);
 }
-/// @endcond
+
+template<class T>
+std::vector<std::shared_ptr<T>> json_object_mapper::to_objects(const std::string &str)
+{
+  return to_objects<T>(str.c_str());
 }
-#endif //MATADOR_JSON_MAPPER_HPP
+
+template<class T>
+std::vector<std::shared_ptr<T>> json_object_mapper::to_objects(const char *str)
+{
+  basic_json_mapper<std::shared_ptr<T>, detail::json_object_mapper_serializer> mapper;
+  return mapper.array_from_string(str);
+}
+}
+
+#endif //MATADOR_JSON_OBJECT_MAPPER_HPP

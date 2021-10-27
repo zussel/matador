@@ -13,28 +13,28 @@
 RelationTestUnit::RelationTestUnit()
   : unit_test("relation", "Relation Test Unit")
 {
-  add_test("has_one", std::bind(&RelationTestUnit::test_has_one, this), "test has one relation");
+  add_test("has_one", [this] { test_has_one(); }, "test has one relation");
 
-  add_test("insert_belongs_to_one", std::bind(&RelationTestUnit::test_insert_belongs_to_one, this), "test belongs to one relation");
-  add_test("belongs_to_one", std::bind(&RelationTestUnit::test_belongs_to_one, this), "test belongs to one relation");
-  add_test("remove_belongs_to_one", std::bind(&RelationTestUnit::test_remove_belongs_to_one, this), "test remove belongs to one relation");
+  add_test("insert_belongs_to_one", [this] { test_insert_belongs_to_one(); }, "test belongs to one relation");
+  add_test("belongs_to_one", [this] { test_belongs_to_one(); }, "test belongs to one relation");
+  add_test("remove_belongs_to_one", [this] { test_remove_belongs_to_one(); }, "test remove belongs to one relation");
 
-  add_test("insert_belongs_to_many", std::bind(&RelationTestUnit::test_insert_belongs_to_many, this), "test insert belongs to many relation");
-  add_test("belongs_to_many", std::bind(&RelationTestUnit::test_belongs_to_many, this), "test belongs to many relation");
-  add_test("remove_belongs_to_many", std::bind(&RelationTestUnit::test_remove_belongs_to_many, this), "test remove belongs to many relation");
-  add_test("belongs_to_many_first_belongs_to", std::bind(&RelationTestUnit::test_belongs_to_many_first_belongs_to, this), "test belongs to many relation where belongs to is registered first");
+  add_test("insert_belongs_to_many", [this] { test_insert_belongs_to_many(); }, "test insert belongs to many relation");
+  add_test("belongs_to_many", [this] { test_belongs_to_many(); }, "test belongs to many relation");
+  add_test("remove_belongs_to_many", [this] { test_remove_belongs_to_many(); }, "test remove belongs to many relation");
+  add_test("belongs_to_many_first_belongs_to", [this] { test_belongs_to_many_first_belongs_to(); }, "test belongs to many relation where belongs to is registered first");
 
-  add_test("insert_has_many_vector", std::bind(&RelationTestUnit::test_insert_has_many_vector, this), "test insert has many vector relation");
-  add_test("has_many_vector", std::bind(&RelationTestUnit::test_has_many_vector, this), "test has many vector relation");
+  add_test("insert_has_many_vector", [this] { test_insert_has_many_vector(); }, "test insert has many vector relation");
+  add_test("has_many_vector", [this] { test_has_many_vector(); }, "test has many vector relation");
 
-  add_test("has_many_list", std::bind(&RelationTestUnit::test_has_many_list, this), "test has many list relation");
-  add_test("has_many_builtin", std::bind(&RelationTestUnit::test_has_many_builtin, this), "test has many relation with builtin");
+  add_test("has_many_list", [this] { test_has_many_list(); }, "test has many list relation");
+  add_test("has_many_builtin", [this] { test_has_many_builtin(); }, "test has many relation with builtin");
 
-  add_test("has_many_to_many", std::bind(&RelationTestUnit::test_has_many_to_many, this), "test has many to many relation");
-  add_test("remove_has_many_to_many", std::bind(&RelationTestUnit::test_remove_has_many_to_many, this), "test remove has many to many relation");
+  add_test("has_many_to_many", [this] { test_has_many_to_many(); }, "test has many to many relation");
+  add_test("remove_has_many_to_many", [this] { test_remove_has_many_to_many(); }, "test remove has many to many relation");
 
-  add_test("blog_single", std::bind(&RelationTestUnit::test_blog_single_post, this), "test blog single post relations");
-  add_test("blog_multi", std::bind(&RelationTestUnit::test_blog_multi_posts, this), "test blog multiple posts relations");
+  add_test("blog_single", [this] { test_blog_single_post(); }, "test blog single post relations");
+  add_test("blog_multi", [this] { test_blog_multi_posts(); }, "test blog multiple posts relations");
 }
 
 void RelationTestUnit::test_has_one()
@@ -87,8 +87,8 @@ void RelationTestUnit::test_has_one()
 
   UNIT_ASSERT_EQUAL(store.find<child>()->size(), 0UL);
 
-  auto m1_ptr = matador::make_unique<master>("m1");
-  auto child1_ptr = matador::make_unique<child>("child 1");
+  auto m1_ptr = std::make_unique<master>("m1");
+  auto child1_ptr = std::make_unique<child>("child 1");
 
   m1_ptr->children = child1_ptr.release();
 
@@ -140,7 +140,7 @@ void RelationTestUnit::test_insert_belongs_to_one()
   // both citizen and address must be inserted
   // and the relation must be resolved
   // address' citizen must be set
-  auto george_ptr = matador::make_unique<citizen>("george");
+  auto george_ptr = std::make_unique<citizen>("george");
   george_ptr->address_ = new address("foreststreet", "foresting");
 
   auto george = store.insert(george_ptr.release());
@@ -160,7 +160,7 @@ void RelationTestUnit::test_insert_belongs_to_one()
   UNIT_ASSERT_EQUAL(store.find<citizen>()->size(), 0UL);
   UNIT_ASSERT_EQUAL(store.find<address>()->size(), 0UL);
 
-  george_ptr = matador::make_unique<citizen>("george");
+  george_ptr = std::make_unique<citizen>("george");
   home = store.insert(new address("foreststreet", "foresting"));
 
   UNIT_ASSERT_TRUE(home.id() > 0UL);
@@ -349,7 +349,7 @@ void RelationTestUnit::test_insert_belongs_to_many()
   UNIT_ASSERT_EQUAL(endpoint->second->field, "employee");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY);
 
-  auto george_ptr = matador::make_unique<employee>("george");
+  auto george_ptr = std::make_unique<employee>("george");
   auto dep = new department("insurance");
   george_ptr->dep(dep);
 
@@ -384,7 +384,7 @@ void RelationTestUnit::test_insert_belongs_to_many()
   UNIT_ASSERT_EQUAL(store.find<employee>()->size(), 0UL);
   UNIT_ASSERT_EQUAL(store.find<department>()->size(), 0UL);
 
-  george_ptr = matador::make_unique<employee>("george");
+  george_ptr = std::make_unique<employee>("george");
   insurance = store.insert(new department("insurance"));
 
   UNIT_ASSERT_TRUE(insurance.id() > 0UL);
@@ -691,8 +691,8 @@ void RelationTestUnit::test_insert_has_many_vector()
   UNIT_ASSERT_EQUAL(endpoint->second->field, "vector_id");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE);
 
-  auto tim_ptr = matador::make_unique<child>("tim");
-  auto group_ptr = matador::make_unique<children_vector>("group");
+  auto tim_ptr = std::make_unique<child>("tim");
+  auto group_ptr = std::make_unique<children_vector>("group");
 
   UNIT_ASSERT_TRUE(group_ptr->children.empty());
   UNIT_ASSERT_EQUAL(group_ptr->children.size(), 0UL);

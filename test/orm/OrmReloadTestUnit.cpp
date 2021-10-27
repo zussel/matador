@@ -13,15 +13,15 @@ OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, std::string dns)
   : unit_test(prefix + "_orm_reload", prefix + " orm reload test unit")
   , dns_(std::move(dns))
 {
-  add_test("load", std::bind(&OrmReloadTestUnit::test_load, this), "test load from table");
-  add_test("load_twice", std::bind(&OrmReloadTestUnit::test_load_twice, this), "test load twice from table");
-  add_test("load_has_one", std::bind(&OrmReloadTestUnit::test_load_has_one, this), "test load has one relation from table");
-  add_test("load_has_many", std::bind(&OrmReloadTestUnit::test_load_has_many, this), "test load has many from table");
-  add_test("load_has_many_to_many", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many, this), "test load has many to many from table");
-  add_test("load_has_many_to_many_remove", std::bind(&OrmReloadTestUnit::test_load_has_many_to_many_remove, this), "test load has many to many from table with remove");
-  add_test("load_has_many_int", std::bind(&OrmReloadTestUnit::test_load_has_many_int, this), "test load has many int from table");
-  add_test("load_has_many_varchar", std::bind(&OrmReloadTestUnit::test_load_has_many_varchar, this), "test load has many varchar from table");
-  add_test("load_belongs_to_many", std::bind(&OrmReloadTestUnit::test_load_belongs_to_many, this), "test load belongs to many from table");
+  add_test("load", [this] { test_load(); }, "test load from table");
+  add_test("load_twice", [this] { test_load_twice(); }, "test load twice from table");
+  add_test("load_has_one", [this] { test_load_has_one(); }, "test load has one relation from table");
+  add_test("load_has_many", [this] { test_load_has_many(); }, "test load has many from table");
+  add_test("load_has_many_to_many", [this] { test_load_has_many_to_many(); }, "test load has many to many from table");
+  add_test("load_has_many_to_many_remove", [this] { test_load_has_many_to_many_remove(); }, "test load has many to many from table with remove");
+  add_test("load_has_many_int", [this] { test_load_has_many_int(); }, "test load has many int from table");
+  add_test("load_has_many_varchar", [this] { test_load_has_many_varchar(); }, "test load has many varchar from table");
+  add_test("load_belongs_to_many", [this] { test_load_belongs_to_many(); }, "test load belongs to many from table");
 }
 
 void OrmReloadTestUnit::test_load()

@@ -1,16 +1,19 @@
-//
-// Created by sascha on 12/23/16.
-//
-
-#include <matador/utils/sequencer.hpp>
 #include "SequencerTestUnit.hpp"
 
-SequencerTestUnit::SequencerTestUnit() : unit_test("sequencer", "sequencer test unit")
+#include "matador/utils/sequencer.hpp"
+#include "matador/utils/sequence_synchronizer.hpp"
+#include "matador/utils/identifier.hpp"
+
+using namespace matador;
+
+SequencerTestUnit::SequencerTestUnit()
+  : unit_test("sequencer", "sequencer test unit")
 {
-  add_test("init", std::bind(&SequencerTestUnit::test_init, this), "init sequencer");
-  add_test("inc", std::bind(&SequencerTestUnit::test_inc, this), "increment sequencer");
-  add_test("reset", std::bind(&SequencerTestUnit::test_reset, this), "reset sequencer");
-  add_test("exchange", std::bind(&SequencerTestUnit::test_reset, this), "exchange sequencer");
+  add_test("init", [this] { test_init(); }, "init sequencer");
+  add_test("inc", [this] { test_inc(); }, "increment sequencer");
+  add_test("reset", [this] { test_reset(); }, "reset sequencer");
+  add_test("exchange", [this] { test_exchange(); }, "exchange sequencer");
+  add_test("sync", [this] { test_reset(); }, "sync sequencer");
 }
 
 void SequencerTestUnit::test_init()
@@ -57,4 +60,22 @@ void SequencerTestUnit::test_exchange()
 
   UNIT_ASSERT_EQUAL(seq.current(), 0UL);
   UNIT_ASSERT_EQUAL(seq.next(), 1UL);
+}
+
+void SequencerTestUnit::test_sync()
+{
+  sequencer seq;
+
+  seq.init();
+
+  UNIT_ASSERT_EQUAL(seq.current(), 0UL);
+  UNIT_ASSERT_EQUAL(seq.next(), 1UL);
+
+  auto pk = make_identifier(7);
+
+  sequence_synchronizer synchronizer(seq);
+
+  synchronizer.sync(pk);
+
+  UNIT_ASSERT_EQUAL(seq.current(), 7UL);
 }

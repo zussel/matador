@@ -1,7 +1,3 @@
-/**
- * @author sascha on 4/19/16.
- */
-
 #ifndef OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
 #define OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
 

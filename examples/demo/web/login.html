@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/bulma.min-0.9.2.css">
+</head>
+<body>
+    <form role="form" onsubmit="return false;">
+        <div class="container">
+            <div class="field">
+                <label class="label">Username</label>
+                <div class="control has-icons-left has-icons-right">
+                    <input class="input is-success" type="text" placeholder="Text input" id="uname" name="uname">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <span class="icon is-small is-right">
+                      <i class="fas fa-check"></i>
+                    </span>
+                </div>
+                <p class="help is-success">This username is available</p>
+            </div>
+
+            <div class="field">
+                <label class="label">Password</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" placeholder="Password" id="pwd" name="pwd">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="field">
+                <p class="control">
+                    <button id="login" type="submit" class="button is-success">
+                        Login
+                    </button>
+                </p>
+            </div>
+        </div>
+    </form>
+    <script src="js/axios.min-0.21.1.js"></script>
+    <script src="js/demo.js"></script>
+</body>
+</html>

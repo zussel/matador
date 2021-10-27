@@ -30,11 +30,35 @@ public:
   }
 };
 
+template<>
+class identifier_hash<std::shared_ptr<basic_identifier>>
+{
+public:
+  typedef std::shared_ptr<basic_identifier> value_type;
+
+  size_t operator()(const value_type &val) const
+  {
+    return val->hash();
+  }
+};
+
 class identifier_equal
 {
 public:
   bool operator()(basic_identifier* lhs,
                   basic_identifier* rhs) const
+  {
+    return lhs->is_same_type(*rhs) && lhs->equal_to(*rhs);
+  }
+};
+
+class identifier_equal_shared
+{
+public:
+  typedef std::shared_ptr<basic_identifier> value_type;
+
+  bool operator()(const value_type &lhs,
+                  const value_type &rhs) const
   {
     return lhs->is_same_type(*rhs) && lhs->equal_to(*rhs);
   }

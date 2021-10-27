@@ -42,7 +42,9 @@ public:
   void test_anonymous_update();
   void test_statement_insert();
   void test_statement_update();
+  void test_statement_delete();
   void test_delete();
+  void test_multiple_delete();
 //  void test_foreign_query();
   void test_query();
   void test_query_range_loop();

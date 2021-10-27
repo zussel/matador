@@ -17,37 +17,40 @@ using namespace std;
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
-  add_test("version", std::bind(&ObjectStoreTestUnit::test_version, this), "test matador version");
-  add_test("optr", std::bind(&ObjectStoreTestUnit::test_optr, this), "test optr behaviour");
-  add_test("expression", std::bind(&ObjectStoreTestUnit::test_expression, this), "test object expressions");
-  add_test("set", std::bind(&ObjectStoreTestUnit::test_set, this), "access object values via set interface");
-  add_test("get", std::bind(&ObjectStoreTestUnit::test_get, this), "access object values via get interface");
-  add_test("serializer", std::bind(&ObjectStoreTestUnit::test_serializer, this), "serializer test");
-  add_test("identifier_serializer", std::bind(&ObjectStoreTestUnit::test_identifier_serializer, this), "identifier serializer test");
-  add_test("reference_counter", std::bind(&ObjectStoreTestUnit::test_reference_counter, this), "reference counter test");
-  add_test("simple", std::bind(&ObjectStoreTestUnit::test_simple_object, this), "create and delete one object");
-  add_test("with_sub", std::bind(&ObjectStoreTestUnit::test_object_with_sub_object, this), "create and delete object with sub object");
-  add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::test_multiple_simple_objects, this), "create and delete multiple objects");
-  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::test_multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
-  add_test("delete", std::bind(&ObjectStoreTestUnit::test_delete_object, this), "object deletion test");
-  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::test_hierarchy, this), "object hierarchy test");
-  add_test("view", std::bind(&ObjectStoreTestUnit::test_view, this), "object view test");
+  add_test("version", [this] { test_version(); }, "test matador version");
+  add_test("optr", [this] { test_optr(); }, "test optr behaviour");
+  add_test("expression", [this] { test_expression(); }, "test object expressions");
+  add_test("set", [this] { test_set(); }, "access object values via set interface");
+  add_test("get", [this] { test_get(); }, "access object values via get interface");
+  add_test("serializer", [this] { test_serializer(); }, "serializer test");
+  add_test("identifier_serializer", [this] { test_identifier_serializer(); }, "identifier serializer test");
+  add_test("reference_counter", [this] { test_reference_counter(); }, "reference counter test");
+  add_test("reference_counter_builtins", [this] { test_reference_counter_builtin(); }, "reference counter with builtins test");
+  add_test("reference_counter_hasmany", [this] { test_reference_counter_has_many(); }, "reference counter with hasmany test");
+  add_test("simple", [this] { test_simple_object(); }, "create and delete one object");
+  add_test("with_sub", [this] { test_object_with_sub_object(); }, "create and delete object with sub object");
+  add_test("multiple_simple", [this] { test_multiple_simple_objects(); }, "create and delete multiple objects");
+  add_test("multiple_object_with_sub", [this] { test_multiple_object_with_sub_objects(); }, "create and delete multiple objects with sub object");
+  add_test("delete", [this] { test_delete_object(); }, "object deletion test");
+  add_test("hierarchy", [this] { test_hierarchy(); }, "object hierarchy test");
+  add_test("view", [this] { test_view(); }, "object view test");
 //  add_test("clear_type", std::bind(&ObjectStoreTestUnit::test_clear_type, this), "object store clear type test");
-  add_test("clear", std::bind(&ObjectStoreTestUnit::test_clear, this), "object store clear test");
-  add_test("generic", std::bind(&ObjectStoreTestUnit::test_generic, this), "generic object access test");
-  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object transient structure test");
-  add_test("structure_cyclic", std::bind(&ObjectStoreTestUnit::test_structure_cyclic, this), "object transient cyclic structure test");
-  add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "object transient container structure test");
-  add_test("transient_optr", std::bind(&ObjectStoreTestUnit::test_transient_optr, this), "test transient object pointer");
-  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
-  add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "object remove test");
-  add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
-  add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
-  add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
-  add_test("belongs_to_one", std::bind(&ObjectStoreTestUnit::test_belongs_to_one, this), "test belongs to one behaviour");
-  add_test("belongs_to_many", std::bind(&ObjectStoreTestUnit::test_belongs_to_many, this), "test belongs to many behaviour");
-  add_test("observer", std::bind(&ObjectStoreTestUnit::test_observer, this), "test observer functionality");
-  add_test("attach_has_many", std::bind(&ObjectStoreTestUnit::test_attach_has_many, this), "test attach has many");
+  add_test("clear", [this] { test_clear(); }, "object store clear test");
+  add_test("generic", [this] { test_generic(); }, "generic object access test");
+  add_test("get_by_pk", [this] { test_get_by_primary_key(); }, "get object by primary key test");
+  add_test("structure", [this] { test_structure(); }, "object transient structure test");
+  add_test("structure_cyclic", [this] { test_structure_cyclic(); }, "object transient cyclic structure test");
+  add_test("structure_container", [this] { test_structure_container(); }, "object transient container structure test");
+  add_test("transient_optr", [this] { test_transient_optr(); }, "test transient object pointer");
+  add_test("insert", [this] { test_insert(); }, "object insert test");
+  add_test("remove", [this] { test_remove(); }, "object remove test");
+  add_test("pk", [this] { test_primary_key(); }, "object proxy primary key test");
+  add_test("has_many", [this] { test_has_many(); }, "has many test");
+  add_test("has_many_to_many", [this] { test_has_many_to_many(); }, "has many to many test");
+  add_test("belongs_to_one", [this] { test_belongs_to_one(); }, "test belongs to one behaviour");
+  add_test("belongs_to_many", [this] { test_belongs_to_many(); }, "test belongs to many behaviour");
+  add_test("observer", [this] { test_observer(); }, "test observer functionality");
+  add_test("attach_has_many", [this] { test_attach_has_many(); }, "test attach has many");
 }
 
 struct basic_test_pair
@@ -97,12 +100,12 @@ struct item_counter : public std::unary_function<const object_ptr<ObjectItem<dat
 
 void ObjectStoreTestUnit::test_version()
 {
-  std::string version("0.7.0");
+  std::string version("0.8.0");
   
   UNIT_ASSERT_EQUAL(matador::version::str, version);
 
   UNIT_ASSERT_EQUAL(matador::version::major, 0);
-  UNIT_ASSERT_EQUAL(matador::version::minor, 7);
+  UNIT_ASSERT_EQUAL(matador::version::minor, 8);
   UNIT_ASSERT_EQUAL(matador::version::patch_level, 0);
 }
 
@@ -311,7 +314,7 @@ void ObjectStoreTestUnit::test_reference_counter()
   ostore_.attach<datatypes>("item");
   ostore_.attach<ObjectItem<datatypes> >("object_item");
 
-  datatypes *i = new datatypes("datatypes", 7);
+  auto *i = new datatypes("datatypes", 7);
   
   typedef object_ptr<datatypes> item_ptr;
   typedef object_ptr<ObjectItem<datatypes> > object_item_ptr;
@@ -340,6 +343,48 @@ void ObjectStoreTestUnit::test_reference_counter()
   UNIT_ASSERT_EQUAL(a2.reference_count(), 2UL);
 }
 
+void ObjectStoreTestUnit::test_reference_counter_builtin()
+{
+  ostore_.attach<many_ints>("ints");
+
+  auto mptr = ostore_.insert(new many_ints);
+
+  UNIT_ASSERT_EQUAL(0UL, mptr.reference_count());
+
+  mptr.modify()->elements.push_back(1);
+
+  UNIT_ASSERT_EQUAL(1UL, mptr.reference_count());
+
+  ostore_.remove(mptr);
+
+  auto view = object_view<many_ints>(ostore_);
+
+  UNIT_ASSERT_TRUE(view.empty());
+}
+
+void ObjectStoreTestUnit::test_reference_counter_has_many()
+{
+  object_store ostore;
+  ostore.attach<child>("child");
+  ostore.attach<children_vector>("children_vector");
+
+  using childrens_ptr = object_ptr<children_vector>;
+
+  childrens_ptr childrens = ostore.insert(new children_vector("ch1"));
+
+  UNIT_ASSERT_GREATER(childrens.id(), 0UL);
+  UNIT_ASSERT_EQUAL(0UL, childrens.reference_count());
+
+  childrens.modify()->children.push_back(new child("heinz"));
+
+  UNIT_ASSERT_EQUAL(1UL, childrens.reference_count());
+
+  object_ptr<child> c1 = childrens->children.front();
+
+  UNIT_ASSERT_GREATER(c1.id(), 0UL);
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL);
+
+}
 
 void ObjectStoreTestUnit::test_set()
 {
@@ -905,6 +950,22 @@ void ObjectStoreTestUnit::test_generic()
 //  bool is_empty = matador::empty(cv);
 }
 
+void ObjectStoreTestUnit::test_get_by_primary_key()
+{
+  ostore_.attach<person>("person");
+
+  auto jane = ostore_.insert(new person("jane", date(31, 12, 1980), 176));
+  auto george = ostore_.insert(new person("george", date(6, 6, 1960), 183));
+  auto jim = ostore_.insert(new person("jim", date(27, 4, 1995), 179));
+
+  auto pk_george = make_identifier(george->id());
+  auto result = ostore_.get<person>(pk_george);
+
+  UNIT_ASSERT_EQUAL(george->id(), result->id());
+  UNIT_ASSERT_EQUAL(george->name(), result->name());
+  UNIT_ASSERT_EQUAL(george->height(), result->height());
+}
+
 void ObjectStoreTestUnit::test_structure()
 {
   ostore_.attach<datatypes>("item");
@@ -914,7 +975,7 @@ void ObjectStoreTestUnit::test_structure()
   typedef object_ptr<object_item_t> object_item_ptr;
   typedef object_ptr<datatypes> item_ptr;
   
-  object_item_t *oi = new object_item_t("object_item", 42);
+  auto *oi = new object_item_t("object_item", 42);
   
   item_ptr iptr(new datatypes);
   oi->ptr(iptr);
@@ -1004,6 +1065,7 @@ void ObjectStoreTestUnit::test_structure_container()
 
   object_ptr<child> c1 = childrens->children.front();
 
+  UNIT_ASSERT_EQUAL(1UL, childrens.reference_count());
   UNIT_ASSERT_GREATER(c1.id(), 0UL);
   UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL);
 }

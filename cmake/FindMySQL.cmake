@@ -18,6 +18,9 @@ if(WIN32)
       $ENV{ProgramFiles}/MySQL/*/include
       $ENV{SystemDrive}/MySQL/*/include
       $ENV{ProgramW6432}/MySQL/*/include
+      $ENV{ProgramFiles}/MariaDB/*/include
+      $ENV{SystemDrive}/MariaDB/*/include
+      $ENV{ProgramW6432}/MariaDB/*/include
    )
 else(WIN32)
    find_path(MYSQL_INCLUDE_DIR mysql.h
@@ -48,18 +51,23 @@ if(WIN32)
     SET(build_dist Release)
   endif(CMAKE_BUILD_TYPE_TOLOWER MATCHES "debug")
 
-  FIND_LIBRARY(MYSQL_LIBRARY NAMES libmysql
+  FIND_LIBRARY(MYSQL_LIBRARY NAMES libmysql libmariadb
     PATHS
     $ENV{MYSQL_DIR}/lib/${binary_dist}
       $ENV{MYSQL_DIR}/libmysql/${build_dist}
       $ENV{MYSQL_DIR}/client/${build_dist}
       $ENV{ProgramFiles}/MySQL/*/lib/${binary_dist}
       $ENV{SystemDrive}/MySQL/*/lib/${binary_dist}
+      $ENV{ProgramFiles}/MariaDB/*/lib/${binary_dist}
+      $ENV{SystemDrive}/MariaDB/*/lib/${binary_dist}
       $ENV{MYSQL_DIR}/lib/opt
       $ENV{MYSQL_DIR}/client/release
       $ENV{ProgramFiles}/MySQL/*/lib/opt
       $ENV{SystemDrive}/MySQL/*/lib/opt
       $ENV{ProgramW6432}/MySQL/*/lib
+      $ENV{ProgramFiles}/MariaDB/*/lib/opt
+      $ENV{SystemDrive}/MariaDB/*/lib/opt
+      $ENV{ProgramW6432}/MariaDB/*/lib
   )
 else(WIN32)
   find_library(MYSQL_LIBRARY NAMES libmysql
@@ -90,6 +98,10 @@ else(WIN32)
     ${MYSQL_LIB_PATHS}
   )
 endif(WIN32)
+
+IF (MYSQL_INCLUDE_DIR)
+    MESSAGE(STATUS "MariaDB include ${MYSQL_INCLUDE_DIR}")
+ENDIF (MYSQL_INCLUDE_DIR)
 
 IF (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
   SET(MYSQL_FOUND TRUE)

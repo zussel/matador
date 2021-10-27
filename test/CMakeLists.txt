@@ -13,20 +13,95 @@ SET (TEST_TOOLS_SOURCES
   utils/AnyTestUnit.hpp
   utils/SequencerTestUnit.cpp
   utils/SequencerTestUnit.hpp
-  utils/JsonTestUnit.cpp
-  utils/JsonTestUnit.hpp
-  utils/JsonMapperTestUnit.cpp
-  utils/JsonMapperTestUnit.hpp
   utils/OSTest.cpp
   utils/OSTest.hpp
-  utils/FileTestUnit.cpp utils/FileTestUnit.hpp)
+  utils/FileTestUnit.cpp
+  utils/FileTestUnit.hpp
+  utils/TreeTest.cpp
+  utils/TreeTest.hpp
+  utils/StreamsTest.cpp
+  utils/StreamsTest.hpp
+  utils/OptionalTest.cpp
+  utils/OptionalTest.hpp
+  utils/ThreadPoolTest.cpp
+  utils/ThreadPoolTest.hpp
+  utils/Base64Test.cpp
+  utils/Base64Test.hpp
+  utils/BufferViewTest.cpp
+  utils/BufferViewTest.hpp
+  utils/EncryptionTest.cpp
+  utils/EncryptionTest.hpp
+  utils/UrlTest.cpp
+  utils/UrlTest.hpp
+  utils/HtmlTest.cpp
+  utils/HtmlTest.hpp)
+
+SET (TEST_JSON_SOURCES
+  json/JsonTestUnit.cpp
+  json/JsonTestUnit.hpp
+  json/JsonMapperTestUnit.cpp
+  json/JsonMapperTestUnit.hpp
+  json/JsonSerializerTest.cpp
+  json/JsonSerializerTest.hpp
+  )
 
 SET (TEST_LOGGER_SOURCES
   logger/LoggerTest.cpp
   logger/LoggerTest.hpp
-    logger/file.cpp logger/file.hpp)
+  logger/file.cpp
+  logger/file.hpp)
 
-SET (TEST_HEADER datatypes.hpp entities.hpp person.hpp has_many_list.hpp Blog.hpp)
+SET (TEST_NET_SOURCES
+  net/IPTestUnit.cpp
+  net/IPTestUnit.hpp
+  net/AddressTest.cpp
+  net/AddressTest.hpp
+  net/SocketTest.cpp
+  net/SocketTest.hpp
+  net/FDSetTest.cpp
+  net/FDSetTest.hpp
+  net/AddressResolverTest.cpp
+  net/AddressResolverTest.hpp
+  net/SocketInterrupterTest.cpp
+  net/ReactorTest.cpp
+  net/ReactorTest.hpp
+  net/SocketInterrupterTest.hpp
+  net/EchoServer.cpp
+  net/EchoServer.hpp
+  net/IOServiceTest.cpp
+  net/IOServiceTest.hpp
+  net/IOEchoServerConnection.cpp
+  net/IOEchoServerConnection.hpp
+  net/IOEchoServer.cpp
+  net/IOEchoServer.hpp
+  net/NetUtils.hpp)
+
+SET (TEST_HTTP_SOURCES
+  http/RequestParserTest.cpp
+  http/RequestParserTest.hpp
+  http/RequestData.hpp
+  http/RouteEngineTest.cpp
+  http/RouteEngineTest.hpp
+  http/RouteEndpointTest.cpp
+  http/RouteEndpointTest.hpp
+  http/HttpServerTest.cpp
+  http/HttpServerTest.hpp
+  http/ResponseParserTest.cpp
+  http/ResponseParserTest.hpp
+  http/ResponseData.hpp
+  http/TemplateEngineTest.cpp
+  http/TemplateEngineTest.hpp
+  http/JwtTest.cpp
+  http/JwtTest.hpp
+  http/MiddlewareTest.cpp
+  http/MiddlewareTest.hpp)
+
+SET (TEST_HEADER
+  datatypes.hpp
+  entities.hpp
+  person.hpp
+  has_many_list.hpp
+  Blog.hpp)
 
 SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.cpp
@@ -73,7 +148,9 @@ SET (TEST_SQL_SOURCES
   sql/ValueUnitTest.cpp
   sql/ValueUnitTest.hpp
   sql/PostgreSQLDialectTestUnit.cpp
-  sql/PostgreSQLDialectTestUnit.hpp sql/SqlLoggerTest.cpp sql/SqlLoggerTest.hpp)
+  sql/PostgreSQLDialectTestUnit.hpp
+  sql/SqlLoggerTest.cpp
+  sql/SqlLoggerTest.hpp)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp
@@ -88,22 +165,27 @@ SET (TEST_ORM_SOURCES
   orm/BlogUnitTest.hpp
   orm/PrimaryKeyTestUnit.cpp
   orm/PrimaryKeyTestUnit.hpp
-)
+  orm/JsonOrmTest.cpp
+  orm/JsonOrmTest.hpp)
 
-SET (TEST_SOURCES test_matador.cpp)
+SET (TEST_SOURCES test_matador.cpp dto.hpp)
 
 ADD_EXECUTABLE(test_matador
+  EXCLUDE_FROM_ALL
   ${TEST_SOURCES}
   ${TEST_HEADER}
   ${TEST_TOOLS_SOURCES}
   ${TEST_OBJECT_SOURCES}
+  ${TEST_JSON_SOURCES}
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
   ${TEST_LOGGER_SOURCES}
+  ${TEST_HTTP_SOURCES}
+  ${TEST_NET_SOURCES}
   ${TEST_SQL_SOURCES}
 )
 
-SET(MYSQL_CONNECTION_STRING "mysql://sascha:sascha@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
+SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
 IF (WIN32)
   SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\\\SQLEXPRESS/test_oos (SQL Server)" CACHE STRING "mssql connection string")
 ELSE()
@@ -121,41 +203,33 @@ MESSAGE(STATUS "postgresql connection string: ${POSTGRESQL_CONNECTION_STRING}")
 
 CONFIGURE_FILE(connections.hpp.in ${PROJECT_BINARY_DIR}/connections.hpp @ONLY IMMEDIATE)
 
-SET(DB_LIBRARIES)
-
-IF(ODBC_FOUND)
-  MESSAGE(STATUS "Appendig ODBC libs: ${ODBC_LIBRARY}")
-  LIST(APPEND DB_LIBRARIES ${ODBC_LIBRARY})
-ENDIF()
-
-IF(MYSQL_FOUND)
-  MESSAGE(STATUS "Appendig MySQL libs: ${MYSQL_LIBRARY}")
-  LIST(APPEND DB_LIBRARIES ${MYSQL_LIBRARY})
-ENDIF()
-
-IF(SQLITE3_FOUND)
-  MESSAGE(STATUS "Appendig SQLite3 libs: ${SQLITE3_LIBRARY}")
-  LIST(APPEND DB_LIBRARIES ${SQLITE3_LIBRARY})
-ENDIF()
-
-IF(POSTGRESQL_FOUND)
-  MESSAGE(STATUS "Appendig PostgreSQL libs: ${POSTGRESQL_LIBRARIES}")
-  LIST(APPEND DB_LIBRARIES ${POSTGRESQL_LIBRARIES})
-ENDIF()
+MESSAGE(STATUS "Appending thread libs: ${CMAKE_THREAD_LIBS_INIT}")
 
 TARGET_LINK_LIBRARIES(test_matador
   matador-unit
   matador-utils
+  matador-json
   matador-logger
+  matador-net
+  matador-http
   matador-object
   matador-sql
   matador-orm
   ${CMAKE_DL_LIBS}
-  ${DB_LIBRARIES}
+  ${MATADOR_DB_LIBRARIES}
+  ${CMAKE_THREAD_LIBS_INIT}
 )
+
+if(WIN32)
+  target_link_libraries(test_matador wsock32 ws2_32)
+endif()
 
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
+SOURCE_GROUP("logger" FILES ${TEST_LOGGER_SOURCES})
+SOURCE_GROUP("json" FILES ${TEST_JSON_SOURCES})
+SOURCE_GROUP("net" FILES ${TEST_NET_SOURCES})
+SOURCE_GROUP("http" FILES ${TEST_HTTP_SOURCES})
 SOURCE_GROUP("utils" FILES ${TEST_TOOLS_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})
@@ -164,4 +238,4 @@ SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
-ADD_TEST(test_matador_all ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_matador exec all)
+ADD_TEST(NAME test_matador_all COMMAND test_matador exec all WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

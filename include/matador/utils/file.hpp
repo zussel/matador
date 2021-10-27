@@ -114,9 +114,26 @@ public:
    */
   FILE* stream() const;
 
+  /**
+   * Returns true if file is open.
+   *
+   * @return True if file is open
+   */
+  bool is_open() const;
+
 private:
   std::string path_;
   FILE *stream_ = nullptr;
 };
+
+/**
+ * Reads a given file as text and
+ * returns its content as string
+ *
+ * @param f File to read in
+ * @return The content of the file as string
+ */
+OOS_UTILS_API std::string read_as_text(const file &f);
+
 }
 #endif //MATADOR_FILE_HPP

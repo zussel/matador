@@ -17,10 +17,10 @@ namespace matador {
  * @param args Forwared arguments
  * @return The cre
  */
-template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args)
-{
-  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
+//template<typename T, typename... Args>
+//std::unique_ptr<T> make_unique(Args&&... args)
+//{
+//  return std::unique_ptr<T>(new T(static_cast<const person>(std::forward<Args>(args))...));
+//}
 }
 #endif //MATADOR_MEMORY_HPP
