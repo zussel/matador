@@ -9,10 +9,10 @@ Take your database by the horns.
 
 __Build Status__
 
-| Branches    | Linux-CI | Windows-CI | Coveralls    |  CodeCov  |
-|-------------|-----------|-------------|--------------|-----------|
-| master      |[![Build Status](https://travis-ci.org/zussel/matador.png?branch=master)](https://travis-ci.org/zussel/matador?branch=master)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/master?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/master)|[![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=master)](https://coveralls.io/github/zussel/matador?branch=master)|[![codecov](https://codecov.io/gh/zussel/matador/branch/master/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
-| develop     |[![Build Status](https://github.com/zussel/matador/actions/workflows/linux.yml/badge.svg?branch=develop)](https://travis-ci.org/zussel/matador)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/develop)|N/A|[![codecov](https://codecov.io/gh/zussel/matador/branch/develop/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
+| Branches    | Linux-CI | Windows-CI |  CodeCov  |
+|-------------|-----------|-----------|-----------|
+| master      |[![Build Status](https://github.com/zussel/matador/actions/workflows/linux.yml/badge.svg?branch=dev)](https://travis-ci.org/zussel/matador?branch=master)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/master?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/master)|[![codecov](https://codecov.io/gh/zussel/matador/branch/master/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
+| develop     |[![Build Status](https://github.com/zussel/matador/actions/workflows/linux.yml/badge.svg?branch=develop)](https://travis-ci.org/zussel/matador)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/develop)|[![codecov](https://codecov.io/gh/zussel/matador/branch/develop/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
 
 matador is an ORM and Web Application framework written in C++. It
 encapsulates all database backend communication and offers a simple (web) server.
@@ -51,10 +51,10 @@ The following example define an entity _person_, sets up orm backend and
 logging and creates a http server listening at port 8000. The server serves
 five REST apis at ```http://localhost:8000/person/```:
 - GET ```/``` (returns all person)
-- GET ```/id``` (return person with id where id must be numeric)
+- GET ```/{id}``` (return person with id where id must be numeric)
 - POST ```/``` (creates a person from the given json body)
-- PUT ```/id``` (updates a person with id from the given json body)
-- DELETE ```/id``` (deletes a person with id)
+- PUT ```/{id}``` (updates a person with id from the given json body)
+- DELETE ```/{id}``` (deletes a person with id)
 
 ```cpp
 // use matador namespace

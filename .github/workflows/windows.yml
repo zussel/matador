@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - master
     paths-ignore:
       - .github/workflows/linux.yml
       - .github/workflows/release.yml
