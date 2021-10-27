@@ -90,14 +90,9 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
-    - name: Download RPM Artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
-    - name: Download TGZ Artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
+        path: ./
+    - name: Display structure of downloaded files
+      run: ls -R
     - name: Upload Debian Asset
       uses: actions/upload-release-asset@v1
       env:
@@ -107,6 +102,14 @@ jobs:
         asset_path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
         asset_name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
         asset_content_type: application/x-deb
+    - name: Download RPM Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
+    - name: Download TGZ Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
     - name: Upload RPM Asset
       uses: actions/upload-release-asset@v1
       env:
