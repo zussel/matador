@@ -111,25 +111,27 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
-    - name: Download TGZ Artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
+        path: ./
     - name: Upload RPM Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
+        asset_path: "matador-${{ steps.matador_version.outputs.id }}-x86_64-linux.rpm"
         asset_name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
         asset_content_type: application/x-rpm
+    - name: Download TGZ Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
+        path: ./
     - name: Upload TGZ Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
+        asset_path: "matador-${{ steps.matador_version.outputs.id }}-x86_64-linux.tar.gz"
         asset_name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
         asset_content_type: application/x-tar
