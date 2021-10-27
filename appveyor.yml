@@ -68,7 +68,7 @@ before_build:
       cmake -G "$env:generator" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" -DPOSTGRESQL_CONNECTION_STRING:STRING="postgresql://test:test123@127.0.0.1/matador_test" ..
 
 build_script:
-  - cmake --build . --config %configuration%
+  - cmake --build . --config %configuration% --target matador test_matador
 
 before_test:
   - copy "C:\projects\sqlite\sqlite\bin\sqlite3.dll" "C:\projects\matador\build\Release\bin\%CONFIGURATION%\"
