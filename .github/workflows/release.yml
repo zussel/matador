@@ -35,17 +35,10 @@ jobs:
         run: >
           cmake -B ${{github.workspace}}/build
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-          -DMATADOR_ODBC_TEST=false
           -DMATADOR_ODBC=true
-          -DMATADOR_POSTGRESQL_TEST=true
-          -DMATADOR_MYSQL_TEST=true
-          -DMATADOR_SQLITE3_TEST=true
           -DCOVERAGE=false
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador
-      - name: Copy Matador Libs
-        working-directory: ${{github.workspace}}/build
-        run: cp lib/libmatador-*.* bin/
       - name: Build Documentation
         working-directory: ${{github.workspace}}/build
         run: cmake --build ${{github.workspace}}/build --target web
@@ -97,17 +90,14 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
-        path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
     - name: Download RPM Artifact
       uses: actions/download-artifact@v2
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
-        path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
     - name: Download TGZ Artifact
       uses: actions/download-artifact@v2
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
-        path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
     - name: Upload Debian Asset
       uses: actions/upload-release-asset@v1
       env:
@@ -115,7 +105,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
-        asset_name: "${{ env.PROJECT_NAME }}-Linux-${{ steps.version.outputs.name }}.deb"
+        asset_name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
         asset_content_type: application/x-deb
     - name: Upload RPM Asset
       uses: actions/upload-release-asset@v1
@@ -124,7 +114,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
-        asset_name: "${{ env.PROJECT_NAME }}-Linux-${{ steps.version.outputs.name }}.rpm"
+        asset_name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
         asset_content_type: application/x-rpm
     - name: Upload TGZ Asset
       uses: actions/upload-release-asset@v1
@@ -133,5 +123,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
-        asset_name: "${{ env.PROJECT_NAME }}-Linux-${{ steps.version.outputs.name }}.tar.gz"
+        asset_name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
         asset_content_type: application/x-tar
