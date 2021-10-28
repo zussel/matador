@@ -82,7 +82,9 @@ jobs:
           "C:\tools\mysql\current\bin\mysql" -u root -e "GRANT ALL PRIVILEGES ON matador_test.* TO 'test'@'localhost'"
           "C:\tools\mysql\current\bin\mysql" -u root -e "FLUSH PRIVILEGES"
           "C:\tools\mysql\current\bin\mysql" -u root -e "SHOW GRANTS FOR 'test'@'localhost'"
-          echo "MYSQL_DIR=C:\tools\mysql\current" >> $GITHUB_ENV
+      - name: Set MySQL variables
+        shell: bash
+        run: echo "MYSQL_DIR=C:\tools\mysql\current" >> $GITHUB_ENV
       - name: MySQL checks
         shell: cmd
         run: |
