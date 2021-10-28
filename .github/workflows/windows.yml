@@ -47,14 +47,28 @@ jobs:
           & $env:PGBIN\createdb --owner=test matador_test
           $env:PGPASSWORD = 'test123'
           & $env:PGBIN\psql --username=test --host=localhost --list matador_test
-      - uses: ankane/setup-mysql@v1
-        with:
-          database: matador_test
-      - run: mysql -D matador_test -e 'SELECT VERSION()'
-      - run: mysql -u root -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test123'"
-      - run: mysql -u root -e "GRANT ALL PRIVILEGES ON matador_test.* TO 'test'@'localhost'"
-      - run: mysql -u root -e "FLUSH PRIVILEGES"
-      - run: mysql -u root -e "SHOW GRANTS FOR 'test'@'localhost'"
+      - name: Install sqlite
+        shell: cmd
+        run: |
+          choco install sqlite
+          cd /D C:\ProgramData\chocolatey\lib\SQLite\tools
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          lib /machine:x64 /def:sqlite3.def /out:sqlite3.lib
+          echo ::add-path::C:\ProgramData\chocolatey\lib\SQLite\tools
+          echo ::set-env name=SQLITE3_LIB_DIR::C:\ProgramData\chocolatey\lib\SQLite\tools
+          echo ::set-env name=SQLITE_DATABASE_URL::C:\test.db
+      - name: Install mysql (Windows)
+        shell: cmd
+        run: |
+          choco install mysql
+          "C:\tools\mysql\current\bin\mysql" -u root -e "create database matador_test;"
+          "C:\tools\mysql\current\bin\mysql" -D matador_test -e 'SELECT VERSION()'
+          "C:\tools\mysql\current\bin\mysql" -u root -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test123'"
+          "C:\tools\mysql\current\bin\mysql" -u root -e "GRANT ALL PRIVILEGES ON matador_test.* TO 'test'@'localhost'"
+          "C:\tools\mysql\current\bin\mysql" -u root -e "FLUSH PRIVILEGES"
+          "C:\tools\mysql\current\bin\mysql" -u root -e "SHOW GRANTS FOR 'test'@'localhost'"
+          echo ::set-env name=MYSQL_DATABASE_URL::mysql://root@localhost/matador_test
+          echo ::set-env name=MYSQLCLIENT_LIB_DIR::C:\tools\mysql\current\lib
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake
@@ -63,10 +77,9 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DCMAKE_INSTALL_PREFIX="$HOME/$env:INSTALL_LOCATION"
           -DMATADOR_ODBC_TEST=false
-          -DMATADOR_ODBC=false
           -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
           -DMATADOR_SQLITE3_TEST=false
-          -DMATADOR_MYSQL_TEST=false
+          -DMATADOR_MYSQL_TEST=true
       - name: Build
         run: >
           cmake --build ${{github.workspace}}/build
