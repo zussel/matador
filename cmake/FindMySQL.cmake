@@ -33,14 +33,14 @@ endif(WIN32)
 if(WIN32)
   find_path(MYSQL_INCLUDE_DIR mysql.h
     PATHS
-    $ENV{MYSQL_INCLUDE_DIR}
+#    $ENV{MYSQL_INCLUDE_DIR}
     $ENV{MYSQL_DIR}/include
     $ENV{ProgramFiles}/MySQL/*/include
- #   $ENV{SystemDrive}/MySQL/*/include
-    $ENV{ProgramW6432}/MySQL/*/include
-    $ENV{ProgramFiles}/MariaDB/*/include
+#    $ENV{SystemDrive}/MySQL/*/include
+#    $ENV{ProgramW6432}/MySQL/*/include
+#    $ENV{ProgramFiles}/MariaDB/*/include
 #    $ENV{SystemDrive}/MariaDB/*/include
-    $ENV{ProgramW6432}/MariaDB/*/include
+#    $ENV{ProgramW6432}/MariaDB/*/include
    )
 else(WIN32)
   find_path(MYSQL_INCLUDE_DIR mysql.h
@@ -76,21 +76,22 @@ if(WIN32)
   FIND_LIBRARY(MYSQL_LIBRARY NAMES libmysql libmariadb
     PATHS
     $ENV{MYSQL_DIR}/lib
-    $ENV{MYSQL_DIR}/lib/${binary_dist}
-    $ENV{MYSQL_DIR}/libmysql/${build_dist}
-    $ENV{MYSQL_DIR}/client/${build_dist}
-    $ENV{ProgramFiles}/MySQL/*/lib/${binary_dist}
+#    $ENV{MYSQL_DIR}/lib/${binary_dist}
+#    $ENV{MYSQL_DIR}/libmysql/${build_dist}
+#    $ENV{MYSQL_DIR}/client/${build_dist}
+#    $ENV{ProgramFiles}/MySQL/*/lib/${binary_dist}
+    $ENV{ProgramFiles}/MySQL/*/lib
 #    $ENV{SystemDrive}/MySQL/*/lib/${binary_dist}
-    $ENV{ProgramFiles}/MariaDB/*/lib/${binary_dist}
+#    $ENV{ProgramFiles}/MariaDB/*/lib/${binary_dist}
 #    $ENV{SystemDrive}/MariaDB/*/lib/${binary_dist}
-    $ENV{MYSQL_DIR}/lib/opt
-    $ENV{MYSQL_DIR}/client/release
-    $ENV{ProgramFiles}/MySQL/*/lib/opt
+#    $ENV{MYSQL_DIR}/lib/opt
+#    $ENV{MYSQL_DIR}/client/release
+#    $ENV{ProgramFiles}/MySQL/*/lib/opt
 #    $ENV{SystemDrive}/MySQL/*/lib/opt
-    $ENV{ProgramW6432}/MySQL/*/lib
-    $ENV{ProgramFiles}/MariaDB/*/lib/opt
-    $ENV{SystemDrive}/MariaDB/*/lib/opt
-    $ENV{ProgramW6432}/MariaDB/*/lib
+#    $ENV{ProgramW6432}/MySQL/*/lib
+#    $ENV{ProgramFiles}/MariaDB/*/lib/opt
+#    $ENV{SystemDrive}/MariaDB/*/lib/opt
+#    $ENV{ProgramW6432}/MariaDB/*/lib
   )
 else(WIN32)
   find_library(MYSQL_LIBRARY NAMES libmysql
