@@ -11,26 +11,26 @@ IF (MYSQL_INCLUDE_DIR)
 ENDIF (MYSQL_INCLUDE_DIR)
 
 if(WIN32)
-   find_path(MYSQL_INCLUDE_DIR mysql.h
-      PATHS
-      $ENV{MYSQL_INCLUDE_DIR}
-      $ENV{MYSQL_DIR}/include
-      $ENV{ProgramFiles}/MySQL/*/include
-      $ENV{SystemDrive}/MySQL/*/include
-      $ENV{ProgramW6432}/MySQL/*/include
-      $ENV{ProgramFiles}/MariaDB/*/include
-      $ENV{SystemDrive}/MariaDB/*/include
-      $ENV{ProgramW6432}/MariaDB/*/include
+  find_path(MYSQL_INCLUDE_DIR mysql.h
+    PATHS
+    $ENV{MYSQL_DIR}/include
+    $ENV{MYSQL_INCLUDE_DIR}
+    $ENV{ProgramFiles}/MySQL/*/include
+    $ENV{SystemDrive}/MySQL/*/include
+    $ENV{ProgramW6432}/MySQL/*/include
+    $ENV{ProgramFiles}/MariaDB/*/include
+    $ENV{SystemDrive}/MariaDB/*/include
+    $ENV{ProgramW6432}/MariaDB/*/include
    )
 else(WIN32)
-   find_path(MYSQL_INCLUDE_DIR mysql.h
-      PATHS
-      $ENV{MYSQL_INCLUDE_DIR}
-      $ENV{MYSQL_DIR}/include
-      /usr/local/mysql/include
-      /opt/mysql/mysql/include
-      PATH_SUFFIXES
-      mysql
+  find_path(MYSQL_INCLUDE_DIR mysql.h
+    PATHS
+    $ENV{MYSQL_DIR}/include
+    $ENV{MYSQL_INCLUDE_DIR}
+    /usr/local/mysql/include
+    /opt/mysql/mysql/include
+    PATH_SUFFIXES
+    mysql
    )
 endif(WIN32)
 
