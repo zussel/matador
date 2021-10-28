@@ -84,12 +84,15 @@ jobs:
           "C:\tools\mysql\current\bin\mysql" -u root -e "SHOW GRANTS FOR 'test'@'localhost'"
       - name: Set MySQL variables
         shell: bash
-        run: echo "MYSQL_DIR=C:\tools\mysql\current" >> $GITHUB_ENV
+        run: |
+          echo "MYSQL_DIR=C:\tools\mysql\current" >> $GITHUB_ENV
       - name: MySQL checks
         shell: cmd
         run: |
           cd /D C:\tools\mysql\current
           dir
+          dir include
+          dir lib
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake
