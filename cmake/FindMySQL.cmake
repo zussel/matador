@@ -8,6 +8,7 @@
 IF (MYSQL_INCLUDE_DIR)
   # Already in cache, be silent
   SET(MYSQL_FIND_QUIETLY TRUE)
+  MESSAGE(STATUS "MYSQL_INCLUDE_DIR ${MYSQL_INCLUDE_DIR}")
 ENDIF (MYSQL_INCLUDE_DIR)
 
 if(WIN32)
@@ -17,8 +18,8 @@ endif(WIN32)
 if(WIN32)
   find_path(MYSQL_INCLUDE_DIR mysql.h
     PATHS
-    $ENV{MYSQL_DIR}/include
     $ENV{MYSQL_INCLUDE_DIR}
+    $ENV{MYSQL_DIR}/include
     $ENV{ProgramFiles}/MySQL/*/include
     $ENV{SystemDrive}/MySQL/*/include
     $ENV{ProgramW6432}/MySQL/*/include
