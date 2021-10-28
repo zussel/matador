@@ -11,6 +11,7 @@ endif()
 
 IF (WIN32)
     FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
+      $ENV{SQLITE3_DIR}/include/
       $ENV{PROGRAMFILES}/SQLite/include/
       ${PROGRAMFILES}/SQLite/include/
       DOC "The directory where sqlite3.h resides"
@@ -19,6 +20,7 @@ IF (WIN32)
     FIND_LIBRARY( SQLITE3_LIBRARY
       NAMES sqlite3
       PATHS
+      $ENV{SQLITE3_DIR}/lib/
       $ENV{PROGRAMFILES}/SQLite/lib/
       ${PROGRAMFILES}/SQLite/lib/
       DOC "The SQLite3 library"
