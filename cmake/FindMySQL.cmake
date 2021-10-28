@@ -11,6 +11,10 @@ IF (MYSQL_INCLUDE_DIR)
 ENDIF (MYSQL_INCLUDE_DIR)
 
 if(WIN32)
+  MESSAGE(STATUS "MYSQL_DIR $ENV{MYSQL_DIR}")
+endif(WIN32)
+
+if(WIN32)
   find_path(MYSQL_INCLUDE_DIR mysql.h
     PATHS
     $ENV{MYSQL_DIR}/include
@@ -53,21 +57,22 @@ if(WIN32)
 
   FIND_LIBRARY(MYSQL_LIBRARY NAMES libmysql libmariadb
     PATHS
+    $ENV{MYSQL_DIR}/lib
     $ENV{MYSQL_DIR}/lib/${binary_dist}
-      $ENV{MYSQL_DIR}/libmysql/${build_dist}
-      $ENV{MYSQL_DIR}/client/${build_dist}
-      $ENV{ProgramFiles}/MySQL/*/lib/${binary_dist}
-      $ENV{SystemDrive}/MySQL/*/lib/${binary_dist}
-      $ENV{ProgramFiles}/MariaDB/*/lib/${binary_dist}
-      $ENV{SystemDrive}/MariaDB/*/lib/${binary_dist}
-      $ENV{MYSQL_DIR}/lib/opt
-      $ENV{MYSQL_DIR}/client/release
-      $ENV{ProgramFiles}/MySQL/*/lib/opt
-      $ENV{SystemDrive}/MySQL/*/lib/opt
-      $ENV{ProgramW6432}/MySQL/*/lib
-      $ENV{ProgramFiles}/MariaDB/*/lib/opt
-      $ENV{SystemDrive}/MariaDB/*/lib/opt
-      $ENV{ProgramW6432}/MariaDB/*/lib
+    $ENV{MYSQL_DIR}/libmysql/${build_dist}
+    $ENV{MYSQL_DIR}/client/${build_dist}
+    $ENV{ProgramFiles}/MySQL/*/lib/${binary_dist}
+    $ENV{SystemDrive}/MySQL/*/lib/${binary_dist}
+    $ENV{ProgramFiles}/MariaDB/*/lib/${binary_dist}
+    $ENV{SystemDrive}/MariaDB/*/lib/${binary_dist}
+    $ENV{MYSQL_DIR}/lib/opt
+    $ENV{MYSQL_DIR}/client/release
+    $ENV{ProgramFiles}/MySQL/*/lib/opt
+    $ENV{SystemDrive}/MySQL/*/lib/opt
+    $ENV{ProgramW6432}/MySQL/*/lib
+    $ENV{ProgramFiles}/MariaDB/*/lib/opt
+    $ENV{SystemDrive}/MariaDB/*/lib/opt
+    $ENV{ProgramW6432}/MariaDB/*/lib
   )
 else(WIN32)
   find_library(MYSQL_LIBRARY NAMES libmysql
@@ -100,8 +105,17 @@ else(WIN32)
 endif(WIN32)
 
 IF (MYSQL_INCLUDE_DIR)
-    MESSAGE(STATUS "MariaDB include ${MYSQL_INCLUDE_DIR}")
+  MESSAGE(STATUS "MariaDB include ${MYSQL_INCLUDE_DIR}")
+ELSE (MYSQL_INCLUDE_DIR)
+  MESSAGE(STATUS "MariaDB include dir not found")
 ENDIF (MYSQL_INCLUDE_DIR)
+
+IF (MYSQL_LIBRARIES)
+  MESSAGE(STATUS "MariaDB libs ${MYSQL_LIBRARIES}")
+ELSE (MYSQL_LIBRARIES)
+  MESSAGE(STATUS "MariaDB libs dir not found")
+ENDIF (MYSQL_LIBRARIES)
+
 
 IF (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
   SET(MYSQL_FOUND TRUE)
