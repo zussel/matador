@@ -31,6 +31,7 @@ if(WIN32)
 endif(WIN32)
 
 if(WIN32)
+  MESSAGE(STATUS "Searching for MySQL include in $ENV{ProgramFiles}")
   find_path(MYSQL_INCLUDE_DIR mysql.h
     PATHS
 #    $ENV{MYSQL_INCLUDE_DIR}
@@ -42,6 +43,7 @@ if(WIN32)
 #    $ENV{SystemDrive}/MariaDB/*/include
 #    $ENV{ProgramW6432}/MariaDB/*/include
    )
+  MESSAGE(STATUS "Found MYSQL_INCLUDE_DIR ${MYSQL_INCLUDE_DIR}")
 else(WIN32)
   find_path(MYSQL_INCLUDE_DIR mysql.h
     PATHS
@@ -53,8 +55,6 @@ else(WIN32)
     mysql
    )
 endif(WIN32)
-
-MESSAGE(STATUS "Found MYSQL_INCLUDE_DIR ${MYSQL_INCLUDE_DIR}")
 
 if(WIN32)
   if (${CMAKE_BUILD_TYPE})
