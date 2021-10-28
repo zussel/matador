@@ -83,6 +83,11 @@ jobs:
           "C:\tools\mysql\current\bin\mysql" -u root -e "FLUSH PRIVILEGES"
           "C:\tools\mysql\current\bin\mysql" -u root -e "SHOW GRANTS FOR 'test'@'localhost'"
           echo "MYSQL_DIR=C:\tools\mysql\current" >> $GITHUB_ENV
+      - name: MySQL checks
+        shell: cmd
+        run: |
+          cd /D C:\tools\mysql\current
+          dir
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake
