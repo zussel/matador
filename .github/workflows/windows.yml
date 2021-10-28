@@ -103,7 +103,7 @@ jobs:
           -DMYSQL_LIBRARY="${{env.MYSQL_DIR}}\lib\libmysql.lib"
           -DMYSQL_INCLUDE_DIR="${{env.MYSQL_DIR}}\include"
           -DMATADOR_ODBC_TEST=false
-          -DMATADOR_MYSQL_TEST=false
+          -DMATADOR_MYSQL_TEST=true
           -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
       - name: Build
         run: >
