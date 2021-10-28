@@ -13,6 +13,20 @@ ENDIF (MYSQL_INCLUDE_DIR)
 
 if(WIN32)
   MESSAGE(STATUS "MYSQL_DIR $ENV{MYSQL_DIR}")
+
+  MESSAGE(STATUS "Checking $ENV{MYSQL_DIR}/include/mysql.h")
+  if(EXISTS "$ENV{MYSQL_DIR}/include/mysql.h")
+    MESSAGE(STATUS "MySQL header exists")
+  else()
+    MESSAGE(STATUS "MySQL doesn't header exists")
+  endif()
+
+  MESSAGE(STATUS "Checking $ENV{MYSQL_DIR}\\include\\mysql.h")
+  if(EXISTS "$ENV{MYSQL_DIR}\\include\\mysql.h")
+    MESSAGE(STATUS "MySQL header exists")
+  else()
+    MESSAGE(STATUS "MySQL doesn't header exists")
+  endif()
 endif(WIN32)
 
 if(WIN32)
@@ -38,6 +52,8 @@ else(WIN32)
     mysql
    )
 endif(WIN32)
+
+MESSAGE(STATUS "Found MYSQL_INCLUDE_DIR ${MYSQL_INCLUDE_DIR}")
 
 if(WIN32)
   if (${CMAKE_BUILD_TYPE})
