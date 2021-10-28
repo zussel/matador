@@ -18,15 +18,16 @@ if(WIN32)
   if(EXISTS "$ENV{MYSQL_DIR}/include/mysql.h")
     MESSAGE(STATUS "MySQL header exists")
   else()
-    MESSAGE(STATUS "MySQL doesn't header exists")
+    MESSAGE(STATUS "MySQL header doesn't exists")
   endif()
 
-  MESSAGE(STATUS "Checking $ENV{MYSQL_DIR}\\include\\mysql.h")
-  if(EXISTS "$ENV{MYSQL_DIR}\\include\\mysql.h")
-    MESSAGE(STATUS "MySQL header exists")
+  MESSAGE(STATUS "Checking $ENV{MYSQL_DIR}/lib/libmysql.dll")
+  if(EXISTS "$ENV{MYSQL_DIR}/lib/libmysql.dll")
+    MESSAGE(STATUS "MySQL lib exists")
   else()
-    MESSAGE(STATUS "MySQL doesn't header exists")
+    MESSAGE(STATUS "MySQL lib doesn't exists")
   endif()
+
 endif(WIN32)
 
 if(WIN32)
@@ -35,10 +36,10 @@ if(WIN32)
     $ENV{MYSQL_INCLUDE_DIR}
     $ENV{MYSQL_DIR}/include
     $ENV{ProgramFiles}/MySQL/*/include
-    $ENV{SystemDrive}/MySQL/*/include
+ #   $ENV{SystemDrive}/MySQL/*/include
     $ENV{ProgramW6432}/MySQL/*/include
     $ENV{ProgramFiles}/MariaDB/*/include
-    $ENV{SystemDrive}/MariaDB/*/include
+#    $ENV{SystemDrive}/MariaDB/*/include
     $ENV{ProgramW6432}/MariaDB/*/include
    )
 else(WIN32)
@@ -79,13 +80,13 @@ if(WIN32)
     $ENV{MYSQL_DIR}/libmysql/${build_dist}
     $ENV{MYSQL_DIR}/client/${build_dist}
     $ENV{ProgramFiles}/MySQL/*/lib/${binary_dist}
-    $ENV{SystemDrive}/MySQL/*/lib/${binary_dist}
+#    $ENV{SystemDrive}/MySQL/*/lib/${binary_dist}
     $ENV{ProgramFiles}/MariaDB/*/lib/${binary_dist}
-    $ENV{SystemDrive}/MariaDB/*/lib/${binary_dist}
+#    $ENV{SystemDrive}/MariaDB/*/lib/${binary_dist}
     $ENV{MYSQL_DIR}/lib/opt
     $ENV{MYSQL_DIR}/client/release
     $ENV{ProgramFiles}/MySQL/*/lib/opt
-    $ENV{SystemDrive}/MySQL/*/lib/opt
+#    $ENV{SystemDrive}/MySQL/*/lib/opt
     $ENV{ProgramW6432}/MySQL/*/lib
     $ENV{ProgramFiles}/MariaDB/*/lib/opt
     $ENV{SystemDrive}/MariaDB/*/lib/opt
