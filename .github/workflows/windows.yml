@@ -93,10 +93,8 @@ jobs:
           cmake -B ${{github.workspace}}/build
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DCMAKE_INSTALL_PREFIX="$HOME/$env:INSTALL_LOCATION"
-          -DMYSQL_LIBRARY="${{env.MYSQL_DIR}}\lib\libmysql.lib"
-          -DMYSQL_INCLUDE_DIR="${{env.MYSQL_DIR}}\include"
           -DMATADOR_ODBC_TEST=false
-          -DMATADOR_MYSQL_TEST=true
+          -DMATADOR_MYSQL_TEST=false
           -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
       - name: Build
         run: >
