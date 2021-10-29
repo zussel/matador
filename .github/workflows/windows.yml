@@ -85,18 +85,7 @@ jobs:
       - name: Set MySQL variables
         shell: bash
         run: |
-          echo "MYSQL_DIR=C:\tools\mysql\current" >> $GITHUB_ENV
-      - name: MySQL checks
-        shell: cmd
-        run: |
-          cd /D C:\tools\mysql\current
-          dir
-          dir include
-          dir lib
-          cd /D C:\mysql
-          dir
-          dir include
-          dir lib
+          echo "MYSQL_DIR=C:\mysql" >> $GITHUB_ENV
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake
@@ -109,14 +98,14 @@ jobs:
           -DMATADOR_ODBC_TEST=false
           -DMATADOR_MYSQL_TEST=false
           -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
-#      - name: Build
-#        run: >
-#          cmake --build ${{github.workspace}}/build
-#          --config ${{env.BUILD_TYPE}}
-#          --target matador test_matador
-#      - name: List Debug
-#        working-directory: ${{github.workspace}}/build/Debug/bin/Debug
-#        run: dir
-#      - name: Test
-#        working-directory: ${{github.workspace}}/build
-#        run: ctest --verbose -C ${{env.BUILD_TYPE}}
+      - name: Build
+        run: >
+          cmake --build ${{github.workspace}}/build
+          --config ${{env.BUILD_TYPE}}
+          --target matador test_matador
+      - name: List Debug
+        working-directory: ${{github.workspace}}/build/Debug/bin/Debug
+        run: dir
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest --verbose -C ${{env.BUILD_TYPE}}
