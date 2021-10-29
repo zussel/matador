@@ -122,74 +122,54 @@ private:
   matador::logger log_;
 };
 
-class application
-{
-public:
-  explicit application(unsigned short port)
-    : server_(port)
-    , auth_(server_)
-    , app_("/app/*.*", server_)
-  {}
-
-  void run()
-  {
-    server_.run();
-  }
-
-private:
-  http::server server_;
-  auth_service auth_;
-  http::static_file_service app_;
-};
-
-class log_middleware : public http::middleware
-{
-public:
-  log_middleware()
-    : log_(matador::create_logger("LogMiddleware"))
-  {}
-
-  matador::http::response process(http::request &, const next_func_t &next) override
-  {
-    log_.info("before LogMiddleware");
-    auto resp = next();
-    log_.info("after LogMiddleware");
-    return resp;
-  }
-
-private:
-  matador::logger log_;
-};
-
-class time_measure_middleware : public http::middleware
-{
-public:
-  time_measure_middleware()
-    : log_(matador::create_logger("TimeMeasureMiddleware"))
-  {}
-
-  matador::http::response process(http::request &, const next_func_t &next) override
-  {
-    auto start = std::chrono::high_resolution_clock::now();
-
-    log_.info("before LogMiddleware");
-    auto resp = next();
-    log_.info("after LogMiddleware");
-    auto end = std::chrono::high_resolution_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    log_.info("processing middleware took (%dµs)", elapsed);
-    return resp;
-  }
-
-private:
-  matador::logger log_;
-};
+//class application
+//{
+//public:
+//  explicit application(unsigned short port)
+//    : server_(port)
+//    , auth_(server_)
+//    , app_("/app/*.*", server_)
+//  {}
+//
+//  void run()
+//  {
+//    server_.run();
+//  }
+//
+//private:
+//  http::server server_;
+//  auth_service auth_;
+//  http::static_file_service app_;
+//};
 
 enum e_numbers { ONE, TWO, THREE };
 
 void s(int ) {
 
 }
+
+class application
+{
+public:
+  application(matador::persistence &p, matador::http::server &s)
+    : persistence_(p), server_(s)
+  {
+  }
+
+  matador::http::server& http_server()
+  {
+    return server_;
+  }
+
+  matador::persistence& persistence_unit()
+  {
+    return persistence_;
+  }
+
+private:
+  matador::persistence &persistence_;
+  matador::http::server &server_;
+};
 
 int main(int /*argc*/, char* /*argv*/[])
 {
@@ -242,6 +222,9 @@ int main(int /*argc*/, char* /*argv*/[])
 
   // create server and add routing
   http::server server(8700);
+
+  application app(p, server);
+
   server.add_routing_middleware();
 
   // return all persons

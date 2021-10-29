@@ -3,86 +3,117 @@
 #include <typeindex>
 #include <utility>
 #include <functional>
+#include <vector>
+#include <memory>
 
-struct di_item
+class di_strategy
 {
-  ~di_item()
+public:
+  virtual ~di_strategy() = default;
+
+  virtual void* create() = 0;
+};
+
+template < class T >
+class di_default : public di_strategy
+{
+public:
+  template < typename ...Args >
+  explicit di_default(Args&& ...args)
   {
-    if (deleter_) {
-      deleter_(object);
-    }
+    creator_ = [&args..., this]() {
+      std::cout << "creating " << typeid(T).name() << "\n";
+      instances_.push_back(std::make_unique<T>(std::forward<Args&&>(args)...));
+      return instances_.back().get();
+    };
   }
 
-  template< typename T >
-  void to() {
-    creator_ = [](void *) {
-      std::cout << "creating " << typeid(T).name() << "\n";
-      return (void*)(new T);
+  void* create() override
+  {
+    return creator_();
+  }
+
+private:
+  std::function<T*()> creator_ {};
+  std::vector<std::unique_ptr<T>> instances_;
+};
+
+template < class T >
+class di_singleton : public di_strategy
+{
+public:
+  template < typename ...Args >
+  explicit di_singleton(Args&& ...args)
+  {
+    creator_ = [&args..., this]() {
+      if (!instance_) {
+        std::cout << "creating " << typeid(T).name() << "\n";
+        instance_ = std::make_unique<T>(std::forward<Args&&>(args)...);
+      }
+      return instance_.get();
     };
+  }
+
+  void* create() override
+  {
+    return creator_();
+  }
+
+private:
+  std::function<T*()> creator_ {};
+  std::unique_ptr<T> instance_;
+};
+
+template < class T >
+class di_instance : public di_strategy
+{
+public:
+  explicit di_instance(T &&obj)
+    : instance_(obj)
+  {}
+
+  void* create() override
+  {
+    return &instance_;
+  }
+
+private:
+  T &instance_;
+};
+
+struct di_proxy
+{
+  template<typename T, typename ...Args>
+  void to(Args&& ...args) {
+    strategy_ = std::make_unique<di_default<T>>(std::forward<Args&&>(args)...);
   }
 
   template<typename T>
   void to_instance(T &&obj)
   {
-    creator_ = [&obj](void *) {
-      return (void*)&std::forward<T&&>(obj);
-    };
-    // Todo: type id checking
-//    object = &obj;
+    strategy_ = std::make_unique<di_instance<T>>(obj);
   }
 
   template<typename T, typename ...Args>
   void to_singleton(Args&& ...args)
   {
-    creator_ = [&args...](void *obj) {
-      if (obj) {
-        return obj;
-      }
-      std::cout << "creating " << typeid(T).name() << "\n";
-      return (void*)(new T(std::forward<Args&&>(args)...));
-    };
-    deleter_ = &destroy<T>;
+    strategy_ = std::make_unique<di_singleton<T>>(std::forward<Args&&>(args)...);
   }
 
   template<typename T>
   T& get()
   {
-    return *static_cast<T*>(creator_(object));
+    return *static_cast<T*>(strategy_->create());
   }
 
-  template <typename T>
-  static void destroy(void* p)
-  {
-    delete (T*)p;
-  }
-
-  typedef void (*deleter)(void*);
-
-  std::function<void*(void*)> creator_ {};
-  deleter deleter_ = nullptr;
-
-  void *object = nullptr;
+  std::unique_ptr<di_strategy> strategy_;
 };
 
 struct di {
 
-  struct di_bind_mediator
-  {
-    explicit di_bind_mediator(di &d) : di_(d) {}
-
-    void to()
-    {
-
-    }
-
-    void to_singleton() {}
-
-    di &di_;
-  };
-
   template < typename T >
-  di_item& bind() {
-    auto i = item_map.insert(std::make_pair(std::type_index(typeid(T)), di_item{}));
+  di_proxy& bind() {
+    auto i = item_map.insert(std::make_pair(std::type_index(typeid(T)), di_proxy{}));
     return i.first->second;
   }
 
@@ -96,7 +127,7 @@ struct di {
     return i->second.get<T>();
 
   }
-  std::unordered_map<std::type_index, di_item> item_map {};
+  std::unordered_map<std::type_index, di_proxy> item_map {};
 };
 
 static di mydi;
@@ -168,10 +199,14 @@ struct icar
 };
 struct car : public icar
 {
+  explicit car(int num_tyres) : num_tyres_(num_tyres) {}
+
     void print() override {
-      std::cout << "I'm car " << this << "\n";
+      std::cout << "I'm car " << this << " with " << num_tyres_ << " tyres\n";
 
     }
+
+    int num_tyres_ {};
 };
 
 int main()
@@ -189,7 +224,7 @@ int main()
     mydi.bind<super_service>().to_singleton<super_service>(name, id);
   }
 
-  mydi.bind<icar>().to<car>();
+  mydi.bind<icar>().to<car>(4);
   inject<service> si;
   inject<another_service> asi;
   inject<super_service> ssi;
