@@ -94,14 +94,12 @@ after_build:
 artifacts:
   - path: Package/matador*.exe
     name: installer
-  - path: Package/matador*.zip
-    name: zipper
 
 deploy:
   provider: GitHub
   auth_token:
-    secure: ubPcMpzrx0ulil7eJMpQbO94ufnvHXeeHoXpxr8RAMQXRMShsvlPj4ZE94cZ4T7j
-  artifact: installer,zipper
+    secure: EJtE4XadcEcHQNSZoW5bEl0S7hdeSGTFljwtnRa+Sl3NALKmI3kR+sejIYpKUnPQ
+  artifact: installer
   draft: false
   prerelease: false
   on:
