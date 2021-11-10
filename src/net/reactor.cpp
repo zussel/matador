@@ -24,8 +24,9 @@ reactor::~reactor()
 void reactor::register_handler(const std::shared_ptr<handler>& h, event_type et)
 {
   h->register_reactor(this);
-
   h->open();
+
+  std::lock_guard<std::mutex> l(mutex_);
 
   auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &val) {
     return val.first == h;
@@ -42,6 +43,7 @@ void reactor::register_handler(const std::shared_ptr<handler>& h, event_type et)
 
 void reactor::unregister_handler(const std::shared_ptr<handler>& h, event_type)
 {
+  std::lock_guard<std::mutex> l(mutex_);
   auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
     return ht.first == h;
   });
@@ -56,6 +58,7 @@ void reactor::schedule_timer(const std::shared_ptr<handler>& h, time_t offset, t
 {
   h->register_reactor(this);
 
+  std::lock_guard<std::mutex> l(mutex_);
   auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
     return ht.first == h;
   });
@@ -69,6 +72,7 @@ void reactor::schedule_timer(const std::shared_ptr<handler>& h, time_t offset, t
 
 void reactor::cancel_timer(const std::shared_ptr<handler>& h)
 {
+  std::lock_guard<std::mutex> l(mutex_);
   auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
     return ht.first == h;
   });
@@ -232,7 +236,6 @@ void reactor::process_handler(int /*ret*/)
     if (h.first->next_timeout() > 0 && h.first->next_timeout() <= now) {
       on_timeout(h.first, now);
     }
-//    handlers_to_delete_.clear();
   }
   handlers_.pop_front();
 }

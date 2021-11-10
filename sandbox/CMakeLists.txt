@@ -1,8 +1,18 @@
-SET (SANDBOX_SOURCES sandbox.cpp)
+SET (SANDBOX_SOURCES sandbox.cpp ../src/utils/thread_helper.cpp ../include/matador/utils/thread_helper.hpp)
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 
 ADD_EXECUTABLE(di di.cpp)
+
+ADD_EXECUTABLE(reactor reactor.cpp leader_follower_thread_pool.cpp leader_follower_thread_pool.hpp)
+
+TARGET_LINK_LIBRARIES(reactor
+  matador-utils
+  matador-logger
+  matador-net
+  ${CMAKE_DL_LIBS}
+  ${CMAKE_THREAD_LIBS_INIT}
+)
 
 SET(NET_LIBRARIES)
 

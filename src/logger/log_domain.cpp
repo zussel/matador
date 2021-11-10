@@ -1,6 +1,9 @@
 #include "matador/logger/log_domain.hpp"
 
 #include "matador/utils/time.hpp"
+#include "matador/utils/thread_helper.hpp"
+
+#include <thread>
 
 namespace matador {
 
@@ -72,12 +75,13 @@ void log_domain::log(log_level lvl, const std::string &source, const char *messa
   char buffer[1024];
 
 #ifdef _MSC_VER
-  int ret = sprintf_s(buffer, 1024, "%s [%-7s] [%s]: %s\n", timestamp, level_strings[lvl].c_str(), source.c_str(), message);
+  int ret = sprintf_s(buffer, 1024, "%s [Thread %lu] [%-7s] [%s]: %s\n", timestamp, acquire_thread_index(std::this_thread::get_id()), level_strings[lvl].c_str(), source.c_str(), message);
 #else
-  int ret = sprintf(buffer, "%s [%-7s] [%s]: %s\n", timestamp, level_strings[lvl].c_str(), source.c_str(), message);
+  int ret = sprintf(buffer, "%s [Thread %lu] [%-7s] [%s]: %s\n", timestamp, acquire_thread_index(std::this_thread::get_id()), level_strings[lvl].c_str(), source.c_str(), message);
 #endif
 
   for (auto &sink : sinks) {
+    std::lock_guard<std::mutex> l(mutex_);
     sink->write(buffer, ret);
   }
 }

@@ -23,6 +23,7 @@
 #include <list>
 #include <memory>
 #include <atomic>
+#include <mutex>
 
 namespace matador {
 
@@ -170,6 +171,7 @@ private:
   std::atomic<bool> running_ {false};
   std::atomic<bool> shutdown_requested_ {false};
 
+  std::mutex mutex_;
   logger log_;
 
   socket_interrupter interrupter_;

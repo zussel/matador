@@ -21,7 +21,9 @@ SET(SOURCES
   sha256.cpp
   hmac.cpp
   sequence_synchronizer.cpp
-  url.cpp html.cpp)
+  url.cpp
+  html.cpp
+  thread_helper.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -71,6 +73,7 @@ SET(HEADER
   ../../include/matador/utils/sequence_synchronizer.hpp
   ../../include/matador/utils/url.hpp
   ../../include/matador/utils/html.hpp
+  ../../include/matador/utils/thread_helper.hpp
 )
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
