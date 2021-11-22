@@ -12,6 +12,7 @@ public:
     : pool_(threads, [this]() { wait_for_customer(); })
     , customers_(customers)
     , log_(matador::create_logger("TaxiStation"))
+    , eng_{std::random_device{}()}
   {}
 
   void run()
@@ -30,25 +31,30 @@ public:
 private:
   void wait_for_customer()
   {
-    while (handled_customers_ < customers_) {
-      pool_.promote_new_leader();
-
-      handle_customer();
+    if (handled_customers_ == 10) {
+      log_.info("handled customers == customers (%d == %d)",handled_customers_.operator int(), customers_.operator int());
+      no_customer_.notify_one();
     }
+    log_.info("waiting for customer %d", handled_customers_.operator int());
+    std::uniform_int_distribution<> dist{1, 3};
+    auto delay = std::chrono::milliseconds {dist(eng_) * 100};
+    log_.info("delay %d millis", delay.count());
+    std::this_thread::sleep_for(delay);
 
-    log_.info("handled customers == customers (%d == %d)",handled_customers_.operator int(), customers_.operator int());
-    no_customer_.notify_one();
+    pool_.promote_new_leader();
+
+    handle_customer(handled_customers_++);
+
   }
 
-  void handle_customer()
+  void handle_customer(int customer)
   {
-    log_.info("handle customer start");
-    std::mt19937_64 eng{std::random_device{}()};  // or seed however you want
+    log_.info("handle customer %d start", customer);
     std::uniform_int_distribution<> dist{1, 3};
-    auto delay = std::chrono::seconds{dist(eng)};
+    auto delay = std::chrono::seconds{dist(eng_)};
     log_.info("delay %d secs", delay.count());
     std::this_thread::sleep_for(delay);
-    log_.info("finished handling customer %d", ++handled_customers_);
+    log_.info("finished handling customer %d", customer);
   }
 
 private:
@@ -63,17 +69,19 @@ private:
   std::condition_variable no_customer_;
 
   matador::logger log_;
+
+  std::mt19937_64 eng_;
 };
 
 
 int main()
 {
 
-  int num_threads = std::thread::hardware_concurrency();
+  //int num_threads = std::thread::hardware_concurrency();
 
   matador::add_log_sink(matador::create_stdout_sink());
 
-  taxi_station t1(10, num_threads);
+  taxi_station t1(10, 4);
 
   t1.run();
 
