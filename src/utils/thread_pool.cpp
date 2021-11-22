@@ -23,6 +23,13 @@ std::size_t thread_pool::size() const
   return threads_.size();
 }
 
+void thread_pool::add_task()
+{
+  thread_ptr t(new std::thread([this] { execute(); }));
+  std::unique_lock<std::mutex> l(mutex_);
+  threads_.push_back(std::move(t));
+}
+
 void thread_pool::shutdown()
 {
   {

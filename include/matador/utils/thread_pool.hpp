@@ -46,6 +46,8 @@ public:
     condition_task_.notify_one();
   }
 
+  void add_task();
+
   std::size_t size() const;
 
   void shutdown();
