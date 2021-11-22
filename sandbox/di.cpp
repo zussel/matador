@@ -6,14 +6,34 @@
 #include <vector>
 #include <memory>
 
+/**
+ * Interface for the dependency injection
+ * creation strategy.
+ *
+ * The injected service
+ */
 class di_strategy
 {
 public:
+  /**
+   * Destructor
+   */
   virtual ~di_strategy() = default;
 
+  /**
+   *
+   * @return The current injected object depending of the strategy
+   */
   virtual void* create() = 0;
 };
 
+/**
+ * Implements the default dependency injection
+ * strategy. When ever injected a new instance
+ * is created.
+ *
+ * @tparam T Type of the object to be injected
+ */
 template < class T >
 class di_default : public di_strategy
 {
@@ -81,7 +101,7 @@ private:
   T &instance_;
 };
 
-struct di_proxy_base
+class di_proxy_base
 {
 public:
   virtual ~di_proxy_base() = default;
@@ -103,8 +123,9 @@ private:
 };
 
 template < typename I >
-struct di_proxy :public di_proxy_base
+class di_proxy : public di_proxy_base
 {
+public:
   template<typename T, typename ...Args, typename std::enable_if<std::is_base_of<I, T>::value>::type* = nullptr >
   void to(Args&& ...args) {
     initialize_strategy(std::make_unique<di_default<T>>(std::forward<Args&&>(args)...));
@@ -116,15 +137,16 @@ struct di_proxy :public di_proxy_base
     initialize_strategy(std::make_unique<di_instance<T>>(obj));
   }
 
-  template<typename T, typename ...Args>
+  template<typename T, typename ...Args, typename std::enable_if<std::is_base_of<I, T>::value>::type* = nullptr >
   void to_singleton(Args&& ...args)
   {
     initialize_strategy(std::make_unique<di_singleton<T>>(std::forward<Args&&>(args)...));
   }
 };
 
-struct di {
-
+class di
+{
+public:
   template < typename I >
   std::shared_ptr<di_proxy<I>> bind() {
     auto di_proxy_ptr = std::make_shared<di_proxy<I>>();
@@ -142,24 +164,30 @@ struct di {
     return i->second->get<I>();
 
   }
+
+private:
   std::unordered_map<std::type_index, std::shared_ptr<di_proxy_base>> item_map {};
 };
 
 static di mydi;
 
 template < class T >
-struct inject
+class inject
 {
+public:
   inject()
     : obj(mydi.resolve<T>())
-  {
-
-  }
+  {}
 
   T* operator->() {
     return &obj;
   }
 
+  const T* operator->() const {
+    return &obj;
+  }
+
+private:
   T &obj;
 };
 
@@ -240,7 +268,7 @@ int main()
     mydi.bind<super_service>()->to_singleton<super_service>(name, id);
   }
 
-  mydi.bind<icar>()->to<car>();
+  mydi.bind<icar>()->to<car>(4);
   inject<service> si;
   inject<another_service> asi;
   inject<super_service> ssi;
