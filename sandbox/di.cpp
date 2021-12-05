@@ -6,6 +6,18 @@
 #include <vector>
 #include <memory>
 
+#include "matador/utils/singleton.hpp"
+
+template <typename Arg, typename... Args>
+void doPrint(std::ostream& out, Arg&& arg, Args&&... args)
+{
+  out << std::forward<Arg>(arg);
+  using expander = int[];
+  (void)expander{0, (void(out << ", " << std::forward<Args>(args) << " "), 0)...};
+}
+
+namespace matador {
+namespace di {
 /**
  * Interface for the dependency injection
  * creation strategy.
@@ -24,7 +36,7 @@ public:
    *
    * @return The current injected object depending of the strategy
    */
-  virtual void* create() = 0;
+  virtual void *create() = 0;
 };
 
 /**
@@ -34,66 +46,63 @@ public:
  *
  * @tparam T Type of the object to be injected
  */
-template < class T >
+template<class T>
 class di_default : public di_strategy
 {
 public:
-  template < typename ...Args >
-  explicit di_default(Args&& ...args)
-  {
-    creator_ = [&args..., this]() {
+  template<typename ...Args>
+  explicit di_default(Args &&...args) {
+    creator_ = [args..., this]() {
       std::cout << "creating " << typeid(T).name() << "\n";
-      instances_.push_back(std::make_unique<T>(std::forward<Args&&>(args)...));
+      instances_.push_back(std::make_unique<T>(args...));
       return instances_.back().get();
     };
   }
 
-  void* create() override
-  {
+  void *create() override {
     return creator_();
   }
 
 private:
-  std::function<T*()> creator_ {};
+  std::function<T *()> creator_{};
   std::vector<std::unique_ptr<T>> instances_;
 };
 
-template < class T >
+template<class T>
 class di_singleton : public di_strategy
 {
 public:
-  template < typename ...Args >
-  explicit di_singleton(Args&& ...args)
-  {
-    creator_ = [&args..., this]() {
+  template<typename ...Args>
+  explicit di_singleton(Args &&...args) {
+    //doPrint(std::cout, args...);
+    creator_ = [args..., this]() {
       if (!instance_) {
         std::cout << "creating " << typeid(T).name() << "\n";
-        instance_ = std::make_unique<T>(std::forward<Args&&>(args)...);
+        doPrint(std::cout, args...);
+        std::cout << "\n";
+        instance_ = std::make_unique<T>(args...);
       }
       return instance_.get();
     };
   }
 
-  void* create() override
-  {
+  void *create() override {
     return creator_();
   }
 
 private:
-  std::function<T*()> creator_ {};
+  std::function<T *()> creator_{};
   std::unique_ptr<T> instance_;
 };
 
-template < class T >
+template<class T>
 class di_instance : public di_strategy
 {
 public:
   explicit di_instance(T &&obj)
-    : instance_(obj)
-  {}
+    : instance_(obj) {}
 
-  void* create() override
-  {
+  void *create() override {
     return &instance_;
   }
 
@@ -107,14 +116,12 @@ public:
   virtual ~di_proxy_base() = default;
 
   template<typename T>
-  T& get()
-  {
-    return *static_cast<T*>(strategy_->create());
+  T &get() {
+    return *static_cast<T *>(strategy_->create());
   }
 
 protected:
-  void initialize_strategy(std::unique_ptr<di_strategy> &&strategy)
-  {
+  void initialize_strategy(std::unique_ptr<di_strategy> &&strategy) {
     strategy_ = std::move(strategy);
   }
 
@@ -122,41 +129,39 @@ private:
   std::unique_ptr<di_strategy> strategy_;
 };
 
-template < typename I >
+template<typename I>
 class di_proxy : public di_proxy_base
 {
 public:
-  template<typename T, typename ...Args, typename std::enable_if<std::is_base_of<I, T>::value>::type* = nullptr >
-  void to(Args&& ...args) {
-    initialize_strategy(std::make_unique<di_default<T>>(std::forward<Args&&>(args)...));
+  template<typename T, typename ...Args, typename std::enable_if<std::is_base_of<I, T>::value>::type * = nullptr>
+  void to(Args &&...args) {
+    initialize_strategy(std::make_unique<di_default<T>>(std::forward<Args &&>(args)...));
   }
 
   template<typename T>
-  void to_instance(T &&obj)
-  {
+  void to_instance(T &&obj) {
     initialize_strategy(std::make_unique<di_instance<T>>(obj));
   }
 
-  template<typename T, typename ...Args, typename std::enable_if<std::is_base_of<I, T>::value>::type* = nullptr >
-  void to_singleton(Args&& ...args)
-  {
-    initialize_strategy(std::make_unique<di_singleton<T>>(std::forward<Args&&>(args)...));
+  template<typename T, typename ...Args, typename std::enable_if<std::is_base_of<I, T>::value>::type * = nullptr>
+  void to_singleton(Args &&...args) {
+    doPrint(std::cout, args...);
+    initialize_strategy(std::make_unique<di_singleton<T>>(std::forward<Args &&>(args)...));
   }
 };
 
-class di
+class di_module
 {
 public:
-  template < typename I >
+  template<typename I>
   std::shared_ptr<di_proxy<I>> bind() {
     auto di_proxy_ptr = std::make_shared<di_proxy<I>>();
     auto i = item_map.insert(std::make_pair(std::type_index(typeid(I)), di_proxy_ptr));
     return std::static_pointer_cast<di_proxy<I>>(i.first->second);
   }
 
-  template < typename I >
-  I& resolve()
-  {
+  template<typename I>
+  I &resolve() {
     auto i = item_map.find(std::type_index(typeid(I)));
     if (i == item_map.end()) {
       throw std::logic_error(std::string("couldn't find type ") + typeid(I).name());
@@ -166,30 +171,60 @@ public:
   }
 
 private:
-  std::unordered_map<std::type_index, std::shared_ptr<di_proxy_base>> item_map {};
+  std::unordered_map<std::type_index, std::shared_ptr<di_proxy_base>> item_map{};
 };
 
-static di mydi;
+class di_module_builder
+{
+public:
+  virtual ~di_module_builder() = default;
 
-template < class T >
+  virtual void build(di_module &module) = 0;
+};
+
+class di_repository : public matador::singleton<di_repository>
+{
+public:
+  void install_module(std::unique_ptr<di_module_builder> &&builder) {
+    builder->build(module_);
+  }
+
+  template<typename I>
+  I &resolve() {
+    return module_.resolve<I>();
+  }
+
+private:
+  di_module module_;
+};
+
+
+template<class T>
 class inject
 {
 public:
   inject()
-    : obj(mydi.resolve<T>())
-  {}
+    : obj(di_repository::instance().resolve<T>()) {}
 
-  T* operator->() {
+  T *operator->() {
     return &obj;
   }
 
-  const T* operator->() const {
+  const T *operator->() const {
     return &obj;
   }
 
 private:
   T &obj;
 };
+
+void install_module(std::unique_ptr<di_module_builder> &&builder)
+{
+  di_repository::instance().install_module(std::move(builder));
+}
+
+}
+}
 
 struct service
 {
@@ -231,7 +266,7 @@ struct super_service
 
 struct client
 {
-  inject<service> s;
+  matador::di::inject<service> s;
 };
 
 struct icar
@@ -253,22 +288,32 @@ struct car : public icar
     int num_tyres_ {};
 };
 
+class test_module_builder : public matador::di::di_module_builder
+{
+public:
+  void build(matador::di::di_module &module) override {
+    {
+      another_service s{};
+      module.bind<another_service>()->to_instance(s);
+    }
+    module.bind<service>()->to_singleton<service>("test", 3);
+    {
+      std::string name{"super "};
+      long id{2};
+
+      module.bind<super_service>()->to_singleton<super_service>(name, id);
+    }
+
+    module.bind<icar>()->to<car>(4);
+  }
+};
+
+using namespace matador::di;
+
 int main()
 {
-  {
-    another_service s{};
-    mydi.bind<another_service>()->to_instance(s);
-  }
-  mydi.bind<service>()->to_singleton<service>("test", 3);
+  matador::di::install_module(std::make_unique<test_module_builder>());
 
-  {
-    std::string name{"super "};
-    long id{2};
-
-    mydi.bind<super_service>()->to_singleton<super_service>(name, id);
-  }
-
-  mydi.bind<icar>()->to<car>(4);
   inject<service> si;
   inject<another_service> asi;
   inject<super_service> ssi;
@@ -277,7 +322,7 @@ int main()
 
   asi->dump();
 
-  ssi->print();
+  //ssi->print();
 
   client c;
 
