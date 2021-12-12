@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/22/15.
-//
-
 #ifndef PRIMARY_KEY_READER_HPP
 #define PRIMARY_KEY_READER_HPP
 

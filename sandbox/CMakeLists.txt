@@ -1,4 +1,4 @@
-SET (SANDBOX_SOURCES sandbox.cpp ../src/utils/thread_helper.cpp ../include/matador/utils/thread_helper.hpp)
+SET (SANDBOX_SOURCES sandbox.cpp)
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 

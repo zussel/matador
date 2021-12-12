@@ -28,9 +28,7 @@ void reactor::register_handler(const std::shared_ptr<handler>& h, event_type et)
 
   std::lock_guard<std::mutex> l(mutex_);
 
-  auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &val) {
-    return val.first == h;
-  });
+  auto it = find_handler_type(h);
 
   if (it == handlers_.end()) {
     handlers_.emplace_back(h, et);
@@ -44,9 +42,7 @@ void reactor::register_handler(const std::shared_ptr<handler>& h, event_type et)
 void reactor::unregister_handler(const std::shared_ptr<handler>& h, event_type)
 {
   std::lock_guard<std::mutex> l(mutex_);
-  auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
-    return ht.first == h;
-  });
+  auto it = find_handler_type(h);
 
   if (it != handlers_.end()) {
     (*it).first->close();
@@ -59,9 +55,7 @@ void reactor::schedule_timer(const std::shared_ptr<handler>& h, time_t offset, t
   h->register_reactor(this);
 
   std::lock_guard<std::mutex> l(mutex_);
-  auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
-    return ht.first == h;
-  });
+  auto it = find_handler_type(h);
 
   if (it == handlers_.end()) {
     handlers_.emplace_back(h, event_type::NONE_MASK);
@@ -73,9 +67,7 @@ void reactor::schedule_timer(const std::shared_ptr<handler>& h, time_t offset, t
 void reactor::cancel_timer(const std::shared_ptr<handler>& h)
 {
   std::lock_guard<std::mutex> l(mutex_);
-  auto it = std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
-    return ht.first == h;
-  });
+  auto it = find_handler_type(h);
 
   if (it != handlers_.end()) {
     handlers_.erase(it);
@@ -240,24 +232,24 @@ void reactor::process_handler(int /*ret*/)
   handlers_.pop_front();
 }
 
-void reactor::on_read_mask(const std::shared_ptr<handler>& h)
+void reactor::on_read_mask(const handler_ptr& h)
 {
   log_.debug("read bit for handler %d is set; handle input", h->handle());
   h->on_input();
 }
 
-void reactor::on_write_mask(const std::shared_ptr<handler>& h)
+void reactor::on_write_mask(const handler_ptr& h)
 {
   log_.debug("write bit for handler %d is set; handle output", h->handle());
   h->on_output();
 }
 
-void reactor::on_except_mask(const std::shared_ptr<handler>&)
+void reactor::on_except_mask(const handler_ptr&)
 {
 
 }
 
-void reactor::on_timeout(const std::shared_ptr<handler> &h, time_t now)
+void reactor::on_timeout(const handler_ptr &h, time_t now)
 {
   log_.debug("timeout expired for handler %d; handle timeout", h->handle());
   h->calculate_next_timeout(now);
@@ -269,7 +261,7 @@ const select_fdsets &reactor::fdsets() const
   return fdsets_;
 }
 
-void reactor::mark_handler_for_delete(const std::shared_ptr<handler>& h)
+void reactor::mark_handler_for_delete(const handler_ptr& h)
 {
   handlers_to_delete_.push_back(h);
 }
@@ -286,4 +278,30 @@ bool reactor::is_interrupted()
   return false;
 }
 
+std::list<reactor::t_handler_type>::iterator reactor::find_handler_type(const reactor::handler_ptr &h)
+{
+  return std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
+    return ht.first.get() == h.get();
+  });
+}
+
+void reactor::activate_handler(const reactor::handler_ptr &h, event_type ev)
+{
+  std::lock_guard<std::mutex> l(mutex_);
+  auto it = find_handler_type(h);
+  if (it == handlers_.end()) {
+    return;
+  }
+  it->second &= ~ev;
+}
+
+void reactor::deactivate_handler(const reactor::handler_ptr &h, event_type ev)
+{
+  std::lock_guard<std::mutex> l(mutex_);
+  auto it = find_handler_type(h);
+  if (it == handlers_.end()) {
+    return;
+  }
+  it->second |= ev;
+}
 }

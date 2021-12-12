@@ -66,7 +66,7 @@ IF (NOT COVERAGE_TESTS)
 ENDIF()
 
 OPTION(ARCH "Compiler architecture for Clang/GCC" "")
-OPTION(EXAMPLES "Build examples" false)
+OPTION(EXAMPLES "Build examples" true)
 
 FIND_PACKAGE( Threads REQUIRED )
 

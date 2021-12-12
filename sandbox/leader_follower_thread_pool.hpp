@@ -55,7 +55,7 @@ private:
   std::size_t num_threads_{};
 
   std::thread::id leader_ {};
-  std::thread::id nullid {0};
+  std::thread::id null_id {0};
 
   join_func_t join_;
   thread_vector_t threads_;

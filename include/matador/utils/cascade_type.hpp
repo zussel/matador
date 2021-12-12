@@ -1,7 +1,3 @@
-//
-// Created by sascha on 12/16/15.
-//
-
 #ifndef OOS_CASCADE_TYPE_HPP
 #define OOS_CASCADE_TYPE_HPP
 

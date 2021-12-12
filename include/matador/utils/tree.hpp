@@ -1,4 +1,4 @@
-#ifndef MATADOR_TREE_HPP // -*- c++ -*-
+#ifndef MATADOR_TREE_HPP
 #define MATADOR_TREE_HPP
 
 #include <cassert>

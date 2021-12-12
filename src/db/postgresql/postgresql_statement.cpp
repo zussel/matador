@@ -1,13 +1,8 @@
-//
-// Created by sascha on 03.06.19.
-//
-
 #include "matador/db/postgresql/postgresql_exception.hpp"
 #include "matador/db/postgresql/postgresql_statement.hpp"
 #include "matador/db/postgresql/postgresql_prepared_result.hpp"
 #include "matador/db/postgresql/postgresql_connection.hpp"
 
-#include "matador/utils/memory.hpp"
 #include "matador/utils/identifier.hpp"
 
 #include "matador/sql/sql.hpp"

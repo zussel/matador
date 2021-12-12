@@ -1,11 +1,5 @@
-//
-// Created by sascha on 30.08.19.
-//
-
 #include "matador/db/mssql/mssql_parameter_binder.hpp"
 #include "matador/db/mssql/mssql_statement.hpp"
-
-#include "matador/utils/memory.hpp"
 
 #include "matador/sql/types.hpp"
 

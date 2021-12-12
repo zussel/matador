@@ -35,7 +35,7 @@ void leader_follower_thread_pool::promote_new_leader()
     return;
   }
 
-  leader_ = nullid;
+  leader_ = null_id;
   log_.info("promoting new leader");
 
   signal_ready_ = true;
@@ -82,7 +82,7 @@ void leader_follower_thread_pool::execute()
 {
   std::unique_lock<std::mutex> l(mutex_);
   while (is_running_) {
-    while (leader_ != nullid) {
+    while (leader_ != null_id) {
       log_.info("waiting for synchronizer (leader_ %d)", acquire_thread_index(leader_));
       condition_synchronizer_.wait(l, [this]() { return signal_ready_; });
       signal_ready_ = false;

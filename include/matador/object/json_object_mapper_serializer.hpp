@@ -20,7 +20,6 @@
 #include "matador/json/json_mapper_serializer.hpp"
 #include "matador/json/json_parser.hpp"
 #include "matador/utils/date.hpp"
-#include "matador/utils/memory.hpp"
 
 #include "matador/object/has_many.hpp"
 #include "matador/object/belongs_to.hpp"

@@ -1,12 +1,6 @@
-//
-// Created by sascha on 2/26/16.
-//
-
 #include "DialectTestUnit.hpp"
 
 #include "TestDialect.hpp"
-
-#include "matador/utils/memory.hpp"
 
 #include "matador/sql/sql.hpp"
 #include "matador/sql/dialect_token.hpp"

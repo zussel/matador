@@ -143,12 +143,17 @@ public:
   void mark_handler_for_delete(const std::shared_ptr<handler>& h);
 
 private:
+  using handler_ptr = std::shared_ptr<handler>;
+  using t_handler_type = std::pair<handler_ptr, event_type>;
+  using t_handler_list = std::list<t_handler_type>;
+
+private:
   void process_handler(int num);
 
-  void on_read_mask(const std::shared_ptr<handler>& h);
-  void on_write_mask(const std::shared_ptr<handler>& h);
-  void on_except_mask(const std::shared_ptr<handler>& h);
-  void on_timeout(const std::shared_ptr<handler> &h, time_t i);
+  void on_read_mask(const handler_ptr& h);
+  void on_write_mask(const handler_ptr& h);
+  void on_except_mask(const handler_ptr& h);
+  void on_timeout(const handler_ptr &h, time_t i);
 
   void prepare_select_bits(time_t& timeout);
 
@@ -160,11 +165,15 @@ private:
 
   bool is_interrupted();
 
+  t_handler_list::iterator find_handler_type(const handler_ptr &h);
+
+  void activate_handler(const handler_ptr &h, event_type ev);
+  void deactivate_handler(const handler_ptr &h, event_type ev);
+
 private:
-  typedef std::pair<std::shared_ptr<handler>, event_type> t_handler_type;
-  std::shared_ptr<handler> sentinel_;
-  std::list<t_handler_type> handlers_;
-  std::list<std::shared_ptr<handler>> handlers_to_delete_;
+  handler_ptr sentinel_;
+  t_handler_list handlers_;
+  std::list<handler_ptr> handlers_to_delete_;
 
   select_fdsets fdsets_;
 
