@@ -21,7 +21,7 @@ reactor::~reactor()
     log_.debug("destroying reactor");
 }
 
-void reactor::register_handler(const std::shared_ptr<handler>& h, event_type et)
+void reactor::register_handler(const handler_ptr& h, event_type et)
 {
   h->register_reactor(this);
   h->open();
@@ -37,9 +37,10 @@ void reactor::register_handler(const std::shared_ptr<handler>& h, event_type et)
   } else {
     it->second = it->second | et;
   }
+  interrupt();
 }
 
-void reactor::unregister_handler(const std::shared_ptr<handler>& h, event_type)
+void reactor::unregister_handler(const handler_ptr& h, event_type)
 {
   std::lock_guard<std::mutex> l(mutex_);
   auto it = find_handler_type(h);
@@ -48,6 +49,7 @@ void reactor::unregister_handler(const std::shared_ptr<handler>& h, event_type)
     (*it).first->close();
     handlers_.erase(it);
   }
+  interrupt();
 }
 
 void reactor::schedule_timer(const std::shared_ptr<handler>& h, time_t offset, time_t interval)
@@ -150,6 +152,7 @@ bool reactor::is_running() const
 
 void reactor::prepare_select_bits(time_t& timeout)
 {
+  std::lock_guard<std::mutex> l(mutex_);
   fdsets_.reset();
   time_t now = ::time(nullptr);
   timeout = (std::numeric_limits<time_t>::max)();
@@ -268,6 +271,7 @@ void reactor::mark_handler_for_delete(const handler_ptr& h)
 
 bool reactor::is_interrupted()
 {
+  std::lock_guard<std::mutex> l(mutex_);
   if (fdsets_.read_set().is_set(interrupter_.socket_id())) {
     log_.debug("interrupt byte received; resetting interrupter");
     if (shutdown_requested_) {
@@ -292,7 +296,7 @@ void reactor::activate_handler(const reactor::handler_ptr &h, event_type ev)
   if (it == handlers_.end()) {
     return;
   }
-  it->second &= ~ev;
+  it->second |= ev;
 }
 
 void reactor::deactivate_handler(const reactor::handler_ptr &h, event_type ev)
@@ -302,6 +306,12 @@ void reactor::deactivate_handler(const reactor::handler_ptr &h, event_type ev)
   if (it == handlers_.end()) {
     return;
   }
-  it->second |= ev;
+  it->second &= ~ev;
 }
+
+void reactor::interrupt()
+{
+  interrupter_.interrupt();
+}
+
 }

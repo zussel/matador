@@ -58,6 +58,8 @@ class handler;
  */
 class OOS_NET_API reactor {
 public:
+  using handler_ptr = std::shared_ptr<handler>; /**< Shortcut for shared pointer to handler */
+
   /**
    * Default constructor
    */
@@ -71,7 +73,7 @@ public:
    * @param h Handler to register
    * @param type Event type which the handler is used for
    */
-  void register_handler(const std::shared_ptr<handler>& h, event_type type);
+  void register_handler(const handler_ptr& h, event_type type);
 
   /**
    * Unregisters a handler from the reactor for
@@ -81,7 +83,7 @@ public:
    * @param h Handler to unregister.
    * @param type Event mask for which the handler is to be removed
    */
-  void unregister_handler(const std::shared_ptr<handler>& h, event_type type);
+  void unregister_handler(const handler_ptr& h, event_type type);
 
   /**
    * Schedules a timer handler within the reactor.
@@ -142,10 +144,16 @@ public:
    */
   void mark_handler_for_delete(const std::shared_ptr<handler>& h);
 
-private:
-  using handler_ptr = std::shared_ptr<handler>;
+  void activate_handler(const handler_ptr &h, event_type ev);
+  void deactivate_handler(const handler_ptr &h, event_type ev);
+
   using t_handler_type = std::pair<handler_ptr, event_type>;
   using t_handler_list = std::list<t_handler_type>;
+
+  t_handler_list::iterator find_handler_type(const handler_ptr &h);
+
+private:
+  void interrupt();
 
 private:
   void process_handler(int num);
@@ -164,11 +172,6 @@ private:
   int select(struct timeval* timeout);
 
   bool is_interrupted();
-
-  t_handler_list::iterator find_handler_type(const handler_ptr &h);
-
-  void activate_handler(const handler_ptr &h, event_type ev);
-  void deactivate_handler(const handler_ptr &h, event_type ev);
 
 private:
   handler_ptr sentinel_;

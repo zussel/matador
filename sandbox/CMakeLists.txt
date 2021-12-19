@@ -4,7 +4,7 @@ ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 
 ADD_EXECUTABLE(di di.cpp)
 
-ADD_EXECUTABLE(reactor reactor.cpp leader_follower_thread_pool.cpp leader_follower_thread_pool.hpp)
+ADD_EXECUTABLE(reactor reactor.cpp)
 
 TARGET_LINK_LIBRARIES(reactor
   matador-utils

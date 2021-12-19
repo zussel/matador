@@ -1,5 +1,4 @@
-#include "leader_follower_thread_pool.hpp"
-
+#include "matador/utils/leader_follower_thread_pool.hpp"
 #include "matador/utils/thread_helper.hpp"
 
 #include <iostream>

@@ -23,7 +23,9 @@ SET(SOURCES
   sequence_synchronizer.cpp
   url.cpp
   html.cpp
-  thread_helper.cpp)
+  thread_helper.cpp
+  leader_follower_thread_pool.cpp
+)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -73,6 +75,7 @@ SET(HEADER
   ../../include/matador/utils/url.hpp
   ../../include/matador/utils/html.hpp
   ../../include/matador/utils/thread_helper.hpp
+  ../../include/matador/utils/leader_follower_thread_pool.hpp
 )
 
 ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})

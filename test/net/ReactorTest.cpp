@@ -84,6 +84,7 @@ ReactorTest::ReactorTest()
 {
   add_test("event_types", [this] { test_event_types(); }, "event types test");
   add_test("fdsets", [this] { test_fdset(); }, "reactor fdsets test");
+  add_test("handler", [this] { test_handler(); }, "reactor handler test");
   add_test("connector", [this] { test_connector(); }, "connector test");
   add_test("shutdown", [this] { test_shutdown(); }, "reactor shutdown test");
   add_test("reactor_acceptor", [this] { test_reactor_acceptor(); }, "reactor acceptor send and receive test");
@@ -107,6 +108,31 @@ void ReactorTest::test_fdset()
   const auto &fds = r.fdsets();
 
   UNIT_ASSERT_EQUAL(0, fds.maxp1());
+}
+
+void ReactorTest::test_handler()
+{
+  reactor r;
+
+  auto h = std::make_shared<EchoServer>();
+
+  r.register_handler(h, event_type::ALL_MASK);
+
+  auto it = r.find_handler_type(h);
+  UNIT_ASSERT_NOT_NULL(it->first.get());
+
+  UNIT_ASSERT_TRUE(is_event_type_set(it->second, event_type::READ_MASK));
+  UNIT_ASSERT_TRUE(is_event_type_set(it->second, event_type::WRITE_MASK));
+  UNIT_ASSERT_TRUE(is_event_type_set(it->second, event_type::ACCEPT_MASK));
+  UNIT_ASSERT_TRUE(is_event_type_set(it->second, event_type::EXCEPT_MASK));
+
+  r.deactivate_handler(h, event_type::READ_MASK);
+
+  UNIT_ASSERT_FALSE(is_event_type_set(it->second, event_type::READ_MASK));
+
+  r.activate_handler(h, event_type::READ_MASK);
+
+  UNIT_ASSERT_TRUE(is_event_type_set(it->second, event_type::READ_MASK));
 }
 
 void ReactorTest::test_connector()
