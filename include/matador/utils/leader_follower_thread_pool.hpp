@@ -1,7 +1,9 @@
 #ifndef MATADOR_LEADER_FOLLOWER_THREAD_POOL_HPP
 #define MATADOR_LEADER_FOLLOWER_THREAD_POOL_HPP
 
-#include "matador/logger/log_manager.hpp"
+#include "matador/utils/export.hpp"
+
+//#include "matador/logger/log_manager.hpp"
 
 #include <memory>
 #include <thread>
@@ -14,7 +16,7 @@
 
 namespace matador {
 
-class leader_follower_thread_pool
+class OOS_UTILS_API leader_follower_thread_pool
 {
 private:
   leader_follower_thread_pool(const leader_follower_thread_pool &);
@@ -24,7 +26,9 @@ private:
 public:
   template<typename F>
   leader_follower_thread_pool(std::size_t size, F join_func)
-    : num_threads_(size), join_(join_func), log_(matador::create_logger("LFThreadPool")), follower_(size) {}
+    : num_threads_(size), join_(join_func)
+    //, log_(matador::create_logger("LFThreadPool"))
+    , follower_(size) {}
 
   ~leader_follower_thread_pool();
 
@@ -56,7 +60,7 @@ private:
   std::size_t num_threads_{};
 
   std::thread::id leader_{};
-  std::thread::id null_id{0};
+  std::thread::id null_id{};
 
   join_func_t join_;
   thread_vector_t threads_;
@@ -69,7 +73,7 @@ private:
 
   bool is_running_ = true;
 
-  matador::logger log_;
+//  matador::logger log_;
 
   std::atomic_size_t follower_{};
 };

@@ -173,7 +173,7 @@ void JsonObjectMapperTest::test_to_string()
   dt->id(1);
   dt->set_bool(true);
   dt->set_double(4.567);
-  dt->set_float(3.1415);
+  dt->set_float(3.1415f);
   dt->set_char('f');
   dt->set_short(-127);
   dt->set_int(-12345678);

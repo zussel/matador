@@ -16,7 +16,7 @@ void leader_follower_thread_pool::start() {
     thread_ptr t(new std::thread([this] { execute(); }));
     threads_.push_back(std::move(t));
   }
-  log_.info("thread pool started with %d threads", num_threads_);
+//  log_.info("thread pool started with %d threads", num_threads_);
 }
 
 void leader_follower_thread_pool::stop() {
@@ -27,12 +27,12 @@ void leader_follower_thread_pool::promote_new_leader() {
   std::lock_guard<std::mutex> l(mutex_);
 
   if (leader_ != std::this_thread::get_id()) {
-    log_.info("leader isn't current thread, skipping");
+//    log_.info("leader isn't current thread, skipping");
     return;
   }
 
   leader_ = null_id;
-  log_.info("promoting new leader");
+//  log_.info("promoting new leader");
 
   signal_ready_ = true;
   condition_synchronizer_.notify_one();
@@ -49,7 +49,7 @@ void leader_follower_thread_pool::shutdown() {
       return;
     }
     stop();
-    log_.info("shutting down; notifying all tasks");
+//    log_.info("shutting down; notifying all tasks");
     signal_ready_ = true;
     condition_synchronizer_.notify_all();
   }
@@ -74,19 +74,19 @@ void leader_follower_thread_pool::execute() {
   std::unique_lock<std::mutex> l(mutex_);
   while (is_running_) {
     while (leader_ != null_id) {
-      log_.info("waiting for synchronizer (leader_ %d)", acquire_thread_index(leader_));
+//      log_.info("waiting for synchronizer (leader_ %d)", acquire_thread_index(leader_));
       condition_synchronizer_.wait(l, [this]() { return signal_ready_; });
       signal_ready_ = false;
-      log_.info("is running: %d", is_running_);
+//      log_.info("is running: %d", is_running_);
       if (!is_running_) {
-        log_.info("task %d not running; returning", acquire_thread_index(std::this_thread::get_id()));
+//        log_.info("task %d not running; returning", acquire_thread_index(std::this_thread::get_id()));
         return;
       }
-      log_.info("got signal");
+//      log_.info("got signal");
     }
 
     leader_ = std::this_thread::get_id();
-    log_.info("new leader <%d>", acquire_thread_index(leader_));
+//    log_.info("new leader <%d>", acquire_thread_index(leader_));
 
     l.unlock();
 
@@ -94,6 +94,6 @@ void leader_follower_thread_pool::execute() {
 
     l.lock();
   }
-  log_.info("finished task %d", acquire_thread_index(std::this_thread::get_id()));
+//  log_.info("finished task %d", acquire_thread_index(std::this_thread::get_id()));
 }
 }

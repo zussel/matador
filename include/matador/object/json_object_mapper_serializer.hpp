@@ -56,6 +56,8 @@ public:
   void serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
   template < class V >
   void serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
+  template < class E >
+  void serialize(const char *id, E &to, typename std::enable_if<std::is_enum<E>::value>::type* = 0);
   void serialize(const char *id, bool &to);
   void serialize(const char *id, std::string &to);
   void serialize(const char *id, std::string &to, size_t);
@@ -179,6 +181,18 @@ void json_object_mapper_serializer::serialize(const char *id, V &to, typename st
     return;
   }
   to = runtime_data_.value.as<V>();
+}
+
+template<class V>
+void json_object_mapper_serializer::serialize(const char *id, V &to, typename std::enable_if<std::is_enum<V>::value>::type *)
+{
+  if (runtime_data_.key != id) {
+    return;
+  }
+  if (!runtime_data_.value.is_number()) {
+    return;
+  }
+  to = static_cast<V>(runtime_data_.value.as<int>());
 }
 
 template<class Value>

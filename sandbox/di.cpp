@@ -116,8 +116,8 @@ public:
   virtual ~proxy_base() = default;
 
   template<typename T>
-  T &get() {
-    return *static_cast<T *>(strategy_->create());
+  T *get() {
+    return static_cast<T *>(strategy_->create());
   }
 
 protected:
@@ -161,7 +161,7 @@ public:
   }
 
   template<typename I>
-  I &resolve() {
+  I* resolve() {
     auto i = item_map.find(std::type_index(typeid(I)));
     if (i == item_map.end()) {
       throw std::logic_error(std::string("couldn't find type ") + typeid(I).name());
@@ -190,7 +190,7 @@ public:
   }
 
   template<typename I>
-  I &resolve() {
+  I* resolve() {
     return module_.resolve<I>();
   }
 
@@ -207,7 +207,7 @@ public:
     : obj(repository::instance().resolve<T>()) {}
 
   T *operator->() {
-    return &obj;
+    return obj;
   }
 
   const T *operator->() const {
@@ -215,7 +215,7 @@ public:
   }
 
 private:
-  T &obj;
+  T *obj;
 };
 
 void install_module(std::unique_ptr<module_builder> &&builder)
