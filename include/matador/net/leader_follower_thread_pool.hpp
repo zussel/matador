@@ -3,7 +3,7 @@
 
 #include "matador/utils/export.hpp"
 
-//#include "matador/logger/log_manager.hpp"
+#include "matador/logger/log_manager.hpp"
 
 #include <memory>
 #include <thread>
@@ -27,7 +27,7 @@ public:
   template<typename F>
   leader_follower_thread_pool(std::size_t size, F join_func)
     : num_threads_(size), join_(join_func)
-    //, log_(matador::create_logger("LFThreadPool"))
+    , log_(matador::create_logger("LFThreadPool"))
     , follower_(size) {}
 
   ~leader_follower_thread_pool();
@@ -73,7 +73,7 @@ private:
 
   bool is_running_ = true;
 
-//  matador::logger log_;
+  matador::logger log_;
 
   std::atomic_size_t follower_{};
 };

@@ -17,6 +17,7 @@
 #include "matador/net/event_type.hpp"
 #include "matador/net/select_fdsets.hpp"
 #include "matador/net/socket_interrupter.hpp"
+#include "matador/net/leader_follower_thread_pool.hpp"
 
 #include "matador/logger/logger.hpp"
 
@@ -113,6 +114,9 @@ public:
    * shutdown ist called.
    */
   void run();
+  void run_single_threaded();
+
+  void handle_events();
 
   /**
    * Shutdown the dispatching process of the
@@ -185,6 +189,8 @@ private:
 
   std::mutex mutex_;
   logger log_;
+
+  leader_follower_thread_pool thread_pool_;
 
   socket_interrupter interrupter_;
 };

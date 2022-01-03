@@ -1,5 +1,19 @@
 SET(SOURCES
-  address.cpp fdset.cpp select_fdsets.cpp handler.cpp acceptor.cpp reactor.cpp os.cpp error.cpp connector.cpp address_resolver.cpp io_service.cpp stream_handler.cpp socket_interrupter.cpp)
+  address.cpp
+  fdset.cpp
+  select_fdsets.cpp
+  handler.cpp
+  acceptor.cpp
+  reactor.cpp
+  os.cpp
+  error.cpp
+  connector.cpp
+  address_resolver.cpp
+  io_service.cpp
+  stream_handler.cpp
+  socket_interrupter.cpp
+  leader_follower_thread_pool.cpp
+)
 
 SET(HEADER
   ../../include/matador/net/socket.hpp
@@ -22,7 +36,10 @@ SET(HEADER
   ../../include/matador/net/stream_handler.hpp
   ../../include/matador/net/io_stream.hpp
   ../../include/matador/net/socket_interrupter.hpp
-  ../../include/matador/net/os.hpp ../../include/matador/net/handler_creator.hpp)
+  ../../include/matador/net/os.hpp
+  ../../include/matador/net/handler_creator.hpp
+  ../../include/matador/net/leader_follower_thread_pool.hpp
+)
 
 ADD_LIBRARY(matador-net SHARED ${SOURCES} ${HEADER})
 

@@ -1,5 +1,8 @@
-#include "matador/utils/leader_follower_thread_pool.hpp"
+#include "matador/net/leader_follower_thread_pool.hpp"
+
 #include "matador/utils/thread_helper.hpp"
+
+#include "matador/logger/log_manager.hpp"
 
 #include <iostream>
 #include <random>
@@ -57,7 +60,7 @@ private:
   }
 
 private:
-  leader_follower_thread_pool pool_;
+  matador::leader_follower_thread_pool pool_;
 
   std::atomic_int customers_ {};
   std::atomic_int handled_customers_ {};
