@@ -1,7 +1,3 @@
-//
-// Created by sascha on 1/28/16.
-//
-
 #ifndef OOS_CONNECTION_IMPL_HPP
 #define OOS_CONNECTION_IMPL_HPP
 
@@ -21,7 +17,7 @@
 
 #include "matador/sql/types.hpp"
 #include "matador/sql/basic_sql_logger.hpp"
-#include "field.hpp"
+#include "matador/sql/field.hpp"
 
 #include <string>
 #include <vector>

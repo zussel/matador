@@ -1,7 +1,7 @@
 #ifndef MATADOR_LEADER_FOLLOWER_THREAD_POOL_HPP
 #define MATADOR_LEADER_FOLLOWER_THREAD_POOL_HPP
 
-#include "matador/utils/export.hpp"
+#include "matador/net/export.hpp"
 
 #include "matador/logger/log_manager.hpp"
 
@@ -16,7 +16,7 @@
 
 namespace matador {
 
-class OOS_UTILS_API leader_follower_thread_pool
+class OOS_NET_API leader_follower_thread_pool
 {
 private:
   leader_follower_thread_pool(const leader_follower_thread_pool &);
