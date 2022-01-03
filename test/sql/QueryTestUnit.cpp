@@ -582,11 +582,17 @@ void QueryTestUnit::test_anonymous_create()
   q.drop("person").execute(connection_);
 }
 
+template < class T = row >
+query<T> make_query(const std::string &name)
+{
+  return query<T>(name);
+}
+
 void QueryTestUnit::test_anonymous_insert()
 {
   connection_.connect();
 
-  query<> q("person");
+  auto q = make_query("person");
 
   q.create({
      make_typed_id_column<int>("id"),
@@ -1333,7 +1339,9 @@ void QueryTestUnit::test_update_limit()
   matador::column owner("owner_id");
   matador::column item("item_id");
   relation::t_id newid(4UL);
-  q.update({{item.name, newid}}).where("owner_id"_col == 1 && item == 1).limit(1);
+  q.update({{item.name, newid}})
+    .where("owner_id"_col == 1 && item == 1)
+    .limit(1);
 
   res = q.execute(connection_);
 
@@ -1372,7 +1380,8 @@ void QueryTestUnit::test_prepared_statement_creation()
 {
   connection_.connect();
 
-  query<person> q("person");
+  auto q = make_query<person>("person");
+//  query<person> q("person");
 
   q.create();
 

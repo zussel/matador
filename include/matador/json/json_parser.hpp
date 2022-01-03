@@ -27,7 +27,7 @@ namespace matador {
  *
  * This class parse a given input stream or string
  * into a json serializable representation.
- * The result will be a oos::json_value serializable.
+ * The result will be a matador::json_value serializable.
  */
 class OOS_JSON_API json_parser : public generic_json_parser<json_parser>
 {
