@@ -64,7 +64,7 @@ HttpServerTest::HttpServerTest()
 
 void HttpServerTest::initialize()
 {
-  //add_log_sink(create_stdout_sink());
+//  add_log_sink(create_stdout_sink());
 }
 
 void HttpServerTest::finalize()
@@ -90,6 +90,9 @@ void HttpServerTest::test_shutdown()
 
 void HttpServerTest::test_get()
 {
+  default_min_log_level(log_level::LVL_DEBUG);
+  add_log_sink(create_stdout_sink());
+
   http::server s(8123);
   s.add_routing_middleware();
 

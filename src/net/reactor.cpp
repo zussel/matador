@@ -83,9 +83,17 @@ void reactor::run()
   log_.info("start dispatching all clients");
   thread_pool_.start();
 
+  log_.info("waiting for reactor shutdown");
+  std::unique_lock<std::mutex> l(mutex_);
+  shutdown_.wait(l, [this]() {
+    return handlers_.empty();
+  });
+  cleanup();
 
   log_.info("all clients dispatched; shutting down");
+  thread_pool_.shutdown();
 }
+
 void reactor::run_single_threaded()
 {
   log_.info("starting reactor");
@@ -147,7 +155,7 @@ void reactor::run_single_threaded()
 
 void reactor::handle_events()
 {
-  log_.info("starting reactor");
+  log_.info("handle events");
 
   running_ = true;
   time_t timeout;
@@ -189,18 +197,52 @@ void reactor::handle_events()
   bool interrupted = is_interrupted();
 
   if (interrupted) {
-    cleanup();
-  } else {
-    process_handler(ret);
+    if (!shutdown_requested_) {
+      log_.info("reactor was interrupted");
+      thread_pool_.promote_new_leader();
+      return;
+    } else {
+      log_.info("shutting down");
+      cleanup();
+      shutdown_.notify_one();
+      return;
+    }
+  }
+
+  time_t now = ::time(nullptr);
+  t_handler_type handler_type = resolve_next_handler(now);
+
+  if (handler_type.first) {
+    deactivate_handler(handler_type.first, handler_type.second);
+    thread_pool_.promote_new_leader();
+    log_.info("start handling event");
+    // handle event
+    if (handler_type.second == event_type::WRITE_MASK) {
+      on_write_mask(handler_type.first);
+    } else if (handler_type.second == event_type::READ_MASK) {
+      on_read_mask(handler_type.first);
+    } else if (handler_type.second == event_type::TIMEOUT_MASK) {
+      on_timeout(handler_type.first, now);
+    } else {
+      log_.info("unknown event type");
+    }
+    activate_handler(handler_type.first, handler_type.second);
     remove_deleted();
+  } else {
+    // no handler found
+    log_.info("no handler found");
+    thread_pool_.promote_new_leader();
   }
 
-  if (handlers_.empty() && timeout == (std::numeric_limits<time_t>::max)()) {
-    log_.info("no clients to handle, exiting");
-    running_ = false;
-  }
-
-  cleanup();
+//  process_handler(ret);
+//  remove_deleted();
+//
+//  if (handlers_.empty() && timeout == (std::numeric_limits<time_t>::max)()) {
+//    log_.info("no clients to handle, exiting");
+//    running_ = false;
+//  }
+//
+//  cleanup();
 }
 
 void reactor::shutdown()
@@ -279,6 +321,7 @@ int reactor::select(struct timeval *timeout)
   );
 }
 
+
 void reactor::process_handler(int /*ret*/)
 {
   handlers_.emplace_back(sentinel_, event_type::NONE_MASK);
@@ -299,6 +342,23 @@ void reactor::process_handler(int /*ret*/)
     }
   }
   handlers_.pop_front();
+}
+
+reactor::t_handler_type reactor::resolve_next_handler(time_t now)
+{
+  std::lock_guard<std::mutex> l(mutex_);
+  for (auto &h : handlers_) {
+    if (h.first->handle() > 0 && fdsets_.write_set().is_set(h.first->handle())) {
+      return std::make_pair(h.first, event_type::WRITE_MASK);
+    }
+    if (h.first->handle() > 0 && fdsets_.read_set().is_set(h.first->handle())) {
+      return std::make_pair(h.first, event_type::READ_MASK);
+    }
+    if (h.first->next_timeout() > 0 && h.first->next_timeout() <= now) {
+      return std::make_pair(h.first, event_type::TIMEOUT_MASK);
+    }
+  }
+  return std::make_pair(nullptr, event_type::NONE_MASK);
 }
 
 void reactor::on_read_mask(const handler_ptr& h)

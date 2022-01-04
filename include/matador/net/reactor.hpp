@@ -150,6 +150,8 @@ private:
 private:
   void process_handler(int num);
 
+  t_handler_type resolve_next_handler(time_t now);
+
   void on_read_mask(const handler_ptr& h);
   void on_write_mask(const handler_ptr& h);
   void on_except_mask(const handler_ptr& h);
@@ -176,6 +178,7 @@ private:
   std::atomic<bool> shutdown_requested_ {false};
 
   std::mutex mutex_;
+  std::condition_variable shutdown_;
   logger log_;
 
   leader_follower_thread_pool thread_pool_;

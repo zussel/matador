@@ -15,6 +15,7 @@ enum class event_type : unsigned {
   READ_MASK =   1 << 0,       /**< Enum value for read mask */
   WRITE_MASK =  1 << 1,       /**< Enum value for write mask */
   EXCEPT_MASK = 1 << 2,       /**< Enum value for except mask */
+  TIMEOUT_MASK = 1 << 3,      /**< Enum value for timeout mask */
   ACCEPT_MASK = READ_MASK,    /**< Enum value for accept mask */
   READ_WRITE_MASK = READ_MASK | WRITE_MASK,                     /**< Enum value for read write mask */
   ALL_MASK = READ_MASK | WRITE_MASK | EXCEPT_MASK | ACCEPT_MASK /**< Enum value for all events mask */

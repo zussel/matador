@@ -70,6 +70,7 @@ private:
   std::condition_variable condition_synchronizer_;
 
   bool signal_ready_ = false;
+  bool signal_shutdown_ = false;
 
   bool is_running_ = true;
 

@@ -61,7 +61,7 @@ public:
     reactor_thread_ = std::thread([this] {
       reactor_.run();
       // sleep for some seconds to ensure valid thread join
-      std::this_thread::sleep_for(std::chrono::seconds (2));
+      std::this_thread::sleep_for(std::chrono::seconds (1));
     });
   }
   void stop()
@@ -152,6 +152,9 @@ void ReactorTest::test_connector()
 
 void ReactorTest::test_shutdown()
 {
+//  matador::default_min_log_level(log_level::LVL_DEBUG);
+//  matador::add_log_sink(matador::create_stdout_sink());
+
   auto ep = tcp::peer(address::v4::any(), 7777);
   auto ac = std::make_shared<acceptor>(ep, [](tcp::socket sock, tcp::peer p, acceptor *) {
     auto cl = std::make_shared<EchoServer>();
@@ -176,8 +179,9 @@ void ReactorTest::test_shutdown()
 
 void ReactorTest::test_reactor_acceptor()
 {
-  //matador::default_min_log_level(log_level::LVL_DEBUG);
-  //matador::add_log_sink(matador::create_stdout_sink());
+//  matador::default_min_log_level(log_level::LVL_DEBUG);
+//  matador::add_log_sink(matador::create_stdout_sink());
+//  matador::add_log_sink(matador::create_file_sink("reactor.log"));
     
   auto echo_conn = std::make_shared<EchoServer>();
 
@@ -221,6 +225,9 @@ void ReactorTest::test_reactor_acceptor()
 
 void ReactorTest::test_reactor_connector()
 {
+//  matador::default_min_log_level(log_level::LVL_DEBUG);
+//  matador::add_log_sink(matador::create_stdout_sink());
+
   // setup acceptor
   tcp::acceptor acceptor;
 
@@ -264,7 +271,7 @@ void ReactorTest::test_reactor_connector()
   UNIT_ASSERT_EQUAL(5UL, len);
   data.clear();
 
-  std::this_thread::sleep_for(std::chrono::seconds (1));
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
   len = remote.receive(data);
   UNIT_ASSERT_EQUAL(5UL, len);
