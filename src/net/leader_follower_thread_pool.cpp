@@ -80,7 +80,7 @@ void leader_follower_thread_pool::execute() {
                 acquire_thread_index(leader_));
       condition_synchronizer_.wait(l, [this]() { return signal_ready_ || signal_shutdown_; });
       signal_ready_ = false;
-      log_.info("is running: %d", is_running_);
+      log_.info("thread <%d> is running: %d", acquire_thread_index(std::this_thread::get_id()), is_running_);
       if (!is_running_) {
         log_.info("task %d not running; returning", acquire_thread_index(std::this_thread::get_id()));
         return;

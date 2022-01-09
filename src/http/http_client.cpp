@@ -24,8 +24,8 @@ client::client(const std::string &host)
   }
 
   if (count == 2) {
-    host_ = parts.at(0);
-    port_ = parts.at(1);
+    host_.assign(parts[0]);
+    port_.assign(parts[1]);
   }
 }
 

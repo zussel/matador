@@ -55,6 +55,7 @@ void http_server_connection::read()
         // not all data read
         log_.debug("not all data was read; continue reading");
         read();
+
       }
     }
   });

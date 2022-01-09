@@ -78,7 +78,7 @@ private:
 
 int main()
 {
-  int num_threads = std::thread::hardware_concurrency();
+  auto num_threads = std::thread::hardware_concurrency();
 
   matador::add_log_sink(matador::create_stdout_sink());
 

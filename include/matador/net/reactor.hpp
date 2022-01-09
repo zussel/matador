@@ -144,7 +144,7 @@ public:
 
   t_handler_list::iterator find_handler_type(const handler_ptr &h);
 
-private:
+//private:
   void interrupt();
 
 private:
