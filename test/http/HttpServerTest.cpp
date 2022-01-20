@@ -90,8 +90,8 @@ void HttpServerTest::test_shutdown()
 
 void HttpServerTest::test_get()
 {
-  //default_min_log_level(log_level::LVL_DEBUG);
-  //add_log_sink(create_stdout_sink());
+//  default_min_log_level(log_level::LVL_DEBUG);
+//  add_log_sink(create_stdout_sink());
 
   http::server s(8123);
   s.add_routing_middleware();
@@ -104,7 +104,7 @@ void HttpServerTest::test_get()
 
   wrapper.start();
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (400));
+  std::this_thread::sleep_for(std::chrono::milliseconds (100));
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
@@ -114,7 +114,7 @@ void HttpServerTest::test_get()
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
   UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
 
-  std::this_thread::sleep_for(std::chrono::seconds (1));
+  std::this_thread::sleep_for(std::chrono::milliseconds (100));
 
   wrapper.stop();
 

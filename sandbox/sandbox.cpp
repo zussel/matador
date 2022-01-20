@@ -40,7 +40,7 @@ public:
 
   void on_attach(matador::prototype_node &node, T &) override
   {
-      auto func = [this, &node](const matador::json &js) {
+      auto func = [this](const matador::json &js) {
           matador::json_object_mapper mapper;
           auto o = mapper.to_object<T>(js);
           auto p = store_.insert(o.release());

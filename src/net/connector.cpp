@@ -39,6 +39,9 @@ void connector::on_timeout()
 {
   tcp::socket stream;
   for (const auto &ep : endpoints_) {
+    if (!ep.addr().is_v4()) {
+      continue;
+    }
     auto ret = matador::connect(stream, ep);
     if (ret != 0) {
 	  char error_buffer[1024];
