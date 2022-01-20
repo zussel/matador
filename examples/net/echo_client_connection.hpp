@@ -21,6 +21,7 @@ private:
   std::array<char, 16384> buf_ = {};
   matador::io_stream &stream_;
   matador::tcp::peer endpoint_;
+  std::string message_;
 };
 
 

@@ -8,7 +8,7 @@ echo_client::echo_client(std::string port)
 , port_(std::move(port))
 {
   matador::add_log_sink(matador::create_file_sink("log/client.log"));
-  matador::add_log_sink(matador::create_stdout_sink());
+  //matador::add_log_sink(matador::create_stdout_sink());
 
   prepare_connect();
 }

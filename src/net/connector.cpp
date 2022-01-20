@@ -47,17 +47,17 @@ void connector::on_timeout()
     } else {
       log_.info("connection established to %s (fd: %d)", ep.to_string().c_str(), stream.id());
     }
-
     stream.non_blocking(true);
     auto h = connect_handler_(stream, ep, this);
 
+//    if (stream.is_open()) {
+//    }
     get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
+    get_reactor()->cancel_timer(shared_from_this());
+
     break;
   }
-  if (stream.is_open()) {
-    endpoints_.clear();
-    get_reactor()->cancel_timer(shared_from_this());
-  }
+  endpoints_.clear();
 }
 
 bool connector::is_ready_write() const

@@ -60,7 +60,7 @@ void reactor::schedule_timer(const std::shared_ptr<handler>& h, time_t offset, t
   auto it = find_handler_type(h);
 
   if (it == handlers_.end()) {
-    handlers_.emplace_back(h, event_type::NONE_MASK);
+    handlers_.emplace_back(h, event_type::TIMEOUT_MASK);
   }
 
   h->schedule(offset, interval);
@@ -278,7 +278,7 @@ void reactor::prepare_select_bits(time_t& timeout)
     if (h.first->is_ready_write() && is_event_type_set(h.second, event_type::WRITE_MASK)) {
       fdsets_.write_set().set(h.first->handle());
     }
-    if (h.first->next_timeout() > 0) {
+    if (h.first->next_timeout() > 0 && is_event_type_set(h.second, event_type::TIMEOUT_MASK)) {
       timeout = (std::min)(timeout, h.first->next_timeout() <= now ? 0 : (h.first->next_timeout() - now));
     }
   }

@@ -32,13 +32,13 @@ void echo_client_connection::read()
 void echo_client_connection::write()
 {
   std::cout << "Message: ";
-  std::string message;
-  std::cin >> message;
-  if (message == "exit") {
+  message_.clear();
+  std::cin >> message_;
+  if (message_ == "exit") {
     stream_.close_stream();
     return;
   }
-  std::list<matador::buffer_view> data{ matador::buffer_view(message) };
+  std::list<matador::buffer_view> data{ matador::buffer_view(message_) };
 
   auto self(shared_from_this());
   stream_.write(data, [this, self](int ec, int nwrite) {
