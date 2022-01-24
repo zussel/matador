@@ -1,7 +1,3 @@
-//
-// Created by sascha on 5/31/16.
-//
-
 #ifndef OOS_TOKEN_LIST_HPP
 #define OOS_TOKEN_LIST_HPP
 

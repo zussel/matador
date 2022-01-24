@@ -19,6 +19,7 @@ public:
   void test_set();
   void test_get();
   void test_serializer();
+  void test_embeddable();
   void test_identifier_serializer();
   void test_reference_counter();
   void test_reference_counter_builtin();

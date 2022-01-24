@@ -1,10 +1,8 @@
-//
-// Created by sascha on 2/25/16.
-//
 #include "matador/sql/typed_column_serializer.hpp"
 
 #include "matador/utils/identifiable_holder.hpp"
 #include "matador/utils/basic_identifier.hpp"
+#include "matador/utils/embed.hpp"
 
 namespace matador {
 namespace detail {
@@ -156,6 +154,11 @@ void typed_column_serializer::serialize(const char *id, basic_identifier &x)
     create_column_func_ = make_column<typed_column>;
     create_varchar_column_func_ = make_varchar_column<typed_varchar_column>;
   }
+}
+
+void typed_column_serializer::serialize(const char *id, basic_embed &x)
+{
+  x.serialize(id, *this);
 }
 
 }

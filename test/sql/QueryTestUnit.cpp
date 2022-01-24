@@ -1,7 +1,3 @@
-//
-// Created by sascha on 9/7/15.
-//
-
 #include "QueryTestUnit.hpp"
 
 #include "../datatypes.hpp"
@@ -14,6 +10,7 @@
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
+#include "matador/utils/embed.hpp"
 
 #include <algorithm>
 #include <limits>
@@ -30,6 +27,7 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
 {
   add_test("info", [this] { print_datatypes(); }, "print datatypes info");
   add_test("datatypes", [this] { test_datatypes(); }, "test sql datatypes");
+  add_test("embeddable", [this] { test_embeddable(); }, "test sql embeddable");
   add_test("qvc", [this] { test_query_value_creator(); }, "test query value creator");
   add_test("quoted_identifier", [this] { test_quoted_identifier(); }, "test quoted identifier");
   add_test("columns_with_quotes", [this] { test_columns_with_quotes_in_name(); }, "test columns with quotes in name");
@@ -190,6 +188,62 @@ void QueryTestUnit::test_datatypes()
   q.drop().execute(connection_);
 }
 
+struct coordinate
+{
+  int x;
+  int y;
+  int z;
+
+  template < typename Serializer >
+  void serialize(Serializer &serializer)
+  {
+    serializer.serialize("x", x);
+    serializer.serialize("y", y);
+    serializer.serialize("y", z);
+  }
+};
+
+struct shape
+{
+  matador::identifier<unsigned long> id;
+  std::string name;
+  matador::embed<coordinate> coordiantes;
+
+  template < typename Serializer >
+  void serialize(Serializer &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("coordinates", coordiantes);
+  }
+};
+
+void QueryTestUnit::test_embeddable()
+{
+  shape s;
+  s.coordiantes->x = 5;
+  s.coordiantes().y = 6;
+  s.name = "shape1";
+
+  connection_.connect();
+
+  query<shape> q;
+
+  q.create().execute(connection_);
+
+  auto fields = connection_.describe("person");
+
+  std::vector<std::string> columns = { "id", "name", "x", "y", "z"};
+  std::vector<database_type > types = { matador::database_type::type_bigint, matador::database_type::type_varchar, matador::database_type::type_date, matador::database_type::type_bigint};
+
+  for (auto &&field : fields) {
+    UNIT_ASSERT_EQUAL(field.name(), columns[field.index()]);
+    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()]);
+  }
+
+  q.drop().execute(connection_);
+
+}
 void QueryTestUnit::test_query_value_creator()
 {
   connection_.connect();

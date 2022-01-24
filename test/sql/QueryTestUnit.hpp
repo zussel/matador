@@ -26,6 +26,7 @@ public:
 
   void print_datatypes();
   void test_datatypes();
+  void test_embeddable();
   void test_query_value_creator();
   void test_quoted_identifier();
   void test_columns_with_quotes_in_name();

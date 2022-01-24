@@ -1,7 +1,3 @@
-//
-// Created by sascha on 24.05.16.
-//
-
 #ifndef OOS_BASIC_QUERY_HPP
 #define OOS_BASIC_QUERY_HPP
 

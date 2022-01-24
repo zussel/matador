@@ -1,7 +1,3 @@
-//
-// Created by sascha on 04.03.16.
-//
-
 #ifndef OOS_COLUMN_SERIALIZER_HPP
 #define OOS_COLUMN_SERIALIZER_HPP
 

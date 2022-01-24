@@ -272,7 +272,7 @@ public:
   result<row> execute()
   {
     logger_->on_execute(p->str());
-    return result<row>(p->execute(), prototype_);
+    return { p->execute(), prototype_ };
   }
 
   /**

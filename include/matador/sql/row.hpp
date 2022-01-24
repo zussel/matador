@@ -82,7 +82,7 @@ public:
    * already exists
    *
    * @param column Name of the column
-   * @return True if column was added, false if column aready exists
+   * @return True if column was added, false if column already exists
    */
   bool add_column(const std::string &column);
 
@@ -92,7 +92,7 @@ public:
    *
    * @param column Name of the column
    * @param value Value of the column
-   * @return True if column was added, false if column aready exists
+   * @return True if column was added, false if column already exists
    */
   bool add_column(const std::string &column, const std::shared_ptr<value> &value);
 

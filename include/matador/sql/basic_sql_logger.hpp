@@ -22,7 +22,7 @@ namespace matador {
 /**
  * @brief Base class for sql logging
  *
- * Thsi class acts as a base class to
+ * This class acts as a base class to
  * implement a concrete logger for sql
  * statements.
  *

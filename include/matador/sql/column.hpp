@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/2/16.
-//
-
 #ifndef OOS_COLUMN_HPP
 #define OOS_COLUMN_HPP
 

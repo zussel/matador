@@ -1,7 +1,3 @@
-//
-// Created by sascha on 2/9/16.
-//
-
 #ifndef OOS_SQL_EXCEPTION_HPP
 #define OOS_SQL_EXCEPTION_HPP
 

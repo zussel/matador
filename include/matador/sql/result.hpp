@@ -25,6 +25,7 @@
 #include <type_traits>
 #include <iterator>
 #include <functional>
+#include <utility>
 
 namespace matador {
 
@@ -185,7 +186,7 @@ public:
    * @param x The result ro move
    * @return Reference to this
    */
-  result& operator=(result &&x)
+  result& operator=(result &&x) noexcept
   {
     p = std::move(x.p);
     return *this;
@@ -295,9 +296,9 @@ public:
    * @param impl Result implementation
    * @param prototype The row prototype
    */
-  result(matador::detail::result_impl *impl, const row &prototype)
+  result(matador::detail::result_impl *impl, row prototype)
     : p(impl)
-    , prototype_(prototype)
+    , prototype_(std::move(prototype))
   {}
 
   ~result()
@@ -353,7 +354,7 @@ public:
    */
   iterator end()
   {
-    return iterator();
+    return {};
   }
 
   /**

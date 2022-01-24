@@ -1,7 +1,3 @@
-//
-// Created by sascha on 28.12.19.
-//
-
 #ifndef MATADOR_DATABASE_ERROR_HPP
 #define MATADOR_DATABASE_ERROR_HPP
 

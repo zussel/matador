@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/2/16.
-//
-
 #ifndef OOS_DIALECT_TOKEN_HPP
 #define OOS_DIALECT_TOKEN_HPP
 

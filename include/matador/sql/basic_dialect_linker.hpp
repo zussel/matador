@@ -1,7 +1,3 @@
-//
-// Created by sascha on 14.08.16.
-//
-
 #ifndef OOS_BASIC_DIALECT_LINKER_HPP
 #define OOS_BASIC_DIALECT_LINKER_HPP
 

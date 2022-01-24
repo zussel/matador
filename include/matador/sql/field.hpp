@@ -1,7 +1,3 @@
-//
-// Created by sascha on 2/23/16.
-//
-
 #ifndef OOS_FIELD_HPP
 #define OOS_FIELD_HPP
 

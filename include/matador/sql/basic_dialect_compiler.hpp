@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/9/16.
-//
-
 #ifndef OOS_BASIC_DIALECT_COMPILER_HPP
 #define OOS_BASIC_DIALECT_COMPILER_HPP
 

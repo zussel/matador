@@ -1,7 +1,3 @@
-//
-// Created by sascha on 11.01.18.
-//
-
 #ifndef MATADOR_BLOG_HPP
 #define MATADOR_BLOG_HPP
 

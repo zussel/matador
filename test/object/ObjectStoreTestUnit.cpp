@@ -7,6 +7,7 @@
 #include "matador/object/generic_access.hpp"
 
 #include "matador/utils/algorithm.hpp"
+#include "matador/utils/embed.hpp"
 
 #include "version.hpp"
 #include <iostream>
@@ -23,6 +24,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("set", [this] { test_set(); }, "access object values via set interface");
   add_test("get", [this] { test_get(); }, "access object values via get interface");
   add_test("serializer", [this] { test_serializer(); }, "serializer test");
+  add_test("embeddable", [this] { test_embeddable(); }, "embeddable test");
   add_test("identifier_serializer", [this] { test_identifier_serializer(); }, "identifier serializer test");
   add_test("reference_counter", [this] { test_reference_counter(); }, "reference counter test");
   add_test("reference_counter_builtins", [this] { test_reference_counter_builtin(); }, "reference counter with builtins test");
@@ -267,6 +269,47 @@ void ObjectStoreTestUnit::test_serializer()
   UNIT_ASSERT_EQUAL(t, item->get_time());
 
   delete item;
+}
+
+struct coordinate
+{
+  int x;
+  int y;
+  int z;
+
+  template < typename Serializer >
+  void serialize(Serializer &serializer)
+  {
+    serializer.serialize("x", x);
+    serializer.serialize("y", y);
+    serializer.serialize("y", z);
+  }
+};
+
+struct shape
+{
+  matador::identifier<unsigned long> id;
+  std::string name;
+  embed<coordinate> coordiantes;
+
+  template < typename Serializer >
+  void serialize(Serializer &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("coordinates", coordiantes);
+  }
+};
+
+void ObjectStoreTestUnit::test_embeddable()
+{
+
+  shape s;
+  s.coordiantes->x = 5;
+  s.coordiantes().y = 6;
+
+  object_store store;
+  store.attach<shape>("shape");
 }
 
 void ObjectStoreTestUnit::test_identifier_serializer()

@@ -72,9 +72,7 @@ public:
   void serialize(const char *id, time &x) override;
   void serialize(const char *id, identifiable_holder &x, cascade_type) override;
   void serialize(const char *id, basic_identifier &x) override;
-
-//  template < class V >
-//  void serialize(const char *, identifier<V> &) { }
+  void serialize(const char *id, basic_embed &x) override;
   void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
   void serialize(const char *, abstract_has_many &, cascade_type) override {}
 

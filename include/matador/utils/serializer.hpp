@@ -31,6 +31,7 @@ class date;
 class identifiable_holder;
 class basic_identifier;
 class abstract_has_many;
+class basic_embed;
 
 /**
  * @brief A base class to serialize objects
@@ -191,6 +192,14 @@ public:
    * @param cascade The cascade type
    */
   virtual void serialize(const char *id, matador::identifiable_holder &x, cascade_type cascade) = 0;
+
+  /**
+   * @brief Interface to serialize an embeddable object
+   *
+   * @param id The id of the value
+   * @param embedded The embeddable to serialize
+   */
+  virtual void serialize(const char *id, matador::basic_embed &embedded) = 0;
 
   /**
    * @brief Interface to serialize a identifier with given id
