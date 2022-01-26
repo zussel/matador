@@ -14,6 +14,8 @@ using namespace ::detail;
 IOServiceTest::IOServiceTest()
   : matador::unit_test("io_service", "io service test unit")
 {
+  //matador::add_log_sink(matador::create_stdout_sink());
+
   add_test("shutdown", [this] { test_shutdown(); }, "io service shutdown test");
   add_test("acceptor", [this] { test_acceptor(); }, "io service acceptor send and receive test");
   add_test("connector", [this] { test_connector(); }, "io service connector send and receive test");
@@ -37,7 +39,6 @@ void IOServiceTest::test_shutdown()
 
 void IOServiceTest::test_acceptor()
 {
-  //matador::add_log_sink(matador::create_stdout_sink());
   IOEchoServer server(7780);
   server.accept();
 

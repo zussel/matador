@@ -83,13 +83,14 @@ void reactor::run()
   log_.info("start dispatching all clients");
   thread_pool_.start();
 
-  log_.info("waiting for reactor shutdown");
-  std::unique_lock<std::mutex> l(mutex_);
-  shutdown_.wait(l, [this]() {
-    return handlers_.empty();
-  });
-  cleanup();
-
+  {
+    log_.info("waiting for reactor shutdown");
+    std::unique_lock<std::mutex> l(mutex_);
+    shutdown_.wait(l, [this]() {
+      return handlers_.empty();
+    });
+    cleanup();
+  }
   log_.info("all clients dispatched; shutting down");
   thread_pool_.shutdown();
 }
