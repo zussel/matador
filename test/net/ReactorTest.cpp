@@ -64,6 +64,7 @@ public:
       std::this_thread::sleep_for(std::chrono::seconds (1));
     });
   }
+
   void stop()
   {
     reactor_.shutdown();
@@ -139,6 +140,7 @@ void ReactorTest::test_connector()
 {
   connector c;
 
+  UNIT_ASSERT_EQUAL("connector", c.name());
   UNIT_ASSERT_EQUAL(0, c.handle());
 
   c.open();
@@ -191,6 +193,8 @@ void ReactorTest::test_reactor_acceptor()
     return echo_conn;
   });
 
+  UNIT_ASSERT_EQUAL( "acceptor", ac->name() );
+
   ReactorThreadWrapper wrapper;
 
   wrapper.add(ac);
@@ -204,7 +208,7 @@ void ReactorTest::test_reactor_acceptor()
   // send and verify received data
   tcp::socket client;
 
-  int ret = client.open(tcp::v4());
+  auto ret = client.open(tcp::v4());
   UNIT_ASSERT_FALSE(ret < 0);
   auto srv = tcp::peer(address::v4::loopback(), 7779);
   ret = client.connect(srv);

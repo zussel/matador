@@ -108,6 +108,9 @@ void TemplateEngineTest::test_if_else()
   std::string expected_result = { "<h1>Header</h1>"
                                   "<p>Details of George</p>" };
 
+  std::string expected_result_jane = { "<h1>Header</h1>"
+                                       "<p>Details of Jane</p>" };
+
   std::string expected_result_no_details = { "<h1>Header</h1>"
                                              "<p>No details</p>" };
 
@@ -163,7 +166,23 @@ void TemplateEngineTest::test_if_else()
 
   UNIT_ASSERT_EQUAL(expected_result_elif, result);
 
-  std::string if_json_equal_json { "<h1>Header</h1>"
+  if_elif = "<h1>Header</h1>{% for person in persons %}"
+            "{% if person.id != 1 %}<p>1 Details of {{ person.name }}</p>"
+            "{% elif person.id <= 2 %}<p>2 Details of {{ person.name }}</p>"
+            "{% elif person.id > 2 %}<p>3 Details of {{ person.name }}</p>"
+            "{% else %}<p>No details</p>{% endif %}{% endfor %}";
+
+  result = http::template_engine::render(if_elif, data);
+
+  expected_result_elif = "<h1>Header</h1>"
+                         "<p>1 Details of George</p>"
+                         "<p>2 Details of Jane</p>"
+                         "<p>1 Details of Otto</p>";
+
+  UNIT_ASSERT_EQUAL(expected_result_elif, result);
+
+  // JSON equal compare
+  std::string if_json_compare_json {"<h1>Header</h1>"
                                    "{% if person.name == current.name %}<p>Details of {{ person.name }}</p>"
                                    "{% else %}<p>No details</p>{% endif %}" };
 
@@ -177,15 +196,73 @@ void TemplateEngineTest::test_if_else()
     }}
   };
 
-  result = http::template_engine::render(if_json_equal_json, data);
+  result = http::template_engine::render(if_json_compare_json, data);
 
   UNIT_ASSERT_EQUAL(expected_result, result);
 
   data["current"]["name"] = "Jane";
 
-  result = http::template_engine::render(if_json_equal_json, data);
+  result = http::template_engine::render(if_json_compare_json, data);
 
   UNIT_ASSERT_EQUAL(expected_result_no_details, result);
+
+  // JSON less compare
+  if_json_compare_json = "<h1>Header</h1>"
+                         "{% if person.id < current.id %}<p>Details of {{ person.name }}</p>"
+                         "{% else %}<p>No details</p>{% endif %}" ;
+
+  data = {
+    { "person", {
+      { "id", 4711 },
+      { "name", "George" }
+    }},
+  { "current", {
+      { "id", 4712 },
+      { "name", "Jane"}
+    }}
+  };
+
+  result = http::template_engine::render(if_json_compare_json, data);
+
+  UNIT_ASSERT_EQUAL(expected_result, result);
+
+  if_json_compare_json = "<h1>Header</h1>"
+                         "{% if person.id > current.id %}<p>Details of {{ person.name }}</p>"
+                         "{% else %}<p>No details</p>{% endif %}" ;
+
+  result = http::template_engine::render(if_json_compare_json, data);
+
+  UNIT_ASSERT_EQUAL(expected_result_no_details, result);
+
+  if_json_compare_json = "<h1>Header</h1>"
+                         "{% if person.id <= current.id %}<p>Details of {{ person.name }}</p>"
+                         "{% else %}<p>No details</p>{% endif %}" ;
+
+  result = http::template_engine::render(if_json_compare_json, data);
+
+  UNIT_ASSERT_EQUAL(expected_result, result);
+
+  if_json_compare_json = "<h1>Header</h1>"
+                         "{% if person.id >= current.id %}<p>Details of {{ person.name }}</p>"
+                         "{% else %}<p>No details</p>{% endif %}" ;
+
+  result = http::template_engine::render(if_json_compare_json, data);
+
+  UNIT_ASSERT_EQUAL(expected_result_no_details, result);
+
+  if_json_compare_json = "<h1>Header</h1>"
+                         "{% if person.id != current.id %}<p>Details of {{ person.name }}</p>"
+                         "{% else %}<p>No details</p>{% endif %}" ;
+
+  result = http::template_engine::render(if_json_compare_json, data);
+
+  UNIT_ASSERT_EQUAL(expected_result, result);
+
+  if_json_compare_json = "<h1>Header</h1>"
+                         "{% if person.id !> current.id %}<p>Details of {{ person.name }}</p>"
+                         "{% else %}<p>No details</p>{% endif %}" ;
+
+  UNIT_ASSERT_EXCEPTION(http::template_engine::render(if_json_compare_json, data), std::logic_error, "invalid operator !>");
 }
 
 void TemplateEngineTest::test_include()

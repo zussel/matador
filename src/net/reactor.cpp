@@ -95,65 +95,6 @@ void reactor::run()
   thread_pool_.shutdown();
 }
 
-void reactor::run_single_threaded()
-{
-  log_.info("starting reactor");
-
-  running_ = true;
-  time_t timeout;
-  while (running_) {
-    prepare_select_bits(timeout);
-
-    log_.debug("fds [r: %d, w: %d, e: %d]",
-              fdsets_.read_set().count(),
-              fdsets_.write_set().count(),
-              fdsets_.except_set().count());
-
-    if (timeout != (std::numeric_limits<time_t>::max)()) {
-      log_.debug("next timeout in %d sec", timeout);
-    }
-    struct timeval tselect{};
-    struct timeval* p = nullptr;
-    if (timeout < (std::numeric_limits<time_t>::max)()) {
-      tselect.tv_sec = timeout;
-      tselect.tv_usec = 0;
-      p = &tselect;
-    }
-
-    if (fdsets_.maxp1() < 1 && timeout == (std::numeric_limits<time_t>::max)()) {
-      log_.info("no clients to handle, exiting");
-      return;
-    }
-
-    int ret;
-    while ((ret = select(p)) < 0) {
-      if(errno != EINTR) {
-        char error_buffer[1024];
-        log_.warn("select failed: %s", os::strerror(errno, error_buffer, 1024));
-        shutdown();
-      } else {
-        return;
-      }
-    }
-
-    bool interrupted = is_interrupted();
-
-    if (interrupted) {
-      cleanup();
-    } else {
-      process_handler(ret);
-      remove_deleted();
-    }
-
-    if (handlers_.empty() && timeout == (std::numeric_limits<time_t>::max)()) {
-      log_.info("no clients to handle, exiting");
-      running_ = false;
-    }
-  }
-
-  cleanup();
-}
-
 void reactor::handle_events()
 {
   log_.info("handle events");
@@ -234,16 +175,6 @@ void reactor::handle_events()
     log_.info("no handler found");
     thread_pool_.promote_new_leader();
   }
-
-//  process_handler(ret);
-//  remove_deleted();
-//
-//  if (handlers_.empty() && timeout == (std::numeric_limits<time_t>::max)()) {
-//    log_.info("no clients to handle, exiting");
-//    running_ = false;
-//  }
-//
-//  cleanup();
 }
 
 void reactor::shutdown()

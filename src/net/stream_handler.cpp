@@ -48,7 +48,6 @@ void stream_handler::on_input()
     on_close();
   } else {
     log_.debug("%s: received %d bytes (data: %s)", name().c_str(), len, read_buffer_.data());
-    //log_.debug("%s: read data: %s", name().c_str(), read_buffer_.data());
     read_buffer_.bump(len);
     is_ready_to_read_ = false;
     on_read_(0, len);
@@ -94,6 +93,7 @@ void stream_handler::on_close()
 {
   log_.debug("%s: closing connection", name().c_str(), handle());
   stream_.close();
+  creator_->notify_close( this );
   auto self = shared_from_this();
   get_reactor()->mark_handler_for_delete(self);
   get_reactor()->unregister_handler(self, event_type::READ_WRITE_MASK);
@@ -106,6 +106,7 @@ void stream_handler::close()
   }
   log_.debug("%s: closing connection", name().c_str(), handle());
   stream_.close();
+  creator_->notify_close( this );
 }
 
 bool stream_handler::is_ready_write() const

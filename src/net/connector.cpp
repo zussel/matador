@@ -44,7 +44,7 @@ void connector::on_timeout()
     }
     auto ret = matador::connect(stream, ep);
     if (ret != 0) {
-	  char error_buffer[1024];
+      char error_buffer[1024];
       log_.error("couldn't establish connection to: %s", ep.to_string().c_str(), os::strerror(errno, error_buffer, 1024));
       continue;
     } else {
@@ -53,8 +53,6 @@ void connector::on_timeout()
     stream.non_blocking(true);
     auto h = connect_handler_(stream, ep, this);
 
-//    if (stream.is_open()) {
-//    }
     get_reactor()->register_handler(h, event_type::READ_WRITE_MASK);
     get_reactor()->cancel_timer(shared_from_this());
 

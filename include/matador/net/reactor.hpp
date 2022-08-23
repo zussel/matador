@@ -102,7 +102,6 @@ public:
    * shutdown ist called.
    */
   void run();
-  void run_single_threaded();
 
   void handle_events();
 
