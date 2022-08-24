@@ -74,7 +74,7 @@ SET (TEST_NET_SOURCES
   net/IOEchoServerConnection.hpp
   net/IOEchoServer.cpp
   net/IOEchoServer.hpp
-  net/NetUtils.hpp)
+  net/NetUtils.hpp net/LeaderFollowerThreadPoolTest.cpp net/LeaderFollowerThreadPoolTest.hpp)
 
 SET (TEST_HTTP_SOURCES
   http/RequestParserTest.cpp

@@ -23,9 +23,7 @@ FILE* fopen(const std::string &path, const char *modes)
 FILE* fopen(const char *path, const char *modes)
 {
 #ifdef _WIN32
-  FILE *stream;
-  fopen_s(&stream, path, modes);
-  return stream;
+  return _fsopen(path, modes, _SH_DENYWR);
 #else
   return ::fopen(path, modes);
 #endif

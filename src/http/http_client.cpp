@@ -24,8 +24,8 @@ client::client(const std::string &host)
   }
 
   if (count == 2) {
-    host_ = parts.at(0);
-    port_ = parts.at(1);
+    host_.assign(parts[0]);
+    port_.assign(parts[1]);
   }
 }
 
@@ -60,7 +60,7 @@ response client::execute(request req)
   request_ = std::move(req);
   service_.connect(connector_, port_, [this](tcp::peer ep, io_stream &stream) {
     // create echo server connection
-    auto conn = std::make_shared<http_client_connection>(request_, response_, stream, std::move(ep));
+    auto conn = std::make_shared<http_client_connection>(request_, response_, stream, service_, std::move(ep));
     conn->execute();
   });
 

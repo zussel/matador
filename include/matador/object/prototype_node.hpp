@@ -33,7 +33,6 @@
 #endif
 
 #include "matador/utils/identifier.hpp"
-#include "matador/utils/memory.hpp"
 
 #include "matador/object/identifier_proxy_map.hpp"
 #include "matador/object/typed_object_store_observer.hpp"

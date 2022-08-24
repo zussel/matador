@@ -1,7 +1,3 @@
-//
-// Created by sascha on 17.09.19.
-//
-
 #ifndef MATADOR_IS_VARCHAR_HPP
 #define MATADOR_IS_VARCHAR_HPP
 

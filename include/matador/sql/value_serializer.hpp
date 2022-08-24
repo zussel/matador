@@ -20,7 +20,6 @@
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/serializer.hpp"
-#include "matador/utils/memory.hpp"
 
 #include "matador/sql/dialect_token.hpp"
 

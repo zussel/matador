@@ -1,28 +1,18 @@
 #ifndef MATADOR_REACTOR_HPP
 #define MATADOR_REACTOR_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_net_EXPORTS
-    #define OOS_NET_API __declspec(dllexport)
-    #define EXPIMP_NET_TEMPLATE
-  #else
-    #define OOS_NET_API __declspec(dllimport)
-    #define EXPIMP_NET_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define OOS_NET_API
-#endif
-
+#include "matador/net/export.hpp"
 #include "matador/net/event_type.hpp"
 #include "matador/net/select_fdsets.hpp"
 #include "matador/net/socket_interrupter.hpp"
+#include "matador/net/leader_follower_thread_pool.hpp"
 
 #include "matador/logger/logger.hpp"
 
 #include <list>
 #include <memory>
 #include <atomic>
+#include <mutex>
 
 namespace matador {
 
@@ -57,6 +47,8 @@ class handler;
  */
 class OOS_NET_API reactor {
 public:
+  using handler_ptr = std::shared_ptr<handler>; /**< Shortcut for shared pointer to handler */
+
   /**
    * Default constructor
    */
@@ -70,7 +62,7 @@ public:
    * @param h Handler to register
    * @param type Event type which the handler is used for
    */
-  void register_handler(const std::shared_ptr<handler>& h, event_type type);
+  void register_handler(const handler_ptr& h, event_type type);
 
   /**
    * Unregisters a handler from the reactor for
@@ -80,7 +72,7 @@ public:
    * @param h Handler to unregister.
    * @param type Event mask for which the handler is to be removed
    */
-  void unregister_handler(const std::shared_ptr<handler>& h, event_type type);
+  void unregister_handler(const handler_ptr& h, event_type type);
 
   /**
    * Schedules a timer handler within the reactor.
@@ -110,6 +102,8 @@ public:
    * shutdown ist called.
    */
   void run();
+
+  void handle_events();
 
   /**
    * Shutdown the dispatching process of the
@@ -141,13 +135,26 @@ public:
    */
   void mark_handler_for_delete(const std::shared_ptr<handler>& h);
 
+  void activate_handler(const handler_ptr &h, event_type ev);
+  void deactivate_handler(const handler_ptr &h, event_type ev);
+
+  using t_handler_type = std::pair<handler_ptr, event_type>;
+  using t_handler_list = std::list<t_handler_type>;
+
+  t_handler_list::iterator find_handler_type(const handler_ptr &h);
+
+//private:
+  void interrupt();
+
 private:
   void process_handler(int num);
 
-  void on_read_mask(const std::shared_ptr<handler>& h);
-  void on_write_mask(const std::shared_ptr<handler>& h);
-  void on_except_mask(const std::shared_ptr<handler>& h);
-  void on_timeout(const std::shared_ptr<handler> &h, time_t i);
+  t_handler_type resolve_next_handler(time_t now);
+
+  void on_read_mask(const handler_ptr& h);
+  void on_write_mask(const handler_ptr& h);
+  void on_except_mask(const handler_ptr& h);
+  void on_timeout(const handler_ptr &h, time_t i);
 
   void prepare_select_bits(time_t& timeout);
 
@@ -160,17 +167,20 @@ private:
   bool is_interrupted();
 
 private:
-  typedef std::pair<std::shared_ptr<handler>, event_type> t_handler_type;
-  std::shared_ptr<handler> sentinel_;
-  std::list<t_handler_type> handlers_;
-  std::list<std::shared_ptr<handler>> handlers_to_delete_;
+  handler_ptr sentinel_;
+  t_handler_list handlers_;
+  std::list<handler_ptr> handlers_to_delete_;
 
   select_fdsets fdsets_;
 
   std::atomic<bool> running_ {false};
   std::atomic<bool> shutdown_requested_ {false};
 
+  std::mutex mutex_;
+  std::condition_variable shutdown_;
   logger log_;
+
+  leader_follower_thread_pool thread_pool_;
 
   socket_interrupter interrupter_;
 };

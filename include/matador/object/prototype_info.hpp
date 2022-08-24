@@ -1,7 +1,3 @@
-//
-// Created by sascha on 24.05.17.
-//
-
 #ifndef MATADOR_PROTOTYPE_INFO_HPP
 #define MATADOR_PROTOTYPE_INFO_HPP
 

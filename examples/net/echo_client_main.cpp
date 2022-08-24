@@ -2,6 +2,8 @@
 
 #include "matador/net/os.hpp"
 
+#include "matador/logger/log_manager.hpp"
+
 #include "echo_client.hpp"
 
 using namespace matador;

@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/17/16.
-//
-
 #ifndef OOS_ABSTRACT_HAS_MANY_HPP
 #define OOS_ABSTRACT_HAS_MANY_HPP
 
@@ -31,7 +27,7 @@ namespace matador {
  * @brief Detail namespace of the open object store.
  *
  * This is the namespace where for all function, classes
- * and other code which is not neccessary to be public should go.
+ * and other code which is not necessary to be public should go.
  */
 namespace detail {
 class object_inserter;
@@ -50,8 +46,8 @@ class MATADOR_OBJECT_API abstract_has_many : public detail::object_proxy_accesso
 public:
   typedef size_t size_type;
 
-  void owner_field(const std::string &ownerfield) { owner_field_ = ownerfield; }
-  void item_field(const std::string &itemfield) { item_field_ = itemfield; }
+  void owner_field(const std::string &owner_field) { owner_field_ = owner_field; }
+  void item_field(const std::string &item_field) { item_field_ = item_field; }
 
   std::string owner_field() const { return owner_field_; }
   std::string item_field() const { return item_field_; }

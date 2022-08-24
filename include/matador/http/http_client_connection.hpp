@@ -31,6 +31,7 @@
 namespace matador {
 
 class io_stream;
+class io_service;
 
 namespace http {
 
@@ -39,7 +40,7 @@ namespace http {
 class OOS_HTTP_API http_client_connection : public std::enable_shared_from_this<http_client_connection>
 {
 public:
-  http_client_connection(request req, response &resp, matador::io_stream &stream, matador::tcp::peer endpoint);
+  http_client_connection(request req, response &resp, matador::io_stream &stream, matador::io_service &service, matador::tcp::peer endpoint);
 
   void execute();
 
@@ -51,6 +52,7 @@ private:
   matador::logger log_;
   std::array<char, 16384> buf_{};
   matador::io_stream &stream_;
+  matador::io_service &service_;
   matador::tcp::peer endpoint_;
 
   matador::http::response_parser parser_;

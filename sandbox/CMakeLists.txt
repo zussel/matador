@@ -4,6 +4,16 @@ ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 
 ADD_EXECUTABLE(di di.cpp)
 
+ADD_EXECUTABLE(reactor reactor.cpp)
+
+TARGET_LINK_LIBRARIES(reactor
+  matador-utils
+  matador-logger
+  matador-net
+  ${CMAKE_DL_LIBS}
+  ${CMAKE_THREAD_LIBS_INIT}
+)
+
 SET(NET_LIBRARIES)
 
 IF(WIN32)

@@ -15,6 +15,7 @@ enum class event_type : unsigned {
   READ_MASK =   1 << 0,       /**< Enum value for read mask */
   WRITE_MASK =  1 << 1,       /**< Enum value for write mask */
   EXCEPT_MASK = 1 << 2,       /**< Enum value for except mask */
+  TIMEOUT_MASK = 1 << 3,      /**< Enum value for timeout mask */
   ACCEPT_MASK = READ_MASK,    /**< Enum value for accept mask */
   READ_WRITE_MASK = READ_MASK | WRITE_MASK,                     /**< Enum value for read write mask */
   ALL_MASK = READ_MASK | WRITE_MASK | EXCEPT_MASK | ACCEPT_MASK /**< Enum value for all events mask */
@@ -45,7 +46,29 @@ inline event_type operator&(event_type a, event_type b)
 {
   return static_cast<event_type>(static_cast<unsigned int>(a) & static_cast<unsigned int>(b));
 }
+inline event_type operator~ (event_type a)
+{
+  return (event_type)~(int)a;
+}
 
+inline event_type operator^ (event_type a, event_type b)
+{
+  return (event_type)((int)a ^ (int)b);
+}
+inline event_type& operator|= (event_type& a, event_type b)
+{
+  return (event_type&)((int&)a |= (int)b);
+}
+
+inline event_type& operator&= (event_type& a, event_type b)
+{
+  return (event_type&)((int&)a &= (int)b);
+}
+
+inline event_type& operator^= (event_type& a, event_type b)
+{
+  return (event_type&)((int&)a ^= (int)b);
+}
 /**
  * Checks if a specific event_type is set in
  * a given event type mask. If type is set

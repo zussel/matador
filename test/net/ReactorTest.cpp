@@ -61,9 +61,10 @@ public:
     reactor_thread_ = std::thread([this] {
       reactor_.run();
       // sleep for some seconds to ensure valid thread join
-      std::this_thread::sleep_for(std::chrono::seconds (2));
+      std::this_thread::sleep_for(std::chrono::seconds (1));
     });
   }
+
   void stop()
   {
     reactor_.shutdown();
@@ -84,6 +85,7 @@ ReactorTest::ReactorTest()
 {
   add_test("event_types", [this] { test_event_types(); }, "event types test");
   add_test("fdsets", [this] { test_fdset(); }, "reactor fdsets test");
+  add_test("handler", [this] { test_handler(); }, "reactor handler test");
   add_test("connector", [this] { test_connector(); }, "connector test");
   add_test("shutdown", [this] { test_shutdown(); }, "reactor shutdown test");
   add_test("reactor_acceptor", [this] { test_reactor_acceptor(); }, "reactor acceptor send and receive test");
@@ -109,10 +111,36 @@ void ReactorTest::test_fdset()
   UNIT_ASSERT_EQUAL(0, fds.maxp1());
 }
 
+void ReactorTest::test_handler()
+{
+  reactor r;
+
+  auto h = std::make_shared<EchoServer>();
+
+  r.register_handler(h, event_type::ALL_MASK);
+
+  auto it = r.find_handler_type(h);
+  UNIT_ASSERT_NOT_NULL(it->first.get());
+
+  UNIT_ASSERT_TRUE(is_event_type_set(it->second, event_type::READ_MASK));
+  UNIT_ASSERT_TRUE(is_event_type_set(it->second, event_type::WRITE_MASK));
+  UNIT_ASSERT_TRUE(is_event_type_set(it->second, event_type::ACCEPT_MASK));
+  UNIT_ASSERT_TRUE(is_event_type_set(it->second, event_type::EXCEPT_MASK));
+
+  r.deactivate_handler(h, event_type::READ_MASK);
+
+  UNIT_ASSERT_FALSE(is_event_type_set(it->second, event_type::READ_MASK));
+
+  r.activate_handler(h, event_type::READ_MASK);
+
+  UNIT_ASSERT_TRUE(is_event_type_set(it->second, event_type::READ_MASK));
+}
+
 void ReactorTest::test_connector()
 {
   connector c;
 
+  UNIT_ASSERT_EQUAL("connector", c.name());
   UNIT_ASSERT_EQUAL(0, c.handle());
 
   c.open();
@@ -126,6 +154,9 @@ void ReactorTest::test_connector()
 
 void ReactorTest::test_shutdown()
 {
+//  matador::default_min_log_level(log_level::LVL_DEBUG);
+//  matador::add_log_sink(matador::create_stdout_sink());
+
   auto ep = tcp::peer(address::v4::any(), 7777);
   auto ac = std::make_shared<acceptor>(ep, [](tcp::socket sock, tcp::peer p, acceptor *) {
     auto cl = std::make_shared<EchoServer>();
@@ -150,8 +181,9 @@ void ReactorTest::test_shutdown()
 
 void ReactorTest::test_reactor_acceptor()
 {
-  //matador::default_min_log_level(log_level::LVL_DEBUG);
-  //matador::add_log_sink(matador::create_stdout_sink());
+//  matador::default_min_log_level(log_level::LVL_DEBUG);
+//  matador::add_log_sink(matador::create_stdout_sink());
+//  matador::add_log_sink(matador::create_file_sink("reactor.log"));
     
   auto echo_conn = std::make_shared<EchoServer>();
 
@@ -160,6 +192,8 @@ void ReactorTest::test_reactor_acceptor()
     echo_conn->init(std::move(sock), std::move(p));
     return echo_conn;
   });
+
+  UNIT_ASSERT_EQUAL( "acceptor", ac->name() );
 
   ReactorThreadWrapper wrapper;
 
@@ -174,7 +208,7 @@ void ReactorTest::test_reactor_acceptor()
   // send and verify received data
   tcp::socket client;
 
-  int ret = client.open(tcp::v4());
+  auto ret = client.open(tcp::v4());
   UNIT_ASSERT_FALSE(ret < 0);
   auto srv = tcp::peer(address::v4::loopback(), 7779);
   ret = client.connect(srv);
@@ -195,6 +229,9 @@ void ReactorTest::test_reactor_acceptor()
 
 void ReactorTest::test_reactor_connector()
 {
+//  matador::default_min_log_level(log_level::LVL_DEBUG);
+//  matador::add_log_sink(matador::create_stdout_sink());
+
   // setup acceptor
   tcp::acceptor acceptor;
 
@@ -238,7 +275,7 @@ void ReactorTest::test_reactor_connector()
   UNIT_ASSERT_EQUAL(5UL, len);
   data.clear();
 
-  std::this_thread::sleep_for(std::chrono::seconds (1));
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
   len = remote.receive(data);
   UNIT_ASSERT_EQUAL(5UL, len);

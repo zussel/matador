@@ -47,8 +47,8 @@ void stream_handler::on_input()
     on_read_((int)len, len);
     on_close();
   } else {
+    log_.debug("%s: received %d bytes (data: %s)", name().c_str(), len, read_buffer_.data());
     read_buffer_.bump(len);
-    log_.debug("%s: received %d bytes", name().c_str(), len);
     is_ready_to_read_ = false;
     on_read_(0, len);
   }
@@ -93,6 +93,7 @@ void stream_handler::on_close()
 {
   log_.debug("%s: closing connection", name().c_str(), handle());
   stream_.close();
+  creator_->notify_close( this );
   auto self = shared_from_this();
   get_reactor()->mark_handler_for_delete(self);
   get_reactor()->unregister_handler(self, event_type::READ_WRITE_MASK);
@@ -105,6 +106,7 @@ void stream_handler::close()
   }
   log_.debug("%s: closing connection", name().c_str(), handle());
   stream_.close();
+  creator_->notify_close( this );
 }
 
 bool stream_handler::is_ready_write() const
@@ -122,6 +124,7 @@ void stream_handler::read(const buffer_view &buf, t_read_handler read_handler)
   on_read_ = std::move(read_handler);
   read_buffer_ = buf;
   is_ready_to_read_ = true;
+  get_reactor()->interrupt();
 }
 
 void stream_handler::write(std::list<buffer_view> &buffers, io_stream::t_write_handler write_handler)
@@ -129,6 +132,7 @@ void stream_handler::write(std::list<buffer_view> &buffers, io_stream::t_write_h
   on_write_ = std::move(write_handler);
   write_buffers_ = std::move(buffers);
   is_ready_to_write_ = true;
+  get_reactor()->interrupt();
 }
 
 void stream_handler::close_stream()

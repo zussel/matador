@@ -3,13 +3,15 @@
 #include "matador/logger/log_manager.hpp"
 
 #include "matador/net/io_stream.hpp"
+#include "matador/net/io_service.hpp"
 
 namespace matador {
 namespace http {
 
-http_client_connection::http_client_connection(request req, response &resp, io_stream &stream, matador::tcp::peer endpoint)
+http_client_connection::http_client_connection(request req, response &resp, io_stream &stream, io_service &service, matador::tcp::peer endpoint)
   : log_(matador::create_logger("HttpClientConnection"))
   , stream_(stream)
+  , service_(service)
   , endpoint_(std::move(endpoint))
   , request_(std::move(req))
   , response_(resp)
@@ -36,10 +38,12 @@ void http_client_connection::read()
 
         parser_.reset();
         stream_.close_stream();
+        service_.shutdown();
       } else if (result == response_parser::INVALID){
         log_.debug("invalid response; closing stream");
         response_ = response::bad_request();
         stream_.close_stream();
+        service_.shutdown();
       } else {
         // not all data read
         log_.debug("not all data was read; continue reading");
@@ -48,6 +52,7 @@ void http_client_connection::read()
     } else {
       log_.error("error on reading response: %d", ec);
       stream_.close_stream();
+      service_.shutdown();
     }
   });
 }
@@ -64,6 +69,7 @@ void http_client_connection::write()
     } else {
       log_.error("error on writing request: %d", ec);
       stream_.close_stream();
+      service_.shutdown();
     }
   });
 }

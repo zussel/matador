@@ -1,7 +1,6 @@
 #include "JwtTest.hpp"
 
 #include "matador/json/json_mapper.hpp"
-#include "matador/json/json_serializer.hpp"
 
 #include "matador/http/auth/jwt_token.hpp"
 
@@ -32,4 +31,10 @@ void JwtTest::test_jwt_token()
   result = mapper.to_string(p);
 
   UNIT_ASSERT_EQUAL(R"({"iss": "www.example.com","sub": "123456789","name": "John Doe"})", result);
+
+  auto parsed_jwt_payload = mapper.to_object<jwt_payload>( result );
+
+  UNIT_ASSERT_EQUAL( p.issuer, parsed_jwt_payload.issuer );
+  UNIT_ASSERT_EQUAL( p.subject, parsed_jwt_payload.subject );
+  UNIT_ASSERT_EQUAL( p.name, parsed_jwt_payload.name );
 }

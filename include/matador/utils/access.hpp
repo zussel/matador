@@ -1,7 +1,3 @@
-//
-// Created by sascha on 11/25/15.
-//
-
 #ifndef OOS_ACCESS_HPP
 #define OOS_ACCESS_HPP
 

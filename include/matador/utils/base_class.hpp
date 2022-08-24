@@ -1,7 +1,3 @@
-//
-// Created by sascha on 12/2/15.
-//
-
 #ifndef BASE_CLASS_HPP
 #define BASE_CLASS_HPP
 

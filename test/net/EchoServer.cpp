@@ -37,6 +37,7 @@ void EchoServer::on_input()
   } else {
     log_.info("received %d bytes", len);
     message_.size(len);
+    get_reactor()->interrupt();
   }
 }
 

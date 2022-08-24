@@ -1,7 +1,6 @@
 #ifndef MATADOR_STREAM_PROCESSOR_HPP
 #define MATADOR_STREAM_PROCESSOR_HPP
 
-#include "matador/utils/memory.hpp"
 #include "matador/utils/stream.hpp"
 
 #include <memory>

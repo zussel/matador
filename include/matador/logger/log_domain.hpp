@@ -20,6 +20,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <mutex>
 
 namespace matador {
 
@@ -120,6 +121,8 @@ private:
   std::list<sink_ptr> sinks;
 
   log_level_range log_level_range_;
+
+  std::mutex mutex_;
 };
 
 }
