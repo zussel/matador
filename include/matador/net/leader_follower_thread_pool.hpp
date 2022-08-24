@@ -46,6 +46,8 @@ public:
 
   std::size_t num_follower() const;
 
+  bool is_running() const;
+
 private:
   /*
    * wait for a task to execute
@@ -72,7 +74,7 @@ private:
   bool signal_ready_ = false;
   bool signal_shutdown_ = false;
 
-  bool is_running_ = true;
+  bool is_running_ = false;
 
   matador::logger log_;
 

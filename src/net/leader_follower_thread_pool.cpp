@@ -58,7 +58,7 @@ void leader_follower_thread_pool::shutdown()
     condition_synchronizer_.notify_all();
   }
 
-  std::for_each(threads_.begin(), threads_.end(), [this](thread_vector_t::reference item) {
+  std::for_each(threads_.begin(), threads_.end(), [](thread_vector_t::reference item) {
     if (item->joinable()) {
       item->join();
     }
@@ -72,6 +72,11 @@ std::thread::id leader_follower_thread_pool::leader() {
 
 std::size_t leader_follower_thread_pool::num_follower() const {
   return follower_;
+}
+
+bool leader_follower_thread_pool::is_running() const
+{
+  return is_running_;
 }
 
 void leader_follower_thread_pool::execute() {
