@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef TEST_SUITE_HPP
 #define TEST_SUITE_HPP
 
@@ -31,11 +14,12 @@
   #define OOS_UNIT_API
 #endif
 
+#include "matador/unit/unit_test.hpp"
+
 #include <memory>
 #include <map>
 #include <string>
 #include <vector>
-#include "unit_test.hpp"
 
 /**
  * @namespace matador
@@ -156,7 +140,7 @@ private:
   typedef std::map<std::string, unit_test_ptr> t_unit_test_map;
   typedef t_unit_test_map::value_type value_type;
 
-  struct unit_executer : public std::unary_function<unit_test_ptr, void>
+  struct unit_executer
   {
     unit_executer(summary &s, bool q);
     void operator()(test_suite::value_type &x);
@@ -166,7 +150,7 @@ private:
     summary &summary_;
   };
 
-  struct unit_lister : public std::unary_function<unit_test_ptr, void>
+  struct unit_lister
   {
     explicit unit_lister(std::ostream &o, bool b = false);
     void operator()(const test_suite::value_type &x) const;

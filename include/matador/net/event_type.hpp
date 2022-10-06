@@ -46,25 +46,65 @@ inline event_type operator&(event_type a, event_type b)
 {
   return static_cast<event_type>(static_cast<unsigned int>(a) & static_cast<unsigned int>(b));
 }
+
+/**
+ * event_type not operator
+ *
+ * @param a Left event_type
+ * @return The combined result
+ */
 inline event_type operator~ (event_type a)
 {
   return (event_type)~(int)a;
 }
 
+/**
+ * event_type operator to concat to event types
+ * with xor operator
+ *
+ * @param a Left event_type
+ * @param b Right event_type
+ * @return The combined result
+ */
 inline event_type operator^ (event_type a, event_type b)
 {
   return (event_type)((int)a ^ (int)b);
 }
+
+/**
+ * event_type operator to assign event type
+ * with or operator
+ *
+ * @param a Left event_type
+ * @param b Right event_type
+ * @return The combined result
+ */
 inline event_type& operator|= (event_type& a, event_type b)
 {
   return (event_type&)((int&)a |= (int)b);
 }
 
+/**
+ * event_type operator to assign event type
+ * with and operator
+ *
+ * @param a Left event_type
+ * @param b Right event_type
+ * @return The combined result
+ */
 inline event_type& operator&= (event_type& a, event_type b)
 {
   return (event_type&)((int&)a &= (int)b);
 }
 
+/**
+ * event_type operator to assign event type
+ * with xor operator
+ *
+ * @param a Left event_type
+ * @param b Right event_type
+ * @return The combined result
+ */
 inline event_type& operator^= (event_type& a, event_type b)
 {
   return (event_type&)((int&)a ^= (int)b);

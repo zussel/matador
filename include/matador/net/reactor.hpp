@@ -103,6 +103,9 @@ public:
    */
   void run();
 
+  /**
+   * Handle events.
+   */
   void handle_events();
 
   /**
@@ -135,15 +138,44 @@ public:
    */
   void mark_handler_for_delete(const std::shared_ptr<handler>& h);
 
+  /**
+   * Activates the given handler for given
+   * event type.
+   *
+   * @param h Handler to be used for activation
+   * @param ev Event type to be activated
+   */
   void activate_handler(const handler_ptr &h, event_type ev);
+
+  /**
+   * Deactivates the given handler for given
+   * event type.
+   *
+   * @param h Handler to be used for deactivation
+   * @param ev Event type to be deactivated
+   */
   void deactivate_handler(const handler_ptr &h, event_type ev);
 
+  /**
+   * Shortcut for handler event type pair
+   */
   using t_handler_type = std::pair<handler_ptr, event_type>;
+  /**
+   * Shortcut for handler type list
+   */
   using t_handler_list = std::list<t_handler_type>;
 
+  /**
+   * Finds a handler type pair for the given handler.
+   *
+   * @param h Handler key to be searched for
+   * @return The found pair or end iterator
+   */
   t_handler_list::iterator find_handler_type(const handler_ptr &h);
 
-//private:
+  /**
+   * Interrupts the reactor.
+   */
   void interrupt();
 
 private:

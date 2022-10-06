@@ -64,7 +64,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
+  void serialize(const char *id, V &, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
     result_[id] = json::object();
   }

@@ -123,6 +123,12 @@ public:
    */
   bool is_ready_read() const override;
 
+  /**
+   * Notifies the connector that
+   * this handler was closed.
+   *
+   * @param hndlr Closed handler.
+   */
   void notify_close(handler *hndlr) override;
 
   std::string name() const override;

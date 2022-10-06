@@ -13,6 +13,11 @@
 
 namespace matador {
 
+/**
+ * Simple thread pool class. The pool
+ * consists of a given number of threads and
+ * a queue of tasks to be executed.
+ */
 class OOS_UTILS_API thread_pool
 {
 private:
@@ -20,13 +25,21 @@ private:
   thread_pool& operator=(const thread_pool&);
 
 public:
+  /**
+   * Creating a new thread pool with given
+   * numbers of threads.
+   *
+   * @param size Number of provided threads.
+   */
   explicit thread_pool(std::size_t size);
   ~thread_pool();
 
   /**
    * Push a task into the thread pool
-   * to be executed once a thread
-   * is available
+   * to be executed once a thread is available
+   *
+   * @tparam F Type of threaded function
+   * @param func Function to be executed in next available thread.
    */
   template < typename F >
   void schedule(F func) {
@@ -35,13 +48,33 @@ public:
     condition_task_.notify_one();
   }
 
+  /**
+   * Adds a new task to the thread queue.
+   */
   void add_task();
 
+  /**
+   * Returns the number of available threads.
+   *
+   * @return Number of threads.
+   */
   std::size_t size() const;
 
+  /**
+   * Shuts the thread pool down.
+   */
   void shutdown();
+
+  /**
+   * Waits until all threads are finished.
+   */
   void wait();
 
+  /**
+   * Returns the number of pending tasks.
+   *
+   * @return Number of pending tasks.
+   */
   std::size_t pending();
 
 private:

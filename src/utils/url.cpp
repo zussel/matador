@@ -2,44 +2,45 @@
 #include "matador/utils/stream.hpp"
 
 namespace matador {
+namespace url {
 
-std::unordered_map<char, const char *> url::char_to_enc_map_({ /* NOLINT */
-  { ' ', "%20" },
-  { '!', "%21" },
-  { '"', "%22" },
-  { '#', "%23" },
-  { '$', "%24" },
-  { '%', "%25" },
-  { '&', "%26" },
-  { '\'', "%27" },
-  { '(', "%28" },
-  { ')', "%29" },
-  { '*', "%2A" },
-  { '+', "%2B" },
-  { ',', "%2C" },
-  { '-', "%2D" },
-  { '.', "%2E" },
-  { '/', "%2F" },
-  { ':', "%3A" },
-  { ';', "%3B" },
-  { '<', "%3C" },
-  { '=', "%3D" },
-  { '>', "%3E" },
-  { '?', "%3F" },
-  { '@', "%40" },
-  { '[', "%5B" },
-  { '\\', "%5C" },
-  { ']', "%5D" },
-  { '{', "%7B" },
-  { '|', "%7C" },
-  { '}', "%7D" },
-});
+static std::unordered_map<char, const char *> char_to_enc_map_({ /* NOLINT */
+                                                               {' ',  "%20"},
+                                                               {'!',  "%21"},
+                                                               {'"',  "%22"},
+                                                               {'#',  "%23"},
+                                                               {'$',  "%24"},
+                                                               {'%',  "%25"},
+                                                               {'&',  "%26"},
+                                                               {'\'', "%27"},
+                                                               {'(',  "%28"},
+                                                               {')',  "%29"},
+                                                               {'*',  "%2A"},
+                                                               {'+',  "%2B"},
+                                                               {',',  "%2C"},
+                                                               {'-',  "%2D"},
+                                                               {'.',  "%2E"},
+                                                               {'/',  "%2F"},
+                                                               {':',  "%3A"},
+                                                               {';',  "%3B"},
+                                                               {'<',  "%3C"},
+                                                               {'=',  "%3D"},
+                                                               {'>',  "%3E"},
+                                                               {'?',  "%3F"},
+                                                               {'@',  "%40"},
+                                                               {'[',  "%5B"},
+                                                               {'\\', "%5C"},
+                                                               {']',  "%5D"},
+                                                               {'{',  "%7B"},
+                                                               {'|',  "%7C"},
+                                                               {'}',  "%7D"},
+                                                               });
 
-std::string url::encode(const std::string &str)
+std::string encode(const std::string &str)
 {
   std::string result;
   // replace special characters with html characters
-  for (char i : str) {
+  for (char i: str) {
     auto c = char_to_enc_map_.find(i);
     if (c == char_to_enc_map_.end()) {
       result += i;
@@ -50,7 +51,7 @@ std::string url::encode(const std::string &str)
   return result;
 }
 
-bool url::decode(const std::string &str, std::string &decoded)
+bool decode(const std::string &str, std::string &decoded)
 {
   decoded.clear();
   // replace html
@@ -72,5 +73,7 @@ bool url::decode(const std::string &str, std::string &decoded)
     }
   }
   return true;
+}
+
 }
 }

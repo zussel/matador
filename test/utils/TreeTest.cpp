@@ -1,10 +1,9 @@
-#include "matador/utils/tree.hpp"
 #include "TreeTest.hpp"
 
+#include "matador/utils/tree.hpp"
 
 #include <string>
 #include <list>
-#include <iostream>
 #include <algorithm>
 #include <utility>
 
@@ -15,7 +14,8 @@ typedef tree<string> t_stringtree;
 typedef list<string> t_stringlist;
 
 template <typename T>
-class equal_node_name : public unary_function<T, bool> {
+class equal_node_name
+{
 public:
     explicit equal_node_name(T n = "") : name_(std::move(n)) {}
     bool operator() (const T& x) const {
@@ -26,7 +26,8 @@ private:
 };
 
 template < typename T >
-struct greater_name : public binary_function<typename tree<T>::t_node, typename tree<T>::t_node, bool> {
+struct greater_name
+{
 public:
   bool operator()(const typename tree<T>::t_node &a, const typename tree<T>::t_node &b) const {
     return (a.data > b.data);

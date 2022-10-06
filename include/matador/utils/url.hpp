@@ -7,16 +7,30 @@
 #include <unordered_map>
 
 namespace matador {
+namespace url {
 
-class OOS_UTILS_API url
-{
-public:
-  static std::string encode(const std::string &str);
-  static bool decode(const std::string &str, std::string &decoded);
+/**
+ * URL encodes a given string and returns the
+ * encoded string.
+ *
+ * @param str String to be URL encoded.
+ * @return The URL encoded string.
+ */
+std::string encode(const std::string &str);
 
-private:
-  static std::unordered_map<char, const char *> char_to_enc_map_;
-};
+/**
+ * URL decodes the given string and writes
+ * the result into the given string reference.
+ * If string could be decoded successfully true
+ * is returned.
+ *
+ * @param str String to be URL decoded.
+ * @param decoded The decoded string
+ * @return True on successfully decoding
+ */
+bool decode(const std::string &str, std::string &decoded);
 
 }
+}
+
 #endif //MATADOR_URL_HPP

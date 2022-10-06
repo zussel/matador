@@ -105,7 +105,7 @@ template<typename AcceptCallback>
 void io_service::accept(const std::shared_ptr<acceptor>& ac, AcceptCallback accept_callback)
 {
   log_.info("registering acceptor for %s", ac->endpoint().to_string().c_str());
-  ac->accecpt([accept_callback, this](tcp::socket sock, tcp::peer p, acceptor *accptr) {
+  ac->accecpt([accept_callback](tcp::socket sock, tcp::peer p, acceptor *accptr) {
     return std::make_shared<stream_handler>(sock, p, accptr, accept_callback);
   });
 
@@ -118,7 +118,7 @@ void io_service::connect(const std::shared_ptr<connector> &co, const std::string
   log_.info("registering connector for localhost:%s", port.c_str());
   tcp::resolver resolver;
   auto endpoints = resolver.resolve("localhost", port);
-  co->connect(reactor_, endpoints, [connect_callback, this](const tcp::socket& sock, const tcp::peer &p, connector *cnnctr) {
+  co->connect(reactor_, endpoints, [connect_callback](const tcp::socket& sock, const tcp::peer &p, connector *cnnctr) {
     return std::make_shared<stream_handler>(sock, p, cnnctr, connect_callback);
   });
 }

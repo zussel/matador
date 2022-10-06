@@ -138,10 +138,37 @@ public:
    */
   template < class T >
   std::unique_ptr<T> to_object(const std::string &str);
+
+  /**
+   * Convert a json string into a new object
+   * wrapped into a unique_ptr
+   *
+   * @tparam T Type of the object to create
+   * @param str Json string to convert
+   * @return
+   */
   template < class T >
   std::unique_ptr<T> to_object(const char *str);
+
+  /**
+   * Convert a json array string into a new array of
+   * objects wrapped into a unique_ptr
+   *
+   * @tparam T Type of the object to create
+   * @param str Json string to convert
+   * @return Array of created objects
+   */
   template < class T >
   std::vector<std::shared_ptr<T>> to_objects(const std::string &str);
+
+  /**
+   * Convert a json array string into a new array of
+   * objects wrapped into a unique_ptr
+   *
+   * @tparam T Type of the object to create
+   * @param str Json string to convert
+   * @return Array of created objects
+   */
   template < class T >
   std::vector<std::shared_ptr<T>> to_objects(const char *str);
 

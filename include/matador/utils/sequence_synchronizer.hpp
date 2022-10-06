@@ -11,6 +11,8 @@ namespace matador {
 class identifiable_holder;
 class abstract_has_many;
 
+/// @cond MATADOR_DEV
+
 class OOS_UTILS_API sequence_synchronizer : public serializer
 {
 public:
@@ -59,6 +61,8 @@ private:
   sequencer &seq_;
 
 };
+
+/// @endcond
 
 }
 

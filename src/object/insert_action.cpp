@@ -1,7 +1,3 @@
-//
-// Created by sascha on 12.03.16.
-//
-
 #include "matador/object/insert_action.hpp"
 #include "matador/object/action_visitor.hpp"
 #include "matador/object/object_proxy.hpp"
@@ -46,7 +42,7 @@ bool insert_action::empty() const
   return object_proxy_list_.empty();
 }
 
-struct object_by_id : public std::unary_function<unsigned long, bool>
+struct object_by_id
 {
   object_by_id(unsigned long id)
     : id_(id)

@@ -16,6 +16,10 @@
 
 namespace matador {
 
+/**
+ * This thread pool class implements the
+ * leader follower pattern.
+ */
 class OOS_NET_API leader_follower_thread_pool
 {
 private:
@@ -24,6 +28,15 @@ private:
   leader_follower_thread_pool &operator=(const leader_follower_thread_pool &);
 
 public:
+  /**
+   * Creates a new leader follower thread pool instance
+   * with the given thread pool size and given join
+   * function.
+   *
+   * @tparam F Type of join function
+   * @param size Number of threads
+   * @param join_func Join function.
+   */
   template<typename F>
   leader_follower_thread_pool(std::size_t size, F join_func)
     : num_threads_(size), join_(join_func)
@@ -32,20 +45,54 @@ public:
 
   ~leader_follower_thread_pool();
 
+  /**
+   * Starts the thread pool.
+   */
   void start();
 
+  /**
+   * Stops the thread pool.
+   */
   void stop();
 
+  /**
+   * Promotes the next new leading thread.
+   */
   void promote_new_leader();
 
+  /**
+   * Returns number of threads.
+   *
+   * @return Number of threads.
+   */
   std::size_t size() const;
 
+  /**
+   * Shuts the thread pool down.
+   */
   void shutdown();
 
+  /**
+   * Returns the thread id of the current
+   * leading thread.
+   *
+   * @return Thread id of the leading thread.
+   */
   std::thread::id leader();
 
+  /**
+   * Returns the current number of
+   * thread followers.
+   *
+   * @return Number of follower threads.
+   */
   std::size_t num_follower() const;
 
+  /**
+   * Returns true if the thread pool is running.
+   *
+   * @return True if thread pool is running.
+   */
   bool is_running() const;
 
 private:

@@ -34,7 +34,7 @@ public:
 #if _WIN32
   typedef SOCKET socket_type;
 #else
-  typedef int socket_type;
+  typedef int socket_type; /**< Shortcut for socket type */
 #endif
   /**
    * Creates a socket for a specific given

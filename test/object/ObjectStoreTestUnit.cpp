@@ -9,6 +9,7 @@
 #include "matador/utils/algorithm.hpp"
 
 #include "version.hpp"
+
 #include <iostream>
 
 using namespace matador;
@@ -90,7 +91,7 @@ void ObjectStoreTestUnit::finalize()
   ostore_.clear(true);
 }
 
-struct item_counter : public std::unary_function<const object_ptr<ObjectItem<datatypes> >&, void>
+struct item_counter
 {
   explicit item_counter(int &c) : count(c) {}
   
