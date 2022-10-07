@@ -145,7 +145,7 @@ void HttpServerTest::test_post()
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
   UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
 
-  std::this_thread::sleep_for(std::chrono::seconds (1));
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
   wrapper.stop();
 
@@ -175,7 +175,7 @@ void HttpServerTest::test_put()
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
   UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
 
-  std::this_thread::sleep_for(std::chrono::seconds (1));
+  std::this_thread::sleep_for(std::chrono::milliseconds (400));
 
   wrapper.stop();
 
@@ -205,7 +205,7 @@ void HttpServerTest::test_delete()
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
   UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
 
-  std::this_thread::sleep_for(std::chrono::seconds (1));
+  std::this_thread::sleep_for(std::chrono::milliseconds (400));
 
   wrapper.stop();
 
