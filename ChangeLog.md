@@ -1,3 +1,33 @@
+## matador 0.8.1 "Aeronian"
+
+Refactor reactor to process incoming request in a multithreading way. [#130](https://github.com/zussel/matador/issues/130)
+The implemented pattern is the leader follower pattern.
+
+Look [here](https://en.wikipedia.org/wiki/Aeronian) to find out what Aeronian is.
+
+## matador 0.8.0 "Rhuddanian"
+
+This release comes with a bunch of changes:
+ - A network module implementing the reactor pattern (only single threaded by now)
+ - An HTTP server and client based on the network module
+     - The HTTP server implements the middleware pattern
+     - A template engine not only for the HTTP server
+ - Handle collection with a streaming interface
+ - Better JSON object mapper
+ - And of course bugfixes
+
+Look [here](https://en.wikipedia.org/wiki/Rhuddanian) to find out what Rhuddanian is.
+
+## matador 0.7.0 "Hirnantian"
+
+This release will mainly contain a simple JSON class coming with a json class, a parser and an object mapper and a simple logging mechanism. As usual some bugs will be fixed as well.
+
+- JSON module [#115](https://github.com/zussel/matador/issues/115)
+- Logging module [#121](https://github.com/zussel/matador/issues/121)
+- Bugfix: result::empty() always returned ```false``` [#118](https://github.com/zussel/matador/issues/118)
+
+Look [here](https://en.wikipedia.org/wiki/Hirnantian) to find out what Hirnantian is.
+
 ## matador 0.6.2 "Katian"
 
 This is a bugfix release. The following issues will be addressed
@@ -12,7 +42,7 @@ Look [here](https://en.wikipedia.org/wiki/Katian) to find out what Katian is.
 ## matador 0.6.1 "Sandbian"
 
 This release focused on some bugfixes and enhancements according to the supported
-datatypes. Furthermore the session class is now more intuitive and the documentation
+datatype list. Furthermore, the session class is now more intuitive and the documentation
 was updated.
 
  - Make session class more intuitive [#87](https://github.com/zussel/matador/issues/87)
@@ -31,7 +61,7 @@ Look [here](http://en.wikipedia.org/wiki/Darriwilian) to find out what Darriwili
 
 ## matador 0.5.1 "Dapingian"
 
-This feature solves an issue when deleting objects within a container. Furthermore a lot of CMake issues were solved.
+This feature solves an issue when deleting objects within a container. Furthermore, a lot of CMake issues were solved.
 
 Here are the changes in detail:
 
@@ -47,13 +77,13 @@ Look [here](http://en.wikipedia.org/wiki/Dapingian) to find out what Dapingian i
 
 ## matador 0.5.0 "Floian"
 
-This release features major changes how matador deals with objects/entities. Furthermore
+This release features major changes how matador deals with objects/entities. Furthermore,
 real relationship handling was implemented. And at least the name of the library changed
 from OOS to matador.
 
 Here are the changes in detail:
 
- - No need to derive from a base class anymore. Objects classes can be at least a pod. (#48)
+ - No need to derive from a base class anymore. Object classes can be at least a pod. (#48)
  - Real relationship handling (#74, #45)
  - Stabilize SQL query module (#62, #64, #67, #47, #49)
  - Add time and date class (#12)
@@ -69,7 +99,7 @@ This is a bugfix release consisting of the following fixes:
 
  - Fixed build failure under ubuntu 13.10 (thanx to [TyRoXx](https://github.com/TyRoXx))
  - Replaced exits with throws
- - Removed all debug couts
+ - Removed all debug __couts__
 
 Look [here](http://en.wikipedia.org/wiki/Tremadocian) to find out what _Tremadocian_ is.
 
@@ -80,7 +110,7 @@ of changes:
 
  - Support of MS SQL Server
  - Bugfix in MySQL backend
- - Performance improvment for MySQL backend
+ - Performance improvement for MySQL backend
  
 Look [here](http://en.wikipedia.org/wiki/Furongian) to find out what _Furongian_ is.
 
@@ -88,9 +118,9 @@ Look [here](http://en.wikipedia.org/wiki/Furongian) to find out what _Furongian_
 
 This is the initial release of Open Object Store (oos). oos is an c++ orm framework.
 As a unique feature it comes with a single point storage for all kind of objects
-called object store. Furthermore oos has the following main features:
+called object store. Furthermore, oos has the following main features:
 
- - Encapsulate all SQL related things (datatype mapping, serializationm etc.)
+ - Encapsulate all SQL related things (datatype mapping, serialization etc.)
  - STL like interface
  - Transaction mechanism
  - Internal reference counting mechanism

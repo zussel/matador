@@ -3,7 +3,7 @@ matador
 
 Take your database by the horns.
 
-[![Version 0.8.0](https://badge.fury.io/gh/zussel%2Fmatador.svg)](https://badge.fury.io/gh/zussel%2Fmatador)
+[![Version 0.8.1](https://badge.fury.io/gh/zussel%2Fmatador.svg)](https://badge.fury.io/gh/zussel%2Fmatador)
 [![GPLv3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://raw.githubusercontent.com/zussel/matador/develop/License)
 [![C++14](https://img.shields.io/badge/language-C%2B%2B14-yellow.svg)](https://en.wikipedia.org/wiki/C%2B%2B14)
 
@@ -111,7 +111,7 @@ http::server server(8000);
 server.add_routing_middleware();
 
 // return all persons
-server.on_get("/person", [this](const request &req) {
+server.on_get("/person", [&s](const request &req) {
   auto result = s.select<person>();
   json_object_mapper mapper;
 
