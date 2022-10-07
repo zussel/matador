@@ -216,7 +216,7 @@ bool date::is_daylight_saving(int year, int month, int day)
 #ifdef _WIN32
   int hours{};
   auto error = _get_daylight(&hours);
-  if (error != 0 || hours != 0) {
+  if (error != 0 || hours == 0) {
     return false;
   }
 #else
