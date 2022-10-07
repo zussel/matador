@@ -34,7 +34,7 @@ public:
     reactor_thread_ = std::thread([this] {
       actor_.run();
       // sleep for some seconds to ensure valid thread join
-      std::this_thread::sleep_for(std::chrono::seconds (2));
+      std::this_thread::sleep_for(std::chrono::seconds (3));
     });
   }
   void stop()
@@ -69,6 +69,7 @@ void HttpServerTest::initialize()
 
 void HttpServerTest::finalize()
 {
+  std::this_thread::sleep_for(std::chrono::milliseconds (300));
 }
 
 void HttpServerTest::test_shutdown()
