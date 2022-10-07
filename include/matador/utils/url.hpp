@@ -16,7 +16,7 @@ namespace url {
  * @param str String to be URL encoded.
  * @return The URL encoded string.
  */
-std::string encode(const std::string &str);
+OOS_UTILS_API std::string encode(const std::string &str);
 
 /**
  * URL decodes the given string and writes
@@ -28,7 +28,7 @@ std::string encode(const std::string &str);
  * @param decoded The decoded string
  * @return True on successfully decoding
  */
-bool decode(const std::string &str, std::string &decoded);
+OOS_UTILS_API bool decode(const std::string &str, std::string &decoded);
 
 }
 }

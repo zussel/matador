@@ -75,7 +75,7 @@ void log_domain::log(log_level lvl, const std::string &source, const char *messa
   char buffer[1024];
 
 #ifdef _MSC_VER
-  int ret = sprintf_s(buffer, 1024, "%s [Thread %lu] [%-7s] [%s]: %s\n", timestamp, acquire_thread_index(std::this_thread::get_id()), level_strings[lvl].c_str(), source.c_str(), message);
+  int ret = sprintf_s(buffer, 1024, "%s [Thread %zu] [%-7s] [%s]: %s\n", timestamp, acquire_thread_index(std::this_thread::get_id()), level_strings[lvl].c_str(), source.c_str(), message);
 #else
   int ret = sprintf(buffer, "%s [Thread %lu] [%-7s] [%s]: %s\n", timestamp, acquire_thread_index(std::this_thread::get_id()), level_strings[lvl].c_str(), source.c_str(), message);
 #endif

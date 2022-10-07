@@ -214,7 +214,9 @@ bool date::is_valid_date(int year, int month, int day)
 bool date::is_daylight_saving(int year, int month, int day)
 {
 #ifdef _WIN32
-  if (_daylight == 0) {
+  int hours{};
+  auto error = _get_daylight(&hours);
+  if (error != 0 || hours != 0) {
     return false;
   }
 #else
