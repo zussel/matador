@@ -10,6 +10,7 @@ StreamsTest::StreamsTest()
   : unit_test("streams", "streams test")
 {
   add_test("generate", [this] { test_generate(); }, "streams generate test");
+  add_test("collect_map", [this] { test_collect_map(); }, "streams collect to map test");
   add_test("iterate", [this] { test_iterate(); }, "streams iterate test");
   add_test("min", [this] { test_min(); }, "streams find minimum test");
   add_test("max", [this] { test_max(); }, "streams find maximum test");
@@ -91,6 +92,19 @@ void StreamsTest::test_generate()
 
   UNIT_ASSERT_EQUAL(5UL, result.size());
   UNIT_ASSERT_TRUE(expected_result == result);
+}
+
+void StreamsTest::test_collect_map()
+{
+  auto s = make_stream({ 1, 2, 3, 4 });
+
+  auto result = s.collect<std::map, int, std::string>([](const int &val) { return val; }, [](const int &val) { return std::to_string(val); });
+
+  UNIT_ASSERT_EQUAL(4UL, result.size());
+  UNIT_ASSERT_EQUAL("1", result[1]);
+  UNIT_ASSERT_EQUAL("2", result[2]);
+  UNIT_ASSERT_EQUAL("3", result[3]);
+  UNIT_ASSERT_EQUAL("4", result[4]);
 }
 
 void StreamsTest::test_iterate()

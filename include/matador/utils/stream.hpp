@@ -5,6 +5,7 @@
 #include "matador/utils/stream_processor.hpp"
 
 #include <list>
+#include <functional>
 #include <vector>
 #include <algorithm>
 #include <memory>
@@ -395,6 +396,21 @@ public:
   C<T, Allocator> collect();
 
   /**
+   * The collect method collects all elements into new
+   * associative container of type C. The containers template
+   * parameters are the type Key and Value.
+   *
+   * @tparam C Type of the container
+   * @tparam Key Key type of the associative container
+   * @tparam Value Value type of the associative container
+   * @param keyFunc The function returning the key
+   * @param valueFunc The function returning the value
+   * @return An associative container containing all transformed elements
+   */
+  template < template < class ... > class C, class Key, class Value >
+  C<Key, Value> collect(std::function<Key(const T& value)> &&keyFunc, std::function<Value(const T& value)> &&valueFunc);
+
+  /**
    * Iterates over all stream elements and
    * applies the given predicate to each element.
    *
@@ -647,6 +663,19 @@ C<T, Allocator> collect(stream <T> &s)
   return result;
 }
 
+template<class T, class Key, class Value, template<class ...> class C, class Comparator = std::less<Key>, class Allocator = std::allocator <std::pair<const Key, Value> > >
+C<Key, Value, Comparator, Allocator> collect(stream <T> &s, std::function<Key(const T& value)> &&key_func, std::function<Value(const T& value)> &&value_func)
+{
+  using container_type = C<Key, Value, Comparator, Allocator>;
+  container_type result;
+
+  std::for_each(s.begin(), s.end(), [&result, &key_func, &value_func](T &&val) {
+    result.insert({key_func(val), value_func(val)});
+  });
+
+  return result;
+}
+
 template < class T >
 std::string join(stream<T> &s)
 {
@@ -686,6 +715,13 @@ template<template<class ...> class C, class Allocator>
 C<T, Allocator> stream<T>::collect()
 {
   return matador::collect<T, C>(*this);
+}
+
+template<class T>
+template < template < class ... > class C, class Key, class Value >
+C<Key, Value> stream<T>::collect(std::function<Key(const T& value)> &&key_func, std::function<Value(const T& value)> &&value_func)
+{
+  return matador::collect<T, Key, Value, C>(*this, std::forward<std::function<Key(const T& value)>>(key_func), std::forward<std::function<Value(const T& value)>>(value_func));
 }
 
 template<class T>

@@ -9,6 +9,7 @@ public:
   StreamsTest();
 
   void test_generate();
+  void test_collect_map();
   void test_iterate();
   void test_min();
   void test_max();
