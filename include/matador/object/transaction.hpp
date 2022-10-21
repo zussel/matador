@@ -191,7 +191,6 @@ public:
    * 
    * @tparam T The type of the updated object
    */
-  template < class T >
   void on_update(object_proxy *proxy);
   /**
    * Called when deletion took place.
@@ -271,28 +270,8 @@ void transaction::on_insert(object_proxy *proxy)
       transaction_data_->id_action_index_map_.insert(std::make_pair(proxy->id(), index));
     }
   } else {
-    // ERROR: an serializable with that id already exists
+    // ERROR: a serializable with that id already exists
     throw_object_exception("transaction: an object with id " << proxy->id() << " already exists");
-  }
-}
-
-template < class T >
-void transaction::on_update(object_proxy *proxy)
-{
-  /*****************
-   *
-   * backup updated serializable
-   * on rollback the serializable
-   * is restored to old values
-   *
-   *****************/
-  if (transaction_data_->id_action_index_map_.find(proxy->id()) == transaction_data_->id_action_index_map_.end()) {
-    std::shared_ptr<update_action> ua(new update_action(proxy, (T*)proxy->obj()));
-    backup(ua, proxy);
-  } else {
-    // An object with that id already exists
-    // do nothing because the serializable is already
-    // backed up
   }
 }
 

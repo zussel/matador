@@ -4,6 +4,7 @@
 #include "matador/object/object_store.hpp"
 
 #include <algorithm>
+#include <utility>
 
 namespace matador {
 
@@ -72,13 +73,13 @@ void insert_action::push_back(object_proxy *proxy)
 
 insert_action::iterator insert_action::erase(insert_action::iterator i)
 {
-  return object_proxy_list_.erase(i);
+  return object_proxy_list_.erase(std::move(i));
 }
 
 void insert_action::restore(byte_buffer &, object_store *store)
 {
   // remove objects from object store
-  for (insert_action::iterator i = begin(); i != end(); ++i) {
+  for (auto i = begin(); i != end(); ++i) {
     action::remove_proxy(*i, store);
   }
 }

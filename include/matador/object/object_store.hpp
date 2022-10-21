@@ -809,19 +809,9 @@ public:
    * Marks the given object proxy as modified
    * and notifies all transactions
    * 
-   * @tparam T Object type of the proxy
    * @param proxy The modified object proxy
    */
-  template < class T >
-  void mark_modified(object_proxy *proxy)
-  {
-    // notify observers
-    proxy->node()->on_update_proxy(proxy);
-
-    if (has_transaction()) {
-      transactions_.top().on_update<T>(proxy);
-    }
-  }
+  void mark_modified(object_proxy *proxy);
 
   /**
    * Marks the given object_ptr as modified
@@ -833,7 +823,7 @@ public:
   template < class T >
   void mark_modified(const object_ptr<T> &optr)
   {
-    mark_modified<T>(optr.proxy_);
+    mark_modified(optr.proxy_);
   }
 
   /**

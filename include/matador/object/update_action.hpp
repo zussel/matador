@@ -1,7 +1,3 @@
-//
-// Created by sascha on 12.03.16.
-//
-
 #ifndef OOS_UPDATE_ACTION_HPP
 #define OOS_UPDATE_ACTION_HPP
 
@@ -36,9 +32,9 @@ public:
    * @param o The updated serializable.
    */
   template < class T >
-  update_action(object_proxy *proxy, T *obj)
+  update_action(const char* classname, unsigned long id, object_proxy *proxy, T *obj)
     : proxy_(proxy)
-    , delete_action_(new delete_action(proxy, obj))
+    , delete_action_(new delete_action(classname, id, proxy, obj))
     , backup_func_(&backup_update<T, object_serializer>)
     , restore_func_(&restore_update<T, object_serializer>)
   {}

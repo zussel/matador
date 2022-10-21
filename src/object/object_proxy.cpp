@@ -1,25 +1,15 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "matador/object/object_store.hpp"
+#include "matador/object/update_action.hpp"
 
 using namespace std;
 
 namespace matador {
+
+template<class T>
+update_action* object_proxy::create_update_action_internal(object_proxy *proxy)
+{
+  return new update_action(proxy->classname(), proxy->id(), proxy, static_cast<T*>(proxy->obj));
+}
 
 object_proxy::object_proxy(basic_identifier *pk)
   : primary_key_(pk)
@@ -156,6 +146,11 @@ basic_identifier* object_proxy::pk() const
 void object_proxy::pk(basic_identifier *id)
 {
   primary_key_ = id;
+}
+
+update_action* object_proxy::create_update_action()
+{
+  return create_update_action_func_(this);
 }
 
 transaction object_proxy::current_transaction()

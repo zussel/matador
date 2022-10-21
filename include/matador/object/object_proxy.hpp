@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef OBJECT_PROXY_HPP
 #define OBJECT_PROXY_HPP
 
@@ -38,7 +21,7 @@
 #include <ostream>
 #include <set>
 #include <list>
-
+#include <functional>
 #include <map>
 #include <memory>
 
@@ -49,6 +32,7 @@ class object_holder;
 class prototype_node;
 class basic_identifier;
 class transaction;
+class update_action;
 
 namespace detail {
 class basic_relation_data;
@@ -86,6 +70,7 @@ public:
     : obj_(obj)
     , deleter_(&destroy<T>)
     , namer_(&type_id<T>)
+    , create_update_action_func_(&create_update_action_internal<T>)
     , ostore_(store)
     , node_(node)
     , primary_key_(pk)
@@ -276,7 +261,6 @@ public:
     node_ = nullptr;
     if (obj_ != nullptr && resolve_identifier) {
       primary_key_ = identifier_resolver<T>::resolve(o);
-//      primary_key_.reset(identifier_resolver<T>::create());
     }
   }
 
@@ -349,6 +333,8 @@ public:
 
   void pk(basic_identifier *id);
 
+  update_action* create_update_action();
+
 private:
   transaction current_transaction();
   bool has_transaction() const;
@@ -363,8 +349,10 @@ private:
   friend class object_holder;
   template < class T, object_holder_type OHT > friend class object_pointer;
   friend class detail::basic_relation_data;
-  typedef void (*deleter)(void*);
-  typedef const char* (*namer)();
+  using delete_func = std::function<void(void*)>;
+  using name_func = std::function<const char*()>;
+  using create_update_action_func = std::function<update_action*(object_proxy*)>;
+
 
   template <typename T>
   static void destroy(void* p)
@@ -378,13 +366,17 @@ private:
     return typeid(T).name();
   }
 
+  template<class T>
+  static update_action* create_update_action_internal(object_proxy *proxy);
+
   object_proxy *prev_ = nullptr;      /**< The previous object_proxy in the list. */
   object_proxy *next_ = nullptr;      /**< The next object_proxy in the list. */
 
-  void *obj_ = nullptr;         /**< The concrete object. */
-  deleter deleter_ = nullptr;             /**< The object deleter function */
-  namer namer_ = nullptr;       /**< The object classname function */
-  unsigned long oid = 0;        /**< The id of the concrete or expected object. */
+  void *obj_ = nullptr;                       /**< The concrete object. */
+  delete_func deleter_ = nullptr;             /**< The object deleter function */
+  name_func namer_ = nullptr;                 /**< The object classname function */
+  create_update_action_func create_update_action_func_;  /**< Create update_action function */
+  unsigned long oid = 0;                      /**< The id of the concrete or expected object. */
 
   unsigned long reference_counter_ = 0;
 

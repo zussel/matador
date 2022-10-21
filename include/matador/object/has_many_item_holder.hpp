@@ -1,7 +1,3 @@
-//
-// Created by sascha on 09.05.17.
-//
-
 #ifndef MATADOR_HAS_MANY_ITEM_HOLDER_HPP
 #define MATADOR_HAS_MANY_ITEM_HOLDER_HPP
 

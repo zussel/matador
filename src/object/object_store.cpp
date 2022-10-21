@@ -314,6 +314,16 @@ bool object_store::has_transaction() const
   return !transactions_.empty();
 }
 
+void object_store::mark_modified(object_proxy *proxy)
+{
+  // notify observers
+  proxy->node()->on_update_proxy(proxy);
+
+  if (has_transaction()) {
+    transactions_.top().on_update(proxy);
+  }
+}
+
 void object_store::on_proxy_delete(std::function<void(object_proxy *)> callback)
 {
   on_proxy_delete_ = std::move(callback);

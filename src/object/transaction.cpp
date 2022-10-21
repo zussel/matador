@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/9/16.
-//
-
 #include "matador/object/transaction.hpp"
 #include "matador/object/object_store.hpp"
 
@@ -77,7 +73,7 @@ void transaction::rollback()
      *
      **************/
     while (!transaction_data_->actions_.empty()) {
-      action_iterator i = transaction_data_->actions_.begin();
+      auto i = transaction_data_->actions_.begin();
       action_ptr a = *i;
       transaction_data_->actions_.erase(i);
       restore(a);
@@ -90,6 +86,25 @@ void transaction::rollback()
 
     // clear container
     cleanup();
+  }
+}
+
+void transaction::on_update(object_proxy *proxy)
+{
+  /*****************
+   *
+   * backup updated serializable
+   * on rollback the serializable
+   * is restored to old values
+   *
+   *****************/
+  if (transaction_data_->id_action_index_map_.find(proxy->id()) == transaction_data_->id_action_index_map_.end()) {
+    std::shared_ptr<update_action> ua(proxy->create_update_action());
+    backup(ua, proxy);
+  } else {
+    // An object with that id already exists
+    // do nothing because the serializable is already
+    // backed up
   }
 }
 

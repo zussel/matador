@@ -1,9 +1,3 @@
-#include <utility>
-
-//
-// Created by sascha on 12.03.16.
-//
-
 #ifndef OOS_INSERT_ACTION_HPP
 #define OOS_INSERT_ACTION_HPP
 
@@ -19,8 +13,6 @@
 #else
 #define MATADOR_OBJECT_API
 #endif
-
-#include <algorithm>
 
 #include "matador/object/action.hpp"
 

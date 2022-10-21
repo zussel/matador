@@ -1,7 +1,3 @@
-//
-// Created by sascha on 12.03.16.
-//
-
 #ifndef OOS_DELETE_ACTION_HPP
 #define OOS_DELETE_ACTION_HPP
 
@@ -19,11 +15,10 @@
 #endif
 
 #include "matador/object/action.hpp"
-#include "matador/object/object_proxy.hpp"
 #include "matador/object/prototype_node.hpp"
 
 #include "matador/utils/basic_identifier.hpp"
-#include "abstract_has_many.hpp"
+#include "matador/object/abstract_has_many.hpp"
 
 namespace matador {
 
@@ -45,6 +40,22 @@ private:
   typedef void (*t_backup_func)(byte_buffer&, delete_action*, object_serializer &serializer);
   typedef void (*t_restore_func)(byte_buffer&, delete_action*, object_store*, object_serializer &serializer);
 public:
+  /**
+   * Creates an delete_action.
+   *
+   * @param classname The serializable type name.
+   * @param id The id of the deleted serializable.
+   */
+  template < class T >
+  delete_action(const char* classname, unsigned long id, object_proxy *proxy, T *obj)
+    : classname_(classname)
+    , id_(id)
+    , pk_(identifier_resolver<T>::resolve(obj))
+    , proxy_(proxy)
+    , backup_func_(&backup_delete<T, object_serializer>)
+    , restore_func_(&restore_delete<T, object_serializer>)
+  {}
+
   /**
    * Creates an delete_action.
    *
@@ -92,55 +103,16 @@ public:
 
 private:
   template < class T, class S >
-  static void backup_delete(byte_buffer &buffer, delete_action *act, S &serializer)
-  {
-    T* obj = (T*)(act->proxy()->obj());
-    act->backup_object(obj);
-    serializer.serialize(obj, &buffer);
-  }
+  static void backup_delete(byte_buffer &buffer, delete_action *act, S &serializer);
 
   template < class T, class S >
-  static void restore_delete(byte_buffer &buffer, delete_action *act, object_store *store, S &serializer)
-  {
-    // check if there is an serializable with id in
-    // serializable store
-    object_proxy *proxy = action::find_proxy(store, act->id());
-    if (!proxy) {
-      // create proxy
-      proxy = act->proxy_;
-//      proxy = new object_proxy(new T, act->id(), store);
-      action::insert_proxy(store, proxy);
-    } else {
-      act->mark_deleted();
-    }
-//    object_serializer serializer;
-    if (!proxy->obj()) {
-      // create serializable with id and deserialize
-      T *obj = act->init_object(new T);
-      proxy->reset(obj);
-      // data from buffer into serializable
-      serializer.deserialize(obj, &buffer, store);
-      // restore pk
-      if (act->pk()) {
-        proxy->pk(act->pk()->clone());
-      }
-      // insert serializable
-//      store->insert<T>(proxy, false);
-    } else {
-      // data from buffer into serializable
-      T *obj = act->init_object((T*)proxy->obj());
-      serializer.deserialize(obj, &buffer, store);
-    }
-  }
+  static void restore_delete(byte_buffer &buffer, delete_action *act, object_store *store, S &serializer);
 
   template < class T >
   void backup_object(T *, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0) {}
 
   template < class T >
-  void backup_object(T *, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0)
-  {
-//    owner_identifier_ = obj->owner();
-  }
+  void backup_object(T *, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0) {}
 
   template < class T >
   T* init_object(T *obj, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0)
@@ -151,7 +123,6 @@ private:
   template < class T >
   T* init_object(T *obj, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0)
   {
-//    obj->owner(owner_identifier_);
     return obj;
   }
 
@@ -160,7 +131,6 @@ private:
   unsigned long id_ = 0;
   basic_identifier *pk_ = nullptr;
   object_proxy *proxy_ = nullptr;
-//  basic_identifier* owner_identifier_ = nullptr;
 
   t_backup_func backup_func_;
   t_restore_func restore_func_;

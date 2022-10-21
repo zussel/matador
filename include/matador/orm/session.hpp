@@ -148,7 +148,7 @@ public:
   object_ptr<T> save(const object_ptr<T> &obj)
   {
     if (store().has_transaction()) {
-      store().current_transaction().on_update<T>(obj.proxy_);
+      store().current_transaction().on_update(obj.proxy_);
     } else {
       persistence_.store().mark_modified(obj);
       flush();

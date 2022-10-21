@@ -13,7 +13,7 @@ void object_inserter::insert(object_proxy *proxy, T *o, bool notify)
   proxy_stack_.push(proxy);
 
   modified_marker_ = [](object_store &store, object_proxy *oproxy) {
-    store.mark_modified<T>(oproxy);
+    store.mark_modified(oproxy);
   };
 
   if (proxy->obj()) {
