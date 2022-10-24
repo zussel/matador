@@ -52,7 +52,7 @@ public:
     , id_(id)
     , pk_(identifier_resolver<T>::resolve(obj))
     , proxy_(proxy)
-    , backup_func_(&backup_delete<T, object_serializer>)
+    , backup_func_(&backup_delete)
     , restore_func_(&restore_delete<T, object_serializer>)
   {}
 
@@ -102,29 +102,7 @@ public:
   void mark_deleted();
 
 private:
-  template < class T, class S >
-  static void backup_delete(byte_buffer &buffer, delete_action *act, S &serializer);
-
-  template < class T, class S >
-  static void restore_delete(byte_buffer &buffer, delete_action *act, object_store *store, S &serializer);
-
-  template < class T >
-  void backup_object(T *, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0) {}
-
-  template < class T >
-  void backup_object(T *, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0) {}
-
-  template < class T >
-  T* init_object(T *obj, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0)
-  {
-    return obj;
-  }
-
-  template < class T >
-  T* init_object(T *obj, typename std::enable_if<std::is_base_of<basic_has_many_to_many_item, T>::value>::type* = 0)
-  {
-    return obj;
-  }
+  static void restore_delete(byte_buffer &buffer, delete_action *act, object_store *store, object_serializer &serializer);
 
 private:
   std::string classname_;

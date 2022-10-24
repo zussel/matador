@@ -4,32 +4,25 @@
 
 namespace matador {
 
-template < class T, class S >
-void delete_action::backup_delete(byte_buffer &buffer, delete_action *act, S &serializer)
-{
-  T* obj = (T*)(act->proxy()->obj());
-  act->backup_object(obj);
-  serializer.serialize(obj, &buffer);
-}
-
-template < class T, class S >
-void delete_action::restore_delete(byte_buffer &buffer, delete_action *act, object_store *store, S &serializer)
+void delete_action::restore_delete(byte_buffer &buffer, delete_action *act, object_store *store, object_serializer &serializer)
 {
   // check if there is a serializable with id in
   // serializable store
-  object_proxy *proxy = action::find_proxy(store, act->id());
+  object_proxy *proxy = store->find_proxy(act->id());
+//  object_proxy *proxy = action::find_proxy(store, act->id());
   if (!proxy) {
     // create proxy
     proxy = act->proxy_;
 //      proxy = new object_proxy(new T, act->id(), store);
-    action::insert_proxy(store, proxy);
+    store->insert_proxy(proxy);
+//    action::insert_proxy(store, proxy);
   } else {
     act->mark_deleted();
   }
 //    object_serializer serializer;
   if (!proxy->obj()) {
     // create serializable with id and deserialize
-    proxy->restore_delete(buffer, store);
+    proxy->restore(buffer, store, serializer);
     T *obj = act->init_object(new T);
     proxy->reset(obj);
     // data from buffer into serializable
@@ -80,7 +73,7 @@ object_proxy *delete_action::proxy() const
 
 void delete_action::backup(byte_buffer &buffer)
 {
-  backup_func_(buffer, this, *serializer_);
+  proxy()->backup(buffer, *serializer_);
 }
 
 void delete_action::restore(byte_buffer &buffer, object_store *store)

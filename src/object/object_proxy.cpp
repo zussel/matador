@@ -109,6 +109,14 @@ unsigned long object_proxy::reference_count() const
   return reference_counter_;
 }
 
+void object_proxy::restore(byte_buffer &buffer, object_store *store, object_serializer &serializer)
+{
+  if ( obj_ == nullptr ) {
+    create_object();
+  }
+
+}
+
 void object_proxy::add(object_holder *ptr)
 {
   ptr_set_.insert(ptr);
@@ -153,6 +161,10 @@ update_action* object_proxy::create_update_action()
   return create_update_action_func_(this);
 }
 
+void object_proxy::backup(byte_buffer &buffer, object_serializer &serializer) {
+
+}
+
 transaction object_proxy::current_transaction()
 {
   return ostore_->current_transaction();
@@ -161,6 +173,11 @@ transaction object_proxy::current_transaction()
 bool object_proxy::has_transaction() const
 {
   return ostore_->has_transaction();
+}
+
+void object_proxy::create_object()
+{
+  creator_(this);
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)

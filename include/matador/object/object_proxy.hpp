@@ -33,6 +33,7 @@ class prototype_node;
 class basic_identifier;
 class transaction;
 class update_action;
+class object_serializer;
 
 namespace detail {
 class basic_relation_data;
@@ -69,8 +70,11 @@ public:
   explicit object_proxy(basic_identifier *pk, T *obj, object_store *store, prototype_node *node)
     : obj_(obj)
     , deleter_(&destroy<T>)
+    , creator_(&create<T>)
     , namer_(&type_id<T>)
     , create_update_action_func_(&create_update_action_internal<T>)
+    , restore_func_(&restore_object<T, object_serializer>)
+    , backup_func_(&backup_object<T, object_serializer>)
     , ostore_(store)
     , node_(node)
     , primary_key_(pk)
@@ -88,6 +92,7 @@ public:
   explicit object_proxy(T *o)
     : obj_(o)
     , deleter_(&destroy<T>)
+    , creator_(&create<T>)
     , namer_(&type_id<T>)
   {
     primary_key_ = identifier_resolver<T>::resolve(o);
@@ -107,6 +112,7 @@ public:
   object_proxy(T *o, unsigned long id, object_store *os)
     : obj_(o)
     , deleter_(&destroy<T>)
+    , creator_(&create<T>)
     , namer_(&type_id<T>)
     , oid(id)
     , ostore_(os)
@@ -264,6 +270,7 @@ public:
     }
   }
 
+  void restore(byte_buffer &buffer, object_store *store, object_serializer &serializer);
 
   /**
    * @brief Add an object_holder to the linked list.
@@ -323,11 +330,11 @@ public:
   bool has_identifier() const;
 
   /**
-   * Return the primary key. If underlaying object
+   * Return the primary key. If underlying object
    * doesn't have a primary key, an uninitialized
    * primary key is returned
    *
-   * @return The primary key of the underlaying object
+   * @return The primary key of the underlying object
    */
   basic_identifier* pk() const;
 
@@ -335,9 +342,13 @@ public:
 
   update_action* create_update_action();
 
+  void backup(byte_buffer &buffer, object_serializer &serializer);
+
 private:
   transaction current_transaction();
   bool has_transaction() const;
+
+  void create_object();
 
 private:
   friend class object_store;
@@ -350,14 +361,23 @@ private:
   template < class T, object_holder_type OHT > friend class object_pointer;
   friend class detail::basic_relation_data;
   using delete_func = std::function<void(void*)>;
+  using create_func = std::function<void(object_proxy*)>;
   using name_func = std::function<const char*()>;
   using create_update_action_func = std::function<update_action*(object_proxy*)>;
+  using restore_func = std::function<void(object_proxy*, byte_buffer&, object_store&, object_serializer&)>;
+  using backup_func = std::function<void(object_proxy*, byte_buffer&, object_serializer&)>;
 
 
   template <typename T>
   static void destroy(void* p)
   {
     delete (T*)p;
+  }
+
+  template<typename T>
+  static void create(object_proxy *proxy)
+  {
+    proxy->template reset(new T);
   }
 
   template < class T >
@@ -369,13 +389,30 @@ private:
   template<class T>
   static update_action* create_update_action_internal(object_proxy *proxy);
 
+  template<class T, class Serializer>
+  static void backup_object(object_proxy *proxy, byte_buffer &buffer, Serializer &serializer)
+  {
+    T* obj = proxy->obj<T>();
+    serializer.serialize(obj, &buffer);
+  }
+
+  template<class T>
+  static void restore_object(object_proxy *proxy, byte_buffer&, object_store&, object_serializer&)
+  {
+
+  }
+
   object_proxy *prev_ = nullptr;      /**< The previous object_proxy in the list. */
   object_proxy *next_ = nullptr;      /**< The next object_proxy in the list. */
 
   void *obj_ = nullptr;                       /**< The concrete object. */
   delete_func deleter_ = nullptr;             /**< The object deleter function */
+  create_func creator_ = nullptr;
   name_func namer_ = nullptr;                 /**< The object classname function */
   create_update_action_func create_update_action_func_;  /**< Create update_action function */
+  restore_func restore_func_;
+  backup_func backup_func_;
+
   unsigned long oid = 0;                      /**< The id of the concrete or expected object. */
 
   unsigned long reference_counter_ = 0;
