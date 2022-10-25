@@ -73,7 +73,7 @@ public:
     , creator_(&create<T>)
     , namer_(&type_id<T>)
     , create_update_action_func_(&create_update_action_internal<T>)
-    , restore_func_(&restore_object<T, object_serializer>)
+    , restore_func_(&restore_object)
     , backup_func_(&backup_object<T, object_serializer>)
     , ostore_(store)
     , node_(node)
@@ -286,8 +286,8 @@ public:
   /**
    * @brief Remove an object_holder from the linked list.
    *
-   * Each destroying ore reseting object_holder
-   * containg this object_proxy calls this method.
+   * Each destroying resets object_holder
+   * containing this object_proxy calls this method.
    * So object_proxy knows how many object_holder
    * are dealing with this object.
    *
@@ -344,11 +344,11 @@ public:
 
   void backup(byte_buffer &buffer, object_serializer &serializer);
 
+  void create_object();
+
 private:
   transaction current_transaction();
   bool has_transaction() const;
-
-  void create_object();
 
 private:
   friend class object_store;
@@ -389,18 +389,18 @@ private:
   template<class T>
   static update_action* create_update_action_internal(object_proxy *proxy);
 
-  template<class T, class Serializer>
-  static void backup_object(object_proxy *proxy, byte_buffer &buffer, Serializer &serializer)
-  {
-    T* obj = proxy->obj<T>();
-    serializer.serialize(obj, &buffer);
-  }
-
-  template<class T>
-  static void restore_object(object_proxy *proxy, byte_buffer&, object_store&, object_serializer&)
-  {
-
-  }
+//  template<class T, class Serializer>
+//  static void backup_object(object_proxy *proxy, byte_buffer &buffer, Serializer &serializer)
+//  {
+//    T* obj = proxy->obj<T>();
+//    serializer.serialize(obj, &buffer);
+//  }
+//
+//  template<class T>
+//  static void restore_object(object_proxy *proxy, byte_buffer&, object_store&, object_serializer&)
+//  {
+//
+//  }
 
   object_proxy *prev_ = nullptr;      /**< The previous object_proxy in the list. */
   object_proxy *next_ = nullptr;      /**< The next object_proxy in the list. */

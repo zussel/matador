@@ -80,7 +80,8 @@ void insert_action::restore(byte_buffer &, object_store *store)
 {
   // remove objects from object store
   for (auto i = begin(); i != end(); ++i) {
-    action::remove_proxy(*i, store);
+    store->remove_proxy(*i);
+//    action::remove_proxy(*i, store);
   }
 }
 

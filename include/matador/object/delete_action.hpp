@@ -52,8 +52,8 @@ public:
     , id_(id)
     , pk_(identifier_resolver<T>::resolve(obj))
     , proxy_(proxy)
-    , backup_func_(&backup_delete)
-    , restore_func_(&restore_delete<T, object_serializer>)
+//    , backup_func_(&backup_delete)
+    , restore_func_(&restore_delete)
   {}
 
   /**
@@ -68,8 +68,8 @@ public:
     , id_(proxy->id())
     , pk_(identifier_resolver<T>::resolve(obj))
     , proxy_(proxy)
-    , backup_func_(&backup_delete<T, object_serializer>)
-    , restore_func_(&restore_delete<T, object_serializer>)
+//    , backup_func_(&backup_delete<T, object_serializer>)
+    , restore_func_(&restore_delete)
   {}
 
   ~delete_action() override;

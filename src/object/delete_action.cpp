@@ -9,34 +9,24 @@ void delete_action::restore_delete(byte_buffer &buffer, delete_action *act, obje
   // check if there is a serializable with id in
   // serializable store
   object_proxy *proxy = store->find_proxy(act->id());
-//  object_proxy *proxy = action::find_proxy(store, act->id());
   if (!proxy) {
     // create proxy
     proxy = act->proxy_;
-//      proxy = new object_proxy(new T, act->id(), store);
     store->insert_proxy(proxy);
-//    action::insert_proxy(store, proxy);
   } else {
     act->mark_deleted();
   }
-//    object_serializer serializer;
   if (!proxy->obj()) {
+    proxy->create_object();
     // create serializable with id and deserialize
-    proxy->restore(buffer, store, serializer);
-    T *obj = act->init_object(new T);
-    proxy->reset(obj);
     // data from buffer into serializable
-    serializer.deserialize(obj, &buffer, store);
     // restore pk
     if (act->pk()) {
       proxy->pk(act->pk()->clone());
     }
     // insert serializable
-  } else {
-    // data from buffer into serializable
-    T *obj = act->init_object((T*)proxy->obj());
-    serializer.deserialize(obj, &buffer, store);
   }
+  proxy->restore(buffer, store, serializer);
 }
 
 delete_action::~delete_action()

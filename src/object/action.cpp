@@ -31,19 +31,19 @@ action::~action()
   delete serializer_;
 }
 
-void action::remove_proxy(object_proxy *proxy, object_store *store)
-{
-  store->remove_proxy(proxy);
-}
-
-object_proxy* action::find_proxy(object_store *store, unsigned long id)
-{
-  return store->find_proxy(id);
-}
-
-void action::insert_proxy(object_store *store, object_proxy *proxy)
-{
-  store->insert_proxy(proxy);
-}
+//void action::remove_proxy(object_proxy *proxy, object_store *store)
+//{
+//  store->remove_proxy(proxy);
+//}
+//
+//object_proxy* action::find_proxy(object_store *store, unsigned long id)
+//{
+//  return store->find_proxy(id);
+//}
+//
+//void action::insert_proxy(object_store *store, object_proxy *proxy)
+//{
+//  store->insert_proxy(proxy);
+//}
 
 }
