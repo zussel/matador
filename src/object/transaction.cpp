@@ -67,7 +67,7 @@ void transaction::rollback()
     /**************
      *
      * rollback transaction
-     * restore objects
+     * restore_ objects
      * and finally pop transaction
      * clear insert action map
      *

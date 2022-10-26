@@ -28,7 +28,7 @@ namespace matador {
 
 void object_serializer::serialize(const char *, char *c, size_t s)
 {
-  if (restore) {
+  if (restore_) {
     size_t len = 0;
     buffer_->release(&len, sizeof(len));
     // TODO: check size of buffer
@@ -43,7 +43,7 @@ void object_serializer::serialize(const char *, char *c, size_t s)
 
 void object_serializer::serialize(const char *, std::string &s, size_t)
 {
-  if (restore) {
+  if (restore_) {
     size_t len = 0;
     buffer_->release(&len, sizeof(len));
     char *str = new char[len];
@@ -60,7 +60,7 @@ void object_serializer::serialize(const char *, std::string &s, size_t)
 
 void object_serializer::serialize(const char *, std::string &s)
 {
-  if (restore) {
+  if (restore_) {
     size_t len = 0;
     buffer_->release(&len, sizeof(len));
     char *str = new char[len];
@@ -77,7 +77,7 @@ void object_serializer::serialize(const char *, std::string &s)
 
 void object_serializer::serialize(const char *id, date &x)
 {
-  if (restore) {
+  if (restore_) {
     int julian_date(0);
     buffer_->release(&julian_date, sizeof(julian_date));
     x.set(julian_date);
@@ -89,7 +89,7 @@ void object_serializer::serialize(const char *id, date &x)
 
 void object_serializer::serialize(const char *id, time &x)
 {
-  if (restore) {
+  if (restore_) {
     struct timeval tv{};
     buffer_->release(&tv.tv_sec, sizeof(tv.tv_sec));
     buffer_->release(&tv.tv_usec, sizeof(tv.tv_usec));
@@ -103,7 +103,7 @@ void object_serializer::serialize(const char *id, time &x)
 
 void object_serializer::serialize(const char *, basic_identifier &x)
 {
-  if (restore) {
+  if (restore_) {
     basic_identifier_serializer_.deserialize(x, *buffer_);
   } else {
     basic_identifier_serializer_.serialize(x, *buffer_);
@@ -112,12 +112,12 @@ void object_serializer::serialize(const char *, basic_identifier &x)
 
 object_proxy *object_serializer::find_proxy(unsigned long oid)
 {
-  return ostore_->find_proxy(oid);
+  return store_->find_proxy(oid);
 }
 
 void object_serializer::insert_proxy(object_proxy *proxy)
 {
-  ostore_->insert_proxy(proxy);
+  store_->insert_proxy(proxy);
 }
 
 }

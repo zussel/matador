@@ -20,7 +20,7 @@ void delete_action::restore_delete(byte_buffer &buffer, delete_action *act, obje
     proxy->create_object();
     // create serializable with id and deserialize
     // data from buffer into serializable
-    // restore pk
+    // restore_ pk
     if (act->pk()) {
       proxy->pk(act->pk()->clone());
     }

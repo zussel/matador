@@ -53,38 +53,38 @@ public:
   virtual ~object_serializer() = default;
 
   /**
-   * Serialize the given serializable to the given buffer
+   * Serialize the given object to the given buffer
    *
    * @param o The serializable to serialize.
    * @param buffer The byte_buffer to serialize to.
    * @return True on success.
    */
   template < class T >
-  void serialize(T *o, byte_buffer *buffer)
+  void backup(T *o, byte_buffer *buffer)
   {
-    restore = false;
+    restore_ = false;
     buffer_ = buffer;
     matador::access::serialize(*this, *o);
     buffer_ = nullptr;
   }
 
   /**
-   * Serialize the given serializable to the given buffer
+   * Serialize the given object to the given buffer
    *
-   * @param o The serializable to deserialize.
+   * @param o The object to deserialize.
    * @param buffer The byte_buffer to deserialize from.
    * @param ostore The object_store where the serializable resides.
    * @return True on success.
    */
   template < class T >
-  void deserialize(T *o, byte_buffer *buffer, object_store *ostore)
+  void restore(T *o, byte_buffer *buffer, object_store *store)
   {
-    restore = true;
-    ostore_ = ostore;
+    restore_ = true;
+    store_ = store;
     buffer_ = buffer;
     matador::access::serialize(*this, *o);
     buffer_ = nullptr;
-    ostore_ = nullptr;
+    store_ = nullptr;
   }
 
 public:
@@ -97,7 +97,7 @@ public:
   template < class T >
   void serialize(const char *, T &x)
   {
-    if (restore) {
+    if (restore_) {
       buffer_->release(&x, sizeof(x));
     } else {
       buffer_->append(&x, sizeof(x));
@@ -116,7 +116,7 @@ public:
   template < class V >
   void serialize(const char* id, identifier<V> &x)
   {
-    if (restore) {
+    if (restore_) {
       V val;
       serialize(id, val);
       x.value(val);
@@ -129,7 +129,7 @@ public:
   template < class T, object_holder_type OHT >
 	void serialize(const char* id, object_pointer<T, OHT> &x, cascade_type cascade)
   {
-    if (restore) {
+    if (restore_) {
       /***************
        *
        * extract id and type of serializable from buffer
@@ -145,7 +145,7 @@ public:
       if (oid > 0) {
         object_proxy *oproxy = find_proxy(oid);
         if (!oproxy) {
-          oproxy =  new object_proxy(new T, oid, ostore_);
+          oproxy =  new object_proxy(new T, oid, store_);
           insert_proxy(oproxy);
         }
         x.reset(oproxy, cascade);
@@ -167,7 +167,7 @@ public:
   {
     std::string id_oid(id);
     id_oid += ".oid";
-    if (restore) {
+    if (restore_) {
       typename basic_has_many<T, C>::size_type s = 0;
       // deserialize container size
       serialize(id, s);
@@ -182,7 +182,7 @@ public:
 
 
         // and append them to container
-        object_proxy *proxy = x.relation_info_->acquire_proxy(oid, *ostore_);
+        object_proxy *proxy = x.relation_info_->acquire_proxy(oid, *store_);
         if (proxy) {
           insert_proxy(proxy);
         }
@@ -217,9 +217,9 @@ private:
   void insert_proxy(object_proxy *proxy);
 
 private:
-  object_store *ostore_ = nullptr;
+  object_store *store_ = nullptr;
   byte_buffer *buffer_ = nullptr;
-  bool restore = false;
+  bool restore_ = false;
   basic_identifier_serializer basic_identifier_serializer_;
 };
 /// @endcond

@@ -19,7 +19,7 @@ object_proxy::~object_proxy()
 {
   if (ostore_ && id() > 0) {
     // Todo: callback to object store?
-//    ostore_->delete_proxy(id());
+//    store_->delete_proxy(id());
   }
   if (obj_) {
     deleter_(obj_);
@@ -114,7 +114,7 @@ void object_proxy::restore(byte_buffer &buffer, object_store *store, object_seri
   if ( obj_ == nullptr ) {
     create_object();
   }
-
+  restore_func
 }
 
 void object_proxy::add(object_holder *ptr)
@@ -162,7 +162,7 @@ update_action* object_proxy::create_update_action()
 }
 
 void object_proxy::backup(byte_buffer &buffer, object_serializer &serializer) {
-
+  backup_func_(this, buffer, serializer);
 }
 
 transaction object_proxy::current_transaction()

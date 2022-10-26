@@ -73,7 +73,7 @@ public:
     , creator_(&create<T>)
     , namer_(&type_id<T>)
     , create_update_action_func_(&create_update_action_internal<T>)
-    , restore_func_(&restore_object)
+//    , restore_func_(&restore_object)
     , backup_func_(&backup_object<T, object_serializer>)
     , ostore_(store)
     , node_(node)
@@ -132,10 +132,10 @@ public:
   const char* classname() const;
 
   /**
-   * Return the underlaying object
+   * Return the underlying object
    *
    * @tparam The type of the object
-   * @return The underlaying object
+   * @return The underlying object
    */
   template < typename T = void >
   T* obj()
@@ -144,10 +144,10 @@ public:
   }
 
   /**
-   * Return the underlaying object
+   * Return the underlying object
    *
    * @tparam The type of the object
-   * @return The underlaying object
+   * @return The underlying object
    */
   template < typename T = void >
   const T* obj() const
@@ -156,7 +156,7 @@ public:
   }
 
   /**
-   * Return the underlaying object store
+   * Return the underlying object store
    *
    * @return The object store
    */
@@ -389,18 +389,19 @@ private:
   template<class T>
   static update_action* create_update_action_internal(object_proxy *proxy);
 
-//  template<class T, class Serializer>
-//  static void backup_object(object_proxy *proxy, byte_buffer &buffer, Serializer &serializer)
-//  {
-//    T* obj = proxy->obj<T>();
-//    serializer.serialize(obj, &buffer);
-//  }
-//
-//  template<class T>
-//  static void restore_object(object_proxy *proxy, byte_buffer&, object_store&, object_serializer&)
-//  {
-//
-//  }
+  template<class T, class Serializer>
+  static void backup_object(object_proxy *proxy, byte_buffer &buffer, Serializer &serializer)
+  {
+    T* obj = proxy->obj<T>();
+    serializer.backup(obj, &buffer);
+  }
+
+  template<class T, class Serializer>
+  static void restore_object(object_proxy *proxy, byte_buffer &buffer, object_store &store, Serializer &serializer)
+  {
+    T* obj = proxy->obj<T>();
+    serializer.restore(obj, &buffer, store);
+  }
 
   object_proxy *prev_ = nullptr;      /**< The previous object_proxy in the list. */
   object_proxy *next_ = nullptr;      /**< The next object_proxy in the list. */
@@ -410,7 +411,7 @@ private:
   create_func creator_ = nullptr;
   name_func namer_ = nullptr;                 /**< The object classname function */
   create_update_action_func create_update_action_func_;  /**< Create update_action function */
-  restore_func restore_func_;
+//  restore_func restore_func_;
   backup_func backup_func_;
 
   unsigned long oid = 0;                      /**< The id of the concrete or expected object. */

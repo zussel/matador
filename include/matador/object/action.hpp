@@ -87,7 +87,7 @@ public:
   /**
    * @brief Restores an object from given byte_buffer into given object_store
    *
-   * @param from byte_buffer to restore from
+   * @param from byte_buffer to restore_ from
    * @param store object_store to insert in
    */
   virtual void restore(byte_buffer &from, object_store *store) = 0;
