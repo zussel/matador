@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef OBJECT_PROXY_HPP
 #define OBJECT_PROXY_HPP
 
@@ -83,12 +66,7 @@ public:
 
   template < class T >
   explicit object_proxy(basic_identifier *pk, T *obj, object_store *store, prototype_node *node)
-    : obj_(obj)
-    , deleter_(&destroy<T>)
-    , namer_(&type_id<T>)
-    , ostore_(store)
-    , node_(node)
-    , primary_key_(pk)
+    : object_proxy(pk, obj, 0, store, node)
   {}
 
   /**
@@ -101,12 +79,8 @@ public:
    */
   template < typename T >
   explicit object_proxy(T *o)
-    : obj_(o)
-    , deleter_(&destroy<T>)
-    , namer_(&type_id<T>)
-  {
-    primary_key_ = identifier_resolver<T>::resolve(o);
-  }
+    : object_proxy(identifier_resolver<T>::resolve(o), o, 0, nullptr, nullptr)
+  {}
 
   /**
    * @brief Create an object_proxy for a given object.
@@ -119,17 +93,20 @@ public:
    * @param os The object_store.
    */
   template < typename T >
-  object_proxy(T *o, unsigned long id, object_store *os)
-    : obj_(o)
-    , deleter_(&destroy<T>)
-    , namer_(&type_id<T>)
-    , oid(id)
-    , ostore_(os)
-  {
-    if (obj_ != nullptr) {
-      primary_key_ = identifier_resolver<T>::resolve(o);
-    }
-  }
+  object_proxy(T *o, unsigned long id, object_store *store)
+    : object_proxy(identifier_resolver<T>::resolve(o), o, id, store, nullptr)
+  {}
+
+  template < class T >
+  explicit object_proxy(basic_identifier *pk, T *obj, unsigned long id, object_store *store, prototype_node *node)
+  : obj_(obj)
+  , deleter_(&destroy<T>)
+  , namer_(&type_id<T>)
+  , oid(id)
+  , ostore_(store)
+  , node_(node)
+  , primary_key_(pk)
+  {}
 
   ~object_proxy();
 
@@ -394,7 +371,6 @@ private:
   typedef std::set<object_holder *> ptr_set_t; /**< Shortcut to the object_holder set. */
   ptr_set_t ptr_set_;      /**< This set contains every object_holder pointing to this object_proxy. */
   
-//  std::shared_ptr<basic_identifier> primary_key_ = nullptr;
   basic_identifier *primary_key_ = nullptr;
 };
 /// @endcond
