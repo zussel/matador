@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/9/16.
-//
-
 #include "ObjectTransactionTestUnit.hpp"
 
 #include "../person.hpp"
@@ -14,16 +10,16 @@
 ObjectTransactionTestUnit::ObjectTransactionTestUnit()
   : unit_test("transaction", "transaction unit test")
 {
-  add_test("insert", std::bind(&ObjectTransactionTestUnit::test_insert, this), "test transaction insert");
-  add_test("insert_rollback", std::bind(&ObjectTransactionTestUnit::test_insert_rollback, this), "test transaction insert rollback");
-  add_test("update", std::bind(&ObjectTransactionTestUnit::test_update, this), "test transaction update");
-  add_test("update_rollback", std::bind(&ObjectTransactionTestUnit::test_update_rollback, this), "test transaction update rollback");
-  add_test("delete", std::bind(&ObjectTransactionTestUnit::test_delete, this), "test transaction delete");
-  add_test("delete_rollback", std::bind(&ObjectTransactionTestUnit::test_delete_rollback, this), "test transaction delete rollback");
-  add_test("nested", std::bind(&ObjectTransactionTestUnit::test_nested, this), "test nested transaction");
-  add_test("nested_rollback", std::bind(&ObjectTransactionTestUnit::test_nested_rollback, this), "test nested transaction rollback");
-  add_test("foreign", std::bind(&ObjectTransactionTestUnit::test_foreign, this), "test transaction foreign object");
-  add_test("foreign_rollback", std::bind(&ObjectTransactionTestUnit::test_foreign_rollback, this), "test transaction foreign object rollback");
+  add_test("insert", [this] { test_insert(); }, "test transaction insert");
+  add_test("insert_rollback", [this] { test_insert_rollback(); }, "test transaction insert rollback");
+  add_test("update", [this] { test_update(); }, "test transaction update");
+  add_test("update_rollback", [this] { test_update_rollback(); }, "test transaction update rollback");
+  add_test("delete", [this] { test_delete(); }, "test transaction delete");
+  add_test("delete_rollback", [this] { test_delete_rollback(); }, "test transaction delete rollback");
+  add_test("nested", [this] { test_nested(); }, "test nested transaction");
+  add_test("nested_rollback", [this] { test_nested_rollback(); }, "test nested transaction rollback");
+  add_test("foreign", [this] { test_foreign(); }, "test transaction foreign object");
+  add_test("foreign_rollback", [this] { test_foreign_rollback(); }, "test transaction foreign object rollback");
 }
 
 
@@ -97,8 +93,8 @@ void ObjectTransactionTestUnit::test_update()
     UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
     tr.commit();
-  } catch (std::exception &) {
-    UNIT_FAIL("shouldn't come here");
+  } catch (std::exception &ex) {
+    UNIT_FAIL(ex.what());
   }
 
   UNIT_ASSERT_EQUAL(hans->height(), 183U);
@@ -129,8 +125,8 @@ void ObjectTransactionTestUnit::test_update_rollback()
     UNIT_ASSERT_GREATER(hans->id(), 0UL);
 
     tr.rollback();
-  } catch (std::exception &) {
-    UNIT_FAIL("shouldn't come here");
+  } catch (std::exception &ex) {
+    UNIT_FAIL(ex.what());
   }
 
   UNIT_ASSERT_EQUAL(hans->height(), 180U);
