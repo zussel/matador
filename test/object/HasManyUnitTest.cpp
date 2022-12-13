@@ -1,7 +1,3 @@
-//
-// Created by sascha on 19.09.19.
-//
-
 #include "HasManyUnitTest.hpp"
 #include "../entities.hpp"
 
@@ -12,7 +8,7 @@ using namespace matador;
 HasManyUnitTest::HasManyUnitTest()
 : unit_test("has_many", "has many base unit tests")
 {
-  add_test("one_to_many", std::bind(&HasManyUnitTest::test_one_to_many, this), "test one to many item");
+  add_test("one_to_many", [this] { test_one_to_many(); }, "test one to many item");
 }
 
 using many_list_varchars = many_builtins<varchar<255>, std::list>;
