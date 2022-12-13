@@ -10,7 +10,7 @@ sql_logger::sql_logger()
   : sql_logger(1000000, 5)
 {}
 
-sql_logger::sql_logger(size_t max_size, size_t file_count)
+sql_logger::sql_logger(size_t /*max_size*/, size_t /*file_count*/)
   : LOG(create_logger("SQL"))
 {
 //  auto path = matador::os::build_path("log", "sql.log");

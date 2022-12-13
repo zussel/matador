@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef OBJECT_STORE_HPP
 #define OBJECT_STORE_HPP
 
@@ -29,6 +12,7 @@
 #include "matador/object/object_serializer.hpp"
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/transaction.hpp"
+#include "matador/object/object_type_registry_entry.hpp"
 
 #include "matador/utils/sequencer.hpp"
 #include "matador/utils/sequence_synchronizer.hpp"
@@ -522,7 +506,7 @@ public:
   void clear(bool full = false);
 
   /**
-   * Clears a prototype node and its cildren nodes.
+   * Clears a prototype node and its children nodes.
    * All objects will be deleted.
    *
    * @param type The name of the type to remove.
@@ -549,7 +533,7 @@ public:
 
   /**
    * Returns true if the object_store
-   * conatins no elements (objects)
+   * contains no elements (objects)
    * 
    * @return True on empty object_store.
    */
@@ -590,7 +574,7 @@ public:
    * @brief Inserts a new proxy into the object store
    *
    * @param proxy Object proxy to insert
-   * @param notify Indicates wether all observers should be notified.
+   * @param notify Indicates whether all observers should be notified.
    */
   template < class T >
   object_proxy* insert(object_proxy *proxy, bool notify)
@@ -615,7 +599,8 @@ public:
     }
 
     proxy->id(seq_.next());
-    proxy->ostore_ = this;
+    proxy->object_type_entry_ = object_type_registry_.object_type<T>();
+//    proxy->ostore_ = this;
 
     // get object
     T *object = static_cast<T*>(proxy->obj());
@@ -833,6 +818,11 @@ public:
    * @param callback To be called when an object proxy is deleted
    */
   void on_proxy_delete(std::function<void(object_proxy*)> callback);
+
+  const detail::object_type_registry& type_registry() const {
+    return object_type_registry_;
+  }
+
 private:
   friend class detail::object_inserter;
   friend struct detail::basic_relation_endpoint;
@@ -841,6 +831,7 @@ private:
   friend class object_proxy;
   friend class prototype_node;
   friend class transaction;
+  friend class detail::object_type_registry_entry_base;
   template < class T, template <class ...> class C >
   friend class has_many;
 
@@ -930,6 +921,8 @@ private:
   detail::object_deleter object_deleter_;
   detail::object_inserter object_inserter_;
 
+  detail::object_type_registry object_type_registry_;
+
   std::stack<transaction> transactions_;
 
   std::function<void(object_proxy *)> on_proxy_delete_;
@@ -961,7 +954,7 @@ void object_store::validate(prototype_node *node)
      * typeid check for type
      * throw exception
      */
-    throw object_exception("unexpectly found prototype");
+    throw object_exception("unexpectedly found prototype");
   }
   nptr.release();
 }
@@ -982,6 +975,8 @@ prototype_iterator object_store::attach_internal(prototype_node *node, const cha
   // Check if nodes object has 'to-many' relations
   // Analyze primary and foreign keys of node
   detail::node_analyzer<T, O> analyzer(*node, *this, observer);
+
+  object_type_registry_.register_type<T>(this, node);
 
   T *proto = node->prototype<T>();
   analyzer.analyze(*proto);

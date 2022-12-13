@@ -1,7 +1,3 @@
-//
-// @author sascha on 3/23/17.
-//
-
 #ifndef MATADOR_RELATION_FIELD_ENDPOINT_HPP
 #define MATADOR_RELATION_FIELD_ENDPOINT_HPP
 

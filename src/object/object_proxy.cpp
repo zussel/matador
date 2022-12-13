@@ -5,26 +5,19 @@ using namespace std;
 
 namespace matador {
 
-template<class T>
-update_action* object_proxy::create_update_action_internal(object_proxy *proxy)
-{
-  return new update_action(proxy->classname(), proxy->id(), proxy, static_cast<T*>(proxy->obj));
-}
-
 object_proxy::object_proxy(basic_identifier *pk)
   : primary_key_(pk)
 {}
 
 object_proxy::~object_proxy()
 {
-  if (ostore_ && id() > 0) {
+  if (object_type_entry_ && object_type_entry_->store() && id() > 0) {
     // Todo: callback to object store?
 //    store_->delete_proxy(id());
   }
   if (obj_) {
     deleter_(obj_);
   }
-  ostore_ = nullptr;
   for (auto &ptr : ptr_set_) {
     ptr->proxy_ = nullptr;
   }
@@ -32,17 +25,17 @@ object_proxy::~object_proxy()
 
 const char *object_proxy::classname() const
 {
-  return namer_();
+  return name_();
 }
 
 object_store *object_proxy::ostore() const
 {
-  return ostore_;
+  return object_type_entry_ ? object_type_entry_->store() : nullptr;
 }
 
 prototype_node *object_proxy::node() const
 {
-  return node_;
+  return object_type_entry_ ? object_type_entry_->node() : nullptr;
 }
 
 void object_proxy::link(object_proxy *successor)
@@ -66,7 +59,6 @@ void object_proxy::unlink()
   }
   prev_ = nullptr;
   next_ = nullptr;
-  node_ = nullptr;
 }
 
 unsigned long object_proxy::operator++()
@@ -89,11 +81,6 @@ unsigned long object_proxy::operator--(int)
   return reference_counter_--;
 }
 
-bool object_proxy::linked() const
-{
-  return node_ != nullptr;
-}
-
 object_proxy *object_proxy::next() const
 {
   return next_;
@@ -109,12 +96,12 @@ unsigned long object_proxy::reference_count() const
   return reference_counter_;
 }
 
-void object_proxy::restore(byte_buffer &buffer, object_store *store, object_serializer &serializer)
+void object_proxy::restore(byte_buffer &buffer, object_deserializer &deserializer)
 {
   if ( obj_ == nullptr ) {
     create_object();
   }
-  restore_func
+  object_type_entry_->restore(this, buffer, deserializer);
 }
 
 void object_proxy::add(object_holder *ptr)
@@ -129,7 +116,7 @@ bool object_proxy::remove(object_holder *ptr)
 
 bool object_proxy::valid() const
 {
-  return ostore_ && node_ && prev_ && next_;
+  return object_type_entry_ && prev_ && next_;
 }
 
 unsigned long object_proxy::id() const {
@@ -156,23 +143,9 @@ void object_proxy::pk(basic_identifier *id)
   primary_key_ = id;
 }
 
-update_action* object_proxy::create_update_action()
+void object_proxy::backup(byte_buffer &buffer, object_serializer &serializer)
 {
-  return create_update_action_func_(this);
-}
-
-void object_proxy::backup(byte_buffer &buffer, object_serializer &serializer) {
-  backup_func_(this, buffer, serializer);
-}
-
-transaction object_proxy::current_transaction()
-{
-  return ostore_->current_transaction();
-}
-
-bool object_proxy::has_transaction() const
-{
-  return ostore_->has_transaction();
+  object_type_entry_->backup(this, buffer, serializer);
 }
 
 void object_proxy::create_object()
@@ -182,7 +155,7 @@ void object_proxy::create_object()
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
 {
-  os << "proxy [" << &op << "] (oid: " << op.oid << ", type: " << (op.node_ ? op.node_->type() : op.classname()) << ")"
+  os << "proxy [" << &op << "] (oid: " << op.oid << ", type: " << (op.object_type_entry_ ? op.object_type_entry_->node()->type() : op.classname()) << ")"
      << " prev_ [" << op.prev_ << "]"
      << " next_ [" << op.next_ << "] object [" << op.obj_ << "] "
      << " refs [" << op.reference_counter_ << "]";

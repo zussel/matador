@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/13/17.
-//
-
 #ifndef MATADOR_TO_MANY_ENDPOINTS_HPP
 #define MATADOR_TO_MANY_ENDPOINTS_HPP
 
@@ -149,7 +145,8 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
     }
     object_proxy *proxy = store.find_proxy(oid);
     if (proxy == nullptr) {
-      proxy = new object_proxy(new has_one_to_many_item<Owner, Value>(), oid, &store);
+      auto object_type = store.type_registry().object_type<has_one_to_many_item<Owner, Value>>();
+      proxy = new object_proxy(new has_one_to_many_item<Owner, Value>(), oid, object_type);
     }
     return proxy;
   }
@@ -222,7 +219,8 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     }
     object_proxy *proxy = store.find_proxy(oid);
     if (proxy == nullptr) {
-      proxy = new object_proxy(new has_one_to_many_item<Owner, Value>(), oid, &store);
+      auto object_type = store.type_registry().object_type<has_one_to_many_item<Owner, Value>>();
+      proxy = new object_proxy(new has_one_to_many_item<Owner, Value>(), oid, object_type);
     }
     return proxy;
   }

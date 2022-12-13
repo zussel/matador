@@ -242,15 +242,16 @@ void ObjectStoreTestUnit::test_serializer()
   item->set_time(t);
   
   object_serializer serializer;
- 
+  object_deserializer deserializer;
+
   byte_buffer buffer;
-  serializer.serialize(item, &buffer);
+  serializer.backup(item, &buffer);
   
   delete item;
   
   item = new datatypes();
-  
-  serializer.deserialize(item, &buffer, &ostore_);
+
+  deserializer.restore(item, &buffer, &ostore_);
 
   UNIT_ASSERT_EQUAL(c, item->get_char());
   UNIT_ASSERT_EQUAL(f, item->get_float());

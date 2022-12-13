@@ -21,7 +21,7 @@ SET(SOURCES
   prototype_info.cpp json_object_mapper.cpp
   json_object_serializer.cpp
   object_json_serializer.cpp
-  json_object_mapper_serializer.cpp)
+  json_object_mapper_serializer.cpp object_deserializer.cpp object_type_registry_entry_base.cpp)
 
 SET(HEADER
   ../../include/matador/object/action.hpp
@@ -82,7 +82,7 @@ SET(HEADER
   ../../include/matador/object/has_many_iterator_traits.hpp
   ../../include/matador/object/json_object_serializer.hpp
   ../../include/matador/object/object_json_serializer.hpp
-  ../../include/matador/object/json_object_mapper_serializer.hpp)
+  ../../include/matador/object/json_object_mapper_serializer.hpp ../../include/matador/object/action_vector.hpp ../../include/matador/object/object_deserializer.hpp ../../include/matador/object/object_type_registry_entry_base.hpp ../../include/matador/object/object_type_registry_entry.hpp)
 
 ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
 

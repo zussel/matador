@@ -15,10 +15,8 @@
 #endif
 
 #include "matador/object/action.hpp"
-#include "matador/object/prototype_node.hpp"
 
 #include "matador/utils/basic_identifier.hpp"
-#include "matador/object/abstract_has_many.hpp"
 
 namespace matador {
 
@@ -36,9 +34,6 @@ class object_serializer;
  */
 class MATADOR_OBJECT_API delete_action : public action
 {
-private:
-  typedef void (*t_backup_func)(byte_buffer&, delete_action*, object_serializer &serializer);
-  typedef void (*t_restore_func)(byte_buffer&, delete_action*, object_store*, object_serializer &serializer);
 public:
   /**
    * Creates an delete_action.
@@ -46,15 +41,7 @@ public:
    * @param classname The serializable type name.
    * @param id The id of the deleted serializable.
    */
-  template < class T >
-  delete_action(const char* classname, unsigned long id, object_proxy *proxy, T *obj)
-    : classname_(classname)
-    , id_(id)
-    , pk_(identifier_resolver<T>::resolve(obj))
-    , proxy_(proxy)
-//    , backup_func_(&backup_delete)
-    , restore_func_(&restore_delete)
-  {}
+  delete_action(const char* classname, unsigned long id, object_proxy *proxy);
 
   /**
    * Creates an delete_action.
@@ -62,15 +49,7 @@ public:
    * @param classname The serializable type name.
    * @param id The id of the deleted serializable.
    */
-  template < class T >
-  delete_action(object_proxy *proxy, T *obj)
-    : classname_(proxy->node()->type())
-    , id_(proxy->id())
-    , pk_(identifier_resolver<T>::resolve(obj))
-    , proxy_(proxy)
-//    , backup_func_(&backup_delete<T, object_serializer>)
-    , restore_func_(&restore_delete)
-  {}
+  explicit delete_action(object_proxy *proxy);
 
   ~delete_action() override;
 
@@ -102,16 +81,9 @@ public:
   void mark_deleted();
 
 private:
-  static void restore_delete(byte_buffer &buffer, delete_action *act, object_store *store, object_serializer &serializer);
-
-private:
   std::string classname_;
   unsigned long id_ = 0;
-  basic_identifier *pk_ = nullptr;
   object_proxy *proxy_ = nullptr;
-
-  t_backup_func backup_func_;
-  t_restore_func restore_func_;
 
   bool deleted_ = false;
 };

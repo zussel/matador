@@ -24,6 +24,7 @@ namespace matador
 
 action::action()
   : serializer_(new object_serializer)
+  , deserializer_(new object_deserializer)
 {}
 
 action::~action()

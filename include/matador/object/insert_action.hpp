@@ -44,10 +44,7 @@ public:
    *
    * @param type The type of the expected objects
    */
-  template < class T >
-  explicit insert_action(std::string type, T*)
-    : type_(std::move(type))
-  {}
+  explicit insert_action(std::string type);
 
   void accept(action_visitor *av) override;
 

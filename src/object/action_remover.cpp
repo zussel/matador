@@ -1,21 +1,18 @@
-//
-// Created by sascha on 12.03.16.
-//
-
 #include "matador/utils/identifier_resolver.hpp"
 
 #include "matador/object/action_remover.hpp"
 #include "matador/object/insert_action.hpp"
 #include "matador/object/update_action.hpp"
+#include "matador/object/object_proxy.hpp"
 
 namespace matador {
 
-action_remover::action_remover(t_action_vactor &actions)
+action_remover::action_remover(t_action_vector &actions)
   : actions_(actions)
 {}
 
 
-bool action_remover::remove(t_action_vactor::size_type index, object_proxy *proxy)
+bool action_remover::remove(t_action_vector::size_type index, object_proxy *proxy)
 {
   proxy_ = proxy;
   index_ = index;
@@ -36,7 +33,7 @@ void action_remover::visit(insert_action *a)
    * from insert action
    *
    ***********/
-  insert_action::iterator i = a->find(proxy_->id());
+  auto i = a->find(proxy_->id());
   if (i != a->end()) {
     a->erase(i);
   }

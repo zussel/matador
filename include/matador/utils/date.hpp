@@ -7,14 +7,14 @@
 
 namespace matador {
 
-class mday
-{
-public:
-
-  operator unsigned short() const { return day_; }
-private:
-  unsigned short day_;
-};
+//class mday
+//{
+//public:
+//
+//  operator unsigned short() const { return day_; }
+//private:
+//  unsigned short day_;
+//};
 
 enum class month : unsigned short {
   january = 1,
@@ -30,18 +30,18 @@ enum class month : unsigned short {
   december
 };
 
-class year
-{
-public:
+//class year
+//{
+//public:
+//
+//  operator unsigned short() const { return year_; }
+//
+//private:
+//  unsigned int year_;
+//};
 
-  operator unsigned short() const { return year_; }
-
-private:
-  unsigned int year_;
-};
-
-OOS_UTILS_API mday operator "" _mday(unsigned long long y);
-OOS_UTILS_API year operator "" _year(unsigned long long y);
+//OOS_UTILS_API mday operator "" _mday(unsigned long long y);
+//OOS_UTILS_API year operator "" _year(unsigned long long y);
 
 /// @cond MATADOR_DEV
 
@@ -91,7 +91,7 @@ public:
    */
   date(int day, int month, int year);
 
-  date(year y, month m, mday d);
+//  date(year y, month m, mday d);
   /**
    * Creates a date from a given date/time
    * string and a format string

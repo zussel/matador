@@ -168,7 +168,7 @@ SET (TEST_ORM_SOURCES
   orm/JsonOrmTest.cpp
   orm/JsonOrmTest.hpp)
 
-SET (TEST_SOURCES test_matador.cpp dto.hpp)
+SET (TEST_SOURCES test_matador.cpp dto.hpp ../include/matador/object/action_vector.hpp)
 
 ADD_EXECUTABLE(test_matador
   EXCLUDE_FROM_ALL

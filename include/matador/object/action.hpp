@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef ACTION_HPP
 #define ACTION_HPP
 
@@ -42,6 +25,7 @@ class byte_buffer;
 class object_store;
 class object_proxy;
 class object_serializer;
+class object_deserializer;
 
 /// @cond MATADOR_DEV
 
@@ -60,12 +44,6 @@ class object_serializer;
  */
 class MATADOR_OBJECT_API action
 {
-public:
-  /**
-   * @brief Function pointer to a backup function
-   */
-  typedef void (*t_backup_func)(byte_buffer&, action*, object_serializer &serializer);
-
 public:
   action();
   virtual ~action();
@@ -92,13 +70,10 @@ public:
    */
   virtual void restore(byte_buffer &from, object_store *store) = 0;
 
-//protected:
-//  static void remove_proxy(object_proxy *proxy, object_store *store);
-//  static object_proxy* find_proxy(object_store *store, unsigned long id);
-//  static void insert_proxy(object_store *store, object_proxy *proxy);
-
 protected:
   object_serializer *serializer_;
+  object_deserializer *deserializer_;
+
 };
 
 /// @endcond

@@ -99,7 +99,7 @@ void transaction::on_update(object_proxy *proxy)
    *
    *****************/
   if (transaction_data_->id_action_index_map_.find(proxy->id()) == transaction_data_->id_action_index_map_.end()) {
-    std::shared_ptr<update_action> ua(proxy->create_update_action());
+    auto ua = std::make_shared<update_action>(proxy);
     backup(ua, proxy);
   } else {
     // An object with that id already exists

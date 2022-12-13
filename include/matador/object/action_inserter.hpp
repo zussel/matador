@@ -74,9 +74,7 @@ action_inserter::t_action_vactor::size_type action_inserter::insert(object_proxy
     }
   }
   if (!inserted_) {
-    T* obj = (T*)object(proxy);
-    const char* t = type(proxy);
-    std::shared_ptr<insert_action> ia(new insert_action(t, obj));
+    auto ia = std::make_shared<insert_action>(type(proxy));
     ia->push_back(proxy_);
     actions_.get().push_back(ia);
     return actions_.get().size() - 1;

@@ -42,7 +42,7 @@ class object_store;
  * @brief This class provides the transaction mechanism
  *
  * This class provides the transaction mechanism. It can be used
- * if a couple of actions (inser, update, delete) should be made
+ * if a couple of actions (insert, update, delete) should be made
  * at once.
  *
  * If one action fails all finished action we be rolled back. If
@@ -288,7 +288,7 @@ void transaction::on_delete(object_proxy *proxy)
    *****************/
   auto i = transaction_data_->id_action_index_map_.find(proxy->id());
   if (i == transaction_data_->id_action_index_map_.end()) {
-    backup(std::make_shared<delete_action>(proxy, (T*)proxy->obj()), proxy);
+    backup(std::make_shared<delete_action>(proxy), proxy);
   } else {
     action_remover ar(transaction_data_->actions_);
     ar.remove(i->second, proxy);

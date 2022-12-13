@@ -122,6 +122,7 @@ void object_store::clear(bool full)
     }
   }
   object_map_.clear();
+  object_type_registry_.clear();
 }
 
 void object_store::clear(const char *type)

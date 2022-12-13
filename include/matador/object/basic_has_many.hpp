@@ -1,11 +1,6 @@
-//
-// Created by sascha on 1/6/16.
-//
-
 #ifndef OOS_BASIC_HAS_MANY_HPP
 #define OOS_BASIC_HAS_MANY_HPP
 
-#include "matador/object/has_one.hpp"
 #include "matador/object/abstract_has_many.hpp"
 #include "matador/object/container_type_traits.hpp"
 #include "matador/object/relation_field_endpoint.hpp"
@@ -183,6 +178,7 @@ protected:
   friend class detail::object_inserter;
   friend class object_store;
   friend class object_serializer;
+  friend class object_deserializer;
 
   object_proxy *owner_ = nullptr;
   basic_identifier *owner_id_ = nullptr;

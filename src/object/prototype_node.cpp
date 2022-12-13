@@ -124,7 +124,7 @@ void prototype_node::insert(object_proxy *proxy)
     adjust_right_marker(this, proxy->prev_, proxy);
   }
   // set prototype node
-  proxy->node_ = this;
+//  proxy->node_ = this;
   // adjust size
   ++count;
   // find and insert primary key

@@ -148,7 +148,7 @@ void object_deleter::serialize(const char *, basic_has_many<T, C> &x, cascade_ty
 template<class T>
 void object_deleter::serialize(const char *id, identifier<T> &x)
 {
-  T val = x.value();
+  auto val = x.value();
   serialize(id, val);
 }
 

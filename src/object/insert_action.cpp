@@ -8,6 +8,10 @@
 
 namespace matador {
 
+insert_action::insert_action(std::string type)
+  : type_(std::move(type))
+{}
+
 void insert_action::accept(action_visitor *av)
 {
   av->visit(this);
@@ -73,15 +77,14 @@ void insert_action::push_back(object_proxy *proxy)
 
 insert_action::iterator insert_action::erase(insert_action::iterator i)
 {
-  return object_proxy_list_.erase(std::move(i));
+  return object_proxy_list_.erase(i);
 }
 
 void insert_action::restore(byte_buffer &, object_store *store)
 {
   // remove objects from object store
-  for (auto i = begin(); i != end(); ++i) {
-    store->remove_proxy(*i);
-//    action::remove_proxy(*i, store);
+  for (auto & i : *this) {
+    store->remove_proxy(i);
   }
 }
 
