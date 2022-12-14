@@ -356,7 +356,7 @@ private:
   template<typename T>
   static void create(object_proxy *proxy)
   {
-    proxy->template reset(new T);
+    proxy->reset(new T);
   }
 
   template < class T >
