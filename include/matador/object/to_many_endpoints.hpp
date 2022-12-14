@@ -59,7 +59,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     object_ptr<Owner> ownptr(owner);
     // insert new item
     std::unique_ptr<object_proxy> proxy(new object_proxy(new has_many_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column)));
-    auto itemptr = store.insert<has_many_to_many_item<Owner, Value>>(proxy.release(), true);
+    auto itemptr = store.insert(proxy.release(), true);
     this->increment_reference_count(holder.value());
     this->set_has_many_item_proxy(holder, itemptr);
     ++(*itemptr);
@@ -172,7 +172,7 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
       store.insert(holder.value());
     }
     std::unique_ptr<object_proxy> proxy(new object_proxy(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column)));
-    auto itemptr = store.insert<has_one_to_many_item<Owner, Value>>(proxy.release(), true);
+    auto itemptr = store.insert(proxy.release(), true);
     this->increment_reference_count(holder.value());
     ++(*itemptr);
     ++(*owner);
@@ -257,7 +257,7 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     object_ptr<Owner> ownptr(owner);
 
     std::unique_ptr<object_proxy> proxy(new object_proxy(new has_many_to_many_item<Value, Owner>(holder.value(), ownptr, this->owner_column, this->item_column)));
-    auto itemptr = store.insert<has_many_to_many_item<Owner, Value>>(proxy.release(), true);
+    auto itemptr = store.insert(proxy.release(), true);
     this->increment_reference_count(holder.value());
     ++(*itemptr);
     ++(*itemptr);

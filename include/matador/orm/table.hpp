@@ -5,6 +5,8 @@
 #ifndef OOS_TABLE_HPP
 #define OOS_TABLE_HPP
 
+#include <memory>
+
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/object_store.hpp"
 #include "matador/object/prototype_node.hpp"
@@ -116,10 +118,10 @@ public:
         proxy_->reset(entity.release(), true, true);
       } else {
         // create new proxy
-        proxy_.reset(new object_proxy(entity.release()));
+        proxy_ = std::make_unique<object_proxy>(entity.release());
       }
 
-      object_proxy *proxy = store.insert<table_type>(proxy_.release(), false);
+      object_proxy *proxy = store.insert(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
 
       if (i != identifier_proxy_map_.end()) {
@@ -326,7 +328,7 @@ public:
     for (auto entity : result) {
       // create new proxy of relation object
       proxy_.reset(new object_proxy(entity.release()));
-      object_proxy *proxy = store.insert<T>(proxy_.release(), false);
+      object_proxy *proxy = store.insert(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
     }
 

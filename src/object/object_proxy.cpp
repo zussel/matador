@@ -1,5 +1,7 @@
 #include "matador/object/object_store.hpp"
 #include "matador/object/update_action.hpp"
+#include "matador/object/object_proxy.hpp"
+
 
 using namespace std;
 
@@ -104,6 +106,26 @@ void object_proxy::restore(byte_buffer &buffer, object_deserializer &deserialize
   object_type_entry_->restore(this, buffer, deserializer);
 }
 
+void object_proxy::backup(byte_buffer &buffer, object_serializer &serializer)
+{
+  object_type_entry_->backup(this, buffer, serializer);
+}
+
+void object_proxy::insert_object(detail::object_inserter &inserter)
+{
+  object_type_entry_->insert_object(this);
+}
+
+void object_proxy::delete_object(detail::object_deleter &deleter)
+{
+  object_type_entry_->delete_object(this);
+}
+
+void object_proxy::sync_id()
+{
+  object_type_entry_->sync_id(this);
+}
+
 void object_proxy::add(object_holder *ptr)
 {
   ptr_set_.insert(ptr);
@@ -141,11 +163,6 @@ basic_identifier* object_proxy::pk() const
 void object_proxy::pk(basic_identifier *id)
 {
   primary_key_ = id;
-}
-
-void object_proxy::backup(byte_buffer &buffer, object_serializer &serializer)
-{
-  object_type_entry_->backup(this, buffer, serializer);
 }
 
 void object_proxy::create_object()

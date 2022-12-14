@@ -1,17 +1,9 @@
-//
-// Created by sascha on 3/9/16.
-//
-
 #ifndef OOS_TRANSACTION_HPP
 #define OOS_TRANSACTION_HPP
 
 #include "matador/object/action.hpp"
 #include "matador/object/object_exception.hpp"
 #include "matador/object/action_inserter.hpp"
-#include "matador/object/action_remover.hpp"
-#include "matador/object/update_action.hpp"
-#include "matador/object/delete_action.hpp"
-#include "matador/object/object_proxy.hpp"
 
 #include "matador/utils/byte_buffer.hpp"
 #include "matador/utils/sequencer.hpp"
@@ -37,7 +29,9 @@
 namespace matador {
 
 class object_store;
-
+class insert_action;
+class update_action;
+class delete_action;
 /**
  * @brief This class provides the transaction mechanism
  *
@@ -184,7 +178,6 @@ public:
    * 
    * @tparam T The type of the inserted object
    */
-  template < class T >
   void on_insert(object_proxy *proxy);
   /**
    * Called when update took place.
@@ -197,7 +190,6 @@ public:
    * 
    * @tparam T The type of the deleted object
    */
-  template < class T >
   void on_delete(object_proxy *proxy);
 
 private:
@@ -247,53 +239,8 @@ private:
   std::shared_ptr<transaction_data> transaction_data_;
   static sequencer sequencer_;
 
-  bool commiting_ = false;
+  bool committing_ = false;
 };
-
-template < class T >
-void transaction::on_insert(object_proxy *proxy)
-{
-  /*****************
-   *
-   * backup inserted object
-   * on rollback the object is removed
-   * from object store
-   *
-   *****************/
-  auto i = transaction_data_->id_action_index_map_.find(proxy->id());
-  if (i == transaction_data_->id_action_index_map_.end()) {
-    // create insert action and insert serializable
-    t_action_vector::size_type index = transaction_data_->inserter_.insert<T>(proxy);
-    if (index == transaction_data_->actions_.size()) {
-      throw_object_exception("transaction: action for object with id " << proxy->id() << " couldn't be inserted");
-    } else {
-      transaction_data_->id_action_index_map_.insert(std::make_pair(proxy->id(), index));
-    }
-  } else {
-    // ERROR: a serializable with that id already exists
-    throw_object_exception("transaction: an object with id " << proxy->id() << " already exists");
-  }
-}
-
-template < class T >
-void transaction::on_delete(object_proxy *proxy)
-{
-  /*****************
-   *
-   * backup deleted serializable
-   * on rollback the serializable
-   * is restored into the
-   * serializable store
-   *
-   *****************/
-  auto i = transaction_data_->id_action_index_map_.find(proxy->id());
-  if (i == transaction_data_->id_action_index_map_.end()) {
-    backup(std::make_shared<delete_action>(proxy), proxy);
-  } else {
-    action_remover ar(transaction_data_->actions_);
-    ar.remove(i->second, proxy);
-  }
-}
 
 }
 #endif //OOS_TRANSACTION_HPP

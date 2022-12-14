@@ -576,58 +576,7 @@ public:
    * @param proxy Object proxy to insert
    * @param notify Indicates whether all observers should be notified.
    */
-  template < class T >
-  object_proxy* insert(object_proxy *proxy, bool notify)
-  {
-    if (proxy == nullptr) {
-      throw_object_exception("proxy is null");
-    }
-    if (proxy->obj() == nullptr) {
-      throw_object_exception("object is null");
-    }
-    iterator node = find(proxy->classname());
-    if (node == end()) {
-      throw_object_exception("couldn't find object type");
-    }
-    // check if proxy/object is already inserted
-    if (proxy->ostore() != nullptr && proxy->id() > 0) {
-      return proxy;
-    }
-    // check if proxy/object is already inserted
-    if (proxy->ostore() == nullptr && proxy->id() > 0) {
-      throw_object_exception("object has id but doesn't belong to a store");
-    }
-
-    proxy->id(seq_.next());
-    proxy->object_type_entry_ = node->object_type_entry_;
-
-    // get object
-    T *object = static_cast<T*>(proxy->obj());
-    if (object && proxy->has_identifier() && !proxy->pk()->is_valid()) {
-      // if object has primary key of type short, int or long
-      // set the id of proxy as value
-      identifier_setter<unsigned long>::assign(proxy->id(), object);
-    } else if (object && proxy->has_identifier()) {
-      synchronizer_.sync(*proxy->pk());
-    }
-
-    node->insert(proxy);
-
-    // initialize object
-    if (object) {
-      object_inserter_.insert(proxy, object, notify);
-    }
-    // set this into persistent serializable
-    // notify observer
-    if (notify && !transactions_.empty()) {
-      transactions_.top().on_insert<T>(proxy);
-    }
-
-    // insert element into hash map for fast lookup
-    object_map_.insert(std::make_pair(proxy->id(), proxy));
-
-    return proxy;
-  }
+  object_proxy* insert(object_proxy *proxy, bool notify);
 
   /**
    * Inserts an object of a specific type. On successful insertion
@@ -645,7 +594,7 @@ public:
     object_inserter_.reset();
     std::unique_ptr<object_proxy> proxy(new object_proxy(o));
     try {
-      insert<T>(proxy.get(), true);
+      insert(proxy.get(), true);
     } catch (object_exception &ex) {
       proxy->release<T>();
       throw ex;
@@ -732,7 +681,7 @@ public:
 
       if (!transactions_.empty()) {
         // notify transaction
-        transactions_.top().on_delete<T>(proxy);
+        transactions_.top().on_delete(proxy);
       } else {
         on_proxy_delete_(proxy);
       }
@@ -849,7 +798,7 @@ private:
     if (reset) {
       object_inserter_.reset();
     }
-    insert<T>(o.proxy_, true);
+    insert(o.proxy_, true);
     return o;
   }
 
@@ -882,16 +831,14 @@ private:
    */
   prototype_node *remove_prototype_node(prototype_node *node, bool check_for_eos);
 
-  template < class T >
-  prototype_node* attach_node(prototype_node *node, const char *parent);
+  prototype_node* attach_node(prototype_node *node, const char *parent, const char *type_name, basic_identifier *pk);
 
   prototype_node* find_parent(const char *name) const;
 
   void push_transaction(const transaction &tr);
   void pop_transaction();
 
-  template < class T >
-  void validate(prototype_node *node);
+  void validate(prototype_node *node, const char* type_name);
 
 private:
   typedef std::unordered_map<std::string, prototype_node *> t_prototype_map;
@@ -921,37 +868,6 @@ private:
   std::function<void(object_proxy *)> on_proxy_delete_;
 };
 
-template < class T >
-void object_store::validate(prototype_node *node)
-{
-  std::unique_ptr<prototype_node> nptr(node);
-  // try to find node in prepared map
-  const char *name = typeid(T).name();
-  auto i = prototype_map_.find(node->type_);
-  if (i != prototype_map_.end()) {
-    throw_object_exception("prototype already inserted: " << node->type_.c_str());
-  }
-  // try to find by typeid name
-  i = prototype_map_.find(name);
-  if (i != prototype_map_.end()) {
-    throw_object_exception("prototype already inserted: " << node->type_.c_str());
-  }
-  /*
-   * no typeid found, seems to be
-   * a new type
-   * to be sure check in typeid map
-   */
-  auto j = typeid_prototype_map_.find(name);
-  if (j != typeid_prototype_map_.end() && j->second.find(node->type_) != j->second.end()) {
-    /* unexpected found the
-     * typeid check for type
-     * throw exception
-     */
-    throw object_exception("unexpectedly found prototype");
-  }
-  nptr.release();
-}
-
 template < class T, template < class U = T > class O  >
 prototype_iterator object_store::attach(prototype_node *node, const char *parent, std::initializer_list<O<T>*> observer)
 {
@@ -972,41 +888,14 @@ prototype_iterator object_store::attach_internal(prototype_node *node, const cha
   T *proto = node->prototype<T>();
   analyzer.analyze(*proto);
 
-  validate<T>(node);
+  const char* type_name = typeid(T).name();
+  validate(node, type_name);
 
-  node = attach_node<T>(node, parent);
+  node = attach_node(node, parent, type_name, identifier_resolver<T>::create());
 
   node->on_attach();
 
   return prototype_iterator(node);
-}
-
-template < class T >
-prototype_node* object_store::attach_node(prototype_node *node, const char *parent)
-{
-  std::unique_ptr<prototype_node> nptr(node);
-  // set node to root node
-  prototype_node *parent_node = find_parent(parent);
-  /*
-   * try to insert new prototype node
-   */
-  // insert node
-  if (parent_node != nullptr) {
-    parent_node->insert(node);
-  } else {
-    last_->prev->append(node);
-  }
-  // Analyze primary and foreign keys of node
-  basic_identifier *id = identifier_resolver<T>::create();
-  if (id) {
-    node->id_.reset(id);
-  }
-  // store prototype in map
-  // Todo: check return value
-  prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
-  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
-
-  return nptr.release();
 }
 
 namespace detail {

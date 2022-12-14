@@ -33,7 +33,7 @@ namespace detail {
  * @class object_deleter
  * @brief Checks if an serializable could be deleted
  *
- * This class checks wether a given serializable or a
+ * This class checks whether a given serializable or a
  * given object_list_base and their children objects
  * could be deleted or not.
  * If the check was successful, all the deletable serializable

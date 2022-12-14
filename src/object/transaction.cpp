@@ -1,5 +1,9 @@
 #include "matador/object/transaction.hpp"
+#include "matador/object/object_proxy.hpp"
 #include "matador/object/object_store.hpp"
+#include "matador/object/action_remover.hpp"
+#include "matador/object/update_action.hpp"
+#include "matador/object/delete_action.hpp"
 
 namespace matador {
 
@@ -51,9 +55,9 @@ void transaction::begin()
 
 void transaction::commit()
 {
-  commiting_ = true;
+  committing_ = true;
   transaction_data_->observer_->on_commit(transaction_data_->actions_);
-  commiting_ = false;
+  committing_ = false;
   cleanup();
 }
 
@@ -79,13 +83,37 @@ void transaction::rollback()
       restore(a);
     }
 
-    if (commiting_) {
+    if (committing_) {
       transaction_data_->observer_->on_rollback();
-      commiting_ = false;
+      committing_ = false;
     }
 
     // clear container
     cleanup();
+  }
+}
+
+void transaction::on_insert(object_proxy *proxy)
+{
+  /*****************
+   *
+   * backup inserted object
+   * on rollback the object is removed
+   * from object store
+   *
+   *****************/
+  auto i = transaction_data_->id_action_index_map_.find(proxy->id());
+  if (i == transaction_data_->id_action_index_map_.end()) {
+    // create insert action and insert serializable
+    t_action_vector::size_type index = transaction_data_->inserter_.insert(proxy);
+    if (index == transaction_data_->actions_.size()) {
+      throw_object_exception("transaction: action for object with id " << proxy->id() << " couldn't be inserted");
+    } else {
+      transaction_data_->id_action_index_map_.insert(std::make_pair(proxy->id(), index));
+    }
+  } else {
+    // ERROR: a serializable with that id already exists
+    throw_object_exception("transaction: an object with id " << proxy->id() << " already exists");
   }
 }
 
@@ -105,6 +133,25 @@ void transaction::on_update(object_proxy *proxy)
     // An object with that id already exists
     // do nothing because the serializable is already
     // backed up
+  }
+}
+
+void transaction::on_delete(object_proxy *proxy)
+{
+  /*****************
+   *
+   * backup deleted serializable
+   * on rollback the serializable
+   * is restored into the
+   * serializable store
+   *
+   *****************/
+  auto i = transaction_data_->id_action_index_map_.find(proxy->id());
+  if (i == transaction_data_->id_action_index_map_.end()) {
+    backup(std::make_shared<delete_action>(proxy), proxy);
+  } else {
+    action_remover ar(transaction_data_->actions_);
+    ar.remove(i->second, proxy);
   }
 }
 

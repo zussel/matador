@@ -50,8 +50,7 @@ public:
 
   ~object_inserter() = default;
 
-  template<class T>
-  void insert(object_proxy *proxy, T *o, bool notify);
+  void insert(object_proxy *proxy, bool notify);
 
   void reset();
 

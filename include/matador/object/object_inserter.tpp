@@ -5,26 +5,6 @@ namespace matador {
 namespace detail {
 
 template<class T>
-void object_inserter::insert(object_proxy *proxy, T *o, bool notify)
-{
-
-  notify_ = notify;
-
-  proxy_stack_.push(proxy);
-
-  modified_marker_ = [](object_store &store, object_proxy *oproxy) {
-    store.mark_modified(oproxy);
-  };
-
-  if (proxy->obj()) {
-    matador::access::serialize(*this, *o);
-  }
-  if (!proxy_stack_.empty()) {
-	 proxy_stack_.pop();
-  }
-}
-
-template<class T>
 void object_inserter::serialize(T &x)
 {
   matador::access::serialize(*this, x);
@@ -71,7 +51,7 @@ void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cas
       proxy_stack_.pop();
     } else {
       // new object
-      ostore_.insert<T>(x.proxy_, notify_);
+      ostore_.insert(x.proxy_, notify_);
     }
   }
 }
@@ -117,7 +97,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
       proxy_stack_.pop();
     } else {
       // new object
-      ostore_.insert<T>(x.proxy_, notify_);
+      ostore_.insert(x.proxy_, notify_);
     }
   }
 }
