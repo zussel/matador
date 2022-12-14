@@ -145,7 +145,8 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
     }
     object_proxy *proxy = store.find_proxy(oid);
     if (proxy == nullptr) {
-      auto object_type = store.type_registry().object_type<has_one_to_many_item<Owner, Value>>();
+      auto node = store.find<has_one_to_many_item<Owner, Value>>();
+      auto object_type = node->object_type_entry();
       proxy = new object_proxy(new has_one_to_many_item<Owner, Value>(), oid, object_type);
     }
     return proxy;
@@ -219,7 +220,8 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     }
     object_proxy *proxy = store.find_proxy(oid);
     if (proxy == nullptr) {
-      auto object_type = store.type_registry().object_type<has_one_to_many_item<Owner, Value>>();
+      auto node = store.find<has_one_to_many_item<Owner, Value>>();
+      auto object_type = node->object_type_entry();
       proxy = new object_proxy(new has_one_to_many_item<Owner, Value>(), oid, object_type);
     }
     return proxy;

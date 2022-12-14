@@ -104,7 +104,7 @@ public:
   typedef const_prototype_iterator const_iterator;  /**< Shortcut for the list const iterator. */
 
   /**
-   * Describes wether the inserted object type
+   * Describes whether the inserted object type
    * is handle as a concrete or abstract type
    */
   enum abstract_type {
@@ -599,8 +599,7 @@ public:
     }
 
     proxy->id(seq_.next());
-    proxy->object_type_entry_ = object_type_registry_.object_type<T>();
-//    proxy->ostore_ = this;
+    proxy->object_type_entry_ = node->object_type_entry_;
 
     // get object
     T *object = static_cast<T*>(proxy->obj());
@@ -657,7 +656,7 @@ public:
 
   /**
    * Inserts a given object_ptr of specific type.
-   * On successfull insertion an object_ptr element
+   * On successfully insertion an object_ptr element
    * with the inserted object is returned.
    *
    * @param o object_ptr to be inserted.
@@ -670,7 +669,7 @@ public:
   }
 
   /**
-   * Returns true if the underlaying
+   * Returns true if the underlying
    * serializable is removable.
    * 
    * @param o The serializable to check.
@@ -696,7 +695,7 @@ public:
    * from its proxy list.
    *
    * If the notify flag is true all observers are notified on
-   * successfull deletion.
+   * successfully deletion.
    *
    * If check_if_deletable flag is true method checks if the
    * proxy is deletable.
@@ -761,11 +760,11 @@ public:
    * @brief Finds serializable proxy with id
    *
    * Try to find the serializable proxy with given id in
-   * serializable stores proxy map. If serializable can't be found
+   * serializable stores proxy map. If object can't be found
    * NULL is returned.
    *
    * @param id ID of serializable proxy to find
-   * @return On success it returns an serializable proxy on failure null
+   * @return On success it returns an object proxy on failure null
    *
    */
   object_proxy *find_proxy(unsigned long id) const;
@@ -819,10 +818,6 @@ public:
    */
   void on_proxy_delete(std::function<void(object_proxy*)> callback);
 
-  const detail::object_type_registry& type_registry() const {
-    return object_type_registry_;
-  }
-
 private:
   friend class detail::object_inserter;
   friend struct detail::basic_relation_endpoint;
@@ -839,7 +834,7 @@ private:
 private:
   /**
    * Clears a prototype_node and its
-   * cildren nodes. All object_proxy objects will be
+   * children nodes. All object_proxy objects will be
    * deleted.
    *
    * @param node The prototype_node to remove.
@@ -870,7 +865,7 @@ private:
    *
    * @param type Type name of the prototype node to search
    * @return The requested prototype node or nullptr
-   * @throws matador::object_exception if in error occurrs
+   * @throws matador::object_exception if in error occurs
    */
   prototype_node *find_prototype_node(const char *type) const;
 
@@ -883,7 +878,7 @@ private:
    * @param node The prototype node to remove
    * @param check_for_eos Indicates if given node is root node
    * @return The successor node
-   * @throws matador::object_exception if in error occurrs
+   * @throws matador::object_exception if in error occurs
    */
   prototype_node *remove_prototype_node(prototype_node *node, bool check_for_eos);
 
@@ -920,8 +915,6 @@ private:
 
   detail::object_deleter object_deleter_;
   detail::object_inserter object_inserter_;
-
-  detail::object_type_registry object_type_registry_;
 
   std::stack<transaction> transactions_;
 
@@ -975,8 +968,6 @@ prototype_iterator object_store::attach_internal(prototype_node *node, const cha
   // Check if nodes object has 'to-many' relations
   // Analyze primary and foreign keys of node
   detail::node_analyzer<T, O> analyzer(*node, *this, observer);
-
-  object_type_registry_.register_type<T>(this, node);
 
   T *proto = node->prototype<T>();
   analyzer.analyze(*proto);

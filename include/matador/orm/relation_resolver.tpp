@@ -51,7 +51,7 @@ void relation_resolver<T, typename std::enable_if<
      */
     auto foreign_proxy = foreign_table->find_proxy(pk);
     if (foreign_proxy == foreign_table->end_proxy()) {
-      proxy = new object_proxy(pk, node->tree()->type_registry().object_type<T>(), detail::identity<T>{});
+      proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<T>{});
       foreign_proxy = foreign_table->insert_proxy(pk, proxy);
       // if foreign relation is HAS_ONE
       x.reset(foreign_proxy->second.proxy, cascade, false);

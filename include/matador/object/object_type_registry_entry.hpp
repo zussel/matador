@@ -71,12 +71,15 @@ public:
   template<class Type>
   void register_type(object_store *store, prototype_node *node) {
     auto ti = std::type_index(typeid(Type));
+    std::cout << "register type " << ti.name() << " (node: " << node->type() << ")\n";
     type_registry_.insert(std::make_pair(ti, std::make_shared<object_type_registry_entry<Type>>(store, node)));
   }
 
   template<class Type>
   std::shared_ptr<object_type_registry_entry_base> object_type() const {
-    return type_registry_.at(std::type_index(typeid(Type)));
+    auto ti = std::type_index(typeid(Type));
+    std::cout << "access type " << ti.name() << "\n";
+    return type_registry_.at(ti);
   }
 
   std::shared_ptr<object_type_registry_entry_base> object_type(const std::type_index &ti) const {

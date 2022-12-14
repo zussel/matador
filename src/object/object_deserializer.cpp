@@ -72,7 +72,8 @@ void object_deserializer::insert_proxy(object_proxy *proxy)
 }
 
 std::shared_ptr<detail::object_type_registry_entry_base> object_deserializer::determine_object_type(const std::type_index& type) {
-  return store_->type_registry().object_type(type);
+  auto node = store_->find(type.name());
+  return node->object_type_entry();
 }
 
 }

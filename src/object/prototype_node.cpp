@@ -394,8 +394,13 @@ const detail::abstract_prototype_info::t_endpoint_map &prototype_node::endpoints
   return info_->endpoints();
 }
 
+std::shared_ptr<detail::object_type_registry_entry_base> prototype_node::object_type_entry() const
+{
+  return object_type_entry_;
+}
+
 /*
- * adjust the marker of all predeccessor nodes
+ * adjust the marker of all predecessor nodes
  * self and last marker
  */
 void prototype_node::adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy)

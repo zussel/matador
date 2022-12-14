@@ -114,7 +114,7 @@ public:
       }
       auto k = j->second->find_proxy(pk);
       if (k == j->second->end_proxy()) {
-        proxy = new object_proxy(pk, node->tree()->type_registry().object_type<T>(), detail::identity<T>{});
+        proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<T>{});
         k = j->second->insert_proxy(pk, proxy);
         x.reset(k->second.proxy, cascade, false);
       } else {
@@ -292,7 +292,7 @@ private:
       // find proxy in tables id(pk) proxy map
       auto id_proxy_pair = tbl->find_proxy(pk);
       if (id_proxy_pair == tbl->end_proxy()) {
-        proxy = new object_proxy(pk, node->tree()->type_registry().object_type<T>(), detail::identity<T>{});
+        proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<T>{});
         id_proxy_pair = tbl->insert_proxy(pk, proxy);
       } else {
         proxy = id_proxy_pair->second.proxy;
@@ -418,7 +418,7 @@ private:
     } else {
       auto idproxy = tbl->find_proxy(pk);
       if (idproxy == tbl->end_proxy()) {
-        auto ot = node->tree()->type_registry().object_type<T>();
+        auto ot = node->object_type_entry();
         proxy = new object_proxy(pk, ot, detail::identity<T>{});
         idproxy = tbl->insert_proxy(pk, proxy);
       } else {
