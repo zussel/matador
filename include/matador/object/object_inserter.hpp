@@ -107,7 +107,7 @@ private:
   template < class T, class ItemHolderType >
   void insert_has_many_item(const ItemHolderType &item,
                             object_proxy *proxy,
-                            const std::shared_ptr<detail::relation_endpoint<T>>& relation_info, cascade_type cascade,
+                            const std::shared_ptr<detail::relation_endpoint<T>>& relation_info, cascade_type,
                             typename std::enable_if<matador::is_builtin<T>::value>::type* = 0);
 
 private:
@@ -191,7 +191,7 @@ template < class T, class ItemHolderType >
 void object_inserter::insert_has_many_item(const ItemHolderType &item,
                                            object_proxy *proxy,
                                            const std::shared_ptr<detail::relation_endpoint<T>>& relation_info,
-                                           cascade_type cascade,
+                                           cascade_type,
                                            typename std::enable_if<matador::is_builtin<T>::value>::type*)
 {
   if (!item.holder_item().is_inserted()) {
