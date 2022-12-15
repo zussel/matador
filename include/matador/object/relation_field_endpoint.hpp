@@ -348,7 +348,7 @@ void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is
 {
   object_ptr<Owner> valptr(value);
   inserter.insert(valptr, this->field, has_many_item_holder<Value>(owner, nullptr));
-  proxy(valptr)->mark_modified();
+  this->proxy(valptr)->mark_modified();
 }
 
 template < class Value, class Owner >
@@ -356,14 +356,14 @@ void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is
 {
   object_ptr<Owner> valptr(value);
   remover.remove(valptr, this->field, has_many_item_holder<Value>(owner, nullptr));
-  proxy(valptr)->mark_modified();
+  this->proxy(valptr)->mark_modified();
 }
 
 template < class Value, class Owner >
 void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::insert_value(const basic_has_many_item_holder &holder, object_proxy *owner)
 {
   inserter.insert(static_cast<const has_many_item_holder<Owner>&>(holder).value(), this->field, has_many_item_holder<Value>(owner, nullptr));
-  proxy(static_cast<const has_many_item_holder<Owner>&>(holder).value())->mark_modified();
+  this->proxy(static_cast<const has_many_item_holder<Owner>&>(holder).value())->mark_modified();
 }
 
 template < class Value, class Owner >
@@ -371,7 +371,7 @@ void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is
 {
   remover.remove(static_cast<const has_many_item_holder<Owner> &>(holder).value(), this->field,
                  has_many_item_holder<Value>(owner, nullptr));
-  proxy(static_cast<const has_many_item_holder<Owner> &>(holder).value())->mark_modified();
+  this->proxy(static_cast<const has_many_item_holder<Owner> &>(holder).value())->mark_modified();
 }
 
 template<class Value, class Owner>
