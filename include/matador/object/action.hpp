@@ -14,16 +14,11 @@
   #define MATADOR_OBJECT_API
 #endif
 
-#include <string>
-#include <list>
-#include <memory>
-
 namespace matador {
 
 class action_visitor;
 class byte_buffer;
 class object_store;
-class object_proxy;
 class object_serializer;
 class object_deserializer;
 

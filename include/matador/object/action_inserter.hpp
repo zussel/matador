@@ -18,6 +18,7 @@
 #include "matador/object/action.hpp"
 
 #include <vector>
+#include <memory>
 
 namespace matador {
 

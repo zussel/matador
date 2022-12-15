@@ -626,7 +626,7 @@ public:
    */
   template<class T>
   bool is_removable(const object_ptr<T> &o) {
-    return object_deleter_.is_deletable(o.proxy_, o.get());
+    return object_deleter_.is_deletable(o.proxy_);
   }
 
   /**
@@ -649,44 +649,10 @@ public:
    * If check_if_deletable flag is true method checks if the
    * proxy is deletable.
    *
-   * @tparam T Type of the object represented by the object_proxy
    * @param proxy              The object_proxy to be removed.
    * @param check_if_deletable If true methods checks if proxy is deletable.
    */
-  template < class T >
-  void remove(object_proxy *proxy, bool check_if_deletable)
-  {
-    if (proxy == nullptr) {
-      throw_object_exception("object proxy is nullptr");
-    }
-    if (proxy->node() == nullptr) {
-      throw_object_exception("prototype node is nullptr");
-    }
-    // check if object tree is deletable
-    if (check_if_deletable && !object_deleter_.is_deletable<T>(proxy, (T*)proxy->obj())) {
-      throw_object_exception("object is not removable");
-    }
-
-    if (check_if_deletable) {
-      object_deleter_.remove();
-    } else {
-      // single deletion
-      if (object_map_.erase(proxy->id()) != 1) {
-        // couldn't remove object
-        // throw exception
-        throw_object_exception("couldn't remove object");
-      }
-
-      proxy->node()->remove(proxy);
-
-      if (!transactions_.empty()) {
-        // notify transaction
-        transactions_.top().on_delete(proxy);
-      } else {
-        on_proxy_delete_(proxy);
-      }
-    }
-  }
+  void remove(object_proxy *proxy, bool check_if_deletable);
 
   /**
    * Removes an object from the object store. After successful
@@ -702,7 +668,7 @@ public:
   template<class T>
   void remove(object_ptr<T> &o)
   {
-    remove<T>(o.proxy_, true);
+    remove(o.proxy_, true);
   }
 
   /**
@@ -915,11 +881,5 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 }
 
 #include "matador/object/node_analyzer.tpp"
-#include "matador/object/relation_field_endpoint.tpp"
-#include "matador/object/relation_endpoint_value_inserter.tpp"
-#include "matador/object/relation_endpoint_value_remover.tpp"
-#include "matador/object/object_inserter.tpp"
-#include "matador/object/object_deleter.tpp"
-#include "matador/object/object_ptr.tpp"
 
 #endif /* OBJECT_STORE_HPP */

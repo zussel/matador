@@ -16,11 +16,12 @@
 
 #include "matador/object/action.hpp"
 
-#include "matador/utils/basic_identifier.hpp"
+#include <string>
 
 namespace matador {
 
-class object_serializer;
+class object_proxy;
+class basic_identifier;
 
 /// @cond MATADOR_DEV
 

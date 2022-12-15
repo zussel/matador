@@ -3,7 +3,7 @@
 
 #include "matador/object/abstract_has_many.hpp"
 #include "matador/object/container_type_traits.hpp"
-#include "matador/object/relation_field_endpoint.hpp"
+#include "matador/object/relation_endpoint.hpp"
 #include "matador/object/has_many_iterator_traits.hpp"
 
 namespace matador {
@@ -64,8 +64,6 @@ public:
   typedef typename container_type::size_type size_type;                 /**< Shortcut to size type */
   typedef typename container_type::iterator container_iterator;         /**< Shortcut to container iterator */
 
-  typedef std::function<void(object_store&, object_proxy*)> mark_modified_owner_func; /**< Shortcut to mark modified owner function */
-
 public:
   ~basic_has_many()
   {
@@ -114,7 +112,7 @@ public:
    *
    * @return A const copy of the first element
    */
-  const value_type front() const { return *begin(); }
+  value_type front() const { return *begin(); }
 
   /**
    * @brief Returns a const copy of the first element
@@ -133,7 +131,7 @@ public:
    *
    * @return A const copy of the last element
    */
-  const value_type back() const
+  value_type back() const
   {
     const_iterator tmp = end();
     --tmp;
@@ -179,11 +177,6 @@ protected:
   friend class object_store;
   friend class object_serializer;
   friend class object_deserializer;
-
-  object_proxy *owner_ = nullptr;
-  basic_identifier *owner_id_ = nullptr;
-
-  mark_modified_owner_func mark_modified_owner_;
 
   holder_container_type holder_container_;
 

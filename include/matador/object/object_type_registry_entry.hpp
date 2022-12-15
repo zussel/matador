@@ -5,6 +5,7 @@
 
 #include "matador/object/object_type_registry_entry_base.hpp"
 #include "matador/object/object_proxy.hpp"
+#include "matador/object/prototype_node.hpp"
 #include "matador/object/object_serializer.hpp"
 #include "matador/object/object_deserializer.hpp"
 

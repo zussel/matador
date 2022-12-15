@@ -44,6 +44,9 @@ class object_proxy;
 class MATADOR_OBJECT_API abstract_has_many : public detail::object_proxy_accessor
 {
 public:
+  typedef std::function<void(object_store&, object_proxy*)> mark_modified_owner_func; /**< Shortcut to mark modified owner function */
+
+public:
   typedef size_t size_type;
 
   void owner_field(const std::string &owner_field) { owner_field_ = owner_field; }
@@ -79,6 +82,11 @@ protected:
   friend class detail::object_inserter;
 
   object_store *ostore_ = nullptr;
+
+  object_proxy *owner_ = nullptr;
+  basic_identifier *owner_id_ = nullptr;
+
+  mark_modified_owner_func mark_modified_owner_;
 
   std::string owner_field_ = "owner_id";
   std::string item_field_ = "item_id";

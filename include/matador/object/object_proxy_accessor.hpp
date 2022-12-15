@@ -1,7 +1,3 @@
-//
-// Created by sascha on 9/2/16.
-//
-
 #ifndef OOS_OBJECT_PROXY_ACCESSOR_HPP
 #define OOS_OBJECT_PROXY_ACCESSOR_HPP
 

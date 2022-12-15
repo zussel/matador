@@ -42,21 +42,11 @@ namespace detail {
 class MATADOR_OBJECT_API object_deleter {
 private:
   struct MATADOR_OBJECT_API t_object_count {
-    typedef void (*t_remove_func)(object_proxy*);
-    template < class T >
-    explicit t_object_count(object_proxy *oproxy, T* = nullptr)
-      : proxy(oproxy)
-      , remove_func(&remove_object<T>)
-    {}
+    explicit t_object_count(object_proxy *oproxy);
 
     void remove();
 
-    template <typename T>
-    static void remove_object(object_proxy *proxy);
-
     object_proxy *proxy;
-
-    t_remove_func remove_func;
   };
 
 private:
@@ -81,8 +71,7 @@ public:
    * @param proxy The object_proxy to be checked.
    * @return True if the serializable could be deleted.
    */
-  template<class T>
-  bool is_deletable(object_proxy *proxy, const T *o);
+  bool is_deletable(object_proxy *proxy);
 
   void remove();
 
@@ -138,6 +127,133 @@ private:
 };
 
 /// @endcond
+
+template<class T>
+void object_deleter::serialize(const char *, const T &)
+{
+  if (!proxy_stack_.top()->node()->is_relation_node()) {
+    return;
+  }
+  auto curr_obj = visited_objects_.find(proxy_stack_.top());
+  if (curr_obj != visited_objects_.end()) {
+//    --curr_obj->second;
+  }
+
+}
+
+template<class T>
+void object_deleter::serialize(const char *, belongs_to<T> &x, cascade_type cascade)
+{
+  if (!x.ptr()) {
+    return;
+  }
+
+  if (visited_objects_.find(x.proxy_) != visited_objects_.end()) {
+    return;
+  }
+
+  if (!proxy_stack_.top()->node()->is_relation_node()) {
+    if (x.proxy_ && x.relation_info_) {
+      relations_to_remove_.push_back([&x]() {
+        x.relation_info_->remove_value_from_foreign(x.owner_, x.proxy_);
+      });
+    }
+    visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1));
+  }
+
+
+  auto curr_obj = visited_objects_.find(proxy_stack_.top());
+  if (curr_obj != visited_objects_.end()) {
+    --curr_obj->second;
+  }
+
+  if (cascade & cascade_type::REMOVE) {
+    objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
+    proxy_stack_.push(x.proxy_);
+    matador::access::serialize(*this, *(T*)x.ptr());
+    proxy_stack_.pop();
+  }
+}
+
+template<class T>
+void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade)
+{
+  if (!x.ptr()) {
+    return;
+  }
+
+  if (visited_objects_.find(x.proxy_) != visited_objects_.end()) {
+    return;
+  }
+
+  if (!proxy_stack_.top()->node()->is_relation_node()) {
+    if (x.proxy_ && x.relation_info_) {
+      relations_to_remove_.push_back([&x]() {
+        x.relation_info_->remove_value_from_foreign(x.owner_, x.proxy_);
+      });
+    }
+    auto foreign_endpoint = x.relation_info_->foreign_endpoint.lock();
+    if (foreign_endpoint && foreign_endpoint->type == basic_relation_endpoint::BELONGS_TO) {
+      auto current_proxy = visited_objects_.find(proxy_stack_.top());
+      if (current_proxy != visited_objects_.end()) {
+        --current_proxy->second;
+      }
+    }
+    visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1));
+  }
+
+  if (cascade & cascade_type::REMOVE) {
+    objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
+    proxy_stack_.push(x.proxy_);
+    matador::access::serialize(*this, *(T*)x.ptr());
+    proxy_stack_.pop();
+  }
+}
+
+template<class T, template<class ...> class C>
+void object_deleter::serialize(const char *, basic_has_many<T, C> &x, cascade_type, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
+{
+  typename basic_has_many<T, C>::iterator first = x.begin();
+  typename basic_has_many<T, C>::iterator last = x.end();
+
+  object_proxy *owner = proxy_stack_.top();
+  while (first != last) {
+    has_many_item_holder<T> &holder = first.holder_item();
+    if (x.relation_info_) {
+      relations_to_remove_.push_back([&holder,&x, owner]() {
+        x.relation_info_->remove_value_from_foreign(holder, owner);
+      });
+    }
+
+    auto curr_obj = visited_objects_.find(proxy_stack_.top());
+    if (curr_obj != visited_objects_.end()) {
+      --curr_obj->second;
+    }
+    ++first;
+  }
+}
+
+template<class T, template<class ...> class C>
+void object_deleter::serialize(const char *, basic_has_many<T, C> &x, cascade_type, typename std::enable_if<matador::is_builtin<T>::value>::type*)
+{
+  typename basic_has_many<T, C>::iterator first = x.begin();
+  typename basic_has_many<T, C>::iterator last = x.end();
+
+  while (first != last) {
+    auto curr_obj = visited_objects_.find(proxy_stack_.top());
+    if (curr_obj != visited_objects_.end()) {
+      --curr_obj->second;
+    }
+    ++first;
+  }
+}
+
+template<class T>
+void object_deleter::serialize(const char *id, identifier<T> &x)
+{
+  auto val = x.value();
+  serialize(id, val);
+}
 
 }
 }
