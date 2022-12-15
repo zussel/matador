@@ -39,8 +39,6 @@ class object_deserializer;
 
 namespace detail {
 class basic_relation_data;
-class object_deleter;
-class object_inserter;
 
 template<typename T> struct identity { typedef T type; };
 
@@ -266,8 +264,8 @@ public:
   void restore(byte_buffer &buffer, object_deserializer &deserializer);
   void backup(byte_buffer &buffer, object_serializer &serializer);
 
-  void insert_object(detail::object_inserter &inserter);
-  void delete_object(detail::object_deleter &deleter);
+  void insert_object();
+  void delete_object();
 
   void sync_id();
 

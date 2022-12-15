@@ -111,12 +111,12 @@ void object_proxy::backup(byte_buffer &buffer, object_serializer &serializer)
   object_type_entry_->backup(this, buffer, serializer);
 }
 
-void object_proxy::insert_object(detail::object_inserter &inserter)
+void object_proxy::insert_object()
 {
   object_type_entry_->insert_object(this);
 }
 
-void object_proxy::delete_object(detail::object_deleter &deleter)
+void object_proxy::delete_object()
 {
   object_type_entry_->delete_object(this);
 }

@@ -19,7 +19,7 @@ void object_inserter::insert(object_proxy *proxy, bool notify)
   };
 
   if (proxy->obj()) {
-    proxy->insert_object(*this);
+    proxy->insert_object();
   }
   if (!proxy_stack_.empty()) {
     proxy_stack_.pop();
