@@ -279,7 +279,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value>
-prototype_iterator node_analyzer<Owner, Observer>::detach_one_to_many_node(prototype_iterator node)
+prototype_iterator node_analyzer<Owner, Observer>::detach_one_to_many_node(const prototype_iterator &node)
 {
   // found has one-to-many
   // must be detached because

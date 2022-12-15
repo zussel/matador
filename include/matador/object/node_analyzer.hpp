@@ -55,7 +55,7 @@ private:
    * @return The foreign prototype node iterator
    */
   template < class V >
-  prototype_iterator detach_one_to_many_node(prototype_iterator node);
+  prototype_iterator detach_one_to_many_node(const prototype_iterator &node);
 
 protected:
   prototype_node &node_;
