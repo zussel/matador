@@ -267,7 +267,11 @@ public:
   void insert_object();
   void delete_object();
 
+  void mark_modified();
+
   void sync_id();
+
+  const std::type_index& type_index() const;
 
   /**
    * @brief Add an object_holder to the linked list.
@@ -374,7 +378,7 @@ private:
 
   void *obj_ = nullptr;                       /**< The concrete object. */
 
-  std::shared_ptr<detail::object_type_registry_entry_base> object_type_entry_;
+  std::shared_ptr<detail::object_type_registry_entry_base> object_type_entry_ = detail::null_object_type_registry_entry::null_type_entry;
 
   delete_func deleter_ = nullptr;             /**< The object deleter function */
   create_func creator_ = nullptr;

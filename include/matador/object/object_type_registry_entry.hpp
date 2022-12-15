@@ -5,6 +5,7 @@
 
 #include "matador/object/object_type_registry_entry_base.hpp"
 #include "matador/object/object_proxy.hpp"
+#include "matador/object/prototype_node.hpp"
 #include "matador/object/object_serializer.hpp"
 #include "matador/object/object_deserializer.hpp"
 
@@ -70,13 +71,12 @@ class object_type_registry
 public:
   template<class Type>
   void register_type(object_store *store, prototype_node *node) {
-    auto ti = std::type_index(typeid(Type));
-    type_registry_.insert(std::make_pair(ti, std::make_shared<object_type_registry_entry<Type>>(store, node)));
+    type_registry_.insert(std::make_pair(std::type_index(typeid(Type)), std::make_shared<object_type_registry_entry<Type>>(store, node)));
   }
 
   template<class Type>
   std::shared_ptr<object_type_registry_entry_base> object_type() const {
-    return type_registry_.at(std::type_index(typeid(Type)));
+    return object_type(std::type_index(typeid(Type)));
   }
 
   std::shared_ptr<object_type_registry_entry_base> object_type(const std::type_index &ti) const {

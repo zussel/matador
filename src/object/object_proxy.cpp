@@ -13,7 +13,7 @@ object_proxy::object_proxy(basic_identifier *pk)
 
 object_proxy::~object_proxy()
 {
-  if (object_type_entry_ && object_type_entry_->store() && id() > 0) {
+  if (object_type_entry_->store() && id() > 0) {
     // Todo: callback to object store?
 //    store_->delete_proxy(id());
   }
@@ -32,12 +32,12 @@ const char *object_proxy::classname() const
 
 object_store *object_proxy::ostore() const
 {
-  return object_type_entry_ ? object_type_entry_->store() : nullptr;
+  return object_type_entry_->store();
 }
 
 prototype_node *object_proxy::node() const
 {
-  return object_type_entry_ ? object_type_entry_->node() : nullptr;
+  return object_type_entry_->node();
 }
 
 void object_proxy::link(object_proxy *successor)
@@ -121,9 +121,19 @@ void object_proxy::delete_object()
   object_type_entry_->delete_object(this);
 }
 
+void object_proxy::mark_modified()
+{
+  object_type_entry_->mark_modified(this);
+}
+
 void object_proxy::sync_id()
 {
   object_type_entry_->sync_id(this);
+}
+
+const std::type_index& object_proxy::type_index() const
+{
+  return object_type_entry_->type_index();
 }
 
 void object_proxy::add(object_holder *ptr)
@@ -138,7 +148,7 @@ bool object_proxy::remove(object_holder *ptr)
 
 bool object_proxy::valid() const
 {
-  return object_type_entry_ && prev_ && next_;
+  return object_type_entry_->store() && prev_ && next_;
 }
 
 unsigned long object_proxy::id() const {
@@ -172,7 +182,7 @@ void object_proxy::create_object()
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
 {
-  os << "proxy [" << &op << "] (oid: " << op.oid << ", type: " << (op.object_type_entry_ ? op.object_type_entry_->node()->type() : op.classname()) << ")"
+  os << "proxy [" << &op << "] (oid: " << op.oid << ", type: " << (op.object_type_entry_->node() ? op.object_type_entry_->node()->type() : op.classname()) << ")"
      << " prev_ [" << op.prev_ << "]"
      << " next_ [" << op.next_ << "] object [" << op.obj_ << "] "
      << " refs [" << op.reference_counter_ << "]";

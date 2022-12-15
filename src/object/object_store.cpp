@@ -259,6 +259,40 @@ void object_store::remove_proxy(object_proxy *proxy)
   delete proxy;
 }
 
+void object_store::remove(object_proxy *proxy, bool check_if_deletable)
+{
+  if (proxy == nullptr) {
+    throw_object_exception("object proxy is nullptr");
+  }
+  if (proxy->node() == nullptr) {
+    throw_object_exception("prototype node is nullptr");
+  }
+  // check if object tree is deletable
+  if (check_if_deletable && !object_deleter_.is_deletable(proxy)) {
+    throw_object_exception("object is not removable");
+  }
+
+  if (check_if_deletable) {
+    object_deleter_.remove();
+  } else {
+    // single deletion
+    if (object_map_.erase(proxy->id()) != 1) {
+      // couldn't remove object
+      // throw exception
+      throw_object_exception("couldn't remove object");
+    }
+
+    proxy->node()->remove(proxy);
+
+    if (!transactions_.empty()) {
+      // notify transaction
+      transactions_.top().on_delete(proxy);
+    } else {
+      on_proxy_delete_(proxy);
+    }
+  }
+}
+
 prototype_node* object_store::find_prototype_node(const char *type) const {
   // check for null
   if (type == nullptr) {

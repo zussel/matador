@@ -132,7 +132,7 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
                                                typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   // attach relation table for has many relation
-  // check if has many item is already attached
+  // check if has-many item is already attached
   // true: check owner and item field
   // false: attach it
   prototype_iterator pi = store_.find(id);
@@ -279,11 +279,11 @@ void node_analyzer<Owner, Observer>::serialize(const char *id, has_many <Value, 
 
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value>
-prototype_iterator node_analyzer<Owner, Observer>::detach_one_to_many_node(prototype_iterator node)
+prototype_iterator node_analyzer<Owner, Observer>::detach_one_to_many_node(const prototype_iterator &node)
 {
-  // found has one to many
+  // found has one-to-many
   // must be detached because
-  // we have a many to many relation here
+  // we have a many-to-many relation here
   store_.detach(node);
   // remove registered endpoint from foreign site
   prototype_iterator foreign_node = store_.find<Value>();
@@ -292,6 +292,9 @@ prototype_iterator node_analyzer<Owner, Observer>::detach_one_to_many_node(proto
   }
   return foreign_node;
 }
+
+void analyze_has_one(const char *type);
+void analyze_belongs_to(const char *type);
 
 }
 }

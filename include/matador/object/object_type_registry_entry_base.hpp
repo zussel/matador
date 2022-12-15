@@ -15,6 +15,7 @@
 #endif
 
 #include <typeindex>
+#include <memory>
 
 namespace matador {
 
@@ -50,6 +51,7 @@ public:
   virtual void insert_object(object_proxy *proxy) const = 0;
   virtual void delete_object(object_proxy *proxy) const = 0;
   virtual basic_identifier* resolve_identifier(object_proxy *proxy) const = 0;
+  virtual void mark_modified(object_proxy *proxy);
 
   const std::type_index& type_index() const;
 
@@ -61,6 +63,26 @@ private:
   object_store *store_ = nullptr;
   prototype_node *node_ = nullptr;
   const std::type_index type_index_;
+};
+
+class MATADOR_OBJECT_API null_object_type_registry_entry : public object_type_registry_entry_base
+{
+private:
+  struct MATADOR_OBJECT_API null_type {};
+
+public:
+  null_object_type_registry_entry();
+
+  void sync_id(object_proxy *proxy) const override;
+  void restore(object_proxy *proxy, byte_buffer &, object_deserializer &) const override;
+  void backup(object_proxy *proxy, byte_buffer &, object_serializer &) const override;
+  void create_object(object_proxy *proxy) const override;
+  void insert_object(object_proxy *proxy) const override;
+  void delete_object(object_proxy *proxy) const override;
+  basic_identifier* resolve_identifier(object_proxy *proxy) const override;
+  void mark_modified(object_proxy *proxy) override;
+
+  static std::shared_ptr<object_type_registry_entry_base> null_type_entry;
 };
 
 }

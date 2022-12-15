@@ -15,13 +15,14 @@ SET(SOURCES
   object_proxy_accessor.cpp
   object_deleter.cpp
   object_inserter.cpp
-  relation_field_endpoint.cpp
   abstract_has_many.cpp
   basic_has_many_to_many_item.cpp
   prototype_info.cpp json_object_mapper.cpp
   json_object_serializer.cpp
   object_json_serializer.cpp
-  json_object_mapper_serializer.cpp object_deserializer.cpp object_type_registry_entry_base.cpp)
+  json_object_mapper_serializer.cpp
+  object_deserializer.cpp
+  object_type_registry_entry_base.cpp relation_endpoint.cpp)
 
 SET(HEADER
   ../../include/matador/object/action.hpp
@@ -29,7 +30,6 @@ SET(HEADER
   ../../include/matador/object/generic_access.hpp
   ../../include/matador/object/object_exception.hpp
   ../../include/matador/object/object_ptr.hpp
-  ../../include/matador/object/object_ptr.tpp
   ../../include/matador/object/object_store.hpp
   ../../include/matador/object/object_view.hpp
   ../../include/matador/object/object_proxy.hpp
@@ -63,26 +63,26 @@ SET(HEADER
   ../../include/matador/object/belongs_to.hpp
   ../../include/matador/object/object_holder_type.hpp
   ../../include/matador/object/object_inserter.hpp
-  ../../include/matador/object/object_inserter.tpp
   ../../include/matador/object/object_deleter.hpp
-  ../../include/matador/object/object_deleter.tpp
   ../../include/matador/object/node_analyzer.hpp
   ../../include/matador/object/node_analyzer.tpp
   ../../include/matador/object/relation_field_endpoint.hpp
-  ../../include/matador/object/relation_field_endpoint.tpp
   ../../include/matador/object/has_many_to_many_item.hpp
   ../../include/matador/object/basic_has_many_to_many_item.hpp
   ../../include/matador/object/has_many_item_holder.hpp
   ../../include/matador/object/prototype_info.hpp
   ../../include/matador/object/relation_endpoint_value_inserter.hpp
-  ../../include/matador/object/relation_endpoint_value_inserter.tpp
   ../../include/matador/object/relation_endpoint_value_remover.hpp
-  ../../include/matador/object/relation_endpoint_value_remover.tpp
   ../../include/matador/object/to_many_endpoints.hpp
   ../../include/matador/object/has_many_iterator_traits.hpp
   ../../include/matador/object/json_object_serializer.hpp
   ../../include/matador/object/object_json_serializer.hpp
-  ../../include/matador/object/json_object_mapper_serializer.hpp ../../include/matador/object/action_vector.hpp ../../include/matador/object/object_deserializer.hpp ../../include/matador/object/object_type_registry_entry_base.hpp ../../include/matador/object/object_type_registry_entry.hpp)
+  ../../include/matador/object/json_object_mapper_serializer.hpp
+  ../../include/matador/object/action_vector.hpp
+  ../../include/matador/object/object_deserializer.hpp
+  ../../include/matador/object/object_type_registry_entry_base.hpp
+  ../../include/matador/object/object_type_registry_entry.hpp
+  ../../include/matador/object/relation_endpoint.hpp)
 
 ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
 

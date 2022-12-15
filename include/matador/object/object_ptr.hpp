@@ -242,6 +242,17 @@ private:
   static std::unique_ptr<basic_identifier> identifier_;
 };
 
+template < class T, object_holder_type OPT >
+T* object_pointer<T, OPT>::modify() {
+  if (proxy_ && proxy_->obj()) {
+    proxy_->mark_modified();
+
+    return proxy_->obj<T>();
+  } else {
+    return nullptr;
+  }
+}
+
 /**
  * Shortcut to object_pointer representing a object_ptr
  * relationship

@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/2/17.
-//
-
 #ifndef MATADOR_RELATION_ENDPOINT_VALUE_REMOVER_HPP
 #define MATADOR_RELATION_ENDPOINT_VALUE_REMOVER_HPP
 
@@ -70,6 +66,36 @@ private:
 };
 
 /// @endcond
+
+template < class Value >
+template<class Owner>
+void relation_endpoint_value_remover<Value>::remove(const object_ptr <Owner> &owner, const std::string &field, has_many_item_holder<Value> holder)
+{
+  field_ = field;
+  holder_ = holder;
+
+  matador::access::serialize(*this, *owner);
+
+  field_.clear();
+}
+
+template < class Value >
+void relation_endpoint_value_remover<Value>::serialize(const char *id, object_pointer<Value, object_holder_type::BELONGS_TO> &x, cascade_type cascade)
+{
+  if (field_ != id) {
+    return;
+  }
+  x.reset(nullptr, cascade, false);
+}
+
+template < class Value >
+void relation_endpoint_value_remover<Value>::serialize(const char *id, object_pointer<Value, object_holder_type::HAS_ONE> &x, cascade_type cascade)
+{
+  if (field_ != id) {
+    return;
+  }
+  x.reset(nullptr, cascade, false);
+}
 
 }
 }

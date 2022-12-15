@@ -4,10 +4,11 @@
 #include "matador/object/action.hpp"
 #include "matador/object/delete_action.hpp"
 
+#include <memory>
+
 namespace matador {
 
 class object_proxy;
-class object_serializer;
 
 /// @cond MATADOR_DEV
 

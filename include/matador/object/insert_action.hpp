@@ -16,6 +16,9 @@
 
 #include "matador/object/action.hpp"
 
+#include <list>
+#include <string>
+
 namespace matador {
 
 class object_proxy;
