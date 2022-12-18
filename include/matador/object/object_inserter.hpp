@@ -1,6 +1,7 @@
 #ifndef OOS_OBJECT_INSERTER_HPP
 #define OOS_OBJECT_INSERTER_HPP
 
+#include "matador/object/prototype_node.hpp"
 #include "matador/object/has_one.hpp"
 #include "matador/object/belongs_to.hpp"
 #include "matador/object/basic_has_many.hpp"

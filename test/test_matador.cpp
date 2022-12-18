@@ -211,6 +211,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ConnectionTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new QueryTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new BlogUnitTest("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new JsonOrmTest("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));

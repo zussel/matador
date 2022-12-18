@@ -62,6 +62,7 @@ void BlogUnitTest::test_blog_single_post()
   UNIT_ASSERT_EQUAL(p.store().size(), 7UL);
   p.create();
 
+  std::cout << "Created database\n";
   {
     matador::session s(p);
 
@@ -102,10 +103,13 @@ void BlogUnitTest::test_blog_single_post()
 
   p.clear();
 
+  std::cout << "Reloading blog database\n";
   {
     matador::session s(p);
 
     s.load();
+
+    std::cout << "Finished loading tables\n";
 
     using t_author_view = matador::object_view<author>;
     t_author_view authors(s.store());

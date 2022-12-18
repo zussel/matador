@@ -65,7 +65,7 @@ public:
   virtual void* prototype() const = 0;
   virtual void* create() const = 0;
   virtual void register_observer(basic_object_store_observer *obs) = 0;
-  virtual void notify(notification_type type, object_proxy *proxy = nullptr) const = 0;
+  virtual void notify(notification_type type, object_proxy *proxy) const = 0;
 
 protected:
   prototype_node &node;        /**< prototype node of the represented object type */

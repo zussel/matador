@@ -443,12 +443,12 @@ const prototype_node::relation_node_info &prototype_node::node_info() const
 
 void prototype_node::on_attach() const
 {
-  info_->notify(detail::notification_type::ATTACH);
+  info_->notify(detail::notification_type::ATTACH, nullptr);
 }
 
 void prototype_node::on_detach() const
 {
-  info_->notify(detail::notification_type::DETACH);
+  info_->notify(detail::notification_type::DETACH, nullptr);
 }
 
 void prototype_node::on_insert_proxy(object_proxy *proxy) const

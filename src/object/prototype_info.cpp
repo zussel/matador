@@ -1,4 +1,5 @@
 #include "matador/object/prototype_info.hpp"
+#include "matador/object/prototype_node.hpp"
 
 #include <algorithm>
 
@@ -8,12 +9,15 @@ namespace detail {
 void abstract_prototype_info::register_relation_endpoint(const std::type_index &tindex,
                                                       const std::shared_ptr<basic_relation_endpoint> &endpoint)
 {
+  std::cout << this << " node " << tindex.name() << ": registering relation endpoint " << endpoint->field << "\n";
   endpoints_.insert(std::make_pair(tindex, endpoint));
 }
 
 void abstract_prototype_info::unregister_relation_endpoint(const std::type_index &tindex)
 {
-  endpoints_.erase(tindex);
+  auto it = endpoints_.find(tindex);
+  std::cout << this << " node " << tindex.name() << ": unregistering relation endpoint " << it->second->field << "\n";
+  endpoints_.erase(it);
 }
 
 abstract_prototype_info::const_endpoint_iterator abstract_prototype_info::find_relation_endpoint(const std::type_index &tindex) const
@@ -35,6 +39,12 @@ abstract_prototype_info::const_endpoint_iterator abstract_prototype_info::find_r
 
 abstract_prototype_info::endpoint_iterator abstract_prototype_info::find_relation_endpoint(const std::string &field)
 {
+  std::cout << this << " try to find relation info for field " << field << "\n";
+  std::cout << this << " available fields:\n";
+  for ( const auto& rf : endpoints_ ) {
+    std::cout << this << " field " << rf.second->field << " (node: " << rf.second->node->type() << ")\n";
+  }
+
   return std::find_if(endpoints_.begin(), endpoints_.end(), [&field](const t_endpoint_map::value_type &value) {
     return value.second->field == field;
   });

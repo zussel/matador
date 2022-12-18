@@ -75,6 +75,7 @@ public:
   template < class T >
   object_ptr<T> insert(T *obj)
   {
+    std::cout << "Insert object of type " << typeid(T).name() << "\n";
     return persistence_.store().insert(obj);
   }
 
