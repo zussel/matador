@@ -114,7 +114,7 @@ public:
       }
       auto k = j->second->find_proxy(pk);
       if (k == j->second->end_proxy()) {
-        proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<T>{});
+        proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<V>{});
         k = j->second->insert_proxy(pk, proxy);
         x.reset(k->second.proxy, cascade, false);
       } else {
@@ -155,7 +155,7 @@ public:
     }
     auto endpoint = proxy_->node()->find_endpoint(id);
 //    if (!endpoint->second) {
-    if (endpoint != proxy_->node()->endpoint_end() && !endpoint->second) {
+    if (endpoint != proxy_->node()->endpoint_end() || !endpoint->second) {
       throw_object_exception("couldn't find endpoint for field " << id);
     }
 
