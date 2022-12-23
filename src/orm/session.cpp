@@ -80,6 +80,7 @@ const object_store &session::store() const
 void session::load(const persistence::table_ptr &table)
 {
   std::cout << "Loading table " << table->name() << "\n";
+  std::cout.flush();
   table->load(persistence_.store());
 }
 

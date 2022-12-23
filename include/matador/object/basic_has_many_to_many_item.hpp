@@ -27,7 +27,7 @@ class MATADOR_OBJECT_API basic_has_many_to_many_item
 {
 protected:
   basic_has_many_to_many_item() = default;
-  basic_has_many_to_many_item(const std::string &left_column, const std::string &right_column);
+  basic_has_many_to_many_item(std::string left_column, std::string right_column);
 
   virtual ~basic_has_many_to_many_item() = default;
 
