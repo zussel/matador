@@ -153,10 +153,9 @@ public:
     if (data == table_.end_relation_data()) {
       return;
     }
-    std::cout << *proxy_ << "\n";
     auto endpoint = proxy_->node()->find_endpoint(id);
-    if (!endpoint->second) {
-//    if (endpoint != proxy_->node()->endpoint_end() && !endpoint->second) {
+//    if (!endpoint->second) {
+    if (endpoint != proxy_->node()->endpoint_end() && !endpoint->second) {
       throw_object_exception("couldn't find endpoint for field " << id);
     }
 

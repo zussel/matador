@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/21/16.
-//
-
 #ifndef OOS_TABLE_HPP
 #define OOS_TABLE_HPP
 

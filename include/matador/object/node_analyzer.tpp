@@ -293,8 +293,5 @@ prototype_iterator node_analyzer<Owner, Observer>::detach_one_to_many_node(const
   return foreign_node;
 }
 
-void analyze_has_one(const char *type);
-void analyze_belongs_to(const char *type);
-
 }
 }

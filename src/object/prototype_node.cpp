@@ -58,7 +58,7 @@ void prototype_node::append(prototype_node *sibling)
     sibling->op_first->next_ = sibling->op_last;
     sibling->op_last->prev_ = sibling->op_first;
   } else {
-    throw object_exception("");
+    throw object_exception("failed to add node as sibling: node has no parent");
     // 1. first
 //    if (op_first->next() == op_last) {
 //      // node hasn't any serializable (proxy)
