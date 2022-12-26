@@ -155,8 +155,8 @@ public:
     }
     auto endpoint = proxy_->node()->find_endpoint(id);
 //    if (!endpoint->second) {
-    if (endpoint != proxy_->node()->endpoint_end() || !endpoint->second) {
-      throw_object_exception("couldn't find endpoint for field " << id);
+    if (endpoint == proxy_->node()->endpoint_end() || !endpoint->second) {
+      throw_object_exception("couldn't find endpoint in node " << proxy_->node()->type() << "for field " << id);
     }
 
     if (is_same_type<V>(data->second)) {
@@ -269,15 +269,14 @@ public:
       return;
     }
 
-//    std::cout << "processing identifier " << *pk << " (has_one field: " << id << ", " << pk << ")\n";
-
-    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
   }
   
   void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
   void serialize(const char *, abstract_has_many &, cascade_type) { }
 
 private:
+  template<class V>
   object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
@@ -293,7 +292,12 @@ private:
       // find proxy in tables id(pk) proxy map
       auto id_proxy_pair = tbl->find_proxy(pk);
       if (id_proxy_pair == tbl->end_proxy()) {
-        proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<T>{});
+//        std::cout << "acquire proxy\n";
+//        std::cout << "node type " << node->type() << " (object type " << node->object_type_entry()->type_index().name() << ")\n";
+//        std::cout << "left type " << typeid(V).name() << "\n";
+//        std::cout << "right type " << typeid(right_value_type).name() << "\n";
+
+        proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<V>{});
         id_proxy_pair = tbl->insert_proxy(pk, proxy);
       } else {
         proxy = id_proxy_pair->second.proxy;
@@ -400,14 +404,14 @@ public:
       return;
     }
 
-    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
   }
 
-//  template<class V, template<class ...> class C>
   void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
   void serialize(const char *, abstract_has_many &, cascade_type) { }
 
 private:
+  template < class V >
   object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
@@ -420,7 +424,7 @@ private:
       auto idproxy = tbl->find_proxy(pk);
       if (idproxy == tbl->end_proxy()) {
         auto ot = node->object_type_entry();
-        proxy = new object_proxy(pk, ot, detail::identity<T>{});
+        proxy = new object_proxy(pk, ot, detail::identity<V>{});
         idproxy = tbl->insert_proxy(pk, proxy);
       } else {
         proxy = idproxy->second.proxy;

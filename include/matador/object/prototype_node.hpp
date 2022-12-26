@@ -28,6 +28,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <ostream>
 
 namespace matador {
 
@@ -404,6 +405,8 @@ public:
 
   std::shared_ptr<detail::object_type_registry_entry_base> object_type_entry() const;
 /// @endcond
+
+  friend std::ostream &operator<<(std::ostream &stream, const prototype_node &node);
 
 private:
 

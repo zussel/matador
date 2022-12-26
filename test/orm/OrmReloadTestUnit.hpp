@@ -3,14 +3,10 @@
 
 #include "matador/unit/unit_test.hpp"
 
-#include <matador/orm/persistence.hpp>
-
 class OrmReloadTestUnit : public matador::unit_test
 {
 public:
-  OrmReloadTestUnit(const std::string &prefix, std::string dns);
-
-  void finalize() override;
+  OrmReloadTestUnit(const std::string &prefix, std::string  dns);
 
   void test_load();
   void test_load_twice();
@@ -23,7 +19,7 @@ public:
   void test_load_belongs_to_many();
 
 private:
-  matador::persistence persistence_;
+  std::string dns_;
 };
 
 #endif // OOS_ORMRELOADTESTUNIT_HPP

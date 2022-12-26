@@ -377,7 +377,11 @@ void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is
 template<class Value, class Owner>
 void belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::is_builtin<Value>::value>::type>::print(std::ostream &out) const
 {
-  out << "belongs_to_many_endpoint<" << typeid(Value).name() << "," << typeid(Owner).name() << "> relation " << this->node->type() << "::" << this->field << " (" << this->type_name << ")";
+  out << "relation belongs_to_many_endpoint<" << typeid(Value).name() << "," << typeid(Owner).name() << "> " << this->node->type() << "::" << this->field << " (" << this->type_name << ")";
+  auto locked_endpoint = this->foreign_endpoint.lock();
+  if (locked_endpoint) {
+    out << " -> " << locked_endpoint->node->type() << "::" << locked_endpoint->field << " (" << locked_endpoint->type_name << ")";
+  }
 }
 
 template < class Value, class Owner >

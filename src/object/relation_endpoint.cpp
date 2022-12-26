@@ -50,6 +50,10 @@ std::ostream& operator<<(std::ostream &stream, const basic_relation_endpoint &en
 void basic_relation_endpoint::print(std::ostream &out) const
 {
   out << "relation " << node->type() << "::" << field << " (" << type_name << ")";
+  auto locked_endpoint = foreign_endpoint.lock();
+  if (locked_endpoint) {
+    out << " -> " << locked_endpoint->node->type() << "::" << locked_endpoint->field << " (" << locked_endpoint->type_name << ")";
+  }
 }
 
 }

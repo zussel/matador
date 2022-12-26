@@ -466,4 +466,12 @@ void prototype_node::on_delete_proxy(object_proxy *proxy) const
   info_->notify(detail::notification_type::REMOVE, proxy);
 }
 
+std::ostream &operator<<(std::ostream &stream, const prototype_node &node) {
+  stream << "Node [" << node.type_ << "] (type index " << node.info_->type_index().name() << ")\n";
+  for (const auto &endpoint : node.info_->endpoints()) {
+    stream << *endpoint.second << "\n";
+  }
+  return stream;
+}
+
 }

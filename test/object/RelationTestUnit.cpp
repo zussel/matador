@@ -35,6 +35,8 @@ RelationTestUnit::RelationTestUnit()
 
   add_test("blog_single", [this] { test_blog_single_post(); }, "test blog single post relations");
   add_test("blog_multi", [this] { test_blog_multi_posts(); }, "test blog multiple posts relations");
+
+//  add_test("output", [this] { test_output(); }, "test relation output");
 }
 
 void RelationTestUnit::test_has_one()
@@ -1154,4 +1156,19 @@ void RelationTestUnit::test_blog_multi_posts()
   UNIT_ASSERT_EQUAL(main.reference_count(), 3UL);
   UNIT_ASSERT_EQUAL(me->posts.size(), 3UL);
   UNIT_ASSERT_EQUAL(me.reference_count(), 3UL);
+}
+
+void RelationTestUnit::test_output() {
+  matador::object_store store;
+
+  store.attach_abstract<blog_detail::person>("person");
+  store.attach<author, blog_detail::person>("author");
+  store.attach<category>("category");
+  store.attach<comment>("comment");
+  store.attach<post>("post");
+
+  std::cout << "\n";
+  for (const auto &node : store) {
+    std::cout << node << "\n";
+  }
 }

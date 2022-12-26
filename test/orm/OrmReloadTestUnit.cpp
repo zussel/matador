@@ -1,5 +1,7 @@
 #include "OrmReloadTestUnit.hpp"
 
+#include <utility>
+
 #include "../person.hpp"
 #include "../entities.hpp"
 #include "../has_many_list.hpp"
@@ -9,9 +11,9 @@
 
 using namespace hasmanylist;
 
-OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, std::string dns)
+OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, std::string  dns)
   : unit_test(prefix + "_orm_reload", prefix + " orm reload test unit")
-  , persistence_(std::move(dns))
+  , dns_(std::move(dns))
 {
   add_test("load", [this] { test_load(); }, "test load from table");
   add_test("load_twice", [this] { test_load_twice(); }, "test load twice from table");
@@ -24,21 +26,18 @@ OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, std::string dns)
   add_test("load_belongs_to_many", [this] { test_load_belongs_to_many(); }, "test load belongs to many from table");
 }
 
-void OrmReloadTestUnit::finalize() {
-  persistence_.drop();
-}
-
 void OrmReloadTestUnit::test_load()
 {
-  persistence_.attach<person>("person");
+  matador::persistence p(dns_);
+  p.attach<person>("person");
 
-  persistence_.create();
+  p.create();
 
   std::vector<std::string> names({"hans", "otto", "georg", "hilde", "ute", "manfred"});
 
   {
     // insert some persons
-    matador::session s(persistence_);
+    matador::session s(p);
 
     for (const std::string &name : names) {
       auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
@@ -49,11 +48,11 @@ void OrmReloadTestUnit::test_load()
     s.flush();
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
     // load persons from database
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load();
 
@@ -75,20 +74,21 @@ void OrmReloadTestUnit::test_load()
     UNIT_ASSERT_TRUE(names.empty());
   }
 
-  persistence_.drop();
+  p.drop();
 }
 
 void OrmReloadTestUnit::test_load_twice()
 {
-  persistence_.attach<person>("person");
+  matador::persistence p(dns_);
+  p.attach<person>("person");
 
-  persistence_.create();
+  p.create();
 
   std::vector<std::string> names({"hans", "otto", "georg", "hilde", "ute", "manfred"});
 
   {
     // insert some persons
-    matador::session s(persistence_);
+    matador::session s(p);
 
     for (const std::string &name : names) {
       auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
@@ -99,11 +99,11 @@ void OrmReloadTestUnit::test_load_twice()
     s.flush();
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
     // load persons from database
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load();
 
@@ -125,11 +125,11 @@ void OrmReloadTestUnit::test_load_twice()
     UNIT_ASSERT_TRUE(names.empty());
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
     // load persons from database
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load();
 
@@ -151,19 +151,20 @@ void OrmReloadTestUnit::test_load_twice()
     UNIT_ASSERT_TRUE(names.empty());
   }
 
-  persistence_.drop();
+  p.drop();
 }
 
 void OrmReloadTestUnit::test_load_has_one()
 {
-  persistence_.attach<master>("master");
-  persistence_.attach<child>("child");
+  matador::persistence p(dns_);
+  p.attach<master>("master");
+  p.attach<child>("child");
 
-  persistence_.create();
+  p.create();
 
   {
     // insert some persons
-    matador::session s(persistence_);
+    matador::session s(p);
 
     auto c = s.insert(new child("child 1"));
 
@@ -174,11 +175,11 @@ void OrmReloadTestUnit::test_load_has_one()
     s.flush();
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
     // load persons from database
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load();
 
@@ -203,18 +204,19 @@ void OrmReloadTestUnit::test_load_has_one()
     UNIT_ASSERT_EQUAL(chptr.reference_count(), 1UL);
   }
 
-  persistence_.drop();
+  p.drop();
 }
 
 void OrmReloadTestUnit::test_load_has_many()
 {
-  persistence_.attach<child>("child");
-  persistence_.attach<children_list>("children_list");
+  matador::persistence p(dns_);
+  p.attach<child>("child");
+  p.attach<children_list>("children_list");
 
-  persistence_.create();
+  p.create();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     auto children = s.insert(new children_list("children list 1"));
 
@@ -238,10 +240,10 @@ void OrmReloadTestUnit::test_load_has_many()
     UNIT_ASSERT_EQUAL(children->children.size(), 2UL);
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load();
 
@@ -264,19 +266,20 @@ void OrmReloadTestUnit::test_load_has_many()
     }
   }
 
-  persistence_.drop();
+  p.drop();
 }
 
 void OrmReloadTestUnit::test_load_has_many_to_many()
 {
-  persistence_.attach<person>("person");
-  persistence_.attach<student, person>("student");
-  persistence_.attach<course>("course");
+  matador::persistence p(dns_);
+  p.attach<person>("person");
+  p.attach<student, person>("student");
+  p.attach<course>("course");
 
-  persistence_.create();
+  p.create();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     auto jane = s.insert(new student("jane"));
     auto tom = s.insert(new student("tom"));
@@ -314,10 +317,10 @@ void OrmReloadTestUnit::test_load_has_many_to_many()
     UNIT_ASSERT_EQUAL(art->students.back(), tom);
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load();
 
@@ -352,19 +355,20 @@ void OrmReloadTestUnit::test_load_has_many_to_many()
     UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
   }
 
-  persistence_.drop();
+  p.drop();
 }
 
 void OrmReloadTestUnit::test_load_has_many_to_many_remove()
 {
-  persistence_.attach<person>("person");
-  persistence_.attach<student, person>("student");
-  persistence_.attach<course>("course");
+  matador::persistence p(dns_);
+  p.attach<person>("person");
+  p.attach<student, person>("student");
+  p.attach<course>("course");
 
-  persistence_.create();
+  p.create();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     auto jane = s.insert(new student("jane"));
     auto tom = s.insert(new student("tom"));
@@ -423,10 +427,10 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
     UNIT_ASSERT_EQUAL(art->students.back(), tom);
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load();
 
@@ -461,10 +465,10 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
     UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load();
 
@@ -485,17 +489,18 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
     UNIT_ASSERT_EQUAL(art->students.size(), 1UL);
   }
 
-  persistence_.drop();
+  p.drop();
 }
 
 void OrmReloadTestUnit::test_load_has_many_int()
 {
-  persistence_.attach<many_ints>("many_ints");
+  matador::persistence p(dns_);
+  p.attach<many_ints>("many_ints");
 
-  persistence_.create();
+  p.create();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     auto intlist = s.insert(new many_ints);
 
@@ -521,10 +526,10 @@ void OrmReloadTestUnit::test_load_has_many_int()
     UNIT_ASSERT_EQUAL(intlist->elements.size(), 2UL);
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load();
 
@@ -547,19 +552,20 @@ void OrmReloadTestUnit::test_load_has_many_int()
 
   }
 
-  persistence_.drop();
+  p.drop();
 }
 
 using many_varchars = many_builtins<matador::varchar<255>, std::list>;
 
 void OrmReloadTestUnit::test_load_has_many_varchar()
 {
-  persistence_.attach<many_varchars>("many_varchars");
+  matador::persistence p(dns_);
+  p.attach<many_varchars>("many_varchars");
 
-  persistence_.create();
+  p.create();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     auto varcharlist = s.insert(new many_varchars);
 
@@ -585,10 +591,10 @@ void OrmReloadTestUnit::test_load_has_many_varchar()
     UNIT_ASSERT_EQUAL(varcharlist->elements.size(), 2UL);
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load();
 
@@ -610,19 +616,20 @@ void OrmReloadTestUnit::test_load_has_many_varchar()
     }
   }
 
-  persistence_.drop();
+  p.drop();
 }
 
 void OrmReloadTestUnit::test_load_belongs_to_many()
 {
-  persistence_.attach_abstract<person>("person");
-  persistence_.attach<department>("department");
-  persistence_.attach<employee, person>("employee");
+  matador::persistence p(dns_);
+  p.attach_abstract<person>("person");
+  p.attach<department>("department");
+  p.attach<employee, person>("employee");
 
-  persistence_.create();
+  p.create();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     auto jane = s.insert(new employee("jane"));
     auto insurance = s.insert(new department("insurance"));
@@ -651,10 +658,10 @@ void OrmReloadTestUnit::test_load_belongs_to_many()
     UNIT_ASSERT_EQUAL(jane.reference_count(), 1UL);
   }
 
-  persistence_.clear();
+  p.clear();
 
   {
-    matador::session s(persistence_);
+    matador::session s(p);
 
     s.load("employee");
     s.load<department>();
@@ -684,5 +691,5 @@ void OrmReloadTestUnit::test_load_belongs_to_many()
     UNIT_ASSERT_EQUAL(insurance->employees.front(), jane);
   }
 
-  persistence_.drop();
+  p.drop();
 }
