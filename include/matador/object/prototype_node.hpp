@@ -406,7 +406,7 @@ public:
   std::shared_ptr<detail::object_type_registry_entry_base> object_type_entry() const;
 /// @endcond
 
-  friend std::ostream &operator<<(std::ostream &stream, const prototype_node &node);
+  friend MATADOR_OBJECT_API std::ostream &operator<<(std::ostream &stream, const prototype_node &node);
 
 private:
 
