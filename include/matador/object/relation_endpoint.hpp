@@ -99,7 +99,7 @@ struct MATADOR_OBJECT_API basic_relation_endpoint : public object_proxy_accessor
   std::weak_ptr<basic_relation_endpoint> foreign_endpoint;
 };
 
-std::ostream &operator<<(std::ostream &stream, const basic_relation_endpoint &endpoint);
+MATADOR_OBJECT_API std::ostream &operator<<(std::ostream &stream, const basic_relation_endpoint &endpoint);
 
 /// @endcond
 
