@@ -29,7 +29,7 @@ void update_action::backup(byte_buffer &buffer)
   proxy_->backup(buffer, *serializer_);
 }
 
-void update_action::restore(byte_buffer &buffer, object_store *store)
+void update_action::restore(byte_buffer &buffer, object_store*)
 {
   proxy_->restore(buffer, *deserializer_);
 }

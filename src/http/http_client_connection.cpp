@@ -63,7 +63,7 @@ void http_client_connection::write()
 
   std::list<buffer_view> data = request_.to_buffers();
 
-  stream_.write(data, [this, self](int ec, int) {
+  stream_.write(std::move(data), [this, self](int ec, int) {
     if (ec == 0) {
       read();
     } else {

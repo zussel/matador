@@ -17,6 +17,7 @@ MESSAGE(STATUS "${PROJECT_NAME_UPPER} ${APP_VERSION}")
 # These are defined for clang/gcc compatibility.
 # When non-compatible flags are implemented then we must specify them separately.
 SET(GCC_CLANG_COMMON_FLAGS "-std=c++14 -Wall -Wextra -pedantic -ftemplate-backtrace-limit=0")
+#SET(GCC_CLANG_COMMON_FLAGS "-std=c++14 -Wall -Wextra -pedantic -ftemplate-backtrace-limit=0 -fsanitize=thread")
 SET(GCC_CLANG_COMMON_FLAGS_DEBUG "-O0 -g -DDEBUG")
 SET(GCC_CLANG_COMMON_FLAGS_RELEASE "-O1 -DNDEBUG")
 SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -45,6 +46,7 @@ ELSEIF(MSVC)
     SET(CMAKE_CXX_FLAGS_DEBUG "/MDd /Od /Zi /D_DEBUG /DDEBUG")
     SET(CMAKE_CXX_FLAGS_RELEASE "/O1 /DNDEBUG")
 ENDIF()
+
 
 MESSAGE(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR} ${CMAKE_SYSTEM_NAME}")
 

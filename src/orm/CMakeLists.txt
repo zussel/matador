@@ -19,7 +19,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/orm/basic_relation_data.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/belongs_to_resolver.hpp)
 
-ADD_LIBRARY(matador-orm SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-orm STATIC ${SOURCES} ${HEADER})
 
 TARGET_LINK_LIBRARIES(matador-orm matador-utils matador-json matador-sql matador-object)
 

@@ -98,14 +98,15 @@ void HttpServerTest::test_get()
   s.add_routing_middleware();
 
   s.on_get("/test/{name}", [](const http::request &req) {
-    return http::response::ok("<h1>hello " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
+    return http::response::ok("<h1>hello " + req.path_params().at("name") + "</h1>",
+                              http::mime_types::TYPE_TEXT_HTML);
   });
 
   ThreadWrapper<http::server> wrapper(s);
 
   wrapper.start();
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (100));
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
@@ -115,7 +116,7 @@ void HttpServerTest::test_get()
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
   UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (100));
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
   wrapper.stop();
 
@@ -124,18 +125,22 @@ void HttpServerTest::test_get()
 
 void HttpServerTest::test_post()
 {
+//  default_min_log_level(log_level::LVL_DEBUG);
+//  add_log_sink(create_stdout_sink());
+
   http::server s(7779);
   s.add_routing_middleware();
 
   s.on_post("/test/{name}", [](const http::request &req) {
-    return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
+    return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>",
+                              http::mime_types::TYPE_TEXT_HTML);
   });
 
   ThreadWrapper<http::server> wrapper(s);
 
   wrapper.start();
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (400));
+  std::this_thread::sleep_for(std::chrono::milliseconds(400));
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
 
@@ -145,7 +150,7 @@ void HttpServerTest::test_post()
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
   UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (300));
+  std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
   wrapper.stop();
 

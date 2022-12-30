@@ -119,15 +119,15 @@ bool stream_handler::is_ready_read() const
   return is_ready_to_read_ && !read_buffer_.full();
 }
 
-void stream_handler::read(const buffer_view &buf, t_read_handler read_handler)
+void stream_handler::read(buffer_view buf, t_read_handler read_handler)
 {
   on_read_ = std::move(read_handler);
-  read_buffer_ = buf;
+  read_buffer_ = std::move(buf);
   is_ready_to_read_ = true;
   get_reactor()->interrupt();
 }
 
-void stream_handler::write(std::list<buffer_view> &buffers, io_stream::t_write_handler write_handler)
+void stream_handler::write(std::list<buffer_view> buffers, io_stream::t_write_handler write_handler)
 {
   on_write_ = std::move(write_handler);
   write_buffers_ = std::move(buffers);

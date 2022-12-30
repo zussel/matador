@@ -18,7 +18,7 @@ SET(HEADER
   ../../include/matador/logger/log_level.hpp
   ../../include/matador/logger/rotating_file_sink.hpp)
 
-ADD_LIBRARY(matador-logger SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-logger STATIC ${SOURCES} ${HEADER})
 
 TARGET_LINK_LIBRARIES(matador-logger matador-utils)
 

@@ -68,7 +68,7 @@ SET(HEADER
   ../../include/matador/sql/sql_logger.hpp
 )
 
-ADD_LIBRARY(matador-sql SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-sql STATIC ${SOURCES} ${HEADER})
 
 TARGET_LINK_LIBRARIES(matador-sql matador-logger matador-utils)
 

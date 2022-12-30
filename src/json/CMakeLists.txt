@@ -22,7 +22,7 @@ SET(HEADER
   ../../include/matador/json/json_utils.hpp
   )
 
-ADD_LIBRARY(matador-json SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-json STATIC ${SOURCES} ${HEADER})
 
 TARGET_LINK_LIBRARIES(matador-json matador-utils ${CMAKE_DL_LIBS})
 

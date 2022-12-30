@@ -114,7 +114,9 @@ public:
   void clear();
 
 private:
+  void get_time_stamp(char* timestamp_buffer);
 
+private:
   static std::map<log_level, std::string> level_strings;
 
   std::string name_;

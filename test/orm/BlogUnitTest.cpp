@@ -36,27 +36,36 @@ struct blog_service
   matador::session &session_;
 };
 
-BlogUnitTest::BlogUnitTest(const std::string& prefix, const std::string& dns)
+BlogUnitTest::BlogUnitTest(const std::string& prefix, std::string  dns)
   : unit_test(prefix + "_blog", prefix + " blog unit tests")
-  , persistence_(dns)
+  , dns_(std::move(dns))
 {
   add_test("single", [this] { test_blog_single_post(); }, "test single blog post");
   add_test("multiple", [this] { test_blog_multiple_post(); }, "test multiple blog post");
+}
 
-  persistence_.attach_abstract<blog_detail::person>("person");
-  persistence_.attach<author, blog_detail::person>("author");
-  persistence_.attach<category>("category");
-  persistence_.attach<comment>("comment");
-  persistence_.attach<post>("post");
+void BlogUnitTest::initialize() {
+  persistence_ = std::make_unique<matador::persistence>(dns_);
+
+  persistence_->attach_abstract<blog_detail::person>("person");
+  persistence_->attach<author, blog_detail::person>("author");
+  persistence_->attach<category>("category");
+  persistence_->attach<comment>("comment");
+  persistence_->attach<post>("post");
+}
+
+void BlogUnitTest::finalize() {
+  persistence_->drop();
+  persistence_.reset();
 }
 
 void BlogUnitTest::test_blog_single_post()
 {
-  UNIT_ASSERT_EQUAL(persistence_.store().size(), 7UL);
-  persistence_.create();
+  UNIT_ASSERT_EQUAL(persistence_->store().size(), 7UL);
+  persistence_->create();
 
   {
-    matador::session s(persistence_);
+    matador::session s(*persistence_);
 
     blog_service blogger(s);
 
@@ -93,10 +102,10 @@ void BlogUnitTest::test_blog_single_post()
     UNIT_ASSERT_EQUAL(post1.reference_count(), 3UL);
   }
 
-  persistence_.clear();
+  persistence_->clear();
 
   {
-    matador::session s(persistence_);
+    matador::session s(*persistence_);
 
     s.load();
 
@@ -147,15 +156,15 @@ void BlogUnitTest::test_blog_single_post()
     UNIT_ASSERT_EQUAL(me.reference_count(), 0UL);
   }
 
-  persistence_.drop();
+  persistence_->drop();
 }
 
 void BlogUnitTest::test_blog_multiple_post()
 {
-  UNIT_ASSERT_EQUAL(persistence_.store().size(), 7UL);
-  persistence_.create();
+  UNIT_ASSERT_EQUAL(persistence_->store().size(), 7UL);
+  persistence_->create();
   {
-    matador::session s(persistence_);
+    matador::session s(*persistence_);
 
     blog_service blogger(s);
 
@@ -183,10 +192,10 @@ void BlogUnitTest::test_blog_multiple_post()
     UNIT_ASSERT_EQUAL(posts.size(), 4UL);
   }
 
-  persistence_.clear();
+  persistence_->clear();
 
   {
-    matador::session s(persistence_);
+    matador::session s(*persistence_);
 
     s.load();
 
@@ -232,9 +241,5 @@ void BlogUnitTest::test_blog_multiple_post()
     UNIT_ASSERT_EQUAL(me->posts.size(), 3UL);
     UNIT_ASSERT_EQUAL(main->posts.size(), 3UL);
   }
-  persistence_.drop();
-}
-
-void BlogUnitTest::finalize() {
-  persistence_.drop();
+  persistence_->drop();
 }

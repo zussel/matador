@@ -41,7 +41,7 @@ SET(HEADER
   ../../include/matador/net/leader_follower_thread_pool.hpp
 )
 
-ADD_LIBRARY(matador-net SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-net STATIC ${SOURCES} ${HEADER})
 
 if(WIN32)
   TARGET_LINK_LIBRARIES(matador-net matador-logger matador-utils wsock32 ws2_32)

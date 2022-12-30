@@ -60,7 +60,7 @@ SET(HEADER
   ../../include/matador/http/detail/template_filter_factory.hpp
 )
 
-ADD_LIBRARY(matador-http SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-http STATIC ${SOURCES} ${HEADER})
 
 TARGET_LINK_LIBRARIES(matador-http matador-net matador-logger matador-utils matador-json)
 

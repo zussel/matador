@@ -84,7 +84,7 @@ SET(HEADER
   ../../include/matador/object/object_type_registry_entry.hpp
   ../../include/matador/object/relation_endpoint.hpp)
 
-ADD_LIBRARY(matador-object SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-object STATIC ${SOURCES} ${HEADER})
 
 TARGET_LINK_LIBRARIES(matador-object matador-utils matador-json)
 

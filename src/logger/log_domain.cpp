@@ -68,9 +68,8 @@ void log_domain::log(log_level lvl, const std::string &source, const char *messa
     return;
   }
 
-  char timestamp_buffer [80];
-
-  const char *timestamp = details::gettimestamp(timestamp_buffer, 80);
+  char timestamp[80];
+  get_time_stamp(timestamp);
 
   char buffer[1024];
 
@@ -89,6 +88,12 @@ void log_domain::log(log_level lvl, const std::string &source, const char *messa
 void log_domain::clear()
 {
   sinks.clear();
+}
+
+void log_domain::get_time_stamp(char* timestamp_buffer)
+{
+  std::lock_guard<std::mutex> l(mutex_);
+  details::gettimestamp(timestamp_buffer, 80);
 }
 
 }
