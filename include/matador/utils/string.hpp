@@ -61,7 +61,7 @@ OOS_UTILS_API size_t split(const std::string &str, char delim, std::list<std::st
 OOS_UTILS_API std::string trim(const std::string& str, const std::string& whitespace = " \t");
 
 /**
- * Replaces all occurences of string from in given string
+ * Replaces all occurrences of string from in given string
  * with string to.
  *
  * @param in Source string where the replacement takes place

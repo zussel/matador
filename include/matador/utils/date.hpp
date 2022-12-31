@@ -54,7 +54,7 @@ void throw_invalid_date(int d, int m, int y);
  * @brief This class provides simple date representation
  *
  * This class provides simple date representation with
- * julian calendar for date calcultion.
+ * julian calendar for date calculation.
  *
  * A date can be constructed either from
  * - a julian date

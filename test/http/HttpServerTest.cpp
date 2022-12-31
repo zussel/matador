@@ -64,11 +64,14 @@ HttpServerTest::HttpServerTest()
 
 void HttpServerTest::initialize()
 {
-//  add_log_sink(create_stdout_sink());
+  default_min_log_level(log_level::LVL_DEBUG);
+  add_log_sink(create_stdout_sink());
 }
 
 void HttpServerTest::finalize()
 {
+  default_min_log_level(log_level::LVL_INFO);
+  clear_all_log_sinks();
   std::this_thread::sleep_for(std::chrono::milliseconds (300));
 }
 
@@ -91,9 +94,6 @@ void HttpServerTest::test_shutdown()
 
 void HttpServerTest::test_get()
 {
-  default_min_log_level(log_level::LVL_DEBUG);
-  add_log_sink(create_stdout_sink());
-
   http::server s(8123);
   s.add_routing_middleware();
 
@@ -125,9 +125,6 @@ void HttpServerTest::test_get()
 
 void HttpServerTest::test_post()
 {
-//  default_min_log_level(log_level::LVL_DEBUG);
-//  add_log_sink(create_stdout_sink());
-
   http::server s(7779);
   s.add_routing_middleware();
 
