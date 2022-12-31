@@ -64,14 +64,14 @@ HttpServerTest::HttpServerTest()
 
 void HttpServerTest::initialize()
 {
-  default_min_log_level(log_level::LVL_DEBUG);
-  add_log_sink(create_stdout_sink());
+//  default_min_log_level(log_level::LVL_DEBUG);
+//  add_log_sink(create_stdout_sink());
 }
 
 void HttpServerTest::finalize()
 {
-  default_min_log_level(log_level::LVL_INFO);
-  clear_all_log_sinks();
+//  default_min_log_level(log_level::LVL_INFO);
+//  clear_all_log_sinks();
   std::this_thread::sleep_for(std::chrono::milliseconds (300));
 }
 

@@ -1,19 +1,7 @@
 #ifndef OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
 #define OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
-  #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-  #pragma warning(disable: 4355)
-#else
-#define OOS_UTILS_API
-#endif
+#include "matador/utils/export.hpp"
 
 #include "matador/utils/serializer.hpp"
 #include "matador/utils/byte_buffer.hpp"
