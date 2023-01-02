@@ -21,6 +21,7 @@
 #include <map>
 #include <list>
 #include <memory>
+#include <mutex>
 
 namespace matador {
 
@@ -57,6 +58,9 @@ public:
    * @param log_domain The log_domain containing the log sinks
    */
   logger(std::string source, std::shared_ptr<log_domain> log_domain);
+
+  logger(const logger& l);
+  logger& operator=(const logger& l);
 
   /**
    * Writes a log message string with log level LVL_FATAL
@@ -228,6 +232,7 @@ public:
 private:
   std::string source_;
   std::shared_ptr<log_domain> logger_domain_;
+  mutable std::mutex mutex_;
 };
 
 template<typename... ARGS>
@@ -241,6 +246,7 @@ void logger::log(log_level lvl, const char *what, ARGS const &... args)
   sprintf(message_buffer, what, args...);
 #endif
 
+  std::lock_guard<std::mutex> lock(mutex_);
   logger_domain_->log(lvl, source_, message_buffer);
 }
 

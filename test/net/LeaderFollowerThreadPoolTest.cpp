@@ -7,7 +7,7 @@ using namespace matador;
 LeaderFollowerThreadPoolTest::LeaderFollowerThreadPoolTest()
 : unit_test("lf_thread_pool", "leader follower thread pool test")
 {
-  add_test("thread_pool", [this] { test_threadpool(); }, "leader follower thread pool test");
+  add_test("thread_pool", [this] { test_thread_pool(); }, "leader follower thread pool test");
 }
 
 struct runner
@@ -25,7 +25,7 @@ struct runner
   std::atomic_uint counter {0};
 };
 
-void LeaderFollowerThreadPoolTest::test_threadpool()
+void LeaderFollowerThreadPoolTest::test_thread_pool()
 {
   runner r;
 
