@@ -21,24 +21,37 @@ public:
   explicit ThreadWrapper(T &actor) : actor_(actor) {}
   ~ThreadWrapper()
   {
+    std::cout << "Start destroy reactor\n";
+    std::cout.flush();
     if (actor_.is_running()) {
+      std::cout << "Reactor is running; stopping\n";
+      std::cout.flush();
       stop();
     }
     if (reactor_thread_.joinable()) {
+      std::cout << "Join reactor\n";
+      std::cout.flush();
       reactor_thread_.join();
+    } else {
+      std::cout << "Reactor not joinable\n";
+      std::cout.flush();
     }
   }
 
   void start()
   {
+    std::cout << "Starting reactor\n";
+    std::cout.flush();
     reactor_thread_ = std::thread([this] {
       actor_.run();
       // sleep for some seconds to ensure valid thread join
-      std::this_thread::sleep_for(std::chrono::seconds (3));
+      std::this_thread::sleep_for(std::chrono::seconds (1));
     });
   }
   void stop()
   {
+    std::cout << "Shutting down reactor\n";
+    std::cout.flush();
     actor_.shutdown();
   }
 

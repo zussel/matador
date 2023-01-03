@@ -16,7 +16,6 @@
 
 #include "matador/sql/query.hpp"
 
-
 namespace matador {
 
 class connection;

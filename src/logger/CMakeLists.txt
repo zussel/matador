@@ -16,7 +16,7 @@ SET(HEADER
   ../../include/matador/logger/file_sink.hpp
   ../../include/matador/logger/log_domain.hpp
   ../../include/matador/logger/log_level.hpp
-  ../../include/matador/logger/rotating_file_sink.hpp)
+  ../../include/matador/logger/rotating_file_sink.hpp ../../include/matador/logger/export.hpp)
 
 ADD_LIBRARY(matador-logger STATIC ${SOURCES} ${HEADER})
 

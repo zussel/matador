@@ -1,19 +1,7 @@
 #ifndef OOS_CONNECTION_IMPL_HPP
 #define OOS_CONNECTION_IMPL_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_sql_EXPORTS
-#define OOS_SQL_API __declspec(dllexport)
-#define EXPIMP_SQL_TEMPLATE
-#else
-#define OOS_SQL_API __declspec(dllimport)
-#define EXPIMP_SQL_TEMPLATE extern
-#endif
-#pragma warning(disable: 4251)
-#pragma warning(disable: 4355)
-#else
-#define OOS_SQL_API
-#endif
+#include "matador/sql/export.hpp"
 
 #include "matador/sql/types.hpp"
 #include "matador/sql/basic_sql_logger.hpp"

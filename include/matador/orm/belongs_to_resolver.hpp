@@ -1,7 +1,3 @@
-//
-// Created by sascha on 30.03.18.
-//
-
 #ifndef MATADOR_BELONGS_TO_RESOLVER_HPP
 #define MATADOR_BELONGS_TO_RESOLVER_HPP
 

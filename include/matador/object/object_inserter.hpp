@@ -1,26 +1,14 @@
 #ifndef OOS_OBJECT_INSERTER_HPP
 #define OOS_OBJECT_INSERTER_HPP
 
+#include "matador/object/export.hpp"
+
 #include "matador/object/prototype_node.hpp"
 #include "matador/object/has_one.hpp"
 #include "matador/object/belongs_to.hpp"
 #include "matador/object/basic_has_many.hpp"
 
 #include <stack>
-
-#ifdef _MSC_VER
-#ifdef matador_object_EXPORTS
-    #define MATADOR_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_OBJECT_TEMPLATE
-  #else
-    #define MATADOR_OBJECT_API __declspec(dllimport)
-    #define EXPIMP_OBJECT_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-  #pragma warning(disable: 4355)
-#else
-#define MATADOR_OBJECT_API
-#endif
 
 namespace matador {
 namespace detail {

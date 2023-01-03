@@ -1,7 +1,3 @@
-//
-// Created by sascha on 10.10.19.
-//
-
 #ifndef MATADOR_HAS_MANY_ITERATOR_TRAITS_HPP
 #define MATADOR_HAS_MANY_ITERATOR_TRAITS_HPP
 

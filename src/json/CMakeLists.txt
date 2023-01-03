@@ -20,7 +20,7 @@ SET(HEADER
   ../../include/matador/json/json_identifier_serializer.hpp
   ../../include/matador/json/json_format.hpp
   ../../include/matador/json/json_utils.hpp
-  )
+  ../../include/matador/json/export.hpp)
 
 ADD_LIBRARY(matador-json STATIC ${SOURCES} ${HEADER})
 

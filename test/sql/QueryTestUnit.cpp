@@ -1,7 +1,3 @@
-//
-// Created by sascha on 9/7/15.
-//
-
 #include "QueryTestUnit.hpp"
 
 #include "../datatypes.hpp"

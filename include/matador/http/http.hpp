@@ -1,22 +1,11 @@
 #ifndef MATADOR_HTTP_HPP
 #define MATADOR_HTTP_HPP
 
-#include "matador/utils/buffer_view.hpp"
-
-#ifdef _MSC_VER
-#ifdef matador_http_EXPORTS
-    #define OOS_HTTP_API __declspec(dllexport)
-    #define EXPIMP_HTTP_TEMPLATE
-  #else
-    #define OOS_HTTP_API __declspec(dllimport)
-    #define EXPIMP_HTTP_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define OOS_HTTP_API
-#endif
+#include "matador/http/export.hpp"
 
 #include "matador/http/enum_class_hash.hpp"
+
+#include "matador/utils/buffer_view.hpp"
 
 #include <unordered_map>
 #include <string>

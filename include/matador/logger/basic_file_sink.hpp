@@ -1,18 +1,7 @@
 #ifndef MATADOR_BASIC_FILE_SINK_HPP
 #define MATADOR_BASIC_FILE_SINK_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_logger_EXPORTS
-    #define OOS_LOGGER_API __declspec(dllexport)
-    #define EXPIMP_LOGGER_TEMPLATE
-  #else
-    #define OOS_LOGGER_API __declspec(dllimport)
-    #define EXPIMP_LOGGER_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define OOS_LOGGER_API
-#endif
+#include "matador/logger/export.hpp"
 
 #include "matador/logger/log_sink.hpp"
 

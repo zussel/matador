@@ -1,22 +1,7 @@
-//
-// Created by sascha on 21.03.16.
-//
-
 #ifndef OOS_SESSION_HPP
 #define OOS_SESSION_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_orm_EXPORTS
-#define OOS_ORM_API __declspec(dllexport)
-#define EXPIMP_ORM_TEMPLATE
-#else
-#define OOS_ORM_API __declspec(dllimport)
-#define EXPIMP_ORM_TEMPLATE extern
-#endif
-#pragma warning(disable: 4251)
-#else
-#define OOS_ORM_API
-#endif
+#include "matador/orm/export.hpp"
 
 #include "matador/object/has_many.hpp"
 #include "matador/object/object_view.hpp"

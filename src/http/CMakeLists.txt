@@ -58,7 +58,7 @@ SET(HEADER
   ../../include/matador/http/enum_class_hash.hpp
   ../../include/matador/http/detail/template_filter.hpp
   ../../include/matador/http/detail/template_filter_factory.hpp
-)
+  ../../include/matador/http/export.hpp)
 
 ADD_LIBRARY(matador-http STATIC ${SOURCES} ${HEADER})
 

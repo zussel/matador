@@ -1,6 +1,8 @@
 #ifndef OOS_TRANSACTION_HPP
 #define OOS_TRANSACTION_HPP
 
+#include "matador/object/export.hpp"
+
 #include "matador/object/action.hpp"
 #include "matador/object/object_exception.hpp"
 #include "matador/object/action_inserter.hpp"
@@ -12,19 +14,6 @@
 #include <utility>
 #include <vector>
 #include <unordered_map>
-
-#ifdef _MSC_VER
-#ifdef matador_object_EXPORTS
-    #define MATADOR_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_OBJECT_TEMPLATE
-  #else
-    #define MATADOR_OBJECT_API __declspec(dllimport)
-    #define EXPIMP_OBJECT_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define MATADOR_OBJECT_API
-#endif
 
 namespace matador {
 

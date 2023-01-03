@@ -1,25 +1,13 @@
 #ifndef OOS_ABSTRACT_HAS_MANY_HPP
 #define OOS_ABSTRACT_HAS_MANY_HPP
 
+#include "matador/object/export.hpp"
+
 #include "matador/object/object_holder.hpp"
 #include "matador/object/object_proxy_accessor.hpp"
 
 #include <functional>
 #include <string>
-
-#ifdef _MSC_VER
-#ifdef matador_object_EXPORTS
-    #define MATADOR_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_OBJECT_TEMPLATE
-  #else
-    #define MATADOR_OBJECT_API __declspec(dllimport)
-    #define EXPIMP_OBJECT_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-  #pragma warning(disable: 4355)
-#else
-#define MATADOR_OBJECT_API
-#endif
 
 namespace matador {
 

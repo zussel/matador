@@ -1,6 +1,8 @@
 #ifndef OBJECT_STORE_HPP
 #define OBJECT_STORE_HPP
 
+#include "matador/object/export.hpp"
+
 #include "matador/object/prototype_iterator.hpp"
 #include "matador/object/object_exception.hpp"
 #include "matador/object/typed_object_store_observer.hpp"
@@ -27,20 +29,6 @@
 #include <ostream>
 #include <list>
 #include <iostream>
-
-#ifdef _MSC_VER
-  #ifdef matador_object_EXPORTS
-    #define MATADOR_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_OBJECT_TEMPLATE
-  #else
-    #define MATADOR_OBJECT_API __declspec(dllimport)
-    #define EXPIMP_OBJECT_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-  #pragma warning(disable: 4355)
-#else
-  #define MATADOR_OBJECT_API
-#endif
 
 namespace matador {
 

@@ -1,22 +1,7 @@
-/**
- * @author sascha on 4/7/16.
- */
-
 #ifndef OOS_IDENTIFIER_COLUMN_RESOLVER_HPP
 #define OOS_IDENTIFIER_COLUMN_RESOLVER_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_orm_EXPORTS
-#define OOS_ORM_API __declspec(dllexport)
-#define EXPIMP_ORM_TEMPLATE
-#else
-#define OOS_ORM_API __declspec(dllimport)
-#define EXPIMP_ORM_TEMPLATE extern
-#endif
-#pragma warning(disable: 4251)
-#else
-#define OOS_ORM_API
-#endif
+#include "matador/orm/export.hpp"
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/identifier.hpp"

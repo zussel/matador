@@ -1,18 +1,7 @@
 #ifndef MATADOR_OBJECT_TYPE_REGISTRY_ENTRY_BASE_HPP
 #define MATADOR_OBJECT_TYPE_REGISTRY_ENTRY_BASE_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_object_EXPORTS
-#define MATADOR_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_OBJECT_TEMPLATE
-#else
-#define MATADOR_OBJECT_API __declspec(dllimport)
-#define EXPIMP_OBJECT_TEMPLATE extern
-#endif
-#pragma warning(disable: 4251)
-#else
-#define MATADOR_OBJECT_API
-#endif
+#include "matador/object/export.hpp"
 
 #include <typeindex>
 #include <memory>
