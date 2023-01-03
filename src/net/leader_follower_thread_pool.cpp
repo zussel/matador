@@ -15,8 +15,7 @@ void leader_follower_thread_pool::start()
 {
   is_running_ = true;
   for (std::size_t i = 0; i < num_threads_; ++i) {
-    thread_ptr t(new std::thread([this] { execute(); }));
-    threads_.push_back(std::move(t));
+    threads_.emplace_back([this] { execute(); });
   }
   log_.info("thread pool started with %d threads", num_threads_);
 }
@@ -59,8 +58,8 @@ void leader_follower_thread_pool::shutdown()
   }
 
   std::for_each(threads_.begin(), threads_.end(), [](thread_vector_t::reference item) {
-    if (item->joinable()) {
-      item->join();
+    if (item.joinable()) {
+      item.join();
     }
   });
 }

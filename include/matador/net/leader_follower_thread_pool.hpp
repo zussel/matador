@@ -102,8 +102,7 @@ private:
   void execute();
 
 private:
-  typedef std::unique_ptr<std::thread> thread_ptr;
-  typedef std::vector<thread_ptr> thread_vector_t;
+  typedef std::vector<std::thread> thread_vector_t;
   typedef std::function<void()> join_func_t;
 
   std::size_t num_threads_{};
