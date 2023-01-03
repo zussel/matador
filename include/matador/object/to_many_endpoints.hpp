@@ -11,7 +11,7 @@ namespace detail {
 /// @cond MATADOR_DEV
 
 /*
- * Left side of a many to many relation
+ * Left side of a many-to-many relation
  *
  * Owner is stored in left column
  * Value is stored in right column

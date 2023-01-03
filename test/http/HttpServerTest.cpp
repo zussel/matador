@@ -23,10 +23,13 @@ public:
   {
     std::cout << "Start destroy reactor\n";
     std::cout.flush();
-    if (actor_.is_running()) {
-      std::cout << "Reactor is running; stopping\n";
-      std::cout.flush();
-      stop();
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      if (actor_.is_running()) {
+        std::cout << "Reactor is running; stopping\n";
+        std::cout.flush();
+        stop();
+      }
     }
     if (reactor_thread_.joinable()) {
       std::cout << "Join reactor\n";
@@ -52,6 +55,7 @@ public:
   {
     std::cout << "Shutting down reactor\n";
     std::cout.flush();
+    std::lock_guard<std::mutex> lock(mutex_);
     actor_.shutdown();
   }
 
@@ -63,6 +67,8 @@ public:
 private:
   std::thread reactor_thread_;
   T& actor_;
+
+  std::mutex mutex_;
 };
 
 HttpServerTest::HttpServerTest()
