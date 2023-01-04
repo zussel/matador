@@ -179,7 +179,7 @@ public:
   void interrupt();
 
 private:
-  void process_handler(int num);
+//  void process_handler(int num);
 
   t_handler_type resolve_next_handler(time_t now);
 

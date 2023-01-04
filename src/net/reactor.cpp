@@ -244,6 +244,7 @@ void reactor::cleanup()
 int reactor::select(struct timeval *timeout)
 {
   log_.debug("calling select; waiting for io events");
+  std::lock_guard<std::mutex> l(mutex_);
   return ::select(
     fdsets_.maxp1() + 1,
     fdsets_.read_set().get(),
@@ -254,27 +255,27 @@ int reactor::select(struct timeval *timeout)
 }
 
 
-void reactor::process_handler(int /*ret*/)
-{
-  handlers_.emplace_back(sentinel_, event_type::NONE_MASK);
-  time_t now = ::time(nullptr);
-  while (handlers_.front().first != nullptr) {
-    auto h = handlers_.front();
-    handlers_.pop_front();
-    handlers_.push_back(h);
-    // check for read/accept
-    if (h.first->handle() > 0 && fdsets_.write_set().is_set(h.first->handle())) {
-      on_write_mask(h.first);
-    }
-    if (h.first->handle() > 0 && fdsets_.read_set().is_set(h.first->handle())) {
-      on_read_mask(h.first);
-    }
-    if (h.first->next_timeout() > 0 && h.first->next_timeout() <= now) {
-      on_timeout(h.first, now);
-    }
-  }
-  handlers_.pop_front();
-}
+//void reactor::process_handler(int /*ret*/)
+//{
+//  handlers_.emplace_back(sentinel_, event_type::NONE_MASK);
+//  time_t now = ::time(nullptr);
+//  while (handlers_.front().first != nullptr) {
+//    auto h = handlers_.front();
+//    handlers_.pop_front();
+//    handlers_.push_back(h);
+//    // check for read/accept
+//    if (h.first->handle() > 0 && fdsets_.write_set().is_set(h.first->handle())) {
+//      on_write_mask(h.first);
+//    }
+//    if (h.first->handle() > 0 && fdsets_.read_set().is_set(h.first->handle())) {
+//      on_read_mask(h.first);
+//    }
+//    if (h.first->next_timeout() > 0 && h.first->next_timeout() <= now) {
+//      on_timeout(h.first, now);
+//    }
+//  }
+//  handlers_.pop_front();
+//}
 
 reactor::t_handler_type reactor::resolve_next_handler(time_t now)
 {
@@ -324,6 +325,7 @@ const select_fdsets &reactor::fdsets() const
 
 void reactor::mark_handler_for_delete(const handler_ptr& h)
 {
+  std::lock_guard<std::mutex> l(mutex_);
   handlers_to_delete_.push_back(h);
 }
 
@@ -351,6 +353,7 @@ bool reactor::has_clients_to_handle(time_t timeout) const {
 
 std::list<reactor::t_handler_type>::iterator reactor::find_handler_type(const reactor::handler_ptr &h)
 {
+  std::lock_guard<std::mutex> l(mutex_);
   return std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
     return ht.first.get() == h.get();
   });
