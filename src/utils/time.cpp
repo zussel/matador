@@ -136,7 +136,7 @@ bool time::operator!=(const time &x) const
 bool time::operator<(const time &x) const
 {
   return time_.tv_sec < x.time_.tv_sec ||
-         time_.tv_sec == x.time_.tv_sec && time_.tv_usec < x.time_.tv_usec;
+         (time_.tv_sec == x.time_.tv_sec && time_.tv_usec < x.time_.tv_usec);
 }
 
 bool time::operator<=(const time &x) const

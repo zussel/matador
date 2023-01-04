@@ -198,6 +198,8 @@ private:
 
   bool is_interrupted();
 
+  bool has_clients_to_handle(time_t timeout) const;
+
 private:
   handler_ptr sentinel_;
   t_handler_list handlers_;
@@ -205,10 +207,10 @@ private:
 
   select_fdsets fdsets_;
 
-  std::atomic<bool> running_ {false};
-  std::atomic<bool> shutdown_requested_ {false};
+  std::atomic_bool running_ {false};
+  std::atomic_bool shutdown_requested_ {false};
 
-  std::mutex mutex_;
+  mutable std::mutex mutex_;
   std::condition_variable shutdown_;
   logger log_;
 

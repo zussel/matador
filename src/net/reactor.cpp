@@ -120,7 +120,7 @@ void reactor::handle_events()
     p = &tselect;
   }
 
-  if (fdsets_.maxp1() < 1 && timeout == (std::numeric_limits<time_t>::max)()) {
+  if (!has_clients_to_handle(timeout)) {
 //    log_.info("no clients to handle, exiting");
     return;
   }
@@ -338,6 +338,15 @@ bool reactor::is_interrupted()
     return interrupter_.reset();
   }
   return false;
+}
+
+bool reactor::has_clients_to_handle(time_t timeout) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return fdsets_.maxp1() > 0 || timeout != (std::numeric_limits<time_t>::max)();
+//  if (fdsets_.maxp1() < 1 && timeout == (std::numeric_limits<time_t>::max)()) {
+//    return false;
+//  }
+//  return true;
 }
 
 std::list<reactor::t_handler_type>::iterator reactor::find_handler_type(const reactor::handler_ptr &h)

@@ -215,7 +215,7 @@ void ReactorTest::test_reactor_acceptor()
   UNIT_ASSERT_FALSE(ret < 0);
   buffer data;
   data.append("hallo");
-  size_t len = client.send(data);
+  auto len = client.send(data);
   UNIT_ASSERT_EQUAL(5UL, len);
   data.clear();
   len = client.receive(data);
