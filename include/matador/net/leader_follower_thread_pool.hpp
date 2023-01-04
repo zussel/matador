@@ -117,10 +117,10 @@ private:
   std::condition_variable condition_task_;
   std::condition_variable condition_synchronizer_;
 
-  bool signal_ready_ = false;
-  bool signal_shutdown_ = false;
+  std::atomic_bool signal_ready_ { false };
+  std::atomic_bool signal_shutdown_ { false };
 
-  bool is_running_ = false;
+  std::atomic_bool is_running_ { false };
 
   matador::logger log_;
 

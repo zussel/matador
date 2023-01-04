@@ -48,8 +48,10 @@ public:
    */
   logger(std::string source, std::shared_ptr<log_domain> log_domain);
 
-  logger(const logger& l);
-  logger& operator=(const logger& l);
+  logger(const logger& l) = delete;
+  logger(logger&& l) noexcept;
+  logger& operator=(const logger& l) = delete;
+  logger& operator=(logger&& l) noexcept;
 
   /**
    * Writes a log message string with log level LVL_FATAL
@@ -209,7 +211,7 @@ public:
    *
    * @return Represented log source name
    */
-  std::string source() const;
+  const std::string& source() const;
 
   /**
    * Returns the name of the connected log domain
@@ -221,7 +223,6 @@ public:
 private:
   std::string source_;
   std::shared_ptr<log_domain> logger_domain_;
-  mutable std::mutex mutex_;
 };
 
 template<typename... ARGS>
@@ -235,7 +236,6 @@ void logger::log(log_level lvl, const char *what, ARGS const &... args)
   sprintf(message_buffer, what, args...);
 #endif
 
-  std::lock_guard<std::mutex> lock(mutex_);
   logger_domain_->log(lvl, source_, message_buffer);
 }
 

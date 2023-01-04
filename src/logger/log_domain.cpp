@@ -79,8 +79,8 @@ void log_domain::log(log_level lvl, const std::string &source, const char *messa
   int ret = sprintf(buffer, "%s [Thread %lu] [%-7s] [%s]: %s\n", timestamp, acquire_thread_index(std::this_thread::get_id()), level_strings[lvl].c_str(), source.c_str(), message);
 #endif
 
+  std::lock_guard<std::mutex> l(mutex_);
   for (auto &sink : sinks) {
-    std::lock_guard<std::mutex> l(mutex_);
     sink->write(buffer, ret);
   }
 }
