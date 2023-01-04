@@ -80,38 +80,38 @@ void reactor::cancel_timer(const std::shared_ptr<handler>& h)
 
 void reactor::run()
 {
-  log_.info("start dispatching all clients");
+//  log_.info("start dispatching all clients");
   thread_pool_.start();
 
   {
-    log_.info("waiting for reactor shutdown");
+//    log_.info("waiting for reactor shutdown");
     std::unique_lock<std::mutex> l(mutex_);
     shutdown_.wait(l, [this]() {
       return handlers_.empty();
     });
     cleanup();
   }
-  log_.info("all clients dispatched; shutting down");
+//  log_.info("all clients dispatched; shutting down");
   thread_pool_.shutdown();
 }
 
 void reactor::handle_events()
 {
-  log_.info("handle events");
+//  log_.info("handle events");
 
   running_ = true;
   time_t timeout;
 
   prepare_select_bits(timeout);
 
-  log_.debug("fds [r: %d, w: %d, e: %d]",
-             fdsets_.read_set().count(),
-             fdsets_.write_set().count(),
-             fdsets_.except_set().count());
+//  log_.debug("fds [r: %d, w: %d, e: %d]",
+//             fdsets_.read_set().count(),
+//             fdsets_.write_set().count(),
+//             fdsets_.except_set().count());
 
-  if (timeout != (std::numeric_limits<time_t>::max)()) {
-    log_.debug("next timeout in %d sec", timeout);
-  }
+//  if (timeout != (std::numeric_limits<time_t>::max)()) {
+//    log_.debug("next timeout in %d sec", timeout);
+//  }
   struct timeval tselect{};
   struct timeval* p = nullptr;
   if (timeout < (std::numeric_limits<time_t>::max)()) {
@@ -121,7 +121,7 @@ void reactor::handle_events()
   }
 
   if (fdsets_.maxp1() < 1 && timeout == (std::numeric_limits<time_t>::max)()) {
-    log_.info("no clients to handle, exiting");
+//    log_.info("no clients to handle, exiting");
     return;
   }
 
@@ -140,11 +140,11 @@ void reactor::handle_events()
 
   if (interrupted) {
     if (!shutdown_requested_) {
-      log_.info("reactor was interrupted");
+//      log_.info("reactor was interrupted");
       thread_pool_.promote_new_leader();
       return;
     } else {
-      log_.info("shutting down");
+//      log_.info("shutting down");
       cleanup();
       shutdown_.notify_one();
       return;
@@ -157,7 +157,7 @@ void reactor::handle_events()
   if (handler_type.first) {
     deactivate_handler(handler_type.first, handler_type.second);
     thread_pool_.promote_new_leader();
-    log_.info("start handling event");
+//    log_.info("start handling event");
     // handle event
     if (handler_type.second == event_type::WRITE_MASK) {
       on_write_mask(handler_type.first);
@@ -166,13 +166,13 @@ void reactor::handle_events()
     } else if (handler_type.second == event_type::TIMEOUT_MASK) {
       on_timeout(handler_type.first, now);
     } else {
-      log_.info("unknown event type");
+//      log_.info("unknown event type");
     }
     activate_handler(handler_type.first, handler_type.second);
     remove_deleted();
   } else {
     // no handler found
-    log_.info("no handler found");
+//    log_.info("no handler found");
     thread_pool_.promote_new_leader();
   }
 }

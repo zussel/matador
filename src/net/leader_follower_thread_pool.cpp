@@ -82,9 +82,9 @@ void leader_follower_thread_pool::execute() {
   std::unique_lock<std::mutex> l(mutex_);
   while (is_running_) {
     while (leader_ != null_id) {
-      log_.info("thread <%d> waiting for synchronizer (leader %d)",
-                acquire_thread_index(std::this_thread::get_id()),
-                acquire_thread_index(leader_));
+//      log_.info("thread <%d> waiting for synchronizer (leader %d)",
+//                acquire_thread_index(std::this_thread::get_id()),
+//                acquire_thread_index(leader_));
       condition_synchronizer_.wait(l, [this]() { return signal_ready_ || signal_shutdown_; });
       signal_ready_ = false;
       if (!is_running_) {
@@ -92,14 +92,14 @@ void leader_follower_thread_pool::execute() {
       }
     }
 
-    log_.info("new leader <%d> (thread <%d> is now follower)",acquire_thread_index(std::this_thread::get_id()) , acquire_thread_index(leader_));
+//    log_.info("new leader <%d> (thread <%d> is now follower)",acquire_thread_index(std::this_thread::get_id()) , acquire_thread_index(leader_));
     leader_ = std::this_thread::get_id();
 
     l.unlock();
 
     join_();
 
-    log_.info("thread <%d> finished work", acquire_thread_index(std::this_thread::get_id()));
+//    log_.info("thread <%d> finished work", acquire_thread_index(std::this_thread::get_id()));
     l.lock();
   }
 }

@@ -29,12 +29,12 @@ jobs:
       matrix:
         compiler-version: [9]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Create MySQL database
       run: |
         sudo systemctl start mysql.service
         mysql --version
-        mysql -u root -proot -e "CREATE DATABASE matador_test;"
+        mysql -u root -p root -e "CREATE DATABASE matador_test;"
       #        mysql -u root -p root -e "GRANT ALL PRIVILEGES ON matador_test.* TO 'root'@'%';";
     - name: CMake Version
       run: cmake --version
@@ -54,7 +54,10 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador test_matador
     - name: Copy Matador Libs
       working-directory: ${{github.workspace}}/build
-      run: cp lib/libmatador-*.* bin/
+      run: |
+        ls -la lib/libmatador-*.*
+        cp lib/libmatador-*.* bin/
+        ls -la bin
     - uses: harmon758/postgresql-action@v1
       with:
         postgresql version: '14'

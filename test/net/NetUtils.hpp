@@ -1,9 +1,7 @@
 #ifndef MATADOR_NETUTILS_HPP
 #define MATADOR_NETUTILS_HPP
 
-#ifndef _WIN32
-#include <unistd.h>
-#endif
+#include <thread>
 
 namespace detail {
 namespace utils {
@@ -27,11 +25,7 @@ template < class T >
 bool wait_until(T &service, bool running, int retries)
 {
   while (service.is_running() != running && retries-- > 0) {
-#ifdef _WIN32
-    ::Sleep(200);
-#else
-    ::usleep(500);
-#endif
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
 
   return service.is_running() == running;
