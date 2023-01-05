@@ -47,7 +47,7 @@ socket_interrupter::~socket_interrupter()
   server_.close();
 }
 
-int socket_interrupter::socket_id()
+int socket_interrupter::socket_id() const
 {
   return server_.id();
 }

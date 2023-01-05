@@ -27,7 +27,6 @@ void reactor::register_handler(const handler_ptr& h, event_type et)
   h->open();
 
   std::lock_guard<std::mutex> l(mutex_);
-
   auto it = find_handler_type(h);
 
   if (it == handlers_.end()) {
@@ -101,8 +100,8 @@ void reactor::handle_events()
 
   running_ = true;
   time_t timeout;
-
-  prepare_select_bits(timeout);
+  select_fdsets fd_sets;
+  prepare_select_bits(timeout, fd_sets);
 
 //  log_.debug("fds [r: %d, w: %d, e: %d]",
 //             fdsets_.read_set().count(),
@@ -120,13 +119,13 @@ void reactor::handle_events()
     p = &tselect;
   }
 
-  if (!has_clients_to_handle(timeout)) {
+  if (!has_clients_to_handle(timeout, fd_sets)) {
 //    log_.info("no clients to handle, exiting");
     return;
   }
 
   int ret;
-  while ((ret = select(p)) < 0) {
+  while ((ret = select(p, fd_sets)) < 0) {
     if(errno != EINTR) {
       char error_buffer[1024];
       log_.warn("select failed: %s", os::strerror(errno, error_buffer, 1024));
@@ -136,7 +135,7 @@ void reactor::handle_events()
     }
   }
 
-  bool interrupted = is_interrupted();
+  bool interrupted = is_interrupted(fd_sets);
 
   if (interrupted) {
     if (!shutdown_requested_) {
@@ -152,7 +151,7 @@ void reactor::handle_events()
   }
 
   time_t now = ::time(nullptr);
-  t_handler_type handler_type = resolve_next_handler(now);
+  t_handler_type handler_type = resolve_next_handler(now, fd_sets);
 
   if (handler_type.first) {
     deactivate_handler(handler_type.first, handler_type.second);
@@ -190,25 +189,25 @@ bool reactor::is_running() const
   return running_;
 }
 
-void reactor::prepare_select_bits(time_t& timeout)
+void reactor::prepare_select_bits(time_t& timeout, select_fdsets& fd_sets) const
 {
   std::lock_guard<std::mutex> l(mutex_);
-  fdsets_.reset();
+  fd_sets.reset();
   time_t now = ::time(nullptr);
   timeout = (std::numeric_limits<time_t>::max)();
 
   // set interrupter fd
-  fdsets_.read_set().set(interrupter_.socket_id());
+  fd_sets.read_set().set(interrupter_.socket_id());
 
   for (const auto &h : handlers_) {
     if (h.first == nullptr) {
       continue;
     }
     if (h.first->is_ready_read() && is_event_type_set(h.second, event_type::READ_MASK)) {
-      fdsets_.read_set().set(h.first->handle());
+      fd_sets.read_set().set(h.first->handle());
     }
     if (h.first->is_ready_write() && is_event_type_set(h.second, event_type::WRITE_MASK)) {
-      fdsets_.write_set().set(h.first->handle());
+      fd_sets.write_set().set(h.first->handle());
     }
     if (h.first->next_timeout() > 0 && is_event_type_set(h.second, event_type::TIMEOUT_MASK)) {
       timeout = (std::min)(timeout, h.first->next_timeout() <= now ? 0 : (h.first->next_timeout() - now));
@@ -241,15 +240,14 @@ void reactor::cleanup()
   }
 }
 
-int reactor::select(struct timeval *timeout)
+int reactor::select(struct timeval *timeout, select_fdsets& fd_sets)
 {
   log_.debug("calling select; waiting for io events");
-  std::lock_guard<std::mutex> l(mutex_);
   return ::select(
-    fdsets_.maxp1() + 1,
-    fdsets_.read_set().get(),
-    fdsets_.write_set().get(),
-    fdsets_.except_set().get(),
+    fd_sets.maxp1() + 1,
+    fd_sets.read_set().get(),
+    fd_sets.write_set().get(),
+    fd_sets.except_set().get(),
     timeout
   );
 }
@@ -277,14 +275,14 @@ int reactor::select(struct timeval *timeout)
 //  handlers_.pop_front();
 //}
 
-reactor::t_handler_type reactor::resolve_next_handler(time_t now)
+reactor::t_handler_type reactor::resolve_next_handler(time_t now, select_fdsets& fd_sets)
 {
   std::lock_guard<std::mutex> l(mutex_);
   for (auto &h : handlers_) {
-    if (h.first->handle() > 0 && fdsets_.write_set().is_set(h.first->handle())) {
+    if (h.first->handle() > 0 && fd_sets.write_set().is_set(h.first->handle())) {
       return std::make_pair(h.first, event_type::WRITE_MASK);
     }
-    if (h.first->handle() > 0 && fdsets_.read_set().is_set(h.first->handle())) {
+    if (h.first->handle() > 0 && fd_sets.read_set().is_set(h.first->handle())) {
       return std::make_pair(h.first, event_type::READ_MASK);
     }
     if (h.first->next_timeout() > 0 && h.first->next_timeout() <= now) {
@@ -318,9 +316,12 @@ void reactor::on_timeout(const handler_ptr &h, time_t now)
   h->on_timeout();
 }
 
-const select_fdsets &reactor::fdsets() const
+select_fdsets reactor::fdsets() const
 {
-  return fdsets_;
+  time_t timeout;
+  select_fdsets fd_sets;
+  prepare_select_bits(timeout, fd_sets);
+  return std::move(fd_sets);
 }
 
 void reactor::mark_handler_for_delete(const handler_ptr& h)
@@ -329,10 +330,10 @@ void reactor::mark_handler_for_delete(const handler_ptr& h)
   handlers_to_delete_.push_back(h);
 }
 
-bool reactor::is_interrupted()
+bool reactor::is_interrupted(select_fdsets& fd_sets)
 {
   std::lock_guard<std::mutex> l(mutex_);
-  if (fdsets_.read_set().is_set(interrupter_.socket_id())) {
+  if (fd_sets.read_set().is_set(interrupter_.socket_id())) {
     log_.debug("interrupt byte received; resetting interrupter");
     if (shutdown_requested_) {
       running_ = false;
@@ -342,18 +343,13 @@ bool reactor::is_interrupted()
   return false;
 }
 
-bool reactor::has_clients_to_handle(time_t timeout) const {
+bool reactor::has_clients_to_handle(time_t timeout, select_fdsets& fd_sets) const {
   std::lock_guard<std::mutex> lock(mutex_);
-  return fdsets_.maxp1() > 0 || timeout != (std::numeric_limits<time_t>::max)();
-//  if (fdsets_.maxp1() < 1 && timeout == (std::numeric_limits<time_t>::max)()) {
-//    return false;
-//  }
-//  return true;
+  return fd_sets.maxp1() > 0 || timeout != (std::numeric_limits<time_t>::max)();
 }
 
 std::list<reactor::t_handler_type>::iterator reactor::find_handler_type(const reactor::handler_ptr &h)
 {
-  std::lock_guard<std::mutex> l(mutex_);
   return std::find_if(handlers_.begin(), handlers_.end(), [&h](const t_handler_type &ht) {
     return ht.first.get() == h.get();
   });

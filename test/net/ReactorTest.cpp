@@ -106,9 +106,9 @@ void ReactorTest::test_fdset()
 {
   reactor r;
 
-  const auto &fds = r.fdsets();
+  auto fds = r.fdsets();
 
-  UNIT_ASSERT_EQUAL(0, fds.maxp1());
+  UNIT_ASSERT_GREATER(fds.maxp1(), 0);
 }
 
 void ReactorTest::test_handler()

@@ -122,12 +122,12 @@ public:
   bool is_running() const;
 
   /**
-   * Returns the internal fd sets for
+   * Returns the current internal fd sets for
    * reading, writing and exceptions.
    *
    * @return The internal select fd sets
    */
-  const select_fdsets& fdsets() const;
+  select_fdsets fdsets() const;
 
   /**
    * Marks the given handler to be deleted
@@ -181,31 +181,29 @@ public:
 private:
 //  void process_handler(int num);
 
-  t_handler_type resolve_next_handler(time_t now);
+  t_handler_type resolve_next_handler(time_t now, select_fdsets& fd_sets);
 
   void on_read_mask(const handler_ptr& h);
   void on_write_mask(const handler_ptr& h);
   void on_except_mask(const handler_ptr& h);
   void on_timeout(const handler_ptr &h, time_t i);
 
-  void prepare_select_bits(time_t& timeout);
+  void prepare_select_bits(time_t& timeout, select_fdsets& fd_sets) const;
 
   void remove_deleted();
 
   void cleanup();
 
-  int select(struct timeval* timeout);
+  int select(struct timeval* timeout, select_fdsets& fd_sets);
 
-  bool is_interrupted();
+  bool is_interrupted(select_fdsets& fd_sets);
 
-  bool has_clients_to_handle(time_t timeout) const;
+  bool has_clients_to_handle(time_t timeout, select_fdsets& fd_sets) const;
 
 private:
   handler_ptr sentinel_;
   t_handler_list handlers_;
   std::list<handler_ptr> handlers_to_delete_;
-
-  select_fdsets fdsets_;
 
   std::atomic_bool running_ {false};
   std::atomic_bool shutdown_requested_ {false};
