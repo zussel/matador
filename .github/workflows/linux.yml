@@ -57,7 +57,8 @@ jobs:
       run: |
         ls -la lib/libmatador-*.*
         cp lib/libmatador-*.* bin/
-        ls -la bin
+        pwd
+        ls -la bin/
     - uses: harmon758/postgresql-action@v1
       with:
         postgresql version: '14'

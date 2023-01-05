@@ -31,10 +31,10 @@ public:
         stop();
       }
     }
-    if (reactor_thread_.joinable()) {
+    if (actor_thread_.joinable()) {
       std::cout << "Join reactor\n";
       std::cout.flush();
-      reactor_thread_.join();
+      actor_thread_.join();
     } else {
       std::cout << "Reactor not joinable\n";
       std::cout.flush();
@@ -45,8 +45,12 @@ public:
   {
     std::cout << "Starting reactor\n";
     std::cout.flush();
-    reactor_thread_ = std::thread([this] {
+    actor_thread_ = std::thread([this] {
+      std::cout << "Created http server thread\n";
+      std::cout.flush();
       actor_.run();
+      std::cout << "Http server finished\n";
+      std::cout.flush();
       // sleep for some seconds to ensure valid thread join
       std::this_thread::sleep_for(std::chrono::seconds (1));
     });
@@ -65,7 +69,7 @@ public:
   }
 
 private:
-  std::thread reactor_thread_;
+  std::thread actor_thread_;
   T& actor_;
 
   std::mutex mutex_;
