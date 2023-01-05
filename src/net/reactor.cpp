@@ -85,9 +85,10 @@ void reactor::run()
   {
 //    log_.info("waiting for reactor shutdown");
     std::unique_lock<std::mutex> l(mutex_);
-    shutdown_.wait(l, [this]() {
-      return handlers_.empty();
-    });
+    shutdown_.wait(l);
+//    shutdown_.wait(l, [this]() {
+//      return handlers_.empty();
+//    });
     cleanup();
   }
 //  log_.info("all clients dispatched; shutting down");
@@ -144,7 +145,7 @@ void reactor::handle_events()
       return;
     } else {
 //      log_.info("shutting down");
-      cleanup();
+//      cleanup();
       shutdown_.notify_one();
       return;
     }
