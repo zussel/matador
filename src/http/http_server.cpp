@@ -23,16 +23,16 @@ server::server(unsigned short port, const std::string &dir)
   if (!dir.empty()) {
     os::chdir(dir);
   }
-  service_.accept(acceptor_, [this](tcp::peer ep, io_stream &stream) {
-    // create echo server connection
-    auto conn = std::make_shared<http_server_connection>(pipeline_, stream, std::move(ep));
-    conn->start();
-  });
 }
 
 void server::run()
 {
   log_.info("serving content at http://localhost:%d", acceptor_->endpoint().port());
+  service_.accept(acceptor_, [this](tcp::peer ep, io_stream &stream) {
+    // create echo server connection
+    auto conn = std::make_shared<http_server_connection>(pipeline_, stream, std::move(ep));
+    conn->start();
+  });
   service_.run();
 }
 
