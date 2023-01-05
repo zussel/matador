@@ -36,7 +36,7 @@ void reactor::register_handler(const handler_ptr& h, event_type et)
   } else {
     it->second = it->second | et;
   }
-  interrupt();
+  interrupt_without_lock();
 }
 
 void reactor::unregister_handler(const handler_ptr& h, event_type)
@@ -48,7 +48,7 @@ void reactor::unregister_handler(const handler_ptr& h, event_type)
     (*it).first->close();
     handlers_.erase(it);
   }
-  interrupt();
+  interrupt_without_lock();
 }
 
 void reactor::schedule_timer(const std::shared_ptr<handler>& h, time_t offset, time_t interval)
@@ -178,11 +178,13 @@ void reactor::handle_events()
 
 void reactor::shutdown()
 {
+  if (!is_running()) {
+    return;
+  }
   // shutdown the reactor properly
   log_.info("shutting down reactor");
   shutdown_requested_ = true;
-  std::lock_guard<std::mutex> l(mutex_);
-  interrupter_.interrupt();
+  interrupt();
 }
 
 bool reactor::is_running() const
@@ -380,6 +382,12 @@ void reactor::interrupt()
 {
   log_.info("interrupting reactor");
   std::lock_guard<std::mutex> l(mutex_);
+  interrupter_.interrupt();
+}
+
+void reactor::interrupt_without_lock()
+{
+  log_.info("interrupting reactor");
   interrupter_.interrupt();
 }
 

@@ -200,6 +200,8 @@ private:
 
   bool has_clients_to_handle(time_t timeout, select_fdsets& fd_sets) const;
 
+  void interrupt_without_lock();
+
 private:
   handler_ptr sentinel_;
   t_handler_list handlers_;
