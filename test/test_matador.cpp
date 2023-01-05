@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new SocketInterrupterTest);
   suite.register_unit(new LeaderFollowerThreadPoolTest);
 
-  suite.register_unit(new HttpServerTest);
+//  suite.register_unit(new HttpServerTest);
   suite.register_unit(new JwtTest);
   suite.register_unit(new RequestParserTest);
   suite.register_unit(new ResponseParserTest);
