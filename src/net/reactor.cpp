@@ -86,10 +86,7 @@ void reactor::run()
   {
 //    log_.info("waiting for reactor shutdown");
     std::unique_lock<std::mutex> l(mutex_);
-    shutdown_.wait(l);
-//    shutdown_.wait(l, [this]() {
-//      return handlers_.empty();
-//    });
+    shutdown_.wait(l, [this]() { return shutdown_requested_.load(); });
     cleanup();
   }
 //  log_.info("all clients dispatched; shutting down");
@@ -119,8 +116,7 @@ void reactor::handle_events()
     tselect.tv_sec = timeout;
     tselect.tv_usec = 0;
     p = &tselect;
-    std::cout << this << " next timeout in " << p->tv_sec << " seconds\n";
-    std::cout.flush();
+    std::cout << this << " next timeout in " << p->tv_sec << " seconds\n" << std::flush;
   }
 
   if (!has_clients_to_handle(timeout, fd_sets)) {
@@ -130,8 +126,7 @@ void reactor::handle_events()
 
   int ret;
   while ((ret = select(p, fd_sets)) < 0) {
-    std::cout << this << " select returned with error " << ret << "\n";
-    std::cout.flush();
+    std::cout << this << " select returned with error " << ret << "\n" << std::flush;
     if(errno != EINTR) {
       char error_buffer[1024];
       log_.warn("select failed: %s", os::strerror(errno, error_buffer, 1024));
@@ -141,17 +136,18 @@ void reactor::handle_events()
     }
   }
 
-  std::cout << this << " select returned with active requests " << ret << "\n";
-  std::cout.flush();
+  std::cout << this << " select returned with active requests " << ret << "\n" << std::flush;
 
   bool interrupted = is_interrupted(fd_sets);
 
   if (interrupted) {
     if (!shutdown_requested_) {
+      std::cout << this << " reactor was interrupted - promote new leader\n" << std::flush;
 //      log_.info("reactor was interrupted");
       thread_pool_.promote_new_leader();
       return;
     } else {
+      std::cout << this << " reactor was interrupted for shutdown\n" << std::flush;
 //      log_.info("shutting down");
 //      cleanup();
       shutdown_.notify_one();
@@ -164,8 +160,7 @@ void reactor::handle_events()
 
   if (handler_type.first) {
     deactivate_handler(handler_type.first, handler_type.second);
-    std::cout << this << " handling client " << handler_type.first->name() << " (socket: " << handler_type.first->handle() << ")\n";
-    std::cout.flush();
+    std::cout << this << " handling client " << handler_type.first->name() << " (socket: " << handler_type.first->handle() << ") - promoting new leader\n" << std::flush;
 
     thread_pool_.promote_new_leader();
 //    log_.info("start handling event");
@@ -309,24 +304,28 @@ reactor::t_handler_type reactor::resolve_next_handler(time_t now, select_fdsets&
 
 void reactor::on_read_mask(const handler_ptr& h)
 {
-  log_.debug("read bit for handler %d is set; handle input", h->handle());
+//  log_.debug("read bit for handler %d is set; handle input", h->handle());
+  std::cout << this << " (handler " << h.get() << "): handle read\n" << std::flush;
   h->on_input();
 }
 
 void reactor::on_write_mask(const handler_ptr& h)
 {
-  log_.debug("write bit for handler %d is set; handle output", h->handle());
+//  log_.debug("write bit for handler %d is set; handle output", h->handle());
+  std::cout << this << " (handler " << h.get() << "): handle write\n" << std::flush;
   h->on_output();
 }
 
-void reactor::on_except_mask(const handler_ptr&)
+void reactor::on_except_mask(const handler_ptr& h)
 {
+  std::cout << this << " (handler " << h.get() << "): handle exception\n" << std::flush;
 
 }
 
 void reactor::on_timeout(const handler_ptr &h, time_t now)
 {
-  log_.debug("timeout expired for handler %d; handle timeout", h->handle());
+//  log_.debug("timeout expired for handler %d; handle timeout", h->handle());
+  std::cout << this << " (handler " << h.get() << "): handle timeout\n" << std::flush;
   h->calculate_next_timeout(now);
   h->on_timeout();
 }
