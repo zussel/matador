@@ -2,7 +2,6 @@
 #include "matador/net/handler_creator.hpp"
 #include "matador/net/reactor.hpp"
 
-#include "matador/utils/buffer.hpp"
 #include "matador/utils/buffer_view.hpp"
 
 #include "matador/logger/log_manager.hpp"

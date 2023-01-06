@@ -119,7 +119,7 @@ public:
   void on_close() override {}
 
   /**
-   * Closes the listebn fd of the acceptor
+   * Closes the listen fd of the acceptor
    */
   void close() override;
 
@@ -160,6 +160,8 @@ public:
 private:
   tcp::acceptor acceptor_;
   tcp::peer endpoint_;
+
+  std::string name_ { "acceptor" };
 
   t_accept_handler accept_handler_;
 

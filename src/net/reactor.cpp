@@ -95,12 +95,16 @@ void reactor::run()
 
 void reactor::handle_events()
 {
+  std::cout << this << " start handle events\n" << std::flush;
+
 //  log_.info("handle events");
 
   running_ = true;
   time_t timeout;
   select_fdsets fd_sets;
   prepare_select_bits(timeout, fd_sets);
+
+  std::cout << this << " fd sets r: " << fd_sets.read_set().count() << ", w: " << fd_sets.write_set().count() << ", e: " << fd_sets.except_set().count() << ", max: " << fd_sets.maxp1() << "\n" << std::flush;
 
 //  log_.debug("fds [r: %d, w: %d, e: %d]",
 //             fdsets_.read_set().count(),
@@ -120,6 +124,7 @@ void reactor::handle_events()
   }
 
   if (!has_clients_to_handle(timeout, fd_sets)) {
+    std::cout << this << " no clients to handle; returning\n" << std::flush;
 //    log_.info("no clients to handle, exiting");
     return;
   }
@@ -160,7 +165,7 @@ void reactor::handle_events()
 
   if (handler_type.first) {
     deactivate_handler(handler_type.first, handler_type.second);
-    std::cout << this << " handling client " << handler_type.first->name() << " (socket: " << handler_type.first->handle() << ") - promoting new leader\n" << std::flush;
+    std::cout << this << " handling client " << handler_type.first->name() << " - promoting new leader\n" << std::flush;
 
     thread_pool_.promote_new_leader();
 //    log_.info("start handling event");
