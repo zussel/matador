@@ -7,6 +7,7 @@
 #include <limits>
 #include <cerrno>
 #include <ctime>
+#include <iostream>
 
 namespace matador {
 
@@ -118,6 +119,8 @@ void reactor::handle_events()
     tselect.tv_sec = timeout;
     tselect.tv_usec = 0;
     p = &tselect;
+    std::cout << this << " next timeout in " << p->tv_sec << " seconds\n";
+    std::cout.flush();
   }
 
   if (!has_clients_to_handle(timeout, fd_sets)) {
@@ -127,6 +130,8 @@ void reactor::handle_events()
 
   int ret;
   while ((ret = select(p, fd_sets)) < 0) {
+    std::cout << this << " select returned with error " << ret << "\n";
+    std::cout.flush();
     if(errno != EINTR) {
       char error_buffer[1024];
       log_.warn("select failed: %s", os::strerror(errno, error_buffer, 1024));
@@ -135,6 +140,9 @@ void reactor::handle_events()
       return;
     }
   }
+
+  std::cout << this << " select returned with active requests " << ret << "\n";
+  std::cout.flush();
 
   bool interrupted = is_interrupted(fd_sets);
 
@@ -156,6 +164,9 @@ void reactor::handle_events()
 
   if (handler_type.first) {
     deactivate_handler(handler_type.first, handler_type.second);
+    std::cout << this << " handling client " << handler_type.first->name() << " (socket: " << handler_type.first->handle() << ")\n";
+    std::cout.flush();
+
     thread_pool_.promote_new_leader();
 //    log_.info("start handling event");
     // handle event
@@ -325,7 +336,7 @@ select_fdsets reactor::fdsets() const
   time_t timeout;
   select_fdsets fd_sets;
   prepare_select_bits(timeout, fd_sets);
-  return std::move(fd_sets);
+  return fd_sets;
 }
 
 void reactor::mark_handler_for_delete(const handler_ptr& h)

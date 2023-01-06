@@ -390,9 +390,9 @@ template < class T >
 typename result_iterator<T>::self result_iterator<T>::operator++(int)
 {
   std::unique_ptr<T> obj(base::obj_.release());
-  base::result_->p->bind(base::obj_.get());
-  if (!base::result_->p->fetch(base::obj_.get())) {
-    base::obj_.reset();
+  base::result_->p->bind(obj.get());
+  if (!base::result_->p->fetch(obj.get())) {
+    obj.reset();
   }
   return self(base::result_, obj.release());
 }
