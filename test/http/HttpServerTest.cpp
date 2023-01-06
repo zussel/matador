@@ -21,44 +21,44 @@ public:
   explicit ThreadWrapper(T &actor) : actor_(actor) {}
   ~ThreadWrapper()
   {
-    std::cout << "Start destroy reactor\n";
-    std::cout.flush();
+//    std::cout << "Start destroy reactor\n";
+//    std::cout.flush();
     {
       std::lock_guard<std::mutex> lock(mutex_);
       if (actor_.is_running()) {
-        std::cout << "Reactor is running; stopping\n";
-        std::cout.flush();
+//        std::cout << "Reactor is running; stopping\n";
+//        std::cout.flush();
         stop();
       }
     }
     if (actor_thread_.joinable()) {
-      std::cout << "Join reactor\n";
-      std::cout.flush();
+//      std::cout << "Join reactor\n";
+//      std::cout.flush();
       actor_thread_.join();
     } else {
-      std::cout << "Reactor not joinable\n";
-      std::cout.flush();
+//      std::cout << "Reactor not joinable\n";
+//      std::cout.flush();
     }
   }
 
   void start()
   {
-    std::cout << "Starting reactor\n";
-    std::cout.flush();
+//    std::cout << "Starting reactor\n";
+//    std::cout.flush();
     actor_thread_ = std::thread([this] {
-      std::cout << "Created http server thread\n";
-      std::cout.flush();
+//      std::cout << "Created http server thread\n";
+//      std::cout.flush();
       actor_.run();
-      std::cout << "Http server finished\n";
-      std::cout.flush();
+//      std::cout << "Http server finished\n";
+//      std::cout.flush();
       // sleep for some seconds to ensure valid thread join
       std::this_thread::sleep_for(std::chrono::seconds (1));
     });
   }
   void stop()
   {
-    std::cout << "Shutting down reactor\n";
-    std::cout.flush();
+//    std::cout << "Shutting down reactor\n";
+//    std::cout.flush();
     std::lock_guard<std::mutex> lock(mutex_);
     actor_.shutdown();
   }
