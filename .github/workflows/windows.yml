@@ -67,11 +67,10 @@ jobs:
           copy sqlite-amalgamation-3360000\sqlite3*.h include\
           dir include
       - name: Set variables for SQLite
-        shell: bash
         run: |
           echo "C:\ProgramData\chocolatey\lib\SQLite\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-#          "C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_PATH
-#          "SQLITE3_DIR=C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_ENV
+          "C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_PATH
+          "SQLITE3_DIR=C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_ENV
       - name: Install mysql
         shell: cmd
         run: choco install mysql
