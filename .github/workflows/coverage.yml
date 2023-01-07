@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler-version: [12]
+        compiler-version: [9]
     steps:
       - uses: actions/checkout@v2
       - name: Create MySQL database
