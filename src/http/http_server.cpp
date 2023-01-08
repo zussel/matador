@@ -14,6 +14,10 @@ server::server(unsigned short port)
   : server(port, "")
 { }
 
+server::~server() {
+  service_.shutdown();
+}
+
 server::server(unsigned short port, const std::string &dir)
   : log_(matador::create_logger("HttpServer"))
   , acceptor_(std::make_shared<acceptor>(tcp::peer(address::v4::any(), port)))

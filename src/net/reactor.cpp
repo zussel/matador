@@ -20,6 +20,7 @@ reactor::reactor()
 reactor::~reactor()
 {
     log_.debug("destroying reactor");
+    thread_pool_.shutdown();
 }
 
 void reactor::register_handler(const handler_ptr& h, event_type et)
@@ -90,7 +91,7 @@ void reactor::run()
     cleanup();
   }
 //  log_.info("all clients dispatched; shutting down");
-  thread_pool_.shutdown();
+  thread_pool_.stop();
 }
 
 void reactor::handle_events()

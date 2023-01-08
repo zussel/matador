@@ -40,6 +40,8 @@ public:
    */
   explicit server(unsigned short port);
 
+  ~server();
+
   /**
    * Creates a HTTP server at the given port. The given
    * directory path is used as root directory when serving

@@ -404,7 +404,7 @@ timeval time::parse_time_string(const std::string &tstr, const char *format)
   unsigned long usec = 0;
   if (endptr == nullptr && pch != nullptr) {
     // parse error
-    throw std::logic_error("error parsing time");
+    throw std::logic_error("error parsing time: " + tstr);
   } else if (pch != nullptr) {
     char *next;
     usec = std::strtoul(endptr, &next, 10);

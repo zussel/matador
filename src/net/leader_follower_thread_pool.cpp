@@ -48,9 +48,9 @@ void leader_follower_thread_pool::shutdown()
 {
   {
     const std::lock_guard<std::mutex> l(mutex_);
-    if (!is_running_) {
-      return;
-    }
+//    if (!is_running_) {
+//      return;
+//    }
     stop();
     log_.info("shutting down; notifying all tasks");
     signal_shutdown_ = true;
