@@ -74,7 +74,9 @@ SET (TEST_NET_SOURCES
   net/IOEchoServerConnection.hpp
   net/IOEchoServer.cpp
   net/IOEchoServer.hpp
-  net/NetUtils.hpp net/LeaderFollowerThreadPoolTest.cpp net/LeaderFollowerThreadPoolTest.hpp)
+  net/NetUtils.hpp
+  net/LeaderFollowerThreadPoolTest.cpp
+  net/LeaderFollowerThreadPoolTest.hpp)
 
 SET (TEST_HTTP_SOURCES
   http/RequestParserTest.cpp
@@ -94,7 +96,9 @@ SET (TEST_HTTP_SOURCES
   http/JwtTest.cpp
   http/JwtTest.hpp
   http/MiddlewareTest.cpp
-  http/MiddlewareTest.hpp)
+  http/MiddlewareTest.hpp
+  http/HttpClientTest.cpp
+  http/HttpClientTest.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp

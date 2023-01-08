@@ -71,6 +71,7 @@
 #include "net/LeaderFollowerThreadPoolTest.hpp"
 
 #include "http/HttpServerTest.hpp"
+#include "http/HttpClientTest.hpp"
 #include "http/JwtTest.hpp"
 #include "http/RequestParserTest.hpp"
 #include "http/ResponseParserTest.hpp"
@@ -163,6 +164,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new LeaderFollowerThreadPoolTest);
 
   suite.register_unit(new HttpServerTest);
+  suite.register_unit(new HttpClientTest);
   suite.register_unit(new JwtTest);
   suite.register_unit(new RequestParserTest);
   suite.register_unit(new ResponseParserTest);

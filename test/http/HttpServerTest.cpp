@@ -3,9 +3,9 @@
 #include "../net/NetUtils.hpp"
 
 #include "matador/http/http_server.hpp"
-#include "matador/http/http_client.hpp"
 #include "matador/http/http.hpp"
 #include "matador/http/response.hpp"
+#include "matador/http/request.hpp"
 #include "matador/http/response_parser.hpp"
 
 #include "matador/logger/log_manager.hpp"
