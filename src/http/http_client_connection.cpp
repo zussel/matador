@@ -28,6 +28,8 @@ void http_client_connection::read()
   stream_.read(matador::buffer_view(buf_), [this, self](int ec, int nread) {
     if (ec == 0) {
       std::string response_string(buf_.data(), nread);
+      std::cout << "read " << nread << "\n";
+      std::cout.flush();
       // parse request and prepare response
       log_.trace("%s: response [%s]", stream_.name().c_str(), response_string.c_str());
       auto result = parser_.parse(response_string, response_);

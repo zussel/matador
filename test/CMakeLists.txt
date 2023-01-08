@@ -98,7 +98,7 @@ SET (TEST_HTTP_SOURCES
   http/MiddlewareTest.cpp
   http/MiddlewareTest.hpp
   http/HttpClientTest.cpp
-  http/HttpClientTest.hpp)
+  http/HttpClientTest.hpp http/HttpTestServer.cpp http/HttpTestServer.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp
