@@ -88,17 +88,15 @@ public:
 private:
   response execute(const request& req);
 
+  void connect(tcp::socket &stream);
+  void send_request(tcp::socket &stream, const request &req);
+  void read_response(tcp::socket &stream, response &resp);
+
 private:
   std::string host_;
   std::string port_ { "80" };
 
-  matador::io_service service_;
-  std::shared_ptr<matador::connector> connector_;
-
   logger log_;
-
-  request request_;
-  response response_;
 };
 
 }

@@ -38,7 +38,6 @@ void stream_handler::on_input()
 {
   auto len = stream_.receive(read_buffer_);
   log_.trace("%s: read %d bytes", name().c_str(), len);
-//  std::cout << get_reactor() << " (handler " << this << "): handle <- received " << len << " bytes\n" << std::flush;
   if (len == 0) {
     on_close();
   } else if (len < 0 && errno != EWOULDBLOCK) {
@@ -63,7 +62,6 @@ void stream_handler::on_output()
     buffer_view &bv = write_buffers_.front();
 
     auto len = stream_.send(bv);
-//    std::cout << get_reactor() << " (handler " << this << "): handle -> sent " << len << " bytes\n" << std::flush;
     log_.trace("%s: sent %d bytes", name().c_str(), len);
 
     if (len == 0) {
