@@ -31,9 +31,9 @@ void HttpTestServer::run()
 
   running_ = true;
 
-  int ret = select(acceptor.id()+1, &read_set, nullptr, nullptr, nullptr);
+  select(acceptor.id()+1, &read_set, nullptr, nullptr, nullptr);
 
-  bool ready_to_read = FD_ISSET(socket_id, &read_set);
+  FD_ISSET(socket_id, &read_set);
 
   tcp::socket remote;
   acceptor.accept(remote);
@@ -64,9 +64,7 @@ void HttpTestServer::run()
     std::list<buffer_view> data = response.to_buffers();
 
     for (const auto &buf: data) {
-      auto ret = remote.send(buf);
-//      std::cout << "server sent: " << ret << "\n";
-//      std::cout.flush();
+      remote.send(buf);
     }
 
   } catch(const std::exception &ex) {
@@ -89,8 +87,6 @@ bool HttpTestServer::is_running() const
 void HttpTestServer::shutdown() const
 {
   if (client_id_) {
-//    std::cout << "closing fd " << client_id_ << "\n";
-//    std::cout.flush();
     os::close(client_id_);
   }
 }

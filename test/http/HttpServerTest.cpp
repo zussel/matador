@@ -78,51 +78,15 @@ void HttpServerTest::test_get()
 
   UNIT_ASSERT_TRUE(utils::wait_until_running(s));
 
-  tcp::socket client;
-
-  int ret = client.open(tcp::v4());
-  UNIT_ASSERT_FALSE(ret < 0);
-  auto srv = tcp::peer(address::v4::loopback(), 8123);
-  ret = client.connect(srv);
-  UNIT_ASSERT_FALSE(ret < 0);
-
   http::request req(http::http::GET, "localhost:8123", "/test/world");
-
-  std::list<buffer_view> data = req.to_buffers();
-
-  for (const auto &buf: data) {
-    auto size = buf.size();
-    size_t ret = client.send(buf);
-    UNIT_ASSERT_EQUAL(ret, size);
-  }
-
   http::response response;
-  http::response_parser::return_t parse_result{};
-  http::response_parser parser;
-  do {
-    buffer result;
-    auto nread = client.receive(result);
-    std::string msg(result.data(), nread);
 
-//    std::cout << "part: " << msg << "\n";
-    parse_result = parser.parse(msg, response);
-    if (parse_result == matador::http::response_parser::INVALID) {
-//      std::cout << "invalid part: " << msg << "\n";
-    }
-    UNIT_ASSERT_NOT_EQUAL(http::response_parser::INVALID, parse_result);
-  } while (parse_result != matador::http::response_parser::FINISH);
-  client.close();
+  send_request(8123, req, response);
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", response.body());
   UNIT_ASSERT_EQUAL(http::http::OK, response.status());
 
   s.shutdown();
-
-//  UNIT_ASSERT_TRUE(utils::wait_until_stopped(s));
-
-//    if (t.joinable()) {
-//      t.join();
-//    }
 }
 
 void HttpServerTest::test_post()
@@ -142,62 +106,18 @@ void HttpServerTest::test_post()
     utils::wait_until_stopped(s);
   });
 
-//  std::this_thread::sleep_for(std::chrono::milliseconds(400));
-
   UNIT_ASSERT_TRUE(utils::wait_until_running(s));
 
-  tcp::socket client;
-
-  int ret = client.open(tcp::v4());
-  UNIT_ASSERT_FALSE(ret < 0);
-  auto srv = tcp::peer(address::v4::loopback(), 7779);
-  ret = client.connect(srv);
-  UNIT_ASSERT_FALSE(ret < 0);
-
-  http::request req(http::http::POST, "localhost:8123", "/test/world");
+  http::request req(http::http::POST, "localhost:7779", "/test/world");
   req.body("hello");
-
-  std::list<buffer_view> data = req.to_buffers();
-
-  for (const auto &buf: data) {
-    auto size = buf.size();
-    size_t ret = client.send(buf);
-    UNIT_ASSERT_EQUAL(ret, size);
-  }
-
   http::response response;
-  http::response_parser::return_t parse_result{};
-  http::response_parser parser;
-  do {
-    buffer result;
-    auto nread = client.receive(result);
-    std::string msg(result.data(), nread);
 
-//    std::cout << "part: " << msg << "\n";
-    parse_result = parser.parse(msg, response);
-    if (parse_result == matador::http::response_parser::INVALID) {
-//      std::cout << "invalid part: " << msg << "\n";
-    }
-    UNIT_ASSERT_NOT_EQUAL(http::response_parser::INVALID, parse_result);
-  } while (parse_result != matador::http::response_parser::FINISH);
-  client.close();
+  send_request(7779, req, response);
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", response.body());
   UNIT_ASSERT_EQUAL(http::http::OK, response.status());
 
   s.shutdown();
-
-//  http::client c("localhost:7779");
-//  auto resp = c.post("/test/world", "hello");
-//
-//  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
-//  UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
-
-//  std::this_thread::sleep_for(std::chrono::milliseconds(300));
-
-//  wrapper.stop();
-
-//  UNIT_ASSERT_TRUE(utils::wait_until_stopped(s));
 }
 
 void HttpServerTest::test_put()
@@ -216,58 +136,18 @@ void HttpServerTest::test_put()
     utils::wait_until_stopped(s);
   });
 
-//  std::this_thread::sleep_for(std::chrono::milliseconds (400));
-
   UNIT_ASSERT_TRUE(utils::wait_until_running(s));
 
-  tcp::socket client;
-
-  int ret = client.open(tcp::v4());
-  UNIT_ASSERT_FALSE(ret < 0);
-  auto srv = tcp::peer(address::v4::loopback(), 7779);
-  ret = client.connect(srv);
-  UNIT_ASSERT_FALSE(ret < 0);
-
-  http::request req(http::http::PUT, "localhost:8123", "/test/world");
+  http::request req(http::http::PUT, "localhost:7779", "/test/world");
   req.body("hello");
-
-  std::list<buffer_view> data = req.to_buffers();
-
-  for (const auto &buf: data) {
-    auto size = buf.size();
-    size_t ret = client.send(buf);
-    UNIT_ASSERT_EQUAL(ret, size);
-  }
-
   http::response response;
-  http::response_parser::return_t parse_result{};
-  http::response_parser parser;
-  do {
-    buffer result;
-    auto nread = client.receive(result);
-    std::string msg(result.data(), nread);
 
-//    std::cout << "part: " << msg << "\n";
-    parse_result = parser.parse(msg, response);
-    if (parse_result == matador::http::response_parser::INVALID) {
-//      std::cout << "invalid part: " << msg << "\n";
-    }
-    UNIT_ASSERT_NOT_EQUAL(http::response_parser::INVALID, parse_result);
-  } while (parse_result != matador::http::response_parser::FINISH);
-  client.close();
+  send_request(7779, req, response);
 
   UNIT_ASSERT_EQUAL("<h1>hello world</h1>", response.body());
   UNIT_ASSERT_EQUAL(http::http::OK, response.status());
 
-//  http::client c("localhost:7779");
-//  auto resp = c.put("/test/world", "hello");
-
-//  std::this_thread::sleep_for(std::chrono::milliseconds (400));
-
   s.shutdown();
-//  wrapper.stop();
-
-//  UNIT_ASSERT_TRUE(utils::wait_until_stopped(s));
 }
 
 void HttpServerTest::test_delete()
@@ -286,21 +166,30 @@ void HttpServerTest::test_delete()
     utils::wait_until_stopped(s);
   });
 
-//  std::this_thread::sleep_for(std::chrono::milliseconds (400));
-
   UNIT_ASSERT_TRUE(utils::wait_until_running(s));
 
+  http::request req(http::http::DEL, "localhost:7779", "/test/world");
+  http::response response;
+
+  send_request(7779, req, response);
+
+  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", response.body());
+  UNIT_ASSERT_EQUAL(http::http::OK, response.status());
+
+  s.shutdown();
+}
+
+void HttpServerTest::send_request(unsigned int port, const http::request &request, http::response &response)
+{
   tcp::socket client;
 
   int ret = client.open(tcp::v4());
   UNIT_ASSERT_FALSE(ret < 0);
-  auto srv = tcp::peer(address::v4::loopback(), 7779);
+  auto srv = tcp::peer(address::v4::loopback(), port);
   ret = client.connect(srv);
   UNIT_ASSERT_FALSE(ret < 0);
 
-  http::request req(http::http::DEL, "localhost:8123", "/test/world");
-
-  std::list<buffer_view> data = req.to_buffers();
+  std::list<buffer_view> data = request.to_buffers();
 
   for (const auto &buf: data) {
     auto size = buf.size();
@@ -308,7 +197,6 @@ void HttpServerTest::test_delete()
     UNIT_ASSERT_EQUAL(ret, size);
   }
 
-  http::response response;
   http::response_parser::return_t parse_result{};
   http::response_parser parser;
   do {
@@ -316,24 +204,10 @@ void HttpServerTest::test_delete()
     auto nread = client.receive(result);
     std::string msg(result.data(), nread);
 
-//    std::cout << "part: " << msg << "\n";
     parse_result = parser.parse(msg, response);
     if (parse_result == matador::http::response_parser::INVALID) {
-//      std::cout << "invalid part: " << msg << "\n";
     }
     UNIT_ASSERT_NOT_EQUAL(http::response_parser::INVALID, parse_result);
   } while (parse_result != matador::http::response_parser::FINISH);
   client.close();
-
-//  http::client c("localhost:7779");
-//  auto resp = c.remove("/test/world");
-
-  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", response.body());
-  UNIT_ASSERT_EQUAL(http::http::OK, response.status());
-
-  s.shutdown();
-
-//  std::this_thread::sleep_for(std::chrono::milliseconds (400));
-
-//  UNIT_ASSERT_TRUE(utils::wait_until_stopped(s));
 }

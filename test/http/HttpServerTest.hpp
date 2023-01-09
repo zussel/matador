@@ -3,6 +3,13 @@
 
 #include "matador/unit/unit_test.hpp"
 
+namespace matador {
+namespace http {
+class request;
+class response;
+}
+}
+
 class HttpServerTest : public matador::unit_test
 {
 public:
@@ -16,6 +23,9 @@ public:
   void test_post();
   void test_put();
   void test_delete();
+
+private:
+  void send_request(unsigned int port, const matador::http::request &request, matador::http::response &response);
 };
 
 

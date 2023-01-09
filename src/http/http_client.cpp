@@ -1,5 +1,4 @@
 #include "matador/http/http_client.hpp"
-#include "matador/http/http_client_connection.hpp"
 #include "matador/http/request.hpp"
 #include "matador/http/response_parser.hpp"
 
