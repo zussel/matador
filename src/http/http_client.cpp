@@ -93,8 +93,7 @@ response client::execute(const request& req)
     auto nread = connection.receive(result);
     if (nread == -1) {
       char errbuf[1024];
-      strerror_s(errbuf, errno);
-      std::cout << "errno: " << errbuf << "\n";
+      std::cout << "errno: " << os::strerror(errno, errbuf, 1024) << "\n";
       continue;
     }
     std::string msg(result.data(), nread);
