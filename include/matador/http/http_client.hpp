@@ -86,7 +86,7 @@ public:
   response remove(const std::string &route);
 
 private:
-  response execute(request req);
+  response execute(const request& req);
 
 private:
   std::string host_;

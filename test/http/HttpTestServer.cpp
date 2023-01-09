@@ -65,22 +65,18 @@ void HttpTestServer::run()
 
     for (const auto &buf: data) {
       auto ret = remote.send(buf);
-      std::cout << "server sent: " << ret << "\n";
-      std::cout.flush();
+//      std::cout << "server sent: " << ret << "\n";
+//      std::cout.flush();
     }
 
   } catch(const std::exception &ex) {
     std::cout << "caught exception: " << ex.what() << "\n";
   }
 
-  std::cout << "Before finishing\n";
-
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
   client_id_ = remote.release();
   acceptor.close();
-
-  std::cout << "Finished\n";
 
   running_ = false;
 }
@@ -93,8 +89,8 @@ bool HttpTestServer::is_running() const
 void HttpTestServer::shutdown() const
 {
   if (client_id_) {
-    std::cout << "closing fd " << client_id_ << "\n";
-    std::cout.flush();
+//    std::cout << "closing fd " << client_id_ << "\n";
+//    std::cout.flush();
     os::close(client_id_);
   }
 }

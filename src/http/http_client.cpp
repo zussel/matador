@@ -1,11 +1,9 @@
 #include "matador/http/http_client.hpp"
 #include "matador/http/http_client_connection.hpp"
 #include "matador/http/request.hpp"
-#include "matador/http/request_header.hpp"
+#include "matador/http/response_parser.hpp"
 
 #include "matador/logger/log_manager.hpp"
-
-#include <chrono>
 
 namespace matador {
 namespace http {
@@ -55,16 +53,69 @@ response client::remove(const std::string &route)
   return execute(request(http::DEL, host_, route));
 }
 
-response client::execute(request req)
+response client::execute(const request& req)
 {
-  request_ = std::move(req);
-  service_.connect(connector_, port_, [this](tcp::peer ep, io_stream &stream) {
-    // create echo server connection
-    auto conn = std::make_shared<http_client_connection>(request_, response_, stream, service_, std::move(ep));
-    conn->execute();
-  });
+  tcp::socket connection;
+  tcp::resolver resolver;
+  auto endpoints = resolver.resolve(host_, port_);
+  for (const auto &endpoint : endpoints) {
+    auto ret = matador::connect(connection, endpoint);
+    if (ret != 0) {
+      if (errno > 0) {
+        char error_buffer[1024];
+//        std::cout << "couldn't establish connection to: " << endpoint.to_string().c_str() << " (error: " << os::strerror(errno, error_buffer, 1024) << "\n";
+        log_.error("couldn't establish connection to: %s (%s)", endpoint.to_string().c_str(), os::strerror(errno, error_buffer, 1024));
+      } else {
+//        std::cout << "skipping connection to: " << endpoint.to_string().c_str() << "\n";
+        log_.error("skipping connection to: %s", endpoint.to_string().c_str());
+      }
+      continue;
+    } else {
+//      std::cout << "connection established to " << endpoint.to_string().c_str() << " (fd: " << connection.id() << ")\n";
+      log_.info("connection established to %s (fd: %d)", endpoint.to_string().c_str(), connection.id());
+      break;
+    }
+  }
 
-  service_.run();
+  if (!connection.is_open()) {
+    throw_logic_error("couldn't connect to " << host_ << ":" << port_);
+  }
+
+  auto buffer_list = req.to_buffers();
+  for (const auto &buf : buffer_list) {
+    connection.send(buf);
+  }
+
+  response_parser::return_t parse_result{};
+  response_parser parser;
+  do {
+    buffer result;
+    auto nread = connection.receive(result);
+    if (nread == -1) {
+      char errbuf[1024];
+      strerror_s(errbuf, errno);
+      std::cout << "errno: " << errbuf << "\n";
+      continue;
+    }
+    std::string msg(result.data(), nread);
+
+    parse_result = parser.parse(msg, response_);
+    if (parse_result == matador::http::response_parser::INVALID) {
+      response_ = response::bad_request();
+      break;
+    }
+  } while (parse_result != matador::http::response_parser::FINISH);
+
+  connection.close();
+
+//  request_ = std::move(req);
+//  service_.connect(connector_, port_, [this](tcp::peer ep, io_stream &stream) {
+//    // create echo server connection
+//    auto conn = std::make_shared<http_client_connection>(request_, response_, stream, service_, std::move(ep));
+//    conn->execute();
+//  });
+
+//  service_.run();
 
   return response_;
 }
