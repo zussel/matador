@@ -1,36 +1,7 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef PROTOTYPE_NODE_HPP
 #define PROTOTYPE_NODE_HPP
 
-#ifdef _MSC_VER
-  #ifdef matador_object_EXPORTS
-    #define MATADOR_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_OBJECT_TEMPLATE
-  #else
-    #define MATADOR_OBJECT_API __declspec(dllimport)
-    #define EXPIMP_OBJECT_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-  #define MATADOR_OBJECT_API
-  #define EXPIMP_OBJECT_TEMPLATE
-#endif
+#include "matador/object/export.hpp"
 
 #include "matador/utils/identifier.hpp"
 
@@ -38,12 +9,14 @@
 #include "matador/object/typed_object_store_observer.hpp"
 #include "matador/object/relation_field_endpoint.hpp"
 #include "matador/object/prototype_info.hpp"
+#include "matador/object/object_type_registry_entry.hpp"
 
 #include <map>
 #include <vector>
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <ostream>
 
 namespace matador {
 
@@ -52,7 +25,6 @@ class object_proxy;
 
 /// @cond MATADOR_DEV
 namespace detail {
-class basic_node_analyzer;
 template < class T, template < class U = T > class O >
 class node_analyzer;
 class object_inserter;
@@ -82,8 +54,6 @@ public:
 
 public:
   /// @cond MATADOR_DEV
-
-//  typedef std::unordered_map<std::type_index, std::shared_ptr<detail::relation_field_endpoint>> t_endpoint_map;
 
   typedef detail::abstract_prototype_info::t_endpoint_map::const_iterator const_endpoint_iterator;
   typedef detail::abstract_prototype_info::t_endpoint_map::iterator endpoint_iterator;
@@ -153,6 +123,7 @@ public:
     , last(new prototype_node)
     , type_(type)
     , abstract_(abstract)
+    , object_type_entry_(std::make_shared<detail::object_type_registry_entry<T>>(tree, this))
   {
     first->next = last.get();
     last->prev = first.get();
@@ -419,7 +390,11 @@ public:
   bool endpoints_empty() const;
 
   const detail::abstract_prototype_info::t_endpoint_map& endpoints() const;
+
+  std::shared_ptr<detail::object_type_registry_entry_base> object_type_entry() const;
 /// @endcond
+
+  friend MATADOR_OBJECT_API std::ostream &operator<<(std::ostream &stream, const prototype_node &node);
 
 private:
 
@@ -451,7 +426,6 @@ private:
   void on_delete_proxy(object_proxy *proxy) const;
 
 private:
-  friend class prototype_tree;
   friend class object_holder;
   friend class object_store;
   template < class T >
@@ -462,7 +436,6 @@ private:
   friend class object_view_iterator;
   template < class T, template <class ...> class C >
   friend class has_many;
-  friend class detail::basic_node_analyzer;
   template < class T,  template < class U = T > class O >
   friend class detail::node_analyzer;
   friend class detail::object_inserter;
@@ -499,10 +472,10 @@ private:
    */
   std::unique_ptr<basic_identifier> id_;
 
-//  t_endpoint_map relation_field_endpoint_map_;
-
   bool is_relation_node_ = false;
   relation_node_info relation_node_info_;
+
+  std::shared_ptr<detail::object_type_registry_entry_base> object_type_entry_;
 };
 
 template<class T>

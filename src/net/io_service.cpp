@@ -8,6 +8,11 @@ io_service::io_service()
   : log_(matador::create_logger("IOService"))
 {}
 
+io_service::~io_service()
+{
+  reactor_.shutdown();
+}
+
 void io_service::run()
 {
   reactor_.run();

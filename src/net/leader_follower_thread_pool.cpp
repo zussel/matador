@@ -15,8 +15,7 @@ void leader_follower_thread_pool::start()
 {
   is_running_ = true;
   for (std::size_t i = 0; i < num_threads_; ++i) {
-    thread_ptr t(new std::thread([this] { execute(); }));
-    threads_.push_back(std::move(t));
+    threads_.emplace_back([this] { execute(); });
   }
   log_.info("thread pool started with %d threads", num_threads_);
 }
@@ -49,9 +48,9 @@ void leader_follower_thread_pool::shutdown()
 {
   {
     const std::lock_guard<std::mutex> l(mutex_);
-    if (!is_running_) {
-      return;
-    }
+//    if (!is_running_) {
+//      return;
+//    }
     stop();
     log_.info("shutting down; notifying all tasks");
     signal_shutdown_ = true;
@@ -59,8 +58,8 @@ void leader_follower_thread_pool::shutdown()
   }
 
   std::for_each(threads_.begin(), threads_.end(), [](thread_vector_t::reference item) {
-    if (item->joinable()) {
-      item->join();
+    if (item.joinable()) {
+      item.join();
     }
   });
 }
@@ -83,9 +82,9 @@ void leader_follower_thread_pool::execute() {
   std::unique_lock<std::mutex> l(mutex_);
   while (is_running_) {
     while (leader_ != null_id) {
-      log_.info("thread <%d> waiting for synchronizer (leader %d)",
-                acquire_thread_index(std::this_thread::get_id()),
-                acquire_thread_index(leader_));
+//      log_.info("thread <%d> waiting for synchronizer (leader %d)",
+//                acquire_thread_index(std::this_thread::get_id()),
+//                acquire_thread_index(leader_));
       condition_synchronizer_.wait(l, [this]() { return signal_ready_ || signal_shutdown_; });
       signal_ready_ = false;
       if (!is_running_) {
@@ -93,14 +92,14 @@ void leader_follower_thread_pool::execute() {
       }
     }
 
-    log_.info("new leader <%d> (thread <%d> is now follower)",acquire_thread_index(std::this_thread::get_id()) , acquire_thread_index(leader_));
+//    log_.info("new leader <%d> (thread <%d> is now follower)",acquire_thread_index(std::this_thread::get_id()) , acquire_thread_index(leader_));
     leader_ = std::this_thread::get_id();
 
     l.unlock();
 
     join_();
 
-    log_.info("thread <%d> finished work", acquire_thread_index(std::this_thread::get_id()));
+//    log_.info("thread <%d> finished work", acquire_thread_index(std::this_thread::get_id()));
     l.lock();
   }
 }

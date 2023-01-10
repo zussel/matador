@@ -1,7 +1,3 @@
-//
-// Created by sascha on 08.04.15.
-//
-
 #include "matador/sql/result_impl.hpp"
 
 #include "matador/utils/identifiable_holder.hpp"

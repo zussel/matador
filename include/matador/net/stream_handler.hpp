@@ -10,6 +10,9 @@
 #include "matador/net/ip.hpp"
 #include "matador/net/io_stream.hpp"
 
+#include <atomic>
+#include <mutex>
+
 namespace matador {
 
 class handler_creator;
@@ -57,9 +60,9 @@ public:
   bool is_ready_write() const override;
   bool is_ready_read() const override;
 
-  void read(const buffer_view &buf, t_read_handler read_handler) override;
+  void read(buffer_view buf, t_read_handler read_handler) override;
+  void write(std::list<buffer_view> buffers, t_write_handler write_handler) override;
 
-  void write(std::list<buffer_view> &buffers, t_write_handler write_handler) override;
   void close_stream() override;
 
   tcp::socket &stream() override;
@@ -83,8 +86,10 @@ private:
   t_read_handler on_read_;
   t_write_handler on_write_;
 
-  bool is_ready_to_read_ = false;
-  bool is_ready_to_write_ = false;
+  std::atomic_bool is_ready_to_read_ { false };
+  std::atomic_bool is_ready_to_write_ { false };
+
+  mutable std::mutex mutex_;
 };
 
 }

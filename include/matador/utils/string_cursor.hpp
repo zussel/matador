@@ -1,18 +1,7 @@
 #ifndef MATADOR_STRING_CURSOR_HPP
 #define MATADOR_STRING_CURSOR_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_utils_EXPORTS
-#define OOS_UTILS_API __declspec(dllexport)
-#define EXPIMP_UTILS_TEMPLATE
-#else
-#define OOS_UTILS_API __declspec(dllimport)
-#define EXPIMP_UTILS_TEMPLATE extern
-#endif
-#pragma warning(disable: 4251)
-#else
-#define OOS_UTILS_API
-#endif
+#include "matador/utils/export.hpp"
 
 namespace matador {
 
@@ -79,7 +68,7 @@ public:
    * Increments cursor position and returns
    * this character.
    *
-   * @return Nect chaarcter in string
+   * @return Next character in string
    */
   char next_char();
 

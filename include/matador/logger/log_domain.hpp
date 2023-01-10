@@ -1,18 +1,7 @@
 #ifndef MATADOR_LOG_DOMAIN_HPP
 #define MATADOR_LOG_DOMAIN_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_logger_EXPORTS
-#define OOS_LOGGER_API __declspec(dllexport)
-#define EXPIMP_LOGGER_TEMPLATE
-#else
-#define OOS_LOGGER_API __declspec(dllimport)
-#define EXPIMP_LOGGER_TEMPLATE extern
-#endif
-#pragma warning(disable: 4251)
-#else
-#define OOS_LOGGER_API
-#endif
+#include "matador/logger/export.hpp"
 
 #include "matador/logger/log_sink.hpp"
 #include "matador/logger/log_level.hpp"
@@ -114,7 +103,9 @@ public:
   void clear();
 
 private:
+  void get_time_stamp(char* timestamp_buffer);
 
+private:
   static std::map<log_level, std::string> level_strings;
 
   std::string name_;

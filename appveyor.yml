@@ -16,7 +16,7 @@ image:
   - Visual Studio 2017
 
 configuration:
-  - Debug
+#  - Debug
   - Release
 
 environment:
@@ -98,7 +98,7 @@ artifacts:
 deploy:
   provider: GitHub
   auth_token:
-    secure: EJtE4XadcEcHQNSZoW5bEl0S7hdeSGTFljwtnRa+Sl3NALKmI3kR+sejIYpKUnPQ
+    secure: bZfzMuUq+rE9ccTEljeiAak0qFdtk+DeN45P7cLSC/l4/Upx3nIAPyFtwawg/mu2
   artifact: installer
   draft: false
   prerelease: false

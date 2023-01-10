@@ -6,7 +6,7 @@
 class OrmReloadTestUnit : public matador::unit_test
 {
 public:
-  OrmReloadTestUnit(const std::string &prefix, std::string dns);
+  OrmReloadTestUnit(const std::string &prefix, std::string  dns);
 
   void test_load();
   void test_load_twice();

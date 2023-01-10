@@ -23,6 +23,7 @@ public:
    */
   io_service();
 
+  ~io_service();
   /**
    * Starts the io_service with the underlying reactor
    */

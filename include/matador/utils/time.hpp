@@ -51,7 +51,7 @@ OOS_UTILS_API int strftime(char *buffer, size_t size, const char *format, const 
  * @param tp Timeval struct where the result ist stored
  * @return Returns 0 on success
  */
-OOS_UTILS_API int gettimeofday(struct timeval *tp);
+OOS_UTILS_API void gettimeofday(struct timeval *tp);
 
 /**
  * @class time

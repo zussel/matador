@@ -76,7 +76,7 @@ SET(HEADER
   ../../include/matador/utils/thread_helper.hpp
 )
 
-ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-utils STATIC ${SOURCES} ${HEADER})
 
 TARGET_LINK_LIBRARIES(matador-utils ${CMAKE_DL_LIBS})
 

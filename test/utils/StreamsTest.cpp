@@ -98,13 +98,20 @@ void StreamsTest::test_collect_map()
 {
   auto s = make_stream({ 1, 2, 3, 4 });
 
-  auto result = s.collect<std::map, int, std::string>([](const int &val) { return val; }, [](const int &val) { return std::to_string(val); });
+  auto vec = s.collect<std::vector>();
+
+  s = make_stream({ 1, 2, 3, 4 });
+
+  auto result = s.collect<std::map, int, std::string>(
+    [](const auto &val) { return val + 1; },
+    [](const auto &val) { return std::to_string(val); }
+  );
 
   UNIT_ASSERT_EQUAL(4UL, result.size());
-  UNIT_ASSERT_EQUAL("1", result[1]);
-  UNIT_ASSERT_EQUAL("2", result[2]);
-  UNIT_ASSERT_EQUAL("3", result[3]);
-  UNIT_ASSERT_EQUAL("4", result[4]);
+  UNIT_ASSERT_EQUAL("1", result[2]);
+  UNIT_ASSERT_EQUAL("2", result[3]);
+  UNIT_ASSERT_EQUAL("3", result[4]);
+  UNIT_ASSERT_EQUAL("4", result[5]);
 }
 
 void StreamsTest::test_iterate()

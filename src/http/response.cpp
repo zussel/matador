@@ -61,23 +61,23 @@ std::list<matador::buffer_view> response::to_buffers() const
 
   for(const auto &p : headers_) {
     buffers.emplace_back(p.first);
-    buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
+    buffers.emplace_back(name_value_separator, 2);
     buffers.emplace_back(p.second);
-    buffers.emplace_back(matador::buffer_view(crlf, 2));
+    buffers.emplace_back(crlf, 2);
   }
 
   if (!body_.empty()) {
     buffers.emplace_back(response_header::CONTENT_LENGTH);
-    buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
+    buffers.emplace_back(name_value_separator, 2);
     buffers.emplace_back(content_.length);
-    buffers.emplace_back(matador::buffer_view(crlf, 2));
+    buffers.emplace_back(crlf, 2);
     buffers.emplace_back(response_header::CONTENT_TYPE);
-    buffers.emplace_back(matador::buffer_view(name_value_separator, 2));
+    buffers.emplace_back(name_value_separator, 2);
     buffers.emplace_back(content_.type);
-    buffers.emplace_back(matador::buffer_view(crlf, 2));
+    buffers.emplace_back(crlf, 2);
   }
 
-  buffers.emplace_back(matador::buffer_view(crlf, 2));
+  buffers.emplace_back(crlf, 2);
 
   if (!body_.empty()) {
     buffers.emplace_back(body_);

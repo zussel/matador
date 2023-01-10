@@ -1,22 +1,7 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef OBJECT_STORE_HPP
 #define OBJECT_STORE_HPP
+
+#include "matador/object/export.hpp"
 
 #include "matador/object/prototype_iterator.hpp"
 #include "matador/object/object_exception.hpp"
@@ -29,6 +14,7 @@
 #include "matador/object/object_serializer.hpp"
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/transaction.hpp"
+#include "matador/object/object_type_registry_entry.hpp"
 
 #include "matador/utils/sequencer.hpp"
 #include "matador/utils/sequence_synchronizer.hpp"
@@ -43,20 +29,6 @@
 #include <ostream>
 #include <list>
 #include <iostream>
-
-#ifdef _MSC_VER
-  #ifdef matador_object_EXPORTS
-    #define MATADOR_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_OBJECT_TEMPLATE
-  #else
-    #define MATADOR_OBJECT_API __declspec(dllimport)
-    #define EXPIMP_OBJECT_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-  #pragma warning(disable: 4355)
-#else
-  #define MATADOR_OBJECT_API
-#endif
 
 namespace matador {
 
@@ -120,7 +92,7 @@ public:
   typedef const_prototype_iterator const_iterator;  /**< Shortcut for the list const iterator. */
 
   /**
-   * Describes wether the inserted object type
+   * Describes whether the inserted object type
    * is handle as a concrete or abstract type
    */
   enum abstract_type {
@@ -522,7 +494,7 @@ public:
   void clear(bool full = false);
 
   /**
-   * Clears a prototype node and its cildren nodes.
+   * Clears a prototype node and its children nodes.
    * All objects will be deleted.
    *
    * @param type The name of the type to remove.
@@ -549,7 +521,7 @@ public:
 
   /**
    * Returns true if the object_store
-   * conatins no elements (objects)
+   * contains no elements (objects)
    * 
    * @return True on empty object_store.
    */
@@ -590,60 +562,9 @@ public:
    * @brief Inserts a new proxy into the object store
    *
    * @param proxy Object proxy to insert
-   * @param notify Indicates wether all observers should be notified.
+   * @param notify Indicates whether all observers should be notified.
    */
-  template < class T >
-  object_proxy* insert(object_proxy *proxy, bool notify)
-  {
-    if (proxy == nullptr) {
-      throw_object_exception("proxy is null");
-    }
-    if (proxy->obj() == nullptr) {
-      throw_object_exception("object is null");
-    }
-    iterator node = find(proxy->classname());
-    if (node == end()) {
-      throw_object_exception("couldn't find object type");
-    }
-    // check if proxy/object is already inserted
-    if (proxy->ostore() != nullptr && proxy->id() > 0) {
-      return proxy;
-    }
-    // check if proxy/object is already inserted
-    if (proxy->ostore() == nullptr && proxy->id() > 0) {
-      throw_object_exception("object has id but doesn't belong to a store");
-    }
-
-    proxy->id(seq_.next());
-    proxy->ostore_ = this;
-
-    // get object
-    T *object = static_cast<T*>(proxy->obj());
-    if (object && proxy->has_identifier() && !proxy->pk()->is_valid()) {
-      // if object has primary key of type short, int or long
-      // set the id of proxy as value
-      identifier_setter<unsigned long>::assign(proxy->id(), object);
-    } else if (object && proxy->has_identifier()) {
-      synchronizer_.sync(*proxy->pk());
-    }
-
-    node->insert(proxy);
-
-    // initialize object
-    if (object) {
-      object_inserter_.insert(proxy, object, notify);
-    }
-    // set this into persistent serializable
-    // notify observer
-    if (notify && !transactions_.empty()) {
-      transactions_.top().on_insert<T>(proxy);
-    }
-
-    // insert element into hash map for fast lookup
-    object_map_.insert(std::make_pair(proxy->id(), proxy));
-
-    return proxy;
-  }
+  object_proxy* insert(object_proxy *proxy, bool notify);
 
   /**
    * Inserts an object of a specific type. On successful insertion
@@ -661,7 +582,7 @@ public:
     object_inserter_.reset();
     std::unique_ptr<object_proxy> proxy(new object_proxy(o));
     try {
-      insert<T>(proxy.get(), true);
+      insert(proxy.get(), true);
     } catch (object_exception &ex) {
       proxy->release<T>();
       throw ex;
@@ -672,7 +593,7 @@ public:
 
   /**
    * Inserts a given object_ptr of specific type.
-   * On successfull insertion an object_ptr element
+   * On successfully insertion an object_ptr element
    * with the inserted object is returned.
    *
    * @param o object_ptr to be inserted.
@@ -685,7 +606,7 @@ public:
   }
 
   /**
-   * Returns true if the underlaying
+   * Returns true if the underlying
    * serializable is removable.
    * 
    * @param o The serializable to check.
@@ -693,7 +614,7 @@ public:
    */
   template<class T>
   bool is_removable(const object_ptr<T> &o) {
-    return object_deleter_.is_deletable(o.proxy_, o.get());
+    return object_deleter_.is_deletable(o.proxy_);
   }
 
   /**
@@ -711,49 +632,15 @@ public:
    * from its proxy list.
    *
    * If the notify flag is true all observers are notified on
-   * successfull deletion.
+   * successfully deletion.
    *
    * If check_if_deletable flag is true method checks if the
    * proxy is deletable.
    *
-   * @tparam T Type of the object represented by the object_proxy
    * @param proxy              The object_proxy to be removed.
    * @param check_if_deletable If true methods checks if proxy is deletable.
    */
-  template < class T >
-  void remove(object_proxy *proxy, bool check_if_deletable)
-  {
-    if (proxy == nullptr) {
-      throw_object_exception("object proxy is nullptr");
-    }
-    if (proxy->node() == nullptr) {
-      throw_object_exception("prototype node is nullptr");
-    }
-    // check if object tree is deletable
-    if (check_if_deletable && !object_deleter_.is_deletable<T>(proxy, (T*)proxy->obj())) {
-      throw_object_exception("object is not removable");
-    }
-
-    if (check_if_deletable) {
-      object_deleter_.remove();
-    } else {
-      // single deletion
-      if (object_map_.erase(proxy->id()) != 1) {
-        // couldn't remove object
-        // throw exception
-        throw_object_exception("couldn't remove object");
-      }
-
-      proxy->node()->remove(proxy);
-
-      if (!transactions_.empty()) {
-        // notify transaction
-        transactions_.top().on_delete<T>(proxy);
-      } else {
-        on_proxy_delete_(proxy);
-      }
-    }
-  }
+  void remove(object_proxy *proxy, bool check_if_deletable);
 
   /**
    * Removes an object from the object store. After successful
@@ -769,18 +656,18 @@ public:
   template<class T>
   void remove(object_ptr<T> &o)
   {
-    remove<T>(o.proxy_, true);
+    remove(o.proxy_, true);
   }
 
   /**
    * @brief Finds serializable proxy with id
    *
    * Try to find the serializable proxy with given id in
-   * serializable stores proxy map. If serializable can't be found
+   * serializable stores proxy map. If object can't be found
    * NULL is returned.
    *
    * @param id ID of serializable proxy to find
-   * @return On success it returns an serializable proxy on failure null
+   * @return On success it returns an object proxy on failure null
    *
    */
   object_proxy *find_proxy(unsigned long id) const;
@@ -809,19 +696,9 @@ public:
    * Marks the given object proxy as modified
    * and notifies all transactions
    * 
-   * @tparam T Object type of the proxy
    * @param proxy The modified object proxy
    */
-  template < class T >
-  void mark_modified(object_proxy *proxy)
-  {
-    // notify observers
-    proxy->node()->on_update_proxy(proxy);
-
-    if (has_transaction()) {
-      transactions_.top().on_update<T>(proxy);
-    }
-  }
+  void mark_modified(object_proxy *proxy);
 
   /**
    * Marks the given object_ptr as modified
@@ -833,7 +710,7 @@ public:
   template < class T >
   void mark_modified(const object_ptr<T> &optr)
   {
-    mark_modified<T>(optr.proxy_);
+    mark_modified(optr.proxy_);
   }
 
   /**
@@ -843,6 +720,7 @@ public:
    * @param callback To be called when an object proxy is deleted
    */
   void on_proxy_delete(std::function<void(object_proxy*)> callback);
+
 private:
   friend class detail::object_inserter;
   friend struct detail::basic_relation_endpoint;
@@ -851,6 +729,7 @@ private:
   friend class object_proxy;
   friend class prototype_node;
   friend class transaction;
+  friend class detail::object_type_registry_entry_base;
   template < class T, template <class ...> class C >
   friend class has_many;
 
@@ -858,7 +737,7 @@ private:
 private:
   /**
    * Clears a prototype_node and its
-   * cildren nodes. All object_proxy objects will be
+   * children nodes. All object_proxy objects will be
    * deleted.
    *
    * @param node The prototype_node to remove.
@@ -873,7 +752,7 @@ private:
     if (reset) {
       object_inserter_.reset();
     }
-    insert<T>(o.proxy_, true);
+    insert(o.proxy_, true);
     return o;
   }
 
@@ -889,7 +768,7 @@ private:
    *
    * @param type Type name of the prototype node to search
    * @return The requested prototype node or nullptr
-   * @throws matador::object_exception if in error occurrs
+   * @throws matador::object_exception if in error occurs
    */
   prototype_node *find_prototype_node(const char *type) const;
 
@@ -902,20 +781,18 @@ private:
    * @param node The prototype node to remove
    * @param check_for_eos Indicates if given node is root node
    * @return The successor node
-   * @throws matador::object_exception if in error occurrs
+   * @throws matador::object_exception if in error occurs
    */
   prototype_node *remove_prototype_node(prototype_node *node, bool check_for_eos);
 
-  template < class T >
-  prototype_node* attach_node(prototype_node *node, const char *parent);
+  prototype_node* attach_node(prototype_node *node, const char *parent, const char *type_name, basic_identifier *pk);
 
   prototype_node* find_parent(const char *name) const;
 
   void push_transaction(const transaction &tr);
   void pop_transaction();
 
-  template < class T >
-  void validate(prototype_node *node);
+  void validate(prototype_node *node, const char* type_name);
 
 private:
   typedef std::unordered_map<std::string, prototype_node *> t_prototype_map;
@@ -945,37 +822,6 @@ private:
   std::function<void(object_proxy *)> on_proxy_delete_;
 };
 
-template < class T >
-void object_store::validate(prototype_node *node)
-{
-  std::unique_ptr<prototype_node> nptr(node);
-  // try to find node in prepared map
-  const char *name = typeid(T).name();
-  auto i = prototype_map_.find(node->type_);
-  if (i != prototype_map_.end()) {
-    throw_object_exception("prototype already inserted: " << node->type_.c_str());
-  }
-  // try to find by typeid name
-  i = prototype_map_.find(name);
-  if (i != prototype_map_.end()) {
-    throw_object_exception("prototype already inserted: " << node->type_.c_str());
-  }
-  /*
-   * no typeid found, seems to be
-   * a new type
-   * to be sure check in typeid map
-   */
-  auto j = typeid_prototype_map_.find(name);
-  if (j != typeid_prototype_map_.end() && j->second.find(node->type_) != j->second.end()) {
-    /* unexpected found the
-     * typeid check for type
-     * throw exception
-     */
-    throw object_exception("unexpectly found prototype");
-  }
-  nptr.release();
-}
-
 template < class T, template < class U = T > class O  >
 prototype_iterator object_store::attach(prototype_node *node, const char *parent, std::initializer_list<O<T>*> observer)
 {
@@ -996,41 +842,14 @@ prototype_iterator object_store::attach_internal(prototype_node *node, const cha
   T *proto = node->prototype<T>();
   analyzer.analyze(*proto);
 
-  validate<T>(node);
+  const char* type_name = typeid(T).name();
+  validate(node, type_name);
 
-  node = attach_node<T>(node, parent);
+  node = attach_node(node, parent, type_name, identifier_resolver<T>::create());
 
   node->on_attach();
 
   return prototype_iterator(node);
-}
-
-template < class T >
-prototype_node* object_store::attach_node(prototype_node *node, const char *parent)
-{
-  std::unique_ptr<prototype_node> nptr(node);
-  // set node to root node
-  prototype_node *parent_node = find_parent(parent);
-  /*
-   * try to insert new prototype node
-   */
-  // insert node
-  if (parent_node != nullptr) {
-    parent_node->insert(node);
-  } else {
-    last_->prev->append(node);
-  }
-  // Analyze primary and foreign keys of node
-  basic_identifier *id = identifier_resolver<T>::create();
-  if (id) {
-    node->id_.reset(id);
-  }
-  // store prototype in map
-  // Todo: check return value
-  prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
-  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
-
-  return nptr.release();
 }
 
 namespace detail {
@@ -1050,11 +869,5 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 }
 
 #include "matador/object/node_analyzer.tpp"
-#include "matador/object/relation_field_endpoint.tpp"
-#include "matador/object/relation_endpoint_value_inserter.tpp"
-#include "matador/object/relation_endpoint_value_remover.tpp"
-#include "matador/object/object_inserter.tpp"
-#include "matador/object/object_deleter.tpp"
-#include "matador/object/object_ptr.tpp"
 
 #endif /* OBJECT_STORE_HPP */

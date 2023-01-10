@@ -1,28 +1,12 @@
-#include <utility>
-
-//
-// Created by sascha on 12.03.16.
-//
-
 #ifndef OOS_INSERT_ACTION_HPP
 #define OOS_INSERT_ACTION_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_object_EXPORTS
-    #define MATADOR_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_OBJECT_TEMPLATE
-  #else
-    #define MATADOR_OBJECT_API __declspec(dllimport)
-    #define EXPIMP_OBJECT_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define MATADOR_OBJECT_API
-#endif
-
-#include <algorithm>
+#include "matador/object/export.hpp"
 
 #include "matador/object/action.hpp"
+
+#include <list>
+#include <string>
 
 namespace matador {
 
@@ -52,10 +36,7 @@ public:
    *
    * @param type The type of the expected objects
    */
-  template < class T >
-  explicit insert_action(std::string type, T*)
-    : type_(std::move(type))
-  {}
+  explicit insert_action(std::string type);
 
   void accept(action_visitor *av) override;
 

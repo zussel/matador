@@ -1,10 +1,12 @@
 #include "HttpServerTest.hpp"
 
-#include "../net/NetUtils.hpp"
+#include "../NetUtils.hpp"
 
 #include "matador/http/http_server.hpp"
-#include "matador/http/http_client.hpp"
+#include "matador/http/http.hpp"
 #include "matador/http/response.hpp"
+#include "matador/http/request.hpp"
+#include "matador/http/response_parser.hpp"
 
 #include "matador/logger/log_manager.hpp"
 
@@ -13,44 +15,6 @@
 
 using namespace matador;
 using namespace ::detail;
-
-template < class T >
-class ThreadWrapper
-{
-public:
-  explicit ThreadWrapper(T &actor) : actor_(actor) {}
-  ~ThreadWrapper()
-  {
-    if (actor_.is_running()) {
-      stop();
-    }
-    if (reactor_thread_.joinable()) {
-      reactor_thread_.join();
-    }
-  }
-
-  void start()
-  {
-    reactor_thread_ = std::thread([this] {
-      actor_.run();
-      // sleep for some seconds to ensure valid thread join
-      std::this_thread::sleep_for(std::chrono::seconds (3));
-    });
-  }
-  void stop()
-  {
-    actor_.shutdown();
-  }
-
-  T& get()
-  {
-    return actor_;
-  }
-
-private:
-  std::thread reactor_thread_;
-  T& actor_;
-};
 
 HttpServerTest::HttpServerTest()
   : matador::unit_test("http_server", "http server test")
@@ -64,11 +28,14 @@ HttpServerTest::HttpServerTest()
 
 void HttpServerTest::initialize()
 {
+//  default_min_log_level(log_level::LVL_DEBUG);
 //  add_log_sink(create_stdout_sink());
 }
 
 void HttpServerTest::finalize()
 {
+//  default_min_log_level(log_level::LVL_INFO);
+//  clear_all_log_sinks();
   std::this_thread::sleep_for(std::chrono::milliseconds (300));
 }
 
@@ -76,138 +43,171 @@ void HttpServerTest::test_shutdown()
 {
   http::server s(8123);
 
-  ThreadWrapper<http::server> wrapper(s);
-
-  wrapper.start();
+  utils::ThreadRunner runner([&s] {
+    s.run();
+  }, [&s] {
+    s.shutdown();
+    utils::wait_until_stopped(s);
+  });
 
   std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
+  UNIT_ASSERT_TRUE(utils::wait_until_running(s));
 
-  wrapper.stop();
+  s.shutdown();
 
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
+  UNIT_ASSERT_TRUE(utils::wait_until_stopped(s));
 }
 
 void HttpServerTest::test_get()
 {
-//  default_min_log_level(log_level::LVL_DEBUG);
-//  add_log_sink(create_stdout_sink());
-
   http::server s(8123);
-  s.add_routing_middleware();
 
-  s.on_get("/test/{name}", [](const http::request &req) {
-    return http::response::ok("<h1>hello " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
+  utils::ThreadRunner runner([&s] {
+    s.add_routing_middleware();
+
+    s.on_get("/test/{name}", [](const http::request &req) {
+      return http::response::ok("<h1>hello " + req.path_params().at("name") + "</h1>",
+                                http::mime_types::TYPE_TEXT_HTML);
+    });
+    s.run();
+  }, [&s] {
+    s.shutdown();
+    utils::wait_until_stopped(s);
   });
 
-  ThreadWrapper<http::server> wrapper(s);
+  UNIT_ASSERT_TRUE(utils::wait_until_running(s));
 
-  wrapper.start();
+  http::request req(http::http::GET, "localhost:8123", "/test/world");
+  http::response response;
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (100));
+  send_request(8123, req, response);
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
+  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", response.body());
+  UNIT_ASSERT_EQUAL(http::http::OK, response.status());
 
-  http::client c("localhost:8123");
-  auto resp = c.get("/test/world");
-
-  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
-  UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
-
-  std::this_thread::sleep_for(std::chrono::milliseconds (100));
-
-  wrapper.stop();
-
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
+  s.shutdown();
 }
 
 void HttpServerTest::test_post()
 {
   http::server s(7779);
-  s.add_routing_middleware();
 
-  s.on_post("/test/{name}", [](const http::request &req) {
-    return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
+  utils::ThreadRunner runner([&s] {
+    s.add_routing_middleware();
+
+    s.on_post("/test/{name}", [](const http::request &req) {
+      return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>",
+                                http::mime_types::TYPE_TEXT_HTML);
+    });
+    s.run();
+  }, [&s] {
+    s.shutdown();
+    utils::wait_until_stopped(s);
   });
 
-  ThreadWrapper<http::server> wrapper(s);
+  UNIT_ASSERT_TRUE(utils::wait_until_running(s));
 
-  wrapper.start();
+  http::request req(http::http::POST, "localhost:7779", "/test/world");
+  req.body("hello");
+  http::response response;
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (400));
+  send_request(7779, req, response);
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
+  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", response.body());
+  UNIT_ASSERT_EQUAL(http::http::OK, response.status());
 
-  http::client c("localhost:7779");
-  auto resp = c.post("/test/world", "hello");
-
-  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
-  UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
-
-  std::this_thread::sleep_for(std::chrono::milliseconds (300));
-
-  wrapper.stop();
-
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
+  s.shutdown();
 }
 
 void HttpServerTest::test_put()
 {
   http::server s(7779);
-  s.add_routing_middleware();
 
-  s.on_put("/test/{name}", [](const http::request &req) {
-    return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
+  utils::ThreadRunner runner([&s] {
+    s.add_routing_middleware();
+
+    s.on_put("/test/{name}", [](const http::request &req) {
+      return http::response::ok("<h1>" + req.body() + " " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
+    });
+    s.run();
+  }, [&s] {
+    s.shutdown();
+    utils::wait_until_stopped(s);
   });
 
-  ThreadWrapper<http::server> wrapper(s);
+  UNIT_ASSERT_TRUE(utils::wait_until_running(s));
 
-  wrapper.start();
+  http::request req(http::http::PUT, "localhost:7779", "/test/world");
+  req.body("hello");
+  http::response response;
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (400));
+  send_request(7779, req, response);
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
+  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", response.body());
+  UNIT_ASSERT_EQUAL(http::http::OK, response.status());
 
-  http::client c("localhost:7779");
-  auto resp = c.put("/test/world", "hello");
-
-  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
-  UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
-
-  std::this_thread::sleep_for(std::chrono::milliseconds (400));
-
-  wrapper.stop();
-
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
+  s.shutdown();
 }
 
 void HttpServerTest::test_delete()
 {
   http::server s(7779);
-  s.add_routing_middleware();
 
-  s.on_remove("/test/{name}", [](const http::request &req) {
-    return http::response::ok("<h1>hello " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
+  utils::ThreadRunner runner([&s] {
+    s.add_routing_middleware();
+
+    s.on_remove("/test/{name}", [](const http::request &req) {
+      return http::response::ok("<h1>hello " + req.path_params().at("name") + "</h1>", http::mime_types::TYPE_TEXT_HTML);
+    });
+    s.run();
+  }, [&s] {
+    s.shutdown();
+    utils::wait_until_stopped(s);
   });
 
-  ThreadWrapper<http::server> wrapper(s);
+  UNIT_ASSERT_TRUE(utils::wait_until_running(s));
 
-  wrapper.start();
+  http::request req(http::http::DEL, "localhost:7779", "/test/world");
+  http::response response;
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (400));
+  send_request(7779, req, response);
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(wrapper.get()));
+  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", response.body());
+  UNIT_ASSERT_EQUAL(http::http::OK, response.status());
 
-  http::client c("localhost:7779");
-  auto resp = c.remove("/test/world");
+  s.shutdown();
+}
 
-  UNIT_ASSERT_EQUAL("<h1>hello world</h1>", resp.body());
-  UNIT_ASSERT_EQUAL(http::http::OK, resp.status());
+void HttpServerTest::send_request(unsigned int port, const http::request &request, http::response &response)
+{
+  tcp::socket client;
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (400));
+  int ret = client.open(tcp::v4());
+  UNIT_ASSERT_FALSE(ret < 0);
+  auto srv = tcp::peer(address::v4::loopback(), port);
+  ret = client.connect(srv);
+  UNIT_ASSERT_FALSE(ret < 0);
 
-  wrapper.stop();
+  std::list<buffer_view> data = request.to_buffers();
 
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(wrapper.get()));
+  for (const auto &buf: data) {
+    auto size = buf.size();
+    size_t ret = client.send(buf);
+    UNIT_ASSERT_EQUAL(ret, size);
+  }
+
+  http::response_parser::return_t parse_result{};
+  http::response_parser parser;
+  do {
+    buffer result;
+    auto nread = client.receive(result);
+    std::string msg(result.data(), nread);
+
+    parse_result = parser.parse(msg, response);
+    if (parse_result == matador::http::response_parser::INVALID) {
+    }
+    UNIT_ASSERT_NOT_EQUAL(http::response_parser::INVALID, parse_result);
+  } while (parse_result != matador::http::response_parser::FINISH);
+  client.close();
 }

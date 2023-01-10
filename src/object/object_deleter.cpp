@@ -1,12 +1,17 @@
 #include "matador/object/object_deleter.hpp"
 #include "matador/object/object_exception.hpp"
+#include "matador/object/object_store.hpp"
 
 namespace matador {
 namespace detail {
 
+object_deleter::t_object_count::t_object_count(object_proxy *oproxy)
+: proxy(oproxy)
+{}
+
 void object_deleter::t_object_count::remove()
 {
-  remove_func(proxy);
+  proxy->ostore()->remove(proxy, false);
 }
 
 void object_deleter::remove()
@@ -24,6 +29,21 @@ void object_deleter::remove()
   // cleanup
   relations_to_remove_.clear();
   objects_to_remove_.clear();
+}
+
+bool object_deleter::is_deletable(object_proxy *proxy) {
+  objects_to_remove_.clear();
+  objects_to_remove_.insert(std::make_pair(proxy->id(), t_object_count(proxy)));
+
+  visited_objects_.insert(std::make_pair(proxy, proxy->reference_count()));
+  proxy_stack_.push(proxy);
+  // start collecting information
+  proxy->delete_object();
+
+  proxy_stack_.pop();
+  bool ret = check_object_count_map();
+  visited_objects_.clear();
+  return ret;
 }
 
 object_deleter::iterator object_deleter::begin()

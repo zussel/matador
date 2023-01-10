@@ -11,6 +11,7 @@ public:
   void test_empty_response();
   void test_body_response();
   void test_from_file_response();
+  void test_partial_response_header();
   void test_partial_response_body();
   void test_partial_response_body_2();
 };

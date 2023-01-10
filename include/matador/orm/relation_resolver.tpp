@@ -51,7 +51,7 @@ void relation_resolver<T, typename std::enable_if<
      */
     auto foreign_proxy = foreign_table->find_proxy(pk);
     if (foreign_proxy == foreign_table->end_proxy()) {
-      proxy = new object_proxy(pk, (T*)nullptr, node->tree(), node.get());
+      proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<V>{});
       foreign_proxy = foreign_table->insert_proxy(pk, proxy);
       // if foreign relation is HAS_ONE
       x.reset(foreign_proxy->second.proxy, cascade, false);
@@ -130,7 +130,7 @@ void relation_resolver<T, typename std::enable_if<
   // increase reference count of has_many_to_xxx item proxy
   // because there will be an object for this kind of field
   ++(*proxy_);
-  // check wether is left or right side value
+  // check whether is left or right side value
   // left side will be determined first
   basic_identifier *pk = x.primary_key();
   if (!pk) {
@@ -139,11 +139,11 @@ void relation_resolver<T, typename std::enable_if<
 
   if (left_proxy_ == nullptr) {
     // if left is not loaded
-    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
 
   } else {
 
-    object_proxy* right_proxy = acquire_proxy(x, pk, cascade, right_table_ptr_);
+    object_proxy* right_proxy = acquire_proxy<V>(x, pk, cascade, right_table_ptr_);
     if (left_table_ptr_->is_loaded()) {
       left_endpoint_->insert_value_into_foreign(right_proxy, left_proxy_);
     } else {
@@ -236,7 +236,7 @@ void relation_resolver<T, typename std::enable_if<
 
   if (left_proxy_ == nullptr) {
     // if left is not loaded
-    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
 
   } else {
     throw_object_exception("right value type must not be object pointer");

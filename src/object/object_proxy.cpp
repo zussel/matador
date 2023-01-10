@@ -1,21 +1,7 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "matador/object/object_store.hpp"
+#include "matador/object/update_action.hpp"
+#include "matador/object/object_proxy.hpp"
+
 
 using namespace std;
 
@@ -27,14 +13,13 @@ object_proxy::object_proxy(basic_identifier *pk)
 
 object_proxy::~object_proxy()
 {
-  if (ostore_ && id() > 0) {
+  if (object_type_entry_->store() && id() > 0) {
     // Todo: callback to object store?
-//    ostore_->delete_proxy(id());
+//    store_->delete_proxy(id());
   }
   if (obj_) {
     deleter_(obj_);
   }
-  ostore_ = nullptr;
   for (auto &ptr : ptr_set_) {
     ptr->proxy_ = nullptr;
   }
@@ -42,17 +27,17 @@ object_proxy::~object_proxy()
 
 const char *object_proxy::classname() const
 {
-  return namer_();
+  return name_();
 }
 
 object_store *object_proxy::ostore() const
 {
-  return ostore_;
+  return object_type_entry_->store();
 }
 
 prototype_node *object_proxy::node() const
 {
-  return node_;
+  return object_type_entry_->node();
 }
 
 void object_proxy::link(object_proxy *successor)
@@ -76,7 +61,6 @@ void object_proxy::unlink()
   }
   prev_ = nullptr;
   next_ = nullptr;
-  node_ = nullptr;
 }
 
 unsigned long object_proxy::operator++()
@@ -99,11 +83,6 @@ unsigned long object_proxy::operator--(int)
   return reference_counter_--;
 }
 
-bool object_proxy::linked() const
-{
-  return node_ != nullptr;
-}
-
 object_proxy *object_proxy::next() const
 {
   return next_;
@@ -119,6 +98,44 @@ unsigned long object_proxy::reference_count() const
   return reference_counter_;
 }
 
+void object_proxy::restore(byte_buffer &buffer, object_deserializer &deserializer)
+{
+  if ( obj_ == nullptr ) {
+    create_object();
+  }
+  object_type_entry_->restore(this, buffer, deserializer);
+}
+
+void object_proxy::backup(byte_buffer &buffer, object_serializer &serializer)
+{
+  object_type_entry_->backup(this, buffer, serializer);
+}
+
+void object_proxy::insert_object()
+{
+  object_type_entry_->insert_object(this);
+}
+
+void object_proxy::delete_object()
+{
+  object_type_entry_->delete_object(this);
+}
+
+void object_proxy::mark_modified()
+{
+  object_type_entry_->mark_modified(this);
+}
+
+void object_proxy::sync_id()
+{
+  object_type_entry_->sync_id(this);
+}
+
+const std::type_index& object_proxy::type_index() const
+{
+  return object_type_entry_->type_index();
+}
+
 void object_proxy::add(object_holder *ptr)
 {
   ptr_set_.insert(ptr);
@@ -131,7 +148,7 @@ bool object_proxy::remove(object_holder *ptr)
 
 bool object_proxy::valid() const
 {
-  return ostore_ && node_ && prev_ && next_;
+  return object_type_entry_->store() && prev_ && next_;
 }
 
 unsigned long object_proxy::id() const {
@@ -158,19 +175,14 @@ void object_proxy::pk(basic_identifier *id)
   primary_key_ = id;
 }
 
-transaction object_proxy::current_transaction()
+void object_proxy::create_object()
 {
-  return ostore_->current_transaction();
-}
-
-bool object_proxy::has_transaction() const
-{
-  return ostore_->has_transaction();
+  creator_(this);
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
 {
-  os << "proxy [" << &op << "] (oid: " << op.oid << ", type: " << (op.node_ ? op.node_->type() : op.classname()) << ")"
+  os << "proxy [" << &op << "] (oid: " << op.oid << ", type: " << (op.object_type_entry_->node() ? op.object_type_entry_->node()->type() : op.classname()) << ")"
      << " prev_ [" << op.prev_ << "]"
      << " next_ [" << op.next_ << "] object [" << op.obj_ << "] "
      << " refs [" << op.reference_counter_ << "]";

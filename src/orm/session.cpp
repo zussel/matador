@@ -1,4 +1,6 @@
 #include "matador/orm/session.hpp"
+#include "matador/object/insert_action.hpp"
+#include "matador/object/update_action.hpp"
 
 namespace matador {
 

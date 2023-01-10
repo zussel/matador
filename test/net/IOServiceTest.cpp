@@ -1,6 +1,6 @@
 #include "IOServiceTest.hpp"
 #include "IOEchoServer.hpp"
-#include "NetUtils.hpp"
+#include "../NetUtils.hpp"
 
 #include "matador/logger/log_manager.hpp"
 

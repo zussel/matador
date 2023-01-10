@@ -58,7 +58,7 @@ void prototype_node::append(prototype_node *sibling)
     sibling->op_first->next_ = sibling->op_last;
     sibling->op_last->prev_ = sibling->op_first;
   } else {
-    throw object_exception("");
+    throw object_exception("failed to add node as sibling: node has no parent");
     // 1. first
 //    if (op_first->next() == op_last) {
 //      // node hasn't any serializable (proxy)
@@ -124,7 +124,7 @@ void prototype_node::insert(object_proxy *proxy)
     adjust_right_marker(this, proxy->prev_, proxy);
   }
   // set prototype node
-  proxy->node_ = this;
+//  proxy->node_ = this;
   // adjust size
   ++count;
   // find and insert primary key
@@ -394,8 +394,13 @@ const detail::abstract_prototype_info::t_endpoint_map &prototype_node::endpoints
   return info_->endpoints();
 }
 
+std::shared_ptr<detail::object_type_registry_entry_base> prototype_node::object_type_entry() const
+{
+  return object_type_entry_;
+}
+
 /*
- * adjust the marker of all predeccessor nodes
+ * adjust the marker of all predecessor nodes
  * self and last marker
  */
 void prototype_node::adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy)
@@ -438,12 +443,12 @@ const prototype_node::relation_node_info &prototype_node::node_info() const
 
 void prototype_node::on_attach() const
 {
-  info_->notify(detail::notification_type::ATTACH);
+  info_->notify(detail::notification_type::ATTACH, nullptr);
 }
 
 void prototype_node::on_detach() const
 {
-  info_->notify(detail::notification_type::DETACH);
+  info_->notify(detail::notification_type::DETACH, nullptr);
 }
 
 void prototype_node::on_insert_proxy(object_proxy *proxy) const
@@ -459,6 +464,14 @@ void prototype_node::on_update_proxy(object_proxy *proxy) const
 void prototype_node::on_delete_proxy(object_proxy *proxy) const
 {
   info_->notify(detail::notification_type::REMOVE, proxy);
+}
+
+std::ostream &operator<<(std::ostream &stream, const prototype_node &node) {
+  stream << "Node [" << node.type_ << "] (type index " << node.info_->type_index().name() << ")\n";
+  for (const auto &endpoint : node.info_->endpoints()) {
+    stream << *endpoint.second << "\n";
+  }
+  return stream;
 }
 
 }

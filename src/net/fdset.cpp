@@ -7,6 +7,17 @@ fdset::fdset()
   reset();
 }
 
+fdset::fdset(fdset&& x) noexcept
+: max_fd_set_(std::move(x.max_fd_set_))
+, fd_set_(x.fd_set_) {}
+
+fdset& fdset::operator=(fdset&& x) noexcept
+{
+  max_fd_set_ = std::move(x.max_fd_set_);
+  fd_set_ = x.fd_set_;
+  return *this;
+}
+
 // set all bits to zero
 void fdset::reset()
 {

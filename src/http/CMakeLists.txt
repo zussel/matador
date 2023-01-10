@@ -14,8 +14,6 @@ SET(SOURCES
   mime_types.cpp
   static_file_service.cpp
   response_parser.cpp
-  http_client_connection.cpp
-  http_client_connection.cpp
   template_engine.cpp
   detail/template_command.cpp
   detail/template_command_factory.cpp
@@ -44,8 +42,6 @@ SET(HEADER
   ../../include/matador/http/mime_types.hpp
   ../../include/matador/http/static_file_service.hpp
   ../../include/matador/http/response_parser.hpp
-  ../../include/matador/http/http_client_connection.hpp
-  ../../include/matador/http/http_client_connection.hpp
   ../../include/matador/http/template_engine.hpp
   ../../include/matador/http/detail/template_command.hpp
   ../../include/matador/http/detail/template_command_factory.hpp
@@ -58,9 +54,9 @@ SET(HEADER
   ../../include/matador/http/enum_class_hash.hpp
   ../../include/matador/http/detail/template_filter.hpp
   ../../include/matador/http/detail/template_filter_factory.hpp
-)
+  ../../include/matador/http/export.hpp)
 
-ADD_LIBRARY(matador-http SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-http STATIC ${SOURCES} ${HEADER})
 
 TARGET_LINK_LIBRARIES(matador-http matador-net matador-logger matador-utils matador-json)
 

@@ -23,7 +23,7 @@ object_holder::object_holder(object_holder &&x) noexcept
   object_proxy *proxy = x.proxy_;
   if (proxy) {
     proxy->remove(&x);
-    if (x.is_internal() && x.is_inserted_ && proxy->ostore_) {
+    if (x.is_internal() && x.is_inserted_ && proxy->object_type_entry_->store()) {
       --(*proxy);
     }
   }
@@ -49,7 +49,7 @@ object_holder &object_holder::operator=(object_holder &&x) noexcept
     object_proxy *proxy = x.proxy_;
     if (proxy) {
       proxy->remove(&x);
-      if (x.is_internal() && x.is_inserted_ && proxy->ostore_) {
+      if (x.is_internal() && x.is_inserted_ && proxy->object_type_entry_->store()) {
         --(*proxy);
       }
     }
@@ -214,7 +214,7 @@ bool object_holder::is_inserted() const
 
 bool object_holder::has_primary_key() const
 {
-  return (proxy_ ? proxy_->has_identifier() : false);
+  return proxy_ != nullptr && proxy_->has_identifier();
 }
 
 basic_identifier* object_holder::primary_key() const
@@ -258,7 +258,7 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade, bool notify
   }
   if (proxy_) {
     proxy_->remove(this);
-    if (is_internal() && is_inserted_ && proxy_->ostore_) {
+    if (is_internal() && is_inserted_ && proxy_->object_type_entry_->store()) {
       --(*proxy_);
       if (relation_info_ && notify_foreign_relation) {
         relation_info_->remove_value_from_foreign(owner_, proxy_);
@@ -275,7 +275,7 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade, bool notify
   proxy_ = proxy;
   cascade_ = cascade;
   if (proxy_) {
-    if (is_internal() && is_inserted_ && proxy_->ostore_) {
+    if (is_internal() && is_inserted_ && proxy_->object_type_entry_->store()) {
       ++(*proxy_);
       if (relation_info_ && notify_foreign_relation) {
         relation_info_->insert_value_into_foreign(owner_, proxy_);

@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/13/17.
-//
-
 #ifndef MATADOR_TO_MANY_ENDPOINTS_HPP
 #define MATADOR_TO_MANY_ENDPOINTS_HPP
 
@@ -15,7 +11,7 @@ namespace detail {
 /// @cond MATADOR_DEV
 
 /*
- * Left side of a many to many relation
+ * Left side of a many-to-many relation
  *
  * Owner is stored in left column
  * Value is stored in right column
@@ -63,7 +59,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     object_ptr<Owner> ownptr(owner);
     // insert new item
     std::unique_ptr<object_proxy> proxy(new object_proxy(new has_many_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column)));
-    auto itemptr = store.insert<has_many_to_many_item<Owner, Value>>(proxy.release(), true);
+    auto itemptr = store.insert(proxy.release(), true);
     this->increment_reference_count(holder.value());
     this->set_has_many_item_proxy(holder, itemptr);
     ++(*itemptr);
@@ -149,7 +145,9 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
     }
     object_proxy *proxy = store.find_proxy(oid);
     if (proxy == nullptr) {
-      proxy = new object_proxy(new has_one_to_many_item<Owner, Value>(), oid, &store);
+      auto node = store.find<has_one_to_many_item<Owner, Value>>();
+      auto object_type = node->object_type_entry();
+      proxy = new object_proxy(new has_one_to_many_item<Owner, Value>(), oid, object_type);
     }
     return proxy;
   }
@@ -174,7 +172,7 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
       store.insert(holder.value());
     }
     std::unique_ptr<object_proxy> proxy(new object_proxy(new has_one_to_many_item<Owner, Value>(ownptr, holder.value(), this->owner_column, this->item_column)));
-    auto itemptr = store.insert<has_one_to_many_item<Owner, Value>>(proxy.release(), true);
+    auto itemptr = store.insert(proxy.release(), true);
     this->increment_reference_count(holder.value());
     ++(*itemptr);
     ++(*owner);
@@ -222,7 +220,9 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     }
     object_proxy *proxy = store.find_proxy(oid);
     if (proxy == nullptr) {
-      proxy = new object_proxy(new has_one_to_many_item<Owner, Value>(), oid, &store);
+      auto node = store.find<has_one_to_many_item<Owner, Value>>();
+      auto object_type = node->object_type_entry();
+      proxy = new object_proxy(new has_one_to_many_item<Owner, Value>(), oid, object_type);
     }
     return proxy;
   }
@@ -257,7 +257,7 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     object_ptr<Owner> ownptr(owner);
 
     std::unique_ptr<object_proxy> proxy(new object_proxy(new has_many_to_many_item<Value, Owner>(holder.value(), ownptr, this->owner_column, this->item_column)));
-    auto itemptr = store.insert<has_many_to_many_item<Owner, Value>>(proxy.release(), true);
+    auto itemptr = store.insert(proxy.release(), true);
     this->increment_reference_count(holder.value());
     ++(*itemptr);
     ++(*itemptr);

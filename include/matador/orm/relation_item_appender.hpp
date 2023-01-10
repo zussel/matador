@@ -1,7 +1,3 @@
-//
-// Created by sascha on 8/26/16.
-//
-
 #ifndef OOS_RELATION_TABLE_LOADER_HPP
 #define OOS_RELATION_TABLE_LOADER_HPP
 

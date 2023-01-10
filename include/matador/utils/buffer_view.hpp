@@ -6,6 +6,7 @@
 #include <cstring>
 #include <string>
 #include <array>
+#include <mutex>
 
 namespace matador {
 
@@ -74,7 +75,7 @@ public:
    *
    * @param x buffer_view to copy from
    */
-  buffer_view(const buffer_view &x) = default;
+  buffer_view(const buffer_view &x) = delete;
 
   /**
    * Move assign constructor
@@ -90,7 +91,7 @@ public:
    * @param x buffer_view to assign from
    * @return The assigned buffer_view
    */
-  buffer_view& operator=(const buffer_view &x) = default;
+  buffer_view& operator=(const buffer_view &x) = delete;
 
   /**
    * Assign the given string to the buffer_view
@@ -166,9 +167,14 @@ public:
   void clear();
 
 private:
+  size_t capacity_unlocked() const;
+
+private:
   const char *start_ = nullptr;
   char *cursor_ = nullptr;
   size_t size_ = 0;
+
+  mutable std::mutex mutex_;
 };
 
 }

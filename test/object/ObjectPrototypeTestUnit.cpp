@@ -12,15 +12,15 @@ using namespace std;
 ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   : unit_test("prototype", "ObjectStore Prototype Test Unit")
 {
-  add_test("empty", std::bind(&ObjectPrototypeTestUnit::empty_store, this), "test empty serializable store");
-  add_test("find", std::bind(&ObjectPrototypeTestUnit::test_find, this), "find prototype test");
-  add_test("size", std::bind(&ObjectPrototypeTestUnit::test_size, this), "size prototype test");
-  add_test("parent_of", std::bind(&ObjectPrototypeTestUnit::test_is_parent_of, this), "check parent");
-  add_test("decrement", std::bind(&ObjectPrototypeTestUnit::test_decrement, this), "check decrementing iterator");
-  add_test("one", std::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
-  add_test("hierarchy", std::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
-  add_test("iterator", std::bind(&ObjectPrototypeTestUnit::prototype_traverse, this), "prototype iterator");
-  add_test("relation", std::bind(&ObjectPrototypeTestUnit::prototype_relation, this), "prototype relation");
+  add_test("empty", [this] { empty_store(); }, "test empty serializable store");
+  add_test("find", [this] { test_find(); }, "find prototype test");
+  add_test("size", [this] { test_size(); }, "size prototype test");
+  add_test("parent_of", [this] { test_is_parent_of(); }, "check parent");
+  add_test("decrement", [this] { test_decrement(); }, "check decrementing iterator");
+  add_test("one", [this] { one_prototype(); }, "one prototype");
+  add_test("hierarchy", [this] { prototype_hierachy(); }, "prototype hierarchy");
+  add_test("iterator", [this] { prototype_traverse(); }, "prototype iterator");
+  add_test("relation", [this] { prototype_relation(); }, "prototype relation");
 }
 
 void
