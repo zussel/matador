@@ -16,7 +16,7 @@ void to_json(T &val, std::string &out)
 std::string json_identifier_serializer::serialize(basic_identifier &x)
 {
   json_.clear();
-  x.serialize("", *this);
+//  x.serialize("", *this);
   return json_;
 }
 
