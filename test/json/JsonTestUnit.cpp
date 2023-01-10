@@ -204,6 +204,19 @@ void JsonTestUnit::test_simple()
   jnull = json::object();
 
   UNIT_ASSERT_FALSE(jnull.is_number());
+
+  json jchar;
+  jchar = 7;
+
+  i = jchar.as<int>();
+  UNIT_ASSERT_TRUE(jchar.is_number());
+  UNIT_ASSERT_EQUAL(7, i);
+
+  jchar.reset("string");
+
+  str = jchar.as<std::string>();
+  UNIT_ASSERT_TRUE(jchar.is_string());
+  UNIT_ASSERT_EQUAL("string", str);
 }
 
 void JsonTestUnit::test_access()

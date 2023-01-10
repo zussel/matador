@@ -23,7 +23,7 @@ class delete_action;
 class MATADOR_OBJECT_API action_visitor
 {
 public:
-  virtual ~action_visitor() {}
+  virtual ~action_visitor() = default;
 
   /**
    * @brief Called with a insert_action

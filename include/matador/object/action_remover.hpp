@@ -22,7 +22,6 @@ public:
 
 public:
   explicit action_remover(t_action_vector &actions);
-  ~action_remover() override = default;
 
   bool remove(t_action_vector::size_type index, object_proxy *proxy);
 
