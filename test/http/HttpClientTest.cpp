@@ -4,7 +4,7 @@
 
 #include "matador/http/http_client.hpp"
 
-#include "../net/NetUtils.hpp"
+#include "../NetUtils.hpp"
 
 using namespace matador;
 using namespace ::detail;

@@ -1,6 +1,6 @@
 #include "HttpServerTest.hpp"
 
-#include "../net/NetUtils.hpp"
+#include "../NetUtils.hpp"
 
 #include "matador/http/http_server.hpp"
 #include "matador/http/http.hpp"

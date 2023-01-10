@@ -74,7 +74,6 @@ SET (TEST_NET_SOURCES
   net/IOEchoServerConnection.hpp
   net/IOEchoServer.cpp
   net/IOEchoServer.hpp
-  net/NetUtils.hpp
   net/LeaderFollowerThreadPoolTest.cpp
   net/LeaderFollowerThreadPoolTest.hpp)
 
@@ -172,7 +171,7 @@ SET (TEST_ORM_SOURCES
   orm/JsonOrmTest.cpp
   orm/JsonOrmTest.hpp)
 
-SET (TEST_SOURCES test_matador.cpp dto.hpp ../include/matador/object/action_vector.hpp)
+SET (TEST_SOURCES test_matador.cpp dto.hpp NetUtils.hpp)
 
 ADD_EXECUTABLE(test_matador
   EXCLUDE_FROM_ALL
