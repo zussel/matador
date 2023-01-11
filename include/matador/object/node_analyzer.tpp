@@ -127,9 +127,9 @@ void node_analyzer<Owner, Observer>::on_has_many(const char *id, has_many<Value,
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, Observer>::on_has_many(const char *id, has_many <Value, Container> &,
-                                               const char *left_column, const char *right_column,
-                                               cascade_type,
-                                               typename std::enable_if<!is_builtin<Value>::value>::type*)
+                                                 const char *left_column, const char *right_column,
+                                                 cascade_type,
+                                                 typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   // attach relation table for has many relation
   // check if has-many item is already attached

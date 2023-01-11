@@ -3,13 +3,13 @@
 
 namespace matador {
 
-template < class T, template < class ... > class C >
+template<class T, template<class ...> class C>
 class has_many;
 
-template < class T >
+template<class T>
 class object_ptr;
 
-enum cascade_type;
+enum class cascade_type;
 
 /**
  * @class access
@@ -51,8 +51,7 @@ public:
    * @param t Object to be serialized
    */
   template<class S, class T>
-  static void serialize(S &s, T &t)
-  {
+  static void serialize(S &s, T &t) {
     t.serialize(s);
   }
 
@@ -65,50 +64,50 @@ public:
    * @param t Object to be serialized
    */
   template<class S, class T>
-  static void serialize(S &s, const T &t)
-  {
-    const_cast<T&>(t).serialize(s);
+  static void serialize(S &s, const T &t) {
+    const_cast<T &>(t).serialize(s);
   }
 };
 
-template < typename T, typename Operation >
-void primary_key(Operation &op, const char* name, T& value)
+namespace store {
+
+template<typename T, typename Operation>
+void primary_key(Operation &op, const char *name, T &value)
 {
   op.on_primary_key(name, value);
 }
 
-template< typename Operation >
-void revision(Operation &op, const char* name, unsigned long rev)
-{
+template<typename Operation>
+void revision(Operation &op, const char *name, unsigned long rev) {
   op.on_revision(name, rev);
 }
 
-template < typename Operation  >
-void attribute(Operation &op, const char* name, char *data, size_t len)
+template<typename Operation>
+void attribute(Operation &op, const char *name, char *data, size_t len)
 {
   op.on_attribute(name, data, len);
 }
 
-template < typename Operation  >
-void attribute(Operation &op, const char* name, std::string &data, size_t len)
+template<typename Operation>
+void attribute(Operation &op, const char *name, std::string &data, size_t len)
 {
   op.on_attribute(name, data, len);
 }
 
-template < typename T, typename Operation  >
-void attribute(Operation &op, const char* name, T& pk)
+template<typename T, typename Operation>
+void attribute(Operation &op, const char *name, T &pk)
 {
   op.on_attribute(name, pk);
 }
 
-template < typename T, typename Operation  >
-void has_one(Operation &op, const char* name, matador::object_ptr<T> &collection, matador::cascade_type cascade)
+template<typename T, typename Operation>
+void has_one(Operation &op, const char *name, matador::object_ptr<T> &collection, matador::cascade_type cascade)
 {
   op.on_has_one(name, collection, cascade);
 }
 
-template< typename T, typename Operation  >
-void belongs_to(Operation &op, const char* name, matador::object_ptr<T> &object, matador::cascade_type cascade)
+template<typename T, typename Operation>
+void belongs_to(Operation &op, const char *name, matador::object_ptr<T> &object, matador::cascade_type cascade)
 {
   op.on_belongs_to(name, object, cascade);
 }
@@ -119,10 +118,12 @@ void belongs_to(Operation &op, const char* name, matador::object_ptr<T> &object,
 //  op.on_has_one(name, object, cascade);
 //}
 
-template< typename T, template < class ... > class C, typename Operation  >
-void has_many(Operation &op, const char* name, matador::has_many<T, C> &container, const char *left_column, const char *right_column, matador::cascade_type cascade)
+template<typename T, template<class ...> class C, typename Operation>
+void has_many(Operation &op, const char *name, matador::has_many<T, C> &container, const char *left_column, const char *right_column, matador::cascade_type cascade)
 {
   op.on_has_many(name, container, left_column, right_column, cascade);
+}
+
 }
 
 }

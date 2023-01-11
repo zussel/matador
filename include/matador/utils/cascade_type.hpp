@@ -6,7 +6,7 @@ namespace matador {
 /**
  * @brief Cascade types for database actions
  */
-enum cascade_type
+enum class cascade_type
 {
   NONE = 0,                        /**< Cascade type none */
   REMOVE = 1,                      /**< Cascade type remove */
