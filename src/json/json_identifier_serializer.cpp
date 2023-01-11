@@ -20,82 +20,82 @@ std::string json_identifier_serializer::serialize(basic_identifier &x)
   return json_;
 }
 
-void json_identifier_serializer::serialize(const char*, char &x)
+void json_identifier_serializer::on_attribute(const char*, char &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, short &x)
+void json_identifier_serializer::on_attribute(const char*, short &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, int &x)
+void json_identifier_serializer::on_attribute(const char*, int &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, long &x)
+void json_identifier_serializer::on_attribute(const char*, long &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, long long &x)
+void json_identifier_serializer::on_attribute(const char*, long long &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, unsigned char &x)
+void json_identifier_serializer::on_attribute(const char*, unsigned char &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, unsigned short &x)
+void json_identifier_serializer::on_attribute(const char*, unsigned short &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, unsigned int &x)
+void json_identifier_serializer::on_attribute(const char*, unsigned int &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, unsigned long &x)
+void json_identifier_serializer::on_attribute(const char*, unsigned long &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, unsigned long long &x)
+void json_identifier_serializer::on_attribute(const char*, unsigned long long &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, bool &x)
+void json_identifier_serializer::on_attribute(const char*, bool &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, float &x)
+void json_identifier_serializer::on_attribute(const char*, float &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, double &x)
+void json_identifier_serializer::on_attribute(const char*, double &x)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, char *x, size_t len)
+void json_identifier_serializer::on_attribute(const char*, char *x, size_t len)
 {
   json_.append(x, len);
 }
 
-void json_identifier_serializer::serialize(const char*, std::string &x)
+void json_identifier_serializer::on_attribute(const char*, std::string &x)
 {
   json_.append(x);
 }
 
-void json_identifier_serializer::serialize(const char*, std::string &x, size_t len)
+void json_identifier_serializer::on_attribute(const char*, std::string &x, size_t len)
 {
   json_.append(x.c_str(), len);
 }

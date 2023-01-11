@@ -7,7 +7,8 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/identifier.hpp"
 
-#include "matador/object/object_ptr.hpp"
+#include "matador/object/belongs_to.hpp"
+#include "matador/object/has_one.hpp"
 #include "matador/object/basic_has_many.hpp"
 
 #include <string>
@@ -67,28 +68,28 @@ public:
   }
 
   template<class T>
-  void serialize(const char *, T &x)
+  void on_attribute(const char *, T &x)
   {
     buffer_->release(&x, sizeof(x));
   }
 
-  void serialize(const char *id, char *c, size_t s);
-  void serialize(const char *id, std::string &s);
-  void serialize(const char *, std::string &s, size_t);
-  void serialize(const char *id, date &x);
-  void serialize(const char *id, time &x);
-  void serialize(const char *id, basic_identifier &x);
+  void on_attribute(const char *id, char *c, size_t s);
+  void on_attribute(const char *id, std::string &s);
+  void on_attribute(const char *, std::string &s, size_t);
+  void on_attribute(const char *id, date &x);
+  void on_attribute(const char *id, time &x);
+  void on_primary_key(const char *id, basic_identifier &x);
 
   template<class V>
-  void serialize(const char *id, identifier<V> &x)
+  void on_attribute(const char *id, identifier<V> &x)
   {
     V val;
-    serialize(id, val);
+    on_attribute(id, val);
     x.value(val);
   }
 
-  template<class T, object_holder_type OHT>
-  void serialize(const char *id, object_pointer<T, OHT> &x, cascade_type cascade)
+  template<class T>
+  void on_belongs_to(const char *id, matador::belongs_to<T> &x, cascade_type cascade)
   {
     /***************
      *
@@ -100,7 +101,33 @@ public:
      *
      ***************/
     unsigned long oid = 0;
-    serialize(id, oid);
+    on_attribute(id, oid);
+
+    if (oid > 0) {
+      object_proxy *oproxy = find_proxy(oid);
+      if (!oproxy) {
+        auto object_type = determine_object_type(std::type_index(typeid(T)));
+        oproxy = new object_proxy(new T, oid, object_type);
+        insert_proxy(oproxy);
+      }
+      x.reset(oproxy, cascade);
+    }
+  }
+
+  template<class T>
+  void on_has_one(const char *id, matador::has_one<T> &x, cascade_type cascade)
+  {
+    /***************
+     *
+     * extract id and type of serializable from buffer
+     * try to find serializable on serializable store
+     * if found check type if wrong type throw error
+     * else create serializable and set extracted id
+     * insert serializable into serializable store
+     *
+     ***************/
+    unsigned long oid = 0;
+    on_attribute(id, oid);
 
     if (oid > 0) {
       object_proxy *oproxy = find_proxy(oid);
@@ -114,19 +141,19 @@ public:
   }
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, basic_has_many<T, C> &x, const char *, const char *, cascade_type cascade)
   {
-    serialize(id, x, cascade);
+    on_has_many(id, x, cascade);
   }
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &x, cascade_type)
+  void on_has_many(const char *id, basic_has_many<T, C> &x, cascade_type)
   {
     std::string id_oid(id);
     id_oid += ".oid";
-    typename basic_has_many<T, C>::size_type s = 0;
+    typename basic_has_many<T, C>::size_type s{};
     // deserialize container size
-    serialize(id, s);
+    on_attribute(id, s);
 
     x.reset();
 
@@ -134,7 +161,7 @@ public:
 
       // deserialize all items
       unsigned long oid = 0;
-      serialize(id_oid.c_str(), oid);
+      on_attribute(id_oid.c_str(), oid);
 
 
       // and append them to container

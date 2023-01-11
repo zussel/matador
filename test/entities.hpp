@@ -1,20 +1,3 @@
-/*
- * This file is part of matador.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef ENTITIES_HPP
 #define ENTITIES_HPP
 
@@ -49,8 +32,8 @@ public:
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize(*matador::base_class<datatypes>(this));
-        serializer.serialize("ref", ref_, matador::cascade_type::NONE);
-        serializer.serialize("ptr", ptr_, matador::cascade_type::ALL);
+        serializer.on_has_one("ref", ref_, matador::cascade_type::NONE);
+        serializer.on_has_one("ptr", ptr_, matador::cascade_type::ALL);
     }
 
     void ref(const value_ptr &r)
@@ -91,9 +74,9 @@ public:
     template < class S >
     void serialize(S &s)
     {
-        s.serialize("id", id);
-        s.serialize("name", name);
-        s.serialize("object_item_list", items, "list_id", "object_item_id", matador::cascade_type::NONE);
+        s.on_primary_key("id", id);
+        s.on_attribute("name", name);
+        s.on_has_many("object_item_list", items, "list_id", "object_item_id", matador::cascade_type::NONE);
     }
 
     iterator begin() { return items.begin(); }
@@ -124,10 +107,10 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("title", title_);
-        serializer.serialize("isbn", isbn_);
-        serializer.serialize("author", author_);
+        serializer.on_primary_key("id", id_);
+        serializer.on_attribute("title", title_);
+        serializer.on_attribute("isbn", isbn_);
+        serializer.on_attribute("author", author_);
     }
 
     unsigned long id() const { return id_; }
@@ -151,8 +134,8 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("books", book_list_, "book_list_id", "book_id", matador::cascade_type::NONE);
+        serializer.on_primary_key("id", id_);
+        serializer.on_has_many("books", book_list_, "book_list_id", "book_id", matador::cascade_type::NONE);
     }
 
     void add(const matador::object_ptr<book> &b)
@@ -195,7 +178,7 @@ public:
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize(*matador::base_class<person>(this));
-        serializer.serialize("department"    , department_, matador::cascade_type::NONE);
+        serializer.on_belongs_to("department"    , department_, matador::cascade_type::NONE);
         // name of table, object     , cascade
     }
 
@@ -214,7 +197,7 @@ struct department
 
     department() = default;
     explicit department(std::string n)
-            : name(n)
+            : name(std::move(n))
     {}
 
     ~department() = default;
@@ -222,9 +205,9 @@ struct department
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("name", name, 255);
-        serializer.serialize("employee"    , employees, "department", "id", matador::cascade_type::NONE);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("name", name, 255);
+        serializer.on_has_many("employee"    , employees, "department", "id", matador::cascade_type::NONE);
         //                    name of table, container,  name of member
         //                                   to serialize
     }
@@ -243,7 +226,7 @@ public:
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize(*matador::base_class<person>(this));
-        serializer.serialize("student_course", courses, "student_id", "course_id", matador::cascade_type::NONE);
+        serializer.on_has_many("student_course", courses, "student_id", "course_id", matador::cascade_type::NONE);
     }
 
     matador::has_many<course> courses;
@@ -259,8 +242,8 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("title", title, 1023);
+        serializer.on_primary_key("id", id);
+        serializer.on_("title", title, 1023);
         serializer.serialize("student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
     }
 

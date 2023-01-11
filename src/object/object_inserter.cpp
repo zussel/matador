@@ -5,8 +5,8 @@
 namespace matador {
 namespace detail {
 
-object_inserter::object_inserter(object_store &ostore)
-  : ostore_(ostore) { }
+object_inserter::object_inserter(object_store &store)
+  : ostore_(store) { }
 
 void object_inserter::insert(object_proxy *proxy, bool notify)
 {

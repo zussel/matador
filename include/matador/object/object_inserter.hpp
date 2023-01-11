@@ -30,12 +30,12 @@ public:
    *
    * An object_inserter instance ist created for a
    * given object_store. The notify flag tells the
-   * object_inserter wether the observers should be
+   * object_inserter weather the observers should be
    * notified or not.
    *
-   * @param ostore The object_store.
+   * @param store The object_store.
    */
-  explicit object_inserter(object_store &ostore);
+  explicit object_inserter(object_store &store);
 
   ~object_inserter() = default;
 
@@ -46,24 +46,25 @@ public:
   template<class T>
   void serialize(T &x);
 
+  void on_primary_key(const char *, basic_identifier &) {}
   template<class T>
-  void serialize(const char *, T &) { }
-  void serialize(const char *, char *, size_t) { }
-  void serialize(const char *, std::string &, size_t) { }
+  void on_attribute(const char *, T &) { }
+  void on_attribute(const char *, char *, size_t) { }
+  void on_attribute(const char *, std::string &, size_t) { }
 
   template<class T>
-  void serialize(const char *, belongs_to<T> &x, cascade_type cascade);
+  void on_belongs_to(const char *, belongs_to<T> &x, cascade_type cascade);
   template<class T>
-  void serialize(const char *, has_one<T> &x, cascade_type cascade);
+  void on_has_one(const char *, has_one<T> &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &x, const char*, const char*, cascade_type cascade)
+  void on_has_many(const char *id, basic_has_many<T, C> &x, const char*, const char*, cascade_type cascade)
   {
-    serialize(id, x, cascade);
+    on_has_many(id, x, cascade);
   }
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &, cascade_type);
+  void on_has_many(const char *id, basic_has_many<T, C> &, cascade_type);
 
 private:
   template < class T >
@@ -122,19 +123,19 @@ void object_inserter::serialize(T &x)
 }
 
 template<class T>
-void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cascade)
+void object_inserter::on_belongs_to(const char *, belongs_to<T> &x, cascade_type cascade)
 {
   insert_object(x, std::type_index(typeid(T)), cascade);
 }
 
 template<class T>
-void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade)
+void object_inserter::on_has_one(const char *, has_one<T> &x, cascade_type cascade)
 {
   insert_object(x, std::type_index(typeid(T)), cascade);
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::serialize(const char *, basic_has_many<T, C> &x, cascade_type cascade)
+void object_inserter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_type cascade)
 {
   auto *proxy = initialize_has_many(x);
 

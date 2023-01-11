@@ -30,22 +30,23 @@ public:
 
   template<class V>
   void serialize(V &x);
+  void on_primary_key(const char *, basic_identifier &) {}
   template<class V>
-  void serialize(const char *, V &) { }
-  void serialize(const char *, char *, size_t) { }
-  void serialize(const char *, std::string &, size_t) { }
+  void on_attribute(const char *, V &) { }
+  void on_attribute(const char *, char *, size_t) { }
+  void on_attribute(const char *, std::string &, size_t) { }
   template<class Value>
-  void serialize(const char *id, belongs_to<Value> &x, cascade_type);
+  void on_belongs_to(const char *id, belongs_to<Value> &x, cascade_type);
   template<class Value>
-  void serialize(const char *id, has_one<Value> &x, cascade_type);
+  void on_has_one(const char *id, has_one<Value> &x, cascade_type);
 
   template<class Value, template<class ...> class Container>
-  void serialize(const char *id, has_many<Value, Container> &x, cascade_type cascade);
+  void on_has_many(const char *id, has_many<Value, Container> &x, cascade_type cascade);
 
   template<class Value, template<class ...> class Container>
-  void serialize(const char *, has_many<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *, has_many<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template<class Value, template<class ...> class Container>
-  void serialize(const char *, has_many<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *, has_many<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
 
 private:
   /**

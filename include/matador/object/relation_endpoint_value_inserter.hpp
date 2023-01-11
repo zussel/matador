@@ -37,16 +37,17 @@ public:
     matador::access::serialize(*this, x);
   }
 
+  void on_primary_key(const char *, basic_identifier &) {}
   template < class T >
-  void serialize(const char *, T &) {}
-  void serialize(const char *, char *, size_t) {}
-  void serialize(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, T &) {}
+  void on_attribute(const char *, char *, size_t) {}
+  void on_attribute(const char *, std::string &, size_t) {}
   template < class T >
-  void serialize(const char *, T &, cascade_type) {}
-  void serialize(const char *id, object_pointer<Value, object_holder_type::BELONGS_TO> &x, cascade_type);
-  void serialize(const char *id, object_pointer<Value, object_holder_type::HAS_ONE> &x, cascade_type);
+  void on_attribute(const char *, T &, cascade_type) {}
+  void on_belongs_to(const char *id, object_holder &x, cascade_type);
+  void on_has_one(const char *id, object_holder &x, cascade_type);
   template < template < class ... > class Container >
-  void serialize(const char *id, has_many<Value, Container> &x, cascade_type)
+  void on_has_many(const char *id, has_many<Value, Container> &x, cascade_type)
   {
     if (field_ != id) {
       return;
@@ -56,14 +57,14 @@ public:
 
 
   template < template < class ... > class Container >
-  void serialize(const char *id, has_many<Value, Container> &x, const char*, const char*, cascade_type cascade)
+  void on_has_many(const char *id, has_many<Value, Container> &x, const char*, const char*, cascade_type cascade)
   {
-    serialize(id, x, cascade);
+    on_has_many(id, x, cascade);
   }
   template < class T, template < class ... > class Container >
-  void serialize(const char *, has_many<T, Container> &, cascade_type) {}
+  void on_has_many(const char *, has_many<T, Container> &, cascade_type) {}
   template < class T, template < class ... > class Container >
-  void serialize(const char *, has_many<T, Container> &, const char*, const char*, cascade_type) {}
+  void on_has_many(const char *, has_many<T, Container> &, const char*, const char*, cascade_type) {}
 
 private:
   std::string field_;
@@ -86,9 +87,7 @@ void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &o
 }
 
 template<class Value>
-void relation_endpoint_value_inserter<Value>::serialize(const char *id,
-                                                        object_pointer <Value, object_holder_type::BELONGS_TO> &x,
-                                                        cascade_type cascade)
+void relation_endpoint_value_inserter<Value>::on_belongs_to(const char *id, object_holder &x, cascade_type cascade)
 {
   if (field_ != id) {
     return;
@@ -97,9 +96,7 @@ void relation_endpoint_value_inserter<Value>::serialize(const char *id,
 }
 
 template<class Value>
-void relation_endpoint_value_inserter<Value>::serialize(const char *id,
-                                                        object_pointer <Value, object_holder_type::HAS_ONE> &x,
-                                                        cascade_type cascade)
+void relation_endpoint_value_inserter<Value>::on_has_one(const char *id, object_holder &x, cascade_type cascade)
 {
   if (field_ != id) {
     return;

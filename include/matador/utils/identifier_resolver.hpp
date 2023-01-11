@@ -64,25 +64,23 @@ public:
   }
 
   template < class V >
-  void serialize(const char*, V&) {}
+  void on_attribute(const char*, V&) {}
 
-  void serialize(const char*, char*, size_t) {}
-  void serialize(const char*, std::string &, size_t) {}
+  void on_attribute(const char*, char*, size_t) {}
+  void on_attribute(const char*, std::string &, size_t) {}
 
-//  template < class HAS_ONE >
-  void serialize(const char*, object_holder&, cascade_type) {}
+  void on_belongs_to(const char*, identifiable_holder&, cascade_type) {}
+  void on_has_one(const char*, identifiable_holder&, cascade_type) {}
 
-//  template < class HAS_MANY >
-  void serialize(const char *, abstract_has_many&, const char *, const char *, cascade_type) {}
-  void serialize(const char *, abstract_has_many&, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many&, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many&, cascade_type) {}
 
   template < class V >
-  void serialize(const char *, identifier<V> &x)
+  void on_primary_key(const char *, identifier<V> &x)
   {
     if (clone_) {
       id_ = x.clone();
     } else {
-//      id_ = x.clone();
       id_ = &x;
     }
   }

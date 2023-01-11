@@ -54,7 +54,7 @@ public:
   {}
 
   template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -64,7 +64,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_arithmetic<T>::value && std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, typename std::enable_if<std::is_arithmetic<T>::value && std::is_same<V, bool>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -74,7 +74,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
+  void on_attribute(const char *id, V &to, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -83,10 +83,10 @@ public:
     this->success_ = true;
   }
   template < class V >
-  void serialize(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
-  void serialize(const char *, char*, size_t) {}
+  void on_attribute(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
+  void on_attribute(const char *, char*, size_t) {}
 
-  void serialize(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, std::string &, size_t) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -106,7 +106,7 @@ public:
   {}
 
   template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -116,7 +116,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -126,7 +126,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_arithmetic<V>::value && std::is_same<bool, V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, typename std::enable_if<std::is_arithmetic<V>::value && std::is_same<bool, V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -136,9 +136,9 @@ public:
   }
 
   template < class V >
-  void serialize(const char *, V &, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
-  void serialize(const char *, char*, size_t) {}
-  void serialize(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, V &, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
+  void on_attribute(const char *, char*, size_t) {}
+  void on_attribute(const char *, std::string &, size_t) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -158,15 +158,15 @@ public:
   {}
 
   template < class V >
-  void serialize(V &obj)
+  void on_attribute(V &obj)
   {
     access::serialize(*this, obj);
   }
 
   template < class V >
-  void serialize(const char *, V &) {}
-  void serialize(const char *, char*, std::size_t) {}
-  void serialize(const char *, std::string &, std::size_t) {}
+  void on_attribute(const char *, V &) {}
+  void on_attribute(const char *, char*, std::size_t) {}
+  void on_attribute(const char *, std::string &, std::size_t) {}
 
   template < class V >
   void on_belongs_to(const char *, belongs_to<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
@@ -201,15 +201,15 @@ public:
   {}
 
   template < class V >
-  void serialize(V &obj)
+  void on_attribute(V &obj)
   {
     access::serialize(*this, obj);
   }
 
   template < class V >
-  void serialize(const char *, V &) {}
-  void serialize(const char *, char*, std::size_t) {}
-  void serialize(const char *, std::string &, std::size_t) {}
+  void on_attribute(const char *, V &) {}
+  void on_attribute(const char *, char*, std::size_t) {}
+  void on_attribute(const char *, std::string &, std::size_t) {}
 
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
   void on_has_many(const char *, identifiable_holder &, cascade_type) { }
@@ -242,15 +242,15 @@ public:
   {}
 
   template < class V >
-  void serialize(V &obj)
+  void on_attribute(V &obj)
   {
     access::serialize(*this, obj);
   }
 
   template < class V >
-  void serialize(const char *, V &) {}
-  void serialize(const char *, char*, std::size_t) {}
-  void serialize(const char *, std::string &, std::size_t) {}
+  void on_attribute(const char *, V &) {}
+  void on_attribute(const char *, char*, std::size_t) {}
+  void on_attribute(const char *, std::string &, std::size_t) {}
 
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
   void on_has_many(const char *, identifiable_holder &, cascade_type) { }
@@ -286,8 +286,8 @@ public:
   ~attribute_reader() = default;
 
   template < class V >
-  void serialize(const char *, V &) {}
-  void serialize(const char *id, std::string &to, size_t)
+  void on_attribute(const char *, V &) {}
+  void on_attribute(const char *id, std::string &to, size_t)
   {
     if (id_ != id) {
       return;
@@ -295,7 +295,7 @@ public:
     to = from_;
     this->success_ = true;
   }
-  void serialize(const char *id, std::string &to)
+  void on_attribute(const char *id, std::string &to)
   {
     if (id_ != id) {
       return;
@@ -304,7 +304,7 @@ public:
     this->success_ = true;
   }
 
-  void serialize(const char *id, char *to, size_t len)
+  void on_attribute(const char *id, char *to, size_t len)
   {
     if (id_ != id) {
       return;
@@ -342,8 +342,8 @@ public:
   ~attribute_reader() = default;
 
   template < class V >
-  void serialize(const char *, V &) {}
-  void serialize(const char *id, std::string &to, size_t)
+  void on_attribute(const char *, V &) {}
+  void on_attribute(const char *id, std::string &to, size_t)
   {
     if (id_ != id) {
       return;
@@ -351,7 +351,7 @@ public:
     to = from_;
     this->success_ = true;
   }
-  void serialize(const char *id, std::string &to)
+  void on_attribute(const char *id, std::string &to)
   {
     if (id_ != id) {
       return;
@@ -360,7 +360,7 @@ public:
     this->success_ = true;
   }
 
-  void serialize(const char *id, char *to, size_t len)
+  void on_attribute(const char *id, char *to, size_t len)
   {
     if (id_ != id) {
       return;
@@ -397,7 +397,7 @@ public:
   ~attribute_writer() = default;
 
   template < class V >
-  void serialize(const char *id, V &from, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -407,7 +407,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &from, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && std::is_same<bool, T>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && std::is_same<bool, T>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -417,7 +417,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &from, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
+  void on_attribute(const char *id, V &from, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -426,10 +426,10 @@ public:
     success_ = true;
   }
   template < class V >
-  void serialize(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
+  void on_attribute(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
 
-  void serialize(const char *, char*, size_t) {}
-  void serialize(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, char*, size_t) {}
+  void on_attribute(const char *, std::string &, size_t) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -450,9 +450,9 @@ public:
   {}
 
   template < class V >
-  void serialize(const char *, V &) {}
-  void serialize(const char *, char*, size_t) {}
-  void serialize(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, V &) {}
+  void on_attribute(const char *, char*, size_t) {}
+  void on_attribute(const char *, std::string &, size_t) {}
 
   template < class V >
   void on_belongs_to(const char *, belongs_to<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
@@ -485,15 +485,15 @@ public:
   {}
 
   template < class V >
-  void serialize(V &obj)
+  void on_attribute(V &obj)
   {
     access::serialize(*this, obj);
   }
 
   template < class V >
-  void serialize(const char *, V &) {}
-  void serialize(const char *, char*, size_t) {}
-  void serialize(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, V &) {}
+  void on_attribute(const char *, char*, size_t) {}
+  void on_attribute(const char *, std::string &, size_t) {}
 
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
   void on_has_one(const char *, identifiable_holder &, cascade_type) {}
@@ -525,15 +525,15 @@ public:
   {}
 
   template < class V >
-  void serialize(V &obj)
+  void on_attribute(V &obj)
   {
     access::serialize(*this, obj);
   }
 
   template < class V >
-  void serialize(const char *, V &) {}
-  void serialize(const char *, char*, size_t) {}
-  void serialize(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, V &) {}
+  void on_attribute(const char *, char*, size_t) {}
+  void on_attribute(const char *, std::string &, size_t) {}
 
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
   void on_has_many(const char *, identifiable_holder &, cascade_type) {}
@@ -568,7 +568,7 @@ public:
   ~attribute_writer() = default;
 
   template < class V >
-  void serialize(const char *id, V &from, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -578,7 +578,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &from, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -587,7 +587,7 @@ public:
     success_ = true;
   }
 
-  void serialize(const char *id, std::string &from)
+  void on_attribute(const char *id, std::string &from)
   {
     if (id_ != id) {
       return;
@@ -596,7 +596,7 @@ public:
     success_ = true;
   }
 
-  void serialize(const char *id, std::string &from, size_t)
+  void on_attribute(const char *id, std::string &from, size_t)
   {
     if (id_ != id) {
       return;
@@ -605,7 +605,7 @@ public:
     success_ = true;
   }
 
-  void serialize(const char *id, char *from, size_t len)
+  void on_attribute(const char *id, char *from, size_t len)
   {
     if (id_ != id) {
       return;
@@ -614,7 +614,7 @@ public:
     success_ = true;
   }
 
-  void serialize(const char *id, date &from)
+  void on_attribute(const char *id, date &from)
   {
     if (id_ != id) {
       return;
@@ -622,7 +622,7 @@ public:
     to_ = to_string(from);
     success_ = true;
   }
-  void serialize(const char *id, matador::time &from)
+  void on_attribute(const char *id, matador::time &from)
   {
     if (id_ != id) {
       return;
@@ -632,7 +632,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, identifier<V> &x)
+  void on_attribute(const char *id, identifier<V> &x)
   {
     if (id_ != id) {
       return;
@@ -644,7 +644,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, belongs_to<V> &x, cascade_type)
+  void on_belongs_to(const char *id, belongs_to<V> &x, cascade_type)
   {
     if (id_ != id) {
       return;
@@ -660,7 +660,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, has_one<V> &x, cascade_type)
+  void on_has_one(const char *id, has_one<V> &x, cascade_type)
   {
     if (id_ != id) {
       return;
@@ -675,8 +675,8 @@ public:
     success_ = true;
   }
 
-  void serialize(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
-  void serialize(const char*, abstract_has_many&, cascade_type) {}
+  void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
+  void on_has_many(const char*, abstract_has_many&, cascade_type) {}
 
 private:
   std::string &to_;
@@ -720,7 +720,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &/*from*/)
+  void on_attribute(const char *id, V &/*from*/)
   {
     if (id_ != id) {
       return;
@@ -729,18 +729,16 @@ public:
     success_ = true;
   }
 
-  void serialize(const char*, date&) {}
-  void serialize(const char*, time&) {}
+  void on_attribute(const char*, date&) {}
+  void on_attribute(const char*, time&) {}
+  void on_belongs_to(const char*, identifiable_holder &, cascade_type) {}
+  void on_has_one(const char*, identifiable_holder &, cascade_type) {}
+  void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
+  void on_has_many(const char*, abstract_has_many&, cascade_type) {}
   template < class V >
-  void serialize(const char*, belongs_to<V> &, cascade_type) {}
-  template < class V >
-  void serialize(const char*, has_one<V> &, cascade_type) {}
-  void serialize(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
-  void serialize(const char*, abstract_has_many&, cascade_type) {}
-  template < class V >
-  void serialize(const char*, const identifier<V> &) {}
+  void on_attribute(const char*, const identifier<V> &) {}
 
-  void serialize(const char *id, std::string &from, size_t size)
+  void on_attribute(const char *id, std::string &from, size_t size)
   {
     if (id_ != id) {
       return;
@@ -763,7 +761,7 @@ public:
     success_ = true;
   }
 
-  void serialize(const char *id, char *from, size_t size)
+  void on_attribute(const char *id, char *from, size_t size)
   {
     if (id_ != id) {
       return;

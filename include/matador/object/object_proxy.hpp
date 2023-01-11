@@ -107,7 +107,7 @@ public:
     , oid(id)
   {
     if (obj_ != nullptr) {
-      primary_key_ = identifier_resolver<T>::resolve(o);
+      primary_key_ = object_type_entry->resolve_identifier(this);
     }
   }
 

@@ -13,7 +13,7 @@ object_deserializer::object_deserializer(byte_buffer *buffer, object_store *stor
   : store_(store)
   , buffer_(buffer) {}
 
-void object_deserializer::serialize(const char *, char *c, size_t)
+void object_deserializer::on_attribute(const char *, char *c, size_t)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -21,7 +21,7 @@ void object_deserializer::serialize(const char *, char *c, size_t)
   buffer_->release(c, len);
 }
 
-void object_deserializer::serialize(const char *, std::string &s, size_t)
+void object_deserializer::on_attribute(const char *, std::string &s, size_t)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -31,7 +31,7 @@ void object_deserializer::serialize(const char *, std::string &s, size_t)
   delete [] str;
 }
 
-void object_deserializer::serialize(const char *, std::string &s)
+void object_deserializer::on_attribute(const char *, std::string &s)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -41,14 +41,14 @@ void object_deserializer::serialize(const char *, std::string &s)
   delete [] str;
 }
 
-void object_deserializer::serialize(const char *, date &x)
+void object_deserializer::on_attribute(const char *, date &x)
 {
   int julian_date(0);
   buffer_->release(&julian_date, sizeof(julian_date));
   x.set(julian_date);
 }
 
-void object_deserializer::serialize(const char *, time &x)
+void object_deserializer::on_attribute(const char *, time &x)
 {
   struct timeval tv{};
   buffer_->release(&tv.tv_sec, sizeof(tv.tv_sec));
@@ -56,7 +56,7 @@ void object_deserializer::serialize(const char *, time &x)
   x.set(tv);
 }
 
-void object_deserializer::serialize(const char *, basic_identifier &x)
+void object_deserializer::on_primary_key(const char *, basic_identifier &x)
 {
   basic_identifier_serializer_.deserialize(x, *buffer_);
 }
