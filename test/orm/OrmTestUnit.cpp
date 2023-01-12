@@ -43,11 +43,11 @@ struct person
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer) {
-    serializer.serialize("id", id);
-    serializer.serialize("name", name, 255);
-    serializer.serialize("ip", ip, 255);
-    serializer.serialize("age", age);
-    serializer.serialize("person_color", colors, "person_id",   "color",      matador::cascade_type::ALL);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("name", name, 255);
+    serializer.on_attribute("ip", ip, 255);
+    serializer.on_attribute("age", age);
+    serializer.on_has_many("person_color", colors, "person_id",   "color",      matador::cascade_type::ALL);
     //                    table name     member   left column   right column  cascade type
   }
 };

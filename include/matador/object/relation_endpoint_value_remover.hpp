@@ -54,7 +54,7 @@ public:
   template < template < class ... > class Container >
   void on_has_many(const char *id, has_many<Value, Container> &x, const char*, const char*, cascade_type cascade)
   {
-    serialize(id, x, cascade);
+    on_attribute(id, x, cascade);
   }
   template < class T, template < class ... > class Container >
   void on_has_many(const char *, has_many<T, Container> &, cascade_type) {}

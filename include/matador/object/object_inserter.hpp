@@ -166,7 +166,7 @@ void object_inserter::insert_has_many_item(const ItemHolderType &item,
                                            cascade_type cascade,
                                            typename std::enable_if<!matador::is_builtin<T>::value>::type*)
 {
-  if (cascade & cascade_type::INSERT) {
+  if ((cascade & cascade_type::INSERT) == cascade_type::INSERT) {
     // item is not in store, insert it
     insert_proxy(this->proxy(*item));
   }

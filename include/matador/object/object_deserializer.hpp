@@ -171,7 +171,7 @@ public:
       }
 
       typename has_many_item_holder<T>::object_type val;
-      serialize("", val);
+      on_attribute("", val);
 
       x.append(has_many_item_holder<T>(val, proxy));
     }

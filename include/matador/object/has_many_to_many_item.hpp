@@ -31,8 +31,8 @@ public:
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
-    serializer.serialize(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.serialize(this->right_column().c_str(), right_, matador::cascade_type::NONE);
+    serializer.on_belongs_to(this->left_column().c_str(), left_, matador::cascade_type::NONE);
+    serializer.on_belongs_to(this->right_column().c_str(), right_, matador::cascade_type::NONE);
   }
 
   object_ptr<L> left() const

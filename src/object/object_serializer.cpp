@@ -54,13 +54,13 @@ void object_serializer::on_primary_key(const char *, basic_identifier &x)
   basic_identifier_serializer_.serialize(x, *buffer_);
 }
 
-void object_serializer::on_belongs_to(const char *id, object_holder &x, cascade_type cascade)
+void object_serializer::on_belongs_to(const char *id, object_holder &x, cascade_type)
 {
   unsigned long oid = x.id();
   on_attribute(id, oid);
 }
 
-void object_serializer::on_has_one(const char *id, object_holder &x, cascade_type cascade)
+void object_serializer::on_has_one(const char *id, object_holder &x, cascade_type)
 {
   unsigned long oid = x.id();
   on_attribute(id, oid);

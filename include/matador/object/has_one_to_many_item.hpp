@@ -52,8 +52,8 @@ public:
   template<class SERIALIZER>
   void serialize(SERIALIZER &serializer)
   {
-    serializer.serialize(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.serialize(this->right_column().c_str(), right_, matador::cascade_type::NONE);
+    serializer.on_has_one(this->left_column().c_str(), left_, matador::cascade_type::NONE);
+    serializer.on_belongs_to(this->right_column().c_str(), right_, matador::cascade_type::NONE);
   }
 
   object_ptr<L> left() const
@@ -97,8 +97,8 @@ public:
   template<class SERIALIZER>
   void serialize(SERIALIZER &serializer)
   {
-    serializer.serialize(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.serialize(this->right_column().c_str(), right_);
+    serializer.on_has_one(this->left_column().c_str(), left_, matador::cascade_type::NONE);
+    serializer.on_attribute(this->right_column().c_str(), right_);
   }
 
   object_ptr<L> left() const
@@ -145,8 +145,8 @@ public:
   template<class SERIALIZER>
   void serialize(SERIALIZER &serializer)
   {
-    serializer.serialize(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.serialize(this->right_column().c_str(), right_.value(), SIZE);
+    serializer.on_has_one(this->left_column().c_str(), left_, matador::cascade_type::NONE);
+    serializer.on_attribute(this->right_column().c_str(), right_.value(), SIZE);
   }
 
   object_ptr<L> left() const
