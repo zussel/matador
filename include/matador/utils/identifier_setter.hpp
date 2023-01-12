@@ -39,25 +39,26 @@ public:
   {
     matador::access::serialize(*this, x);
   }
-  void serialize(const char*, T &x);
+  void on_attribute(const char*, T &x);
 
   template < class V >
-  void serialize(const char *id, identifier<V> &x)
+  void on_primary_key(const char *id, identifier<V> &x)
   {
     reading_pk_ = true;
     V val = {};
-    serialize(id, val);
+    on_attribute(id, val);
     x.value(val);
     reading_pk_ = false;
   }
 
   template < class V >
-  void serialize(const char*, V &) {}
-  void serialize(const char*, char *, size_t) {}
-  void serialize(const char*, std::string &, size_t) {}
-  void serialize(const char*, object_holder&, cascade_type) {}
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void serialize(const char *, abstract_has_many &, cascade_type) {}
+  void on_attribute(const char*, V &) {}
+  void on_attribute(const char*, char *, size_t) {}
+  void on_attribute(const char*, std::string &, size_t) {}
+  void on_belongs_to(const char*, object_holder&, cascade_type) {}
+  void on_has_one(const char*, object_holder&, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   T value_;
@@ -65,7 +66,7 @@ private:
 };
 
 template < class T >
-void identifier_setter<T>::serialize(const char*, T &x) {
+void identifier_setter<T>::on_attribute(const char*, T &x) {
   if (reading_pk_) {
     x = value_;
   }

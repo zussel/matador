@@ -155,7 +155,7 @@ void object_deleter::on_belongs_to(const char *, belongs_to<T> &x, cascade_type 
     --curr_obj->second;
   }
 
-  if (cascade & cascade_type::REMOVE) {
+  if ((cascade & cascade_type::REMOVE) == cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     proxy_stack_.push(x.proxy_);
     matador::access::serialize(*this, *(T*)x.ptr());
@@ -190,7 +190,7 @@ void object_deleter::on_has_one(const char *, has_one<T> &x, cascade_type cascad
     visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1));
   }
 
-  if (cascade & cascade_type::REMOVE) {
+  if ((cascade & cascade_type::REMOVE) == cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     proxy_stack_.push(x.proxy_);
     matador::access::serialize(*this, *(T*)x.ptr());
@@ -240,7 +240,7 @@ template<class T>
 void object_deleter::on_primary_key(const char *id, identifier <T> &x)
 {
   auto val = x.value();
-  serialize(id, val);
+  on_attribute(id, val);
 }
 
 }

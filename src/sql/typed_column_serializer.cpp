@@ -1,6 +1,3 @@
-//
-// Created by sascha on 2/25/16.
-//
 #include "matador/sql/typed_column_serializer.hpp"
 
 #include "matador/utils/identifiable_holder.hpp"
@@ -45,97 +42,97 @@ typed_column_serializer::typed_column_serializer()
   , create_varchar_column_func_(make_varchar_column<typed_varchar_column>)
 {}
 
-void typed_column_serializer::serialize(const char *id, char&)
+void typed_column_serializer::on_attribute(const char *id, char&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_char, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, short&)
+void typed_column_serializer::on_attribute(const char *id, short&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_short, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, int&)
+void typed_column_serializer::on_attribute(const char *id, int&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_int, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, long&)
+void typed_column_serializer::on_attribute(const char *id, long&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_long, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, long long&)
+void typed_column_serializer::on_attribute(const char *id, long long&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_long_long, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, unsigned char&)
+void typed_column_serializer::on_attribute(const char *id, unsigned char&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_char, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, unsigned short&)
+void typed_column_serializer::on_attribute(const char *id, unsigned short&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_unsigned_short, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, unsigned int&)
+void typed_column_serializer::on_attribute(const char *id, unsigned int&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_unsigned_int, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, unsigned long&)
+void typed_column_serializer::on_attribute(const char *id, unsigned long&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_unsigned_long, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, unsigned long long&)
+void typed_column_serializer::on_attribute(const char *id, unsigned long long&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_unsigned_long_long, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, float&)
+void typed_column_serializer::on_attribute(const char *id, float&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_float, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, double&)
+void typed_column_serializer::on_attribute(const char *id, double&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_double, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, bool&)
+void typed_column_serializer::on_attribute(const char *id, bool&)
 {
   cols_->push_back(create_column_func_(id, data_type::type_bool, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, char *, size_t s)
+void typed_column_serializer::on_attribute(const char *id, char *, size_t s)
 {
   cols_->push_back(create_varchar_column_func_(id, s, data_type::type_char_pointer, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, std::string &, size_t s)
+void typed_column_serializer::on_attribute(const char *id, std::string &, size_t s)
 {
   cols_->push_back(create_varchar_column_func_(id, s, data_type::type_varchar, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, std::string &)
+void typed_column_serializer::on_attribute(const char *id, std::string &)
 {
   cols_->push_back(create_column_func_(id, data_type::type_text, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, date &)
+void typed_column_serializer::on_attribute(const char *id, date &)
 {
   cols_->push_back(create_column_func_(id, data_type::type_date, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, time &)
+void typed_column_serializer::on_attribute(const char *id, time &)
 {
   cols_->push_back(create_column_func_(id, data_type::type_time, index_++));
 }
 
-void typed_column_serializer::serialize(const char *id, identifiable_holder &x, cascade_type)
+void typed_column_serializer::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
@@ -145,7 +142,17 @@ void typed_column_serializer::serialize(const char *id, identifiable_holder &x, 
   }
 }
 
-void typed_column_serializer::serialize(const char *id, basic_identifier &x)
+void typed_column_serializer::on_has_one(const char *id, identifiable_holder &x, cascade_type)
+{
+  if (x.has_primary_key()) {
+    x.primary_key()->serialize(id, *this);
+  } else {
+    std::unique_ptr<basic_identifier> pk(x.create_identifier());
+    pk->serialize(id, *this);
+  }
+}
+
+void typed_column_serializer::on_primary_key(const char *id, basic_identifier &x)
 {
   if (x.as_value()) {
     x.serialize(id, *this);

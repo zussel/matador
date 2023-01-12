@@ -1,7 +1,3 @@
-//
-// Created by sascha on 03.12.19.
-//
-
 #include "matador/sql/value_visitor.hpp"
 #include "matador/sql/basic_dialect.hpp"
 
@@ -44,22 +40,22 @@ void value_visitor::apply(matador::any &a, const char *id, serializer *s)
 
 void value_visitor::process(std::string &val)
 {
-  serializer_->serialize(id_, val);
+  serializer_->on_attribute(id_, val);
 }
 
 void value_visitor::process(char *val)
 {
-  serializer_->serialize(id_, val, 0);
+  serializer_->on_attribute(id_, val, 0);
 }
 
 void value_visitor::process(time &val)
 {
-  serializer_->serialize(id_, val);
+  serializer_->on_attribute(id_, val);
 }
 
 void value_visitor::process(date &val)
 {
-  serializer_->serialize(id_, val);
+  serializer_->on_attribute(id_, val);
 }
 
 value_to_string_visitor::value_to_string_visitor()

@@ -28,13 +28,13 @@ public:
   template < class T >
   void process(T &val, typename std::enable_if<std::is_integral<T>::value>::type* = 0)
   {
-    serializer_->serialize(id_, val);
+    serializer_->on_attribute(id_, val);
   }
 
   template < class T >
   void process(T &val, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
   {
-    serializer_->serialize(id_, val);
+    serializer_->on_attribute(id_, val);
   }
 
   void process(std::string &val);

@@ -3,7 +3,7 @@
 namespace matador {
 namespace detail {
 
-void json_mapper_serializer::serialize(const char *id, identifier<std::string> &pk)
+void json_mapper_serializer::on_primary_key(const char *id, identifier<std::string> &pk)
 {
   if (runtime_data_.key != id) {
     return;
@@ -15,7 +15,7 @@ void json_mapper_serializer::serialize(const char *id, identifier<std::string> &
   pk.value(runtime_data_.value.as<std::string>());
 }
 
-void json_mapper_serializer::serialize(const char *id, std::string &to)
+void json_mapper_serializer::on_attribute(const char *id, std::string &to)
 {
   if (runtime_data_.key != id) {
     return;
@@ -26,7 +26,7 @@ void json_mapper_serializer::serialize(const char *id, std::string &to)
   to = runtime_data_.value.as<std::string>();
 }
 
-void json_mapper_serializer::serialize(const char *id, bool &to)
+void json_mapper_serializer::on_attribute(const char *id, bool &to)
 {
   if (runtime_data_.key != id) {
     return;
@@ -37,7 +37,7 @@ void json_mapper_serializer::serialize(const char *id, bool &to)
   to = runtime_data_.value.as<bool>();
 }
 
-void json_mapper_serializer::serialize(const char *id, std::string &to, size_t)
+void json_mapper_serializer::on_attribute(const char *id, std::string &to, size_t)
 {
   if (runtime_data_.key != id) {
     return;
@@ -48,7 +48,7 @@ void json_mapper_serializer::serialize(const char *id, std::string &to, size_t)
   to = runtime_data_.value.as<std::string>();
 }
 
-void json_mapper_serializer::serialize(const char *id, date &to)
+void json_mapper_serializer::on_attribute(const char *id, date &to)
 {
   if (runtime_data_.key != id) {
     return;
@@ -60,7 +60,7 @@ void json_mapper_serializer::serialize(const char *id, date &to)
   to = date::parse(runtime_data_.value.as<std::string>(), date_format::ISO8601);
 }
 
-void json_mapper_serializer::serialize(const char *id, time &to)
+void json_mapper_serializer::on_attribute(const char *id, time &to)
 {
   if (runtime_data_.key != id) {
     return;

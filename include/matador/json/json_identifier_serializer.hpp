@@ -15,7 +15,7 @@ class date;
 class identifiable_holder;
 class abstract_has_many;
 
-enum cascade_type;
+enum class cascade_type;
 
 class OOS_JSON_API json_identifier_serializer
 {

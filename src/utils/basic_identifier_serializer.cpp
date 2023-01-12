@@ -28,72 +28,72 @@ void basic_identifier_serializer::deserialize(basic_identifier &x, byte_buffer &
   basic_identifier_.reset();
 }
 
-void basic_identifier_serializer::serialize(const char *, char &x)
+void basic_identifier_serializer::on_attribute(const char *, char &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, short &x)
+void basic_identifier_serializer::on_attribute(const char *, short &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, int &x)
+void basic_identifier_serializer::on_attribute(const char *, int &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, long &x)
+void basic_identifier_serializer::on_attribute(const char *, long &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, long long &x)
+void basic_identifier_serializer::on_attribute(const char *, long long &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, unsigned char &x)
+void basic_identifier_serializer::on_attribute(const char *, unsigned char &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, unsigned short &x)
+void basic_identifier_serializer::on_attribute(const char *, unsigned short &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, unsigned int &x)
+void basic_identifier_serializer::on_attribute(const char *, unsigned int &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, unsigned long &x)
+void basic_identifier_serializer::on_attribute(const char *, unsigned long &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, unsigned long long &x)
+void basic_identifier_serializer::on_attribute(const char *, unsigned long long &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, bool &x)
+void basic_identifier_serializer::on_attribute(const char *, bool &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, float &x)
+void basic_identifier_serializer::on_attribute(const char *, float &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, double &x)
+void basic_identifier_serializer::on_attribute(const char *, double &x)
 {
   serialize_value(x);
 }
 
-void basic_identifier_serializer::serialize(const char *, char *x, size_t size)
+void basic_identifier_serializer::on_attribute(const char *, char *x, size_t size)
 {
   if (restore_) {
     size_t len = 0;
@@ -108,7 +108,7 @@ void basic_identifier_serializer::serialize(const char *, char *x, size_t size)
   }
 }
 
-void basic_identifier_serializer::serialize(const char *, std::string &x)
+void basic_identifier_serializer::on_attribute(const char *, std::string &x)
 {
   if (restore_) {
     size_t len = 0;
@@ -125,7 +125,7 @@ void basic_identifier_serializer::serialize(const char *, std::string &x)
   }
 }
 
-void basic_identifier_serializer::serialize(const char *, std::string &x, size_t)
+void basic_identifier_serializer::on_attribute(const char *, std::string &x, size_t)
 {
   if (restore_) {
     size_t len = 0;
@@ -143,7 +143,7 @@ void basic_identifier_serializer::serialize(const char *, std::string &x, size_t
   }
 }
 
-void basic_identifier_serializer::serialize(const char *id, matador::time &x)
+void basic_identifier_serializer::on_attribute(const char *id, matador::time &x)
 {
   if (restore_) {
     struct timeval tv{};
@@ -152,12 +152,12 @@ void basic_identifier_serializer::serialize(const char *id, matador::time &x)
     x.set(tv);
   } else {
     struct timeval tv = x.get_timeval();
-    serialize(id, tv.tv_sec);
-    serialize(id, tv.tv_usec);
+    on_attribute(id, tv.tv_sec);
+    on_attribute(id, tv.tv_usec);
   }
 }
 
-void basic_identifier_serializer::serialize(const char *id, matador::date &x)
+void basic_identifier_serializer::on_attribute(const char *id, matador::date &x)
 {
   if (restore_) {
     int julian_date(0);
@@ -165,12 +165,14 @@ void basic_identifier_serializer::serialize(const char *id, matador::date &x)
     x.set(julian_date);
   } else {
     int jd(x.julian_date());
-    serialize(id, jd);
+    on_attribute(id, jd);
   }
 }
 
-void basic_identifier_serializer::serialize(const char *, matador::basic_identifier &) { }
+void basic_identifier_serializer::on_primary_key(const char *, matador::basic_identifier &) { }
 
-void basic_identifier_serializer::serialize(const char *, matador::identifiable_holder &, cascade_type) { }
+void basic_identifier_serializer::on_belongs_to(const char *, matador::identifiable_holder &, cascade_type) { }
+
+void basic_identifier_serializer::on_has_one(const char *, matador::identifiable_holder &, cascade_type) { }
 
 }

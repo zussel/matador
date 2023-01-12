@@ -86,7 +86,7 @@ void object_inserter::insert_object(object_holder &x, const std::type_index &typ
     return;
   }
 
-  if (cascade & cascade_type::INSERT) {
+  if ((cascade & cascade_type::INSERT) != cascade_type::NONE) {
     if (x.id() > 0) {
       // do the pointer count
       proxy_stack_.push(x.proxy_);

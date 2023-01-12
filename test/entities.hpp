@@ -243,8 +243,8 @@ public:
     void serialize(SERIALIZER &serializer)
     {
         serializer.on_primary_key("id", id);
-        serializer.on_("title", title, 1023);
-        serializer.serialize("student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
+        serializer.on_attribute("title", title, 1023);
+        serializer.on_has_many("student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
     }
 
     matador::identifier<unsigned long> id;
@@ -265,7 +265,7 @@ struct citizen : public person
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize(*matador::base_class<person>(this));
-        serializer.serialize("address", address_, matador::cascade_type::ALL);
+        serializer.on_has_one("address", address_, matador::cascade_type::ALL);
     }
 };
 
@@ -284,10 +284,10 @@ struct address
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("street", street, 255);
-        serializer.serialize("city", city, 255);
-        serializer.serialize("citizen", citizen_, matador::cascade_type::NONE);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("street", street, 255);
+        serializer.on_attribute("city", city, 255);
+        serializer.on_belongs_to("citizen", citizen_, matador::cascade_type::NONE);
     }
 };
 
@@ -316,10 +316,10 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("title", title_);
-        serializer.serialize("album", album_);
-        serializer.serialize("track_index", index_);
+        serializer.on_primary_key("id", id_);
+        serializer.on_attribute("title", title_);
+        serializer.on_has_one("album", album_, matador::cascade_type::ALL);
+        serializer.on_attribute("track_index", index_);
     }
 
     unsigned long id() { return id_.value(); }
@@ -357,9 +357,9 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("name", name_);
-        serializer.serialize("tracks", tracks_);
+        serializer.on_primary_key("id", id_);
+        serializer.on_attribute("name", name_);
+        serializer.on_has_many("tracks", tracks_, matador::cascade_type::ALL);
     }
 
     unsigned long id() { return id_.value(); }
@@ -372,7 +372,7 @@ public:
         tracks_.push_back(t);
     }
 
-    iterator insert(iterator pos, const track_ptr &b)
+    iterator insert(const iterator& pos, const track_ptr &b)
     {
         return tracks_.insert(pos, b);
     }
@@ -383,8 +383,8 @@ public:
     iterator end() { return tracks_.end(); }
     const_iterator end() const { return tracks_.end(); }
 
-    iterator erase(iterator i) { return tracks_.erase(i); }
-    iterator erase(iterator a, iterator b) { return tracks_.erase(a, b); }
+    iterator erase(const iterator& i) { return tracks_.erase(i); }
+    iterator erase(const iterator& a, const iterator& b) { return tracks_.erase(a, b); }
 
     size_type size() const { return tracks_.size(); }
     bool empty() const { return tracks_.empty(); }
@@ -414,10 +414,10 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("name", name_);
-        serializer.serialize("playlist_tracks", tracks_);
-        serializer.serialize("backup_tracks", backup_tracks_);
+        serializer.on_primary_key("id", id_);
+        serializer.on_attribute("name", name_);
+        serializer.on_has_many("playlist_tracks", tracks_, matador::cascade_type::ALL);
+        serializer.on_has_many("backup_tracks", backup_tracks_, matador::cascade_type::ALL);
     }
 
     std::string name() const { return name_; }
@@ -450,8 +450,8 @@ public:
     template < class S >
     void serialize(S &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("name", name);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("name", name);
     }
 
     matador::identifier<unsigned long> id;
@@ -474,9 +474,9 @@ public:
     template < class S >
     void serialize(S &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("name", name);
-        serializer.serialize("child", children, matador::cascade_type::ALL);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("name", name);
+        serializer.on_has_one("child", children, matador::cascade_type::ALL);
     }
 };
 
@@ -492,9 +492,9 @@ public:
     template < class S >
     void serialize(S &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("name", name);
-        serializer.serialize("children", children, "vector_id", "child_id", matador::cascade_type::ALL);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("name", name);
+        serializer.on_has_many("children", children, "vector_id", "child_id", matador::cascade_type::ALL);
     }
 
     matador::identifier<unsigned long> id;
@@ -514,9 +514,9 @@ public:
     template < class S >
     void serialize(S &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("name", name);
-        serializer.serialize("children", children, "list_id", "child_id", matador::cascade_type::ALL);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("name", name);
+        serializer.on_has_many("children", children, "list_id", "child_id", matador::cascade_type::ALL);
     }
 
     matador::identifier<unsigned long> id;
@@ -537,8 +537,8 @@ public:
     template < class S >
     void serialize(S &s)
     {
-        s.serialize("id", id);
-        s.serialize("elements", elements, "list_id", "value", matador::cascade_type::ALL);
+        s.on_primary_key("id", id);
+        s.on_has_many("elements", elements, "list_id", "value", matador::cascade_type::ALL);
     }
 };
 
@@ -560,8 +560,8 @@ public:
     template < class S >
     void serialize(S &s)
     {
-        s.serialize("id", id);
-        s.serialize("name", name, 255);
+        s.on_primary_key("id", id);
+        s.on_attribute("name", name, 255);
     }
 
 };
@@ -578,8 +578,8 @@ public:
     template < class S >
     void serialize(S &s)
     {
-        s.serialize("id", id);
-        s.serialize("name", name, 255);
+        s.on_primary_key("id", id);
+        s.on_attribute("name", name, 255);
     }
 };
 
@@ -594,10 +594,10 @@ public:
     template < class S >
     void serialize(S &s)
     {
-        s.serialize("id", id);
-        s.serialize("name", name, 255);
-        s.serialize("sources", sources);
-        s.serialize("destinations", destinations);
+        s.on_primary_key("id", id);
+        s.on_attribute("name", name, 255);
+        s.on_has_many("sources", sources, matador::cascade_type::ALL);
+        s.on_has_many("destinations", destinations, matador::cascade_type::ALL);
     }
 
 };

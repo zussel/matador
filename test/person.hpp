@@ -30,10 +30,10 @@ public:
     template < class T >
     void serialize(T &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("name", name_, 255);
-        serializer.serialize("birthdate", birthdate_);
-        serializer.serialize("height", height_);
+        serializer.on_primary_key("id", id_);
+        serializer.on_attribute("name", name_, 255);
+        serializer.on_attribute("birthdate", birthdate_);
+        serializer.on_attribute("height", height_);
     }
 
     void id(unsigned long i) { id_.value(i); }

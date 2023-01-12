@@ -91,7 +91,7 @@ public:
    */
   void serialize(const char *id, serializer &s) override
   {
-    s.serialize(id, id_);
+    s.on_attribute(id, id_);
   }
 
   /**
@@ -296,7 +296,7 @@ public:
    */
   void serialize(const char *id, serializer &s) override
   {
-    s.serialize(id, id_);
+    s.on_attribute(id, id_);
   }
 
   /**
@@ -506,7 +506,7 @@ public:
    */
   void serialize(const char *id, serializer &s) override
   {
-    s.serialize(id, id_.value(), SIZE);
+    s.on_attribute(id, id_.value(), SIZE);
   }
 
   /**

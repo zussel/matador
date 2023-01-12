@@ -78,28 +78,29 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  void serialize(const char *id, char &) override { bind(id, param_); }
-  void serialize(const char *id, short &) override { bind(id, param_); }
-  void serialize(const char *id, int &) override { bind(id, param_); }
-  void serialize(const char *id, long &) override { bind(id, param_); }
-  void serialize(const char *id, long long &) override { bind(id, param_); }
-  void serialize(const char *id, unsigned char &) override { bind(id, param_); }
-  void serialize(const char *id, unsigned short &) override { bind(id, param_); }
-  void serialize(const char *id, unsigned int &) override { bind(id, param_); }
-  void serialize(const char *id, unsigned long &) override { bind(id, param_); }
-  void serialize(const char *id, unsigned long long &) override { bind(id, param_); }
-  void serialize(const char *id, bool &) override { bind(id, param_); }
-  void serialize(const char *id, float &) override { bind(id, param_); }
-  void serialize(const char *id, double &) override { bind(id, param_); }
-  void serialize(const char *, matador::time &) override {}
-  void serialize(const char *, matador::date &) override {}
-  void serialize(const char *, char*, size_t) override {}
-  void serialize(const char *, std::string &, size_t) override {}
-  void serialize(const char *, std::string &) override {}
-  void serialize(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
-  void serialize(const char *, identifiable_holder &, cascade_type) override {}
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void serialize(const char *, abstract_has_many &, cascade_type) override {}
+  void on_attribute(const char *id, char &) override { bind(id, param_); }
+  void on_attribute(const char *id, short &) override { bind(id, param_); }
+  void on_attribute(const char *id, int &) override { bind(id, param_); }
+  void on_attribute(const char *id, long &) override { bind(id, param_); }
+  void on_attribute(const char *id, long long &) override { bind(id, param_); }
+  void on_attribute(const char *id, unsigned char &) override { bind(id, param_); }
+  void on_attribute(const char *id, unsigned short &) override { bind(id, param_); }
+  void on_attribute(const char *id, unsigned int &) override { bind(id, param_); }
+  void on_attribute(const char *id, unsigned long &) override { bind(id, param_); }
+  void on_attribute(const char *id, unsigned long long &) override { bind(id, param_); }
+  void on_attribute(const char *id, bool &) override { bind(id, param_); }
+  void on_attribute(const char *id, float &) override { bind(id, param_); }
+  void on_attribute(const char *id, double &) override { bind(id, param_); }
+  void on_attribute(const char *, matador::time &) override {}
+  void on_attribute(const char *, matador::date &) override {}
+  void on_attribute(const char *, char*, size_t) override {}
+  void on_attribute(const char *, std::string &, size_t) override {}
+  void on_attribute(const char *, std::string &) override {}
+  void on_primary_key(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
+  void on_belongs_to(const char *, identifiable_holder &, cascade_type) override {}
+  void on_has_one(const char *, identifiable_holder &, cascade_type) override {}
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
 
 private:
   template < class V >
@@ -136,26 +137,26 @@ public:
     return impl_->current_index();
   }
 
-  void serialize(const char *, char &) override {}
-  void serialize(const char *, short &) override {}
-  void serialize(const char *, int &) override {}
-  void serialize(const char *, long &) override {}
-  void serialize(const char *, long long &) override {}
-  void serialize(const char *, unsigned char &) override {}
-  void serialize(const char *, unsigned short &) override {}
-  void serialize(const char *, unsigned int &) override {}
-  void serialize(const char *, unsigned long &) override {}
-  void serialize(const char *, unsigned long long &) override {}
-  void serialize(const char *, bool &) override {}
-  void serialize(const char *, float &) override {}
-  void serialize(const char *, double &) override {}
-  void serialize(const char *, matador::time &) override {}
-  void serialize(const char *, matador::date &) override {}
-  void serialize(const char *id, char*, size_t) override { bind(id, param_.data(), param_.size()); }
-  void serialize(const char *id, std::string &, size_t) override { bind(id, param_.data(), param_.size()); }
-  void serialize(const char *id, std::string &) override { bind(id, param_);}
-  void serialize(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
-  void serialize(const char *id, identifiable_holder &x, cascade_type) override
+  void on_attribute(const char *, char &) override {}
+  void on_attribute(const char *, short &) override {}
+  void on_attribute(const char *, int &) override {}
+  void on_attribute(const char *, long &) override {}
+  void on_attribute(const char *, long long &) override {}
+  void on_attribute(const char *, unsigned char &) override {}
+  void on_attribute(const char *, unsigned short &) override {}
+  void on_attribute(const char *, unsigned int &) override {}
+  void on_attribute(const char *, unsigned long &) override {}
+  void on_attribute(const char *, unsigned long long &) override {}
+  void on_attribute(const char *, bool &) override {}
+  void on_attribute(const char *, float &) override {}
+  void on_attribute(const char *, double &) override {}
+  void on_attribute(const char *, matador::time &) override {}
+  void on_attribute(const char *, matador::date &) override {}
+  void on_attribute(const char *id, char*, size_t) override { bind(id, param_.data(), param_.size()); }
+  void on_attribute(const char *id, std::string &, size_t) override { bind(id, param_.data(), param_.size()); }
+  void on_attribute(const char *id, std::string &) override { bind(id, param_);}
+  void on_primary_key(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
+  void on_belongs_to(const char *id, identifiable_holder &x, cascade_type) override
   {
     if (x.has_primary_key()) {
       x.primary_key()->serialize(id, *this);
@@ -166,8 +167,19 @@ public:
       impl_->bind_null(false);
     }
   }
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void serialize(const char *, abstract_has_many &, cascade_type) override {}
+  void on_has_one(const char *id, identifiable_holder &x, cascade_type) override
+  {
+    if (x.has_primary_key()) {
+      x.primary_key()->serialize(id, *this);
+    } else {
+      std::unique_ptr<basic_identifier> basic_id(x.create_identifier());
+      impl_->bind_null(true);
+      basic_id->serialize(id, *this);
+      impl_->bind_null(false);
+    }
+  }
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
 
 private:
   template < class V >
@@ -217,26 +229,26 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  void serialize(const char *id, char &x) override { bind_value(id, x); }
-  void serialize(const char *id, short &x) override { bind_value(id, x); }
-  void serialize(const char *id, int &x) override { bind_value(id, x); }
-  void serialize(const char *id, long &x) override { bind_value(id, x); }
-  void serialize(const char *id, long long &x) override { bind_value(id, x); }
-  void serialize(const char *id, unsigned char &x) override { bind_value(id, x); }
-  void serialize(const char *id, unsigned short &x) override { bind_value(id, x); }
-  void serialize(const char *id, unsigned int &x) override { bind_value(id, x); }
-  void serialize(const char *id, unsigned long &x) override { bind_value(id, x); }
-  void serialize(const char *id, unsigned long long &x) override { bind_value(id, x); }
-  void serialize(const char *id, bool &x) override { bind_value(id, x); }
-  void serialize(const char *id, float &x) override { bind_value(id, x); }
-  void serialize(const char *id, double &x) override { bind_value(id, x); }
-  void serialize(const char *id, matador::time &x) override { bind_value(id, x); }
-  void serialize(const char *id, matador::date &x) override { bind_value(id, x); }
-  void serialize(const char *id, std::string &x) override { bind_value(id, x); }
-  void serialize(const char *, char *x, size_t s) override { impl_->bind(x, s, impl_->next_index()); }
-  void serialize(const char *, std::string &x, size_t s) override { impl_->bind(x, s, impl_->next_index()); }
-  void serialize(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
-  void serialize(const char *id, identifiable_holder &x, cascade_type) override
+  void on_attribute(const char *id, char &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, short &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, int &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, long &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, long long &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, unsigned char &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, unsigned short &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, unsigned int &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, unsigned long &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, unsigned long long &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, bool &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, float &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, double &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, matador::time &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, matador::date &x) override { bind_value(id, x); }
+  void on_attribute(const char *id, std::string &x) override { bind_value(id, x); }
+  void on_attribute(const char *, char *x, size_t s) override { impl_->bind(x, s, impl_->next_index()); }
+  void on_attribute(const char *, std::string &x, size_t s) override { impl_->bind(x, s, impl_->next_index()); }
+  void on_primary_key(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
+  void on_belongs_to(const char *id, identifiable_holder &x, cascade_type) override
   {
     if (x.has_primary_key()) {
       x.primary_key()->serialize(id, *this);
@@ -247,8 +259,19 @@ public:
       impl_->bind_null(false);
     }
   }
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void serialize(const char *, abstract_has_many &, cascade_type) override {}
+  void on_has_one(const char *id, identifiable_holder &x, cascade_type) override
+  {
+    if (x.has_primary_key()) {
+      x.primary_key()->serialize(id, *this);
+    } else {
+      std::unique_ptr<basic_identifier> basic_id(x.create_identifier());
+      impl_->bind_null(true);
+      basic_id->serialize(id, *this);
+      impl_->bind_null(false);
+    }
+  }
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
 
 private:
   template < class V >

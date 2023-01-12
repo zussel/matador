@@ -15,5 +15,13 @@ enum class cascade_type
   ALL = REMOVE | UPDATE | INSERT   /**< Cascade type all */
 };
 
+inline cascade_type operator~ (cascade_type a) { return (cascade_type)~(int)a; }
+inline cascade_type operator| (cascade_type a, cascade_type b) { return (cascade_type)((int)a | (int)b); }
+inline cascade_type operator& (cascade_type a, cascade_type b) { return (cascade_type)((int)a & (int)b); }
+inline cascade_type operator^ (cascade_type a, cascade_type b) { return (cascade_type)((int)a ^ (int)b); }
+inline cascade_type& operator|= (cascade_type& a, cascade_type b) { return (cascade_type&)((int&)a |= (int)b); }
+inline cascade_type& operator&= (cascade_type& a, cascade_type b) { return (cascade_type&)((int&)a &= (int)b); }
+inline cascade_type& operator^= (cascade_type& a, cascade_type b) { return (cascade_type&)((int&)a ^= (int)b); }
+
 }
 #endif //OOS_CASCADE_TYPE_HPP

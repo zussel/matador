@@ -68,7 +68,7 @@ struct date_object
   template < class S >
   void serialize(S &serializer)
   {
-    serializer.serialize("time", t);
+    serializer.on_attribute("time", t);
   }
 };
 
