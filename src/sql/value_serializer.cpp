@@ -99,7 +99,7 @@ void value_serializer::on_attribute(const char*, time &x)
 void value_serializer::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
-//    x.primary_key()->serialize(id, *this);
+    x.primary_key()->serialize(id, *this);
   } else {
     values_->push_back(std::make_shared<null_value>());
   }
@@ -108,7 +108,7 @@ void value_serializer::on_belongs_to(const char *id, identifiable_holder &x, cas
 void value_serializer::on_has_one(const char *id, identifiable_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
-//    x.primary_key()->serialize(id, *this);
+    x.primary_key()->serialize(id, *this);
   } else {
     values_->push_back(std::make_shared<null_value>());
   }
@@ -116,7 +116,7 @@ void value_serializer::on_has_one(const char *id, identifiable_holder &x, cascad
 
 void value_serializer::on_primary_key(const char *id, basic_identifier &x)
 {
-//  x.serialize(id, *this);
+  x.serialize(id, *this);
 }
 
 }

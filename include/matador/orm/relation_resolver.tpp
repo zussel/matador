@@ -15,7 +15,7 @@ template < class T >
 template < class V >
 void relation_resolver<T, typename std::enable_if<
   !std::is_base_of<basic_has_many_to_many_item, T>::value
->::type>::serialize(const char *id, belongs_to<V> &x, cascade_type cascade)
+>::type>::on_belongs_to(const char *id, belongs_to<V> &x, cascade_type cascade)
 {
   basic_identifier *pk = x.primary_key();
   if (!pk) {
@@ -90,7 +90,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   !matador::is_builtin<typename T::right_value_type>::value
->::type>::serialize(const char *, V &x)
+>::type>::on_attribute(const char *, V &x)
 {
   // must be right side value
   // if left table is loaded
@@ -111,7 +111,7 @@ template < class T >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   !matador::is_builtin<typename T::right_value_type>::value
->::type>::serialize(const char *, char *, size_t)
+>::type>::on_attribute(const char *, char *, size_t)
 {
   // must be right side value
   // if left table is loaded
@@ -125,7 +125,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   !matador::is_builtin<typename T::right_value_type>::value
->::type>::serialize(const char *, belongs_to<V> &x, cascade_type cascade)
+>::type>::on_belongs_to(const char *, belongs_to<V> &x, cascade_type cascade)
 {
   // increase reference count of has_many_to_xxx item proxy
   // because there will be an object for this kind of field
@@ -174,7 +174,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::serialize(const char *, V &x)
+>::type>::on_attribute(const char *, V &x)
 {
   // must be right side value
   // if left table is loaded
@@ -195,7 +195,7 @@ template < class T >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::serialize(const char *, char *, size_t)
+>::type>::on_attribute(const char *, char *, size_t)
 {
   // must be right side value
   // if left table is loaded
@@ -208,7 +208,7 @@ template < class T >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::serialize(const char *, std::string &x, size_t)
+>::type>::on_attribute(const char *, std::string &x, size_t)
 {
   if (left_table_ptr_->is_loaded()) {
     has_many_item_holder<typename T::right_value_type> value(x, nullptr);
@@ -225,7 +225,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::serialize(const char *, belongs_to<V> &x, cascade_type cascade)
+>::type>::on_belongs_to(const char *, belongs_to<V> &x, cascade_type cascade)
 {
   // check whether is left or right side value
   // left side will be determined first

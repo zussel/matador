@@ -277,8 +277,8 @@ struct address
     matador::belongs_to<citizen> citizen_;
 
     address() = default;
-    address(const std::string &str, const std::string &c)
-            : street(str), city(c)
+    address(std::string str, std::string c)
+            : street(std::move(str)), city(std::move(c))
     {}
 
     template < class SERIALIZER >

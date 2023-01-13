@@ -3,6 +3,8 @@
 
 #include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/object_proxy_accessor.hpp"
+#include "matador/object/belongs_to.hpp"
+#include "matador/object/has_one.hpp"
 
 #include "matador/utils/cascade_type.hpp"
 
@@ -18,9 +20,6 @@ template < class V, template < class ... > class C >
 class has_many;
 
 class object_holder;
-
-template < class T, object_holder_type OHT >
-class object_pointer;
 
 namespace detail {
 
@@ -44,8 +43,8 @@ public:
   void on_attribute(const char *, std::string &, size_t) {}
   template < class T >
   void on_attribute(const char *, T &, cascade_type) {}
-  void on_belongs_to(const char *id, object_holder &x, cascade_type);
-  void on_has_one(const char *id, object_holder &x, cascade_type);
+  void on_belongs_to(const char *id, belongs_to<Value> &x, cascade_type);
+  void on_has_one(const char *id, has_one<Value> &x, cascade_type);
   template < template < class ... > class Container >
   void on_has_many(const char *id, has_many<Value, Container> &x, cascade_type)
   {
@@ -87,7 +86,7 @@ void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &o
 }
 
 template<class Value>
-void relation_endpoint_value_inserter<Value>::on_belongs_to(const char *id, object_holder &x, cascade_type cascade)
+void relation_endpoint_value_inserter<Value>::on_belongs_to(const char *id, belongs_to<Value> &x, cascade_type cascade)
 {
   if (field_ != id) {
     return;
@@ -96,7 +95,7 @@ void relation_endpoint_value_inserter<Value>::on_belongs_to(const char *id, obje
 }
 
 template<class Value>
-void relation_endpoint_value_inserter<Value>::on_has_one(const char *id, object_holder &x, cascade_type cascade)
+void relation_endpoint_value_inserter<Value>::on_has_one(const char *id, has_one<Value> &x, cascade_type cascade)
 {
   if (field_ != id) {
     return;

@@ -5,7 +5,7 @@
 
 namespace matador {
 
-void object_json_serializer::serialize(const char *id, identifier <std::string> &pk)
+void object_json_serializer::on_primary_key(const char *id, identifier <std::string> &pk)
 {
   if (pk.is_valid()) {
     result_[id] = pk.value();
@@ -13,27 +13,27 @@ void object_json_serializer::serialize(const char *id, identifier <std::string> 
 
 }
 
-void object_json_serializer::serialize(const char *id, bool &x)
+void object_json_serializer::on_attribute(const char *id, bool &x)
 {
   result_[id] = x;
 }
 
-void object_json_serializer::serialize(const char *id, std::string &x)
+void object_json_serializer::on_attribute(const char *id, std::string &x)
 {
   result_[id] = x;
 }
 
-void object_json_serializer::serialize(const char *id, std::string &x, size_t)
+void object_json_serializer::on_attribute(const char *id, std::string &x, size_t)
 {
   result_[id] = x;
 }
 
-void object_json_serializer::serialize(const char *id, date &to)
+void object_json_serializer::on_attribute(const char *id, date &to)
 {
   result_[id] = to_string(to);
 }
 
-void object_json_serializer::serialize(const char *id, time &to)
+void object_json_serializer::on_attribute(const char *id, time &to)
 {
   result_[id] = to_string(to);
 }

@@ -37,19 +37,15 @@ public:
   }
 
   template<class T>
-  void serialize(const char *, T &) {}
-  void serialize(const char *, char *, size_t) { }
-  void serialize(const char *, std::string &, size_t) { }
-
+  void on_attribute(const char *, T &) {}
+  void on_attribute(const char *, char *, size_t) { }
+  void on_attribute(const char *, std::string &, size_t) { }
   template < class V >
-  void serialize(const char *, identifier<V> &x);
-
-//  template < class HAS_ONE >
-  void serialize(const char*, object_holder&, cascade_type) { }
-
-//  template < class HAS_MANY >
-  void serialize(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
-  void serialize(const char*, abstract_has_many&, cascade_type) {}
+  void on_primary_key(const char *, identifier<V> &x);
+  void on_belongs_to(const char*, identifiable_holder&, cascade_type) { }
+  void on_has_one(const char*, identifiable_holder&, cascade_type) { }
+  void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
+  void on_has_many(const char*, abstract_has_many&, cascade_type) {}
 
 private:
   column col_;
@@ -71,7 +67,7 @@ column identifier_column_resolver::resolve(T *obj)
 }
 
 template<class V>
-void identifier_column_resolver::serialize(const char *id, identifier<V> &)
+void identifier_column_resolver::on_primary_key(const char *id, identifier<V> &)
 {
   col_.name = id;
 }

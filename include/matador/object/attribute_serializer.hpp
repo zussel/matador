@@ -54,6 +54,18 @@ public:
   {}
 
   template < class V >
+  void on_primary_key(const char *id, identifier<V> &to)
+  {
+    if (id_ != id) {
+      return;
+    }
+    V val;
+    on_attribute(id, val);
+    to.value(val);
+    this->success_ = true;
+  }
+
+  template < class V >
   void on_attribute(const char *id, V &to, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     if (id_ != id) {
@@ -104,6 +116,9 @@ public:
     : basic_attribute_serializer(id)
     , from_(from)
   {}
+
+  template < class V >
+  void on_primary_key(const char *, identifier<V> &) {}
 
   template < class V >
   void on_attribute(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
@@ -158,11 +173,13 @@ public:
   {}
 
   template < class V >
-  void on_attribute(V &obj)
+  void serialize(V &obj)
   {
     access::serialize(*this, obj);
   }
 
+  template < class V >
+  void on_primary_key(const char *, identifier<V> &) {}
   template < class V >
   void on_attribute(const char *, V &) {}
   void on_attribute(const char *, char*, std::size_t) {}
@@ -175,7 +192,7 @@ public:
     this->success_ = true;
   }
   template < class V >
-  void on_has_ome(const char *, has_one<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_has_one(const char *, has_one<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     x = from_;
     this->success_ = true;
@@ -205,6 +222,9 @@ public:
   {
     access::serialize(*this, obj);
   }
+
+  template < class V >
+  void on_primary_key(const char *, identifier<V> &) {}
 
   template < class V >
   void on_attribute(const char *, V &) {}
@@ -248,6 +268,9 @@ public:
   }
 
   template < class V >
+  void on_primary_key(const char *, identifier<V> &) {}
+
+  template < class V >
   void on_attribute(const char *, V &) {}
   void on_attribute(const char *, char*, std::size_t) {}
   void on_attribute(const char *, std::string &, std::size_t) {}
@@ -285,6 +308,8 @@ public:
 
   ~attribute_reader() = default;
 
+  template < class V >
+  void on_primary_key(const char *, identifier<V> &) {}
   template < class V >
   void on_attribute(const char *, V &) {}
   void on_attribute(const char *id, std::string &to, size_t)
@@ -342,6 +367,18 @@ public:
   ~attribute_reader() = default;
 
   template < class V >
+  void on_primary_key(const char *id, identifier<V> &to)
+  {
+    if (id_ != id) {
+      return;
+    }
+    V val;
+    on_attribute(id, val);
+    to.value(val);
+    this->success_ = true;
+  }
+
+  template < class V >
   void on_attribute(const char *, V &) {}
   void on_attribute(const char *id, std::string &to, size_t)
   {
@@ -397,6 +434,16 @@ public:
   ~attribute_writer() = default;
 
   template < class V >
+  void on_primary_key(const char *id, identifier<V> &from)
+  {
+    if (id_ != id) {
+      return;
+    }
+    auto val = from.value();
+    on_attribute(id, val);
+  }
+
+  template < class V >
   void on_attribute(const char *id, V &from, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
   {
     if (id_ != id) {
@@ -450,6 +497,9 @@ public:
   {}
 
   template < class V >
+  void on_primary_key(const char *, identifier<V> &) {}
+
+  template < class V >
   void on_attribute(const char *, V &) {}
   void on_attribute(const char *, char*, size_t) {}
   void on_attribute(const char *, std::string &, size_t) {}
@@ -485,10 +535,13 @@ public:
   {}
 
   template < class V >
-  void on_attribute(V &obj)
+  void serialize(V &obj)
   {
     access::serialize(*this, obj);
   }
+
+  template < class V >
+  void on_primary_key(const char *, identifier<V> &) {}
 
   template < class V >
   void on_attribute(const char *, V &) {}
@@ -525,10 +578,13 @@ public:
   {}
 
   template < class V >
-  void on_attribute(V &obj)
+  void serialize(V &obj)
   {
     access::serialize(*this, obj);
   }
+
+  template < class V >
+  void on_primary_key(const char *, identifier<V> &) {}
 
   template < class V >
   void on_attribute(const char *, V &) {}
@@ -566,6 +622,16 @@ public:
   {}
 
   ~attribute_writer() = default;
+
+  template < class V >
+  void on_primary_key(const char *id, identifier<V> &from)
+  {
+    if (id_ != id) {
+      return;
+    }
+    auto val = from.value();
+    on_attribute(id, val);
+  }
 
   template < class V >
   void on_attribute(const char *id, V &from, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
@@ -719,6 +785,8 @@ public:
     return success_;
   }
 
+  template < class V >
+  void on_primary_key(const char *, identifier<V> &) {}
   template < class V >
   void on_attribute(const char *id, V &/*from*/)
   {

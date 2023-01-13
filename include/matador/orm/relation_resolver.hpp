@@ -72,16 +72,17 @@ public:
     matador::access::serialize(*this, obj);
   }
 
+  void on_primary_key(const char *, basic_identifier &) {}
   template < class V >
-  void serialize(const char *, V &) { }
-  void serialize(const char *, char *, size_t) { }
-  void serialize(const char *, std::string &, size_t) { }
+  void on_attribute(const char *, V &) { }
+  void on_attribute(const char *, char *, size_t) { }
+  void on_attribute(const char *, std::string &, size_t) { }
 
   template < class V >
-  void serialize(const char *id, belongs_to<V> &x, cascade_type cascade);
+  void on_belongs_to(const char *id, belongs_to<V> &x, cascade_type cascade);
 
   template < class V >
-  void serialize(const char *, has_one<V> &x, cascade_type cascade)
+  void on_has_one(const char *, has_one<V> &x, cascade_type cascade)
   {
     basic_identifier *pk = x.primary_key();
     if (!pk) {
@@ -125,13 +126,13 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, basic_has_many<V, C> &x, const char *, const char *, cascade_type cascade)
   {
-    serialize(id, x, cascade);
+    on_has_many(id, x, cascade);
   }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &x, cascade_type)
+  void on_has_many(const char *id, basic_has_many<V, C> &x, cascade_type)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);
@@ -247,17 +248,18 @@ public:
     matador::access::serialize(*this, obj);
   }
 
+  void on_primary_key(const char *, basic_identifier &) {}
   template < class V >
-  void serialize(const char *, V &x);
+  void on_attribute(const char *, V &x);
 
-  void serialize(const char *, char *, size_t);
-  void serialize(const char *, std::string &, size_t) { }
-
-  template < class V >
-  void serialize(const char *, belongs_to<V> &x, cascade_type cascade);
+  void on_attribute(const char *, char *, size_t);
+  void on_attribute(const char *, std::string &, size_t) { }
 
   template < class V >
-  void serialize(const char *, has_one<V> &x, cascade_type cascade)
+  void on_belongs_to(const char *, belongs_to<V> &x, cascade_type cascade);
+
+  template < class V >
+  void on_has_one(const char *, has_one<V> &x, cascade_type cascade)
   {
     // must be left side value
     // if left table is loaded
@@ -272,8 +274,8 @@ public:
     left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
   }
   
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
-  void serialize(const char *, abstract_has_many &, cascade_type) { }
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
+  void on_has_many(const char *, abstract_has_many &, cascade_type) { }
 
 private:
   template<class V>
@@ -382,17 +384,18 @@ public:
     matador::access::serialize(*this, obj);
   }
 
+  void on_primary_key(const char *, basic_identifier &) {}
   template < class V >
-  void serialize(const char *, V &x);
+  void on_attribute(const char *, V &x);
 
-  void serialize(const char *, char *, size_t);
-  void serialize(const char *, std::string &, size_t);
-
-  template < class V >
-  void serialize(const char *, belongs_to<V> &x, cascade_type cascade);
+  void on_attribute(const char *, char *, size_t);
+  void on_attribute(const char *, std::string &, size_t);
 
   template < class V >
-  void serialize(const char *, has_one<V> &x, cascade_type cascade)
+  void on_belongs_to(const char *, belongs_to<V> &x, cascade_type cascade);
+
+  template < class V >
+  void on_has_one(const char *, has_one<V> &x, cascade_type cascade)
   {
     // must be left side value
     // if left table is loaded
@@ -407,8 +410,8 @@ public:
     left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
   }
 
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
-  void serialize(const char *, abstract_has_many &, cascade_type) { }
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
+  void on_has_many(const char *, abstract_has_many &, cascade_type) { }
 
 private:
   template < class V >

@@ -1000,9 +1000,9 @@ public:
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &w) {
-    w.serialize("id", id);
-    w.serialize("name", name);
-    w.serialize("cycler", cycler, cascade_type::ALL);
+    w.on_primary_key("id", id);
+    w.on_attribute("name", name);
+    w.on_has_one("cycler", cycler, cascade_type::ALL);
   }
   matador::identifier<unsigned long> id;
   std::string name;

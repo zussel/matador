@@ -44,7 +44,7 @@ public:
   }
 
   template< class V >
-  void serialize(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     if (pk.is_valid()) {
       result_[id] = pk.value();
@@ -52,33 +52,33 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
     result_[id] = json::object();
   }
 
   template < class V >
-  void serialize(const char *id, V &val, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &val, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     result_[id] = val;
   }
 
-  void serialize(const char *id, identifier<std::string> &pk);
-  void serialize(const char *id, bool &to);
-  void serialize(const char *id, std::string &to);
-  void serialize(const char *id, std::string &to, size_t);
-  void serialize(const char *id, date &to);
-  void serialize(const char *id, time &to);
+  void on_primary_key(const char *id, identifier<std::string> &pk);
+  void on_attribute(const char *id, bool &to);
+  void on_attribute(const char *id, std::string &to);
+  void on_attribute(const char *id, std::string &to, size_t);
+  void on_attribute(const char *id, date &to);
+  void on_attribute(const char *id, time &to);
 
   template<class V>
-  void serialize(const char *id, belongs_to<V> &x, cascade_type)
+  void on_belongs_to(const char *id, belongs_to<V> &x, cascade_type)
   {
     if (!x.empty()) {
       result_[id] = json::object();
     }
   }
   template<class V>
-  void serialize(const char *id, has_one<V> &x, cascade_type)
+  void on_has_one(const char *id, has_one<V> &x, cascade_type)
   {
     if (!x.empty()) {
       object_json_serializer ojs;
@@ -87,7 +87,7 @@ public:
   }
 
   template < class V, template <class ...> class Container >
-  void serialize(const char *id, basic_has_many<V, Container> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *id, basic_has_many<V, Container> &x, const char *, const char *, cascade_type)
   {
     json array = json::array();
     object_json_serializer ojs;

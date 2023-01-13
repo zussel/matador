@@ -399,8 +399,8 @@ public:
   template < class SERIALIZER >
   void serialize(SERIALIZER &s)
   {
-    s.serialize("id", id);
-    s.serialize("name", name);
+    s.on_primary_key("id", id);
+    s.on_attribute("name", name);
   }
 
   matador::identifier<unsigned long> id;
@@ -1276,8 +1276,8 @@ struct relation
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
-    serializer.serialize("owner_id", owner);
-    serializer.serialize("item_id", item);
+    serializer.on_attribute("owner_id", owner);
+    serializer.on_attribute("item_id", item);
   }
 };
 

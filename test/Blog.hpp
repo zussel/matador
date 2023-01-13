@@ -1,7 +1,3 @@
-//
-// Created by sascha on 11.01.18.
-//
-
 #ifndef MATADOR_BLOG_HPP
 #define MATADOR_BLOG_HPP
 
@@ -28,9 +24,9 @@ struct person
   template<class Serializer>
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("name", name, 255);
-    serializer.serialize("birthday", birthday);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("name", name, 255);
+    serializer.on_attribute("birthday", birthday);
   }
 };
 }
@@ -50,7 +46,7 @@ struct author : public blog_detail::person
   void serialize(Serializer &serializer)
   {
     serializer.serialize(*matador::base_class<person>(this));
-    serializer.serialize("post", posts, "author", "id", matador::cascade_type::NONE);
+    serializer.on_has_many("post", posts, "author", "id", matador::cascade_type::NONE);
   }
 };
 
@@ -70,10 +66,10 @@ struct category
   template < class Serializer >
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("name", name, 255);
-    serializer.serialize("description", description);
-    serializer.serialize("post_category", posts, "category_id", "post_id", matador::cascade_type::NONE);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("name", name, 255);
+    serializer.on_attribute("description", description);
+    serializer.on_has_many("post_category", posts, "category_id", "post_id", matador::cascade_type::NONE);
   }
 };
 
@@ -93,11 +89,11 @@ struct comment
   template < class Serializer >
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("email", email, 255);
-    serializer.serialize("post", blog_post, matador::cascade_type::NONE);
-    serializer.serialize("content", content);
-    serializer.serialize("created_at", created_at);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("email", email, 255);
+    serializer.on_belongs_to("post", blog_post, matador::cascade_type::NONE);
+    serializer.on_attribute("content", content);
+    serializer.on_attribute("created_at", created_at);
   }
 };
 
@@ -137,14 +133,14 @@ struct post
   template < class Serializer >
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("title", title, 255);
-    serializer.serialize("author", writer, matador::cascade_type::NONE);
-    serializer.serialize("created_at", created_at);
-    serializer.serialize("post_category", categories, "category_id", "post_id", matador::cascade_type::INSERT);
-    serializer.serialize("comment", comments, "post", "id", matador::cascade_type::ALL);
-    serializer.serialize("post_tag", tags, "post_id", "tag", matador::cascade_type::ALL);
-    serializer.serialize("content", content);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("title", title, 255);
+    serializer.on_belongs_to("author", writer, matador::cascade_type::NONE);
+    serializer.on_attribute("created_at", created_at);
+    serializer.on_has_many("post_category", categories, "category_id", "post_id", matador::cascade_type::INSERT);
+    serializer.on_has_many("comment", comments, "post", "id", matador::cascade_type::ALL);
+    serializer.on_has_many("post_tag", tags, "post_id", "tag", matador::cascade_type::ALL);
+    serializer.on_attribute("content", content);
   }
 };
 

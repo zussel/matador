@@ -1,7 +1,3 @@
-//
-// Created by sascha on 9/7/16.
-//
-
 #ifndef OOS_HAS_MANY_LIST_HPP
 #define OOS_HAS_MANY_LIST_HPP
 
@@ -23,8 +19,8 @@ public:
   template < class S >
   void serialize(S &s)
   {
-    s.serialize("id", id);
-    s.serialize("name", name);
+    s.on_primary_key("id", id);
+    s.on_attribute("name", name);
   }
 };
 
@@ -42,9 +38,9 @@ public:
   template < class S >
   void serialize(S &s)
   {
-    s.serialize("id", id);
-    s.serialize("name", name);
-    s.serialize("owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
+    s.on_primary_key("id", id);
+    s.on_attribute("name", name);
+    s.on_has_many("owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
   }
 };
 }

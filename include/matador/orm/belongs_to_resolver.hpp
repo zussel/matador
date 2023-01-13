@@ -48,13 +48,14 @@ public:
     matador::access::serialize(*this, obj);
   }
 
+  void on_primary_key(const char *, basic_identifier &) {}
   template<class V>
-  void serialize(const char *, V &) {}
-  void serialize(const char *, char *, size_t) {}
-  void serialize(const char *, std::string &, size_t) { }
+  void on_attribute(const char *, V &) {}
+  void on_attribute(const char *, char *, size_t) {}
+  void on_attribute(const char *, std::string &, size_t) { }
 
   template<class V>
-  void serialize(const char *id, belongs_to<V> &, cascade_type)
+  void on_belongs_to(const char *id, belongs_to<V> &, cascade_type)
   {
     auto it = table_.find_table<V>();
     if (it != table_.end_table()) {
@@ -63,7 +64,7 @@ public:
   }
 
   template<class V>
-  void serialize(const char *id, has_one<V> &, cascade_type)
+  void on_has_one(const char *id, has_one<V> &, cascade_type)
   {
     auto it = table_.find_table<V>();
     if (it != table_.end_table()) {
@@ -71,8 +72,8 @@ public:
     }
   }
 
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void serialize(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   basic_table &table_;

@@ -70,8 +70,8 @@ struct user
   template < class S >
   void serialize(S &s)
   {
-    s.serialize("email", email);
-    s.serialize("name", name, 255);
+    s.on_primary_key("email", email);
+    s.on_attribute("name", name, 255);
   }
 };
 
@@ -125,8 +125,8 @@ struct product
   template < class S >
   void serialize(S &s)
   {
-    s.serialize("id", id);
-    s.serialize("name", name, 255);
+    s.on_primary_key("id", id);
+    s.on_attribute("name", name, 255);
   }
 };
 
