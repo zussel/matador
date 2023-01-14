@@ -1,24 +1,7 @@
-//
-// Created by sascha on 28.12.19.
-//
-
 #ifndef MATADOR_DATABASE_ERROR_HPP
 #define MATADOR_DATABASE_ERROR_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_sql_EXPORTS
-    #define OOS_SQL_API __declspec(dllexport)
-    #define EXPIMP_SQL_TEMPLATE
-  #else
-    #define OOS_SQL_API __declspec(dllimport)
-    #define EXPIMP_SQL_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-  #pragma warning(disable: 4355)
-  #pragma warning(disable: 4275)
-#else
-#define OOS_SQL_API
-#endif
+#include "matador/sql/export.hpp"
 
 #include <stdexcept>
 

@@ -66,9 +66,9 @@ SET(HEADER
   ../../include/matador/sql/database_error.hpp
   ../../include/matador/sql/basic_sql_logger.hpp
   ../../include/matador/sql/sql_logger.hpp
-)
+  ../../include/matador/sql/export.hpp)
 
-ADD_LIBRARY(matador-sql SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-sql STATIC ${SOURCES} ${HEADER})
 
 TARGET_LINK_LIBRARIES(matador-sql matador-logger matador-utils)
 

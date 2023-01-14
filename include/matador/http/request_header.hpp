@@ -1,18 +1,7 @@
 #ifndef MATADOR_REQUEST_HEADER_HPP
 #define MATADOR_REQUEST_HEADER_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_http_EXPORTS
-    #define OOS_HTTP_API __declspec(dllexport)
-    #define EXPIMP_HTTP_TEMPLATE
-  #else
-    #define OOS_HTTP_API __declspec(dllimport)
-    #define EXPIMP_HTTP_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define OOS_HTTP_API
-#endif
+#include "matador/http/export.hpp"
 
 namespace matador {
 namespace http {

@@ -1,11 +1,8 @@
-//
-// Created by sascha on 09.05.17.
-//
-
 #ifndef MATADOR_HAS_MANY_ITEM_HOLDER_HPP
 #define MATADOR_HAS_MANY_ITEM_HOLDER_HPP
 
 #include "matador/utils/varchar.hpp"
+#include "matador/utils/is_builtin.hpp"
 
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/basic_has_many_item_holder.hpp"

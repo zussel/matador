@@ -1,7 +1,3 @@
-//
-// Created by sascha on 8/11/15.
-//
-
 #include "PrimaryKeyUnitTest.hpp"
 
 #include "matador/utils/identifier.hpp"
@@ -11,8 +7,8 @@
 PrimaryKeyUnitTest::PrimaryKeyUnitTest()
   : unit_test("pk", "Primary Key Unit Test")
 {
-  add_test("create", std::bind(&PrimaryKeyUnitTest::test_create, this), "test create");
-  add_test("share", std::bind(&PrimaryKeyUnitTest::test_share, this), "test share");
+  add_test("create", [this] { test_create(); }, "test create");
+  add_test("share", [this] { test_share(); }, "test share");
 }
 
 void PrimaryKeyUnitTest::test_create()

@@ -41,6 +41,7 @@ void acceptor::open()
 {
   acceptor_.bind(endpoint_);
   acceptor_.listen(10);
+  name_ += " (fd: " + std::to_string(acceptor_.id()) + ")";
   log_.debug("fd %d: accepting connections", handle());
 }
 
@@ -112,7 +113,7 @@ void acceptor::notify_close(handler *)
 
 std::string acceptor::name() const
 {
-  return "acceptor";
+  return name_;
 }
 
 }

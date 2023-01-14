@@ -42,7 +42,7 @@ bool json_value_expression::evaluate(const json &data) const
       return val.as<double>() > 0;
     }
     return false;
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     return false;
   }
 }

@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "matador/unit/test_suite.hpp"
 
 #include "matador/net/os.hpp"
@@ -67,10 +50,10 @@
 #include "orm/OrmRelationTestUnit.hpp"
 #include "orm/TransactionTestUnit.hpp"
 
-#include "sql/ConnectionTestUnit.hpp"
 #include "sql/DialectTestUnit.hpp"
-#include "sql/QueryTestUnit.hpp"
 #include "sql/ConditionUnitTest.hpp"
+#include "sql/ConnectionTestUnit.hpp"
+#include "sql/QueryTestUnit.hpp"
 #include "sql/MSSQLDialectTestUnit.hpp"
 #include "sql/PostgreSQLDialectTestUnit.hpp"
 #include "sql/SQLiteDialectTestUnit.hpp"
@@ -88,6 +71,7 @@
 #include "net/LeaderFollowerThreadPoolTest.hpp"
 
 #include "http/HttpServerTest.hpp"
+#include "http/HttpClientTest.hpp"
 #include "http/JwtTest.hpp"
 #include "http/RequestParserTest.hpp"
 #include "http/ResponseParserTest.hpp"
@@ -180,6 +164,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new LeaderFollowerThreadPoolTest);
 
   suite.register_unit(new HttpServerTest);
+  suite.register_unit(new HttpClientTest);
   suite.register_unit(new JwtTest);
   suite.register_unit(new RequestParserTest);
   suite.register_unit(new ResponseParserTest);
@@ -228,6 +213,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ConnectionTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new QueryTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new BlogUnitTest("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new JsonOrmTest("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));

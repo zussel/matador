@@ -1,18 +1,7 @@
 #ifndef STRING_HPP
 #define STRING_HPP
 
-#ifdef _MSC_VER
-  #ifdef matador_utils_EXPORTS
-    #define OOS_UTILS_API __declspec(dllexport)
-    #define EXPIMP_UTILS_TEMPLATE
-  #else
-    #define OOS_UTILS_API __declspec(dllimport)
-    #define EXPIMP_UTILS_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define OOS_UTILS_API
-#endif
+#include "matador/utils/export.hpp"
 
 #include <sstream>
 #include <vector>
@@ -61,7 +50,7 @@ OOS_UTILS_API size_t split(const std::string &str, char delim, std::list<std::st
 OOS_UTILS_API std::string trim(const std::string& str, const std::string& whitespace = " \t");
 
 /**
- * Replaces all occurences of string from in given string
+ * Replaces all occurrences of string from in given string
  * with string to.
  *
  * @param in Source string where the replacement takes place

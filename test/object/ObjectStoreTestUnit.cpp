@@ -242,15 +242,16 @@ void ObjectStoreTestUnit::test_serializer()
   item->set_time(t);
   
   object_serializer serializer;
- 
+  object_deserializer deserializer;
+
   byte_buffer buffer;
-  serializer.serialize(item, &buffer);
+  serializer.backup(item, &buffer);
   
   delete item;
   
   item = new datatypes();
-  
-  serializer.deserialize(item, &buffer, &ostore_);
+
+  deserializer.restore(item, &buffer, &ostore_);
 
   UNIT_ASSERT_EQUAL(c, item->get_char());
   UNIT_ASSERT_EQUAL(f, item->get_float());
@@ -754,37 +755,37 @@ void ObjectStoreTestUnit::test_view()
 
 //void ObjectStoreTestUnit::test_clear_type()
 //{
-//  ostore_.attach<datatypes>("item");
+//  store_.attach<datatypes>("item");
 //
 //  for (int i = 0; i < 10; ++i) {
 //    std::stringstream str;
 //    str << "datatypes " << i+1;
-//    ostore_.insert(new datatypes(str.str(), i+1));
+//    store_.insert(new datatypes(str.str(), i+1));
 //  }
 //
 //  typedef object_view<datatypes> item_view_t;
 //
-//  item_view_t iview(ostore_);
+//  item_view_t iview(store_);
 //
 //  UNIT_ASSERT_EQUAL((int)iview.size(), 10);
 //  UNIT_ASSERT_FALSE(iview.empty());
-//  UNIT_ASSERT_FALSE(ostore_.empty());
+//  UNIT_ASSERT_FALSE(store_.empty());
 //
-//  ostore_.clear("item");
+//  store_.clear("item");
 //
-//  UNIT_ASSERT_TRUE(ostore_.empty());
+//  UNIT_ASSERT_TRUE(store_.empty());
 //  UNIT_ASSERT_EQUAL(iview.size(), 0UL);
 //  UNIT_ASSERT_TRUE(iview.empty());
 //
-//  prototype_iterator first = ostore_.begin();
-//  prototype_iterator last = ostore_.end();
+//  prototype_iterator first = store_.begin();
+//  prototype_iterator last = store_.end();
 //
 //  UNIT_ASSERT_FALSE(first == last);
 //
-//  ostore_.clear(true);
+//  store_.clear(true);
 //
-//  first = ostore_.begin();
-//  last = ostore_.end();
+//  first = store_.begin();
+//  last = store_.end();
 //
 //  UNIT_ASSERT_TRUE(first == last);
 //}

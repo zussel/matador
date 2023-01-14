@@ -1,18 +1,7 @@
 #ifndef MATADOR_LOGGER_HPP
 #define MATADOR_LOGGER_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_logger_EXPORTS
-    #define OOS_LOGGER_API __declspec(dllexport)
-    #define EXPIMP_LOGGER_TEMPLATE
-  #else
-    #define OOS_LOGGER_API __declspec(dllimport)
-    #define EXPIMP_LOGGER_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define OOS_LOGGER_API
-#endif
+#include "matador/logger/export.hpp"
 
 #include "matador/logger/log_level.hpp"
 #include "matador/logger/log_domain.hpp"
@@ -21,6 +10,7 @@
 #include <map>
 #include <list>
 #include <memory>
+#include <mutex>
 
 namespace matador {
 
@@ -57,6 +47,11 @@ public:
    * @param log_domain The log_domain containing the log sinks
    */
   logger(std::string source, std::shared_ptr<log_domain> log_domain);
+
+  logger(const logger& l) = delete;
+  logger(logger&& l) noexcept;
+  logger& operator=(const logger& l) = delete;
+  logger& operator=(logger&& l) noexcept;
 
   /**
    * Writes a log message string with log level LVL_FATAL
@@ -216,7 +211,7 @@ public:
    *
    * @return Represented log source name
    */
-  std::string source() const;
+  const std::string& source() const;
 
   /**
    * Returns the name of the connected log domain

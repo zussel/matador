@@ -8,6 +8,7 @@ using namespace std;
 
 void buffer::append(const char *chunk, size_t size)
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   if (size_ + size > buf_.max_size()) {
     throw std::out_of_range("size exceeds buffer capacity");
   }
@@ -47,16 +48,19 @@ size_t buffer::size() const
 
 void buffer::size(std::size_t s)
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   size_ = s;
 }
 
 bool buffer::empty() const
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   return size_ == 0;
 }
 
 void buffer::clear()
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   size_ = 0;
 }
 }

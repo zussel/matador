@@ -9,6 +9,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <iostream>
 
 #ifdef _WIN32
 #undef min
@@ -407,8 +408,8 @@ public:
    * @param valueFunc The function returning the value
    * @return An associative container containing all transformed elements
    */
-  template < template < class ... > class C, class Key, class Value >
-  C<Key, Value> collect(std::function<Key(const T& value)> &&keyFunc, std::function<Value(const T& value)> &&valueFunc);
+  template < template < class ... > class C, class Key, class Value, typename KeyFunc, typename ValueFunc >
+  C<Key, Value> collect(const KeyFunc &key_func, const ValueFunc &value_func);
 
   /**
    * Iterates over all stream elements and
@@ -663,8 +664,8 @@ C<T, Allocator> collect(stream <T> &s)
   return result;
 }
 
-template<class T, class Key, class Value, template<class ...> class C, class Comparator = std::less<Key>, class Allocator = std::allocator <std::pair<const Key, Value> > >
-C<Key, Value, Comparator, Allocator> collect(stream <T> &s, std::function<Key(const T& value)> &&key_func, std::function<Value(const T& value)> &&value_func)
+template<class T, class Key, class Value, template<class ...> class C, class Comparator = std::less<Key>, class Allocator = std::allocator <std::pair<const Key, Value> >, typename KeyFunc, typename ValueFunc >
+C<Key, Value, Comparator, Allocator> collect(stream <T> &s, const KeyFunc &key_func, const ValueFunc &value_func)
 {
   using container_type = C<Key, Value, Comparator, Allocator>;
   container_type result;
@@ -718,10 +719,10 @@ C<T, Allocator> stream<T>::collect()
 }
 
 template<class T>
-template < template < class ... > class C, class Key, class Value >
-C<Key, Value> stream<T>::collect(std::function<Key(const T& value)> &&key_func, std::function<Value(const T& value)> &&value_func)
+template < template < class ... > class C, class Key, class Value, typename KeyFunc, typename ValueFunc >
+C<Key, Value> stream<T>::collect(const KeyFunc &key_func, const ValueFunc &value_func)
 {
-  return matador::collect<T, Key, Value, C>(*this, std::forward<std::function<Key(const T& value)>>(key_func), std::forward<std::function<Value(const T& value)>>(value_func));
+  return matador::collect<T, Key, Value, C>(*this, key_func, value_func);
 }
 
 template<class T>

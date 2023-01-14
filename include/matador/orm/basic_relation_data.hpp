@@ -1,7 +1,3 @@
-//
-// Created by sascha on 9/29/17.
-//
-
 #ifndef MATADOR_RELATION_DATA_HPP
 #define MATADOR_RELATION_DATA_HPP
 
@@ -14,7 +10,6 @@
 #include "matador/object/identifier_proxy_map.hpp"
 
 #include <memory>
-
 
 namespace matador {
 

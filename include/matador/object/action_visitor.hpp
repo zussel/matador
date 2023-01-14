@@ -1,22 +1,7 @@
-//
-// Created by sascha on 11.03.16.
-//
-
 #ifndef OOS_ACTION_VISITOR_HPP
 #define OOS_ACTION_VISITOR_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_object_EXPORTS
-    #define MATADOR_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_OBJECT_TEMPLATE
-  #else
-    #define MATADOR_OBJECT_API __declspec(dllimport)
-    #define EXPIMP_OBJECT_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define MATADOR_OBJECT_API
-#endif
+#include "matador/object/export.hpp"
 
 namespace matador {
 
@@ -38,7 +23,7 @@ class delete_action;
 class MATADOR_OBJECT_API action_visitor
 {
 public:
-  virtual ~action_visitor() {}
+  virtual ~action_visitor() = default;
 
   /**
    * @brief Called with a insert_action

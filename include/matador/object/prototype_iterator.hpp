@@ -1,7 +1,3 @@
-//
-// Created by sascha on 11/30/15.
-//
-
 #ifndef OOS_PROTOTYPE_ITERATOR_HPP
 #define OOS_PROTOTYPE_ITERATOR_HPP
 

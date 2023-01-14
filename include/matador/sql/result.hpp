@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
@@ -407,6 +390,9 @@ template < class T >
 typename result_iterator<T>::self result_iterator<T>::operator++(int)
 {
   std::unique_ptr<T> obj(base::obj_.release());
+//  base::result_->p->bind(obj.get());
+//  if (!base::result_->p->fetch(obj.get())) {
+//    obj.reset();
   base::result_->p->bind(base::obj_.get());
   if (!base::result_->p->fetch(base::obj_.get())) {
     base::obj_.reset();

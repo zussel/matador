@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/18/15.
-//
-
 #include "matador/utils/string.hpp"
 #include "matador/utils/time.hpp"
 

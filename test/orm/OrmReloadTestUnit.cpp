@@ -1,5 +1,7 @@
 #include "OrmReloadTestUnit.hpp"
 
+#include <utility>
+
 #include "../person.hpp"
 #include "../entities.hpp"
 #include "../has_many_list.hpp"
@@ -9,7 +11,7 @@
 
 using namespace hasmanylist;
 
-OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, std::string dns)
+OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, std::string  dns)
   : unit_test(prefix + "_orm_reload", prefix + " orm reload test unit")
   , dns_(std::move(dns))
 {
@@ -27,7 +29,6 @@ OrmReloadTestUnit::OrmReloadTestUnit(const std::string &prefix, std::string dns)
 void OrmReloadTestUnit::test_load()
 {
   matador::persistence p(dns_);
-
   p.attach<person>("person");
 
   p.create();
@@ -79,7 +80,6 @@ void OrmReloadTestUnit::test_load()
 void OrmReloadTestUnit::test_load_twice()
 {
   matador::persistence p(dns_);
-
   p.attach<person>("person");
 
   p.create();
@@ -157,7 +157,6 @@ void OrmReloadTestUnit::test_load_twice()
 void OrmReloadTestUnit::test_load_has_one()
 {
   matador::persistence p(dns_);
-
   p.attach<master>("master");
   p.attach<child>("child");
 
@@ -211,7 +210,6 @@ void OrmReloadTestUnit::test_load_has_one()
 void OrmReloadTestUnit::test_load_has_many()
 {
   matador::persistence p(dns_);
-
   p.attach<child>("child");
   p.attach<children_list>("children_list");
 
@@ -274,7 +272,6 @@ void OrmReloadTestUnit::test_load_has_many()
 void OrmReloadTestUnit::test_load_has_many_to_many()
 {
   matador::persistence p(dns_);
-
   p.attach<person>("person");
   p.attach<student, person>("student");
   p.attach<course>("course");
@@ -364,7 +361,6 @@ void OrmReloadTestUnit::test_load_has_many_to_many()
 void OrmReloadTestUnit::test_load_has_many_to_many_remove()
 {
   matador::persistence p(dns_);
-
   p.attach<person>("person");
   p.attach<student, person>("student");
   p.attach<course>("course");
@@ -499,7 +495,6 @@ void OrmReloadTestUnit::test_load_has_many_to_many_remove()
 void OrmReloadTestUnit::test_load_has_many_int()
 {
   matador::persistence p(dns_);
-
   p.attach<many_ints>("many_ints");
 
   p.create();
@@ -565,7 +560,6 @@ using many_varchars = many_builtins<matador::varchar<255>, std::list>;
 void OrmReloadTestUnit::test_load_has_many_varchar()
 {
   matador::persistence p(dns_);
-
   p.attach<many_varchars>("many_varchars");
 
   p.create();
@@ -628,7 +622,6 @@ void OrmReloadTestUnit::test_load_has_many_varchar()
 void OrmReloadTestUnit::test_load_belongs_to_many()
 {
   matador::persistence p(dns_);
-
   p.attach_abstract<person>("person");
   p.attach<department>("department");
   p.attach<employee, person>("employee");

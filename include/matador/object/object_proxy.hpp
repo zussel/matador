@@ -1,27 +1,17 @@
 #ifndef OBJECT_PROXY_HPP
 #define OBJECT_PROXY_HPP
 
-#ifdef _MSC_VER
-  #ifdef matador_object_EXPORTS
-    #define MATADOR_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_OBJECT_TEMPLATE
-  #else
-    #define MATADOR_OBJECT_API __declspec(dllimport)
-    #define EXPIMP_OBJECT_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-  #define MATADOR_OBJECT_API
-#endif
+#include "matador/object/export.hpp"
 
 #include "matador/utils/identifier_resolver.hpp"
 
 #include "matador/object/object_holder_type.hpp"
+#include "matador/object/object_type_registry_entry_base.hpp"
 
 #include <ostream>
 #include <set>
 #include <list>
-
+#include <functional>
 #include <map>
 #include <memory>
 
@@ -32,9 +22,15 @@ class object_holder;
 class prototype_node;
 class basic_identifier;
 class transaction;
+class update_action;
+class object_serializer;
+class object_deserializer;
 
 namespace detail {
 class basic_relation_data;
+
+template<typename T> struct identity { typedef T type; };
+
 }
 
 /**
@@ -65,8 +61,12 @@ public:
   explicit object_proxy(basic_identifier *pk);
 
   template < class T >
-  explicit object_proxy(basic_identifier *pk, T *obj, object_store *store, prototype_node *node)
-    : object_proxy(pk, obj, 0, store, node)
+  object_proxy(basic_identifier *pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)
+    : object_type_entry_(object_type_entry)
+    , deleter_(&destroy<T>)
+    , creator_(&create<T>)
+    , name_(&type_id<T>)
+    , primary_key_(pk)
   {}
 
   /**
@@ -79,8 +79,13 @@ public:
    */
   template < typename T >
   explicit object_proxy(T *o)
-    : object_proxy(identifier_resolver<T>::resolve(o), o, 0, nullptr, nullptr)
-  {}
+    : obj_(o)
+    , deleter_(&destroy<T>)
+    , creator_(&create<T>)
+    , name_(&type_id<T>)
+  {
+    primary_key_ = identifier_resolver<T>::resolve(o);
+  }
 
   /**
    * @brief Create an object_proxy for a given object.
@@ -93,20 +98,18 @@ public:
    * @param os The object_store.
    */
   template < typename T >
-  object_proxy(T *o, unsigned long id, object_store *store)
-    : object_proxy(identifier_resolver<T>::resolve(o), o, id, store, nullptr)
-  {}
-
-  template < class T >
-  explicit object_proxy(basic_identifier *pk, T *obj, unsigned long id, object_store *store, prototype_node *node)
-  : obj_(obj)
-  , deleter_(&destroy<T>)
-  , namer_(&type_id<T>)
-  , oid(id)
-  , ostore_(store)
-  , node_(node)
-  , primary_key_(pk)
-  {}
+  object_proxy(T *o, unsigned long id, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry)
+    : obj_(o)
+    , object_type_entry_(object_type_entry)
+    , deleter_(&destroy<T>)
+    , creator_(&create<T>)
+    , name_(&type_id<T>)
+    , oid(id)
+  {
+    if (obj_ != nullptr) {
+      primary_key_ = identifier_resolver<T>::resolve(o);
+    }
+  }
 
   ~object_proxy();
 
@@ -118,10 +121,10 @@ public:
   const char* classname() const;
 
   /**
-   * Return the underlaying object
+   * Return the underlying object
    *
    * @tparam The type of the object
-   * @return The underlaying object
+   * @return The underlying object
    */
   template < typename T = void >
   T* obj()
@@ -130,10 +133,10 @@ public:
   }
 
   /**
-   * Return the underlaying object
+   * Return the underlying object
    *
    * @tparam The type of the object
-   * @return The underlaying object
+   * @return The underlying object
    */
   template < typename T = void >
   const T* obj() const
@@ -142,7 +145,7 @@ public:
   }
 
   /**
-   * Return the underlaying object store
+   * Return the underlying object store
    *
    * @return The object store
    */
@@ -210,12 +213,6 @@ public:
    */
   unsigned long operator--();
   unsigned long operator--(int);
-  /**
-   * Return true if the object_proxy is linked.
-   *
-   * @return True if the object_proxy is linked.
-   */
-  bool linked() const;
 
   /**
    * Return the next object proxy
@@ -246,17 +243,24 @@ public:
     if (!keep_ref_count) {
       reference_counter_ = 0;
     }
-    deleter_ = &destroy<T>;
-    namer_ = &type_id<T>;
     obj_ = o;
     oid = 0;
-    node_ = nullptr;
     if (obj_ != nullptr && resolve_identifier) {
       primary_key_ = identifier_resolver<T>::resolve(o);
-//      primary_key_.reset(identifier_resolver<T>::create());
     }
   }
 
+  void restore(byte_buffer &buffer, object_deserializer &deserializer);
+  void backup(byte_buffer &buffer, object_serializer &serializer);
+
+  void insert_object();
+  void delete_object();
+
+  void mark_modified();
+
+  void sync_id();
+
+  const std::type_index& type_index() const;
 
   /**
    * @brief Add an object_holder to the linked list.
@@ -272,8 +276,8 @@ public:
   /**
    * @brief Remove an object_holder from the linked list.
    *
-   * Each destroying ore reseting object_holder
-   * containg this object_proxy calls this method.
+   * Each destroying resets object_holder
+   * containing this object_proxy calls this method.
    * So object_proxy knows how many object_holder
    * are dealing with this object.
    *
@@ -316,37 +320,40 @@ public:
   bool has_identifier() const;
 
   /**
-   * Return the primary key. If underlaying object
+   * Return the primary key. If underlying object
    * doesn't have a primary key, an uninitialized
    * primary key is returned
    *
-   * @return The primary key of the underlaying object
+   * @return The primary key of the underlying object
    */
   basic_identifier* pk() const;
 
   void pk(basic_identifier *id);
 
-private:
-  transaction current_transaction();
-  bool has_transaction() const;
+  void create_object();
 
 private:
   friend class object_store;
   friend class prototype_node;
-  friend class prototype_tree;
   template < class T > friend class result;
-  friend class table_reader;
-  friend class restore_visitor;
   friend class object_holder;
   template < class T, object_holder_type OHT > friend class object_pointer;
   friend class detail::basic_relation_data;
-  typedef void (*deleter)(void*);
-  typedef const char* (*namer)();
+  using delete_func = std::function<void(void*)>;
+  using create_func = std::function<void(object_proxy*)>;
+  using name_func = std::function<const char*()>;
+
 
   template <typename T>
   static void destroy(void* p)
   {
     delete (T*)p;
+  }
+
+  template<typename T>
+  static void create(object_proxy *proxy)
+  {
+    proxy->reset(new T);
   }
 
   template < class T >
@@ -358,19 +365,21 @@ private:
   object_proxy *prev_ = nullptr;      /**< The previous object_proxy in the list. */
   object_proxy *next_ = nullptr;      /**< The next object_proxy in the list. */
 
-  void *obj_ = nullptr;         /**< The concrete object. */
-  deleter deleter_ = nullptr;             /**< The object deleter function */
-  namer namer_ = nullptr;       /**< The object classname function */
-  unsigned long oid = 0;        /**< The id of the concrete or expected object. */
+  void *obj_ = nullptr;                       /**< The concrete object. */
+
+  std::shared_ptr<detail::object_type_registry_entry_base> object_type_entry_ = detail::null_object_type_registry_entry::null_type_entry;
+
+  delete_func deleter_ = nullptr;             /**< The object deleter function */
+  create_func creator_ = nullptr;
+  name_func name_ = nullptr;                 /**< The object classname function */
+
+  unsigned long oid = 0;                      /**< The id of the concrete or expected object. */
 
   unsigned long reference_counter_ = 0;
 
-  object_store *ostore_ = nullptr;    /**< The object_store to which the object_proxy belongs. */
-  prototype_node *node_ = nullptr;    /**< The prototype_node containing the type of the object. */
-
   typedef std::set<object_holder *> ptr_set_t; /**< Shortcut to the object_holder set. */
   ptr_set_t ptr_set_;      /**< This set contains every object_holder pointing to this object_proxy. */
-  
+
   basic_identifier *primary_key_ = nullptr;
 };
 /// @endcond

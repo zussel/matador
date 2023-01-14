@@ -1,7 +1,3 @@
-//
-// Created by sascha on 1/15/16.
-//
-
 #ifndef OOS_HAS_MANY_SET_HPP
 #define OOS_HAS_MANY_SET_HPP
 

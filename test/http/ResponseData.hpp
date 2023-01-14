@@ -27,6 +27,17 @@ public:
   static constexpr const char* FILLED_PARTIAL_BODY_END = \
     R"(rge", "age": 37 })";
 
+  static constexpr const char* FILLED_PARTIAL_HEADER_BEGIN = \
+    "HTTP/1.1 200 OK\r\n" \
+    "Server:";
+
+  static constexpr const char* FILLED_PARTIAL_HEADER_END = \
+    "(Matador\r\n" \
+    "Content-Type: application/json\r\n" \
+    "Content-Length: 31\r\n" \
+    "\r\n" \
+    "{ \"name\": \"George\", \"age\": 37 }";
+
   static constexpr const char* FILLED_PARTIAL_BODY_BEGIN_2 = \
     "HTTP/1.1 200 OK\r\n" \
     "Server: Matador\r\n" \

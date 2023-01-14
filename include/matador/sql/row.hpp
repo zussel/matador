@@ -1,35 +1,7 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY {} without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef ROW_HPP
 #define ROW_HPP
 
-#ifdef _MSC_VER
-  #ifdef matador_sql_EXPORTS
-    #define OOS_SQL_API __declspec(dllexport)
-    #define EXPIMP_SQL_TEMPLATE
-  #else
-    #define OOS_SQL_API __declspec(dllimport)
-    #define EXPIMP_SQL_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-  #define OOS_SQL_API
-#endif
+#include "matador/sql/export.hpp"
 
 #include "matador/sql/value.hpp"
 
@@ -82,7 +54,7 @@ public:
    * already exists
    *
    * @param column Name of the column
-   * @return True if column was added, false if column aready exists
+   * @return True if column was added, false if column already exists
    */
   bool add_column(const std::string &column);
 
@@ -92,7 +64,7 @@ public:
    *
    * @param column Name of the column
    * @param value Value of the column
-   * @return True if column was added, false if column aready exists
+   * @return True if column was added, false if column already exists
    */
   bool add_column(const std::string &column, const std::shared_ptr<value> &value);
 

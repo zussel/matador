@@ -1,28 +1,13 @@
-//
-// Created by sascha on 11.03.16.
-//
-
 #ifndef OOS_ACTION_INSERTER_HPP
 #define OOS_ACTION_INSERTER_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_object_EXPORTS
-#define MATADOR_OBJECT_API __declspec(dllexport)
-#define EXPIMP_OBJECT_TEMPLATE
-#else
-#define MATADOR_OBJECT_API __declspec(dllimport)
-#define EXPIMP_OBJECT_TEMPLATE extern
-#endif
-#pragma warning(disable: 4251)
-#else
-#define MATADOR_OBJECT_API
-#endif
+#include "matador/object/export.hpp"
 
 #include "matador/object/action_visitor.hpp"
 #include "matador/object/action.hpp"
-#include "matador/object/insert_action.hpp"
 
 #include <vector>
+#include <memory>
 
 namespace matador {
 
@@ -42,7 +27,6 @@ public:
 
   virtual ~action_inserter() { }
 
-  template < class T >
   t_action_vactor::size_type insert(object_proxy *proxy);
 
   virtual void visit(insert_action *a);
@@ -58,31 +42,6 @@ private:
   object_proxy *proxy_ = nullptr;
   bool inserted_ = false;
 };
-
-template < class T >
-action_inserter::t_action_vactor::size_type action_inserter::insert(object_proxy *proxy) {
-  proxy_ = proxy;
-  inserted_ = false;
-  t_action_vactor::size_type end = actions_.get().size();
-  for (t_action_vactor::size_type i = 0; i < end; ++i) {
-//  while (first != last) {
-    actions_.get().at(i)->accept(this);
-
-//    (*first)->accept(this);
-    if (inserted_) {
-      return i;
-    }
-  }
-  if (!inserted_) {
-    T* obj = (T*)object(proxy);
-    const char* t = type(proxy);
-    std::shared_ptr<insert_action> ia(new insert_action(t, obj));
-    ia->push_back(proxy_);
-    actions_.get().push_back(ia);
-    return actions_.get().size() - 1;
-  }
-  return actions_.get().size();
-}
 
 /// @endcond
 

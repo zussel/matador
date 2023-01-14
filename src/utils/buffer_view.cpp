@@ -28,6 +28,7 @@ buffer_view::buffer_view(buffer_view &&x) noexcept
 
 buffer_view &buffer_view::operator=(buffer_view &&x) noexcept
 {
+  std::lock_guard<std::mutex> lock(x.mutex_);
   start_ = x.start_;
   cursor_ = x.cursor_;
   size_ = x.size_;
@@ -44,7 +45,8 @@ buffer_view &buffer_view::operator=(const std::string &str)
 
 void buffer_view::bump(size_t len)
 {
-  cursor_ += std::min(len, capacity());
+  std::lock_guard<std::mutex> lock(mutex_);
+  cursor_ += std::min(len, capacity_unlocked());
 }
 
 const char *buffer_view::data() const
@@ -64,22 +66,30 @@ size_t buffer_view::size() const
 
 size_t buffer_view::capacity() const
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   return size_ - (cursor_ - start_);
 }
 
 bool buffer_view::empty() const
 {
-  return capacity() == size_;
+  std::lock_guard<std::mutex> lock(mutex_);
+  return capacity_unlocked() == size_;
 }
 
 bool buffer_view::full() const
 {
-  return capacity() == 0;
+  std::lock_guard<std::mutex> lock(mutex_);
+  return capacity_unlocked() == 0;
 }
 
 void buffer_view::clear()
 {
+  std::lock_guard<std::mutex> lock(mutex_);
 	cursor_ = const_cast<char*>(start_);
+}
+
+size_t buffer_view::capacity_unlocked() const {
+  return size_ - (cursor_ - start_);
 }
 
 }

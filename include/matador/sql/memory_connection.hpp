@@ -1,7 +1,3 @@
-//
-// Created by sascha on 1/28/16.
-//
-
 #ifndef OOS_MEMORY_CONNECTION_HPP
 #define OOS_MEMORY_CONNECTION_HPP
 

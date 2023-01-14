@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/9/17.
-//
-
 #ifndef MATADOR_RELATIONTESTUNIT_HPP
 #define MATADOR_RELATIONTESTUNIT_HPP
 
@@ -35,6 +31,8 @@ public:
 
   void test_blog_single_post();
   void test_blog_multi_posts();
+
+  void test_output();
 };
 
 

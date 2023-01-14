@@ -1,36 +1,7 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef OOS_DATABASE_TYPES_HPP
 #define OOS_DATABASE_TYPES_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_sql_EXPORTS
-    #define OOS_SQL_API __declspec(dllexport)
-    #define EXPIMP_SQL_TEMPLATE
-  #else
-    #define OOS_SQL_API __declspec(dllimport)
-    #define EXPIMP_SQL_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-  #pragma warning(disable: 4355)
-#else
-#define OOS_SQL_API
-#endif
+#include "matador/sql/export.hpp"
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
@@ -89,8 +60,8 @@ enum struct database_type {
 /**
  * @brief Output operator for data types
  *
- * @param out The output strream to write on
- * @param type The data ytpe to be written
+ * @param out The output stream to write on
+ * @param type The data type to be written
  * @return The modified output stream
  */
 //OOS_SQL_API std::ostream& operator<<(std::ostream &out, const matador::database_type &type);

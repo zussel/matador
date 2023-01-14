@@ -38,6 +38,9 @@ public:
    */
   ~fdset() = default;
 
+  fdset(fdset&& x) noexcept;
+  fdset& operator=(fdset&& x) noexcept;
+
   /**
    * Reset all bits to zero
    */

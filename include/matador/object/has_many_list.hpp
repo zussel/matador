@@ -1,7 +1,3 @@
-//
-// Created by sascha on 1/15/16.
-//
-
 #ifndef OOS_TEST_HAS_MANY_LIST_HPP
 #define OOS_TEST_HAS_MANY_LIST_HPP
 

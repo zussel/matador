@@ -1,22 +1,7 @@
-//
-// Created by sascha on 6/1/16.
-//
-
 #ifndef OOS_TOKEN_VISITOR_HPP
 #define OOS_TOKEN_VISITOR_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_sql_EXPORTS
-    #define OOS_SQL_API __declspec(dllexport)
-    #define EXPIMP_SQL_TEMPLATE
-  #else
-    #define OOS_SQL_API __declspec(dllimport)
-    #define EXPIMP_SQL_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define OOS_SQL_API
-#endif
+#include "matador/sql/export.hpp"
 
 namespace matador {
 

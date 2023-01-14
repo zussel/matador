@@ -1,18 +1,7 @@
 #ifndef REACTOR_JSON_HPP
 #define REACTOR_JSON_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_json_EXPORTS
-    #define OOS_JSON_API __declspec(dllexport)
-    #define EXPIMP_JSON_TEMPLATE
-  #else
-    #define OOS_JSON_API __declspec(dllimport)
-    #define EXPIMP_JSON_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define OOS_JSON_API
-#endif
+#include "matador/json/export.hpp"
 
 #include "json_format.hpp"
 #include "json_utils.hpp"
@@ -523,12 +512,33 @@ public:
    * @tparam T Type of the new value
    * @param val Value to set
    */
-  template < class T >
-  void reset(T val, typename std::enable_if<std::is_convertible<T, std::string>::value>::type * = 0)
+  void reset(const std::string &val)
   {
     if (type_ != e_string) {
       clear();
       type_ = e_string;
+    }
+    if (value_.str == nullptr) {
+      value_.str = new std::string(val);
+    } else {
+      value_.str->assign(val);
+    }
+  }
+
+  /**
+   * Resets the json value to a new string type value.
+   *
+   * @tparam T Type of the new value
+   * @param val Value to set
+   */
+  void reset(const char *val)
+  {
+    if (type_ != e_string) {
+      clear();
+      type_ = e_string;
+    }
+    if (val == nullptr) {
+      return;
     }
     if (value_.str == nullptr) {
       value_.str = new std::string(val);

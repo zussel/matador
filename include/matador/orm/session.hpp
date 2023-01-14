@@ -1,22 +1,7 @@
-//
-// Created by sascha on 21.03.16.
-//
-
 #ifndef OOS_SESSION_HPP
 #define OOS_SESSION_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_orm_EXPORTS
-#define OOS_ORM_API __declspec(dllexport)
-#define EXPIMP_ORM_TEMPLATE
-#else
-#define OOS_ORM_API __declspec(dllimport)
-#define EXPIMP_ORM_TEMPLATE extern
-#endif
-#pragma warning(disable: 4251)
-#else
-#define OOS_ORM_API
-#endif
+#include "matador/orm/export.hpp"
 
 #include "matador/object/has_many.hpp"
 #include "matador/object/object_view.hpp"
@@ -148,7 +133,7 @@ public:
   object_ptr<T> save(const object_ptr<T> &obj)
   {
     if (store().has_transaction()) {
-      store().current_transaction().on_update<T>(obj.proxy_);
+      store().current_transaction().on_update(obj.proxy_);
     } else {
       persistence_.store().mark_modified(obj);
       flush();

@@ -74,7 +74,8 @@ SET (TEST_NET_SOURCES
   net/IOEchoServerConnection.hpp
   net/IOEchoServer.cpp
   net/IOEchoServer.hpp
-  net/NetUtils.hpp net/LeaderFollowerThreadPoolTest.cpp net/LeaderFollowerThreadPoolTest.hpp)
+  net/LeaderFollowerThreadPoolTest.cpp
+  net/LeaderFollowerThreadPoolTest.hpp)
 
 SET (TEST_HTTP_SOURCES
   http/RequestParserTest.cpp
@@ -94,7 +95,9 @@ SET (TEST_HTTP_SOURCES
   http/JwtTest.cpp
   http/JwtTest.hpp
   http/MiddlewareTest.cpp
-  http/MiddlewareTest.hpp)
+  http/MiddlewareTest.hpp
+  http/HttpClientTest.cpp
+  http/HttpClientTest.hpp http/HttpTestServer.cpp http/HttpTestServer.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp
@@ -168,7 +171,7 @@ SET (TEST_ORM_SOURCES
   orm/JsonOrmTest.cpp
   orm/JsonOrmTest.hpp)
 
-SET (TEST_SOURCES test_matador.cpp dto.hpp)
+SET (TEST_SOURCES test_matador.cpp dto.hpp NetUtils.hpp)
 
 ADD_EXECUTABLE(test_matador
   EXCLUDE_FROM_ALL

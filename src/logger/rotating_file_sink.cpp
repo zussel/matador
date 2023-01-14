@@ -89,10 +89,10 @@ void rotating_file_sink::prepare(const std::string &path)
   // extract base path and extension
   std::vector<std::string> result;
   if (matador::split(filename, '.', result) != 2) {
-    throw std::logic_error("splitted path must consists of two elements");
+    throw std::logic_error("split path must consists of two elements");
   }
-  base_path_ = result.at(0);
-  extension_ = result.at(1);
+  base_path_.assign(result[0]);
+  extension_.assign(result[1]);
   // get current path
   auto pwd = os::get_current_dir();
   // make path

@@ -6,6 +6,7 @@
 #include <array>
 #include <cstddef>
 #include <string>
+#include <mutex>
 
 namespace matador {
 
@@ -26,7 +27,7 @@ public:
    *
    * @param x Buffer to copy from
    */
-  buffer(const buffer &x) = default;
+  buffer(const buffer &x) = delete;
 
   /**
    * Copy assigns from given buffer x
@@ -34,7 +35,7 @@ public:
    * @param x Buffer to assign from
    * @return The assign buffer
    */
-  buffer& operator=(const buffer &x) = default;
+  buffer& operator=(const buffer &x) = delete;
 
   /**
    * Destroys the buffer
@@ -120,6 +121,7 @@ public:
 private:
   std::array<char, 16384> buf_{};
   std::size_t size_ = 0;
+  mutable std::mutex mutex_;
 };
 
 }

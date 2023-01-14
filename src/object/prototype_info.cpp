@@ -1,4 +1,5 @@
 #include "matador/object/prototype_info.hpp"
+#include "matador/object/prototype_node.hpp"
 
 #include <algorithm>
 

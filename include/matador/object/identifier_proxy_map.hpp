@@ -1,7 +1,3 @@
-/**
- * @author sascha on 5/2/16.
- */
-
 #ifndef OOS_IDENTIFIER_PROXY_MAP_HPP
 #define OOS_IDENTIFIER_PROXY_MAP_HPP
 

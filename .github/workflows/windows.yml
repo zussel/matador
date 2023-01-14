@@ -67,10 +67,10 @@ jobs:
           copy sqlite-amalgamation-3360000\sqlite3*.h include\
           dir include
       - name: Set variables for SQLite
-        shell: bash
         run: |
-          echo "C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_PATH
-          echo "SQLITE3_DIR=C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_ENV
+          echo "C:\ProgramData\chocolatey\lib\SQLite\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          "C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_PATH
+          "SQLITE3_DIR=C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_ENV
       - name: Install mysql
         shell: cmd
         run: choco install mysql
@@ -83,9 +83,8 @@ jobs:
           "C:\tools\mysql\current\bin\mysql" -u root -e "FLUSH PRIVILEGES"
           "C:\tools\mysql\current\bin\mysql" -u root -e "SHOW GRANTS FOR 'test'@'localhost'"
       - name: Set MySQL variables
-        shell: bash
         run: |
-          echo "MYSQL_DIR=C:\mysql" >> $GITHUB_ENV
+          "MYSQL_DIR=C:\tools\mysql\current" >> $GITHUB_ENV
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake

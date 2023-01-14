@@ -189,6 +189,57 @@ object_proxy* object_store::insert_proxy(object_proxy *proxy)
   return object_map_.insert(std::make_pair(proxy->id(), proxy)).first->second;
 }
 
+object_proxy* object_store::insert(object_proxy *proxy, bool notify)
+{
+  if (proxy == nullptr) {
+    throw_object_exception("proxy is null");
+  }
+  if (proxy->obj() == nullptr) {
+    throw_object_exception("object is null");
+  }
+  iterator node = find(proxy->classname());
+  if (node == end()) {
+    throw_object_exception("couldn't find object type");
+  }
+  // check if proxy/object is already inserted
+  if (proxy->ostore() != nullptr && proxy->id() > 0) {
+    return proxy;
+  }
+  // check if proxy/object is already inserted
+  if (proxy->ostore() == nullptr && proxy->id() > 0) {
+    throw_object_exception("object has id but doesn't belong to a store");
+  }
+
+  proxy->id(seq_.next());
+  proxy->object_type_entry_ = node->object_type_entry_;
+
+  // get object
+  if (proxy->obj() && proxy->has_identifier() && !proxy->pk()->is_valid()) {
+    // if object has primary key of type short, int or long
+    // set the id of proxy as value
+    proxy->sync_id();
+  } else if (proxy->obj() && proxy->has_identifier()) {
+    synchronizer_.sync(*proxy->pk());
+  }
+
+  node->insert(proxy);
+
+  // initialize object
+  if (proxy->obj()) {
+    object_inserter_.insert(proxy, notify);
+  }
+  // set this into persistent serializable
+  // notify observer
+  if (notify && !transactions_.empty()) {
+    transactions_.top().on_insert(proxy);
+  }
+
+  // insert element into hash map for fast lookup
+  object_map_.insert(std::make_pair(proxy->id(), proxy));
+
+  return proxy;
+}
+
 void object_store::remove_proxy(object_proxy *proxy)
 {
   if (proxy == nullptr) {
@@ -206,6 +257,40 @@ void object_store::remove_proxy(object_proxy *proxy)
 
   proxy->node()->remove(proxy);
   delete proxy;
+}
+
+void object_store::remove(object_proxy *proxy, bool check_if_deletable)
+{
+  if (proxy == nullptr) {
+    throw_object_exception("object proxy is nullptr");
+  }
+  if (proxy->node() == nullptr) {
+    throw_object_exception("prototype node is nullptr");
+  }
+  // check if object tree is deletable
+  if (check_if_deletable && !object_deleter_.is_deletable(proxy)) {
+    throw_object_exception("object is not removable");
+  }
+
+  if (check_if_deletable) {
+    object_deleter_.remove();
+  } else {
+    // single deletion
+    if (object_map_.erase(proxy->id()) != 1) {
+      // couldn't remove object
+      // throw exception
+      throw_object_exception("couldn't remove object");
+    }
+
+    proxy->node()->remove(proxy);
+
+    if (!transactions_.empty()) {
+      // notify transaction
+      transactions_.top().on_delete(proxy);
+    } else {
+      on_proxy_delete_(proxy);
+    }
+  }
 }
 
 prototype_node* object_store::find_prototype_node(const char *type) const {
@@ -282,6 +367,31 @@ prototype_node* object_store::remove_prototype_node(prototype_node *node, bool c
   return next;
 }
 
+prototype_node* object_store::attach_node(prototype_node *node, const char *parent, const char *type_name, basic_identifier *pk)
+{
+  std::unique_ptr<prototype_node> nptr(node);
+  // set node to root node
+  prototype_node *parent_node = find_parent(parent);
+  /*
+   * try to insert new prototype node
+   */
+  // insert node
+  if (parent_node != nullptr) {
+    parent_node->insert(node);
+  } else {
+    last_->prev->append(node);
+  }
+  if (pk) {
+    node->id_.reset(pk);
+  }
+  // store prototype in map
+  // Todo: check return value
+  prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
+  typeid_prototype_map_[type_name].insert(std::make_pair(node->type_, node));
+
+  return nptr.release();
+}
+
 prototype_node *object_store::find_parent(const char *name) const
 {
   prototype_node *parent_node(nullptr);
@@ -304,6 +414,35 @@ void object_store::pop_transaction()
   transactions_.pop();
 }
 
+void object_store::validate(prototype_node *node, const char* type_name)
+{
+  std::unique_ptr<prototype_node> nptr(node);
+  // try to find node in prepared map
+  auto i = prototype_map_.find(node->type_);
+  if (i != prototype_map_.end()) {
+    throw_object_exception("prototype already inserted: " << node->type_.c_str());
+  }
+  // try to find by typeid name
+  i = prototype_map_.find(type_name);
+  if (i != prototype_map_.end()) {
+    throw_object_exception("prototype already inserted: " << node->type_.c_str());
+  }
+  /*
+   * no typeid found, seems to be
+   * a new type
+   * to be sure check in typeid map
+   */
+  auto j = typeid_prototype_map_.find(type_name);
+  if (j != typeid_prototype_map_.end() && j->second.find(node->type_) != j->second.end()) {
+    /* unexpected found the
+     * typeid check for type
+     * throw exception
+     */
+    throw object_exception("unexpectedly found prototype");
+  }
+  nptr.release();
+}
+
 transaction object_store::current_transaction()
 {
   return transactions_.top();
@@ -312,6 +451,16 @@ transaction object_store::current_transaction()
 bool object_store::has_transaction() const
 {
   return !transactions_.empty();
+}
+
+void object_store::mark_modified(object_proxy *proxy)
+{
+  // notify observers
+  proxy->node()->on_update_proxy(proxy);
+
+  if (has_transaction()) {
+    transactions_.top().on_update(proxy);
+  }
 }
 
 void object_store::on_proxy_delete(std::function<void(object_proxy *)> callback)

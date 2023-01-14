@@ -5,10 +5,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <cmath>
-
-#ifndef _MSC_VER
-#include <sys/time.h>
-#endif
+#include <chrono>
 
 namespace matador {
 
@@ -22,10 +19,13 @@ namespace detail {
 
 void localtime(const time_t &in, struct tm &out)
 {
-#ifdef _MSC_VER
+#if defined(__unix__)
+  localtime_r(&in, &out);
+#elif defined(_MSC_VER)
   errno_t err = localtime_s(&out, &in);
 #else
-//  localtime_r(&in, &out);
+  static std::mutex mtx;
+  std::lock_guard<std::mutex> lock(mtx);
   out = *std::localtime(&in);
 #endif
 }
@@ -85,25 +85,12 @@ int strftime(char *buffer, size_t size, const char *format, const struct timeval
   return 0;
 }
 
-int gettimeofday(struct timeval *tp)
+void gettimeofday(struct timeval *tp)
 {
-#ifdef _MSC_VER
-  FILETIME    file_time;
-  SYSTEMTIME  system_time;
-  ULARGE_INTEGER ularge;
-
-  GetSystemTime(&system_time);
-  SystemTimeToFileTime(&system_time, &file_time);
-  ularge.LowPart = file_time.dwLowDateTime;
-  ularge.HighPart = file_time.dwHighDateTime;
-
-  tp->tv_sec = (long)((ularge.QuadPart - detail::epoch) / 10000000L);
-  tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
-
-  return 0;
-#else
-  return ::gettimeofday(tp, nullptr);
-#endif
+  auto now=std::chrono::system_clock::now();
+  auto millisecs= std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+  tp->tv_sec=millisecs.count()/1000;
+  tp->tv_usec=(millisecs.count()%1000)*1000;
 }
 
 void throw_invalid_time(int h, int m, int s, long ms)
@@ -115,9 +102,7 @@ void throw_invalid_time(int h, int m, int s, long ms)
 
 time::time()
 {
-  if (matador::gettimeofday(&time_) != 0) {
-    throw std::logic_error("couldn' get time of day");
-  }
+  matador::gettimeofday(&time_);
   auto temp = this->time_.tv_sec;
   localtime(temp, tm_);
 }
@@ -137,13 +122,6 @@ time::time(int year, int month, int day, int hour, int min, int sec, long millis
   set(year, month, day, hour, min, sec, millis);
 }
 
-//time::time(uint64_t microseconds)
-//{
-//  time_.tv_sec = microseconds / 1000000;
-//  time_.tv_usec = microseconds % 1000000;
-//  localtime_r(&time_.tv_sec, &tm_);
-//}
-
 bool time::operator==(const time &x) const
 {
   return time_.tv_sec == x.time_.tv_sec &&
@@ -157,7 +135,8 @@ bool time::operator!=(const time &x) const
 
 bool time::operator<(const time &x) const
 {
-  return timercmp(&time_, &x.time_, <);
+  return time_.tv_sec < x.time_.tv_sec ||
+         (time_.tv_sec == x.time_.tv_sec && time_.tv_usec < x.time_.tv_usec);
 }
 
 bool time::operator<=(const time &x) const
@@ -425,7 +404,7 @@ timeval time::parse_time_string(const std::string &tstr, const char *format)
   unsigned long usec = 0;
   if (endptr == nullptr && pch != nullptr) {
     // parse error
-    throw std::logic_error("error parsing time");
+    throw std::logic_error("error parsing time: " + tstr);
   } else if (pch != nullptr) {
     char *next;
     usec = std::strtoul(endptr, &next, 10);

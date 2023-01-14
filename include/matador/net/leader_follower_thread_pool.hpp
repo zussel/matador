@@ -102,8 +102,7 @@ private:
   void execute();
 
 private:
-  typedef std::unique_ptr<std::thread> thread_ptr;
-  typedef std::vector<thread_ptr> thread_vector_t;
+  typedef std::vector<std::thread> thread_vector_t;
   typedef std::function<void()> join_func_t;
 
   std::size_t num_threads_{};
@@ -118,10 +117,10 @@ private:
   std::condition_variable condition_task_;
   std::condition_variable condition_synchronizer_;
 
-  bool signal_ready_ = false;
-  bool signal_shutdown_ = false;
+  std::atomic_bool signal_ready_ { false };
+  std::atomic_bool signal_shutdown_ { false };
 
-  bool is_running_ = false;
+  std::atomic_bool is_running_ { false };
 
   matador::logger log_;
 

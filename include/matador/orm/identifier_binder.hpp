@@ -1,7 +1,3 @@
-//
-// Created by sascha on 7/13/15.
-//
-
 #ifndef PRIMARY_KEY_BINDER_HPP
 #define PRIMARY_KEY_BINDER_HPP
 

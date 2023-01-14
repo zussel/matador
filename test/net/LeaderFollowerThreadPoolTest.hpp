@@ -8,7 +8,7 @@ class LeaderFollowerThreadPoolTest : public matador::unit_test
 public:
   LeaderFollowerThreadPoolTest();
 
-  void test_threadpool();
+  void test_thread_pool();
 };
 
 

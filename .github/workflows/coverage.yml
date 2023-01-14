@@ -57,7 +57,7 @@ jobs:
         run: cp lib/libmatador-*.* bin/
       - uses: harmon758/postgresql-action@v1
         with:
-          postgresql version: '11'
+          postgresql version: '14'
           postgresql db: matador_test
           postgresql user: test
           postgresql password: test123

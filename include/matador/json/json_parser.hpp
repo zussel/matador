@@ -1,18 +1,7 @@
 #ifndef REACTOR_JSON_PARSER_HPP
 #define REACTOR_JSON_PARSER_HPP
 
-#ifdef _MSC_VER
-#ifdef matador_json_EXPORTS
-    #define OOS_JSON_API __declspec(dllexport)
-    #define EXPIMP_JSON_TEMPLATE
-  #else
-    #define OOS_JSON_API __declspec(dllimport)
-    #define EXPIMP_JSON_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define OOS_JSON_API
-#endif
+#include "matador/json/export.hpp"
 
 #include "json.hpp"
 #include "generic_json_parser.hpp"

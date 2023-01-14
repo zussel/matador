@@ -27,9 +27,10 @@ void IOEchoServerConnection::write()
 {
   auto self(shared_from_this());
 
-  std::list<matador::buffer_view> data { matador::buffer_view(echo_) };
+  std::list<matador::buffer_view> data;
+  data.emplace_back(echo_);
 
-  stream_.write(data, [this, self](int ec, int /*nwrite*/) {
+  stream_.write(std::move(data), [this, self](int ec, int /*nwrite*/) {
     if (ec == 0) {
       read();
     }

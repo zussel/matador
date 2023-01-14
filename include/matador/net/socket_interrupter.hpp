@@ -18,7 +18,7 @@ public:
   socket_interrupter();
   ~socket_interrupter();
 
-  int socket_id();
+  int socket_id() const;
 
   void interrupt();
   bool reset();
