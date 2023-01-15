@@ -243,5 +243,25 @@ void relation_resolver<T, typename std::enable_if<
   }
 }
 
+template < class T >
+template < class V >
+void relation_resolver<T, typename std::enable_if<
+  std::is_base_of<basic_has_many_to_many_item, T>::value &&
+  matador::is_builtin<typename T::right_value_type>::value
+>::type>::on_has_one(const char *, has_one<V> &x, cascade_type cascade)
+{
+  // must be left side value
+  // if left table is loaded
+  // insert it into concrete object
+  // else
+  // insert into relation data
+  basic_identifier *pk = x.primary_key();
+  if (!pk) {
+    return;
+  }
+
+  left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
+}
+
 }
 }

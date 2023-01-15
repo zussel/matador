@@ -250,7 +250,6 @@ Value, Owner, Type, typename std::enable_if<!matador::is_builtin<Value>::value>:
   object_ptr<Owner> ownptr(owner);
   const auto &value_holder = static_cast<const has_many_item_holder<Value>&>(holder);
   inserter.insert(ownptr, this->field, value_holder);
-//  this->increment_reference_count(value_holder.value());
 }
 
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type>
@@ -261,7 +260,6 @@ Value, Owner, Type, typename std::enable_if<!matador::is_builtin<Value>::value>:
   object_ptr<Owner> ownptr(owner);
   const auto &value_holder = static_cast<const has_many_item_holder<Value>&>(holder);
   remover.remove(ownptr, this->field, value_holder);
-//  this->decrement_reference_count(value_holder.value());
 }
 
 

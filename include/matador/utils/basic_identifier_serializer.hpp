@@ -40,9 +40,9 @@ public:
   void on_attribute(const char*, std::string&, size_t) override;
   void on_attribute(const char*, matador::time&) override;
   void on_attribute(const char*, matador::date&) override;
-  void on_primary_key(const char*, matador::basic_identifier &x) override;
-  void on_belongs_to(const char*, matador::identifiable_holder &x, cascade_type) override;
-  void on_has_one(const char*, matador::identifiable_holder &x, cascade_type) override;
+  void on_primary_key(const char*, matador::basic_identifier &) override {}
+  void on_belongs_to(const char*, matador::identifiable_holder &, cascade_type) override {}
+  void on_has_one(const char*, matador::identifiable_holder &, cascade_type) override {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
   void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
 

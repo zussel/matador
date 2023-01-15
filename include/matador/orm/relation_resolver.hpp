@@ -395,20 +395,7 @@ public:
   void on_belongs_to(const char *, belongs_to<V> &x, cascade_type cascade);
 
   template < class V >
-  void on_has_one(const char *, has_one<V> &x, cascade_type cascade)
-  {
-    // must be left side value
-    // if left table is loaded
-    // insert it into concrete object
-    // else
-    // insert into relation data
-    basic_identifier *pk = x.primary_key();
-    if (!pk) {
-      return;
-    }
-
-    left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
-  }
+  void on_has_one(const char *, has_one<V> &x, cascade_type cascade);
 
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
   void on_has_many(const char *, abstract_has_many &, cascade_type) { }

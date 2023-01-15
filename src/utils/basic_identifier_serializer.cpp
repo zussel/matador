@@ -169,10 +169,4 @@ void basic_identifier_serializer::on_attribute(const char *id, matador::date &x)
   }
 }
 
-void basic_identifier_serializer::on_primary_key(const char *, matador::basic_identifier &) { }
-
-void basic_identifier_serializer::on_belongs_to(const char *, matador::identifiable_holder &, cascade_type) { }
-
-void basic_identifier_serializer::on_has_one(const char *, matador::identifiable_holder &, cascade_type) { }
-
 }

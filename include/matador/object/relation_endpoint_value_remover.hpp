@@ -38,10 +38,12 @@ public:
   void on_attribute(const char *, T &) {}
   void on_attribute(const char *, char *, size_t) {}
   void on_attribute(const char *, std::string &, size_t) {}
+  void on_belongs_to(const char *id, object_pointer<Value, object_holder_type::BELONGS_TO> &x, cascade_type);
   template < class T >
-  void on_attribute(const char *, T &, cascade_type) {}
-  void on_belongs_to(const char *id, object_holder &x, cascade_type);
-  void on_has_one(const char *id, object_holder &x, cascade_type);
+  void on_belongs_to(const char *, T &, cascade_type) {}
+  void on_has_one(const char *id, object_pointer<Value, object_holder_type::HAS_ONE> &x, cascade_type);
+  template < class T >
+  void on_has_one(const char *, T &, cascade_type) {}
   template < template < class ... > class Container >
   void on_has_many(const char *id, has_many<Value, Container> &x, cascade_type)
   {
@@ -54,7 +56,7 @@ public:
   template < template < class ... > class Container >
   void on_has_many(const char *id, has_many<Value, Container> &x, const char*, const char*, cascade_type cascade)
   {
-    on_attribute(id, x, cascade);
+    on_has_many(id, x, cascade);
   }
   template < class T, template < class ... > class Container >
   void on_has_many(const char *, has_many<T, Container> &, cascade_type) {}
@@ -81,7 +83,9 @@ void relation_endpoint_value_remover<Value>::remove(const object_ptr <Owner> &ow
 }
 
 template < class Value >
-void relation_endpoint_value_remover<Value>::on_belongs_to(const char *id, object_holder &x, cascade_type cascade)
+void relation_endpoint_value_remover<Value>::on_belongs_to(const char *id,
+                                                           object_pointer<Value, object_holder_type::BELONGS_TO> &x,
+                                                           cascade_type cascade)
 {
   if (field_ != id) {
     return;
@@ -90,7 +94,9 @@ void relation_endpoint_value_remover<Value>::on_belongs_to(const char *id, objec
 }
 
 template < class Value >
-void relation_endpoint_value_remover<Value>::on_has_one(const char *id, object_holder &x, cascade_type cascade)
+void relation_endpoint_value_remover<Value>::on_has_one(const char *id,
+                                                        object_pointer<Value, object_holder_type::HAS_ONE> &x,
+                                                        cascade_type cascade)
 {
   if (field_ != id) {
     return;

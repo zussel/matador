@@ -81,7 +81,7 @@ public:
   void on_primary_key(const char *id, basic_identifier &x);
 
   template<class V>
-  void on_attribute(const char *id, identifier<V> &x)
+  void on_primary_key(const char *id, identifier<V> &x)
   {
     V val;
     on_attribute(id, val);
