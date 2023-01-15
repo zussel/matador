@@ -58,26 +58,27 @@ protected:
   bool finalize_fetch() override;
 
 protected:
-  void serialize(const char*, char&) override;
-  void serialize(const char*, short&) override;
-  void serialize(const char*, int&) override;
-  void serialize(const char*, long&) override;
-  void serialize(const char*, long long&) override;
-  void serialize(const char*, unsigned char&) override;
-  void serialize(const char*, unsigned short&) override;
-  void serialize(const char*, unsigned int&) override;
-  void serialize(const char*, unsigned long&) override;
-  void serialize(const char*, unsigned long long&) override;
-  void serialize(const char*, bool&) override;
-  void serialize(const char*, float&) override;
-  void serialize(const char*, double&) override;
-  void serialize(const char*, char *, size_t) override;
-  void serialize(const char*, std::string&) override;
-  void serialize(const char*, std::string &x, size_t s) override;
-  void serialize(const char*, matador::time&) override;
-  void serialize(const char*, matador::date&) override;
-  void serialize(const char*, matador::basic_identifier &x) override;
-  void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
+  void on_attribute(const char *id, char &x) override;
+  void on_attribute(const char *id, short &x) override;
+  void on_attribute(const char *id, int &x) override;
+  void on_attribute(const char *id, long &x) override;
+  void on_attribute(const char *id, long long &x) override;
+  void on_attribute(const char *id, unsigned char &x) override;
+  void on_attribute(const char *id, unsigned short &x) override;
+  void on_attribute(const char *id, unsigned int &x) override;
+  void on_attribute(const char *id, unsigned long &x) override;
+  void on_attribute(const char *id, unsigned long long &x) override;
+  void on_attribute(const char *id, bool &x) override;
+  void on_attribute(const char *id, float &x) override;
+  void on_attribute(const char *id, double &x) override;
+  void on_attribute(const char *id, char *x, size_t s) override;
+  void on_attribute(const char *id, matador::date &x) override;
+  void on_attribute(const char *id, matador::time &x) override;
+  void on_attribute(const char *id, std::string &x) override;
+  void on_attribute(const char *id, std::string &x, size_t s) override;
+  void on_primary_key(const char *id, basic_identifier &x) override;
+  void on_belongs_to(const char *id, identifiable_holder &x, cascade_type) override;
+  void on_has_one(const char *id, identifiable_holder &x, cascade_type) override;
 
 private:
   friend class sqlite_connection;

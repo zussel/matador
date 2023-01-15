@@ -96,72 +96,72 @@ int mssql_result::transform_index(int index) const
   return ++index;
 }
 
-void mssql_result::serialize(const char *id, char &x)
+void mssql_result::on_attribute(const char *id, char &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, short &x)
+void mssql_result::on_attribute(const char *id, short &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, int &x)
+void mssql_result::on_attribute(const char *id, int &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, long &x)
+void mssql_result::on_attribute(const char *id, long &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, long long &x)
+void mssql_result::on_attribute(const char *id, long long &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, unsigned char &x)
+void mssql_result::on_attribute(const char *id, unsigned char &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, unsigned short &x)
+void mssql_result::on_attribute(const char *id, unsigned short &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, unsigned int &x)
+void mssql_result::on_attribute(const char *id, unsigned int &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, unsigned long &x)
+void mssql_result::on_attribute(const char *id, unsigned long &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, unsigned long long &x)
+void mssql_result::on_attribute(const char *id, unsigned long long &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, bool &x)
+void mssql_result::on_attribute(const char *id, bool &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, float &x)
+void mssql_result::on_attribute(const char *id, float &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, double &x)
+void mssql_result::on_attribute(const char *id, double &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *, char *x, size_t s)
+void mssql_result::on_attribute(const char *, char *x, size_t s)
 {
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, result_index_++, SQL_C_CHAR, x, s, &info);
@@ -172,34 +172,39 @@ void mssql_result::serialize(const char *, char *x, size_t s)
   }
 }
 
-void mssql_result::serialize(const char *id, std::string &x, size_t s)
+void mssql_result::on_attribute(const char *id, std::string &x, size_t s)
 {
   read_column(id, x, s);
 }
 
-void mssql_result::serialize(const char *id, std::string &x)
+void mssql_result::on_attribute(const char *id, std::string &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, matador::date &x)
+void mssql_result::on_attribute(const char *id, matador::date &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, matador::time &x)
+void mssql_result::on_attribute(const char *id, matador::time &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, identifiable_holder &x, cascade_type)
+void mssql_result::on_primary_key(const char *id, basic_identifier &x)
+{
+  x.serialize(id, *this);
+}
+
+void mssql_result::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
 {
   read_foreign_object(id, x);
 }
 
-void mssql_result::serialize(const char *id, basic_identifier &x)
+void mssql_result::on_has_one(const char *id, identifiable_holder &x, cascade_type)
 {
-  x.serialize(id, *this);
+  read_foreign_object(id, x);
 }
 
 void mssql_result::read_column(const char *, std::string &val)

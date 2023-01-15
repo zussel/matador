@@ -3,8 +3,6 @@
 
 #include "matador/utils/access.hpp"
 
-#include "matador/object/belongs_to.hpp"
-#include "matador/object/has_one.hpp"
 #include "matador/object/prototype_node.hpp"
 
 #include "matador/orm/basic_table.hpp"
@@ -55,7 +53,7 @@ public:
   void on_attribute(const char *, std::string &, size_t) { }
 
   template<class V>
-  void on_belongs_to(const char *id, belongs_to<V> &, cascade_type)
+  void on_belongs_to(const char *id, object_ptr<V> &, cascade_type)
   {
     auto it = table_.find_table<V>();
     if (it != table_.end_table()) {
@@ -64,7 +62,7 @@ public:
   }
 
   template<class V>
-  void on_has_one(const char *id, has_one<V> &, cascade_type)
+  void on_has_one(const char *id, object_ptr<V> &, cascade_type)
   {
     auto it = table_.find_table<V>();
     if (it != table_.end_table()) {

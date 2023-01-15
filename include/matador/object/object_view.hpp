@@ -444,7 +444,7 @@ class object_view
 public:
   typedef object_view_iterator<T> iterator;             /**< Shortcut to the iterator type */
   typedef const_object_view_iterator<T> const_iterator; /**< Shortcut to the const_iterator type */
-  typedef object_ptr<T> object_pointer;                 /**< Shortcut to serializable pointer */
+  typedef object_ptr<T> pointer;                 /**< Shortcut to serializable pointer */
 
   /**
    * @brief Creates an object_view.
@@ -565,23 +565,23 @@ public:
   }
 
   /**
-   * Return the very first object_ptr
+   * Return the very first pointer
    * of the object_view.
    *
-   * @return The first object_ptr of the view.
+   * @return The first pointer of the view.
    */
-  object_pointer front() const
+  pointer front() const
   {
     return (*begin());
   }
 
   /**
-   * Return the very last object_ptr
+   * Return the very last pointer
    * of the object_view.
    *
-   * @return The last object_ptr of the view.
+   * @return The last pointer of the view.
    */
-  object_pointer back() const
+  pointer back() const
   {
     return (*(--end()));
   }

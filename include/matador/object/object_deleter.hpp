@@ -88,9 +88,9 @@ public:
   void on_attribute(const char *, std::string &, size_t) {}
 
   template<class T>
-  void on_belongs_to(const char *, belongs_to<T> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade);
   template<class T>
-  void on_has_one(const char *, has_one<T> &x, cascade_type cascade);
+  void on_has_one(const char *, object_ptr<T> &x, cascade_type cascade);
   template<class T, template<class ...> class Container>
   void on_has_many(const char *id, basic_has_many<T, Container> &x, const char *, const char *, cascade_type cascade)
   {
@@ -130,7 +130,7 @@ void object_deleter::on_attribute(const char *, const T &)
 }
 
 template<class T>
-void object_deleter::on_belongs_to(const char *, belongs_to<T> &x, cascade_type cascade)
+void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade)
 {
   if (!x.ptr()) {
     return;
@@ -164,7 +164,7 @@ void object_deleter::on_belongs_to(const char *, belongs_to<T> &x, cascade_type 
 }
 
 template<class T>
-void object_deleter::on_has_one(const char *, has_one<T> &x, cascade_type cascade)
+void object_deleter::on_has_one(const char *, object_ptr<T> &x, cascade_type cascade)
 {
   if (!x.ptr()) {
     return;

@@ -4,7 +4,6 @@
 #include "matador/utils/basic_identifier.hpp"
 
 #include "matador/object/object_proxy.hpp"
-#include "matador/object/object_holder_type.hpp"
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/identifier_proxy_map.hpp"
@@ -15,8 +14,8 @@ namespace matador {
 
 /// @cond MATADOR_DEV
 
-template < class T, object_holder_type OHT >
-class object_pointer;
+template < class T >
+class object_ptr;
 
 namespace detail {
 

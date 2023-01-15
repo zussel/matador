@@ -77,7 +77,7 @@ struct comment
 {
   matador::identifier<unsigned long> id;
   std::string email;
-  matador::belongs_to<post> blog_post;
+  matador::object_ptr<post> blog_post;
   std::string content;
   matador::time created_at;
 
@@ -101,7 +101,7 @@ struct post
 {
   matador::identifier<unsigned long> id;
   std::string title;
-  matador::belongs_to<author> writer;
+  matador::object_ptr<author> writer;
   matador::time created_at;
   matador::has_many<category> categories;
   matador::has_many<comment> comments;

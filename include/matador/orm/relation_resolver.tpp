@@ -15,7 +15,7 @@ template < class T >
 template < class V >
 void relation_resolver<T, typename std::enable_if<
   !std::is_base_of<basic_has_many_to_many_item, T>::value
->::type>::on_belongs_to(const char *id, belongs_to<V> &x, cascade_type cascade)
+>::type>::on_belongs_to(const char *id, object_ptr<V> &x, cascade_type cascade)
 {
   basic_identifier *pk = x.primary_key();
   if (!pk) {
@@ -74,7 +74,7 @@ void relation_resolver<T, typename std::enable_if<
   } else {
     // add relation data
     auto lptr = std::static_pointer_cast<table<V>>(foreign_table);
-    lptr->append_relation_data(table_.name(), proxy->pk(), object_pointer<T, object_holder_type::OBJECT_PTR>(proxy_), nullptr);
+    lptr->append_relation_data(table_.name(), proxy->pk(), object_ptr<T>(proxy_), nullptr);
   }
 }
 
@@ -125,7 +125,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   !matador::is_builtin<typename T::right_value_type>::value
->::type>::on_belongs_to(const char *, belongs_to<V> &x, cascade_type cascade)
+>::type>::on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade)
 {
   // increase reference count of has_many_to_xxx item proxy
   // because there will be an object for this kind of field
@@ -148,7 +148,7 @@ void relation_resolver<T, typename std::enable_if<
       left_endpoint_->insert_value_into_foreign(right_proxy, left_proxy_);
     } else {
       auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);
-      lptr->append_relation_data(table_.name(), left_proxy_->pk(), object_pointer<right_value_type, object_holder_type::OBJECT_PTR>(right_proxy), proxy_);
+      lptr->append_relation_data(table_.name(), left_proxy_->pk(), object_ptr<right_value_type>(right_proxy), proxy_);
     }
 
     if (right_table_ptr_->is_loaded()) {
@@ -156,7 +156,7 @@ void relation_resolver<T, typename std::enable_if<
       right_endpoint_->insert_value_into_foreign(holder, left_proxy_);
     } else {
       auto rptr = std::static_pointer_cast<table<right_value_type>>(right_table_ptr_);
-      rptr->append_relation_data(table_.name(), right_proxy->pk(), object_pointer<left_value_type, object_holder_type::OBJECT_PTR>(left_proxy_), proxy_);
+      rptr->append_relation_data(table_.name(), right_proxy->pk(), object_ptr<left_value_type>(left_proxy_), proxy_);
     }
 
   }
@@ -225,7 +225,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_belongs_to(const char *, belongs_to<V> &x, cascade_type cascade)
+>::type>::on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade)
 {
   // check whether is left or right side value
   // left side will be determined first
@@ -248,7 +248,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_has_one(const char *, has_one<V> &x, cascade_type cascade)
+>::type>::on_has_one(const char *, object_ptr<V> &x, cascade_type cascade)
 {
   // must be left side value
   // if left table is loaded

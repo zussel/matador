@@ -92,7 +92,7 @@ public:
   {}
 
   template < matador::object_holder_type OHT >
-  friend std::ostream& operator<<(std::ostream &out, const matador::object_pointer<person, OHT> &p) {
+  friend std::ostream& operator<<(std::ostream &out, const matador::object_ptr<person, OHT> &p) {
     out << p->name_ << " (id: " << p->id_ << ", color: " << color_map[p->color_] << ")";
     return out;
   }

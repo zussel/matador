@@ -5,8 +5,6 @@
 #include "matador/utils/varchar.hpp"
 
 #include "matador/object/object_ptr.hpp"
-#include "matador/object/has_one.hpp"
-#include "matador/object/belongs_to.hpp"
 #include "matador/object/basic_has_many_to_many_item.hpp"
 
 #include <string>
@@ -67,8 +65,8 @@ public:
   }
 
 private:
-  has_one<L> left_;
-  belongs_to<R> right_;
+  object_ptr<L> left_;
+  object_ptr<R> right_;
 };
 
 
@@ -112,7 +110,7 @@ public:
   }
 
 private:
-  has_one<L> left_;
+  object_ptr<L> left_;
   R right_ = {};
 };
 
@@ -162,7 +160,7 @@ public:
 private:
   typedef varchar<SIZE, R> varchar_type;
 
-  has_one<L> left_;
+  object_ptr<L> left_;
   varchar_type right_;
 };
 

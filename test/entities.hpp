@@ -3,8 +3,6 @@
 
 #include "matador/utils/base_class.hpp"
 #include "matador/object/object_ptr.hpp"
-#include "matador/object/has_one.hpp"
-#include "matador/object/belongs_to.hpp"
 #include "matador/object/has_many.hpp"
 
 #include "matador/utils/time.hpp"
@@ -53,8 +51,8 @@ public:
     }
 
 private:
-    matador::has_one<T> ref_;
-    matador::has_one<T> ptr_;
+    matador::object_ptr<T> ref_;
+    matador::object_ptr<T> ptr_;
 };
 
 class ObjectItemList
@@ -164,7 +162,7 @@ struct department;
 class employee : public person
 {
 public:
-    matador::belongs_to<department> department_;
+    matador::object_ptr<department> department_;
 
 public:
     employee() = default;
@@ -259,7 +257,7 @@ struct citizen : public person
     citizen() = default;
     explicit citizen(const std::string &name, const matador::date &bdate = matador::date(), unsigned h = 170) : person(name, bdate, h) {}
 
-    matador::has_one<address> address_;
+    matador::object_ptr<address> address_;
 
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
@@ -274,7 +272,7 @@ struct address
     matador::identifier<unsigned long> id;
     std::string street;
     std::string city;
-    matador::belongs_to<citizen> citizen_;
+    matador::object_ptr<citizen> citizen_;
 
     address() = default;
     address(std::string str, std::string c)
@@ -301,7 +299,7 @@ public:
 private:
     matador::identifier<unsigned long> id_;
     std::string title_;
-    matador::has_one<album> album_;
+    matador::object_ptr<album> album_;
     int index_;
 
 public:
@@ -337,7 +335,7 @@ public:
 class album
 {
 public:
-    typedef matador::has_one <track> track_ptr;
+    typedef matador::object_ptr <track> track_ptr;
     typedef matador::has_many<track> track_vector_t;
     typedef track_vector_t::size_type size_type;
     typedef track_vector_t::iterator iterator;
@@ -463,7 +461,7 @@ class master
 public:
     matador::identifier<unsigned long> id;
     std::string name;
-    matador::has_one<child> children;
+    matador::object_ptr<child> children;
 
 public:
     master() = default;

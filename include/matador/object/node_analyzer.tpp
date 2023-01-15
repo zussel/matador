@@ -32,7 +32,7 @@ void node_analyzer<Owner, Observer>::serialize(Value &x)
 
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value>
-void node_analyzer<Owner, Observer>::on_belongs_to(const char *id, belongs_to <Value> &x, cascade_type)
+void node_analyzer<Owner, Observer>::on_belongs_to(const char *id, object_ptr <Value> &x, cascade_type)
 {
   // find foreign_node of belongs to type
   prototype_iterator foreign_node = store_.find(x.type());
@@ -87,7 +87,7 @@ void node_analyzer<Owner, Observer>::on_belongs_to(const char *id, belongs_to <V
 
 template<class Owner, template < class U = Owner > class Observer >
 template<class Value>
-void node_analyzer<Owner, Observer>::on_has_one(const char *id, has_one <Value> &x, cascade_type)
+void node_analyzer<Owner, Observer>::on_has_one(const char *id, object_ptr <Value> &x, cascade_type)
 {
   auto endpoint = std::make_shared<detail::has_one_endpoint<Value, Owner>>(id, &node_);
   node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);

@@ -4,13 +4,12 @@
 #include "matador/object/export.hpp"
 
 #include "matador/json/json.hpp"
+
 #include "matador/utils/is_builtin.hpp"
 
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/object_view.hpp"
 #include "matador/object/has_many.hpp"
-#include "matador/object/has_one.hpp"
-#include "matador/object/belongs_to.hpp"
 
 #include <string>
 
@@ -21,8 +20,8 @@ namespace matador {
 class MATADOR_OBJECT_API object_json_serializer
 {
 public:
-  template< typename T, object_holder_type OPT >
-  json to_json(const matador::object_pointer<T, OPT> &obj)
+  template< typename T >
+  json to_json(const matador::object_ptr<T> &obj)
   {
     result_ = json::object();
     matador::access::serialize(*this, *obj);
@@ -71,14 +70,14 @@ public:
   void on_attribute(const char *id, time &to);
 
   template<class V>
-  void on_belongs_to(const char *id, belongs_to<V> &x, cascade_type)
+  void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type)
   {
     if (!x.empty()) {
       result_[id] = json::object();
     }
   }
   template<class V>
-  void on_has_one(const char *id, has_one<V> &x, cascade_type)
+  void on_has_one(const char *id, object_ptr<V> &x, cascade_type)
   {
     if (!x.empty()) {
       object_json_serializer ojs;

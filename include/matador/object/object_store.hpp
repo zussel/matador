@@ -9,8 +9,6 @@
 #include "matador/object/object_inserter.hpp"
 #include "matador/object/object_deleter.hpp"
 #include "matador/object/node_analyzer.hpp"
-#include "matador/object/has_one.hpp"
-#include "matador/object/belongs_to.hpp"
 #include "matador/object/object_serializer.hpp"
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/transaction.hpp"

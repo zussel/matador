@@ -53,102 +53,107 @@ int postgresql_prepared_result::transform_index(int index) const
   return index;
 }
 
-void postgresql_prepared_result::serialize(const char *, char &x)
+void postgresql_prepared_result::on_attribute(const char *, char &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, short &x)
+void postgresql_prepared_result::on_attribute(const char *, short &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, int &x)
+void postgresql_prepared_result::on_attribute(const char *, int &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, long &x)
+void postgresql_prepared_result::on_attribute(const char *, long &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, long long &x)
+void postgresql_prepared_result::on_attribute(const char *, long long &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, unsigned char &x)
+void postgresql_prepared_result::on_attribute(const char *, unsigned char &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, unsigned short &x)
+void postgresql_prepared_result::on_attribute(const char *, unsigned short &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, unsigned int &x)
+void postgresql_prepared_result::on_attribute(const char *, unsigned int &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, unsigned long &x)
+void postgresql_prepared_result::on_attribute(const char *, unsigned long &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, unsigned long long &x)
+void postgresql_prepared_result::on_attribute(const char *, unsigned long long &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, bool &x)
+void postgresql_prepared_result::on_attribute(const char *, bool &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, float &x)
+void postgresql_prepared_result::on_attribute(const char *, float &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, double &x)
+void postgresql_prepared_result::on_attribute(const char *, double &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, char *x, size_t s)
+void postgresql_prepared_result::on_attribute(const char *, char *x, size_t s)
 {
   detail::get_value(res_, row_, column_++, x, s);
 }
 
-void postgresql_prepared_result::serialize(const char *, matador::date &x)
+void postgresql_prepared_result::on_attribute(const char *, matador::date &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, matador::time &x)
+void postgresql_prepared_result::on_attribute(const char *, matador::time &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, std::string &x)
+void postgresql_prepared_result::on_attribute(const char *, std::string &x)
 {
   detail::get_value(res_, row_, column_++, x);
 }
 
-void postgresql_prepared_result::serialize(const char *, std::string &x, size_t s)
+void postgresql_prepared_result::on_attribute(const char *, std::string &x, size_t s)
 {
   detail::get_value(res_, row_, column_++, x, s);
 }
 
-void postgresql_prepared_result::serialize(const char *id, basic_identifier &x)
+void postgresql_prepared_result::on_primary_key(const char *id, basic_identifier &x)
 {
   x.serialize(id, *this);
 }
 
-void postgresql_prepared_result::serialize(const char *id, identifiable_holder &x, cascade_type)
+void postgresql_prepared_result::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
+{
+  read_foreign_object(id, x);
+}
+
+void postgresql_prepared_result::on_has_one(const char *id, identifiable_holder &x, cascade_type)
 {
   read_foreign_object(id, x);
 }

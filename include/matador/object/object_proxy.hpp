@@ -5,7 +5,6 @@
 
 #include "matador/utils/identifier_resolver.hpp"
 
-#include "matador/object/object_holder_type.hpp"
 #include "matador/object/object_type_registry_entry_base.hpp"
 
 #include <ostream>
@@ -337,7 +336,7 @@ private:
   friend class prototype_node;
   template < class T > friend class result;
   friend class object_holder;
-  template < class T, object_holder_type OHT > friend class object_pointer;
+  template < class T > friend class object_ptr;
   friend class detail::basic_relation_data;
   using delete_func = std::function<void(void*)>;
   using create_func = std::function<void(object_proxy*)>;

@@ -9,8 +9,6 @@
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/object_view.hpp"
 #include "matador/object/basic_has_many.hpp"
-#include "matador/object/belongs_to.hpp"
-#include "matador/object/has_one.hpp"
 
 /// @cond MATADOR_DEV
 
@@ -27,13 +25,13 @@ public:
 
   t_type_id_map type_id_map_;
 
-  template< typename T, object_holder_type OPT >
-  std::string to_json_string(const object_pointer<T, OPT> &obj, json_format format = json_format::compact)
+  template< typename T >
+  std::string to_json_string(const object_ptr<T> &obj, json_format format = json_format::compact)
   {
     type_id_map_.clear();
     format_ = format;
     json_.clear();
-    append(const_cast<object_pointer<T, OPT>&>(obj));
+    append(const_cast<object_ptr<T>&>(obj));
     newline();
     return json_;
   }
@@ -114,11 +112,11 @@ public:
   void on_attribute(const char *id, time &val);
 
   template<class Value>
-  void on_belongs_to(const char *id, belongs_to<Value> &x, cascade_type);
+  void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
   template<class Value>
-  void on_has_one(const char *id, has_one<Value> &x, cascade_type);
+  void on_has_one(const char *id, object_ptr<Value> &x, cascade_type);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, basic_has_many<Value, Container> &x, const char *, const char *, cascade_type);
+  void on_has_many(const char *id, basic_has_many<Value, Container> &c, const char *, const char *, cascade_type);
 
 private:
   void write_id(const char *id);
@@ -141,8 +139,8 @@ private:
     json_.append(std::to_string(value));
   }
 
-  template< typename T, object_holder_type OPT >
-  void append(const object_pointer<T, OPT> &x)
+  template< typename T >
+  void append(const object_ptr<T> &x)
   {
     auto tindex = std::type_index(typeid(T));
     auto it = type_id_map_.find(tindex);
@@ -170,8 +168,8 @@ private:
     }
   }
 
-  template< typename T, object_holder_type OPT >
-  void append(object_pointer<T, OPT> &x)
+  template< typename T >
+  void append(object_ptr<T> &x)
   {
     auto tindex = std::type_index(typeid(T));
     auto it = type_id_map_.find(tindex);
@@ -225,7 +223,7 @@ private:
 };
 
 template<class Value>
-void json_object_serializer::on_belongs_to(const char *id, belongs_to<Value> &x, cascade_type)
+void json_object_serializer::on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type)
 {
   if (x.empty()) {
     return;
@@ -235,7 +233,7 @@ void json_object_serializer::on_belongs_to(const char *id, belongs_to<Value> &x,
 }
 
 template<class Value>
-void json_object_serializer::on_has_one(const char *id, has_one<Value> &x, cascade_type)
+void json_object_serializer::on_has_one(const char *id, object_ptr<Value> &x, cascade_type)
 {
   if (x.empty()) {
     return;

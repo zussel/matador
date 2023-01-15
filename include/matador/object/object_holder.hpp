@@ -6,8 +6,6 @@
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/identifiable_holder.hpp"
 
-#include "matador/object/object_holder_type.hpp"
-
 #include <memory>
 
 namespace matador {
@@ -50,10 +48,8 @@ protected:
    * as a reference or an pointer. The difference
    * is that the reference couldn't be deleted
    * from the object_store and the pointer can.
-   *
-   * @param holder_type Type of the object holder
    */
-  explicit object_holder(object_holder_type holder_type);
+  object_holder() = default;
 
   /**
    * Copies from another object_holder
@@ -91,10 +87,9 @@ protected:
    * boolean tells the object_holder if it should be
    * handled as an internal.
    * 
-   * @param holder_type Type of the object holder
-   * @param op The object_proxy of the object_holder
+   * @param proxy The object_proxy of the object_holder
    */
-  object_holder(object_holder_type holder_type, object_proxy *op);
+  explicit object_holder(object_proxy *proxy);
 
   /**
    * Destroys the object_holder
@@ -259,27 +254,6 @@ public:
   bool is_internal() const;
 
   /**
-   * Returns true if holder represents a belongs_to
-   *
-   * @return True if holder represents a belongs_to
-   */
-  bool is_belongs_to() const;
-
-  /**
-   * Returns true if holder represents a has_one
-   *
-   * @return True if holder represents a has_one
-   */
-  bool is_has_one() const;
-
-  /**
-   * Returns true if holder represents a object_ptr
-   *
-   * @return True if holder represents a object_ptr
-   */
-  bool is_object_ptr() const;
-
-  /**
    * Returns true if the underlying object
    * is inserted in an object_store
    *
@@ -316,13 +290,6 @@ public:
   virtual const char* type() const = 0;
 
   /**
-   * Return the object holder type.
-   *
-   * @return The object holder type.
-   */
-  object_holder_type holder_type() const;
-
-  /**
    * Returns the cascade type of the holder
    *
    * @return The cascade type
@@ -354,14 +321,13 @@ private:
   // Todo: change interface to remove friend
   friend class session;
 
-  template < class T, object_holder_type OPT >
-  friend class object_pointer;
+  template < class T >
+  friend class object_ptr;
   friend struct detail::basic_relation_endpoint;
 
   object_proxy *proxy_ = nullptr;
   object_proxy *owner_ = nullptr; // only set if holder type is BELONGS_TO or HAS_MANY
   cascade_type cascade_ = cascade_type::NONE;
-  object_holder_type type_ = object_holder_type::OBJECT_PTR;
   bool is_inserted_ = false;
 
   std::shared_ptr<detail::basic_relation_endpoint> relation_info_;

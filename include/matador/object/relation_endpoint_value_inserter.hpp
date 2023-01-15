@@ -3,8 +3,6 @@
 
 #include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/object_proxy_accessor.hpp"
-#include "matador/object/belongs_to.hpp"
-#include "matador/object/has_one.hpp"
 
 #include "matador/utils/cascade_type.hpp"
 
@@ -28,7 +26,7 @@ class relation_endpoint_value_inserter : object_proxy_accessor
 {
 public:
   template < class Owner >
-  void insert(const object_pointer<Owner, object_holder_type::OBJECT_PTR> &owner, const std::string &field, has_many_item_holder<Value> holder);
+  void insert(const object_ptr<Owner> &owner, const std::string &field, has_many_item_holder<Value> holder);
 
   template < class T >
   void serialize(T &x)
@@ -41,10 +39,10 @@ public:
   void on_attribute(const char *, T &) {}
   void on_attribute(const char *, char *, size_t) {}
   void on_attribute(const char *, std::string &, size_t) {}
-  void on_belongs_to(const char *id, object_pointer<Value, object_holder_type::BELONGS_TO> &x, cascade_type);
+  void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
   template < class T >
   void on_belongs_to(const char *, T &, cascade_type) {}
-  void on_has_one(const char *id, object_pointer<Value, object_holder_type::HAS_ONE> &x, cascade_type);
+  void on_has_one(const char *id, object_ptr<Value> &x, cascade_type);
   template < class T >
   void on_has_one(const char *, T &, cascade_type) {}
   template < template < class ... > class Container >
@@ -89,7 +87,7 @@ void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &o
 
 template<class Value>
 void relation_endpoint_value_inserter<Value>::on_belongs_to(const char *id,
-                                                            object_pointer <Value, object_holder_type::BELONGS_TO> &x,
+                                                            object_ptr <Value> &x,
                                                             cascade_type cascade)
 {
   if (field_ != id) {
@@ -100,7 +98,7 @@ void relation_endpoint_value_inserter<Value>::on_belongs_to(const char *id,
 
 template<class Value>
 void relation_endpoint_value_inserter<Value>::on_has_one(const char *id,
-                                                         object_pointer <Value, object_holder_type::HAS_ONE> &x,
+                                                         object_ptr <Value> &x,
                                                          cascade_type cascade)
 {
   if (field_ != id) {

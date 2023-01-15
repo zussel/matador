@@ -4,8 +4,6 @@
 #include "matador/object/export.hpp"
 
 #include "matador/object/prototype_node.hpp"
-#include "matador/object/has_one.hpp"
-#include "matador/object/belongs_to.hpp"
 #include "matador/object/basic_has_many.hpp"
 
 #include <stack>
@@ -53,9 +51,9 @@ public:
   void on_attribute(const char *, std::string &, size_t) { }
 
   template<class T>
-  void on_belongs_to(const char *, belongs_to<T> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade);
   template<class T>
-  void on_has_one(const char *, has_one<T> &x, cascade_type cascade);
+  void on_has_one(const char *, object_ptr<T> &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
   void on_has_many(const char *id, basic_has_many<T, C> &x, const char*, const char*, cascade_type cascade)
@@ -70,7 +68,7 @@ private:
   template < class T >
   void increment_reference_count(T) const {}
   template < class T >
-  void increment_reference_count(const object_pointer<T, object_holder_type::OBJECT_PTR> &pointer) const
+  void increment_reference_count(const object_ptr<T> &pointer) const
   {
     increment_reference_count(static_cast<const object_holder&>(pointer));
   }
@@ -78,7 +76,7 @@ private:
   template < class T >
   void decrement_reference_count(T) const {}
   template < class T >
-  void decrement_reference_count(object_pointer<T, object_holder_type::OBJECT_PTR> &pointer) const
+  void decrement_reference_count(object_ptr<T> &pointer) const
   {
     decrement_reference_count(static_cast<object_holder&>(pointer));
   }
@@ -123,13 +121,13 @@ void object_inserter::serialize(T &x)
 }
 
 template<class T>
-void object_inserter::on_belongs_to(const char *, belongs_to<T> &x, cascade_type cascade)
+void object_inserter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade)
 {
   insert_object(x, std::type_index(typeid(T)), cascade);
 }
 
 template<class T>
-void object_inserter::on_has_one(const char *, has_one<T> &x, cascade_type cascade)
+void object_inserter::on_has_one(const char *, object_ptr<T> &x, cascade_type cascade)
 {
   insert_object(x, std::type_index(typeid(T)), cascade);
 }

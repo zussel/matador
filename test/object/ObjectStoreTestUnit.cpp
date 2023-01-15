@@ -1006,7 +1006,7 @@ public:
   }
   matador::identifier<unsigned long> id;
   std::string name;
-  has_one<cyclic> cycler;
+  object_ptr<cyclic> cycler;
 };
 
 void ObjectStoreTestUnit::test_structure_cyclic()

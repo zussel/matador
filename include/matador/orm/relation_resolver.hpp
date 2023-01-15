@@ -3,7 +3,6 @@
 
 #include "matador/utils/access.hpp"
 
-#include "matador/object/has_one.hpp"
 #include "matador/object/object_exception.hpp"
 
 #include "matador/orm/basic_table.hpp"
@@ -79,10 +78,10 @@ public:
   void on_attribute(const char *, std::string &, size_t) { }
 
   template < class V >
-  void on_belongs_to(const char *id, belongs_to<V> &x, cascade_type cascade);
+  void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type cascade);
 
   template < class V >
-  void on_has_one(const char *, has_one<V> &x, cascade_type cascade)
+  void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade)
   {
     basic_identifier *pk = x.primary_key();
     if (!pk) {
@@ -256,10 +255,10 @@ public:
   void on_attribute(const char *, std::string &, size_t) { }
 
   template < class V >
-  void on_belongs_to(const char *, belongs_to<V> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);
 
   template < class V >
-  void on_has_one(const char *, has_one<V> &x, cascade_type cascade)
+  void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade)
   {
     // must be left side value
     // if left table is loaded
@@ -392,10 +391,10 @@ public:
   void on_attribute(const char *, std::string &, size_t);
 
   template < class V >
-  void on_belongs_to(const char *, belongs_to<V> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);
 
   template < class V >
-  void on_has_one(const char *, has_one<V> &x, cascade_type cascade);
+  void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade);
 
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
   void on_has_many(const char *, abstract_has_many &, cascade_type) { }

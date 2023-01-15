@@ -52,13 +52,12 @@ public:
    * object pointer.
    *
    * @tparam T Type of object pointer.
-   * @tparam OPT Kind of object pointer.
    * @param format Format string to render.
    * @param data Data object to be rendered in.
    * @return The rendered string
    */
-  template< typename T, object_holder_type OPT >
-  static std::string render(const std::string &format, const object_pointer<T, OPT> &data);
+  template< typename T >
+  static std::string render(const std::string &format, const object_ptr<T> &data);
 
   /**
    * Render the given format string with the given
@@ -95,8 +94,8 @@ std::string template_engine::render(const std::string &format, const T &data)
   return render(format, mapper.to_json(data));
 }
 
-template<typename T, object_holder_type OPT>
-std::string template_engine::render(const std::string &format, const object_pointer<T, OPT> &data)
+template<typename T>
+std::string template_engine::render(const std::string &format, const object_ptr<T> &data)
 {
   json_object_mapper mapper;
   return render(format, mapper.to_json(data));

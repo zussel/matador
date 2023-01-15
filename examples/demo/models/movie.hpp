@@ -32,7 +32,7 @@ struct movie
   matador::has_many<e_genre> genres;
   unsigned short year {};
   matador::has_many<person> actors;
-  matador::has_one<person> director;
+  matador::object_ptr<person> director;
 
   template < class Serializer >
   void serialize(Serializer &serializer)

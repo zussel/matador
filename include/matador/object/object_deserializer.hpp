@@ -7,8 +7,6 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/identifier.hpp"
 
-#include "matador/object/belongs_to.hpp"
-#include "matador/object/has_one.hpp"
 #include "matador/object/basic_has_many.hpp"
 
 #include <string>
@@ -89,7 +87,7 @@ public:
   }
 
   template<class T>
-  void on_belongs_to(const char *id, matador::belongs_to<T> &x, cascade_type cascade)
+  void on_belongs_to(const char *id, matador::object_ptr<T> &x, cascade_type cascade)
   {
     /***************
      *
@@ -115,7 +113,7 @@ public:
   }
 
   template<class T>
-  void on_has_one(const char *id, matador::has_one<T> &x, cascade_type cascade)
+  void on_has_one(const char *id, matador::object_ptr<T> &x, cascade_type cascade)
   {
     /***************
      *

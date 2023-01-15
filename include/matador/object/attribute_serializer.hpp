@@ -1,7 +1,6 @@
 #ifndef ATTRIBUTE_SERIALIZER_HPP
 #define ATTRIBUTE_SERIALIZER_HPP
 
-#include "matador/object/has_one.hpp"
 #include "matador/object/object_ptr.hpp"
 
 #include "matador/utils/identifier.hpp"
@@ -186,13 +185,13 @@ public:
   void on_attribute(const char *, std::string &, std::size_t) {}
 
   template < class V >
-  void on_belongs_to(const char *, belongs_to<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_belongs_to(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     x = from_;
     this->success_ = true;
   }
   template < class V >
-  void on_has_one(const char *, has_one<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_has_one(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     x = from_;
     this->success_ = true;
@@ -505,12 +504,12 @@ public:
   void on_attribute(const char *, std::string &, size_t) {}
 
   template < class V >
-  void on_belongs_to(const char *, belongs_to<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_belongs_to(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     to_ = x;
   }
   template < class V >
-  void on_has_one(const char *, has_one<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_has_one(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     to_ = x;
   }
@@ -710,7 +709,7 @@ public:
   }
 
   template < class V >
-  void on_belongs_to(const char *id, belongs_to<V> &x, cascade_type)
+  void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type)
   {
     if (id_ != id) {
       return;
@@ -726,7 +725,7 @@ public:
   }
 
   template < class V >
-  void on_has_one(const char *id, has_one<V> &x, cascade_type)
+  void on_has_one(const char *id, object_ptr<V> &x, cascade_type)
   {
     if (id_ != id) {
       return;

@@ -40,7 +40,6 @@ SET(HEADER
   ../../include/matador/object/attribute_serializer.hpp
   ../../include/matador/object/prototype_iterator.hpp
   ../../include/matador/object/has_many.hpp
-  ../../include/matador/object/has_one.hpp
   ../../include/matador/object/json_object_mapper.hpp
   ../../include/matador/object/container_type_traits.hpp
   ../../include/matador/object/object_holder.hpp
@@ -60,8 +59,6 @@ SET(HEADER
   ../../include/matador/object/basic_has_many_item_holder.hpp
   ../../include/matador/object/identifier_proxy_map.hpp
   ../../include/matador/object/object_proxy_accessor.hpp
-  ../../include/matador/object/belongs_to.hpp
-  ../../include/matador/object/object_holder_type.hpp
   ../../include/matador/object/object_inserter.hpp
   ../../include/matador/object/object_deleter.hpp
   ../../include/matador/object/node_analyzer.hpp
