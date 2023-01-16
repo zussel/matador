@@ -1,6 +1,8 @@
 #ifndef OOS_TYPED_COLUMN_SERIALIZER_HPP
 #define OOS_TYPED_COLUMN_SERIALIZER_HPP
 
+#include <memory>
+
 #include "matador/sql/export.hpp"
 
 #include "matador/sql/sql.hpp"
@@ -25,7 +27,7 @@ public:
   template < class T >
   columns* execute(T &x)
   {
-    cols_.reset(new columns);
+    cols_ = std::make_unique<columns>();
     matador::access::serialize(*this, x);
     return cols_.release();
   }

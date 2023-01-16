@@ -6,6 +6,7 @@
 #include "matador/sql/value.hpp"
 
 #include <cstddef>
+#include <memory>
 #include <vector>
 #include <unordered_map>
 
@@ -85,7 +86,7 @@ public:
   void serialize(SERIALIZER &serializer)
   {
     for (auto &&column : columns_) {
-      values_.at(column)->serialize(column.c_str(), serializer);
+//      values_.at(column)->serialize(column.c_str(), serializer);
     }
   }
 
@@ -102,7 +103,7 @@ public:
   template < class T >
   void set(size_t index, const T &val)
   {
-    values_.at(columns_.at(index)).reset(new value(val));
+    values_.at(columns_.at(index)) = std::make_shared<value>(val);
   }
 
   /**
@@ -118,7 +119,7 @@ public:
   template < class T >
   void set(const std::string &column, const T &val)
   {
-    values_.at(column).reset(new value(val));
+    values_.at(column) = std::make_shared<value>(val);
   }
 
   /**

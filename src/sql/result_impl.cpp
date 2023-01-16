@@ -6,6 +6,42 @@
 namespace matador {
 namespace detail {
 
+void result_impl::on_attribute(const char*, char *value, size_t s)
+{
+  read_value(result_index_++, result_row_, value, s);
+}
+
+void result_impl::on_attribute(const char*, std::string &value, size_t s)
+{
+  read_value(result_index_++, result_row_, value, s);
+}
+
+void result_impl::on_attribute(const char*, matador::time &value)
+{
+  read_value(result_index_++, result_row_, value);
+}
+
+void result_impl::on_attribute(const char*, matador::date &value)
+{
+  read_value(result_index_++, result_row_, value);
+}
+
+void result_impl::on_primary_key(const char*, matador::basic_identifier &x)
+{
+
+}
+
+void result_impl::on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type)
+{
+  read_foreign_object(id, x);
+}
+
+void result_impl::on_has_one(const char *id, matador::identifiable_holder &x, cascade_type)
+{
+  read_foreign_object(id, x);
+}
+
+
 void result_impl::read_foreign_object(const char *id, identifiable_holder &x)
 {
   //determine and create primary key of object ptr
@@ -14,7 +50,7 @@ void result_impl::read_foreign_object(const char *id, identifiable_holder &x)
     pk = x.create_identifier();
   }
 
-  pk->serialize(id, *this);
+//  pk->serialize(id, *this);
   if (!pk->is_valid()) {
     // no pk is set => null
     return;

@@ -15,7 +15,7 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API result_impl : public matador::serializer
+class OOS_SQL_API result_impl
 {
 public:
   result_impl(const result_impl &) = delete;
@@ -33,7 +33,7 @@ protected:
   virtual bool finalize_fetch() = 0;
 
 public:
-  ~result_impl() override = default;
+  virtual ~result_impl() = default;
 
   template < class T >
   void serialize(T &x)
@@ -41,29 +41,41 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  void on_attribute(const char*, char&) override = 0;
-  void on_attribute(const char*, short&) override = 0;
-  void on_attribute(const char*, int&) override = 0;
-  void on_attribute(const char*, long&) override = 0;
-  void on_attribute(const char*, long long&) override = 0;
-  void on_attribute(const char*, unsigned char&) override = 0;
-  void on_attribute(const char*, unsigned short&) override = 0;
-  void on_attribute(const char*, unsigned int&) override = 0;
-  void on_attribute(const char*, unsigned long&) override = 0;
-  void on_attribute(const char*, unsigned long long&) override = 0;
-  void on_attribute(const char*, bool&) override = 0;
-  void on_attribute(const char*, float&) override = 0;
-  void on_attribute(const char*, double&) override = 0;
-  void on_attribute(const char*, char *, size_t) override = 0;
-  void on_attribute(const char*, std::string&) override = 0;
-  void on_attribute(const char*, std::string&, size_t) override = 0;
-  void on_attribute(const char*, matador::time&) override = 0;
-  void on_attribute(const char*, matador::date&) override = 0;
-  void on_primary_key(const char*, matador::basic_identifier &x) override = 0;
-  void on_belongs_to(const char*, matador::identifiable_holder &x, cascade_type) override = 0;
-  void on_has_one(const char*, matador::identifiable_holder &x, cascade_type) override = 0;
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
+  template<typename ValueType>
+  void on_attribute(const char*, ValueType &value)
+  {
+    read_value(result_index_++, result_row_, value);
+  }
+
+  void on_attribute(const char*, char *, size_t);
+  void on_attribute(const char*, std::string&, size_t);
+  void on_attribute(const char*, matador::time&);
+  void on_attribute(const char*, matador::date&);
+  void on_primary_key(const char*, matador::basic_identifier &x);
+  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type);
+  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type);
+
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+
+  virtual void read_value(int index, int row, char &value) = 0;
+  virtual void read_value(int index, int row, short &value) = 0;
+  virtual void read_value(int index, int row, int &value) = 0;
+  virtual void read_value(int index, int row, long &value) = 0;
+  virtual void read_value(int index, int row, long long &value) = 0;
+  virtual void read_value(int index, int row, unsigned char &value) = 0;
+  virtual void read_value(int index, int row, unsigned short &value) = 0;
+  virtual void read_value(int index, int row, unsigned int &value) = 0;
+  virtual void read_value(int index, int row, unsigned long &value) = 0;
+  virtual void read_value(int index, int row, unsigned long long &value) = 0;
+  virtual void read_value(int index, int row, bool &value) = 0;
+  virtual void read_value(int index, int row, float &value) = 0;
+  virtual void read_value(int index, int row, double &value) = 0;
+  virtual void read_value(int index, int row, matador::time &value) = 0;
+  virtual void read_value(int index, int row, matador::date &value) = 0;
+  virtual void read_value(int index, int row, char *value, size_t s) = 0;
+  virtual void read_value(int index, int row, std::string &value) = 0;
+  virtual void read_value(int index, int row, std::string &value, size_t s) = 0;
 
   virtual const char *column(size_type c) const = 0;
 
@@ -109,6 +121,7 @@ protected:
 
 protected:
   int result_index_ = 0;
+  int result_row_ = 0;
 };
 
 /// @endcond

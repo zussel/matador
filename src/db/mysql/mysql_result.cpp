@@ -104,207 +104,192 @@ int mysql_result::transform_index(int index) const
   return index;
 }
 
-void mysql_result::on_attribute(const char *, char &x)
+void mysql_result::read_value(int index, int row, char &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) > 1) {
-    x = val[0];
+    value = val[0];
   }
 }
 
-void mysql_result::on_attribute(const char *, short &x)
+void mysql_result::read_value(int index, int row, short &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (short)strtol(val, &end, 10);
+  value = (short)strtol(val, &end, 10);
 }
 
-void mysql_result::on_attribute(const char *, int &x)
+void mysql_result::read_value(int index, int row, int &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (int)strtol(val, &end, 10);
+  value = (int)strtol(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, long &x)
+void mysql_result::read_value(int index, int row, long &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = strtol(val, &end, 10);
+  value = strtol(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, long long &x)
+void mysql_result::read_value(int index, int row, long long &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = strtoll(val, &end, 10);
+  value = strtoll(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, unsigned char &x)
+void mysql_result::read_value(int index, int row, unsigned char &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (unsigned char)strtoul(val, &end, 10);
+  value = (unsigned char)strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, unsigned short &x)
+void mysql_result::read_value(int index, int row, unsigned short &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (unsigned short)strtoul(val, &end, 10);
+  value = (unsigned short)strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, unsigned int &x)
+void mysql_result::read_value(int index, int row, unsigned int &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (unsigned int)strtoul(val, &end, 10);
+  value = (unsigned int)strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, unsigned long &x)
+void mysql_result::read_value(int index, int row, unsigned long &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (!val || strlen(val) == 0) {
     return;
   }
   char *end = nullptr;
-  x = strtoul(val, &end, 10);
+  value = strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, unsigned long long &x)
+void mysql_result::read_value(int index, int row, unsigned long long &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (!val || strlen(val) == 0) {
     return;
   }
   char *end = nullptr;
-  x = strtoull(val, &end, 10);
+  value = strtoull(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, bool &x)
+void mysql_result::read_value(int index, int row, bool &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = strtoul(val, &end, 10) > 0;
+  value = strtoul(val, &end, 10) > 0;
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, float &x)
+void mysql_result::read_value(int index, int row, float &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (float)strtod(val, &end);
+  value = static_cast<float>(strtod(val, &end));
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, double &x)
+void mysql_result::read_value(int index, int row, double &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = strtod(val, &end);
+  value = strtod(val, &end);
   // Todo: check error
 }
 
-void mysql_result::on_attribute(const char *, char *x, size_t s)
+void mysql_result::read_value(int index, int row, char *value, size_t s)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   size_t len = strlen(val);
   if (len > (size_t)s) {
-    strncpy(x, val, (size_t)s);
-    x[s-1] = '\n';
+    strncpy(value, val, (size_t)s);
+    value[s-1] = '\n';
   } else {
-    strcpy(x, val);
+    strcpy(value, val);
   }
 
 }
 
-void mysql_result::on_attribute(const char *, std::string &x, size_t)
+void mysql_result::read_value(int index, int row, std::string &value, size_t s)
 {
-  char *val = row_[result_index_++];
-  x.assign(val);
+  char *val = row_[index];
+  value.assign(val);
 }
 
-void mysql_result::on_attribute(const char *, std::string &x)
+void mysql_result::read_value(int index, int row, std::string &value)
 {
-  char *val = row_[result_index_++];
-  x.assign(val);
+  char *val = row_[index];
+  value.assign(val);
 }
 
-void mysql_result::on_attribute(const char *, matador::date &x)
+void mysql_result::read_value(int index, int row, matador::date &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   size_t len = strlen(val);
   if (val == nullptr || len == 0) {
     return;
   }
-  x.set(val, matador::date_format::ISO8601);
+  value.set(val, matador::date_format::ISO8601);
 }
 
-void mysql_result::on_attribute(const char *id, matador::time &x)
+void mysql_result::read_value(int index, int row, matador::time &value)
 {
   std::string val;
-  on_attribute(id, val);
+  read_value(index, row, val);
   if (mysql::version < 50604) {
     // before mysql version 5.6.4 datetime
     // doesn't support fractional seconds,
     // so we use a datetime string here
-    x = matador::time::parse(val, "%Y-%m-%dT%T");
+    value = matador::time::parse(val, "%Y-%m-%dT%T");
   } else {
-    x = matador::time::parse(val, "%Y-%m-%d %T.%f");
+    value = matador::time::parse(val, "%Y-%m-%d %T.%f");
   }
-}
-
-void mysql_result::on_primary_key(const char *id, matador::basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
-void mysql_result::on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
-}
-
-void mysql_result::on_has_one(const char *id, matador::identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
 }
 
 }

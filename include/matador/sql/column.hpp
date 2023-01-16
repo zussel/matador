@@ -49,21 +49,21 @@ struct OOS_SQL_API column : public detail::token
 struct OOS_SQL_API columns : public detail::token
 {
   /**
-   * Enum declaring values on howto interprete
+   * Enum declaring values on howto interpret
    * the column list
    */
   enum t_brackets {
-    WITH_BRACKETS,   /**< Interpret the columns with surrounding bracktes */
-    WITHOUT_BRACKETS /**< Interpret the columns without surrounding bracktes */
+    WITH_BRACKETS,   /**< Interpret the columns with surrounding brackets */
+    WITHOUT_BRACKETS /**< Interpret the columns without surrounding brackets */
   };
 
   /**
    * @brief Create a list of columns containing given columns and bracket type
    *
-   * @param colnames The list of column names
+   * @param column_names The list of column names
    * @param with_brackets The bracket type
    */
-  columns(const std::initializer_list<std::string> &colnames, t_brackets with_brackets = WITH_BRACKETS);
+  columns(const std::initializer_list<std::string> &column_names, t_brackets with_brackets = WITH_BRACKETS);
 
   /**
    * @brief Create a list of columns containing given columns and bracket type
@@ -160,7 +160,7 @@ private:
 /**
  * User defined literal to have a shortcut creating a column object
  * @param name Name of the column
- * @param len Lenght of the column name
+ * @param len Length of the column name
  * @return A column object with given name
  */
 OOS_SQL_API column operator "" _col(const char *name, size_t len);

@@ -100,173 +100,168 @@ int mysql_prepared_result::transform_index(int index) const
   return index;
 }
 
-void mysql_prepared_result::on_attribute(const char *, char &x)
+void mysql_prepared_result::read_value(int index, int row, char &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
+    prepare_bind_column(index, MYSQL_TYPE_TINY, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, short & x)
+void mysql_prepared_result::read_value(int index, int row, short &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_SHORT, x);
+    prepare_bind_column(index, MYSQL_TYPE_SHORT, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, int &x)
+void mysql_prepared_result::read_value(int index, int row, int &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
+    prepare_bind_column(index, MYSQL_TYPE_LONG, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, long &x)
+void mysql_prepared_result::read_value(int index, int row, long &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
-//	prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
+    prepare_bind_column(index, MYSQL_TYPE_LONGLONG, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, long long &x)
+void mysql_prepared_result::read_value(int index, int row, long long &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
-//	prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
+    prepare_bind_column(index, MYSQL_TYPE_LONGLONG, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, unsigned char &x)
+void mysql_prepared_result::read_value(int index, int row, unsigned char &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
+    prepare_bind_column(index, MYSQL_TYPE_VAR_STRING, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, unsigned short &x)
+void mysql_prepared_result::read_value(int index, int row, unsigned short &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_SHORT, x);
+    prepare_bind_column(index, MYSQL_TYPE_SHORT, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, unsigned int &x)
+void mysql_prepared_result::read_value(int index, int row, unsigned int &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
+    prepare_bind_column(index, MYSQL_TYPE_LONG, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, unsigned long &x)
+void mysql_prepared_result::read_value(int index, int row, unsigned long &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
-//	prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
+    prepare_bind_column(index, MYSQL_TYPE_LONGLONG, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, unsigned long long &x)
+void mysql_prepared_result::read_value(int index, int row, unsigned long long &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
-//	prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
+    prepare_bind_column(index, MYSQL_TYPE_LONGLONG, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, bool &x)
+void mysql_prepared_result::read_value(int index, int row, bool &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
+    prepare_bind_column(index, MYSQL_TYPE_TINY, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, float &x)
+void mysql_prepared_result::read_value(int index, int row, float &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_FLOAT, x);
+    prepare_bind_column(index, MYSQL_TYPE_FLOAT, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, double &x)
+void mysql_prepared_result::read_value(int index, int row, double &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_DOUBLE, x);
+    prepare_bind_column(index, MYSQL_TYPE_DOUBLE, value);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, char *x, size_t s)
-{
+void mysql_prepared_result::read_value(int index, int row, char *value, size_t s) {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x, s);
+    prepare_bind_column(index, MYSQL_TYPE_VAR_STRING, value, s);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, matador::date &x)
+void mysql_prepared_result::read_value(int index, int row, matador::date &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_DATE, x);
+    prepare_bind_column(index, MYSQL_TYPE_DATE, value);
   } else {
     if (info_[result_index_].length > 0) {
       auto *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
-      x.set(mtt->day, mtt->month, mtt->year);
+      value.set(mtt->day, mtt->month, mtt->year);
     }
     bind_[result_index_].length = nullptr;
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *id, matador::time &x)
+void mysql_prepared_result::read_value(int index, int row, matador::time &value)
 {
   if (mysql::version < 50604) {
     if (prepare_binding_) {
-      prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
+      prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, value);
     } else {
       if (info_[result_index_].length > 0) {
         // before mysql version 5.6.4 datetime
         // doesn't support fractional seconds
         // so we use a datetime string here
         std::string val;
-        on_attribute(id, val);
-        x = matador::time::parse(val, "%FT%T");
+        read_value(index, row, val);
+        value = matador::time::parse(val, "%FT%T");
         ++result_index_;
       }
     }
   } else {
     if (prepare_binding_) {
-      prepare_bind_column(column_index_++, MYSQL_TYPE_TIMESTAMP, x);
+      prepare_bind_column(column_index_++, MYSQL_TYPE_TIMESTAMP, value);
     } else {
       if (info_[result_index_].length > 0) {
         auto *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
-        x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
+        value.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
       }
       bind_[result_index_].length = nullptr;
       ++result_index_;
@@ -274,33 +269,28 @@ void mysql_prepared_result::on_attribute(const char *id, matador::time &x)
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, std::string &x)
+void mysql_prepared_result::read_value(int index, int row, std::string &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_STRING, x);
+    prepare_bind_column(column_index_++, MYSQL_TYPE_STRING, value);
   } else {
-//    if (*bind_[result_index_].error) {
-      // assume truncated data
-      on_truncated_data(result_index_, x);
-//    } else {
-//      throw_error("mysql_stmt_fetch_column");
-//    }
+    on_truncated_data(result_index_, value);
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::on_attribute(const char *, std::string &x, size_t s)
+void mysql_prepared_result::read_value(int index, int row, std::string &value, size_t s)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x, s);
+    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, value, s);
   } else {
     if (*bind_[result_index_].error) {
       // assume truncated data
-      on_truncated_data(result_index_, x);
+      on_truncated_data(result_index_, value);
     } else {
       auto *data = (char *) bind_[result_index_].buffer;
       unsigned long len = info_[result_index_].length;
-      x.assign(data, len);
+      value.assign(data, len);
     }
     ++result_index_;
   }
@@ -324,11 +314,6 @@ void mysql_prepared_result::on_truncated_data(int index, std::string &x) {
   bind_[index].length = nullptr;
 }
 
-void mysql_prepared_result::on_primary_key(const char *id, matador::basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
 void mysql_prepared_result::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
 {
   if (prepare_binding_) {
@@ -339,7 +324,6 @@ void mysql_prepared_result::on_belongs_to(const char *id, identifiable_holder &x
     auto i = foreign_keys_.find(id);
     if (i != foreign_keys_.end()) {
       if (i->second->is_valid()) {
-//        std::cout << "created identifier " << *i->second << " (field: " << i->first << ", " << i->second.get() << ")\n";
         x.reset(i->second.release());
       }
       foreign_keys_.erase(i);
@@ -358,7 +342,6 @@ void mysql_prepared_result::on_has_one(const char *id, identifiable_holder &x, c
     auto i = foreign_keys_.find(id);
     if (i != foreign_keys_.end()) {
       if (i->second->is_valid()) {
-//        std::cout << "created identifier " << *i->second << " (field: " << i->first << ", " << i->second.get() << ")\n";
         x.reset(i->second.release());
       }
       foreign_keys_.erase(i);
