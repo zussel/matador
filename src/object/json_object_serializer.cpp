@@ -40,6 +40,17 @@ void json_object_serializer::on_attribute(const char *id, const char *val, long 
   newline();
 }
 
+void json_object_serializer::on_attribute(const char *id, char val[], long /*size*/)
+{
+  if (val == nullptr) {
+    return;
+  }
+  write_id(id);
+  append(val);
+  json_.append(",");
+  newline();
+}
+
 void json_object_serializer::on_attribute(const char *id, date &d, long /*size*/)
 {
   if (d.julian_date() == 0) {

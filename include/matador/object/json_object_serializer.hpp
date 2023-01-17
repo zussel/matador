@@ -107,6 +107,7 @@ public:
   void on_attribute(const char *id, bool &val, long /*size*/ = -1);
   void on_attribute(const char *id, std::string &val, long size = -1);
   void on_attribute(const char *id, const char *val, long size);
+  void on_attribute(const char *id, char val[], long size);
   void on_attribute(const char *id, date &val, long /*size*/ = -1);
   void on_attribute(const char *id, time &val, long /*size*/ = -1);
 
