@@ -26,7 +26,7 @@ void result_impl::on_attribute(const char*, matador::date &value)
   read_value(result_index_++, result_row_, value);
 }
 
-void result_impl::on_primary_key(const char*, matador::basic_identifier &x)
+void result_impl::on_primary_key(const char*, matador::basic_identifier &/*x*/)
 {
 
 }
@@ -42,7 +42,7 @@ void result_impl::on_has_one(const char *id, matador::identifiable_holder &x, ca
 }
 
 
-void result_impl::read_foreign_object(const char *id, identifiable_holder &x)
+void result_impl::read_foreign_object(const char */*id*/, identifiable_holder &x)
 {
   //determine and create primary key of object ptr
   basic_identifier* pk = x.primary_key();

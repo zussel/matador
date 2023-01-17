@@ -43,6 +43,10 @@ public:
   : value_(std::move(val))
   {}
 
+  explicit varchar(const char *val)
+  : value_(val)
+  {}
+
   /**
    * Provides the less to compare operator
    *

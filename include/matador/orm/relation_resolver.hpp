@@ -249,14 +249,11 @@ public:
 
   void on_primary_key(const char *, basic_identifier &) {}
   template < class V >
-  void on_attribute(const char *, V &x);
-
-  void on_attribute(const char *, char *, size_t);
-  void on_attribute(const char *, std::string &, size_t) { }
-
+  void on_attribute(const char *, V &x, long /*size*/ = -1);
+  void on_attribute(const char *, char *, long size = -1);
+  void on_attribute(const char *, std::string &, long size = -1) { }
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);
-
   template < class V >
   void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade)
   {
@@ -272,7 +269,6 @@ public:
 
     left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
   }
-  
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
   void on_has_many(const char *, abstract_has_many &, cascade_type) { }
 
@@ -385,10 +381,10 @@ public:
 
   void on_primary_key(const char *, basic_identifier &) {}
   template < class V >
-  void on_attribute(const char *, V &x);
+  void on_attribute(const char *, V &x, long size = -1);
 
-  void on_attribute(const char *, char *, size_t);
-  void on_attribute(const char *, std::string &, size_t);
+  void on_attribute(const char *, char *, long size = -1);
+  void on_attribute(const char *, std::string &, long size = -1);
 
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);

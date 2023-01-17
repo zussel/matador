@@ -83,11 +83,11 @@ public:
    * @param serializer The serializer to be used
    */
   template < class SERIALIZER >
-  void serialize(SERIALIZER &serializer)
+  void serialize(SERIALIZER &/*serializer*/)
   {
-    for (auto &&column : columns_) {
+//    for (auto &&column : columns_) {
 //      values_.at(column)->serialize(column.c_str(), serializer);
-    }
+//    }
   }
 
   /**

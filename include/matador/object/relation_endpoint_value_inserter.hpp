@@ -36,9 +36,9 @@ public:
 
   void on_primary_key(const char *, basic_identifier &) {}
   template < class T >
-  void on_attribute(const char *, T &) {}
-  void on_attribute(const char *, char *, size_t) {}
-  void on_attribute(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, T &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char *, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
   template < class T >
   void on_belongs_to(const char *, T &, cascade_type) {}

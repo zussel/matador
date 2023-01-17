@@ -65,19 +65,7 @@ public:
     matador::access::serialize(*this, obj);
   }
 
-  template<class T>
-  void on_attribute(const char *, T &x)
-  {
-    buffer_->release(&x, sizeof(x));
-  }
-
-  void on_attribute(const char *id, char *c, size_t s);
-  void on_attribute(const char *id, std::string &s);
-  void on_attribute(const char *, std::string &s, size_t);
-  void on_attribute(const char *id, date &x);
-  void on_attribute(const char *id, time &x);
   void on_primary_key(const char *id, basic_identifier &x);
-
   template<class V>
   void on_primary_key(const char *id, identifier<V> &x)
   {
@@ -85,6 +73,17 @@ public:
     on_attribute(id, val);
     x.value(val);
   }
+
+
+  template<class T>
+  void on_attribute(const char *, T &x, long /*size*/ = -1)
+  {
+    buffer_->release(&x, sizeof(x));
+  }
+  void on_attribute(const char *id, char *c, long size);
+  void on_attribute(const char *id, std::string &s, long size = -1);
+  void on_attribute(const char *id, date &x, long /*size*/ = -1);
+  void on_attribute(const char *id, time &x, long /*size*/ = -1);
 
   template<class T>
   void on_belongs_to(const char *id, matador::object_ptr<T> &x, cascade_type cascade)

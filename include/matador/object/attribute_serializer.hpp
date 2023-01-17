@@ -65,7 +65,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, long /*size*/ = -1, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -75,7 +75,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, typename std::enable_if<std::is_arithmetic<T>::value && std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, long /*size*/ = -1, typename std::enable_if<std::is_arithmetic<T>::value && std::is_same<V, bool>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -85,7 +85,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
+  void on_attribute(const char *id, V &to, long /*size*/ = -1, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -94,10 +94,9 @@ public:
     this->success_ = true;
   }
   template < class V >
-  void on_attribute(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
-  void on_attribute(const char *, char*, size_t) {}
-
-  void on_attribute(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, V &, long /*size*/ = -1, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
+  void on_attribute(const char *, char*, long) {}
+  void on_attribute(const char *, std::string &, long) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -120,7 +119,7 @@ public:
   void on_primary_key(const char *, identifier<V> &) {}
 
   template < class V >
-  void on_attribute(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, long /*size*/ = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -130,7 +129,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, long /*size*/ = -1, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -140,7 +139,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, typename std::enable_if<std::is_arithmetic<V>::value && std::is_same<bool, V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, long /*size*/ = -1, typename std::enable_if<std::is_arithmetic<V>::value && std::is_same<bool, V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -150,9 +149,9 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *, V &, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
-  void on_attribute(const char *, char*, size_t) {}
-  void on_attribute(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, V &, long /*size*/ = -1, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
+  void on_attribute(const char *, char*, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -180,10 +179,9 @@ public:
   template < class V >
   void on_primary_key(const char *, identifier<V> &) {}
   template < class V >
-  void on_attribute(const char *, V &) {}
-  void on_attribute(const char *, char*, std::size_t) {}
-  void on_attribute(const char *, std::string &, std::size_t) {}
-
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char*, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
@@ -196,7 +194,6 @@ public:
     x = from_;
     this->success_ = true;
   }
-
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
@@ -217,29 +214,25 @@ public:
   {}
 
   template < class V >
-  void on_attribute(V &obj)
+  void serialize(V &obj)
   {
     access::serialize(*this, obj);
   }
 
   template < class V >
   void on_primary_key(const char *, identifier<V> &) {}
-
   template < class V >
-  void on_attribute(const char *, V &) {}
-  void on_attribute(const char *, char*, std::size_t) {}
-  void on_attribute(const char *, std::string &, std::size_t) {}
-
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char*, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
   void on_has_many(const char *, identifiable_holder &, cascade_type) { }
-
   template<class V, template <class ...> class C>
   void on_has_many(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
   {
     x.push_back(from_);
     this->success_ = true;
   }
-
   template<class V, template <class ...> class C>
   void on_has_many(const char *, has_many<V, C> &x, cascade_type)
   {
@@ -261,29 +254,25 @@ public:
   {}
 
   template < class V >
-  void on_attribute(V &obj)
+  void serialize(V &obj)
   {
     access::serialize(*this, obj);
   }
 
   template < class V >
   void on_primary_key(const char *, identifier<V> &) {}
-
   template < class V >
-  void on_attribute(const char *, V &) {}
-  void on_attribute(const char *, char*, std::size_t) {}
-  void on_attribute(const char *, std::string &, std::size_t) {}
-
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char*, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
   void on_has_many(const char *, identifiable_holder &, cascade_type) { }
-
   template<class V, template <class ...> class C>
   void on_has_many(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
   {
     x.push_back(from_);
     this->success_ = true;
   }
-
   template<class V, template <class ...> class C>
   void on_has_many(const char *, has_many<V, C> &x, cascade_type)
   {
@@ -302,7 +291,7 @@ public:
   attribute_reader(const std::string &id, const char* from)
     : basic_attribute_serializer(id)
     , from_(from)
-    , len_(strlen(from))
+    , len_(static_cast<long>(strlen(from)))
   {}
 
   ~attribute_reader() = default;
@@ -310,8 +299,8 @@ public:
   template < class V >
   void on_primary_key(const char *, identifier<V> &) {}
   template < class V >
-  void on_attribute(const char *, V &) {}
-  void on_attribute(const char *id, std::string &to, size_t)
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *id, std::string &to, long /*size*/ = -1)
   {
     if (id_ != id) {
       return;
@@ -319,16 +308,7 @@ public:
     to = from_;
     this->success_ = true;
   }
-  void on_attribute(const char *id, std::string &to)
-  {
-    if (id_ != id) {
-      return;
-    }
-    to = from_;
-    this->success_ = true;
-  }
-
-  void on_attribute(const char *id, char *to, size_t len)
+  void on_attribute(const char *id, char *to, long len)
   {
     if (id_ != id) {
       return;
@@ -343,7 +323,6 @@ public:
       this->success_ = true;
     }
   }
-
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -351,7 +330,7 @@ public:
 
 private:
   const char* from_ = nullptr;
-  size_t len_ = 0;
+  long len_ = 0;
 };
 
 template <>
@@ -376,10 +355,9 @@ public:
     to.value(val);
     this->success_ = true;
   }
-
   template < class V >
-  void on_attribute(const char *, V &) {}
-  void on_attribute(const char *id, std::string &to, size_t)
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *id, std::string &to, long /*size*/ = -1)
   {
     if (id_ != id) {
       return;
@@ -387,21 +365,12 @@ public:
     to = from_;
     this->success_ = true;
   }
-  void on_attribute(const char *id, std::string &to)
+  void on_attribute(const char *id, char *to, long len)
   {
     if (id_ != id) {
       return;
     }
-    to = from_;
-    this->success_ = true;
-  }
-
-  void on_attribute(const char *id, char *to, size_t len)
-  {
-    if (id_ != id) {
-      return;
-    }
-    if (len > from_.size()) {
+    if (len > static_cast<long>(from_.size())) {
 #ifdef _MSC_VER
 		strncpy_s(to, len, from_.c_str(), from_.size());
 		to[from_.size()] = '\0';
@@ -441,9 +410,8 @@ public:
     auto val = from.value();
     on_attribute(id, val);
   }
-
   template < class V >
-  void on_attribute(const char *id, V &from, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, long /*size*/ = -1, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -451,9 +419,8 @@ public:
     to_ = (T)from;
     success_ = true;
   }
-
   template < class V >
-  void on_attribute(const char *id, V &from, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && std::is_same<bool, T>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, long /*size*/ = -1, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && std::is_same<bool, T>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -461,9 +428,8 @@ public:
     to_ = (from ? 1 : 0);
     success_ = true;
   }
-
   template < class V >
-  void on_attribute(const char *id, V &from, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
+  void on_attribute(const char *id, V &from, long /*size*/ = -1, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -472,10 +438,9 @@ public:
     success_ = true;
   }
   template < class V >
-  void on_attribute(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
-
-  void on_attribute(const char *, char*, size_t) {}
-  void on_attribute(const char *, std::string &, size_t) {}
+  void on_attribute(const char *, V &, long /*size*/ = -1, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
+  void on_attribute(const char *, char*, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -497,12 +462,10 @@ public:
 
   template < class V >
   void on_primary_key(const char *, identifier<V> &) {}
-
   template < class V >
-  void on_attribute(const char *, V &) {}
-  void on_attribute(const char *, char*, size_t) {}
-  void on_attribute(const char *, std::string &, size_t) {}
-
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char*, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
@@ -513,7 +476,6 @@ public:
   {
     to_ = x;
   }
-
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
@@ -541,22 +503,18 @@ public:
 
   template < class V >
   void on_primary_key(const char *, identifier<V> &) {}
-
   template < class V >
-  void on_attribute(const char *, V &) {}
-  void on_attribute(const char *, char*, size_t) {}
-  void on_attribute(const char *, std::string &, size_t) {}
-
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char*, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
   void on_has_one(const char *, identifiable_holder &, cascade_type) {}
-
   template<class V, template <class ...> class C>
   void on_has_many(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
   {
     x.remove(to_);
     this->success_ = true;
   }
-
   template<class V, template <class ...> class C>
   void on_has_many(const char *, has_many<V, C> &x, cascade_type)
   {
@@ -584,22 +542,18 @@ public:
 
   template < class V >
   void on_primary_key(const char *, identifier<V> &) {}
-
   template < class V >
-  void on_attribute(const char *, V &) {}
-  void on_attribute(const char *, char*, size_t) {}
-  void on_attribute(const char *, std::string &, size_t) {}
-
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char*, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
   void on_has_many(const char *, identifiable_holder &, cascade_type) {}
-
   template<class V, template <class ...> class C>
   void on_has_many(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
   {
     x.remove(to_);
     this->success_ = true;
   }
-
   template<class V, template <class ...> class C>
   void on_has_many(const char *, has_many<V, C> &x, cascade_type)
   {
@@ -631,9 +585,8 @@ public:
     auto val = from.value();
     on_attribute(id, val);
   }
-
   template < class V >
-  void on_attribute(const char *id, V &from, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, long /*size*/ = -1, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -643,7 +596,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &from, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, long /*size*/ = -1, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -652,7 +605,7 @@ public:
     success_ = true;
   }
 
-  void on_attribute(const char *id, std::string &from)
+  void on_attribute(const char *id, std::string &from, long /*size*/ = -1)
   {
     if (id_ != id) {
       return;
@@ -661,16 +614,7 @@ public:
     success_ = true;
   }
 
-  void on_attribute(const char *id, std::string &from, size_t)
-  {
-    if (id_ != id) {
-      return;
-    }
-    to_ = from;
-    success_ = true;
-  }
-
-  void on_attribute(const char *id, char *from, size_t len)
+  void on_attribute(const char *id, char *from, long len)
   {
     if (id_ != id) {
       return;
@@ -679,7 +623,7 @@ public:
     success_ = true;
   }
 
-  void on_attribute(const char *id, date &from)
+  void on_attribute(const char *id, date &from, long /*size*/ = -1)
   {
     if (id_ != id) {
       return;
@@ -687,24 +631,12 @@ public:
     to_ = to_string(from);
     success_ = true;
   }
-  void on_attribute(const char *id, matador::time &from)
+  void on_attribute(const char *id, matador::time &from, long /*size*/ = -1)
   {
     if (id_ != id) {
       return;
     }
     to_ = to_string(from);
-    success_ = true;
-  }
-
-  template < class V >
-  void on_attribute(const char *id, identifier<V> &x)
-  {
-    if (id_ != id) {
-      return;
-    }
-    std::stringstream to;
-    x.print(to);
-    to_ = to.str();
     success_ = true;
   }
 
@@ -762,7 +694,7 @@ public:
    * @param id The name of the attribute.
    * @param to The attribute value to retrieve.
    */
-  attribute_writer(std::string id, char *to, size_t size/*, size_t precision = 0*/)
+  attribute_writer(std::string id, char *to, long size)
     : id_(std::move(id))
     , to_(to)
     , size_(size)
@@ -787,7 +719,7 @@ public:
   template < class V >
   void on_primary_key(const char *, identifier<V> &) {}
   template < class V >
-  void on_attribute(const char *id, V &/*from*/)
+  void on_attribute(const char *id, V &/*from*/, long /*size*/ = -1)
   {
     if (id_ != id) {
       return;
@@ -795,17 +727,14 @@ public:
     // Todo: convert each type to char*
     success_ = true;
   }
-
-  void on_attribute(const char*, date&) {}
-  void on_attribute(const char*, time&) {}
+  void on_attribute(const char*, date&, long /*size*/ = -1) {}
+  void on_attribute(const char*, time&, long /*size*/ = -1) {}
   void on_belongs_to(const char*, identifiable_holder &, cascade_type) {}
   void on_has_one(const char*, identifiable_holder &, cascade_type) {}
   void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
   void on_has_many(const char*, abstract_has_many&, cascade_type) {}
-  template < class V >
-  void on_attribute(const char*, const identifier<V> &) {}
 
-  void on_attribute(const char *id, std::string &from, size_t size)
+  void on_attribute(const char *id, std::string &from, long size)
   {
     if (id_ != id) {
       return;
@@ -828,7 +757,7 @@ public:
     success_ = true;
   }
 
-  void on_attribute(const char *id, char *from, size_t size)
+  void on_attribute(const char *id, char *from, long size)
   {
     if (id_ != id) {
       return;
@@ -854,9 +783,8 @@ public:
 private:
   std::string id_;
   char *to_;
-  size_t size_;
+  long size_;
   bool success_;
-//  size_t precision_;
 };
 
 /// @endcond

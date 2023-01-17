@@ -13,7 +13,12 @@ object_deserializer::object_deserializer(byte_buffer *buffer, object_store *stor
   : store_(store)
   , buffer_(buffer) {}
 
-void object_deserializer::on_attribute(const char *, char *c, size_t)
+void object_deserializer::on_primary_key(const char *, basic_identifier &x)
+{
+  basic_identifier_serializer_.deserialize(x, *buffer_);
+}
+
+void object_deserializer::on_attribute(const char *, char *c, long /*size*/)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -21,7 +26,7 @@ void object_deserializer::on_attribute(const char *, char *c, size_t)
   buffer_->release(c, len);
 }
 
-void object_deserializer::on_attribute(const char *, std::string &s, size_t)
+void object_deserializer::on_attribute(const char *, std::string &s, long /*size*/)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -31,34 +36,19 @@ void object_deserializer::on_attribute(const char *, std::string &s, size_t)
   delete [] str;
 }
 
-void object_deserializer::on_attribute(const char *, std::string &s)
-{
-  size_t len = 0;
-  buffer_->release(&len, sizeof(len));
-  char *str = new char[len];
-  buffer_->release(str, len);
-  s.assign(str, len);
-  delete [] str;
-}
-
-void object_deserializer::on_attribute(const char *, date &x)
+void object_deserializer::on_attribute(const char *, date &x, long /*size*/)
 {
   int julian_date(0);
   buffer_->release(&julian_date, sizeof(julian_date));
   x.set(julian_date);
 }
 
-void object_deserializer::on_attribute(const char *, time &x)
+void object_deserializer::on_attribute(const char *, time &x, long /*size*/)
 {
   struct timeval tv{};
   buffer_->release(&tv.tv_sec, sizeof(tv.tv_sec));
   buffer_->release(&tv.tv_usec, sizeof(tv.tv_usec));
   x.set(tv);
-}
-
-void object_deserializer::on_primary_key(const char *, basic_identifier &x)
-{
-  basic_identifier_serializer_.deserialize(x, *buffer_);
 }
 
 object_proxy *object_deserializer::find_proxy(unsigned long oid)

@@ -42,6 +42,7 @@ public:
     return result;
   }
 
+  void on_primary_key(const char *id, identifier<std::string> &pk);
   template< class V >
   void on_primary_key(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
@@ -51,23 +52,21 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &, long /*size*/ = -1, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
     result_[id] = json::object();
   }
 
   template < class V >
-  void on_attribute(const char *id, V &val, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &val, long /*size*/ = -1, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     result_[id] = val;
   }
 
-  void on_primary_key(const char *id, identifier<std::string> &pk);
-  void on_attribute(const char *id, bool &to);
-  void on_attribute(const char *id, std::string &to);
-  void on_attribute(const char *id, std::string &to, size_t);
-  void on_attribute(const char *id, date &to);
-  void on_attribute(const char *id, time &to);
+  void on_attribute(const char *id, bool &to, long /*size*/ = -1);
+  void on_attribute(const char *id, std::string &to, long /*size*/ = -1);
+  void on_attribute(const char *id, date &to, long /*size*/ = -1);
+  void on_attribute(const char *id, time &to, long /*size*/ = -1);
 
   template<class V>
   void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type)

@@ -13,27 +13,22 @@ void object_json_serializer::on_primary_key(const char *id, identifier <std::str
 
 }
 
-void object_json_serializer::on_attribute(const char *id, bool &x)
+void object_json_serializer::on_attribute(const char *id, bool &x, long /*size*/)
 {
   result_[id] = x;
 }
 
-void object_json_serializer::on_attribute(const char *id, std::string &x)
+void object_json_serializer::on_attribute(const char *id, std::string &x, long /*size*/)
 {
   result_[id] = x;
 }
 
-void object_json_serializer::on_attribute(const char *id, std::string &x, size_t)
-{
-  result_[id] = x;
-}
-
-void object_json_serializer::on_attribute(const char *id, date &to)
+void object_json_serializer::on_attribute(const char *id, date &to, long /*size*/)
 {
   result_[id] = to_string(to);
 }
 
-void object_json_serializer::on_attribute(const char *id, time &to)
+void object_json_serializer::on_attribute(const char *id, time &to, long /*size*/)
 {
   result_[id] = to_string(to);
 }

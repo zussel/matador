@@ -83,10 +83,9 @@ public:
   void serialize(T &x) { matador::access::serialize(*this, x); }
 
   template<class T>
-  void on_attribute(const char *, const T &);
-  void on_attribute(const char *, char *, size_t) {}
-  void on_attribute(const char *, std::string &, size_t) {}
-
+  void on_attribute(const char *, const T &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char *, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   template<class T>
   void on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade);
   template<class T>
@@ -96,7 +95,6 @@ public:
   {
     on_has_many(id, x, cascade);
   }
-
   template<class T, template<class ...> class Container>
   void on_has_many(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
   template<class T, template<class ...> class Container>
@@ -115,19 +113,6 @@ private:
 };
 
 /// @endcond
-
-template<class T>
-void object_deleter::on_attribute(const char *, const T &)
-{
-  if (!proxy_stack_.top()->node()->is_relation_node()) {
-    return;
-  }
-  auto curr_obj = visited_objects_.find(proxy_stack_.top());
-  if (curr_obj != visited_objects_.end()) {
-//    --curr_obj->second;
-  }
-
-}
 
 template<class T>
 void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade)

@@ -39,8 +39,6 @@ public:
   {
     matador::access::serialize(*this, x);
   }
-  void on_attribute(const char*, T &x);
-
   template < class V >
   void on_primary_key(const char *id, identifier<V> &x)
   {
@@ -51,10 +49,11 @@ public:
     reading_pk_ = false;
   }
 
+  void on_attribute(const char*, T &x, long /*size*/ = -1);
   template < class V >
-  void on_attribute(const char*, V &) {}
-  void on_attribute(const char*, char *, size_t) {}
-  void on_attribute(const char*, std::string &, size_t) {}
+  void on_attribute(const char*, V &, long /*size*/ = -1) {}
+  void on_attribute(const char*, char *, long /*size*/ = -1) {}
+  void on_attribute(const char*, std::string &, long /*size*/ = -1) {}
   void on_belongs_to(const char*, object_holder&, cascade_type) {}
   void on_has_one(const char*, object_holder&, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -66,7 +65,7 @@ private:
 };
 
 template < class T >
-void identifier_setter<T>::on_attribute(const char*, T &x) {
+void identifier_setter<T>::on_attribute(const char*, T &x, long /*size*/) {
   if (reading_pk_) {
     x = value_;
   }

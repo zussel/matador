@@ -12,15 +12,20 @@ namespace matador {
 object_serializer::object_serializer(byte_buffer *buffer)
   : buffer_(buffer) {}
 
-void object_serializer::on_attribute(const char *, char *c, size_t s)
+void object_serializer::on_primary_key(const char *, basic_identifier &x)
 {
-  size_t len = s;
+  basic_identifier_serializer_.serialize(x, *buffer_);
+}
+
+void object_serializer::on_attribute(const char *, char *c, long size)
+{
+  auto len = size;
 
   buffer_->append(&len, sizeof(len));
   buffer_->append(c, len);
 }
 
-void object_serializer::on_attribute(const char *, std::string &s, size_t)
+void object_serializer::on_attribute(const char *, std::string &s, long /*size*/)
 {
   size_t len = s.size();
 
@@ -28,30 +33,17 @@ void object_serializer::on_attribute(const char *, std::string &s, size_t)
   buffer_->append(s.c_str(), len);
 }
 
-void object_serializer::on_attribute(const char *, std::string &s)
-{
-  size_t len = s.size();
-
-  buffer_->append(&len, sizeof(len));
-  buffer_->append(s.c_str(), len);
-}
-
-void object_serializer::on_attribute(const char *id, date &x)
+void object_serializer::on_attribute(const char *id, date &x, long /*size*/)
 {
   int jd(x.julian_date());
   on_attribute(id, jd);
 }
 
-void object_serializer::on_attribute(const char *id, time &x)
+void object_serializer::on_attribute(const char *id, time &x, long /*size*/)
 {
   struct timeval tv = x.get_timeval();
   on_attribute(id, tv.tv_sec);
   on_attribute(id, tv.tv_usec);
-}
-
-void object_serializer::on_primary_key(const char *, basic_identifier &x)
-{
-  basic_identifier_serializer_.serialize(x, *buffer_);
 }
 
 void object_serializer::on_belongs_to(const char *id, object_holder &x, cascade_type)

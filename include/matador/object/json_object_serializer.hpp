@@ -88,7 +88,7 @@ public:
   void on_primary_key(const char *id, identifier<std::string> &pk);
 
   template < class V >
-  void on_attribute(const char *id, V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = nullptr)
+  void on_attribute(const char *id, V &obj, long /*size*/ = -1, typename std::enable_if<!matador::is_builtin<V>::value>::type* = nullptr)
   {
     write_id(id);
     append(obj);
@@ -96,7 +96,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &val, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &val, long /*size*/ = -1, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     write_id(id);
     append(val);
@@ -104,12 +104,11 @@ public:
     newline();
   }
 
-  void on_attribute(const char *id, bool &val);
-  void on_attribute(const char *id, std::string &val);
-  void on_attribute(const char *id, std::string &val, size_t len);
-  void on_attribute(const char *id, const char *val, size_t len);
-  void on_attribute(const char *id, date &val);
-  void on_attribute(const char *id, time &val);
+  void on_attribute(const char *id, bool &val, long /*size*/ = -1);
+  void on_attribute(const char *id, std::string &val, long size = -1);
+  void on_attribute(const char *id, const char *val, long size);
+  void on_attribute(const char *id, date &val, long /*size*/ = -1);
+  void on_attribute(const char *id, time &val, long /*size*/ = -1);
 
   template<class Value>
   void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
