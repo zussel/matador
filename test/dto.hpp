@@ -33,7 +33,7 @@ struct bounding_box
 
 struct dto
 {
-  matador::identifier<matador::varchar<255>> id;
+  std::string id;
   std::string name;
   matador::date birthday;
   matador::time created;
@@ -49,7 +49,7 @@ struct dto
   template < class S >
   void serialize(S &s)
   {
-    s.on_primary_key("id", id);
+    s.on_primary_key("id", id, 255);
     s.on_attribute("name", name);
     s.on_attribute("birthday", birthday);
     s.on_attribute("created", created);

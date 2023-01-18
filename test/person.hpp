@@ -7,7 +7,7 @@
 class person
 {
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long id_{};
     std::string name_;
     matador::date birthdate_;
     unsigned int height_ = 0;
@@ -36,8 +36,8 @@ public:
         serializer.on_attribute("height", height_);
     }
 
-    void id(unsigned long i) { id_.value(i); }
-    unsigned long id() const { return id_.value(); }
+    void id(unsigned long i) { id_ = i; }
+    unsigned long id() const { return id_; }
 
     std::string name() const { return name_; }
     void name(const std::string &name) { name_ = name; }

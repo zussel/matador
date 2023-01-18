@@ -128,8 +128,8 @@ void prototype_node::insert(object_proxy *proxy)
   // adjust size
   ++count;
   // find and insert primary key
-  if (proxy->primary_key_) {
-    id_map_.insert(std::make_pair(proxy->primary_key_, proxy));
+  if (proxy->pk_ != null_pk) {
+    id_map_.insert(std::make_pair(proxy->pk_, proxy));
   }
 
   // notify observers
@@ -157,7 +157,7 @@ void prototype_node::remove(object_proxy *proxy)
   proxy->next_ = nullptr;
 
   if (has_primary_key()) {
-    if (id_map_.erase(proxy->primary_key_) == 0) {
+    if (id_map_.erase(proxy->pk_) == 0) {
       // couldn't find and erase primary key
     }
   }

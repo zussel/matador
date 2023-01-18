@@ -4,9 +4,9 @@
 #include "matador/json/export.hpp"
 
 #include "matador/json/basic_json_mapper.hpp"
-#include "json_serializer.hpp"
-#include "json_mapper_serializer.hpp"
-#include "json.hpp"
+#include "matador/json/json_serializer.hpp"
+#include "matador/json/json_mapper_serializer.hpp"
+#include "matador/json/json.hpp"
 
 #include <set>
 #include <unordered_set>

@@ -46,12 +46,12 @@ public:
     matador::access::serialize(*this, obj);
   }
 
-  template < class T >
-  void on_primary_key(const char *, T &, long /*size*/ = -1) {}
+  template < class V >
+  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
   template<class V>
-  void on_attribute(const char *, V &) {}
-  void on_attribute(const char *, char *, size_t) {}
-  void on_attribute(const char *, std::string &, size_t) { }
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char *, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
 
   template<class V>
   void on_belongs_to(const char *id, object_ptr<V> &, cascade_type)

@@ -202,18 +202,18 @@ public:
 
   /**
    * Creates a new identifier, represented by the identifier
-   * of the underlaying type.
+   * of the underlying type.
    *
    * @return A new identifier.
    */
-  basic_identifier* create_identifier() const override
+  id_pk create_identifier() const override
   {
-    return self::identifier_->clone();
+    return self::identifier_;
   }
 
 private:
   static std::string classname_;
-  static std::unique_ptr<basic_identifier> identifier_;
+  static id_pk identifier_;
 };
 
 template < class T >
@@ -231,7 +231,7 @@ template < class T >
 std::string object_ptr<T>::classname_ = typeid(T).name();
 
 template < class T >
-std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver<T>::create());
+id_pk object_ptr<T>::identifier_(identifier_resolver<T>::create());
 
 }
 

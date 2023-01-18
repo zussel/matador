@@ -3,6 +3,8 @@
 
 #include "matador/utils/export.hpp"
 
+#include "matador/utils/id_pk.hpp"
+
 #include <memory>
 
 namespace matador {
@@ -25,7 +27,7 @@ public:
    *
    * @param id The identifier to set
    */
-  virtual void reset(basic_identifier* id) = 0;
+  virtual void reset(const id_pk &id) = 0;
 
   /**
    * Returns true if serializable has a primary key
@@ -39,15 +41,14 @@ public:
    *
    * @return The primary key of the foreign serializable
    */
-  virtual basic_identifier* primary_key() const = 0;
+  virtual const id_pk& primary_key() const = 0;
 
   /**
    * Creates a new identifier object.
    *
    * @return Returns a new identifier object.
    */
-  virtual basic_identifier* create_identifier() const = 0;
-
+  virtual id_pk create_identifier() const = 0;
 };
 
 }

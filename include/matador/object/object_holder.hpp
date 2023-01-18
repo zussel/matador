@@ -93,7 +93,7 @@ protected:
 
   /**
    * Destroys the object_holder
-   * and decides wether the underlaying
+   * and decides whether the underlying
    * object_proxy is destroyed as well.
    *
    * It is destroyed if it is not inserted
@@ -145,7 +145,7 @@ public:
    * Resets the object_holder with the given object_proxy.
    * 
    * @param proxy The new object_proxy for the object_holder.
-   * @param cascade Sets the cascadable actions for the proxy.
+   * @param cascade Sets the cascade actions for the proxy.
    */
   void reset(object_proxy *proxy, cascade_type cascade);
 
@@ -153,7 +153,7 @@ public:
    * Resets the object_holder with the given object_proxy.
    *
    * @param proxy The new object_proxy for the object_holder.
-   * @param cascade Sets the cascadable actions for the proxy.
+   * @param cascade Sets the cascade actions for the proxy.
    * @param notify_foreign_relation True if foreign relation endpoint should be modified
    */
   void reset(object_proxy *proxy, cascade_type cascade, bool notify_foreign_relation);
@@ -173,7 +173,7 @@ public:
    *
    * @param id The identifier to set
    */
-  void reset(basic_identifier *id) override;
+  void reset(const id_pk &id) override;
 
   /**
    * Clears the currently set object
@@ -273,7 +273,7 @@ public:
    *
    * @return The primary key of the foreign object
    */
-  basic_identifier* primary_key() const override;
+  const id_pk& primary_key() const override;
 
   /**
    * Returns the current reference count
@@ -297,7 +297,7 @@ public:
   cascade_type cascade() const;
 
   /**
-   * Prints the underlaying object
+   * Prints the underlying object
    *
    * @param out The output stream to write on.
    * @param x The object pointer to print.

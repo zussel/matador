@@ -62,7 +62,7 @@ public:
     typedef typename object_item_list_t::iterator iterator;
     typedef typename object_item_list_t::const_iterator const_iterator;
 
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     object_item_list_t items;
 
@@ -189,7 +189,7 @@ public:
 
 struct department
 {
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     matador::has_many<employee> employees;
 
@@ -245,7 +245,7 @@ public:
         serializer.on_has_many("student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
     }
 
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string title;
     matador::has_many<student> students;
 };
@@ -269,7 +269,7 @@ struct citizen : public person
 
 struct address
 {
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string street;
     std::string city;
     matador::object_ptr<citizen> citizen_;
@@ -452,14 +452,14 @@ public:
         serializer.on_attribute("name", name);
     }
 
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
 };
 
 class master
 {
 public:
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     matador::object_ptr<child> children;
 
@@ -495,7 +495,7 @@ public:
         serializer.on_has_many("children", children, "vector_id", "child_id", matador::cascade_type::ALL);
     }
 
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     children_vector_t children;
 };
@@ -517,7 +517,7 @@ public:
         serializer.on_has_many("children", children, "list_id", "child_id", matador::cascade_type::ALL);
     }
 
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     children_list_t children;
 };
@@ -529,7 +529,7 @@ public:
     typedef matador::has_many<T, C> element_list_t;
 
 public:
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     element_list_t elements;
 
     template < class S >
@@ -549,7 +549,7 @@ using many_vector_strings = many_builtins<std::string, std::vector>;
 class load
 {
 public:
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
 
     load() = default;
@@ -567,7 +567,7 @@ public:
 class location
 {
 public:
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
 
     location() = default;
@@ -584,7 +584,7 @@ public:
 class order
 {
 public:
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     matador::has_many<location> sources;
     matador::has_many<location> destinations;

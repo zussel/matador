@@ -4,6 +4,7 @@
 #include "matador/object/export.hpp"
 
 #include "matador/utils/identifier_resolver.hpp"
+#include "matador/utils/id_pk.hpp"
 
 #include "matador/object/object_type_registry_entry_base.hpp"
 
@@ -57,15 +58,15 @@ public:
    *
    * @param pk primary key of object
    */
-  explicit object_proxy(basic_identifier *pk);
+  explicit object_proxy(const id_pk &pk);
 
   template < class T >
-  object_proxy(basic_identifier *pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)
+  object_proxy(const id_pk &pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)
     : object_type_entry_(object_type_entry)
     , deleter_(&destroy<T>)
     , creator_(&create<T>)
     , name_(&type_id<T>)
-    , primary_key_(pk)
+    , pk_(pk)
   {}
 
   /**
@@ -83,7 +84,7 @@ public:
     , creator_(&create<T>)
     , name_(&type_id<T>)
   {
-    primary_key_ = identifier_resolver<T>::resolve(o);
+    pk_ = identifier_resolver<T>::resolve(o);
   }
 
   /**
@@ -106,7 +107,7 @@ public:
     , oid(id)
   {
     if (obj_ != nullptr) {
-      primary_key_ = object_type_entry->resolve_identifier(this);
+      pk_ = object_type_entry->resolve_identifier(this);
     }
   }
 
@@ -245,7 +246,7 @@ public:
     obj_ = o;
     oid = 0;
     if (obj_ != nullptr && resolve_identifier) {
-      primary_key_ = identifier_resolver<T>::resolve(o);
+      pk_ = identifier_resolver<T>::resolve(o);
     }
   }
 
@@ -325,9 +326,9 @@ public:
    *
    * @return The primary key of the underlying object
    */
-  basic_identifier* pk() const;
+  const id_pk& pk() const;
 
-  void pk(basic_identifier *id);
+  void pk(const id_pk &id);
 
   void create_object();
 
@@ -378,8 +379,8 @@ private:
 
   typedef std::set<object_holder *> ptr_set_t; /**< Shortcut to the object_holder set. */
   ptr_set_t ptr_set_;      /**< This set contains every object_holder pointing to this object_proxy. */
-  
-  basic_identifier *primary_key_ = nullptr;
+
+  id_pk pk_;
 };
 /// @endcond
 }

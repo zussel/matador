@@ -68,7 +68,7 @@ void identifier_binder<T>::bind(T *obj, statement<T> *stmt, size_t pos, basic_id
 
 template < class T >
 template< class V >
-void identifier_binder<T>::on_primary_key(const char *, V &x, long size)
+void identifier_binder<T>::on_primary_key(const char *, V &/*x*/, long /*size*/)
 {
   throw_object_exception("needs implementation");
 //  if (!x.is_same_type(*id_)) {
