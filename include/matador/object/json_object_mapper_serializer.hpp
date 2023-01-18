@@ -34,10 +34,8 @@ public:
   template < class V >
   void serialize(object_ptr<V> &obj);
   template < class V >
-  void on_primary_key(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
-  void on_primary_key(const char *id, identifier<std::string> &pk);
-  template < int SIZE, class V >
-  void on_primary_key(const char *id, identifier<varchar<SIZE, V>> &pk);
+  void on_primary_key(const char *id, V &pk, long size = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_primary_key(const char *id, std::string &pk, long size = -1);
   template < class V >
   void on_attribute(const char *id, V &to, long size = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
   template < class V >
@@ -118,7 +116,7 @@ void json_object_mapper_serializer::serialize(object_ptr<V> &obj)
 }
 
 template<class V>
-void json_object_mapper_serializer::on_primary_key(const char *id, identifier<V> &pk, typename std::enable_if<
+void json_object_mapper_serializer::on_primary_key(const char *id, V &pk, long /*size*/, typename std::enable_if<
   std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
   if (runtime_data_.key != id) {
@@ -128,20 +126,7 @@ void json_object_mapper_serializer::on_primary_key(const char *id, identifier<V>
     return;
   }
 
-  pk.value(runtime_data_.value.as<V>());
-}
-
-template<int SIZE, class V>
-void json_object_mapper_serializer::on_primary_key(const char *id, identifier<varchar<SIZE, V>> &pk)
-{
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_string()) {
-    return;
-  }
-
-  pk.value(runtime_data_.value.as<std::string>());
+  pk = runtime_data_.value.as<V>();
 }
 
 template<class V>

@@ -83,6 +83,8 @@ public:
   void serialize(T &x) { matador::access::serialize(*this, x); }
 
   template<class T>
+  void on_primary_key(const char *id, T &x, long size = -1);
+  template<class T>
   void on_attribute(const char *, const T &, long /*size*/ = -1) {}
   void on_attribute(const char *, char *, long /*size*/ = -1) {}
   void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
@@ -99,8 +101,6 @@ public:
   void on_has_many(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
   template<class T, template<class ...> class Container>
   void on_has_many(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<is_builtin<T>::value>::type* = 0);
-  template<class T>
-  void on_primary_key(const char *id, identifier<T> &x);
 
 private:
   bool check_object_count_map() const;
@@ -222,10 +222,9 @@ void object_deleter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_
 }
 
 template<class T>
-void object_deleter::on_primary_key(const char *id, identifier <T> &x)
+void object_deleter::on_primary_key(const char *id, T &x, long size)
 {
-  auto val = x.value();
-  on_attribute(id, val);
+  on_attribute(id, x, size);
 }
 
 }

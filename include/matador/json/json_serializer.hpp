@@ -63,7 +63,7 @@ public:
   }
 
   template< class V >
-  void on_primary_key(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &pk, long /*size*/ = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     write_id(id);
     append(pk).append(",");
@@ -78,15 +78,7 @@ public:
     newline();
   }
 
-  void on_primary_key(const char *id, identifier<std::string> &pk);
-
-  template < int SIZE, class V >
-  void on_primary_key(const char *id, identifier<varchar<SIZE, V>> &pk)
-  {
-    write_id(id);
-    append(pk.value()).append(",");
-    newline();
-  }
+  void on_primary_key(const char *id, std::string &pk, long size = -1);
 
   // numbers
   template < class V >

@@ -36,12 +36,12 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  template<class T>
-  void on_attribute(const char *, T &) {}
-  void on_attribute(const char *, char *, size_t) { }
-  void on_attribute(const char *, std::string &, size_t) { }
   template < class V >
-  void on_primary_key(const char *, identifier<V> &x);
+  void on_primary_key(const char *, V &x, long /*size*/ = -1);
+  template<class T>
+  void on_attribute(const char *, T &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char *, long /*size*/ = -1) { }
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
   void on_belongs_to(const char*, identifiable_holder&, cascade_type) { }
   void on_has_one(const char*, identifiable_holder&, cascade_type) { }
   void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
@@ -67,7 +67,7 @@ column identifier_column_resolver::resolve(T *obj)
 }
 
 template<class V>
-void identifier_column_resolver::on_primary_key(const char *id, identifier<V> &)
+void identifier_column_resolver::on_primary_key(const char *id, V &, long /*size*/)
 {
   col_.name = id;
 }

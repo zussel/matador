@@ -2,10 +2,10 @@
 
 namespace matador {
 
-void json_object_serializer::on_primary_key(const char *id, identifier<std::string> &pk)
+void json_object_serializer::on_primary_key(const char *id, std::string &pk, long /*size*/)
 {
   write_id(id);
-  append(pk.value());
+  append(pk);
   json_.append(",");
   newline();
 }

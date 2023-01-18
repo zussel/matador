@@ -5,12 +5,9 @@
 
 namespace matador {
 
-void object_json_serializer::on_primary_key(const char *id, identifier <std::string> &pk)
+void object_json_serializer::on_primary_key(const char *id, std::string &pk, long /*size*/)
 {
-  if (pk.is_valid()) {
-    result_[id] = pk.value();
-  }
-
+  result_[id] = pk;
 }
 
 void object_json_serializer::on_attribute(const char *id, bool &x, long /*size*/)

@@ -53,14 +53,12 @@ public:
   {}
 
   template < class V >
-  void on_primary_key(const char *id, identifier<V> &to)
+  void on_primary_key(const char *id, V &to)
   {
     if (id_ != id) {
       return;
     }
-    V val;
-    on_attribute(id, val);
-    to.value(val);
+    on_attribute(id, to);
     this->success_ = true;
   }
 
@@ -116,7 +114,7 @@ public:
   {}
 
   template < class V >
-  void on_primary_key(const char *, identifier<V> &) {}
+  void on_primary_key(const char *, V &) {}
 
   template < class V >
   void on_attribute(const char *id, V &to, long /*size*/ = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
@@ -177,7 +175,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, identifier<V> &) {}
+  void on_primary_key(const char *, V &) {}
   template < class V >
   void on_attribute(const char *, V &, long /*size*/ = -1) {}
   void on_attribute(const char *, char*, long /*size*/ = -1) {}
@@ -220,7 +218,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, identifier<V> &) {}
+  void on_primary_key(const char *, V &) {}
   template < class V >
   void on_attribute(const char *, V &, long /*size*/ = -1) {}
   void on_attribute(const char *, char*, long /*size*/ = -1) {}
@@ -260,7 +258,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, identifier<V> &) {}
+  void on_primary_key(const char *, V &) {}
   template < class V >
   void on_attribute(const char *, V &, long /*size*/ = -1) {}
   void on_attribute(const char *, char*, long /*size*/ = -1) {}
@@ -297,7 +295,7 @@ public:
   ~attribute_reader() = default;
 
   template < class V >
-  void on_primary_key(const char *, identifier<V> &) {}
+  void on_primary_key(const char *, V &) {}
   template < class V >
   void on_attribute(const char *, V &, long /*size*/ = -1) {}
   void on_attribute(const char *id, std::string &to, long /*size*/ = -1)
@@ -345,14 +343,12 @@ public:
   ~attribute_reader() = default;
 
   template < class V >
-  void on_primary_key(const char *id, identifier<V> &to)
+  void on_primary_key(const char *id, V &to)
   {
     if (id_ != id) {
       return;
     }
-    V val;
-    on_attribute(id, val);
-    to.value(val);
+    on_attribute(id, to);
     this->success_ = true;
   }
   template < class V >
@@ -402,13 +398,12 @@ public:
   ~attribute_writer() = default;
 
   template < class V >
-  void on_primary_key(const char *id, identifier<V> &from)
+  void on_primary_key(const char *id, V &from)
   {
     if (id_ != id) {
       return;
     }
-    auto val = from.value();
-    on_attribute(id, val);
+    on_attribute(id, from);
   }
   template < class V >
   void on_attribute(const char *id, V &from, long /*size*/ = -1, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
@@ -461,7 +456,7 @@ public:
   {}
 
   template < class V >
-  void on_primary_key(const char *, identifier<V> &) {}
+  void on_primary_key(const char *, V &) {}
   template < class V >
   void on_attribute(const char *, V &, long /*size*/ = -1) {}
   void on_attribute(const char *, char*, long /*size*/ = -1) {}
@@ -502,7 +497,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, identifier<V> &) {}
+  void on_primary_key(const char *, V &) {}
   template < class V >
   void on_attribute(const char *, V &, long /*size*/ = -1) {}
   void on_attribute(const char *, char*, long /*size*/ = -1) {}
@@ -541,7 +536,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, identifier<V> &) {}
+  void on_primary_key(const char *, V &) {}
   template < class V >
   void on_attribute(const char *, V &, long /*size*/ = -1) {}
   void on_attribute(const char *, char*, long /*size*/ = -1) {}
@@ -577,13 +572,12 @@ public:
   ~attribute_writer() = default;
 
   template < class V >
-  void on_primary_key(const char *id, identifier<V> &from)
+  void on_primary_key(const char *id, V &from)
   {
     if (id_ != id) {
       return;
     }
-    auto val = from.value();
-    on_attribute(id, val);
+    on_attribute(id, from);
   }
   template < class V >
   void on_attribute(const char *id, V &from, long /*size*/ = -1, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
@@ -717,7 +711,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, identifier<V> &) {}
+  void on_primary_key(const char *, V &) {}
   template < class V >
   void on_attribute(const char *id, V &/*from*/, long /*size*/ = -1)
   {

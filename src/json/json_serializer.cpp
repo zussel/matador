@@ -12,10 +12,10 @@ void json_serializer::on_attribute(const char *id, std::string &val, size_t)
   newline();
 }
 
-void json_serializer::on_primary_key(const char *id, identifier<std::string> &pk)
+void json_serializer::on_primary_key(const char *id, std::string &pk, long /*size*/)
 {
   write_id(id);
-  append(pk.value()).append(",");
+  append(pk).append(",");
   newline();
 }
 

@@ -30,10 +30,10 @@ public:
   }
 
   template<class V>
-  void on_attribute(const char *, V &) {}
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
 
   template < class V >
-  void on_primary_key(const char *, identifier<V> &x);
+  void on_primary_key(const char *, V &x, long size = -1);
 
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
   void on_has_one(const char *, identifiable_holder &, cascade_type) { }
@@ -68,12 +68,13 @@ void identifier_binder<T>::bind(T *obj, statement<T> *stmt, size_t pos, basic_id
 
 template < class T >
 template< class V >
-void identifier_binder<T>::on_primary_key(const char *, identifier<V> &x)
+void identifier_binder<T>::on_primary_key(const char *, V &x, long size)
 {
-  if (!x.is_same_type(*id_)) {
-    throw_object_exception("identifier types aren't equal");
-  }
-  stmt_->bind(pos_, static_cast<identifier<V>*>(id_)->reference());
+  throw_object_exception("needs implementation");
+//  if (!x.is_same_type(*id_)) {
+//    throw_object_exception("identifier types aren't equal");
+//  }
+//  stmt_->bind(pos_, static_cast<identifier<V>*>(id_)->reference());
 }
 
 template < class T >

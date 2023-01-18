@@ -69,23 +69,20 @@ public:
   }
 
   template< class V >
-  void on_primary_key(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &pk, long /*size*/ = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     write_id(id);
-    if (pk.is_valid()) {
 
-      auto it = type_id_map_.find(*current_type_index_);
-      if (it != type_id_map_.end() && it->second.first.empty()) {
-        it->second.first.assign(id);
-      }
-      append(pk.value());
-      json_.append(",");
-    } else {
-      json_.append("null,");
+    auto it = type_id_map_.find(*current_type_index_);
+    if (it != type_id_map_.end() && it->second.first.empty()) {
+      it->second.first.assign(id);
     }
+    append(pk.value());
+    json_.append(",");
+
     newline();
   }
-  void on_primary_key(const char *id, identifier<std::string> &pk);
+  void on_primary_key(const char *id, std::string &pk, long size = -1);
 
   template < class V >
   void on_attribute(const char *id, V &obj, long /*size*/ = -1, typename std::enable_if<!matador::is_builtin<V>::value>::type* = nullptr)

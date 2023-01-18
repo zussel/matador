@@ -13,11 +13,6 @@ object_deserializer::object_deserializer(byte_buffer *buffer, object_store *stor
   : store_(store)
   , buffer_(buffer) {}
 
-void object_deserializer::on_primary_key(const char *, basic_identifier &x)
-{
-  basic_identifier_serializer_.deserialize(x, *buffer_);
-}
-
 void object_deserializer::on_attribute(const char *, char *c, long /*size*/)
 {
   size_t len = 0;

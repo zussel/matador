@@ -42,13 +42,11 @@ public:
     return result;
   }
 
-  void on_primary_key(const char *id, identifier<std::string> &pk);
+  void on_primary_key(const char *id, std::string &pk, long /*size*/ = -1);
   template< class V >
-  void on_primary_key(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &pk, long /*size*/ = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
-    if (pk.is_valid()) {
-      result_[id] = pk.value();
-    }
+    result_[id] = pk;
   }
 
   template < class V >

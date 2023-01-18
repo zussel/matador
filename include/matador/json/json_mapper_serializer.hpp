@@ -27,15 +27,13 @@ public:
   template < class V >
   void serialize(V &obj);
 
+  void on_primary_key(const char *id, std::string &to, long size = -1);
   template < class V >
-  void on_attribute(const char *id, V &obj, typename std::enable_if<std::is_class<V>::value>::type* = 0);
-  template < class V >
-  void on_primary_key(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
-  void on_primary_key(const char *id, identifier<std::string> &pk);
-  template < int SIZE, class V >
-  void on_primary_key(const char *id, identifier<varchar<SIZE, V>> &pk);
+  void on_primary_key(const char *id, V &to, long size = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
   template < class V >
   void on_attribute(const char *id, V &to, long size = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  template < class V >
+  void on_attribute(const char *id, V &obj, typename std::enable_if<std::is_class<V>::value>::type* = 0);
   template < class V >
   void on_attribute(const char *id, V &to, long size = -1, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
   void on_attribute(const char *id, bool &to, long size = -1);
@@ -81,7 +79,7 @@ void json_mapper_serializer::on_attribute(const char *id, V &obj, typename std::
 }
 
 template<class V>
-void json_mapper_serializer::on_primary_key(const char *id, identifier<V> &pk, typename std::enable_if<
+void json_mapper_serializer::on_primary_key(const char *id, V &to, long /*size*/, typename std::enable_if<
   std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
   if (runtime_data_.key != id) {
@@ -91,7 +89,7 @@ void json_mapper_serializer::on_primary_key(const char *id, identifier<V> &pk, t
     return;
   }
 
-  pk.value(runtime_data_.value.as<V>());
+  to = runtime_data_.value.as<V>();
 }
 
 template<class V>
@@ -117,19 +115,6 @@ void json_mapper_serializer::on_attribute(const char *id, V &to, long /*size*/, 
     return;
   }
   to = runtime_data_.value.as<V>();
-}
-
-template<int SIZE, class V>
-void json_mapper_serializer::on_primary_key(const char *id, identifier<varchar<SIZE, V>> &pk)
-{
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_string()) {
-    return;
-  }
-
-  pk.value(runtime_data_.value.as<std::string>());
 }
 
 template<class V>

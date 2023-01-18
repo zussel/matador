@@ -12,11 +12,6 @@ namespace matador {
 object_serializer::object_serializer(byte_buffer *buffer)
   : buffer_(buffer) {}
 
-void object_serializer::on_primary_key(const char *, basic_identifier &x)
-{
-  basic_identifier_serializer_.serialize(x, *buffer_);
-}
-
 void object_serializer::on_attribute(const char *, char *c, long size)
 {
   auto len = size;

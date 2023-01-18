@@ -34,7 +34,8 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  void on_primary_key(const char *, basic_identifier &) {}
+  template < class T >
+  void on_primary_key(const char *, T &, long /*size*/ = -1) {}
   template < class T >
   void on_attribute(const char *, T &, long /*size*/ = -1) {}
   void on_attribute(const char *, char *, long /*size*/ = -1) {}

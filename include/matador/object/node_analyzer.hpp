@@ -28,7 +28,8 @@ public:
 
   template<class V>
   void serialize(V &x);
-  void on_primary_key(const char *, basic_identifier &) {}
+  template<class V>
+  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
   template<class V>
   void on_attribute(const char *, V &, long /*size*/ = -1) { }
   void on_attribute(const char *, char *, long /*size*/ = -1) { }

@@ -64,12 +64,10 @@ public:
     matador::access::serialize(*this, obj);
   }
 
-  void on_primary_key(const char *id, basic_identifier &x);
   template < class V >
-  void on_primary_key(const char* id, identifier<V> &x)
+  void on_primary_key(const char* id, V &x, long size = -1)
   {
-    V val(x.value());
-    on_attribute(id, val);
+    on_attribute(id, x, size);
   }
   template < class T >
   void on_attribute(const char *, T &x, long /*size*/ = -1)

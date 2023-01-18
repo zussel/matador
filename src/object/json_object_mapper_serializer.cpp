@@ -7,7 +7,7 @@ json_object_mapper_serializer::json_object_mapper_serializer(details::mapper_run
   : runtime_data_(runtime_data)
 {}
 
-void json_object_mapper_serializer::on_primary_key(const char *id, identifier<std::string> &pk)
+void json_object_mapper_serializer::on_primary_key(const char *id, std::string &pk, long /*size*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -16,7 +16,7 @@ void json_object_mapper_serializer::on_primary_key(const char *id, identifier<st
     return;
   }
 
-  pk.value(runtime_data_.value.as<std::string>());
+  pk = runtime_data_.value.as<std::string>();
 }
 
 void json_object_mapper_serializer::on_attribute(const char *id, bool &to, long /*size*/)
