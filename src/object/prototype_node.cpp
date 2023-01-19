@@ -319,13 +319,10 @@ std::type_index prototype_node::type_index() const
   return info_->type_index();
 }
 
-object_proxy *prototype_node::find_proxy(basic_identifier *pk)
+object_proxy *prototype_node::find_proxy(const id_pk &pk)
 {
-  auto i = std::find_if(id_map_.begin(), id_map_.end(), [pk](const detail::t_identifier_map::value_type &x) {
-    return *pk == *(x.first);
-  });
-//  t_primary_key_map::iterator i = primary_key_map.find(pk);
-  return (i != id_map_.end() ? i->second : nullptr);
+  auto it = id_map_.find(pk);
+  return (it != id_map_.end() ? it->second : nullptr);
 }
 
 void prototype_node::register_relation_endpoint(const std::type_index &tindex,

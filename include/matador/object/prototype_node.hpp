@@ -209,7 +209,7 @@ public:
    * capacity objects the corresponding
    * prototype tree must be passed
    *
-   * @param recursive Indicates wether all or only nodes objects are deleted
+   * @param recursive Indicates whether all or only nodes objects are deleted
    */
   void clear(bool recursive);
 
@@ -247,7 +247,7 @@ public:
   prototype_node* next_node(const prototype_node *root) const;
 
   /**
-   * Return nodes predeccessor node or NULL if node is first.
+   * Return nodes predecessor node or NULL if node is first.
    * 
    * @return The previous node.
    */
@@ -355,7 +355,7 @@ public:
    * @param pk The primary key
    * @return The corresponding object_proxy or nullptr
    */
-  object_proxy* find_proxy(basic_identifier *pk);
+  object_proxy* find_proxy(const id_pk &pk);
 
   /**
    * Register relation_field_endpoint identified by the given type index.

@@ -58,7 +58,7 @@ public:
   void on_attribute(const char *id, time &x) override;
   void on_belongs_to(const char *id, identifiable_holder &x, cascade_type) override;
   void on_has_one(const char *id, identifiable_holder &x, cascade_type) override;
-  void on_primary_key(const char *id, basic_identifier &x) override;
+//  void on_primary_key(const char *id, basic_identifier &x) override;
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
   void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
 

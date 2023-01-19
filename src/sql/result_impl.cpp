@@ -6,29 +6,24 @@
 namespace matador {
 namespace detail {
 
-void result_impl::on_attribute(const char*, char *value, size_t s)
+void result_impl::on_attribute(const char*, char *value, long size)
 {
-  read_value(result_index_++, result_row_, value, s);
+  read_value(result_index_++, result_row_, value, size);
 }
 
-void result_impl::on_attribute(const char*, std::string &value, size_t s)
+void result_impl::on_attribute(const char*, std::string &value, long size)
 {
-  read_value(result_index_++, result_row_, value, s);
+  read_value(result_index_++, result_row_, value, size);
 }
 
-void result_impl::on_attribute(const char*, matador::time &value)
+void result_impl::on_attribute(const char*, matador::time &value, long /*size*/)
 {
   read_value(result_index_++, result_row_, value);
 }
 
-void result_impl::on_attribute(const char*, matador::date &value)
+void result_impl::on_attribute(const char*, matador::date &value, long /*size*/)
 {
   read_value(result_index_++, result_row_, value);
-}
-
-void result_impl::on_primary_key(const char*, matador::basic_identifier &/*x*/)
-{
-
 }
 
 void result_impl::on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type)
@@ -45,16 +40,16 @@ void result_impl::on_has_one(const char *id, matador::identifiable_holder &x, ca
 void result_impl::read_foreign_object(const char */*id*/, identifiable_holder &x)
 {
   //determine and create primary key of object ptr
-  basic_identifier* pk = x.primary_key();
-  if (!pk) {
+  auto pk = x.primary_key();
+  if (pk == matador::null_pk) {
     pk = x.create_identifier();
   }
 
 //  pk->serialize(id, *this);
-  if (!pk->is_valid()) {
+//  if (!pk->is_valid()) {
     // no pk is set => null
-    return;
-  }
+//    return;
+//  }
 
   // set found primary key into object_base_ptr
   if (!x.has_primary_key()) {

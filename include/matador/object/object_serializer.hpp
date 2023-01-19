@@ -112,7 +112,6 @@ public:
 
 private:
   byte_buffer *buffer_ = nullptr;
-  basic_identifier_serializer basic_identifier_serializer_;
 };
 /// @endcond
 }

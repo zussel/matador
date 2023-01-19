@@ -42,16 +42,22 @@ public:
   }
 
   template<typename ValueType>
-  void on_attribute(const char*, ValueType &value)
+  void on_primary_key(const char*, ValueType &value, long size = -1)
   {
     read_value(result_index_++, result_row_, value);
   }
 
-  void on_attribute(const char*, char *, size_t);
-  void on_attribute(const char*, std::string&, size_t);
-  void on_attribute(const char*, matador::time&);
-  void on_attribute(const char*, matador::date&);
-  void on_primary_key(const char*, matador::basic_identifier &x);
+  template<typename ValueType>
+  void on_attribute(const char*, ValueType &value, long size = -1)
+  {
+    read_value(result_index_++, result_row_, value);
+  }
+
+  void on_attribute(const char*, char *, long size = -1);
+  void on_attribute(const char*, std::string&, long size = -1);
+  void on_attribute(const char*, matador::time&, long size = -1);
+  void on_attribute(const char*, matador::date&, long size = -1);
+
   void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type);
   void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type);
 

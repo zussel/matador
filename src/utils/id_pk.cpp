@@ -1,5 +1,8 @@
 #include "matador/utils/id_pk.hpp"
 
+#include <stdexcept>
+#include <ostream>
+
 namespace matador {
 
 id_pk::base::base(const std::type_index &ti)
@@ -31,6 +34,11 @@ bool id_pk::null_pk::less(const id_pk::base &x) const
 std::string id_pk::null_pk::str() const
 {
   return "null_pk";
+}
+
+size_t id_pk::null_pk::hash() const
+{
+  throw std::runtime_error("hash for null_pk not allowed");
 }
 
 id_pk::id_pk()
@@ -88,8 +96,18 @@ const std::type_index &id_pk::type_index() const {
   return id_->type_index_;
 }
 
+size_t id_pk::hash() const {
+  return id_->hash();
+}
+
 std::ostream &operator<<(std::ostream &out, const id_pk &id) {
   out << id.str();
   return out;
 }
+
+size_t id_pk_hash::operator()(const id_pk &id) const
+{
+  return id.hash();
+}
+
 }

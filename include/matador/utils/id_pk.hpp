@@ -35,6 +35,7 @@ private:
     virtual bool equal_to(const base &x) const = 0;
     virtual bool less(const base &x) const = 0;
     virtual std::string str() const = 0;
+    virtual size_t hash() const = 0;
 
     std::type_index type_index_;
   };
@@ -63,6 +64,10 @@ private:
       return detail::to_string(id_);
     }
 
+    size_t hash() const final {
+      return std::hash<IdType>(id_);
+    }
+
     IdType id_;
   };
 
@@ -75,6 +80,7 @@ private:
     bool equal_to(const base &x) const final;
     bool less(const base &x) const final;
     std::string str() const final;
+    size_t hash() const final;
   };
 
 public:
@@ -106,6 +112,8 @@ public:
   std::string str() const;
   const std::type_index &type_index() const;
 
+  size_t hash() const;
+
   friend std::ostream &operator<<(std::ostream &out, const id_pk &id);
 
 private:
@@ -113,6 +121,11 @@ private:
 };
 
 static id_pk null_pk{};
+
+struct id_pk_hash
+{
+  size_t operator()(const id_pk &id) const;
+};
 
 }
 

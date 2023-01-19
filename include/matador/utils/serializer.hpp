@@ -14,7 +14,6 @@ namespace matador {
 class time;
 class date;
 class identifiable_holder;
-class basic_identifier;
 class abstract_has_many;
 
 /**
@@ -167,7 +166,7 @@ public:
    * @param id The id of the value
    * @param x The value to be serialized
    */
-  virtual void on_primary_key(const char *id, matador::basic_identifier &x) = 0;
+//  virtual void on_primary_key(const char *id, matador::basic_identifier &x) = 0;
   /**
    * @brief Interface to serialize an object with given id and cascade type
    *
@@ -190,14 +189,14 @@ public:
    * @param id The id of the value
    * @param x The identifier to be serialized
    */
-  template < class T, typename = typename std::enable_if<
-    std::is_base_of<basic_identifier, T>::value &&
-    !std::is_same<T, basic_identifier>::value
-  >::type >
-  void on_primary_key(const char *id, T &x)
-  {
-    serialize(id, serializer::to_basic_identifier(x));
-  }
+//  template < class T, typename = typename std::enable_if<
+//    std::is_base_of<basic_identifier, T>::value &&
+//    !std::is_same<T, basic_identifier>::value
+//  >::type >
+//  void on_primary_key(const char *id, T &x)
+//  {
+//    serialize(id, serializer::to_basic_identifier(x));
+//  }
 
 
   /**
@@ -223,11 +222,11 @@ public:
   virtual void on_has_many(const char *, abstract_has_many &, cascade_type) = 0;
 
 private:
-  template < class T, typename = typename std::enable_if<
-    std::is_base_of<basic_identifier, T>::value &&
-    !std::is_same<T, basic_identifier>::value
-  >::type >
-  static basic_identifier& to_basic_identifier(T &x) { return x; }
+//  template < class T, typename = typename std::enable_if<
+//    std::is_base_of<basic_identifier, T>::value &&
+//    !std::is_same<T, basic_identifier>::value
+//  >::type >
+//  static basic_identifier& to_basic_identifier(T &x) { return x; }
 };
 
 }
