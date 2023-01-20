@@ -49,17 +49,17 @@
 //#include "orm/OrmReloadTestUnit.hpp"
 //#include "orm/OrmRelationTestUnit.hpp"
 //#include "orm/TransactionTestUnit.hpp"
-//
-//#include "sql/DialectTestUnit.hpp"
-//#include "sql/ConditionUnitTest.hpp"
-//#include "sql/ConnectionTestUnit.hpp"
-//#include "sql/QueryTestUnit.hpp"
-//#include "sql/MSSQLDialectTestUnit.hpp"
-//#include "sql/PostgreSQLDialectTestUnit.hpp"
-//#include "sql/SQLiteDialectTestUnit.hpp"
-//#include "sql/ValueUnitTest.hpp"
-//#include "sql/SqlLoggerTest.hpp"
-//
+
+#include "sql/DialectTestUnit.hpp"
+#include "sql/ConditionUnitTest.hpp"
+#include "sql/ConnectionTestUnit.hpp"
+#include "sql/QueryTestUnit.hpp"
+#include "sql/MSSQLDialectTestUnit.hpp"
+#include "sql/PostgreSQLDialectTestUnit.hpp"
+#include "sql/SQLiteDialectTestUnit.hpp"
+#include "sql/ValueUnitTest.hpp"
+#include "sql/SqlLoggerTest.hpp"
+
 //#include "net/IPTestUnit.hpp"
 //#include "net/AddressTest.hpp"
 //#include "net/SocketTest.hpp"
@@ -80,7 +80,7 @@
 //#include "http/TemplateEngineTest.hpp"
 //#include "http/MiddlewareTest.hpp"
 
-//#include "connections.hpp"
+#include "connections.hpp"
 
 #include <cstdlib> // EXIT_SUCCESS
 
@@ -148,11 +148,11 @@ int main(int argc, char *argv[])
   suite.register_unit(new HasManyListUnitTest);
   suite.register_unit(new RelationTestUnit);
 
-//  suite.register_unit(new ConditionUnitTest);
-//  suite.register_unit(new DialectTestUnit);
-//  suite.register_unit(new SqlLoggerTest);
-//  suite.register_unit(new ValueUnitTest);
-//
+  suite.register_unit(new ConditionUnitTest);
+  suite.register_unit(new DialectTestUnit);
+  suite.register_unit(new SqlLoggerTest);
+  suite.register_unit(new ValueUnitTest);
+
 //  suite.register_unit(new IPTestUnit);
 //  suite.register_unit(new AddressTest);
 //  suite.register_unit(new SocketTest);
@@ -172,54 +172,54 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new RouteEndpointTest);
 //  suite.register_unit(new TemplateEngineTest);
 //  suite.register_unit(new MiddlewareTest);
-//
-//#if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
-//  suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
-//  suite.register_unit(new TransactionTestUnit("mysql", ::connection::mysql));
-//  suite.register_unit(new QueryTestUnit("mysql", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
-//  suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
-//  suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
-//  suite.register_unit(new JsonOrmTest("mysql", ::connection::mysql));
-//  suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
-//  suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
-//#endif
-//
-//#if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
-//  suite.register_unit(new ConnectionTestUnit("mssql", ::connection::mssql));
+
+#if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
+  suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
+  suite.register_unit(new TransactionTestUnit("mysql", ::connection::mysql));
+  suite.register_unit(new QueryTestUnit("mysql", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
+  suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
+  suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
+  suite.register_unit(new JsonOrmTest("mysql", ::connection::mysql));
+  suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
+  suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
+#endif
+
+#if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
+  suite.register_unit(new ConnectionTestUnit("mssql", ::connection::mssql));
 //  suite.register_unit(new TransactionTestUnit("mssql", ::connection::mssql));
-//  suite.register_unit(new QueryTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new QueryTestUnit("mssql", ::connection::mssql));
 //  suite.register_unit(new BlogUnitTest("mssql", ::connection::mssql));
 //  suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
 //  suite.register_unit(new JsonOrmTest("mssql", ::connection::mssql));
 //  suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
 //  suite.register_unit(new OrmRelationTestUnit("mssql", ::connection::mssql));
-//  suite.register_unit(new MSSQLDialectTestUnit());
-//#endif
-//
-//#if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
-//  suite.register_unit(new ConnectionTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new QueryTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
-//  suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new JsonOrmTest("sqlite", ::connection::sqlite));
-//  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new SQLiteDialectTestUnit());
-//#endif
-//
-//#if defined(MATADOR_POSTGRESQL) && defined(MATADOR_POSTGRESQL_TEST)
-//  suite.register_unit(new ConnectionTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new QueryTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new BlogUnitTest("postgresql", ::connection::postgresql));
-//  suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new JsonOrmTest("postgresql", ::connection::postgresql));
-//  suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new PostgreSQLDialectTestUnit());
-//#endif
+  suite.register_unit(new MSSQLDialectTestUnit());
+#endif
+
+#if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
+  suite.register_unit(new ConnectionTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new QueryTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
+  suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new JsonOrmTest("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new SQLiteDialectTestUnit());
+#endif
+
+#if defined(MATADOR_POSTGRESQL) && defined(MATADOR_POSTGRESQL_TEST)
+  suite.register_unit(new ConnectionTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new QueryTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new BlogUnitTest("postgresql", ::connection::postgresql));
+  suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new JsonOrmTest("postgresql", ::connection::postgresql));
+  suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new PostgreSQLDialectTestUnit());
+#endif
 
 //  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 

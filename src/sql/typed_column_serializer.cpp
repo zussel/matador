@@ -135,7 +135,7 @@ void typed_column_serializer::on_attribute(const char *id, time &)
 void typed_column_serializer::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
-    x.primary_key()->serialize(id, *this);
+    x.primary_key().serialize(*this);
   } else {
     std::unique_ptr<basic_identifier> pk(x.create_identifier());
     pk->serialize(id, *this);

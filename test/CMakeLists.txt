@@ -133,28 +133,28 @@ SET (TEST_UNIT_SOURCES
   unit/TestSuiteTestUnit.hpp
 )
 
-#SET (TEST_SQL_SOURCES
-#  sql/ConnectionTestUnit.cpp
-#  sql/ConnectionTestUnit.hpp
-#  sql/QueryTestUnit.cpp
-#  sql/QueryTestUnit.hpp
-#  sql/ConditionUnitTest.cpp
-#  sql/ConditionUnitTest.hpp
-#  sql/DialectTestUnit.cpp
-#  sql/DialectTestUnit.hpp
-#  sql/TestDialect.cpp
-#  sql/TestDialect.hpp
-#  sql/MSSQLDialectTestUnit.cpp
-#  sql/MSSQLDialectTestUnit.hpp
-#  sql/SQLiteDialectTestUnit.cpp
-#  sql/SQLiteDialectTestUnit.hpp
-#  sql/ValueUnitTest.cpp
-#  sql/ValueUnitTest.hpp
-#  sql/PostgreSQLDialectTestUnit.cpp
-#  sql/PostgreSQLDialectTestUnit.hpp
-#  sql/SqlLoggerTest.cpp
-#  sql/SqlLoggerTest.hpp)
-#
+SET (TEST_SQL_SOURCES
+  sql/ConnectionTestUnit.cpp
+  sql/ConnectionTestUnit.hpp
+  sql/QueryTestUnit.cpp
+  sql/QueryTestUnit.hpp
+  sql/ConditionUnitTest.cpp
+  sql/ConditionUnitTest.hpp
+  sql/DialectTestUnit.cpp
+  sql/DialectTestUnit.hpp
+  sql/TestDialect.cpp
+  sql/TestDialect.hpp
+  sql/MSSQLDialectTestUnit.cpp
+  sql/MSSQLDialectTestUnit.hpp
+  sql/SQLiteDialectTestUnit.cpp
+  sql/SQLiteDialectTestUnit.hpp
+  sql/ValueUnitTest.cpp
+  sql/ValueUnitTest.hpp
+  sql/PostgreSQLDialectTestUnit.cpp
+  sql/PostgreSQLDialectTestUnit.hpp
+  sql/SqlLoggerTest.cpp
+  sql/SqlLoggerTest.hpp)
+
 #SET (TEST_ORM_SOURCES
 #  orm/TransactionTestUnit.cpp
 #  orm/TransactionTestUnit.hpp
@@ -185,7 +185,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_LOGGER_SOURCES}
 #  ${TEST_HTTP_SOURCES}
 #  ${TEST_NET_SOURCES}
-#  ${TEST_SQL_SOURCES}
+  ${TEST_SQL_SOURCES}
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
@@ -216,10 +216,10 @@ TARGET_LINK_LIBRARIES(test_matador
 #  matador-net
 #  matador-http
   matador-object
-#  matador-sql
+  matador-sql
 #  matador-orm
   ${CMAKE_DL_LIBS}
-#  ${MATADOR_DB_LIBRARIES}
+  ${MATADOR_DB_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
 )
 
