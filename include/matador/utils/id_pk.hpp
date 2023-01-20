@@ -17,6 +17,25 @@ static std::string to_string(const std::string &value) {
 }
 }
 
+struct null_type_t {};
+
+class identifier_serializer
+{
+public:
+  virtual ~identifier_serializer() = default;
+
+  virtual void serialize(short &) = 0;
+  virtual void serialize(int &) = 0;
+  virtual void serialize(long &) = 0;
+  virtual void serialize(long long &) = 0;
+  virtual void serialize(unsigned short &) = 0;
+  virtual void serialize(unsigned int &) = 0;
+  virtual void serialize(unsigned long &) = 0;
+  virtual void serialize(unsigned long long &) = 0;
+  virtual void serialize(std::string &) = 0;
+  virtual void serialize(null_type_t &) = 0;
+};
+
 class id_pk
 {
 private:
@@ -34,6 +53,7 @@ private:
     virtual base *copy() const = 0;
     virtual bool equal_to(const base &x) const = 0;
     virtual bool less(const base &x) const = 0;
+    virtual void serialize(identifier_serializer &s) = 0;
     virtual std::string str() const = 0;
     virtual size_t hash() const = 0;
 
@@ -64,6 +84,10 @@ private:
       return detail::to_string(id_);
     }
 
+    void serialize(identifier_serializer &s) final {
+      s.serialize(id_);
+    }
+
     size_t hash() const final {
       return std::hash<IdType>(id_);
     }
@@ -73,14 +97,16 @@ private:
 
   struct null_pk : public base
   {
-    struct null_type_t {};
-
     null_pk();
     base *copy() const final;
     bool equal_to(const base &x) const final;
     bool less(const base &x) const final;
+    void serialize(identifier_serializer &s) final {
+      s.serialize(null_);
+    }
     std::string str() const final;
     size_t hash() const final;
+    null_type_t null_;
   };
 
 public:
@@ -112,6 +138,15 @@ public:
   std::string str() const;
   const std::type_index &type_index() const;
 
+  bool is_null() const;
+  void clear() {
+    id_ = std::make_unique<null_pk>();
+  }
+
+  void serialize(identifier_serializer &s) {
+    id_->serialize(s);
+  }
+
   size_t hash() const;
 
   friend std::ostream &operator<<(std::ostream &out, const id_pk &id);
@@ -120,7 +155,11 @@ private:
   std::unique_ptr <base> id_;
 };
 
-static id_pk null_pk{};
+static const id_pk null_identifier{};
+
+bool id_pk::is_null() const {
+  return is_same_type(null_identifier);
+}
 
 struct id_pk_hash
 {

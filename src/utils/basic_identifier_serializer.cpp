@@ -1,7 +1,3 @@
-/**
- * @author sascha on 4/19/16.
- */
-
 #include "matador/utils/basic_identifier_serializer.hpp"
 
 #include "matador/utils/basic_identifier.hpp"

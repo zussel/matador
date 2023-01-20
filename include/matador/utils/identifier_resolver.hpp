@@ -13,7 +13,7 @@
 namespace matador {
 
 class prototype_node;
-class object_holder;
+class identifiable_holder;
 class abstract_has_many;
 
 /// @cond MATADOR_DEV
@@ -74,7 +74,6 @@ public:
   }
 
 private:
-  bool clone_ = false;
   id_pk id_;
 };
 

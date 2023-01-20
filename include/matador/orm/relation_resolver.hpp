@@ -268,14 +268,14 @@ public:
       return;
     }
 
-    left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
   }
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
   void on_has_many(const char *, abstract_has_many &, cascade_type) { }
 
 private:
   template<class V>
-  object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
+  object_proxy* acquire_proxy(object_ptr<V> &x, basic_identifier *pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());
@@ -398,7 +398,7 @@ public:
 
 private:
   template < class V >
-  object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
+  object_proxy* acquire_proxy(object_ptr<V> &x, basic_identifier *pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());

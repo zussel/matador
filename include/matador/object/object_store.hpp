@@ -449,13 +449,13 @@ public:
    * @return The found object or an empty object
    */
   template < class T >
-  object_ptr<T> get(basic_identifier &pk)
+  object_ptr<T> get(const id_pk &pk)
   {
     auto node = find_prototype_node(typeid(T).name());
     if (node == nullptr) {
       return object_ptr<T>();
     }
-    return object_ptr<T>(node->find_proxy(&pk));
+    return object_ptr<T>(node->find_proxy(pk));
   }
 
   /**

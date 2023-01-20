@@ -1,8 +1,6 @@
 #ifndef PRIMARY_KEY_READER_HPP
 #define PRIMARY_KEY_READER_HPP
 
-#include "matador/utils/identifier.hpp"
-
 #include "cascade_type.hpp"
 #include "access.hpp"
 
@@ -40,16 +38,12 @@ public:
     matador::access::serialize(*this, x);
   }
   template < class V >
-  void on_primary_key(const char *id, identifier<V> &x)
+  void on_primary_key(const char *id, V &x, long /*size*/ = -1) {}
+  void on_primary_key(const char *id, T &x, long /*size*/ = -1)
   {
-    reading_pk_ = true;
-    V val = {};
-    on_attribute(id, val);
-    x.value(val);
-    reading_pk_ = false;
+    x = value_;
   }
 
-  void on_attribute(const char*, T &x, long /*size*/ = -1);
   template < class V >
   void on_attribute(const char*, V &, long /*size*/ = -1) {}
   void on_attribute(const char*, char *, long /*size*/ = -1) {}
@@ -63,13 +57,6 @@ private:
   T value_;
   bool reading_pk_ = false;
 };
-
-template < class T >
-void identifier_setter<T>::on_attribute(const char*, T &x, long /*size*/) {
-  if (reading_pk_) {
-    x = value_;
-  }
-}
 
 /// @endcond
 

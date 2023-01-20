@@ -139,11 +139,11 @@ void relation_resolver<T, typename std::enable_if<
 
   if (left_proxy_ == nullptr) {
     // if left is not loaded
-    left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
 
   } else {
 
-    object_proxy* right_proxy = acquire_proxy<V>(x, pk, cascade, right_table_ptr_);
+    object_proxy* right_proxy = acquire_proxy(x, pk, cascade, right_table_ptr_);
     if (left_table_ptr_->is_loaded()) {
       left_endpoint_->insert_value_into_foreign(right_proxy, left_proxy_);
     } else {
@@ -236,7 +236,7 @@ void relation_resolver<T, typename std::enable_if<
 
   if (left_proxy_ == nullptr) {
     // if left is not loaded
-    left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
 
   } else {
     throw_object_exception("right value type must not be object pointer");
@@ -260,7 +260,7 @@ void relation_resolver<T, typename std::enable_if<
     return;
   }
 
-  left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
+  left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
 }
 
 }

@@ -5,7 +5,6 @@
 
 #include "matador/utils/byte_buffer.hpp"
 #include "matador/utils/access.hpp"
-#include "matador/utils/identifier.hpp"
 
 #include "matador/object/basic_has_many.hpp"
 
@@ -180,7 +179,6 @@ private:
 private:
   object_store *store_ = nullptr;
   byte_buffer *buffer_ = nullptr;
-  basic_identifier_serializer basic_identifier_serializer_;
 };
 /// @endcond
 
