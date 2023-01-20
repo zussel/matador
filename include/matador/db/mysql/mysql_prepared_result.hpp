@@ -21,7 +21,6 @@
 namespace matador {
 
 class object_base_ptr;
-class basic_identifier;
 class time;
 class date;
 

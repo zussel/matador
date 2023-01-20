@@ -127,7 +127,7 @@ bool object_holder::valid() const noexcept
   return !empty();
 }
 
-void object_holder::reset(const id_pk &id)
+void object_holder::reset(const identifier &id)
 {
   if (proxy_ && !proxy_->pk().is_same_type(id)) {
     throw object_exception("identifier types are not equal");
@@ -193,9 +193,9 @@ bool object_holder::has_primary_key() const
   return proxy_ != nullptr && proxy_->has_identifier();
 }
 
-const id_pk& object_holder::primary_key() const
+const identifier& object_holder::primary_key() const
 {
-  return (proxy_ ? proxy_->pk() : null_pk);
+  return (proxy_ ? proxy_->pk() : null_identifier);
 }
 
 unsigned long object_holder::reference_count() const

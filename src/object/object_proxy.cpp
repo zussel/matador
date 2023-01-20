@@ -7,7 +7,7 @@ using namespace std;
 
 namespace matador {
 
-object_proxy::object_proxy(const id_pk &pk)
+object_proxy::object_proxy(const identifier &pk)
   : pk_(pk)
 {}
 
@@ -162,15 +162,20 @@ void object_proxy::id(unsigned long i)
 
 bool object_proxy::has_identifier() const
 {
-  return pk_ != null_pk;
+  return !pk_.is_null();
 }
 
-const id_pk& object_proxy::pk() const
+const identifier& object_proxy::pk() const
 {
   return pk_;
 }
 
-void object_proxy::pk(const id_pk &id)
+identifier& object_proxy::pk()
+{
+  return pk_;
+}
+
+void object_proxy::pk(const identifier &id)
 {
   pk_ = id;
 }

@@ -11,7 +11,6 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/serializer.hpp"
-#include "matador/utils/identifier.hpp"
 
 namespace matador {
 namespace detail {

@@ -30,8 +30,6 @@ struct sqlite3_stmt;
 
 namespace matador {
 
-class basic_identifier;
-
 namespace sqlite {
 
 class sqlite_connection;

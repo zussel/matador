@@ -2,7 +2,6 @@
 
 #include "matador/logger/log_manager.hpp"
 
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/date.hpp"
 
 #include "matador/object/json_object_mapper.hpp"
@@ -23,7 +22,7 @@ using namespace matador;
 namespace ormjson {
 struct person
 {
-  identifier<unsigned long> id;   // primary key
+  unsigned long id{};   // primary key
   std::string name;
   date birthday;
   has_many<std::string> colors {};

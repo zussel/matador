@@ -6,7 +6,6 @@
 
 #include "matador/unit/unit_test.hpp"
 
-#include "matador/utils/identifier.hpp"
 #include "matador/object/has_many.hpp"
 #include "../datatypes.hpp"
 #include "../entities.hpp"
@@ -16,7 +15,7 @@ namespace hasmanyvector {
 class item
 {
 public:
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string name;
 
   item() = default;
@@ -34,7 +33,7 @@ class owner
 {
 public:
   typedef matador::has_many<item> item_vector_t;
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string name;
   item_vector_t items;
 

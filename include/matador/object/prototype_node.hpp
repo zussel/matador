@@ -3,8 +3,6 @@
 
 #include "matador/object/export.hpp"
 
-#include "matador/utils/identifier.hpp"
-
 #include "matador/object/identifier_proxy_map.hpp"
 #include "matador/object/typed_object_store_observer.hpp"
 #include "matador/object/relation_field_endpoint.hpp"
@@ -60,7 +58,7 @@ public:
 
   struct relation_node_info
   {
-    basic_identifier *owner_id_ = nullptr;
+    identifier owner_id_;
     std::string owner_type_;
     std::string relation_id_;
     std::string owner_id_column_;
@@ -297,7 +295,7 @@ public:
    * @brief Returns a pointer to the identifier prototype
    * @return A pointer to the identifier prototype
    */
-  basic_identifier* id() const;
+  const identifier& id() const;
 
   /**
    * @brief Returns true if the node represents an abstract object
@@ -355,7 +353,7 @@ public:
    * @param pk The primary key
    * @return The corresponding object_proxy or nullptr
    */
-  object_proxy* find_proxy(const id_pk &pk);
+  object_proxy* find_proxy(const identifier &pk);
 
   /**
    * Register relation_field_endpoint identified by the given type index.
@@ -470,7 +468,7 @@ private:
   /**
    * a primary key prototype to clone from
    */
-  std::unique_ptr<basic_identifier> id_;
+  identifier id_;
 
   bool is_relation_node_ = false;
   relation_node_info relation_node_info_;

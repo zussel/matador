@@ -3,7 +3,6 @@
 
 #include "matador/utils/base_class.hpp"
 #include "matador/utils/varchar.hpp"
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 

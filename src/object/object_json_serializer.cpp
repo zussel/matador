@@ -1,6 +1,5 @@
 #include "matador/object/object_json_serializer.hpp"
 
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/string.hpp"
 
 namespace matador {

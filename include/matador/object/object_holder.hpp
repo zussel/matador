@@ -25,7 +25,6 @@ class relation_endpoint_value_remover;
 
 /// @endcond
 
-class basic_identifier;
 class object_proxy;
 class object_store;
 
@@ -173,7 +172,7 @@ public:
    *
    * @param id The identifier to set
    */
-  void reset(const id_pk &id) override;
+  void reset(const identifier &id) override;
 
   /**
    * Clears the currently set object
@@ -273,7 +272,7 @@ public:
    *
    * @return The primary key of the foreign object
    */
-  const id_pk& primary_key() const override;
+  const identifier& primary_key() const override;
 
   /**
    * Returns the current reference count

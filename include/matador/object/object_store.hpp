@@ -449,7 +449,7 @@ public:
    * @return The found object or an empty object
    */
   template < class T >
-  object_ptr<T> get(const id_pk &pk)
+  object_ptr<T> get(const identifier &pk)
   {
     auto node = find_prototype_node(typeid(T).name());
     if (node == nullptr) {
@@ -783,7 +783,7 @@ private:
    */
   prototype_node *remove_prototype_node(prototype_node *node, bool check_for_eos);
 
-  prototype_node* attach_node(prototype_node *node, const char *parent, const char *type_name, basic_identifier *pk);
+  prototype_node* attach_node(prototype_node *node, const char *parent, const char *type_name, const identifier &pk);
 
   prototype_node* find_parent(const char *name) const;
 

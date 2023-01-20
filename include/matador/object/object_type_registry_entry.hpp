@@ -54,10 +54,10 @@ public:
     matador::access::serialize(deleter(), *proxy->obj<T>());
   }
 
-  basic_identifier* resolve_identifier(object_proxy *proxy) const override
+  identifier resolve_identifier(object_proxy *proxy) const override
   {
     if (proxy->obj()) {
-      return nullptr;
+      return null_identifier;
     }
     return resolver_.resolve(proxy->obj<T>());
   }

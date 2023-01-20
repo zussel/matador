@@ -72,7 +72,7 @@ protected:
   object_store *ostore_ = nullptr;
 
   object_proxy *owner_ = nullptr;
-  basic_identifier *owner_id_ = nullptr;
+  identifier owner_id_;
 
   mark_modified_owner_func mark_modified_owner_;
 

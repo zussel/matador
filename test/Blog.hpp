@@ -1,7 +1,6 @@
 #ifndef MATADOR_BLOG_HPP
 #define MATADOR_BLOG_HPP
 
-#include <matador/utils/identifier.hpp>
 #include <matador/utils/time.hpp>
 #include <matador/utils/base_class.hpp>
 
@@ -11,7 +10,7 @@ namespace blog_detail {
 
 struct person
 {
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string name;
   matador::date birthday;
 
@@ -52,7 +51,7 @@ struct author : public blog_detail::person
 
 struct category
 {
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string name;
   std::string description;
   matador::has_many<post> posts;
@@ -75,7 +74,7 @@ struct category
 
 struct comment
 {
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string email;
   matador::object_ptr<post> blog_post;
   std::string content;
@@ -99,7 +98,7 @@ struct comment
 
 struct post
 {
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string title;
   matador::object_ptr<author> writer;
   matador::time created_at;

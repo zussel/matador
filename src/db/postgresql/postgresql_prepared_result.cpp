@@ -1,10 +1,7 @@
-//
-// Created by sascha on 11.06.19.
-//
 #include "matador/db/postgresql/postgresql_prepared_result.hpp"
 #include "matador/db/postgresql/postgresql_getvalue.hpp"
 
-#include "matador/utils/basic_identifier.hpp"
+//#include "matador/utils/basic_identifier.hpp"
 
 namespace matador {
 namespace postgresql {

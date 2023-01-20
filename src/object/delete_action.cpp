@@ -31,7 +31,7 @@ const char* delete_action::classname() const
   return classname_.c_str();
 }
 
-basic_identifier * delete_action::pk() const
+const identifier& delete_action::pk() const
 {
   return proxy_->pk();
 }
@@ -68,8 +68,8 @@ void delete_action::restore(byte_buffer &buffer, object_store *store)
     // create serializable with id and deserialize
     // data from buffer into serializable
     // restore_ pk
-    if (pk()) {
-      proxy->pk(pk()->clone());
+    if (!pk().is_null()) {
+      proxy->pk(pk());
     }
     // insert serializable
   }

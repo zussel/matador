@@ -1,11 +1,6 @@
-//
-// Created by sascha on 27.10.19.
-//
-
 #include "../entities.hpp"
 #include "PrimaryKeyTestUnit.hpp"
 
-#include "matador/utils/identifier.hpp"
 #include "matador/orm/persistence.hpp"
 #include "matador/orm/session.hpp"
 
@@ -64,13 +59,13 @@ void PrimaryKeyTestUnit::test_long_pk()
 
 struct user
 {
-  matador::identifier<std::string> email;
+  std::string email;
   std::string name;
 
   template < class S >
   void serialize(S &s)
   {
-    s.on_primary_key("email", email);
+    s.on_primary_key("email", email, 255);
     s.on_attribute("name", name, 255);
   }
 };
@@ -100,7 +95,7 @@ void PrimaryKeyTestUnit::test_string_pk()
   UNIT_ASSERT_TRUE(first != res.end());
   std::unique_ptr<user> p1(first.release());
 
-  UNIT_EXPECT_EQUAL("hans@email.com", p1->email.value());
+  UNIT_EXPECT_EQUAL("hans@email.com", p1->email);
 
   optr.modify()->email = "hans@email.de";
 
@@ -112,20 +107,20 @@ void PrimaryKeyTestUnit::test_string_pk()
   UNIT_ASSERT_TRUE(first != res.end());
   p1.reset(first.release());
 
-  UNIT_EXPECT_EQUAL("hans@email.de", p1->email.value());
+  UNIT_EXPECT_EQUAL("hans@email.de", p1->email);
 
   p.drop();
 }
 
 struct product
 {
-  matador::identifier<varchar<255>> id;
+  std::string id;
   std::string name;
 
   template < class S >
   void serialize(S &s)
   {
-    s.on_primary_key("id", id);
+    s.on_primary_key("id", id, 255);
     s.on_attribute("name", name, 255);
   }
 };
@@ -155,7 +150,7 @@ void PrimaryKeyTestUnit::test_varchar_pk()
   UNIT_ASSERT_TRUE(first != res.end());
   std::unique_ptr<product> pp(first.release());
 
-  UNIT_EXPECT_EQUAL("p1", pp->id.value());
+  UNIT_EXPECT_EQUAL("p1", pp->id);
 
   optr.modify()->id = "p2";
 
@@ -167,7 +162,7 @@ void PrimaryKeyTestUnit::test_varchar_pk()
   UNIT_ASSERT_TRUE(first != res.end());
   pp.reset(first.release());
 
-  UNIT_EXPECT_EQUAL("p2", pp->id.value());
+  UNIT_EXPECT_EQUAL("p2", pp->id);
 
   p.drop();
 

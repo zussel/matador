@@ -4,7 +4,7 @@
 #include "matador/object/export.hpp"
 
 #include "matador/utils/identifier_resolver.hpp"
-#include "matador/utils/id_pk.hpp"
+#include "matador/utils/identifier.hpp"
 
 #include "matador/object/object_type_registry_entry_base.hpp"
 
@@ -20,7 +20,6 @@ namespace matador {
 class object_store;
 class object_holder;
 class prototype_node;
-class basic_identifier;
 class transaction;
 class update_action;
 class object_serializer;
@@ -58,10 +57,10 @@ public:
    *
    * @param pk primary key of object
    */
-  explicit object_proxy(const id_pk &pk);
+  explicit object_proxy(const identifier &pk);
 
   template < class T >
-  object_proxy(const id_pk &pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)
+  object_proxy(const identifier &pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)
     : object_type_entry_(object_type_entry)
     , deleter_(&destroy<T>)
     , creator_(&create<T>)
@@ -326,9 +325,10 @@ public:
    *
    * @return The primary key of the underlying object
    */
-  const id_pk& pk() const;
+  const identifier& pk() const;
+  identifier& pk();
 
-  void pk(const id_pk &id);
+  void pk(const identifier &id);
 
   void create_object();
 
@@ -380,7 +380,7 @@ private:
   typedef std::set<object_holder *> ptr_set_t; /**< Shortcut to the object_holder set. */
   ptr_set_t ptr_set_;      /**< This set contains every object_holder pointing to this object_proxy. */
 
-  id_pk pk_;
+  identifier pk_;
 };
 /// @endcond
 }

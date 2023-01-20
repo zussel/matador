@@ -10,7 +10,7 @@
 namespace matador {
 
 class object_proxy;
-class basic_identifier;
+class identifier;
 
 /// @cond MATADOR_DEV
 
@@ -58,7 +58,7 @@ public:
    *
    * @return The primary key of the deleted serializable.
    */
-  basic_identifier* pk() const;
+  const identifier& pk() const;
 
   unsigned long id() const;
 

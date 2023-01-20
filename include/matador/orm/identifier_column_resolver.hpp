@@ -4,7 +4,6 @@
 #include "matador/orm/export.hpp"
 
 #include "matador/utils/access.hpp"
-#include "matador/utils/identifier.hpp"
 
 #include "matador/sql/column.hpp"
 

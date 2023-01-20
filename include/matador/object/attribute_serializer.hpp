@@ -3,7 +3,6 @@
 
 #include "matador/object/object_ptr.hpp"
 
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/string.hpp"
 
 #include <stdexcept>

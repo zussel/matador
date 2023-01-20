@@ -175,7 +175,7 @@ bool get(const O &obj, const std::string &name, T &val)
  * @return       True if the operation succeeds.
  */
 template < typename O, class T >
-bool get(const O &obj, const std::string &name, char *val, size_t size)
+bool get(const O &obj, const std::string &name, const char *val, size_t size)
 {
   attribute_writer<T> writer(name, val, size);
   matador::access::serialize(writer, const_cast<O&>(obj));

@@ -14,7 +14,7 @@ object_serializer::object_serializer(byte_buffer *buffer)
 
 void object_serializer::on_attribute(const char *, char *c, long size)
 {
-  auto len = size;
+  size_t len = size;
 
   buffer_->append(&len, sizeof(len));
   buffer_->append(c, len);

@@ -3,9 +3,9 @@
 
 #include "matador/utils/export.hpp"
 
-#include "matador/utils/id_pk.hpp"
+#include "matador/utils/identifier.hpp"
 #include "matador/utils/cascade_type.hpp"
-#include "matador/utils/basic_identifier.hpp"
+//#include "matador/utils/basic_identifier.hpp"
 #include "matador/utils/access.hpp"
 
 #include <stdexcept>
@@ -33,20 +33,20 @@ public:
   identifier_resolver() = default;
   ~identifier_resolver() = default;
 
-  static id_pk resolve(T *o)
+  static identifier resolve(T *o)
   {
     identifier_resolver<T> resolver;
     return resolver.resolve_object(o);
   }
 
-  static basic_identifier* create()
+  static identifier create()
   {
     identifier_resolver<T> resolver;
     T obj;
-    return resolver.resolve_object(&obj, true);
+    return resolver.resolve_object(&obj);
   }
 
-  id_pk resolve_object(T *o)
+  identifier resolve_object(T *o)
   {
     matador::access::serialize(*this, *o);
     return id_;
@@ -74,7 +74,7 @@ public:
   }
 
 private:
-  id_pk id_;
+  identifier id_;
 };
 
 /// @endcond

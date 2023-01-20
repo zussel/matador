@@ -214,12 +214,13 @@ object_proxy* object_store::insert(object_proxy *proxy, bool notify)
   proxy->object_type_entry_ = node->object_type_entry_;
 
   // get object
-  if (proxy->obj() && proxy->has_identifier() && !proxy->pk()->is_valid()) {
+  if (proxy->obj() && proxy->has_identifier() && !proxy->pk().is_valid()) {
     // if object has primary key of type short, int or long
     // set the id of proxy as value
     proxy->sync_id();
+    proxy->pk_ = proxy->id();
   } else if (proxy->obj() && proxy->has_identifier()) {
-    synchronizer_.sync(*proxy->pk());
+    synchronizer_.sync(proxy->pk());
   }
 
   node->insert(proxy);
@@ -367,7 +368,7 @@ prototype_node* object_store::remove_prototype_node(prototype_node *node, bool c
   return next;
 }
 
-prototype_node* object_store::attach_node(prototype_node *node, const char *parent, const char *type_name, basic_identifier *pk)
+prototype_node* object_store::attach_node(prototype_node *node, const char *parent, const char *type_name, const identifier &pk)
 {
   std::unique_ptr<prototype_node> nptr(node);
   // set node to root node
@@ -381,8 +382,8 @@ prototype_node* object_store::attach_node(prototype_node *node, const char *pare
   } else {
     last_->prev->append(node);
   }
-  if (pk) {
-    node->id_.reset(pk);
+  if (!pk.is_null()) {
+    node->id_ = pk;
   }
   // store prototype in map
   // Todo: check return value

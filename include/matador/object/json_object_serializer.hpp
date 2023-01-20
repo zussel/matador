@@ -19,7 +19,8 @@ class MATADOR_OBJECT_API json_object_serializer
 public:
   json_object_serializer() = default;
 
-  using t_id_set = std::unordered_set<basic_identifier*, detail::identifier_hash<basic_identifier>, detail::identifier_equal>;
+  using id_pk_ref = std::reference_wrapper<const identifier>;
+  using t_id_set = std::unordered_set<id_pk_ref , id_pk_hash, std::equal_to<const identifier>>;
   using t_name_id_set_pair = std::pair<std::string, t_id_set>;
   using t_type_id_map = std::unordered_map<std::type_index, t_name_id_set_pair>;
 
@@ -77,7 +78,7 @@ public:
     if (it != type_id_map_.end() && it->second.first.empty()) {
       it->second.first.assign(id);
     }
-    append(pk.value());
+    append(pk);
     json_.append(",");
 
     newline();
@@ -181,7 +182,7 @@ private:
         // only serialize id
         begin_object();
         write_id(it->second.first.c_str());
-        json_.append(identifier_serializer_.serialize(*x.primary_key()));
+        json_.append(identifier_serializer_.serialize(x.primary_key()));
         end_object();
         newline();
         //x.primary_key();

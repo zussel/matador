@@ -7,7 +7,6 @@
 
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
-#include "matador/utils/identifier.hpp"
 
 class datatypes
 {
@@ -47,15 +46,15 @@ public:
     serializer.on_attribute("val_unsigned_long", unsigned_long_);
     serializer.on_attribute("val_unsigned_long_long", unsigned_long64_);
     serializer.on_attribute("val_bool", bool_);
-    serializer.on_attribute("val_cstr", cstr_, (long)CSTR_LEN);
+    serializer.on_attribute("val_cstr", cstr_, CSTR_LEN);
     serializer.on_attribute("val_string", string_);
     serializer.on_attribute("val_varchar", varchar_, 63);
     serializer.on_attribute("val_date", date_);
     serializer.on_attribute("val_time", time_);
   }
 
-  unsigned long id() const { return id_.value(); }
-  void id(unsigned long i) { id_.value(i); }
+  unsigned long id() const { return id_; }
+  void id(unsigned long i) { id_ = i; }
 
   void set_char(char x) { char_ = x; }
   void set_float(float x) { float_ = x; }
@@ -115,7 +114,7 @@ public:
 private:
   enum { CSTR_LEN=255 };
 
-  matador::identifier<unsigned long> id_ = 0;
+  unsigned long id_ = 0;
 
   char char_ = 'c';
   float float_ = 3.1415f;

@@ -206,14 +206,14 @@ public:
    *
    * @return A new identifier.
    */
-  id_pk create_identifier() const override
+  identifier create_identifier() const override
   {
     return self::identifier_;
   }
 
 private:
   static std::string classname_;
-  static id_pk identifier_;
+  static identifier identifier_;
 };
 
 template < class T >
@@ -231,7 +231,7 @@ template < class T >
 std::string object_ptr<T>::classname_ = typeid(T).name();
 
 template < class T >
-id_pk object_ptr<T>::identifier_(identifier_resolver<T>::create());
+identifier object_ptr<T>::identifier_(identifier_resolver<T>::create());
 
 }
 

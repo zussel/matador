@@ -1,8 +1,6 @@
 #ifndef OOS_HAS_MANY_LIST_HPP
 #define OOS_HAS_MANY_LIST_HPP
 
-#include "matador/utils/identifier.hpp"
-
 #include "matador/object/has_many.hpp"
 
 namespace hasmanylist {
@@ -10,7 +8,7 @@ namespace hasmanylist {
 class item
 {
 public:
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string name;
 
   item() = default;
@@ -28,7 +26,7 @@ class owner
 {
 public:
   typedef matador::has_many<item, std::list> item_list_t;
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string name;
   item_list_t items;
 

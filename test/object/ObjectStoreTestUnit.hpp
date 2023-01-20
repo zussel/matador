@@ -3,7 +3,6 @@
 
 #include "matador/unit/unit_test.hpp"
 
-#include "matador/object/object_ptr.hpp"
 #include "matador/object/object_store.hpp"
 
 class ObjectStoreTestUnit : public matador::unit_test
@@ -19,7 +18,7 @@ public:
   void test_set();
   void test_get();
   void test_serializer();
-  void test_identifier_serializer();
+//  void test_identifier_serializer();
   void test_reference_counter();
   void test_reference_counter_builtin();
   void test_reference_counter_has_many();

@@ -223,10 +223,10 @@ int main(int argc, char *argv[])
 
 //  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 
-  net::init();
+//  net::init();
 
   result = suite.run();
 
-  net::cleanup();
+//  net::cleanup();
   return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }

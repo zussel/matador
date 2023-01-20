@@ -216,7 +216,7 @@ void JsonMapperTestUnit::test_false_types()
 
   date b(27, 9, 1987);
 
-  UNIT_EXPECT_EQUAL("", p.id.value());
+  UNIT_EXPECT_EQUAL("", p.id);
   UNIT_EXPECT_EQUAL("", p.name);
   UNIT_EXPECT_FALSE(p.flag);
   UNIT_EXPECT_FALSE(b == p.birthday);

@@ -8,9 +8,6 @@ SET(SOURCES
   sequencer.cpp
   string.cpp
   strptime.cpp
-  identifier.cpp
-  basic_identifier.cpp
-  basic_identifier_serializer.cpp
   serializer.cpp
   file.cpp os.cpp
   buffer.cpp
@@ -24,7 +21,7 @@ SET(SOURCES
   url.cpp
   html.cpp
   thread_helper.cpp
-  id_pk.cpp)
+  identifier.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -46,8 +43,6 @@ SET(HEADER
   ../../include/matador/utils/conditional.hpp
   ../../include/matador/utils/serializer.hpp
   ../../include/matador/utils/basic_identifier.hpp
-  ../../include/matador/utils/basic_identifier_serializer.hpp
-  ../../include/matador/utils/identifier.hpp
   ../../include/matador/utils/identifier_resolver.hpp
   ../../include/matador/utils/identifier_setter.hpp
   ../../include/matador/utils/identifiable_holder.hpp
@@ -74,7 +69,7 @@ SET(HEADER
   ../../include/matador/utils/url.hpp
   ../../include/matador/utils/html.hpp
   ../../include/matador/utils/thread_helper.hpp
-  ../../include/matador/utils/id_pk.hpp)
+  ../../include/matador/utils/identifier.hpp)
 
 ADD_LIBRARY(matador-utils STATIC ${SOURCES} ${HEADER})
 

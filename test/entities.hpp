@@ -7,7 +7,6 @@
 
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
-#include "matador/utils/identifier.hpp"
 
 #include <ostream>
 #include <utility>
@@ -88,7 +87,7 @@ public:
 class book
 {
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long id_{};
     std::string title_;
     std::string isbn_;
     std::string author_;
@@ -153,7 +152,7 @@ public:
     bool empty() const { return book_list_.empty(); }
 
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long id_{};
     book_list_t book_list_;
 };
 
@@ -297,7 +296,7 @@ public:
     typedef matador::object_ptr<album> album_ptr;
 
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long id_{};
     std::string title_;
     matador::object_ptr<album> album_;
     int index_;
@@ -320,7 +319,7 @@ public:
         serializer.on_attribute("track_index", index_);
     }
 
-    unsigned long id() { return id_.value(); }
+    unsigned long id() { return id_; }
 
     std::string title() const { return title_; }
     void title(const std::string &t) { title_ = t; }
@@ -342,7 +341,7 @@ public:
     typedef track_vector_t::const_iterator const_iterator;
 
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long id_{};
     std::string name_;
     track_vector_t tracks_;
 
@@ -360,7 +359,7 @@ public:
         serializer.on_has_many("tracks", tracks_, matador::cascade_type::ALL);
     }
 
-    unsigned long id() { return id_.value(); }
+    unsigned long id() { return id_; }
 
     std::string name() const { return name_; }
     void name(const std::string &name) { name_ = name; }
@@ -398,7 +397,7 @@ public:
     typedef track_list_t::const_iterator const_iterator;
 
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long id_{};
     std::string name_;
     track_list_t tracks_;
     track_list_t backup_tracks_;
