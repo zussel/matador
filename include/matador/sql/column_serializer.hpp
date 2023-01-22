@@ -33,27 +33,31 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  void on_attribute(const char *id, char &x);
-  void on_attribute(const char *id, short &x);
-  void on_attribute(const char *id, int &x);
-  void on_attribute(const char *id, long &x);
-  void on_attribute(const char *id, long long &x);
-  void on_attribute(const char *id, unsigned char &x);
-  void on_attribute(const char *id, unsigned short &x);
-  void on_attribute(const char *id, unsigned int &x);
-  void on_attribute(const char *id, unsigned long &x);
-  void on_attribute(const char *id, unsigned long long &x);
-  void on_attribute(const char *id, float &x);
-  void on_attribute(const char *id, double &x);
-  void on_attribute(const char *id, bool &x);
-  void on_attribute(const char *id, char *x, size_t s);
-  void on_attribute(const char *id, std::string &x, size_t s);
-  void on_attribute(const char *id, std::string &x);
-  void on_attribute(const char *id, date &x);
-  void on_attribute(const char *id, time &x);
+  void on_attribute(const char *id, char &x, long /*size*/ = -1);
+  void on_attribute(const char *id, short &x, long /*size*/ = -1);
+  void on_attribute(const char *id, int &x, long /*size*/ = -1);
+  void on_attribute(const char *id, long &x, long /*size*/ = -1);
+  void on_attribute(const char *id, long long &x, long /*size*/ = -1);
+  void on_attribute(const char *id, unsigned char &x, long /*size*/ = -1);
+  void on_attribute(const char *id, unsigned short &x, long /*size*/ = -1);
+  void on_attribute(const char *id, unsigned int &x, long /*size*/ = -1);
+  void on_attribute(const char *id, unsigned long &x, long /*size*/ = -1);
+  void on_attribute(const char *id, unsigned long long &x, long /*size*/ = -1);
+  void on_attribute(const char *id, float &x, long /*size*/ = -1);
+  void on_attribute(const char *id, double &x, long /*size*/ = -1);
+  void on_attribute(const char *id, bool &x, long /*size*/ = -1);
+  void on_attribute(const char *id, char *x, long size = -1);
+  void on_attribute(const char *id, std::string &x, long /*size*/ = -1);
+  void on_attribute(const char *id, date &x, long /*size*/ = -1);
+  void on_attribute(const char *id, time &x, long /*size*/ = -1);
   void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);
   void on_has_one(const char *id, identifiable_holder &x, cascade_type);
-  void on_primary_key(const char *id, basic_identifier &x);
+
+  template<typename ValueType>
+  void on_primary_key(const char *id, ValueType &, long size = -1)
+  {
+    cols_->push_back(std::make_shared<column>(id));
+  }
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 

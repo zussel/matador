@@ -40,6 +40,7 @@ public:
    * @return The primary key of the foreign serializable
    */
   virtual const identifier& primary_key() const = 0;
+  virtual identifier& primary_key() = 0;
 
   /**
    * Creates a new identifier object.

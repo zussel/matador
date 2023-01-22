@@ -137,7 +137,7 @@ public:
 
   /**
    * Returns the statement as string where
-   * the host values a shown as questionmarks (?)
+   * the host values a shown as question marks (?)
    * 
    * @return The query string
    */
@@ -255,7 +255,7 @@ public:
   result<row> execute()
   {
     logger_->on_execute(p->str());
-    return result<row>(p->execute(), prototype_);
+    return { p->execute(), prototype_ };
   }
 
   /**
@@ -284,7 +284,7 @@ public:
 
   /**
    * Returns the statement as string where
-   * the host values a shown as questionmarks (?)
+   * the host values a shown as question marks (?)
    * 
    * @return The query string
    */

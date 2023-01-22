@@ -10,18 +10,45 @@
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/cascade_type.hpp"
-#include "matador/utils/serializer.hpp"
+#include "matador/utils/identifier.hpp"
 
 namespace matador {
 namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API typed_column_serializer : public serializer
+class typed_column_serializer;
+
+class typed_column_identifier_serializer : public identifier_serializer
+{
+public:
+  explicit typed_column_identifier_serializer(typed_column_serializer &serializer)
+    : serializer_(serializer) {}
+
+  void serialize(short &value) override { make_typed_column(value); }
+  void serialize(int &value) override { make_typed_column(value); }
+  void serialize(long &value) override { make_typed_column(value); }
+  void serialize(long long &value) override { make_typed_column(value); }
+  void serialize(unsigned short &value) override { make_typed_column(value); }
+  void serialize(unsigned int &value) override { make_typed_column(value); }
+  void serialize(unsigned long &value) override { make_typed_column(value); }
+  void serialize(unsigned long long &value) override { make_typed_column(value); }
+  void serialize(std::string &value) override { make_typed_column(value); }
+  void serialize(null_type_t &) override;
+
+private:
+  template < typename ValueType >
+  void make_typed_column(ValueType &value);
+
+private:
+  typed_column_serializer &serializer_;
+};
+
+class OOS_SQL_API typed_column_serializer
 {
 public:
   typed_column_serializer();
-  ~typed_column_serializer() override = default;
+  ~typed_column_serializer() = default;
 
   template < class T >
   columns* execute(T &x)
@@ -37,29 +64,29 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  void on_attribute(const char *id, char &x) override;
-  void on_attribute(const char *id, short &x) override;
-  void on_attribute(const char *id, int &x) override;
-  void on_attribute(const char *id, long &x) override;
-  void on_attribute(const char *id, long long &x) override;
-  void on_attribute(const char *id, unsigned char &x) override;
-  void on_attribute(const char *id, unsigned short &x) override;
-  void on_attribute(const char *id, unsigned int &x) override;
-  void on_attribute(const char *id, unsigned long &x) override;
-  void on_attribute(const char *id, unsigned long long &x) override;
-  void on_attribute(const char *id, float &x) override;
-  void on_attribute(const char *id, double &x) override;
-  void on_attribute(const char *id, bool &x) override;
-  void on_attribute(const char *id, char *x, size_t s) override;
-  void on_attribute(const char *id, std::string &x, size_t) override;
-  void on_attribute(const char *id, std::string &x) override;
-  void on_attribute(const char *id, date &x) override;
-  void on_attribute(const char *id, time &x) override;
-  void on_belongs_to(const char *id, identifiable_holder &x, cascade_type) override;
-  void on_has_one(const char *id, identifiable_holder &x, cascade_type) override;
-//  void on_primary_key(const char *id, basic_identifier &x) override;
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
+  void on_attribute(const char *id, char &x, long /*size*/ = -1);
+  void on_attribute(const char *id, short &x, long /*size*/ = -1);
+  void on_attribute(const char *id, int &x, long /*size*/ = -1);
+  void on_attribute(const char *id, long &x, long /*size*/ = -1);
+  void on_attribute(const char *id, long long &x, long /*size*/ = -1);
+  void on_attribute(const char *id, unsigned char &x, long /*size*/ = -1);
+  void on_attribute(const char *id, unsigned short &x, long /*size*/ = -1);
+  void on_attribute(const char *id, unsigned int &x, long /*size*/ = -1);
+  void on_attribute(const char *id, unsigned long &x, long /*size*/ = -1);
+  void on_attribute(const char *id, unsigned long long &x, long /*size*/ = -1);
+  void on_attribute(const char *id, float &x, long /*size*/ = -1);
+  void on_attribute(const char *id, double &x, long /*size*/ = -1);
+  void on_attribute(const char *id, bool &x, long /*size*/ = -1);
+  void on_attribute(const char *id, char *x, long /*size*/ = -1);
+  void on_attribute(const char *id, std::string &x, long /*size*/ = -1);
+  void on_attribute(const char *id, date &x, long /*size*/ = -1);
+  void on_attribute(const char *id, time &x, long /*size*/ = -1);
+  void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);
+  void on_has_one(const char *id, identifiable_holder &x, cascade_type);
+  template < typename V >
+  void on_primary_key(const char *id, V &x, long size = -1);
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   std::unique_ptr<columns> cols_;
@@ -68,9 +95,57 @@ private:
   t_create_column_func create_column_func_;
   typedef std::function<std::shared_ptr<column> (const char*, size_t, data_type, size_t)> t_create_varchar_column_func;
   t_create_varchar_column_func create_varchar_column_func_;
+
+  typed_column_identifier_serializer column_identifier_serializer_;
 };
 
 /// @endcond
+
+template < class T >
+std::shared_ptr<column> make_column(const char *id, data_type t, size_t index);
+
+template <>
+std::shared_ptr<column> make_column<typed_column>(const char *id, data_type t, size_t index)
+{
+  return std::make_shared<typed_column>(id, t, index, false);
+}
+
+template <>
+std::shared_ptr<column> make_column<typed_identifier_column>(const char *id, data_type t, size_t index)
+{
+  return std::make_shared<typed_identifier_column>(id, t, index, false);
+}
+
+template < class T >
+std::shared_ptr<column> make_varchar_column(const char *id, size_t s, data_type t, size_t index);
+
+template <>
+std::shared_ptr<column> make_varchar_column<typed_varchar_column>(const char *id, size_t s, data_type t, size_t index)
+{
+  return std::make_shared<typed_varchar_column>(id, s, t, index, false);
+}
+
+template <>
+std::shared_ptr<column> make_varchar_column<identifier_varchar_column>(const char *id, size_t s, data_type t, size_t index)
+{
+  return std::make_shared<identifier_varchar_column>(id, s, t, index, false);
+}
+
+template<typename V>
+void typed_column_serializer::on_primary_key(const char *id, V &x, long size)
+{
+  create_column_func_ = make_column<typed_identifier_column>;
+  create_varchar_column_func_ = make_varchar_column<identifier_varchar_column>;
+  on_attribute(id, x, size);
+  create_column_func_ = make_column<typed_column>;
+  create_varchar_column_func_ = make_varchar_column<typed_varchar_column>;
+}
+
+template<typename ValueType>
+void typed_column_identifier_serializer::make_typed_column(ValueType &value)
+{
+  serializer_.on_attribute("", value);
+}
 
 }
 

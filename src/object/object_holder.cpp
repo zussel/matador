@@ -198,6 +198,11 @@ const identifier& object_holder::primary_key() const
   return (proxy_ ? proxy_->pk() : null_identifier);
 }
 
+identifier& object_holder::primary_key()
+{
+  return (proxy_ ? proxy_->pk() : null_identifier);
+}
+
 unsigned long object_holder::reference_count() const
 {
   return (proxy_ ? proxy_->reference_counter_ : 0UL);

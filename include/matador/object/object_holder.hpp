@@ -273,6 +273,7 @@ public:
    * @return The primary key of the foreign object
    */
   const identifier& primary_key() const override;
+  identifier& primary_key() override;
 
   /**
    * Returns the current reference count

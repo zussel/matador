@@ -162,7 +162,7 @@ private:
   std::unique_ptr <base> id_;
 };
 
-static const identifier null_identifier{};
+static identifier null_identifier{};
 
 struct id_pk_hash
 {

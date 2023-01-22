@@ -5,6 +5,8 @@
 
 #include "matador/json/basic_json_mapper.hpp"
 
+#include "matador/utils/access.hpp"
+
 #include <set>
 #include <unordered_set>
 #include <cstddef>
@@ -64,7 +66,7 @@ T json_mapper_serializer::create()
 template<class V>
 void json_mapper_serializer::serialize(V &obj)
 {
-  access::serialize(*this, obj);
+  matador::access::serialize(*this, obj);
 }
 
 template<class V>

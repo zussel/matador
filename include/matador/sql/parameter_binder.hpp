@@ -2,7 +2,6 @@
 #define MATADOR_PARAMETER_BINDER_HPP
 
 #include "matador/utils/cascade_type.hpp"
-//#include "matador/utils/basic_identifier.hpp"
 #include "matador/utils/identifiable_holder.hpp"
 
 #include <string>
@@ -13,6 +12,9 @@ namespace matador {
 
 class object_holder;
 class abstract_has_many;
+
+template < class T >
+class parameter_binder;
 
 namespace detail {
 
@@ -54,9 +56,35 @@ protected:
   bool bind_null_ = false;
 };
 
+template < typename Type >
+class parameter_identifier_serializer : public identifier_serializer
+{
+public:
+  explicit parameter_identifier_serializer(parameter_binder<Type> &binder)
+  : binder_(binder) {}
+
+  void serialize(short &value) override { bind(value); }
+  void serialize(int &value) override { bind(value); }
+  void serialize(long &value) override { bind(value); }
+  void serialize(long long &value) override { bind(value); }
+  void serialize(unsigned short &value) override { bind(value); }
+  void serialize(unsigned int &value) override { bind(value); }
+  void serialize(unsigned long &value) override { bind(value); }
+  void serialize(unsigned long long &value) override { bind(value); }
+  void serialize(std::string &value) override { bind(value); }
+  void serialize(null_type_t &) override;
+
+private:
+  template< typename ValueType >
+  void bind(ValueType &value);
+
+private:
+  parameter_binder<Type> &binder_;
+};
+
 }
 template < class T >
-class parameter_binder : public serializer
+class parameter_binder
 {
 public:
   parameter_binder(const std::string &id, const T &param, size_t index, detail::parameter_binder_impl *impl)
@@ -78,29 +106,29 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  void on_attribute(const char *id, char &) override { bind(id, param_); }
-  void on_attribute(const char *id, short &) override { bind(id, param_); }
-  void on_attribute(const char *id, int &) override { bind(id, param_); }
-  void on_attribute(const char *id, long &) override { bind(id, param_); }
-  void on_attribute(const char *id, long long &) override { bind(id, param_); }
-  void on_attribute(const char *id, unsigned char &) override { bind(id, param_); }
-  void on_attribute(const char *id, unsigned short &) override { bind(id, param_); }
-  void on_attribute(const char *id, unsigned int &) override { bind(id, param_); }
-  void on_attribute(const char *id, unsigned long &) override { bind(id, param_); }
-  void on_attribute(const char *id, unsigned long long &) override { bind(id, param_); }
-  void on_attribute(const char *id, bool &) override { bind(id, param_); }
-  void on_attribute(const char *id, float &) override { bind(id, param_); }
-  void on_attribute(const char *id, double &) override { bind(id, param_); }
-  void on_attribute(const char *, matador::time &) override {}
-  void on_attribute(const char *, matador::date &) override {}
-  void on_attribute(const char *, char*, size_t) override {}
-  void on_attribute(const char *, std::string &, size_t) override {}
-  void on_attribute(const char *, std::string &) override {}
-  void on_primary_key(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
-  void on_belongs_to(const char *, identifiable_holder &, cascade_type) override {}
-  void on_has_one(const char *, identifiable_holder &, cascade_type) override {}
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
+  void on_attribute(const char *id, char &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, short &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, int &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, long &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, long long &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, unsigned char &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, unsigned short &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, unsigned int &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, unsigned long &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, unsigned long long &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, bool &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, float &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *id, double &, long /*size*/ = -1) { bind(id, param_); }
+  void on_attribute(const char *, matador::time &, long /*size*/ = -1) {}
+  void on_attribute(const char *, matador::date &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char*, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
+  template < typename V >
+  void on_primary_key(const char *id, V &, long) { bind(id, param_); }
+  void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
+  void on_has_one(const char *, identifiable_holder &, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   template < class V >
@@ -121,11 +149,14 @@ private:
 };
 
 template <>
-class parameter_binder<std::string> : public serializer
+class parameter_binder<std::string>
 {
 public:
   parameter_binder(const std::string &id, const std::string &param, size_t index, detail::parameter_binder_impl *impl)
-    : id_(id), param_(param), impl_(impl)
+    : id_(id)
+    , param_(param)
+    , impl_(impl)
+    , identifier_serializer_(*this)
   {
     impl_->initialize_index(index);
   }
@@ -137,49 +168,50 @@ public:
     return impl_->current_index();
   }
 
-  void on_attribute(const char *, char &) override {}
-  void on_attribute(const char *, short &) override {}
-  void on_attribute(const char *, int &) override {}
-  void on_attribute(const char *, long &) override {}
-  void on_attribute(const char *, long long &) override {}
-  void on_attribute(const char *, unsigned char &) override {}
-  void on_attribute(const char *, unsigned short &) override {}
-  void on_attribute(const char *, unsigned int &) override {}
-  void on_attribute(const char *, unsigned long &) override {}
-  void on_attribute(const char *, unsigned long long &) override {}
-  void on_attribute(const char *, bool &) override {}
-  void on_attribute(const char *, float &) override {}
-  void on_attribute(const char *, double &) override {}
-  void on_attribute(const char *, matador::time &) override {}
-  void on_attribute(const char *, matador::date &) override {}
-  void on_attribute(const char *id, char*, size_t) override { bind(id, param_.data(), param_.size()); }
-  void on_attribute(const char *id, std::string &, size_t) override { bind(id, param_.data(), param_.size()); }
-  void on_attribute(const char *id, std::string &) override { bind(id, param_);}
-  void on_primary_key(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
-  void on_belongs_to(const char *id, identifiable_holder &x, cascade_type) override
+  void on_attribute(const char *, char &, long) {}
+  void on_attribute(const char *, short &, long) {}
+  void on_attribute(const char *, int &, long) {}
+  void on_attribute(const char *, long &, long) {}
+  void on_attribute(const char *, long long &, long) {}
+  void on_attribute(const char *, unsigned char &, long) {}
+  void on_attribute(const char *, unsigned short &, long) {}
+  void on_attribute(const char *, unsigned int &, long) {}
+  void on_attribute(const char *, unsigned long &, long) {}
+  void on_attribute(const char *, unsigned long long &, long) {}
+  void on_attribute(const char *, bool &, long) {}
+  void on_attribute(const char *, float &, long) {}
+  void on_attribute(const char *, double &, long) {}
+  void on_attribute(const char *, matador::time &, long) {}
+  void on_attribute(const char *, matador::date &, long) {}
+  void on_attribute(const char *id, char*, size_t) { bind(id, param_.data(), param_.size()); }
+  void on_attribute(const char *id, std::string &, size_t) { bind(id, param_.data(), param_.size()); }
+  void on_attribute(const char *id, std::string &, long) { bind(id, param_);}
+  template < typename V >
+  void on_primary_key(const char *id, V &v, long s) { on_attribute(id, v, s); }
+  void on_belongs_to(const char */*id*/, identifiable_holder &x, cascade_type)
   {
     if (x.has_primary_key()) {
-      x.primary_key()->serialize(id, *this);
+      x.primary_key().serialize(identifier_serializer_);
     } else {
-      std::unique_ptr<basic_identifier> basic_id(x.create_identifier());
+      auto pk = x.create_identifier();
       impl_->bind_null(true);
-      basic_id->serialize(id, *this);
+      pk.serialize(identifier_serializer_);
       impl_->bind_null(false);
     }
   }
-  void on_has_one(const char *id, identifiable_holder &x, cascade_type) override
+  void on_has_one(const char */*id*/, identifiable_holder &x, cascade_type)
   {
     if (x.has_primary_key()) {
-      x.primary_key()->serialize(id, *this);
+      x.primary_key().serialize(identifier_serializer_);
     } else {
-      std::unique_ptr<basic_identifier> basic_id(x.create_identifier());
+      auto pk = x.create_identifier();
       impl_->bind_null(true);
-      basic_id->serialize(id, *this);
+      pk.serialize(identifier_serializer_);
       impl_->bind_null(false);
     }
   }
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
 private:
   template < class V >
@@ -198,20 +230,26 @@ private:
     }
     impl_->bind(data, size, impl_->next_index());
   }
+
+private:
+  friend class detail::parameter_identifier_serializer<std::string>;
+
 private:
   const std::string &id_;
 
   const std::string &param_;
 
   detail::parameter_binder_impl *impl_;
+  detail::parameter_identifier_serializer<std::string> identifier_serializer_;
 };
 
 template <>
-class parameter_binder<void> : public serializer
+class parameter_binder<void>
 {
 public:
   explicit parameter_binder(size_t index, detail::parameter_binder_impl *impl)
     : impl_(impl)
+    , identifier_serializer_(*this)
   {
     impl_->initialize_index(index);
   }
@@ -229,49 +267,52 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  void on_attribute(const char *id, char &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, short &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, int &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, long &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, long long &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, unsigned char &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, unsigned short &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, unsigned int &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, unsigned long &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, unsigned long long &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, bool &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, float &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, double &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, matador::time &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, matador::date &x) override { bind_value(id, x); }
-  void on_attribute(const char *id, std::string &x) override { bind_value(id, x); }
-  void on_attribute(const char *, char *x, size_t s) override { impl_->bind(x, s, impl_->next_index()); }
-  void on_attribute(const char *, std::string &x, size_t s) override { impl_->bind(x, s, impl_->next_index()); }
-  void on_primary_key(const char *id, basic_identifier &x) override { x.serialize(id, *this); }
-  void on_belongs_to(const char *id, identifiable_holder &x, cascade_type) override
+  void on_attribute(const char *id, char &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, short &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, int &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, long &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, long long &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, unsigned char &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, unsigned short &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, unsigned int &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, unsigned long &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, unsigned long long &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, bool &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, float &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, double &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, matador::time &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *id, matador::date &x, long /*size*/ = -1) { bind_value(id, x); }
+  void on_attribute(const char *, char *x, long size = -1) { impl_->bind(x, size, impl_->next_index()); }
+  void on_attribute(const char *, std::string &x, long size = -1) { impl_->bind(x, size, impl_->next_index()); }
+  template< typename V >
+  void on_primary_key(const char *id, V &x, long size = -1) { on_attribute(id, x, size); }
+  void on_belongs_to(const char */*id*/, identifiable_holder &x, cascade_type)
   {
     if (x.has_primary_key()) {
-      x.primary_key()->serialize(id, *this);
+      x.primary_key().serialize(identifier_serializer_);
     } else {
-      std::unique_ptr<basic_identifier> basic_id(x.create_identifier());
+      auto pk = x.create_identifier();
       impl_->bind_null(true);
-      basic_id->serialize(id, *this);
+      pk.serialize(identifier_serializer_);
       impl_->bind_null(false);
     }
   }
-  void on_has_one(const char *id, identifiable_holder &x, cascade_type) override
+  void on_has_one(const char */*id*/, identifiable_holder &x, cascade_type)
   {
     if (x.has_primary_key()) {
-      x.primary_key()->serialize(id, *this);
+      x.primary_key().serialize(identifier_serializer_);
     } else {
-      std::unique_ptr<basic_identifier> basic_id(x.create_identifier());
+      auto pk = x.create_identifier();
       impl_->bind_null(true);
-      basic_id->serialize(id, *this);
+      pk.serialize(identifier_serializer_);
       impl_->bind_null(false);
     }
   }
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+
+private:
+  friend class detail::parameter_identifier_serializer<void>;
 
 private:
   template < class V >
@@ -282,8 +323,25 @@ private:
 
 private:
   detail::parameter_binder_impl *impl_;
+  detail::parameter_identifier_serializer<void> identifier_serializer_;
 };
 
+namespace detail {
+
+template<typename Type>
+void parameter_identifier_serializer<Type>::serialize(null_type_t &)
+{
+  binder_.impl_->bind_null(true);
+}
+
+template<typename Type>
+template< typename ValueType >
+void parameter_identifier_serializer<Type>::bind(ValueType &value)
+{
+  binder_.impl_->bind(value, binder_.impl_->next_index());
+}
+
+}
 /// @endcond
 }
 #endif //MATADOR_PARAMETER_BINDER_HPP
