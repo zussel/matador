@@ -71,7 +71,7 @@ identifier &identifier::operator=(const identifier &x) {
   return *this;
 }
 
-identifier::identifier(identifier &&x)
+identifier::identifier(identifier &&x) noexcept
   : id_(std::move(x.id_)) {}
 
 identifier &identifier::operator=(identifier &&x) noexcept {

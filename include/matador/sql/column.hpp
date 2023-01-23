@@ -316,12 +316,16 @@ struct value_column<char*> : public basic_value_column
   : basic_value_column(col, val)
   { }
 
-  value_column(const std::string &col, char* val, size_t s)
-    : basic_value_column(col, new value(val, s))
+  value_column(const std::string &col, char* val, long size)
+    : basic_value_column(col, new value(val, size))
   { }
 
-  value_column(const char *col, char* val, size_t s)
-  : basic_value_column(col, new value(val, s))
+  value_column(const std::string &col, char* val)
+    : basic_value_column(col, new value(val))
+  { }
+
+  value_column(const char *col, char* val, long size)
+  : basic_value_column(col, new value(val, size))
   { }
 };
 
@@ -332,30 +336,38 @@ struct value_column<const char*> : public basic_value_column
   : basic_value_column(col, val)
   { }
 
-  value_column(const std::string &col, const char* val, size_t s)
-    : basic_value_column(col, new value(val, s))
+  value_column(const std::string &col, const char* val, long size)
+    : basic_value_column(col, new value(val, size))
   { }
 
-  value_column(const char *col, const char* val, size_t s)
-  : basic_value_column(col, new value(val, s))
+  value_column(const char *col, const char* val, long size)
+  : basic_value_column(col, new value(val, size))
   { }
 };
 
-//template <>
-//struct value_column<std::string> : public basic_value_column
-//{
-//  value_column(const std::string &col, value *val)
-//  : basic_value_column(col, val)
-//  { }
-//
-//  value_column(const std::string &col, const std::string &val, size_t)
-//    : basic_value_column(col, new value<std::string>(val))
-//  { }
-//
-//  value_column(const char *col, const std::string &val, size_t)
-//  : basic_value_column(col, new value<std::string>(val))
-//  { }
-//};
+template <>
+struct value_column<std::string> : public basic_value_column
+{
+  value_column(const std::string &col, value *val)
+  : basic_value_column(col, val)
+  { }
+
+  value_column(const std::string &col, const std::string &val, long size)
+    : basic_value_column(col, new value(val, size))
+  { }
+
+  value_column(const char *col, const std::string &val, long size)
+  : basic_value_column(col, new value(val, size))
+  { }
+
+  value_column(const char *col, const std::string &val)
+  : basic_value_column(col, new value(val))
+  { }
+
+  value_column(const std::string &col, const std::string &val)
+  : basic_value_column(col, new value(val))
+  { }
+};
 
 /// @endcond
 

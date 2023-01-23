@@ -124,7 +124,7 @@ public:
   void on_attribute(const char *, char*, long /*size*/ = -1) {}
   void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   template < typename V >
-  void on_primary_key(const char *id, V &, long) { bind(id, param_); }
+  void on_primary_key(const char *id, V &, long /*size*/ = -1) { bind(id, param_); }
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
   void on_has_one(const char *, identifiable_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -168,26 +168,25 @@ public:
     return impl_->current_index();
   }
 
-  void on_attribute(const char *, char &, long) {}
-  void on_attribute(const char *, short &, long) {}
-  void on_attribute(const char *, int &, long) {}
-  void on_attribute(const char *, long &, long) {}
-  void on_attribute(const char *, long long &, long) {}
-  void on_attribute(const char *, unsigned char &, long) {}
-  void on_attribute(const char *, unsigned short &, long) {}
-  void on_attribute(const char *, unsigned int &, long) {}
-  void on_attribute(const char *, unsigned long &, long) {}
-  void on_attribute(const char *, unsigned long long &, long) {}
-  void on_attribute(const char *, bool &, long) {}
-  void on_attribute(const char *, float &, long) {}
-  void on_attribute(const char *, double &, long) {}
-  void on_attribute(const char *, matador::time &, long) {}
-  void on_attribute(const char *, matador::date &, long) {}
-  void on_attribute(const char *id, char*, size_t) { bind(id, param_.data(), param_.size()); }
-  void on_attribute(const char *id, std::string &, size_t) { bind(id, param_.data(), param_.size()); }
-  void on_attribute(const char *id, std::string &, long) { bind(id, param_);}
+  void on_attribute(const char *, char &, long /*size*/ = -1) {}
+  void on_attribute(const char *, short &, long /*size*/ = -1) {}
+  void on_attribute(const char *, int &, long /*size*/ = -1) {}
+  void on_attribute(const char *, long &, long /*size*/ = -1) {}
+  void on_attribute(const char *, long long &, long /*size*/ = -1) {}
+  void on_attribute(const char *, unsigned char &, long /*size*/ = -1) {}
+  void on_attribute(const char *, unsigned short &, long /*size*/ = -1) {}
+  void on_attribute(const char *, unsigned int &, long /*size*/ = -1) {}
+  void on_attribute(const char *, unsigned long &, long /*size*/ = -1) {}
+  void on_attribute(const char *, unsigned long long &, long /*size*/ = -1) {}
+  void on_attribute(const char *, bool &, long /*size*/ = -1) {}
+  void on_attribute(const char *, float &, long /*size*/ = -1) {}
+  void on_attribute(const char *, double &, long /*size*/ = -1) {}
+  void on_attribute(const char *, matador::time &, long /*size*/ = -1) {}
+  void on_attribute(const char *, matador::date &, long /*size*/ = -1) {}
+  void on_attribute(const char *id, char*, long /*size*/ = -1) { bind(id, param_.data(), param_.size()); }
+  void on_attribute(const char *id, std::string &, long /*size*/ = -1) { bind(id, param_.data(), param_.size()); }
   template < typename V >
-  void on_primary_key(const char *id, V &v, long s) { on_attribute(id, v, s); }
+  void on_primary_key(const char *id, V &v, long size = -1) { on_attribute(id, v, size); }
   void on_belongs_to(const char */*id*/, identifiable_holder &x, cascade_type)
   {
     if (x.has_primary_key()) {

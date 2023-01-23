@@ -105,31 +105,19 @@ template < class T >
 std::shared_ptr<column> make_column(const char *id, data_type t, size_t index);
 
 template <>
-std::shared_ptr<column> make_column<typed_column>(const char *id, data_type t, size_t index)
-{
-  return std::make_shared<typed_column>(id, t, index, false);
-}
+std::shared_ptr<column> make_column<typed_column>(const char *id, data_type t, size_t index);
 
 template <>
-std::shared_ptr<column> make_column<typed_identifier_column>(const char *id, data_type t, size_t index)
-{
-  return std::make_shared<typed_identifier_column>(id, t, index, false);
-}
+std::shared_ptr<column> make_column<typed_identifier_column>(const char *id, data_type t, size_t index);
 
 template < class T >
 std::shared_ptr<column> make_varchar_column(const char *id, size_t s, data_type t, size_t index);
 
 template <>
-std::shared_ptr<column> make_varchar_column<typed_varchar_column>(const char *id, size_t s, data_type t, size_t index)
-{
-  return std::make_shared<typed_varchar_column>(id, s, t, index, false);
-}
+std::shared_ptr<column> make_varchar_column<typed_varchar_column>(const char *id, size_t s, data_type t, size_t index);
 
 template <>
-std::shared_ptr<column> make_varchar_column<identifier_varchar_column>(const char *id, size_t s, data_type t, size_t index)
-{
-  return std::make_shared<identifier_varchar_column>(id, s, t, index, false);
-}
+std::shared_ptr<column> make_varchar_column<identifier_varchar_column>(const char *id, size_t s, data_type t, size_t index);
 
 template<typename V>
 void typed_column_serializer::on_primary_key(const char *id, V &x, long size)

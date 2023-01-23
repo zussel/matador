@@ -403,7 +403,7 @@ public:
     s.on_attribute("name", name);
   }
 
-  matador::identifier<unsigned long> id;
+  unsigned long id;
   std::string name;
 };
 
@@ -417,7 +417,7 @@ void QueryTestUnit::test_identifier()
 
   std::unique_ptr<pktest> p(new pktest(7, "hans"));
 
-  UNIT_EXPECT_EQUAL(p->id.value(), 7UL);
+  UNIT_EXPECT_EQUAL(p->id, 7UL);
 
   q.insert(*p).execute(connection_);
 
@@ -430,7 +430,7 @@ void QueryTestUnit::test_identifier()
 
   p.reset((first++).release());
 
-  UNIT_EXPECT_GREATER(p->id.value(), 0UL);
+  UNIT_EXPECT_GREATER(p->id, 0UL);
 
   q.drop().execute(connection_);
 }
@@ -446,7 +446,7 @@ void QueryTestUnit::test_identifier_prepared()
 
   pktest p(7, "hans");
 
-  UNIT_EXPECT_EQUAL(p.id.value(), 7UL);
+  UNIT_EXPECT_EQUAL(p.id, 7UL);
 
   stmt = q.insert(p).prepare(connection_);
   stmt.bind(0, &p);
@@ -463,7 +463,7 @@ void QueryTestUnit::test_identifier_prepared()
 
   for (auto pres : res) {
     UNIT_EXPECT_EQUAL(pres->name, "hans");
-    UNIT_EXPECT_GREATER(pres->id.value(), 0UL);
+    UNIT_EXPECT_GREATER(pres->id, 0UL);
   }
 //  std::unique_ptr<pktest> pres((first++).release());
 

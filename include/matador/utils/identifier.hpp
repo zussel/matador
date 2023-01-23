@@ -126,7 +126,7 @@ public:
     : id_(std::make_unique<pk<Type>>(id)) {}
   identifier(const identifier &x);
   identifier &operator=(const identifier &x);
-  identifier(identifier &&x);
+  identifier(identifier &&x) noexcept ;
   identifier &operator=(identifier &&x) noexcept;
 
   template<typename Type>
