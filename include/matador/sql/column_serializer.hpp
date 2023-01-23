@@ -54,7 +54,7 @@ public:
   void on_has_one(const char *id, identifiable_holder &x, cascade_type);
 
   template<typename ValueType>
-  void on_primary_key(const char *id, ValueType &, long size = -1)
+  void on_primary_key(const char *id, ValueType &, long /*size*/ = -1)
   {
     cols_->push_back(std::make_shared<column>(id));
   }

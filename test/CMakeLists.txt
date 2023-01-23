@@ -34,7 +34,7 @@ SET (TEST_TOOLS_SOURCES
   utils/UrlTest.cpp
   utils/UrlTest.hpp
   utils/HtmlTest.cpp
-  utils/HtmlTest.hpp)
+  utils/HtmlTest.hpp utils/IdentifierTest.cpp utils/IdentifierTest.hpp)
 
 SET (TEST_JSON_SOURCES
   json/JsonTestUnit.cpp

@@ -50,109 +50,94 @@ int postgresql_prepared_result::transform_index(int index) const
   return index;
 }
 
-void postgresql_prepared_result::on_attribute(const char *, char &x)
+void postgresql_prepared_result::read_value(int index, int row, char &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, short &x)
+void postgresql_prepared_result::read_value(int index, int row, short &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, int &x)
+void postgresql_prepared_result::read_value(int index, int row, int &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, long &x)
+void postgresql_prepared_result::read_value(int index, int row, long &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, long long &x)
+void postgresql_prepared_result::read_value(int index, int row, long long &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, unsigned char &x)
+void postgresql_prepared_result::read_value(int index, int row, unsigned char &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, unsigned short &x)
+void postgresql_prepared_result::read_value(int index, int row, unsigned short &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, unsigned int &x)
+void postgresql_prepared_result::read_value(int index, int row, unsigned int &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, unsigned long &x)
+void postgresql_prepared_result::read_value(int index, int row, unsigned long &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, unsigned long long &x)
+void postgresql_prepared_result::read_value(int index, int row, unsigned long long &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, bool &x)
+void postgresql_prepared_result::read_value(int index, int row, bool &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, float &x)
+void postgresql_prepared_result::read_value(int index, int row, float &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, double &x)
+void postgresql_prepared_result::read_value(int index, int row, double &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, char *x, size_t s)
+void postgresql_prepared_result::read_value(int index, int row, matador::date &x)
 {
-  detail::get_value(res_, row_, column_++, x, s);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, matador::date &x)
+void postgresql_prepared_result::read_value(int index, int row, matador::time &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, matador::time &x)
+void postgresql_prepared_result::read_value(int index, int row, char *x, size_t s)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x, s);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, std::string &x)
+void postgresql_prepared_result::read_value(int index, int row, std::string &x)
 {
-  detail::get_value(res_, row_, column_++, x);
+  detail::get_value(res_, row, index, x);
 }
 
-void postgresql_prepared_result::on_attribute(const char *, std::string &x, size_t s)
+void postgresql_prepared_result::read_value(int index, int row, std::string &x, size_t s)
 {
-  detail::get_value(res_, row_, column_++, x, s);
-}
-
-void postgresql_prepared_result::on_primary_key(const char *id, basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
-void postgresql_prepared_result::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
-}
-
-void postgresql_prepared_result::on_has_one(const char *id, identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
+  detail::get_value(res_, row, index, x, s);
 }
 
 bool postgresql_prepared_result::needs_bind()

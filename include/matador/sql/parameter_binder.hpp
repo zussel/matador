@@ -1,6 +1,7 @@
 #ifndef MATADOR_PARAMETER_BINDER_HPP
 #define MATADOR_PARAMETER_BINDER_HPP
 
+#include "matador/utils/access.hpp"
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/identifiable_holder.hpp"
 
@@ -12,6 +13,8 @@ namespace matador {
 
 class object_holder;
 class abstract_has_many;
+class time;
+class date;
 
 template < class T >
 class parameter_binder;

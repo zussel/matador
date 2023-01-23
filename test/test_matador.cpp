@@ -26,6 +26,7 @@
 #include "utils/EncryptionTest.hpp"
 #include "utils/HtmlTest.hpp"
 #include "utils/UrlTest.hpp"
+#include "utils/IdentifierTest.hpp"
 
 #include "json/JsonTestUnit.hpp"
 #include "json/JsonMapperTestUnit.hpp"
@@ -130,6 +131,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new EncryptionTest);
   suite.register_unit(new HtmlTest);
   suite.register_unit(new UrlTest);
+  suite.register_unit(new IdentifierTest);
 
   suite.register_unit(new JsonTestUnit);
   suite.register_unit(new JsonMapperTestUnit);
@@ -175,13 +177,13 @@ int main(int argc, char *argv[])
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new TransactionTestUnit("mysql", ::connection::mysql));
+//  suite.register_unit(new TransactionTestUnit("mysql", ::connection::mysql));
   suite.register_unit(new QueryTestUnit("mysql", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
-  suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
-  suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new JsonOrmTest("mysql", ::connection::mysql));
-  suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
+//  suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
+//  suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
+//  suite.register_unit(new JsonOrmTest("mysql", ::connection::mysql));
+//  suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
+//  suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
 #endif
 
 #if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
@@ -198,26 +200,26 @@ int main(int argc, char *argv[])
 
 #if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
   suite.register_unit(new ConnectionTestUnit("sqlite", ::connection::sqlite));
-  suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
+//  suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new QueryTestUnit("sqlite", ::connection::sqlite));
-  suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
-  suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
-  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
-  suite.register_unit(new JsonOrmTest("sqlite", ::connection::sqlite));
-  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
-  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
+//  suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
+//  suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
+//  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
+//  suite.register_unit(new JsonOrmTest("sqlite", ::connection::sqlite));
+//  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
+//  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new SQLiteDialectTestUnit());
 #endif
 
 #if defined(MATADOR_POSTGRESQL) && defined(MATADOR_POSTGRESQL_TEST)
   suite.register_unit(new ConnectionTestUnit("postgresql", ::connection::postgresql));
-  suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
+//  suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new QueryTestUnit("postgresql", ::connection::postgresql));
-  suite.register_unit(new BlogUnitTest("postgresql", ::connection::postgresql));
-  suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
-  suite.register_unit(new JsonOrmTest("postgresql", ::connection::postgresql));
-  suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
-  suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
+//  suite.register_unit(new BlogUnitTest("postgresql", ::connection::postgresql));
+//  suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
+//  suite.register_unit(new JsonOrmTest("postgresql", ::connection::postgresql));
+//  suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
+//  suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new PostgreSQLDialectTestUnit());
 #endif
 

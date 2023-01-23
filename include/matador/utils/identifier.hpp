@@ -8,18 +8,18 @@
 namespace matador {
 namespace detail {
 template<typename T>
-static std::string to_string(const T &value) {
+std::string to_string(const T &value) {
   return std::to_string(value);
 }
 
-static std::string to_string(const std::string &value);
+std::string to_string(const std::string &value);
 
 template<typename T>
-static bool is_valid(const T &value) {
+bool is_valid(const T &value) {
   return value > 0;
 }
 
-static bool is_valid(const std::string &value);
+bool is_valid(const std::string &value);
 }
 
 struct null_type_t {};

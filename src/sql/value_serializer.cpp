@@ -102,7 +102,7 @@ void value_serializer::on_attribute(const char*, time &x, long /*size*/)
   add_value(x);
 }
 
-void value_serializer::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
+void value_serializer::on_belongs_to(const char *, identifiable_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
     x.primary_key().serialize(value_identifier_serializer_);
@@ -111,7 +111,7 @@ void value_serializer::on_belongs_to(const char *id, identifiable_holder &x, cas
   }
 }
 
-void value_serializer::on_has_one(const char *id, identifiable_holder &x, cascade_type)
+void value_serializer::on_has_one(const char *, identifiable_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
     x.primary_key().serialize(value_identifier_serializer_);

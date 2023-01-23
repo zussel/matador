@@ -38,8 +38,8 @@ public:
     matador::access::serialize(*this, x);
   }
   template < class V >
-  void on_primary_key(const char *id, V &x, long /*size*/ = -1) {}
-  void on_primary_key(const char *id, T &x, long /*size*/ = -1)
+  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, T &x, long /*size*/ = -1)
   {
     x = value_;
   }

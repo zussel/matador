@@ -42,13 +42,13 @@ public:
   }
 
   template<typename ValueType>
-  void on_primary_key(const char*, ValueType &value, long size = -1)
+  void on_primary_key(const char*, ValueType &value, long /*size*/ = -1)
   {
     read_value(result_index_++, result_row_, value);
   }
 
   template<typename ValueType>
-  void on_attribute(const char*, ValueType &value, long size = -1)
+  void on_attribute(const char*, ValueType &value, long /*size*/ = -1)
   {
     read_value(result_index_++, result_row_, value);
   }
