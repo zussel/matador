@@ -32,24 +32,24 @@ public:
 
   int transform_index(int index) const override;
 
-  void read_value(int index, int row, char &x) override;
-  void read_value(int index, int row, short &x) override;
-  void read_value(int index, int row, int &x) override;
-  void read_value(int index, int row, long &x) override;
-  void read_value(int index, int row, long long &x) override;
-  void read_value(int index, int row, unsigned char &x) override;
-  void read_value(int index, int row, unsigned short &x) override;
-  void read_value(int index, int row, unsigned int &x) override;
-  void read_value(int index, int row, unsigned long &x) override;
-  void read_value(int index, int row, unsigned long long &x) override;
-  void read_value(int index, int row, bool &x) override;
-  void read_value(int index, int row, float &x) override;
-  void read_value(int index, int row, double &x) override;
-  void read_value(int index, int row, matador::date &x) override;
-  void read_value(int index, int row, matador::time &x) override;
-  void read_value(int index, int row, char *x, size_t s) override;
-  void read_value(int index, int row, std::string &x) override;
-  void read_value(int index, int row, std::string &x, size_t s) override;
+  void read_value(const char *id, int index, int row, char &x) override;
+  void read_value(const char *id, int index, int row, short &x) override;
+  void read_value(const char *id, int index, int row, int &x) override;
+  void read_value(const char *id, int index, int row, long &x) override;
+  void read_value(const char *id, int index, int row, long long &x) override;
+  void read_value(const char *id, int index, int row, unsigned char &x) override;
+  void read_value(const char *id, int index, int row, unsigned short &x) override;
+  void read_value(const char *id, int index, int row, unsigned int &x) override;
+  void read_value(const char *id, int index, int row, unsigned long &x) override;
+  void read_value(const char *id, int index, int row, unsigned long long &x) override;
+  void read_value(const char *id, int index, int row, bool &x) override;
+  void read_value(const char *id, int index, int row, float &x) override;
+  void read_value(const char *id, int index, int row, double &x) override;
+  void read_value(const char *id, int index, int row, matador::date &x) override;
+  void read_value(const char *id, int index, int row, matador::time &x) override;
+  void read_value(const char *id, int index, int row, char *x, long size) override;
+  void read_value(const char *id, int index, int row, std::string &x) override;
+  void read_value(const char *id, int index, int row, std::string &x, long size) override;
 
 protected:
   bool needs_bind() override;

@@ -4,7 +4,6 @@
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/string.hpp"
-//#include "matador/utils/basic_identifier.hpp"
 
 #include <cstring>
 
@@ -54,79 +53,79 @@ int sqlite_prepared_result::transform_index(int index) const
   return index;
 }
 
-void sqlite_prepared_result::on_attribute(const char *, char &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, char &x)
 {
   x = (char)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, short &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, short &x)
 {
   x = (short)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, int &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, int &x)
 {
   x = sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, long &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, long &x)
 {
   x = (long)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, long long &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, long long &x)
 {
   x = (long)sqlite3_column_int64(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, unsigned char &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, unsigned char &x)
 {
   x = (unsigned char)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, unsigned short &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, unsigned short &x)
 {
   x = (unsigned short)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, unsigned int &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, unsigned int &x)
 {
   x = (unsigned int)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, unsigned long &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, unsigned long &x)
 {
   x = (unsigned long)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, unsigned long long &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, unsigned long long &x)
 {
   x = (unsigned long long)sqlite3_column_int64(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, bool &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, bool &x)
 {
   x = sqlite3_column_int(stmt_, result_index_++) > 0;
 }
 
-void sqlite_prepared_result::on_attribute(const char *, float &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, float &x)
 {
   x = (float)sqlite3_column_double(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, double &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, double &x)
 {
   x = sqlite3_column_double(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, std::string &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, std::string &x)
 {
   auto s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   auto *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
   x.assign(text, s);
 }
 
-void sqlite_prepared_result::on_attribute(const char *, std::string &x, size_t )
+void sqlite_prepared_result::read_value(const char *id, int index, int row, std::string &x, long /*size*/)
 {
   auto s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   auto *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
@@ -135,7 +134,7 @@ void sqlite_prepared_result::on_attribute(const char *, std::string &x, size_t )
   }
 }
 
-void sqlite_prepared_result::on_attribute(const char *, char *x, size_t s)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, char *x, long s)
 {
   auto size = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   if (size < s) {
@@ -155,33 +154,18 @@ void sqlite_prepared_result::on_attribute(const char *, char *x, size_t s)
   }
 }
 
-void sqlite_prepared_result::on_attribute(const char *id, matador::date &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, matador::date &x)
 {
   std::string val;
   on_attribute(id, val);
   x = matador::date::parse(val, date_format::ISO8601);
 }
 
-void sqlite_prepared_result::on_attribute(const char *id, matador::time &x)
+void sqlite_prepared_result::read_value(const char *id, int index, int row, matador::time &x)
 {
   std::string val;
   on_attribute(id, val);
   x = matador::time::parse(val, "%Y-%m-%dT%T.%f");
-}
-
-void sqlite_prepared_result::on_primary_key(const char *id, basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
-void sqlite_prepared_result::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
-}
-
-void sqlite_prepared_result::on_has_one(const char *id, identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
 }
 
 bool sqlite_prepared_result::prepare_fetch()

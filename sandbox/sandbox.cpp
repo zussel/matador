@@ -5,6 +5,11 @@
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/json_object_mapper.hpp"
 
+// WebSocket:
+// https://blog.mi.hdm-stuttgart.de/index.php/2021/02/19/websocket-protokoll-ein-detaillierter-technischer-einblick/
+// https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers
+// https://datatracker.ietf.org/doc/html/rfc6455#section-5.2
+
 class generic_json_service
 {
 public:
@@ -80,7 +85,7 @@ std::map<colors, std::string> color_map = {
 class person
 {
 public:
-  matador::identifier<unsigned long> id_;
+  unsigned long id_;
   std::string name_;
   colors color_ { colors::WHITE };
 
@@ -91,8 +96,7 @@ public:
     , color_(c)
   {}
 
-  template < matador::object_holder_type OHT >
-  friend std::ostream& operator<<(std::ostream &out, const matador::object_ptr<person, OHT> &p) {
+  friend std::ostream& operator<<(std::ostream &out, const matador::object_ptr<person> &p) {
     out << p->name_ << " (id: " << p->id_ << ", color: " << color_map[p->color_] << ")";
     return out;
   }
@@ -100,9 +104,9 @@ public:
   template < class T >
   void serialize(T &serializer)
   {
-    serializer.serialize("id", id_);
-    serializer.serialize("name", name_, 255);
-    serializer.serialize("color", color_);
+    serializer.on_primary_key("id", id_);
+    serializer.on_attribute("name", name_, 255);
+    serializer.on_attribute("color", color_);
   }
 };
 
@@ -248,7 +252,7 @@ int main()
 
   std::cout << "object <person> " << george << "\n";
 
-  auto pk = matador::make_identifier(13UL);
+  matador::identifier pk(13UL);
 
   george = store.get<person>(pk);
 

@@ -63,7 +63,7 @@ template < class T, class Enabled = void >
 struct test_pair;
 
 template < class T >
-struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::type > : public basic_test_pair
+struct test_pair<T, typename std::enable_if< !std::is_same<T, const char*>::value >::type > : public basic_test_pair
 {
   explicit test_pair(T exp) : expected(std::move(exp)) {}
   T expected;
@@ -71,7 +71,7 @@ struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::t
 };
 
 template <>
-struct test_pair<char*> : public basic_test_pair
+struct test_pair<const char*> : public basic_test_pair
 {
   explicit test_pair(const char exp[],long s)
     : expected(exp)
@@ -81,7 +81,7 @@ struct test_pair<char*> : public basic_test_pair
   {}
   ~test_pair() { delete [] result; }
   const char* expected;
-  char* result;
+  const char* result;
   size_t expected_size;
   size_t size;
 };
@@ -450,7 +450,7 @@ void ObjectStoreTestUnit::test_get()
   test_pair<unsigned short> us(45);
   test_pair<unsigned int> ui(4567890);
   test_pair<unsigned long> ul(987654321);
-  test_pair<char*> cstr("baba", 255);
+  test_pair<const char*> cstr("baba", 255);
   test_pair<std::string> str("Hallo Welt");
   test_pair<std::string> varstr("The answer is 42");
   test_pair<matador::date> dateval(matador::date("29.4.1972"));
@@ -839,7 +839,7 @@ void ObjectStoreTestUnit::test_generic()
   test_pair<unsigned short> us(45);
   test_pair<unsigned int> ui(4567890);
   test_pair<unsigned long> ul(987654321);
-  test_pair<char*> cstr("baba", 255);
+  test_pair<const char*> cstr("baba", 255);
   test_pair<std::string> str("Hallo Welt");
   test_pair<std::string> varstr("The answer is 42");
   test_pair<matador::date> dateval(matador::date("29.4.1972"));

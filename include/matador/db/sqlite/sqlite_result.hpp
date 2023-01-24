@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef SQLITE_RESULT_HPP
 #define SQLITE_RESULT_HPP
 
@@ -58,27 +41,24 @@ protected:
   bool finalize_fetch() override;
 
 protected:
-  void on_attribute(const char *id, char &x) override;
-  void on_attribute(const char *id, short &x) override;
-  void on_attribute(const char *id, int &x) override;
-  void on_attribute(const char *id, long &x) override;
-  void on_attribute(const char *id, long long &x) override;
-  void on_attribute(const char *id, unsigned char &x) override;
-  void on_attribute(const char *id, unsigned short &x) override;
-  void on_attribute(const char *id, unsigned int &x) override;
-  void on_attribute(const char *id, unsigned long &x) override;
-  void on_attribute(const char *id, unsigned long long &x) override;
-  void on_attribute(const char *id, bool &x) override;
-  void on_attribute(const char *id, float &x) override;
-  void on_attribute(const char *id, double &x) override;
-  void on_attribute(const char *id, char *x, size_t s) override;
-  void on_attribute(const char *id, matador::date &x) override;
-  void on_attribute(const char *id, matador::time &x) override;
-  void on_attribute(const char *id, std::string &x) override;
-  void on_attribute(const char *id, std::string &x, size_t s) override;
-  void on_primary_key(const char *id, basic_identifier &x) override;
-  void on_belongs_to(const char *id, identifiable_holder &x, cascade_type) override;
-  void on_has_one(const char *id, identifiable_holder &x, cascade_type) override;
+  void read_value(const char *id, int index, int row, char &value) override;
+  void read_value(const char *id, int index, int row, short &value) override;
+  void read_value(const char *id, int index, int row, int &value) override;
+  void read_value(const char *id, int index, int row, long &value) override;
+  void read_value(const char *id, int index, int row, long long &value) override;
+  void read_value(const char *id, int index, int row, unsigned char &value) override;
+  void read_value(const char *id, int index, int row, unsigned short &value) override;
+  void read_value(const char *id, int index, int row, unsigned int &value) override;
+  void read_value(const char *id, int index, int row, unsigned long &value) override;
+  void read_value(const char *id, int index, int row, unsigned long long &value) override;
+  void read_value(const char *id, int index, int row, bool &value) override;
+  void read_value(const char *id, int index, int row, float &value) override;
+  void read_value(const char *id, int index, int row, double &value) override;
+  void read_value(const char *id, int index, int row, matador::time &value) override;
+  void read_value(const char *id, int index, int row, matador::date &value) override;
+  void read_value(const char *id, int index, int row, char *value, long size) override;
+  void read_value(const char *id, int index, int row, std::string &value) override;
+  void read_value(const char *id, int index, int row, std::string &value, long size) override;
 
 private:
   friend class sqlite_connection;

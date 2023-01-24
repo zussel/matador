@@ -1,6 +1,5 @@
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-//#include "matador/utils/basic_identifier.hpp"
 #include "matador/utils/string.hpp"
 
 #include "matador/db/sqlite/sqlite_result.hpp"
@@ -85,7 +84,7 @@ void sqlite_result::push_back(char **row_values, int column_count)
   result_.push_back(row);
 }
 
-void sqlite_result::on_attribute(const char *, char &x)
+void sqlite_result::read_value(const char *id, int index, int row, char &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
 
@@ -94,7 +93,7 @@ void sqlite_result::on_attribute(const char *, char &x)
   }
 }
 
-void sqlite_result::on_attribute(const char *, short &x)
+void sqlite_result::read_value(const char *id, int index, int row, short &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -105,7 +104,7 @@ void sqlite_result::on_attribute(const char *, short &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, int &x)
+void sqlite_result::read_value(const char *id, int index, int row, int &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -116,7 +115,7 @@ void sqlite_result::on_attribute(const char *, int &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, long &x)
+void sqlite_result::read_value(const char *id, int index, int row, long &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -127,7 +126,7 @@ void sqlite_result::on_attribute(const char *, long &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, long long &x)
+void sqlite_result::read_value(const char *id, int index, int row, long long &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -138,7 +137,7 @@ void sqlite_result::on_attribute(const char *, long long &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, unsigned char &x)
+void sqlite_result::read_value(const char *id, int index, int row, unsigned char &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -149,7 +148,7 @@ void sqlite_result::on_attribute(const char *, unsigned char &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, unsigned short &x)
+void sqlite_result::read_value(const char *id, int index, int row, unsigned short &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -160,7 +159,7 @@ void sqlite_result::on_attribute(const char *, unsigned short &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, unsigned int &x)
+void sqlite_result::read_value(const char *id, int index, int row, unsigned int &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -171,7 +170,7 @@ void sqlite_result::on_attribute(const char *, unsigned int &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, unsigned long &x)
+void sqlite_result::read_value(const char *id, int index, int row, unsigned long &x)
 {
   char *val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -182,7 +181,7 @@ void sqlite_result::on_attribute(const char *, unsigned long &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, unsigned long long &x)
+void sqlite_result::read_value(const char *id, int index, int row, unsigned long long &x)
 {
   char *val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -193,7 +192,7 @@ void sqlite_result::on_attribute(const char *, unsigned long long &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, bool &x)
+void sqlite_result::read_value(const char *id, int index, int row, bool &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -204,7 +203,7 @@ void sqlite_result::on_attribute(const char *, bool &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, float &x)
+void sqlite_result::read_value(const char *id, int index, int row, float &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -215,7 +214,7 @@ void sqlite_result::on_attribute(const char *, float &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, double &x)
+void sqlite_result::read_value(const char *id, int index, int row, double &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -226,63 +225,48 @@ void sqlite_result::on_attribute(const char *, double &x)
   // Todo: check error
 }
 
-void sqlite_result::on_attribute(const char *, char *x, size_t s)
+void sqlite_result::read_value(const char *id, int index, int row, char *x, long size)
 {
   t_row::value_type &val = result_[pos_][column_++];
   size_t len = strlen(val);
-  if (len > (size_t)s) {
+  if (len > (size_t)size) {
 #ifdef _MSC_VER
-    strncpy_s(x, s, val, len);
+    strncpy_s(x, size, val, len);
 #else
     strncpy(x, val, s);
 #endif
-    x[s-1] = '\n';
+    x[size-1] = '\n';
   } else {
 #ifdef _MSC_VER
-    strcpy_s(x, s, val);
+    strcpy_s(x, size, val);
 #else
     strcpy(x, val);
 #endif
   }
 }
 
-void sqlite_result::on_attribute(const char *, std::string &x, size_t)
+void sqlite_result::read_value(const char *id, int index, int row, std::string &x, long /*size*/)
 {
   t_row::value_type val = result_[pos_][column_++];
   x.assign(val);
 }
 
-void sqlite_result::on_attribute(const char *, std::string &x)
+void sqlite_result::read_value(const char *id, int index, int row, std::string &x)
 {
   t_row::value_type val = result_[pos_][column_++];
   x = val;
 }
 
-void sqlite_result::on_attribute(const char *, matador::date &x)
+void sqlite_result::read_value(const char *id, int index, int row, matador::date &x)
 {
   t_row::value_type val = result_[pos_][column_++];
   x.set(val, date_format::ISO8601);
 }
 
-void sqlite_result::on_attribute(const char *, matador::time &x)
+void sqlite_result::read_value(const char *id, int index, int row, matador::time &x)
 {
   t_row::value_type val = result_[pos_][column_++];
   x = matador::time::parse(val, "%Y-%m-%dT%T.%f");
-}
-
-void sqlite_result::on_primary_key(const char *id, basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
-void sqlite_result::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
-}
-
-void sqlite_result::on_has_one(const char *id, identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
 }
 
 bool sqlite_result::prepare_fetch()

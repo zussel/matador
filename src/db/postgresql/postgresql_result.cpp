@@ -1,9 +1,8 @@
-#include <cstring>
-
 #include "matador/utils/string.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-//#include "matador/utils/basic_identifier.hpp"
+
+#include <cstring>
 
 #include "matador/db/postgresql/postgresql_result.hpp"
 #include "matador/db/postgresql/postgresql_getvalue.hpp"
@@ -56,92 +55,92 @@ int postgresql_result::transform_index(int index) const
   return index;
 }
 
-void postgresql_result::read_value(int index, int row, char &value)
+void postgresql_result::read_value(const char *id, int index, int row, char &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, short &value)
+void postgresql_result::read_value(const char *id, int index, int row, short &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, int &value)
+void postgresql_result::read_value(const char *id, int index, int row, int &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, long &value)
+void postgresql_result::read_value(const char *id, int index, int row, long &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, long long &value)
+void postgresql_result::read_value(const char *id, int index, int row, long long &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, unsigned char &value)
+void postgresql_result::read_value(const char *id, int index, int row, unsigned char &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, unsigned short &value)
+void postgresql_result::read_value(const char *id, int index, int row, unsigned short &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, unsigned int &value)
+void postgresql_result::read_value(const char *id, int index, int row, unsigned int &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, unsigned long &value)
+void postgresql_result::read_value(const char *id, int index, int row, unsigned long &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, unsigned long long &value)
+void postgresql_result::read_value(const char *id, int index, int row, unsigned long long &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, bool &value)
+void postgresql_result::read_value(const char *id, int index, int row, bool &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, float &value)
+void postgresql_result::read_value(const char *id, int index, int row, float &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, double &value)
+void postgresql_result::read_value(const char *id, int index, int row, double &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, char *value, size_t s)
+void postgresql_result::read_value(const char *id, int index, int row, char *value, long size)
 {
-  detail::get_value(res_, row, index, value, s);
+  detail::get_value(res_, row, index, value, size);
 }
 
-void postgresql_result::read_value(int index, int row, std::string &value, size_t s)
+void postgresql_result::read_value(const char *id, int index, int row, std::string &value, long size)
 {
-  detail::get_value(res_, row, index, value, s);
+  detail::get_value(res_, row, index, value, size);
 }
 
-void postgresql_result::read_value(int index, int row, std::string &value)
-{
-  detail::get_value(res_, row, index, value);
-}
-
-void postgresql_result::read_value(int index, int row, matador::date &value)
+void postgresql_result::read_value(const char *id, int index, int row, std::string &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(int index, int row, matador::time &value)
+void postgresql_result::read_value(const char *id, int index, int row, matador::date &value)
+{
+  detail::get_value(res_, row, index, value);
+}
+
+void postgresql_result::read_value(const char *id, int index, int row, matador::time &value)
 {
   detail::get_value(res_, row, index, value);
 }

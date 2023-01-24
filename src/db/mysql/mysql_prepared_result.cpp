@@ -5,7 +5,6 @@
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-//#include "matador/utils/basic_identifier.hpp"
 #include "matador/utils/identifiable_holder.hpp"
 
 #include <cstring>
@@ -100,7 +99,7 @@ int mysql_prepared_result::transform_index(int index) const
   return index;
 }
 
-void mysql_prepared_result::read_value(int index, int row, char &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, char &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_TINY, value);
@@ -109,7 +108,7 @@ void mysql_prepared_result::read_value(int index, int row, char &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, short &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, short &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_SHORT, value);
@@ -118,7 +117,7 @@ void mysql_prepared_result::read_value(int index, int row, short &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, int &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, int &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_LONG, value);
@@ -127,7 +126,7 @@ void mysql_prepared_result::read_value(int index, int row, int &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, long &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, long &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_LONGLONG, value);
@@ -136,7 +135,7 @@ void mysql_prepared_result::read_value(int index, int row, long &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, long long &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, long long &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_LONGLONG, value);
@@ -145,7 +144,7 @@ void mysql_prepared_result::read_value(int index, int row, long long &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, unsigned char &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, unsigned char &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_VAR_STRING, value);
@@ -154,7 +153,7 @@ void mysql_prepared_result::read_value(int index, int row, unsigned char &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, unsigned short &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, unsigned short &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_SHORT, value);
@@ -163,7 +162,7 @@ void mysql_prepared_result::read_value(int index, int row, unsigned short &value
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, unsigned int &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, unsigned int &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_LONG, value);
@@ -172,7 +171,7 @@ void mysql_prepared_result::read_value(int index, int row, unsigned int &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, unsigned long &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, unsigned long &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_LONGLONG, value);
@@ -181,7 +180,7 @@ void mysql_prepared_result::read_value(int index, int row, unsigned long &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, unsigned long long &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, unsigned long long &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_LONGLONG, value);
@@ -190,7 +189,7 @@ void mysql_prepared_result::read_value(int index, int row, unsigned long long &v
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, bool &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, bool &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_TINY, value);
@@ -199,7 +198,7 @@ void mysql_prepared_result::read_value(int index, int row, bool &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, float &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, float &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_FLOAT, value);
@@ -208,7 +207,7 @@ void mysql_prepared_result::read_value(int index, int row, float &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, double &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, double &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_DOUBLE, value);
@@ -217,15 +216,15 @@ void mysql_prepared_result::read_value(int index, int row, double &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, char *value, size_t s) {
+void mysql_prepared_result::read_value(const char *id, int index, int row, char *value, long size) {
   if (prepare_binding_) {
-    prepare_bind_column(index, MYSQL_TYPE_VAR_STRING, value, s);
+    prepare_bind_column(index, MYSQL_TYPE_VAR_STRING, value, size);
   } else {
     ++result_index_;
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, matador::date &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, matador::date &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_DATE, value);
@@ -239,7 +238,7 @@ void mysql_prepared_result::read_value(int index, int row, matador::date &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, matador::time &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, matador::time &value)
 {
   if (mysql::version < 50604) {
     if (prepare_binding_) {
@@ -250,7 +249,7 @@ void mysql_prepared_result::read_value(int index, int row, matador::time &value)
         // doesn't support fractional seconds
         // so we use a datetime string here
         std::string val;
-        read_value(index, row, val);
+        read_value(id, index, row, val);
         value = matador::time::parse(val, "%FT%T");
         ++result_index_;
       }
@@ -269,7 +268,7 @@ void mysql_prepared_result::read_value(int index, int row, matador::time &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, std::string &value)
+void mysql_prepared_result::read_value(const char *id, int index, int row, std::string &value)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_STRING, value);
@@ -279,10 +278,10 @@ void mysql_prepared_result::read_value(int index, int row, std::string &value)
   }
 }
 
-void mysql_prepared_result::read_value(int index, int row, std::string &value, size_t s)
+void mysql_prepared_result::read_value(const char *id, int index, int row, std::string &value, long size)
 {
   if (prepare_binding_) {
-    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, value, s);
+    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, value, size);
   } else {
     if (*bind_[result_index_].error) {
       // assume truncated data

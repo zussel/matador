@@ -5,24 +5,24 @@
 namespace matador {
 namespace detail {
 
-void result_impl::on_attribute(const char*, char *value, long size)
+void result_impl::on_attribute(const char *id, char *value, long size)
 {
-  read_value(result_index_++, result_row_, value, size);
+  read_value(id, result_index_++, result_row_, value, size);
 }
 
-void result_impl::on_attribute(const char*, std::string &value, long size)
+void result_impl::on_attribute(const char *id, std::string &value, long size)
 {
-  read_value(result_index_++, result_row_, value, size);
+  read_value(id, result_index_++, result_row_, value, size);
 }
 
-void result_impl::on_attribute(const char*, matador::time &value, long /*size*/)
+void result_impl::on_attribute(const char *id, matador::time &value, long /*size*/)
 {
-  read_value(result_index_++, result_row_, value);
+  read_value(id, result_index_++, result_row_, value);
 }
 
-void result_impl::on_attribute(const char*, matador::date &value, long /*size*/)
+void result_impl::on_attribute(const char *id, matador::date &value, long /*size*/)
 {
-  read_value(result_index_++, result_row_, value);
+  read_value(id, result_index_++, result_row_, value);
 }
 
 void result_impl::on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type)
