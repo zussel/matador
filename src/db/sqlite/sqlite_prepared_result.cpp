@@ -55,80 +55,80 @@ int sqlite_prepared_result::transform_index(int index) const
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, char &x)
 {
-  x = (char)sqlite3_column_int(stmt_, result_index_++);
+  x = (char)sqlite3_column_int(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, short &x)
 {
-  x = (short)sqlite3_column_int(stmt_, result_index_++);
+  x = (short)sqlite3_column_int(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, int &x)
 {
-  x = sqlite3_column_int(stmt_, result_index_++);
+  x = sqlite3_column_int(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, long &x)
 {
-  x = (long)sqlite3_column_int(stmt_, result_index_++);
+  x = (long)sqlite3_column_int(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, long long &x)
 {
-  x = (long)sqlite3_column_int64(stmt_, result_index_++);
+  x = (long)sqlite3_column_int64(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, unsigned char &x)
 {
-  x = (unsigned char)sqlite3_column_int(stmt_, result_index_++);
+  x = (unsigned char)sqlite3_column_int(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, unsigned short &x)
 {
-  x = (unsigned short)sqlite3_column_int(stmt_, result_index_++);
+  x = (unsigned short)sqlite3_column_int(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, unsigned int &x)
 {
-  x = (unsigned int)sqlite3_column_int(stmt_, result_index_++);
+  x = (unsigned int)sqlite3_column_int(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, unsigned long &x)
 {
-  x = (unsigned long)sqlite3_column_int(stmt_, result_index_++);
+  x = (unsigned long)sqlite3_column_int(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, unsigned long long &x)
 {
-  x = (unsigned long long)sqlite3_column_int64(stmt_, result_index_++);
+  x = (unsigned long long)sqlite3_column_int64(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, bool &x)
 {
-  x = sqlite3_column_int(stmt_, result_index_++) > 0;
+  x = sqlite3_column_int(stmt_, index) > 0;
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, float &x)
 {
-  x = (float)sqlite3_column_double(stmt_, result_index_++);
+  x = (float)sqlite3_column_double(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, double &x)
 {
-  x = sqlite3_column_double(stmt_, result_index_++);
+  x = sqlite3_column_double(stmt_, index);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, std::string &x)
 {
   auto s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
-  auto *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
+  auto *text = (const char*)sqlite3_column_text(stmt_, index);
   x.assign(text, s);
 }
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, std::string &x, long /*size*/)
 {
   auto s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
-  auto *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
+  auto *text = (const char*)sqlite3_column_text(stmt_, index);
   if (s > 0) {
     x.assign(text, s);
   }
@@ -136,19 +136,19 @@ void sqlite_prepared_result::read_value(const char *id, int index, int row, std:
 
 void sqlite_prepared_result::read_value(const char *id, int index, int row, char *x, long s)
 {
-  auto size = (size_t)sqlite3_column_bytes(stmt_, result_index_);
+  auto size = (size_t)sqlite3_column_bytes(stmt_, index);
   if (size < s) {
 #ifdef _MSC_VER
-    strncpy_s(x, s, (const char*)sqlite3_column_text(stmt_, result_index_++), size);
+    strncpy_s(x, s, (const char*)sqlite3_column_text(stmt_, index), size);
 #else
-    strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index_++), size);
+    strncpy(x, (const char*)sqlite3_column_text(stmt_, index), size);
 #endif
     x[size] = '\0';
   } else {
 #ifdef _MSC_VER
-    strncpy_s(x, s, (const char*)sqlite3_column_text(stmt_, result_index_++), size - 1);
+    strncpy_s(x, s, (const char*)sqlite3_column_text(stmt_, index), size - 1);
 #else
-    strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index_++), size - 1);
+    strncpy(x, (const char*)sqlite3_column_text(stmt_, index), size - 1);
 #endif
     x[s] = '\0';
   }
