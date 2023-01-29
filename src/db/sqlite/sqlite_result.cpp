@@ -233,7 +233,7 @@ void sqlite_result::read_value(const char *id, int index, int row, char *x, long
 #ifdef _MSC_VER
     strncpy_s(x, size, val, len);
 #else
-    strncpy(x, val, s);
+    strncpy(x, val, size);
 #endif
     x[size-1] = '\n';
   } else {
