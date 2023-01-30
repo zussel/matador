@@ -93,6 +93,18 @@ else()
   MESSAGE(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
 endif()
 
+SET(NET_LIBRARIES)
+
+if (WIN32)
+  find_library(WSOCK32_LIBRARY wsock32)
+  find_library(WS2_32_LIBRARY ws2_32)
+
+  message(STATUS "WSOCK32 ${WSOCK32_LIBRARY}")
+  message(STATUS "WS2_32 ${WS2_32_LIBRARY}")
+
+  MESSAGE(STATUS "Appending Windows Socket libs")
+  LIST(APPEND NET_LIBRARIES ${WSOCK32_LIBRARY} ${WS2_32_LIBRARY})
+endif()
 # Put the libaries and binaries that get built into directories at the
 # top of the build tree rather than in hard-to-find leaf
 # directories. This simplifies manual testing and the use of the build

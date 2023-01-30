@@ -1,10 +1,5 @@
 SET(NET_LIBRARIES)
 
-IF(WIN32)
-  MESSAGE(STATUS "Appending Windows Socket libs: wsock32 ws2_32")
-  LIST(APPEND NET_LIBRARIES wsock32 ws2_32)
-ENDIF()
-
 SET (HTTP_SERVER_SOURCES
   main.cpp)
 

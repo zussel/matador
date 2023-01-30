@@ -43,11 +43,7 @@ SET(HEADER
 
 ADD_LIBRARY(matador-net STATIC ${SOURCES} ${HEADER})
 
-if(WIN32)
-  TARGET_LINK_LIBRARIES(matador-net matador-logger matador-utils wsock32 ws2_32)
-else()
-  TARGET_LINK_LIBRARIES(matador-net matador-logger matador-utils)
-endif()
+TARGET_LINK_LIBRARIES(matador-net matador-logger matador-utils ${NET_LIBRARIES})
 
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-net

@@ -14,13 +14,6 @@ TARGET_LINK_LIBRARIES(reactor
   ${CMAKE_THREAD_LIBS_INIT}
 )
 
-SET(NET_LIBRARIES)
-
-IF(WIN32)
-  MESSAGE(STATUS "Appending Windows Socket libs: wsock32 ws2_32")
-  LIST(APPEND NET_LIBRARIES wsock32 ws2_32)
-ENDIF()
-
 TARGET_LINK_LIBRARIES(sandbox
     matador-unit
     matador-utils
