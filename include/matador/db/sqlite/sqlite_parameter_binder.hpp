@@ -1,7 +1,3 @@
-//
-// Created by sascha on 08.09.19.
-//
-
 #ifndef MATADOR_SQLITE_PARAMETER_BINDER_HPP
 #define MATADOR_SQLITE_PARAMETER_BINDER_HPP
 
