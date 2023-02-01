@@ -25,4 +25,8 @@ void IdentifierTest::test_identifier()
   id1 = std::string("id");
 
   UNIT_ASSERT_EQUAL("id", id1.str());
+
+  auto shared_id = id1.share();
+
+  UNIT_ASSERT_EQUAL(2UL, shared_id.use_count());
 }

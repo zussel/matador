@@ -65,7 +65,7 @@ size_t identifier::null_pk::hash() const
 }
 
 identifier::identifier()
-  : id_(std::make_unique<null_pk>()) {}
+  : id_(std::make_shared<null_pk>()) {}
 
 identifier::identifier(const identifier &x)
   : id_(x.id_->copy()) {}
@@ -119,6 +119,16 @@ const std::type_index &identifier::type_index() const {
   return id_->type_index_;
 }
 
+identifier identifier::share() const
+{
+  return identifier(id_);
+}
+
+size_t identifier::use_count() const
+{
+  return id_.use_count();
+}
+
 bool identifier::is_null() const {
   return is_same_type(null_identifier);
 }
@@ -142,6 +152,10 @@ size_t identifier::hash() const
 {
   return id_->hash();
 }
+
+identifier::identifier(const std::shared_ptr<base> &id)
+  : id_(id)
+{}
 
 std::ostream &operator<<(std::ostream &out, const identifier &id) {
   out << id.str();

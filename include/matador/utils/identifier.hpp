@@ -124,7 +124,7 @@ public:
   identifier();
   template<typename Type>
   explicit identifier(const Type &id)
-    : id_(std::make_unique<pk<Type>>(id)) {}
+    : id_(std::make_shared<pk<Type>>(id)) {}
   identifier(const identifier &x);
   identifier &operator=(const identifier &x);
   identifier(identifier &&x) noexcept ;
@@ -152,6 +152,9 @@ public:
   std::string str() const;
   const std::type_index &type_index() const;
 
+  identifier share() const;
+  size_t use_count() const;
+
   bool is_null() const;
   bool is_valid() const;
   void clear();
@@ -163,7 +166,10 @@ public:
   friend std::ostream &operator<<(std::ostream &out, const identifier &id);
 
 private:
-  std::unique_ptr <base> id_;
+  explicit identifier(const std::shared_ptr<base>& id);
+
+private:
+  std::shared_ptr<base> id_;
 };
 
 static identifier null_identifier{};
