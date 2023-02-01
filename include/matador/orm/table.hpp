@@ -104,7 +104,7 @@ public:
 
     for (auto entity : result) {
       // try to find object proxy by id
-      basic_identifier* id(identifier_resolver_.resolve_object(entity.get()));
+      auto id = identifier_resolver_.resolve_object(entity.get());
 
       auto i = identifier_proxy_map_.find(id);
       if (i != identifier_proxy_map_.end()) {
@@ -122,9 +122,6 @@ public:
       if (i != identifier_proxy_map_.end()) {
         auto proxy_info = i->second;
         identifier_proxy_map_.erase(i);
-        for (auto pk : proxy_info.primary_keys) {
-          delete pk;
-        }
       }
     }
 
@@ -164,7 +161,7 @@ public:
     }
     auto *obj = static_cast<table_type *>(proxy->obj());
     size_t pos = update_.bind(0, obj);
-    binder_.bind(obj, &update_, pos, it->second.get());
+    binder_.bind(obj, &update_, pos, it->second);
     // Todo: check result
     update_.execute();
   }
@@ -180,7 +177,7 @@ public:
   void remove(object_proxy *proxy) override
   {
     delete_.reset();
-    binder_.bind(static_cast<table_type *>(proxy->obj()), &delete_, 0, proxy->pk());
+    binder_.bind(proxy->obj<table_type>(), &delete_, 0, proxy->pk());
     // Todo: check result
     delete_.execute();
   }
@@ -193,7 +190,7 @@ public:
 
 /// @cond MATADOR_DEV
   template<class V>
-  void append_relation_data(const std::string &field, basic_identifier *id, const V &val, object_proxy *owner);
+  void append_relation_data(const std::string &field, const identifier &id, const V &val, object_proxy *owner);
 /// @endcond
 
 protected:
@@ -245,7 +242,7 @@ template < class T >
 template < class V >
 void table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, T>::value>::type>::append_relation_data(
   const std::string &field,
-  basic_identifier *id,
+  const identifier &id,
   const V &val,
   object_proxy *owner)
 {
@@ -322,7 +319,7 @@ public:
 
     for (auto entity : result) {
       // create new proxy of relation object
-      proxy_.reset(new object_proxy(entity.release()));
+      proxy_ = std::make_unique<object_proxy>(entity.release());
       object_proxy *proxy = store.insert(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
     }
@@ -352,7 +349,7 @@ public:
   }
 
   template < class V >
-  void append_relation_data(const std::string &, basic_identifier*, const V &) { }
+  void append_relation_data(const std::string &, const identifier&, const V &) { }
 
 private:
   statement<T> select_all_;

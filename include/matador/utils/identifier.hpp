@@ -54,6 +54,7 @@ private:
     virtual ~base() = default;
 
     bool is_same_type(const base &x) const;
+    bool is_same_type(const std::type_index &x) const;
 
     virtual base *copy() const = 0;
     virtual bool equal_to(const base &x) const = 0;
@@ -145,6 +146,9 @@ public:
   bool operator>=(const identifier &x) const;
 
   bool is_same_type(const identifier &x) const;
+
+  template<typename Type>
+  bool is_same_type() const;
   std::string str() const;
   const std::type_index &type_index() const;
 
@@ -163,6 +167,12 @@ private:
 };
 
 static identifier null_identifier{};
+
+template<typename Type>
+bool identifier::is_same_type() const
+{
+  return id_->is_same_type(std::type_index(typeid(Type)));
+}
 
 struct id_pk_hash
 {

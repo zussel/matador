@@ -127,7 +127,7 @@ void persistence::register_proxy_insert(object_proxy &proxy)
 void persistence::register_proxy_update(object_proxy &proxy)
 {
   if (proxy_identifier_map_.find(&proxy) == proxy_identifier_map_.end()) {
-    proxy_identifier_map_.insert(std::make_pair(&proxy, std::unique_ptr<basic_identifier>(proxy.pk()->clone())));
+    proxy_identifier_map_.insert(std::make_pair(&proxy, proxy.pk()));
   }
   if (store_.has_transaction()) {
     return;

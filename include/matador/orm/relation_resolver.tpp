@@ -17,8 +17,8 @@ void relation_resolver<T, typename std::enable_if<
   !std::is_base_of<basic_has_many_to_many_item, T>::value
 >::type>::on_belongs_to(const char *id, object_ptr<V> &x, cascade_type cascade)
 {
-  basic_identifier *pk = x.primary_key();
-  if (!pk) {
+  const identifier &pk = x.primary_key();
+  if (pk.is_null()) {
     return;
   }
 
@@ -41,7 +41,6 @@ void relation_resolver<T, typename std::enable_if<
      * already read - replace proxy
      */
     x.reset(proxy, cascade, false);
-    delete pk;
   } else {
     /**
      * if proxy can't be found we create
@@ -132,8 +131,8 @@ void relation_resolver<T, typename std::enable_if<
   ++(*proxy_);
   // check whether is left or right side value
   // left side will be determined first
-  basic_identifier *pk = x.primary_key();
-  if (!pk) {
+  const identifier &pk = x.primary_key();
+  if (pk.is_null()) {
     return;
   }
 
@@ -229,8 +228,8 @@ void relation_resolver<T, typename std::enable_if<
 {
   // check whether is left or right side value
   // left side will be determined first
-  basic_identifier *pk = x.primary_key();
-  if (!pk) {
+  const identifier &pk = x.primary_key();
+  if (pk.is_null()) {
     return;
   }
 
@@ -255,8 +254,8 @@ void relation_resolver<T, typename std::enable_if<
   // insert it into concrete object
   // else
   // insert into relation data
-  basic_identifier *pk = x.primary_key();
-  if (!pk) {
+  const identifier &pk = x.primary_key();
+  if (pk.is_null()) {
     return;
   }
 

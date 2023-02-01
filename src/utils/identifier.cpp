@@ -21,6 +21,10 @@ bool identifier::base::is_same_type(const base &x) const {
   return type_index_ == x.type_index_;
 }
 
+bool identifier::base::is_same_type(const std::type_index &x) const {
+  return type_index_ == x;
+}
+
 identifier::null_pk::null_pk()
   : base(std::type_index(typeid(null_type_t)))
 {}

@@ -159,21 +159,21 @@ SET (TEST_SQL_SOURCES
   sql/SqlLoggerTest.cpp
   sql/SqlLoggerTest.hpp)
 
-#SET (TEST_ORM_SOURCES
-#  orm/TransactionTestUnit.cpp
-#  orm/TransactionTestUnit.hpp
-#  orm/OrmTestUnit.cpp
-#  orm/OrmTestUnit.hpp
-#  orm/OrmReloadTestUnit.cpp
-#  orm/OrmReloadTestUnit.hpp
-#  orm/OrmRelationTestUnit.cpp
-#  orm/OrmRelationTestUnit.hpp
-#  orm/BlogUnitTest.cpp
-#  orm/BlogUnitTest.hpp
-#  orm/PrimaryKeyTestUnit.cpp
-#  orm/PrimaryKeyTestUnit.hpp
-#  orm/JsonOrmTest.cpp
-#  orm/JsonOrmTest.hpp)
+SET (TEST_ORM_SOURCES
+  orm/TransactionTestUnit.cpp
+  orm/TransactionTestUnit.hpp
+  orm/OrmTestUnit.cpp
+  orm/OrmTestUnit.hpp
+  orm/OrmReloadTestUnit.cpp
+  orm/OrmReloadTestUnit.hpp
+  orm/OrmRelationTestUnit.cpp
+  orm/OrmRelationTestUnit.hpp
+  orm/BlogUnitTest.cpp
+  orm/BlogUnitTest.hpp
+  orm/PrimaryKeyTestUnit.cpp
+  orm/PrimaryKeyTestUnit.hpp
+  orm/JsonOrmTest.cpp
+  orm/JsonOrmTest.hpp)
 
 SET (TEST_SOURCES test_matador.cpp dto.hpp NetUtils.hpp)
 
@@ -185,7 +185,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_OBJECT_SOURCES}
   ${TEST_JSON_SOURCES}
   ${TEST_UNIT_SOURCES}
-#  ${TEST_ORM_SOURCES}
+  ${TEST_ORM_SOURCES}
   ${TEST_LOGGER_SOURCES}
 #  ${TEST_HTTP_SOURCES}
 #  ${TEST_NET_SOURCES}
@@ -221,7 +221,7 @@ TARGET_LINK_LIBRARIES(test_matador
 #  matador-http
   matador-object
   matador-sql
-#  matador-orm
+  matador-orm
   ${CMAKE_DL_LIBS}
   ${MATADOR_DB_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}

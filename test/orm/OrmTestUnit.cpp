@@ -30,7 +30,7 @@ namespace demo {
 // a simple person class
 struct person
 {
-  identifier<unsigned long> id;   // primary key
+  unsigned long id{};   // primary key
   std::string name;
   std::string ip;
   unsigned int age = 0;

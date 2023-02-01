@@ -75,7 +75,7 @@ public:
   void on_attribute(const char *id, double &x, long /*size*/ = -1);
   void on_attribute(const char *id, bool &x, long /*size*/ = -1);
   void on_attribute(const char *id, char *x, long size);
-  void on_attribute(const char *id, std::string &x, long size);
+  void on_attribute(const char *id, std::string &x, long size = -1);
   void on_attribute(const char *id, date &x, long /*size*/ = -1);
   void on_attribute(const char *id, time &x, long /*size*/ = -1);
   void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);

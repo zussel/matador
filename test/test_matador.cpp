@@ -43,13 +43,13 @@
 #include "object/HasManyListUnitTest.hpp"
 #include "object/RelationTestUnit.hpp"
 
-//#include "orm/BlogUnitTest.hpp"
-//#include "orm/PrimaryKeyTestUnit.hpp"
-//#include "orm/OrmTestUnit.hpp"
-//#include "orm/JsonOrmTest.hpp"
-//#include "orm/OrmReloadTestUnit.hpp"
-//#include "orm/OrmRelationTestUnit.hpp"
-//#include "orm/TransactionTestUnit.hpp"
+#include "orm/BlogUnitTest.hpp"
+#include "orm/PrimaryKeyTestUnit.hpp"
+#include "orm/OrmTestUnit.hpp"
+#include "orm/JsonOrmTest.hpp"
+#include "orm/OrmReloadTestUnit.hpp"
+#include "orm/OrmRelationTestUnit.hpp"
+#include "orm/TransactionTestUnit.hpp"
 
 #include "sql/DialectTestUnit.hpp"
 #include "sql/ConditionUnitTest.hpp"
@@ -200,14 +200,14 @@ int main(int argc, char *argv[])
 
 #if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
   suite.register_unit(new ConnectionTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new QueryTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
-//  suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new JsonOrmTest("sqlite", ::connection::sqlite));
-//  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
+  suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new JsonOrmTest("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new SQLiteDialectTestUnit());
 #endif
 
