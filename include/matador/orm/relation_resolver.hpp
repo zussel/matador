@@ -61,7 +61,7 @@ public:
     proxy_ = proxy;
     matador::access::serialize(*this, *proxy->obj<T>());
     proxy_ = nullptr;
-    id_ = nullptr;
+    id_.clear();
     store_ = nullptr;
   }
 
@@ -237,7 +237,7 @@ public:
     right_table_ptr_ = right_table_.lock();
     matador::access::serialize(*this, *proxy->obj<T>());
     proxy_ = nullptr;
-    id_ = nullptr;
+    id_.clear();
     store_ = nullptr;
   }
 
@@ -368,7 +368,7 @@ public:
     left_table_ptr_ = left_table_.lock();
     matador::access::serialize(*this, *proxy->obj<T>());
     proxy_ = nullptr;
-    id_ = nullptr;
+    id_.clear();
     store_ = nullptr;
   }
 

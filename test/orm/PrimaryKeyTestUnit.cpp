@@ -40,7 +40,7 @@ void PrimaryKeyTestUnit::test_long_pk()
   UNIT_ASSERT_TRUE(first != res.end());
   std::unique_ptr<child> p1(first.release());
 
-  UNIT_EXPECT_EQUAL(1UL, p1->id.value());
+  UNIT_EXPECT_EQUAL(1UL, p1->id);
 
   optr.modify()->id = 2UL;
 
@@ -52,7 +52,7 @@ void PrimaryKeyTestUnit::test_long_pk()
   UNIT_ASSERT_TRUE(first != res.end());
   p1.reset(first.release());
 
-  UNIT_EXPECT_EQUAL(2UL, p1->id.value());
+  UNIT_EXPECT_EQUAL(2UL, p1->id);
 
   p.drop();
 }

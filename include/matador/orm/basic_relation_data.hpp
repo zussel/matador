@@ -115,8 +115,8 @@ public:
 private:
   std::type_index tindex_;
 
-  using id_pk_ref = std::reference_wrapper<const identifier>;
-  std::unordered_multimap<id_pk_ref, std::pair<value_type, object_proxy*>, id_pk_hash, std::equal_to<const identifier>> id_multi_map_;
+//  using id_pk_ref = std::reference_wrapper<const identifier>;
+  std::unordered_multimap<identifier, std::pair<T, object_proxy*>, id_pk_hash, std::equal_to<const identifier>> id_multi_map_;
 //  std::unordered_multimap<basic_identifier*, std::pair<T, object_proxy*>, identifier_hash<basic_identifier>, identifier_equal> id_multi_map_;
 };
 

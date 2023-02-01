@@ -90,7 +90,7 @@ void identifier_binder<T>::cleanup()
   stmt_ = nullptr;
   pos_ = 0;
   obj_ = nullptr;
-  id_ = nullptr;
+  id_.clear();
 }
 
 /// @endcond

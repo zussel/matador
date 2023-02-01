@@ -26,7 +26,12 @@ void IdentifierTest::test_identifier()
 
   UNIT_ASSERT_EQUAL("id", id1.str());
 
-  auto shared_id = id1.share();
+  {
+    auto shared_id = id1.share();
 
-  UNIT_ASSERT_EQUAL(2UL, shared_id.use_count());
+    UNIT_ASSERT_EQUAL(2UL, shared_id.use_count());
+    UNIT_ASSERT_EQUAL(2UL, id1.use_count());
+  }
+
+  UNIT_ASSERT_EQUAL(1UL, id1.use_count());
 }
