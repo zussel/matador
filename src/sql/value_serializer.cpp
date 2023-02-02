@@ -120,7 +120,7 @@ void value_serializer::on_has_one(const char *, identifiable_holder &x, cascade_
   }
 }
 
-void value_identifier_serializer::serialize(null_type_t &)
+void value_identifier_serializer::serialize(const char *, null_type_t &)
 {
 //  values_->push_back(std::make_shared<null_value>());
 }

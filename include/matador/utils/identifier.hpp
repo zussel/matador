@@ -29,16 +29,16 @@ class identifier_serializer
 public:
   virtual ~identifier_serializer() = default;
 
-  virtual void serialize(short &) = 0;
-  virtual void serialize(int &) = 0;
-  virtual void serialize(long &) = 0;
-  virtual void serialize(long long &) = 0;
-  virtual void serialize(unsigned short &) = 0;
-  virtual void serialize(unsigned int &) = 0;
-  virtual void serialize(unsigned long &) = 0;
-  virtual void serialize(unsigned long long &) = 0;
-  virtual void serialize(std::string &) = 0;
-  virtual void serialize(null_type_t &) = 0;
+  virtual void serialize(const char *, short &) = 0;
+  virtual void serialize(const char *, int &) = 0;
+  virtual void serialize(const char *, long &) = 0;
+  virtual void serialize(const char *, long long &) = 0;
+  virtual void serialize(const char *, unsigned short &) = 0;
+  virtual void serialize(const char *, unsigned int &) = 0;
+  virtual void serialize(const char *, unsigned long &) = 0;
+  virtual void serialize(const char *, unsigned long long &) = 0;
+  virtual void serialize(const char *, std::string &) = 0;
+  virtual void serialize(const char *, null_type_t &) = 0;
 };
 
 class identifier
@@ -96,7 +96,7 @@ private:
     }
 
     void serialize(identifier_serializer &s) final {
-      s.serialize(id_);
+      s.serialize("", id_);
     }
 
     size_t hash() const final {

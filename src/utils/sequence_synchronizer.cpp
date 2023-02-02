@@ -2,42 +2,42 @@
 
 namespace matador {
 
-void sequence_synchronizer::serialize(short &x)
+void sequence_synchronizer::serialize(const char *, short &x)
 {
   sync_integral(x);
 }
 
-void sequence_synchronizer::serialize(int &x)
+void sequence_synchronizer::serialize(const char *, int &x)
 {
   sync_integral(x);
 }
 
-void sequence_synchronizer::serialize(long &x)
+void sequence_synchronizer::serialize(const char *, long &x)
 {
   sync_integral(x);
 }
 
-void sequence_synchronizer::serialize(long long int &x)
+void sequence_synchronizer::serialize(const char *, long long int &x)
 {
   sync_integral(x);
 }
 
-void sequence_synchronizer::serialize(unsigned short &x)
+void sequence_synchronizer::serialize(const char *, unsigned short &x)
 {
   sync_integral(x);
 }
 
-void sequence_synchronizer::serialize(unsigned int &x)
+void sequence_synchronizer::serialize(const char *, unsigned int &x)
 {
   sync_integral(x);
 }
 
-void sequence_synchronizer::serialize(unsigned long &x)
+void sequence_synchronizer::serialize(const char *, unsigned long &x)
 {
   sync_integral(x);
 }
 
-void sequence_synchronizer::serialize(unsigned long long int &x)
+void sequence_synchronizer::serialize(const char *, unsigned long long int &x)
 {
   sync_integral(x);
 }

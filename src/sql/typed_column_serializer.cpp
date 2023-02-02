@@ -128,29 +128,31 @@ void typed_column_serializer::on_attribute(const char *id, time &, long /*size*/
   cols_->push_back(create_column_func_(id, data_type::type_time, index_++));
 }
 
-void typed_column_serializer::on_belongs_to(const char *, identifiable_holder &x, cascade_type)
+void typed_column_serializer::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
-    x.primary_key().serialize(column_identifier_serializer_);
+    column_identifier_serializer_.make_typed_column(id, x.primary_key());
   } else {
     auto pk(x.create_identifier());
-    pk.serialize(column_identifier_serializer_);
+    column_identifier_serializer_.make_typed_column(id, pk);
   }
 }
 
-void typed_column_serializer::on_has_one(const char *, identifiable_holder &x, cascade_type)
+void typed_column_serializer::on_has_one(const char *id, identifiable_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
-    x.primary_key().serialize(column_identifier_serializer_);
+    column_identifier_serializer_.make_typed_column(id, x.primary_key());
   } else {
     auto pk(x.create_identifier());
-    pk.serialize(column_identifier_serializer_);
+    column_identifier_serializer_.make_typed_column(id, pk);
   }
 }
 
-void typed_column_identifier_serializer::serialize(null_type_t &)
+void typed_column_identifier_serializer::make_typed_column(const char *id, identifier &pk)
 {
-
+  id_ = id;
+  pk.serialize(*this);
+  id_ = nullptr;
 }
 
 }

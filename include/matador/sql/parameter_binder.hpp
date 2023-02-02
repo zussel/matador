@@ -66,16 +66,16 @@ public:
   explicit parameter_identifier_serializer(parameter_binder<Type> &binder)
   : binder_(binder) {}
 
-  void serialize(short &value) override { bind(value); }
-  void serialize(int &value) override { bind(value); }
-  void serialize(long &value) override { bind(value); }
-  void serialize(long long &value) override { bind(value); }
-  void serialize(unsigned short &value) override { bind(value); }
-  void serialize(unsigned int &value) override { bind(value); }
-  void serialize(unsigned long &value) override { bind(value); }
-  void serialize(unsigned long long &value) override { bind(value); }
-  void serialize(std::string &value) override { bind(value); }
-  void serialize(null_type_t &) override;
+  void serialize(const char *, short &value) override { bind(value); }
+  void serialize(const char *, int &value) override { bind(value); }
+  void serialize(const char *, long &value) override { bind(value); }
+  void serialize(const char *, long long &value) override { bind(value); }
+  void serialize(const char *, unsigned short &value) override { bind(value); }
+  void serialize(const char *, unsigned int &value) override { bind(value); }
+  void serialize(const char *, unsigned long &value) override { bind(value); }
+  void serialize(const char *, unsigned long long &value) override { bind(value); }
+  void serialize(const char *, std::string &value) override { bind(value); }
+  void serialize(const char *, null_type_t &) override;
 
 private:
   template< typename ValueType >
@@ -331,7 +331,7 @@ private:
 namespace detail {
 
 template<typename Type>
-void parameter_identifier_serializer<Type>::serialize(null_type_t &)
+void parameter_identifier_serializer<Type>::serialize(const char *, null_type_t &)
 {
   binder_.impl_->bind_null(true);
 }

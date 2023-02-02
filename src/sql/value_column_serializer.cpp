@@ -140,7 +140,7 @@ void value_column_serializer::on_has_one(const char *id, identifiable_holder &x,
   }
 }
 
-void value_column_identifier_serializer::serialize(null_type_t &) {
+void value_column_identifier_serializer::serialize(const char *, null_type_t &) {
 
 }
 }
