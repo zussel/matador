@@ -1,7 +1,7 @@
 #ifndef OOS_CONNECTION_IMPL_HPP
 #define OOS_CONNECTION_IMPL_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/types.hpp"
 #include "matador/sql/basic_sql_logger.hpp"
@@ -22,7 +22,8 @@ class basic_dialect;
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API connection_impl
+//class OOS_SQL_API connection_impl
+class connection_impl
 {
 public:
   virtual ~connection_impl() = default;

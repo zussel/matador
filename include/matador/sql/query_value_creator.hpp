@@ -1,7 +1,7 @@
 #ifndef OOS_QUERY_VALUE_CREATOR_HPP
 #define OOS_QUERY_VALUE_CREATOR_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/value.hpp"
 
@@ -15,7 +15,8 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API query_value_creator
+//class OOS_SQL_API query_value_creator
+class query_value_creator
 {
 public:
   query_value_creator();

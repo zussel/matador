@@ -1,7 +1,7 @@
 #ifndef OOS_FIELD_HPP
 #define OOS_FIELD_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/types.hpp"
 
@@ -12,7 +12,8 @@ namespace matador {
 /**
  * @brief Describes a database column field
  */
-class OOS_SQL_API field
+//class OOS_SQL_API field
+class field
 {
 public:
   /**

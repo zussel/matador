@@ -1,7 +1,7 @@
 #ifndef MATADOR_SQL_LOGGER_HPP
 #define MATADOR_SQL_LOGGER_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/basic_sql_logger.hpp"
 #include "matador/logger/logger.hpp"
@@ -13,7 +13,8 @@ namespace matador {
  * logging mechanism with two sink. A rotating
  * file sink besides a stdout sink.
  */
-class OOS_SQL_API sql_logger : public basic_sql_logger
+//class OOS_SQL_API sql_logger : public basic_sql_logger
+class sql_logger : public basic_sql_logger
 {
 public:
   /**

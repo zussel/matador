@@ -1,7 +1,7 @@
 #ifndef OOS_COLUMN_SERIALIZER_HPP
 #define OOS_COLUMN_SERIALIZER_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/sql.hpp"
 #include "matador/sql/column.hpp"
@@ -16,7 +16,9 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API column_serializer {
+//class OOS_SQL_API column_serializer
+class column_serializer
+{
 public:
   explicit column_serializer(columns::t_brackets brackets);
 

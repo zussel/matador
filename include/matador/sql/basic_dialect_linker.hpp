@@ -1,7 +1,7 @@
 #ifndef OOS_BASIC_DIALECT_LINKER_HPP
 #define OOS_BASIC_DIALECT_LINKER_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/token_visitor.hpp"
 #include "matador/sql/token.hpp"
@@ -20,7 +20,8 @@ struct build_info;
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API basic_dialect_linker : public token_visitor
+//class OOS_SQL_API basic_dialect_linker : public token_visitor
+class basic_dialect_linker : public token_visitor
 {
 public:
   void link();

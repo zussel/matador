@@ -1,7 +1,7 @@
 #ifndef ROW_HPP
 #define ROW_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/value.hpp"
 
@@ -15,7 +15,8 @@ namespace matador {
 /**
  * @brief Row representation
  */
-class OOS_SQL_API row
+//class OOS_SQL_API row
+class row
 {
 public:
   row() = default;

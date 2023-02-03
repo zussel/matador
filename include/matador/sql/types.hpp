@@ -1,7 +1,7 @@
 #ifndef OOS_DATABASE_TYPES_HPP
 #define OOS_DATABASE_TYPES_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"

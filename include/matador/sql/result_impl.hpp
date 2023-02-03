@@ -1,7 +1,7 @@
 #ifndef RESULT_IMPL_HPP
 #define RESULT_IMPL_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/serializer.hpp"
@@ -15,7 +15,8 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API result_impl
+//class OOS_SQL_API result_impl
+class result_impl
 {
 public:
   result_impl(const result_impl &) = delete;

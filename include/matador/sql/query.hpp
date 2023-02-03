@@ -1,7 +1,7 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/basic_query.hpp"
 #include "matador/sql/dialect_token.hpp"
@@ -867,7 +867,8 @@ query<T> select(const std::string &table)
  * @param cols The rows to select
  * @return A select query for anonymous rows.
  */
-OOS_SQL_API query<row> select(columns cols);
+query<row> select(columns cols);
+//OOS_SQL_API query<row> select(columns cols);
 
 }
 

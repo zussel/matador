@@ -1,7 +1,7 @@
 #ifndef OOS_STATEMENT_IMPL_HPP
 #define OOS_STATEMENT_IMPL_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/result.hpp"
 #include "matador/sql/parameter_binder.hpp"
@@ -14,7 +14,8 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API statement_impl
+//class OOS_SQL_API statement_impl
+class statement_impl
 {
 public:
   statement_impl() = delete;

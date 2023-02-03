@@ -1,9 +1,7 @@
 #ifndef OOS_TYPED_COLUMN_SERIALIZER_HPP
 #define OOS_TYPED_COLUMN_SERIALIZER_HPP
 
-#include <memory>
-
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/sql.hpp"
 #include "matador/sql/column.hpp"
@@ -11,6 +9,8 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/identifier.hpp"
+
+#include <memory>
 
 namespace matador {
 namespace detail {
@@ -27,27 +27,28 @@ public:
 
   void make_typed_column(const char *id, identifier &pk);
 
-  void serialize(const char *id, short &value) override { make_typed_column(id_, value); }
-  void serialize(const char *id, int &value) override { make_typed_column(id_, value); }
-  void serialize(const char *id, long &value) override { make_typed_column(id_, value); }
-  void serialize(const char *id, long long &value) override { make_typed_column(id_, value); }
-  void serialize(const char *id, unsigned short &value) override { make_typed_column(id_, value); }
-  void serialize(const char *id, unsigned int &value) override { make_typed_column(id_, value); }
-  void serialize(const char *id, unsigned long &value) override { make_typed_column(id_, value); }
-  void serialize(const char *id, unsigned long long &value) override { make_typed_column(id_, value); }
-  void serialize(const char *id, std::string &value) override { make_typed_column(id_, value); }
-  void serialize(const char *, null_type_t &) override {}
+  void serialize(short &value) override { make_typed_column(value); }
+  void serialize(int &value) override { make_typed_column(value); }
+  void serialize(long &value) override { make_typed_column(value); }
+  void serialize(long long &value) override { make_typed_column(value); }
+  void serialize(unsigned short &value) override { make_typed_column(value); }
+  void serialize(unsigned int &value) override { make_typed_column(value); }
+  void serialize(unsigned long &value) override { make_typed_column(value); }
+  void serialize(unsigned long long &value) override { make_typed_column(value); }
+  void serialize(std::string &value) override { make_typed_column(value); }
+  void serialize(null_type_t &) override {}
 
 private:
   template < typename ValueType >
-  void make_typed_column(const char *id, ValueType &value);
+  void make_typed_column(ValueType &value);
 
 private:
   const char *id_{};
   typed_column_serializer &serializer_;
 };
 
-class OOS_SQL_API typed_column_serializer
+//class OOS_SQL_API typed_column_serializer
+class typed_column_serializer
 {
 public:
   typed_column_serializer();
@@ -133,9 +134,9 @@ void typed_column_serializer::on_primary_key(const char *id, V &x, long size)
 }
 
 template<typename ValueType>
-void typed_column_identifier_serializer::make_typed_column(const char *id, ValueType &value)
+void typed_column_identifier_serializer::make_typed_column(ValueType &value)
 {
-  serializer_.on_attribute(id, value);
+  serializer_.on_attribute(id_, value);
 }
 
 }

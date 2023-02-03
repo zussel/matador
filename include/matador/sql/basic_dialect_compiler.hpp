@@ -1,7 +1,7 @@
 #ifndef OOS_BASIC_DIALECT_COMPILER_HPP
 #define OOS_BASIC_DIALECT_COMPILER_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/token_visitor.hpp"
 #include "matador/sql/token_list.hpp"
@@ -18,7 +18,8 @@ struct build_info;
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API basic_dialect_compiler : public token_visitor
+//class OOS_SQL_API basic_dialect_compiler : public token_visitor
+class basic_dialect_compiler : public token_visitor
 {
 public:
   void compile(basic_dialect &dialect);

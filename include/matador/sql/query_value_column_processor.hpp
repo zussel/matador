@@ -1,7 +1,7 @@
 #ifndef OOS_QUERY_VALUE_COLUMN_PROCESSOR_HPP
 #define OOS_QUERY_VALUE_COLUMN_PROCESSOR_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/utils/time.hpp"
 #include "matador/utils/any_visitor.hpp"
@@ -13,7 +13,8 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API query_value_column_processor
+//class OOS_SQL_API query_value_column_processor
+class query_value_column_processor
 {
 public:
   query_value_column_processor(std::shared_ptr<columns> update_columns, std::vector<matador::any> rowvalues);

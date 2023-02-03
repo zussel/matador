@@ -56,7 +56,7 @@ std::string identifier::null_pk::str() const
 
 void identifier::null_pk::serialize(identifier_serializer &s)
 {
-  s.serialize("", null_);
+  s.serialize(null_);
 }
 
 size_t identifier::null_pk::hash() const
@@ -71,6 +71,9 @@ identifier::identifier(const identifier &x)
   : id_(x.id_->copy()) {}
 
 identifier &identifier::operator=(const identifier &x) {
+  if (this == &x) {
+    return *this;
+  }
   id_.reset(x.id_->copy());
   return *this;
 }

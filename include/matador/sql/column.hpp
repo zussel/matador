@@ -1,7 +1,7 @@
 #ifndef OOS_COLUMN_HPP
 #define OOS_COLUMN_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/token.hpp"
 #include "matador/sql/value.hpp"
@@ -15,7 +15,8 @@ namespace matador {
  * Represents a database column consisting of
  * name.
  */
-struct OOS_SQL_API column : public detail::token
+//struct OOS_SQL_API column : public detail::token
+struct column : public detail::token
 {
   /**
    * @brief Creates a new column with given name
@@ -46,7 +47,8 @@ struct OOS_SQL_API column : public detail::token
 /**
  * @brief Represents a list of database columns.
  */
-struct OOS_SQL_API columns : public detail::token
+//struct OOS_SQL_API columns : public detail::token
+struct columns : public detail::token
 {
   /**
    * Enum declaring values on howto interpret
@@ -163,7 +165,8 @@ private:
  * @param len Length of the column name
  * @return A column object with given name
  */
-OOS_SQL_API column operator "" _col(const char *name, size_t len);
+column operator "" _col(const char *name, size_t len);
+//OOS_SQL_API column operator "" _col(const char *name, size_t len);
 
 namespace detail {
 struct typed_column;
@@ -197,7 +200,8 @@ std::shared_ptr<detail::typed_column> make_typed_column(const std::string &col)
  * @param size Size of the varchar
  * @return The varchar typed column
  */
-OOS_SQL_API std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col, size_t size);
+std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col, size_t size);
+//OOS_SQL_API std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col, size_t size);
 
 /**
  * @brief Create a identifier typed column object
@@ -219,7 +223,8 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-struct OOS_SQL_API typed_column : public matador::column
+//struct OOS_SQL_API typed_column : public matador::column
+struct typed_column : public matador::column
 {
   typed_column(const std::string &col, data_type t);
   typed_column(const std::string &col, data_type t, std::size_t idx, bool host);
@@ -231,7 +236,8 @@ struct OOS_SQL_API typed_column : public matador::column
   bool is_host = false;
 };
 
-struct OOS_SQL_API typed_identifier_column : public typed_column
+//struct OOS_SQL_API typed_identifier_column : public typed_column
+struct typed_identifier_column : public typed_column
 {
   typed_identifier_column(const std::string &n, data_type t) : typed_column(n, t) { }
   typed_identifier_column(const std::string &n, data_type t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
@@ -242,7 +248,8 @@ struct OOS_SQL_API typed_identifier_column : public typed_column
   }
 };
 
-struct OOS_SQL_API typed_varchar_column : public typed_column
+//struct OOS_SQL_API typed_varchar_column : public typed_column
+struct typed_varchar_column : public typed_column
 {
   typed_varchar_column(const std::string &n, size_t size, data_type t)
     : typed_column(n, t)
@@ -261,7 +268,8 @@ struct OOS_SQL_API typed_varchar_column : public typed_column
   size_t size;
 };
 
-struct OOS_SQL_API identifier_varchar_column : public typed_varchar_column
+//struct OOS_SQL_API identifier_varchar_column : public typed_varchar_column
+struct identifier_varchar_column : public typed_varchar_column
 {
   identifier_varchar_column(const char *n, size_t size, data_type t, size_t idx, bool host)
     : typed_varchar_column(n, size, t, idx, host)
@@ -273,7 +281,8 @@ struct OOS_SQL_API identifier_varchar_column : public typed_varchar_column
   }
 };
 
-struct OOS_SQL_API basic_value_column : public column
+//struct OOS_SQL_API basic_value_column : public column
+struct basic_value_column : public column
 {
   basic_value_column(const std::string &col, value *val)
     : column(col)

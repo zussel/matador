@@ -1,7 +1,7 @@
 #ifndef OOS_BASIC_QUERY_HPP
 #define OOS_BASIC_QUERY_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/commands.hpp"
 #include "matador/sql/sql.hpp"
@@ -26,7 +26,8 @@ namespace detail {
  * This class acts as a base class for all types
  * of query implementations
  */
-class OOS_SQL_API basic_query
+//class OOS_SQL_API basic_query
+class basic_query
 {
 public:
   /**

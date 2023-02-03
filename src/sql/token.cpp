@@ -1,7 +1,3 @@
-//
-// Created by sascha on 2/26/16.
-//
-
 #include "matador/sql/token.hpp"
 
 #include <utility>

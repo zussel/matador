@@ -36,7 +36,8 @@ class sqlite_result;
  * This class is the sqlite sql backend
  * class. It provides the sqlite version 3
  */
-class OOS_SQLITE_API sqlite_connection : public connection_impl
+//class OOS_SQLITE_API sqlite_connection : public connection_impl
+class sqlite_connection : public connection_impl
 {
 public:
   sqlite_connection();

@@ -1,7 +1,7 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
 
-#include "matador/sql/export.hpp"
+//#include "matador/sql/export.hpp"
 
 #include "matador/sql/token.hpp"
 #include "matador/sql/basic_dialect.hpp"
@@ -22,7 +22,8 @@ namespace matador {
 
 /// @cond MATADOR_DEV
 
-struct OOS_SQL_API value : public detail::token
+//struct OOS_SQL_API value : public detail::token
+struct value : public detail::token
 {
   template<typename T, typename U = std::decay<T>>
   value(T &&val)
