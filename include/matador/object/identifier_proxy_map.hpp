@@ -61,7 +61,6 @@ namespace detail {
 //  }
 //};
 
-using id_pk_ref = std::reference_wrapper<const identifier>;
 using t_identifier_map = std::unordered_map<identifier, object_proxy*, id_pk_hash, std::equal_to<identifier>>;
 typedef std::unordered_multimap<identifier, std::shared_ptr<basic_has_many_item_holder>, id_pk_hash, std::equal_to<identifier>> t_identifier_multimap;
 

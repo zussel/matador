@@ -84,7 +84,7 @@ public:
   template < class V >
   void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade)
   {
-    const auto &pk = x.primary_key();
+    const auto pk = x.primary_key().share();
     if (pk.is_null()) {
       return;
     }
@@ -263,7 +263,7 @@ public:
     // insert it into concrete object
     // else
     // insert into relation data
-    const identifier &pk = x.primary_key();
+    const identifier &pk = x.primary_key().share();
     if (pk.is_null()) {
       return;
     }

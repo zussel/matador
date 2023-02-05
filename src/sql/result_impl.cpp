@@ -5,6 +5,10 @@
 namespace matador {
 namespace detail {
 
+result_impl::result_impl()
+: result_identifier_reader_(*this)
+{}
+
 void result_impl::on_attribute(const char *id, char *value, long size)
 {
   read_value(id, result_index_++, result_row_, value, size);
@@ -45,9 +49,12 @@ void result_impl::read_foreign_object(const char */*id*/, identifiable_holder &x
   }
 
   // Todo: handle serialization
+  pk.serialize(result_identifier_reader_);
 //  pk->serialize(id, *this);
   if (!pk.is_valid()) {
     // no pk is set => null
+    pk.clear();
+    x.reset(pk);
     return;
   }
 
@@ -57,5 +64,8 @@ void result_impl::read_foreign_object(const char */*id*/, identifiable_holder &x
   }
 }
 
+void result_identifier_reader::serialize(null_type_t &) {
+
+}
 }
 }

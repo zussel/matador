@@ -1,8 +1,6 @@
 #ifndef MATADOR_RELATION_DATA_HPP
 #define MATADOR_RELATION_DATA_HPP
 
-//#include "matador/utils/basic_identifier.hpp"
-
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/has_many_item_holder.hpp"
@@ -70,8 +68,7 @@ public:
 private:
   std::type_index tindex_;
 
-  using id_pk_ref = std::reference_wrapper<const identifier>;
-  std::unordered_multimap<id_pk_ref, std::pair<value_type, object_proxy*>, id_pk_hash, std::equal_to<const identifier>> id_multi_map_;
+  std::unordered_multimap<identifier, std::pair<value_type, object_proxy*>, id_pk_hash, std::equal_to<identifier>> id_multi_map_;
 };
 
 template < class T >
@@ -115,9 +112,7 @@ public:
 private:
   std::type_index tindex_;
 
-//  using id_pk_ref = std::reference_wrapper<const identifier>;
-  std::unordered_multimap<identifier, std::pair<T, object_proxy*>, id_pk_hash, std::equal_to<const identifier>> id_multi_map_;
-//  std::unordered_multimap<basic_identifier*, std::pair<T, object_proxy*>, identifier_hash<basic_identifier>, identifier_equal> id_multi_map_;
+  std::unordered_multimap<identifier, std::pair<T, object_proxy*>, id_pk_hash, std::equal_to<identifier>> id_multi_map_;
 };
 
 template < int SIZE, class T >
@@ -154,9 +149,7 @@ public:
 private:
   std::type_index tindex_;
 
-  using id_pk_ref = std::reference_wrapper<const identifier>;
-  std::unordered_multimap<id_pk_ref, std::pair<value_type, object_proxy*>, id_pk_hash, std::equal_to<const identifier>> id_multi_map_;
-//  std::unordered_multimap<basic_identifier*, std::pair<T, object_proxy*>, identifier_hash<basic_identifier>, identifier_equal> id_multi_map_;
+  std::unordered_multimap<identifier, std::pair<value_type, object_proxy*>, id_pk_hash, std::equal_to<identifier>> id_multi_map_;
 };
 
 /// @endcond

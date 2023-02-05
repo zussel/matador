@@ -4,16 +4,47 @@
 //#include "matador/sql/export.hpp"
 
 #include "matador/utils/access.hpp"
-#include "matador/utils/serializer.hpp"
+#include "matador/utils/identifier.hpp"
 #include "matador/utils/cascade_type.hpp"
 
 #include <memory>
 
 namespace matador {
 
+class date;
+class time;
+class identifiable_holder;
+class abstract_has_many;
+
 namespace detail {
 
 /// @cond MATADOR_DEV
+
+class result_impl;
+
+class result_identifier_reader : public identifier_serializer
+{
+public:
+  explicit result_identifier_reader(result_impl &res)
+  : result_impl_(res) {}
+
+  void serialize(short &value) override { read_value(value); }
+  void serialize(int &value) override { read_value(value); }
+  void serialize(long &value) override { read_value(value); }
+  void serialize(long long &value) override { read_value(value); }
+  void serialize(unsigned short &value) override { read_value(value); }
+  void serialize(unsigned int &value) override { read_value(value); }
+  void serialize(unsigned long &value) override { read_value(value); }
+  void serialize(unsigned long long &value) override { read_value(value); }
+  void serialize(std::string &value) override { read_value(value); }
+  void serialize(null_type_t &) override;
+
+  template<class Type>
+  void read_value(Type &value);
+
+private:
+  result_impl &result_impl_;
+};
 
 //class OOS_SQL_API result_impl
 class result_impl
@@ -26,7 +57,8 @@ public:
   typedef unsigned long size_type;
 
 protected:
-  result_impl() = default;
+  result_impl();
+//  result_impl() = default;
 
   virtual bool needs_bind() { return false; };
   virtual bool finalize_bind() { return false; }
@@ -75,7 +107,7 @@ public:
   virtual void read_value(const char *id, int index, int row, unsigned int &value) = 0;
   virtual void read_value(const char *id, int index, int row, unsigned long &value) = 0;
   virtual void read_value(const char *id, int index, int row, unsigned long long &value) = 0;
-  virtual void read_value(const char *id, int index, int row, bool &value) = 0;
+  virtual void read_value(const char *iresult_identifier_readerd, int index, int row, bool &value) = 0;
   virtual void read_value(const char *id, int index, int row, float &value) = 0;
   virtual void read_value(const char *id, int index, int row, double &value) = 0;
   virtual void read_value(const char *id, int index, int row, matador::time &value) = 0;
@@ -126,12 +158,19 @@ public:
 protected:
   void read_foreign_object(const char *id, identifiable_holder &x);
 
-protected:
+private:
   int result_index_ = 0;
   int result_row_ = 0;
+
+  result_identifier_reader result_identifier_reader_;
 };
 
 /// @endcond
+
+template<class Type>
+void result_identifier_reader::read_value(Type &value) {
+  result_impl_.on_attribute("", value);
+}
 
 }
 

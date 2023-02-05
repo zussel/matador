@@ -17,7 +17,7 @@ void relation_resolver<T, typename std::enable_if<
   !std::is_base_of<basic_has_many_to_many_item, T>::value
 >::type>::on_belongs_to(const char *id, object_ptr<V> &x, cascade_type cascade)
 {
-  const identifier &pk = x.primary_key();
+  const auto &pk = x.primary_key().share();
   if (pk.is_null()) {
     return;
   }

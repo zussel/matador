@@ -72,8 +72,8 @@ private:
   {
     using self = pk<IdType>;
 
-    explicit pk(IdType id)
-      : base(std::type_index(typeid(IdType))), id_(std::move(id)) {}
+    explicit pk(const IdType &id)
+      : base(std::type_index(typeid(IdType))), id_(id) {}
 
     base *copy() const final {
       return new self(id_);
