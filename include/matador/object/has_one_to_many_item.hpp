@@ -8,6 +8,7 @@
 #include "matador/object/basic_has_many_to_many_item.hpp"
 
 #include <string>
+#include <utility>
 
 namespace matador {
 
@@ -114,13 +115,13 @@ private:
   R right_ = {};
 };
 
-template<class L, class R, int SIZE>
-class has_one_to_many_item<L, varchar<SIZE, R>>
+template<class L, int SIZE>
+class has_one_to_many_item<L, varchar<SIZE>>
   : public basic_has_many_to_many_item
 {
 public:
   typedef L left_value_type;
-  typedef varchar<SIZE, R> right_value_type;
+  typedef std::string right_value_type;
 
   has_one_to_many_item() = default;
 
@@ -128,23 +129,16 @@ public:
     : basic_has_many_to_many_item(left_column, right_column)
   {}
 
-  has_one_to_many_item(const object_ptr<L> &left, const varchar<255, R> &right,
+  has_one_to_many_item(const object_ptr<L> &left, std::string right,
                        const std::string &left_column, const std::string &right_column)
-    : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(right)
+    : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(std::move(right))
   {}
-
-  has_one_to_many_item(const object_ptr<L> &left, const R &right,
-                       const std::string &left_column, const std::string &right_column)
-    : basic_has_many_to_many_item(left_column, right_column), left_(left)
-  {
-    right_.assign(right);
-  }
 
   template<class SERIALIZER>
   void serialize(SERIALIZER &serializer)
   {
     serializer.on_has_one(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.on_attribute(this->right_column().c_str(), right_.value(), SIZE);
+    serializer.on_attribute(this->right_column().c_str(), right_, SIZE);
   }
 
   object_ptr<L> left() const
@@ -152,16 +146,14 @@ public:
     return left_;
   }
 
-  R right() const
+  std::string right() const
   {
-    return right_.value();
+    return right_;
   }
 
 private:
-  typedef varchar<SIZE, R> varchar_type;
-
   object_ptr<L> left_;
-  varchar_type right_;
+  std::string right_;
 };
 
 /// @endcond

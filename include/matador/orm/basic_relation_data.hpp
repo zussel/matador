@@ -91,7 +91,6 @@ public:
   void insert_into_container(const identifier &pk, basic_has_many<value_type, C> &container)
   {
     auto range = id_multi_map_.equal_range(pk);
-
     for (auto i = range.first; i != range.second; ++i)
     {
       container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
@@ -115,15 +114,15 @@ private:
   std::unordered_multimap<identifier, std::pair<T, object_proxy*>, id_pk_hash, std::equal_to<identifier>> id_multi_map_;
 };
 
-template < int SIZE, class T >
-class relation_data<varchar<SIZE, T>> : public basic_relation_data
+template < int SIZE >
+class relation_data<varchar<SIZE>> : public basic_relation_data
 {
 public:
-  typedef varchar<SIZE, T> value_type;
+  typedef varchar<SIZE> value_type;
 
   relation_data() : tindex_(std::type_index(typeid(value_type))) {}
 
-  void append_data(const identifier &pk, const T &data, object_proxy *owner)
+  void append_data(const identifier &pk, const std::string &data, object_proxy *owner)
   {
     id_multi_map_.insert(std::make_pair(pk, std::make_pair(data, owner)));
   }

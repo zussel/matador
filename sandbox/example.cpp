@@ -26,7 +26,7 @@ using namespace std;
 
 struct user
 {
-  long id;
+  unsigned long id;
   std::string username;
   std::string password;
   std::string first_name;

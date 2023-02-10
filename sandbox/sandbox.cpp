@@ -85,7 +85,7 @@ std::map<colors, std::string> color_map = {
 class person
 {
 public:
-  unsigned long id_;
+  unsigned long id_{};
   std::string name_;
   colors color_ { colors::WHITE };
 
