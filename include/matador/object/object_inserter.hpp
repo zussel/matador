@@ -143,6 +143,7 @@ void object_inserter::on_has_many(const char *, basic_has_many<T, C> &x, cascade
   }
 
   prototype_node *node = x.owner_->node();
+  std::cout << "try to find endpoint for T " << typeid(T).name() << "\n";
   auto i = node->find_endpoint(std::type_index(typeid(T)));
   if (i != node->endpoint_end()) {
     x.relation_info_ = std::static_pointer_cast<relation_endpoint<T>>(i->second);

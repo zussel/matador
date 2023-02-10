@@ -246,6 +246,7 @@ void table<T, typename std::enable_if<!std::is_base_of<basic_has_many_to_many_it
   const V &val,
   object_proxy *owner)
 {
+  std::cout << "append_relation_data type " << typeid(V).name() << "\n";
   auto i = relation_data_map_.find(field);
   if (i == relation_data_map_.end()) {
       auto value = std::make_shared<detail::relation_data<V>>();
