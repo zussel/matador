@@ -115,15 +115,15 @@ private:
   std::unordered_multimap<identifier, std::pair<T, object_proxy*>, id_pk_hash, std::equal_to<identifier>> id_multi_map_;
 };
 
-template < int SIZE, class T >
-class relation_data<varchar<SIZE, T>> : public basic_relation_data
+template < long SIZE >
+class relation_data<varchar<SIZE>> : public basic_relation_data
 {
 public:
-  typedef varchar<SIZE, T> value_type;
+  typedef varchar<SIZE> value_type;
 
   relation_data() : tindex_(std::type_index(typeid(value_type))) {}
 
-  void append_data(const identifier &pk, const T &data, object_proxy *owner)
+  void append_data(const identifier &pk, const std::string &data, object_proxy *owner)
   {
     id_multi_map_.insert(std::make_pair(pk, std::make_pair(data, owner)));
   }

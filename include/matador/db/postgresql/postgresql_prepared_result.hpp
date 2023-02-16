@@ -60,8 +60,6 @@ protected:
 
 private:
   PGresult *res_ = nullptr;
-  size_type row_ = 0;
-  size_type column_ = 0;
 
   size_type affected_rows_ = 0;
   size_type rows_ = 0;

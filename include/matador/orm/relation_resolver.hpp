@@ -26,10 +26,10 @@ struct relation_data_type
   typedef T value_type;
 };
 
-template < int SIZE, class T >
-struct relation_data_type<varchar<SIZE, T>>
+template < long SIZE >
+struct relation_data_type<varchar<SIZE>>
 {
-  typedef typename varchar<SIZE, T>::value_type value_type;
+  typedef typename varchar<SIZE>::value_type value_type;
 };
 
 template < typename T >

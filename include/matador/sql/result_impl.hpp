@@ -58,7 +58,6 @@ public:
 
 protected:
   result_impl();
-//  result_impl() = default;
 
   virtual bool needs_bind() { return false; };
   virtual bool finalize_bind() { return false; }
@@ -148,9 +147,7 @@ public:
   }
 
   virtual size_type affected_rows() const = 0;
-
   virtual size_type result_rows() const = 0;
-
   virtual size_type fields() const = 0;
 
   virtual int transform_index(int index) const = 0;
@@ -158,9 +155,13 @@ public:
 protected:
   void read_foreign_object(const char *id, identifiable_holder &x);
 
+  size_t column_index() const;
+  size_t row_index() const;
+  size_t increase_row_index();
+
 private:
-  int result_index_ = 0;
-  int result_row_ = 0;
+  size_t result_index_ = 0;
+  size_t result_row_ = 0;
 
   result_identifier_reader result_identifier_reader_;
 };

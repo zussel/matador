@@ -64,6 +64,21 @@ void result_impl::read_foreign_object(const char */*id*/, identifiable_holder &x
   }
 }
 
+size_t result_impl::column_index() const
+{
+  return result_index_;
+}
+
+size_t result_impl::row_index() const
+{
+  return result_row_;
+}
+
+size_t result_impl::increase_row_index()
+{
+  return ++result_row_;
+}
+
 void result_identifier_reader::serialize(null_type_t &) {
 
 }

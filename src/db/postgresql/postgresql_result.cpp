@@ -27,12 +27,12 @@ postgresql_result::~postgresql_result()
 
 const char *postgresql_result::column(postgresql_result::size_type c) const
 {
-  return PQgetvalue(res_, pos_, c);
+  return PQgetvalue(res_, row_index(), c);
 }
 
 bool postgresql_result::fetch()
 {
-  return ++pos_ < rows_;
+  return increase_row_index() < rows_;
 }
 
 postgresql_result::size_type postgresql_result::affected_rows() const
@@ -55,105 +55,104 @@ int postgresql_result::transform_index(int index) const
   return index;
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, char &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, char &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, short &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, short &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, int &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, int &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, long &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, long &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, long long &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, long long &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, unsigned char &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, unsigned char &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, unsigned short &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, unsigned short &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, unsigned int &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, unsigned int &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, unsigned long &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, unsigned long &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, unsigned long long &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, unsigned long long &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, bool &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, bool &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, float &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, float &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, double &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, double &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, char *value, long size)
+void postgresql_result::read_value(const char */*id*/, int index, int row, char *value, long size)
 {
   detail::get_value(res_, row, index, value, size);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, std::string &value, long size)
+void postgresql_result::read_value(const char */*id*/, int index, int row, std::string &value, long size)
 {
   detail::get_value(res_, row, index, value, size);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, std::string &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, std::string &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, matador::date &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, matador::date &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
-void postgresql_result::read_value(const char *id, int index, int row, matador::time &value)
+void postgresql_result::read_value(const char */*id*/, int index, int row, matador::time &value)
 {
   detail::get_value(res_, row, index, value);
 }
 
 bool postgresql_result::prepare_fetch()
 {
-  column_ = 0;
-  return pos_ + 1 <= rows_;
+  return row_index() + 1 <= rows_;
 }
 
 bool postgresql_result::finalize_fetch()
 {
-  ++pos_;
+  increase_row_index();
   return true;
 }
 

@@ -64,14 +64,10 @@ private:
   friend class sqlite_connection;
 
 private:
-
-//  typedef std::vector<std::shared_ptr<char> > t_row;
   typedef std::vector<char*> t_row;
   typedef std::vector<t_row> t_result;
 
   t_result result_;
-  t_result::size_type pos_ = 0;
-  t_result::size_type column_ = 0;
 
   size_type fields_ = 0;
 };

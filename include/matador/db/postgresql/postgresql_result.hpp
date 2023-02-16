@@ -80,9 +80,6 @@ private:
   size_type rows_;
   size_type fields_;
 
-  size_type column_ = 0;
-  size_type pos_ = 0;
-  
   PGresult *res_ = nullptr;
 };
 

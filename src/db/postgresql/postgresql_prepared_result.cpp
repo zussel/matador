@@ -1,8 +1,6 @@
 #include "matador/db/postgresql/postgresql_prepared_result.hpp"
 #include "matador/db/postgresql/postgresql_getvalue.hpp"
 
-//#include "matador/utils/basic_identifier.hpp"
-
 namespace matador {
 namespace postgresql {
 
@@ -22,12 +20,14 @@ postgresql_prepared_result::~postgresql_prepared_result()
 
 const char *postgresql_prepared_result::column(postgresql_prepared_result::size_type c) const
 {
-  return PQgetvalue(res_,row_, c);
+  return PQgetvalue(res_,row_index(), c);
 }
 
 bool postgresql_prepared_result::fetch()
 {
-  return row_++ < rows_;
+  bool has_next_row = row_index() < rows_;
+  increase_row_index();
+  return has_next_row;
 }
 
 postgresql_prepared_result::size_type postgresql_prepared_result::affected_rows() const
@@ -152,13 +152,12 @@ bool postgresql_prepared_result::finalize_bind()
 
 bool postgresql_prepared_result::prepare_fetch()
 {
-  column_ = 0;
-  return row_ + 1 <= rows_;
+  return row_index() + 1 <= rows_;
 }
 
 bool postgresql_prepared_result::finalize_fetch()
 {
-  ++row_;
+  increase_row_index();
   return true;
 }
 }
