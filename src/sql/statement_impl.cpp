@@ -1,6 +1,3 @@
-//
-// Created by sascha on 18.09.15.
-//
 #include "matador/sql/statement_impl.hpp"
 
 namespace matador {

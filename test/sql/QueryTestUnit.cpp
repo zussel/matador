@@ -400,7 +400,7 @@ public:
   void serialize(SERIALIZER &s)
   {
     s.on_primary_key("id", id);
-    s.on_attribute("name", name);
+    s.on_attribute("name", name, 255);
   }
 
   unsigned long id{};
@@ -463,7 +463,7 @@ void QueryTestUnit::test_identifier_prepared()
 
   for (auto pres : res) {
     UNIT_EXPECT_EQUAL(pres->name, "hans");
-    UNIT_EXPECT_GREATER(pres->id, 0UL);
+    UNIT_EXPECT_EQUAL(pres->id, 7UL);
   }
 //  std::unique_ptr<pktest> pres((first++).release());
 

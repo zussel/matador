@@ -20,16 +20,17 @@ struct mysql_result_info
   unsigned long length = 0;
   my_bool is_null = false;
   my_bool error = false;
-  char *buffer = nullptr;
+  std::unique_ptr<char[]> buffer;
+//  char *buffer = nullptr;
   unsigned long buffer_length = 0;
-  bool is_allocated = false;
+//  bool is_allocated = false;
 
-  ~mysql_result_info()
-  {
-      if (is_allocated) {
-          delete [] buffer;
-      }
-  }
+//  ~mysql_result_info()
+//  {
+//      if (is_allocated) {
+//          delete [] buffer;
+//      }
+//  }
 };
 
 }

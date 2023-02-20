@@ -22,13 +22,13 @@ sqlite_result::~sqlite_result()
 
 const char* sqlite_result::column(sqlite_result::size_type c) const
 {
-  t_row::value_type val = result_.at(row_index()).at(c);
+  t_row::value_type val = result_.at(row_index_).at(c);
   return val;
 }
 
 bool sqlite_result::fetch()
 {
-  return increase_row_index() < result_.size();
+  return ++row_index_ < result_.size();
 }
 
 //bool sqlite_result::fetch(serializable *obj)
@@ -59,9 +59,9 @@ sqlite_result::size_type sqlite_result::fields() const
   return 0;
 }
 
-int sqlite_result::transform_index(int index) const
+detail::result_impl::size_type sqlite_result::reset_column_index() const
 {
-  return index;
+  return 0;
 }
 
 void sqlite_result::push_back(char **row_values, int column_count)
@@ -84,18 +84,18 @@ void sqlite_result::push_back(char **row_values, int column_count)
   result_.push_back(row);
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, char &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, char &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
 
   if (strlen(val) > 1) {
     x = val[0];
   }
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, short &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, short &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -104,9 +104,9 @@ void sqlite_result::read_value(const char *id, int index, int row, short &x)
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, int &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, int &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -115,9 +115,9 @@ void sqlite_result::read_value(const char *id, int index, int row, int &x)
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, long &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, long &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -126,9 +126,9 @@ void sqlite_result::read_value(const char *id, int index, int row, long &x)
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, long long &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, long long &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -137,9 +137,9 @@ void sqlite_result::read_value(const char *id, int index, int row, long long &x)
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, unsigned char &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, unsigned char &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -148,9 +148,9 @@ void sqlite_result::read_value(const char *id, int index, int row, unsigned char
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, unsigned short &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, unsigned short &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -159,9 +159,9 @@ void sqlite_result::read_value(const char *id, int index, int row, unsigned shor
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, unsigned int &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, unsigned int &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -170,9 +170,9 @@ void sqlite_result::read_value(const char *id, int index, int row, unsigned int 
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, unsigned long &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, unsigned long &x)
 {
-  char *val = result_[row_index()][index];
+  char *val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -181,9 +181,9 @@ void sqlite_result::read_value(const char *id, int index, int row, unsigned long
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, unsigned long long &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, unsigned long long &x)
 {
-  char *val = result_[row_index()][index];
+  char *val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -192,9 +192,9 @@ void sqlite_result::read_value(const char *id, int index, int row, unsigned long
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, bool &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, bool &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -203,9 +203,9 @@ void sqlite_result::read_value(const char *id, int index, int row, bool &x)
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, float &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, float &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -214,9 +214,9 @@ void sqlite_result::read_value(const char *id, int index, int row, float &x)
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, double &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, double &x)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -225,9 +225,9 @@ void sqlite_result::read_value(const char *id, int index, int row, double &x)
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, char *x, long size)
+void sqlite_result::read_value(const char */*id*/, size_type index, char *x, long size)
 {
-  t_row::value_type &val = result_[row_index()][index];
+  t_row::value_type &val = result_[row_index_][index];
   size_t len = strlen(val);
   if (len > (size_t)size) {
 #ifdef _MSC_VER
@@ -245,38 +245,38 @@ void sqlite_result::read_value(const char *id, int index, int row, char *x, long
   }
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, std::string &x, long /*size*/)
+void sqlite_result::read_value(const char */*id*/, size_type index, std::string &x, long /*size*/)
 {
-  t_row::value_type val = result_[row_index()][index];
+  t_row::value_type val = result_[row_index_][index];
   x.assign(val);
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, std::string &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, std::string &x)
 {
-  t_row::value_type val = result_[row_index()][index];
+  t_row::value_type val = result_[row_index_][index];
   x = val;
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, matador::date &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, matador::date &x)
 {
-  t_row::value_type val = result_[row_index()][index];
+  t_row::value_type val = result_[row_index_][index];
   x.set(val, date_format::ISO8601);
 }
 
-void sqlite_result::read_value(const char *id, int index, int row, matador::time &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, matador::time &x)
 {
-  t_row::value_type val = result_[row_index()][index];
+  t_row::value_type val = result_[row_index_][index];
   x = matador::time::parse(val, "%Y-%m-%dT%T.%f");
 }
 
 bool sqlite_result::prepare_fetch()
 {
-  return row_index() + 1 <= result_.size();
+  return row_index_ + 1 <= result_.size();
 }
 
 bool sqlite_result::finalize_fetch()
 {
-  increase_row_index();
+  ++row_index_;
   return true;
 }
 

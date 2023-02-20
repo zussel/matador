@@ -53,55 +53,55 @@ SET (TEST_LOGGER_SOURCES
   logger/file.cpp
   logger/file.hpp)
 
-#SET (TEST_NET_SOURCES
-#  net/IPTestUnit.cpp
-#  net/IPTestUnit.hpp
-#  net/AddressTest.cpp
-#  net/AddressTest.hpp
-#  net/SocketTest.cpp
-#  net/SocketTest.hpp
-#  net/FDSetTest.cpp
-#  net/FDSetTest.hpp
-#  net/AddressResolverTest.cpp
-#  net/AddressResolverTest.hpp
-#  net/SocketInterrupterTest.cpp
-#  net/ReactorTest.cpp
-#  net/ReactorTest.hpp
-#  net/SocketInterrupterTest.hpp
-#  net/EchoServer.cpp
-#  net/EchoServer.hpp
-#  net/IOServiceTest.cpp
-#  net/IOServiceTest.hpp
-#  net/IOEchoServerConnection.cpp
-#  net/IOEchoServerConnection.hpp
-#  net/IOEchoServer.cpp
-#  net/IOEchoServer.hpp
-#  net/LeaderFollowerThreadPoolTest.cpp
-#  net/LeaderFollowerThreadPoolTest.hpp)
+SET (TEST_NET_SOURCES
+  net/IPTestUnit.cpp
+  net/IPTestUnit.hpp
+  net/AddressTest.cpp
+  net/AddressTest.hpp
+  net/SocketTest.cpp
+  net/SocketTest.hpp
+  net/FDSetTest.cpp
+  net/FDSetTest.hpp
+  net/AddressResolverTest.cpp
+  net/AddressResolverTest.hpp
+  net/SocketInterrupterTest.cpp
+  net/ReactorTest.cpp
+  net/ReactorTest.hpp
+  net/SocketInterrupterTest.hpp
+  net/EchoServer.cpp
+  net/EchoServer.hpp
+  net/IOServiceTest.cpp
+  net/IOServiceTest.hpp
+  net/IOEchoServerConnection.cpp
+  net/IOEchoServerConnection.hpp
+  net/IOEchoServer.cpp
+  net/IOEchoServer.hpp
+  net/LeaderFollowerThreadPoolTest.cpp
+  net/LeaderFollowerThreadPoolTest.hpp)
 
-#SET (TEST_HTTP_SOURCES
-#  http/RequestParserTest.cpp
-#  http/RequestParserTest.hpp
-#  http/RequestData.hpp
-#  http/RouteEngineTest.cpp
-#  http/RouteEngineTest.hpp
-#  http/RouteEndpointTest.cpp
-#  http/RouteEndpointTest.hpp
-#  http/HttpServerTest.cpp
-#  http/HttpServerTest.hpp
-#  http/ResponseParserTest.cpp
-#  http/ResponseParserTest.hpp
-#  http/ResponseData.hpp
-#  http/TemplateEngineTest.cpp
-#  http/TemplateEngineTest.hpp
-#  http/JwtTest.cpp
-#  http/JwtTest.hpp
-#  http/MiddlewareTest.cpp
-#  http/MiddlewareTest.hpp
-#  http/HttpClientTest.cpp
-#  http/HttpClientTest.hpp
-#  http/HttpTestServer.cpp
-#  http/HttpTestServer.hpp)
+SET (TEST_HTTP_SOURCES
+  http/RequestParserTest.cpp
+  http/RequestParserTest.hpp
+  http/RequestData.hpp
+  http/RouteEngineTest.cpp
+  http/RouteEngineTest.hpp
+  http/RouteEndpointTest.cpp
+  http/RouteEndpointTest.hpp
+  http/HttpServerTest.cpp
+  http/HttpServerTest.hpp
+  http/ResponseParserTest.cpp
+  http/ResponseParserTest.hpp
+  http/ResponseData.hpp
+  http/TemplateEngineTest.cpp
+  http/TemplateEngineTest.hpp
+  http/JwtTest.cpp
+  http/JwtTest.hpp
+  http/MiddlewareTest.cpp
+  http/MiddlewareTest.hpp
+  http/HttpClientTest.cpp
+  http/HttpClientTest.hpp
+  http/HttpTestServer.cpp
+  http/HttpTestServer.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp
@@ -187,8 +187,8 @@ ADD_EXECUTABLE(test_matador
   ${TEST_UNIT_SOURCES}
   ${TEST_ORM_SOURCES}
   ${TEST_LOGGER_SOURCES}
-#  ${TEST_HTTP_SOURCES}
-#  ${TEST_NET_SOURCES}
+  ${TEST_HTTP_SOURCES}
+  ${TEST_NET_SOURCES}
   ${TEST_SQL_SOURCES}
 )
 
@@ -217,8 +217,8 @@ TARGET_LINK_LIBRARIES(test_matador
   matador-utils
   matador-json
   matador-logger
-#  matador-net
-#  matador-http
+  matador-net
+  matador-http
   matador-object
   matador-sql
   matador-orm

@@ -36,7 +36,7 @@ public:
   size_type result_rows() const override;
   size_type fields() const override;
 
-  int transform_index(int index) const override;
+  size_type reset_column_index() const override;
 
   template < class T >
   T get(size_type index, typename std::enable_if<std::is_integral<T>::value>::type* = nullptr) const
@@ -64,27 +64,27 @@ public:
   }
 
 protected:
-  void read_value(const char *id, int index, int row, char &x) override;
-  void read_value(const char *id, int index, int row, short &x) override;
-  void read_value(const char *id, int index, int row, int &x) override;
-  void read_value(const char *id, int index, int row, long &x) override;
-  void read_value(const char *id, int index, int row, long long &x) override;
-  void read_value(const char *id, int index, int row, unsigned char &x) override;
-  void read_value(const char *id, int index, int row, unsigned short &x) override;
-  void read_value(const char *id, int index, int row, unsigned int &x) override;
-  void read_value(const char *id, int index, int row, unsigned long &x) override;
-  void read_value(const char *id, int index, int row, unsigned long long &x) override;
-  void read_value(const char *id, int index, int row, bool &x) override;
-  void read_value(const char *id, int index, int row, float &x) override;
-  void read_value(const char *id, int index, int row, double &x) override;
-  void read_value(const char *id, int index, int row, matador::date &x) override;
-  void read_value(const char *id, int index, int row, matador::time &x) override;
-  void read_value(const char *id, int index, int row, char *x, long size) override;
-  void read_value(const char *id, int index, int row, std::string &x) override;
-  void read_value(const char *id, int index, int row, std::string &x, long size) override;
+  void read_value(const char *id, size_type index, char &x) override;
+  void read_value(const char *id, size_type index, short &x) override;
+  void read_value(const char *id, size_type index, int &x) override;
+  void read_value(const char *id, size_type index, long &x) override;
+  void read_value(const char *id, size_type index, long long &x) override;
+  void read_value(const char *id, size_type index, unsigned char &x) override;
+  void read_value(const char *id, size_type index, unsigned short &x) override;
+  void read_value(const char *id, size_type index, unsigned int &x) override;
+  void read_value(const char *id, size_type index, unsigned long &x) override;
+  void read_value(const char *id, size_type index, unsigned long long &x) override;
+  void read_value(const char *id, size_type index, bool &x) override;
+  void read_value(const char *id, size_type index, float &x) override;
+  void read_value(const char *id, size_type index, double &x) override;
+  void read_value(const char *id, size_type index, matador::date &x) override;
+  void read_value(const char *id, size_type index, matador::time &x) override;
+  void read_value(const char *id, size_type index, char *x, long size) override;
+  void read_value(const char *id, size_type index, std::string &x) override;
+  void read_value(const char *id, size_type index, std::string &x, long size) override;
 
   template < class T >
-  void read_column(const char *id, int index, T &val)
+  void read_column(const char *id, size_type index, T &val)
   {
     SQLLEN info = 0;
     auto type = (SQLSMALLINT)type2int(data_type_traits<T>::builtin_type());
@@ -98,12 +98,12 @@ protected:
     }
   }
   
-  void read_column(const char *, int index, char &val);
-  void read_column(const char *, int index, unsigned char &val);
-  void read_column(const char *, int index, std::string &val);
-  void read_column(const char *, int index, std::string &val, size_t);
-  void read_column(const char *, int index, matador::date &val);
-  void read_column(const char *, int index, matador::time &val);
+  void read_column(const char *, size_type index, char &val);
+  void read_column(const char *, size_type index, unsigned char &val);
+  void read_column(const char *, size_type index, std::string &val);
+  void read_column(const char *, size_type index, std::string &val, long);
+  void read_column(const char *, size_type index, matador::date &val);
+  void read_column(const char *, size_type index, matador::time &val);
 
 
   bool prepare_fetch() override;

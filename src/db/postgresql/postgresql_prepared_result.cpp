@@ -20,14 +20,12 @@ postgresql_prepared_result::~postgresql_prepared_result()
 
 const char *postgresql_prepared_result::column(postgresql_prepared_result::size_type c) const
 {
-  return PQgetvalue(res_,row_index(), c);
+  return PQgetvalue(res_,row_index_, c);
 }
 
 bool postgresql_prepared_result::fetch()
 {
-  bool has_next_row = row_index() < rows_;
-  increase_row_index();
-  return has_next_row;
+  return row_index_++ < rows_;;
 }
 
 postgresql_prepared_result::size_type postgresql_prepared_result::affected_rows() const
@@ -45,99 +43,99 @@ postgresql_prepared_result::size_type postgresql_prepared_result::fields() const
   return fields_;
 }
 
-int postgresql_prepared_result::transform_index(int index) const
+detail::result_impl::size_type postgresql_prepared_result::reset_column_index() const
 {
-  return index;
+  return 0;
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, char &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, char &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, short &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, short &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, int &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, int &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, long &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, long &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, long long &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, long long &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, unsigned char &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, unsigned char &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, unsigned short &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, unsigned short &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, unsigned int &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, unsigned int &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, unsigned long &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, unsigned long &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, unsigned long long &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, unsigned long long &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, bool &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, bool &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, float &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, float &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, double &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, double &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, matador::date &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, matador::date &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, matador::time &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, matador::time &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, char *x, long size)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, char *x, long size)
 {
-  detail::get_value(res_, row, index, x, size);
+  detail::get_value(res_, row_index_, index, x, size);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, std::string &x)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, std::string &x)
 {
-  detail::get_value(res_, row, index, x);
+  detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char *id, int index, int row, std::string &x, long size)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, std::string &x, long size)
 {
-  detail::get_value(res_, row, index, x, size);
+  detail::get_value(res_, row_index_, index, x, size);
 }
 
 bool postgresql_prepared_result::needs_bind()
@@ -152,12 +150,12 @@ bool postgresql_prepared_result::finalize_bind()
 
 bool postgresql_prepared_result::prepare_fetch()
 {
-  return row_index() + 1 <= rows_;
+  return row_index_ + 1 <= rows_;
 }
 
 bool postgresql_prepared_result::finalize_fetch()
 {
-  increase_row_index();
+  ++row_index_;
   return true;
 }
 }

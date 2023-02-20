@@ -11,22 +11,22 @@ result_impl::result_impl()
 
 void result_impl::on_attribute(const char *id, char *value, long size)
 {
-  read_value(id, result_index_++, result_row_, value, size);
+  read_value(id, column_index_++, value, size);
 }
 
 void result_impl::on_attribute(const char *id, std::string &value, long size)
 {
-  read_value(id, result_index_++, result_row_, value, size);
+  read_value(id, column_index_++, value, size);
 }
 
 void result_impl::on_attribute(const char *id, matador::time &value, long /*size*/)
 {
-  read_value(id, result_index_++, result_row_, value);
+  read_value(id, column_index_++, value);
 }
 
 void result_impl::on_attribute(const char *id, matador::date &value, long /*size*/)
 {
-  read_value(id, result_index_++, result_row_, value);
+  read_value(id, column_index_++, value);
 }
 
 void result_impl::on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type)
@@ -66,17 +66,7 @@ void result_impl::read_foreign_object(const char */*id*/, identifiable_holder &x
 
 size_t result_impl::column_index() const
 {
-  return result_index_;
-}
-
-size_t result_impl::row_index() const
-{
-  return result_row_;
-}
-
-size_t result_impl::increase_row_index()
-{
-  return ++result_row_;
+  return column_index_;
 }
 
 void result_identifier_reader::serialize(null_type_t &) {
