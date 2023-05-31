@@ -53,7 +53,7 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<
   typedef typename holder_container_type::const_iterator const_container_iterator;
 };
 
-template < int SIZE >
+template < long SIZE >
 struct has_many_iterator_traits<varchar<SIZE>, std::vector>
 : public std::iterator<std::random_access_iterator_tag, std::string>
 {
@@ -101,7 +101,7 @@ struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<
   typedef typename holder_container_type::const_iterator const_container_iterator;
 };
 
-template < int SIZE >
+template < long SIZE >
 struct const_has_many_iterator_traits<varchar<SIZE>, std::vector>
 : public std::iterator<std::random_access_iterator_tag, std::string>
 {
@@ -152,7 +152,7 @@ struct has_many_iterator_traits<T, std::list, typename std::enable_if<
   typedef typename holder_container_type::const_iterator const_container_iterator;
 };
 
-template < int SIZE >
+template < long SIZE >
 struct has_many_iterator_traits<varchar<SIZE>, std::list>
 : public std::iterator<std::bidirectional_iterator_tag, std::string>
 {
@@ -200,7 +200,7 @@ struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<
   typedef typename holder_container_type::const_iterator const_container_iterator;
 };
 
-template < int SIZE >
+template < long SIZE >
 struct const_has_many_iterator_traits<varchar<SIZE>, std::list>
 : public std::iterator<std::bidirectional_iterator_tag, std::string>
 {

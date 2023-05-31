@@ -136,13 +136,18 @@ public:
     return value_;
   }
 
-  long size() const {
+  long size() const
+  {
     return SIZE;
   }
 
 private:
   value_type value_;
 };
+
+/// @cond MATADOR_DEV
+
+/// @endcond
 
 }
 #endif //MATADOR_VARCHAR_HPP

@@ -56,7 +56,6 @@ bool mysql_result::prepare_fetch()
     return false;
   }
 
-  result_index_ = 0;
   return true;
 }
 
@@ -80,12 +79,12 @@ mysql_result::size_type mysql_result::fields() const
   return fields_;
 }
 
-int mysql_result::transform_index(int index) const
+detail::result_impl::size_type mysql_result::reset_column_index() const
 {
-  return index;
+  return 0;
 }
 
-void mysql_result::read_value(const char *id, int index, int row, char &value)
+void mysql_result::read_value(const char */*id*/, size_type index, char &value)
 {
   char *val = row_[index];
   if (strlen(val) > 1) {
@@ -93,7 +92,7 @@ void mysql_result::read_value(const char *id, int index, int row, char &value)
   }
 }
 
-void mysql_result::read_value(const char *id, int index, int row, short &value)
+void mysql_result::read_value(const char */*id*/, size_type index, short &value)
 {
   char *val = row_[index];
   if (strlen(val) == 0) {
@@ -103,7 +102,7 @@ void mysql_result::read_value(const char *id, int index, int row, short &value)
   value = (short)strtol(val, &end, 10);
 }
 
-void mysql_result::read_value(const char *id, int index, int row, int &value)
+void mysql_result::read_value(const char */*id*/, size_type index, int &value)
 {
   char *val = row_[index];
   if (strlen(val) == 0) {
@@ -114,7 +113,7 @@ void mysql_result::read_value(const char *id, int index, int row, int &value)
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, long &value)
+void mysql_result::read_value(const char */*id*/, size_type index, long &value)
 {
   char *val = row_[index];
   if (strlen(val) == 0) {
@@ -125,7 +124,7 @@ void mysql_result::read_value(const char *id, int index, int row, long &value)
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, long long &value)
+void mysql_result::read_value(const char */*id*/, size_type index, long long &value)
 {
   char *val = row_[index];
   if (strlen(val) == 0) {
@@ -136,7 +135,7 @@ void mysql_result::read_value(const char *id, int index, int row, long long &val
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, unsigned char &value)
+void mysql_result::read_value(const char */*id*/, size_type index, unsigned char &value)
 {
   char *val = row_[index];
   if (strlen(val) == 0) {
@@ -147,7 +146,7 @@ void mysql_result::read_value(const char *id, int index, int row, unsigned char 
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, unsigned short &value)
+void mysql_result::read_value(const char */*id*/, size_type index, unsigned short &value)
 {
   char *val = row_[index];
   if (strlen(val) == 0) {
@@ -158,7 +157,7 @@ void mysql_result::read_value(const char *id, int index, int row, unsigned short
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, unsigned int &value)
+void mysql_result::read_value(const char */*id*/, size_type index, unsigned int &value)
 {
   char *val = row_[index];
   if (strlen(val) == 0) {
@@ -169,7 +168,7 @@ void mysql_result::read_value(const char *id, int index, int row, unsigned int &
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, unsigned long &value)
+void mysql_result::read_value(const char */*id*/, size_type index, unsigned long &value)
 {
   char *val = row_[index];
   if (!val || strlen(val) == 0) {
@@ -180,7 +179,7 @@ void mysql_result::read_value(const char *id, int index, int row, unsigned long 
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, unsigned long long &value)
+void mysql_result::read_value(const char */*id*/, size_type index, unsigned long long &value)
 {
   char *val = row_[index];
   if (!val || strlen(val) == 0) {
@@ -191,7 +190,7 @@ void mysql_result::read_value(const char *id, int index, int row, unsigned long 
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, bool &value)
+void mysql_result::read_value(const char */*id*/, size_type index, bool &value)
 {
   char *val = row_[index];
   if (strlen(val) == 0) {
@@ -202,7 +201,7 @@ void mysql_result::read_value(const char *id, int index, int row, bool &value)
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, float &value)
+void mysql_result::read_value(const char */*id*/, size_type index, float &value)
 {
   char *val = row_[index];
   if (strlen(val) == 0) {
@@ -213,7 +212,7 @@ void mysql_result::read_value(const char *id, int index, int row, float &value)
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, double &value)
+void mysql_result::read_value(const char */*id*/, size_type index, double &value)
 {
   char *val = row_[index];
   if (strlen(val) == 0) {
@@ -224,7 +223,7 @@ void mysql_result::read_value(const char *id, int index, int row, double &value)
   // Todo: check error
 }
 
-void mysql_result::read_value(const char *id, int index, int row, char *value, size_t s)
+void mysql_result::read_value(const char */*id*/, size_type index, char *value, long s)
 {
   char *val = row_[index];
   size_t len = strlen(val);
@@ -237,19 +236,19 @@ void mysql_result::read_value(const char *id, int index, int row, char *value, s
 
 }
 
-void mysql_result::read_value(const char *id, int index, int row, std::string &value, size_t s)
+void mysql_result::read_value(const char */*id*/, size_type index, std::string &value, long /*size*/)
 {
   char *val = row_[index];
   value.assign(val);
 }
 
-void mysql_result::read_value(const char *id, int index, int row, std::string &value)
+void mysql_result::read_value(const char */*id*/, size_type index, std::string &value)
 {
   char *val = row_[index];
   value.assign(val);
 }
 
-void mysql_result::read_value(const char *id, int index, int row, matador::date &value)
+void mysql_result::read_value(const char */*id*/, size_type index, matador::date &value)
 {
   char *val = row_[index];
   size_t len = strlen(val);
@@ -259,10 +258,10 @@ void mysql_result::read_value(const char *id, int index, int row, matador::date 
   value.set(val, matador::date_format::ISO8601);
 }
 
-void mysql_result::read_value(const char *id, int index, int row, matador::time &value)
+void mysql_result::read_value(const char *id, size_type index, matador::time &value)
 {
   std::string val;
-  read_value(id, index, row, val);
+  read_value(id, index, val);
   if (mysql::version < 50604) {
     // before mysql version 5.6.4 datetime
     // doesn't support fractional seconds,

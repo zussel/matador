@@ -46,9 +46,9 @@ public:
   void bind(bool b, size_t size) override;
   void bind(float d, size_t size) override;
   void bind(double d, size_t size) override;
-  void bind(const char *string, size_t size, size_t size1) override;
-  void bind(const std::string &string, size_t size) override;
-  void bind(const std::string &x, size_t s, size_t size) override;
+  void bind(const char *string, size_t size, size_t index) override;
+  void bind(const std::string &string, size_t index) override;
+  void bind(const std::string &x, size_t size, size_t index) override;
   void bind(const matador::time &time, size_t size) override;
   void bind(const matador::date &date, size_t size) override;
 

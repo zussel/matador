@@ -58,7 +58,6 @@ public:
 
 protected:
   result_impl();
-//  result_impl() = default;
 
   virtual bool needs_bind() { return false; };
   virtual bool finalize_bind() { return false; }
@@ -77,13 +76,13 @@ public:
   template<typename ValueType>
   void on_primary_key(const char *id, ValueType &value, long /*size*/ = -1)
   {
-    read_value(id, result_index_++, result_row_, value);
+    read_value(id, column_index_++, value);
   }
 
   template<typename ValueType>
   void on_attribute(const char *id, ValueType &value, long /*size*/ = -1)
   {
-    read_value(id, result_index_++, result_row_, value);
+    read_value(id, column_index_++, value);
   }
 
   void on_attribute(const char *id, char *, long size = -1);
@@ -97,24 +96,24 @@ public:
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
-  virtual void read_value(const char *id, int index, int row, char &value) = 0;
-  virtual void read_value(const char *id, int index, int row, short &value) = 0;
-  virtual void read_value(const char *id, int index, int row, int &value) = 0;
-  virtual void read_value(const char *id, int index, int row, long &value) = 0;
-  virtual void read_value(const char *id, int index, int row, long long &value) = 0;
-  virtual void read_value(const char *id, int index, int row, unsigned char &value) = 0;
-  virtual void read_value(const char *id, int index, int row, unsigned short &value) = 0;
-  virtual void read_value(const char *id, int index, int row, unsigned int &value) = 0;
-  virtual void read_value(const char *id, int index, int row, unsigned long &value) = 0;
-  virtual void read_value(const char *id, int index, int row, unsigned long long &value) = 0;
-  virtual void read_value(const char *iresult_identifier_readerd, int index, int row, bool &value) = 0;
-  virtual void read_value(const char *id, int index, int row, float &value) = 0;
-  virtual void read_value(const char *id, int index, int row, double &value) = 0;
-  virtual void read_value(const char *id, int index, int row, matador::time &value) = 0;
-  virtual void read_value(const char *id, int index, int row, matador::date &value) = 0;
-  virtual void read_value(const char *id, int index, int row, char *value, long s) = 0;
-  virtual void read_value(const char *id, int index, int row, std::string &value) = 0;
-  virtual void read_value(const char *id, int index, int row, std::string &value, long s) = 0;
+  virtual void read_value(const char *id, size_type index, char &value) = 0;
+  virtual void read_value(const char *id, size_type index, short &value) = 0;
+  virtual void read_value(const char *id, size_type index, int &value) = 0;
+  virtual void read_value(const char *id, size_type index, long &value) = 0;
+  virtual void read_value(const char *id, size_type index, long long &value) = 0;
+  virtual void read_value(const char *id, size_type index, unsigned char &value) = 0;
+  virtual void read_value(const char *id, size_type index, unsigned short &value) = 0;
+  virtual void read_value(const char *id, size_type index, unsigned int &value) = 0;
+  virtual void read_value(const char *id, size_type index, unsigned long &value) = 0;
+  virtual void read_value(const char *id, size_type index, unsigned long long &value) = 0;
+  virtual void read_value(const char *id, size_type index, bool &value) = 0;
+  virtual void read_value(const char *id, size_type index, float &value) = 0;
+  virtual void read_value(const char *id, size_type index, double &value) = 0;
+  virtual void read_value(const char *id, size_type index, matador::time &value) = 0;
+  virtual void read_value(const char *id, size_type index, matador::date &value) = 0;
+  virtual void read_value(const char *id, size_type index, char *value, long s) = 0;
+  virtual void read_value(const char *id, size_type index, std::string &value) = 0;
+  virtual void read_value(const char *id, size_type index, std::string &value, long s) = 0;
 
   virtual const char *column(size_type c) const = 0;
 
@@ -142,25 +141,24 @@ public:
     if (!prepare_fetch()) {
       return false;
     }
-    result_index_ = transform_index(0);
+    column_index_ = reset_column_index();
     serialize(*o);
     return finalize_fetch();
   }
 
   virtual size_type affected_rows() const = 0;
-
   virtual size_type result_rows() const = 0;
-
   virtual size_type fields() const = 0;
 
-  virtual int transform_index(int index) const = 0;
+  virtual size_type reset_column_index() const = 0;
 
 protected:
   void read_foreign_object(const char *id, identifiable_holder &x);
 
+  size_type column_index() const;
+
 private:
-  int result_index_ = 0;
-  int result_row_ = 0;
+  size_type column_index_ = 0;
 
   result_identifier_reader result_identifier_reader_;
 };

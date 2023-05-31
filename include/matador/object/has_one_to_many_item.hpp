@@ -115,13 +115,13 @@ private:
   R right_ = {};
 };
 
-template<class L, int SIZE>
+template<class L, long SIZE>
 class has_one_to_many_item<L, varchar<SIZE>>
   : public basic_has_many_to_many_item
 {
 public:
   typedef L left_value_type;
-  typedef std::string right_value_type;
+  typedef varchar<SIZE> right_value_type;
 
   has_one_to_many_item() = default;
 
@@ -129,10 +129,17 @@ public:
     : basic_has_many_to_many_item(left_column, right_column)
   {}
 
-  has_one_to_many_item(const object_ptr<L> &left, std::string right,
+  has_one_to_many_item(const object_ptr<L> &left, const varchar<SIZE> &right,
                        const std::string &left_column, const std::string &right_column)
     : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(std::move(right))
   {}
+
+  has_one_to_many_item(const object_ptr<L> &left, const std::string &right,
+                       const std::string &left_column, const std::string &right_column)
+    : basic_has_many_to_many_item(left_column, right_column), left_(left)
+  {
+    right_.assign(right);
+  }
 
   template<class SERIALIZER>
   void serialize(SERIALIZER &serializer)

@@ -74,77 +74,77 @@ mssql_result::size_type mssql_result::fields() const
   return fields_;
 }
 
-int mssql_result::transform_index(int index) const
+detail::result_impl::size_type mssql_result::reset_column_index() const
 {
-  return ++index;
+  return 1;
 }
 
-void mssql_result::read_value(const char *id, int index, int row, char &x)
-{
-  read_column(id, index, x);
-}
-
-void mssql_result::read_value(const char *id, int index, int row, short &x)
+void mssql_result::read_value(const char *id, size_type index, char &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, int &x)
+void mssql_result::read_value(const char *id, size_type index, short &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, long &x)
+void mssql_result::read_value(const char *id, size_type index, int &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, long long &x)
+void mssql_result::read_value(const char *id, size_type index, long &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, unsigned char &x)
+void mssql_result::read_value(const char *id, size_type index, long long &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, unsigned short &x)
+void mssql_result::read_value(const char *id, size_type index, unsigned char &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, unsigned int &x)
+void mssql_result::read_value(const char *id, size_type index, unsigned short &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, unsigned long &x)
+void mssql_result::read_value(const char *id, size_type index, unsigned int &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, unsigned long long &x)
+void mssql_result::read_value(const char *id, size_type index, unsigned long &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, bool &x)
+void mssql_result::read_value(const char *id, size_type index, unsigned long long &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, float &x)
+void mssql_result::read_value(const char *id, size_type index, bool &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, double &x)
+void mssql_result::read_value(const char *id, size_type index, float &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *, int index, int row, char *x, long size)
+void mssql_result::read_value(const char *id, size_type index, double &x)
+{
+  read_column(id, index, x);
+}
+
+void mssql_result::read_value(const char *, size_type index, char *x, long size)
 {
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, index, SQL_C_CHAR, x, size, &info);
@@ -155,27 +155,27 @@ void mssql_result::read_value(const char *, int index, int row, char *x, long si
   }
 }
 
-void mssql_result::read_value(const char *id, int index, int row, std::string &x, long size)
+void mssql_result::read_value(const char *id, size_type index, std::string &x, long size)
 {
   read_column(id, index, x, size);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, std::string &x)
+void mssql_result::read_value(const char *id, size_type index, std::string &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, matador::date &x)
+void mssql_result::read_value(const char *id, size_type index, matador::date &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *id, int index, int row, matador::time &x)
+void mssql_result::read_value(const char *id, size_type index, matador::time &x)
 {
   read_column(id, index, x);
 }
 
-void mssql_result::read_column(const char *, int index, std::string &val)
+void mssql_result::read_column(const char *, size_type index, std::string &val)
 {
   char buf[1024];
   SQLLEN info = 0;
@@ -187,8 +187,11 @@ void mssql_result::read_column(const char *, int index, std::string &val)
   }
 }
 
-void mssql_result::read_column(const char *, int index, std::string &val, size_t s)
+void mssql_result::read_column(const char *, size_type index, std::string &val, long s)
 {
+  if (s == -1) {
+    s = 8000;
+  }
   std::vector<char> buf(s, 0);
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, index, SQL_C_CHAR, buf.data(), s, &info);
@@ -200,7 +203,7 @@ void mssql_result::read_column(const char *, int index, std::string &val, size_t
 
 }
 
-void mssql_result::read_column(const char *, int index, char &val)
+void mssql_result::read_column(const char *, size_type index, char &val)
 {
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, &val, 0, &info);
@@ -211,7 +214,7 @@ void mssql_result::read_column(const char *, int index, char &val)
   }
 }
 
-void mssql_result::read_column(const char *, int index, unsigned char &val)
+void mssql_result::read_column(const char *, size_type index, unsigned char &val)
 {
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, &val, 0, &info);
@@ -222,7 +225,7 @@ void mssql_result::read_column(const char *, int index, unsigned char &val)
   }
 }
 
-void mssql_result::read_column(char const *, int index, date &x)
+void mssql_result::read_column(char const *, size_type index, date &x)
 {
   SQL_DATE_STRUCT ds;
 
@@ -235,7 +238,7 @@ void mssql_result::read_column(char const *, int index, date &x)
   }
 }
 
-void mssql_result::read_column(char const *, int index, time &x)
+void mssql_result::read_column(char const *, size_type index, time &x)
 {
   SQL_TIMESTAMP_STRUCT ts;
 
@@ -254,7 +257,6 @@ bool mssql_result::prepare_fetch()
     return false;
   }
 
-  result_index_ = 0;
   return true;
 }
 

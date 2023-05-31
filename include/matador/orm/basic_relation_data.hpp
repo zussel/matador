@@ -114,7 +114,7 @@ private:
   std::unordered_multimap<identifier, std::pair<T, object_proxy*>, id_pk_hash, std::equal_to<identifier>> id_multi_map_;
 };
 
-template < int SIZE >
+template < long SIZE >
 class relation_data<varchar<SIZE>> : public basic_relation_data
 {
 public:

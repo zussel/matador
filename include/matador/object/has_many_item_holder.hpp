@@ -180,6 +180,7 @@ class has_many_item_holder<varchar<SIZE>> : public basic_has_many_item_holder
 {
 public:
   typedef varchar<SIZE> object_type;
+  typedef std::string value_type;
 
   has_many_item_holder() = default;
 

@@ -79,7 +79,7 @@ SET(HEADER
   ../../include/matador/object/object_deserializer.hpp
   ../../include/matador/object/object_type_registry_entry_base.hpp
   ../../include/matador/object/object_type_registry_entry.hpp
-  ../../include/matador/object/relation_endpoint.hpp ../../include/matador/object/export.hpp ../../include/matador/object/serialization.hpp)
+  ../../include/matador/object/relation_endpoint.hpp ../../include/matador/object/export.hpp ../../include/matador/object/serialization.hpp ../../include/matador/object/type_traits.hpp)
 
 ADD_LIBRARY(matador-object STATIC ${SOURCES} ${HEADER})
 

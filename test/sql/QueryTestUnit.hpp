@@ -1,7 +1,3 @@
-//
-// Created by sascha on 9/7/15.
-//
-
 #ifndef OOS_SQLTEST_HPP
 #define OOS_SQLTEST_HPP
 
