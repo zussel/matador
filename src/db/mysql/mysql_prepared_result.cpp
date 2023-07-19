@@ -200,7 +200,7 @@ void mysql_prepared_result::read_value(const char */*id*/, size_type index, mata
     prepare_bind_column(index, MYSQL_TYPE_DATE, value);
   } else {
     if (info_[index].length > 0) {
-      auto *mtt = (MYSQL_TIME*)info_[index].buffer.get();
+      auto *mtt = (MYSQL_TIME*)info_[index].buffer;
       value.set(mtt->day, mtt->month, mtt->year);
     }
     bind_[index].length = nullptr;
@@ -229,7 +229,7 @@ void mysql_prepared_result::read_value(const char *id, size_type index, matador:
       prepare_bind_column(index, MYSQL_TYPE_TIMESTAMP, value);
     } else {
       if (info_[index].length > 0) {
-        auto *mtt = (MYSQL_TIME*)info_[index].buffer.get();
+        auto *mtt = (MYSQL_TIME*)info_[index].buffer;
         value.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
       }
       bind_[index].length = nullptr;
@@ -266,13 +266,16 @@ void mysql_prepared_result::on_truncated_data(int index, std::string &x) {
   if (info_[index].length == 0) {
     return;
   }
-  bind_[index].buffer = info_[index].buffer.get();
+  bind_[index].buffer = new char[info_[index].length];
   bind_[index].buffer_length = info_[index].length;
   if (mysql_stmt_fetch_column(stmt, &bind_[index], index, 0) == 0) {
     auto *data = (char*)bind_[index].buffer;
     unsigned long len = bind_[index].buffer_length;
     x.assign(data, len);
+  } else {
+      // Todo: handle statement fetch column error
   }
+  delete [] (char*)bind_[index].buffer;
   bind_[index].buffer = nullptr;
   bind_[index].length = nullptr;
 }
@@ -293,12 +296,13 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
 {
   if (info_[index].buffer == nullptr) {
     size_t s = sizeof(MYSQL_TIME);
-    info_[index].buffer.reset(new char[s]);
-    memset(info_[index].buffer.get(), 0, s);
+    info_[index].buffer = new char[s];
+    memset(info_[index].buffer, 0, s);
     info_[index].buffer_length = (unsigned long)s;
+    info_[index].is_allocated = true;
   }
   bind_[index].buffer_type = type;
-  bind_[index].buffer = info_[index].buffer.get();
+  bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].is_null = &info_[index].is_null;
   bind_[index].length = &info_[index].length;
@@ -309,12 +313,13 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
 {
   if (info_[index].buffer == nullptr) {
     size_t s = sizeof(MYSQL_TIME);
-    info_[index].buffer.reset(new char[s]);
-    memset(info_[index].buffer.get(), 0, s);
+    info_[index].buffer = new char[s];
+    memset(info_[index].buffer, 0, s);
     info_[index].buffer_length = (unsigned long)s;
+    info_[index].is_allocated = true;
   }
   bind_[index].buffer_type = type;
-  bind_[index].buffer = info_[index].buffer.get();
+  bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].is_null = &info_[index].is_null;
   bind_[index].length = &info_[index].length;
@@ -344,12 +349,13 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
 void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, std::string & /*value*/, size_t s)
 {
   if (info_[index].buffer == nullptr) {
-    info_[index].buffer.reset(new char[s]);
-    memset(info_[index].buffer.get(), 0, s);
+    info_[index].buffer = new char[s];
+    memset(info_[index].buffer, 0, s);
     info_[index].buffer_length = (unsigned long)s;
+    info_[index].is_allocated = true;
   }
   bind_[index].buffer_type = type;
-  bind_[index].buffer = info_[index].buffer.get();
+  bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].buffer = nullptr;
   bind_[index].buffer_length = 0;

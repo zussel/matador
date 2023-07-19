@@ -31,14 +31,14 @@ public:
   , result_(res)
   {}
   base_result_iterator(base_result_iterator&& x) noexcept
-  : obj_(x.obj_.release())
+  : obj_(std::move(x.obj_))
   , result_(x.result_)
   {}
 
   base_result_iterator& operator=(base_result_iterator&& x) noexcept
   {
     result_ = x.result_;
-    obj_.reset(x.obj_.release());
+    obj_ = std::move(x.obj_);
     return *this;
   }
 

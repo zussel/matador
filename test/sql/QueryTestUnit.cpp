@@ -461,7 +461,7 @@ void QueryTestUnit::test_identifier_prepared()
 //
 //  UNIT_ASSERT_TRUE(first != last);
 
-  for (auto pres : res) {
+  for (const auto &pres : res) {
     UNIT_EXPECT_EQUAL(pres->name, "hans");
     UNIT_EXPECT_EQUAL(pres->id, 7UL);
   }

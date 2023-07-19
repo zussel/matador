@@ -129,10 +129,12 @@ public:
   template < class T >
   void bind(T *o)
   {
-    if (needs_bind()) {
-      serialize(*o);
-      finalize_bind();
+    if (!needs_bind()) {
+      return;
     }
+    column_index_ = reset_column_index();
+    serialize(*o);
+    finalize_bind();
   }
 
   template < class T >
