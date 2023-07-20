@@ -1,7 +1,3 @@
-//
-// Created by sascha on 27.10.19.
-//
-
 #ifndef MATADOR_PRIMARYKEYTESTUNIT_HPP
 #define MATADOR_PRIMARYKEYTESTUNIT_HPP
 
