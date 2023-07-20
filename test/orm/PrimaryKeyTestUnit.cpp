@@ -10,9 +10,9 @@ PrimaryKeyTestUnit::PrimaryKeyTestUnit(const std::string &prefix, std::string dn
   : unit_test(prefix + "_pk", prefix + " primary key test unit")
   , dns_(std::move(dns))
 {
-  add_test("long", std::bind(&PrimaryKeyTestUnit::test_long_pk, this), "test long primary key");
-  add_test("string", std::bind(&PrimaryKeyTestUnit::test_string_pk, this), "test string primary key");
-  add_test("varchar", std::bind(&PrimaryKeyTestUnit::test_varchar_pk, this), "test varchar primary key");
+  add_test("long", [this] { test_long_pk(); }, "test long primary key");
+  add_test("string", [this] { test_string_pk(); }, "test string primary key");
+  add_test("varchar", [this] { test_varchar_pk(); }, "test varchar primary key");
 }
 
 void PrimaryKeyTestUnit::test_long_pk()
