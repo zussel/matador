@@ -16,7 +16,11 @@ void result_impl::on_attribute(const char *id, char *value, long size)
 
 void result_impl::on_attribute(const char *id, std::string &value, long size)
 {
-  read_value(id, column_index_++, value, size);
+  if (size == -1) {
+    read_value(id, column_index_++, value);
+  } else {
+    read_value(id, column_index_++, value, size);
+  }
 }
 
 void result_impl::on_attribute(const char *id, matador::time &value, long /*size*/)
