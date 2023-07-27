@@ -29,16 +29,16 @@ class identifier_serializer
 public:
   virtual ~identifier_serializer() = default;
 
-  virtual void serialize(short &) = 0;
-  virtual void serialize(int &) = 0;
-  virtual void serialize(long &) = 0;
-  virtual void serialize(long long &) = 0;
-  virtual void serialize(unsigned short &) = 0;
-  virtual void serialize(unsigned int &) = 0;
-  virtual void serialize(unsigned long &) = 0;
-  virtual void serialize(unsigned long long &) = 0;
-  virtual void serialize(std::string &) = 0;
-  virtual void serialize(null_type_t &) = 0;
+  virtual void serialize(short &, long) = 0;
+  virtual void serialize(int &, long) = 0;
+  virtual void serialize(long &, long) = 0;
+  virtual void serialize(long long &, long) = 0;
+  virtual void serialize(unsigned short &, long) = 0;
+  virtual void serialize(unsigned int &, long) = 0;
+  virtual void serialize(unsigned long &, long) = 0;
+  virtual void serialize(unsigned long long &, long) = 0;
+  virtual void serialize(std::string &, long) = 0;
+  virtual void serialize(null_type_t &, long) = 0;
 };
 
 class identifier
@@ -72,11 +72,11 @@ private:
   {
     using self = pk<IdType>;
 
-    explicit pk(const IdType &id)
-      : base(std::type_index(typeid(IdType))), id_(id) {}
+    explicit pk(const IdType &id, long size = -1)
+      : base(std::type_index(typeid(IdType))), id_(id), size_(size) {}
 
     base *copy() const final {
-      return new self(id_);
+      return new self(id_, size_);
     }
 
     bool equal_to(const base &x) const final {
@@ -96,7 +96,7 @@ private:
     }
 
     void serialize(identifier_serializer &s) final {
-      s.serialize(id_);
+      s.serialize(id_, size_);
     }
 
     size_t hash() const final {
@@ -105,6 +105,7 @@ private:
     }
 
     IdType id_;
+    long size_{-1};
   };
 
   struct null_pk : public base
@@ -123,8 +124,8 @@ private:
 public:
   identifier();
   template<typename Type>
-  explicit identifier(const Type &id)
-    : id_(std::make_shared<pk<Type>>(id)) {}
+  explicit identifier(const Type &id, long size = -1)
+    : id_(std::make_shared<pk<Type>>(id, size)) {}
   identifier(const identifier &x);
   identifier &operator=(const identifier &x);
   identifier(identifier &&x) noexcept ;
@@ -132,7 +133,7 @@ public:
 
   template<typename Type>
   identifier &operator=(const Type &value) {
-    id_ = std::make_unique<pk<Type>>(value);
+    id_ = std::make_shared<pk<Type>>(value);
     return *this;
   }
 

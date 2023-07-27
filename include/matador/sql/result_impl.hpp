@@ -28,19 +28,20 @@ public:
   explicit result_identifier_reader(result_impl &res)
   : result_impl_(res) {}
 
-  void serialize(short &value) override { read_value(value); }
-  void serialize(int &value) override { read_value(value); }
-  void serialize(long &value) override { read_value(value); }
-  void serialize(long long &value) override { read_value(value); }
-  void serialize(unsigned short &value) override { read_value(value); }
-  void serialize(unsigned int &value) override { read_value(value); }
-  void serialize(unsigned long &value) override { read_value(value); }
-  void serialize(unsigned long long &value) override { read_value(value); }
-  void serialize(std::string &value) override { read_value(value); }
-  void serialize(null_type_t &) override;
+  void serialize(short &value, long /*size*/) override { read_value(value); }
+  void serialize(int &value, long /*size*/) override { read_value(value); }
+  void serialize(long &value, long /*size*/) override { read_value(value); }
+  void serialize(long long &value, long /*size*/) override { read_value(value); }
+  void serialize(unsigned short &value, long /*size*/) override { read_value(value); }
+  void serialize(unsigned int &value, long /*size*/) override { read_value(value); }
+  void serialize(unsigned long &value, long /*size*/) override { read_value(value); }
+  void serialize(unsigned long long &value, long /*size*/) override { read_value(value); }
+  void serialize(std::string &value, long size) override { read_value(value, size); }
+  void serialize(null_type_t &, long /*size*/) override;
 
   template<class Type>
   void read_value(Type &value);
+  void read_value(std::string &value, long size);
 
 private:
   result_impl &result_impl_;
@@ -155,14 +156,13 @@ public:
   virtual size_type reset_column_index() const = 0;
 
 protected:
-  void read_foreign_object(const char *id, identifiable_holder &x);
+  virtual void read_foreign_object(const char *id, identifiable_holder &x);
 
   size_type column_index() const;
 
-private:
-  size_type column_index_ = 0;
-
   result_identifier_reader result_identifier_reader_;
+
+  size_type column_index_ = 0;
 };
 
 /// @endcond

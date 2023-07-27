@@ -19,52 +19,52 @@ std::string json_identifier_serializer::serialize(const identifier &x)
   return json_;
 }
 
-void json_identifier_serializer::serialize(short &x)
+void json_identifier_serializer::serialize(short &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(int &x)
+void json_identifier_serializer::serialize(int &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(long &x)
+void json_identifier_serializer::serialize(long &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(long long &x)
+void json_identifier_serializer::serialize(long long &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(unsigned short &x)
+void json_identifier_serializer::serialize(unsigned short &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(unsigned int &x)
+void json_identifier_serializer::serialize(unsigned int &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(unsigned long &x)
+void json_identifier_serializer::serialize(unsigned long &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(unsigned long long &x)
+void json_identifier_serializer::serialize(unsigned long long &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(std::string &x)
+void json_identifier_serializer::serialize(std::string &x, long /*size*/)
 {
   json_.append(x);
 }
 
-void json_identifier_serializer::serialize(null_type_t &)
+void json_identifier_serializer::serialize(null_type_t &, long /*size*/)
 {
   json_.append("null");
 }

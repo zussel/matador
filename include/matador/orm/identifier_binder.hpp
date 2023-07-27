@@ -1,7 +1,7 @@
 #ifndef PRIMARY_KEY_BINDER_HPP
 #define PRIMARY_KEY_BINDER_HPP
 
-#include "matador/utils/identifiable_holder.hpp"
+#include "matador/utils/identifier.hpp"
 
 #include "matador/sql/statement.hpp"
 
@@ -9,16 +9,17 @@ namespace matador {
 
 class object_holder;
 class abstract_has_many;
+class identifiable_holder;
 
 namespace detail {
 /// @cond MATADOR_DEV
 
 template < class T >
-class identifier_binder
+class identifier_binder : public identifier_serializer
 {
 public:
   identifier_binder() = default;
-  virtual ~identifier_binder() = default;
+  ~identifier_binder() override = default;
 
   void bind(T *obj, statement<T> *stmt, size_t pos, identifier &id);
 
@@ -43,6 +44,56 @@ public:
   void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
   void on_has_many(const char*, abstract_has_many&, cascade_type) {}
 
+  void serialize(short &i, long /*size*/) override
+  {
+    stmt_->bind(pos_, i);
+  }
+
+  void serialize(int &i, long /*size*/) override
+  {
+    stmt_->bind(pos_, i);
+
+  }
+
+  void serialize(long &i, long /*size*/) override
+  {
+    stmt_->bind(pos_, i);
+  }
+
+  void serialize(long long int &i, long /*size*/) override
+  {
+    stmt_->bind(pos_, i);
+  }
+
+  void serialize(unsigned short &i, long /*size*/) override
+  {
+    stmt_->bind(pos_, i);
+  }
+
+  void serialize(unsigned int &i, long /*size*/) override
+  {
+    stmt_->bind(pos_, i);
+  }
+
+  void serialize(unsigned long &i, long /*size*/) override
+  {
+    stmt_->bind(pos_, i);
+  }
+
+  void serialize(unsigned long long int &i, long /*size*/) override
+  {
+    stmt_->bind(pos_, i);
+  }
+
+  void serialize(std::string &str, long size) override
+  {
+    stmt_->bind(pos_, str, size);
+  }
+
+  void serialize(null_type_t &/*type*/, long /*size*/) override
+  {
+  }
+
 private:
   void setup(statement<T> *stmt, T *obj, size_t pos, identifier &id);
 
@@ -53,6 +104,7 @@ private:
   size_t pos_ = 0;
   T *obj_ = nullptr;
   identifier id_;
+  std::string field_name_;
 };
 
 template<class T>
@@ -67,12 +119,15 @@ void identifier_binder<T>::bind(T *obj, statement<T> *stmt, size_t pos, identifi
 
 template < class T >
 template< class V >
-void identifier_binder<T>::on_primary_key(const char *, V &x, long /*size*/)
+void identifier_binder<T>::on_primary_key(const char *id, V &/*x*/, long /*size*/)
 {
   if (!id_.is_same_type<V>()) {
     throw_object_exception("identifier types aren't equal");
   }
-  stmt_->bind(pos_, x);
+  if (!field_name_.empty() && field_name_ != id) {
+    return;
+  }
+  id_.serialize(*this);
 }
 
 template < class T >
@@ -91,6 +146,7 @@ void identifier_binder<T>::cleanup()
   pos_ = 0;
   obj_ = nullptr;
   id_.clear();
+  field_name_.clear();
 }
 
 /// @endcond

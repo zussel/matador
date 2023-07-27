@@ -1,8 +1,6 @@
 #ifndef OOS_STATEMENT_IMPL_HPP
 #define OOS_STATEMENT_IMPL_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/sql/result.hpp"
 #include "matador/sql/parameter_binder.hpp"
 
@@ -14,7 +12,6 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-//class OOS_SQL_API statement_impl
 class statement_impl
 {
 public:
@@ -43,17 +40,18 @@ public:
   }
 
   template < class T, class V >
-  size_t bind(V &val, size_t pos)
+  size_t bind(V &val, long size, size_t pos)
   {
     T obj;
-    // get column name at pos
     if (pos >= bind_vars().size()) {
       throw std::out_of_range("host index out of range");
     }
 
+    // get column name at pos
     host_var_ = bind_vars().at(pos);
 
-    matador::parameter_binder<typename std::remove_const<V>::type> binder(host_var_, val, pos, this->binder());
+//    this->binder()->bind(val, pos);
+    matador::parameter_binder<typename std::remove_const<V>::type> binder(host_var_, val, size, pos, this->binder());
     pos = binder.bind(obj);
 
     host_var_.clear();
@@ -76,6 +74,9 @@ protected:
   std::string host_var_;
 
   virtual detail::parameter_binder_impl* binder() const = 0;
+//  virtual size_t normalize_position(size_t pos) const = 0;
+//  virtual bool is_valid_host_var_position(size_t pos) const = 0;
+//  virtual std::string bind_var_at(size_t pos) const = 0;
 
 private:
   std::string sql_;

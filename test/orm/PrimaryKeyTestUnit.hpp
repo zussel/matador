@@ -9,7 +9,6 @@ public:
   PrimaryKeyTestUnit(const std::string &prefix, std::string dns);
 
   void test_long_pk();
-  void test_string_pk();
   void test_varchar_pk();
 
 private:

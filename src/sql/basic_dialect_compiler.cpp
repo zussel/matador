@@ -53,7 +53,7 @@ void basic_dialect_compiler::visit(const matador::detail::typed_varchar_column &
 
 void basic_dialect_compiler::visit(const matador::detail::identifier_varchar_column &) { }
 
-void basic_dialect_compiler::visit(const matador::detail::basic_value_column &) { }
+void basic_dialect_compiler::visit(const matador::detail::value_column &) { }
 
 void basic_dialect_compiler::visit(const matador::detail::from &) { }
 

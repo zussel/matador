@@ -262,6 +262,25 @@ void mysql_prepared_result::read_value(const char */*id*/, size_type index, std:
   }
 }
 
+void mysql_prepared_result::read_foreign_object(const char *id, identifiable_holder &x)
+{
+  if (prepare_binding_) {
+    auto pk = x.create_identifier();
+    pk.serialize(result_identifier_reader_);
+    foreign_keys_.insert(std::make_pair(id, std::move(pk)));
+  } else {
+    auto i = foreign_keys_.find(id);
+    if (i != foreign_keys_.end()) {
+      if (i->second.is_valid()) {
+//        std::cout << "created identifier " << *i->second << " (field: " << i->first << ", " << i->second.get() << ")\n";
+        x.reset(i->second);
+      }
+      foreign_keys_.erase(i);
+    }
+    ++column_index_;
+  }
+}
+
 void mysql_prepared_result::on_truncated_data(int index, std::string &x) {
   if (info_[index].length == 0) {
     return;

@@ -24,20 +24,20 @@ public:
   explicit value_column_identifier_serializer(value_column_serializer &serializer)
   : serializer_(serializer) {}
 
-  void serialize(short &value) override { extract_value(value); }
-  void serialize(int &value) override { extract_value(value); }
-  void serialize(long &value) override { extract_value(value); }
-  void serialize(long long &value) override { extract_value(value); }
-  void serialize(unsigned short &value) override { extract_value(value); }
-  void serialize(unsigned int &value) override { extract_value(value); }
-  void serialize(unsigned long &value) override { extract_value(value); }
-  void serialize(unsigned long long &value) override { extract_value(value); }
-  void serialize(std::string &value) override { extract_value(value); }
-  void serialize(null_type_t &) override;
+  void serialize(short &value, long size) override { extract_value(value, size); }
+  void serialize(int &value, long size) override { extract_value(value, size); }
+  void serialize(long &value, long size) override { extract_value(value, size); }
+  void serialize(long long &value, long size) override { extract_value(value, size); }
+  void serialize(unsigned short &value, long size) override { extract_value(value, size); }
+  void serialize(unsigned int &value, long size) override { extract_value(value, size); }
+  void serialize(unsigned long &value, long size) override { extract_value(value, size); }
+  void serialize(unsigned long long &value, long size) override { extract_value(value, size); }
+  void serialize(std::string &value, long size) override { extract_value(value, size); }
+  void serialize(null_type_t &, long /*size*/) override {}
 
 private:
   template < typename ValueType >
-  void extract_value(ValueType &value);
+  void extract_value(ValueType &value, long size);
 
 private:
   value_column_serializer &serializer_;
@@ -90,10 +90,19 @@ public:
   void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
   template < class ValueType >
-  void add_column_value(const char *col, ValueType &val)
+  void add_column_value(const char *col, ValueType &val, long size)
   {
-    cols_->push_back(std::make_shared<value_column<ValueType>>(col, val));
+    cols_->push_back(make_value_column(col, val, size));
   }
+
+//  void add_column_value(const char *col, std::string &val, long size)
+//  {
+//    if (size == -1) {
+//      cols_->push_back(std::make_shared<value_column<std::string>>(col, val));
+//    } else {
+//      cols_->push_back(std::make_shared<value_column<std::string>>(col, val, size));
+//    }
+//  }
 
   template < class ValueType >
   void add_value(const char *col, ValueType &val, long size)
@@ -109,11 +118,10 @@ private:
 /// @endcond
 
 template<typename ValueType>
-void value_column_identifier_serializer::extract_value(ValueType &value)
+void value_column_identifier_serializer::extract_value(ValueType &value, long size)
 {
   // Todo: Add column name
-  serializer_.add_column_value("", value);
-
+  serializer_.add_column_value("", value, size);
 }
 
 }

@@ -119,21 +119,6 @@ void mysql_parameter_binder::reset()
   }
 }
 
-void mysql_parameter_binder::initialize_index(size_t index)
-{
-  index_ = index;
-}
-
-size_t mysql_parameter_binder::next_index()
-{
-  return index_++;
-}
-
-size_t mysql_parameter_binder::current_index() const
-{
-  return index_;
-}
-
 void mysql_parameter_binder::bind(char i, size_t index)
 {
   bind_value(MYSQL_TYPE_VAR_STRING, i, host_array_[index], is_null_vector[index].is_null);

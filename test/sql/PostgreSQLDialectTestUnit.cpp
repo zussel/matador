@@ -1,7 +1,3 @@
-//
-// Created by sascha on 04.06.19.
-//
-
 #include <matador/sql/query.hpp>
 
 #include "../person.hpp"
@@ -20,11 +16,11 @@ using namespace matador;
 PostgreSQLDialectTestUnit::PostgreSQLDialectTestUnit()
   : unit_test("postgresql_dialect" , "postgresql dialect test")
 {
-  add_test("placeholder", std::bind(&PostgreSQLDialectTestUnit::test_placeholder, this), "test postgresql placeholder link");
-  add_test("placeholder_condition", std::bind(&PostgreSQLDialectTestUnit::test_placeholder_condition, this), "test postgresql placeholder in condition link");
-  add_test("update_limit", std::bind(&PostgreSQLDialectTestUnit::test_update_limit, this), "test postgresql limit");
-  add_test("update_limit_prepare", std::bind(&PostgreSQLDialectTestUnit::test_update_limit_prepare, this), "test postgresql prepared limit");
-  add_test("tablename", std::bind(&PostgreSQLDialectTestUnit::test_table_name, this), "test postgresql extract table name");
+  add_test("placeholder", [this] { test_placeholder(); }, "test postgresql placeholder link");
+  add_test("placeholder_condition", [this] { test_placeholder_condition(); }, "test postgresql placeholder in condition link");
+  add_test("update_limit", [this] { test_update_limit(); }, "test postgresql limit");
+  add_test("update_limit_prepare", [this] { test_update_limit_prepare(); }, "test postgresql prepared limit");
+  add_test("tablename", [this] { test_table_name(); }, "test postgresql extract table name");
 }
 
 void PostgreSQLDialectTestUnit::test_placeholder()
@@ -98,7 +94,7 @@ void PostgreSQLDialectTestUnit::test_update_limit()
   std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   unsigned long owner_id(1);
-  cols->push_back(std::make_shared<detail::value_column<unsigned long>>("owner_id", owner_id));
+  cols->push_back(detail::make_value_column("owner_id", owner_id, -1));
 
   s.append(cols.release());
 
@@ -122,7 +118,7 @@ void PostgreSQLDialectTestUnit::test_update_limit_prepare(){
   std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   unsigned long owner_id(1);
-  cols->push_back(std::make_shared<detail::value_column<unsigned long>>("owner_id", owner_id));
+  cols->push_back(detail::make_value_column("owner_id", owner_id, -1));
 
   s.append(cols.release());
 

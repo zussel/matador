@@ -23,16 +23,16 @@ public:
 
   std::string serialize(const identifier &x);
 
-  void serialize(short &x) override;
-  void serialize(int &x) override;
-  void serialize(long &x) override;
-  void serialize(long long &x) override;
-  void serialize(unsigned short &x) override;
-  void serialize(unsigned int &x) override;
-  void serialize(unsigned long &x) override;
-  void serialize(unsigned long long &x) override;
-  void serialize(std::string &) override;
-  void serialize(null_type_t &) override;
+  void serialize(short &x, long size) override;
+  void serialize(int &x, long size) override;
+  void serialize(long &x, long size) override;
+  void serialize(long long &x, long size) override;
+  void serialize(unsigned short &x, long size) override;
+  void serialize(unsigned int &x, long size) override;
+  void serialize(unsigned long &x, long size) override;
+  void serialize(unsigned long long &x, long size) override;
+  void serialize(std::string &, long size) override;
+  void serialize(null_type_t &, long size) override;
 
 private:
   std::string json_;

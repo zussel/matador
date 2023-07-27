@@ -1,7 +1,7 @@
 #include "matador/db/mssql/mssql_parameter_binder.hpp"
 #include "matador/db/mssql/mssql_statement.hpp"
 
-#include "matador/sql/types.hpp"
+#include "matador/utils/time.hpp"
 
 #include <sql.h>
 
@@ -109,17 +109,39 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, const cha
   return v.release();
 }
 
+SQLUSMALLINT adjust_index(size_t index) {
+  return (int)index + 1;
+}
+
 void bind_value(SQLHANDLE stmt, SQLUSMALLINT ctype, SQLUSMALLINT type, mssql_parameter_binder::value_t *v, size_t index)
 {
   SQLLEN buffer_length(0);
-  SQLRETURN ret = SQLBindParameter(stmt, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, v->len, 0, v->data, buffer_length, nullptr);
+  SQLRETURN ret = SQLBindParameter(stmt,
+                                   adjust_index(index),
+                                   SQL_PARAM_INPUT,
+                                   (SQLSMALLINT)ctype,
+                                   (SQLSMALLINT)type,
+                                   v->len,
+                                   0,
+                                   v->data,
+                                   buffer_length,
+                                   nullptr);
   throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
 }
 
 void bind_value(SQLHANDLE stmt, SQLUSMALLINT ctype, SQLUSMALLINT type, mssql_parameter_binder::value_t *v, unsigned short scale, size_t index)
 {
   SQLLEN buffer_length(0);
-  SQLRETURN ret = SQLBindParameter(stmt, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, v->len, scale, v->data, buffer_length, nullptr);
+  SQLRETURN ret = SQLBindParameter(stmt,
+                                   adjust_index(index),
+                                   SQL_PARAM_INPUT,
+                                   (SQLSMALLINT)ctype,
+                                   (SQLSMALLINT)type,
+                                   v->len,
+                                   (SQLSMALLINT)scale,
+                                   v->data,
+                                   buffer_length,
+                                   nullptr);
   throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
 }
 
@@ -136,21 +158,6 @@ void mssql_parameter_binder::reset()
   data_to_put_map_.clear();
 
   index_ = 1;
-}
-
-void mssql_parameter_binder::initialize_index(size_t index)
-{
-  index_ = index + 1;
-}
-
-size_t mssql_parameter_binder::next_index()
-{
-  return index_++;
-}
-
-size_t mssql_parameter_binder::current_index() const
-{
-  return index_ - 1;
 }
 
 void mssql_parameter_binder::bind(char i, size_t index)

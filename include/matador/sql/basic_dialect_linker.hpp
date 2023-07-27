@@ -56,7 +56,7 @@ public:
   void visit(const matador::detail::typed_identifier_column &) override;
   void visit(const matador::detail::typed_varchar_column &) override;
   void visit(const matador::detail::identifier_varchar_column &) override;
-  void visit(const matador::detail::basic_value_column &) override;
+  void visit(const matador::detail::value_column &) override;
   void visit(const matador::detail::begin &) override;
   void visit(const matador::detail::commit &) override;
   void visit(const matador::detail::rollback &) override;

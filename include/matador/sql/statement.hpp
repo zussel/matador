@@ -130,9 +130,9 @@ public:
    * @return The next index to bind
    */
   template < class V >
-  std::size_t bind(std::size_t index, V &val)
+  std::size_t bind(std::size_t index, V &val, long size = -1)
   {
-    return p->bind<T>(val, index);
+    return p->bind<T>(val, size, index);
   }
 
   /**

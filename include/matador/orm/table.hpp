@@ -161,7 +161,7 @@ public:
     }
     auto *obj = static_cast<table_type *>(proxy->obj());
     size_t pos = update_.bind(0, obj);
-    binder_.bind(obj, &update_, pos, it->second);
+    identifier_binder_.bind(obj, &update_, pos, it->second);
     // Todo: check result
     update_.execute();
   }
@@ -177,7 +177,7 @@ public:
   void remove(object_proxy *proxy) override
   {
     delete_.reset();
-    binder_.bind(proxy->obj<table_type>(), &delete_, 0, proxy->pk());
+    identifier_binder_.bind(proxy->obj<table_type>(), &delete_, 0, proxy->pk());
     // Todo: check result
     delete_.execute();
   }
@@ -222,7 +222,7 @@ protected:
   }
 
 private:
-  detail::identifier_binder<table_type> binder_;
+  detail::identifier_binder<table_type> identifier_binder_;
 
   statement<table_type> insert_;
   statement<table_type> update_;
