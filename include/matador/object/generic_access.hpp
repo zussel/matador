@@ -167,17 +167,16 @@ bool get(const O &obj, const std::string &name, T &val)
  * the operation succeeds true is returned.
  *
  * @tparam O     The object for which the value should be get.
- * @tparam T     The type of the value to retrieve.
  * @param obj    The object to get the value from.
  * @param name   The name of the member variable.
  * @param val    The pointer to a character array.
  * @param size   The size of the character array.
  * @return       True if the operation succeeds.
  */
-template < typename O, class T >
-bool get(const O &obj, const std::string &name, const char *val, size_t size)
+template < typename O >
+bool get(const O &obj, const std::string &name, char *val, size_t size)
 {
-  attribute_writer<T> writer(name, val, size);
+  attribute_writer<char*> writer(name, val, size);
   matador::access::serialize(writer, const_cast<O&>(obj));
   return writer.success();
 }
