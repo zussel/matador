@@ -15,6 +15,8 @@ class sql;
 
 namespace detail {
   class statement_impl;
+  template < class Type >
+  class identifier_binder;
 }
 
 /**
@@ -171,6 +173,10 @@ public:
   {
     return p->is_log_enabled();
   }
+
+private:
+  template < class Type >
+  friend class detail::identifier_binder;
 
 private:
   std::unique_ptr<matador::detail::statement_impl> p;

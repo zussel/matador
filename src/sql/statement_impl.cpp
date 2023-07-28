@@ -25,6 +25,13 @@ const std::vector<std::string> &statement_impl::columns() const
   return columns_;
 }
 
+bool statement_impl::is_valid_host_var(const std::string &host_var, size_t pos) const
+{
+  const auto host_var_at_pos = bind_vars().at(pos);
+
+  return host_var_at_pos == host_var;
+}
+
 void statement_impl::log(const std::string &stmt) const
 {
   if (log_enabled_) {

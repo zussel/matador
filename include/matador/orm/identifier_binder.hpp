@@ -46,58 +46,69 @@ public:
 
   void serialize(short &i, long /*size*/) override
   {
-    stmt_->bind(pos_, i);
+    bind(i);
   }
 
   void serialize(int &i, long /*size*/) override
   {
-    stmt_->bind(pos_, i);
-
+    bind(i);
   }
 
   void serialize(long &i, long /*size*/) override
   {
-    stmt_->bind(pos_, i);
+    bind(i);
   }
 
   void serialize(long long int &i, long /*size*/) override
   {
-    stmt_->bind(pos_, i);
+    bind(i);
   }
 
   void serialize(unsigned short &i, long /*size*/) override
   {
-    stmt_->bind(pos_, i);
+    bind(i);
   }
 
   void serialize(unsigned int &i, long /*size*/) override
   {
-    stmt_->bind(pos_, i);
+    bind(i);
   }
 
   void serialize(unsigned long &i, long /*size*/) override
   {
-    stmt_->bind(pos_, i);
+    bind(i);
   }
 
   void serialize(unsigned long long int &i, long /*size*/) override
   {
-    stmt_->bind(pos_, i);
+    bind(i);
   }
 
   void serialize(std::string &str, long size) override
   {
+    if (!stmt_->p->is_valid_host_var(field_name_, pos_)) {
+      return;
+    }
     stmt_->bind(pos_, str, size);
   }
 
-  void serialize(null_type_t &/*type*/, long /*size*/) override
-  {
-  }
+  void serialize(null_type_t &/*type*/, long /*size*/) override { }
 
 private:
   void setup(statement<T> *stmt, T *obj, size_t pos, identifier &id);
-
   void cleanup();
+
+  template<class Type>
+  void bind(Type &val) {
+    if (pos_ >= stmt_->p->bind_vars().size()) {
+      throw std::out_of_range("host index out of range");
+    }
+
+    if (!stmt_->p->is_valid_host_var(field_name_, pos_)) {
+      return;
+    }
+    stmt_->bind(pos_, val);
+  }
 
 private:
   statement<T> *stmt_ = nullptr;
@@ -124,9 +135,7 @@ void identifier_binder<T>::on_primary_key(const char *id, V &/*x*/, long /*size*
   if (!id_.is_same_type<V>()) {
     throw_object_exception("identifier types aren't equal");
   }
-  if (!field_name_.empty() && field_name_ != id) {
-    return;
-  }
+  field_name_ = id;
   id_.serialize(*this);
 }
 

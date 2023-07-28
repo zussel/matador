@@ -40,21 +40,9 @@ public:
   }
 
   template < class T, class V >
-  size_t bind(V &val, long size, size_t pos)
+  size_t bind(V &val, long /*size*/, size_t pos)
   {
-    T obj;
-    if (pos >= bind_vars().size()) {
-      throw std::out_of_range("host index out of range");
-    }
-
-    // get column name at pos
-    host_var_ = bind_vars().at(pos);
-
-//    this->binder()->bind(val, pos);
-    matador::parameter_binder<typename std::remove_const<V>::type> binder(host_var_, val, size, pos, this->binder());
-    pos = binder.bind(obj);
-
-    host_var_.clear();
+    this->binder()->bind(val, pos++);
 
     return pos;
   }
@@ -62,6 +50,8 @@ public:
   std::string str() const;
   const std::vector<std::string>& bind_vars() const;
   const std::vector<std::string>& columns() const;
+
+  bool is_valid_host_var(const std::string &host_var, size_t pos) const;
 
   void log(const std::string &stmt) const;
 
@@ -74,9 +64,6 @@ protected:
   std::string host_var_;
 
   virtual detail::parameter_binder_impl* binder() const = 0;
-//  virtual size_t normalize_position(size_t pos) const = 0;
-//  virtual bool is_valid_host_var_position(size_t pos) const = 0;
-//  virtual std::string bind_var_at(size_t pos) const = 0;
 
 private:
   std::string sql_;
