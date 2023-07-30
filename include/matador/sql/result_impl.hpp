@@ -1,11 +1,10 @@
 #ifndef RESULT_IMPL_HPP
 #define RESULT_IMPL_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/utils/access.hpp"
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/cascade_type.hpp"
+#include "matador/utils/serializer.hpp"
 
 #include <memory>
 
@@ -47,8 +46,7 @@ private:
   result_impl &result_impl_;
 };
 
-//class OOS_SQL_API result_impl
-class result_impl
+class result_impl : public serializer
 {
 public:
   result_impl(const result_impl &) = delete;
@@ -66,8 +64,6 @@ protected:
   virtual bool finalize_fetch() = 0;
 
 public:
-  virtual ~result_impl() = default;
-
   template < class T >
   void serialize(T &x)
   {
@@ -80,22 +76,30 @@ public:
     read_value(id, column_index_++, value);
   }
 
-  template<typename ValueType>
-  void on_attribute(const char *id, ValueType &value, long /*size*/ = -1)
-  {
-    read_value(id, column_index_++, value);
-  }
+  void on_attribute(const char *id, char &x) override;
+  void on_attribute(const char *id, short &x) override;
+  void on_attribute(const char *id, int &x) override;
+  void on_attribute(const char *id, long &x) override;
+  void on_attribute(const char *id, long long &x) override;
+  void on_attribute(const char *id, unsigned char &x) override;
+  void on_attribute(const char *id, unsigned short &x) override;
+  void on_attribute(const char *id, unsigned int &x) override;
+  void on_attribute(const char *id, unsigned long &x) override;
+  void on_attribute(const char *id, unsigned long long &x) override;
+  void on_attribute(const char *id, bool &x) override;
+  void on_attribute(const char *id, float &x) override;
+  void on_attribute(const char *id, double &x) override;
+  void on_attribute(const char *id, char *, long size) override;
+  void on_attribute(const char *id, std::string&) override;
+  void on_attribute(const char *id, std::string&, long size) override;
+  void on_attribute(const char *id, matador::time&) override;
+  void on_attribute(const char *id, matador::date&) override;
 
-  void on_attribute(const char *id, char *, long size = -1);
-  void on_attribute(const char *id, std::string&, long size = -1);
-  void on_attribute(const char *id, matador::time&, long size = -1);
-  void on_attribute(const char *id, matador::date&, long size = -1);
+  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type) override;
+  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type) override;
 
-  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type);
-  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type);
-
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
 
   virtual void read_value(const char *id, size_type index, char &value) = 0;
   virtual void read_value(const char *id, size_type index, short &value) = 0;

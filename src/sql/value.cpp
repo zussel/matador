@@ -1,6 +1,3 @@
-//
-// Created by sascha on 3/2/16.
-//
 #include "matador/sql/value.hpp"
 #include "matador/sql/token_visitor.hpp"
 #include "matador/sql/basic_dialect.hpp"

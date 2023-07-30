@@ -27,9 +27,9 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("info", [this] { print_datatypes(); }, "print datatypes info");
   add_test("datatypes", [this] { test_datatypes(); }, "test sql datatypes");
   add_test("qvc", [this] { test_query_value_creator(); }, "test query value creator");
-//  add_test("quoted_identifier", [this] { test_quoted_identifier(); }, "test quoted identifier");
-//  add_test("columns_with_quotes", [this] { test_columns_with_quotes_in_name(); }, "test columns with quotes in name");
-//  add_test("quoted_literals", [this] { test_quoted_literals(); }, "test quoted literals");
+  add_test("quoted_identifier", [this] { test_quoted_identifier(); }, "test quoted identifier");
+  add_test("columns_with_quotes", [this] { test_columns_with_quotes_in_name(); }, "test columns with quotes in name");
+  add_test("quoted_literals", [this] { test_quoted_literals(); }, "test quoted literals");
   add_test("bind_tablename", [this] { test_bind_tablename(); }, "test bind tablenames");
   add_test("describe", [this] { test_describe(); }, "test describe table");
   add_test("unknown_table", [this] { test_unknown_table(); }, "test unknown table");
@@ -37,9 +37,9 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("identifier_prepared", [this] { test_identifier_prepared(); }, "test sql prepared identifier");
   add_test("update", [this] { test_update(); }, "test direct sql update statement");
   add_test("create", [this] { test_create(); }, "test direct sql create statement");
-//  add_test("create_anonymous", [this] { test_anonymous_create(); }, "test direct sql create statement via row (anonymous)");
-//  add_test("insert_anonymous", [this] { test_anonymous_insert(); }, "test direct sql insert statement via row (anonymous)");
-//  add_test("update_anonymous", [this] { test_anonymous_update(); }, "test direct sql update statement via row (anonymous)");
+  add_test("create_anonymous", [this] { test_anonymous_create(); }, "test direct sql create statement via row (anonymous)");
+  add_test("insert_anonymous", [this] { test_anonymous_insert(); }, "test direct sql insert statement via row (anonymous)");
+  add_test("update_anonymous", [this] { test_anonymous_update(); }, "test direct sql update statement via row (anonymous)");
   add_test("statement_insert", [this] { test_statement_insert(); }, "test prepared sql insert statement");
   add_test("statement_update", [this] { test_statement_update(); }, "test prepared sql update statement");
   add_test("statement_delete", [this] { test_statement_delete(); }, "test prepared sql delete statement");
@@ -49,16 +49,16 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("query", [this] { test_query(); }, "test query");
   add_test("result_range", [this] { test_query_range_loop(); }, "test result range loop");
   add_test("select", [this] { test_query_select(); }, "test query select");
-//  add_test("select_count", [this] { test_query_select_count(); }, "test query select count");
-//  add_test("select_columns", [this] { test_query_select_columns(); }, "test query select columns");
+  add_test("select_count", [this] { test_query_select_count(); }, "test query select count");
+  add_test("select_columns", [this] { test_query_select_columns(); }, "test query select columns");
   add_test("select_like", [this] { test_query_select_like(); }, "test query select like");
   add_test("select_limit", [this] { test_select_limit(); }, "test query select limit");
   add_test("update_limit", [this] { test_update_limit(); }, "test query update limit");
-//  add_test("prepared_statement", [this] { test_prepared_statement(); }, "test query prepared statement");
+  add_test("prepared_statement", [this] { test_prepared_statement(); }, "test query prepared statement");
   add_test("prepared_statement_creation", [this] { test_prepared_statement_creation(); }, "test query prepared statement creation");
   add_test("object_result_twice", [this] { test_prepared_object_result_twice(); }, "test query prepared statement get object result twice");
-//  add_test("scalar_result_twice", [this] { test_prepared_scalar_result_twice(); }, "test query prepared statement get scalar result twice");
-//  add_test("rows", [this] { test_rows(); }, "test row value serialization");
+  add_test("scalar_result_twice", [this] { test_prepared_scalar_result_twice(); }, "test query prepared statement get scalar result twice");
+  add_test("rows", [this] { test_rows(); }, "test row value serialization");
   add_test("log", [this] { test_log(); }, "test log behavior");
 }
 

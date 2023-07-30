@@ -1,8 +1,6 @@
 #ifndef ROW_HPP
 #define ROW_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/sql/value.hpp"
 
 #include <cstddef>
@@ -15,7 +13,6 @@ namespace matador {
 /**
  * @brief Row representation
  */
-//class OOS_SQL_API row
 class row
 {
 public:
@@ -84,11 +81,11 @@ public:
    * @param serializer The serializer to be used
    */
   template < class SERIALIZER >
-  void serialize(SERIALIZER &/*serializer*/)
+  void serialize(SERIALIZER &serializer)
   {
-//    for (auto &&column : columns_) {
-//      values_.at(column)->serialize(column.c_str(), serializer);
-//    }
+    for (auto &column : columns_) {
+      values_.at(column)->serialize(column.c_str(), serializer);
+    }
   }
 
   /**

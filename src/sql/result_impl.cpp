@@ -9,9 +9,79 @@ result_impl::result_impl()
 : result_identifier_reader_(*this)
 {}
 
+void result_impl::on_attribute(const char *id, char &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, short &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, int &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, long &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, long long int &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, unsigned char &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, unsigned short &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, unsigned int &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, unsigned long &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, unsigned long long int &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, bool &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, float &x)
+{
+  read_value(id, column_index_++, x);
+}
+
+void result_impl::on_attribute(const char *id, double &x)
+{
+  read_value(id, column_index_++, x);
+}
+
 void result_impl::on_attribute(const char *id, char *value, long size)
 {
   read_value(id, column_index_++, value, size);
+}
+
+void result_impl::on_attribute(const char *id, std::string &value)
+{
+  read_value(id, column_index_++, value);
 }
 
 void result_impl::on_attribute(const char *id, std::string &value, long size)
@@ -23,12 +93,12 @@ void result_impl::on_attribute(const char *id, std::string &value, long size)
   }
 }
 
-void result_impl::on_attribute(const char *id, matador::time &value, long /*size*/)
+void result_impl::on_attribute(const char *id, matador::time &value)
 {
   read_value(id, column_index_++, value);
 }
 
-void result_impl::on_attribute(const char *id, matador::date &value, long /*size*/)
+void result_impl::on_attribute(const char *id, matador::date &value)
 {
   read_value(id, column_index_++, value);
 }
