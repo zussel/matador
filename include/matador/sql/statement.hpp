@@ -15,6 +15,8 @@ class sql;
 
 namespace detail {
   class statement_impl;
+  template < class Type >
+  class identifier_binder;
 }
 
 /**
@@ -130,9 +132,9 @@ public:
    * @return The next index to bind
    */
   template < class V >
-  std::size_t bind(std::size_t index, V &val)
+  std::size_t bind(std::size_t index, V &val, long size = -1)
   {
-    return p->bind<T>(val, index);
+    return p->bind<T>(val, size, index);
   }
 
   /**
@@ -171,6 +173,10 @@ public:
   {
     return p->is_log_enabled();
   }
+
+private:
+  template < class Type >
+  friend class detail::identifier_binder;
 
 private:
   std::unique_ptr<matador::detail::statement_impl> p;

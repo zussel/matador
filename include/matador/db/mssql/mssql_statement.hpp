@@ -31,10 +31,6 @@ public:
   detail::result_impl* execute() override;
   void reset() override;
   
-//  virtual int column_count() const;
-//  virtual const char* column_name(int i) const;
-
-
 protected:
   detail::parameter_binder_impl *binder() const override;
 
@@ -43,8 +39,6 @@ private:
 
 private:
   enum { NUMERIC_LEN = 21 };
-
-  bool bind_null_ = false;
 
   SQLHANDLE stmt_ = nullptr;
   SQLHANDLE db_ = nullptr;

@@ -18,10 +18,6 @@ public:
   explicit postgresql_parameter_binder(size_t bind_var_size);
   void reset() override;
 
-  void initialize_index(size_t index) override;
-  size_t next_index() override;
-  size_t current_index() const override;
-
   void bind(char i, size_t size) override;
   void bind(short i, size_t size) override;
   void bind(int i, size_t size) override;

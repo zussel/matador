@@ -62,6 +62,21 @@ detail::parameter_binder_impl *sqlite_statement::binder() const
   return binder_.get();
 }
 
+//bool sqlite_statement::is_valid_host_var_position(size_t pos) const
+//{
+//  return bind_vars().size() > (pos - 1);
+//}
+//
+//std::string sqlite_statement::bind_var_at(size_t pos) const
+//{
+//  return bind_vars().at(pos - 1);
+//}
+//
+//size_t sqlite_statement::normalize_position(size_t pos) const
+//{
+//  return pos;
+//}
+
 }
 
 }

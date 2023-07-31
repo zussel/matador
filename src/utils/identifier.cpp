@@ -56,7 +56,7 @@ std::string identifier::null_pk::str() const
 
 void identifier::null_pk::serialize(identifier_serializer &s)
 {
-  s.serialize(null_);
+  s.serialize(null_, -1);
 }
 
 size_t identifier::null_pk::hash() const

@@ -1,8 +1,6 @@
 #ifndef MATADOR_VALUE_VISITOR_HPP
 #define MATADOR_VALUE_VISITOR_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/utils/any_visitor.hpp"
 #include "matador/utils/serializer.hpp"
 #include "matador/utils/time.hpp"
@@ -18,7 +16,6 @@ class basic_dialect;
 
 namespace detail {
 
-//class OOS_SQL_API value_visitor
 class value_visitor
 {
 public:
@@ -49,7 +46,6 @@ private:
   const char *id_ = nullptr;
 };
 
-//class OOS_SQL_API value_to_string_visitor
 class value_to_string_visitor
 {
 public:

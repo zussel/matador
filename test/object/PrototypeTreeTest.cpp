@@ -12,18 +12,18 @@ using namespace std;
 PrototypeTreeTestUnit::PrototypeTreeTestUnit()
   : unit_test("prototype_tree", "Prototype Tree Test Unit")
 {
-  add_test("empty", std::bind(&PrototypeTreeTestUnit::test_empty, this), "test empty prototype tree");
-  add_test("insert", std::bind(&PrototypeTreeTestUnit::test_insert, this), "test insert element by template arguments");
-  add_test("find", std::bind(&PrototypeTreeTestUnit::test_find, this), "test find element");
-  add_test("remove", std::bind(&PrototypeTreeTestUnit::test_remove, this), "test remove element");
-  add_test("erase", std::bind(&PrototypeTreeTestUnit::test_erase, this), "test erase element");
-  add_test("clear", std::bind(&PrototypeTreeTestUnit::test_clear, this), "test clear prototype tree");
-  add_test("has_many", std::bind(&PrototypeTreeTestUnit::test_has_many, this), "test insert has_many relation");
-  add_test("decrement", std::bind(&PrototypeTreeTestUnit::test_decrement, this), "test decrement iterator");
-  add_test("count", std::bind(&PrototypeTreeTestUnit::test_count, this), "test count of prototypes");
-  add_test("child_of", std::bind(&PrototypeTreeTestUnit::test_child_of, this), "test child of element");
-  add_test("traverse", std::bind(&PrototypeTreeTestUnit::test_traverse, this), "test traversing the prototype tree");
-  add_test("const_traverse", std::bind(&PrototypeTreeTestUnit::test_const_traverse, this), "test const traversing the prototype tree");
+  add_test("empty", [this] { test_empty(); }, "test empty prototype tree");
+  add_test("insert", [this] { test_insert(); }, "test insert element by template arguments");
+  add_test("find", [this] { test_find(); }, "test find element");
+  add_test("remove", [this] { test_remove(); }, "test remove element");
+  add_test("erase", [this] { test_erase(); }, "test erase element");
+  add_test("clear", [this] { test_clear(); }, "test clear prototype tree");
+  add_test("has_many", [this] { test_has_many(); }, "test insert has_many relation");
+  add_test("decrement", [this] { test_decrement(); }, "test decrement iterator");
+  add_test("count", [this] { test_count(); }, "test count of prototypes");
+  add_test("child_of", [this] { test_child_of(); }, "test child of element");
+  add_test("traverse", [this] { test_traverse(); }, "test traversing the prototype tree");
+  add_test("const_traverse", [this] { test_const_traverse(); }, "test const traversing the prototype tree");
 }
 
 void PrototypeTreeTestUnit::test_empty()

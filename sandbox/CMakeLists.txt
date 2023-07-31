@@ -1,10 +1,12 @@
-SET (SANDBOX_SOURCES sandbox.cpp ../include/matador/object/serialization.hpp)
+SET (SANDBOX_SOURCES sandbox.cpp)
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 
 ADD_EXECUTABLE(di di.cpp)
 
 ADD_EXECUTABLE(reactor reactor.cpp)
+
+ADD_EXECUTABLE(row row.cpp)
 
 TARGET_LINK_LIBRARIES(reactor
   matador-utils
@@ -27,5 +29,16 @@ TARGET_LINK_LIBRARIES(sandbox
     ${CMAKE_DL_LIBS}
     ${MATADOR_DB_LIBRARIES}
     ${NET_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+
+TARGET_LINK_LIBRARIES(row
+    matador-unit
+    matador-utils
+    matador-json
+    matador-logger
+    matador-object
+    matador-sql
+    ${CMAKE_DL_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
 )

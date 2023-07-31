@@ -1,8 +1,6 @@
 #ifndef OOS_VALUE_SERIALIZER_HPP
 #define OOS_VALUE_SERIALIZER_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/utils/access.hpp"
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/serializer.hpp"
@@ -24,16 +22,16 @@ public:
   explicit value_identifier_serializer(value_serializer &serializer)
   : serializer_(serializer) {}
 
-  void serialize(short &value) override { extract_value(value); }
-  void serialize(int &value) override { extract_value(value); }
-  void serialize(long &value) override { extract_value(value); }
-  void serialize(long long &value) override { extract_value(value); }
-  void serialize(unsigned short &value) override { extract_value(value); }
-  void serialize(unsigned int &value) override { extract_value(value); }
-  void serialize(unsigned long &value) override { extract_value(value); }
-  void serialize(unsigned long long &value) override { extract_value(value); }
-  void serialize(std::string &value) override { extract_value(value); }
-  void serialize(null_type_t &) override;
+  void serialize(short &value, long /*size*/) override { extract_value(value); }
+  void serialize(int &value, long /*size*/) override { extract_value(value); }
+  void serialize(long &value, long /*size*/) override { extract_value(value); }
+  void serialize(long long &value, long /*size*/) override { extract_value(value); }
+  void serialize(unsigned short &value, long /*size*/) override { extract_value(value); }
+  void serialize(unsigned int &value, long /*size*/) override { extract_value(value); }
+  void serialize(unsigned long &value, long /*size*/) override { extract_value(value); }
+  void serialize(unsigned long long &value, long /*size*/) override { extract_value(value); }
+  void serialize(std::string &value, long /*size*/) override { extract_value(value); }
+  void serialize(null_type_t &, long /*size*/) override;
 
 private:
   template < typename ValueType >

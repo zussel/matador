@@ -79,6 +79,8 @@ protected:
   bool prepare_fetch() override;
   bool finalize_fetch() override;
 
+  void read_foreign_object(const char *id, identifiable_holder &x) override;
+
 private:
 
   template < class T >

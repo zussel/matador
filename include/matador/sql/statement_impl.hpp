@@ -1,8 +1,6 @@
 #ifndef OOS_STATEMENT_IMPL_HPP
 #define OOS_STATEMENT_IMPL_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/sql/result.hpp"
 #include "matador/sql/parameter_binder.hpp"
 
@@ -14,7 +12,6 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-//class OOS_SQL_API statement_impl
 class statement_impl
 {
 public:
@@ -43,20 +40,9 @@ public:
   }
 
   template < class T, class V >
-  size_t bind(V &val, size_t pos)
+  size_t bind(V &val, long /*size*/, size_t pos)
   {
-    T obj;
-    // get column name at pos
-    if (pos >= bind_vars().size()) {
-      throw std::out_of_range("host index out of range");
-    }
-
-    host_var_ = bind_vars().at(pos);
-
-    matador::parameter_binder<typename std::remove_const<V>::type> binder(host_var_, val, pos, this->binder());
-    pos = binder.bind(obj);
-
-    host_var_.clear();
+    this->binder()->bind(val, pos++);
 
     return pos;
   }
@@ -64,6 +50,8 @@ public:
   std::string str() const;
   const std::vector<std::string>& bind_vars() const;
   const std::vector<std::string>& columns() const;
+
+  bool is_valid_host_var(const std::string &host_var, size_t pos) const;
 
   void log(const std::string &stmt) const;
 

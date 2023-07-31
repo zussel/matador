@@ -27,27 +27,26 @@ public:
 
   void make_typed_column(const char *id, identifier &pk);
 
-  void serialize(short &value) override { make_typed_column(value); }
-  void serialize(int &value) override { make_typed_column(value); }
-  void serialize(long &value) override { make_typed_column(value); }
-  void serialize(long long &value) override { make_typed_column(value); }
-  void serialize(unsigned short &value) override { make_typed_column(value); }
-  void serialize(unsigned int &value) override { make_typed_column(value); }
-  void serialize(unsigned long &value) override { make_typed_column(value); }
-  void serialize(unsigned long long &value) override { make_typed_column(value); }
-  void serialize(std::string &value) override { make_typed_column(value); }
-  void serialize(null_type_t &) override {}
+  void serialize(short &value, long size) override { make_typed_column(value, size); }
+  void serialize(int &value, long size) override { make_typed_column(value, size); }
+  void serialize(long &value, long size) override { make_typed_column(value, size); }
+  void serialize(long long &value, long size) override { make_typed_column(value, size); }
+  void serialize(unsigned short &value, long size) override { make_typed_column(value, size); }
+  void serialize(unsigned int &value, long size) override { make_typed_column(value, size); }
+  void serialize(unsigned long &value, long size) override { make_typed_column(value, size); }
+  void serialize(unsigned long long &value, long size) override { make_typed_column(value, size); }
+  void serialize(std::string &value, long size) override { make_typed_column(value, size); }
+  void serialize(null_type_t &, long /*size*/) override {}
 
 private:
   template < typename ValueType >
-  void make_typed_column(ValueType &value);
+  void make_typed_column(ValueType &value, long size);
 
 private:
   const char *id_{};
   typed_column_serializer &serializer_;
 };
 
-//class OOS_SQL_API typed_column_serializer
 class typed_column_serializer
 {
 public:
@@ -134,13 +133,12 @@ void typed_column_serializer::on_primary_key(const char *id, V &x, long size)
 }
 
 template<typename ValueType>
-void typed_column_identifier_serializer::make_typed_column(ValueType &value)
+void typed_column_identifier_serializer::make_typed_column(ValueType &value, long size)
 {
-  serializer_.on_attribute(id_, value);
+  serializer_.on_attribute(id_, value, size);
 }
 
 }
-
 }
 
 #endif //OOS_TYPED_COLUMN_SERIALIZER_HPP

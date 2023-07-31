@@ -333,8 +333,8 @@ void DialectTestUnit::test_update_query()
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+  cols->push_back(detail::make_value_column("name", dieter, 255));
+  cols->push_back(detail::make_value_column("age", age54, -1));
 
   s.append(cols.release());
 
@@ -358,8 +358,8 @@ void DialectTestUnit::test_update_where_query()
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+  cols->push_back(detail::make_value_column("name", dieter, 255));
+  cols->push_back(detail::make_value_column("age", age54, -1));
 
   s.append(cols.release());
 
@@ -387,8 +387,8 @@ void DialectTestUnit::test_update_prepare_query()
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+  cols->push_back(detail::make_value_column("name", dieter, 255));
+  cols->push_back(detail::make_value_column("age", age54, -1));
 
   s.append(cols.release());
 
@@ -411,8 +411,8 @@ void DialectTestUnit::test_update_where_prepare_query()
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+  cols->push_back(detail::make_value_column("name", dieter, 255));
+  cols->push_back(detail::make_value_column("age", age54, -1));
 
   s.append(cols.release());
 

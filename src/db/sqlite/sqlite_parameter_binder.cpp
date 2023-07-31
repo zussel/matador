@@ -1,7 +1,3 @@
-//
-// Created by sascha on 08.09.19.
-//
-
 #include <cstring>
 #include "matador/db/sqlite/sqlite_parameter_binder.hpp"
 #include "matador/db/sqlite/sqlite_exception.hpp"
@@ -24,96 +20,85 @@ void sqlite_parameter_binder::reset()
   index_ = 1;
 }
 
-void sqlite_parameter_binder::initialize_index(size_t index)
-{
-  index_ = index + 1;
-}
-
-size_t sqlite_parameter_binder::next_index()
-{
-  return index_++;
-}
-
-size_t sqlite_parameter_binder::current_index() const
-{
-  return index_ - 1;
+int adjust_index(size_t index) {
+  return (int)index + 1;
 }
 
 void sqlite_parameter_binder::bind(char i, size_t index)
 {
-  int ret = sqlite3_bind_int(stmt_, (int)index, i);
+  int ret = sqlite3_bind_int(stmt_, adjust_index(index), i);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(short i, size_t index)
 {
-  int ret = sqlite3_bind_int(stmt_, (int)index, i);
+  int ret = sqlite3_bind_int(stmt_, adjust_index(index), i);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(int i, size_t index)
 {
-  int ret = sqlite3_bind_int(stmt_, (int)index, i);
+  int ret = sqlite3_bind_int(stmt_, adjust_index(index), i);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(long i, size_t index)
 {
-  int ret = sqlite3_bind_int(stmt_, (int)index, i);
+  int ret = sqlite3_bind_int(stmt_, adjust_index(index), i);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(long long i, size_t index)
 {
-  int ret = sqlite3_bind_int64(stmt_, (int)index, i);
+  int ret = sqlite3_bind_int64(stmt_, adjust_index(index), i);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(unsigned char i, size_t index)
 {
-  int ret = sqlite3_bind_int(stmt_, (int)index, i);
+  int ret = sqlite3_bind_int(stmt_, adjust_index(index), i);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(unsigned short i, size_t index)
 {
-  int ret = sqlite3_bind_int(stmt_, (int)index, i);
+  int ret = sqlite3_bind_int(stmt_, adjust_index(index), i);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(unsigned int i, size_t index)
 {
-  int ret = sqlite3_bind_int(stmt_, (int)index, i);
+  int ret = sqlite3_bind_int(stmt_, adjust_index(index), i);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(unsigned long i, size_t index)
 {
-  int ret = sqlite3_bind_int(stmt_, (int)index, i);
+  int ret = sqlite3_bind_int(stmt_, adjust_index(index), i);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(unsigned long long i, size_t index)
 {
-  int ret = sqlite3_bind_int64(stmt_, (int)index, i);
+  int ret = sqlite3_bind_int64(stmt_, adjust_index(index), i);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(bool b, size_t index)
 {
-  int ret = sqlite3_bind_int(stmt_, (int)index, b);
+  int ret = sqlite3_bind_int(stmt_, adjust_index(index), b);
   throw_database_error(ret, db_, "sqlite3_bind_int");
 }
 
 void sqlite_parameter_binder::bind(float d, size_t index)
 {
-  int ret = sqlite3_bind_double(stmt_, (int)index, d);
+  int ret = sqlite3_bind_double(stmt_, adjust_index(index), d);
   throw_database_error(ret, db_, "sqlite3_bind_double");
 }
 
 void sqlite_parameter_binder::bind(double d, size_t index)
 {
-  int ret = sqlite3_bind_double(stmt_, (int)index, d);
+  int ret = sqlite3_bind_double(stmt_, adjust_index(index), d);
   throw_database_error(ret, db_, "sqlite3_bind_double");
 }
 
@@ -121,13 +106,13 @@ void sqlite_parameter_binder::bind(const char *x, size_t len, size_t index)
 {
   auto size = strlen(x);
   len = (size > len) ? len : size;
-  int ret = sqlite3_bind_text(stmt_, (int)index, x, (int)len, nullptr);
+  int ret = sqlite3_bind_text(stmt_, adjust_index(index), x, (int)len, nullptr);
   throw_database_error(ret, db_, "sqlite3_bind_text");
 }
 
 void sqlite_parameter_binder::bind(const std::string &x, size_t index)
 {
-  int ret = sqlite3_bind_text(stmt_, (int)index, x.c_str(), (int)x.size(), nullptr);
+  int ret = sqlite3_bind_text(stmt_, adjust_index(index), x.c_str(), (int)x.size(), nullptr);
   throw_database_error(ret, db_, "sqlite3_bind_text");
 }
 
@@ -135,7 +120,7 @@ void sqlite_parameter_binder::bind(const std::string &x, size_t len, size_t inde
 {
   auto size = x.size();
   len = (size > len) ? len : size;
-  int ret = sqlite3_bind_text(stmt_, (int)index, x.data(), (int)len, nullptr);
+  int ret = sqlite3_bind_text(stmt_, adjust_index(index), x.data(), (int)len, nullptr);
   throw_database_error(ret, db_, "sqlite3_bind_text");
 }
 

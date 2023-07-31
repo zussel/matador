@@ -1,8 +1,6 @@
 #ifndef OOS_COLUMN_HPP
 #define OOS_COLUMN_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/sql/token.hpp"
 #include "matador/sql/value.hpp"
 #include "matador/sql/basic_dialect.hpp"
@@ -15,7 +13,6 @@ namespace matador {
  * Represents a database column consisting of
  * name.
  */
-//struct OOS_SQL_API column : public detail::token
 struct column : public detail::token
 {
   /**
@@ -23,15 +20,15 @@ struct column : public detail::token
    *
    * @param col The name of the column
    */
-  explicit column(const std::string &col);
+  explicit column(std::string col);
 
   /**
    * @brief Creates a new column with given name
    *
    * @param col The name of the column
-   * @param skipquotes True if the column shouldn't get quotes
+   * @param skip_quotes True if the column shouldn't get quotes
    */
-  column(const std::string &col, bool skipquotes);
+  column(std::string col, bool skip_quotes);
 
   /**
    * @brief Interface according to the visitor pattern.
@@ -47,7 +44,6 @@ struct column : public detail::token
 /**
  * @brief Represents a list of database columns.
  */
-//struct OOS_SQL_API columns : public detail::token
 struct columns : public detail::token
 {
   /**
@@ -166,7 +162,6 @@ private:
  * @return A column object with given name
  */
 column operator "" _col(const char *name, size_t len);
-//OOS_SQL_API column operator "" _col(const char *name, size_t len);
 
 namespace detail {
 struct typed_column;
@@ -201,7 +196,6 @@ std::shared_ptr<detail::typed_column> make_typed_column(const std::string &col)
  * @return The varchar typed column
  */
 std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col, size_t size);
-//OOS_SQL_API std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col, size_t size);
 
 /**
  * @brief Create a identifier typed column object
@@ -223,7 +217,6 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-//struct OOS_SQL_API typed_column : public matador::column
 struct typed_column : public matador::column
 {
   typed_column(const std::string &col, data_type t);
@@ -236,7 +229,6 @@ struct typed_column : public matador::column
   bool is_host = false;
 };
 
-//struct OOS_SQL_API typed_identifier_column : public typed_column
 struct typed_identifier_column : public typed_column
 {
   typed_identifier_column(const std::string &n, data_type t) : typed_column(n, t) { }
@@ -248,7 +240,6 @@ struct typed_identifier_column : public typed_column
   }
 };
 
-//struct OOS_SQL_API typed_varchar_column : public typed_column
 struct typed_varchar_column : public typed_column
 {
   typed_varchar_column(const std::string &n, size_t size, data_type t)
@@ -268,7 +259,6 @@ struct typed_varchar_column : public typed_column
   size_t size;
 };
 
-//struct OOS_SQL_API identifier_varchar_column : public typed_varchar_column
 struct identifier_varchar_column : public typed_varchar_column
 {
   identifier_varchar_column(const char *n, size_t size, data_type t, size_t idx, bool host)
@@ -281,15 +271,15 @@ struct identifier_varchar_column : public typed_varchar_column
   }
 };
 
-//struct OOS_SQL_API basic_value_column : public column
-struct basic_value_column : public column
+
+struct value_column : public column
 {
-  basic_value_column(const std::string &col, value *val)
+  value_column(const std::string &col, value *val)
     : column(col)
     , value_(val)
   { }
 
-  basic_value_column(const char *col, value *val)
+  value_column(const char *col, value *val)
     : column(col)
     , value_(val)
   { }
@@ -302,81 +292,16 @@ struct basic_value_column : public column
   std::unique_ptr<value> value_;
 };
 
-template < class T >
-struct value_column : public basic_value_column
-{
-  value_column(const std::string &col, value *val)
-    : basic_value_column(col, val)
-  { }
+template < typename Type >
+std::shared_ptr<value_column> make_value_column(const std::string &col, const Type &val, long /*size*/) {
+  return std::make_shared<value_column>(col, new value(val));
+}
 
-  value_column(const std::string &col, const T& val)
-    : basic_value_column(col, new value(val))
-  { }
+std::shared_ptr<value_column> make_value_column(const std::string &col, const std::string &val, long size);
 
-  value_column(const char *col, const T& val)
-  : basic_value_column(col, new value(val))
-  { }
-};
+std::shared_ptr<value_column> make_value_column(const std::string &col, const char *val, long size);
 
-template <>
-struct value_column<char*> : public basic_value_column
-{
-  value_column(const std::string &col, value *val)
-  : basic_value_column(col, val)
-  { }
-
-  value_column(const std::string &col, char* val, long size)
-    : basic_value_column(col, new value(val, size))
-  { }
-
-  value_column(const std::string &col, char* val)
-    : basic_value_column(col, new value(val))
-  { }
-
-  value_column(const char *col, char* val, long size)
-  : basic_value_column(col, new value(val, size))
-  { }
-};
-
-template <>
-struct value_column<const char*> : public basic_value_column
-{
-  value_column(const std::string &col, value *val)
-  : basic_value_column(col, val)
-  { }
-
-  value_column(const std::string &col, const char* val, long size)
-    : basic_value_column(col, new value(val, size))
-  { }
-
-  value_column(const char *col, const char* val, long size)
-  : basic_value_column(col, new value(val, size))
-  { }
-};
-
-template <>
-struct value_column<std::string> : public basic_value_column
-{
-  value_column(const std::string &col, value *val)
-  : basic_value_column(col, val)
-  { }
-
-  value_column(const std::string &col, const std::string &val, long size)
-    : basic_value_column(col, new value(val, size))
-  { }
-
-  value_column(const char *col, const std::string &val, long size)
-  : basic_value_column(col, new value(val, size))
-  { }
-
-  value_column(const char *col, const std::string &val)
-  : basic_value_column(col, new value(val))
-  { }
-
-  value_column(const std::string &col, const std::string &val)
-  : basic_value_column(col, new value(val))
-  { }
-};
+std::shared_ptr<value_column> make_value_column(const std::string &col, char *val, long size);
 
 /// @endcond
 

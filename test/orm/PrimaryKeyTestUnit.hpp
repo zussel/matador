@@ -1,7 +1,3 @@
-//
-// Created by sascha on 27.10.19.
-//
-
 #ifndef MATADOR_PRIMARYKEYTESTUNIT_HPP
 #define MATADOR_PRIMARYKEYTESTUNIT_HPP
 
@@ -13,7 +9,6 @@ public:
   PrimaryKeyTestUnit(const std::string &prefix, std::string dns);
 
   void test_long_pk();
-  void test_string_pk();
   void test_varchar_pk();
 
 private:

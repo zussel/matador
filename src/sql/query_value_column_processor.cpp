@@ -8,7 +8,7 @@ query_value_column_processor::query_value_column_processor(
   std::vector<matador::any> rowvalues
 )
   : update_columns_(std::move(update_columns))
-  , rowvalues_(std::move(rowvalues))
+  , row_values_(std::move(rowvalues))
 {
   visitor_.register_visitor<char>([this](char &val) { this->process(val); });
   visitor_.register_visitor<short>([this](short &val) { this->process(val); });
@@ -31,20 +31,18 @@ query_value_column_processor::query_value_column_processor(
 void query_value_column_processor::execute(std::pair<std::string, matador::any> &a)
 {
   current_id_ = a.first;
-  rowvalues_.push_back(a.second);
-  visitor_.visit(rowvalues_.back());
+  row_values_.push_back(a.second);
+  visitor_.visit(row_values_.back());
 }
 
 void query_value_column_processor::process(char *val)
 {
-  std::shared_ptr<detail::value_column<const char*>> ival(new detail::value_column<const char*>(current_id_, val, strlen(val)));
-  update_columns_->push_back(ival);
+  update_columns_->push_back(detail::make_value_column(current_id_, val, -1));
 }
 
 void query_value_column_processor::process(const char *val)
 {
-  std::shared_ptr<detail::value_column<const char*>> ival(new detail::value_column<const char*>(current_id_, val, strlen(val)));
-  update_columns_->push_back(ival);
+  update_columns_->push_back(detail::make_value_column(current_id_, val, -1));
 }
 
 }
