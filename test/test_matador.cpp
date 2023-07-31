@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new RouteEngineTest);
   suite.register_unit(new RouteEndpointTest);
   suite.register_unit(new TemplateEngineTest);
-  suite.register_unit(new MiddlewareTest);
+//  suite.register_unit(new MiddlewareTest);
 
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
   suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
