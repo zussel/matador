@@ -63,7 +63,7 @@ using namespace matador
 // a simple person class
 struct person
 {
-  identifier<long> id;   // primary key
+  long id;   // primary key
   std::string name;
   date birthday;
   has_many<std::string> colors;
@@ -75,14 +75,14 @@ struct person
   
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer) {
-    serializer.serialize("id", id);
-    serializer.serialize("name", name, 255);
-    serializer.serialize("birthday", birthday);
-    serializer.serialize("person_color",  // relation table name
-                         colors,          // class member
-                         "person_id",     // left column in relation table
-                         "color",         // right column in relation table
-                         matador::cascade_type::ALL); // cascade type
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("name", name, 255);
+    serializer.on_attribute("birthday", birthday);
+    serializer.on_has_many("person_color",  // relation table name
+                           colors,          // class member
+                           "person_id",     // left column in relation table
+                           "color",         // right column in relation table
+                           matador::cascade_type::ALL); // cascade type
   }
 };
 
