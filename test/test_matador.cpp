@@ -213,18 +213,18 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new SQLiteDialectTestUnit());
 //#endif
 //
-//#if defined(MATADOR_POSTGRESQL) && defined(MATADOR_POSTGRESQL_TEST)
-//  suite.register_unit(new ConnectionTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new QueryTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new BlogUnitTest("postgresql", ::connection::postgresql));
-//  suite.register_unit(new PrimaryKeyTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new JsonOrmTest("postgresql", ::connection::postgresql));
-//  suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
-//  suite.register_unit(new PostgreSQLDialectTestUnit());
-//#endif
+#if defined(MATADOR_POSTGRESQL) && defined(MATADOR_POSTGRESQL_TEST)
+  suite.register_unit(new ConnectionTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new QueryTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new BlogUnitTest("postgresql", ::connection::postgresql));
+  suite.register_unit(new PrimaryKeyTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new JsonOrmTest("postgresql", ::connection::postgresql));
+  suite.register_unit(new OrmReloadTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new PostgreSQLDialectTestUnit());
+#endif
 
 //  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 
