@@ -162,7 +162,7 @@ void sha256(const char *input, size_t length, unsigned char *digest, size_t)
 
   SHA256 ctx = SHA256();
   ctx.init();
-  ctx.update(reinterpret_cast<const unsigned char *>(input), length);
+  ctx.update(reinterpret_cast<const unsigned char *>(input), static_cast<unsigned int>(length));
   ctx.final(digest);
 }
 

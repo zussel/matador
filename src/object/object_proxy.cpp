@@ -151,11 +151,11 @@ bool object_proxy::valid() const
   return object_type_entry_->store() && prev_ && next_;
 }
 
-unsigned long object_proxy::id() const {
+unsigned long long object_proxy::id() const {
   return oid;
 }
 
-void object_proxy::id(unsigned long i)
+void object_proxy::id(unsigned long long i)
 {
   oid = i;
 }

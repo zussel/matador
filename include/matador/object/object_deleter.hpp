@@ -38,7 +38,7 @@ private:
   };
 
 private:
-  typedef std::map<unsigned long, t_object_count> t_objects_to_remove_map;
+  typedef std::map<unsigned long long, t_object_count> t_objects_to_remove_map;
   typedef std::vector<std::function<void()>> t_relations_to_remove_map;
 
 public:

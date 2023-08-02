@@ -668,7 +668,7 @@ public:
    * @return On success it returns an object proxy on failure null
    *
    */
-  object_proxy *find_proxy(unsigned long id) const;
+  object_proxy *find_proxy(unsigned long long id) const;
 
   /**
    * Insert object proxy into object store
@@ -806,7 +806,7 @@ private:
   // typeid to prototype node map
   t_typeid_prototype_map typeid_prototype_map_;
 
-  typedef std::unordered_map<long, object_proxy *> t_object_proxy_map;
+  typedef std::unordered_map<unsigned long long, object_proxy *> t_object_proxy_map;
   t_object_proxy_map object_map_;
 
   sequencer seq_;

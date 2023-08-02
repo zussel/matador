@@ -31,7 +31,7 @@ public:
    * @param classname The serializable type name.
    * @param id The id of the deleted serializable.
    */
-  delete_action(const char* classname, unsigned long id, object_proxy *proxy);
+  delete_action(const char* classname, unsigned long long id, object_proxy *proxy);
 
   /**
    * Creates an delete_action.
@@ -60,7 +60,7 @@ public:
    */
   const identifier& pk() const;
 
-  unsigned long id() const;
+  unsigned long long id() const;
 
   object_proxy* proxy() const;
 
@@ -72,7 +72,7 @@ public:
 
 private:
   std::string classname_;
-  unsigned long id_ = 0;
+  unsigned long long id_ = 0;
   object_proxy *proxy_ = nullptr;
 
   bool deleted_ = false;

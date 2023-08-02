@@ -1,8 +1,6 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/sql/basic_query.hpp"
 #include "matador/sql/dialect_token.hpp"
 #include "matador/sql/column.hpp"

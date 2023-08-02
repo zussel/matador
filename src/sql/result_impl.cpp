@@ -134,7 +134,7 @@ void result_impl::read_foreign_object(const char */*id*/, identifiable_holder &x
   }
 }
 
-size_t result_impl::column_index() const
+result_impl::size_type result_impl::column_index() const
 {
   return column_index_;
 }

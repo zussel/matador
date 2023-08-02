@@ -98,7 +98,7 @@ public:
     typename basic_has_many<T, C>::iterator last = x.end();
 
     while (first != last) {
-      unsigned long oid(0);
+      unsigned long long oid(0);
       if (first.holder_item().item_proxy()) {
         oid = first.holder_item().item_proxy()->id();
       }

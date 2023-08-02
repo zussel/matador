@@ -3,6 +3,9 @@
 
 #include "matador/sql/parameter_binder.hpp"
 
+#if defined(_MSC_VER)
+#include <WinSock2.h>
+#endif
 #include <sqltypes.h>
 
 #include <vector>

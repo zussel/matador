@@ -8,6 +8,7 @@
     #define OOS_MSSQL_API __declspec(dllimport)
   #endif
   #pragma warning(disable: 4355)
+  #pragma warning(disable: 4275)
 #else
   #define OOS_MSSQL_API
 #endif

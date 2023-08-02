@@ -4,7 +4,7 @@
 
 namespace matador {
 
-delete_action::delete_action(const char* classname, unsigned long id, object_proxy *proxy)
+delete_action::delete_action(const char* classname, unsigned long long id, object_proxy *proxy)
   : classname_(classname)
   , id_(id)
   , proxy_(proxy)
@@ -36,7 +36,7 @@ const identifier& delete_action::pk() const
   return proxy_->pk();
 }
 
-unsigned long delete_action::id() const
+unsigned long long delete_action::id() const
 {
   return id_;
 }

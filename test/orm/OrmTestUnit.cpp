@@ -136,7 +136,7 @@ void OrmTestUnit::test_table()
 
   s.flush();
 
-  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+  UNIT_EXPECT_GREATER(hans->id(), 0ULL);
 
   UNIT_ASSERT_TRUE(is_loaded(hans));
 
@@ -174,7 +174,7 @@ void OrmTestUnit::test_insert()
 
   s.flush();
 
-  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+  UNIT_EXPECT_GREATER(hans->id(), 0ULL);
 
   matador::query<person> q("person");
   auto res = q.select().where(matador::column("name") == "hans").execute(p.conn());
@@ -214,7 +214,7 @@ void OrmTestUnit::test_select()
 
   for (auto const &name : names) {
     auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
-  	UNIT_EXPECT_GREATER(pptr->id(), 0UL);
+  	UNIT_EXPECT_GREATER(pptr->id(), 0ULL);
   }
 
   s.flush();
@@ -246,11 +246,11 @@ void OrmTestUnit::test_update()
 
   s.flush();
 
-  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+  UNIT_EXPECT_GREATER(hans->id(), 0ULL);
   UNIT_EXPECT_EQUAL(hans->height(), 180U);
   UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
-  UNIT_EXPECT_GREATER(george->id(), 0UL);
+  UNIT_EXPECT_GREATER(george->id(), 0ULL);
   UNIT_EXPECT_EQUAL(george->height(), 189U);
   UNIT_EXPECT_EQUAL(george->birthdate(), birthday);
 
@@ -300,7 +300,7 @@ void OrmTestUnit::test_delete()
 
   s.flush();
 
-  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+  UNIT_EXPECT_GREATER(hans->id(), 0ULL);
 
   matador::query<person> q("person");
   matador::connection c(dns_);
@@ -344,8 +344,8 @@ void OrmTestUnit::test_multiple_delete()
 
   s.flush();
 
-  UNIT_EXPECT_GREATER(hans->id(), 0UL);
-  UNIT_EXPECT_GREATER(george->id(), 0UL);
+  UNIT_EXPECT_GREATER(hans->id(), 0ULL);
+  UNIT_EXPECT_GREATER(george->id(), 0ULL);
 
   matador::query<person> q("person");
   matador::connection c(dns_);
@@ -396,7 +396,7 @@ void OrmTestUnit::test_save()
   matador::date birthday(18, 5, 1980);
   auto hans = s.save(new person("hans", birthday, 180));
 
-  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+  UNIT_EXPECT_GREATER(hans->id(), 0ULL);
   UNIT_EXPECT_EQUAL(hans->height(), 180U);
   UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
@@ -450,7 +450,7 @@ void OrmTestUnit::test_flush()
   matador::date birthday(18, 5, 1980);
   auto hans = s.insert(new person("hans", birthday, 180));
 
-  UNIT_EXPECT_GREATER(hans->id(), 0UL);
+  UNIT_EXPECT_GREATER(hans->id(), 0ULL);
   UNIT_EXPECT_EQUAL(hans->height(), 180U);
   UNIT_EXPECT_EQUAL(hans->birthdate(), birthday);
 
@@ -458,7 +458,7 @@ void OrmTestUnit::test_flush()
 
   auto george = s.insert(new person("george", birthday, 154));
 
-  UNIT_EXPECT_GREATER(george->id(), 0UL);
+  UNIT_EXPECT_GREATER(george->id(), 0ULL);
   UNIT_EXPECT_EQUAL(george->height(), 154U);
   UNIT_EXPECT_EQUAL(george->birthdate(), birthday);
 

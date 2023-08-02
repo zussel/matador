@@ -140,7 +140,7 @@ bool object_holder::is_loaded() const
   return (proxy_ && proxy_->obj());
 }
 
-unsigned long object_holder::id() const
+unsigned long long object_holder::id() const
 {
   return (proxy_ ? proxy_->id() : 0);
 }

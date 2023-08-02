@@ -27,7 +27,7 @@ public:
 
   void sync_id(object_proxy *proxy) const override
   {
-    identifier_setter<unsigned long>::assign(proxy->id(), proxy->obj<T>());
+    identifier_setter<unsigned long long>::assign(proxy->id(), proxy->obj<T>());
   }
 
   void restore(object_proxy *proxy, byte_buffer &buffer, object_deserializer &deserializer) const override

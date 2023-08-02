@@ -301,14 +301,14 @@ public:
    *
    * @return 0 (null) or the id of the object.
    */
-  unsigned long id() const;
+  unsigned long long id() const;
 
   /**
    * Sets the id of the object_proxy.
    *
    * @param i New id of the proxy.
    */
-  void id(unsigned long i);
+  void id(unsigned long long i);
 
   /**
    * Returns true if the underlying
@@ -373,7 +373,7 @@ private:
   create_func creator_ = nullptr;
   name_func name_ = nullptr;                 /**< The object classname function */
 
-  unsigned long oid = 0;                      /**< The id of the concrete or expected object. */
+  unsigned long long oid = 0;                      /**< The id of the concrete or expected object. */
 
   unsigned long reference_counter_ = 0;
 

@@ -158,7 +158,7 @@ bool object_store::empty() const
   return is_empty;
 }
 
-object_proxy* object_store::find_proxy(unsigned long id) const
+object_proxy* object_store::find_proxy(unsigned long long id) const
 {
   auto i = object_map_.find(id);
   if (i == object_map_.end()) {

@@ -206,7 +206,7 @@ public:
    * 
    * @return The id of the object.
    */
-  unsigned long id() const;
+  unsigned long long id() const;
 
   /**
    * Returns the corresponding

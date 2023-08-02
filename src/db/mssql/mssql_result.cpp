@@ -147,7 +147,7 @@ void mssql_result::read_value(const char *id, size_type index, double &x)
 void mssql_result::read_value(const char *, size_type index, char *x, long size)
 {
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, index, SQL_C_CHAR, x, size, &info);
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, x, size, &info);
   if (ret == SQL_SUCCESS) {
     return;
   } else {
@@ -179,7 +179,7 @@ void mssql_result::read_column(const char *, size_type index, std::string &val)
 {
   char buf[1024];
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, index, SQL_C_CHAR, buf, 1024, &info);
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf, 1024, &info);
   if (SQL_SUCCEEDED(ret)) {
     val.assign(buf, info);
   } else {
@@ -194,7 +194,7 @@ void mssql_result::read_column(const char *, size_type index, std::string &val, 
   }
   std::vector<char> buf(s, 0);
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, index, SQL_C_CHAR, buf.data(), s, &info);
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf.data(), s, &info);
   if (SQL_SUCCEEDED(ret)) {
     val.assign(buf.data(), info);
   } else {

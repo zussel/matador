@@ -43,13 +43,13 @@ void object_serializer::on_attribute(const char *id, time &x, long /*size*/)
 
 void object_serializer::on_belongs_to(const char *id, object_holder &x, cascade_type)
 {
-  unsigned long oid = x.id();
+  auto oid = x.id();
   on_attribute(id, oid);
 }
 
 void object_serializer::on_has_one(const char *id, object_holder &x, cascade_type)
 {
-  unsigned long oid = x.id();
+  auto oid = x.id();
   on_attribute(id, oid);
 }
 

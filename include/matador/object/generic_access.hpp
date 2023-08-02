@@ -176,7 +176,7 @@ bool get(const O &obj, const std::string &name, T &val)
 template < typename O >
 bool get(const O &obj, const std::string &name, char *val, size_t size)
 {
-  attribute_writer<char*> writer(name, val, size);
+  attribute_writer<char*> writer(name, val, static_cast<long>(size));
   matador::access::serialize(writer, const_cast<O&>(obj));
   return writer.success();
 }
