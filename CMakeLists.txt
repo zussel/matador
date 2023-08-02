@@ -97,14 +97,15 @@ endif()
 SET(NET_LIBRARIES)
 
 if (WIN32)
-  find_library(WSOCK32_LIBRARY wsock32)
-  find_library(WS2_32_LIBRARY ws2_32)
+#  find_library(WSOCK32_LIBRARY wsock32)
+#  find_library(WS2_32_LIBRARY ws2_32)
 
-  message(STATUS "WSOCK32 ${WSOCK32_LIBRARY}")
-  message(STATUS "WS2_32 ${WS2_32_LIBRARY}")
+#  message(STATUS "WSOCK32 ${WSOCK32_LIBRARY}")
+#  message(STATUS "WS2_32 ${WS2_32_LIBRARY}")
 
   MESSAGE(STATUS "Appending Windows Socket libs")
-  LIST(APPEND NET_LIBRARIES ${WSOCK32_LIBRARY} ${WS2_32_LIBRARY})
+  LIST(APPEND NET_LIBRARIES wsock32 ws2_32)
+#  LIST(APPEND NET_LIBRARIES ${WSOCK32_LIBRARY} ${WS2_32_LIBRARY})
 endif()
 # Put the libaries and binaries that get built into directories at the
 # top of the build tree rather than in hard-to-find leaf
