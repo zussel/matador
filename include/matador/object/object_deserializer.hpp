@@ -149,7 +149,7 @@ public:
 
     x.reset();
 
-    for (typename basic_has_many<T, C>::size_type i = 0; i < s; ++i) {
+    for (auto i = 0; i < s; ++i) {
 
       // deserialize all items
       unsigned long oid = 0;
