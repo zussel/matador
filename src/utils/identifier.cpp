@@ -4,18 +4,11 @@
 #include <ostream>
 
 namespace matador {
-namespace detail {
-std::string to_string(const std::string &value) {
-  return value;
-}
 
-bool is_valid(const std::string &value) {
-  return !value.empty();
-}
-}
-
-identifier::base::base(const std::type_index &ti)
-  : type_index_(ti) {}
+identifier::base::base(const std::type_index &ti, detail::identifier_type id_type)
+  : type_index_(ti)
+  , identifier_type_(id_type)
+{}
 
 //bool identifier::base::is_same_type(const base &x) const {
 //  return type_index_ == x.type_index_;
@@ -25,8 +18,18 @@ identifier::base::base(const std::type_index &ti)
 //  return type_index_ == x;
 //}
 
+bool identifier::base::is_similar_type(const identifier::base &x) const
+{
+  return identifier_type_ == x.type();
+}
+
+detail::identifier_type identifier::base::type() const
+{
+  return identifier_type_;
+}
+
 identifier::null_pk::null_pk()
-  : base(std::type_index(typeid(null_type_t)))
+  : base(std::type_index(typeid(null_type_t)), detail::identifier_type_traits<null_type_t>::type())
 {}
 
 identifier::base* identifier::null_pk::copy() const
@@ -48,12 +51,12 @@ bool identifier::null_pk::less(const identifier::base &x) const
 
 bool identifier::null_pk::is_valid() const
 {
-  return false;
+  return detail::identifier_type_traits<null_type_t>::is_valid();
 }
 
 std::string identifier::null_pk::str() const
 {
-  return "null_pk";
+  return detail::identifier_type_traits<null_type_t>::to_string();
 }
 
 void identifier::null_pk::serialize(identifier_serializer &s)
@@ -116,6 +119,11 @@ bool identifier::operator>=(const identifier &x) const {
 //  return id_->is_same_type(*x.id_);
 //}
 
+bool identifier::is_similar_type(const identifier &x) const
+{
+  return id_->is_similar_type(*x.id_);
+}
+
 std::string identifier::str() const {
   return id_->str();
 }
@@ -134,7 +142,8 @@ size_t identifier::use_count() const
   return id_.use_count();
 }
 
-bool identifier::is_null() const {
+bool identifier::is_null() const
+{
   return type_index() == null_identifier.type_index();
 //  return is_same_type(null_identifier);
 }
@@ -163,7 +172,8 @@ identifier::identifier(const std::shared_ptr<base> &id)
   : id_(id)
 {}
 
-std::ostream &operator<<(std::ostream &out, const identifier &id) {
+std::ostream &operator<<(std::ostream &out, const identifier &id)
+{
   out << id.str();
   return out;
 }

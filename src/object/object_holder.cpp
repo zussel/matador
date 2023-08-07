@@ -129,7 +129,7 @@ bool object_holder::valid() const noexcept
 
 void object_holder::reset(const identifier &id)
 {
-  if (proxy_ && !proxy_->pk().is_same_type(id)) {
+  if (proxy_ && !proxy_->pk().is_similar_type(id)) {
     throw object_exception("identifier types are not equal");
   }
   reset(new object_proxy(id), cascade_type::NONE);

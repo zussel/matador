@@ -132,7 +132,7 @@ template < class T >
 template< class V >
 void identifier_binder<T>::on_primary_key(const char *id, V &/*x*/, long /*size*/)
 {
-  if (!id_.is_same_type<V>()) {
+  if (!id_.is_similar_type<V>()) {
     throw_object_exception("identifier types aren't equal");
   }
   field_name_ = id;

@@ -6,23 +6,45 @@
 #include <typeindex>
 
 namespace matador {
-namespace detail {
-template<typename T>
-std::string to_string(const T &value) {
-  return std::to_string(value);
-}
-
-std::string to_string(const std::string &value);
-
-template<typename T>
-bool is_valid(const T &value) {
-  return value > 0;
-}
-
-bool is_valid(const std::string &value);
-}
 
 struct null_type_t {};
+
+namespace detail {
+
+enum class identifier_type : unsigned int {
+  INTEGRAL_TYPE,
+  STRING_TYPE,
+  NULL_TYPE
+};
+
+template<typename Type, class Enabled = void>
+struct identifier_type_traits;
+
+template<typename Type>
+struct identifier_type_traits<Type, typename std::enable_if<std::is_integral<Type>::value>::type> {
+  static identifier_type type() { return identifier_type::INTEGRAL_TYPE; }
+  static std::string type_string() { return "integral"; }
+  static bool is_valid(Type value) { return value > 0; }
+  static std::string to_string(Type value) { return std::to_string(value); }
+};
+
+template<typename Type>
+struct identifier_type_traits<Type, typename std::enable_if<std::is_same<Type, std::string>::value>::type> {
+  static identifier_type type() { return identifier_type::STRING_TYPE; }
+  static std::string type_string() { return "string"; }
+  static bool is_valid(const Type &value) { return !value.empty(); }
+  static std::string to_string(Type value) { return value; }
+};
+
+template<typename Type>
+struct identifier_type_traits<Type, typename std::enable_if<std::is_same<Type, null_type_t>::value>::type> {
+  static identifier_type type() { return identifier_type::NULL_TYPE; }
+  static std::string type_string() { return "null"; }
+  static bool is_valid() { return true; }
+  static std::string to_string() { return "null_pk"; }
+};
+
+}
 
 class identifier_serializer
 {
@@ -46,7 +68,7 @@ class identifier
 private:
   struct base
   {
-    explicit base(const std::type_index &ti);
+    explicit base(const std::type_index &ti, detail::identifier_type id_type);
     base(const base &x) = delete;
     base &operator=(const base &x) = delete;
     base(base &&x) = delete;
@@ -55,6 +77,14 @@ private:
 
 //    bool is_same_type(const base &x) const;
 //    bool is_same_type(const std::type_index &x) const;
+    template<typename Type>
+    bool is_similar_type() const
+    {
+      return identifier_type_ == detail::identifier_type_traits<Type>::type();
+    }
+
+    bool is_similar_type(const base &x) const;
+    detail::identifier_type type() const;
 
     virtual base *copy() const = 0;
     virtual bool equal_to(const base &x) const = 0;
@@ -65,18 +95,17 @@ private:
     virtual size_t hash() const = 0;
 
     std::type_index type_index_;
+    detail::identifier_type identifier_type_;
   };
 
-  template < class IdType, class Enabled = void >
-  struct pk;
-
   template<class IdType>
-  struct pk<IdType, typename std::enable_if<std::is_integral<IdType>::value>::type> : public base
+  struct pk : public base
   {
     using self = pk<IdType>;
 
-    explicit pk(const IdType &id, long size = -1)
-      : base(std::type_index(typeid(IdType))), id_(id), size_(size) {}
+    explicit pk(const IdType &id, long size = -1) : base(std::type_index(typeid(IdType)), detail::identifier_type_traits<IdType>::type())
+    , id_(id)
+    , size_(size) {}
 
     base *copy() const final {
       return new self(id_, size_);
@@ -90,53 +119,14 @@ private:
       return static_cast<const pk<IdType> &>(x).id_ < id_;
     }
 
-    bool is_valid() const final {
-      return detail::is_valid(id_);
+    bool is_valid() const final
+    {
+      return detail::identifier_type_traits<IdType>::is_valid(id_);
     }
 
-    std::string str() const final {
-      return detail::to_string(id_);
-    }
-
-    void serialize(identifier_serializer &s) final {
-      s.serialize(id_, size_);
-    }
-
-    size_t hash() const final {
-      std::hash<IdType> hash_func;
-      return hash_func(id_);
-    }
-
-    IdType id_;
-    long size_{-1};
-  };
-
-  template<class IdType>
-  struct pk<IdType, typename std::enable_if<std::is_same<IdType, std::string>::value>::type> : public base
-  {
-    using self = pk<IdType>;
-
-    explicit pk(const IdType &id, long size = -1)
-      : base(std::type_index(typeid(IdType))), id_(id), size_(size) {}
-
-    base *copy() const final {
-      return new self(id_, size_);
-    }
-
-    bool equal_to(const base &x) const final {
-      return static_cast<const pk<IdType> &>(x).id_ == id_;
-    }
-
-    bool less(const base &x) const final {
-      return static_cast<const pk<IdType> &>(x).id_ < id_;
-    }
-
-    bool is_valid() const final {
-      return detail::is_valid(id_);
-    }
-
-    std::string str() const final {
-      return detail::to_string(id_);
+    std::string str() const final
+    {
+      return detail::identifier_type_traits<IdType>::to_string(id_);
     }
 
     void serialize(identifier_serializer &s) final {
@@ -176,7 +166,8 @@ public:
   identifier &operator=(identifier &&x) noexcept;
 
   template<typename Type>
-  identifier &operator=(const Type &value) {
+  identifier &operator=(const Type &value)
+  {
     id_ = std::make_shared<pk<Type>>(value);
     return *this;
   }
@@ -191,8 +182,15 @@ public:
   bool operator>=(const identifier &x) const;
 
 //  bool is_same_type(const identifier &x) const;
+  bool is_similar_type(const identifier &x) const;
+  template<typename Type>
+  bool is_similar_type() const
+  {
+    return id_->is_similar_type<Type>();
+  }
 
-//  template<typename Type>
+
+  //  template<typename Type>
 //  bool is_same_type() const;
   std::string str() const;
   const std::type_index &type_index() const;
