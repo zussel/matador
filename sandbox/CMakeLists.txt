@@ -40,13 +40,3 @@ TARGET_LINK_LIBRARIES(row
     ${CMAKE_DL_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
 )
-
-TARGET_LINK_LIBRARIES(identifier
-    matador-unit
-    matador-utils
-    matador-json
-    matador-logger
-    matador-object
-    ${CMAKE_DL_LIBS}
-    ${CMAKE_THREAD_LIBS_INIT}
-)

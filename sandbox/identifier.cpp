@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <typeindex>
 
 namespace test {
@@ -19,32 +20,36 @@ template < typename Type >
 struct identifier_type_traits<Type, typename std::enable_if<std::is_integral<Type>::value>::type>
 {
   static identifier_type type() { return identifier_type::INTEGRAL_TYPE; }
-  static std::string str() { return "integral"; }
+  static std::string type_string() { return "integral"; }
   static bool is_valid(Type value) { return value > 0; }
+  static std::string to_string(Type value) { return std::to_string(value); }
 };
 
 template < typename Type >
 struct identifier_type_traits<Type, typename std::enable_if<std::is_floating_point<Type>::value>::type>
 {
   static identifier_type type() { return identifier_type::FLOATING_POINT_TYPE; }
-  static std::string str() { return "floating_point"; }
+  static std::string type_string() { return "floating_point"; }
   static bool is_valid(Type value) { return value > 0.0; }
+  static std::string to_string(Type value) { return std::to_string(value); }
 };
 
 template < typename Type >
 struct identifier_type_traits<Type, typename std::enable_if<std::is_same<Type, std::string>::value>::type>
 {
   static identifier_type type() { return identifier_type::STRING_TYPE; }
-  static std::string str() { return "string"; }
+  static std::string type_string() { return "string"; }
   static bool is_valid(const Type& value) { return !value.empty(); }
+  static std::string to_string(Type value) { return value; }
 };
 
 template < typename Type >
 struct identifier_type_traits<Type, typename std::enable_if<std::is_same<Type, null_type>::value>::type>
 {
   static identifier_type type() { return identifier_type::NULL_TYPE; }
-  static std::string str() { return "null"; }
+  static std::string type_string() { return "null"; }
   static bool is_valid(Type value) { return true; }
+  static std::string to_string(Type value) { return "null"; }
 };
 
 class identifier_serializer;
@@ -58,8 +63,8 @@ struct base
   base &operator=(base &&x) = delete;
   virtual ~base() = default;
 
-  bool is_same_type(const base &x) const;
-  bool is_same_type(const std::type_index &x) const;
+  bool is_same_type(const base &x) const { return is_same_type(x.type_index_); }
+  bool is_same_type(const std::type_index &ti) const { return type_index_ == ti; }
 
   bool is_similar_type(const base &x) const { return identifier_type_ == x.type(); }
   identifier_type type() const { return identifier_type_; }
@@ -96,11 +101,11 @@ struct pk : public base
   }
 
   bool is_valid() const final {
-    return detail::is_valid(id_);
+    return identifier_type_traits<IdType>::is_valid(id_);
   }
 
   std::string str() const final {
-    return detail::to_string(id_);
+    return identifier_type_traits<IdType>::to_string(id_);
   }
 
   void serialize(identifier_serializer &s) final {
@@ -116,4 +121,17 @@ struct pk : public base
   long size_{-1};
 };
 
+}
+
+int main(int /*argc*/, char* /*argv*/[]) {
+
+  test::pk<long> lid(7);
+  test::pk<int> iid(8);
+  test::pk<int> iid2(7);
+
+  auto b = lid.is_similar_type(iid);
+  b = lid.is_same_type(iid);
+
+  b = lid.equal_to(iid);
+  b = lid.equal_to(iid2);
 }
