@@ -5,6 +5,7 @@ ADD_EXECUTABLE(di di.cpp)
 ADD_EXECUTABLE(reactor reactor.cpp)
 ADD_EXECUTABLE(row row.cpp)
 ADD_EXECUTABLE(identifier identifier.cpp)
+ADD_EXECUTABLE(field_attribute field_attribute.cpp)
 
 TARGET_LINK_LIBRARIES(reactor
   matador-utils
