@@ -17,13 +17,13 @@ bool is_valid(const std::string &value) {
 identifier::base::base(const std::type_index &ti)
   : type_index_(ti) {}
 
-bool identifier::base::is_same_type(const base &x) const {
-  return type_index_ == x.type_index_;
-}
-
-bool identifier::base::is_same_type(const std::type_index &x) const {
-  return type_index_ == x;
-}
+//bool identifier::base::is_same_type(const base &x) const {
+//  return type_index_ == x.type_index_;
+//}
+//
+//bool identifier::base::is_same_type(const std::type_index &x) const {
+//  return type_index_ == x;
+//}
 
 identifier::null_pk::null_pk()
   : base(std::type_index(typeid(null_type_t)))
@@ -36,12 +36,14 @@ identifier::base* identifier::null_pk::copy() const
 
 bool identifier::null_pk::equal_to(const identifier::base &x) const
 {
-  return is_same_type(x);
+//  return is_same_type(x);
+  return type_index_ == x.type_index_;
 }
 
 bool identifier::null_pk::less(const identifier::base &x) const
 {
-  return is_same_type(x);
+//  return is_same_type(x);
+  return type_index_ == x.type_index_;
 }
 
 bool identifier::null_pk::is_valid() const
@@ -110,9 +112,9 @@ bool identifier::operator>=(const identifier &x) const {
   return !operator<(x);
 }
 
-bool identifier::is_same_type(const identifier &x) const {
-  return id_->is_same_type(*x.id_);
-}
+//bool identifier::is_same_type(const identifier &x) const {
+//  return id_->is_same_type(*x.id_);
+//}
 
 std::string identifier::str() const {
   return id_->str();
@@ -133,7 +135,8 @@ size_t identifier::use_count() const
 }
 
 bool identifier::is_null() const {
-  return is_same_type(null_identifier);
+  return type_index() == null_identifier.type_index();
+//  return is_same_type(null_identifier);
 }
 
 bool identifier::is_valid() const

@@ -136,7 +136,7 @@ public:
     print(id, x);
   }
 
-  void on_attribute(const char *id, int &x) override
+  void on_attribute(const char *id, int &x) override type
   {
     print(id, x);
   }
@@ -216,26 +216,10 @@ public:
     print(id, x);
   }
 
-  void on_belongs_to(const char *id, matador::identifiable_holder &x, matador::cascade_type cascade) override
-  {
-
-  }
-
-  void on_has_one(const char *id, matador::identifiable_holder &x, matador::cascade_type cascade) override
-  {
-
-  }
-
-  void on_has_many(const char *string, matador::abstract_has_many &many, const char *string1, const char *string2,
-                   matador::cascade_type type) override
-  {
-
-  }
-
-  void on_has_many(const char *string, matador::abstract_has_many &many, matador::cascade_type type) override
-  {
-
-  }
+  void on_belongs_to(const char * /*id*/, matador::identifiable_holder &/*x*/, matador::cascade_type) override { }
+  void on_has_one(const char * /*id*/, matador::identifiable_holder &/*x*/, matador::cascade_type) override { }
+  void on_has_many(const char * /*id*/, matador::abstract_has_many &/*x*/, const char *, const char *, matador::cascade_type) override { }
+  void on_has_many(const char * /*id*/, matador::abstract_has_many &/*x*/, matador::cascade_type) override { }
 
 private:
   template<typename Type>
