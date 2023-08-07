@@ -1,7 +1,3 @@
-//
-// Created by sascha on 24.05.19.
-//
-
 #ifndef MATADOR_POSTGRESQL_CONNECTION_HPP
 #define MATADOR_POSTGRESQL_CONNECTION_HPP
 
@@ -12,6 +8,7 @@
     #define MATADOR_POSTGRESQL_API __declspec(dllimport)
   #endif
   #pragma warning(disable: 4355)
+  #pragma warning(disable: 4275)
 #else
 #define MATADOR_POSTGRESQL_API
 #endif
