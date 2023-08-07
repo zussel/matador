@@ -47,7 +47,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &x, long /*size*/ = -1, typename std::enable_if<!std::is_integral<V>::value>::type* = 0) { }
+  void on_primary_key(const char *, V &, long /*size*/ = -1, typename std::enable_if<!std::is_integral<V>::value>::type* = 0) { }
 
   template < class V >
   void on_attribute(const char*, V &, long /*size*/ = -1) {}
@@ -90,7 +90,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &x, long /*size*/ = -1) {}
+  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
 
   void on_primary_key(const char *, T &x, long /*size*/ = -1)
   {

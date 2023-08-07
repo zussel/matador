@@ -53,8 +53,8 @@ private:
     base &operator=(base &&x) = delete;
     virtual ~base() = default;
 
-    bool is_same_type(const base &x) const;
-    bool is_same_type(const std::type_index &x) const;
+//    bool is_same_type(const base &x) const;
+//    bool is_same_type(const std::type_index &x) const;
 
     virtual base *copy() const = 0;
     virtual bool equal_to(const base &x) const = 0;
@@ -67,8 +67,11 @@ private:
     std::type_index type_index_;
   };
 
+  template < class IdType, class Enabled = void >
+  struct pk;
+
   template<class IdType>
-  struct pk : public base
+  struct pk<IdType, typename std::enable_if<std::is_integral<IdType>::value>::type> : public base
   {
     using self = pk<IdType>;
 
@@ -80,11 +83,52 @@ private:
     }
 
     bool equal_to(const base &x) const final {
-      return is_same_type(x) && static_cast<const pk<IdType> &>(x).id_ == id_;
+      return static_cast<const pk<IdType> &>(x).id_ == id_;
     }
 
     bool less(const base &x) const final {
-      return is_same_type(x) && static_cast<const pk<IdType> &>(x).id_ < id_;
+      return static_cast<const pk<IdType> &>(x).id_ < id_;
+    }
+
+    bool is_valid() const final {
+      return detail::is_valid(id_);
+    }
+
+    std::string str() const final {
+      return detail::to_string(id_);
+    }
+
+    void serialize(identifier_serializer &s) final {
+      s.serialize(id_, size_);
+    }
+
+    size_t hash() const final {
+      std::hash<IdType> hash_func;
+      return hash_func(id_);
+    }
+
+    IdType id_;
+    long size_{-1};
+  };
+
+  template<class IdType>
+  struct pk<IdType, typename std::enable_if<std::is_same<IdType, std::string>::value>::type> : public base
+  {
+    using self = pk<IdType>;
+
+    explicit pk(const IdType &id, long size = -1)
+      : base(std::type_index(typeid(IdType))), id_(id), size_(size) {}
+
+    base *copy() const final {
+      return new self(id_, size_);
+    }
+
+    bool equal_to(const base &x) const final {
+      return static_cast<const pk<IdType> &>(x).id_ == id_;
+    }
+
+    bool less(const base &x) const final {
+      return static_cast<const pk<IdType> &>(x).id_ < id_;
     }
 
     bool is_valid() const final {
@@ -146,10 +190,10 @@ public:
   bool operator>(const identifier &x) const;
   bool operator>=(const identifier &x) const;
 
-  bool is_same_type(const identifier &x) const;
+//  bool is_same_type(const identifier &x) const;
 
-  template<typename Type>
-  bool is_same_type() const;
+//  template<typename Type>
+//  bool is_same_type() const;
   std::string str() const;
   const std::type_index &type_index() const;
 
@@ -175,11 +219,11 @@ private:
 
 static identifier null_identifier{};
 
-template<typename Type>
-bool identifier::is_same_type() const
-{
-  return id_->is_same_type(std::type_index(typeid(Type)));
-}
+//template<typename Type>
+//bool identifier::is_same_type() const
+//{
+//  return id_->is_same_type(std::type_index(typeid(Type)));
+//}
 
 struct id_pk_hash
 {
