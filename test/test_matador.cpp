@@ -200,19 +200,19 @@ int main(int argc, char *argv[])
   suite.register_unit(new MSSQLDialectTestUnit());
 #endif
 
-//#if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
-//  suite.register_unit(new ConnectionTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new QueryTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
-//  suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new JsonOrmTest("sqlite", ::connection::sqlite));
-//  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
-//  suite.register_unit(new SQLiteDialectTestUnit());
-//#endif
-//
+#if defined(MATADOR_SQLITE3) && defined(MATADOR_SQLITE3_TEST)
+  suite.register_unit(new ConnectionTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new QueryTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
+  suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new JsonOrmTest("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new SQLiteDialectTestUnit());
+#endif
+
 #if defined(MATADOR_POSTGRESQL) && defined(MATADOR_POSTGRESQL_TEST)
   suite.register_unit(new ConnectionTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
