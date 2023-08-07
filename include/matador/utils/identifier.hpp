@@ -40,7 +40,7 @@ template<typename Type>
 struct identifier_type_traits<Type, typename std::enable_if<std::is_same<Type, null_type_t>::value>::type> {
   static identifier_type type() { return identifier_type::NULL_TYPE; }
   static std::string type_string() { return "null"; }
-  static bool is_valid() { return true; }
+  static bool is_valid() { return false; }
   static std::string to_string() { return "null_pk"; }
 };
 
