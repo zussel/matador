@@ -39,10 +39,17 @@ public:
     return binder.bind(*o);
   }
 
-  template < class T, class V >
-  size_t bind(V &val, long /*size*/, size_t pos)
+  template < class V >
+  size_t bind(V &val, size_t pos)
   {
     this->binder()->bind(val, pos++);
+
+    return pos;
+  }
+
+  size_t bind(std::string &val, long size, size_t pos)
+  {
+    this->binder()->bind(val, size, pos++);
 
     return pos;
   }

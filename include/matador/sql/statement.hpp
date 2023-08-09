@@ -131,10 +131,15 @@ public:
    * @param index The index where the value is to bind
    * @return The next index to bind
    */
-  template < class V >
-  std::size_t bind(std::size_t index, V &val, long size = -1)
+  std::size_t bind(std::size_t index, std::string &val, long size = -1)
   {
-    return p->bind<T>(val, size, index);
+    return p->bind(val, size, index);
+  }
+
+  template < class V >
+  std::size_t bind(std::size_t index, V &val)
+  {
+    return p->bind(val, index);
   }
 
   /**
