@@ -75,8 +75,6 @@ private:
     base &operator=(base &&x) = delete;
     virtual ~base() = default;
 
-//    bool is_same_type(const base &x) const;
-//    bool is_same_type(const std::type_index &x) const;
     template<typename Type>
     bool is_similar_type() const
     {
