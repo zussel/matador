@@ -175,17 +175,23 @@ int main(int argc, char *argv[])
   suite.register_unit(new TemplateEngineTest);
   suite.register_unit(new MiddlewareTest);
 
+  try {
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
-  suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new TransactionTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new QueryTestUnit("mysql", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
-  suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
-  suite.register_unit(new PrimaryKeyTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new JsonOrmTest("mysql", ::connection::mysql));
-  suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
-  suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
+    suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
+    suite.register_unit(new TransactionTestUnit("mysql", ::connection::mysql));
+    suite.register_unit(new QueryTestUnit("mysql", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
+    suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
+    suite.register_unit(new PrimaryKeyTestUnit("mysql", ::connection::mysql));
+    suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
+    suite.register_unit(new JsonOrmTest("mysql", ::connection::mysql));
+    suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
+    suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
 #endif
+  } catch (const std::exception &ex) {
+    std::cout << "caught exception: " << ex.what() << "\n";
+  } catch (...) {
+    std::cout << "caught unknown exception\n";
+  }
 
 #if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
   suite.register_unit(new ConnectionTestUnit("mssql", ::connection::mssql));
