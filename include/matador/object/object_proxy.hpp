@@ -95,7 +95,7 @@ public:
    * @param os The object_store.
    */
   template < typename T >
-  object_proxy(T *o, unsigned long id, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry)
+  object_proxy(T *o, unsigned long long id, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry)
     : obj_(o)
     , object_type_entry_(object_type_entry)
     , deleter_(&destroy<T>)

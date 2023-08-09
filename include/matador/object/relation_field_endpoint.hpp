@@ -74,7 +74,7 @@ struct from_one_endpoint<Value, Owner, Type, typename std::enable_if<!matador::i
   void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override;
   void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override;
 
-  object_proxy* acquire_proxy(unsigned long , object_store &) override { return nullptr; }
+  object_proxy* acquire_proxy(unsigned long long , object_store &) override { return nullptr; }
 };
 
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type>
@@ -97,7 +97,7 @@ struct from_one_endpoint<Value, Owner, Type, typename std::enable_if<matador::is
   void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override;
   void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override;
 
-  object_proxy* acquire_proxy(unsigned long , object_store &) override { return nullptr; }
+  object_proxy* acquire_proxy(unsigned long long , object_store &) override { return nullptr; }
 };
 
 template < class Value, class Owner >
@@ -131,7 +131,7 @@ struct many_to_one_endpoint<Value, Owner, typename std::enable_if<!std::is_base_
   void insert_value(object_proxy *value, object_proxy *owner) override;
   void remove_value(object_proxy *value, object_proxy *owner) override;
 
-  object_proxy* acquire_proxy(unsigned long , object_store &) override { return nullptr; }
+  object_proxy* acquire_proxy(unsigned long long , object_store &) override { return nullptr; }
 
 };
 
@@ -155,7 +155,7 @@ struct many_to_one_endpoint<Value, Owner, typename std::enable_if<std::is_base_o
   void insert_value(const basic_has_many_item_holder &, object_proxy *) override {} // owner
   void remove_value(const basic_has_many_item_holder &, object_proxy *) override {} // owner
 
-  object_proxy* acquire_proxy(unsigned long , object_store &) override { return nullptr; }
+  object_proxy* acquire_proxy(unsigned long long , object_store &) override { return nullptr; }
 };
 
 template < class Value, class Owner, class Enabled = void >
@@ -181,7 +181,7 @@ struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<!matador::
   void insert_value(const basic_has_many_item_holder &holder, object_proxy *owner) override;
   void remove_value(const basic_has_many_item_holder &holder, object_proxy *owner) override;
 
-  object_proxy* acquire_proxy(unsigned long , object_store &) override { return nullptr; }
+  object_proxy* acquire_proxy(unsigned long long , object_store &) override { return nullptr; }
 
   void print(std::ostream &out) const override;
 };
@@ -206,7 +206,7 @@ struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<matador::i
   void insert_value(const basic_has_many_item_holder &, object_proxy *) override {} // owner
   void remove_value(const basic_has_many_item_holder &, object_proxy *) override {} // owner
 
-  object_proxy* acquire_proxy(unsigned long , object_store &) override { return nullptr; }
+  object_proxy* acquire_proxy(unsigned long long , object_store &) override { return nullptr; }
 };
 /// @endcond
 

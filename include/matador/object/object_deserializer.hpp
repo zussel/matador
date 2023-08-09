@@ -153,7 +153,7 @@ private:
      * insert object into object store
      *
      ***************/
-    unsigned long oid = 0;
+    unsigned long long oid = 0;
     on_attribute(id, oid);
 
     if (oid > 0) {
@@ -167,7 +167,7 @@ private:
     }
   }
 private:
-  object_proxy *find_proxy(unsigned long oid);
+  object_proxy *find_proxy(unsigned long long oid);
 
   void insert_proxy(object_proxy *proxy);
 

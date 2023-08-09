@@ -45,7 +45,7 @@ void object_deserializer::on_attribute(const char *, time &x, long /*size*/)
   x.set(tv);
 }
 
-object_proxy *object_deserializer::find_proxy(unsigned long oid)
+object_proxy *object_deserializer::find_proxy(unsigned long long oid)
 {
   return store_->find_proxy(oid);
 }

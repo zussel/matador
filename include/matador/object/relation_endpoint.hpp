@@ -104,7 +104,7 @@ struct relation_endpoint : public basic_relation_endpoint {
 
   virtual void remove_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) = 0;
 
-  virtual object_proxy *acquire_proxy(unsigned long oid, object_store &store) = 0;
+  virtual object_proxy *acquire_proxy(unsigned long long oid, object_store &store) = 0;
 };
 
 template<class T>

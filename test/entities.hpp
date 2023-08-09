@@ -87,7 +87,7 @@ public:
 class book
 {
 private:
-    unsigned long id_{};
+    unsigned long long id_{};
     std::string title_;
     std::string isbn_;
     std::string author_;
@@ -110,8 +110,8 @@ public:
         serializer.on_attribute("author", author_);
     }
 
-    unsigned long id() const { return id_; }
-    void id(unsigned long i)  { id_ = i; }
+    unsigned long long id() const { return id_; }
+    void id(unsigned long long i)  { id_ = i; }
     std::string title() const { return title_; }
     std::string isbn() const { return isbn_; }
     std::string author() const { return author_; }
@@ -152,7 +152,7 @@ public:
     bool empty() const { return book_list_.empty(); }
 
 private:
-    unsigned long id_{};
+    unsigned long long id_{};
     book_list_t book_list_;
 };
 
