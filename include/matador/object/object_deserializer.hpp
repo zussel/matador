@@ -75,61 +75,21 @@ public:
   {
     buffer_->release(&x, sizeof(x));
   }
-  void on_attribute(const char *id, char *c, long size);
-  void on_attribute(const char *id, std::string &s, long size = -1);
+  void on_attribute(const char *id, char *x, long size);
+  void on_attribute(const char *id, std::string &x, long size = -1);
   void on_attribute(const char *id, date &x, long /*size*/ = -1);
   void on_attribute(const char *id, time &x, long /*size*/ = -1);
 
   template<class T>
   void on_belongs_to(const char *id, matador::object_ptr<T> &x, cascade_type cascade)
   {
-    /***************
-     *
-     * extract id and type of serializable from buffer
-     * try to find serializable on serializable store
-     * if found check type if wrong type throw error
-     * else create serializable and set extracted id
-     * insert serializable into serializable store
-     *
-     ***************/
-    unsigned long oid = 0;
-    on_attribute(id, oid);
-
-    if (oid > 0) {
-      object_proxy *oproxy = find_proxy(oid);
-      if (!oproxy) {
-        auto object_type = determine_object_type(std::type_index(typeid(T)));
-        oproxy = new object_proxy(new T, oid, object_type);
-        insert_proxy(oproxy);
-      }
-      x.reset(oproxy, cascade);
-    }
+    on_foreign_object(id, x, cascade);
   }
 
   template<class T>
   void on_has_one(const char *id, matador::object_ptr<T> &x, cascade_type cascade)
   {
-    /***************
-     *
-     * extract id and type of serializable from buffer
-     * try to find serializable on serializable store
-     * if found check type if wrong type throw error
-     * else create serializable and set extracted id
-     * insert serializable into serializable store
-     *
-     ***************/
-    unsigned long oid = 0;
-    on_attribute(id, oid);
-
-    if (oid > 0) {
-      object_proxy *oproxy = find_proxy(oid);
-      if (!oproxy) {
-        auto object_type = determine_object_type(std::type_index(typeid(T)));
-        oproxy = new object_proxy(new T, oid, object_type);
-        insert_proxy(oproxy);
-      }
-      x.reset(oproxy, cascade);
-    }
+    on_foreign_object(id, x, cascade);
   }
 
   template<class T, template<class ...> class C>
@@ -139,7 +99,7 @@ public:
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<T, C> &x, cascade_type)
+  void on_has_many(const char *id, basic_has_many<T, C> &x, cascade_type cascade)
   {
     std::string id_oid(id);
     id_oid += ".oid";
@@ -149,12 +109,11 @@ public:
 
     x.reset();
 
-    for (auto i = 0; i < s; ++i) {
+    for (typename basic_has_many<T, C>::size_type i = 0; i < s; ++i) {
 
       // deserialize all items
-      unsigned long oid = 0;
+      unsigned long long oid = 0;
       on_attribute(id_oid.c_str(), oid);
-
 
       // and append them to container
       object_proxy *proxy = x.relation_info_->acquire_proxy(oid, *store_);
@@ -163,12 +122,50 @@ public:
       }
 
       typename has_many_item_holder<T>::object_type val;
-      on_attribute("", val);
+      process_has_many_item(val, cascade);
 
       x.append(has_many_item_holder<T>(val, proxy));
     }
   }
 
+private:
+  template<class T>
+  void process_has_many_item(T &obj, cascade_type cascade, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0)
+  {
+    on_foreign_object("", obj, cascade);
+  }
+
+  template<class T>
+  void process_has_many_item(T &attr, cascade_type /*cascade*/, typename std::enable_if<matador::is_builtin<T>::value>::type* = 0)
+  {
+    on_attribute("", attr);
+  }
+
+  template<class T>
+  void on_foreign_object(const char *id, matador::object_ptr<T> &x, cascade_type cascade)
+  {
+    /***************
+     *
+     * extract id and type of serializable from buffer
+     * try to find object on object store
+     * if found check type if wrong type throw error
+     * else create object and set extracted id
+     * insert object into object store
+     *
+     ***************/
+    unsigned long oid = 0;
+    on_attribute(id, oid);
+
+    if (oid > 0) {
+      object_proxy *oproxy = find_proxy(oid);
+      if (!oproxy) {
+        auto object_type = determine_object_type(std::type_index(typeid(T)));
+        oproxy = new object_proxy(new T, oid, object_type);
+        insert_proxy(oproxy);
+      }
+      x.reset(oproxy, cascade);
+    }
+  }
 private:
   object_proxy *find_proxy(unsigned long oid);
 

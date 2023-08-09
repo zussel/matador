@@ -13,22 +13,21 @@ object_deserializer::object_deserializer(byte_buffer *buffer, object_store *stor
   : store_(store)
   , buffer_(buffer) {}
 
-void object_deserializer::on_attribute(const char *, char *c, long /*size*/)
+void object_deserializer::on_attribute(const char *, char *x, long /*size*/)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
   // TODO: check size of buffer
-  buffer_->release(c, len);
+  buffer_->release(x, len);
 }
 
-void object_deserializer::on_attribute(const char *, std::string &s, long /*size*/)
+void object_deserializer::on_attribute(const char *, std::string &x, long /*size*/)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
-  char *str = new char[len];
-  buffer_->release(str, len);
-  s.assign(str, len);
-  delete [] str;
+  auto str = std::make_unique<char[]>(len);
+  buffer_->release(str.get(), len);
+  x.assign(str.get(), len);
 }
 
 void object_deserializer::on_attribute(const char *, date &x, long /*size*/)

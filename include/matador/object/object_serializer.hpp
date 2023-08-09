@@ -87,7 +87,7 @@ public:
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<T, C> &x, cascade_type)
+  void on_has_many(const char *id, basic_has_many<T, C> &x, cascade_type cascade)
   {
     std::string id_oid(id);
     id_oid += ".oid";
@@ -105,8 +105,23 @@ public:
       // serialize holder proxy id
       on_attribute(id_oid.c_str(), oid);
       // serialize value
-      on_attribute("", *first++);
+      process_has_many_item(*first++, cascade);
     }
+  }
+
+private:
+  void on_foreign_object(const char *id, object_holder &x, cascade_type cascade);
+
+  template<class T>
+  void process_has_many_item(T &obj, cascade_type cascade, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0)
+  {
+    on_foreign_object("", obj, cascade);
+  }
+
+  template<class T>
+  void process_has_many_item(T &attr, cascade_type /*cascade*/, typename std::enable_if<matador::is_builtin<T>::value>::type* = 0)
+  {
+    on_attribute("", attr);
   }
 
 private:
