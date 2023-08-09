@@ -20,8 +20,6 @@ namespace matador {
 class object_store;
 class object_holder;
 class prototype_node;
-class transaction;
-class update_action;
 class object_serializer;
 class object_deserializer;
 
