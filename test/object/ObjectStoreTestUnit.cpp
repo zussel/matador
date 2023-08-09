@@ -24,7 +24,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("set", [this] { test_set(); }, "access object values via set interface");
   add_test("get", [this] { test_get(); }, "access object values via get interface");
   add_test("serializer", [this] { test_serializer(); }, "serializer test");
-//  add_test("identifier_serializer", [this] { test_identifier_serializer(); }, "identifier serializer test");
+//  add_test("nested_serializer", [this] { test_nested_serializer(); }, "identifier serializer test");
   add_test("reference_counter", [this] { test_reference_counter(); }, "reference counter test");
   add_test("reference_counter_builtins", [this] { test_reference_counter_builtin(); }, "reference counter with builtins test");
   add_test("reference_counter_hasmany", [this] { test_reference_counter_has_many(); }, "reference counter with hasmany test");
@@ -271,44 +271,31 @@ void ObjectStoreTestUnit::test_serializer()
   delete item;
 }
 
-//void ObjectStoreTestUnit::test_identifier_serializer()
+//void ObjectStoreTestUnit::test_nested_serializer()
 //{
+//  object_store store;
+//  store.attach<child>("child");
+//  store.attach<children_list>("children_list");
+//
+//  auto clist = store.insert(new children_list("children list"));
+//  auto c1 = store.insert(new child("c1"));
+//
+//  clist.modify()->children.push_back(c1);
+//
 //  byte_buffer buffer;
-//  basic_identifier_serializer serializer;
+//  object_serializer serializer;
 //
-//  {
-//    typedef identifier<unsigned long> t_ul_id;
-//    std::unique_ptr<t_ul_id> id(new t_ul_id(8UL));
+//  serializer.backup(clist.get(), &buffer);
 //
-//    UNIT_ASSERT_EQUAL(id->value(), 8UL);
+//  children_list restored_clist;
 //
-//    serializer.serialize(*id, buffer);
+//  object_deserializer deserializer;
 //
-//    std::unique_ptr<t_ul_id> id2(new identifier<unsigned long>());
+//  deserializer.restore(&restored_clist, &buffer, &store);
 //
-//    serializer.deserialize(*id2, buffer);
-//
-//    UNIT_ASSERT_EQUAL(id2->value(), 8UL);
-//
-//    UNIT_ASSERT_EXCEPTION(serializer.deserialize(*id2, buffer), std::logic_error, "invalid identifier type");
-//  }
-//
-//  {
-//    typedef identifier<std::string> t_str_id;
-//    std::unique_ptr<t_str_id> id(new identifier<std::string>("hallo"));
-//
-//    UNIT_ASSERT_EQUAL(id->value(), "hallo");
-//
-//    serializer.serialize(*id, buffer);
-//
-//    std::unique_ptr<t_str_id> id2(new identifier<std::string>());
-//
-//    serializer.deserialize(*id2, buffer);
-//
-//    UNIT_ASSERT_EQUAL(id2->value(), "hallo");
-//
-//    UNIT_ASSERT_EXCEPTION(serializer.deserialize(*id2, buffer), std::logic_error, "invalid identifier type");
-//  }
+//  UNIT_ASSERT_EQUAL(restored_clist.id, 1UL);
+//  UNIT_ASSERT_EQUAL(restored_clist.name, "children list");
+//  UNIT_ASSERT_TRUE(restored_clist.children.empty());
 //}
 
 void ObjectStoreTestUnit::test_reference_counter()
