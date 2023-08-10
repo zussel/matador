@@ -54,6 +54,7 @@
 #include "sql/DialectTestUnit.hpp"
 #include "sql/ConditionUnitTest.hpp"
 #include "sql/ConnectionTestUnit.hpp"
+#include "sql/IdentifierSerializerTest.h"
 #include "sql/QueryTestUnit.hpp"
 #include "sql/MSSQLDialectTestUnit.hpp"
 #include "sql/PostgreSQLDialectTestUnit.hpp"
@@ -210,6 +211,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ConnectionTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new TransactionTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new QueryTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new IdentifierSerializerTest("sqlite", ::connection::sqlite));
   suite.register_unit(new BlogUnitTest("sqlite", ::connection::sqlite));
   suite.register_unit(new PrimaryKeyTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));

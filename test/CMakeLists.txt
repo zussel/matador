@@ -157,7 +157,9 @@ SET (TEST_SQL_SOURCES
   sql/PostgreSQLDialectTestUnit.cpp
   sql/PostgreSQLDialectTestUnit.hpp
   sql/SqlLoggerTest.cpp
-  sql/SqlLoggerTest.hpp)
+  sql/SqlLoggerTest.hpp
+  sql/IdentifierSerializerTest.cpp
+  sql/IdentifierSerializerTest.h)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp
