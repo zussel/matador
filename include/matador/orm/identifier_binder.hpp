@@ -114,7 +114,7 @@ private:
   statement<T> *stmt_ = nullptr;
   size_t pos_ = 0;
   T *obj_ = nullptr;
-  identifier id_;
+  identifier *id_ = nullptr;
   std::string field_name_;
 };
 
@@ -132,11 +132,11 @@ template < class T >
 template< class V >
 void identifier_binder<T>::on_primary_key(const char *id, V &/*x*/, long /*size*/)
 {
-  if (!id_.is_similar_type<V>()) {
+  if (!id_->is_similar_type<V>()) {
     throw_object_exception("identifier types aren't equal");
   }
   field_name_ = id;
-  id_.serialize(*this);
+  id_->serialize(*this);
 }
 
 template < class T >
@@ -145,7 +145,7 @@ void identifier_binder<T>::setup(statement <T> *stmt, T *obj, size_t pos, identi
   stmt_ = stmt;
   pos_ = pos;
   obj_ = obj;
-  id_ = id;
+  id_ = &id;
 }
 
 template < class T >
@@ -154,7 +154,7 @@ void identifier_binder<T>::cleanup()
   stmt_ = nullptr;
   pos_ = 0;
   obj_ = nullptr;
-  id_.clear();
+  id_ = nullptr;
   field_name_.clear();
 }
 
