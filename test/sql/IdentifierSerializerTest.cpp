@@ -38,7 +38,7 @@ void IdentifierSerializerTest::test_identifier_result(matador::connection &conn)
   res = q.select().execute(conn);
 
   for (const auto &i : res) {
-    UNIT_EXPECT_EQUAL(i->id, 1);
+    UNIT_EXPECT_EQUAL(i->id, static_cast<IdType>(1));
     UNIT_EXPECT_EQUAL(i->name, "george");
   }
 
@@ -79,13 +79,13 @@ void IdentifierSerializerTest::test_identifier_row_result(connection &conn) {
                       make_typed_varchar_column("name", 255)
                       }).execute(conn);
 
-  res = q.insert({"id", "name"}).values({1LL, "george"}).execute(conn);
+  res = q.insert({"id", "name"}).values({static_cast<IdType>(1), "george"}).execute(conn);
 
   res = q.select({"id", "name"}).from("id_row_type").execute(conn);
 
   for (const auto &i : res) {
 //    std::cout << "type " << typeid(IdType).name() << "\n";
-    UNIT_EXPECT_EQUAL(i->template at<IdType>("id"), 1LL);
+    UNIT_EXPECT_EQUAL(i->template at<IdType>("id"), static_cast<IdType>(1));
     UNIT_EXPECT_EQUAL(i->template at<std::string>("name"), "george");
   }
 
