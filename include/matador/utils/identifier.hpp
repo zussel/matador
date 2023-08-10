@@ -179,7 +179,6 @@ public:
   bool operator>(const identifier &x) const;
   bool operator>=(const identifier &x) const;
 
-//  bool is_same_type(const identifier &x) const;
   bool is_similar_type(const identifier &x) const;
   template<typename Type>
   bool is_similar_type() const
@@ -187,9 +186,6 @@ public:
     return id_->is_similar_type<Type>();
   }
 
-
-  //  template<typename Type>
-//  bool is_same_type() const;
   std::string str() const;
   const std::type_index &type_index() const;
 
@@ -214,12 +210,6 @@ private:
 };
 
 static identifier null_identifier{};
-
-//template<typename Type>
-//bool identifier::is_same_type() const
-//{
-//  return id_->is_same_type(std::type_index(typeid(Type)));
-//}
 
 struct id_pk_hash
 {

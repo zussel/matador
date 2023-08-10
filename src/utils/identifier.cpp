@@ -10,14 +10,6 @@ identifier::base::base(const std::type_index &ti, detail::identifier_type id_typ
   , identifier_type_(id_type)
 {}
 
-//bool identifier::base::is_same_type(const base &x) const {
-//  return type_index_ == x.type_index_;
-//}
-//
-//bool identifier::base::is_same_type(const std::type_index &x) const {
-//  return type_index_ == x;
-//}
-
 bool identifier::base::is_similar_type(const identifier::base &x) const
 {
   return identifier_type_ == x.type();
@@ -39,13 +31,11 @@ identifier::base* identifier::null_pk::copy() const
 
 bool identifier::null_pk::equal_to(const identifier::base &x) const
 {
-//  return is_same_type(x);
   return type_index_ == x.type_index_;
 }
 
 bool identifier::null_pk::less(const identifier::base &x) const
 {
-//  return is_same_type(x);
   return type_index_ == x.type_index_;
 }
 
@@ -115,10 +105,6 @@ bool identifier::operator>=(const identifier &x) const {
   return !operator<(x);
 }
 
-//bool identifier::is_same_type(const identifier &x) const {
-//  return id_->is_same_type(*x.id_);
-//}
-
 bool identifier::is_similar_type(const identifier &x) const
 {
   return id_->is_similar_type(*x.id_);
@@ -145,7 +131,6 @@ size_t identifier::use_count() const
 bool identifier::is_null() const
 {
   return type_index() == null_identifier.type_index();
-//  return is_same_type(null_identifier);
 }
 
 bool identifier::is_valid() const

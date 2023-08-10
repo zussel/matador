@@ -1,8 +1,6 @@
 #ifndef OOS_VALUE_COLUMN_SERIALIZER_HPP
 #define OOS_VALUE_COLUMN_SERIALIZER_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/utils/access.hpp"
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/serializer.hpp"
@@ -43,7 +41,6 @@ private:
   value_column_serializer &serializer_;
 };
 
-//class OOS_SQL_API value_column_serializer
 class value_column_serializer
 {
 public:
@@ -94,15 +91,6 @@ public:
   {
     cols_->push_back(make_value_column(col, val, size));
   }
-
-//  void add_column_value(const char *col, std::string &val, long size)
-//  {
-//    if (size == -1) {
-//      cols_->push_back(std::make_shared<value_column<std::string>>(col, val));
-//    } else {
-//      cols_->push_back(std::make_shared<value_column<std::string>>(col, val, size));
-//    }
-//  }
 
   template < class ValueType >
   void add_value(const char *col, ValueType &val, long size)
