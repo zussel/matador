@@ -295,7 +295,7 @@ public:
    * @param x The result ro move
    */
   result(result &&x) noexcept
-    : prototype_(x.prototype_)
+    : prototype_(std::move(x.prototype_))
   {
     std::swap(p, x.p);
   }
@@ -314,6 +314,8 @@ public:
       p = nullptr;
     }
     std::swap(p, x.p);
+//    prototype_ = x.prototype_;
+    std::swap(prototype_, x.prototype_);
     return *this;
   }
 
@@ -371,7 +373,7 @@ private:
   }
 private:
   matador::detail::result_impl *p = nullptr;
-  const row prototype_;
+  row prototype_;
 };
 
 /// @cond MATADOR_DEV
