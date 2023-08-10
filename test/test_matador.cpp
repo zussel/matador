@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
   }
 
   suite.init(argc, argv);
-/*
+
   suite.register_unit(new AnyTestUnit);
   suite.register_unit(new Base64Test);
   suite.register_unit(new BufferViewTest);
@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new RouteEndpointTest);
   suite.register_unit(new TemplateEngineTest);
   suite.register_unit(new MiddlewareTest);
-*/
+
   try {
 #if defined(MATADOR_MYSQL) && defined(MATADOR_MYSQL_TEST)
     suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
   } catch (...) {
     std::cout << "caught unknown exception\n";
   }
-/*
+
 #if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
   suite.register_unit(new ConnectionTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new TransactionTestUnit("mssql", ::connection::mssql));
@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new OrmRelationTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new PostgreSQLDialectTestUnit());
 #endif
-*/
+
 //  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 
   net::init();
