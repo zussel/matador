@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/2/16.
-//
-
 #include <utility>
 
 #include "matador/sql/column.hpp"
