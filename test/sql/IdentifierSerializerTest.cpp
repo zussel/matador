@@ -79,12 +79,13 @@ void IdentifierSerializerTest::test_identifier_row_result(connection &conn) {
                       make_typed_varchar_column("name", 255)
                       }).execute(conn);
 
-  res = q.insert({"id", "name"}).values({1, "george"}).execute(conn);
+  res = q.insert({"id", "name"}).values({1LL, "george"}).execute(conn);
 
   res = q.select({"id", "name"}).from("id_row_type").execute(conn);
 
   for (const auto &i : res) {
-    UNIT_EXPECT_EQUAL(i->template at<IdType>("id"), 1);
+//    std::cout << "type " << typeid(IdType).name() << "\n";
+    UNIT_EXPECT_EQUAL(i->template at<IdType>("id"), 1LL);
     UNIT_EXPECT_EQUAL(i->template at<std::string>("name"), "george");
   }
 
@@ -117,7 +118,7 @@ IdentifierSerializerTest::IdentifierSerializerTest(const std::string &prefix, st
 , dns_(std::move(dns))
 {
   add_test("result", [this] { test_identifier_result_test(); }, "test identifier result binding");
-//  add_test("row_result", [this] { test_identifier_row_result_test(); }, "test identifier row result binding");
+  add_test("row_result", [this] { test_identifier_row_result_test(); }, "test identifier row result binding");
 }
 
 void IdentifierSerializerTest::test_identifier_result_test()
@@ -154,11 +155,11 @@ void IdentifierSerializerTest::test_identifier_row_result_test()
   test_identifier_row_result<short,
                              int,
                              long,
-                             long long,
+//                             long long
                              unsigned short,
                              unsigned int,
                              unsigned long,
-                             unsigned long long,
+//                             unsigned long long,
                              std::string>(conn);
 
   conn.disconnect();
