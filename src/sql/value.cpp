@@ -11,7 +11,7 @@ void value::accept(token_visitor &visitor)
 
 void value::serialize(const char *id, serializer &srlzr)
 {
-  value_visitor_.apply(value_, id, &srlzr);
+  value_visitor_.apply(value_, id, srlzr);
 }
 
 std::string value::str() const

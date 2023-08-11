@@ -21,8 +21,9 @@ class value_visitor
 public:
   value_visitor();
 
-  void apply(matador::any &a, const char *id, serializer *s);
+  void apply(matador::any &a, const char *id, serializer &s);
 
+private:
   template < class T >
   void process(T &val, typename std::enable_if<std::is_integral<T>::value>::type* = 0)
   {
