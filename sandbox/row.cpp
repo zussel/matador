@@ -136,7 +136,7 @@ public:
     print(id, x);
   }
 
-  void on_attribute(const char *id, int &x) override type
+  void on_attribute(const char *id, int &x) override
   {
     print(id, x);
   }
