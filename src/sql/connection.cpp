@@ -192,7 +192,7 @@ value* create_default_value(database_type type)
     case database_type::type_int:
       return make_value<int>(0);
     case database_type::type_bigint:
-      return make_value<long>(0);
+      return make_value<long long>(0);
     case database_type::type_float:
       return make_value<float>(0);
     case database_type::type_double:
