@@ -1,8 +1,6 @@
 #ifndef OOS_BASIC_DIALECT_HPP
 #define OOS_BASIC_DIALECT_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/sql/types.hpp"
 #include "matador/sql/token.hpp"
 #include "matador/sql/token_list.hpp"
@@ -27,13 +25,12 @@ class basic_query;
 
 /// @cond MATADOR_DEV
 
-//struct OOS_SQL_API build_info
 struct build_info
 {
   build_info(const sql &s, basic_dialect *d);
 
   build_info(const build_info&) = default;
-  build_info(build_info&&) = default;
+  build_info(build_info&&) noexcept = default;
   build_info& operator=(const build_info&) = default;
   build_info& operator=(build_info&&) = default;
 
@@ -76,7 +73,6 @@ struct dialect_traits {
  * which could eventually overwritten by the concrete
  * dialect.
  */
-//class OOS_SQL_API basic_dialect
 class basic_dialect
 {
 public:
@@ -120,7 +116,6 @@ public:
    * @return The sql string as a prepared statement
    */
   std::tuple<std::string, std::vector<std::string>, std::vector<std::string>> prepare(const sql &s);
-//  std::string prepare(const sql &s);
 
   /**
    * Prepare sql dialect identifier for execution

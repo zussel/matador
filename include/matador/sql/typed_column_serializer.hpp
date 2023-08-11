@@ -1,8 +1,6 @@
 #ifndef OOS_TYPED_COLUMN_SERIALIZER_HPP
 #define OOS_TYPED_COLUMN_SERIALIZER_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/sql/sql.hpp"
 #include "matador/sql/column.hpp"
 

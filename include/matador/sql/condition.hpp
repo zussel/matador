@@ -1,8 +1,6 @@
 #ifndef CONDITION_HPP
 #define CONDITION_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/sql/types.hpp"
 #include "matador/sql/column.hpp"
 #include "matador/sql/token.hpp"
@@ -22,7 +20,6 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-//class OOS_SQL_API basic_condition : public token
 class basic_condition : public token
 {
 public:

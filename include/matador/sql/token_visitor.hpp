@@ -1,8 +1,6 @@
 #ifndef OOS_TOKEN_VISITOR_HPP
 #define OOS_TOKEN_VISITOR_HPP
 
-//#include "matador/sql/export.hpp"
-
 namespace matador {
 
 class sql;
@@ -47,7 +45,6 @@ struct query;
 
 /// @cond MATADOR_DEV
 
-//class OOS_SQL_API token_visitor
 class token_visitor
 {
 public:

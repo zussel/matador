@@ -1,9 +1,6 @@
 #ifndef MATADOR_BASIC_SQL_LOGGER_HPP
 #define MATADOR_BASIC_SQL_LOGGER_HPP
 
-//#include "matador/sql/export.hpp"
-//#define OOS_SQL_API
-
 #include <string>
 
 namespace matador {
@@ -22,7 +19,6 @@ namespace matador {
  * execute or going to prepared.
  */
 class basic_sql_logger
-//class OOS_SQL_API basic_sql_logger
 {
 public:
 
@@ -61,7 +57,6 @@ public:
  * This is used as the default logger for all
  * connections and statements.
  */
-//class OOS_SQL_API null_sql_logger : public basic_sql_logger
 class null_sql_logger : public basic_sql_logger
 {
 public:

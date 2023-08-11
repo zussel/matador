@@ -1,8 +1,6 @@
 #ifndef OOS_DIALECT_TOKEN_HPP
 #define OOS_DIALECT_TOKEN_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/sql/token.hpp"
 #include "matador/sql/condition.hpp"
 

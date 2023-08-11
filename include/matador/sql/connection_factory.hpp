@@ -1,8 +1,6 @@
 #ifndef DATABASE_FACTORY_HPP
 #define DATABASE_FACTORY_HPP
 
-//#include "matador/sql/export.hpp"
-
 #include "matador/utils/singleton.hpp"
 #include "matador/utils/factory.hpp"
 #include "matador/utils/library.hpp"
@@ -14,7 +12,6 @@
 namespace matador {
 
 /// @cond MATADOR_DEV
-//class OOS_SQL_API connection_factory : public matador::singleton<connection_factory>
 class connection_factory : public matador::singleton<connection_factory>
 {
 private:
