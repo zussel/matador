@@ -51,11 +51,7 @@ before_build:
       cd C:\projects\sqlite\src
       mkdir build
       cd build
-      if ("$env:APPVEYOR_BUILD_WORKER_IMAGE" -match "Visual Studio 2015") {
-          $env:generator="Visual Studio 14 2015"
-      } else {
-          $env:generator="Visual Studio 15 2017"
-      }
+      $env:generator="Visual Studio 16 2019"
       if ($env:PLATFORM -eq "x64") {
           $env:generator="$env:generator Win64"
       }
