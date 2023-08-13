@@ -52,9 +52,6 @@ before_build:
       mkdir build
       cd build
       $env:generator="Visual Studio 16 2019"
-      if ($env:PLATFORM -eq "x64") {
-          $env:generator="$env:generator Win64"
-      }
       echo generator="$env:generator"
       $env:SQLITE_ROOT="C:\projects\sqlite\sqlite"
       $env:PATH="$env:PATH;$env:SQLITE_ROOT\bin;$env:MYSQL_DIR\bin;$env:MYSQL_DIR\lib"
