@@ -3,6 +3,8 @@
 
 #include "matador/utils/identifier.hpp"
 
+#include "matador/object/object_exception.hpp"
+
 #include "matador/sql/statement.hpp"
 
 namespace matador {

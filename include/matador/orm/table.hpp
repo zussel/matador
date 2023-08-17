@@ -9,12 +9,12 @@
 #include "matador/object/object_proxy_accessor.hpp"
 
 #include "matador/orm/basic_table.hpp"
-#include "matador/orm/identifier_binder.hpp"
 #include "matador/orm/identifier_column_resolver.hpp"
 #include "matador/orm/relation_resolver.hpp"
 #include "matador/orm/relation_item_appender.hpp"
 
 #include "matador/sql/query.hpp"
+#include "matador/sql/identifier_binder.hpp"
 
 namespace matador {
 

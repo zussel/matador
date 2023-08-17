@@ -180,6 +180,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ConnectionTestUnit("mysql", ::connection::mysql));
   suite.register_unit(new TransactionTestUnit("mysql", ::connection::mysql));
   suite.register_unit(new QueryTestUnit("mysql", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
+  suite.register_unit(new IdentifierSerializerTest("mysql", ::connection::mysql));
   suite.register_unit(new BlogUnitTest("mysql", ::connection::mysql));
   suite.register_unit(new PrimaryKeyTestUnit("mysql", ::connection::mysql));
   suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
@@ -192,6 +193,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ConnectionTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new TransactionTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new QueryTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new IdentifierSerializerTest("mssql", ::connection::mssql));
   suite.register_unit(new BlogUnitTest("mssql", ::connection::mssql));
   suite.register_unit(new PrimaryKeyTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
@@ -219,6 +221,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ConnectionTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new TransactionTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new QueryTestUnit("postgresql", ::connection::postgresql));
+  suite.register_unit(new IdentifierSerializerTest("postgresql", ::connection::postgresql));
   suite.register_unit(new BlogUnitTest("postgresql", ::connection::postgresql));
   suite.register_unit(new PrimaryKeyTestUnit("postgresql", ::connection::postgresql));
   suite.register_unit(new OrmTestUnit("postgresql", ::connection::postgresql));

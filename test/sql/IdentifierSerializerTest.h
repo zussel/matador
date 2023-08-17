@@ -13,6 +13,7 @@ public:
 
   void test_identifier_result_test();
   void test_identifier_row_result_test();
+  void test_identifier_statement_test();
 
 private:
   template < typename IdType, typename SecondIdType, typename ... OtherIdTypes >

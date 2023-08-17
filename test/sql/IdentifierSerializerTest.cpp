@@ -1,6 +1,7 @@
 #include "IdentifierSerializerTest.h"
 
 #include "matador/sql/connection.hpp"
+#include "matador/sql/identifier_binder.hpp"
 #include "matador/sql/query.hpp"
 
 using namespace matador;
@@ -21,13 +22,15 @@ struct identifier_entity
 };
 
 template<typename IdType, typename SecondIdType, typename... OtherIdTypes>
-void IdentifierSerializerTest::test_identifier_result(matador::connection &conn) {
+void IdentifierSerializerTest::test_identifier_result(matador::connection &conn)
+{
   test_identifier_result<IdType>(conn);
   test_identifier_result<SecondIdType, OtherIdTypes...>(conn);
 }
 
 template<typename IdType>
-void IdentifierSerializerTest::test_identifier_result(matador::connection &conn) {
+void IdentifierSerializerTest::test_identifier_result(matador::connection &conn)
+{
   query<identifier_entity<IdType>> q("id_type");
 
   auto res = q.create().execute(conn);
@@ -46,7 +49,8 @@ void IdentifierSerializerTest::test_identifier_result(matador::connection &conn)
 }
 
 template<>
-void IdentifierSerializerTest::test_identifier_result<std::string>(matador::connection &conn) {
+void IdentifierSerializerTest::test_identifier_result<std::string>(matador::connection &conn)
+{
   query<identifier_entity<std::string, 255>> q("id_type");
 
   auto res = q.create().execute(conn);
@@ -65,13 +69,15 @@ void IdentifierSerializerTest::test_identifier_result<std::string>(matador::conn
 }
 
 template<typename IdType, typename SecondIdType, typename... OtherIdTypes>
-void IdentifierSerializerTest::test_identifier_row_result(connection &conn) {
+void IdentifierSerializerTest::test_identifier_row_result(connection &conn)
+{
   test_identifier_row_result<IdType>(conn);
   test_identifier_row_result<SecondIdType, OtherIdTypes...>(conn);
 }
 
 template<typename IdType>
-void IdentifierSerializerTest::test_identifier_row_result(connection &conn) {
+void IdentifierSerializerTest::test_identifier_row_result(connection &conn)
+{
   auto q = query<>("id_row_type");
 
   auto res = q.create({
@@ -92,7 +98,8 @@ void IdentifierSerializerTest::test_identifier_row_result(connection &conn) {
 }
 
 template<>
-void IdentifierSerializerTest::test_identifier_row_result<std::string>(connection &conn) {
+void IdentifierSerializerTest::test_identifier_row_result<std::string>(connection &conn)
+{
   auto q = query<>("id_row_type");
 
   auto res = q.create({
@@ -118,6 +125,7 @@ IdentifierSerializerTest::IdentifierSerializerTest(const std::string &prefix, st
 {
   add_test("result", [this] { test_identifier_result_test(); }, "test identifier result binding");
   add_test("row_result", [this] { test_identifier_row_result_test(); }, "test identifier row result binding");
+//  add_test("statement_binding", [this] { test_identifier_statement_test(); }, "test identifier statement binding");
 }
 
 void IdentifierSerializerTest::test_identifier_result_test()
@@ -161,6 +169,29 @@ void IdentifierSerializerTest::test_identifier_row_result_test()
                              unsigned long long,
                              std::string
                              >(conn);
+
+  conn.disconnect();
+
+  UNIT_ASSERT_FALSE(conn.is_connected());
+}
+
+void IdentifierSerializerTest::test_identifier_statement_test()
+{
+  connection conn(dns_);
+
+  conn.connect();
+
+  UNIT_ASSERT_TRUE(conn.is_connected());
+
+  identifier_entity<short> id { 7, "jane"};
+  query<identifier_entity<short>> q("id_stmt_entity");
+  auto res = q.create().execute(conn);
+
+  auto stmt = q.update().where("id"_col == 7).prepare(conn);
+  stmt.bind(0, &id);
+
+//  detail::identifier_binder<identifier_entity<short>> pk_binder;
+
 
   conn.disconnect();
 

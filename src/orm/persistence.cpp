@@ -1,7 +1,3 @@
-//
-// Created by sascha on 20.03.16.
-//
-
 #include "matador/orm/persistence.hpp"
 #include "matador/sql/sql_logger.hpp"
 
