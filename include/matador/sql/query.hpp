@@ -462,7 +462,7 @@ public:
   /**
    * @brief Resets the query.
    *
-   * @param query_command The query command to which the query is resetted
+   * @param query_command The query command to which the query is reset
    * @return A reference to the query.
    */
   query& reset(t_query_command query_command)
