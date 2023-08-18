@@ -123,7 +123,7 @@ class column_printer : public matador::serializer
 {
 public:
   void apply(const std::string &id, matador::any &val) {
-    visitor_.apply(val, id.c_str(), this);
+    visitor_.apply(val, id.c_str(), *this);
   }
 
   void on_attribute(const char *id, char &x) override
