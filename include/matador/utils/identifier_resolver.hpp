@@ -11,7 +11,6 @@
 
 namespace matador {
 
-class prototype_node;
 class identifiable_holder;
 class abstract_has_many;
 
