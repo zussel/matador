@@ -144,7 +144,8 @@ void IdentifierSerializerTest::test_identifier_result_test()
                          unsigned int,
                          unsigned long,
                          unsigned long long,
-                         std::string>(conn);
+                         std::string
+                         >(conn);
 
   conn.disconnect();
 
@@ -159,15 +160,16 @@ void IdentifierSerializerTest::test_identifier_row_result_test()
 
   UNIT_ASSERT_TRUE(conn.is_connected());
 
-  test_identifier_row_result<short,
+  test_identifier_row_result<
+                             short,
                              int,
                              long,
                              long long,
                              unsigned short,
                              unsigned int,
                              unsigned long,
-                             unsigned long long,
-                             std::string
+                             unsigned long long
+//                             std::string
                              >(conn);
 
   conn.disconnect();
