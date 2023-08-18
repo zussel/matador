@@ -119,13 +119,49 @@ void IdentifierSerializerTest::test_identifier_row_result<std::string>(connectio
   res = q.drop().execute(conn);
 }
 
+template<typename IdType, typename SecondIdType, typename... OtherIdTypes>
+void IdentifierSerializerTest::test_identifier_statement_result(connection &conn) {
+  test_identifier_statement_result<IdType>(conn);
+  test_identifier_statement_result<SecondIdType, OtherIdTypes...>(conn);
+}
+
+template<typename IdType>
+void IdentifierSerializerTest::test_identifier_statement_result(connection &conn)
+{
+  identifier_entity<short> id { 7, "jane"};
+  query<identifier_entity<short>> q("id_stmt_entity");
+  auto res = q.create().execute(conn);
+
+  res = q.insert(id).execute(conn);
+
+  id.name = "john";
+
+  auto stmt = q.update().where("id"_col == 7).prepare(conn);
+  stmt.bind(0, &id);
+
+  detail::identifier_binder<identifier_entity<short>> pk_binder;
+  auto pk = identifier{id.id};
+  pk_binder.bind(&id, &stmt, 2, pk);
+
+  res = stmt.execute();
+
+  res = q.select().where("id"_col == 7).execute(conn);
+
+  for (const auto &p : res) {
+    UNIT_EXPECT_EQUAL(p->id, 7UL);
+    UNIT_EXPECT_EQUAL(p->name, "john");
+  }
+
+  res = q.drop().execute(conn);
+}
+
 IdentifierSerializerTest::IdentifierSerializerTest(const std::string &prefix, std::string dns)
 : unit_test(prefix + "_identifier_serializer", "identifier serializer test")
 , dns_(std::move(dns))
 {
   add_test("result", [this] { test_identifier_result_test(); }, "test identifier result binding");
   add_test("row_result", [this] { test_identifier_row_result_test(); }, "test identifier row result binding");
-//  add_test("statement_binding", [this] { test_identifier_statement_test(); }, "test identifier statement binding");
+  add_test("statement_binding", [this] { test_identifier_statement_test(); }, "test identifier statement binding");
 }
 
 void IdentifierSerializerTest::test_identifier_result_test()
@@ -185,15 +221,17 @@ void IdentifierSerializerTest::test_identifier_statement_test()
 
   UNIT_ASSERT_TRUE(conn.is_connected());
 
-  identifier_entity<short> id { 7, "jane"};
-  query<identifier_entity<short>> q("id_stmt_entity");
-  auto res = q.create().execute(conn);
-
-  auto stmt = q.update().where("id"_col == 7).prepare(conn);
-  stmt.bind(0, &id);
-
-//  detail::identifier_binder<identifier_entity<short>> pk_binder;
-
+  test_identifier_statement_result<
+                             short,
+                             int,
+                             long,
+                             long long,
+                             unsigned short,
+                             unsigned int,
+                             unsigned long,
+                             unsigned long long
+//                             std::string
+                            >(conn);
 
   conn.disconnect();
 

@@ -26,6 +26,11 @@ private:
   template < typename IdType >
   void test_identifier_row_result(matador::connection &conn);
 
+  template < typename IdType, typename SecondIdType, typename ... OtherIdTypes >
+  void test_identifier_statement_result(matador::connection &conn);
+  template < typename IdType >
+  void test_identifier_statement_result(matador::connection &conn);
+
 private:
   std::string dns_;
 };
