@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/3/16.
-//
-
 #ifndef OOS_SQLITE_DIALECT_HPP
 #define OOS_SQLITE_DIALECT_HPP
 

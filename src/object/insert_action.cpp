@@ -49,7 +49,7 @@ bool insert_action::empty() const
 
 struct object_by_id
 {
-  object_by_id(unsigned long id)
+  object_by_id(unsigned long long id)
     : id_(id)
   {}
   bool operator()(const object_proxy *proxy) const
@@ -57,15 +57,15 @@ struct object_by_id
     return (proxy->obj() && proxy->id() == id_);
   }
 
-  unsigned long id_;
+  unsigned long long id_;
 };
 
-insert_action::iterator insert_action::find(unsigned long id)
+insert_action::iterator insert_action::find(unsigned long long id)
 {
   return std::find_if(object_proxy_list_.begin(), object_proxy_list_.end(), object_by_id(id));
 }
 
-insert_action::const_iterator insert_action::find(unsigned long id) const
+insert_action::const_iterator insert_action::find(unsigned long long id) const
 {
   return std::find_if(object_proxy_list_.begin(), object_proxy_list_.end(), object_by_id(id));
 }
@@ -77,7 +77,7 @@ void insert_action::push_back(object_proxy *proxy)
 
 insert_action::iterator insert_action::erase(insert_action::iterator i)
 {
-  return object_proxy_list_.erase(i);
+  return object_proxy_list_.erase(std::move(i));
 }
 
 void insert_action::restore(byte_buffer &, object_store *store)

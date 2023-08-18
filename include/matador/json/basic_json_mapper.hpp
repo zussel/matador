@@ -3,9 +3,9 @@
 
 #include "matador/json/export.hpp"
 
-#include "json.hpp"
-#include "json_parser.hpp"
-#include "matador/utils/identifier.hpp"
+#include "matador/json/json.hpp"
+#include "matador/json/json_parser.hpp"
+
 #include "matador/utils/time.hpp"
 
 namespace matador {

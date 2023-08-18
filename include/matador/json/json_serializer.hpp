@@ -4,7 +4,6 @@
 #include "matador/json/export.hpp"
 
 #include "matador/utils/access.hpp"
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/string.hpp"
 #include "json.hpp"
 #include "matador/utils/is_builtin.hpp"
@@ -63,7 +62,7 @@ public:
   }
 
   template< class V >
-  void serialize(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &pk, long /*size*/ = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     write_id(id);
     append(pk).append(",");
@@ -71,49 +70,32 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
     write_id(id);
     append(obj);
     newline();
   }
 
-  void serialize(const char *id, identifier<std::string> &pk);
-
-  template < int SIZE, class V >
-  void serialize(const char *id, identifier<varchar<SIZE, V>> &pk)
-  {
-    write_id(id);
-    append(pk.value()).append(",");
-    newline();
-  }
+  void on_primary_key(const char *id, std::string &pk, long size = -1);
 
   // numbers
   template < class V >
-  void serialize(const char *id, V &val, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &val, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     write_id(id);
     append(val).append(",");
     newline();
   }
 
-  // boolean
-  void serialize(const char *id, bool &val);
-
-  // string
-  void serialize(const char *id, std::string &val);
-
-  // string
-  void serialize(const char *id, std::string &val, size_t);
-
-  // date
-  void serialize(const char *id, date &d);
-
-  // time
-  void serialize(const char *id, time &t);
+  void on_attribute(const char *id, bool &val);
+  void on_attribute(const char *id, std::string &val);
+  void on_attribute(const char *id, std::string &val, size_t);
+  void on_attribute(const char *id, date &d);
+  void on_attribute(const char *id, time &t);
 
   template < class V >
-  void serialize(const char *id, std::list<V> &cont)
+  void on_attribute(const char *id, std::list<V> &cont)
   {
     write_id(id);
     begin_array();
@@ -123,7 +105,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, std::vector<V> &cont)
+  void on_attribute(const char *id, std::vector<V> &cont)
   {
     write_id(id);
     begin_array();
@@ -133,7 +115,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, std::set<V> &cont)
+  void on_attribute(const char *id, std::set<V> &cont)
   {
     write_id(id);
     begin_array();
@@ -143,7 +125,7 @@ public:
   }
 
   template < class V >
-  void serialize(const char *id, std::unordered_set<V> &cont)
+  void on_attribute(const char *id, std::unordered_set<V> &cont)
   {
     write_id(id);
     begin_array();
@@ -184,11 +166,8 @@ private:
   void newline();
 
   std::string& append(const char *str);
-
   std::string& append(const std::string &str);
-
   std::string& append(std::string &val, size_t);
-
   std::string& append(const bool &value);
 
   template<class V>

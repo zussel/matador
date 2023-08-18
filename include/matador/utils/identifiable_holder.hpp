@@ -3,11 +3,11 @@
 
 #include "matador/utils/export.hpp"
 
+#include "matador/utils/identifier.hpp"
+
 #include <memory>
 
 namespace matador {
-
-class basic_identifier;
 
 /**
  * Base class for all pointer object
@@ -25,7 +25,7 @@ public:
    *
    * @param id The identifier to set
    */
-  virtual void reset(basic_identifier* id) = 0;
+  virtual void reset(const identifier &id) = 0;
 
   /**
    * Returns true if serializable has a primary key
@@ -39,15 +39,15 @@ public:
    *
    * @return The primary key of the foreign serializable
    */
-  virtual basic_identifier* primary_key() const = 0;
+  virtual const identifier& primary_key() const = 0;
+  virtual identifier& primary_key() = 0;
 
   /**
    * Creates a new identifier object.
    *
    * @return Returns a new identifier object.
    */
-  virtual basic_identifier* create_identifier() const = 0;
-
+  virtual identifier create_identifier() const = 0;
 };
 
 }

@@ -12,52 +12,49 @@ namespace matador {
 object_serializer::object_serializer(byte_buffer *buffer)
   : buffer_(buffer) {}
 
-void object_serializer::serialize(const char *, char *c, size_t s)
+void object_serializer::on_attribute(const char *, char *x, long /*size*/)
 {
-  size_t len = s;
+  size_t len = strlen(x);
 
   buffer_->append(&len, sizeof(len));
-  buffer_->append(c, len);
+  buffer_->append(x, len);
 }
 
-void object_serializer::serialize(const char *, std::string &s, size_t)
+void object_serializer::on_attribute(const char *, std::string &x, long /*size*/)
 {
-  size_t len = s.size();
+  size_t len = x.size();
 
   buffer_->append(&len, sizeof(len));
-  buffer_->append(s.c_str(), len);
+  buffer_->append(x.c_str(), len);
 }
 
-void object_serializer::serialize(const char *, std::string &s)
-{
-  size_t len = s.size();
-
-  buffer_->append(&len, sizeof(len));
-  buffer_->append(s.c_str(), len);
-}
-
-void object_serializer::serialize(const char *id, date &x)
+void object_serializer::on_attribute(const char *id, date &x, long /*size*/)
 {
   int jd(x.julian_date());
-  serialize(id, jd);
+  on_attribute(id, jd);
 }
 
-void object_serializer::serialize(const char *id, time &x)
+void object_serializer::on_attribute(const char *id, time &x, long /*size*/)
 {
   struct timeval tv = x.get_timeval();
-  serialize(id, tv.tv_sec);
-  serialize(id, tv.tv_usec);
+  on_attribute(id, tv.tv_sec);
+  on_attribute(id, tv.tv_usec);
 }
 
-void object_serializer::serialize(const char *, basic_identifier &x)
+void object_serializer::on_belongs_to(const char *id, object_holder &x, cascade_type cascade)
 {
-  basic_identifier_serializer_.serialize(x, *buffer_);
+  on_foreign_object(id, x, cascade);
 }
 
-void object_serializer::serialize(const char* id, object_holder &x, cascade_type)
+void object_serializer::on_has_one(const char *id, object_holder &x, cascade_type cascade)
 {
-  unsigned long oid = x.id();
-  serialize(id, oid);
+  on_foreign_object(id, x, cascade);
+}
+
+void object_serializer::on_foreign_object(const char *id, object_holder &x, cascade_type /*cascade*/)
+{
+  auto oid = x.id();
+  on_attribute(id, oid);
 }
 
 }

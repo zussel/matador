@@ -1,8 +1,6 @@
 #ifndef MATADOR_VALUE_VISITOR_HPP
 #define MATADOR_VALUE_VISITOR_HPP
 
-#include "matador/sql/export.hpp"
-
 #include "matador/utils/any_visitor.hpp"
 #include "matador/utils/serializer.hpp"
 #include "matador/utils/time.hpp"
@@ -18,23 +16,24 @@ class basic_dialect;
 
 namespace detail {
 
-class OOS_SQL_API value_visitor
+class value_visitor
 {
 public:
   value_visitor();
 
-  void apply(matador::any &a, const char *id, serializer *s);
+  void apply(matador::any &a, const char *id, serializer &s);
 
+private:
   template < class T >
   void process(T &val, typename std::enable_if<std::is_integral<T>::value>::type* = 0)
   {
-    serializer_->serialize(id_, val);
+    serializer_->on_attribute(id_, val);
   }
 
   template < class T >
   void process(T &val, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
   {
-    serializer_->serialize(id_, val);
+    serializer_->on_attribute(id_, val);
   }
 
   void process(std::string &val);
@@ -48,7 +47,7 @@ private:
   const char *id_ = nullptr;
 };
 
-class OOS_SQL_API value_to_string_visitor
+class value_to_string_visitor
 {
 public:
   value_to_string_visitor();

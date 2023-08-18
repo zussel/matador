@@ -34,7 +34,9 @@ SET (TEST_TOOLS_SOURCES
   utils/UrlTest.cpp
   utils/UrlTest.hpp
   utils/HtmlTest.cpp
-  utils/HtmlTest.hpp)
+  utils/HtmlTest.hpp
+  utils/IdentifierTest.cpp
+  utils/IdentifierTest.hpp)
 
 SET (TEST_JSON_SOURCES
   json/JsonTestUnit.cpp
@@ -97,7 +99,9 @@ SET (TEST_HTTP_SOURCES
   http/MiddlewareTest.cpp
   http/MiddlewareTest.hpp
   http/HttpClientTest.cpp
-  http/HttpClientTest.hpp http/HttpTestServer.cpp http/HttpTestServer.hpp)
+  http/HttpClientTest.hpp
+  http/HttpTestServer.cpp
+  http/HttpTestServer.hpp)
 
 SET (TEST_HEADER
   datatypes.hpp
@@ -153,7 +157,9 @@ SET (TEST_SQL_SOURCES
   sql/PostgreSQLDialectTestUnit.cpp
   sql/PostgreSQLDialectTestUnit.hpp
   sql/SqlLoggerTest.cpp
-  sql/SqlLoggerTest.hpp)
+  sql/SqlLoggerTest.hpp
+  sql/IdentifierSerializerTest.cpp
+  sql/IdentifierSerializerTest.h)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp
@@ -221,11 +227,8 @@ TARGET_LINK_LIBRARIES(test_matador
   ${CMAKE_DL_LIBS}
   ${MATADOR_DB_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
+  ${NET_LIBRARIES}
 )
-
-if(WIN32)
-  target_link_libraries(test_matador wsock32 ws2_32)
-endif()
 
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})

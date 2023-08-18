@@ -1,21 +1,52 @@
 #ifndef RESULT_IMPL_HPP
 #define RESULT_IMPL_HPP
 
-#include "matador/sql/export.hpp"
-
 #include "matador/utils/access.hpp"
-#include "matador/utils/serializer.hpp"
+#include "matador/utils/identifier.hpp"
 #include "matador/utils/cascade_type.hpp"
+#include "matador/utils/serializer.hpp"
 
 #include <memory>
 
 namespace matador {
 
+class date;
+class time;
+class identifiable_holder;
+class abstract_has_many;
+
 namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API result_impl : public matador::serializer
+class result_impl;
+
+class result_identifier_reader : public identifier_serializer
+{
+public:
+  explicit result_identifier_reader(result_impl &res)
+  : result_impl_(res) {}
+
+  void serialize(short &value, long /*size*/) override { read_value(value); }
+  void serialize(int &value, long /*size*/) override { read_value(value); }
+  void serialize(long &value, long /*size*/) override { read_value(value); }
+  void serialize(long long &value, long /*size*/) override { read_value(value); }
+  void serialize(unsigned short &value, long /*size*/) override { read_value(value); }
+  void serialize(unsigned int &value, long /*size*/) override { read_value(value); }
+  void serialize(unsigned long &value, long /*size*/) override { read_value(value); }
+  void serialize(unsigned long long &value, long /*size*/) override { read_value(value); }
+  void serialize(std::string &value, long size) override { read_value(value, size); }
+  void serialize(null_type_t &, long /*size*/) override;
+
+  template<class Type>
+  void read_value(Type &value);
+  void read_value(std::string &value, long size);
+
+private:
+  result_impl &result_impl_;
+};
+
+class result_impl : public serializer
 {
 public:
   result_impl(const result_impl &) = delete;
@@ -25,7 +56,7 @@ public:
   typedef unsigned long size_type;
 
 protected:
-  result_impl() = default;
+  result_impl();
 
   virtual bool needs_bind() { return false; };
   virtual bool finalize_bind() { return false; }
@@ -33,36 +64,61 @@ protected:
   virtual bool finalize_fetch() = 0;
 
 public:
-  ~result_impl() override = default;
-
   template < class T >
   void serialize(T &x)
   {
     matador::access::serialize(*this, x);
   }
 
-  void serialize(const char*, char&) override = 0;
-  void serialize(const char*, short&) override = 0;
-  void serialize(const char*, int&) override = 0;
-  void serialize(const char*, long&) override = 0;
-  void serialize(const char*, long long&) override = 0;
-  void serialize(const char*, unsigned char&) override = 0;
-  void serialize(const char*, unsigned short&) override = 0;
-  void serialize(const char*, unsigned int&) override = 0;
-  void serialize(const char*, unsigned long&) override = 0;
-  void serialize(const char*, unsigned long long&) override = 0;
-  void serialize(const char*, bool&) override = 0;
-  void serialize(const char*, float&) override = 0;
-  void serialize(const char*, double&) override = 0;
-  void serialize(const char*, char *, size_t) override = 0;
-  void serialize(const char*, std::string&) override = 0;
-  void serialize(const char*, std::string&, size_t) override = 0;
-  void serialize(const char*, matador::time&) override = 0;
-  void serialize(const char*, matador::date&) override = 0;
-  void serialize(const char*, matador::basic_identifier &x) override = 0;
-  void serialize(const char*, matador::identifiable_holder &x, cascade_type) override = 0;
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void serialize(const char *, abstract_has_many &, cascade_type) override {}
+  template<typename ValueType>
+  void on_primary_key(const char *id, ValueType &value, long /*size*/ = -1)
+  {
+    read_value(id, column_index_++, value);
+  }
+
+  void on_attribute(const char *id, char &x) override;
+  void on_attribute(const char *id, short &x) override;
+  void on_attribute(const char *id, int &x) override;
+  void on_attribute(const char *id, long &x) override;
+  void on_attribute(const char *id, long long &x) override;
+  void on_attribute(const char *id, unsigned char &x) override;
+  void on_attribute(const char *id, unsigned short &x) override;
+  void on_attribute(const char *id, unsigned int &x) override;
+  void on_attribute(const char *id, unsigned long &x) override;
+  void on_attribute(const char *id, unsigned long long &x) override;
+  void on_attribute(const char *id, bool &x) override;
+  void on_attribute(const char *id, float &x) override;
+  void on_attribute(const char *id, double &x) override;
+  void on_attribute(const char *id, char *, long size) override;
+  void on_attribute(const char *id, std::string&) override;
+  void on_attribute(const char *id, std::string&, long size) override;
+  void on_attribute(const char *id, matador::time&) override;
+  void on_attribute(const char *id, matador::date&) override;
+
+  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type) override;
+  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type) override;
+
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
+
+  virtual void read_value(const char *id, size_type index, char &value) = 0;
+  virtual void read_value(const char *id, size_type index, short &value) = 0;
+  virtual void read_value(const char *id, size_type index, int &value) = 0;
+  virtual void read_value(const char *id, size_type index, long &value) = 0;
+  virtual void read_value(const char *id, size_type index, long long &value) = 0;
+  virtual void read_value(const char *id, size_type index, unsigned char &value) = 0;
+  virtual void read_value(const char *id, size_type index, unsigned short &value) = 0;
+  virtual void read_value(const char *id, size_type index, unsigned int &value) = 0;
+  virtual void read_value(const char *id, size_type index, unsigned long &value) = 0;
+  virtual void read_value(const char *id, size_type index, unsigned long long &value) = 0;
+  virtual void read_value(const char *id, size_type index, bool &value) = 0;
+  virtual void read_value(const char *id, size_type index, float &value) = 0;
+  virtual void read_value(const char *id, size_type index, double &value) = 0;
+  virtual void read_value(const char *id, size_type index, matador::time &value) = 0;
+  virtual void read_value(const char *id, size_type index, matador::date &value) = 0;
+  virtual void read_value(const char *id, size_type index, char *value, long s) = 0;
+  virtual void read_value(const char *id, size_type index, std::string &value) = 0;
+  virtual void read_value(const char *id, size_type index, std::string &value, long s) = 0;
 
   virtual const char *column(size_type c) const = 0;
 
@@ -78,10 +134,12 @@ public:
   template < class T >
   void bind(T *o)
   {
-    if (needs_bind()) {
-      serialize(*o);
-      finalize_bind();
+    if (!needs_bind()) {
+      return;
     }
+    column_index_ = reset_column_index();
+    serialize(*o);
+    finalize_bind();
   }
 
   template < class T >
@@ -90,27 +148,33 @@ public:
     if (!prepare_fetch()) {
       return false;
     }
-    result_index_ = transform_index(0);
+    column_index_ = reset_column_index();
     serialize(*o);
     return finalize_fetch();
   }
 
   virtual size_type affected_rows() const = 0;
-
   virtual size_type result_rows() const = 0;
-
   virtual size_type fields() const = 0;
 
-  virtual int transform_index(int index) const = 0;
+  virtual size_type reset_column_index() const = 0;
 
 protected:
-  void read_foreign_object(const char *id, identifiable_holder &x);
+  virtual void read_foreign_object(const char *id, identifiable_holder &x);
 
-protected:
-  int result_index_ = 0;
+  size_type column_index() const;
+
+  result_identifier_reader result_identifier_reader_;
+
+  size_type column_index_ = 0;
 };
 
 /// @endcond
+
+template<class Type>
+void result_identifier_reader::read_value(Type &value) {
+  result_impl_.on_attribute("", value);
+}
 
 }
 

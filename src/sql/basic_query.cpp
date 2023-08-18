@@ -1,7 +1,3 @@
-//
-// Created by sascha on 24.05.16.
-//
-
 #include "matador/sql/column.hpp"
 #include "matador/sql/basic_query.hpp"
 #include "matador/sql/connection.hpp"

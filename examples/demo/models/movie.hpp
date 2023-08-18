@@ -1,7 +1,6 @@
 #ifndef MATADOR_MOVIE_HPP
 #define MATADOR_MOVIE_HPP
 
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/cascade_type.hpp"
 
 #include "matador/object/has_many.hpp"
@@ -27,22 +26,22 @@ struct movie
     : title(std::move(t)), year(y), director(dir)
   {}
 
-  matador::identifier<unsigned long> id;
+  unsigned long id;
   std::string title;
   matador::has_many<e_genre> genres;
   unsigned short year {};
   matador::has_many<person> actors;
-  matador::has_one<person> director;
+  matador::object_ptr<person> director;
 
   template < class Serializer >
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("title", title);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("title", title, 255);
     //serializer.serialize("genres", genres, "movie_id", "genre", matador::cascade_type::ALL);
-    serializer.serialize("year", year);
-    serializer.serialize("actors", actors, "movie_id", "actor_id", matador::cascade_type::NONE);
-    serializer.serialize("director", director, matador::cascade_type::NONE);
+    serializer.on_attribute("year", year);
+    serializer.on_has_many("actors", actors, "movie_id", "actor_id", matador::cascade_type::NONE);
+    serializer.on_has_one("director", director, matador::cascade_type::NONE);
   }
 };
 #endif //MATADOR_MOVIE_HPP

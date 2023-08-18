@@ -175,16 +175,16 @@ private:
   object_type value_;
 };
 
-template < int SIZE, class T >
-class has_many_item_holder<varchar<SIZE, T>> : public basic_has_many_item_holder
+template < long SIZE >
+class has_many_item_holder<varchar<SIZE>> : public basic_has_many_item_holder
 {
 public:
-  typedef varchar<SIZE, T> object_type;
-  typedef T value_type;
+  typedef varchar<SIZE> object_type;
+  typedef std::string value_type;
 
   has_many_item_holder() = default;
 
-  has_many_item_holder(const T &val, object_proxy *item_proxy)
+  has_many_item_holder(const std::string &val, object_proxy *item_proxy)
     : basic_has_many_item_holder(item_proxy)
     , value_(val)
   {}
@@ -236,12 +236,12 @@ public:
     return a.value_ != b.value_;
   }
 
-  const T& value() const
+  const std::string& value() const
   {
     return value_.value();
   }
 
-  T& value()
+  std::string& value()
   {
     return value_.value();
   }

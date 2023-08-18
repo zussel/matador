@@ -1,25 +1,6 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/string.hpp"
-
-#include "matador/utils/identifier.hpp"
 
 #include "matador/db/mysql/mysql_result.hpp"
 #include "matador/db/mysql/mysql_exception.hpp"
@@ -75,7 +56,6 @@ bool mysql_result::prepare_fetch()
     return false;
   }
 
-  result_index_ = 0;
   return true;
 }
 
@@ -99,207 +79,197 @@ mysql_result::size_type mysql_result::fields() const
   return fields_;
 }
 
-int mysql_result::transform_index(int index) const
+detail::result_impl::size_type mysql_result::reset_column_index() const
 {
-  return index;
+  return 0;
 }
 
-void mysql_result::serialize(const char *, char &x)
+void mysql_result::read_value(const char */*id*/, size_type index, char &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) > 1) {
-    x = val[0];
+    value = val[0];
   }
 }
 
-void mysql_result::serialize(const char *, short &x)
+void mysql_result::read_value(const char */*id*/, size_type index, short &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (short)strtol(val, &end, 10);
+  value = (short)strtol(val, &end, 10);
 }
 
-void mysql_result::serialize(const char *, int &x)
+void mysql_result::read_value(const char */*id*/, size_type index, int &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (int)strtol(val, &end, 10);
+  value = (int)strtol(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, long &x)
+void mysql_result::read_value(const char */*id*/, size_type index, long &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = strtol(val, &end, 10);
+  value = strtol(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, long long &x)
+void mysql_result::read_value(const char */*id*/, size_type index, long long &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = strtoll(val, &end, 10);
+  value = strtoll(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, unsigned char &x)
+void mysql_result::read_value(const char */*id*/, size_type index, unsigned char &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (unsigned char)strtoul(val, &end, 10);
+  value = (unsigned char)strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, unsigned short &x)
+void mysql_result::read_value(const char */*id*/, size_type index, unsigned short &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (unsigned short)strtoul(val, &end, 10);
+  value = (unsigned short)strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, unsigned int &x)
+void mysql_result::read_value(const char */*id*/, size_type index, unsigned int &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (unsigned int)strtoul(val, &end, 10);
+  value = (unsigned int)strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, unsigned long &x)
+void mysql_result::read_value(const char */*id*/, size_type index, unsigned long &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (!val || strlen(val) == 0) {
     return;
   }
   char *end = nullptr;
-  x = strtoul(val, &end, 10);
+  value = strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, unsigned long long &x)
+void mysql_result::read_value(const char */*id*/, size_type index, unsigned long long &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (!val || strlen(val) == 0) {
     return;
   }
   char *end = nullptr;
-  x = strtoull(val, &end, 10);
+  value = strtoull(val, &end, 10);
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, bool &x)
+void mysql_result::read_value(const char */*id*/, size_type index, bool &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = strtoul(val, &end, 10) > 0;
+  value = strtoul(val, &end, 10) > 0;
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, float &x)
+void mysql_result::read_value(const char */*id*/, size_type index, float &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = (float)strtod(val, &end);
+  value = static_cast<float>(strtod(val, &end));
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, double &x)
+void mysql_result::read_value(const char */*id*/, size_type index, double &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   if (strlen(val) == 0) {
     return;
   }
   char *end;
-  x = strtod(val, &end);
+  value = strtod(val, &end);
   // Todo: check error
 }
 
-void mysql_result::serialize(const char *, char *x, size_t s)
+void mysql_result::read_value(const char */*id*/, size_type index, char *value, long s)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   size_t len = strlen(val);
   if (len > (size_t)s) {
-    strncpy(x, val, (size_t)s);
-    x[s-1] = '\n';
+    strncpy(value, val, (size_t)s);
+    value[s-1] = '\n';
   } else {
-    strcpy(x, val);
+    strcpy(value, val);
   }
 
 }
 
-void mysql_result::serialize(const char *, std::string &x, size_t)
+void mysql_result::read_value(const char */*id*/, size_type index, std::string &value, long /*size*/)
 {
-  char *val = row_[result_index_++];
-  x.assign(val);
+  char *val = row_[index];
+  value.assign(val);
 }
 
-void mysql_result::serialize(const char *, std::string &x)
+void mysql_result::read_value(const char */*id*/, size_type index, std::string &value)
 {
-  char *val = row_[result_index_++];
-  x.assign(val);
+  char *val = row_[index];
+  value.assign(val);
 }
 
-void mysql_result::serialize(const char *, matador::date &x)
+void mysql_result::read_value(const char */*id*/, size_type index, matador::date &value)
 {
-  char *val = row_[result_index_++];
+  char *val = row_[index];
   size_t len = strlen(val);
   if (val == nullptr || len == 0) {
     return;
   }
-  x.set(val, matador::date_format::ISO8601);
+  value.set(val, matador::date_format::ISO8601);
 }
 
-void mysql_result::serialize(const char *id, matador::time &x)
+void mysql_result::read_value(const char *id, size_type index, matador::time &value)
 {
   std::string val;
-  serialize(id, val);
+  read_value(id, index, val);
   if (mysql::version < 50604) {
     // before mysql version 5.6.4 datetime
-    // doesn't support fractional seconds
+    // doesn't support fractional seconds,
     // so we use a datetime string here
-    x = matador::time::parse(val, "%Y-%m-%dT%T");
+    value = matador::time::parse(val, "%Y-%m-%dT%T");
   } else {
-    x = matador::time::parse(val, "%Y-%m-%d %T.%f");
+    value = matador::time::parse(val, "%Y-%m-%d %T.%f");
   }
-}
-
-void mysql_result::serialize(const char *id, matador::basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
-void mysql_result::serialize(const char *id, matador::identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
 }
 
 }

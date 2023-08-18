@@ -3,12 +3,11 @@
 
 #include <utility>
 
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/date.hpp"
 
 struct person
 {
-  matador::identifier<unsigned long> id;
+  unsigned long id;
   std::string name;
   matador::date birthday;
 
@@ -20,9 +19,9 @@ struct person
   template < class Serializer >
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("name", name);
-    serializer.serialize("birthday", birthday);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("name", name, 255);
+    serializer.on_attribute("birthday", birthday);
   }
 };
 

@@ -3,7 +3,6 @@
 
 #include "matador/utils/access.hpp"
 
-#include "matador/object/has_one.hpp"
 #include "matador/object/object_exception.hpp"
 
 #include "matador/orm/basic_table.hpp"
@@ -27,10 +26,10 @@ struct relation_data_type
   typedef T value_type;
 };
 
-template < int SIZE, class T >
-struct relation_data_type<varchar<SIZE, T>>
+template < long SIZE >
+struct relation_data_type<varchar<SIZE>>
 {
-  typedef typename varchar<SIZE, T>::value_type value_type;
+  typedef typename varchar<SIZE>::value_type value_type;
 };
 
 template < typename T >
@@ -62,7 +61,7 @@ public:
     proxy_ = proxy;
     matador::access::serialize(*this, *proxy->obj<T>());
     proxy_ = nullptr;
-    id_ = nullptr;
+    id_.clear();
     store_ = nullptr;
   }
 
@@ -73,18 +72,20 @@ public:
   }
 
   template < class V >
-  void serialize(const char *, V &) { }
-  void serialize(const char *, char *, size_t) { }
-  void serialize(const char *, std::string &, size_t) { }
+  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
+  template<class V>
+  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char *, long /*size*/ = -1) { }
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
 
   template < class V >
-  void serialize(const char *id, belongs_to<V> &x, cascade_type cascade);
+  void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type cascade);
 
   template < class V >
-  void serialize(const char *, has_one<V> &x, cascade_type cascade)
+  void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade)
   {
-    basic_identifier *pk = x.primary_key();
-    if (!pk) {
+    const auto pk = x.primary_key().share();
+    if (pk.is_null()) {
       return;
     }
 
@@ -99,7 +100,6 @@ public:
        * already read - replace proxy
        */
       x.reset(proxy, cascade);
-      delete pk;
     } else {
       /**
        * if proxy can't be found we create
@@ -125,13 +125,13 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, basic_has_many<V, C> &x, const char *, const char *, cascade_type cascade)
   {
-    serialize(id, x, cascade);
+    on_has_many(id, x, cascade);
   }
 
   template<class V, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<V, C> &x, cascade_type)
+  void on_has_many(const char *id, basic_has_many<V, C> &x, cascade_type)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);
@@ -171,7 +171,7 @@ private:
   object_store *store_ = nullptr;
   basic_table &table_;
   object_proxy *proxy_ = nullptr;
-  basic_identifier *id_ = nullptr;
+  identifier id_;
 
   typename belongs_to_resolver<T>::t_table_map belongs_to_table_map_;
 };
@@ -237,7 +237,7 @@ public:
     right_table_ptr_ = right_table_.lock();
     matador::access::serialize(*this, *proxy->obj<T>());
     proxy_ = nullptr;
-    id_ = nullptr;
+    id_.clear();
     store_ = nullptr;
   }
 
@@ -247,45 +247,41 @@ public:
     matador::access::serialize(*this, obj);
   }
 
+  template<typename V>
+  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
   template < class V >
-  void serialize(const char *, V &x);
-
-  void serialize(const char *, char *, size_t);
-  void serialize(const char *, std::string &, size_t) { }
-
+  void on_attribute(const char *, V &x, long /*size*/ = -1);
+  void on_attribute(const char *, char *, long size = -1);
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
   template < class V >
-  void serialize(const char *, belongs_to<V> &x, cascade_type cascade);
-
+  void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);
   template < class V >
-  void serialize(const char *, has_one<V> &x, cascade_type cascade)
+  void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade)
   {
     // must be left side value
     // if left table is loaded
     // insert it into concrete object
     // else
     // insert into relation data
-    basic_identifier *pk = x.primary_key();
-    if (!pk) {
+    const identifier &pk = x.primary_key().share();
+    if (pk.is_null()) {
       return;
     }
 
-    left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
   }
-  
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
-  void serialize(const char *, abstract_has_many &, cascade_type) { }
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
+  void on_has_many(const char *, abstract_has_many &, cascade_type) { }
 
 private:
   template<class V>
-  object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
+  object_proxy* acquire_proxy(object_ptr<V> &x, const identifier pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());
 
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
-      auto id = x.primary_key();
-      delete id;
       x.reset(proxy, cascade);
     } else {
       // proxy wasn't created (wasn't found in node tree)
@@ -312,7 +308,7 @@ private:
   object_store *store_ = nullptr;
   basic_table &table_;
   object_proxy *proxy_ = nullptr;
-  basic_identifier *id_ = nullptr;
+  identifier id_;
 
   std::weak_ptr<basic_table> left_table_;
   std::weak_ptr<basic_table> right_table_;
@@ -372,7 +368,7 @@ public:
     left_table_ptr_ = left_table_.lock();
     matador::access::serialize(*this, *proxy->obj<T>());
     proxy_ = nullptr;
-    id_ = nullptr;
+    id_.clear();
     store_ = nullptr;
   }
 
@@ -383,36 +379,25 @@ public:
   }
 
   template < class V >
-  void serialize(const char *, V &x);
+  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
+  template < class V >
+  void on_attribute(const char *, V &x, long size = -1);
 
-  void serialize(const char *, char *, size_t);
-  void serialize(const char *, std::string &, size_t);
+  void on_attribute(const char *, char *, long size = -1);
+  void on_attribute(const char *, std::string &, long size = -1);
 
   template < class V >
-  void serialize(const char *, belongs_to<V> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);
 
   template < class V >
-  void serialize(const char *, has_one<V> &x, cascade_type cascade)
-  {
-    // must be left side value
-    // if left table is loaded
-    // insert it into concrete object
-    // else
-    // insert into relation data
-    basic_identifier *pk = x.primary_key();
-    if (!pk) {
-      return;
-    }
+  void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade);
 
-    left_proxy_ = acquire_proxy<V>(x, pk, cascade, left_table_ptr_);
-  }
-
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
-  void serialize(const char *, abstract_has_many &, cascade_type) { }
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
+  void on_has_many(const char *, abstract_has_many &, cascade_type) { }
 
 private:
   template < class V >
-  object_proxy* acquire_proxy(object_holder &x, basic_identifier *pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
+  object_proxy* acquire_proxy(object_ptr<V> &x, const identifier &pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());
@@ -438,7 +423,7 @@ private:
   object_store *store_ = nullptr;
   basic_table &table_;
   object_proxy *proxy_ = nullptr;
-  basic_identifier *id_ = nullptr;
+  identifier id_;
 
   std::weak_ptr<basic_table> left_table_;
 

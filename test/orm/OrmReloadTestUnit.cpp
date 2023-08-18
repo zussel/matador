@@ -42,7 +42,7 @@ void OrmReloadTestUnit::test_load()
     for (const std::string &name : names) {
       auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
 
-      UNIT_EXPECT_GREATER(pptr->id(), 0UL);
+      UNIT_EXPECT_GREATER(pptr->id(), 0ULL);
     }
 
     s.flush();
@@ -93,7 +93,7 @@ void OrmReloadTestUnit::test_load_twice()
     for (const std::string &name : names) {
       auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
 
-      UNIT_EXPECT_GREATER(pptr->id(), 0UL);
+      UNIT_EXPECT_GREATER(pptr->id(), 0ULL);
     }
 
     s.flush();

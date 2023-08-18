@@ -1,678 +1,221 @@
-#ifndef IDENTIFIER_HPP
-#define IDENTIFIER_HPP
+#ifndef MATADOR_IDENTIFIER_HPP
+#define MATADOR_IDENTIFIER_HPP
 
-#include "matador/utils/export.hpp"
-
-#include "matador/utils/basic_identifier.hpp"
-#include "matador/utils/serializer.hpp"
-#include "matador/utils/varchar.hpp"
-
-#include <type_traits>
-#include <stdexcept>
-#include <functional>
 #include <memory>
+#include <string>
+#include <typeindex>
 
 namespace matador {
 
-/**
- * @brief Identifier class for integral types
- *
- * @tparam T Type of the identifier
- */
-template<typename T>
-class identifier<T, typename std::enable_if<std::is_integral<T>::value>::type> : public basic_identifier
-{
-public:
-  typedef identifier<T> self; /**< Shortcut to self */
-  typedef T type;             /**< Shortcut to type */
+struct null_type_t {};
 
-  /**
-   * @brief Create an identifier
-   */
-  identifier() : id_(0) {}
+namespace detail {
 
-  /**
-   * @brief Create an identifier with given value
-   * @param val Value of the identifier
-   */
-  identifier(T val) : id_(val) {}
-
-  ~identifier() override = default;
-
-  /**
-   * @brief Default copy assignment constructor
-   *
-   * @return The copied identifier object
-   */
-  identifier& operator=(const identifier &x) {
-    if (this != &x) {
-      id_ = x.id_;
-    }
-    return *this;
-  }
-
-  /**
-   * @brief Default move assignment constructor
-   *
-   * @return The moved identifier object
-   */
-  identifier& operator=(identifier &&x) noexcept {
-    id_ = x.id_;
-    return *this;
-  }
-
-  /**
-   * @brief Default copy constructor
-   */
-  identifier(const identifier &) = default;
-
-  /**
-   * @brief Default move constructor
-   */
-  identifier(identifier &&) noexcept = default;
-
-  /**
-   * @brief Copy assigns a new identifier from given value
-   * @param val Value to be assigned
-   * @return Reference to the new identfifier
-   */
-  identifier& operator=(T val)
-  {
-    id_ = val;
-    return *this;
-  }
-
-  /**
-   * Serialize the identifier value with
-   * the given serializer.
-   * 
-   * @param id Name of the identifier
-   * @param s The serializer to serialize with
-   */
-  void serialize(const char *id, serializer &s) override
-  {
-    s.serialize(id, id_);
-  }
-
-  /**
-   * Returns true if own id value is less
-   * than foreign id value.
-   *
-   * @param x Foreign id to compare
-   * @return True if own id value is less than foreign id value
-   */
-  bool less(const basic_identifier &x) const override
-  {
-    if (this->is_same_type(x)) {
-      return id_ < static_cast<const self &>(x).value();
-    } else {
-      throw std::logic_error("not the same type");
-    }
-  }
-
-  /**
-   * Returns true if own id value is equal to
-   * foreign id value.
-   *
-   * @param x Foreign id to compare
-   * @return True if own id value is equal to foreign id value
-   */
-  bool equal_to(const basic_identifier &x) const override
-  {
-    if (this->is_same_type(x)) {
-      return id_ == static_cast<const identifier<T> &>(x).value();
-    } else {
-      throw std::logic_error("not the same type");
-    }
-  }
-
-  /**
-   * Create a hash value of current
-   * id value
-   * 
-   * @return The calculated hash value
-   */
-  size_t hash() const override
-  {
-    std::hash<T> pk_hash;
-    return pk_hash(id_);
-  }
-
-  /**
-   * Returns true if foreign id type is
-   * the same as this id type
-   * 
-   * @param x Foreign identifier to validate with
-   * @return True if types are the same
-   */
-  bool is_same_type(const basic_identifier &x) const override
-  {
-    return type_index() == x.type_index();
-  }
-
-  /**
-   * Returns the underlying type_index
-   * object of ids type
-   * 
-   * @return The type_index object
-   */
-  const std::type_index &type_index() const override
-  {
-    return type_index_;
-  }
-
-  /**
-   * Write the current id value to
-   * the given stream and returns the
-   * modified stream.
-   * 
-   * @param out Stream to write on
-   * @return Modified stream
-   */
-  std::ostream &print(std::ostream &out) const override
-  {
-    out << id_;
-    return out;
-  }
-
-  /**
-   * Return the value of this identifier
-   * 
-   * @return The value of this identifier
-   */
-  operator T() const { return id_; }
-
-  /**
-   * Clones this identifier
-   *
-   * @return A clone of this identifier
-   */
-  basic_identifier *clone() const override
-  {
-    return new self(id_);
-  }
-
-  /**
-   * Returns true if identifier value is valid.
-   *
-   * @return True if identifier value is valid.
-   */
-  bool is_valid() const override
-  {
-    return id_ != 0;
-  }
-
-  /**
-   * Return the value if the id
-   *
-   * @return The value
-   */
-  T value() const { return id_; }
-
-  /**
-   * Set a new identifier value
-   * 
-   * @param val Value to set
-   */
-  void value(T val) { id_ = val; }
-
-  /**
-   * Returns a reference to the value
-   *
-   * @return A reference to the value
-   */
-  T& reference() { return id_; }
-
-private:
-  T id_ = {};
-  static std::type_index type_index_;
+enum class identifier_type : unsigned int {
+  INTEGRAL_TYPE,
+  STRING_TYPE,
+  NULL_TYPE
 };
 
-template<typename T>
-std::type_index identifier<T, typename std::enable_if<std::is_integral<T>::value>::type>::type_index_ = std::type_index(
-    typeid(identifier<T, typename std::enable_if<std::is_integral<T>::value>::type>));
+template<typename Type, class Enabled = void>
+struct identifier_type_traits;
 
-
-/**
- * @brief Identifier class for string
- */
-template<>
-class OOS_UTILS_API identifier<std::string> : public basic_identifier
-{
-public:
-  typedef identifier<std::string> self;  /**< Shortcut to self */
-
-  /**
-   * @brief Create an identifier
-   */
-  identifier() : id_("")
-  { };
-
-  /**
-   * @brief Create an identifier with given string value
-   * 
-   * @param val String value of the identifier
-   */
-  explicit identifier(std::string val) : id_(std::move(val))
-  { }
-
-  /**
-   * Create an identifier from given string
-   *
-   * @param val Value of identifier
-   */
-  identifier(const char *val) :id_(val) {}
-
-  /**
-   * @brief Copy assigns a new identifier from given string value
-   * @param val String value to be assigned
-   * @return Reference to the new identfifier
-   */
-  identifier& operator=(const std::string &val)
-  {
-    id_ = val;
-    return *this;
-  }
-
-  /**
-   * @brief Copy assigns a new identifier from given string value
-   * @param val String value to be assigned
-   * @return Reference to the new identfifier
-   */
-  identifier& operator=(const char *val)
-  {
-    id_.assign(val);
-    return *this;
-  }
-
-  ~identifier() override = default;
-
-  /**
-   * Serialize the identifier value with
-   * the given serializer.
-   * 
-   * @param id Name of the identifier
-   * @param s The serializer to serialize with
-   */
-  void serialize(const char *id, serializer &s) override
-  {
-    s.serialize(id, id_);
-  }
-
-  /**
-   * Returns true if own id value is less
-   * than foreign id value.
-   *
-   * @param x Foreign id to compare
-   * @return True if own id value is less than foreign id value
-   */
-  bool less(const basic_identifier &x) const override
-  {
-    if (this->is_same_type(x)) {
-      return id_ < static_cast<const self &>(x).value();
-    } else {
-      throw std::logic_error("not the same type");
-    }
-  }
-
-  /**
-   * Returns true if own id value is equal to
-   * foreign id value.
-   *
-   * @param x Foreign id to compare
-   * @return True if own id value is equal to foreign id value
-   */
-  bool equal_to(const basic_identifier &x) const override
-  {
-    if (this->is_same_type(x)) {
-      return id_ == static_cast<const identifier<std::string> &>(x).value();
-    } else {
-      throw std::logic_error("not the same type");
-    }
-  }
-
-  /**
-   * Create a hash value of current
-   * id value
-   * 
-   * @return The calculated hash value
-   */
-  size_t hash() const override
-  {
-    std::hash<std::string> pk_hash;
-    return pk_hash(id_);
-  }
-
-  /**
-   * Returns true if foreign id type is
-   * the same as this id type
-   * 
-   * @param x Foreign identifier to validate with
-   * @return True if types are the same
-   */
-  bool is_same_type(const basic_identifier &x) const override
-  {
-    return type_index() == x.type_index();
-  }
-
-  /**
-   * Returns the undelying type_index
-   * object of ids type
-   * 
-   * @return The type_index object
-   */
-  const std::type_index &type_index() const override
-  {
-    return type_index_;
-  }
-
-  /**
-   * Write the current id value to
-   * the given stream and returns the
-   * modified stream.
-   * 
-   * @param out Stream to write on
-   * @return Modified stream
-   */
-  std::ostream &print(std::ostream &out) const override
-  {
-    out << id_;
-    return out;
-  }
-
-  /**
-   * Return the value of this identifier
-   * 
-   * @return The value of this identifier
-   */
-  operator std::string() const { return id_; }
-
-  /**
-   * Clones this identifier
-   *
-   * @return A clone of this identifier
-   */
-  basic_identifier *clone() const override
-  {
-    return new self(id_);
-  }
-
-  /**
-   * Returns true if identifier value is valid.
-   *
-   * @return True if identifier value is valid.
-   */
-  bool is_valid() const  override
-  {
-    return !id_.empty();
-  }
-
-  /**
-   * Return the string value if the id
-   *
-   * @return The string value
-   */
-  std::string value() const { return id_; }
-  
-  /**
-   * Set a new identifier value
-   * 
-   * @param val Value to set
-   */
-  void value(const std::string &val) { id_ = val; }
-
-  /**
-   * Returns a reference to the value
-   *
-   * @return A reference to the value
-   */
-  const std::string& reference() const { return id_; }
-
-private:
-  std::string id_;
-
-  static std::type_index type_index_;
+template<typename Type>
+struct identifier_type_traits<Type, typename std::enable_if<std::is_integral<Type>::value>::type> {
+  static identifier_type type() { return identifier_type::INTEGRAL_TYPE; }
+  static std::string type_string() { return "integral"; }
+  static bool is_valid(Type value) { return value > 0; }
+  static std::string to_string(Type value) { return std::to_string(value); }
 };
 
-/**
- * @brief Identifier class for varchar
- */
-template < int SIZE, class T >
-class OOS_UTILS_API identifier<varchar<SIZE, T>> : public basic_identifier
-{
-public:
-  typedef varchar<SIZE, T> varchar_type;  /**< Shortcut to varchar type */
-  typedef identifier<varchar_type> self;  /**< Shortcut to self */
-  typedef typename varchar_type::value_type value_type; /**< Shortcut to varchar value type */
-
-  /**
-   * @brief Create an identifier
-   */
-  identifier() = default;
-
-  /**
-   * @brief Create an identifier with given string value
-   *
-   * @param val String value of the identifier
-   */
-  explicit identifier(const std::string& val) : id_(val)
-  { }
-
-  /**
-   * @brief Create an identifier with given string value
-   *
-   * @param val String value of the identifier
-   */
-  explicit identifier(const varchar_type &val) : id_(val)
-  { }
-
-  /**
-   * Create an identifier from given string
-   *
-   * @param val Value of identifier
-   */
-  identifier(const char *val) :id_(val) {}
-
-  /**
-   * @brief Copy assigns a new identifier from given string value
-   * @param val String value to be assigned
-   * @return Reference to the new identfifier
-   */
-  identifier& operator=(const std::string &val)
-  {
-    id_ = val;
-    return *this;
-  }
-
-  /**
-   * @brief Copy assigns a new identifier from given string value
-   * @param val String value to be assigned
-   * @return Reference to the new identfifier
-   */
-  identifier& operator=(const char *val)
-  {
-    id_.assign(val);
-    return *this;
-  }
-
-  ~identifier() override = default;
-
-  /**
-   * Serialize the identifier value with
-   * the given serializer.
-   *
-   * @param id Name of the identifier
-   * @param s The serializer to serialize with
-   */
-  void serialize(const char *id, serializer &s) override
-  {
-    s.serialize(id, id_.value(), SIZE);
-  }
-
-  /**
-   * Returns true if own id value is less
-   * than foreign id value.
-   *
-   * @param x Foreign id to compare
-   * @return True if own id value is less than foreign id value
-   */
-  bool less(const basic_identifier &x) const override
-  {
-    if (this->is_same_type(x)) {
-      return id_ < static_cast<const self &>(x).id_;
-    } else {
-      throw std::logic_error("not the same type");
-    }
-  }
-
-  /**
-   * Returns true if own id value is equal to
-   * foreign id value.
-   *
-   * @param x Foreign id to compare
-   * @return True if own id value is equal to foreign id value
-   */
-  bool equal_to(const basic_identifier &x) const override
-  {
-    if (this->is_same_type(x)) {
-      return id_ == static_cast<const identifier<varchar_type> &>(x).id_;
-    } else {
-      throw std::logic_error("not the same type");
-    }
-  }
-
-  /**
-   * Create a hash value of current
-   * id value
-   *
-   * @return The calculated hash value
-   */
-  size_t hash() const override
-  {
-    return id_.hash();
-  }
-
-  /**
-   * Returns true if foreign id type is
-   * the same as this id type
-   *
-   * @param x Foreign identifier to validate with
-   * @return True if types are the same
-   */
-  bool is_same_type(const basic_identifier &x) const override
-  {
-    return type_index() == x.type_index();
-  }
-
-  /**
-   * Returns the undelying type_index
-   * object of ids type
-   *
-   * @return The type_index object
-   */
-  const std::type_index &type_index() const override
-  {
-    return type_index_;
-  }
-
-  /**
-   * Write the current id value to
-   * the given stream and returns the
-   * modified stream.
-   *
-   * @param out Stream to write on
-   * @return Modified stream
-   */
-  std::ostream &print(std::ostream &out) const override
-  {
-    out << id_.value();
-    return out;
-  }
-
-  /**
-   * Return the value of this identifier
-   *
-   * @return The value of this identifier
-   */
-  operator value_type () const { return id_.value(); }
-
-  /**
-   * Clones this identifier
-   *
-   * @return A clone of this identifier
-   */
-  basic_identifier *clone() const override
-  {
-    return new self(id_);
-  }
-
-  /**
-   * Returns true if identifier value is valid.
-   *
-   * @return True if identifier value is valid.
-   */
-  bool is_valid() const  override
-  {
-    return !id_.empty();
-  }
-
-  /**
-   * Return the string value if the id
-   *
-   * @return The string value
-   */
-  value_type value() { return id_.value(); }
-
-  /**
-   * Return the string value if the id
-   *
-   * @return The string value
-   */
-  const value_type value() const { return id_.value(); }
-
-  /**
-   * Set a new identifier value
-   *
-   * @param val Value to set
-   */
-  void value(const std::string &val) { id_.assign(val); }
-
-  /**
-   * Set a new identifier value
-   *
-   * @param val Value to set
-   */
-  void value(const varchar_type &val) { id_ = val; }
-
-  /**
-   * Returns a reference to the value
-   *
-   * @return A reference to the value
-   */
-  const std::string& reference() const { return id_.value(); }
-
-private:
-  varchar_type id_;
-
-  static std::type_index type_index_;
+template<typename Type>
+struct identifier_type_traits<Type, typename std::enable_if<std::is_same<Type, std::string>::value>::type> {
+  static identifier_type type() { return identifier_type::STRING_TYPE; }
+  static std::string type_string() { return "string"; }
+  static bool is_valid(const Type &value) { return !value.empty(); }
+  static std::string to_string(Type value) { return value; }
 };
 
-template < int SIZE, class T >
-std::type_index identifier<varchar<SIZE, T>>::type_index_ = std::type_index(typeid(identifier<varchar<SIZE, T>>));
-
-/**
- * @brief Shortcut to create a new identifier from value
- *
- * @tparam T Type of the identifier value
- * @param id The value of the identifier
- * @return Pointer to the new identifier object
- */
-template<class T>
-identifier<T> *make_id(const T &id)
-{
-  return new identifier<T>(id);
-}
+template<typename Type>
+struct identifier_type_traits<Type, typename std::enable_if<std::is_same<Type, null_type_t>::value>::type> {
+  static identifier_type type() { return identifier_type::NULL_TYPE; }
+  static std::string type_string() { return "null"; }
+  static bool is_valid() { return false; }
+  static std::string to_string() { return "null_pk"; }
+};
 
 }
 
-#endif /* IDENTIFIER_HPP */
+class identifier_serializer
+{
+public:
+  virtual ~identifier_serializer() = default;
+
+  virtual void serialize(short &, long) = 0;
+  virtual void serialize(int &, long) = 0;
+  virtual void serialize(long &, long) = 0;
+  virtual void serialize(long long &, long) = 0;
+  virtual void serialize(unsigned short &, long) = 0;
+  virtual void serialize(unsigned int &, long) = 0;
+  virtual void serialize(unsigned long &, long) = 0;
+  virtual void serialize(unsigned long long &, long) = 0;
+  virtual void serialize(std::string &, long) = 0;
+  virtual void serialize(null_type_t &, long) = 0;
+};
+
+class identifier
+{
+private:
+  struct base
+  {
+    explicit base(const std::type_index &ti, detail::identifier_type id_type);
+    base(const base &x) = delete;
+    base &operator=(const base &x) = delete;
+    base(base &&x) = delete;
+    base &operator=(base &&x) = delete;
+    virtual ~base() = default;
+
+    template<typename Type>
+    bool is_similar_type() const
+    {
+      return identifier_type_ == detail::identifier_type_traits<Type>::type();
+    }
+
+    bool is_similar_type(const base &x) const;
+    detail::identifier_type type() const;
+
+    virtual base *copy() const = 0;
+    virtual bool equal_to(const base &x) const = 0;
+    virtual bool less(const base &x) const = 0;
+    virtual bool is_valid() const = 0;
+    virtual void serialize(identifier_serializer &s) = 0;
+    virtual std::string str() const = 0;
+    virtual size_t hash() const = 0;
+
+    std::type_index type_index_;
+    detail::identifier_type identifier_type_;
+  };
+
+  template<class IdType>
+  struct pk : public base
+  {
+    using self = pk<IdType>;
+
+    explicit pk(const IdType &id, long size = -1) : base(std::type_index(typeid(IdType)), detail::identifier_type_traits<IdType>::type())
+    , id_(id)
+    , size_(size) {}
+
+    base *copy() const final {
+      return new self(id_, size_);
+    }
+
+    bool equal_to(const base &x) const final {
+      return static_cast<const pk<IdType> &>(x).id_ == id_;
+    }
+
+    bool less(const base &x) const final {
+      return static_cast<const pk<IdType> &>(x).id_ < id_;
+    }
+
+    bool is_valid() const final
+    {
+      return detail::identifier_type_traits<IdType>::is_valid(id_);
+    }
+
+    std::string str() const final
+    {
+      return detail::identifier_type_traits<IdType>::to_string(id_);
+    }
+
+    void serialize(identifier_serializer &s) final {
+      s.serialize(id_, size_);
+    }
+
+    size_t hash() const final {
+      std::hash<IdType> hash_func;
+      return hash_func(id_);
+    }
+
+    IdType id_;
+    long size_{-1};
+  };
+
+  struct null_pk : public base
+  {
+    null_pk();
+    base *copy() const final;
+    bool equal_to(const base &x) const final;
+    bool less(const base &x) const final;
+    bool is_valid() const final;
+    void serialize(identifier_serializer &s) final;
+    std::string str() const final;
+    size_t hash() const final;
+    null_type_t null_;
+  };
+
+public:
+  identifier();
+  template<typename Type>
+  explicit identifier(const Type &id, long size = -1)
+    : id_(std::make_shared<pk<Type>>(id, size)) {}
+  identifier(const identifier &x);
+  identifier &operator=(const identifier &x);
+  identifier(identifier &&x) noexcept ;
+  identifier &operator=(identifier &&x) noexcept;
+
+  template<typename Type>
+  identifier &operator=(const Type &value)
+  {
+    id_ = std::make_shared<pk<Type>>(value);
+    return *this;
+  }
+
+  ~identifier() = default;
+
+  bool operator==(const identifier &x) const;
+  bool operator!=(const identifier &x) const;
+  bool operator<(const identifier &x) const;
+  bool operator<=(const identifier &x) const;
+  bool operator>(const identifier &x) const;
+  bool operator>=(const identifier &x) const;
+
+  bool is_similar_type(const identifier &x) const;
+  template<typename Type>
+  bool is_similar_type() const
+  {
+    return id_->is_similar_type<Type>();
+  }
+
+  std::string str() const;
+  const std::type_index &type_index() const;
+
+  identifier share() const;
+  size_t use_count() const;
+
+  bool is_null() const;
+  bool is_valid() const;
+  void clear();
+
+  void serialize(identifier_serializer &s);
+
+  size_t hash() const;
+
+  friend std::ostream &operator<<(std::ostream &out, const identifier &id);
+
+private:
+  explicit identifier(const std::shared_ptr<base>& id);
+
+private:
+  std::shared_ptr<base> id_;
+};
+
+static identifier null_identifier{};
+
+struct id_pk_hash
+{
+  size_t operator()(const identifier &id) const;
+};
+
+}
+
+#endif //MATADOR_IDENTIFIER_HPP

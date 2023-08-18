@@ -5,7 +5,6 @@
 
 #include "matador/utils/byte_buffer.hpp"
 #include "matador/utils/access.hpp"
-#include "matador/utils/identifier.hpp"
 
 #include "matador/object/object_holder.hpp"
 #include "matador/object/basic_has_many.hpp"
@@ -40,7 +39,7 @@ public:
   object_serializer() = default;
   explicit object_serializer(byte_buffer *buffer);
 
-  virtual ~object_serializer() = default;
+  ~object_serializer() = default;
 
   /**
    * Serialize the given object to the given buffer
@@ -64,62 +63,69 @@ public:
     matador::access::serialize(*this, obj);
   }
 
+  template < class V >
+  void on_primary_key(const char* id, V &x, long size = -1)
+  {
+    on_attribute(id, x, size);
+  }
   template < class T >
-  void serialize(const char *, T &x)
+  void on_attribute(const char *, T &x, long /*size*/ = -1)
   {
     buffer_->append(&x, sizeof(x));
   }
-
-  void serialize(const char* id, char *c, size_t s);
-  void serialize(const char* id, std::string &s);
-  void serialize(const char *, std::string &s, size_t);
-
-  void serialize(const char* id, date &x);
-  void serialize(const char* id, time &x);
-
-  void serialize(const char *id, basic_identifier &x);
-
-  template < class V >
-  void serialize(const char* id, identifier<V> &x)
-  {
-    V val(x.value());
-    serialize(id, val);
-  }
-
-  void serialize(const char* id, object_holder &x, cascade_type cascade);
+  void on_attribute(const char* id, char *c, long size);
+  void on_attribute(const char* id, std::string &s, long /*size*/ = -1);
+  void on_attribute(const char* id, date &x, long /*size*/ = -1);
+  void on_attribute(const char* id, time &x, long /*size*/ = -1);
+  void on_belongs_to(const char* id, object_holder &x, cascade_type cascade);
+  void on_has_one(const char* id, object_holder &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, basic_has_many<T, C> &x, const char *, const char *, cascade_type cascade)
   {
-    serialize(id, x, cascade);
+    on_has_many(id, x, cascade);
   }
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &x, cascade_type)
+  void on_has_many(const char *id, basic_has_many<T, C> &x, cascade_type cascade)
   {
     std::string id_oid(id);
     id_oid += ".oid";
     typename basic_has_many<T, C>::size_type s = x.size();
-    serialize(id, s);
+    on_attribute(id, s);
 
     typename basic_has_many<T, C>::iterator first = x.begin();
     typename basic_has_many<T, C>::iterator last = x.end();
 
     while (first != last) {
-      unsigned long oid(0);
+      unsigned long long oid(0);
       if (first.holder_item().item_proxy()) {
         oid = first.holder_item().item_proxy()->id();
       }
       // serialize holder proxy id
-      serialize(id_oid.c_str(), oid);
+      on_attribute(id_oid.c_str(), oid);
       // serialize value
-      serialize("", *first++);
+      process_has_many_item(*first++, cascade);
     }
   }
 
 private:
+  void on_foreign_object(const char *id, object_holder &x, cascade_type cascade);
+
+  template<class T>
+  void process_has_many_item(T &obj, cascade_type cascade, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0)
+  {
+    on_foreign_object("", obj, cascade);
+  }
+
+  template<class T>
+  void process_has_many_item(T &attr, cascade_type /*cascade*/, typename std::enable_if<matador::is_builtin<T>::value>::type* = 0)
+  {
+    on_attribute("", attr);
+  }
+
+private:
   byte_buffer *buffer_ = nullptr;
-  basic_identifier_serializer basic_identifier_serializer_;
 };
 /// @endcond
 }

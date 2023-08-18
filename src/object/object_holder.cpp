@@ -1,17 +1,9 @@
-//
-// Created by sascha on 12/10/15.
-//
-
 #include "matador/object/object_holder.hpp"
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/object_store.hpp"
 #include "matador/object/object_exception.hpp"
 
 namespace matador {
-
-object_holder::object_holder(object_holder_type holder_type)
-  : type_(holder_type)
-{}
 
 object_holder::object_holder(const object_holder &x)
 {
@@ -60,9 +52,8 @@ object_holder &object_holder::operator=(object_holder &&x) noexcept
   return *this;
 }
 
-object_holder::object_holder(object_holder_type holder_type, object_proxy *op)
-  : proxy_(op)
-  , type_(holder_type)
+object_holder::object_holder(object_proxy *proxy)
+  : proxy_(proxy)
 {
   if (proxy_) {
     proxy_->add(this);
@@ -136,9 +127,9 @@ bool object_holder::valid() const noexcept
   return !empty();
 }
 
-void object_holder::reset(basic_identifier *id)
+void object_holder::reset(const identifier &id)
 {
-  if (proxy_ && !proxy_->pk()->is_same_type(*id)) {
+  if (proxy_ && !proxy_->pk().is_similar_type(id)) {
     throw object_exception("identifier types are not equal");
   }
   reset(new object_proxy(id), cascade_type::NONE);
@@ -149,7 +140,7 @@ bool object_holder::is_loaded() const
   return (proxy_ && proxy_->obj());
 }
 
-unsigned long object_holder::id() const
+unsigned long long object_holder::id() const
 {
   return (proxy_ ? proxy_->id() : 0);
 }
@@ -187,24 +178,9 @@ void*object_holder::lookup_object() const
   return proxy_ ? proxy_->obj() : nullptr;
 }
 
-bool object_holder::is_belongs_to() const
-{
-  return type_ == object_holder_type::BELONGS_TO;
-}
-
-bool object_holder::is_has_one() const
-{
-  return type_ == object_holder_type::HAS_ONE;
-}
-
-bool object_holder::is_object_ptr() const
-{
-  return type_ == object_holder_type::OBJECT_PTR;
-}
-
 bool object_holder::is_internal() const
 {
-  return type_ == object_holder_type::BELONGS_TO || type_ == object_holder_type::HAS_ONE;
+  return store() != nullptr;
 }
 
 bool object_holder::is_inserted() const
@@ -217,19 +193,19 @@ bool object_holder::has_primary_key() const
   return proxy_ != nullptr && proxy_->has_identifier();
 }
 
-basic_identifier* object_holder::primary_key() const
+const identifier& object_holder::primary_key() const
 {
-  return (proxy_ ? proxy_->pk() : nullptr);
+  return (proxy_ ? proxy_->pk() : null_identifier);
+}
+
+identifier& object_holder::primary_key()
+{
+  return (proxy_ ? proxy_->pk() : null_identifier);
 }
 
 unsigned long object_holder::reference_count() const
 {
   return (proxy_ ? proxy_->reference_counter_ : 0UL);
-}
-
-object_holder_type object_holder::holder_type() const
-{
-  return type_;
 }
 
 cascade_type object_holder::cascade() const

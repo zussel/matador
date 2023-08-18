@@ -1,5 +1,4 @@
 #include "matador/json/json_identifier_serializer.hpp"
-#include "matador/utils/basic_identifier.hpp"
 
 namespace matador {
 
@@ -13,91 +12,61 @@ void to_json(T &val, std::string &out)
 
 }
 
-std::string json_identifier_serializer::serialize(basic_identifier &x)
+std::string json_identifier_serializer::serialize(const identifier &x)
 {
   json_.clear();
-  x.serialize("", *this);
+  const_cast<identifier&>(x).serialize(*this);
   return json_;
 }
 
-void json_identifier_serializer::serialize(const char*, char &x)
+void json_identifier_serializer::serialize(short &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, short &x)
+void json_identifier_serializer::serialize(int &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, int &x)
+void json_identifier_serializer::serialize(long &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, long &x)
+void json_identifier_serializer::serialize(long long &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, long long &x)
+void json_identifier_serializer::serialize(unsigned short &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, unsigned char &x)
+void json_identifier_serializer::serialize(unsigned int &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, unsigned short &x)
+void json_identifier_serializer::serialize(unsigned long &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, unsigned int &x)
+void json_identifier_serializer::serialize(unsigned long long &x, long /*size*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(const char*, unsigned long &x)
-{
-  detail::to_json(x, json_);
-}
-
-void json_identifier_serializer::serialize(const char*, unsigned long long &x)
-{
-  detail::to_json(x, json_);
-}
-
-void json_identifier_serializer::serialize(const char*, bool &x)
-{
-  detail::to_json(x, json_);
-}
-
-void json_identifier_serializer::serialize(const char*, float &x)
-{
-  detail::to_json(x, json_);
-}
-
-void json_identifier_serializer::serialize(const char*, double &x)
-{
-  detail::to_json(x, json_);
-}
-
-void json_identifier_serializer::serialize(const char*, char *x, size_t len)
-{
-  json_.append(x, len);
-}
-
-void json_identifier_serializer::serialize(const char*, std::string &x)
+void json_identifier_serializer::serialize(std::string &x, long /*size*/)
 {
   json_.append(x);
 }
 
-void json_identifier_serializer::serialize(const char*, std::string &x, size_t len)
+void json_identifier_serializer::serialize(null_type_t &, long /*size*/)
 {
-  json_.append(x.c_str(), len);
+  json_.append("null");
 }
 
 }

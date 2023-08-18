@@ -1,8 +1,6 @@
 #ifndef MATADOR_BASIC_SQL_LOGGER_HPP
 #define MATADOR_BASIC_SQL_LOGGER_HPP
 
-#include "matador/sql/export.hpp"
-
 #include <string>
 
 namespace matador {
@@ -10,7 +8,7 @@ namespace matador {
 /**
  * @brief Base class for sql logging
  *
- * Thsi class acts as a base class to
+ * This class acts as a base class to
  * implement a concrete logger for sql
  * statements.
  *
@@ -20,7 +18,7 @@ namespace matador {
  * when an sql statement is about to
  * execute or going to prepared.
  */
-class OOS_SQL_API basic_sql_logger
+class basic_sql_logger
 {
 public:
 
@@ -59,7 +57,7 @@ public:
  * This is used as the default logger for all
  * connections and statements.
  */
-class OOS_SQL_API null_sql_logger : public basic_sql_logger
+class null_sql_logger : public basic_sql_logger
 {
 public:
   /**

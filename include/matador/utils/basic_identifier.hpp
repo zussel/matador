@@ -3,13 +3,13 @@
 
 #include "matador/utils/export.hpp"
 
-#include "matador/utils/basic_identifier_serializer.hpp"
-
 #include <typeindex>
 #include <iosfwd>
 #include <stdexcept>
 
 namespace matador {
+
+class basic_identifier_serializer;
 
 /// @cond MATADOR_DEV
 

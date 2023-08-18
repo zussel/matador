@@ -1,23 +1,5 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-#include "matador/utils/basic_identifier.hpp"
 #include "matador/utils/string.hpp"
 
 #include "matador/db/sqlite/sqlite_result.hpp"
@@ -40,13 +22,13 @@ sqlite_result::~sqlite_result()
 
 const char* sqlite_result::column(sqlite_result::size_type c) const
 {
-  t_row::value_type val = result_.at(pos_).at(c);
+  t_row::value_type val = result_.at(row_index_).at(c);
   return val;
 }
 
 bool sqlite_result::fetch()
 {
-  return ++pos_ < result_.size();
+  return ++row_index_ < result_.size();
 }
 
 //bool sqlite_result::fetch(serializable *obj)
@@ -77,9 +59,9 @@ sqlite_result::size_type sqlite_result::fields() const
   return 0;
 }
 
-int sqlite_result::transform_index(int index) const
+detail::result_impl::size_type sqlite_result::reset_column_index() const
 {
-  return index;
+  return 0;
 }
 
 void sqlite_result::push_back(char **row_values, int column_count)
@@ -102,18 +84,18 @@ void sqlite_result::push_back(char **row_values, int column_count)
   result_.push_back(row);
 }
 
-void sqlite_result::serialize(const char *, char &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, char &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
 
   if (strlen(val) > 1) {
     x = val[0];
   }
 }
 
-void sqlite_result::serialize(const char *, short &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, short &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -122,9 +104,9 @@ void sqlite_result::serialize(const char *, short &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, int &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, int &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -133,9 +115,9 @@ void sqlite_result::serialize(const char *, int &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, long &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, long &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -144,9 +126,9 @@ void sqlite_result::serialize(const char *, long &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, long long &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, long long &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -155,9 +137,9 @@ void sqlite_result::serialize(const char *, long long &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, unsigned char &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, unsigned char &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -166,9 +148,9 @@ void sqlite_result::serialize(const char *, unsigned char &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, unsigned short &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, unsigned short &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -177,9 +159,9 @@ void sqlite_result::serialize(const char *, unsigned short &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, unsigned int &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, unsigned int &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -188,9 +170,9 @@ void sqlite_result::serialize(const char *, unsigned int &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, unsigned long &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, unsigned long &x)
 {
-  char *val = result_[pos_][column_++];
+  char *val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -199,9 +181,9 @@ void sqlite_result::serialize(const char *, unsigned long &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, unsigned long long &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, unsigned long long &x)
 {
-  char *val = result_[pos_][column_++];
+  char *val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -210,9 +192,9 @@ void sqlite_result::serialize(const char *, unsigned long long &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, bool &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, bool &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -221,9 +203,9 @@ void sqlite_result::serialize(const char *, bool &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, float &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, float &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -232,9 +214,9 @@ void sqlite_result::serialize(const char *, float &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, double &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, double &x)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   if (strlen(val) == 0) {
     return;
   }
@@ -243,69 +225,58 @@ void sqlite_result::serialize(const char *, double &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char *, char *x, size_t s)
+void sqlite_result::read_value(const char */*id*/, size_type index, char *x, long size)
 {
-  t_row::value_type &val = result_[pos_][column_++];
+  t_row::value_type &val = result_[row_index_][index];
   size_t len = strlen(val);
-  if (len > (size_t)s) {
+  if (len > (size_t)size) {
 #ifdef _MSC_VER
-    strncpy_s(x, s, val, len);
+    strncpy_s(x, size, val, len);
 #else
-    strncpy(x, val, s);
+    strncpy(x, val, size);
 #endif
-    x[s-1] = '\n';
+    x[size-1] = '\n';
   } else {
 #ifdef _MSC_VER
-    strcpy_s(x, s, val);
+    strcpy_s(x, size, val);
 #else
     strcpy(x, val);
 #endif
   }
 }
 
-void sqlite_result::serialize(const char *, std::string &x, size_t)
+void sqlite_result::read_value(const char */*id*/, size_type index, std::string &x, long /*size*/)
 {
-  t_row::value_type val = result_[pos_][column_++];
+  t_row::value_type val = result_[row_index_][index];
   x.assign(val);
 }
 
-void sqlite_result::serialize(const char *, std::string &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, std::string &x)
 {
-  t_row::value_type val = result_[pos_][column_++];
+  t_row::value_type val = result_[row_index_][index];
   x = val;
 }
 
-void sqlite_result::serialize(const char *, matador::date &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, matador::date &x)
 {
-  t_row::value_type val = result_[pos_][column_++];
+  t_row::value_type val = result_[row_index_][index];
   x.set(val, date_format::ISO8601);
 }
 
-void sqlite_result::serialize(const char *, matador::time &x)
+void sqlite_result::read_value(const char */*id*/, size_type index, matador::time &x)
 {
-  t_row::value_type val = result_[pos_][column_++];
+  t_row::value_type val = result_[row_index_][index];
   x = matador::time::parse(val, "%Y-%m-%dT%T.%f");
-}
-
-void sqlite_result::serialize(const char *id, identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
-}
-
-void sqlite_result::serialize(const char *id, basic_identifier &x)
-{
-  x.serialize(id, *this);
 }
 
 bool sqlite_result::prepare_fetch()
 {
-  column_ = 0;
-  return pos_ + 1 <= result_.size();
+  return row_index_ + 1 <= result_.size();
 }
 
 bool sqlite_result::finalize_fetch()
 {
-  ++pos_;
+  ++row_index_;
   return true;
 }
 

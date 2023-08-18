@@ -7,8 +7,8 @@ using namespace std;
 
 namespace matador {
 
-object_proxy::object_proxy(basic_identifier *pk)
-  : primary_key_(pk)
+object_proxy::object_proxy(const identifier &pk)
+  : pk_(pk)
 {}
 
 object_proxy::~object_proxy()
@@ -151,28 +151,33 @@ bool object_proxy::valid() const
   return object_type_entry_->store() && prev_ && next_;
 }
 
-unsigned long object_proxy::id() const {
+unsigned long long object_proxy::id() const {
   return oid;
 }
 
-void object_proxy::id(unsigned long i)
+void object_proxy::id(unsigned long long i)
 {
   oid = i;
 }
 
 bool object_proxy::has_identifier() const
 {
-  return primary_key_ != nullptr;
+  return !pk_.is_null();
 }
 
-basic_identifier* object_proxy::pk() const
+const identifier& object_proxy::pk() const
 {
-  return primary_key_;
+  return pk_;
 }
 
-void object_proxy::pk(basic_identifier *id)
+identifier& object_proxy::pk()
 {
-  primary_key_ = id;
+  return pk_;
+}
+
+void object_proxy::pk(const identifier &id)
+{
+  pk_ = id;
 }
 
 void object_proxy::create_object()

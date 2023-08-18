@@ -1,7 +1,3 @@
-//
-// Created by sascha on 22.02.16.
-//
-
 #include "ConditionUnitTest.hpp"
 
 #include "matador/sql/query.hpp"
@@ -14,15 +10,15 @@ using namespace matador;
 ConditionUnitTest::ConditionUnitTest()
   : unit_test("condition", "condition test unit")
 {
-  add_test("literal", std::bind(&ConditionUnitTest::test_col_literal, this), "test col literal");
-  add_test("logical", std::bind(&ConditionUnitTest::test_logical_condition, this), "test a logical condition");
-  add_test("and", std::bind(&ConditionUnitTest::test_and_condition, this), "test an and condition");
-  add_test("or", std::bind(&ConditionUnitTest::test_or_condition, this), "test an or condition");
-  add_test("not", std::bind(&ConditionUnitTest::test_not_condition, this), "test a not condition");
-  add_test("in", std::bind(&ConditionUnitTest::test_in_condition, this), "test an in condition");
-  add_test("in_query", std::bind(&ConditionUnitTest::test_in_query_condition, this), "test an in query condition");
-  add_test("between", std::bind(&ConditionUnitTest::test_between_condition, this), "test a between condition");
-  add_test("like", std::bind(&ConditionUnitTest::test_like_condition, this), "test a like condition");
+  add_test("literal", [this] { test_col_literal(); }, "test col literal");
+  add_test("logical", [this] { test_logical_condition(); }, "test a logical condition");
+  add_test("and", [this] { test_and_condition(); }, "test an and condition");
+  add_test("or", [this] { test_or_condition(); }, "test an or condition");
+  add_test("not", [this] { test_not_condition(); }, "test a not condition");
+  add_test("in", [this] { test_in_condition(); }, "test an in condition");
+  add_test("in_query", [this] { test_in_query_condition(); }, "test an in query condition");
+  add_test("between", [this] { test_between_condition(); }, "test a between condition");
+  add_test("like", [this] { test_like_condition(); }, "test a like condition");
 }
 
 void ConditionUnitTest::test_col_literal()

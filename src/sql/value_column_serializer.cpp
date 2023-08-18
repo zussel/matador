@@ -1,127 +1,113 @@
-//
-// Created by sascha on 03.04.16.
-//
-
 #include "matador/sql/value_column_serializer.hpp"
 #include "matador/utils/identifiable_holder.hpp"
-#include "matador/utils/basic_identifier.hpp"
 
 namespace matador {
 namespace detail {
 
-template < class T >
-std::shared_ptr<value_column<T>> make_shared_value_column(const char *col, T &val)
+value_column_serializer::value_column_serializer()
+: value_column_identifier_serializer_(*this) {}
+
+void value_column_serializer::on_attribute(const char *id, char &x, long size)
 {
-  return std::make_shared<value_column<T>>(col, val);
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-std::shared_ptr<value_column<char*>> make_shared_value_column(const char *col, char* &val, size_t s)
+void value_column_serializer::on_attribute(const char *id, short &x, long size)
 {
-  return std::make_shared<value_column<char*>>(col, val, s);
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, char &x)
+void value_column_serializer::on_attribute(const char *id, int &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, short &x)
+void value_column_serializer::on_attribute(const char *id, long &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, int &x)
+void value_column_serializer::on_attribute(const char *id, long long &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, long &x)
+void value_column_serializer::on_attribute(const char *id, unsigned char &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, long long &x)
+void value_column_serializer::on_attribute(const char *id, unsigned short &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, unsigned char &x)
+void value_column_serializer::on_attribute(const char *id, unsigned int &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, unsigned short &x)
+void value_column_serializer::on_attribute(const char *id, unsigned long &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, unsigned int &x)
+void value_column_serializer::on_attribute(const char *id, unsigned long long &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, unsigned long &x)
+void value_column_serializer::on_attribute(const char *id, float &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, unsigned long long &x)
+void value_column_serializer::on_attribute(const char *id, double &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, float &x)
+void value_column_serializer::on_attribute(const char *id, bool &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, double &x)
+void value_column_serializer::on_attribute(const char *id, char *x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, bool &x)
+void value_column_serializer::on_attribute(const char *id, std::string &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, char *x, size_t s)
+void value_column_serializer::on_attribute(const char *id, date &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x, s));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, std::string &x, size_t)
+void value_column_serializer::on_attribute(const char *id, time &x, long size)
 {
-  cols_->push_back(make_shared_value_column(id, x));
+  cols_->push_back(make_value_column(id, x, size));
 }
 
-void value_column_serializer::serialize(const char *id, std::string &x)
-{
-  cols_->push_back(make_shared_value_column(id, x));
-}
-
-void value_column_serializer::serialize(const char *id, date &x)
-{
-  cols_->push_back(make_shared_value_column(id, x));
-}
-
-void value_column_serializer::serialize(const char *id, time &x)
-{
-  cols_->push_back(make_shared_value_column(id, x));
-}
-
-void value_column_serializer::serialize(const char *id, identifiable_holder &x, cascade_type)
+void value_column_serializer::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
-    x.primary_key()->serialize(id, *this);
+    x.primary_key().serialize(value_column_identifier_serializer_);
   } else {
-    cols_->push_back(std::make_shared<value_column<null_value>>(id, new null_value));
+    cols_->push_back(std::make_shared<value_column>(id, new null_value));
   }
 }
 
-void value_column_serializer::serialize(const char *id, basic_identifier &x)
+void value_column_serializer::on_has_one(const char *id, identifiable_holder &x, cascade_type)
 {
-  x.serialize(id, *this);
+  if (x.has_primary_key()) {
+    x.primary_key().serialize(value_column_identifier_serializer_);
+  } else {
+    cols_->push_back(std::make_shared<value_column>(id, new null_value));
+  }
 }
 
 }

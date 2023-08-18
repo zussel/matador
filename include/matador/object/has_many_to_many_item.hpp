@@ -3,7 +3,6 @@
 
 #include "matador/object/basic_has_many_to_many_item.hpp"
 #include "matador/object/object_ptr.hpp"
-#include "matador/object/belongs_to.hpp"
 
 namespace matador {
 
@@ -31,8 +30,8 @@ public:
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
-    serializer.serialize(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.serialize(this->right_column().c_str(), right_, matador::cascade_type::NONE);
+    serializer.on_belongs_to(this->left_column().c_str(), left_, matador::cascade_type::NONE);
+    serializer.on_belongs_to(this->right_column().c_str(), right_, matador::cascade_type::NONE);
   }
 
   object_ptr<L> left() const
@@ -46,8 +45,8 @@ public:
   }
 
 private:
-  belongs_to<L> left_;
-  belongs_to<R> right_;
+  object_ptr<L> left_;
+  object_ptr<R> right_;
 };
 
 /// @endcond

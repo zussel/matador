@@ -4,8 +4,8 @@
 #include "matador/object/export.hpp"
 
 #include "matador/utils/identifier_resolver.hpp"
+#include "matador/utils/identifier.hpp"
 
-#include "matador/object/object_holder_type.hpp"
 #include "matador/object/object_type_registry_entry_base.hpp"
 
 #include <ostream>
@@ -20,9 +20,6 @@ namespace matador {
 class object_store;
 class object_holder;
 class prototype_node;
-class basic_identifier;
-class transaction;
-class update_action;
 class object_serializer;
 class object_deserializer;
 
@@ -58,15 +55,15 @@ public:
    *
    * @param pk primary key of object
    */
-  explicit object_proxy(basic_identifier *pk);
+  explicit object_proxy(const identifier &pk);
 
   template < class T >
-  object_proxy(basic_identifier *pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)
+  object_proxy(const identifier &pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)
     : object_type_entry_(object_type_entry)
     , deleter_(&destroy<T>)
     , creator_(&create<T>)
     , name_(&type_id<T>)
-    , primary_key_(pk)
+    , pk_(pk)
   {}
 
   /**
@@ -84,7 +81,7 @@ public:
     , creator_(&create<T>)
     , name_(&type_id<T>)
   {
-    primary_key_ = identifier_resolver<T>::resolve(o);
+    pk_ = identifier_resolver<T>::resolve(o);
   }
 
   /**
@@ -98,7 +95,7 @@ public:
    * @param os The object_store.
    */
   template < typename T >
-  object_proxy(T *o, unsigned long id, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry)
+  object_proxy(T *o, unsigned long long id, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry)
     : obj_(o)
     , object_type_entry_(object_type_entry)
     , deleter_(&destroy<T>)
@@ -107,7 +104,7 @@ public:
     , oid(id)
   {
     if (obj_ != nullptr) {
-      primary_key_ = identifier_resolver<T>::resolve(o);
+      pk_ = object_type_entry->resolve_identifier(this);
     }
   }
 
@@ -246,7 +243,7 @@ public:
     obj_ = o;
     oid = 0;
     if (obj_ != nullptr && resolve_identifier) {
-      primary_key_ = identifier_resolver<T>::resolve(o);
+      pk_ = identifier_resolver<T>::resolve(o);
     }
   }
 
@@ -302,14 +299,14 @@ public:
    *
    * @return 0 (null) or the id of the object.
    */
-  unsigned long id() const;
+  unsigned long long id() const;
 
   /**
    * Sets the id of the object_proxy.
    *
    * @param i New id of the proxy.
    */
-  void id(unsigned long i);
+  void id(unsigned long long i);
 
   /**
    * Returns true if the underlying
@@ -326,9 +323,10 @@ public:
    *
    * @return The primary key of the underlying object
    */
-  basic_identifier* pk() const;
+  const identifier& pk() const;
+  identifier& pk();
 
-  void pk(basic_identifier *id);
+  void pk(const identifier &id);
 
   void create_object();
 
@@ -337,7 +335,7 @@ private:
   friend class prototype_node;
   template < class T > friend class result;
   friend class object_holder;
-  template < class T, object_holder_type OHT > friend class object_pointer;
+  template < class T > friend class object_ptr;
   friend class detail::basic_relation_data;
   using delete_func = std::function<void(void*)>;
   using create_func = std::function<void(object_proxy*)>;
@@ -373,14 +371,14 @@ private:
   create_func creator_ = nullptr;
   name_func name_ = nullptr;                 /**< The object classname function */
 
-  unsigned long oid = 0;                      /**< The id of the concrete or expected object. */
+  unsigned long long oid = 0;                      /**< The id of the concrete or expected object. */
 
   unsigned long reference_counter_ = 0;
 
   typedef std::set<object_holder *> ptr_set_t; /**< Shortcut to the object_holder set. */
   ptr_set_t ptr_set_;      /**< This set contains every object_holder pointing to this object_proxy. */
-  
-  basic_identifier *primary_key_ = nullptr;
+
+  identifier pk_;
 };
 /// @endcond
 }

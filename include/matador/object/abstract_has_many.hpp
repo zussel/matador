@@ -22,8 +22,8 @@ class object_inserter;
 }
 
 class basic_has_many_item_holder;
-template < class T, object_holder_type OHT >
-class object_pointer;
+template < class T >
+class object_ptr;
 class object_store;
 class object_proxy;
 
@@ -49,7 +49,7 @@ protected:
   template < class T >
   void increment_reference_count(T) const {}
   template < class T >
-  void increment_reference_count(const object_pointer<T, object_holder_type::OBJECT_PTR> &pointer) const
+  void increment_reference_count(const object_ptr<T> &pointer) const
   {
     increment_reference_count(static_cast<const object_holder&>(pointer));
   }
@@ -57,7 +57,7 @@ protected:
   template < class T >
   void decrement_reference_count(T) const {}
   template < class T >
-  void decrement_reference_count(const object_pointer<T, object_holder_type::OBJECT_PTR> &pointer) const
+  void decrement_reference_count(const object_ptr<T> &pointer) const
   {
     decrement_reference_count(static_cast<const object_holder&>(pointer));
   }
@@ -72,7 +72,7 @@ protected:
   object_store *ostore_ = nullptr;
 
   object_proxy *owner_ = nullptr;
-  basic_identifier *owner_id_ = nullptr;
+  identifier owner_id_;
 
   mark_modified_owner_func mark_modified_owner_;
 

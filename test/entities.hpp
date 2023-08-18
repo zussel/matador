@@ -1,32 +1,12 @@
-/*
- * This file is part of matador.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef ENTITIES_HPP
 #define ENTITIES_HPP
 
 #include "matador/utils/base_class.hpp"
 #include "matador/object/object_ptr.hpp"
-#include "matador/object/has_one.hpp"
-#include "matador/object/belongs_to.hpp"
 #include "matador/object/has_many.hpp"
 
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
-#include "matador/utils/identifier.hpp"
 
 #include <ostream>
 #include <utility>
@@ -49,8 +29,8 @@ public:
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize(*matador::base_class<datatypes>(this));
-        serializer.serialize("ref", ref_, matador::cascade_type::NONE);
-        serializer.serialize("ptr", ptr_, matador::cascade_type::ALL);
+        serializer.on_has_one("ref", ref_, matador::cascade_type::NONE);
+        serializer.on_has_one("ptr", ptr_, matador::cascade_type::ALL);
     }
 
     void ref(const value_ptr &r)
@@ -70,8 +50,8 @@ public:
     }
 
 private:
-    matador::has_one<T> ref_;
-    matador::has_one<T> ptr_;
+    matador::object_ptr<T> ref_;
+    matador::object_ptr<T> ptr_;
 };
 
 class ObjectItemList
@@ -81,7 +61,7 @@ public:
     typedef typename object_item_list_t::iterator iterator;
     typedef typename object_item_list_t::const_iterator const_iterator;
 
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     object_item_list_t items;
 
@@ -91,9 +71,9 @@ public:
     template < class S >
     void serialize(S &s)
     {
-        s.serialize("id", id);
-        s.serialize("name", name);
-        s.serialize("object_item_list", items, "list_id", "object_item_id", matador::cascade_type::NONE);
+        s.on_primary_key("id", id);
+        s.on_attribute("name", name);
+        s.on_has_many("object_item_list", items, "list_id", "object_item_id", matador::cascade_type::NONE);
     }
 
     iterator begin() { return items.begin(); }
@@ -107,7 +87,7 @@ public:
 class book
 {
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long long id_{};
     std::string title_;
     std::string isbn_;
     std::string author_;
@@ -124,14 +104,14 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("title", title_);
-        serializer.serialize("isbn", isbn_);
-        serializer.serialize("author", author_);
+        serializer.on_primary_key("id", id_);
+        serializer.on_attribute("title", title_);
+        serializer.on_attribute("isbn", isbn_);
+        serializer.on_attribute("author", author_);
     }
 
-    unsigned long id() const { return id_; }
-    void id(unsigned long i)  { id_ = i; }
+    unsigned long long id() const { return id_; }
+    void id(unsigned long long i)  { id_ = i; }
     std::string title() const { return title_; }
     std::string isbn() const { return isbn_; }
     std::string author() const { return author_; }
@@ -151,8 +131,8 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("books", book_list_, "book_list_id", "book_id", matador::cascade_type::NONE);
+        serializer.on_primary_key("id", id_);
+        serializer.on_has_many("books", book_list_, "book_list_id", "book_id", matador::cascade_type::NONE);
     }
 
     void add(const matador::object_ptr<book> &b)
@@ -172,7 +152,7 @@ public:
     bool empty() const { return book_list_.empty(); }
 
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long long id_{};
     book_list_t book_list_;
 };
 
@@ -181,7 +161,7 @@ struct department;
 class employee : public person
 {
 public:
-    matador::belongs_to<department> department_;
+    matador::object_ptr<department> department_;
 
 public:
     employee() = default;
@@ -195,7 +175,7 @@ public:
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize(*matador::base_class<person>(this));
-        serializer.serialize("department"    , department_, matador::cascade_type::NONE);
+        serializer.on_belongs_to("department"    , department_, matador::cascade_type::NONE);
         // name of table, object     , cascade
     }
 
@@ -208,13 +188,13 @@ public:
 
 struct department
 {
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     matador::has_many<employee> employees;
 
     department() = default;
     explicit department(std::string n)
-            : name(n)
+            : name(std::move(n))
     {}
 
     ~department() = default;
@@ -222,9 +202,9 @@ struct department
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("name", name, 255);
-        serializer.serialize("employee"    , employees, "department", "id", matador::cascade_type::NONE);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("name", name, 255);
+        serializer.on_has_many("employee"    , employees, "department", "id", matador::cascade_type::NONE);
         //                    name of table, container,  name of member
         //                                   to serialize
     }
@@ -243,7 +223,7 @@ public:
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize(*matador::base_class<person>(this));
-        serializer.serialize("student_course", courses, "student_id", "course_id", matador::cascade_type::NONE);
+        serializer.on_has_many("student_course", courses, "student_id", "course_id", matador::cascade_type::NONE);
     }
 
     matador::has_many<course> courses;
@@ -259,12 +239,12 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("title", title, 1023);
-        serializer.serialize("student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("title", title, 1023);
+        serializer.on_has_many("student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
     }
 
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string title;
     matador::has_many<student> students;
 };
@@ -276,35 +256,35 @@ struct citizen : public person
     citizen() = default;
     explicit citizen(const std::string &name, const matador::date &bdate = matador::date(), unsigned h = 170) : person(name, bdate, h) {}
 
-    matador::has_one<address> address_;
+    matador::object_ptr<address> address_;
 
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
         serializer.serialize(*matador::base_class<person>(this));
-        serializer.serialize("address", address_, matador::cascade_type::ALL);
+        serializer.on_has_one("address", address_, matador::cascade_type::ALL);
     }
 };
 
 struct address
 {
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string street;
     std::string city;
-    matador::belongs_to<citizen> citizen_;
+    matador::object_ptr<citizen> citizen_;
 
     address() = default;
-    address(const std::string &str, const std::string &c)
-            : street(str), city(c)
+    address(std::string str, std::string c)
+            : street(std::move(str)), city(std::move(c))
     {}
 
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("street", street, 255);
-        serializer.serialize("city", city, 255);
-        serializer.serialize("citizen", citizen_, matador::cascade_type::NONE);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("street", street, 255);
+        serializer.on_attribute("city", city, 255);
+        serializer.on_belongs_to("citizen", citizen_, matador::cascade_type::NONE);
     }
 };
 
@@ -316,9 +296,9 @@ public:
     typedef matador::object_ptr<album> album_ptr;
 
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long id_{};
     std::string title_;
-    matador::has_one<album> album_;
+    matador::object_ptr<album> album_;
     int index_;
 
 public:
@@ -333,13 +313,13 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("title", title_);
-        serializer.serialize("album", album_);
-        serializer.serialize("track_index", index_);
+        serializer.on_primary_key("id", id_);
+        serializer.on_attribute("title", title_);
+        serializer.on_has_one("album", album_, matador::cascade_type::ALL);
+        serializer.on_attribute("track_index", index_);
     }
 
-    unsigned long id() { return id_.value(); }
+    unsigned long id() { return id_; }
 
     std::string title() const { return title_; }
     void title(const std::string &t) { title_ = t; }
@@ -354,14 +334,14 @@ public:
 class album
 {
 public:
-    typedef matador::has_one <track> track_ptr;
+    typedef matador::object_ptr <track> track_ptr;
     typedef matador::has_many<track> track_vector_t;
     typedef track_vector_t::size_type size_type;
     typedef track_vector_t::iterator iterator;
     typedef track_vector_t::const_iterator const_iterator;
 
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long id_{};
     std::string name_;
     track_vector_t tracks_;
 
@@ -374,12 +354,12 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("name", name_);
-        serializer.serialize("tracks", tracks_);
+        serializer.on_primary_key("id", id_);
+        serializer.on_attribute("name", name_);
+        serializer.on_has_many("tracks", tracks_, matador::cascade_type::ALL);
     }
 
-    unsigned long id() { return id_.value(); }
+    unsigned long id() { return id_; }
 
     std::string name() const { return name_; }
     void name(const std::string &name) { name_ = name; }
@@ -389,7 +369,7 @@ public:
         tracks_.push_back(t);
     }
 
-    iterator insert(iterator pos, const track_ptr &b)
+    iterator insert(const iterator& pos, const track_ptr &b)
     {
         return tracks_.insert(pos, b);
     }
@@ -400,8 +380,8 @@ public:
     iterator end() { return tracks_.end(); }
     const_iterator end() const { return tracks_.end(); }
 
-    iterator erase(iterator i) { return tracks_.erase(i); }
-    iterator erase(iterator a, iterator b) { return tracks_.erase(a, b); }
+    iterator erase(const iterator& i) { return tracks_.erase(i); }
+    iterator erase(const iterator& a, const iterator& b) { return tracks_.erase(a, b); }
 
     size_type size() const { return tracks_.size(); }
     bool empty() const { return tracks_.empty(); }
@@ -417,7 +397,7 @@ public:
     typedef track_list_t::const_iterator const_iterator;
 
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long id_{};
     std::string name_;
     track_list_t tracks_;
     track_list_t backup_tracks_;
@@ -431,10 +411,10 @@ public:
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("name", name_);
-        serializer.serialize("playlist_tracks", tracks_);
-        serializer.serialize("backup_tracks", backup_tracks_);
+        serializer.on_primary_key("id", id_);
+        serializer.on_attribute("name", name_);
+        serializer.on_has_many("playlist_tracks", tracks_, matador::cascade_type::ALL);
+        serializer.on_has_many("backup_tracks", backup_tracks_, matador::cascade_type::ALL);
     }
 
     std::string name() const { return name_; }
@@ -467,20 +447,20 @@ public:
     template < class S >
     void serialize(S &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("name", name);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("name", name);
     }
 
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
 };
 
 class master
 {
 public:
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
-    matador::has_one<child> children;
+    matador::object_ptr<child> children;
 
 public:
     master() = default;
@@ -491,9 +471,9 @@ public:
     template < class S >
     void serialize(S &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("name", name);
-        serializer.serialize("child", children, matador::cascade_type::ALL);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("name", name);
+        serializer.on_has_one("child", children, matador::cascade_type::ALL);
     }
 };
 
@@ -509,12 +489,12 @@ public:
     template < class S >
     void serialize(S &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("name", name);
-        serializer.serialize("children", children, "vector_id", "child_id", matador::cascade_type::ALL);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("name", name);
+        serializer.on_has_many("children", children, "vector_id", "child_id", matador::cascade_type::ALL);
     }
 
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     children_vector_t children;
 };
@@ -531,12 +511,12 @@ public:
     template < class S >
     void serialize(S &serializer)
     {
-        serializer.serialize("id", id);
-        serializer.serialize("name", name);
-        serializer.serialize("children", children, "list_id", "child_id", matador::cascade_type::ALL);
+        serializer.on_primary_key("id", id);
+        serializer.on_attribute("name", name);
+        serializer.on_has_many("children", children, "list_id", "child_id", matador::cascade_type::ALL);
     }
 
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     children_list_t children;
 };
@@ -548,14 +528,14 @@ public:
     typedef matador::has_many<T, C> element_list_t;
 
 public:
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     element_list_t elements;
 
     template < class S >
     void serialize(S &s)
     {
-        s.serialize("id", id);
-        s.serialize("elements", elements, "list_id", "value", matador::cascade_type::ALL);
+        s.on_primary_key("id", id);
+        s.on_has_many("elements", elements, "list_id", "value", matador::cascade_type::ALL);
     }
 };
 
@@ -568,7 +548,7 @@ using many_vector_strings = many_builtins<std::string, std::vector>;
 class load
 {
 public:
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
 
     load() = default;
@@ -577,8 +557,8 @@ public:
     template < class S >
     void serialize(S &s)
     {
-        s.serialize("id", id);
-        s.serialize("name", name, 255);
+        s.on_primary_key("id", id);
+        s.on_attribute("name", name, 255);
     }
 
 };
@@ -586,7 +566,7 @@ public:
 class location
 {
 public:
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
 
     location() = default;
@@ -595,15 +575,15 @@ public:
     template < class S >
     void serialize(S &s)
     {
-        s.serialize("id", id);
-        s.serialize("name", name, 255);
+        s.on_primary_key("id", id);
+        s.on_attribute("name", name, 255);
     }
 };
 
 class order
 {
 public:
-    matador::identifier<unsigned long> id;
+    unsigned long id{};
     std::string name;
     matador::has_many<location> sources;
     matador::has_many<location> destinations;
@@ -611,10 +591,10 @@ public:
     template < class S >
     void serialize(S &s)
     {
-        s.serialize("id", id);
-        s.serialize("name", name, 255);
-        s.serialize("sources", sources);
-        s.serialize("destinations", destinations);
+        s.on_primary_key("id", id);
+        s.on_attribute("name", name, 255);
+        s.on_has_many("sources", sources, matador::cascade_type::ALL);
+        s.on_has_many("destinations", destinations, matador::cascade_type::ALL);
     }
 
 };

@@ -1,8 +1,6 @@
 #ifndef OOS_TOKEN_VISITOR_HPP
 #define OOS_TOKEN_VISITOR_HPP
 
-#include "matador/sql/export.hpp"
-
 namespace matador {
 
 class sql;
@@ -21,7 +19,7 @@ struct typed_column;
 struct typed_identifier_column;
 struct typed_varchar_column;
 struct identifier_varchar_column;
-struct basic_value_column;
+struct value_column;
 struct values;
 struct distinct;
 struct set;
@@ -47,7 +45,7 @@ struct query;
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API token_visitor
+class token_visitor
 {
 public:
   virtual ~token_visitor() = default;
@@ -65,7 +63,7 @@ public:
   virtual void visit(const matador::detail::typed_identifier_column &) = 0;
   virtual void visit(const matador::detail::typed_varchar_column &) = 0;
   virtual void visit(const matador::detail::identifier_varchar_column &) = 0;
-  virtual void visit(const matador::detail::basic_value_column &) = 0;
+  virtual void visit(const matador::detail::value_column &) = 0;
   virtual void visit(const matador::detail::from &) = 0;
   virtual void visit(const matador::detail::where &) = 0;
   virtual void visit(const matador::detail::basic_condition &) = 0;

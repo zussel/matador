@@ -1,7 +1,3 @@
-//
-// Created by sascha on 29.07.16.
-//
-
 #include "SQLiteDialectTestUnit.hpp"
 
 #include "connections.hpp"
@@ -15,8 +11,8 @@ using namespace matador;
 SQLiteDialectTestUnit::SQLiteDialectTestUnit()
   : unit_test("sqlite_dialect", "sqlite dialect test")
 {
-  add_test("update_limit", std::bind(&SQLiteDialectTestUnit::test_update_with_limit, this), "test sqlite update limit compile");
-  add_test("delete_limit", std::bind(&SQLiteDialectTestUnit::test_delete_with_limit, this), "test sqlite delete limit compile");
+  add_test("update_limit", [this] { test_update_with_limit(); }, "test sqlite update limit compile");
+  add_test("delete_limit", [this] { test_delete_with_limit(); }, "test sqlite delete limit compile");
 }
 
 void SQLiteDialectTestUnit::test_update_with_limit()
@@ -33,8 +29,8 @@ void SQLiteDialectTestUnit::test_update_with_limit()
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+  cols->push_back(detail::make_value_column("name", dieter, 255));
+  cols->push_back(detail::make_value_column("age", age54, -1));
 
   s.append(cols.release());
 

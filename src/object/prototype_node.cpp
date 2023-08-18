@@ -128,8 +128,8 @@ void prototype_node::insert(object_proxy *proxy)
   // adjust size
   ++count;
   // find and insert primary key
-  if (proxy->primary_key_) {
-    id_map_.insert(std::make_pair(proxy->primary_key_, proxy));
+  if (!proxy->pk_.is_null()) {
+    id_map_.insert(std::make_pair(proxy->pk_, proxy));
   }
 
   // notify observers
@@ -157,7 +157,7 @@ void prototype_node::remove(object_proxy *proxy)
   proxy->next_ = nullptr;
 
   if (has_primary_key()) {
-    if (id_map_.erase(proxy->primary_key_) == 0) {
+    if (id_map_.erase(proxy->pk_) == 0) {
       // couldn't find and erase primary key
     }
   }
@@ -301,12 +301,12 @@ bool prototype_node::has_children() const
 
 bool prototype_node::has_primary_key() const
 {
-  return id_ != nullptr;
+  return !id_.is_null();
 }
 
-basic_identifier *prototype_node::id() const
+const identifier& prototype_node::id() const
 {
-  return id_.get();
+  return id_;
 }
 
 bool prototype_node::is_abstract() const
@@ -319,13 +319,10 @@ std::type_index prototype_node::type_index() const
   return info_->type_index();
 }
 
-object_proxy *prototype_node::find_proxy(basic_identifier *pk)
+object_proxy *prototype_node::find_proxy(const identifier &pk)
 {
-  auto i = std::find_if(id_map_.begin(), id_map_.end(), [pk](const detail::t_identifier_map::value_type &x) {
-    return *pk == *(x.first);
-  });
-//  t_primary_key_map::iterator i = primary_key_map.find(pk);
-  return (i != id_map_.end() ? i->second : nullptr);
+  auto it = id_map_.find(pk);
+  return (it != id_map_.end() ? it->second : nullptr);
 }
 
 void prototype_node::register_relation_endpoint(const std::type_index &tindex,

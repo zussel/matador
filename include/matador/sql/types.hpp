@@ -1,8 +1,6 @@
 #ifndef OOS_DATABASE_TYPES_HPP
 #define OOS_DATABASE_TYPES_HPP
 
-#include "matador/sql/export.hpp"
-
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 
@@ -56,15 +54,6 @@ enum struct database_type {
   type_null,           /*!< Data type null */
   type_unknown         /*!< Data type unknown */
 };
-
-/**
- * @brief Output operator for data types
- *
- * @param out The output stream to write on
- * @param type The data type to be written
- * @return The modified output stream
- */
-//OOS_SQL_API std::ostream& operator<<(std::ostream &out, const matador::database_type &type);
 
 /**
  * @tparam T The type of the traits

@@ -1,8 +1,6 @@
 #ifndef CONDITION_HPP
 #define CONDITION_HPP
 
-#include "matador/sql/export.hpp"
-
 #include "matador/sql/types.hpp"
 #include "matador/sql/column.hpp"
 #include "matador/sql/token.hpp"
@@ -22,7 +20,7 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API basic_condition : public token
+class basic_condition : public token
 {
 public:
   basic_condition() : token(token::CONDITION) { }
@@ -57,7 +55,8 @@ public:
   static std::array<std::string, num_operands> operands;
 };
 
-class OOS_SQL_API basic_column_condition : public basic_condition
+//class OOS_SQL_API basic_column_condition : public basic_condition
+class basic_column_condition : public basic_condition
 {
 public:
   column field_;
@@ -73,7 +72,8 @@ public:
   }
 };
 
-class OOS_SQL_API basic_in_condition : public basic_condition
+//class OOS_SQL_API basic_in_condition : public basic_condition
+class basic_in_condition : public basic_condition
 {
 public:
   column field_;
@@ -527,7 +527,8 @@ condition<column, std::initializer_list<V>> in(const matador::column &col, std::
  * @param q The query to be executes as sub select
  * @return The condition object
  */
-OOS_SQL_API condition<column, detail::basic_query> in(const matador::column &col, detail::basic_query &q);
+condition<column, detail::basic_query> in(const matador::column &col, detail::basic_query &q);
+//OOS_SQL_API condition<column, detail::basic_query> in(const matador::column &col, detail::basic_query &q);
 
 /**
  * @brief Creates a between condition.
@@ -557,7 +558,8 @@ condition<column, std::pair<T, T>> between(const matador::column &col, T low, T 
  * @param val The value to the like operator
  * @return The like condition object
  */
-OOS_SQL_API condition<column, std::string> like(const matador::column &col, const std::string &val);
+condition<column, std::string> like(const matador::column &col, const std::string &val);
+//OOS_SQL_API condition<column, std::string> like(const matador::column &col, const std::string &val);
 
 /**
  * @brief Condition equality operator for a column and a value
@@ -586,7 +588,8 @@ condition<column, T> operator==(const column &col, T val)
  * @param q The query to compare with
  * @return The condition object representing the equality operation
  */
-OOS_SQL_API condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
+condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
+//OOS_SQL_API condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
 
 /**
  * @brief Condition unequality operator for a column and a value

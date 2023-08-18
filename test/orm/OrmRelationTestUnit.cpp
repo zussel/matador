@@ -1,7 +1,3 @@
-//
-// Created by sascha on 16.03.17.
-//
-
 #include "OrmRelationTestUnit.hpp"
 
 #include "../entities.hpp"

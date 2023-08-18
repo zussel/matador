@@ -1,13 +1,8 @@
-//
-// Created by sascha on 29.05.19.
-//
-
-#include <cstring>
-
 #include "matador/utils/string.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-#include "matador/utils/basic_identifier.hpp"
+
+#include <cstring>
 
 #include "matador/db/postgresql/postgresql_result.hpp"
 #include "matador/db/postgresql/postgresql_getvalue.hpp"
@@ -32,12 +27,12 @@ postgresql_result::~postgresql_result()
 
 const char *postgresql_result::column(postgresql_result::size_type c) const
 {
-  return PQgetvalue(res_, pos_, c);
+  return PQgetvalue(res_, row_index_, c);
 }
 
 bool postgresql_result::fetch()
 {
-  return ++pos_ < rows_;
+  return ++row_index_ < rows_;
 }
 
 postgresql_result::size_type postgresql_result::affected_rows() const
@@ -55,120 +50,109 @@ postgresql_result::size_type postgresql_result::fields() const
   return fields_;
 }
 
-int postgresql_result::transform_index(int index) const
+detail::result_impl::size_type postgresql_result::reset_column_index() const
 {
-  return index;
+  return 0;
 }
 
-void postgresql_result::serialize(const char *, char &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, char &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, short &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, short &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, int &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, int &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, long &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, long &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, long long &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, long long &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, unsigned char &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, unsigned char &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, unsigned short &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, unsigned short &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, unsigned int &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, unsigned int &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, unsigned long &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, unsigned long &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, unsigned long long &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, unsigned long long &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, bool &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, bool &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, float &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, float &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, double &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, double &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, char *x, size_t s)
+void postgresql_result::read_value(const char */*id*/, size_type index, char *value, long size)
 {
-  detail::get_value(res_, pos_, column_++, x, s);
+  detail::get_value(res_, row_index_, index, value, size);
 }
 
-void postgresql_result::serialize(const char *, std::string &x, size_t s)
+void postgresql_result::read_value(const char */*id*/, size_type index, std::string &value, long size)
 {
-  detail::get_value(res_, pos_, column_++, x, s);
+  detail::get_value(res_, row_index_, index, value, size);
 }
 
-void postgresql_result::serialize(const char *, std::string &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, std::string &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, matador::date &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, matador::date &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::serialize(const char *, matador::time &x)
+void postgresql_result::read_value(const char */*id*/, size_type index, matador::time &value)
 {
-  detail::get_value(res_, pos_, column_++, x);
-}
-
-void postgresql_result::serialize(const char *id, matador::basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
-void postgresql_result::serialize(const char *id, matador::identifiable_holder &x, cascade_type)
-{
-  read_foreign_object(id, x);
+  detail::get_value(res_, row_index_, index, value);
 }
 
 bool postgresql_result::prepare_fetch()
 {
-  column_ = 0;
-  return pos_ + 1 <= rows_;
+  return row_index_ + 1 <= rows_;
 }
 
 bool postgresql_result::finalize_fetch()
 {
-  ++pos_;
+  ++row_index_;
   return true;
 }
 

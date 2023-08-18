@@ -4,8 +4,7 @@
 #include "matador/object/export.hpp"
 
 #include "matador/object/prototype_node.hpp"
-#include "matador/object/has_one.hpp"
-#include "matador/object/belongs_to.hpp"
+#include "matador/object/object_holder.hpp"
 #include "matador/object/basic_has_many.hpp"
 
 #include <unordered_map>
@@ -39,7 +38,7 @@ private:
   };
 
 private:
-  typedef std::map<unsigned long, t_object_count> t_objects_to_remove_map;
+  typedef std::map<unsigned long long, t_object_count> t_objects_to_remove_map;
   typedef std::vector<std::function<void()>> t_relations_to_remove_map;
 
 public:
@@ -55,7 +54,7 @@ public:
   ~object_deleter() = default;
 
   /**
-   * Checks wether the given serializable is deletable.
+   * Checks weather the given serializable is deletable.
    *
    * @param proxy The object_proxy to be checked.
    * @return True if the serializable could be deleted.
@@ -84,26 +83,24 @@ public:
   void serialize(T &x) { matador::access::serialize(*this, x); }
 
   template<class T>
-  void serialize(const char *, const T &);
-  void serialize(const char *, char *, size_t) {}
-  void serialize(const char *, std::string &, size_t) {}
-
+  void on_primary_key(const char *id, T &x, long size = -1);
   template<class T>
-  void serialize(const char *, belongs_to<T> &x, cascade_type cascade);
+  void on_attribute(const char *, const T &, long /*size*/ = -1) {}
+  void on_attribute(const char *, char *, long /*size*/ = -1) {}
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
   template<class T>
-  void serialize(const char *, has_one<T> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade);
+  template<class T>
+  void on_has_one(const char *, object_ptr<T> &x, cascade_type cascade);
   template<class T, template<class ...> class Container>
-  void serialize(const char *id, basic_has_many<T, Container> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, basic_has_many<T, Container> &x, const char *, const char *, cascade_type cascade)
   {
-    serialize(id, x, cascade);
+    on_has_many(id, x, cascade);
   }
-
   template<class T, template<class ...> class Container>
-  void serialize(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
+  void on_has_many(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
   template<class T, template<class ...> class Container>
-  void serialize(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<is_builtin<T>::value>::type* = 0);
-  template<class T>
-  void serialize(const char *id, identifier<T> &x);
+  void on_has_many(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<is_builtin<T>::value>::type* = 0);
 
 private:
   bool check_object_count_map() const;
@@ -118,20 +115,7 @@ private:
 /// @endcond
 
 template<class T>
-void object_deleter::serialize(const char *, const T &)
-{
-  if (!proxy_stack_.top()->node()->is_relation_node()) {
-    return;
-  }
-  auto curr_obj = visited_objects_.find(proxy_stack_.top());
-  if (curr_obj != visited_objects_.end()) {
-//    --curr_obj->second;
-  }
-
-}
-
-template<class T>
-void object_deleter::serialize(const char *, belongs_to<T> &x, cascade_type cascade)
+void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade)
 {
   if (!x.ptr()) {
     return;
@@ -156,7 +140,7 @@ void object_deleter::serialize(const char *, belongs_to<T> &x, cascade_type casc
     --curr_obj->second;
   }
 
-  if (cascade & cascade_type::REMOVE) {
+  if ((cascade & cascade_type::REMOVE) == cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     proxy_stack_.push(x.proxy_);
     matador::access::serialize(*this, *(T*)x.ptr());
@@ -165,7 +149,7 @@ void object_deleter::serialize(const char *, belongs_to<T> &x, cascade_type casc
 }
 
 template<class T>
-void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade)
+void object_deleter::on_has_one(const char *, object_ptr<T> &x, cascade_type cascade)
 {
   if (!x.ptr()) {
     return;
@@ -191,7 +175,7 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
     visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1));
   }
 
-  if (cascade & cascade_type::REMOVE) {
+  if ((cascade & cascade_type::REMOVE) == cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     proxy_stack_.push(x.proxy_);
     matador::access::serialize(*this, *(T*)x.ptr());
@@ -200,7 +184,7 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::serialize(const char *, basic_has_many<T, C> &x, cascade_type, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
+void object_deleter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_type, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
 {
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
@@ -223,7 +207,7 @@ void object_deleter::serialize(const char *, basic_has_many<T, C> &x, cascade_ty
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::serialize(const char *, basic_has_many<T, C> &x, cascade_type, typename std::enable_if<matador::is_builtin<T>::value>::type*)
+void object_deleter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_type, typename std::enable_if<matador::is_builtin<T>::value>::type*)
 {
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
@@ -238,10 +222,9 @@ void object_deleter::serialize(const char *, basic_has_many<T, C> &x, cascade_ty
 }
 
 template<class T>
-void object_deleter::serialize(const char *id, identifier<T> &x)
+void object_deleter::on_primary_key(const char *id, T &x, long size)
 {
-  auto val = x.value();
-  serialize(id, val);
+  on_attribute(id, x, size);
 }
 
 }

@@ -1,11 +1,6 @@
-//
-// Created by sascha on 11.01.18.
-//
-
 #ifndef MATADOR_BLOG_HPP
 #define MATADOR_BLOG_HPP
 
-#include <matador/utils/identifier.hpp>
 #include <matador/utils/time.hpp>
 #include <matador/utils/base_class.hpp>
 
@@ -15,7 +10,7 @@ namespace blog_detail {
 
 struct person
 {
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string name;
   matador::date birthday;
 
@@ -28,9 +23,9 @@ struct person
   template<class Serializer>
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("name", name, 255);
-    serializer.serialize("birthday", birthday);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("name", name, 255);
+    serializer.on_attribute("birthday", birthday);
   }
 };
 }
@@ -50,13 +45,13 @@ struct author : public blog_detail::person
   void serialize(Serializer &serializer)
   {
     serializer.serialize(*matador::base_class<person>(this));
-    serializer.serialize("post", posts, "author", "id", matador::cascade_type::NONE);
+    serializer.on_has_many("post", posts, "author", "id", matador::cascade_type::NONE);
   }
 };
 
 struct category
 {
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string name;
   std::string description;
   matador::has_many<post> posts;
@@ -70,18 +65,18 @@ struct category
   template < class Serializer >
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("name", name, 255);
-    serializer.serialize("description", description);
-    serializer.serialize("post_category", posts, "category_id", "post_id", matador::cascade_type::NONE);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("name", name, 255);
+    serializer.on_attribute("description", description);
+    serializer.on_has_many("post_category", posts, "category_id", "post_id", matador::cascade_type::NONE);
   }
 };
 
 struct comment
 {
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string email;
-  matador::belongs_to<post> blog_post;
+  matador::object_ptr<post> blog_post;
   std::string content;
   matador::time created_at;
 
@@ -93,19 +88,19 @@ struct comment
   template < class Serializer >
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("email", email, 255);
-    serializer.serialize("post", blog_post, matador::cascade_type::NONE);
-    serializer.serialize("content", content);
-    serializer.serialize("created_at", created_at);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("email", email, 255);
+    serializer.on_belongs_to("post", blog_post, matador::cascade_type::NONE);
+    serializer.on_attribute("content", content);
+    serializer.on_attribute("created_at", created_at);
   }
 };
 
 struct post
 {
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string title;
-  matador::belongs_to<author> writer;
+  matador::object_ptr<author> writer;
   matador::time created_at;
   matador::has_many<category> categories;
   matador::has_many<comment> comments;
@@ -137,14 +132,14 @@ struct post
   template < class Serializer >
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("title", title, 255);
-    serializer.serialize("author", writer, matador::cascade_type::NONE);
-    serializer.serialize("created_at", created_at);
-    serializer.serialize("post_category", categories, "category_id", "post_id", matador::cascade_type::INSERT);
-    serializer.serialize("comment", comments, "post", "id", matador::cascade_type::ALL);
-    serializer.serialize("post_tag", tags, "post_id", "tag", matador::cascade_type::ALL);
-    serializer.serialize("content", content);
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("title", title, 255);
+    serializer.on_belongs_to("author", writer, matador::cascade_type::NONE);
+    serializer.on_attribute("created_at", created_at);
+    serializer.on_has_many("post_category", categories, "category_id", "post_id", matador::cascade_type::INSERT);
+    serializer.on_has_many("comment", comments, "post", "id", matador::cascade_type::ALL);
+    serializer.on_has_many("post_tag", tags, "post_id", "tag", matador::cascade_type::ALL);
+    serializer.on_attribute("content", content);
   }
 };
 

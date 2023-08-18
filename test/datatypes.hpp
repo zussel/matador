@@ -7,7 +7,6 @@
 
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
-#include "matador/utils/identifier.hpp"
 
 class datatypes
 {
@@ -33,29 +32,29 @@ public:
 public:
   template < class SERIALIZER > void serialize(SERIALIZER &serializer)
   {
-    serializer.serialize("id", id_);
-    serializer.serialize("val_char", char_);
-    serializer.serialize("val_float", float_);
-    serializer.serialize("val_double", double_);
-    serializer.serialize("val_short", short_);
-    serializer.serialize("val_int", int_);
-    serializer.serialize("val_long", long_);
-    serializer.serialize("val_long_long", long64_);
-    serializer.serialize("val_unsigned_char", unsigned_char_);
-    serializer.serialize("val_unsigned_short", unsigned_short_);
-    serializer.serialize("val_unsigned_int", unsigned_int_);
-    serializer.serialize("val_unsigned_long", unsigned_long_);
-    serializer.serialize("val_unsigned_long_long", unsigned_long64_);
-    serializer.serialize("val_bool", bool_);
-    serializer.serialize("val_cstr", cstr_, (size_t)CSTR_LEN);
-    serializer.serialize("val_string", string_);
-    serializer.serialize("val_varchar", varchar_, 63);
-    serializer.serialize("val_date", date_);
-    serializer.serialize("val_time", time_);
+    serializer.on_primary_key("id", id_);
+    serializer.on_attribute("val_char", char_);
+    serializer.on_attribute("val_float", float_);
+    serializer.on_attribute("val_double", double_);
+    serializer.on_attribute("val_short", short_);
+    serializer.on_attribute("val_int", int_);
+    serializer.on_attribute("val_long", long_);
+    serializer.on_attribute("val_long_long", long64_);
+    serializer.on_attribute("val_unsigned_char", unsigned_char_);
+    serializer.on_attribute("val_unsigned_short", unsigned_short_);
+    serializer.on_attribute("val_unsigned_int", unsigned_int_);
+    serializer.on_attribute("val_unsigned_long", unsigned_long_);
+    serializer.on_attribute("val_unsigned_long_long", unsigned_long64_);
+    serializer.on_attribute("val_bool", bool_);
+    serializer.on_attribute("val_cstr", cstr_, CSTR_LEN);
+    serializer.on_attribute("val_string", string_);
+    serializer.on_attribute("val_varchar", varchar_, 63);
+    serializer.on_attribute("val_date", date_);
+    serializer.on_attribute("val_time", time_);
   }
 
-  unsigned long id() const { return id_.value(); }
-  void id(unsigned long i) { id_.value(i); }
+  unsigned long id() const { return id_; }
+  void id(unsigned long i) { id_ = i; }
 
   void set_char(char x) { char_ = x; }
   void set_float(float x) { float_ = x; }
@@ -115,7 +114,7 @@ public:
 private:
   enum { CSTR_LEN=255 };
 
-  matador::identifier<unsigned long> id_ = 0;
+  unsigned long id_ = 0;
 
   char char_ = 'c';
   float float_ = 3.1415f;

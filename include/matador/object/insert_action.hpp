@@ -56,8 +56,8 @@ public:
 
   bool empty() const;
 
-  iterator find(unsigned long id);
-  const_iterator find(unsigned long id) const;
+  iterator find(unsigned long long id);
+  const_iterator find(unsigned long long id) const;
 
   void push_back(object_proxy *proxy);
 

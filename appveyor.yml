@@ -7,13 +7,12 @@ platform:
   - x64
 
 services:
-  - mssql2014
+  - mssql2017
   - mysql
   - postgresql101
 
 image:
-#  - Visual Studio 2015
-  - Visual Studio 2017
+  - Visual Studio 2019
 
 configuration:
 #  - Debug
@@ -52,14 +51,7 @@ before_build:
       cd C:\projects\sqlite\src
       mkdir build
       cd build
-      if ("$env:APPVEYOR_BUILD_WORKER_IMAGE" -match "Visual Studio 2015") {
-          $env:generator="Visual Studio 14 2015"
-      } else {
-          $env:generator="Visual Studio 15 2017"
-      }
-      if ($env:PLATFORM -eq "x64") {
-          $env:generator="$env:generator Win64"
-      }
+      $env:generator="Visual Studio 16 2019"
       echo generator="$env:generator"
       $env:SQLITE_ROOT="C:\projects\sqlite\sqlite"
       $env:PATH="$env:PATH;$env:SQLITE_ROOT\bin;$env:MYSQL_DIR\bin;$env:MYSQL_DIR\lib"
@@ -73,7 +65,7 @@ before_build:
       cd "$env:APPVEYOR_BUILD_FOLDER"
       mkdir build
       cd build
-      cmake -G "$env:generator" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" -DPOSTGRESQL_CONNECTION_STRING:STRING="postgresql://test:test123@127.0.0.1/matador_test" ..
+      cmake -G "$env:generator" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2017/matador_test" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" -DPOSTGRESQL_CONNECTION_STRING:STRING="postgresql://test:test123@127.0.0.1/matador_test" ..
 
 build_script:
   - cmake --build . --config %configuration% --target matador test_matador

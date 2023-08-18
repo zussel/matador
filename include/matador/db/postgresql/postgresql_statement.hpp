@@ -12,8 +12,6 @@
 
 namespace matador {
 
-class basic_identifier;
-
 namespace postgresql {
 
 class postgresql_connection;
