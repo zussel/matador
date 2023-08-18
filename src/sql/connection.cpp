@@ -167,7 +167,7 @@ void connection::prepare_prototype_row(row &prototype, const std::string &table_
     return;
   }
   auto fields = impl_->describe(table_name);
-  for (auto &&f : fields) {
+  for (const auto &f : fields) {
     if (!prototype.has_column(f.name())) {
       continue;
     }
