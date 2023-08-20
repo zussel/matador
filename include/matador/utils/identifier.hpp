@@ -7,6 +7,7 @@
 
 namespace matador {
 
+class field_attributes;
 struct null_type_t {};
 
 namespace detail {
@@ -51,16 +52,16 @@ class identifier_serializer
 public:
   virtual ~identifier_serializer() = default;
 
-  virtual void serialize(short &, long) = 0;
-  virtual void serialize(int &, long) = 0;
-  virtual void serialize(long &, long) = 0;
-  virtual void serialize(long long &, long) = 0;
-  virtual void serialize(unsigned short &, long) = 0;
-  virtual void serialize(unsigned int &, long) = 0;
-  virtual void serialize(unsigned long &, long) = 0;
-  virtual void serialize(unsigned long long &, long) = 0;
-  virtual void serialize(std::string &, long) = 0;
-  virtual void serialize(null_type_t &, long) = 0;
+  virtual void serialize(short &, const field_attributes &) = 0;
+  virtual void serialize(int &, const field_attributes &) = 0;
+  virtual void serialize(long &, const field_attributes &) = 0;
+  virtual void serialize(long long &, const field_attributes &) = 0;
+  virtual void serialize(unsigned short &, const field_attributes &) = 0;
+  virtual void serialize(unsigned int &, const field_attributes &) = 0;
+  virtual void serialize(unsigned long &, const field_attributes &) = 0;
+  virtual void serialize(unsigned long long &, const field_attributes &) = 0;
+  virtual void serialize(std::string &, const field_attributes &) = 0;
+  virtual void serialize(null_type_t &, const field_attributes &) = 0;
 };
 
 class identifier

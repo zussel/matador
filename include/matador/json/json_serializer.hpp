@@ -2,10 +2,11 @@
 #define MATADOR_JSON_SERIALIZER_HPP
 
 #include "matador/json/export.hpp"
+#include "matador/json/json.hpp"
 
 #include "matador/utils/access.hpp"
+#include "matador/utils/field_attributes.hpp"
 #include "matador/utils/string.hpp"
-#include "json.hpp"
 #include "matador/utils/is_builtin.hpp"
 
 #include <set>
@@ -62,7 +63,7 @@ public:
   }
 
   template< class V >
-  void on_primary_key(const char *id, V &pk, long /*size*/ = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &pk, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     write_id(id);
     append(pk).append(",");
@@ -77,7 +78,7 @@ public:
     newline();
   }
 
-  void on_primary_key(const char *id, std::string &pk, long size = -1);
+  void on_primary_key(const char *id, std::string &pk, const field_attributes &attr = {});
 
   // numbers
   template < class V >

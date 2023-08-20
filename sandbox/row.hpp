@@ -3,6 +3,8 @@
 
 #include "column.hpp"
 
+#include <vector>
+
 namespace matador {
 
 class row
