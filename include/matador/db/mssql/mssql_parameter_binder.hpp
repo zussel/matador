@@ -1,20 +1,20 @@
-//
-// Created by sascha on 30.08.19.
-//
-
 #ifndef MATADOR_MSSQL_PARAMETER_BINDER_HPP
 #define MATADOR_MSSQL_PARAMETER_BINDER_HPP
 
-#include "matador/utils/time.hpp"
-#include "matador/utils/basic_identifier.hpp"
 #include "matador/sql/parameter_binder.hpp"
 
+#if defined(_MSC_VER)
+#include <WinSock2.h>
+#endif
 #include <sqltypes.h>
 
 #include <vector>
 #include <unordered_map>
 
 namespace matador {
+
+class time;
+class date;
 
 namespace mssql {
 
@@ -24,10 +24,6 @@ public:
   explicit mssql_parameter_binder(SQLHANDLE stmt);
 
   void reset() override;
-
-  void initialize_index(size_t index) override;
-  size_t next_index() override;
-  size_t current_index() const override;
 
   void bind(char i, size_t) override;
   void bind(short i, size_t) override;

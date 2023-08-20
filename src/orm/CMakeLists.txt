@@ -9,7 +9,6 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/orm/table.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/session.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/basic_table.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/orm/identifier_binder.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/identifier_column_resolver.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_resolver.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_resolver.tpp
@@ -17,7 +16,8 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence_observer.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence_observer.tpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/basic_relation_data.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/orm/belongs_to_resolver.hpp ../../include/matador/orm/export.hpp)
+  ${CMAKE_SOURCE_DIR}/include/matador/orm/belongs_to_resolver.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/orm/export.hpp)
 
 ADD_LIBRARY(matador-orm STATIC ${SOURCES} ${HEADER})
 

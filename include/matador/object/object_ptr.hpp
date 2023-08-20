@@ -11,103 +11,88 @@
 namespace matador {
 
 /**
- * @brief The object_pointer holds a pointer to an serializable.
+ * @brief The object_ptr holds a pointer to an serializable.
  * @tparam T The type of the serializable.
  *
- * The object_pointer holds a pointer to an object. The
- * object_pointer is a wrapper class for the object class
+ * The object_ptr holds a pointer to an object. The
+ * object_ptr is a wrapper class for the object class
  * It has a reference count mechanism.
  * The objects inserted into the object_store are returned
- * as a object_pointer and should be used through the
- * object_pointer class.
+ * as a object_ptr and should be used through the
+ * object_ptr class.
  */
-template < class T, object_holder_type OPT >
-class object_pointer : public object_holder
+template < class T >
+class object_ptr : public object_holder
 {
 public:
   typedef T object_type;           /**< Shortcut for serializable type. */
-  typedef object_pointer<T, OPT> self;      /**< Shortcut for self class. */
+  typedef object_ptr<T> self;      /**< Shortcut for self class. */
 
 public:
   /**
-   * Create an empty object_pointer
+   * Create an empty object_ptr
    */
-  object_pointer()
-    : object_holder(OPT)
-  {}
+  object_ptr() = default;
   /**
-   * Copies object_pointer
+   * Copies object_ptr
    *
-   * @param x The object_pointer to copy
+   * @param x The object_ptr to copy
    */
-  object_pointer(const self &x)
-    : object_holder(x.type_, x.proxy_)
+  object_ptr(const self &x)
+    : object_holder(x.proxy_)
   {}
 
   /**
    * Move constructor
    * 
-   * @param x object_pointer to move
+   * @param x object_ptr to move
    */
-  object_pointer(self &&x) noexcept
+  object_ptr(self &&x) noexcept
     : object_holder(std::move(x))
   {}
 
   /**
-   * Create an object_pointer from an object
+   * Create an object_ptr from an object
    *
    * @param o The object.
    */
-  object_pointer(T *o)
-    : object_holder(OPT, new object_proxy(o))
+  object_ptr(T *o)
+    : object_holder(new object_proxy(o))
   {}
 
   /**
-   * Initializes the object_pointer
+   * Initializes the object_ptr
    * with nullptr
    */ 
-  object_pointer(std::nullptr_t)
-    : object_holder(OPT)
+  object_ptr(std::nullptr_t)
   {}
 
   /**
-   * Create an object_pointer from an object_proxy
+   * Create an object_ptr from an object_proxy
    *
    * @param proxy The object_proxy.
    */
-  explicit object_pointer(object_proxy *proxy)
-  : object_holder(OPT, proxy)
+  explicit object_ptr(object_proxy *proxy)
+  : object_holder(proxy)
   {}
-
-  /**
-   * @brief Creates an object_pointer from the given object_pointer object
-   *
-   * @param x The object_pointer object to created the object_pointer from
-   */
-  template < object_holder_type OOPT >
-  object_pointer(const object_pointer<T, OOPT> &x)
-    : object_holder(OPT)
-  {
-    reset(x.proxy_, x.cascade_);
-  }
 
   /**
    * Assign operator.
    *
    * @param x The x serializable to assign from.
    */
-  object_pointer& operator=(T *x)
+  object_ptr& operator=(T *x)
   {
     reset(new object_proxy(x), cascade_);
     return *this;
   }
 
   /**
-   * @brief Copy assignes an object_pointer from the given has_one object
-   * @param x The has_one object to created the object_pointer from
-   * @return A reference to the created object_pointer
+   * @brief Copy assignes an object_ptr from the given has_one object
+   * @param x The has_one object to created the object_ptr from
+   * @return A reference to the created object_ptr
    */
-  object_pointer& operator=(const self &x)
+  object_ptr& operator=(const self &x)
   {
     reset(x.proxy_, x.cascade_);
     return *this;
@@ -116,31 +101,20 @@ public:
   /**
    * Move assignment constructor
    * 
-   * @param x object_pointer to be moved
+   * @param x object_ptr to be moved
    */
-  object_pointer& operator=(self &&x) noexcept
+  object_ptr& operator=(self &&x) noexcept
   {
-    return static_cast<self&>(object_holder::operator=(std::move(x)));
-  }
-
-  /**
-   * @brief Copy assignes an object_pointer from the given has_one object
-   * @param x The has_one object to created the object_pointer from
-   * @return A reference to the created object_pointer
-   */
-  template < object_holder_type OOPT >
-  object_pointer& operator=(object_pointer<T, OOPT> &x)
-  {
-    reset(x.proxy_, x.cascade_);
+    object_holder::operator=(std::move(x));
     return *this;
   }
 
   /**
-   * Assigns nullptr to the object_pointer
+   * Assigns nullptr to the object_ptr
    * 
-   * @return Cleared reference to object_pointer
+   * @return Cleared reference to object_ptr
    */
-  object_pointer& operator=(std::nullptr_t)
+  object_ptr& operator=(std::nullptr_t)
   {
     clear();
     return *this;
@@ -228,22 +202,22 @@ public:
 
   /**
    * Creates a new identifier, represented by the identifier
-   * of the underlaying type.
+   * of the underlying type.
    *
    * @return A new identifier.
    */
-  basic_identifier* create_identifier() const override
+  identifier create_identifier() const override
   {
-    return self::identifier_->clone();
+    return self::identifier_;
   }
 
 private:
   static std::string classname_;
-  static std::unique_ptr<basic_identifier> identifier_;
+  static identifier identifier_;
 };
 
-template < class T, object_holder_type OPT >
-T* object_pointer<T, OPT>::modify() {
+template < class T >
+T* object_ptr<T>::modify() {
   if (proxy_ && proxy_->obj()) {
     proxy_->mark_modified();
 
@@ -253,18 +227,11 @@ T* object_pointer<T, OPT>::modify() {
   }
 }
 
-/**
- * Shortcut to object_pointer representing a object_ptr
- * relationship
- */
 template < class T >
-using object_ptr = object_pointer<T, object_holder_type::OBJECT_PTR>;
+std::string object_ptr<T>::classname_ = typeid(T).name();
 
-template < class T, object_holder_type OPT >
-std::string object_pointer<T, OPT>::classname_ = typeid(T).name();
-
-template < class T, object_holder_type OPT >
-std::unique_ptr<basic_identifier> object_pointer<T, OPT>::identifier_(identifier_resolver<T>::create());
+template < class T >
+identifier object_ptr<T>::identifier_(identifier_resolver<T>::create());
 
 }
 

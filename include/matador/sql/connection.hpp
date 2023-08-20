@@ -1,8 +1,6 @@
 #ifndef CONNECTION_HPP
 #define CONNECTION_HPP
 
-#include "matador/sql/export.hpp"
-
 #include "matador/sql/result.hpp"
 #include "matador/sql/statement.hpp"
 #include "matador/sql/connection_impl.hpp"
@@ -19,7 +17,7 @@ class basic_dialect;
 /**
  * @brief The connection class represents a connection to a database.
  */
-class OOS_SQL_API connection
+class connection
 {
 public:
   /**

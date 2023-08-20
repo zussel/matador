@@ -239,7 +239,7 @@ void basic_dialect_linker::visit(const matador::detail::identifier_varchar_colum
   dialect().append_to_result(str.str());
 }
 
-void basic_dialect_linker::visit(const matador::detail::basic_value_column &col)
+void basic_dialect_linker::visit(const matador::detail::value_column &col)
 {
   visit(static_cast<const matador::column&>(col));
   dialect().append_to_result("=");

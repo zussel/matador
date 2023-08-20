@@ -1,7 +1,3 @@
-//
-// Created by sascha on 11.06.19.
-//
-
 #ifndef MATADOR_POSTGRESQL_PREPARED_RESULT_HPP
 #define MATADOR_POSTGRESQL_PREPARED_RESULT_HPP
 
@@ -34,28 +30,26 @@ public:
   size_type result_rows() const override;
   size_type fields() const override;
 
-  int transform_index(int index) const override;
+  size_type reset_column_index() const override;
 
-  void serialize(const char *id, char &x) override;
-  void serialize(const char *id, short &x) override;
-  void serialize(const char *id, int &x) override;
-  void serialize(const char *id, long &x) override;
-  void serialize(const char *id, long long &x) override;
-  void serialize(const char *id, unsigned char &x) override;
-  void serialize(const char *id, unsigned short &x) override;
-  void serialize(const char *id, unsigned int &x) override;
-  void serialize(const char *id, unsigned long &x) override;
-  void serialize(const char *id, unsigned long long &x) override;
-  void serialize(const char *id, bool &x) override;
-  void serialize(const char *id, float &x) override;
-  void serialize(const char *id, double &x) override;
-  void serialize(const char *id, char *x, size_t s) override;
-  void serialize(const char *id, matador::date &x) override;
-  void serialize(const char *id, matador::time &x) override;
-  void serialize(const char *id, std::string &x) override;
-  void serialize(const char *id, std::string &x, size_t s) override;
-  void serialize(const char *id, basic_identifier &x) override;
-  void serialize(const char *id, identifiable_holder &x, cascade_type) override;
+  void read_value(const char *id, size_type index, char &x) override;
+  void read_value(const char *id, size_type index, short &x) override;
+  void read_value(const char *id, size_type index, int &x) override;
+  void read_value(const char *id, size_type index, long &x) override;
+  void read_value(const char *id, size_type index, long long &x) override;
+  void read_value(const char *id, size_type index, unsigned char &x) override;
+  void read_value(const char *id, size_type index, unsigned short &x) override;
+  void read_value(const char *id, size_type index, unsigned int &x) override;
+  void read_value(const char *id, size_type index, unsigned long &x) override;
+  void read_value(const char *id, size_type index, unsigned long long &x) override;
+  void read_value(const char *id, size_type index, bool &x) override;
+  void read_value(const char *id, size_type index, float &x) override;
+  void read_value(const char *id, size_type index, double &x) override;
+  void read_value(const char *id, size_type index, matador::date &x) override;
+  void read_value(const char *id, size_type index, matador::time &x) override;
+  void read_value(const char *id, size_type index, char *x, long size) override;
+  void read_value(const char *id, size_type index, std::string &x) override;
+  void read_value(const char *id, size_type index, std::string &x, long size) override;
 
 protected:
   bool needs_bind() override;
@@ -66,12 +60,12 @@ protected:
 
 private:
   PGresult *res_ = nullptr;
-  size_type row_ = 0;
-  size_type column_ = 0;
 
   size_type affected_rows_ = 0;
   size_type rows_ = 0;
   size_type fields_ = 0;
+
+  size_type row_index_ = 0;
 };
 
 }

@@ -14,8 +14,8 @@ using namespace matador;
 SqlLoggerTest::SqlLoggerTest()
   : unit_test("sql_logger", "sql logger test unit")
 {
-  add_test("null_logger", std::bind(&SqlLoggerTest::test_null_logger, this), "test null logger");
-  add_test("sql_logger", std::bind(&SqlLoggerTest::test_sql_logger, this), "test sql logger");
+  add_test("null_logger", [this] { test_null_logger(); }, "test null logger");
+  add_test("sql_logger", [this] { test_sql_logger(); }, "test sql logger");
 }
 
 void SqlLoggerTest::test_null_logger()

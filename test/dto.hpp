@@ -3,7 +3,6 @@
 
 #include "matador/utils/base_class.hpp"
 #include "matador/utils/varchar.hpp"
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 
@@ -25,15 +24,15 @@ struct bounding_box
   template < class S >
   void serialize(S &s)
   {
-    s.serialize("length", length);
-    s.serialize("width", width);
-    s.serialize("height", height);
+    s.on_attribute("length", length);
+    s.on_attribute("width", width);
+    s.on_attribute("height", height);
   }
 };
 
 struct dto
 {
-  matador::identifier<matador::varchar<255>> id;
+  std::string id;
   std::string name;
   matador::date birthday;
   matador::time created;
@@ -49,18 +48,18 @@ struct dto
   template < class S >
   void serialize(S &s)
   {
-    s.serialize("id", id);
-    s.serialize("name", name);
-    s.serialize("birthday", birthday);
-    s.serialize("created", created);
-    s.serialize("flag", flag);
-    s.serialize("height", height);
-    s.serialize("doubles", doubles);
-    s.serialize("bits", bits);
-    s.serialize("names", names);
-    s.serialize("values", values);
-    s.serialize("dimension", dimension);
-    s.serialize("dimensions", dimensions);
+    s.on_primary_key("id", id, 255);
+    s.on_attribute("name", name);
+    s.on_attribute("birthday", birthday);
+    s.on_attribute("created", created);
+    s.on_attribute("flag", flag);
+    s.on_attribute("height", height);
+    s.on_attribute("doubles", doubles);
+    s.on_attribute("bits", bits);
+    s.on_attribute("names", names);
+    s.on_attribute("values", values);
+    s.on_attribute("dimension", dimension);
+    s.on_attribute("dimensions", dimensions);
   }
 };
 
@@ -71,7 +70,7 @@ struct base
   template < class S >
   void serialize(S &s)
   {
-    s.serialize("id", id);
+    s.on_attribute("id", id);
   }
 };
 
@@ -83,7 +82,7 @@ struct derived : public base
   void serialize(S &s)
   {
     s.serialize(*matador::base_class<base>(this));
-    s.serialize("name", name);
+    s.on_attribute("name", name);
   }
 };
 

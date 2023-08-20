@@ -23,8 +23,8 @@ public:
   template<class Serializer>
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("alg", algorithm);
-    serializer.serialize("typ", type);
+    serializer.on_attribute("alg", algorithm);
+    serializer.on_attribute("typ", type);
   }
 };
 
@@ -43,14 +43,14 @@ public:
   template<class Serializer>
   void serialize(Serializer &serializer)
   {
-    serializer.serialize("iss", issuer);
-    serializer.serialize("sub", subject);
-    serializer.serialize("aud", audience);
-    serializer.serialize("exp", expiration_time);
-    serializer.serialize("nbf", not_before);
-    serializer.serialize("iat", issued_at);
-    serializer.serialize("jti", jwt_id);
-    serializer.serialize("name", name);
+    serializer.on_attribute("iss", issuer);
+    serializer.on_attribute("sub", subject);
+    serializer.on_attribute("aud", audience);
+    serializer.on_attribute("exp", expiration_time);
+    serializer.on_attribute("nbf", not_before);
+    serializer.on_attribute("iat", issued_at);
+    serializer.on_attribute("jti", jwt_id);
+    serializer.on_attribute("name", name);
   }
 };
 

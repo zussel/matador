@@ -10,8 +10,6 @@
 #include "matador/utils/date.hpp"
 
 #include "matador/object/has_many.hpp"
-#include "matador/object/belongs_to.hpp"
-#include "matador/object/has_one.hpp"
 
 namespace matador {
 namespace detail {
@@ -33,32 +31,29 @@ public:
   template < class V >
   void serialize(std::shared_ptr<V> &obj);
 
-  template < class V, object_holder_type OPT >
-  void serialize(object_pointer<V, OPT> &obj);
   template < class V >
-  void serialize(const char *id, identifier<V> &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
-  void serialize(const char *id, identifier<std::string> &pk);
-  template < int SIZE, class V >
-  void serialize(const char *id, identifier<varchar<SIZE, V>> &pk);
+  void serialize(object_ptr<V> &obj);
   template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_primary_key(const char *id, V &pk, long size = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_primary_key(const char *id, std::string &pk, long size = -1);
   template < class V >
-  void serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
+  void on_attribute(const char *id, V &to, long size = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  template < class V >
+  void on_attribute(const char *id, V &to, long size = -1, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
   template < class E >
-  void serialize(const char *id, E &to, typename std::enable_if<std::is_enum<E>::value>::type* = 0);
-  void serialize(const char *id, bool &to);
-  void serialize(const char *id, std::string &to);
-  void serialize(const char *id, std::string &to, size_t);
-  void serialize(const char *id, date &to);
-  void serialize(const char *id, time &to);
+  void on_attribute(const char *id, E &to, long size = -1, typename std::enable_if<std::is_enum<E>::value>::type* = 0);
+  void on_attribute(const char *id, bool &to, long size = -1);
+  void on_attribute(const char *id, std::string &to, long size = -1);
+  void on_attribute(const char *id, date &to, long size = -1);
+  void on_attribute(const char *id, time &to, long size = -1);
   template<class Value>
-  void serialize(const char *id, belongs_to<Value> &x, cascade_type);
+  void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
   template<class Value>
-  void serialize(const char *id, has_one<Value> &x, cascade_type);
+  void on_has_one(const char *id, object_ptr<Value> &x, cascade_type);
   template < class Value, template <class ...> class Container >
-  void serialize(const char *id, has_many<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, has_many<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
-  void serialize(const char *id, has_many<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, has_many<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
 
 private:
   details::mapper_runtime &runtime_data_;
@@ -82,11 +77,11 @@ std::shared_ptr<T> create_object(std::shared_ptr<T>&)
   return std::shared_ptr<T>(new T);
 }
 
-template < class T, object_holder_type OPT >
-object_pointer<T, OPT> create_object(object_pointer<T, OPT>&)
+template < class T >
+object_ptr<T> create_object(object_ptr<T>&)
 {
-  auto *val = new typename object_pointer<T, OPT>::object_type;
-  return object_pointer<T, OPT>(val);
+  auto *val = new typename object_ptr<T>::object_type;
+  return object_ptr<T>(val);
 }
 
 template< typename T >
@@ -114,14 +109,14 @@ void json_object_mapper_serializer::serialize(std::shared_ptr<V> &obj)
   access::serialize(*this, *obj);
 }
 
-template<class V, object_holder_type OPT>
-void json_object_mapper_serializer::serialize(object_pointer<V, OPT> &obj)
+template<class V>
+void json_object_mapper_serializer::serialize(object_ptr<V> &obj)
 {
   access::serialize(*this, *obj);
 }
 
 template<class V>
-void json_object_mapper_serializer::serialize(const char *id, identifier<V> &pk, typename std::enable_if<
+void json_object_mapper_serializer::on_primary_key(const char *id, V &pk, long /*size*/, typename std::enable_if<
   std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
   if (runtime_data_.key != id) {
@@ -131,24 +126,11 @@ void json_object_mapper_serializer::serialize(const char *id, identifier<V> &pk,
     return;
   }
 
-  pk.value(runtime_data_.value.as<V>());
-}
-
-template<int SIZE, class V>
-void json_object_mapper_serializer::serialize(const char *id, identifier<varchar<SIZE, V>> &pk)
-{
-  if (runtime_data_.key != id) {
-    return;
-  }
-  if (!runtime_data_.value.is_string()) {
-    return;
-  }
-
-  pk.value(runtime_data_.value.as<std::string>());
+  pk = runtime_data_.value.as<V>();
 }
 
 template<class V>
-void json_object_mapper_serializer::serialize(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
+void json_object_mapper_serializer::on_attribute(const char *id, V &to, long /*size*/, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
   if (runtime_data_.key != id) {
     return;
@@ -160,7 +142,7 @@ void json_object_mapper_serializer::serialize(const char *id, V &to, typename st
 }
 
 template<class V>
-void json_object_mapper_serializer::serialize(const char *id, V &to, typename std::enable_if<std::is_floating_point<V>::value>::type *)
+void json_object_mapper_serializer::on_attribute(const char *id, V &to, long /*size*/, typename std::enable_if<std::is_floating_point<V>::value>::type *)
 {
   if (runtime_data_.key != id) {
     return;
@@ -172,7 +154,7 @@ void json_object_mapper_serializer::serialize(const char *id, V &to, typename st
 }
 
 template<class V>
-void json_object_mapper_serializer::serialize(const char *id, V &to, typename std::enable_if<std::is_enum<V>::value>::type *)
+void json_object_mapper_serializer::on_attribute(const char *id, V &to, long /*size*/, typename std::enable_if<std::is_enum<V>::value>::type *)
 {
   if (runtime_data_.key != id) {
     return;
@@ -184,7 +166,7 @@ void json_object_mapper_serializer::serialize(const char *id, V &to, typename st
 }
 
 template<class Value>
-void json_object_mapper_serializer::serialize(const char *id, belongs_to<Value> &x, cascade_type)
+void json_object_mapper_serializer::on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type)
 {
   if (runtime_data_.object_key != id) {
     return;
@@ -197,7 +179,7 @@ void json_object_mapper_serializer::serialize(const char *id, belongs_to<Value> 
 }
 
 template<class Value>
-void json_object_mapper_serializer::serialize(const char *id, has_one<Value> &x, cascade_type)
+void json_object_mapper_serializer::on_has_one(const char *id, object_ptr<Value> &x, cascade_type)
 {
   if (runtime_data_.object_key != id) {
     return;
@@ -210,7 +192,7 @@ void json_object_mapper_serializer::serialize(const char *id, has_one<Value> &x,
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_mapper_serializer::serialize(const char *id, has_many<Value, Container> &x, const char *,
+void json_object_mapper_serializer::on_has_many(const char *id, has_many<Value, Container> &x, const char *,
                                               const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.object_key != id) {
@@ -227,7 +209,7 @@ void json_object_mapper_serializer::serialize(const char *id, has_many<Value, Co
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_mapper_serializer::serialize(const char *id, has_many<Value, Container> &x, const char *,
+void json_object_mapper_serializer::on_has_many(const char *id, has_many<Value, Container> &x, const char *,
                                               const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.key != id) {
@@ -239,8 +221,6 @@ void json_object_mapper_serializer::serialize(const char *id, has_many<Value, Co
       continue;
     }
     x.insert(x.end(), val.template as<Value>());
-//    typename has_many_item_holder<Value>::value_type v(val.template as<Value>());
-//    x.append(has_many_item_holder<Value>(v, nullptr));
   }
 }
 /// @endcond

@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef SQLITE_RESULT_HPP
 #define SQLITE_RESULT_HPP
 
@@ -48,50 +31,44 @@ public:
   size_type result_rows() const override;
   size_type fields() const override;
 
-  int transform_index(int index) const override;
+  size_type reset_column_index() const override;
 
   void push_back(char **row_values, int column_count);
 
 protected:
   bool prepare_fetch() override;
-
   bool finalize_fetch() override;
 
 protected:
-  void serialize(const char*, char&) override;
-  void serialize(const char*, short&) override;
-  void serialize(const char*, int&) override;
-  void serialize(const char*, long&) override;
-  void serialize(const char*, long long&) override;
-  void serialize(const char*, unsigned char&) override;
-  void serialize(const char*, unsigned short&) override;
-  void serialize(const char*, unsigned int&) override;
-  void serialize(const char*, unsigned long&) override;
-  void serialize(const char*, unsigned long long&) override;
-  void serialize(const char*, bool&) override;
-  void serialize(const char*, float&) override;
-  void serialize(const char*, double&) override;
-  void serialize(const char*, char *, size_t) override;
-  void serialize(const char*, std::string&) override;
-  void serialize(const char*, std::string &x, size_t s) override;
-  void serialize(const char*, matador::time&) override;
-  void serialize(const char*, matador::date&) override;
-  void serialize(const char*, matador::basic_identifier &x) override;
-  void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
+  void read_value(const char *id, size_type index, char &value) override;
+  void read_value(const char *id, size_type index, short &value) override;
+  void read_value(const char *id, size_type index, int &value) override;
+  void read_value(const char *id, size_type index, long &value) override;
+  void read_value(const char *id, size_type index, long long &value) override;
+  void read_value(const char *id, size_type index, unsigned char &value) override;
+  void read_value(const char *id, size_type index, unsigned short &value) override;
+  void read_value(const char *id, size_type index, unsigned int &value) override;
+  void read_value(const char *id, size_type index, unsigned long &value) override;
+  void read_value(const char *id, size_type index, unsigned long long &value) override;
+  void read_value(const char *id, size_type index, bool &value) override;
+  void read_value(const char *id, size_type index, float &value) override;
+  void read_value(const char *id, size_type index, double &value) override;
+  void read_value(const char *id, size_type index, matador::time &value) override;
+  void read_value(const char *id, size_type index, matador::date &value) override;
+  void read_value(const char *id, size_type index, char *value, long size) override;
+  void read_value(const char *id, size_type index, std::string &value) override;
+  void read_value(const char *id, size_type index, std::string &value, long size) override;
 
 private:
   friend class sqlite_connection;
 
 private:
-
-//  typedef std::vector<std::shared_ptr<char> > t_row;
   typedef std::vector<char*> t_row;
   typedef std::vector<t_row> t_result;
 
   t_result result_;
-  t_result::size_type pos_ = 0;
-  t_result::size_type column_ = 0;
 
+  size_type row_index_ = 0;
   size_type fields_ = 0;
 };
 

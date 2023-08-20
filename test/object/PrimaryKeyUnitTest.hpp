@@ -1,7 +1,3 @@
-//
-// Created by sascha on 8/11/15.
-//
-
 #ifndef OOS_PRIMARYKEYUNITTEST_HPP
 #define OOS_PRIMARYKEYUNITTEST_HPP
 

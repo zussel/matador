@@ -39,7 +39,7 @@ void JsonMapperTestUnit::test_fields()
 
   date b(27, 9, 1987);
 
-  UNIT_ASSERT_EQUAL("george@mail.net", p.id.value());
+  UNIT_ASSERT_EQUAL("george@mail.net", p.id);
   UNIT_ASSERT_EQUAL("george", p.name);
   UNIT_ASSERT_EQUAL(b, p.birthday);
   UNIT_ASSERT_EQUAL(183L, p.height);
@@ -134,7 +134,7 @@ void JsonMapperTestUnit::test_complex()
 
   date b(27, 9, 1987);
 
-  UNIT_EXPECT_EQUAL("george@mail.net", p.id.value());
+  UNIT_EXPECT_EQUAL("george@mail.net", p.id);
   UNIT_EXPECT_EQUAL("george", p.name);
   UNIT_EXPECT_EQUAL(b, p.birthday);
   UNIT_EXPECT_EQUAL(183L, p.height);
@@ -216,7 +216,7 @@ void JsonMapperTestUnit::test_false_types()
 
   date b(27, 9, 1987);
 
-  UNIT_EXPECT_EQUAL("", p.id.value());
+  UNIT_EXPECT_EQUAL("", p.id);
   UNIT_EXPECT_EQUAL("", p.name);
   UNIT_EXPECT_FALSE(p.flag);
   UNIT_EXPECT_FALSE(b == p.birthday);

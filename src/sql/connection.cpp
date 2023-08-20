@@ -167,7 +167,7 @@ void connection::prepare_prototype_row(row &prototype, const std::string &table_
     return;
   }
   auto fields = impl_->describe(table_name);
-  for (auto &&f : fields) {
+  for (const auto &f : fields) {
     if (!prototype.has_column(f.name())) {
       continue;
     }
@@ -192,7 +192,7 @@ value* create_default_value(database_type type)
     case database_type::type_int:
       return make_value<int>(0);
     case database_type::type_bigint:
-      return make_value<long>(0);
+      return make_value<long long>(0);
     case database_type::type_float:
       return make_value<float>(0);
     case database_type::type_double:

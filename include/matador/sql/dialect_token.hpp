@@ -1,8 +1,6 @@
 #ifndef OOS_DIALECT_TOKEN_HPP
 #define OOS_DIALECT_TOKEN_HPP
 
-#include "matador/sql/export.hpp"
-
 #include "matador/sql/token.hpp"
 #include "matador/sql/condition.hpp"
 
@@ -12,91 +10,91 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-struct OOS_SQL_API select : public token
+struct select : public token
 {
   select() : token(SELECT) {}
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API begin : public token
+struct begin : public token
 {
   begin() : token(BEGIN) {}
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API commit : public token
+struct commit : public token
 {
   commit() : token(COMMIT) {}
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API rollback : public token
+struct rollback : public token
 {
   rollback() : token(ROLLBACK) {}
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API drop : public table_name_token
+struct drop : public table_name_token
 {
   explicit drop(const std::string &t) : table_name_token(DROP, t) {}
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API create : public table_name_token
+struct create : public table_name_token
 {
   explicit create(const std::string &t);
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API insert : public table_name_token
+struct insert : public table_name_token
 {
   explicit insert(std::string t);
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API update : public token
+struct update : public token
 {
   update();
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API tablename : public table_name_token
+struct tablename : public table_name_token
 {
   explicit tablename(std::string t);
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API remove : public token
+struct remove : public token
 {
   remove();
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API distinct : public token
+struct distinct : public token
 {
   distinct() : token(DISTINCT) {}
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API set : public token
+struct set : public token
 {
   set() : token(SET) {}
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API values : public token
+struct values : public token
 {
   values() : token(VALUES) {}
 
@@ -110,28 +108,28 @@ struct OOS_SQL_API values : public token
   std::vector<std::shared_ptr<value>> values_;
 };
 
-struct OOS_SQL_API asc : public token
+struct asc : public token
 {
   asc() : token(ASC) {}
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API desc : public token
+struct desc : public token
 {
   desc() : token(DESC) {}
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API from : public table_name_token
+struct from : public table_name_token
 {
   explicit from(const std::string &t);
 
   void accept(token_visitor &visitor) override;
 };
 
-struct OOS_SQL_API top : public token
+struct top : public token
 {
   explicit top(size_t lmt);
 
@@ -140,7 +138,7 @@ struct OOS_SQL_API top : public token
   size_t limit_;
 };
 
-struct OOS_SQL_API as : public token
+struct as : public token
 {
   explicit as(std::string a);
 
@@ -149,7 +147,7 @@ struct OOS_SQL_API as : public token
   std::string alias;
 };
 
-struct OOS_SQL_API order_by : public token
+struct order_by : public token
 {
   explicit order_by(std::string col);
 
@@ -158,7 +156,7 @@ struct OOS_SQL_API order_by : public token
   std::string column;
 };
 
-struct OOS_SQL_API group_by : public token
+struct group_by : public token
 {
   explicit group_by(std::string col);
 
@@ -167,7 +165,7 @@ struct OOS_SQL_API group_by : public token
   std::string column;
 };
 
-struct OOS_SQL_API where : public token
+struct where : public token
 {
   template < class COND >
   explicit where(const COND &c)

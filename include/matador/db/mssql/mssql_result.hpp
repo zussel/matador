@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef MSSQL_RESULT_HPP
 #define MSSQL_RESULT_HPP
 
@@ -53,7 +36,7 @@ public:
   size_type result_rows() const override;
   size_type fields() const override;
 
-  int transform_index(int index) const override;
+  size_type reset_column_index() const override;
 
   template < class T >
   T get(size_type index, typename std::enable_if<std::is_integral<T>::value>::type* = nullptr) const
@@ -81,33 +64,31 @@ public:
   }
 
 protected:
-  void serialize(const char*, char&) override;
-  void serialize(const char*, short&) override;
-  void serialize(const char*, int&) override;
-  void serialize(const char*, long&) override;
-  void serialize(const char*, long long&) override;
-  void serialize(const char*, unsigned char&) override;
-  void serialize(const char*, unsigned short&) override;
-  void serialize(const char*, unsigned int&) override;
-  void serialize(const char*, unsigned long&) override;
-  void serialize(const char*, unsigned long long&) override;
-  void serialize(const char*, bool&) override;
-  void serialize(const char*, float&) override;
-  void serialize(const char*, double&) override;
-  void serialize(const char*, char *, size_t) override;
-  void serialize(const char*, std::string&) override;
-  void serialize(const char*, std::string &x, size_t s) override;
-  void serialize(const char*, matador::time&) override;
-  void serialize(const char*, matador::date&) override;
-  void serialize(const char*, matador::basic_identifier &x) override;
-  void serialize(const char*, matador::identifiable_holder &x, cascade_type) override;
+  void read_value(const char *id, size_type index, char &x) override;
+  void read_value(const char *id, size_type index, short &x) override;
+  void read_value(const char *id, size_type index, int &x) override;
+  void read_value(const char *id, size_type index, long &x) override;
+  void read_value(const char *id, size_type index, long long &x) override;
+  void read_value(const char *id, size_type index, unsigned char &x) override;
+  void read_value(const char *id, size_type index, unsigned short &x) override;
+  void read_value(const char *id, size_type index, unsigned int &x) override;
+  void read_value(const char *id, size_type index, unsigned long &x) override;
+  void read_value(const char *id, size_type index, unsigned long long &x) override;
+  void read_value(const char *id, size_type index, bool &x) override;
+  void read_value(const char *id, size_type index, float &x) override;
+  void read_value(const char *id, size_type index, double &x) override;
+  void read_value(const char *id, size_type index, matador::date &x) override;
+  void read_value(const char *id, size_type index, matador::time &x) override;
+  void read_value(const char *id, size_type index, char *x, long size) override;
+  void read_value(const char *id, size_type index, std::string &x) override;
+  void read_value(const char *id, size_type index, std::string &x, long size) override;
 
   template < class T >
-  void read_column(const char *id, T & val)
+  void read_column(const char *id, size_type index, T &val)
   {
     SQLLEN info = 0;
     auto type = (SQLSMALLINT)type2int(data_type_traits<T>::builtin_type());
-    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index_++), type, &val, sizeof(T), &info);
+    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (SQL_SUCCEEDED(ret)) {
       return;
     } else {
@@ -117,12 +98,12 @@ protected:
     }
   }
   
-  void read_column(const char *, char &val);
-  void read_column(const char *, unsigned char &val);
-  void read_column(const char *, std::string &val);
-  void read_column(const char *, std::string &val, size_t);
-  void read_column(const char *, matador::date &val);
-  void read_column(const char *, matador::time &val);
+  void read_column(const char *, size_type index, char &val);
+  void read_column(const char *, size_type index, unsigned char &val);
+  void read_column(const char *, size_type index, std::string &val);
+  void read_column(const char *, size_type index, std::string &val, long);
+  void read_column(const char *, size_type index, matador::date &val);
+  void read_column(const char *, size_type index, matador::time &val);
 
 
   bool prepare_fetch() override;

@@ -4,8 +4,6 @@
 #include "matador/object/export.hpp"
 
 #include "matador/object/prototype_node.hpp"
-#include "matador/object/has_one.hpp"
-#include "matador/object/belongs_to.hpp"
 #include "matador/object/basic_has_many.hpp"
 
 #include <stack>
@@ -30,12 +28,12 @@ public:
    *
    * An object_inserter instance ist created for a
    * given object_store. The notify flag tells the
-   * object_inserter wether the observers should be
+   * object_inserter weather the observers should be
    * notified or not.
    *
-   * @param ostore The object_store.
+   * @param store The object_store.
    */
-  explicit object_inserter(object_store &ostore);
+  explicit object_inserter(object_store &store);
 
   ~object_inserter() = default;
 
@@ -47,29 +45,31 @@ public:
   void serialize(T &x);
 
   template<class T>
-  void serialize(const char *, T &) { }
-  void serialize(const char *, char *, size_t) { }
-  void serialize(const char *, std::string &, size_t) { }
+  void on_primary_key(const char *, T &, long /*size*/ = -1) {}
+  template<class T>
+  void on_attribute(const char *, T &, long /*size*/ = -1) { }
+  void on_attribute(const char *, char *, long /*size*/ = -1) { }
+  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
 
   template<class T>
-  void serialize(const char *, belongs_to<T> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade);
   template<class T>
-  void serialize(const char *, has_one<T> &x, cascade_type cascade);
+  void on_has_one(const char *, object_ptr<T> &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &x, const char*, const char*, cascade_type cascade)
+  void on_has_many(const char *id, basic_has_many<T, C> &x, const char*, const char*, cascade_type cascade)
   {
-    serialize(id, x, cascade);
+    on_has_many(id, x, cascade);
   }
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &, cascade_type);
+  void on_has_many(const char *id, basic_has_many<T, C> &, cascade_type);
 
 private:
   template < class T >
   void increment_reference_count(T) const {}
   template < class T >
-  void increment_reference_count(const object_pointer<T, object_holder_type::OBJECT_PTR> &pointer) const
+  void increment_reference_count(const object_ptr<T> &pointer) const
   {
     increment_reference_count(static_cast<const object_holder&>(pointer));
   }
@@ -77,7 +77,7 @@ private:
   template < class T >
   void decrement_reference_count(T) const {}
   template < class T >
-  void decrement_reference_count(object_pointer<T, object_holder_type::OBJECT_PTR> &pointer) const
+  void decrement_reference_count(object_ptr<T> &pointer) const
   {
     decrement_reference_count(static_cast<object_holder&>(pointer));
   }
@@ -122,19 +122,19 @@ void object_inserter::serialize(T &x)
 }
 
 template<class T>
-void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cascade)
+void object_inserter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade)
 {
   insert_object(x, std::type_index(typeid(T)), cascade);
 }
 
 template<class T>
-void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade)
+void object_inserter::on_has_one(const char *, object_ptr<T> &x, cascade_type cascade)
 {
   insert_object(x, std::type_index(typeid(T)), cascade);
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::serialize(const char *, basic_has_many<T, C> &x, cascade_type cascade)
+void object_inserter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_type cascade)
 {
   auto *proxy = initialize_has_many(x);
 
@@ -165,7 +165,7 @@ void object_inserter::insert_has_many_item(const ItemHolderType &item,
                                            cascade_type cascade,
                                            typename std::enable_if<!matador::is_builtin<T>::value>::type*)
 {
-  if (cascade & cascade_type::INSERT) {
+  if ((cascade & cascade_type::INSERT) == cascade_type::INSERT) {
     // item is not in store, insert it
     insert_proxy(this->proxy(*item));
   }

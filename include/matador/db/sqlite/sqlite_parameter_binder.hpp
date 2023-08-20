@@ -1,7 +1,3 @@
-//
-// Created by sascha on 08.09.19.
-//
-
 #ifndef MATADOR_SQLITE_PARAMETER_BINDER_HPP
 #define MATADOR_SQLITE_PARAMETER_BINDER_HPP
 
@@ -21,10 +17,6 @@ public:
   sqlite_parameter_binder(sqlite3 *db, sqlite3_stmt *stmt);
 
   void reset() override;
-
-  void initialize_index(size_t index) override;
-  size_t next_index() override;
-  size_t current_index() const override;
 
   void bind(char i, size_t size) override;
   void bind(short i, size_t size) override;

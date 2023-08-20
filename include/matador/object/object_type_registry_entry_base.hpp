@@ -3,6 +3,8 @@
 
 #include "matador/object/export.hpp"
 
+#include "matador/utils/identifier.hpp"
+
 #include <typeindex>
 #include <memory>
 
@@ -15,7 +17,6 @@ class object_serializer;
 class object_deserializer;
 class prototype_node;
 class object_store;
-class basic_identifier;
 
 namespace detail {
 
@@ -39,7 +40,7 @@ public:
   virtual void create_object(object_proxy *proxy) const = 0;
   virtual void insert_object(object_proxy *proxy) const = 0;
   virtual void delete_object(object_proxy *proxy) const = 0;
-  virtual basic_identifier* resolve_identifier(object_proxy *proxy) const = 0;
+  virtual identifier resolve_identifier(object_proxy *proxy) const = 0;
   virtual void mark_modified(object_proxy *proxy);
 
   const std::type_index& type_index() const;
@@ -68,7 +69,7 @@ public:
   void create_object(object_proxy *proxy) const override;
   void insert_object(object_proxy *proxy) const override;
   void delete_object(object_proxy *proxy) const override;
-  basic_identifier* resolve_identifier(object_proxy *proxy) const override;
+  identifier resolve_identifier(object_proxy *proxy) const override;
   void mark_modified(object_proxy *proxy) override;
 
   static std::shared_ptr<object_type_registry_entry_base> null_type_entry;

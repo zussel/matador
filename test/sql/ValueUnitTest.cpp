@@ -1,17 +1,14 @@
-//
-// Created by sascha on 03.01.17.
-//
-
 #include "matador/sql/value.hpp"
 #include "matador/sql/value_serializer.hpp"
 
 #include "ValueUnitTest.hpp"
 #include "../datatypes.hpp"
 
-ValueUnitTest::ValueUnitTest() : unit_test("value", "value test unit")
+ValueUnitTest::ValueUnitTest()
+: unit_test("value", "value test unit")
 {
-  add_test("values", std::bind(&ValueUnitTest::test_values, this), "test values");
-  add_test("serialize", std::bind(&ValueUnitTest::test_serialize, this), "test serialize values");
+  add_test("values", [this] { test_values(); }, "test values");
+  add_test("serialize", [this] { test_serialize(); }, "test serialize values");
 }
 
 void ValueUnitTest::test_values()

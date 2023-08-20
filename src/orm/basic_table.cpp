@@ -67,12 +67,12 @@ basic_table::t_table_map::iterator basic_table::end_table()
 }
 
 detail::t_identifier_proxy_infos::iterator
-basic_table::insert_proxy(basic_identifier *pk, object_proxy *proxy)
+basic_table::insert_proxy(const identifier &pk, object_proxy *proxy)
 {
   return identifier_proxy_map_.insert(std::make_pair(pk, detail::object_proxy_info(proxy))).first;
 }
 
-detail::t_identifier_proxy_infos::iterator basic_table::find_proxy(basic_identifier *pk)
+detail::t_identifier_proxy_infos::iterator basic_table::find_proxy(const identifier &pk)
 {
   return identifier_proxy_map_.find(pk);
 }

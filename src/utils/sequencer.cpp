@@ -21,28 +21,28 @@
 
 namespace matador {
 
-unsigned long default_sequencer::init()
+unsigned long long default_sequencer::init()
 {
   return number_;
 }
 
-unsigned long default_sequencer::reset(unsigned long id)
+unsigned long long default_sequencer::reset(unsigned long long id)
 {
   number_ = id;
   return number_;
 }
 
-unsigned long default_sequencer::next()
+unsigned long long default_sequencer::next()
 {
   return ++number_;
 }
 
-unsigned long default_sequencer::current() const
+unsigned long long default_sequencer::current() const
 {
   return number_;
 }
 
-unsigned long default_sequencer::update(unsigned long id)
+unsigned long long default_sequencer::update(unsigned long long id)
 {
   if (id > number_) {
     number_ = id;
@@ -62,27 +62,27 @@ sequencer_impl_ptr sequencer::exchange_sequencer(const sequencer_impl_ptr &impl)
   return tmp;
 }
 
-unsigned long sequencer::init()
+unsigned long long sequencer::init()
 {
   return impl_->init();
 }
 
-unsigned long sequencer::reset(unsigned long id)
+unsigned long long sequencer::reset(unsigned long long id)
 {
   return impl_->reset(id);
 }
 
-unsigned long sequencer::next()
+unsigned long long sequencer::next()
 {
   return impl_->next();
 }
 
-unsigned long sequencer::current() const
+unsigned long long sequencer::current() const
 {
   return impl_->current();
 }
 
-unsigned long sequencer::update(unsigned long id)
+unsigned long long sequencer::update(unsigned long long id)
 {
   return impl_->update(id);
 }

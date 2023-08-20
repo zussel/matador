@@ -73,10 +73,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
     this->decrement_reference_count(holder.value());
   }
 
-  object_proxy* acquire_proxy(unsigned long , object_store &) override
-  {
-    return nullptr;
-  }
+  object_proxy* acquire_proxy(unsigned long long , object_store &) override { return nullptr; }
 };
 
 /*
@@ -138,7 +135,7 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
     remover.remove(ownptr, this->field, static_cast<const value_type&>(holder));
   }
 
-  object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
+  object_proxy* acquire_proxy(unsigned long long oid, object_store &store) override
   {
     if (oid == 0) {
       return nullptr;
@@ -213,7 +210,7 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<!matador::
     this->decrement_reference_count(value_holder.value());
   }
 
-  object_proxy* acquire_proxy(unsigned long oid, object_store &store) override
+  object_proxy* acquire_proxy(unsigned long long oid, object_store &store) override
   {
     if (oid == 0) {
       return nullptr;
@@ -296,10 +293,7 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
     remover.remove(owner_holder.value(), this->field, value_holder);
   }
 
-  object_proxy* acquire_proxy(unsigned long , object_store &) override
-  {
-    return nullptr;
-  }
+  object_proxy* acquire_proxy(unsigned long long, object_store &) override { return nullptr; }
 };
 
 /// @endcond

@@ -17,13 +17,13 @@ TransactionTestUnit::TransactionTestUnit(const std::string &prefix, std::string 
   : unit_test(prefix + "_transaction", prefix + " transaction test unit")
   , dns_(std::move(dns))
 {
-  add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple transaction test");
-  add_test("nested", std::bind(&TransactionTestUnit::test_nested, this), "nested transaction test");
-  add_test("foreign", std::bind(&TransactionTestUnit::test_foreign, this), "object with foreign key transaction test");
-  add_test("list_commit", std::bind(&TransactionTestUnit::test_has_many_list_commit, this), "object with object list transaction commit test");
-  add_test("list_rollback", std::bind(&TransactionTestUnit::test_has_many_list_rollback, this), "object with object list transaction rollback test");
-  add_test("list", std::bind(&TransactionTestUnit::test_has_many_list, this), "object with object list transaction test");
-  add_test("vector", std::bind(&TransactionTestUnit::test_has_many_vector, this), "object with object vector transaction test");
+  add_test("simple", [this] { test_simple(); }, "simple transaction test");
+  add_test("nested", [this] { test_nested(); }, "nested transaction test");
+  add_test("foreign", [this] { test_foreign(); }, "object with foreign key transaction test");
+  add_test("list_commit", [this] { test_has_many_list_commit(); }, "object with object list transaction commit test");
+  add_test("list_rollback", [this] { test_has_many_list_rollback(); }, "object with object list transaction rollback test");
+  add_test("list", [this] { test_has_many_list(); }, "object with object list transaction test");
+  add_test("vector", [this] { test_has_many_vector(); }, "object with object vector transaction test");
 //  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "serializable with serializable vector sql test");
 }
 

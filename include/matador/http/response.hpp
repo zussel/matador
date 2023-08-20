@@ -101,12 +101,11 @@ public:
    * converted into a json string as body
    *
    * @tparam T Type of the object
-   * @tparam OPT Type of the object_pointer
    * @param obj Object to convert
    * @return The created OK response
    */
-  template < class T, object_holder_type OPT >
-  static response ok(const object_pointer<T, OPT> &obj);
+  template < class T >
+  static response ok(const object_ptr<T> &obj);
 
   /**
    * Creates an OK response with the give object_view
@@ -232,8 +231,8 @@ response response::ok(const T &obj)
   return create(http::OK, mapper.to_string(obj, json_format::compact), mime_types::TYPE_APPLICATION_JSON);
 }
 
-template<class T, object_holder_type OPT>
-response response::ok(const object_pointer <T, OPT> &obj)
+template<class T>
+response response::ok(const object_ptr <T> &obj)
 {
   json_object_mapper mapper;
 

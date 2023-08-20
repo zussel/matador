@@ -1,8 +1,6 @@
 #ifndef SQL_HPP
 #define SQL_HPP
 
-#include "matador/sql/export.hpp"
-
 #include "matador/sql/types.hpp"
 #include "matador/sql/token.hpp"
 #include "matador/sql/commands.hpp"
@@ -27,7 +25,7 @@ struct build_info;
 
 }
 
-class OOS_SQL_API sql
+class sql
 {
 public:
   sql();

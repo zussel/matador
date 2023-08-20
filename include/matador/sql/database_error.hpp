@@ -1,19 +1,17 @@
 #ifndef MATADOR_DATABASE_ERROR_HPP
 #define MATADOR_DATABASE_ERROR_HPP
 
-#include "matador/sql/export.hpp"
-
 #include <stdexcept>
 
 namespace matador {
 
 /**
- * @brief Thrown by db backend containing all available error informations
+ * @brief Thrown by db backend containing all available error information's
  *
  * This exception is thrown by the database backend and contains
- * all available error informations provided by the backend
+ * all available error information's provided by the backend
  */
-class OOS_SQL_API database_error : public std::runtime_error
+class database_error : public std::runtime_error
 {
 public:
   /**

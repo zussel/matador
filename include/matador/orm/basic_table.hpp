@@ -41,10 +41,10 @@ public:
   ~object_proxy_info() = default;
 
   object_proxy *proxy;
-  std::vector<basic_identifier*> primary_keys;
+  std::vector<identifier> primary_keys;
 };
 
-typedef std::unordered_map<basic_identifier*, object_proxy_info, detail::identifier_hash<basic_identifier>, detail::identifier_equal> t_identifier_proxy_infos;
+typedef std::unordered_map<identifier, object_proxy_info, id_pk_hash, std::equal_to<identifier>> t_identifier_proxy_infos;
 }
 
 /// @endcond
@@ -200,8 +200,8 @@ public:
 
   virtual void prepare(connection &conn) = 0;
 
-  detail::t_identifier_proxy_infos::iterator insert_proxy(basic_identifier *pk, object_proxy *proxy);
-  detail::t_identifier_proxy_infos::iterator find_proxy(basic_identifier *pk);
+  detail::t_identifier_proxy_infos::iterator insert_proxy(const identifier &pk, object_proxy *proxy);
+  detail::t_identifier_proxy_infos::iterator find_proxy(const identifier &pk);
   detail::t_identifier_proxy_infos::iterator begin_proxy();
   detail::t_identifier_proxy_infos::iterator end_proxy();
 

@@ -88,7 +88,13 @@ const char* mysql_dialect::to_database_type_string(matador::data_type type) cons
 
 database_type mysql_dialect::string_type(const char *type) const
 {
-  if (strncmp(type, "int", 3) == 0) {
+  if (strncmp(type, "smallint", 8) == 0) {
+    if (strstr(type, "unsigned") != nullptr) {
+      return database_type::type_smallint;
+    } else {
+      return database_type::type_smallint;
+    }
+  } else if (strncmp(type, "int", 3) == 0) {
     if (strstr(type, "unsigned") != nullptr) {
       return database_type::type_bigint;
     } else {
@@ -110,7 +116,7 @@ database_type mysql_dialect::string_type(const char *type) const
     return database_type::type_double;
   } else if (strncmp(type, "varchar", 7) == 0) {
     return database_type::type_varchar;
-  } else if (strncmp(type, "text", 0) == 0) {
+  } else if (strncmp(type, "text", 4) == 0) {
     return database_type::type_text;
   } else {
     return database_type::type_unknown;

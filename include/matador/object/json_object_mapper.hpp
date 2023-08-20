@@ -39,13 +39,12 @@ public:
    * into a json string with the given json format
    *
    * @tparam T Type of the object_ptr
-   * @tparam OPT object_pointer type
    * @param obj Object to convert
    * @param format Json format object
    * @return The json formatted string
    */
-  template< typename T, object_holder_type OPT >
-  std::string to_string(const object_pointer<T, OPT> &obj, const json_format &format = json_format::compact);
+  template< typename T >
+  std::string to_string(const object_ptr<T> &obj, const json_format &format = json_format::compact);
 
   /**
    * Converts an array of objects
@@ -76,12 +75,11 @@ public:
    * into an json object
    *
    * @tparam T Type of the object_ptr
-   * @tparam OPT object_pointer type
    * @param obj Object to convert
    * @return The json object
    */
-  template< typename T, object_holder_type OPT >
-  json to_json(const object_pointer<T, OPT> &obj);
+  template< typename T >
+  json to_json(const object_ptr<T> &obj);
 
   /**
    * Convert the elements of on object_view
@@ -165,8 +163,8 @@ private:
   object_json_serializer object_json_serializer_;
 };
 
-template<typename T, object_holder_type OPT>
-std::string json_object_mapper::to_string(const object_pointer<T, OPT> &obj, const json_format &format)
+template<typename T>
+std::string json_object_mapper::to_string(const object_ptr<T> &obj, const json_format &format)
 {
   return json_object_serializer_.to_json_string(obj, format);
 }
@@ -183,8 +181,8 @@ std::string json_object_mapper::to_string(const object_view<T> &array, const jso
   return json_object_serializer_.to_json_string(array, format);
 }
 
-template<typename T, object_holder_type OPT>
-json json_object_mapper::to_json(const object_pointer<T, OPT> &obj)
+template<typename T>
+json json_object_mapper::to_json(const object_ptr<T> &obj)
 {
   return object_json_serializer_.to_json(obj);
 }

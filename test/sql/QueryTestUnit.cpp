@@ -399,11 +399,11 @@ public:
   template < class SERIALIZER >
   void serialize(SERIALIZER &s)
   {
-    s.serialize("id", id);
-    s.serialize("name", name);
+    s.on_primary_key("id", id);
+    s.on_attribute("name", name, 255);
   }
 
-  matador::identifier<unsigned long> id;
+  unsigned long id{};
   std::string name;
 };
 
@@ -417,7 +417,7 @@ void QueryTestUnit::test_identifier()
 
   std::unique_ptr<pktest> p(new pktest(7, "hans"));
 
-  UNIT_EXPECT_EQUAL(p->id.value(), 7UL);
+  UNIT_EXPECT_EQUAL(p->id, 7UL);
 
   q.insert(*p).execute(connection_);
 
@@ -430,7 +430,7 @@ void QueryTestUnit::test_identifier()
 
   p.reset((first++).release());
 
-  UNIT_EXPECT_GREATER(p->id.value(), 0UL);
+  UNIT_EXPECT_GREATER(p->id, 0UL);
 
   q.drop().execute(connection_);
 }
@@ -446,7 +446,7 @@ void QueryTestUnit::test_identifier_prepared()
 
   pktest p(7, "hans");
 
-  UNIT_EXPECT_EQUAL(p.id.value(), 7UL);
+  UNIT_EXPECT_EQUAL(p.id, 7UL);
 
   stmt = q.insert(p).prepare(connection_);
   stmt.bind(0, &p);
@@ -461,9 +461,9 @@ void QueryTestUnit::test_identifier_prepared()
 //
 //  UNIT_ASSERT_TRUE(first != last);
 
-  for (auto pres : res) {
+  for (const auto &pres : res) {
     UNIT_EXPECT_EQUAL(pres->name, "hans");
-    UNIT_EXPECT_GREATER(pres->id.value(), 0UL);
+    UNIT_EXPECT_EQUAL(pres->id, 7UL);
   }
 //  std::unique_ptr<pktest> pres((first++).release());
 
@@ -1276,8 +1276,8 @@ struct relation
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
-    serializer.serialize("owner_id", owner);
-    serializer.serialize("item_id", item);
+    serializer.on_attribute("owner_id", owner);
+    serializer.on_attribute("item_id", item);
   }
 };
 

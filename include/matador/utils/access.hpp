@@ -43,8 +43,7 @@ public:
    * @param t Object to be serialized
    */
   template<class S, class T>
-  static void serialize(S &s, T &t)
-  {
+  static void serialize(S &s, T &t) {
     t.serialize(s);
   }
 
@@ -57,9 +56,8 @@ public:
    * @param t Object to be serialized
    */
   template<class S, class T>
-  static void serialize(S &s, const T &t)
-  {
-    const_cast<T&>(t).serialize(s);
+  static void serialize(S &s, const T &t) {
+    const_cast<T &>(t).serialize(s);
   }
 };
 

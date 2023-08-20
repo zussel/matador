@@ -2,7 +2,6 @@
 
 #include "matador/utils/sequencer.hpp"
 #include "matador/utils/sequence_synchronizer.hpp"
-#include "matador/utils/identifier.hpp"
 
 using namespace matador;
 
@@ -71,7 +70,7 @@ void SequencerTestUnit::test_sync()
   UNIT_ASSERT_EQUAL(seq.current(), 0UL);
   UNIT_ASSERT_EQUAL(seq.next(), 1UL);
 
-  auto pk = make_identifier(7);
+  auto pk = identifier(7);
 
   sequence_synchronizer synchronizer(seq);
 

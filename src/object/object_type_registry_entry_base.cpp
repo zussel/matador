@@ -56,9 +56,9 @@ void null_object_type_registry_entry::insert_object(object_proxy *) const {}
 
 void null_object_type_registry_entry::delete_object(object_proxy *) const {}
 
-basic_identifier* null_object_type_registry_entry::resolve_identifier(object_proxy *) const
+identifier null_object_type_registry_entry::resolve_identifier(object_proxy *) const
 {
-  return nullptr;
+  return null_identifier;
 }
 
 void null_object_type_registry_entry::mark_modified(object_proxy *) {}

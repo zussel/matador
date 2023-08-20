@@ -48,8 +48,8 @@ struct person
   template < class S >
   void serialize(S &serializer)
   {
-    serializer.serialize("name", name);
-    serializer.serialize("age", age);
+    serializer.on_attribute("name", name);
+    serializer.on_attribute("age", age);
   }
 };
 }

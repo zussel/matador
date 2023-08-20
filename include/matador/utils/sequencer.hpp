@@ -13,7 +13,7 @@ namespace matador {
  * @brief Sequencer implementation interface
  *
  * This class provides the implementation
- * interafce for the sequencer class.
+ * interface for the sequencer class.
  */
 class OOS_UTILS_API sequencer_impl
 {
@@ -25,7 +25,7 @@ public:
    *
    * @return The sequence number after init.
    */
-  virtual unsigned long init() = 0;
+  virtual unsigned long long init() = 0;
 
   /**
    * Resets the sequencer implementation to
@@ -35,7 +35,7 @@ public:
    * @param id The new id of the sequencer.
    * @return The new set id.
    */
-  virtual unsigned long reset(unsigned long id) = 0;
+  virtual unsigned long long reset(unsigned long long id) = 0;
 
   /**
    * Get the next valid sequence id.
@@ -44,7 +44,7 @@ public:
    *
    * @return The next valid sequence id.
    */
-  virtual unsigned long next() = 0;
+  virtual unsigned long long next() = 0;
 
   /**
    * Returns the current sequence id without
@@ -52,7 +52,7 @@ public:
    *
    * @return The current sequence id.
    */
-  virtual unsigned long current() const = 0;
+  virtual unsigned long long current() const = 0;
 
   /**
    * Updates the given id with the current id
@@ -63,7 +63,7 @@ public:
    * @param id The id to update
    * @return The new id.
    */
-  virtual unsigned long update(unsigned long id) = 0;
+  virtual unsigned long long update(unsigned long long id) = 0;
 };
 /// @endcond
 
@@ -79,17 +79,17 @@ public:
   default_sequencer() = default;
   ~default_sequencer() override = default;
 
-  unsigned long init() override;
+  unsigned long long init() override;
 
-  unsigned long reset(unsigned long id) override;
+  unsigned long long reset(unsigned long long id) override;
 
-  unsigned long next() override;
-  unsigned long current() const override;
+  unsigned long long next() override;
+  unsigned long long current() const override;
 
-  unsigned long update(unsigned long id) override;
+  unsigned long long update(unsigned long long id) override;
 
 private:
-  unsigned long number_ {0};
+  unsigned long long number_ {0};
 };
 /// @endcond
 
@@ -136,7 +136,7 @@ public:
    *
    * @return The current sequence number.
    */
-  unsigned long init();
+  unsigned long long init();
 
   /**
    * Resets the sequencers sequence
@@ -145,21 +145,21 @@ public:
    * @param id The new sequence number.
    * @return The current sequence number.
    */
-  unsigned long reset(unsigned long id);
+  unsigned long long reset(unsigned long long id);
 
   /**
    * Returns the next valid sequence number.
    *
    * @return The next sequence number.
    */
-  unsigned long next();
+  unsigned long long next();
 
   /**
    * Returns the current sequence number.
    *
    * @return The current sequence number.
    */
-  unsigned long current() const;
+  unsigned long long current() const;
 
   /**
    * Updates the sequence number
@@ -168,7 +168,7 @@ public:
    * @param id The value to update.
    * @return The new current sequence value.
    */
-  unsigned long update(unsigned long id);
+  unsigned long long update(unsigned long long id);
 
 private:
   sequencer_impl_ptr impl_;

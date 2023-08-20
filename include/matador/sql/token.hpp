@@ -1,8 +1,6 @@
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
 
-#include "matador/sql/export.hpp"
-
 #include "matador/sql/types.hpp"
 
 #include <memory>
@@ -18,7 +16,7 @@ class token_visitor;
 namespace detail {
 
 /// @cond MATADOR_DEV
-struct OOS_SQL_API token
+struct token
 {
   enum t_token
   {
@@ -67,7 +65,7 @@ struct OOS_SQL_API token
   t_token type;
 };
 
-struct OOS_SQL_API table_name_token : public token
+struct table_name_token : public token
 {
   table_name_token(t_token tok, std::string tablename);
 

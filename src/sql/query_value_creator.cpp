@@ -9,10 +9,12 @@ query_value_creator::query_value_creator()
   visitor_.register_visitor<short>([this](short &val) { this->process(val); });
   visitor_.register_visitor<int>([this](int &val) { this->process(val); });
   visitor_.register_visitor<long>([this](long &val) { this->process(val); });
+  visitor_.register_visitor<long long>([this](long long &val) { this->process(val); });
   visitor_.register_visitor<unsigned char>([this](unsigned char &val) { this->process(val); });
   visitor_.register_visitor<unsigned short>([this](unsigned short &val) { this->process(val); });
   visitor_.register_visitor<unsigned int>([this](unsigned int &val) { this->process(val); });
   visitor_.register_visitor<unsigned long>([this](unsigned long &val) { this->process(val); });
+  visitor_.register_visitor<unsigned long long>([this](unsigned long long &val) { this->process(val); });
   visitor_.register_visitor<bool>([this](bool &val) { this->process(val); });
   visitor_.register_visitor<float>([this](float &val) { this->process(val); });
   visitor_.register_visitor<double>([this](double &val) { this->process(val); });

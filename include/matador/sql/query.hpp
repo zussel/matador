@@ -1,8 +1,6 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
-#include "matador/sql/export.hpp"
-
 #include "matador/sql/basic_query.hpp"
 #include "matador/sql/dialect_token.hpp"
 #include "matador/sql/column.hpp"
@@ -464,7 +462,7 @@ public:
   /**
    * @brief Resets the query.
    *
-   * @param query_command The query command to which the query is resetted
+   * @param query_command The query command to which the query is reset
    * @return A reference to the query.
    */
   query& reset(t_query_command query_command)
@@ -867,7 +865,8 @@ query<T> select(const std::string &table)
  * @param cols The rows to select
  * @return A select query for anonymous rows.
  */
-OOS_SQL_API query<row> select(columns cols);
+query<row> select(columns cols);
+//OOS_SQL_API query<row> select(columns cols);
 
 }
 

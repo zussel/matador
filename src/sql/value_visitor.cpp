@@ -1,7 +1,3 @@
-//
-// Created by sascha on 03.12.19.
-//
-
 #include "matador/sql/value_visitor.hpp"
 #include "matador/sql/basic_dialect.hpp"
 
@@ -20,8 +16,8 @@ value_visitor::value_visitor()
   visitor.register_visitor<long>([this](long &val) { this->process(val); });
   visitor.register_visitor<long long>([this](long long &val) { this->process(val); });
   visitor.register_visitor<unsigned char>([this](unsigned char &val) { this->process(val); });
-  visitor.register_visitor<unsigned int>([this](unsigned int &val) { this->process(val); });
   visitor.register_visitor<unsigned short>([this](unsigned short &val) { this->process(val); });
+  visitor.register_visitor<unsigned int>([this](unsigned int &val) { this->process(val); });
   visitor.register_visitor<unsigned long>([this](unsigned long &val) { this->process(val); });
   visitor.register_visitor<unsigned long long>([this](unsigned long long &val) { this->process(val); });
   visitor.register_visitor<bool>([this](bool &val) { this->process(val); });
@@ -33,10 +29,10 @@ value_visitor::value_visitor()
   visitor.register_visitor<date>([this](date &val) { this->process(val); });
 }
 
-void value_visitor::apply(matador::any &a, const char *id, serializer *s)
+void value_visitor::apply(matador::any &a, const char *id, serializer &s)
 {
   id_ = id;
-  serializer_ = s;
+  serializer_ = &s;
   visitor.visit(a);
   id_ = nullptr;
   serializer_ = nullptr;
@@ -44,22 +40,22 @@ void value_visitor::apply(matador::any &a, const char *id, serializer *s)
 
 void value_visitor::process(std::string &val)
 {
-  serializer_->serialize(id_, val);
+  serializer_->on_attribute(id_, val);
 }
 
 void value_visitor::process(char *val)
 {
-  serializer_->serialize(id_, val, 0);
+  serializer_->on_attribute(id_, val, 0);
 }
 
 void value_visitor::process(time &val)
 {
-  serializer_->serialize(id_, val);
+  serializer_->on_attribute(id_, val);
 }
 
 void value_visitor::process(date &val)
 {
-  serializer_->serialize(id_, val);
+  serializer_->on_attribute(id_, val);
 }
 
 value_to_string_visitor::value_to_string_visitor()

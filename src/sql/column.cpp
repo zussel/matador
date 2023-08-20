@@ -1,21 +1,19 @@
-//
-// Created by sascha on 3/2/16.
-//
+#include <utility>
 
 #include "matador/sql/column.hpp"
 #include "matador/sql/token_visitor.hpp"
 
 namespace matador {
 
-column::column(const std::string &col)
+column::column(std::string col)
   : token(COLUMN)
-  , name(col)
+  , name(std::move(col))
 {}
 
-column::column(const std::string &col, bool skipquotes)
+column::column(std::string col, bool skip_quotes)
   : token(COLUMN)
-  , name(col)
-  , skip_quotes(skipquotes)
+  , name(std::move(col))
+  , skip_quotes(skip_quotes)
 {}
 
 void column::accept(token_visitor &visitor)
@@ -90,6 +88,20 @@ void typed_column::accept(token_visitor &visitor)
   return visitor.visit(*this);
 }
 
+std::shared_ptr<value_column> make_value_column(const std::string &col, const std::string &val, long size)
+{
+  return std::make_shared<value_column>(col, new value(val, size));
+}
+
+std::shared_ptr<value_column> make_value_column(const std::string &col, const char *val, long size)
+{
+  return std::make_shared<value_column>(col, new value(val, size));
+}
+
+std::shared_ptr<value_column> make_value_column(const std::string &col, char *val, long size)
+{
+  return std::make_shared<value_column>(col, new value(val, size));
+}
 }
 
 void columns::push_back(const std::shared_ptr<column> &col)

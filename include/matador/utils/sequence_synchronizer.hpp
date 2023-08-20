@@ -3,56 +3,41 @@
 
 #include "matador/utils/export.hpp"
 
-#include "matador/utils/basic_identifier.hpp"
+#include "matador/utils/identifier.hpp"
 #include "matador/utils/sequencer.hpp"
 
 namespace matador {
 
-class identifiable_holder;
-class abstract_has_many;
-
 /// @cond MATADOR_DEV
 
-class OOS_UTILS_API sequence_synchronizer : public serializer
+class OOS_UTILS_API sequence_synchronizer : public identifier_serializer
 {
 public:
   explicit sequence_synchronizer(sequencer &seq)
     : seq_(seq)
   {}
 
-  void sync(basic_identifier &bi)
+  void sync(identifier &bi)
   {
-    bi.serialize(nullptr, *this);
+    bi.serialize(*this);
   }
 
-  void serialize(const char *id, char &x) override;
-  void serialize(const char *id, short &x) override;
-  void serialize(const char *id, int &x) override;
-  void serialize(const char *id, long &x) override;
-  void serialize(const char *id, long long &x) override;
-  void serialize(const char *id, unsigned char &x) override;
-  void serialize(const char *id, unsigned short &x) override;
-  void serialize(const char *id, unsigned int &x) override;
-  void serialize(const char *id, unsigned long &x) override;
-  void serialize(const char *id, unsigned long long &x) override;
-  void serialize(const char *, float &) override {}
-  void serialize(const char *, double &) override {}
-  void serialize(const char *, bool &) override {}
-  void serialize(const char *, char *, size_t) override {}
-  void serialize(const char *, std::string &, size_t ) override {}
-  void serialize(const char *, std::string &) override {}
-  void serialize(const char *, date &) override {}
-  void serialize(const char *, time &) override {}
-  void serialize(const char *, identifiable_holder &, cascade_type) override {}
-  void serialize(const char *, basic_identifier &) override {}
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void serialize(const char *, abstract_has_many &, cascade_type) override {}
+  void serialize(short &x, long size) override;
+  void serialize(int &x, long size) override;
+  void serialize(long &x, long size) override;
+  void serialize(long long &x, long size) override;
+  void serialize(unsigned short &x, long size) override;
+  void serialize(unsigned int &x, long size) override;
+  void serialize(unsigned long &x, long size) override;
+  void serialize(unsigned long long &x, long size) override;
+  void serialize(std::string &, long /*size*/) override {}
+  void serialize(null_type_t &, long /*size*/) override {}
 
 private:
   template<class T>
-  void sync_integral(T val)
+  void sync_integral(const T &val)
   {
-    if (val > (T)seq_.current()) {
+    if (val > static_cast<T>(seq_.current())) {
       seq_.update(val);
     }
   }

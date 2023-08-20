@@ -12,23 +12,23 @@ using namespace matador;
 DialectTestUnit::DialectTestUnit()
   : unit_test("dialect", "dialect test unit")
 {
-  add_test("escaping", std::bind(&DialectTestUnit::test_escaping_quotes, this), "test dialect escaping");
-  add_test("create", std::bind(&DialectTestUnit::test_create_query, this), "test create dialect");
-  add_test("drop", std::bind(&DialectTestUnit::test_drop_query, this), "test drop dialect");
-  add_test("insert", std::bind(&DialectTestUnit::test_insert_query, this), "test insert dialect");
-  add_test("insert_prepare", std::bind(&DialectTestUnit::test_insert_prepare_query, this), "test prepared insert dialect");
-  add_test("select_all", std::bind(&DialectTestUnit::test_select_all_query, this), "test select all dialect");
-  add_test("select_distinct", std::bind(&DialectTestUnit::test_select_distinct_query, this), "test select distinct dialect");
-  add_test("select_limit", std::bind(&DialectTestUnit::test_select_limit_query, this), "test select limit dialect");
-  add_test("select_ordered", std::bind(&DialectTestUnit::test_select_ordered_query, this), "test select ordered dialect");
-  add_test("select_grouped", std::bind(&DialectTestUnit::test_select_grouped_query, this), "test select grouped dialect");
-  add_test("select_where", std::bind(&DialectTestUnit::test_select_where_query, this), "test select where dialect");
-  add_test("update", std::bind(&DialectTestUnit::test_update_query, this), "test update dialect");
-  add_test("update_where", std::bind(&DialectTestUnit::test_update_where_query, this), "test update where dialect");
-  add_test("update_prepare", std::bind(&DialectTestUnit::test_update_prepare_query, this), "test prepared update dialect");
-  add_test("update_where_prepare", std::bind(&DialectTestUnit::test_update_where_prepare_query, this), "test prepared update where dialect");
-  add_test("delete", std::bind(&DialectTestUnit::test_delete_query, this), "test delete dialect");
-  add_test("delete_where", std::bind(&DialectTestUnit::test_delete_where_query, this), "test delete where dialect");
+  add_test("escaping", [this] { test_escaping_quotes(); }, "test dialect escaping");
+  add_test("create", [this] { test_create_query(); }, "test create dialect");
+  add_test("drop", [this] { test_drop_query(); }, "test drop dialect");
+  add_test("insert", [this] { test_insert_query(); }, "test insert dialect");
+  add_test("insert_prepare", [this] { test_insert_prepare_query(); }, "test prepared insert dialect");
+  add_test("select_all", [this] { test_select_all_query(); }, "test select all dialect");
+  add_test("select_distinct", [this] { test_select_distinct_query(); }, "test select distinct dialect");
+  add_test("select_limit", [this] { test_select_limit_query(); }, "test select limit dialect");
+  add_test("select_ordered", [this] { test_select_ordered_query(); }, "test select ordered dialect");
+  add_test("select_grouped", [this] { test_select_grouped_query(); }, "test select grouped dialect");
+  add_test("select_where", [this] { test_select_where_query(); }, "test select where dialect");
+  add_test("update", [this] { test_update_query(); }, "test update dialect");
+  add_test("update_where", [this] { test_update_where_query(); }, "test update where dialect");
+  add_test("update_prepare", [this] { test_update_prepare_query(); }, "test prepared update dialect");
+  add_test("update_where_prepare", [this] { test_update_where_prepare_query(); }, "test prepared update where dialect");
+  add_test("delete", [this] { test_delete_query(); }, "test delete dialect");
+  add_test("delete_where", [this] { test_delete_where_query(); }, "test delete where dialect");
 }
 
 void DialectTestUnit::test_escaping_quotes()
@@ -333,8 +333,8 @@ void DialectTestUnit::test_update_query()
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+  cols->push_back(detail::make_value_column("name", dieter, 255));
+  cols->push_back(detail::make_value_column("age", age54, -1));
 
   s.append(cols.release());
 
@@ -358,8 +358,8 @@ void DialectTestUnit::test_update_where_query()
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+  cols->push_back(detail::make_value_column("name", dieter, 255));
+  cols->push_back(detail::make_value_column("age", age54, -1));
 
   s.append(cols.release());
 
@@ -387,8 +387,8 @@ void DialectTestUnit::test_update_prepare_query()
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+  cols->push_back(detail::make_value_column("name", dieter, 255));
+  cols->push_back(detail::make_value_column("age", age54, -1));
 
   s.append(cols.release());
 
@@ -411,8 +411,8 @@ void DialectTestUnit::test_update_where_prepare_query()
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+  cols->push_back(detail::make_value_column("name", dieter, 255));
+  cols->push_back(detail::make_value_column("age", age54, -1));
 
   s.append(cols.release());
 

@@ -31,14 +31,14 @@ public:
   , result_(res)
   {}
   base_result_iterator(base_result_iterator&& x) noexcept
-  : obj_(x.obj_.release())
+  : obj_(std::move(x.obj_))
   , result_(x.result_)
   {}
 
   base_result_iterator& operator=(base_result_iterator&& x) noexcept
   {
     result_ = x.result_;
-    obj_.reset(x.obj_.release());
+    obj_ = std::move(x.obj_);
     return *this;
   }
 
@@ -145,8 +145,23 @@ public:
    * @param impl Result implementation
    */
   explicit result(matador::detail::result_impl *impl)
-    : p(impl)
+    : result(impl, {})
   {}
+
+  /**
+   * Creates a result initialized
+   * by the given result implementation and
+   * the given row prototype containing
+   * all expected columns.
+   *
+   * @param impl Result implementation
+   * @param prototype The row prototype
+   */
+  result(matador::detail::result_impl *impl, const T &prototype)
+    : p(impl)
+    , prototype_(prototype)
+  {}
+
 
   ~result() = default;
 
@@ -157,9 +172,9 @@ public:
    * @param x The result ro move
    */
   result(result &&x) noexcept
-  {
-    std::swap(p, x.p);
-  }
+    : p(std::move(x.p))
+    , prototype_(std::move(x.prototype_))
+  {}
 
   /**
    * Assignment move constructor for given
@@ -171,6 +186,7 @@ public:
   result& operator=(result &&x)
   {
     p = std::move(x.p);
+    std::swap(prototype_, x.prototype_);
     return *this;
   }
 
@@ -235,143 +251,12 @@ private:
 
   T* create() const
   {
-    if (creator_func_) {
-      return creator_func_();
-    } else {
-      return new T;
-    }
+    return creator_func_();
   }
 private:
   std::unique_ptr<matador::detail::result_impl> p;
-  t_creator_func creator_func_;
-};
-
-/**
- * @brief Represents a sql query result
- * 
- * This class is used as a iterable result
- * of a sql select query. Once such a query is
- * executed one can iterate the result and each
- * row is deserialized as an anonymous row
- */
-template <>
-class result<row>
-{
-public:
-  typedef result_iterator<row> iterator; /**< Shortcut to the iterator type */
-
-  result(const result &x) = delete;
-  result& operator=(const result &x) = delete;
-
-public:
-  /**
-   * Empty result
-   */
-  result() : prototype_(row()) {}
-
-  /**
-   * Creates a result initialized
-   * by the given result implementation and
-   * the given row prototype containing
-   * all expected columns.
-   * 
-   * @param impl Result implementation
-   * @param prototype The row prototype
-   */
-  result(matador::detail::result_impl *impl, const row &prototype)
-    : p(impl)
-    , prototype_(prototype)
-  {}
-
-  ~result()
-  {
-    delete p;
-  }
-
-  /**
-   * Copy moves a result from given
-   * result
-   * 
-   * @param x The result ro move
-   */
-  result(result &&x) noexcept
-    : prototype_(x.prototype_)
-  {
-    std::swap(p, x.p);
-  }
-
-  /**
-   * Assignment move constructor for given
-   * result
-   * 
-   * @param x The result ro move
-   * @return Reference to this
-   */
-  result& operator=(result &&x) noexcept
-  {
-    if (p) {
-      delete p;
-      p = nullptr;
-    }
-    std::swap(p, x.p);
-    return *this;
-  }
-
-  /**
-   * Returns the first row of the
-   * result set
-   * 
-   * @return Iterator to the first row
-   */
-  iterator begin()
-  {
-    return std::move(++iterator(this));
-  }
-
-  /**
-   * Returns the last element of the
-   * result set
-   * 
-   * @return Iterator to the last element
-   */
-  iterator end()
-  {
-    return iterator();
-  }
-
-  /**
-   * Returns true if the result set
-   * is empty
-   * 
-   * @return True on empty result set
-   */
-  bool empty () const
-  {
-    return false;
-  }
-
-  /**
-   * Returns the size of the result set
-   * 
-   * @return Size of the result set
-   */
-  std::size_t size () const
-  {
-    return p->result_rows();
-  }
-
-private:
-  friend class result_iterator<row>;
-
-private:
-
-  row* create() const
-  {
-    return new row(prototype_);
-  }
-private:
-  matador::detail::result_impl *p = nullptr;
-  const row prototype_;
+  t_creator_func creator_func_ = [this](){ return new T(prototype_); };
+  T prototype_{};
 };
 
 /// @cond MATADOR_DEV
@@ -390,9 +275,6 @@ template < class T >
 typename result_iterator<T>::self result_iterator<T>::operator++(int)
 {
   std::unique_ptr<T> obj(base::obj_.release());
-//  base::result_->p->bind(obj.get());
-//  if (!base::result_->p->fetch(obj.get())) {
-//    obj.reset();
   base::result_->p->bind(base::obj_.get());
   if (!base::result_->p->fetch(base::obj_.get())) {
     base::obj_.reset();

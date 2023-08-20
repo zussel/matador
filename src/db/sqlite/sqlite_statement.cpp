@@ -17,7 +17,7 @@ sqlite_statement::sqlite_statement(sqlite_connection &db, const matador::sql &sq
   , stmt_(nullptr)
 {
   // prepare sqlite statement
-  int ret = sqlite3_prepare_v2(db_.handle(), str().c_str(), str().size(), &stmt_, nullptr);
+  int ret = sqlite3_prepare_v2(db_.handle(), str().c_str(), static_cast<int>(str().size()), &stmt_, nullptr);
   throw_database_error(ret, db_.handle(), "sqlite3_prepare_v2", str());
   binder_ = std::make_unique<sqlite_parameter_binder>(db.handle(), stmt_);
 }
@@ -61,6 +61,21 @@ detail::parameter_binder_impl *sqlite_statement::binder() const
 {
   return binder_.get();
 }
+
+//bool sqlite_statement::is_valid_host_var_position(size_t pos) const
+//{
+//  return bind_vars().size() > (pos - 1);
+//}
+//
+//std::string sqlite_statement::bind_var_at(size_t pos) const
+//{
+//  return bind_vars().at(pos - 1);
+//}
+//
+//size_t sqlite_statement::normalize_position(size_t pos) const
+//{
+//  return pos;
+//}
 
 }
 

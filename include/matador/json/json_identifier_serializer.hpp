@@ -3,43 +3,36 @@
 
 #include "matador/json/export.hpp"
 
-#include "matador/utils/serializer.hpp"
+#include "matador/utils/identifier.hpp"
 
 namespace matador {
 
 /// @cond MATADOR_DEV
 
-class basic_identifier;
+class time;
+class date;
+class identifiable_holder;
+class abstract_has_many;
 
-class OOS_JSON_API json_identifier_serializer : public serializer
+enum class cascade_type;
+
+class OOS_JSON_API json_identifier_serializer : public identifier_serializer
 {
 public:
   json_identifier_serializer() = default;
 
-  std::string serialize(basic_identifier &x);
+  std::string serialize(const identifier &x);
 
-  void serialize(const char*, char&) override;
-  void serialize(const char*, short&) override;
-  void serialize(const char*, int&) override;
-  void serialize(const char*, long&) override;
-  void serialize(const char*, long long&) override;
-  void serialize(const char*, unsigned char&) override;
-  void serialize(const char*, unsigned short&) override;
-  void serialize(const char*, unsigned int&) override;
-  void serialize(const char*, unsigned long&) override;
-  void serialize(const char*, unsigned long long&) override;
-  void serialize(const char*, bool&) override;
-  void serialize(const char*, float&) override;
-  void serialize(const char*, double&) override;
-  void serialize(const char*, char *, size_t) override;
-  void serialize(const char*, std::string&) override;
-  void serialize(const char*, std::string&, size_t) override;
-  void serialize(const char*, matador::time&) override {}
-  void serialize(const char*, matador::date&) override {}
-  void serialize(const char*, matador::basic_identifier &) override {}
-  void serialize(const char*, matador::identifiable_holder &, cascade_type) override {}
-  void serialize(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void serialize(const char *, abstract_has_many &, cascade_type) override {}
+  void serialize(short &x, long size) override;
+  void serialize(int &x, long size) override;
+  void serialize(long &x, long size) override;
+  void serialize(long long &x, long size) override;
+  void serialize(unsigned short &x, long size) override;
+  void serialize(unsigned int &x, long size) override;
+  void serialize(unsigned long &x, long size) override;
+  void serialize(unsigned long long &x, long size) override;
+  void serialize(std::string &, long size) override;
+  void serialize(null_type_t &, long size) override;
 
 private:
   std::string json_;

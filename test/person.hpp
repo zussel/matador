@@ -2,12 +2,11 @@
 #define PERSON_HPP
 
 #include "matador/utils/date.hpp"
-#include "matador/utils/identifier.hpp"
 
 class person
 {
 private:
-    matador::identifier<unsigned long> id_;
+    unsigned long long id_{};
     std::string name_;
     matador::date birthdate_;
     unsigned int height_ = 0;
@@ -30,14 +29,14 @@ public:
     template < class T >
     void serialize(T &serializer)
     {
-        serializer.serialize("id", id_);
-        serializer.serialize("name", name_, 255);
-        serializer.serialize("birthdate", birthdate_);
-        serializer.serialize("height", height_);
+        serializer.on_primary_key("id", id_);
+        serializer.on_attribute("name", name_, 255);
+        serializer.on_attribute("birthdate", birthdate_);
+        serializer.on_attribute("height", height_);
     }
 
-    void id(unsigned long i) { id_.value(i); }
-    unsigned long id() const { return id_.value(); }
+    void id(unsigned long long i) { id_ = i; }
+    unsigned long long id() const { return id_; }
 
     std::string name() const { return name_; }
     void name(const std::string &name) { name_ = name; }

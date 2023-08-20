@@ -1,6 +1,3 @@
-//
-// Created by sascha on 3/2/16.
-//
 #include "matador/sql/value.hpp"
 #include "matador/sql/token_visitor.hpp"
 #include "matador/sql/basic_dialect.hpp"
@@ -14,7 +11,7 @@ void value::accept(token_visitor &visitor)
 
 void value::serialize(const char *id, serializer &srlzr)
 {
-  value_visitor_.apply(value_, id, &srlzr);
+  value_visitor_.apply(value_, id, srlzr);
 }
 
 std::string value::str() const

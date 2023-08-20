@@ -4,7 +4,7 @@
 
 namespace matador {
 
-delete_action::delete_action(const char* classname, unsigned long id, object_proxy *proxy)
+delete_action::delete_action(const char* classname, unsigned long long id, object_proxy *proxy)
   : classname_(classname)
   , id_(id)
   , proxy_(proxy)
@@ -31,12 +31,12 @@ const char* delete_action::classname() const
   return classname_.c_str();
 }
 
-basic_identifier * delete_action::pk() const
+const identifier& delete_action::pk() const
 {
   return proxy_->pk();
 }
 
-unsigned long delete_action::id() const
+unsigned long long delete_action::id() const
 {
   return id_;
 }
@@ -68,8 +68,8 @@ void delete_action::restore(byte_buffer &buffer, object_store *store)
     // create serializable with id and deserialize
     // data from buffer into serializable
     // restore_ pk
-    if (pk()) {
-      proxy->pk(pk()->clone());
+    if (!pk().is_null()) {
+      proxy->pk(pk());
     }
     // insert serializable
   }

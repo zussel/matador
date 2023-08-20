@@ -5,6 +5,11 @@
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/json_object_mapper.hpp"
 
+// WebSocket:
+// https://blog.mi.hdm-stuttgart.de/index.php/2021/02/19/websocket-protokoll-ein-detaillierter-technischer-einblick/
+// https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers
+// https://datatracker.ietf.org/doc/html/rfc6455#section-5.2
+
 class generic_json_service
 {
 public:
@@ -80,7 +85,7 @@ std::map<colors, std::string> color_map = {
 class person
 {
 public:
-  matador::identifier<unsigned long> id_;
+  unsigned long id_{};
   std::string name_;
   colors color_ { colors::WHITE };
 
@@ -91,8 +96,7 @@ public:
     , color_(c)
   {}
 
-  template < matador::object_holder_type OHT >
-  friend std::ostream& operator<<(std::ostream &out, const matador::object_pointer<person, OHT> &p) {
+  friend std::ostream& operator<<(std::ostream &out, const matador::object_ptr<person> &p) {
     out << p->name_ << " (id: " << p->id_ << ", color: " << color_map[p->color_] << ")";
     return out;
   }
@@ -100,11 +104,132 @@ public:
   template < class T >
   void serialize(T &serializer)
   {
-    serializer.serialize("id", id_);
-    serializer.serialize("name", name_, 255);
-    serializer.serialize("color", color_);
+    serializer.on_primary_key("id", id_);
+    serializer.on_attribute("name", name_, 255);
+    serializer.on_attribute("color", color_);
   }
 };
+
+namespace matador {
+
+class date;
+class time;
+
+class field_serializer
+{
+public:
+  virtual ~field_serializer() = default;
+  virtual void serialize(char &x) = 0;
+  virtual void serialize(short &x) = 0;
+  virtual void serialize(int &x) = 0;
+  virtual void serialize(long &x) = 0;
+  virtual void serialize(long long &x) = 0;
+  virtual void serialize(unsigned char &x) = 0;
+  virtual void serialize(unsigned short &x) = 0;
+  virtual void serialize(unsigned int &x) = 0;
+  virtual void serialize(unsigned long &x) = 0;
+  virtual void serialize(unsigned long long &x) = 0;
+  virtual void serialize(std::string &x, long size) = 0;
+  virtual void serialize(date &x) = 0;
+  virtual void serialize(time &x) = 0;
+};
+
+class field
+{
+private:
+  class base
+  {
+  public:
+    virtual ~base() = default;
+    virtual base *copy() const = 0;
+    virtual std::string str() const = 0;
+    virtual long size() const = 0;
+    virtual void serialize(field_serializer &s) = 0;
+  };
+
+  template<typename Type>
+  class value : public base
+  {
+  public:
+    using self = value<Type>;
+
+    explicit value(const Type &val, long size = -1)
+    : value_(val), size_(size) {}
+
+    base *copy() const final {
+      return new self(value_, size_);
+    }
+    std::string str() const final {
+      return std::to_string(value_);
+    }
+    long size() const final {
+      return size_;
+    }
+
+    void serialize(field_serializer &s) final {
+      s.serialize(value_);
+    }
+
+  private:
+    Type value_;
+    long size_{};
+  };
+
+public:
+  field();
+  template<typename Type>
+  explicit field(std::string name, const Type &val)
+  : name_(std::move(name)), value_(std::make_unique<value>(val)) {}
+  field(const field &x)
+  : name_(x.name_)
+  , value_(x.value_->copy()) {}
+  field &operator=(const field &x) {
+    name_ = x.name_;
+    value_.reset(x.value_->copy());
+    return *this;
+  }
+  field(field &&x) noexcept
+  : name_(std::move(x.name_))
+  , value_(std::move(x.value_)) {}
+  field &operator=(field &&x) noexcept {
+    name_ = std::move(x.name_);
+    value_ = std::move(x.value_);
+    return *this;
+  }
+
+  void serialize(field_serializer &serializer) {
+    value_->serialize(serializer);
+  }
+
+  const std::string& name() const {
+    return name_;
+  }
+  std::string value_string() const {
+    return value_->str();
+  }
+
+  long size() const {
+    return value_->size();
+  }
+
+private:
+  std::string name_;
+  std::unique_ptr<base> value_;
+};
+
+class row
+{
+public:
+  void add_field(const field &f) {
+    field_.push_back(f);
+  }
+  void add_field(field &&f) {
+    field_.emplace_back(f);
+  }
+private:
+  std::vector<field> field_;
+};
+}
 
 int main()
 {
@@ -127,7 +252,7 @@ int main()
 
   std::cout << "object <person> " << george << "\n";
 
-  auto pk = matador::make_identifier(13UL);
+  matador::identifier pk(13UL);
 
   george = store.get<person>(pk);
 

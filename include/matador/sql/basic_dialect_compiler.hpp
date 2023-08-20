@@ -1,8 +1,6 @@
 #ifndef OOS_BASIC_DIALECT_COMPILER_HPP
 #define OOS_BASIC_DIALECT_COMPILER_HPP
 
-#include "matador/sql/export.hpp"
-
 #include "matador/sql/token_visitor.hpp"
 #include "matador/sql/token_list.hpp"
 
@@ -18,7 +16,7 @@ struct build_info;
 
 /// @cond MATADOR_DEV
 
-class OOS_SQL_API basic_dialect_compiler : public token_visitor
+class basic_dialect_compiler : public token_visitor
 {
 public:
   void compile(basic_dialect &dialect);
@@ -36,7 +34,7 @@ public:
   void visit(const matador::detail::typed_identifier_column &) override;
   void visit(const matador::detail::typed_varchar_column &) override;
   void visit(const matador::detail::identifier_varchar_column &) override;
-  void visit(const matador::detail::basic_value_column &) override;
+  void visit(const matador::detail::value_column &) override;
   void visit(const matador::detail::from &) override;
   void visit(const matador::detail::where &) override;
   void visit(const matador::detail::basic_condition &) override;

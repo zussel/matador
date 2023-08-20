@@ -119,21 +119,6 @@ void mysql_parameter_binder::reset()
   }
 }
 
-void mysql_parameter_binder::initialize_index(size_t index)
-{
-  index_ = index;
-}
-
-size_t mysql_parameter_binder::next_index()
-{
-  return index_++;
-}
-
-size_t mysql_parameter_binder::current_index() const
-{
-  return index_;
-}
-
 void mysql_parameter_binder::bind(char i, size_t index)
 {
   bind_value(MYSQL_TYPE_VAR_STRING, i, host_array_[index], is_null_vector[index].is_null);
@@ -218,7 +203,7 @@ void mysql_parameter_binder::bind(const matador::time &x, size_t index)
 {
   if (mysql::version < 50604) {
     // before mysql version 5.6.4 datetime
-    // doesn't support fractional seconds
+    // doesn't support fractional seconds,
     // so we use a datetime string here
     std::string tstr = to_string(x, "%FT%T");
     bind_value(MYSQL_TYPE_VAR_STRING, tstr.c_str(), tstr.size(), host_array_[index], is_null_vector[index].is_null);

@@ -142,7 +142,7 @@ public:
    * @brief Returns the unique id of the transaction
    * @return The unique id of the transaction
    */
-  unsigned long id() const;
+  unsigned long long id() const;
 
   /**
    * @brief Start a new transaction
@@ -183,7 +183,7 @@ public:
 
 private:
   typedef t_action_vector::iterator action_iterator;
-  typedef std::unordered_map<unsigned long, t_action_vector::size_type> t_id_action_index_map;
+  typedef std::unordered_map<unsigned long long, t_action_vector::size_type> t_id_action_index_map;
 
   void backup(const action_ptr &a, const object_proxy *proxy);
   void restore(const action_ptr &a);
@@ -221,7 +221,7 @@ private:
 
     std::shared_ptr<observer> observer_;
 
-    unsigned long id_;
+    unsigned long long id_;
   };
 
 private:

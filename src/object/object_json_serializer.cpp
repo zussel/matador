@@ -1,39 +1,30 @@
 #include "matador/object/object_json_serializer.hpp"
 
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/string.hpp"
 
 namespace matador {
 
-void object_json_serializer::serialize(const char *id, identifier <std::string> &pk)
+void object_json_serializer::on_primary_key(const char *id, std::string &pk, long /*size*/)
 {
-  if (pk.is_valid()) {
-    result_[id] = pk.value();
-  }
-
+  result_[id] = pk;
 }
 
-void object_json_serializer::serialize(const char *id, bool &x)
+void object_json_serializer::on_attribute(const char *id, bool &x, long /*size*/)
 {
   result_[id] = x;
 }
 
-void object_json_serializer::serialize(const char *id, std::string &x)
+void object_json_serializer::on_attribute(const char *id, std::string &x, long /*size*/)
 {
   result_[id] = x;
 }
 
-void object_json_serializer::serialize(const char *id, std::string &x, size_t)
-{
-  result_[id] = x;
-}
-
-void object_json_serializer::serialize(const char *id, date &to)
+void object_json_serializer::on_attribute(const char *id, date &to, long /*size*/)
 {
   result_[id] = to_string(to);
 }
 
-void object_json_serializer::serialize(const char *id, time &to)
+void object_json_serializer::on_attribute(const char *id, time &to, long /*size*/)
 {
   result_[id] = to_string(to);
 }

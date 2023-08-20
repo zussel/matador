@@ -254,7 +254,7 @@ private:
 
   std::unordered_set<object_proxy*> proxies_to_delete_;
 
-  std::unordered_map<object_proxy*, std::unique_ptr<basic_identifier>> proxy_identifier_map_;
+  std::unordered_map<object_proxy*, identifier> proxy_identifier_map_;
 };
 
 }

@@ -9,8 +9,6 @@
 #include "matador/object/object_inserter.hpp"
 #include "matador/object/object_deleter.hpp"
 #include "matador/object/node_analyzer.hpp"
-#include "matador/object/has_one.hpp"
-#include "matador/object/belongs_to.hpp"
 #include "matador/object/object_serializer.hpp"
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/transaction.hpp"
@@ -451,13 +449,13 @@ public:
    * @return The found object or an empty object
    */
   template < class T >
-  object_ptr<T> get(basic_identifier &pk)
+  object_ptr<T> get(const identifier &pk)
   {
     auto node = find_prototype_node(typeid(T).name());
     if (node == nullptr) {
       return object_ptr<T>();
     }
-    return object_ptr<T>(node->find_proxy(&pk));
+    return object_ptr<T>(node->find_proxy(pk));
   }
 
   /**
@@ -670,7 +668,7 @@ public:
    * @return On success it returns an object proxy on failure null
    *
    */
-  object_proxy *find_proxy(unsigned long id) const;
+  object_proxy *find_proxy(unsigned long long id) const;
 
   /**
    * Insert object proxy into object store
@@ -785,7 +783,7 @@ private:
    */
   prototype_node *remove_prototype_node(prototype_node *node, bool check_for_eos);
 
-  prototype_node* attach_node(prototype_node *node, const char *parent, const char *type_name, basic_identifier *pk);
+  prototype_node* attach_node(prototype_node *node, const char *parent, const char *type_name, const identifier &pk);
 
   prototype_node* find_parent(const char *name) const;
 
@@ -808,7 +806,7 @@ private:
   // typeid to prototype node map
   t_typeid_prototype_map typeid_prototype_map_;
 
-  typedef std::unordered_map<long, object_proxy *> t_object_proxy_map;
+  typedef std::unordered_map<unsigned long long, object_proxy *> t_object_proxy_map;
   t_object_proxy_map object_map_;
 
   sequencer seq_;

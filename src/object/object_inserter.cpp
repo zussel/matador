@@ -5,8 +5,8 @@
 namespace matador {
 namespace detail {
 
-object_inserter::object_inserter(object_store &ostore)
-  : ostore_(ostore) { }
+object_inserter::object_inserter(object_store &store)
+  : ostore_(store) { }
 
 void object_inserter::insert(object_proxy *proxy, bool notify)
 {
@@ -64,7 +64,7 @@ void object_inserter::insert_object(object_holder &x, const std::type_index &typ
     x.relation_info_ = i->second;
 
     if (x.proxy_ && x.proxy_->obj() != nullptr) {
-      if (x.is_has_one()) {
+      if (i->second->type == basic_relation_endpoint::HAS_ONE/* x.is_has_one()*/) {
         ++(*x.proxy_);
       }
       if (!x.relation_info_->foreign_endpoint.expired()) {
@@ -77,7 +77,7 @@ void object_inserter::insert_object(object_holder &x, const std::type_index &typ
     return;
   }
 
-  if (!proxy_stack_.top()->node()->is_relation_node() && x.is_belongs_to()) {
+  if (!proxy_stack_.top()->node()->is_relation_node() && i->second->type == basic_relation_endpoint::BELONGS_TO/*x.is_belongs_to()*/) {
     ++(*x.proxy_);
   }
 
@@ -86,7 +86,7 @@ void object_inserter::insert_object(object_holder &x, const std::type_index &typ
     return;
   }
 
-  if (cascade & cascade_type::INSERT) {
+  if ((cascade & cascade_type::INSERT) != cascade_type::NONE) {
     if (x.id() > 0) {
       // do the pointer count
       proxy_stack_.push(x.proxy_);
