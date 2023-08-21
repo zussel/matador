@@ -47,7 +47,7 @@ public:
     return pos;
   }
 
-  size_t bind(std::string &val, long size, size_t pos)
+  size_t bind(std::string &val, size_t size, size_t pos)
   {
     this->binder()->bind(val, size, pos++);
 

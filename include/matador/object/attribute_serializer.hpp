@@ -313,7 +313,7 @@ public:
     }
     if (attr.size() > len_) {
 #ifdef _MSC_VER
-		strncpy_s(to, len, from_, len_);
+		strncpy_s(to, attr.size(), from_, len_);
 		to[len_] = '\0';
 #else
 		strcpy(to, from_);
@@ -368,7 +368,7 @@ public:
     }
     if (attr.size() > static_cast<long>(from_.size())) {
 #ifdef _MSC_VER
-		strncpy_s(to, len, from_.c_str(), from_.size());
+		strncpy_s(to, attr.size(), from_.c_str(), from_.size());
 		to[from_.size()] = '\0';
 #else
 		strncpy(to, from_.c_str(), from_.size());
@@ -738,7 +738,7 @@ public:
       return;
     }
 #ifdef _MSC_VER
-    strncpy_s(to_, size_, from.c_str(), size);
+    strncpy_s(to_, size_, from.c_str(), attr.size());
 #else
     strncpy(to_, from.c_str(), attr.size());
 #endif
@@ -761,7 +761,7 @@ public:
       return;
     }
 #ifdef _MSC_VER
-    strncpy_s(to_, size_, from, size);
+    strncpy_s(to_, size_, from, attr.size());
 #else
     strncpy(to_, from, attr.size());
 #endif

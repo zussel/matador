@@ -35,95 +35,95 @@ typed_column_serializer::typed_column_serializer()
   , column_identifier_serializer_(*this)
 {}
 
-void typed_column_serializer::on_attribute(const char *id, char&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, char&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_char, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, short&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, short&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_short, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, int&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, int&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_int, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, long&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, long&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_long, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, long long&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, long long&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_long_long, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, unsigned char&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, unsigned char&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_char, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, unsigned short&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, unsigned short&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_unsigned_short, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, unsigned int&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, unsigned int&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_unsigned_int, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, unsigned long&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, unsigned long&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_unsigned_long, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, unsigned long long&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, unsigned long long&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_unsigned_long_long, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, float&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, float&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_float, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, double&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, double&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_double, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, bool&, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, bool&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_bool, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, char *, long size)
+void typed_column_serializer::on_attribute(const char *id, char *, const field_attributes &attr)
 {
-  if (size < 0) {
+  if (attr.size() == 0) {
     cols_->push_back(create_column_func_(id, data_type::type_text, index_++));
   } else {
-    cols_->push_back(create_varchar_column_func_(id, size, data_type::type_varchar, index_++));
+    cols_->push_back(create_varchar_column_func_(id, attr.size(), data_type::type_varchar, index_++));
   }
 }
 
-void typed_column_serializer::on_attribute(const char *id, std::string &, long size)
+void typed_column_serializer::on_attribute(const char *id, std::string &, const field_attributes &attr)
 {
-  if (size < 0) {
+  if (attr.size() == 0) {
     cols_->push_back(create_column_func_(id, data_type::type_text, index_++));
   } else {
-    cols_->push_back(create_varchar_column_func_(id, size, data_type::type_varchar, index_++));
+    cols_->push_back(create_varchar_column_func_(id, attr.size(), data_type::type_varchar, index_++));
   }
 }
 
-void typed_column_serializer::on_attribute(const char *id, date &, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, date &, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_date, index_++));
 }
 
-void typed_column_serializer::on_attribute(const char *id, time &, long /*size*/)
+void typed_column_serializer::on_attribute(const char *id, time &, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_time, index_++));
 }

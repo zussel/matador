@@ -2,6 +2,7 @@
 #define OOS_RELATION_RESOLVER_HPP
 
 #include "matador/utils/access.hpp"
+#include "matador/utils/field_attributes.hpp"
 
 #include "matador/object/object_exception.hpp"
 
@@ -72,11 +73,11 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = {}) {}
   template<class V>
-  void on_attribute(const char *, V &, long /*size*/ = -1) {}
-  void on_attribute(const char *, char *, long /*size*/ = -1) { }
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {}) { }
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) { }
 
   template < class V >
   void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type cascade);
@@ -248,11 +249,11 @@ public:
   }
 
   template<typename V>
-  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = {}) {}
   template < class V >
-  void on_attribute(const char *, V &x, long /*size*/ = -1);
-  void on_attribute(const char *, char *, long size = -1);
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
+  void on_attribute(const char *, V &x, const field_attributes &/*attr*/ = {});
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {});
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) { }
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);
   template < class V >
@@ -379,12 +380,12 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = {}) {}
   template < class V >
-  void on_attribute(const char *, V &x, long size = -1);
+  void on_attribute(const char *, V &x, const field_attributes &/*attr*/ = {});
 
-  void on_attribute(const char *, char *, long size = -1);
-  void on_attribute(const char *, std::string &, long size = -1);
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {});
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {});
 
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);

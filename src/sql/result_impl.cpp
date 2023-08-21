@@ -9,96 +9,91 @@ result_impl::result_impl()
 : result_identifier_reader_(*this)
 {}
 
-void result_impl::on_attribute(const char *id, char &x)
+void result_impl::on_attribute(const char *id, char &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, short &x)
+void result_impl::on_attribute(const char *id, short &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, int &x)
+void result_impl::on_attribute(const char *id, int &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, long &x)
+void result_impl::on_attribute(const char *id, long &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, long long int &x)
+void result_impl::on_attribute(const char *id, long long int &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, unsigned char &x)
+void result_impl::on_attribute(const char *id, unsigned char &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, unsigned short &x)
+void result_impl::on_attribute(const char *id, unsigned short &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, unsigned int &x)
+void result_impl::on_attribute(const char *id, unsigned int &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, unsigned long &x)
+void result_impl::on_attribute(const char *id, unsigned long &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, unsigned long long int &x)
+void result_impl::on_attribute(const char *id, unsigned long long int &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, bool &x)
+void result_impl::on_attribute(const char *id, bool &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, float &x)
+void result_impl::on_attribute(const char *id, float &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, double &x)
+void result_impl::on_attribute(const char *id, double &x, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, x);
 }
 
-void result_impl::on_attribute(const char *id, char *value, long size)
+void result_impl::on_attribute(const char *id, char *value, const field_attributes &attr)
 {
-  read_value(id, column_index_++, value, size);
+  read_value(id, column_index_++, value, attr.size());
 }
 
-void result_impl::on_attribute(const char *id, std::string &value)
+void result_impl::on_attribute(const char *id, std::string &value, const field_attributes &attr)
 {
-  read_value(id, column_index_++, value);
-}
-
-void result_impl::on_attribute(const char *id, std::string &value, long size)
-{
-  if (size == -1) {
+  if (attr.size() == 0) {
     read_value(id, column_index_++, value);
   } else {
-    read_value(id, column_index_++, value, size);
+    read_value(id, column_index_++, value, attr.size());
   }
 }
 
-void result_impl::on_attribute(const char *id, matador::time &value)
+void result_impl::on_attribute(const char *id, matador::time &value, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, value);
 }
 
-void result_impl::on_attribute(const char *id, matador::date &value)
+void result_impl::on_attribute(const char *id, matador::date &value, const field_attributes &/*attr*/)
 {
   read_value(id, column_index_++, value);
 }
@@ -139,12 +134,7 @@ result_impl::size_type result_impl::column_index() const
   return column_index_;
 }
 
-void result_identifier_reader::serialize(null_type_t &, long /*size*/) { }
-
-void result_identifier_reader::read_value(std::string &value, long size)
-{
-  result_impl_.on_attribute("", value, size);
-}
+void result_identifier_reader::serialize(null_type_t &, const field_attributes &/*attr*/) { }
 
 }
 }

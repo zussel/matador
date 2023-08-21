@@ -293,15 +293,15 @@ struct value_column : public column
 };
 
 template < typename Type >
-std::shared_ptr<value_column> make_value_column(const std::string &col, const Type &val, long /*size*/) {
+std::shared_ptr<value_column> make_value_column(const std::string &col, const Type &val, const field_attributes &/*attr*/) {
   return std::make_shared<value_column>(col, new value(val));
 }
 
-std::shared_ptr<value_column> make_value_column(const std::string &col, const std::string &val, long size);
+std::shared_ptr<value_column> make_value_column(const std::string &col, const std::string &val, const field_attributes &attr);
 
-std::shared_ptr<value_column> make_value_column(const std::string &col, const char *val, long size);
+std::shared_ptr<value_column> make_value_column(const std::string &col, const char *val, const field_attributes &attr);
 
-std::shared_ptr<value_column> make_value_column(const std::string &col, char *val, long size);
+std::shared_ptr<value_column> make_value_column(const std::string &col, char *val, const field_attributes &attr);
 
 /// @endcond
 

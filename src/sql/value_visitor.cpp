@@ -40,22 +40,22 @@ void value_visitor::apply(matador::any &a, const char *id, serializer &s)
 
 void value_visitor::process(std::string &val)
 {
-  serializer_->on_attribute(id_, val);
+  serializer_->on_attribute(id_, val, {});
 }
 
 void value_visitor::process(char *val)
 {
-  serializer_->on_attribute(id_, val, 0);
+  serializer_->on_attribute(id_, val, {});
 }
 
 void value_visitor::process(time &val)
 {
-  serializer_->on_attribute(id_, val);
+  serializer_->on_attribute(id_, val, {});
 }
 
 void value_visitor::process(date &val)
 {
-  serializer_->on_attribute(id_, val);
+  serializer_->on_attribute(id_, val, {});
 }
 
 value_to_string_visitor::value_to_string_visitor()

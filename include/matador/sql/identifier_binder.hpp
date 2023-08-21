@@ -32,69 +32,69 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &x, long size = -1);
+  void on_primary_key(const char *, V &x, const field_attributes &/*attr*/ = {});
 
   template<class V>
-  void on_attribute(const char *, V &, long /*size*/ = -1) {}
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
 
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
   void on_has_one(const char *, identifiable_holder &, cascade_type) { }
 
-  void on_attribute(const char *, char *, size_t) { }
-  void on_attribute(const char *, std::string &, size_t) { }
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {}) { }
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) { }
 
   void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
   void on_has_many(const char*, abstract_has_many&, cascade_type) {}
 
-  void serialize(short &i, long /*size*/) override
+  void serialize(short &i, const field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(int &i, long /*size*/) override
+  void serialize(int &i, const field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(long &i, long /*size*/) override
+  void serialize(long &i, const field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(long long int &i, long /*size*/) override
+  void serialize(long long int &i, const field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(unsigned short &i, long /*size*/) override
+  void serialize(unsigned short &i, const field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(unsigned int &i, long /*size*/) override
+  void serialize(unsigned int &i, const field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(unsigned long &i, long /*size*/) override
+  void serialize(unsigned long &i, const field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(unsigned long long int &i, long /*size*/) override
+  void serialize(unsigned long long int &i, const field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(std::string &str, long size) override
+  void serialize(std::string &str, const field_attributes &attr) override
   {
     if (!stmt_->p->is_valid_host_var(field_name_, pos_)) {
       return;
     }
-    stmt_->bind(pos_, str, size);
+    stmt_->bind(pos_, str, attr.size());
   }
 
-  void serialize(null_type_t &/*type*/, long /*size*/) override { }
+  void serialize(null_type_t &/*type*/, const field_attributes &/*attr*/) override { }
 
 private:
   void setup(statement<T> *stmt, T *obj, size_t pos, identifier &id);
@@ -132,7 +132,7 @@ void identifier_binder<T>::bind(T *obj, statement<T> *stmt, size_t pos, identifi
 
 template < class T >
 template< class V >
-void identifier_binder<T>::on_primary_key(const char *id, V &/*x*/, long /*size*/)
+void identifier_binder<T>::on_primary_key(const char *id, V &/*x*/, const field_attributes &/*attr*/)
 {
   if (!id_->is_similar_type<V>()) {
     throw_object_exception("identifier types aren't equal");

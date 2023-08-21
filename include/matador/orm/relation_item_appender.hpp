@@ -3,6 +3,7 @@
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/cascade_type.hpp"
+#include "matador/utils/field_attributes.hpp"
 
 #include <cstddef>
 #include <iostream>
@@ -38,10 +39,10 @@ public:
   }
 
   template<class T>
-  void on_primary_key(const char *, T &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, T &, const field_attributes &/*attr*/ = {}) {}
   template<class T>
-  void on_attribute(const char *, T &, long /*size*/ = -1) {}
-  void on_attribute(const char *, char *, long /*size*/ = -1)  {}
+  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {})  {}
 
   void on_belongs_to(const char*, identifiable_holder&, cascade_type) { }
   void on_has_one(const char*, identifiable_holder&, cascade_type) { }

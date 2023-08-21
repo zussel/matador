@@ -7,89 +7,89 @@ namespace detail {
 value_column_serializer::value_column_serializer()
 : value_column_identifier_serializer_(*this) {}
 
-void value_column_serializer::on_attribute(const char *id, char &x, long size)
+void value_column_serializer::on_attribute(const char *id, char &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, short &x, long size)
+void value_column_serializer::on_attribute(const char *id, short &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, int &x, long size)
+void value_column_serializer::on_attribute(const char *id, int &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, long &x, long size)
+void value_column_serializer::on_attribute(const char *id, long &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, long long &x, long size)
+void value_column_serializer::on_attribute(const char *id, long long &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, unsigned char &x, long size)
+void value_column_serializer::on_attribute(const char *id, unsigned char &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, unsigned short &x, long size)
+void value_column_serializer::on_attribute(const char *id, unsigned short &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, unsigned int &x, long size)
+void value_column_serializer::on_attribute(const char *id, unsigned int &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, unsigned long &x, long size)
+void value_column_serializer::on_attribute(const char *id, unsigned long &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, unsigned long long &x, long size)
+void value_column_serializer::on_attribute(const char *id, unsigned long long &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, float &x, long size)
+void value_column_serializer::on_attribute(const char *id, float &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, double &x, long size)
+void value_column_serializer::on_attribute(const char *id, double &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, bool &x, long size)
+void value_column_serializer::on_attribute(const char *id, bool &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, char *x, long size)
+void value_column_serializer::on_attribute(const char *id, char *x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, std::string &x, long size)
+void value_column_serializer::on_attribute(const char *id, std::string &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, date &x, long size)
+void value_column_serializer::on_attribute(const char *id, date &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
-void value_column_serializer::on_attribute(const char *id, time &x, long size)
+void value_column_serializer::on_attribute(const char *id, time &x, const field_attributes &attr)
 {
-  cols_->push_back(make_value_column(id, x, size));
+  cols_->push_back(make_value_column(id, x, attr));
 }
 
 void value_column_serializer::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)

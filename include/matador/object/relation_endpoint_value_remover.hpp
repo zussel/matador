@@ -4,6 +4,8 @@
 #include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/object_proxy_accessor.hpp"
 
+#include "matador/utils/field_attributes.hpp"
+
 #include <iostream>
 
 namespace matador {
@@ -34,11 +36,11 @@ public:
   }
 
   template < class T >
-  void on_primary_key(const char *, T &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, T &, const field_attributes &/*attr*/ = {}) {}
   template < class T >
-  void on_attribute(const char *, T &, long /*size*/ = -1) {}
-  void on_attribute(const char *, char *, long /*size*/ = -1) {}
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
+  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
   void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
   template < class T >
   void on_belongs_to(const char *, T &, cascade_type) {}

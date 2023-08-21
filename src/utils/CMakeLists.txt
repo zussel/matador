@@ -22,7 +22,8 @@ SET(SOURCES
   html.cpp
   thread_helper.cpp
   identifier.cpp
-        field_attributes.cpp)
+  field_attributes.cpp
+  constraints.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp

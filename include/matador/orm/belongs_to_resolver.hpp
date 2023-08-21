@@ -2,6 +2,7 @@
 #define MATADOR_BELONGS_TO_RESOLVER_HPP
 
 #include "matador/utils/access.hpp"
+#include "matador/utils/field_attributes.hpp"
 
 #include "matador/object/prototype_node.hpp"
 
@@ -47,11 +48,11 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = {}) {}
   template<class V>
-  void on_attribute(const char *, V &, long /*size*/ = -1) {}
-  void on_attribute(const char *, char *, long /*size*/ = -1) {}
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) { }
 
   template<class V>
   void on_belongs_to(const char *id, object_ptr<V> &, cascade_type)

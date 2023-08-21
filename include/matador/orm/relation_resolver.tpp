@@ -89,7 +89,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   !matador::is_builtin<typename T::right_value_type>::value
->::type>::on_attribute(const char *, V &x, long /*size*/)
+>::type>::on_attribute(const char *, V &x, const field_attributes &/*attr*/)
 {
   // must be right side value
   // if left table is loaded
@@ -110,7 +110,7 @@ template < class T >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   !matador::is_builtin<typename T::right_value_type>::value
->::type>::on_attribute(const char *, char *, long /*size*/)
+>::type>::on_attribute(const char *, char *, const field_attributes &/*attr*/)
 {
   // must be right side value
   // if left table is loaded
@@ -173,7 +173,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_attribute(const char *, V &x, long /*size*/)
+>::type>::on_attribute(const char *, V &x, const field_attributes &/*attr*/)
 {
   // must be right side value
   // if left table is loaded
@@ -194,7 +194,7 @@ template < class T >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_attribute(const char *, char *, long /*size*/)
+>::type>::on_attribute(const char *, char *, const field_attributes &/*attr*/)
 {
   // must be right side value
   // if left table is loaded
@@ -207,7 +207,7 @@ template < class T >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_attribute(const char *, std::string &x, long /*size*/)
+>::type>::on_attribute(const char *, std::string &x, const field_attributes &/*attr*/)
 {
   if (left_table_ptr_->is_loaded()) {
     has_many_item_holder<typename T::right_value_type> value(x, nullptr);

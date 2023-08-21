@@ -3,6 +3,7 @@
 
 #include "matador/object/basic_has_many.hpp"
 
+#include "matador/utils/field_attributes.hpp"
 #include "matador/utils/is_builtin.hpp"
 
 namespace matador {
@@ -29,11 +30,11 @@ public:
   template<class V>
   void serialize(V &x);
   template<class V>
-  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = {}) {}
   template<class V>
-  void on_attribute(const char *, V &, long /*size*/ = -1) { }
-  void on_attribute(const char *, char *, long /*size*/ = -1) { }
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) { }
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {}) { }
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) { }
   template<class Value>
   void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
   template<class Value>

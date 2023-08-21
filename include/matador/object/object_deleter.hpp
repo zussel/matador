@@ -7,6 +7,8 @@
 #include "matador/object/object_holder.hpp"
 #include "matador/object/basic_has_many.hpp"
 
+#include "matador/utils/field_attributes.hpp"
+
 #include <unordered_map>
 #include <stack>
 
@@ -83,11 +85,11 @@ public:
   void serialize(T &x) { matador::access::serialize(*this, x); }
 
   template<class T>
-  void on_primary_key(const char *id, T &x, long size = -1);
+  void on_primary_key(const char *id, T &x, const field_attributes &attr = {});
   template<class T>
-  void on_attribute(const char *, const T &, long /*size*/ = -1) {}
-  void on_attribute(const char *, char *, long /*size*/ = -1) {}
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
+  void on_attribute(const char *, const T &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
   template<class T>
   void on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade);
   template<class T>
@@ -222,9 +224,9 @@ void object_deleter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_
 }
 
 template<class T>
-void object_deleter::on_primary_key(const char *id, T &x, long size)
+void object_deleter::on_primary_key(const char *id, T &x, const field_attributes &attr)
 {
-  on_attribute(id, x, size);
+  on_attribute(id, x, attr);
 }
 
 }

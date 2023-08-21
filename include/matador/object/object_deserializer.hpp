@@ -5,6 +5,7 @@
 
 #include "matador/utils/byte_buffer.hpp"
 #include "matador/utils/access.hpp"
+#include "matador/utils/field_attributes.hpp"
 
 #include "matador/object/basic_has_many.hpp"
 
@@ -65,20 +66,20 @@ public:
   }
 
   template<class V>
-  void on_primary_key(const char *id, V &x, long size = -1)
+  void on_primary_key(const char *id, V &x, const field_attributes &attr = {})
   {
-    on_attribute(id, x, size);
+    on_attribute(id, x, attr);
   }
 
   template<class T>
-  void on_attribute(const char *, T &x, long /*size*/ = -1)
+  void on_attribute(const char *, T &x, const field_attributes &/*attr*/ = {})
   {
     buffer_->release(&x, sizeof(x));
   }
-  void on_attribute(const char *id, char *x, long size);
-  void on_attribute(const char *id, std::string &x, long size = -1);
-  void on_attribute(const char *id, date &x, long /*size*/ = -1);
-  void on_attribute(const char *id, time &x, long /*size*/ = -1);
+  void on_attribute(const char *id, char *x, const field_attributes &attr);
+  void on_attribute(const char *id, std::string &x, const field_attributes &attr = {});
+  void on_attribute(const char *id, date &x, const field_attributes &/*attr*/ = {});
+  void on_attribute(const char *id, time &x, const field_attributes &/*attr*/ = {});
 
   template<class T>
   void on_belongs_to(const char *id, matador::object_ptr<T> &x, cascade_type cascade)

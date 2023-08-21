@@ -88,19 +88,19 @@ void typed_column::accept(token_visitor &visitor)
   return visitor.visit(*this);
 }
 
-std::shared_ptr<value_column> make_value_column(const std::string &col, const std::string &val, long size)
+std::shared_ptr<value_column> make_value_column(const std::string &col, const std::string &val, const field_attributes &attr)
 {
-  return std::make_shared<value_column>(col, new value(val, size));
+  return std::make_shared<value_column>(col, new value(val, attr.size()));
 }
 
-std::shared_ptr<value_column> make_value_column(const std::string &col, const char *val, long size)
+std::shared_ptr<value_column> make_value_column(const std::string &col, const char *val, const field_attributes &attr)
 {
-  return std::make_shared<value_column>(col, new value(val, size));
+  return std::make_shared<value_column>(col, new value(val, attr.size()));
 }
 
-std::shared_ptr<value_column> make_value_column(const std::string &col, char *val, long size)
+std::shared_ptr<value_column> make_value_column(const std::string &col, char *val, const field_attributes &attr)
 {
-  return std::make_shared<value_column>(col, new value(val, size));
+  return std::make_shared<value_column>(col, new value(val, attr.size()));
 }
 }
 

@@ -1,13 +1,14 @@
 #ifndef MATADOR_IDENTIFIER_HPP
 #define MATADOR_IDENTIFIER_HPP
 
+#include "matador/utils/field_attributes.hpp"
+
 #include <memory>
 #include <string>
 #include <typeindex>
 
 namespace matador {
 
-class field_attributes;
 struct null_type_t {};
 
 namespace detail {
@@ -102,7 +103,7 @@ private:
   {
     using self = pk<IdType>;
 
-    explicit pk(const IdType &id, long size = -1) : base(std::type_index(typeid(IdType)), detail::identifier_type_traits<IdType>::type())
+    explicit pk(const IdType &id, size_t size = 0) : base(std::type_index(typeid(IdType)), detail::identifier_type_traits<IdType>::type())
     , id_(id)
     , size_(size) {}
 
@@ -138,7 +139,7 @@ private:
     }
 
     IdType id_;
-    long size_{-1};
+    size_t size_{};
   };
 
   struct null_pk : public base
