@@ -9,21 +9,6 @@ void value::accept(token_visitor &visitor)
   return visitor.visit(*this);
 }
 
-void value::serialize(const char *id, serializer &srlzr)
-{
-  value_visitor_.apply(value_, id, srlzr);
-}
-
-std::string value::str() const
-{
-  return const_cast<detail::value_to_string_visitor&>(value_to_string_visitor_).to_string(const_cast<any&>(value_));
-}
-
-std::string value::safe_string(const basic_dialect &d) const
-{
-  return const_cast<detail::value_to_string_visitor&>(value_to_string_visitor_).to_safe_string(const_cast<any&>(value_), &d);
-}
-
 const char *value::type_id() const
 {
   return value_.type_index().name();

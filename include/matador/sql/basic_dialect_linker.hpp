@@ -2,6 +2,7 @@
 #define OOS_BASIC_DIALECT_LINKER_HPP
 
 #include "matador/sql/token_visitor.hpp"
+#include "matador/sql/value_processor.hpp"
 #include "matador/sql/token.hpp"
 #include "matador/sql/token_list.hpp"
 
@@ -71,6 +72,7 @@ private:
   void dialect(basic_dialect *d);
 
   basic_dialect *dialect_;
+  detail::value_to_string_visitor value_to_string_visitor_;
 };
 
 /// @endcond

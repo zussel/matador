@@ -113,10 +113,10 @@ void basic_dialect_linker::visit(const matador::detail::values &values)
 void basic_dialect_linker::visit(const matador::value &val)
 {
   if (dialect().compile_type() == basic_dialect::DIRECT) {
-    dialect().append_to_result(val.safe_string(dialect()));
+    dialect().append_to_result(value_to_string_visitor_.to_safe_string(const_cast<matador::value &>(val).value_, &dialect()));
   } else {
     // Todo: check correct value to add
-    dialect().add_host_var(val.str());
+    dialect().add_host_var(value_to_string_visitor_.to_string(const_cast<matador::value &>(val).value_));
     dialect().append_to_result(dialect().next_placeholder());
   }
 }

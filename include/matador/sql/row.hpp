@@ -84,7 +84,7 @@ public:
   void serialize(Serializer &serializer)
   {
     for (auto &column : columns_) {
-      values_.at(column)->serialize(column.c_str(), serializer);
+      value_processor_.apply(values_.at(column)->value_, column.c_str(), serializer);
     }
   }
 
@@ -162,7 +162,7 @@ public:
    */
   std::string str(size_t pos)
   {
-    return values_.at(columns_.at(pos))->str();
+    return value_to_string_visitor_.to_string(values_.at(columns_.at(pos))->value_);
   }
 
   /**
@@ -173,7 +173,7 @@ public:
    */
   std::string str(const std::string &column)
   {
-    return values_.at(column)->str();
+    return value_to_string_visitor_.to_string(values_.at(column)->value_);
   }
 
   /**
@@ -191,6 +191,8 @@ private:
   t_columns columns_;
   t_values values_;
 
+  detail::value_processor value_processor_;
+  detail::value_to_string_visitor value_to_string_visitor_;
 };
 /// @endcond
 

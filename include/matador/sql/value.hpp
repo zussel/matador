@@ -39,18 +39,12 @@ struct value : public detail::token
     return value_._<T>();
   }
 
-  void serialize(const char *id, serializer &srlzr);
-
   void accept(token_visitor &visitor) override;
-
-  std::string str() const;
-  std::string safe_string(const basic_dialect &) const;
 
   virtual const char* type_id() const;
 
   any value_;
   std::size_t size_ = 0;
-  detail::value_processor value_visitor_;
   detail::value_to_string_visitor value_to_string_visitor_;
 };
 
