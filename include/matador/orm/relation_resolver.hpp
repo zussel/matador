@@ -73,11 +73,11 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = {}) {}
+  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   template<class V>
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {}) { }
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) { }
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) { }
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
 
   template < class V >
   void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type cascade);
@@ -249,11 +249,11 @@ public:
   }
 
   template<typename V>
-  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = {}) {}
+  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   template < class V >
-  void on_attribute(const char *, V &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) { }
+  void on_attribute(const char *, V &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);
   template < class V >
@@ -380,12 +380,12 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = {}) {}
+  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   template < class V >
-  void on_attribute(const char *, V &x, const field_attributes &/*attr*/ = {});
+  void on_attribute(const char *, V &x, const field_attributes &/*attr*/ = null_attributes);
 
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {});
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes);
 
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);

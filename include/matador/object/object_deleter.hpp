@@ -85,11 +85,11 @@ public:
   void serialize(T &x) { matador::access::serialize(*this, x); }
 
   template<class T>
-  void on_primary_key(const char *id, T &x, const field_attributes &attr = {});
+  void on_primary_key(const char *id, T &x, const field_attributes &attr = null_attributes);
   template<class T>
-  void on_attribute(const char *, const T &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, const T &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   template<class T>
   void on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade);
   template<class T>

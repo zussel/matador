@@ -1,9 +1,8 @@
 SET (SANDBOX_SOURCES sandbox.cpp
-  contraints.hpp
-  field_attributes.hpp
   column.hpp
   row.hpp
-  column_printer.hpp)
+  column_printer.hpp
+  )
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 ADD_EXECUTABLE(di di.cpp)

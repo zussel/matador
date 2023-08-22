@@ -1,11 +1,10 @@
 #ifndef MATADOR_COLUMN_HPP
 #define MATADOR_COLUMN_HPP
 
+#include "matador/utils/field_attributes.hpp"
 #include "matador/utils/any.hpp"
 
 #include "matador/sql/types.hpp"
-
-#include "field_attributes.hpp"
 
 #include <memory>
 
@@ -47,7 +46,7 @@ public:
   }
 
   size_t size() const {
-    return attr_.size_;
+    return attr_.size();
   }
 
   template<typename Type>
@@ -67,14 +66,25 @@ std::shared_ptr<column> make_column(const std::string &name, matador::database_t
 }
 
 template < typename Type >
-std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = {}) {
+std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = null_attributes) {
   return make_column(name, matador::data_type_traits<Type>::type(), attr, matador::any(Type()));
 }
 
 template < typename Type >
-std::shared_ptr<column> make_column(const std::string &name, const Type &val, const field_attributes &attr = {}) {
+std::shared_ptr<column> make_column(const std::string &name, const Type &val, const field_attributes &attr = null_attributes) {
   return std::make_shared<column>(name, val, attr);
 }
+
+template < typename Type >
+std::shared_ptr<column> make_pk_column(const std::string &name, size_t /*max_size*/ = 0) {
+  return make_column(name, matador::data_type_traits<Type>::type(), constraints::PRIMARY_KEY, matador::any(Type()));
+}
+
+template <>
+std::shared_ptr<column> make_pk_column<std::string>(const std::string &name, size_t max_size) {
+  return make_column(name, matador::data_type_traits<std::string>::type(), { max_size, constraints::PRIMARY_KEY }, matador::any(std::string{}));
+}
+
 
 }
 #endif //MATADOR_COLUMN_HPP

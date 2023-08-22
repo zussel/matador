@@ -122,7 +122,7 @@ void sqlite_prepared_result::read_value(const char */*id*/, size_type index, std
   x.assign(text, s);
 }
 
-void sqlite_prepared_result::read_value(const char */*id*/, size_type index, std::string &x, long /*size*/)
+void sqlite_prepared_result::read_value(const char */*id*/, size_type index, std::string &x, size_t /*size*/)
 {
   auto s = (size_t)sqlite3_column_bytes(stmt_, index);
   auto *text = (const char*)sqlite3_column_text(stmt_, index);
@@ -131,7 +131,7 @@ void sqlite_prepared_result::read_value(const char */*id*/, size_type index, std
   }
 }
 
-void sqlite_prepared_result::read_value(const char */*id*/, size_type index, char *x, long s)
+void sqlite_prepared_result::read_value(const char */*id*/, size_type index, char *x, size_t s)
 {
   auto size = (size_t)sqlite3_column_bytes(stmt_, index);
   if (size < s) {

@@ -63,7 +63,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -73,7 +73,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_arithmetic<T>::value && std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<T>::value && std::is_same<V, bool>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -83,7 +83,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = {}, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
+  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -92,9 +92,9 @@ public:
     this->success_ = true;
   }
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
+  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -117,7 +117,7 @@ public:
   void on_primary_key(const char *, V &) {}
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -127,7 +127,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -137,7 +137,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_arithmetic<V>::value && std::is_same<bool, V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<V>::value && std::is_same<bool, V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -147,9 +147,9 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
+  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -177,9 +177,9 @@ public:
   template < class V >
   void on_primary_key(const char *, V &) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
@@ -220,9 +220,9 @@ public:
   template < class V >
   void on_primary_key(const char *, V &) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
   void on_has_many(const char *, identifiable_holder &, cascade_type) { }
   template<class V, template <class ...> class C>
@@ -260,9 +260,9 @@ public:
   template < class V >
   void on_primary_key(const char *, V &) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
   void on_has_many(const char *, identifiable_holder &, cascade_type) { }
   template<class V, template <class ...> class C>
@@ -297,8 +297,8 @@ public:
   template < class V >
   void on_primary_key(const char *, V &) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = {})
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = null_attributes)
   {
     if (id_ != id) {
       return;
@@ -352,8 +352,8 @@ public:
     this->success_ = true;
   }
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = {})
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = null_attributes)
   {
     if (id_ != id) {
       return;
@@ -406,7 +406,7 @@ public:
     on_attribute(id, from);
   }
   template < class V >
-  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = {}, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -415,7 +415,7 @@ public:
     success_ = true;
   }
   template < class V >
-  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && std::is_same<bool, T>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && std::is_same<bool, T>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -424,7 +424,7 @@ public:
     success_ = true;
   }
   template < class V >
-  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = {}, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
+  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -433,9 +433,9 @@ public:
     success_ = true;
   }
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
+  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -458,9 +458,9 @@ public:
   template < class V >
   void on_primary_key(const char *, V &) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
@@ -499,9 +499,9 @@ public:
   template < class V >
   void on_primary_key(const char *, V &) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
   void on_has_one(const char *, identifiable_holder &, cascade_type) {}
   template<class V, template <class ...> class C>
@@ -538,9 +538,9 @@ public:
   template < class V >
   void on_primary_key(const char *, V &) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
   void on_has_many(const char *, identifiable_holder &, cascade_type) {}
   template<class V, template <class ...> class C>
@@ -580,7 +580,7 @@ public:
     on_attribute(id, from);
   }
   template < class V >
-  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = {}, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -590,7 +590,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = {}, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -599,7 +599,7 @@ public:
     success_ = true;
   }
 
-  void on_attribute(const char *id, std::string &from, const field_attributes &/*attr*/ = {})
+  void on_attribute(const char *id, std::string &from, const field_attributes &/*attr*/ = null_attributes)
   {
     if (id_ != id) {
       return;
@@ -617,7 +617,7 @@ public:
     success_ = true;
   }
 
-  void on_attribute(const char *id, date &from, const field_attributes &/*attr*/ = {})
+  void on_attribute(const char *id, date &from, const field_attributes &/*attr*/ = null_attributes)
   {
     if (id_ != id) {
       return;
@@ -625,7 +625,7 @@ public:
     to_ = to_string(from);
     success_ = true;
   }
-  void on_attribute(const char *id, matador::time &from, const field_attributes &/*attr*/ = {})
+  void on_attribute(const char *id, matador::time &from, const field_attributes &/*attr*/ = null_attributes)
   {
     if (id_ != id) {
       return;
@@ -713,7 +713,7 @@ public:
   template < class V >
   void on_primary_key(const char *, V &) {}
   template < class V >
-  void on_attribute(const char *id, V &/*from*/, const field_attributes &/*attr*/ = {})
+  void on_attribute(const char *id, V &/*from*/, const field_attributes &/*attr*/ = null_attributes)
   {
     if (id_ != id) {
       return;
@@ -721,8 +721,8 @@ public:
     // Todo: convert each type to char*
     success_ = true;
   }
-  void on_attribute(const char*, date&, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char*, time&, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char*, date&, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char*, time&, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char*, identifiable_holder &, cascade_type) {}
   void on_has_one(const char*, identifiable_holder &, cascade_type) {}
   void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}

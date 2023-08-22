@@ -15,6 +15,7 @@ class date;
 class time;
 class identifiable_holder;
 class abstract_has_many;
+class row;
 
 namespace detail {
 
@@ -22,6 +23,40 @@ namespace detail {
 
 class result_impl;
 
+class result_row_serializer : public serializer
+{
+public:
+  explicit result_row_serializer(result_impl &impl);
+
+  void serialize(row &r);
+
+  void on_attribute(const char *id, char &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, short &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, int &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, long &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, long long &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, unsigned char &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, unsigned short &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, unsigned int &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, unsigned long &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, unsigned long long &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, bool &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, float &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, double &x, const field_attributes &attr) override;
+  void on_attribute(const char *id, char *, const field_attributes &attr) override;
+  void on_attribute(const char *id, std::string&, const field_attributes &attr) override;
+  void on_attribute(const char *id, matador::time&, const field_attributes &attr) override;
+  void on_attribute(const char *id, matador::date&, const field_attributes &attr) override;
+
+  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type) override;
+  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type) override;
+
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
+
+private:
+  result_impl &impl_;
+};
 class result_identifier_reader : public identifier_serializer
 {
 public:
@@ -46,11 +81,13 @@ private:
   result_impl &result_impl_;
 };
 
-class result_impl : public serializer
+class result_impl
 {
 public:
   result_impl(const result_impl &) = delete;
   result_impl &operator=(const result_impl &) = delete;
+
+  virtual ~result_impl() = default;
 
 public:
   typedef unsigned long size_type;
@@ -70,35 +107,27 @@ public:
     matador::access::serialize(*this, x);
   }
 
+  void serialize(row &r);
+
   template<typename ValueType>
-  void on_primary_key(const char *id, ValueType &value, const field_attributes &/*attr*/ = {})
+  void on_primary_key(const char *id, ValueType &value, const field_attributes &/*attr*/ = null_attributes)
   {
     read_value(id, column_index_++, value);
   }
 
-  void on_attribute(const char *id, char &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, short &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, int &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, long &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, long long &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, unsigned char &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, unsigned short &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, unsigned int &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, unsigned long &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, unsigned long long &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, bool &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, float &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, double &x, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, char *, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, std::string&, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, matador::time&, const field_attributes &attr = {}) override;
-  void on_attribute(const char *id, matador::date&, const field_attributes &attr = {}) override;
+  template < class Type >
+  void on_attribute(const char *id, Type &x, const field_attributes &/*attr*/ = null_attributes)
+  {
+    read_value(id, column_index_++, x);
+  }
+  void on_attribute(const char *id, char *, const field_attributes &attr = null_attributes) /*override*/;
+  void on_attribute(const char *id, std::string&, const field_attributes &attr = null_attributes) /*override*/;
 
-  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type) override;
-  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type) override;
+  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type) /*override*/;
+  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type) /*override*/;
 
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) /*override*/ {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) /*override*/ {}
 
   virtual void read_value(const char *id, size_type index, char &value) = 0;
   virtual void read_value(const char *id, size_type index, short &value) = 0;
@@ -115,9 +144,9 @@ public:
   virtual void read_value(const char *id, size_type index, double &value) = 0;
   virtual void read_value(const char *id, size_type index, matador::time &value) = 0;
   virtual void read_value(const char *id, size_type index, matador::date &value) = 0;
-  virtual void read_value(const char *id, size_type index, char *value, long s) = 0;
+  virtual void read_value(const char *id, size_type index, char *value, size_t s) = 0;
   virtual void read_value(const char *id, size_type index, std::string &value) = 0;
-  virtual void read_value(const char *id, size_type index, std::string &value, long s) = 0;
+  virtual void read_value(const char *id, size_type index, std::string &value, size_t s) = 0;
 
   virtual const char *column(size_type c) const = 0;
 
@@ -159,6 +188,9 @@ public:
   virtual size_type reset_column_index() const = 0;
 
 protected:
+  friend class result_row_serializer;
+
+protected:
   virtual void read_foreign_object(const char *id, identifiable_holder &x);
 
   size_type column_index() const;
@@ -166,6 +198,9 @@ protected:
   result_identifier_reader result_identifier_reader_;
 
   size_type column_index_ = 0;
+
+private:
+  result_row_serializer result_row_serializer_;
 };
 
 /// @endcond

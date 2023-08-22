@@ -39,10 +39,10 @@ public:
   }
 
   template<class T>
-  void on_primary_key(const char *, T &, const field_attributes &/*attr*/ = {}) {}
+  void on_primary_key(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
   template<class T>
-  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {})  {}
+  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes)  {}
 
   void on_belongs_to(const char*, identifiable_holder&, cascade_type) { }
   void on_has_one(const char*, identifiable_holder&, cascade_type) { }

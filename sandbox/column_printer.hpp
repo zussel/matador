@@ -4,7 +4,7 @@
 #include "matador/utils/any.hpp"
 #include "matador/utils/serializer.hpp"
 
-#include "matador/sql/value_visitor.hpp"
+#include "matador/sql/value_processor.hpp"
 
 class column_printer : public matador::serializer
 {
@@ -105,12 +105,16 @@ public:
 
 private:
   template<typename Type>
-  void print(const char *id, Type &val, const matador::field_attributes &attr) {
+  void print(const char *id, Type &val, const matador::field_attributes &/*attr*/) {
+    std::cout << "[" << id << "]: " << val << "\n";
+  }
+
+  void print(const char *id, std::string &val, const matador::field_attributes &attr) {
     std::cout << "[" << id << "]: " << val << " (size: " << attr.size() << ")\n";
   }
 
 private:
-  matador::detail::value_visitor visitor_;
+  matador::detail::value_processor visitor_;
 };
 
 #endif //MATADOR_COLUMN_PRINTER_HPP

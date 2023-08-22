@@ -22,5 +22,7 @@ private:
   constraints options_ = constraints::NONE;
 };
 
+const field_attributes null_attributes {};
+
 }
 #endif //MATADOR_FIELD_ATTRIBUTES_HPP

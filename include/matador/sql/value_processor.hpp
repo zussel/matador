@@ -1,10 +1,12 @@
-#ifndef MATADOR_VALUE_VISITOR_HPP
-#define MATADOR_VALUE_VISITOR_HPP
+#ifndef MATADOR_VALUE_PROCESSOR_HPP
+#define MATADOR_VALUE_PROCESSOR_HPP
 
 #include "matador/utils/any_visitor.hpp"
 #include "matador/utils/serializer.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
+
+//#include "matador/sql/value.hpp"
 
 #include <sstream>
 
@@ -16,10 +18,44 @@ class basic_dialect;
 
 namespace detail {
 
-class value_visitor
+//class value_visitor
+//{
+//public:
+//  using function = std::function<void(matador::value&)>; /**< Shortcut for the visitor callback function */
+//
+//  template <typename T>
+//  void register_visitor(const std::function<void(T&)> &f) {
+//    fs.insert(std::make_pair(
+//    std::type_index(typeid(T)),
+//    function([f](matador::any & x) {
+//      f(x._<T>());
+//    })
+//    ));
+//  }
+//
+//  /**
+//   * @brief Applies the visitor pattern on an any object.
+//   * @param x The any object the pattern should be applied on
+//   * @return Returns true if a function could be applied.
+//   */
+//  bool visit(matador::any & x) {
+//    auto it = fs.find(x.type_index());
+//    if (it != fs.end()) {
+//      it->second(x);
+//      return true;
+//    } else {
+//      return false;
+//    }
+//  }
+//
+//private:
+//  std::unordered_map<std::type_index, function> fs;
+//};
+
+class value_processor
 {
 public:
-  value_visitor();
+  value_processor();
 
   void apply(matador::any &a, const char *id, serializer &s);
 
@@ -93,4 +129,4 @@ private:
 /// @endcond
 
 }
-#endif //MATADOR_VALUE_VISITOR_HPP
+#endif //MATADOR_VALUE_PROCESSOR_HPP

@@ -63,7 +63,7 @@ public:
   }
 
   template< class V >
-  void on_primary_key(const char *id, V &pk, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &pk, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     write_id(id);
     append(pk).append(",");
@@ -78,7 +78,7 @@ public:
     newline();
   }
 
-  void on_primary_key(const char *id, std::string &pk, const field_attributes &attr = {});
+  void on_primary_key(const char *id, std::string &pk, const field_attributes &attr = null_attributes);
 
   // numbers
   template < class V >

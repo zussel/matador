@@ -1,4 +1,4 @@
-#include "matador/sql/value_visitor.hpp"
+#include "matador/sql/value_processor.hpp"
 #include "matador/sql/basic_dialect.hpp"
 
 #include "matador/utils/date.hpp"
@@ -8,7 +8,7 @@
 namespace matador {
 namespace detail {
 
-value_visitor::value_visitor()
+value_processor::value_processor()
 {
   visitor.register_visitor<char>([this](char &val) { this->process(val); });
   visitor.register_visitor<int>([this](int &val) { this->process(val); });
@@ -29,7 +29,7 @@ value_visitor::value_visitor()
   visitor.register_visitor<date>([this](date &val) { this->process(val); });
 }
 
-void value_visitor::apply(matador::any &a, const char *id, serializer &s)
+void value_processor::apply(matador::any &a, const char *id, serializer &s)
 {
   id_ = id;
   serializer_ = &s;
@@ -38,22 +38,22 @@ void value_visitor::apply(matador::any &a, const char *id, serializer &s)
   serializer_ = nullptr;
 }
 
-void value_visitor::process(std::string &val)
+void value_processor::process(std::string &val)
 {
   serializer_->on_attribute(id_, val, {});
 }
 
-void value_visitor::process(char *val)
+void value_processor::process(char *val)
 {
   serializer_->on_attribute(id_, val, {});
 }
 
-void value_visitor::process(time &val)
+void value_processor::process(time &val)
 {
   serializer_->on_attribute(id_, val, {});
 }
 
-void value_visitor::process(date &val)
+void value_processor::process(date &val)
 {
   serializer_->on_attribute(id_, val, {});
 }

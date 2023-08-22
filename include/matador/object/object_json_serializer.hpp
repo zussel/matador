@@ -43,29 +43,29 @@ public:
     return result;
   }
 
-  void on_primary_key(const char *id, std::string &pk, const field_attributes &/*attr*/ = {});
+  void on_primary_key(const char *id, std::string &pk, const field_attributes &/*attr*/ = null_attributes);
   template< class V >
-  void on_primary_key(const char *id, V &pk, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &pk, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     result_[id] = pk;
   }
 
   template < class V >
-  void on_attribute(const char *id, V &, const field_attributes &/*attr*/ = {}, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
     result_[id] = json::object();
   }
 
   template < class V >
-  void on_attribute(const char *id, V &val, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &val, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     result_[id] = val;
   }
 
-  void on_attribute(const char *id, bool &to, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, date &to, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, time &to, const field_attributes &/*attr*/ = {});
+  void on_attribute(const char *id, bool &to, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, date &to, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, time &to, const field_attributes &/*attr*/ = null_attributes);
 
   template<class V>
   void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type)

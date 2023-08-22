@@ -66,20 +66,20 @@ public:
   }
 
   template<class V>
-  void on_primary_key(const char *id, V &x, const field_attributes &attr = {})
+  void on_primary_key(const char *id, V &x, const field_attributes &attr = null_attributes)
   {
     on_attribute(id, x, attr);
   }
 
   template<class T>
-  void on_attribute(const char *, T &x, const field_attributes &/*attr*/ = {})
+  void on_attribute(const char *, T &x, const field_attributes &/*attr*/ = null_attributes)
   {
     buffer_->release(&x, sizeof(x));
   }
   void on_attribute(const char *id, char *x, const field_attributes &attr);
-  void on_attribute(const char *id, std::string &x, const field_attributes &attr = {});
-  void on_attribute(const char *id, date &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, time &x, const field_attributes &/*attr*/ = {});
+  void on_attribute(const char *id, std::string &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, date &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, time &x, const field_attributes &/*attr*/ = null_attributes);
 
   template<class T>
   void on_belongs_to(const char *id, matador::object_ptr<T> &x, cascade_type cascade)

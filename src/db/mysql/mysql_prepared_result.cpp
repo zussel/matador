@@ -188,7 +188,7 @@ void mysql_prepared_result::read_value(const char */*id*/, size_type index, doub
   }
 }
 
-void mysql_prepared_result::read_value(const char */*id*/, size_type index, char *value, long size) {
+void mysql_prepared_result::read_value(const char */*id*/, size_type index, char *value, size_t size) {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_VAR_STRING, value, size);
   }
@@ -246,7 +246,7 @@ void mysql_prepared_result::read_value(const char */*id*/, size_type index, std:
   }
 }
 
-void mysql_prepared_result::read_value(const char */*id*/, size_type index, std::string &value, long size)
+void mysql_prepared_result::read_value(const char */*id*/, size_type index, std::string &value, size_t size)
 {
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_VAR_STRING, value, size);

@@ -79,9 +79,9 @@ protected:
   void read_value(const char *id, size_type index, double &x) override;
   void read_value(const char *id, size_type index, matador::date &x) override;
   void read_value(const char *id, size_type index, matador::time &x) override;
-  void read_value(const char *id, size_type index, char *x, long size) override;
+  void read_value(const char *id, size_type index, char *x, size_t size) override;
   void read_value(const char *id, size_type index, std::string &x) override;
-  void read_value(const char *id, size_type index, std::string &x, long size) override;
+  void read_value(const char *id, size_type index, std::string &x, size_t size) override;
 
   template < class T >
   void read_column(const char *id, size_type index, T &val)

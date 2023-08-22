@@ -36,11 +36,11 @@ public:
   }
 
   template < class T >
-  void on_primary_key(const char *, T &, const field_attributes &/*attr*/ = {}) {}
+  void on_primary_key(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
   template < class T >
-  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = {}) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = {}) {}
+  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
   template < class T >
   void on_belongs_to(const char *, T &, cascade_type) {}

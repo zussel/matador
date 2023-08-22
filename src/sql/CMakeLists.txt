@@ -63,7 +63,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_column_processor.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_creator.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/parameter_binder.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/value_visitor.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/value_processor.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/database_error.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_sql_logger.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/sql_logger.hpp

@@ -9,7 +9,7 @@
 namespace matador {
 
 /**
- * @brief Enumeration type of all builtin data types
+ * @brief Enumeration type of all supported builtin data types
  */
 enum struct data_type {
   type_char = 0,           /*!< Data type char */
@@ -41,9 +41,9 @@ enum struct database_type {
   type_char = 0,       /*!< Data type char */
   type_float,          /*!< Data type float */
   type_double,         /*!< Data type double */
-  type_smallint,
-  type_int,
-  type_bigint,
+  type_smallint,       /*!< Data type small int */
+  type_int,            /*!< Data type integer */
+  type_bigint,         /*!< Data type big integer */
   type_bool,           /*!< Data type bool */
   type_char_pointer,   /*!< Data type character pointer */
   type_varchar,        /*!< Data type varchar */

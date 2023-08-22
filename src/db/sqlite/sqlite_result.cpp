@@ -225,7 +225,7 @@ void sqlite_result::read_value(const char */*id*/, size_type index, double &x)
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char */*id*/, size_type index, char *x, long size)
+void sqlite_result::read_value(const char */*id*/, size_type index, char *x, size_t size)
 {
   t_row::value_type &val = result_[row_index_][index];
   size_t len = strlen(val);
@@ -245,7 +245,7 @@ void sqlite_result::read_value(const char */*id*/, size_type index, char *x, lon
   }
 }
 
-void sqlite_result::read_value(const char */*id*/, size_type index, std::string &x, long /*size*/)
+void sqlite_result::read_value(const char */*id*/, size_type index, std::string &x, size_t /*size*/)
 {
   t_row::value_type val = result_[row_index_][index];
   x.assign(val);

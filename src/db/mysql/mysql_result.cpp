@@ -223,7 +223,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, double &value
   // Todo: check error
 }
 
-void mysql_result::read_value(const char */*id*/, size_type index, char *value, long s)
+void mysql_result::read_value(const char */*id*/, size_type index, char *value, size_t s)
 {
   char *val = row_[index];
   size_t len = strlen(val);
@@ -236,7 +236,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, char *value, 
 
 }
 
-void mysql_result::read_value(const char */*id*/, size_type index, std::string &value, long /*size*/)
+void mysql_result::read_value(const char */*id*/, size_type index, std::string &value, size_t /*size*/)
 {
   char *val = row_[index];
   value.assign(val);

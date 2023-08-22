@@ -70,7 +70,7 @@ public:
   }
 
   template< class V >
-  void on_primary_key(const char *id, V &pk, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &pk, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     write_id(id);
 
@@ -83,10 +83,10 @@ public:
 
     newline();
   }
-  void on_primary_key(const char *id, std::string &pk, const field_attributes &/*attr*/ = {});
+  void on_primary_key(const char *id, std::string &pk, const field_attributes &/*attr*/ = null_attributes);
 
   template < class V >
-  void on_attribute(const char *id, V &obj, const field_attributes &/*attr*/ = {}, typename std::enable_if<!matador::is_builtin<V>::value>::type* = nullptr)
+  void on_attribute(const char *id, V &obj, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!matador::is_builtin<V>::value>::type* = nullptr)
   {
     write_id(id);
     append(obj);
@@ -94,7 +94,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &val, const field_attributes &/*attr*/ = {}, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &val, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     write_id(id);
     append(val);
@@ -102,12 +102,12 @@ public:
     newline();
   }
 
-  void on_attribute(const char *id, bool &val, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, std::string &val, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, const char *val, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, char val[], const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, date &val, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, time &val, const field_attributes &/*attr*/ = {});
+  void on_attribute(const char *id, bool &val, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, std::string &val, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, const char *val, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, char val[], const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, date &val, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, time &val, const field_attributes &/*attr*/ = null_attributes);
 
   template<class Value>
   void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);

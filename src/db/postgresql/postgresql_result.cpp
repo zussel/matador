@@ -120,12 +120,12 @@ void postgresql_result::read_value(const char */*id*/, size_type index, double &
   detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::read_value(const char */*id*/, size_type index, char *value, long size)
+void postgresql_result::read_value(const char */*id*/, size_type index, char *value, size_t size)
 {
   detail::get_value(res_, row_index_, index, value, size);
 }
 
-void postgresql_result::read_value(const char */*id*/, size_type index, std::string &value, long size)
+void postgresql_result::read_value(const char */*id*/, size_type index, std::string &value, size_t size)
 {
   detail::get_value(res_, row_index_, index, value, size);
 }

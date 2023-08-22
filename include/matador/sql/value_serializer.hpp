@@ -61,27 +61,27 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  void on_attribute(const char *id, char &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, short &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, int &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, long &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, long long &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, unsigned char &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, unsigned short &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, unsigned int &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, unsigned long &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, unsigned long long &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, float &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, double &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, bool &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, char *x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, std::string &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, date &x, const field_attributes &/*attr*/ = {});
-  void on_attribute(const char *id, time &x, const field_attributes &/*attr*/ = {});
+  void on_attribute(const char *id, char &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, short &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, int &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, long &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, long long &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, unsigned char &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, unsigned short &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, unsigned int &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, unsigned long &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, unsigned long long &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, float &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, double &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, bool &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, char *x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, std::string &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, date &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, time &x, const field_attributes &/*attr*/ = null_attributes);
   void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);
   void on_has_one(const char *id, identifiable_holder &x, cascade_type);
   template<typename ValueType>
-  void on_primary_key(const char *id, ValueType &x, const field_attributes &attr = {})
+  void on_primary_key(const char *id, ValueType &x, const field_attributes &attr = null_attributes)
   {
     on_attribute(id, x, attr);
   }

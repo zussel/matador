@@ -29,7 +29,7 @@ public:
    *
    * @param r The row to move from
    */
-  row(row &&r) = default;
+  row(row &&r) noexcept = default;
 
   /**
    * Copy assigns a row with a given row
@@ -77,11 +77,11 @@ public:
   /**
    * @brief Serializes the row with the given serializer
    *
-   * @tparam SERIALIZER The type of the used serializer object
+   * @tparam Serializer The type of the used serializer object
    * @param serializer The serializer to be used
    */
-  template < class SERIALIZER >
-  void serialize(SERIALIZER &serializer)
+  template < class Serializer >
+  void serialize(Serializer &serializer)
   {
     for (auto &column : columns_) {
       values_.at(column)->serialize(column.c_str(), serializer);

@@ -144,7 +144,7 @@ void mssql_result::read_value(const char *id, size_type index, double &x)
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *, size_type index, char *x, long size)
+void mssql_result::read_value(const char *, size_type index, char *x, size_t size)
 {
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, x, size, &info);
@@ -155,7 +155,7 @@ void mssql_result::read_value(const char *, size_type index, char *x, long size)
   }
 }
 
-void mssql_result::read_value(const char *id, size_type index, std::string &x, long size)
+void mssql_result::read_value(const char *id, size_type index, std::string &x, size_t size)
 {
   read_column(id, index, x, size);
 }

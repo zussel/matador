@@ -123,7 +123,7 @@ void postgresql_prepared_result::read_value(const char */*id*/, size_type index,
   detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char */*id*/, size_type index, char *x, long size)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, char *x, size_t size)
 {
   detail::get_value(res_, row_index_, index, x, size);
 }
@@ -133,7 +133,7 @@ void postgresql_prepared_result::read_value(const char */*id*/, size_type index,
   detail::get_value(res_, row_index_, index, x);
 }
 
-void postgresql_prepared_result::read_value(const char */*id*/, size_type index, std::string &x, long size)
+void postgresql_prepared_result::read_value(const char */*id*/, size_type index, std::string &x, size_t size)
 {
   detail::get_value(res_, row_index_, index, x, size);
 }
