@@ -17,7 +17,7 @@ enum class constraints : unsigned char {
   UNIQUE_NOT_NULL = UNIQUE | NOT_NULL
 };
 
-static std::unordered_map<constraints, std::string> constraints_to_name_map();
+//static std::unordered_map<constraints, std::string> constraints_to_name_map();
 
 inline constraints operator|(constraints a, constraints b)
 {

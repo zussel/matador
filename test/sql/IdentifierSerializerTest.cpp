@@ -128,8 +128,8 @@ void IdentifierSerializerTest::test_identifier_statement_result(connection &conn
 template<typename IdType>
 void IdentifierSerializerTest::test_identifier_statement_result(connection &conn)
 {
-  identifier_entity<short> id { 7, "jane"};
-  query<identifier_entity<short>> q("id_stmt_entity");
+  identifier_entity<IdType> id { 7, "jane"};
+  query<identifier_entity<IdType>> q("id_stmt_entity");
   auto res = q.create().execute(conn);
 
   res = q.insert(id).execute(conn);
@@ -139,7 +139,7 @@ void IdentifierSerializerTest::test_identifier_statement_result(connection &conn
   auto stmt = q.update().where("id"_col == 7).prepare(conn);
   stmt.bind(0, &id);
 
-  detail::identifier_binder<identifier_entity<short>> pk_binder;
+  detail::identifier_binder<identifier_entity<IdType>> pk_binder;
   auto pk = identifier{id.id};
   pk_binder.bind(&id, &stmt, 2, pk);
 
@@ -148,7 +148,7 @@ void IdentifierSerializerTest::test_identifier_statement_result(connection &conn
   res = q.select().where("id"_col == 7).execute(conn);
 
   for (const auto &p : res) {
-    UNIT_EXPECT_EQUAL(p->id, 7UL);
+    UNIT_EXPECT_EQUAL(p->id, static_cast<IdType>(7));
     UNIT_EXPECT_EQUAL(p->name, "john");
   }
 

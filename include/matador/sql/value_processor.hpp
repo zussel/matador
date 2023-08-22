@@ -14,6 +14,7 @@ namespace matador {
 
 /// @cond MATADOR_DEV
 
+struct value;
 class basic_dialect;
 
 namespace detail {
@@ -83,13 +84,13 @@ private:
   const char *id_ = nullptr;
 };
 
-class value_to_string_visitor
+class value_to_string_processor
 {
 public:
-  value_to_string_visitor();
+  value_to_string_processor();
 
-  std::string to_string(matador::any &a);
-  std::string to_safe_string(matador::any &a, const basic_dialect *d);
+  std::string to_string(const matador::value &v);
+  std::string to_safe_string(const matador::value &v, const basic_dialect *d);
 
   template < class T >
   void process(T &val, typename std::enable_if<

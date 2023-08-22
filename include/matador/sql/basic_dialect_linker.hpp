@@ -72,7 +72,7 @@ private:
   void dialect(basic_dialect *d);
 
   basic_dialect *dialect_;
-  detail::value_to_string_visitor value_to_string_visitor_;
+  detail::value_to_string_processor value_to_string_visitor_;
 };
 
 /// @endcond

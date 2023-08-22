@@ -2,6 +2,7 @@
 #define CONNECTION_HPP
 
 #include "matador/sql/result.hpp"
+#include "matador/sql/basic_dialect.hpp"
 #include "matador/sql/statement.hpp"
 #include "matador/sql/connection_impl.hpp"
 #include "matador/sql/row.hpp"

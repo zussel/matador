@@ -24,7 +24,7 @@ SET(SOURCES
   query_value_column_processor.cpp
   query_value_creator.cpp
   connection_impl.cpp
-  value_visitor.cpp
+  value_processor.cpp
   database_error.cpp
   sql_logger.cpp)
 

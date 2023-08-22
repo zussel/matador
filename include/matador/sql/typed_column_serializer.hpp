@@ -10,6 +10,7 @@
 #include "matador/utils/identifier.hpp"
 
 #include <memory>
+#include <functional>
 
 namespace matador {
 namespace detail {

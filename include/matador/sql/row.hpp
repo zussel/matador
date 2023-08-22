@@ -2,6 +2,7 @@
 #define ROW_HPP
 
 #include "matador/sql/value.hpp"
+#include "matador/sql/value_processor.hpp"
 
 #include <cstddef>
 #include <memory>
@@ -162,7 +163,7 @@ public:
    */
   std::string str(size_t pos)
   {
-    return value_to_string_visitor_.to_string(values_.at(columns_.at(pos))->value_);
+    return value_to_string_visitor_.to_string(*values_.at(columns_.at(pos)));
   }
 
   /**
@@ -173,7 +174,7 @@ public:
    */
   std::string str(const std::string &column)
   {
-    return value_to_string_visitor_.to_string(values_.at(column)->value_);
+    return value_to_string_visitor_.to_string(*values_.at(column));
   }
 
   /**
@@ -192,7 +193,7 @@ private:
   t_values values_;
 
   detail::value_processor value_processor_;
-  detail::value_to_string_visitor value_to_string_visitor_;
+  detail::value_to_string_processor value_to_string_visitor_;
 };
 /// @endcond
 

@@ -61,7 +61,7 @@ private:
 template<typename T>
 T json_mapper_serializer::create()
 {
-  return std::move(T());
+  return T{};
 }
 
 template<class V>

@@ -366,7 +366,7 @@ public:
     if (id_ != id) {
       return;
     }
-    if (attr.size() > static_cast<long>(from_.size())) {
+    if (attr.size() > from_.size()) {
 #ifdef _MSC_VER
 		strncpy_s(to, attr.size(), from_.c_str(), from_.size());
 		to[from_.size()] = '\0';

@@ -86,7 +86,7 @@ public:
    */
   std::vector<T> array_from_string(const char *str)
   {
-    return std::move(array_from_string(str, true));
+    return array_from_string(str, true);
   }
 
   /// @cond OOS_DEV

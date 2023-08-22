@@ -1,3 +1,4 @@
+#include "matador/sql/basic_dialect.hpp"
 #include "matador/sql/statement_impl.hpp"
 
 namespace matador {

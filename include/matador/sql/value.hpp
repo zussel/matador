@@ -2,8 +2,6 @@
 #define VALUE_HPP
 
 #include "matador/sql/token.hpp"
-#include "matador/sql/basic_dialect.hpp"
-#include "matador/sql/value_processor.hpp"
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
@@ -45,7 +43,6 @@ struct value : public detail::token
 
   any value_;
   std::size_t size_ = 0;
-  detail::value_to_string_visitor value_to_string_visitor_;
 };
 
 struct null_value : public value

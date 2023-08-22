@@ -1,5 +1,6 @@
 #include "matador/sql/value_processor.hpp"
 #include "matador/sql/basic_dialect.hpp"
+#include "matador/sql/value.hpp"
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
@@ -58,7 +59,7 @@ void value_processor::process(date &val)
   serializer_->on_attribute(id_, val, {});
 }
 
-value_to_string_visitor::value_to_string_visitor()
+value_to_string_processor::value_to_string_processor()
 {
   visitor.register_visitor<char>([this](char &val) { this->process(val); });
   visitor.register_visitor<int>([this](int &val) { this->process(val); });
@@ -80,23 +81,24 @@ value_to_string_visitor::value_to_string_visitor()
   visitor.register_visitor<date>([this](date &val) { this->process(val); });
 }
 
-std::string value_to_string_visitor::to_string(matador::any &a)
+std::string value_to_string_processor::to_string(const matador::value &v)
 {
   dialect_ = nullptr;
   result_.clear();
-  visitor.visit(a);
+  visitor.visit(const_cast<matador::value&>(v).value_);
   return result_;
 }
 
-std::string value_to_string_visitor::to_safe_string(matador::any &a, const basic_dialect *d)
+std::string value_to_string_processor::to_safe_string(const matador::value &v, const basic_dialect *d)
 {
   dialect_ = d;
   result_.clear();
-  visitor.visit(a);
+  auto a = v.value_;
+  visitor.visit(const_cast<matador::value&>(v).value_);
   return result_;
 }
 
-void value_to_string_visitor::process(std::string &val)
+void value_to_string_processor::process(std::string &val)
 {
   if (dialect_ != nullptr) {
     result_ =  "'" + dialect_->prepare_literal(val) + "'";
@@ -105,21 +107,21 @@ void value_to_string_visitor::process(std::string &val)
   }
 }
 
-void value_to_string_visitor::process(char &val)
+void value_to_string_processor::process(char &val)
 {
   std::stringstream ss;
   ss << "'" << val << "'";
   result_ = ss.str();
 }
 
-void value_to_string_visitor::process(unsigned char &val)
+void value_to_string_processor::process(unsigned char &val)
 {
   std::stringstream ss;
   ss << "'" << val << "'";
   result_ = ss.str();
 }
 
-void value_to_string_visitor::process(char *val)
+void value_to_string_processor::process(char *val)
 {
   if (dialect_ != nullptr) {
     std::stringstream ss;
@@ -132,7 +134,7 @@ void value_to_string_visitor::process(char *val)
   }
 }
 
-void value_to_string_visitor::process(const char *val)
+void value_to_string_processor::process(const char *val)
 {
   if (dialect_ != nullptr) {
     std::stringstream ss;
@@ -145,7 +147,7 @@ void value_to_string_visitor::process(const char *val)
   }
 }
 
-void value_to_string_visitor::process(time &val)
+void value_to_string_processor::process(time &val)
 {
   if (dialect_ != nullptr) {
     std::stringstream ss;
@@ -158,7 +160,7 @@ void value_to_string_visitor::process(time &val)
   }
 }
 
-void value_to_string_visitor::process(date &val)
+void value_to_string_processor::process(date &val)
 {
   if (dialect_ != nullptr) {
     std::stringstream ss;
