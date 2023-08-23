@@ -2,7 +2,6 @@
 #define ROW_HPP
 
 #include "matador/sql/value.hpp"
-#include "matador/sql/value_processor.hpp"
 
 #include <cstddef>
 #include <memory>
@@ -85,7 +84,7 @@ public:
   void serialize(Serializer &serializer)
   {
     for (auto &column : columns_) {
-      value_processor_.apply(values_.at(column)->value_, column.c_str(), serializer);
+      serializer.process(column.c_str(), values_.at(column));
     }
   }
 
@@ -156,28 +155,6 @@ public:
   }
 
   /**
-   * Get string value of column at position
-   *
-   * @param pos Column index
-   * @return The string value of the requested column.
-   */
-  std::string str(size_t pos)
-  {
-    return value_to_string_visitor_.to_string(*values_.at(columns_.at(pos)));
-  }
-
-  /**
-   * Get string value of column at position
-   *
-   * @param column Column name
-   * @return The string value of the requested column.
-   */
-  std::string str(const std::string &column)
-  {
-    return value_to_string_visitor_.to_string(*values_.at(column));
-  }
-
-  /**
    * @brief Clear the row
    *
    * Clear the row and all its columns
@@ -191,9 +168,6 @@ private:
 
   t_columns columns_;
   t_values values_;
-
-  detail::value_processor value_processor_;
-  detail::value_to_string_processor value_to_string_visitor_;
 };
 /// @endcond
 

@@ -7,6 +7,8 @@
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/serializer.hpp"
 
+#include "matador/sql/value_processor.hpp"
+
 #include <memory>
 
 namespace matador {
@@ -28,7 +30,7 @@ class result_row_serializer : public serializer
 public:
   explicit result_row_serializer(result_impl &impl);
 
-  void serialize(row &r);
+  void process(const char *id, const std::shared_ptr<value> &val);
 
   void on_attribute(const char *id, char &x, const field_attributes &attr) override;
   void on_attribute(const char *id, short &x, const field_attributes &attr) override;
@@ -56,7 +58,9 @@ public:
 
 private:
   result_impl &impl_;
+  detail::value_processor value_processor_;
 };
+
 class result_identifier_reader : public identifier_serializer
 {
 public:
