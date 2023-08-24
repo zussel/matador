@@ -30,7 +30,9 @@ public:
   template<class V>
   void serialize(V &x);
   template<class V>
-  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class V>
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) { }
   void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) { }

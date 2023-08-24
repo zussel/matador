@@ -2,12 +2,14 @@
 
 namespace matador {
 
-void json_object_serializer::on_primary_key(const char *id, std::string &pk, const field_attributes &/*attr*/)
+void json_object_serializer::on_primary_key(const char *id, std::string &pk, size_t /*size*/)
 {
-  write_id(id);
-  append(pk);
-  json_.append(",");
-  newline();
+  on_attribute(id, pk);
+}
+
+void json_object_serializer::on_revision(const char *id, unsigned long long int &rev)
+{
+  on_attribute(id, rev);
 }
 
 void json_object_serializer::on_attribute(const char *id, bool &val, const field_attributes &/*attr*/)

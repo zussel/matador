@@ -3,7 +3,7 @@
 namespace matador {
 namespace detail {
 
-void json_mapper_serializer::on_primary_key(const char *id, std::string &to, const field_attributes &/*attr*/)
+void json_mapper_serializer::on_primary_key(const char *id, std::string &to, size_t /*size*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -13,6 +13,11 @@ void json_mapper_serializer::on_primary_key(const char *id, std::string &to, con
   }
 
   to = runtime_data_.value.as<std::string>();
+}
+
+void json_mapper_serializer::on_revision(const char *id, unsigned long long int &rev)
+{
+  on_attribute(id, rev);
 }
 
 void json_mapper_serializer::on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/)

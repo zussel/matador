@@ -7,6 +7,16 @@ column_serializer::column_serializer(columns::t_brackets brackets)
   : brackets_(brackets)
 {}
 
+void column_serializer::on_primary_key(const char *id, std::string &, size_t /*size*/)
+{
+  cols_->push_back(std::make_shared<column>(id));
+}
+
+void column_serializer::on_revision(const char *id, unsigned long long int &/*rev*/)
+{
+  cols_->push_back(std::make_shared<column>(id));
+}
+
 void column_serializer::on_attribute(const char *id, char&, const field_attributes &/*attr*/)
 {
   cols_->push_back(std::make_shared<column>(id));

@@ -70,7 +70,7 @@ public:
   }
 
   template< class V >
-  void on_primary_key(const char *id, V &pk, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     write_id(id);
 
@@ -83,7 +83,8 @@ public:
 
     newline();
   }
-  void on_primary_key(const char *id, std::string &pk, const field_attributes &/*attr*/ = null_attributes);
+  void on_primary_key(const char *id, std::string &pk, size_t /*size*/);
+  void on_revision(const char *id, unsigned long long &rev);
 
   template < class V >
   void on_attribute(const char *id, V &obj, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!matador::is_builtin<V>::value>::type* = nullptr)

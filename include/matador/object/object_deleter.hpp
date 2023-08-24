@@ -85,7 +85,9 @@ public:
   void serialize(T &x) { matador::access::serialize(*this, x); }
 
   template<class T>
-  void on_primary_key(const char *id, T &x, const field_attributes &attr = null_attributes);
+  void on_primary_key(const char *id, T &x, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type* = 0);
+  void on_primary_key(const char *id, std::string &x, size_t size);
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class T>
   void on_attribute(const char *, const T &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
@@ -224,9 +226,9 @@ void object_deleter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_
 }
 
 template<class T>
-void object_deleter::on_primary_key(const char *id, T &x, const field_attributes &attr)
+void object_deleter::on_primary_key(const char *id, T &x, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type*)
 {
-  on_attribute(id, x, attr);
+  on_attribute(id, x);
 }
 
 }

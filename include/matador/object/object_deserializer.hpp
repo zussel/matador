@@ -66,10 +66,12 @@ public:
   }
 
   template<class V>
-  void on_primary_key(const char *id, V &x, const field_attributes &attr = null_attributes)
+  void on_primary_key(const char *id, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
-    on_attribute(id, x, attr);
+    on_attribute(id, x);
   }
+  void on_primary_key(const char *id, std::string &x, size_t size);
+  void on_revision(const char *id, unsigned long long &rev);
 
   template<class T>
   void on_attribute(const char *, T &x, const field_attributes &/*attr*/ = null_attributes)

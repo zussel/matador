@@ -59,6 +59,13 @@ public:
     matador::access::serialize(*this, x);
   }
 
+  template< typename ValueType >
+  void on_primary_key(const char *id, ValueType &x, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type* = 0)
+  {
+    on_attribute(id, x, { constraints::PRIMARY_KEY });
+  }
+  void on_primary_key(const char *id, std::string &pk, size_t size);
+  void on_revision(const char *id, unsigned long long &rev);
   void on_attribute(const char *id, char &x, const field_attributes &attr = null_attributes);
   void on_attribute(const char *id, short &x, const field_attributes &attr = null_attributes);
   void on_attribute(const char *id, int &x, const field_attributes &attr = null_attributes);
@@ -78,11 +85,6 @@ public:
   void on_attribute(const char *id, time &x, const field_attributes &attr = null_attributes);
   void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);
   void on_has_one(const char *id, identifiable_holder &x, cascade_type);
-  template< typename ValueType >
-  void on_primary_key(const char *id, ValueType &x, const field_attributes &attr = null_attributes)
-  {
-    on_attribute(id, x, attr);
-  }
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 

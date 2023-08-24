@@ -32,7 +32,9 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_primary_key(const char *, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_primary_key(const char *id, std::string &, size_t size);
+  void on_revision(const char *id, unsigned long long &/*rev*/) {}
 
   template<class V>
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
@@ -132,9 +134,19 @@ void identifier_binder<T>::bind(T *obj, statement<T> *stmt, size_t pos, identifi
 
 template < class T >
 template< class V >
-void identifier_binder<T>::on_primary_key(const char *id, V &/*x*/, const field_attributes &/*attr*/)
+void identifier_binder<T>::on_primary_key(const char *id, V &/*x*/, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type*)
 {
   if (!id_->is_similar_type<V>()) {
+    throw_object_exception("identifier types aren't equal");
+  }
+  field_name_ = id;
+  id_->serialize(*this);
+}
+
+template<class T>
+void identifier_binder<T>::on_primary_key(const char *id, std::string &, size_t size)
+{
+  if (!id_->is_similar_type<std::string>()) {
     throw_object_exception("identifier types aren't equal");
   }
   field_name_ = id;

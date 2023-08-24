@@ -7,6 +7,16 @@ namespace detail {
 value_column_serializer::value_column_serializer()
 : value_column_identifier_serializer_(*this) {}
 
+void value_column_serializer::on_primary_key(const char *id, std::string &pk, size_t size)
+{
+  on_attribute(id, pk, { size, constraints::PRIMARY_KEY });
+}
+
+void value_column_serializer::on_revision(const char *id, unsigned long long int &rev)
+{
+  on_attribute(id, rev);
+}
+
 void value_column_serializer::on_attribute(const char *id, char &x, const field_attributes &attr)
 {
   cols_->push_back(make_value_column(id, x, attr));

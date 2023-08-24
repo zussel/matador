@@ -100,6 +100,16 @@ void result_impl::serialize(row &r)
   matador::access::serialize(result_row_serializer_, r);
 }
 
+void result_impl::on_primary_key(const char *id, std::string &value, size_t size)
+{
+  read_value(id, column_index_++, value, size);
+}
+
+void result_impl::on_revision(const char *id, unsigned long long int &rev)
+{
+  read_value(id, column_index_++, rev);
+}
+
 void result_impl::on_attribute(const char *id, char *value, const field_attributes &attr)
 {
   read_value(id, column_index_++, value, attr.size());

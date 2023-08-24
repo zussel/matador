@@ -109,7 +109,9 @@ public:
   }
 
   template < typename V >
-  void on_primary_key(const char *id, V &, const field_attributes &attr = null_attributes) { bind(id, param_, attr); }
+  void on_primary_key(const char *id, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) { bind(id, param_, {}); }
+  void on_primary_key(const char *id, std::string &, size_t size) { bind(id, param_, size); }
+  void on_revision(const char *id, unsigned long long &/*rev*/) { bind(id, param_, {}); }
   void on_attribute(const char *id, char &, const field_attributes &attr = null_attributes) { bind(id, param_, attr); }
   void on_attribute(const char *id, short &, const field_attributes &attr = null_attributes) { bind(id, param_, attr); }
   void on_attribute(const char *id, int &, const field_attributes &attr = null_attributes) { bind(id, param_, attr); }
@@ -179,7 +181,9 @@ public:
   }
 
   template < typename V >
-  void on_primary_key(const char *id, V &v, const field_attributes &attr = null_attributes) { on_attribute(id, v, attr); }
+  void on_primary_key(const char *id, V &v, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) { on_attribute(id, v, {}); }
+  void on_primary_key(const char *id, std::string &v, size_t size) { on_attribute(id, v, size); }
+  void on_revision(const char *id, unsigned long long &rev) { on_attribute(id, rev, {}); }
   void on_attribute(const char *, char &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, short &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, int &, const field_attributes &/*attr*/ = null_attributes) {}
@@ -277,6 +281,10 @@ public:
     matador::access::serialize(*this, x);
   }
 
+  template < typename V >
+  void on_primary_key(const char *id, V &v, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) { on_attribute(id, v, {}); }
+  void on_primary_key(const char *id, std::string &v, size_t size) { on_attribute(id, v, size); }
+  void on_revision(const char *id, unsigned long long &rev) { on_attribute(id, rev, {}); }
   void on_attribute(const char *id, char &x, const field_attributes &/*attr*/ = null_attributes) { bind_value(id, x); }
   void on_attribute(const char *id, short &x, const field_attributes &/*attr*/ = null_attributes) { bind_value(id, x); }
   void on_attribute(const char *id, int &x, const field_attributes &/*attr*/ = null_attributes) { bind_value(id, x); }
@@ -294,8 +302,6 @@ public:
   void on_attribute(const char *id, matador::date &x, const field_attributes &/*attr*/ = null_attributes) { bind_value(id, x); }
   void on_attribute(const char *, char *x, const field_attributes &attr = null_attributes) { impl_->bind(x, attr.size(), index_++); }
   void on_attribute(const char *, std::string &x, const field_attributes &attr = null_attributes) { impl_->bind(x, attr.size(), index_++); }
-  template< typename V >
-  void on_primary_key(const char *id, V &x, const field_attributes &attr = null_attributes) { on_attribute(id, x, attr); }
   void on_belongs_to(const char */*id*/, identifiable_holder &x, cascade_type)
   {
     if (x.has_primary_key()) {

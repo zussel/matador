@@ -35,6 +35,20 @@ typed_column_serializer::typed_column_serializer()
   , column_identifier_serializer_(*this)
 {}
 
+void typed_column_serializer::on_primary_key(const char *id, std::string &pk, size_t size)
+{
+  create_column_func_ = make_column<typed_identifier_column>;
+  create_varchar_column_func_ = make_varchar_column<identifier_varchar_column>;
+  on_attribute(id, pk, { size, constraints::PRIMARY_KEY });
+  create_column_func_ = make_column<typed_column>;
+  create_varchar_column_func_ = make_varchar_column<typed_varchar_column>;
+}
+
+void typed_column_serializer::on_revision(const char *id, unsigned long long int &rev)
+{
+  on_attribute(id, rev);
+}
+
 void typed_column_serializer::on_attribute(const char *id, char&, const field_attributes &/*attr*/)
 {
   cols_->push_back(create_column_func_(id, data_type::type_char, index_++));

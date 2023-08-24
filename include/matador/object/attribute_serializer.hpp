@@ -53,13 +53,18 @@ public:
   {}
 
   template < class V >
-  void on_primary_key(const char *id, V &to)
+  void on_primary_key(const char *id, V &to, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
-    if (id_ != id) {
-      return;
-    }
     on_attribute(id, to);
-    this->success_ = true;
+  }
+  void on_primary_key(const char *id, std::string &to, size_t size)
+  {
+    on_attribute(id, to, size);
+  }
+
+  void on_revision(const char *id, unsigned long long &rev)
+  {
+    on_attribute(id, rev);
   }
 
   template < class V >
@@ -114,7 +119,12 @@ public:
   {}
 
   template < class V >
-  void on_primary_key(const char *, V &) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t) {}
+  void on_revision(const char *id, unsigned long long &rev)
+  {
+    on_attribute(id, rev);
+  }
 
   template < class V >
   void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
@@ -175,7 +185,9 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
@@ -218,7 +230,9 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
@@ -258,7 +272,9 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
@@ -295,7 +311,12 @@ public:
   ~attribute_reader() = default;
 
   template < class V >
-  void on_primary_key(const char *, V &) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *id, std::string &to, size_t size)
+  {
+    on_attribute(id, to, size);
+  }
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = null_attributes)
@@ -343,14 +364,12 @@ public:
   ~attribute_reader() = default;
 
   template < class V >
-  void on_primary_key(const char *id, V &to)
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *id, std::string &to, size_t size)
   {
-    if (id_ != id) {
-      return;
-    }
-    on_attribute(id, to);
-    this->success_ = true;
+    on_attribute(id, to, size);
   }
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = null_attributes)
@@ -398,13 +417,19 @@ public:
   ~attribute_writer() = default;
 
   template < class V >
-  void on_primary_key(const char *id, V &from)
+  void on_primary_key(const char *id, V &from, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
-    if (id_ != id) {
-      return;
-    }
     on_attribute(id, from);
   }
+  void on_primary_key(const char *id, std::string &from, size_t size)
+  {
+    on_attribute(id, from, size);
+  }
+  void on_revision(const char *id, unsigned long long &rev)
+  {
+    on_attribute(id, rev);
+  }
+
   template < class V >
   void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
   {
@@ -456,7 +481,9 @@ public:
   {}
 
   template < class V >
-  void on_primary_key(const char *, V &) {}
+  void on_primary_key(const char *, V &from, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &/*from*/, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
@@ -497,7 +524,9 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &) {}
+  void on_primary_key(const char *, V &from, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &/*from*/, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
@@ -536,7 +565,9 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &) {}
+  void on_primary_key(const char *, V &from, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &/*from*/, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
@@ -572,13 +603,12 @@ public:
   ~attribute_writer() = default;
 
   template < class V >
-  void on_primary_key(const char *id, V &from)
+  void on_primary_key(const char *, V &from, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *id, std::string &from, size_t size)
   {
-    if (id_ != id) {
-      return;
-    }
-    on_attribute(id, from);
+    on_attribute(id, from, size);
   }
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
   void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
   {
@@ -711,7 +741,18 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &) {}
+  void on_primary_key(const char *id, V &from, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  {
+    on_attribute(id, from);
+  }
+  void on_primary_key(const char *id, std::string &from, size_t size)
+  {
+    on_attribute(id, from, size);
+  }
+  void on_revision(const char *id, unsigned long long &rev)
+  {
+    on_attribute(id, rev);
+  }
   template < class V >
   void on_attribute(const char *id, V &/*from*/, const field_attributes &/*attr*/ = null_attributes)
   {

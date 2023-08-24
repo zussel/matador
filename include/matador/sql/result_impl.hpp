@@ -114,24 +114,26 @@ public:
   void serialize(row &r);
 
   template<typename ValueType>
-  void on_primary_key(const char *id, ValueType &value, const field_attributes &/*attr*/ = null_attributes)
+  void on_primary_key(const char *id, ValueType &value, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type* = 0)
   {
     read_value(id, column_index_++, value);
   }
+  void on_primary_key(const char *id, std::string &v, size_t size);
+  void on_revision(const char *id, unsigned long long &rev);
 
   template < class Type >
   void on_attribute(const char *id, Type &x, const field_attributes &/*attr*/ = null_attributes)
   {
     read_value(id, column_index_++, x);
   }
-  void on_attribute(const char *id, char *, const field_attributes &attr = null_attributes) /*override*/;
-  void on_attribute(const char *id, std::string&, const field_attributes &attr = null_attributes) /*override*/;
+  void on_attribute(const char *id, char *, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, std::string&, const field_attributes &attr = null_attributes);
 
-  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type) /*override*/;
-  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type) /*override*/;
+  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type);
+  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type);
 
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) /*override*/ {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) /*override*/ {}
+  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
   virtual void read_value(const char *id, size_type index, char &value) = 0;
   virtual void read_value(const char *id, size_type index, short &value) = 0;

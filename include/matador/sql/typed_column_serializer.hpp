@@ -67,8 +67,10 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  template < typename V >
-  void on_primary_key(const char *id, V &x, const field_attributes &/*attr*/ = null_attributes);
+  template < class V >
+  void on_primary_key(const char *, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_primary_key(const char *id, std::string &, size_t size);
+  void on_revision(const char *id, unsigned long long &/*rev*/);
   void on_attribute(const char *id, char &x, const field_attributes &/*attr*/ = null_attributes);
   void on_attribute(const char *id, short &x, const field_attributes &/*attr*/ = null_attributes);
   void on_attribute(const char *id, int &x, const field_attributes &/*attr*/ = null_attributes);
@@ -123,11 +125,11 @@ template <>
 std::shared_ptr<column> make_varchar_column<identifier_varchar_column>(const char *id, size_t s, data_type t, size_t index);
 
 template<typename V>
-void typed_column_serializer::on_primary_key(const char *id, V &x, const field_attributes &attr)
+void typed_column_serializer::on_primary_key(const char *id, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type*)
 {
   create_column_func_ = make_column<typed_identifier_column>;
   create_varchar_column_func_ = make_varchar_column<identifier_varchar_column>;
-  on_attribute(id, x, attr);
+  on_attribute(id, x, { constraints::PRIMARY_KEY });
   create_column_func_ = make_column<typed_column>;
   create_varchar_column_func_ = make_varchar_column<typed_varchar_column>;
 }

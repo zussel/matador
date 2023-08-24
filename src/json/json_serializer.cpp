@@ -12,11 +12,16 @@ void json_serializer::on_attribute(const char *id, std::string &val, size_t)
   newline();
 }
 
-void json_serializer::on_primary_key(const char *id, std::string &pk, const field_attributes &/*attr*/)
+void json_serializer::on_primary_key(const char *id, std::string &pk, size_t /*size*/)
 {
   write_id(id);
   append(pk).append(",");
   newline();
+}
+
+void json_serializer::on_revision(const char *id, unsigned long long int &rev)
+{
+  on_attribute(id, rev);
 }
 
 void json_serializer::on_attribute(const char *id, bool &val)

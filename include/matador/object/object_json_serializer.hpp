@@ -43,11 +43,19 @@ public:
     return result;
   }
 
-  void on_primary_key(const char *id, std::string &pk, const field_attributes &/*attr*/ = null_attributes);
-  template< class V >
-  void on_primary_key(const char *id, V &pk, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, std::string &pk, size_t /*size*/)
   {
     result_[id] = pk;
+  }
+  template< class V >
+  void on_primary_key(const char *id, V &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  {
+    result_[id] = pk;
+  }
+
+  void on_revision(const char *id, unsigned long long &rev)
+  {
+    result_[id] = rev;
   }
 
   template < class V >
