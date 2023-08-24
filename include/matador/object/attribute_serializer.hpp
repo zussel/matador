@@ -481,7 +481,7 @@ public:
   {}
 
   template < class V >
-  void on_primary_key(const char *, V &from, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *, std::string &/*from*/, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
@@ -565,7 +565,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &from, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *, std::string &/*from*/, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
@@ -603,7 +603,7 @@ public:
   ~attribute_writer() = default;
 
   template < class V >
-  void on_primary_key(const char *, V &from, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *id, std::string &from, size_t size)
   {
     on_attribute(id, from, size);

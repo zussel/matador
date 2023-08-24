@@ -42,12 +42,15 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &x, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value>::type* = 0) {
+  void on_primary_key(const char *, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  {
     x = static_cast<V>(value_);
   }
-
   template < class V >
-  void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!std::is_integral<V>::value>::type* = 0) { }
+  void on_primary_key(const char *, V &, typename std::enable_if<!std::is_integral<V>::value || std::is_same<bool, V>::value>::type* = 0) { }
+  void on_primary_key(const char *, std::string &, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
+
 
   template < class V >
   void on_attribute(const char*, V &, const field_attributes &/*attr*/ = null_attributes) {}
@@ -91,8 +94,7 @@ public:
 
   template < class V >
   void on_primary_key(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-
-  void on_primary_key(const char *, T &x, const field_attributes &/*attr*/ = null_attributes)
+  void on_primary_key(const char *, T &x, size_t /*size*/)
   {
     x = value_;
   }

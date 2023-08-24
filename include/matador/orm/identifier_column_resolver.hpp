@@ -39,7 +39,7 @@ public:
   template < class V >
   void on_primary_key(const char *, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
   void on_primary_key(const char *id, std::string &pk, size_t size);
-  void on_revision(const char *id, unsigned long long &/*rev*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class T>
   void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
@@ -74,10 +74,6 @@ void identifier_column_resolver::on_primary_key(const char *id, V &, typename st
   col_.name = id;
 }
 
-void identifier_column_resolver::on_primary_key(const char *id, std::string &pk, size_t size)
-{
-  col_.name = id;
-}
 /// @endcond
 
 }

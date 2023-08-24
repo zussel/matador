@@ -6,7 +6,7 @@
 
 using namespace matador;
 
-template < class IdentifierType, long Size = -1 >
+template < class IdentifierType, size_t Size = 0 >
 struct identifier_entity
 {
   IdentifierType id{};

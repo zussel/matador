@@ -73,7 +73,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, T &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class V>
@@ -251,7 +251,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, T &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
@@ -384,7 +384,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, T &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >

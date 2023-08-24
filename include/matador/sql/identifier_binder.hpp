@@ -144,7 +144,7 @@ void identifier_binder<T>::on_primary_key(const char *id, V &/*x*/, typename std
 }
 
 template<class T>
-void identifier_binder<T>::on_primary_key(const char *id, std::string &, size_t size)
+void identifier_binder<T>::on_primary_key(const char *id, std::string &, size_t /*size*/)
 {
   if (!id_->is_similar_type<std::string>()) {
     throw_object_exception("identifier types aren't equal");
