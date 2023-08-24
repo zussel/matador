@@ -10,6 +10,7 @@ ADD_EXECUTABLE(reactor reactor.cpp)
 ADD_EXECUTABLE(row row.cpp)
 ADD_EXECUTABLE(identifier identifier.cpp)
 ADD_EXECUTABLE(field_attribute field_attribute.cpp)
+ADD_EXECUTABLE(sqlng sqlng.cpp)
 
 TARGET_LINK_LIBRARIES(reactor
   matador-utils
