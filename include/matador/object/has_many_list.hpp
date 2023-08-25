@@ -6,8 +6,6 @@
 #include "matador/object/has_many_iterator_traits.hpp"
 
 #include "matador/utils/is_builtin.hpp"
-#include "matador/utils/is_varchar.hpp"
-#include "matador/utils/varchar.hpp"
 
 #include <list>
 
@@ -53,8 +51,6 @@ public:
    */
   has_many_iterator(const self &iter) : iter_(iter.iter_) {}
 
-  //has_many_iterator(self &&iter) = default;
-  //has_many_iterator& operator=(self &&iter) = default;
   /**
    * @brief Creates a has many iterator from given internal container iterator
    *
@@ -88,7 +84,7 @@ public:
   bool operator==(const self &i) const { return (iter_ == i.iter_); }
 
   /**
-   * @brief Compares unequality iterator with another iterator.
+   * @brief Compares inequality iterator with another iterator.
    *
    * Compares iterator with another iterator. If other iterator doesn't
    * contain the same element true es returned.
@@ -119,9 +115,9 @@ public:
    */
   self operator++(int)
   {
-    self result(*this);
+    auto tmp(*this);
     ++iter_;
-    return result;
+    return tmp;
   }
 
   /**
@@ -145,8 +141,9 @@ public:
    */
   self operator--(int)
   {
-    --iter_;
-    return self();
+    auto tmp = *this;
+    --(*this);
+    return tmp;
   }
 
   /**
@@ -407,6 +404,7 @@ public:
    * std::list as container type
    */
   has_many() = default;
+  explicit has_many(size_t /*size*/) {}
 
   /**
    * @brief Inserts an element at the given position.
@@ -470,16 +468,19 @@ public:
    */
   void remove(const value_type &value)
   {
-    iterator first = this->begin();
-    iterator last = this->end();
-    while (first != last) {
-      iterator next = first;
-      ++next;
-      if (*first == value) {
-        erase(first);
-      }
-      first = next;
-    }
+    return remove_if([&value](const value_type &val) {
+      return val == value;
+    });
+//    iterator first = this->begin();
+//    iterator last = this->end();
+//    while (first != last) {
+//      iterator next = first;
+//      ++next;
+//      if (*first == value) {
+//        erase(first);
+//      }
+//      first = next;
+//    }
   }
 
   /**

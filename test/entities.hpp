@@ -521,7 +521,7 @@ public:
     children_list_t children;
 };
 
-template < class T, template <class ...> class C >
+template < class T, template <class ...> class C, size_t Size = 0 >
 class many_builtins
 {
 public:
@@ -529,6 +529,7 @@ public:
 
 public:
     unsigned long id{};
+//    element_list_t elements{Size};
     element_list_t elements;
 
     template < class S >

@@ -14,6 +14,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <utility>
 
 namespace matador {
 
@@ -58,12 +59,12 @@ public:
   explicit object_proxy(const identifier &pk);
 
   template < class T >
-  object_proxy(const identifier &pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)
+  object_proxy(identifier pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)
     : object_type_entry_(object_type_entry)
     , deleter_(&destroy<T>)
     , creator_(&create<T>)
     , name_(&type_id<T>)
-    , pk_(pk)
+    , pk_(std::move(pk))
   {}
 
   /**

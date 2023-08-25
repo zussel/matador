@@ -2,7 +2,6 @@
 #define MATADOR_HAS_ONE_TO_MANY_ITEM_HPP
 
 #include "matador/utils/is_builtin.hpp"
-#include "matador/utils/varchar.hpp"
 
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/basic_has_many_to_many_item.hpp"
@@ -27,10 +26,7 @@ template<class L, class R, typename Enable = void>
 class has_one_to_many_item;
 
 template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<
-  !is_builtin<R>::value &&
-  !std::is_base_of<varchar_base, R>::value
->::type>
+class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<R>::value>::type>
   : public basic_has_many_to_many_item
 {
 public:
@@ -72,10 +68,7 @@ private:
 
 
 template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<
-  is_builtin<R>::value &&
-  !std::is_base_of<varchar_base, R>::value
->::type>
+class has_one_to_many_item<L, R, typename std::enable_if<is_builtin<R>::value>::type>
   : public basic_has_many_to_many_item
 {
 public:
@@ -115,37 +108,32 @@ private:
   R right_ = {};
 };
 
-template<class L, long SIZE>
-class has_one_to_many_item<L, varchar<SIZE>>
-  : public basic_has_many_to_many_item
+template<class L>
+class has_one_to_many_item<L, std::string> : public basic_has_many_to_many_item
 {
 public:
   typedef L left_value_type;
-  typedef varchar<SIZE> right_value_type;
+  typedef std::string right_value_type;
 
-  has_one_to_many_item() = default;
+  explicit has_one_to_many_item(const field_attributes &attr = {})
+  : attributes_(attr) {}
 
   has_one_to_many_item(const std::string &left_column, const std::string &right_column)
     : basic_has_many_to_many_item(left_column, right_column)
   {}
 
-  has_one_to_many_item(const object_ptr<L> &left, const varchar<SIZE> &right,
-                       const std::string &left_column, const std::string &right_column)
-    : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(std::move(right))
-  {}
-
   has_one_to_many_item(const object_ptr<L> &left, const std::string &right,
                        const std::string &left_column, const std::string &right_column)
-    : basic_has_many_to_many_item(left_column, right_column), left_(left)
+    : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(right)
   {
     right_.assign(right);
   }
 
-  template<class SERIALIZER>
-  void serialize(SERIALIZER &serializer)
+  template<class Serializer>
+  void serialize(Serializer &serializer)
   {
     serializer.on_has_one(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.on_attribute(this->right_column().c_str(), right_, SIZE);
+    serializer.on_attribute(this->right_column().c_str(), right_, attributes_);
   }
 
   object_ptr<L> left() const
@@ -161,6 +149,7 @@ public:
 private:
   object_ptr<L> left_;
   std::string right_;
+  field_attributes attributes_;
 };
 
 /// @endcond

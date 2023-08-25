@@ -47,7 +47,7 @@ public:
    * @param sqllogger The logger handler to write sql log messages to
    */
   statement(detail::statement_impl *impl, std::shared_ptr<basic_sql_logger> sqllogger)
-    : statement(impl, {}, sqllogger)
+    : statement(impl, T{}, sqllogger)
   {}
 
   /**

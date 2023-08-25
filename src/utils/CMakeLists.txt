@@ -51,8 +51,6 @@ SET(HEADER
   ../../include/matador/utils/any.hpp
   ../../include/matador/utils/any_visitor.hpp
   ../../include/matador/utils/is_builtin.hpp
-  ../../include/matador/utils/is_varchar.hpp
-  ../../include/matador/utils/varchar.hpp
   ../../include/matador/utils/file.hpp
   ../../include/matador/utils/os.hpp
   ../../include/matador/utils/buffer.hpp

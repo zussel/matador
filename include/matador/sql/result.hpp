@@ -145,7 +145,7 @@ public:
    * @param impl Result implementation
    */
   explicit result(matador::detail::result_impl *impl)
-    : result(impl, {})
+    : result(impl, T{})
   {}
 
   /**

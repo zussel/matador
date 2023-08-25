@@ -21,22 +21,23 @@ namespace detail {
 template < class T, class Enabled = void >
 class relation_resolver;
 
-template < typename T >
-struct relation_data_type
-{
-  typedef T value_type;
-};
-
-template < long SIZE >
-struct relation_data_type<varchar<SIZE>>
-{
-  typedef typename varchar<SIZE>::value_type value_type;
-};
+//template < typename T >
+//struct relation_data_type
+//{
+//  typedef T value_type;
+//};
+//
+//template < long SIZE >
+//struct relation_data_type<varchar<SIZE>>
+//{
+//  typedef typename varchar<SIZE>::value_type value_type;
+//};
 
 template < typename T >
 bool is_same_type(const std::shared_ptr<detail::basic_relation_data> &rdata)
 {
-  return rdata->type_index() == std::type_index(typeid(typename relation_data_type<T>::value_type));
+  return rdata->type_index() == std::type_index(typeid(T));
+//  return rdata->type_index() == std::type_index(typeid(typename relation_data_type<T>::value_type));
 }
 
 template < class T >

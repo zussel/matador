@@ -88,7 +88,7 @@ public:
   bool operator==(const self &i) const { return (iter_ == i.iter_); }
 
   /**
-   * @brief Compares unequality iterator with another iterator.
+   * @brief Compares inequality iterator with another iterator.
    *
    * Compares iterator with another iterator. If other iterator doesn't
    * contain the same element true es returned.
@@ -105,7 +105,7 @@ public:
    * less than this iterator true es returned.
    *
    * @param i The iterator to compare with
-   * @return True if iterators isn't less than this itertor
+   * @return True if iterators isn't less than this iterator
    */
   bool operator<(const self &i) const { return iter_ < i.iter_; }
 
@@ -139,8 +139,8 @@ public:
    */
   self operator++(int)
   {
-    self tmp = *this;
-    ++iter_;
+    auto tmp = *this;
+    ++(*this);
     return tmp;
   }
 
@@ -572,7 +572,7 @@ private:
  * - erase a range of elements within first and last iterator position
  * - clear the container
  *
- * All of these methods are wrappes around the std::vector methods plus
+ * All of these methods are wrapped around the std::vector methods plus
  * the modification in the corresponding object_store and notification
  * of the transaction observer
  *
@@ -601,6 +601,7 @@ public:
    * std::vector as container type
    */
   has_many() = default;
+  explicit has_many(size_t /*size*/) {}
 
   /**
    * @brief Inserts an element at the given position.
@@ -614,7 +615,6 @@ public:
     holder_type holder(value, nullptr);
 
     if (this->ostore_) {
-
       this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
 
       this->mark_holder_as_inserted(holder);
@@ -728,7 +728,6 @@ public:
           this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
         }
         this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
-
         ++i;
       }
       this->mark_modified_owner_(*this->ostore_, this->owner_);
@@ -753,17 +752,14 @@ public:
   }
 
 private:
-
   void remove_it(holder_type &holder)
   {
     if (this->ostore_) {
       this->mark_holder_as_removed(holder);
-
       if (!matador::is_builtin<T>::value) {
         this->relation_info_->remove_value_from_foreign(holder, this->owner_);
       }
       this->relation_info_->remove_holder(*this->ostore_, holder, this->owner_);
-
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
   }

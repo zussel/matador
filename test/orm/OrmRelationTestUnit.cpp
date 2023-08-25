@@ -22,7 +22,7 @@ OrmRelationTestUnit::OrmRelationTestUnit(const std::string &prefix, std::string 
   add_test("save_object", [this] { test_save_object(); }, "test save object");
 }
 
-using many_list_varchars = many_builtins<varchar<255>, std::list>;
+using many_list_varchars = many_builtins<std::string, std::list, 255>;
 
 void OrmRelationTestUnit::test_has_many_varchars()
 {
