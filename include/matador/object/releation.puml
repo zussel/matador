@@ -1,0 +1,71 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'enum relation_type {
+'BELONGS_TO
+'HAS_ONE
+'HAS_MANY
+'}
+
+abstract class basic_relation_endpoint
+{
+    basic_relation_endpoint(string field_name, prototype_node *node, relation_type type);
+
+    {abstract} void insert_value(object_proxy *value, object_proxy *owner);
+    {abstract} void remove_value(object_proxy *value, object_proxy *owner);
+    {abstract} void insert_value(const basic_has_many_item_holder &value, object_proxy *owner);
+    {abstract} void remove_value(const basic_has_many_item_holder &value, object_proxy *owner);
+}
+
+
+abstract class relation_endpoint<ValueType>
+
+class from_many_endpoint<ValueType, OwnerType>
+class from_one_endpoint<ValueType, OwnerType, RelationType>
+
+class has_one_endpoint<ValueType, OwnerType, HAS_ONE> implements from_one_endpoint
+class belongs_to_one_endpoint<ValueType, OwnerType, BELONGS_TO> implements from_one_endpoint
+
+class many_to_one_endpoint<ValueType, OwnerType>
+class belongs_to_many_endpoint<ValueType, OwnerType>
+
+together {
+class left_to_many_endpoint<ValueType, OwnerType>
+class right_to_many_endpoint<ValueType, OwnerType>
+class has_one_to_many_endpoint<ValueType, OwnerType>
+}
+
+basic_relation_endpoint <|-- relation_endpoint
+relation_endpoint <|-- from_many_endpoint
+relation_endpoint <|-- from_one_endpoint
+relation_endpoint <|-- many_to_one_endpoint
+relation_endpoint <|-- belongs_to_many_endpoint
+
+from_many_endpoint <|-- left_to_many_endpoint
+from_many_endpoint <|-- right_to_many_endpoint
+from_many_endpoint <|-- has_one_to_many_endpoint
+
+'abstract class AbstractList
+'abstract AbstractCollection
+'interface List
+'interface Collection
+'
+'List <|-- AbstractList
+'Collection <|-- AbstractCollection
+'
+'Collection <|- List
+'AbstractCollection <|- AbstractList
+'AbstractList <|-- ArrayList
+'
+'class ArrayList {
+'Object[] elementData
+'size()
+'}
+'
+'enum TimeUnit {
+'DAYS
+'HOURS
+'MINUTES
+'}
+
+@enduml

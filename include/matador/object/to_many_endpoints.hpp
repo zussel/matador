@@ -77,7 +77,7 @@ struct left_to_many_endpoint : public from_many_endpoint<Value, Owner>
 };
 
 /*
- * One to many relation endpoint
+ * one-to-many relation endpoint
  *
  * Owner is stored in left column
  * Value is stored in right column
@@ -91,12 +91,12 @@ struct has_one_to_many_endpoint<Owner, Value, typename std::enable_if<matador::i
 {
   typedef has_many_item_holder<Value> value_type;
 
+  relation_endpoint_value_inserter<Value> inserter;
+  relation_endpoint_value_remover<Value> remover;
+
   has_one_to_many_endpoint(const std::string &field, prototype_node *node)
     : from_many_endpoint<Value, Owner>(field, node)
   {}
-
-  relation_endpoint_value_inserter<Value> inserter;
-  relation_endpoint_value_remover<Value> remover;
 
   void insert_holder(object_store &store, has_many_item_holder<Value> &holder, object_proxy *owner) override
   {

@@ -34,15 +34,12 @@ template < class T, class Enabled = void >
 class relation_data;
 
 template < class T >
-class relation_data<T, typename std::enable_if<
-  matador::is_builtin<T>::value &&
-  !std::is_base_of<varchar_base, T>::value
->::type> : public basic_relation_data
+class relation_data<T, typename std::enable_if<matador::is_builtin<T>::value>::type> : public basic_relation_data
 {
 public:
   typedef T value_type;
 
-  relation_data() : tindex_(std::type_index(typeid(value_type))) {}
+  relation_data() : type_index_(std::type_index(typeid(value_type))) {}
 
   void append_data(const identifier &pk, const value_type &data, object_proxy *owner)
   {
@@ -62,25 +59,22 @@ public:
 
   const std::type_index& type_index() const override
   {
-    return tindex_;
+    return type_index_;
   }
 
 private:
-  std::type_index tindex_;
+  std::type_index type_index_;
 
   std::unordered_multimap<identifier, std::pair<value_type, object_proxy*>, id_pk_hash, std::equal_to<identifier>> id_multi_map_;
 };
 
 template < class T >
-class relation_data<T, typename std::enable_if<
-  !matador::is_builtin<T>::value &&
-  !std::is_base_of<varchar_base, T>::value
->::type> : public basic_relation_data
+class relation_data<T, typename std::enable_if<!matador::is_builtin<T>::value>::type> : public basic_relation_data
 {
 public:
   typedef typename T::object_type value_type;
 
-  relation_data() : tindex_(std::type_index(typeid(value_type))) {}
+  relation_data() : type_index_(std::type_index(typeid(value_type))) {}
 
   void append_data(const identifier &pk, const T &data, object_proxy *owner)
   {
@@ -105,51 +99,14 @@ public:
 
   const std::type_index& type_index() const override
   {
-    return tindex_;
+    return type_index_;
   }
 
 private:
-  std::type_index tindex_;
+  std::type_index type_index_;
 
   std::unordered_multimap<identifier, std::pair<T, object_proxy*>, id_pk_hash, std::equal_to<identifier>> id_multi_map_;
 };
-
-//template < long SIZE >
-//class relation_data<varchar<SIZE>> : public basic_relation_data
-//{
-//public:
-//  typedef varchar<SIZE> value_type;
-//
-//  relation_data() : tindex_(std::type_index(typeid(value_type))) {}
-//
-//  void append_data(const identifier &pk, const std::string &data, object_proxy *owner)
-//  {
-//    id_multi_map_.insert(std::make_pair(pk, std::make_pair(data, owner)));
-//  }
-//
-//  template < template <class ...> class C >
-//  void insert_into_container(const identifier &pk, basic_has_many<value_type, C> &container)
-//  {
-//    auto range = id_multi_map_.equal_range(pk);
-//
-//    for (auto i = range.first; i != range.second; ++i)
-//    {
-//      container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
-//    }
-//
-//    id_multi_map_.erase(pk);
-//  }
-//
-//  const std::type_index& type_index() const override
-//  {
-//    return tindex_;
-//  }
-//
-//private:
-//  std::type_index tindex_;
-//
-//  std::unordered_multimap<identifier, std::pair<value_type, object_proxy*>, id_pk_hash, std::equal_to<identifier>> id_multi_map_;
-//};
 
 /// @endcond
 

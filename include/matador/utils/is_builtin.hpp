@@ -3,6 +3,7 @@
 
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
+#include "matador/utils/identifiable_holder.hpp"
 
 #include <type_traits>
 #include <string>
@@ -11,7 +12,17 @@ namespace matador {
 
 /// @cond MATADOR_DEV
 
-struct varchar_base;
+template <typename T, typename Enabled = void>
+struct is_identifiable {
+  static const bool value = false;
+};
+
+template <typename T>
+struct is_identifiable< T,
+typename std::enable_if<std::is_base_of<identifiable_holder, T>::value>::type>
+{
+  static const bool value = true;
+};
 
 template <typename T, typename Enabled = void>
 struct is_builtin {
