@@ -81,7 +81,7 @@ public:
    * Bind a table name to a specific
    * object type
    *
-   * @param table_name The tablename to bind
+   * @param table_name The table_name to bind
    */
   static void bind_table(const std::string &table_name)
   {
@@ -89,7 +89,7 @@ public:
   }
 
   /**
-   * Remove all bound tablenames
+   * Remove all bound table names
    */
   static void clear_bound_tables()
   {
