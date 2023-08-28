@@ -67,7 +67,8 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/database_error.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_sql_logger.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/sql_logger.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/export.hpp)
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/export.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/schema.hpp)
 
 ADD_LIBRARY(matador-sql STATIC ${SOURCES} ${HEADER})
 

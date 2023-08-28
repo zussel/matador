@@ -7,6 +7,7 @@
 #include "matador/sql/query.hpp"
 #include "matador/sql/types.hpp"
 #include "matador/sql/database_error.hpp"
+#include "matador/sql/schema.hpp"
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
@@ -24,8 +25,9 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   , db_vendor_(prefix)
   , time_val_(timeval)
 {
-  add_test("info", [this] { print_datatypes(); }, "print datatypes info");
-  add_test("datatypes", [this] { test_datatypes(); }, "test sql datatypes");
+  add_test("info", [this] { print_data_types(); }, "print datatypes info");
+  add_test("datatypes", [this] { test_data_types(); }, "test sql datatypes");
+  add_test("schema", [this] { test_schema(); }, "test schema");
   add_test("qvc", [this] { test_query_value_creator(); }, "test query value creator");
   add_test("quoted_identifier", [this] { test_quoted_identifier(); }, "test quoted identifier");
   add_test("columns_with_quotes", [this] { test_columns_with_quotes_in_name(); }, "test columns with quotes in name");
@@ -75,7 +77,7 @@ void QueryTestUnit::initialize()
 
 using namespace matador;
 
-void QueryTestUnit::print_datatypes()
+void QueryTestUnit::print_data_types()
 {
   std::cout << "\n";
   std::cout << std::setw(20) << "type" << "|" << std::setw(8) << "size" << "\n";
@@ -99,7 +101,7 @@ void QueryTestUnit::print_datatypes()
   std::cout << std::left << std::setw(20) << data_type_traits<matador::time>::name() << "|" <<  std::right <<  std::setw(8) << data_type_traits<matador::time>::size() << "\n";
 }
 
-void QueryTestUnit::test_datatypes()
+void QueryTestUnit::test_data_types()
 {
   connection_.connect();
 
@@ -186,10 +188,24 @@ void QueryTestUnit::test_datatypes()
   q.drop().execute(connection_);
 }
 
+void QueryTestUnit::test_schema()
+{
+  matador::schema s;
+
+  s.attach<person>("person");
+
+  auto info = s.find<person>();
+
+  UNIT_ASSERT_NOT_NULL(info.get());
+  UNIT_ASSERT_EQUAL(info->name, "person");
+  UNIT_ASSERT_NULL(info->parent_info.get());
+
+  const std::type_index ti(typeid(person));
+  UNIT_ASSERT_TRUE(info->type == ti);
+}
+
 void QueryTestUnit::test_query_value_creator()
 {
-  connection_.connect();
-
   matador::detail::query_value_creator qvc;
 
   matador::any ac = 'c';
