@@ -45,6 +45,33 @@ from_many_endpoint <|-- left_to_many_endpoint
 from_many_endpoint <|-- right_to_many_endpoint
 from_many_endpoint <|-- has_one_to_many_endpoint
 
+class node_analyzer {
++ void on_has_one(const char *id, object_ptr<Type> &object)
++ void on_belongs_to(const char *id, object_ptr<Type> &object)
++ void on_has_many(const char *id, has_many<Type> &container)
+}
+note right of node_analyzer::on_has_one
+    creates <b><color:royalBlue>has_one_endpoint</color>
+end note
+
+note right of node_analyzer::on_belongs_to
+    if foreign side not yet analyzed
+        create <b><color:royalBlue>belongs_to_many_endpoint</color>
+    else if foreign is has many
+        replace foreign endpoint with <b><color:royalBlue>many_to_one_endpoint</color>
+        create <b><color:royalBlue>belongs_to_many_endpoint</color>
+    else
+        create <b><color:royalBlue>belongs_to_many_endpoint</color>
+end note
+
+note right of node_analyzer::on_has_many
+    if Type wasn't already attached
+        attach node and
+        create <b><color:royalBlue>has_one_to_many_endpoint</color>
+    else
+
+end note
+
 'abstract class AbstractList
 'abstract AbstractCollection
 'interface List
