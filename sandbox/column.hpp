@@ -13,22 +13,19 @@ namespace matador {
 class column
 {
 public:
-  column(std::string name, matador::database_type type, field_attributes attr)
+  column(std::string name, field_attributes attr)
   : name_(std::move(name))
-  , database_type_(type)
   , attr_(attr) {}
 
-  column(std::string name, matador::database_type type, field_attributes attr, matador::any val)
+  column(std::string name, matador::any val, field_attributes attr)
   : name_(std::move(name))
   , value_(std::move(val))
-  , database_type_(type)
   , attr_(attr) {}
 
   template < typename Type >
-  column(std::string name, const Type &val, field_attributes attr)
+  column(std::string name, const Type &val, field_attributes attr, typename std::enable_if<!std::is_same<Type, matador::any>::value>::type* = 0)
   : name_(std::move(name))
   , value_(val)
-  , database_type_(matador::data_type_traits<Type>::type())
   , attr_(attr) {}
 
   template<class Serializer>
@@ -39,10 +36,6 @@ public:
 
   const std::string& name() const {
     return name_;
-  }
-
-  matador::database_type database_type() const {
-    return database_type_;
   }
 
   size_t size() const {
@@ -57,17 +50,16 @@ public:
 private:
   std::string name_;
   matador::any value_;
-  matador::database_type database_type_;
   field_attributes attr_;
 };
 
-std::shared_ptr<column> make_column(const std::string &name, matador::database_type type, const field_attributes &attr = {}, const matador::any& val = {}) {
-  return std::make_shared<column>(name, type, attr, val);
+std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = null_attributes, const matador::any& val = {}) {
+  return std::make_shared<column>(name, val, attr);
 }
 
 template < typename Type >
 std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = null_attributes) {
-  return make_column(name, matador::data_type_traits<Type>::type(), attr, matador::any(Type()));
+  return make_column(name, Type{}, attr);
 }
 
 template < typename Type >
@@ -77,12 +69,12 @@ std::shared_ptr<column> make_column(const std::string &name, const Type &val, co
 
 template < typename Type >
 std::shared_ptr<column> make_pk_column(const std::string &name, size_t /*max_size*/ = 0) {
-  return make_column(name, matador::data_type_traits<Type>::type(), constraints::PRIMARY_KEY, matador::any(Type()));
+  return make_column(name, Type{}, constraints::PRIMARY_KEY);
 }
 
 template <>
 std::shared_ptr<column> make_pk_column<std::string>(const std::string &name, size_t max_size) {
-  return make_column(name, matador::data_type_traits<std::string>::type(), { max_size, constraints::PRIMARY_KEY }, matador::any(std::string{}));
+  return make_column<std::string>(name, { max_size, constraints::PRIMARY_KEY });
 }
 
 

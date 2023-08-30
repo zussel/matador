@@ -1,9 +1,6 @@
-//
-// Created by sascha on 17.08.16.
-//
-
 #include "matador/sql/basic_dialect_linker.hpp"
 #include "matador/sql/dialect_token.hpp"
+#include "matador/sql/columns.hpp"
 
 #include <algorithm>
 
@@ -203,10 +200,10 @@ void basic_dialect_linker::visit(const matador::columns &cols)
 
 void basic_dialect_linker::visit(const matador::column &col)
 {
-  if (col.skip_quotes) {
-    dialect().append_to_result(col.name);
-  } else {
+  if (is_build_options_set(col.build_options, t_build_options::with_quotes)) {
     dialect().append_to_result(dialect_->prepare_identifier(col.name));
+  } else {
+    dialect().append_to_result(col.name);
   }
   dialect().add_column(col.name);
 }

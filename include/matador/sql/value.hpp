@@ -45,14 +45,14 @@ struct value : public detail::token
   std::size_t size_ = 0;
 };
 
-struct null_value : public value
-{
-  static std::string NULLSTR;
-
-  null_value() : value(NULLSTR) { }
-
-  const char* type_id() const override;
-};
+//struct null_value : public value
+//{
+//  static std::string NULLSTR;
+//
+//  null_value() : value(NULLSTR) { }
+//
+//  const char* type_id() const override;
+//};
 
 template < class T >
 value* make_value(const T &val)

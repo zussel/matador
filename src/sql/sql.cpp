@@ -36,12 +36,6 @@ void sql::append(const std::shared_ptr<detail::token> &tokptr)
   token_list_.push_back(tokptr);
 }
 
-void sql::append(detail::token *tok)
-{
-  std::shared_ptr<detail::token> tokptr(tok);
-  token_list_.push_back(tokptr);
-}
-
 void sql::append(const sql &stmt)
 {
   append(new detail::query(stmt));

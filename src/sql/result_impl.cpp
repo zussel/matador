@@ -11,7 +11,7 @@ result_row_serializer::result_row_serializer(result_impl &impl)
 
 void result_row_serializer::process(const char *id, const std::shared_ptr<value> &val)
 {
-  value_processor_.apply(val->value_, id, *this);
+  value_processor_.apply(id, *val, {}, *this);
 }
 
 void result_row_serializer::on_attribute(const char *id, char &x, const field_attributes &attr) {

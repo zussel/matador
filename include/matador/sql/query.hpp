@@ -454,7 +454,7 @@ public:
   query& column(const std::string &column, data_type type, size_t index)
   {
     throw_invalid(QUERY_COLUMN, state);
-    sql_.append(new detail::typed_column(column, type, index, false));
+    sql_.append(make_column(column, type, index));
     state = QUERY_COLUMN;
     return *this;
   }
@@ -536,7 +536,7 @@ public:
    * @param collist The columns to be created
    * @return A reference to the query.
    */
-  query& create(const std::initializer_list<std::shared_ptr<detail::typed_column>> &collist)
+  query& create(const std::initializer_list<std::shared_ptr<column>> &collist)
   {
     return create(table_name_, collist);
   }
@@ -548,7 +548,7 @@ public:
    * @param collist The columns to be created
    * @return A reference to the query.
    */
-  query& create(const std::string &table_name, const std::initializer_list<std::shared_ptr<detail::typed_column>> &collist)
+  query& create(const std::string &table_name, const std::initializer_list<std::shared_ptr<column>> &collist)
   {
     reset(t_query_command::CREATE);
 
@@ -667,17 +667,17 @@ public:
    * Appends all columns from initializer_list
    * to a select statement.
    * 
-   * @param colnames The column list to select
+   * @param column_names The column list to select
    * @return A reference to the query.
    */
-  query& select(const std::initializer_list<std::string> &colnames)
+  query& select(const std::initializer_list<std::string> &column_names)
   {
     reset(t_query_command::SELECT);
 
     throw_invalid(QUERY_SELECT, state);
     sql_.append(new detail::select);
 
-    std::unique_ptr<matador::columns> cols(new matador::columns(colnames, matador::columns::WITHOUT_BRACKETS));
+    std::unique_ptr<matador::columns> cols(new matador::columns(column_names, matador::columns::WITHOUT_BRACKETS));
 
     for (auto &&column : cols->columns_) {
       row_.add_column(column->name);

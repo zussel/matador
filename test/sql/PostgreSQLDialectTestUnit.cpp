@@ -94,7 +94,7 @@ void PostgreSQLDialectTestUnit::test_update_limit()
   std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   unsigned long owner_id(1);
-  cols->push_back(detail::make_value_column("owner_id", owner_id, -1));
+  cols->push_back(make_column("owner_id", owner_id, -1));
 
   s.append(cols.release());
 
@@ -118,7 +118,7 @@ void PostgreSQLDialectTestUnit::test_update_limit_prepare(){
   std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   unsigned long owner_id(1);
-  cols->push_back(detail::make_value_column("owner_id", owner_id, -1));
+  cols->push_back(make_column("owner_id", owner_id, -1));
 
   s.append(cols.release());
 

@@ -10,7 +10,6 @@
 
 namespace matador {
 
-class basic_dialect;
 class token_visitor;
 
 namespace detail {
@@ -67,7 +66,7 @@ struct token
 
 struct table_name_token : public token
 {
-  table_name_token(t_token tok, std::string tablename);
+  table_name_token(t_token tok, std::string table_name);
 
   std::string table_name;
 };

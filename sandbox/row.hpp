@@ -18,10 +18,6 @@ public:
     add_column(make_column<Type>(name, size));
   }
 
-  void add_column(const std::string &name, matador::database_type type, long size = -1) {
-    add_column(make_column(name, type, size));
-  }
-
   void add_column(const column_ptr &col) {
     columns_.push_back(col);
     columns_by_name_.insert({col->name(), col});

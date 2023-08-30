@@ -11,52 +11,52 @@ namespace detail {
 
 value_processor::value_processor()
 {
-  visitor.register_visitor<char>([this](char &val) { this->process(val); });
-  visitor.register_visitor<int>([this](int &val) { this->process(val); });
-  visitor.register_visitor<short>([this](short &val) { this->process(val); });
-  visitor.register_visitor<long>([this](long &val) { this->process(val); });
-  visitor.register_visitor<long long>([this](long long &val) { this->process(val); });
-  visitor.register_visitor<unsigned char>([this](unsigned char &val) { this->process(val); });
-  visitor.register_visitor<unsigned short>([this](unsigned short &val) { this->process(val); });
-  visitor.register_visitor<unsigned int>([this](unsigned int &val) { this->process(val); });
-  visitor.register_visitor<unsigned long>([this](unsigned long &val) { this->process(val); });
-  visitor.register_visitor<unsigned long long>([this](unsigned long long &val) { this->process(val); });
-  visitor.register_visitor<bool>([this](bool &val) { this->process(val); });
-  visitor.register_visitor<float>([this](float &val) { this->process(val); });
-  visitor.register_visitor<double>([this](double &val) { this->process(val); });
-  visitor.register_visitor<char*>([this](char *val) { this->process(val); });
-  visitor.register_visitor<std::string>([this](std::string &val) { this->process(val); });
-  visitor.register_visitor<time>([this](time &val) { this->process(val); });
-  visitor.register_visitor<date>([this](date &val) { this->process(val); });
+  visitor_.register_visitor<char>([this](char &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<int>([this](int &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<short>([this](short &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<long>([this](long &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<long long>([this](long long &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<unsigned char>([this](unsigned char &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<unsigned short>([this](unsigned short &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<unsigned int>([this](unsigned int &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<unsigned long>([this](unsigned long &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<unsigned long long>([this](unsigned long long &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<bool>([this](bool &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<float>([this](float &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<double>([this](double &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<char*>([this](char *val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<std::string>([this](std::string &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<time>([this](time &val, const field_attributes &attr) { this->process(val, attr); });
+  visitor_.register_visitor<date>([this](date &val, const field_attributes &attr) { this->process(val, attr); });
 }
 
-void value_processor::apply(matador::any &a, const char *id, serializer &s)
+void value_processor::apply(matador::value &val, field_attributes &attr, const char *id, serializer &s)
 {
   id_ = id;
   serializer_ = &s;
-  visitor.visit(a);
+  visitor_.visit(val, attr);
   id_ = nullptr;
   serializer_ = nullptr;
 }
 
-void value_processor::process(std::string &val)
+void value_processor::process(std::string &val, const field_attributes &attr)
 {
-  serializer_->on_attribute(id_, val, {});
+  serializer_->on_attribute(id_, val, attr);
 }
 
-void value_processor::process(char *val)
+void value_processor::process(char *val, const field_attributes &attr)
 {
-  serializer_->on_attribute(id_, val, {});
+  serializer_->on_attribute(id_, val, attr);
 }
 
-void value_processor::process(time &val)
+void value_processor::process(time &val, const field_attributes &attr)
 {
-  serializer_->on_attribute(id_, val, {});
+  serializer_->on_attribute(id_, val, attr);
 }
 
-void value_processor::process(date &val)
+void value_processor::process(date &val, const field_attributes &attr)
 {
-  serializer_->on_attribute(id_, val, {});
+  serializer_->on_attribute(id_, val, attr);
 }
 
 value_to_string_processor::value_to_string_processor()

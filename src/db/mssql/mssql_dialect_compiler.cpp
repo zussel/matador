@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/13/16.
-//
-
 #include "matador/db/mssql/mssql_dialect_compiler.hpp"
 
 #include "matador/sql/basic_dialect.hpp"

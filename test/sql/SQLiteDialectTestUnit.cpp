@@ -3,7 +3,7 @@
 #include "connections.hpp"
 
 #include "matador/sql/connection.hpp"
-#include "matador/sql/column.hpp"
+#include "matador/sql/columns.hpp"
 #include "matador/sql/dialect_token.hpp"
 
 using namespace matador;
@@ -29,8 +29,8 @@ void SQLiteDialectTestUnit::test_update_with_limit()
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(detail::make_value_column("name", dieter, 255));
-  cols->push_back(detail::make_value_column("age", age54, -1));
+  cols->push_back(make_column("name", dieter, 255));
+  cols->push_back(make_column("age", age54, -1));
 
   s.append(cols.release());
 

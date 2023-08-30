@@ -4,7 +4,7 @@
 
 #include "matador/sql/sql.hpp"
 #include "matador/sql/dialect_token.hpp"
-#include "matador/sql/column.hpp"
+#include "matador/sql/columns.hpp"
 #include "matador/sql/condition.hpp"
 
 using namespace matador;
@@ -51,8 +51,9 @@ void DialectTestUnit::test_create_query()
 
   std::unique_ptr<matador::columns> cols(new columns(columns::WITH_BRACKETS));
 
-  cols->push_back(std::make_shared<detail::typed_identifier_column>("id", data_type::type_unsigned_long, 0, false));
-  cols->push_back(std::make_shared<detail::typed_varchar_column>("name", 256, data_type::type_varchar, 1, false));
+  cols->push_back(make_pk_column("id", data_type::type_unsigned_long, 0));
+  cols->push_back(make_column("name", 256, data_type::type_varchar, 1, false));
+//  cols->push_back(std::make_shared<detail::typed_varchar_column>("name", 256, data_type::type_varchar, 1, false));
   cols->push_back(std::make_shared<detail::typed_column>("age", data_type::type_unsigned_int, 2, false));
 
   s.append(cols.release());

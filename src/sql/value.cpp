@@ -11,14 +11,18 @@ void value::accept(token_visitor &visitor)
 
 const char *value::type_id() const
 {
-  return value_.type_index().name();
+  if (value_.empty()) {
+    return "null";
+  } else {
+    return value_.type_index().name();
+  }
 }
 
-std::string null_value::NULLSTR = "NULL";
-
-const char *null_value::type_id() const {
-  return "null";
-}
+//std::string null_value::NULLSTR = "NULL";
+//
+//const char *null_value::type_id() const {
+//  return "null";
+//}
 
 value* make_value(const char* val, std::size_t len)
 {

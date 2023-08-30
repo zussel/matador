@@ -6,7 +6,7 @@
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
 
-//#include "matador/sql/value.hpp"
+#include "matador/sql/value.hpp"
 
 #include <sstream>
 
@@ -19,67 +19,67 @@ class basic_dialect;
 
 namespace detail {
 
-//class value_visitor
-//{
-//public:
-//  using function = std::function<void(matador::value&)>; /**< Shortcut for the visitor callback function */
-//
-//  template <typename T>
-//  void register_visitor(const std::function<void(T&)> &f) {
-//    fs.insert(std::make_pair(
-//    std::type_index(typeid(T)),
-//    function([f](matador::any & x) {
-//      f(x._<T>());
-//    })
-//    ));
-//  }
-//
-//  /**
-//   * @brief Applies the visitor pattern on an any object.
-//   * @param x The any object the pattern should be applied on
-//   * @return Returns true if a function could be applied.
-//   */
-//  bool visit(matador::any & x) {
-//    auto it = fs.find(x.type_index());
-//    if (it != fs.end()) {
-//      it->second(x);
-//      return true;
-//    } else {
-//      return false;
-//    }
-//  }
-//
-//private:
-//  std::unordered_map<std::type_index, function> fs;
-//};
+class value_visitor
+{
+public:
+  using function = std::function<void(matador::value&, const field_attributes&)>; /**< Shortcut for the visitor callback function */
+
+  template <typename T>
+  void register_visitor(const std::function<void(T&, const field_attributes&)> &f) {
+    fs.insert(std::make_pair(
+      std::type_index(typeid(T)),
+      function([f](matador::value &value, const field_attributes &attr) {
+        f(value.value_._<T>(), attr);
+      })
+    ));
+  }
+
+  /**
+   * @brief Applies the visitor pattern on an any object.
+   * @param x The any object the pattern should be applied on
+   * @return Returns true if a function could be applied.
+   */
+  bool visit(matador::value &value, const field_attributes &attr) {
+    auto it = fs.find(value.value_.type_index());
+    if (it != fs.end()) {
+      it->second(value, attr);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+private:
+  std::unordered_map<std::type_index, function> fs;
+};
 
 class value_processor
 {
 public:
   value_processor();
 
-  void apply(matador::any &a, const char *id, serializer &s);
+  void apply(const char *id, matador::value &val, field_attributes &attr, serializer &s);
 
 private:
   template < class T >
-  void process(T &val, typename std::enable_if<std::is_integral<T>::value>::type* = 0)
+  void process(T &val, const field_attributes &attr, typename std::enable_if<std::is_integral<T>::value>::type* = 0)
   {
-    serializer_->on_attribute(id_, val, {});
+    serializer_->on_attribute(id_, val, attr);
   }
 
   template < class T >
-  void process(T &val, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
+  void process(T &val, const field_attributes &attr, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
   {
-    serializer_->on_attribute(id_, val, {});
+    serializer_->on_attribute(id_, val, attr);
   }
 
-  void process(std::string &val);
-  void process(char *val);
-  void process(time &val);
-  void process(date &val);
+  void process(std::string &val, const field_attributes &attr);
+  void process(char *val, const field_attributes &attr);
+  void process(time &val, const field_attributes &attr);
+  void process(date &val, const field_attributes &attr);
 
 private:
-  matador::any_visitor visitor;
+  value_visitor visitor_;
   serializer *serializer_ = nullptr;
   const char *id_ = nullptr;
 };

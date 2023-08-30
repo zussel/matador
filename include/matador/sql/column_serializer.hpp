@@ -3,6 +3,7 @@
 
 #include "matador/sql/sql.hpp"
 #include "matador/sql/column.hpp"
+#include "matador/sql/columns.hpp"
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/field_attributes.hpp"

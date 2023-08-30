@@ -4,33 +4,33 @@ namespace matador {
 
 bool row::add_column(const std::string &column)
 {
-  return add_column(column, std::make_shared<null_value>());
+  return add_column(std::make_shared<matador::column>(column));
 }
 
-bool row::add_column(const std::string &column, const std::shared_ptr<value> &value)
+bool row::add_column(const column_ptr &col)
 {
-  if (has_column(column)) {
+  if (has_column(col->name)) {
     return false;
   }
 
-  columns_.push_back(column);
-  return values_.insert({column, value}).second;
+  columns_.push_back(col);
+  return columns_by_name_.insert({col->name, col}).second;
 }
 
 bool row::has_column(const std::string &column) const
 {
-  return values_.find(column) != values_.end();
+  return columns_by_name_.find(column) != columns_by_name_.end();
 }
 
 void row::set(const std::string &column, const std::shared_ptr<value> &value)
 {
-  values_.at(column) = value;
+  columns_by_name_.at(column)->val.value_ = value->value_;
 }
 
 void row::clear()
 {
   columns_.clear();
-  values_.clear();
+  columns_by_name_.clear();
 }
 
 }
