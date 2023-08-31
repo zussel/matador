@@ -91,7 +91,7 @@ public:
   template < class ValueType >
   void add_column_value(const char *col, ValueType &val, const field_attributes &attr)
   {
-    cols_->push_back(make_value_column(col, val, attr));
+    cols_->push_back(make_column(col, val, attr));
   }
 
   template < class ValueType >

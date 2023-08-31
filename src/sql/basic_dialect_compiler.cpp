@@ -45,16 +45,6 @@ void basic_dialect_compiler::visit(const matador::columns &) { }
 
 void basic_dialect_compiler::visit(const matador::column &) { }
 
-void basic_dialect_compiler::visit(const matador::detail::typed_column &) { }
-
-void basic_dialect_compiler::visit(const matador::detail::typed_identifier_column &) { }
-
-void basic_dialect_compiler::visit(const matador::detail::typed_varchar_column &) { }
-
-void basic_dialect_compiler::visit(const matador::detail::identifier_varchar_column &) { }
-
-void basic_dialect_compiler::visit(const matador::detail::value_column &) { }
-
 void basic_dialect_compiler::visit(const matador::detail::from &) { }
 
 void basic_dialect_compiler::visit(const matador::detail::where &) { }

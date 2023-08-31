@@ -208,40 +208,40 @@ void basic_dialect_linker::visit(const matador::column &col)
   dialect().add_column(col.name);
 }
 
-void basic_dialect_linker::visit(const matador::detail::typed_column &col)
-{
-  visit(static_cast<const matador::column&>(col));
-  dialect().append_to_result(std::string(" ") + dialect().to_database_type_string(col.type));
-}
-
-void basic_dialect_linker::visit(const matador::detail::typed_identifier_column &col)
-{
-  visit(static_cast<const matador::column&>(col));
-  dialect().append_to_result(std::string(" ") + dialect().to_database_type_string(col.type) + " NOT NULL PRIMARY KEY");
-}
-
-void basic_dialect_linker::visit(const matador::detail::typed_varchar_column &col)
-{
-  visit(static_cast<const matador::column&>(col));
-  std::stringstream str;
-  str << " " << dialect().to_database_type_string(col.type) << "(" << col.size << ")";
-  dialect().append_to_result(str.str());
-}
-
-void basic_dialect_linker::visit(const matador::detail::identifier_varchar_column &col)
-{
-  visit(static_cast<const matador::column&>(col));
-  std::stringstream str;
-  str << " " << dialect().to_database_type_string(col.type) << "(" << col.size << ") NOT NULL PRIMARY KEY";
-  dialect().append_to_result(str.str());
-}
-
-void basic_dialect_linker::visit(const matador::detail::value_column &col)
-{
-  visit(static_cast<const matador::column&>(col));
-  dialect().append_to_result("=");
-  col.value_->accept(*this);
-}
+//void basic_dialect_linker::visit(const matador::detail::typed_column &col)
+//{
+//  visit(static_cast<const matador::column&>(col));
+//  dialect().append_to_result(std::string(" ") + dialect().to_database_type_string(col.type));
+//}
+//
+//void basic_dialect_linker::visit(const matador::detail::typed_identifier_column &col)
+//{
+//  visit(static_cast<const matador::column&>(col));
+//  dialect().append_to_result(std::string(" ") + dialect().to_database_type_string(col.type) + " NOT NULL PRIMARY KEY");
+//}
+//
+//void basic_dialect_linker::visit(const matador::detail::typed_varchar_column &col)
+//{
+//  visit(static_cast<const matador::column&>(col));
+//  std::stringstream str;
+//  str << " " << dialect().to_database_type_string(col.type) << "(" << col.size << ")";
+//  dialect().append_to_result(str.str());
+//}
+//
+//void basic_dialect_linker::visit(const matador::detail::identifier_varchar_column &col)
+//{
+//  visit(static_cast<const matador::column&>(col));
+//  std::stringstream str;
+//  str << " " << dialect().to_database_type_string(col.type) << "(" << col.size << ") NOT NULL PRIMARY KEY";
+//  dialect().append_to_result(str.str());
+//}
+//
+//void basic_dialect_linker::visit(const matador::detail::value_column &col)
+//{
+//  visit(static_cast<const matador::column&>(col));
+//  dialect().append_to_result("=");
+//  col.value_->accept(*this);
+//}
 
 std::string basic_dialect_linker::token_string(detail::token::t_token tok) const
 {

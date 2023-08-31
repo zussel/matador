@@ -1,4 +1,4 @@
-#include "matador/sql/column.hpp"
+#include "matador/sql/columns.hpp"
 #include "matador/sql/basic_query.hpp"
 #include "matador/sql/connection.hpp"
 

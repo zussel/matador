@@ -285,10 +285,10 @@ public:
    * any settings. Sets for all column value pairs
    * attributes column and values.
    *
-   * @param colvalues The column name and value list
+   * @param column_values The column name and value list
    * @return A reference to the query.
    */
-  query& update(const std::initializer_list<std::pair<std::string, matador::any>> &colvalues)
+  query& update(const std::initializer_list<std::pair<std::string, matador::any>> &column_values)
   {
     reset(t_query_command::UPDATE);
 
@@ -297,8 +297,8 @@ public:
     sql_.table_name(table_name_);
     sql_.append(new detail::set);
 
-    for (auto colvalue : colvalues) {
-      query_value_column_processor_.execute(colvalue);
+    for (auto column_value : column_values) {
+      query_value_column_processor_.execute(column_value);
     }
 
     sql_.append(update_columns_);
@@ -308,9 +308,9 @@ public:
   }
 
   /**
-   * @brief Specfies the from token of a query
+   * @brief Specifies the from token of a query
    *
-   * Specfies the from token of a query with
+   * Specifies the from token of a query with
    * a table name as argument.
    *
    * @param table The name of the table
@@ -356,7 +356,6 @@ public:
     throw_invalid(QUERY_COND_WHERE, state);
 
     sql_.append(new detail::where(c));
-//    sql_.append(new condition<COND>(c));
 
     state = QUERY_COND_WHERE;
     return *this;
