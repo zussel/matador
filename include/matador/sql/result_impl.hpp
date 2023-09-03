@@ -30,7 +30,7 @@ class result_row_serializer : public serializer
 public:
   explicit result_row_serializer(result_impl &impl);
 
-  void process(const char *id, const std::shared_ptr<value> &val);
+  void process(const char *id, value &val, const field_attributes &attr);
 
   void on_attribute(const char *id, char &x, const field_attributes &attr) override;
   void on_attribute(const char *id, short &x, const field_attributes &attr) override;

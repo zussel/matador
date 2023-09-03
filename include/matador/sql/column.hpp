@@ -93,9 +93,7 @@ struct column : public detail::token
  */
 column operator "" _col(const char *name, size_t len);
 
-std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = null_attributes, const matador::any& val = {}) {
-  return std::make_shared<column>(name, val, attr);
-}
+std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = null_attributes, const matador::any& val = {});
 
 std::shared_ptr<column> make_column(const std::string &name, data_type type, size_t index, const field_attributes &attr = null_attributes);
 
@@ -117,9 +115,7 @@ std::shared_ptr<column> make_pk_column(const std::string &name, size_t /*max_siz
 }
 
 template <>
-std::shared_ptr<column> make_pk_column<std::string>(const std::string &name, size_t max_size) {
-  return make_column<std::string>(name, { max_size, constraints::PRIMARY_KEY });
-}
+std::shared_ptr<column> make_pk_column<std::string>(const std::string &name, size_t max_size);
 
 std::shared_ptr<column> make_pk_column(const std::string &name, data_type type, size_t index, size_t max_size = 0);
 

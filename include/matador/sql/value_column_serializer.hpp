@@ -5,7 +5,7 @@
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/serializer.hpp"
 
-#include "matador/sql/column.hpp"
+#include "matador/sql/columns.hpp"
 
 namespace matador {
 

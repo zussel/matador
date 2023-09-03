@@ -20,6 +20,8 @@ namespace matador {
 
 struct value : public detail::token
 {
+  value();
+
   template<typename T, typename U = std::decay<T>>
   explicit value(T &&val)
     : token(detail::token::VALUE)

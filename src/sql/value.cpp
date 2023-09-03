@@ -4,6 +4,10 @@
 
 namespace matador {
 
+value::value()
+: token(detail::token::VALUE)
+{}
+
 void value::accept(token_visitor &visitor)
 {
   return visitor.visit(*this);

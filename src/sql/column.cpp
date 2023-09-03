@@ -60,4 +60,15 @@ std::shared_ptr<column> make_column(const std::string &name, data_type type, siz
   return col;
 }
 
+std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr, const any &val)
+{
+  return std::make_shared<column>(name, val, attr);
+}
+
+template<>
+std::shared_ptr<column> make_pk_column<std::string>(const std::string &name, size_t max_size)
+{
+  return make_column<std::string>(name, { max_size, constraints::PRIMARY_KEY });
+}
+
 }

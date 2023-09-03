@@ -179,6 +179,14 @@ template <> struct data_type_traits<const char*>
   inline static const char* name() { return "const char*"; }
 };
 
+template <> struct data_type_traits<char*>
+{
+  inline static database_type type() { return database_type::type_varchar; }
+  inline static data_type builtin_type() { return data_type::type_char_pointer; }
+  inline static unsigned long size() { return sizeof(char*); }
+  inline static const char* name() { return "char*"; }
+};
+
 template <> struct data_type_traits<std::string>
 {
   inline static database_type type() { return database_type::type_text; }

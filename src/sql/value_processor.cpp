@@ -30,7 +30,7 @@ value_processor::value_processor()
   visitor_.register_visitor<date>([this](date &val, const field_attributes &attr) { this->process(val, attr); });
 }
 
-void value_processor::apply(matador::value &val, field_attributes &attr, const char *id, serializer &s)
+void value_processor::apply(const char *id, matador::value &val, const field_attributes &attr, serializer &s)
 {
   id_ = id;
   serializer_ = &s;

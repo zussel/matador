@@ -42,7 +42,7 @@ void value_serializer::on_belongs_to(const char *, identifiable_holder &x, casca
   if (x.has_primary_key()) {
     x.primary_key().serialize(value_identifier_serializer_);
   } else {
-    values_->push_back(std::make_shared<null_value>());
+    values_->push_back(std::make_shared<value>());
   }
 }
 
@@ -51,7 +51,7 @@ void value_serializer::on_has_one(const char *, identifiable_holder &x, cascade_
   if (x.has_primary_key()) {
     x.primary_key().serialize(value_identifier_serializer_);
   } else {
-    values_->push_back(std::make_shared<null_value>());
+    values_->push_back(std::make_shared<value>());
   }
 }
 

@@ -221,7 +221,7 @@ void QueryTestUnit::test_quoted_identifier()
 
   query<> q("quotes");
 
-  q.create({make_typed_column<std::string>("from"), make_typed_column<std::string>("to")}).execute(connection_);
+  q.create({make_column<std::string>("from", 255), make_column<std::string>("to", 255)}).execute(connection_);
 
   // check table description
   std::vector<std::string> columns = { "from", "to"};
@@ -275,7 +275,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
   for (const auto &colname : colnames) {
     query<> q("quotes");
 
-    q.create({make_typed_column<std::string>(colname)}).execute(connection_);
+    q.create({make_column<std::string>(colname, 255)}).execute(connection_);
 
     // check table description
     std::vector<std::string> columns({ colname });
@@ -297,7 +297,7 @@ void QueryTestUnit::test_quoted_literals()
 
   query<> q("escapes");
 
-  q.create({make_typed_column<std::string>("name")}).execute(connection_);
+  q.create({make_column<std::string>("name", 255)}).execute(connection_);
 
   q.insert({"name"}).values({"text"}).execute(connection_);
 
@@ -577,9 +577,9 @@ void QueryTestUnit::test_anonymous_create()
   auto cols = {"id", "name", "age"};
 
   q.create({
-    make_typed_id_column<long>("id"),
-    make_typed_varchar_column("name", 32),
-    make_typed_column<unsigned>("age")
+    make_pk_column<long>("id"),
+    make_column("name", 63),
+    make_column<unsigned>("age")
   });
 
   q.execute(connection_);
@@ -607,9 +607,9 @@ void QueryTestUnit::test_anonymous_insert()
   auto q = make_query("person");
 
   q.create({
-     make_typed_id_column<int>("id"),
-     make_typed_varchar_column("name", 32),
-     make_typed_column<unsigned>("age")
+           make_pk_column<int>("id"),
+           make_column("name", 63),
+           make_column<unsigned>("age")
    });
 
   q.execute(connection_);
@@ -640,9 +640,9 @@ void QueryTestUnit::test_anonymous_update()
   query<> q("person");
 
   q.create({
-     make_typed_id_column<int>("id"),
-     make_typed_varchar_column("name", 32),
-     make_typed_column<unsigned>("age")
+           make_pk_column<long>("id"),
+           make_column("name", 63),
+           make_column<unsigned>("age")
    });
 
   q.execute(connection_);
@@ -1367,9 +1367,9 @@ void QueryTestUnit::test_prepared_statement()
   query<> q( "person");
 
   q.create({
-	  make_typed_id_column<long>("id"),
-	  make_typed_varchar_column("name", 32),
-	  make_typed_column<unsigned>("age")
+     make_pk_column<long>("id"),
+     make_column("name", 63),
+     make_column<unsigned>("age")
   });
 
   auto stmt = q.prepare(connection_);
@@ -1474,7 +1474,7 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
   query<> q("person");
 
   q.create({
-             make_typed_id_column<int>("id"),
+             make_pk_column<int>("id"),
            });
 
   q.execute(connection_);
@@ -1523,14 +1523,14 @@ void QueryTestUnit::test_rows()
   auto cols = {"id", "string", "varchar", "int", "float", "double", "date", "time"};
 
   q.create({
-             make_typed_id_column<int>("id"),
-             make_typed_column<std::string>("string"),
-             make_typed_varchar_column("varchar", 32),
-             make_typed_column<int>("int"),
-             make_typed_column<float>("float"),
-             make_typed_column<double>("double"),
-             make_typed_column<matador::date>("date"),
-             make_typed_column<matador::time>("time"),
+             make_pk_column<int>("id"),
+             make_column<std::string>("string"),
+             make_column("varchar", 63),
+             make_column<int>("int"),
+             make_column<float>("float"),
+             make_column<double>("double"),
+             make_column<matador::date>("date"),
+             make_column<matador::time>("time"),
            });
 
   q.execute(connection_);

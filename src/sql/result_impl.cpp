@@ -9,9 +9,9 @@ namespace detail {
 result_row_serializer::result_row_serializer(result_impl &impl)
 : impl_(impl) { }
 
-void result_row_serializer::process(const char *id, const std::shared_ptr<value> &val)
+void result_row_serializer::process(const char *id, value &val, const field_attributes &attr)
 {
-  value_processor_.apply(id, *val, {}, *this);
+  value_processor_.apply(id, val, attr, *this);
 }
 
 void result_row_serializer::on_attribute(const char *id, char &x, const field_attributes &attr) {

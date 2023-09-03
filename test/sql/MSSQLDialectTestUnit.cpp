@@ -29,19 +29,19 @@ void MSSQLDialectTestUnit::test_limit()
 
   sql s;
 
-  s.append(new detail::select);
+  s.append(std::make_shared<detail::select>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::from("person"));
+  s.append(std::make_shared<detail::from>("person"));
 
-  s.append(new detail::top(10));
+  s.append(std::make_shared<detail::top>(10));
 
   std::string result = conn.dialect()->direct(s);
 

@@ -31,14 +31,14 @@ sql::~sql()
   reset(t_query_command::UNKNOWN);
 }
 
-void sql::append(const std::shared_ptr<detail::token> &tokptr)
+void sql::append(const std::shared_ptr<detail::token> &token_ptr)
 {
-  token_list_.push_back(tokptr);
+  token_list_.push_back(token_ptr);
 }
 
 void sql::append(const sql &stmt)
 {
-  append(new detail::query(stmt));
+  append(std::make_shared<detail::query>(stmt));
 }
 
 void sql::reset(t_query_command command_type)

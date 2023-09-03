@@ -81,8 +81,8 @@ void IdentifierSerializerTest::test_identifier_row_result(connection &conn)
   auto q = query<>("id_row_type");
 
   auto res = q.create({
-                      make_typed_id_column<IdType>("id"),
-                      make_typed_varchar_column("name", 255)
+                      make_pk_column<IdType>("id"),
+                      make_column<std::string>("name", 255)
                       }).execute(conn);
 
   res = q.insert({"id", "name"}).values({static_cast<IdType>(1), "george"}).execute(conn);
@@ -103,8 +103,8 @@ void IdentifierSerializerTest::test_identifier_row_result<std::string>(connectio
   auto q = query<>("id_row_type");
 
   auto res = q.create({
-                      make_typed_id_column<std::string>("id"),
-                      make_typed_varchar_column("name", 255)
+                      make_pk_column<std::string>("id"),
+                      make_column<std::string>("name", 255)
                       }).execute(conn);
 
   res = q.insert({"id", "name"}).values({"id", "george"}).execute(conn);

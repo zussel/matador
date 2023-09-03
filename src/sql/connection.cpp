@@ -1,6 +1,6 @@
 #include "matador/sql/connection_factory.hpp"
 #include "matador/sql/connection.hpp"
-#include "matador/sql/column.hpp"
+#include "matador/sql/columns.hpp"
 #include "matador/sql/value.hpp"
 
 namespace matador {
@@ -208,7 +208,7 @@ value* create_default_value(database_type type)
     case database_type::type_varchar:
       return make_value<std::string>("");
     default:
-      return new null_value;
+      return new value();
   }
 }
 

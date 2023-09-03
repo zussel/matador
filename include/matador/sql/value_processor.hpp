@@ -58,7 +58,7 @@ class value_processor
 public:
   value_processor();
 
-  void apply(const char *id, matador::value &val, field_attributes &attr, serializer &s);
+  void apply(const char *id, matador::value &val, const field_attributes &attr, serializer &s);
 
 private:
   template < class T >

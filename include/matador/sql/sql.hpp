@@ -31,8 +31,7 @@ public:
   sql();
   ~sql();
 
-  void append(const std::shared_ptr<detail::token> &tokptr);
-  void append(detail::token *tok);
+  void append(const std::shared_ptr<detail::token> &token_ptr);
   void append(const sql &stmt);
 
   void reset(t_query_command command_type);
