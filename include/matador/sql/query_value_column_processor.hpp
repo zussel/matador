@@ -22,7 +22,7 @@ private:
   template < class T >
   void process(T &val)
   {
-    update_columns_->push_back(make_column(current_id_, val, -1));
+    update_columns_->push_back(make_column(current_id_, val));
   }
   void process(char *val);
   void process(const char *val);

@@ -37,6 +37,7 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("unknown_table", [this] { test_unknown_table(); }, "test unknown table");
   add_test("identifier", [this] { test_identifier(); }, "test sql identifier");
   add_test("identifier_prepared", [this] { test_identifier_prepared(); }, "test sql prepared identifier");
+  add_test("select_time", [this] { test_select_time(); }, "test select time value");
   add_test("update", [this] { test_update(); }, "test direct sql update statement");
   add_test("create", [this] { test_create(); }, "test direct sql create statement");
   add_test("create_anonymous", [this] { test_anonymous_create(); }, "test direct sql create statement via row (anonymous)");
@@ -185,6 +186,7 @@ void QueryTestUnit::test_data_types()
   UNIT_EXPECT_EQUAL(it->get_date(), date_val);
   UNIT_EXPECT_EQUAL(it->get_time(), time_val);
 
+  res.close();
   q.drop().execute(connection_);
 }
 
@@ -225,7 +227,7 @@ void QueryTestUnit::test_quoted_identifier()
 
   // check table description
   std::vector<std::string> columns = { "from", "to"};
-  std::vector<database_type > types = {matador::database_type::type_text, matador::database_type::type_text};
+  std::vector<database_type > types = {matador::database_type::type_varchar, matador::database_type::type_varchar};
   auto fields = connection_.describe("quotes");
 
   for (auto &&field : fields) {
@@ -279,7 +281,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
 
     // check table description
     std::vector<std::string> columns({ colname });
-    std::vector<database_type > types({matador::database_type::type_text });
+    std::vector<database_type > types({matador::database_type::type_varchar });
     auto fields = connection_.describe("quotes");
 
     for (auto &&field : fields) {
@@ -472,20 +474,50 @@ void QueryTestUnit::test_identifier_prepared()
 
   auto res = stmt.execute();
 
-//  auto first = res.begin();
-//  auto last = res.end();
-//
-//  UNIT_ASSERT_TRUE(first != last);
-
   for (const auto &pres : res) {
     UNIT_EXPECT_EQUAL(pres->name, "hans");
     UNIT_EXPECT_EQUAL(pres->id, 7UL);
   }
-//  std::unique_ptr<pktest> pres((first++).release());
 
   stmt = q.drop().prepare(connection_);
 
   stmt.execute();
+}
+
+struct appointment
+{
+  unsigned long id{};
+  std::string name;
+  matador::time time_point;
+
+  template<class Serializer>
+  void serialize(Serializer &serializer)
+  {
+    serializer.on_primary_key("id", id);
+    serializer.on_attribute("name", name, 255);
+    serializer.on_attribute("time_point", time_point);
+  }
+};
+
+void QueryTestUnit::test_select_time()
+{
+  connection_.connect();
+
+  query<appointment> q("appointment");
+
+  q.create().execute(connection_);
+
+  auto dinner = appointment{ 1, "dinner", time_val_ };
+  auto str = to_string(time_val_);
+  q.insert(dinner).execute(connection_);
+
+  auto res = q.select().execute(connection_);
+
+  for (const auto &item : res) {
+    UNIT_EXPECT_EQUAL(item->time_point, time_val_);
+  }
+
+  q.drop().execute(connection_);
 }
 
 void QueryTestUnit::test_create()
@@ -578,7 +610,7 @@ void QueryTestUnit::test_anonymous_create()
 
   q.create({
     make_pk_column<long>("id"),
-    make_column("name", 63),
+    make_column<std::string>("name", 63),
     make_column<unsigned>("age")
   });
 
@@ -608,7 +640,7 @@ void QueryTestUnit::test_anonymous_insert()
 
   q.create({
            make_pk_column<int>("id"),
-           make_column("name", 63),
+           make_column<std::string>("name", 63),
            make_column<unsigned>("age")
    });
 
@@ -641,7 +673,7 @@ void QueryTestUnit::test_anonymous_update()
 
   q.create({
            make_pk_column<long>("id"),
-           make_column("name", 63),
+           make_column<std::string>("name", 63),
            make_column<unsigned>("age")
    });
 
@@ -1525,7 +1557,7 @@ void QueryTestUnit::test_rows()
   q.create({
              make_pk_column<int>("id"),
              make_column<std::string>("string"),
-             make_column("varchar", 63),
+             make_column<std::string>("varchar", 63),
              make_column<int>("int"),
              make_column<float>("float"),
              make_column<double>("double"),

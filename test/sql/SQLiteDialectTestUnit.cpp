@@ -30,7 +30,7 @@ void SQLiteDialectTestUnit::test_update_with_limit()
   std::string dieter("Dieter");
   unsigned int age54(54);
   cols->push_back(make_column("name", dieter, 255));
-  cols->push_back(make_column("age", age54, -1));
+  cols->push_back(make_column("age", age54));
 
   s.append(cols);
 

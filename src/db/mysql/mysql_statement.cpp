@@ -14,7 +14,7 @@ mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   : statement_impl(db.dialect(), stmt)
   , stmt_(mysql_stmt_init(db.handle()))
 {
-  if (mysql_stmt_prepare(stmt_, str().c_str(), str().size()) != 0) {
+  if (mysql_stmt_prepare(stmt_, str().c_str(), static_cast<unsigned long>(str().size())) != 0) {
     throw_stmt_error(stmt_, "mysql", str());
   }
 

@@ -19,7 +19,7 @@ postgresql_statement::postgresql_statement(postgresql_connection &db, const mata
   // parse sql to create result and host arrays
   name_ = generate_statement_name(stmt);
 
-  res_ = PQprepare(db.handle(), name_.c_str(), str().c_str(), bind_vars().size(), nullptr);
+  res_ = PQprepare(db.handle(), name_.c_str(), str().c_str(), static_cast<int>(bind_vars().size()), nullptr);
 
   throw_database_error(res_, db_.handle(), "postgresql", str());
 }
@@ -39,7 +39,7 @@ void postgresql_statement::clear()
 
 detail::result_impl *postgresql_statement::execute()
 {
-  PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), binder_->params().size(), binder_->params().data(), nullptr, nullptr, 0);
+  PGresult *res = PQexecPrepared(db_.handle(), name_.c_str(), static_cast<int>(binder_->params().size()), binder_->params().data(), nullptr, nullptr, 0);
 
   throw_database_error(res, db_.handle(), "postgresql", str());
 

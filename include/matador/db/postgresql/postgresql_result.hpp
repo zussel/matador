@@ -46,6 +46,8 @@ public:
 
   size_type reset_column_index() const override;
 
+  void close() override;
+
   PGresult* result_handle();
 
 protected:

@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/13/16.
-//
-
 #include "MSSQLDialectTestUnit.hpp"
 
 #include "connections.hpp"

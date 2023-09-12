@@ -62,7 +62,7 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, const std
     v->len = SQL_NULL_DATA;
   } else {
 
-    v->len = (s == 0 ? 1 : s);
+    v->len = static_cast<SQLLEN>(s == 0 ? 1 : s);
     v->data = new char[s + 1];
 #ifdef _MSC_VER
     strncpy_s(v->data, s + 1, val.c_str(), s);
@@ -91,7 +91,9 @@ mssql_parameter_binder::value_t* create_bind_value(bool is_null_value)
 mssql_parameter_binder::value_t* create_bind_value(bool is_null_value, const char *val, size_t size)
 {
   size_t val_size = strlen(val);
-  val_size = (val_size < size ? val_size : size);
+  if (size > 0) {
+    val_size = (val_size < size ? val_size : size);
+  }
   auto v = std::make_unique<mssql_parameter_binder::value_t>(val_size + 1);
 
   if (is_null_value) {

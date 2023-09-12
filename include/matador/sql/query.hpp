@@ -556,6 +556,7 @@ public:
 
     auto cols = std::make_shared<matador::columns>(matador::columns::WITH_BRACKETS);
     for (auto &&col : collist) {
+      col->build_options = t_build_options::with_type | t_build_options::with_quotes;
       cols->push_back(col);
     }
 

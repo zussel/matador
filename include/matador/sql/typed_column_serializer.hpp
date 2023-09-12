@@ -71,23 +71,23 @@ public:
   void on_primary_key(const char *, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
   void on_primary_key(const char *id, std::string &, size_t size);
   void on_revision(const char *id, unsigned long long &/*rev*/);
-  void on_attribute(const char *id, char &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, short &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, int &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, long &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, long long &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, unsigned char &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, unsigned short &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, unsigned int &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, unsigned long &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, unsigned long long &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, float &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, double &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, bool &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, char *x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, std::string &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, date &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, time &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, char &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, short &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, int &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, long &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, long long &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, unsigned char &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, unsigned short &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, unsigned int &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, unsigned long &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, unsigned long long &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, float &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, double &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, bool &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, char *x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, std::string &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, date &x, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, time &x, const field_attributes &attr = null_attributes);
   void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);
   void on_has_one(const char *id, identifiable_holder &x, cascade_type);
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -96,42 +96,16 @@ public:
 private:
   std::unique_ptr<columns> cols_;
   size_t index_ = 0;
-//  typedef std::function<std::shared_ptr<column> (const char*, data_type, size_t)> t_create_column_func;
-//  t_create_column_func create_column_func_;
-//  typedef std::function<std::shared_ptr<column> (const char*, size_t, data_type, size_t)> t_create_varchar_column_func;
-//  t_create_varchar_column_func create_varchar_column_func_;
 
   typed_column_identifier_serializer column_identifier_serializer_;
 };
 
 /// @endcond
 
-//template < class T >
-//std::shared_ptr<column> make_column(const char *id, data_type t, size_t index);
-//
-//template <>
-//std::shared_ptr<column> make_column<typed_column>(const char *id, data_type t, size_t index);
-//
-//template <>
-//std::shared_ptr<column> make_column<typed_identifier_column>(const char *id, data_type t, size_t index);
-//
-//template < class T >
-//std::shared_ptr<column> make_varchar_column(const char *id, size_t s, data_type t, size_t index);
-//
-//template <>
-//std::shared_ptr<column> make_varchar_column<typed_varchar_column>(const char *id, size_t s, data_type t, size_t index);
-//
-//template <>
-//std::shared_ptr<column> make_varchar_column<identifier_varchar_column>(const char *id, size_t s, data_type t, size_t index);
-
 template<typename V>
 void typed_column_serializer::on_primary_key(const char *id, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type*)
 {
-//  create_column_func_ = make_column<typed_identifier_column>;
-//  create_varchar_column_func_ = make_varchar_column<identifier_varchar_column>;
   on_attribute(id, x, { constraints::PRIMARY_KEY });
-//  create_column_func_ = make_column<typed_column>;
-//  create_varchar_column_func_ = make_varchar_column<typed_varchar_column>;
 }
 
 template<typename ValueType>

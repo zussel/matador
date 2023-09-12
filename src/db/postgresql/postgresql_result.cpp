@@ -161,5 +161,7 @@ PGresult *postgresql_result::result_handle()
   return res_;
 }
 
+void postgresql_result::close() {}
+
 }
 }

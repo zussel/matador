@@ -11,9 +11,9 @@ namespace details {
 
 const char *gettimestamp(char *buffer, size_t size)
 {
-  struct timeval tp{};
-  matador::gettimeofday(&tp);
-  matador::strftime(buffer, size, log_domain::TIMESTAMP_FORMAT, &tp);
+  time_info ti{};
+  matador::gettimeofday(ti);
+  matador::strftime(buffer, size, log_domain::TIMESTAMP_FORMAT, ti);
   return buffer;
 }
 

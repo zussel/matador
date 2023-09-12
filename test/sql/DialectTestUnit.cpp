@@ -61,7 +61,7 @@ void DialectTestUnit::test_create_query()
   std::string result = dialect.direct(s);
 
   UNIT_ASSERT_EQUAL("create", s.command());
-  UNIT_ASSERT_EQUAL("CREATE TABLE \"person\" (\"id\" INTEGER NOT NULL PRIMARY KEY, \"name\" VARCHAR(256), \"age\" INTEGER) ", result);
+  UNIT_ASSERT_EQUAL("CREATE TABLE \"person\" (\"id\" INTEGER NOT NULL PRIMARY KEY, \"name\" VARCHAR(255), \"age\" INTEGER) ", result);
 }
 
 void DialectTestUnit::test_drop_query()

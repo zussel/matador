@@ -1,6 +1,7 @@
 #include "ConnectionTestUnit.hpp"
 
 #include "matador/sql/connection.hpp"
+#include "matador/sql/connection_info.hpp"
 #include "matador/sql/database_error.hpp"
 
 #include <fstream>
@@ -82,8 +83,9 @@ void ConnectionTestUnit::test_connection_failed()
     return;
   }
 
-  std::regex re("(test)");
-  string dns = std::regex_replace(dns_, re, "matador_invalid");
+  auto ci = matador::connection_info::parse(dns_, 0);
+  ci.database = "invalid";
+  const auto dns = matador::connection_info::to_string(ci);
 
   matador::connection conn(dns);
 

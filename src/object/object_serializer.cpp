@@ -36,9 +36,9 @@ void object_serializer::on_attribute(const char *id, date &x, const field_attrib
 
 void object_serializer::on_attribute(const char *id, time &x, const field_attributes &/*attr*/)
 {
-  struct timeval tv = x.get_timeval();
-  on_attribute(id, tv.tv_sec);
-  on_attribute(id, tv.tv_usec);
+  time_info ti = x.get_time_info();
+  on_attribute(id, ti.seconds_since_epoch);
+  on_attribute(id, ti.milliseconds);
 }
 
 void object_serializer::on_belongs_to(const char *id, object_holder &x, cascade_type cascade)

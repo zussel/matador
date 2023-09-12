@@ -1,6 +1,3 @@
-//
-// Created by sascha on 3/3/16.
-//
 #include "matador/db/sqlite/sqlite_dialect.hpp"
 #include "matador/db/sqlite/sqlite_dialect_compiler.hpp"
 

@@ -164,9 +164,9 @@ void TransactionTestUnit::test_foreign()
   * comment this statement and the following
   * will happen if data exists:
   * data won't be load
-  * a car serializable with id 1 is created
+  * a car object with id 1 is created
   * and an exception on insert is thrown
-  * because there is already a car serializable
+  * because there is already a car object
   * with id 1
   ****************/
 //  session_->load();
@@ -174,11 +174,11 @@ void TransactionTestUnit::test_foreign()
   // create and begin transaction
   transaction tr = s.begin();
   try {
-    // ... do some serializable modifications
+    // ... do some object modifications
     typedef ObjectItem<datatypes> object_item_t;
     typedef object_ptr<object_item_t> object_item_ptr;
     typedef object_ptr<datatypes> item_ptr;
-    // insert new serializable
+    // insert new object
     item_ptr item = s.insert(new datatypes("Bar", 13));
     object_item_ptr object_item = s.insert(new object_item_t("Foo", 42));
     object_item.modify()->ptr(item);

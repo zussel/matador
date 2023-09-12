@@ -32,6 +32,7 @@ public:
   void test_unknown_table();
   void test_identifier();
   void test_identifier_prepared();
+  void test_select_time();
   void test_create();
   void test_update();
   void test_anonymous_create();

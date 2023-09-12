@@ -158,5 +158,8 @@ bool postgresql_prepared_result::finalize_fetch()
   ++row_index_;
   return true;
 }
+
+void postgresql_prepared_result::close() {}
+
 }
 }

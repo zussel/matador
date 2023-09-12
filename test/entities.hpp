@@ -529,8 +529,7 @@ public:
 
 public:
     unsigned long id{};
-//    element_list_t elements{Size};
-    element_list_t elements;
+    element_list_t elements{Size};
 
     template < class S >
     void serialize(S &s)

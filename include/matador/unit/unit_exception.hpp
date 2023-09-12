@@ -37,7 +37,7 @@ class unit_exception : public std::exception
 {
 public:
   /**
-   * @brief Contructs a unit_exception
+   * @brief Constructs a unit_exception
    * 
    * A serializable of type unit_exception with
    * the given message is created.

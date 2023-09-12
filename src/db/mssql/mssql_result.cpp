@@ -32,7 +32,6 @@ mssql_result::mssql_result(SQLHANDLE stmt)
 
 mssql_result::~mssql_result()
 {
-  SQLCloseCursor(stmt_);
   SQLFreeStmt(stmt_, SQL_CLOSE);
 }
 
@@ -187,14 +186,14 @@ void mssql_result::read_column(const char *, size_type index, std::string &val)
   }
 }
 
-void mssql_result::read_column(const char *, size_type index, std::string &val, long s)
+void mssql_result::read_column(const char *, size_type index, std::string &val, size_t size)
 {
-  if (s == -1) {
-    s = 8000;
+  if (size == 0) {
+    size = 8000;
   }
-  std::vector<char> buf(s, 0);
+  std::vector<char> buf(size, 0);
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf.data(), s, &info);
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf.data(), static_cast<SQLLEN>(size), &info);
   if (SQL_SUCCEEDED(ret)) {
     val.assign(buf.data(), info);
   } else {
@@ -263,6 +262,11 @@ bool mssql_result::prepare_fetch()
 bool mssql_result::finalize_fetch()
 {
   return true;
+}
+
+void mssql_result::close()
+{
+  SQLCloseCursor(stmt_);
 }
 
 }

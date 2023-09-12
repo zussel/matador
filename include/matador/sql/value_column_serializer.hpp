@@ -22,6 +22,8 @@ public:
   explicit value_column_identifier_serializer(value_column_serializer &serializer)
   : serializer_(serializer) {}
 
+  value_column_identifier_serializer& for_column(const char *id);
+
   void serialize(short &value, const field_attributes &attr) override { extract_value(value, attr); }
   void serialize(int &value, const field_attributes &attr) override { extract_value(value, attr); }
   void serialize(long &value, const field_attributes &attr) override { extract_value(value, attr); }
@@ -39,6 +41,7 @@ private:
 
 private:
   value_column_serializer &serializer_;
+  const char *id_{nullptr};
 };
 
 class value_column_serializer
@@ -66,23 +69,13 @@ public:
   }
   void on_primary_key(const char *id, std::string &pk, size_t size);
   void on_revision(const char *id, unsigned long long &rev);
-  void on_attribute(const char *id, char &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, short &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, int &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, long &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, long long &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, unsigned char &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, unsigned short &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, unsigned int &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, unsigned long &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, unsigned long long &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, float &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, double &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, bool &x, const field_attributes &attr = null_attributes);
+
+  template<typename Type>
+  void on_attribute(const char *id, Type &x, const field_attributes &attr = null_attributes)
+  {
+    cols_->push_back(make_column(id, x, attr));
+  }
   void on_attribute(const char *id, char *x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, std::string &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, date &x, const field_attributes &attr = null_attributes);
-  void on_attribute(const char *id, time &x, const field_attributes &attr = null_attributes);
   void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);
   void on_has_one(const char *id, identifiable_holder &x, cascade_type);
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
@@ -111,7 +104,7 @@ template<typename ValueType>
 void value_column_identifier_serializer::extract_value(ValueType &value, const field_attributes &attr)
 {
   // Todo: Add column name
-  serializer_.add_column_value("", value, attr);
+  serializer_.add_column_value(id_, value, attr);
 }
 
 }

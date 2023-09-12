@@ -272,6 +272,8 @@ void mysql_result::read_value(const char *id, size_type index, matador::time &va
   }
 }
 
+void mysql_result::close() {}
+
 }
 
 }

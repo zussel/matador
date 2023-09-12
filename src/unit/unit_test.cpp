@@ -147,13 +147,13 @@ void unit_test::info(const std::string &msg)
 
 void unit_test::execute(test_func_info &test_info, bool quiet)
 {
-  initialize();
-  if (!quiet) {
-    std::cout << std::left << std::setw(70) << test_info.caption << " ... " << std::flush;
-  }
-
   long dur(0L);
   try {
+    initialize();
+    if (!quiet) {
+      std::cout << std::left << std::setw(70) << test_info.caption << " ... " << std::flush;
+    }
+
     current_test_func_info = &test_info;
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
     test_info.func();
@@ -161,6 +161,7 @@ void unit_test::execute(test_func_info &test_info, bool quiet)
 
     dur = duration_cast<microseconds>( t2 - t1 ).count();
 
+    finalize();
   } catch (unit_exception &ex) {
     test_info.succeeded = false;
     test_info.message = ex.what();
@@ -168,7 +169,6 @@ void unit_test::execute(test_func_info &test_info, bool quiet)
     test_info.succeeded = false;
     test_info.message = ex.what();
   }
-  finalize();
   if (quiet) {
     return;
   }

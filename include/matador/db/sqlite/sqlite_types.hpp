@@ -26,7 +26,7 @@ template <> struct type_traits<bool> { inline static const char* type_string() {
 template <> struct type_traits<float> { inline static const char* type_string() { return "FLOAT"; } };
 template <> struct type_traits<double> { inline static const char* type_string() { return "DOUBLE"; } };
 template <> struct type_traits<const char*> { inline static const char* type_string() { return "VARCHAR"; } };
-template <> struct type_traits<std::string> { inline static const char* type_string() { return "TEXT"; } };
+template <> struct type_traits<std::string> { inline static const char* type_string() { return "VARCHAR"; } };
 template <> struct type_traits<matador::date> { inline static const char* type_string() { return "DATE"; } };
 template <> struct type_traits<matador::time> { inline static const char* type_string() { return "DATETIME"; } };
 template <> struct type_traits<object_base_ptr> { inline static const char* type_string() { return "INTEGER"; } };

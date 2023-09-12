@@ -49,10 +49,10 @@ void object_deserializer::on_attribute(const char *, date &x, const field_attrib
 
 void object_deserializer::on_attribute(const char *, time &x, const field_attributes &/*attr*/)
 {
-  struct timeval tv{};
-  buffer_->release(&tv.tv_sec, sizeof(tv.tv_sec));
-  buffer_->release(&tv.tv_usec, sizeof(tv.tv_usec));
-  x.set(tv);
+  time_info ti;
+  buffer_->release(&ti.seconds_since_epoch, sizeof(ti.seconds_since_epoch));
+  buffer_->release(&ti.milliseconds, sizeof(ti.milliseconds));
+  x.set(ti);
 }
 
 object_proxy *object_deserializer::find_proxy(unsigned long long oid)

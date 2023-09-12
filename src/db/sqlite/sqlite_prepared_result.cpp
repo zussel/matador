@@ -185,6 +185,8 @@ bool sqlite_prepared_result::finalize_fetch()
   return true;
 }
 
+void sqlite_prepared_result::close() {}
+
 }
 
 }

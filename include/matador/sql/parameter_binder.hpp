@@ -300,8 +300,22 @@ public:
   void on_attribute(const char *id, double &x, const field_attributes &/*attr*/ = null_attributes) { bind_value(id, x); }
   void on_attribute(const char *id, matador::time &x, const field_attributes &/*attr*/ = null_attributes) { bind_value(id, x); }
   void on_attribute(const char *id, matador::date &x, const field_attributes &/*attr*/ = null_attributes) { bind_value(id, x); }
-  void on_attribute(const char *, char *x, const field_attributes &attr = null_attributes) { impl_->bind(x, attr.size(), index_++); }
-  void on_attribute(const char *, std::string &x, const field_attributes &attr = null_attributes) { impl_->bind(x, attr.size(), index_++); }
+  void on_attribute(const char *, char *x, const field_attributes &attr = null_attributes)
+  {
+    if (attr.size() == 0) {
+      impl_->bind(x, index_++);
+    } else {
+      impl_->bind(x, attr.size(), index_++);
+    }
+  }
+  void on_attribute(const char *, std::string &x, const field_attributes &attr = null_attributes)
+  {
+    if (attr.size() == 0) {
+      impl_->bind(x, index_++);
+    } else {
+      impl_->bind(x, attr.size(), index_++);
+    }
+  }
   void on_belongs_to(const char */*id*/, identifiable_holder &x, cascade_type)
   {
     if (x.has_primary_key()) {

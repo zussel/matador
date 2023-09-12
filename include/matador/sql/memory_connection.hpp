@@ -12,7 +12,7 @@ namespace memory {
 class memory_connection : public matador::connection_impl
 {
 public:
-  void open(const std::string &) override {}
+  void open(const connection_info &) override {}
   bool is_open() const override { return true; }
   void close() override {}
 
@@ -34,9 +34,11 @@ public:
 
   bool exists(const std::string &) override { return true; }
 
-  std::vector<field> describe(const std::string &) override { return std::vector<field>(); }
+  std::vector<field> describe(const std::string &) override { return {}; }
 
   basic_dialect* dialect() override { return nullptr; }
+
+  unsigned short default_port() const override { return 0; }
 };
 
 /// @endcond

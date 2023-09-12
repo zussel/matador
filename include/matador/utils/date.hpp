@@ -400,9 +400,9 @@ public:
   static bool is_daylight_saving(int year, int month, int day);
 
   /**
-   * Returns the underlaying julian date
+   * Returns the underlying julian date
    *
-   * @return The underlaying julian date
+   * @return The underlying julian date
    */
   int julian_date() const;
 

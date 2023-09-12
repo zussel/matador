@@ -193,6 +193,8 @@ public:
 
   virtual size_type reset_column_index() const = 0;
 
+  virtual void close() = 0;
+
 protected:
   friend class result_row_serializer;
 

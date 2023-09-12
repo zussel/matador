@@ -39,10 +39,10 @@ void gmtime(const time_t &in, tm &out)
 #endif
 }
 
-int strftime(char *buffer, size_t size, const char *format, const struct timeval *tv)
+size_t strftime(char *buffer, size_t size, const char *format, const time_info &ti)
 {
-  struct tm timeinfo = {};
-  localtime(tv->tv_sec, timeinfo);
+//  struct tm timeinfo = {};
+//  localtime(tv->tv_sec, timeinfo);
   // find position of "%f" for milliseconds
   const char *fpos = strstr(format, "%f");
   if (fpos != nullptr) {
@@ -58,17 +58,17 @@ int strftime(char *buffer, size_t size, const char *format, const struct timeval
     strncpy(first_part, format, len);
 #endif
     first_part[len] = '\0';
-    int s = (int)::strftime(buffer, size, first_part, &timeinfo);
+    auto s = ::strftime(buffer, size, first_part, &ti.timestamp);
     if (s == 0) {
       throw std::logic_error("couldn't format date string");
     }
 
-    s += snprintf(buffer + s, size - s, "%03ld", tv->tv_usec / 1000);
+    s += snprintf(buffer + s, size - s, "%03u", ti.milliseconds);
 
     const char *last_part = fpos + 2;
     // check if last part is valid
     if (last_part < format + strlen(format)) {
-      s = ::strftime(buffer + s, size - s, last_part, &timeinfo);
+      s = ::strftime(buffer + s, size - s, last_part, &ti.timestamp);
       if (s == 0) {
         throw std::logic_error("couldn't format date string");
       }
@@ -76,7 +76,7 @@ int strftime(char *buffer, size_t size, const char *format, const struct timeval
     return s;
   } else {
     // "%f" not found; call usual strftime
-    int s = ::strftime(buffer, size, format, &timeinfo);
+    auto s = ::strftime(buffer, size, format, &ti.timestamp);
     if (s == 0) {
       throw std::logic_error("couldn't format date string");
     }
@@ -85,26 +85,26 @@ int strftime(char *buffer, size_t size, const char *format, const struct timeval
   return 0;
 }
 
-void gettimeofday(struct timeval *tp)
+void gettimeofday(time_info &ti)
 {
   auto now=std::chrono::system_clock::now();
-  auto millisecs= std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
-  tp->tv_sec=millisecs.count()/1000;
-  tp->tv_usec=(millisecs.count()%1000)*1000;
+  auto milliseconds= std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+  ti.milliseconds = (milliseconds.count()%1000);
+  ti.seconds_since_epoch = milliseconds.count()/1000;
+  localtime(ti.seconds_since_epoch, ti.timestamp);
 }
 
-void throw_invalid_time(int h, int m, int s, long ms)
+void throw_invalid_time(int h, int m, int s, unsigned int millis)
 {
-  if (!time::is_valid_time(h, m, s, ms)) {
+  if (!time::is_valid_time(h, m, s, millis)) {
     throw std::logic_error("time isn't valid");
   }
 }
 
 time::time()
 {
-  matador::gettimeofday(&time_);
-  auto temp = this->time_.tv_sec;
-  localtime(temp, tm_);
+  matador::gettimeofday(time_info_);
+  localtime(time_info_.seconds_since_epoch, time_info_.timestamp);
 }
 
 time::time(time_t t)
@@ -112,10 +112,9 @@ time::time(time_t t)
   set(t, 0);
 }
 
-time::time(struct timeval tv)
-{
-  set(tv);
-}
+time::time(const time_info &ti)
+: time_info_(ti)
+{}
 
 time::time(int year, int month, int day, int hour, int min, int sec, long millis)
 {
@@ -124,8 +123,8 @@ time::time(int year, int month, int day, int hour, int min, int sec, long millis
 
 bool time::operator==(const time &x) const
 {
-  return time_.tv_sec == x.time_.tv_sec &&
-    time_.tv_usec == x.time_.tv_usec;
+  return time_info_.seconds_since_epoch == x.time_info_.seconds_since_epoch &&
+    time_info_.milliseconds == x.time_info_.milliseconds;
 }
 
 bool time::operator!=(const time &x) const
@@ -135,8 +134,8 @@ bool time::operator!=(const time &x) const
 
 bool time::operator<(const time &x) const
 {
-  return time_.tv_sec < x.time_.tv_sec ||
-         (time_.tv_sec == x.time_.tv_sec && time_.tv_usec < x.time_.tv_usec);
+  return time_info_.seconds_since_epoch < x.time_info_.seconds_since_epoch ||
+         (time_info_.seconds_since_epoch == x.time_info_.seconds_since_epoch && time_info_.milliseconds < x.time_info_.milliseconds);
 }
 
 bool time::operator<=(const time &x) const
@@ -159,7 +158,16 @@ time time::now()
   return time{};
 }
 
-bool time::is_valid_time(int hour, int min, int sec, long millis) {
+time time::to_utc() const
+{
+  time_info utc;
+  gmtime(time_info_.seconds_since_epoch, utc.timestamp);
+  utc.seconds_since_epoch = mktime(&utc.timestamp);
+  utc.milliseconds = time_info_.milliseconds;
+  return time{utc};
+}
+
+bool time::is_valid_time(int hour, int min, int sec, unsigned int millis) {
   if (hour < 0 || hour > 23) {
     return false;
   }
@@ -169,16 +177,16 @@ bool time::is_valid_time(int hour, int min, int sec, long millis) {
   if (sec < 0 || sec > 59) {
     return false;
   }
-  return !(millis < 0 || millis > 9999);
+  return millis <= 9999;
 }
 
 time time::parse(const std::string &tstr, const char *format)
 {
-  struct timeval tv = parse_time_string(tstr, format);
-  return matador::time(tv);
+  auto ti = parse_time_string(tstr, format);
+  return time{ti};
 }
 
-void time::set(int year, int month, int day, int hour, int min, int sec, long millis)
+void time::set(int year, int month, int day, int hour, int min, int sec, unsigned int millis)
 {
   throw_invalid_date(day, month, year);
   throw_invalid_time(hour, min, sec, millis);
@@ -190,16 +198,12 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   temp_tm.tm_hour = hour;
   temp_tm.tm_min = min;
   temp_tm.tm_sec = sec;
-  temp_tm.tm_isdst = date::is_daylight_saving(year, month, day);
+  // set 'tm_isdst' to -1 to let mktime() determine correct value
+  temp_tm.tm_isdst = -1;
 
-#ifdef _MSC_VER
-  time_.tv_sec = (long)mktime(&temp_tm);
-#else
-  time_.tv_sec = std::mktime(&temp_tm);
-#endif
-  time_.tv_usec = millis * 1000;
-  localtime(time_.tv_sec, temp_tm);
-  tm_ = temp_tm;
+  time_info_.seconds_since_epoch = std::mktime(&temp_tm);
+  time_info_.milliseconds = millis;
+  localtime(time_info_.seconds_since_epoch, time_info_.timestamp);
 }
 
 void time::set(const char *timestr, const char *format)
@@ -207,16 +211,11 @@ void time::set(const char *timestr, const char *format)
   set(parse_time_string(timestr, format));
 }
 
-void time::set(time_t t, long millis)
+void time::set(time_t t, unsigned int millis)
 {
-#ifdef _MSC_VER
-  time_.tv_sec = (long)t;
-#else
-  time_.tv_sec = t;
-#endif
-  time_.tv_usec = millis * 1000;
-  auto temp = this->time_.tv_sec;
-  localtime(temp, tm_);
+  time_info_.seconds_since_epoch = t;
+  time_info_.milliseconds = millis;
+  localtime(time_info_.seconds_since_epoch, time_info_.timestamp);
 }
 
 void time::set(const date &d)
@@ -224,46 +223,45 @@ void time::set(const date &d)
   set(d.year(), d.month(), d.day(), 0, 0, 0, 0);
 }
 
-void time::set(timeval tv)
+void time::set(const time_info &ti)
 {
-  time_ = tv;
-  auto temp = this->time_.tv_sec;
-  localtime(temp, tm_);
+  time_info_ = ti;
+  localtime(time_info_.seconds_since_epoch, time_info_.timestamp);
 }
 
 int time::year() const
 {
-  return tm_.tm_year + 1900;
+  return time_info_.timestamp.tm_year + 1900;
 }
 
 int time::month() const
 {
-  return tm_.tm_mon + 1;
+  return time_info_.timestamp.tm_mon + 1;
 }
 
 int time::day() const
 {
-  return tm_.tm_mday;
+  return time_info_.timestamp.tm_mday;
 }
 
 int time::hour() const
 {
-   return tm_.tm_hour;
+   return time_info_.timestamp.tm_hour;
 }
 
 int time::minute() const
 {
-  return tm_.tm_min;
+  return time_info_.timestamp.tm_min;
 }
 
 int time::second() const
 {
-  return tm_.tm_sec;
+  return time_info_.timestamp.tm_sec;
 }
 
-int time::milli_second() const
+unsigned int time::milli_second() const
 {
-  return (int)(time_.tv_usec / 1000);
+  return time_info_.milliseconds;
 }
 
 time &time::year(int y)
@@ -310,37 +308,37 @@ time &time::milli_second(int ms)
 
 int time::day_of_week() const
 {
-  return tm_.tm_wday;
+  return time_info_.timestamp.tm_wday;
 }
 
 int time::day_of_year() const
 {
-  return tm_.tm_yday;
+  return time_info_.timestamp.tm_yday;
 }
 
-bool time::is_leapyear() const
+bool time::is_leap_year() const
 {
-  return date::is_leapyear(tm_.tm_year + 1900);
+  return date::is_leapyear(time_info_.timestamp.tm_year + 1900);
 }
 
 bool time::is_daylight_saving() const
 {
-  return tm_.tm_isdst == 1;
+  return time_info_.timestamp.tm_isdst == 1;
 }
 
-struct timeval time::get_timeval() const
+time_info time::get_time_info() const
 {
-  return time_;
+  return time_info_;
 }
 
 struct tm time::get_tm() const
 {
-  return tm_;
+  return time_info_.timestamp;
 }
 
 date time::to_date() const
 {
-  return matador::date(tm_.tm_mday, tm_.tm_mon + 1,  tm_.tm_year + 1900);
+  return {time_info_.timestamp.tm_mday, time_info_.timestamp.tm_mon + 1,  time_info_.timestamp.tm_year + 1900};
 }
 
 std::ostream& operator<<(std::ostream &out, const time &x)
@@ -351,45 +349,45 @@ std::ostream& operator<<(std::ostream &out, const time &x)
 
 void time::sync_day(int d)
 {
-  sync_time(tm_.tm_year + 1900, tm_.tm_mon + 1, d, tm_.tm_hour, tm_.tm_min, tm_.tm_sec, time_.tv_usec / 1000);
+  sync_time(time_info_.timestamp.tm_year + 1900, time_info_.timestamp.tm_mon + 1, d, time_info_.timestamp.tm_hour, time_info_.timestamp.tm_min, time_info_.timestamp.tm_sec, time_info_.milliseconds);
 }
 
 void time::sync_month(int m)
 {
-  sync_time(tm_.tm_year + 1900, m, tm_.tm_mday, tm_.tm_hour, tm_.tm_min, tm_.tm_sec, time_.tv_usec / 1000);
+  sync_time(time_info_.timestamp.tm_year + 1900, m, time_info_.timestamp.tm_mday, time_info_.timestamp.tm_hour, time_info_.timestamp.tm_min, time_info_.timestamp.tm_sec, time_info_.milliseconds);
 }
 
 void time::sync_year(int y)
 {
-  sync_time(y, tm_.tm_mon + 1, tm_.tm_mday, tm_.tm_hour, tm_.tm_min, tm_.tm_sec, time_.tv_usec / 1000);
+  sync_time(y, time_info_.timestamp.tm_mon + 1, time_info_.timestamp.tm_mday, time_info_.timestamp.tm_hour, time_info_.timestamp.tm_min, time_info_.timestamp.tm_sec, time_info_.milliseconds);
 }
 
 void time::sync_hour(int h)
 {
-  sync_time(tm_.tm_year + 1900, tm_.tm_mon + 1, tm_.tm_mday, h, tm_.tm_min, tm_.tm_sec, time_.tv_usec / 1000);
+  sync_time(time_info_.timestamp.tm_year + 1900, time_info_.timestamp.tm_mon + 1, time_info_.timestamp.tm_mday, h, time_info_.timestamp.tm_min, time_info_.timestamp.tm_sec, time_info_.milliseconds);
 }
 
 void time::sync_minute(int m)
 {
-  sync_time(tm_.tm_year + 1900, tm_.tm_mon + 1, tm_.tm_mday, tm_.tm_hour, m, tm_.tm_sec, time_.tv_usec / 1000);
+  sync_time(time_info_.timestamp.tm_year + 1900, time_info_.timestamp.tm_mon + 1, time_info_.timestamp.tm_mday, time_info_.timestamp.tm_hour, m, time_info_.timestamp.tm_sec, time_info_.milliseconds);
 }
 
 void time::sync_second(int s)
 {
-  sync_time(tm_.tm_year + 1900, tm_.tm_mon + 1, tm_.tm_mday, tm_.tm_hour, tm_.tm_min, s, time_.tv_usec / 1000);
+  sync_time(time_info_.timestamp.tm_year + 1900, time_info_.timestamp.tm_mon + 1, time_info_.timestamp.tm_mday, time_info_.timestamp.tm_hour, time_info_.timestamp.tm_min, s, time_info_.milliseconds);
 }
 
 void time::sync_milli_second(int ms)
 {
-  sync_time(tm_.tm_year + 1900, tm_.tm_mon + 1, tm_.tm_mday, tm_.tm_hour, tm_.tm_min, tm_.tm_sec, ms);
+  sync_time(time_info_.timestamp.tm_year + 1900, time_info_.timestamp.tm_mon + 1, time_info_.timestamp.tm_mday, time_info_.timestamp.tm_hour, time_info_.timestamp.tm_min, time_info_.timestamp.tm_sec, ms);
 }
 
-void time::sync_time(int y, int m, int d, int h, int min, int s, long ms)
+void time::sync_time(int y, int m, int d, int h, int min, int s, unsigned int millis)
 {
-  set(y, m, d, h, min, s, ms);
+  set(y, m, d, h, min, s, millis);
 }
 
-timeval time::parse_time_string(const std::string &tstr, const char *format)
+time_info time::parse_time_string(const std::string &tstr, const char *format)
 {
   /*
   * find the %f format token
@@ -398,10 +396,10 @@ timeval time::parse_time_string(const std::string &tstr, const char *format)
   const char *pch = strstr(format, "%f");
 
   std::string part(format, (pch ? pch-format : strlen(format)));
-  struct tm tm{};
-  memset(&tm, 0, sizeof(struct tm));
-  const char *endptr = detail::strptime(tstr.c_str(), part.c_str(), &tm);
-  unsigned long usec = 0;
+  time_info ti{};
+  memset(&ti.timestamp, 0, sizeof(struct tm));
+  const char *endptr = detail::strptime(tstr.c_str(), part.c_str(), &ti.timestamp);
+  unsigned int usec = 0;
   if (endptr == nullptr && pch != nullptr) {
     // parse error
     throw std::logic_error("error parsing time: " + tstr);
@@ -410,22 +408,19 @@ timeval time::parse_time_string(const std::string &tstr, const char *format)
     usec = std::strtoul(endptr, &next, 10);
     // calculate precision
     auto digits = (unsigned int) (next - endptr);
-    usec *= (unsigned long)pow(10.0, 6 - digits);
+    usec *= (unsigned long)pow(10.0, 3 - digits);
     if ((size_t)(next - format) != strlen(format)) {
       // still time string to parse
-      detail::strptime(next, pch+2, &tm);
+      detail::strptime(next, pch+2, &ti.timestamp);
     }
   }
 
-  tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
-  struct timeval tv{};
-#ifdef _MSC_VER
-  tv.tv_sec = (long)mktime(&tm);
-  tv.tv_usec = usec;
-#else
-  tv.tv_sec = mktime(&tm);
-  tv.tv_usec = usec;
-#endif
-  return tv;
+  // set 'tm_isdst' to -1 to let mktime() determine correct value
+  ti.timestamp.tm_isdst = -1;
+  ti.milliseconds = usec;
+  ti.seconds_since_epoch = mktime(&ti.timestamp);
+  
+  return ti;
 }
+
 }

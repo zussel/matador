@@ -40,6 +40,8 @@ public:
 
   size_type reset_column_index() const override;
 
+  void close() override;
+
 protected:
   void read_value(const char *id, size_type index, char &value) override;
   void read_value(const char *id, size_type index, short &value) override;

@@ -53,7 +53,7 @@ void json_serializer::on_attribute(const char *id, date &d)
 
 void json_serializer::on_attribute(const char *id, time &t)
 {
-  if (t.get_timeval().tv_sec == 0 || t.get_timeval().tv_usec == 0) {
+  if (t.get_time_info().seconds_since_epoch == 0 || t.get_time_info().milliseconds == 0) {
     return;
   }
   write_id(id);

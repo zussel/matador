@@ -64,11 +64,11 @@ void TimeTestUnit::test_initialize()
   UNIT_ASSERT_EQUAL(20, t1.hour());
   UNIT_ASSERT_EQUAL(17, t1.minute());
   UNIT_ASSERT_EQUAL(45, t1.second());
-  UNIT_ASSERT_EQUAL(0, t1.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t1.milli_second());
   UNIT_ASSERT_EQUAL(3, t1.day_of_week());
   UNIT_ASSERT_EQUAL(336, t1.day_of_year());
   UNIT_ASSERT_FALSE(t1.is_daylight_saving());
-  UNIT_ASSERT_FALSE(t1.is_leapyear());
+  UNIT_ASSERT_FALSE(t1.is_leap_year());
 
   time_t t;
   ::time(&t);
@@ -95,9 +95,9 @@ void TimeTestUnit::test_initialize()
   UNIT_ASSERT_EQUAL(20, t2.hour());
   UNIT_ASSERT_EQUAL(17, t2.minute());
   UNIT_ASSERT_EQUAL(45, t2.second());
-  UNIT_ASSERT_EQUAL(0, t2.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t2.milli_second());
   UNIT_ASSERT_FALSE(t2.is_daylight_saving());
-  UNIT_ASSERT_FALSE(t2.is_leapyear());
+  UNIT_ASSERT_FALSE(t2.is_leap_year());
 }
 
 void TimeTestUnit::test_invalid()
@@ -122,9 +122,9 @@ void TimeTestUnit::test_copy()
   UNIT_ASSERT_EQUAL(20, t1.hour());
   UNIT_ASSERT_EQUAL(17, t1.minute());
   UNIT_ASSERT_EQUAL(45, t1.second());
-  UNIT_ASSERT_EQUAL(0, t1.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t1.milli_second());
   UNIT_ASSERT_FALSE(t1.is_daylight_saving());
-  UNIT_ASSERT_FALSE(t1.is_leapyear());
+  UNIT_ASSERT_FALSE(t1.is_leap_year());
 
   UNIT_ASSERT_EQUAL(2014, t2.year());
   UNIT_ASSERT_EQUAL(12, t2.month());
@@ -132,9 +132,9 @@ void TimeTestUnit::test_copy()
   UNIT_ASSERT_EQUAL(20, t2.hour());
   UNIT_ASSERT_EQUAL(17, t2.minute());
   UNIT_ASSERT_EQUAL(45, t2.second());
-  UNIT_ASSERT_EQUAL(0, t2.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t2.milli_second());
   UNIT_ASSERT_FALSE(t2.is_daylight_saving());
-  UNIT_ASSERT_FALSE(t2.is_leapyear());
+  UNIT_ASSERT_FALSE(t2.is_leap_year());
 
   UNIT_ASSERT_TRUE(t1 == t2);
 }
@@ -151,9 +151,9 @@ void TimeTestUnit::test_assign()
   UNIT_ASSERT_EQUAL(20, t1.hour());
   UNIT_ASSERT_EQUAL(17, t1.minute());
   UNIT_ASSERT_EQUAL(45, t1.second());
-  UNIT_ASSERT_EQUAL(0, t1.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t1.milli_second());
   UNIT_ASSERT_FALSE(t1.is_daylight_saving());
-  UNIT_ASSERT_FALSE(t1.is_leapyear());
+  UNIT_ASSERT_FALSE(t1.is_leap_year());
 
   UNIT_ASSERT_EQUAL(2014, t2.year());
   UNIT_ASSERT_EQUAL(12, t2.month());
@@ -161,9 +161,9 @@ void TimeTestUnit::test_assign()
   UNIT_ASSERT_EQUAL(20, t2.hour());
   UNIT_ASSERT_EQUAL(17, t2.minute());
   UNIT_ASSERT_EQUAL(45, t2.second());
-  UNIT_ASSERT_EQUAL(0, t2.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t2.milli_second());
   UNIT_ASSERT_FALSE(t2.is_daylight_saving());
-  UNIT_ASSERT_FALSE(t2.is_leapyear());
+  UNIT_ASSERT_FALSE(t2.is_leap_year());
 
   UNIT_ASSERT_TRUE(t1 == t2);
 }
@@ -194,9 +194,9 @@ void TimeTestUnit::test_modify()
   UNIT_ASSERT_EQUAL(11, t.hour());
   UNIT_ASSERT_EQUAL(35, t.minute());
   UNIT_ASSERT_EQUAL(7, t.second());
-  UNIT_ASSERT_EQUAL(0, t.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t.milli_second());
   UNIT_ASSERT_FALSE(t.is_daylight_saving());
-  UNIT_ASSERT_FALSE(t.is_leapyear());
+  UNIT_ASSERT_FALSE(t.is_leap_year());
 
   t.year(2014).month(8).day(8);
 
@@ -206,9 +206,9 @@ void TimeTestUnit::test_modify()
   UNIT_ASSERT_EQUAL(11, t.hour());
   UNIT_ASSERT_EQUAL(35, t.minute());
   UNIT_ASSERT_EQUAL(7, t.second());
-  UNIT_ASSERT_EQUAL(0, t.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t.milli_second());
 //  UNIT_ASSERT_TRUE(t.is_daylight_saving());
-  UNIT_ASSERT_FALSE(t.is_leapyear());
+  UNIT_ASSERT_FALSE(t.is_leap_year());
 
   t.year(2016);
 
@@ -218,9 +218,9 @@ void TimeTestUnit::test_modify()
   UNIT_ASSERT_EQUAL(11, t.hour());
   UNIT_ASSERT_EQUAL(35, t.minute());
   UNIT_ASSERT_EQUAL(7, t.second());
-  UNIT_ASSERT_EQUAL(0, t.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t.milli_second());
 //  UNIT_ASSERT_TRUE(t.is_daylight_saving());
-  UNIT_ASSERT_TRUE(t.is_leapyear());
+  UNIT_ASSERT_TRUE(t.is_leap_year());
 
   t.year(2000).hour(23).minute(13).second(1).milli_second(4711);
 
@@ -230,9 +230,9 @@ void TimeTestUnit::test_modify()
   UNIT_ASSERT_EQUAL(23, t.hour());
   UNIT_ASSERT_EQUAL(13, t.minute());
   UNIT_ASSERT_EQUAL(1, t.second());
-  UNIT_ASSERT_EQUAL(4711, t.milli_second());
+  UNIT_ASSERT_EQUAL(4711U, t.milli_second());
 //  UNIT_ASSERT_TRUE(t.is_daylight_saving());
-  UNIT_ASSERT_TRUE(t.is_leapyear());
+  UNIT_ASSERT_TRUE(t.is_leap_year());
 }
 
 void TimeTestUnit::test_parse()
@@ -247,7 +247,7 @@ void TimeTestUnit::test_parse()
   UNIT_ASSERT_EQUAL(12, t.hour());
   UNIT_ASSERT_EQUAL(55, t.minute());
   UNIT_ASSERT_EQUAL(12, t.second());
-  UNIT_ASSERT_EQUAL(123, t.milli_second());
+  UNIT_ASSERT_EQUAL(123U, t.milli_second());
 
   tstr1.assign("12:55:12.123 03.04.2015");
 
@@ -259,7 +259,7 @@ void TimeTestUnit::test_parse()
   UNIT_ASSERT_EQUAL(12, t.hour());
   UNIT_ASSERT_EQUAL(55, t.minute());
   UNIT_ASSERT_EQUAL(12, t.second());
-  UNIT_ASSERT_EQUAL(123, t.milli_second());
+  UNIT_ASSERT_EQUAL(123U, t.milli_second());
 
   tstr1.assign("12:55:12 03.04.2015");
 
@@ -271,7 +271,7 @@ void TimeTestUnit::test_parse()
   UNIT_ASSERT_EQUAL(12, t.hour());
   UNIT_ASSERT_EQUAL(55, t.minute());
   UNIT_ASSERT_EQUAL(12, t.second());
-  UNIT_ASSERT_EQUAL(0, t.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t.milli_second());
 }
 
 void TimeTestUnit::test_format()
@@ -293,11 +293,11 @@ void TimeTestUnit::test_to_date()
   UNIT_ASSERT_EQUAL(20, t1.hour());
   UNIT_ASSERT_EQUAL(17, t1.minute());
   UNIT_ASSERT_EQUAL(45, t1.second());
-  UNIT_ASSERT_EQUAL(0, t1.milli_second());
+  UNIT_ASSERT_EQUAL(0U, t1.milli_second());
   UNIT_ASSERT_EQUAL(3, t1.day_of_week());
   UNIT_ASSERT_EQUAL(336, t1.day_of_year());
   UNIT_ASSERT_FALSE(t1.is_daylight_saving());
-  UNIT_ASSERT_FALSE(t1.is_leapyear());
+  UNIT_ASSERT_FALSE(t1.is_leap_year());
 
   matador::date d1 = t1.to_date();
 
@@ -310,15 +310,15 @@ void TimeTestUnit::test_strftime()
 {
   matador::time t(2019, 8, 29, 14, 43, 57, 123);
 
-  struct timeval tv = t.get_timeval();
+  const auto ti = t.get_time_info();
 
   char buffer[64];
 
-  strftime(buffer, 64, "%H:%M:%S.%f", &tv);
+  strftime(buffer, 64, "%H:%M:%S.%f", ti);
 
   UNIT_EXPECT_EQUAL("14:43:57.123", buffer);
 
-  strftime(buffer, 64, "%H:%M:%S.%f %Y", &tv);
+  strftime(buffer, 64, "%H:%M:%S.%f %Y", ti);
 
   UNIT_EXPECT_EQUAL("14:43:57.123 2019", buffer);
 }

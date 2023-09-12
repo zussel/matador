@@ -383,5 +383,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].error = &info_[index].error;
 }
 
+void mysql_prepared_result::close() {}
+
 }
 }

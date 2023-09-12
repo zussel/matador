@@ -33,6 +33,8 @@ public:
 
   size_type reset_column_index() const override;
 
+  void close() override;
+
   void push_back(char **row_values, int column_count);
 
 protected:

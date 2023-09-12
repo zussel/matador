@@ -80,7 +80,7 @@ column columns::count_all()
   return count_all_;
 }
 
-columns columns::all_ = columns({column("*", true)}, WITHOUT_BRACKETS);
-column columns::count_all_ = column("COUNT(*)", true);
+columns columns::all_ = columns({column("*", t_build_options::empty)}, WITHOUT_BRACKETS);
+column columns::count_all_ = column("COUNT(*)", t_build_options::empty);
 
 }

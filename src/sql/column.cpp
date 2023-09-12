@@ -48,7 +48,7 @@ std::shared_ptr<column> make_column(const std::string &name, data_type type, con
 
 std::shared_ptr<column> make_pk_column(const std::string &name, data_type type, size_t index, size_t max_size)
 {
-  return make_column(name, type, index, { max_size, constraints::PRIMARY_KEY });
+  return make_column(name, type, index, { max_size, constraints::PRIMARY_KEY | constraints::NOT_NULL });
 }
 
 std::shared_ptr<column> make_column(const std::string &name, data_type type, size_t index, const field_attributes &attr)
@@ -68,7 +68,7 @@ std::shared_ptr<column> make_column(const std::string &name, const field_attribu
 template<>
 std::shared_ptr<column> make_pk_column<std::string>(const std::string &name, size_t max_size)
 {
-  return make_column<std::string>(name, { max_size, constraints::PRIMARY_KEY });
+  return make_column<std::string>(name, { max_size, constraints::PRIMARY_KEY | constraints::NOT_NULL });
 }
 
 }

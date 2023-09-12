@@ -86,7 +86,7 @@ public:
    * @brief Copy constructor
    * @param s any object to be copied
    */
-  any(any const &s) : p{s.p->copy()} { }
+  any(any const &s) : p{s.p ? s.p->copy() : nullptr} { }
 
   /**
    * @brief Create any from concrete object

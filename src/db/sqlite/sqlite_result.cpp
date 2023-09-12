@@ -280,6 +280,8 @@ bool sqlite_result::finalize_fetch()
   return true;
 }
 
+void sqlite_result::close() {}
+
 }
 
 }

@@ -11,7 +11,7 @@ enum class t_build_options {
   empty = 0 << 0,
   with_quotes = 1 << 0,
   with_type = 1 << 1,
-  with_size = 1 << 2
+  with_value = 1 << 2
 };
 
 inline t_build_options operator|(t_build_options a, t_build_options b)
@@ -55,18 +55,18 @@ struct column : public detail::token
   /**
    * @brief Creates a new column with given name
    *
-   * @param col The name of the column
+   * @param name The name of the column
    * @param skip_quotes True if the column shouldn't get quotes
    * @param attr Field attributes of the column
    */
-  column(std::string col, t_build_options options, const field_attributes &attr = null_attributes);
+  column(std::string name, t_build_options options, const field_attributes &attr = null_attributes);
 
   template < typename Type >
-  column(std::string name, const Type &val, field_attributes attr, typename std::enable_if<!std::is_same<Type, matador::any>::value>::type* = 0)
+  column(std::string name, const Type &val, const field_attributes &attr, typename std::enable_if<!std::is_same<Type, matador::any>::value>::type* = 0)
   : token(COLUMN)
   , name(std::move(name))
   , val(val)
-  , type(data_type_traits<Type>::builtin_type())
+  , type(data_type_traits<Type>::builtin_type(attr.size()))
   , attributes(attr) {}
 
   /**
@@ -77,7 +77,7 @@ struct column : public detail::token
   void accept(token_visitor &visitor) override;
 
   std::string name;         /**< Name of the column */
-  t_build_options build_options{t_build_options::empty};
+  t_build_options build_options{t_build_options::with_quotes};
   value val;
   data_type type{data_type::type_unknown};
   field_attributes attributes;
@@ -99,19 +99,27 @@ std::shared_ptr<column> make_column(const std::string &name, data_type type, siz
 
 template < typename Type >
 std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = null_attributes) {
-  return make_column(name, Type{}, attr);
+  return make_column(name, data_type_traits<Type>::builtin_type(attr.size()), 0, attr);
 }
 
 template < typename Type >
 std::shared_ptr<column> make_column(const std::string &name, const Type &val, const field_attributes &attr = null_attributes) {
-  return std::make_shared<column>(name, val, attr);
+  auto col = std::make_shared<column>(name, val, attr);
+  col->build_options |= t_build_options::with_value;
+  return col;
 }
+
+//std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr, const std::string &val) {
+//  auto col = std::make_shared<column>(name, val, attr);
+//  col->build_options |= t_build_options::with_value;
+//  return col;
+//}
 
 std::shared_ptr<column> make_column(const std::string &name, data_type type, const matador::any& val, t_build_options options, size_t index, const field_attributes &attr = null_attributes);
 
 template < typename Type >
-std::shared_ptr<column> make_pk_column(const std::string &name, size_t /*max_size*/ = 0) {
-  return make_column(name, Type{}, constraints::PRIMARY_KEY);
+std::shared_ptr<column> make_pk_column(const std::string &name, size_t max_size = 0) {
+  return make_column(name, data_type_traits<Type>::builtin_type(max_size), 0, constraints::PRIMARY_KEY | constraints::NOT_NULL);
 }
 
 template <>
