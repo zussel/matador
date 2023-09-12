@@ -52,7 +52,7 @@ public:
 
   unsigned long last_inserted_id();
 
-  void open(const std::string &db) override;
+  void open(const connection_info &info) override;
   void close() override;
 
   detail::result_impl* execute(const matador::sql &stmt) override;
@@ -71,6 +71,8 @@ public:
   std::vector<field> describe(const std::string &table) override;
 
   basic_dialect* dialect() override;
+
+  unsigned short default_port() const override;
 
   /**
    * Return the raw pointer to the sqlite3

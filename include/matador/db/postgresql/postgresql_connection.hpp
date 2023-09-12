@@ -57,7 +57,7 @@ public:
    */
 //  MYSQL* handle();
 
-  void open(const std::string &db) override;
+  void open(const connection_info &info) override;
   void close() override;
 
   detail::result_impl* execute(const matador::sql &stmt) override;
@@ -77,13 +77,14 @@ public:
 
   basic_dialect* dialect() override;
 
+  unsigned short default_port() const override;
+
   PGconn* handle() const;
 
 private:
   postgresql_result* execute_internal(const std::string &stmt);
 
 private:
-  std::string db_;
   bool is_open_;
   postgresql_dialect dialect_;
   PGconn *conn_ = nullptr;

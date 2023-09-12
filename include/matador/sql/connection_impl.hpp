@@ -17,6 +17,7 @@ class statement_impl;
 }
 class sql;
 class basic_dialect;
+struct connection_info;
 
 /// @cond MATADOR_DEV
 
@@ -25,7 +26,7 @@ class connection_impl
 public:
   virtual ~connection_impl() = default;
 
-  virtual void open(const std::string &db) = 0;
+  virtual void open(const connection_info &info) = 0;
   virtual bool is_open() const = 0;
   virtual void close() = 0;
 
@@ -45,6 +46,8 @@ public:
   virtual std::vector<field> describe(const std::string &table) = 0;
 
   virtual basic_dialect* dialect() = 0;
+
+  virtual unsigned short default_port() const = 0;
 
   /**
    * Enable console log of sql statements

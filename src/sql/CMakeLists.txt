@@ -27,7 +27,8 @@ SET(SOURCES
   value_processor.cpp
   database_error.cpp
   sql_logger.cpp
-  columns.cpp)
+  columns.cpp
+  connection_info.cpp)
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/condition.hpp
@@ -70,7 +71,8 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/sql_logger.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/export.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/schema.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/columns.hpp)
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/columns.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/connection_info.hpp)
 
 ADD_LIBRARY(matador-sql STATIC ${SOURCES} ${HEADER})
 

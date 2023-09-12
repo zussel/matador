@@ -1,16 +1,14 @@
-//
-// Created by sascha on 24.05.19.
-//
-
-#include <libpq-fe.h>
-#include <regex>
-
-#include "matador/sql/database_error.hpp"
-
 #include "matador/db/postgresql/postgresql_connection.hpp"
 #include "matador/db/postgresql/postgresql_statement.hpp"
 #include "matador/db/postgresql/postgresql_exception.hpp"
 #include "matador/db/postgresql/postgresql_result.hpp"
+
+#include "matador/sql/connection_info.hpp"
+#include "matador/sql/database_error.hpp"
+
+#include <libpq-fe.h>
+
+#include <regex>
 
 namespace matador {
 namespace postgresql {
@@ -34,31 +32,13 @@ unsigned long postgresql_connection::last_inserted_id()
   return 0;
 }
 
-void postgresql_connection::open(const std::string &dns)
+void postgresql_connection::open(const connection_info &info)
 {
   if (is_open_) {
     return;
   }
-  static const std::regex DNS_RGX("(.+?)(?::(.+?))?@([^:]+?)(?::([1-9][0-9]*?))?/(.+)");
-  std::smatch what;
 
-  if (!std::regex_match(dns, what, DNS_RGX)) {
-    throw std::logic_error("mysql:connect invalid dns: " + dns);
-  }
-
-  const std::string user = what[1].str();
-  const std::string passwd = what[2].str();
-  const std::string host = what[3].str();
-
-  std::string port = "5432";
-  if (what[4].matched) {
-    port = what[4].str();
-  }
-
-  db_ = what[5].str();
-
-
-  std::string connection("user=" + user + " password=" + passwd + " host=" + host + " dbname=" + db_ + " port=" + port);
+  std::string connection("user=" + info.user + " password=" + info.password + " host=" + info.hostname + " dbname=" + info.database + " port=" + std::to_string(info.port));
 
   conn_ = PQconnectdb(connection.c_str());
   if (PQstatus(conn_) == CONNECTION_BAD) {
@@ -181,6 +161,11 @@ postgresql_result* postgresql_connection::execute_internal(const std::string &st
   throw_database_error(res, conn_, "postgresql", stmt);
 
   return new postgresql_result(res);
+}
+
+unsigned short postgresql_connection::default_port() const
+{
+  return 5432;
 }
 
 }

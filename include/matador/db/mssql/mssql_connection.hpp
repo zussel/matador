@@ -41,7 +41,7 @@ public:
   explicit mssql_connection();
   ~mssql_connection() override;
 
-  void open(const std::string &db) override;
+  void open(const connection_info &info) override;
   void close() override;
 
   /**
@@ -72,6 +72,8 @@ public:
 
   basic_dialect* dialect() override;
 
+  unsigned short default_port() const override;
+
 private:
   void execute_no_result(const std::string &stmt);
 
@@ -79,7 +81,7 @@ private:
   SQLHANDLE odbc_;
   SQLHANDLE connection_;
 
-  std::string db_;
+  std::string database_name_;
 
   mssql_dialect dialect_;
   bool is_open_;

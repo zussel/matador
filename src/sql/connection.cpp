@@ -7,31 +7,27 @@ namespace matador {
 
 connection::connection(const std::string &dns)
 {
-  parse_dns(dns);
-  impl_.reset(create_connection(type_));
+  initialize_connection_info(dns);
 }
 
 connection::connection(std::shared_ptr<basic_sql_logger> sqllogger)
   : logger_(std::move(sqllogger))
 {}
 
-connection::connection(const std::string &dns, std::shared_ptr<basic_sql_logger> sqllogger)
-  : logger_(std::move(sqllogger))
+connection::connection(const std::string &dns, std::shared_ptr<basic_sql_logger> sql_logger)
+  : logger_(std::move(sql_logger))
 {
-  parse_dns(dns);
-  impl_.reset(create_connection(type_));
+  initialize_connection_info(dns);
 }
 
 connection::connection(const connection &x)
-  : type_(x.type_)
-  , dns_(x.dns_)
+  : connection_info_(x.connection_info_)
 {
   init_from_foreign_connection(x);
 }
 
 connection::connection(connection &&x) noexcept
-  : type_(std::move(x.type_))
-  , dns_(std::move(x.dns_))
+  : connection_info_(std::move(x.connection_info_))
   , impl_(std::move(x.impl_))
 {}
 
@@ -40,8 +36,7 @@ connection &connection::operator=(const connection &x)
   if (this == &x) {
     return *this;
   }
-  type_ = x.type_;
-  dns_ = x.dns_;
+  connection_info_ = x.connection_info_;
 
   init_from_foreign_connection(x);
 
@@ -50,8 +45,7 @@ connection &connection::operator=(const connection &x)
 
 connection &connection::operator=(connection &&x) noexcept
 {
-  type_ = std::move(x.type_);
-  dns_ = std::move(x.dns_);
+  connection_info_ = std::move(x.connection_info_);
   impl_ = std::move(x.impl_);
   return *this;
 }
@@ -62,7 +56,7 @@ connection::~connection()
     return;
   }
   impl_->close();
-  connection_factory::instance().destroy(type_, impl_.release());
+  connection_factory::instance().destroy(connection_info_.type, impl_.release());
 }
 
 void connection::connect(const std::string &dns)
@@ -70,9 +64,9 @@ void connection::connect(const std::string &dns)
   if (is_connected()) {
     return;
   } else {
-    parse_dns(dns);
+    initialize_connection_info(dns);
     logger_->on_connect();
-    impl_->open(dns_);
+    impl_->open(connection_info_);
   }
 }
 
@@ -82,11 +76,11 @@ void connection::connect()
     return;
   } else {
     if (!impl_) {
-      connection_factory::instance().destroy(type_, impl_.release());
-      impl_.reset(create_connection(type_));
+      connection_factory::instance().destroy(connection_info_.type, impl_.release());
+      impl_.reset(create_connection(connection_info_.type));
     }
     logger_->on_connect();
-    impl_->open(dns_);
+    impl_->open(connection_info_);
   }
 }
 
@@ -97,7 +91,7 @@ void connection::reconnect()
     impl_->close();
   }
   logger_->on_connect();
-  impl_->open(dns_);
+  impl_->open(connection_info_);
 }
 
 bool connection::is_connected() const
@@ -131,7 +125,7 @@ void connection::rollback()
 
 std::string connection::type() const
 {
-  return type_;
+  return connection_info_.type;
 }
 
 std::string connection::version() const
@@ -156,10 +150,19 @@ basic_dialect *connection::dialect()
 
 bool connection::is_valid() const
 {
-  return !type_.empty() && !dns_.empty();
+  return !connection_info_.type.empty() && !connection_info_.database.empty();
 }
 
 value* create_default_value(database_type type);
+
+void connection::initialize_connection_info(const std::string &dns)
+{
+  connection_info_ = connection_info::parse(dns);
+  impl_.reset(create_connection(connection_info_.type));
+  if (connection_info_.port == 0) {
+    connection_info_.port = impl_->default_port();
+  }
+}
 
 void connection::prepare_prototype_row(row &prototype, const std::string &table_name)
 {
@@ -221,19 +224,12 @@ connection_impl *connection::create_connection(const std::string &type)
 void connection::init_from_foreign_connection(const connection &foreign_connection)
 {
   if (is_valid()) {
-    impl_.reset(create_connection(type_));
+    impl_.reset(create_connection(connection_info_.type));
 
     if (foreign_connection.is_connected()) {
       connect();
     }
   }
-}
-
-void connection::parse_dns(const std::string &dns)
-{
-  std::string::size_type pos = dns.find(':');
-  type_ = dns.substr(0, pos);
-  dns_ = dns.substr(pos + 3);
 }
 
 void connection::log_token(detail::token::t_token tok)

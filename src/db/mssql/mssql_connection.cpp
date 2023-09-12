@@ -1,27 +1,9 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "matador/db/mssql/mssql_connection.hpp"
 #include "matador/db/mssql/mssql_statement.hpp"
 #include "matador/db/mssql/mssql_result.hpp"
-#include "matador/db/mssql/mssql_types.hpp"
 #include "matador/db/mssql/mssql_exception.hpp"
 
-#include "matador/utils/string.hpp"
+#include "matador/sql/connection_info.hpp"
 
 #include <regex>
 
@@ -44,36 +26,9 @@ mssql_connection::~mssql_connection()
 }
 
 
-void mssql_connection::open(const std::string &connection)
+void mssql_connection::open(const connection_info &info)
 {
-  // dns syntax:
-  // user[:passwd]@host[:port]/instance/db [(Drivername)]
-  static const std::regex DNS_RGX(R"((.+?)(?::(.+?))?@([^:]+?)(?::([1-9][0-9]*?))?(?:/(.+?))?/(.+?)(?:\s+\((.+)\))?)");
-  std::smatch what;
-
-  if (!std::regex_match(connection, what, DNS_RGX)) {
-    throw std::logic_error("mssql:connect invalid dns: " + connection);
-  }
-
-  const std::string user = what[1].str();
-  const std::string passwd = what[2].str();
-
-  // get connection part
-  const std::string host = what[3].str();
-  std::string port = "1433";
-  if (what[4].matched) {
-    port = what[4].str();
-  }
-
-  // Should we just ignore the "instance" part?
-  // const std::string instance = what[5].str();
-
-  db_ = what[6].str();
-
-  std::string driver = "SQL Server";
-  if (what[7].matched) {
-    driver = what[7].str();
-  }
+  database_name_ = info.database;
 
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &odbc_);
   if (ret != SQL_SUCCESS) {
@@ -95,7 +50,7 @@ void mssql_connection::open(const std::string &connection)
 
   SQLSetConnectAttr(connection_, SQL_LOGIN_TIMEOUT, (SQLPOINTER *)5, 0);
 
-  std::string dns("DRIVER={" + driver + "};SERVER=" + host + ";Protocol=TCPIP;Port=" + port + ";DATABASE=" + db_ + ";UID=" + user + ";PWD=" + passwd + ";");
+  std::string dns("DRIVER={" + info.driver + "};SERVER=" + info.hostname + ";Protocol=TCPIP;Port=" + std::to_string(info.port) + ";DATABASE=" + database_name_ + ";UID=" + info.user + ";PWD=" + info.password + ";");
 
   SQLCHAR retconstring[1024];
   ret = SQLDriverConnect(connection_, nullptr, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, nullptr, SQL_DRIVER_NOPROMPT);
@@ -202,7 +157,7 @@ std::string mssql_connection::server_version() const
 
 bool mssql_connection::exists(const std::string &tablename)
 {
-  std::string stmt("SELECT TOP 1 COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='" + db_ + "' AND TABLE_NAME='" + tablename + "'");
+  std::string stmt("SELECT TOP 1 COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='" + database_name_ + "' AND TABLE_NAME='" + tablename + "'");
   std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute(stmt)));
 
   if (!res->fetch()) {
@@ -353,6 +308,11 @@ void mssql_connection::execute_no_result(const std::string &stmt)
   */
 
   throw_database_error(ret, SQL_HANDLE_STMT, handle, "mssql", stmt);
+}
+
+unsigned short mssql_connection::default_port() const
+{
+  return 1433;
 }
 
 }
