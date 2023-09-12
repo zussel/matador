@@ -13,6 +13,7 @@ ADD_EXECUTABLE(field_attribute field_attribute.cpp)
 ADD_EXECUTABLE(sqlng sqlng.cpp)
 ADD_EXECUTABLE(container container.cpp)
 ADD_EXECUTABLE(connection_pool connection_pool.cpp)
+ADD_EXECUTABLE(datetime datetime.cpp)
 
 TARGET_LINK_LIBRARIES(reactor
   matador-utils
@@ -47,4 +48,8 @@ TARGET_LINK_LIBRARIES(row
     matador-sql
     ${CMAKE_DL_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
+)
+
+TARGET_LINK_LIBRARIES(datetime
+    matador-utils
 )

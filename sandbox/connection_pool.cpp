@@ -16,10 +16,10 @@ public:
   : pool_(pool)
   , connection_(connection)
   {}
-  connection_pointer(connection_pointer &&x)
+  connection_pointer(connection_pointer &&x) noexcept
   : pool_(std::move(x.pool_))
   {}
-  connection_pointer& operator=(connection_pointer &&x) {
+  connection_pointer& operator=(connection_pointer &&x) noexcept {
     pool_ = std::move(x.pool_);
     return *this;
   }
