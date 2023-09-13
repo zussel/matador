@@ -18,6 +18,7 @@ void ConnectionInfoTest::test_parse_connection_info()
   const std::string mssql_dns = "mssql://test:test123!@localhost/testdb (SQL Server)";
   const std::string postgresql_dns = "postgresql://test:test123@127.0.0.1:15432/test";
   const std::string sqlite_dns = "sqlite://test.sqlite";
+  const std::string mssql_dns_special = R"foo(mssql://test:test123!@(local)\SQLEXPRESS/testdb (SQL Server))foo";
 
   auto ci = matador::connection_info::parse(postgresql_dns, 15432);
 
@@ -45,6 +46,16 @@ void ConnectionInfoTest::test_parse_connection_info()
   UNIT_ASSERT_EQUAL(ci.user, "test");
   UNIT_ASSERT_EQUAL(ci.password, "test123!");
   UNIT_ASSERT_EQUAL(ci.hostname, "localhost");
+  UNIT_ASSERT_EQUAL(ci.port, 1433);
+  UNIT_ASSERT_EQUAL(ci.database, "testdb");
+  UNIT_ASSERT_EQUAL(ci.driver, "SQL Server");
+
+  ci = matador::connection_info::parse(mssql_dns_special, 1433);
+
+  UNIT_ASSERT_EQUAL(ci.type, "mssql");
+  UNIT_ASSERT_EQUAL(ci.user, "test");
+  UNIT_ASSERT_EQUAL(ci.password, "test123!");
+  UNIT_ASSERT_EQUAL(ci.hostname, "(local)\\SQLEXPRESS");
   UNIT_ASSERT_EQUAL(ci.port, 1433);
   UNIT_ASSERT_EQUAL(ci.database, "testdb");
   UNIT_ASSERT_EQUAL(ci.driver, "SQL Server");
