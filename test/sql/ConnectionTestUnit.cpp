@@ -5,6 +5,7 @@
 #include "matador/sql/database_error.hpp"
 
 #include <fstream>
+#include <iostream>
 #include <regex>
 
 using namespace matador;
@@ -23,6 +24,8 @@ ConnectionTestUnit::ConnectionTestUnit(const std::string &prefix, std::string dn
 
 void ConnectionTestUnit::test_open_close()
 {
+  std::cout << "\ndns: " << dns_ << "\n";
+
   matador::connection conn(dns_);
 
   UNIT_ASSERT_FALSE(conn.is_connected());
