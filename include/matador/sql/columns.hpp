@@ -31,6 +31,14 @@ struct columns : public detail::token
   /**
    * @brief Create a list of columns containing given columns and bracket type
    *
+   * @param column_names The list of column names
+   * @param with_brackets The bracket type
+   */
+  explicit columns(const std::vector<std::string> &column_names, t_brackets with_brackets = WITH_BRACKETS);
+
+  /**
+   * @brief Create a list of columns containing given columns and bracket type
+   *
    * @param cols The list of columns
    * @param with_brackets The bracket type
    */

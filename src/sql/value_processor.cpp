@@ -109,16 +109,15 @@ void value_to_string_processor::process(std::string &val)
 
 void value_to_string_processor::process(char &val)
 {
-  std::stringstream ss;
-  ss << "'" << val << "'";
-  result_ = ss.str();
+  result_ = std::to_string(val);
+//  std::stringstream ss;
+//  ss << "'" << val << "'";
+//  result_ = ss.str();
 }
 
 void value_to_string_processor::process(unsigned char &val)
 {
-  std::stringstream ss;
-  ss << "'" << val << "'";
-  result_ = ss.str();
+  result_ = std::to_string(val);
 }
 
 void value_to_string_processor::process(char *val)

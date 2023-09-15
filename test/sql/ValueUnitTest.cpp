@@ -1,7 +1,8 @@
+#include "ValueUnitTest.hpp"
+
 #include "matador/sql/value.hpp"
 #include "matador/sql/value_serializer.hpp"
 
-#include "ValueUnitTest.hpp"
 #include "../datatypes.hpp"
 
 ValueUnitTest::ValueUnitTest()
@@ -13,6 +14,9 @@ ValueUnitTest::ValueUnitTest()
 
 void ValueUnitTest::test_values()
 {
+  matador::value v1;
+  UNIT_ASSERT_EQUAL(v1.type, matador::detail::token::VALUE);
+
   matador::value v(28UL);
 
   matador::detail::value_to_string_processor value_to_string;

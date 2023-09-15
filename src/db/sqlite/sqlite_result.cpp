@@ -87,10 +87,11 @@ void sqlite_result::push_back(char **row_values, int column_count)
 void sqlite_result::read_value(const char */*id*/, size_type index, char &x)
 {
   t_row::value_type &val = result_[row_index_][index];
-
-  if (strlen(val) > 1) {
-    x = val[0];
+  if (strlen(val) == 0) {
+    return;
   }
+  char *end;
+  x = (char)strtol(val, &end, 10);
 }
 
 void sqlite_result::read_value(const char */*id*/, size_type index, short &x)
@@ -144,8 +145,7 @@ void sqlite_result::read_value(const char */*id*/, size_type index, unsigned cha
     return;
   }
   char *end;
-  x = (unsigned char)strtoul(val, &end, 10);
-  // Todo: check error
+  x = (unsigned char)strtol(val, &end, 10);
 }
 
 void sqlite_result::read_value(const char */*id*/, size_type index, unsigned short &x)

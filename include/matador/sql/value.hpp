@@ -41,28 +41,15 @@ struct value : public detail::token
 
   void accept(token_visitor &visitor) override;
 
-  virtual const char* type_id() const;
-
   any value_;
   std::size_t size_ = 0;
 };
-
-//struct null_value : public value
-//{
-//  static std::string NULLSTR;
-//
-//  null_value() : value(NULLSTR) { }
-//
-//  const char* type_id() const override;
-//};
 
 template < class T >
 value* make_value(const T &val)
 {
   return new value(val);
 }
-
-value* make_value(const char* val, std::size_t len);
 
 /// @endcond
 

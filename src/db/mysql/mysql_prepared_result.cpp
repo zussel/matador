@@ -135,7 +135,7 @@ void mysql_prepared_result::read_value(const char */*id*/, size_type index, long
 void mysql_prepared_result::read_value(const char */*id*/, size_type index, unsigned char &value)
 {
   if (prepare_binding_) {
-    prepare_bind_column(index, MYSQL_TYPE_VAR_STRING, value);
+    prepare_bind_column(index, MYSQL_TYPE_TINY, value);
   }
 }
 

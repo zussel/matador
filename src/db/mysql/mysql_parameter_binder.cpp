@@ -1,7 +1,3 @@
-//
-// Created by sascha on 06.09.19.
-//
-
 #include "matador/db/mysql/mysql_parameter_binder.hpp"
 #include "matador/db/mysql/mysql_constants.hpp"
 
@@ -121,7 +117,7 @@ void mysql_parameter_binder::reset()
 
 void mysql_parameter_binder::bind(char i, size_t index)
 {
-  bind_value(MYSQL_TYPE_VAR_STRING, i, host_array_[index], is_null_vector[index].is_null);
+  bind_value(MYSQL_TYPE_TINY, i, host_array_[index], is_null_vector[index].is_null);
 }
 
 void mysql_parameter_binder::bind(short i, size_t index)
@@ -146,7 +142,7 @@ void mysql_parameter_binder::bind(long long i, size_t index)
 
 void mysql_parameter_binder::bind(unsigned char i, size_t index)
 {
-  bind_value(MYSQL_TYPE_VAR_STRING, i, host_array_[index], is_null_vector[index].is_null);
+  bind_value(MYSQL_TYPE_TINY, i, host_array_[index], is_null_vector[index].is_null);
 }
 
 void mysql_parameter_binder::bind(unsigned short i, size_t index)

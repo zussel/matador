@@ -87,9 +87,11 @@ detail::result_impl::size_type mysql_result::reset_column_index() const
 void mysql_result::read_value(const char */*id*/, size_type index, char &value)
 {
   char *val = row_[index];
-  if (strlen(val) > 1) {
-    value = val[0];
+  if (strlen(val) == 0) {
+    return;
   }
+  char *end;
+  value = (char)strtol(val, &end, 10);
 }
 
 void mysql_result::read_value(const char */*id*/, size_type index, short &value)

@@ -11,6 +11,15 @@ columns::columns(const std::initializer_list<std::string> &column_names, t_brack
   }
 }
 
+columns::columns(const std::vector<std::string> &column_names, columns::t_brackets with_brackets)
+: token(COLUMNS)
+, with_brackets_(with_brackets)
+{
+  for (const auto &column_name : column_names) {
+    push_back(std::make_shared<column>(column_name));
+  }
+}
+
 columns::columns(std::initializer_list<column> cols, t_brackets with_brackets)
 : token(COLUMNS)
 , with_brackets_(with_brackets)

@@ -100,8 +100,8 @@ protected:
     }
   }
   
-  void read_column(const char *, size_type index, char &val);
-  void read_column(const char *, size_type index, unsigned char &val);
+//  void read_column(const char *, size_type index, char &val);
+//  void read_column(const char *, size_type index, unsigned char &val);
   void read_column(const char *, size_type index, std::string &val);
   void read_column(const char *, size_type index, std::string &val, size_t size);
   void read_column(const char *, size_type index, matador::date &val);

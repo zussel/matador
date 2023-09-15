@@ -1,7 +1,3 @@
-//
-// Created by sascha on 08.09.19.
-//
-
 #include "matador/db/postgresql/postgresql_parameter_binder.hpp"
 
 #include "matador/utils/string.hpp"
@@ -23,7 +19,7 @@ void bind_value(std::vector<std::string> &strings, std::vector<const char*> &par
 template <>
 void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, char &x)
 {
-  strings[index] = x;
+  strings[index] = std::to_string(x);
   params[index] = strings[index].data();
   ++index;
 }
@@ -31,7 +27,7 @@ void bind_value(std::vector<std::string> &strings, std::vector<const char*> &par
 template <>
 void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, unsigned char &x)
 {
-  strings[index] = x;
+  strings[index] = std::to_string(x);
   params[index] = strings[index].data();
   ++index;
 }

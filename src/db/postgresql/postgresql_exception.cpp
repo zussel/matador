@@ -1,7 +1,3 @@
-//
-// Created by sascha on 24.05.19.
-//
-
 #include "matador/sql/database_error.hpp"
 
 #include "matador/db/postgresql/postgresql_exception.hpp"

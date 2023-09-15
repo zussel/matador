@@ -544,10 +544,10 @@ public:
    * @brief Create a table with given name
    *
    * @param table_name The table name to be used for the statement
-   * @param collist The columns to be created
+   * @param column_list The columns to be created
    * @return A reference to the query.
    */
-  query& create(const std::string &table_name, const std::initializer_list<std::shared_ptr<column>> &collist)
+  query& create(const std::string &table_name, const std::initializer_list<std::shared_ptr<column>> &column_list)
   {
     reset(t_query_command::CREATE);
 
@@ -555,7 +555,7 @@ public:
     sql_.table_name(table_name_);
 
     auto cols = std::make_shared<matador::columns>(matador::columns::WITH_BRACKETS);
-    for (auto &&col : collist) {
+    for (auto &&col : column_list) {
       col->build_options = t_build_options::with_type | t_build_options::with_quotes;
       cols->push_back(col);
     }
@@ -567,7 +567,7 @@ public:
   }
 
   /**
-   * @brief Start a drop query for the default tablename
+   * @brief Start a drop query for the default table name
    * @return A reference to the query.
    */
   query& drop()
@@ -596,6 +596,31 @@ public:
    * @return A reference to the query.
    */
   query& insert(const std::initializer_list<std::string> &column_names)
+  {
+    reset(t_query_command::INSERT);
+
+    sql_.append(std::make_shared<detail::insert>(table_name_));
+    sql_.table_name(table_name_);
+
+    auto cols = std::make_shared<matador::columns>();
+
+    for (const auto& name : column_names) {
+      cols->push_back(std::make_shared<matador::column>(name));
+    }
+
+    sql_.append(cols);
+
+    state = QUERY_INSERT;
+
+    return *this;
+  }
+
+  /**
+   * @brief Create an insert statement for given columns.
+   * @param column_names List of column to insert
+   * @return A reference to the query.
+   */
+  query& insert(const std::vector<std::string> &column_names)
   {
     reset(t_query_command::INSERT);
 
@@ -690,6 +715,32 @@ public:
   }
 
   /**
+   * Appends all columns from vector
+   * to a select statement.
+   *
+   * @param column_names The column list to select
+   * @return A reference to the query.
+   */
+  query& select(const std::vector<std::string> &column_names)
+  {
+    reset(t_query_command::SELECT);
+
+    throw_invalid(QUERY_SELECT, state);
+    sql_.append(std::make_shared<detail::select>());
+
+    auto cols = std::make_shared<matador::columns>(column_names, matador::columns::WITHOUT_BRACKETS);
+
+    for (auto &&column : cols->columns_) {
+      row_.add_column(column->name);
+    }
+
+    sql_.append(cols);
+
+    state = QUERY_SELECT;
+    return *this;
+  }
+
+  /**
    * @brief Creates a select statement with the
    * given columns.
    *
@@ -715,9 +766,9 @@ public:
   }
 
   /**
-   * @brief Specfies the from token of a query
+   * @brief Specifies the from token of a query
    *
-   * Specfies the from token of a query with
+   * Specifies the from token of a query with
    * a table name as argument.
    *
    * @param table The name of the table
@@ -736,9 +787,9 @@ public:
   }
 
   /**
-   * @brief Specfies the from token of a query
+   * @brief Specifies the from token of a query
    *
-   * Specfies the from token of a query with
+   * Specifies the from token of a query with
    * a sub query as argument.
    *
    * @param q The sub query
@@ -778,7 +829,7 @@ public:
   /**
    * @brief Resets the query.
    *
-   * @param query_command The query command to which the query is resetted
+   * @param query_command The query command to which the query is reset
    * @return A reference to the query.
    */
   query& reset(t_query_command query_command)

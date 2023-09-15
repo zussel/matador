@@ -2,9 +2,6 @@
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-//#include "matador/utils/basic_identifier.hpp"
-
-#include <cstring>
 
 namespace matador {
 
@@ -42,13 +39,6 @@ const char* mssql_result::column(size_type) const
 
 bool mssql_result::fetch()
 {
-//  SQLRETURN ret = SQLSetStmtAttr(stmt_, SQL_ROWSET_SIZE, (void *) 2, SQL_NTS);
-//  throw_error(ret, SQL_HANDLE_DBC, stmt_, "mssql", "error on creating sql statement");
-//  ret = SQLSetStmtAttr(stmt_, SQL_ATTR_CURSOR_TYPE, (void *) SQL_CURSOR_KEYSET_DRIVEN, SQL_NTS);
-//  throw_error(ret, SQL_HANDLE_DBC, stmt_, "mssql", "error on creating sql statement");
-//  ret = SQLSetStmtAttr(stmt_, SQL_ATTR_CONCURRENCY, (void *) SQL_CONCUR_LOCK, SQL_NTS);
-//  throw_error(ret, SQL_HANDLE_DBC, stmt_, "mssql", "error on creating sql statement");
-
   SQLRETURN ret = SQLFetch(stmt_);
   if (SQL_SUCCEEDED(ret)) {
     return true;
@@ -202,27 +192,27 @@ void mssql_result::read_column(const char *, size_type index, std::string &val, 
 
 }
 
-void mssql_result::read_column(const char *, size_type index, char &val)
-{
-  SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, &val, 0, &info);
-  if (SQL_SUCCEEDED(ret)) {
-    return;
-  } else {
-    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
-  }
-}
-
-void mssql_result::read_column(const char *, size_type index, unsigned char &val)
-{
-  SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, &val, 0, &info);
-  if (SQL_SUCCEEDED(ret)) {
-    return;
-  } else {
-    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
-  }
-}
+//void mssql_result::read_column(const char *, size_type index, char &val)
+//{
+//  SQLLEN info = 0;
+//  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, &val, 0, &info);
+//  if (SQL_SUCCEEDED(ret)) {
+//    return;
+//  } else {
+//    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
+//  }
+//}
+//
+//void mssql_result::read_column(const char *, size_type index, unsigned char &val)
+//{
+//  SQLLEN info = 0;
+//  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, &val, 0, &info);
+//  if (SQL_SUCCEEDED(ret)) {
+//    return;
+//  } else {
+//    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
+//  }
+//}
 
 void mssql_result::read_column(char const *, size_type index, date &x)
 {

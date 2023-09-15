@@ -47,7 +47,7 @@ void typed_column_serializer::on_attribute(const char *id, long long&, const fie
 
 void typed_column_serializer::on_attribute(const char *id, unsigned char&, const field_attributes &attr)
 {
-  cols_->push_back(make_column(id, data_type::type_char, index_++, attr));
+  cols_->push_back(make_column(id, data_type::type_unsigned_char, index_++, attr));
 }
 
 void typed_column_serializer::on_attribute(const char *id, unsigned short&, const field_attributes &attr)

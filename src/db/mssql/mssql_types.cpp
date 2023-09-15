@@ -1,7 +1,3 @@
-//
-// Created by sascha on 10.09.19.
-//
-
 #include "matador/db/mssql/mssql_types.hpp"
 
 namespace matador {
@@ -12,7 +8,7 @@ int type2int(data_type type)
 {
   switch(type) {
     case data_type::type_char:
-      return SQL_C_CHAR;
+      return SQL_C_SSHORT;
     case data_type::type_short:
       return SQL_C_SSHORT;
     case data_type::type_int:
@@ -26,7 +22,7 @@ int type2int(data_type type)
     case data_type::type_long_long:
       return SQL_C_SBIGINT;
     case data_type::type_unsigned_char:
-      return SQL_C_CHAR;
+      return SQL_C_SHORT;
     case data_type::type_unsigned_short:
       return SQL_C_USHORT;
     case data_type::type_unsigned_int:
