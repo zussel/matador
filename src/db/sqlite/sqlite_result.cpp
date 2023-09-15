@@ -145,7 +145,8 @@ void sqlite_result::read_value(const char */*id*/, size_type index, unsigned cha
     return;
   }
   char *end;
-  x = (unsigned char)strtol(val, &end, 10);
+  x = (unsigned char)strtoul(val, &end, 10);
+  // Todo: check error
 }
 
 void sqlite_result::read_value(const char */*id*/, size_type index, unsigned short &x)
