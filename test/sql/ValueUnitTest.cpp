@@ -37,14 +37,14 @@ void ValueUnitTest::test_serialize()
 
   UNIT_ASSERT_EQUAL(19UL, vlist->values_.size());
   UNIT_ASSERT_EQUAL("0", value_to_string.to_string(*vlist->values_[0]));
-  UNIT_ASSERT_EQUAL("'c'", value_to_string.to_string(*vlist->values_[1]));
+  UNIT_ASSERT_EQUAL("99", value_to_string.to_string(*vlist->values_[1]));
   UNIT_ASSERT_EQUAL("3.1415", value_to_string.to_string(*vlist->values_[2]));
   UNIT_ASSERT_EQUAL("1.1414", value_to_string.to_string(*vlist->values_[3]));
   UNIT_ASSERT_EQUAL("-127", value_to_string.to_string(*vlist->values_[4]));
   UNIT_ASSERT_EQUAL("-65000", value_to_string.to_string(*vlist->values_[5]));
   UNIT_ASSERT_EQUAL("-128000", value_to_string.to_string(*vlist->values_[6]));
   UNIT_ASSERT_EQUAL("-1234567890", value_to_string.to_string(*vlist->values_[7]));
-  UNIT_ASSERT_EQUAL("'H'", value_to_string.to_string(*vlist->values_[8]));
+  UNIT_ASSERT_EQUAL("72", value_to_string.to_string(*vlist->values_[8]));
   UNIT_ASSERT_EQUAL("128", value_to_string.to_string(*vlist->values_[9]));
   UNIT_ASSERT_EQUAL("65000", value_to_string.to_string(*vlist->values_[10]));
   UNIT_ASSERT_EQUAL("128000", value_to_string.to_string(*vlist->values_[11]));
