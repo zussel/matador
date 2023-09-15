@@ -2,6 +2,7 @@
 #define OOS_BASIC_DIALECT_LINKER_HPP
 
 #include "matador/sql/token_visitor.hpp"
+#include "matador/sql/value_processor.hpp"
 #include "matador/sql/token.hpp"
 #include "matador/sql/token_list.hpp"
 
@@ -49,11 +50,6 @@ public:
   void visit(const matador::detail::basic_in_condition &) override;
   void visit(const matador::columns &) override;
   void visit(const matador::column &) override;
-  void visit(const matador::detail::typed_column &) override;
-  void visit(const matador::detail::typed_identifier_column &) override;
-  void visit(const matador::detail::typed_varchar_column &) override;
-  void visit(const matador::detail::identifier_varchar_column &) override;
-  void visit(const matador::detail::value_column &) override;
   void visit(const matador::detail::begin &) override;
   void visit(const matador::detail::commit &) override;
   void visit(const matador::detail::rollback &) override;
@@ -71,6 +67,7 @@ private:
   void dialect(basic_dialect *d);
 
   basic_dialect *dialect_;
+  detail::value_to_string_processor value_to_string_visitor_;
 };
 
 /// @endcond

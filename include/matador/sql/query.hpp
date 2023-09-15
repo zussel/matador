@@ -81,7 +81,7 @@ public:
    * Bind a table name to a specific
    * object type
    *
-   * @param table_name The tablename to bind
+   * @param table_name The table_name to bind
    */
   static void bind_table(const std::string &table_name)
   {
@@ -89,7 +89,7 @@ public:
   }
 
   /**
-   * Remove all bound tablenames
+   * Remove all bound table names
    */
   static void clear_bound_tables()
   {
@@ -117,14 +117,14 @@ public:
   {
     reset(t_query_command::CREATE);
 
-    sql_.append(new detail::create(table_name_));
+    sql_.append(std::make_shared<detail::create>(table_name_));
     sql_.table_name(table_name_);
 
     detail::typed_column_serializer serializer;
 
-    std::unique_ptr<columns> cols(serializer.execute(obj));
+    std::shared_ptr<columns> cols(serializer.execute(obj));
 
-    sql_.append(cols.release());
+    sql_.append(cols);
 
     state = QUERY_CREATE;
     return *this;
@@ -138,7 +138,7 @@ public:
   query& drop()
   {
     reset(t_query_command::DROP);
-    sql_.append(new detail::drop(table_name_));
+    sql_.append(std::make_shared<detail::drop>(table_name_));
 
     state = QUERY_DROP;
     return *this;
@@ -154,15 +154,15 @@ public:
     reset(t_query_command::SELECT);
 
     throw_invalid(QUERY_SELECT, state);
-    sql_.append(new detail::select);
+    sql_.append(std::make_shared<detail::select>());
 
     detail::column_serializer serializer(columns::WITHOUT_BRACKETS);
 
-    std::unique_ptr<columns> cols(serializer.execute(obj_));
+    std::shared_ptr<columns> cols(serializer.execute(obj_));
 
-    sql_.append(cols.release());
+    sql_.append(cols);
 
-    sql_.append(new detail::from(table_name_));
+    sql_.append(std::make_shared<detail::from>(table_name_));
     sql_.table_name(table_name_);
 
     state = QUERY_FROM;
@@ -180,16 +180,16 @@ public:
     reset(t_query_command::SELECT);
 
     throw_invalid(QUERY_SELECT, state);
-    sql_.append(new detail::select);
+    sql_.append(std::make_shared<detail::select>());
 
-    std::unique_ptr<columns> cols(new columns(columns::WITHOUT_BRACKETS));
+    auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
     for (auto &&col : column_names) {
       cols->push_back(std::make_shared<matador::column>(col));
     }
 
-    sql_.append(cols.release());
+    sql_.append(cols);
 
-    sql_.append(new detail::from(table_name_));
+    sql_.append(std::make_shared<detail::from>(table_name_));
     sql_.table_name(table_name_);
 
     state = QUERY_FROM;
@@ -217,20 +217,20 @@ public:
   {
     reset(t_query_command::INSERT);
 
-    sql_.append(new detail::insert(table_name_));
+    sql_.append(std::make_shared<detail::insert>(table_name_));
     sql_.table_name(table_name_);
 
     detail::column_serializer serializer(columns::WITH_BRACKETS);
 
-    std::unique_ptr<columns> cols(serializer.execute(obj));
+    std::shared_ptr<columns> cols(serializer.execute(obj));
 
-    sql_.append(cols.release());
+    sql_.append(cols);
 
     detail::value_serializer vserializer;
 
-    std::unique_ptr<detail::values> vals(vserializer.execute(obj));
+    std::shared_ptr<detail::values> vals(vserializer.execute(obj));
 
-    sql_.append(vals.release());
+    sql_.append(vals);
 
     state = QUERY_INSERT;
 
@@ -263,10 +263,10 @@ public:
   {
     reset(t_query_command::UPDATE);
 
-    sql_.append(new detail::update);
-    sql_.append(new detail::tablename(table_name_));
+    sql_.append(std::make_shared<detail::update>());
+    sql_.append(std::make_shared<detail::tablename>(table_name_));
     sql_.table_name(table_name_);
-    sql_.append(new detail::set);
+    sql_.append(std::make_shared<detail::set>());
     sql_.append(update_columns_);
 
     state = QUERY_UPDATE;
@@ -285,20 +285,20 @@ public:
    * any settings. Sets for all column value pairs
    * attributes column and values.
    *
-   * @param colvalues The column name and value list
+   * @param column_values The column name and value list
    * @return A reference to the query.
    */
-  query& update(const std::initializer_list<std::pair<std::string, matador::any>> &colvalues)
+  query& update(const std::initializer_list<std::pair<std::string, matador::any>> &column_values)
   {
     reset(t_query_command::UPDATE);
 
-    sql_.append(new detail::update);
-    sql_.append(new detail::tablename(table_name_));
+    sql_.append(std::make_shared<detail::update>());
+    sql_.append(std::make_shared<detail::tablename>(table_name_));
     sql_.table_name(table_name_);
-    sql_.append(new detail::set);
+    sql_.append(std::make_shared<detail::set>());
 
-    for (auto colvalue : colvalues) {
-      query_value_column_processor_.execute(colvalue);
+    for (auto column_value : column_values) {
+      query_value_column_processor_.execute(column_value);
     }
 
     sql_.append(update_columns_);
@@ -308,9 +308,9 @@ public:
   }
 
   /**
-   * @brief Specfies the from token of a query
+   * @brief Specifies the from token of a query
    *
-   * Specfies the from token of a query with
+   * Specifies the from token of a query with
    * a table name as argument.
    *
    * @param table The name of the table
@@ -318,7 +318,7 @@ public:
    */
   query& from(const std::string &table)
   {
-    sql_.append(new detail::from(table));
+    sql_.append(std::make_shared<detail::from>(table));
     sql_.table_name(table_name_);
 
     return *this;
@@ -333,8 +333,8 @@ public:
   {
     reset(t_query_command::REMOVE);
 
-    sql_.append(new detail::remove());
-    sql_.append(new detail::from(table_name_));
+    sql_.append(std::make_shared<detail::remove>());
+    sql_.append(std::make_shared<detail::from>(table_name_));
     sql_.table_name(table_name_);
 
     state = QUERY_DELETE;
@@ -355,8 +355,7 @@ public:
   {
     throw_invalid(QUERY_COND_WHERE, state);
 
-    sql_.append(new detail::where(c));
-//    sql_.append(new condition<COND>(c));
+    sql_.append(std::make_shared<detail::where>(c));
 
     state = QUERY_COND_WHERE;
     return *this;
@@ -373,7 +372,7 @@ public:
   {
     throw_invalid(QUERY_ORDERBY, state);
 
-    sql_.append(new detail::order_by(col));
+    sql_.append(std::make_shared<detail::order_by>(col));
 
     state = QUERY_ORDERBY;
 
@@ -389,7 +388,7 @@ public:
   {
     throw_invalid(QUERY_ORDER_DIRECTION, state);
 
-    sql_.append(new detail::asc);
+    sql_.append(std::make_shared<detail::asc>());
 
     state = QUERY_ORDER_DIRECTION;
 
@@ -405,7 +404,7 @@ public:
   {
     throw_invalid(QUERY_ORDER_DIRECTION, state);
 
-    sql_.append(new detail::desc);
+    sql_.append(std::make_shared<detail::desc>());
 
     state = QUERY_ORDER_DIRECTION;
 
@@ -421,7 +420,7 @@ public:
    */
   query& limit(std::size_t l)
   {
-    sql_.append(new detail::top(l));
+    sql_.append(std::make_shared<detail::top>(l));
     return *this;
   }
 
@@ -436,7 +435,7 @@ public:
   {
     throw_invalid(QUERY_GROUPBY, state);
 
-    sql_.append(new detail::group_by(col));
+    sql_.append(std::make_shared<detail::group_by>(col));
 
     state = QUERY_GROUPBY;
 
@@ -454,7 +453,7 @@ public:
   query& column(const std::string &column, data_type type, size_t index)
   {
     throw_invalid(QUERY_COLUMN, state);
-    sql_.append(new detail::typed_column(column, type, index, false));
+    sql_.append(make_column(column, type, index));
     state = QUERY_COLUMN;
     return *this;
   }
@@ -512,7 +511,7 @@ public:
    * @brief Create a new query.
    *
    * Create a new query with unset
-   * default tablename and unset
+   * default table name and unset
    * default internal connection
    */
   query()
@@ -536,7 +535,7 @@ public:
    * @param collist The columns to be created
    * @return A reference to the query.
    */
-  query& create(const std::initializer_list<std::shared_ptr<detail::typed_column>> &collist)
+  query& create(const std::initializer_list<std::shared_ptr<column>> &collist)
   {
     return create(table_name_, collist);
   }
@@ -545,29 +544,30 @@ public:
    * @brief Create a table with given name
    *
    * @param table_name The table name to be used for the statement
-   * @param collist The columns to be created
+   * @param column_list The columns to be created
    * @return A reference to the query.
    */
-  query& create(const std::string &table_name, const std::initializer_list<std::shared_ptr<detail::typed_column>> &collist)
+  query& create(const std::string &table_name, const std::initializer_list<std::shared_ptr<column>> &column_list)
   {
     reset(t_query_command::CREATE);
 
-    sql_.append(new detail::create(table_name));
+    sql_.append(std::make_shared<detail::create>(table_name));
     sql_.table_name(table_name_);
 
-    std::unique_ptr<matador::columns> cols(new matador::columns(matador::columns::WITH_BRACKETS));
-    for (auto &&col : collist) {
+    auto cols = std::make_shared<matador::columns>(matador::columns::WITH_BRACKETS);
+    for (auto &&col : column_list) {
+      col->build_options = t_build_options::with_type | t_build_options::with_quotes;
       cols->push_back(col);
     }
 
-    sql_.append(cols.release());
+    sql_.append(cols);
 
     state = QUERY_CREATE;
     return *this;
   }
 
   /**
-   * @brief Start a drop query for the default tablename
+   * @brief Start a drop query for the default table name
    * @return A reference to the query.
    */
   query& drop()
@@ -583,7 +583,7 @@ public:
   query& drop(const std::string &table_name)
   {
     reset(t_query_command::DROP);
-    sql_.append(new detail::drop(table_name));
+    sql_.append(std::make_shared<detail::drop>(table_name));
     sql_.table_name(table_name_);
 
     state = QUERY_DROP;
@@ -599,16 +599,41 @@ public:
   {
     reset(t_query_command::INSERT);
 
-    sql_.append(new detail::insert(table_name_));
+    sql_.append(std::make_shared<detail::insert>(table_name_));
     sql_.table_name(table_name_);
 
-    std::unique_ptr<columns> cols(new matador::columns);
+    auto cols = std::make_shared<matador::columns>();
 
     for (const auto& name : column_names) {
       cols->push_back(std::make_shared<matador::column>(name));
     }
 
-    sql_.append(cols.release());
+    sql_.append(cols);
+
+    state = QUERY_INSERT;
+
+    return *this;
+  }
+
+  /**
+   * @brief Create an insert statement for given columns.
+   * @param column_names List of column to insert
+   * @return A reference to the query.
+   */
+  query& insert(const std::vector<std::string> &column_names)
+  {
+    reset(t_query_command::INSERT);
+
+    sql_.append(std::make_shared<detail::insert>(table_name_));
+    sql_.table_name(table_name_);
+
+    auto cols = std::make_shared<matador::columns>();
+
+    for (const auto& name : column_names) {
+      cols->push_back(std::make_shared<matador::column>(name));
+    }
+
+    sql_.append(cols);
 
     state = QUERY_INSERT;
 
@@ -625,13 +650,13 @@ public:
    */
   query& values(const std::initializer_list<matador::any> &values)
   {
-    std::unique_ptr<detail::values> vals(new detail::values);
+    auto vals = std::make_shared<detail::values>();
 
     // append values
     for (auto value : values) {
       vals->push_back(query_value_creator_.create_from_any(value));
     }
-    sql_.append(vals.release());
+    sql_.append(vals);
 
     return *this;
   }
@@ -641,20 +666,20 @@ public:
    * any settings. Sets for all column value pairs
    * attributes column and values.
    *
-   * @param colvalues The column name and value list
+   * @param column_values The column name and value list
    * @return A reference to the query.
    */
-  query& update(const std::initializer_list<std::pair<std::string, matador::any>> &colvalues)
+  query& update(const std::initializer_list<std::pair<std::string, matador::any>> &column_values)
   {
     reset(t_query_command::UPDATE);
 
-    sql_.append(new detail::update);
-    sql_.append(new detail::tablename(table_name_));
+    sql_.append(std::make_shared<detail::update>());
+    sql_.append(std::make_shared<detail::tablename>(table_name_));
     sql_.table_name(table_name_);
-    sql_.append(new detail::set);
+    sql_.append(std::make_shared<detail::set>());
 
-    for (auto colvalue : colvalues) {
-      query_value_column_processor_.execute(colvalue);
+    for (auto column_value : column_values) {
+      query_value_column_processor_.execute(column_value);
     }
 
     sql_.append(update_columns_);
@@ -667,23 +692,49 @@ public:
    * Appends all columns from initializer_list
    * to a select statement.
    * 
-   * @param colnames The column list to select
+   * @param column_names The column list to select
    * @return A reference to the query.
    */
-  query& select(const std::initializer_list<std::string> &colnames)
+  query& select(const std::initializer_list<std::string> &column_names)
   {
     reset(t_query_command::SELECT);
 
     throw_invalid(QUERY_SELECT, state);
-    sql_.append(new detail::select);
+    sql_.append(std::make_shared<detail::select>());
 
-    std::unique_ptr<matador::columns> cols(new matador::columns(colnames, matador::columns::WITHOUT_BRACKETS));
+    auto cols = std::make_shared<matador::columns>(column_names, matador::columns::WITHOUT_BRACKETS);
 
     for (auto &&column : cols->columns_) {
       row_.add_column(column->name);
     }
 
-    sql_.append(cols.release());
+    sql_.append(cols);
+
+    state = QUERY_SELECT;
+    return *this;
+  }
+
+  /**
+   * Appends all columns from vector
+   * to a select statement.
+   *
+   * @param column_names The column list to select
+   * @return A reference to the query.
+   */
+  query& select(const std::vector<std::string> &column_names)
+  {
+    reset(t_query_command::SELECT);
+
+    throw_invalid(QUERY_SELECT, state);
+    sql_.append(std::make_shared<detail::select>());
+
+    auto cols = std::make_shared<matador::columns>(column_names, matador::columns::WITHOUT_BRACKETS);
+
+    for (auto &&column : cols->columns_) {
+      row_.add_column(column->name);
+    }
+
+    sql_.append(cols);
 
     state = QUERY_SELECT;
     return *this;
@@ -701,10 +752,10 @@ public:
     reset(t_query_command::SELECT);
 
     throw_invalid(QUERY_SELECT, state);
-    sql_.append(new detail::select);
+    sql_.append(std::make_shared<detail::select>());
 
     cols.without_brackets();
-    sql_.append(new matador::columns(cols));
+    sql_.append(std::make_shared<matador::columns>(cols));
 
     for (auto &&column : cols.columns_) {
       row_.add_column(column->name);
@@ -715,9 +766,9 @@ public:
   }
 
   /**
-   * @brief Specfies the from token of a query
+   * @brief Specifies the from token of a query
    *
-   * Specfies the from token of a query with
+   * Specifies the from token of a query with
    * a table name as argument.
    *
    * @param table The name of the table
@@ -727,7 +778,7 @@ public:
   {
     throw_invalid(QUERY_FROM, state);
 
-    sql_.append(new detail::from(table));
+    sql_.append(std::make_shared<detail::from>(table));
     sql_.table_name(table_name_);
 
     table_name_ = table;
@@ -736,9 +787,9 @@ public:
   }
 
   /**
-   * @brief Specfies the from token of a query
+   * @brief Specifies the from token of a query
    *
-   * Specfies the from token of a query with
+   * Specifies the from token of a query with
    * a sub query as argument.
    *
    * @param q The sub query
@@ -748,7 +799,7 @@ public:
   {
     throw_invalid(QUERY_FROM, state);
 
-    sql_.append(new detail::from(""));
+    sql_.append(std::make_shared<detail::from>(""));
     sql_.append(q.stmt());
 
     return *this;
@@ -769,7 +820,7 @@ public:
   {
     throw_invalid(QUERY_COND_WHERE, state);
 
-    sql_.append(new detail::where(c));
+    sql_.append(std::make_shared<detail::where>(c));
 
     state = QUERY_COND_WHERE;
     return *this;
@@ -778,7 +829,7 @@ public:
   /**
    * @brief Resets the query.
    *
-   * @param query_command The query command to which the query is resetted
+   * @param query_command The query command to which the query is reset
    * @return A reference to the query.
    */
   query& reset(t_query_command query_command)
@@ -824,7 +875,7 @@ public:
  */
   query& limit(std::size_t l)
   {
-    sql_.append(new detail::top(l));
+    sql_.append(std::make_shared<detail::top>(l));
     return *this;
   }
 
@@ -837,7 +888,7 @@ public:
    */
   query& as(const std::string &alias)
   {
-    sql_.append(new detail::as(alias));
+    sql_.append(std::make_shared<detail::as>(alias));
     return *this;
   }
 

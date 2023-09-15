@@ -2,6 +2,7 @@ SET(SOURCES
   persistence.cpp
   session.cpp
   basic_table.cpp
+        identifier_column_resolver.cpp
 )
 
 SET(HEADER

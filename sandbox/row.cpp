@@ -6,7 +6,7 @@ using namespace matador;
 int main()
 {
   row r;
-  r.add_column(make_column<long>("id", constraints::PRIMARY_KEY));
+  r.add_column(make_pk_column<long>("id"));
   r.add_column(make_column<std::string>("name","george", { 255, constraints::UNIQUE_NOT_NULL }));
   r.add_column(make_column<matador::date>("birthday", constraints::NOT_NULL));
 

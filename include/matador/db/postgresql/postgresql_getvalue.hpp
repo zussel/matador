@@ -1,7 +1,3 @@
-//
-// Created by sascha on 06.06.19.
-//
-
 #ifndef MATADOR_POSTGRESQL_GETVALUE_HPP
 #define MATADOR_POSTGRESQL_GETVALUE_HPP
 
@@ -61,9 +57,11 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
 {
   auto value = PQgetvalue(res, (int)row, (int)col);
 
-  if (strlen(value) > 1) {
-    val = value[0];
+  if (strlen(value) == 0) {
+    return;
   }
+  char *end;
+  val = (char)strtol(value, &end, 10);
 }
 
 template < typename T, typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>

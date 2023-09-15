@@ -6,6 +6,7 @@
 #include "matador/json/basic_json_mapper.hpp"
 
 #include "matador/utils/access.hpp"
+#include "matador/utils/field_attributes.hpp"
 
 #include <set>
 #include <unordered_set>
@@ -29,29 +30,30 @@ public:
   template < class V >
   void serialize(V &obj);
 
-  void on_primary_key(const char *id, std::string &to, long size = -1);
+  void on_primary_key(const char *id, std::string &to, size_t size);
   template < class V >
-  void on_primary_key(const char *id, V &to, long size = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_primary_key(const char *id, V &to = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_revision(const char *id, unsigned long long &rev);
   template < class V >
-  void on_attribute(const char *id, V &to, long size = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_attribute(const char *id, V &to, const field_attributes &attr = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
   template < class V >
   void on_attribute(const char *id, V &obj, typename std::enable_if<std::is_class<V>::value>::type* = 0);
   template < class V >
-  void on_attribute(const char *id, V &to, long size = -1, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
-  void on_attribute(const char *id, bool &to, long size = -1);
-  void on_attribute(const char *id, std::string &to, long size = -1);
-  void on_attribute(const char *id, date &to, long size = -1);
-  void on_attribute(const char *id, time &to, long size = -1);
+  void on_attribute(const char *id, V &to, const field_attributes &attr = null_attributes, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
+  void on_attribute(const char *id, bool &to, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, std::string &to, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, date &to, const field_attributes &attr = null_attributes);
+  void on_attribute(const char *id, time &to, const field_attributes &attr = null_attributes);
   template < class V >
-  void on_attribute(const char *id, std::list<V> &cont, long size = -1);
+  void on_attribute(const char *id, std::list<V> &cont, const field_attributes &attr = null_attributes);
   template < class V >
-  void on_attribute(const char *id, std::vector<V> &cont, long size = -1, typename std::enable_if<!std::is_class<V>::value>::type* = 0);
+  void on_attribute(const char *id, std::vector<V> &cont, const field_attributes &attr = null_attributes, typename std::enable_if<!std::is_class<V>::value>::type* = 0);
   template < class V >
-  void on_attribute(const char *id, std::vector<V> &cont, long size = -1, typename std::enable_if<std::is_class<V>::value>::type* = 0);
+  void on_attribute(const char *id, std::vector<V> &cont, const field_attributes &attr = null_attributes, typename std::enable_if<std::is_class<V>::value>::type* = 0);
   template < class V >
-  void on_attribute(const char *id, std::set<V> &cont, long size = -1);
+  void on_attribute(const char *id, std::set<V> &cont, const field_attributes &attr = null_attributes);
   template < class V >
-  void on_attribute(const char *id, std::unordered_set<V> &cont, long size = -1);
+  void on_attribute(const char *id, std::unordered_set<V> &cont, const field_attributes &attr = null_attributes);
 
 private:
   details::mapper_runtime &runtime_data_;
@@ -60,7 +62,7 @@ private:
 template<typename T>
 T json_mapper_serializer::create()
 {
-  return std::move(T());
+  return T{};
 }
 
 template<class V>
@@ -81,7 +83,7 @@ void json_mapper_serializer::on_attribute(const char *id, V &obj, typename std::
 }
 
 template<class V>
-void json_mapper_serializer::on_primary_key(const char *id, V &to, long /*size*/, typename std::enable_if<
+void json_mapper_serializer::on_primary_key(const char *id, V &to, typename std::enable_if<
   std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
   if (runtime_data_.key != id) {
@@ -95,7 +97,7 @@ void json_mapper_serializer::on_primary_key(const char *id, V &to, long /*size*/
 }
 
 template<class V>
-void json_mapper_serializer::on_attribute(const char *id, V &to, long /*size*/, typename std::enable_if<std::is_floating_point<V>::value>::type *)
+void json_mapper_serializer::on_attribute(const char *id, V &to, const field_attributes &/*attr*/, typename std::enable_if<std::is_floating_point<V>::value>::type *)
 {
   if (runtime_data_.key != id) {
     return;
@@ -107,7 +109,7 @@ void json_mapper_serializer::on_attribute(const char *id, V &to, long /*size*/, 
 }
 
 template<class V>
-void json_mapper_serializer::on_attribute(const char *id, V &to, long /*size*/, typename std::enable_if<
+void json_mapper_serializer::on_attribute(const char *id, V &to, const field_attributes &/*attr*/, typename std::enable_if<
   std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
   if (runtime_data_.key != id) {
@@ -120,7 +122,7 @@ void json_mapper_serializer::on_attribute(const char *id, V &to, long /*size*/, 
 }
 
 template<class V>
-void json_mapper_serializer::on_attribute(const char *id, std::unordered_set<V> &cont, long /*size*/)
+void json_mapper_serializer::on_attribute(const char *id, std::unordered_set<V> &cont, const field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -135,7 +137,7 @@ void json_mapper_serializer::on_attribute(const char *id, std::unordered_set<V> 
 }
 
 template<class V>
-void json_mapper_serializer::on_attribute(const char *id, std::vector<V> &cont, long /*size*/, typename std::enable_if<!std::is_class<V>::value>::type*)
+void json_mapper_serializer::on_attribute(const char *id, std::vector<V> &cont, const field_attributes &/*attr*/, typename std::enable_if<!std::is_class<V>::value>::type*)
 {
   if (runtime_data_.key != id) {
     return;
@@ -150,7 +152,7 @@ void json_mapper_serializer::on_attribute(const char *id, std::vector<V> &cont, 
 }
 
 template<class V>
-void json_mapper_serializer::on_attribute(const char *id, std::vector<V> &cont, long /*size*/, typename std::enable_if<std::is_class<V>::value>::type*)
+void json_mapper_serializer::on_attribute(const char *id, std::vector<V> &cont, const field_attributes &/*attr*/, typename std::enable_if<std::is_class<V>::value>::type*)
 {
   if (runtime_data_.object_key != id) {
     return;
@@ -162,7 +164,7 @@ void json_mapper_serializer::on_attribute(const char *id, std::vector<V> &cont, 
 }
 
 template<class V>
-void json_mapper_serializer::on_attribute(const char *id, std::list<V> &cont, long /*size*/)
+void json_mapper_serializer::on_attribute(const char *id, std::list<V> &cont, const field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -177,7 +179,7 @@ void json_mapper_serializer::on_attribute(const char *id, std::list<V> &cont, lo
 }
 
 template<class V>
-void json_mapper_serializer::on_attribute(const char *id, std::set<V> &cont, long /*size*/)
+void json_mapper_serializer::on_attribute(const char *id, std::set<V> &cont, const field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;

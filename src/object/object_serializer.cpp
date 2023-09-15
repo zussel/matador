@@ -12,7 +12,7 @@ namespace matador {
 object_serializer::object_serializer(byte_buffer *buffer)
   : buffer_(buffer) {}
 
-void object_serializer::on_attribute(const char *, char *x, long /*size*/)
+void object_serializer::on_attribute(const char *, char *x, const field_attributes &/*attr*/)
 {
   size_t len = strlen(x);
 
@@ -20,7 +20,7 @@ void object_serializer::on_attribute(const char *, char *x, long /*size*/)
   buffer_->append(x, len);
 }
 
-void object_serializer::on_attribute(const char *, std::string &x, long /*size*/)
+void object_serializer::on_attribute(const char *, std::string &x, const field_attributes &/*attr*/)
 {
   size_t len = x.size();
 
@@ -28,17 +28,17 @@ void object_serializer::on_attribute(const char *, std::string &x, long /*size*/
   buffer_->append(x.c_str(), len);
 }
 
-void object_serializer::on_attribute(const char *id, date &x, long /*size*/)
+void object_serializer::on_attribute(const char *id, date &x, const field_attributes &/*attr*/)
 {
   int jd(x.julian_date());
   on_attribute(id, jd);
 }
 
-void object_serializer::on_attribute(const char *id, time &x, long /*size*/)
+void object_serializer::on_attribute(const char *id, time &x, const field_attributes &/*attr*/)
 {
-  struct timeval tv = x.get_timeval();
-  on_attribute(id, tv.tv_sec);
-  on_attribute(id, tv.tv_usec);
+  time_info ti = x.get_time_info();
+  on_attribute(id, ti.seconds_since_epoch);
+  on_attribute(id, ti.milliseconds);
 }
 
 void object_serializer::on_belongs_to(const char *id, object_holder &x, cascade_type cascade)

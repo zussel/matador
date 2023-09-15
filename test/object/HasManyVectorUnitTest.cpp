@@ -300,7 +300,7 @@ void HasManyVectorUnitTest::test_string()
   UNIT_ASSERT_EQUAL(*i, "jane");
 }
 
-using many_vector_varchars = many_builtins<varchar<255>, std::vector>;
+using many_vector_varchars = many_builtins<std::string, std::vector, 255>;
 
 void HasManyVectorUnitTest::test_varchar()
 {

@@ -1,6 +1,3 @@
-//
-// Created by sascha on 3/3/16.
-//
 #include "matador/db/sqlite/sqlite_dialect.hpp"
 #include "matador/db/sqlite/sqlite_dialect_compiler.hpp"
 
@@ -79,6 +76,8 @@ database_type sqlite_dialect::string_type(const char *type) const
     return database_type::type_smallint;
   } else if (strncmp(type, "BIGINT", 6) == 0) {
     return database_type::type_bigint;
+  } else if (strcmp(type, "BOOLEAN") == 0) {
+    return database_type::type_bool;
   } else if (strcmp(type, "REAL") == 0) {
     return database_type::type_double;
   } else if (strcmp(type, "FLOAT") == 0) {

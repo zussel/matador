@@ -1,8 +1,5 @@
-#include "matador/utils/string.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-
-#include <cstring>
 
 #include "matador/db/postgresql/postgresql_result.hpp"
 #include "matador/db/postgresql/postgresql_getvalue.hpp"
@@ -120,12 +117,12 @@ void postgresql_result::read_value(const char */*id*/, size_type index, double &
   detail::get_value(res_, row_index_, index, value);
 }
 
-void postgresql_result::read_value(const char */*id*/, size_type index, char *value, long size)
+void postgresql_result::read_value(const char */*id*/, size_type index, char *value, size_t size)
 {
   detail::get_value(res_, row_index_, index, value, size);
 }
 
-void postgresql_result::read_value(const char */*id*/, size_type index, std::string &value, long size)
+void postgresql_result::read_value(const char */*id*/, size_type index, std::string &value, size_t size)
 {
   detail::get_value(res_, row_index_, index, value, size);
 }
@@ -160,6 +157,8 @@ PGresult *postgresql_result::result_handle()
 {
   return res_;
 }
+
+void postgresql_result::close() {}
 
 }
 }

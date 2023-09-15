@@ -3,7 +3,7 @@
 #include "connections.hpp"
 
 #include "matador/sql/connection.hpp"
-#include "matador/sql/column.hpp"
+#include "matador/sql/columns.hpp"
 #include "matador/sql/dialect_token.hpp"
 
 using namespace matador;
@@ -21,23 +21,23 @@ void SQLiteDialectTestUnit::test_update_with_limit()
 
   sql s;
 
-  s.append(new detail::update);
-  s.append(new detail::tablename("person"));
-  s.append(new detail::set);
+  s.append(std::make_shared<detail::update>());
+  s.append(std::make_shared<detail::tablename>("person"));
+  s.append(std::make_shared<detail::set>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(detail::make_value_column("name", dieter, 255));
-  cols->push_back(detail::make_value_column("age", age54, -1));
+  cols->push_back(make_column("name", dieter, 255));
+  cols->push_back(make_column("age", age54));
 
-  s.append(cols.release());
+  s.append(cols);
 
   matador::column name("name");
-  s.append(new detail::where(name != "Hans"));
+  s.append(std::make_shared<detail::where>(name != "Hans"));
 
-  s.append(new detail::top(1));
+  s.append(std::make_shared<detail::top>(1));
 
   std::string result = conn.dialect()->direct(s);
 
@@ -50,13 +50,13 @@ void SQLiteDialectTestUnit::test_delete_with_limit()
 
   sql s;
 
-  s.append(new detail::remove());
-  s.append(new detail::from("person"));
+  s.append(std::make_shared<detail::remove>());
+  s.append(std::make_shared<detail::from>("person"));
 
   matador::column name("name");
-  s.append(new detail::where(name != "Hans"));
+  s.append(std::make_shared<detail::where>(name != "Hans"));
 
-  s.append(new detail::top(1));
+  s.append(std::make_shared<detail::top>(1));
 
   std::string result = conn.dialect()->direct(s);
 

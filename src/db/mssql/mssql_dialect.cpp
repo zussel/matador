@@ -28,7 +28,7 @@ const char* mssql_dialect::to_database_type_string(matador::data_type type) cons
 {
   switch(type) {
     case data_type::type_char:
-      return "CHAR(1)";
+      return "SMALLINT";
     case data_type::type_short:
       return "SMALLINT";
     case data_type::type_int:
@@ -38,7 +38,7 @@ const char* mssql_dialect::to_database_type_string(matador::data_type type) cons
     case data_type::type_long_long:
       return "BIGINT";
     case data_type::type_unsigned_char:
-      return "CHAR(1)";
+      return "SMALLINT";
     case data_type::type_unsigned_short:
       return "INT";
     case data_type::type_unsigned_int:
@@ -80,6 +80,8 @@ database_type mssql_dialect::string_type(const char *type) const
     return database_type::type_bigint;
   } else if (strcmp(type, "smallint") == 0) {
     return database_type::type_smallint;
+  } else if (strcmp(type, "tinyint") == 0) {
+    return database_type::type_char;
   } else if (strcmp(type, "int") == 0) {
     return database_type::type_int;
   } else if (strcmp(type, "bit") == 0) {

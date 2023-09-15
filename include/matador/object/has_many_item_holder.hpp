@@ -1,7 +1,6 @@
 #ifndef MATADOR_HAS_MANY_ITEM_HOLDER_HPP
 #define MATADOR_HAS_MANY_ITEM_HOLDER_HPP
 
-#include "matador/utils/varchar.hpp"
 #include "matador/utils/is_builtin.hpp"
 
 #include "matador/object/object_ptr.hpp"
@@ -22,10 +21,7 @@ template < class T, class Enable = void >
 class has_many_item_holder;
 
 template < class T >
-class has_many_item_holder<T, typename std::enable_if<
-  is_builtin<T>::value &&
-  !std::is_convertible<T*, varchar_base*>::value
->::type> : public basic_has_many_item_holder
+class has_many_item_holder<T, typename std::enable_if<is_builtin<T>::value>::type> : public basic_has_many_item_holder
 {
 public:
   typedef T object_type;
@@ -97,10 +93,7 @@ private:
 };
 
 template < class T >
-class has_many_item_holder<T, typename std::enable_if<
-  !is_builtin<T>::value &&
-  !std::is_convertible<T*, varchar_base*>::value
->::type> : public basic_has_many_item_holder
+class has_many_item_holder<T, typename std::enable_if<!is_builtin<T>::value>::type> : public basic_has_many_item_holder
 {
 public:
   typedef object_ptr<T> object_type;
@@ -169,85 +162,6 @@ public:
   {
     value_.reset(nullptr, value_.cascade());
   }
-private:
-  friend struct detail::basic_relation_endpoint;
-
-  object_type value_;
-};
-
-template < long SIZE >
-class has_many_item_holder<varchar<SIZE>> : public basic_has_many_item_holder
-{
-public:
-  typedef varchar<SIZE> object_type;
-  typedef std::string value_type;
-
-  has_many_item_holder() = default;
-
-  has_many_item_holder(const std::string &val, object_proxy *item_proxy)
-    : basic_has_many_item_holder(item_proxy)
-    , value_(val)
-  {}
-
-  has_many_item_holder(const object_type &val, object_proxy *item_proxy)
-    : basic_has_many_item_holder(item_proxy)
-    , value_(val)
-  {}
-
-  has_many_item_holder(const has_many_item_holder &x)
-    : basic_has_many_item_holder(x.has_many_to_many_item_poxy_)
-    , value_(x.value_)
-  {}
-
-  has_many_item_holder& operator=(const has_many_item_holder &x)
-  {
-    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-    value_ = x.value_;
-    return *this;
-  }
-
-  has_many_item_holder(object_proxy *, std::nullptr_t) {}
-
-  has_many_item_holder(has_many_item_holder &&x) noexcept
-  {
-    value_ = std::move(x.value_);
-
-    has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-    x.has_many_to_many_item_poxy_ = nullptr;
-  }
-
-  has_many_item_holder& operator=(has_many_item_holder &&x) noexcept
-  {
-    if (this != &x) {
-      value_ = std::move(x.value_);
-      has_many_to_many_item_poxy_ = x.has_many_to_many_item_poxy_;
-      x.has_many_to_many_item_poxy_ = nullptr;
-    }
-    return *this;
-  }
-
-  friend bool operator==(const has_many_item_holder &a, const has_many_item_holder &b)
-  {
-    return a.value_ == b.value_;
-  }
-
-  friend bool operator!=(const has_many_item_holder &a, const has_many_item_holder &b)
-  {
-    return a.value_ != b.value_;
-  }
-
-  const std::string& value() const
-  {
-    return value_.value();
-  }
-
-  std::string& value()
-  {
-    return value_.value();
-  }
-
-  void clear() {}
-
 private:
   friend struct detail::basic_relation_endpoint;
 

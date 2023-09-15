@@ -4,7 +4,7 @@
 
 #include "matador/sql/sql.hpp"
 #include "matador/sql/dialect_token.hpp"
-#include "matador/sql/column.hpp"
+#include "matador/sql/columns.hpp"
 #include "matador/sql/condition.hpp"
 
 using namespace matador;
@@ -47,21 +47,21 @@ void DialectTestUnit::test_create_query()
   sql s;
 
   s.reset(t_query_command::CREATE);
-  s.append(new detail::create("person"));
+  s.append(std::make_shared<detail::create>("person"));
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITH_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITH_BRACKETS);
 
-  cols->push_back(std::make_shared<detail::typed_identifier_column>("id", data_type::type_unsigned_long, 0, false));
-  cols->push_back(std::make_shared<detail::typed_varchar_column>("name", 256, data_type::type_varchar, 1, false));
-  cols->push_back(std::make_shared<detail::typed_column>("age", data_type::type_unsigned_int, 2, false));
+  cols->push_back(make_pk_column("id", data_type::type_unsigned_long, 0));
+  cols->push_back(make_column("name", data_type::type_varchar, 1, 255));
+  cols->push_back(make_column("age", data_type::type_unsigned_int, 2));
 
-  s.append(cols.release());
+  s.append(cols);
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
   UNIT_ASSERT_EQUAL("create", s.command());
-  UNIT_ASSERT_EQUAL("CREATE TABLE \"person\" (\"id\" INTEGER NOT NULL PRIMARY KEY, \"name\" VARCHAR(256), \"age\" INTEGER) ", result);
+  UNIT_ASSERT_EQUAL("CREATE TABLE \"person\" (\"id\" INTEGER NOT NULL PRIMARY KEY, \"name\" VARCHAR(255), \"age\" INTEGER) ", result);
 }
 
 void DialectTestUnit::test_drop_query()
@@ -69,7 +69,7 @@ void DialectTestUnit::test_drop_query()
   sql s;
 
   s.reset(t_query_command::DROP);
-  s.append(new detail::drop("person"));
+  s.append(std::make_shared<detail::drop>("person"));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -84,17 +84,17 @@ void DialectTestUnit::test_insert_query()
 
   s.reset(t_query_command::INSERT);
   s.table_name("person");
-  s.append(new detail::insert("person"));
+  s.append(std::make_shared<detail::insert>("person"));
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITH_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITH_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  std::unique_ptr<matador::detail::values> vals(new detail::values);
+  auto vals = std::make_shared<detail::values>();
 
   unsigned long id(8);
   std::string name("hans");
@@ -104,7 +104,7 @@ void DialectTestUnit::test_insert_query()
   vals->push_back(std::make_shared<value>(name));
   vals->push_back(std::make_shared<value>(age));
 
-  s.append(vals.release());
+  s.append(vals);
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -119,17 +119,17 @@ void DialectTestUnit::test_insert_prepare_query()
   sql s;
 
   s.reset(t_query_command::INSERT);
-  s.append(new detail::insert("person"));
+  s.append(std::make_shared<detail::insert>("person"));
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITH_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITH_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  std::unique_ptr<matador::detail::values> vals(new detail::values);
+  auto vals = std::make_shared<detail::values>();
 
   unsigned long id(8);
   std::string name("hans");
@@ -139,7 +139,7 @@ void DialectTestUnit::test_insert_prepare_query()
   vals->push_back(std::make_shared<value>(name));
   vals->push_back(std::make_shared<value>(age));
 
-  s.append(vals.release());
+  s.append(vals);
 
   TestDialect dialect;
   auto result = dialect.prepare(s);
@@ -152,17 +152,17 @@ void DialectTestUnit::test_select_all_query()
   sql s;
 
   s.reset(t_query_command::SELECT);
-  s.append(new detail::select);
+  s.append(std::make_shared<detail::select>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::from("person"));
+  s.append(std::make_shared<detail::from>("person"));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -176,18 +176,18 @@ void DialectTestUnit::test_select_distinct_query()
   sql s;
 
   s.reset(t_query_command::SELECT);
-  s.append(new detail::select);
-  s.append(new detail::distinct);
+  s.append(std::make_shared<detail::select>());
+  s.append(std::make_shared<detail::distinct>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::from("person"));
+  s.append(std::make_shared<detail::from>("person"));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -201,18 +201,18 @@ void DialectTestUnit::test_select_limit_query()
   sql s;
 
   s.reset(t_query_command::SELECT);
-  s.append(new detail::select);
-  s.append(new detail::top(10));
+  s.append(std::make_shared<detail::select>());
+  s.append(std::make_shared<detail::top>(10));
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::from("person"));
+  s.append(std::make_shared<detail::from>("person"));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -226,19 +226,19 @@ void DialectTestUnit::test_select_ordered_query()
   sql s;
 
   s.reset(t_query_command::SELECT);
-  s.append(new detail::select);
+  s.append(std::make_shared<detail::select>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::from("person"));
-  s.append(new detail::order_by("name"));
-  s.append(new detail::desc);
+  s.append(std::make_shared<detail::from>("person"));
+  s.append(std::make_shared<detail::order_by>("name"));
+  s.append(std::make_shared<detail::desc>());
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -252,18 +252,18 @@ void DialectTestUnit::test_select_grouped_query()
   sql s;
 
   s.reset(t_query_command::SELECT);
-  s.append(new detail::select);
+  s.append(std::make_shared<detail::select>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::from("person"));
-  s.append(new detail::group_by("name"));
+  s.append(std::make_shared<detail::from>("person"));
+  s.append(std::make_shared<detail::group_by>("name"));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -277,20 +277,20 @@ void DialectTestUnit::test_select_where_query()
   sql s;
 
   s.reset(t_query_command::SELECT);
-  s.append(new detail::select);
+  s.append(std::make_shared<detail::select>());
 
-  auto cols = std::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::from("person"));
+  s.append(std::make_shared<detail::from>("person"));
 
   matador::column name("name");
-  s.append(new detail::where(name != "hans"));
+  s.append(std::make_shared<detail::where>(name != "hans"));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -300,19 +300,19 @@ void DialectTestUnit::test_select_where_query()
 
   s.reset(t_query_command::SELECT);
 
-  s.append(new detail::select);
+  s.append(std::make_shared<detail::select>());
 
-  cols = std::make_unique<matador::columns>(columns::WITHOUT_BRACKETS);
+  cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::from("person"));
+  s.append(std::make_shared<detail::from>("person"));
 
-  s.append(new detail::where(name != "Hans" && name != "Dieter"));
+  s.append(std::make_shared<detail::where>(name != "Hans" && name != "Dieter"));
 
   result = dialect.direct(s);
 
@@ -325,18 +325,18 @@ void DialectTestUnit::test_update_query()
   sql s;
 
   s.reset(t_query_command::UPDATE);
-  s.append(new detail::update);
-  s.append(new detail::tablename("person"));
-  s.append(new detail::set);
+  s.append(std::make_shared<detail::update>());
+  s.append(std::make_shared<detail::tablename>("person"));
+  s.append(std::make_shared<detail::set>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(detail::make_value_column("name", dieter, 255));
-  cols->push_back(detail::make_value_column("age", age54, -1));
+  cols->push_back(make_column("name", dieter, 255));
+  cols->push_back(make_column("age", age54));
 
-  s.append(cols.release());
+  s.append(cols);
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -350,22 +350,22 @@ void DialectTestUnit::test_update_where_query()
   sql s;
 
   s.reset(t_query_command::UPDATE);
-  s.append(new detail::update);
-  s.append(new detail::tablename("person"));
-  s.append(new detail::set);
+  s.append(std::make_shared<detail::update>());
+  s.append(std::make_shared<detail::tablename>("person"));
+  s.append(std::make_shared<detail::set>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(detail::make_value_column("name", dieter, 255));
-  cols->push_back(detail::make_value_column("age", age54, -1));
+  cols->push_back(make_column("name", dieter, 255));
+  cols->push_back(make_column("age", age54));
 
-  s.append(cols.release());
+  s.append(cols);
 
   matador::column name("name");
   matador::column age("age");
-  s.append(new detail::where(name != "Hans" && matador::in(age, {7,5,5,8})));
+  s.append(std::make_shared<detail::where>(name != "Hans" && matador::in(age, {7,5,5,8})));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -379,18 +379,18 @@ void DialectTestUnit::test_update_prepare_query()
   sql s;
 
   s.reset(t_query_command::UPDATE);
-  s.append(new detail::update);
-  s.append(new detail::tablename("person"));
-  s.append(new detail::set);
+  s.append(std::make_shared<detail::update>());
+  s.append(std::make_shared<detail::tablename>("person"));
+  s.append(std::make_shared<detail::set>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(detail::make_value_column("name", dieter, 255));
-  cols->push_back(detail::make_value_column("age", age54, -1));
+  cols->push_back(make_column("name", dieter, 255));
+  cols->push_back(make_column("age", age54));
 
-  s.append(cols.release());
+  s.append(cols);
 
   TestDialect dialect;
   auto result = dialect.prepare(s);
@@ -403,22 +403,22 @@ void DialectTestUnit::test_update_where_prepare_query()
   sql s;
 
   s.reset(t_query_command::UPDATE);
-  s.append(new detail::update);
-  s.append(new detail::tablename("person"));
-  s.append(new detail::set);
+  s.append(std::make_shared<detail::update>());
+  s.append(std::make_shared<detail::tablename>("person"));
+  s.append(std::make_shared<detail::set>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   std::string dieter("Dieter");
   unsigned int age54(54);
-  cols->push_back(detail::make_value_column("name", dieter, 255));
-  cols->push_back(detail::make_value_column("age", age54, -1));
+  cols->push_back(make_column("name", dieter, 255));
+  cols->push_back(make_column("age", age54));
 
-  s.append(cols.release());
+  s.append(cols);
 
   matador::column name("name");
   matador::column age("age");
-  s.append(new detail::where(name != "Hans" && matador::in(age, {7,5,5,8})));
+  s.append(std::make_shared<detail::where>(name != "Hans" && matador::in(age, {7,5,5,8})));
 
   TestDialect dialect;
   auto result = dialect.prepare(s);
@@ -432,8 +432,8 @@ void DialectTestUnit::test_delete_query()
   sql s;
 
   s.reset(t_query_command::REMOVE);
-  s.append(new detail::remove());
-  s.append(new detail::from("person"));
+  s.append(std::make_shared<detail::remove>());
+  s.append(std::make_shared<detail::from>("person"));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -447,12 +447,12 @@ void DialectTestUnit::test_delete_where_query()
   sql s;
 
   s.reset(t_query_command::REMOVE);
-  s.append(new detail::remove());
-  s.append(new detail::from("person"));
+  s.append(std::make_shared<detail::remove>());
+  s.append(std::make_shared<detail::from>("person"));
 
   matador::column name("name");
   matador::column age("age");
-  s.append(new detail::where(name != "Hans" && matador::between(age, 21, 30)));
+  s.append(std::make_shared<detail::where>(name != "Hans" && matador::between(age, 21, 30)));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);

@@ -59,11 +59,6 @@ public:
   virtual void visit(const matador::detail::set &) = 0;
   virtual void visit(const matador::columns &) = 0;
   virtual void visit(const matador::column &) = 0;
-  virtual void visit(const matador::detail::typed_column &) = 0;
-  virtual void visit(const matador::detail::typed_identifier_column &) = 0;
-  virtual void visit(const matador::detail::typed_varchar_column &) = 0;
-  virtual void visit(const matador::detail::identifier_varchar_column &) = 0;
-  virtual void visit(const matador::detail::value_column &) = 0;
   virtual void visit(const matador::detail::from &) = 0;
   virtual void visit(const matador::detail::where &) = 0;
   virtual void visit(const matador::detail::basic_condition &) = 0;

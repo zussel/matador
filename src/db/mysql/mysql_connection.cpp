@@ -1,25 +1,10 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "matador/db/mysql/mysql_connection.hpp"
 #include "matador/db/mysql/mysql_statement.hpp"
 #include "matador/db/mysql/mysql_result.hpp"
 #include "matador/db/mysql/mysql_types.hpp"
 #include "matador/db/mysql/mysql_exception.hpp"
+
+#include "matador/sql/connection_info.hpp"
 
 #include <sstream>
 #include <regex>
@@ -41,34 +26,13 @@ mysql_connection::~mysql_connection()
 }
 
 
-void mysql_connection::open(const std::string &connection)
+void mysql_connection::open(const connection_info &info)
 {
-  // dns syntax:
-  // user[:passwd]@host[:port]/db
-  static const std::regex DNS_RGX("(.+?)(?::(.+?))?@([^:]+?)(?::([1-9][0-9]*?))?/(.+)");
-  std::smatch what;
-
-  if (!std::regex_match(connection, what, DNS_RGX)) {
-    throw std::logic_error("mysql:connect invalid dns: " + connection);
-  }
-
-  const std::string user = what[1].str();
-  const std::string passwd = what[2].str();
-  const std::string host = what[3].str();
-
-  unsigned port = 0;
-  if (what[4].matched) {
-    port = unsigned(std::stoi(what[4].str()));
-  }
-
-  db_ = what[5].str();
-
-
   if (!mysql_init(&mysql_)) {
     throw_error(&mysql_, "mysql");
   }
 
-  if (!mysql_real_connect(&mysql_, host.c_str(), user.c_str(), !passwd.empty() ? passwd.c_str() : nullptr, db_.c_str(), port, nullptr, 0)) {
+  if (!mysql_real_connect(&mysql_, info.hostname.c_str(), info.user.c_str(), !info.password.empty() ? info.password.c_str() : nullptr, info.database.c_str(), info.port, nullptr, 0)) {
     // disconnect all handles
     mysql_close(&mysql_);
     // throw exception
@@ -151,7 +115,6 @@ std::string mysql_connection::server_version() const
 bool mysql_connection::exists(const std::string &tablename)
 {
   std::string stmt("SHOW TABLES LIKE '" + tablename + "'");
-//  std::string stmt("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + db_ + "' AND table_name = '" + tablename + "' LIMIT 1");
   std::unique_ptr<mysql_result> res(execute_internal(stmt));
   return res->fetch();
 }
@@ -198,6 +161,11 @@ unsigned long mysql_connection::last_inserted_id()
     return (unsigned long)mysql_insert_id(&mysql_);
   }
   return 0;
+}
+
+unsigned short mysql_connection::default_port() const
+{
+  return 3306;
 }
 
 }

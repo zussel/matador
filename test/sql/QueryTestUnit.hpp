@@ -20,8 +20,9 @@ public:
 
   void initialize() override;
 
-  void print_datatypes();
-  void test_datatypes();
+  void print_data_types();
+  void test_data_types();
+  void test_schema();
   void test_query_value_creator();
   void test_quoted_identifier();
   void test_columns_with_quotes_in_name();
@@ -31,6 +32,7 @@ public:
   void test_unknown_table();
   void test_identifier();
   void test_identifier_prepared();
+  void test_select_time();
   void test_create();
   void test_update();
   void test_anonymous_create();

@@ -1,6 +1,8 @@
 #ifndef MATADOR_IDENTIFIER_HPP
 #define MATADOR_IDENTIFIER_HPP
 
+#include "matador/utils/field_attributes.hpp"
+
 #include <memory>
 #include <string>
 #include <typeindex>
@@ -51,16 +53,16 @@ class identifier_serializer
 public:
   virtual ~identifier_serializer() = default;
 
-  virtual void serialize(short &, long) = 0;
-  virtual void serialize(int &, long) = 0;
-  virtual void serialize(long &, long) = 0;
-  virtual void serialize(long long &, long) = 0;
-  virtual void serialize(unsigned short &, long) = 0;
-  virtual void serialize(unsigned int &, long) = 0;
-  virtual void serialize(unsigned long &, long) = 0;
-  virtual void serialize(unsigned long long &, long) = 0;
-  virtual void serialize(std::string &, long) = 0;
-  virtual void serialize(null_type_t &, long) = 0;
+  virtual void serialize(short &, const field_attributes &) = 0;
+  virtual void serialize(int &, const field_attributes &) = 0;
+  virtual void serialize(long &, const field_attributes &) = 0;
+  virtual void serialize(long long &, const field_attributes &) = 0;
+  virtual void serialize(unsigned short &, const field_attributes &) = 0;
+  virtual void serialize(unsigned int &, const field_attributes &) = 0;
+  virtual void serialize(unsigned long &, const field_attributes &) = 0;
+  virtual void serialize(unsigned long long &, const field_attributes &) = 0;
+  virtual void serialize(std::string &, const field_attributes &) = 0;
+  virtual void serialize(null_type_t &, const field_attributes &) = 0;
 };
 
 class identifier
@@ -101,7 +103,7 @@ private:
   {
     using self = pk<IdType>;
 
-    explicit pk(const IdType &id, long size = -1) : base(std::type_index(typeid(IdType)), detail::identifier_type_traits<IdType>::type())
+    explicit pk(const IdType &id, size_t size = 0) : base(std::type_index(typeid(IdType)), detail::identifier_type_traits<IdType>::type())
     , id_(id)
     , size_(size) {}
 
@@ -137,7 +139,7 @@ private:
     }
 
     IdType id_;
-    long size_{-1};
+    size_t size_{};
   };
 
   struct null_pk : public base

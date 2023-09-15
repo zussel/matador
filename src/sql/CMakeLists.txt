@@ -24,9 +24,11 @@ SET(SOURCES
   query_value_column_processor.cpp
   query_value_creator.cpp
   connection_impl.cpp
-  value_visitor.cpp
+  value_processor.cpp
   database_error.cpp
-  sql_logger.cpp)
+  sql_logger.cpp
+  columns.cpp
+  connection_info.cpp)
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/condition.hpp
@@ -63,11 +65,14 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_column_processor.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_creator.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/parameter_binder.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/value_visitor.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/value_processor.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/database_error.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_sql_logger.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/sql_logger.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/export.hpp)
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/export.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/schema.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/columns.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/connection_info.hpp)
 
 ADD_LIBRARY(matador-sql STATIC ${SOURCES} ${HEADER})
 

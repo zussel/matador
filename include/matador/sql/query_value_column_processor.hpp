@@ -4,7 +4,7 @@
 #include "matador/utils/time.hpp"
 #include "matador/utils/any_visitor.hpp"
 
-#include "matador/sql/column.hpp"
+#include "matador/sql/columns.hpp"
 
 namespace matador {
 namespace detail {
@@ -22,7 +22,7 @@ private:
   template < class T >
   void process(T &val)
   {
-    update_columns_->push_back(detail::make_value_column(current_id_, val, -1));
+    update_columns_->push_back(make_column(current_id_, val));
   }
   void process(char *val);
   void process(const char *val);

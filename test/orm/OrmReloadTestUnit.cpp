@@ -555,7 +555,7 @@ void OrmReloadTestUnit::test_load_has_many_int()
   p.drop();
 }
 
-using many_varchars = many_builtins<matador::varchar<255>, std::list>;
+using many_varchars = many_builtins<std::string, std::list, 255>;
 
 void OrmReloadTestUnit::test_load_has_many_varchar()
 {

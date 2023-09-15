@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "matador/db/sqlite/sqlite_connection.hpp"
 #include "matador/db/sqlite/sqlite_statement.hpp"
 #include "matador/db/sqlite/sqlite_result.hpp"
@@ -22,6 +5,7 @@
 #include "matador/db/sqlite/sqlite_exception.hpp"
 
 #include "matador/sql/sql.hpp"
+#include "matador/sql/connection_info.hpp"
 
 #include <sqlite3.h>
 
@@ -42,9 +26,9 @@ sqlite_connection::~sqlite_connection()
 }
 
 
-void sqlite_connection::open(const std::string &db)
+void sqlite_connection::open(const connection_info &info)
 {
-  int ret = sqlite3_open(db.c_str(), &sqlite_db_);
+  int ret = sqlite3_open(info.database.c_str(), &sqlite_db_);
 
   throw_database_error(ret, sqlite_db_, "sqlite");
 }
@@ -189,6 +173,12 @@ sqlite_result *sqlite_connection::execute_internal(const std::string &stmt)
 
   return res.release();
 }
+
+unsigned short sqlite_connection::default_port() const
+{
+  return 0;
+}
+
 }
 
 }

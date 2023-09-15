@@ -3,6 +3,7 @@
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/cascade_type.hpp"
+#include "matador/utils/field_attributes.hpp"
 
 #include <cstddef>
 #include <iostream>
@@ -37,11 +38,13 @@ public:
     matador::access::serialize(*this, x);
   }
 
+  template < class T >
+  void on_primary_key(const char *, T &, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class T>
-  void on_primary_key(const char *, T &, long /*size*/ = -1) {}
-  template<class T>
-  void on_attribute(const char *, T &, long /*size*/ = -1) {}
-  void on_attribute(const char *, char *, long /*size*/ = -1)  {}
+  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes)  {}
 
   void on_belongs_to(const char*, identifiable_holder&, cascade_type) { }
   void on_has_one(const char*, identifiable_holder&, cascade_type) { }

@@ -1,7 +1,3 @@
-//
-// Created by sascha on 06.06.19.
-//
-
 #include "matador/db/postgresql/postgresql_getvalue.hpp"
 
 namespace matador {
@@ -36,7 +32,11 @@ void get_value(PGresult *res, size_t row, size_t col, unsigned char &val)
     return;
   }
 
-  val = value[0];
+  if (strlen(value) == 0) {
+    return;
+  }
+  char *end;
+  val = (unsigned char)strtoul(value, &end, 10);
 }
 }
 }

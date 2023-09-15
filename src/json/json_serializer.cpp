@@ -12,11 +12,16 @@ void json_serializer::on_attribute(const char *id, std::string &val, size_t)
   newline();
 }
 
-void json_serializer::on_primary_key(const char *id, std::string &pk, long /*size*/)
+void json_serializer::on_primary_key(const char *id, std::string &pk, size_t /*size*/)
 {
   write_id(id);
   append(pk).append(",");
   newline();
+}
+
+void json_serializer::on_revision(const char *id, unsigned long long int &rev)
+{
+  on_attribute(id, rev);
 }
 
 void json_serializer::on_attribute(const char *id, bool &val)
@@ -48,7 +53,7 @@ void json_serializer::on_attribute(const char *id, date &d)
 
 void json_serializer::on_attribute(const char *id, time &t)
 {
-  if (t.get_timeval().tv_sec == 0 || t.get_timeval().tv_usec == 0) {
+  if (t.get_time_info().seconds_since_epoch == 0 || t.get_time_info().milliseconds == 0) {
     return;
   }
   write_id(id);

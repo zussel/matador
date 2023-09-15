@@ -5,6 +5,7 @@
 
 #include "matador/utils/byte_buffer.hpp"
 #include "matador/utils/access.hpp"
+#include "matador/utils/field_attributes.hpp"
 
 #include "matador/object/object_holder.hpp"
 #include "matador/object/basic_has_many.hpp"
@@ -64,19 +65,27 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char* id, V &x, long size = -1)
+  void on_primary_key(const char* id, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
-    on_attribute(id, x, size);
+    on_attribute(id, x);
+  }
+  void on_primary_key(const char *id, std::string &pk, size_t size)
+  {
+    on_attribute(id, pk, size);
+  }
+  void on_revision(const char *id, unsigned long long &rev)
+  {
+    on_attribute(id, rev);
   }
   template < class T >
-  void on_attribute(const char *, T &x, long /*size*/ = -1)
+  void on_attribute(const char *, T &x, const field_attributes &/*attr*/ = null_attributes)
   {
     buffer_->append(&x, sizeof(x));
   }
-  void on_attribute(const char* id, char *c, long size);
-  void on_attribute(const char* id, std::string &s, long /*size*/ = -1);
-  void on_attribute(const char* id, date &x, long /*size*/ = -1);
-  void on_attribute(const char* id, time &x, long /*size*/ = -1);
+  void on_attribute(const char* id, char *c, const field_attributes &attr = null_attributes);
+  void on_attribute(const char* id, std::string &s, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char* id, date &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char* id, time &x, const field_attributes &/*attr*/ = null_attributes);
   void on_belongs_to(const char* id, object_holder &x, cascade_type cascade);
   void on_has_one(const char* id, object_holder &x, cascade_type cascade);
 

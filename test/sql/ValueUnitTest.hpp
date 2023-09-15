@@ -1,7 +1,3 @@
-//
-// Created by sascha on 03.01.17.
-//
-
 #ifndef OOS_VALUEUNITTEST_HPP
 #define OOS_VALUEUNITTEST_HPP
 

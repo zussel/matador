@@ -1,20 +1,3 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "matador/sql/sql.hpp"
 #include "matador/sql/basic_dialect.hpp"
 
@@ -31,20 +14,14 @@ sql::~sql()
   reset(t_query_command::UNKNOWN);
 }
 
-void sql::append(const std::shared_ptr<detail::token> &tokptr)
+void sql::append(const std::shared_ptr<detail::token> &token_ptr)
 {
-  token_list_.push_back(tokptr);
-}
-
-void sql::append(detail::token *tok)
-{
-  std::shared_ptr<detail::token> tokptr(tok);
-  token_list_.push_back(tokptr);
+  token_list_.push_back(token_ptr);
 }
 
 void sql::append(const sql &stmt)
 {
-  append(new detail::query(stmt));
+  append(std::make_shared<detail::query>(stmt));
 }
 
 void sql::reset(t_query_command command_type)

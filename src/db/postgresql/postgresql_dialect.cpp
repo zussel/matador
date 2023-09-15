@@ -1,7 +1,3 @@
-//
-// Created by sascha on 24.05.19.
-//
-
 #include <sstream>
 
 #include "matador/db/postgresql/postgresql_dialect_compiler.hpp"
@@ -24,7 +20,7 @@ const char *postgresql_dialect::to_database_type_string(matador::data_type type)
 {
   switch (type) {
     case data_type::type_char:
-      return "CHAR(1)";
+      return "SMALLINT";
     case data_type::type_short:
       return "SMALLINT";
     case data_type::type_int:
@@ -34,7 +30,7 @@ const char *postgresql_dialect::to_database_type_string(matador::data_type type)
     case data_type::type_long_long:
       return "BIGINT";
     case data_type::type_unsigned_char:
-      return "CHAR(1)";
+      return "SMALLINT";
     case data_type::type_unsigned_short:
       return "INTEGER";
     case data_type::type_unsigned_int:

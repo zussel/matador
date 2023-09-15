@@ -57,19 +57,24 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char*, V&, long /*size*/ = -1) {}
-
-  void on_belongs_to(const char*, identifiable_holder&, cascade_type) {}
-  void on_has_one(const char*, identifiable_holder&, cascade_type) {}
-
-  void on_has_many(const char *, abstract_has_many&, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many&, cascade_type) {}
-
-  template < class V >
-  void on_primary_key(const char *, V &x, long /*size*/ = -1)
+  void on_primary_key(const char *, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     id_ = x;
   }
+  void on_primary_key(const char *, std::string &pk, size_t /*size*/)
+  {
+    id_ =  pk;
+  }
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
+
+  template < class V >
+  void on_attribute(const char*, V&, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_belongs_to(const char*, identifiable_holder&, cascade_type) {}
+
+  void on_has_one(const char*, identifiable_holder&, cascade_type) {}
+  void on_has_many(const char *, abstract_has_many&, const char *, const char *, cascade_type) {}
+
+  void on_has_many(const char *, abstract_has_many&, cascade_type) {}
 
 private:
   identifier id_;

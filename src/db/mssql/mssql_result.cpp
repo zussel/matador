@@ -2,9 +2,6 @@
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
-//#include "matador/utils/basic_identifier.hpp"
-
-#include <cstring>
 
 namespace matador {
 
@@ -32,7 +29,6 @@ mssql_result::mssql_result(SQLHANDLE stmt)
 
 mssql_result::~mssql_result()
 {
-  SQLCloseCursor(stmt_);
   SQLFreeStmt(stmt_, SQL_CLOSE);
 }
 
@@ -43,13 +39,6 @@ const char* mssql_result::column(size_type) const
 
 bool mssql_result::fetch()
 {
-//  SQLRETURN ret = SQLSetStmtAttr(stmt_, SQL_ROWSET_SIZE, (void *) 2, SQL_NTS);
-//  throw_error(ret, SQL_HANDLE_DBC, stmt_, "mssql", "error on creating sql statement");
-//  ret = SQLSetStmtAttr(stmt_, SQL_ATTR_CURSOR_TYPE, (void *) SQL_CURSOR_KEYSET_DRIVEN, SQL_NTS);
-//  throw_error(ret, SQL_HANDLE_DBC, stmt_, "mssql", "error on creating sql statement");
-//  ret = SQLSetStmtAttr(stmt_, SQL_ATTR_CONCURRENCY, (void *) SQL_CONCUR_LOCK, SQL_NTS);
-//  throw_error(ret, SQL_HANDLE_DBC, stmt_, "mssql", "error on creating sql statement");
-
   SQLRETURN ret = SQLFetch(stmt_);
   if (SQL_SUCCEEDED(ret)) {
     return true;
@@ -144,7 +133,7 @@ void mssql_result::read_value(const char *id, size_type index, double &x)
   read_column(id, index, x);
 }
 
-void mssql_result::read_value(const char *, size_type index, char *x, long size)
+void mssql_result::read_value(const char *, size_type index, char *x, size_t size)
 {
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, x, size, &info);
@@ -155,7 +144,7 @@ void mssql_result::read_value(const char *, size_type index, char *x, long size)
   }
 }
 
-void mssql_result::read_value(const char *id, size_type index, std::string &x, long size)
+void mssql_result::read_value(const char *id, size_type index, std::string &x, size_t size)
 {
   read_column(id, index, x, size);
 }
@@ -187,14 +176,14 @@ void mssql_result::read_column(const char *, size_type index, std::string &val)
   }
 }
 
-void mssql_result::read_column(const char *, size_type index, std::string &val, long s)
+void mssql_result::read_column(const char *, size_type index, std::string &val, size_t size)
 {
-  if (s == -1) {
-    s = 8000;
+  if (size == 0) {
+    size = 8000;
   }
-  std::vector<char> buf(s, 0);
+  std::vector<char> buf(size, 0);
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf.data(), s, &info);
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf.data(), static_cast<SQLLEN>(size), &info);
   if (SQL_SUCCEEDED(ret)) {
     val.assign(buf.data(), info);
   } else {
@@ -203,27 +192,27 @@ void mssql_result::read_column(const char *, size_type index, std::string &val, 
 
 }
 
-void mssql_result::read_column(const char *, size_type index, char &val)
-{
-  SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, &val, 0, &info);
-  if (SQL_SUCCEEDED(ret)) {
-    return;
-  } else {
-    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
-  }
-}
-
-void mssql_result::read_column(const char *, size_type index, unsigned char &val)
-{
-  SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, &val, 0, &info);
-  if (SQL_SUCCEEDED(ret)) {
-    return;
-  } else {
-    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
-  }
-}
+//void mssql_result::read_column(const char *, size_type index, char &val)
+//{
+//  SQLLEN info = 0;
+//  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, &val, 0, &info);
+//  if (SQL_SUCCEEDED(ret)) {
+//    return;
+//  } else {
+//    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
+//  }
+//}
+//
+//void mssql_result::read_column(const char *, size_type index, unsigned char &val)
+//{
+//  SQLLEN info = 0;
+//  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, &val, 0, &info);
+//  if (SQL_SUCCEEDED(ret)) {
+//    return;
+//  } else {
+//    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
+//  }
+//}
 
 void mssql_result::read_column(char const *, size_type index, date &x)
 {
@@ -263,6 +252,11 @@ bool mssql_result::prepare_fetch()
 bool mssql_result::finalize_fetch()
 {
   return true;
+}
+
+void mssql_result::close()
+{
+  SQLCloseCursor(stmt_);
 }
 
 }

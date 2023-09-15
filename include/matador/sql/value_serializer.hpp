@@ -22,16 +22,16 @@ public:
   explicit value_identifier_serializer(value_serializer &serializer)
   : serializer_(serializer) {}
 
-  void serialize(short &value, long /*size*/) override { extract_value(value); }
-  void serialize(int &value, long /*size*/) override { extract_value(value); }
-  void serialize(long &value, long /*size*/) override { extract_value(value); }
-  void serialize(long long &value, long /*size*/) override { extract_value(value); }
-  void serialize(unsigned short &value, long /*size*/) override { extract_value(value); }
-  void serialize(unsigned int &value, long /*size*/) override { extract_value(value); }
-  void serialize(unsigned long &value, long /*size*/) override { extract_value(value); }
-  void serialize(unsigned long long &value, long /*size*/) override { extract_value(value); }
-  void serialize(std::string &value, long /*size*/) override { extract_value(value); }
-  void serialize(null_type_t &, long /*size*/) override;
+  void serialize(short &value, const field_attributes &/*attr*/) override { extract_value(value); }
+  void serialize(int &value, const field_attributes &/*attr*/) override { extract_value(value); }
+  void serialize(long &value, const field_attributes &/*attr*/) override { extract_value(value); }
+  void serialize(long long &value, const field_attributes &/*attr*/) override { extract_value(value); }
+  void serialize(unsigned short &value, const field_attributes &/*attr*/) override { extract_value(value); }
+  void serialize(unsigned int &value, const field_attributes &/*attr*/) override { extract_value(value); }
+  void serialize(unsigned long &value, const field_attributes &/*attr*/) override { extract_value(value); }
+  void serialize(unsigned long long &value, const field_attributes &/*attr*/) override { extract_value(value); }
+  void serialize(std::string &value, const field_attributes &/*attr*/) override { extract_value(value); }
+  void serialize(null_type_t &, const field_attributes &/*attr*/) override;
 
 private:
   template < typename ValueType >
@@ -61,30 +61,22 @@ public:
     matador::access::serialize(*this, x);
   }
 
-  void on_attribute(const char *id, char &x, long /*size*/ = -1);
-  void on_attribute(const char *id, short &x, long /*size*/ = -1);
-  void on_attribute(const char *id, int &x, long /*size*/ = -1);
-  void on_attribute(const char *id, long &x, long /*size*/ = -1);
-  void on_attribute(const char *id, long long &x, long /*size*/ = -1);
-  void on_attribute(const char *id, unsigned char &x, long /*size*/ = -1);
-  void on_attribute(const char *id, unsigned short &x, long /*size*/ = -1);
-  void on_attribute(const char *id, unsigned int &x, long /*size*/ = -1);
-  void on_attribute(const char *id, unsigned long &x, long /*size*/ = -1);
-  void on_attribute(const char *id, unsigned long long &x, long /*size*/ = -1);
-  void on_attribute(const char *id, float &x, long /*size*/ = -1);
-  void on_attribute(const char *id, double &x, long /*size*/ = -1);
-  void on_attribute(const char *id, bool &x, long /*size*/ = -1);
-  void on_attribute(const char *id, char *x, long /*size*/ = -1);
-  void on_attribute(const char *id, std::string &x, long /*size*/ = -1);
-  void on_attribute(const char *id, date &x, long /*size*/ = -1);
-  void on_attribute(const char *id, time &x, long /*size*/ = -1);
+  template<typename ValueType>
+  void on_primary_key(const char *id, ValueType &x, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type* = 0)
+  {
+    on_attribute(id, x, { constraints::PRIMARY_KEY });
+  }
+  void on_primary_key(const char *id, std::string &pk, size_t size);
+  void on_revision(const char *id, unsigned long long &rev);
+  template < class Type >
+  void on_attribute(const char *, Type &x, const field_attributes &/*attr*/ = null_attributes)
+  {
+    add_value(x);
+  }
+  void on_attribute(const char *id, char *x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, std::string &x, const field_attributes &/*attr*/ = null_attributes);
   void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);
   void on_has_one(const char *id, identifiable_holder &x, cascade_type);
-  template<typename ValueType>
-  void on_primary_key(const char *id, ValueType &x, long size = -1)
-  {
-    on_attribute(id, x, size);
-  }
   void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
   void on_has_many(const char *, abstract_has_many &, cascade_type) {}
 
@@ -95,7 +87,7 @@ public:
   }
 
   template < class ValueType >
-  void add_value(ValueType &val, long size)
+  void add_value(ValueType &val, size_t size)
   {
     values_->push_back(std::make_shared<value>(val, size));
   }

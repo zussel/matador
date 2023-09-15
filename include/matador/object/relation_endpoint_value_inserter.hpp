@@ -4,8 +4,8 @@
 #include "matador/object/has_many_item_holder.hpp"
 #include "matador/object/object_proxy_accessor.hpp"
 
+#include "matador/utils/field_attributes.hpp"
 #include "matador/utils/cascade_type.hpp"
-
 #include "matador/utils/access.hpp"
 
 #include <iostream>
@@ -35,11 +35,13 @@ public:
   }
 
   template < class T >
-  void on_primary_key(const char *, T &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, T &, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class T >
-  void on_attribute(const char *, T &, long /*size*/ = -1) {}
-  void on_attribute(const char *, char *, long /*size*/ = -1) {}
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) {}
+  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
   template < class T >
   void on_belongs_to(const char *, T &, cascade_type) {}

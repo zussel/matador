@@ -5,6 +5,7 @@
 
 #include "matador/json/json.hpp"
 
+#include "matador/utils/field_attributes.hpp"
 #include "matador/utils/is_builtin.hpp"
 
 #include "matador/object/object_ptr.hpp"
@@ -42,29 +43,34 @@ public:
     return result;
   }
 
-  void on_primary_key(const char *id, std::string &pk, long /*size*/ = -1);
   template< class V >
-  void on_primary_key(const char *id, V &pk, long /*size*/ = -1, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     result_[id] = pk;
   }
+  void on_primary_key(const char *id, std::string &pk, size_t /*size*/);
+
+  void on_revision(const char *id, unsigned long long &rev)
+  {
+    result_[id] = rev;
+  }
 
   template < class V >
-  void on_attribute(const char *id, V &, long /*size*/ = -1, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
     result_[id] = json::object();
   }
 
   template < class V >
-  void on_attribute(const char *id, V &val, long /*size*/ = -1, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &val, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     result_[id] = val;
   }
 
-  void on_attribute(const char *id, bool &to, long /*size*/ = -1);
-  void on_attribute(const char *id, std::string &to, long /*size*/ = -1);
-  void on_attribute(const char *id, date &to, long /*size*/ = -1);
-  void on_attribute(const char *id, time &to, long /*size*/ = -1);
+  void on_attribute(const char *id, bool &to, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, date &to, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, time &to, const field_attributes &/*attr*/ = null_attributes);
 
   template<class V>
   void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type)

@@ -1,9 +1,8 @@
 SET (SANDBOX_SOURCES sandbox.cpp
-  contraints.hpp
-  field_attributes.hpp
   column.hpp
   row.hpp
-  column_printer.hpp)
+  column_printer.hpp
+  )
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 ADD_EXECUTABLE(di di.cpp)
@@ -11,6 +10,10 @@ ADD_EXECUTABLE(reactor reactor.cpp)
 ADD_EXECUTABLE(row row.cpp)
 ADD_EXECUTABLE(identifier identifier.cpp)
 ADD_EXECUTABLE(field_attribute field_attribute.cpp)
+ADD_EXECUTABLE(sqlng sqlng.cpp)
+ADD_EXECUTABLE(container container.cpp)
+ADD_EXECUTABLE(connection_pool connection_pool.cpp)
+ADD_EXECUTABLE(datetime datetime.cpp)
 
 TARGET_LINK_LIBRARIES(reactor
   matador-utils
@@ -45,4 +48,8 @@ TARGET_LINK_LIBRARIES(row
     matador-sql
     ${CMAKE_DL_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
+)
+
+TARGET_LINK_LIBRARIES(datetime
+    matador-utils
 )

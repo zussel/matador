@@ -2,7 +2,9 @@
 #define CONNECTION_HPP
 
 #include "matador/sql/result.hpp"
+#include "matador/sql/basic_dialect.hpp"
 #include "matador/sql/statement.hpp"
+#include "matador/sql/connection_info.hpp"
 #include "matador/sql/connection_impl.hpp"
 #include "matador/sql/row.hpp"
 #include "matador/sql/field.hpp"
@@ -41,9 +43,9 @@ public:
    * @brief Creates a database connection from a connection string.
    *
    * @param dns The database connection string
-   * @param sqllogger The logger handler to write sql log messages to
+   * @param sql_logger The logger handler to write sql log messages to
    */
-  connection(const std::string &dns, std::shared_ptr<basic_sql_logger> sqllogger);
+  connection(const std::string &dns, std::shared_ptr<basic_sql_logger> sql_logger);
 
   /**
    * Copies a given connection
@@ -214,31 +216,32 @@ private:
   template < class T >
   friend class query;
 
+  void initialize_connection_info(const std::string &dns);
   void prepare_prototype_row(row &prototype, const std::string &table_name);
 
-  template < class T >
-  result<T> execute(const sql &stmt, const std::string &tablename, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
+  template < class Type >
+  result<Type> execute(const sql &stmt, const std::string &table_name, row prototype, typename std::enable_if< std::is_same<Type, row>::value >::type* = 0)
   {
     // get column descriptions
-    prepare_prototype_row(prototype, tablename);
+    prepare_prototype_row(prototype, table_name);
     auto sql_stmt = dialect()->direct(stmt);
     logger_->on_execute(sql_stmt);
-    return result<T>(impl_->execute(sql_stmt), prototype);
+    return result<Type>(impl_->execute(sql_stmt), prototype);
   }
 
   /**
    * @brief Execute a sql object representing a statement
    *
-   * @tparam T The entity type of the query
+   * @tparam Type The entity type of the query
    * @param stmt The statement to be executed
    * @return A result object
    */
-  template < class T >
-  result<T> execute(const sql &stmt, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
+  template < class Type >
+  result<Type> execute(const sql &stmt, typename std::enable_if< !std::is_same<Type, row>::value >::type* = 0)
   {
     auto sql_stmt = dialect()->direct(stmt);
     logger_->on_execute(sql_stmt);
-    return result<T>(impl_->execute(sql_stmt));
+    return result<Type>(impl_->execute(sql_stmt));
   }
 
   template < class T >
@@ -265,13 +268,11 @@ private:
 private:
   static connection_impl* create_connection(const std::string &type) ;
   void init_from_foreign_connection(const connection &foreign_connection);
-  void parse_dns(const std::string &dns);
 
   void log_token(detail::token::t_token tok);
 
 private:
-  std::string type_;
-  std::string dns_;
+  connection_info connection_info_{};
   std::unique_ptr<connection_impl> impl_;
 
   std::shared_ptr<basic_sql_logger> logger_ = std::make_shared<null_sql_logger>();

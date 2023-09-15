@@ -145,7 +145,7 @@ public:
    * @param impl Result implementation
    */
   explicit result(matador::detail::result_impl *impl)
-    : result(impl, {})
+    : result(impl, T{})
   {}
 
   /**
@@ -183,7 +183,7 @@ public:
    * @param x The result ro move
    * @return Reference to this
    */
-  result& operator=(result &&x)
+  result& operator=(result &&x) noexcept
   {
     p = std::move(x.p);
     std::swap(prototype_, x.prototype_);
@@ -242,6 +242,11 @@ public:
   void creator(const t_creator_func &creator_func)
   {
     creator_func_ = creator_func;
+  }
+
+  void close()
+  {
+    p->close();
   }
 
 private:

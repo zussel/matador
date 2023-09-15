@@ -35,7 +35,6 @@ public:
     fs.insert(std::make_pair(
       std::type_index(typeid(T)),
       function([f](matador::any & x) {
-//        std::cout << "calling any visitor for type " << typeid(T).name() << "\n";
         f(x._<T>());
       })
     ));

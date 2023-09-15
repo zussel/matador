@@ -1,106 +1,127 @@
 #include "matador/sql/result_impl.hpp"
+#include "matador/sql/row.hpp"
 
 #include "matador/utils/identifiable_holder.hpp"
 
 namespace matador {
 namespace detail {
 
+result_row_serializer::result_row_serializer(result_impl &impl)
+: impl_(impl) { }
+
+void result_row_serializer::process(const char *id, value &val, const field_attributes &attr)
+{
+  value_processor_.apply(id, val, attr, *this);
+}
+
+void result_row_serializer::on_attribute(const char *id, char &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, short &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, int &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, long &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, long long int &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, unsigned char &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, unsigned short &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, unsigned int &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, unsigned long &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, unsigned long long int &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, bool &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, float &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, double &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, char *x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, std::string &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, time &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_attribute(const char *id, date &x, const field_attributes &attr) {
+  impl_.on_attribute(id, x, attr);
+}
+
+void result_row_serializer::on_belongs_to(const char *id, identifiable_holder &x, cascade_type) {
+  impl_.read_foreign_object(id, x);
+}
+
+void result_row_serializer::on_has_one(const char *id, identifiable_holder &x, cascade_type) {
+  impl_.read_foreign_object(id, x);
+}
+
 result_impl::result_impl()
 : result_identifier_reader_(*this)
+, result_row_serializer_(*this)
 {}
 
-void result_impl::on_attribute(const char *id, char &x)
+void result_impl::serialize(row &r)
 {
-  read_value(id, column_index_++, x);
+  matador::access::serialize(result_row_serializer_, r);
 }
 
-void result_impl::on_attribute(const char *id, short &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, int &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, long &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, long long int &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, unsigned char &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, unsigned short &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, unsigned int &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, unsigned long &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, unsigned long long int &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, bool &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, float &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, double &x)
-{
-  read_value(id, column_index_++, x);
-}
-
-void result_impl::on_attribute(const char *id, char *value, long size)
+void result_impl::on_primary_key(const char *id, std::string &value, size_t size)
 {
   read_value(id, column_index_++, value, size);
 }
 
-void result_impl::on_attribute(const char *id, std::string &value)
+void result_impl::on_revision(const char *id, unsigned long long int &rev)
 {
-  read_value(id, column_index_++, value);
+  read_value(id, column_index_++, rev);
 }
 
-void result_impl::on_attribute(const char *id, std::string &value, long size)
+void result_impl::on_attribute(const char *id, char *value, const field_attributes &attr)
 {
-  if (size == -1) {
+  read_value(id, column_index_++, value, attr.size());
+}
+
+void result_impl::on_attribute(const char *id, std::string &value, const field_attributes &attr)
+{
+  if (attr.size() == 0) {
     read_value(id, column_index_++, value);
   } else {
-    read_value(id, column_index_++, value, size);
+    read_value(id, column_index_++, value, attr.size());
   }
-}
-
-void result_impl::on_attribute(const char *id, matador::time &value)
-{
-  read_value(id, column_index_++, value);
-}
-
-void result_impl::on_attribute(const char *id, matador::date &value)
-{
-  read_value(id, column_index_++, value);
 }
 
 void result_impl::on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type)
@@ -139,12 +160,7 @@ result_impl::size_type result_impl::column_index() const
   return column_index_;
 }
 
-void result_identifier_reader::serialize(null_type_t &, long /*size*/) { }
-
-void result_identifier_reader::read_value(std::string &value, long size)
-{
-  result_impl_.on_attribute("", value, size);
-}
+void result_identifier_reader::serialize(null_type_t &, const field_attributes &/*attr*/) { }
 
 }
 }

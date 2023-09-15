@@ -1,9 +1,11 @@
 #include "ConnectionTestUnit.hpp"
 
 #include "matador/sql/connection.hpp"
+#include "matador/sql/connection_info.hpp"
 #include "matador/sql/database_error.hpp"
 
 #include <fstream>
+#include <iostream>
 #include <regex>
 
 using namespace matador;
@@ -22,6 +24,8 @@ ConnectionTestUnit::ConnectionTestUnit(const std::string &prefix, std::string dn
 
 void ConnectionTestUnit::test_open_close()
 {
+  std::cout << "\ndns: " << dns_ << "\n";
+
   matador::connection conn(dns_);
 
   UNIT_ASSERT_FALSE(conn.is_connected());
@@ -82,8 +86,9 @@ void ConnectionTestUnit::test_connection_failed()
     return;
   }
 
-  std::regex re("(test)");
-  string dns = std::regex_replace(dns_, re, "matador_invalid");
+  auto ci = matador::connection_info::parse(dns_, 0);
+  ci.database = "invalid";
+  const auto dns = matador::connection_info::to_string(ci);
 
   matador::connection conn(dns);
 

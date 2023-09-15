@@ -308,21 +308,21 @@ reactor::t_handler_type reactor::resolve_next_handler(time_t now, select_fdsets&
   return std::make_pair(nullptr, event_type::NONE_MASK);
 }
 
-void reactor::on_read_mask(const handler_ptr& h)
+void reactor::on_read_mask(const handler_ptr& handler)
 {
 //  log_.debug("read bit for handler %d is set; handle input", h->handle());
 //  std::cout << this << " (handler " << h.get() << "): handle read\n" << std::flush;
-  h->on_input();
+  handler->on_input();
 }
 
-void reactor::on_write_mask(const handler_ptr& h)
+void reactor::on_write_mask(const handler_ptr& handler)
 {
 //  log_.debug("write bit for handler %d is set; handle output", h->handle());
 //  std::cout << this << " (handler " << h.get() << "): handle write\n" << std::flush;
-  h->on_output();
+  handler->on_output();
 }
 
-void reactor::on_except_mask(const handler_ptr& h)
+void reactor::on_except_mask(const handler_ptr& /*handler*/)
 {
 //  std::cout << this << " (handler " << h.get() << "): handle exception\n" << std::flush;
 

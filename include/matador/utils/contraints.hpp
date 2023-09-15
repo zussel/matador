@@ -1,6 +1,7 @@
-#ifndef MATADOR_CONSTRAINTS_HPP
-#define MATADOR_CONSTRAINTS_HPP
+#ifndef MATADOR_CONTRAINTS_HPP
+#define MATADOR_CONTRAINTS_HPP
 
+#include <string>
 #include <unordered_map>
 
 namespace matador {
@@ -16,15 +17,7 @@ enum class constraints : unsigned char {
   UNIQUE_NOT_NULL = UNIQUE | NOT_NULL
 };
 
-std::unordered_map<constraints, std::string> constraints_to_name_map {
-{ constraints::NONE, "none" },
-{ constraints::NOT_NULL, "not null" },
-{ constraints::INDEX, "index" },
-{ constraints::UNIQUE, "unique" },
-{ constraints::PRIMARY_KEY, "primary key" },
-{ constraints::FOREIGN_KEY, "foreign key" },
-{ constraints::DEFAULT, "default" }
-};
+//static std::unordered_map<constraints, std::string> constraints_to_name_map();
 
 inline constraints operator|(constraints a, constraints b)
 {
@@ -43,4 +36,4 @@ inline bool is_constraint_set(constraints source, constraints needle)
 
 }
 
-#endif //MATADOR_CONSTRAINTS_HPP
+#endif //MATADOR_CONTRAINTS_HPP

@@ -293,7 +293,7 @@ void HasManyListUnitTest::test_string()
   UNIT_ASSERT_EQUAL(*i, "jane");
 }
 
-using many_list_varchars = many_builtins<varchar<255>, std::list>;
+using many_list_varchars = many_builtins<std::string, std::list, 255>;
 
 void HasManyListUnitTest::test_varchar()
 {

@@ -87,10 +87,11 @@ void sqlite_result::push_back(char **row_values, int column_count)
 void sqlite_result::read_value(const char */*id*/, size_type index, char &x)
 {
   t_row::value_type &val = result_[row_index_][index];
-
-  if (strlen(val) > 1) {
-    x = val[0];
+  if (strlen(val) == 0) {
+    return;
   }
+  char *end;
+  x = (char)strtol(val, &end, 10);
 }
 
 void sqlite_result::read_value(const char */*id*/, size_type index, short &x)
@@ -225,7 +226,7 @@ void sqlite_result::read_value(const char */*id*/, size_type index, double &x)
   // Todo: check error
 }
 
-void sqlite_result::read_value(const char */*id*/, size_type index, char *x, long size)
+void sqlite_result::read_value(const char */*id*/, size_type index, char *x, size_t size)
 {
   t_row::value_type &val = result_[row_index_][index];
   size_t len = strlen(val);
@@ -245,7 +246,7 @@ void sqlite_result::read_value(const char */*id*/, size_type index, char *x, lon
   }
 }
 
-void sqlite_result::read_value(const char */*id*/, size_type index, std::string &x, long /*size*/)
+void sqlite_result::read_value(const char */*id*/, size_type index, std::string &x, size_t /*size*/)
 {
   t_row::value_type val = result_[row_index_][index];
   x.assign(val);
@@ -279,6 +280,8 @@ bool sqlite_result::finalize_fetch()
   ++row_index_;
   return true;
 }
+
+void sqlite_result::close() {}
 
 }
 

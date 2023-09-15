@@ -23,16 +23,16 @@ public:
 
   std::string serialize(const identifier &x);
 
-  void serialize(short &x, long size) override;
-  void serialize(int &x, long size) override;
-  void serialize(long &x, long size) override;
-  void serialize(long long &x, long size) override;
-  void serialize(unsigned short &x, long size) override;
-  void serialize(unsigned int &x, long size) override;
-  void serialize(unsigned long &x, long size) override;
-  void serialize(unsigned long long &x, long size) override;
-  void serialize(std::string &, long size) override;
-  void serialize(null_type_t &, long size) override;
+  void serialize(short &x, const field_attributes &attr) override;
+  void serialize(int &x, const field_attributes &attr) override;
+  void serialize(long &x, const field_attributes &attr) override;
+  void serialize(long long &x, const field_attributes &attr) override;
+  void serialize(unsigned short &x, const field_attributes &attr) override;
+  void serialize(unsigned int &x, const field_attributes &attr) override;
+  void serialize(unsigned long &x, const field_attributes &attr) override;
+  void serialize(unsigned long long &x, const field_attributes &attr) override;
+  void serialize(std::string &, const field_attributes &attr) override;
+  void serialize(null_type_t &, const field_attributes &attr) override;
 
 private:
   std::string json_;

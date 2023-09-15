@@ -2,6 +2,7 @@
 #define OOS_RELATION_RESOLVER_HPP
 
 #include "matador/utils/access.hpp"
+#include "matador/utils/field_attributes.hpp"
 
 #include "matador/object/object_exception.hpp"
 
@@ -20,22 +21,23 @@ namespace detail {
 template < class T, class Enabled = void >
 class relation_resolver;
 
-template < typename T >
-struct relation_data_type
-{
-  typedef T value_type;
-};
-
-template < long SIZE >
-struct relation_data_type<varchar<SIZE>>
-{
-  typedef typename varchar<SIZE>::value_type value_type;
-};
+//template < typename T >
+//struct relation_data_type
+//{
+//  typedef T value_type;
+//};
+//
+//template < long SIZE >
+//struct relation_data_type<varchar<SIZE>>
+//{
+//  typedef typename varchar<SIZE>::value_type value_type;
+//};
 
 template < typename T >
 bool is_same_type(const std::shared_ptr<detail::basic_relation_data> &rdata)
 {
-  return rdata->type_index() == std::type_index(typeid(typename relation_data_type<T>::value_type));
+  return rdata->type_index() == std::type_index(typeid(T));
+//  return rdata->type_index() == std::type_index(typeid(typename relation_data_type<T>::value_type));
 }
 
 template < class T >
@@ -72,11 +74,13 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class V>
-  void on_attribute(const char *, V &, long /*size*/ = -1) {}
-  void on_attribute(const char *, char *, long /*size*/ = -1) { }
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
+  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) { }
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
 
   template < class V >
   void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type cascade);
@@ -247,12 +251,14 @@ public:
     matador::access::serialize(*this, obj);
   }
 
-  template<typename V>
-  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
   template < class V >
-  void on_attribute(const char *, V &x, long /*size*/ = -1);
-  void on_attribute(const char *, char *, long size = -1);
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
+  template < class V >
+  void on_attribute(const char *, V &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);
   template < class V >
@@ -379,12 +385,14 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &x, long size = -1);
+  void on_attribute(const char *, V &x, const field_attributes &/*attr*/ = null_attributes);
 
-  void on_attribute(const char *, char *, long size = -1);
-  void on_attribute(const char *, std::string &, long size = -1);
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes);
 
   template < class V >
   void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);

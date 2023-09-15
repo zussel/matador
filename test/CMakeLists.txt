@@ -159,7 +159,9 @@ SET (TEST_SQL_SOURCES
   sql/SqlLoggerTest.cpp
   sql/SqlLoggerTest.hpp
   sql/IdentifierSerializerTest.cpp
-  sql/IdentifierSerializerTest.h)
+  sql/IdentifierSerializerTest.h
+  sql/ConnectionInfoTest.cpp
+  sql/ConnectionInfoTest.hpp)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp

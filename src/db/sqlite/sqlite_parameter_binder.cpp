@@ -119,7 +119,11 @@ void sqlite_parameter_binder::bind(const std::string &x, size_t index)
 void sqlite_parameter_binder::bind(const std::string &x, size_t len, size_t index)
 {
   auto size = x.size();
-  len = (size > len) ? len : size;
+  if (len == 0) {
+    len = size;
+  } else {
+    len = (size > len) ? len : size;
+  }
   int ret = sqlite3_bind_text(stmt_, adjust_index(index), x.data(), (int)len, nullptr);
   throw_database_error(ret, db_, "sqlite3_bind_text");
 }

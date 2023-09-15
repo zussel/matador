@@ -6,6 +6,8 @@
 #include "matador/object/prototype_node.hpp"
 #include "matador/object/basic_has_many.hpp"
 
+#include "matador/utils/field_attributes.hpp"
+
 #include <stack>
 
 namespace matador {
@@ -45,11 +47,13 @@ public:
   void serialize(T &x);
 
   template<class T>
-  void on_primary_key(const char *, T &, long /*size*/ = -1) {}
+  void on_primary_key(const char *, T &, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type* = 0) {}
+  void on_primary_key(const char *, std::string &, size_t /*size*/) {}
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class T>
-  void on_attribute(const char *, T &, long /*size*/ = -1) { }
-  void on_attribute(const char *, char *, long /*size*/ = -1) { }
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
+  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) { }
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) { }
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
 
   template<class T>
   void on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade);

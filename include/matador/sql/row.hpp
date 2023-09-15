@@ -1,7 +1,7 @@
 #ifndef ROW_HPP
 #define ROW_HPP
 
-#include "matador/sql/value.hpp"
+#include "matador/sql/column.hpp"
 
 #include <cstddef>
 #include <memory>
@@ -16,6 +16,9 @@ namespace matador {
 class row
 {
 public:
+  using column_ptr = std::shared_ptr<column>;
+
+public:
   row() = default;
   /**
    * Copy constructs a row from a given row
@@ -29,7 +32,7 @@ public:
    *
    * @param r The row to move from
    */
-  row(row &&r) = default;
+  row(row &&r) noexcept = default;
 
   /**
    * Copy assigns a row with a given row
@@ -61,11 +64,10 @@ public:
    * Add a column to the row. If column
    * already exists
    *
-   * @param column Name of the column
-   * @param value Value of the column
+   * @param col Column to add
    * @return True if column was added, false if column already exists
    */
-  bool add_column(const std::string &column, const std::shared_ptr<value> &value);
+  bool add_column(const column_ptr &col);
 
   /**
    * @brief Checks if the row has a column of the given name
@@ -77,14 +79,14 @@ public:
   /**
    * @brief Serializes the row with the given serializer
    *
-   * @tparam SERIALIZER The type of the used serializer object
+   * @tparam Serializer The type of the used serializer object
    * @param serializer The serializer to be used
    */
-  template < class SERIALIZER >
-  void serialize(SERIALIZER &serializer)
+  template < class Serializer >
+  void serialize(Serializer &serializer)
   {
     for (auto &column : columns_) {
-      values_.at(column)->serialize(column.c_str(), serializer);
+      serializer.process(column->name.c_str(), column->val, column->attributes);
     }
   }
 
@@ -101,7 +103,7 @@ public:
   template < class T >
   void set(size_t index, const T &val)
   {
-    values_.at(columns_.at(index)) = std::make_shared<value>(val);
+    columns_.at(index)->val.value_ = val;
   }
 
   /**
@@ -117,7 +119,7 @@ public:
   template < class T >
   void set(const std::string &column, const T &val)
   {
-    values_.at(column) = std::make_shared<value>(val);
+    columns_by_name_.at(column)->val = val;
   }
 
   /**
@@ -138,7 +140,7 @@ public:
   template < class T >
   T at(size_t pos)
   {
-    return values_.at(columns_.at(pos))->get<T>();
+    return columns_.at(pos)->val.get<T>();
   }
 
   /**
@@ -151,29 +153,7 @@ public:
   template < class T >
   T at(const std::string &column)
   {
-    return values_.at(column)->get<T>();
-  }
-
-  /**
-   * Get string value of column at position
-   *
-   * @param pos Column index
-   * @return The string value of the requested column.
-   */
-  std::string str(size_t pos)
-  {
-    return values_.at(columns_.at(pos))->str();
-  }
-
-  /**
-   * Get string value of column at position
-   *
-   * @param column Column name
-   * @return The string value of the requested column.
-   */
-  std::string str(const std::string &column)
-  {
-    return values_.at(column)->str();
+    return columns_by_name_.at(column)->val.get<T>();
   }
 
   /**
@@ -184,13 +164,11 @@ public:
   void clear();
 
 private:
-  typedef std::shared_ptr<value> value_ptr;
-  typedef std::vector<std::string> t_columns;
-  typedef std::unordered_map<std::string, value_ptr> t_values;
+  using column_by_index = std::vector<column_ptr>;
+  using column_by_name_map = std::unordered_map<std::string, column_ptr >;
 
-  t_columns columns_;
-  t_values values_;
-
+  column_by_index columns_;
+  column_by_name_map columns_by_name_;
 };
 /// @endcond
 

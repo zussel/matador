@@ -4,6 +4,7 @@
 #include "matador/utils/export.hpp"
 
 #include "matador/utils/cascade_type.hpp"
+#include "matador/utils/field_attributes.hpp"
 #include "matador/utils/access.hpp"
 
 #include <string>
@@ -35,133 +36,137 @@ public:
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, char &x) = 0;
+  virtual void on_attribute(const char *id, char &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a short with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, short &x) = 0;
+  virtual void on_attribute(const char *id, short &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a int with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, int &x) = 0;
+  virtual void on_attribute(const char *id, int &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a long with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, long &x) = 0;
+  virtual void on_attribute(const char *id, long &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a long long with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, long long &x) = 0;
+  virtual void on_attribute(const char *id, long long &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a unsigned char with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, unsigned char &x) = 0;
+  virtual void on_attribute(const char *id, unsigned char &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a unsigned short with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, unsigned short &x) = 0;
+  virtual void on_attribute(const char *id, unsigned short &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a unsigned int with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, unsigned int &x) = 0;
+  virtual void on_attribute(const char *id, unsigned int &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a unsigned long long with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, unsigned long long &x) = 0;
+  virtual void on_attribute(const char *id, unsigned long long &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a unsigned long with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, unsigned long &x) = 0;
+  virtual void on_attribute(const char *id, unsigned long &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a bool with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, bool &x) = 0;
+  virtual void on_attribute(const char *id, bool &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a float with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, float &x) = 0;
+  virtual void on_attribute(const char *id, float &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a double with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, double &x) = 0;
+  virtual void on_attribute(const char *id, double &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a char string with given id
    *
    * @param id The id of the value
    * @param x The string value to be serialized
-   * @param s The size of the string
-   * @param size Size of the value
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, char *x, long size) = 0;
+  virtual void on_attribute(const char *id, char *x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a string with given id
    *
    * @param id The id of the value
    * @param x The string to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, std::string &x) = 0;
-  /**
-   * @brief Interface to serialize a varchar with given id
-   * Interface to serialize a varchar with given id. Varchar
-   * consists of a string and a size
-   *
-   * @param id The id of the value
-   * @param x The value to be serialized
-   * @param s The size of the string
-   * @param size Size of the value
-   */
-  virtual void on_attribute(const char *id, std::string &x, long size) = 0;
+  virtual void on_attribute(const char *id, std::string &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a time with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, matador::time &x) = 0;
+  virtual void on_attribute(const char *id, matador::time &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize a date with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
+   * @param attr The field attributes
    */
-  virtual void on_attribute(const char *id, matador::date &x) = 0;
+  virtual void on_attribute(const char *id, matador::date &x, const field_attributes &attr) = 0;
   /**
    * @brief Interface to serialize an object with given id and cascade type
    *

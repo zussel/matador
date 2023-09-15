@@ -3,6 +3,7 @@
 
 #include "matador/orm/export.hpp"
 
+#include "matador/utils/field_attributes.hpp"
 #include "matador/utils/access.hpp"
 
 #include "matador/sql/column.hpp"
@@ -36,13 +37,15 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &x, long /*size*/ = -1);
+  void on_primary_key(const char *, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_primary_key(const char *id, std::string &pk, size_t size);
+  void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class T>
-  void on_attribute(const char *, T &, long /*size*/ = -1) {}
-  void on_attribute(const char *, char *, long /*size*/ = -1) { }
-  void on_attribute(const char *, std::string &, long /*size*/ = -1) { }
-  void on_belongs_to(const char*, identifiable_holder&, cascade_type) { }
-  void on_has_one(const char*, identifiable_holder&, cascade_type) { }
+  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_belongs_to(const char*, identifiable_holder&, cascade_type) {}
+  void on_has_one(const char*, identifiable_holder&, cascade_type) {}
   void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
   void on_has_many(const char*, abstract_has_many&, cascade_type) {}
 
@@ -66,7 +69,7 @@ column identifier_column_resolver::resolve(T *obj)
 }
 
 template<class V>
-void identifier_column_resolver::on_primary_key(const char *id, V &, long /*size*/)
+void identifier_column_resolver::on_primary_key(const char *id, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type*)
 {
   col_.name = id;
 }

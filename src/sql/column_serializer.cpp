@@ -7,87 +7,17 @@ column_serializer::column_serializer(columns::t_brackets brackets)
   : brackets_(brackets)
 {}
 
-void column_serializer::on_attribute(const char *id, char&, long /*size*/)
+void column_serializer::on_primary_key(const char *id, std::string &, size_t /*size*/)
 {
   cols_->push_back(std::make_shared<column>(id));
 }
 
-void column_serializer::on_attribute(const char *id, short&, long /*size*/)
+void column_serializer::on_revision(const char *id, unsigned long long int &/*rev*/)
 {
   cols_->push_back(std::make_shared<column>(id));
 }
 
-void column_serializer::on_attribute(const char *id, int&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, long&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, long long&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, unsigned char&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, unsigned short&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, unsigned int&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, unsigned long&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, unsigned long long&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, float&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, double&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, bool&, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, char *, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, std::string &, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, date &, long /*size*/)
-{
-  cols_->push_back(std::make_shared<column>(id));
-}
-
-void column_serializer::on_attribute(const char *id, time &, long /*size*/)
+void column_serializer::on_attribute(const char *id, char * /*x*/, const field_attributes &)
 {
   cols_->push_back(std::make_shared<column>(id));
 }

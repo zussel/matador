@@ -43,7 +43,7 @@ public:
   {
     T val;
     SQLLEN info = 0;
-    auto type = (SQLSMALLINT)type2int(matador::data_type_traits<T>::builtin_type());
+    auto type = (SQLSMALLINT)type2int(matador::data_type_traits<T>::builtin_type(0));
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (!SQL_SUCCEEDED(ret)) {
       throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
@@ -63,6 +63,8 @@ public:
     return std::string(buf, info);
   }
 
+  void close() override;
+
 protected:
   void read_value(const char *id, size_type index, char &x) override;
   void read_value(const char *id, size_type index, short &x) override;
@@ -79,15 +81,15 @@ protected:
   void read_value(const char *id, size_type index, double &x) override;
   void read_value(const char *id, size_type index, matador::date &x) override;
   void read_value(const char *id, size_type index, matador::time &x) override;
-  void read_value(const char *id, size_type index, char *x, long size) override;
+  void read_value(const char *id, size_type index, char *x, size_t size) override;
   void read_value(const char *id, size_type index, std::string &x) override;
-  void read_value(const char *id, size_type index, std::string &x, long size) override;
+  void read_value(const char *id, size_type index, std::string &x, size_t size) override;
 
   template < class T >
-  void read_column(const char *id, size_type index, T &val)
+  void read_column(const char *id, size_type index, T &val, size_t size = 0)
   {
     SQLLEN info = 0;
-    auto type = (SQLSMALLINT)type2int(data_type_traits<T>::builtin_type());
+    auto type = (SQLSMALLINT)type2int(data_type_traits<T>::builtin_type(size));
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (SQL_SUCCEEDED(ret)) {
       return;
@@ -98,10 +100,10 @@ protected:
     }
   }
   
-  void read_column(const char *, size_type index, char &val);
-  void read_column(const char *, size_type index, unsigned char &val);
+//  void read_column(const char *, size_type index, char &val);
+//  void read_column(const char *, size_type index, unsigned char &val);
   void read_column(const char *, size_type index, std::string &val);
-  void read_column(const char *, size_type index, std::string &val, long);
+  void read_column(const char *, size_type index, std::string &val, size_t size);
   void read_column(const char *, size_type index, matador::date &val);
   void read_column(const char *, size_type index, matador::time &val);
 

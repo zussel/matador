@@ -29,17 +29,17 @@ void PostgreSQLDialectTestUnit::test_placeholder()
 
   sql s;
 
-  s.append(new detail::insert("person"));
+  s.append(std::make_shared<detail::insert>("person"));
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITH_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITH_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  std::unique_ptr<matador::detail::values> vals(new detail::values);
+  auto vals = std::make_shared<detail::values>();
 
   unsigned long id(8);
   std::string name("hans");
@@ -49,7 +49,7 @@ void PostgreSQLDialectTestUnit::test_placeholder()
   vals->push_back(std::make_shared<value>(name));
   vals->push_back(std::make_shared<value>(age));
 
-  s.append(vals.release());
+  s.append(vals);
 
   auto result = conn.dialect()->prepare(s);
 
@@ -62,19 +62,19 @@ void PostgreSQLDialectTestUnit::test_placeholder_condition()
 
   sql s;
 
-  s.append(new detail::select());
+  s.append(std::make_shared<detail::select>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
   cols->push_back(std::make_shared<column>("age"));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::from("person"));
+  s.append(std::make_shared<detail::from>("person"));
 
-  s.append(new detail::where("name"_col == "hans"));
+  s.append(std::make_shared<detail::where>("name"_col == "hans"));
 
   auto result = conn.dialect()->prepare(s);
 
@@ -87,19 +87,19 @@ void PostgreSQLDialectTestUnit::test_update_limit()
 
   sql s;
 
-  s.append(new detail::update);
-  s.append(new detail::tablename("relation"));
-  s.append(new detail::set);
+  s.append(std::make_shared<detail::update>());
+  s.append(std::make_shared<detail::tablename>("relation"));
+  s.append(std::make_shared<detail::set>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   unsigned long owner_id(1);
-  cols->push_back(detail::make_value_column("owner_id", owner_id, -1));
+  cols->push_back(make_column("owner_id", owner_id, -1));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::where("owner_id"_col == 1 && "item_id"_col == 1));
-  s.append(new detail::top(1));
+  s.append(std::make_shared<detail::where>("owner_id"_col == 1 && "item_id"_col == 1));
+  s.append(std::make_shared<detail::top>(1));
 
   auto result = conn.dialect()->direct(s);
 
@@ -111,19 +111,19 @@ void PostgreSQLDialectTestUnit::test_update_limit_prepare(){
 
   sql s;
 
-  s.append(new detail::update);
-  s.append(new detail::tablename("relation"));
-  s.append(new detail::set);
+  s.append(std::make_shared<detail::update>());
+  s.append(std::make_shared<detail::tablename>("relation"));
+  s.append(std::make_shared<detail::set>());
 
-  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
 
   unsigned long owner_id(1);
-  cols->push_back(detail::make_value_column("owner_id", owner_id, -1));
+  cols->push_back(make_column("owner_id", owner_id, -1));
 
-  s.append(cols.release());
+  s.append(cols);
 
-  s.append(new detail::where("owner_id"_col == 1 && "item_id"_col == 1));
-  s.append(new detail::top(1));
+  s.append(std::make_shared<detail::where>("owner_id"_col == 1 && "item_id"_col == 1));
+  s.append(std::make_shared<detail::top>(1));
 
   auto result = conn.dialect()->prepare(s);
 

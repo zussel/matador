@@ -1,7 +1,3 @@
-//
-// Created by sascha on 27.02.20.
-//
-
 #ifndef MATADOR_JSONMAPPERTESTUNIT_HPP
 #define MATADOR_JSONMAPPERTESTUNIT_HPP
 

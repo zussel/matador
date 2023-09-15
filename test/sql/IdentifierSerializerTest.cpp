@@ -6,7 +6,7 @@
 
 using namespace matador;
 
-template < class IdentifierType, long Size = -1 >
+template < class IdentifierType, size_t Size = 0 >
 struct identifier_entity
 {
   IdentifierType id{};
@@ -81,8 +81,8 @@ void IdentifierSerializerTest::test_identifier_row_result(connection &conn)
   auto q = query<>("id_row_type");
 
   auto res = q.create({
-                      make_typed_id_column<IdType>("id"),
-                      make_typed_varchar_column("name", 255)
+                      make_pk_column<IdType>("id"),
+                      make_column<std::string>("name", 255)
                       }).execute(conn);
 
   res = q.insert({"id", "name"}).values({static_cast<IdType>(1), "george"}).execute(conn);
@@ -103,8 +103,8 @@ void IdentifierSerializerTest::test_identifier_row_result<std::string>(connectio
   auto q = query<>("id_row_type");
 
   auto res = q.create({
-                      make_typed_id_column<std::string>("id"),
-                      make_typed_varchar_column("name", 255)
+                      make_pk_column<std::string>("id"),
+                      make_column<std::string>("name", 255)
                       }).execute(conn);
 
   res = q.insert({"id", "name"}).values({"id", "george"}).execute(conn);
@@ -128,8 +128,8 @@ void IdentifierSerializerTest::test_identifier_statement_result(connection &conn
 template<typename IdType>
 void IdentifierSerializerTest::test_identifier_statement_result(connection &conn)
 {
-  identifier_entity<short> id { 7, "jane"};
-  query<identifier_entity<short>> q("id_stmt_entity");
+  identifier_entity<IdType> id { 7, "jane"};
+  query<identifier_entity<IdType>> q("id_stmt_entity");
   auto res = q.create().execute(conn);
 
   res = q.insert(id).execute(conn);
@@ -139,7 +139,7 @@ void IdentifierSerializerTest::test_identifier_statement_result(connection &conn
   auto stmt = q.update().where("id"_col == 7).prepare(conn);
   stmt.bind(0, &id);
 
-  detail::identifier_binder<identifier_entity<short>> pk_binder;
+  detail::identifier_binder<identifier_entity<IdType>> pk_binder;
   auto pk = identifier{id.id};
   pk_binder.bind(&id, &stmt, 2, pk);
 
@@ -148,7 +148,7 @@ void IdentifierSerializerTest::test_identifier_statement_result(connection &conn
   res = q.select().where("id"_col == 7).execute(conn);
 
   for (const auto &p : res) {
-    UNIT_EXPECT_EQUAL(p->id, 7UL);
+    UNIT_EXPECT_EQUAL(p->id, static_cast<IdType>(7));
     UNIT_EXPECT_EQUAL(p->name, "john");
   }
 

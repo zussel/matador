@@ -20,10 +20,7 @@ struct const_has_many_iterator_traits;
  * has_many_vector iterator traits
  */
 template < class T >
-struct has_many_iterator_traits<T, std::vector, typename std::enable_if<
-  is_builtin<T>::value &&
-  !std::is_convertible<T*, varchar_base*>::value
->::type>
+struct has_many_iterator_traits<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
 : public std::iterator<std::random_access_iterator_tag, T>
 {
   typedef has_many_iterator_traits<T, std::vector> self;
@@ -37,10 +34,7 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<
 };
 
 template < class T >
-struct has_many_iterator_traits<T, std::vector, typename std::enable_if<
-  !is_builtin<T>::value &&
-  !std::is_convertible<T*, varchar_base*>::value
->::type>
+struct has_many_iterator_traits<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
 : public std::iterator<std::random_access_iterator_tag, T>
 {
   typedef has_many_iterator_traits<T, std::vector> self;
@@ -53,25 +47,8 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<
   typedef typename holder_container_type::const_iterator const_container_iterator;
 };
 
-template < long SIZE >
-struct has_many_iterator_traits<varchar<SIZE>, std::vector>
-: public std::iterator<std::random_access_iterator_tag, std::string>
-{
-  typedef has_many_iterator_traits<std::string, std::vector> self;
-  typedef varchar<SIZE> object_type;
-  typedef typename object_type::value_type value_type;
-  typedef typename std::iterator<std::random_access_iterator_tag, std::string>::difference_type difference_type;
-  typedef has_many_item_holder<object_type> holder_type;
-  typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
 template < class T >
-struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<
-!is_builtin<T>::value &&
-!std::is_convertible<T*, varchar_base*>::value
->::type>
+struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
 : public std::iterator<std::random_access_iterator_tag, T>
 {
   typedef const_has_many_iterator_traits<T, std::vector> self;
@@ -85,10 +62,7 @@ struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<
 };
 
 template < class T >
-struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<
-  is_builtin<T>::value &&
-  !std::is_convertible<T*, varchar_base*>::value
-  >::type>
+struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
 : public std::iterator<std::random_access_iterator_tag, T>
 {
   typedef const_has_many_iterator_traits<T, std::vector> self;
@@ -96,20 +70,6 @@ struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<
   typedef T object_type;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
   typedef has_many_item_holder<T> holder_type;
-  typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
-template < long SIZE >
-struct const_has_many_iterator_traits<varchar<SIZE>, std::vector>
-: public std::iterator<std::random_access_iterator_tag, std::string>
-{
-  typedef const_has_many_iterator_traits<std::string, std::vector> self;
-  typedef varchar<SIZE> object_type;
-  typedef typename object_type::value_type value_type;
-  typedef typename std::iterator<std::random_access_iterator_tag, std::string>::difference_type difference_type;
-  typedef has_many_item_holder<object_type> holder_type;
   typedef std::vector<holder_type, std::allocator<holder_type>> holder_container_type;
   typedef typename holder_container_type::iterator container_iterator;
   typedef typename holder_container_type::const_iterator const_container_iterator;
@@ -119,10 +79,7 @@ struct const_has_many_iterator_traits<varchar<SIZE>, std::vector>
  * has_many_list iterator traits
  */
 template < class T >
-struct has_many_iterator_traits<T, std::list, typename std::enable_if<
-  is_builtin<T>::value &&
-  !std::is_convertible<T*, varchar_base*>::value
-  >::type>
+struct has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
 : public std::iterator<std::bidirectional_iterator_tag, T>
 {
   typedef has_many_iterator_traits<T, std::list> self;
@@ -136,10 +93,7 @@ struct has_many_iterator_traits<T, std::list, typename std::enable_if<
 };
 
 template < class T >
-struct has_many_iterator_traits<T, std::list, typename std::enable_if<
-  !is_builtin<T>::value &&
-  !std::is_convertible<T*, varchar_base*>::value
-  >::type>
+struct has_many_iterator_traits<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
 : public std::iterator<std::bidirectional_iterator_tag, T>
 {
   typedef has_many_iterator_traits<T, std::list> self;
@@ -152,25 +106,8 @@ struct has_many_iterator_traits<T, std::list, typename std::enable_if<
   typedef typename holder_container_type::const_iterator const_container_iterator;
 };
 
-template < long SIZE >
-struct has_many_iterator_traits<varchar<SIZE>, std::list>
-: public std::iterator<std::bidirectional_iterator_tag, std::string>
-{
-  typedef has_many_iterator_traits<std::string, std::list> self;
-  typedef varchar<SIZE> object_type;
-  typedef typename object_type::value_type value_type;
-  typedef typename std::iterator<std::bidirectional_iterator_tag, std::string>::difference_type difference_type;
-  typedef has_many_item_holder<object_type> holder_type;
-  typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
-  typedef typename holder_container_type::iterator container_iterator;
-  typedef typename holder_container_type::const_iterator const_container_iterator;
-};
-
 template < class T >
-struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<
-  !is_builtin<T>::value &&
-  !std::is_convertible<T*, varchar_base*>::value
->::type>
+struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
 : public std::iterator<std::bidirectional_iterator_tag, T>
 {
   typedef const_has_many_iterator_traits<T, std::list> self;
@@ -184,10 +121,7 @@ struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<
 };
 
 template < class T >
-struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<
-  is_builtin<T>::value &&
-  !std::is_convertible<T*, varchar_base*>::value
->::type>
+struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
 : public std::iterator<std::bidirectional_iterator_tag, T>
 {
   typedef const_has_many_iterator_traits<T, std::list> self;
@@ -200,19 +134,6 @@ struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<
   typedef typename holder_container_type::const_iterator const_container_iterator;
 };
 
-template < long SIZE >
-struct const_has_many_iterator_traits<varchar<SIZE>, std::list>
-: public std::iterator<std::bidirectional_iterator_tag, std::string>
-{
-typedef const_has_many_iterator_traits<std::string, std::list> self;
-typedef varchar<SIZE> object_type;
-typedef typename object_type::value_type value_type;
-typedef typename std::iterator<std::bidirectional_iterator_tag, std::string>::difference_type difference_type;
-typedef has_many_item_holder<object_type> holder_type;
-typedef std::list<holder_type, std::allocator<holder_type>> holder_container_type;
-typedef typename holder_container_type::iterator container_iterator;
-typedef typename holder_container_type::const_iterator const_container_iterator;
-};
 /// @endcond
 
 }

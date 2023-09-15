@@ -47,7 +47,7 @@ public:
    * @param sqllogger The logger handler to write sql log messages to
    */
   statement(detail::statement_impl *impl, std::shared_ptr<basic_sql_logger> sqllogger)
-    : statement(impl, {}, sqllogger)
+    : statement(impl, T{}, sqllogger)
   {}
 
   /**
@@ -148,7 +148,7 @@ public:
    * @param index The index where the value is to bind
    * @return The next index to bind
    */
-  std::size_t bind(std::size_t index, std::string &val, long size = -1)
+  std::size_t bind(std::size_t index, std::string &val, size_t size = 0)
   {
     return p->bind(val, size, index);
   }

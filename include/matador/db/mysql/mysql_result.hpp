@@ -40,6 +40,8 @@ public:
 
   size_type reset_column_index() const override;
 
+  void close() override;
+
 protected:
   void read_value(const char *id, size_type index, char &value) override;
   void read_value(const char *id, size_type index, short &value) override;
@@ -56,9 +58,9 @@ protected:
   void read_value(const char *id, size_type index, double &value) override;
   void read_value(const char *id, size_type index, matador::time &value) override;
   void read_value(const char *id, size_type index, matador::date &value) override;
-  void read_value(const char *id, size_type index, char *value, long size) override;
+  void read_value(const char *id, size_type index, char *value, size_t size) override;
   void read_value(const char *id, size_type index, std::string &value) override;
-  void read_value(const char *id, size_type index, std::string &value, long size) override;
+  void read_value(const char *id, size_type index, std::string &value, size_t size) override;
 
 protected:
   bool prepare_fetch() override;

@@ -1,6 +1,3 @@
-//
-// Created by sascha on 24.06.19.
-//
 #include "matador/sql/query.hpp"
 
 #include "matador/db/postgresql/postgresql_dialect_compiler.hpp"

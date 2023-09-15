@@ -32,6 +32,8 @@ public:
 
   size_type reset_column_index() const override;
 
+  void close() override;
+
   void read_value(const char *id, size_type index, char &x) override;
   void read_value(const char *id, size_type index, short &x) override;
   void read_value(const char *id, size_type index, int &x) override;
@@ -47,9 +49,9 @@ public:
   void read_value(const char *id, size_type index, double &x) override;
   void read_value(const char *id, size_type index, matador::date &x) override;
   void read_value(const char *id, size_type index, matador::time &x) override;
-  void read_value(const char *id, size_type index, char *x, long size) override;
+  void read_value(const char *id, size_type index, char *x, size_t size) override;
   void read_value(const char *id, size_type index, std::string &x) override;
-  void read_value(const char *id, size_type index, std::string &x, long size) override;
+  void read_value(const char *id, size_type index, std::string &x, size_t size) override;
 
 protected:
   bool needs_bind() override;

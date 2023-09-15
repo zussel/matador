@@ -3,6 +3,8 @@
 
 #include "column.hpp"
 
+#include <vector>
+
 namespace matador {
 
 class row
@@ -14,10 +16,6 @@ public:
   template < typename Type >
   void add_column(const std::string &name, long size = -1) {
     add_column(make_column<Type>(name, size));
-  }
-
-  void add_column(const std::string &name, matador::database_type type, long size = -1) {
-    add_column(make_column(name, type, size));
   }
 
   void add_column(const column_ptr &col) {

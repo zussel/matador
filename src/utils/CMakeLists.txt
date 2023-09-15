@@ -21,7 +21,9 @@ SET(SOURCES
   url.cpp
   html.cpp
   thread_helper.cpp
-  identifier.cpp)
+  identifier.cpp
+  field_attributes.cpp
+  constraints.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -49,8 +51,6 @@ SET(HEADER
   ../../include/matador/utils/any.hpp
   ../../include/matador/utils/any_visitor.hpp
   ../../include/matador/utils/is_builtin.hpp
-  ../../include/matador/utils/is_varchar.hpp
-  ../../include/matador/utils/varchar.hpp
   ../../include/matador/utils/file.hpp
   ../../include/matador/utils/os.hpp
   ../../include/matador/utils/buffer.hpp
@@ -69,7 +69,9 @@ SET(HEADER
   ../../include/matador/utils/url.hpp
   ../../include/matador/utils/html.hpp
   ../../include/matador/utils/thread_helper.hpp
-  ../../include/matador/utils/identifier.hpp)
+  ../../include/matador/utils/identifier.hpp
+        ../../include/matador/utils/contraints.hpp
+        ../../include/matador/utils/field_attributes.hpp)
 
 ADD_LIBRARY(matador-utils STATIC ${SOURCES} ${HEADER})
 

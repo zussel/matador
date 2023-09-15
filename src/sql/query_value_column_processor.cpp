@@ -39,12 +39,12 @@ void query_value_column_processor::execute(std::pair<std::string, matador::any> 
 
 void query_value_column_processor::process(char *val)
 {
-  update_columns_->push_back(detail::make_value_column(current_id_, val, -1));
+  update_columns_->push_back(make_column(current_id_, val));
 }
 
 void query_value_column_processor::process(const char *val)
 {
-  update_columns_->push_back(detail::make_value_column(current_id_, val, -1));
+  update_columns_->push_back(make_column(current_id_, val, -1));
 }
 
 }

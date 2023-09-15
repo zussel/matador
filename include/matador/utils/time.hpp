@@ -31,6 +31,15 @@ OOS_UTILS_API void localtime(const time_t &in, struct tm &out);
  */
 OOS_UTILS_API void gmtime(const time_t &in, struct tm &out);
 
+
+struct time_info
+{
+  std::tm timestamp{};
+  time_t seconds_since_epoch{};
+  unsigned int milliseconds{};
+};
+
+
 /**
  * Formats a given timeval struct as a string
  * within the given buffer. It is possible to format the
@@ -43,7 +52,7 @@ OOS_UTILS_API void gmtime(const time_t &in, struct tm &out);
  * @param tv timeval struct containing the time to format
  * @return The length of the buffer string
  */
-OOS_UTILS_API int strftime(char *buffer, size_t size, const char *format, const struct timeval *tv);
+OOS_UTILS_API size_t strftime(char *buffer, size_t size, const char *format, const time_info &ti);
 
 /**
  * Multi platform version of gettimeofday
@@ -51,7 +60,7 @@ OOS_UTILS_API int strftime(char *buffer, size_t size, const char *format, const 
  * @param tp Timeval struct where the result ist stored
  * @return Returns 0 on success
  */
-OOS_UTILS_API void gettimeofday(struct timeval *tp);
+OOS_UTILS_API void gettimeofday(time_info &ti);
 
 /**
  * @class time
@@ -92,7 +101,7 @@ public:
    *
    * @param tv timeval value to create time from
    */
-  explicit time(struct timeval tv);
+  explicit time(const time_info &ti);
 
   /**
    * Create a time from discret values
@@ -197,6 +206,8 @@ public:
    */
   static time now();
 
+  time to_utc() const;
+
   /**
    * Checks if given time parts are valid
    *
@@ -211,7 +222,7 @@ public:
    * @param millis Milliseconds to check
    * @return true if time parts are valid
    */
-  static bool is_valid_time(int hour, int min, int sec, long millis);
+  static bool is_valid_time(int hour, int min, int sec, unsigned int millis);
 
   /**
    * Parse a given time string with a valid format
@@ -234,7 +245,7 @@ public:
    * @param sec The seconds part of the time.
    * @param millis The milliseconds part of the time.
    */
-  void set(int year, int month, int day, int hour, int min, int sec, long millis);
+  void set(int year, int month, int day, int hour, int min, int sec, unsigned int millis);
 
   /**
    * Sets the date from a given date/time
@@ -251,7 +262,7 @@ public:
    * @param t The time_t to set.
    * @param millis The milliseconds to set.
    */
-  void set(time_t t, long millis);
+  void set(time_t t, unsigned int millis);
 
   /**
    * Sets the time from a date. The hour,
@@ -268,7 +279,7 @@ public:
    *
    * @param tv Timeval object to set the time from.
    */
-  void set(timeval tv);
+  void set(const time_info &ti);
 
   /**
    * Return the year of the time.
@@ -317,7 +328,7 @@ public:
    *
    * @return The millisecond part of the time.
    */
-  int milli_second() const;
+  unsigned int milli_second() const;
 
   /**
    * Sets the year part of the time and
@@ -407,7 +418,7 @@ public:
    *
    * @return True If year of time is leap year.
    */
-  bool is_leapyear() const;
+  bool is_leap_year() const;
 
   /**
    * Returns true if time is in
@@ -419,12 +430,12 @@ public:
   bool is_daylight_saving() const;
 
   /**
-   * Returns the underlaying timeval struct
+   * Returns the underlying timeval struct
    * representing the time.
    *
-   * @return The underlaying timeval struct
+   * @return The underlying timeval struct
    */
-  struct timeval get_timeval() const;
+  time_info get_time_info() const;
 
   /**
    * Returns the time as struct tm representing
@@ -460,15 +471,13 @@ private:
   void sync_minute(int m);
   void sync_second(int s);
   void sync_milli_second(int ms);
-  void sync_time(int y, int m, int d, int h, int min, int s, long ms);
+  void sync_time(int y, int m, int d, int h, int min, int s, unsigned int millis);
 
-  static timeval parse_time_string(const std::string &tstr, const char *format);
+  static time_info parse_time_string(const std::string &tstr, const char *format);
 
 private:
-  struct timeval time_ = {0,0 };
 //  struct tm tm_ = {0,0,0,0,0,0,0,0,0,0,nullptr};
-
-  std::tm tm_ = {};
+  time_info time_info_{};
 };
 
 }

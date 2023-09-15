@@ -7,7 +7,7 @@ json_object_mapper_serializer::json_object_mapper_serializer(details::mapper_run
   : runtime_data_(runtime_data)
 {}
 
-void json_object_mapper_serializer::on_primary_key(const char *id, std::string &pk, long /*size*/)
+void json_object_mapper_serializer::on_primary_key(const char *id, std::string &pk, size_t /*size*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -19,7 +19,12 @@ void json_object_mapper_serializer::on_primary_key(const char *id, std::string &
   pk = runtime_data_.value.as<std::string>();
 }
 
-void json_object_mapper_serializer::on_attribute(const char *id, bool &to, long /*size*/)
+void json_object_mapper_serializer::on_revision(const char *id, unsigned long long int &rev)
+{
+  on_attribute(id, rev);
+}
+
+void json_object_mapper_serializer::on_attribute(const char *id, bool &to, const field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -30,7 +35,7 @@ void json_object_mapper_serializer::on_attribute(const char *id, bool &to, long 
   to = runtime_data_.value.as<bool>();
 }
 
-void json_object_mapper_serializer::on_attribute(const char *id, std::string &to, long /*size*/)
+void json_object_mapper_serializer::on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -41,7 +46,7 @@ void json_object_mapper_serializer::on_attribute(const char *id, std::string &to
   to = runtime_data_.value.as<std::string>();
 }
 
-void json_object_mapper_serializer::on_attribute(const char *id, date &to, long /*size*/)
+void json_object_mapper_serializer::on_attribute(const char *id, date &to, const field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -52,7 +57,7 @@ void json_object_mapper_serializer::on_attribute(const char *id, date &to, long 
   to.set(runtime_data_.value.as<std::string>().c_str(), "%Y-%m-%d");
 }
 
-void json_object_mapper_serializer::on_attribute(const char *id, time &to, long /*size*/)
+void json_object_mapper_serializer::on_attribute(const char *id, time &to, const field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;

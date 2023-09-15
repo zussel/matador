@@ -1,9 +1,6 @@
-//
-// Created by sascha on 17.08.16.
-//
-
 #include "matador/sql/basic_dialect_linker.hpp"
 #include "matador/sql/dialect_token.hpp"
+#include "matador/sql/columns.hpp"
 
 #include <algorithm>
 
@@ -113,10 +110,10 @@ void basic_dialect_linker::visit(const matador::detail::values &values)
 void basic_dialect_linker::visit(const matador::value &val)
 {
   if (dialect().compile_type() == basic_dialect::DIRECT) {
-    dialect().append_to_result(val.safe_string(dialect()));
+    dialect().append_to_result(value_to_string_visitor_.to_safe_string(val, &dialect()));
   } else {
     // Todo: check correct value to add
-    dialect().add_host_var(val.str());
+    dialect().add_host_var(value_to_string_visitor_.to_string(val));
     dialect().append_to_result(dialect().next_placeholder());
   }
 }
@@ -203,47 +200,31 @@ void basic_dialect_linker::visit(const matador::columns &cols)
 
 void basic_dialect_linker::visit(const matador::column &col)
 {
-  if (col.skip_quotes) {
-    dialect().append_to_result(col.name);
-  } else {
+  if (is_build_options_set(col.build_options, t_build_options::with_quotes)) {
     dialect().append_to_result(dialect_->prepare_identifier(col.name));
+  } else {
+    dialect().append_to_result(col.name);
+  }
+  if (is_build_options_set(col.build_options, t_build_options::with_type)) {
+    dialect().append_to_result(std::string(" ") + dialect().to_database_type_string(col.type));
+    if (col.attributes.size() > 0) {
+      std::stringstream str;
+      str << "(" << col.attributes.size() << ")";
+      dialect().append_to_result(str.str());
+    }
+
+    if (is_constraint_set(col.attributes.options(), constraints::NOT_NULL)) {
+      dialect().append_to_result(" NOT NULL");
+    }
+    if (is_constraint_set(col.attributes.options(), constraints::PRIMARY_KEY)) {
+      dialect().append_to_result(" PRIMARY KEY");
+    }
+  }
+  if (is_build_options_set(col.build_options, t_build_options::with_value)) {
+    dialect().append_to_result("=");
+    const_cast<matador::column&>(col).val.accept(*this);
   }
   dialect().add_column(col.name);
-}
-
-void basic_dialect_linker::visit(const matador::detail::typed_column &col)
-{
-  visit(static_cast<const matador::column&>(col));
-  dialect().append_to_result(std::string(" ") + dialect().to_database_type_string(col.type));
-}
-
-void basic_dialect_linker::visit(const matador::detail::typed_identifier_column &col)
-{
-  visit(static_cast<const matador::column&>(col));
-  dialect().append_to_result(std::string(" ") + dialect().to_database_type_string(col.type) + " NOT NULL PRIMARY KEY");
-}
-
-void basic_dialect_linker::visit(const matador::detail::typed_varchar_column &col)
-{
-  visit(static_cast<const matador::column&>(col));
-  std::stringstream str;
-  str << " " << dialect().to_database_type_string(col.type) << "(" << col.size << ")";
-  dialect().append_to_result(str.str());
-}
-
-void basic_dialect_linker::visit(const matador::detail::identifier_varchar_column &col)
-{
-  visit(static_cast<const matador::column&>(col));
-  std::stringstream str;
-  str << " " << dialect().to_database_type_string(col.type) << "(" << col.size << ") NOT NULL PRIMARY KEY";
-  dialect().append_to_result(str.str());
-}
-
-void basic_dialect_linker::visit(const matador::detail::value_column &col)
-{
-  visit(static_cast<const matador::column&>(col));
-  dialect().append_to_result("=");
-  col.value_->accept(*this);
 }
 
 std::string basic_dialect_linker::token_string(detail::token::t_token tok) const
