@@ -31,7 +31,7 @@ public:
   template < class T >
   void serialize(T &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < class T >
@@ -83,7 +83,7 @@ void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &o
   field_ = field;
   holder_ = std::move(holder);
 
-  matador::access::serialize(*this, *owner);
+  matador::access::process(*this, *owner);
 
   field_.clear();
 }

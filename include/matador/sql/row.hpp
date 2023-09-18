@@ -82,11 +82,11 @@ public:
    * @tparam Serializer The type of the used serializer object
    * @param serializer The serializer to be used
    */
-  template < class Serializer >
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
     for (auto &column : columns_) {
-      serializer.process(column->name.c_str(), column->val, column->attributes);
+      op.process(column->name.c_str(), column->val, column->attributes);
     }
   }
 

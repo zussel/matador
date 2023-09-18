@@ -53,7 +53,7 @@ public:
   {
     store_ = store;
     buffer_ = buffer;
-    matador::access::serialize(*this, *o);
+    matador::access::process(*this, *o);
     buffer_ = nullptr;
     store_ = nullptr;
   }
@@ -62,7 +62,7 @@ public:
   template<class T>
   void serialize(T &obj)
   {
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
   }
 
   template<class V>

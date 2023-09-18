@@ -77,7 +77,7 @@ template < typename O, class T >
 bool set(O &obj, const std::string &name, const T &val)
 {
   attribute_reader<T> reader(name, val);
-  matador::access::serialize(reader, obj);
+  matador::access::process(reader, obj);
   return reader.success();
 }
 
@@ -97,7 +97,7 @@ template < typename O, class T >
 bool append(O &obj, const std::string &name, const T &val)
 {
   has_many_attribute_reader<T> writer(name, val);
-  matador::access::serialize(writer, obj);
+  matador::access::process(writer, obj);
   return writer.success();
 }
 
@@ -117,7 +117,7 @@ template < typename O, class T >
 bool remove(O &obj, const std::string &name, const T &val)
 {
   has_many_attribute_writer<T> writer(name, val);
-  matador::access::serialize(writer, obj);
+  matador::access::process(writer, obj);
   return writer.success();
 }
 
@@ -137,7 +137,7 @@ template < typename O >
 bool set(O &obj, const std::string &name, const char *val)
 {
   attribute_reader<const char*> reader(name, val);
-  matador::access::serialize(reader, obj);
+  matador::access::process(reader, obj);
   return reader.success();
 }
 
@@ -157,7 +157,7 @@ template < typename O, class T >
 bool get(const O &obj, const std::string &name, T &val)
 {
   attribute_writer<T> writer(name, val);
-  matador::access::serialize(writer, const_cast<O&>(obj));
+  matador::access::process(writer, const_cast<O&>(obj));
   return writer.success();
 }
 
@@ -177,7 +177,7 @@ template < typename O >
 bool get(const O &obj, const std::string &name, char *val, size_t size)
 {
   attribute_writer<char*> writer(name, val, static_cast<long>(size));
-  matador::access::serialize(writer, const_cast<O&>(obj));
+  matador::access::process(writer, const_cast<O&>(obj));
   return writer.success();
 }
 
@@ -198,7 +198,7 @@ template < typename O, class T >
 bool get(const O &obj, const std::string &name, T &val, size_t precision)
 {
   attribute_writer<T> writer(name, val, precision);
-  matador::access::serialize(writer, const_cast<O&>(obj));
+  matador::access::process(writer, const_cast<O&>(obj));
   return writer.success();
 }
 

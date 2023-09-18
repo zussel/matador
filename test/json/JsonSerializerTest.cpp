@@ -65,10 +65,10 @@ struct date_object
 {
   matador::time t;
 
-  template < class S >
-  void serialize(S &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_attribute("time", t);
+    matador::access::attribute(op, "time", t);
   }
 };
 

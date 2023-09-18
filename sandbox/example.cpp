@@ -32,20 +32,20 @@ struct user
   std::string first_name;
   std::string last_name;
 
-  template < class S >
-  void serialize(S &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.serialize("id", id);
-    serializer.serialize("username", username);
-    serializer.serialize("password", password);
-    serializer.serialize("first_name", first_name);
-    serializer.serialize("last_name", last_name);
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "username", username, 255);
+    matador::access::attribute(op, "password", password, 255);
+    matador::access::attribute(op, "first_name", first_name, 255);
+    matador::access::attribute(op, "last_name", last_name, 255);
   }
 };
 
 struct person
 {
-  identifier<unsigned long> id;   // primary key
+  unsigned long id;   // primary key
   std::string name;
   date birthday;
   has_many<std::string> colors {};
@@ -55,12 +55,13 @@ struct person
   : id(i), name(std::move(n))
   {}
 
-  template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer) {
-    serializer.serialize("id", id);
-    serializer.serialize("name", name, 255);
-    serializer.serialize("birthday", birthday);
-    serializer.serialize("person_color",  // relation table name
+  template < class Operator >
+  void process(Operator &op)
+  {
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name, 255);
+    matador::access::attribute(op, "birthday", birthday);
+    matador::access::has_many(op, "person_color",  // relation table name
                          colors,          // class member
                          "person_id",     // left column in relation table
                          "color",         // right column in relation table
@@ -73,11 +74,11 @@ struct credential
   std::string username;
   std::string password;
 
-  template < class S >
-  void serialize(S &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.serialize("username", username);
-    serializer.serialize("password", password);
+    matador::access::attribute(op, "username", username, 255);
+    matador::access::attribute(op, "password", password, 255);
   }
 };
 

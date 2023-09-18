@@ -95,25 +95,25 @@ T json_object_mapper_serializer::create()
 template<class V>
 void json_object_mapper_serializer::serialize(V &obj)
 {
-  access::serialize(*this, obj);
+  access::process(*this, obj);
 }
 
 template<class V>
 void json_object_mapper_serializer::serialize(std::unique_ptr<V> &obj)
 {
-  access::serialize(*this, *obj);
+  access::process(*this, *obj);
 }
 
 template<class V>
 void json_object_mapper_serializer::serialize(std::shared_ptr<V> &obj)
 {
-  access::serialize(*this, *obj);
+  access::process(*this, *obj);
 }
 
 template<class V>
 void json_object_mapper_serializer::serialize(object_ptr<V> &obj)
 {
-  access::serialize(*this, *obj);
+  access::process(*this, *obj);
 }
 
 template<class V>

@@ -2,6 +2,7 @@
 #define PERSON_HPP
 
 #include "matador/utils/date.hpp"
+#include "matador/utils/access.hpp"
 
 class person
 {
@@ -26,13 +27,13 @@ public:
 
     virtual ~person() = default;
 
-    template < class T >
-    void serialize(T &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id_);
-        serializer.on_attribute("name", name_, 255);
-        serializer.on_attribute("birthdate", birthdate_);
-        serializer.on_attribute("height", height_);
+        matador::access::primary_key(op, "id", id_);
+        matador::access::attribute(op, "name", name_, 255);
+        matador::access::attribute(op, "birthdate", birthdate_);
+        matador::access::attribute(op, "height", height_);
     }
 
     void id(unsigned long long i) { id_ = i; }

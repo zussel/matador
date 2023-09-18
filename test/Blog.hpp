@@ -20,12 +20,12 @@ struct person
     : name(std::move(n)), birthday(std::move(bd))
   {}
 
-  template<class Serializer>
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_primary_key("id", id);
-    serializer.on_attribute("name", name, 255);
-    serializer.on_attribute("birthday", birthday);
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name, 255);
+    matador::access::attribute(op, "birthday", birthday);
   }
 };
 }
@@ -41,11 +41,11 @@ struct author : public blog_detail::person
     : person(n, birthday)
   {}
 
-  template < class Serializer >
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.serialize(*matador::base_class<person>(this));
-    serializer.on_has_many("post", posts, "author", "id", matador::cascade_type::NONE);
+    matador::access::process(op, *matador::base_class<person>(this));
+    matador::access::has_many_(op, "post", posts, "author", "id", matador::cascade_type::NONE);
   }
 };
 
@@ -62,13 +62,13 @@ struct category
     : name(std::move(n)), description(std::move(desc))
   {}
 
-  template < class Serializer >
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_primary_key("id", id);
-    serializer.on_attribute("name", name, 255);
-    serializer.on_attribute("description", description);
-    serializer.on_has_many("post_category", posts, "category_id", "post_id", matador::cascade_type::NONE);
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name, 255);
+    matador::access::attribute(op, "description", description);
+    matador::access::has_many_(op, "post_category", posts, "category_id", "post_id", matador::cascade_type::NONE);
   }
 };
 
@@ -85,14 +85,14 @@ struct comment
     : email(std::move(eml)), content(std::move(msg))
   {}
 
-  template < class Serializer >
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_primary_key("id", id);
-    serializer.on_attribute("email", email, 255);
-    serializer.on_belongs_to("post", blog_post, matador::cascade_type::NONE);
-    serializer.on_attribute("content", content);
-    serializer.on_attribute("created_at", created_at);
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "email", email, 255);
+    matador::access::belongs_to(op, "post", blog_post, matador::cascade_type::NONE);
+    matador::access::attribute(op, "content", content);
+    matador::access::attribute(op, "created_at", created_at);
   }
 };
 
@@ -129,17 +129,17 @@ struct post
     categories.push_back(cat);
   }
 
-  template < class Serializer >
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_primary_key("id", id);
-    serializer.on_attribute("title", title, 255);
-    serializer.on_belongs_to("author", writer, matador::cascade_type::NONE);
-    serializer.on_attribute("created_at", created_at);
-    serializer.on_has_many("post_category", categories, "category_id", "post_id", matador::cascade_type::INSERT);
-    serializer.on_has_many("comment", comments, "post", "id", matador::cascade_type::ALL);
-    serializer.on_has_many("post_tag", tags, "post_id", "tag", matador::cascade_type::ALL);
-    serializer.on_attribute("content", content);
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "title", title, 255);
+    matador::access::belongs_to(op, "author", writer, matador::cascade_type::NONE);
+    matador::access::attribute(op, "created_at", created_at);
+    matador::access::has_many_(op, "post_category", categories, "category_id", "post_id", matador::cascade_type::INSERT);
+    matador::access::has_many_(op, "comment", comments, "post", "id", matador::cascade_type::ALL);
+    matador::access::has_many_(op, "post_tag", tags, "post_id", "tag", matador::cascade_type::ALL);
+    matador::access::attribute(op, "content", content);
   }
 };
 

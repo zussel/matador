@@ -181,7 +181,7 @@ public:
   template < class V >
   void serialize(V &obj)
   {
-    access::serialize(*this, obj);
+    access::process(*this, obj);
   }
 
   template < class V >
@@ -226,7 +226,7 @@ public:
   template < class V >
   void serialize(V &obj)
   {
-    access::serialize(*this, obj);
+    access::process(*this, obj);
   }
 
   template < class V >
@@ -268,7 +268,7 @@ public:
   template < class V >
   void serialize(V &obj)
   {
-    access::serialize(*this, obj);
+    access::process(*this, obj);
   }
 
   template < class V >
@@ -520,7 +520,7 @@ public:
   template < class V >
   void serialize(V &obj)
   {
-    access::serialize(*this, obj);
+    access::process(*this, obj);
   }
 
   template < class V >
@@ -561,7 +561,7 @@ public:
   template < class V >
   void serialize(V &obj)
   {
-    access::serialize(*this, obj);
+    access::process(*this, obj);
   }
 
   template < class V >

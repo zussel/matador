@@ -51,14 +51,14 @@ public:
   template<class T>
   values *execute(T &x) {
     values_ = std::make_unique<values>();
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
     return values_.release();
   }
 
   template < class T >
   void serialize(T &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template<typename ValueType>

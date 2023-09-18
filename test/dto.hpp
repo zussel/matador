@@ -20,12 +20,12 @@ struct bounding_box
     : length(l), width(w), height(h)
   {}
 
-  template < class S >
-  void serialize(S &s)
+  template < class Operator >
+  void process(Operator &op)
   {
-    s.on_attribute("length", length);
-    s.on_attribute("width", width);
-    s.on_attribute("height", height);
+    matador::access::attribute(op, "length", length);
+    matador::access::attribute(op, "width", width);
+    matador::access::attribute(op, "height", height);
   }
 };
 
@@ -44,21 +44,21 @@ struct dto
   bounding_box dimension;
   std::vector<bounding_box> dimensions;
 
-  template < class S >
-  void serialize(S &s)
+  template < class Operator >
+  void process(Operator &op)
   {
-    s.on_primary_key("id", id, 255);
-    s.on_attribute("name", name);
-    s.on_attribute("birthday", birthday);
-    s.on_attribute("created", created);
-    s.on_attribute("flag", flag);
-    s.on_attribute("height", height);
-    s.on_attribute("doubles", doubles);
-    s.on_attribute("bits", bits);
-    s.on_attribute("names", names);
-    s.on_attribute("values", values);
-    s.on_attribute("dimension", dimension);
-    s.on_attribute("dimensions", dimensions);
+    matador::access::primary_key(op, "id", id, 255);
+    matador::access::attribute(op, "name", name);
+    matador::access::attribute(op, "birthday", birthday);
+    matador::access::attribute(op, "created", created);
+    matador::access::attribute(op, "flag", flag);
+    matador::access::attribute(op, "height", height);
+    matador::access::attribute(op, "doubles", doubles);
+    matador::access::attribute(op, "bits", bits);
+    matador::access::attribute(op, "names", names);
+    matador::access::attribute(op, "values", values);
+    matador::access::attribute(op, "dimension", dimension);
+    matador::access::attribute(op, "dimensions", dimensions);
   }
 };
 
@@ -66,10 +66,10 @@ struct base
 {
   long id;
 
-  template < class S >
-  void serialize(S &s)
+  template < class Operator >
+  void process(Operator &op)
   {
-    s.on_attribute("id", id);
+    matador::access::attribute(op, "id", id);
   }
 };
 
@@ -77,11 +77,11 @@ struct derived : public base
 {
   std::string name;
 
-  template < class S >
-  void serialize(S &s)
+  template < class Operator >
+  void process(Operator &op)
   {
-    s.serialize(*matador::base_class<base>(this));
-    s.on_attribute("name", name);
+    matador::access::process(op, *matador::base_class<base>(this));
+    matador::access::attribute(op, "name", name);
   }
 };
 

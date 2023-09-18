@@ -32,13 +32,13 @@ public:
   static void assign(T value, V *obj)
   {
     identifier_setter<T> setter(value);
-    matador::access::serialize(setter, *obj);
+    matador::access::process(setter, *obj);
   }
 
   template < class V >
   void serialize(V &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < class V >
@@ -83,13 +83,13 @@ public:
   static void assign(T value, V *obj)
   {
     identifier_setter<T> setter(value);
-    matador::access::serialize(setter, *obj);
+    matador::access::process(setter, *obj);
   }
 
   template < class V >
   void serialize(V &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < class V >

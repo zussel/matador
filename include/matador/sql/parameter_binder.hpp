@@ -98,14 +98,14 @@ public:
   template < class V >
   size_t bind(V &obj)
   {
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
     return index_;
   }
 
   template < class V >
   void serialize(V &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < typename V >
@@ -170,14 +170,14 @@ public:
   template < class V >
   size_t bind(V &obj)
   {
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
     return index_;
   }
 
   template < class V >
   void serialize(V &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < typename V >
@@ -271,14 +271,14 @@ public:
   template < class V >
   size_t bind(V &obj)
   {
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
     return index_;
   }
 
   template < class V >
   void serialize(V &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < typename V >

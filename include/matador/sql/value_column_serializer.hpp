@@ -53,13 +53,13 @@ public:
   void append_to(const std::shared_ptr<columns> &cols, T &x)
   {
     cols_ = cols;
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < class T >
   void serialize(T &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template< typename ValueType >

@@ -20,14 +20,14 @@ void node_analyzer<Owner, Observer>::analyze()
 template<class Owner, template<class U = Owner> class Observer>
 void node_analyzer<Owner, Observer>::analyze(Owner &obj)
 {
-  matador::access::serialize(*this, obj);
+  matador::access::process(*this, obj);
 }
 
 template<class Owner, template<class U = Owner> class Observer>
 template<class Value>
 void node_analyzer<Owner, Observer>::serialize(Value &x)
 {
-  matador::access::serialize(*this, x);
+  matador::access::process(*this, x);
 }
 
 template<class Owner, template<class U = Owner> class Observer>

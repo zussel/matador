@@ -20,11 +20,11 @@ public:
     : algorithm(std::move(algo)), type(std::move(typ))
   {}
 
-  template<class Serializer>
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_attribute("alg", algorithm);
-    serializer.on_attribute("typ", type);
+    matador::access::attribute(op, "alg", algorithm);
+    matador::access::attribute(op, "typ", type);
   }
 };
 
@@ -40,17 +40,17 @@ public:
   std::string jwt_id {};
   std::string name {};
 
-  template<class Serializer>
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_attribute("iss", issuer);
-    serializer.on_attribute("sub", subject);
-    serializer.on_attribute("aud", audience);
-    serializer.on_attribute("exp", expiration_time);
-    serializer.on_attribute("nbf", not_before);
-    serializer.on_attribute("iat", issued_at);
-    serializer.on_attribute("jti", jwt_id);
-    serializer.on_attribute("name", name);
+    matador::access::attribute(op, "iss", issuer);
+    matador::access::attribute(op, "sub", subject);
+    matador::access::attribute(op, "aud", audience);
+    matador::access::attribute(op, "exp", expiration_time);
+    matador::access::attribute(op, "nbf", not_before);
+    matador::access::attribute(op, "iat", issued_at);
+    matador::access::attribute(op, "jti", jwt_id);
+    matador::access::attribute(op, "name", name);
   }
 };
 

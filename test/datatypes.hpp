@@ -30,27 +30,28 @@ public:
   ~datatypes() = default;
 
 public:
-  template < class SERIALIZER > void serialize(SERIALIZER &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_primary_key("id", id_);
-    serializer.on_attribute("val_char", char_);
-    serializer.on_attribute("val_float", float_);
-    serializer.on_attribute("val_double", double_);
-    serializer.on_attribute("val_short", short_);
-    serializer.on_attribute("val_int", int_);
-    serializer.on_attribute("val_long", long_);
-    serializer.on_attribute("val_long_long", long64_);
-    serializer.on_attribute("val_unsigned_char", unsigned_char_);
-    serializer.on_attribute("val_unsigned_short", unsigned_short_);
-    serializer.on_attribute("val_unsigned_int", unsigned_int_);
-    serializer.on_attribute("val_unsigned_long", unsigned_long_);
-    serializer.on_attribute("val_unsigned_long_long", unsigned_long64_);
-    serializer.on_attribute("val_bool", bool_);
-    serializer.on_attribute("val_cstr", cstr_, CSTR_LEN);
-    serializer.on_attribute("val_string", string_);
-    serializer.on_attribute("val_varchar", varchar_, 63);
-    serializer.on_attribute("val_date", date_);
-    serializer.on_attribute("val_time", time_);
+    matador::access::primary_key(op, "id", id_);
+    matador::access::attribute(op, "val_char", char_);
+    matador::access::attribute(op, "val_float", float_);
+    matador::access::attribute(op, "val_double", double_);
+    matador::access::attribute(op, "val_short", short_);
+    matador::access::attribute(op, "val_int", int_);
+    matador::access::attribute(op, "val_long", long_);
+    matador::access::attribute(op, "val_long_long", long64_);
+    matador::access::attribute(op, "val_unsigned_char", unsigned_char_);
+    matador::access::attribute(op, "val_unsigned_short", unsigned_short_);
+    matador::access::attribute(op, "val_unsigned_int", unsigned_int_);
+    matador::access::attribute(op, "val_unsigned_long", unsigned_long_);
+    matador::access::attribute(op, "val_unsigned_long_long", unsigned_long64_);
+    matador::access::attribute(op, "val_bool", bool_);
+    matador::access::attribute(op, "val_cstr", cstr_, CSTR_LEN);
+    matador::access::attribute(op, "val_string", string_);
+    matador::access::attribute(op, "val_varchar", varchar_, 63);
+    matador::access::attribute(op, "val_date", date_);
+    matador::access::attribute(op, "val_time", time_);
   }
 
   unsigned long id() const { return id_; }

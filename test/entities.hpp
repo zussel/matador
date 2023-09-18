@@ -25,13 +25,13 @@ public:
             : datatypes(n, i)
     {}
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
-    {
-        serializer.serialize(*matador::base_class<datatypes>(this));
-        serializer.on_has_one("ref", ref_, matador::cascade_type::NONE);
-        serializer.on_has_one("ptr", ptr_, matador::cascade_type::ALL);
-    }
+  template < class Operator >
+  void process(Operator &op)
+  {
+      matador::access::process(op, *matador::base_class<datatypes>(this));
+      matador::access::has_one(op, "ref", ref_, matador::cascade_type::NONE);
+      matador::access::has_one(op, "ptr", ptr_, matador::cascade_type::ALL);
+  }
 
     void ref(const value_ptr &r)
     {
@@ -68,12 +68,12 @@ public:
     ObjectItemList() = default;
     explicit ObjectItemList(std::string n) : name(std::move(n)) {}
 
-    template < class S >
-    void serialize(S &s)
+    template < class Operator >
+    void process(Operator &op)
     {
-        s.on_primary_key("id", id);
-        s.on_attribute("name", name);
-        s.on_has_many("object_item_list", items, "list_id", "object_item_id", matador::cascade_type::NONE);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "name", name);
+        matador::access::has_many_(op, "object_item_list", items, "list_id", "object_item_id", matador::cascade_type::NONE);
     }
 
     iterator begin() { return items.begin(); }
@@ -101,13 +101,13 @@ public:
     {}
     ~book() = default;
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id_);
-        serializer.on_attribute("title", title_);
-        serializer.on_attribute("isbn", isbn_);
-        serializer.on_attribute("author", author_);
+        matador::access::primary_key(op, "id", id_);
+        matador::access::attribute(op, "title", title_);
+        matador::access::attribute(op, "isbn", isbn_);
+        matador::access::attribute(op, "author", author_);
     }
 
     unsigned long long id() const { return id_; }
@@ -128,11 +128,11 @@ public:
     book_list() = default;
     ~book_list() = default;
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id_);
-        serializer.on_has_many("books", book_list_, "book_list_id", "book_id", matador::cascade_type::NONE);
+        matador::access::primary_key(op, "id", id_);
+        matador::access::has_many_(op, "books", book_list_, "book_list_id", "book_id", matador::cascade_type::NONE);
     }
 
     void add(const matador::object_ptr<book> &b)
@@ -171,12 +171,12 @@ public:
             , department_(dep)
     {}
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.serialize(*matador::base_class<person>(this));
-        serializer.on_belongs_to("department"    , department_, matador::cascade_type::NONE);
-        // name of table, object     , cascade
+        matador::access::process(op, *matador::base_class<person>(this));
+        matador::access::belongs_to(op, "department"    , department_, matador::cascade_type::NONE);
+        //                                      name of table, object     , cascade
     }
 
     matador::object_ptr<department> dep() const { return department_; }
@@ -199,12 +199,12 @@ struct department
 
     ~department() = default;
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+   void process(Operator &op)
     {
-        serializer.on_primary_key("id", id);
-        serializer.on_attribute("name", name, 255);
-        serializer.on_has_many("employee"    , employees, "department", "id", matador::cascade_type::NONE);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "name", name, 255);
+        matador::access::has_many_(op, "employee"    , employees, "department", "id", matador::cascade_type::NONE);
         //                    name of table, container,  name of member
         //                                   to serialize
     }
@@ -219,11 +219,11 @@ public:
     explicit student(const std::string &name, const matador::date &bdate = matador::date(), unsigned h = 170)
             : person(name, bdate, h) {}
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.serialize(*matador::base_class<person>(this));
-        serializer.on_has_many("student_course", courses, "student_id", "course_id", matador::cascade_type::NONE);
+        matador::access::process(op, *matador::base_class<person>(this));
+        matador::access::has_many_(op, "student_course", courses, "student_id", "course_id", matador::cascade_type::NONE);
     }
 
     matador::has_many<course> courses;
@@ -236,12 +236,12 @@ public:
     course() = default;
     explicit course(std::string t) : title(std::move(t)) {}
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id);
-        serializer.on_attribute("title", title, 1023);
-        serializer.on_has_many("student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "title", title, 1023);
+        matador::access::has_many_(op, "student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
     }
 
     unsigned long id{};
@@ -258,11 +258,11 @@ struct citizen : public person
 
     matador::object_ptr<address> address_;
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.serialize(*matador::base_class<person>(this));
-        serializer.on_has_one("address", address_, matador::cascade_type::ALL);
+        matador::access::process(op, *matador::base_class<person>(this));
+        matador::access::has_one(op, "address", address_, matador::cascade_type::ALL);
     }
 };
 
@@ -278,13 +278,13 @@ struct address
             : street(std::move(str)), city(std::move(c))
     {}
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id);
-        serializer.on_attribute("street", street, 255);
-        serializer.on_attribute("city", city, 255);
-        serializer.on_belongs_to("citizen", citizen_, matador::cascade_type::NONE);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "street", street, 255);
+        matador::access::attribute(op, "city", city, 255);
+        matador::access::belongs_to(op, "citizen", citizen_, matador::cascade_type::NONE);
     }
 };
 
@@ -310,13 +310,13 @@ public:
 
     ~track() = default;
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id_);
-        serializer.on_attribute("title", title_);
-        serializer.on_has_one("album", album_, matador::cascade_type::ALL);
-        serializer.on_attribute("track_index", index_);
+        matador::access::primary_key(op, "id", id_);
+        matador::access::attribute(op, "title", title_);
+        matador::access::has_one(op, "album", album_, matador::cascade_type::ALL);
+        matador::access::attribute(op, "track_index", index_);
     }
 
     unsigned long id() { return id_; }
@@ -351,12 +351,12 @@ public:
 
     ~album() = default;
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id_);
-        serializer.on_attribute("name", name_);
-        serializer.on_has_many("tracks", tracks_, matador::cascade_type::ALL);
+        matador::access::primary_key(op, "id", id_);
+        matador::access::attribute(op, "name", name_);
+        matador::access::has_many_(op, "tracks", tracks_, matador::cascade_type::ALL);
     }
 
     unsigned long id() { return id_; }
@@ -408,13 +408,13 @@ public:
 
     ~playlist() = default;
 
-    template < class SERIALIZER >
-    void serialize(SERIALIZER &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id_);
-        serializer.on_attribute("name", name_);
-        serializer.on_has_many("playlist_tracks", tracks_, matador::cascade_type::ALL);
-        serializer.on_has_many("backup_tracks", backup_tracks_, matador::cascade_type::ALL);
+        matador::access::primary_key(op, "id", id_);
+        matador::access::attribute(op, "name", name_);
+        matador::access::has_many_(op, "playlist_tracks", tracks_, matador::cascade_type::ALL);
+        matador::access::has_many_(op, "backup_tracks", backup_tracks_, matador::cascade_type::ALL);
     }
 
     std::string name() const { return name_; }
@@ -444,11 +444,11 @@ public:
     explicit child(std::string n) : name(std::move(n)) {}
     ~child() = default;
 
-    template < class S >
-    void serialize(S &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id);
-        serializer.on_attribute("name", name);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "name", name);
     }
 
     unsigned long id{};
@@ -468,12 +468,12 @@ public:
     master(std::string n, const matador::object_ptr<child> &c) : name(std::move(n)), children(c) {}
     ~master() = default;
 
-    template < class S >
-    void serialize(S &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id);
-        serializer.on_attribute("name", name);
-        serializer.on_has_one("child", children, matador::cascade_type::ALL);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "name", name);
+        matador::access::has_one(op, "child", children, matador::cascade_type::ALL);
     }
 };
 
@@ -486,12 +486,12 @@ public:
     explicit children_vector(std::string n) : name(std::move(n)) {}
     ~children_vector() = default;
 
-    template < class S >
-    void serialize(S &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id);
-        serializer.on_attribute("name", name);
-        serializer.on_has_many("children", children, "vector_id", "child_id", matador::cascade_type::ALL);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "name", name);
+        matador::access::has_many_(op, "children", children, "vector_id", "child_id", matador::cascade_type::ALL);
     }
 
     unsigned long id{};
@@ -508,12 +508,12 @@ public:
     explicit children_list(std::string n) : name(std::move(n)) {}
     ~children_list() = default;
 
-    template < class S >
-    void serialize(S &serializer)
+    template < class Operator >
+    void process(Operator &op)
     {
-        serializer.on_primary_key("id", id);
-        serializer.on_attribute("name", name);
-        serializer.on_has_many("children", children, "list_id", "child_id", matador::cascade_type::ALL);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "name", name);
+        matador::access::has_many_(op, "children", children, "list_id", "child_id", matador::cascade_type::ALL);
     }
 
     unsigned long id{};
@@ -531,11 +531,11 @@ public:
     unsigned long id{};
     element_list_t elements{Size};
 
-    template < class S >
-    void serialize(S &s)
+    template < class Operator >
+    void process(Operator &op)
     {
-        s.on_primary_key("id", id);
-        s.on_has_many("elements", elements, "list_id", "value", matador::cascade_type::ALL);
+        matador::access::primary_key(op, "id", id);
+        matador::access::has_many_(op, "elements", elements, "list_id", "value", matador::cascade_type::ALL);
     }
 };
 
@@ -554,11 +554,11 @@ public:
     load() = default;
     explicit load(std::string loadname) : name(std::move(loadname)) {}
 
-    template < class S >
-    void serialize(S &s)
+    template < class Operator >
+    void process(Operator &op)
     {
-        s.on_primary_key("id", id);
-        s.on_attribute("name", name, 255);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "name", name, 255);
     }
 
 };
@@ -572,11 +572,11 @@ public:
     location() = default;
     explicit location(std::string locname) : name(std::move(locname)) {}
 
-    template < class S >
-    void serialize(S &s)
+    template < class Operator >
+    void process(Operator &op)
     {
-        s.on_primary_key("id", id);
-        s.on_attribute("name", name, 255);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "name", name, 255);
     }
 };
 
@@ -588,13 +588,13 @@ public:
     matador::has_many<location> sources;
     matador::has_many<location> destinations;
 
-    template < class S >
-    void serialize(S &s)
+    template < class Operator >
+    void process(Operator &op)
     {
-        s.on_primary_key("id", id);
-        s.on_attribute("name", name, 255);
-        s.on_has_many("sources", sources, matador::cascade_type::ALL);
-        s.on_has_many("destinations", destinations, matador::cascade_type::ALL);
+        matador::access::primary_key(op, "id", id);
+        matador::access::attribute(op, "name", name, 255);
+        matador::access::has_many_(op, "sources", sources, matador::cascade_type::ALL);
+        matador::access::has_many_(op, "destinations", destinations, matador::cascade_type::ALL);
     }
 
 };

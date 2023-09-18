@@ -44,7 +44,7 @@ public:
   template<class V>
   void serialize(V &obj)
   {
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
   }
 
   template < class V >

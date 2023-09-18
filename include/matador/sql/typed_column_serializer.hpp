@@ -57,14 +57,14 @@ public:
   columns* execute(T &x)
   {
     cols_ = std::make_unique<columns>();
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
     return cols_.release();
   }
 
   template < class T >
   void serialize(T &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < class V >

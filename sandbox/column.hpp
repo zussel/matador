@@ -28,10 +28,10 @@ public:
   , value_(val)
   , attr_(attr) {}
 
-  template<class Serializer>
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.apply(name_, value_);
+    op.apply(name_, value_);
   }
 
   const std::string& name() const {

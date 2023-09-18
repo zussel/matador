@@ -108,7 +108,7 @@ public:
   template < class T >
   void serialize(T &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   void serialize(row &r);
