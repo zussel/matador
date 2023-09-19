@@ -985,11 +985,12 @@ public:
   explicit cyclic(std::string n) : name(std::move(n)) {}
   ~cyclic() = default;
 
-  template < class SERIALIZER >
-  void serialize(SERIALIZER &w) {
-    w.on_primary_key("id", id);
-    w.on_attribute("name", name);
-    w.on_has_one("cycler", cycler, cascade_type::ALL);
+  template < class Operator >
+  void process(Operator &op)
+  {
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name);
+    matador::access::has_one(op, "cycler", cycler, cascade_type::ALL);
   }
   unsigned long id{};
   std::string name;

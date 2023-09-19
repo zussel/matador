@@ -7,8 +7,6 @@
 
 namespace matador {
 
-class serializer;
-
 /**
  * Throws an serializable exception
  * 

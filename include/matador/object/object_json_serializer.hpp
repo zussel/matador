@@ -25,7 +25,7 @@ public:
   json to_json(const matador::object_ptr<T> &obj)
   {
     result_ = json::object();
-    matador::access::serialize(*this, *obj);
+    matador::access::process(*this, *obj);
     return result_;
   }
 
@@ -36,7 +36,7 @@ public:
 
     for (const auto &obj : objects) {
       result_ = json::object();
-      matador::access::serialize(*this, *obj.get());
+      matador::access::process(*this, *obj.get());
       result.push_back(result_);
     }
 

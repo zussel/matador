@@ -24,14 +24,14 @@ public:
   template<class T>
   columns *execute(T &x) {
     cols_ = std::make_unique<columns>(brackets_);
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
     return cols_.release();
   }
 
   template < class T >
   void serialize(T &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template<typename ValueType>

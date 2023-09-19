@@ -97,7 +97,7 @@ result_impl::result_impl()
 
 void result_impl::serialize(row &r)
 {
-  matador::access::serialize(result_row_serializer_, r);
+  matador::access::process(result_row_serializer_, r);
 }
 
 void result_impl::on_primary_key(const char *id, std::string &value, size_t size)

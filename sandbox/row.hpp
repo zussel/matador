@@ -23,11 +23,11 @@ public:
     columns_by_name_.insert({col->name(), col});
   }
 
-  template<class Serializer>
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
     for (auto& col : columns_) {
-      col->serialize(serializer);
+      col->process(op);
     }
   }
 

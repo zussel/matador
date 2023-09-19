@@ -33,15 +33,15 @@ struct movie
   matador::has_many<person> actors;
   matador::object_ptr<person> director;
 
-  template < class Serializer >
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_primary_key("id", id);
-    serializer.on_attribute("title", title, 255);
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "title", title, 255);
     //serializer.serialize("genres", genres, "movie_id", "genre", matador::cascade_type::ALL);
-    serializer.on_attribute("year", year);
-    serializer.on_has_many("actors", actors, "movie_id", "actor_id", matador::cascade_type::NONE);
-    serializer.on_has_one("director", director, matador::cascade_type::NONE);
+    matador::access::attribute(op, "year", year);
+    matador::access::has_many(op, "actors", actors, "movie_id", "actor_id", matador::cascade_type::NONE);
+    matador::access::has_one(op, "director", director, matador::cascade_type::NONE);
   }
 };
 #endif //MATADOR_MOVIE_HPP

@@ -44,11 +44,11 @@ public:
     : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(right)
   {}
 
-  template<class Serializer>
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_has_one(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.on_belongs_to(this->right_column().c_str(), right_, matador::cascade_type::NONE);
+    matador::access::has_one(op, this->left_column().c_str(), left_, matador::cascade_type::NONE);
+    matador::access::belongs_to(op, this->right_column().c_str(), right_, matador::cascade_type::NONE);
   }
 
   object_ptr<L> left() const
@@ -87,11 +87,11 @@ public:
     : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(right)
   {}
 
-  template<class SERIALIZER>
-  void serialize(SERIALIZER &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_has_one(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.on_attribute(this->right_column().c_str(), right_, right_attributes_);
+    matador::access::has_one(op, this->left_column().c_str(), left_, matador::cascade_type::NONE);
+    matador::access::attribute(op, this->right_column().c_str(), right_, right_attributes_);
   }
 
   object_ptr<L> left() const

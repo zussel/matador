@@ -1,16 +1,20 @@
 #ifndef MATADOR_CREDENTIAL_HPP
 #define MATADOR_CREDENTIAL_HPP
 
+#include "matador/utils/access.hpp"
+
+#include <string>
+
 struct credential
 {
   std::string username {};
   std::string password {};
 
-  template < class S >
-  void serialize(S &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.serialize("username", username);
-    serializer.serialize("password", password);
+    matador::access::attribute(op, "username", username, 255);
+    matador::access::attribute(op, "password", password, 255);
   }
 };
 

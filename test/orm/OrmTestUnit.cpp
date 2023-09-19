@@ -41,14 +41,14 @@ struct person
     : id(i), name(std::move(n))
   {}
 
-  template < class SERIALIZER >
-  void serialize(SERIALIZER &serializer) {
-    serializer.on_primary_key("id", id);
-    serializer.on_attribute("name", name, 255);
-    serializer.on_attribute("ip", ip, 255);
-    serializer.on_attribute("age", age);
-    serializer.on_has_many("person_color", colors, "person_id",   "color",      matador::cascade_type::ALL);
-    //                    table name     member   left column   right column  cascade type
+  template < class Operator >
+  void process(Operator &op) {
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name, 255);
+    matador::access::attribute(op, "ip", ip, 255);
+    matador::access::attribute(op, "age", age);
+    matador::access::has_many_(op, "person_color", colors, "person_id",   "color",      matador::cascade_type::ALL);
+    //                             table name     member   left column   right column  cascade type
   }
 };
 }

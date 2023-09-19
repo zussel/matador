@@ -46,14 +46,14 @@ public:
 
   identifier resolve_object(T *o)
   {
-    matador::access::serialize(*this, *o);
+    matador::access::process(*this, *o);
     return id_;
   }
 
   template < class V >
   void serialize(V &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < class V >

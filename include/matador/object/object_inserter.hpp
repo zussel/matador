@@ -122,7 +122,7 @@ private:
 template<class T>
 void object_inserter::serialize(T &x)
 {
-  matador::access::serialize(*this, x);
+  matador::access::process(*this, x);
 }
 
 template<class T>

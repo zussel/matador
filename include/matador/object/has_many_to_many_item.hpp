@@ -27,11 +27,11 @@ public:
     : basic_has_many_to_many_item(left_column, right_column)
   {}
 
-  template < class SERIALIZER >
-  void serialize(SERIALIZER &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_belongs_to(this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    serializer.on_belongs_to(this->right_column().c_str(), right_, matador::cascade_type::NONE);
+    matador::access::belongs_to(op, this->left_column().c_str(), left_, matador::cascade_type::NONE);
+    matador::access::belongs_to(op, this->right_column().c_str(), right_, matador::cascade_type::NONE);
   }
 
   object_ptr<L> left() const

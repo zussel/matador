@@ -62,11 +62,11 @@ struct product
   std::string id;
   std::string name;
 
-  template < class S >
-  void serialize(S &s)
+  template < class Operator >
+  void process(Operator &op)
   {
-    s.on_primary_key("idpk", id, 255);
-    s.on_attribute("name", name, 255);
+      matador::access::primary_key(op, "idpk", id, 255);
+      matador::access::attribute(op, "name", name, 255);
   }
 };
 

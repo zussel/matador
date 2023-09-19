@@ -66,7 +66,7 @@ public:
   template < class V >
   void serialize(V &obj)
   {
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
   }
 
   template< class V >
@@ -202,7 +202,7 @@ private:
   void append(V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
     begin_object();
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
     auto idx = json_.find_last_of(',');
     json_.erase(idx, 1);
     end_object();

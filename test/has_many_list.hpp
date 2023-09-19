@@ -14,11 +14,11 @@ public:
   item() = default;
   explicit item(std::string n) : name(std::move(n)) {}
 
-  template < class S >
-  void serialize(S &s)
+  template < class Operator >
+  void process(Operator &op)
   {
-    s.on_primary_key("id", id);
-    s.on_attribute("name", name);
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name);
   }
 };
 
@@ -33,12 +33,12 @@ public:
   owner() = default;
   explicit owner(std::string n) : name(std::move(n)) {}
 
-  template < class S >
-  void serialize(S &s)
+  template < class Operator >
+  void process(Operator &op)
   {
-    s.on_primary_key("id", id);
-    s.on_attribute("name", name);
-    s.on_has_many("owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name);
+    matador::access::has_many_(op, "owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
   }
 };
 }

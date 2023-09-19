@@ -417,11 +417,11 @@ public:
 
   ~pktest() = default;
 
-  template < class SERIALIZER >
-  void serialize(SERIALIZER &s)
+  template < class Operator >
+  void process(Operator &op)
   {
-    s.on_primary_key("id", id);
-    s.on_attribute("name", name, 255);
+      matador::access::primary_key(op, "id", id);
+      matador::access::attribute(op, "name", name, 255);
   }
 
   unsigned long id{};
@@ -493,12 +493,12 @@ struct appointment
   std::string name;
   matador::time time_point;
 
-  template<class Serializer>
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_primary_key("id", id);
-    serializer.on_attribute("name", name, 255);
-    serializer.on_attribute("time_point", time_point);
+      matador::access::primary_key(op, "id", id);
+      matador::access::attribute(op, "name", name, 255);
+      matador::access::attribute(op, "time_point", time_point);
   }
 };
 
@@ -1324,11 +1324,11 @@ struct relation
     : owner(oid), item(iid)
   {}
 
-  template < class SERIALIZER >
-  void serialize(SERIALIZER &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_attribute("owner_id", owner);
-    serializer.on_attribute("item_id", item);
+    matador::access::attribute(op, "owner_id", owner);
+    matador::access::attribute(op, "item_id", item);
   }
 };
 

@@ -1,9 +1,10 @@
 #ifndef MATADOR_PERSON_HPP
 #define MATADOR_PERSON_HPP
 
-#include <utility>
-
+#include "matador/utils/access.hpp"
 #include "matador/utils/date.hpp"
+
+#include <utility>
 
 struct person
 {
@@ -16,12 +17,12 @@ struct person
     : name(std::move(n)), birthday(std::move(bd))
   {}
 
-  template < class Serializer >
-  void serialize(Serializer &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_primary_key("id", id);
-    serializer.on_attribute("name", name, 255);
-    serializer.on_attribute("birthday", birthday);
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name, 255);
+    matador::access::attribute(op, "birthday", birthday);
   }
 };
 

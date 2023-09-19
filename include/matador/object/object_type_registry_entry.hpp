@@ -46,12 +46,12 @@ public:
 
   void insert_object(object_proxy *proxy) const override
   {
-    matador::access::serialize(inserter(), *proxy->obj<T>());
+    matador::access::process(inserter(), *proxy->obj<T>());
   }
 
   void delete_object(object_proxy *proxy) const override
   {
-    matador::access::serialize(deleter(), *proxy->obj<T>());
+    matador::access::process(deleter(), *proxy->obj<T>());
   }
 
   identifier resolve_identifier(object_proxy *proxy) const override

@@ -82,7 +82,7 @@ public:
   iterator end();
 
   template<class T>
-  void serialize(T &x) { matador::access::serialize(*this, x); }
+  void serialize(T &x) { matador::access::process(*this, x); }
 
   template<class T>
   void on_primary_key(const char *id, T &x, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type* = 0);
@@ -147,7 +147,7 @@ void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type 
   if ((cascade & cascade_type::REMOVE) == cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     proxy_stack_.push(x.proxy_);
-    matador::access::serialize(*this, *(T*)x.ptr());
+    matador::access::process(*this, *(T*)x.ptr());
     proxy_stack_.pop();
   }
 }
@@ -182,7 +182,7 @@ void object_deleter::on_has_one(const char *, object_ptr<T> &x, cascade_type cas
   if ((cascade & cascade_type::REMOVE) == cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     proxy_stack_.push(x.proxy_);
-    matador::access::serialize(*this, *(T*)x.ptr());
+    matador::access::process(*this, *(T*)x.ptr());
     proxy_stack_.pop();
   }
 }

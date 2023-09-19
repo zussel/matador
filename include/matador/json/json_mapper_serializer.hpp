@@ -68,7 +68,7 @@ T json_mapper_serializer::create()
 template<class V>
 void json_mapper_serializer::serialize(V &obj)
 {
-  matador::access::serialize(*this, obj);
+  matador::access::process(*this, obj);
 }
 
 template<class V>

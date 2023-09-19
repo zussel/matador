@@ -28,7 +28,7 @@ public:
   template<class V>
   void serialize(V &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < class V >
@@ -127,7 +127,7 @@ void identifier_binder<T>::bind(T *obj, statement<T> *stmt, size_t pos, identifi
 {
   setup(stmt, obj, pos, id);
 
-  matador::access::serialize(*this, *obj);
+  matador::access::process(*this, *obj);
 
   cleanup();
 }

@@ -33,7 +33,7 @@ public:
   template<class T>
   void serialize(T &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < class V >
@@ -64,7 +64,7 @@ column identifier_column_resolver::resolve()
 template<class T>
 column identifier_column_resolver::resolve(T *obj)
 {
-  matador::access::serialize(*this, *obj);
+  matador::access::process(*this, *obj);
   return col_;
 }
 

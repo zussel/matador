@@ -45,11 +45,11 @@ struct person
   std::string name;
   int age {};
 
-  template < class S >
-  void serialize(S &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_attribute("name", name);
-    serializer.on_attribute("age", age);
+    matador::access::attribute(op, "name", name);
+    matador::access::attribute(op, "age", age);
   }
 };
 }

@@ -23,8 +23,8 @@ public:
 
   json_serializer() = default;
 
-  template < class T >
-  std::string to_json(const T &obj, const json_format &format = json_format::compact)
+  template < class Type >
+  std::string to_json(const Type &obj, const json_format &format = json_format::compact)
   {
     format_ = format;
     json_.clear();
@@ -59,7 +59,7 @@ public:
   template < class V >
   void serialize(V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
   }
 
   template< class V >
@@ -182,7 +182,7 @@ private:
   std::string& append(V &obj, typename std::enable_if<!matador::is_builtin<V>::value>::type* = 0)
   {
     begin_object();
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
     auto idx = json_.find_last_of(',');
     json_.erase(idx, 1);
     end_object();

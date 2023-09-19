@@ -61,7 +61,7 @@ public:
     store_ = store;
     id_ = proxy->pk();
     proxy_ = proxy;
-    matador::access::serialize(*this, *proxy->obj<T>());
+    matador::access::process(*this, *proxy->obj<T>());
     proxy_ = nullptr;
     id_.clear();
     store_ = nullptr;
@@ -70,7 +70,7 @@ public:
   template < class V >
   void serialize(V &obj)
   {
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
   }
 
   template < class V >
@@ -239,7 +239,7 @@ public:
     left_proxy_ = nullptr;
     left_table_ptr_ = left_table_.lock();
     right_table_ptr_ = right_table_.lock();
-    matador::access::serialize(*this, *proxy->obj<T>());
+    matador::access::process(*this, *proxy->obj<T>());
     proxy_ = nullptr;
     id_.clear();
     store_ = nullptr;
@@ -248,7 +248,7 @@ public:
   template < class V >
   void serialize(V &obj)
   {
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
   }
 
   template < class V >
@@ -372,7 +372,7 @@ public:
     proxy_ = proxy;
     left_proxy_ = nullptr;
     left_table_ptr_ = left_table_.lock();
-    matador::access::serialize(*this, *proxy->obj<T>());
+    matador::access::process(*this, *proxy->obj<T>());
     proxy_ = nullptr;
     id_.clear();
     store_ = nullptr;
@@ -381,7 +381,7 @@ public:
   template < class V >
   void serialize(V &obj)
   {
-    matador::access::serialize(*this, obj);
+    matador::access::process(*this, obj);
   }
 
   template < class V >

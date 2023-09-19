@@ -25,7 +25,7 @@ public:
     owner_id_ = id;
     for (const auto& value : identifier_proxy_map) {
       id_ = value.first;
-      matador::access::serialize(*this, *value.second->obj<OWNER>());
+      matador::access::process(*this, *value.second->obj<OWNER>());
     }
     owner_id_.clear();
     identifier_proxy_map.clear();
@@ -35,7 +35,7 @@ public:
   template<class T>
   void serialize(T &x)
   {
-    matador::access::serialize(*this, x);
+    matador::access::process(*this, x);
   }
 
   template < class T >

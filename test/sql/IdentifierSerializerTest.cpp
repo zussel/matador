@@ -13,10 +13,25 @@ struct identifier_entity
   std::string name;
 
   template<class Operator>
-  void serialize(Operator &op)
+  void process(Operator &op)
   {
-    op.on_primary_key("id", id, Size);
-    op.on_attribute("name", name, 255);
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name, 255);
+  }
+
+};
+
+template < size_t Size >
+struct identifier_entity<std::string, Size>
+{
+  std::string id{};
+  std::string name;
+
+  template<class Operator>
+  void process(Operator &op)
+  {
+    matador::access::primary_key(op, "id", id, Size);
+    matador::access::attribute(op, "name", name, 255);
   }
 
 };
