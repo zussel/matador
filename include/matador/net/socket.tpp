@@ -206,7 +206,7 @@ socket_type connect(socket_stream<P> &stream, const char* hostname, unsigned sho
   socket_type ret = 0;
   do {
     conn_fd = ::socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    if (is_valid_socket(conn_fd)) {
+    if (!is_valid_socket(conn_fd)) {
       // error, try next one
       continue;
     }
@@ -240,7 +240,7 @@ int connect(socket_stream<P> &stream, peer_base<P> endpoint)
 
   auto fd = ::socket(pt.family(), pt.type(), pt.protocol());
 
-  if (is_valid_socket(fd)) {
+  if (!is_valid_socket(fd)) {
     return static_cast<int>(fd);
   }
 

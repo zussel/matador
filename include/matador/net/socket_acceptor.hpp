@@ -230,7 +230,7 @@ template < class P >
 int socket_acceptor<P>::bind(peer_type &peer)
 {
   socket_type listen_fd = ::socket(peer.protocol().family(), peer.protocol().type(), peer.protocol().protocol());
-  if (is_valid_socket(listen_fd)) {
+  if (!is_valid_socket(listen_fd)) {
     // error, try next one
     return static_cast<int>(listen_fd);
   }
@@ -322,7 +322,7 @@ int socket_acceptor<P>::accept(stream_type &stream, peer_type &endpoint)
   auto addr_len = static_cast<socklen_t>(endpoint.size());
   auto fd = ::accept(this->id(), endpoint.data(), &addr_len);
 
-  if (is_valid_socket(fd)) {
+  if (!is_valid_socket(fd)) {
     stream.assign(fd);
     stream.non_blocking(true);
     stream.cloexec(true);
