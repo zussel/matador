@@ -75,7 +75,7 @@ matador::http::response movie_service::list(const matador::http::request &)
   auto result = s.select<movie>();
 
   for (const auto &m : result) {
-    log(log_level::LVL_INFO, "List", "found movie %s (id: %d)", m->title.c_str(), m->id.value());
+    log(log_level::LVL_INFO, "List", "found movie %s (id: %d)", m->title.c_str(), m->id);
   }
   json_object_mapper mapper;
 
