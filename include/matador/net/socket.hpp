@@ -31,11 +31,6 @@ public:
   typedef P protocol_type;            /**< Shortcut to the protocol type */
   typedef typename P::peer peer_type; /**< Shortcut to the peer type */
 
-#if _WIN32
-  typedef SOCKET socket_type;
-#else
-  typedef int socket_type; /**< Shortcut for socket type */
-#endif
   /**
    * Creates a socket for a specific given
    * protocol
@@ -47,7 +42,7 @@ public:
   /**
    * Creates a socket with the given peer
    *
-   * @param peer Peer used to initialze the socket
+   * @param peer Peer used to initialize the socket
    */
   explicit socket_base(const peer_type &peer);
 

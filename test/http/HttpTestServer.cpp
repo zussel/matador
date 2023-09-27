@@ -31,7 +31,7 @@ void HttpTestServer::run()
 
   running_ = true;
 
-  select(acceptor.id()+1, &read_set, nullptr, nullptr, nullptr);
+  select(static_cast<int>(acceptor.id())+1, &read_set, nullptr, nullptr, nullptr);
 
   FD_ISSET(socket_id, &read_set);
 

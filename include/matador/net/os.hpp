@@ -5,6 +5,16 @@
 
 #include <cstdio>
 
+#if _WIN32
+#include <WinSock2.h>
+#endif
+
+#ifdef _WIN32
+  using socket_type = SOCKET;
+#else
+  using socket_type = int;
+#endif
+
 namespace matador {
 namespace net {
 
@@ -12,6 +22,8 @@ OOS_NET_API void init();
 OOS_NET_API void cleanup();
 
 }
+
+bool is_valid_socket(socket_type fd);
 
 namespace os {
 
@@ -25,8 +37,8 @@ enum class shutdown_type
     READ_WRITE = 2
 };
 
-OOS_NET_API int shutdown(int fd, shutdown_type type);
-OOS_NET_API int close(int fd);
+OOS_NET_API int shutdown(socket_type fd, shutdown_type type);
+OOS_NET_API int close(socket_type fd);
 
 }
 }

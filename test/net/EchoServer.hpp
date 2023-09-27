@@ -17,7 +17,7 @@ public:
 
   void open() override;
 
-  int handle() const override;
+  socket_type handle() const override;
 
   void on_input() override;
   void on_output() override;

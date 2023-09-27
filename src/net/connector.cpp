@@ -30,7 +30,7 @@ void connector::connect(reactor &r, const std::vector<tcp::peer> &endpoints, t_c
   connect(r, endpoints);
 }
 
-int connector::handle() const
+socket_type connector::handle() const
 {
   return 0;
 }

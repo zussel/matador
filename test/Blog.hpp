@@ -88,11 +88,12 @@ struct comment
   template < class Operator >
   void process(Operator &op)
   {
-    matador::access::primary_key(op, "id", id);
-    matador::access::attribute(op, "email", email, 255);
-    matador::access::belongs_to(op, "post", blog_post, matador::cascade_type::NONE);
-    matador::access::attribute(op, "content", content);
-    matador::access::attribute(op, "created_at", created_at);
+    namespace field = matador::access;
+    field::primary_key(op, "id", id);
+    field::attribute(op, "email", email, 255);
+    field::belongs_to(op, "post", blog_post, matador::cascade_type::NONE);
+    field::attribute(op, "content", content);
+    field::attribute(op, "created_at", created_at);
   }
 };
 

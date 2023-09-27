@@ -74,7 +74,7 @@ public:
    *
    * @return Always zero
    */
-  int handle() const override;
+  socket_type handle() const override;
 
   /**
    * Does nothing

@@ -26,24 +26,24 @@ void fdset::reset()
   max_fd_set_.insert(0);
 }
 
-bool fdset::is_set(int fd) const
+bool fdset::is_set(socket_type fd) const
 {
   return FD_ISSET(fd, &fd_set_) > 0;
 }
 
-void fdset::clear(int fd)
+void fdset::clear(socket_type fd)
 {
   FD_CLR(fd, &fd_set_);
   max_fd_set_.erase(fd);
 }
 
-void fdset::set(int fd)
+void fdset::set(socket_type fd)
 {
   FD_SET(fd, &fd_set_);
   max_fd_set_.insert(fd);
 }
 
-int fdset::maxp1() const
+socket_type fdset::maxp1() const
 {
   return *max_fd_set_.begin();
 }

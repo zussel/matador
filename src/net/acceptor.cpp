@@ -45,7 +45,7 @@ void acceptor::open()
   log_.debug("fd %d: accepting connections", handle());
 }
 
-int acceptor::handle() const
+socket_type acceptor::handle() const
 {
   return acceptor_.id();
 }

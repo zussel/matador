@@ -1,6 +1,8 @@
 #ifndef MATADOR_HTTPTESTSERVER_HPP
 #define MATADOR_HTTPTESTSERVER_HPP
 
+#include "matador/net/os.hpp"
+
 #include <atomic>
 
 class HttpTestServer
@@ -16,7 +18,7 @@ public:
 private:
   unsigned short port_{};
   std::atomic_bool running_{false};
-  int client_id_{};
+  socket_type client_id_{};
 };
 
 

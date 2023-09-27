@@ -229,10 +229,10 @@ int socket_acceptor<P>::bind(const char* hostname, unsigned short port)
 template < class P >
 int socket_acceptor<P>::bind(peer_type &peer)
 {
-  int listenfd = ::socket(peer.protocol().family(), peer.protocol().type(), peer.protocol().protocol());
-  if (listenfd < 0) {
+  socket_type listen_fd = ::socket(peer.protocol().family(), peer.protocol().type(), peer.protocol().protocol());
+  if (is_valid_socket(listen_fd)) {
     // error, try next one
-    return listenfd;
+    return static_cast<int>(listen_fd);
   }
 
 #ifdef _WIN32
@@ -240,14 +240,14 @@ int socket_acceptor<P>::bind(peer_type &peer)
 #else
   const int on = 1;
 #endif
-  if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
+  if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
     detail::throw_logic_error_with_errno("setsockopt error: %s", errno);
   }
 
-  int ret = ::bind(listenfd, peer.data(), peer.size());
+  int ret = ::bind(listen_fd, peer.data(), static_cast<int>(peer.size()));
   if (ret == 0) {
     // success
-    this->assign(listenfd);
+    this->assign(listen_fd);
   } else {
     detail::throw_logic_error_with_errno("couldn't bind fd: %s", errno);
   }
@@ -303,9 +303,9 @@ int socket_acceptor<P>::accept(stream_type &stream)
   struct sockaddr_storage remote_addr = {};
 //    address_type remote_addr;
   socklen_t addrlen = sizeof(remote_addr);
-  int fd =  ::accept(this->id(), (struct sockaddr *)&remote_addr, &addrlen);
+  auto fd =  ::accept(this->id(), (struct sockaddr *)&remote_addr, &addrlen);
 
-  if (fd > 0) {
+  if (is_valid_socket(fd)) {
     stream.assign(fd);
     stream.non_blocking(true);
     stream.cloexec(true);
@@ -313,16 +313,16 @@ int socket_acceptor<P>::accept(stream_type &stream)
 //    detail::throw_logic_error_with_errno("accept failed: %s", errno);
   }
 
-  return fd;
+  return static_cast<int>(fd);
 }
 
 template<class P>
 int socket_acceptor<P>::accept(stream_type &stream, peer_type &endpoint)
 {
-  socklen_t addrlen = endpoint.size();
-  int fd = ::accept(this->id(), endpoint.data(), &addrlen);
+  auto addr_len = static_cast<socklen_t>(endpoint.size());
+  auto fd = ::accept(this->id(), endpoint.data(), &addr_len);
 
-  if (fd > 0) {
+  if (is_valid_socket(fd)) {
     stream.assign(fd);
     stream.non_blocking(true);
     stream.cloexec(true);
@@ -330,7 +330,7 @@ int socket_acceptor<P>::accept(stream_type &stream, peer_type &endpoint)
 //    detail::throw_logic_error_with_errno("accept failed: %s", errno);
   }
 
-  return fd;
+  return static_cast<int>(fd);
 }
 
 template < class P >

@@ -33,6 +33,15 @@ void cleanup()
 }
 
 }
+
+bool is_valid_socket(socket_type fd) {
+#ifdef _WIN32
+  return fd != INVALID_SOCKET;
+#else
+  return fd >= 0;
+#endif
+}
+
 namespace os {
 
 int inet_pton(int af, const char *src, void *dst)
@@ -53,7 +62,7 @@ const char* inet_ntop(int af, const void* src, char* dst, size_t size)
 #endif
 }
 
-int close(int fd)
+int close(socket_type fd)
 {
 #ifdef _WIN32
   return ::closesocket(fd);
@@ -62,7 +71,7 @@ int close(int fd)
 #endif
 }
 
-int shutdown(int fd, shutdown_type type)
+int shutdown(socket_type fd, shutdown_type type)
 {
 #ifdef _WIN32
     return ::shutdown(fd, static_cast<int>(type));
