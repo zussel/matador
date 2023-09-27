@@ -1,8 +1,6 @@
 #ifndef OOS_NODE_ANALYZER_HPP
 #define OOS_NODE_ANALYZER_HPP
 
-#include "matador/object/basic_has_many.hpp"
-
 #include "matador/utils/field_attributes.hpp"
 #include "matador/utils/is_builtin.hpp"
 
@@ -43,12 +41,12 @@ public:
   void on_has_one(const char *id, object_ptr<Value> &x, cascade_type);
 
   template<class Value, template<class ...> class Container>
-  void on_has_many(const char *id, has_many<Value, Container> &x, cascade_type cascade);
+  void on_has_many(const char *id, container<Value, Container> &x, cascade_type cascade);
 
   template<class Value, template<class ...> class Container>
-  void on_has_many(const char *, has_many<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *, container<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template<class Value, template<class ...> class Container>
-  void on_has_many(const char *, has_many<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *, container<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
 
 private:
   /**

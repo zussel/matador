@@ -1,7 +1,3 @@
-//
-// Created by sascha on 31.12.15.
-//
-
 #include "HasManyVectorUnitTest.hpp"
 
 #include "matador/object/object_store.hpp"
@@ -12,16 +8,16 @@ using namespace hasmanyvector;
 HasManyVectorUnitTest::HasManyVectorUnitTest()
   : unit_test("vector", "has many vector unit tests")
 {
-  add_test("join", std::bind(&HasManyVectorUnitTest::test_join_table, this), "test vector join table");
-  add_test("const_iterator", std::bind(&HasManyVectorUnitTest::test_const_iterator, this), "test vector const iterator");
-  add_test("erase_scalar", std::bind(&HasManyVectorUnitTest::test_erase_scalar, this), "test vector erase scalar elements");
-  add_test("erase_object", std::bind(&HasManyVectorUnitTest::test_erase_object, this), "test vector erase object elements");
-  add_test("remove_scalar", std::bind(&HasManyVectorUnitTest::test_remove_scalar, this), "test vector remove scalar elements");
-  add_test("remove_object", std::bind(&HasManyVectorUnitTest::test_remove_object, this), "test vector remove object elements");
-  add_test("remove_if", std::bind(&HasManyVectorUnitTest::test_remove_if, this), "test vector remove if");
-  add_test("int", std::bind(&HasManyVectorUnitTest::test_integer, this), "test vector of elements");
-  add_test("string", std::bind(&HasManyVectorUnitTest::test_string, this), "test list of strings");
-  add_test("varchar", std::bind(&HasManyVectorUnitTest::test_varchar, this), "test list of varchars");
+  add_test("join", [this] { test_join_table(); }, "test vector join table");
+  add_test("const_iterator", [this] { test_const_iterator(); }, "test vector const iterator");
+  add_test("erase_scalar", [this] { test_erase_scalar(); }, "test vector erase scalar elements");
+  add_test("erase_object", [this] { test_erase_object(); }, "test vector erase object elements");
+  add_test("remove_scalar", [this] { test_remove_scalar(); }, "test vector remove scalar elements");
+  add_test("remove_object", [this] { test_remove_object(); }, "test vector remove object elements");
+  add_test("remove_if", [this] { test_remove_if(); }, "test vector remove if");
+  add_test("int", [this] { test_integer(); }, "test vector of elements");
+  add_test("string", [this] { test_string(); }, "test list of strings");
+  add_test("varchar", [this] { test_varchar(); }, "test list of varchars");
 }
 
 void HasManyVectorUnitTest::test_join_table()

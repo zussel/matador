@@ -104,7 +104,7 @@ void object_inserter::insert_proxy(object_proxy *proxy)
   ostore_.insert(proxy, true);
 }
 
-object_proxy* object_inserter::initialize_has_many(abstract_has_many &x)
+object_proxy* object_inserter::initialize_has_many(abstract_container &x)
 {
   // initialize the has many relation
   // set identifier

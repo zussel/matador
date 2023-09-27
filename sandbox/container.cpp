@@ -57,7 +57,7 @@ public:
   using reference = typename iterator_traits::reference;
   using container_iterator_type = typename iterator_traits::container_iterator_type;
 
-  explicit container_iterator(const container_iterator_type &iter) : iter_(iter) {}
+  explicit container_iterator(container_iterator_type iter) : iter_(std::move(iter)) {}
 
   reference operator*() const { return iter_->value; }
   pointer operator->() { return &iter_->value; }

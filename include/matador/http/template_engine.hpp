@@ -80,10 +80,12 @@ public:
    */
   static std::string render(const char *format, size_t len, const matador::json &data);
 
-private:
   static std::string render(const std::shared_ptr<detail::template_part>& part, const matador::json &data);
 
   static std::shared_ptr<detail::template_part> build(const std::string &format);
+
+private:
+
   static std::shared_ptr<detail::template_part> build(const char *format, size_t len);
 };
 

@@ -5,7 +5,7 @@
 #include "matador/json/json_mapper.hpp"
 #include "matador/utils/url.hpp"
 
-#include "matador/object/has_many.hpp"
+#include "matador/object/container.hpp"
 #include "matador/object/json_object_mapper.hpp"
 
 #include "matador/orm/persistence.hpp"

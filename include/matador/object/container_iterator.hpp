@@ -1,23 +1,25 @@
-#ifndef OOS_HAS_MANY_VECTOR_HPP
-#define OOS_HAS_MANY_VECTOR_HPP
+#ifndef MATADOR_CONTAINER_ITERATOR_HPP
+#define MATADOR_CONTAINER_ITERATOR_HPP
 
-#include "matador/object/basic_has_many.hpp"
-#include "matador/object/has_many_to_many_item.hpp"
-#include "matador/object/generic_access.hpp"
-#include "matador/object/has_many_item_holder.hpp"
-#include "matador/object/has_many_iterator_traits.hpp"
-
-#include "matador/utils/is_builtin.hpp"
-
-#include <vector>
-#include <algorithm>
+#include "matador/object/container_iterator_traits.hpp"
 
 namespace matador {
 
-/// @cond MATADOR_DEV
-template < class T, template < class ... > class C >
-class has_many;
-/// @endcond
+namespace detail {
+class object_inserter;
+class object_deleter;
+}
+
+class object_serializer;
+
+template < class Type, template < class ... > class ContainerType >
+class basic_container;
+
+template < class Type, template < class ... > class ContainerType >
+class container;
+
+template < class Type, template < class ... > class ContainerType >
+class const_container_iterator;
 
 /**
  * @brief Represents a has many iterator
@@ -25,43 +27,42 @@ class has_many;
  * Represents a has many iterator for a has many
  * relationship with std::vector container
  *
- * @tparam T The type of the iterator/container
+ * @tparam Type The type of the iterator/container
  */
-template < class T >
-class has_many_iterator<T, std::vector>
-  : public has_many_iterator_traits<T, std::vector>
+template < class Type, template < class ... > class ContainerType >
+class container_iterator
 {
 private:
-  typedef has_many_iterator_traits<T, std::vector> traits;
-  typedef typename traits::holder_type container_type;
+  using traits = container_iterator_traits<Type, ContainerType>;
+  using container_holder_type = typename traits::holder_type;
 
 public:
-  typedef has_many_iterator<T, std::vector> self;                             /**< Shortcut value self */
+  typedef container_iterator<Type, ContainerType> self;                             /**< Shortcut value self */
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
   typedef typename traits::holder_type holder_type;                           /**< Shortcut to the relation type */
   typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type */
-  typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the internal container iterator */
-  typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */
+  typedef typename traits::holder_container_iterator holder_container_iterator;             /**< Shortcut to the internal container iterator */
+  typedef typename traits::holder_const_container_iterator holder_const_container_iterator; /**< Shortcut to the internal const container iterator */
 
 public:
   /**
    * @brief Creates an empty has many iterator
    */
-  has_many_iterator() = default;
+  container_iterator() = default;
 
   /**
    * @brief Copy constructs an iterator from another iterator
    *
    * @param iter The iterator to copy from
    */
-  has_many_iterator(const self &iter) : iter_(iter.iter_) {}
+  container_iterator(const self &iter) : iter_(iter.iter_) {}
 
   /**
    * @brief Creates a has many iterator from given internal container iterator
    *
    * @param iter The iterator to create the has many iterator from
    */
-  explicit has_many_iterator(container_iterator iter) : iter_(iter) {}
+  explicit container_iterator(holder_container_iterator iter) : iter_(iter) {}
 
   /**
    * @brief Copy assign an iterator from another iterator
@@ -69,12 +70,12 @@ public:
    * @param iter The iterator to copy from
    * @return A reference to self
    */
-  has_many_iterator& operator=(const self &iter)
+  container_iterator& operator=(const self &iter)
   {
     iter_ = iter.iter_;
     return *this;
   }
-  ~has_many_iterator() = default;
+  ~container_iterator() = default;
 
   /**
    * @brief Compares equality iterator with another iterator.
@@ -221,7 +222,7 @@ public:
   /**
    * Increment given iterator with the given
    * offset.
-   * 
+   *
    * @param offset Increment offset value
    * @param out Iterator to increment
    * @return Incremented iterator
@@ -266,9 +267,9 @@ public:
   holder_type& holder_item() const { return *iter_; }
 
 private:
-  friend class has_many<T, std::vector>;
-  friend class const_has_many_iterator<T, std::vector>;
-  friend class basic_has_many<T, std::vector>;
+  friend class container<Type, ContainerType>;
+  friend class const_container_iterator<Type, ContainerType>;
+  friend class basic_container<Type, ContainerType>;
   friend class object_serializer;
   friend class detail::object_inserter;
   friend class detail::object_deleter;
@@ -278,7 +279,7 @@ private:
     *iter_ = std::move(*i.iter_);
   }
 
-  container_iterator iter_;
+  holder_container_iterator iter_;
 };
 
 /**
@@ -289,53 +290,53 @@ private:
  *
  * @tparam T The type of the iterator/container
  */
-template < class T >
-class const_has_many_iterator<T, std::vector> : public const_has_many_iterator_traits<T, std::vector>
+template < class Type, template < class ... > class ContainerType >
+class const_container_iterator
 {
 private:
-  typedef const_has_many_iterator_traits<T, std::vector> traits;
+  using traits = const_container_iterator_traits<Type, ContainerType>;
 
 public:
-  typedef const_has_many_iterator<T, std::vector> self;                       /**< Shortcut value self */
+  typedef const_container_iterator<Type, ContainerType> self;                       /**< Shortcut value self */
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
   typedef typename traits::holder_type holder_type;                           /**< Shortcut to the relation type */
   typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type*/
-  typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the internal container iterator */
-  typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */
+  typedef typename traits::holder_container_iterator holder_container_iterator;             /**< Shortcut to the internal container iterator */
+  typedef typename traits::holder_const_container_iterator const_holder_container_iterator; /**< Shortcut to the internal const container iterator */
 
 public:
   /**
    * @brief Creates an empty const has many iterator
    */
-  const_has_many_iterator() = default;
+  const_container_iterator() = default;
 
   /**
    * @brief Creates a const has many iterator from given internal container iterator
    *
    * @param iter The iterator to create the const has many iterator from
    */
-  explicit const_has_many_iterator(container_iterator iter) : iter_(iter) {}
+  explicit const_container_iterator(holder_container_iterator iter) : iter_(iter) {}
 
   /**
    * @brief Creates a const has many iterator from given internal const container iterator
    *
    * @param iter The const iterator to create the const has many iterator from
    */
-  explicit const_has_many_iterator(const_container_iterator iter) : iter_(iter) {}
+  explicit const_container_iterator(const_holder_container_iterator iter) : iter_(iter) {}
 
   /**
    * @brief Creates a const has many iterator from a has many iterator
    *
    * @param iter The iterator to create the const has many iterator from
    */
-  const_has_many_iterator(const has_many_iterator<T, std::vector> &iter) : iter_(iter.iter_) {}
+  const_container_iterator(const container_iterator<Type, ContainerType> &iter) : iter_(iter.iter_) {}
 
   /**
    * @brief Copy construct a const_has_many_iterator from given iterator.
    *
    * @param iter Iterator to copy construct from.
    */
-  const_has_many_iterator(const self &iter) : iter_(iter.iter_) {}
+  const_container_iterator(const self &iter) : iter_(iter.iter_) {}
 
   //const_has_many_iterator(self &&iter) = default;
   //const_has_many_iterator& operator=(self &&iter) = default;
@@ -345,7 +346,7 @@ public:
    * @param iter The iterator to be copy assigned from
    * @return Reference to the created iterator
    */
-  const_has_many_iterator& operator=(const self &iter)
+  const_container_iterator& operator=(const self &iter)
   {
     iter_ = iter.iter_;
     return *this;
@@ -360,12 +361,12 @@ public:
    * @param iter The iterator to be copy assigned from
    * @return Reference to the created iterator
    */
-  const_has_many_iterator& operator=(const has_many_iterator<T, std::vector> &iter)
+  const_container_iterator& operator=(const container_iterator<Type, ContainerType> &iter)
   {
     iter_ = iter.iter_;
     return *this;
   }
-  ~const_has_many_iterator() = default;
+  ~const_container_iterator() = default;
 
   /**
    * @brief Compares equality iterator with another iterator.
@@ -512,7 +513,7 @@ public:
   /**
    * Increment given iterator with the given
    * offset.
-   * 
+   *
    * @param offset Increment offset value
    * @param out Iterator to increment
    * @return Incremented iterator
@@ -526,7 +527,7 @@ public:
   /**
    * Return the current value
    * represented by the iterator
-   * 
+   *
    * @return The current value
    */
   const value_type operator->() const { return iter_->value(); }
@@ -550,255 +551,13 @@ private:
   }
 
 private:
-  friend class has_many<T, std::vector>;
-  friend class basic_has_many<T, std::vector>;
+  friend class container<Type, ContainerType>;
+  friend class basic_container<Type, ContainerType>;
   friend class object_serializer;
   friend class detail::object_inserter;
 
-  const_container_iterator iter_;
-};
-
-/**
- * @brief Has many relation class using a std::vector as container
- *
- * The has many relation class uses a std::vector as internal
- * container to store the objects.
- *
- * It provides all main interface functions std::vector provides
- * - insert element at a iterator position
- * - access with bracket operator []
- * - push back an element
- * - erase an element at iterator position
- * - erase a range of elements within first and last iterator position
- * - clear the container
- *
- * All of these methods are wrapped around the std::vector methods plus
- * the modification in the corresponding object_store and notification
- * of the transaction observer
- *
- * The relation holds object_ptr elements as well as scalar data elements.
- *
- * @tparam T The type of the elements
- */
-template<class T>
-class has_many<T, std::vector> : public basic_has_many<T, std::vector>
-{
-public:
-  typedef basic_has_many<T, std::vector> base;                     /**< Shortcut to self */
-  typedef typename base::iterator iterator;                        /**< Shortcut to iterator type */
-  typedef typename base::value_type value_type;                    /**< Shortcut to value_type */
-  typedef typename base::holder_type holder_type;                  /**< Shortcut to holder_type */
-  typedef typename base::size_type size_type;                      /**< Shortcut to size_type */
-
-private:
-  typedef typename base::container_iterator container_iterator;
-
-public:
-  /**
-   * @brief Creates an empty has_many object
-   *
-   * Creates an empty has_many object with a
-   * std::vector as container type
-   */
-  has_many() = default;
-  explicit has_many(size_t /*size*/) {}
-
-  /**
-   * @brief Inserts an element at the given position.
-   *
-   * @param pos The position to insert at
-   * @param value The element to be inserted
-   * @return The iterator at position of inserted element
-   */
-  iterator insert(iterator pos, const value_type &value)
-  {
-    holder_type holder(value, nullptr);
-
-    if (this->ostore_) {
-      this->relation_info_->insert_holder(*this->ostore_, holder, this->owner_);
-
-      this->mark_holder_as_inserted(holder);
-
-      if (!matador::is_builtin<T>::value) {
-        this->relation_info_->insert_value_into_foreign(holder, this->owner_);
-      }
-
-      this->mark_modified_owner_(*this->ostore_, this->owner_);
-    }
-
-    return iterator(this->holder_container_.insert(pos.iter_, holder));
-  }
-
-  /**
-   * @brief Inserts an element at last position.
-   *
-   * @param value The element to be inserted
-   */
-  void push_back(const value_type &value)
-  {
-    insert(this->end(), value);
-  }
-
-  /**
-   * @brief Clears the vector
-   */
-  void clear()
-  {
-    erase(this->begin(), this->end());
-  }
-
-  /**
-   * Removes all values equal to given value
-   * from the container
-   *
-   * @param value Value to remove
-   */
-  iterator remove(const value_type &value)
-  {
-    return remove_if([&value](const value_type &val) {
-      return val == value;
-    });
-  }
-
-  /**
-   * Removes all elements from the container for which
-   * the given predicate returns true.
-   *
-   * @tparam P Type of the predicate
-   * @param predicate Predicate to be evaluated
-   */
-  template<class P>
-  iterator remove_if(P predicate)
-  {
-    auto first = this->holder_container_.begin();
-    auto last = this->holder_container_.end();
-
-    first = find_if(first, last, predicate);
-    if (first != last) {
-      // remove first
-      remove_it(*first);
-      for (auto i = first; ++i != last;) {
-        if (!predicate(i->value())) {
-          *first = std::move(*i);
-          ++first;
-        } else {
-          remove_it(*i);
-        }
-      }
-    }
-    return iterator(this->holder_container_.erase(first, last));
-  }
-
-  /**
-   * @brief Remove the element at given position.
-   *
-   * Erase the element at given position and return the iterator
-   * following the last removed element.
-   *
-   * @param i Iterator to the element to remove
-   * @return Iterator following the last removed element
-   */
-  iterator erase(iterator i)
-  {
-    remove_it(i.holder_item());
-    container_iterator ci = this->holder_container_.erase(i.iter_);
-    return iterator(ci);
-  }
-
-  /**
-   * @brief Remove the elements of given range.
-   *
-   * Remove the elements of the given range identified
-   * by the first and last iterator position. Where the first
-   * iterator is included and the last iterator is not included
-   * [first; last)
-   *
-   * @param start First iterator of the range
-   * @param end Last iterator of the ranges
-   * @return Iterator following the last removed element
-   */
-  iterator erase(iterator start, iterator end)
-  {
-    iterator i = start;
-    if (this->ostore_) {
-      while (i != end) {
-        this->mark_holder_as_removed(i.holder_item());
-
-        if (!matador::is_builtin<T>::value) {
-          this->relation_info_->remove_value_from_foreign(i.holder_item(), this->owner_);
-        }
-        this->relation_info_->remove_holder(*this->ostore_, i.holder_item(), this->owner_);
-        ++i;
-      }
-      this->mark_modified_owner_(*this->ostore_, this->owner_);
-    }
-    return iterator(this->holder_container_.erase(start.iter_, end.iter_));
-  }
-
-  /**
-   * @brief Finds an element matching the predicate
-   *
-   * Finds the first element where the given predicate
-   * matches. If it doesn't match end() is returned
-   *
-   * @tparam P The type of the predicate object
-   * @param predicate The predicate object
-   * @return The found element of end()
-   */
-  template<class P>
-  iterator find_if(P predicate)
-  {
-    return iterator(find_if(this->holder_container_.begin(), this->holder_container_.end(), predicate));
-  }
-
-private:
-  void remove_it(holder_type &holder)
-  {
-    if (this->ostore_) {
-      this->mark_holder_as_removed(holder);
-      if (!matador::is_builtin<T>::value) {
-        this->relation_info_->remove_value_from_foreign(holder, this->owner_);
-      }
-      this->relation_info_->remove_holder(*this->ostore_, holder, this->owner_);
-      this->mark_modified_owner_(*this->ostore_, this->owner_);
-    }
-  }
-
-  template<class InputIt, class P>
-  container_iterator find_if(InputIt first, InputIt last, P predicate)
-  {
-    for (; first != last; ++first) {
-      if (predicate(first->value())) {
-        return first;
-      }
-    }
-    return last;
-  }
-
-private:
-  void insert_holder(const holder_type &holder)
-  {
-    this->mark_holder_as_inserted(const_cast<holder_type &>(holder));
-    this->increment_reference_count(holder.value());
-    this->holder_container_.push_back(holder);
-  }
-
-  void remove_holder(const holder_type &holder)
-  {
-    auto i = std::remove(this->holder_container_.begin(), this->holder_container_.end(), holder);
-    if (i != this->holder_container_.end()) {
-      this->mark_holder_as_removed(*i);
-      this->decrement_reference_count(holder.value());
-      this->holder_container_.erase(i, this->holder_container_.end());
-    } else {
-      std::cout << "couldn't find holder to remove " << *holder.item_proxy() << "\n";
-    }
-  }
-
-private:
-  friend class detail::relation_endpoint_value_inserter<T>;
-  friend class detail::relation_endpoint_value_remover<T>;
+  const_holder_container_iterator iter_;
 };
 
 }
-#endif //OOS_HAS_MANY_VECTOR_HPP
+#endif //MATADOR_CONTAINER_ITERATOR_HPP

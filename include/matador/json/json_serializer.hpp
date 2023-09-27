@@ -82,21 +82,20 @@ public:
 
   // numbers
   template < class V >
-  void on_attribute(const char *id, V &val, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &val, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     write_id(id);
     append(val).append(",");
     newline();
   }
 
-  void on_attribute(const char *id, bool &val);
-  void on_attribute(const char *id, std::string &val);
-  void on_attribute(const char *id, std::string &val, size_t);
-  void on_attribute(const char *id, date &d);
-  void on_attribute(const char *id, time &t);
+  void on_attribute(const char *id, bool &val, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, std::string &val, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, date &d, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, time &t, const field_attributes &/*attr*/ = null_attributes);
 
   template < class V >
-  void on_attribute(const char *id, std::list<V> &cont)
+  void on_attribute(const char *id, std::list<V> &cont, const field_attributes &/*attr*/ = null_attributes)
   {
     write_id(id);
     begin_array();
@@ -106,7 +105,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, std::vector<V> &cont)
+  void on_attribute(const char *id, std::vector<V> &cont, const field_attributes &/*attr*/ = null_attributes)
   {
     write_id(id);
     begin_array();
@@ -116,7 +115,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, std::set<V> &cont)
+  void on_attribute(const char *id, std::set<V> &cont, const field_attributes &/*attr*/ = null_attributes)
   {
     write_id(id);
     begin_array();
@@ -126,7 +125,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, std::unordered_set<V> &cont)
+  void on_attribute(const char *id, std::unordered_set<V> &cont, const field_attributes &/*attr*/ = null_attributes)
   {
     write_id(id);
     begin_array();

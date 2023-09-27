@@ -3,7 +3,7 @@
 
 #include "matador/utils/cascade_type.hpp"
 
-#include "matador/object/has_many.hpp"
+#include "matador/object/container.hpp"
 
 #include <string>
 #include <utility>
@@ -28,9 +28,9 @@ struct movie
 
   unsigned long id;
   std::string title;
-  matador::has_many<e_genre> genres;
+  matador::container<e_genre> genres;
   unsigned short year {};
-  matador::has_many<person> actors;
+  matador::container<person> actors;
   matador::object_ptr<person> director;
 
   template < class Operator >

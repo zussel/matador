@@ -77,8 +77,8 @@ public:
   void on_attribute(const char *id, std::string &x, const field_attributes &/*attr*/ = null_attributes);
   void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);
   void on_has_one(const char *id, identifiable_holder &x, cascade_type);
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, cascade_type) {}
 
   template < class ValueType >
   void add_value(ValueType &val)

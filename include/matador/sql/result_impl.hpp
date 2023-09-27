@@ -16,7 +16,7 @@ namespace matador {
 class date;
 class time;
 class identifiable_holder;
-class abstract_has_many;
+class abstract_container;
 class row;
 
 namespace detail {
@@ -53,8 +53,8 @@ public:
   void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type) override;
   void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type) override;
 
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) override {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) override {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) override {}
+  void on_has_many(const char *, abstract_container &, cascade_type) override {}
 
 private:
   result_impl &impl_;
@@ -132,8 +132,8 @@ public:
   void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type);
   void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type);
 
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, cascade_type) {}
 
   virtual void read_value(const char *id, size_type index, char &value) = 0;
   virtual void read_value(const char *id, size_type index, short &value) = 0;

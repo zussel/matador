@@ -433,7 +433,7 @@ private:
   template < class T >
   friend class object_view_iterator;
   template < class T, template <class ...> class C >
-  friend class has_many;
+  friend class container;
   template < class T,  template < class U = T > class O >
   friend class detail::node_analyzer;
   friend class detail::object_inserter;

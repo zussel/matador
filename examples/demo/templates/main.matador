@@ -6,5 +6,6 @@
     <h1>{{title}}</h1>
 </div>
 <a class="pure-button pure-button-primary" href="/movie">Movies</a>
+<a class="pure-button pure-button-primary" href="/director">Directors</a>
 </body>
 </html>

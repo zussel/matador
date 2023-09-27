@@ -5,7 +5,7 @@
 
 #include "matador/object/prototype_node.hpp"
 #include "matador/object/object_holder.hpp"
-#include "matador/object/basic_has_many.hpp"
+#include "matador/object/container.hpp"
 
 #include "matador/utils/field_attributes.hpp"
 
@@ -97,14 +97,14 @@ public:
   template<class T>
   void on_has_one(const char *, object_ptr<T> &x, cascade_type cascade);
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *id, basic_has_many<T, Container> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, container<T, Container> &x, const char *, const char *, cascade_type cascade)
   {
     on_has_many(id, x, cascade);
   }
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
+  void on_has_many(const char *, container<T, Container> &, cascade_type, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *, basic_has_many<T, Container> &, cascade_type, typename std::enable_if<is_builtin<T>::value>::type* = 0);
+  void on_has_many(const char *, container<T, Container> &, cascade_type, typename std::enable_if<is_builtin<T>::value>::type* = 0);
 
 private:
   bool check_object_count_map() const;
@@ -188,14 +188,14 @@ void object_deleter::on_has_one(const char *, object_ptr<T> &x, cascade_type cas
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_type, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
+void object_deleter::on_has_many(const char *, container<T, C> &x, cascade_type, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
 {
-  typename basic_has_many<T, C>::iterator first = x.begin();
-  typename basic_has_many<T, C>::iterator last = x.end();
+  typename container<T, C>::iterator first = x.begin();
+  typename container<T, C>::iterator last = x.end();
 
   object_proxy *owner = proxy_stack_.top();
   while (first != last) {
-    has_many_item_holder<T> &holder = first.holder_item();
+    container_item_holder<T> &holder = first.holder_item();
     if (x.relation_info_) {
       relations_to_remove_.push_back([&holder,&x, owner]() {
         x.relation_info_->remove_value_from_foreign(holder, owner);
@@ -211,10 +211,10 @@ void object_deleter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_type, typename std::enable_if<matador::is_builtin<T>::value>::type*)
+void object_deleter::on_has_many(const char *, container<T, C> &x, cascade_type, typename std::enable_if<matador::is_builtin<T>::value>::type*)
 {
-  typename basic_has_many<T, C>::iterator first = x.begin();
-  typename basic_has_many<T, C>::iterator last = x.end();
+  typename container<T, C>::iterator first = x.begin();
+  typename container<T, C>::iterator last = x.end();
 
   while (first != last) {
     auto curr_obj = visited_objects_.find(proxy_stack_.top());

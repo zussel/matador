@@ -8,7 +8,7 @@
 
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/object_view.hpp"
-#include "matador/object/basic_has_many.hpp"
+#include "matador/object/container.hpp"
 
 /// @cond MATADOR_DEV
 
@@ -115,7 +115,7 @@ public:
   template<class Value>
   void on_has_one(const char *id, object_ptr<Value> &x, cascade_type);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, basic_has_many<Value, Container> &c, const char *, const char *, cascade_type);
+  void on_has_many(const char *id, container<Value, Container> &c, const char *, const char *, cascade_type);
 
 private:
   void write_id(const char *id);
@@ -154,7 +154,7 @@ private:
         // only serialize id
         begin_object();
         write_id(it->second.first.c_str());
-        json_.append(identifier_serializer_.serialize(*x.primary_key()));
+        json_.append(identifier_serializer_.serialize(x.primary_key()));
         end_object();
         newline();
       }
@@ -242,8 +242,8 @@ void json_object_serializer::on_has_one(const char *id, object_ptr<Value> &x, ca
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_serializer::on_has_many(const char *id, basic_has_many<Value, Container> &c, const char *,
-                                       const char *, cascade_type)
+void json_object_serializer::on_has_many(const char *id, container<Value, Container> &c, const char *,
+                                         const char *, cascade_type)
 {
   write_id(id);
   begin_array();

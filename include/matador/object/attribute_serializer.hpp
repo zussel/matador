@@ -15,7 +15,7 @@ namespace matador {
 /// @cond MATADOR_DEV
 
 class object_holder;
-class abstract_has_many;
+class abstract_container;
 
 class basic_attribute_serializer
 {
@@ -102,8 +102,8 @@ public:
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, cascade_type) {}
 
 private:
   const T &from_;
@@ -162,8 +162,8 @@ public:
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, cascade_type) {}
 
 private:
   bool from_;
@@ -204,8 +204,8 @@ public:
     x = from_;
     this->success_ = true;
   }
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, cascade_type) {}
 
 private:
   const object_ptr<T> &from_;
@@ -240,13 +240,13 @@ public:
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
   void on_has_many(const char *, identifiable_holder &, cascade_type) { }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const char *, const char *, cascade_type)
   {
     x.push_back(from_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, has_many<V, C> &x, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, cascade_type)
   {
     x.push_back(from_);
     this->success_ = true;
@@ -282,13 +282,13 @@ public:
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
   void on_has_many(const char *, identifiable_holder &, cascade_type) { }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const char *, const char *, cascade_type)
   {
     x.push_back(from_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, has_many<V, C> &x, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, cascade_type)
   {
     x.push_back(from_);
     this->success_ = true;
@@ -344,8 +344,8 @@ public:
   }
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, cascade_type) {}
 
 private:
   const char* from_ = nullptr;
@@ -397,8 +397,8 @@ public:
   }
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, cascade_type) {}
 
 private:
   const std::string &from_;
@@ -463,8 +463,8 @@ public:
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char *, object_holder &, cascade_type) {}
   void on_has_one(const char *, object_holder &, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, cascade_type) {}
 
 private:
   T &to_;
@@ -498,8 +498,8 @@ public:
   {
     to_ = x;
   }
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, cascade_type) {}
 
 private:
   object_ptr<T> &to_;
@@ -534,13 +534,13 @@ public:
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
   void on_has_one(const char *, identifiable_holder &, cascade_type) {}
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const char *, const char *, cascade_type)
   {
     x.remove(to_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, has_many<V, C> &x, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, cascade_type)
   {
     x.remove(to_);
     this->success_ = true;
@@ -575,13 +575,13 @@ public:
   void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
   void on_has_many(const char *, identifiable_holder &, cascade_type) {}
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, has_many<V, C> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const char *, const char *, cascade_type)
   {
     x.remove(to_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, has_many<V, C> &x, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, cascade_type)
   {
     x.remove(to_);
     this->success_ = true;
@@ -696,8 +696,8 @@ public:
     success_ = true;
   }
 
-  void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
-  void on_has_many(const char*, abstract_has_many&, cascade_type) {}
+  void on_has_many(const char*, abstract_container&, const char*, const char*, cascade_type) {}
+  void on_has_many(const char*, abstract_container&, cascade_type) {}
 
 private:
   std::string &to_;
@@ -766,8 +766,8 @@ public:
   void on_attribute(const char*, time&, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char*, identifiable_holder &, cascade_type) {}
   void on_has_one(const char*, identifiable_holder &, cascade_type) {}
-  void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
-  void on_has_many(const char*, abstract_has_many&, cascade_type) {}
+  void on_has_many(const char*, abstract_container&, const char*, const char*, cascade_type) {}
+  void on_has_many(const char*, abstract_container&, cascade_type) {}
 
   void on_attribute(const char *id, std::string &from, const field_attributes &attr)
   {

@@ -39,14 +39,10 @@ SET(HEADER
   ../../include/matador/object/object_expression.hpp
   ../../include/matador/object/attribute_serializer.hpp
   ../../include/matador/object/prototype_iterator.hpp
-  ../../include/matador/object/has_many.hpp
   ../../include/matador/object/json_object_mapper.hpp
   ../../include/matador/object/container_type_traits.hpp
   ../../include/matador/object/object_holder.hpp
-  ../../include/matador/object/basic_has_many.hpp
-  ../../include/matador/object/has_many_vector.hpp
-  ../../include/matador/object/has_many_list.hpp
-  ../../include/matador/object/has_many_set.hpp
+  ../../include/matador/object/container.hpp
   ../../include/matador/object/transaction.hpp
   ../../include/matador/object/action_inserter.hpp
   ../../include/matador/object/action_visitor.hpp
@@ -54,9 +50,9 @@ SET(HEADER
   ../../include/matador/object/insert_action.hpp
   ../../include/matador/object/update_action.hpp
   ../../include/matador/object/delete_action.hpp
-  ../../include/matador/object/abstract_has_many.hpp
+  ../../include/matador/object/abstract_container.hpp
   ../../include/matador/object/has_one_to_many_item.hpp
-  ../../include/matador/object/basic_has_many_item_holder.hpp
+  ../../include/matador/object/basic_container_item_holder.hpp
   ../../include/matador/object/identifier_proxy_map.hpp
   ../../include/matador/object/object_proxy_accessor.hpp
   ../../include/matador/object/object_inserter.hpp
@@ -66,12 +62,12 @@ SET(HEADER
   ../../include/matador/object/relation_field_endpoint.hpp
   ../../include/matador/object/has_many_to_many_item.hpp
   ../../include/matador/object/basic_has_many_to_many_item.hpp
-  ../../include/matador/object/has_many_item_holder.hpp
+  ../../include/matador/object/container_item_holder.hpp
   ../../include/matador/object/prototype_info.hpp
   ../../include/matador/object/relation_endpoint_value_inserter.hpp
   ../../include/matador/object/relation_endpoint_value_remover.hpp
   ../../include/matador/object/to_many_endpoints.hpp
-  ../../include/matador/object/has_many_iterator_traits.hpp
+  ../../include/matador/object/container_iterator_traits.hpp
   ../../include/matador/object/json_object_serializer.hpp
   ../../include/matador/object/object_json_serializer.hpp
   ../../include/matador/object/json_object_mapper_serializer.hpp
@@ -79,7 +75,9 @@ SET(HEADER
   ../../include/matador/object/object_deserializer.hpp
   ../../include/matador/object/object_type_registry_entry_base.hpp
   ../../include/matador/object/object_type_registry_entry.hpp
-  ../../include/matador/object/relation_endpoint.hpp ../../include/matador/object/export.hpp ../../include/matador/object/serialization.hpp ../../include/matador/object/type_traits.hpp)
+  ../../include/matador/object/relation_endpoint.hpp ../../include/matador/object/export.hpp ../../include/matador/object/type_traits.hpp
+  ../../include/matador/object/value_type_traits.hpp
+  ../../include/matador/object/container_iterator.hpp)
 
 ADD_LIBRARY(matador-object STATIC ${SOURCES} ${HEADER})
 

@@ -8,7 +8,7 @@ namespace matador {
 enum class cascade_type;
 
 template < class Type, template < class ... > class ContainerType >
-class has_many;
+class container;
 
 class field_attributes;
 
@@ -59,12 +59,12 @@ void belongs_to(Operator &op, const char *id, Type &value, cascade_type cascade)
 }
 
 template<class Operator, class Type, template<class ...> class ContainerType>
-void has_many_(Operator &op, const char *id, has_many<Type, ContainerType> &container, cascade_type cascade) {
+void has_many(Operator &op, const char *id, container<Type, ContainerType> &container, cascade_type cascade) {
   op.on_has_many(id, container, cascade);
 }
 
 template<class Operator, class Type, template<class ...> class ContainerType>
-void has_many_(Operator &op, const char *id, has_many<Type, ContainerType> &container, const char *left_column, const char *right_column, cascade_type cascade) {
+void has_many(Operator &op, const char *id, container<Type, ContainerType> &container, const char *left_column, const char *right_column, cascade_type cascade) {
   op.on_has_many(id, container, left_column, right_column, cascade);
 }
 

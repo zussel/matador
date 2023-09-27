@@ -74,8 +74,8 @@ public:
     }
   }
 
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, cascade_type) {}
 
 private:
   basic_table &table_;

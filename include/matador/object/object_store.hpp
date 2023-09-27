@@ -10,7 +10,6 @@
 #include "matador/object/object_deleter.hpp"
 #include "matador/object/node_analyzer.hpp"
 #include "matador/object/object_serializer.hpp"
-#include "matador/object/basic_has_many.hpp"
 #include "matador/object/transaction.hpp"
 #include "matador/object/object_type_registry_entry.hpp"
 
@@ -729,7 +728,7 @@ private:
   friend class transaction;
   friend class detail::object_type_registry_entry_base;
   template < class T, template <class ...> class C >
-  friend class has_many;
+  friend class container;
 
 
 private:

@@ -2,8 +2,8 @@
 #define MATADOR_RELATION_DATA_HPP
 
 #include "matador/object/object_proxy.hpp"
-#include "matador/object/basic_has_many.hpp"
-#include "matador/object/has_many_item_holder.hpp"
+#include "matador/object/container.hpp"
+#include "matador/object/container_item_holder.hpp"
 #include "matador/object/identifier_proxy_map.hpp"
 
 #include <memory>
@@ -47,12 +47,12 @@ public:
   }
 
   template < template <class ...> class C >
-  void insert_into_container(const identifier &pk, basic_has_many<value_type, C> &container)
+  void insert_into_container(const identifier &pk, container<value_type, C> &container)
   {
     auto range = id_multi_map_.equal_range(pk);
     for (auto i = range.first; i != range.second; ++i)
     {
-      container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
+      container.append(container_item_holder<value_type>(i->second.first, i->second.second));
     }
     id_multi_map_.erase(pk);
   }
@@ -82,12 +82,12 @@ public:
   }
 
   template < template <class ...> class C >
-  void insert_into_container(const identifier &pk, basic_has_many<value_type, C> &container)
+  void insert_into_container(const identifier &pk, container<value_type, C> &container)
   {
     auto range = id_multi_map_.equal_range(pk);
     for (auto i = range.first; i != range.second; ++i)
     {
-      container.append(has_many_item_holder<value_type>(i->second.first, i->second.second));
+      container.append(container_item_holder<value_type>(i->second.first, i->second.second));
       if (!std::is_base_of<basic_has_many_to_many_item, value_type>::value && i->second.second == nullptr) {
         ++(*proxy(i->second.first));
       }

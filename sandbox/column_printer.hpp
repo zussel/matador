@@ -100,8 +100,8 @@ public:
 
   void on_belongs_to(const char * /*id*/, matador::identifiable_holder &/*x*/, matador::cascade_type) override { }
   void on_has_one(const char * /*id*/, matador::identifiable_holder &/*x*/, matador::cascade_type) override { }
-  void on_has_many(const char * /*id*/, matador::abstract_has_many &/*x*/, const char *, const char *, matador::cascade_type) override { }
-  void on_has_many(const char * /*id*/, matador::abstract_has_many &/*x*/, matador::cascade_type) override { }
+  void on_has_many(const char * /*id*/, matador::abstract_container &/*x*/, const char *, const char *, matador::cascade_type) override { }
+  void on_has_many(const char * /*id*/, matador::abstract_container &/*x*/, matador::cascade_type) override { }
 
 private:
   template<typename Type>

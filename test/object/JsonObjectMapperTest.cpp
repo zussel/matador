@@ -12,7 +12,7 @@ JsonObjectMapperTest::JsonObjectMapperTest()
 {
   add_test("simple", [this] { test_simple(); }, "test simple json object mapper");
   add_test("derived", [this] { test_derived(); }, "test derived json object mapper");
-  add_test("has_many", [this] { test_has_many(); }, "test has many json object mapper");
+  add_test("container", [this] { test_has_many(); }, "test has many json object mapper");
   add_test("has_many_builtin", [this] { test_has_many_builtin(); }, "test has many builtin json object mapper");
   add_test("array", [this] { test_array(); }, "test array of objects json object mapper");
   add_test("to_json_string", [this] { test_to_json(); }, "test object to json");

@@ -12,7 +12,7 @@ namespace matador {
 class time;
 class date;
 class identifiable_holder;
-class abstract_has_many;
+class abstract_container;
 
 enum class cascade_type;
 

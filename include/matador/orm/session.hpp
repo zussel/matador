@@ -3,7 +3,7 @@
 
 #include "matador/orm/export.hpp"
 
-#include "matador/object/has_many.hpp"
+#include "matador/object/container.hpp"
 #include "matador/object/object_view.hpp"
 #include "matador/object/transaction.hpp"
 
@@ -98,7 +98,7 @@ public:
   template < class T, class V >
   object_ptr<T> get(V id)
   {
-    auto pk = make_identifier(id);
+    auto pk = identifier{id};
 
     return store().get<T>(pk);
   }

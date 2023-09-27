@@ -9,7 +9,7 @@
 #include "matador/json/json_parser.hpp"
 #include "matador/utils/date.hpp"
 
-#include "matador/object/has_many.hpp"
+#include "matador/object/container.hpp"
 
 namespace matador {
 namespace detail {
@@ -52,9 +52,9 @@ public:
   template<class Value>
   void on_has_one(const char *id, object_ptr<Value> &x, cascade_type);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, has_many<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, container<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, has_many<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, container<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
 
 private:
   details::mapper_runtime &runtime_data_;
@@ -193,25 +193,25 @@ void json_object_mapper_serializer::on_has_one(const char *id, object_ptr<Value>
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_mapper_serializer::on_has_many(const char *id, has_many<Value, Container> &x, const char *,
-                                              const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type*)
+void json_object_mapper_serializer::on_has_many(const char *id, container<Value, Container> &x, const char *,
+                                                const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.object_key != id) {
     return;
   }
 
-  basic_json_mapper<typename has_many_item_holder<Value>::object_type, json_object_mapper_serializer> mapper;
+  basic_json_mapper<typename container_item_holder<Value>::value_type, json_object_mapper_serializer> mapper;
   auto elements = mapper.array_from_string(runtime_data_.json_array_cursor, false);
   for (auto &&item : elements) {
-    typename has_many_item_holder<Value>::value_type val(item);
-    x.append(has_many_item_holder<Value>(val, nullptr));
+    typename container_item_holder<Value>::value_type val(item);
+    x.append(container_item_holder<Value>(val, nullptr));
   }
   runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_mapper_serializer::on_has_many(const char *id, has_many<Value, Container> &x, const char *,
-                                              const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type*)
+void json_object_mapper_serializer::on_has_many(const char *id, container<Value, Container> &x, const char *,
+                                                const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.key != id) {
     return;

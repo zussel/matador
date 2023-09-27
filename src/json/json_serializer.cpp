@@ -2,16 +2,6 @@
 
 namespace matador {
 
-void json_serializer::on_attribute(const char *id, std::string &val, size_t)
-{
-  if (val.empty()) {
-    return;
-  }
-  write_id(id);
-  append(val).append(",");
-  newline();
-}
-
 void json_serializer::on_primary_key(const char *id, std::string &pk, size_t /*size*/)
 {
   write_id(id);
@@ -24,14 +14,14 @@ void json_serializer::on_revision(const char *id, unsigned long long int &rev)
   on_attribute(id, rev);
 }
 
-void json_serializer::on_attribute(const char *id, bool &val)
+void json_serializer::on_attribute(const char *id, bool &val, const field_attributes &/*attr*/)
 {
   write_id(id);
   append(val).append(",");
   newline();
 }
 
-void json_serializer::on_attribute(const char *id, std::string &val)
+void json_serializer::on_attribute(const char *id, std::string &val, const field_attributes &/*attr*/)
 {
   if (val.empty()) {
     return;
@@ -41,7 +31,7 @@ void json_serializer::on_attribute(const char *id, std::string &val)
   newline();
 }
 
-void json_serializer::on_attribute(const char *id, date &d)
+void json_serializer::on_attribute(const char *id, date &d, const field_attributes &/*attr*/)
 {
   if (d.julian_date() == 0) {
     return;
@@ -51,7 +41,7 @@ void json_serializer::on_attribute(const char *id, date &d)
   newline();
 }
 
-void json_serializer::on_attribute(const char *id, time &t)
+void json_serializer::on_attribute(const char *id, time &t, const field_attributes &/*attr*/)
 {
   if (t.get_time_info().seconds_since_epoch == 0 || t.get_time_info().milliseconds == 0) {
     return;

@@ -4,7 +4,7 @@
 //#include "matador/utils/basic_identifier.hpp"
 #include "matador/utils/identifier.hpp"
 
-#include "matador/object/basic_has_many_item_holder.hpp"
+#include "matador/object/basic_container_item_holder.hpp"
 
 #include <unordered_map>
 
@@ -62,7 +62,7 @@ namespace detail {
 //};
 
 using t_identifier_map = std::unordered_map<identifier, object_proxy*, id_pk_hash, std::equal_to<identifier>>;
-typedef std::unordered_multimap<identifier, std::shared_ptr<basic_has_many_item_holder>, id_pk_hash, std::equal_to<identifier>> t_identifier_multimap;
+typedef std::unordered_multimap<identifier, std::shared_ptr<basic_container_item_holder>, id_pk_hash, std::equal_to<identifier>> t_identifier_multimap;
 
 /// @endcond
 
