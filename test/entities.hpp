@@ -3,7 +3,7 @@
 
 #include "matador/utils/base_class.hpp"
 #include "matador/object/object_ptr.hpp"
-#include "matador/object/has_many.hpp"
+#include "matador/object/container.hpp"
 
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
@@ -57,7 +57,7 @@ private:
 class ObjectItemList
 {
 public:
-    typedef matador::has_many<ObjectItem<datatypes>> object_item_list_t;
+    typedef matador::container<ObjectItem<datatypes>> object_item_list_t;
     typedef typename object_item_list_t::iterator iterator;
     typedef typename object_item_list_t::const_iterator const_iterator;
 
@@ -73,7 +73,7 @@ public:
     {
         matador::access::primary_key(op, "id", id);
         matador::access::attribute(op, "name", name);
-        matador::access::has_many_(op, "object_item_list", items, "list_id", "object_item_id", matador::cascade_type::NONE);
+      matador::access::has_many(op, "object_item_list", items, "list_id", "object_item_id", matador::cascade_type::NONE);
     }
 
     iterator begin() { return items.begin(); }
@@ -120,7 +120,7 @@ public:
 class book_list
 {
 public:
-    typedef matador::has_many<book> book_list_t;
+    typedef matador::container<book> book_list_t;
     typedef book_list_t::size_type size_type;
     typedef book_list_t::iterator iterator;
     typedef book_list_t::const_iterator const_iterator;
@@ -132,7 +132,7 @@ public:
     void process(Operator &op)
     {
         matador::access::primary_key(op, "id", id_);
-        matador::access::has_many_(op, "books", book_list_, "book_list_id", "book_id", matador::cascade_type::NONE);
+      matador::access::has_many(op, "books", book_list_, "book_list_id", "book_id", matador::cascade_type::NONE);
     }
 
     void add(const matador::object_ptr<book> &b)
@@ -190,7 +190,7 @@ struct department
 {
     unsigned long id{};
     std::string name;
-    matador::has_many<employee> employees;
+    matador::container<employee> employees;
 
     department() = default;
     explicit department(std::string n)
@@ -204,7 +204,7 @@ struct department
     {
         matador::access::primary_key(op, "id", id);
         matador::access::attribute(op, "name", name, 255);
-        matador::access::has_many_(op, "employee"    , employees, "department", "id", matador::cascade_type::NONE);
+      matador::access::has_many(op, "employee", employees, "department", "id", matador::cascade_type::NONE);
         //                    name of table, container,  name of member
         //                                   to serialize
     }
@@ -223,10 +223,10 @@ public:
     void process(Operator &op)
     {
         matador::access::process(op, *matador::base_class<person>(this));
-        matador::access::has_many_(op, "student_course", courses, "student_id", "course_id", matador::cascade_type::NONE);
+      matador::access::has_many(op, "student_course", courses, "student_id", "course_id", matador::cascade_type::NONE);
     }
 
-    matador::has_many<course> courses;
+    matador::container<course> courses;
 };
 
 class course
@@ -241,12 +241,12 @@ public:
     {
         matador::access::primary_key(op, "id", id);
         matador::access::attribute(op, "title", title, 1023);
-        matador::access::has_many_(op, "student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
+      matador::access::has_many(op, "student_course", students, "student_id", "course_id", matador::cascade_type::ALL);
     }
 
     unsigned long id{};
     std::string title;
-    matador::has_many<student> students;
+    matador::container<student> students;
 };
 
 struct address;
@@ -335,7 +335,7 @@ class album
 {
 public:
     typedef matador::object_ptr <track> track_ptr;
-    typedef matador::has_many<track> track_vector_t;
+    typedef matador::container<track> track_vector_t;
     typedef track_vector_t::size_type size_type;
     typedef track_vector_t::iterator iterator;
     typedef track_vector_t::const_iterator const_iterator;
@@ -356,7 +356,7 @@ public:
     {
         matador::access::primary_key(op, "id", id_);
         matador::access::attribute(op, "name", name_);
-        matador::access::has_many_(op, "tracks", tracks_, matador::cascade_type::ALL);
+      matador::access::has_many(op, "tracks", tracks_, matador::cascade_type::ALL);
     }
 
     unsigned long id() { return id_; }
@@ -391,7 +391,7 @@ class playlist
 {
 public:
     typedef matador::object_ptr<track> track_ref;
-    typedef matador::has_many<track> track_list_t;
+    typedef matador::container<track> track_list_t;
     typedef track_list_t::size_type size_type;
     typedef track_list_t::iterator iterator;
     typedef track_list_t::const_iterator const_iterator;
@@ -413,8 +413,8 @@ public:
     {
         matador::access::primary_key(op, "id", id_);
         matador::access::attribute(op, "name", name_);
-        matador::access::has_many_(op, "playlist_tracks", tracks_, matador::cascade_type::ALL);
-        matador::access::has_many_(op, "backup_tracks", backup_tracks_, matador::cascade_type::ALL);
+      matador::access::has_many(op, "playlist_tracks", tracks_, matador::cascade_type::ALL);
+      matador::access::has_many(op, "backup_tracks", backup_tracks_, matador::cascade_type::ALL);
     }
 
     std::string name() const { return name_; }
@@ -480,7 +480,7 @@ public:
 class children_vector
 {
 public:
-    typedef matador::has_many<child> children_vector_t;
+    typedef matador::container<child> children_vector_t;
 
     children_vector() = default;
     explicit children_vector(std::string n) : name(std::move(n)) {}
@@ -491,7 +491,7 @@ public:
     {
         matador::access::primary_key(op, "id", id);
         matador::access::attribute(op, "name", name);
-        matador::access::has_many_(op, "children", children, "vector_id", "child_id", matador::cascade_type::ALL);
+      matador::access::has_many(op, "children", children, "vector_id", "child_id", matador::cascade_type::ALL);
     }
 
     unsigned long id{};
@@ -502,7 +502,7 @@ public:
 class children_list
 {
 public:
-    typedef matador::has_many<child, std::list> children_list_t;
+    typedef matador::container<child, std::list> children_list_t;
 
     children_list() = default;
     explicit children_list(std::string n) : name(std::move(n)) {}
@@ -513,7 +513,7 @@ public:
     {
         matador::access::primary_key(op, "id", id);
         matador::access::attribute(op, "name", name);
-        matador::access::has_many_(op, "children", children, "list_id", "child_id", matador::cascade_type::ALL);
+      matador::access::has_many(op, "children", children, "list_id", "child_id", matador::cascade_type::ALL);
     }
 
     unsigned long id{};
@@ -525,7 +525,25 @@ template < class T, template <class ...> class C, size_t Size = 0 >
 class many_builtins
 {
 public:
-    typedef matador::has_many<T, C> element_list_t;
+    typedef matador::container<T, C> element_list_t;
+
+public:
+    unsigned long id{};
+    element_list_t elements{};
+
+    template < class Operator >
+    void process(Operator &op)
+    {
+        matador::access::primary_key(op, "id", id);
+      matador::access::has_many(op, "elements", elements, "list_id", "value", matador::cascade_type::ALL);
+    }
+};
+
+template < template <class ...> class C, size_t Size >
+class many_builtins<std::string, C, Size>
+{
+public:
+    typedef matador::container<std::string, C> element_list_t;
 
 public:
     unsigned long id{};
@@ -535,7 +553,7 @@ public:
     void process(Operator &op)
     {
         matador::access::primary_key(op, "id", id);
-        matador::access::has_many_(op, "elements", elements, "list_id", "value", matador::cascade_type::ALL);
+      matador::access::has_many(op, "elements", elements, "list_id", "value", matador::cascade_type::ALL);
     }
 };
 
@@ -585,16 +603,16 @@ class order
 public:
     unsigned long id{};
     std::string name;
-    matador::has_many<location> sources;
-    matador::has_many<location> destinations;
+    matador::container<location> sources;
+    matador::container<location> destinations;
 
     template < class Operator >
     void process(Operator &op)
     {
         matador::access::primary_key(op, "id", id);
         matador::access::attribute(op, "name", name, 255);
-        matador::access::has_many_(op, "sources", sources, matador::cascade_type::ALL);
-        matador::access::has_many_(op, "destinations", destinations, matador::cascade_type::ALL);
+      matador::access::has_many(op, "sources", sources, matador::cascade_type::ALL);
+      matador::access::has_many(op, "destinations", destinations, matador::cascade_type::ALL);
     }
 
 };

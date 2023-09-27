@@ -129,13 +129,13 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<V, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, container<V, C> &x, const char *, const char *, cascade_type cascade)
   {
     on_has_many(id, x, cascade);
   }
 
   template<class V, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<V, C> &x, cascade_type)
+  void on_has_many(const char *id, container<V, C> &x, cascade_type)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);
@@ -165,7 +165,7 @@ public:
 
     if (is_same_type<V>(data->second)) {
       // correct type
-      auto rdata = std::static_pointer_cast<detail::relation_data<typename basic_has_many<V, C>::object_type>>(data->second);
+      auto rdata = std::static_pointer_cast<detail::relation_data<typename container<V, C>::value_type>>(data->second);
 
       rdata->insert_into_container(proxy_->pk(), x);
     }
@@ -276,8 +276,8 @@ public:
 
     left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
   }
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
-  void on_has_many(const char *, abstract_has_many &, cascade_type) { }
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) { }
+  void on_has_many(const char *, abstract_container &, cascade_type) { }
 
 private:
   template<class V>
@@ -400,8 +400,8 @@ public:
   template < class V >
   void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade);
 
-  void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) { }
-  void on_has_many(const char *, abstract_has_many &, cascade_type) { }
+  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) { }
+  void on_has_many(const char *, abstract_container &, cascade_type) { }
 
 private:
   template < class V >

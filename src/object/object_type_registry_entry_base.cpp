@@ -50,8 +50,6 @@ void null_object_type_registry_entry::restore(object_proxy *, byte_buffer &, obj
 
 void null_object_type_registry_entry::backup(object_proxy *, byte_buffer &, object_serializer &) const {}
 
-void null_object_type_registry_entry::create_object(object_proxy *) const {}
-
 void null_object_type_registry_entry::insert_object(object_proxy *) const {}
 
 void null_object_type_registry_entry::delete_object(object_proxy *) const {}

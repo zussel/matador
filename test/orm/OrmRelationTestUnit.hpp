@@ -1,7 +1,3 @@
-//
-// Created by sascha on 16.03.17.
-//
-
 #ifndef OOS_ORMRELATIONTESTUNIT_HPP
 #define OOS_ORMRELATIONTESTUNIT_HPP
 

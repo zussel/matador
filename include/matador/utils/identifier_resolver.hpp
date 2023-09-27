@@ -12,7 +12,7 @@
 namespace matador {
 
 class identifiable_holder;
-class abstract_has_many;
+class abstract_container;
 
 /// @cond MATADOR_DEV
 
@@ -72,9 +72,9 @@ public:
   void on_belongs_to(const char*, identifiable_holder&, cascade_type) {}
 
   void on_has_one(const char*, identifiable_holder&, cascade_type) {}
-  void on_has_many(const char *, abstract_has_many&, const char *, const char *, cascade_type) {}
+  void on_has_many(const char *, abstract_container&, const char *, const char *, cascade_type) {}
 
-  void on_has_many(const char *, abstract_has_many&, cascade_type) {}
+  void on_has_many(const char *, abstract_container&, cascade_type) {}
 
 private:
   identifier id_;

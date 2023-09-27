@@ -7,7 +7,7 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/field_attributes.hpp"
 
-#include "matador/object/basic_has_many.hpp"
+#include "matador/object/container.hpp"
 
 #include <string>
 #include <cstring>
@@ -96,23 +96,23 @@ public:
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<T, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, container<T, C> &x, const char *, const char *, cascade_type cascade)
   {
     on_has_many(id, x, cascade);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<T, C> &x, cascade_type cascade)
+  void on_has_many(const char *id, container<T, C> &x, cascade_type cascade)
   {
     std::string id_oid(id);
     id_oid += ".oid";
-    typename basic_has_many<T, C>::size_type s{};
+    typename container<T, C>::size_type s{};
     // deserialize container size
     on_attribute(id, s);
 
     x.reset();
 
-    for (typename basic_has_many<T, C>::size_type i = 0; i < s; ++i) {
+    for (typename container<T, C>::size_type i = 0; i < s; ++i) {
 
       // deserialize all items
       unsigned long long oid = 0;
@@ -124,10 +124,10 @@ public:
         insert_proxy(proxy);
       }
 
-      typename has_many_item_holder<T>::object_type val;
+      typename container_item_holder<T>::value_type val;
       process_has_many_item(val, cascade);
 
-      x.append(has_many_item_holder<T>(val, proxy));
+      x.append(container_item_holder<T>(val, proxy));
     }
   }
 

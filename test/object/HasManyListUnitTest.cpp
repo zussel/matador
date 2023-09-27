@@ -1,7 +1,3 @@
-//
-// Created by sascha on 1/19/16.
-//
-
 #include "matador/object/object_store.hpp"
 
 #include "HasManyListUnitTest.hpp"
@@ -15,15 +11,15 @@ using namespace hasmanylist;
 HasManyListUnitTest::HasManyListUnitTest()
   : unit_test("list", "has many list unit tests")
 {
-  add_test("join", std::bind(&HasManyListUnitTest::test_join_table, this), "test list join table");
-  add_test("const_iterator", std::bind(&HasManyListUnitTest::test_const_iterator, this), "test list const iterator");
-  add_test("remove_scalar", std::bind(&HasManyListUnitTest::test_remove_scalar, this), "test list remove scalar elements");
-  add_test("remove_object", std::bind(&HasManyListUnitTest::test_remove_object, this), "test list remove object elements");
-  add_test("erase_scalar", std::bind(&HasManyListUnitTest::test_erase_scalar, this), "test list erase scalar elements");
-  add_test("erase_object", std::bind(&HasManyListUnitTest::test_erase_object, this), "test list erase object elements");
-  add_test("int", std::bind(&HasManyListUnitTest::test_integer, this), "test list of ints");
-  add_test("string", std::bind(&HasManyListUnitTest::test_string, this), "test list of strings");
-  add_test("varchar", std::bind(&HasManyListUnitTest::test_varchar, this), "test list of varchars");
+  add_test("join", [this] { test_join_table(); }, "test list join table");
+  add_test("const_iterator", [this] { test_const_iterator(); }, "test list const iterator");
+  add_test("remove_scalar", [this] { test_remove_scalar(); }, "test list remove scalar elements");
+  add_test("remove_object", [this] { test_remove_object(); }, "test list remove object elements");
+  add_test("erase_scalar", [this] { test_erase_scalar(); }, "test list erase scalar elements");
+  add_test("erase_object", [this] { test_erase_object(); }, "test list erase object elements");
+  add_test("int", [this] { test_integer(); }, "test list of ints");
+  add_test("string", [this] { test_string(); }, "test list of strings");
+  add_test("varchar", [this] { test_varchar(); }, "test list of varchars");
 }
 
 void HasManyListUnitTest::test_join_table()

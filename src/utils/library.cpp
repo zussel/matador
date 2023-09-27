@@ -37,7 +37,7 @@ bool library::load()
 #elif defined(__APPLE__)
   handle_ = dlopen(std::string("lib" + lib_ + ".dylib").c_str(), RTLD_LAZY);
 #else
-  handle_ = dlopen(std::string("lib" + lib_ + ".so").c_str(), RTLD_LAZY);
+  handle_ = dlopen(std::string("./lib" + lib_ + ".so").c_str(), RTLD_LAZY);
 #endif
   if (!handle_) {
 #if defined(_MSC_VER) || defined(__MINGW32__)

@@ -1,7 +1,7 @@
 #ifndef MATADOR_RELATION_ENDPOINT_VALUE_INSERTER_HPP
 #define MATADOR_RELATION_ENDPOINT_VALUE_INSERTER_HPP
 
-#include "matador/object/has_many_item_holder.hpp"
+#include "matador/object/container_item_holder.hpp"
 #include "matador/object/object_proxy_accessor.hpp"
 
 #include "matador/utils/field_attributes.hpp"
@@ -15,7 +15,7 @@ namespace matador {
 /// @cond MATADOR_DEV
 
 template < class V, template < class ... > class C >
-class has_many;
+class container;
 
 class object_holder;
 
@@ -26,7 +26,7 @@ class relation_endpoint_value_inserter : object_proxy_accessor
 {
 public:
   template < class Owner >
-  void insert(const object_ptr<Owner> &owner, const std::string &field, has_many_item_holder<Value> holder);
+  void insert(const object_ptr<Owner> &owner, const std::string &field, container_item_holder<Value> holder);
 
   template < class T >
   void serialize(T &x)
@@ -49,7 +49,7 @@ public:
   template < class T >
   void on_has_one(const char *, T &, cascade_type) {}
   template < template < class ... > class Container >
-  void on_has_many(const char *id, has_many<Value, Container> &x, cascade_type)
+  void on_has_many(const char *id, container<Value, Container> &x, cascade_type)
   {
     if (field_ != id) {
       return;
@@ -59,18 +59,18 @@ public:
 
 
   template < template < class ... > class Container >
-  void on_has_many(const char *id, has_many<Value, Container> &x, const char*, const char*, cascade_type cascade)
+  void on_has_many(const char *id, container<Value, Container> &x, const char*, const char*, cascade_type cascade)
   {
     on_has_many(id, x, cascade);
   }
   template < class T, template < class ... > class Container >
-  void on_has_many(const char *, has_many<T, Container> &, cascade_type) {}
+  void on_has_many(const char *, container<T, Container> &, cascade_type) {}
   template < class T, template < class ... > class Container >
-  void on_has_many(const char *, has_many<T, Container> &, const char*, const char*, cascade_type) {}
+  void on_has_many(const char *, container<T, Container> &, const char*, const char*, cascade_type) {}
 
 private:
   std::string field_;
-  has_many_item_holder<Value> holder_;
+  container_item_holder<Value> holder_;
 };
 
 /// @endcond
@@ -78,7 +78,7 @@ private:
 template<class Value>
 template<class Owner>
 void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &owner, const std::string &field,
-                                                     has_many_item_holder <Value> holder)
+                                                     container_item_holder <Value> holder)
 {
   field_ = field;
   holder_ = std::move(holder);

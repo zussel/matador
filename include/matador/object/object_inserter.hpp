@@ -4,7 +4,7 @@
 #include "matador/object/export.hpp"
 
 #include "matador/object/prototype_node.hpp"
-#include "matador/object/basic_has_many.hpp"
+#include "matador/object/container.hpp"
 
 #include "matador/utils/field_attributes.hpp"
 
@@ -61,13 +61,13 @@ public:
   void on_has_one(const char *, object_ptr<T> &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<T, C> &x, const char*, const char*, cascade_type cascade)
+  void on_has_many(const char *id, container<T, C> &x, const char*, const char*, cascade_type cascade)
   {
     on_has_many(id, x, cascade);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<T, C> &, cascade_type);
+  void on_has_many(const char *id, container<T, C> &, cascade_type);
 
 private:
   template < class T >
@@ -90,7 +90,7 @@ private:
   void insert_object(object_holder &x, const std::type_index &type_index, cascade_type cascade);
   void insert_proxy(object_proxy *proxy);
 
-  object_proxy* initialize_has_many(abstract_has_many &x);
+  object_proxy* initialize_has_many(abstract_container &x);
 
   template < class T, class ItemHolderType >
   void insert_has_many_item(const ItemHolderType &item,
@@ -138,7 +138,7 @@ void object_inserter::on_has_one(const char *, object_ptr<T> &x, cascade_type ca
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::on_has_many(const char *, basic_has_many<T, C> &x, cascade_type cascade)
+void object_inserter::on_has_many(const char *, container<T, C> &x, cascade_type cascade)
 {
   auto *proxy = initialize_has_many(x);
 

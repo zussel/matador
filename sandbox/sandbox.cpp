@@ -101,12 +101,12 @@ public:
     return out;
   }
 
-  template < class T >
-  void serialize(T &serializer)
+  template < class Operator >
+  void process(Operator &op)
   {
-    serializer.on_primary_key("id", id_);
-    serializer.on_attribute("name", name_, 255);
-    serializer.on_attribute("color", color_);
+    matador::access::primary_key(op, "id", id_);
+    matador::access::attribute(op, "name", name_, 255);
+    matador::access::attribute(op, "color", color_);
   }
 };
 

@@ -34,7 +34,7 @@ struct person
   std::string name;
   std::string ip;
   unsigned int age = 0;
-  has_many<std::string> colors;
+  container<std::string> colors{255};
 
   person() = default;
   person(long i, std::string n)
@@ -47,7 +47,7 @@ struct person
     matador::access::attribute(op, "name", name, 255);
     matador::access::attribute(op, "ip", ip, 255);
     matador::access::attribute(op, "age", age);
-    matador::access::has_many_(op, "person_color", colors, "person_id",   "color",      matador::cascade_type::ALL);
+    matador::access::has_many(op, "person_color", colors, "person_id", "color", matador::cascade_type::ALL);
     //                             table name     member   left column   right column  cascade type
   }
 };

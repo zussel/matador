@@ -164,7 +164,7 @@ public:
 
   void* create() const override
   {
-    return new T(this->get()->left_column(), this->get()->right_column());
+    return this->prototype_->clone();
   }
 };
 

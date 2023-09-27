@@ -8,7 +8,7 @@
 #include "matador/utils/field_attributes.hpp"
 
 #include "matador/object/object_holder.hpp"
-#include "matador/object/basic_has_many.hpp"
+#include "matador/object/container.hpp"
 
 #include <string>
 #include <cstring>
@@ -90,21 +90,21 @@ public:
   void on_has_one(const char* id, object_holder &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<T, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, container<T, C> &x, const char *, const char *, cascade_type cascade)
   {
     on_has_many(id, x, cascade);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<T, C> &x, cascade_type cascade)
+  void on_has_many(const char *id, container<T, C> &x, cascade_type cascade)
   {
     std::string id_oid(id);
     id_oid += ".oid";
-    typename basic_has_many<T, C>::size_type s = x.size();
+    typename container<T, C>::size_type s = x.size();
     on_attribute(id, s);
 
-    typename basic_has_many<T, C>::iterator first = x.begin();
-    typename basic_has_many<T, C>::iterator last = x.end();
+    typename container<T, C>::iterator first = x.begin();
+    typename container<T, C>::iterator last = x.end();
 
     while (first != last) {
       unsigned long long oid(0);

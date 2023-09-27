@@ -311,10 +311,10 @@ private:
   friend class detail::object_deleter;
   friend class detail::object_inserter;
   friend class object_store;
-  friend class abstract_has_many;
+  friend class abstract_container;
   friend class detail::object_proxy_accessor;
-  template < class T, class Enable >
-  friend class has_many_item_holder;
+  template < class T >
+  friend class container_item_holder;
   template < class L, class R >
   friend class has_many_to_many_item;
 

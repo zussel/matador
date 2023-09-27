@@ -3,13 +3,16 @@
 
 #include "matador/object/export.hpp"
 
-#include "matador/object/object_holder.hpp"
 #include "matador/object/object_proxy_accessor.hpp"
+
+#include "matador/utils/identifier.hpp"
 
 #include <functional>
 #include <string>
 
 namespace matador {
+
+class object_holder;
 
 /**
  * @brief Detail namespace of the open object store.
@@ -21,7 +24,7 @@ namespace detail {
 class object_inserter;
 }
 
-class basic_has_many_item_holder;
+class basic_container_item_holder;
 template < class T >
 class object_ptr;
 class object_store;
@@ -29,10 +32,10 @@ class object_proxy;
 
 /// @cond MATADOR_DEV
 
-class MATADOR_OBJECT_API abstract_has_many : public detail::object_proxy_accessor
+class MATADOR_OBJECT_API abstract_container : public detail::object_proxy_accessor
 {
 public:
-  typedef std::function<void(object_store&, object_proxy*)> mark_modified_owner_func; /**< Shortcut to mark modified owner function */
+  using mark_modified_owner_func = std::function<void(object_store&, object_proxy*)>; /**< Shortcut to mark modified owner function */
 
 public:
   typedef size_t size_type;
@@ -63,8 +66,8 @@ protected:
   }
   void decrement_reference_count(const object_holder &holder) const;
 
-  void mark_holder_as_inserted(basic_has_many_item_holder &holder) const;
-  void mark_holder_as_removed(basic_has_many_item_holder &holder) const;
+  static void mark_holder_as_inserted(basic_container_item_holder &holder) ;
+  static void mark_holder_as_removed(basic_container_item_holder &holder) ;
 
 protected:
   friend class detail::object_inserter;

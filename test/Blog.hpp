@@ -4,7 +4,7 @@
 #include <matador/utils/time.hpp>
 #include <matador/utils/base_class.hpp>
 
-#include <matador/object/has_many.hpp>
+#include <matador/object/container.hpp>
 
 namespace blog_detail {
 
@@ -34,7 +34,7 @@ struct post;
 struct author : public blog_detail::person
 {
   // many to one
-  matador::has_many<post> posts;
+  matador::container<post> posts;
 
   author() = default;
   author(const std::string &n, const matador::date &birthday)
@@ -45,7 +45,7 @@ struct author : public blog_detail::person
   void process(Operator &op)
   {
     matador::access::process(op, *matador::base_class<person>(this));
-    matador::access::has_many_(op, "post", posts, "author", "id", matador::cascade_type::NONE);
+    matador::access::has_many(op, "post", posts, "author", "id", matador::cascade_type::NONE);
   }
 };
 
@@ -54,7 +54,7 @@ struct category
   unsigned long id{};
   std::string name;
   std::string description;
-  matador::has_many<post> posts;
+  matador::container<post> posts;
 
   category() = default;
   explicit category(const std::string &n) : category(n, "") {}
@@ -68,7 +68,7 @@ struct category
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name, 255);
     matador::access::attribute(op, "description", description);
-    matador::access::has_many_(op, "post_category", posts, "category_id", "post_id", matador::cascade_type::NONE);
+    matador::access::has_many(op, "post_category", posts, "category_id", "post_id", matador::cascade_type::NONE);
   }
 };
 
@@ -102,21 +102,18 @@ struct post
   std::string title;
   matador::object_ptr<author> writer;
   matador::time created_at;
-  matador::has_many<category> categories;
-  matador::has_many<comment> comments;
-//  matador::has_many<matador::varchar<255>> tags;
-  matador::has_many<std::string> tags;
-  // Todo: Implement new behavior for varchar:
-//  matador::has_many<std::string, 255> tags;
+  matador::container<category> categories;
+  matador::container<comment> comments;
+  matador::container<std::string> tags{255};
   std::string content;
 
   post() = default;
 
-  post(std::string ttle,
-       const matador::object_ptr<author> &autr,
-       std::string cntnt
+  post(std::string title,
+       const matador::object_ptr<author> &a,
+       std::string content
   )
-    : title(std::move(ttle)), writer(autr), content(std::move(cntnt))
+    : title(std::move(title)), writer(a), content(std::move(content))
   {}
 
   post(std::string ttle,
@@ -136,9 +133,9 @@ struct post
     matador::access::attribute(op, "title", title, 255);
     matador::access::belongs_to(op, "author", writer, matador::cascade_type::NONE);
     matador::access::attribute(op, "created_at", created_at);
-    matador::access::has_many_(op, "post_category", categories, "category_id", "post_id", matador::cascade_type::INSERT);
-    matador::access::has_many_(op, "comment", comments, "post", "id", matador::cascade_type::ALL);
-    matador::access::has_many_(op, "post_tag", tags, "post_id", "tag", matador::cascade_type::ALL);
+    matador::access::has_many(op, "post_category", categories, "category_id", "post_id", matador::cascade_type::INSERT);
+    matador::access::has_many(op, "comment", comments, "post", "id", matador::cascade_type::ALL);
+    matador::access::has_many(op, "post_tag", tags, "post_id", "tag", matador::cascade_type::ALL);
     matador::access::attribute(op, "content", content);
   }
 };

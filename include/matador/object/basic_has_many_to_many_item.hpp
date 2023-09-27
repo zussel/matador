@@ -20,6 +20,8 @@ protected:
   virtual ~basic_has_many_to_many_item() = default;
 
 public:
+  virtual basic_has_many_to_many_item* clone() const = 0;
+
   std::string left_column() const;
   std::string right_column() const;
 

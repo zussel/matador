@@ -50,13 +50,13 @@ public:
   void on_has_one(const char*, identifiable_holder&, cascade_type) { }
 
   template<class V, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<V, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, basic_container<V, C> &x, const char *, const char *, cascade_type cascade)
   {
     on_has_many(id, x, cascade);
   }
 
   template<class V, template<class ...> class C>
-  void on_has_many(const char *id, basic_has_many<V, C> &, cascade_type)
+  void on_has_many(const char *id, basic_container<V, C> &, cascade_type)
   {
     if (owner_id_ != id) {
       return;

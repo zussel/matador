@@ -31,12 +31,12 @@ void basic_relation_endpoint::decrement_reference_count(const object_holder &hol
   --(*(this->proxy(holder)));
 }
 
-void basic_relation_endpoint::mark_holder_as_inserted(basic_has_many_item_holder &holder) const
+void basic_relation_endpoint::mark_holder_as_inserted(basic_container_item_holder &holder) const
 {
   holder.is_inserted_ = true;
 }
 
-void basic_relation_endpoint::mark_holder_as_removed(basic_has_many_item_holder &holder) const
+void basic_relation_endpoint::mark_holder_as_removed(basic_container_item_holder &holder) const
 {
   holder.is_inserted_ = false;
 }

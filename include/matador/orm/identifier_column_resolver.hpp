@@ -13,7 +13,7 @@
 namespace matador {
 
 class object_holder;
-class abstract_has_many;
+class abstract_container;
 
 namespace detail {
 
@@ -46,8 +46,8 @@ public:
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_belongs_to(const char*, identifiable_holder&, cascade_type) {}
   void on_has_one(const char*, identifiable_holder&, cascade_type) {}
-  void on_has_many(const char*, abstract_has_many&, const char*, const char*, cascade_type) {}
-  void on_has_many(const char*, abstract_has_many&, cascade_type) {}
+  void on_has_many(const char*, abstract_container&, const char*, const char*, cascade_type) {}
+  void on_has_many(const char*, abstract_container&, cascade_type) {}
 
 private:
   column col_;

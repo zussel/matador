@@ -1,7 +1,7 @@
 #ifndef OOS_HAS_MANY_LIST_HPP
 #define OOS_HAS_MANY_LIST_HPP
 
-#include "matador/object/has_many.hpp"
+#include "matador/object/container.hpp"
 
 namespace hasmanylist {
 
@@ -25,7 +25,7 @@ public:
 class owner
 {
 public:
-  typedef matador::has_many<item, std::list> item_list_t;
+  typedef matador::container<item, std::list> item_list_t;
   unsigned long id{};
   std::string name;
   item_list_t items;
@@ -38,7 +38,7 @@ public:
   {
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name);
-    matador::access::has_many_(op, "owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
+    matador::access::has_many(op, "owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
   }
 };
 }

@@ -15,7 +15,7 @@ namespace matador {
 class time;
 class date;
 class identifiable_holder;
-class abstract_has_many;
+class abstract_container;
 
 /**
  * @brief A base class to serialize objects
@@ -194,7 +194,7 @@ public:
    * @param item_id The name of the item field
    * @param cascade The cascade type
    */
-  virtual void on_has_many(const char *, abstract_has_many &, const char *, const char *, cascade_type) = 0;
+  virtual void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) = 0;
 
   /**
    * @fn void serialize(const char *id, abstract_has_many &x, cascade_type cascade)
@@ -204,7 +204,7 @@ public:
    * @param x The value to be serialized
    * @param cascade The cascade type
    */
-  virtual void on_has_many(const char *, abstract_has_many &, cascade_type) = 0;
+  virtual void on_has_many(const char *, abstract_container &, cascade_type) = 0;
 };
 
 }

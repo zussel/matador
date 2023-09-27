@@ -18,7 +18,7 @@ PrototypeTreeTestUnit::PrototypeTreeTestUnit()
   add_test("remove", [this] { test_remove(); }, "test remove element");
   add_test("erase", [this] { test_erase(); }, "test erase element");
   add_test("clear", [this] { test_clear(); }, "test clear prototype tree");
-  add_test("has_many", [this] { test_has_many(); }, "test insert has_many relation");
+  add_test("container", [this] { test_has_many(); }, "test insert container relation");
   add_test("decrement", [this] { test_decrement(); }, "test decrement iterator");
   add_test("count", [this] { test_count(); }, "test count of prototypes");
   add_test("child_of", [this] { test_child_of(); }, "test child of element");

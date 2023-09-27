@@ -6,7 +6,7 @@
 
 #include "matador/unit/unit_test.hpp"
 
-#include "matador/object/has_many.hpp"
+#include "matador/object/container.hpp"
 #include "../datatypes.hpp"
 #include "../entities.hpp"
 
@@ -32,7 +32,7 @@ public:
 class owner
 {
 public:
-  typedef matador::has_many<item> item_vector_t;
+  typedef matador::container<item> item_vector_t;
   unsigned long id{};
   std::string name;
   item_vector_t items;
@@ -45,7 +45,7 @@ public:
   {
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name);
-    matador::access::has_many_(op, "owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
+    matador::access::has_many(op, "owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
   }
 };
 

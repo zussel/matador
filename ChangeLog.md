@@ -47,7 +47,7 @@ was updated.
 
  - Make session class more intuitive [#87](https://github.com/zussel/matador/issues/87)
  - Increase stability for SQLite backend [#91](https://github.com/zussel/matador/issues/91)
- - Removed varchar class (use it only as a has_many helper) [#104](https://github.com/zussel/matador/issues/104)
+ - Removed varchar class (use it only as a container helper) [#104](https://github.com/zussel/matador/issues/104)
  - Handle int64/uint64 values [#106](https://github.com/zussel/matador/issues/106)
  - Update documentation [#103](https://github.com/zussel/matador/issues/103)
 

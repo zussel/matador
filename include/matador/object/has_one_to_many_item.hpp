@@ -16,31 +16,30 @@ namespace matador {
 
 /**
  * Left is owner type
- * Right is value type
+ * Right is foreign type
  *
- * @tparam L owner type
- * @tparam R value type
+ * @tparam LeftType owner type
+ * @tparam RightType foreign type
  * @tparam Enable
  */
-template<class L, class R, typename Enable = void>
-class has_one_to_many_item;
+//template<class LeftType, class RightType, typename Enable = void>
+//class has_one_to_many_item;
 
-template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<!is_builtin<R>::value>::type>
-  : public basic_has_many_to_many_item
+template<class LeftType, class RightType>
+class has_one_to_many_item_foreign : public basic_has_many_to_many_item
 {
 public:
-  typedef L left_value_type;
-  typedef R right_value_type;
+  using left_value_type = LeftType;
+  using right_value_type = RightType;
 
-  has_one_to_many_item() = default;
+  has_one_to_many_item_foreign() = default;
 
-  has_one_to_many_item(const std::string &left_column, const std::string &right_column)
+  has_one_to_many_item_foreign(const std::string &left_column, const std::string &right_column)
     : basic_has_many_to_many_item(left_column, right_column)
   {}
 
-  has_one_to_many_item(const object_ptr<L> &left, const object_ptr<R> &right,
-                       const std::string &left_column, const std::string &right_column)
+  has_one_to_many_item_foreign(const object_ptr<LeftType> &left, const object_ptr<RightType> &right,
+                               const std::string &left_column, const std::string &right_column)
     : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(right)
   {}
 
@@ -51,38 +50,45 @@ public:
     matador::access::belongs_to(op, this->right_column().c_str(), right_, matador::cascade_type::NONE);
   }
 
-  object_ptr<L> left() const
+  basic_has_many_to_many_item *clone() const override
+  {
+    return new has_one_to_many_item_foreign(left_column(), right_column());
+  }
+
+  object_ptr<LeftType> left() const
   {
     return left_;
   }
 
-  object_ptr<R> right() const
+  object_ptr<RightType> right() const
   {
     return right_;
   }
 
 private:
-  object_ptr<L> left_;
-  object_ptr<R> right_;
+  object_ptr<LeftType> left_;
+  object_ptr<RightType> right_;
 };
 
 
-template<class L, class R>
-class has_one_to_many_item<L, R, typename std::enable_if<is_builtin<R>::value>::type>
-  : public basic_has_many_to_many_item
+template<class LeftType, class RightType>
+class has_one_to_many_item_scalar : public basic_has_many_to_many_item
 {
 public:
-  typedef L left_value_type;
-  typedef R right_value_type;
+  using left_value_type = LeftType;
+  using right_value_type = RightType;
 
-  explicit has_one_to_many_item(const field_attributes &attr = {})
+  has_one_to_many_item_scalar() = default;
+
+  explicit has_one_to_many_item_scalar(const field_attributes &attr)
   : right_attributes_(attr) {}
 
-  has_one_to_many_item(const std::string &left_column, const std::string &right_column)
+  has_one_to_many_item_scalar(const std::string &left_column, const std::string &right_column, const field_attributes &attr)
     : basic_has_many_to_many_item(left_column, right_column)
+    , right_attributes_(attr)
   {}
 
-  has_one_to_many_item(const object_ptr<L> &left, const R &right,
+  has_one_to_many_item_scalar(const object_ptr<LeftType> &left, const RightType &right,
                        const std::string &left_column, const std::string &right_column)
     : basic_has_many_to_many_item(left_column, right_column), left_(left), right_(right)
   {}
@@ -94,19 +100,24 @@ public:
     matador::access::attribute(op, this->right_column().c_str(), right_, right_attributes_);
   }
 
-  object_ptr<L> left() const
+  basic_has_many_to_many_item *clone() const override
+  {
+    return new has_one_to_many_item_scalar(left_column(), right_column(), right_attributes_);
+  }
+
+  object_ptr<LeftType> left() const
   {
     return left_;
   }
 
-  R right() const
+  RightType right() const
   {
     return right_;
   }
 
 private:
-  object_ptr<L> left_;
-  R right_ = {};
+  object_ptr<LeftType> left_;
+  RightType right_ = {};
   field_attributes right_attributes_;
 };
 

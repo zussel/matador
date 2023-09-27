@@ -66,7 +66,7 @@ struct person
   long id;   // primary key
   std::string name;
   date birthday;
-  has_many<std::string> colors;
+  container<std::string> colors;
   
   person() = default;
   person(long i, std::string n)
@@ -78,7 +78,7 @@ struct person
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name, 255);
     matador::access::attribute(op, "birthday", birthday);
-    matador::access::has_many(op,              // operator
+    matador::access::container(op,              // operator
                               "person_color",  // relation table name
                               colors,          // class member
                               "person_id",     // left column in relation table

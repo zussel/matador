@@ -5,7 +5,7 @@
 #include "matador/utils/date.hpp"
 
 #include "matador/object/json_object_mapper.hpp"
-#include "matador/object/has_many.hpp"
+#include "matador/object/container.hpp"
 
 #include "matador/orm/persistence.hpp"
 #include "matador/orm/session.hpp"
@@ -25,7 +25,7 @@ struct person
   unsigned long id{};   // primary key
   std::string name;
   date birthday;
-  has_many<std::string> colors {};
+  container<std::string> colors {255};
 
   person() = default;
   person(long i, std::string n)
@@ -38,11 +38,11 @@ struct person
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name, 255);
     matador::access::attribute(op, "birthday", birthday);
-    matador::access::has_many_(op, "person_color",  // relation table name
-                                  colors,          // class member
-                                  "person_id",     // left column in relation table
-                                  "color",         // right column in relation table
-                                  matador::cascade_type::ALL); // cascade type
+    matador::access::has_many(op, "person_color",  // relation table name
+                              colors,          // class member
+                              "person_id",     // left column in relation table
+                              "color",         // right column in relation table
+                              matador::cascade_type::ALL); // cascade type
   }
 };
 }

@@ -39,11 +39,6 @@ public:
     serializer.backup(proxy->obj<T>(), &buffer);
   }
 
-  void create_object(object_proxy *) const override
-  {
-
-  }
-
   void insert_object(object_proxy *proxy) const override
   {
     matador::access::process(inserter(), *proxy->obj<T>());

@@ -97,7 +97,7 @@ void relation_resolver<T, typename std::enable_if<
   // else
   // insert into relation data
   if (left_table_ptr_->is_loaded()) {
-    has_many_item_holder<V> value(x, nullptr);
+    container_item_holder<V> value(x, nullptr);
     left_endpoint_->insert_value_into_foreign(value, left_proxy_);
   } else {
     auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);
@@ -151,7 +151,7 @@ void relation_resolver<T, typename std::enable_if<
     }
 
     if (right_table_ptr_->is_loaded()) {
-      has_many_item_holder<right_value_type > holder(right_proxy, proxy_);
+      container_item_holder<right_value_type > holder(right_proxy, proxy_);
       right_endpoint_->insert_value_into_foreign(holder, left_proxy_);
     } else {
       auto rptr = std::static_pointer_cast<table<right_value_type>>(right_table_ptr_);
@@ -181,7 +181,7 @@ void relation_resolver<T, typename std::enable_if<
   // else
   // insert into relation data
   if (left_table_ptr_->is_loaded()) {
-    has_many_item_holder<V> value(x, nullptr);
+    container_item_holder<V> value(x, nullptr);
     left_endpoint_->insert_value_into_foreign(value, left_proxy_);
   } else {
     auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);
@@ -210,7 +210,7 @@ void relation_resolver<T, typename std::enable_if<
 >::type>::on_attribute(const char *, std::string &x, const field_attributes &/*attr*/)
 {
   if (left_table_ptr_->is_loaded()) {
-    has_many_item_holder<typename T::right_value_type> value(x, nullptr);
+    container_item_holder<typename T::right_value_type> value(x, nullptr);
     left_endpoint_->insert_value_into_foreign(value, left_proxy_);
   } else {
     auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);

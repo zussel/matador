@@ -10,7 +10,7 @@
 
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/object_view.hpp"
-#include "matador/object/has_many.hpp"
+#include "matador/object/container.hpp"
 
 #include <string>
 
@@ -89,7 +89,7 @@ public:
   }
 
   template < class V, template <class ...> class Container >
-  void on_has_many(const char *id, basic_has_many<V, Container> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *id, basic_container<V, Container> &x, const char *, const char *, cascade_type)
   {
     json array = json::array();
     object_json_serializer ojs;
