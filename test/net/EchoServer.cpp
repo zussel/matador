@@ -19,7 +19,7 @@ void EchoServer::open()
 
 }
 
-int EchoServer::handle() const
+socket_type EchoServer::handle() const
 {
   return stream_.id();
 }

@@ -2,6 +2,7 @@
 #define MATADOR_FDSET_HPP
 
 #include "matador/net/export.hpp"
+#include "matador/net/os.hpp"
 
 #include <set>
 #include <functional>
@@ -53,21 +54,21 @@ public:
    * @param fd Requested fd
    * @return True if fd is set
    */
-  bool is_set(int fd) const;
+  bool is_set(socket_type fd) const;
 
   /**
    * Clears the giveb fd from the set.
    *
    * @param fd fd to clear
    */
-  void clear(int fd);
+  void clear(socket_type fd);
 
   /**
    * Sets the given fd in the fd set.
    *
    * @param fd fd to set
    */
-  void set(int fd);
+  void set(socket_type fd);
 
   /**
    * Returns the highest fd plus one.
@@ -75,7 +76,7 @@ public:
    *
    * @return Highest fd plus one
    */
-  int maxp1() const;
+  socket_type maxp1() const;
 
   /**
    * Returns the current number of fd in the set
@@ -99,7 +100,7 @@ public:
   fd_set* get();
 
 private:
-  typedef std::set<int, std::greater<> > int_set_t;
+  typedef std::set<socket_type, std::greater<> > int_set_t;
   int_set_t max_fd_set_;
 
   fd_set fd_set_ = {};

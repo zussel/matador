@@ -28,7 +28,7 @@ socket_base<P>::socket_base(const peer_type &peer)
 }
 
 template < class P >
-typename socket_base<P>::socket_type socket_base<P>::open(const protocol_type &protocol)
+socket_type socket_base<P>::open(const protocol_type &protocol)
 {
   return open(protocol.family(), protocol.type(), protocol.protocol());
 }
@@ -51,9 +51,9 @@ bool socket_base<P>::is_open() const
 }
 
 template < class P >
-typename socket_base<P>::socket_type socket_base<P>::release()
+socket_type socket_base<P>::release()
 {
-  int tmp_fd = sock_;
+  auto tmp_fd = sock_;
   sock_ = 0;
   return tmp_fd;
 }
@@ -61,7 +61,7 @@ typename socket_base<P>::socket_type socket_base<P>::release()
 template < class P >
 bool socket_base<P>::connect(const typename protocol_type::peer &p)
 {
-  return ::connect(sock_, p.data(), p.size()) == 0;
+  return ::connect(sock_, p.data(), static_cast<int>(p.size())) == 0;
 }
 
 template < class P >
@@ -69,7 +69,7 @@ void socket_base<P>::non_blocking(bool nb)
 {
 #ifdef WIN32
   unsigned long nonblock = nb ? 0 : 1;
-  // fcntl doesn't do the right thing, but the simular ioctl does
+  // fcntl doesn't do the right thing, but the similar ioctl does
   // warning: is that still true? and does it the right thing for
   // set blocking as well?
   if (ioctlsocket(sock_, FIONBIO, &nonblock) != 0) {
@@ -149,7 +149,7 @@ bool socket_base<P>::options(int name, bool value)
 }
 
 template < class P >
-typename socket_base<P>::socket_type socket_base<P>::id() const
+socket_type socket_base<P>::id() const
 {
   return sock_;
 }
@@ -177,14 +177,14 @@ void socket_base<P>::assign(socket_type sock)
 }
 
 template < class P >
-typename socket_base<P>::socket_type socket_base<P>::open(int family, int type, int protocol)
+socket_type socket_base<P>::open(int family, int type, int protocol)
 {
   sock_ = ::socket(family, type, protocol);
   return sock_;
 }
 
 template < class P >
-typename socket_base<P>::socket_type connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
+socket_type connect(socket_stream<P> &stream, const char* hostname, unsigned short port)
 {
   char portstr[6];
   sprintf(portstr, "%d", port);
@@ -202,26 +202,26 @@ typename socket_base<P>::socket_type connect(socket_stream<P> &stream, const cha
 
   head = res;
 
-  typename socket_base<P>::socket_type connfd = 0;
-  typename socket_base<P>::socket_type ret = 0;
+  socket_type conn_fd = 0;
+  socket_type ret = 0;
   do {
-    connfd = ::socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    if (connfd < 0) {
+    conn_fd = ::socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    if (!is_valid_socket(conn_fd)) {
       // error, try next one
       continue;
     }
 
-    ret = ::connect(connfd, res->ai_addr, res->ai_addrlen);
+    ret = ::connect(conn_fd, res->ai_addr, res->ai_addrlen);
     if (ret == 0) {
       // success
-      stream.assign(connfd);
+      stream.assign(conn_fd);
       break;
 //      } else {
 //        throw_logic_error("couldn't execute: " << strerror(errno));
     }
 
     // bind error, close and try next one
-    os::shutdown(connfd, os::shutdown_type::READ_WRITE);
+    os::shutdown(conn_fd, os::shutdown_type::READ_WRITE);
   } while ( (res = res->ai_next) != nullptr);
 
   if (res == nullptr) {
@@ -234,17 +234,17 @@ typename socket_base<P>::socket_type connect(socket_stream<P> &stream, const cha
 }
 
 template < class P >
-typename socket_base<P>::socket_type connect(socket_stream<P> &stream, peer_base<P> endpoint)
+int connect(socket_stream<P> &stream, peer_base<P> endpoint)
 {
   auto pt = endpoint.protocol();
 
-  typename socket_base<P>::socket_type fd = ::socket(pt.family(), pt.type(), pt.protocol());
+  auto fd = ::socket(pt.family(), pt.type(), pt.protocol());
 
-  if (fd < 0) {
-    return fd;
+  if (!is_valid_socket(fd)) {
+    return static_cast<int>(fd);
   }
 
-  typename socket_base<P>::socket_type ret = ::connect(fd, endpoint.data(), endpoint.size());
+  auto ret = ::connect(fd, endpoint.data(), static_cast<int>(endpoint.size()));
   if (ret == 0) {
     stream.assign(fd);
   } else {

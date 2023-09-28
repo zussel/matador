@@ -27,9 +27,9 @@ void SocketTest::test_socket_v4()
   ts2.non_blocking(true);
   UNIT_ASSERT_TRUE(ts2.non_blocking());
 
-  int fd = ts1.id();
+  auto fd = ts1.id();
 
-  int released_fd = ts1.release();
+  auto released_fd = ts1.release();
 
   UNIT_ASSERT_EQUAL(fd, released_fd);
   UNIT_ASSERT_EQUAL(0, ts1.id());

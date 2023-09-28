@@ -51,8 +51,8 @@ void IOServiceTest::test_acceptor()
   // send and verify received data
   tcp::socket client;
 
-  int ret = client.open(tcp::v4());
-  UNIT_ASSERT_FALSE(ret < 0);
+  auto ret = client.open(tcp::v4());
+  UNIT_ASSERT_TRUE(matador::is_valid_socket(ret));
   auto srv = tcp::peer(address::v4::loopback(), 7780);
   ret = client.connect(srv);
   UNIT_ASSERT_FALSE(ret < 0);

@@ -183,8 +183,8 @@ void HttpServerTest::send_request(unsigned int port, const http::request &reques
 {
   tcp::socket client;
 
-  int ret = client.open(tcp::v4());
-  UNIT_ASSERT_FALSE(ret < 0);
+  auto ret = client.open(tcp::v4());
+  UNIT_ASSERT_TRUE(matador::is_valid_socket(ret));
   auto srv = tcp::peer(address::v4::loopback(), port);
   ret = client.connect(srv);
   UNIT_ASSERT_FALSE(ret < 0);

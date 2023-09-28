@@ -2,6 +2,7 @@
 #define MATADOR_HANDLER_HPP
 
 #include "matador/net/export.hpp"
+#include "matador/net/os.hpp"
 
 #include <memory>
 #include <string>
@@ -37,7 +38,7 @@ public:
    *
    * @return The socket fd
    */
-  virtual int handle() const = 0;
+  virtual socket_type handle() const = 0;
 
   /**
    * Interface handling incoming data

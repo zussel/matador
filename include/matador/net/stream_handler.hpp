@@ -50,7 +50,7 @@ public:
   stream_handler(tcp::socket sock, tcp::peer endpoint, handler_creator *creator, t_init_handler init_handler);
 
   void open() override;
-  int handle() const override;
+  socket_type handle() const override;
   void on_input() override;
   void on_output() override;
   void on_except() override {}

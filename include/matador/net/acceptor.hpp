@@ -87,7 +87,7 @@ public:
    *
    * @return Listening socket fd
    */
-  int handle() const override;
+  socket_type handle() const override;
 
   /**
    * Is called when a new connection wants to

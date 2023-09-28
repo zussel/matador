@@ -260,7 +260,7 @@ int reactor::select(struct timeval *timeout, select_fdsets& fd_sets)
 {
   log_.debug("calling select; waiting for io events");
   return ::select(
-    fd_sets.maxp1() + 1,
+    static_cast<int>(fd_sets.maxp1()) + 1,
     fd_sets.read_set().get(),
     fd_sets.write_set().get(),
     fd_sets.except_set().get(),

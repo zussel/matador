@@ -31,7 +31,7 @@ public:
    *
    * @return Highest fd value over all sets
    */
-  int maxp1() const;
+  socket_type maxp1() const;
 
   /**
    * Returns the fdset identified by the given type

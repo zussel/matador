@@ -47,7 +47,7 @@ socket_interrupter::~socket_interrupter()
   server_.close();
 }
 
-int socket_interrupter::socket_id() const
+socket_type socket_interrupter::socket_id() const
 {
   return server_.id();
 }
@@ -63,9 +63,9 @@ bool socket_interrupter::reset()
 {
   buffer_view buf(consumer_);
   log_.debug("reading interrupt byte");
-  int nread = server_.receive(buf);
+  auto nread = server_.receive(buf);
   bool interrupted = nread > 0;
-  while (nread == (int)buf.capacity()) {
+  while (nread == static_cast<ssize_t>(buf.capacity())) {
     nread = server_.receive(buf);
   }
   return interrupted;

@@ -29,7 +29,7 @@ void stream_handler::open()
   init_handler_(endpoint_, *this);
 }
 
-int stream_handler::handle() const
+socket_type stream_handler::handle() const
 {
   return stream_.id();
 }
@@ -44,13 +44,13 @@ void stream_handler::on_input()
     char error_buffer[1024];
     log_.error("%s: error on read: %s", name().c_str(), os::strerror(errno, error_buffer, 1024));
     is_ready_to_read_ = false;
-    on_read_((int)len, len);
+    on_read_(static_cast<long>(len), static_cast<long>(len));
     on_close();
   } else {
     log_.debug("%s: received %d bytes (data: %s)", name().c_str(), len, read_buffer_.data());
     read_buffer_.bump(len);
     is_ready_to_read_ = false;
-    on_read_(0, len);
+    on_read_(0, static_cast<long>(len));
   }
 }
 
@@ -71,7 +71,7 @@ void stream_handler::on_output()
       log_.error("%s: error on write: %s", name().c_str(), os::strerror(errno, error_buffer, 1024));
       on_close();
       is_ready_to_write_ = false;
-      on_write_((int)len, len);
+      on_write_(static_cast<long>(len), static_cast<long>(len));
     } else if (len < 0 && errno == EWOULDBLOCK) {
       log_.debug("%s: sent %d bytes (blocked)", name().c_str(), bytes_total);
     } else {
@@ -86,7 +86,7 @@ void stream_handler::on_output()
   auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
   log_.debug("%s: sent %d bytes (%dms)", name().c_str(), bytes_total, elapsed);
   is_ready_to_write_ = false;
-  on_write_(0, bytes_total);
+  on_write_(0, static_cast<long>(bytes_total));
 }
 
 void stream_handler::on_close()
