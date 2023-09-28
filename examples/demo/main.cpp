@@ -1,3 +1,4 @@
+#include "services/director_service.hpp"
 #include "services/movie_service.hpp"
 #include "pages/directors_page.hpp"
 #include "pages/movie_page.hpp"
@@ -12,7 +13,6 @@
 #include "matador/orm/session.hpp"
 
 #include "matador/http/http_server.hpp"
-#include "matador/http/request.hpp"
 #include "matador/http/static_file_service.hpp"
 
 #include "matador/utils/os.hpp"
@@ -55,6 +55,7 @@ int main(int /*argc*/, char* /*argv*/[])
     movie_page moviepage(server, p);
     directors_page directorpage(server, p);
     movie_service mservice(server, p);
+    director_service dservice(server, p);
 
     // start server
     server.run();

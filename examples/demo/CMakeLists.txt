@@ -13,10 +13,14 @@ SET (DEMO_SOURCES
   models/user.hpp
   pages/movie_page.cpp
   pages/movie_page.hpp
+  pages/main_page.cpp
+  pages/main_page.hpp
   models/movie.hpp
   models/person.hpp
   services/movie_service.cpp
-  services/movie_service.hpp pages/main_page.cpp pages/main_page.hpp
+  services/movie_service.hpp
+  services/director_service.cpp
+  services/director_service.hpp
   pages/crud_page.hpp
   pages/directors_page.cpp
   pages/directors_page.hpp)

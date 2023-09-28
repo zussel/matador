@@ -26,7 +26,7 @@ struct movie
     : title(std::move(t)), year(y), director(dir)
   {}
 
-  unsigned long id;
+  unsigned long id{};
   std::string title;
   matador::container<e_genre> genres;
   unsigned short year {};

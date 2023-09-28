@@ -8,7 +8,7 @@
 
 struct person
 {
-  unsigned long id;
+  unsigned long id{};
   std::string name;
   matador::date birthday;
 

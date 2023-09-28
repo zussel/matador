@@ -13,7 +13,7 @@
             </div>
             <div class="pure-controls">
                 <button type="submit" class="pure-button pure-button-primary">Submit</button>
-                <a class="button-error pure-button" href="/movie">Cancel</a>
+                <a class="button-error pure-button" href="/director">Cancel</a>
             </div>
         </fieldset>
     </form>
