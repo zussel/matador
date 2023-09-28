@@ -17,7 +17,7 @@ void serve_static_files_at(const std::string &path, server &s)
     }
 
     // check if there is '..' in path
-    if (path.empty() || path[0] != os::DIR_SEPARATOR || path.find("..") != std::string::npos) {
+    if (path.empty() || path[0] != '/' || path.find("..") != std::string::npos) {
       return response::bad_request();
     }
 
