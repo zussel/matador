@@ -11,18 +11,18 @@ using namespace matador;
 DateTestUnit::DateTestUnit()
   : unit_test("date", "date test unit")
 {
-  add_test("create", std::bind(&DateTestUnit::test_create, this), "create date");
-  add_test("parse", std::bind(&DateTestUnit::test_parse, this), "parse date");
-  add_test("julian", std::bind(&DateTestUnit::test_julian_date, this), "julian date");
-  add_test("init", std::bind(&DateTestUnit::test_initialize, this), "initialize date");
-  add_test("invalid", std::bind(&DateTestUnit::test_invalid, this), "invalid date");
-  add_test("copy", std::bind(&DateTestUnit::test_copy, this), "copy date");
-  add_test("assign", std::bind(&DateTestUnit::test_assign, this), "assign date");
-  add_test("compare", std::bind(&DateTestUnit::test_compare, this), "compare date");
-  add_test("set", std::bind(&DateTestUnit::test_set, this), "set date");
-  add_test("modify", std::bind(&DateTestUnit::test_modify, this), "modify date");
-  add_test("difference", std::bind(&DateTestUnit::test_difference, this), "difference date");
-  add_test("to_string", std::bind(&DateTestUnit::test_to_string, this), "to string");
+  add_test("create", [this] { test_create(); }, "create date");
+  add_test("parse", [this] { test_parse(); }, "parse date");
+  add_test("julian", [this] { test_julian_date(); }, "julian date");
+  add_test("init", [this] { test_initialize(); }, "initialize date");
+  add_test("invalid", [this] { test_invalid(); }, "invalid date");
+  add_test("copy", [this] { test_copy(); }, "copy date");
+  add_test("assign", [this] { test_assign(); }, "assign date");
+  add_test("compare", [this] { test_compare(); }, "compare date");
+  add_test("set", [this] { test_set(); }, "set date");
+  add_test("modify", [this] { test_modify(); }, "modify date");
+  add_test("difference", [this] { test_difference(); }, "difference date");
+  add_test("to_string", [this] { test_to_string(); }, "to string");
 }
 
 void DateTestUnit::test_create()
