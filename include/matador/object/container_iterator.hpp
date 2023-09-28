@@ -13,9 +13,6 @@ class object_deleter;
 class object_serializer;
 
 template < class Type, template < class ... > class ContainerType >
-class basic_container;
-
-template < class Type, template < class ... > class ContainerType >
 class container;
 
 template < class Type, template < class ... > class ContainerType >
@@ -269,7 +266,6 @@ public:
 private:
   friend class container<Type, ContainerType>;
   friend class const_container_iterator<Type, ContainerType>;
-  friend class basic_container<Type, ContainerType>;
   friend class object_serializer;
   friend class detail::object_inserter;
   friend class detail::object_deleter;
@@ -552,7 +548,6 @@ private:
 
 private:
   friend class container<Type, ContainerType>;
-  friend class basic_container<Type, ContainerType>;
   friend class object_serializer;
   friend class detail::object_inserter;
 

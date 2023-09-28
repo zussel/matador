@@ -89,7 +89,7 @@ public:
   }
 
   template < class V, template <class ...> class Container >
-  void on_has_many(const char *id, basic_container<V, Container> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *id, container<V, Container> &x, const char *, const char *, cascade_type)
   {
     json array = json::array();
     object_json_serializer ojs;
