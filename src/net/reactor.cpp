@@ -398,14 +398,14 @@ void reactor::deactivate_handler(const reactor::handler_ptr &h, event_type ev)
 
 void reactor::interrupt()
 {
-  log_.info("interrupting reactor");
+  log_.debug("interrupting reactor");
   std::lock_guard<std::mutex> l(mutex_);
   interrupter_.interrupt();
 }
 
 void reactor::interrupt_without_lock()
 {
-  log_.info("interrupting reactor");
+  log_.debug("interrupting reactor");
   interrupter_.interrupt();
 }
 
