@@ -233,6 +233,7 @@ void reactor::prepare_select_bits(time_t& timeout, select_fdsets& fd_sets) const
 
 void reactor::remove_deleted()
 {
+  std::lock_guard<std::mutex> l(mutex_);
   while (!handlers_to_delete_.empty()) {
     auto h = handlers_to_delete_.front();
     handlers_to_delete_.pop_front();
