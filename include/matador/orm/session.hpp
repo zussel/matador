@@ -64,6 +64,21 @@ public:
   }
 
   /**
+   * Inserts an object of type Type into the object_store.
+   * On successful insertion an object_ptr element with the
+   * inserted object is returned.
+   *
+   * @tparam Type Type of the object to insert
+   * @tparam Args Argument types of the constructor arguments
+   * @param args Arguments to construct the object
+   * @return Inserted object contained by an object_ptr on success.
+   */
+  template< class Type, typename... Args >
+  object_ptr<Type> insert(Args&&... args) {
+    return insert(new Type(std::forward<Args>(args)...));
+  }
+
+  /**
    * Remove object from object store
    * @tparam T Type of object to be removed
    * @param optr Object to be removed
@@ -180,14 +195,14 @@ public:
   transaction begin();
 
   /**
-   * @brief Return a reference to the underlaying object_store
+   * @brief Return a reference to the underlying object_store
    *
    * @return A reference to the object_store.
    */
   object_store& store();
 
   /**
-   * @brief Return a const reference to the underlaying object_store
+   * @brief Return a const reference to the underlying object_store
    *
    * @return A const reference to the object_store.
    */

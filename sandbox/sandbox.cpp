@@ -258,5 +258,9 @@ int main()
 
   std::cout << "object <person> " << george << "\n";
 
+  auto otto = store.insert<person>(14, "otto", colors::BLACK);
+
+  std::cout << "object <person> " << otto << "\n";
+
   return 0;
 }

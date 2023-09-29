@@ -38,9 +38,8 @@ public:
   /**
    * Creates an empty iterator
    */
-  object_view_iterator()
-  {}
-  
+  object_view_iterator() = default;
+
   /**
    * @brief Creates a iterator for a concrete type.
    * 
@@ -82,7 +81,7 @@ public:
     return *this;
   }
 
-  ~object_view_iterator() {}
+  ~object_view_iterator() = default;
 
   /**
    * @brief Compares this with another iterators.
@@ -134,7 +133,7 @@ public:
   /**
    * Pre increments the iterator
    * 
-   * @return Returns iterators predeccessor.
+   * @return Returns iterators predecessor.
    */
   self& operator--() {
     decrement();
@@ -165,7 +164,7 @@ public:
   /**
    * Returns the node.
    * 
-   * @return The iterators underlaying node.
+   * @return The iterators underlying node.
    */
   value_type operator*() const
   {
@@ -175,7 +174,7 @@ public:
   /**
    * Returns the node as object_ptr.
    * 
-   * @return The iterators underlaying node as object_ptr.
+   * @return The iterators underlying node as object_ptr.
    */
   value_type optr() const
   {
@@ -201,8 +200,8 @@ private:
   friend class const_object_view_iterator<T>;
 
   prototype_iterator node_;
-  object_proxy *current_;
-  object_proxy *last_;
+  object_proxy *current_{};
+  object_proxy *last_{};
 };
 
 /**
@@ -225,8 +224,7 @@ public:
   /**
    * Creates an empty iterator
    */
-  const_object_view_iterator()
-  {}
+  const_object_view_iterator() = default;
 
   /**
    * @brief Creates a iterator for a concrete type.
@@ -294,7 +292,7 @@ public:
     return *this;
   }
 
-  ~const_object_view_iterator() {}
+  ~const_object_view_iterator() = default;
 
   /**
    * @brief Compares this with another iterators.
@@ -346,7 +344,7 @@ public:
   /**
    * Pre increments the iterator
    * 
-   * @return Returns iterators predeccessor.
+   * @return Returns iterators predecessor.
    */
   self& operator--() {
     decrement();
@@ -377,7 +375,7 @@ public:
   /**
    * Returns the node.
    * 
-   * @return The iterators underlaying node.
+   * @return The iterators underlying node.
    */
   value_type operator*() const
   {
@@ -387,7 +385,7 @@ public:
   /**
    * Returns the node as object_ptr.
    * 
-   * @return The iterators underlaying node as object_ptr.
+   * @return The iterators underlying node as object_ptr.
    */
   value_type optr() const {
     if (current_->obj())
@@ -415,19 +413,6 @@ private:
 };
 /// @endcond
 
-/*
- *
- * @class generic_view
- * @brief Creates a generic view of a concrete serializable type
- *
- * The generic_view class creates a generic view over an serializable type
- * without casting the serializable to the concrete type. The class deals
- * with the base class matador::serializable.
- * When creating it is possible to have the view only over
- * the given type or over the complete subset of objects including
- * child objects.
- */
-
 /**
  * @class object_view
  * @brief Create a view for a concrete serializable type
@@ -453,14 +438,14 @@ public:
    * T within the given object_store. When the skip_siblings
    * flag is true, the view only has serializable of type T.
    *
-   * @param ostore The object_store containing the objects.
+   * @param store The object_store containing the objects.
    * @param skip_siblings If true only objects of concrete type T are part of the view.
    */
-  object_view(object_store &ostore, bool skip_siblings = false)
+  explicit object_view(object_store &store, bool skip_siblings = false)
     : skip_siblings_(skip_siblings)
   {
-    node_ = ostore.find(typeid(T).name());
-		if (node_ == ostore.end()) {
+    node_ = store.find(typeid(T).name());
+		if (node_ == store.end()) {
       std::stringstream str;
       str << "couldn't find serializable type [" << typeid(T).name() << "]";
       throw object_exception(str.str().c_str());
@@ -482,7 +467,7 @@ public:
    *
    * @param x object_view to be moved
    */
-  object_view(object_view &&x)
+  object_view(object_view &&x) noexcept
     : skip_siblings_(std::move(x.skip_siblings_))
     , node_(std::move(x.node_))
   {}
@@ -506,7 +491,7 @@ public:
    * @param x object_view to be moved
    * @return Reference to this object_view
    */
-  object_view& operator=(object_view &&x)
+  object_view& operator=(object_view &&x) noexcept
   {
     skip_siblings_ = std::move(x.skip_siblings_);
     node_ = std::move(x.node_);

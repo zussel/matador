@@ -33,50 +33,17 @@ class object_proxy;
 
 class prototype_node;
 
-namespace detail {
-
-/// @cond MATADOR_DEV
-
-class MATADOR_OBJECT_API modified_marker
-{
-public:
-  typedef void (*t_marker)(object_store &store, object_proxy &proxy);
-
-public:
-  template < class T >
-  explicit modified_marker(T*)
-    : marker_(&marker_func<T>)
-  {}
-
-  void mark(object_store &store, object_proxy &proxy)
-  {
-    marker_(store, proxy);
-  }
-
-private:
-  template < class T >
-  static void marker_func(object_store &store, object_proxy &proxy);
-
-private:
-  t_marker marker_;
-};
-
-/// @endcond
-
-}
-
-
 /**
  * @class object_store
  * @brief A class that stores all kind of objects.
  * 
  * This class is the main container class for all
  * objects. To manage the internal list of objects
- * the store must know the serializable class hierarchy.
+ * the store must know the object class hierarchy.
  *
- * Therefor an serializable prototype tree holds the serializable
+ * Therefor an object prototype tree holds the object
  * hierarchy representation including a producer class
- * serializable of all known types.
+ * object of all known types.
  */
 class MATADOR_OBJECT_API object_store
 {
@@ -113,7 +80,7 @@ public:
 
 public:
   /**
-   * Create an empty serializable store.
+   * Create an empty object store.
    */
   object_store();
 
@@ -195,7 +162,7 @@ public:
    *
    * @tparam T       The type of the prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @param abstract Indicates if the producers object is treated as an abstract node.
    * @param parent   Name of the parent node
    * @return         Returns new inserted prototype iterator.
    */
@@ -217,7 +184,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, template < class U = T > class O >
-  prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer)
+  prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer = {})
   {
     return attach<T, O>(type, abstract_type::not_abstract, nullptr, observer);
   }
@@ -234,7 +201,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S, template < class U = T > class O >
-  prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer)
+  prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer = {})
   {
     return attach<T>(type, abstract_type::not_abstract, typeid(S).name(), observer);
   }
@@ -525,9 +492,9 @@ public:
   bool empty() const;
 
   /**
-   * Creates an serializable of the given type name.
+   * Creates an object of the given type name.
    * 
-   * @return The created serializable on success or NULL if the type couldn't be found.
+   * @return The created object on success or NULL if the type couldn't be found.
    */
   template<class T>
   T *create() const {
@@ -589,6 +556,20 @@ public:
   }
 
   /**
+   * Inserts an object of a specific type. On successful insertion
+   * an object_ptr element with the inserted object is returned.
+   *
+   * @tparam Type Type of the object to insert
+   * @tparam Args Argument types of the constructor arguments
+   * @param args Arguments to construct the object
+   * @return Inserted object contained by an object_ptr on success.
+   */
+  template< class Type, typename... Args >
+  object_ptr<Type> insert(Args&&... args) {
+    return insert(new Type(std::forward<Args>(args)...));
+  }
+
+  /**
    * Inserts a given object_ptr of specific type.
    * On successfully insertion an object_ptr element
    * with the inserted object is returned.
@@ -604,10 +585,10 @@ public:
 
   /**
    * Returns true if the underlying
-   * serializable is removable.
+   * object is removable.
    * 
-   * @param o The serializable to check.
-   * @return True if serializable is removable.
+   * @param o The object to check.
+   * @return True if object is removable.
    */
   template<class T>
   bool is_removable(const object_ptr<T> &o) {
@@ -657,13 +638,13 @@ public:
   }
 
   /**
-   * @brief Finds serializable proxy with id
+   * @brief Finds object proxy with id
    *
-   * Try to find the serializable proxy with given id in
-   * serializable stores proxy map. If object can't be found
+   * Try to find the object proxy with given id in
+   * object stores proxy map. If object can't be found
    * NULL is returned.
    *
-   * @param id ID of serializable proxy to find
+   * @param id ID of object proxy to find
    * @return On success it returns an object proxy on failure null
    *
    */
@@ -847,20 +828,6 @@ prototype_iterator object_store::attach_internal(prototype_node *node, const cha
   node->on_attach();
 
   return prototype_iterator(node);
-}
-
-namespace detail {
-
-/// @cond MATADOR_DEV
-
-template < class T >
-void modified_marker::marker_func(object_store &store, object_proxy &proxy)
-{
-  store.mark_modified<T>(&proxy);
-}
-
-/// @endcond
-
 }
 
 }
