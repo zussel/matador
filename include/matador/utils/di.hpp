@@ -245,7 +245,7 @@ private:
   I* resolve(t_type_proxy_map &type_proxy_map) {
     auto i = type_proxy_map.find(std::type_index(typeid(I)));
     if (i == type_proxy_map.end()) {
-      throw std::logic_error(std::string("couldn't find type ") + typeid(I).name());
+      throw std::logic_error("unknown type");
     }
     return i->second->get<I>();
   }

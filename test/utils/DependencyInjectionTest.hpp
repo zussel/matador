@@ -8,8 +8,12 @@ class DependencyInjectionTest : public matador::unit_test
 public:
   DependencyInjectionTest();
 
-
-
+  void test_basic();
+  void test_named();
+  void test_transient();
+  void test_singleton();
+  void test_instance();
+  void test_singleton_per_thread();
 };
 
 
