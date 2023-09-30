@@ -71,7 +71,8 @@ SET(HEADER
   ../../include/matador/utils/thread_helper.hpp
   ../../include/matador/utils/identifier.hpp
         ../../include/matador/utils/contraints.hpp
-        ../../include/matador/utils/field_attributes.hpp)
+        ../../include/matador/utils/field_attributes.hpp
+        ../../include/matador/utils/di.hpp)
 
 ADD_LIBRARY(matador-utils STATIC ${SOURCES} ${HEADER})
 

@@ -36,7 +36,9 @@ SET (TEST_TOOLS_SOURCES
   utils/HtmlTest.cpp
   utils/HtmlTest.hpp
   utils/IdentifierTest.cpp
-  utils/IdentifierTest.hpp)
+  utils/IdentifierTest.hpp
+        utils/DependencyInjectionTest.cpp
+        utils/DependencyInjectionTest.hpp)
 
 SET (TEST_JSON_SOURCES
   json/JsonTestUnit.cpp
