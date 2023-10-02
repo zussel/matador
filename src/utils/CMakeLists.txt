@@ -23,7 +23,8 @@ SET(SOURCES
   thread_helper.cpp
   identifier.cpp
   field_attributes.cpp
-  constraints.cpp)
+  constraints.cpp
+  version.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -70,9 +71,10 @@ SET(HEADER
   ../../include/matador/utils/html.hpp
   ../../include/matador/utils/thread_helper.hpp
   ../../include/matador/utils/identifier.hpp
-        ../../include/matador/utils/contraints.hpp
-        ../../include/matador/utils/field_attributes.hpp
-        ../../include/matador/utils/di.hpp)
+  ../../include/matador/utils/contraints.hpp
+  ../../include/matador/utils/field_attributes.hpp
+  ../../include/matador/utils/di.hpp
+  ../../include/matador/utils/version.hpp)
 
 ADD_LIBRARY(matador-utils STATIC ${SOURCES} ${HEADER})
 

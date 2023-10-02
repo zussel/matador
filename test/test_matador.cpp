@@ -28,6 +28,7 @@
 #include "utils/UrlTest.hpp"
 #include "utils/IdentifierTest.hpp"
 #include "utils/DependencyInjectionTest.hpp"
+#include "utils/VersionTest.hpp"
 
 #include "json/JsonTestUnit.hpp"
 #include "json/JsonMapperTestUnit.hpp"
@@ -136,6 +137,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new UrlTest);
   suite.register_unit(new IdentifierTest);
   suite.register_unit(new DependencyInjectionTest);
+  suite.register_unit(new VersionTest);
 
   suite.register_unit(new JsonTestUnit);
   suite.register_unit(new JsonMapperTestUnit);
