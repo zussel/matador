@@ -97,14 +97,17 @@ std::string postgresql_connection::type() const
   return "postgresql";
 }
 
-std::string postgresql_connection::client_version() const
+version postgresql_connection::client_version() const
 {
-  return "";
+  const auto client_version = PQlibVersion();
+  return { static_cast<unsigned int>(client_version / 10000),
+           static_cast<unsigned int>((client_version % 10000) / 100),
+           static_cast<unsigned int>(client_version % 100) };
 }
 
-std::string postgresql_connection::server_version() const
+version postgresql_connection::server_version() const
 {
-  return "";
+  return {};
 }
 
 bool postgresql_connection::exists(const std::string &tablename)

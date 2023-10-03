@@ -128,9 +128,9 @@ std::string connection::type() const
   return connection_info_.type;
 }
 
-std::string connection::version() const
+version connection::client_version() const
 {
-  return "";
+  return impl_->client_version();
 }
 
 bool connection::exists(const std::string &table_name) const

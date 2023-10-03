@@ -14,6 +14,7 @@ ConnectionTestUnit::ConnectionTestUnit(const std::string &prefix, std::string dn
 {
   add_test("open_close", [this] { test_open_close(); }, "connect sql test");
   add_test("reopen", [this] { test_reopen(); }, "reopen sql test");
+  add_test("version", [this] { test_version(); }, "version test");
   add_test("reconnect", [this] { test_reconnect(); }, "reconnect sql test");
   add_test("connection_failed", [this] { test_connection_failed(); }, "connection failed test");
 }
@@ -31,6 +32,17 @@ void ConnectionTestUnit::test_open_close()
   conn.disconnect();
 
   UNIT_ASSERT_FALSE(conn.is_connected());
+}
+
+void ConnectionTestUnit::test_version()
+{
+  matador::connection conn(dns_);
+
+  UNIT_ASSERT_FALSE(conn.is_connected());
+
+  const auto v = conn.client_version();
+
+  UNIT_ASSERT_GREATER(v, {});
 }
 
 void ConnectionTestUnit::test_reopen()

@@ -1,7 +1,6 @@
 #include "matador/db/sqlite/sqlite_connection.hpp"
 #include "matador/db/sqlite/sqlite_statement.hpp"
 #include "matador/db/sqlite/sqlite_result.hpp"
-#include "matador/db/sqlite/sqlite_types.hpp"
 #include "matador/db/sqlite/sqlite_exception.hpp"
 
 #include "matador/sql/sql.hpp"
@@ -72,14 +71,18 @@ std::string sqlite_connection::type() const
   return "sqlite";
 }
 
-std::string sqlite_connection::client_version() const
+version sqlite_connection::client_version() const
 {
-  return SQLITE_VERSION;
+  return { static_cast<unsigned int>(SQLITE_VERSION_NUMBER / 1000000),
+           static_cast<unsigned int>((SQLITE_VERSION_NUMBER % 1000000) / 1000),
+           static_cast<unsigned int>(SQLITE_VERSION_NUMBER % 1000) };
 }
 
-std::string sqlite_connection::server_version() const
+version sqlite_connection::server_version() const
 {
-  return SQLITE_VERSION;
+  return { static_cast<unsigned int>(SQLITE_VERSION_NUMBER / 100000),
+           static_cast<unsigned int>((SQLITE_VERSION_NUMBER % 100000) / 1000),
+           static_cast<unsigned int>(SQLITE_VERSION_NUMBER % 1000) };
 }
 
 matador::detail::result_impl* sqlite_connection::execute(const matador::sql &sql)

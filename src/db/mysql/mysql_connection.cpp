@@ -1,12 +1,10 @@
 #include "matador/db/mysql/mysql_connection.hpp"
 #include "matador/db/mysql/mysql_statement.hpp"
 #include "matador/db/mysql/mysql_result.hpp"
-#include "matador/db/mysql/mysql_types.hpp"
 #include "matador/db/mysql/mysql_exception.hpp"
 
 #include "matador/sql/connection_info.hpp"
 
-#include <sstream>
 #include <regex>
 
 using namespace std::placeholders;
@@ -102,14 +100,17 @@ std::string mysql_connection::type() const
   return "mysql";
 }
 
-std::string mysql_connection::client_version() const
+version mysql_connection::client_version() const
 {
-  return mysql_get_server_info(const_cast<MYSQL*>(&mysql_));
+  const auto client_version = mysql_get_client_version();
+  return { static_cast<unsigned int>(client_version / 10000),
+           static_cast<unsigned int>((client_version % 10000) / 100),
+           static_cast<unsigned int>(client_version % 100) };
 }
 
-std::string mysql_connection::server_version() const
+version mysql_connection::server_version() const
 {
-  return mysql_get_client_info();
+  return {};
 }
 
 bool mysql_connection::exists(const std::string &tablename)

@@ -145,19 +145,21 @@ std::string mssql_connection::type() const
   return "mssql";
 }
 
-std::string mssql_connection::client_version() const
+version mssql_connection::client_version() const
 {
-  return "1.1.1";
+  return { static_cast<unsigned int>(((ODBCVER & 0xF000) >> 12) * 10 + ((ODBCVER & 0x0F00) >> 8)),
+           static_cast<unsigned int>(((ODBCVER & 0xF0) >> 4) * 10 + (ODBCVER & 0x0F)),
+           0 };
 }
 
-std::string mssql_connection::server_version() const
+version mssql_connection::server_version() const
 {
-  return "1.1.1";
+  return {};
 }
 
-bool mssql_connection::exists(const std::string &tablename)
+bool mssql_connection::exists(const std::string &table_name)
 {
-  std::string stmt("SELECT TOP 1 COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='" + database_name_ + "' AND TABLE_NAME='" + tablename + "'");
+  std::string stmt("SELECT TOP 1 COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='" + database_name_ + "' AND TABLE_NAME='" + table_name + "'");
   std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute(stmt)));
 
   if (!res->fetch()) {

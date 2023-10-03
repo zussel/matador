@@ -1,7 +1,3 @@
-//
-// Created by sascha on 02.08.19.
-//
-
 #include "matador/sql/connection_impl.hpp"
 
 namespace matador {
