@@ -42,7 +42,7 @@ void postgresql_connection::open(const connection_info &info)
 
   conn_ = PQconnectdb(connection.c_str());
   if (PQstatus(conn_) == CONNECTION_BAD) {
-    std::string msg = PQerrorMessage(conn_);
+    const auto msg = PQerrorMessage(conn_);
     PQfinish(conn_);
     throw database_error(msg, "postgresql", "42000");
   }
@@ -107,7 +107,15 @@ version postgresql_connection::client_version() const
 
 version postgresql_connection::server_version() const
 {
-  return {};
+  const auto server_version = PQserverVersion(conn_);
+
+  if (server_version == 0) {
+    throw database_error("not connected", "postgresql", -2);
+  }
+
+  return { static_cast<unsigned int>(server_version / 10000),
+           static_cast<unsigned int>((server_version % 10000) / 100),
+           static_cast<unsigned int>(server_version % 100) };
 }
 
 bool postgresql_connection::exists(const std::string &tablename)

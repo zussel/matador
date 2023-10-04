@@ -4,6 +4,7 @@
 #include "matador/db/mysql/mysql_exception.hpp"
 
 #include "matador/sql/connection_info.hpp"
+#include "matador/sql/database_error.hpp"
 
 #include <regex>
 
@@ -110,12 +111,20 @@ version mysql_connection::client_version() const
 
 version mysql_connection::server_version() const
 {
-  return {};
+  const auto server_version = mysql_get_server_version(&mysql_);
+
+  if (server_version == 0) {
+    throw database_error("not connected", "mysql", -2);
+  }
+
+  return { static_cast<unsigned int>(server_version / 10000),
+           static_cast<unsigned int>((server_version % 10000) / 100),
+           static_cast<unsigned int>(server_version % 100) };
 }
 
-bool mysql_connection::exists(const std::string &tablename)
+bool mysql_connection::exists(const std::string &table_name)
 {
-  std::string stmt("SHOW TABLES LIKE '" + tablename + "'");
+  std::string stmt("SHOW TABLES LIKE '" + table_name + "'");
   std::unique_ptr<mysql_result> res(execute_internal(stmt));
   return res->fetch();
 }

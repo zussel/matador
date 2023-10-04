@@ -14,7 +14,8 @@ public:
   ~ConnectionTestUnit() override = default;
 
   void test_open_close();
-  void test_version();
+  void test_client_version();
+  void test_server_version();
   void test_reopen();
   void test_reconnect();
   void test_connection_failed();

@@ -51,7 +51,7 @@ void throw_database_error(SQLRETURN ret, SQLSMALLINT htype, SQLHANDLE hndl, cons
   if (ret == SQL_SUCCESS) {
     std::string what(reinterpret_cast<char*>(data));
     std::string sqlstate(reinterpret_cast<char*>(state));
-    throw database_error(what, source, sqlstate, error, sql);
+    throw database_error(what.c_str(), source, sqlstate, error, sql);
   }
 }
 

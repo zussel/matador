@@ -4,6 +4,7 @@
 #include "matador/db/mssql/mssql_exception.hpp"
 
 #include "matador/sql/connection_info.hpp"
+#include "matador/sql/database_error.hpp"
 
 #include <regex>
 
@@ -106,15 +107,7 @@ detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
   throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql", sqlstr);
 
   // execute statement
-//  int retry = retries_;
   ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
-
-  /*
-  do {
-    ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
-  } while (retry-- && !(SQL_SUCCEEDED(ret) || SQL_NO_DATA));
-  */
-
   throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql", sqlstr);
 
   return new mssql_result(stmt);
@@ -154,7 +147,16 @@ version mssql_connection::client_version() const
 
 version mssql_connection::server_version() const
 {
-  return {};
+  SQLCHAR dbms_ver[256];
+  auto ret = SQLGetInfo(connection_, SQL_DBMS_VER, (SQLPOINTER)dbms_ver, sizeof(dbms_ver), NULL);
+
+  if (ret == SQL_INVALID_HANDLE) {
+    throw database_error("not connected", "mssql", -2);
+  }
+
+  throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
+
+  return version::from_string(reinterpret_cast< char const* >(dbms_ver));
 }
 
 bool mssql_connection::exists(const std::string &table_name)

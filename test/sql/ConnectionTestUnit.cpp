@@ -14,7 +14,8 @@ ConnectionTestUnit::ConnectionTestUnit(const std::string &prefix, std::string dn
 {
   add_test("open_close", [this] { test_open_close(); }, "connect sql test");
   add_test("reopen", [this] { test_reopen(); }, "reopen sql test");
-  add_test("version", [this] { test_version(); }, "version test");
+  add_test("client_version", [this] { test_client_version(); }, "client version test");
+  add_test("server_version", [this] { test_server_version(); }, "server version test");
   add_test("reconnect", [this] { test_reconnect(); }, "reconnect sql test");
   add_test("connection_failed", [this] { test_connection_failed(); }, "connection failed test");
 }
@@ -34,7 +35,7 @@ void ConnectionTestUnit::test_open_close()
   UNIT_ASSERT_FALSE(conn.is_connected());
 }
 
-void ConnectionTestUnit::test_version()
+void ConnectionTestUnit::test_client_version()
 {
   matador::connection conn(dns_);
 
@@ -43,6 +44,29 @@ void ConnectionTestUnit::test_version()
   const auto v = conn.client_version();
 
   UNIT_ASSERT_GREATER(v, {});
+}
+
+void ConnectionTestUnit::test_server_version()
+{
+  matador::connection conn(dns_);
+
+  UNIT_ASSERT_FALSE(conn.is_connected());
+
+  if (db_vendor_ != "sqlite") {
+    UNIT_ASSERT_EXCEPTION(conn.server_version(), matador::database_error, "not connected");
+  }
+
+  conn.connect();
+
+  UNIT_ASSERT_TRUE(conn.is_connected());
+
+  const auto v = conn.server_version();
+
+  UNIT_ASSERT_GREATER(v, {});
+
+  conn.disconnect();
+
+  UNIT_ASSERT_FALSE(conn.is_connected());
 }
 
 void ConnectionTestUnit::test_reopen()

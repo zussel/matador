@@ -22,7 +22,7 @@ public:
    * @param ec Error code
    * @param sql Optional sql statement string
    */
-  database_error(const std::string &what, std::string source, long ec, std::string sql = "");
+  database_error(const char *what, std::string source, long ec, std::string sql = "");
 
   /**
    * Creates a database error exception with sql state and error code.
@@ -33,7 +33,7 @@ public:
    * @param ec Error code
    * @param sql Optional sql statement string
    */
-  database_error(const std::string &what, std::string source, std::string sqlstate, long ec, std::string sql = "");
+  database_error(const char *what, std::string source, std::string sqlstate, long ec, std::string sql = "");
 
   /**
    * Creates a database error exception with sql state.
@@ -43,7 +43,7 @@ public:
    * @param sqlstate SQL State
    * @param sql Optional sql statement string
    */
-  database_error(const std::string &what, std::string source, std::string sqlstate, std::string sql = "");
+  database_error(const char *what, std::string source, std::string sqlstate, std::string sql = "");
 
   /**
    * Destroy the database error

@@ -133,6 +133,11 @@ version connection::client_version() const
   return impl_->client_version();
 }
 
+version connection::server_version() const
+{
+  return impl_->server_version();
+}
+
 bool connection::exists(const std::string &table_name) const
 {
   return impl_->exists(table_name);
