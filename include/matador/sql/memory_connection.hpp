@@ -27,8 +27,8 @@ public:
   void rollback() override {}
 
   std::string type() const override { return "memory"; };
-  std::string client_version() const override { return "0.6.1"; };
-  std::string server_version() const override { return "0.6.1"; };
+  version client_version() const override { return {0, 8, 1}; };
+  version server_version() const override { return {0, 8, 1}; };
 
   virtual const char *type_string(database_type) const { return nullptr; }
 

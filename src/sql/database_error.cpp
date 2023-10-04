@@ -1,21 +1,17 @@
-//
-// Created by sascha on 28.12.19.
-//
-
 #include "matador/sql/database_error.hpp"
 
 #include <utility>
 
 namespace matador {
 
-database_error::database_error(const std::string &what, std::string source, long ec, std::string sql)
+database_error::database_error(const char *what, std::string source, long ec, std::string sql)
   : std::runtime_error(what)
   , source_(std::move(source))
   , error_code_(ec)
   , sql_stmt_(std::move(sql))
 {}
 
-database_error::database_error(const std::string &what, std::string source, std::string sqlstate, long ec,
+database_error::database_error(const char *what, std::string source, std::string sqlstate, long ec,
                                std::string sql)
   : std::runtime_error(what)
   , source_(std::move(source))
@@ -24,7 +20,7 @@ database_error::database_error(const std::string &what, std::string source, std:
   , sql_stmt_(std::move(sql))
 {}
 
-database_error::database_error(const std::string &what, std::string source, std::string sqlstate, std::string sql)
+database_error::database_error(const char *what, std::string source, std::string sqlstate, std::string sql)
   : std::runtime_error(what)
   , source_(std::move(source))
   , sqlstate_(std::move(sqlstate))

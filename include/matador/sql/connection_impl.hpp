@@ -5,6 +5,8 @@
 #include "matador/sql/basic_sql_logger.hpp"
 #include "matador/sql/field.hpp"
 
+#include "matador/utils/version.hpp"
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -39,8 +41,8 @@ public:
   virtual void rollback() = 0;
 
   virtual std::string type() const = 0;
-  virtual std::string client_version() const = 0;
-  virtual std::string server_version() const = 0;
+  virtual version client_version() const = 0;
+  virtual version server_version() const = 0;
 
   virtual bool exists(const std::string &table_name) = 0;
   virtual std::vector<field> describe(const std::string &table) = 0;

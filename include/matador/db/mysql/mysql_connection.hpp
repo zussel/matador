@@ -73,10 +73,10 @@ public:
   void rollback() override;
 
   std::string type() const override;
-  std::string client_version() const override;
-  std::string server_version() const override;
+  version client_version() const override;
+  version server_version() const override;
 
-  bool exists(const std::string &tablename) override;
+  bool exists(const std::string &table_name) override;
   std::vector<field> describe(const std::string &table) override;
 
   basic_dialect* dialect() override;
@@ -87,7 +87,7 @@ private:
   mysql_result* execute_internal(const std::string &stmt);
 
 private:
-  MYSQL mysql_ = MYSQL();
+  mutable MYSQL mysql_ = MYSQL();
   bool is_open_;
   mysql_dialect dialect_;
 };

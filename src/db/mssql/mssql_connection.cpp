@@ -4,6 +4,7 @@
 #include "matador/db/mssql/mssql_exception.hpp"
 
 #include "matador/sql/connection_info.hpp"
+#include "matador/sql/database_error.hpp"
 
 #include <regex>
 
@@ -106,15 +107,7 @@ detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
   throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql", sqlstr);
 
   // execute statement
-//  int retry = retries_;
   ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
-
-  /*
-  do {
-    ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
-  } while (retry-- && !(SQL_SUCCEEDED(ret) || SQL_NO_DATA));
-  */
-
   throw_database_error(ret, SQL_HANDLE_STMT, stmt, "mssql", sqlstr);
 
   return new mssql_result(stmt);
@@ -145,19 +138,30 @@ std::string mssql_connection::type() const
   return "mssql";
 }
 
-std::string mssql_connection::client_version() const
+version mssql_connection::client_version() const
 {
-  return "1.1.1";
+  return { static_cast<unsigned int>(((ODBCVER & 0xF000) >> 12) * 10 + ((ODBCVER & 0x0F00) >> 8)),
+           static_cast<unsigned int>(((ODBCVER & 0xF0) >> 4) * 10 + (ODBCVER & 0x0F)),
+           0 };
 }
 
-std::string mssql_connection::server_version() const
+version mssql_connection::server_version() const
 {
-  return "1.1.1";
+  SQLCHAR dbms_ver[256];
+  auto ret = SQLGetInfo(connection_, SQL_DBMS_VER, (SQLPOINTER)dbms_ver, sizeof(dbms_ver), NULL);
+
+  if (ret == SQL_INVALID_HANDLE) {
+    throw database_error("not connected", "mssql", -2);
+  }
+
+  throw_database_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
+
+  return version::from_string(reinterpret_cast< char const* >(dbms_ver));
 }
 
-bool mssql_connection::exists(const std::string &tablename)
+bool mssql_connection::exists(const std::string &table_name)
 {
-  std::string stmt("SELECT TOP 1 COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='" + database_name_ + "' AND TABLE_NAME='" + tablename + "'");
+  std::string stmt("SELECT TOP 1 COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='" + database_name_ + "' AND TABLE_NAME='" + table_name + "'");
   std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute(stmt)));
 
   if (!res->fetch()) {

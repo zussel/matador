@@ -10,6 +10,8 @@
 #include "matador/sql/field.hpp"
 #include "matador/sql/basic_sql_logger.hpp"
 
+#include "matador/utils/version.hpp"
+
 #include <string>
 
 namespace matador {
@@ -145,12 +147,20 @@ public:
    * @return The database type string
    */
   std::string type() const;
+
   /**
    * @brief Return the version string of the current database type
    *
    * @return Version string of the current database type
    */
-  std::string version() const;
+  version client_version() const;
+
+  /**
+   * @brief Return the version string of the current database type
+   *
+   * @return Version string of the current database type
+   */
+  version server_version() const;
 
   /**
    * @brief Execute a sql string statement with retrieving any result

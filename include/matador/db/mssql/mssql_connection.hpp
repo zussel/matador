@@ -60,10 +60,10 @@ public:
   void rollback() override;
 
   std::string type() const override;
-  std::string client_version() const override;
-  std::string server_version() const override;
+  version client_version() const override;
+  version server_version() const override;
 
-  bool exists(const std::string &tablename) override;
+  bool exists(const std::string &table_name) override;
   std::vector<field> describe(const std::string &table) override;
 
   SQLHANDLE handle();

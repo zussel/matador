@@ -49,14 +49,6 @@ public:
 
   virtual unsigned long last_inserted_id();
 
-  /**
-   * Return the raw pointer to the sqlite3
-   * database struct.
-   *
-   * @return The raw sqlite3 pointer.
-   */
-//  MYSQL* handle();
-
   void open(const connection_info &info) override;
   void close() override;
 
@@ -69,8 +61,8 @@ public:
   void rollback() override;
 
   std::string type() const override;
-  std::string client_version() const override;
-  std::string server_version() const override;
+  version client_version() const override;
+  version server_version() const override;
 
   bool exists(const std::string &table_name) override;
   std::vector<field> describe(const std::string &table) override;

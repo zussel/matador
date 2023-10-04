@@ -1,12 +1,11 @@
 #include "matador/db/mysql/mysql_connection.hpp"
 #include "matador/db/mysql/mysql_statement.hpp"
 #include "matador/db/mysql/mysql_result.hpp"
-#include "matador/db/mysql/mysql_types.hpp"
 #include "matador/db/mysql/mysql_exception.hpp"
 
 #include "matador/sql/connection_info.hpp"
+#include "matador/sql/database_error.hpp"
 
-#include <sstream>
 #include <regex>
 
 using namespace std::placeholders;
@@ -102,19 +101,30 @@ std::string mysql_connection::type() const
   return "mysql";
 }
 
-std::string mysql_connection::client_version() const
+version mysql_connection::client_version() const
 {
-  return mysql_get_server_info(const_cast<MYSQL*>(&mysql_));
+  const auto client_version = mysql_get_client_version();
+  return { static_cast<unsigned int>(client_version / 10000),
+           static_cast<unsigned int>((client_version % 10000) / 100),
+           static_cast<unsigned int>(client_version % 100) };
 }
 
-std::string mysql_connection::server_version() const
+version mysql_connection::server_version() const
 {
-  return mysql_get_client_info();
+  const auto server_version = mysql_get_server_version(&mysql_);
+
+  if (server_version == 0) {
+    throw database_error("not connected", "mysql", -2);
+  }
+
+  return { static_cast<unsigned int>(server_version / 10000),
+           static_cast<unsigned int>((server_version % 10000) / 100),
+           static_cast<unsigned int>(server_version % 100) };
 }
 
-bool mysql_connection::exists(const std::string &tablename)
+bool mysql_connection::exists(const std::string &table_name)
 {
-  std::string stmt("SHOW TABLES LIKE '" + tablename + "'");
+  std::string stmt("SHOW TABLES LIKE '" + table_name + "'");
   std::unique_ptr<mysql_result> res(execute_internal(stmt));
   return res->fetch();
 }
