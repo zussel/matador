@@ -10,7 +10,7 @@ basic_query::basic_query(std::string table_name)
   : state(QUERY_BEGIN)
   , table_name_(std::move(table_name))
   , update_columns_(new columns(columns::WITHOUT_BRACKETS))
-  , query_value_column_processor_(update_columns_, rowvalues_)
+  , query_value_column_processor_(update_columns_, row_values_)
 {}
 
 void basic_query::reset_query(t_query_command query_command)
@@ -156,7 +156,7 @@ std::string basic_query::state2text(basic_query::state_t state)
   }
 }
 
-std::unordered_map<std::type_index, std::string> basic_query::tablename_map_ = std::unordered_map<std::type_index, std::string>();
+std::unordered_map<std::type_index, std::string> basic_query::table_name_map_ = std::unordered_map<std::type_index, std::string>();
 
 }
 

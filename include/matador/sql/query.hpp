@@ -63,7 +63,7 @@ public:
   query()
     : basic_query("")
   {
-    determine_tablename<T>();
+    determine_table_name<T>();
   }
 
   /**
@@ -85,7 +85,7 @@ public:
    */
   static void bind_table(const std::string &table_name)
   {
-    tablename_map_.insert(std::make_pair(std::type_index(typeid(T)), table_name));
+    table_name_map_.insert(std::make_pair(std::type_index(typeid(T)), table_name));
   }
 
   /**
@@ -93,7 +93,7 @@ public:
    */
   static void clear_bound_tables()
   {
-    tablename_map_.clear();
+    table_name_map_.clear();
   }
 
   /**
@@ -123,6 +123,46 @@ public:
     detail::typed_column_serializer serializer;
 
     std::shared_ptr<columns> cols(serializer.execute(obj));
+
+    sql_.append(cols);
+
+    state = QUERY_CREATE;
+    return *this;
+  }
+
+  /**
+   * @brief Start a create query for default table
+   * @param column_list The columns to be created
+   * @return A reference to the query.
+   */
+  template < class Type = T >
+  query& create(const std::initializer_list<std::shared_ptr<column>> &column_list)
+  {
+    static_assert(!std::is_same<Type, row>::value, "Initializer list not allowed if type isn't 'row'");
+    return create(table_name_, column_list);
+  }
+
+  /**
+   * @brief Create a table with given name
+   *
+   * @param table_name The table name to be used for the statement
+   * @param column_list The columns to be created
+   * @return A reference to the query.
+   */
+  template < class Type = T >
+  query& create(const std::string &table_name, const std::initializer_list<std::shared_ptr<column>> &column_list)
+  {
+    static_assert(!std::is_same<Type, row>::value, "Initializer list not allowed if type isn't 'row'");
+    reset(t_query_command::CREATE);
+
+    sql_.append(std::make_shared<detail::create>(table_name));
+    sql_.table_name(table_name_);
+
+    auto cols = std::make_shared<matador::columns>(matador::columns::WITH_BRACKETS);
+    for (auto &&col : column_list) {
+      col->build_options = t_build_options::with_type | t_build_options::with_quotes;
+      cols->push_back(col);
+    }
 
     sql_.append(cols);
 
@@ -836,7 +876,7 @@ public:
   {
     reset_query(query_command);
     row_.clear();
-    rowvalues_.clear();
+    row_values_.clear();
     return *this;
   }
 

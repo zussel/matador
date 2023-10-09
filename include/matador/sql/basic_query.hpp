@@ -110,10 +110,10 @@ protected:
   static std::string state2text(state_t state);
 
   template < class T >
-  bool determine_tablename()
+  bool determine_table_name()
   {
-    auto i = basic_query::tablename_map_.find(std::type_index(typeid(T)));
-    if (i != basic_query::tablename_map_.end()) {
+    auto i = basic_query::table_name_map_.find(std::type_index(typeid(T)));
+    if (i != basic_query::table_name_map_.end()) {
       table_name_ = i->second;
       return true;
     }
@@ -127,11 +127,11 @@ protected:
   state_t state;
   std::string table_name_;
   std::shared_ptr<columns> update_columns_;
-  std::vector<matador::any> rowvalues_;
+  std::vector<matador::any> row_values_;
   detail::query_value_column_processor query_value_column_processor_;
   detail::query_value_creator query_value_creator_;
   connection conn_;
-  static std::unordered_map<std::type_index, std::string> tablename_map_;
+  static std::unordered_map<std::type_index, std::string> table_name_map_;
   /// @endcond
 };
 

@@ -343,16 +343,16 @@ void QueryTestUnit::test_bind_tablename()
 {
   matador::query<person>::clear_bound_tables();
 
-  matador::query<person> q0; // tablename should be person
+  matador::query<person> q0; // table name should be person
 
   UNIT_ASSERT_TRUE(q0.tablename().empty());
   matador::query<person>::bind_table("person");
 
-  matador::query<person> q1; // tablename should be person
+  matador::query<person> q1; // table name should be person
 
   UNIT_ASSERT_EQUAL(q1.tablename(), "person");
 
-  matador::query<person> q2("student"); // tablename should be student
+  matador::query<person> q2("student"); // table name should be student
 
   UNIT_ASSERT_EQUAL(q2.tablename(), "student");
 }
@@ -682,13 +682,22 @@ void QueryTestUnit::test_anonymous_update()
 
   q.execute(connection_);
 
-  q.insert({"id", "name", "age"}).values({1, "hans", 45}).execute(connection_);
+  q
+   .insert({"id", "name", "age"})
+   .values({1, "hans", 45})
+   .execute(connection_);
 
   column name("name");
 
-  q.update({{"name", "jane"}, {"age", 47}}).where(name == "hans").execute(connection_);
+  q
+   .update({{"name", "jane"}, {"age", 47}})
+   .where(name == "hans")
+   .execute(connection_);
 
-  auto res = q.select({"id", "name", "age"}).from("person").execute(connection_);
+  auto res = q
+                         .select({"id", "name", "age"})
+                         .from("person")
+                         .execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();

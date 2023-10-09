@@ -1,0 +1,69 @@
+@startuml
+
+scale 800 width
+state Query
+
+state Create
+Create : Create database table
+state Drop
+Drop : Drop database table
+state Select
+Select: Add columns
+state Insert
+Insert: Add columns
+state Update
+Update: Set table name
+state Delete
+
+state Table
+Table: Set table name
+state Into
+Into: Set table name
+state From
+From: Set table name
+
+state Where
+Where: Add where clause
+state Set
+Set: Set column value pairs
+state Values
+Values: Set values
+
+state OrderBy
+OrderBy: Add expression
+state Limit
+Limit: Add number of max result elements
+
+[*] --> Query
+Query --> Create
+Query --> Drop
+Query --> Select
+Query --> Insert
+Query --> Update
+Query --> Delete
+
+Create --> Table
+Drop --> Table
+Select --> From
+Insert --> Into
+Delete --> From
+
+Into --> Values
+Update --> Set
+Set --> Where
+From --> Where
+
+Where --> OrderBy
+Where --> Limit
+
+OrderBy --> Limit
+
+Table --> [*]
+Values --> [*]
+Where --> [*]
+Set --> [*]
+From --> [*]
+Limit --> [*]
+OrderBy --> [*]
+
+@enduml

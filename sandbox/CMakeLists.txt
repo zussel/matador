@@ -14,6 +14,7 @@ ADD_EXECUTABLE(sqlng sqlng.cpp)
 ADD_EXECUTABLE(container container.cpp)
 ADD_EXECUTABLE(connection_pool connection_pool.cpp)
 ADD_EXECUTABLE(datetime datetime.cpp)
+ADD_EXECUTABLE(query query.cpp)
 
 TARGET_LINK_LIBRARIES(reactor
   matador-utils
