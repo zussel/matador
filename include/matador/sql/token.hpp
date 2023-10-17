@@ -30,6 +30,7 @@ struct token
     COLUMNS,
     COLUMN,
     FROM,
+    INTO,
     WHERE,
     AND,
     OR,

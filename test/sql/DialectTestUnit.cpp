@@ -84,7 +84,8 @@ void DialectTestUnit::test_insert_query()
 
   s.reset(t_query_command::INSERT);
   s.table_name("person");
-  s.append(std::make_shared<detail::insert>("person"));
+  s.append(std::make_shared<detail::insert>());
+  s.append(std::make_shared<detail::into>("person"));
 
   auto cols = std::make_shared<columns>(columns::WITH_BRACKETS);
 
@@ -119,7 +120,8 @@ void DialectTestUnit::test_insert_prepare_query()
   sql s;
 
   s.reset(t_query_command::INSERT);
-  s.append(std::make_shared<detail::insert>("person"));
+  s.append(std::make_shared<detail::insert>());
+  s.append(std::make_shared<detail::into>("person"));
 
   auto cols = std::make_shared<columns>(columns::WITH_BRACKETS);
 

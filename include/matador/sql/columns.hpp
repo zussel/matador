@@ -116,7 +116,7 @@ struct columns : public detail::token
   /**
    * @brief Interface according to the visitor pattern.
    *
-   * @param visitor The visitor obejct to be accepted
+   * @param visitor The visitor object to be accepted
    */
   void accept(token_visitor &visitor) override;
 

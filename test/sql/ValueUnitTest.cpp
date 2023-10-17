@@ -2,6 +2,7 @@
 
 #include "matador/sql/value.hpp"
 #include "matador/sql/value_serializer.hpp"
+#include "matador/sql/value_processor.hpp"
 
 #include "../datatypes.hpp"
 
@@ -29,7 +30,7 @@ void ValueUnitTest::test_serialize()
 
   matador::detail::value_serializer vs;
 
-  std::unique_ptr<matador::detail::values> vlist(vs.execute(dt));
+  const auto vlist = vs.execute(dt);
 
   matador::detail::value_to_string_processor value_to_string;
 

@@ -2,7 +2,8 @@
 #define OOS_DIALECT_TOKEN_HPP
 
 #include "matador/sql/token.hpp"
-#include "matador/sql/condition.hpp"
+#include "matador/sql/token_visitor.hpp"
+#include "matador/sql/value.hpp"
 
 namespace matador {
 
@@ -52,9 +53,16 @@ struct create : public table_name_token
   void accept(token_visitor &visitor) override;
 };
 
-struct insert : public table_name_token
+struct insert : public token
 {
-  explicit insert(std::string t);
+  insert();
+
+  void accept(token_visitor &visitor) override;
+};
+
+struct into : public table_name_token
+{
+  explicit into(std::string t);
 
   void accept(token_visitor &visitor) override;
 };

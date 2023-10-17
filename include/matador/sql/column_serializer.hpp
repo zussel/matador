@@ -22,10 +22,10 @@ public:
   explicit column_serializer(columns::t_brackets brackets);
 
   template<class T>
-  columns *execute(T &x) {
-    cols_ = std::make_unique<columns>(brackets_);
+  std::shared_ptr<columns> execute(T &x) {
+    cols_ = std::make_shared<columns>(brackets_);
     matador::access::process(*this, x);
-    return cols_.release();
+    return cols_;
   }
 
   template < class T >
@@ -56,7 +56,7 @@ public:
 
 private:
   columns::t_brackets brackets_;
-  std::unique_ptr<columns> cols_;
+  std::shared_ptr<columns> cols_;
 };
 
 /// @endcond

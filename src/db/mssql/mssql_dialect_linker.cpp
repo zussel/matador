@@ -1,10 +1,7 @@
-//
-// Created by sascha on 19.08.16.
-//
-
 #include "matador/db/mssql/mssql_dialect_linker.hpp"
 
 #include "matador/sql/dialect_token.hpp"
+#include "matador/sql/basic_dialect.hpp"
 
 namespace matador {
 

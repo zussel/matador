@@ -29,11 +29,11 @@ void PrimaryKeyTestUnit::test_long_pk()
 
   s.flush();
 
-  matador::query<child> q("child");
+  matador::query<child> q{};
   matador::connection c(dns_);
   c.connect();
   auto id_col = "id"_col;
-  auto res = q.select().where(id_col == 1).execute(c);
+  auto res = q.select().from("child").where(id_col == 1).execute(c);
   auto first = res.begin();
 
   UNIT_ASSERT_TRUE(first != res.end());
@@ -46,7 +46,7 @@ void PrimaryKeyTestUnit::test_long_pk()
 
   s.flush();
 
-  res = q.select().where(id_col == 2UL).execute(c);
+  res = q.select().from("child").where(id_col == 2UL).execute(c);
   first = res.begin();
 
   UNIT_ASSERT_TRUE(first != res.end());
@@ -85,11 +85,11 @@ void PrimaryKeyTestUnit::test_varchar_pk()
 
   s.flush();
 
-  matador::query<product> q("product");
+  matador::query<product> q{};
   matador::connection c(dns_);
   c.connect();
   auto id_col = "idpk"_col;
-  auto res = q.select().where(id_col == "p1").execute(c);
+  auto res = q.select().from("product").where(id_col == "p1").execute(c);
   auto first = res.begin();
 
   UNIT_ASSERT_TRUE(first != res.end());
@@ -102,7 +102,7 @@ void PrimaryKeyTestUnit::test_varchar_pk()
 
   s.flush();
 
-  res = q.select().where(id_col == "p2").execute(c);
+  res = q.select().from("product").where(id_col == "p2").execute(c);
   first = res.begin();
 
   UNIT_ASSERT_TRUE(first != res.end());

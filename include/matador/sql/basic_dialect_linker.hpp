@@ -44,6 +44,7 @@ public:
   void visit(const matador::detail::group_by &) override;
   void visit(const matador::detail::insert &) override;
   void visit(const matador::detail::from &) override;
+  void visit(const matador::detail::into &) override;
   void visit(const matador::detail::where &) override;
   void visit(const matador::detail::basic_condition &) override;
   void visit(const matador::detail::basic_column_condition &) override;

@@ -125,7 +125,7 @@ public:
    * @param str The identifier string to be prepared
    * @return The prepared string
    */
-  std::string prepare_identifier(const std::string &str);
+  std::string prepare_identifier(const std::string &str) const;
 
   /**
    * Prepare string literal
@@ -139,14 +139,14 @@ public:
    *
    * @param str Identifier to put quotes around
    */
-  void quote_identifier(std::string &str);
+  void quote_identifier(std::string &str) const;
 
   /**
    * Escape identifier quotes inside identifiers.
    *
    * @param str Identifier to be escaped
    */
-  void escape_quotes_in_identifier(std::string &str);
+  void escape_quotes_in_identifier(std::string &str) const;
 
   /**
    * Escape quotes in string literals
@@ -243,7 +243,8 @@ private:
     {detail::token::CREATE_TABLE, "CREATE TABLE"},
     {detail::token::DROP, "DROP TABLE"},
     {detail::token::REMOVE, "DELETE"},
-    {detail::token::INSERT, "INSERT INTO"},
+    {detail::token::INSERT, "INSERT"},
+    {detail::token::INTO, "INTO"},
     {detail::token::VALUES, "VALUES"},
     {detail::token::UPDATE, "UPDATE"},
     {detail::token::SELECT, "SELECT"},

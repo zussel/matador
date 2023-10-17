@@ -7,6 +7,7 @@
 #include "matador/sql/connection.hpp"
 #include "matador/sql/sql.hpp"
 #include "matador/sql/column.hpp"
+#include "matador/sql/condition.hpp"
 #include "matador/sql/dialect_token.hpp"
 
 #include "PostgreSQLDialectTestUnit.hpp"
@@ -20,7 +21,7 @@ PostgreSQLDialectTestUnit::PostgreSQLDialectTestUnit()
   add_test("placeholder_condition", [this] { test_placeholder_condition(); }, "test postgresql placeholder in condition link");
   add_test("update_limit", [this] { test_update_limit(); }, "test postgresql limit");
   add_test("update_limit_prepare", [this] { test_update_limit_prepare(); }, "test postgresql prepared limit");
-  add_test("tablename", [this] { test_table_name(); }, "test postgresql extract table name");
+  add_test("table_name", [this] { test_table_name(); }, "test postgresql extract table name");
 }
 
 void PostgreSQLDialectTestUnit::test_placeholder()
@@ -29,7 +30,8 @@ void PostgreSQLDialectTestUnit::test_placeholder()
 
   sql s;
 
-  s.append(std::make_shared<detail::insert>("person"));
+  s.append(std::make_shared<detail::insert>());
+  s.append(std::make_shared<detail::into>("person"));
 
   auto cols = std::make_shared<columns>(columns::WITH_BRACKETS);
 
@@ -132,11 +134,11 @@ void PostgreSQLDialectTestUnit::test_update_limit_prepare(){
 
 void PostgreSQLDialectTestUnit::test_table_name()
 {
-  query<person> q("person");
+  query<person> q{};
 
   column id("id");
 
-  q.select();
+  q.select().from("person");
 
   UNIT_ASSERT_EQUAL("person", q.stmt().table_name());
 }

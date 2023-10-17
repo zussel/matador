@@ -54,3 +54,21 @@ TARGET_LINK_LIBRARIES(row
 TARGET_LINK_LIBRARIES(datetime
     matador-utils
 )
+
+TARGET_LINK_LIBRARIES(query
+    matador-sql
+    matador-logger
+    matador-utils
+)
+
+TARGET_LINK_LIBRARIES(query
+    matador-sql
+    matador-logger
+    matador-utils
+)
+
+TARGET_LINK_LIBRARIES(query
+    matador-sql
+    matador-logger
+    matador-utils
+)

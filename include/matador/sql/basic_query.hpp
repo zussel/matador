@@ -5,10 +5,12 @@
 #include "matador/sql/sql.hpp"
 #include "matador/sql/column.hpp"
 #include "matador/sql/connection.hpp"
+#include "matador/sql/query_value_column_processor.hpp"
+#include "matador/sql/query_value_creator.hpp"
+#include "matador/sql/value_serializer.hpp"
+#include "matador/sql/value_column_serializer.hpp"
 
 #include "matador/utils/any.hpp"
-#include "query_value_column_processor.hpp"
-#include "query_value_creator.hpp"
 
 #include <string>
 
@@ -33,7 +35,8 @@ public:
    *
    * @param table_name The name of the table
    */
-  explicit basic_query(std::string table_name);
+//  explicit basic_query(std::string table_name);
+  basic_query();
 
   /**
    * Resets the query.
@@ -43,21 +46,11 @@ public:
   void reset_query(t_query_command query_command);
 
   /**
-   * Get the query string build for internal
-   * connection as prepared or direct statement
-   *
-   * @param prepared Indicates wether the query should
-   *                 be interpreted as prepared or direct
-   * @return The build query string
-   */
-  std::string str(bool prepared);
-
-  /**
    * Get the query string build for the specific
    * connection as prepared or direct statement
    *
    * @param conn The connection to build for
-   * @param prepared Indicates wether the query should
+   * @param prepared Indicates whether the query should
    *                 be interpreted as prepared or direct
    * @return The build query string
    */
@@ -71,11 +64,11 @@ public:
   const sql& stmt() const;
 
   /**
-   * Return the current tablename of the query
+   * Return the current table name of the query
    *
-   * @return Current tablename of the query
+   * @return Current table name of the query
    */
-  std::string tablename() const;
+  std::string table_name() const;
 
 protected:
 
@@ -92,11 +85,12 @@ protected:
     QUERY_COLUMN,
     QUERY_SET,
     QUERY_FROM,
+    QUERY_INTO,
     QUERY_WHERE,
     QUERY_COND_WHERE,
-    QUERY_ORDERBY,
+    QUERY_ORDER_BY,
     QUERY_ORDER_DIRECTION,
-    QUERY_GROUPBY
+    QUERY_GROUP_BY
   };
 
   /// @endcond
@@ -109,29 +103,29 @@ protected:
 
   static std::string state2text(state_t state);
 
-  template < class T >
-  bool determine_table_name()
-  {
-    auto i = basic_query::table_name_map_.find(std::type_index(typeid(T)));
-    if (i != basic_query::table_name_map_.end()) {
-      table_name_ = i->second;
-      return true;
-    }
-    return false;
-  }
+//  template < class T >
+//  bool determine_table_name()
+//  {
+//    auto i = basic_query::table_name_map_.find(std::type_index(typeid(T)));
+//    if (i != basic_query::table_name_map_.end()) {
+//      table_name_ = i->second;
+//      return true;
+//    }
+//    return false;
+//  }
   /// @endcond
 
 protected:
   /// @cond MATADOR_DEV
   sql sql_;
   state_t state;
-  std::string table_name_;
   std::shared_ptr<columns> update_columns_;
   std::vector<matador::any> row_values_;
   detail::query_value_column_processor query_value_column_processor_;
   detail::query_value_creator query_value_creator_;
-  connection conn_;
-  static std::unordered_map<std::type_index, std::string> table_name_map_;
+  detail::value_serializer value_serializer_;
+  detail::value_column_serializer value_column_serializer_;
+//  static std::unordered_map<std::type_index, std::string> table_name_map_;
   /// @endcond
 };
 

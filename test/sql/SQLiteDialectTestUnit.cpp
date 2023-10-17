@@ -3,8 +3,10 @@
 #include "connections.hpp"
 
 #include "matador/sql/connection.hpp"
+#include "matador/sql/condition.hpp"
 #include "matador/sql/columns.hpp"
 #include "matador/sql/dialect_token.hpp"
+#include "matador/sql/sql.hpp"
 
 using namespace matador;
 

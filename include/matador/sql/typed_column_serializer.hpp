@@ -54,11 +54,11 @@ public:
   ~typed_column_serializer() = default;
 
   template < class T >
-  columns* execute(T &x)
+  std::shared_ptr<columns> execute(T &x)
   {
-    cols_ = std::make_unique<columns>();
+    cols_ = std::make_shared<columns>();
     matador::access::process(*this, x);
-    return cols_.release();
+    return cols_;
   }
 
   template < class T >
@@ -94,7 +94,7 @@ public:
   void on_has_many(const char *, abstract_container &, cascade_type) {}
 
 private:
-  std::unique_ptr<columns> cols_;
+  std::shared_ptr<columns> cols_;
   size_t index_ = 0;
 
   typed_column_identifier_serializer column_identifier_serializer_;

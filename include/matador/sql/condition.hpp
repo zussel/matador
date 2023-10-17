@@ -55,7 +55,6 @@ public:
   static std::array<std::string, num_operands> operands;
 };
 
-//class OOS_SQL_API basic_column_condition : public basic_condition
 class basic_column_condition : public basic_condition
 {
 public:
@@ -592,15 +591,15 @@ condition<column, detail::basic_query> equals(const column &col, detail::basic_q
 //OOS_SQL_API condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
 
 /**
- * @brief Condition unequality operator for a column and a value
+ * @brief Condition inequality operator for a column and a value
  *
  * Creates a condition condition object of a column and a value
- * checked on unequality.
+ * checked on inequality.
  *
  * @tparam T The type of the value
  * @param col The column object
  * @param val The value to compare with
- * @return The condition object representing the unequality operation
+ * @return The condition object representing the inequality operation
  */
 template<class T>
 condition<column, T> operator!=(const column &col, T val)

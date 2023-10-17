@@ -1,7 +1,3 @@
-//
-// Created by sascha on 2/26/16.
-//
-
 #include "TestDialect.hpp"
 
 #include "matador/sql/dialect_token.hpp"

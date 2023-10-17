@@ -6,6 +6,7 @@
 
 #include "matador/sql/sql.hpp"
 #include "matador/sql/query.hpp"
+#include "matador/sql/condition.hpp"
 #include "matador/sql/dialect_token.hpp"
 #include "matador/sql/connection.hpp"
 
@@ -48,7 +49,7 @@ void MSSQLDialectTestUnit::test_query_select_sub_select()
 {
   matador::connection conn(::connection::mssql);
 
-  query<person> q("person");
+  query<person> q;
 
   column id("id");
 
@@ -65,10 +66,10 @@ void MSSQLDialectTestUnit::test_query_select_sub_select_result()
 
   conn.connect();
 
-  query<person> q("person");
+  query<person> q{};
 
   // create item table and insert item
-  result<person> res(q.create().execute(conn));
+  result<person> res(q.create("person").execute(conn));
 
   unsigned long counter = 0;
 
@@ -94,7 +95,7 @@ void MSSQLDialectTestUnit::test_query_select_sub_select_result()
   //    UNIT_EXPECT_EQUAL(1UL, p->id());
   //    UNIT_EXPECT_EQUAL("Hans", p->name());
   //}
-  q.drop().execute(conn);
+  q.drop("person").execute(conn);
 
   conn.disconnect();
 }

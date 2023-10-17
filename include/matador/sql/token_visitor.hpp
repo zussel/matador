@@ -26,6 +26,7 @@ struct set;
 struct asc;
 struct desc;
 struct from;
+struct into;
 struct where;
 class basic_condition;
 class basic_column_condition;
@@ -60,6 +61,7 @@ public:
   virtual void visit(const matador::columns &) = 0;
   virtual void visit(const matador::column &) = 0;
   virtual void visit(const matador::detail::from &) = 0;
+  virtual void visit(const matador::detail::into &) = 0;
   virtual void visit(const matador::detail::where &) = 0;
   virtual void visit(const matador::detail::basic_condition &) = 0;
   virtual void visit(const matador::detail::basic_column_condition &) = 0;

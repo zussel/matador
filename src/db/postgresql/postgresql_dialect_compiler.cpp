@@ -1,3 +1,4 @@
+#include "matador/sql/condition.hpp"
 #include "matador/sql/query.hpp"
 
 #include "matador/db/postgresql/postgresql_dialect_compiler.hpp"

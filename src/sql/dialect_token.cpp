@@ -43,11 +43,20 @@ void create::accept(token_visitor &visitor)
   visitor.visit(*this);
 }
 
-insert::insert(std::string t)
-  : table_name_token(INSERT, std::move(t))
+insert::insert()
+  : token(INSERT)
 {}
 
 void insert::accept(token_visitor &visitor)
+{
+  visitor.visit(*this);
+}
+
+into::into(std::string name)
+: table_name_token(INTO, std::move(name))
+{}
+
+void into::accept(token_visitor &visitor)
 {
   visitor.visit(*this);
 }

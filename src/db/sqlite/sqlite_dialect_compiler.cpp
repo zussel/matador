@@ -1,7 +1,8 @@
 #include "matador/db/sqlite/sqlite_dialect_compiler.hpp"
-
-#include "matador/sql/query.hpp"
 #include "matador/db/sqlite/sqlite_dialect.hpp"
+
+#include "matador/sql/condition.hpp"
+#include "matador/sql/query.hpp"
 
 namespace matador {
 

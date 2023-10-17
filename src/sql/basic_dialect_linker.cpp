@@ -1,6 +1,8 @@
 #include "matador/sql/basic_dialect_linker.hpp"
 #include "matador/sql/dialect_token.hpp"
 #include "matador/sql/columns.hpp"
+#include "matador/sql/condition.hpp"
+#include "matador/sql/query.hpp"
 
 #include <algorithm>
 
@@ -11,8 +13,8 @@ namespace detail {
 void basic_dialect_linker::link()
 {
   // build the query
-  for(auto const &tokptr : top().tokens_) {
-    tokptr->accept(*this);
+  for(auto const &tok : top().tokens_) {
+    tok->accept(*this);
   }
 }
 
@@ -140,7 +142,7 @@ void basic_dialect_linker::visit(const matador::detail::group_by &by)
 
 void basic_dialect_linker::visit(const matador::detail::insert &insert)
 {
-  dialect().append_to_result(token_string(insert.type) + " " + dialect_->prepare_identifier(insert.table_name) + " ");
+  dialect().append_to_result(token_string(insert.type) + " ");
 }
 
 void basic_dialect_linker::visit(const matador::detail::from &from)
@@ -150,6 +152,11 @@ void basic_dialect_linker::visit(const matador::detail::from &from)
   } else {
     dialect().append_to_result(token_string(from.type) + " " + dialect_->prepare_identifier(from.table_name) + " ");
   }
+}
+
+void basic_dialect_linker::visit(const matador::detail::into &i)
+{
+  dialect().append_to_result(token_string(i.type) + " " + dialect_->prepare_identifier(i.table_name) + " ");
 }
 
 void basic_dialect_linker::visit(const matador::detail::where &where)

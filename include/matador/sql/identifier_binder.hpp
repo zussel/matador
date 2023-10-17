@@ -3,8 +3,6 @@
 
 #include "matador/utils/identifier.hpp"
 
-#include "matador/object/object_exception.hpp"
-
 #include "matador/sql/statement.hpp"
 
 namespace matador {
@@ -137,7 +135,7 @@ template< class V >
 void identifier_binder<T>::on_primary_key(const char *id, V &/*x*/, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type*)
 {
   if (!id_->is_similar_type<V>()) {
-    throw_object_exception("identifier types aren't equal");
+    throw std::logic_error("identifier types aren't equal");
   }
   field_name_ = id;
   id_->serialize(*this);
@@ -147,7 +145,7 @@ template<class T>
 void identifier_binder<T>::on_primary_key(const char *id, std::string &, size_t /*size*/)
 {
   if (!id_->is_similar_type<std::string>()) {
-    throw_object_exception("identifier types aren't equal");
+    throw std::logic_error("identifier types aren't equal");
   }
   field_name_ = id;
   id_->serialize(*this);

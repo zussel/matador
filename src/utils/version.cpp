@@ -58,7 +58,7 @@ std::ostream &operator<<(std::ostream &out, const version &v)
 version version::from_string(const std::string &version_string)
 {
   version result;
-  const auto ret = sscanf(version_string.c_str(), "%d.%d.%d", &result.major_, &result.minor_, &result.patch_);
+  const auto ret = sscanf(version_string.c_str(), "%u.%u.%u", &result.major_, &result.minor_, &result.patch_);
   if (ret != 3) {
     throw std::logic_error("invalid version string");
   }

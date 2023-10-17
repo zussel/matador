@@ -1,6 +1,3 @@
-//
-// Created by sascha on 3/4/16.
-//
 #include "matador/sql/basic_dialect.hpp"
 #include "matador/sql/basic_dialect_compiler.hpp"
 #include "matador/sql/basic_dialect_linker.hpp"
@@ -100,7 +97,7 @@ void basic_dialect::append_to_result(const std::string &part)
 
 void basic_dialect::push(const sql &s)
 {
-  build_info_stack_.push(detail::build_info(s, this));
+  build_info_stack_.emplace(s, this);
 }
 
 void basic_dialect::pop()
@@ -133,7 +130,7 @@ const std::vector<std::string>& basic_dialect::columns() const
   return columns_;
 }
 
-std::string basic_dialect::prepare_identifier(const std::string &str)
+std::string basic_dialect::prepare_identifier(const std::string &str) const
 {
   std::string result(str);
   escape_quotes_in_identifier(result);
@@ -148,13 +145,13 @@ std::string basic_dialect::prepare_literal(const std::string &str) const
   return result;
 }
 
-void basic_dialect::quote_identifier(std::string &str)
+void basic_dialect::quote_identifier(std::string &str) const
 {
   str.insert(0, token_at(detail::token::START_QUOTE));
   str += token_at(detail::token::END_QUOTE);
 }
 
-void basic_dialect::escape_quotes_in_identifier(std::string &str)
+void basic_dialect::escape_quotes_in_identifier(std::string &str) const
 {
   const std::string open_char(token_at(detail::token::START_QUOTE));
   std::string close_char(token_at(detail::token::END_QUOTE));

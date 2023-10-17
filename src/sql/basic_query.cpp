@@ -6,9 +6,9 @@ namespace matador {
 
 namespace detail {
 
-basic_query::basic_query(std::string table_name)
+basic_query::basic_query()
   : state(QUERY_BEGIN)
-  , table_name_(std::move(table_name))
+//  , table_name_(std::move(table_name))
   , update_columns_(new columns(columns::WITHOUT_BRACKETS))
   , query_value_column_processor_(update_columns_, row_values_)
 {}
@@ -19,11 +19,6 @@ void basic_query::reset_query(t_query_command query_command)
   sql_.table_name("");
   state = QUERY_BEGIN;
   update_columns_->columns_.clear();
-}
-
-std::string basic_query::str(bool prepared)
-{
-  return str(conn_, prepared);
 }
 
 std::string basic_query::str(connection &conn, bool prepared)
@@ -41,9 +36,9 @@ const sql& basic_query::stmt() const
   return sql_;
 }
 
-std::string basic_query::tablename() const
+std::string basic_query::table_name() const
 {
-  return table_name_;
+  return sql_.table_name();
 }
 
 void basic_query::throw_invalid(state_t next, state_t current)
@@ -97,7 +92,7 @@ void basic_query::throw_invalid(state_t next, state_t current)
         throw std::logic_error(msg.str());
       }
       break;
-    case basic_query::QUERY_ORDERBY:
+    case basic_query::QUERY_ORDER_BY:
       if (current != basic_query::QUERY_SELECT &&
           current != basic_query::QUERY_WHERE &&
           current != basic_query::QUERY_FROM &&
@@ -108,7 +103,7 @@ void basic_query::throw_invalid(state_t next, state_t current)
       }
       break;
     case QUERY_ORDER_DIRECTION:
-      if (current != basic_query::QUERY_ORDERBY) {
+      if (current != basic_query::QUERY_ORDER_BY) {
         msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
@@ -145,18 +140,18 @@ std::string basic_query::state2text(basic_query::state_t state)
       return "where";
     case QUERY_COND_WHERE:
       return "condition_where";
-    case QUERY_ORDERBY:
+    case QUERY_ORDER_BY:
       return "order_by";
     case QUERY_ORDER_DIRECTION:
       return "order_direction";
-    case QUERY_GROUPBY:
+    case QUERY_GROUP_BY:
       return "group_by";
     default:
       return "unknown";
   }
 }
 
-std::unordered_map<std::type_index, std::string> basic_query::table_name_map_ = std::unordered_map<std::type_index, std::string>();
+//std::unordered_map<std::type_index, std::string> basic_query::table_name_map_ = std::unordered_map<std::type_index, std::string>();
 
 }
 

@@ -14,6 +14,7 @@ Insert: Add columns
 state Update
 Update: Set table name
 state Delete
+Delete: Delete items from table
 
 state Table
 Table: Set table name
@@ -22,6 +23,9 @@ Into: Set table name
 state From
 From: Set table name
 
+state Join
+Join: Set table
+Join: Set join type (inner left, right, outer)
 state Where
 Where: Add where clause
 state Set
@@ -29,6 +33,11 @@ Set: Set column value pairs
 state Values
 Values: Set values
 
+state On:
+On: Set Expression
+
+state GroupBy
+GroupBy: Add column names
 state OrderBy
 OrderBy: Add expression
 state Limit
@@ -52,18 +61,23 @@ Into --> Values
 Update --> Set
 Set --> Where
 From --> Where
+From --> Join
+Join --> On
+On --> Where
 
+Where --> GroupBy
 Where --> OrderBy
 Where --> Limit
 
 OrderBy --> Limit
 
 Table --> [*]
-Values --> [*]
+Values ---> [*]
 Where --> [*]
 Set --> [*]
 From --> [*]
 Limit --> [*]
 OrderBy --> [*]
+GroupBy --> [*]
 
 @enduml

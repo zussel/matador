@@ -31,6 +31,9 @@ public:
   void visit(const matador::columns &) override;
   void visit(const matador::column &) override;
   void visit(const matador::detail::from &) override;
+
+  void visit(const into &into) override;
+
   void visit(const matador::detail::where &) override;
   void visit(const matador::detail::basic_condition &) override;
   void visit(const matador::detail::basic_column_condition &) override;

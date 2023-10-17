@@ -5,15 +5,6 @@
 
 namespace matador {
 
-sql::sql()
-  : command_type_(t_query_command::UNKNOWN)
-{ }
-
-sql::~sql()
-{
-  reset(t_query_command::UNKNOWN);
-}
-
 void sql::append(const std::shared_ptr<detail::token> &token_ptr)
 {
   token_list_.push_back(token_ptr);

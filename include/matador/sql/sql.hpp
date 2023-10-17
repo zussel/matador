@@ -28,8 +28,8 @@ struct build_info;
 class sql
 {
 public:
-  sql();
-  ~sql();
+  sql() = default;
+  ~sql() = default;
 
   void append(const std::shared_ptr<detail::token> &token_ptr);
   void append(const sql &stmt);
@@ -54,7 +54,7 @@ private:
   template < class L, class R, class E >
   friend class condition;
 
-  t_query_command command_type_;
+  t_query_command command_type_{t_query_command::UNKNOWN};
   token_list_t token_list_;
 
   std::string table_name_;
