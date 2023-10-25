@@ -184,9 +184,9 @@ void connection::prepare_prototype_row(row &prototype, const std::string &table_
     prototype.set(f.name(), value);
   }
   // default value for count(*)
-  if (prototype.has_column(matador::columns::count_all().name)) {
+  if (prototype.has_column(matador::columns::count_all().name())) {
     std::shared_ptr<value> value(create_default_value(database_type::type_int));
-    prototype.set(matador::columns::count_all().name, value);
+    prototype.set(matador::columns::count_all().name(), value);
   }
 }
 

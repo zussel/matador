@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "matador/sql/basic_dialect.hpp"
 #include "matador/sql/basic_dialect_compiler.hpp"
 #include "matador/sql/basic_dialect_linker.hpp"
@@ -11,9 +13,41 @@ namespace detail {
 
 build_info::build_info(const sql &s, basic_dialect *d)
   : dialect(d)
+  , s_(const_cast<sql&>(s))
 {
-  tokens_.assign(s.token_list_.begin(),s.token_list_.end());
-  current = tokens_.begin();
+//  tokens_.assign(std::make_move_iterator(s.token_list_.begin()), std::make_move_iterator(s.token_list_.end()));
+  current = s_.token_list_.begin();
+}
+
+build_info &build_info::operator=(const build_info &x) {
+  dialect = x.dialect;
+  s_ = x.s_;
+  current = x.current;
+  result = x.result;
+  return *this;
+}
+
+build_info &build_info::operator=(build_info &&x) noexcept {
+  dialect = x.dialect;
+  s_ = x.s_;
+  current = std::move(x.current);
+  result = std::move(x.result);
+  return *this;
+}
+
+token_ptr build_info::erase_current() {
+  auto limit = std::move(*current);
+  s_.token_list_.erase(current);
+  return std::move(limit);
+}
+
+void build_info::insert_after(token_list_t::iterator i,token_ptr t)
+{
+  s_.token_list_.insert(std::move(i), std::move(t));
+}
+
+token_list_t::iterator build_info::end() const {
+  return s_.token_list_.end();
 }
 
 }

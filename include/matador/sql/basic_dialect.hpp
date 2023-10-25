@@ -31,11 +31,16 @@ struct build_info
 
   build_info(const build_info&) = default;
   build_info(build_info&&) noexcept = default;
-  build_info& operator=(const build_info&) = default;
-  build_info& operator=(build_info&&) = default;
+  build_info& operator=(const build_info&);
+  build_info& operator=(build_info&&) noexcept ;
+
+  token_ptr erase_current();
+  void insert_after(token_list_t::iterator i, token_ptr t);
+  token_list_t::iterator end() const;
 
   basic_dialect *dialect;
-  token_list_t tokens_;
+  sql &s_;
+//  token_list_t tokens_;
   token_list_t::iterator current;
   std::string result;
 };
@@ -91,7 +96,7 @@ protected:
    * Creates a new dialect consisting of a dialect compiler
    * and dialect linker class.
    * Their are default implementations of these classes, but
-   * they could be overwritten by the concrete dialect impementation
+   * they could be overwritten by the concrete dialect implementation
    *
    * @param compiler The dialect compiler object
    * @param linker  The dialect linker object
@@ -165,7 +170,7 @@ public:
 
   /**
    * Generates a next placeholder string. default is
-   * questionmark '?'
+   * question mark '?'
    *
    * @return Placeholder string
    */

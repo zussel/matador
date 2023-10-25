@@ -1,6 +1,7 @@
 #include "matador/db/mssql/mssql_dialect_compiler.hpp"
 
 #include "matador/sql/basic_dialect.hpp"
+#include "matador/sql/sql.hpp"
 
 namespace matador {
 
@@ -28,11 +29,9 @@ void mssql_dialect_compiler::visit(const matador::detail::top &)
   }
 
   // move limit behind select
-  auto limit = *top().current;
-  top().tokens_.erase(top().current);
-  auto current_command = commands_.top();
+  auto limit = top().erase_current();
+  top().insert_after(++commands_.top(), std::move(limit));
   commands_.pop();
-  top().tokens_.insert(++current_command, limit);
 }
 
 void mssql_dialect_compiler::on_compile_start()

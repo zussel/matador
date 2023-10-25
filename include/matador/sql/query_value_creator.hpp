@@ -18,20 +18,20 @@ class query_value_creator
 public:
   query_value_creator();
 
-  std::shared_ptr<value> create_from_any(any &a);
+  std::unique_ptr<value> create_from_any(any &a);
 
 private:
   template < class T >
   void process(T &val)
   {
-    value_ = std::make_shared<value>(val);
+    value_ = std::make_unique<value>(val);
   }
   void process(char *val);
   void process(const char *val);
 
 private:
   any_visitor visitor_;
-  std::shared_ptr<value> value_;
+  std::unique_ptr<value> value_;
 };
 
 /// @endcond

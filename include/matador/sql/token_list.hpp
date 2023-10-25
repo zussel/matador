@@ -7,7 +7,7 @@
 
 namespace matador {
 
-typedef std::shared_ptr<detail::token> token_ptr; /**< Shortcut to a token shared pointer */
+typedef std::unique_ptr<detail::token> token_ptr; /**< Shortcut to a token shared pointer */
 typedef std::list<token_ptr> token_list_t;        /**< Shortcut to a list of token shared pointer */
 
 }

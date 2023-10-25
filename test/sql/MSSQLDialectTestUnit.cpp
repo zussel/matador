@@ -15,8 +15,8 @@ using namespace matador;
 MSSQLDialectTestUnit::MSSQLDialectTestUnit()
   : unit_test("mssql_dialect", "mssql dialect test")
 {
-  add_test("limit", std::bind(&MSSQLDialectTestUnit::test_limit, this), "test mssql limit compile");
-  add_test("sub_select", std::bind(&MSSQLDialectTestUnit::test_query_select_sub_select, this), "test query sub select");
+  add_test("limit", [this] { test_limit(); }, "test mssql limit compile");
+  add_test("sub_select", [this] { test_query_select_sub_select(); }, "test query sub select");
   //add_test("sub_select_result", std::bind(&MSSQLDialectTestUnit::test_query_select_sub_select_result, this), "test query sub select result");
 }
 
@@ -26,19 +26,19 @@ void MSSQLDialectTestUnit::test_limit()
 
   sql s;
 
-  s.append(std::make_shared<detail::select>());
+  s.append(std::make_unique<detail::select>());
 
-  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
+  auto cols = std::make_unique<columns>(columns::WITHOUT_BRACKETS);
 
-  cols->push_back(std::make_shared<column>("id"));
-  cols->push_back(std::make_shared<column>("name"));
-  cols->push_back(std::make_shared<column>("age"));
+  cols->emplace_back("id");
+  cols->emplace_back("name");
+  cols->emplace_back("age");
 
-  s.append(cols);
+  s.append(std::move(cols));
 
-  s.append(std::make_shared<detail::from>("person"));
+  s.append(std::make_unique<detail::from>("person"));
 
-  s.append(std::make_shared<detail::top>(10));
+  s.append(std::make_unique<detail::top>(10));
 
   std::string result = conn.dialect()->direct(s);
 

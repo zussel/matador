@@ -38,6 +38,10 @@ public:
     return name_;
   }
 
+  void name(const std::string& name) {
+    name_ = name;
+  }
+
   size_t size() const {
     return attr_.size();
   }

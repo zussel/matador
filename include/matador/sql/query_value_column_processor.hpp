@@ -14,9 +14,9 @@ namespace detail {
 class query_value_column_processor
 {
 public:
-  query_value_column_processor(std::shared_ptr<columns> update_columns, std::vector<matador::any> rowvalues);
+  query_value_column_processor();
 
-  void execute(std::pair<std::string, matador::any> &a);
+  std::unique_ptr<columns> execute(const std::vector<std::pair<std::string, matador::any>> &column_values);
 
 private:
   template < class T >
@@ -29,7 +29,7 @@ private:
 
 private:
   any_visitor visitor_;
-  std::shared_ptr<columns> update_columns_;
+  std::unique_ptr<columns> update_columns_;
   std::vector<matador::any> row_values_;
   std::string current_id_;
 };

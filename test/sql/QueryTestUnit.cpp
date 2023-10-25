@@ -162,7 +162,7 @@ void QueryTestUnit::test_data_types()
   item.set_date(date_val);
   item.set_time(time_val);
 
-  q.insert(item).into("datatypes").execute(connection_);
+  q.insert(item).into("datatypes").values(item).execute(connection_);
 
   auto res = q.select().from("datatypes").execute(connection_);
 
@@ -1300,7 +1300,7 @@ void QueryTestUnit::test_query_select_columns()
   while (first != last) {
     std::unique_ptr<row> item(first.release());
     UNIT_EXPECT_EQUAL(1UL, item->at<unsigned long>("id"));
-    UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name));
+    UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name()));
     ++first;
   }
 
@@ -1417,7 +1417,7 @@ void QueryTestUnit::test_update_limit()
   matador::column owner("owner_id");
   matador::column item("item_id");
   relation::t_id newid(4UL);
-  q.update("relation", {{item.name, newid}})
+  q.update("relation", {{item.name(), newid}})
     .where("owner_id"_col == 1 && item == 1)
     .limit(1);
 

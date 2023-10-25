@@ -3,12 +3,7 @@
 namespace matador {
 namespace detail {
 
-query_value_column_processor::query_value_column_processor(
-  std::shared_ptr<columns> update_columns,
-  std::vector<matador::any> rowvalues
-)
-  : update_columns_(std::move(update_columns))
-  , row_values_(std::move(rowvalues))
+query_value_column_processor::query_value_column_processor()
 {
   visitor_.register_visitor<char>([this](char &val) { this->process(val); });
   visitor_.register_visitor<short>([this](short &val) { this->process(val); });
@@ -30,11 +25,17 @@ query_value_column_processor::query_value_column_processor(
   visitor_.register_visitor<matador::date>([this](matador::date &val) { this->process(val); });
 }
 
-void query_value_column_processor::execute(std::pair<std::string, matador::any> &a)
+std::unique_ptr<columns> query_value_column_processor::execute(const std::vector<std::pair<std::string, matador::any>> &column_values)
 {
-  current_id_ = a.first;
-  row_values_.push_back(a.second);
-  visitor_.visit(row_values_.back());
+  update_columns_ = std::make_unique<columns>();
+
+  for (const auto &column_value : column_values) {
+    current_id_ = column_value.first;
+    row_values_.push_back(column_value.second);
+    visitor_.visit(row_values_.back());
+  }
+
+  return std::move(update_columns_);
 }
 
 void query_value_column_processor::process(char *val)

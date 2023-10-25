@@ -13,7 +13,7 @@ namespace detail {
 void basic_dialect_linker::link()
 {
   // build the query
-  for(auto const &tok : top().tokens_) {
+  for(auto const &tok : top().s_.token_list_) {
     tok->accept(*this);
   }
 }
@@ -187,15 +187,18 @@ void basic_dialect_linker::visit(const matador::columns &cols)
     dialect().append_to_result("(");
   }
 
-  if (cols.columns_.size() > 1) {
-    std::for_each(cols.columns_.begin(), cols.columns_.end() - 1, [&](const std::shared_ptr<column> &col)
-    {
-      col->accept(*this);
+  if (cols.columns_.size() < 2) {
+    for (auto &col : cols.columns_) {
+      const_cast<column&>(col).accept(*this);
       dialect().append_to_result(", ");
-    });
-  }
-  if (!cols.columns_.empty()) {
-    cols.columns_.back()->accept(*this);
+    }
+  } else {
+    auto it = cols.columns_.begin();
+    const_cast<column&>(*it++).accept(*this);
+    for (;it != cols.columns_.end(); ++it) {
+      dialect().append_to_result(", ");
+      const_cast<column&>(*it).accept(*this);
+    }
   }
 
   if (cols.with_brackets_ == columns::WITH_BRACKETS) {
@@ -207,31 +210,41 @@ void basic_dialect_linker::visit(const matador::columns &cols)
 
 void basic_dialect_linker::visit(const matador::column &col)
 {
-  if (is_build_options_set(col.build_options, t_build_options::with_quotes)) {
-    dialect().append_to_result(dialect_->prepare_identifier(col.name));
-  } else {
-    dialect().append_to_result(col.name);
-  }
-  if (is_build_options_set(col.build_options, t_build_options::with_type)) {
-    dialect().append_to_result(std::string(" ") + dialect().to_database_type_string(col.type));
-    if (col.attributes.size() > 0) {
+  if (col.is_name_column()) {
+    if (col.with_quotes()) {
+      dialect().append_to_result(dialect_->prepare_identifier(col.name()));
+    } else {
+      dialect().append_to_result(col.name());
+    }
+  } else if (col.is_create_column()) {
+    if (col.with_quotes()) {
+      dialect().append_to_result(dialect_->prepare_identifier(col.name()));
+    } else {
+      dialect().append_to_result(col.name());
+    }
+    dialect().append_to_result(std::string(" ") + dialect().to_database_type_string(col.type()));
+    if (col.attributes().size() > 0) {
       std::stringstream str;
-      str << "(" << col.attributes.size() << ")";
+      str << "(" << col.attributes().size() << ")";
       dialect().append_to_result(str.str());
     }
 
-    if (is_constraint_set(col.attributes.options(), constraints::NOT_NULL)) {
+    if (is_constraint_set(col.attributes().options(), constraints::NOT_NULL)) {
       dialect().append_to_result(" NOT NULL");
     }
-    if (is_constraint_set(col.attributes.options(), constraints::PRIMARY_KEY)) {
+    if (is_constraint_set(col.attributes().options(), constraints::PRIMARY_KEY)) {
       dialect().append_to_result(" PRIMARY KEY");
     }
-  }
-  if (is_build_options_set(col.build_options, t_build_options::with_value)) {
+  } else if (col.is_update_column()) {
+    if (col.with_quotes()) {
+      dialect().append_to_result(dialect_->prepare_identifier(col.name()));
+    } else {
+      dialect().append_to_result(col.name());
+    }
     dialect().append_to_result("=");
-    const_cast<matador::column&>(col).val.accept(*this);
+    const_cast<matador::value&>(col.value()).accept(*this);
   }
-  dialect().add_column(col.name);
+  dialect().add_column(col.name());
 }
 
 std::string basic_dialect_linker::token_string(detail::token::t_token tok) const

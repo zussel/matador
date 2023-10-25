@@ -11,7 +11,8 @@ value_column_identifier_serializer &value_column_identifier_serializer::for_colu
 }
 
 value_column_serializer::value_column_serializer()
-: value_column_identifier_serializer_(*this) {}
+: value_column_identifier_serializer_(*this)
+{}
 
 void value_column_serializer::on_primary_key(const char *id, std::string &pk, size_t size)
 {

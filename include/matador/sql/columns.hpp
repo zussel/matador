@@ -50,7 +50,7 @@ struct columns : public detail::token
    * @param cols The list of columns
    * @param with_brackets The bracket type
    */
-  columns(std::initializer_list<std::shared_ptr<column>> cols, t_brackets with_brackets = WITH_BRACKETS);
+  explicit columns(std::vector<column> cols, t_brackets with_brackets = WITH_BRACKETS);
 
   /**
    * @brief Creates an empty list of columns.
@@ -78,7 +78,13 @@ struct columns : public detail::token
    * @brief Append a column to the list
    * @param col The column to be appended
    */
-  void push_back(const std::shared_ptr<column> &col);
+  void push_back(column col);
+
+  template<class... Args>
+  void emplace_back(Args&&... args)
+  {
+    columns_.emplace_back(std::forward<Args>(args)...);
+  }
 
   /**
    * @brief Sets columns to be interpreted with surrounding brackets.
@@ -120,7 +126,7 @@ struct columns : public detail::token
    */
   void accept(token_visitor &visitor) override;
 
-  std::vector<std::shared_ptr<column>> columns_; /**< The list of column shared pointer */
+  std::vector<column> columns_; /**< The list of column shared pointer */
   t_brackets with_brackets_ = WITH_BRACKETS;     /**< The bracket type */
 
 private:

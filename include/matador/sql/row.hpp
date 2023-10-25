@@ -86,7 +86,7 @@ public:
   void process(Operator &op)
   {
     for (auto &column : columns_) {
-      op.process(column->name.c_str(), column->val, column->attributes);
+      op.process(column->name().c_str(), column->value(), column->attributes());
     }
   }
 
@@ -103,7 +103,7 @@ public:
   template < class T >
   void set(size_t index, const T &val)
   {
-    columns_.at(index)->val.value_ = val;
+    columns_.at(index)->value().value_ = val;
   }
 
   /**
@@ -119,7 +119,7 @@ public:
   template < class T >
   void set(const std::string &column, const T &val)
   {
-    columns_by_name_.at(column)->val = val;
+    columns_by_name_.at(column)->value() = val;
   }
 
   /**
@@ -140,7 +140,7 @@ public:
   template < class T >
   T at(size_t pos)
   {
-    return columns_.at(pos)->val.get<T>();
+    return columns_.at(pos)->value().get<T>();
   }
 
   /**
@@ -153,7 +153,7 @@ public:
   template < class T >
   T at(const std::string &column)
   {
-    return columns_by_name_.at(column)->val.get<T>();
+    return columns_by_name_.at(column)->value().get<T>();
   }
 
   /**

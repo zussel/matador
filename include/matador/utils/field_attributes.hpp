@@ -9,9 +9,13 @@ class field_attributes
 {
 public:
   field_attributes() = default;
-  field_attributes(size_t size);
-  field_attributes(constraints options);
+  field_attributes(size_t size); // NOLINT(*-explicit-constructor)
+  field_attributes(constraints options); // NOLINT(*-explicit-constructor)
   field_attributes(size_t size, constraints options);
+  field_attributes(const field_attributes &x) = default;
+  field_attributes& operator=(const field_attributes &x) = default;
+  field_attributes(field_attributes &&x) = default;
+  field_attributes& operator=(field_attributes &&x) = default;
   ~field_attributes() = default;
 
   size_t size() const;

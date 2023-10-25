@@ -3,16 +3,10 @@
 
 #include "matador/sql/commands.hpp"
 #include "matador/sql/sql.hpp"
-#include "matador/sql/column.hpp"
-#include "matador/sql/connection.hpp"
-#include "matador/sql/query_value_column_processor.hpp"
-#include "matador/sql/query_value_creator.hpp"
-#include "matador/sql/value_serializer.hpp"
-#include "matador/sql/value_column_serializer.hpp"
-
-#include "matador/utils/any.hpp"
 
 #include <string>
+#include <unordered_set>
+#include <unordered_map>
 
 namespace matador {
 
@@ -74,9 +68,10 @@ protected:
 
   /// @cond MATADOR_DEV
 
-  enum state_t {
-    QUERY_BEGIN,
+  enum class state_t {
+    QUERY_INIT,
     QUERY_CREATE,
+    QUERY_TABLE,
     QUERY_DROP,
     QUERY_SELECT,
     QUERY_INSERT,
@@ -87,10 +82,13 @@ protected:
     QUERY_FROM,
     QUERY_INTO,
     QUERY_WHERE,
+    QUERY_VALUES,
     QUERY_COND_WHERE,
     QUERY_ORDER_BY,
     QUERY_ORDER_DIRECTION,
-    QUERY_GROUP_BY
+    QUERY_GROUP_BY,
+    QUERY_LIMIT,
+    QUERY_FINISH
   };
 
   /// @endcond
@@ -99,33 +97,21 @@ protected:
 
   /// @cond MATADOR_DEV
 
-  static void throw_invalid(state_t next, state_t current);
+  void transition_to(state_t next);
 
-  static std::string state2text(state_t state);
-
-//  template < class T >
-//  bool determine_table_name()
-//  {
-//    auto i = basic_query::table_name_map_.find(std::type_index(typeid(T)));
-//    if (i != basic_query::table_name_map_.end()) {
-//      table_name_ = i->second;
-//      return true;
-//    }
-//    return false;
-//  }
   /// @endcond
 
 protected:
   /// @cond MATADOR_DEV
   sql sql_;
-  state_t state;
-  std::shared_ptr<columns> update_columns_;
-  std::vector<matador::any> row_values_;
-  detail::query_value_column_processor query_value_column_processor_;
-  detail::query_value_creator query_value_creator_;
-  detail::value_serializer value_serializer_;
-  detail::value_column_serializer value_column_serializer_;
-//  static std::unordered_map<std::type_index, std::string> table_name_map_;
+  state_t state{state_t::QUERY_INIT};
+
+  using query_state_set = std::unordered_set<state_t>;
+  using query_state_transition_map = std::unordered_map<state_t, query_state_set>;
+  using query_state_to_string_map = std::unordered_map<state_t, std::string>;
+
+  static query_state_transition_map transitions_;
+  static query_state_to_string_map state_strings_;
   /// @endcond
 };
 

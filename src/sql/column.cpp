@@ -5,70 +5,120 @@
 
 namespace matador {
 
-column::column(std::string col, const field_attributes &attr)
-  : token(COLUMN)
-  , name(std::move(col))
-  , val(any{})
-  , attributes(attr)
-{}
+column::column(std::string name, column::t_quotes_options quotes_options)
+: detail::token(t_token::COLUMN)
+, name_(std::move(name))
+, quotes_options_(quotes_options) {}
 
-column::column(std::string col, t_build_options options, const field_attributes &attr)
-  : token(COLUMN)
-  , name(std::move(col))
-  , build_options(options)
-  , val(any{})
-  , attributes(attr)
+column::column(std::string name, data_type type, size_t index,
+                                         const field_attributes &attr)
+: detail::token(t_token::COLUMN)
+, name_(std::move(name))
+, use_case_(t_use_case::CREATE_COLUMN)
+, type_(type)
+, attributes_(attr)
+, index_(index) {}
+
+column::column(std::string name, const any &val)
+: detail::token(t_token::COLUMN)
+, name_(std::move(name))
+, use_case_(t_use_case::UPDATE_COLUMN)
+, val_(val)
 {}
 
 void column::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
-column::column(std::string name, const matador::any& val, const field_attributes &attr)
-  : token(COLUMN)
-  , name(std::move(name))
-  , val(val)
-  , attributes(attr) {}
+const std::string &column::name() const
+{
+  return name_;
+}
+
+void column::name(const std::string &n)
+{
+  name_ = n;
+}
+
+bool column::with_quotes() const
+{
+  return quotes_options_ == t_quotes_options::WITH_QUOTES;
+}
+
+bool column::without_quotes() const
+{
+  return quotes_options_ == t_quotes_options::WITHOUT_QUOTES;
+}
+
+bool column::is_name_column() const
+{
+  return use_case_ == t_use_case::COLUMN_NAME;
+}
+
+bool column::is_create_column() const
+{
+  return use_case_ == t_use_case::CREATE_COLUMN;
+}
+
+bool column::is_update_column() const
+{
+  return use_case_ == t_use_case::UPDATE_COLUMN;
+}
+
+data_type column::type() const
+{
+  return type_;
+}
+
+const field_attributes &column::attributes() const
+{
+  return attributes_;
+}
+
+size_t column::index() const
+{
+  return index_;
+}
+
+const struct value& column::value() const
+{
+  return val_;
+}
+
+struct value &column::value()
+{
+  return val_;
+}
+
+void column::value(const struct value &val) {
+  val_.value_ = val.value_;
+}
 
 column operator "" _col(const char *name, size_t len)
 {
     return column(std::string(name, len));
 }
 
-std::shared_ptr<column> make_column(const std::string &name, data_type type, const any &val, t_build_options options, size_t index, const field_attributes &attr)
+column make_pk_column(const std::string &name, data_type type, size_t index, size_t max_size)
 {
-  auto col = std::make_shared<column>(name, val, attr);
-  col->index = index;
-  col->type = type;
-  col->build_options = options;
-
-  return col;
+  return {name, type, index, field_attributes{ max_size, constraints::PRIMARY_KEY | constraints::NOT_NULL}};
 }
 
-std::shared_ptr<column> make_pk_column(const std::string &name, data_type type, size_t index, size_t max_size)
+column make_column(const std::string &name, data_type type, size_t index, const field_attributes &attr)
 {
-  return make_column(name, type, index, { max_size, constraints::PRIMARY_KEY | constraints::NOT_NULL });
+  return {name, type, index, attr};
 }
 
-std::shared_ptr<column> make_column(const std::string &name, data_type type, size_t index, const field_attributes &attr)
+column make_column(const std::string &name, const any &val)
 {
-  auto col = std::make_shared<column>(name, attr);
-  col->type = type;
-  col->index = index;
-  col->build_options |= t_build_options::with_type;
-  return col;
-}
-
-std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr, const any &val)
-{
-  return std::make_shared<column>(name, val, attr);
+  return {name, val};
 }
 
 template<>
-std::shared_ptr<column> make_pk_column<std::string>(const std::string &name, size_t max_size)
+column make_pk_column<std::string>(const std::string &name, size_t max_size)
 {
-  return make_column<std::string>(name, { max_size, constraints::PRIMARY_KEY | constraints::NOT_NULL });
+  return {name, data_type_traits<std::string>::builtin_type(max_size), max_size, field_attributes{max_size, constraints::PRIMARY_KEY | constraints::NOT_NULL}};
 }
 
 }

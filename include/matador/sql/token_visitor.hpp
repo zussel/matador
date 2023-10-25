@@ -4,7 +4,9 @@
 namespace matador {
 
 class sql;
-struct column;
+class column;
+class create_column_token;
+class update_column_token;
 struct columns;
 struct value;
 
@@ -15,11 +17,6 @@ struct insert;
 struct update;
 struct tablename;
 struct remove;
-struct typed_column;
-struct typed_identifier_column;
-struct typed_varchar_column;
-struct identifier_varchar_column;
-struct value_column;
 struct values;
 struct distinct;
 struct set;

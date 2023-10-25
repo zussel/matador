@@ -9,12 +9,12 @@ bool row::add_column(const std::string &column)
 
 bool row::add_column(const column_ptr &col)
 {
-  if (has_column(col->name)) {
+  if (has_column(col->name())) {
     return false;
   }
 
   columns_.push_back(col);
-  return columns_by_name_.insert({col->name, col}).second;
+  return columns_by_name_.insert({col->name(), col}).second;
 }
 
 bool row::has_column(const std::string &column) const
@@ -24,7 +24,7 @@ bool row::has_column(const std::string &column) const
 
 void row::set(const std::string &column, const std::shared_ptr<value> &value)
 {
-  columns_by_name_.at(column)->val.value_ = value->value_;
+  columns_by_name_.at(column)->value(*value);
 }
 
 void row::clear()

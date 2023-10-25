@@ -72,7 +72,8 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/export.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/schema.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/columns.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/connection_info.hpp)
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/connection_info.hpp
+        ../../include/matador/sql/column_processor.hpp)
 
 ADD_LIBRARY(matador-sql STATIC ${SOURCES} ${HEADER})
 

@@ -5,14 +5,38 @@
 
 namespace matador {
 
-void sql::append(const std::shared_ptr<detail::token> &token_ptr)
+sql::sql(const sql &x)
+: command_type_(x.command_type_)
+, table_name_(x.table_name_)
 {
-  token_list_.push_back(token_ptr);
+}
+
+sql &sql::operator=(const sql &x)
+{
+  return *this;
+}
+
+sql::sql(sql &&x) noexcept
+: command_type_(x.command_type_)
+, token_list_(std::move(x.token_list_))
+, table_name_(std::move(x.table_name_))
+{
+
+}
+
+sql &sql::operator=(sql &&x) noexcept
+{
+  return *this;
+}
+
+void sql::append(std::unique_ptr<detail::token> token_ptr)
+{
+  token_list_.push_back(std::move(token_ptr));
 }
 
 void sql::append(const sql &stmt)
 {
-  append(std::make_shared<detail::query>(stmt));
+  append(std::make_unique<detail::query>(stmt));
 }
 
 void sql::reset(t_query_command command_type)

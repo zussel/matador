@@ -7,7 +7,7 @@ columns::columns(const std::initializer_list<std::string> &column_names, t_brack
 , with_brackets_(with_brackets)
 {
   for (const auto &column_name : column_names) {
-    push_back(std::make_shared<column>(column_name));
+    columns_.emplace_back(column_name);
   }
 }
 
@@ -16,7 +16,7 @@ columns::columns(const std::vector<std::string> &column_names, columns::t_bracke
 , with_brackets_(with_brackets)
 {
   for (const auto &column_name : column_names) {
-    push_back(std::make_shared<column>(column_name));
+    columns_.emplace_back(column_name);
   }
 }
 
@@ -25,16 +25,15 @@ columns::columns(std::initializer_list<column> cols, t_brackets with_brackets)
 , with_brackets_(with_brackets)
 {
   for (auto &&col : cols) {
-    push_back(std::make_shared<column>(col));
+    push_back(col);
   }
 }
 
-columns::columns(std::initializer_list<std::shared_ptr<column>> cols, t_brackets with_brackets)
+columns::columns(std::vector<column> cols, columns::t_brackets with_brackets)
 : token(COLUMNS)
 , with_brackets_(with_brackets)
-{
-  columns_.assign(cols);
-}
+, columns_(std::move(cols))
+{}
 
 columns::columns(t_brackets with_brackets)
 : token(COLUMNS)
@@ -44,22 +43,20 @@ columns::columns(t_brackets with_brackets)
 columns::columns(const columns &x)
 : token(x.type)
 , with_brackets_(x.with_brackets_)
-{
-  columns_.assign(x.columns_.begin(), x.columns_.end());
-}
+, columns_(x.columns_)
+{}
 
 columns &columns::operator=(const columns &x)
 {
   type = x.type;
   with_brackets_ = x.with_brackets_;
-  columns_.clear();
-  columns_.assign(x.columns_.begin(), x.columns_.end());
+  columns_ = x.columns_;
   return *this;
 }
 
-void columns::push_back(const std::shared_ptr<column> &col)
+void columns::push_back(column col)
 {
-  columns_.push_back(col);
+  columns_.push_back(std::move(col));
 }
 
 columns &columns::with_brackets()

@@ -25,14 +25,14 @@ void ConditionUnitTest::test_col_literal()
 {
     auto name = "name"_col;
 
-    UNIT_ASSERT_EQUAL(name.name, "name");
+    UNIT_ASSERT_EQUAL(name.name(), "name");
 }
 
 void ConditionUnitTest::test_logical_condition()
 {
   matador::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name, "name");
+  UNIT_ASSERT_EQUAL(name.name(), "name");
 
   auto cond1 = name != "Hans";
 
@@ -42,7 +42,7 @@ void ConditionUnitTest::test_logical_condition()
 
   matador::column age("age");
 
-  UNIT_ASSERT_EQUAL(age.name, "age");
+  UNIT_ASSERT_EQUAL(age.name(), "age");
 
   auto cond2 = age != 9;
 
@@ -54,7 +54,7 @@ void ConditionUnitTest::test_and_condition()
 
   matador::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name, "name");
+  UNIT_ASSERT_EQUAL(name.name(), "name");
 
   auto cond = name != "Hans" && name != "Dieter";
 
@@ -67,7 +67,7 @@ void ConditionUnitTest::test_or_condition()
 {
   matador::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name, "name");
+  UNIT_ASSERT_EQUAL(name.name(), "name");
 
   auto cond = name == "Hans" || name == "Dieter";
 
@@ -80,7 +80,7 @@ void ConditionUnitTest::test_not_condition()
 {
   matador::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name, "name");
+  UNIT_ASSERT_EQUAL(name.name(), "name");
 
   auto cond = !(name != "Hans");
 
@@ -92,7 +92,7 @@ void ConditionUnitTest::test_not_condition()
 void ConditionUnitTest::test_in_condition()
 {
   matador::column age("age");
-  UNIT_ASSERT_EQUAL(age.name, "age");
+  UNIT_ASSERT_EQUAL(age.name(), "age");
 
   auto cond = age != 7 && matador::in(age,  {7,5,5,8});
 
@@ -121,7 +121,7 @@ void ConditionUnitTest::test_in_query_condition()
 void ConditionUnitTest::test_between_condition()
 {
   matador::column age("age");
-  UNIT_ASSERT_EQUAL(age.name, "age");
+  UNIT_ASSERT_EQUAL(age.name(), "age");
 
   auto cond = age != 7 && matador::between(age, 21, 30);
 
@@ -133,7 +133,7 @@ void ConditionUnitTest::test_between_condition()
 void ConditionUnitTest::test_like_condition()
 {
   auto name = "name"_col;
-  UNIT_ASSERT_EQUAL(name.name, "name");
+  UNIT_ASSERT_EQUAL(name.name(), "name");
 
   auto cond = matador::like(name, "%er%");
 

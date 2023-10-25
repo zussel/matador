@@ -127,12 +127,12 @@ public:
 
   std::string evaluate(basic_dialect &dialect) const override
   {
-    dialect.add_host_var(field_.name);
+    dialect.add_host_var(field_.name());
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << value;
+      str << dialect.prepare_identifier(field_.name()) << " " << operand << " " << value;
     } else {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << dialect.next_placeholder();
+      str << dialect.prepare_identifier(field_.name()) << " " << operand << " " << dialect.next_placeholder();
     }
     return str.str();
   }
@@ -153,12 +153,12 @@ public:
 
   std::string evaluate(basic_dialect &dialect) const override
   {
-    dialect.add_host_var(field_.name);
+    dialect.add_host_var(field_.name());
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " '" << value << "'";
+      str << dialect.prepare_identifier(field_.name()) << " " << operand << " '" << value << "'";
     } else {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << dialect.next_placeholder();
+      str << dialect.prepare_identifier(field_.name()) << " " << operand << " " << dialect.next_placeholder();
     }
     return str.str();
   }
@@ -181,7 +181,7 @@ public:
   std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
-    str << value << " " << operand << " " << dialect.prepare_identifier(field_.name);
+    str << value << " " << operand << " " << dialect.prepare_identifier(field_.name());
     return str.str();
   }
 };
@@ -202,7 +202,7 @@ public:
   std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
-    str << "'" << value << "' " << operand << " " << dialect.prepare_identifier(field_.name);
+    str << "'" << value << "' " << operand << " " << dialect.prepare_identifier(field_.name());
     return str.str();
   }
 };
@@ -250,10 +250,10 @@ public:
   {
     auto count = size();
     for (size_t i = 0; i < count; ++i) {
-      dialect.add_host_var(field_.name);
+      dialect.add_host_var(field_.name());
     }
     std::stringstream str;
-    str << dialect.prepare_identifier(field_.name) << " IN (";
+    str << dialect.prepare_identifier(field_.name()) << " IN (";
     if (args_.size() > 1) {
       auto first = args_.begin();
       auto last = args_.end() - 1;
@@ -331,7 +331,7 @@ public:
    */
   std::string evaluate(basic_dialect &dialect) const override
   {
-    std::string result(dialect.prepare_identifier(field_.name) + " " + operand + " (");
+    std::string result(dialect.prepare_identifier(field_.name()) + " " + operand + " (");
     result += dialect.continue_build(query_.stmt(), dialect.compile_type());
     result += (")");
     return result;
@@ -373,13 +373,13 @@ public:
    */
   std::string evaluate(basic_dialect &dialect) const override
   {
-    dialect.add_host_var(field_.name);
-    dialect.add_host_var(field_.name);
+    dialect.add_host_var(field_.name());
+    dialect.add_host_var(field_.name());
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
-      str << dialect.prepare_identifier(field_.name) << " BETWEEN " << range_.first << " AND " << range_.second;
+      str << dialect.prepare_identifier(field_.name()) << " BETWEEN " << range_.first << " AND " << range_.second;
     } else {
-      str << dialect.prepare_identifier(field_.name) << " BETWEEN " << dialect.next_placeholder() << " AND " << dialect.next_placeholder();
+      str << dialect.prepare_identifier(field_.name()) << " BETWEEN " << dialect.next_placeholder() << " AND " << dialect.next_placeholder();
     }
     return str.str();
   }

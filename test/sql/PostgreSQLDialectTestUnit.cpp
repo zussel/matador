@@ -30,28 +30,28 @@ void PostgreSQLDialectTestUnit::test_placeholder()
 
   sql s;
 
-  s.append(std::make_shared<detail::insert>());
-  s.append(std::make_shared<detail::into>("person"));
+  s.append(std::make_unique<detail::insert>());
+  s.append(std::make_unique<detail::into>("person"));
 
-  auto cols = std::make_shared<columns>(columns::WITH_BRACKETS);
+  auto cols = std::make_unique<columns>(columns::WITH_BRACKETS);
 
-  cols->push_back(std::make_shared<column>("id"));
-  cols->push_back(std::make_shared<column>("name"));
-  cols->push_back(std::make_shared<column>("age"));
+  cols->emplace_back("id");
+  cols->emplace_back("name");
+  cols->emplace_back("age");
 
-  s.append(cols);
+  s.append(std::move(cols));
 
-  auto vals = std::make_shared<detail::values>();
+  auto vals = std::make_unique<detail::values>();
 
   unsigned long id(8);
   std::string name("hans");
   unsigned int age(25);
 
-  vals->push_back(std::make_shared<value>(id));
-  vals->push_back(std::make_shared<value>(name));
-  vals->push_back(std::make_shared<value>(age));
+  vals->push_back(std::make_unique<value>(id));
+  vals->push_back(std::make_unique<value>(name));
+  vals->push_back(std::make_unique<value>(age));
 
-  s.append(vals);
+  s.append(std::move(vals));
 
   auto result = conn.dialect()->prepare(s);
 
@@ -64,19 +64,19 @@ void PostgreSQLDialectTestUnit::test_placeholder_condition()
 
   sql s;
 
-  s.append(std::make_shared<detail::select>());
+  s.append(std::make_unique<detail::select>());
 
-  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
+  auto cols = std::make_unique<columns>(columns::WITHOUT_BRACKETS);
 
-  cols->push_back(std::make_shared<column>("id"));
-  cols->push_back(std::make_shared<column>("name"));
-  cols->push_back(std::make_shared<column>("age"));
+  cols->emplace_back("id");
+  cols->emplace_back("name");
+  cols->emplace_back("age");
 
-  s.append(cols);
+  s.append(std::move(cols));
 
-  s.append(std::make_shared<detail::from>("person"));
+  s.append(std::make_unique<detail::from>("person"));
 
-  s.append(std::make_shared<detail::where>("name"_col == "hans"));
+  s.append(std::make_unique<detail::where>("name"_col == "hans"));
 
   auto result = conn.dialect()->prepare(s);
 
@@ -89,19 +89,19 @@ void PostgreSQLDialectTestUnit::test_update_limit()
 
   sql s;
 
-  s.append(std::make_shared<detail::update>());
-  s.append(std::make_shared<detail::tablename>("relation"));
-  s.append(std::make_shared<detail::set>());
+  s.append(std::make_unique<detail::update>());
+  s.append(std::make_unique<detail::tablename>("relation"));
+  s.append(std::make_unique<detail::set>());
 
-  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
+  auto cols = std::make_unique<columns>(columns::WITHOUT_BRACKETS);
 
   unsigned long owner_id(1);
   cols->push_back(make_column("owner_id", owner_id, -1));
 
-  s.append(cols);
+  s.append(std::move(cols));
 
-  s.append(std::make_shared<detail::where>("owner_id"_col == 1 && "item_id"_col == 1));
-  s.append(std::make_shared<detail::top>(1));
+  s.append(std::make_unique<detail::where>("owner_id"_col == 1 && "item_id"_col == 1));
+  s.append(std::make_unique<detail::top>(1));
 
   auto result = conn.dialect()->direct(s);
 
@@ -113,19 +113,19 @@ void PostgreSQLDialectTestUnit::test_update_limit_prepare(){
 
   sql s;
 
-  s.append(std::make_shared<detail::update>());
-  s.append(std::make_shared<detail::tablename>("relation"));
-  s.append(std::make_shared<detail::set>());
+  s.append(std::make_unique<detail::update>());
+  s.append(std::make_unique<detail::tablename>("relation"));
+  s.append(std::make_unique<detail::set>());
 
-  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
+  auto cols = std::make_unique<columns>(columns::WITHOUT_BRACKETS);
 
   unsigned long owner_id(1);
   cols->push_back(make_column("owner_id", owner_id, -1));
 
-  s.append(cols);
+  s.append(std::move(cols));
 
-  s.append(std::make_shared<detail::where>("owner_id"_col == 1 && "item_id"_col == 1));
-  s.append(std::make_shared<detail::top>(1));
+  s.append(std::make_unique<detail::where>("owner_id"_col == 1 && "item_id"_col == 1));
+  s.append(std::make_unique<detail::top>(1));
 
   auto result = conn.dialect()->prepare(s);
 

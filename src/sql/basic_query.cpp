@@ -1,4 +1,3 @@
-#include "matador/sql/columns.hpp"
 #include "matador/sql/basic_query.hpp"
 #include "matador/sql/connection.hpp"
 
@@ -6,19 +5,56 @@ namespace matador {
 
 namespace detail {
 
+// poor mens state machine
+// but does the job for query
+basic_query::query_state_transition_map basic_query::transitions_{
+{state_t::QUERY_INIT, {state_t::QUERY_CREATE, state_t::QUERY_DROP, state_t::QUERY_SELECT, state_t::QUERY_INSERT, state_t::QUERY_UPDATE, state_t::QUERY_DELETE}},
+{state_t::QUERY_CREATE, {state_t::QUERY_TABLE}},
+{state_t::QUERY_DROP, {state_t::QUERY_TABLE}},
+{state_t::QUERY_SELECT, {state_t::QUERY_FROM}},
+{state_t::QUERY_INSERT, {state_t::QUERY_INTO}},
+{state_t::QUERY_UPDATE, {state_t::QUERY_SET}},
+{state_t::QUERY_DELETE, {state_t::QUERY_FROM}},
+{state_t::QUERY_TABLE, {state_t::QUERY_FINISH}},
+{state_t::QUERY_FROM, {state_t::QUERY_WHERE, state_t::QUERY_FINISH}},
+{state_t::QUERY_SET, {state_t::QUERY_WHERE, state_t::QUERY_FINISH}},
+{state_t::QUERY_INTO, {state_t::QUERY_VALUES}},
+{state_t::QUERY_WHERE, {state_t::QUERY_ORDER_BY, state_t::QUERY_GROUP_BY, state_t::QUERY_LIMIT, state_t::QUERY_FINISH}},
+{state_t::QUERY_ORDER_BY, {state_t::QUERY_ORDER_DIRECTION}},
+{state_t::QUERY_ORDER_DIRECTION, {state_t::QUERY_LIMIT, state_t::QUERY_FINISH}},
+{state_t::QUERY_GROUP_BY, {state_t::QUERY_FINISH}},
+{state_t::QUERY_LIMIT, {state_t::QUERY_FINISH}},
+{state_t::QUERY_VALUES, {state_t::QUERY_FINISH}},
+{state_t::QUERY_FINISH, {}},
+};
+
+basic_query::query_state_to_string_map basic_query::state_strings_ {
+{ state_t::QUERY_INIT, "init" },
+{ state_t::QUERY_CREATE, "create" },
+{ state_t::QUERY_DROP, "drop" },
+{ state_t::QUERY_SELECT, "select" },
+{ state_t::QUERY_INSERT, "insert" },
+{ state_t::QUERY_UPDATE, "update" },
+{ state_t::QUERY_DELETE, "delete" },
+{ state_t::QUERY_TABLE, "table" },
+{ state_t::QUERY_FROM, "from" },
+{ state_t::QUERY_SET, "set" },
+{ state_t::QUERY_INTO, "into" },
+{ state_t::QUERY_WHERE, "where" },
+{ state_t::QUERY_ORDER_BY, "order_by" },
+{ state_t::QUERY_GROUP_BY, "group_by" },
+{ state_t::QUERY_LIMIT, "limit" },
+{ state_t::QUERY_FINISH, "finish" },
+};
+
 basic_query::basic_query()
-  : state(QUERY_BEGIN)
-//  , table_name_(std::move(table_name))
-  , update_columns_(new columns(columns::WITHOUT_BRACKETS))
-  , query_value_column_processor_(update_columns_, row_values_)
 {}
 
 void basic_query::reset_query(t_query_command query_command)
 {
   sql_.reset(query_command);
   sql_.table_name("");
-  state = QUERY_BEGIN;
-  update_columns_->columns_.clear();
+  state = state_t::QUERY_INIT;
 }
 
 std::string basic_query::str(connection &conn, bool prepared)
@@ -41,117 +77,12 @@ std::string basic_query::table_name() const
   return sql_.table_name();
 }
 
-void basic_query::throw_invalid(state_t next, state_t current)
-{
-  std::stringstream msg;
-  switch (next) {
-    case basic_query::QUERY_CREATE:
-    case basic_query::QUERY_DROP:
-    case basic_query::QUERY_SELECT:
-    case basic_query::QUERY_INSERT:
-    case basic_query::QUERY_UPDATE:
-    case basic_query::QUERY_DELETE:
-      if (current != QUERY_BEGIN) {
-        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
-        throw std::logic_error(msg.str());
-      }
-      break;
-    case basic_query::QUERY_WHERE:
-    case basic_query::QUERY_COND_WHERE:
-      if (current != basic_query::QUERY_SELECT &&
-          current != basic_query::QUERY_COLUMN &&
-          current != basic_query::QUERY_UPDATE &&
-          current != basic_query::QUERY_SET &&
-          current != basic_query::QUERY_DELETE &&
-          current != basic_query::QUERY_FROM &&
-          current != basic_query::QUERY_COND_WHERE)
-      {
-        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
-        throw std::logic_error(msg.str());
-      }
-      break;
-    case basic_query::QUERY_COLUMN:
-      if (current != basic_query::QUERY_SELECT &&
-          current != basic_query::QUERY_COLUMN)
-      {
-        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
-        throw std::logic_error(msg.str());
-      }
-      break;
-    case basic_query::QUERY_FROM:
-      if (current != basic_query::QUERY_SELECT) {
-        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
-        throw std::logic_error(msg.str());
-      }
-      break;
-    case basic_query::QUERY_SET:
-      if (current != basic_query::QUERY_UPDATE &&
-          current != basic_query::QUERY_SET)
-      {
-        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
-        throw std::logic_error(msg.str());
-      }
-      break;
-    case basic_query::QUERY_ORDER_BY:
-      if (current != basic_query::QUERY_SELECT &&
-          current != basic_query::QUERY_WHERE &&
-          current != basic_query::QUERY_FROM &&
-          current != basic_query::QUERY_COND_WHERE)
-      {
-        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
-        throw std::logic_error(msg.str());
-      }
-      break;
-    case QUERY_ORDER_DIRECTION:
-      if (current != basic_query::QUERY_ORDER_BY) {
-        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
-        throw std::logic_error(msg.str());
-      }
-      break;
-    default:
-      throw std::logic_error("unknown state");
+void basic_query::transition_to(basic_query::state_t next) {
+  if (transitions_[state].count(next) == 0) {
+    throw std::logic_error("invalid next state " + state_strings_[next]);
   }
+  state = next;
 }
-
-std::string basic_query::state2text(basic_query::state_t state)
-{
-  switch (state) {
-    case QUERY_BEGIN:
-      return "begin";
-    case QUERY_CREATE:
-      return "create";
-    case QUERY_DROP:
-      return "drop";
-    case QUERY_SELECT:
-      return "select";
-    case QUERY_INSERT:
-      return "insert";
-    case QUERY_UPDATE:
-      return "update";
-    case QUERY_DELETE:
-      return "delete";
-    case QUERY_COLUMN:
-      return "column";
-    case QUERY_SET:
-      return "set";
-    case QUERY_FROM:
-      return "from";
-    case QUERY_WHERE:
-      return "where";
-    case QUERY_COND_WHERE:
-      return "condition_where";
-    case QUERY_ORDER_BY:
-      return "order_by";
-    case QUERY_ORDER_DIRECTION:
-      return "order_direction";
-    case QUERY_GROUP_BY:
-      return "group_by";
-    default:
-      return "unknown";
-  }
-}
-
-//std::unordered_map<std::type_index, std::string> basic_query::table_name_map_ = std::unordered_map<std::type_index, std::string>();
 
 }
 

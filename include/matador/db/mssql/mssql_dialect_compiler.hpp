@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/13/16.
-//
-
 #ifndef OOS_MSSQL_DIALECT_COMPILER_HPP
 #define OOS_MSSQL_DIALECT_COMPILER_HPP
 

@@ -45,8 +45,7 @@ enum class QueryState {
   QUERY_UPDATE,
   QUERY_DELETE,
   QUERY_FROM,
-  QUERY_TABLE_CREATE,
-  QUERY_TABLE_DROP,
+  QUERY_TABLE,
   QUERY_SET,
   QUERY_INTO,
   QUERY_VALUES,
@@ -147,17 +146,17 @@ public:
   }
 
   query& table(const std::string &table_name, const std::initializer_list<std::shared_ptr<matador::column>> &/*column_list*/) {
-    transition_to(QueryState::QUERY_CREATE);
+    transition_to(QueryState::QUERY_TABLE);
     return *this;
   }
 
   query& table(const std::string &table_name, const std::shared_ptr<matador::columns> &/*column_list*/) {
-    transition_to(QueryState::QUERY_TABLE_DROP);
+    transition_to(QueryState::QUERY_TABLE);
     return *this;
   }
 
   query& table(const std::string &table_name, const row &/*r*/) {
-    transition_to(QueryState::QUERY_CREATE);
+    transition_to(QueryState::QUERY_TABLE);
     return *this;
   }
 
@@ -268,14 +267,13 @@ private:
 
 query::TransitionMap query::transitions_{
 {QueryState::QUERY_INIT, {QueryState::QUERY_CREATE, QueryState::QUERY_DROP, QueryState::QUERY_SELECT, QueryState::QUERY_INSERT, QueryState::QUERY_UPDATE, QueryState::QUERY_DELETE}},
-{QueryState::QUERY_CREATE, {QueryState::QUERY_TABLE_CREATE}},
-{QueryState::QUERY_DROP, {QueryState::QUERY_TABLE_DROP}},
+{QueryState::QUERY_CREATE, {QueryState::QUERY_TABLE}},
+{QueryState::QUERY_DROP, {QueryState::QUERY_TABLE}},
 {QueryState::QUERY_SELECT, {QueryState::QUERY_FROM}},
 {QueryState::QUERY_INSERT, {QueryState::QUERY_INTO}},
 {QueryState::QUERY_UPDATE, {QueryState::QUERY_SET}},
 {QueryState::QUERY_DELETE, {QueryState::QUERY_FROM}},
-{QueryState::QUERY_TABLE_CREATE, {QueryState::QUERY_FINISH}},
-{QueryState::QUERY_TABLE_DROP, {QueryState::QUERY_FINISH}},
+{QueryState::QUERY_TABLE, {QueryState::QUERY_FINISH}},
 {QueryState::QUERY_FROM, {QueryState::QUERY_WHERE, QueryState::QUERY_FINISH}},
 {QueryState::QUERY_SET, {QueryState::QUERY_WHERE, QueryState::QUERY_FINISH}},
 {QueryState::QUERY_INTO, {QueryState::QUERY_VALUES}},
@@ -295,8 +293,7 @@ query::QueryStateStringMap query::state_strings_ {
 { QueryState::QUERY_INSERT, "insert" },
 { QueryState::QUERY_UPDATE, "update" },
 { QueryState::QUERY_DELETE, "delete" },
-{ QueryState::QUERY_TABLE_CREATE, "table" },
-{ QueryState::QUERY_TABLE_DROP, "table" },
+{ QueryState::QUERY_TABLE, "table" },
 { QueryState::QUERY_FROM, "from" },
 { QueryState::QUERY_SET, "set" },
 { QueryState::QUERY_INTO, "into" },
@@ -311,7 +308,7 @@ class connection
 {
 public:
   query query()
-  { return ::query{*this}; }
+  { return ::query{}; }
 };
 
 struct person{

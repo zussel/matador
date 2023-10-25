@@ -10,7 +10,7 @@ void basic_dialect_compiler::compile(basic_dialect &dialect)
 {
   on_compile_start();
 
-  auto last = dialect.top().tokens_.end();
+  auto last = dialect.top().s_.token_list_.end();
   token_list_t::iterator next;
 
   while (dialect.top().current != last) {
@@ -59,7 +59,7 @@ basic_dialect &basic_dialect_compiler::dialect() const
   return *dialect_;
 }
 
-build_info &basic_dialect_compiler::top() const
+build_info &basic_dialect_compiler::top()
 {
   return dialect_->top();
 }

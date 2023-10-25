@@ -49,10 +49,10 @@ public:
   ~value_serializer() = default;
 
   template<class T>
-  std::shared_ptr<values> execute(T &x) {
-    values_ = std::make_shared<values>();
+  std::unique_ptr<values> execute(T &x) {
+    values_ = std::make_unique<values>();
     matador::access::process(*this, x);
-    return values_;
+    return std::move(values_);
   }
 
   template < class T >
@@ -92,7 +92,7 @@ public:
     values_->push_back(std::make_shared<value>(val, size));
   }
 private:
-  std::shared_ptr<values> values_;
+  std::unique_ptr<values> values_;
   value_identifier_serializer value_identifier_serializer_;
 };
 

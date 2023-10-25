@@ -71,7 +71,7 @@ column identifier_column_resolver::resolve(T *obj)
 template<class V>
 void identifier_column_resolver::on_primary_key(const char *id, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type*)
 {
-  col_.name = id;
+  col_.name(id);
 }
 
 /// @endcond

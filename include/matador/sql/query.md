@@ -24,3 +24,7 @@ kind of columns
 - name only (select, insert)
 - name + type (create) -> varchar, primary/foreign keys
 - name + value (update)
+
+struct column_names_token
+struct create_columns_token
+struct update_columns_token

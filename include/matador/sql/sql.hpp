@@ -29,9 +29,13 @@ class sql
 {
 public:
   sql() = default;
+  sql(const sql &x);
+  sql& operator=(const sql &x);
+  sql(sql &&x) noexcept;
+  sql& operator=(sql &&x) noexcept;
   ~sql() = default;
 
-  void append(const std::shared_ptr<detail::token> &token_ptr);
+  void append(std::unique_ptr<detail::token> token_ptr);
   void append(const sql &stmt);
 
   void reset(t_query_command command_type);
@@ -54,6 +58,7 @@ private:
   template < class L, class R, class E >
   friend class condition;
 
+private:
   t_query_command command_type_{t_query_command::UNKNOWN};
   token_list_t token_list_;
 

@@ -23,23 +23,23 @@ void SQLiteDialectTestUnit::test_update_with_limit()
 
   sql s;
 
-  s.append(std::make_shared<detail::update>());
-  s.append(std::make_shared<detail::tablename>("person"));
-  s.append(std::make_shared<detail::set>());
+  s.append(std::make_unique<detail::update>());
+  s.append(std::make_unique<detail::tablename>("person"));
+  s.append(std::make_unique<detail::set>());
 
-  auto cols = std::make_shared<columns>(columns::WITHOUT_BRACKETS);
+  auto cols = std::make_unique<columns>(columns::WITHOUT_BRACKETS);
 
   std::string dieter("Dieter");
   unsigned int age54(54);
   cols->push_back(make_column("name", dieter, 255));
   cols->push_back(make_column("age", age54));
 
-  s.append(cols);
+  s.append(std::move(cols));
 
   matador::column name("name");
-  s.append(std::make_shared<detail::where>(name != "Hans"));
+  s.append(std::make_unique<detail::where>(name != "Hans"));
 
-  s.append(std::make_shared<detail::top>(1));
+  s.append(std::make_unique<detail::top>(1));
 
   std::string result = conn.dialect()->direct(s);
 
@@ -52,13 +52,13 @@ void SQLiteDialectTestUnit::test_delete_with_limit()
 
   sql s;
 
-  s.append(std::make_shared<detail::remove>());
-  s.append(std::make_shared<detail::from>("person"));
+  s.append(std::make_unique<detail::remove>());
+  s.append(std::make_unique<detail::from>("person"));
 
   matador::column name("name");
-  s.append(std::make_shared<detail::where>(name != "Hans"));
+  s.append(std::make_unique<detail::where>(name != "Hans"));
 
-  s.append(std::make_shared<detail::top>(1));
+  s.append(std::make_unique<detail::top>(1));
 
   std::string result = conn.dialect()->direct(s);
 

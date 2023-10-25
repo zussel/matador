@@ -50,10 +50,10 @@ public:
   value_column_serializer();
 
   template<class T>
-  void append_to(const std::shared_ptr<columns> &cols, T &x)
-  {
-    cols_ = cols;
+  std::unique_ptr<columns> execute(T &x, columns::t_brackets brackets) {
+    cols_ = std::make_unique<columns>(brackets);
     matador::access::process(*this, x);
+    return std::move(cols_);
   }
 
   template < class T >
@@ -94,7 +94,7 @@ public:
   }
 
 private:
-  std::shared_ptr<columns> cols_;
+  std::unique_ptr<columns> cols_;
   value_column_identifier_serializer value_column_identifier_serializer_;
 };
 

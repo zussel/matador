@@ -58,7 +58,7 @@ protected:
   virtual void on_compile_finish();
 
   basic_dialect& dialect() const;
-  build_info& top() const;
+  build_info& top();
 
 private:
   friend class matador::basic_dialect;
