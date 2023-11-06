@@ -17,7 +17,7 @@ postgresql_statement::postgresql_statement(PGconn *db, detail::statement_context
 {
   binder_ = std::make_unique<postgresql_parameter_binder>(bind_vars().size());
   // parse sql to create result and host arrays
-  name_ = generate_statement_name(stmt);
+  name_ = postgresql_statement::generate_statement_name(this->context());
 
   res_ = PQprepare(db_, name_.c_str(), str().c_str(), static_cast<int>(bind_vars().size()), nullptr);
 
@@ -50,10 +50,10 @@ void postgresql_statement::reset()
 {
 }
 
-std::string postgresql_statement::generate_statement_name(const matador::sql &stmt)
+std::string postgresql_statement::generate_statement_name(const detail::statement_context &context)
 {
   std::stringstream name;
-  name << stmt.table_name() << "_" << stmt.command();
+  name << context.table_name << "_" << context.command_name;
   auto result = postgresql_statement::statement_name_map_.find(name.str());
 
   if (result == postgresql_statement::statement_name_map_.end()) {

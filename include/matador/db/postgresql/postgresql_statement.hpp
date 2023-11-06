@@ -31,7 +31,7 @@ protected:
   detail::parameter_binder_impl *binder() const override;
 
 private:
-  static std::string generate_statement_name(const matador::sql &stmt);
+  static std::string generate_statement_name(const detail::statement_context &context);
 
 private:
   PGconn *db_{nullptr};

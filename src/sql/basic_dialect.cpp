@@ -42,7 +42,7 @@ std::string basic_dialect::direct(const sql &s)
 
 detail::statement_context basic_dialect::prepare(const sql &s)
 {
-  return {build(s, PREPARED), host_vars_, columns_};
+  return {build(s, PREPARED), host_vars_, columns_, s.table_name(), s.command()};
 }
 
 std::string basic_dialect::build(const sql &s, t_compile_type compile_type)

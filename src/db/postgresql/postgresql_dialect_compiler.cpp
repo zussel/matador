@@ -54,12 +54,12 @@ void postgresql_dialect_compiler::visit(const matador::detail::top &limit)
 
   where_token->cond.swap(cond);
 
-  top().erase_current();
+  top().tokens_.erase(top().current);
 }
 
 void postgresql_dialect_compiler::on_compile_start()
 {
-  where_ = top().end();
+  where_ = top().tokens_.end();
   tablename_.clear();
 }
 

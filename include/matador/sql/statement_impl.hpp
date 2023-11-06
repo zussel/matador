@@ -73,6 +73,8 @@ protected:
 
   virtual detail::parameter_binder_impl* binder() const = 0;
 
+  const statement_context& context() const;
+
 private:
   statement_context context_;
 //  std::string sql_;

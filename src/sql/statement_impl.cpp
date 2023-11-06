@@ -49,8 +49,14 @@ void statement_impl::disable_log()
   log_enabled_ = false;
 }
 
-bool statement_impl::is_log_enabled() const {
+bool statement_impl::is_log_enabled() const
+{
   return log_enabled_;
+}
+
+const statement_context &statement_impl::context() const
+{
+  return context_;
 }
 }
 

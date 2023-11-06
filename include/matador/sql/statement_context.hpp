@@ -15,6 +15,8 @@ struct statement_context
   std::string sql;
   std::vector<std::string> bind_vars;
   std::vector<std::string> columns;
+  std::string table_name;
+  std::string command_name;
 };
 
 /// @endcond
