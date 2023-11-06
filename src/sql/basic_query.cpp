@@ -29,8 +29,7 @@ std::string basic_query::str(bool prepared)
 std::string basic_query::str(connection &conn, bool prepared)
 {
   if (prepared) {
-    auto result = conn.dialect()->prepare(sql_);
-    return std::get<0>(result);
+    return conn.dialect()->prepare(sql_).sql;
   } else {
     return conn.dialect()->direct(sql_);
   }

@@ -1,29 +1,28 @@
+#include <utility>
+
 #include "matador/sql/basic_dialect.hpp"
 #include "matador/sql/statement_impl.hpp"
 
 namespace matador {
 
 namespace detail {
-
-statement_impl::statement_impl(basic_dialect *dialect, const matador::sql &stmt)
-{
-  std::tie(sql_, bind_vars_, columns_) = dialect->prepare(stmt);
-
+statement_impl::statement_impl(statement_context context)
+: context_(std::move(context)) {
 }
 
-std::string statement_impl::str() const
+const std::string& statement_impl::str() const
 {
-  return sql_;
+  return context_.sql;
 }
 
 const std::vector<std::string> &statement_impl::bind_vars() const
 {
-  return bind_vars_;
+  return context_.bind_vars;
 }
 
 const std::vector<std::string> &statement_impl::columns() const
 {
-  return columns_;
+  return context_.columns;
 }
 
 bool statement_impl::is_valid_host_var(const std::string &host_var, size_t pos) const

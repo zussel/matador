@@ -257,7 +257,7 @@ private:
   template < class T >
   statement<T> prepare(const matador::sql &sql, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
-    auto stmt = statement<T>(impl_->prepare(sql), logger_);
+    auto stmt = statement<T>(impl_->prepare(dialect()->prepare(sql)), logger_);
     if (is_log_enabled()) {
       stmt.enable_log();
     }
@@ -268,7 +268,7 @@ private:
   statement<T> prepare(const matador::sql &sql, const std::string &table_name, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
     prepare_prototype_row(prototype, table_name);
-    auto stmt = statement<T>(impl_->prepare(sql), prototype, logger_);
+    auto stmt = statement<T>(impl_->prepare(dialect()->prepare(sql)), prototype, logger_);
     if (is_log_enabled()) {
       stmt.enable_log();
     }

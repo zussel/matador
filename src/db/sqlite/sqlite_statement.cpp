@@ -11,15 +11,15 @@ namespace matador {
 
 namespace sqlite {
 
-sqlite_statement::sqlite_statement(sqlite_connection &db, const matador::sql &sql)
-  : statement_impl(db.dialect(), sql)
+sqlite_statement::sqlite_statement(sqlite3 *db, detail::statement_context &&context)
+  : statement_impl(std::move(context))
   , db_(db)
   , stmt_(nullptr)
 {
   // prepare sqlite statement
-  int ret = sqlite3_prepare_v2(db_.handle(), str().c_str(), static_cast<int>(str().size()), &stmt_, nullptr);
-  throw_database_error(ret, db_.handle(), "sqlite3_prepare_v2", str());
-  binder_ = std::make_unique<sqlite_parameter_binder>(db.handle(), stmt_);
+  int ret = sqlite3_prepare_v2(db_, str().c_str(), static_cast<int>(str().size()), &stmt_, nullptr);
+  throw_database_error(ret, db_, "sqlite3_prepare_v2", str());
+  binder_ = std::make_unique<sqlite_parameter_binder>(db, stmt_);
 }
 
 sqlite_statement::~sqlite_statement()
@@ -34,7 +34,7 @@ detail::result_impl* sqlite_statement::execute()
   int ret = sqlite3_step(stmt_);
 
   if (ret != SQLITE_ROW && ret != SQLITE_DONE) {
-    throw_database_error(ret, db_.handle(), "sqlite3_step");
+    throw_database_error(ret, db_, "sqlite3_step");
   }
   return new sqlite_prepared_result(stmt_, ret);
 }
@@ -53,7 +53,7 @@ void sqlite_statement::clear()
     return;
   }
   int ret = sqlite3_finalize(stmt_);
-  throw_database_error(ret, db_.handle(), "sqlite3_finalize");
+  throw_database_error(ret, db_, "sqlite3_finalize");
   stmt_ = nullptr;
 }
 

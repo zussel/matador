@@ -8,9 +8,9 @@ namespace matador {
 
 namespace mssql {
 
-mssql_statement::mssql_statement(mssql_connection &db, const matador::sql &stmt)
-  : statement_impl(db.dialect(), stmt)
-  , db_(db.handle())
+mssql_statement::mssql_statement(SQLHANDLE db, detail::statement_context &&context)
+  : statement_impl(std::move(context))
+  , db_(db)
 {
   if (!db_) {
     throw std::logic_error("mssql no odbc connection established");

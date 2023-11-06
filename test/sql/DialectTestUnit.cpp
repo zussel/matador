@@ -144,7 +144,7 @@ void DialectTestUnit::test_insert_prepare_query()
   TestDialect dialect;
   auto result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES (?, ?, ?) ", std::get<0>(result));
+  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES (?, ?, ?) ", result.sql);
 }
 
 void DialectTestUnit::test_select_all_query()
@@ -395,7 +395,7 @@ void DialectTestUnit::test_update_prepare_query()
   TestDialect dialect;
   auto result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? ", std::get<0>(result));
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? ", result.sql);
 }
 
 void DialectTestUnit::test_update_where_prepare_query()
@@ -423,7 +423,7 @@ void DialectTestUnit::test_update_where_prepare_query()
   TestDialect dialect;
   auto result = dialect.prepare(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? WHERE (\"name\" <> ? AND \"age\" IN (?,?,?,?)) ", std::get<0>(result));
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"=?, \"age\"=? WHERE (\"name\" <> ? AND \"age\" IN (?,?,?,?)) ", result.sql);
 
 }
 

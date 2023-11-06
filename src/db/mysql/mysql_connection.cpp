@@ -73,9 +73,9 @@ detail::result_impl* mysql_connection::execute(const std::string &sql)
   return execute_internal(sql);
 }
 
-detail::statement_impl* mysql_connection::prepare(const matador::sql &stmt)
+detail::statement_impl* mysql_connection::prepare(detail::statement_context &&context) const
 {
-  return new mysql_statement(*this, stmt);
+  return new mysql_statement(&mysql_, std::move(context));
 }
 
 void mysql_connection::begin()

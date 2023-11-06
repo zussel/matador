@@ -2,6 +2,7 @@
 #define OOS_BASIC_DIALECT_HPP
 
 #include "matador/sql/types.hpp"
+#include "matador/sql/statement_context.hpp"
 #include "matador/sql/token.hpp"
 #include "matador/sql/token_list.hpp"
 #include "matador/sql/token_visitor.hpp"
@@ -115,7 +116,7 @@ public:
    * @param s The sql object to be compiled and linked
    * @return The sql string as a prepared statement
    */
-  std::tuple<std::string, std::vector<std::string>, std::vector<std::string>> prepare(const sql &s);
+  detail::statement_context prepare(const sql &s);
 
   /**
    * Prepare sql dialect identifier for execution

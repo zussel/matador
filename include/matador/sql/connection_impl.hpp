@@ -16,6 +16,7 @@ namespace matador {
 namespace detail {
 class result_impl;
 class statement_impl;
+struct statement_context;
 }
 class sql;
 class basic_dialect;
@@ -34,7 +35,7 @@ public:
 
   virtual detail::result_impl* execute(const matador::sql &stmt) = 0;
   virtual detail::result_impl* execute(const std::string &stmt) = 0;
-  virtual detail::statement_impl* prepare(const matador::sql &stmt) = 0;
+  virtual detail::statement_impl* prepare(detail::statement_context &&context) const = 0;
 
   virtual void begin() = 0;
   virtual void commit() = 0;

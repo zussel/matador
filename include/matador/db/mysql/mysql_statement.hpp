@@ -29,7 +29,7 @@ class mysql_prepared_result;
 class mysql_statement : public matador::detail::statement_impl
 {
 public:
-  mysql_statement(mysql_connection &db, const matador::sql &stmt);
+  mysql_statement(MYSQL *db, detail::statement_context &&context);
   ~mysql_statement() override;
 
   void clear() override;

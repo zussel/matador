@@ -40,10 +40,9 @@ std::string basic_dialect::direct(const sql &s)
   return build(s, DIRECT);
 }
 
-std::tuple<std::string, std::vector<std::string>, std::vector<std::string>>
-basic_dialect::prepare(const sql &s)
+detail::statement_context basic_dialect::prepare(const sql &s)
 {
-  return std::make_tuple(build(s, PREPARED), host_vars_, columns_);
+  return {build(s, PREPARED), host_vars_, columns_};
 }
 
 std::string basic_dialect::build(const sql &s, t_compile_type compile_type)

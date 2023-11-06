@@ -30,7 +30,7 @@ private:
   bool is_update = false;
   bool is_delete = false;
 
-  std::string tablename_;
+  std::string table_name_;
   token_list_t::iterator where_;
 };
 

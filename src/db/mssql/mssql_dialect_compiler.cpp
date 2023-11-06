@@ -1,6 +1,7 @@
 #include "matador/db/mssql/mssql_dialect_compiler.hpp"
 
 #include "matador/sql/basic_dialect.hpp"
+#include "matador/sql/sql.hpp"
 
 namespace matador {
 

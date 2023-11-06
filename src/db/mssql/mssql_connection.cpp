@@ -113,9 +113,9 @@ detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
   return new mssql_result(stmt);
 }
 
-matador::detail::statement_impl *mssql_connection::prepare(const matador::sql &stmt)
+matador::detail::statement_impl *mssql_connection::prepare(detail::statement_context &&context) const
 {
-  return new mssql_statement(*this, stmt);
+  return new mssql_statement(odbc_, std::move(context));
 }
 
 void mssql_connection::begin()
