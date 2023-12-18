@@ -70,7 +70,7 @@ jobs:
         run: |
           echo "C:\ProgramData\chocolatey\lib\SQLite\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           "C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_PATH
-          "SQLITE3_DIR=C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_ENV
+          "SQLITE3_DIR=C:\ProgramData\chocolatey\lib\SQLite\tools" >> $GITHUB_PATH
       - name: Install mysql
         shell: cmd
         run: choco install mysql
@@ -84,7 +84,7 @@ jobs:
           "C:\tools\mysql\current\bin\mysql" -u root -e "SHOW GRANTS FOR 'test'@'localhost'"
       - name: Set MySQL variables
         run: |
-          "MYSQL_DIR=C:\tools\mysql\current\lib" >> $GITHUB_ENV
+          "MYSQL_DIR=C:\tools\mysql\current\lib" >> $GITHUB_PATH
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake
