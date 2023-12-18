@@ -84,7 +84,7 @@ jobs:
           "C:\tools\mysql\current\bin\mysql" -u root -e "SHOW GRANTS FOR 'test'@'localhost'"
       - name: Set MySQL variables
         run: |
-          "MYSQL_DIR=C:\tools\mysql\current" >> $GITHUB_ENV
+          "MYSQL_DIR=C:\tools\mysql\current\lib" >> $GITHUB_ENV
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake
@@ -93,7 +93,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DCMAKE_INSTALL_PREFIX="$HOME/$env:INSTALL_LOCATION"
           -DMATADOR_ODBC_TEST=false
-          -DMATADOR_MYSQL_TEST=false
+          -DMATADOR_MYSQL_TEST=true
           -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
       - name: Build
         run: >
