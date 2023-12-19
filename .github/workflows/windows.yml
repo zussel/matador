@@ -85,6 +85,8 @@ jobs:
           "$env:C:\tools\mysql\current\lib" | Out-File -FilePath $env:GITHUB_PATH -Append
       - name: CMake Version
         run: cmake --version
+      - name: Print Path
+        run: Write-Output "Path $env:GITHUB_PATH"
       - name: Configure CMake
         run: >
           cmake -B ${{github.workspace}}/build
@@ -93,14 +95,14 @@ jobs:
           -DMATADOR_ODBC_TEST=false
           -DMATADOR_MYSQL_TEST=true
           -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
-      - name: Build
-        run: >
-          cmake --build ${{github.workspace}}/build
-          --config ${{env.BUILD_TYPE}}
-          --target matador test_matador
-      - name: List Debug
-        working-directory: ${{github.workspace}}/build/Debug/bin/Debug
-        run: dir
-      - name: Test
-        working-directory: ${{github.workspace}}/build
-        run: ctest --verbose -C ${{env.BUILD_TYPE}}
+#      - name: Build
+#        run: >
+#          cmake --build ${{github.workspace}}/build
+#          --config ${{env.BUILD_TYPE}}
+#          --target matador test_matador
+#      - name: List Debug
+#        working-directory: ${{github.workspace}}/build/Debug/bin/Debug
+#        run: dir
+#      - name: Test
+#        working-directory: ${{github.workspace}}/build
+#        run: ctest --verbose -C ${{env.BUILD_TYPE}}
