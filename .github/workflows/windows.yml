@@ -83,10 +83,14 @@ jobs:
       - name: Set MySQL variables
         run: |
           "$env:C:\tools\mysql\current\lib" | Out-File -FilePath $env:GITHUB_PATH -Append
+          cd /D C:\tools\mysql\current
+          dir
+          echo LIB
+          dir lib
       - name: CMake Version
         run: cmake --version
       - name: Print Path
-        run: echo $PATH
+        run: $env:PATH
       - name: Configure CMake
         run: >
           cmake -B ${{github.workspace}}/build
