@@ -83,6 +83,9 @@ jobs:
       - name: Set MySQL variables
         run: |
           "$env:C:\tools\mysql\current\lib" | Out-File -FilePath $env:GITHUB_PATH -Append
+      - name: Print MySQL directory content
+      - shell: cmd
+        run: |
           cd /D C:\tools\mysql\current
           dir
           echo LIB
