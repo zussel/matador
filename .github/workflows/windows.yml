@@ -86,7 +86,7 @@ jobs:
       - name: CMake Version
         run: cmake --version
       - name: Print Path
-        run: Write-Output "Path $env:GITHUB_PATH"
+        run: echo $PATH
       - name: Configure CMake
         run: >
           cmake -B ${{github.workspace}}/build
