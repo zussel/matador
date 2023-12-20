@@ -62,10 +62,11 @@ jobs:
         shell: cmd
         run: |
           cd /D C:\ProgramData\chocolatey\lib\SQLite\tools
-          $version = (choco list sqlite -r --local-only --exact).Split("|")[1].Trim()
-          echo "SQLite Version: $version"
-          $url = "https://www.sqlite.org/$version/sqlite-amalgamation-$version.zip"
-          curl -L $url --output sqlite-amalgamation.zip
+          for /f "tokens=2 delims=|" %%a in ('choco list sqlite -r --local-only --exact') do set VERSION=%%a
+          echo "SQLite Version: %VERSION%"
+          set URL=https://www.sqlite.org/%VERSION%/sqlite-amalgamation-%VERSION%.zip
+          Invoke-WebRequest -Uri %URL% -OutFile sqlite-amalgamation.zip
+#          curl -L "https://www.sqlite.org/%VERSION%/sqlite-amalgamation-%VERSION%.zip" sqlite-amalgamation.zip
           7z x sqlite-amalgamation.zip -o sqlite-amalgamation
           mkdir include
           copy sqlite-amalgamation\sqlite3*.h include\
