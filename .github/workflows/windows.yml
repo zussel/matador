@@ -54,8 +54,6 @@ jobs:
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
           choco install sqlite
           cd /D C:\ProgramData\chocolatey\lib\SQLite\tools
-          cl.exe
-          lib.exe
           lib.exe /machine:x64 /def:sqlite3.def /out:sqlite3.lib
           mkdir lib
           copy sqlite3.* lib\
@@ -64,10 +62,13 @@ jobs:
         shell: cmd
         run: |
           cd /D C:\ProgramData\chocolatey\lib\SQLite\tools
-          curl -L https://www.sqlite.org/2021/sqlite-amalgamation-3360000.zip --output sqlite-amalgamation-3360000.zip
-          7z x sqlite-amalgamation-3360000.zip
+          $version = (choco list sqlite -r --local-only --exact).Split("|")[1].Trim()
+          echo "SQLite Version: $version"
+          $url = "https://www.sqlite.org/$version/sqlite-amalgamation-$version.zip"
+          curl -L $url --output sqlite-amalgamation.zip
+          7z x sqlite-amalgamation.zip -o sqlite-amalgamation
           mkdir include
-          copy sqlite-amalgamation-3360000\sqlite3*.h include\
+          copy sqlite-amalgamation\sqlite3*.h include\
           dir include
       - name: Set variables for SQLite
         run: |
