@@ -51,7 +51,7 @@ jobs:
       - name: Install SQLite
         shell: cmd
         run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
           choco install sqlite
           cd /D C:\ProgramData\chocolatey\lib\SQLite\tools
           cl.exe
