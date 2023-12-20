@@ -63,7 +63,20 @@ jobs:
           cd /D C:\ProgramData\chocolatey\lib\SQLite\tools
           for /f "tokens=2 delims=|" %%a in ('choco list sqlite -r --local-only --exact') do set VERSION=%%a
           echo "SQLite Version: %VERSION%"
-          curl -L "https://www.sqlite.org/%VERSION%/sqlite-amalgamation-%VERSION%.zip" sqlite-amalgamation.zip
+          rem Extract major, minor, and patch components
+          for /f "tokens=1-3 delims=." %%i in ("%VERSION%") do (
+            set MAJOR=%%i
+            set MINOR=%%j
+            set PATCH=%%k
+          )
+          rem Ensure each component has two digits
+          setlocal enabledelayedexpansion
+          set "MAJOR=!MAJOR:~0,1!!MAJOR:~1,1!"
+          set "MINOR=!MINOR:~0,1!!MINOR:~1,1!"
+          set "PATCH=!PATCH:~0,1!!PATCH:~1,1!"
+          endlocal
+          set FORMATTED_VERSION=!MAJOR!!MINOR!!PATCH!
+          curl -L "https://www.sqlite.org/2023/sqlite-amalgamation-%FORMATTED_VERSION%.zip" sqlite-amalgamation.zip
           7z x sqlite-amalgamation.zip -o sqlite-amalgamation
           mkdir include
           copy sqlite-amalgamation\sqlite3*.h include\
