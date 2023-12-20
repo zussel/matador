@@ -74,7 +74,7 @@ jobs:
           set PATCH=%PATCH:~-2%
           set FORMATTED_VERSION=%MAJOR%%MINOR%%PATCH%00
           echo "SQLite formatted Version: %FORMATTED_VERSION%"
-          curl -L "https://www.sqlite.org/2023/sqlite-amalgamation-%FORMATTED_VERSION%.zip" sqlite-amalgamation.zip
+          curl -L "https://www.sqlite.org/2023/sqlite-amalgamation-%FORMATTED_VERSION%.zip" --output sqlite-amalgamation.zip
           7z x sqlite-amalgamation.zip -o sqlite-amalgamation
           mkdir include
           copy sqlite-amalgamation\sqlite3*.h include\
