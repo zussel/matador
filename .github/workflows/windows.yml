@@ -21,7 +21,6 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Debug
   INSTALL_LOCATION: ".local"
-#  ENVIRONMENT_SCRIPT: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
 
 jobs:
   build:
@@ -73,8 +72,8 @@ jobs:
           set MINOR=%MINOR:~-2%
           set PATCH=%PATCH:~-2%
           set FORMATTED_VERSION=%MAJOR%%MINOR%%PATCH%00
-          echo "SQLite formatted Version: %FORMATTED_VERSION%"
           set SQLITE3_FILE="sqlite-amalgamation-%FORMATTED_VERSION%.zip"
+          echo "Retrieving SQLite Amalgamation File: %SQLITE3_FILE%"
           curl -L "https://www.sqlite.org/2023/sqlite-amalgamation-%FORMATTED_VERSION%.zip" --output %SQLITE3_FILE%
           7z x %SQLITE3_FILE%
           mkdir include
@@ -84,9 +83,6 @@ jobs:
         run: |
           'C:\ProgramData\chocolatey\lib\SQLite\tools' >> $env:GITHUB_PATH
           "SQLITE3_DIR=C:\ProgramData\chocolatey\lib\SQLite\tools" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-#          "$env:C:\ProgramData\chocolatey\lib\SQLite\tools" | Out-File -FilePath $env:GITHUB_PATH -Append
-#               set URL=https://www.sqlite.org/%VERSION%/sqlite-amalgamation-%VERSION%.zip
-#               Invoke-WebRequest -Uri %URL% -OutFile sqlite-amalgamation.zip
       - name: Print SQLite Env Var
         run: $env:SQLITE3_DIR
       - name: Install mysql
@@ -103,7 +99,6 @@ jobs:
       - name: Set MySQL variables
         run: |
           'C:\tools\mysql\current\lib' >> $env:GITHUB_PATH
-#          "$env:C:\tools\mysql\current\lib" | Out-File -FilePath $env:GITHUB_PATH -Append
       - name: Print MySQL directory content
         shell: cmd
         run: |
@@ -123,14 +118,14 @@ jobs:
           -DMATADOR_ODBC_TEST=false
           -DMATADOR_MYSQL_TEST=true
           -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
-#      - name: Build
-#        run: >
-#          cmake --build ${{github.workspace}}/build
-#          --config ${{env.BUILD_TYPE}}
-#          --target matador test_matador
-#      - name: List Debug
-#        working-directory: ${{github.workspace}}/build/Debug/bin/Debug
-#        run: dir
-#      - name: Test
-#        working-directory: ${{github.workspace}}/build
-#        run: ctest --verbose -C ${{env.BUILD_TYPE}}
+      - name: Build
+        run: >
+          cmake --build ${{github.workspace}}/build
+          --config ${{env.BUILD_TYPE}}
+          --target matador test_matador
+      - name: List Debug
+        working-directory: ${{github.workspace}}/build/Debug/bin/Debug
+        run: dir
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest --verbose -C ${{env.BUILD_TYPE}}
