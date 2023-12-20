@@ -17,11 +17,11 @@ SET(HEADER
   ../../../include/matador/db/sqlite/sqlite_types.hpp
   ../../../include/matador/db/sqlite/sqlite_dialect.hpp
   ../../../include/matador/db/sqlite/sqlite_dialect_compiler.hpp
-    ../../../include/matador/db/sqlite/sqlite_parameter_binder.hpp)
+  ../../../include/matador/db/sqlite/sqlite_parameter_binder.hpp)
 
 ADD_LIBRARY(matador-sqlite SHARED ${SOURCES} ${HEADER})
 
-TARGET_LINK_LIBRARIES(matador-sqlite matador-utils matador-sql ${SQLITE3_LIBRARY})
+TARGET_LINK_LIBRARIES(matador-sqlite matador-utils matador-sql ${SQLite3_LIBRARIES})
 
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-sqlite
