@@ -21,7 +21,7 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Debug
   INSTALL_LOCATION: ".local"
-  ENVIRONMENT_SCRIPT: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+#  ENVIRONMENT_SCRIPT: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
 
 jobs:
   build:
@@ -51,7 +51,7 @@ jobs:
       - name: Install SQLite
         shell: cmd
         run: |
-          call "${{ env.ENVIRONMENT_SCRIPT }}"
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
           choco install sqlite
           cd /D C:\ProgramData\chocolatey\lib\SQLite\tools
           cl.exe
