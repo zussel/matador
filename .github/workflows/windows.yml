@@ -57,7 +57,7 @@ jobs:
           lib.exe /machine:x64 /def:sqlite3.def /out:sqlite3.lib
           mkdir lib
           copy sqlite3.* lib\
-          dir lib
+          dir lib\
       - name: Install SQLite Header
         shell: cmd
         run: |
