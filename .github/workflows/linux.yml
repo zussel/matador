@@ -63,25 +63,25 @@ jobs:
       run: >
         cmake -B ${{github.workspace}}/build
         -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-        -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@127.0.0.1/matador_test (FreeTDS)"
+        -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@127.0.0.1/matador_test (ODBC Driver 17 for SQL Server)"
         -DMATADOR_ODBC_TEST=true
-#    - name: Build
-#      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador test_matador
-#    - name: Copy Matador Libs
-#      working-directory: ${{github.workspace}}/build
-#      run: |
-#        ls -la lib/libmatador-*.*
-#        cp lib/libmatador-*.* bin/
-#        pwd
-#        ls -la bin/
-#    - uses: harmon758/postgresql-action@v1
-#      with:
-#        postgresql version: '14'
-#        postgresql db: matador_test
-#        postgresql user: test
-#        postgresql password: test123
-#    - name: Test
-#      working-directory: ${{github.workspace}}/build
-#      run: |
-#        ls -la bin/
-#        ctest --verbose -C ${{env.BUILD_TYPE}}
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador test_matador
+    - name: Copy Matador Libs
+      working-directory: ${{github.workspace}}/build
+      run: |
+        ls -la lib/libmatador-*.*
+        cp lib/libmatador-*.* bin/
+        pwd
+        ls -la bin/
+    - uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '14'
+        postgresql db: matador_test
+        postgresql user: test
+        postgresql password: test123
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: |
+        ls -la bin/
+        ctest --verbose -C ${{env.BUILD_TYPE}}
