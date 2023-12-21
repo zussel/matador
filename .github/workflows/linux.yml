@@ -58,8 +58,8 @@ jobs:
       run: >
         cmake -B ${{github.workspace}}/build
         -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-        -DMATADOR_ODBC_TEST=false
-        -DMATADOR_ODBC=true
+        -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@127.0.0.1/matador_test (Free TDS)"
+        -DMATADOR_ODBC_TEST=true
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador test_matador
     - name: Copy Matador Libs
