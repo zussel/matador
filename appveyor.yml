@@ -19,7 +19,7 @@ configuration:
   - Release
 
 environment:
-  MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+  MYSQL_DIR: C:\Program Files\MySql\MySQL Server 8.0
   PGUSER: "postgres"
   PGPASSWORD: "Password12!"
   MYSQL_PWD: "Password12!"
