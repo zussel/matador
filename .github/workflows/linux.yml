@@ -28,6 +28,16 @@ jobs:
       fail-fast: false
       matrix:
         compiler-version: [12]
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        env:
+          SA_PASSWORD: Password12!
+          ACCEPT_EULA: Y
+          MSSQL_PID: Developer
+        ports:
+          - 1433:1433
+        options: --name=mssql --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'Password12!' -Q 'SELECT 1'" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v3
     - name: Create MySQL database
@@ -35,7 +45,10 @@ jobs:
         sudo systemctl start mysql.service
         mysql --version
         mysql -u root -proot -e "CREATE DATABASE matador_test;"
-      #        mysql -u root -p root -e "GRANT ALL PRIVILEGES ON matador_test.* TO 'root'@'%';";
+    - name: Create MS SQL Database
+      run: |
+        sudo apt-get update && sudo apt-get install -y mssql-tools
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'Password12!' -Q 'CREATE DATABASE matador_test'
     - name: CMake Version
       run: cmake --version
     - name: Configure CMake
@@ -46,10 +59,7 @@ jobs:
         cmake -B ${{github.workspace}}/build
         -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         -DMATADOR_ODBC_TEST=false
-        -DMATADOR_ODBC=false
-        -DMATADOR_POSTGRESQL_TEST=true
-        -DMATADOR_MYSQL_TEST=true
-        -DMATADOR_SQLITE3_TEST=true
+        -DMATADOR_ODBC=true
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador test_matador
     - name: Copy Matador Libs
