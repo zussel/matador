@@ -229,7 +229,9 @@ std::vector<field> mssql_connection::describe(const std::string &table)
     f.index(pos - 1);
     f.size(size);
     f.name(std::string((char*)column));
+
     f.type(type2data_type(data_type, size));
+    std::cout << "mssql column '" << column << "' type: " << data_type << "\n";
     //f.type(dialect_.string_type((char*)type));
     f.not_null(not_null == 0);
 

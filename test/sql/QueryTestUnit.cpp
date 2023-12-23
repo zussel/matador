@@ -357,18 +357,46 @@ void QueryTestUnit::test_bind_tablename()
   UNIT_ASSERT_EQUAL(q2.tablename(), "student");
 }
 
+namespace detail {
+
+struct person
+{
+  unsigned long long id{};
+  std::string name;
+  matador::date birthdate;
+  matador::time important_time;
+  unsigned int height = 0;
+
+  template < class Operator >
+  void process(Operator &op)
+  {
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name, 255);
+    matador::access::attribute(op, "birthdate", birthdate);
+    matador::access::attribute(op, "important_time", important_time);
+    matador::access::attribute(op, "height", height);
+  }
+
+};
+
+}
 void QueryTestUnit::test_describe()
 {
   connection_.connect();
 
-  matador::query<person> q("person");
+  matador::query<::detail::person> q("person");
 
   q.create().execute(connection_);
 
   auto fields = connection_.describe("person");
 
-  std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
-  std::vector<database_type > types = { matador::database_type::type_bigint, matador::database_type::type_varchar, matador::database_type::type_date, matador::database_type::type_bigint};
+  std::vector<std::string> columns = { "id", "name", "birthdate", "important_time", "height"};
+  std::vector<database_type > types = {
+    matador::database_type::type_bigint,
+    matador::database_type::type_varchar,
+    matador::database_type::type_date,
+    matador::database_type::type_time,
+    matador::database_type::type_bigint};
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()]);
