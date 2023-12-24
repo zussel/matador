@@ -39,7 +39,7 @@ jobs:
           - 1433:1433
         options: --name=mssql --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'Password12!' -Q 'SELECT 1'" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Create MySQL database
       run: |
         sudo systemctl start mysql.service
@@ -49,11 +49,6 @@ jobs:
       run: |
         sudo apt-get update && sudo apt-get install -y mssql-tools
         /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'Password12!' -Q 'CREATE DATABASE matador_test'
-    - name: Check ODBC
-      run: |
-        odbcinst -j
-        cat /etc/odbcinst.ini
-        cat /etc/odbc.ini
     - name: CMake Version
       run: cmake --version
     - name: Configure CMake
@@ -64,16 +59,11 @@ jobs:
         cmake -B ${{github.workspace}}/build
         -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@127.0.0.1/matador_test (ODBC Driver 17 for SQL Server)"
-        -DMATADOR_ODBC_TEST=true
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador test_matador
     - name: Copy Matador Libs
       working-directory: ${{github.workspace}}/build
-      run: |
-        ls -la lib/libmatador-*.*
-        cp lib/libmatador-*.* bin/
-        pwd
-        ls -la bin/
+      run: cp lib/libmatador-*.* bin/
     - uses: harmon758/postgresql-action@v1
       with:
         postgresql version: '14'
