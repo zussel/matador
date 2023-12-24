@@ -300,7 +300,7 @@ void mssql_parameter_binder::bind(const matador::time &t, size_t index)
     ts->fraction = (SQLUINTEGER) t.milli_second() * 1000 * 1000;
   }
 
-  bind_value(stmt_, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, host_data_.back(), 0, index);
+  bind_value(stmt_, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, host_data_.back(), 6, index);
 }
 
 void mssql_parameter_binder::bind(const matador::date &d, size_t index)
