@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler-version: [12]
+        compiler-version: [9]
     services:
       mssql:
         image: mcr.microsoft.com/mssql/server:2017-latest
