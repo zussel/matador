@@ -613,12 +613,6 @@ public:
    * 
    * @return The result serializable.
    */
-  template<class LocalType = T, typename = typename std::enable_if<!std::is_same<LocalType, row>::value>::type>
-  result<LocalType> execute(connection &conn)
-  {
-    return conn.execute<T>(sql_);
-  }
-  template<class LocalType = T, typename = typename std::enable_if<std::is_same<LocalType, row>::value>::type>
   result<T> execute(connection &conn)
   {
     return conn.execute<T>(sql_, sql_.table_name(), obj_);
@@ -631,12 +625,6 @@ public:
    * @param conn The connection.
    * @return The new prepared statement.
    */
-  template<class LocalType = T, typename = typename std::enable_if<!std::is_same<LocalType, row>::value>::type>
-  statement<LocalType> prepare(connection &conn)
-  {
-    return conn.prepare<T>(sql_);
-  }
-  template<class LocalType = T, typename = typename std::enable_if<std::is_same<LocalType, row>::value>::type>
   statement<T> prepare(connection &conn)
   {
     return conn.prepare<T>(sql_, sql_.table_name(), obj_);

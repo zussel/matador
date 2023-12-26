@@ -227,10 +227,12 @@ private:
   friend class query;
 
   void initialize_connection_info(const std::string &dns);
+  template <class Type>
+  void prepare_prototype_row(Type &/*prototype*/, const std::string &/*table_name*/) {}
   void prepare_prototype_row(row &prototype, const std::string &table_name);
 
   template < class Type >
-  result<Type> execute(const sql &stmt, const std::string &table_name, row prototype, typename std::enable_if< std::is_same<Type, row>::value >::type* = 0)
+  result<Type> execute(const sql &stmt, const std::string &table_name, const Type &prototype)
   {
     // get column descriptions
     prepare_prototype_row(prototype, table_name);
@@ -239,36 +241,11 @@ private:
     return result<Type>(impl_->execute(sql_stmt), prototype);
   }
 
-  /**
-   * @brief Execute a sql object representing a statement
-   *
-   * @tparam Type The entity type of the query
-   * @param stmt The statement to be executed
-   * @return A result object
-   */
   template < class Type >
-  result<Type> execute(const sql &stmt, typename std::enable_if< !std::is_same<Type, row>::value >::type* = 0)
-  {
-    auto sql_stmt = dialect()->direct(stmt);
-    logger_->on_execute(sql_stmt);
-    return result<Type>(impl_->execute(sql_stmt));
-  }
-
-  template < class T >
-  statement<T> prepare(const matador::sql &sql, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
-  {
-    auto stmt = statement<T>(impl_->prepare(dialect()->prepare(sql)), logger_);
-    if (is_log_enabled()) {
-      stmt.enable_log();
-    }
-    return stmt;
-  }
-
-  template < class T >
-  statement<T> prepare(const matador::sql &sql, const std::string &table_name, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
+  statement<Type> prepare(const matador::sql &sql, const std::string &table_name, const Type &prototype)
   {
     prepare_prototype_row(prototype, table_name);
-    auto stmt = statement<T>(impl_->prepare(dialect()->prepare(sql)), prototype, logger_);
+    auto stmt = statement<Type>(impl_->prepare(dialect()->prepare(sql)), prototype, logger_);
     if (is_log_enabled()) {
       stmt.enable_log();
     }
