@@ -27,7 +27,6 @@ public:
   void test_quoted_identifier();
   void test_columns_with_quotes_in_name();
   void test_quoted_literals();
-  void test_bind_tablename();
   void test_describe();
   void test_unknown_table();
   void test_identifier();

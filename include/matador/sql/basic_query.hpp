@@ -33,7 +33,7 @@ public:
    *
    * @param table_name The name of the table
    */
-  explicit basic_query(std::string table_name);
+  basic_query();
 
   /**
    * Resets the query.
@@ -93,6 +93,7 @@ protected:
     QUERY_SET,
     QUERY_FROM,
     QUERY_WHERE,
+    QUERY_VALUES,
     QUERY_COND_WHERE,
     QUERY_ORDERBY,
     QUERY_ORDER_DIRECTION,
@@ -109,29 +110,17 @@ protected:
 
   static std::string state2text(state_t state);
 
-  template < class T >
-  bool determine_tablename()
-  {
-    auto i = basic_query::tablename_map_.find(std::type_index(typeid(T)));
-    if (i != basic_query::tablename_map_.end()) {
-      table_name_ = i->second;
-      return true;
-    }
-    return false;
-  }
   /// @endcond
 
 protected:
   /// @cond MATADOR_DEV
   sql sql_;
   state_t state;
-  std::string table_name_;
   std::shared_ptr<columns> update_columns_;
   std::vector<matador::any> rowvalues_;
   detail::query_value_column_processor query_value_column_processor_;
   detail::query_value_creator query_value_creator_;
   connection conn_;
-  static std::unordered_map<std::type_index, std::string> tablename_map_;
   /// @endcond
 };
 

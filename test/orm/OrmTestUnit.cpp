@@ -176,8 +176,8 @@ void OrmTestUnit::test_insert()
 
   UNIT_EXPECT_GREATER(hans->id(), 0ULL);
 
-  matador::query<person> q("person");
-  auto res = q.select().where(matador::column("name") == "hans").execute(p.conn());
+  matador::query<person> q;
+  auto res = q.select().from("person").where(matador::column("name") == "hans").execute(p.conn());
 
   auto first = res.begin();
 
@@ -268,10 +268,10 @@ void OrmTestUnit::test_update()
   UNIT_EXPECT_EQUAL(hans->height(), 179U);
   UNIT_EXPECT_EQUAL(george->height(), 155U);
 
-  matador::query<person> q("person");
+  matador::query<person> q;
   matador::connection c(dns_);
   c.connect();
-  auto res = q.select().where(matador::column("name") == "hans").execute(c);
+  auto res = q.select().from("person").where(matador::column("name") == "hans").execute(c);
 
   auto first = res.begin();
 
@@ -302,10 +302,10 @@ void OrmTestUnit::test_delete()
 
   UNIT_EXPECT_GREATER(hans->id(), 0ULL);
 
-  matador::query<person> q("person");
+  matador::query<person> q;
   matador::connection c(dns_);
   c.connect();
-  auto res = q.select().where(matador::column("name") == "hans").execute(c);
+  auto res = q.select().from("person").where(matador::column("name") == "hans").execute(c);
 
   auto first = res.begin();
 
@@ -319,7 +319,7 @@ void OrmTestUnit::test_delete()
 
   s.flush();
 
-  res = q.select().where(matador::column("name") == "hans").execute(c);
+  res = q.select().from("person").where(matador::column("name") == "hans").execute(c);
 
   first = res.begin();
 
@@ -347,10 +347,10 @@ void OrmTestUnit::test_multiple_delete()
   UNIT_EXPECT_GREATER(hans->id(), 0ULL);
   UNIT_EXPECT_GREATER(george->id(), 0ULL);
 
-  matador::query<person> q("person");
+  matador::query<person> q;
   matador::connection c(dns_);
   c.connect();
-  auto res = q.select().where(matador::column("name") == "hans").execute(c);
+  auto res = q.select().from("person").where(matador::column("name") == "hans").execute(c);
 
   auto first = res.begin();
 
@@ -364,7 +364,7 @@ void OrmTestUnit::test_multiple_delete()
 
   s.flush();
 
-  res = q.select().where(matador::column("name") == "hans").execute(c);
+  res = q.select().from("person").where(matador::column("name") == "hans").execute(c);
 
   first = res.begin();
 
@@ -374,7 +374,7 @@ void OrmTestUnit::test_multiple_delete()
 
   s.flush();
 
-  res = q.select().where(matador::column("name") == "george").execute(c);
+  res = q.select().from("person").where(matador::column("name") == "george").execute(c);
 
   first = res.begin();
 
@@ -409,8 +409,8 @@ void OrmTestUnit::test_save()
   matador::connection conn(dns_);
   conn.connect();
 
-  matador::query<person> q("person");
-  auto res = q.select().where("name"_col == "hans").execute(conn);
+  matador::query<person> q;
+  auto res = q.select().from("person").where("name"_col == "hans").execute(conn);
 
 //  auto first = res.begin();
 //
@@ -428,7 +428,7 @@ void OrmTestUnit::test_save()
 
   s.flush();
 
-  res = q.select().where("name"_col == "hans").execute(conn);
+  res = q.select().from("person").where("name"_col == "hans").execute(conn);
 
   auto first = res.begin();
 

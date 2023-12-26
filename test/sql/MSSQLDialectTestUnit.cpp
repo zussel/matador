@@ -48,13 +48,13 @@ void MSSQLDialectTestUnit::test_query_select_sub_select()
 {
   matador::connection conn(::connection::mssql);
 
-  query<person> q("person");
+  query<person> q;
 
   column id("id");
 
   auto subselect = matador::select(columns::all()).from(matador::select({id}).from("person").limit(1)).as("p");
 
-  q.select().where(matador::in(id, subselect));
+  q.select().from("person").where(matador::in(id, subselect));
 
   UNIT_ASSERT_EQUAL("SELECT [id], [name], [birthdate], [height] FROM [person] WHERE [id] IN (SELECT * FROM (SELECT TOP (1) [id] FROM [person] ) AS p ) ", q.str(conn, false));
 }
@@ -65,36 +65,36 @@ void MSSQLDialectTestUnit::test_query_select_sub_select_result()
 
   conn.connect();
 
-  query<person> q("person");
+  query<person> q;
 
   // create item table and insert item
-  result<person> res(q.create().execute(conn));
+  result<person> res(q.create("person").execute(conn));
 
   unsigned long counter = 0;
 
   person hans(++counter, "Hans", matador::date(12, 3, 1980), 180);
-  res = q.insert(hans).execute(conn);
+  res = q.insert("person", hans).execute(conn);
 
   person otto(++counter, "Otto", matador::date(27, 11, 1954), 159);
-  res = q.insert(otto).execute(conn);
+  res = q.insert("person", otto).execute(conn);
 
   person hilde(++counter, "Hilde", matador::date(13, 4, 1975), 175);
-  res = q.insert(hilde).execute(conn);
+  res = q.insert("person", hilde).execute(conn);
 
   person trude(++counter, "Trude", matador::date(1, 9, 1967), 166);
-  res = q.insert(trude).execute(conn);
+  res = q.insert("person", trude).execute(conn);
 
   column id("id");
 
   auto subselect = matador::select(columns::all()).from(matador::select({id}).from("person").limit(1)).as("p");
 
-  res = q.select().where(matador::in(id, subselect)).execute(conn);
+  res = q.select().from("person").where(matador::in(id, subselect)).execute(conn);
 
   //for (auto p : res) {
   //    UNIT_EXPECT_EQUAL(1UL, p->id());
   //    UNIT_EXPECT_EQUAL("Hans", p->name());
   //}
-  q.drop().execute(conn);
+  q.drop("person").execute(conn);
 
   conn.disconnect();
 }

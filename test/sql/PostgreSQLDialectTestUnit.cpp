@@ -132,11 +132,11 @@ void PostgreSQLDialectTestUnit::test_update_limit_prepare(){
 
 void PostgreSQLDialectTestUnit::test_table_name()
 {
-  query<person> q("person");
+  query<person> q;
 
   column id("id");
 
-  q.select();
+  q.select().from("person");
 
   UNIT_ASSERT_EQUAL("person", q.stmt().table_name());
 }
