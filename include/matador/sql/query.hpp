@@ -69,7 +69,6 @@ public:
    * 
    * @return A reference to the query.
    */
-  template<class LocalType = T, typename = typename std::enable_if<!std::is_same<LocalType, row>::value>::type>
   query& create(const std::string &table_name)
   {
     return create(table_name, obj_);
@@ -82,7 +81,6 @@ public:
    * @param obj The serializable providing the column information.
    * @return A reference to the query.
    */
-  template<class LocalType = T, typename = typename std::enable_if<!std::is_same<LocalType, row>::value>::type>
   query& create(const std::string &table_name, T obj)
   {
     reset(t_query_command::CREATE);
@@ -107,8 +105,7 @@ public:
    * @param column_list The columns to be created
    * @return A reference to the query.
    */
-  template<class LocalType = T, typename = typename std::enable_if<std::is_same<LocalType, row>::value>::type>
-  query& create(const std::string &table_name, const std::initializer_list<std::shared_ptr<column>> &column_list)
+  query& create(const std::string &table_name, std::initializer_list<std::shared_ptr<column>> column_list)
   {
     reset(t_query_command::CREATE);
 
