@@ -232,7 +232,7 @@ private:
   void prepare_prototype_row(row &prototype, const std::string &table_name);
 
   template < class Type >
-  result<Type> execute(const sql &stmt, const std::string &table_name, const Type &prototype)
+  result<Type> execute(const sql &stmt, const std::string &table_name, Type &prototype)
   {
     // get column descriptions
     prepare_prototype_row(prototype, table_name);
@@ -242,7 +242,7 @@ private:
   }
 
   template < class Type >
-  statement<Type> prepare(const matador::sql &sql, const std::string &table_name, const Type &prototype)
+  statement<Type> prepare(const matador::sql &sql, const std::string &table_name, Type &prototype)
   {
     prepare_prototype_row(prototype, table_name);
     auto stmt = statement<Type>(impl_->prepare(dialect()->prepare(sql)), prototype, logger_);
