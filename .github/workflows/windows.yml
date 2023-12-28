@@ -47,6 +47,10 @@ jobs:
           & $env:PGBIN\createdb --owner=test matador_test
           $env:PGPASSWORD = 'test123'
           & $env:PGBIN\psql --username=test --host=localhost --list matador_test
+      - name: Install SQL Server on Windows
+        run: >
+          choco install sql-server-2019 -y
+          --params="'/Q /SUPPRESSPRIVACYSTATEMENTNOTICE /IACCEPTSQLSERVERLICENSETERMS /ACTION=Install /SkipRules=RebootRequiredCheck /FEATURES=SQLENGINE /SECURITYMODE=SQL /TCPENABLED=1 /SAPWD=Password12!'"
       - name: Install SQLite
         shell: cmd
         run: |
