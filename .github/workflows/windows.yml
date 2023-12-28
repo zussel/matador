@@ -105,13 +105,6 @@ jobs:
       - name: Set MySQL variables
         run: |
           'C:\tools\mysql\current\lib' >> $env:GITHUB_PATH
-      - name: Print MySQL directory content
-        shell: cmd
-        run: |
-          cd /D C:\tools\mysql\current
-          dir
-          echo LIB
-          dir lib
       - name: CMake Version
         run: cmake --version
       - name: Print Path
