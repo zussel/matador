@@ -51,6 +51,8 @@ jobs:
         run: >
           choco install sql-server-2019 -y
           --params="'/Q /SUPPRESSPRIVACYSTATEMENTNOTICE /IACCEPTSQLSERVERLICENSETERMS /ACTION=Install /SkipRules=RebootRequiredCheck /FEATURES=SQLENGINE /SECURITYMODE=SQL /TCPENABLED=1 /SAPWD=Password12!'"
+      - name: Create SQL Server Database
+        run: sqlcmd -S localhost -U SA -P 'Password12!' -Q 'CREATE DATABASE matador_test'
       - name: Install SQLite
         shell: cmd
         run: |
