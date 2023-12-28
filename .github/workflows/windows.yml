@@ -121,9 +121,8 @@ jobs:
           cmake -B ${{github.workspace}}/build
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DCMAKE_INSTALL_PREFIX="$HOME/$env:INSTALL_LOCATION"
-          -DMATADOR_ODBC_TEST=false
-          -DMATADOR_MYSQL_TEST=true
           -DMYSQL_CONNECTION_STRING=mysql://test:test123@127.0.0.1/matador_test
+          -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@127.0.0.1/matador_test (SQL Server)"
       - name: Build
         run: >
           cmake --build ${{github.workspace}}/build
