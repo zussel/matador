@@ -74,7 +74,7 @@ before_test:
 
 test_script:
   - dir
-#  - cd "%APPVEYOR_BUILD_FOLDER%/build" && if %CONFIGURATION%==Debug (ctest --verbose -E perftest --build-config %CONFIGURATION%) else (ctest --verbose --build-config %CONFIGURATION%)
+  - cd "%APPVEYOR_BUILD_FOLDER%/build" && if %CONFIGURATION%==Debug (ctest --verbose -E perftest --build-config %CONFIGURATION%) else (ctest --verbose --build-config %CONFIGURATION%)
 
 after_build:
   - ps: |
