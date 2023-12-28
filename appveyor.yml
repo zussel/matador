@@ -64,7 +64,7 @@ before_build:
       cd "$env:APPVEYOR_BUILD_FOLDER"
       mkdir build
       cd build
-      cmake -G "$env:generator" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2017/matador_test (SQL Native Client Driver 10.0)" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" -DPOSTGRESQL_CONNECTION_STRING:STRING="postgresql://test:test123@127.0.0.1/matador_test" ..
+      cmake -G "$env:generator" -DMATADOR_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2017/matador_test (ODBC Driver 17 for SQL Server)" -DMATADOR_SQLITE3=true -DMATADOR_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/matador_test" -DPOSTGRESQL_CONNECTION_STRING:STRING="postgresql://test:test123@127.0.0.1/matador_test" ..
 
 build_script:
   - cmake --build . --config %configuration% --target matador test_matador
@@ -90,7 +90,7 @@ artifacts:
 deploy:
   provider: GitHub
   auth_token:
-    secure: bZfzMuUq+rE9ccTEljeiAak0qFdtk+DeN45P7cLSC/l4/Upx3nIAPyFtwawg/mu2
+    secure: VdPPVnmf2IpYg8348grqXRBjh5DWShItre2LA8wKqHvA5yi8eopOI4yp5nI9ZSlZ
   artifact: installer
   draft: false
   prerelease: false
