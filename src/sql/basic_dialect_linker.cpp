@@ -219,6 +219,9 @@ void basic_dialect_linker::visit(const matador::column &col)
     if (is_constraint_set(col.attributes.options(), constraints::PRIMARY_KEY)) {
       dialect().append_to_result(" PRIMARY KEY");
     }
+    if (is_constraint_set(col.attributes.options(), constraints::UNIQUE)) {
+      dialect().append_to_result(" UNIQUE");
+    }
   }
   if (is_build_options_set(col.build_options, t_build_options::with_value)) {
     dialect().append_to_result("=");
