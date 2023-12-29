@@ -2,6 +2,7 @@
 #define OOS_STATEMENT_IMPL_HPP
 
 #include "matador/sql/result.hpp"
+#include "matador/sql/statement_context.hpp"
 #include "matador/sql/parameter_binder.hpp"
 
 namespace matador {
@@ -20,7 +21,7 @@ public:
   statement_impl(statement_impl &&) = delete;
 
 public:
-  statement_impl(basic_dialect *dialect, const matador::sql &stmt);
+  explicit statement_impl(statement_context context);
   statement_impl(const statement_impl &) = default;
   statement_impl& operator=(const statement_impl &) = default;
   virtual ~statement_impl() = default;
@@ -54,7 +55,7 @@ public:
     return pos;
   }
 
-  std::string str() const;
+  const std::string& str() const;
   const std::vector<std::string>& bind_vars() const;
   const std::vector<std::string>& columns() const;
 
@@ -72,10 +73,13 @@ protected:
 
   virtual detail::parameter_binder_impl* binder() const = 0;
 
+  const statement_context& context() const;
+
 private:
-  std::string sql_;
-  std::vector<std::string> bind_vars_;
-  std::vector<std::string> columns_;
+  statement_context context_;
+//  std::string sql_;
+//  std::vector<std::string> bind_vars_;
+//  std::vector<std::string> columns_;
 
   bool log_enabled_ = false;
 };

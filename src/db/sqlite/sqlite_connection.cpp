@@ -85,9 +85,9 @@ version sqlite_connection::server_version() const
            static_cast<unsigned int>(SQLITE_VERSION_NUMBER % 1000) };
 }
 
-matador::detail::result_impl* sqlite_connection::execute(const matador::sql &sql)
+matador::detail::result_impl* sqlite_connection::execute(const sql &q)
 {
-  std::string stmt = dialect_.direct(sql);
+  std::string stmt = dialect_.direct(q);
   return execute_internal(stmt);
 }
 
@@ -96,9 +96,9 @@ matador::detail::result_impl* sqlite_connection::execute(const std::string &stmt
   return execute_internal(stmt);
 }
 
-matador::detail::statement_impl *sqlite_connection::prepare(const matador::sql &sql)
+matador::detail::statement_impl *sqlite_connection::prepare(detail::statement_context &&context) const
 {
-  return new sqlite_statement(*this, sql);
+  return new sqlite_statement(sqlite_db_, std::move(context));
 }
 
 bool sqlite_connection::exists(const std::string &table_name)

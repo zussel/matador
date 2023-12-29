@@ -55,9 +55,9 @@ public:
   void open(const connection_info &info) override;
   void close() override;
 
-  detail::result_impl* execute(const matador::sql &stmt) override;
+  detail::result_impl* execute(const sql &stmt) override;
   detail::result_impl* execute(const std::string &stmt) override;
-  detail::statement_impl* prepare(const matador::sql &stmt) override;
+  detail::statement_impl* prepare(detail::statement_context &&context) const override;
 
   void begin() override;
   void commit() override;

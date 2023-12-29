@@ -6,9 +6,8 @@ namespace matador {
 
 namespace detail {
 
-basic_query::basic_query(std::string table_name)
+basic_query::basic_query()
   : state(QUERY_BEGIN)
-  , table_name_(std::move(table_name))
   , update_columns_(new columns(columns::WITHOUT_BRACKETS))
   , query_value_column_processor_(update_columns_, rowvalues_)
 {}
@@ -29,8 +28,7 @@ std::string basic_query::str(bool prepared)
 std::string basic_query::str(connection &conn, bool prepared)
 {
   if (prepared) {
-    auto result = conn.dialect()->prepare(sql_);
-    return std::get<0>(result);
+    return conn.dialect()->prepare(sql_).sql;
   } else {
     return conn.dialect()->direct(sql_);
   }
@@ -43,72 +41,78 @@ const sql& basic_query::stmt() const
 
 std::string basic_query::tablename() const
 {
-  return table_name_;
+  return sql_.table_name();
 }
 
 void basic_query::throw_invalid(state_t next, state_t current)
 {
   std::stringstream msg;
   switch (next) {
-    case basic_query::QUERY_CREATE:
-    case basic_query::QUERY_DROP:
-    case basic_query::QUERY_SELECT:
-    case basic_query::QUERY_INSERT:
-    case basic_query::QUERY_UPDATE:
-    case basic_query::QUERY_DELETE:
+    case QUERY_CREATE:
+    case QUERY_DROP:
+    case QUERY_SELECT:
+    case QUERY_INSERT:
+    case QUERY_UPDATE:
+    case QUERY_DELETE:
       if (current != QUERY_BEGIN) {
         msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
-    case basic_query::QUERY_WHERE:
-    case basic_query::QUERY_COND_WHERE:
-      if (current != basic_query::QUERY_SELECT &&
-          current != basic_query::QUERY_COLUMN &&
-          current != basic_query::QUERY_UPDATE &&
-          current != basic_query::QUERY_SET &&
-          current != basic_query::QUERY_DELETE &&
-          current != basic_query::QUERY_FROM &&
-          current != basic_query::QUERY_COND_WHERE)
+    case QUERY_VALUES:
+      if (current != QUERY_INSERT) {
+        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
+        throw std::logic_error(msg.str());
+      }
+      break;
+    case QUERY_WHERE:
+    case QUERY_COND_WHERE:
+      if (current != QUERY_SELECT &&
+          current != QUERY_COLUMN &&
+          current != QUERY_UPDATE &&
+          current != QUERY_SET &&
+          current != QUERY_DELETE &&
+          current != QUERY_FROM &&
+          current != QUERY_COND_WHERE)
       {
         msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
-    case basic_query::QUERY_COLUMN:
-      if (current != basic_query::QUERY_SELECT &&
-          current != basic_query::QUERY_COLUMN)
+    case QUERY_COLUMN:
+      if (current != QUERY_SELECT &&
+          current != QUERY_COLUMN)
       {
         msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
-    case basic_query::QUERY_FROM:
-      if (current != basic_query::QUERY_SELECT) {
+    case QUERY_FROM:
+      if (current != QUERY_SELECT) {
         msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
-    case basic_query::QUERY_SET:
-      if (current != basic_query::QUERY_UPDATE &&
-          current != basic_query::QUERY_SET)
+    case QUERY_SET:
+      if (current != QUERY_UPDATE &&
+          current != QUERY_SET)
       {
         msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
-    case basic_query::QUERY_ORDERBY:
-      if (current != basic_query::QUERY_SELECT &&
-          current != basic_query::QUERY_WHERE &&
-          current != basic_query::QUERY_FROM &&
-          current != basic_query::QUERY_COND_WHERE)
+    case QUERY_ORDERBY:
+      if (current != QUERY_SELECT &&
+          current != QUERY_WHERE &&
+          current != QUERY_FROM &&
+          current != QUERY_COND_WHERE)
       {
         msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
     case QUERY_ORDER_DIRECTION:
-      if (current != basic_query::QUERY_ORDERBY) {
+      if (current != QUERY_ORDERBY) {
         msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
@@ -156,7 +160,7 @@ std::string basic_query::state2text(basic_query::state_t state)
   }
 }
 
-std::unordered_map<std::type_index, std::string> basic_query::tablename_map_ = std::unordered_map<std::type_index, std::string>();
+//std::unordered_map<std::type_index, std::string> basic_query::tablename_map_ = std::unordered_map<std::type_index, std::string>();
 
 }
 

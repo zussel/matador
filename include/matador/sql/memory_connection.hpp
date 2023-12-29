@@ -18,7 +18,7 @@ public:
 
   matador::detail::result_impl *execute(const matador::sql &) override { return nullptr; }
   matador::detail::result_impl *execute(const std::string &) override { return nullptr; }
-  detail::statement_impl *prepare(const matador::sql &) override { return nullptr; };
+  detail::statement_impl *prepare(detail::statement_context &&) const override { return nullptr; };
 
   void begin() override {}
 

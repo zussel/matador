@@ -53,7 +53,7 @@ void PostgreSQLDialectTestUnit::test_placeholder()
 
   auto result = conn.dialect()->prepare(s);
 
-  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES ($1, $2, $3) ", std::get<0>(result));
+  UNIT_ASSERT_EQUAL("INSERT INTO \"person\" (\"id\", \"name\", \"age\") VALUES ($1, $2, $3) ", result.sql);
 }
 
 void PostgreSQLDialectTestUnit::test_placeholder_condition()
@@ -78,7 +78,7 @@ void PostgreSQLDialectTestUnit::test_placeholder_condition()
 
   auto result = conn.dialect()->prepare(s);
 
-  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" = $1 ", std::get<0>(result));
+  UNIT_ASSERT_EQUAL("SELECT \"id\", \"name\", \"age\" FROM \"person\" WHERE \"name\" = $1 ", result.sql);
 }
 
 void PostgreSQLDialectTestUnit::test_update_limit()
@@ -127,16 +127,16 @@ void PostgreSQLDialectTestUnit::test_update_limit_prepare(){
 
   auto result = conn.dialect()->prepare(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=$1 WHERE \"ctid\" = (SELECT \"ctid\" FROM \"relation\" WHERE (\"owner_id\" = $2 AND \"item_id\" = $3) LIMIT 1 ) ", std::get<0>(result));
+  UNIT_ASSERT_EQUAL("UPDATE \"relation\" SET \"owner_id\"=$1 WHERE \"ctid\" = (SELECT \"ctid\" FROM \"relation\" WHERE (\"owner_id\" = $2 AND \"item_id\" = $3) LIMIT 1 ) ", result.sql);
 }
 
 void PostgreSQLDialectTestUnit::test_table_name()
 {
-  query<person> q("person");
+  query<person> q;
 
   column id("id");
 
-  q.select();
+  q.select().from("person");
 
   UNIT_ASSERT_EQUAL("person", q.stmt().table_name());
 }

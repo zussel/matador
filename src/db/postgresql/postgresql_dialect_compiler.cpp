@@ -48,7 +48,7 @@ void postgresql_dialect_compiler::visit(const matador::detail::top &limit)
   }
 
   column rowid("ctid");
-  auto where_token = std::static_pointer_cast<detail::where>(*where_);
+  auto *where_token = static_cast<detail::where*>(where_->get()); // NOLINT(*-pro-type-static-cast-downcast)
   auto sub_select = matador::select({rowid}).from(tablename_).where(where_token->cond).limit(limit.limit_);
   auto cond = make_condition(equals(rowid, sub_select));
 

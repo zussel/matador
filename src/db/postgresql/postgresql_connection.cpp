@@ -69,9 +69,9 @@ detail::result_impl *postgresql_connection::execute(const std::string &stmt)
   return execute_internal(stmt);
 }
 
-detail::statement_impl *postgresql_connection::prepare(const matador::sql &stmt)
+detail::statement_impl *postgresql_connection::prepare(detail::statement_context &&context) const
 {
-  return new postgresql_statement(*this, stmt);
+  return new postgresql_statement(handle(), std::move(context));
 }
 
 void postgresql_connection::begin()

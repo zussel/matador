@@ -1,7 +1,3 @@
-//
-// Created by sascha on 03.06.19.
-//
-
 #ifndef MATADOR_POSTGRESQL_STATEMENT_HPP
 #define MATADOR_POSTGRESQL_STATEMENT_HPP
 
@@ -19,7 +15,7 @@ class postgresql_connection;
 class postgresql_statement : public matador::detail::statement_impl
 {
 public:
-  postgresql_statement(postgresql_connection &db, const matador::sql &stmt);
+  postgresql_statement(PGconn *db, detail::statement_context &&context);
   postgresql_statement(const postgresql_statement &x) = delete;
   postgresql_statement& operator=(const postgresql_statement &x) = delete;
   ~postgresql_statement() override;
@@ -35,10 +31,10 @@ protected:
   detail::parameter_binder_impl *binder() const override;
 
 private:
-  static std::string generate_statement_name(const matador::sql &stmt);
+  static std::string generate_statement_name(const detail::statement_context &context);
 
 private:
-  postgresql_connection &db_;
+  PGconn *db_{nullptr};
 
   std::string name_;
 

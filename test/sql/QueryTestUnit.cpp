@@ -32,7 +32,6 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("quoted_identifier", [this] { test_quoted_identifier(); }, "test quoted identifier");
   add_test("columns_with_quotes", [this] { test_columns_with_quotes_in_name(); }, "test columns with quotes in name");
   add_test("quoted_literals", [this] { test_quoted_literals(); }, "test quoted literals");
-  add_test("bind_tablename", [this] { test_bind_tablename(); }, "test bind tablenames");
   add_test("describe", [this] { test_describe(); }, "test describe table");
   add_test("unknown_table", [this] { test_unknown_table(); }, "test unknown table");
   add_test("identifier", [this] { test_identifier(); }, "test sql identifier");
@@ -106,9 +105,9 @@ void QueryTestUnit::test_data_types()
 {
   connection_.connect();
 
-  query<datatypes> q("datatypes");
+  query<datatypes> q;
 
-  q.create().execute(connection_);
+  q.create("datatypes").execute(connection_);
 
   float fval = 2.445566f;
   double dval = 11111.23433345;
@@ -161,9 +160,9 @@ void QueryTestUnit::test_data_types()
   item.set_date(date_val);
   item.set_time(time_val);
 
-  q.insert(item).execute(connection_);
+  q.insert("datatypes", item).execute(connection_);
 
-  auto res = q.select().execute(connection_);
+  auto res = q.select().from("datatypes").execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -190,7 +189,7 @@ void QueryTestUnit::test_data_types()
   UNIT_EXPECT_EQUAL(it->get_time(), time_val);
 
   res.close();
-  q.drop().execute(connection_);
+  q.drop("datatypes").execute(connection_);
 }
 
 void QueryTestUnit::test_schema()
@@ -224,9 +223,9 @@ void QueryTestUnit::test_quoted_identifier()
 {
   connection_.connect();
 
-  query<> q("quotes");
+  query<> q;
 
-  q.create({make_column<std::string>("from", 255), make_column<std::string>("to", 255)}).execute(connection_);
+  q.create("quotes", {make_column<std::string>("from", 255), make_column<std::string>("to", 255)}).execute(connection_);
 
   // check table description
   std::vector<std::string> columns = { "from", "to"};
@@ -238,7 +237,7 @@ void QueryTestUnit::test_quoted_identifier()
     UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()]);
   }
 
-  q.insert({"from", "to"}).values({"Berlin", "London"}).execute(connection_);
+  q.insert("quotes", {"from", "to"}).values({"Berlin", "London"}).execute(connection_);
 
   auto res = q.select({"from", "to"}).from("quotes").execute(connection_);
 
@@ -248,7 +247,7 @@ void QueryTestUnit::test_quoted_identifier()
   }
 
   column from("from");
-  q.update({{"from", "Hamburg"}, {"to", "New York"}}).where(from == "Berlin").execute(connection_);
+  q.update("quotes", {{"from", "Hamburg"}, {"to", "New York"}}).where(from == "Berlin").execute(connection_);
 
   res = q.select({"from", "to"}).from("quotes").execute(connection_);
 
@@ -257,7 +256,7 @@ void QueryTestUnit::test_quoted_identifier()
     UNIT_EXPECT_EQUAL("New York", row->at<std::string>("to"));
   }
 
-  q.drop().execute(connection_);
+  q.drop("quotes").execute(connection_);
 }
 
 void QueryTestUnit::test_columns_with_quotes_in_name()
@@ -278,9 +277,9 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
   };
 
   for (const auto &colname : colnames) {
-    query<> q("quotes");
+    query<> q;
 
-    q.create({make_column<std::string>(colname, 255)}).execute(connection_);
+    q.create("quotes", {make_column<std::string>(colname, 255)}).execute(connection_);
 
     // check table description
     std::vector<std::string> columns({ colname });
@@ -292,7 +291,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
       UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()]);
     }
 
-    q.drop().execute(connection_);
+    q.drop("quotes").execute(connection_);
   }
 }
 
@@ -300,11 +299,11 @@ void QueryTestUnit::test_quoted_literals()
 {
   connection_.connect();
 
-  query<> q("escapes");
+  query<> q;
 
-  q.create({make_column<std::string>("name", 255)}).execute(connection_);
+  q.create("escapes", {make_column<std::string>("name", 255)}).execute(connection_);
 
-  q.insert({"name"}).values({"text"}).execute(connection_);
+  q.insert("escapes", {"name"}).values({"text"}).execute(connection_);
 
   auto res = q.select({"name"}).from("escapes").execute(connection_);
 
@@ -312,7 +311,7 @@ void QueryTestUnit::test_quoted_literals()
     UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text");
   }
 
-  q.update({{"name", "text'd"}}).execute(connection_);
+  q.update("escapes", {{"name", "text'd"}}).execute(connection_);
 
   res = q.select({"name"}).from("escapes").execute(connection_);
 
@@ -320,7 +319,7 @@ void QueryTestUnit::test_quoted_literals()
     UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text'd");
   }
 
-  q.update({{"name", "text\nhello\tworld"}}).execute(connection_);
+  q.update("escapes", {{"name", "text\nhello\tworld"}}).execute(connection_);
 
   res = q.select({"name"}).from("escapes").execute(connection_);
 
@@ -328,7 +327,7 @@ void QueryTestUnit::test_quoted_literals()
     UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text\nhello\tworld");
   }
 
-  q.update({{"name", "text \"text\""}}).execute(connection_);
+  q.update("escapes", {{"name", "text \"text\""}}).execute(connection_);
 
   res = q.select({"name"}).from("escapes").execute(connection_);
 
@@ -336,58 +335,67 @@ void QueryTestUnit::test_quoted_literals()
     UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text \"text\"");
   }
 
-  q.drop().execute(connection_);
+  q.drop("escapes").execute(connection_);
 }
 
-void QueryTestUnit::test_bind_tablename()
+namespace detail {
+
+struct person
 {
-  matador::query<person>::clear_bound_tables();
+  unsigned long long id{};
+  std::string name;
+  matador::date birthdate;
+  matador::time important_time;
+  unsigned int height = 0;
 
-  matador::query<person> q0; // tablename should be person
+  template < class Operator >
+  void process(Operator &op)
+  {
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name, 255);
+    matador::access::attribute(op, "birthdate", birthdate);
+    matador::access::attribute(op, "important_time", important_time);
+    matador::access::attribute(op, "height", height);
+  }
+};
 
-  UNIT_ASSERT_TRUE(q0.tablename().empty());
-  matador::query<person>::bind_table("person");
-
-  matador::query<person> q1; // tablename should be person
-
-  UNIT_ASSERT_EQUAL(q1.tablename(), "person");
-
-  matador::query<person> q2("student"); // tablename should be student
-
-  UNIT_ASSERT_EQUAL(q2.tablename(), "student");
 }
-
 void QueryTestUnit::test_describe()
 {
   connection_.connect();
 
-  matador::query<person> q("person");
+  matador::query<::detail::person> q;
 
-  q.create().execute(connection_);
+  q.create("person").execute(connection_);
 
   auto fields = connection_.describe("person");
 
-  std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
-  std::vector<database_type > types = { matador::database_type::type_bigint, matador::database_type::type_varchar, matador::database_type::type_date, matador::database_type::type_bigint};
+  std::vector<std::string> columns = { "id", "name", "birthdate", "important_time", "height"};
+  std::vector<database_type > types = {
+    matador::database_type::type_bigint,
+    matador::database_type::type_varchar,
+    matador::database_type::type_date,
+    matador::database_type::type_time,
+    matador::database_type::type_bigint};
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()]);
     UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()]);
   }
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_unknown_table()
 {
   connection_.connect();
 
-  matador::query<person> q("person");
+  matador::query<person> q;
 
   bool caught_exception = false;
 
   try {
-    q.select().execute(connection_);
+    q.select().from("person").execute(connection_);
   } catch (database_error &ex) {
     caught_exception = true;
     if (db_vendor_ == "postgresql") {
@@ -401,6 +409,8 @@ void QueryTestUnit::test_unknown_table()
     } else {
       UNIT_FAIL("invalid database vendor string: " << db_vendor_);
     }
+  } catch( const std::exception &ex ) {
+    UNIT_FAIL(ex.what());
   } catch (...) {
     UNIT_FAIL("caught from exception");
   }
@@ -432,17 +442,17 @@ void QueryTestUnit::test_identifier()
 {
   connection_.connect();
 
-  matador::query<pktest> q("pktest");
+  matador::query<pktest> q;
 
-  q.create().execute(connection_);
+  q.create("pktest").execute(connection_);
 
   std::unique_ptr<pktest> p(new pktest(7, "hans"));
 
   UNIT_EXPECT_EQUAL(p->id, 7UL);
 
-  q.insert(*p).execute(connection_);
+  q.insert("pktest", *p).execute(connection_);
 
-  auto res = q.select().execute(connection_);
+  auto res = q.select().from("pktest").execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -453,27 +463,27 @@ void QueryTestUnit::test_identifier()
 
   UNIT_EXPECT_GREATER(p->id, 0UL);
 
-  q.drop().execute(connection_);
+  q.drop("pktest").execute(connection_);
 }
 
 void QueryTestUnit::test_identifier_prepared()
 {
   connection_.connect();
 
-  matador::query<pktest> q("pktest");
+  matador::query<pktest> q;
 
-  auto stmt = q.create().prepare(connection_);
+  auto stmt = q.create("pktest").prepare(connection_);
   stmt.execute();
 
   pktest p(7, "hans");
 
   UNIT_EXPECT_EQUAL(p.id, 7UL);
 
-  stmt = q.insert(p).prepare(connection_);
+  stmt = q.insert("pktest", p).prepare(connection_);
   stmt.bind(0, &p);
   stmt.execute();
 
-  stmt = q.select().prepare(connection_);
+  stmt = q.select().from("pktest").prepare(connection_);
 
   auto res = stmt.execute();
 
@@ -482,7 +492,7 @@ void QueryTestUnit::test_identifier_prepared()
     UNIT_EXPECT_EQUAL(pres->id, 7UL);
   }
 
-  stmt = q.drop().prepare(connection_);
+  stmt = q.drop("pktest").prepare(connection_);
 
   stmt.execute();
 }
@@ -506,37 +516,37 @@ void QueryTestUnit::test_select_time()
 {
   connection_.connect();
 
-  query<appointment> q("appointment");
+  query<appointment> q;
 
-  q.create().execute(connection_);
+  q.create("appointment").execute(connection_);
 
   auto dinner = appointment{ 1, "dinner", time_val_ };
   auto str = to_string(time_val_);
-  q.insert(dinner).execute(connection_);
+  q.insert("appointment", dinner).execute(connection_);
 
-  auto res = q.select().execute(connection_);
+  auto res = q.select().from("appointment").execute(connection_);
 
   for (const auto &item : res) {
     UNIT_EXPECT_EQUAL(item->time_point, time_val_);
   }
 
-  q.drop().execute(connection_);
+  q.drop("appointment").execute(connection_);
 }
 
 void QueryTestUnit::test_create()
 {
   connection_.connect();
 
-  query<datatypes> q("item");
+  query<datatypes> q;
 
-  q.create().execute(connection_);
+  q.create("item").execute(connection_);
 
   auto itime = time_val_;
   datatypes hans("Hans", 4711);
   hans.set_time(itime);
-  result<datatypes> res = q.insert(hans).execute(connection_);
+  result<datatypes> res = q.insert("item", hans).execute(connection_);
 
-  res = q.select().execute(connection_);
+  res = q.select().from("item").execute(connection_);
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL);
 
@@ -551,17 +561,17 @@ void QueryTestUnit::test_create()
     ++first;
   }
 
-  res = q.drop().execute(connection_);
+  res = q.drop("item").execute(connection_);
 }
 
 void QueryTestUnit::test_update()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
   // create item table and insert item
-  result<person> res(q.create().execute(connection_));
+  result<person> res(q.create("person").execute(connection_));
 
   std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
 
@@ -569,10 +579,10 @@ void QueryTestUnit::test_update()
   for (const auto &name : names) {
     person p(name, matador::date(12, 3, 1980), 180);
     p.id(++id);
-    q.insert(p).execute(connection_);
+    q.insert("person", p).execute(connection_);
   }
 
-  res = q.select().where("name"_col == "hans").execute(connection_);
+  res = q.select().from("person").where("name"_col == "hans").execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -590,9 +600,9 @@ void QueryTestUnit::test_update()
   person hans("hans", matador::date(15, 6, 1990), 165);
   hans.id(1);
   column idcol("id");
-  q.update(hans).where(idcol == 1).execute(connection_);
+  q.update("person", hans).where(idcol == 1).execute(connection_);
 
-  res = q.select().where("name"_col == "hans").execute(connection_);
+  res = q.select().from("person").where("name"_col == "hans").execute(connection_);
 
   for (auto i : res) {
     UNIT_ASSERT_EQUAL(i->name(), "hans");
@@ -600,18 +610,18 @@ void QueryTestUnit::test_update()
     UNIT_ASSERT_EQUAL(i->birthdate(), matador::date(15, 6, 1990));
   }
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_anonymous_create()
 {
   connection_.connect();
 
-  query<> q("person");
+  query<> q;
 
   auto cols = {"id", "name", "age"};
 
-  q.create({
+  q.create("person", {
     make_pk_column<long>("id"),
     make_column<std::string>("name", 63),
     make_column<unsigned>("age")
@@ -629,19 +639,13 @@ void QueryTestUnit::test_anonymous_create()
   q.drop("person").execute(connection_);
 }
 
-template < class T = row >
-query<T> make_query(const std::string &name)
-{
-  return query<T>(name);
-}
-
 void QueryTestUnit::test_anonymous_insert()
 {
   connection_.connect();
 
-  auto q = make_query("person");
+  query<> q;
 
-  q.create({
+  q.create("person", {
            make_pk_column<int>("id"),
            make_column<std::string>("name", 63),
            make_column<unsigned>("age")
@@ -649,7 +653,7 @@ void QueryTestUnit::test_anonymous_insert()
 
   q.execute(connection_);
 
-  q.insert({"id", "name", "age"}).values({1, "hans", 45}).execute(connection_);
+  q.insert("person", {"id", "name", "age"}).values({1, "hans", 45}).execute(connection_);
 
   auto res = q.select({"id", "name", "age"}).from("person").execute(connection_);
 
@@ -672,9 +676,9 @@ void QueryTestUnit::test_anonymous_update()
 {
   connection_.connect();
 
-  query<> q("person");
+  query<> q;
 
-  q.create({
+  q.create("person", {
            make_pk_column<long>("id"),
            make_column<std::string>("name", 63),
            make_column<unsigned>("age")
@@ -682,11 +686,11 @@ void QueryTestUnit::test_anonymous_update()
 
   q.execute(connection_);
 
-  q.insert({"id", "name", "age"}).values({1, "hans", 45}).execute(connection_);
+  q.insert("person", {"id", "name", "age"}).values({1, "hans", 45}).execute(connection_);
 
   column name("name");
 
-  q.update({{"name", "jane"}, {"age", 47}}).where(name == "hans").execute(connection_);
+  q.update("person", {{"name", "jane"}, {"age", 47}}).where(name == "hans").execute(connection_);
 
   auto res = q.select({"id", "name", "age"}).from("person").execute(connection_);
 
@@ -707,9 +711,9 @@ void QueryTestUnit::test_statement_insert()
 {
   connection_.connect();
 
-  query<datatypes> q("datatypes");
+  query<datatypes> q;
 
-  statement<datatypes> stmt(q.create().prepare(connection_));
+  statement<datatypes> stmt(q.create("datatypes").prepare(connection_));
 
   result<datatypes> res(stmt.execute());
 
@@ -718,13 +722,13 @@ void QueryTestUnit::test_statement_insert()
   datatypes hans("Hans", 4711);
   hans.id(id);
   hans.set_time(itime);
-  stmt = q.insert(hans).prepare(connection_);
+  stmt = q.insert("datatypes", hans).prepare(connection_);
 
   stmt.bind(0, &hans);
 
   res = stmt.execute();
 
-  stmt = q.select().prepare(connection_);
+  stmt = q.select().from("datatypes").prepare(connection_);
 
   res = stmt.execute();
 
@@ -740,7 +744,7 @@ void QueryTestUnit::test_statement_insert()
     UNIT_EXPECT_EQUAL(item->get_time(), itime);
   }
 
-  stmt = q.drop().prepare(connection_);
+  stmt = q.drop("datatypes").prepare(connection_);
 
   res = stmt.execute();
 }
@@ -749,9 +753,9 @@ void QueryTestUnit::test_statement_update()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
-  statement<person> stmt(q.create().prepare(connection_));
+  statement<person> stmt(q.create("person").prepare(connection_));
 
   result<person> res(stmt.execute());
 
@@ -761,12 +765,12 @@ void QueryTestUnit::test_statement_update()
   for (const auto &name : names) {
     person p(name, matador::date(12, 3, 1980), 180);
     p.id(++id);
-    stmt = q.insert(p).prepare(connection_);
+    stmt = q.insert("person", p).prepare(connection_);
     stmt.bind(0, &p);
     stmt.execute();
   }
 
-  stmt = q.select().where("name"_col == "").prepare(connection_);
+  stmt = q.select().from("person").where("name"_col == "").prepare(connection_);
   std::string name("hans");
   stmt.bind(0, name);
   res = stmt.execute();
@@ -787,7 +791,7 @@ void QueryTestUnit::test_statement_update()
   person hans("hans", matador::date(15, 6, 1990), 165);
   hans.id(1);
 
-  stmt = q.update(hans).where(idcol == 7).prepare(connection_);
+  stmt = q.update("person", hans).where(idcol == 7).prepare(connection_);
   size_t pos = 0;
   pos = stmt.bind(pos, &hans);
   unsigned long hid = 1;
@@ -795,7 +799,7 @@ void QueryTestUnit::test_statement_update()
 
   res = stmt.execute();
 
-  stmt = q.select().where("name"_col == "").prepare(connection_);
+  stmt = q.select().from("person").where("name"_col == "").prepare(connection_);
   stmt.bind(0, name);
   res = stmt.execute();
 
@@ -811,7 +815,7 @@ void QueryTestUnit::test_statement_update()
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(15, 6, 1990));
   }
 
-  stmt = q.drop().prepare(connection_);
+  stmt = q.drop("person").prepare(connection_);
 
   res = stmt.execute();
 
@@ -821,9 +825,9 @@ void QueryTestUnit::test_statement_delete()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
-  statement<person> stmt(q.create().prepare(connection_));
+  statement<person> stmt(q.create("person").prepare(connection_));
 
   result<person> res(stmt.execute());
 
@@ -833,12 +837,12 @@ void QueryTestUnit::test_statement_delete()
   for (const auto &name : names) {
     person p(name, matador::date(12, 3, 1980), 180);
     p.id(++id);
-    stmt = q.insert(p).prepare(connection_);
+    stmt = q.insert("person", p).prepare(connection_);
     stmt.bind(0, &p);
     stmt.execute();
   }
 
-  stmt = q.select().where("name"_col == "").prepare(connection_);
+  stmt = q.select().from("person").where("name"_col == "").prepare(connection_);
   std::string name("hans");
   stmt.bind(0, name);
   res = stmt.execute();
@@ -851,7 +855,7 @@ void QueryTestUnit::test_statement_delete()
   }
 
   column idcol = "name"_col;
-  stmt = q.remove().where(idcol == "").prepare(connection_);
+  stmt = q.remove("person").where(idcol == "").prepare(connection_);
 
   std::string hans {"hans"};
   stmt.bind(0, hans);
@@ -863,7 +867,7 @@ void QueryTestUnit::test_statement_delete()
   stmt.bind(0, georg);
   res = stmt.execute();
 
-  stmt = q.drop().prepare(connection_);
+  stmt = q.drop("person").prepare(connection_);
 
   res = stmt.execute();
 }
@@ -872,17 +876,17 @@ void QueryTestUnit::test_delete()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
   // create item table and insert item
-  result<person> res(q.create().execute(connection_));
+  result<person> res(q.create("person").execute(connection_));
 
   person hans("Hans", matador::date(12, 3, 1980), 180);
   hans.id(1);
-  res = q.insert(hans).execute(connection_);
+  res = q.insert("person", hans).execute(connection_);
 
   column name("name");
-  res = q.select().where(name == "Hans").execute(connection_);
+  res = q.select().from("person").where(name == "Hans").execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -898,34 +902,34 @@ void QueryTestUnit::test_delete()
     //++first;
   }
 
-  q.remove().where(name == "Hans").execute(connection_);
+  q.remove("person").where(name == "Hans").execute(connection_);
 
-  res = q.select().where(name == "Hans").execute(connection_);
+  res = q.select().from("person").where(name == "Hans").execute(connection_);
 
   UNIT_ASSERT_TRUE(res.begin() == res.end());
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_multiple_delete()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
   // create item table and insert item
-  result<person> res(q.create().execute(connection_));
+  result<person> res(q.create("person").execute(connection_));
 
   person hans("Hans", matador::date(12, 3, 1980), 180);
   hans.id(1);
-  res = q.insert(hans).execute(connection_);
+  res = q.insert("person", hans).execute(connection_);
 
   person george("George", matador::date(11, 7, 1979), 198);
   george.id(2);
-  res = q.insert(george).execute(connection_);
+  res = q.insert("person", george).execute(connection_);
 
   column name("name");
-  res = q.select().where(name == "Hans").execute(connection_);
+  res = q.select().from("person").where(name == "Hans").execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -936,13 +940,13 @@ void QueryTestUnit::test_multiple_delete()
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(12, 3, 1980));
   }
 
-  q.remove().where(name == "Hans").execute(connection_);
+  q.remove("person").where(name == "Hans").execute(connection_);
 
-  res = q.select().where(name == "Hans").execute(connection_);
+  res = q.select().from("person").where(name == "Hans").execute(connection_);
 
   UNIT_ASSERT_TRUE(res.begin() == res.end());
 
-  res = q.select().where(name == "George").execute(connection_);
+  res = q.select().from("person").where(name == "George").execute(connection_);
 
   for (auto p : res) {
     UNIT_EXPECT_EQUAL(p->name(), "George");
@@ -950,13 +954,13 @@ void QueryTestUnit::test_multiple_delete()
     UNIT_EXPECT_EQUAL(p->birthdate(), matador::date(11, 7, 1979));
   }
 
-  q.remove().where(name == "George").execute(connection_);
+  q.remove("person").where(name == "George").execute(connection_);
 
-  res = q.select().where(name == "George").execute(connection_);
+  res = q.select().from("person").where(name == "George").execute(connection_);
 
   UNIT_ASSERT_TRUE(res.begin() == res.end());
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 }
 //void QueryTestUnit::test_foreign_query()
 //{
@@ -1008,17 +1012,17 @@ void QueryTestUnit::test_query()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
   // create item table and insert item
-  result<person> res(q.create().execute(connection_));
+  result<person> res(q.create("person").execute(connection_));
 
   person hans("Hans", matador::date(12, 3, 1980), 180);
   hans.id(1);
-  res = q.insert(hans).execute(connection_);
+  res = q.insert("person", hans).execute(connection_);
 
   column name("name");
-  res = q.select().where(name == "hans").execute(connection_);
+  res = q.select().from("person").where(name == "hans").execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -1033,39 +1037,39 @@ void QueryTestUnit::test_query()
     ++first;
   }
 
-  res = q.select().where(name == "heinz").execute(connection_);
+  res = q.select().from("person").where(name == "heinz").execute(connection_);
 
   UNIT_ASSERT_TRUE(res.begin() == res.end());
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_query_range_loop()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
   // create item table and insert item
-  result<person> res(q.create().execute(connection_));
+  result<person> res(q.create("person").execute(connection_));
 
   unsigned long counter = 0;
 
   person hans(++counter, "Hans", matador::date(12, 3, 1980), 180);
-  res = q.insert(hans).execute(connection_);
+  res = q.insert("person", hans).execute(connection_);
 
   person otto(++counter, "Otto", matador::date(27, 11, 1954), 159);
-  res = q.insert(otto).execute(connection_);
+  res = q.insert("person", otto).execute(connection_);
 
   person hilde(++counter, "Hilde", matador::date(13, 4, 1975), 175);
-  res = q.insert(hilde).execute(connection_);
+  res = q.insert("person", hilde).execute(connection_);
 
   person trude(++counter, "Trude", matador::date(1, 9, 1967), 166);
-  res = q.insert(trude).execute(connection_);
+  res = q.insert("person", trude).execute(connection_);
 
   column name("name");
   column height("height");
-  res = q.select().where(name != "Hans" && (height > 160 && height < 180)).execute(connection_);
+  res = q.select().from("person").where(name != "Hans" && (height > 160 && height < 180)).execute(connection_);
 
   std::vector<std::string> result_names({"Hilde", "Trude"});
   unsigned size(0);
@@ -1078,11 +1082,11 @@ void QueryTestUnit::test_query_range_loop()
 
   UNIT_ASSERT_EQUAL(size, 2U);
 
-  res = q.select().where(name == "heinz").execute(connection_);
+  res = q.select().from("person").where(name == "heinz").execute(connection_);
 
   UNIT_ASSERT_TRUE(res.begin() == res.end());
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 
 }
 
@@ -1090,26 +1094,26 @@ void QueryTestUnit::test_query_select()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
   // create item table and insert item
-  result<person> res(q.create().execute(connection_));
+  result<person> res(q.create("person").execute(connection_));
 
   unsigned long counter = 0;
 
   person hans(++counter, "Hans", matador::date(12, 3, 1980), 180);
-  res = q.insert(hans).execute(connection_);
+  res = q.insert("person", hans).execute(connection_);
 
   person otto(++counter, "Otto", matador::date(27, 11, 1954), 159);
-  res = q.insert(otto).execute(connection_);
+  res = q.insert("person", otto).execute(connection_);
 
   person hilde(++counter, "Hilde", matador::date(13, 4, 1975), 175);
-  res = q.insert(hilde).execute(connection_);
+  res = q.insert("person", hilde).execute(connection_);
 
   person trude(++counter, "Trude", matador::date(1, 9, 1967), 166);
-  res = q.insert(trude).execute(connection_);
+  res = q.insert("person", trude).execute(connection_);
 
-  res = q.select().execute(connection_);
+  res = q.select().from("person").execute(connection_);
 
   if (connection_.type() != "mssql") {
     UNIT_ASSERT_EQUAL(4UL, res.size());
@@ -1124,7 +1128,7 @@ void QueryTestUnit::test_query_select()
   }
 
   column name("name");
-  res = q.select().where(name == "Hans").execute(connection_);
+  res = q.select().from("person").where(name == "Hans").execute(connection_);
 
   if (connection_.type() != "mssql") {
     UNIT_ASSERT_EQUAL(1UL, res.size());
@@ -1143,7 +1147,7 @@ void QueryTestUnit::test_query_select()
     ++first;
   }
 
-  res = q.select().order_by("height").asc().execute(connection_);
+  res = q.select().from("person").order_by("height").asc().execute(connection_);
 
   first = res.begin();
 
@@ -1162,6 +1166,7 @@ void QueryTestUnit::test_query_select()
 
   column height("height");
   res = q.select()
+    .from("person")
     .where(height > 160 && height < 180)
     .order_by("height")
     .desc()
@@ -1186,43 +1191,47 @@ void QueryTestUnit::test_query_select()
     ++first;
   }
 
-  res = q.select().where(name == "Holger").execute(connection_);
+  res = q.select().from("person").where(name == "Holger").execute(connection_);
 
   if (connection_.type() != "mssql") {
     UNIT_ASSERT_EQUAL(0UL, res.size());
     UNIT_ASSERT_TRUE(res.empty());
   }
 
-  res = q.drop().execute(connection_);
+  res = q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_query_select_count()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
   // create item table and insert item
-  result<person> res(q.create().execute(connection_));
+  result<person> res(q.create("person").execute(connection_));
 
   unsigned long counter = 0;
 
   person hans(++counter, "Hans", matador::date(12, 3, 1980), 180);
-  res = q.insert(hans).execute(connection_);
+  res = q.insert("person", hans).execute(connection_);
 
   person otto(++counter, "Otto", matador::date(27, 11, 1954), 159);
-  res = q.insert(otto).execute(connection_);
+  res = q.insert("person", otto).execute(connection_);
 
   person hilde(++counter, "Hilde", matador::date(13, 4, 1975), 175);
-  res = q.insert(hilde).execute(connection_);
+  res = q.insert("person", hilde).execute(connection_);
 
   person trude(++counter, "Trude", matador::date(1, 9, 1967), 166);
-  res = q.insert(trude).execute(connection_);
+  res = q.insert("person", trude).execute(connection_);
 
   query<> count;
 
   column name("name");
-  auto rowres = count.select({columns::count_all()}).from("person").where(name == "Hans" || name == "Hilde").execute(connection_);
+  auto rowres = count
+    .select({columns::count_all()})
+    .from("person")
+    .where(name == "Hans" || name == "Hilde")
+    .execute(connection_);
 
   auto first = rowres.begin();
   auto last = rowres.end();
@@ -1233,7 +1242,7 @@ void QueryTestUnit::test_query_select_count()
     ++first;
   }
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 
 }
 
@@ -1241,24 +1250,24 @@ void QueryTestUnit::test_query_select_columns()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
   // create item table and insert item
-  result<person> res(q.create().execute(connection_));
+  result<person> res(q.create("person").execute(connection_));
 
   unsigned long counter = 0;
 
   person hans(++counter, "Hans", matador::date(12, 3, 1980), 180);
-  res = q.insert(hans).execute(connection_);
+  res = q.insert("person", hans).execute(connection_);
 
   person otto(++counter, "Otto", matador::date(27, 11, 1954), 159);
-  res = q.insert(otto).execute(connection_);
+  res = q.insert("person", otto).execute(connection_);
 
   person hilde(++counter, "Hilde", matador::date(13, 4, 1975), 175);
-  res = q.insert(hilde).execute(connection_);
+  res = q.insert("person", hilde).execute(connection_);
 
   person trude(++counter, "Trude", matador::date(1, 9, 1967), 166);
-  res = q.insert(trude).execute(connection_);
+  res = q.insert("person", trude).execute(connection_);
 
   column name("name");
 
@@ -1276,17 +1285,17 @@ void QueryTestUnit::test_query_select_columns()
     ++first;
   }
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_query_select_like()
 {
   connection_.connect();
 
-  query<child> q("child");
+  query<child> q;
 
   // create item table and insert item
-  result<child> res(q.create().execute(connection_));
+  result<child> res(q.create("child").execute(connection_));
 
   std::vector<std::string> names({ "height", "light", "night", "dark" });
 
@@ -1294,10 +1303,10 @@ void QueryTestUnit::test_query_select_like()
   for (const auto &name : names) {
     child c(name);
     c.id = ++id;
-    q.insert(c).execute(connection_);
+    q.insert("child", c).execute(connection_);
   }
 
-  res = q.select().where(like("name"_col, "%ight%")).execute(connection_);
+  res = q.select().from("child").where(like("name"_col, "%ight%")).execute(connection_);
 
   std::vector<std::string> result_names({ "height", "light", "night" });
 
@@ -1310,7 +1319,7 @@ void QueryTestUnit::test_query_select_like()
 
   UNIT_EXPECT_TRUE(result_names.empty());
 
-  q.drop().execute(connection_);
+  q.drop("child").execute(connection_);
 }
 
 struct relation
@@ -1336,21 +1345,21 @@ void QueryTestUnit::test_select_limit()
 {
   connection_.connect();
 
-  query<relation> q("relation");
+  query<relation> q;
 
   // create item table and insert item
-  result<relation> res(q.create().execute(connection_));
+  result<relation> res(q.create("relation").execute(connection_));
 
   auto r1 = std::make_unique<relation>(1UL, 1UL);
-  res = q.insert(*r1).execute(connection_);
+  res = q.insert("relation", *r1).execute(connection_);
   r1 = std::make_unique<relation>(1UL, 1UL);
-  res = q.insert(*r1).execute(connection_);
+  res = q.insert("relation", *r1).execute(connection_);
   r1 = std::make_unique<relation>(1UL, 2UL);
-  res = q.insert(*r1).execute(connection_);
+  res = q.insert("relation", *r1).execute(connection_);
   r1 = std::make_unique<relation>(1UL, 3UL);
-  res = q.insert(*r1).execute(connection_);
+  res = q.insert("relation", *r1).execute(connection_);
 
-  res = q.select().limit(1).execute(connection_);
+  res = q.select().from("relation").limit(1).execute(connection_);
 
   std::size_t count = 0;
   auto first = res.begin();
@@ -1362,46 +1371,46 @@ void QueryTestUnit::test_select_limit()
   }
   UNIT_ASSERT_EQUAL(1UL, count);
 
-  q.drop().execute(connection_);
+  q.drop("relation").execute(connection_);
 }
 
 void QueryTestUnit::test_update_limit()
 {
   connection_.connect();
 
-  query<relation> q("relation");
+  query<relation> q;
 
   // create item table and insert item
-  result<relation> res(q.create().execute(connection_));
+  result<relation> res(q.create("relation").execute(connection_));
 
   auto r1 = std::make_unique<relation>(1UL, 1UL);
-  res = q.insert(*r1).execute(connection_);
+  res = q.insert("relation", *r1).execute(connection_);
   r1 = std::make_unique<relation>(1UL, 1UL);
-  res = q.insert(*r1).execute(connection_);
+  res = q.insert("relation", *r1).execute(connection_);
   r1 = std::make_unique<relation>(1UL, 2UL);
-  res = q.insert(*r1).execute(connection_);
+  res = q.insert("relation", *r1).execute(connection_);
   r1 = std::make_unique<relation>(1UL, 3UL);
-  res = q.insert(*r1).execute(connection_);
+  res = q.insert("relation", *r1).execute(connection_);
 
   matador::column owner("owner_id");
   matador::column item("item_id");
   relation::t_id newid(4UL);
-  q.update({{item.name, newid}})
+  q.update("relation", {{item.name, newid}})
     .where("owner_id"_col == 1 && item == 1)
     .limit(1);
 
   res = q.execute(connection_);
 
-  q.drop().execute(connection_);
+  q.drop("relation").execute(connection_);
 }
 
 void QueryTestUnit::test_prepared_statement()
 {
   connection_.connect();
 
-  query<> q( "person");
+  query<> q;
 
-  q.create({
+  q.create("person", {
      make_pk_column<long>("id"),
      make_column("name", 63),
      make_column<unsigned>("age")
@@ -1420,17 +1429,16 @@ void QueryTestUnit::test_prepared_statement()
 	  UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end());
   }
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_prepared_statement_creation()
 {
   connection_.connect();
 
-  auto q = make_query<person>("person");
-//  query<person> q("person");
+  query<person> q;
 
-  q.create();
+  q.create("person");
 
   auto stmt = q.prepare(connection_);
 
@@ -1438,16 +1446,16 @@ void QueryTestUnit::test_prepared_statement_creation()
 
   UNIT_ASSERT_TRUE(connection_.exists("person"));
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_prepared_object_result_twice()
 {
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
-  q.create();
+  q.create("person");
 
   auto stmt = q.prepare(connection_);
 
@@ -1461,10 +1469,10 @@ void QueryTestUnit::test_prepared_object_result_twice()
   for (const auto& name : names) {
     person p(name, matador::date(12, 3, 1980), 180);
     p.id(++id);
-    q.insert(p).execute(connection_);
+    q.insert("person", p).execute(connection_);
   }
 
-  stmt = q.select().prepare(connection_);
+  stmt = q.select().from("person").prepare(connection_);
 
   {
     std::set<std::string> nameset;
@@ -1499,16 +1507,16 @@ void QueryTestUnit::test_prepared_object_result_twice()
     }
   }
 
-  q.drop().execute(connection_);
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_prepared_scalar_result_twice()
 {
   connection_.connect();
 
-  query<> q("person");
+  query<> q;
 
-  q.create({
+  q.create("person", {
              make_pk_column<int>("id"),
            });
 
@@ -1517,7 +1525,7 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
   std::vector<int> ids({ 1,2,3,4 });
 
   for (int id : ids) {
-    q.insert({"id"}).values({id}).execute(connection_);
+    q.insert("person", {"id"}).values({id}).execute(connection_);
   }
 
   auto stmt = q.select({"id"}).from("person").prepare(connection_);
@@ -1538,7 +1546,7 @@ void QueryTestUnit::test_prepared_scalar_result_twice()
   for(auto id : ids) {
     idset.insert(id);
   }
-  /*auto */result = stmt.execute();
+  result = stmt.execute();
 
   for (auto p : result) {
     auto i = idset.find(p->at<int>("id"));
@@ -1553,7 +1561,7 @@ void QueryTestUnit::test_rows()
 {
   connection_.connect();
 
-  query<> q("item");
+  query<> q;
 
   auto cols = std::vector<std::string>{"id", "val_string", "val_varchar",
                "val_char", "val_short", "val_int", "val_long", "val_long_long",
@@ -1561,7 +1569,7 @@ void QueryTestUnit::test_rows()
                "val_bool",
                "val_float", "val_double", "val_date", "val_time"};
 
-  q.create({
+  q.create("item", {
              make_pk_column<int>("id"),
              make_column<std::string>("val_string"),
              make_column<std::string>("val_varchar", 63),
@@ -1611,7 +1619,7 @@ void QueryTestUnit::test_rows()
   matador::time mt{matador::time::now()};
 
   q
-    .insert(cols)
+    .insert("item", cols)
     .values({id, str, varchar, c, s, i, l, ll, uc, us, ui, ul, ull, b, f, d, md, mt})
     .execute(connection_);
 
@@ -1651,9 +1659,9 @@ void QueryTestUnit::test_log()
 
   connection_.connect();
 
-  query<person> q("person");
+  query<person> q;
 
-  auto stmt = q.create().prepare(connection_);
+  auto stmt = q.create("person").prepare(connection_);
 
   UNIT_ASSERT_TRUE(stmt.is_log_enabled());
 

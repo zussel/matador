@@ -113,9 +113,9 @@ detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
   return new mssql_result(stmt);
 }
 
-matador::detail::statement_impl *mssql_connection::prepare(const matador::sql &stmt)
+matador::detail::statement_impl *mssql_connection::prepare(detail::statement_context &&context) const
 {
-  return new mssql_statement(*this, stmt);
+  return new mssql_statement(connection_, std::move(context));
 }
 
 void mssql_connection::begin()
@@ -229,7 +229,9 @@ std::vector<field> mssql_connection::describe(const std::string &table)
     f.index(pos - 1);
     f.size(size);
     f.name(std::string((char*)column));
+
     f.type(type2data_type(data_type, size));
+//    std::cout << "mssql column '" << column << "' type: " << data_type << "\n";
     //f.type(dialect_.string_type((char*)type));
     f.not_null(not_null == 0);
 
@@ -253,7 +255,7 @@ database_type type2data_type(SQLSMALLINT type, size_t size)
   case SQL_BIGINT:
   case SQL_NUMERIC:
     return database_type::type_bigint;
-  case SQL_DATE:
+  case SQL_TYPE_DATE:
   case -9:
     return database_type::type_date;
   case SQL_TYPE_TIMESTAMP:
@@ -262,7 +264,7 @@ database_type type2data_type(SQLSMALLINT type, size_t size)
     return database_type::type_varchar;
   case SQL_REAL:
     return database_type::type_float;
-    case SQL_FLOAT:
+  case SQL_FLOAT:
     return database_type::type_double;
   case SQL_BIT:
     return database_type::type_bool;

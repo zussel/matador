@@ -8,18 +8,16 @@ platform:
 
 services:
   - mssql2017
-  - mysql
   - postgresql101
 
-image:
-  - Visual Studio 2019
+image: Visual Studio 2019
 
 configuration:
 #  - Debug
   - Release
 
 environment:
-  MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+  MYSQL_DIR: C:\Program Files\MySql\MySQL Server 8.0
   PGUSER: "postgres"
   PGPASSWORD: "Password12!"
   MYSQL_PWD: "Password12!"
@@ -47,6 +45,7 @@ install:
   - appveyor-retry choco install doxygen.install
 
 before_build:
+  - ps: Start-Service MySQL80
   - ps: |
       cd C:\projects\sqlite\src
       mkdir build
@@ -74,6 +73,7 @@ before_test:
   - copy "C:\projects\sqlite\sqlite\bin\sqlite3.dll" "C:\projects\matador\build\Release\bin\%CONFIGURATION%\"
 
 test_script:
+  - dir
   - cd "%APPVEYOR_BUILD_FOLDER%/build" && if %CONFIGURATION%==Debug (ctest --verbose -E perftest --build-config %CONFIGURATION%) else (ctest --verbose --build-config %CONFIGURATION%)
 
 after_build:

@@ -70,8 +70,8 @@ public:
    */
   void create(connection &conn) override
   {
-    query<table_type> stmt(name());
-    stmt.create().execute(conn);
+    query<table_type> stmt;
+    stmt.create(name()).execute(conn);
   }
 
   /**
@@ -84,8 +84,8 @@ public:
    */
   void drop(connection &conn) override
   {
-    query<table_type> stmt(name());
-    stmt.drop().execute(conn);
+    query<table_type> stmt;
+    stmt.drop(name()).execute(conn);
   }
 
   /**
@@ -211,12 +211,12 @@ protected:
    */
   void prepare(connection &conn) override
   {
-    query<table_type> q(name());
-    insert_ = q.insert().prepare(conn);
+    query<table_type> q;
+    insert_ = q.insert(name()).prepare(conn);
     column id = detail::identifier_column_resolver::resolve<T>();
-    update_ = q.update().where(id == 1).prepare(conn);
-    delete_ = q.remove().where(id == 1).prepare(conn);
-    select_ = q.select().prepare(conn);
+    update_ = q.update(name()).where(id == 1).prepare(conn);
+    delete_ = q.remove(name()).where(id == 1).prepare(conn);
+    select_ = q.select().from(name()).prepare(conn);
 
     resolver_.prepare();
   }
@@ -276,29 +276,29 @@ public:
 
   void create(connection &conn) override
   {
-    query<table_type> stmt(name());
-    stmt.create(*node().template prototype<table_type>()).execute(conn);
+    query<table_type> stmt;
+    stmt.create(name(), *node().template prototype<table_type>()).execute(conn);
   }
 
   void drop(connection &conn) override
   {
-    query<table_type> stmt(name());
-    stmt.drop().execute(conn);
+    query<table_type> stmt;
+    stmt.drop(name()).execute(conn);
   }
 
   void prepare(connection &conn) override
   {
-    query<table_type> q(name());
+    query<table_type> q;
 
     table_type *proto = node().template prototype<table_type>();
-    select_all_ = q.select({proto->left_column(), proto->right_column()}).prepare(conn);
-    insert_ = q.insert(*proto).prepare(conn);
+    select_all_ = q.select({proto->left_column(), proto->right_column()}).from(name()).prepare(conn);
+    insert_ = q.insert(name(), *proto).prepare(conn);
 
     column owner_id(proto->left_column());
     column item_id(proto->right_column());
 
-    update_ = q.update(*proto).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
-    delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
+    update_ = q.update(name(), *proto).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
+    delete_ = q.remove(name()).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
 
     resolver_.prepare();
   }

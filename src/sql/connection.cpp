@@ -22,6 +22,7 @@ connection::connection(const std::string &dns, std::shared_ptr<basic_sql_logger>
 
 connection::connection(const connection &x)
   : connection_info_(x.connection_info_)
+  , logger_(x.logger_)
 {
   init_from_foreign_connection(x);
 }
@@ -29,6 +30,7 @@ connection::connection(const connection &x)
 connection::connection(connection &&x) noexcept
   : connection_info_(std::move(x.connection_info_))
   , impl_(std::move(x.impl_))
+  , logger_(std::move(x.logger_))
 {}
 
 connection &connection::operator=(const connection &x)
@@ -37,6 +39,7 @@ connection &connection::operator=(const connection &x)
     return *this;
   }
   connection_info_ = x.connection_info_;
+  logger_ = x.logger_;
 
   init_from_foreign_connection(x);
 
@@ -47,6 +50,7 @@ connection &connection::operator=(connection &&x) noexcept
 {
   connection_info_ = std::move(x.connection_info_);
   impl_ = std::move(x.impl_);
+  logger_ = std::move(x.logger_);
   return *this;
 }
 
