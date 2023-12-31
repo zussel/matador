@@ -37,6 +37,7 @@ SET(HEADER
   ../../include/matador/utils/blob.hpp
   ../../include/matador/utils/calendar.h
   ../../include/matador/utils/date.hpp
+  ../../include/matador/utils/export.hpp
   ../../include/matador/utils/time.hpp
   ../../include/matador/utils/sequencer.hpp
   ../../include/matador/utils/factory.hpp

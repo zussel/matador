@@ -26,6 +26,7 @@ SET(HEADER
   ../../include/matador/net/acceptor.hpp
   ../../include/matador/net/reactor.hpp
   ../../include/matador/net/os.hpp
+  ../../include/matador/net/export.hpp
   ../../include/matador/net/error.hpp
   ../../include/matador/net/event_type.hpp
   ../../include/matador/net/socket_acceptor.hpp
