@@ -43,6 +43,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/row.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/value.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/statement.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/statement_context.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/statement_impl.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/types.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/token.hpp
