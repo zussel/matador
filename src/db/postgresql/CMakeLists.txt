@@ -5,7 +5,9 @@ SET(SOURCES
   postgresql_result.cpp
   postgresql_statement.cpp
   postgresql_getvalue.cpp
-  postgresql_prepared_result.cpp postgresql_dialect_compiler.cpp postgresql_parameter_binder.cpp)
+  postgresql_prepared_result.cpp
+  postgresql_dialect_compiler.cpp
+  postgresql_parameter_binder.cpp)
 
 SET(HEADER
   ../../../include/matador/db/postgresql/postgresql_connection.hpp
@@ -15,11 +17,12 @@ SET(HEADER
   ../../../include/matador/db/postgresql/postgresql_statement.hpp
   ../../../include/matador/db/postgresql/postgresql_getvalue.hpp
   ../../../include/matador/db/postgresql/postgresql_prepared_result.hpp
-  ../../../include/matador/db/postgresql/postgresql_dialect_compiler.hpp ../../../include/matador/db/postgresql/postgresql_parameter_binder.hpp)
+  ../../../include/matador/db/postgresql/postgresql_dialect_compiler.hpp
+  ../../../include/matador/db/postgresql/postgresql_parameter_binder.hpp)
 
 ADD_LIBRARY(matador-postgresql SHARED ${SOURCES} ${HEADER})
 
-TARGET_LINK_LIBRARIES(matador-postgresql matador-utils matador-sql ${POSTGRESQL_LIBRARIES})
+TARGET_LINK_LIBRARIES(matador-postgresql matador-utils matador-sql ${PostgreSQL_LIBRARIES})
 
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(matador-postgresql
