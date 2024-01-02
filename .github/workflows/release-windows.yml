@@ -26,6 +26,9 @@ jobs:
         with:
           path: ${{env.INSTALL_LOCATION}}
           key: ${{runner.os}}-dependencies
+      - name: Install Doxygen
+        shell: cmd
+        run: choco install doxygen.install
       - name: Install SQLite
         shell: cmd
         run: |
@@ -77,11 +80,17 @@ jobs:
           cmake -B ${{github.workspace}}/build
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DCMAKE_INSTALL_PREFIX="$HOME/$env:INSTALL_LOCATION"
-#      - name: Build
-#        run: >
-#          cmake --build ${{github.workspace}}/build
-#          --config ${{env.BUILD_TYPE}}
-#          --target matador
+      - name: Build
+        run: >
+          cmake --build ${{github.workspace}}/build
+          --config ${{env.BUILD_TYPE}}
+          --target matador
+      - name: Build Documentation
+        working-directory: ${{github.workspace}}/build
+        run: cmake --build ${{github.workspace}}/build --target web
+      - name: Build Packages
+        working-directory: ${{github.workspace}}/build
+        run: cpack -G NSIS -C ${{env.BUILD_TYPE}}
 #      - name: List Debug
 #        working-directory: ${{github.workspace}}/build/Debug/bin/Debug
 #        run: dir
