@@ -3,7 +3,7 @@ matador
 
 Take your database by the horns.
 
-[![Version 0.8.1](https://badge.fury.io/gh/zussel%2Fmatador.svg)](https://badge.fury.io/gh/zussel%2Fmatador)
+[![Version 0.9.0](https://badge.fury.io/gh/zussel%2Fmatador.svg)](https://badge.fury.io/gh/zussel%2Fmatador)
 [![GPLv3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://raw.githubusercontent.com/zussel/matador/develop/License)
 [![C++14](https://img.shields.io/badge/language-C%2B%2B14-yellow.svg)](https://en.wikipedia.org/wiki/C%2B%2B14)
 
@@ -33,14 +33,15 @@ Features:
  * Json support including parser and object mapper
  * Simple Logging mechanism
  * Networking
+ * Dependency Injection
  * Web Server
  * Template Engine
  
 Supported databases:
  * PostgreSQL
- * SQLite
- * MySQL
- * MS SQL Server
+ * SQLite3
+ * MySQL/MariaDB
+ * MS SQL Server (ODBC)
 
 Documentation can be found [here](http://zussel.github.io/matador).
 
@@ -68,22 +69,18 @@ struct person
   date birthday;
   container<std::string> colors;
   
-  person() = default;
-  person(long i, std::string n)
-    : id(i), name(std::move(n))
-  {}
-  
   template < class Operator >
   void process(Operator &op) {
-    matador::access::primary_key(op, "id", id);
-    matador::access::attribute(op, "name", name, 255);
-    matador::access::attribute(op, "birthday", birthday);
-    matador::access::container(op,              // operator
-                              "person_color",  // relation table name
-                              colors,          // class member
-                              "person_id",     // left column in relation table
-                              "color",         // right column in relation table
-                              matador::cascade_type::ALL); // cascade type
+    namespace field = matador::access;
+    field::primary_key(op, "id", id);
+    field::attribute(op, "name", name, 255);
+    field::attribute(op, "birthday", birthday);
+    field::container(op,                 // operator
+                     "person_color",     // relation table name
+                     colors,             // class member
+                     "person_id",        // left column in relation table
+                     "color",            // right column in relation table
+                     cascade_type::ALL); // cascade type
   }
 };
 
@@ -195,8 +192,8 @@ Requirements
 
 The library has almost no dependencies. At least the database library you want to use.
 If you would like to build from the sources you need at least the
-[cmake](http://www.cmake.org) build system installed. If you plan to generate an install
-package on a windows system you need the
+[cmake](http://www.cmake.org) build system installed. If you plan to generate an installation
+the package on a Windows system you need the
 [nullsoft scriptable install system](http://nsis.sourceforge.net).
           
 Sources
@@ -231,7 +228,7 @@ Create a build directory change to it and call cmake:
 
 Where __*__ is one of the *__"Visual Studio"__* strings up from *__"14"__*. See cmake
 documentation [here](https://cmake.org/cmake/help/v3.6/manual/cmake-generators.7.html?#visual-studio-generators).
-After generation you find a __matador.sln__ solution file in the current directory.
+After generation, you find a __matador.sln__ solution file in the current directory.
 
 Contact
 -------
