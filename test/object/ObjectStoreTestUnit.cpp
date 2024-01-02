@@ -101,13 +101,13 @@ struct item_counter
 
 void ObjectStoreTestUnit::test_version()
 {
-  std::string version("0.8.1");
+  std::string version("0.9.0");
   
   UNIT_ASSERT_EQUAL(matador::version::str, version);
 
   UNIT_ASSERT_EQUAL(matador::version::major, 0);
-  UNIT_ASSERT_EQUAL(matador::version::minor, 8);
-  UNIT_ASSERT_EQUAL(matador::version::patch_level, 1);
+  UNIT_ASSERT_EQUAL(matador::version::minor, 9);
+  UNIT_ASSERT_EQUAL(matador::version::patch_level, 0);
 }
 
 
