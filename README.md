@@ -75,12 +75,12 @@ struct person
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, 255);
     field::attribute(op, "birthday", birthday);
-    field::container(op,                 // operator
-                     "person_color",     // relation table name
-                     colors,             // class member
-                     "person_id",        // left column in relation table
-                     "color",            // right column in relation table
-                     cascade_type::ALL); // cascade type
+    field::has_many(op,                 // operator
+                    "person_color",     // relation table name
+                    colors,             // class member
+                    "person_id",        // left column in relation table
+                    "color",            // right column in relation table
+                    cascade_type::ALL); // cascade type
   }
 };
 
