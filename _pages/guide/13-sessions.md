@@ -4,18 +4,18 @@ Once the database schema is set up with the ```persistence``` object you need a 
 to use the ORM layer.
 
 {% highlight cpp linenos %}
-persistence p("sqlite://db.sqlite");
-p.attach<person>("person");
+  persistence p("sqlite://db.sqlite");
+  p.attach<person>("person");
 
-session s(p);
+  session s(p);
 {% endhighlight %}
 
 If you have already setup the persitence layer and inserted some data, just call load to
 get it into the layer.
 
 {% highlight cpp linenos %}
-// load the data from database
-s.load();
+  // load the data from database
+  s.load();
 {% endhighlight %}
 
 **Note:** By now the database is loaded __completely__ into the underlying object store. Lazy loading
@@ -27,16 +27,16 @@ Now you can start and insert, update or delete your data. This can be done in tw
 
 Using the direct way it looks like the following code:
 {% highlight cpp linenos %}
-// insert and save an object directly
-auto ptr = s.save(new person("james bond"));
+  // insert and save an object directly
+  auto ptr = s.save(new person("james bond"));
 
-// do multiple modifications and flush them at once
-ptr.modify()->name = "james blunt"
+  // do multiple modifications and flush them at once
+  ptr.modify()->name = "james blunt"
 
-auto addr = s.insert(new address("downing street 10"));
+  auto addr = s.insert(new address("downing street 10"));
 
-// flush changes
-s.flush();
+  // flush changes
+  s.flush();
 {% endhighlight %}
 
 
@@ -48,22 +48,22 @@ the exception. In the catch block you can call ```matador::transaction::rollback
 to rollback all your modifications.
 
 {% highlight cpp linenos %}
-// create a transaction for session
+  // create a transaction for session
 
-matador::transaction tr = s.begin();
-try {
-  // begin the transaction
+  matador::transaction tr = s.begin();
+  try {
+    // begin the transaction
 
-  // insert some objects
-  s.insert(new person("joe", 45))
-  s.insert(new person("walter", 56));
-  s.insert(new person("helen", 37));
-  s.insert(new person("tim", 14));
+    // insert some objects
+    s.insert(new person("joe", 45))
+    s.insert(new person("walter", 56));
+    s.insert(new person("helen", 37));
+    s.insert(new person("tim", 14));
 
-  // commit the modifications
-  tr.commit();
-} catch (exception &ex) {
-  // on error rollback transactions
-  tr.rollback();
-}
+    // commit the modifications
+    tr.commit();
+  } catch (exception &ex) {
+    // on error rollback transactions
+    tr.rollback();
+  }
 {% endhighlight %}

@@ -27,7 +27,7 @@ Install bundler for Gemfile
 gem install bundler
 ```
 
-Install packages via bundler
+Change dir to doc sources and install packages via bundler
 
 ```bash
 bundle install

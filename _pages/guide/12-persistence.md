@@ -16,20 +16,20 @@ Once such an object is created you can attach entities in the same way it is don
 the ```object_store```.
 
 {% highlight cpp linenos %}
-persistence p("sqlite://db.sqlite");
-p.attach<person>("person");
-p.attach<student, person>("student");
-p.attach<course>("course");
+    persistence p("sqlite://db.sqlite");
+    p.attach<person>("person");
+    p.attach<student, person>("student");
+    p.attach<course>("course");
 {% endhighlight %}
 
 Now you can create the database schema simply by calling ```create```:
 
 {% highlight cpp linenos %}
-p.create();
+    p.create();
 {% endhighlight %}
 Or you can drop it as well:
 
 {% highlight cpp linenos %}
-p.drop();
+    p.drop();
 {% endhighlight %}
 After that is done you can deal with a session object and start building your app.

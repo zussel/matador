@@ -8,11 +8,11 @@ classes ```Truck```, ```Car``` and ```Bike```. Now lets make this hierarchy know
 matador::object_store:
 
 {% highlight cpp linenos %}
-matador::object_store ostore;
-ostore.attach<Vehicle>("vehicle", true);
-ostore.attach<Truck, Vehicle>("truck");
-ostore.attach<Car, Vehicle>("car");
-ostore.attach<Bike, Vehicle>("bike");
+  matador::object_store ostore;
+  ostore.attach<Vehicle>("vehicle", true);
+  ostore.attach<Truck, Vehicle>("truck");
+  ostore.attach<Car, Vehicle>("car");
+  ostore.attach<Bike, Vehicle>("bike");
 {% endhighlight %}
 
 As you can see it is quite simple to add the hierarchy to
@@ -32,13 +32,13 @@ Now that we've setup up our hierarchy we can insert objects into
 the matador::object_store.
 
 {% highlight cpp linenos %}
-typedef object_ptr<vehicle> vehicle_ptr;
+  typedef object_ptr<Vehicle> vehicle_ptr;
 
-vehicle_ptr truck = ostore.insert(new Truck("MAN");
-vehicle_ptr car   = ostore.insert(new Car("VW Beetle");
-vehicle_ptr bike  = ostore.insert(new Bike("Honda");
+  vehicle_ptr truck = ostore.insert<Truck>("MAN");
+  vehicle_ptr car   = ostore.insert<Car>("VW Beetle");
+  vehicle_ptr bike  = ostore.insert<Bike>("Honda");
 {% endhighlight %}
-As you can see we use matador::object_ptr of type vehicle. The vehicle class in
+As you can see we use matador::object_ptr of type ```Vehicle```. The vehicle class in
 our example is the abstract base class for all concrete vehicle types.
 So the concrete vehicle object is inserted correctly and assigned to the
 object_ptr.
@@ -59,11 +59,11 @@ object is inserted. Once you received the ```matador::object_ptr```
 you can change your object by using it like usual pointer.
 
 {% highlight cpp linenos %}
-typedef matador::object_ptr<Truck> truck_ptr;
-truck_ptr truck = ostore.insert(new Truck("MAN"));
+  typedef matador::object_ptr<Truck> truck_ptr;
+  truck_ptr truck = ostore.insert<Truck>("MAN");
 
-truck->weight = 2.5;
-truck->color = red;
+  truck.modify()->weight = 2.5;
+  truck.modify()->color = red;
 {% endhighlight %}
 **Note:** When using the raw pointer object store can't guarantee that a change is
 properly rolled back when an exception occurs.
@@ -75,15 +75,15 @@ An already inserted object can be deleted from the object store using the ```rem
 method:
 
 {% highlight cpp linenos %}
-typedef matador::object_ptr<Truck> truck_ptr;
-truck_ptr truck = ostore.insert(new Truck("MAN"));
+  typedef matador::object_ptr<Truck> truck_ptr;
+  truck_ptr truck = ostore.insert<Truck>("MAN");
 
-if (ostore.is_removable(truck)) {
-  // remove object
-  ostore.remove(truck);
-} else {
-  // object can't be removed
-}
+  if (ostore.is_removable(truck)) {
+    // remove object
+    ostore.remove(truck);
+  } else {
+    // object can't be removed
+  }
 {% endhighlight %}
 The object store will check if the object is removable (i.e. there are no other objects
 referencing this object). If the object is not removable an ```object_exception``` is

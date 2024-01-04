@@ -179,23 +179,3 @@ matador::date d(31, 1, 2015);
 
 std::cout << "julian date: " << d.julian_date();
 {% endhighlight %}
-
-### Varchar
-
-The ```varchar<T>``` class is a helper class to create ```has_may``` or ```identifier``` attributes with varchar behaviour. You don't have to use it directly but it helps to tell the classes that you want an varchar.
-
-Its use is quiet simple:
-{% highlight cpp linenos %}
-
-struct list_of_varchar
-{
-    // uses a varchar as primary key
-    identifier<varchar<63>> guid;
-    // creates a list of varchars on database
-    has_many<varchar<255>> varchars;
-};
-{% endhighlight %}
-
-### Identifier
-
-*Tbd!*

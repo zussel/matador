@@ -7,39 +7,43 @@ permalink: /guide/
 
 {% include_relative /guide/01-introduction.md %}
 
-{% include_relative /guide/02-objects.md %}
+{% include_relative /guide/02-installation.md %}
 
-{% include_relative /guide/03-serialization.md %}
+{% include_relative /guide/03-objects.md %}
 
-{% include_relative /guide/04-prototypes.md %}
+{% include_relative /guide/04-attributes.md %}
 
 {% include_relative /guide/05-relations.md %}
 
-{% include_relative /guide/06-views.md %}
+{% include_relative /guide/06-prototypes.md %}
 
-{% include_relative /guide/07-expressions.md %}
+{% include_relative /guide/07-views.md %}
 
-{% include_relative /guide/08-transactions.md %}
+{% include_relative /guide/08-expressions.md %}
 
-{% include_relative /guide/09-databases.md %}
+{% include_relative /guide/09-transactions.md %}
 
-{% include_relative /guide/10-queries.md %}
+{% include_relative /guide/10-databases.md %}
 
-{% include_relative /guide/11-persistence.md %}
+{% include_relative /guide/11-queries.md %}
 
-{% include_relative /guide/12-sessions.md %}
+{% include_relative /guide/12-persistence.md %}
 
-{% include_relative /guide/13-datatypes.md %}
+{% include_relative /guide/13-sessions.md %}
 
-{% include_relative /guide/14-json.md %}
+{% include_relative /guide/14-datatypes.md %}
 
-{% include_relative /guide/15-streams.md %}
+{% include_relative /guide/15-di.md %}
 
-{% include_relative /guide/16-logging.md %}
+{% include_relative /guide/16-json.md %}
 
-{% include_relative /guide/17-networking.md %}
+{% include_relative /guide/17-streams.md %}
 
-{% include_relative /guide/18-http.md %}
+{% include_relative /guide/18-logging.md %}
+
+{% include_relative /guide/19-networking.md %}
+
+{% include_relative /guide/20-http.md %}
 
 </div>
 <div class="col-md-3 hidden-xs hidden-sm">
