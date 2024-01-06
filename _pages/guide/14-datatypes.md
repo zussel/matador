@@ -1,7 +1,7 @@
-## Datatypes
+## Time & Date
 
-Matador comes with some own datatypes and helper classes. The datatype classes represents ```time```, ```date``` and ```identifier<T>``` (which stands for a primary key).
-The helper class ```varchar<SIZE>``` eases the creation of ```has_many``` relations or identifiers with varchars.
+Matador comes with its own ```time```and ```date``` classes which are
+described below.
 
 ### Time
 

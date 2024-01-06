@@ -23,18 +23,22 @@ The [object store](#prototypes) is the central element. Once it is configured wi
 
     template < typename Operator >
     void process(Operator &op) {
-      matador::access::primary_key(op, "id", id);
-      matador::access::attribute(op, "name", name, 255);
+      namespace field = matador::access;
+      field::primary_key(op, "id", id);
+      field::attribute(op, "name", name, 255);
     }
   };
 
   int main()
   {
     matador::object_store store;
+    // attach class to object store
     store.attach<person>("person");
 
+    // insert object
     store.insert<person>("georg");
 
+    // create view
     matador::object_view<person> view(store);
   }
 {% endhighlight %}
@@ -63,40 +67,29 @@ With the [query](#querries) class at hand one can write simple sql statements, p
 On top of the object store and the query interface comes the persistence layer. It represents the ORM mechanism provided by the library. Once a [persistence](#persistence) object is created one can again configure the object hierarchy in the same way it is done with the object store.
 
 {% highlight cpp linenos %}
-  matador::persistence p("sqlite://db.sqlite");
-  p.attach<person>("person");
+matador::persistence p("sqlite://db.sqlite");
+p.attach<person>("person");
 {% endhighlight %}
 
 After the persistance layer is configured all the database tables can be created
 
 {% highlight cpp linenos %}
-  p.create();
+p.create();
 {% endhighlight %}
 
 Now you can create a session and insert, updhttp::server server(8081);
-// add routing middleware
 {% highlight cpp linenos %}
-  server.add_routing_middleware();
+session s(p);
 
-  server.on_get("/", [](const http::request &req) {
-    return http::response::ok(
-      "hello world",
-      http::mime_types::TYPE_TEXT_PLAIN
-    );
-  });
-  server.run();
+auto jane = s.insert<person>("jane");
 
-  session s(p);
+// set janes real age
+jane.modify()->age = 35;
+s.flush();
 
-  auto jane = s.insert<person>("jane");
-
-  // set janes real age
-  jane.modify()->age = 35;
-  s.flush();
-
-  // bye bye jane
-  s.remove(jane)
-  s.flush();
+// bye bye jane
+s.remove(jane)
+s.flush();
 {% endhighlight %}
 
 Once you have data in your database you can load it this way:

@@ -119,7 +119,38 @@ address is automatically added to persons address list.
   // create a new person
   auto joe = s.insert<person>("joe");
   auto home = s.insert<address>("homestreet", "homecity");
-  auto work = s.insert<address>("workstreet", "workcity");
+  auto work = s.insert<address>("workstreet", "workc### Primary keys
+
+Currently two types of  primary keys are supported: Integral type and
+varchar e.g. string with size. The process method for integral types looks like this:
+
+{% highlight cpp linenos %}
+struct identifier_type_integral
+{
+  unsigned long id{};
+
+  template < typename Operator >
+  void process(Operator &op)
+  {
+    matador::access::primary_key(op, "id", id);
+  }
+};
+{% endhighlight %}
+
+Below an example of a string primary key. Note that the size parameter is mandatory.
+{% highlight cpp linenos %}
+struct identifier_type_string
+{
+  std::string id{};
+
+  template < typename Operator >
+  void process(Operator &op)
+  {
+    matador::access::primary_key(op, "id", id, 255);
+  }
+};
+{% endhighlight %}
+ity");
 
   joe.modify()->addresses.push_back(home);
   // homes citicen will be joe
