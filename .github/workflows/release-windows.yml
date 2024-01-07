@@ -91,9 +91,11 @@ jobs:
       - name: Build Packages
         working-directory: ${{github.workspace}}/build
         run: cpack -G NSIS -C ${{env.BUILD_TYPE}}
-#      - name: List Debug
-#        working-directory: ${{github.workspace}}/build/Debug/bin/Debug
-#        run: dir
-#      - name: Test
-#        working-directory: ${{github.workspace}}/build
-#        run: ctest --verbose -C ${{env.BUILD_TYPE}}
+      - name: List Packages
+        working-directory: ${{github.workspace}}/Package
+        run: dir
+#      - name: Upload Windows Artifacts
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: matador-${{ steps.version.outputs.name }}-x86_64-${{ runner.os }}.deb
+#          path: ${{github.workspace}}/Package/matador*.deb
