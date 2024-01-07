@@ -1,3 +1,25 @@
+## matador 0.9.0 "Telychian"
+
+**Breaking Changes:** This release changes the serialization interface going from a generic
+```serialize(...)``` naming to a more explicit naming. Now matador will have
+- "on_primary_key(...)"
+- "on_attribute(...)"
+- "on_belongs_to(...)"
+- "on_has_one(...)"
+- "on_has_many(...)"
+  for the serialization interface.
+
+This leads to a more readable database entity description and the remove of the
+```identifier<Type>```, ```has_one<Type>``` and ```belongs_to<Type>``` classes. For
+primary key the plain datatype (integral and sized string -> varchar) can be used.
+For foreign object only ```object_ptr<Type>``` is used.
+
+Furthermore, the interface is extended with a ```field_attributes``` parameter. This
+class contains constraints like **NOT_NULL**, **PRIMARY_KEY** or **UNIQUE** and a size
+parameter used for varchar (through std::string)
+
+Look [here](https://en.wikipedia.org/wiki/Telychian) to find out what Telychian is.
+
 ## matador 0.8.1 "Aeronian"
 
 Refactor reactor to process incoming request in a multithreading way. [#130](https://github.com/zussel/matador/issues/130)
