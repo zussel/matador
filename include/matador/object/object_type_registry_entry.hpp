@@ -17,7 +17,7 @@ namespace matador {
 class object_store;
 
 namespace detail {
-
+/// @cond MATADOR_DEV
 template < typename T >
 class object_type_registry_entry : public object_type_registry_entry_base
 {
@@ -85,7 +85,7 @@ public:
 private:
   std::unordered_map<std::type_index, std::shared_ptr<object_type_registry_entry_base>> type_registry_;
 };
-
+/// @endcond
 }
 }
 #endif //MATADOR_OBJECT_TYPE_REGISTRY_HPP

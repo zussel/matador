@@ -185,7 +185,7 @@ public:
   virtual void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type cascade) = 0;
 
   /**
-   * @fn void serialize(const char *id, abstract_has_many &x, const char *owner_id, const char *item_id, cascade_type cascade)
+   * @fn void on_has_many(const char *id, abstract_container &x, const char *owner_id, const char *item_id, cascade_type cascade)
    * @brief Interface to serialize a relation with given id
    *
    * @param id The id of the value
@@ -197,7 +197,7 @@ public:
   virtual void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) = 0;
 
   /**
-   * @fn void serialize(const char *id, abstract_has_many &x, cascade_type cascade)
+   * @fn void on_has_many(const char *id, abstract_container &x, cascade_type cascade)
    * @brief Interface to serialize a relation with given id
    *
    * @param id The id of the value

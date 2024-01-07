@@ -116,8 +116,6 @@ private:
   std::stack<object_proxy*> proxy_stack_;
 };
 
-/// @endcond
-
 template<class T>
 void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade)
 {
@@ -230,6 +228,7 @@ void object_deleter::on_primary_key(const char *id, T &x, typename std::enable_i
 {
   on_attribute(id, x);
 }
+/// @endcond
 
 }
 }

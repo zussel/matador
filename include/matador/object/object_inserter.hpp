@@ -117,8 +117,6 @@ private:
   bool notify_ = false;
 };
 
-/// @endcond
-
 template<class T>
 void object_inserter::serialize(T &x)
 {
@@ -193,6 +191,7 @@ void object_inserter::insert_has_many_item(const ItemHolderType &item,
   }
 
 }
+/// @endcond
 
 }
 }

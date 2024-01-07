@@ -23,6 +23,7 @@ namespace detail {
 class object_inserter;
 class object_deleter;
 
+/// @cond MATADOR_DEV
 class MATADOR_OBJECT_API object_type_registry_entry_base
 {
 protected:
@@ -72,7 +73,7 @@ public:
 
   static std::shared_ptr<object_type_registry_entry_base> null_type_entry;
 };
-
+/// @endcond
 }
 }
 #endif //MATADOR_OBJECT_TYPE_REGISTRY_ENTRY_BASE_HPP

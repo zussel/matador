@@ -27,8 +27,9 @@ class object_deserializer;
 namespace detail {
 class basic_relation_data;
 
+/// @cond MATADOR_DEV
 template<typename T> struct identity { typedef T type; };
-
+/// @endcond
 }
 
 /**

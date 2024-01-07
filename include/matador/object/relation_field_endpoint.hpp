@@ -208,7 +208,6 @@ struct belongs_to_many_endpoint<Value, Owner, typename std::enable_if<matador::i
 
   object_proxy* acquire_proxy(unsigned long long , object_store &) override { return nullptr; }
 };
-/// @endcond
 
 template < class Value, class Owner, basic_relation_endpoint::relation_type Type >
 void from_one_endpoint<
@@ -432,6 +431,7 @@ typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::va
   remover.remove(ownptr, this->field, value_holder);
 //  this->decrement_reference_count(value_holder.value());
 }
+/// @endcond
 
 }
 }

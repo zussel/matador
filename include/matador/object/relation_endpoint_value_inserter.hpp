@@ -73,8 +73,6 @@ private:
   container_item_holder<Value> holder_;
 };
 
-/// @endcond
-
 template<class Value>
 template<class Owner>
 void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &owner, const std::string &field,
@@ -109,6 +107,7 @@ void relation_endpoint_value_inserter<Value>::on_has_one(const char *id,
   }
   x.reset(proxy(holder_.value()), cascade, false);
 }
+/// @endcond
 
 }
 }

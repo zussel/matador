@@ -170,7 +170,6 @@ private:
   column_by_index columns_;
   column_by_name_map columns_by_name_;
 };
-/// @endcond
 
 }
 

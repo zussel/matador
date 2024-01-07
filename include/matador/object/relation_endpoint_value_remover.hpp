@@ -73,8 +73,6 @@ private:
   container_item_holder<Value> holder_;
 };
 
-/// @endcond
-
 template < class Value >
 template<class Owner>
 void relation_endpoint_value_remover<Value>::remove(const object_ptr <Owner> &owner, const std::string &field, container_item_holder<Value> holder)
@@ -108,6 +106,8 @@ void relation_endpoint_value_remover<Value>::on_has_one(const char *id,
   }
   x.reset(nullptr, cascade, false);
 }
+
+/// @endcond
 
 }
 }

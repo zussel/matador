@@ -56,7 +56,7 @@ struct column : public detail::token
    * @brief Creates a new column with given name
    *
    * @param name The name of the column
-   * @param skip_quotes True if the column shouldn't get quotes
+   * @param options True if the column shouldn't get quotes
    * @param attr Field attributes of the column
    */
   column(std::string name, t_build_options options, const field_attributes &attr = null_attributes);
@@ -128,8 +128,6 @@ std::shared_ptr<column> make_pk_column<std::string>(const std::string &name, siz
 std::shared_ptr<column> make_pk_column(const std::string &name, data_type type, size_t index, size_t max_size = 0);
 
 std::shared_ptr<column> make_null_column(const std::string &name, const field_attributes &attr);
-
-/// @endcond
 
 }
 #endif //OOS_COLUMN_HPP

@@ -11,6 +11,7 @@ namespace matador {
 
 struct null_type_t {};
 
+/// @cond MATADOR_DEV
 namespace detail {
 
 enum class identifier_type : unsigned int {
@@ -64,6 +65,8 @@ public:
   virtual void serialize(std::string &, const field_attributes &) = 0;
   virtual void serialize(null_type_t &, const field_attributes &) = 0;
 };
+
+/// @endcond
 
 class identifier
 {
@@ -213,11 +216,12 @@ private:
 
 static identifier null_identifier{};
 
+/// @cond MATADOR_DEV
 struct id_pk_hash
 {
   size_t operator()(const identifier &id) const;
 };
-
+/// @endcond
 }
 
 #endif //MATADOR_IDENTIFIER_HPP

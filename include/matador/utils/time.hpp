@@ -32,13 +32,14 @@ OOS_UTILS_API void localtime(const time_t &in, struct tm &out);
 OOS_UTILS_API void gmtime(const time_t &in, struct tm &out);
 
 
+/// @cond MATADOR_DEV
 struct time_info
 {
   std::tm timestamp{};
   time_t seconds_since_epoch{};
   unsigned int milliseconds{};
 };
-
+/// @endcond
 
 /**
  * Formats a given timeval struct as a string
