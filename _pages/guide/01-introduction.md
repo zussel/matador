@@ -77,7 +77,8 @@ After the persistance layer is configured all the database tables can be created
 p.create();
 {% endhighlight %}
 
-Now you can create a session and insert, updhttp::server server(8081);
+Now you can create a session and insert, update or delete entities.
+
 {% highlight cpp linenos %}
 session s(p);
 
