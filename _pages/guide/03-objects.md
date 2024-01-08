@@ -115,8 +115,8 @@ Object relations are supported by using ```object_ptr<Type>```.
 The syntax of ```has_one()``` and ```belongs_to()``` looks as follows:
 
 ```cpp
-matador::has_one(<operator>, <field name>, <field member>, <cascade>);
-matador::belongs_to(<operator>, <field name>, <field member>, <cascade>);
+matador::access::has_one(<operator>, <field name>, <field member>, <cascade>);
+matador::access::belongs_to(<operator>, <field name>, <field member>, <cascade>);
 ```
 
 The first parameter is the operator in charge. The second parameter
