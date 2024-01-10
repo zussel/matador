@@ -87,7 +87,7 @@ detail::result_impl::size_type mysql_result::reset_column_index() const
 void mysql_result::read_value(const char */*id*/, size_type index, char &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -97,7 +97,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, char &value)
 void mysql_result::read_value(const char */*id*/, size_type index, short &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -107,7 +107,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, short &value)
 void mysql_result::read_value(const char */*id*/, size_type index, int &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -118,7 +118,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, int &value)
 void mysql_result::read_value(const char */*id*/, size_type index, long &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -129,7 +129,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, long &value)
 void mysql_result::read_value(const char */*id*/, size_type index, long long &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -140,7 +140,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, long long &va
 void mysql_result::read_value(const char */*id*/, size_type index, unsigned char &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -151,7 +151,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, unsigned char
 void mysql_result::read_value(const char */*id*/, size_type index, unsigned short &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -162,7 +162,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, unsigned shor
 void mysql_result::read_value(const char */*id*/, size_type index, unsigned int &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -173,7 +173,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, unsigned int 
 void mysql_result::read_value(const char */*id*/, size_type index, unsigned long &value)
 {
   char *val = row_[index];
-  if (!val || strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end = nullptr;
@@ -184,7 +184,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, unsigned long
 void mysql_result::read_value(const char */*id*/, size_type index, unsigned long long &value)
 {
   char *val = row_[index];
-  if (!val || strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end = nullptr;
@@ -195,7 +195,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, unsigned long
 void mysql_result::read_value(const char */*id*/, size_type index, bool &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -206,7 +206,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, bool &value)
 void mysql_result::read_value(const char */*id*/, size_type index, float &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -217,7 +217,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, float &value)
 void mysql_result::read_value(const char */*id*/, size_type index, double &value)
 {
   char *val = row_[index];
-  if (strlen(val) == 0) {
+  if (val == nullptr || strlen(val) == 0) {
     return;
   }
   char *end;
@@ -228,6 +228,9 @@ void mysql_result::read_value(const char */*id*/, size_type index, double &value
 void mysql_result::read_value(const char */*id*/, size_type index, char *value, size_t s)
 {
   char *val = row_[index];
+  if (val == nullptr) {
+    return;
+  }
   size_t len = strlen(val);
   if (len > (size_t)s) {
     strncpy(value, val, (size_t)s);
@@ -241,20 +244,29 @@ void mysql_result::read_value(const char */*id*/, size_type index, char *value, 
 void mysql_result::read_value(const char */*id*/, size_type index, std::string &value, size_t /*size*/)
 {
   char *val = row_[index];
+  if (val == nullptr) {
+    return;
+  }
   value.assign(val);
 }
 
 void mysql_result::read_value(const char */*id*/, size_type index, std::string &value)
 {
   char *val = row_[index];
+  if (val == nullptr) {
+    return;
+  }
   value.assign(val);
 }
 
 void mysql_result::read_value(const char */*id*/, size_type index, matador::date &value)
 {
   char *val = row_[index];
+  if (val == nullptr) {
+    return;
+  }
   size_t len = strlen(val);
-  if (val == nullptr || len == 0) {
+  if (len == 0) {
     return;
   }
   value.set(val, matador::date_format::ISO8601);

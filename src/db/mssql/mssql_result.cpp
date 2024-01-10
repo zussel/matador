@@ -170,7 +170,9 @@ void mssql_result::read_column(const char *, size_type index, std::string &val)
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf, 1024, &info);
   if (SQL_SUCCEEDED(ret)) {
-    val.assign(buf, info);
+    if (info > 0) {
+      val.assign(buf, info);
+    }
   } else {
     throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
@@ -185,7 +187,9 @@ void mssql_result::read_column(const char *, size_type index, std::string &val, 
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf.data(), static_cast<SQLLEN>(size), &info);
   if (SQL_SUCCEEDED(ret)) {
-    val.assign(buf.data(), info);
+    if (info > 0) {
+      val.assign(buf.data(), info);
+    }
   } else {
     throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
