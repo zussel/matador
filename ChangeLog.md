@@ -1,3 +1,12 @@
+## matador 0.9.1 "Sheinwoodian"
+
+This is a bugfix release. The following issues will be addressed
+- Raise exception if a specific column value is null (mysql query) [#156](https://github.com/zussel/matador/issues/156)
+
+  Will fix the same issue for mssql/odbc 
+
+Look [here](https://en.wikipedia.org/wiki/Sheinwoodian) to find out what Sheinwoodian is.
+
 ## matador 0.9.0 "Telychian"
 
 **Breaking Changes:** This release changes the serialization interface going from a generic

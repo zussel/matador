@@ -34,6 +34,7 @@ public:
   void test_select_time();
   void test_create();
   void test_update();
+  void test_null_column();
   void test_anonymous_create();
   void test_anonymous_insert();
   void test_anonymous_update();

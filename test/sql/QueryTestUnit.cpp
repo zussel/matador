@@ -38,6 +38,7 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("identifier_prepared", [this] { test_identifier_prepared(); }, "test sql prepared identifier");
   add_test("select_time", [this] { test_select_time(); }, "test select time value");
   add_test("update", [this] { test_update(); }, "test direct sql update statement");
+  add_test("null_column", [this] { test_null_column(); }, "test retrieving null column");
   add_test("create", [this] { test_create(); }, "test direct sql create statement");
   add_test("create_anonymous", [this] { test_anonymous_create(); }, "test direct sql create statement via row (anonymous)");
   add_test("insert_anonymous", [this] { test_anonymous_insert(); }, "test direct sql insert statement via row (anonymous)");
@@ -610,6 +611,32 @@ void QueryTestUnit::test_update()
     UNIT_ASSERT_EQUAL(i->birthdate(), matador::date(15, 6, 1990));
   }
 
+  q.drop("person").execute(connection_);
+}
+
+void QueryTestUnit::test_null_column()
+{
+  connection_.connect();
+
+  query<> q;
+
+  q.create("person", {
+    make_pk_column<long>("id"),
+    make_column<std::string>("name", 63),
+    make_column<unsigned>("age")
+  });
+
+  q.execute(connection_);
+
+  q.insert("person", {"id", "age"}).values({1, 47}).execute(connection_);
+//  connection_.execute("INSERT INTO person (id, name, age) VALUES (1, NULL, 47)");
+
+  auto res = q.select({"id", "name", "age"}).from("person").execute(connection_);
+
+  for (const auto& r : res) {
+    auto name = r->at<std::string>("name");
+    UNIT_EXPECT_TRUE(name.empty());
+  }
   q.drop("person").execute(connection_);
 }
 
