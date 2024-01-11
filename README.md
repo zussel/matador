@@ -3,16 +3,16 @@ matador
 
 Take your database by the horns.
 
-[![Version 0.9.0](https://badge.fury.io/gh/zussel%2Fmatador.svg)](https://badge.fury.io/gh/zussel%2Fmatador)
+[![Version 0.9.1](https://badge.fury.io/gh/zussel%2Fmatador.svg)](https://badge.fury.io/gh/zussel%2Fmatador)
 [![GPLv3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://raw.githubusercontent.com/zussel/matador/develop/License)
 [![C++14](https://img.shields.io/badge/language-C%2B%2B14-yellow.svg)](https://en.wikipedia.org/wiki/C%2B%2B14)
 
 __Build Status__
 
-| Branches    | Linux-CI | Windows-CI |  CodeCov  |
-|-------------|-----------|-----------|-----------|
-| master      |[![Build Status](https://github.com/zussel/matador/actions/workflows/linux.yml/badge.svg?branch=master)](https://github.com/zussel/matador/actions/workflows/linux.yml?query=branch%3Amaster)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/master?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/master)|[![codecov](https://codecov.io/gh/zussel/matador/branch/master/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
-| develop     |[![Build Status](https://github.com/zussel/matador/actions/workflows/linux.yml/badge.svg?branch=develop)](https://github.com/zussel/matador/actions/workflows/linux.yml?query=branch%3Adevelop)|[![Build status](https://ci.appveyor.com/api/projects/status/fs50s053d085q5j8/branch/develop?svg=true)](https://ci.appveyor.com/project/zussel/matador/branch/develop)|[![codecov](https://codecov.io/gh/zussel/matador/branch/develop/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
+| Branches    | Linux-CI | Windows-CI                                                                                                                                                                                          |  CodeCov  |
+|-------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
+| master      |[![Build Status](https://github.com/zussel/matador/actions/workflows/linux.yml/badge.svg?branch=master)](https://github.com/zussel/matador/actions/workflows/linux.yml?query=branch%3Amaster)| [![Build status](https://github.com/zussel/matador/actions/workflows/windows.yml/badge.svg?branch=master)](https://github.com/zussel/matador/actions/workflows/windows.yml?query=branch%3Amaster)   |[![codecov](https://codecov.io/gh/zussel/matador/branch/master/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
+| develop     |[![Build Status](https://github.com/zussel/matador/actions/workflows/linux.yml/badge.svg?branch=develop)](https://github.com/zussel/matador/actions/workflows/linux.yml?query=branch%3Adevelop)| [![Build status](https://github.com/zussel/matador/actions/workflows/windows.yml/badge.svg?branch=develop)](https://github.com/zussel/matador/actions/workflows/windows.yml?query=branch%3Adevelop) |[![codecov](https://codecov.io/gh/zussel/matador/branch/develop/graph/badge.svg?token=3PhtuRr0a8)](https://codecov.io/gh/zussel/matador)|
 
 matador is an ORM and Web Application framework written in C++. It
 encapsulates all database backend communication and offers a simple (web) server.
