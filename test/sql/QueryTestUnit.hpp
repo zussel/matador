@@ -35,6 +35,7 @@ public:
   void test_create();
   void test_update();
   void test_null_column();
+  void test_prepared_null_column();
   void test_anonymous_create();
   void test_anonymous_insert();
   void test_anonymous_update();
