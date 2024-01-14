@@ -1,3 +1,12 @@
+## matador 0.9.2 "Homerian"
+
+This is a bugfix release. The following issues will be addressed
+- Raise exception if a specific column value is null (mysql query) [#156](https://github.com/zussel/matador/issues/156)
+
+  Will fix an additional bug concerning prepared statements for mysql. 
+
+Look [here](https://en.wikipedia.org/wiki/Homerian) to find out what Homerian is.
+
 ## matador 0.9.1 "Sheinwoodian"
 
 This is a bugfix release. The following issues will be addressed
