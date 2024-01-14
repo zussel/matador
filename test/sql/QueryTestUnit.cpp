@@ -39,6 +39,7 @@ QueryTestUnit::QueryTestUnit(const std::string &prefix, std::string db, matador:
   add_test("select_time", [this] { test_select_time(); }, "test select time value");
   add_test("update", [this] { test_update(); }, "test direct sql update statement");
   add_test("null_column", [this] { test_null_column(); }, "test retrieving null column");
+  add_test("prepared_null_column", [this] { test_prepared_null_column(); }, "test retrieving prepared null column");
   add_test("create", [this] { test_create(); }, "test direct sql create statement");
   add_test("create_anonymous", [this] { test_anonymous_create(); }, "test direct sql create statement via row (anonymous)");
   add_test("insert_anonymous", [this] { test_anonymous_insert(); }, "test direct sql insert statement via row (anonymous)");
@@ -629,7 +630,6 @@ void QueryTestUnit::test_null_column()
   q.execute(connection_);
 
   q.insert("person", {"id", "age"}).values({1, 47}).execute(connection_);
-//  connection_.execute("INSERT INTO person (id, name, age) VALUES (1, NULL, 47)");
 
   auto res = q.select({"id", "name", "age"}).from("person").execute(connection_);
 
@@ -637,6 +637,32 @@ void QueryTestUnit::test_null_column()
     auto name = r->at<std::string>("name");
     UNIT_EXPECT_TRUE(name.empty());
   }
+  q.drop("person").execute(connection_);
+}
+
+void QueryTestUnit::test_prepared_null_column()
+{
+  connection_.connect();
+
+  query<person> q;
+
+  q.create("person").execute(connection_);
+
+  query<> qp;
+  qp.insert("person", {"id", "name", "height", "birthdate"}).values({1, "george", 47, date{27, 11, 1954}}).execute(connection_);
+  qp.insert("person", {"id", "height", "birthdate"}).values({2, 47, date{27, 11, 1954}}).execute(connection_);
+
+  auto stmt = q.select().from("person").prepare(connection_);
+
+  auto res = stmt.execute();
+
+  std::vector<std::string> expected_names{"george", ""};
+  size_t index{0};
+  for (const auto& p : res) {
+    auto name = p->name();
+    UNIT_EXPECT_EQUAL(name, expected_names[index++]);
+  }
+
   q.drop("person").execute(connection_);
 }
 

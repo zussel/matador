@@ -251,13 +251,16 @@ void mysql_prepared_result::read_value(const char */*id*/, size_type index, std:
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_VAR_STRING, value, size);
   } else {
-    if (*bind_[index].error) {
+    auto &bind_param = bind_[index];
+    if (*bind_param.error) {
       // assume truncated data
       on_truncated_data(index, value);
-    } else {
-      auto *data = (char *) bind_[index].buffer;
+    } else if (*bind_param.is_null == false) {
+      auto *data = (char *) bind_param.buffer;
       unsigned long len = info_[index].length;
       value.assign(data, len);
+    } else {
+      value.clear();
     }
   }
 }
