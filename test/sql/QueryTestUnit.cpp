@@ -649,7 +649,7 @@ void QueryTestUnit::test_prepared_null_column()
   q.create("person").execute(connection_);
 
   query<> qp;
-  qp.insert("person", {"id", "name", "height", "birthdate"}).values({1, "george", 47, date{27, 11, 1954}}).execute(connection_);
+  qp.insert("person", {"id", "name", "height"}).values({1, "george", 47}).execute(connection_);
   qp.insert("person", {"id", "height", "birthdate"}).values({2, 47, date{27, 11, 1954}}).execute(connection_);
 
   auto stmt = q.select().from("person").prepare(connection_);
