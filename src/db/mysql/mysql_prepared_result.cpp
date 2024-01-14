@@ -199,12 +199,12 @@ void mysql_prepared_result::read_value(const char */*id*/, size_type index, mata
   if (prepare_binding_) {
     prepare_bind_column(index, MYSQL_TYPE_DATE, value);
   } else {
-    if (info_[index].length > 0) {
+    auto &bind_param = bind_[index];
+    if (!*bind_param.is_null && info_[index].length > 0) {
       auto *mtt = (MYSQL_TIME*)info_[index].buffer;
       value.set(mtt->day, mtt->month, mtt->year);
     }
     bind_[index].length = nullptr;
-//    increase_column_index();
   }
 }
 
@@ -228,7 +228,8 @@ void mysql_prepared_result::read_value(const char *id, size_type index, matador:
     if (prepare_binding_) {
       prepare_bind_column(index, MYSQL_TYPE_TIMESTAMP, value);
     } else {
-      if (info_[index].length > 0) {
+      auto &bind_param = bind_[index];
+      if (!*bind_param.is_null && info_[index].length > 0) {
         auto *mtt = (MYSQL_TIME*)info_[index].buffer;
         value.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
       }
