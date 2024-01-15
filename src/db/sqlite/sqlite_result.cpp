@@ -261,13 +261,17 @@ void sqlite_result::read_value(const char */*id*/, size_type index, std::string 
 void sqlite_result::read_value(const char */*id*/, size_type index, matador::date &x)
 {
   t_row::value_type val = result_[row_index_][index];
-  x.set(val, date_format::ISO8601);
+  if (strlen(val) > 0) {
+    x.set(val, date_format::ISO8601);
+  }
 }
 
 void sqlite_result::read_value(const char */*id*/, size_type index, matador::time &x)
 {
   t_row::value_type val = result_[row_index_][index];
-  x = matador::time::parse(val, "%Y-%m-%dT%T.%f");
+  if (strlen(val) > 0) {
+    x = matador::time::parse(val, "%Y-%m-%dT%T.%f");
+  }
 }
 
 bool sqlite_result::prepare_fetch()

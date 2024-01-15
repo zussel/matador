@@ -245,6 +245,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, std::string &
 {
   char *val = row_[index];
   if (val == nullptr) {
+    value.clear();
     return;
   }
   value.assign(val);
@@ -254,6 +255,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, std::string &
 {
   char *val = row_[index];
   if (val == nullptr) {
+    value.clear();
     return;
   }
   value.assign(val);
