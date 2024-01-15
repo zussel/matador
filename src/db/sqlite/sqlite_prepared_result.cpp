@@ -119,7 +119,9 @@ void sqlite_prepared_result::read_value(const char */*id*/, size_type index, std
 {
   auto s = (size_t)sqlite3_column_bytes(stmt_, index);
   auto *text = (const char*)sqlite3_column_text(stmt_, index);
-  x.assign(text, s);
+  if (s > 0) {
+    x.assign(text, s);
+  }
 }
 
 void sqlite_prepared_result::read_value(const char */*id*/, size_type index, std::string &x, size_t /*size*/)
@@ -153,16 +155,22 @@ void sqlite_prepared_result::read_value(const char */*id*/, size_type index, cha
 
 void sqlite_prepared_result::read_value(const char *id, size_type index, matador::date &x)
 {
-  std::string val;
-  read_value(id, index, val);
-  x = matador::date::parse(val, date_format::ISO8601);
+  auto is_null = sqlite3_column_type(stmt_, index) == SQLITE_NULL;
+  auto s = (size_t)sqlite3_column_bytes(stmt_, index);
+  if (!is_null && s > 0) {
+    const auto *text = reinterpret_cast<const char *>( sqlite3_column_text(stmt_, index));
+    x = matador::date::parse(text, date_format::ISO8601);
+  }
 }
 
 void sqlite_prepared_result::read_value(const char *id, size_type index, matador::time &x)
 {
-  std::string val;
-  read_value(id, index, val);
-  x = matador::time::parse(val, "%Y-%m-%dT%T.%f");
+  auto is_null = sqlite3_column_type(stmt_, index) == SQLITE_NULL;
+  auto s = (size_t)sqlite3_column_bytes(stmt_, index);
+  if (!is_null && s > 0) {
+    const auto *text = reinterpret_cast<const char *>( sqlite3_column_text(stmt_, index));
+    x = matador::time::parse(text, "%Y-%m-%dT%T.%f");
+  }
 }
 
 bool sqlite_prepared_result::prepare_fetch()

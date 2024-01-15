@@ -172,6 +172,8 @@ void mssql_result::read_column(const char *, size_type index, std::string &val)
   if (SQL_SUCCEEDED(ret)) {
     if (info > 0) {
       val.assign(buf, info);
+    } else {
+      val.clear();
     }
   } else {
     throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
@@ -189,6 +191,8 @@ void mssql_result::read_column(const char *, size_type index, std::string &val, 
   if (SQL_SUCCEEDED(ret)) {
     if (info > 0) {
       val.assign(buf.data(), info);
+    } else {
+      val.clear();
     }
   } else {
     throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
@@ -225,7 +229,9 @@ void mssql_result::read_column(char const *, size_type index, date &x)
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_TYPE_DATE, &ds, 0, &info);
   if (SQL_SUCCEEDED(ret)) {
-    x.set(ds.day, ds.month, ds.year);
+    if (info != SQL_NULL_DATA) {
+      x.set(ds.day, ds.month, ds.year);
+    }
   } else {
     throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
@@ -238,7 +244,9 @@ void mssql_result::read_column(char const *, size_type index, time &x)
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_TYPE_TIMESTAMP, &ts, 0, &info);
   if (SQL_SUCCEEDED(ret)) {
-    x.set(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.fraction / 1000 / 1000);
+    if (info != SQL_NULL_DATA) {
+      x.set(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.fraction / 1000 / 1000);
+    }
   } else {
     throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }

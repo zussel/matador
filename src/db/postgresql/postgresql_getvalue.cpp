@@ -5,6 +5,9 @@ namespace detail {
 
 void get_value(PGresult *res, size_t row, size_t col, char *val, size_t s)
 {
+  if (PQgetisnull(res, (int)row, (int)col) == 1) {
+    return;
+  }
   auto value = PQgetvalue(res, (int)row, (int)col);
 
   size_t len = strlen(value);
@@ -26,6 +29,9 @@ void get_value(PGresult *res, size_t row, size_t col, char *val, size_t s)
 
 void get_value(PGresult *res, size_t row, size_t col, unsigned char &val)
 {
+  if (PQgetisnull(res, (int)row, (int)col) == 1) {
+    return;
+  }
   auto value = PQgetvalue(res, (int)row, (int)col);
 
   if (strlen(value) == 0) {

@@ -624,19 +624,23 @@ void QueryTestUnit::test_null_column()
   q.create("person", {
     make_pk_column<long>("id"),
     make_column<std::string>("name", 63),
-    make_column<unsigned>("age")
+    make_column<matador::date>("birthday")
   });
 
   q.execute(connection_);
 
-  q.insert("person", {"id", "age"}).values({1, 47}).execute(connection_);
+  q.insert("person", {"id", "name"}).values({1, "george"}).execute(connection_);
+  q.insert("person", {"id", "birthday"}).values({2, date{27, 11, 1954}}).execute(connection_);
 
-  auto res = q.select({"id", "name", "age"}).from("person").execute(connection_);
+  auto res = q.select({"id", "name", "birthday"}).from("person").execute(connection_);
 
+  std::vector<std::string> expected_names{"george", ""};
+  size_t index{0};
   for (const auto& r : res) {
     auto name = r->at<std::string>("name");
-    UNIT_EXPECT_TRUE(name.empty());
+    UNIT_EXPECT_EQUAL(name, expected_names[index++]);
   }
+
   q.drop("person").execute(connection_);
 }
 
