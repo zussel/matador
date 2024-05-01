@@ -45,13 +45,11 @@ public:
 
   void on_attach(matador::prototype_node &node, T &) override
   {
-      auto func = [this](const matador::json &js) {
-          matador::json_object_mapper mapper;
-          auto o = mapper.to_object<T>(js);
-          auto p = store_.insert(o.release());
-      };
-
-      gjs_.register_converter(node.type(), func);
+      gjs_.register_converter(node.type(), [this](const matador::json &js) {
+        matador::json_object_mapper mapper;
+        auto o = mapper.to_object<T>(js);
+        auto p = store_.insert(o.release());
+      });
   }
 
   void on_detach(matador::prototype_node &, T &) override {}
@@ -121,6 +119,7 @@ int main()
   matador::json js = {
     { "name", "george" },
     { "id", 13 },
+    { "invalid", "false" },
     { "color", (int)colors::GREEN }
   };
   gjs.insert("person", js);

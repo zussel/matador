@@ -3,10 +3,10 @@
 
 namespace matador {
 
-class sql;
+class sql_context;
 struct column;
 struct columns;
-struct value;
+class value;
 
 namespace detail {
 

@@ -89,7 +89,7 @@ void mssql_connection::close()
   is_open_ = false;
 }
 
-matador::detail::result_impl *mssql_connection::execute(const matador::sql &sql)
+matador::detail::result_impl *mssql_connection::execute(const matador::sql_context &sql)
 {
   std::string stmt(dialect_.direct(sql));
   return execute(stmt);

@@ -1,10 +1,5 @@
-//
-// Created by sascha on 2/26/16.
-//
-
 #ifndef OOS_TESTDIALECT_HPP
 #define OOS_TESTDIALECT_HPP
-
 
 #include "matador/sql/types.hpp"
 #include "matador/sql/basic_dialect.hpp"

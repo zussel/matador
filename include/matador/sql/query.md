@@ -1,22 +1,22 @@
-```sql
+```sql_context
 CREATE TABLE <table> (<columns datatype>,<constraints>);
 ```
 
-```sql
+```sql_context
 SELECT <columns> FROM <table> WHERE <condition> ORDER BY <order> LIMIT <limit>;
 
 SELECT TOP <rows> <columns> FROM <table> WHERE <condition> ORDER BY <order>;
 ```
 
-```sql
+```sql_context
 UPDATE <table> SET <columns=values> WHERE <condition>;
 ```
 
-```sql
+```sql_context
 INSERT INTO <table> (<columns>) VALUES (<values>);
 ```
 
-```sql
+```sql_context
 DELETE FROM <table> WHERE <condition>;
 ```
 

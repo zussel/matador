@@ -25,14 +25,14 @@ struct build_info;
 
 }
 
-class sql
+class sql_context
 {
 public:
-  sql();
-  ~sql();
+  sql_context();
+  ~sql_context();
 
   void append(const std::shared_ptr<detail::token> &token_ptr);
-  void append(const sql &stmt);
+  void append(const sql_context &stmt);
 
   void reset(t_query_command command_type);
 
@@ -64,11 +64,11 @@ namespace detail {
 
 struct query : public token
 {
-  explicit query(const sql &s);
+  explicit query(const sql_context &s);
 
   void accept(token_visitor &visitor) override;
 
-  sql sql_;
+  sql_context sql_;
 };
 
 }

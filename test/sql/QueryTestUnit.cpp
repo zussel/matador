@@ -212,13 +212,11 @@ void QueryTestUnit::test_schema()
 
 void QueryTestUnit::test_query_value_creator()
 {
-  matador::detail::query_value_creator qvc;
+  value val('c');
 
-  matador::any ac = 'c';
-
-  auto val = qvc.create_from_any(ac);
-
-  UNIT_ASSERT_EQUAL(val->get<char>(), 'c');
+  auto c = val.as<char>();
+  UNIT_ASSERT_TRUE(c.has_value());
+  UNIT_ASSERT_EQUAL(c.value(), 'c');
 }
 
 void QueryTestUnit::test_quoted_identifier()

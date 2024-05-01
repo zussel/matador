@@ -4,6 +4,7 @@
 #include "matador/sql/basic_query.hpp"
 #include "matador/sql/dialect_token.hpp"
 #include "matador/sql/column.hpp"
+#include "matador/sql/column_value.hpp"
 #include "matador/sql/result.hpp"
 #include "matador/sql/statement.hpp"
 #include "matador/sql/connection.hpp"
@@ -12,9 +13,6 @@
 #include "matador/sql/value_serializer.hpp"
 #include "matador/sql/value_column_serializer.hpp"
 #include "matador/sql/row.hpp"
-
-#include "matador/utils/any.hpp"
-#include "matador/utils/any_visitor.hpp"
 
 #include <memory>
 #include <sstream>
@@ -228,7 +226,7 @@ public:
    * @return A reference to the query.
    */
   template<class LocalType = T, typename = typename std::enable_if<std::is_same<LocalType, row>::value>::type>
-  query& values(const std::initializer_list<matador::any> &values)
+  query& values(const std::initializer_list<sql::column_type> &values)
   {
     throw_invalid(QUERY_VALUES, state);
 
@@ -236,7 +234,7 @@ public:
 
     // append values
     for (auto value : values) {
-      vals->push_back(query_value_creator_.create_from_any(value));
+      vals->push_back(std::make_shared<matador::value>(value));
     }
     sql_.append(vals);
 
@@ -388,7 +386,7 @@ public:
    * @param column_values The column name and value list
    * @return A reference to the query.
    */
-  query& update(const std::string &table_name, const std::initializer_list<std::pair<std::string, matador::any>> &column_values)
+  query& update(const std::string &table_name, const std::initializer_list<std::pair<std::string, sql::column_type>> &column_values)
   {
     reset(t_query_command::UPDATE);
 

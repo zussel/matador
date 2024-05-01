@@ -7,14 +7,11 @@
 #include "matador/sql/basic_dialect_compiler.hpp"
 #include "matador/sql/basic_dialect_linker.hpp"
 
-namespace matador {
-namespace postgresql {
+namespace matador::postgresql {
 
 postgresql_dialect::postgresql_dialect()
-: basic_dialect(new postgresql_dialect_compiler, new detail::basic_dialect_linker)
-{
-
-}
+: basic_dialect(new postgresql_dialect_compiler(this), new detail::basic_dialect_linker(this))
+{}
 
 const char *postgresql_dialect::to_database_type_string(matador::data_type type) const
 {
@@ -107,4 +104,4 @@ std::string postgresql_dialect::next_placeholder() const
 }
 
 }
-}
+

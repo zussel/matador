@@ -5,15 +5,15 @@
 
 #include "matador/sql/basic_dialect_compiler.hpp"
 
-namespace matador {
-
-namespace sqlite {
+namespace matador::sqlite {
 
 class sqlite_dialect;
 
 class sqlite_dialect_compiler : public detail::basic_dialect_compiler
 {
 public:
+  using detail::basic_dialect_compiler::basic_dialect_compiler;
+
   void visit(const matador::detail::select &select1) override;
   void visit(const matador::detail::update &update1) override;
   void visit(const matador::detail::remove &remove1) override;
@@ -35,6 +35,6 @@ private:
 };
 
 }
-}
+
 
 #endif //OOS_SQLITE_DIALECT_COMPILER_HPP

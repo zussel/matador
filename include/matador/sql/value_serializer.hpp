@@ -9,7 +9,7 @@
 
 namespace matador {
 
-class sql;
+class sql_context;
 
 namespace detail {
 

@@ -4,7 +4,7 @@
 #include "matador/sql/basic_dialect.hpp"
 #include "matador/sql/basic_dialect_compiler.hpp"
 #include "matador/sql/basic_dialect_linker.hpp"
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 
 #include "matador/utils/string.hpp"
 
@@ -12,7 +12,7 @@ namespace matador {
 
 namespace detail {
 
-build_info::build_info(const sql &s, basic_dialect *d)
+build_info::build_info(const sql_context &s, basic_dialect *d)
   : dialect(d)
 {
   tokens_.assign(s.token_list_.begin(),s.token_list_.end());
@@ -24,10 +24,7 @@ build_info::build_info(const sql &s, basic_dialect *d)
 basic_dialect::basic_dialect(detail::basic_dialect_compiler *compiler, detail::basic_dialect_linker *linker)
   : compiler_(compiler)
   , linker_(linker)
-{
-  compiler_->dialect(this);
-  linker_->dialect(this);
-}
+{}
 
 basic_dialect::~basic_dialect()
 {
@@ -35,17 +32,17 @@ basic_dialect::~basic_dialect()
   delete linker_;
 }
 
-std::string basic_dialect::direct(const sql &s)
+std::string basic_dialect::direct(const sql_context &s)
 {
   return build(s, DIRECT);
 }
 
-detail::statement_context basic_dialect::prepare(const sql &s)
+detail::statement_context basic_dialect::prepare(const sql_context &s)
 {
   return {build(s, PREPARED), host_vars_, columns_, s.table_name(), s.command()};
 }
 
-std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
+std::string basic_dialect::build(const sql_context &s, t_compile_type compile_type)
 {
   compile_type_ = compile_type;
   host_vars_.clear();
@@ -60,7 +57,7 @@ std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
   return result;
 }
 
-std::string basic_dialect::continue_build(const sql &s, t_compile_type compile_type) {
+std::string basic_dialect::continue_build(const sql_context &s, t_compile_type compile_type) {
   compile_type_ = compile_type;
 
   push(s);
@@ -97,7 +94,7 @@ void basic_dialect::append_to_result(const std::string &part)
   top().result += part;
 }
 
-void basic_dialect::push(const sql &s)
+void basic_dialect::push(const sql_context &s)
 {
   build_info_stack_.push(detail::build_info(s, this));
 }

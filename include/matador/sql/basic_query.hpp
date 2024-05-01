@@ -2,13 +2,11 @@
 #define OOS_BASIC_QUERY_HPP
 
 #include "matador/sql/commands.hpp"
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 #include "matador/sql/column.hpp"
 #include "matador/sql/connection.hpp"
 
-#include "matador/utils/any.hpp"
 #include "query_value_column_processor.hpp"
-#include "query_value_creator.hpp"
 
 #include <string>
 
@@ -68,7 +66,7 @@ public:
    *
    * @return The underlying sql
    */
-  const sql& stmt() const;
+  const sql_context& stmt() const;
 
   /**
    * Return the current tablename of the query
@@ -114,12 +112,11 @@ protected:
 
 protected:
   /// @cond MATADOR_DEV
-  sql sql_;
+  sql_context sql_;
   state_t state;
   std::shared_ptr<columns> update_columns_;
-  std::vector<matador::any> rowvalues_;
+  std::vector<sql::column_type> row_values_;
   detail::query_value_column_processor query_value_column_processor_;
-  detail::query_value_creator query_value_creator_;
   connection conn_;
   /// @endcond
 };

@@ -19,14 +19,14 @@ class const_prototype_iterator;
 * are stored in the object_store and must not be altered.
 * therefor the iterator is declared as const.
 */
-class MATADOR_OBJECT_API prototype_iterator : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, prototype_node*, prototype_node&>
+class MATADOR_OBJECT_API prototype_iterator
 {
 public:
-  typedef std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, prototype_node*, prototype_node&> base_iterator; /**< Shortcut to the base iterator class. */
-  typedef prototype_iterator self;	            /**< Shortcut for this class. */
-  typedef base_iterator::value_type value_type; /**< Shortcut for the value type. */
-  typedef base_iterator::pointer pointer;       /**< Shortcut for the pointer type. */
-  typedef base_iterator::reference reference ;  /**< Shortcut for the reference type */
+  using iterator_category = std::bidirectional_iterator_tag;
+  using difference_type = std::ptrdiff_t;
+  using value_type = prototype_node;
+  using pointer = value_type*;
+  using reference = value_type&;
 
   /**
   * Creates an empty iterator
@@ -48,7 +48,7 @@ public:
   *
   * @param x The prototype_iterator to copy from.
   */
-  prototype_iterator(const prototype_iterator &x);
+  prototype_iterator(const prototype_iterator &x) = default;
 
   /**
   * Assign from a given prototype_iterator.
@@ -56,7 +56,7 @@ public:
   * @param x The prototype_iterator to assign from.
   * @return The assigned prototype_iterator.
   */
-  prototype_iterator& operator=(const prototype_iterator &x);
+  prototype_iterator& operator=(const prototype_iterator &x) = default;
 
   ~prototype_iterator() = default;
 
@@ -89,28 +89,28 @@ public:
   *
   * @return Returns iterators successor.
   */
-  self& operator++();
+  prototype_iterator& operator++();
 
   /**
   * Post increments the iterator
   *
   * @return Returns iterator before incrementing.
   */
-  self operator++(int);
+  prototype_iterator operator++(int);
 
   /**
   * Pre increments the iterator
   *
-  * @return Returns iterators predeccessor.
+  * @return Returns iterators predecessor.
   */
-  self& operator--();
+  prototype_iterator& operator--();
 
   /**
   * Post decrements the iterator
   *
   * @return Returns iterator before decrementing.
   */
-  self operator--(int);
+  prototype_iterator operator--(int);
 
   /**
   * Returns the pointer to the node.
@@ -122,7 +122,7 @@ public:
   /**
   * Returns the node.
   *
-  * @return The iterators underlaying node.
+  * @return The iterators underlying node.
   */
   reference operator*() const;
 
@@ -131,7 +131,7 @@ public:
   *
   * @return The pointer to the node.
   */
-  pointer get() const;
+  [[nodiscard]] pointer get() const;
 
 private:
   void increment();
@@ -140,23 +140,22 @@ private:
 private:
   friend class const_prototype_iterator;
 
-  pointer node_ = nullptr;
+  pointer node_{nullptr};
 };
 
 class MATADOR_OBJECT_API const_prototype_iterator
-  : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, const prototype_node *, const prototype_node &>
 {
 public:
-  typedef std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, const prototype_node*, const prototype_node&> base_iterator; /**< Shortcut to the base iterator class. */
-  typedef const_prototype_iterator self;	            /**< Shortcut for this class. */
-  typedef base_iterator::value_type value_type; /**< Shortcut for the value type. */
-  typedef base_iterator::pointer pointer;       /**< Shortcut for the pointer type. */
-  typedef base_iterator::reference reference ;  /**< Shortcut for the reference type */
+  using iterator_category = std::bidirectional_iterator_tag;
+  using difference_type = std::ptrdiff_t;
+  using value_type = prototype_node;
+  using pointer = const value_type*;
+  using reference = const value_type&;
 
   /**
   * Creates an empty iterator
   */
-  const_prototype_iterator();
+  const_prototype_iterator() = default;
 
   /**
   * @brief Creates a iterator for a concrete type.
@@ -173,7 +172,7 @@ public:
   *
   * @param x The prototype_iterator to copy from.
   */
-  const_prototype_iterator(const const_prototype_iterator &x);
+  const_prototype_iterator(const const_prototype_iterator &x) = default;
 
   /**
   * Copy from a given const_object_view_iterator.
@@ -196,7 +195,7 @@ public:
   * @param x The prototype_iterator to assign from.
   * @return The assigned prototype_iterator.
   */
-  const_prototype_iterator& operator=(const const_prototype_iterator &x);
+  const_prototype_iterator& operator=(const const_prototype_iterator &x) = default;
 
   ~const_prototype_iterator() = default;
 
@@ -227,28 +226,28 @@ public:
   *
   * @return Returns iterators successor.
   */
-  self& operator++();
+  const_prototype_iterator& operator++();
 
   /**
   * Post increments the iterator
   *
   * @return Returns iterator before incrementing.
   */
-  self operator++(int);
+  const_prototype_iterator operator++(int);
 
   /**
   * Pre increments the iterator
   *
-  * @return Returns iterators predeccessor.
+  * @return Returns iterators predecessor.
   */
-  self& operator--();
+  const_prototype_iterator& operator--();
 
   /**
   * Post decrements the iterator
   *
   * @return Returns iterator before decrementing.
   */
-  self operator--(int);
+  const_prototype_iterator operator--(int);
 
   /**
   * Returns the pointer to the node.
@@ -260,7 +259,7 @@ public:
   /**
   * Returns the node.
   *
-  * @return The iterators underlaying node.
+  * @return The iterators underlying node.
   */
   reference operator*() const;
 
@@ -269,14 +268,14 @@ public:
   *
   * @return The pointer to the node.
   */
-  pointer get() const;
+  [[nodiscard]] pointer get() const;
 
 private:
   void increment();
   void decrement();
 
 private:
-  pointer node_;
+  pointer node_{nullptr};
 };
 
 /// @endcond

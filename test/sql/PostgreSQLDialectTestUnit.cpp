@@ -5,7 +5,7 @@
 #include "connections.hpp"
 
 #include "matador/sql/connection.hpp"
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 #include "matador/sql/column.hpp"
 #include "matador/sql/dialect_token.hpp"
 
@@ -27,7 +27,7 @@ void PostgreSQLDialectTestUnit::test_placeholder()
 {
   matador::connection conn(::connection::postgresql);
 
-  sql s;
+  sql_context s;
 
   s.append(std::make_shared<detail::insert>("person"));
 
@@ -60,7 +60,7 @@ void PostgreSQLDialectTestUnit::test_placeholder_condition()
 {
   matador::connection conn(::connection::postgresql);
 
-  sql s;
+  sql_context s;
 
   s.append(std::make_shared<detail::select>());
 
@@ -85,7 +85,7 @@ void PostgreSQLDialectTestUnit::test_update_limit()
 {
   matador::connection conn(::connection::postgresql);
 
-  sql s;
+  sql_context s;
 
   s.append(std::make_shared<detail::update>());
   s.append(std::make_shared<detail::tablename>("relation"));
@@ -109,7 +109,7 @@ void PostgreSQLDialectTestUnit::test_update_limit()
 void PostgreSQLDialectTestUnit::test_update_limit_prepare(){
   matador::connection conn(::connection::postgresql);
 
-  sql s;
+  sql_context s;
 
   s.append(std::make_shared<detail::update>());
   s.append(std::make_shared<detail::tablename>("relation"));

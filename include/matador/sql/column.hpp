@@ -50,7 +50,7 @@ struct column : public detail::token
    */
   explicit column(std::string col, const field_attributes &attr = null_attributes);
 
-  column(std::string name, const matador::any& val, const field_attributes &attr);
+  column(std::string name, const sql::column_type &val, const field_attributes &attr);
 
   /**
    * @brief Creates a new column with given name
@@ -62,7 +62,7 @@ struct column : public detail::token
   column(std::string name, t_build_options options, const field_attributes &attr = null_attributes);
 
   template < typename Type >
-  column(std::string name, const Type &val, const field_attributes &attr, typename std::enable_if<!std::is_same<Type, matador::any>::value>::type* = 0)
+  column(std::string name, const Type &val, const field_attributes &attr, typename std::enable_if<!std::is_same<Type, sql::column_type>::value>::type* = 0)
   : token(COLUMN)
   , name(std::move(name))
   , val(val)
@@ -93,7 +93,7 @@ struct column : public detail::token
  */
 column operator "" _col(const char *name, size_t len);
 
-std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = null_attributes, const matador::any& val = {});
+std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = null_attributes, const sql::column_type& val = {});
 
 std::shared_ptr<column> make_column(const std::string &name, data_type type, size_t index, const field_attributes &attr = null_attributes);
 
@@ -115,7 +115,7 @@ std::shared_ptr<column> make_column(const std::string &name, const Type &val, co
 //  return col;
 //}
 
-std::shared_ptr<column> make_column(const std::string &name, data_type type, const matador::any& val, t_build_options options, size_t index, const field_attributes &attr = null_attributes);
+std::shared_ptr<column> make_column(const std::string &name, data_type type, const sql::column_type& val, t_build_options options, size_t index, const field_attributes &attr = null_attributes);
 
 template < typename Type >
 std::shared_ptr<column> make_pk_column(const std::string &name, size_t max_size = 0) {

@@ -11,7 +11,7 @@
 
 namespace matador {
 
-class sql;
+class sql_context;
 
 namespace detail {
   class statement_impl;

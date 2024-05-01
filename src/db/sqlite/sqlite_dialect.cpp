@@ -5,13 +5,10 @@
 
 #include <algorithm>
 
-namespace matador {
-
-namespace sqlite {
-
+namespace matador::sqlite {
 
 sqlite_dialect::sqlite_dialect()
-  : basic_dialect(new sqlite_dialect_compiler, new detail::basic_dialect_linker)
+  : basic_dialect(new sqlite_dialect_compiler(this), new detail::basic_dialect_linker(this))
 {
   replace_token(detail::token::BEGIN, "BEGIN TRANSACTION");
   replace_token(detail::token::COMMIT, "COMMIT TRANSACTION");
@@ -108,4 +105,3 @@ dialect_traits::identifier sqlite_dialect::identifier_escape_type() const
 
 }
 
-}

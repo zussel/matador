@@ -21,7 +21,7 @@ namespace matador {
 namespace mysql {
 
 mysql_dialect::mysql_dialect()
-  : basic_dialect(new detail::basic_dialect_compiler, new detail::basic_dialect_linker)
+  : basic_dialect(new detail::basic_dialect_compiler(this), new detail::basic_dialect_linker(this))
 {
   replace_token(detail::token::BEGIN, "START TRANSACTION");
   replace_token(detail::token::COMMIT, "COMMIT");

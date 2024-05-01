@@ -3,7 +3,7 @@
 #include "matador/db/postgresql/postgresql_prepared_result.hpp"
 #include "matador/db/postgresql/postgresql_connection.hpp"
 
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 
 namespace matador {
 

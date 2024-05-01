@@ -2,7 +2,7 @@
 
 #include "TestDialect.hpp"
 
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 #include "matador/sql/dialect_token.hpp"
 #include "matador/sql/columns.hpp"
 #include "matador/sql/condition.hpp"
@@ -44,7 +44,7 @@ void DialectTestUnit::test_escaping_quotes()
 
 void DialectTestUnit::test_create_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::CREATE);
   s.append(std::make_shared<detail::create>("person"));
@@ -66,7 +66,7 @@ void DialectTestUnit::test_create_query()
 
 void DialectTestUnit::test_drop_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::DROP);
   s.append(std::make_shared<detail::drop>("person"));
@@ -80,7 +80,7 @@ void DialectTestUnit::test_drop_query()
 
 void DialectTestUnit::test_insert_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::INSERT);
   s.table_name("person");
@@ -116,7 +116,7 @@ void DialectTestUnit::test_insert_query()
 
 void DialectTestUnit::test_insert_prepare_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::INSERT);
   s.append(std::make_shared<detail::insert>("person"));
@@ -149,7 +149,7 @@ void DialectTestUnit::test_insert_prepare_query()
 
 void DialectTestUnit::test_select_all_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::SELECT);
   s.append(std::make_shared<detail::select>());
@@ -173,7 +173,7 @@ void DialectTestUnit::test_select_all_query()
 
 void DialectTestUnit::test_select_distinct_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::SELECT);
   s.append(std::make_shared<detail::select>());
@@ -198,7 +198,7 @@ void DialectTestUnit::test_select_distinct_query()
 
 void DialectTestUnit::test_select_limit_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::SELECT);
   s.append(std::make_shared<detail::select>());
@@ -223,7 +223,7 @@ void DialectTestUnit::test_select_limit_query()
 
 void DialectTestUnit::test_select_ordered_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::SELECT);
   s.append(std::make_shared<detail::select>());
@@ -249,7 +249,7 @@ void DialectTestUnit::test_select_ordered_query()
 
 void DialectTestUnit::test_select_grouped_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::SELECT);
   s.append(std::make_shared<detail::select>());
@@ -274,7 +274,7 @@ void DialectTestUnit::test_select_grouped_query()
 
 void DialectTestUnit::test_select_where_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::SELECT);
   s.append(std::make_shared<detail::select>());
@@ -322,7 +322,7 @@ void DialectTestUnit::test_select_where_query()
 
 void DialectTestUnit::test_update_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::UPDATE);
   s.append(std::make_shared<detail::update>());
@@ -347,7 +347,7 @@ void DialectTestUnit::test_update_query()
 
 void DialectTestUnit::test_update_where_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::UPDATE);
   s.append(std::make_shared<detail::update>());
@@ -376,7 +376,7 @@ void DialectTestUnit::test_update_where_query()
 
 void DialectTestUnit::test_update_prepare_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::UPDATE);
   s.append(std::make_shared<detail::update>());
@@ -400,7 +400,7 @@ void DialectTestUnit::test_update_prepare_query()
 
 void DialectTestUnit::test_update_where_prepare_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::UPDATE);
   s.append(std::make_shared<detail::update>());
@@ -429,7 +429,7 @@ void DialectTestUnit::test_update_where_prepare_query()
 
 void DialectTestUnit::test_delete_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::REMOVE);
   s.append(std::make_shared<detail::remove>());
@@ -444,7 +444,7 @@ void DialectTestUnit::test_delete_query()
 
 void DialectTestUnit::test_delete_where_query()
 {
-  sql s;
+  sql_context s;
 
   s.reset(t_query_command::REMOVE);
   s.append(std::make_shared<detail::remove>());

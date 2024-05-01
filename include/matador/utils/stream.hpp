@@ -215,13 +215,13 @@ public:
   stream<T>& concat(const stream<T> &other);
 
   /**
-   * Pack every n elemets of the stream into a container (vector)
-   * and create a ne wstream of it.
+   * Pack every n element of the stream into a container (vector)
+   * and create a new stream of it.
    *
-   * @param packsize Number of elements to pack
+   * @param pack_size Number of elements to pack
    * @return Stream of packed elements
    */
-  stream<std::vector<T>> pack_every(std::size_t packsize);
+  stream<std::vector<T>> pack_every(std::size_t pack_size);
 
   /*
    * Termination methods
@@ -332,11 +332,11 @@ public:
    * be empty and thus the result.
    *
    * @tparam Accumulator Type of the accumulator
-   * @param accu The accumulator function to be applied
+   * @param accumulator The accumulator function to be applied
    * @return An optional possibly containing the accumulated value.
    */
   template < typename Accumulator >
-  optional<T> reduce(Accumulator &&accu);
+  optional<T> reduce(Accumulator &&accumulator);
 
   /**
    * All elements of the stream are reduced to one element
@@ -349,11 +349,11 @@ public:
    * @tparam U Type of the return and identity value
    * @tparam Accumulator Type of the accumulator function
    * @param identity Initial value
-   * @param accu The accumulator function to be applied
+   * @param accumulator The accumulator function to be applied
    * @return The reduced value, at least the given identity value
    */
   template < typename U, typename Accumulator >
-  U reduce(const U &identity, Accumulator &&accu);
+  U reduce(const U &identity, Accumulator &&accumulator);
 
   /**
    * All elements of the stream are reduced to one element
@@ -368,11 +368,11 @@ public:
    * @tparam Accumulator Type of the accumulator function
    * @tparam R Type of the returned value
    * @param identity_fun Function to create the initial value
-   * @param accu The accumulator function to be applied
+   * @param accumulator The accumulator function to be applied
    * @return An optional possibly containing the accumulated value.
    */
   template < typename U, typename Accumulator, typename R = typename std::result_of<U&(T)>::type >
-  optional<R> reduce_idfunc(const U &identity_fun, Accumulator &&accu);
+  optional<R> reduce_id_func(const U &identity_fun, Accumulator &&accumulator);
 
   /**
    * Prints all elements of the stream to the given std::ostream. The elements are
@@ -644,9 +644,9 @@ stream <T> &stream<T>::concat(const stream <T> &other)
 }
 
 template<class T>
-stream<std::vector<T>> stream<T>::pack_every(std::size_t packsize)
+stream<std::vector<T>> stream<T>::pack_every(std::size_t pack_size)
 {
-  return stream<std::vector<T>>(make_pack_every(processor_, packsize));
+  return stream<std::vector<T>>(make_pack_every(processor_, pack_size));
 }
 
 /// @cond MATADOR_DEV
@@ -851,7 +851,7 @@ std::size_t stream<T>::count(Predicate &&pred)
 
 template<class T>
 template<typename Accumulator>
-optional<T> stream<T>::reduce(Accumulator &&accu)
+optional<T> stream<T>::reduce(Accumulator &&accumulator)
 {
   auto first = begin();
   auto last = end();
@@ -862,20 +862,20 @@ optional<T> stream<T>::reduce(Accumulator &&accu)
   auto result = *first;
   ++first;
   while (first != last) {
-    result = accu(result, *first++);
+    result = accumulator(result, *first++);
   }
   return result;
 }
 
 template<class T>
 template<typename U, typename Accumulator>
-U stream<T>::reduce(const U &identity, Accumulator &&accu)
+U stream<T>::reduce(const U &identity, Accumulator &&accumulator)
 {
   auto first = begin();
   auto last = end();
   auto result = identity;
   while (first != last) {
-    result = accu(result, *first);
+    result = accumulator(result, *first);
     ++first;
   }
   return result;
@@ -883,7 +883,7 @@ U stream<T>::reduce(const U &identity, Accumulator &&accu)
 
 template<class T>
 template<typename U, typename Accumulator, typename R>
-optional<R> stream<T>::reduce_idfunc(const U &identity_fun, Accumulator &&accu)
+optional<R> stream<T>::reduce_id_func(const U &identity_fun, Accumulator &&accumulator)
 {
   auto first = begin();
   auto last = end();
@@ -893,7 +893,7 @@ optional<R> stream<T>::reduce_idfunc(const U &identity_fun, Accumulator &&accu)
 
   auto result = identity_fun(*first);
   while (++first != last) {
-    result = accu(result, *first);
+    result = accumulator(result, *first);
   }
   return result;
 }
@@ -907,7 +907,7 @@ void stream<T>::print_to(std::ostream &out, const char *delim)
 }
 
 template < class T, template < class ... > class C, class Allocator >
-stream<T> make_stream(C<T, Allocator> &&container)
+stream<T> move_to_stream(C<T, Allocator> &&container)
 {
   return stream<T>(detail::make_from<T>(std::forward<C<T, Allocator>>(container)));
 }
@@ -924,8 +924,7 @@ stream<T> make_stream(C<T, Allocator> &&container)
 template < class T, template < class ... > class C, class Allocator >
 stream<T> make_stream(const C<T, Allocator> &container)
 {
-  return stream<T>(detail::make_from<T>(container.begin(), container.end()));
-//  return stream<T>(detail::make_from<T>(std::begin(container), std::end(container)));
+  return stream<T>(detail::make_from<T>(std::begin(container), std::end(container)));
 }
 
 template < typename T >
@@ -942,11 +941,11 @@ stream<T> make_stream(T &&from, T &&to)
  * @param container The container
  * @return Stream ready to iterate over the elements of the container
  */
-template < class T, template < class U = T > class C >
-stream<T> make_stream(C<T> &&container)
-{
-  return stream<T>(detail::make_from<T>(std::forward<C<T>>(container)));
-}
+//template < class T, template < class U = T > class C >
+//stream<T> move_to_stream(C<T> &&container)
+//{
+//  return stream<T>(detail::make_from<T>(std::forward<C<T>>(container)));
+//}
 
 template < typename T >
 stream<T> make_stream(std::initializer_list<T> elems)

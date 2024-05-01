@@ -1,15 +1,11 @@
 #ifndef OOS_HAS_MANY_VECTOR_HPP
 #define OOS_HAS_MANY_VECTOR_HPP
 
-//#include "matador/object/generic_access.hpp"
 #include "matador/object/abstract_container.hpp"
-//#include "matador/object/has_many_to_many_item.hpp"
 #include "matador/object/container_item_holder.hpp"
 #include "matador/object/container_iterator.hpp"
 #include "matador/object/container_iterator_traits.hpp"
 #include "matador/object/relation_endpoint.hpp"
-
-//#include "matador/utils/is_builtin.hpp"
 
 #include <vector>
 #include <algorithm>

@@ -27,13 +27,14 @@ template < class T > class const_object_view_iterator;
  * class.
  */
 template < class T >
-class object_view_iterator : public std::iterator<std::bidirectional_iterator_tag, T>
+class object_view_iterator
 {
 public:
-  typedef object_view_iterator<T> self;	/**< Shortcut for this class. */
-  typedef object_ptr<T> value_type;     /**< Shortcut for the value type. */
-  typedef T* pointer;                   /**< Shortcut for the pointer type. */
-  typedef value_type& reference ;       /**< Shortcut for the reference type */
+  using iterator_category = std::bidirectional_iterator_tag;
+  using difference_type = std::ptrdiff_t;
+  using value_type = object_ptr<T>;
+  using pointer = value_type*;
+  using reference = value_type&;
 
   /**
    * Creates an empty iterator
@@ -114,7 +115,7 @@ public:
    * 
    * @return Returns iterators successor.
    */
-  self& operator++() {
+  object_view_iterator& operator++() {
     increment();
     return *this;
   }
@@ -124,7 +125,7 @@ public:
    * 
    * @return Returns iterator before incrementing.
    */
-  self operator++(int) {
+  object_view_iterator operator++(int) {
     object_proxy *tmp = current_;
     increment();
     return object_view_iterator(node_, tmp, last_);
@@ -135,7 +136,7 @@ public:
    * 
    * @return Returns iterators predecessor.
    */
-  self& operator--() {
+  object_view_iterator& operator--() {
     decrement();
     return *this;
   }
@@ -145,7 +146,7 @@ public:
    * 
    * @return Returns iterator before decrementing.
    */
-  self operator--(int) {
+  object_view_iterator operator--(int) {
     object_proxy *tmp = current_;
     decrement();
     return object_view_iterator(node_, tmp, last_);
@@ -200,8 +201,8 @@ private:
   friend class const_object_view_iterator<T>;
 
   prototype_iterator node_;
-  object_proxy *current_{};
-  object_proxy *last_{};
+  object_proxy *current_{nullptr};
+  object_proxy *last_{nullptr};
 };
 
 /**
@@ -213,13 +214,14 @@ private:
  * class.
  */
 template < class T >
-class const_object_view_iterator : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
+class const_object_view_iterator
 {
 public:
-  typedef const_object_view_iterator<T> self;	/**< Shortcut for this class. */
-  typedef object_ptr<T> value_type;           /**< Shortcut for the value type. */
-  typedef T* pointer;                         /**< Shortcut for the pointer type. */
-  typedef value_type& reference ;             /**< Shortcut for the reference type */
+  using iterator_category = std::bidirectional_iterator_tag;
+  using difference_type = std::ptrdiff_t;
+  using value_type = object_ptr<T>;
+  using pointer = const value_type*;
+  using reference = const value_type&;
 
   /**
    * Creates an empty iterator
@@ -325,7 +327,7 @@ public:
    * 
    * @return Returns iterators successor.
    */
-  self& operator++() {
+  const_object_view_iterator& operator++() {
     increment();
     return *this;
   }
@@ -335,7 +337,7 @@ public:
    * 
    * @return Returns iterator before incrementing.
    */
-  self operator++(int) {
+  const_object_view_iterator operator++(int) {
     object_proxy *tmp = current_;
     increment();
     return const_object_view_iterator(node_, tmp, last_);
@@ -346,7 +348,7 @@ public:
    * 
    * @return Returns iterators predecessor.
    */
-  self& operator--() {
+  const_object_view_iterator& operator--() {
     decrement();
     return *this;
   }
@@ -356,7 +358,7 @@ public:
    * 
    * @return Returns iterator before decrementing.
    */
-  self operator--(int) {
+  const_object_view_iterator operator--(int) {
     object_proxy *tmp = current_;
     decrement();
     return const_object_view_iterator(node_, tmp, last_);
@@ -408,8 +410,8 @@ private:
 
 private:
   const_prototype_iterator node_;
-  object_proxy *current_;
-  object_proxy *last_;
+  object_proxy *current_{nullptr};
+  object_proxy *last_{nullptr};
 };
 /// @endcond
 

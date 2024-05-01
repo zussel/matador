@@ -1,15 +1,14 @@
-//
-// Created by sascha on 6/9/16.
-//
-
-#include <iostream>
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 #include "matador/sql/basic_dialect_compiler.hpp"
 #include "matador/sql/basic_dialect.hpp"
 
-namespace matador {
 
-namespace detail {
+
+namespace matador::detail {
+
+basic_dialect_compiler::basic_dialect_compiler(basic_dialect *dialect)
+: dialect_(dialect) {
+}
 
 void basic_dialect_compiler::compile(basic_dialect &dialect)
 {
@@ -97,11 +96,6 @@ build_info &basic_dialect_compiler::top() const
   return dialect_->top();
 }
 
-void basic_dialect_compiler::dialect(basic_dialect *d)
-{
-  dialect_ = d;
 }
 
-}
 
-}

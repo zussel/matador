@@ -1,19 +1,16 @@
-//
-// Created by sascha on 21.06.19.
-//
-
 #ifndef MATADOR_POSTGRESQL_DIALECT_COMPILER_HPP
 #define MATADOR_POSTGRESQL_DIALECT_COMPILER_HPP
 
 #include "matador/sql/basic_dialect_compiler.hpp"
 #include "matador/sql/dialect_token.hpp"
 
-namespace matador {
-namespace postgresql {
+namespace matador::postgresql {
 
 class postgresql_dialect_compiler : public detail::basic_dialect_compiler
 {
 public:
+  using detail::basic_dialect_compiler::basic_dialect_compiler;
+
   void visit(const matador::detail::select &select1) override;
   void visit(const matador::detail::update &update1) override;
   void visit(const matador::detail::remove &remove1) override;
@@ -35,5 +32,5 @@ private:
 };
 
 }
-}
+
 #endif //MATADOR_POSTGRESQL_DIALECT_COMPILER_HPP

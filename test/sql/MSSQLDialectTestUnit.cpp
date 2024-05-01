@@ -4,7 +4,7 @@
 
 #include "../person.hpp"
 
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 #include "matador/sql/query.hpp"
 #include "matador/sql/dialect_token.hpp"
 #include "matador/sql/connection.hpp"
@@ -23,7 +23,7 @@ void MSSQLDialectTestUnit::test_limit()
 {
   matador::connection conn(::connection::mssql);
 
-  sql s;
+  sql_context s;
 
   s.append(std::make_shared<detail::select>());
 

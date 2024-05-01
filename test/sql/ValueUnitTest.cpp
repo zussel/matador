@@ -1,5 +1,7 @@
 #include "ValueUnitTest.hpp"
 
+#include "TestDialect.hpp"
+
 #include "matador/sql/value.hpp"
 #include "matador/sql/value_serializer.hpp"
 
@@ -19,7 +21,8 @@ void ValueUnitTest::test_values()
 
   matador::value v(28UL);
 
-  matador::detail::value_to_string_processor value_to_string;
+  TestDialect dialect;
+  matador::detail::value_to_string_processor value_to_string(dialect);
   UNIT_ASSERT_EQUAL("28", value_to_string.to_string(v));
 }
 
@@ -31,7 +34,8 @@ void ValueUnitTest::test_serialize()
 
   std::unique_ptr<matador::detail::values> vlist(vs.execute(dt));
 
-  matador::detail::value_to_string_processor value_to_string;
+  TestDialect dialect;
+  matador::detail::value_to_string_processor value_to_string(dialect);
 
   UNIT_ASSERT_NOT_NULL(vlist.get());
 

@@ -51,7 +51,7 @@ public:
    */
   bool is_open() const override;
 
-  matador::detail::result_impl* execute(const matador::sql &stmt) override;
+  matador::detail::result_impl* execute(const matador::sql_context &stmt) override;
   matador::detail::result_impl* execute(const std::string &stmt) override;
   matador::detail::statement_impl* prepare(detail::statement_context &&context) const override;
 

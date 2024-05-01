@@ -153,7 +153,7 @@ void sqlite_prepared_result::read_value(const char */*id*/, size_type index, cha
   }
 }
 
-void sqlite_prepared_result::read_value(const char *id, size_type index, matador::date &x)
+void sqlite_prepared_result::read_value(const char * /*id*/, size_type index, matador::date &x)
 {
   auto is_null = sqlite3_column_type(stmt_, index) == SQLITE_NULL;
   auto s = (size_t)sqlite3_column_bytes(stmt_, index);
@@ -163,7 +163,7 @@ void sqlite_prepared_result::read_value(const char *id, size_type index, matador
   }
 }
 
-void sqlite_prepared_result::read_value(const char *id, size_type index, matador::time &x)
+void sqlite_prepared_result::read_value(const char * /*id*/, size_type index, matador::time &x)
 {
   auto is_null = sqlite3_column_type(stmt_, index) == SQLITE_NULL;
   auto s = (size_t)sqlite3_column_bytes(stmt_, index);

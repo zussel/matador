@@ -1,7 +1,7 @@
 #ifndef OOS_TYPED_COLUMN_SERIALIZER_HPP
 #define OOS_TYPED_COLUMN_SERIALIZER_HPP
 
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 #include "matador/sql/column.hpp"
 
 #include "matador/utils/access.hpp"

@@ -19,7 +19,7 @@ void SQLiteDialectTestUnit::test_update_with_limit()
 {
   matador::connection conn(::connection::sqlite);
 
-  sql s;
+  sql_context s;
 
   s.append(std::make_shared<detail::update>());
   s.append(std::make_shared<detail::tablename>("person"));
@@ -48,7 +48,7 @@ void SQLiteDialectTestUnit::test_delete_with_limit()
 {
   matador::connection conn(::connection::sqlite);
 
-  sql s;
+  sql_context s;
 
   s.append(std::make_shared<detail::remove>());
   s.append(std::make_shared<detail::from>("person"));

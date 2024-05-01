@@ -309,6 +309,7 @@ public:
   template < class T, template < class U = T > class O >
   prototype_iterator attach_internal(prototype_node *node, const char *parent, std::vector<O<T>*> observer);
 
+  void register_observer();
 
   /**
    * Removes an object prototype from the prototype tree. All children

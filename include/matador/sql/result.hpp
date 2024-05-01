@@ -16,14 +16,15 @@ class result;
 
 /// @cond MATADOR_DEV
 template < class T >
-class base_result_iterator : public std::iterator<std::forward_iterator_tag, T>
+class base_result_iterator
 {
 public:
-  typedef base_result_iterator<T> self;      /**< Shortcut for this class. */
-  typedef T value_type;                      /**< Shortcut for the value type. */
-  typedef std::unique_ptr<T> value_type_ptr; /**< Shortcut for the value type pointer. */
-  typedef value_type* pointer;               /**< Shortcut for the pointer type. */
-  typedef value_type& reference;             /**< Shortcut for the reference type */
+  using iterator_category = std::forward_iterator_tag;
+  using difference_type = std::ptrdiff_t;
+  using value_type = T;
+  using value_type_ptr = std::unique_ptr<T>;
+  using pointer = value_type*;
+  using reference = value_type&;
 
   base_result_iterator() = default;
   explicit base_result_iterator(matador::result<T> *res, T *obj = nullptr)
@@ -94,17 +95,7 @@ public:
   typedef value_type* pointer;     /**< Shortcut for the pointer type. */
   typedef value_type& reference;   /**< Shortcut for the reference type */
 
-/*#ifdef _MSC_VER
-  result_iterator() {}
-  result_iterator(matador::detail::result_impl *result_impl, T *obj = nullptr)
-    : base(result_impl, obj)
-  {}
-  result_iterator(result_iterator&& x)
-    : base(x.result_impl_, x.obj_.release())
-  {}
-#else*/
   using base_result_iterator<T>::base_result_iterator;
-//#endif
 
   self & operator++();
   self operator++(int);

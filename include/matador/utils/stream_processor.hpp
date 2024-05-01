@@ -30,10 +30,9 @@ template<class Out>
 class stream_element_processor
 {
 public:
-
-  typedef stream_element_processor_iterator<Out> iterator;
-  typedef Out value_type;
-  typedef std::shared_ptr<value_type> value_type_ptr;
+  using iterator = stream_element_processor_iterator<Out>;
+  using value_type = typename iterator::value_type;
+  using value_type_ptr = typename iterator::value_type_ptr;
 
   virtual ~stream_element_processor() = default;
 
@@ -62,36 +61,36 @@ protected:
   virtual bool process_impl() = 0;
 };
 
-//template<class T>
-//using processor_ptr = std::shared_ptr<stream_element_processor<T>>;
-
 template<class T>
-class stream_element_processor_iterator : public std::iterator<std::forward_iterator_tag, T>
+class stream_element_processor_iterator
 {
 public:
-  typedef stream_element_processor_iterator<T> self;      /**< Shortcut for this class. */
-  typedef T value_type;                                   /**< Shortcut for the value type. */
-  typedef std::shared_ptr<T> value_type_ptr;              /**< Shortcut for shared pointer to value type. */
+  using iterator_category = std::forward_iterator_tag;
+  using difference_type = std::ptrdiff_t;
+  using value_type = T;                       /**< Shortcut for the value type. */
+  using value_type_ptr = std::shared_ptr<T>;  /**< Shortcut for shared pointer to value type. */
+  using pointer = value_type*;
+  using reference = value_type&;
 
   stream_element_processor_iterator(stream_element_processor<T> *processor, value_type_ptr value,
                                     stream_process_state state)
     : processor_(std::move(processor)), value_(value), state_(state)
   {}
 
-  bool operator==(const self &i) const
+  bool operator==(const stream_element_processor_iterator &i) const
   {
     return (i.state_ == state_ && value_ == i.value_) ||
            (state_ == stream_process_state::FINISHED &&
             i.state_ ==  stream_process_state::FINISHED);
   }
 
-  bool operator!=(const self &i) const
+  bool operator!=(const stream_element_processor_iterator &i) const
   {
     return !this->operator==(i);
   }
 
   // pre inc
-  self &operator++()
+  stream_element_processor_iterator &operator++()
   {
     if (processor_->process()) {
       state_ = stream_process_state::VALID;
@@ -103,9 +102,9 @@ public:
   }
 
   // post inc
-  self operator++(int)
+  stream_element_processor_iterator operator++(int)
   {
-    self temp = self(processor_, value_, state_);
+    auto temp = stream_element_processor_iterator(processor_, value_, state_);
     if (processor_->process()) {
       state_ = stream_process_state::VALID;
       value_ = processor_->value();
@@ -138,16 +137,13 @@ private:
   using iterator_type = decltype(std::begin(std::declval<Container>()));
 
 public:
-  typedef stream_element_processor<Out> base;
-  typedef typename base::value_type_ptr value_type_ptr;
-
   explicit container_element_processor(Container &&container)
     : container_{container}
     , value_{std::begin(container_)}
     , end_{std::end(container_)}
   {}
 
-  value_type_ptr value() override
+  typename stream_element_processor<Out>::value_type_ptr value() override
   {
     return std::make_shared<Out>(std::move(*value_));
   }
@@ -280,9 +276,9 @@ protected:
   {
     if (first_) {
       first_ = false;
-      return true;
+    } else {
+      current_ += incr_;
     }
-    current_ += incr_;
     return true;
   }
 
@@ -770,9 +766,9 @@ std::shared_ptr<stream_element_processor<R>> make_concat(std::shared_ptr<stream_
 }
 
 template<class In, class Out = std::vector<In>>
-std::shared_ptr<stream_element_processor<Out>> make_pack_every(std::shared_ptr<stream_element_processor<In>> successor, std::size_t packsize)
+std::shared_ptr<stream_element_processor<Out>> make_pack_every(std::shared_ptr<stream_element_processor<In>> successor, std::size_t pack_size)
 {
-  return std::make_shared<pack_every_element_processor<In, Out>>(successor, packsize);
+  return std::make_shared<pack_every_element_processor<In, Out>>(successor, pack_size);
 }
 
 }
