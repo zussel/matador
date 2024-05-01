@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler-version: [9]
+        compiler-version: [12]
     services:
       mssql:
         image: mcr.microsoft.com/mssql/server:2017-latest
@@ -74,5 +74,9 @@ jobs:
       - name: Test
         working-directory: ${{github.workspace}}/build
         run: ctest --verbose -C ${{env.BUILD_TYPE}}
-      - name: Code coverage using Codecov
-        run: bash <(curl -s https://codecov.io/bash)
+      - uses: codecov/codecov-action@v4
+        with:
+          directory: ${{github.workspace}}/build
+          verbose: true # optional (default = false)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
