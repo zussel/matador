@@ -20,14 +20,11 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Debug
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        compiler-version: [12]
     services:
       mssql:
         image: mcr.microsoft.com/mssql/server:2017-latest
@@ -76,8 +73,4 @@ jobs:
         working-directory: ${{github.workspace}}/build
         run: ctest --verbose -C ${{env.BUILD_TYPE}}
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          directory: ${{github.workspace}}/build
-          verbose: true # optional (default = false)
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
