@@ -3,6 +3,3 @@ ignore:
 
 comment:
   require_changes: true
-
-codecov:
-  token: qLYXoCmdGOfkaNgRrHIfe35tUwSDyqnAI7YlQHvvbYAt3vAwtGxRYItW4MfKC5PhFSVg1VAMWiRe15pR1GZs03VFvI+XfXiHZJO19a9qUcA=
