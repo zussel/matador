@@ -49,9 +49,6 @@ jobs:
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake
-        env:
-          CC: gcc-${{ matrix.compiler-version }}
-          CXX: g++-${{ matrix.compiler-version }}
         run: >
           cmake -B ${{github.workspace}}/build
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
