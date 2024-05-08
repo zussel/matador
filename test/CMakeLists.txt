@@ -38,7 +38,9 @@ SET (TEST_TOOLS_SOURCES
   utils/DependencyInjectionTest.cpp
   utils/DependencyInjectionTest.hpp
   utils/VersionTest.cpp
-  utils/VersionTest.hpp)
+  utils/VersionTest.hpp
+  utils/ConvertTest.cpp
+  utils/ConvertTest.hpp)
 
 SET (TEST_JSON_SOURCES
   json/JsonTestUnit.cpp

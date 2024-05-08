@@ -73,13 +73,13 @@ unsigned long long to_unsigned_long_long(const char *source);
 template < typename DestType >
 void convert(DestType &dest, const std::string &source, typename std::enable_if<std::is_integral<DestType>::value && std::is_unsigned<DestType>::value>::type* = nullptr)
 {
-  dest = to_unsigned_long_long(source.c_str());
+  dest = static_cast<DestType>(to_unsigned_long_long(source.c_str()));
 }
 
 template < typename DestType >
 void convert(DestType &dest, const char *source, typename std::enable_if<std::is_integral<DestType>::value && std::is_unsigned<DestType>::value>::type* = nullptr)
 {
-  dest = to_unsigned_long_long(source);
+  dest = static_cast<DestType>(to_unsigned_long_long(source));
 }
 
 long long to_long_long(const char *source);
@@ -87,13 +87,13 @@ long long to_long_long(const char *source);
 template < typename DestType >
 void convert(DestType &dest, const std::string &source, typename std::enable_if<std::is_integral<DestType>::value && std::is_signed<DestType>::value>::type* = nullptr)
 {
-  dest = to_long_long(source.c_str());
+  dest = static_cast<DestType>(to_long_long(source.c_str()));
 }
 
 template < typename DestType >
 void convert(DestType &dest, const char *source, typename std::enable_if<std::is_integral<DestType>::value && std::is_signed<DestType>::value>::type* = nullptr)
 {
-  dest = to_long_long(source);
+  dest = static_cast<DestType>(to_long_long(source));
 }
 
 long double to_double(const char *source);
@@ -101,13 +101,13 @@ long double to_double(const char *source);
 template < typename DestType >
 void convert(DestType &dest, const std::string &source, typename std::enable_if<std::is_floating_point<DestType>::value>::type* = nullptr)
 {
-  dest = to_double(source.c_str());
+  dest = static_cast<DestType>(to_double(source.c_str()));
 }
 
 template < typename DestType >
 void convert(DestType &dest, const char *source, typename std::enable_if<std::is_floating_point<DestType>::value>::type* = nullptr)
 {
-  dest = to_double(source);
+  dest = static_cast<DestType>(to_double(source));
 }
 
 template < typename DestType >

@@ -8,6 +8,7 @@
 
 #include "matador/utils/os.hpp"
 
+#include "utils/ConvertTest.hpp"
 #include "utils/TimeTestUnit.hpp"
 #include "utils/Base64Test.hpp"
 #include "utils/BufferViewTest.hpp"
