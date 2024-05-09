@@ -3,6 +3,7 @@
 
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
+#include "matador/utils/types.hpp"
 
 #include <string>
 
@@ -190,7 +191,7 @@ template <> struct data_type_traits<char*>
 template <> struct data_type_traits<std::string>
 {
   inline static database_type type(size_t size) { return size == 0 ? database_type::type_text : database_type::type_varchar; }
-  inline static data_type builtin_type(size_t size) { return size == 0 ? data_type::type_text : data_type::type_char_pointer; }
+  inline static data_type builtin_type(size_t size) { return size == 0 ? data_type::type_text : data_type::type_varchar; }
   inline static unsigned long size() { return 1023; }
   inline static const char* name() { return "std::string"; }
 };
@@ -209,6 +210,22 @@ template <> struct data_type_traits<matador::time>
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_time; }
   inline static unsigned long size() { return 255; }
   inline static const char* name() { return "matador::time"; }
+};
+
+template <> struct data_type_traits<utils::blob>
+{
+  inline static database_type type(size_t /*size*/) { return database_type::type_blob; }
+  inline static data_type builtin_type(size_t /*size*/) { return data_type::type_blob; }
+  inline static unsigned long size() { return 1023; }
+  inline static const char* name() { return "matador::blob"; }
+};
+
+template <> struct data_type_traits<nullptr_t>
+{
+  inline static database_type type(size_t /*size*/) { return database_type::type_null; }
+  inline static data_type builtin_type(size_t /*size*/) { return data_type::type_null; }
+  inline static unsigned long size() { return 0; }
+  inline static const char* name() { return "matador::null"; }
 };
 
 /// @endcond
