@@ -40,7 +40,9 @@ SET (TEST_TOOLS_SOURCES
   utils/VersionTest.cpp
   utils/VersionTest.hpp
   utils/ConvertTest.cpp
-  utils/ConvertTest.hpp)
+  utils/ConvertTest.hpp
+        utils/ConvertTest.cpp
+        utils/ConvertTest.hpp)
 
 SET (TEST_JSON_SOURCES
   json/JsonTestUnit.cpp
