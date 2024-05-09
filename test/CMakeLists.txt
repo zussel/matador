@@ -41,8 +41,8 @@ SET (TEST_TOOLS_SOURCES
   utils/VersionTest.hpp
   utils/ConvertTest.cpp
   utils/ConvertTest.hpp
-        utils/ConvertTest.cpp
-        utils/ConvertTest.hpp)
+  utils/ConvertTest.cpp
+  utils/ConvertTest.hpp)
 
 SET (TEST_JSON_SOURCES
   json/JsonTestUnit.cpp
@@ -252,3 +252,5 @@ SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
 ADD_TEST(NAME test_matador_all COMMAND test_matador exec all WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+add_subdirectory(catch2)
