@@ -8,7 +8,8 @@
 ConvertTest::ConvertTest()
 : unit_test("convert", "convert test")
 {
-  add_test("convert", [this] { test_convert_integral(); }, "convert test");
+  add_test("convert_integral", [this] { test_convert_integral(); }, "convert integral test");
+  add_test("convert_floating_point", [this] { test_convert_floating_point(); }, "convert floating point test");
 }
 
 using namespace matador::utils;
@@ -59,5 +60,12 @@ void ConvertTest::test_convert_integral()
   validate_conversion<int, char>(514, 2);
   validate_conversion<long, char>(515, 3);
   validate_conversion<long long, char>(516, 4);
+}
 
+void ConvertTest::test_convert_floating_point()
+{
+  validate_conversion<float, float>(-0.1);
+  validate_conversion<float, double>(-0.1);
+  validate_conversion<double, double>(-0.44444);
+  validate_conversion<double, float>(-0.44444);
 }

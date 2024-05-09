@@ -9,6 +9,7 @@ public:
   ConvertTest();
 
   void test_convert_integral();
+  void test_convert_floating_point();
 
 private:
   template<typename From, typename To>
