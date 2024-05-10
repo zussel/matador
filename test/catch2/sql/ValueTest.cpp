@@ -3,6 +3,8 @@
 #include "matador/sql/types.hpp"
 #include "matador/sql/value.hpp"
 
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
 #include "matador/utils/types.hpp"
 
 using namespace matador;
@@ -69,4 +71,20 @@ TEST_CASE("Test value class", "[value]") {
   REQUIRE(v.is_blob());
   REQUIRE(v.data_type() == data_type::type_blob);
   REQUIRE(v.size() == 4);
+
+  const auto today = date{};
+  v = today;
+
+  REQUIRE(v.is_date());
+  REQUIRE(v.data_type() == data_type::type_date);
+  REQUIRE(v.size() == 0);
+  REQUIRE(v.as<date>() == today);
+
+  const auto now = matador::time{};
+  v = now;
+
+  REQUIRE(v.is_time());
+  REQUIRE(v.data_type() == data_type::type_time);
+  REQUIRE(v.size() == 0);
+  REQUIRE(v.as<matador::time>() == now);
 }

@@ -126,6 +126,12 @@ void convert(utils::blob &dest, const utils::blob &data);
 
 void convert(std::string &dest, const date &source);
 
+template < typename SourceType >
+void convert(date &/*dest*/, SourceType &/*source*/)
+{
+  throw std::logic_error("couldn't convert value into date");
+}
+
 template < typename DestType >
 void convert(DestType &/*dest*/, const time &/*data*/)
 {
@@ -133,6 +139,12 @@ void convert(DestType &/*dest*/, const time &/*data*/)
 }
 
 void convert(std::string &dest, const time &source);
+
+template < typename SourceType >
+void convert(time &/*dest*/, SourceType &/*source*/)
+{
+  throw std::logic_error("couldn't convert value into time");
+}
 
 template < typename DestType >
 void convert(DestType &/*dest*/, const date &/*data*/)
