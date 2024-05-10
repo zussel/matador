@@ -8,7 +8,6 @@
 
 #include "matador/utils/os.hpp"
 
-#include "utils/ConvertTest.hpp"
 #include "utils/TimeTestUnit.hpp"
 #include "utils/Base64Test.hpp"
 #include "utils/BufferViewTest.hpp"
@@ -117,7 +116,6 @@ int main(int argc, char *argv[])
 
   suite.init(argc, argv);
 
-  suite.register_unit(new ConvertTest);
   suite.register_unit(new Base64Test);
   suite.register_unit(new BufferViewTest);
   suite.register_unit(new DateTestUnit);

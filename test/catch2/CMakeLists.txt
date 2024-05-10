@@ -13,7 +13,8 @@ include(CTest)
 include(Catch)
 
 add_executable(tests
-        sql/ValueTest.cpp
+  sql/ValueTest.cpp
+  utils/ConvertTest.cpp
 )
 
 target_link_libraries(tests PRIVATE
