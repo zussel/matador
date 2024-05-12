@@ -4,7 +4,7 @@
 #include "matador/db/mysql/mysql_prepared_result.hpp"
 #include "matador/db/mysql/mysql_constants.hpp"
 
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 
 namespace matador {
 

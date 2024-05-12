@@ -9,8 +9,6 @@ SET (TEST_TOOLS_SOURCES
   utils/FactoryTestUnit.cpp
   utils/StringTestUnit.cpp
   utils/StringTestUnit.hpp
-  utils/AnyTestUnit.cpp
-  utils/AnyTestUnit.hpp
   utils/SequencerTestUnit.cpp
   utils/SequencerTestUnit.hpp
   utils/OSTest.cpp
@@ -200,12 +198,11 @@ ADD_EXECUTABLE(test_matador
   ${TEST_SQL_SOURCES}
 )
 
-SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
+SET(MYSQL_CONNECTION_STRING "mysql://test:test123!@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
 IF (WIN32)
   SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\\\SQLEXPRESS/test_oos (SQL Server)" CACHE STRING "mssql connection string")
 ELSE()
-  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@192.168.27.58/test (FreeTDS)" CACHE STRING "mssql connection string")
-#  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@192.168.178.31\\\\SQLEXPRESS/test_matador (FreeTDS)" CACHE STRING "mssql connection string")
+  SET(MSSQL_CONNECTION_STRING "mssql://test:test123!@localhost:1433/matador_test (FreeTDS)" CACHE STRING "mssql connection string")
 ENDIF()
 SET(SQLITE_CONNECTION_STRING "sqlite://test.sqlite" CACHE STRING "sqlite connection string")
 SET(POSTGRESQL_CONNECTION_STRING "postgresql://test:test123@127.0.0.1/matador_test" CACHE STRING "postgresql connection string")
@@ -251,3 +248,5 @@ SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
 ADD_TEST(NAME test_matador_all COMMAND test_matador exec all WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+add_subdirectory(catch2)

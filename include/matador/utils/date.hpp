@@ -413,7 +413,7 @@ public:
    * @param x The date to calculate the difference with.
    * @return The difference in days.
    */
-  virtual int difference(const date &x) const;
+  int difference(const date &x) const;
 
 private:
   void sync_day(int d);

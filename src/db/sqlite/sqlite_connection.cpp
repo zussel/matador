@@ -3,7 +3,7 @@
 #include "matador/db/sqlite/sqlite_result.hpp"
 #include "matador/db/sqlite/sqlite_exception.hpp"
 
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 #include "matador/sql/connection_info.hpp"
 
 #include <sqlite3.h>
@@ -85,7 +85,7 @@ version sqlite_connection::server_version() const
            static_cast<unsigned int>(SQLITE_VERSION_NUMBER % 1000) };
 }
 
-matador::detail::result_impl* sqlite_connection::execute(const sql &q)
+matador::detail::result_impl* sqlite_connection::execute(const sql_context &q)
 {
   std::string stmt = dialect_.direct(q);
   return execute_internal(stmt);

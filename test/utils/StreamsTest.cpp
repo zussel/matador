@@ -418,7 +418,7 @@ void StreamsTest::test_reduce()
 
   UNIT_ASSERT_TRUE(reduce_identity_result.empty());
 
-  auto reduce_identity_func_result = make_stream(1, 8).reduce_idfunc([](const int &val) {
+  auto reduce_identity_func_result = make_stream(1, 8).reduce_id_func([](const int &val) {
     std::stringstream istr;
     istr << val;
     return istr.str();

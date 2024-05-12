@@ -13,7 +13,7 @@
 using namespace matador;
 
 TestDialect::TestDialect()
-  : basic_dialect(new detail::basic_dialect_compiler, new detail::basic_dialect_linker)
+  : basic_dialect(new detail::basic_dialect_compiler(this), new detail::basic_dialect_linker(this))
 { }
 
 const char* TestDialect::to_database_type_string(data_type type) const

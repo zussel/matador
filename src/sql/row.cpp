@@ -22,9 +22,9 @@ bool row::has_column(const std::string &column) const
   return columns_by_name_.find(column) != columns_by_name_.end();
 }
 
-void row::set(const std::string &column, const std::shared_ptr<value> &value)
+void row::set(const std::string &column, const std::shared_ptr<value> &val)
 {
-  columns_by_name_.at(column)->val.value_ = value->value_;
+  columns_by_name_.at(column)->val = *val;
 }
 
 void row::clear()

@@ -9,7 +9,6 @@
 #include "matador/utils/os.hpp"
 
 #include "utils/TimeTestUnit.hpp"
-#include "utils/AnyTestUnit.hpp"
 #include "utils/Base64Test.hpp"
 #include "utils/BufferViewTest.hpp"
 #include "utils/BlobTestUnit.hpp"
@@ -117,7 +116,6 @@ int main(int argc, char *argv[])
 
   suite.init(argc, argv);
 
-  suite.register_unit(new AnyTestUnit);
   suite.register_unit(new Base64Test);
   suite.register_unit(new BufferViewTest);
   suite.register_unit(new DateTestUnit);

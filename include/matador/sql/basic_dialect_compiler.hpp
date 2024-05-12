@@ -19,6 +19,8 @@ struct build_info;
 class basic_dialect_compiler : public token_visitor
 {
 public:
+  explicit basic_dialect_compiler(basic_dialect *dialect);
+
   void compile(basic_dialect &dialect);
 
   void visit(const matador::detail::create &) override;
@@ -60,9 +62,7 @@ protected:
 private:
   friend class matador::basic_dialect;
 
-  void dialect(basic_dialect *d);
-
-  basic_dialect *dialect_;
+  basic_dialect *dialect_{nullptr};
 };
 
 /// @endcond

@@ -3,15 +3,15 @@
 
 #include "matador/utils/identifiable_holder.hpp"
 
-namespace matador {
-namespace detail {
+namespace matador::detail {
 
 result_row_serializer::result_row_serializer(result_impl &impl)
-: impl_(impl) { }
+: impl_(impl)
+, value_processor_(*this) { }
 
 void result_row_serializer::process(const char *id, value &val, const field_attributes &attr)
 {
-  value_processor_.apply(id, val, attr, *this);
+  value_processor_.apply(id, val, attr);
 }
 
 void result_row_serializer::on_attribute(const char *id, char &x, const field_attributes &attr) {
@@ -162,5 +162,4 @@ result_impl::size_type result_impl::column_index() const
 
 void result_identifier_reader::serialize(null_type_t &, const field_attributes &/*attr*/) { }
 
-}
 }

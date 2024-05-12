@@ -1,7 +1,3 @@
-//
-// Created by sascha on 3/9/16.
-//
-
 #include "matador/db/mssql/mssql_dialect.hpp"
 #include "matador/db/mssql/mssql_dialect_compiler.hpp"
 #include "matador/db/mssql/mssql_dialect_linker.hpp"
@@ -9,12 +5,10 @@
 #include <algorithm>
 #include <cstring>
 
-namespace matador {
-
-namespace mssql {
+namespace matador::mssql {
 
 mssql_dialect::mssql_dialect()
-  : basic_dialect(new mssql_dialect_compiler, new mssql_dialect_linker)
+  : basic_dialect(new mssql_dialect_compiler(this), new mssql_dialect_linker(this))
 {
   replace_token(detail::token::BEGIN, "BEGIN TRANSACTION");
   replace_token(detail::token::COMMIT, "COMMIT");
@@ -112,4 +106,4 @@ dialect_traits::identifier mssql_dialect::identifier_escape_type() const
 
 }
 
-}
+

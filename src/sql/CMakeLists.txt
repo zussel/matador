@@ -22,8 +22,7 @@ SET(SOURCES
   basic_dialect_linker.cpp
   type.cpp
   query_value_column_processor.cpp
-  query_value_creator.cpp
-  connection_impl.cpp
+        connection_impl.cpp
   value_processor.cpp
   database_error.cpp
   sql_logger.cpp
@@ -39,7 +38,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/result_impl.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/memory_connection.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/query.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/sql.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/sql_context.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/row.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/value.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/statement.hpp
@@ -64,7 +63,6 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_dialect_compiler.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_dialect_linker.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_column_processor.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_creator.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/parameter_binder.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/value_processor.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/database_error.hpp
@@ -73,7 +71,10 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/sql/export.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/schema.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/sql/columns.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/connection_info.hpp)
+  ${CMAKE_SOURCE_DIR}/include/matador/sql/connection_info.hpp
+        ../../include/matador/sql/column_value.hpp
+        ../../include/matador/sql/column_value_visitor.hpp
+        ../../include/matador/sql/placeholder.hpp)
 
 ADD_LIBRARY(matador-sql STATIC ${SOURCES} ${HEADER})
 

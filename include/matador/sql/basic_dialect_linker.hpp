@@ -22,6 +22,8 @@ struct build_info;
 class basic_dialect_linker : public token_visitor
 {
 public:
+  explicit basic_dialect_linker(basic_dialect *dialect);
+
   void link();
 
   std::string token_string(detail::token::t_token tok) const;
@@ -64,9 +66,7 @@ protected:
 private:
   friend class matador::basic_dialect;
 
-  void dialect(basic_dialect *d);
-
-  basic_dialect *dialect_;
+  basic_dialect *dialect_{nullptr};
   detail::value_to_string_processor value_to_string_visitor_;
 };
 

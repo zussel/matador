@@ -38,14 +38,16 @@ class const_tree_iterator_base;
  * @tparam T Type of the tree containing data
  */
 template < class T >
-class tree_iterator_base : public std::iterator<std::bidirectional_iterator_tag, T> {
+class tree_iterator_base {
 public:
 	typedef tree_iterator_base<T> self; /**< Shortcut to self */
 	typedef t_tree_node<T> t_node;      /**< Shortcut to node class */
 
-	typedef T  value_type;  /**< Shortcut to value type */
-	typedef T* pointer;     /**< Shortcut to pointer of value type */
-	typedef T& reference ;  /**< Shortcut to reference of value type */
+  using iterator_category = std::bidirectional_iterator_tag;
+  using difference_type = std::ptrdiff_t;
+  using value_type = T;           /**< Shortcut to value type */
+  using pointer = value_type*;    /**< Shortcut to pointer of value type */
+  using reference = value_type&;  /**< Shortcut to reference of value type */
 
 	/**
 	 * Default constructor
@@ -203,15 +205,17 @@ protected:
  * @tparam T Type of the tree containing data
  */
 template < class T >
-class const_tree_iterator_base : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T&, const T*> {
+class const_tree_iterator_base {
 public:
   typedef const_tree_iterator_base<T> self;   /**< Shortcut to self */
   typedef tree_iterator_base<T> iterator;     /**< Shortcut to non const tree iterator */
   typedef t_tree_node<T> t_node;              /**< Shortcut to node class */
 
-  typedef T  value_type;  /**< Shortcut to value type */
-  typedef T* pointer;     /**< Shortcut to pointer of value type */
-  typedef T& reference ;  /**< Shortcut to reference of value type */
+  using iterator_category = std::bidirectional_iterator_tag;
+  using difference_type = std::ptrdiff_t;
+  using value_type = T;           /**< Shortcut to value type */
+  using pointer = const value_type*;    /**< Shortcut to pointer of value type */
+  using reference = const value_type&;  /**< Shortcut to reference of value type */
 
   /**
    * Default constructor

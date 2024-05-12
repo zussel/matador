@@ -4,15 +4,18 @@
 
 #include <algorithm>
 
-namespace matador {
+namespace matador::detail {
 
-namespace detail {
+basic_dialect_linker::basic_dialect_linker(basic_dialect *dialect)
+: dialect_(dialect)
+, value_to_string_visitor_(*dialect){
+}
 
 void basic_dialect_linker::link()
 {
   // build the query
-  for(auto const &tokptr : top().tokens_) {
-    tokptr->accept(*this);
+  for(auto const &token_ptr : top().tokens_) {
+    token_ptr->accept(*this);
   }
 }
 
@@ -110,7 +113,7 @@ void basic_dialect_linker::visit(const matador::detail::values &values)
 void basic_dialect_linker::visit(const matador::value &val)
 {
   if (dialect().compile_type() == basic_dialect::DIRECT) {
-    dialect().append_to_result(value_to_string_visitor_.to_safe_string(val, &dialect()));
+    dialect().append_to_result(value_to_string_visitor_.to_safe_string(val));
   } else {
     // Todo: check correct value to add
     dialect().add_host_var(value_to_string_visitor_.to_string(val));
@@ -250,11 +253,5 @@ void basic_dialect_linker::append_to_result(basic_dialect &dialect, const std::s
   dialect.append_to_result(part);
 }
 
-void basic_dialect_linker::dialect(basic_dialect *d)
-{
-  dialect_ = d;
 }
 
-}
-
-}

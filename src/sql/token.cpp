@@ -2,8 +2,7 @@
 
 #include <utility>
 
-namespace matador {
-namespace detail {
+namespace matador::detail {
 
 token::token(t_token tok)
   : type(tok)
@@ -14,5 +13,4 @@ table_name_token::table_name_token(token::t_token tok, std::string table_name)
   , table_name(std::move(table_name))
 {}
 
-}
 }

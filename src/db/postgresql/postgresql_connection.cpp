@@ -58,7 +58,7 @@ void postgresql_connection::close()
   }
 }
 
-detail::result_impl *postgresql_connection::execute(const matador::sql &sql)
+detail::result_impl *postgresql_connection::execute(const matador::sql_context &sql)
 {
   std::string stmt = dialect_.direct(sql);
   return execute_internal(stmt);

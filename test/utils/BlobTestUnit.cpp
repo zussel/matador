@@ -9,7 +9,7 @@ using namespace matador;
 BlobTestUnit::BlobTestUnit()
   : unit_test("blob", "blob test unit")
 {
-  add_test("create", std::bind(&BlobTestUnit::test_create, this), "create blob");
+  add_test("create", [this] { test_create(); }, "create blob");
 }
 
 void BlobTestUnit::test_create()

@@ -2,7 +2,7 @@
 #define MSSQL_STATEMENT_HPP
 
 #include "matador/sql/statement_impl.hpp"
-#include "matador/sql/sql.hpp"
+#include "matador/sql/sql_context.hpp"
 
 #include "matador/db/mssql/mssql_exception.hpp"
 #include "mssql_parameter_binder.hpp"

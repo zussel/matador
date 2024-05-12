@@ -1,10 +1,8 @@
 #include "matador/utils/stream_processor.hpp"
 
-namespace matador {
-
 /// @cond MATADOR_DEV
 
-namespace detail {
+namespace matador::detail {
 
 template<class In, class Out, typename Predicate>
 flatmap_element_processor<In, Out, Predicate>::flatmap_element_processor(
@@ -31,10 +29,9 @@ bool flatmap_element_processor<In, Out, Predicate>::process_impl()
   }
 
   while (successor_->process()) {
-    current_stream_ = make_stream(std::move(pred_(std::move(*successor_->value()))));
+    current_stream_ = move_to_stream(std::move(pred_(std::move(*successor_->value()))));
     if (current_stream_.processor()->process()) {
       value_ = current_stream_.processor()->value();
-//      value_ = std::make_shared<Out>(Out{});
       return true;
     }
   }
@@ -54,4 +51,4 @@ make_flatmap(Predicate &&pred, std::shared_ptr<stream_element_processor<In>> suc
 
 /// @endcond
 
-}
+

@@ -16,7 +16,7 @@ public:
   bool is_open() const override { return true; }
   void close() override {}
 
-  matador::detail::result_impl *execute(const matador::sql &) override { return nullptr; }
+  matador::detail::result_impl *execute(const matador::sql_context &) override { return nullptr; }
   matador::detail::result_impl *execute(const std::string &) override { return nullptr; }
   detail::statement_impl *prepare(detail::statement_context &&) const override { return nullptr; };
 

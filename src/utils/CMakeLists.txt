@@ -24,7 +24,8 @@ SET(SOURCES
   identifier.cpp
   field_attributes.cpp
   constraints.cpp
-  version.cpp)
+  version.cpp
+        convert.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -50,9 +51,7 @@ SET(HEADER
   ../../include/matador/utils/identifier_resolver.hpp
   ../../include/matador/utils/identifier_setter.hpp
   ../../include/matador/utils/identifiable_holder.hpp
-  ../../include/matador/utils/any.hpp
-  ../../include/matador/utils/any_visitor.hpp
-  ../../include/matador/utils/is_builtin.hpp
+        ../../include/matador/utils/is_builtin.hpp
   ../../include/matador/utils/file.hpp
   ../../include/matador/utils/os.hpp
   ../../include/matador/utils/buffer.hpp
@@ -75,7 +74,9 @@ SET(HEADER
   ../../include/matador/utils/contraints.hpp
   ../../include/matador/utils/field_attributes.hpp
   ../../include/matador/utils/di.hpp
-  ../../include/matador/utils/version.hpp)
+  ../../include/matador/utils/version.hpp
+        ../../include/matador/utils/types.hpp
+        ../../include/matador/utils/convert.hpp)
 
 ADD_LIBRARY(matador-utils STATIC ${SOURCES} ${HEADER})
 

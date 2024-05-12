@@ -15,19 +15,18 @@ on:
     paths-ignore:
       - .github/workflows/windows.yml
       - .github/workflows/release.yml
+      - .github/workflows/release-windows.yml
+      - .github/workflows/linux.yml
       - appveyor.yml
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Debug
+  # CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        compiler-version: [9]
     services:
       mssql:
         image: mcr.microsoft.com/mssql/server:2017-latest
@@ -52,16 +51,14 @@ jobs:
       - name: CMake Version
         run: cmake --version
       - name: Configure CMake
-        env:
-          CC: gcc-${{ matrix.compiler-version }}
-          CXX: g++-${{ matrix.compiler-version }}
         run: >
           cmake -B ${{github.workspace}}/build
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@127.0.0.1/matador_test (ODBC Driver 17 for SQL Server)"
+          -DMYSQL_CONNECTION_STRING:STRING="mysql://root:root@127.0.0.1/matador_test"
           -DCOVERAGE=true
       - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador test_matador
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target matador test_matador tests
       - name: Copy Matador Libs
         working-directory: ${{github.workspace}}/build
         run: cp lib/libmatador-*.* bin/
@@ -74,5 +71,7 @@ jobs:
       - name: Test
         working-directory: ${{github.workspace}}/build
         run: ctest --verbose -C ${{env.BUILD_TYPE}}
-      - name: Code coverage using Codecov
-        run: bash <(curl -s https://codecov.io/bash)
+      - name: Upload coverage to Codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"

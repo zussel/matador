@@ -1,14 +1,10 @@
-//
-// Created by sascha on 24.05.19.
-//
-
 #ifndef MATADOR_POSTGRESQL_DIALECT_HPP
 #define MATADOR_POSTGRESQL_DIALECT_HPP
 
 #include <matador/sql/basic_dialect.hpp>
 
-namespace matador {
-namespace postgresql {
+
+namespace matador::postgresql {
 
 class postgresql_dialect : public basic_dialect
 {
@@ -25,6 +21,6 @@ public:
 };
 
 }
-}
+
 
 #endif //MATADOR_POSTGRESQL_DIALECT_HPP

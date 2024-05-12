@@ -5,14 +5,12 @@
 
 #include "matador/sql/basic_dialect_compiler.hpp"
 
-namespace matador {
-
-namespace mssql {
+namespace matador::mssql {
 
 class mssql_dialect_compiler : public detail::basic_dialect_compiler
 {
 public:
-  mssql_dialect_compiler() = default;
+  using detail::basic_dialect_compiler::basic_dialect_compiler;
 
   void visit(const matador::detail::select &select1) override;
   void visit(const matador::detail::update &update1) override;
@@ -27,5 +25,5 @@ private:
 };
 
 }
-}
+
 #endif //OOS_MSSQL_DIALECT_COMPILER_HPP

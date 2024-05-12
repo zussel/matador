@@ -103,7 +103,7 @@ public:
   template < class T >
   void set(size_t index, const T &val)
   {
-    columns_.at(index)->val.value_ = val;
+    columns_.at(index)->val = val;
   }
 
   /**
@@ -140,7 +140,7 @@ public:
   template < class T >
   T at(size_t pos)
   {
-    return columns_.at(pos)->val.get<T>();
+    return columns_.at(pos)->val.as<T>().value();
   }
 
   /**
@@ -153,7 +153,7 @@ public:
   template < class T >
   T at(const std::string &column)
   {
-    return columns_by_name_.at(column)->val.get<T>();
+    return columns_by_name_.at(column)->val.as<T>().value();
   }
 
   /**

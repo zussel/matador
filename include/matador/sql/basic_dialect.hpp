@@ -16,7 +16,7 @@
 namespace matador {
 
 class basic_dialect;
-class sql;
+class sql_context;
 
 namespace detail {
 
@@ -28,7 +28,7 @@ class basic_query;
 
 struct build_info
 {
-  build_info(const sql &s, basic_dialect *d);
+  build_info(const sql_context &s, basic_dialect *d);
 
   build_info(const build_info&) = default;
   build_info(build_info&&) noexcept = default;
@@ -108,7 +108,7 @@ public:
    * @param s The sql object to be compiled and linked
    * @return The sql string for direct execution
    */
-  std::string direct(const sql &s);
+  std::string direct(const sql_context &s);
 
   /**
    * @brief Build a sql statement as a prepared statement
@@ -116,7 +116,7 @@ public:
    * @param s The sql object to be compiled and linked
    * @return The sql string as a prepared statement
    */
-  detail::statement_context prepare(const sql &s);
+  detail::statement_context prepare(const sql_context &s);
 
   /**
    * Prepare sql dialect identifier for execution
@@ -206,14 +206,14 @@ protected:
 
   bool is_preparing() const;
 
-  std::string build(const sql &s, t_compile_type compile_type);
-  std::string continue_build(const sql &s, t_compile_type compile_type);
+  std::string build(const sql_context &s, t_compile_type compile_type);
+  std::string continue_build(const sql_context &s, t_compile_type compile_type);
 
   void replace_token(detail::token::t_token tkn, const std::string &value);
 
   void append_to_result(const std::string &part);
 
-  void push(const sql &s);
+  void push(const sql_context &s);
   void pop();
   detail::build_info& top();
 
