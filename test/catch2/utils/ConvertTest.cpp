@@ -3,6 +3,8 @@
 #include "matador/utils/convert.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
+#include "matador/utils/types.hpp"
+#include "matador/utils/string.hpp"
 
 using namespace matador::utils;
 
@@ -91,9 +93,70 @@ TEST_CASE("Validate string to integral conversion", "[convert][string][integral]
   validate_conversion<std::string, unsigned int>("1234567", 1234567);
   validate_conversion<std::string, unsigned long>("9876543", 9876543);
   validate_conversion<std::string, unsigned long long>("123456790", 123456790);
+
+  validate_conversion<const char*, char>("-56", -56);
+  validate_conversion<const char*, short>("-127", -127);
+  validate_conversion<const char*, int>("-1234567", -1234567);
+  validate_conversion<const char*, long>("-9876543", -9876543);
+  validate_conversion<const char*, long long>("-123456790", -123456790);
+
+  validate_conversion<const char*, unsigned char>("56", 56);
+  validate_conversion<const char*, unsigned short>("127", 127);
+  validate_conversion<const char*, unsigned int>("1234567", 1234567);
+  validate_conversion<const char*, unsigned long>("9876543", 9876543);
+  validate_conversion<const char*, unsigned long long>("123456790", 123456790);
 }
 
 TEST_CASE("Validate string to floating point conversion", "[convert][string][floating_point]") {
   validate_conversion<std::string, float>("-56.1234", -56.1234);
   validate_conversion<std::string, double>("-127.444449", -127.444449);
+
+  validate_conversion<const char*, float>("-56.1234", -56.1234);
+  validate_conversion<const char*, double>("-127.444449", -127.444449);
+}
+
+TEST_CASE("Validate blob to blob conversion", "[convert][blob]") {
+  blob from{1, 2, 3, 4};
+  blob to;
+  convert(to, from);
+
+  REQUIRE(from == to);
+}
+
+TEST_CASE("Validate blob conversion leads to an exception", "[convert][blob][exception]") {
+  blob from{1, 2, 3, 4};
+  int to;
+  REQUIRE_THROWS_AS(convert(to, from), std::logic_error);
+}
+
+TEST_CASE("Validate date to string conversion", "[convert][date][string]") {
+  matador::date today;
+  const auto expected_string = matador::to_string(today);
+  std::string to;
+
+  convert(to, today);
+
+  REQUIRE(expected_string == to);
+}
+
+TEST_CASE("Validate date conversion leads to an exception", "[convert][date][exception]") {
+  matador::date today;
+  int to;
+  REQUIRE_THROWS_AS(convert(to, today), std::logic_error);
+}
+
+TEST_CASE("Validate time to string conversion", "[convert][time][string]") {
+  matador::time now;
+  const auto expected_string = matador::to_string(now);
+  std::string to;
+
+  convert(to, now);
+
+  REQUIRE(expected_string == to);
+}
+
+TEST_CASE("Validate time conversion leads to an exception", "[convert][time][exception]") {
+  matador::time now;
+  int to;
+  REQUIRE_THROWS_AS(convert(to, now), std::logic_error);
 }

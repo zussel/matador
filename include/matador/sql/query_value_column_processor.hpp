@@ -12,7 +12,7 @@ namespace matador::detail {
 class query_value_column_processor
 {
 public:
-  query_value_column_processor(std::shared_ptr<columns> update_columns, std::vector<sql::column_type> row_values);
+  explicit query_value_column_processor(std::shared_ptr<columns> update_columns);
 
   void execute(std::pair<std::string, sql::column_type> &a);
 
@@ -48,7 +48,7 @@ private:
 
 private:
   std::shared_ptr<columns> update_columns_;
-  std::vector<sql::column_type> row_values_;
+  sql::column_type column_value_;
   std::string current_id_;
 };
 

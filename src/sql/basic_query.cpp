@@ -9,7 +9,7 @@ namespace detail {
 basic_query::basic_query()
   : state(QUERY_BEGIN)
   , update_columns_(new columns(columns::WITHOUT_BRACKETS))
-  , query_value_column_processor_(update_columns_, row_values_)
+  , query_value_column_processor_(update_columns_)
 {}
 
 void basic_query::reset_query(t_query_command query_command)

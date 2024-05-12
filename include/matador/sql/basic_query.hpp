@@ -66,14 +66,14 @@ public:
    *
    * @return The underlying sql
    */
-  const sql_context& stmt() const;
+  [[nodiscard]] const sql_context& stmt() const;
 
   /**
    * Return the current tablename of the query
    *
    * @return Current tablename of the query
    */
-  std::string tablename() const;
+  [[nodiscard]] std::string tablename() const;
 
 protected:
 
@@ -115,7 +115,6 @@ protected:
   sql_context sql_;
   state_t state;
   std::shared_ptr<columns> update_columns_;
-  std::vector<sql::column_type> row_values_;
   detail::query_value_column_processor query_value_column_processor_;
   connection conn_;
   /// @endcond
