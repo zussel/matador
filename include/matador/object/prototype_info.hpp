@@ -147,7 +147,7 @@ public:
     : basic_prototype_info<T>(node, proto)
   {}
 
-  void* create() const override
+  [[nodiscard]] void* create() const override
   {
     return new T;
   }
@@ -162,7 +162,7 @@ public:
     : basic_prototype_info<T>(node, proto)
   {}
 
-  void* create() const override
+  [[nodiscard]] void* create() const override
   {
     return this->prototype_->clone();
   }

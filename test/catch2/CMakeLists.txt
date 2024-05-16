@@ -15,8 +15,8 @@ include(Catch)
 add_executable(tests
   sql/ValueTest.cpp
   utils/ConvertTest.cpp
-        sql/ColumnValueVisitorTest.cpp
-        sql/QueryValueColumnProcessorTest.cpp
+  sql/ColumnValueVisitorTest.cpp
+  sql/QueryValueColumnProcessorTest.cpp
 )
 
 target_link_libraries(tests PRIVATE

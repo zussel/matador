@@ -23,7 +23,7 @@ class object_proxy;
 
 /// @cond MATADOR_DEV
 namespace detail {
-template < class T, template < class U = T > class O >
+template < class T >
 class node_analyzer;
 class object_inserter;
 }
@@ -434,7 +434,7 @@ private:
   friend class object_view_iterator;
   template < class T, template <class ...> class C >
   friend class container;
-  template < class T,  template < class U = T > class O >
+  template < class T >
   friend class detail::node_analyzer;
   friend class detail::object_inserter;
 

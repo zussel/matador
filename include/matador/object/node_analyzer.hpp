@@ -12,12 +12,12 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-template < class Owner, template < class U = Owner > class Observer >
+template < class Owner >
 class node_analyzer
 {
 public:
-  node_analyzer(prototype_node &node, object_store &store, std::vector<Observer<Owner>*> observer = {})
-    : node_(node), store_(store), observer_vector_(observer)
+  node_analyzer(prototype_node &node, object_store &store)
+    : node_(node), store_(store)
   { }
 
   ~node_analyzer() = default;
@@ -61,7 +61,6 @@ private:
 protected:
   prototype_node &node_;
   object_store &store_;
-  std::vector<Observer<Owner>*> observer_vector_;
 };
 
 /// @endcond

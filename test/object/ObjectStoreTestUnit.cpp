@@ -1292,11 +1292,11 @@ struct logger : public typed_object_store_observer<T>, public basic_logger
 
 void ObjectStoreTestUnit::test_observer()
 {
-  ostore_.attach<person>("person", { new logger<person> });
-  ostore_.attach<employee, person>("employee", { new logger<employee> });
-  ostore_.attach<department>("department", { new logger<department> });
-  ostore_.attach<book>("book", { new logger<book> });
-  ostore_.attach<book_list>("book_list", { new logger<book_list> });
+  ostore_.attach<person, logger>("person");
+  ostore_.attach<employee, person, logger>("employee");
+  ostore_.attach<department, logger>("department");
+  ostore_.attach<book, logger>("book");
+  ostore_.attach<book_list, logger>("book_list");
 
   std::vector<std::string> result({
     "person",
@@ -1313,11 +1313,11 @@ void ObjectStoreTestUnit::test_observer()
 
   ostore_.clear(true);
 
-  ostore_.attach<person>("person", { new logger<person> });
-  ostore_.attach<department>("department", { new logger<department> });
-  ostore_.attach<employee, person>("employee", { new logger<employee> });
-  ostore_.attach<book_list>("book_list", { new logger<book_list> });
-  ostore_.attach<book>("book", { new logger<book> });
+  ostore_.attach<person, logger>("person");
+  ostore_.attach<department, logger>("department");
+  ostore_.attach<employee, person, logger>("employee");
+  ostore_.attach<book_list, logger>("book_list");
+  ostore_.attach<book, logger>("book");
 
   result = {
     "person",
