@@ -26,8 +26,8 @@ using namespace std::placeholders;
 namespace matador {
 
 object_store::object_store()
-  : first_(new prototype_node)
-  , last_(new prototype_node)
+  : first_(new prototype_node(*this))
+  , last_(new prototype_node(*this))
   , synchronizer_(seq_)
   , object_inserter_(*this)
 {
@@ -383,7 +383,7 @@ prototype_node* object_store::attach_node(prototype_node *node, const char *pare
     last_->prev->append(node);
   }
   if (!pk.is_null()) {
-    node->id_ = pk;
+    node->primary_key_ = pk;
   }
   // store prototype in map
   // Todo: check return value

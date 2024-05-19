@@ -262,29 +262,36 @@ private:
 #include "persistence_observer.tpp"
 
 namespace matador {
+template<class Type>
+std::vector<std::unique_ptr<typed_object_store_observer<Type>>> make_observers(persistence &p) {
+  std::vector<std::unique_ptr<typed_object_store_observer<Type>>> v;
+  v.push_back(std::make_unique<persistence_observer<Type>>(p));
+
+  return v;
+}
 
 template<class T>
 void persistence::attach(const char *type, const char *parent)
 {
-  store_.attach<T>(type, object_store::not_abstract, parent, { new persistence_observer<T>(*this) });
+  store_.attach<T>(type, object_store::not_abstract, parent, make_observers<T>(*this));
 }
 
 template<class T>
 void persistence::attach_abstract(const char *type, const char *parent)
 {
-  store_.attach<T>(type, object_store::abstract, parent, { new persistence_observer<T>(*this) });
+  store_.attach<T>(type, object_store::abstract, parent, make_observers<T>(*this));
 }
 
 template<class T, class S>
 void persistence::attach(const char *type)
 {
-  store_.attach<T>(type, object_store::not_abstract, typeid(S).name(), { new persistence_observer<T>(*this) });
+  store_.attach<T>(type, object_store::not_abstract, typeid(S).name(), make_observers<T>(*this));
 }
 
 template<class T, class S>
 void persistence::attach_abstract(const char *type)
 {
-  store_.attach<T>(type, object_store::abstract, typeid(S).name(), { new persistence_observer<T>(*this) });
+  store_.attach<T>(type, object_store::abstract, typeid(S).name(), make_observers<T>(*this));
 }
 
 }

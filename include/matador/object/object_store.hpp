@@ -155,7 +155,7 @@ public:
   template <class Type, template <typename> typename... ObserverType>
   prototype_iterator attach(const char *type, abstract_type abstract, const char *parent)
   {
-    auto node = new prototype_node(this, type, new Type, abstract == abstract_type::abstract);
+    auto node = new prototype_node(*this, type, new Type, abstract == abstract_type::abstract);
     return attach_internal<Type, ObserverType...>(node, parent);
   }
 
@@ -166,7 +166,7 @@ public:
    * If parent name is given prototype node is inserted below the found parent
    * node.
    * 
-   * @tparam Type       The type of the prototype node
+   * @tparam Type    The type of the prototype node
    * @param node     The prototype node to be inserted
    * @param parent   The name of the parent node.
    * @return         Returns new inserted prototype iterator.
@@ -175,6 +175,27 @@ public:
   prototype_iterator attach(prototype_node *node, const char *parent = nullptr)
   {
     return attach_internal<Type, ObserverType...>(node, parent);
+  }
+
+  /**
+   * Inserts a new object prototype into the object_store. The
+   * type of the prototype is given via template parameter T. A prepared
+   * prototype node is passed to be inserted.
+   * If parent name is given prototype node is inserted below the found parent
+   * node.
+   *
+   * @tparam Type    The type of the prototype node
+   * @param type     The unique name of the type.
+   * @param abstract Indicates if the producers object is treated as an abstract node.
+   * @param parent   Name of the parent node
+   * @param observer Vector of observers for this type
+   * @return
+   */
+  template <class Type>
+  prototype_iterator attach(const char *type, abstract_type abstract, const char *parent, std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observer)
+  {
+    auto node = new prototype_node(*this, type, new Type, abstract == abstract_type::abstract);
+    return attach_internal<Type>(node, parent, std::move(observer));
   }
 
   /**
@@ -191,6 +212,9 @@ public:
    */
   template < class Type, template <typename> typename... ObserverType >
   prototype_iterator attach_internal(prototype_node *node, const char *parent);
+
+  template < class Type >
+  prototype_iterator attach_internal(prototype_node *node, const char *parent, std::vector<std::unique_ptr<typed_object_store_observer<Type>>> &&observer);
 
   /**
    * Removes an object prototype from the prototype tree. All children
@@ -280,7 +304,7 @@ public:
    * @return Returns a prototype iterator.
    */
   template<class T>
-  const_iterator find() const
+  [[nodiscard]] const_iterator find() const
   {
     return find(typeid(T).name());
   }
@@ -311,7 +335,7 @@ public:
    *
    * @return The first prototype node iterator.
    */
-  const_iterator begin() const;
+  [[nodiscard]] const_iterator begin() const;
 
   /**
    * Return the first prototype node.
@@ -325,7 +349,7 @@ public:
    *
    * @return The last prototype node iterator.
    */
-  const_iterator end() const;
+  [[nodiscard]] const_iterator end() const;
 
   /**
    * Return the last prototype node.
@@ -363,7 +387,7 @@ public:
    *
    * @return Count of prototype nodes
    */
-  size_t size() const;
+  [[nodiscard]] size_t size() const;
 
   /**
    * Returns true if the object_store
@@ -371,7 +395,7 @@ public:
    * 
    * @return True on empty object_store.
    */
-  bool empty() const;
+  [[nodiscard]] bool empty() const;
 
   /**
    * Creates an object of the given type name.
@@ -530,7 +554,7 @@ public:
    * @return On success it returns an object proxy on failure null
    *
    */
-  object_proxy *find_proxy(unsigned long long id) const;
+  [[nodiscard]] object_proxy *find_proxy(unsigned long long id) const;
 
   /**
    * Insert object proxy into object store
@@ -550,7 +574,7 @@ public:
    *
    * @return True if there at least one transaction.
    */
-  bool has_transaction() const;
+  [[nodiscard]] bool has_transaction() const;
 
   /**
    * Marks the given object proxy as modified
@@ -635,7 +659,7 @@ private:
   /**
    * @internal
    *
-   * Removes a prototy node and
+   * Removes a prototype node and
    * return its successor node
    *
    * @param node The prototype node to remove
@@ -682,12 +706,55 @@ private:
   std::function<void(object_proxy *)> on_proxy_delete_;
 };
 
+template <typename Type, template <typename> class... ObserverType>
+class observer_list_creator
+{
+public:
+  using observer_vector = std::vector<std::unique_ptr<typed_object_store_observer<Type>>>;
+  using iterator = typename observer_vector::iterator;
+
+  static observer_vector build() {
+    observer_list_creator<Type, ObserverType...> creator;
+
+    return std::move(creator.observers_);
+  }
+
+private:
+  observer_list_creator() {
+    if constexpr (sizeof...(ObserverType) != 0) {
+      build_observer<ObserverType...>();
+    }
+  }
+
+  template <template <typename> class FirstObserverType>
+  void build_observer() {
+    observers_.emplace_back(std::make_unique<FirstObserverType<Type>>());
+  }
+
+  template <template <typename> class FirstObserverType, template <typename> class NextObserverType, template <typename> class... RestObserverType>
+  void build_observer() {
+    observers_.emplace_back(std::make_unique<FirstObserverType<Type>>());
+    build_observer<NextObserverType, RestObserverType...>();
+  }
+
+private:
+  observer_vector observers_;
+};
+
 template <class Type, template <typename> typename... ObserverType>
 prototype_iterator object_store::attach_internal(prototype_node *node, const char *parent)
 {
-//  for(auto obs : observer) {
-//    node->register_observer(obs);
-//  }
+  auto observers = observer_list_creator<Type, ObserverType...>::build();
+  return attach_internal<Type>(node, parent, std::move(observers));
+}
+
+template < class Type >
+prototype_iterator object_store::attach_internal(prototype_node *node, const char *parent, std::vector<std::unique_ptr<typed_object_store_observer<Type>>> &&observer)
+{
+  for(auto &&obs : observer) {
+    node->register_observer(std::move(obs));
+  }
+
   // Check if nodes object has 'to-many' relations
   // Analyze primary and foreign keys of node
   detail::node_analyzer<Type> analyzer(*node, *this);

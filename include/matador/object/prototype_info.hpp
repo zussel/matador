@@ -83,7 +83,7 @@ protected:
     , prototype_(proto)
   {}
 
-  void* prototype() const override;
+  [[nodiscard]] void* prototype() const override;
   void register_observer(basic_object_store_observer *obs) override;
   void notify(notification_type type, object_proxy *proxy) const override;
 

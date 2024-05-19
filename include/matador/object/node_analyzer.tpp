@@ -6,32 +6,16 @@
 
 namespace matador::detail {
 
-/*
- * no observer version
- */
-template<class Owner>
-void node_analyzer<Owner>::analyze()
-{
-  Owner obj;
-  analyze(obj);
-}
-
-template<class Owner>
-void node_analyzer<Owner>::analyze(Owner &obj)
-{
-  matador::access::process(*this, obj);
-}
-
-template<class Owner>
+template<class Owner, template <typename> typename... ObserverType>
 template<class Value>
-void node_analyzer<Owner>::serialize(Value &x)
+void node_analyzer<Owner, ObserverType...>::serialize(Value &x)
 {
   matador::access::process(*this, x);
 }
 
-template<class Owner>
+template<class Owner, template <typename> typename... ObserverType>
 template<class Value>
-void node_analyzer<Owner>::on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type)
+void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type)
 {
   // find foreign_node of belongs to type
   prototype_iterator foreign_node = store_.find(x.type());
@@ -81,9 +65,9 @@ void node_analyzer<Owner>::on_belongs_to(const char *id, object_ptr<Value> &x, c
   }
 }
 
-template<class Owner>
+template<class Owner, template <typename> typename... ObserverType>
 template<class Value>
-void node_analyzer<Owner>::on_has_one(const char *id, object_ptr<Value> &x, cascade_type)
+void node_analyzer<Owner, ObserverType...>::on_has_one(const char *id, object_ptr<Value> &x, cascade_type)
 {
   auto endpoint = std::make_shared<detail::has_one_endpoint<Value, Owner>>(id, &node_);
   node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
@@ -104,9 +88,9 @@ void node_analyzer<Owner>::on_has_one(const char *id, object_ptr<Value> &x, casc
   }
 }
 
-template<class Owner>
+template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
-void node_analyzer<Owner>::on_has_many(const char *id, container<Value, Container> &x, cascade_type cascade)
+void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, container<Value, Container> &x, cascade_type cascade)
 {
   if (is_builtin<Value>::value) {
     this->serialize(id, x, node_.type(), typeid(Value).name(), cascade);
@@ -120,9 +104,9 @@ void node_analyzer<Owner>::on_has_many(const char *id, container<Value, Containe
   }
 }
 
-template<class Owner>
+template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
-void node_analyzer<Owner>::on_has_many(const char *id, container<Value, Container> &,
+void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, container<Value, Container> &,
                                        const char *left_column, const char *right_column,
                                        cascade_type,
                                        typename std::enable_if<!is_builtin<Value>::value>::type *)
@@ -143,19 +127,15 @@ void node_analyzer<Owner>::on_has_many(const char *id, container<Value, Containe
      */
     // handle observer
     using has_many_item = has_one_to_many_item_foreign<Owner, Value>;
-//    std::vector<Observer<has_many_item> *> has_many_item_observer;
-//    for (const auto &o: observer_vector_) {
-//      has_many_item_observer.push_back(new Observer<has_many_item>(o));
-//    }
 
     auto endpoint = std::make_shared<detail::has_one_to_many_endpoint<Owner, typename has_many_item::right_value_type>>(id, &node_);
     node_.register_relation_endpoint(std::type_index(typeid(typename has_many_item::right_value_type)), endpoint);
 
     // new has many to many item
     auto proto = new has_many_item(left_column, right_column);
-    prototype_node *node = prototype_node::make_relation_node<has_many_item>(&store_, id, proto, false, node_.type(), id);
+    prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
 
-    pi = store_.attach_internal<has_many_item>(node, nullptr/*, has_many_item_observer*/);
+    pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr/*, has_many_item_observer*/);
 
     auto sep = pi->find_endpoint(left_column);
     if (sep != pi->endpoint_end()) {
@@ -181,11 +161,6 @@ void node_analyzer<Owner>::on_has_many(const char *id, container<Value, Containe
 
       foreign_node->register_relation_endpoint(std::type_index(typeid(Owner)), foreign_endpoint);
 
-//      std::vector<Observer<has_many_to_many_item<Owner, Value> > *> has_many_item_observer;
-//      for (auto o: observer_vector_) {
-//        has_many_item_observer.push_back(new Observer<has_many_to_many_item<Owner, Value> >(o));
-//      }
-
       auto endpoint = std::make_shared<detail::left_to_many_endpoint<Value, Owner>>(id, &node_);
 
       node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
@@ -196,9 +171,9 @@ void node_analyzer<Owner>::on_has_many(const char *id, container<Value, Containe
 
       // new has many to many item
       auto proto = new has_many_to_many_item<Owner, Value>(right_column, left_column);
-      prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<Owner, Value>>(&store_, id, proto, false, node_.type(), id);
+      prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<Owner, Value>>(store_, id, proto, false, node_.type(), id);
 
-      pi = store_.attach_internal<has_many_to_many_item<Owner, Value>>(node, nullptr/*, has_many_item_observer*/);
+      pi = store_.attach_internal<has_many_to_many_item<Owner, Value>, ObserverType...>(node, nullptr/*, has_many_item_observer*/);
 
       auto sep = pi->find_endpoint(right_column);
       if (sep != pi->endpoint_end()) {
@@ -233,9 +208,9 @@ void node_analyzer<Owner>::on_has_many(const char *id, container<Value, Containe
   }
 }
 
-template<class Owner>
+template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
-void node_analyzer<Owner>::on_has_many(const char *id, container<Value, Container> &cont,
+void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, container<Value, Container> &cont,
                                                  const char *left_column, const char *right_column,
                                                  cascade_type,
                                                  typename std::enable_if<is_builtin<Value>::value>::type *)
@@ -247,18 +222,14 @@ void node_analyzer<Owner>::on_has_many(const char *id, container<Value, Containe
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
     using has_many_item = has_one_to_many_item_scalar<Owner, Value>;
-//    std::vector<Observer<has_many_item> *> has_many_item_observer;
-//    for (auto o: observer_vector_) {
-//      has_many_item_observer.push_back(new Observer<has_many_item>(o));
-//    }
 
     auto endpoint = std::make_shared<detail::has_one_to_many_endpoint<Owner, typename has_many_item::right_value_type>>(id, &node_);
     node_.register_relation_endpoint(std::type_index(typeid(typename has_many_item::right_value_type)), endpoint);
 
     auto proto = new has_many_item(left_column, right_column, cont.size_);
-    prototype_node *node = prototype_node::make_relation_node<has_many_item>(&store_, id, proto, false, node_.type(), id);
+    prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
 
-    pi = store_.attach_internal<has_many_item>(node, nullptr/*, has_many_item_observer*/);
+    pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr/*, has_many_item_observer*/);
 
     auto sep = pi->find_endpoint(left_column);
     if (sep != pi->endpoint_end()) {
@@ -266,14 +237,13 @@ void node_analyzer<Owner>::on_has_many(const char *id, container<Value, Containe
       endpoint->foreign_endpoint = sep->second;
     }
   } else {
-    // throw exception
     throw_object_exception("prototype already inserted: " << pi->type());
   }
 }
 
-template<class Owner>
+template<class Owner, template <typename> typename... ObserverType>
 template<class Value>
-prototype_iterator node_analyzer<Owner>::detach_one_to_many_node(const prototype_iterator &node)
+prototype_iterator node_analyzer<Owner, ObserverType...>::detach_one_to_many_node(const prototype_iterator &node)
 {
   // found has one-to-many
   // must be detached because

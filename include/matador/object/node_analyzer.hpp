@@ -12,7 +12,7 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-template < class Owner >
+template < class Owner, template <typename> typename... ObserverType >
 class node_analyzer
 {
 public:
@@ -22,8 +22,16 @@ public:
 
   ~node_analyzer() = default;
 
-  void analyze();
-  void analyze(Owner &obj);
+  void analyze()
+  {
+    Owner obj;
+    analyze(obj);
+  }
+
+  void analyze(Owner &obj)
+  {
+    matador::access::process(*this, obj);
+  }
 
   template<class V>
   void serialize(V &x);

@@ -9,17 +9,6 @@ using namespace std;
 
 namespace matador {
 
-void prototype_node::initialize(object_store *tree, const char *type, bool abstract)
-{
-  tree_ = tree;
-  first = std::make_unique<prototype_node>();
-  last = std::make_unique<prototype_node>();
-  type_.assign(type);
-  abstract_ = abstract;
-  first->next = last.get();
-  last->prev = first.get();
-}
-
 bool
 prototype_node::empty(bool self) const
 {
@@ -281,7 +270,7 @@ prototype_node* prototype_node::previous_node(const prototype_node *root) const
 
 object_store *prototype_node::tree() const
 {
-  return tree_;
+  return &tree_;
 }
 
 bool prototype_node::is_child_of(const prototype_node *prnt) const
@@ -301,12 +290,7 @@ bool prototype_node::has_children() const
 
 bool prototype_node::has_primary_key() const
 {
-  return !id_.is_null();
-}
-
-const identifier& prototype_node::id() const
-{
-  return id_;
+  return !primary_key_.is_null();
 }
 
 bool prototype_node::is_abstract() const
@@ -415,6 +399,10 @@ void prototype_node::adjust_left_marker(prototype_node *root, object_proxy *old_
     node = node->previous_node();
   }
 }
+
+prototype_node::prototype_node(object_store &store)
+: tree_(store)
+{}
 
 void prototype_node::adjust_right_marker(prototype_node *root, object_proxy* old_proxy, object_proxy *new_proxy)
 {

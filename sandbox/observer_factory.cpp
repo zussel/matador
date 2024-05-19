@@ -31,20 +31,6 @@ public:
 };
 
 
-class basic_observer_producer
-{
-public:
-  virtual ~basic_observer_producer() = default;
-};
-
-
-template < typename Type >
-class observer_producer : public basic_observer_producer
-{
-public:
-  [[nodiscard]] virtual std::unique_ptr<observer<Type>> produce_observer() const = 0;
-};
-
 template < typename Type >
 class logger_observer : public observer<Type>
 {
@@ -58,52 +44,9 @@ public:
 
 };
 
-template < typename Type >
-class logger_observer_producer : public observer_producer<Type>
-{
-public:
-  [[nodiscard]] std::unique_ptr<observer<Type>> produce_observer() const override {
-    return std::make_unique<logger_observer<Type>>();
-  };
-};
-
-class basic_observer_factory
-{
-public:
-  virtual ~basic_observer_factory() = default;
-
-  template<typename Type>
-  [[nodiscard]] std::shared_ptr<observer_producer<Type>> produce() const {
-    std::type_index type(typeid(Type));
-    return std::static_pointer_cast<observer_producer<Type>>(producer_.at(type));
-  }
-
-protected:
-  std::unordered_map<std::type_index, std::shared_ptr<basic_observer_producer>> producer_;
-};
-
-class oof : public basic_observer_factory
-{
-public:
-
-};
-
-template < template < class T > typename ObserverProducerType >
-class observer_factory : public basic_observer_factory
-{
-public:
-  template<typename Type>
-  void register_type() {
-    auto item = std::make_shared<ObserverProducerType<Type>>();
-    producer_.insert(std::make_pair(std::type_index(typeid(Type)), item));
-  }
-};
-
 struct basic_node_handler
 {
   virtual ~basic_node_handler() = default;
-  virtual void register_producer(basic_observer_factory &factory) = 0;
-  virtual void register_observer(const std::unique_ptr<basic_observer_producer> &observer_producer) = 0;
 };
 
 template < typename Type >
@@ -114,17 +57,6 @@ struct node_handler : basic_node_handler
 
   explicit node_handler(prototype_ptr &&proto)
   : prototype(std::move(proto)) {}
-
-  void register_producer(basic_observer_factory &factory) override {
-  }
-
-  void register_observer(const std::unique_ptr<basic_observer_producer> &observer_producer) override {
-    auto *producer = dynamic_cast<::observer_producer<Type>*>(observer_producer.get());
-    if (producer) {
-      auto obs = producer->produce_observer();
-      observers.push_back(std::move(obs));
-    }
-  }
 
   prototype_ptr prototype;
   observer_vector observers;
@@ -142,34 +74,65 @@ struct node
   std::unique_ptr<basic_node_handler> handler;
 };
 
+template <typename Type, template <typename> class... ObserverType>
+class observer_creator
+{
+public:
+  using observer_vector = std::vector<std::unique_ptr<observer<Type>>>;
+  using iterator = typename observer_vector::iterator;
+
+  observer_creator() {
+    build_observer<ObserverType...>();
+  }
+
+  iterator begin();
+  iterator end() { return observers_.end(); }
+
+private:
+  void build_observer() {}
+
+  template <template <typename> class FirstObserverType>
+  void build_observer() {
+    observers_.emplace_back(std::make_unique<FirstObserverType<Type>>());
+  }
+
+  template <template <typename> class FirstObserverType, template <typename> class NextObserverType, template <typename> class... RestObserverType>
+  void build_observer() {
+    observers_.emplace_back(std::make_unique<FirstObserverType<Type>>());
+    build_observer<NextObserverType, RestObserverType...>();
+  }
+
+private:
+  observer_vector observers_;
+};
+
+template<typename Type, template <typename> class... ObserverType>
+typename observer_creator<Type, ObserverType...>::iterator observer_creator<Type, ObserverType...>::begin() { return observers_.begin(); }
+
 class store
 {
 public:
-  template < template < class T > typename ObserverProducerType >
-  void register_observer() {
-    factory_.push_back(observer_factory<ObserverProducerType>{});
-    for (auto &n : nodes_) {
-      n.handler->register_producer(factory_.back());
-    }
-  }
-
-//  template<typename Type>
-//  void attach(const std::string &name) {
-//    nodes_.emplace_back(name, std::make_unique<Type>());
-//  }
-
   template<typename Type, template <typename> typename... ObserverType>
   void attach(const std::string &name) {
-    nodes_.emplace_back(name, std::make_unique<Type>());
+    attach<Type, ObserverType...>(name, nullptr);
   }
 
   template<typename Type, typename Super, template <typename> typename... ObserverType>
   void attach(const std::string &name) {
-    nodes_.emplace_back(name, std::make_unique<Type>());
+    attach<Type, ObserverType...>(name, typeid(Super).name());
   }
 
+  template<typename Type, template <typename> typename... ObserverType>
+  void attach(const std::string &name, const char* super) {
+    observer_creator<Type, ObserverType...> creator;
+    nodes_.emplace_back(name, std::make_unique<Type>());
+    for (auto &&o : creator) {
+      std::cout << "handle observer " << typeid(o).name() << "\n";
+    }
+  }
+
+
 private:
-  std::vector<basic_observer_factory> factory_;
   std::vector<node> nodes_;
 };
 
@@ -182,10 +145,8 @@ int main() {
 
   store s;
   s.attach<person, logger_observer, logger_observer>("person");
-  s.attach<student, person, logger_observer, logger_observer>("student");
-  s.attach<comment, logger_observer, logger_observer>("comment");
-
-  s.register_observer<logger_observer_producer>();
+//  s.attach<student, person, logger_observer, logger_observer>("student");
+//  s.attach<comment, logger_observer, logger_observer>("comment");
 
   return 0;
 }
