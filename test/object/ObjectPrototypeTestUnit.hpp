@@ -14,9 +14,8 @@ public:
   void test_is_parent_of();
   void test_decrement();
   void one_prototype();
-  void prototype_hierachy();
+  void prototype_hierarchy();
   void prototype_traverse();
-  void prototype_relation();
 };
 
 #endif /* OBJECT_PROTOTYPE_TESTUNIT_HPP */
