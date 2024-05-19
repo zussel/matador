@@ -1,9 +1,8 @@
 SET (SANDBOX_SOURCES sandbox.cpp
-  object_observer_producer.hpp)
+)
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 ADD_EXECUTABLE(datetime datetime.cpp)
-ADD_EXECUTABLE(observer_factory observer_factory.cpp)
 
 TARGET_LINK_LIBRARIES(sandbox
     matador-unit
