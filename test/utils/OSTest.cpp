@@ -7,11 +7,11 @@ using namespace matador;
 OSTest::OSTest()
   : unit_test("os", "os test")
 {
-  add_test("mkdir", std::bind(&OSTest::test_mkdir, this), "os mkdir test");
-  add_test("mkpath", std::bind(&OSTest::test_mkpath, this), "os mkpath test");
-  add_test("rm", std::bind(&OSTest::test_remove_file, this), "os rm file test");
-  add_test("move", std::bind(&OSTest::test_rename_file, this), "os move file test");
-  add_test("access", std::bind(&OSTest::test_access_file, this), "os access file test");
+  add_test("mkdir", [this] { test_mkdir(); }, "os mkdir test");
+  add_test("mkpath", [this] { test_mkpath(); }, "os mkpath test");
+  add_test("rm", [this] { test_remove_file(); }, "os rm file test");
+  add_test("move", [this] { test_rename_file(); }, "os move file test");
+  add_test("access", [this] { test_access_file(); }, "os access file test");
 }
 
 void OSTest::test_mkdir()
@@ -33,7 +33,7 @@ void OSTest::test_mkdir()
 void OSTest::test_mkpath()
 {
 #ifdef _WIN32
-  std::string temppath("my\\tmp\\dir\\path");
+  std::string temppath(R"(my\tmp\dir\path)");
 #else
   std::string temppath("my/tmp/dir/path");
 #endif

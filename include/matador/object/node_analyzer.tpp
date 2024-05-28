@@ -3,6 +3,7 @@
 #include "matador/object/object_store.hpp"
 #include "matador/object/container_item_holder.hpp"
 #include "matador/object/to_many_endpoints.hpp"
+#include "matador/object/observer_list_copy_creator.hpp"
 
 namespace matador::detail {
 
@@ -135,7 +136,8 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, containe
     auto proto = new has_many_item(left_column, right_column);
     prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
 
-    pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr/*, has_many_item_observer*/);
+    auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
+    pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr, std::move(observers));
 
     auto sep = pi->find_endpoint(left_column);
     if (sep != pi->endpoint_end()) {
@@ -169,11 +171,14 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, containe
       foreign_endpoint->foreign_endpoint = endpoint;
       endpoint->foreign_endpoint = foreign_endpoint;
 
-      // new has many to many item
-      auto proto = new has_many_to_many_item<Owner, Value>(right_column, left_column);
-      prototype_node *node = prototype_node::make_relation_node<has_many_to_many_item<Owner, Value>>(store_, id, proto, false, node_.type(), id);
+      using has_many_item = has_many_to_many_item<Owner, Value>;
 
-      pi = store_.attach_internal<has_many_to_many_item<Owner, Value>, ObserverType...>(node, nullptr/*, has_many_item_observer*/);
+      // new has many to many item
+      auto proto = new has_many_item(right_column, left_column);
+      prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
+
+      auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
+      pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr, std::move(observers));
 
       auto sep = pi->find_endpoint(right_column);
       if (sep != pi->endpoint_end()) {
@@ -229,7 +234,8 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, containe
     auto proto = new has_many_item(left_column, right_column, cont.size_);
     prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
 
-    pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr/*, has_many_item_observer*/);
+    auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
+    pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr, std::move(observers));
 
     auto sep = pi->find_endpoint(left_column);
     if (sep != pi->endpoint_end()) {

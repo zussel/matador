@@ -16,8 +16,8 @@ template < class Owner, template <typename> typename... ObserverType >
 class node_analyzer
 {
 public:
-  node_analyzer(prototype_node &node, object_store &store)
-    : node_(node), store_(store)
+  node_analyzer(prototype_node &node, object_store &store, const std::vector<std::unique_ptr<typed_object_store_observer<Owner>>> &observers)
+    : node_(node), store_(store), observers_(observers)
   { }
 
   ~node_analyzer() = default;
@@ -69,6 +69,8 @@ private:
 protected:
   prototype_node &node_;
   object_store &store_;
+
+  const std::vector<std::unique_ptr<typed_object_store_observer<Owner>>> &observers_;
 };
 
 /// @endcond

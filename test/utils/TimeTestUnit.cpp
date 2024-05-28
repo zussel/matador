@@ -27,10 +27,10 @@ void TimeTestUnit::test_create()
 {
   time_t t = ::time(nullptr);
 #ifdef _MSC_VER
-  struct tm *tt = new tm;
+  auto *tt = new tm;
   localtime_s(tt, &t);
 #else
-  struct tm *tt = localtime(&t);
+  auto *tt = localtime(&t);
 #endif
 
   matador::time now(t);
@@ -73,10 +73,10 @@ void TimeTestUnit::test_initialize()
   time_t t;
   ::time(&t);
 #ifdef _MSC_VER
-  struct tm *tt = new tm;
+  auto *tt = new tm;
   localtime_s(tt, &t);
 #else
-  struct tm *tt = localtime(&t);
+  auto *tt = localtime(&t);
 #endif
 
   tt->tm_sec = 45;

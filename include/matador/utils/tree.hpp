@@ -1264,7 +1264,7 @@ void tree<T>::move(iter a, iter b) {
   // insert node before b
   // same parent as b
   a.node->parent = b.node->parent;
-  // a is now predeccessor of b
+  // a is now predecessor of b
   a.node->prev = b.node->prev;
   a.node->prev->next = a.node;
   // a is now successor of bs former predecessor

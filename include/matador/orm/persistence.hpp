@@ -273,25 +273,25 @@ std::vector<std::unique_ptr<typed_object_store_observer<Type>>> make_observers(p
 template<class T>
 void persistence::attach(const char *type, const char *parent)
 {
-  store_.attach<T>(type, object_store::not_abstract, parent, make_observers<T>(*this));
+  store_.attach<T, persistence_observer>(type, object_store::not_abstract, parent, make_observers<T>(*this));
 }
 
 template<class T>
 void persistence::attach_abstract(const char *type, const char *parent)
 {
-  store_.attach<T>(type, object_store::abstract, parent, make_observers<T>(*this));
+  store_.attach<T, persistence_observer>(type, object_store::abstract, parent, make_observers<T>(*this));
 }
 
 template<class T, class S>
 void persistence::attach(const char *type)
 {
-  store_.attach<T>(type, object_store::not_abstract, typeid(S).name(), make_observers<T>(*this));
+  store_.attach<T, persistence_observer>(type, object_store::not_abstract, typeid(S).name(), make_observers<T>(*this));
 }
 
 template<class T, class S>
 void persistence::attach_abstract(const char *type)
 {
-  store_.attach<T>(type, object_store::abstract, typeid(S).name(), make_observers<T>(*this));
+  store_.attach<T, persistence_observer>(type, object_store::abstract, typeid(S).name(), make_observers<T>(*this));
 }
 
 }

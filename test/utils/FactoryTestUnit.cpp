@@ -9,12 +9,12 @@ using namespace matador;
 class Vehicle
 {
 protected:
-  Vehicle(const char *t) : type_(t) {}
+  explicit Vehicle(const char *t) : type_(t) {}
 
 public:
-  virtual ~Vehicle() {}
+  virtual ~Vehicle() = default;
 
-  std::string type() const { return type_; }
+  [[nodiscard]] std::string type() const { return type_; }
 
 private:
   std::string type_;
@@ -24,37 +24,33 @@ class Plane : public Vehicle
 {
 public:
   Plane() : Vehicle("plane") {}
-  virtual ~Plane() {}
 };
 
 class Bike : public Vehicle
 {
 public:
   Bike() : Vehicle("bike") {}
-  virtual ~Bike() {}
 };
 
 class Car : public Vehicle
 {
 public:
   Car() : Vehicle("car") {}
-  virtual ~Car() {}
 };
 
 class Ship : public Vehicle
 {
 public:
   Ship() : Vehicle("ship") {}
-  virtual ~Ship() {}
 };
 
 FactoryTestUnit::FactoryTestUnit()
   : unit_test("factory", "factory test unit")
 {
-  add_test("create", std::bind(&FactoryTestUnit::create_factory, this), "create factory");
-  add_test("insert", std::bind(&FactoryTestUnit::insert_items, this), "insert items into factory");
-  add_test("produce", std::bind(&FactoryTestUnit::produce_items, this), "produce items with factory");
-  add_test("list", std::bind(&FactoryTestUnit::list_items, this), "list all items in factory");
+  add_test("create", [this] { create_factory(); }, "create factory");
+  add_test("insert", [this] { insert_items(); }, "insert items into factory");
+  add_test("produce", [this] { produce_items(); }, "produce items with factory");
+  add_test("list", [this] { list_items(); }, "list all items in factory");
 }
 
 void FactoryTestUnit::create_factory()

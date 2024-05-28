@@ -17,11 +17,14 @@ add_executable(tests
   utils/ConvertTest.cpp
   sql/ColumnValueVisitorTest.cpp
   sql/QueryValueColumnProcessorTest.cpp
+  object/ObserverListCopyCreatorTest.cpp
+  object/ObjectPrototypeTest.cpp
 )
 
 target_link_libraries(tests PRIVATE
         Catch2::Catch2WithMain
         matador-utils
+        matador-object
         matador-sql
         ${CMAKE_DL_LIBS})
 target_include_directories(tests PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include)

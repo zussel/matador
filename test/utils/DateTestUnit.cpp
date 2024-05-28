@@ -29,10 +29,10 @@ void DateTestUnit::test_create()
 {
   time_t t = std::time(nullptr);
 #ifdef _MSC_VER
-  struct tm *tt = new tm;
+  auto *tt = new tm;
   localtime_s(tt, &t);
 #else
-  struct tm *tt = localtime(&t);
+  auto *tt = localtime(&t);
 #endif
 
   date now;

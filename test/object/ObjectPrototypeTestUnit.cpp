@@ -74,7 +74,7 @@ ObjectPrototypeTestUnit::test_is_parent_of()
     
   prototype_iterator i = store.find<datatypes>();
 
-  UNIT_ASSERT_FALSE(root->is_child_of(i.get()));
+  UNIT_ASSERT_FALSE(root->is_child_of(*i));
 
 //  UNIT_ASSERT_TRUE(i->is_child_of(root.get()));
 }
@@ -99,12 +99,12 @@ ObjectPrototypeTestUnit::one_prototype()
   object_store store;
 
   store.attach<datatypes>("item");
-  
-  auto *o = store.create<datatypes>();
-  
-  UNIT_ASSERT_NOT_NULL(o);
 
-  delete o;
+  auto o = store.create<datatypes>();
+  
+  UNIT_ASSERT_NOT_NULL(o.get());
+
+  o.reset();
   
   store.detach("item");
   
@@ -120,11 +120,11 @@ ObjectPrototypeTestUnit::prototype_hierarchy()
   store.attach<ItemB, datatypes>("ITEM_B");
   store.attach<ItemC, datatypes>("ITEM_C");
 
-  auto *a = store.create<ItemB>();
+  auto a = store.create<ItemB>();
   
-  UNIT_ASSERT_NOT_NULL(a);
+  UNIT_ASSERT_NOT_NULL(a.get());
   
-  delete a;
+  a.reset();
   
   store.detach("ITEM_B");
   

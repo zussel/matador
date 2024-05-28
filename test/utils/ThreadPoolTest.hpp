@@ -8,7 +8,7 @@ class ThreadPoolTest : public matador::unit_test
 public:
   ThreadPoolTest();
 
-  void test_threadpool();
+  void test_thread_pool();
 };
 
 

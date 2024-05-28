@@ -13,7 +13,12 @@ template < class T >
 class persistence_observer : public typed_object_store_observer<T>
 {
 public:
+  persistence_observer() = default;
   explicit persistence_observer(persistence &p) : persistence_(p) {}
+  template<typename OtherType>
+  explicit persistence_observer(const persistence_observer<OtherType> &x)
+  : persistence_(x.persistence_)
+  {}
 
   void on_attach(prototype_node &node, T &proto) override;
   void on_detach(prototype_node &node, T &proto) override;

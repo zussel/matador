@@ -251,10 +251,10 @@ public:
   /**
    * Returns true if node is child of given parent node.
    * 
-   * @param prnt The parent node.
+   * @param parent The parent node.
    * @return True if node is child of given parent node.
    */
-  bool is_child_of(const prototype_node *prnt) const;
+  bool is_child_of(const prototype_node &parent) const;
 
   /**
    * Returns true if node has children.
@@ -413,7 +413,7 @@ private:
   object_store &tree_;   /**< The prototype tree to which the node belongs */
 
   // tree links
-  prototype_node *parent = nullptr;       /**< The parent node */
+  prototype_node *parent_ = nullptr;       /**< The parent node */
   prototype_node *prev = nullptr;         /**< The previous node */
   prototype_node *next = nullptr;         /**< The next node */
   std::unique_ptr<prototype_node> first;  /**< The first children node */

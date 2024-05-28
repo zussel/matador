@@ -180,9 +180,9 @@ void PrototypeTreeTestUnit::test_child_of()
 
   prototype_iterator item_a = ptree.find<ItemA>();
 
-  UNIT_ASSERT_FALSE(root->is_child_of(item_a.get()));
+  UNIT_ASSERT_FALSE(root->is_child_of(*item_a));
 
-  UNIT_ASSERT_TRUE(item_a->is_child_of(root.get()));
+  UNIT_ASSERT_TRUE(item_a->is_child_of(*root));
 }
 
 void PrototypeTreeTestUnit::test_traverse()
