@@ -19,7 +19,7 @@ public:
 
 private:
   explicit observer_list_creator(observer_vector &observers)
-  : observers_(std::move(observers)) {
+  : observers_(observers) {
     if constexpr (sizeof...(ObserverType) != 0) {
       build_observer<ObserverType...>();
     }
