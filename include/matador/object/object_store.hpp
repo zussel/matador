@@ -183,11 +183,11 @@ public:
    * @tparam ObserverType   The type of the observer classes
    * @param node            The prototype node to be inserted
    * @param parent          The name of the parent node.
-   * @param observer        A list of observer to be called an attach
+   * @param observers        A list of observer to be called an attach
    * @return                Returns new inserted prototype iterator.
    */
   template < class Type, template <typename> typename... ObserverType >
-  prototype_iterator attach_internal(prototype_node *node, const char *parent, std::vector<std::unique_ptr<typed_object_store_observer<Type>>> &&observer);
+  prototype_iterator attach_internal(prototype_node *node, const char *parent, std::vector<std::unique_ptr<typed_object_store_observer<Type>>> &&observers);
 
   /**
    * Removes an object prototype from the prototype tree. All children
@@ -682,16 +682,17 @@ private:
 };
 
 template < class Type, template <typename> typename... ObserverType >
-prototype_iterator object_store::attach_internal(prototype_node *node, const char *parent, std::vector<std::unique_ptr<typed_object_store_observer<Type>>> &&observer)
+prototype_iterator object_store::attach_internal(prototype_node *node, const char *parent, std::vector<std::unique_ptr<typed_object_store_observer<Type>>> &&observers)
 {
+  observer_list_creator<Type, ObserverType...>::create_missing(observers);
   // Check if nodes object has 'to-many' relations
   // Analyze primary and foreign keys of node
-  detail::node_analyzer<Type, ObserverType...> analyzer(*node, *this, observer);
+  detail::node_analyzer<Type, ObserverType...> analyzer(*node, *this, observers);
 
   Type *proto = node->prototype<Type>();
   analyzer.analyze(*proto);
 
-  for(auto &&obs : observer) {
+  for(auto &&obs : observers) {
     node->register_observer(std::move(obs));
   }
 
