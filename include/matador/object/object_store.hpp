@@ -84,7 +84,7 @@ public:
    * node.
    *
    * @tparam Type           Type of the prototype
-   * @tparam ObserverType   The type of the observer classes
+   * @tparam ObserverType   List of template types of observers
    * @param type            Name of the prototype
    * @param parent          Name of the parent node
    * @return                Iterator representing the inserted prototype node
@@ -103,7 +103,7 @@ public:
    * node.
    *
    * @tparam Type           Type of the prototype
-   * @tparam ObserverType   The type of the observer classes
+   * @tparam ObserverType   List of template types of observers
    * @param type            Name of the prototype
    * @param parent          Name of the parent node
    * @return                Iterator representing the inserted prototype node
@@ -147,25 +147,6 @@ public:
   }
 
   /**
-   *
-   * If the abstract flag is true prototype is treated as abstract. No concrete
-   * object can be inserted for this prototype.
-   *
-   * @tparam Type           The type of the prototype node
-   * @tparam ObserverType   The type of the observer classes
-   * @param type            The unique name of the type.
-   * @param abstract        Indicates if the producers object is treated as an abstract node.
-   * @param parent          Name of the parent node
-   * @return                Returns new inserted prototype iterator.
-   */
-  template <class Type, template <typename> typename... ObserverType>
-  prototype_iterator attach(const char *type, abstract_type abstract, const char *parent)
-  {
-    auto node = new prototype_node(*this, type, new Type, abstract == abstract_type::abstract);
-    return attach_internal<Type, ObserverType...>(node, parent);
-  }
-
-  /**
    * Inserts a new object prototype into the object_store. The
    * type of the prototype is given via template parameter Type.
    * The name of type is given via the first parameter. The abstract
@@ -193,48 +174,13 @@ public:
   }
 
   /**
-   * Inserts a new object prototype into the object_store. The
-   * type of the prototype is given via template parameter T. A prepared
-   * prototype node is passed to be inserted.
-   * If parent name is given prototype node is inserted below the found parent
-   * node.
-   *
-   * @tparam Type    The type of the prototype node
-   * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers object is treated as an abstract node.
-   * @param parent   Name of the parent node
-   * @param observer Vector of observers for this type
-   * @return
-   */
-  template <class Type>
-  prototype_iterator attach(const char *type, abstract_type abstract, const char *parent, std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observer)
-  {
-    auto node = new prototype_node(*this, type, new Type, abstract == abstract_type::abstract);
-    return attach_internal<Type>(node, parent, std::move(observer));
-  }
-
-  /**
-   * Inserts a new object prototype into the object_store as a root object type.
-   * The type of the prototype is given via template parameter T. A prepared
-   * prototype node is passed to be inserted.
-   *
-   * @tparam Type           The type of the prototype node
-   * @tparam ObserverType   The type of the observer classes
-   * @param node            The prototype node to be inserted
-   * @param parent          The name of the parent node.
-   * @param observer        A list of observer to be called an attach
-   * @return                Returns new inserted prototype iterator.
-   */
-  template < class Type, template <typename> typename... ObserverType >
-  prototype_iterator attach_internal(prototype_node *node, const char *parent);
-
-  /**
    * Inserts a new object prototype into the object_store as a root object type.
    * The type of the prototype is given via template parameter T. A prepared
    * prototype node is passed to be inserted. Additionally a list of
    * object observer for this type is passed.
    *
    * @tparam Type           The type of the prototype node
+   * @tparam ObserverType   The type of the observer classes
    * @param node            The prototype node to be inserted
    * @param parent          The name of the parent node.
    * @param observer        A list of observer to be called an attach
@@ -734,37 +680,6 @@ private:
 
   std::function<void(object_proxy *)> on_proxy_delete_;
 };
-
-template <class Type, template <typename> typename... ObserverType>
-prototype_iterator object_store::attach_internal(prototype_node *node, const char *parent)
-{
-  auto observers = observer_list_creator<Type, ObserverType...>::build();
-  return attach_internal<Type, ObserverType...>(node, parent, std::move(observers));
-}
-
-//template < class Type, template <typename> typename... ObserverType >
-//prototype_iterator object_store::attach_internal(prototype_node *node, const char *parent, std::vector<std::unique_ptr<typed_object_store_observer<Type>>> &&observer)
-//{
-//  for(auto &&obs : observer) {
-//    node->register_observer(std::move(obs));
-//  }
-//
-//  // Check if nodes object has 'to-many' relations
-//  // Analyze primary and foreign keys of node
-//  detail::node_analyzer<Type, ObserverType...> analyzer(*node, *this, {});
-//
-//  Type *proto = node->prototype<Type>();
-//  analyzer.analyze(*proto);
-//
-//  const char* type_name = node->type_id();
-//  validate(node, type_name);
-//
-//  node = attach_node(node, parent, type_name, identifier_resolver<Type>::create());
-//
-//  node->on_attach();
-//
-//  return prototype_iterator(node);
-//}
 
 template < class Type, template <typename> typename... ObserverType >
 prototype_iterator object_store::attach_internal(prototype_node *node, const char *parent, std::vector<std::unique_ptr<typed_object_store_observer<Type>>> &&observer)
