@@ -1,5 +1,5 @@
 SET (SANDBOX_SOURCES sandbox.cpp
-  object_observer_producer.hpp)
+)
 
 ADD_EXECUTABLE(sandbox ${SANDBOX_SOURCES})
 ADD_EXECUTABLE(datetime datetime.cpp)

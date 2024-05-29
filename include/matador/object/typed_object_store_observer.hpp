@@ -1,6 +1,7 @@
 #ifndef OBJECT_STORE_OBSERVER_HPP
 #define OBJECT_STORE_OBSERVER_HPP
 
+#include <memory>
 #include <typeindex>
 
 namespace matador {

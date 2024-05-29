@@ -1,8 +1,7 @@
 SET(SOURCES
   byte_buffer.cpp
   library.cpp
-  blob.cpp
-  calendar.cpp
+        calendar.cpp
   date.cpp
   time.cpp
   sequencer.cpp
@@ -35,8 +34,7 @@ SET(HEADER
   ../../include/matador/utils/cascade_type.hpp
   ../../include/matador/utils/singleton.hpp
   ../../include/matador/utils/library.hpp
-  ../../include/matador/utils/blob.hpp
-  ../../include/matador/utils/calendar.h
+        ../../include/matador/utils/calendar.h
   ../../include/matador/utils/date.hpp
   ../../include/matador/utils/export.hpp
   ../../include/matador/utils/time.hpp

@@ -13,11 +13,10 @@ template < class T >
 class persistence_observer : public typed_object_store_observer<T>
 {
 public:
-
   explicit persistence_observer(persistence &p) : persistence_(p) {}
-  template < class O >
-  explicit persistence_observer(const persistence_observer<O> *x)
-    : persistence_(x->persistence_)
+  template<typename OtherType>
+  explicit persistence_observer(const persistence_observer<OtherType> &x)
+  : persistence_(x.persistence_)
   {}
 
   void on_attach(prototype_node &node, T &proto) override;
@@ -26,8 +25,6 @@ public:
   void on_insert(object_proxy &proxy) override;
   void on_update(object_proxy &proxy) override;
   void on_delete(object_proxy &proxy) override;
-
-  persistence& get_persistence() const { return persistence_; }
 private:
 
   template < class V >

@@ -18,46 +18,45 @@ ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   add_test("parent_of", [this] { test_is_parent_of(); }, "check parent");
   add_test("decrement", [this] { test_decrement(); }, "check decrementing iterator");
   add_test("one", [this] { one_prototype(); }, "one prototype");
-  add_test("hierarchy", [this] { prototype_hierachy(); }, "prototype hierarchy");
+  add_test("hierarchy", [this] { prototype_hierarchy(); }, "prototype hierarchy");
   add_test("iterator", [this] { prototype_traverse(); }, "prototype iterator");
-  add_test("relation", [this] { prototype_relation(); }, "prototype relation");
 }
 
 void
 ObjectPrototypeTestUnit::empty_store()
 {
-  object_store ostore;
+  object_store store;
 
-  UNIT_ASSERT_TRUE(ostore.empty());
+  UNIT_ASSERT_TRUE(store.empty());
 }
 
 void
 ObjectPrototypeTestUnit::test_find()
 {
-  object_store ostore;
-  ostore.attach<datatypes>("item");
+  object_store store;
+  store.attach<datatypes>("item");
   
-  prototype_iterator i = ostore.find<datatypes>();
+  prototype_iterator i = store.find<datatypes>();
   
-  UNIT_ASSERT_TRUE(i != ostore.end());
+  UNIT_ASSERT_TRUE(i != store.end());
 }
 
 void
 ObjectPrototypeTestUnit::test_size()
 {
-  object_store ostore;
+  object_store store;
   
-  prototype_iterator i = ostore.begin();
+  prototype_iterator i = store.begin();
   
   UNIT_ASSERT_TRUE(i->size() == 0);
 
-  ostore.attach<datatypes>("item");
+  store.attach<datatypes>("item");
     
-  i = ostore.find<datatypes>();
+  i = store.find<datatypes>();
 
   UNIT_ASSERT_TRUE(i->size() == 0);
   
-  ostore.insert(new datatypes);
+  store.insert(new datatypes);
 
   UNIT_ASSERT_TRUE(i->size() == 1);
 }
@@ -65,17 +64,17 @@ ObjectPrototypeTestUnit::test_size()
 void
 ObjectPrototypeTestUnit::test_is_parent_of()
 {
-  object_store ostore;
+  object_store store;
   
-  prototype_iterator root = ostore.begin();
+  prototype_iterator root = store.begin();
   
   UNIT_ASSERT_TRUE(root->size() == 0);
 
-  ostore.attach<datatypes>("item");
+  store.attach<datatypes>("item");
     
-  prototype_iterator i = ostore.find<datatypes>();
+  prototype_iterator i = store.find<datatypes>();
 
-  UNIT_ASSERT_FALSE(root->is_child_of(i.get()));
+  UNIT_ASSERT_FALSE(root->is_child_of(*i));
 
 //  UNIT_ASSERT_TRUE(i->is_child_of(root.get()));
 }
@@ -83,72 +82,72 @@ ObjectPrototypeTestUnit::test_is_parent_of()
 void
 ObjectPrototypeTestUnit::test_decrement()
 {
-  object_store ostore;
-  ostore.attach<datatypes>("item");
-  ostore.attach<ItemA, datatypes>("item_a");
+  object_store store;
+  store.attach<datatypes>("item");
+  store.attach<ItemA, datatypes>("item_a");
 
-  prototype_iterator i = ostore.end();
+  prototype_iterator i = store.end();
 
   --i;
 
-  UNIT_ASSERT_TRUE(--i == ostore.begin());
+  UNIT_ASSERT_TRUE(--i == store.begin());
 }
 
 void
 ObjectPrototypeTestUnit::one_prototype()
 {
-  object_store ostore;
+  object_store store;
 
-  ostore.attach<datatypes>("item");
-  
-  auto *o = ostore.create<datatypes>();
-  
-  UNIT_ASSERT_NOT_NULL(o);
+  store.attach<datatypes>("item");
 
-  delete o;
+  auto o = store.create<datatypes>();
   
-  ostore.detach("item");
+  UNIT_ASSERT_NOT_NULL(o.get());
+
+  o.reset();
   
-  UNIT_ASSERT_EXCEPTION(ostore.create<datatypes>(), object_exception, "unknown prototype type");
+  store.detach("item");
+  
+  UNIT_ASSERT_EXCEPTION(store.create<datatypes>(), object_exception, "unknown prototype type");
 }
 
 void
-ObjectPrototypeTestUnit::prototype_hierachy()
+ObjectPrototypeTestUnit::prototype_hierarchy()
 {
-  object_store ostore;
-  ostore.attach<datatypes>("ITEM");
-  ostore.attach<ItemA, datatypes>("ITEM_A");
-  ostore.attach<ItemB, datatypes>("ITEM_B");
-  ostore.attach<ItemC, datatypes>("ITEM_C");
+  object_store store;
+  store.attach<datatypes>("ITEM");
+  store.attach<ItemA, datatypes>("ITEM_A");
+  store.attach<ItemB, datatypes>("ITEM_B");
+  store.attach<ItemC, datatypes>("ITEM_C");
 
-  auto *a = ostore.create<ItemB>();
+  auto a = store.create<ItemB>();
   
-  UNIT_ASSERT_NOT_NULL(a);
+  UNIT_ASSERT_NOT_NULL(a.get());
   
-  delete a;
+  a.reset();
   
-  ostore.detach("ITEM_B");
+  store.detach("ITEM_B");
   
-  UNIT_ASSERT_EXCEPTION(ostore.create<ItemB>(), object_exception, "unknown prototype type");
+  UNIT_ASSERT_EXCEPTION(store.create<ItemB>(), object_exception, "unknown prototype type");
   
-  ostore.detach("ITEM");
+  store.detach("ITEM");
   
-  UNIT_ASSERT_EXCEPTION(ostore.create<datatypes>(), object_exception, "unknown prototype type");
-  UNIT_ASSERT_EXCEPTION(ostore.create<ItemA>(), object_exception, "unknown prototype type");
-  UNIT_ASSERT_EXCEPTION(ostore.create<ItemC>(), object_exception, "unknown prototype type");
+  UNIT_ASSERT_EXCEPTION(store.create<datatypes>(), object_exception, "unknown prototype type");
+  UNIT_ASSERT_EXCEPTION(store.create<ItemA>(), object_exception, "unknown prototype type");
+  UNIT_ASSERT_EXCEPTION(store.create<ItemC>(), object_exception, "unknown prototype type");
 }
 
 void
 ObjectPrototypeTestUnit::prototype_traverse()
 {
-  object_store ostore;
-  ostore.attach<datatypes>("ITEM");
-  ostore.attach<ItemA, datatypes>("ITEM_A");
-  ostore.attach<ItemB, datatypes>("ITEM_B");
-  ostore.attach<ItemC, datatypes>("ITEM_C");
+  object_store store;
+  store.attach<datatypes>("ITEM");
+  store.attach<ItemA, datatypes>("ITEM_A");
+  store.attach<ItemB, datatypes>("ITEM_B");
+  store.attach<ItemC, datatypes>("ITEM_C");
 
-  prototype_iterator first = ostore.begin();
-  prototype_iterator last = ostore.end();
+  prototype_iterator first = store.begin();
+  prototype_iterator last = store.end();
   int count(0);
 
   while (first != last) {
@@ -158,15 +157,4 @@ ObjectPrototypeTestUnit::prototype_traverse()
   }
   
   UNIT_ASSERT_EQUAL(count, 4);
-}
-
-void
-ObjectPrototypeTestUnit::prototype_relation()
-{
-  // Todo: complete test!
-  object_store ostore;
-
-//  ostore.attach<album>("album");
-//  ostore.attach<track>("track");
-//  ostore.attach<playlist>("playlist");
 }

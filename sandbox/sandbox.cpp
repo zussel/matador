@@ -5,6 +5,8 @@
 #include "matador/object/object_ptr.hpp"
 #include "matador/object/json_object_mapper.hpp"
 
+#include "matador/utils/di.hpp"
+
 // WebSocket:
 // https://blog.mi.hdm-stuttgart.de/index.php/2021/02/19/websocket-protokoll-ein-detaillierter-technischer-einblick/
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers
@@ -38,17 +40,13 @@ template < class T >
 class object_store_json_type_observer : public matador::typed_object_store_observer<T>
 {
 public:
-  object_store_json_type_observer(matador::object_store &store, generic_json_service &gjs)
-    : store_(store)
-    , gjs_(gjs)
-  {}
-
   void on_attach(matador::prototype_node &node, T &) override
   {
-      gjs_.register_converter(node.type(), [this](const matador::json &js) {
+    auto *store = node.tree();
+      gjs_->register_converter(node.type(), [store](const matador::json &js) {
         matador::json_object_mapper mapper;
         auto o = mapper.to_object<T>(js);
-        auto p = store_.insert(o.release());
+        auto p = store->insert(o.release());
       });
   }
 
@@ -59,8 +57,7 @@ public:
   void on_delete(matador::object_proxy &) override {}
 
 private:
-  matador::object_store &store_;
-  generic_json_service &gjs_;
+  matador::di::inject<generic_json_service> gjs_;
 };
 
 enum class colors : uint32_t
@@ -110,11 +107,13 @@ public:
 
 int main()
 {
-  generic_json_service gjs;
+  matador::di::install_module([](matador::di::module &module) {
+    module.bind<generic_json_service>()->to_singleton<generic_json_service>();
+  });
 
   matador::object_store store;
 
-  store.attach<person>("person", { new object_store_json_type_observer<person>(store, gjs) });
+  store.attach<person, object_store_json_type_observer>("person");
 
   matador::json js = {
     { "name", "george" },
@@ -122,7 +121,10 @@ int main()
     { "invalid", "false" },
     { "color", (int)colors::GREEN }
   };
-  gjs.insert("person", js);
+
+  matador::di::inject<generic_json_service> gjs;
+
+  gjs->insert("person", js);
 
   matador::object_view<person> persons(store);
 

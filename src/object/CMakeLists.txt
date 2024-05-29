@@ -77,7 +77,9 @@ SET(HEADER
   ../../include/matador/object/object_type_registry_entry.hpp
   ../../include/matador/object/relation_endpoint.hpp ../../include/matador/object/export.hpp ../../include/matador/object/type_traits.hpp
   ../../include/matador/object/value_type_traits.hpp
-  ../../include/matador/object/container_iterator.hpp)
+  ../../include/matador/object/container_iterator.hpp
+        ../../include/matador/object/observer_list_copy_creator.hpp
+  ../../include/matador/object/observer_list_creator.hpp)
 
 ADD_LIBRARY(matador-object STATIC ${SOURCES} ${HEADER})
 

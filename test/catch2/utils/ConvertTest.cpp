@@ -56,8 +56,8 @@ TEST_CASE("Validate integral conversion", "[convert][integral]") {
 }
 
 TEST_CASE("Validate floating point conversion", "[convert][floating_point]") {
-  validate_conversion<float, float>(-0.1);
-  validate_conversion<float, double>(-0.1);
+  validate_conversion<float, float>(-0.1f);
+  validate_conversion<float, double>(-0.1f);
   validate_conversion<double, double>(-0.44444);
   validate_conversion<double, float>(-0.44444);
 }
@@ -77,7 +77,7 @@ TEST_CASE("Validate integral to string conversion", "[convert][integral][string]
 }
 
 TEST_CASE("Validate floating point to string conversion", "[convert][floating_point][string]") {
-  validate_conversion<float, std::string>(-56.1234, "-56.1234");
+  validate_conversion<float, std::string>(-56.1234f, "-56.1234");
   validate_conversion<double, std::string>(-127.444449, "-127.444449");
 }
 
@@ -108,10 +108,10 @@ TEST_CASE("Validate string to integral conversion", "[convert][string][integral]
 }
 
 TEST_CASE("Validate string to floating point conversion", "[convert][string][floating_point]") {
-  validate_conversion<std::string, float>("-56.1234", -56.1234);
+  validate_conversion<std::string, float>("-56.1234", -56.1234f);
   validate_conversion<std::string, double>("-127.444449", -127.444449);
 
-  validate_conversion<const char*, float>("-56.1234", -56.1234);
+  validate_conversion<const char*, float>("-56.1234", -56.1234f);
   validate_conversion<const char*, double>("-127.444449", -127.444449);
 }
 

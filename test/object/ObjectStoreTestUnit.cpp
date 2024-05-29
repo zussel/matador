@@ -497,13 +497,13 @@ void ObjectStoreTestUnit::test_simple_object()
 {
   ostore_.attach<datatypes>("item");
 
-  auto *a = ostore_.create<datatypes>();
+  auto a = ostore_.create<datatypes>();
   
-  UNIT_ASSERT_NOT_NULL(a);
+  UNIT_ASSERT_NOT_NULL(a.get());
   
   typedef object_ptr<datatypes> item_ptr;
   
-  item_ptr simple = ostore_.insert(a);
+  item_ptr simple = ostore_.insert(a.release());
   
   UNIT_ASSERT_NOT_NULL(simple.get());
   
@@ -517,13 +517,13 @@ void ObjectStoreTestUnit::test_object_with_sub_object()
   ostore_.attach<datatypes>("item");
   ostore_.attach<ObjectItem<datatypes> >("object_item");
 
-  auto *s = ostore_.create<ObjectItem<datatypes>>();
+  auto s = ostore_.create<ObjectItem<datatypes>>();
   
-  UNIT_ASSERT_NOT_NULL(s);
+  UNIT_ASSERT_NOT_NULL(s.get());
   
   typedef object_ptr<ObjectItem<datatypes> > obj_item_ptr;
   
-  obj_item_ptr ows = ostore_.insert(s);
+  obj_item_ptr ows = ostore_.insert(s.release());
   
   UNIT_ASSERT_NOT_NULL(ows.get());
   
@@ -546,11 +546,11 @@ void ObjectStoreTestUnit::test_multiple_simple_objects()
   size_t elem_size = 10;
   // create 10 objects
   for (size_t i = 0; i < elem_size; ++i) {
-    auto *a = ostore_.create<datatypes>();
+    auto a = ostore_.create<datatypes>();
     
-    UNIT_ASSERT_NOT_NULL(a);
+    UNIT_ASSERT_NOT_NULL(a.get());
     
-    item_ptr simple = ostore_.insert(a);
+    item_ptr simple = ostore_.insert(a.release());
   }
 
   typedef object_view<datatypes> simple_view_t;
@@ -569,11 +569,11 @@ void ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
   // create 10 objects
   size_t elem_size = 10;
   for (size_t i = 0; i < elem_size; ++i) {
-    auto *s = ostore_.create<ObjectItem<datatypes>>();
+    auto s = ostore_.create<ObjectItem<datatypes>>();
 
-    UNIT_ASSERT_NOT_NULL(s);
+    UNIT_ASSERT_NOT_NULL(s.get());
     
-    ows_ptr ows = ostore_.insert(s);
+    ows_ptr ows = ostore_.insert(s.release());
   }
 
   typedef object_view<ObjectItem<datatypes> > withsub_view_t;
@@ -1261,7 +1261,7 @@ struct logger : public typed_object_store_observer<T>, public basic_logger
   logger() = default;
 
   template < class V >
-  explicit logger(const logger<V> *) {}
+  explicit logger(const logger<V> &) {}
 
   void on_attach(prototype_node &node, T &) override
   {
@@ -1292,11 +1292,11 @@ struct logger : public typed_object_store_observer<T>, public basic_logger
 
 void ObjectStoreTestUnit::test_observer()
 {
-  ostore_.attach<person>("person", { new logger<person> });
-  ostore_.attach<employee, person>("employee", { new logger<employee> });
-  ostore_.attach<department>("department", { new logger<department> });
-  ostore_.attach<book>("book", { new logger<book> });
-  ostore_.attach<book_list>("book_list", { new logger<book_list> });
+  ostore_.attach<person, logger>("person");
+  ostore_.attach<employee, person, logger>("employee");
+  ostore_.attach<department, logger>("department");
+  ostore_.attach<book, logger>("book");
+  ostore_.attach<book_list, logger>("book_list");
 
   std::vector<std::string> result({
     "person",
@@ -1313,11 +1313,11 @@ void ObjectStoreTestUnit::test_observer()
 
   ostore_.clear(true);
 
-  ostore_.attach<person>("person", { new logger<person> });
-  ostore_.attach<department>("department", { new logger<department> });
-  ostore_.attach<employee, person>("employee", { new logger<employee> });
-  ostore_.attach<book_list>("book_list", { new logger<book_list> });
-  ostore_.attach<book>("book", { new logger<book> });
+  ostore_.attach<person, logger>("person");
+  ostore_.attach<department, logger>("department");
+  ostore_.attach<employee, person, logger>("employee");
+  ostore_.attach<book_list, logger>("book_list");
+  ostore_.attach<book, logger>("book");
 
   result = {
     "person",

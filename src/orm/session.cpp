@@ -92,7 +92,7 @@ void session::load(const prototype_node &node)
   auto i = persistence_.find_table(node.type());
   if (i == persistence_.end()) {
     // Todo: replace with persistence exception
-    throw_object_exception("couldn't find table");
+    throw_object_exception("couldn't find table '" << node.type() << "'");
   }
   load(i->second);
 }

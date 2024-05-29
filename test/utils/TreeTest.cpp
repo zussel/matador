@@ -128,9 +128,9 @@ void TreeTest::test_tree()
   UNIT_ASSERT_EQUAL(10UL, stringtree.size(l));
 
   t_stringlist sl;
-  sl.push_back("hallo");
-  sl.push_back("saturn");
-  sl.push_back("ring 2");
+  sl.emplace_back("hallo");
+  sl.emplace_back("saturn");
+  sl.emplace_back("ring 2");
 
   j = stringtree.find_in_path(sl.begin(), sl.end(), [](const std::string &elem, const std::string &path_elem) {
     return elem == path_elem;

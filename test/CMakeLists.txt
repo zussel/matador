@@ -3,9 +3,7 @@ SET (TEST_TOOLS_SOURCES
   utils/TimeTestUnit.hpp
   utils/DateTestUnit.cpp
   utils/DateTestUnit.hpp
-  utils/BlobTestUnit.hpp
-  utils/BlobTestUnit.cpp
-  utils/FactoryTestUnit.hpp
+        utils/FactoryTestUnit.hpp
   utils/FactoryTestUnit.cpp
   utils/StringTestUnit.cpp
   utils/StringTestUnit.hpp

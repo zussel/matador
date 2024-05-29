@@ -1,7 +1,3 @@
-//
-// Created by sascha on 4/8/15.
-//
-
 #include "StringTestUnit.hpp"
 
 #include "matador/utils/string.hpp"
@@ -9,8 +5,8 @@
 StringTestUnit::StringTestUnit()
   : unit_test("string", "string test unit")
 {
-  add_test("split", std::bind(&StringTestUnit::test_split, this), "test split");
-  add_test("trim", std::bind(&StringTestUnit::test_trim, this), "test trim");
+  add_test("split", [this] { test_split(); }, "test split");
+  add_test("trim", [this] { test_trim(); }, "test trim");
 }
 
 void StringTestUnit::test_split()

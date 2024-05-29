@@ -9,17 +9,6 @@ using namespace std;
 
 namespace matador {
 
-void prototype_node::initialize(object_store *tree, const char *type, bool abstract)
-{
-  tree_ = tree;
-  first = std::make_unique<prototype_node>();
-  last = std::make_unique<prototype_node>();
-  type_.assign(type);
-  abstract_ = abstract;
-  first->next = last.get();
-  last->prev = first.get();
-}
-
 bool
 prototype_node::empty(bool self) const
 {
@@ -44,7 +33,7 @@ const char *prototype_node::type_id() const
 
 void prototype_node::append(prototype_node *sibling)
 {
-  sibling->parent = parent;
+  sibling->parent_ = parent_;
 
   sibling->prev = this;
   sibling->next = next;
@@ -52,7 +41,7 @@ void prototype_node::append(prototype_node *sibling)
   sibling->next->prev = sibling;
   sibling->depth = depth;
 
-  if (!parent) {
+  if (!parent_) {
     sibling->op_first = new object_proxy();
     sibling->op_last = sibling->op_marker = new object_proxy();
     sibling->op_first->next_ = sibling->op_last;
@@ -76,7 +65,7 @@ void prototype_node::append(prototype_node *sibling)
 
 void prototype_node::insert(prototype_node *child)
 {
-  child->parent = this;
+  child->parent_ = this;
   child->prev = last->prev;
   child->next = last.get();
   last->prev->next = child;
@@ -216,8 +205,8 @@ prototype_node* prototype_node::next_node() const
     // if there is a sibling, this is our next iterator to return
     // if not, we go back to the parent
     const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last.get()) {
-      node = node->parent;
+    while (node->parent_ && node->next == node->parent_->last.get()) {
+      node = node->parent_;
     }
     return node->next;
   }
@@ -234,8 +223,8 @@ prototype_node* prototype_node::next_node(const prototype_node *root) const
     // if there is a sibling, this is our next iterator to return
     // if not, we go back to the parent
     const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last.get() && node->parent != root) {
-      node = node->parent;
+    while (node->parent_ && node->next == node->parent_->last.get() && node->parent_ != root) {
+      node = node->parent_;
     }
     return node->next;
   }
@@ -256,7 +245,7 @@ prototype_node* prototype_node::previous_node() const
     // if there is no previous sibling, our next iterator
     // is the parent of the node
   } else {
-    return parent;
+    return parent_;
   }
 }
 
@@ -268,29 +257,29 @@ prototype_node* prototype_node::previous_node(const prototype_node *root) const
   // child as our iterator
   if (prev && prev->prev) {
     const prototype_node *node = prev;
-    while (node->last && node->first->next != node->last.get() && node->parent != root) {
+    while (node->last && node->first->next != node->last.get() && node->parent_ != root) {
       node = node->last->prev;
     }
     return const_cast<prototype_node*>(node);
     // if there is no previous sibling, our next iterator
     // is the parent of the node
   } else {
-    return parent;
+    return parent_;
   }
 }
 
 object_store *prototype_node::tree() const
 {
-  return tree_;
+  return &tree_;
 }
 
-bool prototype_node::is_child_of(const prototype_node *prnt) const
+bool prototype_node::is_child_of(const prototype_node &parent) const
 {
   const prototype_node *node = this;
-  while (prnt->depth < node->depth) {
-    node = node->parent;
+  while (parent.depth < node->depth) {
+    node = node->parent_;
   }
-  return node == prnt;
+  return node == &parent;
 }
 
 
@@ -301,12 +290,7 @@ bool prototype_node::has_children() const
 
 bool prototype_node::has_primary_key() const
 {
-  return !id_.is_null();
-}
-
-const identifier& prototype_node::id() const
-{
-  return id_;
+  return !primary_key_.is_null();
 }
 
 bool prototype_node::is_abstract() const
@@ -415,6 +399,10 @@ void prototype_node::adjust_left_marker(prototype_node *root, object_proxy *old_
     node = node->previous_node();
   }
 }
+
+prototype_node::prototype_node(object_store &store)
+: tree_(store)
+{}
 
 void prototype_node::adjust_right_marker(prototype_node *root, object_proxy* old_proxy, object_proxy *new_proxy)
 {

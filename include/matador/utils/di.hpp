@@ -13,9 +13,7 @@
 #include <functional>
 #include <stdexcept>
 
-namespace matador {
-
-namespace di {
+namespace matador::di {
 /**
  * Interface for the dependency injection
  * creation strategy.
@@ -325,7 +323,7 @@ public:
 
   inject& operator=(const inject &x)
   {
-    if (this != *x) {
+    if (this != &x) {
       obj = x.obj;
     }
     return *this;
@@ -375,8 +373,6 @@ void install_module(const std::function<void(module&)>& builder)
 void append_module(const std::function<void(module&)>& builder)
 {
   repository::instance().append(builder);
-}
-
 }
 
 }

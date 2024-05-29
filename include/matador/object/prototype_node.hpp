@@ -21,21 +21,15 @@ namespace matador {
 class object_store;
 class object_proxy;
 
-/// @cond MATADOR_DEV
-namespace detail {
-template < class T, template < class U = T > class O >
-class node_analyzer;
-class object_inserter;
-}
 /// @endcond
 
 /**
  * @class prototype_node
- * @brief Holds the prototype of a concrete serializable.
+ * @brief Holds the prototype of a concrete object.
  *
  * The prototype_node class holds the prototype of
- * a concrete serializable inside a producer serializable. Whenever
- * requested the class produces a new serializable.
+ * a concrete object inside a producer object. Whenever
+ * requested the class produces a new object.
  * 
  * It also holds a partial list containing all objects of
  * this and all children nodes.
@@ -80,7 +74,7 @@ public:
    * @return The created node.
    */
   template < class T >
-  static prototype_node* make_node(object_store *store, const char *type, T* prototype, bool abstract = false);
+  static prototype_node* make_node(object_store &store, const char *type, T* prototype, bool abstract = false);
 
   /**
    * Creates a relation prototype node.
@@ -95,17 +89,15 @@ public:
    * @return The created node.
    */
   template < class T >
-  static prototype_node* make_relation_node(object_store *store, const char *type,
+  static prototype_node* make_relation_node(object_store &store, const char *type,
                                             T *item, bool abstract,
                                             const char *owner_type, const char *relation_id);
-
-  prototype_node() = default;
 
   /**
    * @brief Creates a new prototype_node.
    * 
    * Creates a new prototype_node which creates an
-   * serializable from given object_base_producer. The node
+   * object from given object_base_producer. The node
    * gets the given type name t.
    * 
    * @param tree The node containing tree.
@@ -114,14 +106,14 @@ public:
    * @param abstract Tells the node if its prototype is abstract.
    */
   template < class T >
-  prototype_node(object_store *tree, const char *type, T *proto, bool abstract = false)
+  prototype_node(object_store &tree, const char *type, T *proto, bool abstract = false)
     : info_(std::make_unique<detail::prototype_info<T>>(*this, proto))
     , tree_(tree)
-    , first(new prototype_node)
-    , last(new prototype_node)
+    , first(new prototype_node(tree))
+    , last(new prototype_node(tree))
     , type_(type)
     , abstract_(abstract)
-    , object_type_entry_(std::make_shared<detail::object_type_registry_entry<T>>(tree, this))
+    , object_type_entry_(std::make_shared<detail::object_type_registry_entry<T>>(&tree, this))
   {
     first->next = last.get();
     last->prev = first.get();
@@ -131,19 +123,7 @@ public:
   ~prototype_node() = default;
 
   /**
-   * @brief Initializes a prototype_node.
-   * 
-   * Initializes a prototype_node. The node
-   * gets the given type name alias t.
-   *
-   * @param tree The node containing tree.
-   * @param type The type name of this node.
-   * @param abstract Tells the node if its prototype is abstract.
-   */
-  void initialize(object_store *tree, const char *type, bool abstract);
-
-  /**
-   * Returns true if serializable proxy list is empty. If self is true, only
+   * Returns true if object proxy list is empty. If self is true, only
    * list of own objects is checked. If self is false, complete list is
    * checked.
    * 
@@ -153,7 +133,7 @@ public:
   bool empty(bool self) const;
   
   /**
-   * Returns the size of the serializable proxy list.
+   * Returns the size of the object proxy list.
    * 
    * @return The number of objects.
    */
@@ -188,12 +168,12 @@ public:
   void insert(prototype_node *child);
 
   /**
-   * Inserts a serializable proxy into the
+   * Inserts a object proxy into the
    */
   void insert(object_proxy *proxy);
 
   /**
-   * @brief Removes an serializable proxy from prototype node
+   * @brief Removes an object proxy from prototype node
    *
    * @param proxy Object proxy to remove
    */
@@ -203,7 +183,7 @@ public:
    * Delete all objects inside this node
    * if recursive flag is set, delete all
    * objects below this node as well.
-   * To adjust the serializable proxy marker for the
+   * To adjust the object proxy marker for the
    * capacity objects the corresponding
    * prototype tree must be passed
    *
@@ -271,10 +251,10 @@ public:
   /**
    * Returns true if node is child of given parent node.
    * 
-   * @param prnt The parent node.
+   * @param parent The parent node.
    * @return True if node is child of given parent node.
    */
-  bool is_child_of(const prototype_node *prnt) const;
+  bool is_child_of(const prototype_node &parent) const;
 
   /**
    * Returns true if node has children.
@@ -284,18 +264,12 @@ public:
   bool has_children() const;
 
   /**
-   * Returns true if the serializable represented by this node
+   * Returns true if the object represented by this node
    * owns a primary key
    *
-   * @return True if serializable owns a primary key
+   * @return True if object owns a primary key
    */
   bool has_primary_key() const;
-
-  /**
-   * @brief Returns a pointer to the identifier prototype
-   * @return A pointer to the identifier prototype
-   */
-  const identifier& id() const;
 
   /**
    * @brief Returns true if the node represents an abstract object
@@ -335,7 +309,7 @@ public:
    * @param obs The observer to register
    */
   template < class T >
-  void register_observer(typed_object_store_observer<T> *obs);
+  void register_observer(std::unique_ptr<typed_object_store_observer<T>> &&obs);
 
   /**
    * Returns the prototype object of the node
@@ -396,10 +370,12 @@ public:
 
 private:
 
+  explicit prototype_node(object_store &store);
+
   /**
    * @internal
    *
-   * Adjust first marker of all successor nodes with given serializable proxy.
+   * Adjust first marker of all successor nodes with given object proxy.
    *
    * @param old_proxy The old first marker proxy.
    * @param new_proxy The new first marker proxy.
@@ -409,8 +385,8 @@ private:
   /**
    * @internal
    *
-   * Adjusts self and last marker of all predeccessor nodes with given
-   * serializable proxy.
+   * Adjusts self and last marker of all predecessor nodes with given
+   * object proxy.
    *
    * @param old_proxy The old last marker proxy.
    * @param new_proxy The new last marker proxy.
@@ -424,7 +400,6 @@ private:
   void on_delete_proxy(object_proxy *proxy) const;
 
 private:
-  friend class object_holder;
   friend class object_store;
   template < class T >
   friend class object_view;
@@ -432,18 +407,13 @@ private:
   friend class const_object_view_iterator;
   template < class T >
   friend class object_view_iterator;
-  template < class T, template <class ...> class C >
-  friend class container;
-  template < class T,  template < class U = T > class O >
-  friend class detail::node_analyzer;
-  friend class detail::object_inserter;
 
   std::unique_ptr<matador::detail::abstract_prototype_info> info_;
 
-  object_store *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
+  object_store &tree_;   /**< The prototype tree to which the node belongs */
 
   // tree links
-  prototype_node *parent = nullptr;       /**< The parent node */
+  prototype_node *parent_ = nullptr;       /**< The parent node */
   prototype_node *prev = nullptr;         /**< The previous node */
   prototype_node *next = nullptr;         /**< The next node */
   std::unique_ptr<prototype_node> first;  /**< The first children node */
@@ -458,7 +428,7 @@ private:
 
   std::string type_;	       /**< The type name of the prototype node */
 
-  bool abstract_ = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
+  bool abstract_ = false;        /**< Indicates whether this node holds a producer of an abstract object */
 
   /**
    * Holds the primary keys of all proxies in this node
@@ -468,7 +438,7 @@ private:
   /**
    * a primary key prototype to clone from
    */
-  identifier id_;
+  identifier primary_key_;
 
   bool is_relation_node_ = false;
   relation_node_info relation_node_info_;
@@ -483,9 +453,9 @@ T *prototype_node::create() const
 }
 
 template<class T>
-void prototype_node::register_observer(typed_object_store_observer<T> *obs)
+void prototype_node::register_observer(std::unique_ptr<typed_object_store_observer<T>> &&obs)
 {
-  info_->register_observer(obs);
+  info_->register_observer(obs.release());
 }
 
 template<class T>
@@ -495,13 +465,13 @@ T *prototype_node::prototype() const
 }
 
 template<class T>
-prototype_node *prototype_node::make_node(object_store *store, const char *type, T *prototype, bool abstract)
+prototype_node *prototype_node::make_node(object_store &store, const char *type, T *prototype, bool abstract)
 {
   return new prototype_node(store, type, prototype, abstract);
 }
 
 template<class T>
-prototype_node *prototype_node::make_relation_node(object_store *store, const char *type,
+prototype_node *prototype_node::make_relation_node(object_store &store, const char *type,
                                                    T *item, bool abstract,
                                                    const char *owner_type, const char *relation_id)
 {

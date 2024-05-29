@@ -12,18 +12,26 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 
-template < class Owner, template < class U = Owner > class Observer >
+template < class Owner, template <typename> typename... ObserverType >
 class node_analyzer
 {
 public:
-  node_analyzer(prototype_node &node, object_store &store, std::vector<Observer<Owner>*> observer = {})
-    : node_(node), store_(store), observer_vector_(observer)
+  node_analyzer(prototype_node &node, object_store &store, const std::vector<std::unique_ptr<typed_object_store_observer<Owner>>> &observers)
+    : node_(node), store_(store), observers_(observers)
   { }
 
   ~node_analyzer() = default;
 
-  void analyze();
-  void analyze(Owner &obj);
+  void analyze()
+  {
+    Owner obj;
+    analyze(obj);
+  }
+
+  void analyze(Owner &obj)
+  {
+    matador::access::process(*this, obj);
+  }
 
   template<class V>
   void serialize(V &x);
@@ -61,7 +69,8 @@ private:
 protected:
   prototype_node &node_;
   object_store &store_;
-  std::vector<Observer<Owner>*> observer_vector_;
+
+  const std::vector<std::unique_ptr<typed_object_store_observer<Owner>>> &observers_;
 };
 
 /// @endcond
