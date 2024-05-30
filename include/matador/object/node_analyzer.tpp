@@ -134,7 +134,7 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, containe
 
     // new has many to many item
     auto proto = new has_many_item(left_column, right_column);
-    prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
+    prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, prototype_node::abstract_type::not_abstract, node_.type(), id);
 
     auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
     pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr, std::move(observers));
@@ -175,7 +175,7 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, containe
 
       // new has many to many item
       auto proto = new has_many_item(right_column, left_column);
-      prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
+      prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, prototype_node::abstract_type::not_abstract, node_.type(), id);
 
       auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
       pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr, std::move(observers));
@@ -232,7 +232,7 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, containe
     node_.register_relation_endpoint(std::type_index(typeid(typename has_many_item::right_value_type)), endpoint);
 
     auto proto = new has_many_item(left_column, right_column, cont.size_);
-    prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
+    prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, prototype_node::abstract_type::not_abstract, node_.type(), id);
 
     auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
     pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr, std::move(observers));

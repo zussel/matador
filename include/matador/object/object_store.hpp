@@ -56,15 +56,6 @@ public:
   typedef prototype_iterator iterator;              /**< Shortcut for the list iterator. */
   typedef const_prototype_iterator const_iterator;  /**< Shortcut for the list const iterator. */
 
-  /**
-   * Describes whether the inserted object type
-   * is handle as a concrete or abstract type
-   */
-  enum abstract_type {
-    abstract,           /**< Indicates an abstract object type */
-    not_abstract        /**< Indicates a concrete object type */
-  };
-
 public:
   /**
    * Create an empty object store.
@@ -94,7 +85,7 @@ public:
   prototype_iterator attach(const char *type, const char *parent = nullptr,
                             std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observers = {})
   {
-    return attach<Type, ObserverType...>(type, abstract_type::not_abstract, parent, std::move(observers));
+    return attach<Type, ObserverType...>(type, prototype_node::abstract_type::not_abstract, parent, std::move(observers));
   }
 
   /**
@@ -115,7 +106,7 @@ public:
   prototype_iterator attach_abstract(const char *type, const char *parent = nullptr,
                                      std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observers = {})
   {
-    return attach<Type, ObserverType...>(type, abstract_type::abstract, parent, std::move(observers));
+    return attach<Type, ObserverType...>(type, prototype_node::abstract_type::abstract, parent, std::move(observers));
   }
 
   /**
@@ -133,7 +124,7 @@ public:
   prototype_iterator attach(const char *type,
                             std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observers = {})
   {
-    return attach<Type, ObserverType...>(type, abstract, typeid(Super).name(), std::move(observers));
+    return attach<Type, ObserverType...>(type, prototype_node::abstract_type::abstract, typeid(Super).name(), std::move(observers));
   }
 
   /**
@@ -151,7 +142,7 @@ public:
   prototype_iterator attach_abstract(const char *type,
                                      std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observers = {})
   {
-    return attach<Type, ObserverType...>(type, abstract, typeid(Super).name(), std::move(observers));
+    return attach<Type, ObserverType...>(type, prototype_node::abstract_type::abstract, typeid(Super).name(), std::move(observers));
   }
 
   /**
@@ -173,11 +164,11 @@ public:
    */
   template <class Type, template <typename> typename... ObserverType>
   prototype_iterator attach(const char *type,
-                            abstract_type abstract,
+                            prototype_node::abstract_type abstract,
                             const char *parent = nullptr,
                             std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observers = {})
   {
-    auto node = new prototype_node(*this, type, new Type, abstract == abstract_type::abstract);
+    auto node = new prototype_node(*this, type, new Type, abstract);
     return attach_internal<Type, ObserverType...>(node, parent, std::move(observers));
   }
 

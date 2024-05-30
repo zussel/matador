@@ -3,6 +3,7 @@
 
 #include "matador/object/export.hpp"
 
+#include "matador/object/abstract_container.hpp"
 #include "matador/object/identifier_proxy_map.hpp"
 #include "matador/object/typed_object_store_observer.hpp"
 #include "matador/object/relation_field_endpoint.hpp"
@@ -44,6 +45,15 @@ public:
   prototype_node(const prototype_node&) = delete;
   prototype_node& operator=(const prototype_node&) = delete;
 
+  /**
+   * Describes whether the inserted object type
+   * is handle as a concrete or abstract type
+   */
+  enum class abstract_type {
+    abstract,           /**< Indicates an abstract object type */
+    not_abstract        /**< Indicates a concrete object type */
+  };
+
 public:
   /// @cond MATADOR_DEV
 
@@ -66,32 +76,38 @@ public:
   /**
    * Creates a regular prototype node.
    *
-   * @tparam T Type of the node
+   * @tparam Type Type of the node
    * @param store Corresponding object_store
    * @param type Type name
    * @param prototype The one prototype object
-   * @param abstract Flag indicating if node is abstract.
+   * @param abstract Indicating if node is abstract.
    * @return The created node.
    */
-  template < class T >
-  static prototype_node* make_node(object_store &store, const char *type, T* prototype, bool abstract = false);
+  template < class Type >
+  static prototype_node* make_node(object_store &store,
+                                   const char *type,
+                                   Type* prototype,
+                                   abstract_type abstract = abstract_type::not_abstract);
 
   /**
    * Creates a relation prototype node.
    *
-   * @tparam T Type of the node
+   * @tparam Type Type of the node
    * @param store Corresponding object_store
    * @param type Type name
    * @param item Prototype item
-   * @param abstract Flag indicating if node is abstract.
+   * @param abstract Indicating if node is abstract.
    * @param owner_type Type name of the owner node
    * @param relation_id Name of the relation in the prototype object
    * @return The created node.
    */
-  template < class T >
-  static prototype_node* make_relation_node(object_store &store, const char *type,
-                                            T *item, bool abstract,
-                                            const char *owner_type, const char *relation_id);
+  template < class Type >
+  static prototype_node* make_relation_node(object_store &store,
+                                            const char *type,
+                                            Type *item,
+                                            abstract_type abstract,
+                                            const char *owner_type,
+                                            const char *relation_id);
 
   /**
    * @brief Creates a new prototype_node.
@@ -106,7 +122,7 @@ public:
    * @param abstract Tells the node if its prototype is abstract.
    */
   template < class T >
-  prototype_node(object_store &tree, const char *type, T *proto, bool abstract = false)
+  prototype_node(object_store &tree, const char *type, T *proto, abstract_type abstract = abstract_type::not_abstract)
     : info_(std::make_unique<detail::prototype_info<T>>(*this, proto))
     , tree_(tree)
     , first(new prototype_node(tree))
@@ -428,7 +444,7 @@ private:
 
   std::string type_;	       /**< The type name of the prototype node */
 
-  bool abstract_ = false;        /**< Indicates whether this node holds a producer of an abstract object */
+  abstract_type abstract_{abstract_type::not_abstract};        /**< Indicates whether this node holds a producer of an abstract object */
 
   /**
    * Holds the primary keys of all proxies in this node
@@ -465,14 +481,14 @@ T *prototype_node::prototype() const
 }
 
 template<class T>
-prototype_node *prototype_node::make_node(object_store &store, const char *type, T *prototype, bool abstract)
+prototype_node *prototype_node::make_node(object_store &store, const char *type, T *prototype, abstract_type abstract)
 {
   return new prototype_node(store, type, prototype, abstract);
 }
 
 template<class T>
 prototype_node *prototype_node::make_relation_node(object_store &store, const char *type,
-                                                   T *item, bool abstract,
+                                                   T *item, abstract_type abstract,
                                                    const char *owner_type, const char *relation_id)
 {
   prototype_node *node = make_node<T>(store, type, item, abstract);

@@ -36,7 +36,7 @@ void PrototypeTreeTestUnit::test_empty()
 void PrototypeTreeTestUnit::test_insert()
 {
   object_store ptree;
-  UNIT_ASSERT_EXCEPTION(ptree.attach<datatypes>("item", matador::object_store::not_abstract, "baba"), object_exception, "unknown prototype type");
+  UNIT_ASSERT_EXCEPTION(ptree.attach<datatypes>("item", prototype_node::abstract_type::not_abstract, "baba"), object_exception, "unknown prototype type");
 
   ptree.attach<datatypes>("item");
 
@@ -119,9 +119,9 @@ void PrototypeTreeTestUnit::test_clear()
 {
   object_store ptree;
   ptree.attach<datatypes>("item");
-  ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
-  ptree.attach<ItemB>("item_b", matador::object_store::not_abstract, "item");
-  ptree.attach<ItemC>("item_c", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemA>("item_a", prototype_node::abstract_type::not_abstract, "item");
+  ptree.attach<ItemB>("item_b", prototype_node::abstract_type::not_abstract, "item");
+  ptree.attach<ItemC>("item_c", prototype_node::abstract_type::not_abstract, "item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4);
 
@@ -161,9 +161,9 @@ void PrototypeTreeTestUnit::test_decrement()
 void PrototypeTreeTestUnit::test_count() {
   object_store ptree;
   ptree.attach<datatypes>("item");
-  ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
-  ptree.attach<ItemB>("item_b", matador::object_store::not_abstract, "item");
-  ptree.attach<ItemC>("item_c", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemA>("item_a", prototype_node::abstract_type::not_abstract, "item");
+  ptree.attach<ItemB>("item_b", prototype_node::abstract_type::not_abstract, "item");
+  ptree.attach<ItemC>("item_c", prototype_node::abstract_type::not_abstract, "item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4);
 }
@@ -172,7 +172,7 @@ void PrototypeTreeTestUnit::test_child_of()
 {
   object_store ptree;
   ptree.attach<datatypes>("item");
-  ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemA>("item_a", prototype_node::abstract_type::not_abstract, "item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2);
 
@@ -189,9 +189,9 @@ void PrototypeTreeTestUnit::test_traverse()
 {
   object_store ptree;
   ptree.attach<datatypes>("item");
-  ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
-  ptree.attach<ItemB>("item_b", matador::object_store::not_abstract, "item");
-  ptree.attach<ItemC>("item_c", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemA>("item_a", prototype_node::abstract_type::not_abstract, "item");
+  ptree.attach<ItemB>("item_b", prototype_node::abstract_type::not_abstract, "item");
+  ptree.attach<ItemC>("item_c", prototype_node::abstract_type::not_abstract, "item");
 
   prototype_iterator first;
   first = ptree.begin();
@@ -217,9 +217,9 @@ void PrototypeTreeTestUnit::test_const_traverse()
 {
   object_store ptree;
   ptree.attach<datatypes>("item");
-  ptree.attach<ItemA>("item_a", matador::object_store::not_abstract, "item");
-  ptree.attach<ItemB>("item_b", matador::object_store::not_abstract, "item");
-  ptree.attach<ItemC>("item_c", matador::object_store::not_abstract, "item");
+  ptree.attach<ItemA>("item_a", prototype_node::abstract_type::not_abstract, "item");
+  ptree.attach<ItemB>("item_b", prototype_node::abstract_type::not_abstract, "item");
+  ptree.attach<ItemC>("item_c", prototype_node::abstract_type::not_abstract, "item");
 
   const_prototype_iterator first= ptree.begin();
   const_prototype_iterator last = ptree.end();

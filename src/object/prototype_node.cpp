@@ -295,7 +295,7 @@ bool prototype_node::has_primary_key() const
 
 bool prototype_node::is_abstract() const
 {
-  return abstract_;
+  return abstract_ == abstract_type::abstract;
 }
 
 std::type_index prototype_node::type_index() const
