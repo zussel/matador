@@ -24,7 +24,8 @@ SET(SOURCES
   field_attributes.cpp
   constraints.cpp
   version.cpp
-        convert.cpp)
+        convert.cpp
+        foreign_attributes.cpp)
 
 SET(HEADER
   ../../include/matador/utils/access.hpp
@@ -74,7 +75,9 @@ SET(HEADER
   ../../include/matador/utils/di.hpp
   ../../include/matador/utils/version.hpp
         ../../include/matador/utils/types.hpp
-        ../../include/matador/utils/convert.hpp)
+        ../../include/matador/utils/convert.hpp
+        ../../include/matador/utils/foreign_attributes.hpp
+        ../../include/matador/utils/fetch_type.hpp)
 
 ADD_LIBRARY(matador-utils STATIC ${SOURCES} ${HEADER})
 
