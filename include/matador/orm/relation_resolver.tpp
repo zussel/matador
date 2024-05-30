@@ -1,9 +1,7 @@
 #include "matador/orm/relation_resolver.hpp"
 #include "relation_resolver.hpp"
 
-namespace matador {
-
-namespace detail {
+namespace matador::detail {
 
 /*******************************
  *
@@ -15,7 +13,7 @@ template < class T >
 template < class V >
 void relation_resolver<T, typename std::enable_if<
   !std::is_base_of<basic_has_many_to_many_item, T>::value
->::type>::on_belongs_to(const char *id, object_ptr<V> &x, cascade_type cascade)
+>::type>::on_belongs_to(const char *id, object_ptr<V> &x, const foreign_attributes &attr)
 {
   const auto &pk = x.primary_key().share();
   if (pk.is_null()) {
@@ -31,7 +29,7 @@ void relation_resolver<T, typename std::enable_if<
   auto foreign_table = it->second;
 
   // get node of object type
-  prototype_iterator node = store_->find(x.type());
+  auto node = store_->find(x.type());
 
   object_proxy *proxy = node->find_proxy(pk);
   if (proxy) {
@@ -40,7 +38,7 @@ void relation_resolver<T, typename std::enable_if<
      * if proxy can be found object was
      * already read - replace proxy
      */
-    x.reset(proxy, cascade, false);
+    x.reset(proxy, attr, false);
   } else {
     /**
      * if proxy can't be found we create
@@ -53,9 +51,9 @@ void relation_resolver<T, typename std::enable_if<
       proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<V>{});
       foreign_proxy = foreign_table->insert_proxy(pk, proxy);
       // if foreign relation is HAS_ONE
-      x.reset(foreign_proxy->second.proxy, cascade, false);
+      x.reset(foreign_proxy->second.proxy, attr, false);
     } else {
-      x.reset(foreign_proxy->second.proxy, cascade, true);
+      x.reset(foreign_proxy->second.proxy, attr, true);
     }
     foreign_proxy->second.primary_keys.push_back(pk);
   }
@@ -124,7 +122,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   !matador::is_builtin<typename T::right_value_type>::value
->::type>::on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade)
+>::type>::on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &attr)
 {
   // increase reference count of has_many_to_xxx item proxy
   // because there will be an object for this kind of field
@@ -138,11 +136,11 @@ void relation_resolver<T, typename std::enable_if<
 
   if (left_proxy_ == nullptr) {
     // if left is not loaded
-    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy(x, pk, attr, left_table_ptr_);
 
   } else {
 
-    object_proxy* right_proxy = acquire_proxy(x, pk, cascade, right_table_ptr_);
+    object_proxy* right_proxy = acquire_proxy(x, pk, attr, right_table_ptr_);
     if (left_table_ptr_->is_loaded()) {
       left_endpoint_->insert_value_into_foreign(right_proxy, left_proxy_);
     } else {
@@ -224,7 +222,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade)
+>::type>::on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &attr)
 {
   // check whether is left or right side value
   // left side will be determined first
@@ -235,7 +233,7 @@ void relation_resolver<T, typename std::enable_if<
 
   if (left_proxy_ == nullptr) {
     // if left is not loaded
-    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy(x, pk, attr, left_table_ptr_);
 
   } else {
     throw_object_exception("right value type must not be object pointer");
@@ -247,7 +245,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_has_one(const char *, object_ptr<V> &x, cascade_type cascade)
+>::type>::on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &attr)
 {
   // must be left side value
   // if left table is loaded
@@ -259,8 +257,7 @@ void relation_resolver<T, typename std::enable_if<
     return;
   }
 
-  left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
+  left_proxy_ = acquire_proxy(x, pk, attr, left_table_ptr_);
 }
 
-}
 }

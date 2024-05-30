@@ -93,18 +93,18 @@ public:
   void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   template<class T>
-  void on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
   template<class T>
-  void on_has_one(const char *, object_ptr<T> &x, cascade_type cascade);
+  void on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *id, container<T, Container> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, container<T, Container> &x, const char *, const char *, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_has_many(id, x, cascade);
+    on_has_many(id, x, attr);
   }
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *, container<T, Container> &, cascade_type, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
+  void on_has_many(const char *, container<T, Container> &, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *, container<T, Container> &, cascade_type, typename std::enable_if<is_builtin<T>::value>::type* = 0);
+  void on_has_many(const char *, container<T, Container> &, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<is_builtin<T>::value>::type* = 0);
 
 private:
   bool check_object_count_map() const;
@@ -117,7 +117,7 @@ private:
 };
 
 template<class T>
-void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade)
+void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, const foreign_attributes &attr)
 {
   if (!x.ptr()) {
     return;
@@ -142,7 +142,7 @@ void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type 
     --curr_obj->second;
   }
 
-  if ((cascade & cascade_type::REMOVE) == cascade_type::REMOVE) {
+  if ((attr.cascade() & cascade_type::REMOVE) == cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     proxy_stack_.push(x.proxy_);
     matador::access::process(*this, *(T*)x.ptr());
@@ -151,7 +151,7 @@ void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type 
 }
 
 template<class T>
-void object_deleter::on_has_one(const char *, object_ptr<T> &x, cascade_type cascade)
+void object_deleter::on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr)
 {
   if (!x.ptr()) {
     return;
@@ -177,7 +177,7 @@ void object_deleter::on_has_one(const char *, object_ptr<T> &x, cascade_type cas
     visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1));
   }
 
-  if ((cascade & cascade_type::REMOVE) == cascade_type::REMOVE) {
+  if ((attr.cascade() & cascade_type::REMOVE) == cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     proxy_stack_.push(x.proxy_);
     matador::access::process(*this, *(T*)x.ptr());
@@ -186,7 +186,7 @@ void object_deleter::on_has_one(const char *, object_ptr<T> &x, cascade_type cas
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::on_has_many(const char *, container<T, C> &x, cascade_type, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
+void object_deleter::on_has_many(const char *, container<T, C> &x, const foreign_attributes &/*attr*/, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
 {
   typename container<T, C>::iterator first = x.begin();
   typename container<T, C>::iterator last = x.end();
@@ -209,7 +209,7 @@ void object_deleter::on_has_many(const char *, container<T, C> &x, cascade_type,
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::on_has_many(const char *, container<T, C> &x, cascade_type, typename std::enable_if<matador::is_builtin<T>::value>::type*)
+void object_deleter::on_has_many(const char *, container<T, C> &x, const foreign_attributes &/*attr*/, typename std::enable_if<matador::is_builtin<T>::value>::type*)
 {
   typename container<T, C>::iterator first = x.begin();
   typename container<T, C>::iterator last = x.end();

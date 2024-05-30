@@ -4,6 +4,7 @@
 #include "matador/orm/export.hpp"
 
 #include "matador/utils/field_attributes.hpp"
+#include "matador/utils/foreign_attributes.hpp"
 #include "matador/utils/access.hpp"
 
 #include "matador/sql/column.hpp"
@@ -44,10 +45,10 @@ public:
   void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char*, identifiable_holder&, cascade_type) {}
-  void on_has_one(const char*, identifiable_holder&, cascade_type) {}
-  void on_has_many(const char*, abstract_container&, const char*, const char*, cascade_type) {}
-  void on_has_many(const char*, abstract_container&, cascade_type) {}
+  void on_belongs_to(const char*, identifiable_holder&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_one(const char*, identifiable_holder&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char*, abstract_container&, const char*, const char*, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char*, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   column col_;

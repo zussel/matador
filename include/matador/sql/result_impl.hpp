@@ -3,6 +3,7 @@
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/field_attributes.hpp"
+#include "matador/utils/foreign_attributes.hpp"
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/serializer.hpp"
@@ -129,11 +130,11 @@ public:
   void on_attribute(const char *id, char *, const field_attributes &attr = null_attributes);
   void on_attribute(const char *id, std::string&, const field_attributes &attr = null_attributes);
 
-  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type);
-  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type);
+  void on_belongs_to(const char *id, matador::identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_one(const char *id, matador::identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
 
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
   virtual void read_value(const char *id, size_type index, char &value) = 0;
   virtual void read_value(const char *id, size_type index, short &value) = 0;
@@ -154,7 +155,7 @@ public:
   virtual void read_value(const char *id, size_type index, std::string &value) = 0;
   virtual void read_value(const char *id, size_type index, std::string &value, size_t s) = 0;
 
-  virtual const char *column(size_type c) const = 0;
+  [[nodiscard]] virtual const char *column(size_type c) const = 0;
 
   virtual bool fetch() = 0;
 
@@ -187,11 +188,11 @@ public:
     return finalize_fetch();
   }
 
-  virtual size_type affected_rows() const = 0;
-  virtual size_type result_rows() const = 0;
-  virtual size_type fields() const = 0;
+  [[nodiscard]] virtual size_type affected_rows() const = 0;
+  [[nodiscard]] virtual size_type result_rows() const = 0;
+  [[nodiscard]] virtual size_type fields() const = 0;
 
-  virtual size_type reset_column_index() const = 0;
+  [[nodiscard]] virtual size_type reset_column_index() const = 0;
 
   virtual void close() = 0;
 
@@ -201,7 +202,7 @@ protected:
 protected:
   virtual void read_foreign_object(const char *id, identifiable_holder &x);
 
-  size_type column_index() const;
+  [[nodiscard]] size_type column_index() const;
 
   result_identifier_reader result_identifier_reader_;
 

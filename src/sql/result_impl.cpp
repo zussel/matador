@@ -124,12 +124,12 @@ void result_impl::on_attribute(const char *id, std::string &value, const field_a
   }
 }
 
-void result_impl::on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type)
+void result_impl::on_belongs_to(const char *id, matador::identifiable_holder &x, const foreign_attributes &/*attr*/)
 {
   read_foreign_object(id, x);
 }
 
-void result_impl::on_has_one(const char *id, matador::identifiable_holder &x, cascade_type)
+void result_impl::on_has_one(const char *id, matador::identifiable_holder &x, const foreign_attributes &/*attr*/)
 {
   read_foreign_object(id, x);
 }

@@ -4,6 +4,7 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/identifier.hpp"
 #include "matador/utils/serializer.hpp"
+#include "matador/utils/foreign_attributes.hpp"
 
 #include "matador/sql/columns.hpp"
 
@@ -76,10 +77,10 @@ public:
     cols_->push_back(make_column(id, x, attr));
   }
   void on_attribute(const char *id, char *x, const field_attributes &attr = null_attributes);
-  void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);
-  void on_has_one(const char *id, identifiable_holder &x, cascade_type);
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_belongs_to(const char *id, identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_one(const char *id, identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_many(const char *, abstract_container &, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
   template < class ValueType >
   void add_column_value(const char *col, ValueType &val, const field_attributes &attr)

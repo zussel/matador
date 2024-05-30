@@ -2,8 +2,7 @@
 
 #include "matador/object/object_store.hpp"
 
-namespace matador {
-namespace detail {
+namespace matador::detail {
 
 object_inserter::object_inserter(object_store &store)
   : ostore_(store) { }
@@ -48,14 +47,14 @@ void object_inserter::decrement_reference_count(object_holder &holder) const
   }
 }
 
-void object_inserter::insert_object(object_holder &x, const std::type_index &type_index, cascade_type cascade)
+void object_inserter::insert_object(object_holder &x, const std::type_index &type_index, const foreign_attributes &attr)
 {
   if (x.is_inserted()) {
     return;
   }
 
   x.is_inserted_ = true;
-  x.cascade_ = cascade;
+  x.attributes_ = attr;
   x.owner_ = proxy_stack_.top();
 
   prototype_node *node = x.owner_->node();
@@ -86,7 +85,7 @@ void object_inserter::insert_object(object_holder &x, const std::type_index &typ
     return;
   }
 
-  if ((cascade & cascade_type::INSERT) != cascade_type::NONE) {
+  if ((attr.cascade() & cascade_type::INSERT) != cascade_type::NONE) {
     if (x.id() > 0) {
       // do the pointer count
       proxy_stack_.push(x.proxy_);
@@ -127,5 +126,4 @@ object_proxy* object_inserter::initialize_has_many(abstract_container &x)
   return proxy;
 }
 
-}
 }

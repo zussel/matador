@@ -6,14 +6,15 @@
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/field_attributes.hpp"
+#include "matador/utils/foreign_attributes.hpp"
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/identifier.hpp"
 
 #include <memory>
 #include <functional>
 
-namespace matador {
-namespace detail {
+
+namespace matador::detail {
 
 /// @cond MATADOR_DEV
 
@@ -88,10 +89,10 @@ public:
   void on_attribute(const char *id, std::string &x, const field_attributes &attr = null_attributes);
   void on_attribute(const char *id, date &x, const field_attributes &attr = null_attributes);
   void on_attribute(const char *id, time &x, const field_attributes &attr = null_attributes);
-  void on_belongs_to(const char *id, identifiable_holder &x, cascade_type);
-  void on_has_one(const char *id, identifiable_holder &x, cascade_type);
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_belongs_to(const char *id, identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_one(const char *id, identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_many(const char *, abstract_container &, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   std::unique_ptr<columns> cols_;
@@ -115,6 +116,6 @@ void typed_column_identifier_serializer::make_typed_column(ValueType &value, con
 }
 
 }
-}
+
 
 #endif //OOS_TYPED_COLUMN_SERIALIZER_HPP

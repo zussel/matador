@@ -16,7 +16,7 @@ void node_analyzer<Owner, ObserverType...>::serialize(Value &x)
 
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value>
-void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type)
+void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
 {
   // find foreign_node of belongs to type
   prototype_iterator foreign_node = store_.find(x.type());
@@ -68,7 +68,7 @@ void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object
 
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value>
-void node_analyzer<Owner, ObserverType...>::on_has_one(const char *id, object_ptr<Value> &x, cascade_type)
+void node_analyzer<Owner, ObserverType...>::on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
 {
   auto endpoint = std::make_shared<detail::has_one_endpoint<Value, Owner>>(id, &node_);
   node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
@@ -91,16 +91,16 @@ void node_analyzer<Owner, ObserverType...>::on_has_one(const char *id, object_pt
 
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
-void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, container<Value, Container> &x, cascade_type cascade)
+void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, container<Value, Container> &x, const foreign_attributes &attr)
 {
   if (is_builtin<Value>::value) {
-    this->serialize(id, x, node_.type(), typeid(Value).name(), cascade);
+    this->serialize(id, x, node_.type(), typeid(Value).name(), attr);
   } else {
     auto value_node = store_.find<Value>();
     if (value_node == store_.end()) {
-      this->serialize(id, x, node_.type(), typeid(Value).name(), cascade);
+      this->serialize(id, x, node_.type(), typeid(Value).name(), attr);
     } else {
-      this->serialize(id, x, node_.type(), value_node->type(), cascade);
+      this->serialize(id, x, node_.type(), value_node->type(), attr);
     }
   }
 }
@@ -108,9 +108,9 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, containe
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, container<Value, Container> &,
-                                       const char *left_column, const char *right_column,
-                                       cascade_type,
-                                       typename std::enable_if<!is_builtin<Value>::value>::type *)
+                                                        const char *left_column, const char *right_column,
+                                                        const foreign_attributes &/*attr*/,
+                                                        typename std::enable_if<!is_builtin<Value>::value>::type *)
                                        {
   // attach relation table for has many relation
   // check if has-many item is already attached
@@ -216,9 +216,9 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, containe
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, container<Value, Container> &cont,
-                                                 const char *left_column, const char *right_column,
-                                                 cascade_type,
-                                                 typename std::enable_if<is_builtin<Value>::value>::type *)
+                                                        const char *left_column, const char *right_column,
+                                                        const foreign_attributes &/*attr*/,
+                                                        typename std::enable_if<is_builtin<Value>::value>::type *)
 {
   // attach relation table for has many relation
   // check if has many item is already attached

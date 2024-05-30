@@ -48,13 +48,13 @@ public:
   void on_attribute(const char *id, date &to, const field_attributes &/*attr*/ = null_attributes);
   void on_attribute(const char *id, time &to, const field_attributes &/*attr*/ = null_attributes);
   template<class Value>
-  void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
+  void on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template<class Value>
-  void on_has_one(const char *id, object_ptr<Value> &x, cascade_type);
+  void on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, container<Value, Container> &x, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &x, const char *, const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, container<Value, Container> &x, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
 
 private:
   details::mapper_runtime &runtime_data_;
@@ -167,7 +167,7 @@ void json_object_mapper_serializer::on_attribute(const char *id, V &to, const fi
 }
 
 template<class Value>
-void json_object_mapper_serializer::on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type)
+void json_object_mapper_serializer::on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
 {
   if (runtime_data_.object_key != id) {
     return;
@@ -180,7 +180,7 @@ void json_object_mapper_serializer::on_belongs_to(const char *id, object_ptr<Val
 }
 
 template<class Value>
-void json_object_mapper_serializer::on_has_one(const char *id, object_ptr<Value> &x, cascade_type)
+void json_object_mapper_serializer::on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
 {
   if (runtime_data_.object_key != id) {
     return;
@@ -193,8 +193,12 @@ void json_object_mapper_serializer::on_has_one(const char *id, object_ptr<Value>
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_mapper_serializer::on_has_many(const char *id, container<Value, Container> &x, const char *,
-                                                const char *, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type*)
+void json_object_mapper_serializer::on_has_many(const char *id,
+                                                container<Value, Container> &x,
+                                                const char *,
+                                                const char *,
+                                                const foreign_attributes &/*attr*/,
+                                                typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.object_key != id) {
     return;
@@ -210,8 +214,12 @@ void json_object_mapper_serializer::on_has_many(const char *id, container<Value,
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_mapper_serializer::on_has_many(const char *id, container<Value, Container> &x, const char *,
-                                                const char *, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type*)
+void json_object_mapper_serializer::on_has_many(const char *id,
+                                                container<Value, Container> &x,
+                                                const char *,
+                                                const char *,
+                                                const foreign_attributes &/*attr*/,
+                                                typename std::enable_if<is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.key != id) {
     return;

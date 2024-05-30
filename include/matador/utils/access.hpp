@@ -11,6 +11,7 @@ template < class Type, template < class ... > class ContainerType >
 class container;
 
 class field_attributes;
+class foreign_attributes;
 
 namespace access {
 template<class Operator, class Type>
@@ -49,23 +50,23 @@ void attribute(Operator &op, const char *id, Type &value) {
 }
 
 template<class Operator, class Type>
-void has_one(Operator &op, const char *id, Type &value, cascade_type cascade) {
-  op.on_has_one(id, value, cascade);
+void has_one(Operator &op, const char *id, Type &value, const foreign_attributes &attr) {
+  op.on_has_one(id, value, attr);
 }
 
 template<class Operator, class Type>
-void belongs_to(Operator &op, const char *id, Type &value, cascade_type cascade) {
-  op.on_belongs_to(id, value, cascade);
+void belongs_to(Operator &op, const char *id, Type &value, const foreign_attributes &attr) {
+  op.on_belongs_to(id, value, attr);
 }
 
 template<class Operator, class Type, template<class ...> class ContainerType>
-void has_many(Operator &op, const char *id, container<Type, ContainerType> &container, cascade_type cascade) {
-  op.on_has_many(id, container, cascade);
+void has_many(Operator &op, const char *id, container<Type, ContainerType> &container, const foreign_attributes &attr) {
+  op.on_has_many(id, container, attr);
 }
 
 template<class Operator, class Type, template<class ...> class ContainerType>
-void has_many(Operator &op, const char *id, container<Type, ContainerType> &container, const char *left_column, const char *right_column, cascade_type cascade) {
-  op.on_has_many(id, container, left_column, right_column, cascade);
+void has_many(Operator &op, const char *id, container<Type, ContainerType> &container, const char *left_column, const char *right_column, const foreign_attributes &attr) {
+  op.on_has_many(id, container, left_column, right_column, attr);
 }
 
 }

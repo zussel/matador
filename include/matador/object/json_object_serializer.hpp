@@ -111,11 +111,11 @@ public:
   void on_attribute(const char *id, time &val, const field_attributes &/*attr*/ = null_attributes);
 
   template<class Value>
-  void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
+  void on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template<class Value>
-  void on_has_one(const char *id, object_ptr<Value> &x, cascade_type);
+  void on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &c, const char *, const char *, cascade_type);
+  void on_has_many(const char *id, container<Value, Container> &c, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes);
 
 private:
   void write_id(const char *id);
@@ -222,7 +222,7 @@ private:
 };
 
 template<class Value>
-void json_object_serializer::on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type)
+void json_object_serializer::on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
 {
   if (x.empty()) {
     return;
@@ -232,7 +232,8 @@ void json_object_serializer::on_belongs_to(const char *id, object_ptr<Value> &x,
 }
 
 template<class Value>
-void json_object_serializer::on_has_one(const char *id, object_ptr<Value> &x, cascade_type)
+void json_object_serializer::on_has_one(const char *id, object_ptr<Value> &x,
+                                        const foreign_attributes &/*attr*/)
 {
   if (x.empty()) {
     return;
@@ -242,8 +243,10 @@ void json_object_serializer::on_has_one(const char *id, object_ptr<Value> &x, ca
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_serializer::on_has_many(const char *id, container<Value, Container> &c, const char *,
-                                         const char *, cascade_type)
+void json_object_serializer::on_has_many(const char *id, container<Value, Container> &c,
+                                         const char *,
+                                         const char *,
+                                         const foreign_attributes &/*attr*/)
 {
   write_id(id);
   begin_array();

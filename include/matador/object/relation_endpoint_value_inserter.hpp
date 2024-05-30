@@ -42,14 +42,14 @@ public:
   void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
+  void on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &attr = default_foreign_attributes);
   template < class T >
-  void on_belongs_to(const char *, T &, cascade_type) {}
-  void on_has_one(const char *id, object_ptr<Value> &x, cascade_type);
+  void on_belongs_to(const char *, T &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &attr = default_foreign_attributes);
   template < class T >
-  void on_has_one(const char *, T &, cascade_type) {}
+  void on_has_one(const char *, T &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   template < template < class ... > class Container >
-  void on_has_many(const char *id, container<Value, Container> &x, cascade_type)
+  void on_has_many(const char *id, container<Value, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     if (field_ != id) {
       return;
@@ -59,14 +59,14 @@ public:
 
 
   template < template < class ... > class Container >
-  void on_has_many(const char *id, container<Value, Container> &x, const char*, const char*, cascade_type cascade)
+  void on_has_many(const char *id, container<Value, Container> &x, const char*, const char*, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_has_many(id, x, cascade);
+    on_has_many(id, x, attr);
   }
   template < class T, template < class ... > class Container >
-  void on_has_many(const char *, container<T, Container> &, cascade_type) {}
+  void on_has_many(const char *, container<T, Container> &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   template < class T, template < class ... > class Container >
-  void on_has_many(const char *, container<T, Container> &, const char*, const char*, cascade_type) {}
+  void on_has_many(const char *, container<T, Container> &, const char*, const char*, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   std::string field_;
@@ -89,23 +89,23 @@ void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &o
 template<class Value>
 void relation_endpoint_value_inserter<Value>::on_belongs_to(const char *id,
                                                             object_ptr <Value> &x,
-                                                            cascade_type cascade)
+                                                            const foreign_attributes &attr)
 {
   if (field_ != id) {
     return;
   }
-  x.reset(proxy(holder_.value()), cascade, false);
+  x.reset(proxy(holder_.value()), attr, false);
 }
 
 template<class Value>
 void relation_endpoint_value_inserter<Value>::on_has_one(const char *id,
                                                          object_ptr <Value> &x,
-                                                         cascade_type cascade)
+                                                         const foreign_attributes &attr)
 {
   if (field_ != id) {
     return;
   }
-  x.reset(proxy(holder_.value()), cascade, false);
+  x.reset(proxy(holder_.value()), attr, false);
 }
 /// @endcond
 

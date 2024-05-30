@@ -32,14 +32,14 @@ public:
    *
    * @return true if serializable has a primary key
    */
-  virtual bool has_primary_key() const = 0;
+  [[nodiscard]] virtual bool has_primary_key() const = 0;
 
   /**
    * Gets the primary key of the foreign serializable
    *
    * @return The primary key of the foreign serializable
    */
-  virtual const identifier& primary_key() const = 0;
+  [[nodiscard]] virtual const identifier& primary_key() const = 0;
   virtual identifier& primary_key() = 0;
 
   /**
@@ -47,7 +47,7 @@ public:
    *
    * @return Returns a new identifier object.
    */
-  virtual identifier create_identifier() const = 0;
+  [[nodiscard]] virtual identifier create_identifier() const = 0;
 };
 
 }

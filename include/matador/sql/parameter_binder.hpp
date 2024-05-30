@@ -4,6 +4,7 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/field_attributes.hpp"
+#include "matador/utils/foreign_attributes.hpp"
 #include "matador/utils/identifiable_holder.hpp"
 
 #include <string>
@@ -316,7 +317,7 @@ public:
       impl_->bind(x, attr.size(), index_++);
     }
   }
-  void on_belongs_to(const char */*id*/, identifiable_holder &x, cascade_type)
+  void on_belongs_to(const char */*id*/, identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     if (x.has_primary_key()) {
       x.primary_key().serialize(identifier_serializer_);
@@ -327,7 +328,7 @@ public:
       impl_->bind_null(false);
     }
   }
-  void on_has_one(const char */*id*/, identifiable_holder &x, cascade_type)
+  void on_has_one(const char */*id*/, identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     if (x.has_primary_key()) {
       x.primary_key().serialize(identifier_serializer_);
@@ -338,8 +339,8 @@ public:
       impl_->bind_null(false);
     }
   }
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_has_many(const char *, abstract_container &, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   friend class detail::parameter_identifier_serializer<void>;

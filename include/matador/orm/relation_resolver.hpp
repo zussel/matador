@@ -83,10 +83,10 @@ public:
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
 
   template < class V >
-  void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type cascade);
+  void on_belongs_to(const char *id, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
 
   template < class V >
-  void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade)
+  void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes)
   {
     const auto pk = x.primary_key().share();
     if (pk.is_null()) {
@@ -103,7 +103,7 @@ public:
        * if proxy can be found object was
        * already read - replace proxy
        */
-      x.reset(proxy, cascade);
+      x.reset(proxy, attr);
     } else {
       /**
        * if proxy can't be found we create
@@ -120,22 +120,22 @@ public:
       if (k == j->second->end_proxy()) {
         proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<V>{});
         k = j->second->insert_proxy(pk, proxy);
-        x.reset(k->second.proxy, cascade, false);
+        x.reset(k->second.proxy, attr, false);
       } else {
-        x.reset(k->second.proxy, cascade, true);
+        x.reset(k->second.proxy, attr, true);
       }
       k->second.primary_keys.push_back(pk);
     }
   }
 
   template<class V, template<class ...> class C>
-  void on_has_many(const char *id, container<V, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, container<V, C> &x, const char *, const char *, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_has_many(id, x, cascade);
+    on_has_many(id, x, attr);
   }
 
   template<class V, template<class ...> class C>
-  void on_has_many(const char *id, container<V, C> &x, cascade_type)
+  void on_has_many(const char *id, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);
@@ -260,9 +260,9 @@ public:
   void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes);
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
   template < class V >
-  void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes);
   template < class V >
-  void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade)
+  void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes)
   {
     // must be left side value
     // if left table is loaded
@@ -274,21 +274,21 @@ public:
       return;
     }
 
-    left_proxy_ = acquire_proxy(x, pk, cascade, left_table_ptr_);
+    left_proxy_ = acquire_proxy(x, pk, attr, left_table_ptr_);
   }
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) { }
-  void on_has_many(const char *, abstract_container &, cascade_type) { }
+  void on_has_many(const char *, abstract_container &, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
+  void on_has_many(const char *, abstract_container &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
 
 private:
   template<class V>
-  object_proxy* acquire_proxy(object_ptr<V> &x, const identifier pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
+  object_proxy* acquire_proxy(object_ptr<V> &x, const identifier pk, const foreign_attributes &attr, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());
 
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
-      x.reset(proxy, cascade);
+      x.reset(proxy, attr);
     } else {
       // proxy wasn't created (wasn't found in node tree)
       // find proxy in tables id(pk) proxy map
@@ -305,7 +305,7 @@ private:
         proxy = id_proxy_pair->second.proxy;
       }
       id_proxy_pair->second.primary_keys.push_back(pk);
-      x.reset(proxy, cascade);
+      x.reset(proxy, attr);
       --(*proxy);
     }
     return proxy;
@@ -395,24 +395,24 @@ public:
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes);
 
   template < class V >
-  void on_belongs_to(const char *, object_ptr<V> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes);
 
   template < class V >
-  void on_has_one(const char *, object_ptr<V> &x, cascade_type cascade);
+  void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes);
 
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) { }
-  void on_has_many(const char *, abstract_container &, cascade_type) { }
+  void on_has_many(const char *, abstract_container &, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
+  void on_has_many(const char *, abstract_container &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
 
 private:
   template < class V >
-  object_proxy* acquire_proxy(object_ptr<V> &x, const identifier &pk, cascade_type cascade, const std::shared_ptr<basic_table> &tbl)
+  object_proxy* acquire_proxy(object_ptr<V> &x, const identifier &pk, const foreign_attributes &attr, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());
 
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
-      x.reset(proxy, cascade);
+      x.reset(proxy, attr);
     } else {
       auto idproxy = tbl->find_proxy(pk);
       if (idproxy == tbl->end_proxy()) {
@@ -423,7 +423,7 @@ private:
         proxy = idproxy->second.proxy;
       }
       idproxy->second.primary_keys.push_back(pk);
-      x.reset(proxy, cascade);
+      x.reset(proxy, attr);
     }
     return proxy;
   }

@@ -2,8 +2,7 @@
 
 #include "matador/utils/identifiable_holder.hpp"
 
-namespace matador {
-namespace detail {
+namespace matador::detail {
 
 value_serializer::value_serializer()
 : value_identifier_serializer_(*this)
@@ -37,7 +36,7 @@ void value_serializer::on_attribute(const char*, std::string &x, const field_att
   }
 }
 
-void value_serializer::on_belongs_to(const char *, identifiable_holder &x, cascade_type)
+void value_serializer::on_belongs_to(const char *, identifiable_holder &x, const foreign_attributes &/*attr*/)
 {
   if (x.has_primary_key()) {
     x.primary_key().serialize(value_identifier_serializer_);
@@ -46,7 +45,7 @@ void value_serializer::on_belongs_to(const char *, identifiable_holder &x, casca
   }
 }
 
-void value_serializer::on_has_one(const char *, identifiable_holder &x, cascade_type)
+void value_serializer::on_has_one(const char *, identifiable_holder &x, const foreign_attributes &/*attr*/)
 {
   if (x.has_primary_key()) {
     x.primary_key().serialize(value_identifier_serializer_);
@@ -61,4 +60,4 @@ void value_identifier_serializer::serialize(null_type_t &, const field_attribute
 }
 
 }
-}
+

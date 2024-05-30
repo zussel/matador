@@ -7,7 +7,7 @@ namespace matador {
 
 object_holder::object_holder(const object_holder &x)
 {
-  reset(x.proxy_, x.cascade_);
+  reset(x.proxy_, x.attributes_);
 }
 
 object_holder::object_holder(object_holder &&x) noexcept
@@ -20,8 +20,8 @@ object_holder::object_holder(object_holder &&x) noexcept
     }
   }
   x.proxy_ = nullptr;
-  reset(proxy, x.cascade_, true);
-  cascade_ = x.cascade_;
+  reset(proxy, x.attributes_, true);
+  attributes_ = x.attributes_;
   x.owner_ = nullptr;
 }
 
@@ -45,8 +45,8 @@ object_holder &object_holder::operator=(object_holder &&x) noexcept
         --(*proxy);
       }
     }
-    reset(proxy, x.cascade_, true);
-    cascade_ = x.cascade_;
+    reset(proxy, x.attributes_, true);
+    attributes_ = x.attributes_;
     x.owner_ = nullptr;
   }
   return *this;
@@ -102,14 +102,14 @@ object_holder::operator bool() const noexcept
   return proxy_ != nullptr;
 }
 
-void object_holder::reset(object_proxy *proxy, cascade_type cascade)
+void object_holder::reset(object_proxy *proxy, const foreign_attributes &attr)
 {
-  reset(proxy, cascade, true);
+  reset(proxy, attr, true);
 }
 
 void object_holder::reset(object_holder &holder)
 {
-  reset(holder.proxy_, holder.cascade_);
+  reset(holder.proxy_, holder.attributes_);
 }
 
 void object_holder::clear()
@@ -210,7 +210,7 @@ unsigned long object_holder::reference_count() const
 
 cascade_type object_holder::cascade() const
 {
-  return cascade_;
+  return attributes_.cascade();
 }
 
 std::ostream& operator<<(std::ostream &out, const object_holder &x)
@@ -227,7 +227,7 @@ std::ostream& operator<<(std::ostream &out, const object_holder &x)
   return out;
 }
 
-void object_holder::reset(object_proxy *proxy, cascade_type cascade, bool notify_foreign_relation)
+void object_holder::reset(object_proxy *proxy, const foreign_attributes &attr, bool notify_foreign_relation)
 {
   if (proxy_ == proxy) {
     return;
@@ -249,7 +249,7 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade, bool notify
     }
   }
   proxy_ = proxy;
-  cascade_ = cascade;
+  attributes_ = attr;
   if (proxy_) {
     if (is_internal() && is_inserted_ && proxy_->object_type_entry_->store()) {
       ++(*proxy_);

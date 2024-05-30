@@ -107,7 +107,7 @@ void typed_column_serializer::on_attribute(const char *id, time &, const field_a
   cols_->push_back(make_column(id, data_type::type_time, index_++, attr));
 }
 
-void typed_column_serializer::on_belongs_to(const char *id, identifiable_holder &x, cascade_type)
+void typed_column_serializer::on_belongs_to(const char *id, identifiable_holder &x, const foreign_attributes &/*attr*/)
 {
   if (x.has_primary_key()) {
     column_identifier_serializer_.make_typed_column(id, x.primary_key());
@@ -117,7 +117,7 @@ void typed_column_serializer::on_belongs_to(const char *id, identifiable_holder 
   }
 }
 
-void typed_column_serializer::on_has_one(const char *id, identifiable_holder &x, cascade_type)
+void typed_column_serializer::on_has_one(const char *id, identifiable_holder &x, const foreign_attributes &/*attr*/)
 {
   if (x.has_primary_key()) {
     column_identifier_serializer_.make_typed_column(id, x.primary_key());
