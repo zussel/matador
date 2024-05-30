@@ -87,12 +87,14 @@ public:
    * @tparam ObserverType   List of template types of observers
    * @param type            Name of the prototype
    * @param parent          Name of the parent node
+   * @param observers       The list of observers
    * @return                Iterator representing the inserted prototype node
    */
   template <class Type, template <typename> typename... ObserverType>
-  prototype_iterator attach(const char *type, const char *parent = nullptr)
+  prototype_iterator attach(const char *type, const char *parent = nullptr,
+                            std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observers = {})
   {
-    return attach<Type, ObserverType...>(type, abstract_type::not_abstract, parent);
+    return attach<Type, ObserverType...>(type, abstract_type::not_abstract, parent, std::move(observers));
   }
 
   /**
@@ -106,12 +108,14 @@ public:
    * @tparam ObserverType   List of template types of observers
    * @param type            Name of the prototype
    * @param parent          Name of the parent node
+   * @param observers       The list of observers
    * @return                Iterator representing the inserted prototype node
    */
   template <class Type, template <typename> typename... ObserverType>
-  prototype_iterator attach_abstract(const char *type, const char *parent = nullptr)
+  prototype_iterator attach_abstract(const char *type, const char *parent = nullptr,
+                                     std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observers = {})
   {
-    return attach<Type, ObserverType...>(type, abstract_type::abstract, parent);
+    return attach<Type, ObserverType...>(type, abstract_type::abstract, parent, std::move(observers));
   }
 
   /**
@@ -122,12 +126,14 @@ public:
    * @tparam Super          The type of the parent prototype node
    * @tparam ObserverType   List of template types of observers
    * @param type            The unique name of the type.
+   * @param observers       The list of observers
    * @return                Returns new inserted prototype iterator.
    */
   template<class Type, class Super, template <typename> typename... ObserverType >
-  prototype_iterator attach(const char *type)
+  prototype_iterator attach(const char *type,
+                            std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observers = {})
   {
-    return attach<Type, ObserverType...>(type, abstract, typeid(Super).name());
+    return attach<Type, ObserverType...>(type, abstract, typeid(Super).name(), std::move(observers));
   }
 
   /**
@@ -138,12 +144,14 @@ public:
    * @tparam Super          The type of the parent prototype node
    * @tparam ObserverType   List of template types of observers
    * @param type            The unique name of the type.
+   * @param observers       The list of observers
    * @return                Returns new inserted prototype iterator.
    */
   template<class Type, class Super, template <typename> typename... ObserverType>
-  prototype_iterator attach_abstract(const char *type)
+  prototype_iterator attach_abstract(const char *type,
+                                     std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observers = {})
   {
-    return attach<Type, ObserverType...>(type, abstract, typeid(Super).name());
+    return attach<Type, ObserverType...>(type, abstract, typeid(Super).name(), std::move(observers));
   }
 
   /**
