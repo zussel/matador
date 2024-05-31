@@ -8,7 +8,7 @@
 
 struct person
 {
-  unsigned long id;
+  unsigned long id{};
   std::string name;
   matador::date birthday;
 
@@ -20,9 +20,10 @@ struct person
   template < class Operator >
   void process(Operator &op)
   {
-    matador::access::primary_key(op, "id", id);
-    matador::access::attribute(op, "name", name, 255);
-    matador::access::attribute(op, "birthday", birthday);
+    namespace field = matador::access;
+    field::primary_key(op, "id", id);
+    field::attribute(op, "name", name, 255);
+    field::attribute(op, "birthday", birthday);
   }
 };
 

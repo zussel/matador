@@ -12,7 +12,6 @@
 #include "matador/orm/session.hpp"
 
 #include "matador/http/http_server.hpp"
-#include "matador/http/request.hpp"
 #include "matador/http/static_file_service.hpp"
 
 #include "matador/utils/os.hpp"
