@@ -16,8 +16,7 @@ namespace matador {
 
 class string_cursor;
 
-namespace http {
-namespace detail {
+namespace http::detail {
 
 /// @cond MATADOR_DEV
 
@@ -145,7 +144,7 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
 /// @endcond
 
 }
-}
+
 }
 
 #endif //MATADOR_TEMPLATE_PARSER_HPP

@@ -4,9 +4,8 @@
 
 #include <algorithm>
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
+
 void template_filter::append(const std::shared_ptr<template_filter> &filter)
 {
   if (next_) {
@@ -64,5 +63,4 @@ json lower_filter::evaluate(const json &data)
   return val;
 }
 }
-}
-}
+

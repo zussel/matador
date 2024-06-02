@@ -7,9 +7,7 @@
 #include "matador/utils/stream.hpp"
 #include "matador/json/json.hpp"
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 
 void template_part::append_filter(const template_filter_ptr &filter)
 {
@@ -137,5 +135,4 @@ std::string if_template_part::render(const json &data)
 }
 
 }
-}
-}
+

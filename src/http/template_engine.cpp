@@ -6,8 +6,7 @@
 #include "matador/json/json.hpp"
 #include "matador/utils/string_cursor.hpp"
 
-namespace matador {
-namespace http {
+namespace matador::http {
 
 // {% [command] %}
 // {{ [key] }}
@@ -63,4 +62,4 @@ std::string template_engine::render(const char *format, size_t len, const json &
 }
 
 }
-}
+

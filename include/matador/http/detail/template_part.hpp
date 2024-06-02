@@ -13,8 +13,7 @@ namespace matador {
 
 class json;
 
-namespace http {
-namespace detail {
+namespace http::detail {
 
 /// @cond MATADOR_DEV
 
@@ -106,7 +105,7 @@ private:
 /// @endcond
 
 }
-}
+
 }
 
 #endif //MATADOR_TEMPLATE_PART_HPP

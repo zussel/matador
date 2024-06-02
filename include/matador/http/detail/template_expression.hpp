@@ -10,8 +10,7 @@ namespace matador {
 
 class json;
 
-namespace http {
-namespace detail {
+namespace http::detail {
 
 /// @cond MATADOR_DEV
 
@@ -20,7 +19,7 @@ class OOS_HTTP_API template_expression
 public:
   virtual ~template_expression() = default;
 
-  virtual bool evaluate(const json &data) const = 0;
+  [[nodiscard]] virtual bool evaluate(const json &data) const = 0;
 };
 
 OOS_HTTP_API bool operator==(const json &a, const std::string &b);
@@ -74,6 +73,6 @@ private:
 /// @endcond
 
 }
-}
+
 }
 #endif //MATADOR_TEMPLATE_EXPRESSION_HPP

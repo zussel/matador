@@ -8,9 +8,7 @@
 
 #include <set>
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 
 std::string parse_token(string_cursor &cursor)
 {
@@ -212,5 +210,4 @@ std::string parse_operator(string_cursor &cursor)
 }
 
 }
-}
-}
+

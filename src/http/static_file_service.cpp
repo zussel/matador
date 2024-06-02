@@ -5,8 +5,7 @@
 #include "matador/http/response.hpp"
 #include "matador/http/static_file_service.hpp"
 
-namespace matador {
-namespace http {
+namespace matador::http {
 
 void serve_static_files_at(const std::string &path, server &s)
 {
@@ -58,5 +57,5 @@ response static_file_service::serve(const request &req)
 
   return response::from_file("." + path);
 }
-}
+
 }

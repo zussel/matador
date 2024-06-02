@@ -8,9 +8,7 @@
 #include <string>
 #include <memory>
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 
 /// @cond MATADOR_DEV
 
@@ -56,6 +54,6 @@ public:
 /// @endcond
 
 }
-}
-}
+
+
 #endif //MATADOR_TEMPLATE_FILTER_HPP

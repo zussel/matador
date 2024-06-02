@@ -1,8 +1,6 @@
 #include "matador/http/detail/template_command_factory.hpp"
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 
 template_command_factory::template_command_factory()
 {
@@ -18,5 +16,4 @@ std::shared_ptr<template_command> template_command_factory::produce(const std::s
 }
 
 }
-}
-}
+

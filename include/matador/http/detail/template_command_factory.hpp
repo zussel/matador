@@ -8,9 +8,7 @@
 
 #include "matador/http/detail/template_command.hpp"
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 
 /// @cond MATADOR_DEV
 
@@ -22,7 +20,7 @@ private:
 public:
   template_command_factory();
 
-  std::shared_ptr<template_command> produce(const std::string &key) const;
+  [[nodiscard]] std::shared_ptr<template_command> produce(const std::string &key) const;
 
 private:
   factory_type factory_;
@@ -31,6 +29,6 @@ private:
 /// @endcond
 
 }
-}
-}
+
+
 #endif //MATADOR_TEMPLATE_COMMAND_FACTORY_HPP

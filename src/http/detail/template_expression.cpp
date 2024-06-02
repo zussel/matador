@@ -6,9 +6,7 @@
 
 #include <iostream>
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 
 bool operator==(const json &a, const std::string &b)
 {
@@ -63,5 +61,5 @@ bool json_json_compare_expression::evaluate(const json &data) const
 }
 
 }
-}
-}
+
+
