@@ -21,7 +21,6 @@ class movie_service
 public:
   movie_service(matador::http::server &s, matador::persistence &p);
 
-  matador::http::response initialize(const matador::http::request &p);
   matador::http::response list(const matador::http::request &p);
   matador::http::response get_movie(const matador::http::request &p);
   matador::http::response create_movie(const matador::http::request &p);

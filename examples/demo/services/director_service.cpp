@@ -25,9 +25,6 @@ director_service::director_service(matador::http::server &s, matador::persistenc
   s.on_get("/api/director/{id: \\d+}", [this](const request &req) {
     return get_director(req);
   });
-  s.on_get("/api/director/init", [this](const request &req) {
-    return initialize(req);
-  });
   s.on_post("/api/director", [this](const request &req) {
     return create_director(req);
   });
@@ -37,24 +34,6 @@ director_service::director_service(matador::http::server &s, matador::persistenc
   s.on_post("/api/director/delete/{id: \\d+}", [this](const request &req) {
     return delete_director(req);
   });
-}
-
-matador::http::response director_service::initialize(const matador::http::request &p)
-{
-  session s(persistence_);
-
-  object_ptr<person> steven;
-  transaction tr = s.begin();
-  try {
-    s.insert<person>("Steven Spielberg", date(18, 12, 1946));
-    s.insert<person>("George Lucas", date(14, 5, 1944));
-    tr.commit();
-  } catch (std::exception &ex) {
-    log_.error("Couldn't commit transaction: %s", ex.what());
-    tr.rollback();
-  }
-
-  return response::ok("app initialized", mime_types::TYPE_TEXT_PLAIN);
 }
 
 matador::http::response director_service::list(const matador::http::request &p)

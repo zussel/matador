@@ -17,6 +17,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
+                            <th>Date of birth</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -24,6 +25,7 @@
                         <tr>
                             <td><a href="/director/{{director.id}}">{{ director.id }}</a></td>
                             <td><a href="/director/{{director.id}}">{{ director.name }}</a></td>
+                            <td>{{ director.birthday }}</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>

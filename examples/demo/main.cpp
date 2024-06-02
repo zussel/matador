@@ -27,6 +27,8 @@ int main(int /*argc*/, char* /*argv*/[])
     matador::add_log_sink(matador::create_file_sink("log/server.log"));
     matador::add_log_sink(matador::create_stdout_sink());
 
+    const auto initialized = os::exists( "moviedb.sqlite");
+
     // setup database
     matador::persistence p("sqlite://moviedb.sqlite");
     p.enable_log();
@@ -34,11 +36,35 @@ int main(int /*argc*/, char* /*argv*/[])
     p.attach<person>("person");
     p.attach<movie>("movie");
 
-    p.create();
-
     // load entities
     session s(p);
-    s.load();
+    p.create();
+
+    if (!initialized) {
+
+      object_ptr<person> steven;
+      transaction tr = s.begin();
+      try {
+        steven = s.insert(new person("Steven Spielberg", date(18, 12, 1946)));
+        s.insert(new person("George Lucas", date(14, 5, 1944)));
+        tr.commit();
+      } catch (std::exception &ex) {
+        matador::log(log_level::LVL_ERROR, "Initialize", "Couldn't commit transaction: %s", ex.what());
+        tr.rollback();
+      }
+
+      tr = s.begin();
+      try {
+        s.insert(new movie("Jaws", 1974, steven));
+        s.insert(new movie("Raiders of the lost Arc", 1984, steven));
+        tr.commit();
+      } catch (std::exception &ex) {
+        matador::log(log_level::LVL_ERROR, "Initialize", "Couldn't commit transaction: %s", ex.what());
+        tr.rollback();
+      }
+    } else {
+      s.load();
+    }
 
     // initialize network stack
     net::init();

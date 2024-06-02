@@ -26,9 +26,6 @@ movie_service::movie_service(matador::http::server &s, matador::persistence &p)
   s.on_get("/api/movie/{id: \\d+}", [this](const request &req) {
     return get_movie(req);
   });
-  s.on_get("/api/movie/init", [this](const request &req) {
-    return initialize(req);
-  });
   s.on_post("/api/movie", [this](const request &req) {
     return create_movie(req);
   });
@@ -38,34 +35,6 @@ movie_service::movie_service(matador::http::server &s, matador::persistence &p)
   s.on_post("/api/movie/delete/{id: \\d+}", [this](const request &req) {
     return delete_movie(req);
   });
-}
-
-matador::http::response movie_service::initialize(const matador::http::request &)
-{
-  session s(persistence_);
-
-  object_ptr<person> steven;
-  transaction tr = s.begin();
-  try {
-    steven = s.insert(new person("Steven Spielberg", date(18, 12, 1946)));
-    s.insert(new person("George Lucas", date(14, 5, 1944)));
-    tr.commit();
-  } catch (std::exception &ex) {
-    log_.error("Couldn't commit transaction: %s", ex.what());
-    tr.rollback();
-  }
-
-  tr = s.begin();
-  try {
-    s.insert(new movie("Jaws", 1974, steven));
-    s.insert(new movie("Raiders of the lost Arc", 1984, steven));
-    tr.commit();
-  } catch (std::exception &ex) {
-    log_.error("Couldn't commit transaction: %s", ex.what());
-    tr.rollback();
-  }
-
-  return response::ok("app initialized", mime_types::TYPE_TEXT_PLAIN);
 }
 
 matador::http::response movie_service::list(const matador::http::request &)

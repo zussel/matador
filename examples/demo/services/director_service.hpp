@@ -21,7 +21,6 @@ class director_service
 public:
   director_service(matador::http::server &s, matador::persistence &p);
 
-  matador::http::response initialize(const matador::http::request &p);
   matador::http::response list(const matador::http::request &p);
   matador::http::response get_director(const matador::http::request &p);
   matador::http::response create_director(const matador::http::request &p);
