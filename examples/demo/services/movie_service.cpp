@@ -1,3 +1,5 @@
+#include "movie_service.hpp"
+
 #include "matador/orm/persistence.hpp"
 #include "matador/orm/session.hpp"
 
@@ -10,8 +12,6 @@
 
 #include "../models/person.hpp"
 #include "../models/movie.hpp"
-
-#include "movie_service.hpp"
 
 using namespace matador;
 using namespace matador::http;

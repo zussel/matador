@@ -19,7 +19,9 @@ SET (DEMO_SOURCES
   services/movie_service.hpp pages/main_page.cpp pages/main_page.hpp
   pages/crud_page.hpp
   pages/directors_page.cpp
-  pages/directors_page.hpp)
+  pages/directors_page.hpp
+        services/director_service.cpp
+        services/director_service.hpp)
 
 ADD_EXECUTABLE(demo ${DEMO_SOURCES})
 

@@ -5,7 +5,7 @@
 <div class="header">
     <h1>{{title}}</h1>
 </div>
-    <form class="pure-form pure-form-aligned" action="/api/director/{{movie.id}}" method="post">
+    <form class="pure-form pure-form-aligned" action="/api/director/{{director.id}}" method="post">
         <fieldset>
             <div class="pure-control-group">
                 <label for="aligned-id">Id</label>

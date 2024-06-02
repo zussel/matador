@@ -5,12 +5,12 @@
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/field_attributes.hpp"
 
+#include "matador/object/abstract_container.hpp"
+
 #include <cstddef>
 #include <iostream>
 
-namespace matador {
-
-namespace detail {
+namespace matador::detail {
 
 /// @cond MATADOR_DEV
 
@@ -49,14 +49,12 @@ public:
   void on_belongs_to(const char*, identifiable_holder&, cascade_type) { }
   void on_has_one(const char*, identifiable_holder&, cascade_type) { }
 
-  template<class V, template<class ...> class C>
-  void on_has_many(const char *id, basic_container<V, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, abstract_container &x, const char *, const char *, cascade_type cascade)
   {
     on_has_many(id, x, cascade);
   }
 
-  template<class V, template<class ...> class C>
-  void on_has_many(const char *id, basic_container<V, C> &, cascade_type)
+  void on_has_many(const char *id, abstract_container &, cascade_type)
   {
     if (owner_id_ != id) {
       return;
@@ -67,8 +65,6 @@ public:
     }
     auto items = rel->second.equal_range(id_);
     for (auto item = items.first; item != items.second; ++item) {
-//      typename basic_has_many<V, C>::internal_type val(item->second);
-//      x.append(val);
     }
     // clear all elements
     rel->second.erase(id_);
@@ -83,5 +79,5 @@ private:
 /// @endcond
 
 }
-}
+
 #endif //OOS_RELATION_TABLE_LOADER_HPP

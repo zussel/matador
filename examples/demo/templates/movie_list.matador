@@ -27,7 +27,7 @@
                             <td><a href="/movie/{{movie.id}}">{{ movie.id }}</a></td>
                             <td><a href="/movie/{{movie.id}}">{{ movie.title }}</a></td>
                             <td>{{ movie.year }}</td>
-                            <td>{{ movie.director.name }}</td>
+                            <td><a href="/director/{{movie.director.id}}">{{ movie.director.name }}</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>

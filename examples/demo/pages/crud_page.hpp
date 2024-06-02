@@ -15,7 +15,7 @@
 #include "matador/logger/log_manager.hpp"
 
 struct crud_context {
-  std::string entity_singular_name;
+  std::string entity_singular_name{};
   std::string entity_plural_name;
   std::string entity_type_name;
 };

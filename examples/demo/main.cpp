@@ -1,4 +1,6 @@
+#include "services/director_service.hpp"
 #include "services/movie_service.hpp"
+
 #include "pages/directors_page.hpp"
 #include "pages/movie_page.hpp"
 #include "pages/main_page.hpp"
@@ -54,6 +56,7 @@ int main(int /*argc*/, char* /*argv*/[])
     movie_page moviepage(server, p);
     directors_page directorpage(server, p);
     movie_service mservice(server, p);
+    director_service dservice(server, p);
 
     // start server
     server.run();
