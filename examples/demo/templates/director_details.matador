@@ -5,20 +5,35 @@
 <div class="header">
     <h1>{{title}}</h1>
 </div>
-    <a class="pure-button pure-button-primary" href="/director/edit/{{director.id}}">Edit</a>
-    <a class="button-error pure-button" href="/director/delete/{{director.id}}">Delete</a>
-    <a class="button-secondary pure-button" href="/director">List</a>
-    <form class="pure-form pure-form-aligned">
-        <fieldset>
-            <div class="pure-control-group">
+    <header class="container">
+        <h1>{{title}}</h1>
+    </header>
+    <main class="container">
+        <nav aria-label="breadcrumb">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/director">Directors</a></li>
+                <li>{{director.name | escape}}</li>
+            </ul>
+        </nav>
+
+        <button class="outline"><a href="/director/edit/{{director.id}}">Edit</a></button>
+        <button class="outline"><a href="/director/delete/{{director.id}}">Delete</a></button>
+
+        <form>
+            <fieldset class="grid">
                 <label for="aligned-id">Id</label>
-                <input type="text" id="aligned-id" placeholder="id" readonly="" value="{{director.id}}"/>
-            </div>
-            <div class="pure-control-group">
-                <label for="aligned-title">Title</label>
-                <input type="text" id="aligned-title" placeholder="Title" readonly="" value="{{director.name | escape}}" />
-            </div>
-        </fieldset>
-    </form>
+                <input type="text" id="aligned-id" placeholder="Id" readonly="" name="id" value="{{director.id}}"/>
+            </fieldset>
+            <fieldset class="grid">
+                <label for="aligned-name">Name</label>
+                <input type="text" id="aligned-name" placeholder="Name" readonly="" name="name" value="{{director.name | escape}}"/>
+            </fieldset>
+            <fieldset class="grid">
+                <label for="aligned-date">Date of Birth</label>
+                <input type="date" id="aligned-date" aria-label="Date"  readonly="" placeholder="Date of Birth" name="birthday" value="{{director.birthday}}"/>
+            </fieldset>
+        </form>
+    </main>
 </body>
 </html>

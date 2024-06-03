@@ -81,6 +81,7 @@ int main(int /*argc*/, char* /*argv*/[])
     main_page mainpage(server, p);
     movie_page moviepage(server, p);
     directors_page directorpage(server, p);
+
     movie_service mservice(server, p);
     director_service dservice(server, p);
 
