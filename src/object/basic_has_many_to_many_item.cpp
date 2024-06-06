@@ -19,4 +19,14 @@ std::string basic_has_many_to_many_item::right_column() const
   return right_column_;
 }
 
+void basic_has_many_to_many_item::left_column(const std::string &left_column_name)
+{
+  left_column_ = left_column_name;
+}
+
+void basic_has_many_to_many_item::right_column(const std::string &right_column_name)
+{
+  right_column_ = right_column_name;
+}
+
 }

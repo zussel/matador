@@ -47,8 +47,8 @@ struct person
     matador::access::attribute(op, "name", name, 255);
     matador::access::attribute(op, "ip", ip, 255);
     matador::access::attribute(op, "age", age);
-    matador::access::has_many(op, "person_color", colors, "person_id", "color", matador::cascade_type::ALL);
-    //                             table name     member   left column   right column  cascade type
+    matador::access::has_many_to_many(op, "person_color", colors, "person_id", "color", matador::cascade_type::ALL);
+    //                                     table name     member   join column  inverse join column  cascade type
   }
 };
 }

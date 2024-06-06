@@ -95,24 +95,38 @@ public:
     on_foreign_object(id, x, attr);
   }
 
-  template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, const char *, const char *, const foreign_attributes &attr = default_foreign_attributes)
+  template<class Type, template<class ...> class Container>
+  void on_has_many(container<Type, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_has_many(id, x, attr);
+    handle_has_many_relation(join_column, x, attr);
   }
 
-  template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  template<class Type, template<class ...> class Container>
+  void on_has_many_to_many(const char *id, container<Type, Container> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_has_many_relation(id, x, attr);
+  }
+
+
+  template<class Type, template<class ...> class Container>
+  void on_has_many_to_many(const char *id, container<Type, Container> &x, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_has_many_relation(id, x, attr);
+  }
+
+private:
+  template<class Type, template<class ...> class Container>
+  void handle_has_many_relation(const char *id, container<Type, Container> &x, const foreign_attributes &attr = default_foreign_attributes)
   {
     std::string id_oid(id);
     id_oid += ".oid";
-    typename container<T, C>::size_type s{};
+    typename container<Type, Container>::size_type s{};
     // deserialize container size
     on_attribute(id, s);
 
     x.reset();
 
-    for (typename container<T, C>::size_type i = 0; i < s; ++i) {
+    for (typename container<Type, Container>::size_type i = 0; i < s; ++i) {
 
       // deserialize all items
       unsigned long long oid = 0;
@@ -124,14 +138,13 @@ public:
         insert_proxy(proxy);
       }
 
-      typename container_item_holder<T>::value_type val;
+      typename container_item_holder<Type>::value_type val;
       process_has_many_item(val, attr);
 
-      x.append(container_item_holder<T>(val, proxy));
+      x.append(container_item_holder<Type>(val, proxy));
     }
   }
 
-private:
   template<class T>
   void process_has_many_item(T &obj, const foreign_attributes &attr, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0)
   {

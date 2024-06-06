@@ -138,7 +138,7 @@ prototype_node* object_store::clear(prototype_node *node)
 {
   prototype_node *current = node->first->next;
   while (current != node->last.get()) {
-    current = clear(current);
+    current = clear(current); // NOLINT
   }
   // finally link first to last and vice versa
   return remove_prototype_node(node, false);

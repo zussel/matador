@@ -59,14 +59,23 @@ public:
   template<class T>
   void on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
 
-  template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, const char*, const char*, const foreign_attributes &attr = default_foreign_attributes)
+  template<class Type, template<class ...> class Container>
+  void on_has_many(container<Type, Container> &x, const char * /*join_column*/, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_has_many(id, x, attr);
+    handle_insert_has_many_relation(x, attr);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &, const foreign_attributes &attr = default_foreign_attributes);
+  void on_has_many_to_many(const char * /*id*/, container<T, C> &x, const char* /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_insert_has_many_relation(x, attr);
+  }
+
+  template<class T, template<class ...> class C>
+  void on_has_many_to_many(const char * /*id*/, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_insert_has_many_relation(x, attr);
+  }
 
 private:
   template < class T >
@@ -90,6 +99,9 @@ private:
   void insert_proxy(object_proxy *proxy);
 
   object_proxy* initialize_has_many(abstract_container &x);
+
+  template<class T, template<class ...> class C>
+  void handle_insert_has_many_relation(container<T, C> &x, const foreign_attributes &attr);
 
   template < class T, class ItemHolderType >
   void insert_has_many_item(const ItemHolderType &item,
@@ -135,7 +147,7 @@ void object_inserter::on_has_one(const char *, object_ptr<T> &x, const foreign_a
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::on_has_many(const char *, container<T, C> &x, const foreign_attributes &attr)
+void object_inserter::handle_insert_has_many_relation(container<T, C> &x, const foreign_attributes &attr)
 {
   auto *proxy = initialize_has_many(x);
 

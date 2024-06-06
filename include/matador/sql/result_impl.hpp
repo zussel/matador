@@ -51,11 +51,12 @@ public:
   void on_attribute(const char *id, matador::time&, const field_attributes &attr) override;
   void on_attribute(const char *id, matador::date&, const field_attributes &attr) override;
 
-  void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type) override;
-  void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type) override;
+  void on_belongs_to(const char *id, matador::identifiable_holder &x, const foreign_attributes &/*attr*/) override;
+  void on_has_one(const char *id, matador::identifiable_holder &x, const foreign_attributes &/*attr*/) override;
 
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) override {}
-  void on_has_many(const char *, abstract_container &, cascade_type) override {}
+  void on_has_many(abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/) override {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/) override {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/) override {}
 
 private:
   result_impl &impl_;
@@ -133,8 +134,9 @@ public:
   void on_belongs_to(const char *id, matador::identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   void on_has_one(const char *id, matador::identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
 
-  void on_has_many(const char *, abstract_container &, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
   virtual void read_value(const char *id, size_type index, char &value) = 0;
   virtual void read_value(const char *id, size_type index, short &value) = 0;

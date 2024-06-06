@@ -55,18 +55,48 @@ void has_one(Operator &op, const char *id, Type &value, const foreign_attributes
 }
 
 template<class Operator, class Type>
+void has_one(Operator &op, const char *id, Type &value) {
+  op.on_has_one(id, value);
+}
+
+template<class Operator, class Type>
 void belongs_to(Operator &op, const char *id, Type &value, const foreign_attributes &attr) {
   op.on_belongs_to(id, value, attr);
 }
 
-template<class Operator, class Type, template<class ...> class ContainerType>
-void has_many(Operator &op, const char *id, container<Type, ContainerType> &container, const foreign_attributes &attr) {
-  op.on_has_many(id, container, attr);
+template<class Operator, class Type>
+void belongs_to(Operator &op, const char *id, Type &value) {
+  op.on_belongs_to(id, value);
 }
 
 template<class Operator, class Type, template<class ...> class ContainerType>
-void has_many(Operator &op, const char *id, container<Type, ContainerType> &container, const char *left_column, const char *right_column, const foreign_attributes &attr) {
-  op.on_has_many(id, container, left_column, right_column, attr);
+void has_many(Operator &op, container<Type, ContainerType> &c, const char *join_column, const foreign_attributes &attr) {
+  op.on_has_many(c, join_column, attr);
+}
+
+template<class Operator, class Type, template<class ...> class ContainerType>
+void has_many(Operator &op, container<Type, ContainerType> &c, const char *join_column) {
+  op.on_has_many(c, join_column);
+}
+
+template<class Operator, class ContainerType>
+void has_many_to_many(Operator &op, const char *id, ContainerType &c, const char *join_column, const char *inverse_join_column, const foreign_attributes &attr) {
+  op.on_has_many_to_many(id, c, join_column, inverse_join_column, attr);
+}
+
+template<class Operator, class ContainerType>
+void has_many_to_many(Operator &op, const char *id, ContainerType &c, const char *join_column, const char *inverse_join_column) {
+  op.on_has_many_to_many(id, c, join_column, inverse_join_column);
+}
+
+template<class Operator, class ContainerType>
+void has_many_to_many(Operator &op, const char *id, ContainerType &c, const foreign_attributes &attr) {
+  op.on_has_many_to_many(id, c, attr);
+}
+
+template<class Operator, class ContainerType>
+void has_many_to_many(Operator &op, const char *id, ContainerType &c) {
+  op.on_has_many_to_many(id, c);
 }
 
 }

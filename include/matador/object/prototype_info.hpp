@@ -40,30 +40,30 @@ public:
   typedef t_endpoint_map::const_iterator const_endpoint_iterator;
 
 public:
-  std::type_index type_index() const { return type_index_; }
+  [[nodiscard]] std::type_index type_index() const { return type_index_; }
 
   void register_relation_endpoint(const std::type_index &tindex, const std::shared_ptr<basic_relation_endpoint> &endpoint);
   void unregister_relation_endpoint(const std::type_index &tindex);
 
-  const_endpoint_iterator find_relation_endpoint(const std::type_index &tindex) const;
+  [[nodiscard]] const_endpoint_iterator find_relation_endpoint(const std::type_index &tindex) const;
   endpoint_iterator find_relation_endpoint(const std::type_index &tindex);
 
-  const_endpoint_iterator find_relation_endpoint(const std::string &field) const;
+  [[nodiscard]] const_endpoint_iterator find_relation_endpoint(const std::string &field) const;
   endpoint_iterator find_relation_endpoint(const std::string &field);
 
   endpoint_iterator endpoint_begin();
-  const_endpoint_iterator endpoint_begin() const;
+  [[nodiscard]] const_endpoint_iterator endpoint_begin() const;
 
   endpoint_iterator endpoint_end();
-  const_endpoint_iterator endpoint_end() const;
+  [[nodiscard]] const_endpoint_iterator endpoint_end() const;
 
-  std::size_t endpoints_size() const;
-  bool endpoints_empty() const;
+  [[nodiscard]] std::size_t endpoints_size() const;
+  [[nodiscard]] bool endpoints_empty() const;
 
-  const t_endpoint_map& endpoints() const;
+  [[nodiscard]] const t_endpoint_map& endpoints() const;
 
-  virtual void* prototype() const = 0;
-  virtual void* create() const = 0;
+  [[nodiscard]] virtual void* prototype() const = 0;
+  [[nodiscard]] virtual void* create() const = 0;
   virtual void register_observer(basic_object_store_observer *obs) = 0;
   virtual void notify(notification_type type, object_proxy *proxy) const = 0;
 

@@ -5,6 +5,8 @@
 #include "matador/sql/value.hpp"
 #include "matador/sql/basic_dialect.hpp"
 
+#include "matador/utils/field_attributes.hpp"
+
 namespace matador {
 
 enum class t_build_options {

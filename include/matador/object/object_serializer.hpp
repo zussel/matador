@@ -90,13 +90,26 @@ public:
   void on_has_one(const char* id, object_holder &x, const foreign_attributes &attr = default_foreign_attributes);
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, const char *, const char *, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(container<T, C> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_has_many(id, x, attr);
+    handle_has_many_relation(join_column, x, attr);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many_to_many(const char *id, container<T, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_has_many_relation(id, x, attr);
+  }
+
+  template<class T, template<class ...> class C>
+  void on_has_many_to_many(const char *id, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_has_many_relation(id, x, attr);
+  }
+
+private:
+  template<class T, template<class ...> class C>
+  void handle_has_many_relation(const char *id, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
   {
     std::string id_oid(id);
     id_oid += ".oid";
@@ -118,7 +131,6 @@ public:
     }
   }
 
-private:
   void on_foreign_object(const char *id, object_holder &x, const foreign_attributes &attr);
 
   template<class T>

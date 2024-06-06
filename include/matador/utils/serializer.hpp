@@ -4,7 +4,6 @@
 #include "matador/utils/export.hpp"
 
 #include "matador/utils/cascade_type.hpp"
-#include "matador/utils/field_attributes.hpp"
 #include "matador/utils/access.hpp"
 
 #include <string>
@@ -16,6 +15,8 @@ class time;
 class date;
 class identifiable_holder;
 class abstract_container;
+class field_attributes;
+class foreign_attributes;
 
 /**
  * @brief A base class to serialize objects
@@ -174,7 +175,7 @@ public:
    * @param x The object to be serialized
    * @param cascade The cascade type
    */
-  virtual void on_belongs_to(const char *id, matador::identifiable_holder &x, cascade_type cascade) = 0;
+  virtual void on_belongs_to(const char *id, matador::identifiable_holder &x, const foreign_attributes &attr) = 0;
   /**
    * @brief Interface to serialize an object with given id and cascade type
    *
@@ -182,29 +183,39 @@ public:
    * @param x The object to be serialized
    * @param cascade The cascade type
    */
-  virtual void on_has_one(const char *id, matador::identifiable_holder &x, cascade_type cascade) = 0;
+  virtual void on_has_one(const char *id, matador::identifiable_holder &x, const foreign_attributes &attr) = 0;
 
   /**
-   * @fn void on_has_many(const char *id, abstract_container &x, const char *owner_id, const char *item_id, cascade_type cascade)
+   * @fn void on_has_many_to_many(abstract_container &x, const char *join_column, const foreign_attributes &attr)
+   * @brief Interface to serialize a relation with given id
+   *
+   * @param x The value to be serialized
+   * @param join_column The name of the join column
+   * @param attr Foreign attributes
+   */
+  virtual void on_has_many(abstract_container &, const char *, const foreign_attributes &attr) = 0;
+
+  /**
+   * @fn void on_has_many_to_many(const char *id, abstract_container &x, const char *join_column, const char *inverse_join_column, const foreign_attributes &attr)
    * @brief Interface to serialize a relation with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
-   * @param owner_id The name of the owner field
-   * @param item_id The name of the item field
-   * @param cascade The cascade type
+   * @param join_column The name of the join column name
+   * @param inverse_join_column The name of the inverse join column name
+   * @param attr Foreign attributes
    */
-  virtual void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) = 0;
+  virtual void on_has_many_to_many(const char *, abstract_container &, const char *, const char *, const foreign_attributes &attr) = 0;
 
   /**
-   * @fn void on_has_many(const char *id, abstract_container &x, cascade_type cascade)
+   * @fn void on_has_many_to_many(const char *id, abstract_container &x, const foreign_attributes &attr)
    * @brief Interface to serialize a relation with given id
    *
    * @param id The id of the value
    * @param x The value to be serialized
-   * @param cascade The cascade type
+   * @param attr Foreign attributes
    */
-  virtual void on_has_many(const char *, abstract_container &, cascade_type) = 0;
+  virtual void on_has_many_to_many(const char *, abstract_container &, const foreign_attributes &attr) = 0;
 };
 
 }

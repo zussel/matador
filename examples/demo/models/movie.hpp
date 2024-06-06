@@ -41,7 +41,7 @@ struct movie
     field::attribute(op, "title", title, 255);
     //serializer.serialize("genres", genres, "movie_id", "genre", matador::cascade_type::ALL);
     field::attribute(op, "year", year);
-    field::has_many(op, "actors", actors, "movie_id", "actor_id", matador::cascade_type::NONE);
+    field::has_many_to_many(op, "actors", actors, "movie_id", "actor_id", matador::cascade_type::NONE);
     field::has_one(op, "director", director, matador::cascade_type::NONE);
   }
 };

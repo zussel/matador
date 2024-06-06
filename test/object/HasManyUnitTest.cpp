@@ -1,4 +1,5 @@
 #include "HasManyUnitTest.hpp"
+
 #include "../entities.hpp"
 
 #include "matador/object/has_one_to_many_item.hpp"

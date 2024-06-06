@@ -2,8 +2,7 @@
 #include "matador/object/object_exception.hpp"
 #include "matador/object/object_store.hpp"
 
-namespace matador {
-namespace detail {
+namespace matador::detail {
 
 object_deleter::t_object_count::t_object_count(object_proxy *oproxy)
 : proxy(oproxy)
@@ -14,7 +13,7 @@ void object_deleter::on_primary_key(const char *id, std::string &x, size_t size)
   on_attribute(id, x, size);
 }
 
-void object_deleter::t_object_count::remove()
+void object_deleter::t_object_count::remove() const
 {
   proxy->ostore()->remove(proxy, false);
 }
@@ -78,4 +77,4 @@ bool object_deleter::check_object_count_map() const
 }
 
 }
-}
+

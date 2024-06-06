@@ -52,9 +52,13 @@ public:
   template<class Value>
   void on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &x, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void on_has_many(container<Value, Container> &x, const char *join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &x, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  void on_has_many(container<Value, Container> &x, const char *join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  template < class Value, template <class ...> class Container >
+  void on_has_many_to_many(const char *id, container<Value, Container> &x, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  template < class Value, template <class ...> class Container >
+  void on_has_many_to_many(const char *id, container<Value, Container> &x, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
 
 private:
   details::mapper_runtime &runtime_data_;
@@ -193,12 +197,49 @@ void json_object_mapper_serializer::on_has_one(const char *id, object_ptr<Value>
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_mapper_serializer::on_has_many(const char *id,
-                                                container<Value, Container> &x,
-                                                const char *,
-                                                const char *,
+void json_object_mapper_serializer::on_has_many(container<Value, Container> &x,
+                                                const char *join_column,
                                                 const foreign_attributes &/*attr*/,
                                                 typename std::enable_if<!is_builtin<Value>::value>::type*)
+{
+  if (runtime_data_.object_key != join_column) {
+    return;
+  }
+
+  basic_json_mapper<typename container_item_holder<Value>::value_type, json_object_mapper_serializer> mapper;
+  auto elements = mapper.array_from_string(runtime_data_.json_array_cursor, false);
+  for (auto &&item : elements) {
+    typename container_item_holder<Value>::value_type val(item);
+    x.append(container_item_holder<Value>(val, nullptr));
+  }
+  runtime_data_.cursor.sync_cursor(mapper.runtime_data().json_array_cursor);
+}
+
+template<class Value, template <class ...> class Container>
+void json_object_mapper_serializer::on_has_many(container<Value, Container> &x,
+                                                const char *join_column,
+                                                const foreign_attributes &/*attr*/,
+                                                typename std::enable_if<is_builtin<Value>::value>::type *)
+{
+  if (runtime_data_.key != join_column) {
+    return;
+  }
+
+  for (auto &val : runtime_data_.value) {
+    if (!val.template fits_to_type<Value>()) {
+      continue;
+    }
+    x.insert(x.end(), val.template as<Value>());
+  }
+}
+
+template<class Value, template <class ...> class Container>
+void json_object_mapper_serializer::on_has_many_to_many(const char *id,
+                                                        container<Value, Container> &x,
+                                                        const char *,
+                                                        const char *,
+                                                        const foreign_attributes &/*attr*/,
+                                                        typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.object_key != id) {
     return;
@@ -214,12 +255,12 @@ void json_object_mapper_serializer::on_has_many(const char *id,
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_mapper_serializer::on_has_many(const char *id,
-                                                container<Value, Container> &x,
-                                                const char *,
-                                                const char *,
-                                                const foreign_attributes &/*attr*/,
-                                                typename std::enable_if<is_builtin<Value>::value>::type*)
+void json_object_mapper_serializer::on_has_many_to_many(const char *id,
+                                                        container<Value, Container> &x,
+                                                        const char *,
+                                                        const char *,
+                                                        const foreign_attributes &/*attr*/,
+                                                        typename std::enable_if<is_builtin<Value>::value>::type *)
 {
   if (runtime_data_.key != id) {
     return;
@@ -232,6 +273,8 @@ void json_object_mapper_serializer::on_has_many(const char *id,
     x.insert(x.end(), val.template as<Value>());
   }
 }
+
+
 /// @endcond
 
 }

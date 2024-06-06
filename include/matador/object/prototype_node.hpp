@@ -146,28 +146,28 @@ public:
    * @param self If true only elements inside this node are considered.
    * @return True if the node is empty.
    */
-  bool empty(bool self) const;
+  [[nodiscard]] bool empty(bool self) const;
   
   /**
    * Returns the size of the object proxy list.
    * 
    * @return The number of objects.
    */
-  unsigned long size() const;
+  [[nodiscard]] unsigned long size() const;
 
   /**
    * Return the type name of this node.
    *
    * @return The type name
    */
-  const char* type() const;
+  [[nodiscard]] const char* type() const;
 
   /**
    * Return the type id of this node.
    *
    * @return The type id
    */
-  const char* type_id() const;
+  [[nodiscard]] const char* type_id() const;
 
   /**
    * Appends the given prototype node as a sibling
@@ -228,7 +228,7 @@ public:
    * 
    * @return The next node.
    */
-  prototype_node* next_node() const;
+  [[nodiscard]] prototype_node* next_node() const;
 
   /**
    * Returns nodes successor node or nullptr if node is last.
@@ -245,10 +245,10 @@ public:
    * 
    * @return The previous node.
    */
-  prototype_node* previous_node() const;
+  [[nodiscard]] prototype_node* previous_node() const;
 
   /**
-   * Returns nodes predeccessor node or nullptr if node is last.
+   * Returns nodes predecessor node or nullptr if node is last.
    * Where given root node is the sentinel not to pass while
    * traversing
    *
@@ -262,7 +262,7 @@ public:
    *
    * @return The corresponding object_store
    */
-  object_store* tree() const;
+  [[nodiscard]] object_store* tree() const;
 
   /**
    * Returns true if node is child of given parent node.
@@ -270,14 +270,14 @@ public:
    * @param parent The parent node.
    * @return True if node is child of given parent node.
    */
-  bool is_child_of(const prototype_node &parent) const;
+  [[nodiscard]] bool is_child_of(const prototype_node &parent) const;
 
   /**
    * Returns true if node has children.
    *
    * @return True if node has children.
    */
-  bool has_children() const;
+  [[nodiscard]] bool has_children() const;
 
   /**
    * Returns true if the object represented by this node
@@ -285,20 +285,20 @@ public:
    *
    * @return True if object owns a primary key
    */
-  bool has_primary_key() const;
+  [[nodiscard]] bool has_primary_key() const;
 
   /**
    * @brief Returns true if the node represents an abstract object
    * @return True if the node represents an abstract object
    */
-  bool is_abstract() const;
+  [[nodiscard]] bool is_abstract() const;
 
   /**
    * @brief Return the type index of the represented object type
    *
    * @return Type index of the represented object type
    */
-  std::type_index type_index() const;
+  [[nodiscard]] std::type_index type_index() const;
 
   /**
    * Returns true if this node represents a relation
@@ -306,7 +306,7 @@ public:
    *
    * @return True if this node represents a relation node.
    */
-  bool is_relation_node() const;
+  [[nodiscard]] bool is_relation_node() const;
 
   /**
    * Returns the relation node info. This struct contains
@@ -314,7 +314,7 @@ public:
    * node (has_many_item<T>).
    * @return
    */
-  const relation_node_info& node_info() const;
+  [[nodiscard]] const relation_node_info& node_info() const;
 
   /**
    * Registers an object store observer for the object
@@ -362,24 +362,24 @@ public:
   void unregister_relation_endpoint(const std::type_index &tindex);
 
 /// @cond MATADOR_DEV
-  const_endpoint_iterator find_endpoint(const std::type_index &tindex) const;
+  [[nodiscard]] const_endpoint_iterator find_endpoint(const std::type_index &tindex) const;
   endpoint_iterator find_endpoint(const std::type_index &tindex);
 
-  const_endpoint_iterator find_endpoint(const std::string &field) const;
+  [[nodiscard]] const_endpoint_iterator find_endpoint(const std::string &field) const;
   endpoint_iterator find_endpoint(const std::string &field);
 
   endpoint_iterator endpoint_begin();
-  const_endpoint_iterator endpoint_begin() const;
+  [[nodiscard]] const_endpoint_iterator endpoint_begin() const;
 
   endpoint_iterator endpoint_end();
-  const_endpoint_iterator endpoint_end() const;
+  [[nodiscard]] const_endpoint_iterator endpoint_end() const;
 
-  std::size_t endpoints_size() const;
-  bool endpoints_empty() const;
+  [[nodiscard]] std::size_t endpoints_size() const;
+  [[nodiscard]] bool endpoints_empty() const;
 
-  const detail::abstract_prototype_info::t_endpoint_map& endpoints() const;
+  [[nodiscard]] const detail::abstract_prototype_info::t_endpoint_map& endpoints() const;
 
-  std::shared_ptr<detail::object_type_registry_entry_base> object_type_entry() const;
+  [[nodiscard]] std::shared_ptr<detail::object_type_registry_entry_base> object_type_entry() const;
 /// @endcond
 
   friend MATADOR_OBJECT_API std::ostream &operator<<(std::ostream &stream, const prototype_node &node);

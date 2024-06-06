@@ -5,8 +5,7 @@
 #include "matador/object/has_one_to_many_item.hpp"
 #include "matador/object/has_many_to_many_item.hpp"
 
-namespace matador {
-namespace detail {
+namespace matador::detail {
 
 /// @cond MATADOR_DEV
 
@@ -303,6 +302,6 @@ struct right_to_many_endpoint : public from_many_endpoint<Value, Owner>
 /// @endcond
 
 }
-}
+
 
 #endif //MATADOR_TO_MANY_ENDPOINTS_HPP

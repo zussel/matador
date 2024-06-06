@@ -34,7 +34,7 @@ public:
     matador::access::belongs_to(op, this->right_column().c_str(), right_, matador::cascade_type::NONE);
   }
 
-  basic_has_many_to_many_item *clone() const override
+  [[nodiscard]] basic_has_many_to_many_item *clone() const override
   {
     return new has_many_to_many_item(left_column(), right_column());
   }

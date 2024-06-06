@@ -47,10 +47,11 @@ public:
   }
   void on_attribute(const char *id, char *x, const field_attributes &/*attr*/ = null_attributes);
   void on_belongs_to(const char *id, identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
-
   void on_has_one(const char *id, identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
-  void on_has_many(const char *, abstract_container &, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+
+  void on_has_many(abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   columns::t_brackets brackets_;

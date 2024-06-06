@@ -34,7 +34,7 @@ private:
   struct MATADOR_OBJECT_API t_object_count {
     explicit t_object_count(object_proxy *oproxy);
 
-    void remove();
+    void remove() const;
 
     object_proxy *proxy;
   };
@@ -47,13 +47,6 @@ public:
   typedef t_objects_to_remove_map::iterator iterator;
   /**< Shortcut the serializable map iterator */
   typedef t_objects_to_remove_map::const_iterator const_iterator; /**< Shortcut the serializable map const_iterator */
-
-  /**
-   * Creates an instance of the object_deleter
-   */
-  object_deleter() = default;
-
-  ~object_deleter() = default;
 
   /**
    * Checks weather the given serializable is deletable.
@@ -82,9 +75,6 @@ public:
   iterator end();
 
   template<class T>
-  void serialize(T &x) { matador::access::process(*this, x); }
-
-  template<class T>
   void on_primary_key(const char *id, T &x, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type* = 0);
   void on_primary_key(const char *id, std::string &x, size_t size);
   void on_revision(const char *, unsigned long long &/*rev*/) {}
@@ -97,17 +87,38 @@ public:
   template<class T>
   void on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *id, container<T, Container> &x, const char *, const char *, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(container<T, Container> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
-    on_has_many(id, x, attr);
+    handle_has_many_relation(x);
   }
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *, container<T, Container> &, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<!is_builtin<T>::value>::type* = 0);
+  void on_has_many_to_many(const char * /*id*/, container<T, Container> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    handle_has_many_relation(x);
+  }
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *, container<T, Container> &, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<is_builtin<T>::value>::type* = 0);
+  void on_has_many_to_many(const char *, container<T, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    handle_has_many_relation(x);
+  }
 
 private:
-  bool check_object_count_map() const;
+  [[nodiscard]] bool check_object_count_map() const;
+
+  template<class T, template<class ...> class Container>
+  void handle_has_many_relation(container<T, Container> &x);
+
+  template<class T, template<class ...> class C>
+  void handle_relation(container<T, C> &/*x*/,
+                       const typename container<T, C>::iterator &/*it*/,
+                       object_proxy * /*owner*/,
+                       typename std::enable_if<!matador::is_builtin<T>::value>::type* = nullptr);
+
+  template<class T, template<class ...> class C>
+  void handle_relation(container<T, C> &/*x*/,
+                       const typename container<T, C>::iterator &/*it*/,
+                       object_proxy * /*owner*/,
+                       typename std::enable_if<matador::is_builtin<T>::value>::type* = nullptr) {}
 
 private:
   t_objects_to_remove_map objects_to_remove_;
@@ -115,6 +126,12 @@ private:
   std::unordered_map<object_proxy*, long> visited_objects_;
   std::stack<object_proxy*> proxy_stack_;
 };
+
+template<class T>
+void object_deleter::on_primary_key(const char *id, T &x, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type*)
+{
+  on_attribute(id, x);
+}
 
 template<class T>
 void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, const foreign_attributes &attr)
@@ -186,19 +203,34 @@ void object_deleter::on_has_one(const char *, object_ptr<T> &x, const foreign_at
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::on_has_many(const char *, container<T, C> &x, const foreign_attributes &/*attr*/, typename std::enable_if<!matador::is_builtin<T>::value>::type*)
+void object_deleter::handle_relation(container<T, C> &x,
+                     const typename container<T, C>::iterator &it,
+                     object_proxy *owner,
+                     typename std::enable_if<!matador::is_builtin<T>::value>::type*)
 {
-  typename container<T, C>::iterator first = x.begin();
-  typename container<T, C>::iterator last = x.end();
+  container_item_holder<T> &holder = it.holder_item();
+  if (x.relation_info_) {
+    relations_to_remove_.push_back([&holder,&x, owner]() {
+      x.relation_info_->remove_value_from_foreign(holder, owner);
+    });
+  }
+}
 
-  object_proxy *owner = proxy_stack_.top();
+template<class Type, template<class ...> class Container>
+void object_deleter::handle_has_many_relation(container<Type, Container> &x)
+{
+  auto first = x.begin();
+  auto last = x.end();
+
+  auto *owner = proxy_stack_.top();
   while (first != last) {
-    container_item_holder<T> &holder = first.holder_item();
-    if (x.relation_info_) {
-      relations_to_remove_.push_back([&holder,&x, owner]() {
-        x.relation_info_->remove_value_from_foreign(holder, owner);
-      });
-    }
+    handle_relation(x, first, owner);
+//    container_item_holder<T> &holder = first.holder_item();
+//    if (x.relation_info_) {
+//      relations_to_remove_.push_back([&holder,&x, owner]() {
+//        x.relation_info_->remove_value_from_foreign(holder, owner);
+//      });
+//    }
 
     auto curr_obj = visited_objects_.find(proxy_stack_.top());
     if (curr_obj != visited_objects_.end()) {
@@ -208,26 +240,20 @@ void object_deleter::on_has_many(const char *, container<T, C> &x, const foreign
   }
 }
 
-template<class T, template<class ...> class C>
-void object_deleter::on_has_many(const char *, container<T, C> &x, const foreign_attributes &/*attr*/, typename std::enable_if<matador::is_builtin<T>::value>::type*)
-{
-  typename container<T, C>::iterator first = x.begin();
-  typename container<T, C>::iterator last = x.end();
-
-  while (first != last) {
-    auto curr_obj = visited_objects_.find(proxy_stack_.top());
-    if (curr_obj != visited_objects_.end()) {
-      --curr_obj->second;
-    }
-    ++first;
-  }
-}
-
-template<class T>
-void object_deleter::on_primary_key(const char *id, T &x, typename std::enable_if<std::is_integral<T>::value && !std::is_same<bool, T>::value>::type*)
-{
-  on_attribute(id, x);
-}
+//template<class T, template<class ...> class C>
+//void object_deleter::on_has_many(const char *, container<T, C> &x, const foreign_attributes &/*attr*/, typename std::enable_if<matador::is_builtin<T>::value>::type*)
+//{
+//  typename container<T, C>::iterator first = x.begin();
+//  typename container<T, C>::iterator last = x.end();
+//
+//  while (first != last) {
+//    auto curr_obj = visited_objects_.find(proxy_stack_.top());
+//    if (curr_obj != visited_objects_.end()) {
+//      --curr_obj->second;
+//    }
+//    ++first;
+//  }
+//}
 /// @endcond
 
 }
