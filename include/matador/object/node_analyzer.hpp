@@ -50,23 +50,13 @@ public:
   template<class Value>
   void on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template<class Value, template<class ...> class Container>
-  void on_has_many(container<Value, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes);
+  void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  template<class Value, template<class ...> class Container>
+  void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
   template<class Value, template<class ...> class Container>
   void on_has_many_to_many(const char *id, container<Value, Container> &x, const foreign_attributes &attr = default_foreign_attributes);
   template<class Value, template<class ...> class Container>
-  void on_has_many_to_many(const char *, container<Value, Container> &, const char *join_column, const char *inverse_join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
-  template<class Value, template<class ...> class Container>
-  void on_has_many_to_many(const char *, container<Value, Container> &, const char *join_column, const char *inverse_join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
-
-private:
-  /**
-   * Detach has_one_to_many node
-   *
-   * @param node Node to detach
-   * @return The foreign prototype node iterator
-   */
-  template < class V >
-  prototype_iterator detach_one_to_many_node(const prototype_iterator &node);
+  void on_has_many_to_many(const char *, container<Value, Container> &, const char *join_column, const char *inverse_join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes);
 
 protected:
   prototype_node &node_;

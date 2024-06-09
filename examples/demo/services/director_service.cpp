@@ -73,6 +73,7 @@ matador::http::response director_service::create_director(const matador::http::r
 {
   auto m = new person;
   m->name = p.form_data().at("name");
+  m->birthday = date::parse(p.form_data().at("birthday"), date_format::ISO8601);
 
   session s(persistence_);
   auto tr = s.begin();
@@ -101,6 +102,8 @@ matador::http::response director_service::update_director(const matador::http::r
   try {
 
     result.modify()->name = p.form_data().at("name");
+    const auto bd =  p.form_data().at("birthday");
+    result.modify()->birthday = date::parse(bd, date_format::ISO8601);
 
     tr.commit();
   } catch (std::exception &ex) {

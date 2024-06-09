@@ -87,7 +87,7 @@ public:
   template<class T>
   void on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
   template<class T, template<class ...> class Container>
-  void on_has_many(container<T, Container> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<T, Container> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     handle_has_many_relation(x);
   }

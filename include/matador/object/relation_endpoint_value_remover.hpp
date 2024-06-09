@@ -52,9 +52,9 @@ public:
   void on_has_one(const char *, T &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
   template < template < class ... > class Container >
-  void on_has_many(container<Value, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(const char *id, container<Value, Container> &x, const char * /*join_column*/, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_has_many_to_many(join_column, x, attr);
+    on_has_many_to_many(id, x, attr);
   }
   template < template < class ... > class Container >
   void on_has_many_to_many(const char *id, container<Value, Container> &x, const char* /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &attr = default_foreign_attributes)
@@ -71,7 +71,7 @@ public:
   }
 
   template < class T, template < class ... > class Container >
-  void on_has_many(container<T, Container> &, const char* /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, container<T, Container> &, const char* /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   template < class T, template < class ... > class Container >
   void on_has_many_to_many(const char *, container<T, Container> &, const char* /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   template < class T, template < class ... > class Container >

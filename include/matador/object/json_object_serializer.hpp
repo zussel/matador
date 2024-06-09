@@ -115,7 +115,7 @@ public:
   template<class Value>
   void on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template < class Value, template <class ...> class Container >
-  void on_has_many(container<Value, Container> &c, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_many(const char *id, container<Value, Container> &c, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template < class Value, template <class ...> class Container >
   void on_has_many_to_many(const char *id, container<Value, Container> &c, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template < class Value, template <class ...> class Container >
@@ -250,9 +250,9 @@ void json_object_serializer::on_has_one(const char *id, object_ptr<Value> &x,
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_serializer::on_has_many(container<Value, Container> &c, const char *join_column, const foreign_attributes &)
+void json_object_serializer::on_has_many(const char *id, container<Value, Container> &c, const char * /*join_column*/, const foreign_attributes &)
 {
-  handle_has_many(join_column, c);
+  handle_has_many(id, c);
 }
 
 template<class Value, template <class ...> class Container>

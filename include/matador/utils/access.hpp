@@ -70,13 +70,13 @@ void belongs_to(Operator &op, const char *id, Type &value) {
 }
 
 template<class Operator, class Type, template<class ...> class ContainerType>
-void has_many(Operator &op, container<Type, ContainerType> &c, const char *join_column, const foreign_attributes &attr) {
-  op.on_has_many(c, join_column, attr);
+void has_many(Operator &op, const char *id, container<Type, ContainerType> &c, const char *join_column, const foreign_attributes &attr) {
+  op.on_has_many(id, c, join_column, attr);
 }
 
 template<class Operator, class Type, template<class ...> class ContainerType>
-void has_many(Operator &op, container<Type, ContainerType> &c, const char *join_column) {
-  op.on_has_many(c, join_column);
+void has_many(Operator &op, const char *id, container<Type, ContainerType> &c, const char *join_column) {
+  op.on_has_many(id, c, join_column);
 }
 
 template<class Operator, class ContainerType>

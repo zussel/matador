@@ -45,7 +45,7 @@ struct author : public blog_detail::person
   void process(Operator &op)
   {
     matador::access::process(op, *matador::base_class<person>(this));
-    matador::access::has_many(op, posts, "author", matador::cascade_type::NONE);
+    matador::access::has_many(op, "posts", posts, "author", matador::cascade_type::NONE);
   }
 };
 
@@ -135,8 +135,8 @@ struct post
     matador::access::belongs_to(op, "author", writer, matador::cascade_type::NONE);
     matador::access::attribute(op, "created_at", created_at);
     matador::access::has_many_to_many(op, "post_category", categories, matador::cascade_type::INSERT);
-    matador::access::has_many_to_many(op, "comment", comments, "post", "id", matador::cascade_type::ALL);
-    matador::access::has_many_to_many(op, "post_tag", tags, "post_id", "tag", matador::cascade_type::ALL);
+    matador::access::has_many(op, "comments", comments, "id", matador::cascade_type::ALL);
+    matador::access::has_many(op, "tags", tags, "tag", matador::cascade_type::ALL);
     matador::access::attribute(op, "content", content);
   }
 };

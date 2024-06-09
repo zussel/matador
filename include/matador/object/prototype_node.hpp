@@ -84,10 +84,10 @@ public:
    * @return The created node.
    */
   template < class Type >
-  static prototype_node* make_node(object_store &store,
-                                   const char *type,
-                                   Type* prototype,
-                                   abstract_type abstract = abstract_type::not_abstract);
+  static std::unique_ptr<prototype_node> make_node(object_store &store,
+                                                   const char *type,
+                                                   Type* prototype,
+                                                   abstract_type abstract = abstract_type::not_abstract);
 
   /**
    * Creates a relation prototype node.
@@ -102,12 +102,12 @@ public:
    * @return The created node.
    */
   template < class Type >
-  static prototype_node* make_relation_node(object_store &store,
-                                            const char *type,
-                                            Type *item,
-                                            abstract_type abstract,
-                                            const char *owner_type,
-                                            const char *relation_id);
+  static std::unique_ptr<prototype_node> make_relation_node(object_store &store,
+                                                            const char *type,
+                                                            Type *item,
+                                                            abstract_type abstract,
+                                                            const char *owner_type,
+                                                            const char *relation_id);
 
   /**
    * @brief Creates a new prototype_node.
@@ -481,17 +481,20 @@ T *prototype_node::prototype() const
 }
 
 template<class T>
-prototype_node *prototype_node::make_node(object_store &store, const char *type, T *prototype, abstract_type abstract)
+std::unique_ptr<prototype_node> prototype_node::make_node(object_store &store, const char *type, T *prototype, abstract_type abstract)
 {
-  return new prototype_node(store, type, prototype, abstract);
+  return std::make_unique<prototype_node>(store, type, prototype, abstract);
 }
 
 template<class T>
-prototype_node *prototype_node::make_relation_node(object_store &store, const char *type,
-                                                   T *item, abstract_type abstract,
-                                                   const char *owner_type, const char *relation_id)
+std::unique_ptr<prototype_node> prototype_node::make_relation_node(object_store &store,
+                                                                   const char *type,
+                                                                   T *item,
+                                                                   abstract_type abstract,
+                                                                   const char *owner_type,
+                                                                   const char *relation_id)
 {
-  prototype_node *node = make_node<T>(store, type, item, abstract);
+  auto node = make_node<T>(store, type, item, abstract);
   node->relation_node_info_.owner_type_.assign(owner_type);
   node->relation_node_info_.relation_id_.assign(relation_id);
   node->relation_node_info_.owner_id_column_.assign(item->left_column());

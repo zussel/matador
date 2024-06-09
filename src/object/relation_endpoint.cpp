@@ -4,6 +4,17 @@
 namespace matador {
 
 namespace detail {
+bool basic_relation_endpoint::is_has_one() const {
+  return type == HAS_ONE;
+}
+
+bool basic_relation_endpoint::is_has_many() const {
+  return type == HAS_MANY;
+}
+
+bool basic_relation_endpoint::is_belongs_to() const {
+  return type == BELONGS_TO;
+}
 
 void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, object_proxy *owner)
 {

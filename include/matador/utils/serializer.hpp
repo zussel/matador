@@ -186,14 +186,15 @@ public:
   virtual void on_has_one(const char *id, matador::identifiable_holder &x, const foreign_attributes &attr) = 0;
 
   /**
-   * @fn void on_has_many_to_many(abstract_container &x, const char *join_column, const foreign_attributes &attr)
+   * @fn void on_has_many_to_many(const char *id, abstract_container &x, const char *join_column, const foreign_attributes &attr)
    * @brief Interface to serialize a relation with given id
    *
+   * @param id The id of the value
    * @param x The value to be serialized
    * @param join_column The name of the join column
    * @param attr Foreign attributes
    */
-  virtual void on_has_many(abstract_container &, const char *, const foreign_attributes &attr) = 0;
+  virtual void on_has_many(const char *, abstract_container &, const char *, const foreign_attributes &attr) = 0;
 
   /**
    * @fn void on_has_many_to_many(const char *id, abstract_container &x, const char *join_column, const char *inverse_join_column, const foreign_attributes &attr)

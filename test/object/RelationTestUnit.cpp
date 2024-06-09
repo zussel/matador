@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/9/17.
-//
-
 #include <matador/object/object_view.hpp>
 
 #include "../datatypes.hpp"

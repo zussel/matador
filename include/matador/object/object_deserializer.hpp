@@ -96,9 +96,9 @@ public:
   }
 
   template<class Type, template<class ...> class Container>
-  void on_has_many(container<Type, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(const char *id, container<Type, Container> &x, const char * /*join_column*/, const foreign_attributes &attr = default_foreign_attributes)
   {
-    handle_has_many_relation(join_column, x, attr);
+    handle_has_many_relation(id, x, attr);
   }
 
   template<class Type, template<class ...> class Container>

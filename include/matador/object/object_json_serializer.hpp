@@ -89,14 +89,14 @@ public:
   }
 
   template < class V, template <class ...> class Container >
-  void on_has_many(container<V, Container> &x, const char *join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *id, container<V, Container> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     json array = json::array();
     object_json_serializer ojs;
     for (const auto &obj : x) {
       array.push_back(ojs.to_json(obj));
     }
-    result_[join_column] = array;
+    result_[id] = array;
   }
 
   template < class V, template <class ...> class Container >

@@ -206,7 +206,7 @@ struct department
     {
         matador::access::primary_key(op, "id", id);
         matador::access::attribute(op, "name", name, 255);
-        matador::access::has_many(op, employees, "department", matador::cascade_type::NONE);
+        matador::access::has_many(op, "employees", employees, "department", matador::cascade_type::NONE);
         //                                name of table, container,  name of member
         //                                to serialize
     }
@@ -358,12 +358,12 @@ public:
     {
         matador::access::primary_key(op, "id", id_);
         matador::access::attribute(op, "name", name_);
-        matador::access::has_many(op, tracks_, "album", matador::cascade_type::ALL);
+        matador::access::has_many(op, "tracks", tracks_, "album", matador::cascade_type::ALL);
     }
 
-    unsigned long id() { return id_; }
+    [[nodiscard]] unsigned long id() const { return id_; }
 
-    std::string name() const { return name_; }
+    [[nodiscard]] std::string name() const { return name_; }
     void name(const std::string &name) { name_ = name; }
 
     void add(const track_ptr &t)
@@ -377,16 +377,16 @@ public:
     }
 
     iterator begin() { return tracks_.begin(); }
-    const_iterator begin() const { return tracks_.begin(); }
+    [[nodiscard]] const_iterator begin() const { return tracks_.begin(); }
 
     iterator end() { return tracks_.end(); }
-    const_iterator end() const { return tracks_.end(); }
+    [[nodiscard]] const_iterator end() const { return tracks_.end(); }
 
     iterator erase(const iterator& i) { return tracks_.erase(i); }
     iterator erase(const iterator& a, const iterator& b) { return tracks_.erase(a, b); }
 
-    size_type size() const { return tracks_.size(); }
-    bool empty() const { return tracks_.empty(); }
+    [[nodiscard]] size_type size() const { return tracks_.size(); }
+    [[nodiscard]] bool empty() const { return tracks_.empty(); }
 };
 
 class playlist
@@ -413,13 +413,13 @@ public:
     template < class Operator >
     void process(Operator &op)
     {
-        matador::access::primary_key(op, "id", id_);
-        matador::access::attribute(op, "name", name_);
+      matador::access::primary_key(op, "id", id_);
+      matador::access::attribute(op, "name", name_);
       matador::access::has_many(op, "playlist_tracks", tracks_, matador::cascade_type::ALL);
       matador::access::has_many(op, "backup_tracks", backup_tracks_, matador::cascade_type::ALL);
     }
 
-    std::string name() const { return name_; }
+    [[nodiscard]] std::string name() const { return name_; }
     void name(const std::string &name) { name_ = name; }
 
     void add(const track_ref &b)
@@ -428,15 +428,15 @@ public:
     }
 
     iterator begin() { return tracks_.begin(); }
-    const_iterator begin() const { return tracks_.begin(); }
+    [[nodiscard]] const_iterator begin() const { return tracks_.begin(); }
 
     iterator end() { return tracks_.end(); }
-    const_iterator end() const { return tracks_.end(); }
+    [[nodiscard]] const_iterator end() const { return tracks_.end(); }
 
     iterator erase(const iterator &i) { return tracks_.erase(i); }
 
-    size_type size() const { return tracks_.size(); }
-    bool empty() const { return tracks_.empty(); }
+    [[nodiscard]] size_type size() const { return tracks_.size(); }
+    [[nodiscard]] bool empty() const { return tracks_.empty(); }
 };
 
 class child
@@ -537,7 +537,7 @@ public:
     void process(Operator &op)
     {
         matador::access::primary_key(op, "id", id);
-        matador::access::has_many_to_many(op, "elements", elements, "list_id", "value", matador::cascade_type::ALL);
+        matador::access::has_many(op, "elements", elements, "value", matador::cascade_type::ALL);
     }
 };
 
@@ -555,8 +555,7 @@ public:
     void process(Operator &op)
     {
         matador::access::primary_key(op, "id", id);
-        matador::access::has_many(op, elements, "list_id", matador::cascade_type::ALL);
-        matador::access::has_many_to_many(op, "elements", elements, "list_id", "value", matador::cascade_type::ALL);
+        matador::access::has_many(op, "elements", elements, "value", matador::cascade_type::ALL);
     }
 };
 

@@ -20,6 +20,8 @@ add_executable(tests
   object/ObserverListCopyCreatorTest.cpp
   object/ObjectPrototypeTest.cpp
   object/ObjectStoreAttachTest.cpp
+  object/ObjectStoreRelationTest.cpp
+  object/ObjectStoreAttachTestModels.hpp
 )
 
 target_link_libraries(tests PRIVATE

@@ -38,12 +38,11 @@ struct person
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name, 255);
     matador::access::attribute(op, "birthday", birthday);
-    matador::access::has_many_to_many(op,
-                                      "person_color",  // relation table name
-                                      colors,          // class member
-                                      "person_id",     // left column in relation table
-                                      "color",         // right column in relation table
-                                      matador::cascade_type::ALL); // cascade type
+    matador::access::has_many(op,
+                              "colors", // id
+                              colors,   // class member
+                              "color",  // right column in relation table
+                              matador::cascade_type::ALL); // cascade type
   }
 };
 }
