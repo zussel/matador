@@ -51,18 +51,18 @@ public:
    *
    * @return The class name.
    */
-  const char* classname() const;
+  [[nodiscard]] const char* classname() const;
 
   /**
    * The primary key of the serializable of the action.
    *
    * @return The primary key of the deleted serializable.
    */
-  const identifier& pk() const;
+  [[nodiscard]] const identifier& pk() const;
 
-  unsigned long long id() const;
+  [[nodiscard]] unsigned long long id() const;
 
-  object_proxy* proxy() const;
+  [[nodiscard]] object_proxy* proxy() const;
 
   void backup(byte_buffer &buffer) override;
 

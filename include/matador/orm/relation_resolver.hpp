@@ -21,23 +21,10 @@ namespace detail {
 template < class T, class Enabled = void >
 class relation_resolver;
 
-//template < typename T >
-//struct relation_data_type
-//{
-//  typedef T value_type;
-//};
-//
-//template < long SIZE >
-//struct relation_data_type<varchar<SIZE>>
-//{
-//  typedef typename varchar<SIZE>::value_type value_type;
-//};
-
 template < typename T >
 bool is_same_type(const std::shared_ptr<detail::basic_relation_data> &rdata)
 {
   return rdata->type_index() == std::type_index(typeid(T));
-//  return rdata->type_index() == std::type_index(typeid(typename relation_data_type<T>::value_type));
 }
 
 template < class T >
@@ -130,6 +117,12 @@ public:
 
   template<class V, template<class ...> class C>
   void on_has_many(const char *id, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    on_has_many_to_many(id, x, attr);
+  }
+
+  template<class V, template<class ...> class C>
+  void on_has_many(const char *id, container<V, C> &x, const foreign_attributes &attr = default_foreign_attributes)
   {
     on_has_many_to_many(id, x, attr);
   }
@@ -283,6 +276,7 @@ public:
     left_proxy_ = acquire_proxy(x, pk, attr, left_table_ptr_);
   }
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
@@ -408,6 +402,7 @@ public:
   void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes);
 
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 

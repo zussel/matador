@@ -36,7 +36,7 @@ struct MATADOR_OBJECT_API basic_relation_endpoint : public object_proxy_accessor
         type_name = "has_one";
         break;
       case HAS_MANY:
-        type_name = "container";
+        type_name = "has_many";
         break;
       default:
         break;
@@ -45,9 +45,9 @@ struct MATADOR_OBJECT_API basic_relation_endpoint : public object_proxy_accessor
 
   virtual ~basic_relation_endpoint() = default;
 
-  bool is_has_one() const;
-  bool is_has_many() const;
-  bool is_belongs_to() const;
+  [[nodiscard]] bool is_has_one() const;
+  [[nodiscard]] bool is_has_many() const;
+  [[nodiscard]] bool is_belongs_to() const;
 
   virtual void insert_value(object_proxy *value, object_proxy *owner) = 0;
 

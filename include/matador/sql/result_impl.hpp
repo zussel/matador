@@ -55,6 +55,7 @@ public:
   void on_has_one(const char *id, matador::identifiable_holder &x, const foreign_attributes &/*attr*/) override;
 
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/) override {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/) override {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/) override {}
 
@@ -135,6 +136,7 @@ public:
   void on_has_one(const char *id, matador::identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
 
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 

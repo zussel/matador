@@ -47,6 +47,21 @@ struct toolbox
   }
 };
 
+struct hammer_box
+{
+  unsigned long id{};
+  std::string name;
+  container<hammer> hammers_;
+
+  template<typename Operator>
+  void process(Operator &op) {
+    namespace field = matador::access;
+    field::primary_key(op, "id", id);
+    field::attribute(op, "name", name, 255);
+    field::has_many(op, "hammers", hammers_);
+  }
+};
+
 struct profile;
 
 struct user
@@ -79,20 +94,42 @@ struct profile
   }
 };
 
-struct department;
-
-struct employee
+struct post
 {
   unsigned long id{};
   std::string name;
-  object_ptr<department> department_;
+  matador::container<std::string> tags{255};
 
   template<typename Operator>
   void process(Operator &op) {
     namespace field = matador::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, 255);
-    field::belongs_to(op, "department_id", department_);
+    field::has_many(op, "tags", tags);
+  }
+};
+
+struct department;
+
+struct employee
+{
+  unsigned long id{};
+  std::string name;
+  matador::object_ptr<department> dep{};
+
+  employee() = default;
+  explicit employee(std::string name) : name(std::move(name)) {}
+
+  template < class Operator >
+  void process(Operator &op)
+  {
+    namespace field = matador::access;
+    field::primary_key(op, "id", id);
+    field::attribute(op, "name", name);
+    field::belongs_to(op, "department"    , dep, matador::cascade_type::NONE);
+    //                     ^ name of foreign table
+    //                                      ^ object
+    //                                           ^ foreign attributes
   }
 };
 
@@ -100,14 +137,25 @@ struct department
 {
   unsigned long id{};
   std::string name;
-  container<employee> employees;
+  matador::container<employee> employees{};
 
-  template<typename Operator>
-  void process(Operator &op) {
-    namespace field = matador::access;
-    field::primary_key(op, "id", id);
-    field::attribute(op, "name", name, 255);
-    field::has_many(op, "employees", employees, "id");
+  department() = default;
+  explicit department(std::string n)
+  : name(std::move(n))
+  {}
+
+  ~department() = default;
+
+  template < class Operator >
+  void process(Operator &op)
+  {
+    matador::access::primary_key(op, "id", id);
+    matador::access::attribute(op, "name", name, 255);
+    matador::access::has_many(op, "employees", employees, "department", matador::cascade_type::NONE);
+    //                             ^ id
+    //                                         ^ container
+    //                                                    ^ name of foreign join column
+    //                                                                 ^ foreign attributes
   }
 };
 

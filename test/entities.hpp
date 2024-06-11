@@ -493,7 +493,7 @@ public:
     {
         matador::access::primary_key(op, "id", id);
         matador::access::attribute(op, "name", name);
-        matador::access::has_many_to_many(op, "children", children, "vector_id", "child_id", matador::cascade_type::ALL);
+        matador::access::has_many(op, "children", children, matador::cascade_type::ALL);
     }
 
     unsigned long id{};
@@ -515,7 +515,8 @@ public:
     {
         matador::access::primary_key(op, "id", id);
         matador::access::attribute(op, "name", name);
-        matador::access::has_many_to_many(op, "children", children, "list_id", "child_id", matador::cascade_type::ALL);
+        matador::access::has_many(op, "children", children, matador::cascade_type::ALL);
+//        matador::access::has_many_to_many(op, "children", children, "list_id", "child_id", matador::cascade_type::ALL);
     }
 
     unsigned long id{};
@@ -537,7 +538,7 @@ public:
     void process(Operator &op)
     {
         matador::access::primary_key(op, "id", id);
-        matador::access::has_many(op, "elements", elements, "value", matador::cascade_type::ALL);
+        matador::access::has_many(op, "elements", elements, matador::cascade_type::ALL);
     }
 };
 
@@ -555,7 +556,7 @@ public:
     void process(Operator &op)
     {
         matador::access::primary_key(op, "id", id);
-        matador::access::has_many(op, "elements", elements, "value", matador::cascade_type::ALL);
+        matador::access::has_many(op, "elements", elements, matador::cascade_type::ALL);
     }
 };
 

@@ -4,6 +4,8 @@
 
 #include "matador/object/object_store.hpp"
 
+#include "ObjectStoreAttachTestModels.hpp"
+
 namespace matador::test {
 
 struct child
@@ -42,52 +44,6 @@ struct master
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name);
     field::has_one(op, "child", children, matador::cascade_type::ALL);
-  }
-};
-
-struct department;
-
-struct employee
-{
-  unsigned long id{};
-  std::string name;
-  matador::object_ptr<department> dep;
-
-  employee() = default;
-  explicit employee(std::string name) : name(std::move(name)) {}
-
-  template < class Operator >
-  void process(Operator &op)
-  {
-    namespace field = matador::access;
-    field::primary_key(op, "id", id);
-    field::attribute(op, "name", name);
-    field::belongs_to(op, "department"    , dep, matador::cascade_type::NONE);
-    //                     name of table,   object     , cascade
-  }
-};
-
-struct department
-{
-  unsigned long id{};
-  std::string name;
-  matador::container<employee> employees;
-
-  department() = default;
-  explicit department(std::string n)
-  : name(std::move(n))
-  {}
-
-  ~department() = default;
-
-  template < class Operator >
-  void process(Operator &op)
-  {
-    matador::access::primary_key(op, "id", id);
-    matador::access::attribute(op, "name", name, 255);
-    matador::access::has_many(op, "employees", employees, "department", matador::cascade_type::NONE);
-    //                                name of table, container,  name of member
-    //                                to serialize
   }
 };
 
@@ -162,6 +118,55 @@ TEST_CASE("Test has_one relation", "[has_one][relation]") {
   REQUIRE(store.find<test::child>()->size() == 0);
 }
 
+TEST_CASE("Test has many relation with scalar", "[relation][has_many]") {
+  object_store store;
+
+  // attach master part of many-to-many relation first
+  auto it = store.attach<test::post>("posts");
+
+  REQUIRE(store.size() == 2);
+  REQUIRE(it != store.end());
+  REQUIRE(it->type() == std::string("posts"));
+  REQUIRE(!it->endpoints_empty());
+  REQUIRE(it->endpoints_size() == 1);
+
+  it = store.find("tags");
+  REQUIRE(it != store.end());
+  REQUIRE(it->type() == std::string("tags"));
+  REQUIRE(!it->endpoints_empty());
+  REQUIRE(it->endpoints_size() == 1);
+  REQUIRE(it->empty(true));
+
+  auto p1 = std::make_unique<test::post>();
+  p1->name = "My Post";
+  p1->tags.push_back("black");
+  p1->tags.push_back("green");
+
+  auto ptr = store.insert(p1.release());
+
+  REQUIRE(it->size() == 2);
+
+  ptr.modify()->tags.remove("black");
+
+  REQUIRE(it->size() == 1);
+}
+
+TEST_CASE("Test has many relation with foreign key", "[relation][has_many]") {
+  object_store store;
+
+  // attach master part of has-many relation first
+  auto it = store.attach<test::hammer>("hammer");
+  it = store.attach<test::hammer_box>("hammer_box");
+
+  auto hb = std::make_unique<test::hammer_box>();
+  hb->name = "HammerBox";
+  auto steel_hammer = std::make_unique<test::hammer>();
+  steel_hammer->name = "Steel-Hammer";
+  hb->hammers_.push_back(steel_hammer.release());
+
+  store.insert(hb.release());
+}
+
 TEST_CASE("Test insert belongs to many", "[relation][belongs_to][has_many]") {
   matador::object_store store;
 
@@ -187,7 +192,7 @@ TEST_CASE("Test insert belongs to many", "[relation][belongs_to][has_many]") {
 
   endpoint = node->endpoint_begin();
 
-  REQUIRE(endpoint->second->field == "employee");
+  REQUIRE(endpoint->second->field == "department");
   REQUIRE(endpoint->second->is_has_many());
 
   auto george_ptr = std::make_unique<test::employee>("george");
@@ -216,7 +221,7 @@ TEST_CASE("Test insert belongs to many", "[relation][belongs_to][has_many]") {
   store.remove(george);
 
   REQUIRE(store.find<test::employee>()->size() == 0);
-  REQUIRE(store.find<test::department>()->size() == 0);
+  REQUIRE(store.find<test::department>()->size() == 1);
   REQUIRE(insurance.reference_count() == 0);
   REQUIRE(insurance->employees.empty());
 

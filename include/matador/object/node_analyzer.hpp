@@ -35,8 +35,6 @@ public:
   }
 
   template<class V>
-  void serialize(V &x);
-  template<class V>
   void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
@@ -53,6 +51,10 @@ public:
   void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template<class Value, template<class ...> class Container>
   void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  template<class Value, template<class ...> class Container>
+  void on_has_many(const char *id, container<Value, Container> &x, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  template<class Value, template<class ...> class Container>
+  void on_has_many(const char *id, container<Value, Container> &x, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
   template<class Value, template<class ...> class Container>
   void on_has_many_to_many(const char *id, container<Value, Container> &x, const foreign_attributes &attr = default_foreign_attributes);
   template<class Value, template<class ...> class Container>

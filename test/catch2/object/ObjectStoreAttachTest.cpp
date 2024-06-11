@@ -78,6 +78,31 @@ TEST_CASE("Attach types with belongs to and has many relations", "[object_store]
   REQUIRE(it->endpoints_size() == 1);
 }
 
+TEST_CASE("Attach type with has many relation without belongs to", "[object_store][attach][relation]") {
+  object_store store;
+
+  auto it = store.attach<test::hammer>("hammer");
+
+  REQUIRE(store.size() == 1);
+  REQUIRE(it != store.end());
+  REQUIRE(it->type() == std::string("hammer"));
+  REQUIRE(it->endpoints_empty());
+
+  it = store.attach<test::hammer_box>("hammer_box");
+
+  REQUIRE(store.size() == 3);
+  REQUIRE(it != store.end());
+  REQUIRE(it->type() == std::string("hammer_box"));
+  REQUIRE(!it->endpoints_empty());
+  REQUIRE(it->endpoints_size() == 1);
+
+  it = store.find("hammers");
+  REQUIRE(it != store.end());
+  REQUIRE(it->type() == std::string("hammers"));
+  REQUIRE(!it->endpoints_empty());
+  REQUIRE(it->endpoints_size() == 2);
+}
+
 TEST_CASE("Attach types with has many to many relations (master first)", "[object_store][attach][relation]") {
   object_store store;
 
@@ -203,4 +228,17 @@ TEST_CASE("Attach types with has many to many relations (slave first)", "[object
   REQUIRE(ep->second->type == detail::basic_relation_endpoint::BELONGS_TO);
   REQUIRE(!ep->second->foreign_endpoint.expired());
   REQUIRE(ep->second->foreign_endpoint.lock() == course_relation_endpoint);
+}
+
+TEST_CASE("Attach type with has many relations", "[object_store][attach][relation]") {
+  object_store store;
+
+  // attach master part of many-to-many relation first
+  auto it = store.attach<test::post>("posts");
+
+  REQUIRE(store.size() == 2);
+  REQUIRE(it != store.end());
+  REQUIRE(it->type() == std::string("posts"));
+  REQUIRE(!it->endpoints_empty());
+  REQUIRE(it->endpoints_size() == 1);
 }

@@ -35,7 +35,7 @@ TEST_CASE("Test column value visitor", "[column][convert][visitor]") {
 
   validate_conversion_to_string<bool>(true, "true");
 
-  validate_conversion_to_string<float>(-0.1234, "-0.1234");
+  validate_conversion_to_string<float>(-0.1234f, "-0.1234");
   validate_conversion_to_string<double>(-0.987654321, "-0.987654321");
 
   validate_conversion_to_string<std::string>("hello", "hello");

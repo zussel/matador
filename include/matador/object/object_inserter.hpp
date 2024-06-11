@@ -65,6 +65,12 @@ public:
     handle_insert_has_many_relation(x, attr);
   }
 
+  template<class Type, template<class ...> class Container>
+  void on_has_many(const char *, container<Type, Container> &x, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_insert_has_many_relation(x, attr);
+  }
+
   template<class T, template<class ...> class C>
   void on_has_many_to_many(const char * /*id*/, container<T, C> &x, const char* /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &attr = default_foreign_attributes)
   {

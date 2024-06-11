@@ -75,6 +75,7 @@ public:
   void on_has_one(const char*, identifiable_holder&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 

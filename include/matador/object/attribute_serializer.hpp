@@ -103,6 +103,7 @@ public:
   void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
@@ -164,6 +165,7 @@ public:
   void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
@@ -207,6 +209,7 @@ public:
     this->success_ = true;
   }
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
@@ -244,6 +247,12 @@ public:
   void on_has_one(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
   template<class V, template <class ...> class C>
   void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.push_back(from_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
@@ -292,6 +301,12 @@ public:
   void on_has_one(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
   template<class V, template <class ...> class C>
   void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.push_back(from_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
@@ -360,6 +375,7 @@ public:
   void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
@@ -414,6 +430,7 @@ public:
   void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
@@ -481,6 +498,7 @@ public:
   void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
@@ -517,6 +535,7 @@ public:
     to_ = x;
   }
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
@@ -554,6 +573,12 @@ public:
   void on_has_one(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   template<class V, template <class ...> class C>
   void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.remove(to_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
@@ -600,6 +625,12 @@ public:
   void on_belongs_to(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   template<class V, template <class ...> class C>
   void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.remove(to_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
@@ -727,6 +758,7 @@ public:
   }
 
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
@@ -798,6 +830,7 @@ public:
   void on_belongs_to(const char*, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_one(const char*, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 

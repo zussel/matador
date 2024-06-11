@@ -79,6 +79,16 @@ void has_many(Operator &op, const char *id, container<Type, ContainerType> &c, c
   op.on_has_many(id, c, join_column);
 }
 
+template<class Operator, class Type, template<class ...> class ContainerType>
+void has_many(Operator &op, const char *id, container<Type, ContainerType> &c, const foreign_attributes &attr) {
+  op.on_has_many(id, c, attr);
+}
+
+template<class Operator, class Type, template<class ...> class ContainerType>
+void has_many(Operator &op, const char *id, container<Type, ContainerType> &c) {
+  op.on_has_many(id, c);
+}
+
 template<class Operator, class ContainerType>
 void has_many_to_many(Operator &op, const char *id, ContainerType &c, const char *join_column, const char *inverse_join_column, const foreign_attributes &attr) {
   op.on_has_many_to_many(id, c, join_column, inverse_join_column, attr);

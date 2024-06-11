@@ -11,8 +11,7 @@
 
 #include "matador/object/container.hpp"
 
-namespace matador {
-namespace detail {
+namespace matador::detail {
 
 /// @cond MATADOR_DEV
 class MATADOR_OBJECT_API json_object_mapper_serializer
@@ -55,6 +54,10 @@ public:
   void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
   void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  template < class Value, template <class ...> class Container >
+  void on_has_many(const char *id, container<Value, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  template < class Value, template <class ...> class Container >
+  void on_has_many(const char *id, container<Value, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
   void on_has_many_to_many(const char *id, container<Value, Container> &x, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
@@ -200,7 +203,26 @@ template<class Value, template <class ...> class Container>
 void json_object_mapper_serializer::on_has_many(const char *id,
                                                 container<Value, Container> &x,
                                                 const char * /*join_column*/,
-                                                const foreign_attributes &/*attr*/,
+                                                const foreign_attributes &attr,
+                                                typename std::enable_if<!is_builtin<Value>::value>::type*)
+{
+  on_has_many(id, x, attr);
+}
+
+template<class Value, template <class ...> class Container>
+void json_object_mapper_serializer::on_has_many(const char *id,
+                                                container<Value, Container> &x,
+                                                const char * /*join_column*/,
+                                                const foreign_attributes &attr,
+                                                typename std::enable_if<is_builtin<Value>::value>::type *)
+{
+  on_has_many(id, x, attr);
+}
+
+template<class Value, template <class ...> class Container>
+void json_object_mapper_serializer::on_has_many(const char *id,
+                                                container<Value, Container> &x,
+                                                const foreign_attributes &attr,
                                                 typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.object_key != id) {
@@ -219,7 +241,6 @@ void json_object_mapper_serializer::on_has_many(const char *id,
 template<class Value, template <class ...> class Container>
 void json_object_mapper_serializer::on_has_many(const char *id,
                                                 container<Value, Container> &x,
-                                                const char * /*join_column*/,
                                                 const foreign_attributes &/*attr*/,
                                                 typename std::enable_if<is_builtin<Value>::value>::type *)
 {
@@ -280,5 +301,5 @@ void json_object_mapper_serializer::on_has_many_to_many(const char *id,
 /// @endcond
 
 }
-}
+
 #endif //MATADOR_JSON_OBJECT_MAPPER_SERIALIZER_HPP

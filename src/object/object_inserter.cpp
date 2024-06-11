@@ -76,7 +76,7 @@ void object_inserter::insert_object(object_holder &x, const std::type_index &typ
     return;
   }
 
-  if (!proxy_stack_.top()->node()->is_relation_node() && i->second->type == basic_relation_endpoint::BELONGS_TO/*x.is_belongs_to()*/) {
+  if (!proxy_stack_.top()->node()->is_relation_node() && i->second->is_belongs_to()) {
     ++(*x.proxy_);
   }
 

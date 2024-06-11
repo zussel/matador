@@ -1,9 +1,8 @@
 #include "matador/object/prototype_node.hpp"
 #include "matador/object/relation_endpoint.hpp"
 
-namespace matador {
+namespace matador::detail {
 
-namespace detail {
 bool basic_relation_endpoint::is_has_one() const {
   return type == HAS_ONE;
 }
@@ -67,5 +66,4 @@ void basic_relation_endpoint::print(std::ostream &out) const
   }
 }
 
-}
 }

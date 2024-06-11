@@ -197,6 +197,16 @@ public:
   virtual void on_has_many(const char *, abstract_container &, const char *, const foreign_attributes &attr) = 0;
 
   /**
+   * @fn void on_has_many_to_many(const char *id, abstract_container &x, const foreign_attributes &attr)
+   * @brief Interface to serialize a relation with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   * @param attr Foreign attributes
+   */
+  virtual void on_has_many(const char *, abstract_container &, const foreign_attributes &attr) = 0;
+
+  /**
    * @fn void on_has_many_to_many(const char *id, abstract_container &x, const char *join_column, const char *inverse_join_column, const foreign_attributes &attr)
    * @brief Interface to serialize a relation with given id
    *
