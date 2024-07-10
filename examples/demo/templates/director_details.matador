@@ -2,9 +2,6 @@
 <html lang="en">
 {% include "../templates/header.matador" %}
 <body>
-<div class="header">
-    <h1>{{title}}</h1>
-</div>
     <header class="container">
         <h1>{{title}}</h1>
     </header>
@@ -17,8 +14,8 @@
             </ul>
         </nav>
 
-        <button class="outline"><a href="/director/edit/{{director.id}}">Edit</a></button>
-        <button class="outline"><a href="/director/delete/{{director.id}}">Delete</a></button>
+        <a role="button" href="/director/edit/{{director.id}}">Edit</a>
+        <a role="button" href="/director/delete/{{director.id}}">Delete</a>
 
         <form>
             <fieldset class="grid">

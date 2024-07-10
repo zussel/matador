@@ -45,7 +45,7 @@ struct author : public blog_detail::person
   void process(Operator &op)
   {
     matador::access::process(op, *matador::base_class<person>(this));
-    matador::access::has_many(op, "posts", posts, "author", matador::cascade_type::NONE);
+    matador::access::has_many(op, "post", posts, "author", matador::cascade_type::NONE);
   }
 };
 

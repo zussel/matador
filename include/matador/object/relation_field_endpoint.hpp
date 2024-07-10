@@ -417,7 +417,6 @@ typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::va
   object_ptr<Owner> ownptr(owner);
   this->mark_holder_as_inserted(const_cast<container_item_holder<Value>&>(value_holder));
   inserter.insert(ownptr, this->field, value_holder);
-//  this->increment_reference_count(value_holder.value());
 }
 
 template < class Value, class Owner >
@@ -429,7 +428,6 @@ typename std::enable_if<!std::is_base_of<basic_has_many_to_many_item, Value>::va
 
   object_ptr<Owner> ownptr(owner);
   remover.remove(ownptr, this->field, value_holder);
-//  this->decrement_reference_count(value_holder.value());
 }
 /// @endcond
 

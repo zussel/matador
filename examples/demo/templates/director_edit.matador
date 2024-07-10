@@ -10,9 +10,13 @@
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="/director">Directors</a></li>
-                <li>Create Director</li>
+                <li><a href="/director/{{director.id}}">{{director.name | escape}}</a></li>
+                <li>Edit</li>
             </ul>
         </nav>
+
+        <a role="button" href="/director/{{director.id}}">Back</a>
+
         <form action="/api/director/{{director.id}}" method="post">
             <fieldset class="grid">
                 <label for="aligned-id">Id</label>

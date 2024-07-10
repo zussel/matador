@@ -14,7 +14,8 @@
 #endif
 
 #include "matador/sql/connection_impl.hpp"
-#include "matador/sql/types.hpp"
+
+#include "matador/utils/data_types.hpp"
 
 #include "matador/db/postgresql/postgresql_dialect.hpp"
 

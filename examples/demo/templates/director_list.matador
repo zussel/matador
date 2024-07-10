@@ -13,22 +13,29 @@
             </ul>
         </nav>
 
-        <button class="outline"><a href="/director/create">Create</a></button>
+        <a role="button" href="/director/create">Create</a>
 
         <table class="striped">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Date of birth</th>
+                    {% for column in columns %}
+                    <th>{{ column | capfirst }}</th>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for director in directorlist %}
+                {% for entity in data %}
                 <tr>
-                    <td><a href="/director/{{director.id}}">{{ director.id }}</a></td>
-                    <td><a href="/director/{{director.id}}">{{ director.name }}</a></td>
-                    <td>{{ director.birthday }}</td>
+                    {% for col in entity %}
+                    <td>
+                        {% if col.type == "ENTITY" %}<a href="/{{col.value.type}}/{{col.value.id}}">{{ col.value.name }}</a>
+                        {% elif col.type == "PRIMARYKEY" %}<a href="/{{forloop.parent.forloop.parent.entity}}/{{col.value}}">{{ col.value }}</a>
+                        {% elif col.type == "COLLECTION" %}Collection
+                        {% elif col.is_unique %}<a href="/{{forloop.parent.forloop.parent.entity}}/{{entity.id}}">{{ col.value }}</a>
+                        {% else %}{{ col.value }}
+                        {% endif %}
+                    </td>
+                    {% endfor %}
                 </tr>
                 {% endfor %}
             </tbody>

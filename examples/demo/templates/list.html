@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include "../templates/header.matador" %}
+<body>
+<header class="container">
+    <h1>{{title}}</h1>
+</header>
+
+<main class="container">
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li>{{title}}</li>
+        </ul>
+    </nav>
+
+    <a role="button" href="/movies/create">Create</a>
+
+    <table class="striped">
+        <thead>
+        <tr>
+            {% for column in columns %}
+            <th>{{ column | capfirst }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for entity in data %}
+        <tr>
+            {% for col in entity %}
+            <td>
+                {% if col.type == "ENTITY" %}<a href="/{{col.value.type}}/{{col.value.id}}">{{ col.value.name }}</a>
+                {% elif col.type == "PRIMARYKEY" %}<a href="/{{forloop.parent.forloop.parent.entity}}/{{col.value}}">{{ col.value }}</a>
+                {% elif col.type == "COLLECTION" %}Collection
+                {% elif col.is_unique %}<a href="/{{forloop.parent.forloop.parent.entity}}/{{entity.id}}">{{ col.value }}</a>
+                {% else %}{{ col.value }}
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

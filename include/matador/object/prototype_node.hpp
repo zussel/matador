@@ -224,6 +224,12 @@ public:
   T* create() const;
 
   /**
+   *
+   * @return
+   */
+  object_description describe() const;
+
+  /**
    * Returns nodes successor node or NULL if node is last.
    * 
    * @return The next node.
@@ -335,6 +341,9 @@ public:
    */
   template < class T >
   T* prototype() const;
+
+  template < class T >
+  bool is_of_type() const;
 
   /**
    * Find the underlying proxy of the given primary key.
@@ -478,6 +487,11 @@ template<class T>
 T *prototype_node::prototype() const
 {
   return static_cast<T*>(info_->prototype());
+}
+template < class T >
+bool prototype_node::is_of_type() const
+{
+  return info_->type_index() == typeid(T);
 }
 
 template<class T>

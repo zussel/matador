@@ -63,38 +63,38 @@ const char *sqlite_dialect::to_database_type_string(matador::data_type type) con
   }
 }
 
-database_type sqlite_dialect::string_type(const char *type) const
+data_type sqlite_dialect::string_type(const char *type) const
 {
   if (strncmp(type, "INTEGER", 7) == 0) {
-    return database_type::type_int;
+    return data_type::type_int;
   } else if (strncmp(type, "TINYINT", 3) == 0) {
-    return database_type::type_char;
+    return data_type::type_char;
   } else if (strncmp(type, "SMALLINT", 8) == 0) {
-    return database_type::type_smallint;
+    return data_type::type_int;
   } else if (strncmp(type, "BIGINT", 6) == 0) {
-    return database_type::type_bigint;
+    return data_type::type_long_long;
   } else if (strcmp(type, "BOOLEAN") == 0) {
-    return database_type::type_bool;
+    return data_type::type_bool;
   } else if (strcmp(type, "REAL") == 0) {
-    return database_type::type_double;
+    return data_type::type_double;
   } else if (strcmp(type, "FLOAT") == 0) {
-    return database_type::type_float;
+    return data_type::type_float;
   } else if (strcmp(type, "DOUBLE") == 0) {
-    return database_type::type_double;
+    return data_type::type_double;
   } else if (strcmp(type, "BLOB") == 0) {
-    return database_type::type_blob;
+    return data_type::type_blob;
   } else if (strcmp(type, "NULL") == 0) {
-    return database_type::type_null;
+    return data_type::type_null;
   } else if (strncmp(type, "VARCHAR", 7) == 0) {
-    return database_type::type_varchar;
+    return data_type::type_varchar;
   } else if (strcmp(type, "DATE") == 0) {
-    return database_type::type_date;
+    return data_type::type_date;
   } else if (strcmp(type, "DATETIME") == 0) {
-    return database_type::type_time;
+    return data_type::type_time;
   } else if (strcmp(type, "TEXT") == 0) {
-    return database_type::type_text;
+    return data_type::type_text;
   } else {
-    return database_type::type_unknown;
+    return data_type::type_unknown;
   }
 }
 

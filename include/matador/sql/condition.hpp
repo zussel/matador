@@ -1,10 +1,11 @@
 #ifndef CONDITION_HPP
 #define CONDITION_HPP
 
-#include "matador/sql/types.hpp"
 #include "matador/sql/column.hpp"
 #include "matador/sql/token.hpp"
 #include "matador/sql/basic_query.hpp"
+
+#include "matador/utils/data_types.hpp"
 
 #include <string>
 #include <sstream>

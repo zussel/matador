@@ -43,27 +43,27 @@ void HttpServerTest::test_shutdown()
 {
   http::server s(8123);
 
-  utils::ThreadRunner runner([&s] {
+  ::detail::utils::ThreadRunner runner([&s] {
     s.run();
   }, [&s] {
     s.shutdown();
-    utils::wait_until_stopped(s);
+    ::detail::utils::wait_until_stopped(s);
   });
 
   std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(s));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_running(s));
 
   s.shutdown();
 
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(s));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_stopped(s));
 }
 
 void HttpServerTest::test_get()
 {
   http::server s(8123);
 
-  utils::ThreadRunner runner([&s] {
+  ::detail::utils::ThreadRunner runner([&s] {
     s.add_routing_middleware();
 
     s.on_get("/test/{name}", [](const http::request &req) {
@@ -73,10 +73,10 @@ void HttpServerTest::test_get()
     s.run();
   }, [&s] {
     s.shutdown();
-    utils::wait_until_stopped(s);
+    ::detail::utils::wait_until_stopped(s);
   });
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(s));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_running(s));
 
   http::request req(http::http::GET, "localhost:8123", "/test/world");
   http::response response;
@@ -93,7 +93,7 @@ void HttpServerTest::test_post()
 {
   http::server s(7779);
 
-  utils::ThreadRunner runner([&s] {
+  ::detail::utils::ThreadRunner runner([&s] {
     s.add_routing_middleware();
 
     s.on_post("/test/{name}", [](const http::request &req) {
@@ -103,10 +103,10 @@ void HttpServerTest::test_post()
     s.run();
   }, [&s] {
     s.shutdown();
-    utils::wait_until_stopped(s);
+    ::detail::utils::wait_until_stopped(s);
   });
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(s));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_running(s));
 
   http::request req(http::http::POST, "localhost:7779", "/test/world");
   req.body("hello");
@@ -124,7 +124,7 @@ void HttpServerTest::test_put()
 {
   http::server s(7779);
 
-  utils::ThreadRunner runner([&s] {
+  ::detail::utils::ThreadRunner runner([&s] {
     s.add_routing_middleware();
 
     s.on_put("/test/{name}", [](const http::request &req) {
@@ -133,10 +133,10 @@ void HttpServerTest::test_put()
     s.run();
   }, [&s] {
     s.shutdown();
-    utils::wait_until_stopped(s);
+    ::detail::utils::wait_until_stopped(s);
   });
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(s));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_running(s));
 
   http::request req(http::http::PUT, "localhost:7779", "/test/world");
   req.body("hello");
@@ -154,7 +154,7 @@ void HttpServerTest::test_delete()
 {
   http::server s(7779);
 
-  utils::ThreadRunner runner([&s] {
+  ::detail::utils::ThreadRunner runner([&s] {
     s.add_routing_middleware();
 
     s.on_remove("/test/{name}", [](const http::request &req) {
@@ -163,10 +163,10 @@ void HttpServerTest::test_delete()
     s.run();
   }, [&s] {
     s.shutdown();
-    utils::wait_until_stopped(s);
+    ::detail::utils::wait_until_stopped(s);
   });
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(s));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_running(s));
 
   http::request req(http::http::DEL, "localhost:7779", "/test/world");
   http::response response;
@@ -193,8 +193,7 @@ void HttpServerTest::send_request(unsigned int port, const http::request &reques
 
   for (const auto &buf: data) {
     auto size = buf.size();
-    size_t ret = client.send(buf);
-    UNIT_ASSERT_EQUAL(ret, size);
+    UNIT_ASSERT_EQUAL(client.send(buf), size);
   }
 
   http::response_parser::return_t parse_result{};

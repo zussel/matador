@@ -16,7 +16,7 @@ using namespace matador;
 using namespace matador::http;
 
 movie_page::movie_page(matador::http::server &server, matador::persistence &p)
-  : crud_page<movie>({"Movie", "Movies", "movie"}, server, p)
+  : crud_page<movie>({"Movie", "Movies", "movie", "../templates/"}, server, p)
 {}
 
 void movie_page::prepare_json_form_data(json &data)

@@ -24,6 +24,11 @@ json template_filter::apply(const json &data)
   }
 }
 
+void template_filter::add_attribute(const std::string &attr)
+{
+  attributes_.push_back(attr);
+}
+
 json escape_filter::evaluate(const json &data)
 {
   return html::escape(data.as<std::string>());
@@ -62,5 +67,14 @@ json lower_filter::evaluate(const json &data)
   std::transform(val.begin(), val.end(), val.begin(), ::tolower);
   return val;
 }
+
+json attribute_filter::evaluate(const json &data) {
+  if (data.contains(attributes_[0])) {
+    return data[attributes_[0]];
+  } else {
+    return {};
+  }
+}
+
 }
 

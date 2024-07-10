@@ -1,7 +1,7 @@
 #ifndef OOS_FIELD_HPP
 #define OOS_FIELD_HPP
 
-#include "matador/sql/types.hpp"
+#include "matador/utils/data_types.hpp"
 
 #include <string>
 
@@ -39,7 +39,7 @@ public:
    * @brief Returns the index of the field in table
    * @return Index of the field in table
    */
-  size_t index() const;
+  [[nodiscard]] size_t index() const;
 
   /**
    * @brief Sets the index in table of the field
@@ -51,7 +51,7 @@ public:
    * @brief Returns the name of the field
    * @return Name of the field
    */
-  std::string name() const;
+  [[nodiscard]] std::string name() const;
 
   /**
    * @brief Sets the name of the field
@@ -63,13 +63,13 @@ public:
    * @brief Returns the type of the field
    * @return Type of the field
    */
-  database_type type() const;
+  data_type type() const;
 
   /**
    * @brief Sets the type of the field
    * @param t Type of the field to set
    */
-  void type(database_type t);
+  void type(data_type t);
 
   /**
    * @brief Returns the size of the field
@@ -79,7 +79,7 @@ public:
    *
    * @return Size of the field
    */
-  std::size_t size() const;
+  [[nodiscard]] std::size_t size() const;
 
   /**
    * @brief Sets the size of the field
@@ -99,7 +99,7 @@ public:
    *
    * @return Precision of the field
    */
-  std::size_t precision() const;
+  [[nodiscard]] std::size_t precision() const;
 
   /**
    * @brief Sets the precision of the field
@@ -115,7 +115,7 @@ public:
    * @brief Returns true if NULL value is not allowed
    * @return True if NULL value is not allowed
    */
-  bool is_not_null() const;
+  [[nodiscard]] bool is_not_null() const;
 
   /**
    * @brief Set to true if NULL value is not allowed for this field
@@ -127,7 +127,7 @@ public:
    * @brief Returns the default value as string
    * @return Default value as string
    */
-  std::string default_value() const;
+  [[nodiscard]] std::string default_value() const;
 
   /**
    * @brief Sets the default value as string
@@ -138,7 +138,7 @@ public:
 private:
   size_t index_ = 0;
   std::string name_;
-  database_type type_ = database_type::type_unknown;
+  data_type type_ = data_type::type_unknown;
   std::size_t size_ = 0;
   std::size_t precision_ = 0;
   bool not_null_ = false;

@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "matador/object/object_store.hpp"
 #include "matador/object/update_action.hpp"
 #include "matador/object/object_proxy.hpp"
@@ -7,8 +9,8 @@ using namespace std;
 
 namespace matador {
 
-object_proxy::object_proxy(const identifier &pk)
-  : pk_(pk)
+object_proxy::object_proxy(identifier pk)
+  : pk_(std::move(pk))
 {}
 
 object_proxy::~object_proxy()

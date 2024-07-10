@@ -14,7 +14,8 @@
 #endif
 
 #include "matador/sql/connection_impl.hpp"
-#include "matador/sql/types.hpp"
+
+#include "matador/utils/data_types.hpp"
 
 #include "matador/db/mysql/mysql_dialect.hpp"
 

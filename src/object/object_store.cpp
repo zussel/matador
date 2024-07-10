@@ -158,6 +158,14 @@ bool object_store::empty() const
   return is_empty;
 }
 
+object_description object_store::describe(const char *type) const {
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    throw object_exception("couldn't find object type");
+  }
+  return node->describe();
+}
+
 object_proxy* object_store::find_proxy(unsigned long long id) const
 {
   auto i = object_map_.find(id);

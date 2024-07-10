@@ -142,7 +142,7 @@ void relation_resolver<T, typename std::enable_if<
 
     object_proxy* right_proxy = acquire_proxy(x, pk, attr, right_table_ptr_);
     if (left_table_ptr_->is_loaded()) {
-      left_endpoint_->insert_value_into_foreign(right_proxy, left_proxy_);
+      left_endpoint_->insert_value_into_foreign(left_proxy_, right_proxy);
     } else {
       auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);
       lptr->append_relation_data(table_.name(), left_proxy_->pk(), object_ptr<right_value_type>(right_proxy), proxy_);

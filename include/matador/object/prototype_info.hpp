@@ -3,6 +3,7 @@
 
 #include "matador/object/typed_object_store_observer.hpp"
 #include "matador/object/relation_field_endpoint.hpp"
+#include "matador/object/object_description.hpp"
 
 #include <memory>
 #include <vector>
@@ -41,6 +42,7 @@ public:
 
 public:
   [[nodiscard]] std::type_index type_index() const { return type_index_; }
+  [[nodiscard]] const char* type_name() const;
 
   void register_relation_endpoint(const std::type_index &tindex, const std::shared_ptr<basic_relation_endpoint> &endpoint);
   void unregister_relation_endpoint(const std::type_index &tindex);
@@ -67,6 +69,8 @@ public:
   virtual void register_observer(basic_object_store_observer *obs) = 0;
   virtual void notify(notification_type type, object_proxy *proxy) const = 0;
 
+  [[nodiscard]] virtual object_description describe() const = 0;
+
 protected:
   prototype_node &node;        /**< prototype node of the represented object type */
   std::type_index type_index_; /**< type index of the represented object type */
@@ -86,6 +90,8 @@ protected:
   [[nodiscard]] void* prototype() const override;
   void register_observer(basic_object_store_observer *obs) override;
   void notify(notification_type type, object_proxy *proxy) const override;
+
+  [[nodiscard]] object_description describe() const override;
 
   T* get() const
   {
@@ -134,6 +140,80 @@ void basic_prototype_info<T>::notify(notification_type type, object_proxy *proxy
         break;
     }
   }
+}
+
+class attribute_name_collector
+{
+public:
+  template<typename Type>
+  std::vector<column_description> collect()
+  {
+    Type obj;
+    columns_.clear();
+    access::process(*this, obj);
+
+    return columns_;
+  }
+
+  template<typename ValueType>
+  void on_primary_key(const char *id, ValueType &, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type* = 0)
+  {
+    columns_.emplace_back(id, data_type_traits<ValueType>::builtin_type(0), 0);
+  }
+  void on_primary_key(const char *id, std::string &, size_t size)
+  {
+    columns_.emplace_back(id, data_type::type_varchar, size);
+  }
+  void on_revision(const char *id, unsigned long long &/*rev*/)
+  {
+    columns_.emplace_back(id, data_type::type_varchar, 0);
+  }
+
+  template<typename Type>
+  void on_attribute(const char *id, Type &/*x*/, const field_attributes &attr = null_attributes)
+  {
+    columns_.emplace_back(id, data_type_traits<Type>::builtin_type(attr.size()), attr.size());
+  }
+  void on_attribute(const char *id, char * /*x*/, const field_attributes &attr = null_attributes)
+  {
+    columns_.emplace_back(id, data_type_traits<const char*>::builtin_type(attr.size()), attr.size());
+  }
+
+  void on_belongs_to(const char *id, identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    columns_.emplace_back(id, x.create_identifier().type(), 0);
+  }
+
+  void on_has_one(const char *id, identifiable_holder &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    columns_.emplace_back(id, x.create_identifier().type(), 0);
+  }
+
+  void on_has_many(const char *id, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    columns_.emplace_back(id, data_type::type_unknown, 0);
+  }
+  void on_has_many(const char *id, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    columns_.emplace_back(id, data_type::type_unknown, 0);
+  }
+  void on_has_many_to_many(const char *id, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    columns_.emplace_back(id, data_type::type_unknown, 0);
+  }
+  void on_has_many_to_many(const char *id, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    columns_.emplace_back(id, data_type::type_unknown, 0);
+  }
+
+private:
+  std::vector<column_description> columns_;
+};
+
+template<class Type>
+object_description basic_prototype_info<Type>::describe() const {
+  attribute_name_collector collector;
+  return { std::string(type_name()), collector.collect<Type>() };
 }
 
 template < class T, class Enabled = void >

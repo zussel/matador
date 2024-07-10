@@ -39,12 +39,12 @@ void field::name(const std::string &n)
   name_ = n;
 }
 
-database_type field::type() const
+data_type field::type() const
 {
   return type_;
 }
 
-void field::type(database_type t)
+void field::type(data_type t)
 {
   type_ = t;
 }

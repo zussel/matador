@@ -1,10 +1,10 @@
 #ifndef OOS_CONNECTION_IMPL_HPP
 #define OOS_CONNECTION_IMPL_HPP
 
-#include "matador/sql/types.hpp"
 #include "matador/sql/basic_sql_logger.hpp"
 #include "matador/sql/field.hpp"
 
+#include "matador/utils/data_types.hpp"
 #include "matador/utils/version.hpp"
 
 #include <string>

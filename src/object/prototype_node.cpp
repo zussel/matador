@@ -194,6 +194,10 @@ void prototype_node::unlink()
   prev = nullptr;
 }
 
+object_description prototype_node::describe() const {
+  return info_->describe();
+}
+
 prototype_node* prototype_node::next_node() const
 {
   // if we have a child, child is the next iterator to return

@@ -386,6 +386,13 @@ public:
   }
 
   /**
+   *
+   * @param type
+   * @return
+   */
+  object_description describe(const char *type) const;
+
+  /**
    * Executes a predicate for each root node
    *
    * @tparam Predicate  The predicate function object

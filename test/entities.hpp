@@ -206,7 +206,7 @@ struct department
     {
         matador::access::primary_key(op, "id", id);
         matador::access::attribute(op, "name", name, 255);
-        matador::access::has_many(op, "employees", employees, "department", matador::cascade_type::NONE);
+        matador::access::has_many(op, "employee", employees, "department", matador::cascade_type::NONE);
         //                                name of table, container,  name of member
         //                                to serialize
     }

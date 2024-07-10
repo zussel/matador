@@ -5,6 +5,8 @@
 
 #include "../../datatypes.hpp"
 
+#include "ObjectStoreAttachTestModels.hpp"
+
 using namespace matador;
 
 TEST_CASE("Validates empty object store", "[object_store]") {
@@ -130,4 +132,16 @@ TEST_CASE("Traverses a prototype node hierarchy", "[object_store]") {
   }
 
   REQUIRE(count == 4);
+}
+
+TEST_CASE("Get object description", "[object_store][description]") {
+  object_store store;
+  store.attach<datatypes>("item");
+
+  auto desc = store.describe("item");
+
+  store.attach<test::hammer>("hammer");
+  store.attach<test::toolbox>("toolbox");
+
+  desc = store.describe("toolbox");
 }

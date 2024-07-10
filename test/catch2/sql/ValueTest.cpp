@@ -1,8 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/sql/types.hpp"
 #include "matador/sql/value.hpp"
 
+#include "matador/utils/data_types.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/types.hpp"

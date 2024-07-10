@@ -1,10 +1,11 @@
 #ifndef SQL_HPP
 #define SQL_HPP
 
-#include "matador/sql/types.hpp"
 #include "matador/sql/token.hpp"
 #include "matador/sql/commands.hpp"
 #include "matador/sql/token_list.hpp"
+
+#include "matador/utils/data_types.hpp"
 
 #include <string>
 #include <map>

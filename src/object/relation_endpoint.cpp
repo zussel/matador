@@ -15,7 +15,7 @@ bool basic_relation_endpoint::is_belongs_to() const {
   return type == BELONGS_TO;
 }
 
-void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, object_proxy *owner)
+void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, object_proxy *owner) const
 {
   auto sptr = foreign_endpoint.lock();
   if (sptr) {
@@ -23,7 +23,7 @@ void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, obj
   }
 }
 
-void basic_relation_endpoint::remove_value_from_foreign(object_proxy *value, object_proxy *owner)
+void basic_relation_endpoint::remove_value_from_foreign(object_proxy *value, object_proxy *owner) const
 {
   auto sptr = foreign_endpoint.lock();
   if (sptr) {

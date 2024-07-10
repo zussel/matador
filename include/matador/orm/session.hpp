@@ -206,7 +206,7 @@ public:
    *
    * @return A const reference to the object_store.
    */
-  const object_store& store() const;
+  [[nodiscard]] const object_store& store() const;
 
 private:
   void load(const persistence::table_ptr &table);

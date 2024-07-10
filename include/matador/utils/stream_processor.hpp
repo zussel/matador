@@ -750,13 +750,13 @@ std::shared_ptr<stream_element_processor<R>> make_skip_while(Predicate pred, std
   return std::make_shared<skip_while_element_processor<Out, Predicate>>(successor, pred);
 }
 
-template<class In, typename Predicate, typename Out = typename std::result_of<Predicate &(In)>::type>
+template<class In, typename Predicate, typename Out = typename std::invoke_result<Predicate, In>::type>
 std::shared_ptr<stream_element_processor<Out>> make_mapper(Predicate &&pred, std::shared_ptr<stream_element_processor<In>> successor)
 {
   return std::make_shared<map_element_processor<In, Out, Predicate>>(successor, std::forward<Predicate>(pred));
 }
 
-template<class In, typename Predicate, typename Out = typename std::result_of<Predicate &(In)>::type::value_type>
+template<class In, typename Predicate, typename Out = typename std::invoke_result<Predicate, In>::type::value_type>
 std::shared_ptr<stream_element_processor<Out>> make_flatmap(Predicate &&pred, std::shared_ptr<stream_element_processor<In>> successor);
 
 template<class Out, typename R = Out>

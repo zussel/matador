@@ -9,10 +9,8 @@
 #include <regex>
 
 using namespace std::placeholders;
-
-namespace matador {
   
-namespace mssql {
+namespace matador::mssql {
 
 mssql_connection::mssql_connection()
   : odbc_(nullptr)
@@ -171,7 +169,7 @@ bool mssql_connection::exists(const std::string &table_name)
   }
 }
 
-static database_type type2data_type(SQLSMALLINT type, size_t size);
+static data_type type2data_type(SQLSMALLINT type, size_t size);
 
 std::vector<field> mssql_connection::describe(const std::string &table)
 {
@@ -243,36 +241,36 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   return fields;
 }
 
-database_type type2data_type(SQLSMALLINT type, size_t size)
+data_type type2data_type(SQLSMALLINT type, size_t size)
 {
   switch (type) {
   case SQL_CHAR:
-    return database_type::type_char;
+    return data_type::type_char;
   case SQL_SMALLINT:
-    return database_type::type_smallint;
+    return data_type::type_int;
   case SQL_INTEGER:
-    return database_type::type_int;
+    return data_type::type_int;
   case SQL_BIGINT:
   case SQL_NUMERIC:
-    return database_type::type_bigint;
+    return data_type::type_long_long;
   case SQL_TYPE_DATE:
   case -9:
-    return database_type::type_date;
+    return data_type::type_date;
   case SQL_TYPE_TIMESTAMP:
-    return database_type::type_time;
+    return data_type::type_time;
   case SQL_VARCHAR:
-    return database_type::type_varchar;
+    return data_type::type_varchar;
   case SQL_REAL:
-    return database_type::type_float;
+    return data_type::type_float;
   case SQL_FLOAT:
-    return database_type::type_double;
+    return data_type::type_double;
   case SQL_BIT:
-    return database_type::type_bool;
+    return data_type::type_bool;
   case SQL_LONGVARCHAR:
-    return (size != 2147483647 ? database_type::type_varchar : database_type::type_text);
+    return (size != 2147483647 ? data_type::type_varchar : data_type::type_text);
   case SQL_UNKNOWN_TYPE:
   default:
-    return database_type::type_unknown;
+    return data_type::type_unknown;
   }
 }
 
@@ -323,7 +321,7 @@ unsigned short mssql_connection::default_port() const
 
 }
 
-}
+
 
 extern "C"
 {

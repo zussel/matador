@@ -5,10 +5,10 @@
 #include "../entities.hpp"
 
 #include "matador/sql/query.hpp"
-#include "matador/sql/types.hpp"
 #include "matador/sql/database_error.hpp"
 #include "matador/sql/schema.hpp"
 
+#include "matador/utils/data_types.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 
@@ -229,7 +229,7 @@ void QueryTestUnit::test_quoted_identifier()
 
   // check table description
   std::vector<std::string> columns = { "from", "to"};
-  std::vector<database_type > types = {matador::database_type::type_varchar, matador::database_type::type_varchar};
+  std::vector<data_type > types = {matador::data_type::type_varchar, matador::data_type::type_varchar};
   auto fields = connection_.describe("quotes");
 
   for (auto &&field : fields) {
@@ -283,7 +283,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
 
     // check table description
     std::vector<std::string> columns({ colname });
-    std::vector<database_type > types({matador::database_type::type_varchar });
+    std::vector<data_type > types({matador::data_type::type_varchar });
     auto fields = connection_.describe("quotes");
 
     for (auto &&field : fields) {
@@ -371,12 +371,12 @@ void QueryTestUnit::test_describe()
   auto fields = connection_.describe("person");
 
   std::vector<std::string> columns = { "id", "name", "birthdate", "important_time", "height"};
-  std::vector<database_type > types = {
-    matador::database_type::type_bigint,
-    matador::database_type::type_varchar,
-    matador::database_type::type_date,
-    matador::database_type::type_time,
-    matador::database_type::type_bigint};
+  std::vector<data_type > types = {
+    matador::data_type::type_long_long,
+    matador::data_type::type_varchar,
+    matador::data_type::type_date,
+    matador::data_type::type_time,
+    matador::data_type::type_long_long};
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()]);

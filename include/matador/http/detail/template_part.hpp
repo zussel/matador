@@ -77,7 +77,10 @@ private:
 class OOS_HTTP_API loop_template_part : public template_part
 {
 public:
-  loop_template_part(template_part_ptr part, template_part_ptr on_empty_part, std::string list_name, std::string elem_name);
+  loop_template_part(template_part_ptr part,
+                     template_part_ptr on_empty_part,
+                     std::string list_name,
+                     std::string elem_name);
 
   std::string render(const json &data) override;
 

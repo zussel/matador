@@ -35,26 +35,6 @@ enum struct data_type {
   type_null,               /*!< Data type null */
   type_unknown             /*!< Data type unknown */
 };
-/**
- * @brief Enumeration of database data types
- */
-enum struct database_type {
-  type_char = 0,       /*!< Data type char */
-  type_float,          /*!< Data type float */
-  type_double,         /*!< Data type double */
-  type_smallint,       /*!< Data type small int */
-  type_int,            /*!< Data type integer */
-  type_bigint,         /*!< Data type big integer */
-  type_bool,           /*!< Data type bool */
-  type_char_pointer,   /*!< Data type character pointer */
-  type_varchar,        /*!< Data type varchar */
-  type_text,           /*!< Data type text */
-  type_date,           /*!< Data type date */
-  type_time,           /*!< Data type time */
-  type_blob,           /*!< Data type blob */
-  type_null,           /*!< Data type null */
-  type_unknown         /*!< Data type unknown */
-};
 
 /**
  * @tparam T The type of the traits
@@ -70,7 +50,6 @@ struct data_type_traits;
 /// @cond MATADOR_DEV
 template <> struct data_type_traits<char>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_char; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_char; }
   inline static unsigned long size() { return sizeof(char); }
   inline static const char* name() { return "char"; }
@@ -78,7 +57,6 @@ template <> struct data_type_traits<char>
 
 template <> struct data_type_traits<short>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_smallint; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_short; }
   inline static unsigned long size() { return sizeof(short); }
   inline static const char* name() { return "short"; }
@@ -86,7 +64,6 @@ template <> struct data_type_traits<short>
 
 template <> struct data_type_traits<int>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_int; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_int; }
   inline static unsigned long size() { return sizeof(int); }
   inline static const char* name() { return "int"; }
@@ -94,7 +71,6 @@ template <> struct data_type_traits<int>
 
 template <> struct data_type_traits<long>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_bigint; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_long; }
   inline static unsigned long size() { return sizeof(long); }
   inline static const char* name() { return "long"; }
@@ -102,7 +78,6 @@ template <> struct data_type_traits<long>
 
 template <> struct data_type_traits<long long>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_bigint; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_long_long; }
   inline static unsigned long size() { return sizeof(long long); }
   inline static const char* name() { return "long long"; }
@@ -110,7 +85,6 @@ template <> struct data_type_traits<long long>
 
 template <> struct data_type_traits<unsigned char>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_char; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_unsigned_char; }
   inline static unsigned long size() { return sizeof(unsigned char); }
   inline static const char* name() { return "unsigned char"; }
@@ -118,7 +92,6 @@ template <> struct data_type_traits<unsigned char>
 
 template <> struct data_type_traits<unsigned short>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_smallint; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_unsigned_short; }
   inline static unsigned long size() { return sizeof(unsigned short); }
   inline static const char* name() { return "unsigned short"; }
@@ -126,7 +99,6 @@ template <> struct data_type_traits<unsigned short>
 
 template <> struct data_type_traits<unsigned int>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_int; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_unsigned_int; }
   inline static unsigned long size() { return sizeof(unsigned int); }
   inline static const char* name() { return "unsigned int"; }
@@ -134,7 +106,6 @@ template <> struct data_type_traits<unsigned int>
 
 template <> struct data_type_traits<unsigned long>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_bigint; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_unsigned_long; }
   inline static unsigned long size() { return sizeof(unsigned long); }
   inline static const char* name() { return "unsigned long"; }
@@ -142,7 +113,6 @@ template <> struct data_type_traits<unsigned long>
 
 template <> struct data_type_traits<unsigned long long>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_bigint; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_unsigned_long_long; }
   inline static unsigned long size() { return sizeof(unsigned long long); }
   inline static const char* name() { return "unsigned long long"; }
@@ -150,7 +120,6 @@ template <> struct data_type_traits<unsigned long long>
 
 template <> struct data_type_traits<bool>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_bool; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_bool; }
   inline static unsigned long size() { return sizeof(bool); }
   inline static const char* name() { return "bool"; }
@@ -158,7 +127,6 @@ template <> struct data_type_traits<bool>
 
 template <> struct data_type_traits<float>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_float; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_float; }
   inline static unsigned long size() { return sizeof(float); }
   inline static const char* name() { return "float"; }
@@ -166,7 +134,6 @@ template <> struct data_type_traits<float>
 
 template <> struct data_type_traits<double>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_double; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_double; }
   inline static unsigned long size() { return sizeof(double); }
   inline static const char* name() { return "double"; }
@@ -174,7 +141,6 @@ template <> struct data_type_traits<double>
 
 template <> struct data_type_traits<const char*>
 {
-  inline static database_type type(size_t size) { return size == 0 ? database_type::type_text : database_type::type_varchar; }
   inline static data_type builtin_type(size_t size) { return size == 0 ? data_type::type_text : data_type::type_char_pointer; }
   inline static unsigned long size() { return sizeof(const char*); }
   inline static const char* name() { return "const char*"; }
@@ -182,7 +148,6 @@ template <> struct data_type_traits<const char*>
 
 template <> struct data_type_traits<char*>
 {
-  inline static database_type type(size_t size) { return size == 0 ? database_type::type_text : database_type::type_varchar; }
   inline static data_type builtin_type(size_t size) { return size == 0 ? data_type::type_text : data_type::type_char_pointer; }
   inline static unsigned long size() { return sizeof(char*); }
   inline static const char* name() { return "char*"; }
@@ -190,7 +155,6 @@ template <> struct data_type_traits<char*>
 
 template <> struct data_type_traits<std::string>
 {
-  inline static database_type type(size_t size) { return size == 0 ? database_type::type_text : database_type::type_varchar; }
   inline static data_type builtin_type(size_t size) { return size == 0 ? data_type::type_text : data_type::type_varchar; }
   inline static unsigned long size() { return 1023; }
   inline static const char* name() { return "std::string"; }
@@ -198,7 +162,6 @@ template <> struct data_type_traits<std::string>
 
 template <> struct data_type_traits<matador::date>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_date; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_date; }
   inline static unsigned long size() { return 255; }
   inline static const char* name() { return "matador::date"; }
@@ -206,7 +169,6 @@ template <> struct data_type_traits<matador::date>
 
 template <> struct data_type_traits<matador::time>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_time; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_time; }
   inline static unsigned long size() { return 255; }
   inline static const char* name() { return "matador::time"; }
@@ -214,7 +176,6 @@ template <> struct data_type_traits<matador::time>
 
 template <> struct data_type_traits<utils::blob>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_blob; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_blob; }
   inline static unsigned long size() { return 1023; }
   inline static const char* name() { return "matador::blob"; }
@@ -222,7 +183,6 @@ template <> struct data_type_traits<utils::blob>
 
 template <> struct data_type_traits<nullptr_t>
 {
-  inline static database_type type(size_t /*size*/) { return database_type::type_null; }
   inline static data_type builtin_type(size_t /*size*/) { return data_type::type_null; }
   inline static unsigned long size() { return 0; }
   inline static const char* name() { return "matador::null"; }

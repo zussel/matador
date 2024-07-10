@@ -116,9 +116,39 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void on_has_many(const char *id, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(const char *id, container<V, C> &x, const char *join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
-    on_has_many_to_many(id, x, attr);
+    // get node of object type
+    prototype_iterator node = store_->find(id);
+    if (node == store_->end()) {
+      throw_object_exception("couldn't find prototype node '" << id << "'");
+    }
+
+    /**
+     * if relation table is loaded
+     * check this tables relation proxy list
+     * and update has many relation
+     *
+     * if relation table isn't loaded
+     * append this proxy/id to relation
+     * tables relation owner id list
+     */
+
+    auto data = table_.find_relation_data(id);
+    if (data == table_.end_relation_data()) {
+      return;
+    }
+    auto endpoint = proxy_->node()->find_endpoint(join_column);
+    if (endpoint == proxy_->node()->endpoint_end() || !endpoint->second) {
+      throw_object_exception("couldn't find endpoint in node " << proxy_->node()->type() << " for field " << id);
+    }
+
+    if (is_same_type<V>(data->second)) {
+      // correct type
+      auto rdata = std::static_pointer_cast<detail::relation_data<typename container<V, C>::value_type>>(data->second);
+
+      rdata->insert_into_container(proxy_->pk(), x);
+    }
   }
 
   template<class V, template<class ...> class C>
@@ -139,7 +169,7 @@ public:
     // get node of object type
     prototype_iterator node = store_->find(id);
     if (node == store_->end()) {
-      throw_object_exception("couldn't find prototype node");
+      throw_object_exception("couldn't find prototype node '" << id << "'");
     }
 
     /**
@@ -157,9 +187,8 @@ public:
       return;
     }
     auto endpoint = proxy_->node()->find_endpoint(id);
-//    if (!endpoint->second) {
     if (endpoint == proxy_->node()->endpoint_end() || !endpoint->second) {
-      throw_object_exception("couldn't find endpoint in node " << proxy_->node()->type() << "for field " << id);
+      throw_object_exception("couldn't find endpoint in node " << proxy_->node()->type() << " for field " << id);
     }
 
     if (is_same_type<V>(data->second)) {
@@ -295,11 +324,6 @@ private:
       // find proxy in tables id(pk) proxy map
       auto id_proxy_pair = tbl->find_proxy(pk);
       if (id_proxy_pair == tbl->end_proxy()) {
-//        std::cout << "acquire proxy\n";
-//        std::cout << "node type " << node->type() << " (object type " << node->object_type_entry()->type_index().name() << ")\n";
-//        std::cout << "left type " << typeid(V).name() << "\n";
-//        std::cout << "right type " << typeid(right_value_type).name() << "\n";
-
         proxy = new object_proxy(pk, node->object_type_entry(), detail::identity<V>{});
         id_proxy_pair = tbl->insert_proxy(pk, proxy);
       } else {
@@ -419,6 +443,10 @@ private:
     } else {
       auto idproxy = tbl->find_proxy(pk);
       if (idproxy == tbl->end_proxy()) {
+//        std::cout << "acquire proxy\n";
+//        std::cout << "node type " << node->type() << " (object type " << node->object_type_entry()->type_index().name() << ")\n";
+//        std::cout << "left type " << typeid(V).name() << "\n";
+//        std::cout << "right type " << typeid(right_value_type).name() << "\n";
         auto ot = node->object_type_entry();
         proxy = new object_proxy(pk, ot, detail::identity<V>{});
         idproxy = tbl->insert_proxy(pk, proxy);

@@ -176,7 +176,7 @@ public:
    * @param pred Predicate to apply on every stream element
    * @return New stream created of the result of given predicate
    */
-  template < typename Predicate, typename R = typename std::result_of<Predicate&(T)>::type>
+  template < typename Predicate, typename R = typename std::invoke_result<Predicate, T>::type>
   stream<R> map(Predicate &&pred);
 
   /**
@@ -189,7 +189,7 @@ public:
    * @param pred Predicate to apply on every stream element
    * @return New stream created of the result of given predicate
    */
-  template < typename Predicate, typename R = typename std::result_of<Predicate&(T)>::type::value_type>
+  template < typename Predicate, typename R = typename std::invoke_result<Predicate, T>::type::value_type>
   stream<R> flatmap(Predicate &&pred);
 
   /**
@@ -371,7 +371,7 @@ public:
    * @param accumulator The accumulator function to be applied
    * @return An optional possibly containing the accumulated value.
    */
-  template < typename U, typename Accumulator, typename R = typename std::result_of<U&(T)>::type >
+  template < typename U, typename Accumulator, typename R = typename std::invoke_result<U, T>::type >
   optional<R> reduce_id_func(const U &identity_fun, Accumulator &&accumulator);
 
   /**

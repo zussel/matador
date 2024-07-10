@@ -20,6 +20,8 @@
 
 using namespace matador;
 
+void initialize(matador::session &s);
+
 int main(int /*argc*/, char* /*argv*/[])
 {
   try {
@@ -27,10 +29,11 @@ int main(int /*argc*/, char* /*argv*/[])
     matador::add_log_sink(matador::create_file_sink("log/server.log"));
     matador::add_log_sink(matador::create_stdout_sink());
 
-    const auto initialized = os::exists( "moviedb.sqlite");
+    const std::string dbname = "moviedb.sqlite";
+    const auto initialized = os::exists(dbname);
 
     // setup database
-    matador::persistence p("sqlite://moviedb.sqlite");
+    matador::persistence p("sqlite://" + dbname);
     p.enable_log();
 
     p.attach<person>("person");
@@ -41,27 +44,7 @@ int main(int /*argc*/, char* /*argv*/[])
     p.create();
 
     if (!initialized) {
-
-      object_ptr<person> steven;
-      transaction tr = s.begin();
-      try {
-        steven = s.insert(new person("Steven Spielberg", date(18, 12, 1946)));
-        s.insert(new person("George Lucas", date(14, 5, 1944)));
-        tr.commit();
-      } catch (std::exception &ex) {
-        matador::log(log_level::LVL_ERROR, "Initialize", "Couldn't commit transaction: %s", ex.what());
-        tr.rollback();
-      }
-
-      tr = s.begin();
-      try {
-        s.insert(new movie("Jaws", 1974, steven));
-        s.insert(new movie("Raiders of the lost Arc", 1984, steven));
-        tr.commit();
-      } catch (std::exception &ex) {
-        matador::log(log_level::LVL_ERROR, "Initialize", "Couldn't commit transaction: %s", ex.what());
-        tr.rollback();
-      }
+      initialize(s);
     } else {
       s.load();
     }
@@ -94,4 +77,27 @@ int main(int /*argc*/, char* /*argv*/[])
     std::cout << ex.what() << " (pwd: " << matador::os::get_current_dir() << ")\n";
   }
   return 0;
+}
+
+void initialize(matador::session &s) {
+  object_ptr<person> steven;
+  transaction tr = s.begin();
+  try {
+    steven = s.insert(new person("Steven Spielberg", date(18, 12, 1946)));
+    s.insert(new person("George Lucas", date(14, 5, 1944)));
+    tr.commit();
+  } catch (std::exception &ex) {
+    matador::log(log_level::LVL_ERROR, "Initialize", "Couldn't commit transaction: %s", ex.what());
+    tr.rollback();
+  }
+
+  tr = s.begin();
+  try {
+    s.insert(new movie("Jaws", 1974, steven));
+    s.insert(new movie("Raiders of the lost Arc", 1984, steven));
+    tr.commit();
+  } catch (std::exception &ex) {
+    matador::log(log_level::LVL_ERROR, "Initialize", "Couldn't commit transaction: %s", ex.what());
+    tr.rollback();
+  }
 }
