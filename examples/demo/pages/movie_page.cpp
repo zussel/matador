@@ -1,16 +1,10 @@
 #include "movie_page.hpp"
 
 #include "matador/http/http_server.hpp"
-#include "matador/http/request.hpp"
-#include "matador/http/template_engine.hpp"
-
-#include "matador/logger/log_manager.hpp"
 
 #include "matador/object/json_object_mapper.hpp"
 
 #include "matador/orm/session.hpp"
-
-#include "../models/movie.hpp"
 
 using namespace matador;
 using namespace matador::http;
