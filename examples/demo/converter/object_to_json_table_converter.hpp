@@ -43,7 +43,7 @@ public:
   template< class V >
   void on_primary_key(const char * /*id*/, V &pk, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
-    result_.push_back(create_value_information(pk, "PRIMARYKEY"));
+    result_.push_back(create_value_information(pk, "PRIMARY_KEY"));
   }
   void on_primary_key(const char *id, std::string &pk, size_t /*size*/);
 
@@ -70,7 +70,7 @@ public:
   void on_attribute(const char *id, matador::time &to, const matador::field_attributes &/*attr*/ = matador::null_attributes);
 
   template<class V>
-  void on_belongs_to(const char *id, matador::object_ptr<V> &x, const matador::foreign_attributes &/*attr*/ = matador::default_foreign_attributes)
+  void on_belongs_to(const char * /*id*/, matador::object_ptr<V> &x, const matador::foreign_attributes &/*attr*/ = matador::default_foreign_attributes)
   {
     if (!x.empty()) {
       result_.push_back(create_value_information(extractor_.extract(x, { "id", "name"}), "ENTITY"));

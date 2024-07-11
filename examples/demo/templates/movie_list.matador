@@ -29,8 +29,8 @@
             <tr>
                 {% for col in entity %}
                 <td>
-                    {% if col.type == "ENTITY" %}{{ col.value.name }}
-                    {% elif col.type == "PRIMARYKEY" %}<a href="/{{forloop.parent.forloop.parent.entity}}/{{col.value}}">{{ col.value }}</a>
+                    {% if col.type == "ENTITY" %}<a href="/director/{{col.value.id}}">{{ col.value.name }}</a>
+                    {% elif col.type == "PRIMARY_KEY" %}<a href="/{{forloop.parent.forloop.parent.entity}}/{{col.value}}">{{ col.value }}</a>
                     {% elif col.type == "COLLECTION" %}Collection
                     {% else %}{{ col.value }}
                     {% endif %}

@@ -120,7 +120,6 @@ matador::http::response crud_page<EntityType>::list(const matador::http::request
   object_to_json_table_converter converter;
 
   data["data"] = converter.to_json_table(entities);
-//  data["data"] = mapper.to_json(entities);
 
   auto description = s.store().describe(typeid(EntityType).name());
 

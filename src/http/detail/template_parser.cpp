@@ -52,7 +52,7 @@ std::string parse_operand(string_cursor &cursor)
   char c = cursor.skip_whitespace();
 
   while(!is_eos(c)) {
-    if (isalnum(c) || c == '.' || c == '"') {
+    if (isalnum(c) || c == '.' || c == '"' || c == '_') {
       token.push_back(c);
     } else {
       break;

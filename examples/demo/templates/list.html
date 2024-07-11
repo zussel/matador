@@ -30,7 +30,7 @@
             {% for col in entity %}
             <td>
                 {% if col.type == "ENTITY" %}<a href="/{{col.value.type}}/{{col.value.id}}">{{ col.value.name }}</a>
-                {% elif col.type == "PRIMARYKEY" %}<a href="/{{forloop.parent.forloop.parent.entity}}/{{col.value}}">{{ col.value }}</a>
+                {% elif col.type == "PRIMARY_KEY" %}<a href="/{{forloop.parent.forloop.parent.entity}}/{{col.value}}">{{ col.value }}</a>
                 {% elif col.type == "COLLECTION" %}Collection
                 {% elif col.is_unique %}<a href="/{{forloop.parent.forloop.parent.entity}}/{{entity.id}}">{{ col.value }}</a>
                 {% else %}{{ col.value }}
