@@ -80,6 +80,7 @@ int main(int /*argc*/, char* /*argv*/[])
 }
 
 void initialize(matador::session &s) {
+  auto log = matador::create_logger("Initialize");
   object_ptr<person> steven;
   transaction tr = s.begin();
   try {
@@ -87,7 +88,7 @@ void initialize(matador::session &s) {
     s.insert(new person("George Lucas", date(14, 5, 1944)));
     tr.commit();
   } catch (std::exception &ex) {
-    matador::log(log_level::LVL_ERROR, "Initialize", "Couldn't commit transaction: %s", ex.what());
+    log.error("Couldn't commit transaction: %s", ex.what());
     tr.rollback();
   }
 
@@ -97,7 +98,7 @@ void initialize(matador::session &s) {
     s.insert(new movie("Raiders of the lost Arc", 1984, steven));
     tr.commit();
   } catch (std::exception &ex) {
-    matador::log(log_level::LVL_ERROR, "Initialize", "Couldn't commit transaction: %s", ex.what());
+    log.error("Couldn't commit transaction: %s", ex.what());
     tr.rollback();
   }
 }
