@@ -53,7 +53,7 @@ void relation_resolver<T, typename std::enable_if<
       // if foreign relation is HAS_ONE
       x.reset(foreign_proxy->second.proxy, attr, false);
     } else {
-      x.reset(foreign_proxy->second.proxy, attr, true);
+      x.reset(foreign_proxy->second.proxy, attr, foreign_table->is_loaded());
     }
     foreign_proxy->second.primary_keys.push_back(pk);
   }
@@ -71,7 +71,7 @@ void relation_resolver<T, typename std::enable_if<
   } else {
     // add relation data
     auto lptr = std::static_pointer_cast<table<V>>(foreign_table);
-    lptr->append_relation_data(table_.name(), proxy->pk(), object_ptr<T>(proxy_), nullptr);
+    lptr->append_relation_data(table_.name(), pk, object_ptr<T>(proxy_), nullptr);
   }
 }
 
@@ -144,6 +144,8 @@ void relation_resolver<T, typename std::enable_if<
     if (left_table_ptr_->is_loaded()) {
       left_endpoint_->insert_value_into_foreign(left_proxy_, right_proxy);
     } else {
+      // decrease reference count, because table isn't loaded
+      --(*right_proxy);
       auto lptr = std::static_pointer_cast<table<left_value_type>>(left_table_ptr_);
       lptr->append_relation_data(table_.name(), left_proxy_->pk(), object_ptr<right_value_type>(right_proxy), proxy_);
     }
@@ -152,6 +154,8 @@ void relation_resolver<T, typename std::enable_if<
       container_item_holder<right_value_type > holder(right_proxy, proxy_);
       right_endpoint_->insert_value_into_foreign(holder, left_proxy_);
     } else {
+      // decrease reference count, because table isn't loaded
+      --(*left_proxy_);
       auto rptr = std::static_pointer_cast<table<right_value_type>>(right_table_ptr_);
       rptr->append_relation_data(table_.name(), right_proxy->pk(), object_ptr<left_value_type>(left_proxy_), proxy_);
     }

@@ -135,7 +135,7 @@ struct post
     matador::access::belongs_to(op, "author", writer, matador::cascade_type::NONE);
     matador::access::attribute(op, "created_at", created_at);
     matador::access::has_many_to_many(op, "post_category", categories, matador::cascade_type::INSERT);
-    matador::access::has_many(op, "comments", comments, "id", matador::cascade_type::ALL);
+    matador::access::has_many(op, "comment", comments, "id", matador::cascade_type::ALL);
     matador::access::has_many(op, "tags", tags, "tag", matador::cascade_type::ALL);
     matador::access::attribute(op, "content", content);
   }

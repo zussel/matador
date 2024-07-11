@@ -79,19 +79,8 @@ public:
 
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
-      /**
-       * find proxy in node map
-       * if proxy can be found object was
-       * already read - replace proxy
-       */
       x.reset(proxy, attr);
     } else {
-      /**
-       * if proxy can't be found we create
-       * a proxy and store it in tables
-       * proxy map. it will be used when
-       * table is read.
-       */
       auto j = table_.find_table(node->type());
 
       if (j == table_.end_table()) {
@@ -319,7 +308,6 @@ private:
       }
       id_proxy_pair->second.primary_keys.push_back(pk);
       x.reset(proxy, attr);
-      --(*proxy);
     }
     return proxy;
   }
