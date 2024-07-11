@@ -55,12 +55,6 @@ public:
   }
 
   template < class V >
-  void serialize(V &obj)
-  {
-    matador::access::process(*this, obj);
-  }
-
-  template < class V >
   void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
@@ -274,12 +268,6 @@ public:
   }
 
   template < class V >
-  void serialize(V &obj)
-  {
-    matador::access::process(*this, obj);
-  }
-
-  template < class V >
   void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
@@ -401,12 +389,6 @@ public:
     proxy_ = nullptr;
     id_.clear();
     store_ = nullptr;
-  }
-
-  template < class V >
-  void serialize(V &obj)
-  {
-    matador::access::process(*this, obj);
   }
 
   template < class V >
