@@ -61,14 +61,14 @@ void JsonOrmTest::test_insert_from_json()
   std::string data = R"({
     "name": "george",
     "birthday": "2001-11-15",
-    "person_color": ["green", "blue"]
+    "colors": ["green", "blue"]
   })";
 
   std::string expected_result = R"({
   "id": 1,
   "name": "george",
   "birthday": "2001-11-15",
-  "person_color": ["green","blue"]
+  "colors": ["green","blue"]
 }
 
 )";
