@@ -63,7 +63,7 @@ public:
    * @brief Returns the type of the field
    * @return Type of the field
    */
-  data_type type() const;
+  [[nodiscard]] data_type type() const;
 
   /**
    * @brief Sets the type of the field
@@ -134,6 +134,17 @@ public:
    * @param value Default value as string
    */
   void default_value(const std::string &value);
+
+  [[nodiscard]] bool is_integer() const;
+  [[nodiscard]] bool is_floating_point() const;
+  [[nodiscard]] bool is_bool() const;
+  [[nodiscard]] bool is_string() const;
+  [[nodiscard]] bool is_varchar() const;
+  [[nodiscard]] bool is_blob() const;
+  [[nodiscard]] bool is_date() const;
+  [[nodiscard]] bool is_time() const;
+  [[nodiscard]] bool is_null() const;
+  [[nodiscard]] bool is_unknown() const;
 
 private:
   size_t index_ = 0;

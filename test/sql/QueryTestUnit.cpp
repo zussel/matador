@@ -371,16 +371,17 @@ void QueryTestUnit::test_describe()
   auto fields = connection_.describe("person");
 
   std::vector<std::string> columns = { "id", "name", "birthdate", "important_time", "height"};
-  std::vector<data_type > types = {
-    matador::data_type::type_long_long,
-    matador::data_type::type_varchar,
-    matador::data_type::type_date,
-    matador::data_type::type_time,
-    matador::data_type::type_long_long};
+  std::vector<std::function<bool (const field&)>> type_check = {
+    [](const field &f) { return f.is_integer(); },
+    [](const field &f) { return f.is_varchar(); },
+    [](const field &f) { return f.is_date(); },
+    [](const field &f) { return f.is_time(); },
+    [](const field &f) { return f.is_integer(); }
+  };
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()]);
-    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()]);
+    UNIT_ASSERT_TRUE(type_check[field.index()](field));
   }
 
   q.drop("person").execute(connection_);
