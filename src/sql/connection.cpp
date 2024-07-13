@@ -203,8 +203,20 @@ value* create_default_value(data_type type)
       return make_value<short>(0);
     case data_type::type_int:
       return make_value<int>(0);
+    case data_type::type_long:
+      return make_value<long>(0);
     case data_type::type_long_long:
       return make_value<long long>(0);
+    case data_type::type_unsigned_char:
+      return make_value((unsigned char)0);
+    case data_type::type_unsigned_short:
+      return make_value<unsigned short>(0);
+    case data_type::type_unsigned_int:
+      return make_value<unsigned int>(0);
+    case data_type::type_unsigned_long:
+      return make_value<unsigned long>(0);
+    case data_type::type_unsigned_long_long:
+      return make_value<unsigned long long>(0);
     case data_type::type_bool:
       return make_value<bool>(false);
     case data_type::type_float:
