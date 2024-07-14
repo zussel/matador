@@ -1,7 +1,3 @@
-//
-// Created by sascha on 6/9/17.
-//
-
 #include <matador/object/object_view.hpp>
 
 #include "../datatypes.hpp"
@@ -348,7 +344,7 @@ void RelationTestUnit::test_insert_belongs_to_many()
 
   endpoint = node->endpoint_begin();
 
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "employee");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "department");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY);
 
   auto george_ptr = std::make_unique<employee>("george");
@@ -444,7 +440,7 @@ void RelationTestUnit::test_belongs_to_many()
 
   endpoint = node->endpoint_begin();
 
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "employee");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "department");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY);
 
   auto jane = store.insert(new employee("jane"));
@@ -532,7 +528,7 @@ void RelationTestUnit::test_remove_belongs_to_many()
 
   endpoint = node->endpoint_begin();
 
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "employee");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "department");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY);
 
   auto jane = store.insert(new employee("jane"));
@@ -598,7 +594,7 @@ void RelationTestUnit::test_belongs_to_many_first_belongs_to()
 
   endpoint = node->endpoint_begin();
 
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "employee");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "department");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_MANY);
 
   auto jane = store.insert(new employee("jane"));
@@ -683,15 +679,15 @@ void RelationTestUnit::test_insert_has_many_vector()
   UNIT_ASSERT_FALSE(node->endpoints_empty());
   UNIT_ASSERT_EQUAL(node->endpoints_size(), 2UL);
 
-  endpoint = node->find_endpoint("child_id");
+  endpoint = node->find_endpoint("children_vector");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end());
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "child_id");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO);
-
-  endpoint = node->find_endpoint("vector_id");
-  UNIT_ASSERT_FALSE(endpoint == node->endpoint_end());
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "vector_id");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "children_vector");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE);
+
+  endpoint = node->find_endpoint("value_id");
+  UNIT_ASSERT_FALSE(endpoint == node->endpoint_end());
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "value_id");
+  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO);
 
   auto tim_ptr = std::make_unique<child>("tim");
   auto group_ptr = std::make_unique<children_vector>("group");
@@ -760,14 +756,14 @@ void RelationTestUnit::test_has_many_vector()
   UNIT_ASSERT_FALSE(node->endpoints_empty());
   UNIT_ASSERT_EQUAL(node->endpoints_size(), 2UL);
 
-  endpoint = node->find_endpoint("child_id");
+  endpoint = node->find_endpoint("value_id");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end());
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "child_id");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "value_id");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO);
 
-  endpoint = node->find_endpoint("vector_id");
+  endpoint = node->find_endpoint("children_vector");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end());
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "vector_id");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "children_vector");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE);
 
   auto tim = store.insert(new child("tim"));
@@ -836,15 +832,15 @@ void RelationTestUnit::test_has_many_list()
   UNIT_ASSERT_FALSE(node->endpoints_empty());
   UNIT_ASSERT_EQUAL(node->endpoints_size(), 2UL);
 
-  endpoint = node->find_endpoint("child_id");
+  endpoint = node->find_endpoint("value_id");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end());
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "child_id");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::BELONGS_TO);
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "value_id");
+  UNIT_ASSERT_TRUE(endpoint->second->is_belongs_to());
 
-  endpoint = node->find_endpoint("list_id");
+  endpoint = node->find_endpoint("children_list");
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end());
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "list_id");
-  UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE);
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "children_list");
+  UNIT_ASSERT_TRUE(endpoint->second->is_has_one());
 
   auto tim = store.insert(new child("tim"));
   auto group = store.insert(new children_list("group"));
@@ -889,10 +885,10 @@ void RelationTestUnit::test_has_many_builtin()
   UNIT_ASSERT_FALSE(node->endpoints_empty());
   UNIT_ASSERT_EQUAL(node->endpoints_size(), 1UL);
 
-  endpoint = node->find_endpoint("list_id");
+  endpoint = node->find_endpoint("local_many_vector_ints");
 
   UNIT_ASSERT_FALSE(endpoint == node->endpoint_end());
-  UNIT_ASSERT_EQUAL(endpoint->second->field, "list_id");
+  UNIT_ASSERT_EQUAL(endpoint->second->field, "local_many_vector_ints");
   UNIT_ASSERT_EQUAL(endpoint->second->type, matador::detail::basic_relation_endpoint::HAS_ONE);
 
   endpoint = node->find_endpoint("value");

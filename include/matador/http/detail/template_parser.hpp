@@ -16,8 +16,7 @@ namespace matador {
 
 class string_cursor;
 
-namespace http {
-namespace detail {
+namespace http::detail {
 
 /// @cond MATADOR_DEV
 
@@ -112,7 +111,6 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
       auto res = on_command(cmd, parts_);
       if (res == FINISHED) {
         return std::shared_ptr<template_part>(parts_.release());
-//      } else if (res == INTERMEDIATE) {
       } else {
         if (res == NEXT_COMMAND) {
           auto cmdptr = detail::template_command_factory::instance().produce(cmd);
@@ -145,7 +143,7 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
 /// @endcond
 
 }
-}
+
 }
 
 #endif //MATADOR_TEMPLATE_PARSER_HPP

@@ -83,18 +83,18 @@ public:
    */
   object_ptr& operator=(T *x)
   {
-    reset(new object_proxy(x), cascade_);
+    reset(new object_proxy(x), attributes_);
     return *this;
   }
 
   /**
-   * @brief Copy assignes an object_ptr from the given has_one object
+   * @brief Copy assigns an object_ptr from the given has_one object
    * @param x The has_one object to created the object_ptr from
    * @return A reference to the created object_ptr
    */
   object_ptr& operator=(const self &x)
   {
-    reset(x.proxy_, x.cascade_);
+    reset(x.proxy_, x.attributes_);
     return *this;
   }
 
@@ -125,7 +125,7 @@ public:
    *
    * @return The type string of the object.
    */
-  const char* type() const override
+  [[nodiscard]] const char* type() const override
   {
     return classname_.c_str();
   }
@@ -206,7 +206,7 @@ public:
    *
    * @return A new identifier.
    */
-  identifier create_identifier() const override
+  [[nodiscard]] identifier create_identifier() const override
   {
     return self::identifier_;
   }

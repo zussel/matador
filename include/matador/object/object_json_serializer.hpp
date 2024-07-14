@@ -73,14 +73,14 @@ public:
   void on_attribute(const char *id, time &to, const field_attributes &/*attr*/ = null_attributes);
 
   template<class V>
-  void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type)
+  void on_belongs_to(const char *id, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     if (!x.empty()) {
       result_[id] = json::object();
     }
   }
   template<class V>
-  void on_has_one(const char *id, object_ptr<V> &x, cascade_type)
+  void on_has_one(const char *id, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     if (!x.empty()) {
       object_json_serializer ojs;
@@ -89,7 +89,32 @@ public:
   }
 
   template < class V, template <class ...> class Container >
-  void on_has_many(const char *id, basic_container<V, Container> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *id, container<V, Container> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    handle_has_many(id, x);
+  }
+
+  template < class V, template <class ...> class Container >
+  void on_has_many(const char *id, container<V, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    handle_has_many(id, x);
+  }
+
+  template < class V, template <class ...> class Container >
+  void on_has_many_to_many(const char *id, container<V, Container> &x, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    handle_has_many(id, x);
+  }
+
+  template < class V, template <class ...> class Container >
+  void on_has_many_to_many(const char *id, container<V, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    handle_has_many(id, x);
+  }
+
+private:
+  template < class V, template <class ...> class Container >
+  void handle_has_many(const char *id, container<V, Container> &x)
   {
     json array = json::array();
     object_json_serializer ojs;
@@ -98,7 +123,6 @@ public:
     }
     result_[id] = array;
   }
-
 private:
   json result_;
 };

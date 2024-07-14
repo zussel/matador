@@ -1,4 +1,6 @@
+#include "services/director_service.hpp"
 #include "services/movie_service.hpp"
+
 #include "pages/directors_page.hpp"
 #include "pages/movie_page.hpp"
 #include "pages/main_page.hpp"
@@ -12,12 +14,13 @@
 #include "matador/orm/session.hpp"
 
 #include "matador/http/http_server.hpp"
-#include "matador/http/request.hpp"
 #include "matador/http/static_file_service.hpp"
 
 #include "matador/utils/os.hpp"
 
 using namespace matador;
+
+void initialize(matador::session &s);
 
 int main(int /*argc*/, char* /*argv*/[])
 {
@@ -26,18 +29,25 @@ int main(int /*argc*/, char* /*argv*/[])
     matador::add_log_sink(matador::create_file_sink("log/server.log"));
     matador::add_log_sink(matador::create_stdout_sink());
 
+    const std::string dbname = "moviedb.sqlite";
+    const auto initialized = os::exists(dbname);
+
     // setup database
-    matador::persistence p("sqlite://moviedb.sqlite");
+    matador::persistence p("sqlite://" + dbname);
     p.enable_log();
 
     p.attach<person>("person");
     p.attach<movie>("movie");
 
-    p.create();
-
     // load entities
     session s(p);
-    s.load();
+    p.create();
+
+    if (!initialized) {
+      initialize(s);
+    } else {
+      s.load();
+    }
 
     // initialize network stack
     net::init();
@@ -54,7 +64,9 @@ int main(int /*argc*/, char* /*argv*/[])
     main_page mainpage(server, p);
     movie_page moviepage(server, p);
     directors_page directorpage(server, p);
+
     movie_service mservice(server, p);
+    director_service dservice(server, p);
 
     // start server
     server.run();
@@ -65,4 +77,28 @@ int main(int /*argc*/, char* /*argv*/[])
     std::cout << ex.what() << " (pwd: " << matador::os::get_current_dir() << ")\n";
   }
   return 0;
+}
+
+void initialize(matador::session &s) {
+  auto log = matador::create_logger("Initialize");
+  object_ptr<person> steven;
+  transaction tr = s.begin();
+  try {
+    steven = s.insert(new person("Steven Spielberg", date(18, 12, 1946)));
+    s.insert(new person("George Lucas", date(14, 5, 1944)));
+    tr.commit();
+  } catch (std::exception &ex) {
+    log.error("Couldn't commit transaction: %s", ex.what());
+    tr.rollback();
+  }
+
+  tr = s.begin();
+  try {
+    s.insert(new movie("Jaws", 1974, steven));
+    s.insert(new movie("Raiders of the lost Arc", 1984, steven));
+    tr.commit();
+  } catch (std::exception &ex) {
+    log.error("Couldn't commit transaction: %s", ex.what());
+    tr.rollback();
+  }
 }

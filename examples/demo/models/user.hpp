@@ -16,11 +16,12 @@ struct user
   template < class Operator >
   void process(Operator &op)
   {
-    matador::access::primary_key(op, "id", id);
-    matador::access::attribute(op, "username", username, 255);
-    matador::access::attribute(op, "password", password, 255);
-    matador::access::attribute(op, "first_name", first_name, 255);
-    matador::access::attribute(op, "last_name", last_name, 255);
+    namespace field = matador::access;
+    field::primary_key(op, "id", id);
+    field::attribute(op, "username", username, 255);
+    field::attribute(op, "password", password, 255);
+    field::attribute(op, "first_name", first_name, 255);
+    field::attribute(op, "last_name", last_name, 255);
   }
 };
 

@@ -38,10 +38,10 @@ struct person
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name, 255);
     matador::access::attribute(op, "birthday", birthday);
-    matador::access::has_many(op, "person_color",  // relation table name
-                              colors,          // class member
-                              "person_id",     // left column in relation table
-                              "color",         // right column in relation table
+    matador::access::has_many(op,
+                              "colors", // id
+                              colors,   // class member
+                              "color",  // right column in relation table
                               matador::cascade_type::ALL); // cascade type
   }
 };
@@ -61,14 +61,14 @@ void JsonOrmTest::test_insert_from_json()
   std::string data = R"({
     "name": "george",
     "birthday": "2001-11-15",
-    "person_color": ["green", "blue"]
+    "colors": ["green", "blue"]
   })";
 
   std::string expected_result = R"({
   "id": 1,
   "name": "george",
   "birthday": "2001-11-15",
-  "person_color": ["green","blue"]
+  "colors": ["green","blue"]
 }
 
 )";

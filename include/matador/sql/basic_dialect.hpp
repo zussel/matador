@@ -1,11 +1,12 @@
 #ifndef OOS_BASIC_DIALECT_HPP
 #define OOS_BASIC_DIALECT_HPP
 
-#include "matador/sql/types.hpp"
 #include "matador/sql/statement_context.hpp"
 #include "matador/sql/token.hpp"
 #include "matador/sql/token_list.hpp"
 #include "matador/sql/token_visitor.hpp"
+
+#include "matador/utils/data_types.hpp"
 
 #include <unordered_map>
 #include <memory>

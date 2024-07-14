@@ -4,19 +4,13 @@
 #include "matador/object/container_item_holder.hpp"
 #include "matador/object/to_many_endpoints.hpp"
 #include "matador/object/observer_list_copy_creator.hpp"
+#include "matador/object/relation_endpoint_validator.hpp"
 
 namespace matador::detail {
 
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value>
-void node_analyzer<Owner, ObserverType...>::serialize(Value &x)
-{
-  matador::access::process(*this, x);
-}
-
-template<class Owner, template <typename> typename... ObserverType>
-template<class Value>
-void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type)
+void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
 {
   // find foreign_node of belongs to type
   prototype_iterator foreign_node = store_.find(x.type());
@@ -24,26 +18,26 @@ void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object
     /*
      * foreign_node is already inserted
      * check if foreign_node was created from container
-     * check if foreign_node container relation for id (id == tablename)
+     * check if foreign_node container relation for id (id == table name)
      */
     auto i = foreign_node->find_endpoint(node_.type_index());
     if (i != foreign_node->endpoint_end()) {
 
-      if (i->second->type == detail::basic_relation_endpoint::HAS_MANY) {
+      if (i->second->is_has_many()) {
         // yes, foreign_node was created from container!
         // detach current foreign_node (has_many_item == relation table)
-        store_.detach(node_.type());
+//        store_.detach(node_.type());
 
-        auto foreign_endpoint = std::make_shared<detail::many_to_one_endpoint<Owner, Value>>(i->second->field, foreign_node.get());
-        foreign_node->unregister_relation_endpoint(node_.type_index());
-        foreign_node->register_relation_endpoint(node_.type_index(), foreign_endpoint);
+//        auto foreign_endpoint = std::make_shared<detail::many_to_one_endpoint<Owner, Value>>(i->second->field, foreign_node.get());
+//        foreign_node->unregister_relation_endpoint(node_.type_index());
+//        foreign_node->register_relation_endpoint(node_.type_index(), i->second);
 
         auto endpoint = std::make_shared<detail::belongs_to_many_endpoint<Value, Owner>>(id, &node_);
         node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
-        endpoint->foreign_endpoint = foreign_endpoint;
-        foreign_endpoint->foreign_endpoint = endpoint;
-      } else if (i->second->type == detail::basic_relation_endpoint::HAS_ONE) {
+        endpoint->foreign_endpoint = i->second;
+        i->second->foreign_endpoint = endpoint;
+      } else if (i->second->is_has_one()) {
         // foreign_node was created from has_one
         // check if foreign_node is set
         auto endpoint = std::make_shared<detail::belongs_to_one_endpoint<Value, Owner>>(id, &node_);
@@ -68,7 +62,7 @@ void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object
 
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value>
-void node_analyzer<Owner, ObserverType...>::on_has_one(const char *id, object_ptr<Value> &x, cascade_type)
+void node_analyzer<Owner, ObserverType...>::on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
 {
   auto endpoint = std::make_shared<detail::has_one_endpoint<Value, Owner>>(id, &node_);
   node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
@@ -78,7 +72,7 @@ void node_analyzer<Owner, ObserverType...>::on_has_one(const char *id, object_pt
   if (foreign_node != store_.end()) {
     auto i = foreign_node->find_endpoint(node_.type_index());
     if (i != foreign_node->endpoint_end()) {
-      if (i->second->type == basic_relation_endpoint::BELONGS_TO) {
+      if (i->second->is_belongs_to()) {
         // link both nodes
         endpoint->foreign_endpoint = i->second;
         i->second->foreign_endpoint = endpoint;
@@ -91,137 +85,80 @@ void node_analyzer<Owner, ObserverType...>::on_has_one(const char *id, object_pt
 
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
-void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, container<Value, Container> &x, cascade_type cascade)
+void node_analyzer<Owner, ObserverType...>::on_has_many(const char * /*id*/,
+                                                        container<Value, Container> &/*x*/,
+                                                        const char *join_column,
+                                                        const foreign_attributes &/*attr*/,
+                                                        typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
-  if (is_builtin<Value>::value) {
-    this->serialize(id, x, node_.type(), typeid(Value).name(), cascade);
-  } else {
-    auto value_node = store_.find<Value>();
-    if (value_node == store_.end()) {
-      this->serialize(id, x, node_.type(), typeid(Value).name(), cascade);
-    } else {
-      this->serialize(id, x, node_.type(), value_node->type(), cascade);
+  auto it = store_.find<Value>();
+  if (it == store_.end()) {
+    // validate that join column is available in foreign entity
+    if (!relation_endpoint_validator<Value>::has_belongs_to(join_column)) {
+      throw_object_exception("foreign object hasn't join column '" << join_column << "' for relation type BELONGS_TO");
     }
-  }
-}
 
-template<class Owner, template <typename> typename... ObserverType>
-template<class Value, template<class ...> class Container>
-void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, container<Value, Container> &,
-                                       const char *left_column, const char *right_column,
-                                       cascade_type,
-                                       typename std::enable_if<!is_builtin<Value>::value>::type *)
-                                       {
-  // attach relation table for has many relation
-  // check if has-many item is already attached
-  // true: check owner and item field
-  // false: attach it
-  prototype_iterator pi = store_.find(id);
-  if (pi == store_.end()) {
-    // Value = foreign/owner type => left column
-    // Owner = item/value type    => right column
+    auto endpoint = std::make_shared<detail::many_to_one_endpoint<Value, Owner>>(join_column, &node_);
+//    endpoint->foreign_endpoint = foreign_endpoint;
+    node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
-    /*
-     * Value = value type
-     * Owner = owner type
-     * new has_many_to_many<Value, Owner>
-     */
     // handle observer
-    using has_many_item = has_one_to_many_item_foreign<Owner, Value>;
+//    using has_many_item = has_one_to_many_item_foreign<Owner, Value>;
+//
+//    auto endpoint = std::make_shared<detail::has_one_to_many_endpoint<Owner, typename has_many_item::right_value_type>>(id, &node_);
+//    node_.register_relation_endpoint(std::type_index(typeid(typename has_many_item::right_value_type)), endpoint);
 
-    auto endpoint = std::make_shared<detail::has_one_to_many_endpoint<Owner, typename has_many_item::right_value_type>>(id, &node_);
-    node_.register_relation_endpoint(std::type_index(typeid(typename has_many_item::right_value_type)), endpoint);
+    // new has-one-to-many item
+//    auto owner_column_name = node_.type() + std::string("_id");
+//    auto proto = new has_many_item(owner_column_name, join_column);
 
-    // new has many to many item
-    auto proto = new has_many_item(left_column, right_column);
-    prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
+//    auto node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, prototype_node::abstract_type::not_abstract, node_.type(), id);
 
-    auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
-    pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr, std::move(observers));
+//    auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
+//    it = store_.attach_internal<has_many_item, ObserverType...>(node.release(), nullptr, std::move(observers));
+//    if (it == store_.end()) {
+//      throw_object_exception("couldn't insert prototype node: " << id);
+//    }
 
-    auto sep = pi->find_endpoint(left_column);
-    if (sep != pi->endpoint_end()) {
-      sep->second->foreign_endpoint = endpoint;
-    }
+//    auto sep = it->find_endpoint(id);
+//    if (sep != it->endpoint_end()) {
+//      sep->second->foreign_endpoint = endpoint;
+//    }
   } else {
-    /*
-     * switch left (Owner) and right (Value) template parameter
-     * to fit the already inserted has_many_to_many_item
-     * template parameter
-     */
+    auto ep = it->endpoints();
+    // found corresponding belongs_to
+    auto j = it->find_endpoint(node_.type_index());
+    if (j == it->endpoint_end()) {
+      // check for has many item
+      throw_object_exception("prototype already inserted: " << it->type());
+    } else if (j->second->is_belongs_to()) {
+      // replace foreign endpoint
+      auto foreign_endpoint = std::make_shared<detail::belongs_to_many_endpoint<Owner, Value>>(j->second->field, it.get());
+      it->unregister_relation_endpoint(node_.type_index());
+      it->register_relation_endpoint(node_.type_index(), foreign_endpoint);
 
-    /*
-     * Value = value type
-     * Owner = owner type
-     * new has_many_to_many<Value, Owner>
-     */
-    std::type_index ti(typeid(has_one_to_many_item_foreign<Value, Owner>));
-    if (pi->type_index() == ti) {
-      prototype_iterator foreign_node = detach_one_to_many_node<Value>(pi);
-
-      auto foreign_endpoint = std::make_shared<detail::right_to_many_endpoint<Owner, Value>>(id, foreign_node.get());
-
-      foreign_node->register_relation_endpoint(std::type_index(typeid(Owner)), foreign_endpoint);
-
-      auto endpoint = std::make_shared<detail::left_to_many_endpoint<Value, Owner>>(id, &node_);
-
+      // create and register endpoint
+      // here
+      auto endpoint = std::make_shared<detail::many_to_one_endpoint<Value, Owner>>(join_column, &node_);
+      endpoint->foreign_endpoint = foreign_endpoint;
       node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
-      // link endpoints
+      // link both endpoints
       foreign_endpoint->foreign_endpoint = endpoint;
-      endpoint->foreign_endpoint = foreign_endpoint;
-
-      using has_many_item = has_many_to_many_item<Owner, Value>;
-
-      // new has many to many item
-      auto proto = new has_many_item(right_column, left_column);
-      prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
-
-      auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
-      pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr, std::move(observers));
-
-      auto sep = pi->find_endpoint(right_column);
-      if (sep != pi->endpoint_end()) {
-        sep->second->foreign_endpoint = endpoint;
-      }
-      sep = pi->find_endpoint(left_column);
-      if (sep != pi->endpoint_end()) {
-        sep->second->foreign_endpoint = foreign_endpoint;
-      }
-    } else {
-      // found corresponding belongs_to
-      auto j = pi->find_endpoint(node_.type_index());
-      if (j == pi->endpoint_end()) {
-        // check for has many item
-        throw_object_exception("prototype already inserted: " << pi->type());
-      } else if (j->second->type == detail::basic_relation_endpoint::BELONGS_TO) {
-        // replace foreign endpoint
-        auto foreign_endpoint = std::make_shared<detail::belongs_to_many_endpoint<Owner, Value>>(j->second->field, pi.get());
-        pi->unregister_relation_endpoint(node_.type_index());
-        pi->register_relation_endpoint(node_.type_index(), foreign_endpoint);
-
-        // create and register endpoint
-        // here
-        auto endpoint = std::make_shared<detail::many_to_one_endpoint<Value, Owner>>(id, &node_);
-        endpoint->foreign_endpoint = foreign_endpoint;
-        node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
-
-        // link both endpoints
-        foreign_endpoint->foreign_endpoint = endpoint;
-      }
     }
   }
 }
 
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
-void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, container<Value, Container> &cont,
-                                                 const char *left_column, const char *right_column,
-                                                 cascade_type,
-                                                 typename std::enable_if<is_builtin<Value>::value>::type *)
+void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id,
+                                                        container<Value, Container> &x,
+                                                        const char *join_column,
+                                                        const foreign_attributes &/*attr*/,
+                                                        typename std::enable_if<is_builtin<Value>::value>::type*)
 {
   // attach relation table for has many relation
-  // check if has many item is already attached
+  // check if it has many item is already attached
   // true: check owner and item field
   // false: attach it
   prototype_iterator pi = store_.find(id);
@@ -231,13 +168,13 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, containe
     auto endpoint = std::make_shared<detail::has_one_to_many_endpoint<Owner, typename has_many_item::right_value_type>>(id, &node_);
     node_.register_relation_endpoint(std::type_index(typeid(typename has_many_item::right_value_type)), endpoint);
 
-    auto proto = new has_many_item(left_column, right_column, cont.size_);
-    prototype_node *node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, false, node_.type(), id);
+    auto proto = new has_many_item(node_.type() + std::string("_id"), join_column, x.size_);
+    auto node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, prototype_node::abstract_type::not_abstract, node_.type(), id);
 
     auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
-    pi = store_.attach_internal<has_many_item, ObserverType...>(node, nullptr, std::move(observers));
+    pi = store_.attach_internal<has_many_item, ObserverType...>(node.release(), nullptr, std::move(observers));
 
-    auto sep = pi->find_endpoint(left_column);
+    auto sep = pi->find_endpoint(join_column);
     if (sep != pi->endpoint_end()) {
       sep->second->foreign_endpoint = endpoint;
       endpoint->foreign_endpoint = sep->second;
@@ -248,19 +185,195 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id, containe
 }
 
 template<class Owner, template <typename> typename... ObserverType>
-template<class Value>
-prototype_iterator node_analyzer<Owner, ObserverType...>::detach_one_to_many_node(const prototype_iterator &node)
+template<class Value, template<class ...> class Container>
+void node_analyzer<Owner, ObserverType...>::on_has_many(const char * id,
+                                                        container<Value, Container> &/*x*/,
+                                                        const foreign_attributes &/*attr*/,
+                                                        typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
-  // found has one-to-many
-  // must be detached because
-  // we have a many-to-many relation here
-  store_.detach(node);
-  // remove registered endpoint from foreign site
-  prototype_iterator foreign_node = store_.find<Value>();
-  if (foreign_node != store_.end()) {
-    foreign_node->unregister_relation_endpoint(node_.type_index());
+  prototype_iterator pi = store_.find(id);
+  if (pi == store_.end()) {
+    using has_many_item = has_one_to_many_item_foreign<Owner, Value>;
+
+    auto endpoint = std::make_shared<detail::has_one_to_many_endpoint<Owner, typename has_many_item::right_value_type>>(id, &node_);
+    node_.register_relation_endpoint(std::type_index(typeid(typename has_many_item::right_value_type)), endpoint);
+
+    std::string value_column = "value_id";
+    auto proto = new has_many_item(node_.type(), value_column);
+    auto node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, prototype_node::abstract_type::not_abstract, node_.type(), id);
+
+    auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
+    pi = store_.attach_internal<has_many_item, ObserverType...>(node.release(), nullptr, std::move(observers));
+
+    auto sep = pi->find_endpoint(node_.type());
+    if (sep != pi->endpoint_end()) {
+      sep->second->foreign_endpoint = endpoint;
+//      endpoint->foreign_endpoint = sep->second;
+    }
+  } else {
+    throw_object_exception("prototype already inserted: " << pi->type());
   }
-  return foreign_node;
+}
+
+template<class Owner, template <typename> typename... ObserverType>
+template<class Value, template<class ...> class Container>
+void node_analyzer<Owner, ObserverType...>::on_has_many(const char * id,
+                                                        container<Value, Container> &/*x*/,
+                                                        const foreign_attributes &/*attr*/,
+                                                        typename std::enable_if<is_builtin<Value>::value>::type*)
+{
+  prototype_iterator pi = store_.find(id);
+  if (pi == store_.end()) {
+    using has_many_item = has_one_to_many_item_scalar<Owner, Value>;
+
+    auto endpoint = std::make_shared<detail::has_one_to_many_endpoint<Owner, typename has_many_item::right_value_type>>(id, &node_);
+    node_.register_relation_endpoint(std::type_index(typeid(typename has_many_item::right_value_type)), endpoint);
+
+    std::string value_column = "value_id";
+    auto proto = new has_many_item(node_.type(), value_column, null_attributes);
+    auto node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, prototype_node::abstract_type::not_abstract, node_.type(), id);
+
+    auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
+    pi = store_.attach_internal<has_many_item, ObserverType...>(node.release(), nullptr, std::move(observers));
+
+    auto sep = pi->find_endpoint(node_.type());
+    if (sep != pi->endpoint_end()) {
+      sep->second->foreign_endpoint = endpoint;
+      endpoint->foreign_endpoint = sep->second;
+    }
+  } else {
+    throw_object_exception("prototype already inserted: " << pi->type());
+  }
+}
+
+template<class Owner, template <typename> typename... ObserverType>
+template<class Value, template<class ...> class Container>
+void node_analyzer<Owner, ObserverType...>::on_has_many_to_many(const char *id,
+                                                                container<Value, Container> &/*x*/,
+                                                                const foreign_attributes &/*attr*/)
+{
+  prototype_iterator pi = store_.find(id);
+  if (pi == store_.end()) {
+    using has_many_item = has_many_to_many_item<Value, Owner>;
+
+    auto endpoint = std::make_shared<detail::right_to_many_endpoint<Value, Owner>>(id, &node_);
+    node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
+
+    // new has many to many item
+    auto proto = new has_many_item;
+    auto node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, prototype_node::abstract_type::not_abstract, node_.type(), id);
+
+    auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
+    pi = store_.attach_internal<has_many_item, ObserverType...>(node.release(), nullptr, std::move(observers));
+    if (pi == store_.end()) {
+      throw_object_exception("couldn't insert prototype node: " << id);
+    }
+
+    auto sep = pi->find_endpoint(node_.type_index());
+    if (sep != pi->endpoint_end()) {
+      sep->second->foreign_endpoint = endpoint;
+    }
+  } else if (pi->type_index() == typeid(has_many_to_many_item<Value, Owner>)) {
+    // Value: student
+    // Owner: course
+    auto *proto = pi->prototype<has_many_to_many_item<Value, Owner>>();
+    auto ep = pi->endpoints();
+
+    auto endpoint = std::make_shared<detail::right_to_many_endpoint<Value, Owner>>(id, &node_);
+    node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
+
+    auto sep = pi->find_endpoint(proto->right_column());
+    if (sep != pi->endpoint_end()) {
+      sep->second->foreign_endpoint = endpoint;
+    }
+
+    sep = pi->find_endpoint(proto->left_column());
+    if (sep != pi->endpoint_end()) {
+      auto sptr = sep->second->foreign_endpoint.lock();
+      if (sptr) {
+        endpoint->foreign_endpoint = sptr;
+        sptr->foreign_endpoint = endpoint;
+      }
+    }
+  } else {
+    throw_object_exception("prototype already inserted: " << pi->type());
+  }
+}
+
+template<class Owner, template <typename> typename... ObserverType>
+template<class Value, template<class ...> class Container>
+void node_analyzer<Owner, ObserverType...>::on_has_many_to_many(const char *id, container<Value, Container> &,
+                                                                const char *join_column,
+                                                                const char *inverse_join_column,
+                                                                const foreign_attributes &/*attr*/)
+                                       {
+  // attach relation table for has many relation
+  // check if has-many item is already attached
+  // true: check owner and item field
+  // false: attach it
+  prototype_iterator pi = store_.find(id);
+  if (pi == store_.end()) {
+    // Value = foreign/owner type => join column
+    // Owner = item/value type    => inverse join column
+
+    /*
+     * Value = value type
+     * Owner = owner type
+     * new has_many_to_many<Value, Owner>
+     */
+    using has_many_item = has_many_to_many_item<Owner, Value>;
+
+    auto endpoint = std::make_shared<detail::left_to_many_endpoint<Value, Owner>>(id, &node_);
+    node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
+
+    // new has many to many item
+    auto proto = new has_many_item(join_column, inverse_join_column);
+    auto node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, prototype_node::abstract_type::not_abstract, node_.type(), id);
+
+    auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
+    pi = store_.attach_internal<has_many_item, ObserverType...>(node.release(), nullptr, std::move(observers));
+    if (pi == store_.end()) {
+      throw_object_exception("couldn't insert prototype node: " << id);
+    }
+
+    auto sep = pi->find_endpoint(join_column);
+    if (sep != pi->endpoint_end()) {
+      sep->second->foreign_endpoint = endpoint;
+    }
+  } else if (pi->type_index() == typeid(has_many_to_many_item<Owner, Value>)) {
+    // found node
+    auto endpoint = std::make_shared<detail::left_to_many_endpoint<Value, Owner>>(id, &node_);
+    node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
+
+    // update prototype columns
+    auto *proto = pi->prototype<has_many_to_many_item<Owner, Value>>();
+    auto sep = pi->find_endpoint(node_.type_index());
+    if (sep != pi->endpoint_end()) {
+      sep->second->foreign_endpoint = endpoint;
+      sep->second->field = join_column;
+      proto->left_column(join_column);
+    } else {
+      throw_object_exception("couldn't find endpoint for: " << join_column);
+    }
+
+    sep = pi->find_endpoint(typeid(Value));
+    if (sep == pi->endpoint_end()) {
+      throw_object_exception("couldn't find endpoint for: " << inverse_join_column);
+    }
+    sep->second->field = inverse_join_column;
+    proto->right_column(inverse_join_column);
+    auto foreign_endpoint = sep->second->foreign_endpoint.lock();
+    if (!foreign_endpoint) {
+      throw_object_exception("couldn't find endpoint for: " << inverse_join_column);
+    }
+
+    // link endpoints
+    foreign_endpoint->foreign_endpoint = endpoint;
+    endpoint->foreign_endpoint = foreign_endpoint;
+
+  } else {
+    throw_object_exception("prototype already inserted: " << pi->type());
+  }
 }
 
 }

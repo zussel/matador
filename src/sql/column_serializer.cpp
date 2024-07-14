@@ -22,12 +22,12 @@ void column_serializer::on_attribute(const char *id, char * /*x*/, const field_a
   cols_->push_back(std::make_shared<column>(id));
 }
 
-void column_serializer::on_belongs_to(const char *id, identifiable_holder &, cascade_type)
+void column_serializer::on_belongs_to(const char *id, identifiable_holder &, const foreign_attributes &/*attr*/)
 {
   cols_->push_back(std::make_shared<column>(id));
 }
 
-void column_serializer::on_has_one(const char *id, identifiable_holder &, cascade_type)
+void column_serializer::on_has_one(const char *id, identifiable_holder &, const foreign_attributes &/*attr*/)
 {
   cols_->push_back(std::make_shared<column>(id));
 }

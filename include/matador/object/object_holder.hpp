@@ -5,6 +5,7 @@
 
 #include "matador/utils/cascade_type.hpp"
 #include "matador/utils/identifiable_holder.hpp"
+#include "matador/utils/foreign_attributes.hpp"
 
 #include <memory>
 
@@ -146,7 +147,7 @@ public:
    * @param proxy The new object_proxy for the object_holder.
    * @param cascade Sets the cascade actions for the proxy.
    */
-  void reset(object_proxy *proxy, cascade_type cascade);
+  void reset(object_proxy *proxy, const foreign_attributes &attr);
 
   /**
    * Resets the object_holder with the given object_proxy.
@@ -155,7 +156,7 @@ public:
    * @param cascade Sets the cascade actions for the proxy.
    * @param notify_foreign_relation True if foreign relation endpoint should be modified
    */
-  void reset(object_proxy *proxy, cascade_type cascade, bool notify_foreign_relation);
+  void reset(object_proxy *proxy, const foreign_attributes &attr, bool notify_foreign_relation);
 
   /**
    * Resets the object holder with the given
@@ -185,7 +186,7 @@ public:
    *
    * @return True if object_holder doesn't holds an object
    */
-  bool empty() const noexcept;
+  [[nodiscard]] bool empty() const noexcept;
 
   /**
    * Returns true if object_holder
@@ -193,26 +194,26 @@ public:
    *
    * @return True if object_holder holds an object
    */
-  bool valid() const noexcept;
+  [[nodiscard]] bool valid() const noexcept;
   /**
    * Returns if the object is loaded.
    * 
    * @return True if the object is loaded.
    */
-  bool is_loaded() const;
+  [[nodiscard]] bool is_loaded() const;
 
   /**
    * Returns the object id.
    * 
    * @return The id of the object.
    */
-  unsigned long long id() const;
+  [[nodiscard]] unsigned long long id() const;
 
   /**
    * Returns the corresponding
    * object_store or nullptr
    */
-  object_store* store() const;
+  [[nodiscard]] object_store* store() const;
 
   /**
    * Returns the raw object pointer
@@ -226,7 +227,7 @@ public:
    *
    * @return The raw object pointer.
    */
-  const void* ptr() const;
+  [[nodiscard]] const void* ptr() const;
 
   /**
    * Returns the object pointer
@@ -240,7 +241,7 @@ public:
    *
    * @return The object pointer.
    */
-  void* lookup_object() const;
+  [[nodiscard]] void* lookup_object() const;
 
   /**
    * Returns if this object_holder is inside
@@ -250,7 +251,7 @@ public:
    * 
    * @return True if the object_holder internal
    */
-  bool is_internal() const;
+  [[nodiscard]] bool is_internal() const;
 
   /**
    * Returns true if the underlying object
@@ -258,21 +259,21 @@ public:
    *
    * @return True if object is inserted.
    */
-  bool is_inserted() const;
+  [[nodiscard]] bool is_inserted() const;
 
   /**
    * Returns true if object has a primary key
    *
    * @return true if object has a primary key
    */
-  bool has_primary_key() const override ;
+  [[nodiscard]] bool has_primary_key() const override ;
 
   /**
    * Gets the primary key of the foreign object
    *
    * @return The primary key of the foreign object
    */
-  const identifier& primary_key() const override;
+  [[nodiscard]] const identifier& primary_key() const override;
   identifier& primary_key() override;
 
   /**
@@ -280,21 +281,21 @@ public:
    *
    * @return The current reference count
    */
-  unsigned long reference_count() const;
+  [[nodiscard]] unsigned long reference_count() const;
 
   /**
    * Return the type string of the object
    *
    * @return The type string of the object.
    */
-  virtual const char* type() const = 0;
+  [[nodiscard]] virtual const char* type() const = 0;
 
   /**
    * Returns the cascade type of the holder
    *
    * @return The cascade type
    */
-  cascade_type cascade() const;
+  [[nodiscard]] cascade_type cascade() const;
 
   /**
    * Prints the underlying object
@@ -327,7 +328,7 @@ private:
 
   object_proxy *proxy_ = nullptr;
   object_proxy *owner_ = nullptr; // only set if holder type is BELONGS_TO or HAS_MANY
-  cascade_type cascade_ = cascade_type::NONE;
+  foreign_attributes attributes_;
   bool is_inserted_ = false;
 
   std::shared_ptr<detail::basic_relation_endpoint> relation_info_;

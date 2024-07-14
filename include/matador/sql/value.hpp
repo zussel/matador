@@ -4,8 +4,8 @@
 #include "matador/sql/token.hpp"
 #include "matador/sql/column_value.hpp"
 #include "matador/sql/column_value_visitor.hpp"
-#include "matador/sql/types.hpp"
 
+#include "matador/utils/data_types.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/string.hpp"

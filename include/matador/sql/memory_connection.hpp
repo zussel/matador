@@ -3,9 +3,7 @@
 
 #include "matador/sql/connection_impl.hpp"
 
-namespace matador {
-
-namespace memory {
+namespace matador::memory {
 
 /// @cond MATADOR_DEV
 
@@ -13,7 +11,7 @@ class memory_connection : public matador::connection_impl
 {
 public:
   void open(const connection_info &) override {}
-  bool is_open() const override { return true; }
+  [[nodiscard]] bool is_open() const override { return true; }
   void close() override {}
 
   matador::detail::result_impl *execute(const matador::sql_context &) override { return nullptr; }
@@ -26,11 +24,11 @@ public:
 
   void rollback() override {}
 
-  std::string type() const override { return "memory"; };
-  version client_version() const override { return {0, 8, 1}; };
-  version server_version() const override { return {0, 8, 1}; };
+  [[nodiscard]] std::string type() const override { return "memory"; };
+  [[nodiscard]] version client_version() const override { return {0, 8, 1}; };
+  [[nodiscard]] version server_version() const override { return {0, 8, 1}; };
 
-  virtual const char *type_string(database_type) const { return nullptr; }
+//  [[nodiscard]] virtual const char *type_string(database_type) const { return nullptr; }
 
   bool exists(const std::string &) override { return true; }
 
@@ -38,11 +36,11 @@ public:
 
   basic_dialect* dialect() override { return nullptr; }
 
-  unsigned short default_port() const override { return 0; }
+  [[nodiscard]] unsigned short default_port() const override { return 0; }
 };
 
 /// @endcond
 
 }
-}
+
 #endif //OOS_MEMORY_CONNECTION_HPP

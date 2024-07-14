@@ -62,32 +62,32 @@ const char *postgresql_dialect::to_database_type_string(matador::data_type type)
   }
 }
 
-matador::database_type postgresql_dialect::string_type(const char *type) const
+data_type postgresql_dialect::string_type(const char *type) const
 {
   if (strcmp(type, "int2") == 0) {
-    return database_type::type_smallint;
+    return data_type::type_int;
   } else if (strcmp(type, "int4") == 0) {
-    return database_type::type_int;
+    return data_type::type_int;
   } else if (strcmp(type, "int8") == 0) {
-    return database_type::type_bigint;
+    return data_type::type_long_long;
   } else if (strncmp(type, "int8", 6) == 0) {
-    return database_type::type_bigint;
+    return data_type::type_long_long;
   } else if (strcmp(type, "date") == 0) {
-    return database_type::type_date;
+    return data_type::type_date;
   } else if (strncmp(type, "timestamp", 8) == 0) {
-    return database_type::type_time;
+    return data_type::type_time;
   } else if (strcmp(type, "float4") == 0) {
-    return database_type::type_float;
+    return data_type::type_float;
   } else if (strcmp(type, "float8") == 0) {
-    return database_type::type_double;
+    return data_type::type_double;
   } else if (strncmp(type, "varchar", 7) == 0) {
-    return database_type::type_varchar;
+    return data_type::type_varchar;
   } else if (strncmp(type, "character varying", 7) == 0) {
-    return database_type::type_varchar;
+    return data_type::type_varchar;
   } else if (strncmp(type, "text", 0) == 0) {
-    return database_type::type_text;
+    return data_type::type_text;
   } else {
-    return database_type::type_unknown;
+    return data_type::type_unknown;
   }
 }
 

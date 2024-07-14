@@ -138,7 +138,7 @@ prototype_node* object_store::clear(prototype_node *node)
 {
   prototype_node *current = node->first->next;
   while (current != node->last.get()) {
-    current = clear(current);
+    current = clear(current); // NOLINT
   }
   // finally link first to last and vice versa
   return remove_prototype_node(node, false);
@@ -156,6 +156,14 @@ bool object_store::empty() const
     is_empty &= i->empty(false);
   });
   return is_empty;
+}
+
+object_description object_store::describe(const char *type) const {
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    throw object_exception("couldn't find object type");
+  }
+  return node->describe();
 }
 
 object_proxy* object_store::find_proxy(unsigned long long id) const

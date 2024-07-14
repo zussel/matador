@@ -194,6 +194,10 @@ void prototype_node::unlink()
   prev = nullptr;
 }
 
+object_description prototype_node::describe() const {
+  return info_->describe();
+}
+
 prototype_node* prototype_node::next_node() const
 {
   // if we have a child, child is the next iterator to return
@@ -295,7 +299,7 @@ bool prototype_node::has_primary_key() const
 
 bool prototype_node::is_abstract() const
 {
-  return abstract_;
+  return abstract_ == abstract_type::abstract;
 }
 
 std::type_index prototype_node::type_index() const

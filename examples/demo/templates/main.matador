@@ -2,10 +2,19 @@
 <html lang="en">
 {% include "../templates/header.matador" %}
 <body>
-<div class="header">
-    <h1>{{title}}</h1>
-</div>
-<a class="pure-button pure-button-primary" href="/movie">Movies</a>
-<a class="pure-button pure-button-primary" href="/director">Directors</a>
+    <header class="container">
+        <h1>{{title}}</h1>
+    </header>
+    <main class="container">
+        <nav>
+            <ul>
+                <li><strong>Demo</strong></li>
+            </ul>
+            <ul>
+                <li><a href="/movie">Movies</a></li>
+                <li><a href="/director">Directors</a></li>
+            </ul>
+        </nav>
+    </main>
 </body>
 </html>

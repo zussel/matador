@@ -43,10 +43,10 @@ public:
   void owner_field(const std::string &owner_field) { owner_field_ = owner_field; }
   void item_field(const std::string &item_field) { item_field_ = item_field; }
 
-  std::string owner_field() const { return owner_field_; }
-  std::string item_field() const { return item_field_; }
+  [[nodiscard]] std::string owner_field() const { return owner_field_; }
+  [[nodiscard]] std::string item_field() const { return item_field_; }
 
-  object_store* store() const { return ostore_; }
+  [[nodiscard]] object_store* store() const { return ostore_; }
 
 protected:
   template < class T >

@@ -26,7 +26,7 @@ struct movie
     : title(std::move(t)), year(y), director(dir)
   {}
 
-  unsigned long id;
+  unsigned long id{};
   std::string title;
   matador::container<e_genre> genres;
   unsigned short year {};
@@ -36,12 +36,13 @@ struct movie
   template < class Operator >
   void process(Operator &op)
   {
-    matador::access::primary_key(op, "id", id);
-    matador::access::attribute(op, "title", title, 255);
+    namespace field = matador::access;
+    field::primary_key(op, "id", id);
+    field::attribute(op, "title", title, 255);
     //serializer.serialize("genres", genres, "movie_id", "genre", matador::cascade_type::ALL);
-    matador::access::attribute(op, "year", year);
-    matador::access::has_many(op, "actors", actors, "movie_id", "actor_id", matador::cascade_type::NONE);
-    matador::access::has_one(op, "director", director, matador::cascade_type::NONE);
+    field::attribute(op, "year", year);
+    field::has_many_to_many(op, "actors", actors, "movie_id", "actor_id", matador::cascade_type::NONE);
+    field::has_one(op, "director", director, matador::cascade_type::NONE);
   }
 };
 #endif //MATADOR_MOVIE_HPP

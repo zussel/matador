@@ -6,8 +6,8 @@
 #include <cstdio>
 #include <string>
 
-namespace matador {
-namespace os {
+
+namespace matador::os {
 
 /// @cond MATADOR_DEV
 
@@ -87,5 +87,5 @@ OOS_UTILS_API char* strerror(int err, char* errbuf, size_t bufsize);
 /// @endcond
 
 }
-}
+
 #endif //MATADOR_OS_HPP

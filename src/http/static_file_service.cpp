@@ -5,8 +5,7 @@
 #include "matador/http/response.hpp"
 #include "matador/http/static_file_service.hpp"
 
-namespace matador {
-namespace http {
+namespace matador::http {
 
 void serve_static_files_at(const std::string &path, server &s)
 {
@@ -17,7 +16,7 @@ void serve_static_files_at(const std::string &path, server &s)
     }
 
     // check if there is '..' in path
-    if (path.empty() || path[0] != os::DIR_SEPARATOR || path.find("..") != std::string::npos) {
+    if (path.empty() || path[0] != '/' || path.find("..") != std::string::npos) {
       return response::bad_request();
     }
 
@@ -58,5 +57,5 @@ response static_file_service::serve(const request &req)
 
   return response::from_file("." + path);
 }
-}
+
 }

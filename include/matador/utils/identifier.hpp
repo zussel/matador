@@ -2,6 +2,7 @@
 #define MATADOR_IDENTIFIER_HPP
 
 #include "matador/utils/field_attributes.hpp"
+#include "matador/utils/data_types.hpp"
 
 #include <memory>
 #include <string>
@@ -73,7 +74,7 @@ class identifier
 private:
   struct base
   {
-    explicit base(const std::type_index &ti, detail::identifier_type id_type);
+    explicit base(const std::type_index &ti, detail::identifier_type id_type, data_type type);
     base(const base &x) = delete;
     base &operator=(const base &x) = delete;
     base(base &&x) = delete;
@@ -81,24 +82,25 @@ private:
     virtual ~base() = default;
 
     template<typename Type>
-    bool is_similar_type() const
+    [[nodiscard]] bool is_similar_type() const
     {
       return identifier_type_ == detail::identifier_type_traits<Type>::type();
     }
 
-    bool is_similar_type(const base &x) const;
-    detail::identifier_type type() const;
+    [[nodiscard]] bool is_similar_type(const base &x) const;
+    [[nodiscard]] detail::identifier_type type() const;
 
-    virtual base *copy() const = 0;
-    virtual bool equal_to(const base &x) const = 0;
-    virtual bool less(const base &x) const = 0;
-    virtual bool is_valid() const = 0;
+    [[nodiscard]] virtual base *copy() const = 0;
+    [[nodiscard]] virtual bool equal_to(const base &x) const = 0;
+    [[nodiscard]] virtual bool less(const base &x) const = 0;
+    [[nodiscard]] virtual bool is_valid() const = 0;
     virtual void serialize(identifier_serializer &s) = 0;
-    virtual std::string str() const = 0;
-    virtual size_t hash() const = 0;
+    [[nodiscard]] virtual std::string str() const = 0;
+    [[nodiscard]] virtual size_t hash() const = 0;
 
     std::type_index type_index_;
     detail::identifier_type identifier_type_;
+    data_type type_{data_type::type_unknown};
   };
 
   template<class IdType>
@@ -106,28 +108,29 @@ private:
   {
     using self = pk<IdType>;
 
-    explicit pk(const IdType &id, size_t size = 0) : base(std::type_index(typeid(IdType)), detail::identifier_type_traits<IdType>::type())
+    explicit pk(const IdType &id, size_t size = 0)
+    : base(std::type_index(typeid(IdType)), detail::identifier_type_traits<IdType>::type(), data_type_traits<IdType>::builtin_type(size))
     , id_(id)
     , size_(size) {}
 
-    base *copy() const final {
+    [[nodiscard]] base *copy() const final {
       return new self(id_, size_);
     }
 
-    bool equal_to(const base &x) const final {
+    [[nodiscard]] bool equal_to(const base &x) const final {
       return static_cast<const pk<IdType> &>(x).id_ == id_;
     }
 
-    bool less(const base &x) const final {
+    [[nodiscard]] bool less(const base &x) const final {
       return static_cast<const pk<IdType> &>(x).id_ < id_;
     }
 
-    bool is_valid() const final
+    [[nodiscard]] bool is_valid() const final
     {
       return detail::identifier_type_traits<IdType>::is_valid(id_);
     }
 
-    std::string str() const final
+    [[nodiscard]] std::string str() const final
     {
       return detail::identifier_type_traits<IdType>::to_string(id_);
     }
@@ -136,7 +139,7 @@ private:
       s.serialize(id_, size_);
     }
 
-    size_t hash() const final {
+    [[nodiscard]] size_t hash() const final {
       std::hash<IdType> hash_func;
       return hash_func(id_);
     }
@@ -148,13 +151,13 @@ private:
   struct null_pk : public base
   {
     null_pk();
-    base *copy() const final;
-    bool equal_to(const base &x) const final;
-    bool less(const base &x) const final;
-    bool is_valid() const final;
+    [[nodiscard]] base *copy() const final;
+    [[nodiscard]] bool equal_to(const base &x) const final;
+    [[nodiscard]] bool less(const base &x) const final;
+    [[nodiscard]] bool is_valid() const final;
     void serialize(identifier_serializer &s) final;
-    std::string str() const final;
-    size_t hash() const final;
+    [[nodiscard]] std::string str() const final;
+    [[nodiscard]] size_t hash() const final;
     null_type_t null_;
   };
 
@@ -184,26 +187,27 @@ public:
   bool operator>(const identifier &x) const;
   bool operator>=(const identifier &x) const;
 
-  bool is_similar_type(const identifier &x) const;
+  [[nodiscard]] bool is_similar_type(const identifier &x) const;
   template<typename Type>
-  bool is_similar_type() const
+  [[nodiscard]] bool is_similar_type() const
   {
     return id_->is_similar_type<Type>();
   }
 
-  std::string str() const;
-  const std::type_index &type_index() const;
+  [[nodiscard]] std::string str() const;
+  [[nodiscard]] const std::type_index &type_index() const;
+  [[nodiscard]] data_type type() const;
 
-  identifier share() const;
-  size_t use_count() const;
+  [[nodiscard]] identifier share() const;
+  [[nodiscard]] size_t use_count() const;
 
-  bool is_null() const;
-  bool is_valid() const;
+  [[nodiscard]] bool is_null() const;
+  [[nodiscard]] bool is_valid() const;
   void clear();
 
   void serialize(identifier_serializer &s);
 
-  size_t hash() const;
+  [[nodiscard]] size_t hash() const;
 
   friend std::ostream &operator<<(std::ostream &out, const identifier &id);
 

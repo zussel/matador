@@ -6,7 +6,8 @@
 #include "matador/db/mssql/mssql_types.hpp"
 
 #include "matador/sql/result_impl.hpp"
-#include "matador/sql/types.hpp"
+
+#include "matador/utils/data_types.hpp"
 
 #include <vector>
 

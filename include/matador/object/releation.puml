@@ -48,7 +48,10 @@ from_many_endpoint <|-- has_one_to_many_endpoint
 class node_analyzer {
 + void on_has_one(const char *id, object_ptr<Type> &object)
 + void on_belongs_to(const char *id, object_ptr<Type> &object)
-+ void on_has_many(const char *id, has_many<Type> &container)
++ void on_has_many(has_many<Type> &container)
++ void on_has_many(has_many<Type> &container, const char *join_column)
++ void on_has_many_to_many(const char *id, has_many<Type> &container, const char *join_column, const char *inverse_join_column)
++ void on_has_many_to_many(const char *id, has_many<Type> &container)
 }
 note right of node_analyzer::on_has_one
     creates <b><color:royalBlue>has_one_endpoint</color>

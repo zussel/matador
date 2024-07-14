@@ -86,17 +86,36 @@ public:
   void on_attribute(const char* id, std::string &s, const field_attributes &/*attr*/ = null_attributes);
   void on_attribute(const char* id, date &x, const field_attributes &/*attr*/ = null_attributes);
   void on_attribute(const char* id, time &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_belongs_to(const char* id, object_holder &x, cascade_type cascade);
-  void on_has_one(const char* id, object_holder &x, cascade_type cascade);
+  void on_belongs_to(const char* id, object_holder &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_has_one(const char* id, object_holder &x, const foreign_attributes &attr = default_foreign_attributes);
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, const char *, const char *, cascade_type cascade)
+  void on_has_many(const char *id, container<T, C> &x, const char * /*join_column*/, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_has_many(id, x, cascade);
+    handle_has_many_relation(id, x, attr);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, cascade_type cascade)
+  void on_has_many(const char *id, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_has_many_relation(id, x, attr);
+  }
+
+  template<class T, template<class ...> class C>
+  void on_has_many_to_many(const char *id, container<T, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_has_many_relation(id, x, attr);
+  }
+
+  template<class T, template<class ...> class C>
+  void on_has_many_to_many(const char *id, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_has_many_relation(id, x, attr);
+  }
+
+private:
+  template<class T, template<class ...> class C>
+  void handle_has_many_relation(const char *id, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
   {
     std::string id_oid(id);
     id_oid += ".oid";
@@ -114,21 +133,20 @@ public:
       // serialize holder proxy id
       on_attribute(id_oid.c_str(), oid);
       // serialize value
-      process_has_many_item(*first++, cascade);
+      process_has_many_item(*first++, attr);
     }
   }
 
-private:
-  void on_foreign_object(const char *id, object_holder &x, cascade_type cascade);
+  void on_foreign_object(const char *id, object_holder &x, const foreign_attributes &attr);
 
   template<class T>
-  void process_has_many_item(T &obj, cascade_type cascade, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0)
+  void process_has_many_item(T &obj, const foreign_attributes &attr, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0)
   {
-    on_foreign_object("", obj, cascade);
+    on_foreign_object("", obj, attr);
   }
 
   template<class T>
-  void process_has_many_item(T &attr, cascade_type /*cascade*/, typename std::enable_if<matador::is_builtin<T>::value>::type* = 0)
+  void process_has_many_item(T &attr, const foreign_attributes &/*attr*/, typename std::enable_if<matador::is_builtin<T>::value>::type* = 0)
   {
     on_attribute("", attr);
   }

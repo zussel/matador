@@ -1,7 +1,7 @@
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
 
-#include "matador/sql/types.hpp"
+#include "matador/utils/data_types.hpp"
 
 #include <memory>
 #include <sstream>

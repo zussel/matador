@@ -1,8 +1,6 @@
 #include "matador/http/detail/template_filter_factory.hpp"
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 
 template_filter_factory::template_filter_factory()
 {
@@ -10,6 +8,7 @@ template_filter_factory::template_filter_factory()
   factory_.insert("capfirst", new factory_type::default_producer<capfirst_filter>());
   factory_.insert("upper", new factory_type::default_producer<upper_filter>());
   factory_.insert("lower", new factory_type::default_producer<lower_filter>());
+  factory_.insert("attr", new factory_type::default_producer<attribute_filter>());
 }
 
 std::shared_ptr<template_filter> template_filter_factory::produce(const std::string &key) const
@@ -19,5 +18,4 @@ std::shared_ptr<template_filter> template_filter_factory::produce(const std::str
 }
 
 }
-}
-}
+

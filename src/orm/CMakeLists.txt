@@ -13,7 +13,6 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/matador/orm/identifier_column_resolver.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_resolver.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_resolver.tpp
-  ${CMAKE_SOURCE_DIR}/include/matador/orm/relation_item_appender.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence_observer.hpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/persistence_observer.tpp
   ${CMAKE_SOURCE_DIR}/include/matador/orm/basic_relation_data.hpp

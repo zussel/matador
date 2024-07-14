@@ -66,36 +66,36 @@ const char* mssql_dialect::to_database_type_string(matador::data_type type) cons
   }
 }
 
-database_type mssql_dialect::string_type(const char *type) const
+data_type mssql_dialect::string_type(const char *type) const
 {
   if (strcmp(type, "numeric") == 0) {
-    return database_type::type_bigint;
+    return data_type::type_long_long;
   } else if (strcmp(type, "bigint") == 0) {
-    return database_type::type_bigint;
+    return data_type::type_long_long;
   } else if (strcmp(type, "smallint") == 0) {
-    return database_type::type_smallint;
+    return data_type::type_int;
   } else if (strcmp(type, "tinyint") == 0) {
-    return database_type::type_char;
+    return data_type::type_char;
   } else if (strcmp(type, "int") == 0) {
-    return database_type::type_int;
+    return data_type::type_int;
   } else if (strcmp(type, "bit") == 0) {
-    return database_type::type_bool;
+    return data_type::type_bool;
   } else if (strcmp(type, "date") == 0) {
-    return database_type::type_date;
+    return data_type::type_date;
   } else if (strcmp(type, "datetime") == 0) {
-    return database_type::type_time;
+    return data_type::type_time;
   } else if (strcmp(type, "float(24)") == 0) {
-    return database_type::type_float;
+    return data_type::type_float;
   } else if (strcmp(type, "float(53)") == 0) {
-    return database_type::type_double;
+    return data_type::type_double;
   } else if (strcmp(type, "real") == 0) {
-    return database_type::type_double;
+    return data_type::type_double;
   } else if (strcmp(type, "varchar(max)") == 0) {
-    return database_type::type_text;
+    return data_type::type_text;
   } else if (strcmp(type, "varchar") == 0) {
-    return database_type::type_varchar;
+    return data_type::type_varchar;
   } else {
-    return database_type::type_unknown;
+    return data_type::type_unknown;
   }
 }
 

@@ -8,9 +8,7 @@
 
 #include <set>
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 
 std::string parse_token(string_cursor &cursor)
 {
@@ -18,7 +16,7 @@ std::string parse_token(string_cursor &cursor)
   char c = cursor.skip_whitespace();
 
   while(!is_eos(c)) {
-    if (isalnum(c) || c == '.') {
+    if (isalnum(c) || c == '.' || c == '_') {
       token.push_back(c);
     } else {
       break;
@@ -54,7 +52,7 @@ std::string parse_operand(string_cursor &cursor)
   char c = cursor.skip_whitespace();
 
   while(!is_eos(c)) {
-    if (isalnum(c) || c == '.' || c == '"') {
+    if (isalnum(c) || c == '.' || c == '"' || c == '_') {
       token.push_back(c);
     } else {
       break;
@@ -87,6 +85,23 @@ std::shared_ptr<template_filter> parse_filter(string_cursor &cursor)
   auto name = parse_token(cursor);
 
   auto filter = template_filter_factory::instance().produce(name);
+
+  // check for attributes
+  auto c = cursor.current_char();
+  while (c == ':') {
+    c = cursor.next_char();
+    std::string attr;
+    while(!is_eos(c)) {
+      if (isalnum(c) || c == '.') {
+        attr.push_back(c);
+      } else {
+        break;
+      }
+      c = cursor.next_char();
+    }
+    filter->add_attribute(attr);
+  }
+  cursor.skip_whitespace();
 
   return filter;
 }
@@ -212,5 +227,4 @@ std::string parse_operator(string_cursor &cursor)
 }
 
 }
-}
-}
+

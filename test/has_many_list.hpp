@@ -38,7 +38,7 @@ public:
   {
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name);
-    matador::access::has_many(op, "owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
+    matador::access::has_many_to_many(op, "owner_item", items, "owner_id", "item_id", matador::cascade_type::ALL);
   }
 };
 }

@@ -14,10 +14,23 @@
 #include "matador/logger/logger.hpp"
 #include "matador/logger/log_manager.hpp"
 
+#include "../converter/object_to_json_table_converter.hpp"
+
+using template_ptr = std::shared_ptr<matador::http::detail::template_part>;
+
+struct crud_templates {
+  template_ptr list;
+  template_ptr details;
+  template_ptr create;
+  template_ptr edit;
+  template_ptr remove;
+};
+
 struct crud_context {
   std::string entity_singular_name;
   std::string entity_plural_name;
   std::string entity_type_name;
+  std::string template_path;
 };
 
 template < class EntityType >
@@ -42,18 +55,15 @@ private:
   matador::http::response edit(const matador::http::request &p);
   matador::http::response remove(const matador::http::request &p);
 
+  template_ptr load_template(const std::string &name);
+
 private:
   matador::logger log_;
 
   matador::persistence& persistence_;
 
   const crud_context context_;
-
-  std::shared_ptr<matador::http::detail::template_part> list_template_;
-  std::shared_ptr<matador::http::detail::template_part> details_template_;
-  std::shared_ptr<matador::http::detail::template_part> create_template_;
-  std::shared_ptr<matador::http::detail::template_part> edit_template_;
-  std::shared_ptr<matador::http::detail::template_part> delete_template_;
+  crud_templates templates_;
 };
 
 template < class EntityType >
@@ -64,37 +74,13 @@ crud_page<EntityType>::crud_page(const crud_context &ctx,
   , persistence_(p)
   , context_(ctx)
 {
-  matador::file f("../templates/" + ctx.entity_type_name + "_list.matador", "r");
-  auto tmpl = read_as_text(f);
-  f.close();
+  templates_.list = load_template(ctx.entity_type_name + "_list.matador");
+  templates_.details = load_template(ctx.entity_type_name + "_details.matador");
+  templates_.create = load_template(ctx.entity_type_name + "_create.matador");
+  templates_.edit = load_template(ctx.entity_type_name + "_edit.matador");
+  templates_.remove = load_template(ctx.entity_type_name + "_delete.matador");
 
   using namespace matador::http;
-  list_template_ = template_engine::build(tmpl);
-
-  f.open("../templates/" + ctx.entity_type_name + "_details.matador", "r");
-  tmpl = read_as_text(f);
-  f.close();
-
-  details_template_ = template_engine::build(tmpl);
-
-  f.open("../templates/" + ctx.entity_type_name + "_create.matador", "r");
-  tmpl = read_as_text(f);
-  f.close();
-
-  create_template_ = template_engine::build(tmpl);
-
-  f.open("../templates/" + ctx.entity_type_name + "_edit.matador", "r");
-  tmpl = read_as_text(f);
-  f.close();
-
-  edit_template_ = template_engine::build(tmpl);
-
-  f.open("../templates/" + ctx.entity_type_name + "_delete.matador", "r");
-  tmpl = read_as_text(f);
-  f.close();
-
-  delete_template_ = template_engine::build(tmpl);
-
   server.on_get("/" + ctx.entity_type_name, [this](const request &req) {
     return list(req);
   });
@@ -124,16 +110,25 @@ matador::http::response crud_page<EntityType>::list(const matador::http::request
 
   json data;
   data["title"] = context_.entity_plural_name;
+  data["entity"] = context_.entity_type_name;
 
   session s(persistence_);
 
   auto entities = s.select<EntityType>();
 
   json_object_mapper mapper;
+  object_to_json_table_converter converter;
 
-  data[context_.entity_type_name+"list"] = mapper.to_json(entities);
+  data["data"] = converter.to_json_table(entities);
 
-  return response::ok(template_engine::render(list_template_, data), mime_types::TYPE_TEXT_HTML);
+  auto description = s.store().describe(typeid(EntityType).name());
+
+  data["columns"] = json::array();
+  for (const auto &col : description.columns()) {
+    data["columns"].push_back(col.name);
+  }
+
+  return response::ok(template_engine::render(templates_.list, data), mime_types::TYPE_TEXT_HTML);
 }
 
 template < class EntityType >
@@ -156,7 +151,7 @@ matador::http::response crud_page<EntityType>::view(const matador::http::request
   data["title"] = context_.entity_singular_name;
   data[context_.entity_type_name] = mapper.to_json(m);
 
-  return response::ok(template_engine::render(details_template_, data), mime_types::TYPE_TEXT_HTML);
+  return response::ok(template_engine::render(templates_.details, data), mime_types::TYPE_TEXT_HTML);
 }
 
 template < class EntityType >
@@ -170,7 +165,7 @@ matador::http::response crud_page<EntityType>::create(const matador::http::reque
 
   prepare_json_form_data(data);
 
-  return response::ok(template_engine::render(create_template_, data), mime_types::TYPE_TEXT_HTML);
+  return response::ok(template_engine::render(templates_.create, data), mime_types::TYPE_TEXT_HTML);
 }
 
 template < class EntityType >
@@ -192,7 +187,7 @@ matador::http::response crud_page<EntityType>::edit(const matador::http::request
 
   prepare_json_form_data(data);
 
-  return response::ok(template_engine::render(edit_template_, data), mime_types::TYPE_TEXT_HTML);
+  return response::ok(template_engine::render(templates_.edit, data), mime_types::TYPE_TEXT_HTML);
 }
 
 template < class EntityType >
@@ -215,7 +210,17 @@ matador::http::response crud_page<EntityType>::remove(const matador::http::reque
   data["title"] = std::string("Delete " + context_.entity_singular_name);
   data[context_.entity_type_name] = mapper.to_json(m);
 
-  return response::ok(template_engine::render(delete_template_, data), mime_types::TYPE_TEXT_HTML);
+  return response::ok(template_engine::render(templates_.remove, data), mime_types::TYPE_TEXT_HTML);
+}
+
+template < class EntityType >
+template_ptr crud_page<EntityType>::load_template(const std::string &name)
+{
+  matador::file f(context_.template_path + name, "r");
+  auto tmpl = read_as_text(f);
+  f.close();
+
+  return matador::http::template_engine::build(tmpl);
 }
 
 #endif //MATADOR_CRUD_PAGE_HPP

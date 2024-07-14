@@ -7,19 +7,25 @@ ENDIF()
 
 SET (DEMO_SOURCES
   main.cpp
-  services/auth_service.cpp
-  services/auth_service.hpp
+  models/movie.hpp
+  models/person.hpp
   models/credential.hpp
   models/user.hpp
   pages/movie_page.cpp
   pages/movie_page.hpp
-  models/movie.hpp
-  models/person.hpp
-  services/movie_service.cpp
-  services/movie_service.hpp pages/main_page.cpp pages/main_page.hpp
+  pages/main_page.cpp
+  pages/main_page.hpp
   pages/crud_page.hpp
   pages/directors_page.cpp
-  pages/directors_page.hpp)
+  pages/directors_page.hpp
+  services/auth_service.cpp
+  services/auth_service.hpp
+  services/movie_service.cpp
+  services/movie_service.hpp
+  services/director_service.cpp
+  services/director_service.hpp
+  converter/object_to_json_table_converter.hpp
+  converter/object_to_json_table_converter.cpp)
 
 ADD_EXECUTABLE(demo ${DEMO_SOURCES})
 

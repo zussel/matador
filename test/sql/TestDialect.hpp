@@ -1,8 +1,9 @@
 #ifndef OOS_TESTDIALECT_HPP
 #define OOS_TESTDIALECT_HPP
 
-#include "matador/sql/types.hpp"
 #include "matador/sql/basic_dialect.hpp"
+
+#include "matador/utils/data_types.hpp"
 
 class TestDialect : public matador::basic_dialect
 {

@@ -20,11 +20,7 @@ namespace matador {
  *
  * @tparam LeftType owner type
  * @tparam RightType foreign type
- * @tparam Enable
  */
-//template<class LeftType, class RightType, typename Enable = void>
-//class has_one_to_many_item;
-
 template<class LeftType, class RightType>
 class has_one_to_many_item_foreign : public basic_has_many_to_many_item
 {
@@ -50,7 +46,7 @@ public:
     matador::access::belongs_to(op, this->right_column().c_str(), right_, matador::cascade_type::NONE);
   }
 
-  basic_has_many_to_many_item *clone() const override
+  [[nodiscard]] basic_has_many_to_many_item *clone() const override
   {
     return new has_one_to_many_item_foreign(left_column(), right_column());
   }
@@ -100,7 +96,7 @@ public:
     matador::access::attribute(op, this->right_column().c_str(), right_, right_attributes_);
   }
 
-  basic_has_many_to_many_item *clone() const override
+  [[nodiscard]] basic_has_many_to_many_item *clone() const override
   {
     return new has_one_to_many_item_scalar(left_column(), right_column(), right_attributes_);
   }

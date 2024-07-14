@@ -15,8 +15,7 @@ namespace matador {
 class string_cursor;
 class json;
 
-namespace http {
-namespace detail {
+namespace http::detail {
 
 /// @cond MATADOR_DEV
 
@@ -55,6 +54,6 @@ public:
 /// @endcond
 
 }
-}
+
 }
 #endif //MATADOR_TEMPLATE_COMMAND_HPP

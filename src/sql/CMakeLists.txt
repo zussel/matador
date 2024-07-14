@@ -20,7 +20,6 @@ SET(SOURCES
   basic_query.cpp
   basic_dialect_compiler.cpp
   basic_dialect_linker.cpp
-  type.cpp
   query_value_column_processor.cpp
         connection_impl.cpp
   value_processor.cpp
@@ -30,51 +29,50 @@ SET(SOURCES
   connection_info.cpp)
 
 SET(HEADER
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/condition.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/connection.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/connection_factory.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/connection_impl.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/result.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/result_impl.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/memory_connection.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/query.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/sql_context.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/row.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/value.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/statement.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/statement_context.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/statement_impl.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/types.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/token.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/sql_exception.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/field.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_dialect.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/typed_column_serializer.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/column.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/identifier_binder.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/dialect_token.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/column_serializer.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/value_serializer.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/value_column_serializer.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/commands.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_query.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/token_list.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/token_visitor.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_dialect_compiler.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_dialect_linker.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/query_value_column_processor.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/parameter_binder.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/value_processor.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/database_error.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/basic_sql_logger.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/sql_logger.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/export.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/schema.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/columns.hpp
-  ${CMAKE_SOURCE_DIR}/include/matador/sql/connection_info.hpp
-        ../../include/matador/sql/column_value.hpp
-        ../../include/matador/sql/column_value_visitor.hpp
-        ../../include/matador/sql/placeholder.hpp)
+  ../../include/matador/sql/condition.hpp
+  ../../include/matador/sql/connection.hpp
+  ../../include/matador/sql/connection_factory.hpp
+  ../../include/matador/sql/connection_impl.hpp
+  ../../include/matador/sql/result.hpp
+  ../../include/matador/sql/result_impl.hpp
+  ../../include/matador/sql/memory_connection.hpp
+  ../../include/matador/sql/query.hpp
+  ../../include/matador/sql/sql_context.hpp
+  ../../include/matador/sql/row.hpp
+  ../../include/matador/sql/value.hpp
+  ../../include/matador/sql/statement.hpp
+  ../../include/matador/sql/statement_context.hpp
+  ../../include/matador/sql/statement_impl.hpp
+  ../../include/matador/sql/token.hpp
+  ../../include/matador/sql/sql_exception.hpp
+  ../../include/matador/sql/field.hpp
+  ../../include/matador/sql/basic_dialect.hpp
+  ../../include/matador/sql/typed_column_serializer.hpp
+  ../../include/matador/sql/column.hpp
+  ../../include/matador/sql/identifier_binder.hpp
+  ../../include/matador/sql/dialect_token.hpp
+  ../../include/matador/sql/column_serializer.hpp
+  ../../include/matador/sql/value_serializer.hpp
+  ../../include/matador/sql/value_column_serializer.hpp
+  ../../include/matador/sql/commands.hpp
+  ../../include/matador/sql/basic_query.hpp
+  ../../include/matador/sql/token_list.hpp
+  ../../include/matador/sql/token_visitor.hpp
+  ../../include/matador/sql/basic_dialect_compiler.hpp
+  ../../include/matador/sql/basic_dialect_linker.hpp
+  ../../include/matador/sql/query_value_column_processor.hpp
+  ../../include/matador/sql/parameter_binder.hpp
+  ../../include/matador/sql/value_processor.hpp
+  ../../include/matador/sql/database_error.hpp
+  ../../include/matador/sql/basic_sql_logger.hpp
+  ../../include/matador/sql/sql_logger.hpp
+  ../../include/matador/sql/export.hpp
+  ../../include/matador/sql/schema.hpp
+  ../../include/matador/sql/columns.hpp
+  ../../include/matador/sql/connection_info.hpp
+  ../../include/matador/sql/column_value.hpp
+  ../../include/matador/sql/column_value_visitor.hpp
+  ../../include/matador/sql/placeholder.hpp)
 
 ADD_LIBRARY(matador-sql STATIC ${SOURCES} ${HEADER})
 

@@ -39,12 +39,12 @@ void field::name(const std::string &n)
   name_ = n;
 }
 
-database_type field::type() const
+data_type field::type() const
 {
   return type_;
 }
 
-void field::type(database_type t)
+void field::type(data_type t)
 {
   type_ = t;
 }
@@ -87,6 +87,56 @@ std::string field::default_value() const
 void field::default_value(const std::string &value)
 {
   default_value_ = value;
+}
+
+bool field::is_integer() const
+{
+  return type_ >= data_type::type_char && type_ <= data_type::type_unsigned_long_long;
+}
+
+bool field::is_floating_point() const
+{
+  return type_ == data_type::type_float || type_ == data_type::type_double;
+}
+
+bool field::is_bool() const
+{
+  return type_ == data_type::type_bool;
+}
+
+bool field::is_string() const
+{
+  return type_ == data_type::type_text;
+}
+
+bool field::is_varchar() const
+{
+  return type_ == data_type::type_varchar || type_ == data_type::type_char_pointer;
+}
+
+bool field::is_blob() const
+{
+  return type_ == data_type::type_blob;
+}
+
+bool field::is_date() const
+{
+  return type_ == data_type::type_date;
+}
+
+bool field::is_time() const
+{
+  return type_ == data_type::type_time;
+}
+
+bool field::is_null() const
+{
+  return type_ == data_type::type_null;
+}
+
+bool field::is_unknown() const
+{
+  return type_ == data_type::type_unknown;
 }
 
 }

@@ -1,5 +1,5 @@
-#ifndef OOS_OBJECT_INSERTER_HPP
-#define OOS_OBJECT_INSERTER_HPP
+#ifndef MATADOR_OBJECT_INSERTER_HPP
+#define MATADOR_OBJECT_INSERTER_HPP
 
 #include "matador/object/export.hpp"
 
@@ -10,8 +10,7 @@
 
 #include <stack>
 
-namespace matador {
-namespace detail {
+namespace matador::detail {
 
 /**
  * @cond MATADOR_DEV
@@ -56,18 +55,33 @@ public:
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
 
   template<class T>
-  void on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade);
+  void on_belongs_to(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
   template<class T>
-  void on_has_one(const char *, object_ptr<T> &x, cascade_type cascade);
+  void on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
 
-  template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, const char*, const char*, cascade_type cascade)
+  template<class Type, template<class ...> class Container>
+  void on_has_many(const char *, container<Type, Container> &x, const char * /*join_column*/, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_has_many(id, x, cascade);
+    handle_insert_has_many_relation(x, attr);
+  }
+
+  template<class Type, template<class ...> class Container>
+  void on_has_many(const char *, container<Type, Container> &x, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_insert_has_many_relation(x, attr);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &, cascade_type);
+  void on_has_many_to_many(const char * /*id*/, container<T, C> &x, const char* /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_insert_has_many_relation(x, attr);
+  }
+
+  template<class T, template<class ...> class C>
+  void on_has_many_to_many(const char * /*id*/, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_insert_has_many_relation(x, attr);
+  }
 
 private:
   template < class T >
@@ -87,10 +101,13 @@ private:
   }
   void decrement_reference_count(object_holder &holder) const;
 
-  void insert_object(object_holder &x, const std::type_index &type_index, cascade_type cascade);
+  void insert_object(object_holder &x, const std::type_index &type_index, const foreign_attributes &attr);
   void insert_proxy(object_proxy *proxy);
 
   object_proxy* initialize_has_many(abstract_container &x);
+
+  template<class T, template<class ...> class C>
+  void handle_insert_has_many_relation(container<T, C> &x, const foreign_attributes &attr);
 
   template < class T, class ItemHolderType >
   void insert_has_many_item(const ItemHolderType &item,
@@ -124,19 +141,19 @@ void object_inserter::serialize(T &x)
 }
 
 template<class T>
-void object_inserter::on_belongs_to(const char *, object_ptr<T> &x, cascade_type cascade)
+void object_inserter::on_belongs_to(const char *, object_ptr<T> &x, const foreign_attributes &attr)
 {
-  insert_object(x, std::type_index(typeid(T)), cascade);
+  insert_object(x, std::type_index(typeid(T)), attr);
 }
 
 template<class T>
-void object_inserter::on_has_one(const char *, object_ptr<T> &x, cascade_type cascade)
+void object_inserter::on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr)
 {
-  insert_object(x, std::type_index(typeid(T)), cascade);
+  insert_object(x, std::type_index(typeid(T)), attr);
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::on_has_many(const char *, container<T, C> &x, cascade_type cascade)
+void object_inserter::handle_insert_has_many_relation(container<T, C> &x, const foreign_attributes &attr)
 {
   auto *proxy = initialize_has_many(x);
 
@@ -156,7 +173,7 @@ void object_inserter::on_has_many(const char *, container<T, C> &x, cascade_type
   while (first != last) {
     auto j = first++;
 
-    insert_has_many_item(j, proxy, x.relation_info_, cascade);
+    insert_has_many_item(j, proxy, x.relation_info_, attr.cascade());
   }
 }
 
@@ -194,6 +211,6 @@ void object_inserter::insert_has_many_item(const ItemHolderType &item,
 /// @endcond
 
 }
-}
 
-#endif //OOS_OBJECT_INSERTER_HPP
+
+#endif //MATADOR_OBJECT_INSERTER_HPP

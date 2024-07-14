@@ -3,11 +3,15 @@
 
 #include <algorithm>
 
-namespace matador {
-namespace detail {
+namespace matador::detail {
+
+const char* abstract_prototype_info::type_name() const
+{
+  return node.type();
+}
 
 void abstract_prototype_info::register_relation_endpoint(const std::type_index &tindex,
-                                                      const std::shared_ptr<basic_relation_endpoint> &endpoint)
+                                                         const std::shared_ptr<basic_relation_endpoint> &endpoint)
 {
   endpoints_.insert(std::make_pair(tindex, endpoint));
 }
@@ -74,6 +78,5 @@ std::size_t abstract_prototype_info::endpoints_size() const
 bool abstract_prototype_info::endpoints_empty() const
 {
   return endpoints_.empty();
-}
 }
 }

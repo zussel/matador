@@ -5,9 +5,10 @@
 
 namespace matador {
 
-identifier::base::base(const std::type_index &ti, detail::identifier_type id_type)
+identifier::base::base(const std::type_index &ti, detail::identifier_type id_type, data_type type)
   : type_index_(ti)
   , identifier_type_(id_type)
+  , type_(type)
 {}
 
 bool identifier::base::is_similar_type(const identifier::base &x) const
@@ -21,7 +22,7 @@ detail::identifier_type identifier::base::type() const
 }
 
 identifier::null_pk::null_pk()
-  : base(std::type_index(typeid(null_type_t)), detail::identifier_type_traits<null_type_t>::type())
+  : base(std::type_index(typeid(null_type_t)), detail::identifier_type_traits<null_type_t>::type(), data_type::type_null)
 {}
 
 identifier::base* identifier::null_pk::copy() const
@@ -116,6 +117,10 @@ std::string identifier::str() const {
 
 const std::type_index &identifier::type_index() const {
   return id_->type_index_;
+}
+
+data_type identifier::type() const {
+  return id_->type_;
 }
 
 identifier identifier::share() const

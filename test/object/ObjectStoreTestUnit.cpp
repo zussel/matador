@@ -1321,9 +1321,7 @@ void ObjectStoreTestUnit::test_observer()
 
   result = {
     "person",
-    "employee",
     "department",
-    "employee",
     "employee",
     "books",
     "book_list",
@@ -1350,7 +1348,7 @@ void ObjectStoreTestUnit::test_observer()
   UNIT_ASSERT_TRUE(basic_logger::nodes == result);
 }
 
-typedef has_many_to_many_item<course, student> course_student_item;
+typedef has_many_to_many_item<student, course> student_course_item;
 
 void ObjectStoreTestUnit::test_attach_has_many()
 {
@@ -1360,7 +1358,7 @@ void ObjectStoreTestUnit::test_attach_has_many()
 
   UNIT_ASSERT_EQUAL(4UL, ostore_.size());
 
-  std::unique_ptr<course_student_item> item1(ostore_.create<course_student_item>());
+  std::unique_ptr<student_course_item> item1(ostore_.create<student_course_item>());
 
   UNIT_ASSERT_NOT_NULL(item1.get());
 
@@ -1368,7 +1366,7 @@ void ObjectStoreTestUnit::test_attach_has_many()
 
   UNIT_ASSERT_FALSE(node == ostore_.end());
 
-  node = ostore_.find<course_student_item>();
+  node = ostore_.find<student_course_item>();
 
   UNIT_ASSERT_FALSE(node == ostore_.end());
 }

@@ -7,9 +7,7 @@
 #include "matador/utils/stream.hpp"
 #include "matador/json/json.hpp"
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 
 void template_part::append_filter(const template_filter_ptr &filter)
 {
@@ -109,11 +107,14 @@ std::string loop_template_part::render(const json &data)
     return part_->render(data);
   } else {
     std::string result;
+    size_t index{0};
     for(const auto &elem : cont) {
 
       json item = json::object();
       item[elem_name_] = elem;
       item["forloop"]["parent"] = data;
+      item["forloop"]["counter0"] = index++;
+      item["forloop"]["counter"] = index;
 
       result.append(loop_part_->render(item));
     }
@@ -137,5 +138,4 @@ std::string if_template_part::render(const json &data)
 }
 
 }
-}
-}
+

@@ -13,8 +13,9 @@ struct credential
   template < class Operator >
   void process(Operator &op)
   {
-    matador::access::attribute(op, "username", username, 255);
-    matador::access::attribute(op, "password", password, 255);
+    namespace field = matador::access;
+    field::attribute(op, "username", username, 255);
+    field::attribute(op, "password", password, 255);
   }
 };
 

@@ -1,11 +1,21 @@
 #include "matador/object/prototype_node.hpp"
 #include "matador/object/relation_endpoint.hpp"
 
-namespace matador {
+namespace matador::detail {
 
-namespace detail {
+bool basic_relation_endpoint::is_has_one() const {
+  return type == HAS_ONE;
+}
 
-void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, object_proxy *owner)
+bool basic_relation_endpoint::is_has_many() const {
+  return type == HAS_MANY;
+}
+
+bool basic_relation_endpoint::is_belongs_to() const {
+  return type == BELONGS_TO;
+}
+
+void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, object_proxy *owner) const
 {
   auto sptr = foreign_endpoint.lock();
   if (sptr) {
@@ -13,7 +23,7 @@ void basic_relation_endpoint::insert_value_into_foreign(object_proxy *value, obj
   }
 }
 
-void basic_relation_endpoint::remove_value_from_foreign(object_proxy *value, object_proxy *owner)
+void basic_relation_endpoint::remove_value_from_foreign(object_proxy *value, object_proxy *owner) const
 {
   auto sptr = foreign_endpoint.lock();
   if (sptr) {
@@ -56,5 +66,4 @@ void basic_relation_endpoint::print(std::ostream &out) const
   }
 }
 
-}
 }

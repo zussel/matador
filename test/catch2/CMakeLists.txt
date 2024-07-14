@@ -19,6 +19,9 @@ add_executable(tests
   sql/QueryValueColumnProcessorTest.cpp
   object/ObserverListCopyCreatorTest.cpp
   object/ObjectPrototypeTest.cpp
+  object/ObjectStoreAttachTest.cpp
+  object/ObjectStoreRelationTest.cpp
+  object/ObjectStoreAttachTestModels.hpp
 )
 
 target_link_libraries(tests PRIVATE

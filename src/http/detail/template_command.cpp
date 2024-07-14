@@ -8,9 +8,7 @@
 #include <memory>
 #include <stdexcept>
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 
 void move_parts(std::shared_ptr<multi_template_part> &to_parts, std::unique_ptr<detail::multi_template_part> &from_part)
 {
@@ -153,5 +151,5 @@ std::shared_ptr<template_part> include_command::parse(string_cursor &cursor)
 }
 
 }
-}
-}
+
+

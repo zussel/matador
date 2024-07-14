@@ -2,31 +2,39 @@
 <html lang="en">
 {% include "../templates/header.matador" %}
 <body>
-<div class="header">
+<header class="container">
     <h1>{{title}}</h1>
-</div>
-    <a class="pure-button pure-button-primary" href="/movie/edit/{{movie.id}}">Edit</a>
-    <a class="button-error pure-button" href="/movie/delete/{{movie.id}}">Delete</a>
-    <a class="button-secondary pure-button" href="/movie">List</a>
-    <form class="pure-form pure-form-aligned">
-        <fieldset>
-            <div class="pure-control-group">
-                <label for="aligned-id">Id</label>
-                <input type="text" id="aligned-id" placeholder="id" readonly="" value="{{movie.id}}"/>
-            </div>
-            <div class="pure-control-group">
-                <label for="aligned-title">Title</label>
-                <input type="text" id="aligned-title" placeholder="Title" readonly="" value="{{movie.title | escape}}" />
-            </div>
-            <div class="pure-control-group">
-                <label for="aligned-director">Director</label>
-                <input type="text" id="aligned-director" placeholder="Director" readonly="" value="{{movie.director.name}}" />
-            </div>
-            <div class="pure-control-group">
-                <label for="aligned-year">Year</label>
-                <input type="number" id="aligned-year" placeholder="Year" readonly="" value="{{movie.year}}" />
-            </div>
-        </fieldset>
+</header>
+<main class="container">
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/movie">{{title}}</a></li>
+            <li>{{movie.title | escape}}</li>
+        </ul>
+    </nav>
+
+    <a role="button" href="/movie/edit/{{movie.id}}">Edit</a>
+    <a role="button" href="/movie/delete/{{movie.id}}">Delete</a>
+
+    <form>
+        <div class="grid">
+            <label for="aligned-id">Id</label>
+            <input type="text" id="aligned-id" placeholder="id" readonly="" value="{{movie.id}}"/>
+        </div>
+        <div class="grid">
+            <label for="aligned-title">Title</label>
+            <input type="text" id="aligned-title" placeholder="Title" readonly="" value="{{movie.title | escape}}" />
+        </div>
+        <div class="grid">
+            <label for="aligned-director">Director</label>
+            <input type="text" id="aligned-director" placeholder="Director" readonly="" value="{{movie.director.name}}" />
+        </div>
+        <div class="grid">
+            <label for="aligned-year">Year</label>
+            <input type="number" id="aligned-year" placeholder="Year" readonly="" value="{{movie.year}}" />
+        </div>
     </form>
+</main>
 </body>
 </html>

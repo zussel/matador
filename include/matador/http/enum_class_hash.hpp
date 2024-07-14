@@ -3,9 +3,7 @@
 
 #include <cstddef>
 
-namespace matador {
-namespace http {
-namespace detail {
+namespace matador::http::detail {
 /// @cond MATADOR_DEV
 struct enum_class_hash
 {
@@ -17,6 +15,6 @@ struct enum_class_hash
 };
 /// @endcond
 }
-}
-}
+
+
 #endif //MATADOR_ENUM_CLASS_HASH_HPP

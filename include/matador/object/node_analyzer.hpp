@@ -3,6 +3,7 @@
 
 #include "matador/utils/field_attributes.hpp"
 #include "matador/utils/is_builtin.hpp"
+#include "matador/utils/foreign_attributes.hpp"
 
 namespace matador {
 
@@ -34,8 +35,6 @@ public:
   }
 
   template<class V>
-  void serialize(V &x);
-  template<class V>
   void on_primary_key(const char *, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
@@ -43,28 +42,23 @@ public:
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) { }
   void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) { }
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
+
   template<class Value>
-  void on_belongs_to(const char *id, object_ptr<Value> &x, cascade_type);
+  void on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template<class Value>
-  void on_has_one(const char *id, object_ptr<Value> &x, cascade_type);
-
+  void on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
   template<class Value, template<class ...> class Container>
-  void on_has_many(const char *id, container<Value, Container> &x, cascade_type cascade);
-
+  void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template<class Value, template<class ...> class Container>
-  void on_has_many(const char *, container<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
   template<class Value, template<class ...> class Container>
-  void on_has_many(const char *, container<Value, Container> &, const char *left_column, const char *right_column, cascade_type, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
-
-private:
-  /**
-   * Detach has_one_to_many node
-   *
-   * @param node Node to detach
-   * @return The foreign prototype node iterator
-   */
-  template < class V >
-  prototype_iterator detach_one_to_many_node(const prototype_iterator &node);
+  void on_has_many(const char *id, container<Value, Container> &x, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  template<class Value, template<class ...> class Container>
+  void on_has_many(const char *id, container<Value, Container> &x, const foreign_attributes &attr = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  template<class Value, template<class ...> class Container>
+  void on_has_many_to_many(const char *id, container<Value, Container> &x, const foreign_attributes &attr = default_foreign_attributes);
+  template<class Value, template<class ...> class Container>
+  void on_has_many_to_many(const char *, container<Value, Container> &, const char *join_column, const char *inverse_join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes);
 
 protected:
   prototype_node &node_;

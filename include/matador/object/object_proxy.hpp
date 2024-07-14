@@ -57,7 +57,7 @@ public:
    *
    * @param pk primary key of object
    */
-  explicit object_proxy(const identifier &pk);
+  explicit object_proxy(identifier pk);
 
   template < class T >
   object_proxy(identifier pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)

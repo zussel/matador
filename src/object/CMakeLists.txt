@@ -22,7 +22,8 @@ SET(SOURCES
   object_json_serializer.cpp
   json_object_mapper_serializer.cpp
   object_deserializer.cpp
-  object_type_registry_entry_base.cpp relation_endpoint.cpp)
+  object_type_registry_entry_base.cpp relation_endpoint.cpp
+  object_json_attribute_extractor.cpp)
 
 SET(HEADER
   ../../include/matador/object/action.hpp
@@ -79,7 +80,10 @@ SET(HEADER
   ../../include/matador/object/value_type_traits.hpp
   ../../include/matador/object/container_iterator.hpp
         ../../include/matador/object/observer_list_copy_creator.hpp
-  ../../include/matador/object/observer_list_creator.hpp)
+  ../../include/matador/object/observer_list_creator.hpp
+  ../../include/matador/object/relation_endpoint_validator.hpp
+  ../../include/matador/object/object_description.hpp
+  ../../include/matador/object/object_json_attribute_extractor.hpp)
 
 ADD_LIBRARY(matador-object STATIC ${SOURCES} ${HEADER})
 

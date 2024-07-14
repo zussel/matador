@@ -36,7 +36,7 @@ struct MATADOR_OBJECT_API basic_relation_endpoint : public object_proxy_accessor
         type_name = "has_one";
         break;
       case HAS_MANY:
-        type_name = "container";
+        type_name = "has_many";
         break;
       default:
         break;
@@ -45,37 +45,33 @@ struct MATADOR_OBJECT_API basic_relation_endpoint : public object_proxy_accessor
 
   virtual ~basic_relation_endpoint() = default;
 
+  [[nodiscard]] bool is_has_one() const;
+  [[nodiscard]] bool is_has_many() const;
+  [[nodiscard]] bool is_belongs_to() const;
+
   virtual void insert_value(object_proxy *value, object_proxy *owner) = 0;
-
-  virtual void remove_value(object_proxy *value, object_proxy *owner) = 0;
-
   virtual void insert_value(const basic_container_item_holder &value, object_proxy *owner) = 0;
 
+  virtual void remove_value(object_proxy *value, object_proxy *owner) = 0;
   virtual void remove_value(const basic_container_item_holder &value, object_proxy *owner) = 0;
 
-  void insert_value_into_foreign(object_proxy *value, object_proxy *owner);
-
+  void insert_value_into_foreign(object_proxy *value, object_proxy *owner) const;
   template<class Value>
   void insert_value_into_foreign(const container_item_holder<Value> &holder, object_proxy *owner);
 
-  void remove_value_from_foreign(object_proxy *value, object_proxy *owner);
-
+  void remove_value_from_foreign(object_proxy *value, object_proxy *owner) const;
   template<class Value>
   void remove_value_from_foreign(const container_item_holder<Value> &holder, object_proxy *owner);
 
   template<class T>
   void set_has_many_item_proxy(container_item_holder<T> &holder, const object_holder &obj);
-
   template<class T>
   void set_has_many_item_proxy(container_item_holder<T> &holder, object_proxy *proxy);
 
-
   void increment_reference_count(const object_holder &holder);
-
   void decrement_reference_count(const object_holder &holder);
 
   void mark_holder_as_inserted(basic_container_item_holder &holder) const;
-
   void mark_holder_as_removed(basic_container_item_holder &holder) const;
 
   virtual void print(std::ostream &out) const;
@@ -101,7 +97,6 @@ struct relation_endpoint : public basic_relation_endpoint {
   : basic_relation_endpoint(field, node, type) {}
 
   virtual void insert_holder(object_store &store, container_item_holder<Value> &holder, object_proxy *owner) = 0;
-
   virtual void remove_holder(object_store &store, container_item_holder<Value> &holder, object_proxy *owner) = 0;
 
   virtual object_proxy *acquire_proxy(unsigned long long oid, object_store &store) = 0;

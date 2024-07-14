@@ -84,35 +84,55 @@ public:
   void on_attribute(const char *id, time &x, const field_attributes &/*attr*/ = null_attributes);
 
   template<class T>
-  void on_belongs_to(const char *id, matador::object_ptr<T> &x, cascade_type cascade)
+  void on_belongs_to(const char *id, matador::object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_foreign_object(id, x, cascade);
+    on_foreign_object(id, x, attr);
   }
 
   template<class T>
-  void on_has_one(const char *id, matador::object_ptr<T> &x, cascade_type cascade)
+  void on_has_one(const char *id, matador::object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_foreign_object(id, x, cascade);
+    on_foreign_object(id, x, attr);
   }
 
-  template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, const char *, const char *, cascade_type cascade)
+  template<class Type, template<class ...> class Container>
+  void on_has_many(const char *id, container<Type, Container> &x, const char * /*join_column*/, const foreign_attributes &attr = default_foreign_attributes)
   {
-    on_has_many(id, x, cascade);
+    handle_has_many_relation(id, x, attr);
   }
 
-  template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, cascade_type cascade)
+  template<class Type, template<class ...> class Container>
+  void on_has_many(const char *id, container<Type, Container> &x, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_has_many_relation(id, x, attr);
+  }
+
+  template<class Type, template<class ...> class Container>
+  void on_has_many_to_many(const char *id, container<Type, Container> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_has_many_relation(id, x, attr);
+  }
+
+
+  template<class Type, template<class ...> class Container>
+  void on_has_many_to_many(const char *id, container<Type, Container> &x, const foreign_attributes &attr = default_foreign_attributes)
+  {
+    handle_has_many_relation(id, x, attr);
+  }
+
+private:
+  template<class Type, template<class ...> class Container>
+  void handle_has_many_relation(const char *id, container<Type, Container> &x, const foreign_attributes &attr = default_foreign_attributes)
   {
     std::string id_oid(id);
     id_oid += ".oid";
-    typename container<T, C>::size_type s{};
+    typename container<Type, Container>::size_type s{};
     // deserialize container size
     on_attribute(id, s);
 
     x.reset();
 
-    for (typename container<T, C>::size_type i = 0; i < s; ++i) {
+    for (typename container<Type, Container>::size_type i = 0; i < s; ++i) {
 
       // deserialize all items
       unsigned long long oid = 0;
@@ -124,28 +144,27 @@ public:
         insert_proxy(proxy);
       }
 
-      typename container_item_holder<T>::value_type val;
-      process_has_many_item(val, cascade);
+      typename container_item_holder<Type>::value_type val;
+      process_has_many_item(val, attr);
 
-      x.append(container_item_holder<T>(val, proxy));
+      x.append(container_item_holder<Type>(val, proxy));
     }
   }
 
-private:
   template<class T>
-  void process_has_many_item(T &obj, cascade_type cascade, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0)
+  void process_has_many_item(T &obj, const foreign_attributes &attr, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0)
   {
-    on_foreign_object("", obj, cascade);
+    on_foreign_object("", obj, attr);
   }
 
   template<class T>
-  void process_has_many_item(T &attr, cascade_type /*cascade*/, typename std::enable_if<matador::is_builtin<T>::value>::type* = 0)
+  void process_has_many_item(T &attr, const foreign_attributes &/*attr*/, typename std::enable_if<matador::is_builtin<T>::value>::type* = 0)
   {
     on_attribute("", attr);
   }
 
   template<class T>
-  void on_foreign_object(const char *id, matador::object_ptr<T> &x, cascade_type cascade)
+  void on_foreign_object(const char *id, matador::object_ptr<T> &x, const foreign_attributes &attr)
   {
     /***************
      *
@@ -166,7 +185,7 @@ private:
         oproxy = new object_proxy(new T, oid, object_type);
         insert_proxy(oproxy);
       }
-      x.reset(oproxy, cascade);
+      x.reset(oproxy, attr);
     }
   }
 private:

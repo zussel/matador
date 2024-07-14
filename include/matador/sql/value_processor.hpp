@@ -4,6 +4,7 @@
 #include "matador/utils/serializer.hpp"
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
+#include "matador/utils/field_attributes.hpp"
 
 #include "matador/sql/value.hpp"
 

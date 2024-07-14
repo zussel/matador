@@ -20,7 +20,7 @@ class abstract_container;
 class basic_attribute_serializer
 {
 public:
-  bool success() const
+  [[nodiscard]] bool success() const
   {
     return success_;
   }
@@ -100,10 +100,12 @@ public:
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, object_holder &, cascade_type) {}
-  void on_has_one(const char *, object_holder &, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   const T &from_;
@@ -127,7 +129,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = nullptr)
   {
     if (id_ != id) {
       return;
@@ -137,7 +139,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_floating_point<V>::value>::type* = nullptr)
   {
     if (id_ != id) {
       return;
@@ -160,10 +162,12 @@ public:
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, object_holder &, cascade_type) {}
-  void on_has_one(const char *, object_holder &, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   bool from_;
@@ -193,19 +197,21 @@ public:
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   template < class V >
-  void on_belongs_to(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     x = from_;
     this->success_ = true;
   }
   template < class V >
-  void on_has_one(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     x = from_;
     this->success_ = true;
   }
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   const object_ptr<T> &from_;
@@ -237,16 +243,28 @@ public:
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
-  void on_has_many(const char *, identifiable_holder &, cascade_type) { }
+  void on_belongs_to(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
+  void on_has_one(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.push_back(from_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.push_back(from_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many_to_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
@@ -279,16 +297,28 @@ public:
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, identifiable_holder &, cascade_type) { }
-  void on_has_many(const char *, identifiable_holder &, cascade_type) { }
+  void on_belongs_to(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
+  void on_has_one(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.push_back(from_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.push_back(from_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many_to_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
@@ -342,10 +372,12 @@ public:
       this->success_ = true;
     }
   }
-  void on_belongs_to(const char *, object_holder &, cascade_type) {}
-  void on_has_one(const char *, object_holder &, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   const char* from_ = nullptr;
@@ -395,10 +427,12 @@ public:
       this->success_ = true;
     }
   }
-  void on_belongs_to(const char *, object_holder &, cascade_type) {}
-  void on_has_one(const char *, object_holder &, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   const std::string &from_;
@@ -461,10 +495,12 @@ public:
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, object_holder &, cascade_type) {}
-  void on_has_one(const char *, object_holder &, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   T &to_;
@@ -489,17 +525,19 @@ public:
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
   template < class V >
-  void on_belongs_to(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     to_ = x;
   }
   template < class V >
-  void on_has_one(const char *, object_ptr<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     to_ = x;
   }
-  void on_has_many(const char *, abstract_container &, const char *, const char *, cascade_type) {}
-  void on_has_many(const char *, abstract_container &, cascade_type) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   object_ptr<T> &to_;
@@ -524,23 +562,35 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &from, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
+  void on_primary_key(const char *, V &/*from*/, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0) {}
   void on_primary_key(const char *, std::string &/*from*/, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
-  void on_has_one(const char *, identifiable_holder &, cascade_type) {}
+  void on_belongs_to(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_one(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.remove(to_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.remove(to_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many_to_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
@@ -572,16 +622,27 @@ public:
   void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, identifiable_holder &, cascade_type) {}
-  void on_has_many(const char *, identifiable_holder &, cascade_type) {}
+  void on_belongs_to(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const char *, const char *, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, cascade_type)
+  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.remove(to_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  {
+    x.remove(to_);
+    this->success_ = true;
+  }
+  template<class V, template <class ...> class C>
+  void on_has_many_to_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
@@ -665,7 +726,7 @@ public:
   }
 
   template < class V >
-  void on_belongs_to(const char *id, object_ptr<V> &x, cascade_type)
+  void on_belongs_to(const char *id, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     if (id_ != id) {
       return;
@@ -681,7 +742,7 @@ public:
   }
 
   template < class V >
-  void on_has_one(const char *id, object_ptr<V> &x, cascade_type)
+  void on_has_one(const char *id, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
   {
     if (id_ != id) {
       return;
@@ -696,8 +757,10 @@ public:
     success_ = true;
   }
 
-  void on_has_many(const char*, abstract_container&, const char*, const char*, cascade_type) {}
-  void on_has_many(const char*, abstract_container&, cascade_type) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
 private:
   std::string &to_;
@@ -735,7 +798,7 @@ public:
    *
    * @return True if value could be retrieved.
    */
-  bool success() const
+  [[nodiscard]] bool success() const
   {
     return success_;
   }
@@ -764,10 +827,12 @@ public:
   }
   void on_attribute(const char*, date&, const field_attributes &/*attr*/ = null_attributes) {}
   void on_attribute(const char*, time&, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char*, identifiable_holder &, cascade_type) {}
-  void on_has_one(const char*, identifiable_holder &, cascade_type) {}
-  void on_has_many(const char*, abstract_container&, const char*, const char*, cascade_type) {}
-  void on_has_many(const char*, abstract_container&, cascade_type) {}
+  void on_belongs_to(const char*, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_one(const char*, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
 
   void on_attribute(const char *id, std::string &from, const field_attributes &attr)
   {

@@ -41,17 +41,17 @@ void object_serializer::on_attribute(const char *id, time &x, const field_attrib
   on_attribute(id, ti.milliseconds);
 }
 
-void object_serializer::on_belongs_to(const char *id, object_holder &x, cascade_type cascade)
+void object_serializer::on_belongs_to(const char *id, object_holder &x, const foreign_attributes &attr)
 {
-  on_foreign_object(id, x, cascade);
+  on_foreign_object(id, x, attr);
 }
 
-void object_serializer::on_has_one(const char *id, object_holder &x, cascade_type cascade)
+void object_serializer::on_has_one(const char *id, object_holder &x, const foreign_attributes &attr)
 {
-  on_foreign_object(id, x, cascade);
+  on_foreign_object(id, x, attr);
 }
 
-void object_serializer::on_foreign_object(const char *id, object_holder &x, cascade_type /*cascade*/)
+void object_serializer::on_foreign_object(const char *id, object_holder &x, const foreign_attributes &/*attr*/)
 {
   auto oid = x.id();
   on_attribute(id, oid);

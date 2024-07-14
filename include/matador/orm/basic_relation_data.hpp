@@ -22,12 +22,7 @@ class basic_relation_data : public object_proxy_accessor
 public:
   virtual ~basic_relation_data() = default;
 
-  virtual const std::type_index& type_index() const = 0;
-
-  static void increment_reference_count(object_proxy &proxy)
-  {
-    ++proxy;
-  }
+  [[nodiscard]] virtual const std::type_index& type_index() const = 0;
 };
 
 template < class T, class Enabled = void >
@@ -50,14 +45,13 @@ public:
   void insert_into_container(const identifier &pk, container<value_type, C> &container)
   {
     auto range = id_multi_map_.equal_range(pk);
-    for (auto i = range.first; i != range.second; ++i)
-    {
+    for (auto i = range.first; i != range.second; ++i) {
       container.append(container_item_holder<value_type>(i->second.first, i->second.second));
     }
     id_multi_map_.erase(pk);
   }
 
-  const std::type_index& type_index() const override
+  [[nodiscard]] const std::type_index& type_index() const override
   {
     return type_index_;
   }
@@ -85,19 +79,17 @@ public:
   void insert_into_container(const identifier &pk, container<value_type, C> &container)
   {
     auto range = id_multi_map_.equal_range(pk);
-    for (auto i = range.first; i != range.second; ++i)
-    {
+    for (auto i = range.first; i != range.second; ++i) {
       container.append(container_item_holder<value_type>(i->second.first, i->second.second));
-      if (!std::is_base_of<basic_has_many_to_many_item, value_type>::value && i->second.second == nullptr) {
+      if (!std::is_base_of<basic_has_many_to_many_item, value_type>::value) {
         ++(*proxy(i->second.first));
       }
-
     }
 
     id_multi_map_.erase(pk);
   }
 
-  const std::type_index& type_index() const override
+  [[nodiscard]] const std::type_index& type_index() const override
   {
     return type_index_;
   }
