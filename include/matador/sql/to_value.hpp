@@ -36,7 +36,7 @@ void to_value(Type &value, const char *str, typename std::enable_if<std::is_inte
 template < class Type >
 void to_value(Type &value, const char *str, typename std::enable_if<std::is_integral<Type>::value && std::is_unsigned<Type>::value>::type* = nullptr)
 {
-  if (strlen(str) == 0) {
+  if (str == nullptr || strlen(str) == 0) {
     return;
   }
 

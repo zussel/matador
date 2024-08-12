@@ -3,6 +3,7 @@
 
 #include "matador/utils/time.hpp"
 #include "matador/utils/date.hpp"
+#include "matador/utils/types.hpp"
 
 #include <type_traits>
 #include <string>

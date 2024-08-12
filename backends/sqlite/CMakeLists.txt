@@ -37,4 +37,5 @@ target_include_directories(${LIBRARY_TARGET} PRIVATE
 target_link_libraries(${LIBRARY_TARGET}
     matador-utils
     matador-query
+    matador-object
     ${SQLite3_LIBRARIES})

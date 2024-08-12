@@ -90,7 +90,7 @@ public:
   void on_has_many(const char *, ContainerType &, utils::cascade_type) {}
 
 private:
-  object::attribute_binder &binder_;
+  std::reference_wrapper<object::attribute_binder> binder_;
   size_t index_{0};
   detail::fk_binder fk_binder_;
 };

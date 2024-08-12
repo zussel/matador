@@ -17,26 +17,26 @@ class attribute_binder
 public:
   virtual ~attribute_binder() = default;
 
-  virtual void bind(size_t pos, char) = 0;
-  virtual void bind(size_t pos, short) = 0;
-  virtual void bind(size_t pos, int) = 0;
-  virtual void bind(size_t pos, long) = 0;
-  virtual void bind(size_t pos, long long) = 0;
-  virtual void bind(size_t pos, unsigned char) = 0;
-  virtual void bind(size_t pos, unsigned short) = 0;
-  virtual void bind(size_t pos, unsigned int) = 0;
-  virtual void bind(size_t pos, unsigned long) = 0;
-  virtual void bind(size_t pos, unsigned long long) = 0;
-  virtual void bind(size_t pos, bool) = 0;
-  virtual void bind(size_t pos, float) = 0;
-  virtual void bind(size_t pos, double) = 0;
-  virtual void bind(size_t pos, const matador::time&) = 0;
-  virtual void bind(size_t pos, const matador::date&) = 0;
-  virtual void bind(size_t pos, const char *) = 0;
-  virtual void bind(size_t pos, const char *, size_t size) = 0;
-  virtual void bind(size_t pos, const std::string&) = 0;
+  virtual void bind(size_t pos, char x) = 0;
+  virtual void bind(size_t pos, short x) = 0;
+  virtual void bind(size_t pos, int x) = 0;
+  virtual void bind(size_t pos, long x) = 0;
+  virtual void bind(size_t pos, long long x) = 0;
+  virtual void bind(size_t pos, unsigned char x) = 0;
+  virtual void bind(size_t pos, unsigned short x) = 0;
+  virtual void bind(size_t pos, unsigned int x) = 0;
+  virtual void bind(size_t pos, unsigned long x) = 0;
+  virtual void bind(size_t pos, unsigned long long x) = 0;
+  virtual void bind(size_t pos, bool x) = 0;
+  virtual void bind(size_t pos, float x) = 0;
+  virtual void bind(size_t pos, double x) = 0;
+  virtual void bind(size_t pos, const matador::time &x) = 0;
+  virtual void bind(size_t pos, const matador::date &x) = 0;
+  virtual void bind(size_t pos, const char *x) = 0;
+  virtual void bind(size_t pos, const char *x, size_t size) = 0;
+  virtual void bind(size_t pos, const std::string &x) = 0;
   virtual void bind(size_t pos, const std::string &x, size_t size) = 0;
-  virtual void bind(size_t pos, const utils::blob &) = 0;
+  virtual void bind(size_t pos, const utils::blob &x) = 0;
 };
 
 }

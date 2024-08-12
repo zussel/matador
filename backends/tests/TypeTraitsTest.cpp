@@ -34,13 +34,6 @@ public:
 protected:
   matador::sql::connection db;
   matador::sql::schema schema;
-
-private:
-  void drop_table_if_exists(const std::string &table_name) {
-    if (db.exists(table_name)) {
-      db.query(schema).drop().table(table_name).execute();
-    }
-  }
 };
 
 TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with type traits", "[typetraits]")
@@ -61,11 +54,14 @@ TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with typ
       .query(schema)
       .select(column_generator::generate<location>(schema, true))
       .from("location")
-      .fetch_all<location>();
+      .fetch_one<location>();
 
-    for (const auto &l: result) {
-      REQUIRE(l.name == "center");
-    }
+    REQUIRE(result != nullptr);
+    REQUIRE(result->name == "center");
+    REQUIRE(result->color == Color::Black);
+    REQUIRE(result->coord.x == 1);
+    REQUIRE(result->coord.y == 2);
+    REQUIRE(result->coord.z == 3);
   }
 
   SECTION("Insert and select with prepared statement") {
@@ -87,10 +83,13 @@ TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with typ
       .query(schema)
       .select(column_generator::generate<location>(schema, true))
       .from("location")
-      .fetch_all<location>();
+      .fetch_one<location>();
 
-    for (const auto &l: result) {
-      REQUIRE(l.name == "center");
-    }
+    REQUIRE(result != nullptr);
+    REQUIRE(result->name == "center");
+    REQUIRE(result->color == Color::Black);
+    REQUIRE(result->coord.x == 1);
+    REQUIRE(result->coord.y == 2);
+    REQUIRE(result->coord.z == 3);
   }
 }

@@ -23,14 +23,14 @@ class attribute_binder;
  * for a data type
  */
 template < class Type, class Enable = void >
-struct data_type_traits;
-// {
-  // inline static data_type type(std::size_t /*size*/) { return data_type::type_unknown; }
-  // static void read_value(attribute_reader &reader, const char *id, size_t index, Type &/*value*/);
-  // static void bind_value(attribute_binder &binder, size_t index, Type &/*value*/);
+struct data_type_traits
+{
+   inline static data_type type(std::size_t /*size*/) { return data_type::type_unknown; }
+   static void read_value(attribute_reader &, const char *, size_t, Type &/*value*/) {}
+   static void bind_value(attribute_binder &, size_t, Type &/*value*/) {}
 //  static void bind_result_value(result_parameter_binder &binder, size_t index, Type &/*value*/);
 //  inline static any_type create_value(Type &/*value*/) { return {}; }
-// };
+};
 
 /// @cond MATADOR_DEV
 template <> struct data_type_traits<nullptr_t, void>

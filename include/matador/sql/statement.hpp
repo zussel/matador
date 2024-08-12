@@ -62,7 +62,7 @@ public:
   template<class Type>
   statement &bind(const Type &obj);
   template<typename Type>
-  statement &bind(size_t pos, const Type &value);
+  statement &bind(size_t pos, Type &value);
 
   /**
    * Executes the prepared statement and returns
@@ -96,7 +96,7 @@ public:
   query_result<record> fetch();
   template<class Type>
   /**
-   * Fetches the first result of a prepared statemnent.
+   * Fetches the first result of a prepared statement.
    * If prepared statement is empty or not
    * a SELECT statement an nullptr is returned.
    *
@@ -105,7 +105,7 @@ public:
    */
   std::unique_ptr<Type> fetch_one();
   /**
-   * Fetches the first result of a prepared statemnent.
+   * Fetches the first result of a prepared statement.
    * The type is record representing an unknown variable type.
    * If prepared statement is empty or not
    * a SELECT statement an nullptr is returned.
@@ -115,7 +115,7 @@ public:
   std::optional<record> fetch_one();
 
   /**
-   * Resets the prepared statment to
+   * Resets the prepared statement to
    * reuse it.
    */
   void reset();
@@ -131,7 +131,7 @@ private:
 };
 
 template<typename Type>
-statement &statement::bind(size_t pos, const Type &value) {
+statement &statement::bind(size_t pos, Type &value) {
   statement_->bind(pos, value);
   return *this;
 }

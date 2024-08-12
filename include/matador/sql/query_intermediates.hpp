@@ -7,6 +7,7 @@
 #include "matador/sql/key_value_generator.hpp"
 #include "matador/sql/key_value_pair.hpp"
 #include "matador/sql/placeholder_generator.hpp"
+#include "matador/sql/placeholder_key_value_generator.hpp"
 #include "matador/sql/query_result.hpp"
 #include "matador/sql/query_data.hpp"
 #include "matador/sql/record.hpp"
@@ -277,6 +278,10 @@ class query_insert_intermediate : public query_start_intermediate
 public:
   explicit query_insert_intermediate(connection &db, const sql::schema &schema);
 
+  template<class Type>
+  query_into_intermediate into(const sql::table &table) {
+    return into(table, column_generator::generate<Type>(schema_));
+  }
   query_into_intermediate into(const sql::table &table, std::initializer_list<column> column_names);
   query_into_intermediate into(const sql::table &table, std::vector<column> &&column_names);
   query_into_intermediate into(const sql::table &table);
@@ -305,6 +310,16 @@ private:
   query_execute_where_intermediate where_clause(std::unique_ptr<basic_condition> &&cond);
 };
 
+template < class Type >
+std::vector<key_value_pair> as_key_value_placeholder(const Type &obj)
+{
+  placeholder_key_value_generator generator;
+  access::process(generator, obj);
+
+  return generator.placeholder_values;
+}
+
+
 class query_update_intermediate : public query_start_intermediate
 {
 public:
@@ -312,6 +327,12 @@ public:
 
   query_set_intermediate set(std::initializer_list<key_value_pair> columns);
   query_set_intermediate set(std::vector<key_value_pair> &&columns);
+  template<class Type>
+  query_set_intermediate set()
+  {
+    Type obj;
+    return set(std::move(as_key_value_placeholder(obj)));
+  }
   template<class Type>
   query_set_intermediate set(const Type &obj)
   {

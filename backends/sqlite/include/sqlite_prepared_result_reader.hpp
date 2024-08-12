@@ -33,6 +33,9 @@ public:
   void read_value(const char *id, size_t index, std::string &value) override;
   void read_value(const char *id, size_t index, std::string &value, size_t s) override;
   void read_value(const char *id, size_t index, sql::value &val, size_t size) override;
+  void read_value(const char *id, size_t index, time &value) override;
+  void read_value(const char *id, size_t index, date &value) override;
+  void read_value(const char *id, size_t index, utils::blob &value) override;
 
 private:
   sqlite3 *db_{nullptr};

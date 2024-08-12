@@ -40,6 +40,7 @@ set(SOURCES
   table_definition.cpp
   value.cpp
   value_extractor.cpp
+  placeholder_key_value_generator.cpp
 )
 
 set(HEADER
@@ -95,6 +96,7 @@ set(HEADER
   ../../include/matador/sql/to_value.hpp
   ../../include/matador/sql/value.hpp
   ../../include/matador/sql/value_extractor.hpp
+  ../../include/matador/sql/placeholder_key_value_generator.hpp
 )
 
 ADD_LIBRARY(matador-query STATIC ${SOURCES} ${HEADER})

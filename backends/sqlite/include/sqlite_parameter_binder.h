@@ -15,31 +15,31 @@ class sqlite_parameter_binder final : public object::attribute_binder
 public:
   explicit sqlite_parameter_binder(sqlite3 *db, sqlite3_stmt *stmt);
 
-  void bind(size_t pos, char i) override;
-  void bind(size_t pos, short i) override;
-  void bind(size_t pos, int i) override;
-  void bind(size_t pos, long i) override;
-  void bind(size_t pos, long long int i) override;
-  void bind(size_t pos, unsigned char i) override;
-  void bind(size_t pos, unsigned short i) override;
-  void bind(size_t pos, unsigned int i) override;
-  void bind(size_t pos, unsigned long i) override;
-  void bind(size_t pos, unsigned long long int i) override;
-  void bind(size_t pos, bool b) override;
-  void bind(size_t pos, float d) override;
-  void bind(size_t pos, double d) override;
-  void bind(size_t pos, const time &time) override;
-  void bind(size_t pos, const date &date) override;
-  void bind(size_t pos, const char *string) override;
-  void bind(size_t pos, const char *str, size_t size) override;
-  void bind(size_t pos, const std::string &str) override;
-  void bind(size_t pos, const std::string &str, size_t size) override;
-  void bind(size_t pos, const utils::blob &blob) override;
+  void bind(size_t pos, char x) override;
+  void bind(size_t pos, short x) override;
+  void bind(size_t pos, int x) override;
+  void bind(size_t pos, long x) override;
+  void bind(size_t pos, long long int x) override;
+  void bind(size_t pos, unsigned char x) override;
+  void bind(size_t pos, unsigned short x) override;
+  void bind(size_t pos, unsigned int x) override;
+  void bind(size_t pos, unsigned long x) override;
+  void bind(size_t pos, unsigned long long int x) override;
+  void bind(size_t pos, bool x) override;
+  void bind(size_t pos, float x) override;
+  void bind(size_t pos, double x) override;
+  void bind(size_t pos, const time &x) override;
+  void bind(size_t pos, const date &x) override;
+  void bind(size_t pos, const char *x) override;
+  void bind(size_t pos, const char *x, size_t size) override;
+  void bind(size_t pos, const std::string &x) override;
+  void bind(size_t pos, const std::string &x, size_t size) override;
+  void bind(size_t pos, const utils::blob &x) override;
 private:
   sqlite3 *db_{nullptr};
   sqlite3_stmt *stmt_{nullptr};
 
-  std::vector<std::shared_ptr<std::string> > host_strings_;
+  std::vector<std::string> host_strings_;
 };
 }
 
