@@ -69,7 +69,7 @@ public:
    */
   void create(connection &conn) override
   {
-    query<table_type> stmt;
+    sql::query stmt;
     stmt.create(name()).execute(conn);
   }
 
@@ -221,7 +221,7 @@ protected:
   }
 
 private:
-  detail::identifier_binder<table_type> identifier_binder_;
+  detail::sql::identifier_binder<table_type> identifier_binder_;
 
   statement<table_type> insert_;
   statement<table_type> update_;

@@ -25,7 +25,8 @@ SET (DEMO_SOURCES
   services/director_service.cpp
   services/director_service.hpp
   converter/object_to_json_table_converter.hpp
-  converter/object_to_json_table_converter.cpp)
+  converter/object_to_json_table_converter.cpp
+  utils/object_info.hpp)
 
 ADD_EXECUTABLE(demo ${DEMO_SOURCES})
 

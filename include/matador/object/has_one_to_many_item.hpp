@@ -42,8 +42,8 @@ public:
   template < class Operator >
   void process(Operator &op)
   {
-    matador::access::has_one(op, this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    matador::access::belongs_to(op, this->right_column().c_str(), right_, matador::cascade_type::NONE);
+    matador::access::has_one(op, this->left_column().c_str(), left_, utils::cascade_type::NONE);
+    matador::access::belongs_to(op, this->right_column().c_str(), right_, utils::cascade_type::NONE);
   }
 
   [[nodiscard]] basic_has_many_to_many_item *clone() const override
@@ -76,10 +76,10 @@ public:
 
   has_one_to_many_item_scalar() = default;
 
-  explicit has_one_to_many_item_scalar(const field_attributes &attr)
+  explicit has_one_to_many_item_scalar(const utils::field_attributes &attr)
   : right_attributes_(attr) {}
 
-  has_one_to_many_item_scalar(const std::string &left_column, const std::string &right_column, const field_attributes &attr)
+  has_one_to_many_item_scalar(const std::string &left_column, const std::string &right_column, const utils::field_attributes &attr)
     : basic_has_many_to_many_item(left_column, right_column)
     , right_attributes_(attr)
   {}
@@ -92,7 +92,7 @@ public:
   template < class Operator >
   void process(Operator &op)
   {
-    matador::access::has_one(op, this->left_column().c_str(), left_, matador::cascade_type::NONE);
+    matador::access::has_one(op, this->left_column().c_str(), left_, utils::cascade_type::NONE);
     matador::access::attribute(op, this->right_column().c_str(), right_, right_attributes_);
   }
 
@@ -114,7 +114,7 @@ public:
 private:
   object_ptr<LeftType> left_;
   RightType right_ = {};
-  field_attributes right_attributes_;
+  utils::field_attributes right_attributes_;
 };
 
 /// @endcond

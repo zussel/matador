@@ -6,6 +6,20 @@
 #include <cstdio>
 #include <string>
 
+namespace matador::utils::os {
+enum class override_env_value {
+  KeepValue,
+  OverrideValue
+};
+
+#ifdef _WIN32
+std::string error_string(unsigned long error);
+#endif
+
+void setenv(const char *name, const char *value, override_env_value override_value);
+std::string getenv(const char* name);
+void unsetenv(const char *name);
+}
 
 namespace matador::os {
 

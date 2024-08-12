@@ -10,7 +10,7 @@ namespace matador::detail {
 
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value>
-void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
+void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &/*attr*/)
 {
   // find foreign_node of belongs to type
   prototype_iterator foreign_node = store_.find(x.type());
@@ -62,7 +62,7 @@ void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object
 
 template<class Owner, template <typename> typename... ObserverType>
 template<class Value>
-void node_analyzer<Owner, ObserverType...>::on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
+void node_analyzer<Owner, ObserverType...>::on_has_one(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &/*attr*/)
 {
   auto endpoint = std::make_shared<detail::has_one_endpoint<Value, Owner>>(id, &node_);
   node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
@@ -88,7 +88,7 @@ template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, ObserverType...>::on_has_many(const char * /*id*/,
                                                         container<Value, Container> &/*x*/,
                                                         const char *join_column,
-                                                        const foreign_attributes &/*attr*/,
+                                                        const utils::foreign_attributes &/*attr*/,
                                                         typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   auto it = store_.find<Value>();
@@ -154,7 +154,7 @@ template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, ObserverType...>::on_has_many(const char *id,
                                                         container<Value, Container> &x,
                                                         const char *join_column,
-                                                        const foreign_attributes &/*attr*/,
+                                                        const utils::foreign_attributes &/*attr*/,
                                                         typename std::enable_if<is_builtin<Value>::value>::type*)
 {
   // attach relation table for has many relation
@@ -188,7 +188,7 @@ template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, ObserverType...>::on_has_many(const char * id,
                                                         container<Value, Container> &/*x*/,
-                                                        const foreign_attributes &/*attr*/,
+                                                        const utils::foreign_attributes &/*attr*/,
                                                         typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   prototype_iterator pi = store_.find(id);
@@ -219,7 +219,7 @@ template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, ObserverType...>::on_has_many(const char * id,
                                                         container<Value, Container> &/*x*/,
-                                                        const foreign_attributes &/*attr*/,
+                                                        const utils::foreign_attributes &/*attr*/,
                                                         typename std::enable_if<is_builtin<Value>::value>::type*)
 {
   prototype_iterator pi = store_.find(id);
@@ -230,7 +230,7 @@ void node_analyzer<Owner, ObserverType...>::on_has_many(const char * id,
     node_.register_relation_endpoint(std::type_index(typeid(typename has_many_item::right_value_type)), endpoint);
 
     std::string value_column = "value_id";
-    auto proto = new has_many_item(node_.type(), value_column, null_attributes);
+    auto proto = new has_many_item(node_.type(), value_column, utils::null_attributes);
     auto node = prototype_node::make_relation_node<has_many_item>(store_, id, proto, prototype_node::abstract_type::not_abstract, node_.type(), id);
 
     auto observers = observer_list_copy_creator<Owner, has_many_item, ObserverType...>::copy_create(observers_);
@@ -250,7 +250,7 @@ template<class Owner, template <typename> typename... ObserverType>
 template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, ObserverType...>::on_has_many_to_many(const char *id,
                                                                 container<Value, Container> &/*x*/,
-                                                                const foreign_attributes &/*attr*/)
+                                                                const utils::foreign_attributes &/*attr*/)
 {
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
@@ -305,7 +305,7 @@ template<class Value, template<class ...> class Container>
 void node_analyzer<Owner, ObserverType...>::on_has_many_to_many(const char *id, container<Value, Container> &,
                                                                 const char *join_column,
                                                                 const char *inverse_join_column,
-                                                                const foreign_attributes &/*attr*/)
+                                                                const utils::foreign_attributes &/*attr*/)
                                        {
   // attach relation table for has many relation
   // check if has-many item is already attached

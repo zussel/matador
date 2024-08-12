@@ -2,18 +2,16 @@
 #define MATADOR_HTTP_SERVER_CONNECTION_HPP
 
 #include "matador/http/export.hpp"
+#include "matador/http/request_parser.hpp"
+#include "matador/http/response.hpp"
+#include "matador/http/request.hpp"
+#include "matador/http/middleware.hpp"
 
 #include "matador/net/ip.hpp"
 
 #include "matador/logger/logger.hpp"
 
 #include "matador/utils/buffer.hpp"
-#include "matador/utils/optional.hpp"
-
-#include "matador/http/request_parser.hpp"
-#include "matador/http/response.hpp"
-#include "matador/http/request.hpp"
-#include "matador/http/middleware.hpp"
 
 #include <memory>
 

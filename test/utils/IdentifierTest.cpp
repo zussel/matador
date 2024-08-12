@@ -1,6 +1,6 @@
 #include "IdentifierTest.hpp"
 
-#include "matador/utils/identifier.hpp"
+#include "matador/object/identifier.hpp"
 
 IdentifierTest::IdentifierTest()
 : matador::unit_test("identifier", "identifier test")

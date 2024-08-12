@@ -9,12 +9,68 @@
 #ifdef _WIN32
 #include <io.h>
 #include <direct.h>
+#include <windows.h>
 #else
 #include <unistd.h>
 #endif
 
-namespace matador {
-namespace os {
+namespace matador::utils::os {
+
+void setenv(const char *name, const char *value, override_env_value override_value)
+{
+#ifdef _WIN32
+  _putenv_s(name, value);
+#else
+  ::setenv(name, value, static_cast<int>(override_value));
+#endif
+}
+
+#ifdef _WIN32
+std::string error_string(unsigned long error) {
+    char* lpMsgBuf;
+    auto bufLen = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                                nullptr,
+                                error,
+                                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                                (LPTSTR) &lpMsgBuf,
+                                0,
+                                nullptr);
+    std::string result;
+    if (bufLen) {
+        result.append(lpMsgBuf, lpMsgBuf+bufLen);
+        LocalFree(lpMsgBuf);
+    }
+    return result;
+}
+#endif
+
+std::string getenv(const char *name) {
+#ifdef _WIN32
+  char var[1024];
+  size_t len{};
+  const auto error = getenv_s(&len, var, 1024, name);
+  if (error > 0) {
+    throw std::logic_error(error_string(error));
+  };
+
+  return var;
+#else
+  char *path = ::getenv(name);
+  return path == nullptr ? "" : path;
+#endif
+}
+
+void unsetenv(const char *name)
+{
+#ifdef _WIN32
+#else
+    ::unsetenv(name);
+#endif
+}
+
+}
+
+namespace matador::os {
 FILE* fopen(const std::string &path, const char *modes)
 {
   return fopen(path.c_str(), modes);
@@ -300,5 +356,4 @@ char* strerror(int err, char* errbuf, size_t bufsize)
 #endif
 }
 
-}
 }

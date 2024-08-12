@@ -158,14 +158,6 @@ bool object_store::empty() const
   return is_empty;
 }
 
-object_description object_store::describe(const char *type) const {
-  prototype_node *node = find_prototype_node(type);
-  if (!node) {
-    throw object_exception("couldn't find object type");
-  }
-  return node->describe();
-}
-
 object_proxy* object_store::find_proxy(unsigned long long id) const
 {
   auto i = object_map_.find(id);
@@ -210,23 +202,23 @@ object_proxy* object_store::insert(object_proxy *proxy, bool notify)
     throw_object_exception("couldn't find object type");
   }
   // check if proxy/object is already inserted
-  if (proxy->ostore() != nullptr && proxy->id() > 0) {
+  if (proxy->is_inserted() &&  proxy->id() > 0) {
     return proxy;
   }
   // check if proxy/object is already inserted
-  if (proxy->ostore() == nullptr && proxy->id() > 0) {
+  if (!proxy->is_inserted() && proxy->id() > 0) {
     throw_object_exception("object has id but doesn't belong to a store");
   }
 
   proxy->id(seq_.next());
-  proxy->object_type_entry_ = node->object_type_entry_;
+  proxy->object_type_entry(node->object_type_entry_);
 
   // get object
   if (proxy->obj() && proxy->has_identifier() && !proxy->pk().is_valid()) {
     // if object has primary key of type short, int or long
     // set the id of proxy as value
     proxy->sync_id();
-    proxy->pk_ = proxy->id();
+    proxy->pk(identifier(proxy->id()));
   } else if (proxy->obj() && proxy->has_identifier()) {
     synchronizer_.sync(proxy->pk());
   }

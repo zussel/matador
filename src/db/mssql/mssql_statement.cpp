@@ -2,7 +2,7 @@
 #include "matador/db/mssql/mssql_connection.hpp"
 #include "matador/db/mssql/mssql_result.hpp"
 
-#include "matador/utils/identifiable_holder.hpp"
+#include "matador/object/identifiable_holder.hpp"
 
 namespace matador {
 

@@ -8,6 +8,7 @@
 
 #include "matador/utils/string_cursor.hpp"
 #include "matador/utils/string.hpp"
+#include "matador/utils/os.hpp"
 
 #include <string>
 #include <memory>
@@ -75,7 +76,7 @@ std::shared_ptr<template_part> template_parser::parse(string_cursor &cursor, Fun
   bool needs_next_char = true;
   // copy until next '{' is found
   char c = cursor.current_char();
-  while (!is_eos(c)) {
+  while (!utils::is_eos(c)) {
     // find begin of variable/command tag
     if (c == '{' && state_ == STATIC_TEXT) {
       parts_->push_back(std::make_shared<detail::static_part>(current_part));

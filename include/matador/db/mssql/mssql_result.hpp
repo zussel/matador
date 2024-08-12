@@ -44,7 +44,7 @@ public:
   {
     T val;
     SQLLEN info = 0;
-    auto type = (SQLSMALLINT)type2int(matador::data_type_traits<T>::builtin_type(0));
+    auto type = (SQLSMALLINT)type2int(matador::data_type_traits<T>::type(0));
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (!SQL_SUCCEEDED(ret)) {
       throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
@@ -90,7 +90,7 @@ protected:
   void read_column(const char *id, size_type index, T &val, size_t size = 0)
   {
     SQLLEN info = 0;
-    auto type = (SQLSMALLINT)type2int(data_type_traits<T>::builtin_type(size));
+    auto type = (SQLSMALLINT)type2int(data_type_traits<T>::type(size));
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (SQL_SUCCEEDED(ret)) {
       return;

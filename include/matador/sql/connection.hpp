@@ -1,79 +1,63 @@
-#ifndef CONNECTION_HPP
-#define CONNECTION_HPP
+#ifndef QUERY_CONNECTION_HPP
+#define QUERY_CONNECTION_HPP
 
-#include "matador/sql/result.hpp"
-#include "matador/sql/basic_dialect.hpp"
-#include "matador/sql/statement.hpp"
 #include "matador/sql/connection_info.hpp"
 #include "matador/sql/connection_impl.hpp"
-#include "matador/sql/row.hpp"
-#include "matador/sql/field.hpp"
-#include "matador/sql/basic_sql_logger.hpp"
-
-#include "matador/utils/version.hpp"
+#include "matador/sql/dialect.hpp"
+#include "matador/sql/query.hpp"
+#include "matador/sql/query_context.hpp"
+#include "matador/sql/query_result.hpp"
+#include "matador/sql/record.hpp"
+#include "matador/sql/statement.hpp"
 
 #include <string>
 
-namespace matador {
-
-class basic_dialect;
+namespace matador::sql {
+class schema;
 
 /**
  * @brief The connection class represents a connection to a database.
  */
-class connection
-{
+class connection final {
 public:
   /**
-   * @brief Creates an empty connection
+   * @brief Creates a database connection from a connection info data.
+   *
+   * @param info The database connection info data
+   * @param sqllogger The logging handler
    */
-  connection() = default;
-
-  /**
-   * @brief Creates an empty connection
-   */
-  explicit connection(std::shared_ptr<basic_sql_logger> sqllogger);
-
+  explicit connection(connection_info info,
+                      const std::shared_ptr<basic_sql_logger> &sqllogger = std::make_shared<null_sql_logger>());
   /**
    * @brief Creates a database connection from a connection string.
    *
    * @param dns The database connection string
+   * @param sqllogger The logging handler
    */
-  explicit connection(const std::string &dns);
-  
-  /**
-   * @brief Creates a database connection from a connection string.
-   *
-   * @param dns The database connection string
-   * @param sql_logger The logger handler to write sql log messages to
-   */
-  connection(const std::string &dns, std::shared_ptr<basic_sql_logger> sql_logger);
-
+  explicit connection(const std::string &dns,
+                      const std::shared_ptr<basic_sql_logger> &sqllogger = std::make_shared<null_sql_logger>());
   /**
    * Copies a given connection
-   * 
+   *
    * @param x The connection to copy
    */
   connection(const connection &x);
-
-  /**
-   * Copy moves a given connection
-   * 
-   * @param x The connection to copy move
-   */
-  connection(connection &&x) noexcept;
-
   /**
    * Assigns from the given connection
-   * 
+   *
    * @param x The connection to assign
    * @return The reference to the assigned connection
    */
-  connection& operator=(const connection &x);
-
+  connection &operator=(const connection &x);
+  /**
+   * Copy moves a given connection
+   *
+   * @param x The connection to copy move
+   */
+  connection(connection &&x) noexcept = default;
   /**
    * Assigns moves from the given connection
-   * 
+   *
    * @param x The connection to assign move
    * @return The reference to the assigned connection
    */
@@ -82,58 +66,34 @@ public:
   ~connection();
 
   /**
-   * @brief Opens the sql for the given dns.
+   * @brief Opens the database connection for the given dns.
    *
-   * Opens the sql. If sql couldn't be opened
-   * an exception is thrown.
+   * Opens the database connection. If database connection
+   * couldn't be opened an exception is thrown.
    */
-  void connect(const std::string &dns);
-
+  void open() const;
   /**
-   * @brief Opens the sql.
+   * @brief Closes the database connection.
    *
-   * Opens the sql. If sql couldn't be opened
-   * an exception is thrown.
+   * Closes the database connection.
    */
-  void connect();
-
+  void close() const;
   /**
-   * Reconnect to the database. This means to close
-   * and open the connection.
-   */
-  void reconnect();
-
-  /**
-   * @brief Returns true if sql is open.
+   * @brief Returns true if database connection is open.
    *
-   * Returns true if sql is open
+   * Returns true if database connection is open
    *
-   * @return True on open sql.
+   * @return True on open database connection.
    */
-  bool is_connected() const;
+  [[nodiscard]] bool is_open() const;
 
   /**
-   * @brief Closes the sql.
+   * Returns the connection info data of the
+   * current database connection.
    *
-   * Closes the sql.
+   * @return Returns the connection info data
    */
-  void disconnect();
-
-  /**
-   * @brief Executes the BEGIN TRANSACTION sql command
-   */
-  void begin();
-
-  /**
-   * @brief Executes the COMMIT TRANSACTION sql command
-   */
-  void commit();
-
-  /**
-   * @brief Executes the ROLLBACK TRANSACTION sql command
-   */
-  void rollback();
-
+  [[nodiscard]] const connection_info &info() const;
   /**
    * @brief Return the database type of the connection.
    *
@@ -142,128 +102,56 @@ public:
    * - mssql
    * - mysql
    * - sqlite
-   * - postgressql
+   * - postgres
    *
    * @return The database type string
    */
-  std::string type() const;
+  [[nodiscard]] std::string type() const;
 
   /**
-   * @brief Return the version string of the current database type
-   *
-   * @return Version string of the current database type
+   * @brief Starts a transaction by calling the
+   * underlying database backend transaction begin
+   * statement.
    */
-  version client_version() const;
+  void begin() const;
 
   /**
-   * @brief Return the version string of the current database type
-   *
-   * @return Version string of the current database type
+   * @brief Commits a transaction by calling the
+   * underlying database backend transaction commit
+   * statement.
    */
-  version server_version() const;
+  void commit() const;
 
   /**
-   * @brief Execute a sql string statement with retrieving any result
-   *
-   * @param stmt The statement to be executed
+   * @brief Rollback a transaction by calling the
+   * underlying database backend transaction rollback/abort
+   * statement.
    */
-  void execute(const std::string &stmt)
-  {
-    logger_->on_execute(stmt);
-    std::unique_ptr<detail::result_impl> res(impl_->execute(stmt));
-  }
+  void rollback() const;
 
-  /**
-   * @brief returns true if a table with given name exists.
-   *
-   * @param table_name Name of table to be checked
-   * @return True if table exists.
-   */
-  bool exists(const std::string &table_name) const;
+  [[nodiscard]] std::vector<sql::column_definition> describe(const std::string &table_name) const;
+  [[nodiscard]] bool exists(const std::string &schema_name, const std::string &table_name) const;
+  [[nodiscard]] bool exists(const std::string &table_name) const;
+  [[nodiscard]] sql::query query(const sql::schema &schema) const;
+  [[nodiscard]] query_result<record> fetch(const query_context &q) const;
+  [[nodiscard]] size_t execute(const std::string &sql) const;
 
-  /**
-   * @brief Retrieve a field description list of a table
-   * @param table The name of the requested table
-   * @return A list of fields
-   */
-  std::vector<field> describe(const std::string &table) const;
+  statement prepare(query_context &&query) const;
 
-  /**
-   * @brief Get the underlying sql dialect object.
-   *
-   * @return Sql dialect object.
-   */
-  basic_dialect* dialect();
-
-  /**
-   * @brief Returns true if connection is valid
-   *
-   * Returns true if connection is valid, i.e. the
-   * database connection string is set correctly
-   *
-   * @return True if connection is valid
-   */
-  bool is_valid() const;
-
-  /**
-   * Enable console log of sql statements
-   */
-  void enable_log();
-
-  /**
-   * Disable console log of sql statements
-   */
-  void disable_log();
-
-  /**
-   * Returns true if logging is enabled.
-   *
-   * @return True if logging is enabled
-   */
-  bool is_log_enabled() const;
+  [[nodiscard]] const class dialect &dialect() const;
 
 private:
-  template < class T >
-  friend class query;
-
-  void initialize_connection_info(const std::string &dns);
-  template <class Type>
-  void prepare_prototype_row(Type &/*prototype*/, const std::string &/*table_name*/) {}
-  void prepare_prototype_row(row &prototype, const std::string &table_name);
-
-  template < class Type >
-  result<Type> execute(const sql_context &stmt, const std::string &table_name, Type &prototype)
-  {
-    // get column descriptions
-    prepare_prototype_row(prototype, table_name);
-    auto sql_stmt = dialect()->direct(stmt);
-    logger_->on_execute(sql_stmt);
-    return result<Type>(impl_->execute(sql_stmt), prototype);
-  }
-
-  template < class Type >
-  statement<Type> prepare(const sql_context &sql, const std::string &table_name, Type &prototype)
-  {
-    prepare_prototype_row(prototype, table_name);
-    auto stmt = statement<Type>(impl_->prepare(dialect()->prepare(sql)), prototype, logger_);
-    if (is_log_enabled()) {
-      stmt.enable_log();
-    }
-    return stmt;
-  }
+  [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const std::string &sql) const;
 
 private:
-  static connection_impl* create_connection(const std::string &type) ;
-  void init_from_foreign_connection(const connection &foreign_connection);
+  friend class query_select;
+  friend class session;
 
-  void log_token(detail::token::t_token tok);
-
-private:
-  connection_info connection_info_{};
-  std::unique_ptr<connection_impl> impl_;
-
+  connection_info connection_info_;
+  std::unique_ptr<connection_impl> connection_;
+  const class dialect &dialect_;
   std::shared_ptr<basic_sql_logger> logger_ = std::make_shared<null_sql_logger>();
 };
-
 }
-#endif /* CONNECTION_HPP */
+
+#endif //QUERY_CONNECTION_HPP

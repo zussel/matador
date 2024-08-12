@@ -50,35 +50,35 @@ public:
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class T>
-  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) { }
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) { }
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
+  void on_attribute(const char *, T &, const utils::field_attributes &/*attr*/ = utils::null_attributes) { }
+  void on_attribute(const char *, char *, const utils::field_attributes &/*attr*/ = utils::null_attributes) { }
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) { }
 
   template<class T>
-  void on_belongs_to(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_belongs_to(const char *, object_ptr<T> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
   template<class T>
-  void on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_has_one(const char *, object_ptr<T> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
 
   template<class Type, template<class ...> class Container>
-  void on_has_many(const char *, container<Type, Container> &x, const char * /*join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(const char *, container<Type, Container> &x, const char * /*join_column*/, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     handle_insert_has_many_relation(x, attr);
   }
 
   template<class Type, template<class ...> class Container>
-  void on_has_many(const char *, container<Type, Container> &x, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(const char *, container<Type, Container> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     handle_insert_has_many_relation(x, attr);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many_to_many(const char * /*id*/, container<T, C> &x, const char* /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many_to_many(const char * /*id*/, container<T, C> &x, const char* /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     handle_insert_has_many_relation(x, attr);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many_to_many(const char * /*id*/, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many_to_many(const char * /*id*/, container<T, C> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     handle_insert_has_many_relation(x, attr);
   }
@@ -101,23 +101,25 @@ private:
   }
   void decrement_reference_count(object_holder &holder) const;
 
-  void insert_object(object_holder &x, const std::type_index &type_index, const foreign_attributes &attr);
+  void insert_object(object_holder &x, const std::type_index &type_index, const utils::foreign_attributes &attr);
   void insert_proxy(object_proxy *proxy);
 
   object_proxy* initialize_has_many(abstract_container &x);
 
   template<class T, template<class ...> class C>
-  void handle_insert_has_many_relation(container<T, C> &x, const foreign_attributes &attr);
+  void handle_insert_has_many_relation(container<T, C> &x, const utils::foreign_attributes &attr);
 
   template < class T, class ItemHolderType >
   void insert_has_many_item(const ItemHolderType &item,
                             object_proxy *proxy,
-                            const std::shared_ptr<detail::relation_endpoint<T>>& relation_info, cascade_type cascade,
+                            const std::shared_ptr<detail::relation_endpoint<T>>& relation_info,
+                            utils::cascade_type cascade,
                             typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0);
   template < class T, class ItemHolderType >
   void insert_has_many_item(const ItemHolderType &item,
                             object_proxy *proxy,
-                            const std::shared_ptr<detail::relation_endpoint<T>>& relation_info, cascade_type,
+                            const std::shared_ptr<detail::relation_endpoint<T>>& relation_info,
+                            utils::cascade_type,
                             typename std::enable_if<matador::is_builtin<T>::value>::type* = 0);
 
 private:
@@ -141,19 +143,19 @@ void object_inserter::serialize(T &x)
 }
 
 template<class T>
-void object_inserter::on_belongs_to(const char *, object_ptr<T> &x, const foreign_attributes &attr)
+void object_inserter::on_belongs_to(const char *, object_ptr<T> &x, const utils::foreign_attributes &attr)
 {
   insert_object(x, std::type_index(typeid(T)), attr);
 }
 
 template<class T>
-void object_inserter::on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr)
+void object_inserter::on_has_one(const char *, object_ptr<T> &x, const utils::foreign_attributes &attr)
 {
   insert_object(x, std::type_index(typeid(T)), attr);
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::handle_insert_has_many_relation(container<T, C> &x, const foreign_attributes &attr)
+void object_inserter::handle_insert_has_many_relation(container<T, C> &x, const utils::foreign_attributes &attr)
 {
   auto *proxy = initialize_has_many(x);
 
@@ -181,10 +183,10 @@ template < class T, class ItemHolderType >
 void object_inserter::insert_has_many_item(const ItemHolderType &item,
                                            object_proxy *proxy,
                                            const std::shared_ptr<detail::relation_endpoint<T>>& relation_info,
-                                           cascade_type cascade,
+                                           utils::cascade_type cascade,
                                            typename std::enable_if<!matador::is_builtin<T>::value>::type*)
 {
-  if ((cascade & cascade_type::INSERT) == cascade_type::INSERT) {
+  if ((cascade & utils::cascade_type::INSERT) == utils::cascade_type::INSERT) {
     // item is not in store, insert it
     insert_proxy(this->proxy(*item));
   }
@@ -199,7 +201,7 @@ template < class T, class ItemHolderType >
 void object_inserter::insert_has_many_item(const ItemHolderType &item,
                                            object_proxy *proxy,
                                            const std::shared_ptr<detail::relation_endpoint<T>>& relation_info,
-                                           cascade_type,
+                                           utils::cascade_type,
                                            typename std::enable_if<matador::is_builtin<T>::value>::type*)
 {
   if (!item.holder_item().is_inserted()) {

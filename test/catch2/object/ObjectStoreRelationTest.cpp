@@ -43,7 +43,7 @@ struct master
     namespace field = matador::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name);
-    field::has_one(op, "child", children, matador::cascade_type::ALL);
+    field::has_one(op, "child", children, matador::utils::cascade_type::ALL);
   }
 };
 

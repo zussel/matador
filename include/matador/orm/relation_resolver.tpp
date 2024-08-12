@@ -13,7 +13,7 @@ template < class T >
 template < class V >
 void relation_resolver<T, typename std::enable_if<
   !std::is_base_of<basic_has_many_to_many_item, T>::value
->::type>::on_belongs_to(const char *id, object_ptr<V> &x, const foreign_attributes &attr)
+>::type>::on_belongs_to(const char *id, object_ptr<V> &x, const utils::foreign_attributes &attr)
 {
   const auto &pk = x.primary_key().share();
   if (pk.is_null()) {
@@ -87,7 +87,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   !matador::is_builtin<typename T::right_value_type>::value
->::type>::on_attribute(const char *, V &x, const field_attributes &/*attr*/)
+>::type>::on_attribute(const char *, V &x, const utils::field_attributes &/*attr*/)
 {
   // must be right side value
   // if left table is loaded
@@ -108,7 +108,7 @@ template < class T >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   !matador::is_builtin<typename T::right_value_type>::value
->::type>::on_attribute(const char *, char *, const field_attributes &/*attr*/)
+>::type>::on_attribute(const char *, char *, const utils::field_attributes &/*attr*/)
 {
   // must be right side value
   // if left table is loaded
@@ -122,7 +122,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   !matador::is_builtin<typename T::right_value_type>::value
->::type>::on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &attr)
+>::type>::on_belongs_to(const char *, object_ptr<V> &x, const utils::foreign_attributes &attr)
 {
   // increase reference count of has_many_to_xxx item proxy
   // because there will be an object for this kind of field
@@ -175,7 +175,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_attribute(const char *, V &x, const field_attributes &/*attr*/)
+>::type>::on_attribute(const char *, V &x, const utils::field_attributes &/*attr*/)
 {
   // must be right side value
   // if left table is loaded
@@ -196,7 +196,7 @@ template < class T >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_attribute(const char *, char *, const field_attributes &/*attr*/)
+>::type>::on_attribute(const char *, char *, const utils::field_attributes &/*attr*/)
 {
   // must be right side value
   // if left table is loaded
@@ -209,7 +209,7 @@ template < class T >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_attribute(const char *, std::string &x, const field_attributes &/*attr*/)
+>::type>::on_attribute(const char *, std::string &x, const utils::field_attributes &/*attr*/)
 {
   if (left_table_ptr_->is_loaded()) {
     container_item_holder<typename T::right_value_type> value(x, nullptr);
@@ -226,7 +226,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &attr)
+>::type>::on_belongs_to(const char *, object_ptr<V> &x, const utils::foreign_attributes &attr)
 {
   // check whether is left or right side value
   // left side will be determined first
@@ -249,7 +249,7 @@ template < class V >
 void relation_resolver<T, typename std::enable_if<
   std::is_base_of<basic_has_many_to_many_item, T>::value &&
   matador::is_builtin<typename T::right_value_type>::value
->::type>::on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &attr)
+>::type>::on_has_one(const char *, object_ptr<V> &x, const utils::foreign_attributes &attr)
 {
   // must be left side value
   // if left table is loaded

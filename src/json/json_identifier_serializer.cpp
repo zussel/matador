@@ -19,52 +19,52 @@ std::string json_identifier_serializer::serialize(const identifier &x)
   return json_;
 }
 
-void json_identifier_serializer::serialize(short &x, const field_attributes &/*attr*/)
+void json_identifier_serializer::serialize(short &x, const utils::field_attributes &/*attr*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(int &x, const field_attributes &/*attr*/)
+void json_identifier_serializer::serialize(int &x, const utils::field_attributes &/*attr*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(long &x, const field_attributes &/*attr*/)
+void json_identifier_serializer::serialize(long &x, const utils::field_attributes &/*attr*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(long long &x, const field_attributes &/*attr*/)
+void json_identifier_serializer::serialize(long long &x, const utils::field_attributes &/*attr*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(unsigned short &x, const field_attributes &/*attr*/)
+void json_identifier_serializer::serialize(unsigned short &x, const utils::field_attributes &/*attr*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(unsigned int &x, const field_attributes &/*attr*/)
+void json_identifier_serializer::serialize(unsigned int &x, const utils::field_attributes &/*attr*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(unsigned long &x, const field_attributes &/*attr*/)
+void json_identifier_serializer::serialize(unsigned long &x, const utils::field_attributes &/*attr*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(unsigned long long &x, const field_attributes &/*attr*/)
+void json_identifier_serializer::serialize(unsigned long long &x, const utils::field_attributes &/*attr*/)
 {
   detail::to_json(x, json_);
 }
 
-void json_identifier_serializer::serialize(std::string &x, const field_attributes &/*attr*/)
+void json_identifier_serializer::serialize(std::string &x, const utils::field_attributes &/*attr*/)
 {
   json_.append(x);
 }
 
-void json_identifier_serializer::serialize(null_type_t &, const field_attributes &/*attr*/)
+void json_identifier_serializer::serialize(utils::null_type_t &, const utils::field_attributes &/*attr*/)
 {
   json_.append("null");
 }

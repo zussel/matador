@@ -39,33 +39,33 @@ public:
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class T >
-  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_attribute(const char *, T &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char *, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_belongs_to(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
   template < class Type >
-  void on_belongs_to(const char *, Type &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_belongs_to(const char *, Type &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_one(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
   template < class Type >
-  void on_has_one(const char *, Type &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_one(const char *, Type &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
   template < template < class ... > class Container >
-  void on_has_many(const char * /*id*/, container<Value, Container> &x, const char *join_column, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(const char * /*id*/, container<Value, Container> &x, const char *join_column, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     on_has_many_to_many(join_column, x, attr);
   }
   template < template < class ... > class Container >
-  void on_has_many(const char * id, container<Value, Container> &x, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(const char * id, container<Value, Container> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     on_has_many_to_many(id, x, attr);
   }
   template < template < class ... > class Container >
-  void on_has_many_to_many(const char *id, container<Value, Container> &x, const char*, const char*, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many_to_many(const char *id, container<Value, Container> &x, const char*, const char*, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     on_has_many_to_many(id, x, attr);
   }
   template < template < class ... > class Container >
-  void on_has_many_to_many(const char *id, container<Value, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *id, container<Value, Container> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     if (field_ != id) {
       return;
@@ -74,13 +74,13 @@ public:
   }
 
   template < class T, template < class ... > class Container >
-  void on_has_many(const char *, container<T, Container> &, const char* /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, container<T, Container> &, const char* /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
   template < class T, template < class ... > class Container >
-  void on_has_many(const char *, container<T, Container> &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, container<T, Container> &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
   template < class T, template < class ... > class Container >
-  void on_has_many_to_many(const char *, container<T, Container> &, const char* /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, container<T, Container> &, const char* /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
   template < class T, template < class ... > class Container >
-  void on_has_many_to_many(const char *, container<T, Container> &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, container<T, Container> &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   std::string field_;
@@ -103,7 +103,7 @@ void relation_endpoint_value_inserter<Value>::insert(const object_ptr <Owner> &o
 template<class Value>
 void relation_endpoint_value_inserter<Value>::on_belongs_to(const char *id,
                                                             object_ptr <Value> &x,
-                                                            const foreign_attributes &attr)
+                                                            const utils::foreign_attributes &attr)
 {
   if (field_ != id) {
     return;
@@ -114,7 +114,7 @@ void relation_endpoint_value_inserter<Value>::on_belongs_to(const char *id,
 template<class Value>
 void relation_endpoint_value_inserter<Value>::on_has_one(const char *id,
                                                          object_ptr <Value> &x,
-                                                         const foreign_attributes &attr)
+                                                         const utils::foreign_attributes &attr)
 {
   if (field_ != id) {
     return;

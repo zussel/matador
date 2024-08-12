@@ -32,9 +32,18 @@ const char *object_proxy::classname() const
   return name_();
 }
 
-object_store *object_proxy::ostore() const
+//object_store *object_proxy::store() const
+//{
+//  return object_type_entry_->store();
+//}
+bool object_proxy::is_inserted() const
 {
   return object_type_entry_->store();
+}
+
+bool object_proxy::is_isolated() const
+{
+  return ptr_set_.empty();
 }
 
 prototype_node *object_proxy::node() const
@@ -42,15 +51,32 @@ prototype_node *object_proxy::node() const
   return object_type_entry_->node();
 }
 
-void object_proxy::link(object_proxy *successor)
+void object_proxy::link_before(object_proxy *successor)
 {
   // link serializable proxy before this node_
   prev_ = successor->prev_;
   next_ = successor;
-  if (successor->prev_) {
+  if (prev_) {
     successor->prev_->next_ = this;
   }
   successor->prev_ = this;
+}
+
+void object_proxy::link_after(object_proxy *predecessor)
+{
+  // link object proxy after this node_
+  next_ = predecessor->next_;
+  prev_ = predecessor;
+  if (next_) {
+    predecessor->next_->prev_ = this;
+  }
+  predecessor->next_ = this;
+}
+
+void object_proxy::link(object_proxy *next)
+{
+  next_ = next;
+  next_->prev_ = this;
 }
 
 void object_proxy::unlink()
@@ -148,6 +174,11 @@ bool object_proxy::remove(object_holder *ptr)
   return ptr_set_.erase(ptr) == 1;
 }
 
+void object_proxy::remove()
+{
+  object_type_entry_->store()->remove(this, false);
+}
+
 bool object_proxy::valid() const
 {
   return object_type_entry_->store() && prev_ && next_;
@@ -185,6 +216,11 @@ void object_proxy::pk(const identifier &id)
 void object_proxy::create_object()
 {
   creator_(this);
+}
+
+void object_proxy::object_type_entry(const shared_ptr <detail::object_type_registry_entry_base> &object_type_entry)
+{
+  object_type_entry_ = object_type_entry;
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)

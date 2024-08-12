@@ -3,7 +3,7 @@
 
 #include "matador/object/object_proxy.hpp"
 #include "matador/object/object_holder.hpp"
-#include "matador/utils/identifier_resolver.hpp"
+#include "identifier_resolver.hpp"
 
 #include <memory>
 #include <typeinfo>
@@ -26,6 +26,7 @@ class object_ptr : public object_holder
 {
 public:
   typedef T object_type;           /**< Shortcut for serializable type. */
+  typedef T value_type;           /**< Shortcut for serializable type. */
   typedef object_ptr<T> self;      /**< Shortcut for self class. */
 
 public:
@@ -56,7 +57,7 @@ public:
    *
    * @param o The object.
    */
-  object_ptr(T *o)
+  object_ptr(T *o) // NOLINT(*-explicit-constructor)
     : object_holder(new object_proxy(o))
   {}
 
@@ -64,7 +65,7 @@ public:
    * Initializes the object_ptr
    * with nullptr
    */ 
-  object_ptr(std::nullptr_t)
+  object_ptr(std::nullptr_t) // NOLINT(*-explicit-constructor)
   {}
 
   /**

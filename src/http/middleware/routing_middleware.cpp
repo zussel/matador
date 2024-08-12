@@ -2,9 +2,7 @@
 
 #include "matador/http/request.hpp"
 
-namespace matador {
-namespace http {
-namespace middlewares {
+namespace matador::http::middlewares {
 
 response routing_middleware::process(request &req, const middleware::next_func_t &)
 {
@@ -24,16 +22,15 @@ routing_middleware::routing_middleware(const routing_engine &router)
   , router_(router)
 {}
 
-optional<routing_engine::route_endpoint_ptr> routing_middleware::match(request &req)
+std::optional<routing_engine::route_endpoint_ptr> routing_middleware::match(request &req)
 {
   auto route = router_.match(req);
 
   if (router_.valid(route)) {
     return make_optional(*route);
   } else {
-    return nullopt;
+    return std::nullopt;
   }
 }
 }
-}
-}
+

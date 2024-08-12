@@ -1,0 +1,8 @@
+#ifndef ODBC_CONNECTION_HPP
+#define ODBC_CONNECTION_HPP
+
+namespace matador::test::connection {
+ const char* const dns = "@ODBC_CONNECTION_STRING@";
+}
+
+#endif /*ODBC_CONNECTION_HPP*/

@@ -130,7 +130,7 @@ void sqlite_parameter_binder::bind(const std::string &x, size_t len, size_t inde
 
 void sqlite_parameter_binder::bind(const matador::time &x, size_t index)
 {
-  auto time_string = std::make_shared<std::string>(matador::to_string(x, "%Y-%m-%dT%T.%f"));
+  auto time_string = std::make_shared<std::string>(matador::utils::to_string(x, "%Y-%m-%dT%T.%f"));
   bind(*time_string, index);
   host_strings_.push_back(time_string);
 }
@@ -138,7 +138,7 @@ void sqlite_parameter_binder::bind(const matador::time &x, size_t index)
 void sqlite_parameter_binder::bind(const matador::date &x, size_t index)
 {
   // format time to ISO8601
-  auto date_string = std::make_shared<std::string>(matador::to_string(x, date_format::ISO8601));
+  auto date_string = std::make_shared<std::string>(matador::utils::to_string(x, utils::date_format::ISO8601));
   bind(*date_string, index);
   host_strings_.push_back(date_string);
 }

@@ -2,17 +2,14 @@
 #define MATADOR_ROUTING_MIDDLEWARE_HPP
 
 #include "matador/http/export.hpp"
-
-#include "matador/logger/log_manager.hpp"
-
-#include "matador/utils/optional.hpp"
-
 #include "matador/http/middleware.hpp"
 #include "matador/http/routing_engine.hpp"
 
-namespace matador {
-namespace http {
-namespace middlewares {
+#include "matador/logger/log_manager.hpp"
+
+#include <optional>
+
+namespace matador::http::middlewares {
 
 /// @cond MATADOR_DEV
 
@@ -24,7 +21,7 @@ public:
   response process(request &req, const next_func_t &next) override;
 
 private:
-  optional<routing_engine::route_endpoint_ptr> match(request &req);
+  std::optional<routing_engine::route_endpoint_ptr> match(request &req);
 
 private:
   matador::logger log_;
@@ -35,6 +32,6 @@ private:
 /// @endcond
 
 }
-}
-}
+
+
 #endif //MATADOR_ROUTING_MIDDLEWARE_HPP

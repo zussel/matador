@@ -1,92 +1,87 @@
-#ifndef MATADOR_SCHEMA_HPP
-#define MATADOR_SCHEMA_HPP
+#ifndef QUERY_SCHEMA_HPP
+#define QUERY_SCHEMA_HPP
 
-#include <stdexcept>
-#include <memory>
+#include "matador/sql/column_definition_generator.hpp"
+#include "matador/sql/table_definition.hpp"
+
+#include <optional>
 #include <string>
 #include <typeindex>
 #include <unordered_map>
-#include <utility>
 
-namespace matador {
+namespace matador::sql {
+
+class connection;
+
+struct table_info
+{
+  std::string name;
+  table_definition prototype;
+};
 
 class schema
 {
 public:
-  struct table_info;
-  using table_info_ptr = std::shared_ptr<table_info>;
-  struct table_info
+  using repository = std::unordered_map<std::type_index, table_info>;
+  using repository_by_name = std::unordered_map<std::string, std::reference_wrapper<table_info>>;
+  using iterator = repository::iterator;
+  using const_iterator = repository::const_iterator;
+
+  schema() = delete;
+  explicit schema(std::string name);
+  schema(const schema&) = delete;
+  schema& operator=(const schema&) = delete;
+  schema(schema&&) noexcept = default;
+  schema& operator=(schema&&) noexcept = default;
+
+  [[nodiscard]] std::string name() const;
+
+  template<typename Type>
+  const table_info& attach(const std::string &table_name)
   {
-    table_info(std::string n, const std::type_index &ti, table_info_ptr pi)
-    : name(std::move(n)), type(ti), parent_info(std::move(pi))
-    {}
-    std::string name;
-    std::type_index type;
-    table_info_ptr parent_info;
-  };
+    return attach(std::type_index(typeid(Type)), table_info{table_name, table_definition{column_definition_generator::generate<Type>(*this)}});
+  }
 
-public:
-  template<class Type>
-  void attach(const char *type_name, const char *parent_type_name = nullptr)
+  const table_info& attach(std::type_index ti, const table_info& table);
+
+  template<typename Type>
+  [[nodiscard]] std::optional<table_info> info() const
   {
-    table_info_ptr parent_info;
-    if (parent_type_name != nullptr) {
-      auto it = table_info_map_by_name_.find(parent_type_name);
-      if (it == table_info_map_by_name_.end()) {
-        throw std::logic_error("unknown parent " + std::string(parent_type_name));
-      }
-      parent_info = it->second;
-    }
-    internal_attach<Type>(type_name, parent_info);
-  }
-  
-  template<class Type, class ParentType>
-  void attach(const char *type_name) {
-    std::type_index ti(typeid(ParentType));
-    auto it = table_info_map_by_type_.find(ti);
-    if (it == table_info_map_by_type_.end()) {
-      throw std::logic_error("unknown parent " + std::string(ti.name()));
-    }
-    internal_attach<Type>(type_name, it->second);
+    return info(std::type_index(typeid(Type)));
   }
 
-  template<class Type>
-  table_info_ptr find() const{
-    const auto it = table_info_map_by_type_.find(std::type_index(typeid(Type)));
-    if (it == table_info_map_by_type_.end()) {
-      return {};
-    }
-    return it->second;
+  [[nodiscard]] std::optional<table_info> info(std::type_index ti) const;
+  [[nodiscard]] std::optional<table_info> info(const std::string &name) const;
+
+  template<typename Type>
+  [[nodiscard]] std::pair<std::string, std::string> reference() const
+  {
+    return reference(std::type_index(typeid(Type)));
   }
 
-  table_info_ptr find(const char *type_name) const{
-    const auto it = table_info_map_by_name_.find(type_name);
-    if (it == table_info_map_by_name_.end()) {
-      return {};
-    }
-    return it->second;
+  [[nodiscard]] std::pair<std::string, std::string> reference(const std::type_index &ti) const;
+
+  template<typename Type>
+  [[nodiscard]] bool exists() const
+  {
+    return exists(std::type_index(typeid(Type)));
   }
+
+  [[nodiscard]] bool exists(const std::type_index &ti) const;
+
+  iterator begin();
+  [[nodiscard]] const_iterator begin() const;
+  iterator end();
+  [[nodiscard]] const_iterator end() const;
+
+  [[nodiscard]] bool empty() const;
 
 private:
-  using table_info_map_by_index = std::unordered_map<std::type_index, table_info_ptr>;
-  using table_info_map_by_name = std::unordered_map<std::string, table_info_ptr>;
-
-private:
-  template<class Type>
-  void internal_attach(const char *type_name, const table_info_ptr &parent_info)
-  {
-    const auto ti = std::type_index(typeid(Type));
-    const auto it = table_info_map_by_type_.find(ti);
-    if (it == table_info_map_by_type_.end()) {
-      table_info_map_by_type_.insert({ti, std::make_shared<table_info>(type_name, ti, parent_info)});
-    } else {
-      throw std::logic_error("type " + it->second->name + " already attached to schema");
-    }
-  }
-
-  table_info_map_by_index table_info_map_by_type_;
-  table_info_map_by_name table_info_map_by_name_;
+  std::string name_;
+  repository repository_;
+  repository_by_name repository_by_name_;
 };
 
 }
-#endif //MATADOR_SCHEMA_HPP
+
+#endif //QUERY_SCHEMA_HPP

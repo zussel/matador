@@ -30,7 +30,7 @@ object_holder::operator=(const object_holder &x)
 {
   if (this != &x && proxy_ != x.proxy_) {
     relation_info_ = x.relation_info_;
-    reset(x.proxy_, cascade_type::NONE);
+    reset(x.proxy_, utils::cascade_type::NONE);
   }
   return *this;
 }
@@ -71,7 +71,7 @@ object_holder::~object_holder()
      * if proxy was created temporary
      * we can delete it here
      */
-    if (!proxy_->ostore() && proxy_->ptr_set_.empty()) {
+    if (!proxy_->is_inserted() && proxy_->is_isolated()) {
       delete proxy_;
     }
   }
@@ -102,7 +102,7 @@ object_holder::operator bool() const noexcept
   return proxy_ != nullptr;
 }
 
-void object_holder::reset(object_proxy *proxy, const foreign_attributes &attr)
+void object_holder::reset(object_proxy *proxy, const utils::foreign_attributes &attr)
 {
   reset(proxy, attr, true);
 }
@@ -114,7 +114,7 @@ void object_holder::reset(object_holder &holder)
 
 void object_holder::clear()
 {
-  reset(nullptr, cascade_type::ALL);
+  reset(nullptr, utils::cascade_type::ALL);
 }
 
 bool object_holder::empty() const noexcept
@@ -132,7 +132,7 @@ void object_holder::reset(const identifier &id)
   if (proxy_ && !proxy_->pk().is_similar_type(id)) {
     throw object_exception("identifier types are not equal");
   }
-  reset(new object_proxy(id), cascade_type::NONE);
+  reset(new object_proxy(id), utils::cascade_type::NONE);
 }
 
 bool object_holder::is_loaded() const
@@ -145,12 +145,12 @@ unsigned long long object_holder::id() const
   return (proxy_ ? proxy_->id() : 0);
 }
 
-object_store *object_holder::store() const
-{
-  return (proxy_ ? proxy_->ostore() : nullptr);
-}
+//object_store *object_holder::store() const
+//{
+//  return (proxy_ ? proxy_->store() : nullptr);
+//}
 
-void*object_holder::ptr()
+void* object_holder::ptr()
 {
   return proxy_ ? proxy_->obj() : nullptr;
 }
@@ -163,10 +163,6 @@ const void*object_holder::ptr() const
 void* object_holder::lookup_object()
 {
   if (proxy_ && proxy_->obj()) {
-    if (proxy_->ostore()) {
-      // Todo: callback to object store
-//      proxy_->ostore()->mark_modified(proxy_);
-    }
     return proxy_->obj();
   } else {
     return nullptr;
@@ -180,7 +176,7 @@ void*object_holder::lookup_object() const
 
 bool object_holder::is_internal() const
 {
-  return store() != nullptr;
+  return proxy_->is_inserted();
 }
 
 bool object_holder::is_inserted() const
@@ -205,10 +201,10 @@ identifier& object_holder::primary_key()
 
 unsigned long object_holder::reference_count() const
 {
-  return (proxy_ ? proxy_->reference_counter_ : 0UL);
+  return (proxy_ ? proxy_->reference_count() : 0UL);
 }
 
-cascade_type object_holder::cascade() const
+utils::cascade_type object_holder::cascade() const
 {
   return attributes_.cascade();
 }
@@ -227,14 +223,14 @@ std::ostream& operator<<(std::ostream &out, const object_holder &x)
   return out;
 }
 
-void object_holder::reset(object_proxy *proxy, const foreign_attributes &attr, bool notify_foreign_relation)
+void object_holder::reset(object_proxy *proxy, const utils::foreign_attributes &attr, bool notify_foreign_relation)
 {
   if (proxy_ == proxy) {
     return;
   }
   if (proxy_) {
     proxy_->remove(this);
-    if (is_internal() && is_inserted_ && proxy_->object_type_entry_->store()) {
+    if (is_internal() && is_inserted_ && proxy_->is_inserted()) {
       --(*proxy_);
       if (relation_info_ && notify_foreign_relation) {
         relation_info_->remove_value_from_foreign(owner_, proxy_);
@@ -244,14 +240,14 @@ void object_holder::reset(object_proxy *proxy, const foreign_attributes &attr, b
      * if proxy was created temporary
      * we can delete it here
      */
-    if (proxy_ && !proxy_->ostore() && proxy_->ptr_set_.empty()) {
+    if (proxy_ && !proxy_->is_inserted() && proxy_->ptr_set_.empty()) {
       delete proxy_;
     }
   }
   proxy_ = proxy;
   attributes_ = attr;
   if (proxy_) {
-    if (is_internal() && is_inserted_ && proxy_->object_type_entry_->store()) {
+    if (is_internal() && is_inserted_ && proxy_->is_inserted()) {
       ++(*proxy_);
       if (relation_info_ && notify_foreign_relation) {
         relation_info_->insert_value_into_foreign(owner_, proxy_);

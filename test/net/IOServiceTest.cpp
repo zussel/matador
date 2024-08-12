@@ -30,11 +30,11 @@ void IOServiceTest::test_shutdown()
 
   std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_running(server.service()));
 
   server.stop();
 
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_stopped(server.service()));
 }
 
 void IOServiceTest::test_acceptor()
@@ -46,7 +46,7 @@ void IOServiceTest::test_acceptor()
 
   std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(server.service()));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_running(server.service()));
 
   // send and verify received data
   tcp::socket client;
@@ -67,7 +67,7 @@ void IOServiceTest::test_acceptor()
 
   server.stop();
 
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_stopped(server.service()));
 }
 
 void IOServiceTest::test_connector()
@@ -115,5 +115,5 @@ void IOServiceTest::test_connector()
 
   server.stop();
 
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(server.service()));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_stopped(server.service()));
 }

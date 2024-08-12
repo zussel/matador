@@ -45,7 +45,7 @@ struct author : public blog_detail::person
   void process(Operator &op)
   {
     matador::access::process(op, *matador::base_class<person>(this));
-    matador::access::has_many(op, "post", posts, "author", matador::cascade_type::NONE);
+    matador::access::has_many(op, "post", posts, "author", matador::utils::cascade_type::NONE);
   }
 };
 
@@ -68,7 +68,7 @@ struct category
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name, 255);
     matador::access::attribute(op, "description", description);
-    matador::access::has_many_to_many(op, "post_category", posts, "category_id", "post_id", matador::cascade_type::NONE);
+    matador::access::has_many_to_many(op, "post_category", posts, "category_id", "post_id", matador::utils::cascade_type::NONE);
   }
 };
 
@@ -91,7 +91,7 @@ struct comment
     namespace field = matador::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "email", email, 255);
-    field::belongs_to(op, "post", blog_post, matador::cascade_type::NONE);
+    field::belongs_to(op, "post", blog_post, matador::utils::cascade_type::NONE);
     field::attribute(op, "content", content);
     field::attribute(op, "created_at", created_at);
   }
@@ -132,11 +132,11 @@ struct post
   {
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "title", title, 255);
-    matador::access::belongs_to(op, "author", writer, matador::cascade_type::NONE);
+    matador::access::belongs_to(op, "author", writer, matador::utils::cascade_type::NONE);
     matador::access::attribute(op, "created_at", created_at);
-    matador::access::has_many_to_many(op, "post_category", categories, matador::cascade_type::INSERT);
-    matador::access::has_many(op, "comment", comments, "id", matador::cascade_type::ALL);
-    matador::access::has_many(op, "tags", tags, "tag", matador::cascade_type::ALL);
+    matador::access::has_many_to_many(op, "post_category", categories, matador::utils::cascade_type::INSERT);
+    matador::access::has_many(op, "comment", comments, "id", matador::utils::cascade_type::ALL);
+    matador::access::has_many(op, "tags", tags, "tag", matador::utils::cascade_type::ALL);
     matador::access::attribute(op, "content", content);
   }
 };

@@ -12,7 +12,7 @@
 #include <dlfcn.h>
 #endif
 
-namespace matador {
+namespace matador::utils {
 
 #ifndef MATADOR_DOXYGEN_DOC
 #if defined(_MSC_VER) || defined(__MINGW32__)
@@ -27,12 +27,12 @@ typedef void* func_ptr;
  * @brief Helps to load and unload
  *        external libraries.
  *
- * This class represents a loader and unloader
- * for an exernal library. The path to the library
+ * This class represents a loader and un-loader
+ * for an external library. The path to the library
  * is given by a string.
  * It can be loaded and unloaded. Furthermore it
  * provides a method to get a pointer to an function
- * exported by the library. The function is identfied
+ * exported by the library. The function is identified
  * by a name.
  */
 class OOS_UTILS_API library
@@ -51,7 +51,7 @@ public:
   ~library();
 
   /**
-   * Load the underlaying library.
+   * Load the underlying library.
    * If the library path is invalid
    * or the library cannot be loaded
    * false is returned.
@@ -61,9 +61,9 @@ public:
   bool load();
 
   /**
-   * Sets the libray (and subsequently close and
-   * overwrite an already instatiated library) and
-   * load the underlaying library. If the library
+   * Sets the library (and subsequently close and
+   * overwrite an already instantiated library) and
+   * load the underlying library. If the library
    * path is invalid or the library cannot be loaded
    * false is returned.
    *
@@ -75,7 +75,7 @@ public:
   /**
    * Unload an loaded library. If
    * the library isn't loaded or an
-   * error occured while unloading
+   * error occurred while unloading
    * false is returned.
    *
    * @return True on successful unloading.
@@ -90,7 +90,7 @@ public:
    * @param f The name of the exported function.
    * @return The pointer to the function.
    */
-  func_ptr function(const std::string &f) const;
+  [[nodiscard]] func_ptr function(const std::string &f) const;
 
 private:
   std::string lib_;

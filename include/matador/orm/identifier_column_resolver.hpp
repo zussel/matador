@@ -15,6 +15,7 @@ namespace matador {
 
 class object_holder;
 class abstract_container;
+class identifiable_holder;
 
 namespace detail {
 
@@ -26,10 +27,10 @@ public:
   identifier_column_resolver() : col_("") {}
 
   template < class T >
-  static column resolve();
+  static sql::column resolve();
 
   template < class T >
-  column resolve(T *obj);
+  sql::column resolve(T *obj);
 
   template<class T>
   void serialize(T &x)
@@ -42,22 +43,22 @@ public:
   void on_primary_key(const char *id, std::string &pk, size_t size);
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class T>
-  void on_attribute(const char *, T &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char*, identifiable_holder&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_one(const char*, identifiable_holder&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_attribute(const char *, T &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char *, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_belongs_to(const char*, identifiable_holder&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_one(const char*, identifiable_holder&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
-  column col_;
+  sql::column col_;
 };
 
 template<class T>
-column identifier_column_resolver::resolve()
+sql::column identifier_column_resolver::resolve()
 {
   identifier_column_resolver resolver;
   T obj;
@@ -65,7 +66,7 @@ column identifier_column_resolver::resolve()
 }
 
 template<class T>
-column identifier_column_resolver::resolve(T *obj)
+sql::column identifier_column_resolver::resolve(T *obj)
 {
   matador::access::process(*this, *obj);
   return col_;

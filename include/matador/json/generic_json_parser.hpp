@@ -25,13 +25,13 @@ struct json_cursor
   }
 
   char operator[](int i) const { return json_cursor_[i]; }
-  bool is_null() const { return json_cursor_ == nullptr; }
+  [[nodiscard]] bool is_null() const { return json_cursor_ == nullptr; }
   const char* operator()() const { return json_cursor_; }
   void sync_cursor(const char *cursor) { json_cursor_ = cursor; }
 
   char skip_whitespace()
   {
-    json_cursor_ = skip_ws(json_cursor_);
+    json_cursor_ = utils::skip_ws(json_cursor_);
     return json_cursor_[0];
   }
 
@@ -43,7 +43,7 @@ struct json_cursor
     return (++json_cursor_)[0];
   }
 
-  char current_char() const
+  [[nodiscard]] char current_char() const
   {
     return json_cursor_[0];
   }
@@ -82,7 +82,7 @@ public:
     bool is_real = false;
   };
 
-  const json_cursor& cursor() const { return json_cursor_; }
+  [[nodiscard]] const json_cursor& cursor() const { return json_cursor_; }
   json_cursor& cursor() { return json_cursor_; }
 /// @endcond
 
@@ -203,7 +203,7 @@ private:
 
   char skip_whitespace();
   char next_char();
-  char current_char() const;
+  [[nodiscard]] char current_char() const;
 
   void compare_string(const char *to_compare, size_t len);
 
@@ -227,7 +227,7 @@ void generic_json_parser<T>::parse_json(const char *json_str, bool check_for_eos
 
   char c = skip_whitespace();
 
-  if (is_eos(c)) {
+  if (utils::is_eos(c)) {
     throw json_exception("invalid stream");
   }
 
@@ -248,7 +248,7 @@ void generic_json_parser<T>::parse_json(const char *json_str, bool check_for_eos
   c = skip_whitespace();
 
   // no characters after closing parenthesis are allowed
-  if (check_for_eos && !is_eos(c)) {
+  if (check_for_eos && !utils::is_eos(c)) {
     throw json_exception("no characters are allowed after closed root node");
   }
 }
@@ -261,7 +261,7 @@ void generic_json_parser<T>::parse_json_object(const char *json_str, bool check_
 
   char c = skip_whitespace();
 
-  if (is_eos(c)) {
+  if (utils::is_eos(c)) {
     throw json_exception("invalid stream");
   }
 
@@ -275,7 +275,7 @@ void generic_json_parser<T>::parse_json_object(const char *json_str, bool check_
   c = skip_whitespace();
 
   // no characters after closing parenthesis are allowed
-  if (check_for_eos && !is_eos(c)) {
+  if (check_for_eos && !utils::is_eos(c)) {
     throw json_exception("no characters are allowed after closed root node");
   }
 }
@@ -287,7 +287,7 @@ void generic_json_parser<T>::parse_json_array(const char *json_str, bool check_f
 
   char c = skip_whitespace();
 
-  if (is_eos(c)) {
+  if (utils::is_eos(c)) {
     throw json_exception("invalid stream");
   }
 
@@ -301,7 +301,7 @@ void generic_json_parser<T>::parse_json_array(const char *json_str, bool check_f
   c = skip_whitespace();
 
   // no characters after closing parenthesis are allowed
-  if (check_for_eos && !is_eos(c)) {
+  if (check_for_eos && !utils::is_eos(c)) {
     throw json_exception("no characters are allowed after closed root node");
   }
 }
@@ -340,7 +340,7 @@ generic_json_parser<T>::on_parse_object(bool check_for_eos)
 
   char c = skip_whitespace();
 
-  if (!is_eos(c) && c == '}') {
+  if (!utils::is_eos(c) && c == '}') {
     next_char();
     // call handler callback
     static_cast<T*>(this)->on_end_object();
@@ -356,7 +356,7 @@ generic_json_parser<T>::on_parse_object(bool check_for_eos)
 
     c = skip_whitespace();
     // read colon
-    if (is_eos(c)) {
+    if (utils::is_eos(c)) {
       throw json_exception("invalid stream");
     } else if (c != ':') {
       throw json_exception("character isn't colon");
@@ -374,7 +374,7 @@ generic_json_parser<T>::on_parse_object(bool check_for_eos)
     } else {
       has_next = false;
     }
-  } while (!is_eos(c) && has_next);
+  } while (!utils::is_eos(c) && has_next);
 
   c = skip_whitespace();
 
@@ -384,7 +384,7 @@ generic_json_parser<T>::on_parse_object(bool check_for_eos)
 
   static_cast<T*>(this)->on_end_object();
 
-  bool eos = is_eos(c);
+  bool eos = utils::is_eos(c);
   if (!check_for_eos && eos) {
     throw json_exception("unexpected end of string");
   }
@@ -409,7 +409,7 @@ void generic_json_parser<T>::on_parse_array(bool check_for_eos)
 
   next_char();
   char c = skip_whitespace();
-  if (!is_eos(c) && c == ']') {
+  if (!utils::is_eos(c) && c == ']') {
     next_char();
     static_cast<T*>(this)->on_end_array();
     // empty array
@@ -431,7 +431,7 @@ void generic_json_parser<T>::on_parse_array(bool check_for_eos)
     } else {
       has_next = false;
     }
-  } while (!is_eos(c) && has_next);
+  } while (!utils::is_eos(c) && has_next);
 
   c = skip_whitespace();
 
@@ -441,7 +441,7 @@ void generic_json_parser<T>::on_parse_array(bool check_for_eos)
 
   static_cast<T*>(this)->on_end_array();
 
-  bool eos = is_eos(c);
+  bool eos = utils::is_eos(c);
   if (!check_for_eos && eos) {
     throw json_exception("unexpected end of string");
   }
@@ -457,14 +457,14 @@ std::string generic_json_parser<T>::parse_json_string()
   char c = skip_whitespace();
 
   // parse string
-  if (!is_eos(c) && c != '"') {
+  if (!utils::is_eos(c) && c != '"') {
     throw json_exception("expected string opening quotes");
   }
   
   std::string value;
   // read until next '"' or eof of stream
   c = next_char();
-  while (!is_eos(c)) {
+  while (!utils::is_eos(c)) {
 
     if (c == '"') {
       // read closing double quote
@@ -534,7 +534,7 @@ typename generic_json_parser<T>::number_t generic_json_parser<T>::parse_json_num
     throw json_exception("errno integer error");
   }
 
-  if (!is_eos(end[0]) && end[0] == '.') {
+  if (!utils::is_eos(end[0]) && end[0] == '.') {
     // value is double
     value.is_real = true;
     value.integer = 0;
@@ -586,10 +586,10 @@ template<class T>
 void generic_json_parser<T>::compare_string(const char *to_compare, size_t len)
 {
   size_t i{1};
-  char c{};
+  char c;
   while (i < len) {
     c = next_char();
-    if (is_eos(c)) {
+    if (utils::is_eos(c)) {
       throw json_exception("unexpected end of string");
     }
     if (to_compare[i++] != c) {
@@ -608,7 +608,7 @@ void generic_json_parser<T>::parse_json_null()
     // check for "null"
     while (i < 4) {
       c = next_char();
-      if (is_eos(c)) {
+      if (utils::is_eos(c)) {
         throw json_exception("unexpected end of string");
       }
       if (generic_json_parser<T>::null_string[i++] != c) {
@@ -627,7 +627,7 @@ void generic_json_parser<T>::parse_json_value()
   // parse value of key
   char c = skip_whitespace();
 
-  if (is_eos(c)) {
+  if (utils::is_eos(c)) {
     throw json_exception("invalid stream");
   }
 

@@ -78,44 +78,44 @@ public:
     on_attribute(id, rev);
   }
   template < class T >
-  void on_attribute(const char *, T &x, const field_attributes &/*attr*/ = null_attributes)
+  void on_attribute(const char *, T &x, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
     buffer_->append(&x, sizeof(x));
   }
-  void on_attribute(const char* id, char *c, const field_attributes &attr = null_attributes);
-  void on_attribute(const char* id, std::string &s, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char* id, date &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char* id, time &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_belongs_to(const char* id, object_holder &x, const foreign_attributes &attr = default_foreign_attributes);
-  void on_has_one(const char* id, object_holder &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_attribute(const char* id, char *c, const utils::field_attributes &attr = utils::null_attributes);
+  void on_attribute(const char* id, std::string &s, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char* id, date &x, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char* id, time &x, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_belongs_to(const char* id, object_holder &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
+  void on_has_one(const char* id, object_holder &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, const char * /*join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(const char *id, container<T, C> &x, const char * /*join_column*/, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     handle_has_many_relation(id, x, attr);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many(const char *id, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(const char *id, container<T, C> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     handle_has_many_relation(id, x, attr);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many_to_many(const char *id, container<T, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many_to_many(const char *id, container<T, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     handle_has_many_relation(id, x, attr);
   }
 
   template<class T, template<class ...> class C>
-  void on_has_many_to_many(const char *id, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many_to_many(const char *id, container<T, C> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     handle_has_many_relation(id, x, attr);
   }
 
 private:
   template<class T, template<class ...> class C>
-  void handle_has_many_relation(const char *id, container<T, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  void handle_has_many_relation(const char *id, container<T, C> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     std::string id_oid(id);
     id_oid += ".oid";
@@ -137,16 +137,16 @@ private:
     }
   }
 
-  void on_foreign_object(const char *id, object_holder &x, const foreign_attributes &attr);
+  void on_foreign_object(const char *id, object_holder &x, const utils::foreign_attributes &attr);
 
   template<class T>
-  void process_has_many_item(T &obj, const foreign_attributes &attr, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0)
+  void process_has_many_item(T &obj, const utils::foreign_attributes &attr, typename std::enable_if<!matador::is_builtin<T>::value>::type* = 0)
   {
     on_foreign_object("", obj, attr);
   }
 
   template<class T>
-  void process_has_many_item(T &attr, const foreign_attributes &/*attr*/, typename std::enable_if<matador::is_builtin<T>::value>::type* = 0)
+  void process_has_many_item(T &attr, const utils::foreign_attributes &/*attr*/, typename std::enable_if<matador::is_builtin<T>::value>::type* = 0)
   {
     on_attribute("", attr);
   }

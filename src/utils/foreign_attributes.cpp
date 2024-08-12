@@ -1,6 +1,6 @@
 #include "matador/utils/foreign_attributes.hpp"
 
-namespace matador {
+namespace matador::utils {
 
 foreign_attributes::foreign_attributes(cascade_type cascade)
 : cascade_(cascade) {}

@@ -169,14 +169,14 @@ operator<<(std::ostream &lhs, const date &rhs) {
 
 date date::parse(const std::string &dstr, const char *format)
 {
-  struct tm t;
+  struct tm t{};
   detail::strptime(dstr.c_str(), format, &t);
-  return date(t.tm_mday, t.tm_mon + 1, t.tm_year + 1900);
+  return {t.tm_mday, t.tm_mon + 1, t.tm_year + 1900};
 }
 
 void date::set(const char *datestr, const char *format)
 {
-  struct tm t;
+  struct tm t{};
   detail::strptime(datestr, format, &t);
   sync_date(t.tm_mday, t.tm_mon + 1, t.tm_year + 1900);
 }

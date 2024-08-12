@@ -421,7 +421,7 @@ json& func(json &parent, const std::vector<std::string> &parts, size_t index);
 json& json::at_path(const std::string &path, char delimiter)
 {
   std::vector<std::string> parts;
-  matador::split(path, delimiter, parts);
+  matador::utils::split(path, delimiter, parts);
 
   if (parts.empty()) {
     return *this;
@@ -453,7 +453,7 @@ json& func(json &parent, const std::vector<std::string> &parts, size_t index)
 const json& json::at_path(const std::string &path, char delimiter) const
 {
   std::vector<std::string> parts;
-  matador::split(path, delimiter, parts);
+  matador::utils::split(path, delimiter, parts);
 
   if (parts.empty()) {
     return *this;

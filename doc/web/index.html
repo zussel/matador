@@ -142,9 +142,9 @@
         <div class="width66 float_right">
 <pre><code class="cpp"><span class="preprocessor">#include "object/object_store.hpp"</span>
 
-oos::object_store ostore;
+oos::object_store store;
 
-ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);
+store.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);
 
 </code></pre>
         </div>
@@ -160,7 +160,7 @@ ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);
 
 <span class="preprocessor">#include &lt;exception&gt;</span>
 
-oos::session db(ostore, <span class="string">"sqlite://person.db"</span>);
+oos::session db(store, <span class="string">"sqlite://person.db"</span>);
 
 db.create();
 
@@ -175,10 +175,10 @@ oos::transaction tr(db);
 <span class="keyword">try</span> {  
     tr.begin();
 
-    ostore.insert(<span class="keyword">new</span> person(<span class="string">"George"</span>));
-    ostore.insert(<span class="keyword">new</span> person(<span class="string">"Jane"</span>));
-    ostore.insert(<span class="keyword">new</span> person(<span class="string">"Tim"</span>));
-    ostore.insert(<span class="keyword">new</span> person(<span class="string">"Walter"</span>));
+    store.insert(<span class="keyword">new</span> person(<span class="string">"George"</span>));
+    store.insert(<span class="keyword">new</span> person(<span class="string">"Jane"</span>));
+    store.insert(<span class="keyword">new</span> person(<span class="string">"Tim"</span>));
+    store.insert(<span class="keyword">new</span> person(<span class="string">"Walter"</span>));
 
     tr.commit();
 } <span class="keyword">catch</span> (std::exception&amp;) {
@@ -197,7 +197,7 @@ oos::transaction tr(db);
 <span class="keyword">typedef</span> oos::object_ptr&lt;person&gt; person_ptr;
 <span class="keyword">typedef</span> oos::object_view&lt;person&gt; person_view_t;
 
-person_view_t oview(ostore);
+person_view_t oview(store);
 
 person_view_t::iterator i = oview.begin();
 person_view_t::iterator last = oview.end();

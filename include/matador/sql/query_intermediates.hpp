@@ -1,0 +1,346 @@
+#ifndef QUERY_QUERY_INTERMEDIATES_HPP
+#define QUERY_QUERY_INTERMEDIATES_HPP
+
+#include "matador/sql/column_definition.hpp"
+#include "matador/sql/column_definition_generator.hpp"
+#include "matador/sql/column_generator.hpp"
+#include "matador/sql/key_value_generator.hpp"
+#include "matador/sql/key_value_pair.hpp"
+#include "matador/sql/placeholder_generator.hpp"
+#include "matador/sql/query_result.hpp"
+#include "matador/sql/query_data.hpp"
+#include "matador/sql/record.hpp"
+#include "matador/sql/statement.hpp"
+#include "matador/sql/schema.hpp"
+#include "matador/sql/value_extractor.hpp"
+
+#include "matador/utils/types.hpp"
+
+#include <string>
+
+namespace matador::sql {
+
+class basic_condition;
+class connection;
+
+class basic_query_intermediate
+{
+public:
+  explicit basic_query_intermediate(connection &db, const sql::schema &schema);
+
+protected:
+  connection &connection_;
+  const sql::schema &schema_;
+};
+
+class query_intermediate : public basic_query_intermediate
+{
+public:
+  query_intermediate(connection &db, const sql::schema &schema, const std::shared_ptr<query_data> &data);
+
+protected:
+  std::shared_ptr<query_data> data_;
+};
+
+class query_execute : public query_intermediate
+{
+public:
+  using query_intermediate::query_intermediate;
+
+  size_t execute();
+  statement prepare();
+  [[nodiscard]] query_context build() const;
+};
+
+class query_select : public query_intermediate
+{
+protected:
+  using query_intermediate::query_intermediate;
+
+public:
+  template < class Type >
+  query_result<Type> fetch_all()
+  {
+    return query_result<Type>(fetch());
+  }
+  query_result<record> fetch_all();
+
+  template < class Type >
+  std::unique_ptr<Type> fetch_one()
+  {
+    auto result = query_result<Type>(fetch());
+    auto first = result.begin();
+    if (first == result.end()) {
+      return nullptr;
+    }
+
+    return std::unique_ptr<Type>{first.release()};
+  }
+  std::optional<record> fetch_one();
+
+  template<typename Type>
+  std::optional<Type> fetch_value()
+  {
+    const auto result = fetch_one();
+    if (result.has_value()) {
+      return result.value().at(0).as<Type>().value();
+    }
+    return std::nullopt;
+  }
+
+  statement prepare();
+
+  [[nodiscard]] query_context build() const;
+
+private:
+  std::unique_ptr<query_result_impl> fetch();
+};
+
+class query_offset_intermediate;
+
+class query_limit_intermediate : public query_select
+{
+public:
+  using query_select::query_select;
+
+  query_offset_intermediate offset(size_t offset);
+};
+
+class query_offset_intermediate : public query_select
+{
+public:
+  using query_select::query_select;
+
+  query_limit_intermediate limit(size_t limit);
+};
+
+class query_order_direction_intermediate : public query_select
+{
+public:
+  using query_select::query_select;
+
+  query_limit_intermediate limit(size_t limit);
+};
+
+class query_order_by_intermediate;
+
+class query_group_by_intermediate : public query_select
+{
+public:
+  using query_select::query_select;
+
+  query_order_by_intermediate order_by(const column &col);
+};
+
+class query_order_by_intermediate : public query_intermediate
+{
+public:
+  using query_intermediate::query_intermediate;
+
+  query_order_direction_intermediate asc();
+  query_order_direction_intermediate desc();
+};
+
+class query_where_intermediate : public query_select
+{
+public:
+  using query_select::query_select;
+
+  query_group_by_intermediate group_by(const column &col);
+  query_order_by_intermediate order_by(const column &col);
+};
+
+class query_join_intermediate;
+
+struct join_data
+{
+  table join_table;
+  std::unique_ptr<basic_condition> condition;
+};
+
+class query_from_intermediate : public query_select
+{
+public:
+  using query_select::query_select;
+
+  query_join_intermediate join_left(const table &t);
+  query_from_intermediate join_left(join_data &data);
+  query_from_intermediate join_left(std::vector<join_data> &data_vector);
+
+  template<class Condition>
+  query_where_intermediate where(const Condition &cond)
+  {
+    return where_clause(std::make_unique<Condition>(std::move(cond)));
+  }
+  query_where_intermediate where(std::unique_ptr<basic_condition> &&cond)
+  {
+    return where_clause(std::move(cond));
+  }
+  query_group_by_intermediate group_by(const column &col);
+  query_order_by_intermediate order_by(const column &col);
+
+private:
+  query_where_intermediate where_clause(std::unique_ptr<basic_condition> &&cond);
+};
+
+using query_on_intermediate = query_from_intermediate;
+
+class query_join_intermediate : public query_intermediate
+{
+public:
+  using query_intermediate::query_intermediate;
+
+  template<class Condition>
+  query_on_intermediate on(const Condition &cond)
+  {
+    return on_clause(std::make_unique<Condition>(std::move(cond)));
+  }
+  query_on_intermediate on(std::unique_ptr<basic_condition> &&cond)
+  {
+    return on_clause(std::move(cond));
+  }
+
+private:
+  query_on_intermediate on_clause(std::unique_ptr<basic_condition> &&cond);
+};
+
+class query_start_intermediate : public basic_query_intermediate
+{
+public:
+  explicit query_start_intermediate(connection &db, const sql::schema &schema);
+
+protected:
+  std::shared_ptr<query_data> data_ { std::make_shared<query_data>() };
+};
+
+class query_select_intermediate : public query_start_intermediate
+{
+public:
+  query_select_intermediate(connection &db, const sql::schema &schema, const std::vector<column>& columns);
+
+  query_from_intermediate from(const table& t);
+};
+
+template < class Type >
+std::vector<utils::any_type> as_placeholder(const Type &obj)
+{
+  placeholder_generator generator;
+  access::process(generator, obj);
+
+  return generator.placeholder_values;
+}
+
+class query_into_intermediate : public query_intermediate
+{
+public:
+  using query_intermediate::query_intermediate;
+
+  query_execute values(std::initializer_list<utils::any_type> values);
+  query_execute values(std::vector<utils::any_type> &&values);
+  template<class Type>
+  query_execute values()
+  {
+    Type obj;
+    return values(std::move(as_placeholder(obj)));
+  }
+  template<class Type>
+  query_execute values(const Type &obj)
+  {
+    return values(std::move(value_extractor::extract(obj)));
+  }
+};
+
+class query_create_intermediate : public query_start_intermediate
+{
+public:
+  explicit query_create_intermediate(connection &db, const sql::schema &schema);
+
+  query_execute table(const sql::table &table, std::initializer_list<column_definition> columns);
+  query_execute table(const sql::table &table, const std::vector<column_definition> &columns);
+  template<class Type>
+  query_execute table(const sql::table &table)
+  {
+    return this->table(table, column_definition_generator::generate<Type>(schema_));
+  }
+};
+
+class query_drop_intermediate : query_start_intermediate
+{
+public:
+  explicit query_drop_intermediate(connection &db, const sql::schema &schema);
+
+  query_execute table(const sql::table &table);
+};
+
+class query_insert_intermediate : public query_start_intermediate
+{
+public:
+  explicit query_insert_intermediate(connection &db, const sql::schema &schema);
+
+  query_into_intermediate into(const sql::table &table, std::initializer_list<column> column_names);
+  query_into_intermediate into(const sql::table &table, std::vector<column> &&column_names);
+  query_into_intermediate into(const sql::table &table);
+};
+
+class query_execute_where_intermediate : public query_execute
+{
+public:
+  using query_execute::query_execute;
+
+  query_order_by_intermediate order_by(const column &col);
+};
+
+class query_set_intermediate : public query_execute
+{
+public:
+  using query_execute::query_execute;
+
+  template<class Condition>
+  query_execute_where_intermediate where(const Condition &cond)
+  {
+    return where_clause(std::make_unique<Condition>(std::move(cond)));
+  }
+
+private:
+  query_execute_where_intermediate where_clause(std::unique_ptr<basic_condition> &&cond);
+};
+
+class query_update_intermediate : public query_start_intermediate
+{
+public:
+  query_update_intermediate(connection &db, const sql::schema &schema, const sql::table& table);
+
+  query_set_intermediate set(std::initializer_list<key_value_pair> columns);
+  query_set_intermediate set(std::vector<key_value_pair> &&columns);
+  template<class Type>
+  query_set_intermediate set(const Type &obj)
+  {
+    return set(key_value_generator::generate(obj));
+  }
+};
+
+class query_delete_from_intermediate : public query_execute
+{
+public:
+  using query_execute::query_execute;
+
+  template<class Condition>
+  query_execute_where_intermediate where(const Condition &cond)
+  {
+    return where_clause(std::make_unique<Condition>(std::move(cond)));
+  }
+
+private:
+  query_execute_where_intermediate where_clause(std::unique_ptr<basic_condition> &&cond);
+};
+
+class query_delete_intermediate : public query_start_intermediate
+{
+public:
+  explicit query_delete_intermediate(connection &db, const sql::schema &schema);
+
+  query_delete_from_intermediate from(const sql::table &table);
+};
+
+}
+#endif //QUERY_QUERY_INTERMEDIATES_HPP

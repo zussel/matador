@@ -15,7 +15,7 @@ void object_deleter::on_primary_key(const char *id, std::string &x, size_t size)
 
 void object_deleter::t_object_count::remove() const
 {
-  proxy->ostore()->remove(proxy, false);
+  proxy->remove();
 }
 
 void object_deleter::remove()

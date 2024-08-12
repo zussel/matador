@@ -1,0 +1,8 @@
+#ifndef POSTGRES_CONNECTION_HPP
+#define POSTGRES_CONNECTION_HPP
+
+namespace matador::test::connection {
+ const char* const dns = "@POSTGRES_CONNECTION_STRING@";
+}
+
+#endif /*POSTGRES_CONNECTION_HPP*/

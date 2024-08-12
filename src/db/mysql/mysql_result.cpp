@@ -271,7 +271,7 @@ void mysql_result::read_value(const char */*id*/, size_type index, matador::date
   if (len == 0) {
     return;
   }
-  value.set(val, matador::date_format::ISO8601);
+  value.set(val, matador::utils::date_format::ISO8601);
 }
 
 void mysql_result::read_value(const char *id, size_type index, matador::time &value)

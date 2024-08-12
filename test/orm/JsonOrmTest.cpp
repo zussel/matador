@@ -42,7 +42,7 @@ struct person
                               "colors", // id
                               colors,   // class member
                               "color",  // right column in relation table
-                              matador::cascade_type::ALL); // cascade type
+                              matador::utils::cascade_type::ALL); // cascade type
   }
 };
 }
@@ -58,13 +58,13 @@ void JsonOrmTest::test_insert_from_json()
 
   json_object_mapper mapper;
 
-  std::string data = R"({
+  const std::string data = R"({
     "name": "george",
     "birthday": "2001-11-15",
     "colors": ["green", "blue"]
   })";
 
-  std::string expected_result = R"({
+  const std::string expected_result = R"({
   "id": 1,
   "name": "george",
   "birthday": "2001-11-15",
@@ -77,10 +77,10 @@ void JsonOrmTest::test_insert_from_json()
 
   session s(p);
 
-  auto optr = s.insert(ptr.release());
+  const auto optr = s.insert(ptr.release());
   s.flush();
 
-  auto body = mapper.to_string(optr, json_format::pretty);
+  const auto body = mapper.to_string(optr, json_format::pretty);
 
   UNIT_ASSERT_EQUAL(expected_result, body);
 

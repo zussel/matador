@@ -59,15 +59,15 @@ public:
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class V>
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) { }
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char *, const utils::field_attributes &/*attr*/ = utils::null_attributes) { }
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) { }
 
   template < class V >
-  void on_belongs_to(const char *id, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_belongs_to(const char *id, object_ptr<V> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes);
 
   template < class V >
-  void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_one(const char *, object_ptr<V> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     const auto pk = x.primary_key().share();
     if (pk.is_null()) {
@@ -99,7 +99,7 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void on_has_many(const char *id, container<V, C> &x, const char *join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *id, container<V, C> &x, const char *join_column, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);
@@ -135,19 +135,19 @@ public:
   }
 
   template<class V, template<class ...> class C>
-  void on_has_many(const char *id, container<V, C> &x, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many(const char *id, container<V, C> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     on_has_many_to_many(id, x, attr);
   }
 
   template<class V, template<class ...> class C>
-  void on_has_many_to_many(const char *id, container<V, C> &x, const char *, const char *, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_many_to_many(const char *id, container<V, C> &x, const char *, const char *, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     on_has_many_to_many(id, x, attr);
   }
 
   template<class V, template<class ...> class C>
-  void on_has_many_to_many(const char *id, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *id, container<V, C> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     // get node of object type
     prototype_iterator node = store_->find(id);
@@ -261,13 +261,13 @@ public:
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &x, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
+  void on_attribute(const char *, V &x, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *, char *, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) { }
   template < class V >
-  void on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_belongs_to(const char *, object_ptr<V> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
   template < class V >
-  void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes)
+  void on_has_one(const char *, object_ptr<V> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes)
   {
     // must be left side value
     // if left table is loaded
@@ -281,14 +281,14 @@ public:
 
     left_proxy_ = acquire_proxy(x, pk, attr, left_table_ptr_);
   }
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   template<class V>
-  object_proxy* acquire_proxy(object_ptr<V> &x, const identifier pk, const foreign_attributes &attr, const std::shared_ptr<basic_table> &tbl)
+  object_proxy* acquire_proxy(object_ptr<V> &x, const identifier pk, const utils::foreign_attributes &attr, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());
@@ -384,25 +384,25 @@ public:
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &x, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *, V &x, const utils::field_attributes &/*attr*/ = utils::null_attributes);
 
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes);
-
-  template < class V >
-  void on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_attribute(const char *, char *, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes);
 
   template < class V >
-  void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_belongs_to(const char *, object_ptr<V> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
 
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  template < class V >
+  void on_has_one(const char *, object_ptr<V> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
+
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   template < class V >
-  object_proxy* acquire_proxy(object_ptr<V> &x, const identifier &pk, const foreign_attributes &attr, const std::shared_ptr<basic_table> &tbl)
+  object_proxy* acquire_proxy(object_ptr<V> &x, const identifier &pk, const utils::foreign_attributes &attr, const std::shared_ptr<basic_table> &tbl)
   {
     // get node of object type
     prototype_iterator node = store_->find(x.type());

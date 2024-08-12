@@ -30,8 +30,8 @@ public:
   template < class Operator >
   void process(Operator &op)
   {
-    matador::access::belongs_to(op, this->left_column().c_str(), left_, matador::cascade_type::NONE);
-    matador::access::belongs_to(op, this->right_column().c_str(), right_, matador::cascade_type::NONE);
+    matador::access::belongs_to(op, this->left_column().c_str(), left_, utils::cascade_type::NONE);
+    matador::access::belongs_to(op, this->right_column().c_str(), right_, utils::cascade_type::NONE);
   }
 
   [[nodiscard]] basic_has_many_to_many_item *clone() const override

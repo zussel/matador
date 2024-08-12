@@ -4,7 +4,7 @@
 
 #include "matador/logger/log_manager.hpp"
 
-namespace matador {
+namespace matador::sql {
 
 sql_logger::sql_logger()
   : sql_logger(1000000, 5)

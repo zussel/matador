@@ -1,4 +1,4 @@
-#include "matador/utils/identifier_resolver.hpp"
+#include "matador/object/identifier_resolver.hpp"
 
 #include "matador/object/action_remover.hpp"
 #include "matador/object/insert_action.hpp"

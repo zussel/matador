@@ -79,30 +79,30 @@ public:
   void on_primary_key(const char *id, std::string &x, size_t size);
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class T>
-  void on_attribute(const char *, const T &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, const T &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char *, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
   template<class T>
-  void on_belongs_to(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_belongs_to(const char *, object_ptr<T> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
   template<class T>
-  void on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr = default_foreign_attributes);
+  void on_has_one(const char *, object_ptr<T> &x, const utils::foreign_attributes &attr = utils::default_foreign_attributes);
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *, container<T, Container> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<T, Container> &x, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     handle_has_many_relation(x);
   }
   template<class T, template<class ...> class Container>
-  void on_has_many(const char *, container<T, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<T, Container> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     handle_has_many_relation(x);
   }
   template<class T, template<class ...> class Container>
-  void on_has_many_to_many(const char * /*id*/, container<T, Container> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char * /*id*/, container<T, Container> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     handle_has_many_relation(x);
   }
   template<class T, template<class ...> class Container>
-  void on_has_many_to_many(const char *, container<T, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *, container<T, Container> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     handle_has_many_relation(x);
   }
@@ -139,7 +139,7 @@ void object_deleter::on_primary_key(const char *id, T &x, typename std::enable_i
 }
 
 template<class T>
-void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, const foreign_attributes &attr)
+void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, const utils::foreign_attributes &attr)
 {
   if (!x.ptr()) {
     return;
@@ -164,7 +164,7 @@ void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, const foreign
     --curr_obj->second;
   }
 
-  if ((attr.cascade() & cascade_type::REMOVE) == cascade_type::REMOVE) {
+  if ((attr.cascade() & utils::cascade_type::REMOVE) == utils::cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     proxy_stack_.push(x.proxy_);
     matador::access::process(*this, *(T*)x.ptr());
@@ -173,7 +173,7 @@ void object_deleter::on_belongs_to(const char *, object_ptr<T> &x, const foreign
 }
 
 template<class T>
-void object_deleter::on_has_one(const char *, object_ptr<T> &x, const foreign_attributes &attr)
+void object_deleter::on_has_one(const char *, object_ptr<T> &x, const utils::foreign_attributes &attr)
 {
   if (!x.ptr()) {
     return;
@@ -199,7 +199,7 @@ void object_deleter::on_has_one(const char *, object_ptr<T> &x, const foreign_at
     visited_objects_.insert(std::make_pair(x.proxy_, x.proxy_->reference_count() - 1));
   }
 
-  if ((attr.cascade() & cascade_type::REMOVE) == cascade_type::REMOVE) {
+  if ((attr.cascade() & utils::cascade_type::REMOVE) == utils::cascade_type::REMOVE) {
     objects_to_remove_.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     proxy_stack_.push(x.proxy_);
     matador::access::process(*this, *(T*)x.ptr());
@@ -246,7 +246,7 @@ void object_deleter::handle_has_many_relation(container<Type, Container> &x)
 }
 
 //template<class T, template<class ...> class C>
-//void object_deleter::on_has_many(const char *, container<T, C> &x, const foreign_attributes &/*attr*/, typename std::enable_if<matador::is_builtin<T>::value>::type*)
+//void object_deleter::on_has_many(const char *, container<T, C> &x, const utils::foreign_attributes &/*attr*/, typename std::enable_if<matador::is_builtin<T>::value>::type*)
 //{
 //  typename container<T, C>::iterator first = x.begin();
 //  typename container<T, C>::iterator last = x.end();

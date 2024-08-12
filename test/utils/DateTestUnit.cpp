@@ -50,7 +50,7 @@ void DateTestUnit::test_parse()
   UNIT_ASSERT_EQUAL(d.month(), 11);
   UNIT_ASSERT_EQUAL(d.year(), 1979);
 
-  d = date::parse("2000-11-24", date_format::ISO8601);
+  d = date::parse("2000-11-24", utils::date_format::ISO8601);
 
   UNIT_ASSERT_EQUAL(d.day(), 24);
   UNIT_ASSERT_EQUAL(d.month(), 11);
@@ -282,7 +282,7 @@ void DateTestUnit::test_to_string()
 {
   date d1(30, 6, 2015);
 
-  std::string str = matador::to_string(d1);
+  std::string str = utils::to_string(d1);
 
   UNIT_ASSERT_EQUAL(str, "2015-06-30");
 }

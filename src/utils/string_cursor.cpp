@@ -17,7 +17,7 @@ string_cursor &string_cursor::operator=(const char *str)
 
 char string_cursor::skip_whitespace()
 {
-  cursor_ = skip_ws(cursor_);
+  cursor_ = utils::skip_ws(cursor_);
   return cursor_[0];
 }
 

@@ -131,7 +131,7 @@ TEST_CASE("Validate blob conversion leads to an exception", "[convert][blob][exc
 
 TEST_CASE("Validate date to string conversion", "[convert][date][string]") {
   matador::date today;
-  const auto expected_string = matador::to_string(today);
+  const auto expected_string = matador::utils::to_string(today);
   std::string to;
 
   convert(to, today);
@@ -141,13 +141,14 @@ TEST_CASE("Validate date to string conversion", "[convert][date][string]") {
 
 TEST_CASE("Validate date conversion leads to an exception", "[convert][date][exception]") {
   matador::date today;
-  int to;
-  REQUIRE_THROWS_AS(convert(to, today), std::logic_error);
+  int to{};
+  convert(to, today);
+  REQUIRE(to == today.julian_date());
 }
 
 TEST_CASE("Validate time to string conversion", "[convert][time][string]") {
   matador::time now;
-  const auto expected_string = matador::to_string(now);
+  const auto expected_string = matador::utils::to_string(now);
   std::string to;
 
   convert(to, now);
@@ -158,5 +159,6 @@ TEST_CASE("Validate time to string conversion", "[convert][time][string]") {
 TEST_CASE("Validate time conversion leads to an exception", "[convert][time][exception]") {
   matador::time now;
   int to;
-  REQUIRE_THROWS_AS(convert(to, now), std::logic_error);
+  convert(to, now);
+  REQUIRE(to == now.get_time_info().seconds_since_epoch);
 }

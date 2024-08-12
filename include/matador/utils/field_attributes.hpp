@@ -3,7 +3,7 @@
 
 #include "matador/utils/contraints.hpp"
 
-namespace matador {
+namespace matador::utils {
 
 /**
  * This class represents field attributes in
@@ -65,7 +65,7 @@ private:
   constraints options_ = constraints::NONE;
 };
 
-const field_attributes null_attributes {};
+const utils::field_attributes null_attributes {};
 
 }
 #endif //MATADOR_FIELD_ATTRIBUTES_HPP

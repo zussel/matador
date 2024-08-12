@@ -126,7 +126,7 @@ struct employee
     namespace field = matador::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name);
-    field::belongs_to(op, "department"    , dep, matador::cascade_type::NONE);
+    field::belongs_to(op, "department"    , dep, matador::utils::cascade_type::NONE);
     //                     ^ name of foreign table
     //                                      ^ object
     //                                           ^ foreign attributes
@@ -151,7 +151,7 @@ struct department
   {
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name, 255);
-    matador::access::has_many(op, "employees", employees, "department", matador::cascade_type::NONE);
+    matador::access::has_many(op, "employees", employees, "department", matador::utils::cascade_type::NONE);
     //                             ^ id
     //                                         ^ container
     //                                                    ^ name of foreign join column

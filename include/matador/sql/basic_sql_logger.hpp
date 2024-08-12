@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace matador {
+namespace matador::sql {
 
 /**
  * @brief Base class for sql logging
@@ -57,7 +57,7 @@ public:
  * This is used as the default logger for all
  * connections and statements.
  */
-class null_sql_logger : public basic_sql_logger
+class null_sql_logger final : public basic_sql_logger
 {
 public:
   /**

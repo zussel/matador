@@ -16,7 +16,7 @@
 
 #include "matador/utils/sequencer.hpp"
 #include "matador/utils/sequence_synchronizer.hpp"
-#include "matador/utils/identifier_setter.hpp"
+#include "identifier_setter.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -384,13 +384,6 @@ public:
       throw object_exception("unknown prototype type");
     }
   }
-
-  /**
-   *
-   * @param type
-   * @return
-   */
-  object_description describe(const char *type) const;
 
   /**
    * Executes a predicate for each root node

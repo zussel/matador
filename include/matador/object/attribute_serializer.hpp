@@ -68,7 +68,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -78,7 +78,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<T>::value && std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<std::is_arithmetic<T>::value && std::is_same<V, bool>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -88,7 +88,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
+  void on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -97,15 +97,15 @@ public:
     this->success_ = true;
   }
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) && !std::is_same<T, V>::value >::type* = 0) {}
+  void on_attribute(const char *, char*, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_belongs_to(const char *, object_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_one(const char *, object_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   const T &from_;
@@ -129,7 +129,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = nullptr)
+  void on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = nullptr)
   {
     if (id_ != id) {
       return;
@@ -139,7 +139,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_floating_point<V>::value>::type* = nullptr)
+  void on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<std::is_floating_point<V>::value>::type* = nullptr)
   {
     if (id_ != id) {
       return;
@@ -149,7 +149,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<V>::value && std::is_same<bool, V>::value>::type* = 0)
+  void on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<std::is_arithmetic<V>::value && std::is_same<bool, V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -159,15 +159,15 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<!std::is_arithmetic<V>::value>::type* = 0) {}
+  void on_attribute(const char *, char*, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_belongs_to(const char *, object_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_one(const char *, object_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   bool from_;
@@ -193,25 +193,25 @@ public:
   void on_primary_key(const char *, std::string &, size_t) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char*, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
   template < class V >
-  void on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_belongs_to(const char *, object_ptr<V> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     x = from_;
     this->success_ = true;
   }
   template < class V >
-  void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_has_one(const char *, object_ptr<V> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     x = from_;
     this->success_ = true;
   }
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   const object_ptr<T> &from_;
@@ -240,31 +240,31 @@ public:
   void on_primary_key(const char *, std::string &, size_t) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
-  void on_has_one(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char*, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_belongs_to(const char *, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) { }
+  void on_has_one(const char *, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) { }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<V, C> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many_to_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *, container<V, C> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
@@ -294,31 +294,31 @@ public:
   void on_primary_key(const char *, std::string &, size_t) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
-  void on_has_one(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char*, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_belongs_to(const char *, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) { }
+  void on_has_one(const char *, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) { }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<V, C> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many_to_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *, container<V, C> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.push_back(from_);
     this->success_ = true;
@@ -348,8 +348,8 @@ public:
   }
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = null_attributes)
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *id, std::string &to, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
     if (id_ != id) {
       return;
@@ -357,7 +357,7 @@ public:
     to = from_;
     this->success_ = true;
   }
-  void on_attribute(const char *id, char *to, const field_attributes &attr)
+  void on_attribute(const char *id, char *to, const utils::field_attributes &attr)
   {
     if (id_ != id) {
       return;
@@ -372,12 +372,12 @@ public:
       this->success_ = true;
     }
   }
-  void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_belongs_to(const char *, object_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_one(const char *, object_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   const char* from_ = nullptr;
@@ -403,8 +403,8 @@ public:
   }
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = null_attributes)
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *id, std::string &to, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
     if (id_ != id) {
       return;
@@ -412,7 +412,7 @@ public:
     to = from_;
     this->success_ = true;
   }
-  void on_attribute(const char *id, char *to, const field_attributes &attr)
+  void on_attribute(const char *id, char *to, const utils::field_attributes &attr)
   {
     if (id_ != id) {
       return;
@@ -427,12 +427,12 @@ public:
       this->success_ = true;
     }
   }
-  void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_belongs_to(const char *, object_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_one(const char *, object_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   const std::string &from_;
@@ -465,7 +465,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, T>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -474,7 +474,7 @@ public:
     success_ = true;
   }
   template < class V >
-  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && std::is_same<bool, T>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && std::is_same<bool, T>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -483,7 +483,7 @@ public:
     success_ = true;
   }
   template < class V >
-  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
+  void on_attribute(const char *id, V &from, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -492,15 +492,15 @@ public:
     success_ = true;
   }
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_one(const char *, object_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
+  void on_attribute(const char *, char*, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_belongs_to(const char *, object_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_one(const char *, object_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   T &to_;
@@ -521,23 +521,23 @@ public:
   void on_primary_key(const char *, std::string &/*from*/, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char*, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
   template < class V >
-  void on_belongs_to(const char *, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_belongs_to(const char *, object_ptr<V> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     to_ = x;
   }
   template < class V >
-  void on_has_one(const char *, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void on_has_one(const char *, object_ptr<V> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     to_ = x;
   }
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   object_ptr<T> &to_;
@@ -566,31 +566,31 @@ public:
   void on_primary_key(const char *, std::string &/*from*/, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_one(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char*, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_belongs_to(const char *, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_one(const char *, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<V, C> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many_to_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *, container<V, C> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
@@ -619,30 +619,30 @@ public:
   void on_primary_key(const char *, std::string &/*from*/, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char*, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char*, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_belongs_to(const char *, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<V, C> &x, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many(const char *, container<V, C> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *, container<V, C> &x, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
   }
   template<class V, template <class ...> class C>
-  void on_has_many_to_many(const char *, container<V, C> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_many_to_many(const char *, container<V, C> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     x.remove(to_);
     this->success_ = true;
@@ -671,7 +671,7 @@ public:
   }
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template < class V >
-  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if< !std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -681,16 +681,16 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &from, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
+  void on_attribute(const char *id, V &from, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
     }
-    to_ = matador::to_string(from, precision_);
+    to_ = matador::utils::to_string(from, precision_);
     success_ = true;
   }
 
-  void on_attribute(const char *id, std::string &from, const field_attributes &/*attr*/ = null_attributes)
+  void on_attribute(const char *id, std::string &from, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
     if (id_ != id) {
       return;
@@ -699,7 +699,7 @@ public:
     success_ = true;
   }
 
-  void on_attribute(const char *id, char *from, const field_attributes &attr)
+  void on_attribute(const char *id, char *from, const utils::field_attributes &attr)
   {
     if (id_ != id) {
       return;
@@ -708,25 +708,25 @@ public:
     success_ = true;
   }
 
-  void on_attribute(const char *id, date &from, const field_attributes &/*attr*/ = null_attributes)
+  void on_attribute(const char *id, date &from, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
     if (id_ != id) {
       return;
     }
-    to_ = to_string(from);
+    to_ = utils::to_string(from);
     success_ = true;
   }
-  void on_attribute(const char *id, matador::time &from, const field_attributes &/*attr*/ = null_attributes)
+  void on_attribute(const char *id, matador::time &from, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
     if (id_ != id) {
       return;
     }
-    to_ = to_string(from);
+    to_ = utils::to_string(from);
     success_ = true;
   }
 
   template < class V >
-  void on_belongs_to(const char *id, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_belongs_to(const char *id, object_ptr<V> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     if (id_ != id) {
       return;
@@ -742,7 +742,7 @@ public:
   }
 
   template < class V >
-  void on_has_one(const char *id, object_ptr<V> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_one(const char *id, object_ptr<V> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     if (id_ != id) {
       return;
@@ -757,10 +757,10 @@ public:
     success_ = true;
   }
 
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   std::string &to_;
@@ -817,7 +817,7 @@ public:
     on_attribute(id, rev);
   }
   template < class V >
-  void on_attribute(const char *id, V &/*from*/, const field_attributes &/*attr*/ = null_attributes)
+  void on_attribute(const char *id, V &/*from*/, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
     if (id_ != id) {
       return;
@@ -825,16 +825,16 @@ public:
     // Todo: convert each type to char*
     success_ = true;
   }
-  void on_attribute(const char*, date&, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char*, time&, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_belongs_to(const char*, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_one(const char*, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_attribute(const char*, date&, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char*, time&, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_belongs_to(const char*, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_one(const char*, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
-  void on_attribute(const char *id, std::string &from, const field_attributes &attr)
+  void on_attribute(const char *id, std::string &from, const utils::field_attributes &attr)
   {
     if (id_ != id) {
       return;
@@ -857,7 +857,7 @@ public:
     success_ = true;
   }
 
-  void on_attribute(const char *id, char *from, const field_attributes &attr)
+  void on_attribute(const char *id, char *from, const utils::field_attributes &attr)
   {
     if (id_ != id) {
       return;

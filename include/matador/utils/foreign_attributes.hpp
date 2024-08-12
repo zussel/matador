@@ -4,7 +4,7 @@
 #include "matador/utils/fetch_type.hpp"
 #include "matador/utils/cascade_type.hpp"
 
-namespace matador {
+namespace matador::utils {
 
 class foreign_attributes
 {
@@ -13,8 +13,8 @@ public:
   foreign_attributes(cascade_type cascade); // NOLINT(*-explicit-constructor)
   foreign_attributes(fetch_type fetch); // NOLINT(*-explicit-constructor)
   foreign_attributes(cascade_type cascade, fetch_type fetch);
-  foreign_attributes(const foreign_attributes &x) = default;
-  foreign_attributes& operator=(const foreign_attributes &x) = default;
+  foreign_attributes(const utils::foreign_attributes &x) = default;
+  foreign_attributes& operator=(const utils::foreign_attributes &x) = default;
   foreign_attributes(foreign_attributes &&x) = default;
   foreign_attributes& operator=(foreign_attributes &&x) = default;
   ~foreign_attributes() = default;
@@ -27,7 +27,7 @@ private:
   fetch_type fetch_{fetch_type::LAZY};
 };
 
-const foreign_attributes default_foreign_attributes {};
+const utils::foreign_attributes default_foreign_attributes {};
 
 }
 

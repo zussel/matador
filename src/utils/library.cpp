@@ -1,25 +1,9 @@
-/*
- * This file is part of OpenObjectStore OOS.
- *
- * OpenObjectStore OOS is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "matador/utils/library.hpp"
+#include "matador/utils/os.hpp"
 
 #include <utility>
 
-namespace matador {
+namespace matador::utils {
 
 library::library(std::string lib)
   : lib_(std::move(lib))
@@ -32,23 +16,27 @@ library::~library()
 
 bool library::load()
 {
+    auto path = os::getenv("MATADOR_BACKENDS_PATH");
 #if defined(_MSC_VER) || defined(__MINGW32__)
-  handle_ = LoadLibrary((lib_ + ".dll").c_str());
+    auto cookie = AddDllDirectory(std::wstring(path.begin(), path.end()).c_str());
+    handle_ = LoadLibraryExA((lib_ + ".dll").c_str(), nullptr, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
+    RemoveDllDirectory(cookie);
 #elif defined(__APPLE__)
-  handle_ = dlopen(std::string("lib" + lib_ + ".dylib").c_str(), RTLD_LAZY);
+    handle_ = dlopen(std::string("lib" + lib_ + ".dylib").c_str(), RTLD_LAZY);
 #else
-  handle_ = dlopen(std::string("./lib" + lib_ + ".so").c_str(), RTLD_LAZY);
+  handle_ = dlopen((path + "/lib" + lib_ + ".so").c_str(), RTLD_LAZY);
 #endif
-  if (!handle_) {
+    if (!handle_) {
 #if defined(_MSC_VER) || defined(__MINGW32__)
-    DWORD errorMessageID = ::GetLastError();
+        DWORD errorMessageID = ::GetLastError();
+        auto errstr = utils::os::error_string(errorMessageID);
 #else
-      // TODO: handle win32 and linux error
+        // TODO: handle win32 and linux error
     fprintf(stdout, "dlopen error: %s", dlerror());
 #endif
-    return false;
-  }
-  return true;
+        return false;
+    }
+    return true;
 }
 
 bool library::load(const std::string &lib)

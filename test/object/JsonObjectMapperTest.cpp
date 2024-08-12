@@ -122,7 +122,7 @@ void JsonObjectMapperTest::test_to_json()
   json result = {
     { "id", 1},
     { "name", "george"},
-    { "birthdate", matador::to_string(bd) },
+    { "birthdate", matador::utils::to_string(bd) },
     { "height", 185 }
   };
 

@@ -1,5 +1,7 @@
 #include "matador/json/json_serializer.hpp"
 
+#include "matador/utils/string.hpp"
+
 namespace matador {
 
 void json_serializer::on_primary_key(const char *id, std::string &pk, size_t /*size*/)
@@ -14,14 +16,14 @@ void json_serializer::on_revision(const char *id, unsigned long long int &rev)
   on_attribute(id, rev);
 }
 
-void json_serializer::on_attribute(const char *id, bool &val, const field_attributes &/*attr*/)
+void json_serializer::on_attribute(const char *id, bool &val, const utils::field_attributes &/*attr*/)
 {
   write_id(id);
   append(val).append(",");
   newline();
 }
 
-void json_serializer::on_attribute(const char *id, std::string &val, const field_attributes &/*attr*/)
+void json_serializer::on_attribute(const char *id, std::string &val, const utils::field_attributes &/*attr*/)
 {
   if (val.empty()) {
     return;
@@ -31,23 +33,23 @@ void json_serializer::on_attribute(const char *id, std::string &val, const field
   newline();
 }
 
-void json_serializer::on_attribute(const char *id, date &d, const field_attributes &/*attr*/)
+void json_serializer::on_attribute(const char *id, date &d, const utils::field_attributes &/*attr*/)
 {
   if (d.julian_date() == 0) {
     return;
   }
   write_id(id);
-  append(matador::to_string(d)).append(",");
+  append(matador::utils::to_string(d)).append(",");
   newline();
 }
 
-void json_serializer::on_attribute(const char *id, time &t, const field_attributes &/*attr*/)
+void json_serializer::on_attribute(const char *id, time &t, const utils::field_attributes &/*attr*/)
 {
   if (t.get_time_info().seconds_since_epoch == 0 || t.get_time_info().milliseconds == 0) {
     return;
   }
   write_id(id);
-  append(matador::to_string(t)).append(",");
+  append(matador::utils::to_string(t)).append(",");
   newline();
 }
 

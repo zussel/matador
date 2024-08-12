@@ -108,7 +108,7 @@ void ReactorTest::test_shutdown()
   reactor r;
   r.register_handler(ac, matador::event_type::ACCEPT_MASK);
 
-  utils::ThreadRunner runner([&r]() {
+  ::detail::utils::ThreadRunner runner([&r]() {
     r.run();
   }, [&r]() {
     r.shutdown();
@@ -116,11 +116,11 @@ void ReactorTest::test_shutdown()
 
   std::this_thread::sleep_for(std::chrono::milliseconds (300));
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(r));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_running(r));
 
   r.shutdown();
 
-  UNIT_ASSERT_TRUE(utils::wait_until_stopped(r));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_stopped(r));
 }
 
 void ReactorTest::test_reactor_acceptor()
@@ -138,7 +138,7 @@ void ReactorTest::test_reactor_acceptor()
   reactor r;
   r.register_handler(ac, event_type::ACCEPT_MASK);
 
-  utils::ThreadRunner runner([&r]() {
+  ::detail::utils::ThreadRunner runner([&r]() {
     r.run();
   }, [&r]() {
     r.shutdown();
@@ -146,7 +146,7 @@ void ReactorTest::test_reactor_acceptor()
 
   std::this_thread::sleep_for(std::chrono::milliseconds (800));
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(r));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_running(r));
 
   // send and verify received data
   tcp::socket client;
@@ -198,7 +198,7 @@ void ReactorTest::test_reactor_connector()
   auto endpoints = resolver.resolve("localhost", std::to_string(7890));
   echo_connector->connect(r, endpoints);
 
-  utils::ThreadRunner runner([&r]() {
+  ::detail::utils::ThreadRunner runner([&r]() {
     r.run();
   }, [&r]() {
     r.shutdown();
@@ -238,7 +238,7 @@ void ReactorTest::test_timeout()
   UNIT_ASSERT_EQUAL(1, echo_conn->interval());
   UNIT_ASSERT_GREATER(echo_conn->next_timeout(), 0);
 
-  utils::ThreadRunner runner([&r]() {
+  ::detail::utils::ThreadRunner runner([&r]() {
     r.run();
   }, [&r]() {
     r.shutdown();
@@ -246,7 +246,7 @@ void ReactorTest::test_timeout()
 
   std::this_thread::sleep_for(std::chrono::milliseconds (100));
 
-  UNIT_ASSERT_TRUE(utils::wait_until_running(r));
+  UNIT_ASSERT_TRUE(::detail::utils::wait_until_running(r));
 
   std::this_thread::sleep_for(std::chrono::seconds (3));
 

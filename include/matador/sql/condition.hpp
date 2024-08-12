@@ -1,99 +1,16 @@
-#ifndef CONDITION_HPP
-#define CONDITION_HPP
+#ifndef QUERY_CONDITION_HPP
+#define QUERY_CONDITION_HPP
 
-#include "matador/sql/column.hpp"
-#include "matador/sql/token.hpp"
-#include "matador/sql/basic_query.hpp"
+#include "matador/sql/basic_condition.hpp"
+#include "matador/sql/dialect.hpp"
+#include "matador/sql/query_context.hpp"
 
-#include "matador/utils/data_types.hpp"
+#include "matador/utils/placeholder.hpp"
 
-#include <string>
-#include <sstream>
 #include <memory>
-#include <type_traits>
-#include <vector>
 #include <utility>
-#include <array>
 
-namespace matador {
-
-namespace detail {
-
-/// @cond MATADOR_DEV
-
-class basic_condition : public token
-{
-public:
-  basic_condition() : token(token::CONDITION) { }
-
-  enum t_operand
-  {
-    EQUAL = 0,
-    NOT_EQUAL,
-    LESS,
-    LESS_EQUAL,
-    GREATER,
-    GREATER_EQUAL,
-    OR,
-    AND,
-    NOT,
-    IN_LIST,
-    LIKE
-  };
-
-  enum
-  {
-    num_operands = 11
-  };
-
-  void accept(token_visitor &visitor) override
-  {
-    visitor.visit(*this);
-  }
-
-  virtual std::string evaluate(basic_dialect &dialect) const = 0;
-
-  static std::array<std::string, num_operands> operands;
-};
-
-//class OOS_SQL_API basic_column_condition : public basic_condition
-class basic_column_condition : public basic_condition
-{
-public:
-  column field_;
-  std::string operand;
-
-  basic_column_condition(column fld, detail::basic_condition::t_operand op)
-    : field_(std::move(fld)), operand(detail::basic_condition::operands[op])
-  { }
-
-  void accept(token_visitor &visitor) override
-  {
-    visitor.visit(*this);
-  }
-};
-
-//class OOS_SQL_API basic_in_condition : public basic_condition
-class basic_in_condition : public basic_condition
-{
-public:
-  column field_;
-
-  explicit basic_in_condition(column fld)
-    : field_(std::move(fld))
-  { }
-
-  void accept(token_visitor &visitor) override
-  {
-    visitor.visit(*this);
-  }
-
-  virtual size_t size() const = 0;
-};
-
-/// @endcond
-
-}
+namespace matador::sql {
 
 /**
  * @class condition
@@ -113,56 +30,55 @@ public:
 template<class L, class R, class Enabled = void>
 class condition;
 
+template<>
+class condition<column, utils::placeholder, typename std::enable_if<true>::type> : public basic_column_condition
+{
+public:
+    condition(const column &fld, basic_condition::operand_t op, const utils::placeholder &val);
+
+    utils::placeholder value;
+
+    std::string evaluate(const dialect &d, query_context &query) const override;
+};
+
 template<class T>
 class condition<column, T, typename std::enable_if<
   std::is_scalar<T>::value &&
   !std::is_same<std::string, T>::value &&
-  !std::is_same<const char*, T>::value>::type> : public detail::basic_column_condition
+  !std::is_same<const char*, T>::value>::type> : public basic_column_condition
 {
 public:
-  condition(const column &fld, detail::basic_condition::t_operand op, T val)
+  condition(const column &fld, basic_condition::operand_t op, T val)
     : basic_column_condition(fld, op)
     , value(val)
   { }
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const override
+  std::string evaluate(const dialect &d, query_context &query) const override
   {
-    dialect.add_host_var(field_.name);
-    std::stringstream str;
-    if (dialect.compile_type() == basic_dialect::DIRECT) {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << value;
-    } else {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << dialect.next_placeholder();
-    }
-    return str.str();
+    query.bind_vars.emplace_back(field_.name);
+    return d.prepare_identifier(field_) + " " + operand + " " + std::to_string(value);
   }
 };
 
 template<class T>
 class condition<column, T, typename std::enable_if<
   std::is_same<std::string, T>::value ||
-  std::is_same<const char*, T>::value>::type> : public detail::basic_column_condition
+  std::is_same<const char*, T>::value>::type> : public basic_column_condition
 {
 public:
-  condition(const column &fld, detail::basic_condition::t_operand op, T val)
+  condition(const column &fld, basic_condition::operand_t op, T val)
     : basic_column_condition(fld, op)
     ,value(val)
   { }
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const override
+  std::string evaluate(const dialect &d, query_context &query) const override
   {
-    dialect.add_host_var(field_.name);
-    std::stringstream str;
-    if (dialect.compile_type() == basic_dialect::DIRECT) {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " '" << value << "'";
-    } else {
-      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << dialect.next_placeholder();
-    }
-    return str.str();
+    query.bind_vars.emplace_back(field_.name);
+    return d.prepare_identifier(field_) + " " + operand + " '" + value + "'";
   }
 };
 
@@ -170,42 +86,38 @@ template<class T>
 class condition<T, column, typename std::enable_if<
   std::is_scalar<T>::value &&
   !std::is_same<std::string, T>::value &&
-  !std::is_same<const char*, T>::value>::type> : public detail::basic_column_condition
+  !std::is_same<const char*, T>::value>::type> : public basic_column_condition
 {
 public:
-  condition(T val, detail::basic_condition::t_operand op, const column &fld)
+  condition(T val, basic_condition::operand_t op, const column &fld)
     : basic_column_condition(fld, op)
     , value(val)
   { }
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const override
+  std::string evaluate(const dialect &d, query_context &query) const override
   {
-    std::stringstream str;
-    str << value << " " << operand << " " << dialect.prepare_identifier(field_.name);
-    return str.str();
+    return std::to_string(value) + " " + operand + " " + d.prepare_identifier(field_);
   }
 };
 
 template<class T>
 class condition<T, column, typename std::enable_if<
   std::is_same<std::string, T>::value ||
-  std::is_same<const char*, T>::value>::type> : public detail::basic_column_condition
+  std::is_same<const char*, T>::value>::type> : public basic_column_condition
 {
 public:
-  condition(T val, detail::basic_condition::t_operand op, const column &fld)
+  condition(T val, basic_condition::operand_t op, const column &fld)
     : basic_column_condition(fld, op)
     , value(val)
   { }
 
   T value;
 
-  std::string evaluate(basic_dialect &dialect) const override
+  std::string evaluate(const dialect &d, query_context &query) const override
   {
-    std::stringstream str;
-    str << "'" << value << "' " << operand << " " << dialect.prepare_identifier(field_.name);
-    return str.str();
+    return "'" + std::to_string(value) + "' " + operand + " " + d.prepare_identifier(field_);
   }
 };
 
@@ -215,15 +127,14 @@ public:
  * @brief Condition class representing an IN condition
  *
  * This class represents an query IN condition and evaluates to
- * this condition based on the current database dialect
+ * this condition based on the current database d
  *
  * @code
  * WHERE age IN (29,34,56)
  * @endcode
  */
 template < class V >
-class condition<column, std::initializer_list<V>> : public detail::basic_in_condition
-{
+class condition<column, std::initializer_list<V>> : public basic_in_condition {
 public:
   /**
    * @brief Creates an IN condition
@@ -235,9 +146,7 @@ public:
    * @param args List of arguments
    */
   condition(const column &col, const std::initializer_list<V> &args)
-    : basic_in_condition(col)
-    , args_(args)
-  {}
+  : basic_in_condition(col), args_(args) {}
 
   /**
    * @brief Evaluates the condition
@@ -245,46 +154,36 @@ public:
    * Evaluates the condition to a part of the
    * query string based on the given compile type
    *
-   * @param dialect The dialect used to evaluate
+   * @param d The d used to evaluate
    * @return A condition IN part of the query
    */
-  std::string evaluate(basic_dialect &dialect) const override
-  {
+  std::string evaluate(const dialect &d, query_context &query) const override {
     auto count = size();
     for (size_t i = 0; i < count; ++i) {
-      dialect.add_host_var(field_.name);
+      query.bind_vars.emplace_back(field_.name);
     }
-    std::stringstream str;
-    str << dialect.prepare_identifier(field_.name) << " IN (";
-    if (args_.size() > 1) {
-      auto first = args_.begin();
-      auto last = args_.end() - 1;
-      while (first != last) {
-        if (dialect.compile_type() == basic_dialect::DIRECT) {
-          str << *first++ << ",";
-        } else {
-          ++first;
-          str << dialect.next_placeholder() << ",";
-        }
+
+    std::string result = d.prepare_identifier(field_) + " IN (";
+    if (args_.size() < 2) {
+      for (const auto &val : args_) {
+        result.append(std::to_string(val));
+      }
+    } else {
+      auto it = args_.begin();
+      result.append(std::to_string(*it++));
+      for(; it != args_.end(); ++it) {
+        result.append(", " + std::to_string(*it));
       }
     }
-    if (!args_.empty()) {
-      if (dialect.compile_type() == basic_dialect::DIRECT) {
-        str << args_.back();
-      } else {
-        str << dialect.next_placeholder();
-      }
-    }
-    str << ")";
-    return str.str();
+    result += ")";
+    return result;
   }
 
   /**
    * @brief Returns the number of arguments in the list
    * @return The number of arguments in the list
    */
-  size_t size() const override
-  {
+  [[nodiscard]] size_t size() const override {
     return args_.size();
   }
 
@@ -296,31 +195,28 @@ private:
  * @brief Condition class representing an IN condition
  *
  * This class represents an query IN condition and evaluates to
- * this condition based on the current database dialect
+ * this condition based on the current database d
  *
  * @code
  * WHERE age IN (select age_value from <table>)
  * @endcode
  */
 template <>
-class condition<column, detail::basic_query> : public detail::basic_column_condition
+class condition<column, query_context> : public basic_column_condition
 {
 public:
   /**
    * @brief Create a query IN condition
    *
    * Create an IN condition where the argument values come from
-   * the given query. To evaluate the query a sql dialect must be
+   * the given query. To evaluate the query a sql d must be
    * given.
    *
    * @param col Column for the IN condition
    * @param op Operand of the condition
    * @param q The query to be evaluated to the IN arguments
    */
-  condition(column col, detail::basic_condition::t_operand op, detail::basic_query q)
-    : basic_column_condition(std::move(col), op)
-    , query_(std::move(q))
-  {}
+  condition(column col, basic_condition::operand_t op, query_context &q);
 
   /**
    * @brief Evaluates the condition
@@ -328,19 +224,13 @@ public:
    * Evaluates the condition to a part of the
    * query string based on the given compile type
    *
-   * @param dialect The dialect used to evaluate
+   * @param d The d used to evaluate
    * @return A condition IN part of the query
    */
-  std::string evaluate(basic_dialect &dialect) const override
-  {
-    std::string result(dialect.prepare_identifier(field_.name) + " " + operand + " (");
-    result += dialect.continue_build(query_.stmt(), dialect.compile_type());
-    result += (")");
-    return result;
-  }
+  std::string evaluate(const dialect &d, query_context &query) const override;
 
 private:
-  detail::basic_query query_;
+  query_context &query_;
 };
 
 /**
@@ -352,8 +242,7 @@ private:
  * @tparam T The type of the boundary values
  */
 template < class T >
-class condition<column, std::pair<T, T>> : public detail::basic_condition
-{
+class condition<column, std::pair<T, T>> : public basic_condition {
 public:
   /**
    * @brief Create a new between condition
@@ -362,7 +251,7 @@ public:
    * @param range The boundary values defining the range
    */
   condition(column col, const std::pair<T, T> &range)
-    : field_(std::move(col)), range_(range) { }
+  : field_(std::move(col)), range_(range) {}
 
   /**
    * @brief Evaluates the condition
@@ -370,20 +259,13 @@ public:
    * Evaluates the condition to a between part
    * based on the given compile type
    *
-   * @param dialect The dialect used to evaluate
+   * @param d The d used to evaluate
    * @return A condition BETWEEN part of the query
    */
-  std::string evaluate(basic_dialect &dialect) const override
-  {
-    dialect.add_host_var(field_.name);
-    dialect.add_host_var(field_.name);
-    std::stringstream str;
-    if (dialect.compile_type() == basic_dialect::DIRECT) {
-      str << dialect.prepare_identifier(field_.name) << " BETWEEN " << range_.first << " AND " << range_.second;
-    } else {
-      str << dialect.prepare_identifier(field_.name) << " BETWEEN " << dialect.next_placeholder() << " AND " << dialect.next_placeholder();
-    }
-    return str.str();
+  std::string evaluate(const dialect &d, query_context &query) const override {
+    query.bind_vars.emplace_back(field_.name);
+    query.bind_vars.emplace_back(field_.name);
+    return d.prepare_identifier(field_) + " BETWEEN " + std::to_string(range_.first) + " AND " + std::to_string(range_.second);
   }
 
 private:
@@ -404,7 +286,7 @@ private:
  * @tparam R2 The right hand type of the right operator
  */
 template<class L1, class R1, class L2, class R2>
-class condition<condition<L1, R1>, condition<L2, R2>> : public detail::basic_condition
+class condition<condition<L1, R1>, condition<L2, R2>> : public basic_condition
 {
 public:
   /**
@@ -413,45 +295,31 @@ public:
    * @param r right hand operator of the condition
    * @param op The operand (AND or OR)
    */
-  condition(const condition<L1, R1> &l, const condition<L2, R2> &r, detail::basic_condition::t_operand op)
-    : left(l), right(r), operand(op) { }
+  condition(condition<L1, R1> &&l, condition<L2, R2> &&r, basic_condition::operand_t op)
+    : left(std::move(l)), right(std::move(r)), operand(op) { }
 
   /**
    * @brief Evaluates the condition
    *
-   * @param dialect The dialect used to evaluate
-   * @return The exaluated string based on the compile type
+   * @param d The d used to evaluate
+   * @return The evaluated string based on the compile type
    */
-  std::string evaluate(basic_dialect &dialect) const override
+  std::string evaluate(const dialect &d, query_context &query) const override
   {
-    std::stringstream str;
     // ensure the numbering order for host vars
-    auto cl = left.evaluate(dialect);
-    auto cr = right.evaluate(dialect);
-    if (operand == detail::basic_condition::AND) {
-      str << "(" << cl << " " << detail::basic_condition::operands[operand] << " " << cr << ")";
+    auto cl = left.evaluate(d, query);
+    auto cr = right.evaluate(d, query);
+    if (operand == basic_condition::operand_t::AND) {
+      return "(" + cl + " " + basic_condition::operands[operand] + " " + cr + ")";
     } else {
-      str << cl << " " << detail::basic_condition::operands[operand] << " " << cr;
+      return cl + " " + basic_condition::operands[operand] + " " + cr;
     }
-    return str.str();
   }
-
-  /// @cond MATADOR_DEV
-  /**
-   * Accept the given visitor for this condition
-   * @param visitor Visitor to be accepted
-   */
-  void accept(token_visitor &visitor) override
-  {
-    left.accept(visitor);
-    right.accept(visitor);
-  }
-  /// @endcond
 
 private:
   condition<L1, R1> left;
   condition<L2, R2> right;
-  detail::basic_condition::t_operand operand;
+  basic_condition::operand_t operand;
 };
 
 /**
@@ -463,32 +331,54 @@ private:
  * @tparam R Right hand type of the condition to be negated
  */
 template<class L, class R>
-class condition<condition<L, R>, void> : public detail::basic_condition
+class condition<condition<L, R>, void> : public basic_condition
 {
 public:
   /**
    * @brief Create a logical unary condition
    * @param c The condition to be negated
    */
-  condition(const condition<L, R> &c)
-    : cond(c), operand(detail::basic_condition::operands[detail::basic_condition::NOT]) { }
+  condition(const condition<L, R> &c) // NOLINT(*-explicit-constructor)
+    : cond(c), operand(basic_condition::operands[basic_condition::operand_t::NOT]) { }
 
   /**
    * @brief Evaluates the condition
    *
-   * @param dialect The dialect used to evaluate
-   * @return The exaluated string based on the compile type
+   * @param d The d used to evaluate
+   * @param query The context of the query
+   * @return The evaluated string based on the compile type
    */
-  std::string evaluate(basic_dialect &dialect) const override
+  std::string evaluate(const dialect &d, query_context &query) const override
   {
-    std::stringstream str;
-    str << operand << " (" << cond.evaluate(dialect) << ")";
-    return str.str();
+    return operand + " (" + cond.evaluate(d, query) + ")";
   }
 
 private:
   condition<L, R> cond;
   std::string operand;
+};
+
+template<>
+class condition<column, column> : public basic_column_condition
+{
+public:
+  condition(const column &a, basic_condition::operand_t op, column b)
+  : basic_column_condition(a, op)
+  , other_column_(std::move(b)) {}
+  /**
+   * @brief Evaluates the condition
+   *
+   * @param d The d used to evaluate
+   * @param query The context of the query
+   * @return The evaluated string based on the compile type
+   */
+  std::string evaluate(const dialect &d, query_context &/*query*/) const override
+  {
+    return d.prepare_identifier(field_) + " " + operand + " " + d.prepare_identifier(other_column_);
+  }
+
+private:
+  column other_column_;
 };
 
 /**
@@ -516,7 +406,7 @@ private:
  * @return The condition object
  */
 template < class V >
-condition<column, std::initializer_list<V>> in(const matador::column &col, std::initializer_list<V> args)
+condition<column, std::initializer_list<V>> in(const column &col, std::initializer_list<V> args)
 {
   return condition<column, std::initializer_list<V>>(col, args);
 }
@@ -528,8 +418,7 @@ condition<column, std::initializer_list<V>> in(const matador::column &col, std::
  * @param q The query to be executes as sub select
  * @return The condition object
  */
-condition<column, detail::basic_query> in(const matador::column &col, detail::basic_query &q);
-//OOS_SQL_API condition<column, detail::basic_query> in(const matador::column &col, detail::basic_query &q);
+condition<column, query_context> in(const column &col, query_context &&q);
 
 /**
  * @brief Creates a between condition.
@@ -544,7 +433,7 @@ condition<column, detail::basic_query> in(const matador::column &col, detail::ba
  * @return The condition object
  */
 template<class T>
-condition<column, std::pair<T, T>> between(const matador::column &col, T low, T high)
+condition<column, std::pair<T, T>> between(const column &col, T low, T high)
 {
   return condition<column, std::pair<T, T>>(col, std::make_pair(low, high));
 }
@@ -559,8 +448,7 @@ condition<column, std::pair<T, T>> between(const matador::column &col, T low, T 
  * @param val The value to the like operator
  * @return The like condition object
  */
-condition<column, std::string> like(const matador::column &col, const std::string &val);
-//OOS_SQL_API condition<column, std::string> like(const matador::column &col, const std::string &val);
+condition<column, std::string> like(const column &col, const std::string &val);
 
 /**
  * @brief Condition equality operator for a column and a value
@@ -576,8 +464,10 @@ condition<column, std::string> like(const matador::column &col, const std::strin
 template<class T>
 condition<column, T> operator==(const column &col, T val)
 {
-  return condition<column, T>(col, detail::basic_condition::EQUAL, val);
+  return condition<column, T>(col, basic_condition::operand_t::EQUAL, val);
 }
+
+condition<column, column> operator==(const column &a, const column &b);
 
 /**
  * @brief Condition equality method for a column and a query
@@ -589,24 +479,23 @@ condition<column, T> operator==(const column &col, T val)
  * @param q The query to compare with
  * @return The condition object representing the equality operation
  */
-condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
-//OOS_SQL_API condition<column, detail::basic_query> equals(const column &col, detail::basic_query &q);
+condition<column, query_context> equals(const column &col, query_context &q);
 
 /**
- * @brief Condition unequality operator for a column and a value
+ * @brief Condition inequality operator for a column and a value
  *
  * Creates a condition condition object of a column and a value
- * checked on unequality.
+ * checked on inequality.
  *
  * @tparam T The type of the value
  * @param col The column object
  * @param val The value to compare with
- * @return The condition object representing the unequality operation
+ * @return The condition object representing the inequality operation
  */
 template<class T>
 condition<column, T> operator!=(const column &col, T val)
 {
-  return condition<column, T>(col, detail::basic_condition::NOT_EQUAL, val);
+  return condition<column, T>(col, basic_condition::operand_t::NOT_EQUAL, val);
 }
 
 /**
@@ -623,7 +512,7 @@ condition<column, T> operator!=(const column &col, T val)
 template<class T>
 condition<column, T> operator<(const column &col, T val)
 {
-  return condition<column, T>(col, detail::basic_condition::LESS, val);
+  return condition<column, T>(col, basic_condition::operand_t::LESS, val);
 }
 
 /**
@@ -640,7 +529,7 @@ condition<column, T> operator<(const column &col, T val)
 template<class T>
 condition<column, T> operator<=(const column &col, T val)
 {
-  return condition<column, T>(col, detail::basic_condition::LESS_EQUAL, val);
+  return condition<column, T>(col, basic_condition::operand_t::LESS_EQUAL, val);
 }
 
 /**
@@ -657,7 +546,7 @@ condition<column, T> operator<=(const column &col, T val)
 template<class T>
 condition<column, T> operator>(const column &col, T val)
 {
-  return condition<column, T>(col, detail::basic_condition::GREATER, val);
+  return condition<column, T>(col, basic_condition::operand_t::GREATER, val);
 }
 
 /**
@@ -674,7 +563,7 @@ condition<column, T> operator>(const column &col, T val)
 template<class T>
 condition<column, T> operator>=(const column &col, T val)
 {
-  return condition<column, T>(col, detail::basic_condition::GREATER_EQUAL, val);
+  return condition<column, T>(col, basic_condition::operand_t::GREATER_EQUAL, val);
 }
 
 /**
@@ -689,9 +578,9 @@ condition<column, T> operator>=(const column &col, T val)
  * @return An condition object representing the AND operation
  */
 template<class L1, class R1, class L2, class R2>
-condition<condition<L1, R1>, condition<L2, R2>> operator&&(const condition<L1, R1> &l, const condition<L2, R2> &r)
+condition<condition<L1, R1>, condition<L2, R2>> operator&&(condition<L1, R1> l, condition<L2, R2> r)
 {
-  return condition<condition<L1, R1>, condition<L2, R2>>(l, r, detail::basic_condition::AND);
+  return condition<condition<L1, R1>, condition<L2, R2>>(std::move(l), std::move(r), basic_condition::operand_t::AND);
 }
 
 /**
@@ -706,9 +595,9 @@ condition<condition<L1, R1>, condition<L2, R2>> operator&&(const condition<L1, R
  * @return An condition object representing the OR operation
  */
 template<class L1, class R1, class L2, class R2>
-condition<condition<L1, R1>, condition<L2, R2>> operator||(const condition<L1, R1> &l, const condition<L2, R2> &r)
+condition<condition<L1, R1>, condition<L2, R2>> operator||(condition<L1, R1> l, condition<L2, R2> r)
 {
-  return condition<condition<L1, R1>, condition<L2, R2>>(l, r, detail::basic_condition::OR);
+  return condition<condition<L1, R1>, condition<L2, R2>>(std::move(l), std::move(r), basic_condition::operand_t::OR);
 }
 
 /**
@@ -720,25 +609,25 @@ condition<condition<L1, R1>, condition<L2, R2>> operator||(const condition<L1, R
  * @return An condition object representing the NOT operation
  */
 template<class L, class R>
-condition<condition<L, R>, void> operator!(const condition<L, R> &c)
+condition<condition<L, R>, void> operator!(condition<L, R> c)
 {
-  return condition<condition<L, R>, void>(c);
+  return condition<condition<L, R>, void>(std::move(c));
 }
 
 /**
- * @brief Creates a shared condition from a given condition object
+ * @brief Creates a unique condition from a given condition object
  *
  * @tparam L The left hand type of the condition
  * @tparam R The right hand type of the condition
  * @param cond The condition to be copied
- * @return A shared condition pointer representing the given condition
+ * @return A unique condition pointer representing the given condition
  */
 template<class L, class R>
-std::shared_ptr<detail::basic_condition> make_condition(const condition<L, R> &cond)
+std::unique_ptr<basic_condition> make_condition(const condition<L, R> &cond)
 {
-  return std::make_shared<condition<L, R>>(cond);
+  return std::make_unique<condition<L, R>>(cond);
 }
 
 }
 
-#endif /* CONDITION_HPP */
+#endif //QUERY_CONDITION_HPP

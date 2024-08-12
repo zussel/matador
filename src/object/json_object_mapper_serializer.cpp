@@ -24,7 +24,7 @@ void json_object_mapper_serializer::on_revision(const char *id, unsigned long lo
   on_attribute(id, rev);
 }
 
-void json_object_mapper_serializer::on_attribute(const char *id, bool &to, const field_attributes &/*attr*/)
+void json_object_mapper_serializer::on_attribute(const char *id, bool &to, const utils::field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -35,7 +35,7 @@ void json_object_mapper_serializer::on_attribute(const char *id, bool &to, const
   to = runtime_data_.value.as<bool>();
 }
 
-void json_object_mapper_serializer::on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/)
+void json_object_mapper_serializer::on_attribute(const char *id, std::string &to, const utils::field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -46,7 +46,7 @@ void json_object_mapper_serializer::on_attribute(const char *id, std::string &to
   to = runtime_data_.value.as<std::string>();
 }
 
-void json_object_mapper_serializer::on_attribute(const char *id, date &to, const field_attributes &/*attr*/)
+void json_object_mapper_serializer::on_attribute(const char *id, date &to, const utils::field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;
@@ -57,7 +57,7 @@ void json_object_mapper_serializer::on_attribute(const char *id, date &to, const
   to.set(runtime_data_.value.as<std::string>().c_str(), "%Y-%m-%d");
 }
 
-void json_object_mapper_serializer::on_attribute(const char *id, time &to, const field_attributes &/*attr*/)
+void json_object_mapper_serializer::on_attribute(const char *id, time &to, const utils::field_attributes &/*attr*/)
 {
   if (runtime_data_.key != id) {
     return;

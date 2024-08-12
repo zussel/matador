@@ -201,7 +201,7 @@ void mysql_parameter_binder::bind(const matador::time &x, size_t index)
     // before mysql version 5.6.4 datetime
     // doesn't support fractional seconds,
     // so we use a datetime string here
-    std::string tstr = to_string(x, "%FT%T");
+    std::string tstr = utils::to_string(x, "%FT%T");
     bind_value(MYSQL_TYPE_VAR_STRING, tstr.c_str(), tstr.size(), host_array_[index], is_null_vector[index].is_null);
   } else {
     bind_value(MYSQL_TYPE_TIMESTAMP, x, host_array_[index], is_null_vector[index].is_null);

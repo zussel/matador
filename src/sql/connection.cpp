@@ -1,280 +1,180 @@
-#include "matador/sql/connection_factory.hpp"
 #include "matador/sql/connection.hpp"
-#include "matador/sql/columns.hpp"
-#include "matador/sql/value.hpp"
 
-namespace matador {
+#include "matador/sql/backend_provider.hpp"
+#include "matador/sql/connection_impl.hpp"
+#include "matador/sql/schema.hpp"
 
-connection::connection(const std::string &dns)
+#include <algorithm>
+#include <stdexcept>
+#include <utility>
+
+namespace matador::sql {
+
+connection::connection(connection_info info, const std::shared_ptr<basic_sql_logger> &sqllogger)
+: connection_info_(std::move(info))
+, dialect_(backend_provider::instance().connection_dialect(connection_info_.type))
+, logger_(sqllogger)
 {
-  initialize_connection_info(dns);
+  connection_.reset(backend_provider::instance().create_connection(connection_info_.type, connection_info_));
 }
 
-connection::connection(std::shared_ptr<basic_sql_logger> sqllogger)
-  : logger_(std::move(sqllogger))
+connection::connection(const std::string& dns, const std::shared_ptr<basic_sql_logger> &sqllogger)
+: connection(connection_info::parse(dns), sqllogger)
 {}
-
-connection::connection(const std::string &dns, std::shared_ptr<basic_sql_logger> sql_logger)
-  : logger_(std::move(sql_logger))
-{
-  initialize_connection_info(dns);
-}
 
 connection::connection(const connection &x)
-  : connection_info_(x.connection_info_)
-  , logger_(x.logger_)
+: connection_info_(x.connection_info_)
+, dialect_(x.dialect_)
 {
-  init_from_foreign_connection(x);
+  if (x.connection_) {
+    throw std::runtime_error("couldn't copy connection with valid connection impl");
+  }
 }
 
-connection::connection(connection &&x) noexcept
-  : connection_info_(std::move(x.connection_info_))
-  , impl_(std::move(x.impl_))
-  , logger_(std::move(x.logger_))
-{}
-
-connection &connection::operator=(const connection &x)
-{
+connection &connection::operator=(const connection &x) {
   if (this == &x) {
     return *this;
   }
+
   connection_info_ = x.connection_info_;
-  logger_ = x.logger_;
-
-  init_from_foreign_connection(x);
-
+  if (x.connection_) {
+    throw std::runtime_error("couldn't copy connection with valid connection impl");
+  }
   return *this;
 }
 
-connection &connection::operator=(connection &&x) noexcept
-{
+connection & connection::operator=(connection &&x) noexcept {
   connection_info_ = std::move(x.connection_info_);
-  impl_ = std::move(x.impl_);
+  connection_  = std::move(x.connection_);
+  const_cast<class dialect&>(dialect_) = x.dialect_;
   logger_ = std::move(x.logger_);
+
   return *this;
 }
 
 connection::~connection()
 {
-  if (!impl_) {
-    return;
+  if (connection_->is_open()) {
+    connection_->close();
   }
-  impl_->close();
-  connection_factory::instance().destroy(connection_info_.type, impl_.release());
+  backend_provider::instance().destroy_connection(connection_info_.type, connection_.release());
+  connection_ = nullptr;
 }
 
-void connection::connect(const std::string &dns)
+void connection::open() const
 {
-  if (is_connected()) {
+  if (is_open()) {
     return;
-  } else {
-    initialize_connection_info(dns);
-    logger_->on_connect();
-    impl_->open(connection_info_);
-  }
-}
-
-void connection::connect()
-{
-  if (is_connected()) {
-    return;
-  } else {
-    if (!impl_) {
-      connection_factory::instance().destroy(connection_info_.type, impl_.release());
-      impl_.reset(create_connection(connection_info_.type));
-    }
-    logger_->on_connect();
-    impl_->open(connection_info_);
-  }
-}
-
-void connection::reconnect()
-{
-  if (is_connected()) {
-    logger_->on_close();
-    impl_->close();
   }
   logger_->on_connect();
-  impl_->open(connection_info_);
+  connection_->open();
 }
 
-bool connection::is_connected() const
-{
-  return impl_->is_open();
-}
-
-void connection::disconnect()
+void connection::close() const
 {
   logger_->on_close();
-  impl_->close();
+  connection_->close();
 }
 
-void connection::begin()
+bool connection::is_open() const
 {
-  log_token(detail::token::BEGIN);
-  impl_->begin();
+  return connection_->is_open();
 }
 
-void connection::commit()
+const connection_info &connection::info() const
 {
-  log_token(detail::token::COMMIT);
-  impl_->commit();
+  return connection_info_;
 }
 
-void connection::rollback()
-{
-  log_token(detail::token::ROLLBACK);
-  impl_->rollback();
-}
-
-std::string connection::type() const
-{
+std::string connection::type() const {
   return connection_info_.type;
 }
 
-version connection::client_version() const
-{
-  return impl_->client_version();
+void connection::begin() const {
+  connection_->execute(dialect_.token_at(dialect::token_t::BEGIN));
 }
 
-version connection::server_version() const
+void connection::commit() const {
+  connection_->execute(dialect_.token_at(dialect::token_t::COMMIT));
+}
+
+void connection::rollback() const {
+  connection_->execute(dialect_.token_at(dialect::token_t::ROLLBACK));
+}
+
+std::vector<sql::column_definition> connection::describe(const std::string &table_name) const
 {
-  return impl_->server_version();
+  return connection_->describe(table_name);
+}
+
+bool connection::exists(const std::string &schema_name, const std::string &table_name) const
+{
+  return connection_->exists(schema_name, table_name);
 }
 
 bool connection::exists(const std::string &table_name) const
 {
-  return impl_->exists(table_name);
+  return connection_->exists(dialect_.default_schema_name(), table_name);
 }
 
-std::vector<field> connection::describe(const std::string &table) const
+size_t connection::execute(const std::string &sql) const
 {
-  return impl_->describe(table);
+//  logger_.debug(sql);
+  return connection_->execute(sql);
 }
 
-basic_dialect *connection::dialect()
+sql::query connection::query(const sql::schema &schema) const
 {
-  return impl_->dialect();
+  return sql::query(*const_cast<connection*>(this), schema);
 }
 
-bool connection::is_valid() const
-{
-  return !connection_info_.type.empty() && !connection_info_.database.empty();
+bool is_unknown(const std::vector<sql::column_definition> &columns) {
+  return std::all_of(std::begin(columns), std::end(columns), [](const auto &col) {
+    return col.type() == data_type::type_unknown;
+  });
 }
 
-value* create_default_value(data_type type);
-
-void connection::initialize_connection_info(const std::string &dns)
+query_result<record> connection::fetch(const query_context &q) const
 {
-  connection_info_ = connection_info::parse(dns);
-  impl_.reset(create_connection(connection_info_.type));
-  if (connection_info_.port == 0) {
-    connection_info_.port = impl_->default_port();
+  if (q.prototype.empty() || is_unknown(q.prototype)) {
+    const auto table_prototype = describe(q.table.name);
+    for (auto &col : q.prototype) {
+      const auto rit = std::find_if(std::begin(table_prototype), std::end(table_prototype), [&col](const auto &value) {
+        return value.name() == col.name();
+      });
+      if (col.type() == data_type::type_unknown && rit != table_prototype.end()) {
+        const_cast<column_definition&>(col).type(rit->type());
+      }
+     }
   }
+//  auto it = prototypes_.find(q.table_name);
+//  if (it == prototypes_.end()) {
+//    it = prototypes_.emplace(q.table_name, describe(q.table_name)).first;
+//  }
+//  // adjust columns from given query
+//  for (auto &col : q.prototype) {
+//    if (const auto rit = it->second.find(col.name()); col.type() == data_type_t::type_unknown && rit != it->second.end()) {
+//      const_cast<column&>(col).type(rit->type());
+//    }
+//  }
+  auto res = fetch(q.sql);
+  return query_result<record>{std::move(res), q.prototype};
 }
 
-void connection::prepare_prototype_row(row &prototype, const std::string &table_name)
+std::unique_ptr<query_result_impl> connection::fetch(const std::string &sql) const
 {
-  if (!impl_->exists(table_name)) {
-    return;
-  }
-  auto fields = impl_->describe(table_name);
-  for (const auto &f : fields) {
-    if (!prototype.has_column(f.name())) {
-      continue;
-    }
-    // generate value by type
-    std::shared_ptr<value> value(create_default_value(f.type()));
-    prototype.set(f.name(), value);
-  }
-  // default value for count(*)
-  if (prototype.has_column(matador::columns::count_all().name)) {
-    std::shared_ptr<value> value(create_default_value(data_type::type_int));
-    prototype.set(matador::columns::count_all().name, value);
-  }
+//  logger_.debug(sql);
+  return connection_->fetch(sql);
 }
 
-value* create_default_value(data_type type)
+statement connection::prepare(query_context &&query) const
 {
-  switch (type) {
-    case data_type::type_char:
-      return make_value((char)0);
-    case data_type::type_short:
-      return make_value<short>(0);
-    case data_type::type_int:
-      return make_value<int>(0);
-    case data_type::type_long:
-      return make_value<long>(0);
-    case data_type::type_long_long:
-      return make_value<long long>(0);
-    case data_type::type_unsigned_char:
-      return make_value((unsigned char)0);
-    case data_type::type_unsigned_short:
-      return make_value<unsigned short>(0);
-    case data_type::type_unsigned_int:
-      return make_value<unsigned int>(0);
-    case data_type::type_unsigned_long:
-      return make_value<unsigned long>(0);
-    case data_type::type_unsigned_long_long:
-      return make_value<unsigned long long>(0);
-    case data_type::type_bool:
-      return make_value<bool>(false);
-    case data_type::type_float:
-      return make_value<float>(0);
-    case data_type::type_double:
-      return make_value<double>(0);
-    case data_type::type_char_pointer:
-      return new value((char*)nullptr/*, 0UL*/);
-    case data_type::type_text:
-      return make_value<std::string>("");
-    case data_type::type_date:
-      return make_value<matador::date>(date());
-    case data_type::type_time:
-      return make_value<matador::time>(matador::time());
-    case data_type::type_varchar:
-      return make_value<std::string>("");
-    default:
-      return new value();
-  }
+  return statement(connection_->prepare(std::move(query)));
 }
 
-connection_impl *connection::create_connection(const std::string &type)
+const class dialect &connection::dialect() const
 {
-  // try to create sql implementation
-  return connection_factory::instance().create(type);
-}
-
-void connection::init_from_foreign_connection(const connection &foreign_connection)
-{
-  if (is_valid()) {
-    impl_.reset(create_connection(connection_info_.type));
-
-    if (foreign_connection.is_connected()) {
-      connect();
-    }
-  }
-}
-
-void connection::log_token(detail::token::t_token tok)
-{
-  if (impl_->is_log_enabled()) {
-    logger_->on_execute(dialect()->token_at(tok));
-  }
-}
-
-void connection::enable_log()
-{
-  impl_->enable_log();
-}
-
-void connection::disable_log()
-{
-  impl_->disable_log();
-}
-
-bool connection::is_log_enabled() const
-{
-  return impl_->is_log_enabled();
+  return dialect_;
 }
 
 }

@@ -1,0 +1,99 @@
+#include "catch2/catch_test_macros.hpp"
+
+#include "connection.hpp"
+
+#include "matador/sql/session.hpp"
+
+#include "models/airplane.hpp"
+#include "models/flight.hpp"
+
+class SessionFixture
+{
+public:
+  SessionFixture()
+    : pool(matador::test::connection::dns, 4)
+    , ses(pool)
+  {}
+
+  ~SessionFixture()
+  {
+    drop_table_if_exists("flights");
+    drop_table_if_exists("airplanes");
+  }
+
+protected:
+  matador::sql::connection_pool<matador::sql::connection> pool;
+  matador::sql::session ses;
+
+private:
+  void drop_table_if_exists(const std::string &table_name)
+  {
+    if (ses.table_exists(table_name)) {
+      ses.drop_table(table_name);
+    }
+  }
+};
+
+using namespace matador;
+
+TEST_CASE_METHOD(SessionFixture, "Session relation test", "[session][relation]") {
+  using namespace matador;
+  ses.attach<test::airplane>("airplanes");
+  ses.attach<test::flight>("flights");
+  ses.create_schema();
+  auto plane = ses.insert<test::airplane>(1, "Boeing", "A380");
+  auto f = ses.insert<test::flight>(2, plane, "sully");
+
+  auto result = ses.find<test::flight>(2);
+  REQUIRE(result.is_ok());
+}
+
+TEST_CASE_METHOD(SessionFixture, "Use session to find object with id", "[session][find]") {
+  using namespace matador::test;
+  ses.attach<airplane>("airplanes");
+  ses.create_schema();
+  auto a380 = ses.insert<airplane>(1, "Boeing", "A380");
+
+  auto result = ses.find<airplane>(2);
+  REQUIRE(!result.is_ok());
+  REQUIRE((result.err() == sql::session_error::FailedToFindObject));
+
+  result = ses.find<airplane>(1);
+
+  REQUIRE(result);
+  auto read_a380 = result.value();
+  REQUIRE(a380->id == read_a380->id);
+}
+
+TEST_CASE_METHOD(SessionFixture, "Use session to find all objects", "[session][find]") {
+  using namespace matador::test;
+  ses.attach<airplane>("airplanes");
+  ses.create_schema();
+
+  std::vector<std::unique_ptr<airplane>> planes;
+  planes.emplace_back(new airplane(1, "Airbus", "A380"));
+  planes.emplace_back(new airplane(2, "Boeing", "707"));
+  planes.emplace_back(new airplane(3, "Boeing", "747"));
+
+  for (auto &&plane: planes) {
+    ses.insert(plane.release());
+  }
+
+  auto result = ses.find<airplane>();
+
+  std::vector<std::tuple<unsigned long, std::string, std::string>> expected_result {
+    {1, "Airbus", "A380"},
+    {2, "Boeing", "707"},
+    {3, "Boeing", "747"}
+  };
+  REQUIRE(result);
+  auto all_planes = result.release();
+  size_t index {0};
+  for (const auto &i: all_planes) {
+    REQUIRE(i.id == std::get<0>(expected_result[index]));
+    REQUIRE(i.brand == std::get<1>(expected_result[index]));
+    REQUIRE(i.model == std::get<2>(expected_result[index]));
+    ++index;
+  }
+
+}

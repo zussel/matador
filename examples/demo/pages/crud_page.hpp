@@ -16,6 +16,8 @@
 
 #include "../converter/object_to_json_table_converter.hpp"
 
+#include "../utils/object_info.hpp"
+
 using template_ptr = std::shared_ptr<matador::http::detail::template_part>;
 
 struct crud_templates {
@@ -121,7 +123,8 @@ matador::http::response crud_page<EntityType>::list(const matador::http::request
 
   data["data"] = converter.to_json_table(entities);
 
-  auto description = s.store().describe(typeid(EntityType).name());
+  object_info info;
+  auto description = info.describe<EntityType>(s.store());
 
   data["columns"] = json::array();
   for (const auto &col : description.columns()) {

@@ -3,7 +3,7 @@
 
 #include "matador/utils/export.hpp"
 
-#include "matador/utils/identifier.hpp"
+#include "matador/object/identifier.hpp"
 #include "matador/utils/sequencer.hpp"
 
 namespace matador {
@@ -22,16 +22,16 @@ public:
     bi.serialize(*this);
   }
 
-  void serialize(short &x, const field_attributes &/*attr*/) override;
-  void serialize(int &x, const field_attributes &/*attr*/) override;
-  void serialize(long &x, const field_attributes &/*attr*/) override;
-  void serialize(long long &x, const field_attributes &/*attr*/) override;
-  void serialize(unsigned short &x, const field_attributes &/*attr*/) override;
-  void serialize(unsigned int &x, const field_attributes &/*attr*/) override;
-  void serialize(unsigned long &x, const field_attributes &/*attr*/) override;
-  void serialize(unsigned long long &x, const field_attributes &/*attr*/) override;
-  void serialize(std::string &, const field_attributes &/*attr*/) override {}
-  void serialize(null_type_t &, const field_attributes &/*attr*/) override {}
+  void serialize(short &x, const utils::field_attributes &/*attr*/) override;
+  void serialize(int &x, const utils::field_attributes &/*attr*/) override;
+  void serialize(long &x, const utils::field_attributes &/*attr*/) override;
+  void serialize(long long &x, const utils::field_attributes &/*attr*/) override;
+  void serialize(unsigned short &x, const utils::field_attributes &/*attr*/) override;
+  void serialize(unsigned int &x, const utils::field_attributes &/*attr*/) override;
+  void serialize(unsigned long &x, const utils::field_attributes &/*attr*/) override;
+  void serialize(unsigned long long &x, const utils::field_attributes &/*attr*/) override;
+  void serialize(std::string &, const utils::field_attributes &/*attr*/) override {}
+  void serialize(utils::null_type_t &, const utils::field_attributes &/*attr*/) override {}
 
 private:
   template<class T>

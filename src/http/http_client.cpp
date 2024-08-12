@@ -13,7 +13,7 @@ client::client(const std::string &host)
 {
   // split host from port (default port is 80)
   std::vector<std::string> parts;
-  auto count = matador::split(host, ':', parts);
+  auto count = utils::split(host, ':', parts);
 
   if (count > 2 || count == 0) {
     throw_logic_error("invalid host string");

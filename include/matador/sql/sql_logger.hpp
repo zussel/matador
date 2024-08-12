@@ -4,7 +4,7 @@
 #include "matador/sql/basic_sql_logger.hpp"
 #include "matador/logger/logger.hpp"
 
-namespace matador {
+namespace matador::sql {
 
 /**
  * The sql logger uses the matador

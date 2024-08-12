@@ -40,7 +40,7 @@ public:
   object_proxy_info& operator=(object_proxy_info &&) = default;
   ~object_proxy_info() = default;
 
-  object_proxy *proxy;
+  object_proxy *proxy{};
   std::vector<identifier> primary_keys;
 };
 
@@ -58,9 +58,10 @@ typedef std::unordered_map<identifier, object_proxy_info, id_pk_hash, std::equal
 class OOS_ORM_API basic_table
 {
 public:
+  typedef std::unordered_multimap<identifier, std::shared_ptr<basic_container_item_holder>, id_pk_hash, std::equal_to<identifier>> t_identifier_multimap;
   typedef std::shared_ptr<basic_table> table_ptr;                                             /**< Shortcut to table shared pointer */
   typedef std::unordered_map<std::string, table_ptr> t_table_map;                             /**< Shortcut to an unordered map of table shared pointer*/
-  typedef std::unordered_map<std::string, detail::t_identifier_multimap> t_relation_item_map; /**< Shortcut to an unordered identifier multimap */
+  typedef std::unordered_map<std::string, t_identifier_multimap> t_relation_item_map; /**< Shortcut to an unordered identifier multimap */
   typedef std::unordered_map<std::string, std::shared_ptr<detail::basic_relation_data>> t_relation_data_map; /**< Shortcut to unordered relation data map */
 
 public:
@@ -95,9 +96,9 @@ public:
   virtual void create(connection &conn) = 0;
 
   /**
-   * @brief Interface for droping a table
+   * @brief Interface for dropping a table
    *
-   * Interface for droping a table for the
+   * Interface for dropping a table for the
    * given database connection.
    *
    * @param conn The database connection
@@ -145,23 +146,23 @@ public:
   virtual void remove(object_proxy *proxy) = 0;
 
   /**
-   * @brief Returns true if the table is laready loaded
+   * @brief Returns true if the table is already loaded
    *
-   * @return True if the table is laready loaded
+   * @return True if the table is already loaded
    */
   bool is_loaded() const;
 
   /**
-   * @brief Returns the underlaying prototype node
+   * @brief Returns the underlying prototype node
    *
-   * @return The underlaying prototype node
+   * @return The underlying prototype node
    */
   prototype_node& node();
 
   /**
-   * @brief Returns the underlaying prototype node
+   * @brief Returns the underlying prototype node
    *
-   * @return The underlaying prototype node
+   * @return The underlying prototype node
    */
   const prototype_node& node() const;
 
@@ -171,16 +172,16 @@ public:
   virtual void reset();
 
   /**
-   * @brief Access the underlaying persistence unit object
+   * @brief Access the underlying persistence unit object
    *
-   * @return The underlaying persistence unit object
+   * @return The underlying persistence unit object
    */
   persistence& persistence_unit();
 
   /**
-   * @brief Access the underlaying persistence unit object
+   * @brief Access the underlying persistence unit object
    *
-   * @return The underlaying persistence unit object
+   * @return The underlying persistence unit object
    */
   const persistence& persistence_unit() const;
 

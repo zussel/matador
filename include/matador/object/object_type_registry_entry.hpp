@@ -1,7 +1,7 @@
 #ifndef MATADOR_OBJECT_TYPE_REGISTRY_HPP
 #define MATADOR_OBJECT_TYPE_REGISTRY_HPP
 
-#include "matador/utils/identifier_setter.hpp"
+#include "identifier_setter.hpp"
 
 #include "matador/object/object_type_registry_entry_base.hpp"
 #include "matador/object/object_proxy.hpp"

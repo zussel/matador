@@ -15,7 +15,7 @@ void StringTestUnit::test_split()
 
   std::vector<std::string> strvec;
 
-  size_t count = matador::split(str, ',', strvec);
+  size_t count = matador::utils::split(str, ',', strvec);
 
   UNIT_ASSERT_EQUAL(count, (size_t)5);
   UNIT_ASSERT_EQUAL(strvec.size(), (size_t)5);
@@ -25,11 +25,11 @@ void StringTestUnit::test_trim()
 {
   std::string str("   middle     ");
 
-  std::string result = matador::trim(str);
+  std::string result = matador::utils::trim(str);
 
   UNIT_ASSERT_EQUAL(result, "middle");
 
-  result = matador::trim(str, "-");
+  result = matador::utils::trim(str, "-");
 
   UNIT_ASSERT_EQUAL(result, str);
 }

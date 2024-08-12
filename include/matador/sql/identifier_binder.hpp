@@ -1,16 +1,18 @@
 #ifndef PRIMARY_KEY_BINDER_HPP
 #define PRIMARY_KEY_BINDER_HPP
 
-#include "matador/utils/identifier.hpp"
-
 #include "matador/object/object_exception.hpp"
+#include "matador/object/identifier.hpp"
 
 #include "matador/sql/statement.hpp"
 
 namespace matador {
-
 class object_holder;
 class abstract_container;
+}
+
+namespace matador::sql {
+
 class identifiable_holder;
 
 namespace detail {
@@ -23,7 +25,7 @@ public:
   identifier_binder() = default;
   ~identifier_binder() override = default;
 
-  void bind(T *obj, statement<T> *stmt, size_t pos, identifier &id);
+  void bind(T *obj, statement *stmt, size_t pos, identifier &id);
 
   template<class V>
   void serialize(V &x)
@@ -37,87 +39,87 @@ public:
   void on_revision(const char *id, unsigned long long &/*rev*/) {}
 
   template<class V>
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
 
-  void on_belongs_to(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
-  void on_has_one(const char *, identifiable_holder &, const foreign_attributes &/*attr*/ = default_foreign_attributes) { }
+  void on_belongs_to(const char *, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) { }
+  void on_has_one(const char *, identifiable_holder &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) { }
 
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) { }
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
+  void on_attribute(const char *, char *, const utils::field_attributes &/*attr*/ = utils::null_attributes) { }
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) { }
 
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
-  void serialize(short &i, const field_attributes &/*attr*/) override
+  void serialize(short &i, const utils::field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(int &i, const field_attributes &/*attr*/) override
+  void serialize(int &i, const utils::field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(long &i, const field_attributes &/*attr*/) override
+  void serialize(long &i, const utils::field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(long long int &i, const field_attributes &/*attr*/) override
+  void serialize(long long int &i, const utils::field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(unsigned short &i, const field_attributes &/*attr*/) override
+  void serialize(unsigned short &i, const utils::field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(unsigned int &i, const field_attributes &/*attr*/) override
+  void serialize(unsigned int &i, const utils::field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(unsigned long &i, const field_attributes &/*attr*/) override
+  void serialize(unsigned long &i, const utils::field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(unsigned long long int &i, const field_attributes &/*attr*/) override
+  void serialize(unsigned long long int &i, const utils::field_attributes &/*attr*/) override
   {
     bind(i);
   }
 
-  void serialize(std::string &str, const field_attributes &attr) override
+  void serialize(std::string &str, const utils::field_attributes &attr) override
   {
-    if (!stmt_->p->is_valid_host_var(field_name_, pos_)) {
+    if (!stmt_->statement_->is_valid_host_var(field_name_, pos_)) {
       return;
     }
     stmt_->bind(pos_, str, attr.size());
   }
 
-  void serialize(null_type_t &/*type*/, const field_attributes &/*attr*/) override { }
+  void serialize(null_type_t &/*type*/, const utils::field_attributes &/*attr*/) override { }
 
 private:
-  void setup(statement<T> *stmt, T *obj, size_t pos, identifier &id);
+  void setup(statement *stmt, T *obj, size_t pos, identifier &id);
   void cleanup();
 
   template<class Type>
   void bind(Type &val) {
-    if (pos_ >= stmt_->p->bind_vars().size()) {
+    if (pos_ >= stmt_->statement_->bind_vars().size()) {
       throw std::out_of_range("host index out of range");
     }
 
-    if (!stmt_->p->is_valid_host_var(field_name_, pos_)) {
+    if (!stmt_->statement_->is_valid_host_var(field_name_, pos_)) {
       return;
     }
     stmt_->bind(pos_, val);
   }
 
 private:
-  statement<T> *stmt_ = nullptr;
+  statement *stmt_ = nullptr;
   size_t pos_ = 0;
   T *obj_ = nullptr;
   identifier *id_ = nullptr;
@@ -125,7 +127,7 @@ private:
 };
 
 template<class T>
-void identifier_binder<T>::bind(T *obj, statement<T> *stmt, size_t pos, identifier &id)
+void identifier_binder<T>::bind(T *obj, statement *stmt, size_t pos, identifier &id)
 {
   setup(stmt, obj, pos, id);
 
@@ -156,7 +158,7 @@ void identifier_binder<T>::on_primary_key(const char *id, std::string &, size_t 
 }
 
 template < class T >
-void identifier_binder<T>::setup(statement <T> *stmt, T *obj, size_t pos, identifier &id)
+void identifier_binder<T>::setup(statement *stmt, T *obj, size_t pos, identifier &id)
 {
   stmt_ = stmt;
   pos_ = pos;

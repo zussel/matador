@@ -51,12 +51,12 @@ public:
   void on_primary_key(const char *, std::string &, size_t /*size*/) {}
   void on_revision(const char *, unsigned long long &/*rev*/) {}
   template<class V>
-  void on_attribute(const char *, V &, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, char *, const field_attributes &/*attr*/ = null_attributes) {}
-  void on_attribute(const char *, std::string &, const field_attributes &/*attr*/ = null_attributes) { }
+  void on_attribute(const char *, V &, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, char *, const utils::field_attributes &/*attr*/ = utils::null_attributes) {}
+  void on_attribute(const char *, std::string &, const utils::field_attributes &/*attr*/ = utils::null_attributes) { }
 
   template<class V>
-  void on_belongs_to(const char *id, object_ptr<V> &, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_belongs_to(const char *id, object_ptr<V> &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     auto it = table_.find_table<V>();
     if (it != table_.end_table()) {
@@ -65,7 +65,7 @@ public:
   }
 
   template<class V>
-  void on_has_one(const char *id, object_ptr<V> &, const foreign_attributes &/*attr*/ = default_foreign_attributes)
+  void on_has_one(const char *id, object_ptr<V> &, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
   {
     auto it = table_.find_table<V>();
     if (it != table_.end_table()) {
@@ -73,10 +73,10 @@ public:
     }
   }
 
-  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
-  void on_has_many_to_many(const char *, abstract_container&, const foreign_attributes &/*attr*/ = default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
+  void on_has_many_to_many(const char *, abstract_container&, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes) {}
 
 private:
   basic_table &table_;

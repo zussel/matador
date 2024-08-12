@@ -3,8 +3,7 @@
 
 #include <thread>
 
-namespace detail {
-namespace utils {
+namespace detail::utils {
 
 template < class T >
 bool wait_until(T &service, bool running, int retries = 10);
@@ -53,6 +52,6 @@ private:
 };
 
 }
-}
+
 
 #endif //MATADOR_NETUTILS_HPP

@@ -15,7 +15,7 @@ std::string parse_token(string_cursor &cursor)
   std::string token;
   char c = cursor.skip_whitespace();
 
-  while(!is_eos(c)) {
+  while(!utils::is_eos(c)) {
     if (isalnum(c) || c == '.' || c == '_') {
       token.push_back(c);
     } else {
@@ -33,7 +33,7 @@ std::string parse_filepath(string_cursor &cursor)
   std::string token;
   char c = cursor.skip_whitespace();
 
-  while(!is_eos(c)) {
+  while(!utils::is_eos(c)) {
     if (isalnum(c) || c == '.' || c == '_' || c == '/') {
       token.push_back(c);
     } else {
@@ -51,7 +51,7 @@ std::string parse_operand(string_cursor &cursor)
   std::string token;
   char c = cursor.skip_whitespace();
 
-  while(!is_eos(c)) {
+  while(!utils::is_eos(c)) {
     if (isalnum(c) || c == '.' || c == '"' || c == '_') {
       token.push_back(c);
     } else {
@@ -91,7 +91,7 @@ std::shared_ptr<template_filter> parse_filter(string_cursor &cursor)
   while (c == ':') {
     c = cursor.next_char();
     std::string attr;
-    while(!is_eos(c)) {
+    while(!utils::is_eos(c)) {
       if (isalnum(c) || c == '.') {
         attr.push_back(c);
       } else {
@@ -214,7 +214,7 @@ std::string parse_operator(string_cursor &cursor)
   // ==,!=,<,<=,>,>=
   std::string op;
   char c = cursor.current_char();
-  while (!isspace(c) && !is_eos(c)) {
+  while (!isspace(c) && !utils::is_eos(c)) {
     if (isop(c)) {
       op += c;
     } else {

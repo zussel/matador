@@ -5,7 +5,7 @@
 
 #include "matador/object/object_proxy_accessor.hpp"
 
-#include "matador/utils/identifier.hpp"
+#include "identifier.hpp"
 
 #include <functional>
 #include <string>

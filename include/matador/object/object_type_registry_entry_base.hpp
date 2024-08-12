@@ -3,7 +3,7 @@
 
 #include "matador/object/export.hpp"
 
-#include "matador/utils/identifier.hpp"
+#include "identifier.hpp"
 
 #include <typeindex>
 #include <memory>

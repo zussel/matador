@@ -4,7 +4,7 @@
 #include "matador/object/export.hpp"
 
 #include "matador/utils/cascade_type.hpp"
-#include "matador/utils/identifiable_holder.hpp"
+#include "identifiable_holder.hpp"
 #include "matador/utils/foreign_attributes.hpp"
 
 #include <memory>
@@ -121,7 +121,7 @@ public:
   /**
    * Not equal to operator for the object_holder
    * 
-   * @param x The object_holder to check unequality with.
+   * @param x The object_holder to check °inequality with.
    * @return True if the holder objects are not the same
    */
   bool operator!=(const object_holder &x) const;
@@ -147,7 +147,7 @@ public:
    * @param proxy The new object_proxy for the object_holder.
    * @param cascade Sets the cascade actions for the proxy.
    */
-  void reset(object_proxy *proxy, const foreign_attributes &attr);
+  void reset(object_proxy *proxy, const utils::foreign_attributes &attr);
 
   /**
    * Resets the object_holder with the given object_proxy.
@@ -156,7 +156,7 @@ public:
    * @param cascade Sets the cascade actions for the proxy.
    * @param notify_foreign_relation True if foreign relation endpoint should be modified
    */
-  void reset(object_proxy *proxy, const foreign_attributes &attr, bool notify_foreign_relation);
+  void reset(object_proxy *proxy, const utils::foreign_attributes &attr, bool notify_foreign_relation);
 
   /**
    * Resets the object holder with the given
@@ -213,7 +213,7 @@ public:
    * Returns the corresponding
    * object_store or nullptr
    */
-  [[nodiscard]] object_store* store() const;
+//  [[nodiscard]] object_store* store() const;
 
   /**
    * Returns the raw object pointer
@@ -295,7 +295,7 @@ public:
    *
    * @return The cascade type
    */
-  [[nodiscard]] cascade_type cascade() const;
+  [[nodiscard]] utils::cascade_type cascade() const;
 
   /**
    * Prints the underlying object
@@ -328,7 +328,7 @@ private:
 
   object_proxy *proxy_ = nullptr;
   object_proxy *owner_ = nullptr; // only set if holder type is BELONGS_TO or HAS_MANY
-  foreign_attributes attributes_;
+  utils::foreign_attributes attributes_;
   bool is_inserted_ = false;
 
   std::shared_ptr<detail::basic_relation_endpoint> relation_info_;

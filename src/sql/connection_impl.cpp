@@ -1,19 +1,12 @@
 #include "matador/sql/connection_impl.hpp"
 
-namespace matador {
-void connection_impl::enable_log()
-{
-  log_enabled_ = true;
-}
+namespace matador::sql {
 
-void connection_impl::disable_log()
-{
-  log_enabled_ = false;
-}
+connection_impl::connection_impl(const connection_info &info)
+: info_(info){}
 
-bool connection_impl::is_log_enabled() const
-{
-  return log_enabled_;
+const connection_info &connection_impl::info() const {
+  return info_;
 }
 
 }

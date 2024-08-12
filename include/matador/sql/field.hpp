@@ -1,139 +1,48 @@
-#ifndef OOS_FIELD_HPP
-#define OOS_FIELD_HPP
+#ifndef QUERY_FIELD_HPP
+#define QUERY_FIELD_HPP
+
+#include "matador/sql/value.hpp"
 
 #include "matador/utils/data_types.hpp"
 
+#include <optional>
 #include <string>
 
-namespace matador {
+namespace matador::sql {
 
-/**
- * @brief Describes a database column field
- */
 class field
 {
 public:
-  /**
-   * @brief Creates an empty field
-   */
-  field();
+  explicit field(std::string name);
+  template<typename Type>
+  field(std::string name, Type value, size_t size = 0, int index = -1)
+  : name_(std::move(name))
+  , index_(index)
+  , value_(value, size) {}
+  field(std::string name, data_type dt, size_t size = 0, int index = -1);
+  field(const field &x) = default;
+  field& operator=(const field &x) = default;
+  field(field &&x) noexcept;
+  field& operator=(field &&x) noexcept;
 
-  /**
-   * @brief Creates a named field
-   * @param name Name of the column field
-   */
-  explicit field(const char *name);
+  template<typename Type>
+  field& operator=(Type value) {
+    value_ = std::move(value);
 
-  /**
-   * @brief Creates a named field
-   * @param name Name of the column field
-   */
-  explicit field(const std::string &name);
+    return *this;
+  }
 
-  /**
-   * @brief Destroy a field
-   */
-  ~field();
+  [[nodiscard]] const std::string& name() const;
+  [[nodiscard]] size_t size() const;
+  [[nodiscard]] int index() const;
 
-  /**
-   * @brief Returns the index of the field in table
-   * @return Index of the field in table
-   */
-  [[nodiscard]] size_t index() const;
+  template<class Type>
+  std::optional<Type> as() const
+  {
+    return value_.as<Type>();
+  }
 
-  /**
-   * @brief Sets the index in table of the field
-   * @param i The index of the field
-   */
-  void index(size_t i);
-
-  /**
-   * @brief Returns the name of the field
-   * @return Name of the field
-   */
-  [[nodiscard]] std::string name() const;
-
-  /**
-   * @brief Sets the name of the field
-   * @param n Name of the field to set
-   */
-  void name(const std::string &n);
-
-  /**
-   * @brief Returns the type of the field
-   * @return Type of the field
-   */
-  [[nodiscard]] data_type type() const;
-
-  /**
-   * @brief Sets the type of the field
-   * @param t Type of the field to set
-   */
-  void type(data_type t);
-
-  /**
-   * @brief Returns the size of the field
-   *
-   * Return the size of the field if
-   * field is a numeric or varchar type.
-   *
-   * @return Size of the field
-   */
-  [[nodiscard]] std::size_t size() const;
-
-  /**
-   * @brief Sets the size of the field
-   *
-   * Has only an effect if the type of
-   * the field is numeric or varchar.
-   *
-   * @param s Size of the field to set
-   */
-  void size(std::size_t s);
-
-  /**
-   * @brief Returns the precision of the field
-   *
-   * Return the precision of the field if
-   * field is of type float or double
-   *
-   * @return Precision of the field
-   */
-  [[nodiscard]] std::size_t precision() const;
-
-  /**
-   * @brief Sets the precision of the field
-   *
-   * Has only an effect if the field type
-   * is float or double.
-   *
-   * @param p Precision of the field to set
-   */
-  void precision(std::size_t p);
-
-  /**
-   * @brief Returns true if NULL value is not allowed
-   * @return True if NULL value is not allowed
-   */
-  [[nodiscard]] bool is_not_null() const;
-
-  /**
-   * @brief Set to true if NULL value is not allowed for this field
-   * @param nn True if NULL value is not allowed
-   */
-  void not_null(bool nn);
-
-  /**
-   * @brief Returns the default value as string
-   * @return Default value as string
-   */
-  [[nodiscard]] std::string default_value() const;
-
-  /**
-   * @brief Sets the default value as string
-   * @param value Default value as string
-   */
-  void default_value(const std::string &value);
+  [[nodiscard]] std::string str() const;
 
   [[nodiscard]] bool is_integer() const;
   [[nodiscard]] bool is_floating_point() const;
@@ -141,20 +50,26 @@ public:
   [[nodiscard]] bool is_string() const;
   [[nodiscard]] bool is_varchar() const;
   [[nodiscard]] bool is_blob() const;
-  [[nodiscard]] bool is_date() const;
-  [[nodiscard]] bool is_time() const;
   [[nodiscard]] bool is_null() const;
   [[nodiscard]] bool is_unknown() const;
 
+  friend std::ostream& operator<<(std::ostream &out, const field &col);
+
 private:
-  size_t index_ = 0;
+  template<class Operator>
+  void process(Operator &op)
+  {
+    op.on_attribute(name_.c_str(), value_, value_.size());
+  }
+
+private:
+  friend class record;
+
   std::string name_;
-  data_type type_ = data_type::type_unknown;
-  std::size_t size_ = 0;
-  std::size_t precision_ = 0;
-  bool not_null_ = false;
-  std::string default_value_;
+  int index_{-1};
+
+  value value_;
 };
 
 }
-#endif //OOS_FIELD_HPP
+#endif //QUERY_FIELD_HPP

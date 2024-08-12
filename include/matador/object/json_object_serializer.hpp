@@ -87,7 +87,7 @@ public:
   void on_revision(const char *id, unsigned long long &rev);
 
   template < class V >
-  void on_attribute(const char *id, V &obj, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<!matador::is_builtin<V>::value>::type* = nullptr)
+  void on_attribute(const char *id, V &obj, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<!matador::is_builtin<V>::value>::type* = nullptr)
   {
     write_id(id);
     append(obj);
@@ -95,7 +95,7 @@ public:
   }
 
   template < class V >
-  void on_attribute(const char *id, V &val, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
+  void on_attribute(const char *id, V &val, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<std::is_arithmetic<V>::value && !std::is_same<V, bool>::value>::type* = 0)
   {
     write_id(id);
     append(val);
@@ -103,25 +103,25 @@ public:
     newline();
   }
 
-  void on_attribute(const char *id, bool &val, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, std::string &val, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, const char *val, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, char val[], const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, date &val, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, time &val, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, bool &val, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *id, std::string &val, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *id, const char *val, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *id, char val[], const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *id, date &val, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *id, time &val, const utils::field_attributes &/*attr*/ = utils::null_attributes);
 
   template<class Value>
-  void on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_belongs_to(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes);
   template<class Value>
-  void on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_one(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &c, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_many(const char *id, container<Value, Container> &c, const char *, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &c, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_many(const char *id, container<Value, Container> &c, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes);
   template < class Value, template <class ...> class Container >
-  void on_has_many_to_many(const char *id, container<Value, Container> &c, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_many_to_many(const char *id, container<Value, Container> &c, const char *, const char *, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes);
   template < class Value, template <class ...> class Container >
-  void on_has_many_to_many(const char *id, container<Value, Container> &c, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_many_to_many(const char *id, container<Value, Container> &c, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes);
 
 private:
   template < class Value, template <class ...> class Container >
@@ -231,7 +231,7 @@ private:
 };
 
 template<class Value>
-void json_object_serializer::on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
+void json_object_serializer::on_belongs_to(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &/*attr*/)
 {
   if (x.empty()) {
     return;
@@ -242,7 +242,7 @@ void json_object_serializer::on_belongs_to(const char *id, object_ptr<Value> &x,
 
 template<class Value>
 void json_object_serializer::on_has_one(const char *id, object_ptr<Value> &x,
-                                        const foreign_attributes &/*attr*/)
+                                        const utils::foreign_attributes &/*attr*/)
 {
   if (x.empty()) {
     return;
@@ -252,19 +252,19 @@ void json_object_serializer::on_has_one(const char *id, object_ptr<Value> &x,
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_serializer::on_has_many(const char *id, container<Value, Container> &c, const char * /*join_column*/, const foreign_attributes &)
+void json_object_serializer::on_has_many(const char *id, container<Value, Container> &c, const char * /*join_column*/, const utils::foreign_attributes &)
 {
   handle_has_many(id, c);
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_serializer::on_has_many(const char *id, container<Value, Container> &c, const foreign_attributes &)
+void json_object_serializer::on_has_many(const char *id, container<Value, Container> &c, const utils::foreign_attributes &)
 {
   handle_has_many(id, c);
 }
 
 template<class Value, template <class ...> class Container>
-void json_object_serializer::on_has_many_to_many(const char *id, container<Value, Container> &c, const foreign_attributes &)
+void json_object_serializer::on_has_many_to_many(const char *id, container<Value, Container> &c, const utils::foreign_attributes &)
 {
   handle_has_many(id, c);
 }
@@ -273,7 +273,7 @@ template<class Value, template <class ...> class Container>
 void json_object_serializer::on_has_many_to_many(const char *id, container<Value, Container> &c,
                                                  const char *,
                                                  const char *,
-                                                 const foreign_attributes &/*attr*/)
+                                                 const utils::foreign_attributes &/*attr*/)
 {
   handle_has_many(id, c);
 }

@@ -47,7 +47,7 @@ void object_inserter::decrement_reference_count(object_holder &holder) const
   }
 }
 
-void object_inserter::insert_object(object_holder &x, const std::type_index &type_index, const foreign_attributes &attr)
+void object_inserter::insert_object(object_holder &x, const std::type_index &type_index, const utils::foreign_attributes &attr)
 {
   if (x.is_inserted()) {
     return;
@@ -58,7 +58,7 @@ void object_inserter::insert_object(object_holder &x, const std::type_index &typ
   x.owner_ = proxy_stack_.top();
 
   prototype_node *node = x.owner_->node();
-  auto i = node->find_endpoint(type_index);
+  const auto i = node->find_endpoint(type_index);
   if (!proxy_stack_.top()->node()->is_relation_node() && i != node->endpoint_end()) {
     x.relation_info_ = i->second;
 
@@ -85,7 +85,7 @@ void object_inserter::insert_object(object_holder &x, const std::type_index &typ
     return;
   }
 
-  if ((attr.cascade() & cascade_type::INSERT) != cascade_type::NONE) {
+  if ((attr.cascade() & utils::cascade_type::INSERT) != utils::cascade_type::NONE) {
     if (x.id() > 0) {
       // do the pointer count
       proxy_stack_.push(x.proxy_);

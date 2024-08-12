@@ -2,6 +2,7 @@
 #define STRING_HPP
 
 #include "matador/utils/export.hpp"
+#include "matador/utils/types.hpp"
 
 #include <sstream>
 #include <vector>
@@ -12,7 +13,12 @@
 namespace matador {
 
 class time;
+
 class date;
+
+}
+
+namespace matador::utils {
 
 /**
  * Splits a string by a delimiter and
@@ -25,6 +31,17 @@ class date;
  * @return The size of the vector.
  */
 OOS_UTILS_API size_t split(const std::string &str, char delim, std::vector<std::string> &values);
+
+/**
+ * Splits a string by a delimiter and
+ * add the string tokens to a vector. The
+ * size of the vector is returned.
+ *
+ * @param str The string to split.
+ * @param delim The delimiter character.
+ * @return The the vector with split strings.
+ */
+OOS_UTILS_API std::vector<std::string> split(const std::string &str, char delim);
 
 /**
  * Splits a string by a delimiter and
@@ -111,6 +128,9 @@ OOS_UTILS_API std::string to_string(const matador::time &x, const char *format =
  */
 OOS_UTILS_API std::string to_string(const matador::date &x, const char *format = date_format::ISO8601);
 
+OOS_UTILS_API const std::string& to_string(const std::string &str);
+OOS_UTILS_API std::string to_string(const blob &data);
+
 /**
  * Convert any floating point values
  * into a string with a given precision.
@@ -159,6 +179,34 @@ OOS_UTILS_API const char* skip_ws(const char *str);
  * @return True if character is end of string
  */
 OOS_UTILS_API bool is_eos(char c);
+
+/**
+ * Joins a range of elements as string within a list
+ * with a given delimiter and writes it to the
+ * given stream
+ *
+ * @tparam R Type og the range (e.g. map, list, vector, etc)
+ * @param range The range with the elements to join_left
+ * @param delim The delimiter for the elements
+ * @return The ostream reference
+ */
+template < class R >
+std::string join(R &range, const std::string &delim)
+{
+  std::string result {};
+  if (range.size() < 2) {
+    for (const auto &i : range) {
+      result += to_string(i);
+    }
+  } else {
+    auto it = range.begin();
+    result += to_string(*it++);
+    for (;it != range.end(); ++it) {
+      result += delim + to_string(*it);
+    }
+  }
+  return result;
+}
 
 }
 

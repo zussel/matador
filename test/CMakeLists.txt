@@ -17,9 +17,7 @@ SET (TEST_TOOLS_SOURCES
   utils/TreeTest.hpp
   utils/StreamsTest.cpp
   utils/StreamsTest.hpp
-  utils/OptionalTest.cpp
-  utils/OptionalTest.hpp
-  utils/ThreadPoolTest.cpp
+    utils/ThreadPoolTest.cpp
   utils/ThreadPoolTest.hpp
   utils/Base64Test.cpp
   utils/Base64Test.hpp

@@ -1,72 +1,58 @@
-#include <utility>
-
 #include "matador/sql/column.hpp"
-#include "matador/sql/token_visitor.hpp"
+#include "matador/sql/table.hpp"
 
-namespace matador {
+namespace matador::sql {
 
-column::column(std::string col, const field_attributes &attr)
-  : token(COLUMN)
-  , name(std::move(col))
-  , attributes(attr)
-{}
-
-column::column(std::string col, t_build_options options, const field_attributes &attr)
-  : token(COLUMN)
-  , name(std::move(col))
-  , build_options(options)
-  , attributes(attr)
-{}
-
-void column::accept(token_visitor &visitor)
+column operator ""_col(const char *name, size_t len)
 {
-  return visitor.visit(*this);
+  return {{name, len}};
 }
 
-column::column(std::string name, const sql::column_type &val, const field_attributes &attr)
-  : token(COLUMN)
-  , name(std::move(name))
-  , val(val)
-  , attributes(attr) {}
+column::column(const char *name) : name(name) {}
 
-column operator "" _col(const char *name, size_t len)
+column::column(std::string name) : name(std::move(name)) {}
+
+column::column(sql_function_t func, std::string name) : name(std::move(name)), function_(func) {}
+
+column::column(std::string table_name, std::string name, std::string as)
+: table(std::move(table_name))
+, name(std::move(name))
+, alias(std::move(as)) {}
+
+column::column(std::string table_name, const char *name, std::string as)
+: table(std::move(table_name))
+, name(name)
+, alias(std::move(as)) {}
+
+column::column(struct table &t, const char *name, std::string as)
+: table(t.name)
+, name(name)
+, alias(std::move(as))
 {
-    return column(std::string(name, len));
+  t.columns.push_back(*this);
 }
 
-std::shared_ptr<column> make_column(const std::string &name, data_type type, const sql::column_type &val, t_build_options options, size_t index, const field_attributes &attr)
+bool column::equals(const column &x) const
 {
-  auto col = std::make_shared<column>(name, val, attr);
-  col->index = index;
-  col->type = type;
-  col->build_options = options;
-
-  return col;
+  return table == x.table &&
+         name == x.name &&
+         alias == x.alias &&
+         function_ == x.function_;
 }
 
-std::shared_ptr<column> make_pk_column(const std::string &name, data_type type, size_t index, size_t max_size)
+column &column::as(std::string a)
 {
-  return make_column(name, type, index, { max_size, constraints::PRIMARY_KEY | constraints::NOT_NULL });
+  alias = std::move(a);
+  return *this;
 }
 
-std::shared_ptr<column> make_column(const std::string &name, data_type type, size_t index, const field_attributes &attr)
+bool column::is_function() const
 {
-  auto col = std::make_shared<column>(name, attr);
-  col->type = type;
-  col->index = index;
-  col->build_options |= t_build_options::with_type;
-  return col;
+  return function_ != sql_function_t::NONE;
 }
 
-std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr, const sql::column_type &val)
-{
-  return std::make_shared<column>(name, val, attr);
-}
-
-template<>
-std::shared_ptr<column> make_pk_column<std::string>(const std::string &name, size_t max_size)
-{
-  return make_column<std::string>(name, { max_size, constraints::PRIMARY_KEY | constraints::NOT_NULL });
+bool column::has_alias() const {
+    return !alias.empty();
 }
 
 }

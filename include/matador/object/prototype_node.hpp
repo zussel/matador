@@ -3,7 +3,6 @@
 
 #include "matador/object/export.hpp"
 
-#include "matador/object/abstract_container.hpp"
 #include "matador/object/identifier_proxy_map.hpp"
 #include "matador/object/typed_object_store_observer.hpp"
 #include "matador/object/relation_field_endpoint.hpp"
@@ -222,12 +221,6 @@ public:
    */
   template < class T >
   T* create() const;
-
-  /**
-   *
-   * @return
-   */
-  object_description describe() const;
 
   /**
    * Returns nodes successor node or NULL if node is last.

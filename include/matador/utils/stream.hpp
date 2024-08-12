@@ -1,9 +1,9 @@
 #ifndef MATADOR_STREAM_HPP
 #define MATADOR_STREAM_HPP
 
-#include "matador/utils/optional.hpp"
 #include "matador/utils/stream_processor.hpp"
 
+#include <optional>
 #include <list>
 #include <functional>
 #include <vector>
@@ -234,7 +234,7 @@ public:
    *
    * @return An optional possibly containing the first element.
    */
-  optional<T> first();
+  std::optional<T> first();
 
   /**
    * Return the last element of the current processed
@@ -243,7 +243,7 @@ public:
    *
    * @return An optional possibly containing the last element.
    */
-  optional<T> last();
+  std::optional<T> last();
 
   /**
    * Returns the minimum of the stream. This value is calculated
@@ -252,7 +252,7 @@ public:
    *
    * @return An optional possibly containing the minimum value.
    */
-  optional<T> min();
+  std::optional<T> min();
 
   /**
    * Returns the maximum of the stream. This value is calculated
@@ -261,7 +261,7 @@ public:
    *
    * @return An optional possibly containing the maximum value.
    */
-  optional<T> max();
+  std::optional<T> max();
 
   /**
    * Returns an element at the given position index. The value is returned
@@ -270,7 +270,7 @@ public:
    * @param index Position of the requested element
    * @return An optional possibly containing the value.
    */
-  optional<T> at(std::size_t index);
+  std::optional<T> at(std::size_t index);
 
   /**
    * Returns true if any element of the stream matches the
@@ -336,7 +336,7 @@ public:
    * @return An optional possibly containing the accumulated value.
    */
   template < typename Accumulator >
-  optional<T> reduce(Accumulator &&accumulator);
+  std::optional<T> reduce(Accumulator &&accumulator);
 
   /**
    * All elements of the stream are reduced to one element
@@ -371,8 +371,8 @@ public:
    * @param accumulator The accumulator function to be applied
    * @return An optional possibly containing the accumulated value.
    */
-  template < typename U, typename Accumulator, typename R = typename std::invoke_result<U, T>::type >
-  optional<R> reduce_id_func(const U &identity_fun, Accumulator &&accumulator);
+  template < typename U, typename Accumulator, typename R = typename std::result_of<U&(T)>::type >
+  std::optional<R> reduce_id_func(const U &identity_fun, Accumulator &&accumulator);
 
   /**
    * Prints all elements of the stream to the given std::ostream. The elements are
@@ -751,24 +751,24 @@ void stream<T>::for_each(Predicate &&pred)
 }
 
 template<class T>
-optional<T> stream<T>::first()
+std::optional<T> stream<T>::first()
 {
   auto first = begin();
   if (first != end()) {
-    return make_optional(*first);
+    return std::make_optional(*first);
   } else {
-    return optional<T>();
+    return std::optional<T>();
   }
 }
 
 template<class T>
-optional<T> stream<T>::last()
+std::optional<T> stream<T>::last()
 {
   return reduce([](const T &, const T &next) { return next; });
 }
 
 template<class T>
-optional<T> stream<T>::min()
+std::optional<T> stream<T>::min()
 {
   std::less<T> less_func;
   return reduce([=](const T &x, const T &next) {
@@ -777,7 +777,7 @@ optional<T> stream<T>::min()
 }
 
 template<class T>
-optional<T> stream<T>::max()
+std::optional<T> stream<T>::max()
 {
   std::greater<T> greater_func;
   return reduce([=](const T &x, const T &next) {
@@ -786,7 +786,7 @@ optional<T> stream<T>::max()
 }
 
 template<class T>
-optional<T> stream<T>::at(std::size_t index)
+std::optional<T> stream<T>::at(std::size_t index)
 {
   return skip(index).first();
 }
@@ -851,12 +851,12 @@ std::size_t stream<T>::count(Predicate &&pred)
 
 template<class T>
 template<typename Accumulator>
-optional<T> stream<T>::reduce(Accumulator &&accumulator)
+std::optional<T> stream<T>::reduce(Accumulator &&accumulator)
 {
   auto first = begin();
   auto last = end();
   if (first == last) {
-    return optional<T>();
+    return std::optional<T>();
   }
 
   auto result = *first;
@@ -883,12 +883,12 @@ U stream<T>::reduce(const U &identity, Accumulator &&accumulator)
 
 template<class T>
 template<typename U, typename Accumulator, typename R>
-optional<R> stream<T>::reduce_id_func(const U &identity_fun, Accumulator &&accumulator)
+std::optional<R> stream<T>::reduce_id_func(const U &identity_fun, Accumulator &&accumulator)
 {
   auto first = begin();
   auto last = end();
   if (first == last) {
-    return optional<R>();
+    return std::optional<R>();
   }
 
   auto result = identity_fun(*first);

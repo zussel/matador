@@ -35,7 +35,7 @@ void bind_value(std::vector<std::string> &strings, std::vector<const char*> &par
 template <>
 void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, const matador::date &x)
 {
-  strings[index] = matador::to_string(x, date_format::ISO8601);
+  strings[index] = matador::utils::to_string(x, utils::date_format::ISO8601);
   params[index] = strings[index].c_str();
   ++index;
 }
@@ -43,7 +43,7 @@ void bind_value(std::vector<std::string> &strings, std::vector<const char*> &par
 template <>
 void bind_value(std::vector<std::string> &strings, std::vector<const char*> &params, size_t &index, const matador::time &x)
 {
-  strings[index] = matador::to_string(x, "%Y-%m-%d %T.%f");
+  strings[index] = matador::utils::to_string(x, "%Y-%m-%d %T.%f");
   params[index] = strings[index].c_str();
   ++index;
 }

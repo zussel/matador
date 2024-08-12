@@ -343,7 +343,7 @@ date time::to_date() const
 
 std::ostream& operator<<(std::ostream &out, const time &x)
 {
-  out << to_string(x);
+  out << utils::to_string(x);
   return out;
 }
 

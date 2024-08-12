@@ -124,7 +124,7 @@ routing_engine::route_endpoint_ptr create_route_endpoint(
 
 bool prepare_route_path_elements(const std::string &path, std::list<std::string> &rpe)
 {
-  split(path, '/', rpe);
+  utils::split(path, '/', rpe);
 
   // if no segments return
   if (rpe.empty()) {

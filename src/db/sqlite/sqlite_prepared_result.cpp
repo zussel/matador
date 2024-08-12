@@ -159,7 +159,7 @@ void sqlite_prepared_result::read_value(const char * /*id*/, size_type index, ma
   auto s = (size_t)sqlite3_column_bytes(stmt_, index);
   if (!is_null && s > 0) {
     const auto *text = reinterpret_cast<const char *>( sqlite3_column_text(stmt_, index));
-    x = matador::date::parse(text, date_format::ISO8601);
+    x = matador::date::parse(text, utils::date_format::ISO8601);
   }
 }
 

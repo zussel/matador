@@ -262,7 +262,7 @@ void sqlite_result::read_value(const char */*id*/, size_type index, matador::dat
 {
   t_row::value_type val = result_[row_index_][index];
   if (strlen(val) > 0) {
-    x.set(val, date_format::ISO8601);
+    x.set(val, utils::date_format::ISO8601);
   }
 }
 

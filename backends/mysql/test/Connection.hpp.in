@@ -1,0 +1,8 @@
+#ifndef MYSQL_CONNECTION_HPP
+#define MYSQL_CONNECTION_HPP
+
+namespace matador::test::connection {
+ const char* const dns = "@MYSQL_CONNECTION_STRING@";
+}
+
+#endif /*SQLITE_CONNECTION_HPP*/

@@ -231,7 +231,7 @@ private:
   void register_proxy_update(object_proxy &proxy);
   void register_proxy_delete(object_proxy &proxy);
 private:
-  connection connection_;
+  sql::connection connection_;
   object_store store_;
 
   t_table_map tables_;

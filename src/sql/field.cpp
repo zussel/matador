@@ -1,142 +1,103 @@
-//
-// Created by sascha on 5/17/16.
-//
-
 #include "matador/sql/field.hpp"
 
-namespace matador {
+#include <ostream>
 
+namespace matador::sql {
 
-field::field() { }
-
-field::field(const char *name)
-  : name_(name)
+field::field(std::string name)
+  : name_(std::move(name))
+  , value_(nullptr)
 {}
 
-field::field(const std::string &name)
-  : name_(name)
-{}
+field::field(std::string name, data_type dt, size_t size, int index)
+  : name_(std::move(name))
+  , index_(index)
+  , value_(dt, size) {}
 
-field::~field() { }
-
-size_t field::index() const
+field::field(field &&x) noexcept
+  : name_(std::move(x.name_))
+  , index_(x.index_)
+  , value_(std::move(x.value_))
 {
-  return index_;
+  x.value_ = nullptr;
+  x.index_ = -1;
 }
 
-void field::index(size_t i)
+field &field::operator=(field &&x) noexcept
 {
-  index_ = i;
+  name_ = std::move(x.name_);
+  index_ = x.index_;
+  value_ = std::move(x.value_);
+  x.index_ = -1;
+  x.value_ = nullptr;
+
+  return *this;
 }
 
-std::string field::name() const
+const std::string &field::name() const
 {
   return name_;
 }
 
-void field::name(const std::string &n)
+size_t field::size() const
 {
-  name_ = n;
+  return value_.size();
 }
 
-data_type field::type() const
+int field::index() const
 {
-  return type_;
+  return index_;
 }
 
-void field::type(data_type t)
+std::ostream &operator<<(std::ostream &out, const field &col)
 {
-  type_ = t;
+  out << col.str();
+  return out;
 }
 
-std::size_t field::size() const
+std::string field::str() const
 {
-  return size_;
-}
-
-void field::size(std::size_t s)
-{
-  size_ = s;
-}
-
-std::size_t field::precision() const
-{
-  return precision_;
-}
-
-void field::precision(std::size_t p)
-{
-  precision_ = p;
-}
-
-bool field::is_not_null() const
-{
-  return not_null_;
-}
-
-void field::not_null(bool nn)
-{
-  not_null_ = nn;
-}
-
-std::string field::default_value() const
-{
-  return default_value_;
-}
-
-void field::default_value(const std::string &value)
-{
-  default_value_ = value;
+  return as<std::string>().value();
 }
 
 bool field::is_integer() const
 {
-  return type_ >= data_type::type_char && type_ <= data_type::type_unsigned_long_long;
+  return value_.is_integer();
 }
 
 bool field::is_floating_point() const
 {
-  return type_ == data_type::type_float || type_ == data_type::type_double;
+  return value_.is_floating_point();
 }
 
 bool field::is_bool() const
 {
-  return type_ == data_type::type_bool;
+  return value_.is_bool();
 }
 
 bool field::is_string() const
 {
-  return type_ == data_type::type_text;
+  return value_.is_string();
 }
 
 bool field::is_varchar() const
 {
-  return type_ == data_type::type_varchar || type_ == data_type::type_char_pointer;
+  return value_.is_varchar();
 }
 
 bool field::is_blob() const
 {
-  return type_ == data_type::type_blob;
-}
-
-bool field::is_date() const
-{
-  return type_ == data_type::type_date;
-}
-
-bool field::is_time() const
-{
-  return type_ == data_type::type_time;
+  return value_.is_blob();
 }
 
 bool field::is_null() const
 {
-  return type_ == data_type::type_null;
+  return value_.is_null();
 }
 
 bool field::is_unknown() const
 {
-  return type_ == data_type::type_unknown;
+  return value_.is_unknown();
 }
 
 }

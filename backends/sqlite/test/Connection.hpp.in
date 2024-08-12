@@ -1,0 +1,8 @@
+#ifndef SQLITE_CONNECTION_HPP
+#define SQLITE_CONNECTION_HPP
+
+namespace matador::test::connection {
+ const char* const dns = "@SQLITE_CONNECTION_STRING@";
+}
+
+#endif /*SQLITE_CONNECTION_HPP*/

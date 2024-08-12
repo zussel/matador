@@ -134,7 +134,7 @@ void get_value(PGresult *res, size_t row, size_t col, T &val)
   if (PQgetisnull(res, (int)row, (int)col) == 1) {
     return;
   }
-  val.set(PQgetvalue(res, (int)row, (int)col), date_format::ISO8601);
+  val.set(PQgetvalue(res, (int)row, (int)col), utils::date_format::ISO8601);
 }
 
 void get_value(PGresult *res, size_t row, size_t col, char *val, size_t s);

@@ -24,7 +24,7 @@ file_sink::file_sink(const std::string &path)
   }
   // extract base path and extension
   std::vector<std::string> result;
-  if (matador::split(filename, '.', result) != 2) {
+  if (matador::utils::split(filename, '.', result) != 2) {
     throw std::logic_error("splitted path must consists of two elements");
   }
   // get current path

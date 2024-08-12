@@ -3,8 +3,8 @@
 
 #include "matador/object/export.hpp"
 
-#include "matador/utils/identifier_resolver.hpp"
-#include "matador/utils/identifier.hpp"
+#include "identifier_resolver.hpp"
+#include "identifier.hpp"
 
 #include "matador/object/object_type_registry_entry_base.hpp"
 
@@ -143,12 +143,8 @@ public:
     return static_cast<const T*>(obj_);
   }
 
-  /**
-   * Return the underlying object store
-   *
-   * @return The object store
-   */
-  object_store* ostore() const;
+  [[nodiscard]] bool is_inserted() const;
+  [[nodiscard]] bool is_isolated() const;
 
   /**
    * Return the corresponding prototype
@@ -156,7 +152,7 @@ public:
    *
    * @return The corresponding prototype node
    */
-  prototype_node* node() const;
+  [[nodiscard]] prototype_node* node() const;
 
   /**
    * Release the object from proxies
@@ -189,7 +185,23 @@ public:
    * 
    * @param successor New next object proxy of this
    */
-  void link(object_proxy *successor);
+  void link_before(object_proxy *successor);
+
+  /**
+   * Link this object proxy after given
+   * object proxy next.
+   *
+   * @param predecessor New previous object proxy of this
+   */
+  void link_after(object_proxy *predecessor);
+
+  /**
+   * Simply link given object proxy as next
+   * and object proxies previous to this
+   *
+   * @param next Object proxy to link next to
+   */
+  void link(object_proxy *next);
 
   /**
    * @brief Unlink object proxy from list.
@@ -218,17 +230,17 @@ public:
    *
    * @return The next object proxy
    */
-  object_proxy* next() const;
+  [[nodiscard]] object_proxy* next() const;
 
   /**
    * Return the previous object proxy
    *
    * @return The previous object proxy
    */
-  object_proxy* prev() const;
+  [[nodiscard]] object_proxy* prev() const;
 
 
-  unsigned long reference_count() const;
+  [[nodiscard]] unsigned long reference_count() const;
 
   /**
    * Resets the object of the object_proxy
@@ -259,7 +271,7 @@ public:
 
   void sync_id();
 
-  const std::type_index& type_index() const;
+  [[nodiscard]] const std::type_index& type_index() const;
 
   /**
    * @brief Add an object_holder to the linked list.
@@ -285,6 +297,11 @@ public:
   bool remove(object_holder *ptr);
 
   /**
+   * Remove this proxy from underlying store
+   */
+  void remove();
+
+  /**
    * @brief True if proxy is valid
    * 
    * Returns true if the proxy is part of
@@ -293,7 +310,7 @@ public:
    * 
    * @return True if part of an object_store.
    */
-  bool valid() const;
+  [[nodiscard]] bool valid() const;
 
   /**
    * Return the id of the object. If no object is
@@ -301,7 +318,7 @@ public:
    *
    * @return 0 (null) or the id of the object.
    */
-  unsigned long long id() const;
+  [[nodiscard]] unsigned long long id() const;
 
   /**
    * Sets the id of the object_proxy.
@@ -316,7 +333,7 @@ public:
    *
    * @return true If the object has a primary key
    */
-  bool has_identifier() const;
+  [[nodiscard]] bool has_identifier() const;
 
   /**
    * Return the primary key. If underlying object
@@ -325,15 +342,16 @@ public:
    *
    * @return The primary key of the underlying object
    */
-  const identifier& pk() const;
+  [[nodiscard]] const identifier& pk() const;
   identifier& pk();
 
   void pk(const identifier &id);
 
   void create_object();
 
+  void object_type_entry(const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry);
+
 private:
-  friend class object_store;
   friend class prototype_node;
   template < class T > friend class result;
   friend class object_holder;

@@ -1,6 +1,6 @@
 #include "matador/utils/field_attributes.hpp"
 
-namespace matador {
+namespace matador::utils {
 
 field_attributes::field_attributes(size_t size)
   : size_(size)

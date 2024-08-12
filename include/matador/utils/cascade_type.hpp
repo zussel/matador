@@ -1,7 +1,7 @@
 #ifndef OOS_CASCADE_TYPE_HPP
 #define OOS_CASCADE_TYPE_HPP
 
-namespace matador {
+namespace matador::utils {
 
 /**
  * @brief Cascade types for database actions

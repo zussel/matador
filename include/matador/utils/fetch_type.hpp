@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace matador {
+namespace matador::utils {
 
 /**
  * @brief Defines fetch types

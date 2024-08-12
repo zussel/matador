@@ -123,11 +123,13 @@ void ObjectStoreTestUnit::test_optr()
 
   item_ptr item(new datatypes("Test"));
 
-  UNIT_ASSERT_NULL(item.store());
+  UNIT_ASSERT_FALSE(item.is_inserted());
+  UNIT_ASSERT_FALSE(item.is_internal());
 
   item = ostore_.insert(item);
 
-  UNIT_ASSERT_NOT_NULL(item.store());
+//  UNIT_ASSERT_TRUE(item.is_inserted());
+  UNIT_ASSERT_TRUE(item.is_internal());
 }
 
 void ObjectStoreTestUnit::test_expression()
@@ -990,7 +992,7 @@ public:
   {
     matador::access::primary_key(op, "id", id);
     matador::access::attribute(op, "name", name);
-    matador::access::has_one(op, "cycler", cycler, cascade_type::ALL);
+    matador::access::has_one(op, "cycler", cycler, utils::cascade_type::ALL);
   }
   unsigned long id{};
   std::string name;
@@ -1070,7 +1072,7 @@ void ObjectStoreTestUnit::test_transient_optr()
 
   item_ptr item_copy = item;
 
-  item_copy.reset(nullptr, cascade_type::NONE);
+  item_copy.reset(nullptr, utils::cascade_type::NONE);
 }
 
 void ObjectStoreTestUnit::test_insert()

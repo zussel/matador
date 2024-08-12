@@ -37,31 +37,31 @@ public:
   void on_primary_key(const char *id, std::string &pk, size_t /*size*/);
   void on_revision(const char *id, unsigned long long &rev);
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
   template < class V >
-  void on_attribute(const char *id, V &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
+  void on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<std::is_floating_point<V>::value>::type* = 0);
   template < class E >
-  void on_attribute(const char *id, E &to, const field_attributes &/*attr*/ = null_attributes, typename std::enable_if<std::is_enum<E>::value>::type* = 0);
-  void on_attribute(const char *id, bool &to, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, std::string &to, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, date &to, const field_attributes &/*attr*/ = null_attributes);
-  void on_attribute(const char *id, time &to, const field_attributes &/*attr*/ = null_attributes);
+  void on_attribute(const char *id, E &to, const utils::field_attributes &/*attr*/ = utils::null_attributes, typename std::enable_if<std::is_enum<E>::value>::type* = 0);
+  void on_attribute(const char *id, bool &to, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *id, std::string &to, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *id, date &to, const utils::field_attributes &/*attr*/ = utils::null_attributes);
+  void on_attribute(const char *id, time &to, const utils::field_attributes &/*attr*/ = utils::null_attributes);
   template<class Value>
-  void on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_belongs_to(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes);
   template<class Value>
-  void on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes);
+  void on_has_one(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, container<Value, Container> &x, const char *join_column, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, container<Value, Container> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
-  void on_has_many(const char *id, container<Value, Container> &x, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  void on_has_many(const char *id, container<Value, Container> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
-  void on_has_many_to_many(const char *id, container<Value, Container> &x, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
+  void on_has_many_to_many(const char *id, container<Value, Container> &x, const char *, const char *, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes, typename std::enable_if<!is_builtin<Value>::value>::type* = 0);
   template < class Value, template <class ...> class Container >
-  void on_has_many_to_many(const char *id, container<Value, Container> &x, const char *, const char *, const foreign_attributes &/*attr*/ = default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
+  void on_has_many_to_many(const char *id, container<Value, Container> &x, const char *, const char *, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes, typename std::enable_if<is_builtin<Value>::value>::type* = 0);
 
 private:
   details::mapper_runtime &runtime_data_;
@@ -138,7 +138,7 @@ void json_object_mapper_serializer::on_primary_key(const char *id, V &pk, typena
 }
 
 template<class V>
-void json_object_mapper_serializer::on_attribute(const char *id, V &to, const field_attributes &/*attr*/, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
+void json_object_mapper_serializer::on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type *)
 {
   if (runtime_data_.key != id) {
     return;
@@ -150,7 +150,7 @@ void json_object_mapper_serializer::on_attribute(const char *id, V &to, const fi
 }
 
 template<class V>
-void json_object_mapper_serializer::on_attribute(const char *id, V &to, const field_attributes &/*attr*/, typename std::enable_if<std::is_floating_point<V>::value>::type *)
+void json_object_mapper_serializer::on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/, typename std::enable_if<std::is_floating_point<V>::value>::type *)
 {
   if (runtime_data_.key != id) {
     return;
@@ -162,7 +162,7 @@ void json_object_mapper_serializer::on_attribute(const char *id, V &to, const fi
 }
 
 template<class V>
-void json_object_mapper_serializer::on_attribute(const char *id, V &to, const field_attributes &/*attr*/, typename std::enable_if<std::is_enum<V>::value>::type *)
+void json_object_mapper_serializer::on_attribute(const char *id, V &to, const utils::field_attributes &/*attr*/, typename std::enable_if<std::is_enum<V>::value>::type *)
 {
   if (runtime_data_.key != id) {
     return;
@@ -174,7 +174,7 @@ void json_object_mapper_serializer::on_attribute(const char *id, V &to, const fi
 }
 
 template<class Value>
-void json_object_mapper_serializer::on_belongs_to(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
+void json_object_mapper_serializer::on_belongs_to(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &/*attr*/)
 {
   if (runtime_data_.object_key != id) {
     return;
@@ -187,7 +187,7 @@ void json_object_mapper_serializer::on_belongs_to(const char *id, object_ptr<Val
 }
 
 template<class Value>
-void json_object_mapper_serializer::on_has_one(const char *id, object_ptr<Value> &x, const foreign_attributes &/*attr*/)
+void json_object_mapper_serializer::on_has_one(const char *id, object_ptr<Value> &x, const utils::foreign_attributes &/*attr*/)
 {
   if (runtime_data_.object_key != id) {
     return;
@@ -203,7 +203,7 @@ template<class Value, template <class ...> class Container>
 void json_object_mapper_serializer::on_has_many(const char *id,
                                                 container<Value, Container> &x,
                                                 const char * /*join_column*/,
-                                                const foreign_attributes &attr,
+                                                const utils::foreign_attributes &attr,
                                                 typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   on_has_many(id, x, attr);
@@ -213,7 +213,7 @@ template<class Value, template <class ...> class Container>
 void json_object_mapper_serializer::on_has_many(const char *id,
                                                 container<Value, Container> &x,
                                                 const char * /*join_column*/,
-                                                const foreign_attributes &attr,
+                                                const utils::foreign_attributes &attr,
                                                 typename std::enable_if<is_builtin<Value>::value>::type *)
 {
   on_has_many(id, x, attr);
@@ -222,7 +222,7 @@ void json_object_mapper_serializer::on_has_many(const char *id,
 template<class Value, template <class ...> class Container>
 void json_object_mapper_serializer::on_has_many(const char *id,
                                                 container<Value, Container> &x,
-                                                const foreign_attributes &attr,
+                                                const utils::foreign_attributes &attr,
                                                 typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.object_key != id) {
@@ -241,7 +241,7 @@ void json_object_mapper_serializer::on_has_many(const char *id,
 template<class Value, template <class ...> class Container>
 void json_object_mapper_serializer::on_has_many(const char *id,
                                                 container<Value, Container> &x,
-                                                const foreign_attributes &/*attr*/,
+                                                const utils::foreign_attributes &/*attr*/,
                                                 typename std::enable_if<is_builtin<Value>::value>::type *)
 {
   if (runtime_data_.key != id) {
@@ -261,7 +261,7 @@ void json_object_mapper_serializer::on_has_many_to_many(const char *id,
                                                         container<Value, Container> &x,
                                                         const char *,
                                                         const char *,
-                                                        const foreign_attributes &/*attr*/,
+                                                        const utils::foreign_attributes &/*attr*/,
                                                         typename std::enable_if<!is_builtin<Value>::value>::type*)
 {
   if (runtime_data_.object_key != id) {
@@ -282,7 +282,7 @@ void json_object_mapper_serializer::on_has_many_to_many(const char *id,
                                                         container<Value, Container> &x,
                                                         const char *,
                                                         const char *,
-                                                        const foreign_attributes &/*attr*/,
+                                                        const utils::foreign_attributes &/*attr*/,
                                                         typename std::enable_if<is_builtin<Value>::value>::type *)
 {
   if (runtime_data_.key != id) {

@@ -23,7 +23,7 @@ void object_deserializer::on_revision(const char *id, unsigned long long int &re
   on_attribute(id, rev);
 }
 
-void object_deserializer::on_attribute(const char *, char *x, const field_attributes &/*attr*/)
+void object_deserializer::on_attribute(const char *, char *x, const utils::field_attributes &/*attr*/)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -31,7 +31,7 @@ void object_deserializer::on_attribute(const char *, char *x, const field_attrib
   buffer_->release(x, len);
 }
 
-void object_deserializer::on_attribute(const char *, std::string &x, const field_attributes &/*attr*/)
+void object_deserializer::on_attribute(const char *, std::string &x, const utils::field_attributes &/*attr*/)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -40,14 +40,14 @@ void object_deserializer::on_attribute(const char *, std::string &x, const field
   x.assign(str.get(), len);
 }
 
-void object_deserializer::on_attribute(const char *, date &x, const field_attributes &/*attr*/)
+void object_deserializer::on_attribute(const char *, date &x, const utils::field_attributes &/*attr*/)
 {
   int julian_date(0);
   buffer_->release(&julian_date, sizeof(julian_date));
   x.set(julian_date);
 }
 
-void object_deserializer::on_attribute(const char *, time &x, const field_attributes &/*attr*/)
+void object_deserializer::on_attribute(const char *, time &x, const utils::field_attributes &/*attr*/)
 {
   time_info ti;
   buffer_->release(&ti.seconds_since_epoch, sizeof(ti.seconds_since_epoch));

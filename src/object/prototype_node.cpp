@@ -9,14 +9,12 @@ using namespace std;
 
 namespace matador {
 
-bool
-prototype_node::empty(bool self) const
+bool prototype_node::empty(bool self) const
 {
   return op_first->next() == (self ? op_marker : op_last);
 }
 
-unsigned long
-prototype_node::size() const
+unsigned long prototype_node::size() const
 {
   return count;
 }
@@ -44,22 +42,9 @@ void prototype_node::append(prototype_node *sibling)
   if (!parent_) {
     sibling->op_first = new object_proxy();
     sibling->op_last = sibling->op_marker = new object_proxy();
-    sibling->op_first->next_ = sibling->op_last;
-    sibling->op_last->prev_ = sibling->op_first;
+    sibling->op_first->link(sibling->op_last);
   } else {
     throw object_exception("failed to add node as sibling: node has no parent");
-    // 1. first
-//    if (op_first->next() == op_last) {
-//      // node hasn't any serializable (proxy)
-//      sibling->op_first = op_first;
-//    } else {
-//      // node has some objects (proxy)
-//      sibling->op_first = op_last->prev_;
-//    }
-//    // 2. marker
-//    sibling->op_marker = op_last;
-//    // 3. last
-//    sibling->op_last = op_last;
   }
 }
 
@@ -79,7 +64,7 @@ void prototype_node::insert(prototype_node *child)
     child->op_first = op_first;
   } else {
     // node has some objects (proxy)
-    child->op_first = op_last->prev_;
+    child->op_first = op_last->prev();
   }
   // 2. marker
   child->op_marker = op_last;
@@ -95,30 +80,30 @@ void prototype_node::insert(object_proxy *proxy)
      // there are more than two objects (normal case)
      // insert before last last
 
-    proxy->link(op_marker->prev_);
+    proxy->link_before(op_marker->prev());
   } else if (count == 1) {
 
      // there is one serializable in subtree
      // insert as first; adjust "left" marker
 
-    proxy->link(op_marker->prev_);
-    adjust_left_marker(this, proxy->next_, proxy);
+    proxy->link_before(op_marker->prev());
+    adjust_left_marker(this, proxy->next(), proxy);
   } else { // node->count == 0
 
      // there is no serializable in subtree
      //insert as last; adjust "right" marker
 
-    proxy->link(op_marker);
-    adjust_left_marker(this, proxy->next_, proxy);
-    adjust_right_marker(this, proxy->prev_, proxy);
+    proxy->link_before(op_marker);
+    adjust_left_marker(this, proxy->next(), proxy);
+    adjust_right_marker(this, proxy->prev(), proxy);
   }
   // set prototype node
 //  proxy->node_ = this;
   // adjust size
   ++count;
   // find and insert primary key
-  if (!proxy->pk_.is_null()) {
-    id_map_.insert(std::make_pair(proxy->pk_, proxy));
+  if (!proxy->pk().is_null()) {
+    id_map_.insert(std::make_pair(proxy->pk(), proxy));
   }
 
   // notify observers
@@ -129,24 +114,25 @@ void prototype_node::remove(object_proxy *proxy)
 {
   if (proxy == op_first->next()) {
     // adjust left marker
-    adjust_left_marker(this, op_first->next_, op_first->next_->next_);
+    adjust_left_marker(this, op_first->next(), op_first->next()->next());
   }
   if (proxy == op_marker->prev()) {
     // adjust right marker
-    adjust_right_marker(this, proxy, op_marker->prev_->prev_);
+    adjust_right_marker(this, proxy, op_marker->prev()->prev());
   }
   // unlink object_proxy
-  if (proxy->prev()) {
-    proxy->prev_->next_ = proxy->next_;
-  }
-  if (proxy->next()) {
-    proxy->next_->prev_ = proxy->prev_;
-  }
-  proxy->prev_ = nullptr;
-  proxy->next_ = nullptr;
+  proxy->unlink();
+//  if (proxy->prev()) {
+//    proxy->prev()->next_ = proxy->next();
+//  }
+//  if (proxy->next()) {
+//    proxy->next()->prev_ = proxy->prev();
+//  }
+//  proxy->prev_ = nullptr;
+//  proxy->next_ = nullptr;
 
   if (has_primary_key()) {
-    if (id_map_.erase(proxy->pk_) == 0) {
+    if (id_map_.erase(proxy->pk()) == 0) {
       // couldn't find and erase primary key
     }
   }
@@ -161,11 +147,14 @@ void prototype_node::remove(object_proxy *proxy)
 void prototype_node::clear(bool recursive)
 {
   if (!empty(true)) {
-    adjust_left_marker(this, op_first->next_, op_marker);
-    adjust_right_marker(this, op_marker->prev_, op_first);
+    adjust_left_marker(this, op_first->next(), op_marker);
+    adjust_right_marker(this, op_marker->prev(), op_first);
 
     while (op_first->next() != op_marker) {
-      object_proxy *op = op_first->next_;
+      object_proxy *op = op_first->next();
+      if (op == nullptr) {
+        continue;
+      }
       // remove serializable proxy from list
       op->unlink();
       // delete serializable proxy and serializable
@@ -192,10 +181,6 @@ void prototype_node::unlink()
   next->prev = prev;
   next = nullptr;
   prev = nullptr;
-}
-
-object_description prototype_node::describe() const {
-  return info_->describe();
 }
 
 prototype_node* prototype_node::next_node() const

@@ -20,7 +20,7 @@ public:
 
   void initialize() override;
 
-  void print_data_types();
+//  void print_data_types();
   void test_data_types();
   void test_schema();
   void test_query_value_creator();

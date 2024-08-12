@@ -278,7 +278,7 @@ void TimeTestUnit::test_format()
 {
   matador::time t(2015, 1, 31, 11, 35, 7, 123);
 
-  std::string tstr(to_string(t, "%H:%M:%S.%f %d.%m.%Y"));
+  std::string tstr(utils::to_string(t, "%H:%M:%S.%f %d.%m.%Y"));
 
   UNIT_ASSERT_EQUAL(tstr, "11:35:07.123 31.01.2015");
 }

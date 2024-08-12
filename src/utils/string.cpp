@@ -6,7 +6,7 @@
 
 #include <ctime>
 
-namespace matador {
+namespace matador::utils {
 
 size_t split(const std::string &str, char delim, std::vector<std::string> &values)
 {
@@ -16,6 +16,17 @@ size_t split(const std::string &str, char delim, std::vector<std::string> &value
     values.push_back(item);
   }
   return values.size();
+}
+
+std::vector<std::string> split(const std::string &str, char delim)
+{
+  std::stringstream ss(str);
+  std::string item;
+  std::vector<std::string> result;
+  while (std::getline(ss, item, delim)) {
+    result.push_back(item);
+  }
+  return result;
 }
 
 size_t split(const std::string &str, char delim, std::list<std::string> &values)
@@ -106,6 +117,26 @@ std::string to_string(const matador::time &x, const char *format)
   }
   return result;
 #endif
+}
+
+const std::string &to_string(const std::string &str)
+{
+  return str;
+}
+
+std::string to_string(const blob &data)
+{
+  static constexpr char HEXITS[] = "0123456789ABCDEF";
+
+  std::string str(2 * data.size(), '\0');
+  auto item = str.begin();
+
+  for(auto c : data) {
+    *item++ = HEXITS[c >> 4];
+    *item++ = HEXITS[c & 0x0F];
+  }
+
+  return str;
 }
 
 std::string to_string(const matador::date &x, const char *format)

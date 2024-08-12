@@ -1,135 +1,44 @@
-#ifndef OOS_COLUMN_HPP
-#define OOS_COLUMN_HPP
+#ifndef QUERY_COLUMN_HPP
+#define QUERY_COLUMN_HPP
 
-#include "matador/sql/token.hpp"
-#include "matador/sql/value.hpp"
-#include "matador/sql/basic_dialect.hpp"
+#include <string>
 
-#include "matador/utils/field_attributes.hpp"
+namespace matador::sql {
 
-namespace matador {
+struct table;
 
-enum class t_build_options {
-  empty = 0 << 0,
-  with_quotes = 1 << 0,
-  with_type = 1 << 1,
-  with_value = 1 << 2
+enum class sql_function_t {
+  NONE,
+  COUNT,
+  AVG,
+  SUM,
+  MIN,
+  MAX
 };
 
-inline t_build_options operator|(t_build_options a, t_build_options b)
+struct column
 {
-  return static_cast<t_build_options>(static_cast<unsigned int>(a) | static_cast<unsigned int>(b));
-}
+  column(const char *name); // NOLINT(*-explicit-constructor)
+  column(std::string name); // NOLINT(*-explicit-constructor)
+  column(sql_function_t func, std::string name); // NOLINT(*-explicit-constructor)
+  column(std::string table_name, std::string name, std::string as = "");
+  column(std::string table_name, const char* name, std::string as = "");
+  column(struct table &t, const char* name, std::string as = "");
 
-inline t_build_options operator|=(t_build_options &a, t_build_options b)
-{
-  return static_cast<t_build_options>(reinterpret_cast<unsigned int&>(a) |= static_cast<unsigned int>(b));
-}
+  [[nodiscard]] bool equals(const column &x) const;
 
-inline t_build_options operator&(t_build_options a, t_build_options b)
-{
-  return static_cast<t_build_options>(static_cast<unsigned int>(a) & static_cast<unsigned int>(b));
-}
+  column& as(std::string a);
 
-inline bool is_build_options_set(t_build_options source, t_build_options needle)
-{
-  return static_cast<int>(source & needle) > 0;
-}
+  [[nodiscard]] bool is_function() const;
+  [[nodiscard]] bool has_alias() const;
 
-/**
- * @brief Represents a database column.
- *
- * Represents a database column consisting of
- * name.
- */
-struct column : public detail::token
-{
-  /**
-   * @brief Creates a new column with given name
-   *
-   * @param col The name of the column
-   * @param attr Field attributes of the column
-   */
-  explicit column(std::string col, const field_attributes &attr = null_attributes);
-
-  column(std::string name, const sql::column_type &val, const field_attributes &attr);
-
-  /**
-   * @brief Creates a new column with given name
-   *
-   * @param name The name of the column
-   * @param options True if the column shouldn't get quotes
-   * @param attr Field attributes of the column
-   */
-  column(std::string name, t_build_options options, const field_attributes &attr = null_attributes);
-
-  template < typename Type >
-  column(std::string name, const Type &val, const field_attributes &attr, typename std::enable_if<!std::is_same<Type, sql::column_type>::value>::type* = 0)
-  : token(COLUMN)
-  , name(std::move(name))
-  , val(val)
-  , type(data_type_traits<Type>::builtin_type(attr.size()))
-  , attributes(attr) {}
-
-  /**
-   * @brief Interface according to the visitor pattern.
-   *
-   * @param visitor The visitor object to be accepted
-   */
-  void accept(token_visitor &visitor) override;
-
-  std::string name;         /**< Name of the column */
-  t_build_options build_options{t_build_options::with_quotes};
-  value val;
-  data_type type{data_type::type_unknown};
-  field_attributes attributes;
-  std::size_t index{};
-//  bool is_host{false};
+  std::string table;
+  std::string name;
+  std::string alias;
+  sql_function_t function_{sql_function_t::NONE};
 };
 
-/**
- * User defined literal to have a shortcut creating a column object
- * @param name Name of the column
- * @param len Length of the column name
- * @return A column object with given name
- */
 column operator "" _col(const char *name, size_t len);
 
-std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = null_attributes, const sql::column_type& val = {});
-
-std::shared_ptr<column> make_column(const std::string &name, data_type type, size_t index, const field_attributes &attr = null_attributes);
-
-template < typename Type >
-std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr = null_attributes) {
-  return make_column(name, data_type_traits<Type>::builtin_type(attr.size()), 0, attr);
 }
-
-template < typename Type >
-std::shared_ptr<column> make_column(const std::string &name, const Type &val, const field_attributes &attr = null_attributes) {
-  auto col = std::make_shared<column>(name, val, attr);
-  col->build_options |= t_build_options::with_value;
-  return col;
-}
-
-//std::shared_ptr<column> make_column(const std::string &name, const field_attributes &attr, const std::string &val) {
-//  auto col = std::make_shared<column>(name, val, attr);
-//  col->build_options |= t_build_options::with_value;
-//  return col;
-//}
-
-std::shared_ptr<column> make_column(const std::string &name, data_type type, const sql::column_type& val, t_build_options options, size_t index, const field_attributes &attr = null_attributes);
-
-template < typename Type >
-std::shared_ptr<column> make_pk_column(const std::string &name, size_t max_size = 0) {
-  return make_column(name, data_type_traits<Type>::builtin_type(max_size), 0, constraints::PRIMARY_KEY | constraints::NOT_NULL);
-}
-
-template <>
-std::shared_ptr<column> make_pk_column<std::string>(const std::string &name, size_t max_size);
-
-std::shared_ptr<column> make_pk_column(const std::string &name, data_type type, size_t index, size_t max_size = 0);
-
-std::shared_ptr<column> make_null_column(const std::string &name, const field_attributes &attr);
-
-}
-#endif //OOS_COLUMN_HPP
+#endif //QUERY_COLUMN_HPP

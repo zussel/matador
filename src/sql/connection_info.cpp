@@ -2,7 +2,7 @@
 
 #include <regex>
 
-namespace matador {
+namespace matador::sql {
 
 connection_info connection_info::parse(const std::string &info, unsigned short default_port, const std::string &default_driver) {
   static const std::regex DNS_RGX (R"((\w+):\/\/((([\w]+)(:([\w!]+))?)@)?((((([\w.\(\)\\]+)([:]([\d]+))?)?)\/)?(([\w.]+)( \((.*)\))?)))");
