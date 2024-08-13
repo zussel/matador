@@ -30,13 +30,13 @@ size_t statement::execute()
 query_result<record> statement::fetch()
 {
 //  logger_.info(statement_->query_.sql);
-  return query_result<record>(statement_->fetch());
+  return {statement_->fetch(), statement_->query_.prototype};
 }
 
 std::optional<record> statement::fetch_one()
 {
 //  logger_.info(statement_->query_.sql);
-  query_result<record> result(statement_->fetch());
+  query_result<record> result(statement_->fetch(), statement_->query_.prototype);
   auto first = result.begin();
   if (first == result.end()) {
     return std::nullopt;

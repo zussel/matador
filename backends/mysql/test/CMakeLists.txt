@@ -3,7 +3,7 @@ Include(FetchContent)
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG        v3.5.4 # or a later release
+  GIT_TAG v3.5.4 # or a later release
 )
 
 FetchContent_MakeAvailable(Catch2)
@@ -19,19 +19,24 @@ configure_file(Connection.hpp.in ${PROJECT_BINARY_DIR}/backends/mysql/test/conne
 message(STATUS "mysql connection string: ${MYSQL_CONNECTION_STRING}")
 
 set(TEST_SOURCES
-  ../../tests/QueryTest.cpp
-  ../../tests/QueryTest.cpp
+  ../../../test/catch2/models/types.hpp
+  ../../tests/ColorEnumTraits.cpp
+  ../../tests/ColorEnumTraits.hpp
   ../../tests/ConnectionTest.cpp
+  ../../tests/QueryBasicTest.cpp
+  ../../tests/QueryFixture.cpp
+  ../../tests/QueryFixture.hpp
   ../../tests/QueryRecordTest.cpp
+  ../../tests/QueryStatementTests.cpp
+  ../../tests/QueryTest.cpp
+  ../../tests/QueryTest.cpp
+  ../../tests/SessionFixture.cpp
+  ../../tests/SessionFixture.hpp
+  ../../tests/SessionTest.cpp
+  ../../tests/StatementCacheTest.cpp
   ../../tests/StatementTest.cpp
   ../../tests/TypeTraitsTest.cpp
-  ../../tests/StatementCacheTest.cpp
-  ../../tests/SessionTest.cpp
-    ../../tests/ColorEnumTraits.hpp
-    ../../tests/ColorEnumTraits.cpp
-        ../../../test/catch2/models/types.hpp
-        ../../tests/QueryBasicTest.cpp
-        ../../tests/QueryStatementTests.cpp)
+)
 
 set(LIBRARY_TEST_TARGET mysql_tests)
 

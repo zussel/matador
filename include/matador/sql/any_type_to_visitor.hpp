@@ -12,8 +12,6 @@ class time;
 
 namespace matador::sql {
 
-struct placeholder;
-
 template < typename Type >
 struct any_type_to_visitor
 {

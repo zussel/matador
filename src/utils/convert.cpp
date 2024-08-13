@@ -78,12 +78,12 @@ void convert(time &/*dest*/, bool /*source*/)
 
 void convert(date &dest, const std::string &source)
 {
-  dest.set(source.c_str());
+  dest.set(source.c_str(), date_format::ISO8601);
 }
 
 void convert(time &dest, const std::string &source)
 {
-  dest.set(source.c_str());
+  dest.set(source.c_str(), "%Y-%m-%dT%H:%M:%S.%f");
 }
 
 void convert(matador::date &dest, const char *source)

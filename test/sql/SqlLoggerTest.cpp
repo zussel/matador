@@ -9,7 +9,7 @@
 
 #include "../logger/file.hpp"
 
-using namespace matador;
+using namespace matador::sql;
 
 SqlLoggerTest::SqlLoggerTest()
   : unit_test("sql_logger", "sql logger test unit")

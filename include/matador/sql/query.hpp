@@ -18,6 +18,7 @@ public:
   query_drop_intermediate drop();
   query_select_intermediate select(std::initializer_list<column> columns);
   query_select_intermediate select(const std::vector<column>& columns);
+  query_select_intermediate select(const std::vector<std::string> &column_names);
   query_select_intermediate select(std::vector<column> columns, std::initializer_list<column> additional_columns);
   template<class Type>
   query_select_intermediate select() {

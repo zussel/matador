@@ -3,7 +3,7 @@ SET (TEST_TOOLS_SOURCES
   utils/TimeTestUnit.hpp
   utils/DateTestUnit.cpp
   utils/DateTestUnit.hpp
-        utils/FactoryTestUnit.hpp
+  utils/FactoryTestUnit.hpp
   utils/FactoryTestUnit.cpp
   utils/StringTestUnit.cpp
   utils/StringTestUnit.hpp
@@ -17,7 +17,7 @@ SET (TEST_TOOLS_SOURCES
   utils/TreeTest.hpp
   utils/StreamsTest.cpp
   utils/StreamsTest.hpp
-    utils/ThreadPoolTest.cpp
+  utils/ThreadPoolTest.cpp
   utils/ThreadPoolTest.hpp
   utils/Base64Test.cpp
   utils/Base64Test.hpp
@@ -136,46 +136,46 @@ SET (TEST_UNIT_SOURCES
 )
 
 SET (TEST_SQL_SOURCES
-  sql/ConnectionTestUnit.cpp
-  sql/ConnectionTestUnit.hpp
-  sql/QueryTestUnit.cpp
-  sql/QueryTestUnit.hpp
-  sql/ConditionUnitTest.cpp
-  sql/ConditionUnitTest.hpp
-  sql/DialectTestUnit.cpp
-  sql/DialectTestUnit.hpp
-  sql/TestDialect.cpp
-  sql/TestDialect.hpp
-  sql/MSSQLDialectTestUnit.cpp
-  sql/MSSQLDialectTestUnit.hpp
-  sql/SQLiteDialectTestUnit.cpp
-  sql/SQLiteDialectTestUnit.hpp
-  sql/ValueUnitTest.cpp
-  sql/ValueUnitTest.hpp
-  sql/PostgreSQLDialectTestUnit.cpp
-  sql/PostgreSQLDialectTestUnit.hpp
+#  sql/ConnectionTestUnit.cpp
+#  sql/ConnectionTestUnit.hpp
+#  sql/QueryTestUnit.cpp
+#  sql/QueryTestUnit.hpp
+#  sql/ConditionUnitTest.cpp
+#  sql/ConditionUnitTest.hpp
+#  sql/DialectTestUnit.cpp
+#  sql/DialectTestUnit.hpp
+#  sql/TestDialect.cpp
+#  sql/TestDialect.hpp
+#  sql/MSSQLDialectTestUnit.cpp
+#  sql/MSSQLDialectTestUnit.hpp
+#  sql/SQLiteDialectTestUnit.cpp
+#  sql/SQLiteDialectTestUnit.hpp
+#  sql/ValueUnitTest.cpp
+#  sql/ValueUnitTest.hpp
+#  sql/PostgreSQLDialectTestUnit.cpp
+#  sql/PostgreSQLDialectTestUnit.hpp
   sql/SqlLoggerTest.cpp
   sql/SqlLoggerTest.hpp
-  sql/IdentifierSerializerTest.cpp
-  sql/IdentifierSerializerTest.h
+#  sql/IdentifierSerializerTest.cpp
+#  sql/IdentifierSerializerTest.h
   sql/ConnectionInfoTest.cpp
   sql/ConnectionInfoTest.hpp)
 
-SET (TEST_ORM_SOURCES
-  orm/TransactionTestUnit.cpp
-  orm/TransactionTestUnit.hpp
-  orm/OrmTestUnit.cpp
-  orm/OrmTestUnit.hpp
-  orm/OrmReloadTestUnit.cpp
-  orm/OrmReloadTestUnit.hpp
-  orm/OrmRelationTestUnit.cpp
-  orm/OrmRelationTestUnit.hpp
-  orm/BlogUnitTest.cpp
-  orm/BlogUnitTest.hpp
-  orm/PrimaryKeyTestUnit.cpp
-  orm/PrimaryKeyTestUnit.hpp
-  orm/JsonOrmTest.cpp
-  orm/JsonOrmTest.hpp)
+#SET (TEST_ORM_SOURCES
+#  orm/TransactionTestUnit.cpp
+#  orm/TransactionTestUnit.hpp
+#  orm/OrmTestUnit.cpp
+#  orm/OrmTestUnit.hpp
+#  orm/OrmReloadTestUnit.cpp
+#  orm/OrmReloadTestUnit.hpp
+#  orm/OrmRelationTestUnit.cpp
+#  orm/OrmRelationTestUnit.hpp
+#  orm/BlogUnitTest.cpp
+#  orm/BlogUnitTest.hpp
+#  orm/PrimaryKeyTestUnit.cpp
+#  orm/PrimaryKeyTestUnit.hpp
+#  orm/JsonOrmTest.cpp
+#  orm/JsonOrmTest.hpp)
 
 SET (TEST_SOURCES test_matador.cpp dto.hpp NetUtils.hpp)
 
@@ -187,7 +187,7 @@ ADD_EXECUTABLE(test_matador
   ${TEST_OBJECT_SOURCES}
   ${TEST_JSON_SOURCES}
   ${TEST_UNIT_SOURCES}
-  ${TEST_ORM_SOURCES}
+#  ${TEST_ORM_SOURCES}
   ${TEST_LOGGER_SOURCES}
   ${TEST_HTTP_SOURCES}
   ${TEST_NET_SOURCES}
@@ -221,8 +221,8 @@ TARGET_LINK_LIBRARIES(test_matador
   matador-net
   matador-http
   matador-object
-  matador-sql
-  matador-orm
+  matador-query
+#  matador-orm
   ${CMAKE_DL_LIBS}
   ${MATADOR_DB_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}

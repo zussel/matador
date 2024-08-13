@@ -81,13 +81,13 @@ public:
   [[nodiscard]] const std::string& data_type_at(data_type type) const;
 
   /**
- * Prepare sql dialect identifier for execution
- * and escape quotes and quote the identifier
- * string
- *
- * @param str The identifier string to be prepared
- * @return The prepared string
- */
+   * Prepare sql dialect identifier for execution
+   * and escape quotes and quote the identifier
+   * string
+   *
+   * @param str The identifier string to be prepared
+   * @return The prepared string
+   */
   [[nodiscard]] std::string prepare_identifier(const column &col) const;
   [[nodiscard]] std::string prepare_identifier_string(const std::string &col) const;
 

@@ -282,8 +282,9 @@ public:
   query_into_intermediate into(const sql::table &table) {
     return into(table, column_generator::generate<Type>(schema_));
   }
-  query_into_intermediate into(const sql::table &table, std::initializer_list<column> column_names);
-  query_into_intermediate into(const sql::table &table, std::vector<column> &&column_names);
+  query_into_intermediate into(const sql::table &table, std::initializer_list<column> columns);
+  query_into_intermediate into(const sql::table &table, std::vector<column> &&columns);
+  query_into_intermediate into(const sql::table &table, const std::vector<std::string> &column_names);
   query_into_intermediate into(const sql::table &table);
 };
 

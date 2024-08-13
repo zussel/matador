@@ -1,57 +1,34 @@
 #include "catch2/catch_test_macros.hpp"
 
-#include "connection.hpp"
-
-#include "matador/sql/session.hpp"
+#include "SessionFixture.hpp"
 
 #include "models/airplane.hpp"
 #include "models/flight.hpp"
 
-class SessionFixture
-{
-public:
-  SessionFixture()
-    : pool(matador::test::connection::dns, 4)
-    , ses(pool)
-  {}
-
-  ~SessionFixture()
-  {
-    drop_table_if_exists("flights");
-    drop_table_if_exists("airplanes");
-  }
-
-protected:
-  matador::sql::connection_pool<matador::sql::connection> pool;
-  matador::sql::session ses;
-
-private:
-  void drop_table_if_exists(const std::string &table_name)
-  {
-    if (ses.table_exists(table_name)) {
-      ses.drop_table(table_name);
-    }
-  }
-};
-
 using namespace matador;
+using namespace matador::test;
 
 TEST_CASE_METHOD(SessionFixture, "Session relation test", "[session][relation]") {
-  using namespace matador;
-  ses.attach<test::airplane>("airplanes");
-  ses.attach<test::flight>("flights");
+  ses.attach<airplane>("airplanes");
+  ses.attach<flight>("flights");
   ses.create_schema();
-  auto plane = ses.insert<test::airplane>(1, "Boeing", "A380");
-  auto f = ses.insert<test::flight>(2, plane, "sully");
 
-  auto result = ses.find<test::flight>(2);
+  tables_to_drop.insert("airplanes");
+  tables_to_drop.insert("flights");
+
+  auto plane = ses.insert<airplane>(1, "Boeing", "A380");
+  auto f = ses.insert<flight>(2, plane, "sully");
+
+  auto result = ses.find<flight>(2);
   REQUIRE(result.is_ok());
 }
 
 TEST_CASE_METHOD(SessionFixture, "Use session to find object with id", "[session][find]") {
-  using namespace matador::test;
   ses.attach<airplane>("airplanes");
   ses.create_schema();
+
+  tables_to_drop.insert("airplanes");
+
   auto a380 = ses.insert<airplane>(1, "Boeing", "A380");
 
   auto result = ses.find<airplane>(2);
@@ -66,9 +43,10 @@ TEST_CASE_METHOD(SessionFixture, "Use session to find object with id", "[session
 }
 
 TEST_CASE_METHOD(SessionFixture, "Use session to find all objects", "[session][find]") {
-  using namespace matador::test;
   ses.attach<airplane>("airplanes");
   ses.create_schema();
+
+  tables_to_drop.insert("airplanes");
 
   std::vector<std::unique_ptr<airplane>> planes;
   planes.emplace_back(new airplane(1, "Airbus", "A380"));

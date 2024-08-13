@@ -161,15 +161,24 @@ query_insert_intermediate::query_insert_intermediate(connection &db, const sql::
   data_->parts.push_back(std::make_unique<query_insert_part>());
 }
 
-query_into_intermediate query_insert_intermediate::into(const sql::table &table, std::initializer_list<column> column_names)
+query_into_intermediate query_insert_intermediate::into(const sql::table &table, std::initializer_list<column> columns)
 {
-  return into(table, std::move(std::vector<column>{column_names}));
+  return into(table, std::move(std::vector<column>{columns}));
 }
 
-query_into_intermediate query_insert_intermediate::into(const table &table, std::vector<column> &&column_names)
+query_into_intermediate query_insert_intermediate::into(const table &table, std::vector<column> &&columns)
 {
-  data_->parts.push_back(std::make_unique<query_into_part>(table, column_names));
+  data_->parts.push_back(std::make_unique<query_into_part>(table, columns));
   return {connection_, schema_, data_};
+}
+
+query_into_intermediate query_insert_intermediate::into(const table &table, const std::vector<std::string> &column_names) {
+  std::vector<column> columns;
+  columns.reserve(column_names.size());
+  for (const auto &col_name : column_names) {
+    columns.emplace_back(col_name);
+  }
+  return into(table, std::move(columns));
 }
 
 query_into_intermediate query_insert_intermediate::into(const table &table)

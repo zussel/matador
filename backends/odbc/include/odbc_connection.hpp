@@ -46,11 +46,6 @@ private:
   };
 
 private:
-  static int parse_result(void* param, int column_count, char** values, char** columns);
-
-  fetch_context fetch_internal(const std::string &stmt);
-
-private:
   SQLHANDLE odbc_{};
   SQLHANDLE connection_{};
 };

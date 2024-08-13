@@ -121,10 +121,7 @@ void query_result_reader::read_value(const char * /*id*/, size_t index, utils::b
 {
   const auto val = column(index);
   const auto len = strlen(val);
-  value.clear();
-  for (size_t i = 0; i < len; ++i) {
-    value.push_back(val[i]);
-  }
+  value.assign(val, val+len);
 }
 
 template < typename Type >
@@ -199,7 +196,9 @@ void query_result_reader::read_value(const char * /*id*/, size_t index, value &v
       break;
     }
     case data_type::type_blob: {
-      val = utils::blob{};
+      const auto *data = column(index);
+      const auto len = strlen(data);
+      val = utils::blob{data, data+len};
       break;
     }
     case data_type::type_unknown: {

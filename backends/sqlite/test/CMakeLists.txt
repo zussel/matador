@@ -19,19 +19,25 @@ configure_file(Connection.hpp.in ${PROJECT_BINARY_DIR}/backends/sqlite/test/conn
 message(STATUS "sqlite connection string: ${SQLITE_CONNECTION_STRING}")
 
 set(TEST_SOURCES
-  ../../tests/QueryTest.cpp
-  ../../tests/QueryTest.cpp
+  ../../../test/catch2/models/types.hpp
+  ../../tests/ColorEnumTraits.cpp
+  ../../tests/ColorEnumTraits.hpp
   ../../tests/ConnectionTest.cpp
+  ../../tests/QueryBasicTest.cpp
+  ../../tests/QueryFixture.cpp
+  ../../tests/QueryFixture.hpp
   ../../tests/QueryRecordTest.cpp
+  ../../tests/QueryStatementTests.cpp
+  ../../tests/QueryTest.cpp
+  ../../tests/QueryTest.cpp
+  ../../tests/SessionTest.cpp
+  ../../tests/StatementCacheTest.cpp
   ../../tests/StatementTest.cpp
   ../../tests/TypeTraitsTest.cpp
-  ../../tests/StatementCacheTest.cpp
-  ../../tests/SessionTest.cpp
-  ../../tests/ColorEnumTraits.hpp
-  ../../tests/ColorEnumTraits.cpp
-        ../../tests/QueryBasicTest.cpp
-  ../../../test/catch2/models/types.hpp
-        ../../tests/QueryStatementTests.cpp)
+  QuerySqliteLimitTest.cpp
+  ../../tests/SessionFixture.hpp
+  ../../tests/SessionFixture.cpp
+)
 
 set(LIBRARY_TEST_TARGET sqlite_tests)
 

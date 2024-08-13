@@ -94,7 +94,6 @@ public:
    * @return The query result set
    */
   query_result<record> fetch();
-  template<class Type>
   /**
    * Fetches the first result of a prepared statement.
    * If prepared statement is empty or not
@@ -103,6 +102,7 @@ public:
    * @tparam Type Type of the fetched result
    * @return The query result set
    */
+  template<class Type>
   std::unique_ptr<Type> fetch_one();
   /**
    * Fetches the first result of a prepared statement.

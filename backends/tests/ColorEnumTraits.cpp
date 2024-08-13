@@ -2,7 +2,6 @@
 
 #include "matador/object/attribute_binder.hpp"
 #include "matador/object/attribute_reader.hpp"
-//#include "matador/sql/result_parameter_binder.hpp"
 
 namespace matador::object {
 

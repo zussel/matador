@@ -24,6 +24,7 @@ public:
     drop_table_if_exists("airplane");
     drop_table_if_exists("person");
     drop_table_if_exists("quotes");
+    drop_table_if_exists("types");
   }
 
 protected:
@@ -39,6 +40,102 @@ private:
 };
 
 using namespace matador::sql;
+
+TEST_CASE_METHOD(QueryRecordFixture, "Test all data types for record", "[query][record][data types]") {
+  REQUIRE(!db.exists("types"));
+  db.query(schema).create()
+    .table("types", {
+      make_pk_column<unsigned long>("id"),
+      make_column<char>("val_char"),
+      make_column<short>("val_short"),
+      make_column<int>("val_int"),
+      make_column<long>("val_long"),
+      make_column<long long>("val_long_long"),
+      make_column<unsigned char>("val_uchar"),
+      make_column<unsigned short>("val_ushort"),
+      make_column<unsigned int>("val_uint"),
+      make_column<unsigned long>("val_ulong"),
+      make_column<unsigned long long>("val_ulong_long"),
+      make_column<bool>("val_bool"),
+      make_column<float>("val_float"),
+      make_column<double>("val_double"),
+      make_column<std::string>("val_string"),
+      make_column<std::string>("val_varchar", 63),
+      make_column<matador::date>("val_date"),
+      make_column<matador::time>("val_time"),
+      make_column<matador::utils::blob>("val_blob"),
+    })
+    .execute();
+
+  REQUIRE(db.exists("types"));
+
+  auto cols = std::vector<std::string>{"id",
+                                       "val_char", "val_short", "val_int", "val_long", "val_long_long",
+                                       "val_uchar", "val_ushort", "val_uint", "val_ulong", "val_ulong_long",
+                                       "val_bool",
+                                       "val_float", "val_double",
+                                       "val_string", "val_varchar",
+                                       "val_date", "val_time", "val_blob"};
+
+  const auto fields = db.describe("types");
+  for (const auto &fld : fields) {
+    REQUIRE(std::find(cols.begin(), cols.end(), fld.name()) != cols.end());
+  }
+
+  unsigned long id{1};
+  char c{-11};
+  short s{-256};
+  int i{-123456};
+  long l{-9876543};
+  long long ll{-987654321};
+  unsigned char uc{13};
+  unsigned short us{1024};
+  unsigned int ui{654321};
+  unsigned long ul{12345678};
+  unsigned long long ull{1234567890};
+  bool b{true};
+  float f{3.1415f};
+  double d{2.71828};
+  std::string str{"long text"};
+  std::string varchar{"good day"};
+  matador::date md{matador::date()};
+  matador::time mt{matador::time::now()};
+  matador::utils::blob  bin{1,2,3,4};
+
+  auto res = db.query(schema)
+    .insert()
+    .into("types", cols)
+    .values({id, c, s, i, l, ll, uc, us, ui, ul, ull, b, f, d, str, varchar, md, mt, bin})
+    .execute();
+  REQUIRE(res == 1);
+
+  auto row = db.query(schema)
+    .select(cols)
+    .from("types")
+    .fetch_one();
+
+  REQUIRE(row.has_value());
+
+  REQUIRE(id == row->at<unsigned long>("id"));
+  REQUIRE(c == row->at<char>("val_char"));
+  REQUIRE(s == row->at<short>("val_short"));
+  REQUIRE(i == row->at<int>("val_int"));
+  REQUIRE(l == row->at<long>("val_long"));
+  REQUIRE(ll == row->at<long long>("val_long_long"));
+  REQUIRE(uc == row->at<unsigned char>("val_uchar"));
+  REQUIRE(us == row->at<unsigned short>("val_ushort"));
+  REQUIRE(ui == row->at<unsigned int>("val_uint"));
+  REQUIRE(ul == row->at<unsigned long>("val_ulong"));
+  REQUIRE(ull == row->at<unsigned long long>("val_ulong_long"));
+  REQUIRE(row->at<bool>("val_bool"));
+  REQUIRE(f == row->at<float>("val_float"));
+  REQUIRE(d == row->at<double>("val_double"));
+  REQUIRE(str == row->at<std::string>("val_string"));
+  REQUIRE(varchar == row->at<std::string>("val_varchar"));
+  REQUIRE(md == row->at<matador::date>("val_date"));
+  REQUIRE(mt == row->at<matador::time>("val_time"));
+  REQUIRE(bin == row->at<matador::utils::blob>("val_blob"));
+}
 
 TEST_CASE_METHOD(QueryRecordFixture, "Create and drop table statement", "[query][record]")
 {
@@ -504,4 +601,80 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test update record", "[query][record][upda
   REQUIRE(row->at("id").as<unsigned long>() == 1);
   REQUIRE(row->at("name").as<std::string>() == "jane");
   REQUIRE(row->at("age").as<unsigned short>() == 47);
+}
+
+TEST_CASE_METHOD(QueryRecordFixture, "Test prepared record statement", "[query][record][prepared]") {
+  REQUIRE(!db.exists("person"));
+  auto stmt = db.query(schema).create()
+    .table("person", {
+      make_pk_column<unsigned long>("id"),
+      make_column<std::string>("name", 255),
+      make_column<unsigned short>("age")
+    })
+    .prepare();
+
+  auto res = stmt.execute();
+  REQUIRE(res == 0);
+  REQUIRE(db.exists("person"));
+
+  const std::vector<std::string> cols = {"id", "name", "age"};
+  const auto fields = db.describe("person");
+
+  for (const auto &fld : fields) {
+    REQUIRE(std::find(cols.begin(), cols.end(), fld.name()) != cols.end());
+  }
+}
+
+TEST_CASE_METHOD(QueryRecordFixture, "Test scalar result", "[query][record][scalar][result]") {
+  REQUIRE(!db.exists("person"));
+  db.query(schema).create()
+    .table("person", {
+      make_pk_column<unsigned long>("id"),
+    })
+    .execute();
+
+  REQUIRE(db.exists("person"));
+
+  std::vector<unsigned long> ids({ 1,2,3,4 });
+
+  for(auto id : ids) {
+    auto res = db.query(schema)
+      .insert()
+      .into("person", {"id"})
+      .values({id})
+      .execute();
+    REQUIRE(res == 1);
+  }
+
+  auto stmt = db.query(schema)
+    .select({"id"})
+    .from("person")
+    .order_by("id"_col).asc()
+    .prepare();
+
+  auto rows = stmt.fetch();
+
+  size_t index{0};
+  for (const auto &row : rows) {
+    REQUIRE(row.at("id").as<unsigned long>() == ids[index]);
+    ++index;
+  }
+  REQUIRE(index == 4);
+
+  stmt.reset();
+
+  rows = stmt.fetch();
+
+  index = 0;
+  for (const auto &row : rows) {
+    REQUIRE(row.at("id").as<unsigned long>() == ids[index]);
+    ++index;
+  }
+  REQUIRE(index == 4);
+
+  stmt.reset();
+
+  auto row = stmt.fetch_one();
+  REQUIRE(row.has_value());
+  REQUIRE(row->at("id").as<unsigned long>() == ids[0]);
 }

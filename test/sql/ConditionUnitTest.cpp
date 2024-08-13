@@ -2,10 +2,9 @@
 
 #include "matador/sql/query.hpp"
 #include "matador/sql/condition.hpp"
+#include "matador/sql/dialect_builder.hpp"
 
-#include "TestDialect.hpp"
-
-using namespace matador;
+using namespace matador::sql;
 
 ConditionUnitTest::ConditionUnitTest()
   : unit_test("condition", "condition test unit")
@@ -25,20 +24,21 @@ void ConditionUnitTest::test_col_literal()
 {
     auto name = "name"_col;
 
-    UNIT_ASSERT_EQUAL(name.name(), "name");
+    UNIT_ASSERT_EQUAL(name.name, "name");
 }
 
 void ConditionUnitTest::test_logical_condition()
 {
-  matador::column name("name");
+  column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name(), "name");
+  UNIT_ASSERT_EQUAL(name.name, "name");
 
   auto cond1 = name != "Hans";
 
-  TestDialect dialect;
+  const auto &d = dialect_builder::builder().build();
+  query_context ctx;
 
-  UNIT_ASSERT_EQUAL(cond1.evaluate(dialect), "\"name\" <> 'Hans'");
+  UNIT_ASSERT_EQUAL(cond1.evaluate(d, ctx), "\"name\" <> 'Hans'");
 
   matador::column age("age");
 

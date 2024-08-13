@@ -30,7 +30,11 @@ set(TEST_SOURCES
   ../../tests/ColorEnumTraits.cpp
   ../../../test/catch2/models/types.hpp
         ../../tests/QueryBasicTest.cpp
-        ../../tests/QueryStatementTests.cpp)
+        ../../tests/QueryStatementTests.cpp
+  ../../tests/QueryFixture.hpp
+  ../../tests/QueryFixture.cpp
+  ../../tests/SessionFixture.hpp
+  ../../tests/SessionFixture.cpp)
 
 set(LIBRARY_TEST_TARGET postgres_tests)
 

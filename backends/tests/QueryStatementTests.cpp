@@ -191,13 +191,13 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test delete statement", "[query][statem
     stmt.reset();
   }
 
-  stmt = db.query(schema)
+  auto select_stmt = db.query(schema)
     .select<person>()
     .from("person")
     .where("name"_col == matador::utils::_)
     .prepare();
 
-  auto rows = stmt.bind(0, "jane")
+  auto rows = select_stmt.bind(0, "jane")
     .fetch<person>();
 
   for (const auto &r : rows) {
@@ -218,14 +218,84 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test delete statement", "[query][statem
     .execute();
   REQUIRE(res == 1);
 
-  stmt = db.query(schema)
-    .select<person>()
-    .from("person")
-    .where("name"_col == matador::utils::_)
-    .prepare();
-
-  auto row = stmt.bind(0, "jane")
+  select_stmt.reset();
+  auto row = select_stmt.bind(0, "jane")
     .fetch_one<person>();
 
   REQUIRE(row == nullptr);
+
+  stmt.reset();
+  res = stmt.bind(0, "merlin")
+    .execute();
+  REQUIRE(res == 1);
+
+  select_stmt.reset();
+  row = select_stmt.bind(0, "merlin")
+    .fetch_one<person>();
+
+  REQUIRE(row == nullptr);
+}
+
+TEST_CASE_METHOD(QueryStatementFixture, "Test reuse prepared statement", "[query][statement][reuse]") {
+  using namespace matador::test;
+
+  schema.attach<matador::test::person>("person");
+  auto stmt = db.query(schema)
+    .create()
+    .table<matador::test::person>("person")
+    .prepare();
+
+  auto res = stmt.execute();
+  REQUIRE(res == 0);
+
+  REQUIRE(db.exists("person"));
+
+  stmt = db.query(schema)
+    .insert()
+    .into<person>("person")
+    .values<person>()
+    .prepare();
+
+  std::vector<person> peoples {
+    {1,"george", 45, {1,2,3,4}},
+    {2,"jane", 36, {1,2,3,4}},
+    {3,"lukas", 68, {1,2,3,4}},
+    {4,"merlin", 99, {1,2,3,4}}
+  };
+
+  for (const auto &p : peoples) {
+    res = stmt.bind(p)
+      .execute();
+    REQUIRE(res == 1);
+    stmt.reset();
+  }
+
+  stmt = db.query(schema)
+    .select<person>()
+    .from("person")
+    .prepare();
+
+  auto rows = stmt.fetch<person>();
+
+  size_t index = 0;
+  for (const auto &r : rows) {
+    REQUIRE(r.id == peoples[index].id);
+    REQUIRE(r.name == peoples[index].name);
+    REQUIRE(r.age == peoples[index].age);
+    REQUIRE(r.image == peoples[index].image);
+    ++index;
+  }
+
+  stmt.reset();
+
+  rows = stmt.fetch<person>();
+
+  index = 0;
+  for (const auto &r : rows) {
+    REQUIRE(r.id == peoples[index].id);
+    REQUIRE(r.name == peoples[index].name);
+    REQUIRE(r.age == peoples[index].age);
+    REQUIRE(r.image == peoples[index].image);
+    ++index;
+  }
 }

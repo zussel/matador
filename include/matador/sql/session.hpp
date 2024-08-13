@@ -23,6 +23,33 @@ enum class session_error {
   FailedToFindObject
 };
 
+/**
+ * @brief Represents a session to a database
+ *
+ * This class represents a session to a database
+ * identified by a persistence object.
+ *
+ * @code
+ *
+ * matador::sql::schema p(<database connection string>);
+ * p.attach<person>("person");
+ *
+ * matador::session s(p);
+ *
+ * @endcode
+ *
+ * Once a session object is instantiated one can
+ * insert, update and delete objects.
+ *
+ * @code
+ *
+ * s.insert(new person("georg"));
+ *
+ * @endcode
+ *
+ * This session can also load the whole database into
+ * the underlying object_store.
+ */
 class session
 {
 public:
