@@ -66,7 +66,7 @@ class query_on_part : public query_part
 public:
   template < class Condition >
   explicit query_on_part(const Condition &cond)
-    : query_part(dialect::token_t::ON)
+    : query_part(dialect_token::ON)
     , condition_(new Condition(cond)) {}
   explicit query_on_part(std::unique_ptr<basic_condition> &&cond);
 
@@ -84,7 +84,7 @@ class query_where_part : public query_part
 public:
   template < class Condition >
   explicit query_where_part(const Condition &cond)
-  : query_part(dialect::token_t::WHERE)
+  : query_part(dialect_token::WHERE)
   , condition_(new Condition(cond)) {}
   explicit query_where_part(std::unique_ptr<basic_condition> &&cond);
 
@@ -100,7 +100,7 @@ private:
 class query_table_name_part : public query_part
 {
 protected:
-  explicit query_table_name_part(sql::dialect::token_t token, std::string table_name);
+  explicit query_table_name_part(sql::dialect_token token, std::string table_name);
 
 protected:
   std::string table_name_;

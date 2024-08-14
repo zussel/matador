@@ -13,7 +13,7 @@
       return "$" + std::to_string(index);
     })
     .with_token_replace_map({
-                          {dialect::token_t::BEGIN_BINARY_DATA, "E'\\"}
+                          {dialect_token::BEGIN_BINARY_DATA, "E'\\"}
                           })
     .with_data_type_replace_map({
                                   {matador::data_type::type_blob, "BYTEA"}

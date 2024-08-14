@@ -3,6 +3,8 @@
 
 #include "matador/utils/string.hpp"
 
+#include <cstring>
+
 namespace matador::backends::sqlite {
 
 sqlite_prepared_result_reader::sqlite_prepared_result_reader(sqlite3 *db, sqlite3_stmt *stmt)
@@ -34,87 +36,92 @@ void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index
   value = static_cast<char>(sqlite3_column_int(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, short &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, short &value)
 {
   value = static_cast<short>(sqlite3_column_int(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, int &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, int &value)
 {
   value = static_cast<int>(sqlite3_column_int(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, long &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, long &value)
 {
   value = static_cast<long>(sqlite3_column_int64(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, long long int &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, long long int &value)
 {
   value = static_cast<long long>(sqlite3_column_int64(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, unsigned char &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, unsigned char &value)
 {
   value = static_cast<unsigned char>(sqlite3_column_int(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, unsigned short &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, unsigned short &value)
 {
   value = static_cast<unsigned short>(sqlite3_column_int(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, unsigned int &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, unsigned int &value)
 {
   value = static_cast<unsigned int>(sqlite3_column_int(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, unsigned long &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, unsigned long &value)
 {
   value = static_cast<unsigned long>(sqlite3_column_int(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, unsigned long long int &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, unsigned long long int &value)
 {
   value = static_cast<unsigned long long>(sqlite3_column_int64(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, bool &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, bool &value)
 {
-  query_result_reader::read_value(id, index, value);
+  value = sqlite3_column_int(stmt_, static_cast<int>(index)) > 0;
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, float &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, float &value)
 {
-  query_result_reader::read_value(id, index, value);
+  value = static_cast<float>(sqlite3_column_double(stmt_, static_cast<int>(index)));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, double &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, double &value)
 {
-  query_result_reader::read_value(id, index, value);
+  value = sqlite3_column_double(stmt_, static_cast<int>(index));
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, char *value, size_t s)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, char *value, size_t s)
 {
-  query_result_reader::read_value(id, index, value, s);
+  auto size = static_cast<size_t>(sqlite3_column_bytes(stmt_, static_cast<int>(index)));
+  if (size >= s) {
+    --size;
+  }
+#ifdef _MSC_VER
+  strncpy_s(x, s, reinterpret_cast<const char*>(sqlite3_column_text(stmt_, static_cast<int>(index))), size);
+#else
+  strncpy(value, reinterpret_cast<const char*>(sqlite3_column_text(stmt_, static_cast<int>(index))), size);
+#endif
+  value[size] = '\0';
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, std::string &value)
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, std::string &value)
 {
-  auto s = (size_t)sqlite3_column_bytes(stmt_, static_cast<int>(index));
-  auto *text = (const char*)sqlite3_column_text(stmt_, static_cast<int>(index));
+  const auto s = static_cast<size_t>(sqlite3_column_bytes(stmt_, static_cast<int>(index)));
+  const auto *text = sqlite3_column_text(stmt_, static_cast<int>(index));
   if (s > 0) {
-    value.assign(text, s);
+    value.assign(reinterpret_cast<const char*>(text), s);
   }
 }
 
 void sqlite_prepared_result_reader::read_value(const char *id, size_t index, std::string &value, size_t /*size*/)
 {
-  auto s = (size_t)sqlite3_column_bytes(stmt_, static_cast<int>(index));
-  auto *text = (const char*)sqlite3_column_text(stmt_, static_cast<int>(index));
-  if (s > 0) {
-    value.assign(text, s);
-  }
+  read_value(id, index, value);
 }
 
 void sqlite_prepared_result_reader::read_value(const char *id, size_t index, sql::value &val, size_t size)
@@ -122,29 +129,26 @@ void sqlite_prepared_result_reader::read_value(const char *id, size_t index, sql
   query_result_reader::read_value(id, index, val, size);
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, time &value) {
-  auto is_null = sqlite3_column_type(stmt_, static_cast<int>(index)) == SQLITE_NULL;
-  auto s = (size_t)sqlite3_column_bytes(stmt_, static_cast<int>(index));
-  if (!is_null && s > 0) {
-    const auto *text = reinterpret_cast<const char *>( sqlite3_column_text(stmt_, static_cast<int>(index)));
-    value = matador::time::parse(text, "%Y-%m-%dT%T.%f");
-  }
-}
-
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, date &value) {
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, time &value) {
   const auto is_null = sqlite3_column_type(stmt_, static_cast<int>(index)) == SQLITE_NULL;
-  const auto s = static_cast<size_t>(sqlite3_column_bytes(stmt_, static_cast<int>(index)));
-  if (!is_null && s > 0) {
+  if (const auto s = static_cast<size_t>(sqlite3_column_bytes(stmt_, static_cast<int>(index))); !is_null && s > 0) {
     const auto *text = reinterpret_cast<const char *>( sqlite3_column_text(stmt_, static_cast<int>(index)));
-    value = matador::date::parse(text, matador::utils::date_format::ISO8601);
+    value = time::parse(text, "%Y-%m-%dT%T.%f");
   }
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, utils::blob &value) {
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, date &value) {
+  const auto is_null = sqlite3_column_type(stmt_, static_cast<int>(index)) == SQLITE_NULL;
+  if (const auto s = static_cast<size_t>(sqlite3_column_bytes(stmt_, static_cast<int>(index))); !is_null && s > 0) {
+    const auto *text = reinterpret_cast<const char *>( sqlite3_column_text(stmt_, static_cast<int>(index)));
+    value = date::parse(text, matador::utils::date_format::ISO8601);
+  }
+}
+
+void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, utils::blob &value) {
   auto is_null = sqlite3_column_type(stmt_, static_cast<int>(index)) == SQLITE_NULL;
-  auto s = (size_t)sqlite3_column_bytes(stmt_, static_cast<int>(index));
-  if (!is_null && s > 0) {
-    const auto *data = reinterpret_cast<const unsigned char *>( sqlite3_column_blob(stmt_, static_cast<int>(index)));
+  if (const auto s = static_cast<size_t>(sqlite3_column_bytes(stmt_, static_cast<int>(index))); !is_null && s > 0) {
+    const auto *data = static_cast<const unsigned char*>( sqlite3_column_blob(stmt_, static_cast<int>(index)));
     value.assign(data, data+s);
   }
 }

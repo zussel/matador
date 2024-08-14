@@ -244,6 +244,12 @@ query_execute query_drop_intermediate::table(const sql::table &table)
   return {connection_, schema_, data_};
 }
 
+query_limit_intermediate query_execute_where_intermediate::limit(size_t limit)
+{
+  data_->parts.push_back(std::make_unique<query_limit_part>(limit));
+  return {connection_, schema_, data_};
+}
+
 query_order_by_intermediate query_execute_where_intermediate::order_by(const column &col)
 {
   data_->parts.push_back(std::make_unique<query_order_by_part>(col));

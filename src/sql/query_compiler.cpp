@@ -32,7 +32,7 @@ void append_column(std::vector<column_definition> &columns, const column &col)
 
 void query_compiler::visit(query_select_part &select_part)
 {
-  query_.sql = dialect_.token_at(dialect::token_t::SELECT) + " ";
+  query_.sql = dialect_.token_at(dialect_token::SELECT) + " ";
 
   query_.prototype.clear();
 
@@ -64,12 +64,12 @@ void query_compiler::visit(query_from_part &from_part)
 {
   query_.table = from_part.table();
   if (dialect_.default_schema_name().empty()) {
-    query_.sql += " " + dialect_.token_at(dialect::token_t::FROM) +
+    query_.sql += " " + dialect_.token_at(dialect_token::FROM) +
                   " " + dialect_.prepare_identifier(from_part.table().name) +
                   (from_part.table().alias.empty() ? "" : " AS " +
                                                           dialect_.prepare_identifier(from_part.table().alias));
   } else {
-    query_.sql += " " + dialect_.token_at(dialect::token_t::FROM) +
+    query_.sql += " " + dialect_.token_at(dialect_token::FROM) +
                   " " + dialect_.prepare_identifier(dialect_.default_schema_name()) +
                   "." + dialect_.prepare_identifier(from_part.table().name) +
                   (from_part.table().alias.empty() ? "" : " AS " +
@@ -80,11 +80,11 @@ void query_compiler::visit(query_from_part &from_part)
 void query_compiler::visit(query_join_part &join_part)
 {
   if (dialect_.default_schema_name().empty()) {
-    query_.sql += " " + dialect_.token_at(dialect::token_t::JOIN) +
+    query_.sql += " " + dialect_.token_at(dialect_token::JOIN) +
                   " " + dialect_.prepare_identifier(join_part.table().name) +
                   (join_part.table().alias.empty() ? "" : " AS " + dialect_.prepare_identifier(join_part.table().alias));
   } else {
-    query_.sql += " " + dialect_.token_at(dialect::token_t::JOIN) +
+    query_.sql += " " + dialect_.token_at(dialect_token::JOIN) +
                   " " + dialect_.prepare_identifier(dialect_.default_schema_name()) +
                   "." + dialect_.prepare_identifier(join_part.table().name) +
                   (join_part.table().alias.empty() ? "" : " AS " + dialect_.prepare_identifier(join_part.table().alias));
@@ -94,56 +94,56 @@ void query_compiler::visit(query_join_part &join_part)
 
 void query_compiler::visit(query_on_part &on_part)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::ON) +
+  query_.sql += " " + dialect_.token_at(dialect_token::ON) +
                 " " + on_part.condition().evaluate(const_cast<dialect &>(dialect_), query_);
 }
 
 void query_compiler::visit(query_where_part &where_part)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::WHERE) +
+  query_.sql += " " + dialect_.token_at(dialect_token::WHERE) +
                 " " + where_part.condition().evaluate(const_cast<dialect &>(dialect_), query_);
 }
 
 void query_compiler::visit(query_group_by_part &group_by_part)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::GROUP_BY) + " " + dialect_.prepare_identifier(group_by_part.column());
+  query_.sql += " " + dialect_.token_at(dialect_token::GROUP_BY) + " " + dialect_.prepare_identifier(group_by_part.column());
 }
 
 void query_compiler::visit(query_order_by_part &order_by_part)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::ORDER_BY) +
+  query_.sql += " " + dialect_.token_at(dialect_token::ORDER_BY) +
                 " " + dialect_.prepare_identifier(order_by_part.column());
 }
 
 void query_compiler::visit(query_order_by_asc_part &/*order_by_asc_part*/)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::ASC);
+  query_.sql += " " + dialect_.token_at(dialect_token::ASC);
 }
 
 void query_compiler::visit(query_order_by_desc_part &/*order_by_desc_part*/)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::DESC);
+  query_.sql += " " + dialect_.token_at(dialect_token::DESC);
 }
 
 void query_compiler::visit(query_offset_part &offset_part)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::OFFSET) + " " + std::to_string(offset_part.offset());
+  query_.sql += " " + dialect_.token_at(dialect_token::OFFSET) + " " + std::to_string(offset_part.offset());
 }
 
 void query_compiler::visit(query_limit_part &limit_part)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::LIMIT) + " " + std::to_string(limit_part.limit());
+  query_.sql += " " + dialect_.token_at(dialect_token::LIMIT) + " " + std::to_string(limit_part.limit());
 }
 
 void query_compiler::visit(query_insert_part &/*insert_part*/)
 {
-  query_.sql = dialect_.token_at(dialect::token_t::INSERT);
+  query_.sql = dialect_.token_at(dialect_token::INSERT);
 }
 
 void query_compiler::visit(query_into_part &into_part)
 {
   query_.table = into_part.table();
-  query_.sql += " " + dialect_.token_at(dialect::token_t::INTO) +
+  query_.sql += " " + dialect_.token_at(dialect_token::INTO) +
                 " " + dialect_.prepare_identifier(into_part.table().name);
 
   std::string result{"("};
@@ -165,7 +165,7 @@ void query_compiler::visit(query_into_part &into_part)
 
 void query_compiler::visit(query_values_part &values_part)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::VALUES);
+  query_.sql += " " + dialect_.token_at(dialect_token::VALUES);
 
   any_type_to_string_visitor value_to_string(dialect_, query_);
 
@@ -195,12 +195,12 @@ void query_compiler::visit(query_values_part &values_part)
 void query_compiler::visit(query_update_part &update_part)
 {
   query_.table = update_part.table();
-  query_.sql = dialect_.token_at(dialect::token_t::UPDATE) + " " + dialect_.prepare_identifier(update_part.table().name);
+  query_.sql = dialect_.token_at(dialect_token::UPDATE) + " " + dialect_.prepare_identifier(update_part.table().name);
 }
 
 void query_compiler::visit(query_delete_part &/*delete_part*/)
 {
-  query_.sql = dialect_.token_at(dialect::token_t::REMOVE);
+  query_.sql = dialect_.token_at(dialect_token::REMOVE);
 }
 
 void query_compiler::visit(query_delete_from_part &delete_from_part)
@@ -212,7 +212,7 @@ void query_compiler::visit(query_delete_from_part &delete_from_part)
 
 void query_compiler::visit(query_create_part &/*create_part*/)
 {
-  query_.sql = dialect_.token_at(dialect::token_t::CREATE);
+  query_.sql = dialect_.token_at(dialect_token::CREATE);
 }
 
 struct fk_context
@@ -232,7 +232,7 @@ std::string build_create_column(const column_definition &col, const dialect &d, 
 
 void query_compiler::visit(query_create_table_part &create_table_part)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::TABLE) + " " + dialect_.prepare_identifier(create_table_part.table().name) + " ";
+  query_.sql += " " + dialect_.token_at(dialect_token::TABLE) + " " + dialect_.prepare_identifier(create_table_part.table().name) + " ";
   query_.table = create_table_part.table();
 
   std::string result = "(";
@@ -268,12 +268,12 @@ void query_compiler::visit(query_create_table_part &create_table_part)
 
 void query_compiler::visit(query_drop_part &/*drop_part*/)
 {
-  query_.sql = dialect_.token_at(dialect::token_t::DROP);
+  query_.sql = dialect_.token_at(dialect_token::DROP);
 }
 
 void query_compiler::visit(query_set_part &set_part)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::SET) + " ";
+  query_.sql += " " + dialect_.token_at(dialect_token::SET) + " ";
 
   any_type_to_string_visitor value_to_string(dialect_, query_);
   std::string result;
@@ -304,7 +304,7 @@ void query_compiler::visit(query_set_part &set_part)
 
 void query_compiler::visit(query_drop_table_part &drop_table_part)
 {
-  query_.sql += " " + dialect_.token_at(dialect::token_t::TABLE) + " " + dialect_.prepare_identifier(drop_table_part.table().name);
+  query_.sql += " " + dialect_.token_at(dialect_token::TABLE) + " " + dialect_.prepare_identifier(drop_table_part.table().name);
   query_.table = drop_table_part.table();
 }
 

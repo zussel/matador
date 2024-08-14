@@ -1,7 +1,7 @@
 #ifndef QUERY_QUERY_PART_HPP
 #define QUERY_QUERY_PART_HPP
 
-#include "matador/sql/dialect.hpp"
+#include "matador/sql/dialect_token.hpp"
 
 namespace matador::sql {
 
@@ -10,16 +10,16 @@ class query_part_visitor;
 class query_part
 {
 protected:
-  explicit query_part(sql::dialect::token_t token);
+  explicit query_part(dialect_token token);
 
 public:
   virtual ~query_part() = default;
   virtual void accept(query_part_visitor &visitor) = 0;
 
-  [[nodiscard]] dialect::token_t token() const;
+  [[nodiscard]] dialect_token token() const;
 
 protected:
-  sql::dialect::token_t token_;
+  sql::dialect_token token_;
 };
 
 }

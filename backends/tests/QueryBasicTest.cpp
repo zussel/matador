@@ -193,8 +193,8 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test quoted identifier", "[query][quotes][i
 TEST_CASE_METHOD(BasicQueryFixture, "Test quoted column names", "[query][quotes][column]") {
   using namespace matador::sql;
 
-  const auto start_quote = db.dialect().token_at(matador::sql::dialect::token_t::START_QUOTE);
-  const auto end_quote = db.dialect().token_at(matador::sql::dialect::token_t::END_QUOTE);
+  const auto start_quote = db.dialect().token_at(matador::sql::dialect_token::START_QUOTE);
+  const auto end_quote = db.dialect().token_at(matador::sql::dialect_token::END_QUOTE);
 
   const std::string column_name = "name_with_" + start_quote + "open_close_quotes" + end_quote + "_in_backend_ctx";
 

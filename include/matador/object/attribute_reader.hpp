@@ -32,9 +32,9 @@ public:
   virtual void read_value(const char *id, size_t index, double &value) = 0;
   virtual void read_value(const char *id, size_t index, matador::time &value) = 0;
   virtual void read_value(const char *id, size_t index, matador::date &value) = 0;
-  virtual void read_value(const char *id, size_t index, char *value, size_t s) = 0;
+  virtual void read_value(const char *id, size_t index, char *value, size_t size) = 0;
   virtual void read_value(const char *id, size_t index, std::string &value) = 0;
-  virtual void read_value(const char *id, size_t index, std::string &value, size_t s) = 0;
+  virtual void read_value(const char *id, size_t index, std::string &value, size_t size) = 0;
   virtual void read_value(const char *id, size_t index, utils::blob &value) = 0;
 };
 

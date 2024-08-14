@@ -4,7 +4,7 @@
 
 namespace matador::sql {
 
-const std::string& dialect::token_at(dialect::token_t token) const
+const std::string& dialect::token_at(dialect_token token) const
 {
   return tokens_.at(token);
 }
@@ -51,14 +51,14 @@ std::string dialect::prepare_literal(const std::string &str) const
 
 void dialect::quote_identifier(std::string &str) const
 {
-  str.insert(0, token_at(token_t::START_QUOTE));
-  str += token_at(token_t::END_QUOTE);
+  str.insert(0, token_at(dialect_token::START_QUOTE));
+  str += token_at(dialect_token::END_QUOTE);
 }
 
 void dialect::escape_quotes_in_identifier(std::string &str) const
 {
-  const std::string open_char(token_at(token_t::START_QUOTE));
-  std::string close_char(token_at(token_t::END_QUOTE));
+  const std::string open_char(token_at(dialect_token::START_QUOTE));
+  std::string close_char(token_at(dialect_token::END_QUOTE));
   if (identifier_escape_type() == escape_identifier_t::ESCAPE_CLOSING_BRACKET) {
     utils::replace_all(str, close_char, close_char + close_char);
   } else {
@@ -68,8 +68,8 @@ void dialect::escape_quotes_in_identifier(std::string &str) const
 
 void dialect::escape_quotes_in_literals(std::string &str) const
 {
-  const std::string single_quote(token_at(token_t::STRING_QUOTE));
-  const std::string double_quote(token_at(token_t::STRING_QUOTE) + token_at(token_t::STRING_QUOTE));
+  const std::string single_quote(token_at(dialect_token::STRING_QUOTE));
+  const std::string double_quote(token_at(dialect_token::STRING_QUOTE) + token_at(dialect_token::STRING_QUOTE));
   utils::replace_all(str, single_quote, double_quote);
 }
 
@@ -87,5 +87,19 @@ std::string dialect::default_schema_name() const
 {
   return default_schema_name_;
 }
+
+query_compiler & dialect::compiler() const
+{
+  return *compiler_;
+}
+
+void dialect::compiler(std::unique_ptr<query_compiler> &&cmpl)
+{
+  compiler_ = std::move(cmpl);
+}
+
+dialect::dialect()
+: compiler_(std::make_unique<query_compiler>(*this))
+{}
 
 }

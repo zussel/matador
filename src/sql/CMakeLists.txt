@@ -97,6 +97,7 @@ set(HEADER
   ../../include/matador/sql/value.hpp
   ../../include/matador/sql/value_extractor.hpp
   ../../include/matador/sql/placeholder_key_value_generator.hpp
+  ../../include/matador/sql/dialect_token.hpp
 )
 
 ADD_LIBRARY(matador-query STATIC ${SOURCES} ${HEADER})

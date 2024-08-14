@@ -8,8 +8,8 @@
   const static dialect d = dialect_builder::builder()
     .create()
     .with_token_replace_map({
-                              {dialect::token_t::START_QUOTE, "`"},
-                              {dialect::token_t::END_QUOTE, "`"},
+                              {dialect_token::START_QUOTE, "`"},
+                              {dialect_token::END_QUOTE, "`"},
                             })
     .with_default_schema_name("")
     .build();

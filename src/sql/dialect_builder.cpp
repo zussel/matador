@@ -45,8 +45,15 @@ dialect_builder &dialect_builder::with_default_schema_name(const std::string &sc
   return *this;
 }
 
+dialect_builder & dialect_builder::with_compiler(std::unique_ptr<query_compiler> &&compiler)
+{
+  dialect_.compiler(std::move(compiler));
+
+  return *this;
+}
+
 dialect dialect_builder::build()
 {
-  return dialect_;
+  return std::move(dialect_);
 }
 }

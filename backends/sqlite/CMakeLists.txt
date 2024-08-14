@@ -6,6 +6,7 @@ set(HEADER
   include/sqlite_statement.hpp
   include/sqlite_parameter_binder.h
   include/sqlite_prepared_result_reader.hpp
+  include/sqlite_query_compiler.hpp
 )
 
 set(SOURCES
@@ -16,6 +17,7 @@ set(SOURCES
   src/sqlite_statement.cpp
   src/sqlite_parameter_binder.cpp
   src/sqlite_prepared_result_reader.cpp
+  src/sqlite_query_compiler.cpp
 )
 
 set(LIBRARY_TARGET matador-sqlite)

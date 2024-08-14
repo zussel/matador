@@ -49,7 +49,7 @@ void any_type_to_string_visitor::to_string(utils::blob &val)
   // Postgres: E'\\x5468697320697320612062616E617279204461746120737472696E67'
   // MSSQL:    0x5468697320697320612062616E617279204461746120737472696E67
   // Sqlite:   X'5468697320697320612062616E617279204461746120737472696E67'
-  result = d.token_at(dialect::token_t::BEGIN_BINARY_DATA) + utils::to_string(val) + d.token_at(dialect::token_t::END_BINARY_DATA);
+  result = d.token_at(dialect_token::BEGIN_BINARY_DATA) + utils::to_string(val) + d.token_at(dialect_token::END_BINARY_DATA);
 }
 
 void any_type_to_string_visitor::to_string(utils::placeholder &/*val*/)

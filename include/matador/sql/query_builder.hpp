@@ -110,10 +110,10 @@ private:
 
   struct query_part
   {
-    query_part(dialect::token_t t, std::string p)
+    query_part(dialect_token t, std::string p)
     : token(t), part(std::move(p)) {}
 
-    dialect::token_t token;
+    dialect_token token;
     std::string part;
   };
 

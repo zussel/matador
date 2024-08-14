@@ -1,0 +1,54 @@
+#ifndef DIALECT_TOKEN_HPP
+#define DIALECT_TOKEN_HPP
+
+#include <cstdint>
+
+namespace matador::sql {
+
+enum class dialect_token : uint8_t
+{
+  CREATE = 0,
+  DROP,
+  REMOVE,
+  INSERT,
+  UPDATE,
+  SELECT,
+  TABLE,
+  VALUES,
+  INSERT_VALUES,
+  COLUMNS,
+  COLUMN,
+  FROM,
+  JOIN,
+  ON,
+  INTO,
+  WHERE,
+  WHERE_CLAUSE,
+  AND,
+  OR,
+  LIKE,
+  ORDER_BY,
+  GROUP_BY,
+  ASC,
+  DESC,
+  LIMIT,
+  AS,
+  OFFSET,
+  DISTINCT,
+  SET,
+  UPDATE_VALUES,
+  NOT_NULL,
+  PRIMARY_KEY,
+  BEGIN,
+  COMMIT,
+  ROLLBACK,
+  START_QUOTE,
+  END_QUOTE,
+  STRING_QUOTE,
+  BEGIN_BINARY_DATA,
+  END_BINARY_DATA,
+  NONE
+};
+}
+
+#endif //DIALECT_TOKEN_HPP

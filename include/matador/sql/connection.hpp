@@ -149,7 +149,7 @@ private:
 
   connection_info connection_info_;
   std::unique_ptr<connection_impl> connection_;
-  const class dialect &dialect_;
+  std::reference_wrapper<const class dialect> dialect_;
   std::shared_ptr<basic_sql_logger> logger_ = std::make_shared<null_sql_logger>();
 };
 }

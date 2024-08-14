@@ -5,9 +5,6 @@
 #include "matador/sql/query_parts.hpp"
 #include "matador/sql/query_context.hpp"
 
-#include <typeindex>
-#include <string>
-
 namespace matador::sql {
 
 class dialect;
@@ -17,7 +14,7 @@ struct query_data;
 class query_compiler : public query_part_visitor
 {
 public:
-  explicit query_compiler(const sql::dialect& d);
+  explicit query_compiler(const dialect& d);
 
   query_context compile(const query_data *data);
 

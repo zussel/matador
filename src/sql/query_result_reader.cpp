@@ -8,81 +8,79 @@ namespace matador::sql {
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, char &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, short &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, int &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, long &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, long long int &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, unsigned char &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, unsigned short &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, unsigned int &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, unsigned long &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, unsigned long long int &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, bool &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, float &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, double &value)
 {
-  sql::to_value(value, column(index));
+  to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char *id, size_t index, time &value)
+void query_result_reader::read_value(const char * /*id*/, size_t index, time &value)
 {
-  const auto val = column(index);
-  if (strlen(val) > 0) {
-    value = matador::time::parse(val, "%Y-%m-%dT%T.%f");
+  if (const auto val = column(index); strlen(val) > 0) {
+    value = time::parse(val, "%Y-%m-%dT%T.%f");
   }
 }
 
 void query_result_reader::read_value(const char *id, size_t index, date &value)
 {
-  const auto val = column(index);
-  if (strlen(val) > 0) {
+  if (const auto val = column(index); strlen(val) > 0) {
     value.set(val, matador::utils::date_format::ISO8601);
   }
 }
@@ -90,8 +88,7 @@ void query_result_reader::read_value(const char *id, size_t index, date &value)
 void query_result_reader::read_value(const char * /*id*/, size_t index, char *value, size_t size)
 {
   auto val = column(index);
-  size_t len = strlen(val);
-  if (len > size) {
+  if (const size_t len = strlen(val); len > size) {
 #ifdef _MSC_VER
     strncpy_s(value, size, val, len);
 #else
@@ -128,7 +125,7 @@ template < typename Type >
 void convert(const char *val_str, value &val)
 {
   Type local_val{};
-  sql::to_value(local_val, val_str);
+  to_value(local_val, val_str);
   val = local_val;
 }
 
@@ -173,7 +170,7 @@ void query_result_reader::read_value(const char * /*id*/, size_t index, value &v
       break;
     case data_type::type_bool: {
       int local_val{};
-      sql::to_value(local_val, column(index));
+      to_value(local_val, column(index));
       val = local_val > 0;
       break;
     }

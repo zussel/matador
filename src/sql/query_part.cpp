@@ -2,10 +2,10 @@
 
 namespace matador::sql {
 
-query_part::query_part(sql::dialect::token_t token)
+query_part::query_part(dialect_token token)
 : token_(token) {}
 
-dialect::token_t query_part::token() const
+dialect_token query_part::token() const
 {
   return token_;
 }

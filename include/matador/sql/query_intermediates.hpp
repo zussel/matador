@@ -293,6 +293,7 @@ class query_execute_where_intermediate : public query_execute
 public:
   using query_execute::query_execute;
 
+  query_limit_intermediate limit(size_t limit);
   query_order_by_intermediate order_by(const column &col);
 };
 

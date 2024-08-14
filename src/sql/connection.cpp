@@ -46,7 +46,7 @@ connection &connection::operator=(const connection &x) {
 connection & connection::operator=(connection &&x) noexcept {
   connection_info_ = std::move(x.connection_info_);
   connection_  = std::move(x.connection_);
-  const_cast<class dialect&>(dialect_) = x.dialect_;
+  dialect_ = x.dialect_;
   logger_ = std::move(x.logger_);
 
   return *this;
@@ -91,15 +91,15 @@ std::string connection::type() const {
 }
 
 void connection::begin() const {
-  connection_->execute(dialect_.token_at(dialect::token_t::BEGIN));
+  connection_->execute(dialect_.get().token_at(dialect_token::BEGIN));
 }
 
 void connection::commit() const {
-  connection_->execute(dialect_.token_at(dialect::token_t::COMMIT));
+  connection_->execute(dialect_.get().token_at(dialect_token::COMMIT));
 }
 
 void connection::rollback() const {
-  connection_->execute(dialect_.token_at(dialect::token_t::ROLLBACK));
+  connection_->execute(dialect_.get().token_at(dialect_token::ROLLBACK));
 }
 
 std::vector<sql::column_definition> connection::describe(const std::string &table_name) const
@@ -114,7 +114,7 @@ bool connection::exists(const std::string &schema_name, const std::string &table
 
 bool connection::exists(const std::string &table_name) const
 {
-  return connection_->exists(dialect_.default_schema_name(), table_name);
+  return connection_->exists(dialect_.get().default_schema_name(), table_name);
 }
 
 size_t connection::execute(const std::string &sql) const

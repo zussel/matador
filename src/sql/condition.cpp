@@ -16,7 +16,7 @@ condition<column, query_context>::condition(column col, basic_condition::operand
 : basic_column_condition(std::move(col), op), query_(q)
 {}
 
-std::string condition<column, query_context>::evaluate(const dialect &d, query_context &query) const
+std::string condition<column, query_context>::evaluate(const dialect &d, query_context &/*query*/) const
 {
   std::string result(d.prepare_identifier(field_) + " " + operand + " (");
   result += query_.sql;
