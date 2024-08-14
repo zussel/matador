@@ -9,16 +9,14 @@ namespace matador::sql {
 
 class dialect;
 
-struct query_data;
+struct query_compile_context;
 
 class query_compiler : public query_part_visitor
 {
 public:
-  explicit query_compiler(const dialect& d);
+  query_context compile(const query_compile_context *data);
 
-  query_context compile(const query_data *data);
-
-private:
+protected:
   void visit(query_select_part &select_part) override;
   void visit(query_from_part &from_part) override;
   void visit(query_join_part &join_part) override;
@@ -46,8 +44,10 @@ private:
   void visit(query_drop_part &drop_part) override;
   void visit(query_drop_table_part &drop_table_part) override;
 
-private:
-  const sql::dialect &dialect_;
+  static std::string build_table_name(dialect_token token, const dialect &d, const table& t);
+
+protected:
+  const query_compile_context *data_{};
   query_context query_;
 };
 

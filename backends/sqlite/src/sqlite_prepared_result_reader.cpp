@@ -103,7 +103,7 @@ void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index
     --size;
   }
 #ifdef _MSC_VER
-  strncpy_s(x, s, reinterpret_cast<const char*>(sqlite3_column_text(stmt_, static_cast<int>(index))), size);
+  strncpy_s(value, s, reinterpret_cast<const char*>(sqlite3_column_text(stmt_, static_cast<int>(index))), size);
 #else
   strncpy(value, reinterpret_cast<const char*>(sqlite3_column_text(stmt_, static_cast<int>(index))), size);
 #endif

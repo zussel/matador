@@ -74,7 +74,7 @@ set(HEADER
   ../../include/matador/sql/query_builder.hpp
   ../../include/matador/sql/query_compiler.hpp
   ../../include/matador/sql/query_context.hpp
-  ../../include/matador/sql/query_data.hpp
+  ../../include/matador/sql/query_compile_context.hpp
   ../../include/matador/sql/query_helper.hpp
   ../../include/matador/sql/query_intermediates.hpp
   ../../include/matador/sql/query_part.hpp

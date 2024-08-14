@@ -99,7 +99,7 @@ void dialect::compiler(std::unique_ptr<query_compiler> &&cmpl)
 }
 
 dialect::dialect()
-: compiler_(std::make_unique<query_compiler>(*this))
+: compiler_(std::make_unique<query_compiler>())
 {}
 
 }

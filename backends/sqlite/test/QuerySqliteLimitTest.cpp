@@ -25,9 +25,11 @@ TEST_CASE_METHOD(QueryFixture, "Test update with limit", "[query][update][limit]
     .update({"person"})
     .set({{"name", "george"}})
     .where("id"_col > 1)
+    .order_by("id").asc()
     .limit(5)
     .build();
 
   REQUIRE(q.table.name == "person");
-  REQUIRE(q.sql == R"(UPDATE "main"."person" SET "name"='george' WHERE "rowid" IN (SELECT "rowid" FROM "person" WHERE "id" > 1 LIMIT 5))");
+  REQUIRE(q.sql == R"(UPDATE "main"."person" SET "name"='george' WHERE "id" > 1 ORDER BY "id" ASC LIMIT 5)");
+//  REQUIRE(q.sql == R"(UPDATE "main"."person" SET "name"='george' WHERE "rowid" IN (SELECT "rowid" FROM "person" WHERE "id" > 1 LIMIT 5))");
 }

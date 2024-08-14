@@ -9,7 +9,7 @@
 #include "matador/sql/placeholder_generator.hpp"
 #include "matador/sql/placeholder_key_value_generator.hpp"
 #include "matador/sql/query_result.hpp"
-#include "matador/sql/query_data.hpp"
+#include "matador/sql/query_compile_context.hpp"
 #include "matador/sql/record.hpp"
 #include "matador/sql/statement.hpp"
 #include "matador/sql/schema.hpp"
@@ -24,24 +24,29 @@ namespace matador::sql {
 class basic_condition;
 class connection;
 
-class basic_query_intermediate
+class query_intermediate
 {
 public:
-  explicit basic_query_intermediate(connection &db, const sql::schema &schema);
+  query_intermediate(const std::shared_ptr<query_compile_context> &context); // NOLINT(*-explicit-constructor)
+  query_intermediate(connection &db, const sql::schema &schema);
 
 protected:
-  connection &connection_;
-  const sql::schema &schema_;
-};
-
-class query_intermediate : public basic_query_intermediate
-{
-public:
-  query_intermediate(connection &db, const sql::schema &schema, const std::shared_ptr<query_data> &data);
+  [[nodiscard]] connection& db() const;
+  [[nodiscard]] const class dialect& dialect() const;
+  [[nodiscard]] const class schema& schema() const;
 
 protected:
-  std::shared_ptr<query_data> data_;
+  std::shared_ptr<query_compile_context> context_;
 };
+
+//class query_intermediate : public basic_query_intermediate
+//{
+//public:
+//  query_intermediate(connection &db, const sql::schema &schema, const std::shared_ptr<query_compile_context> &context);
+//
+//protected:
+//  std::shared_ptr<query_compile_context> context_;
+//};
 
 class query_execute : public query_intermediate
 {
@@ -205,16 +210,16 @@ private:
   query_on_intermediate on_clause(std::unique_ptr<basic_condition> &&cond);
 };
 
-class query_start_intermediate : public basic_query_intermediate
-{
-public:
-  explicit query_start_intermediate(connection &db, const sql::schema &schema);
+//class query_start_intermediate : public basic_query_intermediate
+//{
+//public:
+//  explicit query_start_intermediate(connection &db, const sql::schema &schema);
+//
+//protected:
+//  std::shared_ptr<query_compile_context> data_;
+//};
 
-protected:
-  std::shared_ptr<query_data> data_ { std::make_shared<query_data>() };
-};
-
-class query_select_intermediate : public query_start_intermediate
+class query_select_intermediate : public query_intermediate
 {
 public:
   query_select_intermediate(connection &db, const sql::schema &schema, const std::vector<column>& columns);
@@ -251,7 +256,7 @@ public:
   }
 };
 
-class query_create_intermediate : public query_start_intermediate
+class query_create_intermediate : public query_intermediate
 {
 public:
   explicit query_create_intermediate(connection &db, const sql::schema &schema);
@@ -261,11 +266,11 @@ public:
   template<class Type>
   query_execute table(const sql::table &table)
   {
-    return this->table(table, column_definition_generator::generate<Type>(schema_));
+    return this->table(table, column_definition_generator::generate<Type>(context_->schema));
   }
 };
 
-class query_drop_intermediate : query_start_intermediate
+class query_drop_intermediate : query_intermediate
 {
 public:
   explicit query_drop_intermediate(connection &db, const sql::schema &schema);
@@ -273,14 +278,14 @@ public:
   query_execute table(const sql::table &table);
 };
 
-class query_insert_intermediate : public query_start_intermediate
+class query_insert_intermediate : public query_intermediate
 {
 public:
   explicit query_insert_intermediate(connection &db, const sql::schema &schema);
 
   template<class Type>
   query_into_intermediate into(const sql::table &table) {
-    return into(table, column_generator::generate<Type>(schema_));
+    return into(table, column_generator::generate<Type>(context_->schema));
   }
   query_into_intermediate into(const sql::table &table, std::initializer_list<column> columns);
   query_into_intermediate into(const sql::table &table, std::vector<column> &&columns);
@@ -322,7 +327,7 @@ std::vector<key_value_pair> as_key_value_placeholder(const Type &obj)
 }
 
 
-class query_update_intermediate : public query_start_intermediate
+class query_update_intermediate : public query_intermediate
 {
 public:
   query_update_intermediate(connection &db, const sql::schema &schema, const sql::table& table);
@@ -357,7 +362,7 @@ private:
   query_execute_where_intermediate where_clause(std::unique_ptr<basic_condition> &&cond);
 };
 
-class query_delete_intermediate : public query_start_intermediate
+class query_delete_intermediate : public query_intermediate
 {
 public:
   explicit query_delete_intermediate(connection &db, const sql::schema &schema);

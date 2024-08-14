@@ -7,7 +7,9 @@ using namespace matador::sql;
 
 class ConditionFixture {
 protected:
-  dialect dlc = dialect_builder::builder().build();
+  dialect dlc = dialect_builder::builder()
+    .create()
+    .build();
   query_context ctx;
 };
 
@@ -32,7 +34,7 @@ TEST_CASE_METHOD(ConditionFixture, "Test logical condition", "[condition][logica
   REQUIRE(clause == "\"age\" <> 9");
 }
 
-TEST_CASE_METHOD(ConditionFixture, "Test and condition", "[condition][and]") {
+TEST_CASE_METHOD(ConditionFixture, "Test and condition", "[condition][bin][and]") {
   const auto name_col = "name"_col;
 
   REQUIRE(name_col.name == "name");
@@ -43,7 +45,7 @@ TEST_CASE_METHOD(ConditionFixture, "Test and condition", "[condition][and]") {
   REQUIRE(clause == "(\"name\" = 'Hans' AND \"name\" = 'Dieter')");
 }
 
-TEST_CASE_METHOD(ConditionFixture, "Test or condition", "[condition][or]") {
+TEST_CASE_METHOD(ConditionFixture, "Test or condition", "[condition][bin][or]") {
   const auto name_col = "name"_col;
 
   REQUIRE(name_col.name == "name");
