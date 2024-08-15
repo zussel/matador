@@ -72,6 +72,7 @@ SET(HEADER
   ../../include/matador/utils/types.hpp
   ../../include/matador/utils/url.hpp
   ../../include/matador/utils/version.hpp
+  ../../include/matador/utils/macro_map.hpp
 )
 
 ADD_LIBRARY(matador-utils STATIC ${SOURCES} ${HEADER})
