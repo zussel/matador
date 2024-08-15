@@ -26,12 +26,6 @@ void node_analyzer<Owner, ObserverType...>::on_belongs_to(const char *id, object
       if (i->second->is_has_many()) {
         // yes, foreign_node was created from container!
         // detach current foreign_node (has_many_item == relation table)
-//        store_.detach(node_.type());
-
-//        auto foreign_endpoint = std::make_shared<detail::many_to_one_endpoint<Owner, Value>>(i->second->field, foreign_node.get());
-//        foreign_node->unregister_relation_endpoint(node_.type_index());
-//        foreign_node->register_relation_endpoint(node_.type_index(), i->second);
-
         auto endpoint = std::make_shared<detail::belongs_to_many_endpoint<Value, Owner>>(id, &node_);
         node_.register_relation_endpoint(std::type_index(typeid(Value)), endpoint);
 
