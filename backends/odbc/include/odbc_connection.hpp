@@ -38,6 +38,10 @@ public:
 
   bool exists(const std::string &schema_name, const std::string &table_name) override;
 
+  version client_version() const override;
+
+  version server_version() const override;
+
 private:
   struct fetch_context
   {

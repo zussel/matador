@@ -87,47 +87,6 @@ bool odbc_connection::is_valid() const
   return (ret == SQL_SUCCESS && connectionDead == SQL_CD_FALSE);
 }
 
-int odbc_connection::parse_result(void* param, int column_count, char** values, char** columns)
-{
-  auto *context = static_cast<fetch_context*>(param);
-
-  odbc_result_reader::columns column;
-  for(int i = 0; i < column_count; ++i) {
-    // copy and store column data;
-    if (values[i] == nullptr) {
-      auto val = new char[1];
-      val[0] = '\0';
-      column.push_back(val);
-    } else {
-      size_t size = strlen(values[i]);
-      auto val = new char[size + 1];
-      std::memcpy(val, values[i], size);
-      val[size] = '\0';
-      column.push_back(val);
-    }
-  }
-  context->rows.emplace_back(column);
-
-  if (context->prototype.empty()) {
-    for(int i = 0; i < column_count; ++i) {
-      context->prototype.emplace_back(columns[i]);
-    }
-  }
-
-  return 0;
-}
-
-odbc_connection::fetch_context odbc_connection::fetch_internal(const std::string &stmt)
-{
-  fetch_context context;
-  char *errmsg = nullptr;
-  const int ret = sqlite3_exec(con, stmt.c_str(), parse_result, &context, &errmsg);
-
-  throw_odbc_error(ret, db_, "sqlite", stmt);
-
-  return context;
-}
-
 size_t odbc_connection::execute(const std::string &stmt)
 {
   if (!connection_) {
@@ -155,11 +114,15 @@ std::unique_ptr<sql::query_result_impl> odbc_connection::fetch(const std::string
 
 std::unique_ptr<sql::statement_impl> odbc_connection::prepare(sql::query_context query)
 {
-  sqlite3_stmt *stmt{};
-  int ret = sqlite3_prepare_v2(db_, query.sql.c_str(), static_cast<int>(query.sql.size()), &stmt, nullptr);
-  throw_odbc_error(ret, db_, "sqlite3_prepare_v2", query.sql);
+  // create statement handle
+  SQLHANDLE stmt;
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
+  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
 
-  return std::make_unique<odbc_statement>(db_, stmt, query);
+  ret = SQLPrepare(stmt, (SQLCHAR*)query.sql.c_str(), SQL_NTS);
+  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "mssql", query.sql);
+
+  return std::make_unique<odbc_statement>(connection_, stmt, query);
 }
 
 data_type string2type(const char *type)
@@ -303,13 +266,32 @@ bool odbc_connection::exists(const std::string &schema_name, const std::string &
   return v == 1;
 }
 
+version odbc_connection::client_version() const {
+  return { static_cast<unsigned int>(((ODBCVER & 0xF000) >> 12) * 10 + ((ODBCVER & 0x0F00) >> 8)),
+           static_cast<unsigned int>(((ODBCVER & 0xF0) >> 4) * 10 + (ODBCVER & 0x0F)),
+           0 };
+}
+
+version odbc_connection::server_version() const {
+  SQLCHAR dbms_ver[256];
+  auto ret = SQLGetInfo(connection_, SQL_DBMS_VER, (SQLPOINTER)dbms_ver, sizeof(dbms_ver), NULL);
+
+  if (ret == SQL_INVALID_HANDLE) {
+    throw std::logic_error("odbc error (odbc) not connected");
+  }
+
+  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
+
+  return version::from_string(reinterpret_cast< char const* >(dbms_ver));
+}
+
 }
 
 extern "C"
 {
 MATADOR_ODBC_API matador::sql::connection_impl *create_database(const matador::sql::connection_info &info)
 {
-  return new matador::backends::sqlite::odbc_connection(info);
+  return new matador::backends::odbc::odbc_connection(info);
 }
 
 MATADOR_ODBC_API void destroy_database(matador::sql::connection_impl *db)

@@ -3,12 +3,14 @@
 #include "odbc_error.hpp"
 
 namespace matador::backends::odbc {
-odbc_statement::odbc_statement(sqlite3 *db, sqlite3_stmt *stmt, const sql::query_context &query)
+odbc_statement::odbc_statement(SQLHANDLE db, SQLHANDLE stmt, const sql::query_context &query)
 : statement_impl(query)
 , db_(db)
 , stmt_(stmt)
 , binder_(db, stmt)
-{}
+{
+
+}
 
 odbc_statement::~odbc_statement()
 {

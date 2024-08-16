@@ -1,5 +1,6 @@
 #include "odbc_error.hpp"
 
+#include <sqltypes.h>
 #include <sql.h>
 
 #include <stdexcept>

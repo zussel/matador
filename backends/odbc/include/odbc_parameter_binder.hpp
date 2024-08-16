@@ -3,7 +3,7 @@
 
 #include "matador/object/attribute_binder.hpp"
 
-#include <sqlite3.h>
+#include <sql.h>
 
 #include <memory>
 #include <vector>
@@ -13,7 +13,7 @@ namespace matador::backends::odbc {
 class odbc_parameter_binder final : public object::attribute_binder
 {
 public:
-  explicit odbc_parameter_binder(sqlite3 *db, sqlite3_stmt *stmt);
+  explicit odbc_parameter_binder(SQLHANDLE stmt);
 
   void bind(size_t pos, char i) override;
   void bind(size_t pos, short i) override;
@@ -36,9 +36,7 @@ public:
   void bind(size_t pos, const std::string &str, size_t size) override;
   void bind(size_t pos, const utils::blob &blob) override;
 private:
-  sqlite3 *db_{nullptr};
-  sqlite3_stmt *stmt_{nullptr};
-
+  SQLHANDLE stmt_{};
   std::vector<std::shared_ptr<std::string> > host_strings_;
 };
 }

@@ -1,19 +1,21 @@
 #include "odbc_parameter_binder.hpp"
 #include "odbc_error.hpp"
 
+#include <sql.h>
+#include <sqltypes.h>
+
 #include <cstring>
 
 namespace matador::backends::odbc {
 
-odbc_parameter_binder::odbc_parameter_binder(sqlite3 *db, sqlite3_stmt *stmt)
-: db_(db)
-, stmt_(stmt)
+odbc_parameter_binder::odbc_parameter_binder(SQLHANDLE stmt)
+: stmt_(stmt)
 {}
 
 void odbc_parameter_binder::bind(size_t pos, char i)
 {
   int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), i);
-  throw_odbc_error(ret, db_, "sqlite3_bind_int");
+  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "sqlite3_bind_int");
 }
 
 void odbc_parameter_binder::bind(size_t pos, short i)
