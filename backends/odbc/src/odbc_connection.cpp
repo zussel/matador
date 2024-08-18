@@ -15,13 +15,11 @@
 #include <sqlext.h>
 
 namespace matador::backends::odbc {
-
 odbc_connection::odbc_connection(const sql::connection_info &info)
-: connection_impl(info) {
+  : connection_impl(info) {
 }
 
-void odbc_connection::open()
-{
+void odbc_connection::open() {
   if (is_open()) {
     return;
   }
@@ -32,7 +30,7 @@ void odbc_connection::open()
     throw_odbc_error(ret, SQL_HANDLE_ENV, odbc_, "odbc");
   }
 
-  ret = SQLSetEnvAttr(odbc_, SQL_ATTR_ODBC_VERSION,(SQLPOINTER)SQL_OV_ODBC3, 0);
+  ret = SQLSetEnvAttr(odbc_, SQL_ATTR_ODBC_VERSION, (SQLPOINTER) SQL_OV_ODBC3, 0);
   if (ret != SQL_SUCCESS) {
     SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
     throw_odbc_error(ret, SQL_HANDLE_ENV, odbc_, "odbc");
@@ -44,18 +42,20 @@ void odbc_connection::open()
     throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc");
   }
 
-  SQLSetConnectAttr(connection_, SQL_LOGIN_TIMEOUT, (SQLPOINTER *)5, 0);
+  SQLSetConnectAttr(connection_, SQL_LOGIN_TIMEOUT, (SQLPOINTER *) 5, 0);
 
-  std::string dns("DRIVER={" + info().driver + "};SERVER=" + info().hostname + ";Protocol=TCPIP;Port=" + std::to_string(info().port) + ";DATABASE=" + info().database + ";UID=" + info().user + ";PWD=" + info().password + ";");
+  std::string dns(
+    "DRIVER={" + info().driver + "};SERVER=" + info().hostname + ";Protocol=TCPIP;Port=" + std::to_string(info().port) +
+    ";DATABASE=" + info().database + ";UID=" + info().user + ";PWD=" + info().password + ";");
 
   SQLCHAR retconstring[1024];
-  ret = SQLDriverConnect(connection_, nullptr, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, nullptr, SQL_DRIVER_NOPROMPT);
+  ret = SQLDriverConnect(connection_, nullptr, (SQLCHAR *) dns.c_str(), SQL_NTS, retconstring, 1024, nullptr,
+                         SQL_DRIVER_NOPROMPT);
 
   throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc");
 }
 
-void odbc_connection::close()
-{
+void odbc_connection::close() {
   if (!is_open()) {
     return;
   }
@@ -75,58 +75,59 @@ void odbc_connection::close()
   odbc_ = nullptr;
 }
 
-bool odbc_connection::is_open() const
-{
+bool odbc_connection::is_open() const {
   return connection_ != nullptr;
 }
 
-bool odbc_connection::is_valid() const
-{
+bool odbc_connection::is_valid() const {
   SQLUINTEGER connectionDead;
   SQLRETURN ret = SQLGetConnectAttr(connection_, SQL_ATTR_CONNECTION_DEAD, &connectionDead, 0, NULL);
   return (ret == SQL_SUCCESS && connectionDead == SQL_CD_FALSE);
 }
 
-size_t odbc_connection::execute(const std::string &stmt)
-{
+
+size_t odbc_connection::execute(const std::string &sql) {
   if (!connection_) {
     throw std::logic_error("mssql no odbc connection established");
   }
   // create statement handle
-  SQLHANDLE handle;
-
-  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &handle);
-  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc", stmt);
-
-  ret = SQLExecDirectA(handle, (SQLCHAR*)stmt.c_str(), SQL_NTS);
-
-  throw_odbc_error(ret, SQL_HANDLE_STMT, handle, "odbc", stmt);
+  SQLHANDLE handle = execute_statement(sql);
 
   return 0;
 }
 
-std::unique_ptr<sql::query_result_impl> odbc_connection::fetch(const std::string &stmt)
-{
-  auto context = fetch_internal(stmt);
+std::unique_ptr<sql::query_result_impl> odbc_connection::fetch(const std::string &sql) {
+  if (!connection_) {
+    throw std::logic_error("mssql no odbc connection established");
+  }
+  // create statement handle
+  SQLHANDLE stmt = execute_statement(sql);
 
-  return std::move(std::make_unique<sql::query_result_impl>(std::make_unique<odbc_result_reader>(std::move(context.rows), context.prototype.size()), std::move(context.prototype)));
+  SQLSMALLINT num_columns{};
+  auto ret = SQLNumResultCols(stmt, &num_columns);
+  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc", sql);
+
+  std::vector<sql::column_definition> columns;
+  for (SQLSMALLINT i = 1; i <= num_columns; i++) {
+    columns.push_back(describe_column(stmt, i));
+  }
+
+  return std::make_unique<sql::query_result_impl>(std::make_unique<odbc_result_reader>(stmt), std::move(columns));
 }
 
-std::unique_ptr<sql::statement_impl> odbc_connection::prepare(sql::query_context query)
-{
+std::unique_ptr<sql::statement_impl> odbc_connection::prepare(sql::query_context query) {
   // create statement handle
   SQLHANDLE stmt;
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
   throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
 
-  ret = SQLPrepare(stmt, (SQLCHAR*)query.sql.c_str(), SQL_NTS);
+  ret = SQLPrepare(stmt, (SQLCHAR *) query.sql.c_str(), SQL_NTS);
   throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "mssql", query.sql);
 
   return std::make_unique<odbc_statement>(connection_, stmt, query);
 }
 
-data_type string2type(const char *type)
-{
+data_type string2type(const char *type) {
   if (strncmp(type, "INTEGER", 7) == 0) {
     return data_type::type_int;
   } else if (strncmp(type, "TINYINT", 7) == 0) {
@@ -162,8 +163,7 @@ data_type string2type(const char *type)
 
 static data_type type2data_type(SQLSMALLINT type, size_t size);
 
-std::vector<sql::column_definition> odbc_connection::describe(const std::string& table)
-{
+std::vector<sql::column_definition> odbc_connection::describe(const std::string &table) {
   SQLHANDLE stmt;
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
   throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc");
@@ -172,7 +172,7 @@ std::vector<sql::column_definition> odbc_connection::describe(const std::string&
 #ifdef _MSC_VER
   strcpy_s((char*)buf, 256, table.c_str());
 #else
-  strcpy((char*)buf, table.c_str());
+  strcpy((char *) buf, table.c_str());
 #endif
   ret = SQLColumns(stmt, nullptr, 0, nullptr, 0, buf, SQL_NTS, nullptr, 0);
   throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
@@ -209,7 +209,12 @@ std::vector<sql::column_definition> odbc_connection::describe(const std::string&
   std::vector<sql::column_definition> prototype;
   /* Fetch the data */
   while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-    prototype.emplace_back(std::string((char*)column), type2data_type(data_type, size), utils::null_attributes, not_null == 0, pos - 1);
+    prototype.emplace_back(std::string(reinterpret_cast<char*>(column)),
+          type2data_type(data_type, size),
+          size,
+          not_null == SQL_NO_NULLS ? sql::null_option::NOT_NULL : sql::null_option::NULLABLE,
+          reinterpret_cast<size_t>(indicator)
+          );
   }
 
   SQLFreeHandle(SQL_HANDLE_STMT, stmt);
@@ -217,8 +222,7 @@ std::vector<sql::column_definition> odbc_connection::describe(const std::string&
   return prototype;
 }
 
-data_type type2data_type(SQLSMALLINT type, size_t size)
-{
+data_type type2data_type(SQLSMALLINT type, size_t size) {
   switch (type) {
     case SQL_CHAR:
       return data_type::type_char;
@@ -250,10 +254,11 @@ data_type type2data_type(SQLSMALLINT type, size_t size)
   }
 }
 
-bool odbc_connection::exists(const std::string &schema_name, const std::string &table_name)
-{
-  const auto result = fetch_internal("SELECT COUNT(*) FROM odbc_master WHERE type='table' AND tbl_name='" + table_name + "' LIMIT 1");
-  odbc_result_reader reader(result.rows, result.prototype.size());
+bool odbc_connection::exists(const std::string &schema_name, const std::string &table_name) {
+  const std::string sql("SELECT TOP 1 COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='" + info().database + "' AND TABLE_NAME='" + table_name + "'");
+
+  const auto stmt = execute_statement(sql);
+  odbc_result_reader reader(stmt);
 
   if (!reader.fetch()) {
     // Todo: throw an exception?
@@ -267,14 +272,16 @@ bool odbc_connection::exists(const std::string &schema_name, const std::string &
 }
 
 version odbc_connection::client_version() const {
-  return { static_cast<unsigned int>(((ODBCVER & 0xF000) >> 12) * 10 + ((ODBCVER & 0x0F00) >> 8)),
-           static_cast<unsigned int>(((ODBCVER & 0xF0) >> 4) * 10 + (ODBCVER & 0x0F)),
-           0 };
+  return {
+    static_cast<unsigned int>(((ODBCVER & 0xF000) >> 12) * 10 + ((ODBCVER & 0x0F00) >> 8)),
+    static_cast<unsigned int>(((ODBCVER & 0xF0) >> 4) * 10 + (ODBCVER & 0x0F)),
+    0
+  };
 }
 
 version odbc_connection::server_version() const {
   SQLCHAR dbms_ver[256];
-  auto ret = SQLGetInfo(connection_, SQL_DBMS_VER, (SQLPOINTER)dbms_ver, sizeof(dbms_ver), NULL);
+  auto ret = SQLGetInfo(connection_, SQL_DBMS_VER, (SQLPOINTER) dbms_ver, sizeof(dbms_ver), NULL);
 
   if (ret == SQL_INVALID_HANDLE) {
     throw std::logic_error("odbc error (odbc) not connected");
@@ -282,21 +289,56 @@ version odbc_connection::server_version() const {
 
   throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
 
-  return version::from_string(reinterpret_cast< char const* >(dbms_ver));
+  return version::from_string(reinterpret_cast<char const *>(dbms_ver));
 }
 
+SQLHANDLE odbc_connection::execute_statement(const std::string &sql) const {
+  if (!connection_) {
+    throw std::logic_error("mssql no odbc connection established");
+  }
+  // create statement handle
+  SQLHANDLE handle;
+
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &handle);
+  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc", sql);
+
+  ret = SQLExecDirectA(handle, (SQLCHAR*) sql.c_str(), SQL_NTS);
+  throw_odbc_error(ret, SQL_HANDLE_STMT, handle, "odbc", sql);
+
+  return handle;
 }
 
-extern "C"
-{
-MATADOR_ODBC_API matador::sql::connection_impl *create_database(const matador::sql::connection_info &info)
-{
+sql::column_definition &&odbc_connection::describe_column(SQLHANDLE stmt, SQLSMALLINT index) {
+  SQLCHAR name[64];
+  SQLSMALLINT name_length{};
+  SQLSMALLINT data_type(0);
+  SQLULEN data_size(0);
+  SQLSMALLINT digits(0);
+  SQLSMALLINT nullable(0);
+
+  SQLCHAR type[64];
+  SQLINTEGER not_null(0);
+  SQLLEN indicator[6];
+
+  auto ret = SQLDescribeCol(stmt, index, name, 64, &name_length, &data_type, &data_size, &digits, &nullable);
+  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+
+  return {
+    std::string(reinterpret_cast<char *>(name)),
+    type2data_type(data_type, data_size),
+    data_size,
+    nullable == SQL_NO_NULLS ? sql::null_option::NOT_NULL : sql::null_option::NULLABLE,
+    static_cast<size_t>(index)
+  };
+}
+}
+
+extern "C" {
+MATADOR_ODBC_API matador::sql::connection_impl *create_database(const matador::sql::connection_info &info) {
   return new matador::backends::odbc::odbc_connection(info);
 }
 
-MATADOR_ODBC_API void destroy_database(matador::sql::connection_impl *db)
-{
+MATADOR_ODBC_API void destroy_database(matador::sql::connection_impl *db) {
   delete db;
 }
-
 }

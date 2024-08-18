@@ -6,7 +6,9 @@
 #include <sql.h>
 
 #include <memory>
+#include <optional>
 #include <vector>
+#include <unordered_map>
 
 namespace matador::backends::odbc {
 
@@ -35,10 +37,28 @@ public:
   void bind(size_t pos, const std::string &str) override;
   void bind(size_t pos, const std::string &str, size_t size) override;
   void bind(size_t pos, const utils::blob &blob) override;
+
+public:
+  struct bounded_value
+  {
+    explicit bounded_value(const SQLLEN l = 0)
+    : len(l) {}
+
+    SQLLEN len{};
+    SQLLEN result_len = 0;
+    std::unique_ptr<char[]> data{};
+  };
+
+  std::optional<std::optional<std::reference_wrapper<const bounded_value>>> get_data_to_put(PTR ptr) const;
+
 private:
   SQLHANDLE stmt_{};
+  bool bind_null_ = false;
+  std::vector<bounded_value> host_data_;
+  std::unordered_map<PTR, std::reference_wrapper<bounded_value>> data_to_put_map_;
   std::vector<std::shared_ptr<std::string> > host_strings_;
 };
+
 }
 
 #endif //QUERY_SQLITE_PARAMETER_BINDER_H

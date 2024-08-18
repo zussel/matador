@@ -14,7 +14,7 @@ namespace matador::backends::mysql {
 class mysql_result_reader : public sql::query_result_reader
 {
 public:
-  explicit mysql_result_reader(MYSQL_RES *result, unsigned int column_count);
+  mysql_result_reader(MYSQL_RES *result, unsigned int column_count);
   ~mysql_result_reader() override;
 
   [[nodiscard]] size_t column_count() const override;

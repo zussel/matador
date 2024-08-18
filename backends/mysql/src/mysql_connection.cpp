@@ -207,7 +207,7 @@ std::unique_ptr<sql::query_result_impl> mysql_connection::fetch(const std::strin
   }
 
   auto field_count = mysql_num_fields(result);
-  auto fields = mysql_fetch_fields(result);
+  const auto fields = mysql_fetch_fields(result);
   std::vector<sql::column_definition> prototype;
   for (unsigned i = 0; i < field_count; ++i) {
     auto type = to_type(fields[i].type, fields[i].flags);
@@ -273,7 +273,7 @@ std::vector<sql::column_definition> mysql_connection::describe(const std::string
 }
 
 bool mysql_connection::exists(const std::string &/*schema_name*/, const std::string &table_name) {
-  std::string stmt(
+  const std::string stmt(
     "SELECT 1 FROM information_schema.tables WHERE table_schema = '" + info().database + "' AND table_name = '" +
     table_name + "'");
 
@@ -281,7 +281,7 @@ bool mysql_connection::exists(const std::string &/*schema_name*/, const std::str
     throw_mysql_error(mysql_.get(), stmt);
   }
 
-  auto result = mysql_store_result(mysql_.get());
+  const auto result = mysql_store_result(mysql_.get());
   if (result == nullptr) {
     throw_mysql_error(mysql_.get(), stmt);
   }

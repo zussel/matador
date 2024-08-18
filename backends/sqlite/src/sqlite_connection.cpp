@@ -99,7 +99,7 @@ sqlite_connection::fetch_context sqlite_connection::fetch_internal(const std::st
 
 size_t sqlite_connection::execute(const std::string &stmt) {
   char *errmsg = nullptr;
-  int ret = sqlite3_exec(db_, stmt.c_str(), nullptr, nullptr, &errmsg);
+  const int ret = sqlite3_exec(db_, stmt.c_str(), nullptr, nullptr, &errmsg);
 
   throw_sqlite_error(ret, db_, "sqlite", stmt);
 
@@ -107,16 +107,16 @@ size_t sqlite_connection::execute(const std::string &stmt) {
 }
 
 std::unique_ptr<sql::query_result_impl> sqlite_connection::fetch(const std::string &stmt) {
-  auto context = fetch_internal(stmt);
+  auto [prototype, rows] = fetch_internal(stmt);
 
   return std::make_unique<sql::query_result_impl>(
-    std::make_unique<sqlite_result_reader>(std::move(context.rows), context.prototype.size()),
-    std::move(context.prototype));
+    std::make_unique<sqlite_result_reader>(std::move(rows), prototype.size()),
+    std::move(prototype));
 }
 
 std::unique_ptr<sql::statement_impl> sqlite_connection::prepare(sql::query_context query) {
   sqlite3_stmt *stmt{};
-  int ret = sqlite3_prepare_v2(db_, query.sql.c_str(), static_cast<int>(query.sql.size()), &stmt, nullptr);
+  const int ret = sqlite3_prepare_v2(db_, query.sql.c_str(), static_cast<int>(query.sql.size()), &stmt, nullptr);
   throw_sqlite_error(ret, db_, "sqlite3_prepare_v2", query.sql);
 
   return std::make_unique<sqlite_statement>(db_, stmt, query);

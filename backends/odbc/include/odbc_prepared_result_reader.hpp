@@ -46,9 +46,8 @@ public:
   void read_column(const char *id, size_t index, Type &val, size_t size = 0)
   {
     SQLLEN info = 0;
-    auto type = (SQLSMALLINT)type2int(object::data_type_traits<Type>::type(size));
-    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(Type), &info);
-    if (!SQL_SUCCEEDED(ret)) {
+    const auto type = static_cast<SQLSMALLINT>(type2int(object::data_type_traits<Type>::type(size)));
+    if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), type, &val, sizeof(Type), &info); !SQL_SUCCEEDED(ret)) {
       std::string msg{"error on retrieving value for column "};
       msg += std::string(id) + " (type " + typeid(Type).name() + ")";
       throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", msg);

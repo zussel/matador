@@ -12,7 +12,7 @@ namespace matador::backends::odbc {
 class odbc_statement final : public sql::statement_impl
 {
 public:
-  odbc_statement(SQLHANDLE db, SQLHANDLE stmt, const sql::query_context &query);
+  odbc_statement(SQLHANDLE stmt, const sql::query_context &query);
   ~odbc_statement() override;
 
   size_t execute() override;
@@ -23,7 +23,6 @@ protected:
 
 private:
   SQLHANDLE stmt_ = nullptr;
-  SQLHANDLE db_ = nullptr;
 
   odbc_parameter_binder binder_;
 };

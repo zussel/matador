@@ -21,8 +21,7 @@ const char *odbc_prepared_result_reader::column(size_t index) const
 
 bool odbc_prepared_result_reader::fetch()
 {
-  SQLRETURN ret = SQLFetch(stmt_);
-  if (SQL_SUCCEEDED(ret)) {
+  if (const SQLRETURN ret = SQLFetch(stmt_); SQL_SUCCEEDED(ret)) {
     return true;
   } else {
     throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
@@ -98,8 +97,7 @@ void odbc_prepared_result_reader::read_value(const char *id, size_t index, doubl
 void odbc_prepared_result_reader::read_value(const char *id, size_t index, char *value, size_t s)
 {
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, value, s, &info);
-  if (ret != SQL_SUCCESS) {
+  if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, value, s, &info); ret != SQL_SUCCESS) {
     throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
 }
@@ -127,8 +125,7 @@ void odbc_prepared_result_reader::read_value(const char *id, size_t index, std::
   }
   std::vector<char> buf(s, 0);
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf.data(), static_cast<SQLLEN>(s), &info);
-  if (SQL_SUCCEEDED(ret)) {
+  if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf.data(), static_cast<SQLLEN>(s), &info); SQL_SUCCEEDED(ret)) {
     if (info > 0) {
       value.assign(buf.data(), info);
     } else {
@@ -143,8 +140,7 @@ void odbc_prepared_result_reader::read_value(const char *id, size_t index, time 
   SQL_TIMESTAMP_STRUCT ts;
 
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_TYPE_TIMESTAMP, &ts, 0, &info);
-  if (SQL_SUCCEEDED(ret)) {
+  if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_TYPE_TIMESTAMP, &ts, 0, &info); SQL_SUCCEEDED(ret)) {
     if (info != SQL_NULL_DATA) {
       value.set(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.fraction / 1000 / 1000);
     }
@@ -157,8 +153,7 @@ void odbc_prepared_result_reader::read_value(const char *id, size_t index, date 
   SQL_DATE_STRUCT ds;
 
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_TYPE_DATE, &ds, 0, &info);
-  if (SQL_SUCCEEDED(ret)) {
+  if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_TYPE_DATE, &ds, 0, &info); SQL_SUCCEEDED(ret)) {
     if (info != SQL_NULL_DATA) {
       value.set(ds.day, ds.month, ds.year);
     }
@@ -213,7 +208,6 @@ int odbc_prepared_result_reader::type2int(data_type type) {
       return SQL_C_DOUBLE;
     case data_type::type_char_pointer:
     case data_type::type_varchar:
-      return SQL_C_CHAR;
     case data_type::type_text:
       return SQL_C_CHAR;
     case data_type::type_date:

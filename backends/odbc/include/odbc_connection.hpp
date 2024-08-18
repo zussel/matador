@@ -32,22 +32,19 @@ public:
   std::unique_ptr<sql::query_result_impl> fetch(const std::string &stmt) override;
   std::unique_ptr<sql::statement_impl> prepare(sql::query_context query) override;
 
-  size_t execute(const std::string &stmt) override;
+  size_t execute(const std::string &sql) override;
 
   std::vector<sql::column_definition> describe(const std::string& table) override;
 
   bool exists(const std::string &schema_name, const std::string &table_name) override;
 
-  version client_version() const override;
-
-  version server_version() const override;
+  [[nodiscard]] version client_version() const override;
+  [[nodiscard]] version server_version() const override;
 
 private:
-  struct fetch_context
-  {
-    std::vector<sql::column_definition> prototype;
-    odbc_result_reader::rows rows;
-  };
+  [[nodiscard]] SQLHANDLE execute_statement(const std::string &sql) const;
+
+  static sql::column_definition&& describe_column(SQLHANDLE stmt, SQLSMALLINT index);
 
 private:
   SQLHANDLE odbc_{};

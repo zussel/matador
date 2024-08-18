@@ -50,7 +50,7 @@ private:
 private:
   static int parse_result(void* param, int column_count, char** values, char** columns);
 
-  fetch_context fetch_internal(const std::string &stmt) const;
+  [[nodiscard]] fetch_context fetch_internal(const std::string &stmt) const;
 
 private:
   sqlite3 *db_{};
