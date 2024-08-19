@@ -5,6 +5,10 @@
 #pragma warning(disable: 4355)
 #endif
 
+#if defined(_MSC_VER)
+#include <WinSock2.h>
+#endif
+
 #include <sqltypes.h>
 
 #include <string>

@@ -176,7 +176,7 @@ void odbc_parameter_binder::bind(size_t pos, const date &date)
 
 }
 
-std::optional<std::optional<std::reference_wrapper<const odbc_parameter_binder::bounded_value>>> odbc_parameter_binder::get_data_to_put(const PTR ptr) const {
+std::optional<std::optional<std::reference_wrapper<odbc_parameter_binder::bounded_value>>> odbc_parameter_binder::get_data_to_put(const PTR ptr) {
   const auto it = data_to_put_map_.find(ptr);
   if (it == data_to_put_map_.end()) {
     return std::nullopt;
@@ -253,7 +253,7 @@ odbc_parameter_binder::bounded_value create_bind_value(bool is_null_value, const
     v.len = static_cast<SQLLEN>(s == 0 ? 1 : s);
     v.data.reset(new char[s + 1]);
 #ifdef _MSC_VER
-    strncpy_s(v.data, s + 1, val.c_str(), s);
+    strncpy_s(v.data.get(), s + 1, val.c_str(), s);
 #else
     strncpy(v.data.get(), val.c_str(), s);
 #endif
@@ -277,7 +277,7 @@ odbc_parameter_binder::bounded_value create_bind_value(bool is_null_value, const
   } else {
     v.data.reset(new char[val_size + 1]);
 #ifdef _MSC_VER
-    strncpy_s((char *) v.data, val_size + 1, val, val_size);
+    strncpy_s((char *) v.data.get(), val_size + 1, val, val_size);
 #else
     strncpy((char *)v.data.get(), val, val_size);
 #endif

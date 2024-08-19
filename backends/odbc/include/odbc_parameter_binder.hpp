@@ -49,7 +49,7 @@ public:
     std::unique_ptr<char[]> data{};
   };
 
-  std::optional<std::optional<std::reference_wrapper<const bounded_value>>> get_data_to_put(PTR ptr) const;
+  std::optional<std::optional<std::reference_wrapper<bounded_value>>> get_data_to_put(PTR ptr);
 
 private:
   SQLHANDLE stmt_{};
