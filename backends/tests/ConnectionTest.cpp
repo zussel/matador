@@ -7,8 +7,7 @@
 using namespace matador::sql;
 
 TEST_CASE("Create connection test", "[connection]") {
-
-  connection c(matador::test::connection::dns);
+  const connection c(matador::test::connection::dns);
   REQUIRE(!c.is_open());
 
   c.open();

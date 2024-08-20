@@ -44,7 +44,7 @@ public:
 private:
   [[nodiscard]] SQLHANDLE execute_statement(const std::string &sql) const;
 
-  static sql::column_definition&& describe_column(SQLHANDLE stmt, SQLSMALLINT index);
+  static sql::column_definition describe_column(SQLHANDLE stmt, SQLSMALLINT index);
 
 private:
   SQLHANDLE odbc_{};

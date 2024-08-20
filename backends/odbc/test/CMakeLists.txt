@@ -12,25 +12,30 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
 include(Catch)
 
-set(ODBC_CONNECTION_STRING "mssql://test.db")
+set(ODBC_CONNECTION_STRING "odbc://test:test123!@127.0.0.1:1433/testdb (SQL Server)")
 
 configure_file(Connection.hpp.in ${PROJECT_BINARY_DIR}/backends/odbc/test/connection.hpp @ONLY IMMEDIATE)
 
 message(STATUS "odbc connection string: ${ODBC_CONNECTION_STRING}")
 
 set(TEST_SOURCES
-  ../../tests/QueryTest.cpp
-  ../../tests/QueryTest.cpp
+  ../../../test/catch2/models/types.hpp
+  ../../tests/ColorEnumTraits.cpp
+  ../../tests/ColorEnumTraits.hpp
   ../../tests/ConnectionTest.cpp
+  ../../tests/QueryBasicTest.cpp
+  ../../tests/QueryFixture.cpp
+  ../../tests/QueryFixture.hpp
   ../../tests/QueryRecordTest.cpp
+  ../../tests/QueryStatementTests.cpp
+  ../../tests/QueryTest.cpp
+  ../../tests/SessionFixture.cpp
+  ../../tests/SessionFixture.hpp
+  ../../tests/SessionTest.cpp
+  ../../tests/StatementCacheTest.cpp
   ../../tests/StatementTest.cpp
   ../../tests/TypeTraitsTest.cpp
-  ../../tests/StatementCacheTest.cpp
-  ../../tests/SessionTest.cpp
-  ../../tests/ColorEnumTraits.hpp
-  ../../tests/ColorEnumTraits.cpp
-        ../../../test/catch2/models/types.hpp
-        ../../tests/QueryBasicTest.cpp)
+)
 
 set(LIBRARY_TEST_TARGET odbc_tests)
 

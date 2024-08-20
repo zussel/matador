@@ -30,13 +30,13 @@ set(TEST_SOURCES
   ../../tests/QueryStatementTests.cpp
   ../../tests/QueryTest.cpp
   ../../tests/QueryTest.cpp
+  ../../tests/SessionFixture.cpp
+  ../../tests/SessionFixture.hpp
   ../../tests/SessionTest.cpp
   ../../tests/StatementCacheTest.cpp
   ../../tests/StatementTest.cpp
   ../../tests/TypeTraitsTest.cpp
   QuerySqliteLimitTest.cpp
-  ../../tests/SessionFixture.hpp
-  ../../tests/SessionFixture.cpp
 )
 
 set(LIBRARY_TEST_TARGET sqlite_tests)
