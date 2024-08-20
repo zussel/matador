@@ -26,100 +26,100 @@ odbc_parameter_binder::odbc_parameter_binder(SQLHANDLE stmt)
 : stmt_(stmt)
 {}
 
-void odbc_parameter_binder::bind(size_t pos, char i)
+void odbc_parameter_binder::bind(size_t pos, const char &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, i));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_TINYINT, SQL_TINYINT, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, short i)
+void odbc_parameter_binder::bind(size_t pos, const short &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, i));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_SSHORT, SQL_SMALLINT, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, int i)
+void odbc_parameter_binder::bind(size_t pos, const int &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, i));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_SLONG, SQL_INTEGER, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, long i)
+void odbc_parameter_binder::bind(size_t pos, const long &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, i));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_SLONG, SQL_INTEGER, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, long long i)
+void odbc_parameter_binder::bind(size_t pos, const long long int &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, i));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_SBIGINT, SQL_BIGINT, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, unsigned char i)
+void odbc_parameter_binder::bind(size_t pos, const unsigned char &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, i));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_SHORT, SQL_SMALLINT, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, unsigned short i)
+void odbc_parameter_binder::bind(size_t pos, const unsigned short &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, i));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_USHORT, SQL_INTEGER, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, unsigned int i)
+void odbc_parameter_binder::bind(size_t pos, const unsigned int &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, i));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_ULONG, SQL_INTEGER, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, unsigned long i)
+void odbc_parameter_binder::bind(size_t pos, const unsigned long &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, i));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_ULONG, SQL_BIGINT, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, unsigned long long i)
+void odbc_parameter_binder::bind(size_t pos, const unsigned long long int &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, i));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_UBIGINT, SQL_BIGINT, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, bool b)
+void odbc_parameter_binder::bind(size_t pos, const bool &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, b));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_BIT, SQL_BIT, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, float d)
+void odbc_parameter_binder::bind(size_t pos, const float &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, d));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_FLOAT, SQL_FLOAT, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, double d)
+void odbc_parameter_binder::bind(size_t pos, const double &x)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, d));
+  host_data_.push_back(detail::create_bind_value(bind_null_, x));
 
   detail::bind_value(stmt_, SQL_C_DOUBLE, SQL_DOUBLE, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const char *str)
+void odbc_parameter_binder::bind(size_t pos, const char *text)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, str));
+  host_data_.push_back(detail::create_bind_value(bind_null_, text));
 
   bounded_value &value = host_data_.back();
 
@@ -132,16 +132,16 @@ void odbc_parameter_binder::bind(size_t pos, const char *str)
   }
 }
 
-void odbc_parameter_binder::bind(size_t pos, const char *x, size_t size)
+void odbc_parameter_binder::bind(size_t pos, const char *str, size_t size)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, x, size));
+  host_data_.push_back(detail::create_bind_value(bind_null_, str, size));
 
   detail::bind_value(stmt_, SQL_C_CHAR, SQL_VARCHAR, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const std::string &str)
+void odbc_parameter_binder::bind(size_t pos, const std::string &text)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, str));
+  host_data_.push_back(detail::create_bind_value(bind_null_, text));
 
   bounded_value &value = host_data_.back();
 
@@ -154,14 +154,14 @@ void odbc_parameter_binder::bind(size_t pos, const std::string &str)
   }
 }
 
-void odbc_parameter_binder::bind(size_t pos, const std::string &x, size_t size)
+void odbc_parameter_binder::bind(size_t pos, const std::string &str, size_t size)
 {
-  host_data_.push_back(detail::create_bind_value(bind_null_, x.data(), size));
+  host_data_.push_back(detail::create_bind_value(bind_null_, str.data(), size));
 
   detail::bind_value(stmt_, SQL_C_CHAR, SQL_VARCHAR, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const utils::blob &blob)
+void odbc_parameter_binder::bind(size_t pos, const utils::blob &data)
 {
 
 }
@@ -199,34 +199,6 @@ odbc_parameter_binder::bounded_value create_bind_value(bool is_null_value, T val
   }
   return v;
 }
-
-// std::unique_ptr<odbc_parameter_binder::bounded_value> create_bind_value(const bool is_null_value, char val)
-// {
-//   auto v = std::make_unique<odbc_parameter_binder::bounded_value>(2);
-//   if (is_null_value) {
-//     v->data = nullptr;
-//     v->len = SQL_NULL_DATA;
-//   } else {
-//     v->data.reset(new char[2]);
-//     v->data[0] = val;
-//     v->data[1] = '\0';
-//   }
-//   return v;
-// }
-//
-// std::unique_ptr<odbc_parameter_binder::bounded_value> create_bind_value(const bool is_null_value, unsigned char val)
-// {
-//   auto v = std::make_unique<odbc_parameter_binder::bounded_value>(2);
-//   if (is_null_value) {
-//     v->data = nullptr;
-//     v->len = SQL_NULL_DATA;
-//   } else {
-//     v->data.reset(new char[2]);
-//     reinterpret_cast<unsigned char*>(v->data)[0] = val;
-//     v->data[1] = '\0';
-//   }
-//   return v;
-// }
 
 template < class T >
 odbc_parameter_binder::bounded_value create_bind_value(const bool is_null_value)

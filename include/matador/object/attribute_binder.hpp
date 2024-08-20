@@ -17,21 +17,21 @@ class attribute_binder
 public:
   virtual ~attribute_binder() = default;
 
-  virtual void bind(size_t pos, char x) = 0;
-  virtual void bind(size_t pos, short x) = 0;
-  virtual void bind(size_t pos, int x) = 0;
-  virtual void bind(size_t pos, long x) = 0;
-  virtual void bind(size_t pos, long long x) = 0;
-  virtual void bind(size_t pos, unsigned char x) = 0;
-  virtual void bind(size_t pos, unsigned short x) = 0;
-  virtual void bind(size_t pos, unsigned int x) = 0;
-  virtual void bind(size_t pos, unsigned long x) = 0;
-  virtual void bind(size_t pos, unsigned long long x) = 0;
-  virtual void bind(size_t pos, bool x) = 0;
-  virtual void bind(size_t pos, float x) = 0;
-  virtual void bind(size_t pos, double x) = 0;
-  virtual void bind(size_t pos, const matador::time &x) = 0;
-  virtual void bind(size_t pos, const matador::date &x) = 0;
+  virtual void bind(size_t pos, const char &x) = 0;
+  virtual void bind(size_t pos, const short &x) = 0;
+  virtual void bind(size_t pos, const int &x) = 0;
+  virtual void bind(size_t pos, const long &x) = 0;
+  virtual void bind(size_t pos, const long long &x) = 0;
+  virtual void bind(size_t pos, const unsigned char &x) = 0;
+  virtual void bind(size_t pos, const unsigned short &x) = 0;
+  virtual void bind(size_t pos, const unsigned int &x) = 0;
+  virtual void bind(size_t pos, const unsigned long &x) = 0;
+  virtual void bind(size_t pos, const unsigned long long &x) = 0;
+  virtual void bind(size_t pos, const bool &x) = 0;
+  virtual void bind(size_t pos, const float &x) = 0;
+  virtual void bind(size_t pos, const double &x) = 0;
+  virtual void bind(size_t pos, const time &x) = 0;
+  virtual void bind(size_t pos, const date &x) = 0;
   virtual void bind(size_t pos, const char *x) = 0;
   virtual void bind(size_t pos, const char *x, size_t size) = 0;
   virtual void bind(size_t pos, const std::string &x) = 0;

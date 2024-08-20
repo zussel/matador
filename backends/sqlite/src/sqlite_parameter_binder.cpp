@@ -12,79 +12,79 @@ sqlite_parameter_binder::sqlite_parameter_binder(sqlite3 *db, sqlite3_stmt *stmt
 , stmt_(stmt)
 {}
 
-void sqlite_parameter_binder::bind(size_t pos, char x)
+void sqlite_parameter_binder::bind(size_t pos, const char &x)
 {
   const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, short x)
+void sqlite_parameter_binder::bind(size_t pos, const short &x)
 {
   const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, int x)
+void sqlite_parameter_binder::bind(size_t pos, const int &x)
 {
   const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, long x)
+void sqlite_parameter_binder::bind(size_t pos, const long &x)
 {
   const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, long long int x)
+void sqlite_parameter_binder::bind(size_t pos, const long long int &x)
 {
   const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, unsigned char x)
+void sqlite_parameter_binder::bind(size_t pos, const unsigned char &x)
 {
   const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, unsigned short x)
+void sqlite_parameter_binder::bind(size_t pos, const unsigned short &x)
 {
   const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, unsigned int x)
+void sqlite_parameter_binder::bind(size_t pos, const unsigned int &x)
 {
   const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, unsigned long x)
-{
-  const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int64");
-}
-
-void sqlite_parameter_binder::bind(size_t pos, unsigned long long int x)
+void sqlite_parameter_binder::bind(size_t pos, const unsigned long &x)
 {
   const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int64");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, bool x)
+void sqlite_parameter_binder::bind(size_t pos, const unsigned long long int &x)
+{
+  const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x);
+  throw_sqlite_error(ret, db_, "sqlite3_bind_int64");
+}
+
+void sqlite_parameter_binder::bind(size_t pos, const bool &x)
 {
   const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, float x)
+void sqlite_parameter_binder::bind(size_t pos, const float &x)
 {
   const int ret = sqlite3_bind_double(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");
 }
 
-void sqlite_parameter_binder::bind(size_t pos, double x)
+void sqlite_parameter_binder::bind(size_t pos, const double &x)
 {
   const int ret = sqlite3_bind_double(stmt_, static_cast<int>(++pos), x);
   throw_sqlite_error(ret, db_, "sqlite3_bind_int");

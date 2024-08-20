@@ -12,7 +12,7 @@
 
 namespace matador::sql {
 
-class value_extractor : public object::attribute_binder
+class value_extractor final : public object::attribute_binder
 {
 private:
   explicit value_extractor(std::vector<utils::any_type> &values);
@@ -28,7 +28,7 @@ public:
   }
 
   template<typename ValueType>
-  void on_primary_key(const char *, ValueType &x, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type* = 0)
+  void on_primary_key(const char *, ValueType &x, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>>* = nullptr)
   {
     object::data_type_traits<ValueType>::bind_value(*this, 0, x);
   }
@@ -66,26 +66,26 @@ public:
                            const utils::foreign_attributes &/*attr*/) {}
 
 public:
-  void bind(size_t pos, char i) override;
-  void bind(size_t pos, short i) override;
-  void bind(size_t pos, int i) override;
-  void bind(size_t pos, long i) override;
-  void bind(size_t pos, long long int i) override;
-  void bind(size_t pos, unsigned char i) override;
-  void bind(size_t pos, unsigned short i) override;
-  void bind(size_t pos, unsigned int i) override;
-  void bind(size_t pos, unsigned long i) override;
-  void bind(size_t pos, unsigned long long int i) override;
-  void bind(size_t pos, bool b) override;
-  void bind(size_t pos, float d) override;
-  void bind(size_t pos, double d) override;
-  void bind(size_t pos, const time &time) override;
-  void bind(size_t pos, const date &date) override;
-  void bind(size_t pos, const char *string) override;
-  void bind(size_t pos, const char *string, size_t size) override;
-  void bind(size_t pos, const std::string &string) override;
+  void bind(size_t pos, const char &x) override;
+  void bind(size_t pos, const short &x) override;
+  void bind(size_t pos, const int &x) override;
+  void bind(size_t pos, const long &x) override;
+  void bind(size_t pos, const long long int &x) override;
+  void bind(size_t pos, const unsigned char &x) override;
+  void bind(size_t pos, const unsigned short &x) override;
+  void bind(size_t pos, const unsigned int &x) override;
+  void bind(size_t pos, const unsigned long &x) override;
+  void bind(size_t pos, const unsigned long long int &x) override;
+  void bind(size_t pos, const bool &x) override;
+  void bind(size_t pos, const float &x) override;
+  void bind(size_t pos, const double &x) override;
+  void bind(size_t pos, const time &x ) override;
+  void bind(size_t pos, const date &x ) override;
+  void bind(size_t pos, const char *x) override;
+  void bind(size_t pos, const char *x, size_t size) override;
+  void bind(size_t pos, const std::string &x) override;
   void bind(size_t pos, const std::string &x, size_t size) override;
-  void bind(size_t pos, const utils::blob &blob) override;
+  void bind(size_t pos, const utils::blob &x) override;
 
 private:
   detail::fk_value_extractor fk_value_extractor_;

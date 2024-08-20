@@ -28,7 +28,7 @@ public:
   }
 
   template<typename ValueType>
-  void on_primary_key(const char *id, ValueType &value, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type* = 0);
+  void on_primary_key(const char *id, ValueType &value, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>>* = nullptr);
   void on_primary_key(const char *id, std::string &value, size_t size);
   void on_revision(const char * /*id*/, unsigned long long &/*rev*/) {}
 
@@ -61,7 +61,7 @@ public:
   void reset();
 
   template < class Type >
-  void on_primary_key(const char * /*id*/, Type &val, typename std::enable_if<std::is_integral<Type>::value && !std::is_same<bool, Type>::value>::type* = 0)
+  void on_primary_key(const char * /*id*/, Type &val, std::enable_if_t<std::is_integral_v<Type> && !std::is_same_v<bool, Type>>* = nullptr)
   {
     object::data_type_traits<Type>::bind_value(binder_, index_++, val);
   }
@@ -98,7 +98,7 @@ private:
 namespace detail {
 
 template<typename ValueType>
-void fk_binder::on_primary_key(const char *id, ValueType &value, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type *)
+void fk_binder::on_primary_key(const char *id, ValueType &value, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>> *)
 {
   object::data_type_traits<ValueType>::bind_value(binder_, index_++, value);
 }

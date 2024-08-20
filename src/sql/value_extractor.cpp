@@ -26,94 +26,94 @@ void value_extractor::on_attribute(const char *, std::string &x, const utils::fi
   object::data_type_traits<std::string>::bind_value(*this, 0, x, attr.size());
 }
 
-void value_extractor::bind(size_t /*pos*/, char i)
+void value_extractor::bind(size_t /*pos*/, const char &x)
 {
-  values_.emplace_back(i);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, short i)
+void value_extractor::bind(size_t /*pos*/, const short &x)
 {
-  values_.emplace_back(i);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, int i)
+void value_extractor::bind(size_t /*pos*/, const int &x)
 {
-  values_.emplace_back(i);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, long i)
+void value_extractor::bind(size_t /*pos*/, const long &x)
 {
-  values_.emplace_back(i);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, long long int i)
+void value_extractor::bind(size_t /*pos*/, const long long int &x)
 {
-  values_.emplace_back(i);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, unsigned char i)
+void value_extractor::bind(size_t /*pos*/, const unsigned char &x)
 {
-  values_.emplace_back(i);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, unsigned short i)
+void value_extractor::bind(size_t /*pos*/, const unsigned short &x)
 {
-  values_.emplace_back(i);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, unsigned int i)
+void value_extractor::bind(size_t /*pos*/, const unsigned int &x)
 {
-  values_.emplace_back(i);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, unsigned long i)
+void value_extractor::bind(size_t /*pos*/, const unsigned long &x)
 {
-  values_.emplace_back(i);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, unsigned long long int i)
+void value_extractor::bind(size_t /*pos*/, const unsigned long long int &x)
 {
-  values_.emplace_back(i);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, bool b)
+void value_extractor::bind(size_t /*pos*/, const bool &x)
 {
-  values_.emplace_back(b);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, float d)
+void value_extractor::bind(size_t /*pos*/, const float &x)
 {
-  values_.emplace_back(d);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, double d)
+void value_extractor::bind(size_t /*pos*/, const double &x)
 {
-  values_.emplace_back(d);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, const time &time)
+void value_extractor::bind(size_t /*pos*/, const time &x)
 {
-  values_.emplace_back(time);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, const date &date)
+void value_extractor::bind(size_t /*pos*/, const date &x)
 {
-  values_.emplace_back(date);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, const char *string)
+void value_extractor::bind(size_t /*pos*/, const char *x)
 {
-  values_.emplace_back(string);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, const char *string, size_t /*size*/)
+void value_extractor::bind(size_t /*pos*/, const char *x, size_t /*size*/)
 {
-  values_.emplace_back(string);
+  values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, const std::string &string)
+void value_extractor::bind(size_t /*pos*/, const std::string &x)
 {
-  values_.emplace_back(string);
+  values_.emplace_back(x);
 }
 
 void value_extractor::bind(size_t /*pos*/, const std::string &x, size_t /*size*/)
@@ -121,9 +121,9 @@ void value_extractor::bind(size_t /*pos*/, const std::string &x, size_t /*size*/
   values_.emplace_back(x);
 }
 
-void value_extractor::bind(size_t /*pos*/, const utils::blob &blob)
+void value_extractor::bind(size_t /*pos*/, const utils::blob &x)
 {
-  values_.emplace_back(blob);
+  values_.emplace_back(x);
 }
 
 }

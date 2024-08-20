@@ -46,7 +46,7 @@ size_t odbc_statement::execute()
       ret = SQLParamData(stmt_, &pid);
       if (!is_success(ret) && ret != SQL_NEED_DATA) {
         // error
-        throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", str());
+        throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc", query_.sql);
       } else if (ret == SQL_NEED_DATA) {
         // determine next column data pointer
         it = binder_->data_to_put_map().find(pid);
@@ -58,11 +58,8 @@ size_t odbc_statement::execute()
     }
   } else {
     // check result
-    throw_database_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", str());
+    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc", query_.sql);
   }
-
-
-  return sqlite3_changes(db_);
 }
 
 std::unique_ptr<sql::query_result_impl> odbc_statement::fetch()

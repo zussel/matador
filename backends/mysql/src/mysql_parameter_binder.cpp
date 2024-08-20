@@ -96,94 +96,95 @@ mysql_parameter_binder::mysql_parameter_binder(size_t size)
 , info_(size)
 {}
 
-void mysql_parameter_binder::bind(size_t pos, char i)
+void mysql_parameter_binder::bind(size_t pos, const char &x)
 {
-  detail::bind_value(MYSQL_TYPE_TINY, i, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_TINY, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, short i)
+void mysql_parameter_binder::bind(size_t pos, const short &x)
 {
-  detail::bind_value(MYSQL_TYPE_SHORT, i, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_SHORT, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, int i)
+void mysql_parameter_binder::bind(size_t pos, const int &x)
 {
-  detail::bind_value(MYSQL_TYPE_LONG, i, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_LONG, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, long i)
+void mysql_parameter_binder::bind(size_t pos, const long &x)
 {
-  detail::bind_value(MYSQL_TYPE_LONG, i, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_LONG, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, long long int i)
+void mysql_parameter_binder::bind(size_t pos, const long long int &x)
 {
-  detail::bind_value(MYSQL_TYPE_LONGLONG, i, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_LONGLONG, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, unsigned char i)
+void mysql_parameter_binder::bind(size_t pos, const unsigned char &x)
 {
-  detail::bind_value(MYSQL_TYPE_TINY, i, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_TINY, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, unsigned short i)
+void mysql_parameter_binder::bind(size_t pos, const unsigned short &x)
 {
-  detail::bind_value(MYSQL_TYPE_SHORT, i, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_SHORT, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, unsigned int i)
+void mysql_parameter_binder::bind(size_t pos, const unsigned int &x)
 {
-  detail::bind_value(MYSQL_TYPE_LONG, i, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_LONG, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, unsigned long i)
+void mysql_parameter_binder::bind(size_t pos, const unsigned long &x)
 {
-  detail::bind_value(MYSQL_TYPE_LONG, i, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_LONG, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, unsigned long long int i)
+void mysql_parameter_binder::bind(size_t pos, const unsigned long long int &x)
 {
-  detail::bind_value(MYSQL_TYPE_LONGLONG, i, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_LONGLONG, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, bool b)
+void mysql_parameter_binder::bind(size_t pos, const bool &x)
 {
-  detail::bind_value(MYSQL_TYPE_TINY, b, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_TINY, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, float d)
+void mysql_parameter_binder::bind(size_t pos, const float &x)
 {
-  detail::bind_value(MYSQL_TYPE_FLOAT, d, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_FLOAT, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, double d)
+void mysql_parameter_binder::bind(size_t pos, const double &x)
 {
-  detail::bind_value(MYSQL_TYPE_DOUBLE, d, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_DOUBLE, x, bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, const char *str)
+void mysql_parameter_binder::bind(size_t pos, const char *x)
 {
-  detail::bind_value(MYSQL_TYPE_STRING, str, strlen(str), bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_STRING, x, strlen(x), bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, const char *str, size_t size)
+void mysql_parameter_binder::bind(size_t pos, const char *x, size_t /*size*/)
 {
-  detail::bind_value(MYSQL_TYPE_VAR_STRING, str, size, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_VAR_STRING, x, strlen(x), bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, const std::string &str)
+void mysql_parameter_binder::bind(size_t pos, const std::string &x)
 {
-  detail::bind_value(MYSQL_TYPE_STRING, str.data(), str.size(), bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_STRING, x.data(), x.size(), bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, const std::string &str, size_t size)
+void mysql_parameter_binder::bind(size_t pos, const std::string &x, size_t /*size*/)
 {
-  detail::bind_value(MYSQL_TYPE_VAR_STRING, str.data(), size, bind_params_[pos], is_null_vector[pos].is_null);
+  detail::bind_value(MYSQL_TYPE_VAR_STRING, x.data(), x.size(), bind_params_[pos], is_null_vector[pos].is_null);
 }
 
-void mysql_parameter_binder::bind(size_t pos, const utils::blob &blob)
+void mysql_parameter_binder::bind(size_t pos, const utils::blob &x)
 {
-
+  //Todo
+  // detail::bind_value(MYSQL_TYPE_BLOB, x.data(), x.size(), bind_params_[pos], is_null_vector[pos].is_null);
 }
 
 std::vector<MYSQL_BIND> &mysql_parameter_binder::bind_params()
@@ -193,25 +194,25 @@ std::vector<MYSQL_BIND> &mysql_parameter_binder::bind_params()
 
 void mysql_parameter_binder::bind( size_t pos, const time& x )
 {
-  if (bind.buffer == nullptr) {
-    size_t s = sizeof(MYSQL_TIME);
-    bind.buffer = new char[s];
-    bind.buffer_length = (unsigned long)s;
-    bind.buffer_type = MYSQL_TYPE_TIMESTAMP;
-    bind.length = nullptr;
-    bind.is_null = &is_null;
-  }
-  memset(bind.buffer, 0, sizeof(MYSQL_TIME));
-  // is_null = false;
-  auto *mt = static_cast<MYSQL_TIME*>(bind.buffer);
-  mt->day = static_cast<unsigned int>(x.day());
-  mt->month = static_cast<unsigned int>(x.month());
-  mt->year = static_cast<unsigned int>(x.year());
-  mt->hour = static_cast<unsigned int>(x.hour());
-  mt->minute = static_cast<unsigned int>(x.minute());
-  mt->second = static_cast<unsigned int>(x.second());
-  mt->second_part = x.milli_second() * 1000;
-  mt->time_type  = MYSQL_TIMESTAMP_DATETIME;
+  // if (bind.buffer == nullptr) {
+  //   size_t s = sizeof(MYSQL_TIME);
+  //   bind.buffer = new char[s];
+  //   bind.buffer_length = (unsigned long)s;
+  //   bind.buffer_type = MYSQL_TYPE_TIMESTAMP;
+  //   bind.length = nullptr;
+  //   bind.is_null = &is_null;
+  // }
+  // memset(bind.buffer, 0, sizeof(MYSQL_TIME));
+  // // is_null = false;
+  // auto *mt = static_cast<MYSQL_TIME*>(bind.buffer);
+  // mt->day = static_cast<unsigned int>(x.day());
+  // mt->month = static_cast<unsigned int>(x.month());
+  // mt->year = static_cast<unsigned int>(x.year());
+  // mt->hour = static_cast<unsigned int>(x.hour());
+  // mt->minute = static_cast<unsigned int>(x.minute());
+  // mt->second = static_cast<unsigned int>(x.second());
+  // mt->second_part = x.milli_second() * 1000;
+  // mt->time_type  = MYSQL_TIMESTAMP_DATETIME;
 }
 
 void mysql_parameter_binder::bind( size_t pos, const date& date )
