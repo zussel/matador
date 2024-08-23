@@ -57,7 +57,7 @@ private:
     if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), type, &val, sizeof(Type), &info); !SQL_SUCCEEDED(ret)) {
       std::string msg{"error on retrieving value for column "};
       msg += std::string(id) + " (type " + typeid(Type).name() + ")";
-      throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", msg);
+      throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc", msg);
     }
   }
 

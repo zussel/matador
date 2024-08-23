@@ -2,6 +2,8 @@
 
 #include <sqlext.h>
 
+#include "matador/sql/value.hpp"
+
 namespace matador::backends::odbc {
 
 odbc_result_reader::odbc_result_reader(SQLHANDLE stmt)
@@ -116,24 +118,26 @@ void odbc_result_reader::read_value(const char *id, size_t index, double &value)
 void odbc_result_reader::read_value(const char *id, size_t index, char *value, size_t s)
 {
   SQLLEN info = 0;
-  if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, value, s, &info); ret != SQL_SUCCESS) {
-    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
+  if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, value, static_cast<SQLLEN>(s), &info); ret != SQL_SUCCESS) {
+    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc");
   }
 }
 
 void odbc_result_reader::read_value(const char *id, size_t index, std::string &value)
 {
-  char buf[1024];
+  SQLCHAR char_data[5000];
+
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, buf, 1024, &info);
-  if (SQL_SUCCEEDED(ret)) {
-    if (info > 0) {
-      value.assign(buf, info);
+  SQLRETURN ret;
+  while ((ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, char_data, sizeof(char_data), &info)) != SQL_NO_DATA) {
+    if (SQL_SUCCEEDED(ret)) {
+      break;
+    } if (ret == SQL_ERROR) {
+      throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc");
     } else {
-      value.clear();
+      const auto len = (info > 5000) || (info == SQL_NO_TOTAL) ? 5000 : info;
+      value.append(std::begin(char_data), std::begin(char_data) + len);
     }
-  } else {
-    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
   }
 }
 
@@ -182,12 +186,136 @@ void odbc_result_reader::read_value(const char *id, size_t index, date &value) {
 }
 
 void odbc_result_reader::read_value(const char *id, size_t index, utils::blob &value) {
-  query_result_reader::read_value(id, index, value);
+  SQLCHAR binary_data[5000];
+
+  SQLLEN info = 0;
+  SQLRETURN ret;
+  while ((ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_BINARY, binary_data, sizeof(binary_data), &info)) != SQL_NO_DATA) {
+    if (SQL_SUCCEEDED(ret)) {
+      break;
+    } if (ret == SQL_ERROR) {
+      throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc");
+    } else {
+      const auto len = (info > 5000) || (info == SQL_NO_TOTAL) ? 5000 : info;
+      value.insert(value.begin(), std::begin(binary_data), std::begin(binary_data) + len);
+    }
+  }
 }
 
-void odbc_result_reader::read_value(const char *id, size_t index, sql::value &val, size_t size)
+void odbc_result_reader::read_value(const char *id, const size_t index, sql::value &val, size_t size)
 {
-  query_result_reader::read_value(id, index, val, size);
+  switch (val.type()) {
+    case data_type::type_char: {
+      char value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_short: {
+      short value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_int: {
+      int value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_long: {
+      long value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_long_long: {
+      long long value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_unsigned_char: {
+      unsigned char value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_unsigned_short: {
+      unsigned short value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_unsigned_int: {
+      unsigned int value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_unsigned_long: {
+      unsigned long value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_unsigned_long_long: {
+      unsigned long long value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_bool: {
+      bool value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_float: {
+      float value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_double: {
+      double value{};
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_text: {
+      std::string value;
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_varchar: {
+      std::string value;
+      read_value(id, index, value, size);
+      val = value;
+      break;
+    }
+    case data_type::type_date: {
+      date value;
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_time: {
+      time value;
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    case data_type::type_blob: {
+      utils::blob value;
+      read_value(id, index, value);
+      val = value;
+      break;
+    }
+    default:
+      break;
+  }
 }
 
 int odbc_result_reader::type2int(data_type type) {

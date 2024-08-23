@@ -1,5 +1,5 @@
 #include "odbc_statement.hpp"
-#include "odbc_prepared_result_reader.hpp"
+#include "odbc_result_reader.hpp"
 #include "odbc_error.hpp"
 
 namespace matador::backends::odbc {
@@ -75,7 +75,7 @@ std::unique_ptr<sql::query_result_impl> odbc_statement::fetch()
   if (ret == SQL_NEED_DATA) {
   }
 
-  auto reader = std::make_unique<odbc_prepared_result_reader>(stmt_);
+  auto reader = std::make_unique<odbc_result_reader>(stmt_);
   return std::move(std::make_unique<sql::query_result_impl>(std::move(reader), query_.prototype));
 }
 
