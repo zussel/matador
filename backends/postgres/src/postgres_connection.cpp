@@ -20,7 +20,7 @@ void postgres_connection::open() {
     return;
   }
 
-  std::string connection(
+  const std::string connection(
     "user=" + info().user + " password=" + info().password + " host=" + info().hostname + " dbname=" + info().database +
     " port=" + std::to_string(info().port));
 
