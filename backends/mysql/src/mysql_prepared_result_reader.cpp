@@ -6,11 +6,6 @@ mysql_prepared_result_reader::mysql_prepared_result_reader(MYSQL_STMT *stmt)
 : stmt_(stmt)
 {}
 
-mysql_prepared_result_reader::~mysql_prepared_result_reader()
-{
-
-}
-
 size_t mysql_prepared_result_reader::column_count() const
 {
   return 0;

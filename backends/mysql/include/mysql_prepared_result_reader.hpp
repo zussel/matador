@@ -15,7 +15,6 @@ class mysql_prepared_result_reader : public sql::query_result_reader
 {
 public:
   explicit mysql_prepared_result_reader(MYSQL_STMT *stmt);
-  ~mysql_prepared_result_reader() override;
 
   [[nodiscard]] size_t column_count() const override;
   [[nodiscard]] const char *column(size_t index) const override;
