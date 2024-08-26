@@ -3,9 +3,9 @@
 #include "matador/utils/result.hpp"
 
 namespace matador::test {
-
 enum class math_error : int32_t {
-  DIVISION_BY_ZERO = 1
+  DIVISION_BY_ZERO = 1,
+  FAILURE = 2
 };
 
 utils::result<float, math_error>divide(int x, int y) {
@@ -31,6 +31,13 @@ utils::result<float, std::string>error_to_string(math_error err) {
     default:
       return utils::error(std::string("unknown error"));
   }
+}
+
+utils::result<void, math_error>action_on_greater_42(const int i) {
+  if (i > 42) {
+    return utils::ok<void>();
+  }
+  return utils::error(math_error::FAILURE);
 }
 
 }
@@ -92,4 +99,25 @@ TEST_CASE("Result tests", "[result]") {
   REQUIRE(!res.is_error());
   REQUIRE((res.value() == 20.0));
 
+  auto res_void = test::action_on_greater_42(43);
+  REQUIRE(res_void);
+  REQUIRE(res_void.is_ok());
+  REQUIRE(!res_void.is_error());
+
+  res_void = test::action_on_greater_42(41);
+  REQUIRE(!res_void);
+  REQUIRE(!res_void.is_ok());
+  REQUIRE(res_void.is_error());
+
+  res_void = test::divide(4, 2)
+    .and_then([](const auto &val) { return test::action_on_greater_42(val); });
+  REQUIRE(!res_void);
+  REQUIRE(!res_void.is_ok());
+  REQUIRE(res_void.is_error());
+
+  res_void = test::divide(120, 2)
+    .and_then([](const auto &val) { return test::action_on_greater_42(val); });
+  REQUIRE(res_void);
+  REQUIRE(res_void.is_ok());
+  REQUIRE(!res_void.is_error());
 }

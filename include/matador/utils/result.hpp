@@ -2,6 +2,8 @@
 #define QUERY_RESULT_HPP
 
 #include <variant>
+#include <optional>
+#include <functional>
 
 namespace matador::utils {
 
@@ -28,6 +30,14 @@ public:
 
 private:
   ValueType value_;
+};
+
+template <>
+class ok<void>
+{
+public:
+  using value_type = void;
+  explicit constexpr ok() = default;
 };
 
 template < typename ErrorType >
@@ -77,7 +87,7 @@ public:
   constexpr const ValueType* operator->() const { return &value(); }
   constexpr ValueType* operator->() { return &std::get<value_type>(result_).value(); }
 
-  template<typename Func, typename SecondValueType = typename std::invoke_result_t<Func, ValueType >>
+  template<typename Func, typename SecondValueType = std::invoke_result_t<Func, ValueType >>
   result<SecondValueType, ErrorType> transform(Func &&f) {
     if (is_ok()) {
       return result<SecondValueType, ErrorType>(ok(f(release())));
@@ -95,6 +105,14 @@ public:
     return result<SecondValueType, ErrorType>(error(release_error()));
   }
 
+  result<void, ErrorType> and_then(std::function<result<void, ErrorType>()> &&f) {
+    if (is_ok()) {
+      return f();
+    }
+
+    return result<void, ErrorType>(error(release_error()));
+  }
+
   template<typename Func, typename SecondErrorType = typename std::invoke_result_t<Func, ErrorType >::error_type::value_type>
   result<ValueType, SecondErrorType> or_else(Func &&f) {
     if (is_error()) {
@@ -106,6 +124,62 @@ public:
 
 private:
   std::variant<value_type, error_type> result_;
+};
+
+template < typename ErrorType >
+class result<void, ErrorType>
+{
+public:
+  using value_type = ok<void>;
+  using error_type = error<ErrorType>;
+
+  result() = default;
+  result(value_type /*value*/) {};
+  result(error_type error) : result_(std::move(error)) {} // NOLINT(*-explicit-constructor)
+  result(const result<void, ErrorType> &x) = default;
+  result& operator=(const result<void, ErrorType> &x) = default;
+  result(result<void, ErrorType> &&x) = default;
+  result& operator=(result<void, ErrorType> &&x) = default;
+
+  operator bool() const { return is_ok(); } // NOLINT(*-explicit-constructor)
+
+  [[nodiscard]] bool is_ok() const { return !result_.has_value(); }
+  [[nodiscard]] bool is_error() const { return result_.has_value(); }
+
+  ErrorType&& release_error() { return result_->release(); }
+
+  const ErrorType& err() const { return std::get<error_type>(result_).value(); }
+  ErrorType err() { return std::get<error_type>(result_).value(); }
+
+  template<typename Func, typename SecondValueType = typename std::invoke_result_t<Func>>
+  result<SecondValueType, ErrorType> transform(Func &&f) {
+    if (is_ok()) {
+      return result<SecondValueType, ErrorType>(ok(f()));
+    }
+
+    return result<SecondValueType, ErrorType>(error(release_error()));
+  }
+
+  template<typename Func, typename SecondValueType = typename std::invoke_result_t<Func>::value_type::value_type>
+  result<SecondValueType, ErrorType> and_then(Func &&f) {
+    if (is_ok()) {
+      return f();
+    }
+
+    return result<SecondValueType, ErrorType>(error(release_error()));
+  }
+
+  template<typename Func, typename SecondErrorType = typename std::invoke_result_t<Func, ErrorType >::error_type::value_type>
+  result<void, SecondErrorType> or_else(Func &&f) {
+    if (is_error()) {
+      return f(err());
+    }
+
+    return result<void, SecondErrorType>(ok<void>());
+  }
+
+private:
+  std::optional<error_type> result_;
 };
 
 }
