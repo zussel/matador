@@ -216,13 +216,13 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute insert record statement", "[query]
   for (const auto &i: result) {
     REQUIRE(i.size() == 3);
     REQUIRE(i.at(0).name() == "id");
-    //    REQUIRE(i.at(0).type() == data_type_t::type_long_long);
+    REQUIRE(i.at(0).is_integer());
     REQUIRE(i.at(0).template as<long long>() == 7);
     REQUIRE(i.at(1).name() == "name");
-    //    REQUIRE(i.at(1).type() == data_type_t::type_varchar);
+    REQUIRE(i.at(1).is_integer());
     REQUIRE(i.at(1).template as<std::string>() == "george");
     REQUIRE(i.at(2).name() == "age");
-    //    REQUIRE(i.at(2).type() == matador::sql::data_type_t::type_int);
+    REQUIRE(i.at(2).is_integer());
     REQUIRE(i.at(2).template as<int>() == 45);
   }
 
