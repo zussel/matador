@@ -21,6 +21,28 @@ const table_info& schema::attach(const std::type_index ti, const table_info& tab
   return ref;
 }
 
+utils::result<void, error> schema::create(connection &db) {
+  for (const auto &info : repository_) {
+    db.query(*this)
+      .create()
+      .table(info.second.name, info.second.prototype.columns())
+      .execute();
+  }
+
+  return utils::ok<void>();
+}
+
+utils::result<void, error> schema::drop(connection &db) {
+  for (const auto &info : repository_) {
+    db.query(*this)
+      .drop()
+      .table(info.second.name)
+      .execute();
+  }
+
+  return utils::ok<void>();
+}
+
 std::optional<table_info> schema::info(std::type_index ti) const
 {
   const auto it = repository_.find(ti);
@@ -41,8 +63,7 @@ std::optional<table_info> schema::info(const std::string &name) const
 
 std::pair<std::string, std::string> schema::reference(const std::type_index &ti) const
 {
-  const auto it = repository_.find(ti);
-  if (it != repository_.end()) {
+  if (const auto it = repository_.find(ti); it != repository_.end()) {
     if (!it->second.prototype.has_primary_key()) {
       throw std::logic_error("table doesn't has primary key");
     }
