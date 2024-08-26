@@ -3,7 +3,6 @@
 
 #include "matador/sql/connection_info.hpp"
 
-#include <chrono>
 #include <mutex>
 #include <string>
 #include <optional>
@@ -96,7 +95,7 @@ public:
   }
 
   connection_pointer try_acquire() {
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::unique_lock lock(mutex_);
     if (idle_connections_.empty()) {
       return {nullptr, this};
     }
@@ -108,7 +107,7 @@ public:
     using namespace std::chrono_literals;
     pointer next_connection{nullptr};
     auto try_count{0};
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::unique_lock lock(mutex_);
 
     do {
       if (auto it = idle_connections_.find(id); it != idle_connections_.end()) {
