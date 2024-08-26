@@ -8,20 +8,20 @@ enum class math_error : int32_t {
   FAILURE = 2
 };
 
-utils::result<float, math_error>divide(int x, int y) {
+utils::result<float, math_error>divide(const float x, const float y) {
   if (y == 0) {
     return utils::error(math_error::DIVISION_BY_ZERO);
   }
 
-  return utils::ok(float(x) / (float)y);
+  return utils::ok(x / y);
 }
 
-utils::result<float, math_error>multiply(int x, int y) {
-  return utils::ok(float(x) * (float)y);
+utils::result<float, math_error>multiply(const float x, const float y) {
+  return utils::ok(x * y);
 }
 
-utils::result<float, math_error>plus(int x, int y) {
-  return utils::ok(float(x) + (float)y);
+utils::result<float, math_error>plus(const float x, const float y) {
+  return utils::ok(x + y);
 }
 
 utils::result<float, std::string>error_to_string(math_error err) {
@@ -33,7 +33,7 @@ utils::result<float, std::string>error_to_string(math_error err) {
   }
 }
 
-utils::result<void, math_error>action_on_greater_42(const int i) {
+utils::result<void, math_error>action_on_greater_42(const float i) {
   if (i > 42) {
     return utils::ok<void>();
   }
