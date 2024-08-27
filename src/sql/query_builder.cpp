@@ -11,35 +11,35 @@ namespace matador::sql {
 
 namespace detail {
 
-any_type_to_string_visitor::any_type_to_string_visitor(const dialect &d, query_context &query)
-: d(d), query(query)
-{}
-
-void any_type_to_string_visitor::to_string(const char *val)
-{
-  result = "'" + d.prepare_literal(val) + "'";
-}
-
-void any_type_to_string_visitor::to_string(std::string &val)
-{
-  result = "'" + d.prepare_literal(val) + "'";
-}
-
-void any_type_to_string_visitor::to_string(utils::blob &val)
-{
-  // "This is a binary Data string" as binary data:
-  // MySQL:    X'5468697320697320612062616E617279204461746120737472696E67'
-  // Postgres: E'\\x5468697320697320612062616E617279204461746120737472696E67'
-  // MSSQL:    0x5468697320697320612062616E617279204461746120737472696E67
-  // Sqlite:   X'5468697320697320612062616E617279204461746120737472696E67'
-  result = d.token_at(dialect_token::BEGIN_BINARY_DATA) + utils::to_string(val) + d.token_at(dialect_token::END_BINARY_DATA);
-}
-
-void any_type_to_string_visitor::to_string(utils::placeholder &/*val*/)
-{
-  query.bind_vars.emplace_back("unknown");
-  result = d.next_placeholder(query.bind_vars);
-}
+// any_type_to_string_visitor::any_type_to_string_visitor(const dialect &d, query_context &query)
+// : d(d), query(query)
+// {}
+//
+// void any_type_to_string_visitor::to_string(const char *val)
+// {
+//   result = "'" + d.prepare_literal(val) + "'";
+// }
+//
+// void any_type_to_string_visitor::to_string(std::string &val)
+// {
+//   result = "'" + d.prepare_literal(val) + "'";
+// }
+//
+// void any_type_to_string_visitor::to_string(utils::blob &val)
+// {
+//   // "This is a binary Data string" as binary data:
+//   // MySQL:    X'5468697320697320612062616E617279204461746120737472696E67'
+//   // Postgres: E'\\x5468697320697320612062616E617279204461746120737472696E67'
+//   // MSSQL:    0x5468697320697320612062616E617279204461746120737472696E67
+//   // Sqlite:   X'5468697320697320612062616E617279204461746120737472696E67'
+//   result = d.token_at(dialect_token::BEGIN_BINARY_DATA) + utils::to_string(val) + d.token_at(dialect_token::END_BINARY_DATA);
+// }
+//
+// void any_type_to_string_visitor::to_string(utils::placeholder &/*val*/)
+// {
+//   query.bind_vars.emplace_back("unknown");
+//   result = d.next_placeholder(query.bind_vars);
+// }
 
 }
 

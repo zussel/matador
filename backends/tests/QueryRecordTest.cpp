@@ -5,43 +5,15 @@
 #include "matador/sql/connection.hpp"
 #include "matador/sql/query_builder.hpp"
 
-#include "connection.hpp"
+#include "QueryFixture.hpp"
 
 #include <list>
 #include <algorithm>
 
-class QueryRecordFixture
-{
-public:
-  QueryRecordFixture()
-  : db(matador::test::connection::dns)
-  , schema(db.dialect().default_schema_name())
-  {
-    db.open();
-  }
-  ~QueryRecordFixture() {
-    drop_table_if_exists("flight");
-    drop_table_if_exists("airplane");
-    drop_table_if_exists("person");
-    drop_table_if_exists("quotes");
-    drop_table_if_exists("types");
-  }
-
-protected:
-  matador::sql::connection db;
-  matador::sql::schema schema;
-
-private:
-  void drop_table_if_exists(const std::string &table_name) {
-    if (db.exists(table_name)) {
-      db.query(schema).drop().table(table_name).execute();
-    }
-  }
-};
-
 using namespace matador::sql;
+using namespace matador::test;
 
-TEST_CASE_METHOD(QueryRecordFixture, "Test all data types for record", "[query][record][data types]") {
+TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record][data types]") {
   REQUIRE(!db.exists("types"));
   db.query(schema).create()
     .table("types", {
@@ -68,6 +40,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test all data types for record", "[query][
     .execute();
 
   REQUIRE(db.exists("types"));
+  tables_to_drop.insert("types");
 
   auto cols = std::vector<std::string>{"id",
                                        "val_char", "val_short", "val_int", "val_long", "val_long_long",
@@ -137,7 +110,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test all data types for record", "[query][
   REQUIRE(bin == row->at<matador::utils::blob>("val_blob"));
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Create and drop table statement", "[query][record]")
+TEST_CASE_METHOD(QueryFixture, "Create and drop table statement", "[query][record]")
 {
   REQUIRE(!db.exists("person"));
   db.query(schema).create()
@@ -149,6 +122,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Create and drop table statement", "[query]
     .execute();
 
   REQUIRE(db.exists("person"));
+  tables_to_drop.insert("person");
 
   db.query(schema).drop()
     .table("person")
@@ -157,7 +131,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Create and drop table statement", "[query]
   REQUIRE(!db.exists("person"));
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Create and drop table statement with foreign key", "[query][record]")
+TEST_CASE_METHOD(QueryFixture, "Create and drop table statement with foreign key", "[query][record]")
 {
   db.query(schema).create()
   .table("airplane", {
@@ -168,6 +142,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Create and drop table statement with forei
   .execute();
 
   REQUIRE(db.exists("airplane"));
+  tables_to_drop.insert("airplane");
 
   db.query(schema).create()
   .table("flight", {
@@ -178,6 +153,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Create and drop table statement with forei
   .execute();
 
   REQUIRE(db.exists("flight"));
+  tables_to_drop.insert("flight");
 
   db.query(schema).drop()
   .table("flight")
@@ -192,7 +168,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Create and drop table statement with forei
   REQUIRE(!db.exists("airplane"));
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Execute insert record statement", "[query][record]")
+TEST_CASE_METHOD(QueryFixture, "Execute insert record statement", "[query][record]")
 {
   db.query(schema).create()
   .table("person", {
@@ -201,6 +177,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute insert record statement", "[query]
     make_column<unsigned short>("age")
   })
   .execute();
+  tables_to_drop.insert("person");
 
   auto res = db.query(schema).insert()
   .into("person", {"id", "name", "age"})
@@ -219,7 +196,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute insert record statement", "[query]
     REQUIRE(i.at(0).is_integer());
     REQUIRE(i.at(0).template as<long long>() == 7);
     REQUIRE(i.at(1).name() == "name");
-    REQUIRE(i.at(1).is_integer());
+    REQUIRE(i.at(1).is_varchar());
     REQUIRE(i.at(1).template as<std::string>() == "george");
     REQUIRE(i.at(2).name() == "age");
     REQUIRE(i.at(2).is_integer());
@@ -231,7 +208,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute insert record statement", "[query]
   .execute();
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Execute insert record statement with foreign key", "[query][record]")
+TEST_CASE_METHOD(QueryFixture, "Execute insert record statement with foreign key", "[query][record]")
 {
   db.query(schema).create()
   .table("airplane", {
@@ -240,6 +217,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute insert record statement with forei
     make_column<std::string>("model", 255),
   })
   .execute();
+  tables_to_drop.insert("airplane");
 
   db.query(schema).create()
   .table("flight", {
@@ -248,6 +226,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute insert record statement with forei
     make_column<std::string>("pilot_name", 255),
   })
   .execute();
+  tables_to_drop.insert("flight");
 
   auto res = db.query(schema).insert().into("airplane", {"id", "brand", "model"}).values({1, "Airbus", "A380"}).execute();
   REQUIRE(res == 1);
@@ -271,7 +250,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute insert record statement with forei
   REQUIRE(!db.exists("airplane"));
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Execute update record statement", "[query][record]")
+TEST_CASE_METHOD(QueryFixture, "Execute update record statement", "[query][record]")
 {
   db.query(schema).create()
   .table("person", {
@@ -280,6 +259,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute update record statement", "[query]
     make_column<unsigned short>("age")
   })
   .execute();
+  tables_to_drop.insert("person");
 
   auto res = db.query(schema).insert()
   .into("person", {"id", "name", "age"})
@@ -317,7 +297,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute update record statement", "[query]
   db.query(schema).drop().table("person").execute();
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Execute select statement", "[query][record]")
+TEST_CASE_METHOD(QueryFixture, "Execute select statement", "[query][record]")
 {
   db.query(schema).create()
   .table("person", {
@@ -326,6 +306,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute select statement", "[query][record
     make_column<unsigned short>("age")
   })
   .execute();
+  tables_to_drop.insert("person");
 
   auto res = db.query(schema).insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute();
   REQUIRE(res == 1);
@@ -361,7 +342,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute select statement", "[query][record
   db.query(schema).drop().table("person").execute();
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Execute select statement with order by", "[query][record]")
+TEST_CASE_METHOD(QueryFixture, "Execute select statement with order by", "[query][record]")
 {
   db.query(schema).create()
   .table("person", {
@@ -370,6 +351,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute select statement with order by", "
     make_column<unsigned short>("age")
   })
   .execute();
+  tables_to_drop.insert("person");
 
   auto res = db.query(schema).insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute();
   REQUIRE(res == 1);
@@ -395,7 +377,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute select statement with order by", "
   db.query(schema).drop().table("person").execute();
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Execute select statement with group by and order by", "[query][record]")
+TEST_CASE_METHOD(QueryFixture, "Execute select statement with group by and order by", "[query][record]")
 {
   db.query(schema).create()
   .table("person", {
@@ -404,6 +386,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute select statement with group by and
     make_column<unsigned short>("age")
   })
   .execute();
+  tables_to_drop.insert("person");
 
   auto res = db.query(schema).insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute();
   REQUIRE(res == 1);
@@ -440,7 +423,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute select statement with group by and
   db.query(schema).drop().table("person").execute();
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Execute delete statement", "[query][record]")
+TEST_CASE_METHOD(QueryFixture, "Execute delete statement", "[query][record]")
 {
   db.query(schema).create()
   .table("person", {
@@ -448,6 +431,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute delete statement", "[query][record
     make_column<std::string>("name", 255),
     make_column<unsigned short>("age")
   }).execute();
+  tables_to_drop.insert("person");
 
   auto res = db.query(schema).insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute();
   REQUIRE(res == 1);
@@ -470,12 +454,13 @@ TEST_CASE_METHOD(QueryRecordFixture, "Execute delete statement", "[query][record
   db.query(schema).drop().table("person").execute();
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Test quoted identifier record", "[query][record]") {
+TEST_CASE_METHOD(QueryFixture, "Test quoted identifier record", "[query][record]") {
   db.query(schema).create()
   .table("quotes", {
     make_column<std::string>("from", 255),
     make_column<std::string>("to", 255)
   }).execute();
+  tables_to_drop.insert("quotes");
 
   // check table description
   std::vector<std::string> columns = { "from", "to"};
@@ -505,7 +490,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test quoted identifier record", "[query][r
   db.query(schema).drop().table("quotes").execute();
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Test create record", "[query][record][create]") {
+TEST_CASE_METHOD(QueryFixture, "Test create record", "[query][record][create]") {
   REQUIRE(!db.exists("person"));
   db.query(schema).create()
     .table("person", {
@@ -514,6 +499,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test create record", "[query][record][crea
       make_column<unsigned short>("age")
     })
     .execute();
+  tables_to_drop.insert("person");
 
   REQUIRE(db.exists("person"));
   const std::vector<std::string> cols = {"id", "name", "age"};
@@ -524,7 +510,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test create record", "[query][record][crea
   }
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Test insert record", "[query][record][insert]") {
+TEST_CASE_METHOD(QueryFixture, "Test insert record", "[query][record][insert]") {
   REQUIRE(!db.exists("person"));
   db.query(schema).create()
     .table("person", {
@@ -533,6 +519,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test insert record", "[query][record][inse
       make_column<unsigned short>("age")
     })
     .execute();
+  tables_to_drop.insert("person");
 
   REQUIRE(db.exists("person"));
 
@@ -555,7 +542,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test insert record", "[query][record][inse
   REQUIRE(row->at("age").as<unsigned short>() == 45);
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Test update record", "[query][record][update]") {
+TEST_CASE_METHOD(QueryFixture, "Test update record", "[query][record][update]") {
   REQUIRE(!db.exists("person"));
   db.query(schema).create()
     .table("person", {
@@ -564,6 +551,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test update record", "[query][record][upda
       make_column<unsigned short>("age")
     })
     .execute();
+  tables_to_drop.insert("person");
 
   REQUIRE(db.exists("person"));
 
@@ -603,7 +591,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test update record", "[query][record][upda
   REQUIRE(row->at("age").as<unsigned short>() == 47);
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Test prepared record statement", "[query][record][prepared]") {
+TEST_CASE_METHOD(QueryFixture, "Test prepared record statement", "[query][record][prepared]") {
   REQUIRE(!db.exists("person"));
   auto stmt = db.query(schema).create()
     .table("person", {
@@ -612,6 +600,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test prepared record statement", "[query][
       make_column<unsigned short>("age")
     })
     .prepare();
+  tables_to_drop.insert("person");
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
@@ -625,7 +614,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test prepared record statement", "[query][
   }
 }
 
-TEST_CASE_METHOD(QueryRecordFixture, "Test scalar result", "[query][record][scalar][result]") {
+TEST_CASE_METHOD(QueryFixture, "Test scalar result", "[query][record][scalar][result]") {
   REQUIRE(!db.exists("person"));
   db.query(schema).create()
     .table("person", {
@@ -634,6 +623,7 @@ TEST_CASE_METHOD(QueryRecordFixture, "Test scalar result", "[query][record][scal
     .execute();
 
   REQUIRE(db.exists("person"));
+  tables_to_drop.insert("person");
 
   std::vector<unsigned long> ids({ 1,2,3,4 });
 

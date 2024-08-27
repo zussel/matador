@@ -21,39 +21,39 @@ struct any_type_to_string_visitor
 {
   explicit any_type_to_string_visitor(const dialect &d, query_context &query);
 
-  void operator()(char &x) { to_string(x); }
-  void operator()(short &x) { to_string(x); }
-  void operator()(int &x) { to_string(x); }
-  void operator()(long &x) { to_string(x); }
-  void operator()(long long &x) { to_string(x); }
-  void operator()(unsigned char &x) { to_string(x); }
-  void operator()(unsigned short &x) { to_string(x); }
-  void operator()(unsigned int &x) { to_string(x); }
-  void operator()(unsigned long &x) { to_string(x); }
-  void operator()(unsigned long long &x) { to_string(x); }
-  void operator()(bool &x) { to_string(x); }
-  void operator()(float &x) { to_string(x); }
-  void operator()(double &x) { to_string(x); }
+  void operator()(const char &x) { to_string(x); }
+  void operator()(const short &x) { to_string(x); }
+  void operator()(const int &x) { to_string(x); }
+  void operator()(const long &x) { to_string(x); }
+  void operator()(const long long &x) { to_string(x); }
+  void operator()(const unsigned char &x) { to_string(x); }
+  void operator()(const unsigned short &x) { to_string(x); }
+  void operator()(const unsigned int &x) { to_string(x); }
+  void operator()(const unsigned long &x) { to_string(x); }
+  void operator()(const unsigned long long &x) { to_string(x); }
+  void operator()(const bool &x) { to_string(x); }
+  void operator()(const float &x) { to_string(x); }
+  void operator()(const double &x) { to_string(x); }
   void operator()(const char *x) { to_string(x); }
-  void operator()(std::string &x) { to_string(x); }
-  void operator()(matador::date &x) { to_string(x); }
-  void operator()(matador::time &x) { to_string(x); }
-  void operator()(utils::blob &x) { to_string(x); }
-  void operator()(utils::placeholder &x) { to_string(x); }
+  void operator()(const std::string &x) { to_string(x); }
+  void operator()(const matador::date &x) { to_string(x); }
+  void operator()(const matador::time &x) { to_string(x); }
+  void operator()(const utils::blob &x) { to_string(x); }
+  void operator()(const utils::placeholder &x) { to_string(x); }
 
   template<typename Type>
-  void to_string(Type &val)
+  void to_string(const Type &val)
   {
     result = std::to_string(val);
   }
-  void to_string(float &val);
-  void to_string(double &val);
+  void to_string(const float &val);
+  void to_string(const double &val);
   void to_string(const char *val);
-  void to_string(std::string &val);
-  void to_string(matador::date &val);
-  void to_string(matador::time &val);
-  void to_string(utils::blob &val);
-  void to_string(utils::placeholder &val);
+  void to_string(const std::string &val);
+  void to_string(const matador::date &val);
+  void to_string(const matador::time &val);
+  void to_string(const utils::blob &val);
+  void to_string(const utils::placeholder &val);
 
   const dialect &d;
   query_context &query;
