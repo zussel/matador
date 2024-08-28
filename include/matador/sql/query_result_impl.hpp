@@ -23,14 +23,14 @@ public:
   explicit pk_reader(query_result_reader &reader);
 
   template<class Type>
-  void read(Type &obj, size_t column_index)
+  void read(Type &obj, const size_t column_index)
   {
     column_index_ = column_index;
     access::process(*this, obj);
   }
 
   template<typename ValueType>
-  void on_primary_key(const char *id, ValueType &value, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type* = 0);
+  void on_primary_key(const char *id, ValueType &value, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>>* = nullptr);
   void on_primary_key(const char *id, std::string &value, size_t size);
   void on_revision(const char * /*id*/, unsigned long long &/*rev*/) {}
 
@@ -58,10 +58,10 @@ private:
 class query_result_impl
 {
 public:
-  query_result_impl(std::unique_ptr<query_result_reader> &&reader, std::vector<column_definition> prototype);
+  query_result_impl(std::unique_ptr<query_result_reader> &&reader, std::vector<column_definition> prototype, size_t column_index = 0);
 
   template<typename ValueType>
-  void on_primary_key(const char *id, ValueType &value, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type* = 0)
+  void on_primary_key(const char *id, ValueType &value, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>>* = nullptr)
   {
     object::data_type_traits<ValueType>::read_value(*reader_, id, column_index_++, value);
   }
@@ -133,7 +133,7 @@ protected:
 namespace detail {
 
 template<typename ValueType>
-void detail::pk_reader::on_primary_key(const char *id, ValueType &value, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type *)
+void detail::pk_reader::on_primary_key(const char *id, ValueType &value, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>> *)
 {
   object::data_type_traits<ValueType>::read_value(reader_, id, column_index_++, value);
 }

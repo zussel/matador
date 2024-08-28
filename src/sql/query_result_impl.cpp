@@ -12,8 +12,9 @@ void detail::pk_reader::on_primary_key(const char *id, std::string &value, size_
   object::data_type_traits<std::string>::read_value(reader_, id, column_index_++, value, size);
 }
 
-query_result_impl::query_result_impl(std::unique_ptr<query_result_reader> &&reader, std::vector<column_definition> prototype)
-: prototype_(std::move(prototype))
+query_result_impl::query_result_impl(std::unique_ptr<query_result_reader> &&reader, std::vector<column_definition> prototype, const size_t column_index)
+: column_index_(column_index)
+, prototype_(std::move(prototype))
 , reader_(std::move(reader))
 , pk_reader_(*reader_)
 {}

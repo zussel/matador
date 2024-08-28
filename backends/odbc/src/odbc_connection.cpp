@@ -115,7 +115,7 @@ std::unique_ptr<sql::query_result_impl> odbc_connection::fetch(const std::string
     columns.push_back(describe_column(stmt, i));
   }
 
-  return std::make_unique<sql::query_result_impl>(std::make_unique<odbc_result_reader>(stmt), std::move(columns));
+  return std::make_unique<sql::query_result_impl>(std::make_unique<odbc_result_reader>(stmt), std::move(columns), 1);
 }
 
 std::unique_ptr<sql::statement_impl> odbc_connection::prepare(sql::query_context query) {
