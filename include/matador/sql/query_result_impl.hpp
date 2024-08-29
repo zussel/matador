@@ -113,7 +113,7 @@ public:
   template<class Type>
   bool fetch(Type &obj)
   {
-    column_index_ = 0;
+    column_index_ = reader_->start_column_index();
     if (!reader_->fetch()) {
       return false;
     }

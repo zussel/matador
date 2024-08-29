@@ -40,6 +40,11 @@ const char* odbc_result_reader::column(size_t index) const
   return nullptr;
 }
 
+size_t odbc_result_reader::start_column_index() const
+{
+  return 1;
+}
+
 bool odbc_result_reader::fetch()
 {
   if (const SQLRETURN ret = SQLFetch(stmt_); SQL_SUCCEEDED(ret)) {
@@ -131,6 +136,8 @@ void odbc_result_reader::read_value(const char *id, size_t index, std::string &v
   SQLRETURN ret;
   while ((ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, char_data, sizeof(char_data), &info)) != SQL_NO_DATA) {
     if (SQL_SUCCEEDED(ret)) {
+      const auto len = (info > 5000) || (info == SQL_NO_TOTAL) ? 5000 : info;
+      value.append(std::begin(char_data), std::begin(char_data) + len);
       break;
     } if (ret == SQL_ERROR) {
       throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc");
@@ -192,6 +199,8 @@ void odbc_result_reader::read_value(const char *id, size_t index, utils::blob &v
   SQLRETURN ret;
   while ((ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_BINARY, binary_data, sizeof(binary_data), &info)) != SQL_NO_DATA) {
     if (SQL_SUCCEEDED(ret)) {
+      const auto len = (info > 5000) || (info == SQL_NO_TOTAL) ? 5000 : info;
+      value.insert(value.begin(), std::begin(binary_data), std::begin(binary_data) + len);
       break;
     } if (ret == SQL_ERROR) {
       throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc");
@@ -361,6 +370,8 @@ int odbc_result_reader::type2int(data_type type) {
       return SQL_C_TYPE_DATE;
     case data_type::type_time:
       return SQL_C_TYPE_TIMESTAMP;
+    case data_type::type_blob:
+      return SQL_C_BINARY;
     default:
     {
       throw std::logic_error("mssql statement: unknown type");

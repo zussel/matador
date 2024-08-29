@@ -5,6 +5,10 @@
 #include "matador/utils/string.hpp"
 
 namespace matador::sql {
+size_t query_result_reader::start_column_index() const
+{
+  return 0;
+}
 
 void query_result_reader::read_value(const char * /*id*/, size_t index, char &value)
 {

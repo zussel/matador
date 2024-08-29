@@ -10,10 +10,10 @@ QueryFixture::QueryFixture()
 }
 
 QueryFixture::~QueryFixture() {
-  for (const auto &table_name: tables_to_drop) {
-    drop_table_if_exists(table_name);
-  }
-  tables_to_drop.clear();
+    while (!tables_to_drop.empty()) {
+        drop_table_if_exists(tables_to_drop.top());
+        tables_to_drop.pop();
+    }
 }
 
 void QueryFixture::drop_table_if_exists(const std::string &table_name) {

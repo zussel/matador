@@ -15,6 +15,7 @@ public:
   [[nodiscard]] virtual size_t column_count() const = 0;
   [[nodiscard]] virtual const char* column(size_t index) const = 0;
   [[nodiscard]] virtual bool fetch() = 0;
+  [[nodiscard]] virtual size_t start_column_index() const;
 
   void read_value(const char *id, size_t index, char &value) override;
   void read_value(const char *id, size_t index, short &value) override;

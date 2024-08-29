@@ -6,7 +6,7 @@
 
 #include "connection.hpp"
 
-#include <set>
+#include <stack>
 
 namespace matador::test {
 
@@ -18,7 +18,7 @@ public:
 protected:
   matador::sql::connection db;
   matador::sql::schema schema;
-  std::set <std::string> tables_to_drop;
+  std::stack <std::string> tables_to_drop;
 
 private:
   void drop_table_if_exists(const std::string &table_name);

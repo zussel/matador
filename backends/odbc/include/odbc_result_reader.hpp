@@ -26,6 +26,7 @@ public:
 
   [[nodiscard]] const char* column(size_t index) const override;
   [[nodiscard]] bool fetch() override;
+  [[nodiscard]] size_t start_column_index() const override;
 
   void read_value(const char *id, size_t index, char &value) override;
   void read_value(const char *id, size_t index, short &value) override;

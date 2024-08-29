@@ -251,6 +251,8 @@ data_type type2data_type(SQLSMALLINT type, size_t size) {
       return data_type::type_bool;
     case SQL_LONGVARCHAR:
       return (size != 2147483647 ? data_type::type_varchar : data_type::type_text);
+    case SQL_LONGVARBINARY:
+      return data_type::type_blob;
     case SQL_UNKNOWN_TYPE:
     default:
       return data_type::type_unknown;
