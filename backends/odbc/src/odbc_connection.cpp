@@ -157,6 +157,8 @@ data_type string2type(const char *type) {
     return data_type::type_date;
   } else if (strcmp(type, "DATETIME") == 0) {
     return data_type::type_time;
+  } else if (strcmp(type, "DATETIME2") == 0) {
+    return data_type::type_time;
   } else if (strcmp(type, "TEXT") == 0) {
     return data_type::type_text;
   } else {
@@ -188,8 +190,8 @@ std::vector<sql::column_definition> odbc_connection::describe(const std::string 
   SQLSMALLINT data_type(0);
   SQLCHAR type[64];
   SQLINTEGER not_null(0);
-  SQLLEN indicator[6];
-
+  SQLLEN indicator[7];
+  SQLSMALLINT sql_data_type{0};
   // column name
   ret = SQLBindCol(stmt, 4, SQL_C_CHAR, column, sizeof(column), &indicator[0]);
   throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
@@ -205,13 +207,17 @@ std::vector<sql::column_definition> odbc_connection::describe(const std::string 
   // nullable
   ret = SQLBindCol(stmt, 11, SQL_C_SSHORT, &not_null, 0, &indicator[4]);
   throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  // sql data type
+  ret = SQLBindCol(stmt, 14, SQL_C_SSHORT, &sql_data_type, 0, &indicator[5]);
+  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
   // index (1 based)
-  ret = SQLBindCol(stmt, 17, SQL_C_SLONG, &pos, 0, &indicator[5]);
+  ret = SQLBindCol(stmt, 17, SQL_C_SLONG, &pos, 0, &indicator[6]);
   throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
 
   std::vector<sql::column_definition> prototype;
   /* Fetch the data */
   while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
+    // std::cout << "column name: " << std::string(reinterpret_cast<char*>(column)) << ", data type: " << data_type << " (size: " << size << "), type name: " << std::string(reinterpret_cast<char*>(type)) << "\n";
     prototype.emplace_back(std::string(reinterpret_cast<char*>(column)),
           type2data_type(data_type, size),
           size,
@@ -238,6 +244,12 @@ data_type type2data_type(SQLSMALLINT type, size_t size) {
       return data_type::type_long_long;
     case SQL_TYPE_DATE:
     case -9:
+      if (size == 10) {
+          return data_type::type_date;
+      }
+      if (size == 27) {
+          return data_type::type_time;
+      }
       return data_type::type_date;
     case SQL_TYPE_TIMESTAMP:
       return data_type::type_time;

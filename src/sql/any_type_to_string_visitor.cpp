@@ -35,6 +35,7 @@ void any_type_to_string_visitor::to_string(const std::string &val)
 void any_type_to_string_visitor::to_string(const time &val)
 {
   result = "'" + d.prepare_literal(utils::to_string(val, "%FT%T.%f")) + "'";
+        std::cout << "write time value: " << result << " (fraction: " << val.get_time_info().milliseconds << ")\n";
 }
 
 void any_type_to_string_visitor::to_string(const date &val)

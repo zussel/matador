@@ -1,8 +1,10 @@
 #include "odbc_result_reader.hpp"
 
-#include <sqlext.h>
-
 #include "matador/sql/value.hpp"
+
+#include "matador/utils/string.hpp"
+
+#include <sqlext.h>
 
 namespace matador::backends::odbc {
 
@@ -173,6 +175,10 @@ void odbc_result_reader::read_value(const char *id, size_t index, time &value) {
   if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_TYPE_TIMESTAMP, &ts, 0, &info); SQL_SUCCEEDED(ret)) {
     if (info != SQL_NULL_DATA) {
       value.set(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.fraction / 1000 / 1000);
+
+        auto tstr = matador::utils::to_string(value, "%FT%T.%f");
+
+        std::cout << "read time value: " << tstr << " (fraction: " << value.get_time_info().milliseconds << ", original: " << ts.fraction << ")\n";
     }
   } else {
     throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");

@@ -24,7 +24,8 @@
       {matador::data_type::type_float, "FLOAT(24)"},
       {matador::data_type::type_double, "FLOAT(53)"},
       {matador::data_type::type_text, "VARCHAR(MAX)"},
-      {matador::data_type::type_blob, "VARBINARY(MAX)"},
+      {matador::data_type::type_time, "DATETIME2"},
+      {matador::data_type::type_blob, "VARBINARY(MAX)"}
     })
     .with_default_schema_name("dbo")
     .build();
