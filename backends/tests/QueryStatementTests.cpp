@@ -7,38 +7,15 @@
 
 #include "models/person.hpp"
 
-#include "connection.hpp"
+#include "QueryFixture.hpp"
 
 #include <algorithm>
 #include <vector>
 
-class QueryStatementFixture {
-public:
-  QueryStatementFixture()
-    : db(matador::test::connection::dns)
-      , schema(db.dialect().default_schema_name()) {
-    db.open();
-  }
-
-  ~QueryStatementFixture() {
-    drop_table_if_exists("person");
-  }
-
-protected:
-  matador::sql::connection db;
-  matador::sql::schema schema;
-
-private:
-  void drop_table_if_exists(const std::string &table_name) const {
-    if (db.exists(table_name)) {
-      db.query(schema).drop().table(table_name).execute();
-    }
-  }
-};
-
 using namespace matador::sql;
+using namespace matador::test;
 
-TEST_CASE_METHOD(QueryStatementFixture, "Test create statement", "[query][statement][create]") {
+TEST_CASE_METHOD(QueryFixture, "Test create statement", "[query][statement][create]") {
   schema.attach<matador::test::person>("person");
   auto stmt = db.query(schema)
     .create()
@@ -47,6 +24,7 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test create statement", "[query][statem
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
   const std::vector<std::string> cols = {"id", "name", "age", "image"};
@@ -57,7 +35,7 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test create statement", "[query][statem
   }
 }
 
-TEST_CASE_METHOD(QueryStatementFixture, "Test insert statement", "[query][statement][insert]") {
+TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][insert]") {
   using namespace matador::test;
 
   schema.attach<matador::test::person>("person");
@@ -68,6 +46,7 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test insert statement", "[query][statem
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
 
@@ -95,7 +74,7 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test insert statement", "[query][statem
   REQUIRE(row->image == matador::utils::blob{1,2,3,4});
 }
 
-TEST_CASE_METHOD(QueryStatementFixture, "Test update statement", "[query][statement][update]") {
+TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][update]") {
   using namespace matador::test;
 
   schema.attach<matador::test::person>("person");
@@ -106,6 +85,7 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test update statement", "[query][statem
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
 
@@ -157,7 +137,7 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test update statement", "[query][statem
   REQUIRE(row->image == matador::utils::blob{5,6,7,8});
 }
 
-TEST_CASE_METHOD(QueryStatementFixture, "Test delete statement", "[query][statement][delete]") {
+TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][delete]") {
   using namespace matador::test;
 
   schema.attach<matador::test::person>("person");
@@ -168,6 +148,7 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test delete statement", "[query][statem
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
 
@@ -236,7 +217,7 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test delete statement", "[query][statem
   REQUIRE(row == nullptr);
 }
 
-TEST_CASE_METHOD(QueryStatementFixture, "Test reuse prepared statement", "[query][statement][reuse]") {
+TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][statement][reuse]") {
   using namespace matador::test;
 
   schema.attach<matador::test::person>("person");
@@ -247,6 +228,7 @@ TEST_CASE_METHOD(QueryStatementFixture, "Test reuse prepared statement", "[query
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
 

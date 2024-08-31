@@ -11,50 +11,17 @@
 
 #include "models/types.hpp"
 
-#include "connection.hpp"
-
-#include <stdexcept>
+#include "QueryFixture.hpp"
 
 using namespace matador::test;
 
-class BasicQueryFixture
-{
-public:
-  BasicQueryFixture()
-  : db(matador::test::connection::dns)
-  , schema(db.dialect().default_schema_name())
-  {
-    db.open();
-  }
-
-  ~BasicQueryFixture()
-  {
-    drop_table_if_exists("types");
-    drop_table_if_exists("quotes");
-    drop_table_if_exists("escapes");
-    drop_table_if_exists("pk");
-    drop_table_if_exists("appointment");
-    drop_table_if_exists("person");
-  }
-
-protected:
-  matador::sql::connection db;
-  matador::sql::schema schema;
-
-private:
-  void drop_table_if_exists(const std::string &table_name)
-  {
-    if (db.exists(table_name)) {
-      db.query(schema).drop().table(table_name).execute();
-    }
-  }
-};
-
-TEST_CASE_METHOD(BasicQueryFixture, "Insert and select basic datatypes", "[query][datatypes]") {
+TEST_CASE_METHOD(QueryFixture, "Insert and select basic datatypes", "[query][datatypes]") {
   schema.attach<types>("types");
-  db.query(schema).create()
+  db.query(schema)
+    .create()
     .table<types>("types")
     .execute();
+  tables_to_drop.emplace("types");
 
   float float_value = 2.445566f;
   double double_value = 11111.23433345;
@@ -135,7 +102,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Insert and select basic datatypes", "[query
   REQUIRE(result->binary_ == blob_val);
 }
 
-TEST_CASE_METHOD(BasicQueryFixture, "Test quoted identifier", "[query][quotes][identifier]") {
+TEST_CASE_METHOD(QueryFixture, "Test quoted identifier", "[query][quotes][identifier]") {
   using namespace matador::sql;
 
   auto res = db.query(schema)
@@ -146,6 +113,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test quoted identifier", "[query][quotes][i
     })
     .execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("quotes");
 
   // check table description
   std::vector<std::string> column_names = { "from", "to"};
@@ -190,7 +158,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test quoted identifier", "[query][quotes][i
   REQUIRE(row->at("to").as<std::string>() == "New York");
 }
 
-TEST_CASE_METHOD(BasicQueryFixture, "Test quoted column names", "[query][quotes][column]") {
+TEST_CASE_METHOD(QueryFixture, "Test quoted column names", "[query][quotes][column]") {
   using namespace matador::sql;
 
   const auto start_quote = db.dialect().token_at(matador::sql::dialect_token::START_QUOTE);
@@ -205,6 +173,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test quoted column names", "[query][quotes]
     "name_with_`identifier_quotes`_in_backend_ctx",
     "from"
   };
+  tables_to_drop.emplace("quotes");
 
   for (const auto &name : column_names) {
     auto res = db.query(schema)
@@ -229,7 +198,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test quoted column names", "[query][quotes]
   }
 }
 
-TEST_CASE_METHOD(BasicQueryFixture, "Test quoted literals", "[query][quotes][literals]") {
+TEST_CASE_METHOD(QueryFixture, "Test quoted literals", "[query][quotes][literals]") {
   using namespace matador::sql;
 
   auto res = db.query(schema)
@@ -239,6 +208,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test quoted literals", "[query][quotes][lit
     })
     .execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("escapes");
 
   res = db.query(schema)
     .insert()
@@ -298,7 +268,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test quoted literals", "[query][quotes][lit
   REQUIRE(row->at("name").as<std::string>() == "text \"text\"");
 }
 
-TEST_CASE_METHOD(BasicQueryFixture, "Test describe table", "[query][describe][table]") {
+TEST_CASE_METHOD(QueryFixture, "Test describe table", "[query][describe][table]") {
   using namespace matador::sql;
 
   schema.attach<types>("types");
@@ -307,6 +277,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test describe table", "[query][describe][ta
     .table<types>("types")
     .execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("types");
 
   const auto columns = db.describe("types");
 
@@ -345,9 +316,12 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test describe table", "[query][describe][ta
   }
 }
 
-TEST_CASE_METHOD(BasicQueryFixture, "Test unknown table", "[query][table]") {
+TEST_CASE_METHOD(QueryFixture, "Test unknown table", "[query][table]") {
   using Catch::Matchers::ContainsSubstring;
-  REQUIRE_THROWS_WITH(db.query(schema).select({"name"}).from("person").fetch_all(), ContainsSubstring("no such table"));
+  REQUIRE_THROWS_WITH(db.query(schema)
+    .select({"name"})
+    .from("person")
+    .fetch_all(), ContainsSubstring("no such table"));
 }
 
 namespace matador::test::temporary {
@@ -363,7 +337,7 @@ struct pk {
 };
 }
 
-TEST_CASE_METHOD(BasicQueryFixture, "Test primary key", "[query][primary key]") {
+TEST_CASE_METHOD(QueryFixture, "Test primary key", "[query][primary key]") {
   using namespace matador::test::temporary;
   using namespace matador::sql;
 
@@ -373,6 +347,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test primary key", "[query][primary key]") 
     .table<pk>("pk")
     .execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("pk");
 
   pk pk1{ 7, "george" };
 
@@ -391,7 +366,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test primary key", "[query][primary key]") 
   REQUIRE(row->id > 0);
 }
 
-TEST_CASE_METHOD(BasicQueryFixture, "Test primary key prepared", "[query][primary key][prepared]") {
+TEST_CASE_METHOD(QueryFixture, "Test primary key prepared", "[query][primary key][prepared]") {
   using namespace matador::test::temporary;
   using namespace matador::sql;
 
@@ -401,6 +376,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test primary key prepared", "[query][primar
     .table<pk>("pk")
     .execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("pk");
 
   pk pk1{ 7, "george" };
 
@@ -443,7 +419,7 @@ struct appointment
 };
 
 }
-TEST_CASE_METHOD(BasicQueryFixture, "Test select time and date", "[query][select][time]") {
+TEST_CASE_METHOD(QueryFixture, "Test select time and date", "[query][select][time]") {
   using namespace matador::test::temporary;
   using namespace matador::sql;
   schema.attach<appointment>("appointment");
@@ -452,6 +428,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test select time and date", "[query][select
     .table<appointment>("appointment")
     .execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("appointment");
 
   auto dinner = appointment{ 1, "dinner" };
   auto time_str = matador::utils::to_string(dinner.time_point);
@@ -474,7 +451,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test select time and date", "[query][select
   REQUIRE(matador::utils::to_string(row->date_point) == date_str);
 }
 
-TEST_CASE_METHOD(BasicQueryFixture, "Test null column", "[query][select][null]") {
+TEST_CASE_METHOD(QueryFixture, "Test null column", "[query][select][null]") {
   using namespace matador::sql;
 
   auto res = db.query(schema)
@@ -486,6 +463,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test null column", "[query][select][null]")
     })
     .execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("person");
 
   res = db.query(schema)
     .insert()
@@ -517,7 +495,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test null column", "[query][select][null]")
   }
 }
 
-TEST_CASE_METHOD(BasicQueryFixture, "Test null column prepared", "[query][select][null][prepared]") {
+TEST_CASE_METHOD(QueryFixture, "Test null column prepared", "[query][select][null][prepared]") {
   using namespace matador::sql;
 
   auto res = db.query(schema)
@@ -529,6 +507,7 @@ TEST_CASE_METHOD(BasicQueryFixture, "Test null column prepared", "[query][select
     })
     .execute();
   REQUIRE(res == 0);
+  tables_to_drop.emplace("person");
 
   res = db.query(schema)
     .insert()
