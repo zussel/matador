@@ -39,16 +39,7 @@ protected:
   std::shared_ptr<query_compile_context> context_;
 };
 
-//class query_intermediate : public basic_query_intermediate
-//{
-//public:
-//  query_intermediate(connection &db, const sql::schema &schema, const std::shared_ptr<query_compile_context> &context);
-//
-//protected:
-//  std::shared_ptr<query_compile_context> context_;
-//};
-
-class query_execute : public query_intermediate
+class executable_query : public query_intermediate
 {
 public:
   using query_intermediate::query_intermediate;
@@ -58,7 +49,7 @@ public:
   [[nodiscard]] query_context build() const;
 };
 
-class query_select : public query_intermediate
+class fetchable_query : public query_intermediate
 {
 protected:
   using query_intermediate::query_intermediate;
@@ -104,36 +95,36 @@ private:
 
 class query_offset_intermediate;
 
-class query_limit_intermediate : public query_select
+class query_limit_intermediate : public fetchable_query
 {
 public:
-  using query_select::query_select;
+  using fetchable_query::fetchable_query;
 
   query_offset_intermediate offset(size_t offset);
 };
 
-class query_offset_intermediate : public query_select
+class query_offset_intermediate : public fetchable_query
 {
 public:
-  using query_select::query_select;
+  using fetchable_query::fetchable_query;
 
   query_limit_intermediate limit(size_t limit);
 };
 
-class query_order_direction_intermediate : public query_select
+class query_order_direction_intermediate : public fetchable_query
 {
 public:
-  using query_select::query_select;
+  using fetchable_query::fetchable_query;
 
   query_limit_intermediate limit(size_t limit);
 };
 
 class query_order_by_intermediate;
 
-class query_group_by_intermediate : public query_select
+class query_group_by_intermediate : public fetchable_query
 {
 public:
-  using query_select::query_select;
+  using fetchable_query::fetchable_query;
 
   query_order_by_intermediate order_by(const column &col);
 };
@@ -147,10 +138,10 @@ public:
   query_order_direction_intermediate desc();
 };
 
-class query_where_intermediate : public query_select
+class query_where_intermediate : public fetchable_query
 {
 public:
-  using query_select::query_select;
+  using fetchable_query::fetchable_query;
 
   query_group_by_intermediate group_by(const column &col);
   query_order_by_intermediate order_by(const column &col);
@@ -164,10 +155,10 @@ struct join_data
   std::unique_ptr<basic_condition> condition;
 };
 
-class query_from_intermediate : public query_select
+class query_from_intermediate : public fetchable_query
 {
 public:
-  using query_select::query_select;
+  using fetchable_query::fetchable_query;
 
   query_join_intermediate join_left(const table &t);
   query_from_intermediate join_left(join_data &data);
@@ -241,16 +232,16 @@ class query_into_intermediate : public query_intermediate
 public:
   using query_intermediate::query_intermediate;
 
-  query_execute values(std::initializer_list<utils::any_type> values);
-  query_execute values(std::vector<utils::any_type> &&values);
+  executable_query values(std::initializer_list<utils::any_type> values);
+  executable_query values(std::vector<utils::any_type> &&values);
   template<class Type>
-  query_execute values()
+  executable_query values()
   {
     Type obj;
     return values(std::move(as_placeholder(obj)));
   }
   template<class Type>
-  query_execute values(const Type &obj)
+  executable_query values(const Type &obj)
   {
     return values(std::move(value_extractor::extract(obj)));
   }
@@ -261,10 +252,10 @@ class query_create_intermediate : public query_intermediate
 public:
   explicit query_create_intermediate(connection &db, const sql::schema &schema);
 
-  query_execute table(const sql::table &table, std::initializer_list<column_definition> columns);
-  query_execute table(const sql::table &table, const std::vector<column_definition> &columns);
+  executable_query table(const sql::table &table, std::initializer_list<column_definition> columns);
+  executable_query table(const sql::table &table, const std::vector<column_definition> &columns);
   template<class Type>
-  query_execute table(const sql::table &table)
+  executable_query table(const sql::table &table)
   {
     return this->table(table, column_definition_generator::generate<Type>(context_->schema));
   }
@@ -275,7 +266,7 @@ class query_drop_intermediate : query_intermediate
 public:
   explicit query_drop_intermediate(connection &db, const sql::schema &schema);
 
-  query_execute table(const sql::table &table);
+  executable_query table(const sql::table &table);
 };
 
 class query_insert_intermediate : public query_intermediate
@@ -293,19 +284,19 @@ public:
   query_into_intermediate into(const sql::table &table);
 };
 
-class query_execute_where_intermediate : public query_execute
+class query_execute_where_intermediate : public executable_query
 {
 public:
-  using query_execute::query_execute;
+  using executable_query::executable_query;
 
   query_limit_intermediate limit(size_t limit);
   query_order_by_intermediate order_by(const column &col);
 };
 
-class query_set_intermediate : public query_execute
+class query_set_intermediate : public executable_query
 {
 public:
-  using query_execute::query_execute;
+  using executable_query::executable_query;
 
   template<class Condition>
   query_execute_where_intermediate where(const Condition &cond)
@@ -347,10 +338,10 @@ public:
   }
 };
 
-class query_delete_from_intermediate : public query_execute
+class query_delete_from_intermediate : public executable_query
 {
 public:
-  using query_execute::query_execute;
+  using executable_query::executable_query;
 
   template<class Condition>
   query_execute_where_intermediate where(const Condition &cond)

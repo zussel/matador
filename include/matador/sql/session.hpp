@@ -137,7 +137,7 @@ public:
   void drop_table();
   void drop_table(const std::string &table_name);
 
-  [[nodiscard]] query_result<record> fetch(const query_context &q) const;
+//  [[nodiscard]] query_result<record> fetch(const query_context &q) const;
 //  [[nodiscard]] query_result<record> fetch(const std::string &sql) const;
   [[nodiscard]] size_t execute(const std::string &sql) const;
   statement prepare(query_context q) const;
@@ -148,11 +148,11 @@ public:
   const class dialect& dialect() const;
 
 private:
-  friend class query_select;
+  friend class fetchable_query;
 
   [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const std::string &sql) const;
 
-  query_select build_select_query(connection_ptr<connection> &conn, entity_query_data &&data) const;
+  fetchable_query build_select_query(connection_ptr<connection> &conn, entity_query_data &&data) const;
 
 private:
   connection_pool<connection> &pool_;

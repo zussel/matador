@@ -1,5 +1,4 @@
 #include "matador/sql/query.hpp"
-#include "matador/sql/connection.hpp"
 
 namespace matador::sql {
 

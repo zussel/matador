@@ -29,25 +29,25 @@ void session::drop_table(const std::string &table_name)
   c->query(*schema_).drop().table(table_name).execute();
 }
 
-query_result<record> session::fetch(const query_context &q) const
-{
-  auto c = pool_.acquire();
-  if (!c.valid()) {
-    throw std::logic_error("no database connection available");
-  }
-  auto it = prototypes_.find(q.table.name);
-  if (it == prototypes_.end()) {
-    it = prototypes_.emplace(q.table.name, c->describe(q.table.name)).first;
-  }
-  // adjust columns from given query
-  for (auto &col : q.prototype) {
-    if (const auto rit = it->second.find(col.name()); col.type() == data_type::type_unknown && rit != it->second.end()) {
-      const_cast<column_definition&>(col).type(rit->type());
-    }
-  }
-  auto res = c->fetch(q.sql);
-  return query_result<record>{std::move(res), q.prototype};
-}
+//query_result<record> session::fetch(const query_context &q) const
+//{
+//  auto c = pool_.acquire();
+//  if (!c.valid()) {
+//    throw std::logic_error("no database connection available");
+//  }
+//  auto it = prototypes_.find(q.table.name);
+//  if (it == prototypes_.end()) {
+//    it = prototypes_.emplace(q.table.name, c->describe(q.table.name)).first;
+//  }
+//  // adjust columns from given query
+//  for (auto &col : q.prototype) {
+//    if (const auto rit = it->second.find(col.name()); col.type() == data_type::type_unknown && rit != it->second.end()) {
+//      const_cast<column_definition&>(col).type(rit->type());
+//    }
+//  }
+//  auto res = c->fetch(q.sql);
+//  return query_result<record>{std::move(res), q.prototype};
+//}
 
 //query_result<record> session::fetch(const std::string &sql) const
 //{
@@ -103,7 +103,7 @@ std::unique_ptr<query_result_impl> session::fetch(const std::string &sql) const
   return c->fetch(sql);
 }
 
-query_select session::build_select_query(connection_ptr<connection> &conn, entity_query_data &&data) const
+fetchable_query session::build_select_query(connection_ptr<connection> &conn, entity_query_data &&data) const
 {
   return conn->query(*schema_)
     .select(data.columns)

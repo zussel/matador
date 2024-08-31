@@ -144,7 +144,7 @@ private:
   [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const std::string &sql) const;
 
 private:
-  friend class query_select;
+  friend class fetchable_query;
   friend class session;
 
   connection_info connection_info_;

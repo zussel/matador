@@ -54,6 +54,18 @@ TEST_CASE("Create sql query data for entity with eager has one", "[query][entity
   REQUIRE(data->where_clause);
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
   REQUIRE(cond == R"("flights"."id" = 17)");
+
+  const auto sql = db.query(scm)
+    .select(data->columns)
+    .from(data->root_table_name)
+    .join_left(data->joins)
+    .where(std::move(data->where_clause))
+    .order_by({data->root_table_name, data->pk_column_})
+    .asc()
+    .build();
+
+
+  std::cout << sql.sql << "\n";
 }
 
 TEST_CASE("Create sql query data for entity with eager belongs to", "[query][entity][builder]") {

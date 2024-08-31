@@ -63,6 +63,7 @@ std::string getenv(const char *name) {
 void unsetenv(const char *name)
 {
 #ifdef _WIN32
+  _putenv_s(name, nullptr);
 #else
     ::unsetenv(name);
 #endif
