@@ -27,8 +27,8 @@ ADD_CUSTOM_TARGET(matador
   matador-net
   matador-http
   matador-object
-  matador-sql
-  matador-orm
+  matador-query
+#  matador-orm
 )
 
 #IF (SQLITE3_FOUND)

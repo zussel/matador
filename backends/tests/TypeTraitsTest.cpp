@@ -5,7 +5,7 @@
 #include "matador/sql/connection.hpp"
 #include "matador/sql/column_generator.hpp"
 
-#include "connection.hpp"
+#include "QueryFixture.hpp"
 
 #include "models/location.hpp"
 
@@ -13,30 +13,20 @@
 using namespace matador::sql;
 using namespace matador::test;
 
-class TypeTraitsTestFixture
+class TypeTraitsTestFixture : public QueryFixture
 {
 public:
   TypeTraitsTestFixture()
-  : db(matador::test::connection::dns)
-  , schema(db.dialect().default_schema_name())
   {
     db.open();
     db.query(schema).create()
     .table<location>("location")
     .execute();
+    tables_to_drop.emplace("location");
   }
-
-  ~TypeTraitsTestFixture()
-  {
-    db.query(schema).drop().table("location").execute();
-  }
-
-protected:
-  matador::sql::connection db;
-  matador::sql::schema schema;
 };
 
-TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with type traits", "[typetraits]")
+TEST_CASE_METHOD(QueryFixture, "Special handling of attributes with type traits", "[typetraits]")
 {
   schema.attach<location>("location");
   SECTION("Insert and select with direct execution") {

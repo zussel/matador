@@ -5,7 +5,7 @@
 
 #include "connection.hpp"
 
-#include <set>
+#include <stack>
 
 namespace matador::test {
 
@@ -15,12 +15,12 @@ public:
   ~SessionFixture();
 
 protected:
-  matador::sql::connection_pool<matador::sql::connection> pool;
-  matador::sql::session ses;
-  std::set <std::string> tables_to_drop;
+  sql::connection_pool<sql::connection> pool;
+  sql::session ses;
+  std::stack <std::string> tables_to_drop;
 
 private:
-  void drop_table_if_exists(const std::string &table_name);
+  void drop_table_if_exists(const std::string &table_name) const;
 
 };
 

@@ -3,7 +3,7 @@
 namespace matador::test {
 
 QueryFixture::QueryFixture()
-  : db(matador::test::connection::dns)
+  : db(connection::dns)
   , schema(db.dialect().default_schema_name())
 {
   db.open();
@@ -16,7 +16,7 @@ QueryFixture::~QueryFixture() {
     }
 }
 
-void QueryFixture::drop_table_if_exists(const std::string &table_name) {
+void QueryFixture::drop_table_if_exists(const std::string &table_name) const {
   if (db.exists(table_name)) {
     db.query(schema).drop().table(table_name).execute();
   }

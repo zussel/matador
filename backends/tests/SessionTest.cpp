@@ -13,8 +13,8 @@ TEST_CASE_METHOD(SessionFixture, "Session relation test", "[session][relation]")
   ses.attach<flight>("flights");
   ses.create_schema();
 
-  tables_to_drop.insert("airplanes");
-  tables_to_drop.insert("flights");
+  tables_to_drop.emplace("airplanes");
+  tables_to_drop.emplace("flights");
 
   auto plane = ses.insert<airplane>(1, "Boeing", "A380");
   auto f = ses.insert<flight>(2, plane, "sully");
@@ -27,7 +27,7 @@ TEST_CASE_METHOD(SessionFixture, "Use session to find object with id", "[session
   ses.attach<airplane>("airplanes");
   ses.create_schema();
 
-  tables_to_drop.insert("airplanes");
+  tables_to_drop.emplace("airplanes");
 
   auto a380 = ses.insert<airplane>(1, "Boeing", "A380");
 
@@ -46,7 +46,7 @@ TEST_CASE_METHOD(SessionFixture, "Use session to find all objects", "[session][f
   ses.attach<airplane>("airplanes");
   ses.create_schema();
 
-  tables_to_drop.insert("airplanes");
+  tables_to_drop.emplace("airplanes");
 
   std::vector<std::unique_ptr<airplane>> planes;
   planes.emplace_back(new airplane(1, "Airbus", "A380"));

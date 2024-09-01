@@ -6,7 +6,7 @@
 
 #include "matador/object/object_ptr.hpp"
 
-#include "connection.hpp"
+#include "QueryFixture.hpp"
 
 #include "models/airplane.hpp"
 
@@ -21,39 +21,21 @@ template<class Type, typename... Args>
 }
 }
 
-class StatementTestFixture
+class StatementTestFixture : public QueryFixture
 {
 public:
   StatementTestFixture()
-  : db(matador::test::connection::dns)
-  , schema(db.dialect().default_schema_name())
   {
-    db.open();
     db.query(schema).create().table<airplane>("airplane").execute();
-  }
-
-  ~StatementTestFixture()
-  {
-    drop_table_if_exists("airplane");
+    tables_to_drop.emplace("airplane");
   }
 
 protected:
-  matador::sql::connection db;
-  matador::sql::schema schema;
-
   std::vector<matador::object_ptr<airplane>> planes{
     matador::test::detail::make_object_ptr<airplane>(1, "Airbus", "A380"),
     matador::test::detail::make_object_ptr<airplane>(2, "Boeing", "707"),
     matador::test::detail::make_object_ptr<airplane>(3, "Boeing", "747")
   };
-
-private:
-  void drop_table_if_exists(const std::string &table_name) {
-    if (db.exists(table_name)) {
-      db.query(schema).drop().table(table_name).execute();
-    }
-  }
-
 };
 
 TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]")
@@ -102,9 +84,8 @@ TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]
       .where("brand"_col == _)
       .prepare();
 
-    stmt.bind(0, "Airbus");
-
-    auto result = stmt.fetch<airplane>();
+    auto result = stmt.bind(0, "Airbus")
+      .fetch<airplane>();
 
     for (const auto &i: result) {
       REQUIRE(i.id == planes[0]->id);
@@ -114,9 +95,8 @@ TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]
 
     stmt.reset();
 
-    stmt.bind(0, "Boeing");
-
-    result = stmt.fetch<airplane>();
+    result = stmt.bind(0, "Boeing")
+      .fetch<airplane>();
 
     size_t index{1};
     for (const auto &i: result) {

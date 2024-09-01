@@ -11,16 +11,14 @@ session::session(connection_pool<connection> &pool)
 , dialect_(backend_provider::instance().connection_dialect(pool_.info().type))
 , schema_(std::make_unique<sql::schema>(dialect_.default_schema_name())){}
 
-void session::create_schema()
-{
+void session::create_schema() const {
   auto c = pool_.acquire();
   for (const auto &t : *schema_) {
     c->query(*schema_).create().table(t.second.name, t.second.prototype.columns()).execute();
   }
 }
 
-void session::drop_table(const std::string &table_name)
-{
+void session::drop_table(const std::string &table_name) const {
   auto c = pool_.acquire();
   if (!c.valid()) {
     throw std::logic_error("no database connection available");

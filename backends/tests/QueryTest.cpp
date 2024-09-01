@@ -23,14 +23,14 @@ TEST_CASE_METHOD(QueryFixture, "Create table with foreign key relation", "[query
   .execute();
 
   REQUIRE(db.exists("airplane"));
-  tables_to_drop.push("airplane");
+  tables_to_drop.emplace("airplane");
 
   db.query(schema).create()
   .table<flight>("flight")
   .execute();
 
   REQUIRE(db.exists("flight"));
-  tables_to_drop.push("flight");
+  tables_to_drop.emplace("flight");
 
   db.query(schema).drop().table("flight").execute();
   db.query(schema).drop().table("airplane").execute();
@@ -47,10 +47,10 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[q
   .execute();
 
   REQUIRE(db.exists("person"));
-  tables_to_drop.push("person");
+  tables_to_drop.emplace("person");
 
   person george{7, "george", 45};
-  george.image.push_back(37);
+  george.image.emplace_back(37);
 
   auto res = db.query(schema)
   .insert()
@@ -106,7 +106,7 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query]")
   .execute();
 
   REQUIRE(db.exists("person"));
-  tables_to_drop.push("person");
+  tables_to_drop.emplace("person");
 
   auto res = db.query(schema).insert()
   .into("person", {{"", "id", ""}, {"", "name", ""}, {"", "color", ""}})
@@ -146,14 +146,14 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query]")
   .execute();
 
   REQUIRE(db.exists("airplane"));
-  tables_to_drop.push("airplane");
+  tables_to_drop.emplace("airplane");
 
   db.query(schema).create()
   .table<flight>("flight")
   .execute();
 
   REQUIRE(db.exists("flight"));
-  tables_to_drop.push("flight");
+  tables_to_drop.emplace("flight");
 
   std::vector<matador::object_ptr<airplane>> planes{
     matador::object_ptr<airplane>(new airplane{1, "Airbus", "A380"}),
@@ -206,14 +206,14 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left"
   .execute();
 
   REQUIRE(db.exists("airplane"));
-  tables_to_drop.push("airplane");
+  tables_to_drop.emplace("airplane");
 
   db.query(schema).create()
     .table<flight>("flight")
     .execute();
 
   REQUIRE(db.exists("flight"));
-  tables_to_drop.push("flight");
+  tables_to_drop.emplace("flight");
 
   std::vector<matador::object_ptr<airplane>> planes{
     matador::object_ptr<airplane>(new airplane{1, "Airbus", "A380"}),
@@ -292,14 +292,14 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and for single
   .execute();
 
   REQUIRE(db.exists("airplane"));
-  tables_to_drop.push("airplane");
+  tables_to_drop.emplace("airplane");
 
   db.query(schema).create()
     .table<flight>("flight")
     .execute();
 
   REQUIRE(db.exists("flight"));
-  tables_to_drop.push("flight");
+  tables_to_drop.emplace("flight");
 
   std::vector<matador::object_ptr<airplane>> planes{
     matador::object_ptr<airplane>(new airplane{1, "Airbus", "A380"}),
@@ -381,21 +381,21 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship"
   .execute();
 
   REQUIRE(db.exists("recipes"));
-  tables_to_drop.push("recipes");
+  tables_to_drop.emplace("recipes");
 
   db.query(schema).create()
   .table<ingredient>("ingredients")
   .execute();
 
   REQUIRE(db.exists("ingredients"));
-  tables_to_drop.push("ingredients");
+  tables_to_drop.emplace("ingredients");
 
   db.query(schema).create()
   .table<recipe_ingredient>("recipe_ingredients")
   .execute();
 
   REQUIRE(db.exists("recipe_ingredients"));
-  tables_to_drop.push("recipe_ingredients");
+  tables_to_drop.emplace("recipe_ingredients");
 
   std::vector<ingredient> ingredients {
     {1, "Apple"},

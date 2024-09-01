@@ -58,7 +58,7 @@ public:
   template<typename Type>
   void attach(const std::string &table_name);
 
-  void create_schema();
+  void create_schema() const;
 
   template<typename Type>
   object_ptr<Type> insert(Type *obj);
@@ -135,7 +135,7 @@ public:
 
   template<typename Type>
   void drop_table();
-  void drop_table(const std::string &table_name);
+  void drop_table(const std::string &table_name) const;
 
 //  [[nodiscard]] query_result<record> fetch(const query_context &q) const;
 //  [[nodiscard]] query_result<record> fetch(const std::string &sql) const;

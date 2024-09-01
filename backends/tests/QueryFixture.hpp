@@ -16,12 +16,12 @@ public:
   ~QueryFixture();
 
 protected:
-  matador::sql::connection db;
-  matador::sql::schema schema;
+  sql::connection db;
+  sql::schema schema;
   std::stack <std::string> tables_to_drop;
 
 private:
-  void drop_table_if_exists(const std::string &table_name);
+  void drop_table_if_exists(const std::string &table_name) const;
 };
 
 }
