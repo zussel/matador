@@ -42,6 +42,7 @@ void query_compiler::visit(query_select_part &select_part)
     for (const auto &col: columns) {
       result.append(data_->db.dialect().prepare_identifier(col));
       query_.result_vars.emplace_back(col.name);
+      query_.column_aliases.insert({col.table + "." + col.name, col.alias});
       append_column(query_.prototype, col);
     }
   } else {
@@ -53,6 +54,7 @@ void query_compiler::visit(query_select_part &select_part)
       result.append(", ");
       result.append(data_->db.dialect().prepare_identifier(*it));
       query_.result_vars.emplace_back(it->name);
+      query_.column_aliases.insert({it->table + "." + it->name, it->alias});
       append_column(query_.prototype, *it);
     }
   }
@@ -64,6 +66,7 @@ void query_compiler::visit(query_from_part &from_part)
 {
   query_.table = from_part.table();
   query_.sql += " " + query_compiler::build_table_name(from_part.token(), data_->db.dialect(), query_.table);
+  query_.table_aliases.insert({query_.table.name, query_.table.alias});
 }
 
 void query_compiler::visit(query_join_part &join_part)

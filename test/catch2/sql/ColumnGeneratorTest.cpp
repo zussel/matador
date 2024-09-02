@@ -43,7 +43,7 @@ TEST_CASE("Generate columns for object with has many relation", "[column][genera
   s.attach<order_details>("order_details");
   s.attach<order>("order");
 
-  auto columns = column_generator::generate<order>(s);
+  const auto columns = column_generator::generate<order>(s);
 
   const std::vector<column> expected_columns = {
     { "order", "order_id", "c01" },
@@ -88,7 +88,7 @@ TEST_CASE("Generate columns for object with eager foreign key relation", "[colum
     { "authors", "distinguished", "c08" },
     { "books", "published_in", "c09" }
   };
-  auto columns = column_generator::generate<book>(s);
+  const auto columns = column_generator::generate<book>(s);
 
   REQUIRE(!columns.empty());
   REQUIRE(columns.size() == expected_columns.size());

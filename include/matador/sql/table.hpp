@@ -3,7 +3,6 @@
 
 #include "matador/sql/column.hpp"
 
-#include <typeindex>
 #include <string>
 #include <vector>
 
@@ -11,21 +10,24 @@ namespace matador::sql {
 
 struct table
 {
-  table(const char *name, std::string as = "") // NOLINT(*-explicit-constructor)
-  : name(name), alias(std::move(as)) {}
-  table(std::string name, std::string as = "") // NOLINT(*-explicit-constructor)
-  : name(std::move(name)), alias(std::move(as)) {}
+  table(const char *name, std::string as = ""); // NOLINT(*-explicit-constructor)
+  table(std::string name, std::string as = ""); // NOLINT(*-explicit-constructor)
+  table(std::string name, std::string as, const std::vector<column> &columns)
+  : name(std::move(name))
+  , alias(std::move(as))
+  , columns(columns) {}
 
-  table& as(const std::string &a) {
-    alias = a;
-    return *this;
-  }
+  table& as(const std::string &a);
+
+  [[nodiscard]] table as(const std::string &a) const;
 
   std::string name;
   std::string alias;
 
   std::vector<column> columns;
 };
+
+table operator "" _tab(const char *name, size_t len);
 
 }
 

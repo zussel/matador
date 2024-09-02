@@ -26,7 +26,7 @@ public:
   ~column_generator() = default;
 
   template < class Type >
-  static std::vector<column> generate(const sql::schema &ts, bool force_lazy = false)
+  static std::vector<column> generate(const sql::schema &ts, const bool force_lazy = false)
   {
     const auto info = ts.info<Type>();
     if (!info) {
@@ -40,7 +40,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *id, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &, std::enable_if_t<std::is_integral_v<V> && !std::is_same_v<bool, V>>* = nullptr)
   {
     push(id);
   }

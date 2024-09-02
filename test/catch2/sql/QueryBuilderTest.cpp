@@ -5,6 +5,10 @@
 #include <matador/sql/connection.hpp>
 #include <matador/sql/dialect_builder.hpp>
 #include <matador/sql/query.hpp>
+#include <matador/sql/table.hpp>
+
+#include "models/author.hpp"
+#include "models/book.hpp"
 
 using namespace matador::sql;
 using namespace matador::utils;
@@ -239,7 +243,7 @@ TEST_CASE("Select statement with join_left", "[query][join_left]")
   connection noop("noop://noop.db");
   schema scm("noop");
   query q(noop, scm);
-  auto result = q.select({"f.id", "ap.brand", "f.pilot_name"})
+  const auto result = q.select({"f.id", "ap.brand", "f.pilot_name"})
   .from({"flight", "f"})
   .join_left({"airplane", "ap"})
   .on("f.airplane_id"_col == "ap.id"_col)
@@ -247,4 +251,16 @@ TEST_CASE("Select statement with join_left", "[query][join_left]")
 
   REQUIRE(result.sql == R"(SELECT "f"."id", "ap"."brand", "f"."pilot_name" FROM "flight" AS "f" INNER JOIN "airplane" AS "ap" ON "f"."airplane_id" = "ap"."id")");
   REQUIRE(result.table.name == "flight");
+}
+
+TEST_CASE("Select statement with aliased columns", "[query][select][alias]") {
+  using namespace matador::test;
+  connection noop("noop://noop.db");
+  schema scm("noop");
+  scm.attach<author>("authors");
+  scm.attach<book>("books");
+
+  query q(noop, scm);
+  const auto result = q.select<author>().from("authors"_tab.as("A")).build();
+
 }
