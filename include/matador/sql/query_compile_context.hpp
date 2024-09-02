@@ -23,6 +23,7 @@ struct query_compile_context
   const sql::schema &schema;
   std::vector<std::unique_ptr<query_part>> parts{};
   std::vector<column_definition> columns{};
+  std::unordered_map<std::string, table> tables{};
 };
 
 }

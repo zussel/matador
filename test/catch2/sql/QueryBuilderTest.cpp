@@ -249,7 +249,7 @@ TEST_CASE("Select statement with join_left", "[query][join_left]")
   .on("f.airplane_id"_col == "ap.id"_col)
   .build();
 
-  REQUIRE(result.sql == R"(SELECT "f"."id", "ap"."brand", "f"."pilot_name" FROM "flight" AS "f" INNER JOIN "airplane" AS "ap" ON "f"."airplane_id" = "ap"."id")");
+  REQUIRE(result.sql == R"(SELECT "f"."id", "ap"."brand", "f"."pilot_name" FROM "flight" "f" INNER JOIN "airplane" "ap" ON "f"."airplane_id" = "ap"."id")");
   REQUIRE(result.table.name == "flight");
 }
 
@@ -261,6 +261,9 @@ TEST_CASE("Select statement with aliased columns", "[query][select][alias]") {
   scm.attach<book>("books");
 
   query q(noop, scm);
-  const auto result = q.select<author>().from("authors"_tab.as("A")).build();
+  const auto result = q.select<author>().from("authors"_tab.as("T01")).build();
 
+  const auto expected_sql = R"(SELECT "T01"."id" AS C01, "T01"."first_name" AS C02, "T01"."last_name" AS C03, "T01"."date_of_birth" AS C04, "T01"."year_of_birth" AS C05, "T01"."distinguished" AS C06 FROM "authors" "T01")";
+
+  REQUIRE(result.sql == expected_sql);
 }

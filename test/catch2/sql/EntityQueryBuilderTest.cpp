@@ -28,11 +28,11 @@ TEST_CASE("Create sql query data for entity with eager has one", "[query][entity
   REQUIRE(data->root_table_name == "flights");
   REQUIRE(data->joins.size() == 1);
   const std::vector<column> expected_columns {
-    { "flights", "id", "c01" },
-    { "airplanes", "id", "c02" },
-    { "airplanes", "brand", "c03" },
-    { "airplanes", "model", "c04" },
-    { "flights", "pilot_name", "c05" },
+    { "flights", "id", "C01" },
+    { "airplanes", "id", "C02" },
+    { "airplanes", "brand", "C03" },
+    { "airplanes", "model", "C04" },
+    { "flights", "pilot_name", "C05" },
   };
   REQUIRE(data->columns.size() == expected_columns.size());
   for (size_t i = 0; i != expected_columns.size(); ++i) {
@@ -83,15 +83,15 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
   REQUIRE(data->root_table_name == "books");
   REQUIRE(data->joins.size() == 1);
   const std::vector<column> expected_columns {
-    { "books", "id", "c01" },
-    { "books", "title", "c02" },
-    { "authors", "id", "c03" },
-    { "authors", "first_name", "c04" },
-    { "authors", "last_name", "c05" },
-    { "authors", "date_of_birth", "c06" },
-    { "authors", "year_of_birth", "c07" },
-    { "authors", "distinguished", "c08" },
-    { "books", "published_in", "c09" }
+    { "books", "id", "C01" },
+    { "books", "title", "C02" },
+    { "authors", "id", "C03" },
+    { "authors", "first_name", "C04" },
+    { "authors", "last_name", "C05" },
+    { "authors", "date_of_birth", "C06" },
+    { "authors", "year_of_birth", "C07" },
+    { "authors", "distinguished", "C08" },
+    { "books", "published_in", "C09" }
   };
   REQUIRE(data->columns.size() == expected_columns.size());
   for (size_t i = 0; i != expected_columns.size(); ++i) {
@@ -143,21 +143,21 @@ TEST_CASE("Create sql query data for entity with eager has many belongs to", "[q
   REQUIRE(data->root_table_name == "orders");
   REQUIRE(data->joins.size() == 1);
   const std::vector<column> expected_columns = {
-    { "orders", "order_id", "c01" },
-    { "orders", "order_date", "c02" },
-    { "orders", "required_date", "c03" },
-    { "orders", "shipped_date", "c04" },
-    { "orders", "ship_via", "c05" },
-    { "orders", "freight", "c06" },
-    { "orders", "ship_name", "c07" },
-    { "orders", "ship_address", "c08" },
-    { "orders", "ship_city", "c09" },
-    { "orders", "ship_region", "c10" },
-    { "orders", "ship_postal_code", "c11" },
-    { "orders", "ship_country", "c12" },
-    { "order_details", "order_details_id", "c13" },
-    { "order_details", "order_id", "c14" },
-    { "order_details", "product_id", "c15" }
+    { "orders", "order_id", "C01" },
+    { "orders", "order_date", "C02" },
+    { "orders", "required_date", "C03" },
+    { "orders", "shipped_date", "C04" },
+    { "orders", "ship_via", "C05" },
+    { "orders", "freight", "C06" },
+    { "orders", "ship_name", "C07" },
+    { "orders", "ship_address", "C08" },
+    { "orders", "ship_city", "C09" },
+    { "orders", "ship_region", "C10" },
+    { "orders", "ship_postal_code", "C11" },
+    { "orders", "ship_country", "C12" },
+    { "order_details", "order_details_id", "C13" },
+    { "order_details", "order_id", "C14" },
+    { "order_details", "product_id", "C15" }
   };
   REQUIRE(data->columns.size() == expected_columns.size());
   for (size_t i = 0; i != expected_columns.size(); ++i) {
@@ -197,10 +197,10 @@ TEST_CASE("Create sql query data for entity with eager many to many", "[query][e
   REQUIRE(data->root_table_name == "ingredients");
   REQUIRE(data->joins.size() == 2);
   const std::vector<column> expected_columns {
-    { "ingredients", "id", "c01" },
-    { "ingredients", "name", "c02" },
-    { "recipes", "id", "c03" },
-    { "recipes", "name", "c04" }
+    { "ingredients", "id", "C01" },
+    { "ingredients", "name", "C02" },
+    { "recipes", "id", "C03" },
+    { "recipes", "name", "C04" }
   };
   REQUIRE(data->columns.size() == expected_columns.size());
   for (size_t i = 0; i != expected_columns.size(); ++i) {
@@ -241,10 +241,10 @@ TEST_CASE("Create sql query data for entity with eager many to many (inverse par
   REQUIRE(data->root_table_name == "courses");
   REQUIRE(data->joins.size() == 2);
   const std::vector<column> expected_columns {
-    { "courses", "id", "c01" },
-    { "courses", "title", "c02" },
-    { "students", "id", "c03" },
-    { "students", "name", "c04" }
+    { "courses", "id", "C01" },
+    { "courses", "title", "C02" },
+    { "students", "id", "C03" },
+    { "students", "name", "C04" }
   };
   REQUIRE(data->columns.size() == expected_columns.size());
   for (size_t i = 0; i != expected_columns.size(); ++i) {
@@ -267,4 +267,13 @@ TEST_CASE("Create sql query data for entity with eager many to many (inverse par
   REQUIRE(data->where_clause);
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
   REQUIRE(cond == R"("courses"."id" = 17)");
+
+    const auto qry = db.query(scm)
+      .select(data->columns)
+      .from(data->root_table_name)
+      .join_left(data->joins)
+      .where(std::move(data->where_clause))
+      .order_by({data->root_table_name, data->pk_column_})
+      .asc()
+      .build();
 }

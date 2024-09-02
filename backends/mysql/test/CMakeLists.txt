@@ -29,7 +29,6 @@ set(TEST_SOURCES
   ../../tests/QueryRecordTest.cpp
   ../../tests/QueryStatementTests.cpp
   ../../tests/QueryTest.cpp
-  ../../tests/QueryTest.cpp
   ../../tests/SessionFixture.cpp
   ../../tests/SessionFixture.hpp
   ../../tests/SessionTest.cpp
@@ -51,7 +50,7 @@ target_link_libraries(${LIBRARY_TEST_TARGET} PRIVATE
 
 target_include_directories(${LIBRARY_TEST_TARGET}
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include
-  PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/test
+  PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/test/catch2
   PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 catch_discover_tests(${LIBRARY_TEST_TARGET} TEST_SUFFIX " (MySQL)")

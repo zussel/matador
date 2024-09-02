@@ -19,7 +19,7 @@ void entity_query_builder::on_revision(const char *id, unsigned long long &/*rev
 void entity_query_builder::push(const std::string &column_name)
 {
   char str[4];
-  snprintf(str, 4, "c%02d", ++column_index);
+  snprintf(str, 4, "C%02d", ++column_index);
   entity_query_data_.columns.emplace_back(table_info_stack_.top().name, column_name, str);
 }
 

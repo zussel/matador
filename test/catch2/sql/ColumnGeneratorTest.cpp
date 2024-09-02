@@ -46,21 +46,21 @@ TEST_CASE("Generate columns for object with has many relation", "[column][genera
   const auto columns = column_generator::generate<order>(s);
 
   const std::vector<column> expected_columns = {
-    { "order", "order_id", "c01" },
-    { "order", "order_date", "c02" },
-    { "order", "required_date", "c03" },
-    { "order", "shipped_date", "c04" },
-    { "order", "ship_via", "c05" },
-    { "order", "freight", "c06" },
-    { "order", "ship_name", "c07" },
-    { "order", "ship_address", "c08" },
-    { "order", "ship_city", "c09" },
-    { "order", "ship_region", "c10" },
-    { "order", "ship_postal_code", "c11" },
-    { "order", "ship_country", "c12" },
-    { "order_details", "order_details_id", "c13" },
-    { "order_details", "order_id", "c14" },
-    { "order_details", "product_id", "c15" }
+    { "order", "order_id", "C01" },
+    { "order", "order_date", "C02" },
+    { "order", "required_date", "C03" },
+    { "order", "shipped_date", "C04" },
+    { "order", "ship_via", "C05" },
+    { "order", "freight", "C06" },
+    { "order", "ship_name", "C07" },
+    { "order", "ship_address", "C08" },
+    { "order", "ship_city", "C09" },
+    { "order", "ship_region", "C10" },
+    { "order", "ship_postal_code", "C11" },
+    { "order", "ship_country", "C12" },
+    { "order_details", "order_details_id", "C13" },
+    { "order_details", "order_id", "C14" },
+    { "order_details", "product_id", "C15" }
   };
   REQUIRE(!columns.empty());
   REQUIRE(columns.size() == expected_columns.size());
@@ -78,15 +78,15 @@ TEST_CASE("Generate columns for object with eager foreign key relation", "[colum
   s.attach<author>("authors");
 
   const std::vector<column> expected_columns {
-    { "books", "id", "c01" },
-    { "books", "title", "c02" },
-    { "authors", "id", "c03" },
-    { "authors", "first_name", "c04" },
-    { "authors", "last_name", "c05" },
-    { "authors", "date_of_birth", "c06" },
-    { "authors", "year_of_birth", "c07" },
-    { "authors", "distinguished", "c08" },
-    { "books", "published_in", "c09" }
+    { "books", "id", "C01" },
+    { "books", "title", "C02" },
+    { "authors", "id", "C03" },
+    { "authors", "first_name", "C04" },
+    { "authors", "last_name", "C05" },
+    { "authors", "date_of_birth", "C06" },
+    { "authors", "year_of_birth", "C07" },
+    { "authors", "distinguished", "C08" },
+    { "books", "published_in", "C09" }
   };
   const auto columns = column_generator::generate<book>(s);
 

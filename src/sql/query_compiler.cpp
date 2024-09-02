@@ -21,13 +21,20 @@ query_context query_compiler::compile(const query_compile_context *data)
   return query_;
 }
 
-void append_column(std::vector<column_definition> &columns, const column &col)
-{
+std::string handle_column(query_context &ctx, const query_compile_context &compiler_ctx, const column &col) {
+    ctx.result_vars.emplace_back(col.name);
+    ctx.column_aliases.insert({col.table + "." + col.name, col.alias});
     if (col.is_function()) {
-        columns.emplace_back(col.has_alias() ? col.alias : col.name);
+        ctx.prototype.emplace_back(col.has_alias() ? col.alias : col.name);
     } else {
-        columns.emplace_back(col.name);
+        ctx.prototype.emplace_back(col.name);
     }
+
+    if (const auto it = compiler_ctx.tables.find(col.table); it != compiler_ctx.tables.end()) {
+        return compiler_ctx.db.dialect().prepare_identifier({it->second.alias, col.name, col.alias});
+    }
+
+    return compiler_ctx.db.dialect().prepare_identifier(col);
 }
 
 void query_compiler::visit(query_select_part &select_part)
@@ -37,25 +44,16 @@ void query_compiler::visit(query_select_part &select_part)
   query_.prototype.clear();
 
   std::string result;
-  const auto &columns = select_part.columns();
-  if (columns.size() < 2) {
+  if (const auto &columns = select_part.columns(); columns.size() < 2) {
     for (const auto &col: columns) {
-      result.append(data_->db.dialect().prepare_identifier(col));
-      query_.result_vars.emplace_back(col.name);
-      query_.column_aliases.insert({col.table + "." + col.name, col.alias});
-      append_column(query_.prototype, col);
+      result.append(handle_column(query_, *data_, col ));
     }
   } else {
     auto it = columns.begin();
-    result.append(data_->db.dialect().prepare_identifier(*it));
-    query_.result_vars.emplace_back(it->name);
-    append_column(query_.prototype, *it++);
+    result.append(handle_column(query_, *data_, *it++));
     for (; it != columns.end(); ++it) {
       result.append(", ");
-      result.append(data_->db.dialect().prepare_identifier(*it));
-      query_.result_vars.emplace_back(it->name);
-      query_.column_aliases.insert({it->table + "." + it->name, it->alias});
-      append_column(query_.prototype, *it);
+      result.append(handle_column(query_, *data_, *it));
     }
   }
 
@@ -65,6 +63,11 @@ void query_compiler::visit(query_select_part &select_part)
 void query_compiler::visit(query_from_part &from_part)
 {
   query_.table = from_part.table();
+  if (query_.table.alias.empty()) {
+    char str[4];
+    snprintf(str, 4, "T%02d", ++table_index);
+    query_.table.as(str);
+  }
   query_.sql += " " + query_compiler::build_table_name(from_part.token(), data_->db.dialect(), query_.table);
   query_.table_aliases.insert({query_.table.name, query_.table.alias});
 }
@@ -316,7 +319,7 @@ std::string query_compiler::build_table_name(dialect_token token, const dialect 
   return d.token_at(token) + " " +
     (!d.default_schema_name().empty() ? d.prepare_identifier(d.default_schema_name()) + "." : "") +
     d.prepare_identifier(t.name) +
-    (t.alias.empty() ? "" : " AS " + d.prepare_identifier(t.alias));
+    (t.alias.empty() ? "" : " " + d.prepare_identifier(t.alias));
 }
 
 }

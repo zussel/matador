@@ -141,12 +141,10 @@ data_type string2type(const char *type) {
     return data_type::type_long_long;
   } else if (strcmp(type, "BOOLEAN") == 0) {
     return data_type::type_bool;
-  } else if (strcmp(type, "REAL") == 0) {
+  } else if (strcmp(type, "REAL") == 0 || strcmp(type, "DOUBLE") == 0) {
     return data_type::type_double;
   } else if (strcmp(type, "FLOAT") == 0) {
     return data_type::type_float;
-  } else if (strcmp(type, "DOUBLE") == 0) {
-    return data_type::type_double;
   } else if (strcmp(type, "BLOB") == 0) {
     return data_type::type_blob;
   } else if (strcmp(type, "NULL") == 0) {
@@ -155,9 +153,7 @@ data_type string2type(const char *type) {
     return data_type::type_varchar;
   } else if (strcmp(type, "DATE") == 0) {
     return data_type::type_date;
-  } else if (strcmp(type, "DATETIME") == 0) {
-    return data_type::type_time;
-  } else if (strcmp(type, "DATETIME2") == 0) {
+  } else if (strcmp(type, "DATETIME") == 0 || strcmp(type, "DATETIME2") == 0) {
     return data_type::type_time;
   } else if (strcmp(type, "TEXT") == 0) {
     return data_type::type_text;
@@ -236,7 +232,6 @@ data_type type2data_type(SQLSMALLINT type, size_t size) {
     case SQL_CHAR:
       return data_type::type_char;
     case SQL_SMALLINT:
-      return data_type::type_int;
     case SQL_INTEGER:
       return data_type::type_int;
     case SQL_BIGINT:

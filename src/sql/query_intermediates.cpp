@@ -159,6 +159,7 @@ query_select_intermediate::query_select_intermediate(connection &db, const sql::
 query_from_intermediate query_select_intermediate::from(const table& t)
 {
   context_->parts.push_back(std::make_unique<query_from_part>(t));
+  context_->tables.insert({t.name, t});
   return {context_};
 }
 

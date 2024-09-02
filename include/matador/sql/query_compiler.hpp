@@ -49,6 +49,8 @@ protected:
 protected:
   const query_compile_context *data_{};
   query_context query_;
+  size_t table_index{0};
+
 };
 
 }
