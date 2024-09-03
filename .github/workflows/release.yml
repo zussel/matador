@@ -92,7 +92,7 @@ jobs:
         prerelease: false
 
     - name: Download Debian Artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
         path: ./
@@ -108,7 +108,7 @@ jobs:
         asset_name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.deb"
         asset_content_type: application/x-deb
     - name: Download RPM Artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
         path: ./
@@ -122,7 +122,7 @@ jobs:
         asset_name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.rpm"
         asset_content_type: application/x-rpm
     - name: Download TGZ Artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: "matador-${{ steps.version.outputs.name }}-x86_64-Linux.tar.gz"
         path: ./
