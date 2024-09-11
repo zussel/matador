@@ -32,7 +32,7 @@ public:
   [[nodiscard]] std::optional<column_definition> primary_key() const;
 
   template < typename Type >
-  void append(const std::string &name, long size = -1)
+  void append(const std::string &name, const long size = -1)
   {
     append(make_column<Type>(name, size));
   }

@@ -14,19 +14,19 @@ public:
   query(const query &) = delete;
   query& operator=(const query &) = delete;
 
-  query_create_intermediate create();
-  query_drop_intermediate drop();
-  query_select_intermediate select(std::initializer_list<column> columns);
-  query_select_intermediate select(const std::vector<column>& columns);
-  query_select_intermediate select(const std::vector<std::string> &column_names);
-  query_select_intermediate select(std::vector<column> columns, std::initializer_list<column> additional_columns);
+  [[nodiscard]] query_create_intermediate create() const;
+  [[nodiscard]] query_drop_intermediate drop() const;
+  [[nodiscard]] query_select_intermediate select(std::initializer_list<column> columns) const;
+  [[nodiscard]] query_select_intermediate select(const std::vector<column>& columns) const;
+  [[nodiscard]] query_select_intermediate select(const std::vector<std::string> &column_names) const;
+  [[nodiscard]] query_select_intermediate select(std::vector<column> columns, std::initializer_list<column> additional_columns) const;
   template<class Type>
-  query_select_intermediate select() {
+  [[nodiscard]] query_select_intermediate select() const {
     return select(column_generator::generate<Type>(schema_));
   }
-  query_insert_intermediate insert();
-  query_update_intermediate update(const sql::table &table);
-  query_delete_intermediate remove();
+  [[nodiscard]] query_insert_intermediate insert() const;
+  [[nodiscard]] query_update_intermediate update(const sql::table &table) const;
+  [[nodiscard]] query_delete_intermediate remove() const;
 
 private:
   connection &connection_;

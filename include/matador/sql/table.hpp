@@ -8,6 +8,8 @@
 
 namespace matador::sql {
 
+struct column;
+
 struct table
 {
   table(const char *name, std::string as = ""); // NOLINT(*-explicit-constructor)

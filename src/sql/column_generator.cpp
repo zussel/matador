@@ -25,9 +25,9 @@ void column_generator::on_revision(const char *id, unsigned long long int &)
 
 void column_generator::push(const std::string &column_name)
 {
-  char str[4];
-  snprintf(str, 4, "C%02d", ++column_index);
-  column_infos_.emplace_back(table_name_stack_.top(), column_name, str);
+  // char str[4];
+  // snprintf(str, 4, "C%02d", ++column_index);
+  column_infos_.emplace_back(table_name_stack_.top(), column_name/*, str*/);
 }
 
 }

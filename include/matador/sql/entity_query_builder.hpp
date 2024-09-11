@@ -98,6 +98,9 @@ public:
     }
     pk_ = pk;
     table_info_stack_.push(info.value());
+    char str[4];
+    snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
+    table_stack_.emplace(info.value().name, str);
     entity_query_data_ = { info->name };
     try {
     EntityType obj;
@@ -120,9 +123,9 @@ public:
     pk_ = nullptr;
     table_info_stack_.push(info.value());
     entity_query_data_ = { info->name };
-    EntityType obj;
     try {
-      matador::access::process(*this, obj);
+        EntityType obj;
+        access::process(*this, obj);
 
       return {utils::ok(std::move(entity_query_data_))};
     } catch (const query_builder_exception &ex) {
@@ -133,7 +136,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *id, V &, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0)
+  void on_primary_key(const char *id, V &, std::enable_if_t<std::is_integral_v<V> && !std::is_same_v<bool, V>>* = nullptr)
   {
     push(id);
       if (!is_root_entity()) {
@@ -142,7 +145,7 @@ public:
       if (pk_.is_null()) {
           entity_query_data_.pk_column_ = id;
       } else if (pk_.is_integer()) {
-          entity_query_data_.where_clause = make_condition(column{table_info_stack_.top().name, id, ""} == *pk_.as<V>());
+          entity_query_data_.where_clause = make_condition(column{table_stack_.top().alias, id, ""} == *pk_.as<V>());
           entity_query_data_.pk_column_ = id;
       }
   }
@@ -186,7 +189,7 @@ public:
         throw query_builder_exception{query_build_error::MissingPrimaryKey};
       }
 
-      append_join({table_info_stack_.top().name, table_info_stack_.top().prototype.primary_key()->name()}, {info->name, join_column});
+      append_join({table_stack_.top().name, table_info_stack_.top().prototype.primary_key()->name()}, {info->name, join_column}, table_stack_.top());
     }
   }
 
@@ -210,8 +213,8 @@ public:
       throw query_builder_exception{query_build_error::MissingPrimaryKey};
     }
 
-    append_join({table_info_stack_.top().name, table_info_stack_.top().prototype.primary_key()->name()}, {id, join_column});
-    append_join({id, inverse_join_column}, {info->name, pk->name()});
+    append_join({table_stack_.top().name, table_info_stack_.top().prototype.primary_key()->name()}, {id, join_column}, table_stack_.top());
+    append_join({id, inverse_join_column}, {info->name, pk->name()}, {info->name, "TTT"});
   }
 
   template<class ContainerType>
@@ -236,8 +239,8 @@ public:
 
     const auto join_columns = join_column_collector_.collect<typename ContainerType::value_type::value_type>();
 
-    append_join({table_info_stack_.top().name, table_info_stack_.top().prototype.primary_key()->name()}, {id, join_columns.inverse_join_column});
-    append_join({id, join_columns.join_column}, {info->name, pk->name()});
+    append_join({table_info_stack_.top().name, table_info_stack_.top().prototype.primary_key()->name()}, {id, join_columns.inverse_join_column}, table_stack_.top());
+    append_join({id, join_columns.join_column}, {info->name, pk->name()}, {info->name, "TTT"});
   }
 
 private:
@@ -245,11 +248,12 @@ private:
   void on_foreign_object(const char *id, Pointer &, const utils::foreign_attributes &attr);
   void push(const std::string &column_name);
   [[nodiscard]] bool is_root_entity() const;
-  void append_join(const column &left, const column &right);
+  void append_join(const column &left, const column &right, const sql::table& join_table);
 
 private:
   value pk_;
   std::stack<table_info> table_info_stack_;
+  std::stack<table> table_stack_;
   const schema &schema_;
   entity_query_data entity_query_data_;
   int column_index{0};
@@ -273,7 +277,7 @@ void entity_query_builder::on_foreign_object(const char *id, Pointer &, const ut
     if (!pk) {
       throw query_builder_exception{query_build_error::MissingPrimaryKey};
     }
-    append_join({table_info_stack_.top().name, id}, {info->name, pk->name()});
+    append_join({table_info_stack_.top().name, id}, {info->name, pk->name()}, table_stack_.top());
   } else {
     push(id);
   }

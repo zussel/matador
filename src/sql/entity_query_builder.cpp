@@ -27,10 +27,10 @@ void entity_query_builder::push(const std::string &column_name)
   return table_info_stack_.size() == 1;
 }
 
-void entity_query_builder::append_join(const column &left, const column &right)
+void entity_query_builder::append_join(const column &left, const column &right, const sql::table& join_table)
 {
   entity_query_data_.joins.push_back({
-                                       { right.table },
+                                       join_table,
                                        make_condition(left == right)
                                      });
 }

@@ -63,11 +63,11 @@ void query_compiler::visit(query_select_part &select_part)
 void query_compiler::visit(query_from_part &from_part)
 {
   query_.table = from_part.table();
-  if (query_.table.alias.empty()) {
-    char str[4];
-    snprintf(str, 4, "T%02d", ++table_index);
-    query_.table.as(str);
-  }
+  // if (query_.table.alias.empty()) {
+    // char str[4];
+    // snprintf(str, 4, "T%02d", ++table_index);
+    // query_.table.as(str);
+  // }
   query_.sql += " " + query_compiler::build_table_name(from_part.token(), data_->db.dialect(), query_.table);
   query_.table_aliases.insert({query_.table.name, query_.table.alias});
 }

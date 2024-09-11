@@ -3,7 +3,6 @@
 #include <matador/sql/column_definition.hpp>
 #include <matador/sql/condition.hpp>
 #include <matador/sql/connection.hpp>
-#include <matador/sql/dialect_builder.hpp>
 #include <matador/sql/query.hpp>
 #include <matador/sql/table.hpp>
 

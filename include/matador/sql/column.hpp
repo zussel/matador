@@ -5,8 +5,6 @@
 
 namespace matador::sql {
 
-struct table;
-
 enum class sql_function_t {
   NONE,
   COUNT,
@@ -32,6 +30,7 @@ struct column
   [[nodiscard]] bool is_function() const;
   [[nodiscard]] bool has_alias() const;
 
+  // sql::table table;
   std::string table;
   std::string name;
   std::string alias;
