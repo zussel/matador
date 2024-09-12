@@ -173,7 +173,7 @@ TEST_CASE("Select sql statement string with order by", "[query]")
   query q(noop, scm);
   const auto result = q.select({"id", "name", "age"})
   .from("person")
-  .order_by("name").asc()
+  .order_by("name"_col).asc()
   .build();
 
   REQUIRE(result.sql == R"(SELECT "id", "name", "age" FROM "person" ORDER BY "name" ASC)");
@@ -183,11 +183,11 @@ TEST_CASE("Select sql statement string with order by", "[query]")
 TEST_CASE("Select sql statement string with group by", "[query]")
 {
   connection noop("noop://noop.db");
-  schema scm("noop");
+  const schema scm("noop");
   query q(noop, scm);
   const auto result = q.select({"id", "name", "age"})
   .from("person")
-  .group_by("age")
+  .group_by("age"_col)
   .build();
 
   REQUIRE(result.sql == R"(SELECT "id", "name", "age" FROM "person" GROUP BY "age")");

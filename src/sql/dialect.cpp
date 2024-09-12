@@ -18,8 +18,8 @@ std::string dialect::prepare_identifier(const column &col) const
 {
   std::string result;
   if (!col.is_function()) {
-    if (!col.table.empty()) {
-      result = prepare_identifier_string(col.table) + ".";
+    if (!col.table.get().name.empty()) {
+      result = prepare_identifier_string(col.table.get().has_alias() ? col.table.get().alias : col.table.get().name) + ".";
     }
     result += prepare_identifier_string(col.name);
   } else {

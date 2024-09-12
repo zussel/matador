@@ -1,40 +1,56 @@
+#include <utility>
+
 #include "matador/sql/column.hpp"
 #include "matador/sql/table.hpp"
 
 namespace matador::sql {
 
+static const auto default_table = table{""};
+
 column operator ""_col(const char *name, size_t len)
 {
-  return {{name, len}};
+  return column{{name, len}};
 }
 
-column::column(const char *name) : name(name) {}
+column::column(const char *name, std::string as)
+: table(default_table)
+, name(name)
+, alias(std::move(as)) {}
 
-column::column(std::string name) : name(std::move(name)) {}
-
-column::column(sql_function_t func, std::string name) : name(std::move(name)), function_(func) {}
-
-column::column(std::string table_name, std::string name, std::string as)
-: table(std::move(table_name))
+column::column(std::string name, std::string as)
+: table(default_table)
 , name(std::move(name))
 , alias(std::move(as)) {}
 
-column::column(std::string table_name, const char *name, std::string as)
-: table(std::move(table_name))
-, name(name)
-, alias(std::move(as)) {}
+column::column(const sql_function_t func, std::string name)
+: table(default_table)
+, name(std::move(name))
+, function_(func) {}
 
-column::column(struct table &t, const char *name, std::string as)
-: table(t.name)
-, name(name)
-, alias(std::move(as))
-{
-  t.columns.push_back(*this);
+// column::column(std::string table_name, std::string name, std::string as)
+// : table(std::move(table_name))
+// , name(std::move(name))
+// , alias(std::move(as)) {}
+//
+// column::column(std::string table_name, const char *name, std::string as)
+// : table(std::move(table_name))
+// , name(name)
+// , alias(std::move(as)) {}
+//
+column::column(const struct table &t, const char *name, std::string as)
+: column(t, std::string(name), std::move(as))
+{}
+
+column::column( const struct sql::table& t, std::string name, std::string as )
+: table(t)
+, name(std::move(name))
+, alias(std::move(as)) {
+    // t.columns.push_back(*this);
 }
 
 bool column::equals(const column &x) const
 {
-  return table == x.table &&
+  return table.get() == x.table.get() &&
          name == x.name &&
          alias == x.alias &&
          function_ == x.function_;

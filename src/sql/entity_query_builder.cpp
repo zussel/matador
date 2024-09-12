@@ -6,7 +6,7 @@ void entity_query_builder::on_primary_key(const char *id, std::string &, size_t)
 {
   push(id);
   if (!is_root_entity()) {
-    auto b = pk_.is_varchar();
+    const auto b = pk_.is_varchar();
     std::cout << "is matching primary key: " << std::boolalpha << b << "\n";
   }
 }
@@ -20,7 +20,7 @@ void entity_query_builder::push(const std::string &column_name)
 {
   char str[4];
   snprintf(str, 4, "C%02d", ++column_index);
-  entity_query_data_.columns.emplace_back(table_info_stack_.top().name, column_name, str);
+  entity_query_data_.columns.emplace_back(*current_table_, column_name, str);
 }
 
 [[nodiscard]] bool entity_query_builder::is_root_entity() const {
