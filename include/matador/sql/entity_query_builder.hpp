@@ -60,7 +60,7 @@ private:
 
 struct entity_query_data {
   table root_table;
-  std::vector<table> tables;
+  std::vector<table> tables{};
   std::string pk_column_{};
   std::vector<column> columns {};
   std::vector<join_data> joins{};
@@ -101,7 +101,7 @@ public:
     table_info_stack_.push(info.value());
     char str[4];
     snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
-    entity_query_data_ = {{info.value().name, str}};
+    entity_query_data_ = {{info.value().name, "XYZ"}};
     current_table_ = &entity_query_data_.root_table;
     try {
       EntityType obj;
@@ -181,7 +181,7 @@ public:
   }
 
   template<class ContainerType>
-  void on_has_many_to_many(const char *id, ContainerType &/*c*/, const char *join_column, const char *inverse_join_column, const utils::foreign_attributes &attr)
+  void on_has_many_to_many(const char * /*id*/, ContainerType &/*c*/, const char *join_column, const char *inverse_join_column, const utils::foreign_attributes &attr)
   {
     if (attr.fetch() != utils::fetch_type::EAGER) {
       return;
@@ -206,7 +206,7 @@ public:
   }
 
   template<class ContainerType>
-  void on_has_many_to_many(const char *id, ContainerType &/*c*/, const utils::foreign_attributes &attr)
+  void on_has_many_to_many(const char * /*id*/, ContainerType &/*c*/, const utils::foreign_attributes &attr)
   {
     if (attr.fetch() != utils::fetch_type::EAGER) {
       return;

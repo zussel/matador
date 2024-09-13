@@ -35,7 +35,7 @@ struct column
   [[nodiscard]] bool has_alias() const;
 
   using table_ref = std::reference_wrapper<const table>;
-  table_ref table;
+  table_ref table_;
   // std::string table;
   std::string name;
   std::string alias;

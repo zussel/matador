@@ -13,17 +13,17 @@ column operator ""_col(const char *name, size_t len)
 }
 
 column::column(const char *name, std::string as)
-: table(default_table)
+: table_(default_table)
 , name(name)
 , alias(std::move(as)) {}
 
 column::column(std::string name, std::string as)
-: table(default_table)
+: table_(default_table)
 , name(std::move(name))
 , alias(std::move(as)) {}
 
 column::column(const sql_function_t func, std::string name)
-: table(default_table)
+: table_(default_table)
 , name(std::move(name))
 , function_(func) {}
 
@@ -42,7 +42,7 @@ column::column(const struct table &t, const char *name, std::string as)
 {}
 
 column::column( const struct sql::table& t, std::string name, std::string as )
-: table(t)
+: table_(t)
 , name(std::move(name))
 , alias(std::move(as)) {
     // t.columns.push_back(*this);
@@ -50,7 +50,7 @@ column::column( const struct sql::table& t, std::string name, std::string as )
 
 bool column::equals(const column &x) const
 {
-  return table.get() == x.table.get() &&
+  return table_.get() == x.table_.get() &&
          name == x.name &&
          alias == x.alias &&
          function_ == x.function_;
