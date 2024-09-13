@@ -93,7 +93,7 @@ void query_compiler::visit(query_group_by_part &group_by_part)
 void query_compiler::visit(query_order_by_part &order_by_part)
 {
   query_.sql += " " + data_->db.dialect().token_at(dialect_token::ORDER_BY) +
-                " " + data_->db.dialect().prepare_identifier(order_by_part.column());
+                " " + data_->db.dialect().prepare_condition(order_by_part.column());
 }
 
 void query_compiler::visit(query_order_by_asc_part &/*order_by_asc_part*/)

@@ -59,9 +59,15 @@ private:
 };
 
 struct entity_query_data {
-  table root_table;
+  entity_query_data() = default;
+  explicit entity_query_data(const table& root_table) {
+      this->root_table = tables.emplace_back(root_table);
+  }
+
+  std::optional<std::reference_wrapper<table>> root_table;
   std::vector<table> tables{};
-  std::string pk_column_{};
+  std::optional<std::reference_wrapper<const column>> pk_column_;
+  // std::string pk_column_{};
   std::vector<column> columns {};
   std::vector<join_data> joins{};
   std::unique_ptr<basic_condition> where_clause{};
@@ -98,11 +104,7 @@ public:
       return utils::error(query_build_error::UnknownType);
     }
     pk_ = pk;
-    table_info_stack_.push(info.value());
-    char str[4];
-    snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
-    entity_query_data_ = {{info.value().name, "XYZ"}};
-    current_table_ = &entity_query_data_.root_table;
+    setup_query_data(*info);
     try {
       EntityType obj;
       access::process(*this, obj);
@@ -128,11 +130,13 @@ public:
     if (!is_root_entity()) {
       return;
     }
-    if (pk_.is_null()) {
-      entity_query_data_.pk_column_ = id;
-    } else if (pk_.is_integer()) {
-      entity_query_data_.where_clause = make_condition(column{*current_table_, id, ""} == *pk_.as<V>());
-      entity_query_data_.pk_column_ = id;
+    if (pk_.is_integer()) {
+      const auto it = column_ref_map_.find({*current_table_, id});
+      if (it == column_ref_map_.end()) {
+        throw query_builder_exception{query_build_error::MissingPrimaryKey};
+      }
+      entity_query_data_.pk_column_.emplace(it->second);
+      entity_query_data_.where_clause = make_condition(column{it->second.get().name, it->second.get().alias} == *pk_.as<V>());
     }
   }
 
@@ -176,7 +180,7 @@ public:
       }
 
       const auto& join_table = entity_query_data_.tables.emplace_back(info->name);
-      append_join({entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {join_table, join_column}, entity_query_data_.root_table);
+      append_join({*entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {join_table, join_column}, *entity_query_data_.root_table);
     }
   }
 
@@ -201,8 +205,8 @@ public:
     }
 
     const auto& join_table = entity_query_data_.tables.emplace_back(info->name);
-    append_join({entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {join_table, join_column}, entity_query_data_.root_table);
-    append_join({join_table, inverse_join_column}, {entity_query_data_.root_table, pk->name()}, join_table);
+    append_join({*entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {join_table, join_column}, *entity_query_data_.root_table);
+    append_join({join_table, inverse_join_column}, {*entity_query_data_.root_table, pk->name()}, join_table);
   }
 
   template<class ContainerType>
@@ -228,16 +232,33 @@ public:
     const auto join_columns = join_column_collector_.collect<typename ContainerType::value_type::value_type>();
 
     const auto& join_table = entity_query_data_.tables.emplace_back(info->name);
-    append_join({entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {join_table, join_columns.inverse_join_column}, entity_query_data_.root_table);
-    append_join({join_table, join_columns.join_column}, {entity_query_data_.root_table, pk->name()}, join_table);
+    append_join({*entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {join_table, join_columns.inverse_join_column}, *entity_query_data_.root_table);
+    append_join({join_table, join_columns.join_column}, {*entity_query_data_.root_table, pk->name()}, join_table);
   }
 
 private:
+    struct column_key {
+        std::reference_wrapper<const table> table_ref;
+        std::string name;
+
+        bool operator==(const column_key &x) const {
+            return name == x.name && table_ref.get() == x.table_ref.get();
+        }
+    };
+
+    struct column_key_hash {
+        std::size_t operator()(const column_key& x) const {
+            return std::hash<std::string>()(x.name) ^ std::hash<std::string>()(x.table_ref.get().name);
+        }
+    };
+
+private:
+  void setup_query_data(const table_info& info);
   template<class Pointer>
   void on_foreign_object(const char *id, Pointer &, const utils::foreign_attributes &attr);
   void push(const std::string &column_name);
   [[nodiscard]] bool is_root_entity() const;
-  void append_join(const column &left, const column &right, const sql::table& join_table);
+  void append_join(const column_key &left, const column_key &right, const sql::table& join_table);
 
 private:
   value pk_;
@@ -247,6 +268,7 @@ private:
   entity_query_data entity_query_data_;
   int column_index{0};
   join_column_collector join_column_collector_;
+  std::unordered_map<column_key, std::reference_wrapper<const column>, column_key_hash> column_ref_map_;
 };
 
 template<class Pointer>
@@ -260,11 +282,12 @@ void entity_query_builder::on_foreign_object(const char *id, Pointer &, const ut
     table_info_stack_.push(info.value());
     char str[4];
     snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
-    const auto& foreign_table = entity_query_data_.tables.emplace_back(info->name, str);
+    entity_query_data_.tables.push_back({info->name, str});
+    const auto& foreign_table = entity_query_data_.tables.back();
     current_table_ = &foreign_table;
     typename Pointer::value_type obj;
     access::process(*this, obj);
-    current_table_ = &entity_query_data_.root_table;
+    current_table_ = &entity_query_data_.root_table.value().get();
     table_info_stack_.pop();
 
     auto pk = info->prototype.primary_key();
@@ -272,7 +295,7 @@ void entity_query_builder::on_foreign_object(const char *id, Pointer &, const ut
       throw query_builder_exception{query_build_error::MissingPrimaryKey};
     }
     // const table join_table{id};
-    append_join({entity_query_data_.root_table, id}, {foreign_table, pk->name()}, foreign_table);
+    append_join({*entity_query_data_.root_table, id}, {foreign_table, pk->name()}, foreign_table);
   } else {
     push(id);
   }

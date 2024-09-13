@@ -24,19 +24,12 @@ TEST_CASE("Create sql query data for entity with eager has one", "[query][entity
 
   auto data = eqb.build<flight>(17);
 
+    if (data.is_error()) {
+        std::cout << static_cast<int>(data.err()) << std::endl;
+    }
   REQUIRE(data.is_ok());
-  REQUIRE(data->root_table.name == "flights");
+  REQUIRE(data->root_table.value().get().name == "flights");
   REQUIRE(data->joins.size() == 1);
-
-  const auto sql = db.query(scm)
-  .select(data->columns)
-  .from(data->root_table)
-  .join_left(data->joins)
-  .where(std::move(data->where_clause))
-  .order_by(column{data->root_table, data->pk_column_})
-  .asc()
-  .build();
-    std::cout << sql.sql << "\n";
 
   const table flights_table{"flights", "T01"};
   const table airplanes_table{"airplanes", "T01"};
@@ -53,30 +46,29 @@ TEST_CASE("Create sql query data for entity with eager has one", "[query][entity
   }
 
   std::vector<std::pair<std::string, std::string>> expected_join_data {
-    { "airplanes", R"("flights"."airplane_id" = "airplanes"."id")"}
+    { "airplanes", R"("T01"."airplane_id" = C02)"}
   };
 
   query_context qc;
   size_t index{0};
   for (const auto &jd : data->joins) {
-    // REQUIRE(jd.join_table.name == expected_join_data[index].first);
+    REQUIRE(jd.join_table.name == expected_join_data[index].first);
     REQUIRE(jd.condition->evaluate(db.dialect(), qc) == expected_join_data[index].second);
     ++index;
   }
 
   REQUIRE(data->where_clause);
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
-  // REQUIRE(cond == R"("flights"."id" = 17)");
-  REQUIRE(cond == R"("C01" = 17)");
+  REQUIRE(cond == R"(C01 = 17)");
 
-  // const auto sql = db.query(scm)
-    // .select(data->columns)
-    // .from(data->root_table_name)
-    // .join_left(data->joins)
-    // .where(std::move(data->where_clause))
-    // .order_by(column{data->root_table_name, data->pk_column_})
-    // .asc()
-    // .build();
+  const auto sql = db.query(scm)
+    .select(data->columns)
+    .from(*data->root_table)
+    .join_left(data->joins)
+    .where(std::move(data->where_clause))
+    .order_by(column{*data->pk_column_})
+    .asc()
+    .build();
 
   // SELECT "T01"."id" AS C01, "T02"."id" AS C02,        "T02"."brand" AS C03,       "T02"."model" AS C04,       "pilot_name" AS C05 FROM "flights" "T01" INNER JOIN "airplanes" "T02" ON "T01"."airplane_id" = C01                  WHERE C01 = 17        ORDER BY C01 ASC
   // SELECT "id" AS C01,        "airplanes"."id" AS C02, "airplanes"."brand" AS C03, "airplanes"."model" AS C04, "pilot_name" AS C05 FROM "flights"       INNER JOIN "flights"   "T01" ON "flights"."airplane_id" = "airplanes"."id" WHERE "T01"."id" = 17 ORDER BY "flights"."id" ASC
@@ -95,7 +87,7 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
   auto data = eqb.build<book>(17);
 
   REQUIRE(data.is_ok());
-  REQUIRE(data->root_table.name == "books");
+  REQUIRE(data->root_table->get().name == "books");
   REQUIRE(data->joins.size() == 1);
   const std::vector<column> expected_columns {
     { "books", "id", "C01" },
@@ -131,7 +123,7 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
 
   auto q = db.query(scm)
     .select(data->columns)
-    .from(data->root_table.name);
+    .from(data->root_table->get().name);
 
   for (auto &jd : data->joins) {
     q.join_left(jd.join_table)
@@ -155,7 +147,7 @@ TEST_CASE("Create sql query data for entity with eager has many belongs to", "[q
   auto data = eqb.build<order>(17);
 
   REQUIRE(data.is_ok());
-  REQUIRE(data->root_table.name == "orders");
+  REQUIRE(data->root_table->get().name == "orders");
   REQUIRE(data->joins.size() == 1);
   const std::vector<column> expected_columns = {
     { "orders", "order_id", "C01" },
@@ -209,7 +201,7 @@ TEST_CASE("Create sql query data for entity with eager many to many", "[query][e
   auto data = eqb.build<ingredient>(17);
 
   REQUIRE(data.is_ok());
-  REQUIRE(data->root_table.name == "ingredients");
+  REQUIRE(data->root_table->get().name == "ingredients");
   REQUIRE(data->joins.size() == 2);
   const std::vector<column> expected_columns {
     { "ingredients", "id", "C01" },
@@ -253,7 +245,7 @@ TEST_CASE("Create sql query data for entity with eager many to many (inverse par
   auto data = eqb.build<course>(17);
 
   REQUIRE(data.is_ok());
-  REQUIRE(data->root_table.name == "courses");
+  REQUIRE(data->root_table->get().name == "courses");
   REQUIRE(data->joins.size() == 2);
   const std::vector<column> expected_columns {
     { "courses", "id", "C01" },
@@ -285,10 +277,10 @@ TEST_CASE("Create sql query data for entity with eager many to many (inverse par
 
     const auto qry = db.query(scm)
       .select(data->columns)
-      .from(data->root_table)
+      .from(*data->root_table)
       .join_left(data->joins)
       .where(std::move(data->where_clause))
-      .order_by(column{data->root_table, data->pk_column_})
+      .order_by(column{*data->pk_column_})
       .asc()
       .build();
 }

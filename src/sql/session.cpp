@@ -105,10 +105,10 @@ fetchable_query session::build_select_query(connection_ptr<connection> &conn, en
 {
   return conn->query(*schema_)
     .select(data.columns)
-    .from(data.root_table)
+    .from(*data.root_table)
     .join_left(data.joins)
     .where(std::move(data.where_clause))
-    .order_by(column{data.root_table, data.pk_column_})
+    .order_by(column{*data.pk_column_})
     .asc();
 }
 

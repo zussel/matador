@@ -45,8 +45,9 @@ public:
    */
   [[nodiscard]] std::string prepare_identifier(const column &col) const;
   [[nodiscard]] std::string prepare_identifier_string(const std::string &col) const;
+  [[nodiscard]] std::string prepare_condition(const column &col) const;
 
-  /**
+    /**
    * Prepare string literal
    *
    * @param str String literal to be prepared

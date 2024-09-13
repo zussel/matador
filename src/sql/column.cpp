@@ -27,16 +27,6 @@ column::column(const sql_function_t func, std::string name)
 , name(std::move(name))
 , function_(func) {}
 
-// column::column(std::string table_name, std::string name, std::string as)
-// : table(std::move(table_name))
-// , name(std::move(name))
-// , alias(std::move(as)) {}
-//
-// column::column(std::string table_name, const char *name, std::string as)
-// : table(std::move(table_name))
-// , name(name)
-// , alias(std::move(as)) {}
-//
 column::column(const struct table &t, const char *name, std::string as)
 : column(t, std::string(name), std::move(as))
 {}

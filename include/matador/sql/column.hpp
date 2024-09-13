@@ -22,8 +22,6 @@ struct column
   explicit column(const char *name, std::string as = ""); // NOLINT(*-explicit-constructor)
   explicit column(std::string name, std::string as = ""); // NOLINT(*-explicit-constructor)
   column(sql_function_t func, std::string name); // NOLINT(*-explicit-constructor)
-  // column(std::string table_name, std::string name, std::string as = "");
-  // column(std::string table_name, const char* name, std::string as = "");
   column(const struct table &t, const char* name, std::string as = "");
   column(const struct table &t, std::string name, std::string as = "");
 
@@ -36,7 +34,6 @@ struct column
 
   using table_ref = std::reference_wrapper<const table>;
   table_ref table_;
-  // std::string table;
   std::string name;
   std::string alias;
   sql_function_t function_{sql_function_t::NONE};

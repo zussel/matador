@@ -31,6 +31,25 @@ std::string dialect::prepare_identifier(const column &col) const
   return result;
 }
 
+std::string dialect::prepare_condition(const column& col) const
+{
+  std::string result;
+  if (!col.is_function()) {
+    if (!col.alias.empty()) {
+        result = col.alias;
+    } else {
+        if (!col.table_.get().name.empty()) {
+            result = prepare_identifier_string(col.table_.get().has_alias() ? col.table_.get().alias : col.table_.get().name) + ".";
+        }
+        result += prepare_identifier_string(col.name);
+    }
+  } else {
+    result = sql_func_map_.at(col.function_) + "(" + col.name + ")";
+  }
+
+  return result;
+}
+
 std::string dialect::prepare_identifier_string(const std::string &col) const
 {
   auto parts = utils::split(col, '.');

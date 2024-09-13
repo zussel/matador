@@ -31,7 +31,7 @@ template<class L, class R, class Enabled = void>
 class condition;
 
 template<>
-class condition<column, utils::placeholder, typename std::enable_if<true>::type> : public basic_column_condition
+class condition<column, utils::placeholder, std::enable_if_t<true>> final : public basic_column_condition
 {
 public:
     condition(const column &fld, basic_condition::operand_t op, const utils::placeholder &val);
@@ -43,7 +43,7 @@ public:
 
 template<class T>
 class condition<column, T, typename std::enable_if<
-  std::is_scalar<T>::value &&
+  std::is_scalar_v<T> &&
   !std::is_same<std::string, T>::value &&
   !std::is_same<const char*, T>::value>::type> : public basic_column_condition
 {
@@ -58,7 +58,7 @@ public:
   std::string evaluate(const dialect &d, query_context &query) const override
   {
     query.bind_vars.emplace_back(field_.name);
-    return d.prepare_identifier(field_) + " " + operand + " " + std::to_string(value);
+    return d.prepare_condition(field_) + " " + operand + " " + std::to_string(value);
   }
 };
 
@@ -331,7 +331,7 @@ private:
  * @tparam R Right hand type of the condition to be negated
  */
 template<class L, class R>
-class condition<condition<L, R>, void> : public basic_condition
+class condition<condition<L, R>, void> final : public basic_condition
 {
 public:
   /**
@@ -359,10 +359,10 @@ private:
 };
 
 template<>
-class condition<column, column> : public basic_column_condition
+class condition<column, column> final : public basic_column_condition
 {
 public:
-  condition(const column &a, basic_condition::operand_t op, column b)
+  condition(const column &a, const basic_condition::operand_t op, column b)
   : basic_column_condition(a, op)
   , other_column_(std::move(b)) {}
   /**
@@ -372,9 +372,9 @@ public:
    * @param query The context of the query
    * @return The evaluated string based on the compile type
    */
-  std::string evaluate(const dialect &d, query_context &/*query*/) const override
+  std::string evaluate(const dialect &d, query_context &query) const override
   {
-    return d.prepare_identifier(field_) + " " + operand + " " + d.prepare_identifier(other_column_);
+    return d.prepare_condition(field_) + " " + operand + " " + d.prepare_condition(other_column_);
   }
 
 private:
@@ -484,7 +484,7 @@ condition<column, query_context> equals(const column &col, query_context &q);
 /**
  * @brief Condition inequality operator for a column and a value
  *
- * Creates a condition condition object of a column and a value
+ * Creates a condition object of a column and a value
  * checked on inequality.
  *
  * @tparam T The type of the value

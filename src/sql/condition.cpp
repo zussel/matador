@@ -2,17 +2,17 @@
 
 namespace matador::sql {
 
-condition<column, utils::placeholder, std::enable_if<true>::type>::condition(const column &fld, basic_condition::operand_t op, const utils::placeholder &val)
+condition<column, utils::placeholder, std::enable_if_t<true>>::condition(const column &fld, const basic_condition::operand_t op, const utils::placeholder &val)
 : basic_column_condition(fld, op), value(val)
 {}
 
-std::string condition<column, utils::placeholder, std::enable_if<true>::type>::evaluate(const dialect &d, query_context &query) const
+std::string condition<column, utils::placeholder, std::enable_if_t<true>>::evaluate(const dialect &d, query_context &query) const
 {
   query.bind_vars.emplace_back(field_.name);
   return d.prepare_identifier(field_) + " " + operand + " " + d.next_placeholder(query.bind_vars);
 }
 
-condition<column, query_context>::condition(column col, basic_condition::operand_t op, query_context &q)
+condition<column, query_context>::condition(column col, const basic_condition::operand_t op, query_context &q)
 : basic_column_condition(std::move(col), op), query_(q)
 {}
 
