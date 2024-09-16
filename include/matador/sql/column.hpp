@@ -23,7 +23,6 @@ struct column
   column(const char *name, const std::string& as = ""); // NOLINT(*-explicit-constructor)
   explicit column(std::string name, std::string as = ""); // NOLINT(*-explicit-constructor)
   column(sql_function_t func, std::string name); // NOLINT(*-explicit-constructor)
-  column(const struct table &t, const char* name, std::string as = "");
   column(const struct table &t, std::string name, std::string as = "");
   column(const std::shared_ptr<table> &t, std::string name, std::string as = "");
 

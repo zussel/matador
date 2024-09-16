@@ -30,7 +30,7 @@ void entity_query_builder::push(const std::string &column_name)
 {
   char str[4];
   snprintf(str, 4, "C%02d", ++column_index);
-  const auto& col = entity_query_data_.columns.emplace_back(*current_table_, column_name, str);
+  const auto& col = entity_query_data_.columns.emplace_back(current_table_, column_name, str);
   column_ref_map_.insert({ { col.table_, col.name}, col });
 }
 

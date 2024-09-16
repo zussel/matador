@@ -24,10 +24,6 @@ column::column(const sql_function_t func, std::string name)
 , name(std::move(name))
 , function_(func) {}
 
-column::column(const struct table &t, const char *name, std::string as)
-: column(t, std::string(name), std::move(as))
-{}
-
 column::column(const struct sql::table& t, std::string name, std::string as)
 : table_(std::make_shared<sql::table>(t))
 , name(std::move(name))
