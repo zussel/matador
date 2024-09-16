@@ -75,7 +75,7 @@ public:
   }
 
   template < class V >
-  void on_primary_key(const char *, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type* = 0);
+  void on_primary_key(const char *, V &x, std::enable_if_t<std::is_integral_v<V> && !std::is_same_v<bool, V>>* = nullptr);
   void on_primary_key(const char *id, std::string &pk, size_t size);
   void on_revision(const char *id, unsigned long long &rev);
 
@@ -128,7 +128,7 @@ private:
 };
 
 template<typename V>
-void column_definition_generator::on_primary_key(const char *id, V &x, typename std::enable_if<std::is_integral<V>::value && !std::is_same<bool, V>::value>::type*)
+void column_definition_generator::on_primary_key(const char *id, V &x, std::enable_if_t<std::is_integral_v<V> && !std::is_same_v<bool, V>>*)
 {
   on_attribute(id, x, { utils::constraints::PRIMARY_KEY });
 }

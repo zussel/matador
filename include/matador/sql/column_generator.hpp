@@ -35,7 +35,7 @@ public:
     std::vector<column> columns;
     column_generator gen(columns, ts, info.value().name, force_lazy);
     Type obj;
-    matador::access::process(gen, obj);
+    access::process(gen, obj);
     return columns;
   }
 
@@ -113,7 +113,7 @@ public:
   }
 
 private:
-  void push(const std::string &column_name);
+  void push(const std::string &column_name) const;
 
 private:
   std::stack<std::string> table_name_stack_;
