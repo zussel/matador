@@ -18,8 +18,8 @@ std::string dialect::prepare_identifier(const column &col) const
 {
   std::string result;
   if (!col.is_function()) {
-    if (!col.table_.get().name.empty()) {
-      result = prepare_identifier_string(col.table_.get().has_alias() ? col.table_.get().alias : col.table_.get().name) + ".";
+    if (!col.table_->name.empty()) {
+      result = prepare_identifier_string(col.table_->has_alias() ? col.table_->alias : col.table_->name) + ".";
     }
     result += prepare_identifier_string(col.name);
   } else {
@@ -38,8 +38,8 @@ std::string dialect::prepare_condition(const column& col) const
     if (!col.alias.empty()) {
         result = col.alias;
     } else {
-        if (!col.table_.get().name.empty()) {
-            result = prepare_identifier_string(col.table_.get().has_alias() ? col.table_.get().alias : col.table_.get().name) + ".";
+        if (!col.table_->name.empty()) {
+            result = prepare_identifier_string(col.table_->has_alias() ? col.table_->alias : col.table_->name) + ".";
         }
         result += prepare_identifier_string(col.name);
     }

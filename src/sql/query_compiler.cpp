@@ -24,14 +24,14 @@ query_context query_compiler::compile(const query_compile_context *data)
 std::string handle_column(query_context &ctx, const query_compile_context &compiler_ctx, const column &col) {
     ctx.result_vars.emplace_back(col.name);
     const auto& column_table = col.table_.get();
-    ctx.column_aliases.insert({column_table.has_alias() ? column_table.alias : column_table.name + "." + col.name, col.alias});
+    ctx.column_aliases.insert({column_table->has_alias() ? column_table->alias : column_table->name + "." + col.name, col.alias});
     if (col.is_function()) {
         ctx.prototype.emplace_back(col.has_alias() ? col.alias : col.name);
     } else {
         ctx.prototype.emplace_back(col.name);
     }
 
-    if (const auto it = compiler_ctx.tables.find(col.table_.get().name); it != compiler_ctx.tables.end()) {
+    if (const auto it = compiler_ctx.tables.find(col.table_->name); it != compiler_ctx.tables.end()) {
         return compiler_ctx.db.dialect().prepare_identifier({it->second, col.name, col.alias});
     }
 

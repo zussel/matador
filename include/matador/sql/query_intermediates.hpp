@@ -151,7 +151,7 @@ class query_join_intermediate;
 
 struct join_data
 {
-  table join_table;
+  std::shared_ptr<table> join_table;
   std::unique_ptr<basic_condition> condition;
 };
 

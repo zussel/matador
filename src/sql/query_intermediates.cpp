@@ -136,7 +136,7 @@ query_join_intermediate query_from_intermediate::join_left(const table &t)
 
 query_from_intermediate query_from_intermediate::join_left(join_data &data)
 {
-  context_->parts.push_back(std::make_unique<query_join_part>(data.join_table));
+  context_->parts.push_back(std::make_unique<query_join_part>(*data.join_table));
   context_->parts.push_back(std::make_unique<query_on_part>(std::move(data.condition)));
   return {context_};
 }
@@ -144,7 +144,7 @@ query_from_intermediate query_from_intermediate::join_left(join_data &data)
 query_from_intermediate query_from_intermediate::join_left(std::vector<join_data> &data_vector)
 {
   for (auto &data : data_vector) {
-    context_->parts.push_back(std::make_unique<query_join_part>(data.join_table));
+    context_->parts.push_back(std::make_unique<query_join_part>(*data.join_table));
     context_->parts.push_back(std::make_unique<query_on_part>(std::move(data.condition)));
   }
   return {context_};

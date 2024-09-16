@@ -2,6 +2,7 @@
 #define QUERY_COLUMN_HPP
 
 #include <functional>
+#include <memory>
 #include <string>
 
 namespace matador::sql {
@@ -19,11 +20,12 @@ enum class sql_function_t {
 
 struct column
 {
-  column(const char *name, std::string as = ""); // NOLINT(*-explicit-constructor)
+  column(const char *name, const std::string& as = ""); // NOLINT(*-explicit-constructor)
   explicit column(std::string name, std::string as = ""); // NOLINT(*-explicit-constructor)
   column(sql_function_t func, std::string name); // NOLINT(*-explicit-constructor)
   column(const struct table &t, const char* name, std::string as = "");
   column(const struct table &t, std::string name, std::string as = "");
+  column(const std::shared_ptr<table> &t, std::string name, std::string as = "");
 
   [[nodiscard]] bool equals(const column &x) const;
 
@@ -32,8 +34,9 @@ struct column
   [[nodiscard]] bool is_function() const;
   [[nodiscard]] bool has_alias() const;
 
+  std::shared_ptr<table> table_;
   using table_ref = std::reference_wrapper<const table>;
-  table_ref table_;
+  // table_ref table_;
   std::string name;
   std::string alias;
   sql_function_t function_{sql_function_t::NONE};

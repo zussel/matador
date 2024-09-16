@@ -21,9 +21,9 @@ void entity_query_builder::setup_query_data(const table_info& info) {
   char str[4];
   snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
   entity_query_data_ = {};
-  entity_query_data_.tables.emplace_back(info.name, str);
-  entity_query_data_.root_table.emplace(entity_query_data_.tables.back());
-  current_table_ = &entity_query_data_.root_table.value().get();
+  entity_query_data_.tables.emplace_back(std::make_shared<table>(info.name, str));
+  entity_query_data_.root_table = entity_query_data_.tables.back();
+  current_table_ = entity_query_data_.root_table;
 }
 
 void entity_query_builder::push(const std::string &column_name)
@@ -38,12 +38,12 @@ void entity_query_builder::push(const std::string &column_name)
   return table_info_stack_.size() == 1;
 }
 
-void entity_query_builder::append_join(const column_key &left, const column_key &right, const sql::table& join_table)
+void entity_query_builder::append_join(const column_key &left, const column_key &right)
 {
   const auto left_it = column_ref_map_.find(left);
   const auto right_it = column_ref_map_.find(right);
-  column left_col(left.table_ref, left.name);
-  column right_col(right.table_ref, right.name);
+  column left_col(left.table, left.name);
+  column right_col(right.table, right.name);
   if (left_it != column_ref_map_.end()) {
     left_col = column(left_it->second.get().name, left_it->second.get().alias);
   }
@@ -51,7 +51,7 @@ void entity_query_builder::append_join(const column_key &left, const column_key 
     right_col = column(right_it->second.get().name, right_it->second.get().alias);
   }
 
-  entity_query_data_.joins.push_back({join_table, make_condition(left_col == right_col)});
+  entity_query_data_.joins.push_back({right.table, make_condition(left_col == right_col)});
 }
 
 }

@@ -28,7 +28,7 @@ TEST_CASE("Create sql query data for entity with eager has one", "[query][entity
         std::cout << static_cast<int>(data.err()) << std::endl;
     }
   REQUIRE(data.is_ok());
-  REQUIRE(data->root_table.value().get().name == "flights");
+  REQUIRE(data->root_table->name == "flights");
   REQUIRE(data->joins.size() == 1);
 
   const table flights_table{"flights", "T01"};
@@ -52,7 +52,7 @@ TEST_CASE("Create sql query data for entity with eager has one", "[query][entity
   query_context qc;
   size_t index{0};
   for (const auto &jd : data->joins) {
-    REQUIRE(jd.join_table.name == expected_join_data[index].first);
+    REQUIRE(jd.join_table->name == expected_join_data[index].first);
     REQUIRE(jd.condition->evaluate(db.dialect(), qc) == expected_join_data[index].second);
     ++index;
   }
@@ -85,7 +85,7 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
   auto data = eqb.build<book>(17);
 
   REQUIRE(data.is_ok());
-  REQUIRE(data->root_table->get().name == "books");
+  REQUIRE(data->root_table->name == "books");
   REQUIRE(data->joins.size() == 1);
   const table books_table{"books", "T01"};
   const table authors_table{"authors", "T02"};
@@ -112,7 +112,7 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
   query_context qc;
   size_t index{0};
   for (const auto &jd : data->joins) {
-    REQUIRE(jd.join_table.name == expected_join_data[index].first);
+    REQUIRE(jd.join_table->name == expected_join_data[index].first);
     REQUIRE(jd.condition->evaluate(db.dialect(), qc) == expected_join_data[index].second);
     ++index;
   }
@@ -123,10 +123,10 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
 
   auto q = db.query(scm)
     .select(data->columns)
-    .from(data->root_table->get().name);
+    .from(data->root_table->name);
 
   for (auto &jd : data->joins) {
-    q.join_left(jd.join_table)
+    q.join_left(*jd.join_table)
       .on(std::move(jd.condition));
   }
   auto context = q
@@ -147,7 +147,7 @@ TEST_CASE("Create sql query data for entity with eager has many belongs to", "[q
   auto data = eqb.build<order>(17);
 
   REQUIRE(data.is_ok());
-  REQUIRE(data->root_table->get().name == "orders");
+  REQUIRE(data->root_table->name == "orders");
   REQUIRE(data->joins.size() == 1);
   const table orders_table{"orders", "T01"};
   const table order_details_table{"order_details", "T02"};
@@ -180,7 +180,7 @@ TEST_CASE("Create sql query data for entity with eager has many belongs to", "[q
   query_context qc;
   size_t index{0};
   for (const auto &jd : data->joins) {
-    REQUIRE(jd.join_table.name == expected_join_data[index].first);
+    REQUIRE(jd.join_table->name == expected_join_data[index].first);
     REQUIRE(jd.condition->evaluate(db.dialect(), qc) == expected_join_data[index].second);
     ++index;
   }
@@ -203,7 +203,7 @@ TEST_CASE("Create sql query data for entity with eager many to many", "[query][e
   auto data = eqb.build<ingredient>(17);
 
   REQUIRE(data.is_ok());
-  REQUIRE(data->root_table->get().name == "ingredients");
+  REQUIRE(data->root_table->name == "ingredients");
   REQUIRE(data->joins.size() == 2);
   const table ingredients_table{"ingredients", "T01"};
   const table recipes_table{"recipes", "T03"};
@@ -226,7 +226,7 @@ TEST_CASE("Create sql query data for entity with eager many to many", "[query][e
   query_context qc;
   size_t index{0};
   for (const auto &jd : data->joins) {
-    REQUIRE(jd.join_table.name == expected_join_data[index].first);
+    REQUIRE(jd.join_table->name == expected_join_data[index].first);
     REQUIRE(jd.condition->evaluate(db.dialect(), qc) == expected_join_data[index].second);
     ++index;
   }
@@ -261,7 +261,7 @@ TEST_CASE("Create sql query data for entity with eager many to many (inverse par
   auto data = eqb.build<course>(17);
 
   REQUIRE(data.is_ok());
-  REQUIRE(data->root_table->get().name == "courses");
+  REQUIRE(data->root_table->name == "courses");
   REQUIRE(data->joins.size() == 2);
   const table courses_table{"courses", "T01"};
   const table students_table{"students", "T03"};
@@ -284,7 +284,7 @@ TEST_CASE("Create sql query data for entity with eager many to many (inverse par
   query_context qc;
   size_t index{0};
   for (const auto &jd : data->joins) {
-    REQUIRE(jd.join_table.name == expected_join_data[index].first);
+    REQUIRE(jd.join_table->name == expected_join_data[index].first);
     REQUIRE(jd.condition->evaluate(db.dialect(), qc) == expected_join_data[index].second);
     ++index;
   }
