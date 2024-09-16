@@ -26,10 +26,17 @@ public:
   template<class Type>
   join_columns collect()
   {
-    join_columns_ = {};
     Type obj;
 
-    matador::access::process(*this, obj);
+    return collect(obj);
+  }
+
+  template<class Type>
+  join_columns collect(const Type& obj)
+  {
+    join_columns_ = {};
+
+    access::process(*this, obj);
 
     return join_columns_;
   }
@@ -206,17 +213,24 @@ public:
   }
 
   template<class ContainerType>
-  void on_has_many_to_many(const char * /*id*/, ContainerType &/*c*/, const char *join_column, const char *inverse_join_column, const utils::foreign_attributes &attr)
+  void on_has_many_to_many(const char *id, ContainerType &/*c*/, const char *join_column, const char *inverse_join_column, const utils::foreign_attributes &attr)
   {
     if (attr.fetch() != utils::fetch_type::EAGER) {
       return;
     }
+    const auto relation_info = schema_.info(id);
+    if (!relation_info) {
+      throw query_builder_exception{query_build_error::UnknownType};
+    }
+    table_info_stack_.push(relation_info.value());
+    char str[4];
+    snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
+    const auto& relation_table = entity_query_data_.tables.emplace_back(relation_info->name, str);
     const auto info = schema_.info<typename ContainerType::value_type::value_type>();
     if (!info) {
       throw query_builder_exception{query_build_error::UnknownType};
     }
     table_info_stack_.push(info.value());
-    char str[4];
     snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
     const auto& foreign_table = entity_query_data_.tables.emplace_back(info->name, str);
     current_table_ = &foreign_table;
@@ -224,29 +238,36 @@ public:
     access::process(*this , obj);
     current_table_ = &entity_query_data_.root_table.value().get();
     table_info_stack_.pop();
+    table_info_stack_.pop();
 
     auto pk = info->prototype.primary_key();
     if (!pk) {
       throw query_builder_exception{query_build_error::MissingPrimaryKey};
     }
 
-    const auto& join_table = entity_query_data_.tables.emplace_back(info->name);
-    append_join({*entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {join_table, join_column}, *entity_query_data_.root_table);
-    append_join({join_table, inverse_join_column}, {*entity_query_data_.root_table, pk->name()}, join_table);
+    append_join({*entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {relation_table, join_column}, relation_table);
+    append_join({relation_table, inverse_join_column}, {foreign_table, pk->name()}, foreign_table);
   }
 
   template<class ContainerType>
-  void on_has_many_to_many(const char * /*id*/, ContainerType &/*c*/, const utils::foreign_attributes &attr)
+  void on_has_many_to_many(const char *id, ContainerType &/*c*/, const utils::foreign_attributes &attr)
   {
     if (attr.fetch() != utils::fetch_type::EAGER) {
       return;
     }
-    const auto info = schema_.info<typename ContainerType::value_type::value_type>();
+      const auto relation_info = schema_.info(id);
+      if (!relation_info) {
+          throw query_builder_exception{query_build_error::UnknownType};
+      }
+      table_info_stack_.push(relation_info.value());
+      char str[4];
+      snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
+      const auto& relation_table = entity_query_data_.tables.emplace_back(relation_info->name, str);
+      const auto info = schema_.info<typename ContainerType::value_type::value_type>();
     if (!info) {
       throw query_builder_exception{query_build_error::UnknownType};
     }
     table_info_stack_.push(info.value());
-    char str[4];
     snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
     const auto& foreign_table = entity_query_data_.tables.emplace_back(info->name, str);
     current_table_ = &foreign_table;
@@ -254,17 +275,17 @@ public:
     access::process(*this , obj);
     current_table_ = &entity_query_data_.root_table.value().get();
     table_info_stack_.pop();
+    table_info_stack_.pop();
 
     auto pk = info->prototype.primary_key();
     if (!pk) {
       throw query_builder_exception{query_build_error::MissingPrimaryKey};
     }
 
-    const auto join_columns = join_column_collector_.collect<typename ContainerType::value_type::value_type>();
+    const auto join_columns = join_column_collector_.collect(obj);
 
-    const auto& join_table = entity_query_data_.tables.emplace_back(info->name);
-    append_join({*entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {join_table, join_columns.inverse_join_column}, *entity_query_data_.root_table);
-    append_join({join_table, join_columns.join_column}, {*entity_query_data_.root_table, pk->name()}, join_table);
+    append_join({*entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {relation_table, join_columns.inverse_join_column}, relation_table);
+    append_join({relation_table, join_columns.join_column}, {foreign_table, pk->name()}, foreign_table);
   }
 
 private:
