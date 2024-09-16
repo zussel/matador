@@ -18,7 +18,7 @@ public:
   basic_condition() = default;
   virtual ~basic_condition() = default;
 
-  enum class operand_t : uint8_t
+  enum class operand_type : uint8_t
   {
     EQUAL = 0,
     NOT_EQUAL,
@@ -35,7 +35,7 @@ public:
 
   virtual std::string evaluate(const dialect &dialect, query_context &query) const = 0;
 
-  static std::unordered_map<operand_t, std::string> operands;
+  static std::unordered_map<operand_type, std::string> operands;
 };
 
 class basic_column_condition : public basic_condition
@@ -44,7 +44,7 @@ public:
   column field_;
   std::string operand;
 
-  basic_column_condition(column fld, basic_condition::operand_t op);
+  basic_column_condition(column fld, operand_type op);
 };
 
 class basic_in_condition : public basic_condition

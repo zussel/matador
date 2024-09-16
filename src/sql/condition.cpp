@@ -2,17 +2,17 @@
 
 namespace matador::sql {
 
-condition<column, utils::placeholder, std::enable_if_t<true>>::condition(const column &fld, const basic_condition::operand_t op, const utils::placeholder &val)
+condition<column, utils::placeholder>::condition(const column &fld, const operand_type op, const utils::placeholder &val)
 : basic_column_condition(fld, op), value(val)
 {}
 
-std::string condition<column, utils::placeholder, std::enable_if_t<true>>::evaluate(const dialect &d, query_context &query) const
+std::string condition<column, utils::placeholder>::evaluate(const dialect &d, query_context &query) const
 {
   query.bind_vars.emplace_back(field_.name);
   return d.prepare_identifier(field_) + " " + operand + " " + d.next_placeholder(query.bind_vars);
 }
 
-condition<column, query_context>::condition(column col, const basic_condition::operand_t op, query_context &q)
+condition<column, query_context>::condition(column col, const operand_type op, query_context &q)
 : basic_column_condition(std::move(col), op), query_(q)
 {}
 
@@ -24,21 +24,21 @@ std::string condition<column, query_context>::evaluate(const dialect &d, query_c
   return result;
 }
 
-std::string condition<column, column, void>::evaluate(const dialect &d, query_context &/*query*/) const {
+std::string condition<column, column>::evaluate(const dialect &d, query_context &/*query*/) const {
   return d.prepare_condition(field_) + " " + operand + " " + d.prepare_condition(other_column_);
 }
 
 condition<column, query_context> in(const column &col, query_context &&q)
 {
-  return {col, basic_condition::operand_t::IN_LIST, q};
+  return {col, basic_condition::operand_type::IN_LIST, q};
 }
 
 condition<column, std::string> like(const column &col, const std::string &val) {
-  return { col, basic_condition::operand_t::LIKE, val };
+  return { col, basic_condition::operand_type::LIKE, val };
 }
 
 condition<column, column> operator==(const column &a, const column &b)
 {
-  return {a, basic_condition::operand_t::EQUAL, b};
+  return {a, basic_condition::operand_type::EQUAL, b};
 }
 }

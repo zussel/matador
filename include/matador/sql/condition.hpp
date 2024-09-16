@@ -34,7 +34,7 @@ template<>
 class condition<column, utils::placeholder, std::enable_if_t<true>> final : public basic_column_condition
 {
 public:
-    condition(const column &fld, basic_condition::operand_t op, const utils::placeholder &val);
+    condition(const column &fld, operand_type op, const utils::placeholder &val);
 
     utils::placeholder value;
 
@@ -42,13 +42,13 @@ public:
 };
 
 template<class T>
-class condition<column, T, typename std::enable_if<
+class condition<column, T, std::enable_if_t<
   std::is_scalar_v<T> &&
-  !std::is_same<std::string, T>::value &&
-  !std::is_same<const char*, T>::value>::type> : public basic_column_condition
+  !std::is_same_v<std::string, T> &&
+  !std::is_same_v<const char*, T>>> final : public basic_column_condition
 {
 public:
-  condition(const column &fld, basic_condition::operand_t op, T val)
+  condition(const column &fld, const operand_type op, T val)
     : basic_column_condition(fld, op)
     , value(val)
   { }
@@ -63,12 +63,12 @@ public:
 };
 
 template<class T>
-class condition<column, T, typename std::enable_if<
-  std::is_same<std::string, T>::value ||
-  std::is_same<const char*, T>::value>::type> : public basic_column_condition
+class condition<column, T, std::enable_if_t<
+  std::is_same_v<std::string, T> ||
+  std::is_same_v<const char*, T>>>final : public basic_column_condition
 {
 public:
-  condition(const column &fld, basic_condition::operand_t op, T val)
+  condition(const column &fld, const operand_type op, T val)
     : basic_column_condition(fld, op)
     ,value(val)
   { }
@@ -83,13 +83,13 @@ public:
 };
 
 template<class T>
-class condition<T, column, typename std::enable_if<
-  std::is_scalar<T>::value &&
-  !std::is_same<std::string, T>::value &&
-  !std::is_same<const char*, T>::value>::type> : public basic_column_condition
+class condition<T, column, std::enable_if_t<
+  std::is_scalar_v<T> &&
+  !std::is_same_v<std::string, T> &&
+  !std::is_same_v<const char*, T>>> final : public basic_column_condition
 {
 public:
-  condition(T val, basic_condition::operand_t op, const column &fld)
+  condition(T val, const operand_type op, const column &fld)
     : basic_column_condition(fld, op)
     , value(val)
   { }
@@ -103,12 +103,12 @@ public:
 };
 
 template<class T>
-class condition<T, column, typename std::enable_if<
-  std::is_same<std::string, T>::value ||
-  std::is_same<const char*, T>::value>::type> : public basic_column_condition
+class condition<T, column, std::enable_if_t<
+  std::is_same_v<std::string, T> ||
+  std::is_same_v<const char*, T>>> final : public basic_column_condition
 {
 public:
-  condition(T val, basic_condition::operand_t op, const column &fld)
+  condition(T val, const operand_type op, const column &fld)
     : basic_column_condition(fld, op)
     , value(val)
   { }
@@ -134,7 +134,7 @@ public:
  * @endcode
  */
 template < class V >
-class condition<column, std::initializer_list<V>> : public basic_in_condition {
+class condition<column, std::initializer_list<V>> final : public basic_in_condition {
 public:
   /**
    * @brief Creates an IN condition
@@ -155,6 +155,7 @@ public:
    * query string based on the given compile type
    *
    * @param d The d used to evaluate
+   * @param query Query to evaluate
    * @return A condition IN part of the query
    */
   std::string evaluate(const dialect &d, query_context &query) const override {
@@ -194,15 +195,15 @@ private:
 /**
  * @brief Condition class representing an IN condition
  *
- * This class represents an query IN condition and evaluates to
+ * This class represents a query IN condition and evaluates to
  * this condition based on the current database d
  *
  * @code
- * WHERE age IN (select age_value from <table>)
+ * WHERE age IN (select age_value from table)
  * @endcode
  */
 template <>
-class condition<column, query_context> : public basic_column_condition
+class condition<column, query_context> final : public basic_column_condition
 {
 public:
   /**
@@ -216,7 +217,7 @@ public:
    * @param op Operand of the condition
    * @param q The query to be evaluated to the IN arguments
    */
-  condition(column col, basic_condition::operand_t op, query_context &q);
+  condition(column col, operand_type op, query_context &q);
 
   /**
    * @brief Evaluates the condition
@@ -225,6 +226,7 @@ public:
    * query string based on the given compile type
    *
    * @param d The d used to evaluate
+   * @param query Query to evaluate
    * @return A condition IN part of the query
    */
   std::string evaluate(const dialect &d, query_context &query) const override;
@@ -242,7 +244,7 @@ private:
  * @tparam T The type of the boundary values
  */
 template < class T >
-class condition<column, std::pair<T, T>> : public basic_condition {
+class condition<column, std::pair<T, T>> final : public basic_condition {
 public:
   /**
    * @brief Create a new between condition
@@ -260,6 +262,7 @@ public:
    * based on the given compile type
    *
    * @param d The d used to evaluate
+   * @param query Query to evaluate
    * @return A condition BETWEEN part of the query
    */
   std::string evaluate(const dialect &d, query_context &query) const override {
@@ -286,7 +289,7 @@ private:
  * @tparam R2 The right hand type of the right operator
  */
 template<class L1, class R1, class L2, class R2>
-class condition<condition<L1, R1>, condition<L2, R2>> : public basic_condition
+class condition<condition<L1, R1>, condition<L2, R2>> final : public basic_condition
 {
 public:
   /**
@@ -295,13 +298,14 @@ public:
    * @param r right hand operator of the condition
    * @param op The operand (AND or OR)
    */
-  condition(condition<L1, R1> &&l, condition<L2, R2> &&r, basic_condition::operand_t op)
+  condition(condition<L1, R1> &&l, condition<L2, R2> &&r, const operand_type op)
     : left(std::move(l)), right(std::move(r)), operand(op) { }
 
   /**
    * @brief Evaluates the condition
    *
    * @param d The d used to evaluate
+   * @param query Query to evaluate
    * @return The evaluated string based on the compile type
    */
   std::string evaluate(const dialect &d, query_context &query) const override
@@ -309,17 +313,17 @@ public:
     // ensure the numbering order for host vars
     auto cl = left.evaluate(d, query);
     auto cr = right.evaluate(d, query);
-    if (operand == basic_condition::operand_t::AND) {
-      return "(" + cl + " " + basic_condition::operands[operand] + " " + cr + ")";
+    if (operand == operand_type::AND) {
+      return "(" + cl + " " + operands[operand] + " " + cr + ")";
     } else {
-      return cl + " " + basic_condition::operands[operand] + " " + cr;
+      return cl + " " + operands[operand] + " " + cr;
     }
   }
 
 private:
   condition<L1, R1> left;
   condition<L2, R2> right;
-  basic_condition::operand_t operand;
+  basic_condition::operand_type operand;
 };
 
 /**
@@ -339,7 +343,7 @@ public:
    * @param c The condition to be negated
    */
   condition(const condition<L, R> &c) // NOLINT(*-explicit-constructor)
-    : cond(c), operand(basic_condition::operands[basic_condition::operand_t::NOT]) { }
+    : cond(c), operand(operands[operand_type::NOT]) { }
 
   /**
    * @brief Evaluates the condition
@@ -362,7 +366,7 @@ template<>
 class condition<column, column> final : public basic_column_condition
 {
 public:
-  condition(const column &a, const basic_condition::operand_t op, column b)
+  condition(const column &a, const operand_type op, column b)
   : basic_column_condition(a, op)
   , other_column_(std::move(b)) {}
   /**
@@ -461,7 +465,7 @@ condition<column, std::string> like(const column &col, const std::string &val);
 template<class T>
 condition<column, T> operator==(const column &col, T val)
 {
-  return condition<column, T>(col, basic_condition::operand_t::EQUAL, val);
+  return condition<column, T>(col, basic_condition::operand_type::EQUAL, val);
 }
 
 condition<column, column> operator==(const column &a, const column &b);
@@ -492,7 +496,7 @@ condition<column, query_context> equals(const column &col, query_context &q);
 template<class T>
 condition<column, T> operator!=(const column &col, T val)
 {
-  return condition<column, T>(col, basic_condition::operand_t::NOT_EQUAL, val);
+  return condition<column, T>(col, basic_condition::operand_type::NOT_EQUAL, val);
 }
 
 /**
@@ -509,7 +513,7 @@ condition<column, T> operator!=(const column &col, T val)
 template<class T>
 condition<column, T> operator<(const column &col, T val)
 {
-  return condition<column, T>(col, basic_condition::operand_t::LESS, val);
+  return condition<column, T>(col, basic_condition::operand_type::LESS, val);
 }
 
 /**
@@ -526,7 +530,7 @@ condition<column, T> operator<(const column &col, T val)
 template<class T>
 condition<column, T> operator<=(const column &col, T val)
 {
-  return condition<column, T>(col, basic_condition::operand_t::LESS_EQUAL, val);
+  return condition<column, T>(col, basic_condition::operand_type::LESS_EQUAL, val);
 }
 
 /**
@@ -543,7 +547,7 @@ condition<column, T> operator<=(const column &col, T val)
 template<class T>
 condition<column, T> operator>(const column &col, T val)
 {
-  return condition<column, T>(col, basic_condition::operand_t::GREATER, val);
+  return condition<column, T>(col, basic_condition::operand_type::GREATER, val);
 }
 
 /**
@@ -560,7 +564,7 @@ condition<column, T> operator>(const column &col, T val)
 template<class T>
 condition<column, T> operator>=(const column &col, T val)
 {
-  return condition<column, T>(col, basic_condition::operand_t::GREATER_EQUAL, val);
+  return condition<column, T>(col, basic_condition::operand_type::GREATER_EQUAL, val);
 }
 
 /**
@@ -577,7 +581,7 @@ condition<column, T> operator>=(const column &col, T val)
 template<class L1, class R1, class L2, class R2>
 condition<condition<L1, R1>, condition<L2, R2>> operator&&(condition<L1, R1> l, condition<L2, R2> r)
 {
-  return condition<condition<L1, R1>, condition<L2, R2>>(std::move(l), std::move(r), basic_condition::operand_t::AND);
+  return condition<condition<L1, R1>, condition<L2, R2>>(std::move(l), std::move(r), basic_condition::operand_type::AND);
 }
 
 /**
@@ -594,7 +598,7 @@ condition<condition<L1, R1>, condition<L2, R2>> operator&&(condition<L1, R1> l, 
 template<class L1, class R1, class L2, class R2>
 condition<condition<L1, R1>, condition<L2, R2>> operator||(condition<L1, R1> l, condition<L2, R2> r)
 {
-  return condition<condition<L1, R1>, condition<L2, R2>>(std::move(l), std::move(r), basic_condition::operand_t::OR);
+  return condition<condition<L1, R1>, condition<L2, R2>>(std::move(l), std::move(r), basic_condition::operand_type::OR);
 }
 
 /**

@@ -2,22 +2,22 @@
 
 namespace matador::sql {
 
-std::unordered_map<basic_condition::operand_t, std::string> basic_condition::operands{
-  {operand_t::EQUAL, "="},
-  {operand_t::NOT_EQUAL, "<>"},
-  {operand_t::LESS, "<"},
-  {operand_t::LESS_EQUAL, "<="},
-  {operand_t::GREATER, ">"},
-  {operand_t::GREATER_EQUAL, ">="},
-  {operand_t::OR, "OR"},
-  {operand_t::AND, "AND"},
-  {operand_t::NOT, "NOT"},
-  {operand_t::IN_LIST, "IN"},
-  {operand_t::LIKE, "LIKE"}
+std::unordered_map<basic_condition::operand_type, std::string> basic_condition::operands{
+  {operand_type::EQUAL, "="},
+  {operand_type::NOT_EQUAL, "<>"},
+  {operand_type::LESS, "<"},
+  {operand_type::LESS_EQUAL, "<="},
+  {operand_type::GREATER, ">"},
+  {operand_type::GREATER_EQUAL, ">="},
+  {operand_type::OR, "OR"},
+  {operand_type::AND, "AND"},
+  {operand_type::NOT, "NOT"},
+  {operand_type::IN_LIST, "IN"},
+  {operand_type::LIKE, "LIKE"}
 };
 
-basic_column_condition::basic_column_condition(column fld, basic_condition::operand_t op)
-  : field_(std::move(fld)), operand(basic_condition::operands[op])
+basic_column_condition::basic_column_condition(column fld, const operand_type op)
+  : field_(std::move(fld)), operand(operands[op])
 { }
 
 basic_in_condition::basic_in_condition(column fld)
