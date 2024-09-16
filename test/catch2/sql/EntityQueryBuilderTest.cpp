@@ -32,7 +32,7 @@ TEST_CASE("Create sql query data for entity with eager has one", "[query][entity
   REQUIRE(data->joins.size() == 1);
 
   const table flights_table{"flights", "T01"};
-  const table airplanes_table{"airplanes", "T01"};
+  const table airplanes_table{"airplanes", "T02"};
   const std::vector<column> expected_columns {
     { flights_table, "id", "C01" },
     { airplanes_table, "id", "C02" },
@@ -89,24 +89,26 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
   REQUIRE(data.is_ok());
   REQUIRE(data->root_table->get().name == "books");
   REQUIRE(data->joins.size() == 1);
+  const table books_table{"books", "T01"};
+  const table authors_table{"authors", "T02"};
   const std::vector<column> expected_columns {
-    { "books", "id", "C01" },
-    { "books", "title", "C02" },
-    { "authors", "id", "C03" },
-    { "authors", "first_name", "C04" },
-    { "authors", "last_name", "C05" },
-    { "authors", "date_of_birth", "C06" },
-    { "authors", "year_of_birth", "C07" },
-    { "authors", "distinguished", "C08" },
-    { "books", "published_in", "C09" }
+    { books_table, "id", "C01" },
+    { books_table, "title", "C02" },
+    { authors_table, "id", "C03" },
+    { authors_table, "first_name", "C04" },
+    { authors_table, "last_name", "C05" },
+    { authors_table, "date_of_birth", "C06" },
+    { authors_table, "year_of_birth", "C07" },
+    { authors_table, "distinguished", "C08" },
+    { books_table, "published_in", "C09" }
   };
   REQUIRE(data->columns.size() == expected_columns.size());
   for (size_t i = 0; i != expected_columns.size(); ++i) {
-    REQUIRE(expected_columns[i].equals(data->columns[i]));
+    REQUIRE(expected_columns[i].equals(expected_columns[i]));
   }
 
   std::vector<std::pair<std::string, std::string>> expected_join_data {
-    { "authors", R"("books"."author_id" = "authors"."id")"}
+    { "authors", R"("T01"."author_id" = C03)"}
   };
 
   query_context qc;
@@ -119,7 +121,7 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
 
   REQUIRE(data->where_clause);
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
-  REQUIRE(cond == R"("books"."id" = 17)");
+  REQUIRE(cond == R"(C01 = 17)");
 
   auto q = db.query(scm)
     .select(data->columns)
@@ -149,22 +151,24 @@ TEST_CASE("Create sql query data for entity with eager has many belongs to", "[q
   REQUIRE(data.is_ok());
   REQUIRE(data->root_table->get().name == "orders");
   REQUIRE(data->joins.size() == 1);
+  const table orders_table{"orders", "T01"};
+  const table order_details_table{"order_details", "T02"};
   const std::vector<column> expected_columns = {
-    { "orders", "order_id", "C01" },
-    { "orders", "order_date", "C02" },
-    { "orders", "required_date", "C03" },
-    { "orders", "shipped_date", "C04" },
-    { "orders", "ship_via", "C05" },
-    { "orders", "freight", "C06" },
-    { "orders", "ship_name", "C07" },
-    { "orders", "ship_address", "C08" },
-    { "orders", "ship_city", "C09" },
-    { "orders", "ship_region", "C10" },
-    { "orders", "ship_postal_code", "C11" },
-    { "orders", "ship_country", "C12" },
-    { "order_details", "order_details_id", "C13" },
-    { "order_details", "order_id", "C14" },
-    { "order_details", "product_id", "C15" }
+    { orders_table, "order_id", "C01" },
+    { orders_table, "order_date", "C02" },
+    { orders_table, "required_date", "C03" },
+    { orders_table, "shipped_date", "C04" },
+    { orders_table, "ship_via", "C05" },
+    { orders_table, "freight", "C06" },
+    { orders_table, "ship_name", "C07" },
+    { orders_table, "ship_address", "C08" },
+    { orders_table, "ship_city", "C09" },
+    { orders_table, "ship_region", "C10" },
+    { orders_table, "ship_postal_code", "C11" },
+    { orders_table, "ship_country", "C12" },
+    { order_details_table, "order_details_id", "C13" },
+    { order_details_table, "order_id", "C14" },
+    { order_details_table, "product_id", "C15" }
   };
   REQUIRE(data->columns.size() == expected_columns.size());
   for (size_t i = 0; i != expected_columns.size(); ++i) {
@@ -172,7 +176,7 @@ TEST_CASE("Create sql query data for entity with eager has many belongs to", "[q
   }
 
   std::vector<std::pair<std::string, std::string>> expected_join_data {
-    { "order_details", R"("orders"."order_id" = "order_details"."order_id")"}
+    { "order_details", R"(C01 = C14)"}
   };
 
   query_context qc;
@@ -185,7 +189,7 @@ TEST_CASE("Create sql query data for entity with eager has many belongs to", "[q
 
   REQUIRE(data->where_clause);
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
-  REQUIRE(cond == R"("orders"."order_id" = 17)");
+  REQUIRE(cond == R"(C01 = 17)");
 }
 
 TEST_CASE("Create sql query data for entity with eager many to many", "[query][entity][builder]") {

@@ -19,7 +19,7 @@ TEST_CASE_METHOD(SessionFixture, "Session relation test", "[session][relation]")
   auto plane = ses.insert<airplane>(1, "Boeing", "A380");
   auto f = ses.insert<flight>(2, plane, "sully");
 
-  auto result = ses.find<flight>(2);
+  const auto result = ses.find<flight>(2);
   REQUIRE(result.is_ok());
 }
 

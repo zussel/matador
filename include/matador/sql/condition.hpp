@@ -372,10 +372,7 @@ public:
    * @param query The context of the query
    * @return The evaluated string based on the compile type
    */
-  std::string evaluate(const dialect &d, query_context &query) const override
-  {
-    return d.prepare_condition(field_) + " " + operand + " " + d.prepare_condition(other_column_);
-  }
+  std::string evaluate(const dialect &d, query_context &query) const override;
 
 private:
   column other_column_;

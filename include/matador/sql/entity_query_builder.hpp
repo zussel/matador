@@ -4,13 +4,13 @@
 #include "matador/sql/connection.hpp"
 #include "matador/sql/condition.hpp"
 #include "matador/sql/query_context.hpp"
-#include "matador/sql/query.hpp"
 #include "matador/sql/query_intermediates.hpp"
 #include "matador/sql/value.hpp"
 
 #include "matador/utils/result.hpp"
 
 #include <iostream>
+#include <unordered_set>
 
 namespace matador::sql {
 
@@ -58,17 +58,33 @@ private:
   join_columns join_columns_;
 };
 
+struct column_hash {
+  std::size_t operator()(const column& x) const {
+    return std::hash<std::string>()(x.name) ^ std::hash<std::string>()(x.alias);
+  }
+};
+
+struct table_hash {
+  std::size_t operator()(const table& x) const {
+    return std::hash<std::string>()(x.name) ^ std::hash<std::string>()(x.alias);
+  }
+};
+
 struct entity_query_data {
-  entity_query_data() = default;
+  entity_query_data() {
+    tables.reserve(200);
+    columns.reserve(500);
+  }
   explicit entity_query_data(const table& root_table) {
-      this->root_table = tables.emplace_back(root_table);
+    tables.reserve(200);
+    columns.reserve(500);
+    this->root_table = tables.emplace_back(root_table);
   }
 
   std::optional<std::reference_wrapper<table>> root_table;
   std::vector<table> tables{};
   std::optional<std::reference_wrapper<const column>> pk_column_;
-  // std::string pk_column_{};
-  std::vector<column> columns {};
+  std::vector<column> columns{};
   std::vector<join_data> joins{};
   std::unique_ptr<basic_condition> where_clause{};
 };
@@ -80,7 +96,7 @@ enum class query_build_error : std::uint8_t {
   UnexpectedError
 };
 
-class query_builder_exception : public std::exception
+class query_builder_exception final : public std::exception
 {
 public:
   explicit query_builder_exception(const query_build_error error) : error_(error) {}
@@ -170,8 +186,13 @@ public:
         throw query_builder_exception{query_build_error::UnknownType};
       }
       table_info_stack_.push(info.value());
+      char str[4];
+      snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
+      const auto& foreign_table = entity_query_data_.tables.emplace_back(info->name, str);
+      current_table_ = &foreign_table;
       typename ContainerType::value_type::value_type obj;
-      matador::access::process(*this , obj);
+      access::process(*this , obj);
+      current_table_ = &entity_query_data_.root_table.value().get();
       table_info_stack_.pop();
 
       auto pk = info->prototype.primary_key();
@@ -179,8 +200,8 @@ public:
         throw query_builder_exception{query_build_error::MissingPrimaryKey};
       }
 
-      const auto& join_table = entity_query_data_.tables.emplace_back(info->name);
-      append_join({*entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {join_table, join_column}, *entity_query_data_.root_table);
+      // const auto& join_table = entity_query_data_.tables.emplace_back(info->name);
+      append_join({*entity_query_data_.root_table, table_info_stack_.top().prototype.primary_key()->name()}, {foreign_table, join_column}, foreign_table);
     }
   }
 
@@ -195,8 +216,13 @@ public:
       throw query_builder_exception{query_build_error::UnknownType};
     }
     table_info_stack_.push(info.value());
+    char str[4];
+    snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
+    const auto& foreign_table = entity_query_data_.tables.emplace_back(info->name, str);
+    current_table_ = &foreign_table;
     typename ContainerType::value_type::value_type obj;
-    matador::access::process(*this , obj);
+    access::process(*this , obj);
+    current_table_ = &entity_query_data_.root_table.value().get();
     table_info_stack_.pop();
 
     auto pk = info->prototype.primary_key();
@@ -220,8 +246,13 @@ public:
       throw query_builder_exception{query_build_error::UnknownType};
     }
     table_info_stack_.push(info.value());
+    char str[4];
+    snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
+    const auto& foreign_table = entity_query_data_.tables.emplace_back(info->name, str);
+    current_table_ = &foreign_table;
     typename ContainerType::value_type::value_type obj;
-    matador::access::process(*this , obj);
+    access::process(*this , obj);
+    current_table_ = &entity_query_data_.root_table.value().get();
     table_info_stack_.pop();
 
     auto pk = info->prototype.primary_key();
@@ -237,20 +268,21 @@ public:
   }
 
 private:
-    struct column_key {
-        std::reference_wrapper<const table> table_ref;
-        std::string name;
+  struct column_key {
+    std::reference_wrapper<const table> table_ref;
+    std::string name;
 
-        bool operator==(const column_key &x) const {
-            return name == x.name && table_ref.get() == x.table_ref.get();
-        }
-    };
+    bool operator==(const column_key &x) const {
+      return name == x.name && table_ref.get() == x.table_ref.get();
+    }
+  };
 
-    struct column_key_hash {
-        std::size_t operator()(const column_key& x) const {
-            return std::hash<std::string>()(x.name) ^ std::hash<std::string>()(x.table_ref.get().name);
-        }
-    };
+  struct column_key_hash {
+    std::size_t operator()(const column_key& x) const {
+      return std::hash<std::string>()(x.name) ^ std::hash<std::string>()(x.table_ref.get().name);
+    }
+  };
+
 
 private:
   void setup_query_data(const table_info& info);
@@ -282,8 +314,7 @@ void entity_query_builder::on_foreign_object(const char *id, Pointer &, const ut
     table_info_stack_.push(info.value());
     char str[4];
     snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
-    entity_query_data_.tables.push_back({info->name, str});
-    const auto& foreign_table = entity_query_data_.tables.back();
+    const auto& foreign_table = entity_query_data_.tables.emplace_back(info->name, str);
     current_table_ = &foreign_table;
     typename Pointer::value_type obj;
     access::process(*this, obj);

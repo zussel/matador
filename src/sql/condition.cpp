@@ -24,6 +24,10 @@ std::string condition<column, query_context>::evaluate(const dialect &d, query_c
   return result;
 }
 
+std::string condition<column, column, void>::evaluate(const dialect &d, query_context &/*query*/) const {
+  return d.prepare_condition(field_) + " " + operand + " " + d.prepare_condition(other_column_);
+}
+
 condition<column, query_context> in(const column &col, query_context &&q)
 {
   return {col, basic_condition::operand_t::IN_LIST, q};

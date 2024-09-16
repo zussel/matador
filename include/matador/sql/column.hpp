@@ -19,7 +19,7 @@ enum class sql_function_t {
 
 struct column
 {
-  explicit column(const char *name, std::string as = ""); // NOLINT(*-explicit-constructor)
+  column(const char *name, std::string as = ""); // NOLINT(*-explicit-constructor)
   explicit column(std::string name, std::string as = ""); // NOLINT(*-explicit-constructor)
   column(sql_function_t func, std::string name); // NOLINT(*-explicit-constructor)
   column(const struct table &t, const char* name, std::string as = "");

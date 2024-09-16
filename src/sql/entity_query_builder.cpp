@@ -21,9 +21,7 @@ void entity_query_builder::setup_query_data(const table_info& info) {
   char str[4];
   snprintf(str, 4, "T%02d", static_cast<int>(table_info_stack_.size()));
   entity_query_data_ = {};
-  entity_query_data_.tables.reserve(5);
   entity_query_data_.tables.emplace_back(info.name, str);
-  entity_query_data_.columns.reserve(30);
   entity_query_data_.root_table.emplace(entity_query_data_.tables.back());
   current_table_ = &entity_query_data_.root_table.value().get();
 }
