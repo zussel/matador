@@ -18,11 +18,11 @@ namespace matador::test {
 struct flight
 {
   flight() = default;
-  flight(unsigned long id, const object_ptr<airplane> &plane, std::string name)
+  flight(const unsigned long id, const object_ptr<airplane> &plane, std::string name)
   : id(id), airplane(plane), pilot_name(std::move(name)) {}
 
   unsigned long id{};
-  object_ptr<test::airplane> airplane;
+  object_ptr<airplane> airplane;
   std::string pilot_name;
 
   template<class Operator>

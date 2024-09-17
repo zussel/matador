@@ -10,7 +10,7 @@ column_generator::column_generator(std::vector<column> &column_infos,
 , table_schema_(ts)
 , force_lazy_(force_lazy)
 {
-  table_name_stack_.push(table_name);
+  table_stack_.push(std::make_shared<table>(table_name));
 }
 
 void column_generator::on_primary_key(const char *id, std::string &, size_t)
@@ -25,7 +25,7 @@ void column_generator::on_revision(const char *id, unsigned long long int &)
 
 void column_generator::push(const std::string &column_name) const
 {
-  column_infos_.emplace_back(column_name);
+  column_infos_.emplace_back(table_stack_.top(), column_name);
 }
 
 }

@@ -153,13 +153,15 @@ public:
     if (!is_root_entity()) {
       return;
     }
-    if (pk_.is_integer()) {
+    if (pk_.is_integer() || pk_.is_null()) {
       const auto it = column_ref_map_.find({current_table_, id});
       if (it == column_ref_map_.end()) {
         throw query_builder_exception{query_build_error::MissingPrimaryKey};
       }
       entity_query_data_.pk_column_.emplace(it->second);
-      entity_query_data_.where_clause = make_condition(column{it->second.get().name, it->second.get().alias} == *pk_.as<V>());
+      if (!pk_.is_null()) {
+        entity_query_data_.where_clause = make_condition(column{it->second.get().name, it->second.get().alias} == *pk_.as<V>());
+      }
     }
   }
 

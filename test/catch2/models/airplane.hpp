@@ -15,7 +15,7 @@ namespace matador::test {
 struct airplane
 {
   airplane() = default;
-  airplane(unsigned long id, std::string b, std::string m)
+  airplane(const unsigned long id, std::string b, std::string m)
   : id(id)
   , brand(std::move(b))
   , model(std::move(m)) {}

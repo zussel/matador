@@ -1,6 +1,7 @@
 #ifndef QUERY_COLUMN_GENERATOR_HPP
 #define QUERY_COLUMN_GENERATOR_HPP
 
+#include "table.hpp"
 #include "matador/utils/access.hpp"
 #include "matador/utils/field_attributes.hpp"
 #include "matador/utils/foreign_attributes.hpp"
@@ -63,10 +64,10 @@ public:
       if (!info) {
         return;
       }
-      table_name_stack_.push(info.value().name);
+      table_stack_.push(std::make_shared<table>(info.value().name));
       typename Pointer::value_type obj;
-      matador::access::process(*this, obj);
-      table_name_stack_.pop();
+      access::process(*this, obj);
+      table_stack_.pop();
     }
   }
   template<class Pointer>
@@ -79,10 +80,10 @@ public:
       if (!info) {
         return;
       }
-      table_name_stack_.push(info.value().name);
+      table_stack_.push(std::make_shared<table>(info.value().name));
       typename Pointer::value_type obj;
-      matador::access::process(*this, obj);
-      table_name_stack_.pop();
+      access::process(*this, obj);
+      table_stack_.pop();
     }
   }
   template<class ContainerType>
@@ -96,10 +97,10 @@ public:
       return;
     }
 
-    table_name_stack_.push(info.value().name);
+    table_stack_.push(std::make_shared<table>(info.value().name));
     typename ContainerType::value_type::value_type obj;
-    matador::access::process(*this, obj);
-    table_name_stack_.pop();
+    access::process(*this, obj);
+    table_stack_.pop();
   }
 
   template<class ContainerType>
@@ -116,7 +117,7 @@ private:
   void push(const std::string &column_name) const;
 
 private:
-  std::stack<std::string> table_name_stack_;
+  std::stack<std::shared_ptr<table>> table_stack_;
   std::vector<column> &column_infos_;
   const sql::schema &table_schema_;
   int column_index{0};

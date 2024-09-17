@@ -21,6 +21,12 @@ TEST_CASE_METHOD(SessionFixture, "Session relation test", "[session][relation]")
 
   const auto result = ses.find<flight>(2);
   REQUIRE(result.is_ok());
+  REQUIRE(result->get()->id == f->id);
+  REQUIRE(result->get()->pilot_name == f->pilot_name);
+  REQUIRE(result->get()->airplane);
+  REQUIRE(result->get()->airplane->id == plane->id);
+  REQUIRE(result->get()->airplane->brand == plane->brand);
+  REQUIRE(result->get()->airplane->model == plane->model);
 }
 
 TEST_CASE_METHOD(SessionFixture, "Use session to find object with id", "[session][find]") {

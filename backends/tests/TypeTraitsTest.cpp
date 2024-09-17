@@ -26,7 +26,7 @@ public:
   }
 };
 
-TEST_CASE_METHOD(QueryFixture, "Special handling of attributes with type traits", "[typetraits]")
+TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with type traits", "[typetraits]")
 {
   schema.attach<location>("location");
   SECTION("Insert and select with direct execution") {
