@@ -28,28 +28,28 @@ public:
   column_definition& operator=(column_definition&&) noexcept = default;
 
   template<typename Type>
-  explicit column_definition(std::string name, utils::field_attributes attr)
+  explicit column_definition(std::string name, const utils::field_attributes& attr)
   : column_definition(std::move(name), object::data_type_traits<Type>::type(attr.size()), attr)
   {}
 
   template<typename Type>
-  column_definition(std::string name, const Type &, utils::field_attributes attr, null_option null_opt)
+  column_definition(std::string name, const Type &, const utils::field_attributes& attr, null_option null_opt)
   : column_definition(std::move(name), object::data_type_traits<Type>::type(attr.size()), attr, null_opt)
   {}
 
   template<size_t SIZE>
-  column_definition(std::string name, const char (&)[SIZE], utils::field_attributes attr, null_option null_opt)
+  column_definition(std::string name, const char (&)[SIZE], const utils::field_attributes& attr, const null_option null_opt)
   : column_definition(std::move(name), object::data_type_traits<const char*>::type(attr.size()), attr, null_opt)
   {}
 
-  column_definition(std::string name, data_type type, utils::field_attributes attr, null_option null_opt, size_t index = 0);
+  column_definition(std::string name, data_type type, const utils::field_attributes&, null_option null_opt, size_t index = 0);
 
   template<typename Type>
-  column_definition(std::string name, std::string ref_table, std::string ref_column, utils::field_attributes attr, null_option null_opt)
+  column_definition(std::string name, std::string ref_table, std::string ref_column, const utils::field_attributes& attr, null_option null_opt)
   : column_definition(std::move(name), object::data_type_traits<Type>::type(attr.size()), ref_table, ref_column, attr, null_opt)
   {}
 
-  column_definition(std::string name, data_type type, size_t index, std::string ref_table, std::string ref_column, utils::field_attributes attr, null_option null_opt);
+  column_definition(std::string name, data_type type, size_t index, std::string ref_table, std::string ref_column, const utils::field_attributes& attr, null_option null_opt);
 
   [[nodiscard]] const std::string& name() const;
   [[nodiscard]] int index() const;

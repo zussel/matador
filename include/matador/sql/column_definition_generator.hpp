@@ -70,7 +70,7 @@ public:
     std::vector<column_definition> columns;
     column_definition_generator gen(columns, repo);
     Type obj;
-    matador::access::process(gen, obj);
+    access::process(gen, obj);
     return columns;
   }
 

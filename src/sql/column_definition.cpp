@@ -15,7 +15,7 @@ column_definition::column_definition(std::string name)
   , attributes_(utils::null_attributes)
 {}
 
-column_definition::column_definition(std::string name, data_type type, utils::field_attributes attr, null_option null_opt, size_t index)
+column_definition::column_definition(std::string name, const data_type type, const utils::field_attributes& attr, const null_option null_opt, const size_t index)
   : name_(std::move(name))
   , index_(index)
   , attributes_(attr)
@@ -23,8 +23,8 @@ column_definition::column_definition(std::string name, data_type type, utils::fi
   , type_(type)
 {}
 
-column_definition::column_definition(std::string name, data_type type, size_t index, std::string ref_table, std::string ref_column,
-                                     utils::field_attributes attr, null_option null_opt)
+column_definition::column_definition(std::string name, const data_type type, const size_t index, std::string ref_table, std::string ref_column,
+                                     const utils::field_attributes& attr, const null_option null_opt)
   : name_(std::move(name))
   , index_(index)
   , attributes_(attr)

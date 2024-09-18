@@ -56,7 +56,7 @@ public:
   explicit session(connection_pool<connection> &pool);
 
   template<typename Type>
-  void attach(const std::string &table_name);
+  void attach(const std::string &table_name) const;
 
   void create_schema() const;
 
@@ -85,7 +85,7 @@ public:
       return utils::error(session_error::FailedToBuildQuery);
     }
 
-    auto obj = build_select_query(c, data.release()).template fetch_one<Type>();
+    auto obj = build_select_query(c, data.release()).fetch_one<Type>();
 
     if (!obj) {
       return utils::error(session_error::FailedToFindObject);
@@ -110,7 +110,7 @@ public:
       return utils::error(session_error::FailedToBuildQuery);
     }
 
-    return utils::ok(build_select_query(c, data.release()).template fetch_all<Type>());
+    return utils::ok(build_select_query(c, data.release()).fetch_all<Type>());
   }
 
   template<typename Type>
@@ -130,7 +130,7 @@ public:
       return utils::error(session_error::FailedToBuildQuery);
     }
 
-    return utils::ok(build_select_query(c, data.release()).template fetch_all<Type>());
+    return utils::ok(build_select_query(c, data.release()).fetch_all<Type>());
   }
 
   template<typename Type>
@@ -163,7 +163,7 @@ private:
 };
 
 template<typename Type>
-void session::attach(const std::string &table_name)
+void session::attach(const std::string &table_name) const
 {
   schema_->attach<Type>(table_name);
 }

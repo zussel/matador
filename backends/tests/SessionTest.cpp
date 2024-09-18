@@ -3,6 +3,8 @@
 #include "SessionFixture.hpp"
 
 #include "models/airplane.hpp"
+#include "models/author.hpp"
+#include "models/book.hpp"
 #include "models/flight.hpp"
 
 using namespace matador;
@@ -79,5 +81,32 @@ TEST_CASE_METHOD(SessionFixture, "Use session to find all objects", "[session][f
     REQUIRE(i.model == std::get<2>(expected_result[index]));
     ++index;
   }
+}
 
+TEST_CASE_METHOD(SessionFixture, "Use session to find all objects with one-to-many relation", "[session][find][one-to-many]") {
+    ses.attach<author>("authors");
+    ses.attach<book>("books");
+    ses.create_schema();
+
+    std::vector<std::unique_ptr<author>> authors;
+    authors.emplace_back(new author{1, "Michael", "Crichton", "21.5.1975", 1975, true, {}});
+    authors.emplace_back(new author{ 2, "Steven", "King", "21.5.1956", 1956, false, {}});
+
+    for (auto &&a: authors) {
+        ses.insert(a.release());
+    }
+
+    auto result = ses.find<author>();
+    REQUIRE(result);
+    auto all_authors = result.release();
+    std::vector<author> author_repo;
+    for (const auto &i: all_authors) {
+        std::cout << "author: " << i.first_name << std::endl;
+        author_repo.push_back(i);
+    }
+
+    std::vector<std::unique_ptr<book>> books;
+    books.emplace_back( new book(3, ) )
+    tables_to_drop.emplace("books");
+    tables_to_drop.emplace("authors");
 }

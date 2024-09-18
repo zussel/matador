@@ -35,7 +35,6 @@ struct column
 
   std::shared_ptr<table> table_;
   using table_ref = std::reference_wrapper<const table>;
-  // table_ref table_;
   std::string name;
   std::string alias;
   sql_function_t function_{sql_function_t::NONE};

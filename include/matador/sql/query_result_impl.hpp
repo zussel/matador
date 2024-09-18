@@ -103,7 +103,11 @@ public:
   }
 
   template<class ContainerType>
-  void on_has_many(const char *, ContainerType &, const char *, const char *, const utils::foreign_attributes &/*attr*/) {}
+  void on_has_many_to_many(const char *, ContainerType &, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/) {}
+  template<class ContainerType>
+  void on_has_many_to_many(const char *, ContainerType &, const utils::foreign_attributes &/*attr*/) {}
+  template<class ContainerType>
+  void on_has_many(const char *, ContainerType &, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/) {}
   template<class ContainerType>
   void on_has_many(const char *, ContainerType &, const utils::foreign_attributes &/*attr*/) {}
 
