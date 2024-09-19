@@ -85,7 +85,7 @@ public:
       return utils::error(session_error::FailedToBuildQuery);
     }
 
-    auto obj = build_select_query(c, data.release()).fetch_one<Type>();
+    auto obj = build_select_query(c, data.release()).template fetch_one<Type>();
 
     if (!obj) {
       return utils::error(session_error::FailedToFindObject);
@@ -110,7 +110,7 @@ public:
       return utils::error(session_error::FailedToBuildQuery);
     }
 
-    return utils::ok(build_select_query(c, data.release()).fetch_all<Type>());
+    return utils::ok(build_select_query(c, data.release()).template fetch_all<Type>());
   }
 
   template<typename Type>
@@ -130,7 +130,7 @@ public:
       return utils::error(session_error::FailedToBuildQuery);
     }
 
-    return utils::ok(build_select_query(c, data.release()).fetch_all<Type>());
+    return utils::ok(build_select_query(c, data.release()).template fetch_all<Type>());
   }
 
   template<typename Type>

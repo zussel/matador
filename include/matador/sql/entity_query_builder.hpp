@@ -291,7 +291,7 @@ public:
 
 private:
   struct column_key {
-    std::shared_ptr<table> table;
+    std::shared_ptr<sql::table> table;
     std::string name;
 
     bool operator==(const column_key &x) const {

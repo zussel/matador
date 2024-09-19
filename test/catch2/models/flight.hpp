@@ -22,7 +22,7 @@ struct flight
   : id(id), airplane(plane), pilot_name(std::move(name)) {}
 
   unsigned long id{};
-  object_ptr<airplane> airplane;
+  object_ptr<test::airplane> airplane;
   std::string pilot_name;
 
   template<class Operator>
