@@ -215,7 +215,7 @@ public:
   template < template < class ... > class C = ContainerType >
   void push_front(const value_type &value)
   {
-    static_assert(!std::is_same<C<holder_type>, std::vector<ContainerType<holder_type>>>::value, "No push_front in vector");
+    static_assert(!std::is_same_v<C<holder_type>, std::vector<ContainerType<holder_type>>>, "No push_front in vector");
     insert(this->begin(), value);
   }
 

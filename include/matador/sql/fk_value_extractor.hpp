@@ -16,12 +16,12 @@ public:
   template<class Type>
   utils::any_type extract(Type &x)
   {
-    matador::access::process(*this, x);
+    access::process(*this, x);
     return value_;
   }
 
   template<typename ValueType>
-  void on_primary_key(const char *, ValueType &pk, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type* = 0)
+  void on_primary_key(const char *, ValueType &pk, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>>* = nullptr)
   {
     value_ = pk;
   }
@@ -35,7 +35,11 @@ public:
   template<class Pointer>
   void on_has_one(const char * /*id*/, Pointer &/*x*/, const utils::foreign_attributes &/*attr*/) {}
   template<class ContainerType>
-  void on_has_many(const char *, ContainerType &, const char *, const char *, const utils::foreign_attributes &/*attr*/) {}
+  void on_has_many_to_many(const char *, ContainerType &, const char * /*join_column*/, const char * /*inverse_join_column*/, const utils::foreign_attributes &/*attr*/) {}
+  template<class ContainerType>
+  void on_has_many_to_many(const char *, ContainerType &, const utils::foreign_attributes &/*attr*/) {}
+  template<class ContainerType>
+  void on_has_many(const char *, ContainerType &, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/) {}
   template<class ContainerType>
   void on_has_many(const char *, ContainerType &, const utils::foreign_attributes &/*attr*/) {}
 

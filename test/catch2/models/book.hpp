@@ -15,8 +15,8 @@ struct author;
 struct book
 {
   unsigned long id{};
-  matador::object_ptr<author> book_author;
   std::string title;
+  matador::object_ptr<author> book_author;
   unsigned short published_in{};
 
   template<typename Operator>

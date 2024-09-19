@@ -121,17 +121,16 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
   REQUIRE(cond == R"(C01 = 17)");
 
-  auto q = db.query(scm)
+  const auto sql = db.query(scm)
     .select(data->columns)
-    .from(data->root_table->name);
-
-  for (auto &jd : data->joins) {
-    q.join_left(*jd.join_table)
-      .on(std::move(jd.condition));
-  }
-  auto context = q
+    .from(*data->root_table)
+    .join_left(data->joins)
     .where(std::move(data->where_clause))
+    .order_by(column{*data->pk_column_})
+    .asc()
     .build();
+
+  std::cout << sql.sql << "\n";
 }
 
 TEST_CASE("Create sql query data for entity with eager has many belongs to", "[query][entity][builder]") {

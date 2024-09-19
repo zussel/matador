@@ -107,7 +107,17 @@ public:
   template<class ContainerType>
   void on_has_many_to_many(const char *, ContainerType &, const utils::foreign_attributes &/*attr*/) {}
   template<class ContainerType>
-  void on_has_many(const char *, ContainerType &, const char * /*join_column*/, const utils::foreign_attributes &/*attr*/) {}
+  void on_has_many(const char *id, ContainerType &cont, const char * join_column, const utils::foreign_attributes &attr) {
+      if ( attr.fetch() == utils::fetch_type::LAZY ) {
+          // pk_reader_.read(*id, column_index_++);
+      } else {
+          auto obj = std::make_unique<typename ContainerType::value_type::value_type>();
+          // typename ContainerType::value_type x(new typename ContainerType::value_type::value_type);
+          access::process(*this, *obj);
+          cont.push_back(typename ContainerType::value_type(obj.release()));
+      }
+      std::cout << "handle attribute " << id << " with join column " << join_column << "(column index: " << column_index_ << ")\n";
+  }
   template<class ContainerType>
   void on_has_many(const char *, ContainerType &, const utils::foreign_attributes &/*attr*/) {}
 

@@ -89,8 +89,8 @@ TEST_CASE_METHOD(SessionFixture, "Use session to find all objects with one-to-ma
     ses.create_schema();
 
     std::vector<std::unique_ptr<author>> authors;
-    authors.emplace_back(new author{1, "Michael", "Crichton", "21.5.1975", 1975, true, {}});
-    authors.emplace_back(new author{ 2, "Steven", "King", "21.5.1956", 1956, false, {}});
+    authors.emplace_back(new author{1, "Michael", "Crichton", "23.10.1942", 1975, true, {}});
+    authors.emplace_back(new author{ 2, "Steven", "King", "21.9.1947", 1956, false, {}});
 
     for (auto &&a: authors) {
         ses.insert(a.release());
@@ -99,14 +99,36 @@ TEST_CASE_METHOD(SessionFixture, "Use session to find all objects with one-to-ma
     auto result = ses.find<author>();
     REQUIRE(result);
     auto all_authors = result.release();
-    std::vector<author> author_repo;
-    for (const auto &i: all_authors) {
-        std::cout << "author: " << i.first_name << std::endl;
-        author_repo.push_back(i);
+    std::vector<object_ptr<author>> author_repo;
+    for (auto it = all_authors.begin(); it != all_authors.end(); ++it) {
+        std::cout << "author: " << it->first_name << " (books: " << it->books.size() << ")\n";
+        author_repo.emplace_back(it.release());
     }
 
     std::vector<std::unique_ptr<book>> books;
-    books.emplace_back( new book(3, ) )
+    books.emplace_back( new book{3, "Jurassic Park", author_repo[0], 1990} );
+    books.emplace_back( new book{4, "Timeline", author_repo[0], 1999} );
+    books.emplace_back( new book{5, "The Andromeda Strain", author_repo[0], 1969} );
+    books.emplace_back( new book{6, "Congo", author_repo[0], 1980} );
+    books.emplace_back( new book{7, "Prey", author_repo[0], 2002} );
+    books.emplace_back( new book{8, "Carrie", author_repo[1], 1974} );
+    books.emplace_back( new book{9, "The Shining", author_repo[1], 1977} );
+    books.emplace_back( new book{10, "It", author_repo[1], 1986} );
+    books.emplace_back( new book{11, "Misery", author_repo[1], 1987} );
+    books.emplace_back( new book{12, "The Dark Tower: The Gunslinger", author_repo[1], 1982} );
+
+    for (auto &&b: books) {
+        ses.insert(b.release());
+    }
+
+    result = ses.find<author>();
+    REQUIRE(result);
+
+    all_authors = result.release();
+    for (auto it = all_authors.begin(); it != all_authors.end(); ++it) {
+        std::cout << "author: " << it->first_name << " (books: " << it->books.size() << ")\n";
+    }
+
     tables_to_drop.emplace("books");
     tables_to_drop.emplace("authors");
 }
