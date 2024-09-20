@@ -127,13 +127,13 @@ bool object_holder::valid() const noexcept
   return !empty();
 }
 
-void object_holder::reset(const identifier &id)
-{
-  if (proxy_ && !proxy_->pk().is_similar_type(id)) {
-    throw object_exception("identifier types are not equal");
-  }
-  reset(new object_proxy(id), utils::cascade_type::NONE);
-}
+// void object_holder::reset(const identifier &id)
+// {
+//   if (proxy_ && !proxy_->pk().is_similar_type(id)) {
+//     throw object_exception("identifier types are not equal");
+//   }
+//   reset(new object_proxy(id), utils::cascade_type::NONE);
+// }
 
 bool object_holder::is_loaded() const
 {

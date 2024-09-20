@@ -52,21 +52,21 @@ public:
    */
   object_proxy() = default;
 
-  /**
-   * Create a new object proxy with primary key
-   *
-   * @param pk primary key of object
-   */
-  explicit object_proxy(identifier pk);
+  // /**
+  //  * Create a new object proxy with primary key
+  //  *
+  //  * @param pk primary key of object
+  //  */
+  // explicit object_proxy(identifier pk);
 
-  template < class T >
-  object_proxy(identifier pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<T>)
-    : object_type_entry_(object_type_entry)
-    , deleter_(&destroy<T>)
-    , creator_(&create<T>)
-    , name_(&type_id<T>)
-    , pk_(std::move(pk))
-  {}
+  // template < class Type >
+  // object_proxy(identifier pk, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry, detail::identity<Type>)
+  //   : object_type_entry_(object_type_entry)
+  //   , deleter_(&destroy<Type>)
+  //   , creator_(&create<Type>)
+  //   , name_(&type_id<Type>)
+  //   , pk_(std::move(pk))
+  // {}
 
   /**
    * @brief Create an object_proxy for a given object.
@@ -74,16 +74,17 @@ public:
    * Create an object_proxy for unknown object
    * with given id.
    *
-   * @param o The valid object.
+   * @tparam Type Type of object.
+   * @param obj The valid object.
    */
-  template < typename T >
-  explicit object_proxy(T *o)
-    : obj_(o)
-    , deleter_(&destroy<T>)
-    , creator_(&create<T>)
-    , name_(&type_id<T>)
+  template < typename Type >
+  explicit object_proxy(Type *obj)
+    : obj_(obj)
+    , deleter_(&destroy<Type>)
+    , creator_(&create<Type>)
+    , name_(&type_id<Type>)
   {
-    pk_ = identifier_resolver<T>::resolve(o);
+    pk_ = identifier_resolver<Type>::resolve(obj);
   }
 
   /**
@@ -94,10 +95,10 @@ public:
    *
    * @param o The valid object.
    * @param id The object store id for the given object
-   * @param os The object_store.
+   * @param object_type_entry The object type registry
    */
   template < typename T >
-  object_proxy(T *o, unsigned long long id, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry)
+  object_proxy(T *o, const unsigned long long id, const std::shared_ptr<detail::object_type_registry_entry_base> &object_type_entry)
     : obj_(o)
     , object_type_entry_(object_type_entry)
     , deleter_(&destroy<T>)
@@ -117,30 +118,30 @@ public:
    *
    * @return The classname of the object
    */
-  const char* classname() const;
+  [[nodiscard]] const char* classname() const;
 
   /**
    * Return the underlying object
    *
-   * @tparam The type of the object
+   * @tparam Type The type of the object
    * @return The underlying object
    */
-  template < typename T = void >
-  T* obj()
+  template < typename Type = void >
+  Type* obj()
   {
-    return static_cast<T*>(obj_);
+    return static_cast<Type*>(obj_);
   }
 
   /**
    * Return the underlying object
    *
-   * @tparam The type of the object
+   * @tparam Type The type of the object
    * @return The underlying object
    */
-  template < typename T = void >
-  const T* obj() const
+  template < typename Type = void >
+  const Type* obj() const
   {
-    return static_cast<const T*>(obj_);
+    return static_cast<const Type*>(obj_);
   }
 
   [[nodiscard]] bool is_inserted() const;
@@ -159,13 +160,13 @@ public:
    * responsibility. After release the user
    * is responsible for object.
    *
-   * @tparam The type of the object
+   * @tparam Type The type of the object
    * @return The released object
    */
-  template < class T >
-  T* release()
+  template < class Type >
+  Type* release()
   {
-    T* tmp = obj<T>();
+    Type* tmp = obj<Type>();
     obj_ = nullptr;
     return tmp;
   }
@@ -246,18 +247,21 @@ public:
    * Resets the object of the object_proxy
    * with the given object.
    *
-   * @param o The new object for the object_proxy
+   * @tparam Type Type to reset
+   * @param obj The new object for the object_proxy
+   * @param resolve_identifier Flag if identifier must be resolved
+   * @param keep_ref_count Flag if reference must be kept
    */
-  template < typename T >
-  void reset(T *o, bool resolve_identifier = true, bool keep_ref_count = false)
+  template < typename Type >
+  void reset(Type *obj, const bool resolve_identifier = true, const bool keep_ref_count = false)
   {
     if (!keep_ref_count) {
       reference_counter_ = 0;
     }
-    obj_ = o;
+    obj_ = obj;
     oid = 0;
     if (obj_ != nullptr && resolve_identifier) {
-      pk_ = identifier_resolver<T>::resolve(o);
+      pk_ = identifier_resolver<Type>::resolve(obj);
     }
   }
 
@@ -365,7 +369,7 @@ private:
   template <typename T>
   static void destroy(void* p)
   {
-    delete (T*)p;
+    delete static_cast<T*>(p);
   }
 
   template<typename T>

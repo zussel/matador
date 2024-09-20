@@ -132,7 +132,7 @@ private:
     {dialect_token::COLUMNS,     "COLUMNS"},
     {dialect_token::COLUMN,      "COLUMN"},
     {dialect_token::FROM,        "FROM"},
-    {dialect_token::JOIN,        "INNER JOIN"},
+    {dialect_token::JOIN,        "LEFT JOIN"},
     {dialect_token::ON,          "ON"},
     {dialect_token::WHERE,       "WHERE"},
     {dialect_token::AND,         "AND"},

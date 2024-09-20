@@ -9,9 +9,9 @@ using namespace std;
 
 namespace matador {
 
-object_proxy::object_proxy(identifier pk)
-  : pk_(std::move(pk))
-{}
+// object_proxy::object_proxy(identifier pk)
+  // : pk_(std::move(pk))
+// {}
 
 object_proxy::~object_proxy()
 {

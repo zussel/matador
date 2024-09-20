@@ -145,7 +145,7 @@ public:
    * Resets the object_holder with the given object_proxy.
    * 
    * @param proxy The new object_proxy for the object_holder.
-   * @param cascade Sets the cascade actions for the proxy.
+   * @param attr Sets the foreign attribute settings for the proxy.
    */
   void reset(object_proxy *proxy, const utils::foreign_attributes &attr);
 
@@ -153,7 +153,7 @@ public:
    * Resets the object_holder with the given object_proxy.
    *
    * @param proxy The new object_proxy for the object_holder.
-   * @param cascade Sets the cascade actions for the proxy.
+   * @param attr Sets the foreign attribute settings for the proxy.
    * @param notify_foreign_relation True if foreign relation endpoint should be modified
    */
   void reset(object_proxy *proxy, const utils::foreign_attributes &attr, bool notify_foreign_relation);
@@ -173,7 +173,7 @@ public:
    *
    * @param id The identifier to set
    */
-  void reset(const identifier &id) override;
+  // void reset(const identifier &id) override;
 
   /**
    * Clears the currently set object

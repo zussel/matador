@@ -114,7 +114,11 @@ public:
           auto obj = std::make_unique<typename ContainerType::value_type::value_type>();
           // typename ContainerType::value_type x(new typename ContainerType::value_type::value_type);
           access::process(*this, *obj);
-          cont.push_back(typename ContainerType::value_type(obj.release()));
+          auto ptr = typename ContainerType::value_type(obj.release());
+          const auto pk = ptr.primary_key();
+          if (!ptr.primary_key().is_null()) {
+              cont.push_back(ptr);
+          }
       }
       std::cout << "handle attribute " << id << " with join column " << join_column << "(column index: " << column_index_ << ")\n";
   }

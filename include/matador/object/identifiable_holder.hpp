@@ -23,7 +23,7 @@ public:
    *
    * @param id The identifier to set
    */
-  virtual void reset(const identifier &id) = 0;
+  // virtual void reset(const identifier &id) = 0;
 
   /**
    * Returns true if serializable has a primary key
