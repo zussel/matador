@@ -3,6 +3,7 @@
 #include "matador/sql/column_definition.hpp"
 #include "matador/sql/condition.hpp"
 #include "matador/sql/connection.hpp"
+#include "matador/sql/query.hpp"
 
 #include "matador/object/object_ptr.hpp"
 
@@ -26,7 +27,9 @@ class StatementTestFixture : public QueryFixture
 public:
   StatementTestFixture()
   {
-    db.query(schema).create().table<airplane>("airplane").execute();
+    const auto res = query::create()
+      .table<airplane>("airplane", schema)
+      .execute(db);
     tables_to_drop.emplace("airplane");
   }
 
@@ -44,10 +47,10 @@ TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]
   schema.attach<airplane>("airplane");
   table ap{"airplane"};
   SECTION("Insert with prepared statement and placeholder") {
-    auto stmt = db.query(schema).insert()
+    auto stmt = query::insert()
     .into("airplane", column_generator::generate<airplane>(schema, true))
     .values<airplane>()
-    .prepare();
+    .prepare(db);
 
     for (const auto &plane: planes) {
       auto res = stmt.bind(*plane).execute();
@@ -55,10 +58,9 @@ TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]
       stmt.reset();
     }
 
-    auto result = db.query(schema)
-      .select(column_generator::generate<airplane>(schema, true))
+    auto result = query::select(column_generator::generate<airplane>(schema, true))
       .from(ap)
-      .fetch_all<airplane>();
+      .fetch_all<airplane>(db);
 
     size_t index{0};
     for (const auto &i: result) {
@@ -70,19 +72,17 @@ TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]
 
   SECTION("Select with prepared statement") {
     for (const auto &plane: planes) {
-      auto res = db.query(schema)
-        .insert()
+      auto res = query::insert()
         .into("airplane", column_generator::generate<airplane>(schema, true))
         .values(*plane)
-        .execute();
+        .execute(db);
       REQUIRE(res == 1);
     }
 
-    auto stmt = db.query(schema)
-      .select(column_generator::generate<airplane>(schema, true))
+    auto stmt = query::select(column_generator::generate<airplane>(schema, true))
       .from(ap)
       .where("brand"_col == _)
-      .prepare();
+      .prepare(db);
 
     auto result = stmt.bind(0, "Airbus")
       .fetch<airplane>();

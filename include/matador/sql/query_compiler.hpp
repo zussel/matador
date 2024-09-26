@@ -14,7 +14,7 @@ struct query_compile_context;
 class query_compiler : public query_part_visitor
 {
 public:
-  query_context compile(const query_compile_context *data);
+  query_context compile(const query_compile_context *data, const dialect &dialect);
 
 protected:
   void visit(query_select_part &select_part) override;
@@ -50,7 +50,7 @@ protected:
   const query_compile_context *data_{};
   query_context query_;
   size_t table_index{0};
-
+  const dialect *dialect_{};
 };
 
 }

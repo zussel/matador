@@ -3,7 +3,7 @@
 #include "matador/sql/column.hpp"
 #include "matador/sql/condition.hpp"
 #include "matador/sql/connection.hpp"
-#include "matador/sql/query_builder.hpp"
+#include "matador/sql/query.hpp"
 
 #include "models/person.hpp"
 
@@ -17,10 +17,9 @@ using namespace matador::test;
 
 TEST_CASE_METHOD(QueryFixture, "Test create statement", "[query][statement][create]") {
   schema.attach<matador::test::person>("person");
-  auto stmt = db.query(schema)
-    .create()
-    .table<matador::test::person>("person")
-    .prepare();
+  auto stmt = query::create()
+    .table<matador::test::person>("person", schema)
+    .prepare(db);
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
@@ -39,10 +38,9 @@ TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][inse
   using namespace matador::test;
 
   schema.attach<matador::test::person>("person");
-  auto stmt = db.query(schema)
-    .create()
-    .table<matador::test::person>("person")
-    .prepare();
+  auto stmt = query::create()
+    .table<matador::test::person>("person", schema)
+    .prepare(db);
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
@@ -52,20 +50,18 @@ TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][inse
 
   person george{1, "george", 45, {1,2,3,4}};
 
-  stmt = db.query(schema)
-    .insert()
-    .into<person>("person")
+  stmt = query::insert()
+    .into<person>("person", schema)
     .values<person>()
-    .prepare();
+    .prepare(db);
 
   res = stmt.bind(george)
     .execute();
   REQUIRE(res == 1);
 
-  auto row = db.query(schema)
-    .select<person>()
+  auto row = query::select<person>(schema)
     .from("person")
-    .fetch_one<person>();
+    .fetch_one<person>(db);
 
   REQUIRE(row != nullptr);
   REQUIRE(row->id == 1);
@@ -78,10 +74,9 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
   using namespace matador::test;
 
   schema.attach<matador::test::person>("person");
-  auto stmt = db.query(schema)
-    .create()
-    .table<matador::test::person>("person")
-    .prepare();
+  auto stmt = query::create()
+    .table<matador::test::person>("person", schema)
+    .prepare(db);
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
@@ -91,20 +86,18 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
 
   person george{1, "george", 45, {1,2,3,4}};
 
-  stmt = db.query(schema)
-    .insert()
-    .into<person>("person")
+  stmt = query::insert()
+    .into<person>("person", schema)
     .values<person>()
-    .prepare();
+    .prepare(db);
 
   res = stmt.bind(george)
     .execute();
   REQUIRE(res == 1);
 
-  auto row = db.query(schema)
-    .select<person>()
+  auto row = query::select<person>(schema)
     .from("person")
-    .fetch_one<person>();
+    .fetch_one<person>(db);
 
   REQUIRE(row != nullptr);
   REQUIRE(row->id == 1);
@@ -114,21 +107,19 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
 
   george.age = 36;
   george.image = {5,6,7,8};
-  stmt = db.query(schema)
-    .update("person")
+  stmt = query::update("person")
     .set<person>()
     .where("id"_col == matador::utils::_)
-    .prepare();
+    .prepare(db);
 
   res = stmt.bind(george)
     .bind(4, george.id)
     .execute();
   REQUIRE(res == 1);
 
-  row = db.query(schema)
-    .select<person>()
+  row = query::select<person>(schema)
     .from("person")
-    .fetch_one<person>();
+    .fetch_one<person>(db);
 
   REQUIRE(row != nullptr);
   REQUIRE(row->id == 1);
@@ -141,10 +132,9 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
   using namespace matador::test;
 
   schema.attach<matador::test::person>("person");
-  auto stmt = db.query(schema)
-    .create()
-    .table<matador::test::person>("person")
-    .prepare();
+  auto stmt = query::create()
+    .table<matador::test::person>("person", schema)
+    .prepare(db);
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
@@ -152,11 +142,10 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
 
   REQUIRE(db.exists("person"));
 
-  stmt = db.query(schema)
-    .insert()
-    .into<person>("person")
+  stmt = query::insert()
+    .into<person>("person", schema)
     .values<person>()
-    .prepare();
+    .prepare(db);
 
   std::vector<person> peoples {
     {1,"george", 45, {1,2,3,4}},
@@ -172,11 +161,10 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
     stmt.reset();
   }
 
-  auto select_stmt = db.query(schema)
-    .select<person>()
+  auto select_stmt = query::select<person>(schema)
     .from("person")
     .where("name"_col == matador::utils::_)
-    .prepare();
+    .prepare(db);
 
   auto rows = select_stmt.bind(0, "jane")
     .fetch<person>();
@@ -189,11 +177,10 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
     REQUIRE(r.image == peoples[index].image);
   }
 
-  stmt = db.query(schema)
-    .remove()
+  stmt = query::remove()
     .from("person")
     .where("name"_col == matador::utils::_)
-    .prepare();
+    .prepare(db);
 
   res = stmt.bind(0, "jane")
     .execute();
@@ -221,10 +208,9 @@ TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][stateme
   using namespace matador::test;
 
   schema.attach<matador::test::person>("person");
-  auto stmt = db.query(schema)
-    .create()
-    .table<matador::test::person>("person")
-    .prepare();
+  auto stmt = query::create()
+    .table<matador::test::person>("person", schema)
+    .prepare(db);
 
   auto res = stmt.execute();
   REQUIRE(res == 0);
@@ -232,11 +218,10 @@ TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][stateme
 
   REQUIRE(db.exists("person"));
 
-  stmt = db.query(schema)
-    .insert()
-    .into<person>("person")
+  stmt = query::insert()
+    .into<person>("person", schema)
     .values<person>()
-    .prepare();
+    .prepare(db);
 
   std::vector<person> peoples {
     {1,"george", 45, {1,2,3,4}},
@@ -252,10 +237,9 @@ TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][stateme
     stmt.reset();
   }
 
-  stmt = db.query(schema)
-    .select<person>()
+  stmt = query::select<person>(schema)
     .from("person")
-    .prepare();
+    .prepare(db);
 
   auto rows = stmt.fetch<person>();
 

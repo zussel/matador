@@ -4,11 +4,11 @@
 
 #include "matador/sql/connection.hpp"
 #include "matador/sql/column_generator.hpp"
+#include "matador/sql/query.hpp"
 
 #include "QueryFixture.hpp"
 
 #include "models/location.hpp"
-
 
 using namespace matador::sql;
 using namespace matador::test;
@@ -19,9 +19,9 @@ public:
   TypeTraitsTestFixture()
   {
     db.open();
-    db.query(schema).create()
-    .table<location>("location")
-    .execute();
+    const auto res = query::create()
+      .table<location>("location", schema)
+      .execute(db);
     tables_to_drop.emplace("location");
   }
 };
@@ -32,19 +32,15 @@ TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with typ
   SECTION("Insert and select with direct execution") {
     location loc{1, "center", {1, 2, 3}, Color::Black};
 
-    auto res = db
-      .query(schema)
-      .insert()
+    auto res = query::insert()
       .into("location", column_generator::generate<location>(schema, true))
       .values(loc)
-      .execute();
+      .execute(db);
     REQUIRE(res == 1);
 
-    auto result = db
-      .query(schema)
-      .select(column_generator::generate<location>(schema, true))
+    auto result = query::select(column_generator::generate<location>(schema, true))
       .from("location")
-      .fetch_one<location>();
+      .fetch_one<location>(db);
 
     REQUIRE(result != nullptr);
     REQUIRE(result->name == "center");
@@ -57,23 +53,19 @@ TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with typ
   SECTION("Insert and select with prepared statement") {
     location loc{1, "center", {1, 2, 3}, Color::Black};
 
-    auto stmt = db
-      .query(schema)
-      .insert()
+    auto stmt = query::insert()
       .into("location", column_generator::generate<location>(schema, true))
       .values<location>()
-      .prepare();
+      .prepare(db);
 
     auto res = stmt
       .bind(loc)
       .execute();
     REQUIRE(res == 1);
 
-    auto result = db
-      .query(schema)
-      .select(column_generator::generate<location>(schema, true))
+    auto result = query::select(column_generator::generate<location>(schema, true))
       .from("location")
-      .fetch_one<location>();
+      .fetch_one<location>(db);
 
     REQUIRE(result != nullptr);
     REQUIRE(result->name == "center");

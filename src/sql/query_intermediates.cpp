@@ -1,36 +1,25 @@
 #include "matador/sql/query_intermediates.hpp"
 #include "matador/sql/session.hpp"
 #include "matador/sql/query_compiler.hpp"
+#include "matador/sql/query_executor.hpp"
 
 namespace matador::sql {
 
-query_intermediate::query_intermediate(connection &db, const sql::schema & schema)
-: context_(std::make_shared<query_compile_context>(db, schema)) {}
+query_intermediate::query_intermediate()
+: context_(std::make_shared<query_compile_context>()) {}
 
 query_intermediate::query_intermediate(const std::shared_ptr<query_compile_context> &context)
 : context_(context)
 {}
 
-connection &query_intermediate::db() const {
-  return context_->db;
-}
-
-const class dialect &query_intermediate::dialect() const {
-  return context_->db.dialect();
-}
-
-const class schema& query_intermediate::schema() const {
-  return context_->schema;
-}
-
-query_result<record> fetchable_query::fetch_all()
+query_result<record> fetchable_query::fetch_all(const query_executor &executor) const
 {
-  return db().fetch(dialect().compiler().compile(context_.get()));
+  return query_result<record>(executor.fetch(*context_));
 }
 
-std::optional<record> fetchable_query::fetch_one()
+std::optional<record> fetchable_query::fetch_one(const query_executor &executor) const
 {
-  auto result = db().fetch(dialect().compiler().compile(context_.get()));
+  query_result<record> result(executor.fetch(*context_));
   auto first = result.begin();
   if (first == result.end()) {
     return std::nullopt;
@@ -39,19 +28,19 @@ std::optional<record> fetchable_query::fetch_one()
   return *first.get();
 }
 
-query_context fetchable_query::build() const
+std::string fetchable_query::str(const query_executor &executor) const
 {
-  return dialect().compiler().compile(context_.get());
+  return executor.str(*context_);
 }
 
-std::unique_ptr<query_result_impl> fetchable_query::fetch()
+std::unique_ptr<query_result_impl> fetchable_query::fetch(const query_executor &executor) const
 {
-  return db().fetch(dialect().compiler().compile(context_.get()).sql);
+  return executor.fetch(*context_);
 }
 
-statement fetchable_query::prepare()
+statement fetchable_query::prepare(const query_executor &executor) const
 {
-  return db().prepare(dialect().compiler().compile(context_.get()));
+  return executor.prepare(*context_);
 }
 
 query_offset_intermediate query_limit_intermediate::offset(size_t offset)
@@ -150,8 +139,7 @@ query_from_intermediate query_from_intermediate::join_left(std::vector<join_data
   return {context_};
 }
 
-query_select_intermediate::query_select_intermediate(connection &db, const sql::schema &schema, const std::vector<column>& columns)
-: query_intermediate(db, schema)
+query_select_intermediate::query_select_intermediate(const std::vector<column>& columns)
 {
   context_->parts.push_back(std::make_unique<query_select_part>(columns));
 }
@@ -163,8 +151,7 @@ query_from_intermediate query_select_intermediate::from(const table& t)
   return {context_};
 }
 
-query_insert_intermediate::query_insert_intermediate(connection &db, const sql::schema &schema)
-: query_intermediate(db, schema)
+query_insert_intermediate::query_insert_intermediate()
 {
   context_->parts.push_back(std::make_unique<query_insert_part>());
 }
@@ -195,24 +182,24 @@ query_into_intermediate query_insert_intermediate::into(const table &table)
   return {context_};
 }
 
-size_t executable_query::execute()
+size_t executable_query::execute( const query_executor &executor) const
 {
-  return db().execute(dialect().compiler().compile(context_.get()).sql);
+  return executor.execute(*context_);
 }
 
-statement executable_query::prepare()
+statement executable_query::prepare(const query_executor &executor) const
 {
-  return db().prepare(dialect().compiler().compile(context_.get()));
+  return executor.prepare(*context_);
 }
 
-query_context executable_query::build() const
+std::string executable_query::str(const query_executor &executor) const
 {
-  return dialect().compiler().compile(context_.get());
+  return executor.str(*context_);
 }
 
-executable_query query_into_intermediate::values(std::initializer_list<utils::any_type> values)
+executable_query query_into_intermediate::values(const std::initializer_list<utils::any_type> values)
 {
-  return this->values(std::vector<utils::any_type>(values));
+  return this->values(std::vector(values));
 }
 
 executable_query query_into_intermediate::values(std::vector<utils::any_type> &&values)
@@ -221,12 +208,12 @@ executable_query query_into_intermediate::values(std::vector<utils::any_type> &&
   return {context_};
 }
 
-query_create_intermediate::query_create_intermediate(connection &db, const sql::schema &schema)
-: query_intermediate(db, schema) {
+query_create_intermediate::query_create_intermediate()
+{
   context_->parts.push_back(std::make_unique<query_create_part>());
 }
 
-executable_query query_create_intermediate::table(const sql::table &table, std::initializer_list<column_definition> columns)
+executable_query query_create_intermediate::table(const sql::table &table, const std::initializer_list<column_definition> columns)
 {
   return this->table(table, std::vector<column_definition>{columns});
 }
@@ -237,8 +224,7 @@ executable_query query_create_intermediate::table(const sql::table &table, const
   return {context_};
 }
 
-query_drop_intermediate::query_drop_intermediate(connection &db, const sql::schema &schema)
-: query_intermediate(db, schema)
+query_drop_intermediate::query_drop_intermediate()
 {
   context_->parts.push_back(std::make_unique<query_drop_part>());
 }
@@ -267,8 +253,7 @@ query_execute_where_intermediate query_set_intermediate::where_clause(std::uniqu
   return {context_};
 }
 
-query_update_intermediate::query_update_intermediate(connection &db, const sql::schema &schema, const sql::table& table)
-: query_intermediate(db, schema)
+query_update_intermediate::query_update_intermediate(const sql::table& table)
 {
   context_->parts.push_back(std::make_unique<query_update_part>(table));
 }
@@ -291,8 +276,7 @@ query_execute_where_intermediate query_delete_from_intermediate::where_clause(st
   return {context_};
 }
 
-query_delete_intermediate::query_delete_intermediate(connection &db, const sql::schema &schema)
-: query_intermediate(db, schema)
+query_delete_intermediate::query_delete_intermediate()
 {
   context_->parts.push_back(std::make_unique<query_delete_part>());
 }

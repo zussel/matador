@@ -12,7 +12,6 @@
 #include "matador/sql/query_compile_context.hpp"
 #include "matador/sql/record.hpp"
 #include "matador/sql/statement.hpp"
-#include "matador/sql/schema.hpp"
 #include "matador/sql/value_extractor.hpp"
 
 #include "matador/utils/types.hpp"
@@ -24,16 +23,19 @@ namespace matador::sql {
 class basic_condition;
 class connection;
 
+class query_executor;
+
 class query_intermediate
 {
 public:
+  query_intermediate();
   query_intermediate(const std::shared_ptr<query_compile_context> &context); // NOLINT(*-explicit-constructor)
-  query_intermediate(connection &db, const sql::schema &schema);
+  // query_intermediate(connection &db, const sql::schema &schema);
 
 protected:
-  [[nodiscard]] connection& db() const;
-  [[nodiscard]] const class dialect& dialect() const;
-  [[nodiscard]] const class schema& schema() const;
+  // [[nodiscard]] connection& db() const;
+  // [[nodiscard]] const class dialect& dialect() const;
+  // [[nodiscard]] const class schema& schema() const;
 
 protected:
   std::shared_ptr<query_compile_context> context_;
@@ -44,9 +46,9 @@ class executable_query : public query_intermediate
 public:
   using query_intermediate::query_intermediate;
 
-  size_t execute();
-  statement prepare();
-  [[nodiscard]] query_context build() const;
+  [[nodiscard]] size_t execute(const query_executor &executor) const;
+  [[nodiscard]] statement prepare(const query_executor &executor) const;
+  [[nodiscard]] std::string str(const query_executor &executor) const;
 };
 
 class fetchable_query : public query_intermediate
@@ -56,16 +58,16 @@ protected:
 
 public:
   template < class Type >
-  query_result<Type> fetch_all()
+  query_result<Type> fetch_all(query_executor &executor)
   {
-    return query_result<Type>(fetch());
+    return query_result<Type>(fetch(executor));
   }
-  query_result<record> fetch_all();
+  [[nodiscard]] query_result<record> fetch_all(const query_executor &executor) const;
 
   template < class Type >
-  std::unique_ptr<Type> fetch_one()
+  std::unique_ptr<Type> fetch_one(query_executor &executor)
   {
-    auto result = query_result<Type>(fetch());
+    auto result = query_result<Type>(fetch(executor));
     auto first = result.begin();
     if (first == result.end()) {
       return nullptr;
@@ -73,24 +75,24 @@ public:
 
     return std::unique_ptr<Type>{first.release()};
   }
-  std::optional<record> fetch_one();
+  [[nodiscard]] std::optional<record> fetch_one(const query_executor &executor) const;
 
   template<typename Type>
-  std::optional<Type> fetch_value()
+  std::optional<Type> fetch_value(query_executor &executor)
   {
-    const auto result = fetch_one();
+    const auto result = fetch_one(executor);
     if (result.has_value()) {
       return result.value().at(0).as<Type>().value();
     }
     return std::nullopt;
   }
 
-  statement prepare();
+  [[nodiscard]] statement prepare(const query_executor &executor) const;
 
-  [[nodiscard]] query_context build() const;
+  [[nodiscard]] std::string str(const query_executor &executor) const;
 
 private:
-  std::unique_ptr<query_result_impl> fetch();
+  [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const query_executor &executor) const;
 };
 
 class query_offset_intermediate;
@@ -213,7 +215,7 @@ private:
 class query_select_intermediate : public query_intermediate
 {
 public:
-  query_select_intermediate(connection &db, const sql::schema &schema, const std::vector<column>& columns);
+  query_select_intermediate(const std::vector<column>& columns);
 
   query_from_intermediate from(const table& t);
 };
@@ -250,21 +252,21 @@ public:
 class query_create_intermediate : public query_intermediate
 {
 public:
-  explicit query_create_intermediate(connection &db, const sql::schema &schema);
+  query_create_intermediate();
 
   executable_query table(const sql::table &table, std::initializer_list<column_definition> columns);
   executable_query table(const sql::table &table, const std::vector<column_definition> &columns);
   template<class Type>
-  executable_query table(const sql::table &table)
+  executable_query table(const sql::table &table, const sql::schema &schema)
   {
-    return this->table(table, column_definition_generator::generate<Type>(context_->schema));
+    return this->table(table, column_definition_generator::generate<Type>(schema));
   }
 };
 
 class query_drop_intermediate : query_intermediate
 {
 public:
-  explicit query_drop_intermediate(connection &db, const sql::schema &schema);
+  query_drop_intermediate();
 
   executable_query table(const sql::table &table);
 };
@@ -272,11 +274,11 @@ public:
 class query_insert_intermediate : public query_intermediate
 {
 public:
-  explicit query_insert_intermediate(connection &db, const sql::schema &schema);
+  query_insert_intermediate();
 
   template<class Type>
-  query_into_intermediate into(const sql::table &table) {
-    return into(table, column_generator::generate<Type>(context_->schema));
+  query_into_intermediate into(const sql::table &table, const sql::schema &schema) {
+    return into(table, column_generator::generate<Type>(schema));
   }
   query_into_intermediate into(const sql::table &table, std::initializer_list<column> columns);
   query_into_intermediate into(const sql::table &table, std::vector<column> &&columns);
@@ -321,7 +323,7 @@ std::vector<key_value_pair> as_key_value_placeholder(const Type &obj)
 class query_update_intermediate : public query_intermediate
 {
 public:
-  query_update_intermediate(connection &db, const sql::schema &schema, const sql::table& table);
+  query_update_intermediate(const sql::table& table);
 
   query_set_intermediate set(std::initializer_list<key_value_pair> columns);
   query_set_intermediate set(std::vector<key_value_pair> &&columns);
@@ -356,7 +358,7 @@ private:
 class query_delete_intermediate : public query_intermediate
 {
 public:
-  explicit query_delete_intermediate(connection &db, const sql::schema &schema);
+  query_delete_intermediate();
 
   query_delete_from_intermediate from(const sql::table &table);
 };

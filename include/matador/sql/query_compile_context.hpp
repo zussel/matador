@@ -16,11 +16,11 @@ class schema;
 
 struct query_compile_context
 {
-  explicit query_compile_context(connection &db, const sql::schema &schema)
-  : db(db)
-  , schema(schema) {}
-  connection &db;
-  const sql::schema &schema;
+  // explicit query_compile_context(connection &db, const sql::schema &schema)
+  // : db(db)
+  // , schema(schema) {}
+  // connection &db;
+  // const sql::schema &schema;
   std::vector<std::unique_ptr<query_part>> parts{};
   std::vector<column_definition> columns{};
   std::unordered_map<std::string, table> tables{};

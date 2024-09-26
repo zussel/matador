@@ -2,33 +2,45 @@
 
 namespace matador::sql {
 
-query::query(connection &db, const sql::schema &schema)
-: connection_(db)
-, schema_(schema)
-{}
-
-query_create_intermediate query::create() const
+column alias(const std::string &column, const std::string &as)
 {
-  return query_create_intermediate(connection_, schema_);
+  return sql::column{column, as};
 }
 
-query_drop_intermediate query::drop() const
+column alias(column &&col, const std::string &as)
 {
-  return query_drop_intermediate{connection_, schema_};
+  col.as(as);
+  return std::move(col);
 }
 
-query_select_intermediate query::select( const std::initializer_list<column> columns) const
+column count(const std::string &column)
 {
+  return {sql_function_t::COUNT, column};
+}
+
+column count_all()
+{
+  return count("*");
+}
+
+query_create_intermediate query::create()
+{
+  return {};
+}
+
+query_drop_intermediate query::drop() {
+  return {};
+}
+
+query_select_intermediate query::select( const std::initializer_list<column> columns) {
   return select(std::vector<column>{columns});
 }
 
-query_select_intermediate query::select(const std::vector<column>& columns) const
-{
-  return {connection_, schema_, columns};
+query_select_intermediate query::select(const std::vector<column>& columns) {
+  return {columns};
 }
 
-query_select_intermediate query::select(const std::vector<std::string> &column_names) const
-{
+query_select_intermediate query::select(const std::vector<std::string> &column_names) {
   std::vector<column> columns;
   columns.reserve(column_names.size());
   for (const auto &col_name : column_names) {
@@ -37,27 +49,23 @@ query_select_intermediate query::select(const std::vector<std::string> &column_n
   return select(columns);
 }
 
-query_select_intermediate query::select(std::vector<column> columns, const std::initializer_list<column> additional_columns) const
-{
+query_select_intermediate query::select(std::vector<column> columns, const std::initializer_list<column> additional_columns) {
   for (const auto &col : additional_columns) {
     columns.push_back(col);
   }
-  return {connection_, schema_, columns};
+  return {columns};
 }
 
-query_insert_intermediate query::insert() const
-{
-  return query_insert_intermediate{connection_, schema_};
+query_insert_intermediate query::insert() {
+  return {};
 }
 
-query_update_intermediate query::update(const sql::table &table) const
-{
-  return query_update_intermediate{connection_, schema_, table};
+query_update_intermediate query::update(const sql::table &table) {
+  return {table};
 }
 
-query_delete_intermediate query::remove() const
-{
-  return query_delete_intermediate{connection_, schema_};
+query_delete_intermediate query::remove() {
+  return {};
 }
 
 }

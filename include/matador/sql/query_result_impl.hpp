@@ -116,7 +116,7 @@ public:
           access::process(*this, *obj);
           auto ptr = typename ContainerType::value_type(obj.release());
           const auto pk = ptr.primary_key();
-          if (!ptr.primary_key().is_null()) {
+          if (ptr.primary_key().is_valid()) {
               cont.push_back(ptr);
           }
       }

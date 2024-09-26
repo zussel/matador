@@ -20,11 +20,6 @@
 
 namespace matador::sql {
 
-column alias(const std::string &column, const std::string &as);
-column alias(column &&col, const std::string &as);
-column count(const std::string &column);
-column count_all();
-
 enum class join_type_t {
   INNER, OUTER, LEFT, RIGHT
 };

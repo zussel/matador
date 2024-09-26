@@ -4,6 +4,7 @@
 #include "matador/sql/column_definition.hpp"
 #include "matador/sql/connection.hpp"
 #include "matador/sql/condition.hpp"
+#include "matador/sql/query.hpp"
 #include "matador/sql/schema.hpp"
 
 #include "matador/utils/data_types.hpp"
@@ -14,13 +15,13 @@
 #include "QueryFixture.hpp"
 
 using namespace matador::test;
+using namespace matador::sql;
 
 TEST_CASE_METHOD(QueryFixture, "Insert and select basic datatypes", "[query][datatypes]") {
   schema.attach<types>("types");
-  db.query(schema)
-    .create()
-    .table<types>("types")
-    .execute();
+  query::create()
+    .table<types>("types", schema)
+    .execute(db);
   tables_to_drop.emplace("types");
 
   float float_value = 2.445566f;
@@ -67,17 +68,15 @@ TEST_CASE_METHOD(QueryFixture, "Insert and select basic datatypes", "[query][dat
   blob_val
   };
 
-  auto res = db.query(schema)
-    .insert()
+  auto res = query::insert()
     .into("types", matador::sql::column_generator::generate<types>(schema, true))
     .values(t)
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  auto result = db.query(schema)
-    .select<types>()
+  auto result = query::select<types>(schema)
     .from("types")
-    .fetch_one<types>();
+    .fetch_one<types>(db);
   REQUIRE(result != nullptr);
 
   REQUIRE(result->id_ == 1);
@@ -105,13 +104,12 @@ TEST_CASE_METHOD(QueryFixture, "Insert and select basic datatypes", "[query][dat
 TEST_CASE_METHOD(QueryFixture, "Test quoted identifier", "[query][quotes][identifier]") {
   using namespace matador::sql;
 
-  auto res = db.query(schema)
-    .create()
+  auto res = query::create()
     .table("quotes", {
       make_column<std::string>("from", 255),
       make_column<std::string>("to", 255)
     })
-    .execute();
+    .execute(db);
   REQUIRE(res == 0);
   tables_to_drop.emplace("quotes");
 
@@ -125,33 +123,29 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted identifier", "[query][quotes][identi
     REQUIRE(col.type() == types[col.index()]);
   }
 
-  res = db.query(schema)
-    .insert()
+  res = query::insert()
     .into("quotes", {"from", "to"})
     .values({"Berlin", "London"})
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  auto row = db.query(schema)
-    .select({"from", "to"})
+  auto row = query::select({"from", "to"})
     .from("quotes")
-    .fetch_one();
+    .fetch_one(db);
 
   REQUIRE(row.has_value());
   REQUIRE(row->at("from").as<std::string>() == "Berlin");
   REQUIRE(row->at("to").as<std::string>() == "London");
 
-  res = db.query(schema)
-    .update("quotes")
+  res = query::update("quotes")
     .set({{"from", "Hamburg"}, {"to", "New York"}})
     .where("from"_col == "Berlin")
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  row = db.query(schema)
-    .select({"from", "to"})
+  row = query::select({"from", "to"})
     .from("quotes")
-    .fetch_one();
+    .fetch_one(db);
 
   REQUIRE(row.has_value());
   REQUIRE(row->at("from").as<std::string>() == "Hamburg");
@@ -176,12 +170,11 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted column names", "[query][quotes][colu
   tables_to_drop.emplace("quotes");
 
   for (const auto &name : column_names) {
-    auto res = db.query(schema)
-      .create()
+    auto res = query::create()
       .table("quotes", {
         make_column<std::string>(name, 255),
       })
-      .execute();
+      .execute(db);
     REQUIRE(res == 0);
 
     const auto columns = db.describe("quotes");
@@ -190,10 +183,9 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted column names", "[query][quotes][colu
       REQUIRE(col.type() == matador::data_type::type_varchar);
     }
 
-    res = db.query(schema)
-      .drop()
+    res = query::drop()
       .table("quotes")
-      .execute();
+      .execute(db);
     REQUIRE(res == 0);
   }
 }
@@ -201,68 +193,59 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted column names", "[query][quotes][colu
 TEST_CASE_METHOD(QueryFixture, "Test quoted literals", "[query][quotes][literals]") {
   using namespace matador::sql;
 
-  auto res = db.query(schema)
-    .create()
+  auto res = query::create()
     .table("escapes", {
       make_column<std::string>("name", 255),
     })
-    .execute();
+    .execute(db);
   REQUIRE(res == 0);
   tables_to_drop.emplace("escapes");
 
-  res = db.query(schema)
-    .insert()
+  res = query::insert()
     .into("escapes", {"name"})
     .values({"text"})
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  auto row = db.query(schema)
-    .select({"name"})
+  auto row = query::select({"name"})
     .from("escapes")
-    .fetch_one();
+    .fetch_one(db);
 
   REQUIRE(row.has_value());
   REQUIRE(row->at("name").as<std::string>() == "text");
 
-  res = db.query(schema)
-    .update("escapes")
+  res = query::update("escapes")
     .set({{"name", "text'd"}})
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  row = db.query(schema)
-    .select({"name"})
+  row = query::select({"name"})
     .from("escapes")
-    .fetch_one();
+    .fetch_one(db);
 
   REQUIRE(row.has_value());
   REQUIRE(row->at("name").as<std::string>() == "text'd");
 
-  res = db.query(schema)
-    .update("escapes")
+  res = query::update("escapes")
     .set({{"name", "text\nhello\tworld"}})
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  row = db.query(schema)
-    .select({"name"})
+  row = query::select({"name"})
     .from("escapes")
-    .fetch_one();
+    .fetch_one(db);
 
   REQUIRE(row.has_value());
   REQUIRE(row->at("name").as<std::string>() == "text\nhello\tworld");
 
-  res = db.query(schema)
-    .update("escapes")
+  res = query::update("escapes")
     .set({{"name", "text \"text\""}})
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  row = db.query(schema)
-    .select({"name"})
+  row = query::select({"name"})
     .from("escapes")
-    .fetch_one();
+    .fetch_one(db);
 
   REQUIRE(row.has_value());
   REQUIRE(row->at("name").as<std::string>() == "text \"text\"");
@@ -272,10 +255,9 @@ TEST_CASE_METHOD(QueryFixture, "Test describe table", "[query][describe][table]"
   using namespace matador::sql;
 
   schema.attach<types>("types");
-  auto res = db.query(schema)
-    .create()
-    .table<types>("types")
-    .execute();
+  auto res = query::create()
+    .table<types>("types", schema)
+    .execute(db);
   REQUIRE(res == 0);
   tables_to_drop.emplace("types");
 
@@ -318,10 +300,9 @@ TEST_CASE_METHOD(QueryFixture, "Test describe table", "[query][describe][table]"
 
 TEST_CASE_METHOD(QueryFixture, "Test unknown table", "[query][table]") {
   using Catch::Matchers::ContainsSubstring;
-  REQUIRE_THROWS_WITH(db.query(schema)
-    .select({"name"})
+  REQUIRE_THROWS_WITH(query::select({"name"})
     .from("person")
-    .fetch_all(), ContainsSubstring("no such table"));
+    .fetch_all(db), ContainsSubstring("no such table"));
 }
 
 namespace matador::test::temporary {
@@ -342,26 +323,23 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key", "[query][primary key]") {
   using namespace matador::sql;
 
   schema.attach<pk>("pk");
-  auto res = db.query(schema)
-    .create()
-    .table<pk>("pk")
-    .execute();
+  auto res = query::create()
+    .table<pk>("pk", schema)
+    .execute(db);
   REQUIRE(res == 0);
   tables_to_drop.emplace("pk");
 
   pk pk1{ 7, "george" };
 
-  res = db.query(schema)
-    .insert()
+  res = query::insert()
     .into("pk", column_generator::generate<pk>(schema))
     .values(pk1)
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  auto row = db.query(schema)
-    .select<pk>()
+  auto row = query::select<pk>(schema)
     .from("pk")
-    .fetch_one<pk>();
+    .fetch_one<pk>(db);
   REQUIRE(row != nullptr);
   REQUIRE(row->id > 0);
 }
@@ -371,29 +349,26 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key prepared", "[query][primary key
   using namespace matador::sql;
 
   schema.attach<pk>("pk");
-  auto res = db.query(schema)
-    .create()
-    .table<pk>("pk")
-    .execute();
+  auto res = query::create()
+    .table<pk>("pk", schema)
+    .execute(db);
   REQUIRE(res == 0);
   tables_to_drop.emplace("pk");
 
   pk pk1{ 7, "george" };
 
-  auto stmt = db.query(schema)
-    .insert()
+  auto stmt = query::insert()
     .into("pk", column_generator::generate<pk>(schema))
     .values<pk>()
-    .prepare();
+    .prepare(db);
   stmt.bind(pk1);
 
   res = stmt.execute();
   REQUIRE(res == 1);
 
-  stmt = db.query(schema)
-    .select<pk>()
+  stmt = query::select<pk>(schema)
     .from("pk")
-    .prepare();
+    .prepare(db);
 
   auto row = stmt.fetch_one<pk>();
   REQUIRE(row != nullptr);
@@ -423,10 +398,9 @@ TEST_CASE_METHOD(QueryFixture, "Test select time and date", "[query][select][tim
   using namespace matador::test::temporary;
   using namespace matador::sql;
   schema.attach<appointment>("appointment");
-  auto res = db.query(schema)
-    .create()
-    .table<appointment>("appointment")
-    .execute();
+  auto res = query::create()
+    .table<appointment>("appointment", schema)
+    .execute(db);
   REQUIRE(res == 0);
   tables_to_drop.emplace("appointment");
 
@@ -434,17 +408,15 @@ TEST_CASE_METHOD(QueryFixture, "Test select time and date", "[query][select][tim
   auto time_str = matador::utils::to_string(dinner.time_point);
   auto date_str = matador::utils::to_string(dinner.date_point);
 
-  res = db.query(schema)
-    .insert()
+  res = query::insert()
     .into("appointment", column_generator::generate<appointment>(schema))
     .values(dinner)
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  auto row = db.query(schema)
-    .select<appointment>()
+  auto row = query::select<appointment>(schema)
     .from("appointment")
-    .fetch_one<appointment>();
+    .fetch_one<appointment>(db);
 
   REQUIRE(row != nullptr);
   REQUIRE(matador::utils::to_string(row->time_point) == time_str);
@@ -454,35 +426,31 @@ TEST_CASE_METHOD(QueryFixture, "Test select time and date", "[query][select][tim
 TEST_CASE_METHOD(QueryFixture, "Test null column", "[query][select][null]") {
   using namespace matador::sql;
 
-  auto res = db.query(schema)
-    .create()
+  auto res = query::create()
     .table("person", {
       make_pk_column<unsigned long>("id"),
       make_column<std::string>("first_name", 255, null_option::NULLABLE),
       make_column<std::string>("last_name", 255, null_option::NULLABLE)
     })
-    .execute();
+    .execute(db);
   REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
-  res = db.query(schema)
-    .insert()
+  res = query::insert()
     .into("person", {"id", "first_name"})
     .values({1, "george"})
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  res = db.query(schema)
-    .insert()
+  res = query::insert()
     .into("person", {"id", "last_name"})
     .values({2, "clooney"})
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  auto result = db.query(schema)
-    .select({"id", "first_name", "last_name"})
+  auto result = query::select({"id", "first_name", "last_name"})
     .from("person")
-    .fetch_all();
+    .fetch_all(db);
 
   std::vector<std::string> expected_first_names{"george", ""};
   std::vector<std::string> expected_last_names{"", "clooney"};
@@ -498,35 +466,31 @@ TEST_CASE_METHOD(QueryFixture, "Test null column", "[query][select][null]") {
 TEST_CASE_METHOD(QueryFixture, "Test null column prepared", "[query][select][null][prepared]") {
   using namespace matador::sql;
 
-  auto res = db.query(schema)
-    .create()
+  auto res = query::create()
     .table("person", {
       make_pk_column<unsigned long>("id"),
       make_column<std::string>("first_name", 255, null_option::NULLABLE),
       make_column<std::string>("last_name", 255, null_option::NULLABLE)
     })
-    .execute();
+    .execute(db);
   REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
-  res = db.query(schema)
-    .insert()
+  res = query::insert()
     .into("person", {"id", "first_name"})
     .values({1, "george"})
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  res = db.query(schema)
-    .insert()
+  res = query::insert()
     .into("person", {"id", "last_name"})
     .values({2, "clooney"})
-    .execute();
+    .execute(db);
   REQUIRE(res == 1);
 
-  auto result = db.query(schema)
-    .select({"id", "first_name", "last_name"})
+  auto result = query::select({"id", "first_name", "last_name"})
     .from("person")
-    .fetch_all();
+    .fetch_all(db);
 
   std::vector<std::string> expected_first_names{"george", ""};
   std::vector<std::string> expected_last_names{"", "clooney"};

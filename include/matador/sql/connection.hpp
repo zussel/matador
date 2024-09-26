@@ -4,8 +4,8 @@
 #include "matador/sql/connection_info.hpp"
 #include "matador/sql/connection_impl.hpp"
 #include "matador/sql/dialect.hpp"
-#include "matador/sql/query.hpp"
 #include "matador/sql/query_context.hpp"
+#include "matador/sql/query_executor.hpp"
 #include "matador/sql/query_result.hpp"
 #include "matador/sql/record.hpp"
 #include "matador/sql/statement.hpp"
@@ -18,7 +18,7 @@ class schema;
 /**
  * @brief The connection class represents a connection to a database.
  */
-class connection final {
+class connection final : public query_executor {
 public:
   /**
    * @brief Creates a database connection from a connection info data.
@@ -63,7 +63,7 @@ public:
    */
   connection& operator=(connection &&x) noexcept;
 
-  ~connection();
+  ~connection() override;
 
   /**
    * @brief Opens the database connection for the given dns.
@@ -129,19 +129,19 @@ public:
    */
   void rollback() const;
 
-  [[nodiscard]] std::vector<sql::column_definition> describe(const std::string &table_name) const;
+  [[nodiscard]] std::vector<column_definition> describe(const std::string &table_name) const;
   [[nodiscard]] bool exists(const std::string &schema_name, const std::string &table_name) const;
   [[nodiscard]] bool exists(const std::string &table_name) const;
-  [[nodiscard]] sql::query query(const sql::schema &schema) const;
-  [[nodiscard]] query_result<record> fetch(const query_context &q) const;
+  // [[nodiscard]] sql::query query() const;
+
   [[nodiscard]] size_t execute(const std::string &sql) const;
 
-  statement prepare(query_context &&query) const;
+  [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const query_compile_context &ctx) const override;
+  [[nodiscard]] size_t execute(const query_compile_context &ctx) const override;
+  [[nodiscard]] statement prepare(const query_compile_context &query) const override;
+  [[nodiscard]] std::string str( const query_compile_context& ctx ) const override;
 
   [[nodiscard]] const class dialect &dialect() const;
-
-private:
-  [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const std::string &sql) const;
 
 private:
   friend class fetchable_query;

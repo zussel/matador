@@ -1,5 +1,6 @@
 #include "matador/sql/schema.hpp"
 #include "matador/sql/connection.hpp"
+#include "matador/sql/query.hpp"
 
 #include <stdexcept>
 
@@ -15,7 +16,6 @@ std::string schema::name() const
 
 const table_info& schema::attach(const std::type_index ti, const table_info& table)
 {
-
   auto &ref = repository_.try_emplace(ti, table).first->second;
   repository_by_name_.try_emplace(ref.name, std::ref(ref));
   return ref;
@@ -23,10 +23,9 @@ const table_info& schema::attach(const std::type_index ti, const table_info& tab
 
 utils::result<void, error> schema::create(connection &db) {
   for (const auto &info : repository_) {
-    db.query(*this)
-      .create()
+    const auto res = query::create()
       .table(info.second.name, info.second.prototype.columns())
-      .execute();
+      .execute(db);
   }
 
   return utils::ok<void>();
@@ -34,10 +33,9 @@ utils::result<void, error> schema::create(connection &db) {
 
 utils::result<void, error> schema::drop(connection &db) {
   for (const auto &info : repository_) {
-    db.query(*this)
-      .drop()
+    const auto res = query::drop()
       .table(info.second.name)
-      .execute();
+      .execute(db);
   }
 
   return utils::ok<void>();

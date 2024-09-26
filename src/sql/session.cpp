@@ -1,6 +1,7 @@
 #include "matador/sql/session.hpp"
 
 #include "matador/sql/backend_provider.hpp"
+#include "matador/sql/query.hpp"
 
 #include <stdexcept>
 
@@ -14,7 +15,9 @@ session::session(connection_pool<connection> &pool)
 void session::create_schema() const {
   auto c = pool_.acquire();
   for (const auto &t : *schema_) {
-    c->query(*schema_).create().table(t.second.name, t.second.prototype.columns()).execute();
+      const auto res = query::create()
+        .table(t.second.name, t.second.prototype.columns())
+        .execute(*c);
   }
 }
 
@@ -24,7 +27,9 @@ void session::drop_table(const std::string &table_name) const {
     throw std::logic_error("no database connection available");
   }
 
-  c->query(*schema_).drop().table(table_name).execute();
+  const auto res = query::drop()
+    .table(table_name)
+    .execute(*c);
 }
 
 //query_result<record> session::fetch(const query_context &q) const
@@ -60,14 +65,14 @@ size_t session::execute(const std::string &sql) const {
   return c->execute(sql);
 }
 
-statement session::prepare(query_context q) const
-{
-  auto c = pool_.acquire();
-  if (!c.valid()) {
-    throw std::logic_error("no database connection available");
-  }
-  return c->prepare(std::move(q));
-}
+// statement session::prepare(query_context q) const
+// {
+//   auto c = pool_.acquire();
+//   if (!c.valid()) {
+//     throw std::logic_error("no database connection available");
+//   }
+//   return c->prepare(std::move(q));
+// }
 
 std::vector<sql::column_definition> session::describe_table(const std::string &table_name) const
 {
@@ -98,13 +103,12 @@ std::unique_ptr<query_result_impl> session::fetch(const std::string &sql) const
   if (!c.valid()) {
     throw std::logic_error("no database connection available");
   }
-  return c->fetch(sql);
+  // return c->fetch(sql);
+    return {};
 }
 
-fetchable_query session::build_select_query(connection_ptr<connection> &conn, entity_query_data &&data) const
-{
-  return conn->query(*schema_)
-    .select(data.columns)
+fetchable_query session::build_select_query(connection_ptr<connection> &conn, entity_query_data &&data) {
+  return query::select(data.columns)
     .from(*data.root_table)
     .join_left(data.joins)
     .where(std::move(data.where_clause))

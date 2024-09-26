@@ -4,6 +4,7 @@
 #include "matador/sql/connection.hpp"
 #include "matador/sql/connection_pool.hpp"
 #include "matador/sql/entity_query_builder.hpp"
+#include "matador/sql/query.hpp"
 #include "matador/sql/statement.hpp"
 #include "matador/sql/schema.hpp"
 
@@ -85,7 +86,7 @@ public:
       return utils::error(session_error::FailedToBuildQuery);
     }
 
-    auto obj = build_select_query(c, data.release()).template fetch_one<Type>();
+    auto obj = build_select_query(c, data.release()).template fetch_one<Type>(*c);
 
     if (!obj) {
       return utils::error(session_error::FailedToFindObject);
@@ -110,7 +111,7 @@ public:
       return utils::error(session_error::FailedToBuildQuery);
     }
 
-    return utils::ok(build_select_query(c, data.release()).template fetch_all<Type>());
+    return utils::ok(build_select_query(c, data.release()).template fetch_all<Type>(*c));
   }
 
   template<typename Type>
@@ -130,7 +131,7 @@ public:
       return utils::error(session_error::FailedToBuildQuery);
     }
 
-    return utils::ok(build_select_query(c, data.release()).template fetch_all<Type>());
+    return utils::ok(build_select_query(c, data.release()).template fetch_all<Type>(*c));
   }
 
   template<typename Type>
@@ -140,7 +141,7 @@ public:
 //  [[nodiscard]] query_result<record> fetch(const query_context &q) const;
 //  [[nodiscard]] query_result<record> fetch(const std::string &sql) const;
   [[nodiscard]] size_t execute(const std::string &sql) const;
-  statement prepare(query_context q) const;
+  // statement prepare(query_context q) const;
 
   std::vector<sql::column_definition> describe_table(const std::string &table_name) const;
   bool table_exists(const std::string &table_name) const;
@@ -152,7 +153,7 @@ private:
 
   [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const std::string &sql) const;
 
-  fetchable_query build_select_query(connection_ptr<connection> &conn, entity_query_data &&data) const;
+  static fetchable_query build_select_query(connection_ptr<connection> &conn, entity_query_data &&data);
 
 private:
   connection_pool<connection> &pool_;
@@ -176,11 +177,10 @@ object_ptr<Type> session::insert(Type *obj)
   if (!info) {
     return {};
   }
-  c->query(*schema_)
-    .insert()
+  query::insert()
     .into(info->name, column_generator::generate<Type>(*schema_, true))
     .values(*obj)
-    .execute();
+    .execute(*c);
 
   return object_ptr<Type>{obj};
 }
@@ -188,11 +188,10 @@ object_ptr<Type> session::insert(Type *obj)
 template<typename Type>
 void session::drop_table()
 {
-  auto info = schema_->info<Type>();
-  if (info) {
+  if (auto info = schema_->info<Type>()) {
     return drop_table(info.name);
   }
-
 }
+
 }
 #endif //QUERY_SESSION_HPP

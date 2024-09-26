@@ -123,10 +123,10 @@ size_t connection::execute(const std::string &sql) const
   return connection_->execute(sql);
 }
 
-sql::query connection::query(const sql::schema &schema) const
-{
-  return sql::query(*const_cast<connection*>(this), schema);
-}
+// sql::query connection::query() const
+// {
+  // return {};
+// }
 
 bool is_unknown(const std::vector<sql::column_definition> &columns) {
   return std::all_of(std::begin(columns), std::end(columns), [](const auto &col) {
@@ -134,42 +134,65 @@ bool is_unknown(const std::vector<sql::column_definition> &columns) {
   });
 }
 
-query_result<record> connection::fetch(const query_context &q) const
+// query_result<record> connection::fetch(const query_context &ctx) const
+// {
+//   if (ctx.prototype.empty() || is_unknown(ctx.prototype)) {
+//     const auto table_prototype = describe(ctx.table.name);
+//     for (auto &col : ctx.prototype) {
+//       const auto rit = std::find_if(std::begin(table_prototype), std::end(table_prototype), [&col](const auto &value) {
+//         return value.name() == col.name();
+//       });
+//       if (col.type() == data_type::type_unknown && rit != table_prototype.end()) {
+//         const_cast<column_definition&>(col).type(rit->type());
+//       }
+//      }
+//   }
+// //  auto it = prototypes_.find(q.table_name);
+// //  if (it == prototypes_.end()) {
+// //    it = prototypes_.emplace(q.table_name, describe(q.table_name)).first;
+// //  }
+// //  // adjust columns from given query
+// //  for (auto &col : q.prototype) {
+// //    if (const auto rit = it->second.find(col.name()); col.type() == data_type_t::type_unknown && rit != it->second.end()) {
+// //      const_cast<column&>(col).type(rit->type());
+// //    }
+// //  }
+//   auto res = fetch(ctx.sql);
+//   return query_result<record>{std::move(res), ctx.prototype};
+// }
+
+std::unique_ptr<query_result_impl> connection::fetch(const query_compile_context &ctx) const
 {
-  if (q.prototype.empty() || is_unknown(q.prototype)) {
-    const auto table_prototype = describe(q.table.name);
-    for (auto &col : q.prototype) {
+  const auto qry = dialect_.get().compile(ctx);
+  if (qry.prototype.empty() || is_unknown(qry.prototype)) {
+    const auto table_prototype = describe(qry.table.name);
+    for (auto &col : qry.prototype) {
       const auto rit = std::find_if(std::begin(table_prototype), std::end(table_prototype), [&col](const auto &value) {
         return value.name() == col.name();
       });
       if (col.type() == data_type::type_unknown && rit != table_prototype.end()) {
         const_cast<column_definition&>(col).type(rit->type());
       }
-     }
+    }
   }
-//  auto it = prototypes_.find(q.table_name);
-//  if (it == prototypes_.end()) {
-//    it = prototypes_.emplace(q.table_name, describe(q.table_name)).first;
-//  }
-//  // adjust columns from given query
-//  for (auto &col : q.prototype) {
-//    if (const auto rit = it->second.find(col.name()); col.type() == data_type_t::type_unknown && rit != it->second.end()) {
-//      const_cast<column&>(col).type(rit->type());
-//    }
-//  }
-  auto res = fetch(q.sql);
-  return query_result<record>{std::move(res), q.prototype};
-}
 
-std::unique_ptr<query_result_impl> connection::fetch(const std::string &sql) const
-{
 //  logger_.debug(sql);
-  return connection_->fetch(sql);
+  return connection_->fetch(qry.sql);
 }
 
-statement connection::prepare(query_context &&query) const
+size_t connection::execute( const query_compile_context& ctx ) const
 {
-  return statement(connection_->prepare(std::move(query)));
+    return execute(dialect_.get().compile(ctx).sql);
+}
+
+statement connection::prepare(const query_compile_context &query) const
+{
+  return statement(connection_->prepare(dialect_.get().compile(query)));
+}
+
+std::string connection::str( const query_compile_context& ctx ) const
+{
+  return dialect_.get().compile(ctx).sql;
 }
 
 const class dialect &connection::dialect() const

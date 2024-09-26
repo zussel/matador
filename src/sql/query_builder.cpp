@@ -477,25 +477,4 @@ void query_builder::initialize(query_builder::command_t cmd, query_builder::stat
 //  return result;
 //}
 
-column alias(const std::string &column, const std::string &as)
-{
-  return sql::column{column, as};
-}
-
-column alias(column &&col, const std::string &as)
-{
-  col.as(as);
-  return std::move(col);
-}
-
-column count(const std::string &column)
-{
-  return {sql_function_t::COUNT, column};
-}
-
-column count_all()
-{
-  return count("*");
-}
-
 }
