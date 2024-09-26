@@ -106,12 +106,12 @@ size_t sqlite_connection::execute(const std::string &stmt) {
   return sqlite3_changes(db_);
 }
 
-std::unique_ptr<sql::query_result_impl> sqlite_connection::fetch(const std::string &stmt) {
-  auto [prototype, rows] = fetch_internal(stmt);
+std::unique_ptr<sql::query_result_impl> sqlite_connection::fetch(const sql::query_context& context) {
+  auto [prototype, rows] = fetch_internal(context.sql);
 
   return std::make_unique<sql::query_result_impl>(
-    std::make_unique<sqlite_result_reader>(std::move(rows), prototype.size()),
-    std::move(prototype));
+    std::make_unique<sqlite_result_reader>(std::move(rows), context.prototype.size()),
+    context.prototype);
 }
 
 std::unique_ptr<sql::statement_impl> sqlite_connection::prepare(sql::query_context query) {

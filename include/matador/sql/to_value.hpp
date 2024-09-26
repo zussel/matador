@@ -11,8 +11,10 @@
 
 namespace matador::sql {
 
+void to_value(bool &value, const char *str);
+
 template < class Type >
-void to_value(Type &value, const char *str, typename std::enable_if<std::is_integral<Type>::value && std::is_signed<Type>::value>::type* = nullptr)
+void to_value(Type &value, const char *str, std::enable_if_t<std::is_integral_v<Type> && std::is_signed_v<Type>>* = nullptr)
 {
   if (strlen(str) == 0) {
     return;
@@ -34,7 +36,7 @@ void to_value(Type &value, const char *str, typename std::enable_if<std::is_inte
 }
 
 template < class Type >
-void to_value(Type &value, const char *str, typename std::enable_if<std::is_integral<Type>::value && std::is_unsigned<Type>::value>::type* = nullptr)
+void to_value(Type &value, const char *str, std::enable_if_t<std::is_integral_v<Type> && std::is_unsigned_v<Type> && !std::is_same_v<Type, bool>>* = nullptr)
 {
   if (str == nullptr || strlen(str) == 0) {
     return;
@@ -57,7 +59,7 @@ void to_value(Type &value, const char *str, typename std::enable_if<std::is_inte
 }
 
 template < class Type >
-void to_value(Type &value, const char *str, typename std::enable_if<std::is_floating_point<Type>::value>::type* = nullptr)
+void to_value(Type &value, const char *str, std::enable_if_t<std::is_floating_point_v<Type>>* = nullptr)
 {
   if (strlen(str) == 0) {
     return;

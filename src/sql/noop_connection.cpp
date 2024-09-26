@@ -42,7 +42,7 @@ size_t noop_connection::execute(const std::string &/*stmt*/)
   return 0;
 }
 
-std::unique_ptr<query_result_impl> noop_connection::fetch(const std::string &/*stmt*/)
+std::unique_ptr<query_result_impl> noop_connection::fetch(const query_context &/*context*/)
 {
   return {};
 }

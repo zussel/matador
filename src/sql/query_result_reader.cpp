@@ -78,7 +78,7 @@ void query_result_reader::read_value(const char * /*id*/, size_t index, double &
 void query_result_reader::read_value(const char * /*id*/, size_t index, time &value)
 {
   if (const auto val = column(index); strlen(val) > 0) {
-    value = time::parse(val, "%Y-%m-%dT%T.%f");
+    value = time::parse(val, "%Y-%m-%d %T.%f");
   }
 }
 

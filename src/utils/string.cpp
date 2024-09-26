@@ -131,7 +131,7 @@ std::string to_string(const blob &data)
   std::string str(2 * data.size(), '\0');
   auto item = str.begin();
 
-  for(auto c : data) {
+  for(const auto c : data) {
     *item++ = HEXITS[c >> 4];
     *item++ = HEXITS[c & 0x0F];
   }

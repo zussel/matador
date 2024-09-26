@@ -42,6 +42,7 @@ set(SOURCES
   value_extractor.cpp
   placeholder_key_value_generator.cpp
   table.cpp
+  to_value.cpp
 )
 
 set(HEADER

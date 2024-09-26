@@ -46,6 +46,7 @@ struct any_type_to_string_visitor
   {
     result = std::to_string(val);
   }
+  void to_string(const bool &val);
   void to_string(const float &val);
   void to_string(const double &val);
   void to_string(const char *val);

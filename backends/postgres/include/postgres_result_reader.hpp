@@ -16,6 +16,8 @@ public:
   [[nodiscard]] const char *column(size_t index) const override;
   bool fetch() override;
 
+  void read_value(const char *id, size_t index, utils::blob &value) override;
+
 private:
   PGresult *result_{};
 

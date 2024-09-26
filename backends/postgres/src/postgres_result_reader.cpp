@@ -22,7 +22,7 @@ size_t postgres_result_reader::column_count() const
   return column_count_;
 }
 
-const char *postgres_result_reader::column(size_t index) const
+const char *postgres_result_reader::column( const size_t index) const
 {
   return PQgetvalue(result_, static_cast<int>(row_index_), static_cast<int>(index));
 }
@@ -30,6 +30,12 @@ const char *postgres_result_reader::column(size_t index) const
 bool postgres_result_reader::fetch()
 {
   return ++row_index_ < row_count_;
+}
+
+void postgres_result_reader::read_value( const char* id, const size_t index, utils::blob& value )
+{
+    int length = PQgetlength(result_, row_index_, index);
+  query_result_reader::read_value( id, index, value );
 }
 
 }

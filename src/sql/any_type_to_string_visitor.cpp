@@ -12,6 +12,11 @@ any_type_to_string_visitor::any_type_to_string_visitor(const dialect &d, query_c
 : d(d), query(query)
 {}
 
+void any_type_to_string_visitor::to_string(const bool& val)
+{
+  result = "'" + d.prepare_literal(val ? "true" : "false") + "'";
+}
+
 void any_type_to_string_visitor::to_string(const float &val)
 {
   utils::convert(result, val);

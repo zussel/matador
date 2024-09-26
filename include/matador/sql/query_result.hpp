@@ -130,9 +130,9 @@ public:
   explicit query_result(std::unique_ptr<query_result_impl> impl)
   : impl_(std::move(impl)) {}
 
-  query_result(std::unique_ptr<query_result_impl> impl, std::vector<column_definition> record_prototype)
-  : record_prototype_(std::move(record_prototype))
-  , impl_(std::move(impl)) {}
+  // query_result(std::unique_ptr<query_result_impl> impl, std::vector<column_definition> record_prototype)
+  // : record_prototype_(std::move(record_prototype))
+  // , impl_(std::move(impl)) {}
 
   iterator begin() { return std::move(++iterator(this)); }
   iterator end() { return {}; }
@@ -140,7 +140,7 @@ public:
 private:
   friend class query_result_iterator<Type>;
 
-  Type* create() { return detail::create_prototype<Type>(record_prototype_); }
+  Type* create() { return detail::create_prototype<Type>(impl_->prototype()); }
 
   void bind(const Type &obj)
   {
@@ -153,7 +153,7 @@ private:
   }
 
 private:
-  std::vector<column_definition> record_prototype_;
+  // std::vector<column_definition> record_prototype_;
   std::unique_ptr<query_result_impl> impl_;
 };
 

@@ -71,10 +71,15 @@ version postgres_connection::server_version() const {
   };
 }
 
-std::unique_ptr<sql::query_result_impl> postgres_connection::fetch(const std::string &stmt) {
-  PGresult *res = PQexec(conn_, stmt.c_str());
+std::unique_ptr<sql::query_result_impl> postgres_connection::fetch(const sql::query_context &context) {
+  PGresult *res = PQexec(conn_, context.sql.c_str());
 
-  throw_postgres_error(res, conn_, "postgres", stmt);
+    utils::blob b{ '1', '2', '3', '4' };
+    size_t escapedDataLength;
+    unsigned char *escapedData = PQescapeByteaConn(conn_, b.data(), b.size(), &escapedDataLength);
+
+
+  throw_postgres_error(res, conn_, "postgres", context.sql);
 
   std::vector<sql::column_definition> prototype;
   auto num_col = PQnfields(res);
@@ -85,7 +90,7 @@ std::unique_ptr<sql::query_result_impl> postgres_connection::fetch(const std::st
     prototype.emplace_back(col_name);
   }
   return std::move(
-    std::make_unique<sql::query_result_impl>(std::make_unique<postgres_result_reader>(res), std::move(prototype)));
+    std::make_unique<sql::query_result_impl>(std::make_unique<postgres_result_reader>(res), context.prototype));
 }
 
 std::string postgres_connection::generate_statement_name(const sql::query_context &query) {

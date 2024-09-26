@@ -177,7 +177,7 @@ std::unique_ptr<query_result_impl> connection::fetch(const query_compile_context
   }
 
 //  logger_.debug(sql);
-  return connection_->fetch(qry.sql);
+  return connection_->fetch(qry);
 }
 
 size_t connection::execute( const query_compile_context& ctx ) const

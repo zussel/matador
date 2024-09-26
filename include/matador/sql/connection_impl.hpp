@@ -29,7 +29,7 @@ public:
   [[nodiscard]] virtual version server_version() const = 0;
 
   virtual size_t execute(const std::string &stmt) = 0;
-  virtual std::unique_ptr<query_result_impl> fetch(const std::string &stmt) = 0;
+  virtual std::unique_ptr<query_result_impl> fetch(const query_context& context) = 0;
   virtual std::unique_ptr<statement_impl> prepare(query_context context) = 0;
 
   virtual std::vector<column_definition> describe(const std::string &table) = 0;
