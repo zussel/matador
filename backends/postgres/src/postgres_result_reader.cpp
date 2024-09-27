@@ -34,7 +34,7 @@ bool postgres_result_reader::fetch()
 
 void postgres_result_reader::read_value( const char* id, const size_t index, utils::blob& value )
 {
-    int length = PQgetlength(result_, row_index_, index);
+  auto length = PQgetlength(result_, row_index_, static_cast<int>(index));
   query_result_reader::read_value( id, index, value );
 }
 

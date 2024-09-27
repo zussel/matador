@@ -6,7 +6,7 @@
 
 namespace matador::backends::postgres {
 
-class postgres_result_reader : public sql::query_result_reader
+class postgres_result_reader final : public sql::query_result_reader
 {
 public:
   explicit postgres_result_reader(PGresult *result);

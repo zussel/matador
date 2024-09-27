@@ -5,7 +5,6 @@
 
 #include "matador/sql/record.hpp"
 
-#include <iostream>
 #include <sstream>
 
 namespace matador::backends::postgres {
@@ -82,7 +81,7 @@ std::unique_ptr<sql::query_result_impl> postgres_connection::fetch(const sql::qu
   throw_postgres_error(res, conn_, "postgres", context.sql);
 
   std::vector<sql::column_definition> prototype;
-  auto num_col = PQnfields(res);
+  const auto num_col = PQnfields(res);
   for (int i = 0; i < num_col; ++i) {
     const char *col_name = PQfname(res, i);
     auto type = PQftype(res, i);
@@ -159,7 +158,7 @@ data_type string2type(const char *type) {
 }
 
 std::vector<sql::column_definition> postgres_connection::describe(const std::string &table) {
-  std::string stmt(
+  const std::string stmt(
     "SELECT ordinal_position, column_name, udt_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_schema='public' AND table_name='"
     + table + "'");
 
@@ -190,7 +189,7 @@ std::vector<sql::column_definition> postgres_connection::describe(const std::str
 }
 
 bool postgres_connection::exists(const std::string &schema_name, const std::string &table_name) {
-  std::string stmt(
+  const std::string stmt(
     "SELECT 1 FROM information_schema.tables WHERE table_schema = '" + schema_name + "' AND table_name = '" + table_name
     + "'");
 
