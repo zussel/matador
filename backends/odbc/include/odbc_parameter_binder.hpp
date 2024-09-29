@@ -1,7 +1,7 @@
 #ifndef QUERY_SQLITE_PARAMETER_BINDER_H
 #define QUERY_SQLITE_PARAMETER_BINDER_H
 
-#include "matador/object/attribute_binder.hpp"
+#include "matador/object/attribute_writer.hpp"
 
 #include <sql.h>
 
@@ -12,7 +12,7 @@
 
 namespace matador::backends::odbc {
 
-class odbc_parameter_binder final : public object::attribute_binder
+class odbc_parameter_binder final : public object::attribute_writer
 {
 public:
   explicit odbc_parameter_binder(SQLHANDLE stmt);

@@ -45,7 +45,7 @@ std::unique_ptr<sql::query_result_impl> mysql_statement::fetch()
 
 void mysql_statement::reset() {}
 
-object::attribute_binder& mysql_statement::binder()
+object::attribute_writer& mysql_statement::binder()
 {
   return binder_;
 }

@@ -15,6 +15,7 @@
 #include "matador/sql/value_extractor.hpp"
 
 #include "matador/utils/types.hpp"
+#include "matador/utils/result.hpp"
 
 #include <string>
 
@@ -30,12 +31,6 @@ class query_intermediate
 public:
   query_intermediate();
   query_intermediate(const std::shared_ptr<query_compile_context> &context); // NOLINT(*-explicit-constructor)
-  // query_intermediate(connection &db, const sql::schema &schema);
-
-protected:
-  // [[nodiscard]] connection& db() const;
-  // [[nodiscard]] const class dialect& dialect() const;
-  // [[nodiscard]] const class schema& schema() const;
 
 protected:
   std::shared_ptr<query_compile_context> context_;
@@ -202,15 +197,6 @@ public:
 private:
   query_on_intermediate on_clause(std::unique_ptr<basic_condition> &&cond);
 };
-
-//class query_start_intermediate : public basic_query_intermediate
-//{
-//public:
-//  explicit query_start_intermediate(connection &db, const sql::schema &schema);
-//
-//protected:
-//  std::shared_ptr<query_compile_context> data_;
-//};
 
 class query_select_intermediate : public query_intermediate
 {

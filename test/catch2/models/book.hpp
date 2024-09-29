@@ -25,7 +25,7 @@ struct book
     namespace field = matador::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "title", title, 511);
-    field::belongs_to(op, "author_id", book_author, utils::fetch_type::LAZY);
+    field::belongs_to(op, "author_id", book_author, utils::fetch_type::EAGER);
     field::attribute(op, "published_in", published_in);
   }
 };

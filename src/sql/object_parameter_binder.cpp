@@ -5,7 +5,7 @@ namespace matador::sql {
 
 namespace detail {
 
-fk_binder::fk_binder(object::attribute_binder &binder)
+fk_binder::fk_binder(object::attribute_writer &binder)
 : binder_(binder) {}
 
 fk_binder &fk_binder::operator=(fk_binder &&x) noexcept {
@@ -22,7 +22,7 @@ void fk_binder::on_primary_key(const char * /*id*/, std::string &value, size_t /
 
 }
 
-object_parameter_binder::object_parameter_binder(object::attribute_binder &binder)
+object_parameter_binder::object_parameter_binder(object::attribute_writer &binder)
 : binder_(binder)
 , fk_binder_(binder) {}
 

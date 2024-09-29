@@ -35,13 +35,16 @@ public:
   virtual std::vector<column_definition> describe(const std::string &table) = 0;
   virtual bool exists(const std::string &schema_name, const std::string &table_name) = 0;
 
+  [[nodiscard]] const class dialect &dialect() const;
+
 protected:
   explicit connection_impl(const connection_info &info);
 
   [[nodiscard]] const connection_info &info() const;
 
 private:
-  const connection_info & info_;
+  std::reference_wrapper<const connection_info> info_;
+  std::reference_wrapper<const class dialect> dialect_;
 };
 
 }

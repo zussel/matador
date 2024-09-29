@@ -1,7 +1,7 @@
 #ifndef QUERY_SQLITE_PARAMETER_BINDER_H
 #define QUERY_SQLITE_PARAMETER_BINDER_H
 
-#include "matador/object/attribute_binder.hpp"
+#include "matador/object/attribute_writer.hpp"
 
 #include <sqlite3.h>
 
@@ -10,7 +10,7 @@
 
 namespace matador::backends::sqlite {
 
-class sqlite_parameter_binder final : public object::attribute_binder
+class sqlite_parameter_binder final : public object::attribute_writer
 {
 public:
   explicit sqlite_parameter_binder(sqlite3 *db, sqlite3_stmt *stmt);

@@ -12,18 +12,18 @@ TEST_CASE("Load backend", "[backend provider]") {
   auto path = os::getenv("MATADOR_BACKENDS_PATH");
   REQUIRE(path.empty());
 
-  os::setenv("MATADOR_BACKENDS_PATH", matador::os::get_current_dir().c_str(), matador::utils::os::override_env_value::OverrideValue);
+  os::setenv("MATADOR_BACKENDS_PATH", matador::os::get_current_dir().c_str(), os::override_env_value::OverrideValue);
 
   path = os::getenv("MATADOR_BACKENDS_PATH");
   REQUIRE(!path.empty());
 
-  if (path.back() != '\\') {
-    path.push_back('\\');
+  if (path.back() != matador::os::DIR_SEPARATOR) {
+    path.push_back(matador::os::DIR_SEPARATOR);
   }
 
   REQUIRE(!path.empty());
 
-  connection_info ci{};
+  connection_info ci{"noop"};
   const auto &d = backend_provider::instance().connection_dialect("noop");
   auto *connection = backend_provider::instance().create_connection("noop", ci);
   REQUIRE(connection != nullptr);

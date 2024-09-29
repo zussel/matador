@@ -1,7 +1,7 @@
 #ifndef QUERY_POSTGRES_PARAMETER_BINDER_H
 #define QUERY_POSTGRES_PARAMETER_BINDER_H
 
-#include "matador/object/attribute_binder.hpp"
+#include "matador/object/attribute_writer.hpp"
 
 #ifdef _MSC_VER
 #include <mysql.h>
@@ -31,7 +31,7 @@ struct mysql_result_info
   }
 };
 
-class mysql_parameter_binder final : public object::attribute_binder
+class mysql_parameter_binder final : public object::attribute_writer
 {
 public:
   explicit mysql_parameter_binder(size_t size);

@@ -12,7 +12,6 @@ namespace matador::sql {
 
 connection::connection(connection_info info, const std::shared_ptr<basic_sql_logger> &sqllogger)
 : connection_info_(std::move(info))
-, dialect_(backend_provider::instance().connection_dialect(connection_info_.type))
 , logger_(sqllogger)
 {
   connection_.reset(backend_provider::instance().create_connection(connection_info_.type, connection_info_));
@@ -24,7 +23,6 @@ connection::connection(const std::string& dns, const std::shared_ptr<basic_sql_l
 
 connection::connection(const connection &x)
 : connection_info_(x.connection_info_)
-, dialect_(x.dialect_)
 {
   if (x.connection_) {
     throw std::runtime_error("couldn't copy connection with valid connection impl");
@@ -46,7 +44,6 @@ connection &connection::operator=(const connection &x) {
 connection & connection::operator=(connection &&x) noexcept {
   connection_info_ = std::move(x.connection_info_);
   connection_  = std::move(x.connection_);
-  dialect_ = x.dialect_;
   logger_ = std::move(x.logger_);
 
   return *this;
@@ -91,15 +88,15 @@ std::string connection::type() const {
 }
 
 void connection::begin() const {
-  connection_->execute(dialect_.get().token_at(dialect_token::BEGIN));
+  connection_->execute(dialect().token_at(dialect_token::BEGIN));
 }
 
 void connection::commit() const {
-  connection_->execute(dialect_.get().token_at(dialect_token::COMMIT));
+  connection_->execute(dialect().token_at(dialect_token::COMMIT));
 }
 
 void connection::rollback() const {
-  connection_->execute(dialect_.get().token_at(dialect_token::ROLLBACK));
+  connection_->execute(dialect().token_at(dialect_token::ROLLBACK));
 }
 
 std::vector<sql::column_definition> connection::describe(const std::string &table_name) const
@@ -114,7 +111,7 @@ bool connection::exists(const std::string &schema_name, const std::string &table
 
 bool connection::exists(const std::string &table_name) const
 {
-  return connection_->exists(dialect_.get().default_schema_name(), table_name);
+  return connection_->exists(dialect().default_schema_name(), table_name);
 }
 
 size_t connection::execute(const std::string &sql) const
@@ -163,7 +160,7 @@ bool is_unknown(const std::vector<sql::column_definition> &columns) {
 
 std::unique_ptr<query_result_impl> connection::fetch(const query_compile_context &ctx) const
 {
-  const auto qry = dialect_.get().compile(ctx);
+  const auto qry = dialect().compile(ctx, *connection_);
   if (qry.prototype.empty() || is_unknown(qry.prototype)) {
     const auto table_prototype = describe(qry.table.name);
     for (auto &col : qry.prototype) {
@@ -182,22 +179,22 @@ std::unique_ptr<query_result_impl> connection::fetch(const query_compile_context
 
 size_t connection::execute( const query_compile_context& ctx ) const
 {
-    return execute(dialect_.get().compile(ctx).sql);
+    return execute(dialect().compile(ctx, *connection_).sql);
 }
 
 statement connection::prepare(const query_compile_context &query) const
 {
-  return statement(connection_->prepare(dialect_.get().compile(query)));
+  return statement(connection_->prepare(dialect().compile(query, *connection_)));
 }
 
 std::string connection::str( const query_compile_context& ctx ) const
 {
-  return dialect_.get().compile(ctx).sql;
+  return dialect().compile(ctx, *connection_).sql;
 }
 
 const class dialect &connection::dialect() const
 {
-  return dialect_;
+  return connection_->dialect();
 }
 
 }

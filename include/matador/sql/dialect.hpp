@@ -106,7 +106,7 @@ public:
   //  */
   // query_compiler& compiler() const;
 
-  [[nodiscard]] query_context compile(const query_compile_context &data) const;
+  [[nodiscard]] query_context compile(const query_compile_context &data, const connection_impl &conn) const;
 
   void compiler(std::unique_ptr<query_compiler> &&compiler);
 

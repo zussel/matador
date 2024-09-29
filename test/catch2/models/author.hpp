@@ -31,7 +31,7 @@ struct author
     field::attribute(op, "date_of_birth", date_of_birth, 31);
     field::attribute(op, "year_of_birth", year_of_birth);
     field::attribute(op, "distinguished", distinguished);
-    field::has_many(op, "books", books, "author_id", utils::fetch_type::EAGER);
+    field::has_many(op, "books", books, "author_id", utils::fetch_type::LAZY);
   }
 };
 

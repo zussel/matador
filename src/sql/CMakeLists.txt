@@ -21,7 +21,6 @@ set(SOURCES
   object_parameter_binder.cpp
   placeholder_generator.cpp
   query.cpp
-  query_builder.cpp
   query_compiler.cpp
   query_intermediates.cpp
   query_part.cpp
@@ -73,7 +72,6 @@ set(HEADER
   ../../include/matador/sql/parameter_binder.hpp
   ../../include/matador/sql/placeholder_generator.hpp
   ../../include/matador/sql/query.hpp
-  ../../include/matador/sql/query_builder.hpp
   ../../include/matador/sql/query_compiler.hpp
   ../../include/matador/sql/query_context.hpp
   ../../include/matador/sql/query_compile_context.hpp

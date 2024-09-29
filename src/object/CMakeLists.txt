@@ -95,7 +95,7 @@ SET(HEADER
   ../../include/matador/object/update_action.hpp
   ../../include/matador/object/value_type_traits.hpp
   ../../include/matador/object/attribute_reader.hpp
-  ../../include/matador/object/attribute_binder.hpp
+  ../../include/matador/object/attribute_writer.hpp
 )
 
 ADD_LIBRARY(matador-object STATIC ${SOURCES} ${HEADER})

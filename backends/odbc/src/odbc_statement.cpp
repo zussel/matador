@@ -91,7 +91,7 @@ void odbc_statement::reset()
   }
 }
 
-object::attribute_binder& odbc_statement::binder()
+object::attribute_writer& odbc_statement::binder()
 {
   return binder_;
 }

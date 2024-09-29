@@ -12,10 +12,10 @@ class time;
 }
 namespace matador::object {
 
-class attribute_binder
+class attribute_writer
 {
 public:
-  virtual ~attribute_binder() = default;
+  virtual ~attribute_writer() = default;
 
   virtual void bind(size_t pos, const char &x) = 0;
   virtual void bind(size_t pos, const short &x) = 0;

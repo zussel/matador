@@ -4,7 +4,7 @@
 
 namespace matador::backends::sqlite {
 
-sqlite_result_reader::sqlite_result_reader(sqlite_result_reader::rows result, size_t column_count)
+sqlite_result_reader::sqlite_result_reader(rows result, const size_t column_count)
 : result_(std::move(result))
 , column_count_(column_count) {}
 
@@ -22,7 +22,7 @@ size_t sqlite_result_reader::column_count() const
   return column_count_;
 }
 
-const char* sqlite_result_reader::column(size_t index) const
+const char* sqlite_result_reader::column(const size_t index) const
 {
   return result_[row_index_][index];
 }

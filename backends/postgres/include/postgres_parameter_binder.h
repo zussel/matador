@@ -1,13 +1,13 @@
 #ifndef QUERY_POSTGRES_PARAMETER_BINDER_H
 #define QUERY_POSTGRES_PARAMETER_BINDER_H
 
-#include "matador/object/attribute_binder.hpp"
+#include "matador/object/attribute_writer.hpp"
 
 #include <vector>
 
 namespace matador::backends::postgres {
 
-class postgres_parameter_binder final : public object::attribute_binder
+class postgres_parameter_binder final : public object::attribute_writer
 {
 public:
   explicit postgres_parameter_binder(size_t size);

@@ -112,9 +112,9 @@ std::string dialect::default_schema_name() const
 //   return *compiler_;
 // }
 
-query_context dialect::compile(const query_compile_context& data) const
+query_context dialect::compile(const query_compile_context& data, const connection_impl &conn) const
 {
-    return compiler_->compile(&data, *this);
+    return compiler_->compile(&data, conn);
 }
 
 void dialect::compiler(std::unique_ptr<query_compiler> &&compiler)

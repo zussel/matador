@@ -7,7 +7,6 @@
 #include "matador/sql/query_context.hpp"
 #include "matador/sql/query_executor.hpp"
 #include "matador/sql/query_result.hpp"
-#include "matador/sql/record.hpp"
 #include "matador/sql/statement.hpp"
 
 #include <string>
@@ -149,7 +148,6 @@ private:
 
   connection_info connection_info_;
   std::unique_ptr<connection_impl> connection_;
-  std::reference_wrapper<const class dialect> dialect_;
   std::shared_ptr<basic_sql_logger> logger_ = std::make_shared<null_sql_logger>();
 };
 }

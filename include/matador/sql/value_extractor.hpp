@@ -3,7 +3,7 @@
 
 #include "matador/sql/fk_value_extractor.hpp"
 
-#include "matador/object/attribute_binder.hpp"
+#include "matador/object/attribute_writer.hpp"
 #include "matador/object/data_type_traits.hpp"
 
 #include "matador/utils/foreign_attributes.hpp"
@@ -12,7 +12,7 @@
 
 namespace matador::sql {
 
-class value_extractor final : public object::attribute_binder
+class value_extractor final : public object::attribute_writer
 {
 private:
   explicit value_extractor(std::vector<utils::any_type> &values);

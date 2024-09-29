@@ -22,7 +22,7 @@ public:
   std::unique_ptr<sql::query_result_impl> fetch() override;
   void reset() override;
 protected:
-  object::attribute_binder& binder() override;
+  object::attribute_writer& binder() override;
 
 private:
   MYSQL_STMT *stmt_{nullptr};

@@ -1,5 +1,5 @@
-#ifndef MATADOR_COLORENUMTRAITS_HPP
-#define MATADOR_COLORENUMTRAITS_HPP
+#ifndef MATADOR_COLOR_ENUM_TRAITS_HPP
+#define MATADOR_COLOR_ENUM_TRAITS_HPP
 
 #include "matador/object/data_type_traits.hpp"
 
@@ -17,18 +17,12 @@ static const matador::utils::enum_mapper<matador::test::Color> color_enum({
                                                            {matador::test::Color::Brown,  "brown"}
                                                            });
 
-namespace matador::object {
-
 template<>
-struct data_type_traits<test::Color, void>
+struct matador::object::data_type_traits<matador::test::Color, void>
 {
-  inline static data_type type(std::size_t size) { return data_type_traits<std::string>::type(size); }
+  static data_type type(const std::size_t size) { return data_type_traits<std::string>::type(size); }
   static void read_value(attribute_reader &reader, const char *id, size_t index, test::Color &value);
-  static void bind_value(attribute_binder &binder, size_t index, test::Color &value);
-//  static void bind_result_value(result_parameter_binder &binder, size_t index, test::Color &value);
-//  static any_type create_value(test::Color &value) { return color_enum.to_string(value); }
+  static void bind_value(attribute_writer &binder, size_t index, const test::Color &value);
 };
 
-}
-
-#endif //MATADOR_COLORENUMTRAITS_HPP
+#endif //MATADOR_COLOR_ENUM_TRAITS_HPP

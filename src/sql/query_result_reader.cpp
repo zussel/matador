@@ -10,86 +10,86 @@ size_t query_result_reader::start_column_index() const
   return 0;
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, char &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, char &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, short &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, short &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, int &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, int &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, long &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, long &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, long long int &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, long long int &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, unsigned char &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, unsigned char &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, unsigned short &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, unsigned short &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, unsigned int &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, unsigned int &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, unsigned long &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, unsigned long &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, unsigned long long int &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, unsigned long long int &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, bool &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, bool &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, float &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, float &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, double &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, double &value)
 {
   to_value(value, column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, time &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, time &value)
 {
   if (const auto val = column(index); strlen(val) > 0) {
     value = time::parse(val, "%Y-%m-%d %T.%f");
   }
 }
 
-void query_result_reader::read_value(const char *id, size_t index, date &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, date &value)
 {
   if (const auto val = column(index); strlen(val) > 0) {
     value.set(val, matador::utils::date_format::ISO8601);
   }
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, char *value, size_t size)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, char *value, size_t size)
 {
   auto val = column(index);
   if (const size_t len = strlen(val); len > size) {
@@ -108,17 +108,17 @@ void query_result_reader::read_value(const char * /*id*/, size_t index, char *va
   }
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, std::string &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, std::string &value)
 {
   value.assign(column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, std::string &value, size_t /*s*/)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, std::string &value, size_t /*s*/)
 {
   value.assign(column(index));
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, utils::blob &value)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, utils::blob &value)
 {
   const auto val = column(index);
   const auto len = strlen(val);
@@ -133,7 +133,7 @@ void convert(const char *val_str, value &val)
   val = local_val;
 }
 
-void query_result_reader::read_value(const char * /*id*/, size_t index, value &val, size_t /*size*/)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, value &val, size_t /*size*/)
 {
   switch (val.type()) {
     case data_type::type_char:

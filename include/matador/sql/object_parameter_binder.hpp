@@ -1,7 +1,7 @@
 #ifndef QUERY_OBJECT_PARAMETER_BINDER_HPP
 #define QUERY_OBJECT_PARAMETER_BINDER_HPP
 
-#include "matador/object/attribute_binder.hpp"
+#include "matador/object/attribute_writer.hpp"
 #include "matador/object/data_type_traits.hpp"
 
 #include "matador/utils/access.hpp"
@@ -16,7 +16,7 @@ namespace detail {
 class fk_binder
 {
 public:
-  explicit fk_binder(object::attribute_binder &binder);
+  explicit fk_binder(object::attribute_writer &binder);
   fk_binder(fk_binder &&x) = default;
   fk_binder& operator=(fk_binder &&x) noexcept;
 
@@ -45,7 +45,7 @@ public:
   void on_has_many(const char *, ContainerType &, utils::cascade_type) {}
 
 private:
-  object::attribute_binder &binder_;
+  object::attribute_writer &binder_;
   size_t index_{0};
 };
 
@@ -54,7 +54,7 @@ private:
 class object_parameter_binder
 {
 public:
-  explicit object_parameter_binder(object::attribute_binder &binder);
+  explicit object_parameter_binder(object::attribute_writer &binder);
   object_parameter_binder(object_parameter_binder &&x) = default;
   object_parameter_binder& operator=(object_parameter_binder &&x) noexcept;
 
@@ -90,7 +90,7 @@ public:
   void on_has_many(const char *, ContainerType &, utils::cascade_type) {}
 
 private:
-  std::reference_wrapper<object::attribute_binder> binder_;
+  std::reference_wrapper<object::attribute_writer> binder_;
   size_t index_{0};
   detail::fk_binder fk_binder_;
 };

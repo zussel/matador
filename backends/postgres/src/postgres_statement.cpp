@@ -32,7 +32,7 @@ std::unique_ptr<sql::query_result_impl> postgres_statement::fetch()
 
 void postgres_statement::reset() {}
 
-object::attribute_binder& postgres_statement::binder()
+object::attribute_writer& postgres_statement::binder()
 {
   return binder_;
 }
