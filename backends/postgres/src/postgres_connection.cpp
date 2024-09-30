@@ -205,7 +205,7 @@ std::string postgres_connection::to_escaped_string(const utils::blob& value) con
   size_t escapedDataLength;
   unsigned char *escapedData = PQescapeByteaConn(conn_, value.data(), value.size(), &escapedDataLength);
 
-  return {reinterpret_cast<char*>(escapedData), escapedDataLength};
+  return {reinterpret_cast<char*>(escapedData), escapedDataLength-1};
 }
 
 }
