@@ -18,7 +18,7 @@ void data_type_traits<char>::read_value(attribute_reader &reader, const char *id
 
 void data_type_traits<char>::bind_value(attribute_writer &binder, size_t index, char &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<short>::read_value(attribute_reader &reader, const char *id, size_t index, short &value)
@@ -28,7 +28,7 @@ void data_type_traits<short>::read_value(attribute_reader &reader, const char *i
 
 void data_type_traits<short>::bind_value(attribute_writer &binder, size_t index, short &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<int>::read_value(attribute_reader &reader, const char *id, size_t index, int &value)
@@ -38,7 +38,7 @@ void data_type_traits<int>::read_value(attribute_reader &reader, const char *id,
 
 void data_type_traits<int>::bind_value(attribute_writer &binder, size_t index, int &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<long>::read_value(attribute_reader &reader, const char *id, size_t index, long &value)
@@ -48,7 +48,7 @@ void data_type_traits<long>::read_value(attribute_reader &reader, const char *id
 
 void data_type_traits<long>::bind_value(attribute_writer &binder, size_t index, long &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<long long>::read_value(attribute_reader &reader, const char *id, size_t index, long long &value)
@@ -58,7 +58,7 @@ void data_type_traits<long long>::read_value(attribute_reader &reader, const cha
 
 void data_type_traits<long long int>::bind_value(attribute_writer &binder, size_t index, long long int &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<unsigned char>::read_value(attribute_reader &reader, const char *id, size_t index, unsigned char &value)
@@ -68,7 +68,7 @@ void data_type_traits<unsigned char>::read_value(attribute_reader &reader, const
 
 void data_type_traits<unsigned char>::bind_value(attribute_writer &binder, size_t index, unsigned char &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<unsigned short>::read_value(attribute_reader &reader, const char *id, size_t index, unsigned short &value)
@@ -78,7 +78,7 @@ void data_type_traits<unsigned short>::read_value(attribute_reader &reader, cons
 
 void data_type_traits<unsigned short>::bind_value(attribute_writer &binder, size_t index, unsigned short &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<unsigned int>::read_value(attribute_reader &reader, const char *id, size_t index, unsigned int &value)
@@ -88,7 +88,7 @@ void data_type_traits<unsigned int>::read_value(attribute_reader &reader, const 
 
 void data_type_traits<unsigned int>::bind_value(attribute_writer &binder, size_t index, unsigned int &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<unsigned long>::read_value(attribute_reader &reader, const char *id, size_t index, unsigned long &value)
@@ -98,7 +98,7 @@ void data_type_traits<unsigned long>::read_value(attribute_reader &reader, const
 
 void data_type_traits<unsigned long>::bind_value(attribute_writer &binder, size_t index, unsigned long &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<unsigned long long>::read_value(attribute_reader &reader, const char *id, size_t index, unsigned long long &value)
@@ -108,7 +108,7 @@ void data_type_traits<unsigned long long>::read_value(attribute_reader &reader, 
 
 void data_type_traits<unsigned long long>::bind_value(attribute_writer &binder, size_t index, unsigned long long &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<bool>::read_value(attribute_reader &reader, const char *id, size_t index, bool &value)
@@ -118,7 +118,7 @@ void data_type_traits<bool>::read_value(attribute_reader &reader, const char *id
 
 void data_type_traits<bool>::bind_value(attribute_writer &binder, size_t index, bool &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<float>::read_value(attribute_reader &reader, const char *id, size_t index, float &value)
@@ -128,7 +128,7 @@ void data_type_traits<float>::read_value(attribute_reader &reader, const char *i
 
 void data_type_traits<float>::bind_value(attribute_writer &binder, size_t index, float &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<double>::read_value(attribute_reader &reader, const char *id, size_t index, double &value)
@@ -138,7 +138,7 @@ void data_type_traits<double>::read_value(attribute_reader &reader, const char *
 
 void data_type_traits<double>::bind_value(attribute_writer &binder, size_t index, double &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<const char*>::read_value(attribute_reader &reader, const char *id, size_t index, const char* value, size_t size)
@@ -148,7 +148,7 @@ void data_type_traits<const char*>::read_value(attribute_reader &reader, const c
 
 void data_type_traits<const char *>::bind_value(attribute_writer &binder, size_t index, const char *value, size_t size)
 {
-  binder.bind(index, value, size);
+  binder.write_value(index, value, size);
 }
 
 void data_type_traits<char*>::read_value(attribute_reader &reader, const char *id, size_t index, char* value, size_t size)
@@ -158,7 +158,7 @@ void data_type_traits<char*>::read_value(attribute_reader &reader, const char *i
 
 void data_type_traits<char *>::bind_value(attribute_writer &binder, size_t index, char *value, size_t size)
 {
-  binder.bind(index, value, size);
+  binder.write_value(index, value, size);
 }
 
 void data_type_traits<std::string>::read_value(attribute_reader &reader, const char *id, size_t index, std::string &value, size_t size)
@@ -168,7 +168,7 @@ void data_type_traits<std::string>::read_value(attribute_reader &reader, const c
 
 void data_type_traits<std::string>::bind_value(attribute_writer &binder, size_t index, std::string &value, size_t size)
 {
-  binder.bind(index, value, size);
+  binder.write_value(index, value, size);
 }
 
 void data_type_traits<utils::blob, void>::read_value(attribute_reader &reader, const char *id, size_t index, utils::blob &value)
@@ -178,7 +178,7 @@ void data_type_traits<utils::blob, void>::read_value(attribute_reader &reader, c
 
 void data_type_traits<utils::blob, void>::bind_value(attribute_writer &binder, size_t index, utils::blob &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<matador::date>::read_value(attribute_reader &reader, const char *id, size_t index, date &value)
@@ -188,7 +188,7 @@ void data_type_traits<matador::date>::read_value(attribute_reader &reader, const
 
 void data_type_traits<matador::date>::bind_value(attribute_writer &binder, size_t index, date &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 void data_type_traits<matador::time>::read_value(attribute_reader &reader, const char *id, size_t index, time &value)
@@ -198,7 +198,7 @@ void data_type_traits<matador::time>::read_value(attribute_reader &reader, const
 
 void data_type_traits<matador::time>::bind_value(attribute_writer &binder, size_t index, time &value)
 {
-  binder.bind(index, value);
+  binder.write_value(index, value);
 }
 
 }

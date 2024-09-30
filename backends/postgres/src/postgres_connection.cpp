@@ -199,6 +199,15 @@ bool postgres_connection::exists(const std::string &schema_name, const std::stri
 
   return utils::to_long_long(PQcmdTuples(res)) == 1;
 }
+
+std::string postgres_connection::to_escaped_string(const utils::blob& value) const
+{
+  size_t escapedDataLength;
+  unsigned char *escapedData = PQescapeByteaConn(conn_, value.data(), value.size(), &escapedDataLength);
+
+  return {reinterpret_cast<char*>(escapedData), escapedDataLength};
+}
+
 }
 
 extern "C" {

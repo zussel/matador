@@ -196,14 +196,14 @@ type_info determine_type_info(const std::string &type_string) {
   return result;
 }
 
-std::unique_ptr<sql::query_result_impl> mysql_connection::fetch(const std::string &stmt) {
-  if (mysql_query(mysql_.get(), stmt.c_str())) {
-    throw_mysql_error(mysql_.get(), stmt);
+std::unique_ptr<sql::query_result_impl> mysql_connection::fetch(const sql::query_context &context) {
+  if (mysql_query(mysql_.get(), context.sql.c_str())) {
+    throw_mysql_error(mysql_.get(), context.sql);
   }
 
   auto result = mysql_store_result(mysql_.get());
   if (result == nullptr) {
-    throw_mysql_error(mysql_.get(), stmt);
+    throw_mysql_error(mysql_.get(), context.sql);
   }
 
   auto field_count = mysql_num_fields(result);
@@ -288,6 +288,22 @@ bool mysql_connection::exists(const std::string &/*schema_name*/, const std::str
 
   return result->row_count == 1;
 }
+
+std::string mysql_connection::to_escaped_string( const utils::blob& value ) const
+{
+    const auto escapedDataSize = value.size() * 2 + 1;  // Maximum size for escaped data
+    auto *escapedData = new char[escapedDataSize];
+
+    unsigned long escapedLength = mysql_real_escape_string(
+        mysql_.get(),
+        escapedData,
+        reinterpret_cast<const char *>(value.data()),
+        static_cast<unsigned long>(value.size())
+    );
+
+    return {escapedData, escapedLength};
+}
+
 }
 
 extern "C" {

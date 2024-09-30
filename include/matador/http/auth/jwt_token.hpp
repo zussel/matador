@@ -3,9 +3,7 @@
 
 #include "matador/utils/time.hpp"
 
-namespace matador {
-namespace http {
-namespace auth {
+namespace matador::http::auth {
 
 /// @cond MATADOR_DEV
 
@@ -64,6 +62,6 @@ public:
 /// @endcond
 
 }
-}
-}
+
+
 #endif //MATADOR_JWT_TOKEN_HPP

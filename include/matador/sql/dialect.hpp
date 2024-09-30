@@ -98,14 +98,6 @@ public:
    */
   [[nodiscard]] std::string default_schema_name() const;
 
-  // /**
-  //  * Returns the current query compiler
-  //  * of the dialect
-  //  *
-  //  * @return The current query compiler
-  //  */
-  // query_compiler& compiler() const;
-
   [[nodiscard]] query_context compile(const query_compile_context &data, const connection_impl &conn) const;
 
   void compiler(std::unique_ptr<query_compiler> &&compiler);

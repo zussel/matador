@@ -29,7 +29,7 @@ public:
   [[nodiscard]] bool is_open() const override;
   [[nodiscard]] bool is_valid() const override;
 
-  std::unique_ptr<sql::query_result_impl> fetch(const std::string &stmt) override;
+  std::unique_ptr<sql::query_result_impl> fetch(const sql::query_context &context) override;
   std::unique_ptr<sql::statement_impl> prepare(sql::query_context query) override;
 
   size_t execute(const std::string &sql) override;
@@ -40,6 +40,7 @@ public:
 
   [[nodiscard]] version client_version() const override;
   [[nodiscard]] version server_version() const override;
+  [[nodiscard]] std::string to_escaped_string(const utils::blob& value) const override;
 
 private:
   [[nodiscard]] SQLHANDLE execute_statement(const std::string &sql) const;

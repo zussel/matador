@@ -20,7 +20,7 @@
 
 namespace matador::backends::postgres {
 
-class postgres_connection : public matador::sql::connection_impl
+class postgres_connection : public sql::connection_impl
 {
 public:
   explicit postgres_connection(const sql::connection_info &info);
@@ -39,6 +39,8 @@ public:
   std::vector<sql::column_definition> describe(const std::string& table) override;
 
   bool exists(const std::string &schema_name, const std::string &table_name) override;
+
+  [[nodiscard]] std::string to_escaped_string( const utils::blob& value ) const override;
 
 private:
   [[nodiscard]] static std::string generate_statement_name(const sql::query_context &query) ;

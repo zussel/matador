@@ -40,6 +40,8 @@ public:
 
   bool exists(const std::string &schema_name, const std::string &table_name) override;
 
+  [[nodiscard]] std::string to_escaped_string( const utils::blob& value ) const override;
+
 private:
   struct fetch_context
   {

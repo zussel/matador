@@ -8,14 +8,13 @@
 #include <functional>
 #include <memory>
 
-namespace matador {
-namespace http {
+namespace matador::http {
 
 class request;
 
 /**
  * The middleware class is used when processing
- * a HTTP request and works like onion layers
+ * an HTTP request and works like onion layers
  * around a request.
  *
  * The interface consists only of one method process.
@@ -36,7 +35,7 @@ public:
   /**
    * Shortcut to the next middleware callback
    */
-  using next_func_t = std::function<matador::http::response()>;
+  using next_func_t = std::function<response()>;
 
   /**
    * Destructor
@@ -52,7 +51,7 @@ public:
    * @param next Callback to the succeeding middleware
    * @return The response
    */
-  virtual matador::http::response process(matador::http::request &req, const next_func_t &next) = 0;
+  virtual response process(request &req, const next_func_t &next) = 0;
 };
 
 using middleware_ptr = std::shared_ptr<middleware>;
@@ -64,17 +63,17 @@ class OOS_HTTP_API middleware_processor
 public:
   explicit middleware_processor(middleware_ptr current, std::shared_ptr<middleware_processor> next);
 
-  matador::http::response process(matador::http::request &req);
+  response process(request &req);
 
 private:
   middleware_ptr current_;
   std::shared_ptr<middleware_processor> next_;
 };
 
-class OOS_HTTP_API sentinel_middleware : public middleware
+class OOS_HTTP_API sentinel_middleware final : public middleware
 {
 public:
-  matador::http::response process(request &, const next_func_t &) override;
+  response process(request &, const next_func_t &) override;
 };
 
 class OOS_HTTP_API middleware_pipeline
@@ -87,7 +86,7 @@ public:
 
   void add(const middleware_ptr &mware);
 
-  matador::http::response process(matador::http::request &req);
+  response process(request &req);
 
 private:
   middleware_processor_ptr processor_;
@@ -96,5 +95,5 @@ private:
 /// @endcond
 
 }
-}
+
 #endif //MATADOR_MIDDLEWARE_HPP

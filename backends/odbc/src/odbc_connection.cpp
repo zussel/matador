@@ -6,6 +6,7 @@
 #include "matador/sql/record.hpp"
 
 #include "matador/utils/data_types.hpp"
+#include "matador/utils/string.hpp"
 
 #include <cstring>
 #include <memory>
@@ -99,16 +100,16 @@ size_t odbc_connection::execute(const std::string &sql) {
   return affected_rows;
 }
 
-std::unique_ptr<sql::query_result_impl> odbc_connection::fetch(const std::string &sql) {
+std::unique_ptr<sql::query_result_impl> odbc_connection::fetch(const sql::query_context &context) {
   if (!connection_) {
     throw std::logic_error("mssql no odbc connection established");
   }
   // create statement handle
-  SQLHANDLE stmt = execute_statement(sql);
+  SQLHANDLE stmt = execute_statement(context.sql);
 
   SQLSMALLINT num_columns{};
   const auto ret = SQLNumResultCols(stmt, &num_columns);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc", sql);
+  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc", context.sql);
 
   std::vector<sql::column_definition> columns;
   for (SQLSMALLINT i = 1; i <= num_columns; i++) {
@@ -281,6 +282,11 @@ bool odbc_connection::exists(const std::string &schema_name, const std::string &
   reader.read_value("COUNT(*)", 1, v);
 
   return v == 1;
+}
+
+std::string odbc_connection::to_escaped_string( const utils::blob& value ) const
+{
+    return utils::to_string(value);
 }
 
 version odbc_connection::client_version() const {

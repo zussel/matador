@@ -37,6 +37,8 @@ public:
 
   [[nodiscard]] const class dialect &dialect() const;
 
+  [[nodiscard]] virtual std::string to_escaped_string(const utils::blob &value) const = 0;
+
 protected:
   explicit connection_impl(const connection_info &info);
 

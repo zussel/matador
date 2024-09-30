@@ -17,7 +17,7 @@ void data_type_traits<test::Color, void>::read_value(attribute_reader &reader, c
 
 void data_type_traits<test::Color, void>::bind_value(attribute_writer &binder, const size_t index, const test::Color &value)
 {
-  binder.bind(index, color_enum.to_string(value));
+  binder.write_value(index, color_enum.to_string(value));
 }
 
 }

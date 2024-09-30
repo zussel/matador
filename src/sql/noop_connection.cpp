@@ -62,4 +62,9 @@ bool noop_connection::exists(const std::string &/*schema_name*/, const std::stri
   return false;
 }
 
+std::string noop_connection::to_escaped_string(const utils::blob& value) const
+{
+    return {};
+}
+
 }

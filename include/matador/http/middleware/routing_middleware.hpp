@@ -13,7 +13,7 @@ namespace matador::http::middlewares {
 
 /// @cond MATADOR_DEV
 
-class OOS_HTTP_API routing_middleware : public middleware
+class OOS_HTTP_API routing_middleware final : public middleware
 {
 public:
   explicit routing_middleware(const routing_engine &router);
@@ -24,9 +24,9 @@ private:
   std::optional<routing_engine::route_endpoint_ptr> match(request &req);
 
 private:
-  matador::logger log_;
+  logger log_;
 
-  const matador::http::routing_engine &router_;
+  const routing_engine &router_;
 };
 
 /// @endcond

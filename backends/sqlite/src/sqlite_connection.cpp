@@ -4,6 +4,7 @@
 #include "sqlite_statement.hpp"
 
 #include "matador/utils/data_types.hpp"
+#include "matador/utils/string.hpp"
 
 #include <cstring>
 #include <memory>
@@ -207,6 +208,12 @@ bool sqlite_connection::exists(const std::string &/*schema_name*/, const std::st
 
   return v == 1;
 }
+
+std::string sqlite_connection::to_escaped_string( const utils::blob& value ) const
+{
+  return utils::to_string(value);
+}
+
 }
 
 extern "C" {

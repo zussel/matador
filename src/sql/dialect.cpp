@@ -77,7 +77,7 @@ void dialect::quote_identifier(std::string &str) const
 void dialect::escape_quotes_in_identifier(std::string &str) const
 {
   const std::string open_char(token_at(dialect_token::START_QUOTE));
-  std::string close_char(token_at(dialect_token::END_QUOTE));
+  const std::string close_char(token_at(dialect_token::END_QUOTE));
   if (identifier_escape_type() == escape_identifier_t::ESCAPE_CLOSING_BRACKET) {
     utils::replace_all(str, close_char, close_char + close_char);
   } else {
@@ -94,7 +94,7 @@ void dialect::escape_quotes_in_literals(std::string &str) const
 
 dialect::escape_identifier_t dialect::identifier_escape_type() const
 {
-  return dialect::escape_identifier_t::ESCAPE_BOTH_SAME;
+  return escape_identifier_t::ESCAPE_BOTH_SAME;
 }
 
 std::string dialect::next_placeholder(const std::vector<std::string> &bind_vars) const
@@ -106,11 +106,6 @@ std::string dialect::default_schema_name() const
 {
   return default_schema_name_;
 }
-
-// query_compiler & dialect::compiler() const
-// {
-//   return *compiler_;
-// }
 
 query_context dialect::compile(const query_compile_context& data, const connection_impl &conn) const
 {

@@ -151,7 +151,8 @@ void query_compiler::visit(query_values_part &values_part)
 {
   query_.sql += " " + connection_->dialect().token_at(dialect_token::VALUES);
 
-  any_type_to_string_visitor value_to_string(connection_->dialect(), query_);
+  attribute_string_writer writer(*connection_);
+  any_type_to_string_visitor value_to_string(writer, query_);
 
   std::string result{"("};
   if (values_part.values().size() < 2) {
@@ -258,7 +259,8 @@ void query_compiler::visit(query_set_part &set_part)
 {
   query_.sql += " " + connection_->dialect().token_at(dialect_token::SET) + " ";
 
-  any_type_to_string_visitor value_to_string(connection_->dialect(), query_);
+  attribute_string_writer writer(*connection_);
+  any_type_to_string_visitor value_to_string(writer, query_);
   std::string result;
   if (set_part.key_values().size() < 2) {
     for (const auto &col: set_part.key_values()) {

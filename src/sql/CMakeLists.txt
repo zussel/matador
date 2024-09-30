@@ -42,6 +42,7 @@ set(SOURCES
   placeholder_key_value_generator.cpp
   table.cpp
   to_value.cpp
+  attribute_string_writer.cpp
 )
 
 set(HEADER
@@ -99,6 +100,7 @@ set(HEADER
   ../../include/matador/sql/placeholder_key_value_generator.hpp
   ../../include/matador/sql/dialect_token.hpp
   ../../include/matador/sql/query_executor.hpp
+  ../../include/matador/sql/attribute_string_writer.hpp
 )
 
 ADD_LIBRARY(matador-query STATIC ${SOURCES} ${HEADER})

@@ -44,86 +44,86 @@ postgres_parameter_binder::postgres_parameter_binder(size_t size)
     , params_(size) {
 }
 
-void postgres_parameter_binder::bind(size_t pos, const char &x) {
+void postgres_parameter_binder::write_value(size_t pos, const char &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const short &x) {
+void postgres_parameter_binder::write_value(size_t pos, const short &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const int &x) {
+void postgres_parameter_binder::write_value(size_t pos, const int &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const long &x) {
+void postgres_parameter_binder::write_value(size_t pos, const long &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const long long int &x) {
+void postgres_parameter_binder::write_value(size_t pos, const long long int &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const unsigned char &x) {
+void postgres_parameter_binder::write_value(size_t pos, const unsigned char &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const unsigned short &x) {
+void postgres_parameter_binder::write_value(size_t pos, const unsigned short &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const unsigned int &x) {
+void postgres_parameter_binder::write_value(size_t pos, const unsigned int &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const unsigned long &x) {
+void postgres_parameter_binder::write_value(size_t pos, const unsigned long &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const unsigned long long int &x) {
+void postgres_parameter_binder::write_value(size_t pos, const unsigned long long int &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const bool &x) {
+void postgres_parameter_binder::write_value(size_t pos, const bool &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const float &x) {
+void postgres_parameter_binder::write_value(size_t pos, const float &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const double &x) {
+void postgres_parameter_binder::write_value(size_t pos, const double &x) {
   detail::bind_value(strings_, params_, pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const char *x) {
+void postgres_parameter_binder::write_value(size_t pos, const char *x) {
   params_[pos] = x;
 }
 
-void postgres_parameter_binder::bind(size_t pos, const char *x, size_t size) {
+void postgres_parameter_binder::write_value(size_t pos, const char *x, size_t size) {
   params_[pos] = x;
 }
 
-void postgres_parameter_binder::bind(size_t pos, const std::string &x) {
+void postgres_parameter_binder::write_value(size_t pos, const std::string &x) {
   strings_[pos] = x;
   params_[pos] = strings_[pos].c_str();
 }
 
-void postgres_parameter_binder::bind(size_t pos, const std::string &x, size_t size) {
-  bind(pos, x);
+void postgres_parameter_binder::write_value(size_t pos, const std::string &x, size_t size) {
+  write_value(pos, x);
 }
 
-void postgres_parameter_binder::bind(size_t pos, const time &x) {
+void postgres_parameter_binder::write_value(size_t pos, const time &x) {
   strings_[pos] = matador::utils::to_string(x, "%Y-%m-%d %T.%f");
   params_[pos] = strings_[pos].c_str();
 }
 
-void postgres_parameter_binder::bind(size_t pos, const date &x) {
+void postgres_parameter_binder::write_value(size_t pos, const date &x) {
   strings_[pos] = matador::utils::to_string(x, utils::date_format::ISO8601);
   params_[pos] = strings_[pos].c_str();
 }
 
-void postgres_parameter_binder::bind(size_t pos, const utils::blob &x) {
+void postgres_parameter_binder::write_value(size_t pos, const utils::blob &x) {
   params_[pos] = "";
 }
 

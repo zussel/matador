@@ -14,6 +14,17 @@ namespace matador::utils {
 using byte = unsigned char;
 using blob = std::vector<byte>;
 
+using database_type = std::variant<
+    uint8_t, uint16_t, uint32_t, uint64_t,
+    int8_t, int16_t, int32_t, int64_t,
+    float, double,
+    bool,
+    std::string,
+    time, date,
+    blob,
+    placeholder,
+    nullptr_t>;
+
 using any_type = std::variant<
   char, short, int, long, long long,
   unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long,

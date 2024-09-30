@@ -28,72 +28,72 @@ odbc_parameter_binder::odbc_parameter_binder(SQLHANDLE stmt)
 : stmt_(stmt)
 {}
 
-void odbc_parameter_binder::bind(size_t pos, const char &x)
+void odbc_parameter_binder::write_value(size_t pos, const char &x)
 {
   detail::bind_value(stmt_, SQL_TINYINT, SQL_TINYINT, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const short &x)
+void odbc_parameter_binder::write_value(size_t pos, const short &x)
 {
   detail::bind_value(stmt_, SQL_C_SSHORT, SQL_SMALLINT, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const int &x)
+void odbc_parameter_binder::write_value(size_t pos, const int &x)
 {
   detail::bind_value(stmt_, SQL_C_SLONG, SQL_INTEGER, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const long &x)
+void odbc_parameter_binder::write_value(size_t pos, const long &x)
 {
   detail::bind_value(stmt_, SQL_C_SLONG, SQL_INTEGER, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const long long int &x)
+void odbc_parameter_binder::write_value(size_t pos, const long long int &x)
 {
   detail::bind_value(stmt_, SQL_C_SBIGINT, SQL_BIGINT, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const unsigned char &x)
+void odbc_parameter_binder::write_value(size_t pos, const unsigned char &x)
 {
   detail::bind_value(stmt_, SQL_C_SHORT, SQL_SMALLINT, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const unsigned short &x)
+void odbc_parameter_binder::write_value(size_t pos, const unsigned short &x)
 {
   detail::bind_value(stmt_, SQL_C_USHORT, SQL_INTEGER, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const unsigned int &x)
+void odbc_parameter_binder::write_value(size_t pos, const unsigned int &x)
 {
   detail::bind_value(stmt_, SQL_C_ULONG, SQL_INTEGER, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const unsigned long &x)
+void odbc_parameter_binder::write_value(size_t pos, const unsigned long &x)
 {
   detail::bind_value(stmt_, SQL_C_ULONG, SQL_BIGINT, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const unsigned long long int &x)
+void odbc_parameter_binder::write_value(size_t pos, const unsigned long long int &x)
 {
   detail::bind_value(stmt_, SQL_C_UBIGINT, SQL_BIGINT, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const bool &x)
+void odbc_parameter_binder::write_value(size_t pos, const bool &x)
 {
   detail::bind_value(stmt_, SQL_C_BIT, SQL_BIT, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const float &x)
+void odbc_parameter_binder::write_value(size_t pos, const float &x)
 {
   detail::bind_value(stmt_, SQL_C_FLOAT, SQL_FLOAT, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const double &x)
+void odbc_parameter_binder::write_value(size_t pos, const double &x)
 {
   detail::bind_value(stmt_, SQL_C_DOUBLE, SQL_DOUBLE, x, pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const char *text)
+void odbc_parameter_binder::write_value(size_t pos, const char *text)
 {
   host_data_.push_back(detail::create_bind_value(bind_null_, text));
 
@@ -108,14 +108,14 @@ void odbc_parameter_binder::bind(size_t pos, const char *text)
   }
 }
 
-void odbc_parameter_binder::bind(size_t pos, const char *str, size_t size)
+void odbc_parameter_binder::write_value(size_t pos, const char *str, size_t size)
 {
   host_data_.push_back(detail::create_bind_value(bind_null_, str, size));
 
   detail::bind_value(stmt_, SQL_C_CHAR, SQL_VARCHAR, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const std::string &text)
+void odbc_parameter_binder::write_value(size_t pos, const std::string &text)
 {
   host_data_.push_back(detail::create_bind_value(bind_null_, text));
 
@@ -130,24 +130,24 @@ void odbc_parameter_binder::bind(size_t pos, const std::string &text)
   }
 }
 
-void odbc_parameter_binder::bind(size_t pos, const std::string &str, size_t size)
+void odbc_parameter_binder::write_value(size_t pos, const std::string &str, size_t size)
 {
   host_data_.push_back(detail::create_bind_value(bind_null_, str.data(), size));
 
   detail::bind_value(stmt_, SQL_C_CHAR, SQL_VARCHAR, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::bind(size_t pos, const utils::blob &data)
+void odbc_parameter_binder::write_value(size_t pos, const utils::blob &data)
 {
 
 }
 
-void odbc_parameter_binder::bind(size_t pos, const time &time)
+void odbc_parameter_binder::write_value(size_t pos, const time &time)
 {
 
 }
 
-void odbc_parameter_binder::bind(size_t pos, const date &date)
+void odbc_parameter_binder::write_value(size_t pos, const date &date)
 {
 
 }
