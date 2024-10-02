@@ -12,29 +12,30 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
 include(Catch)
 
-set(POSTGRES_CONNECTION_STRING "postgres://test:test123@127.0.0.1:15432/test")
+set(POSTGRES_CONNECTION_STRING "postgres://test:test123!@127.0.0.1:5432/matador")
 
 configure_file(Connection.hpp.in ${PROJECT_BINARY_DIR}/backends/postgres/test/connection.hpp @ONLY IMMEDIATE)
 
 message(STATUS "postgresql connection string: ${POSTGRES_CONNECTION_STRING}")
 
 set(TEST_SOURCES
-  ../../tests/QueryTest.cpp
+  ../../../test/catch2/models/types.hpp
+  ../../tests/ColorEnumTraits.cpp
+  ../../tests/ColorEnumTraits.hpp
   ../../tests/ConnectionTest.cpp
+  ../../tests/QueryBasicTest.cpp
+  ../../tests/QueryFixture.cpp
+  ../../tests/QueryFixture.hpp
   ../../tests/QueryRecordTest.cpp
+  ../../tests/QueryStatementTests.cpp
+  ../../tests/QueryTest.cpp
+  ../../tests/SessionFixture.cpp
+  ../../tests/SessionFixture.hpp
+  ../../tests/SessionTest.cpp
+  ../../tests/StatementCacheTest.cpp
   ../../tests/StatementTest.cpp
   ../../tests/TypeTraitsTest.cpp
-  ../../tests/StatementCacheTest.cpp
-  ../../tests/SessionTest.cpp
-  ../../tests/ColorEnumTraits.hpp
-  ../../tests/ColorEnumTraits.cpp
-  ../../../test/catch2/models/types.hpp
-        ../../tests/QueryBasicTest.cpp
-        ../../tests/QueryStatementTests.cpp
-  ../../tests/QueryFixture.hpp
-  ../../tests/QueryFixture.cpp
-  ../../tests/SessionFixture.hpp
-  ../../tests/SessionFixture.cpp)
+)
 
 set(LIBRARY_TEST_TARGET postgres_tests)
 
