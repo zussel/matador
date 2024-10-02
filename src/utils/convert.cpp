@@ -43,17 +43,17 @@ void convert(utils::blob &, bool /*source*/)
 
 void convert(utils::blob &, const char * /*source*/)
 {
-  throw std::logic_error("couldn't convert bool to blob");
+  throw std::logic_error("couldn't convert const char* to blob");
 }
 
 void convert(utils::blob &, const std::string &/*source*/)
 {
-  throw std::logic_error("couldn't convert bool to blob");
+  throw std::logic_error("couldn't convert string to blob");
 }
 
-void convert(bool &/*dest*/, const std::string &/*source*/)
+void convert(bool &dest, const std::string &source)
 {
-  throw std::logic_error("couldn't convert string to bool");
+  dest = source == "t";
 }
 
 void convert(bool &/*dest*/, const char * /*source*/)
@@ -83,7 +83,7 @@ void convert(date &dest, const std::string &source)
 
 void convert(time &dest, const std::string &source)
 {
-  dest.set(source.c_str(), "%Y-%m-%dT%H:%M:%S.%f");
+  dest.set(source.c_str(), "%Y-%m-%d %H:%M:%S.%f");
 }
 
 void convert(matador::date &dest, const char *source)
