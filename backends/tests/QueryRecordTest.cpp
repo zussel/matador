@@ -73,12 +73,12 @@ TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record
   double d{2.71828};
   std::string str{"long text"};
   std::string varchar{"good day"};
-  matador::date md{matador::date()};
-  matador::time mt{matador::time::now()};
-  matador::utils::blob  bin{1,2,3,4};
+  auto md{matador::date()};
+  auto mt{matador::time::now()};
+  matador::utils::blob bin{1,2,3,4};
 
-    auto tstr = matador::utils::to_string(mt, "%FT%T.%f");
-    std::cout << "initial time value: " << tstr << " (fraction: " << mt.get_time_info().milliseconds << ")\n";
+  const auto tstr = matador::utils::to_string(mt, "%FT%T.%f");
+  std::cout << "initial time value: " << tstr << " (fraction: " << mt.get_time_info().milliseconds << ")\n";
 
   auto res = query::insert()
     .into("types", cols)

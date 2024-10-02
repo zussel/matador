@@ -152,6 +152,8 @@ data_type string2type(const char *type) {
     return data_type::type_varchar;
   } else if (strncmp(type, "text", 0) == 0) {
     return data_type::type_text;
+  } else if (strncmp(type, "bytea", 0) == 0) {
+    return data_type::type_blob;
   } else {
     return data_type::type_unknown;
   }

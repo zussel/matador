@@ -46,7 +46,7 @@ void convert(utils::blob &, const char * /*source*/)
   throw std::logic_error("couldn't convert const char* to blob");
 }
 
-void convert(utils::blob &, const std::string &/*source*/)
+void convert(utils::blob &dest, const std::string &source)
 {
   throw std::logic_error("couldn't convert string to blob");
 }
