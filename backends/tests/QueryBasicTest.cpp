@@ -19,10 +19,11 @@ using namespace matador::sql;
 
 TEST_CASE_METHOD(QueryFixture, "Insert and select basic datatypes", "[query][datatypes]") {
   schema.attach<types>("types");
-  query::create()
+  auto res = query::create()
     .table<types>("types", schema)
     .execute(db);
   tables_to_drop.emplace("types");
+ REQUIRE(res == 0);
 
   float float_value = 2.445566f;
   double double_value = 11111.23433345;
@@ -52,7 +53,7 @@ TEST_CASE_METHOD(QueryFixture, "Insert and select basic datatypes", "[query][dat
                        "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd "
                        "gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
   matador::date date_val(15, 3, 2015);
-  matador::time time_val = matador::time(2015, 3, 15, 13, 56, 23, 123);
+  auto time_val = matador::time(2015, 3, 15, 13, 56, 23, 123);
   matador::utils::blob blob_val {1,2,3,4,5,6,7,8};
 //  matador::utils::blob blob_val {1,2,3,4,0,0,5,6,7,8};
 
@@ -68,7 +69,7 @@ TEST_CASE_METHOD(QueryFixture, "Insert and select basic datatypes", "[query][dat
   blob_val
   };
 
-  auto res = query::insert()
+  res = query::insert()
     .into("types", matador::sql::column_generator::generate<types>(schema, true))
     .values(t)
     .execute(db);

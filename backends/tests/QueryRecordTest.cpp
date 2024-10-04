@@ -17,7 +17,7 @@ using namespace matador::test;
 
 TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record][data types]") {
   REQUIRE(!db.exists("types"));
-  query::create()
+  auto res = query::create()
     .table("types", {
       make_pk_column<unsigned long>("id"),
       make_column<char>("val_char"),
@@ -40,6 +40,7 @@ TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record
       make_column<matador::utils::blob>("val_blob"),
     })
     .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("types"));
   tables_to_drop.emplace("types");
@@ -77,9 +78,7 @@ TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record
   auto mt{matador::time::now()};
   matador::utils::blob bin{0x01,0x02,0x03,0x04};
 
-  const auto tstr = matador::utils::to_string(mt, "%FT%T.%f");
-
-  auto res = query::insert()
+  res = query::insert()
     .into("types", cols)
     .values({id, c, s, i, l, ll, uc, us, ui, ul, ull, b, f, d, str, varchar, md, mt, bin})
     .execute(db);
@@ -115,73 +114,80 @@ TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record
 TEST_CASE_METHOD(QueryFixture, "Create and drop table statement", "[query][record]")
 {
   REQUIRE(!db.exists("person"));
-  query::create()
+  auto res = query::create()
     .table("person", {
       make_pk_column<unsigned long>("id"),
       make_column<std::string>("name", 255),
       make_column<unsigned short>("age")
     })
     .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("person"));
   tables_to_drop.emplace("person");
 
-  query::drop()
+  res = query::drop()
     .table("person")
     .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(!db.exists("person"));
 }
 
 TEST_CASE_METHOD(QueryFixture, "Create and drop table statement with foreign key", "[query][record]")
 {
-  query::create()
+  auto res = query::create()
   .table("airplane", {
     make_pk_column<unsigned long>("id"),
     make_column<std::string>("brand", 255),
     make_column<std::string>("model", 255),
   })
   .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("airplane"));
   tables_to_drop.emplace("airplane");
 
-  query::create()
+  res = query::create()
   .table("flight", {
     make_pk_column<unsigned long>("id"),
     make_fk_column<unsigned long>("airplane_id", "airplane", "id"),
     make_column<std::string>("pilot_name", 255),
   })
   .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("flight"));
   tables_to_drop.emplace("flight");
 
-  query::drop()
+  res = query::drop()
   .table("flight")
   .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(!db.exists("flight"));
 
-  query::drop()
+  res = query::drop()
   .table("airplane")
   .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(!db.exists("airplane"));
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute insert record statement", "[query][record]")
 {
-  query::create()
+  auto res = query::create()
   .table("person", {
     make_pk_column<unsigned long>("id"),
     make_column<std::string>("name", 255),
     make_column<unsigned short>("age")
   })
   .execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
-  auto res = query::insert()
+  res = query::insert()
   .into("person", {"id", "name", "age"})
   .values({7, "george", 45})
   .execute(db);
@@ -204,33 +210,31 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert record statement", "[query][recor
     REQUIRE(i.at(2).is_integer());
     REQUIRE(i.at(2).template as<int>() == 45);
   }
-
-  query::drop()
-  .table("person")
-  .execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute insert record statement with foreign key", "[query][record]")
 {
-  query::create()
+  auto res = query::create()
   .table("airplane", {
     make_pk_column<unsigned long>("id"),
     make_column<std::string>("brand", 255),
     make_column<std::string>("model", 255),
   })
   .execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("airplane");
 
-  query::create()
+  res = query::create()
   .table("flight", {
     make_pk_column<unsigned long>("id"),
     make_fk_column<unsigned long>("airplane_id", "airplane", "id"),
     make_column<std::string>("pilot_name", 255),
   })
   .execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("flight");
 
-  auto res = query::insert().into("airplane", {"id", "brand", "model"}).values({1, "Airbus", "A380"}).execute(db);
+  res = query::insert().into("airplane", {"id", "brand", "model"}).values({1, "Airbus", "A380"}).execute(db);
   REQUIRE(res == 1);
 
   res = query::insert().into("airplane", {"id", "brand", "model"}).values({2, "Boeing", "707"}).execute(db);
@@ -244,26 +248,21 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert record statement with foreign key
 
   res = query::insert().into("flight", {"id", "airplane_id", "pilot_name"}).values({4, 1, "George"}).execute(db);
   REQUIRE(res == 1);
-
-  query::drop().table("flight").execute(db);
-  query::drop().table("airplane").execute(db);
-
-  REQUIRE(!db.exists("flight"));
-  REQUIRE(!db.exists("airplane"));
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute update record statement", "[query][record]")
 {
-  query::create()
+  auto res = query::create()
   .table("person", {
     make_pk_column<unsigned long>("id"),
     make_column<std::string>("name", 255),
     make_column<unsigned short>("age")
   })
   .execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
-  auto res = query::insert()
+  res = query::insert()
   .into("person", {"id", "name", "age"})
   .values({7, "george", 45})
   .execute(db);
@@ -295,22 +294,21 @@ TEST_CASE_METHOD(QueryFixture, "Execute update record statement", "[query][recor
     REQUIRE(i.at(2).is_integer());
     REQUIRE(i.at(2).as<int>() == 35);
   }
-
-  query::drop().table("person").execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute select statement", "[query][record]")
 {
-  query::create()
+  auto res = query::create()
   .table("person", {
     make_pk_column<unsigned long>("id"),
     make_column<std::string>("name", 255),
     make_column<unsigned short>("age")
   })
   .execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
-  auto res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
+  res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
   REQUIRE(res == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({2, "jane", 32}).execute(db);
   REQUIRE(res == 1);
@@ -340,22 +338,21 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement", "[query][record]")
   .from("person")
   .fetch_value<std::string>(db);
   REQUIRE(name == "george");
-
-  query::drop().table("person").execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute select statement with order by", "[query][record]")
 {
-  query::create()
+  auto res = query::create()
   .table("person", {
     make_pk_column<unsigned long>("id"),
     make_column<std::string>("name", 255),
     make_column<unsigned short>("age")
   })
   .execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
-  auto res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
+  res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
   REQUIRE(res == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({2, "jane", 32}).execute(db);
   REQUIRE(res == 1);
@@ -375,22 +372,21 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with order by", "[query
     expected_names.pop_front();
   }
   REQUIRE(expected_names.empty());
-
-  query::drop().table("person").execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute select statement with group by and order by", "[query][record]")
 {
-  query::create()
+  auto res = query::create()
   .table("person", {
     make_pk_column<unsigned long>("id"),
     make_column<std::string>("name", 255),
     make_column<unsigned short>("age")
   })
   .execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
-  auto res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
+  res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
   REQUIRE(res == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({2, "jane", 45}).execute(db);
   REQUIRE(res == 1);
@@ -421,21 +417,20 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with group by and order
     REQUIRE(r.at(1).as<int>() == expected_values.front().second);
     expected_values.pop_front();
   }
-
-  query::drop().table("person").execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute delete statement", "[query][record]")
 {
-  query::create()
+  auto res = query::create()
   .table("person", {
     make_pk_column<unsigned long>("id"),
     make_column<std::string>("name", 255),
     make_column<unsigned short>("age")
   }).execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
-  auto res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
+  res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
   REQUIRE(res == 1);
   res = query::insert()
     .into("person", {"id", "name", "age"})
@@ -460,16 +455,15 @@ TEST_CASE_METHOD(QueryFixture, "Execute delete statement", "[query][record]")
     .from("person")
     .fetch_value<int>(db);
   REQUIRE(count == 1);
-
-  query::drop().table("person").execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Test quoted identifier record", "[query][record]") {
-  query::create()
+  auto res = query::create()
   .table("quotes", {
     make_column<std::string>("from", 255),
     make_column<std::string>("to", 255)
   }).execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("quotes");
 
   // check table description
@@ -482,33 +476,40 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted identifier record", "[query][record]
     REQUIRE(field.type() == types[field.index()]);
   }
 
-  query::insert().into("quotes", {"from", "to"}).values({"Berlin", "London"}).execute(db);
+  res = query::insert()
+    .into("quotes", {"from", "to"})
+    .values({"Berlin", "London"})
+    .execute(db);
+  REQUIRE(res == 1);
 
-  auto res = query::select({"from", "to"}).from("quotes").fetch_one(db);
+  auto result = query::select({"from", "to"}).from("quotes").fetch_one(db);
 
-  REQUIRE(res.has_value());
-  REQUIRE("Berlin" == res->at("from").str());
-  REQUIRE("London" == res->at("to").str());
+  REQUIRE(result.has_value());
+  REQUIRE("Berlin" == result->at("from").str());
+  REQUIRE("London" == result->at("to").str());
 
-  query::update("quotes").set({{"from", "Hamburg"}, {"to", "New York"}}).where("from"_col == "Berlin").execute(db);
+  res = query::update("quotes")
+    .set({{"from", "Hamburg"}, {"to", "New York"}})
+    .where("from"_col == "Berlin")
+    .execute(db);
+  REQUIRE(res == 1);
 
-  res = query::select({"from", "to"}).from("quotes").fetch_one(db);
+  result = query::select({"from", "to"}).from("quotes").fetch_one(db);
 
-  REQUIRE("Hamburg" == res->at("from").str());
-  REQUIRE("New York" == res->at("to").str());
-
-  query::drop().table("quotes").execute(db);
+  REQUIRE("Hamburg" == result->at("from").str());
+  REQUIRE("New York" == result->at("to").str());
 }
 
 TEST_CASE_METHOD(QueryFixture, "Test create record", "[query][record][create]") {
   REQUIRE(!db.exists("person"));
-  query::create()
+  auto res = query::create()
     .table("person", {
       make_pk_column<unsigned long>("id"),
       make_column<std::string>("name", 255),
       make_column<unsigned short>("age")
     })
     .execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
@@ -522,18 +523,19 @@ TEST_CASE_METHOD(QueryFixture, "Test create record", "[query][record][create]") 
 
 TEST_CASE_METHOD(QueryFixture, "Test insert record", "[query][record][insert]") {
   REQUIRE(!db.exists("person"));
-  query::create()
+  auto res = query::create()
     .table("person", {
       make_pk_column<unsigned long>("id"),
       make_column<std::string>("name", 255),
       make_column<unsigned short>("age")
     })
     .execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
 
-  auto res = query::insert()
+  res = query::insert()
     .into("person", {"id", "name", "age"})
     .values({1, "hans", 45})
     .execute(db);
@@ -552,18 +554,19 @@ TEST_CASE_METHOD(QueryFixture, "Test insert record", "[query][record][insert]") 
 
 TEST_CASE_METHOD(QueryFixture, "Test update record", "[query][record][update]") {
   REQUIRE(!db.exists("person"));
-  query::create()
+  auto res = query::create()
     .table("person", {
       make_pk_column<unsigned long>("id"),
       make_column<std::string>("name", 255),
       make_column<unsigned short>("age")
     })
     .execute(db);
+  REQUIRE(res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
 
-  auto res = query::insert()
+  res = query::insert()
     .into("person", {"id", "name", "age"})
     .values({1, "hans", 45})
     .execute(db);
@@ -620,11 +623,12 @@ TEST_CASE_METHOD(QueryFixture, "Test prepared record statement", "[query][record
 
 TEST_CASE_METHOD(QueryFixture, "Test scalar result", "[query][record][scalar][result]") {
   REQUIRE(!db.exists("person"));
-  query::create()
+  auto res = query::create()
     .table("person", {
       make_pk_column<unsigned long>("id"),
     })
     .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("person"));
   tables_to_drop.emplace("person");
@@ -632,7 +636,7 @@ TEST_CASE_METHOD(QueryFixture, "Test scalar result", "[query][record][scalar][re
   std::vector<unsigned long> ids({ 1,2,3,4 });
 
   for(auto id : ids) {
-    auto res = query::insert()
+    res = query::insert()
       .into("person", {"id"})
       .values({id})
       .execute(db);

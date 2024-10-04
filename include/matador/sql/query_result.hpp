@@ -20,7 +20,7 @@ public:
   using iterator_category = std::forward_iterator_tag;
   using value_type = Type;
   using difference_type = std::ptrdiff_t;
-  using self = query_result_iterator<Type>;  /**< Shortcut for this class. */
+  using self = query_result_iterator;        /**< Shortcut for this class. */
   using pointer = value_type*;               /**< Shortcut for the pointer type. */
   using reference = value_type&;             /**< Shortcut for the reference type */
 
@@ -78,7 +78,7 @@ public:
       obj_.reset();
     }
 
-    return std::move(tmp);
+    return tmp;
   }
 
   pointer operator->()

@@ -177,7 +177,7 @@ object_ptr<Type> session::insert(Type *obj)
   if (!info) {
     return {};
   }
-  query::insert()
+  std::ignore = query::insert()
     .into(info->name, column_generator::generate<Type>(*schema_, true))
     .values(*obj)
     .execute(*c);

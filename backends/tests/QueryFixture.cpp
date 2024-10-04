@@ -2,6 +2,8 @@
 
 #include "matador/sql/query.hpp"
 
+#include "catch2/catch_test_macros.hpp"
+
 namespace matador::test {
 
 QueryFixture::QueryFixture()
@@ -20,7 +22,10 @@ QueryFixture::~QueryFixture() {
 
 void QueryFixture::drop_table_if_exists(const std::string &table_name) const {
   if (db.exists(table_name)) {
-    const auto res = sql::query::drop().table(table_name).execute(db);
+    std::ignore = sql::query::drop()
+      .table(table_name)
+      .execute(db);
+    REQUIRE(!db.exists(table_name));
   }
 }
 

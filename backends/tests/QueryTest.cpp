@@ -31,20 +31,15 @@ TEST_CASE_METHOD(QueryFixture, "Create table with foreign key relation", "[query
 
   REQUIRE(db.exists("flight"));
   tables_to_drop.emplace("flight");
-
-  res = query::drop().table("flight").execute(db);
-  res = query::drop().table("airplane").execute(db);
-
-  REQUIRE(!db.exists("flight"));
-  REQUIRE(!db.exists("airplane"));
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[query]")
 {
   schema.attach<person>("person");
-  query::create()
-  .table<person>("person", schema)
-  .execute(db);
+  auto res = query::create()
+    .table<person>("person", schema)
+    .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("person"));
   tables_to_drop.emplace("person");
@@ -52,7 +47,7 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[q
   person george{7, "george", 45};
   george.image.emplace_back(37);
 
-  auto res = query::insert()
+  res = query::insert()
   .into("person", column_generator::generate<person>(schema, true))
   .values(george)
   .execute(db);
@@ -88,24 +83,23 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[q
     REQUIRE(i.name == "george");
     REQUIRE(i.age == 45);
   }
-
-  query::drop().table("person").execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query]")
 {
-  query::create()
+  auto res = query::create()
   .table("person", {
   make_pk_column<unsigned long>("id"),
   make_column<std::string>("name", 255),
   make_column<std::string>("color", 63)
   })
   .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("person"));
   tables_to_drop.emplace("person");
 
-  auto res = query::insert()
+  res = query::insert()
   .into("person", {{"", "id", ""}, {"", "name", ""}, {"", "color", ""}})
   .values({7, "george", "green"})
   .execute(db);
@@ -130,24 +124,24 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query]")
     REQUIRE(i.at(2).is_varchar());
     REQUIRE(i.at(2).as<std::string>() == "green");
   }
-
-  query::drop().table("person").execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query]")
 {
   schema.attach<airplane>("airplane");
   schema.attach<flight>("flight");
-  query::create()
+  auto res = query::create()
   .table<airplane>("airplane", schema)
   .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("airplane"));
   tables_to_drop.emplace("airplane");
 
-  query::create()
+  res = query::create()
   .table<flight>("flight", schema)
   .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("flight"));
   tables_to_drop.emplace("flight");
@@ -159,7 +153,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query]")
   };
 
   for (const auto &plane: planes) {
-    auto res = query::insert()
+    res = query::insert()
       .into("airplane", column_generator::generate<airplane>(schema, true))
       .values(*plane)
       .execute(db);
@@ -173,7 +167,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query]")
 
   flight f4711{4, planes.at(1), "hans"};
 
-  auto res = query::insert()
+  res = query::insert()
     .into("flight", column_generator::generate<flight>(schema, true))
     .values(f4711)
     .execute(db);
@@ -185,25 +179,24 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query]")
   REQUIRE(f.at(0).as<unsigned long>() == 4);
   REQUIRE(f.at(1).as<unsigned long>() == 2);
   REQUIRE(f.at(2).as<std::string>() == "hans");
-
-  query::drop().table("flight").execute(db);
-  query::drop().table("airplane").execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left", "[query][join_left]")
 {
   schema.attach<airplane>("airplane");
   schema.attach<flight>("flight");
-  query::create()
+  auto res = query::create()
   .table<airplane>("airplane", schema)
   .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("airplane"));
   tables_to_drop.emplace("airplane");
 
-  query::create()
+  res = query::create()
     .table<flight>("flight", schema)
     .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("flight"));
   tables_to_drop.emplace("flight");
@@ -215,7 +208,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left"
   };
 
   for (const auto &plane: planes) {
-    auto res = query::insert()
+    res = query::insert()
       .into("airplane", column_generator::generate<airplane>(schema, true))
       .values(*plane)
       .execute(db);
@@ -235,7 +228,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left"
   };
 
   for (const auto &f: flights) {
-    auto res = query::insert()
+    res = query::insert()
       .into("flight", {"id", "airplane_id", "pilot_name"})
       .values(*f)
       .execute(db);
@@ -268,24 +261,23 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left"
     REQUIRE(r.at(0).as<unsigned long>() == expected_result[index].first);
     REQUIRE(r.at(3).as<std::string>() == expected_result[index++].second);
   }
-
-  query::drop().table("flight").execute(db);
-  query::drop().table("airplane").execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and for single entity", "[query][join_left][find]") {
   schema.attach<airplane>("airplane");
   schema.attach<flight>("flight");
-  query::create()
-  .table<airplane>("airplane", schema)
-  .execute(db);
+  auto res = query::create()
+    .table<airplane>("airplane", schema)
+    .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("airplane"));
   tables_to_drop.emplace("airplane");
 
-  query::create()
+  res = query::create()
     .table<flight>("flight", schema)
     .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("flight"));
   tables_to_drop.emplace("flight");
@@ -297,7 +289,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and for single
   };
 
   for (const auto &plane: planes) {
-    auto res = query::insert()
+    res = query::insert()
       .into("airplane", column_generator::generate<airplane>(schema, true))
       .values(*plane)
       .execute(db);
@@ -317,7 +309,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and for single
   };
 
   for (const auto &f: flights) {
-    auto res = query::insert()
+    res = query::insert()
       .into("flight", column_generator::generate<flight>(schema, true))
       .values(*f)
       .execute(db);
@@ -348,32 +340,32 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and for single
   REQUIRE(result->airplane->id == 1);
   REQUIRE(result->airplane->model == "A380");
   REQUIRE(result->airplane->brand == "Airbus");
-
-  query::drop().table("flight").execute(db);
-  query::drop().table("airplane").execute(db);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship", "[query][join][many_to_many]") {
   schema.attach<recipe>("recipes");
   schema.attach<ingredient>("ingredients");
   schema.attach<recipe_ingredient>("recipe_ingredients");
-  query::create()
-  .table<recipe>("recipes", schema)
-  .execute(db);
+  auto res = query::create()
+    .table<recipe>("recipes", schema)
+    .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("recipes"));
   tables_to_drop.emplace("recipes");
 
-  query::create()
-  .table<ingredient>("ingredients", schema)
-  .execute(db);
+  res = query::create()
+    .table<ingredient>("ingredients", schema)
+    .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("ingredients"));
   tables_to_drop.emplace("ingredients");
 
-  query::create()
-  .table<recipe_ingredient>("recipe_ingredients", schema)
-  .execute(db);
+  res = query::create()
+    .table<recipe_ingredient>("recipe_ingredients", schema)
+    .execute(db);
+  REQUIRE(res == 0);
 
   REQUIRE(db.exists("recipe_ingredients"));
   tables_to_drop.emplace("recipe_ingredients");
@@ -389,7 +381,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship"
   };
 
   for (const auto &i: ingredients) {
-    auto res = query::insert()
+    res = query::insert()
     .into("ingredients", column_generator::generate<ingredient>(schema, true))
     .values(i)
     .execute(db);
@@ -403,7 +395,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship"
   };
 
   for (const auto &r: recipes) {
-    auto res = query::insert()
+    res = query::insert()
     .into("recipes", column_generator::generate<recipe>(schema, true))
     .values(r)
     .execute(db);
@@ -422,7 +414,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship"
   };
 
   for (const auto &ri: recipe_ingredients) {
-    auto res = query::insert()
+    res = query::insert()
     .into("recipe_ingredients", column_generator::generate<recipe_ingredient>(schema, true))
     .values({ri.first, ri.second})
     .execute(db);
@@ -496,8 +488,4 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship"
     REQUIRE(r.at(3).as<std::string>().value() == std::get<3>(expected_result_two_joins[index]));
     ++index;
   }
-
-  query::drop().table("recipe_ingredients").execute(db);
-  query::drop().table("recipes").execute(db);
-  query::drop().table("ingredients").execute(db);
 }
