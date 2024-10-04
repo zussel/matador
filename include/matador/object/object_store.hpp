@@ -16,7 +16,6 @@
 
 #include "matador/utils/sequencer.hpp"
 #include "matador/utils/sequence_synchronizer.hpp"
-#include "identifier_setter.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -82,10 +81,12 @@ public:
    * @return                Iterator representing the inserted prototype node
    */
   template <class Type, template <typename> typename... ObserverType>
-  prototype_iterator attach(const char *type, const char *parent = nullptr,
+  prototype_iterator attach(const char *type,
+                            const char *parent = nullptr,
+                            prototype_node::abstract_type abstract_type = prototype_node::abstract_type::not_abstract,
                             std::vector<std::unique_ptr<typed_object_store_observer<Type>>> observers = {})
   {
-    return attach<Type, ObserverType...>(type, prototype_node::abstract_type::not_abstract, parent, std::move(observers));
+    return attach<Type, ObserverType...>(type, abstract_type, parent, std::move(observers));
   }
 
   /**

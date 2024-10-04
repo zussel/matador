@@ -37,6 +37,9 @@ public:
   void read_value(const char *id, size_t index, std::string &value, size_t size) override;
   void read_value(const char *id, size_t index, utils::blob &value) override;
   virtual void read_value(const char *id, size_t index, value &val, size_t size);
+
+protected:
+  virtual utils::blob read_blob(size_t index);
 };
 
 }

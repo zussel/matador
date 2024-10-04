@@ -5,21 +5,24 @@
 namespace matador::backends::postgres {
 namespace detail {
 template<class T>
-void bind_value(std::vector<std::string> &strings, std::vector<const char *> &params, size_t index, T &x) {
-  strings[index] = std::to_string(x);
-  params[index] = strings[index].c_str();
+void bind_value(postgres_parameter_binder::bind_data &data, size_t index, const T &x) {
+  data.strings[index] = std::string(x);
+  data.values[index] = data.strings[index].c_str();
+  data.formats[index] = 0;
 }
 
 template<>
-void bind_value(std::vector<std::string> &strings, std::vector<const char *> &params, size_t index, char &x) {
-  strings[index] = std::to_string(x);
-  params[index] = strings[index].data();
+void bind_value(postgres_parameter_binder::bind_data &data, size_t index, const char &x) {
+  data.strings[index] = std::to_string(x);
+  data.values[index] = data.strings[index].data();
+  data.formats[index] = 0;
 }
 
 template<>
-void bind_value(std::vector<std::string> &strings, std::vector<const char *> &params, size_t index, unsigned char &x) {
-  strings[index] = std::to_string(x);
-  params[index] = strings[index].data();
+void bind_value(postgres_parameter_binder::bind_data &data, size_t index, const unsigned char &x) {
+  data.strings[index] = std::to_string(x);
+  data.values[index] = data.strings[index].data();
+  data.formats[index] = 0;
 }
 
 //template <>
@@ -39,74 +42,84 @@ void bind_value(std::vector<std::string> &strings, std::vector<const char *> &pa
 //}
 }
 
+postgres_parameter_binder::bind_data::bind_data(size_t size)
+: strings(size)
+, bytes(size)
+, values(size)
+, lengths(size)
+, formats(size)
+{}
+
 postgres_parameter_binder::postgres_parameter_binder(size_t size)
-  : strings_(size)
-    , params_(size) {
-}
+: bind_data_(size)
+{}
 
 void postgres_parameter_binder::write_value(size_t pos, const char &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const short &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const int &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const long &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const long long int &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const unsigned char &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const unsigned short &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const unsigned int &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const unsigned long &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const unsigned long long int &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const bool &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const float &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const double &x) {
-  detail::bind_value(strings_, params_, pos, x);
+  detail::bind_value(bind_data_, pos, x);
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const char *x) {
-  params_[pos] = x;
+  bind_data_.values[pos] = x;
+  bind_data_.formats[pos] = 0;
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const char *x, size_t size) {
-  params_[pos] = x;
+  bind_data_.values[pos] = x;
+  bind_data_.formats[pos] = 0;
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const std::string &x) {
-  strings_[pos] = x;
-  params_[pos] = strings_[pos].c_str();
+  bind_data_.strings[pos] = x;
+  bind_data_.values[pos] = bind_data_.strings[pos].c_str();
+  bind_data_.formats[pos] = 0;
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const std::string &x, size_t size) {
@@ -114,20 +127,21 @@ void postgres_parameter_binder::write_value(size_t pos, const std::string &x, si
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const time &x) {
-  strings_[pos] = matador::utils::to_string(x, "%Y-%m-%d %T.%f");
-  params_[pos] = strings_[pos].c_str();
+  write_value(pos, matador::utils::to_string(x, "%Y-%m-%d %T.%f"));
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const date &x) {
-  strings_[pos] = matador::utils::to_string(x, utils::date_format::ISO8601);
-  params_[pos] = strings_[pos].c_str();
+  write_value(pos, matador::utils::to_string(x, utils::date_format::ISO8601));
 }
 
 void postgres_parameter_binder::write_value(size_t pos, const utils::blob &x) {
-  params_[pos] = "";
+  bind_data_.bytes[pos] = x;
+  bind_data_.values[pos] = reinterpret_cast<char*>(bind_data_.bytes[pos].data());
+  bind_data_.lengths[pos] = static_cast<int>(bind_data_.bytes[pos].size());
+  bind_data_.formats[pos] = 1;
 }
 
-const std::vector<const char *> &postgres_parameter_binder::params() const {
-  return params_;
+const postgres_parameter_binder::bind_data &postgres_parameter_binder::params() const {
+  return bind_data_;
 }
 }

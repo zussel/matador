@@ -12,7 +12,7 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
 include(Catch)
 
-set(POSTGRES_CONNECTION_STRING "postgres://test:test123!@127.0.0.1:5432/matador")
+set(POSTGRES_CONNECTION_STRING "postgres://test:test123@127.0.0.1:5432/matador_test")
 
 configure_file(Connection.hpp.in ${PROJECT_BINARY_DIR}/backends/postgres/test/connection.hpp @ONLY IMMEDIATE)
 

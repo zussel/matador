@@ -14,11 +14,15 @@ postgres_statement::postgres_statement(PGconn *db, PGresult *result, std::string
 
 size_t postgres_statement::execute()
 {
-  PGresult *res = PQexecPrepared(db_, name_.c_str(), static_cast<int>(binder_.params().size()), binder_.params().data(), nullptr, nullptr, 0);
+  PGresult *res = PQexecPrepared(db_, name_.c_str(), static_cast<int>(binder_.params().values.size()), binder_.params().data(), nullptr, nullptr, 0);
 
   throw_postgres_error(res, db_, "postgres", query_.sql);
 
-  return std::stoul(PQcmdTuples(res));
+  auto *tuples = PQcmdTuples(res);
+  if (strlen(tuples) == 0) {
+    return 0;
+  }
+  return std::stoul(tuples);
 }
 
 std::unique_ptr<sql::query_result_impl> postgres_statement::fetch()

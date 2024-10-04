@@ -38,4 +38,16 @@ void postgres_result_reader::read_value( const char* id, const size_t index, uti
   query_result_reader::read_value( id, index, value );
 }
 
+utils::blob postgres_result_reader::read_blob(size_t index)
+{
+
+  const auto *data = reinterpret_cast<const unsigned char*>(column(index));
+//  auto length = PQgetlength(result_, row_index_, static_cast<int>(index));
+
+  size_t length;
+  unsigned char* unescaped = PQunescapeBytea(data, &length);
+
+  return utils::blob{unescaped, unescaped+length};
+}
+
 }

@@ -120,9 +120,7 @@ void query_result_reader::read_value(const char * /*id*/, const size_t index, st
 
 void query_result_reader::read_value(const char * /*id*/, const size_t index, utils::blob &value)
 {
-  const auto val = column(index);
-  const auto len = strlen(val);
-  value.assign(val, val+len);
+  value = read_blob(index);
 }
 
 template < typename Type >
@@ -197,9 +195,7 @@ void query_result_reader::read_value(const char * /*id*/, const size_t index, va
       break;
     }
     case data_type::type_blob: {
-      const auto *data = column(index);
-      const auto len = strlen(data);
-      val = utils::blob{data, data+len};
+      val = read_blob(index);
       break;
     }
     case data_type::type_unknown: {
@@ -209,4 +205,11 @@ void query_result_reader::read_value(const char * /*id*/, const size_t index, va
   }
 }
 
+utils::blob query_result_reader::read_blob(size_t index)
+{
+  const auto *data = column(index);
+  const auto len = strlen(data);
+  const auto *bytes = reinterpret_cast<const unsigned char*>(data);
+  return utils::blob{bytes, bytes+len};
+}
 }

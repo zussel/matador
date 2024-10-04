@@ -18,6 +18,9 @@ public:
 
   void read_value(const char *id, size_t index, utils::blob &value) override;
 
+protected:
+  utils::blob read_blob(size_t index) override;
+
 private:
   PGresult *result_{};
 

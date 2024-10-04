@@ -136,11 +136,11 @@ data_type string2type(const char *type) {
     return data_type::type_int;
   } else if (strcmp(type, "int8") == 0) {
     return data_type::type_long_long;
-  } else if (strncmp(type, "int8", 6) == 0) {
+  } else if (strcmp(type, "int8") == 0) {
     return data_type::type_long_long;
   } else if (strcmp(type, "date") == 0) {
     return data_type::type_date;
-  } else if (strncmp(type, "timestamp", 8) == 0) {
+  } else if (strcmp(type, "timestamp") == 0) {
     return data_type::type_time;
   } else if (strcmp(type, "float4") == 0) {
     return data_type::type_float;
@@ -148,11 +148,11 @@ data_type string2type(const char *type) {
     return data_type::type_double;
   } else if (strncmp(type, "varchar", 7) == 0) {
     return data_type::type_varchar;
-  } else if (strncmp(type, "character varying", 7) == 0) {
+  } else if (strcmp(type, "character varying") == 0) {
     return data_type::type_varchar;
-  } else if (strncmp(type, "text", 0) == 0) {
+  } else if (strcmp(type, "text") == 0) {
     return data_type::type_text;
-  } else if (strncmp(type, "bytea", 0) == 0) {
+  } else if (strcmp(type, "bytea") == 0) {
     return data_type::type_blob;
   } else {
     return data_type::type_unknown;

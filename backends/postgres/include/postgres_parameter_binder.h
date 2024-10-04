@@ -10,6 +10,15 @@ namespace matador::backends::postgres {
 class postgres_parameter_binder final : public object::attribute_writer
 {
 public:
+  struct bind_data {
+    explicit bind_data(size_t size);
+    std::vector<std::string> strings;
+    std::vector<std::vector<unsigned char>> bytes;
+    std::vector<const char*> values;
+    std::vector<int> lengths;
+    std::vector<int> formats;
+  };
+
   explicit postgres_parameter_binder(size_t size);
 
   void write_value(size_t pos, const char &x) override;
@@ -33,11 +42,12 @@ public:
   void write_value(size_t pos, const std::string &x, size_t size) override;
   void write_value(size_t pos, const utils::blob &x) override;
 
-  [[nodiscard]] const std::vector<const char*>& params() const;
+  [[nodiscard]] const bind_data& params() const;
 
 private:
-  std::vector<std::string> strings_;
-  std::vector<const char*> params_;
+  bind_data bind_data_;
+//  std::vector<std::string> strings_;
+//  std::vector<const char*> params_;
 };
 
 }

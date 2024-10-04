@@ -75,7 +75,7 @@ TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record
   std::string varchar{"good day"};
   auto md{matador::date()};
   auto mt{matador::time::now()};
-  matador::utils::blob bin{1,2,3,4};
+  matador::utils::blob bin{0x01,0x02,0x03,0x04};
 
   const auto tstr = matador::utils::to_string(mt, "%FT%T.%f");
   std::cout << "initial time value: " << tstr << " (fraction: " << mt.get_time_info().milliseconds << ")\n";
