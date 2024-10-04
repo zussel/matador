@@ -133,7 +133,7 @@ void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index
   const auto is_null = sqlite3_column_type(stmt_, static_cast<int>(index)) == SQLITE_NULL;
   if (const auto s = static_cast<size_t>(sqlite3_column_bytes(stmt_, static_cast<int>(index))); !is_null && s > 0) {
     const auto *text = reinterpret_cast<const char *>( sqlite3_column_text(stmt_, static_cast<int>(index)));
-    value = time::parse(text, "%Y-%m-%dT%T.%f");
+    value = time::parse(text, "%Y-%m-%d %T.%f");
   }
 }
 

@@ -66,7 +66,7 @@ void attribute_string_writer::write_value( size_t pos, const double& x ) {
 }
 
 void attribute_string_writer::write_value( size_t pos, const time& x ) {
-    result_ = "'" + conn_->dialect().prepare_literal(utils::to_string(x, "%FT%T.%f")) + "'";
+    result_ = "'" + conn_->dialect().prepare_literal(utils::to_string(x, "%F %T.%f")) + "'";
 }
 
 void attribute_string_writer::write_value( size_t pos, const date& x ) {
@@ -92,7 +92,7 @@ void attribute_string_writer::write_value( size_t pos, const std::string& x, siz
 void attribute_string_writer::write_value( size_t pos, const utils::blob& x ) {
     // "This is a binary Data string" as binary data:
     // MySQL:    X'5468697320697320612062616E617279204461746120737472696E67'
-    // Postgres: E'\\x5468697320697320612062616E617279204461746120737472696E67'
+    // Postgres: '\\x5468697320697320612062616E617279204461746120737472696E67'
     // MSSQL:    0x5468697320697320612062616E617279204461746120737472696E67
     // Sqlite:   X'5468697320697320612062616E617279204461746120737472696E67'
     result_ = conn_->dialect().token_at(dialect_token::BEGIN_BINARY_DATA) + conn_->to_escaped_string(x) + conn_->dialect().token_at(dialect_token::END_BINARY_DATA);

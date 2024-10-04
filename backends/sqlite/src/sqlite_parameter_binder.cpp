@@ -127,7 +127,7 @@ void sqlite_parameter_binder::write_value(size_t pos, const std::string &x, size
 
 void sqlite_parameter_binder::write_value(size_t pos, const time &x)
 {
-  host_strings_.push_back(utils::to_string(x, "%Y-%m-%dT%T.%f"));
+  host_strings_.push_back(utils::to_string(x, "%Y-%m-%d %T.%f"));
   write_value(pos, host_strings_.back());
 }
 
