@@ -78,7 +78,6 @@ TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record
   matador::utils::blob bin{0x01,0x02,0x03,0x04};
 
   const auto tstr = matador::utils::to_string(mt, "%FT%T.%f");
-  std::cout << "initial time value: " << tstr << " (fraction: " << mt.get_time_info().milliseconds << ")\n";
 
   auto res = query::insert()
     .into("types", cols)
@@ -448,7 +447,6 @@ TEST_CASE_METHOD(QueryFixture, "Execute delete statement", "[query][record]")
     .from("person")
     .fetch_value<int>(db);
 
-  std::cout << count.value() << std::endl;
   REQUIRE(count == 2);
 
   res = query::remove()

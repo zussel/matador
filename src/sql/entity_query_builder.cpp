@@ -48,7 +48,7 @@ void entity_query_builder::append_join(const column_key &left, const column_key 
     left_col = column(left_it->second.get().name, left_it->second.get().alias);
   }
   if (right_it != column_ref_map_.end()) {
-    right_col = column(right_it->second.get().name, right_it->second.get().alias);
+    right_col = column(right_it->second.get().table_, right_it->second.get().name);
   }
 
   entity_query_data_.joins.push_back({right.table, make_condition(left_col == right_col)});

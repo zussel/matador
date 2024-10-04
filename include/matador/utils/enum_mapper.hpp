@@ -11,7 +11,7 @@ template < typename EnumType, class Enable = void >
 class enum_mapper;
 
 template < typename EnumType>
-class enum_mapper<EnumType, typename std::enable_if<std::is_enum<EnumType>::value>::type>
+class enum_mapper<EnumType, std::enable_if_t<std::is_enum_v<EnumType>>>
 {
 public:
   using enum_to_string_map = std::unordered_map<EnumType, std::string>;
@@ -33,17 +33,18 @@ public:
     return std::nullopt;
   }
 
-  std::string to_string(EnumType enum_value) const {
+  const std::string& to_string(EnumType enum_value) const {
     if (const auto it = enum_to_string_map_.find(enum_value); it != enum_to_string_map_.end()) {
       return it->second;
     }
 
-    return {};
+    return empty_;
   }
 
 private:
   enum_to_string_map enum_to_string_map_;
   string_to_enum_map string_to_enum_map_;
+  std::string empty_{};
 };
 
 }

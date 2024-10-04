@@ -130,10 +130,6 @@ public:
   explicit query_result(std::unique_ptr<query_result_impl> impl)
   : impl_(std::move(impl)) {}
 
-  // query_result(std::unique_ptr<query_result_impl> impl, std::vector<column_definition> record_prototype)
-  // : record_prototype_(std::move(record_prototype))
-  // , impl_(std::move(impl)) {}
-
   iterator begin() { return std::move(++iterator(this)); }
   iterator end() { return {}; }
 
@@ -153,7 +149,6 @@ private:
   }
 
 private:
-  // std::vector<column_definition> record_prototype_;
   std::unique_ptr<query_result_impl> impl_;
 };
 

@@ -26,8 +26,9 @@ void throw_postgres_error(PGresult *res, PGconn *db, const std::string &source, 
     std::stringstream msg;
     msg << "postgres error (" << source << ", " << PQerrorMessage(db) << ": " << sql;
     throw std::logic_error(msg.str());
-  } else if ((PQresultStatus(res) != PGRES_COMMAND_OK &&
-              PQresultStatus(res) != PGRES_TUPLES_OK)) {
+  }
+  if (const auto status = PQresultStatus(res); status != PGRES_COMMAND_OK &&
+                                               status != PGRES_TUPLES_OK) {
     std::stringstream msg;
     msg << "postgres error (" << source << ", " << PQresultErrorField(res, PG_DIAG_SQLSTATE) << ") " << PQerrorMessage(db) << ": " << sql;
     throw std::logic_error(msg.str());

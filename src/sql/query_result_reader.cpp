@@ -171,9 +171,9 @@ void query_result_reader::read_value(const char * /*id*/, const size_t index, va
       convert<double>(column(index), val);
       break;
     case data_type::type_bool: {
-      int local_val{};
+      bool local_val{};
       to_value(local_val, column(index));
-      val = local_val > 0;
+      val = local_val;
       break;
     }
     case data_type::type_text:

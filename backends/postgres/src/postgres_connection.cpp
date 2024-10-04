@@ -73,11 +73,6 @@ version postgres_connection::server_version() const {
 std::unique_ptr<sql::query_result_impl> postgres_connection::fetch(const sql::query_context &context) {
   PGresult *res = PQexec(conn_, context.sql.c_str());
 
-    utils::blob b{ '1', '2', '3', '4' };
-    size_t escapedDataLength;
-    unsigned char *escapedData = PQescapeByteaConn(conn_, b.data(), b.size(), &escapedDataLength);
-
-
   throw_postgres_error(res, conn_, "postgres", context.sql);
 
   std::vector<sql::column_definition> prototype;
@@ -136,8 +131,8 @@ data_type string2type(const char *type) {
     return data_type::type_int;
   } else if (strcmp(type, "int8") == 0) {
     return data_type::type_long_long;
-  } else if (strcmp(type, "int8") == 0) {
-    return data_type::type_long_long;
+  } else if (strcmp(type, "bool") == 0) {
+    return data_type::type_bool;
   } else if (strcmp(type, "date") == 0) {
     return data_type::type_date;
   } else if (strcmp(type, "timestamp") == 0) {

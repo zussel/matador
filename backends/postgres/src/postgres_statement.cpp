@@ -14,7 +14,13 @@ postgres_statement::postgres_statement(PGconn *db, PGresult *result, std::string
 
 size_t postgres_statement::execute()
 {
-  PGresult *res = PQexecPrepared(db_, name_.c_str(), static_cast<int>(binder_.params().values.size()), binder_.params().data(), nullptr, nullptr, 0);
+  PGresult *res = PQexecPrepared(db_,
+      name_.c_str(),
+      static_cast<int>(binder_.params().values.size()),
+      binder_.params().values.data(),
+      binder_.params().lengths.data(),
+      binder_.params().formats.data(),
+      0);
 
   throw_postgres_error(res, db_, "postgres", query_.sql);
 
@@ -27,11 +33,17 @@ size_t postgres_statement::execute()
 
 std::unique_ptr<sql::query_result_impl> postgres_statement::fetch()
 {
-  PGresult *res = PQexecPrepared(db_, name_.c_str(), static_cast<int>(binder_.params().size()), binder_.params().data(), nullptr, nullptr, 0);
+  PGresult *res = PQexecPrepared(db_,
+      name_.c_str(),
+      static_cast<int>(binder_.params().values.size()),
+      binder_.params().values.data(),
+      binder_.params().lengths.data(),
+      binder_.params().formats.data(),
+      0);
 
   throw_postgres_error(res, db_, "postgres", query_.sql);
 
-  return std::move(std::make_unique<sql::query_result_impl>(std::make_unique<postgres_result_reader>(res), std::move(query_.prototype)));
+  return std::move(std::make_unique<sql::query_result_impl>(std::make_unique<postgres_result_reader>(res), query_.prototype));
 }
 
 void postgres_statement::reset() {}

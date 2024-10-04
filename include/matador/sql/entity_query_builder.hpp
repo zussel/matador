@@ -160,7 +160,7 @@ public:
       }
       entity_query_data_.pk_column_.emplace(it->second);
       if (!pk_.is_null()) {
-        entity_query_data_.where_clause = make_condition(column{it->second.get().name, it->second.get().alias} == *pk_.as<V>());
+        entity_query_data_.where_clause = make_condition(column{it->second.get().table_, it->second.get().name} == *pk_.as<V>());
       }
     }
   }

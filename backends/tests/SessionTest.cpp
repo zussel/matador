@@ -87,8 +87,8 @@ TEST_CASE_METHOD(SessionFixture, "Use session to find all objects with one-to-ma
   ses.attach<author>("authors");
   ses.attach<book>("books");
 
-  tables_to_drop.emplace("books");
   tables_to_drop.emplace("authors");
+  tables_to_drop.emplace("books");
 
   ses.create_schema();
 

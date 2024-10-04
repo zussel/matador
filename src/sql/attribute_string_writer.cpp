@@ -67,7 +67,6 @@ void attribute_string_writer::write_value( size_t pos, const double& x ) {
 
 void attribute_string_writer::write_value( size_t pos, const time& x ) {
     result_ = "'" + conn_->dialect().prepare_literal(utils::to_string(x, "%FT%T.%f")) + "'";
-    std::cout << "write time value: " << result_ << " (fraction: " << x.get_time_info().milliseconds << ")\n";
 }
 
 void attribute_string_writer::write_value( size_t pos, const date& x ) {

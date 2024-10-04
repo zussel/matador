@@ -58,7 +58,8 @@ private:
 class query_result_impl
 {
 public:
-  query_result_impl(std::unique_ptr<query_result_reader> &&reader, std::vector<column_definition> prototype, size_t column_index = 0);
+  query_result_impl(std::unique_ptr<query_result_reader> &&reader, std::vector<column_definition> &&prototype, size_t column_index = 0);
+  query_result_impl(std::unique_ptr<query_result_reader> &&reader, const std::vector<column_definition> &prototype, size_t column_index = 0);
 
   template<typename ValueType>
   void on_primary_key(const char *id, ValueType &value, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>>* = nullptr)
@@ -120,7 +121,6 @@ public:
               cont.push_back(ptr);
           }
       }
-      std::cout << "handle attribute " << id << " with join column " << join_column << "(column index: " << column_index_ << ")\n";
   }
   template<class ContainerType>
   void on_has_many(const char *, ContainerType &, const utils::foreign_attributes &/*attr*/) {}
