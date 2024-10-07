@@ -17,92 +17,94 @@
 using namespace matador::test;
 using namespace matador::sql;
 
-TEST_CASE_METHOD(QueryFixture, "Insert and select basic datatypes", "[query][datatypes]") {
-  schema.attach<types>("types");
-  auto res = query::create()
-    .table<types>("types", schema)
-    .execute(db);
-  tables_to_drop.emplace("types");
- REQUIRE(res == 0);
+TEST_CASE_METHOD( QueryFixture, "Insert and select basic datatypes", "[query][datatypes]" ) {
+    schema.attach<types>("types");
+    auto res = query::create()
+               .table<types>("types", schema)
+               .execute(db);
+    REQUIRE(res.is_ok());
+    REQUIRE(*res == 0);
+    tables_to_drop.emplace("types");
 
-  float float_value = 2.445566f;
-  double double_value = 11111.23433345;
-  char cval = 'c';
-  short sval = (std::numeric_limits<short>::min)();
-  int ival = (std::numeric_limits<int>::min)();
-  long lval = (std::numeric_limits<long>::min)();
-  long long llval = (std::numeric_limits<long long>::max)();
-  unsigned char ucval = (std::numeric_limits<unsigned char>::max)();
-  unsigned short usval = (std::numeric_limits<unsigned short>::max)();
-  unsigned int uival = (std::numeric_limits<unsigned int>::max)();
-  unsigned long ulval = (std::numeric_limits<unsigned long>::max)();
-  unsigned long long ullval = (std::numeric_limits<unsigned long long>::max)();
-  if (db.type() == "sqlite" || db.type() == "postgres") {
-    ulval = (std::numeric_limits<long>::max)();
-    ullval = (std::numeric_limits<long long>::max)();
-  }
-  bool bval = true;
-  const char *cstr("Armer schwarzer Kater");
-  std::string varcharval("hallo welt");
-  std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam "
-                       "nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
-                       "sed diam voluptua. At vero eos et accusam et justo duo dolores et ea "
-                       "rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. "
-                       "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy "
-                       "eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. "
-                       "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd "
-                       "gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
-  matador::date date_val(15, 3, 2015);
-  auto time_val = matador::time(2015, 3, 15, 13, 56, 23, 123);
-  matador::utils::blob blob_val {1,2,3,4,5,6,7,8};
-//  matador::utils::blob blob_val {1,2,3,4,0,0,5,6,7,8};
+    float float_value = 2.445566f;
+    double double_value = 11111.23433345;
+    char cval = 'c';
+    short sval = (std::numeric_limits<short>::min)();
+    int ival = (std::numeric_limits<int>::min)();
+    long lval = (std::numeric_limits<long>::min)();
+    long long llval = (std::numeric_limits<long long>::max)();
+    unsigned char ucval = (std::numeric_limits<unsigned char>::max)();
+    unsigned short usval = (std::numeric_limits<unsigned short>::max)();
+    unsigned int uival = (std::numeric_limits<unsigned int>::max)();
+    unsigned long ulval = (std::numeric_limits<unsigned long>::max)();
+    unsigned long long ullval = (std::numeric_limits<unsigned long long>::max)();
+    if (db.type() == "sqlite" || db.type() == "postgres") {
+        ulval = (std::numeric_limits<long>::max)();
+        ullval = (std::numeric_limits<long long>::max)();
+    }
+    bool bval = true;
+    const char *cstr("Armer schwarzer Kater");
+    std::string varcharval("hallo welt");
+    std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam "
+            "nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
+            "sed diam voluptua. At vero eos et accusam et justo duo dolores et ea "
+            "rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. "
+            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy "
+            "eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. "
+            "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd "
+            "gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+    matador::date date_val(15, 3, 2015);
+    auto time_val = matador::time(2015, 3, 15, 13, 56, 23, 123);
+    matador::utils::blob blob_val {1,2,3,4,5,6,7,8};
+    //  matador::utils::blob blob_val {1,2,3,4,0,0,5,6,7,8};
 
-  types t {
-  1,
-  cval, sval, ival, lval, llval,
-  ucval, usval, uival, ulval, ullval,
-  float_value, double_value,
-  bval,
-  "Armer schwarzer Kater",
-  strval, varcharval,
-  date_val, time_val,
-  blob_val
-  };
+    types t {
+            1,
+            cval, sval, ival, lval, llval,
+            ucval, usval, uival, ulval, ullval,
+            float_value, double_value,
+            bval,
+            "Armer schwarzer Kater",
+            strval, varcharval,
+            date_val, time_val,
+            blob_val
+    };
 
-  res = query::insert()
-    .into("types", matador::sql::column_generator::generate<types>(schema, true))
-    .values(t)
-    .execute(db);
-  REQUIRE(res == 1);
+    res = query::insert()
+          .into("types", matador::sql::column_generator::generate<types>(schema, true))
+          .values(t)
+          .execute(db);
+    REQUIRE(res.is_ok());
+    REQUIRE(*res == 1);
 
-  auto result = query::select<types>(schema)
-    .from("types")
-    .fetch_one<types>(db);
-  REQUIRE(result != nullptr);
+    auto result = query::select<types>(schema)
+                  .from("types")
+                  .fetch_one<types>(db);
+    REQUIRE(result != nullptr);
 
-  REQUIRE(result->id_ == 1);
-  REQUIRE(result->char_ == cval);
-  REQUIRE(result->short_ == sval);
-  REQUIRE(result->int_ == ival);
-  REQUIRE(result->long_ == lval);
-  REQUIRE(result->long64_ == llval);
-  REQUIRE(result->unsigned_char_ == ucval);
-  REQUIRE(result->unsigned_short_ == usval);
-  REQUIRE(result->unsigned_int_ == uival);
-  REQUIRE(result->unsigned_long_ == ulval);
-  REQUIRE(result->unsigned_long64_ == ullval);
-  REQUIRE(result->float_ == float_value);
-  REQUIRE(result->double_ == double_value);
-  REQUIRE(strcmp(result->cstr_, cstr) == 0);
-  REQUIRE(result->bool_ == bval);
-  REQUIRE(result->varchar_ == varcharval);
-  REQUIRE(result->string_ == strval);
-  REQUIRE(result->date_ == date_val);
-  REQUIRE(result->time_ == time_val);
-  REQUIRE(result->binary_ == blob_val);
+    REQUIRE(result->id_ == 1);
+    REQUIRE(result->char_ == cval);
+    REQUIRE(result->short_ == sval);
+    REQUIRE(result->int_ == ival);
+    REQUIRE(result->long_ == lval);
+    REQUIRE(result->long64_ == llval);
+    REQUIRE(result->unsigned_char_ == ucval);
+    REQUIRE(result->unsigned_short_ == usval);
+    REQUIRE(result->unsigned_int_ == uival);
+    REQUIRE(result->unsigned_long_ == ulval);
+    REQUIRE(result->unsigned_long64_ == ullval);
+    REQUIRE(result->float_ == float_value);
+    REQUIRE(result->double_ == double_value);
+    REQUIRE(strcmp(result->cstr_, cstr) == 0);
+    REQUIRE(result->bool_ == bval);
+    REQUIRE(result->varchar_ == varcharval);
+    REQUIRE(result->string_ == strval);
+    REQUIRE(result->date_ == date_val);
+    REQUIRE(result->time_ == time_val);
+    REQUIRE(result->binary_ == blob_val);
 }
 
-TEST_CASE_METHOD(QueryFixture, "Test quoted identifier", "[query][quotes][identifier]") {
+TEST_CASE_METHOD( QueryFixture, "Test quoted identifier", "[query][quotes][identifier]" ) {
   using namespace matador::sql;
 
   auto res = query::create()
@@ -111,7 +113,8 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted identifier", "[query][quotes][identi
       make_column<std::string>("to", 255)
     })
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("quotes");
 
   // check table description
@@ -128,7 +131,8 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted identifier", "[query][quotes][identi
     .into("quotes", {"from", "to"})
     .values({"Berlin", "London"})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto row = query::select({"from", "to"})
     .from("quotes")
@@ -142,7 +146,8 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted identifier", "[query][quotes][identi
     .set({{"from", "Hamburg"}, {"to", "New York"}})
     .where("from"_col == "Berlin")
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   row = query::select({"from", "to"})
     .from("quotes")
@@ -153,7 +158,7 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted identifier", "[query][quotes][identi
   REQUIRE(row->at("to").as<std::string>() == "New York");
 }
 
-TEST_CASE_METHOD(QueryFixture, "Test quoted column names", "[query][quotes][column]") {
+TEST_CASE_METHOD( QueryFixture, "Test quoted column names", "[query][quotes][column]" ) {
   using namespace matador::sql;
 
   const auto start_quote = db.dialect().token_at(matador::sql::dialect_token::START_QUOTE);
@@ -176,7 +181,8 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted column names", "[query][quotes][colu
         make_column<std::string>(name, 255),
       })
       .execute(db);
-    REQUIRE(res == 0);
+    REQUIRE(res.is_ok());
+    REQUIRE(*res == 0);
 
     const auto columns = db.describe("quotes");
     for (const auto &col : columns) {
@@ -187,7 +193,8 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted column names", "[query][quotes][colu
     res = query::drop()
       .table("quotes")
       .execute(db);
-    REQUIRE(res == 0);
+    REQUIRE(res.is_ok());
+    REQUIRE(*res == 0);
   }
 }
 
@@ -199,14 +206,16 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted literals", "[query][quotes][literals
       make_column<std::string>("name", 255),
     })
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("escapes");
 
   res = query::insert()
     .into("escapes", {"name"})
     .values({"text"})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto row = query::select({"name"})
     .from("escapes")
@@ -218,7 +227,8 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted literals", "[query][quotes][literals
   res = query::update("escapes")
     .set({{"name", "text'd"}})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   row = query::select({"name"})
     .from("escapes")
@@ -230,7 +240,8 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted literals", "[query][quotes][literals
   res = query::update("escapes")
     .set({{"name", "text\nhello\tworld"}})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   row = query::select({"name"})
     .from("escapes")
@@ -242,7 +253,8 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted literals", "[query][quotes][literals
   res = query::update("escapes")
     .set({{"name", "text \"text\""}})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   row = query::select({"name"})
     .from("escapes")
@@ -259,7 +271,8 @@ TEST_CASE_METHOD(QueryFixture, "Test describe table", "[query][describe][table]"
   const auto res = query::create()
     .table<types>("types", schema)
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("types");
 
   const auto columns = db.describe("types");
@@ -327,7 +340,8 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key", "[query][primary key]") {
   auto res = query::create()
     .table<pk>("pk", schema)
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("pk");
 
   pk pk1{ 7, "george" };
@@ -336,7 +350,8 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key", "[query][primary key]") {
     .into("pk", column_generator::generate<pk>(schema))
     .values(pk1)
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto row = query::select<pk>(schema)
     .from("pk")
@@ -353,7 +368,8 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key prepared", "[query][primary key
   auto res = query::create()
     .table<pk>("pk", schema)
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("pk");
 
   pk pk1{ 7, "george" };
@@ -365,7 +381,8 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key prepared", "[query][primary key
   stmt.bind(pk1);
 
   res = stmt.execute();
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   stmt = query::select<pk>(schema)
     .from("pk")
@@ -402,7 +419,8 @@ TEST_CASE_METHOD(QueryFixture, "Test select time and date", "[query][select][tim
   auto res = query::create()
     .table<appointment>("appointment", schema)
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("appointment");
 
   auto dinner = appointment{ 1, "dinner" };
@@ -413,7 +431,8 @@ TEST_CASE_METHOD(QueryFixture, "Test select time and date", "[query][select][tim
     .into("appointment", column_generator::generate<appointment>(schema))
     .values(dinner)
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto row = query::select<appointment>(schema)
     .from("appointment")
@@ -434,20 +453,23 @@ TEST_CASE_METHOD(QueryFixture, "Test null column", "[query][select][null]") {
       make_column<std::string>("last_name", 255, null_option::NULLABLE)
     })
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   res = query::insert()
     .into("person", {"id", "first_name"})
     .values({1, "george"})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   res = query::insert()
     .into("person", {"id", "last_name"})
     .values({2, "clooney"})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto result = query::select({"id", "first_name", "last_name"})
     .from("person")
@@ -474,20 +496,23 @@ TEST_CASE_METHOD(QueryFixture, "Test null column prepared", "[query][select][nul
       make_column<std::string>("last_name", 255, null_option::NULLABLE)
     })
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   res = query::insert()
     .into("person", {"id", "first_name"})
     .values({1, "george"})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   res = query::insert()
     .into("person", {"id", "last_name"})
     .values({2, "clooney"})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto result = query::select({"id", "first_name", "last_name"})
     .from("person")

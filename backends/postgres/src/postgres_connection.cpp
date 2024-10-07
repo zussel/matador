@@ -117,9 +117,8 @@ utils::result<size_t, sql::sql_error> postgres_connection::execute(const std::st
 
   if (const auto status = PQresultStatus(res); status != PGRES_COMMAND_OK &&
                                                status != PGRES_TUPLES_OK) {
-      return utils::error(sql::sql_error::FAILURE);
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, PQresultErrorField(res, PG_DIAG_SQLSTATE), PQerrorMessage(conn_), "postgres", stmt});
   }
-  // throw_postgres_error(res, conn_, "postgres", stmt);
 
   const auto affected_rows = utils::to_long_long(PQcmdTuples(res));
 

@@ -41,7 +41,7 @@ TEST_CASE_METHOD(SessionFixture, "Use session to find object with id", "[session
 
   auto result = ses.find<airplane>(2);
   REQUIRE(!result.is_ok());
-  REQUIRE((result.err() == sql::session_error::FailedToFindObject));
+  REQUIRE((result.err().ec() == sql::session_error_code::FailedToFindObject));
 
   result = ses.find<airplane>(1);
 

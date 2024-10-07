@@ -54,7 +54,8 @@ TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]
 
     for (const auto &plane: planes) {
       auto res = stmt.bind(*plane).execute();
-      REQUIRE(res == 1);
+      REQUIRE(res.is_ok());
+      REQUIRE(*res == 1);
       stmt.reset();
     }
 
@@ -76,7 +77,8 @@ TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]
         .into("airplane", column_generator::generate<airplane>(schema, true))
         .values(*plane)
         .execute(db);
-      REQUIRE(res == 1);
+      REQUIRE(res.is_ok());
+      REQUIRE(*res == 1);
     }
 
     auto stmt = query::select(column_generator::generate<airplane>(schema, true))

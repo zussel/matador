@@ -36,7 +36,8 @@ TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with typ
       .into("location", column_generator::generate<location>(schema, true))
       .values(loc)
       .execute(db);
-    REQUIRE(res == 1);
+    REQUIRE(res.is_ok());
+    REQUIRE(*res == 1);
 
     auto result = query::select(column_generator::generate<location>(schema, true))
       .from("location")
@@ -61,7 +62,8 @@ TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with typ
     auto res = stmt
       .bind(loc)
       .execute();
-    REQUIRE(res == 1);
+    REQUIRE(res.is_ok());
+    REQUIRE(*res == 1);
 
     auto result = query::select(column_generator::generate<location>(schema, true))
       .from("location")

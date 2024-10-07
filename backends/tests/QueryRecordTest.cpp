@@ -40,7 +40,8 @@ TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record
       make_column<matador::utils::blob>("val_blob"),
     })
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
 
   REQUIRE(db.exists("types"));
   tables_to_drop.emplace("types");
@@ -82,7 +83,8 @@ TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record
     .into("types", cols)
     .values({id, c, s, i, l, ll, uc, us, ui, ul, ull, b, f, d, str, varchar, md, mt, bin})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
 
   auto row = query::select(cols)
     .from("types")
@@ -121,7 +123,8 @@ TEST_CASE_METHOD(QueryFixture, "Create and drop table statement", "[query][recor
       make_column<unsigned short>("age")
     })
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
 
   REQUIRE(db.exists("person"));
   tables_to_drop.emplace("person");
@@ -129,7 +132,8 @@ TEST_CASE_METHOD(QueryFixture, "Create and drop table statement", "[query][recor
   res = query::drop()
     .table("person")
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
 
   REQUIRE(!db.exists("person"));
 }
@@ -143,7 +147,8 @@ TEST_CASE_METHOD(QueryFixture, "Create and drop table statement with foreign key
     make_column<std::string>("model", 255),
   })
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
 
   REQUIRE(db.exists("airplane"));
   tables_to_drop.emplace("airplane");
@@ -155,7 +160,8 @@ TEST_CASE_METHOD(QueryFixture, "Create and drop table statement with foreign key
     make_column<std::string>("pilot_name", 255),
   })
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
 
   REQUIRE(db.exists("flight"));
   tables_to_drop.emplace("flight");
@@ -163,14 +169,16 @@ TEST_CASE_METHOD(QueryFixture, "Create and drop table statement with foreign key
   res = query::drop()
   .table("flight")
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
 
   REQUIRE(!db.exists("flight"));
 
   res = query::drop()
   .table("airplane")
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
 
   REQUIRE(!db.exists("airplane"));
 }
@@ -184,19 +192,20 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert record statement", "[query][recor
     make_column<unsigned short>("age")
   })
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
   tables_to_drop.emplace("person");
 
   res = query::insert()
   .into("person", {"id", "name", "age"})
   .values({7, "george", 45})
   .execute(db);
-
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
 
   auto result = query::select({"id", "name", "age"})
-  .from("person")
-  .fetch_all(db);
+    .from("person")
+    .fetch_all(db);
 
   for (const auto &i: result) {
     REQUIRE(i.size() == 3);
@@ -221,7 +230,8 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert record statement with foreign key
     make_column<std::string>("model", 255),
   })
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
   tables_to_drop.emplace("airplane");
 
   res = query::create()
@@ -231,23 +241,28 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert record statement with foreign key
     make_column<std::string>("pilot_name", 255),
   })
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
   tables_to_drop.emplace("flight");
 
   res = query::insert().into("airplane", {"id", "brand", "model"}).values({1, "Airbus", "A380"}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
 
   res = query::insert().into("airplane", {"id", "brand", "model"}).values({2, "Boeing", "707"}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
 
   res = query::insert().into("airplane", {"id", "brand", "model"}).values({3, "Boeing", "747"}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
 
   auto count = query::select({count_all()}).from("airplane").fetch_value<int>(db);
   REQUIRE(count == 3);
 
   res = query::insert().into("flight", {"id", "airplane_id", "pilot_name"}).values({4, 1, "George"}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Execute update record statement", "[query][record]")
@@ -259,7 +274,8 @@ TEST_CASE_METHOD(QueryFixture, "Execute update record statement", "[query][recor
     make_column<unsigned short>("age")
   })
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
   tables_to_drop.emplace("person");
 
   res = query::insert()
@@ -267,7 +283,8 @@ TEST_CASE_METHOD(QueryFixture, "Execute update record statement", "[query][recor
   .values({7, "george", 45})
   .execute(db);
 
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
 
   res = query::update("person")
   .set({{"id",   7},
@@ -275,8 +292,8 @@ TEST_CASE_METHOD(QueryFixture, "Execute update record statement", "[query][recor
         {"age",  35}})
   .where("id"_col == 7)
   .execute(db);
-
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
 
   auto result = query::select({"id", "name", "age"})
   .from("person")
@@ -305,17 +322,22 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement", "[query][record]")
     make_column<unsigned short>("age")
   })
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
   tables_to_drop.emplace("person");
 
   res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({2, "jane", 32}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({3, "michael", 67}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({4, "bob", 13}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
 
   auto result = query::select({"id", "name", "age"})
   .from("person")
@@ -349,17 +371,22 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with order by", "[query
     make_column<unsigned short>("age")
   })
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 0);
   tables_to_drop.emplace("person");
 
   res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({2, "jane", 32}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({3, "michael", 67}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({4, "bob", 13}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(res.value() == 1);
 
   auto result = query::select({"id", "name", "age"})
   .from("person")
@@ -383,19 +410,25 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with group by and order
     make_column<unsigned short>("age")
   })
   .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({2, "jane", 45}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({3, "michael", 13}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({4, "bob", 13}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
   res = query::insert().into("person", {"id", "name", "age"}).values({5, "charlie", 67}).execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto qc = query::select({count("age").as("age_count"), "age"})
   .from("person")
@@ -427,16 +460,22 @@ TEST_CASE_METHOD(QueryFixture, "Execute delete statement", "[query][record]")
     make_column<std::string>("name", 255),
     make_column<unsigned short>("age")
   }).execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
-  res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
-  REQUIRE(res == 1);
+  res = query::insert()
+    .into("person", {"id", "name", "age"})
+    .values({1, "george", 45})
+    .execute(db);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
   res = query::insert()
     .into("person", {"id", "name", "age"})
     .values({2, "jane", 45})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto count = query::select({count_all()})
     .from("person")
@@ -445,11 +484,11 @@ TEST_CASE_METHOD(QueryFixture, "Execute delete statement", "[query][record]")
   REQUIRE(count == 2);
 
   res = query::remove()
-  .from("person")
-  .where("id"_col == 1)
-  .execute(db);
-
-  REQUIRE(res == 1);
+    .from("person")
+    .where("id"_col == 1)
+    .execute(db);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   count = query::select({count_all()})
     .from("person")
@@ -459,11 +498,13 @@ TEST_CASE_METHOD(QueryFixture, "Execute delete statement", "[query][record]")
 
 TEST_CASE_METHOD(QueryFixture, "Test quoted identifier record", "[query][record]") {
   auto res = query::create()
-  .table("quotes", {
-    make_column<std::string>("from", 255),
-    make_column<std::string>("to", 255)
-  }).execute(db);
-  REQUIRE(res == 0);
+    .table("quotes", {
+      make_column<std::string>("from", 255),
+      make_column<std::string>("to", 255)
+    })
+    .execute(db);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("quotes");
 
   // check table description
@@ -480,7 +521,8 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted identifier record", "[query][record]
     .into("quotes", {"from", "to"})
     .values({"Berlin", "London"})
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto result = query::select({"from", "to"}).from("quotes").fetch_one(db);
 
@@ -492,9 +534,12 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted identifier record", "[query][record]
     .set({{"from", "Hamburg"}, {"to", "New York"}})
     .where("from"_col == "Berlin")
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
-  result = query::select({"from", "to"}).from("quotes").fetch_one(db);
+  result = query::select({"from", "to"})
+    .from("quotes")
+    .fetch_one(db);
 
   REQUIRE("Hamburg" == result->at("from").str());
   REQUIRE("New York" == result->at("to").str());
@@ -509,7 +554,8 @@ TEST_CASE_METHOD(QueryFixture, "Test create record", "[query][record][create]") 
       make_column<unsigned short>("age")
     })
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
@@ -530,7 +576,8 @@ TEST_CASE_METHOD(QueryFixture, "Test insert record", "[query][record][insert]") 
       make_column<unsigned short>("age")
     })
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
@@ -539,8 +586,8 @@ TEST_CASE_METHOD(QueryFixture, "Test insert record", "[query][record][insert]") 
     .into("person", {"id", "name", "age"})
     .values({1, "hans", 45})
     .execute(db);
-
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto row = query::select({"id", "name", "age"})
     .from("person")
@@ -561,7 +608,8 @@ TEST_CASE_METHOD(QueryFixture, "Test update record", "[query][record][update]") 
       make_column<unsigned short>("age")
     })
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
@@ -570,8 +618,8 @@ TEST_CASE_METHOD(QueryFixture, "Test update record", "[query][record][update]") 
     .into("person", {"id", "name", "age"})
     .values({1, "hans", 45})
     .execute(db);
-
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto row = query::select({"id", "name", "age"})
     .from("person")
@@ -586,7 +634,8 @@ TEST_CASE_METHOD(QueryFixture, "Test update record", "[query][record][update]") 
     .set({{"name", "jane"}, {"age", 47}})
     .where("name"_col == "hans")
     .execute(db);
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   row = query::select({"id", "name", "age"})
     .from("person")
@@ -610,7 +659,8 @@ TEST_CASE_METHOD(QueryFixture, "Test prepared record statement", "[query][record
   tables_to_drop.emplace("person");
 
   auto res = stmt.execute();
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   REQUIRE(db.exists("person"));
 
   const std::vector<std::string> cols = {"id", "name", "age"};
@@ -628,7 +678,8 @@ TEST_CASE_METHOD(QueryFixture, "Test scalar result", "[query][record][scalar][re
       make_pk_column<unsigned long>("id"),
     })
     .execute(db);
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
 
   REQUIRE(db.exists("person"));
   tables_to_drop.emplace("person");
@@ -640,7 +691,8 @@ TEST_CASE_METHOD(QueryFixture, "Test scalar result", "[query][record][scalar][re
       .into("person", {"id"})
       .values({id})
       .execute(db);
-    REQUIRE(res == 1);
+    REQUIRE(res.is_ok());
+    REQUIRE(*res == 1);
   }
 
   auto stmt = query::select({"id"})

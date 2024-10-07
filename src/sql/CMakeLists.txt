@@ -44,6 +44,7 @@ set(SOURCES
   to_value.cpp
   attribute_string_writer.cpp
   sql_error.cpp
+  session_error.cpp
 )
 
 set(HEADER
@@ -103,6 +104,7 @@ set(HEADER
   ../../include/matador/sql/query_executor.hpp
   ../../include/matador/sql/attribute_string_writer.hpp
   ../../include/matador/sql/sql_error.hpp
+  ../../include/matador/sql/session_error.hpp
 )
 
 ADD_LIBRARY(matador-query STATIC ${SOURCES} ${HEADER})

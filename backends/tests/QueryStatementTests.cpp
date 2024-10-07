@@ -22,7 +22,8 @@ TEST_CASE_METHOD(QueryFixture, "Test create statement", "[query][statement][crea
     .prepare(db);
 
   auto res = stmt.execute();
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
@@ -43,7 +44,8 @@ TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][inse
     .prepare(db);
 
   auto res = stmt.execute();
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
@@ -57,7 +59,8 @@ TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][inse
 
   res = stmt.bind(george)
     .execute();
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto row = query::select<person>(schema)
     .from("person")
@@ -79,7 +82,8 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
     .prepare(db);
 
   auto res = stmt.execute();
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
@@ -93,7 +97,8 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
 
   res = stmt.bind(george)
     .execute();
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   auto row = query::select<person>(schema)
     .from("person")
@@ -115,7 +120,8 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
   res = stmt.bind(george)
     .bind(4, george.id)
     .execute();
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   row = query::select<person>(schema)
     .from("person")
@@ -137,7 +143,8 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
     .prepare(db);
 
   auto res = stmt.execute();
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
@@ -157,7 +164,8 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
   for (const auto &p : peoples) {
     res = stmt.bind(p)
       .execute();
-    REQUIRE(res == 1);
+    REQUIRE(res.is_ok());
+    REQUIRE(*res == 1);
     stmt.reset();
   }
 
@@ -184,7 +192,8 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
 
   res = stmt.bind(0, "jane")
     .execute();
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   select_stmt.reset();
   auto row = select_stmt.bind(0, "jane")
@@ -195,7 +204,8 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
   stmt.reset();
   res = stmt.bind(0, "merlin")
     .execute();
-  REQUIRE(res == 1);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 1);
 
   select_stmt.reset();
   row = select_stmt.bind(0, "merlin")
@@ -213,7 +223,8 @@ TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][stateme
     .prepare(db);
 
   auto res = stmt.execute();
-  REQUIRE(res == 0);
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
   REQUIRE(db.exists("person"));
@@ -233,7 +244,8 @@ TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][stateme
   for (const auto &p : peoples) {
     res = stmt.bind(p)
       .execute();
-    REQUIRE(res == 1);
+    REQUIRE(res.is_ok());
+    REQUIRE(*res == 1);
     stmt.reset();
   }
 

@@ -81,11 +81,15 @@ public:
   ErrorType&& release_error() { return std::get<error_type>(result_).release(); }
 
   const ValueType& value() const { return std::get<value_type>(result_).value(); }
+  ValueType& value() { return std::get<value_type>(result_).value(); }
   const ErrorType& err() const { return std::get<error_type>(result_).value(); }
   ErrorType err() { return std::get<error_type>(result_).value(); }
 
   constexpr const ValueType* operator->() const { return &value(); }
   constexpr ValueType* operator->() { return &std::get<value_type>(result_).value(); }
+
+  constexpr const ValueType& operator*() const& noexcept { return value(); }
+  constexpr ValueType& operator*() & noexcept { return value(); }
 
   template<typename Func, typename SecondValueType = std::invoke_result_t<Func, ValueType >>
   result<SecondValueType, ErrorType> transform(Func &&f) {

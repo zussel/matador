@@ -7,6 +7,7 @@
 #include "matador/sql/query.hpp"
 #include "matador/sql/statement.hpp"
 #include "matador/sql/schema.hpp"
+#include "matador/sql/session_error.hpp"
 
 #include "matador/object/object_ptr.hpp"
 
@@ -15,14 +16,6 @@
 namespace matador::sql {
 
 class dialect;
-
-enum class session_error {
-  Ok = 0,
-  NoConnectionAvailable,
-  UnknownType,
-  FailedToBuildQuery,
-  FailedToFindObject
-};
 
 /**
  * @brief Represents a session to a database
@@ -73,23 +66,23 @@ public:
   utils::result<object_ptr<Type>, session_error> find(const PrimaryKeyType &pk) {
     auto c = pool_.acquire();
     if (!c.valid()) {
-      return utils::error(session_error::NoConnectionAvailable);
+      return utils::error(session_error{session_error_code::NoConnectionAvailable, "no connection available"});
     }
     auto info = schema_->info<Type>();
     if (!info) {
-      return utils::error(session_error::UnknownType);
+      return utils::error(session_error{session_error_code::UnknownType, "unknown type"});
     }
 
     entity_query_builder eqb(*schema_);
     auto data = eqb.build<Type>(pk);
     if (!data.is_ok()) {
-      return utils::error(session_error::FailedToBuildQuery);
+      return utils::error(session_error{session_error_code::FailedToBuildQuery, "failed to build query"});
     }
 
-    auto obj = build_select_query(c, data.release()).template fetch_one<Type>(*c);
+    auto obj = build_select_query(data.release()).template fetch_one<Type>(*c);
 
     if (!obj) {
-      return utils::error(session_error::FailedToFindObject);
+      return utils::error(session_error{session_error_code::FailedToFindObject, "failed to find object"});
     }
     return utils::ok(object_ptr<Type>{ obj.release() });
   }
@@ -98,37 +91,37 @@ public:
   utils::result<query_result<Type>, session_error> find() {
     auto c = pool_.acquire();
     if (!c.valid()) {
-      return utils::error(session_error::NoConnectionAvailable);
+      return utils::error(session_error{session_error_code::NoConnectionAvailable, "no connection available"});
     }
     auto info = schema_->info<Type>();
     if (!info) {
-      return utils::error(session_error::UnknownType);
+      return utils::error(session_error{session_error_code::UnknownType, "unknown type"});
     }
 
     entity_query_builder eqb(*schema_);
     auto data = eqb.build<Type>();
     if (!data.is_ok()) {
-      return utils::error(session_error::FailedToBuildQuery);
+      return utils::error(session_error{session_error_code::FailedToBuildQuery, "failed to build query"});
     }
 
-    return utils::ok(build_select_query(c, data.release()).template fetch_all<Type>(*c));
+    return utils::ok(build_select_query(data.release()).template fetch_all<Type>(*c));
   }
 
   template<typename Type>
   utils::result<query_from_intermediate, session_error> select() {
     auto c = pool_.acquire();
     if (!c.valid()) {
-      return utils::error(session_error::NoConnectionAvailable);
+      return utils::error(session_error{session_error_code::NoConnectionAvailable, "no connection available"});
     }
     auto info = schema_->info<Type>();
     if (!info) {
-      return utils::error(session_error::UnknownType);
+      return utils::error(session_error{session_error_code::UnknownType, "unknown type"});
     }
 
     entity_query_builder eqb(*schema_);
     auto data = eqb.build<Type>();
     if (!data.is_ok()) {
-      return utils::error(session_error::FailedToBuildQuery);
+      return utils::error(session_error{session_error_code::FailedToBuildQuery, "failed to build query"});
     }
 
     return utils::ok(build_select_query(c, data.release()).template fetch_all<Type>(*c));

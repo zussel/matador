@@ -108,7 +108,7 @@ public:
   template<class ContainerType>
   void on_has_many_to_many(const char *, ContainerType &, const utils::foreign_attributes &/*attr*/) {}
   template<class ContainerType>
-  void on_has_many(const char *id, ContainerType &cont, const char * join_column, const utils::foreign_attributes &attr) {
+  void on_has_many(const char * /*id*/, ContainerType &cont, const char * /*join_column*/, const utils::foreign_attributes &attr) {
       if ( attr.fetch() == utils::fetch_type::LAZY ) {
           // pk_reader_.read(*id, column_index_++);
       } else {
