@@ -9,12 +9,12 @@
 
 namespace matador::sql {
 
-query_context query_compiler::compile(const query_compile_context *data, const connection_impl &conn)
+query_context query_compiler::compile(const query_compile_context &data, const connection_impl &conn)
 {
-  data_ = data;
+  data_ = &data;
   connection_ = &conn;
   query_ = {};
-  for (const auto &part: data->parts) {
+  for (const auto &part: data.parts) {
     part->accept(*this);
   }
   connection_ = nullptr;

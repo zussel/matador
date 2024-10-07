@@ -14,7 +14,7 @@ struct query_compile_context;
 class query_compiler : public query_part_visitor
 {
 public:
-  query_context compile(const query_compile_context *data, const connection_impl &conn);
+  query_context compile(const query_compile_context &data, const connection_impl &conn);
 
 protected:
   void visit(query_select_part &select_part) override;
