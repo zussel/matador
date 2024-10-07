@@ -43,6 +43,7 @@ set(SOURCES
   table.cpp
   to_value.cpp
   attribute_string_writer.cpp
+  sql_error.cpp
 )
 
 set(HEADER
@@ -101,6 +102,7 @@ set(HEADER
   ../../include/matador/sql/dialect_token.hpp
   ../../include/matador/sql/query_executor.hpp
   ../../include/matador/sql/attribute_string_writer.hpp
+  ../../include/matador/sql/sql_error.hpp
 )
 
 ADD_LIBRARY(matador-query STATIC ${SOURCES} ${HEADER})

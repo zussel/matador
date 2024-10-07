@@ -34,7 +34,7 @@ public:
   std::unique_ptr<sql::query_result_impl> fetch(const sql::query_context &context) override;
   std::unique_ptr<sql::statement_impl> prepare(sql::query_context context) override;
 
-  size_t execute(const std::string &stmt) override;
+  utils::result<size_t, sql::sql_error> execute(const std::string &stmt) override;
 
   std::vector<sql::column_definition> describe(const std::string& table) override;
 

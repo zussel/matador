@@ -5,6 +5,7 @@
 #include "matador/sql/object_parameter_binder.hpp"
 #include "matador/sql/query_result.hpp"
 #include "matador/sql/statement_impl.hpp"
+#include "matador/sql/sql_error.hpp"
 
 #include <memory>
 
@@ -70,7 +71,7 @@ public:
    *
    * @return The number of affected rows
    */
-  size_t execute();
+  utils::result<size_t, sql_error> execute();
 
   /**
    * Fetches the result of the prepared

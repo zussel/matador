@@ -2,6 +2,8 @@
 #include "sqlite_prepared_result_reader.hpp"
 #include "sqlite_error.hpp"
 
+#include "matador/sql/sql_error.hpp"
+
 namespace matador::backends::sqlite {
 sqlite_statement::sqlite_statement(sqlite3 *db, sqlite3_stmt *stmt, const sql::query_context &query)
 : statement_impl(query)
@@ -15,16 +17,19 @@ sqlite_statement::~sqlite_statement()
   sqlite3_finalize(stmt_);
 }
 
-size_t sqlite_statement::execute()
+utils::result<size_t, sql::sql_error> sqlite_statement::execute()
 {
   // get next row
   int ret = sqlite3_reset(stmt_);
-  throw_sqlite_error(ret, db_, "sqlite3_reset");
-  if (ret = sqlite3_step(stmt_); ret != SQLITE_DONE) {
-    throw_sqlite_error(ret, db_, "sqlite3_step");
+  if (ret != SQLITE_OK && ret != SQLITE_DONE) {
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, std::to_string(ret), sqlite3_errmsg(db_), "sqlite3"});
   }
 
-  return sqlite3_changes(db_);
+  if (ret = sqlite3_step(stmt_); ret != SQLITE_DONE) {
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, std::to_string(ret), sqlite3_errmsg(db_), "sqlite3"});
+  }
+
+  return utils::ok(static_cast<size_t>(sqlite3_changes(db_)));
 }
 
 std::unique_ptr<sql::query_result_impl> sqlite_statement::fetch()

@@ -112,16 +112,20 @@ std::unique_ptr<sql::statement_impl> postgres_connection::prepare(sql::query_con
   return std::make_unique<postgres_statement>(conn_, result, statement_name, std::move(context));
 }
 
-size_t postgres_connection::execute(const std::string &stmt) {
+utils::result<size_t, sql::sql_error> postgres_connection::execute(const std::string &stmt) {
   PGresult *res = PQexec(conn_, stmt.c_str());
 
-  throw_postgres_error(res, conn_, "postgres", stmt);
+  if (const auto status = PQresultStatus(res); status != PGRES_COMMAND_OK &&
+                                               status != PGRES_TUPLES_OK) {
+      return utils::error(sql::sql_error::FAILURE);
+  }
+  // throw_postgres_error(res, conn_, "postgres", stmt);
 
   const auto affected_rows = utils::to_long_long(PQcmdTuples(res));
 
   PQclear(res);
 
-  return affected_rows;
+  return utils::ok(static_cast<size_t>(affected_rows));
 }
 
 data_type string2type(const char *type) {

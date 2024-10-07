@@ -21,7 +21,7 @@ statement &statement::bind(const size_t pos, std::string &val, const size_t size
   return *this;
 }
 
-size_t statement::execute()
+utils::result<size_t, sql_error> statement::execute()
 {
 //  logger_.info(statement_->query_.sql);
   return statement_->execute();

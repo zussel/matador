@@ -5,6 +5,7 @@
 #include "matador/sql/query_result_impl.hpp"
 #include "matador/sql/query_context.hpp"
 #include "matador/sql/record.hpp"
+#include "matador/sql/sql_error.hpp"
 #include "matador/sql/statement_impl.hpp"
 
 #include "matador/utils/version.hpp"
@@ -28,7 +29,7 @@ public:
   [[nodiscard]] virtual version client_version() const = 0;
   [[nodiscard]] virtual version server_version() const = 0;
 
-  virtual size_t execute(const std::string &stmt) = 0;
+  virtual utils::result<size_t, sql_error> execute(const std::string &stmt) = 0;
   virtual std::unique_ptr<query_result_impl> fetch(const query_context& context) = 0;
   virtual std::unique_ptr<statement_impl> prepare(query_context context) = 0;
 

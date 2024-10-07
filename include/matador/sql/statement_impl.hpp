@@ -11,6 +11,8 @@
 
 namespace matador::sql {
 
+class sql_error;
+
 class statement_impl
 {
 protected:
@@ -19,7 +21,7 @@ protected:
 public:
   virtual ~statement_impl() = default;
 
-  virtual size_t execute() = 0;
+  virtual utils::result<size_t, sql_error> execute() = 0;
   virtual std::unique_ptr<query_result_impl> fetch() = 0;
 
   template < class Type >

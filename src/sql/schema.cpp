@@ -1,6 +1,7 @@
 #include "matador/sql/schema.hpp"
 #include "matador/sql/connection.hpp"
 #include "matador/sql/query.hpp"
+#include "matador/sql/sql_error.hpp"
 
 #include <stdexcept>
 
@@ -21,21 +22,27 @@ const table_info& schema::attach(const std::type_index ti, const table_info& tab
   return ref;
 }
 
-utils::result<void, error> schema::create(connection &db) {
+utils::result<void, sql_error> schema::create(connection &db) {
   for (const auto &info : repository_) {
     const auto res = query::create()
       .table(info.second.name, info.second.prototype.columns())
       .execute(db);
+    if (res.is_error()) {
+      return utils::error(res.err());
+    }
   }
 
   return utils::ok<void>();
 }
 
-utils::result<void, error> schema::drop(connection &db) {
+utils::result<void, sql_error> schema::drop(connection &db) {
   for (const auto &info : repository_) {
     const auto res = query::drop()
       .table(info.second.name)
       .execute(db);
+    if (res.is_error()) {
+      return utils::error(res.err());
+    }
   }
 
   return utils::ok<void>();

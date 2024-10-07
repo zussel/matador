@@ -12,6 +12,7 @@
 #include "matador/sql/query_compile_context.hpp"
 #include "matador/sql/record.hpp"
 #include "matador/sql/statement.hpp"
+#include "matador/sql/sql_error.hpp"
 #include "matador/sql/value_extractor.hpp"
 
 #include "matador/utils/types.hpp"
@@ -41,7 +42,7 @@ class executable_query : public query_intermediate
 public:
   using query_intermediate::query_intermediate;
 
-  [[nodiscard]] size_t execute(const query_executor &executor) const;
+  [[nodiscard]] utils::result<size_t, sql_error> execute(const query_executor &executor) const;
   [[nodiscard]] statement prepare(const query_executor &executor) const;
   [[nodiscard]] std::string str(const query_executor &executor) const;
 };
@@ -201,7 +202,7 @@ private:
 class query_select_intermediate : public query_intermediate
 {
 public:
-  query_select_intermediate(const std::vector<column>& columns);
+  explicit query_select_intermediate(const std::vector<column>& columns);
 
   query_from_intermediate from(const table& t);
 };
@@ -309,7 +310,7 @@ std::vector<key_value_pair> as_key_value_placeholder(const Type &obj)
 class query_update_intermediate : public query_intermediate
 {
 public:
-  query_update_intermediate(const sql::table& table);
+  explicit query_update_intermediate(const sql::table& table);
 
   query_set_intermediate set(std::initializer_list<key_value_pair> columns);
   query_set_intermediate set(std::vector<key_value_pair> &&columns);

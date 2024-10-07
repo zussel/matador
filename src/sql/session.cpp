@@ -12,13 +12,10 @@ session::session(connection_pool<connection> &pool)
 , dialect_(backend_provider::instance().connection_dialect(pool_.info().type))
 , schema_(std::make_unique<sql::schema>(dialect_.default_schema_name())){}
 
-void session::create_schema() const {
+utils::result<void, sql_error> session::create_schema() const {
   auto c = pool_.acquire();
-  for (const auto &t : *schema_) {
-      const auto res = query::create()
-        .table(t.second.name, t.second.prototype.columns())
-        .execute(*c);
-  }
+
+  return schema_->create(*c);
 }
 
 void session::drop_table(const std::string &table_name) const {
@@ -107,7 +104,7 @@ std::unique_ptr<query_result_impl> session::fetch(const std::string &sql) const
     return {};
 }
 
-fetchable_query session::build_select_query(connection_ptr<connection> &conn, entity_query_data &&data) {
+fetchable_query session::build_select_query(entity_query_data &&data) {
   return query::select(data.columns)
     .from(*data.root_table)
     .join_left(data.joins)

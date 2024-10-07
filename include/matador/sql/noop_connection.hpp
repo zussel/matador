@@ -16,7 +16,7 @@ public:
   [[nodiscard]] bool is_valid() const override;
   [[nodiscard]] version client_version() const override;
   [[nodiscard]] version server_version() const override;
-  size_t execute(const std::string &stmt) override;
+  utils::result<size_t, sql_error> execute(const std::string &stmt) override;
   std::unique_ptr<query_result_impl> fetch(const query_context &context) override;
   std::unique_ptr<statement_impl> prepare(query_context context) override;
   std::vector<sql::column_definition> describe(const std::string &table) override;

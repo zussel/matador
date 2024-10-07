@@ -47,7 +47,7 @@ TEST_CASE("Create sql query data for entity with eager has one", "[query][entity
   }
 
   std::vector<std::pair<std::string, std::string>> expected_join_data {
-    { "airplanes", R"("T01"."airplane_id" = C02)"}
+    { "airplanes", R"("T01"."airplane_id" = "T02"."id")"}
   };
 
   query_context qc;
@@ -60,7 +60,7 @@ TEST_CASE("Create sql query data for entity with eager has one", "[query][entity
 
   REQUIRE(data->where_clause);
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
-  REQUIRE(cond == R"(C01 = 17)");
+  REQUIRE(cond == R"("T01"."id" = 17)");
 
   const auto sql = query::select(data->columns)
     .from(*data->root_table)
@@ -106,7 +106,7 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
   }
 
   std::vector<std::pair<std::string, std::string>> expected_join_data {
-    { "authors", R"("T01"."author_id" = C03)"}
+    { "authors", R"("T01"."author_id" = "T02"."id")"}
   };
 
   query_context qc;
@@ -119,7 +119,7 @@ TEST_CASE("Create sql query data for entity with eager belongs to", "[query][ent
 
   REQUIRE(data->where_clause);
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
-  REQUIRE(cond == R"(C01 = 17)");
+  REQUIRE(cond == R"("T01"."id" = 17)");
 
   const auto sql = query::select(data->columns)
     .from(*data->root_table)
@@ -172,7 +172,7 @@ TEST_CASE("Create sql query data for entity with eager has many belongs to", "[q
   }
 
   std::vector<std::pair<std::string, std::string>> expected_join_data {
-    { "order_details", R"(C01 = C14)"}
+    { "order_details", R"("order_id" = "T02"."order_id")"}
   };
 
   query_context qc;
@@ -185,7 +185,7 @@ TEST_CASE("Create sql query data for entity with eager has many belongs to", "[q
 
   REQUIRE(data->where_clause);
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
-  REQUIRE(cond == R"(C01 = 17)");
+  REQUIRE(cond == R"("T01"."order_id" = 17)");
 }
 
 TEST_CASE("Create sql query data for entity with eager many to many", "[query][entity][builder]") {
@@ -217,8 +217,8 @@ TEST_CASE("Create sql query data for entity with eager many to many", "[query][e
   }
 
   std::vector<std::pair<std::string, std::string>> expected_join_data {
-    { "recipe_ingredients", R"(C01 = "T02"."ingredient_id")"},
-    { "recipes", R"("T02"."recipe_id" = C03)"}
+    { "recipe_ingredients", R"("id" = "T02"."ingredient_id")"},
+    { "recipes", R"("T02"."recipe_id" = "T03"."id")"}
   };
 
   query_context qc;
@@ -231,7 +231,7 @@ TEST_CASE("Create sql query data for entity with eager many to many", "[query][e
 
   REQUIRE(data->where_clause);
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
-  REQUIRE(cond == R"(C01 = 17)");
+  REQUIRE(cond == R"("T01"."id" = 17)");
 
     const auto sql = query::select(data->columns)
       .from(*data->root_table)
@@ -274,8 +274,8 @@ TEST_CASE("Create sql query data for entity with eager many to many (inverse par
   }
 
   std::vector<std::pair<std::string, std::string>> expected_join_data {
-    { "student_courses", R"(C01 = "T02"."course_id")"},
-    { "students", R"("T02"."student_id" = C03)"}
+    { "student_courses", R"("id" = "T02"."course_id")"},
+    { "students", R"("T02"."student_id" = "T03"."id")"}
   };
 
   query_context qc;
@@ -288,7 +288,7 @@ TEST_CASE("Create sql query data for entity with eager many to many (inverse par
 
   REQUIRE(data->where_clause);
   auto cond = data->where_clause->evaluate(db.dialect(), qc);
-  REQUIRE(cond == R"(C01 = 17)");
+  REQUIRE(cond == R"("T01"."id" = 17)");
 
     const auto sql = query::select(data->columns)
       .from(*data->root_table)

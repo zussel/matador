@@ -59,7 +59,7 @@ public:
   template<typename Type>
   void attach(const std::string &table_name) const;
 
-  void create_schema() const;
+  utils::result<void, sql_error> create_schema() const;
 
   template<typename Type>
   object_ptr<Type> insert(Type *obj);
@@ -153,7 +153,7 @@ private:
 
   [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const std::string &sql) const;
 
-  static fetchable_query build_select_query(connection_ptr<connection> &conn, entity_query_data &&data);
+  static fetchable_query build_select_query(entity_query_data &&data);
 
 private:
   connection_pool<connection> &pool_;

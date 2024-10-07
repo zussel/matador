@@ -87,16 +87,31 @@ std::string connection::type() const {
   return connection_info_.type;
 }
 
-void connection::begin() const {
-  connection_->execute(dialect().token_at(dialect_token::BEGIN));
+utils::result<void, sql_error> connection::begin() const {
+  const auto res = connection_->execute(dialect().token_at(dialect_token::BEGIN));
+  if (res.is_error()) {
+    return utils::error(res.err());
+  }
+
+  return utils::ok<void>();
 }
 
-void connection::commit() const {
-  connection_->execute(dialect().token_at(dialect_token::COMMIT));
+utils::result<void, sql_error> connection::commit() const {
+  const auto res = connection_->execute(dialect().token_at(dialect_token::COMMIT));
+  if (res.is_error()) {
+    return utils::error(res.err());
+  }
+
+  return utils::ok<void>();
 }
 
-void connection::rollback() const {
-  connection_->execute(dialect().token_at(dialect_token::ROLLBACK));
+utils::result<void, sql_error> connection::rollback() const {
+  const auto res = connection_->execute(dialect().token_at(dialect_token::ROLLBACK));
+  if (res.is_error()) {
+    return utils::error(res.err());
+  }
+
+  return utils::ok<void>();
 }
 
 std::vector<sql::column_definition> connection::describe(const std::string &table_name) const
@@ -114,7 +129,7 @@ bool connection::exists(const std::string &table_name) const
   return connection_->exists(dialect().default_schema_name(), table_name);
 }
 
-size_t connection::execute(const std::string &sql) const
+utils::result<size_t, sql_error> connection::execute(const std::string &sql) const
 {
 //  logger_.debug(sql);
   return connection_->execute(sql);
@@ -177,7 +192,7 @@ std::unique_ptr<query_result_impl> connection::fetch(const query_compile_context
   return connection_->fetch(qry);
 }
 
-size_t connection::execute( const query_compile_context& ctx ) const
+utils::result<size_t, sql_error> connection::execute( const query_compile_context& ctx ) const
 {
     return execute(dialect().compile(ctx, *connection_).sql);
 }

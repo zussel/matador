@@ -11,11 +11,9 @@
 
 namespace matador::sql {
 
-class connection;
+class sql_error;
 
-enum class error {
-  Error = 1
-};
+class connection;
 
 struct table_info
 {
@@ -48,8 +46,8 @@ public:
 
   const table_info& attach(std::type_index ti, const table_info& table);
 
-  utils::result<void, error> create(connection& db);
-  utils::result<void, error> drop(connection& db);
+  utils::result<void, sql_error> create(connection& db);
+  utils::result<void, sql_error> drop(connection& db);
 
   template<typename Type>
   [[nodiscard]] std::optional<table_info> info() const

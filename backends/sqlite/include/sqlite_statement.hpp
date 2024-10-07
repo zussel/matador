@@ -13,7 +13,7 @@ public:
   sqlite_statement(sqlite3 *db, sqlite3_stmt *stmt, const sql::query_context &query);
   ~sqlite_statement() override;
 
-  size_t execute() override;
+  utils::result<size_t, sql::sql_error> execute() override;
   std::unique_ptr<sql::query_result_impl> fetch() override;
   void reset() override;
 protected:

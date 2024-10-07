@@ -295,7 +295,6 @@ TEST_CASE_METHOD(QueryFixture, "Test describe table", "[query][describe][table]"
 
   for (const auto &col : columns) {
     REQUIRE(col.name() == column_names[col.index()]);
-    const bool b = type_check[col.index()](col);
     REQUIRE(type_check[col.index()](col));
   }
 }

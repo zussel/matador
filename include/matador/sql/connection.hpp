@@ -112,31 +112,31 @@ public:
    * underlying database backend transaction begin
    * statement.
    */
-  void begin() const;
+  [[nodiscard]] utils::result<void, sql_error> begin() const;
 
   /**
    * @brief Commits a transaction by calling the
    * underlying database backend transaction commit
    * statement.
    */
-  void commit() const;
+  [[nodiscard]] utils::result<void, sql_error> commit() const;
 
   /**
    * @brief Rollback a transaction by calling the
    * underlying database backend transaction rollback/abort
    * statement.
    */
-  void rollback() const;
+  [[nodiscard]] utils::result<void, sql_error> rollback() const;
 
   [[nodiscard]] std::vector<column_definition> describe(const std::string &table_name) const;
   [[nodiscard]] bool exists(const std::string &schema_name, const std::string &table_name) const;
   [[nodiscard]] bool exists(const std::string &table_name) const;
   // [[nodiscard]] sql::query query() const;
 
-  [[nodiscard]] size_t execute(const std::string &sql) const;
+  [[nodiscard]] utils::result<size_t, sql_error> execute(const std::string &sql) const;
 
   [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const query_compile_context &ctx) const override;
-  [[nodiscard]] size_t execute(const query_compile_context &ctx) const override;
+  [[nodiscard]] utils::result<size_t, sql_error> execute(const query_compile_context &ctx) const override;
   [[nodiscard]] statement prepare(const query_compile_context &query) const override;
   [[nodiscard]] std::string str( const query_compile_context& ctx ) const override;
 

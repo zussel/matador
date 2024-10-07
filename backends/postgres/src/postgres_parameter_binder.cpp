@@ -2,6 +2,8 @@
 
 #include "matador/utils/string.hpp"
 
+#include <cstring>
+
 namespace matador::backends::postgres {
 namespace detail {
 template<class T>
@@ -109,13 +111,13 @@ void postgres_parameter_binder::write_value(const size_t pos, const double &x) {
 
 void postgres_parameter_binder::write_value(const size_t pos, const char *x) {
   bind_data_.values[pos] = x;
-  bind_data_.lengths[pos] = static_cast<int>(strlen(x));
+  bind_data_.lengths[pos] = static_cast<int>(std::strlen(x));
   bind_data_.formats[pos] = 0;
 }
 
 void postgres_parameter_binder::write_value(const size_t pos, const char *x, size_t /*size*/) {
   bind_data_.values[pos] = x;
-  bind_data_.lengths[pos] = static_cast<int>(strlen(x));
+  bind_data_.lengths[pos] = static_cast<int>(std::strlen(x));
   bind_data_.formats[pos] = 0;
 }
 

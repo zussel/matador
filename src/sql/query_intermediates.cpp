@@ -182,7 +182,7 @@ query_into_intermediate query_insert_intermediate::into(const table &table)
   return {context_};
 }
 
-size_t executable_query::execute( const query_executor &executor) const
+utils::result<size_t, sql_error> executable_query::execute( const query_executor &executor) const
 {
   return executor.execute(*context_);
 }

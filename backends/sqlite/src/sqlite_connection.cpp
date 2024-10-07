@@ -98,13 +98,15 @@ sqlite_connection::fetch_context sqlite_connection::fetch_internal(const std::st
   return context;
 }
 
-size_t sqlite_connection::execute(const std::string &stmt) {
+utils::result<size_t, sql::sql_error> sqlite_connection::execute(const std::string &stmt) {
   char *errmsg = nullptr;
   const int ret = sqlite3_exec(db_, stmt.c_str(), nullptr, nullptr, &errmsg);
 
-  throw_sqlite_error(ret, db_, "sqlite", stmt);
+  if (ret != SQLITE_OK && ret != SQLITE_DONE) {
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, std::to_string(ret), sqlite3_errmsg(db_), "sqlite3", stmt});
+  }
 
-  return sqlite3_changes(db_);
+  return utils::ok(static_cast<size_t>(sqlite3_changes(db_)));
 }
 
 std::unique_ptr<sql::query_result_impl> sqlite_connection::fetch(const sql::query_context& context) {

@@ -37,7 +37,7 @@ query_select_intermediate query::select( const std::initializer_list<column> col
 }
 
 query_select_intermediate query::select(const std::vector<column>& columns) {
-  return {columns};
+  return query_select_intermediate{columns};
 }
 
 query_select_intermediate query::select(const std::vector<std::string> &column_names) {
@@ -53,7 +53,7 @@ query_select_intermediate query::select(std::vector<column> columns, const std::
   for (const auto &col : additional_columns) {
     columns.push_back(col);
   }
-  return {columns};
+  return query_select_intermediate{columns};
 }
 
 query_insert_intermediate query::insert() {
@@ -61,7 +61,7 @@ query_insert_intermediate query::insert() {
 }
 
 query_update_intermediate query::update(const sql::table &table) {
-  return {table};
+  return query_update_intermediate{table};
 }
 
 query_delete_intermediate query::remove() {

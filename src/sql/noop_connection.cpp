@@ -2,6 +2,8 @@
 #include "matador/sql/query_context.hpp"
 #include "matador/sql/record.hpp"
 
+#include "matador/utils/string.hpp"
+
 #include <string>
 #include <memory>
 
@@ -37,9 +39,9 @@ version noop_connection::server_version() const {
   return {};
 }
 
-size_t noop_connection::execute(const std::string &/*stmt*/)
+utils::result<size_t, sql_error> noop_connection::execute(const std::string &/*stmt*/)
 {
-  return 0;
+  return utils::ok(static_cast<size_t>(0));
 }
 
 std::unique_ptr<query_result_impl> noop_connection::fetch(const query_context &/*context*/)
@@ -64,7 +66,7 @@ bool noop_connection::exists(const std::string &/*schema_name*/, const std::stri
 
 std::string noop_connection::to_escaped_string(const utils::blob& value) const
 {
-    return {};
+  return utils::to_string(value);
 }
 
 }

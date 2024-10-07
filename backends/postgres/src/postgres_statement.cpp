@@ -12,7 +12,7 @@ postgres_statement::postgres_statement(PGconn *db, PGresult *result, std::string
 , binder_(query_.bind_vars.size())
 {}
 
-size_t postgres_statement::execute()
+utils::result<size_t, sql::sql_error> postgres_statement::execute()
 {
   PGresult *res = PQexecPrepared(db_,
       name_.c_str(),
@@ -22,13 +22,17 @@ size_t postgres_statement::execute()
       binder_.params().formats.data(),
       0);
 
-  throw_postgres_error(res, db_, "postgres", query_.sql);
-
-  auto *tuples = PQcmdTuples(res);
-  if (strlen(tuples) == 0) {
-    return 0;
+//  throw_postgres_error(res, db_, "postgres", query_.sql);
+  if (const auto status = PQresultStatus(res); status != PGRES_COMMAND_OK &&
+                                               status != PGRES_TUPLES_OK) {
+    return utils::error(sql::sql_error::FAILURE);
   }
-  return std::stoul(tuples);
+
+  const auto *tuples = PQcmdTuples(res);
+  if (strlen(tuples) == 0) {
+    return utils::ok(static_cast<size_t>(0));
+  }
+  return utils::ok(std::stoul(tuples));
 }
 
 std::unique_ptr<sql::query_result_impl> postgres_statement::fetch()
@@ -43,7 +47,7 @@ std::unique_ptr<sql::query_result_impl> postgres_statement::fetch()
 
   throw_postgres_error(res, db_, "postgres", query_.sql);
 
-  return std::move(std::make_unique<sql::query_result_impl>(std::make_unique<postgres_result_reader>(res), query_.prototype));
+  return std::make_unique<sql::query_result_impl>(std::make_unique<postgres_result_reader>(res), query_.prototype);
 }
 
 void postgres_statement::reset() {}
