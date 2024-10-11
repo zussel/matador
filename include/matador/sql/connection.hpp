@@ -135,7 +135,7 @@ public:
 
   [[nodiscard]] utils::result<size_t, sql_error> execute(const std::string &sql) const;
 
-  [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const query_compile_context &ctx) const override;
+  [[nodiscard]] utils::result<std::unique_ptr<query_result_impl>, sql_error> fetch(const query_compile_context &ctx) const override;
   [[nodiscard]] utils::result<size_t, sql_error> execute(const query_compile_context &ctx) const override;
   [[nodiscard]] statement prepare(const query_compile_context &query) const override;
   [[nodiscard]] std::string str( const query_compile_context& ctx ) const override;

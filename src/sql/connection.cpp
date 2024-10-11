@@ -173,7 +173,7 @@ bool is_unknown(const std::vector<sql::column_definition> &columns) {
 //   return query_result<record>{std::move(res), ctx.prototype};
 // }
 
-std::unique_ptr<query_result_impl> connection::fetch(const query_compile_context &ctx) const
+utils::result<std::unique_ptr<query_result_impl>, sql_error> connection::fetch(const query_compile_context &ctx) const
 {
   const auto qry = dialect().compile(ctx, *connection_);
   if (qry.prototype.empty() || is_unknown(qry.prototype)) {

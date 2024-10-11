@@ -18,7 +18,7 @@ public:
   virtual ~query_executor() = default;
 
   [[nodiscard]] virtual utils::result<size_t, sql_error> execute(const query_compile_context &ctx) const = 0;
-  [[nodiscard]] virtual std::unique_ptr<query_result_impl> fetch(const query_compile_context &ctx) const = 0;
+  [[nodiscard]] virtual utils::result<std::unique_ptr<query_result_impl>, sql_error> fetch(const query_compile_context &ctx) const = 0;
   [[nodiscard]] virtual statement prepare(const query_compile_context &ctx) const = 0;
   [[nodiscard]] virtual std::string str(const query_compile_context &ctx) const = 0;
 };

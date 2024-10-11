@@ -31,9 +31,9 @@ public:
   [[nodiscard]] version client_version() const override;
   [[nodiscard]] version server_version() const override;
 
-  std::unique_ptr<sql::query_result_impl> fetch(const sql::query_context &context) override;
   std::unique_ptr<sql::statement_impl> prepare(sql::query_context context) override;
 
+  utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch(const sql::query_context &context) override;
   utils::result<size_t, sql::sql_error> execute(const std::string &stmt) override;
 
   std::vector<sql::column_definition> describe(const std::string& table) override;

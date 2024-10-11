@@ -54,33 +54,43 @@ protected:
 
 public:
   template < class Type >
-  query_result<Type> fetch_all(query_executor &executor)
+  utils::result<query_result<Type>, sql_error> fetch_all(query_executor &executor)
   {
     return query_result<Type>(fetch(executor));
   }
-  [[nodiscard]] query_result<record> fetch_all(const query_executor &executor) const;
+  [[nodiscard]] utils::result<query_result<record>, sql_error> fetch_all(const query_executor &executor) const;
 
   template < class Type >
-  std::unique_ptr<Type> fetch_one(query_executor &executor)
+  utils::result<std::unique_ptr<Type>, sql_error> fetch_one(query_executor &executor)
   {
-    auto result = query_result<Type>(fetch(executor));
-    auto first = result.begin();
-    if (first == result.end()) {
-      return nullptr;
+    const auto result = fetch(executor);
+    if (!result.is_ok()) {
+      return utils::error(result.err());
     }
 
-    return std::unique_ptr<Type>{first.release()};
+    const auto objects = query_result<Type>(*result);
+    auto first = objects.begin();
+    if (first == objects.end()) {
+      return utils::ok(std::unique_ptr<Type>{nullptr});
+    }
+
+    return utils::ok(std::unique_ptr<Type>{first.release()});
   }
-  [[nodiscard]] std::optional<record> fetch_one(const query_executor &executor) const;
+
+  [[nodiscard]] utils::result<std::optional<record>, sql_error> fetch_one(const query_executor &executor) const;
 
   template<typename Type>
-  std::optional<Type> fetch_value(query_executor &executor)
+  utils::result<std::optional<Type>, sql_error> fetch_value(query_executor &executor)
   {
     const auto result = fetch_one(executor);
-    if (result.has_value()) {
-      return result.value().at(0).as<Type>().value();
+    if (!result.is_ok()) {
+      return utils::error(result.err());
     }
-    return std::nullopt;
+
+    if (result->has_value()) {
+      return utils::ok(std::optional<Type>{result->value().at(0).as<Type>().value()});
+    }
+    return utils::ok(std::optional<Type>{std::nullopt});
   }
 
   [[nodiscard]] statement prepare(const query_executor &executor) const;
@@ -88,7 +98,7 @@ public:
   [[nodiscard]] std::string str(const query_executor &executor) const;
 
 private:
-  [[nodiscard]] std::unique_ptr<query_result_impl> fetch(const query_executor &executor) const;
+  [[nodiscard]] utils::result<std::unique_ptr<query_result_impl>, sql_error> fetch(const query_executor &executor) const;
 };
 
 class query_offset_intermediate;

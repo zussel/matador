@@ -12,20 +12,30 @@ query_intermediate::query_intermediate(const std::shared_ptr<query_compile_conte
 : context_(context)
 {}
 
-query_result<record> fetchable_query::fetch_all(const query_executor &executor) const
+utils::result<query_result<record>, sql_error> fetchable_query::fetch_all(const query_executor &executor) const
 {
-  return query_result<record>(executor.fetch(*context_));
-}
-
-std::optional<record> fetchable_query::fetch_one(const query_executor &executor) const
-{
-  query_result<record> result(executor.fetch(*context_));
-  auto first = result.begin();
-  if (first == result.end()) {
-    return std::nullopt;
+  auto result = executor.fetch(*context_);
+  if (!result.is_ok()) {
+    return utils::error(result.err());
   }
 
-  return *first.get();
+  return utils::ok(query_result<record>(std::move(*result)));
+}
+
+utils::result<std::optional<record>, sql_error> fetchable_query::fetch_one(const query_executor &executor) const
+{
+  auto result = executor.fetch(*context_);
+  if (!result.is_ok()) {
+    return utils::error(result.err());
+  }
+
+  query_result<record> records(std::move(*result));
+  auto first = records.begin();
+  if (first == records.end()) {
+    return utils::ok(std::optional<record>{std::nullopt});
+  }
+
+  return utils::ok(std::optional<record>{*first.get()});
 }
 
 std::string fetchable_query::str(const query_executor &executor) const
@@ -33,7 +43,7 @@ std::string fetchable_query::str(const query_executor &executor) const
   return executor.str(*context_);
 }
 
-std::unique_ptr<query_result_impl> fetchable_query::fetch(const query_executor &executor) const
+utils::result<std::unique_ptr<query_result_impl>, sql_error> fetchable_query::fetch(const query_executor &executor) const
 {
   return executor.fetch(*context_);
 }

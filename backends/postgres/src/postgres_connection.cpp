@@ -70,21 +70,24 @@ version postgres_connection::server_version() const {
   };
 }
 
-std::unique_ptr<sql::query_result_impl> postgres_connection::fetch(const sql::query_context &context) {
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> postgres_connection::fetch(const sql::query_context &context) {
   PGresult *res = PQexec(conn_, context.sql.c_str());
 
-  throw_postgres_error(res, conn_, "postgres", context.sql);
-
-  std::vector<sql::column_definition> prototype;
-  const auto num_col = PQnfields(res);
-  for (int i = 0; i < num_col; ++i) {
-    const char *col_name = PQfname(res, i);
-    auto type = PQftype(res, i);
-    auto size = PQfmod(res, i);
-    prototype.emplace_back(col_name);
+  if (const auto status = PQresultStatus(res); status != PGRES_COMMAND_OK &&
+                                               status != PGRES_TUPLES_OK) {
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, PQresultErrorField(res, PG_DIAG_SQLSTATE), PQerrorMessage(conn_), "postgres", context.sql});
   }
-  return std::move(
-    std::make_unique<sql::query_result_impl>(std::make_unique<postgres_result_reader>(res), context.prototype));
+
+//  std::vector<sql::column_definition> prototype;
+//  const auto num_col = PQnfields(res);
+//  for (int i = 0; i < num_col; ++i) {
+//    const char *col_name = PQfname(res, i);
+//    auto type = PQftype(res, i);
+//    auto size = PQfmod(res, i);
+//    prototype.emplace_back(col_name);
+//  }
+
+  return utils::ok(std::make_unique<sql::query_result_impl>(std::make_unique<postgres_result_reader>(res), context.prototype));
 }
 
 std::string postgres_connection::generate_statement_name(const sql::query_context &query) {
