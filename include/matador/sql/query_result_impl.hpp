@@ -126,7 +126,10 @@ public:
   void on_has_many(const char *, ContainerType &, const utils::foreign_attributes &/*attr*/) {}
 
   template<class Type>
-  void bind(const Type &) {}
+  void bind(const Type &obj)
+  {
+    reader_->bind(obj);
+  }
 
   template<class Type>
   bool fetch(Type &obj)

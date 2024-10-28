@@ -5,6 +5,7 @@
 #include "matador/utils/string.hpp"
 
 namespace matador::sql {
+
 size_t query_result_reader::start_column_index() const
 {
   return 0;
@@ -212,4 +213,10 @@ utils::blob query_result_reader::read_blob(size_t index)
   const auto *bytes = reinterpret_cast<const unsigned char*>(data);
   return utils::blob{bytes, bytes+len};
 }
+
+object::attribute_reader &query_result_reader::result_binder()
+{
+  return empty_result_binder_;
+}
+
 }

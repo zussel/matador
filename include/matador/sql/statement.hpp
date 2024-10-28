@@ -2,7 +2,6 @@
 #define QUERY_STATEMENT_HPP
 
 #include "matador/sql/basic_sql_logger.hpp"
-#include "matador/sql/object_parameter_binder.hpp"
 #include "matador/sql/query_result.hpp"
 #include "matador/sql/statement_impl.hpp"
 #include "matador/sql/sql_error.hpp"
@@ -34,7 +33,6 @@ public:
    */
   statement(statement &&x) noexcept
     : statement_(std::move(x.statement_))
-      , object_binder_(std::move(x.object_binder_))
       , logger_(std::move(x.logger_)) {
   }
 
@@ -46,7 +44,6 @@ public:
    */
   statement &operator=(statement &&x) noexcept {
     statement_ = std::move(x.statement_);
-    object_binder_ = std::move(x.object_binder_);
     logger_ = std::move(x.logger_);
     return *this;
   }
@@ -71,7 +68,7 @@ public:
    *
    * @return The number of affected rows
    */
-  utils::result<size_t, sql_error> execute();
+  [[nodiscard]] utils::result<size_t, sql_error> execute() const;
 
   /**
    * Fetches the result of the prepared
@@ -83,7 +80,7 @@ public:
    * @return The query result set
    */
   template<class Type>
-  query_result<Type> fetch();
+  utils::result<query_result<Type>, sql_error> fetch();
   /**
    * Fetches the result of the prepared
    * statement. The type is record representing an
@@ -94,32 +91,32 @@ public:
    *
    * @return The query result set
    */
-  query_result<record> fetch();
+  [[nodiscard]] utils::result<query_result<record>, sql_error> fetch() const;
   /**
    * Fetches the first result of a prepared statement.
    * If prepared statement is empty or not
-   * a SELECT statement an nullptr is returned.
+   * a SELECT statement a nullptr is returned.
    *
    * @tparam Type Type of the fetched result
    * @return The query result set
    */
   template<class Type>
-  std::unique_ptr<Type> fetch_one();
+  utils::result<std::unique_ptr<Type>, sql_error> fetch_one();
   /**
    * Fetches the first result of a prepared statement.
    * The type is record representing an unknown variable type.
    * If prepared statement is empty or not
-   * a SELECT statement an nullptr is returned.
+   * a SELECT statement a nullptr is returned.
    *
    * @return The query result set
    */
-  std::optional<record> fetch_one();
+  [[nodiscard]] utils::result<std::optional<record>, sql_error> fetch_one() const;
 
   /**
    * Resets the prepared statement to
    * reuse it.
    */
-  void reset();
+  void reset() const;
 
 private:
   template<class Type>
@@ -127,7 +124,6 @@ private:
 
 private:
   std::unique_ptr<statement_impl> statement_;
-  object_parameter_binder object_binder_;
   std::shared_ptr<basic_sql_logger> logger_;
 };
 
@@ -139,25 +135,34 @@ statement &statement::bind(size_t pos, Type &value) {
 
 template<class Type>
 statement &statement::bind(const Type &obj) {
-  object_binder_.reset();
-  matador::access::process(object_binder_, obj);
+  statement_->bind_object(obj);
   return *this;
 }
 
 template<class Type>
-query_result<Type> statement::fetch() {
-  return query_result<Type>(statement_->fetch());
+utils::result<query_result<Type>, sql_error> statement::fetch() {
+  return statement_->fetch().and_then([](std::unique_ptr<query_result_impl> &&value) {
+    return utils::ok(query_result<Type>(std::forward<decltype(value)>(value)));
+  });
+//  if (!result.is_ok()) {
+//    return utils::error(result.err());
+//  }
+//  return query_result<Type>(result.release());
 }
 
 template<class Type>
-std::unique_ptr<Type> statement::fetch_one() {
-  auto result = query_result<Type>(statement_->fetch());
-  auto first = result.begin();
-  if (first == result.end()) {
-    return nullptr;
+utils::result<std::unique_ptr<Type>, sql_error> statement::fetch_one() {
+  auto result = statement_->fetch();
+  if (!result.is_ok()) {
+    return utils::error(result.err());
+  }
+  auto records = query_result<Type>(result.release());
+  auto first = records.begin();
+  if (first == records.end()) {
+    return utils::ok(std::unique_ptr<Type>{nullptr});
   }
 
-  return std::unique_ptr<Type>{first.release()};
+  return utils::ok(std::unique_ptr<Type>{first.release()});
 }
 }
 

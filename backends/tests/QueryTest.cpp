@@ -24,7 +24,7 @@ TEST_CASE_METHOD(QueryFixture, "Create table with foreign key relation", "[query
   REQUIRE(res.is_ok());
   REQUIRE(*res == 0);
 
-  REQUIRE(db.exists("airplane"));
+  check_table_exists("airplane");
   tables_to_drop.emplace("airplane");
 
   res = query::create()
@@ -33,7 +33,7 @@ TEST_CASE_METHOD(QueryFixture, "Create table with foreign key relation", "[query
   REQUIRE(res.is_ok());
   REQUIRE(*res == 0);
 
-  REQUIRE(db.exists("flight"));
+  check_table_exists("flight");
   tables_to_drop.emplace("flight");
 }
 
@@ -46,7 +46,7 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[q
   REQUIRE(res.is_ok());
   REQUIRE(*res == 0);
 
-  REQUIRE(db.exists("person"));
+  check_table_exists("person");
   tables_to_drop.emplace("person");
 
   person george{7, "george", 45};
@@ -64,8 +64,9 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[q
     .from("person")
     .where("id"_col == 7)
     .fetch_all(db);
+  REQUIRE(result_record.is_ok());
 
-  for (const auto &i: result_record) {
+  for (const auto &i: *result_record) {
     REQUIRE(i.size() == 4);
     REQUIRE(i.at(0).name() == "id");
     REQUIRE(i.at(0).is_integer());
@@ -83,8 +84,9 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[q
     .from("person")
     .where("id"_col == 7)
     .fetch_all<person>(db);
+  REQUIRE(result_person.is_ok());
 
-  for (const auto &i: result_person) {
+  for (const auto &i: *result_person) {
     REQUIRE(i.id == 7);
     REQUIRE(i.name == "george");
     REQUIRE(i.age == 45);
@@ -118,8 +120,9 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query]")
     .from("person")
     .where("id"_col == 7)
     .fetch_all(db);
+  REQUIRE(result_record.is_ok());
 
-  for (const auto &i: result_record) {
+  for (const auto &i: *result_record) {
     REQUIRE(i.size() == 3);
     REQUIRE(i.at(0).name() == "id");
     REQUIRE(i.at(0).is_integer());
@@ -172,8 +175,9 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query]")
 
   auto count = query::select({count_all()})
     .from("airplane")
-    .fetch_value<int>(db).value();
-  REQUIRE(count == 3);
+    .fetch_value<int>(db);
+  REQUIRE(count.is_ok());
+  REQUIRE(*count == 3);
 
   flight f4711{4, planes.at(1), "hans"};
 
@@ -184,12 +188,14 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query]")
   REQUIRE(res.is_ok());
   REQUIRE(*res == 1);
 
-  auto f = *query::select(column_generator::generate<flight>(schema, true))
+  auto f = query::select(column_generator::generate<flight>(schema, true))
     .from("flight")
-    .fetch_all(db).begin();
-  REQUIRE(f.at(0).as<unsigned long>() == 4);
-  REQUIRE(f.at(1).as<unsigned long>() == 2);
-  REQUIRE(f.at(2).as<std::string>() == "hans");
+    .fetch_one(db);
+  REQUIRE(f.is_ok());
+
+  REQUIRE(f.value()->at(0).as<unsigned long>() == 4);
+  REQUIRE(f.value()->at(1).as<unsigned long>() == 2);
+  REQUIRE(f.value()->at(2).as<std::string>() == "hans");
 }
 
 TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left", "[query][join_left]")
@@ -250,12 +256,14 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left"
     REQUIRE(*res == 1);
   }
 
-  auto f = *query::select(column_generator::generate<flight>(schema, true))
+  auto f = query::select(column_generator::generate<flight>(schema, true))
     .from("flight")
-    .fetch_all(db).begin();
-  REQUIRE(f.at(0).as<unsigned long>() == 4);
-  REQUIRE(f.at(1).as<unsigned long>() == 1);
-  REQUIRE(f.at(2).as<std::string>() == "hans");
+    .fetch_one(db);
+  REQUIRE(f.is_ok());
+  REQUIRE(f->has_value());
+  REQUIRE(f.value()->at(0).as<unsigned long>() == 4);
+  REQUIRE(f.value()->at(1).as<unsigned long>() == 1);
+  REQUIRE(f.value()->at(2).as<std::string>() == "hans");
 
   auto result = query::select({"f.id", "ap.brand", "ap.model", "f.pilot_name"})
     .from({"flight", "f"})
@@ -263,6 +271,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left"
     .on("f.airplane_id"_col == "ap.id"_col)
     .order_by("f.id").asc()
     .fetch_all(db);
+  REQUIRE(result.is_ok());
 
   std::vector<std::pair<unsigned long, std::string>> expected_result {
     {4, "hans"},
@@ -271,7 +280,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left"
     {7, "paul"}
   };
   size_t index{0};
-  for (const auto &r: result) {
+  for (const auto &r: *result) {
     REQUIRE(r.size() == 4);
     REQUIRE(r.at(0).as<unsigned long>() == expected_result[index].first);
     REQUIRE(r.at(3).as<std::string>() == expected_result[index++].second);
@@ -316,8 +325,10 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and for single
 
   auto count = query::select({count_all()})
     .from("airplane")
-    .fetch_value<int>(db).value();
-  REQUIRE(count == 3);
+    .fetch_value<int>(db);
+  REQUIRE(count.is_ok());
+  REQUIRE(count->has_value());
+  REQUIRE(count->value() == 3);
 
   std::vector<matador::object_ptr<flight>> flights{
     matador::object_ptr<flight>(new flight{4, planes.at(0), "hans"}),
@@ -338,10 +349,11 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and for single
   auto f = query::select(column_generator::generate<flight>(schema, true))
     .from("flight")
     .fetch_one(db);
-  REQUIRE(f.has_value());
-  REQUIRE(f->at(0).as<unsigned long>() == 4);
-  REQUIRE(f->at(1).as<unsigned long>() == 1);
-  REQUIRE(f->at(2).as<std::string>() == "hans");
+  REQUIRE(f.is_ok());
+  REQUIRE(f->has_value());
+  REQUIRE(f.value()->at(0).as<unsigned long>() == 4);
+  REQUIRE(f.value()->at(1).as<unsigned long>() == 1);
+  REQUIRE(f.value()->at(2).as<std::string>() == "hans");
 
   auto result = query::select({"f.id", "f.airplane_id", "ap.brand", "ap.model", "f.pilot_name"})
     .from({"flight", "f"})
@@ -352,13 +364,14 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and for single
 
   auto expected_flight = flights[0];
 
-  REQUIRE(result);
-  REQUIRE(result->id == expected_flight->id);
-  REQUIRE(result->pilot_name == expected_flight->pilot_name);
-  REQUIRE(result->airplane.get());
-  REQUIRE(result->airplane->id == 1);
-  REQUIRE(result->airplane->model == "A380");
-  REQUIRE(result->airplane->brand == "Airbus");
+  REQUIRE(result.is_ok());
+  REQUIRE(*result);
+  REQUIRE(result.value()->id == expected_flight->id);
+  REQUIRE(result.value()->pilot_name == expected_flight->pilot_name);
+  REQUIRE(result.value()->airplane.get());
+  REQUIRE(result.value()->airplane->id == 1);
+  REQUIRE(result.value()->airplane->model == "A380");
+  REQUIRE(result.value()->airplane->brand == "Airbus");
 }
 
 TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship", "[query][join][many_to_many]") {
@@ -451,6 +464,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship"
     .join_left({"recipe_ingredients", "ri"})
     .on("r.id"_col == "ri.recipe_id"_col)
     .fetch_all(db);
+  REQUIRE(result.is_ok());
 
   std::vector<std::tuple<unsigned long, std::string, unsigned long>> expected_result_one_join {
     {7, "Apple Crumble", 1},
@@ -463,7 +477,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship"
     {9, "Fruit Salad", 3}
   };
   size_t index{0};
-  for (const auto &r: result) {
+  for (const auto &r: *result) {
     REQUIRE(r.size() == 3);
     REQUIRE(r.at(0).as<unsigned long>().value() == std::get<0>(expected_result_one_join[index]));
     REQUIRE(r.at(1).as<std::string>().value() == std::get<1>(expected_result_one_join[index]));
@@ -476,6 +490,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship"
     .join_left({"recipe_ingredients", "ri"}).on("r.id"_col == "ri.recipe_id"_col)
     .join_left({"ingredients", "i"}).on("ri.ingredient_id"_col == "i.id"_col)
     .fetch_all(db);
+  REQUIRE(result.is_ok());
 
   std::vector<std::tuple<unsigned long, std::string, unsigned long, std::string>> expected_result_two_joins {
     {7, "Apple Crumble", 1, "Apple"},
@@ -488,7 +503,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship"
     {9, "Fruit Salad", 3, "Pineapple"}
   };
   index = 0;
-  for (const auto &r: result) {
+  for (const auto &r: *result) {
     REQUIRE(r.size() == 4);
     REQUIRE(r.at(0).as<unsigned long>().value() == std::get<0>(expected_result_two_joins[index]));
     REQUIRE(r.at(1).as<std::string>().value() == std::get<1>(expected_result_two_joins[index]));
@@ -503,9 +518,10 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with many to many relationship"
     .join_left({"ingredients", "i"}).on("ri.ingredient_id"_col == "i.id"_col)
     .where("r.id"_col == 8)
     .fetch_all(db);
+  REQUIRE(result.is_ok());
 
   index = 3;
-  for (const auto &r: result) {
+  for (const auto &r: *result) {
     REQUIRE(r.size() == 4);
     REQUIRE(r.at(0).as<unsigned long>().value() == std::get<0>(expected_result_two_joins[index]));
     REQUIRE(r.at(1).as<std::string>().value() == std::get<1>(expected_result_two_joins[index]));

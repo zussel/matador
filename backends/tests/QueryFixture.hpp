@@ -15,6 +15,9 @@ public:
   QueryFixture();
   ~QueryFixture();
 
+  void check_table_exists(const std::string &table_name) const;
+  void check_table_not_exists(const std::string &table_name) const;
+
 protected:
   sql::connection db;
   sql::schema schema;

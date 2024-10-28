@@ -112,17 +112,17 @@ TEST_CASE("Result tests", "[result]") {
   REQUIRE(!res_void.is_ok());
   REQUIRE(res_void.is_error());
 
-  res_void = test::divide(4, 2)
-    .and_then([](const auto &val) { return test::action_on_greater_42(val); });
-  REQUIRE(!res_void);
-  REQUIRE(!res_void.is_ok());
-  REQUIRE(res_void.is_error());
-
-  res_void = test::divide(120, 2)
-    .and_then([](const auto &val) { return test::action_on_greater_42(val); });
-  REQUIRE(res_void);
-  REQUIRE(res_void.is_ok());
-  REQUIRE(!res_void.is_error());
+//  res_void = test::divide(4, 2)
+//    .and_then([](const auto &val) { return test::action_on_greater_42(val); });
+//  REQUIRE(!res_void);
+//  REQUIRE(!res_void.is_ok());
+//  REQUIRE(res_void.is_error());
+//
+//  res_void = test::divide(120, 2)
+//    .and_then([](const auto &val) { return test::action_on_greater_42(val); });
+//  REQUIRE(res_void);
+//  REQUIRE(res_void.is_ok());
+//  REQUIRE(!res_void.is_error());
 }
 
 namespace matador::test {

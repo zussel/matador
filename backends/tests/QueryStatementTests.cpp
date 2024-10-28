@@ -26,7 +26,7 @@ TEST_CASE_METHOD(QueryFixture, "Test create statement", "[query][statement][crea
   REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
-  REQUIRE(db.exists("person"));
+  check_table_exists("person");
   const std::vector<std::string> cols = {"id", "name", "age", "image"};
   const auto fields = db.describe("person");
 
@@ -48,7 +48,7 @@ TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][inse
   REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
-  REQUIRE(db.exists("person"));
+  check_table_exists("person");
 
   person george{1, "george", 45, {1,2,3,4}};
 
@@ -65,12 +65,13 @@ TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][inse
   auto row = query::select<person>(schema)
     .from("person")
     .fetch_one<person>(db);
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row != nullptr);
-  REQUIRE(row->id == 1);
-  REQUIRE(row->name == "george");
-  REQUIRE(row->age == 45);
-  REQUIRE(row->image == matador::utils::blob{1,2,3,4});
+  REQUIRE(*row != nullptr);
+  REQUIRE((*row)->id == 1);
+  REQUIRE((*row)->name == "george");
+  REQUIRE((*row)->age == 45);
+  REQUIRE((*row)->image == matador::utils::blob{1,2,3,4});
 }
 
 TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][update]") {
@@ -86,7 +87,7 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
   REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
-  REQUIRE(db.exists("person"));
+  check_table_exists("person");
 
   person george{1, "george", 45, {1,2,3,4}};
 
@@ -103,12 +104,13 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
   auto row = query::select<person>(schema)
     .from("person")
     .fetch_one<person>(db);
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row != nullptr);
-  REQUIRE(row->id == 1);
-  REQUIRE(row->name == "george");
-  REQUIRE(row->age == 45);
-  REQUIRE(row->image == matador::utils::blob{1,2,3,4});
+  REQUIRE(*row != nullptr);
+  REQUIRE((*row)->id == 1);
+  REQUIRE((*row)->name == "george");
+  REQUIRE((*row)->age == 45);
+  REQUIRE((*row)->image == matador::utils::blob{1,2,3,4});
 
   george.age = 36;
   george.image = {5,6,7,8};
@@ -126,12 +128,13 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
   row = query::select<person>(schema)
     .from("person")
     .fetch_one<person>(db);
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row != nullptr);
-  REQUIRE(row->id == 1);
-  REQUIRE(row->name == "george");
-  REQUIRE(row->age == 36);
-  REQUIRE(row->image == matador::utils::blob{5,6,7,8});
+  REQUIRE(*row != nullptr);
+  REQUIRE((*row)->id == 1);
+  REQUIRE((*row)->name == "george");
+  REQUIRE((*row)->age == 36);
+  REQUIRE((*row)->image == matador::utils::blob{5,6,7,8});
 }
 
 TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][delete]") {
@@ -147,7 +150,7 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
   REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
-  REQUIRE(db.exists("person"));
+  check_table_exists("person");
 
   stmt = query::insert()
     .into<person>("person", schema)
@@ -174,10 +177,12 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
     .where("name"_col == matador::utils::_)
     .prepare(db);
 
-  auto rows = select_stmt.bind(0, "jane")
+  auto rows = select_stmt
+    .bind(0, "jane")
     .fetch<person>();
+  REQUIRE(rows.is_ok());
 
-  for (const auto &r : rows) {
+  for (const auto &r : *rows) {
     constexpr size_t index = 1;
     REQUIRE(r.id == peoples[index].id);
     REQUIRE(r.name == peoples[index].name);
@@ -196,22 +201,27 @@ TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][dele
   REQUIRE(*res == 1);
 
   select_stmt.reset();
-  auto row = select_stmt.bind(0, "jane")
+  auto row = select_stmt
+    .bind(0, "jane")
     .fetch_one<person>();
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row == nullptr);
+  REQUIRE(*row == nullptr);
 
   stmt.reset();
-  res = stmt.bind(0, "merlin")
+  res = stmt
+    .bind(0, "merlin")
     .execute();
   REQUIRE(res.is_ok());
   REQUIRE(*res == 1);
 
   select_stmt.reset();
-  row = select_stmt.bind(0, "merlin")
+  row = select_stmt
+    .bind(0, "merlin")
     .fetch_one<person>();
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row == nullptr);
+  REQUIRE(*row == nullptr);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][statement][reuse]") {
@@ -227,7 +237,7 @@ TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][stateme
   REQUIRE(*res == 0);
   tables_to_drop.emplace("person");
 
-  REQUIRE(db.exists("person"));
+  check_table_exists("person");
 
   stmt = query::insert()
     .into<person>("person", schema)
@@ -254,9 +264,10 @@ TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][stateme
     .prepare(db);
 
   auto rows = stmt.fetch<person>();
+  REQUIRE(rows.is_ok());
 
   size_t index = 0;
-  for (const auto &r : rows) {
+  for (const auto &r : *rows) {
     REQUIRE(r.id == peoples[index].id);
     REQUIRE(r.name == peoples[index].name);
     REQUIRE(r.age == peoples[index].age);
@@ -267,9 +278,10 @@ TEST_CASE_METHOD(QueryFixture, "Test reuse prepared statement", "[query][stateme
   stmt.reset();
 
   rows = stmt.fetch<person>();
+  REQUIRE(rows.is_ok());
 
   index = 0;
-  for (const auto &r : rows) {
+  for (const auto &r : *rows) {
     REQUIRE(r.id == peoples[index].id);
     REQUIRE(r.name == peoples[index].name);
     REQUIRE(r.age == peoples[index].age);

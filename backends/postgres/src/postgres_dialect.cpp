@@ -23,6 +23,7 @@
         {matador::data_type::type_time, "TIMESTAMP"},
         {matador::data_type::type_blob, "BYTEA"}
     })
+    .with_bool_strings("TRUE", "FALSE")
     .with_default_schema_name("public")
     .build();
   return &d;

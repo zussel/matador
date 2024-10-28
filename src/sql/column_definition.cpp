@@ -69,6 +69,11 @@ const std::string &column_definition::ref_column() const
   return ref_column_;
 }
 
+bool column_definition::is_foreign_reference() const
+{
+  return !ref_column_.empty() && !ref_table_.empty();
+}
+
 bool column_definition::is_integer() const
 {
   return type_ >= data_type::type_char && type_ <= data_type::type_unsigned_long_long;

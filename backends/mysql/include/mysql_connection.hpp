@@ -34,14 +34,14 @@ public:
   [[nodiscard]] bool is_valid() const override;
   [[nodiscard]] version client_version() const override;
   [[nodiscard]] version server_version() const override;
-  std::unique_ptr<sql::query_result_impl> fetch(const sql::query_context &context) override;
+  utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch(const sql::query_context &context) override;
   std::unique_ptr<sql::statement_impl> prepare(sql::query_context context) override;
 
-  size_t execute(const std::string &stmt) override;
+  utils::result<size_t, sql::sql_error> execute(const std::string &stmt) override;
 
   std::vector<sql::column_definition> describe(const std::string& table) override;
 
-  bool exists(const std::string &schema_name, const std::string &table_name) override;
+  utils::result<bool, sql::sql_error> exists(const std::string &schema_name, const std::string &table_name) override;
   [[nodiscard]] std::string to_escaped_string( const utils::blob& value ) const override;
 
 private:

@@ -32,13 +32,15 @@ utils::result<size_t, sql::sql_error> sqlite_statement::execute()
   return utils::ok(static_cast<size_t>(sqlite3_changes(db_)));
 }
 
-std::unique_ptr<sql::query_result_impl> sqlite_statement::fetch()
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> sqlite_statement::fetch()
 {
   const int ret = sqlite3_reset(stmt_);
-  throw_sqlite_error(ret, db_, "sqlite3_reset");
+  if (ret != SQLITE_OK && ret != SQLITE_DONE) {
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, std::to_string(ret), sqlite3_errmsg(db_), "sqlite3"});
+  }
 
   auto reader = std::make_unique<sqlite_prepared_result_reader>(db_, stmt_);
-  return std::make_unique<sql::query_result_impl>(std::move(reader), query_.prototype);
+  return utils::ok(std::make_unique<sql::query_result_impl>(std::move(reader), query_.prototype));
 }
 
 void sqlite_statement::reset()

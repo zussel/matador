@@ -58,6 +58,7 @@ public:
   [[nodiscard]] data_type type() const;
   [[nodiscard]] const std::string& ref_table() const;
   [[nodiscard]] const std::string& ref_column() const;
+  [[nodiscard]] bool is_foreign_reference() const;
 
   [[nodiscard]] bool is_integer() const;
   [[nodiscard]] bool is_floating_point() const;

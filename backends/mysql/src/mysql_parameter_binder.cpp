@@ -46,6 +46,31 @@ void bind_value(enum_field_types type, const char *value, size_t, MYSQL_BIND &bi
   is_null = false;
 }
 
+void bind_value(enum_field_types type, const unsigned char *value, size_t size, MYSQL_BIND &bind, my_bool &is_null)
+{
+  std::size_t len(size + 1);
+  if (bind.buffer_length < len) {
+    // reallocate memory
+    delete [] static_cast<unsigned char*>(bind.buffer);
+    bind.buffer = nullptr;
+    bind.buffer_length = 0;
+    bind.buffer_type = type;
+    bind.is_null = &is_null;
+  }
+  if (bind.buffer == nullptr) {
+    // allocating memory
+    bind.buffer = new unsigned char[len];
+    memset(bind.buffer, 0, len);
+  }
+  bind.buffer_length = (unsigned long)(len - 1);
+#ifdef _MSC_VER
+  strncpy_s(static_cast<char*>(bind.buffer), len, reinterpret_cast<const char*>(value), _TRUNCATE);
+#else
+  strncpy(static_cast<char*>(bind.buffer), reinterpret_cast<const char*>(value), len);
+#endif
+  is_null = false;
+}
+
 //void bind_value(enum_field_types type, const matador::date &x, MYSQL_BIND &bind, my_bool &is_null)
 //{
 //  if (bind.buffer == nullptr) {
@@ -183,41 +208,56 @@ void mysql_parameter_binder::write_value(size_t pos, const std::string &x, size_
 
 void mysql_parameter_binder::write_value(size_t pos, const utils::blob &x)
 {
-  //Todo
-  // detail::bind_value(MYSQL_TYPE_BLOB, x.data(), x.size(), bind_params_[pos], is_null_vector[pos].is_null);
+   detail::bind_value(MYSQL_TYPE_BLOB, x.data(), x.size(), bind_params_[pos], is_null_vector[pos].is_null);
+}
+
+void mysql_parameter_binder::write_value(size_t pos, const time& x)
+{
+  auto &bind = bind_params_[pos];
+  if (bind.buffer == nullptr) {
+    size_t s = sizeof(MYSQL_TIME);
+    bind.buffer = new char[s];
+    bind.buffer_length = (unsigned long)s;
+    bind.buffer_type = MYSQL_TYPE_TIMESTAMP;
+    bind.length = nullptr;
+    bind.is_null = &is_null_vector[pos].is_null;
+  }
+  memset(bind.buffer, 0, sizeof(MYSQL_TIME));
+  // is_null = false;
+  auto *mt = static_cast<MYSQL_TIME*>(bind.buffer);
+  mt->day = static_cast<unsigned int>(x.day());
+  mt->month = static_cast<unsigned int>(x.month());
+  mt->year = static_cast<unsigned int>(x.year());
+  mt->hour = static_cast<unsigned int>(x.hour());
+  mt->minute = static_cast<unsigned int>(x.minute());
+  mt->second = static_cast<unsigned int>(x.second());
+  mt->second_part = x.milli_second() * 1000;
+  mt->time_type  = MYSQL_TIMESTAMP_DATETIME;
+}
+
+void mysql_parameter_binder::write_value(size_t pos, const date& x)
+{
+  auto &bind = bind_params_[pos];
+  if (bind.buffer == nullptr) {
+    size_t s = sizeof(MYSQL_TIME);
+    bind.buffer = new char[s];
+    bind.buffer_length = (unsigned long)s;
+    bind.is_null = &is_null_vector[pos].is_null;
+    bind.buffer_type = MYSQL_TYPE_DATE;
+    bind.length = nullptr;
+  }
+  memset(bind.buffer, 0, sizeof(MYSQL_TIME));
+  is_null_vector[pos].is_null = false;
+  auto *mt = static_cast<MYSQL_TIME*>(bind.buffer);
+  mt->day = (unsigned int)x.day();
+  mt->month = (unsigned int)x.month();
+  mt->year = (unsigned int)x.year();
+  mt->time_type  = MYSQL_TIMESTAMP_DATE;
 }
 
 std::vector<MYSQL_BIND> &mysql_parameter_binder::bind_params()
 {
   return bind_params_;
-}
-
-void mysql_parameter_binder::write_value( size_t pos, const time& x )
-{
-  // if (bind.buffer == nullptr) {
-  //   size_t s = sizeof(MYSQL_TIME);
-  //   bind.buffer = new char[s];
-  //   bind.buffer_length = (unsigned long)s;
-  //   bind.buffer_type = MYSQL_TYPE_TIMESTAMP;
-  //   bind.length = nullptr;
-  //   bind.is_null = &is_null;
-  // }
-  // memset(bind.buffer, 0, sizeof(MYSQL_TIME));
-  // // is_null = false;
-  // auto *mt = static_cast<MYSQL_TIME*>(bind.buffer);
-  // mt->day = static_cast<unsigned int>(x.day());
-  // mt->month = static_cast<unsigned int>(x.month());
-  // mt->year = static_cast<unsigned int>(x.year());
-  // mt->hour = static_cast<unsigned int>(x.hour());
-  // mt->minute = static_cast<unsigned int>(x.minute());
-  // mt->second = static_cast<unsigned int>(x.second());
-  // mt->second_part = x.milli_second() * 1000;
-  // mt->time_type  = MYSQL_TIMESTAMP_DATETIME;
-}
-
-void mysql_parameter_binder::write_value( size_t pos, const date& date )
-{
-
 }
 
 }

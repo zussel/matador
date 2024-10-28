@@ -5,7 +5,6 @@ namespace matador::sql {
 
 statement::statement(std::unique_ptr<statement_impl> impl, const std::shared_ptr<basic_sql_logger> &logger)
 : statement_(std::move(impl))
-, object_binder_(statement_->binder())
 , logger_(logger)
 {}
 
@@ -21,31 +20,39 @@ statement &statement::bind(const size_t pos, std::string &val, const size_t size
   return *this;
 }
 
-utils::result<size_t, sql_error> statement::execute()
+utils::result<size_t, sql_error> statement::execute() const
 {
 //  logger_.info(statement_->query_.sql);
   return statement_->execute();
 }
 
-query_result<record> statement::fetch()
+utils::result<query_result<record>, sql_error> statement::fetch() const
 {
-//  logger_.info(statement_->query_.sql);
-  return query_result<record>{statement_->fetch()};
-}
-
-std::optional<record> statement::fetch_one()
-{
-//  logger_.info(statement_->query_.sql);
-  query_result<record> result(statement_->fetch());
-  auto first = result.begin();
-  if (first == result.end()) {
-    return std::nullopt;
+  auto result = statement_->fetch();
+  if (!result.is_ok()) {
+    return utils::error(result.err());
   }
-
-  return {*first.release()};
+//  logger_.info(statement_->query_.sql);
+  return utils::ok(query_result<record>{std::move(*result)});
 }
 
-void statement::reset()
+utils::result<std::optional<record>, sql_error> statement::fetch_one() const {
+    //  logger_.info(statement_->query_.sql);
+    auto result = statement_->fetch();
+    if (!result.is_ok()) {
+        return utils::error(result.err());
+    }
+
+    query_result<record> records(std::move(*result));
+    auto first = records.begin();
+    if (first == records.end()) {
+        return utils::ok(std::optional<record>{std::nullopt});
+    }
+
+    return utils::ok(std::optional{*first.release()});
+}
+
+void statement::reset() const
 {
   statement_->reset();
 }

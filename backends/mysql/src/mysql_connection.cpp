@@ -172,6 +172,8 @@ data_type string2type(const std::string &type_string) {
     return data_type::type_varchar;
   } else if (strncmp(type_string.c_str(), "text", 4) == 0) {
     return data_type::type_text;
+  } else if (strncmp(type_string.c_str(), "blob", 4) == 0) {
+    return data_type::type_blob;
   } else {
     return data_type::type_unknown;
   }
@@ -183,7 +185,7 @@ struct type_info {
 };
 
 type_info determine_type_info(const std::string &type_string) {
-  static const std::regex TYPE_REGEX(R"(^(\w+)(\((\d+)(,(\d+))?\))?$)");
+  static const std::regex TYPE_REGEX(R"(^(\w+)(\((\d+)(,(\d+))?\))?(\s(\w+))?$)");
   std::smatch matcher;
 
   type_info result;
@@ -196,29 +198,33 @@ type_info determine_type_info(const std::string &type_string) {
   return result;
 }
 
-std::unique_ptr<sql::query_result_impl> mysql_connection::fetch(const sql::query_context &context) {
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> mysql_connection::fetch(const sql::query_context &context) {
   if (mysql_query(mysql_.get(), context.sql.c_str())) {
-    throw_mysql_error(mysql_.get(), context.sql);
+    return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, mysql_.get(), context.sql));
   }
 
   auto result = mysql_store_result(mysql_.get());
   if (result == nullptr) {
-    throw_mysql_error(mysql_.get(), context.sql);
+    return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, mysql_.get(), context.sql));
   }
 
   auto field_count = mysql_num_fields(result);
-  const auto fields = mysql_fetch_fields(result);
-  std::vector<sql::column_definition> prototype;
-  for (unsigned i = 0; i < field_count; ++i) {
-    auto type = to_type(fields[i].type, fields[i].flags);
-    auto options = to_constraints(fields[i].flags);
-    auto null_opt = to_null_option(fields[i].flags);
-
-    prototype.emplace_back(fields[i].name, type, options, null_opt);
+  if (field_count != context.prototype.size()) {
+    return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, "Invalid count of result columns", context.sql));
   }
 
-  return std::move(std::make_unique<sql::query_result_impl>(std::make_unique<mysql_result_reader>(result, field_count),
-                                                            std::move(prototype)));
+//  const auto fields = mysql_fetch_fields(result);
+//  std::vector<sql::column_definition> prototype;
+//  for (unsigned i = 0; i < field_count; ++i) {
+//    auto type = to_type(fields[i].type, fields[i].flags);
+//    auto options = to_constraints(fields[i].flags);
+//    auto null_opt = to_null_option(fields[i].flags);
+//
+//    prototype.emplace_back(fields[i].name, type, options, null_opt);
+//  }
+
+  return utils::ok(std::make_unique<sql::query_result_impl>(std::make_unique<mysql_result_reader>(result, field_count),
+                                                            context.prototype));
 }
 
 std::unique_ptr<sql::statement_impl> mysql_connection::prepare(sql::query_context context) {
@@ -234,12 +240,12 @@ std::unique_ptr<sql::statement_impl> mysql_connection::prepare(sql::query_contex
   return std::make_unique<mysql_statement>(stmt, std::move(context));
 }
 
-size_t mysql_connection::execute(const std::string &stmt) {
+utils::result<size_t, sql::sql_error> mysql_connection::execute(const std::string &stmt) {
   if (mysql_query(mysql_.get(), stmt.c_str())) {
-    throw_mysql_error(mysql_.get(), stmt);
+    return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, mysql_.get(), stmt));
   }
 
-  return mysql_affected_rows(mysql_.get());
+  return utils::ok(static_cast<size_t>(mysql_affected_rows(mysql_.get())));
 }
 
 std::vector<sql::column_definition> mysql_connection::describe(const std::string &table) {
@@ -272,21 +278,21 @@ std::vector<sql::column_definition> mysql_connection::describe(const std::string
   return prototype;
 }
 
-bool mysql_connection::exists(const std::string &/*schema_name*/, const std::string &table_name) {
+utils::result<bool, sql::sql_error> mysql_connection::exists(const std::string &/*schema_name*/, const std::string &table_name) {
   const std::string stmt(
     "SELECT 1 FROM information_schema.tables WHERE table_schema = '" + info().database + "' AND table_name = '" +
     table_name + "'");
 
   if (mysql_query(mysql_.get(), stmt.c_str())) {
-    throw_mysql_error(mysql_.get(), stmt);
+    return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, mysql_.get(), stmt));
   }
 
   const auto result = mysql_store_result(mysql_.get());
   if (result == nullptr) {
-    throw_mysql_error(mysql_.get(), stmt);
+    return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, mysql_.get(), stmt));
   }
 
-  return result->row_count == 1;
+  return utils::ok(result->row_count == 1);
 }
 
 std::string mysql_connection::to_escaped_string( const utils::blob& value ) const

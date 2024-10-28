@@ -79,12 +79,16 @@ public:
       return utils::error(session_error{session_error_code::FailedToBuildQuery, "failed to build query"});
     }
 
-    auto obj = build_select_query(data.release()).template fetch_one<Type>(*c);
+    auto result = build_select_query(data.release()).template fetch_one<Type>(*c);
 
-    if (!obj) {
+    if (result.is_error()) {
+      return utils::error(session_error{session_error_code::UnknownType, result.err().error_message()});
+    }
+    if (result.is_ok() && !result->get()) {
       return utils::error(session_error{session_error_code::FailedToFindObject, "failed to find object"});
     }
-    return utils::ok(object_ptr<Type>{ obj.release() });
+
+    return utils::ok(object_ptr<Type>{ result->release() });
   }
 
   template<typename Type>
@@ -104,7 +108,11 @@ public:
       return utils::error(session_error{session_error_code::FailedToBuildQuery, "failed to build query"});
     }
 
-    return utils::ok(build_select_query(data.release()).template fetch_all<Type>(*c));
+    auto result = build_select_query(data.release()).template fetch_all<Type>(*c);
+    if (!result.is_ok()) {
+      return utils::error(session_error{session_error_code::FailedToFindObject, "failed to find object", result.err()});
+    }
+    return utils::ok(result.release());
   }
 
   template<typename Type>

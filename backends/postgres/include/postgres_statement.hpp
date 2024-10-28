@@ -16,7 +16,7 @@ public:
   postgres_statement(PGconn *db, PGresult *result, std::string name, const sql::query_context &query);
 
   utils::result<size_t, sql::sql_error> execute() override;
-  std::unique_ptr<sql::query_result_impl> fetch() override;
+  utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch() override;
   void reset() override;
 protected:
   object::attribute_writer& binder() override;

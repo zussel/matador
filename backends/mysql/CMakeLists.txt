@@ -6,6 +6,9 @@ set(HEADER
   include/mysql_statement.hpp
   include/mysql_parameter_binder.hpp
   include/mysql_prepared_result_reader.hpp
+  include/mysql_result_binder.hpp
+  include/mysql_result_info.hpp
+  include/mysql_bool.hpp
 )
 
 set(SOURCES
@@ -16,6 +19,8 @@ set(SOURCES
   src/mysql_statement.cpp
   src/mysql_parameter_binder.cpp
   src/mysql_prepared_result_reader.cpp
+  src/mysql_result_binder.cpp
+  src/mysql_result_info.cpp
 )
 
 set(LIBRARY_TARGET matador-mysql)

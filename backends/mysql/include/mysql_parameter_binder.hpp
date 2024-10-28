@@ -3,6 +3,8 @@
 
 #include "matador/object/attribute_writer.hpp"
 
+#include "mysql_result_info.hpp"
+
 #ifdef _MSC_VER
 #include <mysql.h>
 #else
@@ -12,24 +14,6 @@
 #include <vector>
 
 namespace matador::backends::mysql {
-
-struct mysql_result_info
-{
-  unsigned long length = 0;
-  my_bool is_null = false;
-  my_bool error = false;
-//  std::unique_ptr<char[]> buffer;
-  char *buffer = nullptr;
-  unsigned long buffer_length = 0;
-  bool is_allocated = false;
-
-  ~mysql_result_info()
-  {
-    if (is_allocated) {
-      delete [] buffer;
-    }
-  }
-};
 
 class mysql_parameter_binder final : public object::attribute_writer
 {

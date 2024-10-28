@@ -59,9 +59,9 @@ std::vector<sql::column_definition> noop_connection::describe(const std::string 
   return {};
 }
 
-bool noop_connection::exists(const std::string &/*schema_name*/, const std::string &/*table_name*/)
+utils::result<bool, sql_error> noop_connection::exists(const std::string &/*schema_name*/, const std::string &/*table_name*/)
 {
-  return false;
+  return utils::ok(false);
 }
 
 std::string noop_connection::to_escaped_string(const utils::blob& value) const

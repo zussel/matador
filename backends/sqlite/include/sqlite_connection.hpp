@@ -31,14 +31,14 @@ public:
   [[nodiscard]] version client_version() const override;
   [[nodiscard]] version server_version() const override;
 
-  std::unique_ptr<sql::query_result_impl> fetch(const sql::query_context& context) override;
+  utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch(const sql::query_context& context) override;
   std::unique_ptr<sql::statement_impl> prepare(sql::query_context query) override;
 
   utils::result<size_t, sql::sql_error> execute(const std::string &stmt) override;
 
   std::vector<sql::column_definition> describe(const std::string& table) override;
 
-  bool exists(const std::string &schema_name, const std::string &table_name) override;
+  utils::result<bool, sql::sql_error> exists(const std::string &schema_name, const std::string &table_name) override;
 
   [[nodiscard]] std::string to_escaped_string( const utils::blob& value ) const override;
 
@@ -52,7 +52,7 @@ private:
 private:
   static int parse_result(void* param, int column_count, char** values, char** columns);
 
-  [[nodiscard]] fetch_context fetch_internal(const std::string &stmt) const;
+  [[nodiscard]] utils::result<fetch_context, sql::sql_error> fetch_internal(const std::string &stmt) const;
 
 private:
   sqlite3 *db_{};

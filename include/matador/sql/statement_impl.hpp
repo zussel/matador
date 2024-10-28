@@ -3,6 +3,7 @@
 
 #include "matador/sql/query_context.hpp"
 #include "matador/sql/query_result_impl.hpp"
+#include "matador/sql/object_parameter_binder.hpp"
 
 #include "matador/object/attribute_writer.hpp"
 #include "matador/object/data_type_traits.hpp"
@@ -22,7 +23,14 @@ public:
   virtual ~statement_impl() = default;
 
   virtual utils::result<size_t, sql_error> execute() = 0;
-  virtual std::unique_ptr<query_result_impl> fetch() = 0;
+  virtual utils::result<std::unique_ptr<query_result_impl>, sql_error> fetch() = 0;
+
+  template < class Type >
+  void bind_object(Type &obj)
+  {
+    object_binder_.reset();
+    object_binder_.bind(obj, binder());
+  }
 
   template < class Type >
   void bind(size_t pos, Type &val)
@@ -45,6 +53,8 @@ protected:
   friend class statement;
 
   query_context query_;
+
+  object_parameter_binder object_binder_;
 };
 
 }

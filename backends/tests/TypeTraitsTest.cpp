@@ -43,12 +43,12 @@ TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with typ
       .from("location")
       .fetch_one<location>(db);
 
-    REQUIRE(result != nullptr);
-    REQUIRE(result->name == "center");
-    REQUIRE(result->color == Color::Black);
-    REQUIRE(result->coord.x == 1);
-    REQUIRE(result->coord.y == 2);
-    REQUIRE(result->coord.z == 3);
+    REQUIRE(result.is_ok());
+    REQUIRE((*result)->name == "center");
+    REQUIRE((*result)->color == Color::Black);
+    REQUIRE((*result)->coord.x == 1);
+    REQUIRE((*result)->coord.y == 2);
+    REQUIRE((*result)->coord.z == 3);
   }
 
   SECTION("Insert and select with prepared statement") {
@@ -69,11 +69,11 @@ TEST_CASE_METHOD(TypeTraitsTestFixture, "Special handling of attributes with typ
       .from("location")
       .fetch_one<location>(db);
 
-    REQUIRE(result != nullptr);
-    REQUIRE(result->name == "center");
-    REQUIRE(result->color == Color::Black);
-    REQUIRE(result->coord.x == 1);
-    REQUIRE(result->coord.y == 2);
-    REQUIRE(result->coord.z == 3);
+    REQUIRE(result.is_ok());
+    REQUIRE((*result)->name == "center");
+    REQUIRE((*result)->color == Color::Black);
+    REQUIRE((*result)->coord.x == 1);
+    REQUIRE((*result)->coord.y == 2);
+    REQUIRE((*result)->coord.z == 3);
   }
 }

@@ -88,14 +88,15 @@ int sqlite_connection::parse_result(void *param, int column_count, char **values
   return 0;
 }
 
-sqlite_connection::fetch_context sqlite_connection::fetch_internal(const std::string &stmt) const {
+utils::result<sqlite_connection::fetch_context, sql::sql_error> sqlite_connection::fetch_internal(const std::string &stmt) const {
   fetch_context context;
   char *errmsg = nullptr;
-  const int ret = sqlite3_exec(db_, stmt.c_str(), parse_result, &context, &errmsg);
 
-  throw_sqlite_error(ret, db_, "sqlite", stmt);
+  if (const int ret = sqlite3_exec(db_, stmt.c_str(), parse_result, &context, &errmsg); ret != SQLITE_OK && ret != SQLITE_DONE) {
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, std::to_string(ret), sqlite3_errmsg(db_), "sqlite3", stmt});
+  }
 
-  return context;
+  return utils::ok(context);
 }
 
 utils::result<size_t, sql::sql_error> sqlite_connection::execute(const std::string &stmt) {
@@ -108,12 +109,14 @@ utils::result<size_t, sql::sql_error> sqlite_connection::execute(const std::stri
   return utils::ok(static_cast<size_t>(sqlite3_changes(db_)));
 }
 
-std::unique_ptr<sql::query_result_impl> sqlite_connection::fetch(const sql::query_context& context) {
-  auto [prototype, rows] = fetch_internal(context.sql);
-
-  return std::make_unique<sql::query_result_impl>(
-    std::make_unique<sqlite_result_reader>(std::move(rows), context.prototype.size()),
-    context.prototype);
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> sqlite_connection::fetch(const sql::query_context& context)
+{
+  return fetch_internal(context.sql).and_then(
+    [&context](const auto &ctx) {
+      return utils::ok(std::make_unique<sql::query_result_impl>(
+        std::make_unique<sqlite_result_reader>(std::move(ctx.rows), context.prototype.size()),
+        context.prototype));
+  });
 }
 
 std::unique_ptr<sql::statement_impl> sqlite_connection::prepare(sql::query_context query) {
@@ -172,8 +175,11 @@ data_type string2type(const char *type) {
 
 std::vector<sql::column_definition> sqlite_connection::describe(const std::string &table) {
   const auto result = fetch_internal("PRAGMA table_info(" + table + ")");
+  if (!result.is_ok()) {
+    return {};
+  }
 
-  sqlite_result_reader reader(result.rows, result.prototype.size());
+  sqlite_result_reader reader(result->rows, result->prototype.size());
   std::vector<sql::column_definition> prototype;
   while (reader.fetch()) {
     char *end = nullptr;
@@ -194,20 +200,24 @@ std::vector<sql::column_definition> sqlite_connection::describe(const std::strin
   return prototype;
 }
 
-bool sqlite_connection::exists(const std::string &/*schema_name*/, const std::string &table_name) {
+utils::result<bool, sql::sql_error> sqlite_connection::exists(const std::string &/*schema_name*/, const std::string &table_name) {
   const auto result = fetch_internal(
     "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND tbl_name='" + table_name + "' LIMIT 1");
-  sqlite_result_reader reader(result.rows, result.prototype.size());
+  if (!result.is_ok()) {
+    return utils::error(result.err());
+  }
+
+  sqlite_result_reader reader(result->rows, result->prototype.size());
 
   if (!reader.fetch()) {
     // Todo: throw an exception?
-    return false;
+    return utils::error(sql::sql_error{sql::sql_error_code::INVALID_QUERY, "", "", ""});
   }
 
   int v{};
   reader.read_value(nullptr, 0, v);
 
-  return v == 1;
+  return utils::ok(v == 1);
 }
 
 std::string sqlite_connection::to_escaped_string( const utils::blob& value ) const

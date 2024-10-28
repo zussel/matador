@@ -4,6 +4,7 @@
 #include "matador/sql/sql_error.hpp"
 
 #include <stdexcept>
+#include <unordered_set>
 
 namespace matador::sql {
 
@@ -23,13 +24,33 @@ const table_info& schema::attach(const std::type_index ti, const table_info& tab
 }
 
 utils::result<void, sql_error> schema::create(connection &db) {
+  std::unordered_set<std::string> created_tables;
   for (const auto &info : repository_) {
+    if (created_tables.count(info.second.name) > 0) {
+      continue;
+    }
+    for (const auto& col : info.second.prototype) {
+      if (col.is_foreign_reference() && created_tables.count(col.ref_table()) == 0) {
+        const auto it = repository_by_name_.find(col.ref_table());
+        if (it == repository_by_name_.end()) {
+          return utils::error(sql_error{sql_error_code::UNKNOWN_TABLE, "", "unknown table " + col.ref_table(), ""});
+        }
+        const auto res = query::create()
+        .table(it->second.get().name, it->second.get().prototype.columns())
+        .execute(db);
+        if (res.is_error()) {
+          return utils::error(res.err());
+        }
+        created_tables.insert(it->second.get().name);
+      }
+    }
     const auto res = query::create()
       .table(info.second.name, info.second.prototype.columns())
       .execute(db);
     if (res.is_error()) {
       return utils::error(res.err());
     }
+    created_tables.insert(info.second.name);
   }
 
   return utils::ok<void>();

@@ -188,19 +188,22 @@ std::vector<sql::column_definition> postgres_connection::describe(const std::str
     prototype.emplace_back(name, type, utils::null_attributes, null_opt, index);
   }
 
-  return std::move(prototype);
+  return prototype;
 }
 
-bool postgres_connection::exists(const std::string &schema_name, const std::string &table_name) {
+utils::result<bool, sql::sql_error> postgres_connection::exists(const std::string &schema_name, const std::string &table_name) {
   const std::string stmt(
     "SELECT 1 FROM information_schema.tables WHERE table_schema = '" + schema_name + "' AND table_name = '" + table_name
     + "'");
 
   PGresult *res = PQexec(conn_, stmt.c_str());
 
-  throw_postgres_error(res, conn_, "postgres", stmt);
+  if (const auto status = PQresultStatus(res); status != PGRES_COMMAND_OK &&
+                                               status != PGRES_TUPLES_OK) {
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, PQresultErrorField(res, PG_DIAG_SQLSTATE), PQerrorMessage(conn_), "postgres", stmt});
+  }
 
-  return utils::to_long_long(PQcmdTuples(res)) == 1;
+  return utils::ok(utils::to_long_long(PQcmdTuples(res)) == 1);
 }
 
 std::string postgres_connection::to_escaped_string(const utils::blob& value) const

@@ -11,6 +11,8 @@ enum class sql_error_code : uint8_t {
     INVALID_QUERY,
     UNKNOWN_TABLE,
     UNKNOWN_COLUMN,
+    BIND_FAILED,
+    EXECUTE_FAILED,
     FAILURE
 };
 

@@ -56,19 +56,24 @@ public:
   template < class Type >
   utils::result<query_result<Type>, sql_error> fetch_all(query_executor &executor)
   {
-    return query_result<Type>(fetch(executor));
+    auto result = fetch(executor);
+    if (!result.is_ok()) {
+      return utils::error(result.err());
+    }
+
+    return utils::ok(query_result<Type>(result.release()));
   }
   [[nodiscard]] utils::result<query_result<record>, sql_error> fetch_all(const query_executor &executor) const;
 
   template < class Type >
   utils::result<std::unique_ptr<Type>, sql_error> fetch_one(query_executor &executor)
   {
-    const auto result = fetch(executor);
+    auto result = fetch(executor);
     if (!result.is_ok()) {
       return utils::error(result.err());
     }
 
-    const auto objects = query_result<Type>(*result);
+    auto objects = query_result<Type>(result.release());
     auto first = objects.begin();
     if (first == objects.end()) {
       return utils::ok(std::unique_ptr<Type>{nullptr});

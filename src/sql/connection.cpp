@@ -119,12 +119,12 @@ std::vector<sql::column_definition> connection::describe(const std::string &tabl
   return connection_->describe(table_name);
 }
 
-bool connection::exists(const std::string &schema_name, const std::string &table_name) const
+utils::result<bool, sql_error> connection::exists(const std::string &schema_name, const std::string &table_name) const
 {
   return connection_->exists(schema_name, table_name);
 }
 
-bool connection::exists(const std::string &table_name) const
+utils::result<bool, sql_error> connection::exists(const std::string &table_name) const
 {
   return connection_->exists(dialect().default_schema_name(), table_name);
 }

@@ -52,6 +52,11 @@ public:
   {
     return at(col).as<Type>();
   }
+  template<class Type>
+  std::optional<Type> at(size_t index) const
+  {
+    return at(index).as<Type>();
+  }
 
   iterator find(const std::string &column_name);
   [[nodiscard]] const_iterator find(const std::string &column_name) const;

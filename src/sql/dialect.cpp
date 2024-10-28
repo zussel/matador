@@ -50,6 +50,17 @@ std::string dialect::prepare_condition(const column& col) const
   return result;
 }
 
+const std::string& dialect::to_string(const bool val) const
+{
+  return bool_strings_[static_cast<int>(val)];
+}
+
+void dialect::bool_strings(const std::string &true_string, const std::string &false_string)
+{
+  bool_strings_[0] = false_string;
+  bool_strings_[1] = true_string;
+}
+
 std::string dialect::prepare_identifier_string(const std::string &col) const
 {
   auto parts = utils::split(col, '.');

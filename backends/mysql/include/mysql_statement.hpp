@@ -17,10 +17,12 @@ class mysql_statement final : public sql::statement_impl
 {
 public:
   mysql_statement(MYSQL_STMT *stmt, const sql::query_context &query);
+  ~mysql_statement() override;
 
-  size_t execute() override;
-  std::unique_ptr<sql::query_result_impl> fetch() override;
+  utils::result<size_t, sql::sql_error> execute() override;
+  utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch() override;
   void reset() override;
+
 protected:
   object::attribute_writer& binder() override;
 

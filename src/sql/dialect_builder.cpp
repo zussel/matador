@@ -45,6 +45,13 @@ dialect_builder &dialect_builder::with_default_schema_name(const std::string &sc
   return *this;
 }
 
+dialect_builder &dialect_builder::with_bool_strings(const std::string &true_string, const std::string &false_string)
+{
+  dialect_.bool_strings(true_string, false_string);
+
+  return *this;
+}
+
 dialect_builder &dialect_builder::with_compiler(std::unique_ptr<query_compiler> &&compiler)
 {
   dialect_.compiler(std::move(compiler));

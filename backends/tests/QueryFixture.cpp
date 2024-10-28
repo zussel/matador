@@ -20,13 +20,33 @@ QueryFixture::~QueryFixture() {
     }
 }
 
+void QueryFixture::check_table_exists(const std::string &table_name) const
+{
+  auto result = db.exists(table_name);
+  REQUIRE(result.is_ok());
+  REQUIRE(*result);
+}
+
+void QueryFixture::check_table_not_exists(const std::string &table_name) const
+{
+  auto result = db.exists(table_name);
+  REQUIRE(result.is_ok());
+  REQUIRE(!*result);
+}
+
 void QueryFixture::drop_table_if_exists(const std::string &table_name) const {
-  if (db.exists(table_name)) {
-    std::ignore = sql::query::drop()
+  const auto result = db.exists(table_name).and_then([&table_name, this](bool exists) {
+    if (exists) {
+      if (sql::query::drop()
       .table(table_name)
-      .execute(db);
-    REQUIRE(!db.exists(table_name));
-  }
+      .execute(db).is_ok()) {
+        this->check_table_not_exists(table_name);
+      } else {
+        FAIL("Failed to drop table");
+      }
+    }
+    return utils::ok(true);
+  });
 }
 
 }

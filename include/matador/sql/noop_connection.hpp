@@ -20,7 +20,7 @@ public:
   utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch(const query_context &context) override;
   std::unique_ptr<statement_impl> prepare(query_context context) override;
   std::vector<sql::column_definition> describe(const std::string &table) override;
-  bool exists(const std::string &schema_name, const std::string &table_name) override;
+  utils::result<bool, sql_error> exists(const std::string &schema_name, const std::string &table_name) override;
 
   [[nodiscard]] std::string to_escaped_string( const utils::blob& value ) const override;
 

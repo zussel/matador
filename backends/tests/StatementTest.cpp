@@ -30,6 +30,7 @@ public:
     const auto res = query::create()
       .table<airplane>("airplane", schema)
       .execute(db);
+    REQUIRE(res.is_ok());
     tables_to_drop.emplace("airplane");
   }
 
@@ -63,8 +64,9 @@ TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]
       .from(ap)
       .fetch_all<airplane>(db);
 
+    REQUIRE(result.is_ok());
     size_t index{0};
-    for (const auto &i: result) {
+    for (const auto &i: *result) {
       REQUIRE(i.id == planes[index]->id);
       REQUIRE(i.brand == planes[index]->brand);
       REQUIRE(i.model == planes[index++]->model);
@@ -89,7 +91,8 @@ TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]
     auto result = stmt.bind(0, "Airbus")
       .fetch<airplane>();
 
-    for (const auto &i: result) {
+    REQUIRE(result.is_ok());
+    for (const auto &i: *result) {
       REQUIRE(i.id == planes[0]->id);
       REQUIRE(i.brand == planes[0]->brand);
       REQUIRE(i.model == planes[0]->model);
@@ -101,7 +104,8 @@ TEST_CASE_METHOD(StatementTestFixture, "Create prepared statement", "[statement]
       .fetch<airplane>();
 
     size_t index{1};
-    for (const auto &i: result) {
+    REQUIRE(result.is_ok());
+    for (const auto &i: *result) {
       REQUIRE(i.id == planes[index]->id);
       REQUIRE(i.brand == planes[index]->brand);
       REQUIRE(i.model == planes[index++]->model);

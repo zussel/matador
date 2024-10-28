@@ -54,7 +54,8 @@ void attribute_string_writer::write_value(size_t /*pos*/, const unsigned long lo
 }
 
 void attribute_string_writer::write_value(size_t /*pos*/, const bool& x ) {
-  result_ = "'" + conn_->dialect().prepare_literal(x ? "true" : "false") + "'";
+//  result_ = "'" + conn_->dialect().prepare_literal(x ? "true" : "false") + "'";
+  result_ = conn_->dialect().to_string(x);
 }
 
 void attribute_string_writer::write_value(size_t /*pos*/, const float& x ) {

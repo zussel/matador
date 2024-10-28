@@ -26,7 +26,7 @@ TEST_CASE_METHOD( QueryFixture, "Insert and select basic datatypes", "[query][da
     REQUIRE(*res == 0);
     tables_to_drop.emplace("types");
 
-    float float_value = 2.445566f;
+    float float_value = 2.44557f;
     double double_value = 11111.23433345;
     char cval = 'c';
     short sval = (std::numeric_limits<short>::min)();
@@ -80,28 +80,29 @@ TEST_CASE_METHOD( QueryFixture, "Insert and select basic datatypes", "[query][da
     auto result = query::select<types>(schema)
                   .from("types")
                   .fetch_one<types>(db);
-    REQUIRE(result != nullptr);
+    REQUIRE(result.is_ok());
+    REQUIRE(*result != nullptr);
 
-    REQUIRE(result->id_ == 1);
-    REQUIRE(result->char_ == cval);
-    REQUIRE(result->short_ == sval);
-    REQUIRE(result->int_ == ival);
-    REQUIRE(result->long_ == lval);
-    REQUIRE(result->long64_ == llval);
-    REQUIRE(result->unsigned_char_ == ucval);
-    REQUIRE(result->unsigned_short_ == usval);
-    REQUIRE(result->unsigned_int_ == uival);
-    REQUIRE(result->unsigned_long_ == ulval);
-    REQUIRE(result->unsigned_long64_ == ullval);
-    REQUIRE(result->float_ == float_value);
-    REQUIRE(result->double_ == double_value);
-    REQUIRE(strcmp(result->cstr_, cstr) == 0);
-    REQUIRE(result->bool_ == bval);
-    REQUIRE(result->varchar_ == varcharval);
-    REQUIRE(result->string_ == strval);
-    REQUIRE(result->date_ == date_val);
-    REQUIRE(result->time_ == time_val);
-    REQUIRE(result->binary_ == blob_val);
+    REQUIRE((*result)->id_ == 1);
+    REQUIRE((*result)->char_ == cval);
+    REQUIRE((*result)->short_ == sval);
+    REQUIRE((*result)->int_ == ival);
+    REQUIRE((*result)->long_ == lval);
+    REQUIRE((*result)->long64_ == llval);
+    REQUIRE((*result)->unsigned_char_ == ucval);
+    REQUIRE((*result)->unsigned_short_ == usval);
+    REQUIRE((*result)->unsigned_int_ == uival);
+    REQUIRE((*result)->unsigned_long_ == ulval);
+    REQUIRE((*result)->unsigned_long64_ == ullval);
+    REQUIRE((*result)->float_ == float_value);
+    REQUIRE((*result)->double_ == double_value);
+    REQUIRE(strcmp((*result)->cstr_, cstr) == 0);
+    REQUIRE((*result)->bool_ == bval);
+    REQUIRE((*result)->varchar_ == varcharval);
+    REQUIRE((*result)->string_ == strval);
+    REQUIRE((*result)->date_ == date_val);
+    REQUIRE((*result)->time_ == time_val);
+    REQUIRE((*result)->binary_ == blob_val);
 }
 
 TEST_CASE_METHOD( QueryFixture, "Test quoted identifier", "[query][quotes][identifier]" ) {
@@ -137,10 +138,11 @@ TEST_CASE_METHOD( QueryFixture, "Test quoted identifier", "[query][quotes][ident
   auto row = query::select({"from", "to"})
     .from("quotes")
     .fetch_one(db);
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row.has_value());
-  REQUIRE(row->at("from").as<std::string>() == "Berlin");
-  REQUIRE(row->at("to").as<std::string>() == "London");
+  REQUIRE(row->has_value());
+  REQUIRE(row.value()->at("from").as<std::string>() == "Berlin");
+  REQUIRE(row.value()->at("to").as<std::string>() == "London");
 
   res = query::update("quotes")
     .set({{"from", "Hamburg"}, {"to", "New York"}})
@@ -152,10 +154,11 @@ TEST_CASE_METHOD( QueryFixture, "Test quoted identifier", "[query][quotes][ident
   row = query::select({"from", "to"})
     .from("quotes")
     .fetch_one(db);
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row.has_value());
-  REQUIRE(row->at("from").as<std::string>() == "Hamburg");
-  REQUIRE(row->at("to").as<std::string>() == "New York");
+  REQUIRE(row->has_value());
+  REQUIRE(row.value()->at("from").as<std::string>() == "Hamburg");
+  REQUIRE(row.value()->at("to").as<std::string>() == "New York");
 }
 
 TEST_CASE_METHOD( QueryFixture, "Test quoted column names", "[query][quotes][column]" ) {
@@ -220,9 +223,10 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted literals", "[query][quotes][literals
   auto row = query::select({"name"})
     .from("escapes")
     .fetch_one(db);
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row.has_value());
-  REQUIRE(row->at("name").as<std::string>() == "text");
+  REQUIRE(row->has_value());
+  REQUIRE(row.value()->at("name").as<std::string>() == "text");
 
   res = query::update("escapes")
     .set({{"name", "text'd"}})
@@ -233,9 +237,10 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted literals", "[query][quotes][literals
   row = query::select({"name"})
     .from("escapes")
     .fetch_one(db);
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row.has_value());
-  REQUIRE(row->at("name").as<std::string>() == "text'd");
+  REQUIRE(row->has_value());
+  REQUIRE(row.value()->at("name").as<std::string>() == "text'd");
 
   res = query::update("escapes")
     .set({{"name", "text\nhello\tworld"}})
@@ -246,9 +251,10 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted literals", "[query][quotes][literals
   row = query::select({"name"})
     .from("escapes")
     .fetch_one(db);
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row.has_value());
-  REQUIRE(row->at("name").as<std::string>() == "text\nhello\tworld");
+  REQUIRE(row->has_value());
+  REQUIRE(row.value()->at("name").as<std::string>() == "text\nhello\tworld");
 
   res = query::update("escapes")
     .set({{"name", "text \"text\""}})
@@ -259,9 +265,10 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted literals", "[query][quotes][literals
   row = query::select({"name"})
     .from("escapes")
     .fetch_one(db);
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row.has_value());
-  REQUIRE(row->at("name").as<std::string>() == "text \"text\"");
+  REQUIRE(row->has_value());
+  REQUIRE(row.value()->at("name").as<std::string>() == "text \"text\"");
 }
 
 TEST_CASE_METHOD(QueryFixture, "Test describe table", "[query][describe][table]") {
@@ -313,10 +320,11 @@ TEST_CASE_METHOD(QueryFixture, "Test describe table", "[query][describe][table]"
 }
 
 TEST_CASE_METHOD(QueryFixture, "Test unknown table", "[query][table]") {
-  using Catch::Matchers::ContainsSubstring;
-  REQUIRE_THROWS(query::select({"name"})
+  const auto result = query::select({"name"})
     .from("person")
-    .fetch_all(db));
+    .fetch_all(db);
+
+  REQUIRE(result.is_error());
 }
 
 namespace matador::test::temporary {
@@ -356,8 +364,9 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key", "[query][primary key]") {
   auto row = query::select<pk>(schema)
     .from("pk")
     .fetch_one<pk>(db);
-  REQUIRE(row != nullptr);
-  REQUIRE(row->id > 0);
+  REQUIRE(row.is_ok());
+  REQUIRE(*row != nullptr);
+  REQUIRE(row.value()->id > 0);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Test primary key prepared", "[query][primary key][prepared]") {
@@ -378,9 +387,9 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key prepared", "[query][primary key
     .into("pk", column_generator::generate<pk>(schema))
     .values<pk>()
     .prepare(db);
-  stmt.bind(pk1);
 
-  res = stmt.execute();
+  res = stmt.bind(pk1)
+    .execute();
   REQUIRE(res.is_ok());
   REQUIRE(*res == 1);
 
@@ -389,8 +398,10 @@ TEST_CASE_METHOD(QueryFixture, "Test primary key prepared", "[query][primary key
     .prepare(db);
 
   auto row = stmt.fetch_one<pk>();
-  REQUIRE(row != nullptr);
-  REQUIRE(row->id > 0);
+  REQUIRE(row.is_ok());
+  REQUIRE(*row != nullptr);
+  REQUIRE(row.value()->id > 0);
+  REQUIRE(row.value()->name == "george");
 }
 
 namespace matador::test::temporary {
@@ -437,10 +448,11 @@ TEST_CASE_METHOD(QueryFixture, "Test select time and date", "[query][select][tim
   auto row = query::select<appointment>(schema)
     .from("appointment")
     .fetch_one<appointment>(db);
+  REQUIRE(row.is_ok());
 
-  REQUIRE(row != nullptr);
-  REQUIRE(matador::utils::to_string(row->time_point) == time_str);
-  REQUIRE(matador::utils::to_string(row->date_point) == date_str);
+  REQUIRE(*row != nullptr);
+  REQUIRE(matador::utils::to_string(row.value()->time_point) == time_str);
+  REQUIRE(matador::utils::to_string(row.value()->date_point) == date_str);
 }
 
 TEST_CASE_METHOD(QueryFixture, "Test null column", "[query][select][null]") {
@@ -474,11 +486,12 @@ TEST_CASE_METHOD(QueryFixture, "Test null column", "[query][select][null]") {
   auto result = query::select({"id", "first_name", "last_name"})
     .from("person")
     .fetch_all(db);
+  REQUIRE(result.is_ok());
 
   std::vector<std::string> expected_first_names{"george", ""};
   std::vector<std::string> expected_last_names{"", "clooney"};
   size_t index{0};
-  for (const auto& row : result) {
+  for (const auto& row : *result) {
     auto first_name = row.at("first_name").as<std::string>();
     auto last_name = row.at("last_name").as<std::string>();
     REQUIRE(first_name == expected_first_names[index]);
@@ -517,11 +530,12 @@ TEST_CASE_METHOD(QueryFixture, "Test null column prepared", "[query][select][nul
   auto result = query::select({"id", "first_name", "last_name"})
     .from("person")
     .fetch_all(db);
+  REQUIRE(result.is_ok());
 
   std::vector<std::string> expected_first_names{"george", ""};
   std::vector<std::string> expected_last_names{"", "clooney"};
   size_t index{0};
-  for (const auto& row : result) {
+  for (const auto& row : *result) {
     auto first_name = row.at("first_name").as<std::string>();
     auto last_name = row.at("last_name").as<std::string>();
     REQUIRE(first_name == expected_first_names[index]);

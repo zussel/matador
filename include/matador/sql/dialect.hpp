@@ -47,7 +47,11 @@ public:
   [[nodiscard]] std::string prepare_identifier_string(const std::string &col) const;
   [[nodiscard]] std::string prepare_condition(const column &col) const;
 
-    /**
+  [[nodiscard]] const std::string& to_string(bool val) const;
+
+  void bool_strings(const std::string &true_string, const std::string &false_string);
+
+  /**
    * Prepare string literal
    *
    * @param str String literal to be prepared
@@ -186,6 +190,10 @@ private:
     {sql_function_t::SUM,   "SUM" },
     {sql_function_t::MIN,   "MIN" },
     {sql_function_t::MAX,   "MAX" },
+  };
+
+  std::array<std::string, 2> bool_strings_ {
+    "0", "1"
   };
 };
 
