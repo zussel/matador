@@ -20,7 +20,7 @@ void prepare_bind_column(MYSQL_BIND &binding, mysql_result_info &result_info, en
   result_info.initialize(sizeof(MYSQL_TIME));
   binding.buffer_type = type;
   binding.buffer = result_info.buffer.data();
-  binding.buffer_length = result_info.buffer_size;
+  binding.buffer_length = static_cast<unsigned long>(result_info.buffer_size);
   binding.is_null = &result_info.is_null;
   binding.length = &result_info.length;
   binding.error = &result_info.error;
@@ -31,7 +31,7 @@ void prepare_bind_column(MYSQL_BIND &binding, mysql_result_info &result_info, en
   result_info.initialize(sizeof(MYSQL_TIME));
   binding.buffer_type = type;
   binding.buffer = result_info.buffer.data();
-  binding.buffer_length = result_info.buffer_size;
+  binding.buffer_length = static_cast<unsigned long>(result_info.buffer_size);
   binding.is_null = &result_info.is_null;
   binding.length = &result_info.length;
   binding.error = &result_info.error;
@@ -41,7 +41,7 @@ void prepare_bind_column(MYSQL_BIND &binding, mysql_result_info &result_info, en
 {
   binding.buffer_type = type;
   binding.buffer= x;
-  binding.buffer_length = (unsigned long) s;
+  binding.buffer_length = static_cast<unsigned long>(s);
   binding.is_null = &result_info.is_null;
   binding.length = &result_info.length;
   binding.error = &result_info.error;
@@ -62,7 +62,7 @@ void prepare_bind_column(MYSQL_BIND &binding, mysql_result_info &result_info, en
   result_info.initialize(s);
   binding.buffer_type = type;
   binding.buffer = result_info.buffer.data();
-  binding.buffer_length = result_info.buffer_size;
+  binding.buffer_length = static_cast<unsigned long>(result_info.buffer_size);
   binding.is_null = &result_info.is_null;
   binding.length = &result_info.length;
   binding.error = &result_info.error;
@@ -73,7 +73,7 @@ void prepare_bind_column(MYSQL_BIND &binding, mysql_result_info &result_info, en
   result_info.initialize(1024);
   binding.buffer_type = type;
   binding.buffer = result_info.buffer.data();
-  binding.buffer_length = result_info.buffer_size;
+  binding.buffer_length = static_cast<unsigned long>(result_info.buffer_size);
   binding.is_null = &result_info.is_null;
   binding.length = &result_info.length;
   binding.error = &result_info.error;

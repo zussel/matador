@@ -79,38 +79,38 @@ void mysql_prepared_result_reader::read_value(const char *, size_t index, date &
   result_binding.length = nullptr;
 }
 
-void on_truncated_data(MYSQL_BIND &result_binding, mysql_result_info &result_info, MYSQL_STMT *stmt, size_t index, std::string &x) {
+void on_truncated_data(MYSQL_BIND &result_binding, const mysql_result_info &result_info, MYSQL_STMT *stmt, const size_t index, std::string &x) {
   if (result_info.length == 0) {
     return;
   }
   result_binding.buffer = new char[result_info.length];
   result_binding.buffer_length = result_info.length;
-  if (mysql_stmt_fetch_column(stmt, &result_binding, index, 0) == 0) {
-    auto *data = (char*)result_binding.buffer;
-    unsigned long len = result_binding.buffer_length;
+  if (mysql_stmt_fetch_column(stmt, &result_binding, static_cast<unsigned int>(index), 0) == 0) {
+    const auto *data = static_cast<char*>(result_binding.buffer);
+    const unsigned long len = result_binding.buffer_length;
     x.assign(data, len);
   } else {
     // Todo: handle statement fetch column error
   }
-  delete [] (char*)result_binding.buffer;
+  // delete [] (char*)result_binding.buffer;
   result_binding.buffer = nullptr;
   result_binding.length = nullptr;
 }
 
-void on_truncated_data(MYSQL_BIND &result_binding, mysql_result_info &result_info, MYSQL_STMT *stmt, size_t index, utils::blob &x) {
+void on_truncated_data(MYSQL_BIND &result_binding, const mysql_result_info &result_info, MYSQL_STMT *stmt, const size_t index, utils::blob &x) {
   if (result_info.length == 0) {
     return;
   }
   result_binding.buffer = new char[result_info.length];
   result_binding.buffer_length = result_info.length;
-  if (mysql_stmt_fetch_column(stmt, &result_binding, index, 0) == 0) {
-    auto *data = reinterpret_cast<unsigned char*>(result_binding.buffer);
-    unsigned long len = result_binding.buffer_length;
+  if (mysql_stmt_fetch_column(stmt, &result_binding, static_cast<unsigned int>(index), 0) == 0) {
+    const auto *data = static_cast<unsigned char*>(result_binding.buffer);
+    const unsigned long len = result_binding.buffer_length;
     x.assign(data, data+len);
   } else {
     // Todo: handle statement fetch column error
   }
-  delete [] (char*)result_binding.buffer;
+  // delete [] (char*)result_binding.buffer;
   result_binding.buffer = nullptr;
   result_binding.length = nullptr;
 }
@@ -118,13 +118,13 @@ void on_truncated_data(MYSQL_BIND &result_binding, mysql_result_info &result_inf
 void mysql_prepared_result_reader::read_value(const char *, size_t index, std::string &value, size_t size)
 {
   auto &result_binding = result_binder_.result_bindings()[index];
-  auto &result_info = result_binder_.result_infos()[index];
+  const auto &result_info = result_binder_.result_infos()[index];
   if (*result_binding.error) {
     // assume truncated data
     on_truncated_data(result_binding, result_info, stmt_, index, value);
   } else if (*result_binding.is_null == false) {
-    auto *data = (char *) result_binding.buffer;
-    unsigned long len = result_info.length;
+    const auto *data = static_cast<char *>(result_binding.buffer);
+    const unsigned long len = result_info.length;
     value.assign(data, len);
   } else {
     value.clear();
@@ -134,13 +134,13 @@ void mysql_prepared_result_reader::read_value(const char *, size_t index, std::s
 void mysql_prepared_result_reader::read_value(const char *, size_t index, utils::blob &value)
 {
   auto &result_binding = result_binder_.result_bindings()[index];
-  auto &result_info = result_binder_.result_infos()[index];
+  const auto &result_info = result_binder_.result_infos()[index];
   if (*result_binding.error) {
     // assume truncated data
     on_truncated_data(result_binding, result_info, stmt_, index, value);
   } else if (*result_binding.is_null == false) {
-    auto *data = (char *) result_binding.buffer;
-    unsigned long len = result_info.length;
+    const auto *data = static_cast<char *>(result_binding.buffer);
+    const unsigned long len = result_info.length;
     value.assign(data, data + len);
   } else {
     value.clear();

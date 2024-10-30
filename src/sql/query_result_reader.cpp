@@ -127,6 +127,10 @@ void query_result_reader::read_value(const char * /*id*/, const size_t index, ut
 template < typename Type >
 void convert(const char *val_str, value &val)
 {
+  if (val_str == nullptr) {
+      val = value(Type{});
+      return;
+  }
   Type local_val{};
   to_value(local_val, val_str);
   val = local_val;
@@ -179,7 +183,11 @@ void query_result_reader::read_value(const char * /*id*/, const size_t index, va
     }
     case data_type::type_text:
     case data_type::type_varchar: {
-      val = std::string{column(index)};
+      if (const auto *column_value = column(index); column_value == nullptr) {
+          val = std::string{};
+      } else {
+          val = std::string{column_value};
+      }
       break;
     }
     case data_type::type_char_pointer: {
@@ -206,9 +214,12 @@ void query_result_reader::read_value(const char * /*id*/, const size_t index, va
   }
 }
 
-utils::blob query_result_reader::read_blob(size_t index)
+utils::blob query_result_reader::read_blob(const size_t index)
 {
   const auto *data = column(index);
+  if (data == nullptr) {
+      return {};
+  }
   const auto len = strlen(data);
   const auto *bytes = reinterpret_cast<const unsigned char*>(data);
   return utils::blob{bytes, bytes+len};

@@ -29,7 +29,6 @@ set(SOURCES
   query_result_impl.cpp
   query_result_reader.cpp
   record.cpp
-  result_parameter_binder.cpp
   schema.cpp
   session.cpp
   sql_logger.cpp
@@ -88,7 +87,6 @@ set(HEADER
   ../../include/matador/sql/query_result_impl.hpp
   ../../include/matador/sql/query_result_reader.hpp
   ../../include/matador/sql/record.hpp
-  ../../include/matador/sql/result_parameter_binder.hpp
   ../../include/matador/sql/schema.hpp
   ../../include/matador/sql/session.hpp
   ../../include/matador/sql/sql_logger.hpp

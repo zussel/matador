@@ -522,9 +522,10 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with group by and order
                                                  {2, 13},
                                                  {1, 67}};
   for (const auto &r: *result) {
-
-    REQUIRE(r.at<int>(0) == expected_values.front().first);
-    REQUIRE(r.at<int>(1) == expected_values.front().second);
+    const auto age_count_val = r.at<int>(0);
+    const auto age_val = r.at<int>(1);
+    REQUIRE(age_count_val == expected_values.front().first);
+    REQUIRE(age_val == expected_values.front().second);
     expected_values.pop_front();
   }
 }

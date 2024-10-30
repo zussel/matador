@@ -16,6 +16,7 @@
                                 {matador::data_type::type_unsigned_char, "TINYINT UNSIGNED"},
                                 {matador::data_type::type_unsigned_long, "BIGINT UNSIGNED"},
                                 {matador::data_type::type_unsigned_long_long, "BIGINT UNSIGNED"},
+                                {matador::data_type::type_bool, "BIT(3)"},
                                 {matador::data_type::type_time, "DATETIME(3)"}
     })
     .with_default_schema_name("")

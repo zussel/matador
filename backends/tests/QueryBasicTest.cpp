@@ -492,8 +492,9 @@ TEST_CASE_METHOD(QueryFixture, "Test null column", "[query][select][null]") {
   std::vector<std::string> expected_last_names{"", "clooney"};
   size_t index{0};
   for (const auto& row : *result) {
-    auto first_name = row.at("first_name").as<std::string>();
-    auto last_name = row.at("last_name").as<std::string>();
+    auto first_name = row.at<std::string>("first_name");
+    auto last_name = row.at<std::string>("last_name");
+    std::cout << "first name " << first_name.value() << " last name " << last_name.value() << std::endl;
     REQUIRE(first_name == expected_first_names[index]);
     REQUIRE(last_name == expected_last_names[index++]);
   }

@@ -140,6 +140,9 @@ sql::null_option to_null_option(unsigned int flags) {
 }
 
 data_type string2type(const std::string &type_string) {
+  if (strcmp("bit", type_string.c_str()) == 0) {
+      return data_type::type_bool;
+  }
   if (strncmp(type_string.c_str(), "tinyint", 7) == 0) {
     return data_type::type_char;
   } else if (strncmp(type_string.c_str(), "smallint", 8) == 0) {
@@ -186,10 +189,9 @@ struct type_info {
 
 type_info determine_type_info(const std::string &type_string) {
   static const std::regex TYPE_REGEX(R"(^(\w+)(\((\d+)(,(\d+))?\))?(\s(\w+))?$)");
-  std::smatch matcher;
 
   type_info result;
-  if (std::regex_match(type_string, matcher, TYPE_REGEX)) {
+  if (std::smatch matcher; std::regex_match(type_string, matcher, TYPE_REGEX)) {
     result.type = string2type(matcher[1].str());
     if (matcher[3].matched) {
       result.size = std::stoi(matcher[3].str());
@@ -249,13 +251,13 @@ utils::result<size_t, sql::sql_error> mysql_connection::execute(const std::strin
 }
 
 std::vector<sql::column_definition> mysql_connection::describe(const std::string &table) {
-  std::string stmt("SHOW COLUMNS FROM " + table);
+  const std::string stmt("SHOW COLUMNS FROM " + table);
 
   if (mysql_query(mysql_.get(), stmt.c_str())) {
     throw_mysql_error(mysql_.get(), stmt);
   }
 
-  auto result = mysql_store_result(mysql_.get());
+  const auto result = mysql_store_result(mysql_.get());
   if (result == nullptr) {
     throw_mysql_error(mysql_.get(), stmt);
   }
@@ -266,13 +268,13 @@ std::vector<sql::column_definition> mysql_connection::describe(const std::string
     char *end = nullptr;
     std::string name = reader.column(0);
 
-    auto typeinfo = determine_type_info(reader.column(1));
+    const auto [type, size] = determine_type_info(reader.column(1));
     end = nullptr;
-    sql::null_option null_opt{sql::null_option::NULLABLE};
+    auto null_opt{sql::null_option::NULLABLE};
     if (strtoul(reader.column(2), &end, 10) == 0) {
       null_opt = sql::null_option::NOT_NULL;
     }
-    prototype.push_back({name, typeinfo.type, {typeinfo.size}, null_opt, prototype.size()});
+    prototype.push_back({name, type, {size}, null_opt, prototype.size()});
   }
 
   return prototype;
