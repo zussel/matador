@@ -147,6 +147,11 @@ void mysql_prepared_result_reader::read_value(const char *, size_t index, utils:
   }
 }
 
+void mysql_prepared_result_reader::read_value( const char* id, size_t index, sql::value& val, size_t size )
+{
+  query_result_reader::read_value( id, index, val, size );
+}
+
 object::attribute_reader &mysql_prepared_result_reader::result_binder()
 {
   return result_binder_;

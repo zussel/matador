@@ -42,6 +42,7 @@ public:
   void read_value(const char * /*id*/, size_t /*index*/, std::string &/*value*/) override {}
   void read_value(const char * /*id*/, size_t index, std::string &value, size_t size) override;
   void read_value(const char * /*id*/, size_t index, utils::blob &value) override;
+  void read_value( const char* id, size_t index, sql::value& val, size_t size ) override;
 
 protected:
   object::attribute_reader &result_binder() override;
