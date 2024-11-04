@@ -1,6 +1,6 @@
 #include "matador/sql/query_result_impl.hpp"
 #include "matador/sql/query_result_reader.hpp"
-#include "matador/sql/value.hpp"
+#include "matador/utils/value.hpp"
 
 namespace matador::sql {
 
@@ -9,7 +9,7 @@ detail::pk_reader::pk_reader(query_result_reader &reader)
 
 void detail::pk_reader::on_primary_key(const char *id, std::string &value, size_t size)
 {
-  object::data_type_traits<std::string>::read_value(reader_, id, column_index_++, value, size);
+  utils::data_type_traits<std::string>::read_value(reader_, id, column_index_++, value, size);
 }
 
 query_result_impl::query_result_impl(std::unique_ptr<query_result_reader> &&reader, std::vector<column_definition> &&prototype, const size_t column_index)
@@ -28,27 +28,27 @@ query_result_impl::query_result_impl(std::unique_ptr<query_result_reader> &&read
 
 void query_result_impl::on_primary_key(const char *id, std::string &value, size_t size)
 {
-  object::data_type_traits<std::string>::read_value(*reader_, id, column_index_++, value, size);
+  utils::data_type_traits<std::string>::read_value(*reader_, id, column_index_++, value, size);
 }
 
 void query_result_impl::on_revision(const char *id, unsigned long long int &rev)
 {
-  object::data_type_traits<unsigned long long int>::read_value(*reader_, id, column_index_++, rev);
+  utils::data_type_traits<unsigned long long int>::read_value(*reader_, id, column_index_++, rev);
   reader_->read_value(id, column_index_++, rev);
 }
 
 void query_result_impl::on_attribute(const char *id, char *value, const utils::field_attributes &attr)
 {
-  object::data_type_traits<char*>::read_value(*reader_, id, column_index_++, value, attr.size());
+  utils::data_type_traits<char*>::read_value(*reader_, id, column_index_++, value, attr.size());
 }
 
 void query_result_impl::on_attribute(const char *id, std::string &value, const utils::field_attributes &attr)
 {
-  object::data_type_traits<std::string>::read_value(*reader_, id, column_index_++, value, attr.size());
+  utils::data_type_traits<std::string>::read_value(*reader_, id, column_index_++, value, attr.size());
 }
 
 void
-query_result_impl::on_attribute(const char *id, value &val, const utils::field_attributes &attr)
+query_result_impl::on_attribute(const char *id, utils::value &val, const utils::field_attributes &attr)
 {
   reader_->read_value(id, column_index_++, val, attr.size());
 }

@@ -104,7 +104,7 @@ std::string postgres_connection::generate_statement_name(const sql::query_contex
   return name.str();
 }
 
-std::unique_ptr<sql::statement_impl> postgres_connection::prepare(sql::query_context context) {
+utils::result<std::unique_ptr<sql::statement_impl>, sql::sql_error> postgres_connection::prepare(sql::query_context context) {
   auto statement_name = postgres_connection::generate_statement_name(context);
 
   PGresult *result = PQprepare(conn_, statement_name.c_str(), context.sql.c_str(),
@@ -112,7 +112,8 @@ std::unique_ptr<sql::statement_impl> postgres_connection::prepare(sql::query_con
 
   throw_postgres_error(result, conn_, "postgres", context.sql);
 
-  return std::make_unique<postgres_statement>(conn_, result, statement_name, std::move(context));
+  std::unique_ptr<sql::statement_impl> s(std::make_unique<postgres_statement>(conn_, result, statement_name, std::move(context)));
+  return utils::ok(std::move(s));
 }
 
 utils::result<size_t, sql::sql_error> postgres_connection::execute(const std::string &stmt) {
@@ -160,7 +161,7 @@ data_type string2type(const char *type) {
   }
 }
 
-std::vector<sql::column_definition> postgres_connection::describe(const std::string &table) {
+utils::result<std::vector<sql::column_definition>, sql::sql_error> postgres_connection::describe(const std::string &table) {
   const std::string stmt(
     "SELECT ordinal_position, column_name, udt_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_schema='public' AND table_name='"
     + table + "'");
@@ -171,7 +172,13 @@ std::vector<sql::column_definition> postgres_connection::describe(const std::str
 
   postgres_result_reader reader(res);
   std::vector<sql::column_definition> prototype;
-  while (reader.fetch()) {
+  while (auto fetched = reader.fetch()) {
+    if (!fetched.is_ok()) {
+      return utils::error(fetched.release_error());
+    }
+    if (!*fetched) {
+      break;
+    }
     char *end = nullptr;
     // Todo: Handle error
     auto index = strtoul(reader.column(0), &end, 10) - 1;
@@ -188,7 +195,7 @@ std::vector<sql::column_definition> postgres_connection::describe(const std::str
     prototype.emplace_back(name, type, utils::null_attributes, null_opt, index);
   }
 
-  return prototype;
+  return utils::ok(prototype);
 }
 
 utils::result<bool, sql::sql_error> postgres_connection::exists(const std::string &schema_name, const std::string &table_name) {

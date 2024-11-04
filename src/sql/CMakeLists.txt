@@ -36,7 +36,6 @@ set(SOURCES
   statement_cache.cpp
   statement_impl.cpp
   table_definition.cpp
-  value.cpp
   value_extractor.cpp
   placeholder_key_value_generator.cpp
   table.cpp
@@ -49,7 +48,6 @@ set(SOURCES
 
 set(HEADER
   ../../include/matador/sql/any_type_to_string_visitor.hpp
-  ../../include/matador/sql/any_type_to_visitor.hpp
   ../../include/matador/sql/backend_provider.hpp
   ../../include/matador/sql/basic_condition.hpp
   ../../include/matador/sql/basic_sql_logger.hpp
@@ -96,7 +94,6 @@ set(HEADER
   ../../include/matador/sql/table.hpp
   ../../include/matador/sql/table_definition.hpp
   ../../include/matador/sql/to_value.hpp
-  ../../include/matador/sql/value.hpp
   ../../include/matador/sql/value_extractor.hpp
   ../../include/matador/sql/placeholder_key_value_generator.hpp
   ../../include/matador/sql/dialect_token.hpp

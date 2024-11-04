@@ -2,7 +2,7 @@
 #define QUERY_COLUMN_DEFINITION_GENERATOR_HPP
 
 #include "matador/sql/column_definition.hpp"
-#include "matador/object/data_type_traits.hpp"
+#include "matador/utils/default_type_traits.hpp"
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/field_attributes.hpp"
@@ -30,7 +30,7 @@ public:
   template<typename ValueType>
   void on_primary_key(const char *, ValueType &/*pk*/, typename std::enable_if<std::is_integral<ValueType>::value && !std::is_same<bool, ValueType>::value>::type* = 0)
   {
-    type_ = object::data_type_traits<ValueType>::type(0);
+    type_ = utils::data_type_traits<ValueType>::type(0);
   }
   void on_primary_key(const char * /*id*/, std::string &/*pk*/, size_t size);
   void on_revision(const char * /*id*/, unsigned long long &/*rev*/) {}
@@ -142,7 +142,7 @@ void column_definition_generator::on_attribute(const char *id, Type &x, const ut
 template<typename Type>
 void column_definition_generator::on_attribute(const char *id, std::optional<Type> &/*x*/, const utils::field_attributes &attr)
 {
-  columns_.emplace_back(id, object::data_type_traits<Type>::type(attr.size()), attr, null_option::NULLABLE);
+  columns_.emplace_back(id, utils::data_type_traits<Type>::type(attr.size()), attr, null_option::NULLABLE);
 }
 
 }

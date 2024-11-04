@@ -122,8 +122,9 @@ TEST_CASE_METHOD( QueryFixture, "Test quoted identifier", "[query][quotes][ident
   std::vector<std::string> column_names = { "from", "to"};
   std::vector<matador::data_type> types = {matador::data_type::type_varchar, matador::data_type::type_varchar};
   const auto columns = db.describe("quotes");
+  REQUIRE(columns.is_ok());
 
-  for (const auto &col : columns) {
+  for (const auto &col : *columns) {
     REQUIRE(col.name() == column_names[col.index()]);
     REQUIRE(col.type() == types[col.index()]);
   }
@@ -188,7 +189,9 @@ TEST_CASE_METHOD( QueryFixture, "Test quoted column names", "[query][quotes][col
     REQUIRE(*res == 0);
 
     const auto columns = db.describe("quotes");
-    for (const auto &col : columns) {
+    REQUIRE(columns.is_ok());
+
+    for (const auto &col : *columns) {
       REQUIRE(col.name() == name);
       REQUIRE(col.type() == matador::data_type::type_varchar);
     }
@@ -283,6 +286,7 @@ TEST_CASE_METHOD(QueryFixture, "Test describe table", "[query][describe][table]"
   tables_to_drop.emplace("types");
 
   const auto columns = db.describe("types");
+  REQUIRE(columns.is_ok());
 
   std::vector<std::string> column_names = { "id",
                                             "val_char", "val_float", "val_double", "val_short",
@@ -313,7 +317,7 @@ TEST_CASE_METHOD(QueryFixture, "Test describe table", "[query][describe][table]"
     [](const column_definition &cf) { return cf.is_blob(); }
   };
 
-  for (const auto &col : columns) {
+  for (const auto &col : *columns) {
     REQUIRE(col.name() == column_names[col.index()]);
     REQUIRE(type_check[col.index()](col));
   }

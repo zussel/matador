@@ -1,5 +1,8 @@
 #include "matador/sql/statement.hpp"
 #include "matador/sql/record.hpp"
+#include "matador/sql/field.hpp"
+
+#include <algorithm>
 
 namespace matador::sql {
 
@@ -26,8 +29,18 @@ utils::result<size_t, sql_error> statement::execute() const
   return statement_->execute();
 }
 
+//bool is_unknown(const std::vector<sql::column_definition> &columns) {
+//  return std::all_of(std::begin(columns), std::end(columns), [](const auto &col) {
+//    return col.is_unknown();
+//  });
+//}
+
 utils::result<query_result<record>, sql_error> statement::fetch() const
 {
+//  if (is_unknown(statement_->query_.prototype)) {
+//
+//  }
+
   auto result = statement_->fetch();
   if (!result.is_ok()) {
     return utils::error(result.err());

@@ -32,12 +32,9 @@ public:
   [[nodiscard]] version server_version() const override;
 
   utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch(const sql::query_context& context) override;
-  std::unique_ptr<sql::statement_impl> prepare(sql::query_context query) override;
-
+  utils::result<std::unique_ptr<sql::statement_impl>, sql::sql_error> prepare(sql::query_context query) override;
   utils::result<size_t, sql::sql_error> execute(const std::string &stmt) override;
-
-  std::vector<sql::column_definition> describe(const std::string& table) override;
-
+  utils::result<std::vector<sql::column_definition>, sql::sql_error> describe(const std::string& table) override;
   utils::result<bool, sql::sql_error> exists(const std::string &schema_name, const std::string &table_name) override;
 
   [[nodiscard]] std::string to_escaped_string( const utils::blob& value ) const override;

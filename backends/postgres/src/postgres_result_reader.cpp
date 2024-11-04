@@ -27,9 +27,9 @@ const char *postgres_result_reader::column( const size_t index) const
   return PQgetvalue(result_, static_cast<int>(row_index_), static_cast<int>(index));
 }
 
-bool postgres_result_reader::fetch()
+utils::result<bool, sql::sql_error> postgres_result_reader::fetch()
 {
-  return ++row_index_ < row_count_;
+  return utils::ok(++row_index_ < row_count_);
 }
 
 void postgres_result_reader::read_value( const char* id, const size_t index, utils::blob& value )

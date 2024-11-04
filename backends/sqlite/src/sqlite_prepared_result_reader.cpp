@@ -22,13 +22,13 @@ const char *sqlite_prepared_result_reader::column(size_t index) const
   return reinterpret_cast<const char*>(sqlite3_column_text(stmt_, static_cast<int>(index)));
 }
 
-bool sqlite_prepared_result_reader::fetch()
+utils::result<bool, sql::sql_error> sqlite_prepared_result_reader::fetch()
 {
-  int ret = sqlite3_step(stmt_);
+  const int ret = sqlite3_step(stmt_);
   if (ret != SQLITE_ROW && ret != SQLITE_DONE) {
-    throw_sqlite_error(ret, db_, "sqlite3_step");
+    return utils::error(make_error(sql::sql_error_code::FAILURE, ret, db_));
   }
-  return ret == SQLITE_ROW;
+  return utils::ok(ret == SQLITE_ROW);
 }
 
 void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, char &value)
@@ -124,11 +124,6 @@ void sqlite_prepared_result_reader::read_value(const char *id, size_t index, std
   read_value(id, index, value);
 }
 
-void sqlite_prepared_result_reader::read_value(const char *id, size_t index, sql::value &val, size_t size)
-{
-  query_result_reader::read_value(id, index, val, size);
-}
-
 void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index, time &value) {
   const auto is_null = sqlite3_column_type(stmt_, static_cast<int>(index)) == SQLITE_NULL;
   if (const auto s = static_cast<size_t>(sqlite3_column_bytes(stmt_, static_cast<int>(index))); !is_null && s > 0) {
@@ -152,4 +147,10 @@ void sqlite_prepared_result_reader::read_value(const char * /*id*/, size_t index
     value.assign(data, data+s);
   }
 }
+
+void sqlite_prepared_result_reader::read_value(const char *id, size_t index, utils::value &val, size_t size)
+{
+  query_result_reader::read_value(id, index, val, size);
+}
+
 }

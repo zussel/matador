@@ -24,7 +24,7 @@ public:
   void reset() override;
 
 protected:
-  object::attribute_writer& binder() override;
+  utils::attribute_writer& binder() override;
 
 private:
   MYSQL_STMT *stmt_{nullptr};

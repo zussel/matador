@@ -57,7 +57,8 @@ TEST_CASE_METHOD(QueryFixture, "Test all data types for record", "[query][record
                                        "val_date", "val_time", "val_blob"};
 
   const auto fields = db.describe("types");
-  for (const auto &fld : fields) {
+  REQUIRE(fields.is_ok());
+  for (const auto &fld : *fields) {
     REQUIRE(std::find(cols.begin(), cols.end(), fld.name()) != cols.end());
   }
 
@@ -263,17 +264,6 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert record statement with foreign key
     REQUIRE(res.is_ok());
     REQUIRE(res.value() == 1);
   }
-//  res = query::insert().into("airplane", {"id", "brand", "model"}).values({1, "Airbus", "A380"}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
-//
-//  res = query::insert().into("airplane", {"id", "brand", "model"}).values({2, "Boeing", "707"}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
-//
-//  res = query::insert().into("airplane", {"id", "brand", "model"}).values({3, "Boeing", "747"}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
 
   auto count = query::select({count_all()})
     .from("airplane")
@@ -368,19 +358,6 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement", "[query][record]")
     REQUIRE(res.value() == 1);
   }
 
-//  res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
-//  res = query::insert().into("person", {"id", "name", "age"}).values({2, "jane", 32}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
-//  res = query::insert().into("person", {"id", "name", "age"}).values({3, "michael", 67}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
-//  res = query::insert().into("person", {"id", "name", "age"}).values({4, "bob", 13}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
-
   auto result = query::select({"id", "name", "age"})
     .from("person")
     .fetch_all(db);
@@ -437,19 +414,6 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with order by", "[query
     REQUIRE(res.value() == 1);
   }
 
-//  res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
-//  res = query::insert().into("person", {"id", "name", "age"}).values({2, "jane", 32}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
-//  res = query::insert().into("person", {"id", "name", "age"}).values({3, "michael", 67}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
-//  res = query::insert().into("person", {"id", "name", "age"}).values({4, "bob", 13}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(res.value() == 1);
-
   auto result = query::select({"id", "name", "age"})
     .from("person")
     .order_by("name").asc()
@@ -480,9 +444,10 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with group by and order
   std::vector<std::vector<matador::utils::any_type>> values_list{
     {1, "george", 45},
     {2, "jane", 45},
-    {3, "michael", 13},
-    {4, "bob", 13},
-    {5, "charlie", 67}
+    {3, "joe", 45},
+    {4, "michael", 13},
+    {5, "bob", 13},
+    {6, "charlie", 67}
   };
 
   for(auto &&values : values_list) {
@@ -494,23 +459,6 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with group by and order
     REQUIRE(res.value() == 1);
   }
 
-
-//  res = query::insert().into("person", {"id", "name", "age"}).values({1, "george", 45}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(*res == 1);
-//  res = query::insert().into("person", {"id", "name", "age"}).values({2, "jane", 45}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(*res == 1);
-//  res = query::insert().into("person", {"id", "name", "age"}).values({3, "michael", 13}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(*res == 1);
-//  res = query::insert().into("person", {"id", "name", "age"}).values({4, "bob", 13}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(*res == 1);
-//  res = query::insert().into("person", {"id", "name", "age"}).values({5, "charlie", 67}).execute(db);
-//  REQUIRE(res.is_ok());
-//  REQUIRE(*res == 1);
-
   auto result = query::select({count("age").as("age_count"), "age"})
     .from("person")
     .group_by("age")
@@ -518,7 +466,7 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with group by and order
     .fetch_all(db);
   REQUIRE(result.is_ok());
 
-  std::list<std::pair<int, int>> expected_values{{2, 45},
+  std::list<std::pair<int, int>> expected_values{{3, 45},
                                                  {2, 13},
                                                  {1, 67}};
   for (const auto &r: *result) {
@@ -594,8 +542,9 @@ TEST_CASE_METHOD(QueryFixture, "Test quoted identifier record", "[query][record]
     matador::data_type::type_varchar
   };
   auto fields = db.describe("quotes");
+  REQUIRE(fields.is_ok());
 
-  for (const auto &field : fields) {
+  for (const auto &field : *fields) {
     REQUIRE(field.name() == columns[field.index()]);
     REQUIRE(field.type() == types[field.index()]);
   }
@@ -648,8 +597,9 @@ TEST_CASE_METHOD(QueryFixture, "Test create record", "[query][record][create]") 
   check_table_exists("person");
   const std::vector<std::string> cols = {"id", "name", "age"};
   const auto fields = db.describe("person");
+  REQUIRE(fields.is_ok());
 
-  for (const auto &fld : fields) {
+  for (const auto &fld : *fields) {
     REQUIRE(std::find(cols.begin(), cols.end(), fld.name()) != cols.end());
   }
 }
@@ -755,8 +705,9 @@ TEST_CASE_METHOD(QueryFixture, "Test prepared record statement", "[query][record
 
   const std::vector<std::string> cols = {"id", "name", "age"};
   const auto fields = db.describe("person");
+  REQUIRE(fields.is_ok());
 
-  for (const auto &fld : fields) {
+  for (const auto &fld : *fields) {
     REQUIRE(std::find(cols.begin(), cols.end(), fld.name()) != cols.end());
   }
 }

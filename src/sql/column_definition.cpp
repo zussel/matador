@@ -127,6 +127,7 @@ bool column_definition::is_unknown() const
 void column_definition::type(data_type type)
 {
   type_ = type;
+  utils::initialize_by_data_type(type, value_);
 }
 
 std::string column_definition::str() const
@@ -135,7 +136,7 @@ std::string column_definition::str() const
     return std::get<std::string>(value_);
   }
 
-  any_type_to_visitor<std::string> visitor;
+  utils::any_type_converter<std::string> visitor;
   std::visit(visitor, const_cast<utils::any_type &>(value_));
   return visitor.result;
 }
@@ -154,7 +155,7 @@ column_definition make_column(const std::string &name, data_type type, utils::fi
 template<>
 column_definition make_column<std::string>(const std::string &name, utils::field_attributes attr, null_option null_opt)
 {
-  return make_column(name, object::data_type_traits<std::string>::type(attr.size()), attr, null_opt);
+  return make_column(name, utils::data_type_traits<std::string>::type(attr.size()), attr, null_opt);
 }
 
 template<>
@@ -167,6 +168,6 @@ template<>
 [[maybe_unused]] column_definition make_fk_column<std::string>(const std::string &name, size_t size, const std::string &ref_table,
                                                                const std::string &ref_column)
 {
-  return {name, object::data_type_traits<std::string>::type(size), 0, ref_table, ref_column, {size, utils::constraints::FOREIGN_KEY}, null_option::NOT_NULL};
+  return {name, utils::data_type_traits<std::string>::type(size), 0, ref_table, ref_column, {size, utils::constraints::FOREIGN_KEY}, null_option::NOT_NULL};
 }
 }

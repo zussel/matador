@@ -1,5 +1,7 @@
 #include "mysql_result_binder.hpp"
 
+#include "matador/utils/value.hpp"
+
 namespace matador::backends::mysql {
 
 namespace detail {
@@ -182,6 +184,53 @@ void mysql_result_binder::read_value(const char * /*id*/, size_t pos, std::strin
 void mysql_result_binder::read_value(const char * /*id*/, size_t pos, utils::blob &x)
 {
   detail::prepare_bind_column(result_bindings_[pos], result_infos_[pos], MYSQL_TYPE_BLOB, x);
+}
+
+template< class Type >
+void try_bind_value(utils::attribute_reader &binder, const char *id, size_t pos, utils::value &source)
+{
+  auto v = source.ref<Type>();
+  if (v.has_value()) {
+    binder.read_value(id, pos, v->get());
+  }
+}
+
+void mysql_result_binder::read_value(const char * id, size_t pos, utils::value &x, size_t)
+{
+  switch (x.type()) {
+    case data_type::type_char:
+      try_bind_value<char>(*this, id, pos, x);
+      break;
+    case data_type::type_short:
+      try_bind_value<short>(*this, id, pos, x);
+      break;
+    case data_type::type_int:
+      try_bind_value<int>(*this, id, pos, x);
+      break;
+    case data_type::type_long:
+      try_bind_value<long>(*this, id, pos, x);
+      break;
+    case data_type::type_long_long:
+      try_bind_value<long long>(*this, id, pos, x);
+      break;
+    case data_type::type_unsigned_char:
+      try_bind_value<unsigned char>(*this, id, pos, x);
+      break;
+    case data_type::type_unsigned_short:
+      try_bind_value<unsigned short>(*this, id, pos, x);
+      break;
+    case data_type::type_unsigned_int:
+      try_bind_value<unsigned int>(*this, id, pos, x);
+      break;
+    case data_type::type_unsigned_long:
+      try_bind_value<unsigned long>(*this, id, pos, x);
+      break;
+    case data_type::type_unsigned_long_long:
+      try_bind_value<unsigned long long>(*this, id, pos, x);
+      break;
+    default:
+      break;
+  }
 }
 
 std::vector<MYSQL_BIND> &mysql_result_binder::result_bindings()

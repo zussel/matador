@@ -2,7 +2,7 @@
 
 #include "TestDialect.hpp"
 
-#include "matador/sql/value.hpp"
+#include "matador/utils/value.hpp"
 #include "matador/sql/value_serializer.hpp"
 
 #include "../datatypes.hpp"

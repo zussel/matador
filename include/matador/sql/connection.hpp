@@ -128,10 +128,9 @@ public:
    */
   [[nodiscard]] utils::result<void, sql_error> rollback() const;
 
-  [[nodiscard]] std::vector<column_definition> describe(const std::string &table_name) const;
+  [[nodiscard]] utils::result<std::vector<column_definition>, sql_error> describe(const std::string &table_name) const;
   [[nodiscard]] utils::result<bool, sql_error> exists(const std::string &schema_name, const std::string &table_name) const;
   [[nodiscard]] utils::result<bool, sql_error> exists(const std::string &table_name) const;
-  // [[nodiscard]] sql::query query() const;
 
   [[nodiscard]] utils::result<size_t, sql_error> execute(const std::string &sql) const;
 

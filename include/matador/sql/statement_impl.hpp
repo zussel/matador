@@ -5,8 +5,8 @@
 #include "matador/sql/query_result_impl.hpp"
 #include "matador/sql/object_parameter_binder.hpp"
 
-#include "matador/object/attribute_writer.hpp"
-#include "matador/object/data_type_traits.hpp"
+#include "matador/utils/attribute_writer.hpp"
+#include "matador/utils/data_type_traits.hpp"
 
 #include <memory>
 
@@ -35,7 +35,7 @@ public:
   template < class Type >
   void bind(size_t pos, Type &val)
   {
-    object::data_type_traits<Type>::bind_value(binder(), pos, val);
+    utils::data_type_traits<Type>::bind_value(binder(), pos, val);
   }
 
   void bind(size_t pos, const char *value, size_t size);
@@ -47,7 +47,7 @@ public:
   [[nodiscard]] bool is_valid_host_var(const std::string &host_var, size_t pos) const;
 
 protected:
-  virtual object::attribute_writer& binder() = 0;
+  virtual utils::attribute_writer& binder() = 0;
 
 protected:
   friend class statement;

@@ -336,7 +336,7 @@ public:
   T* prototype() const;
 
   template < class T >
-  bool is_of_type() const;
+  [[nodiscard]] bool is_of_type() const;
 
   /**
    * Find the underlying proxy of the given primary key.

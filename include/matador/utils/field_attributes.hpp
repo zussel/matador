@@ -1,7 +1,7 @@
 #ifndef MATADOR_FIELD_ATTRIBUTES_HPP
 #define MATADOR_FIELD_ATTRIBUTES_HPP
 
-#include "matador/utils/contraints.hpp"
+#include "matador/utils/constraints.hpp"
 
 namespace matador::utils {
 

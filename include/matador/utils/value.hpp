@@ -1,15 +1,13 @@
 #ifndef QUERY_VALUE_HPP
 #define QUERY_VALUE_HPP
 
-#include "matador/object/data_type_traits.hpp"
-
-#include "matador/sql/any_type_to_visitor.hpp"
-
+#include "matador/utils/any_type_converter.hpp"
+#include "matador/utils/default_type_traits.hpp"
 #include "matador/utils/types.hpp"
 
 #include <optional>
 
-namespace matador::sql {
+namespace matador::utils {
 
 namespace detail {
 template<typename Type>
@@ -30,7 +28,7 @@ public:
   explicit value(Type value, size_t size = 0)
   : value_(value)
   , size_(size)
-  , type_(object::data_type_traits<Type>::type(size)) {}
+  , type_(data_type_traits<Type>::type(size)) {}
   explicit value(data_type data_type, size_t size = 0);
   value(const value &x) = default;
   value& operator=(const value &x) = default;
@@ -39,7 +37,7 @@ public:
   {
     value_ = val;
     size_ = detail::determine_size(val);
-    type_ = object::data_type_traits<Type>::type(size_);
+    type_ = data_type_traits<Type>::type(size_);
     return *this;
   }
   value(value &&x) noexcept;
@@ -51,11 +49,21 @@ public:
     if (std::holds_alternative<Type>(value_)) {
       return std::get<Type>(value_);
     } else {
-      any_type_to_visitor<Type> visitor;
+      any_type_converter<Type> visitor;
       std::visit(visitor, const_cast<utils::any_type &>(value_));
       return visitor.result;
     }
   }
+
+  template<class Type>
+  std::optional<std::reference_wrapper<Type>> ref() {
+    if (std::holds_alternative<Type>(value_)) {
+      return std::get<Type>(value_);
+    }
+
+    return std::nullopt;
+  }
+
   [[nodiscard]] std::string str() const;
 
   [[nodiscard]] size_t size() const;

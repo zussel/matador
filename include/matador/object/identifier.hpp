@@ -4,7 +4,7 @@
 #include "matador/utils/field_attributes.hpp"
 #include "matador/utils/data_types.hpp"
 
-#include "data_type_traits.hpp"
+#include "matador/utils/default_type_traits.hpp"
 
 #include <memory>
 #include <string>
@@ -110,7 +110,7 @@ private:
 
     explicit pk(const IdType &id, size_t size = 0)
     : base(std::type_index(typeid(IdType)), detail::identifier_type_traits<IdType>::type(),
-           object::data_type_traits<IdType>::type(size))
+           utils::data_type_traits<IdType>::type(size))
     , id_(id)
     , size_(size) {}
 

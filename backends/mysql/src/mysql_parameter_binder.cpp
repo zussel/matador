@@ -211,6 +211,8 @@ void mysql_parameter_binder::write_value(size_t pos, const utils::blob &x)
    detail::bind_value(MYSQL_TYPE_BLOB, x.data(), x.size(), bind_params_[pos], is_null_vector[pos].is_null);
 }
 
+void mysql_parameter_binder::write_value(size_t /*pos*/, const utils::value &/*x*/, size_t /*size*/) {}
+
 void mysql_parameter_binder::write_value(size_t pos, const time& x)
 {
   auto &bind = bind_params_[pos];

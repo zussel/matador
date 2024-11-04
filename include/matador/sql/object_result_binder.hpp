@@ -1,8 +1,8 @@
 #ifndef MATADOR_OBJECT_RESULT_BINDER_HPP
 #define MATADOR_OBJECT_RESULT_BINDER_HPP
 
-#include "matador/object/attribute_reader.hpp"
-#include "matador/object/data_type_traits.hpp"
+#include "matador/utils/attribute_reader.hpp"
+#include "matador/utils/default_type_traits.hpp"
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/field_attributes.hpp"
@@ -16,7 +16,7 @@ class fk_result_binder
 {
 public:
   template<class Type>
-  void bind(Type &obj, const char *id, size_t column_index, object::attribute_reader &binder)
+  void bind(Type &obj, const char *id, size_t column_index, utils::attribute_reader &binder)
   {
     binder_ = &binder;
     index_ = column_index;
@@ -55,7 +55,7 @@ public:
                            const utils::foreign_attributes &/*attr*/) {}
 
 private:
-  object::attribute_reader *binder_{};
+  utils::attribute_reader *binder_{};
   size_t index_{0};
   const char *id_{};
 };
@@ -65,7 +65,7 @@ private:
 class object_result_binder {
 public:
   template<class Type>
-  void bind(Type &obj, object::attribute_reader &binder) {
+  void bind(Type &obj, utils::attribute_reader &binder) {
     binder_ = &binder;
     matador::access::process(*this, obj);
     binder_ = nullptr;
@@ -76,7 +76,7 @@ public:
   template < class Type >
   void on_primary_key(const char *id, Type &val, std::enable_if_t<std::is_integral_v<Type> && !std::is_same_v<bool, Type>>* = nullptr)
   {
-    object::data_type_traits<Type>::read_value(*binder_, id, index_++, val);
+    utils::data_type_traits<Type>::read_value(*binder_, id, index_++, val);
   }
   void on_primary_key(const char *id, std::string &, size_t size);
   void on_revision(const char *id, unsigned long long &/*rev*/);
@@ -84,10 +84,11 @@ public:
   template<typename Type>
   void on_attribute(const char *id, Type &val, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
-    object::data_type_traits<Type>::read_value(*binder_, id, index_++, val);
+    utils::data_type_traits<Type>::read_value(*binder_, id, index_++, val);
   }
   void on_attribute(const char *id, char *value, const utils::field_attributes &attr = utils::null_attributes);
   void on_attribute(const char *id, std::string &value, const utils::field_attributes &attr = utils::null_attributes);
+  void on_attribute(const char *id, utils::value &val, const utils::field_attributes &attr = utils::null_attributes);
 
   template<class Type, template < class ... > class Pointer>
   void on_belongs_to(const char *id, Pointer<Type> &x, const utils::foreign_attributes &/*attr*/ = utils::default_foreign_attributes)
@@ -116,7 +117,7 @@ public:
                            const utils::foreign_attributes &/*attr*/) {}
 
 private:
-  object::attribute_reader *binder_{};
+  utils::attribute_reader *binder_{};
   size_t index_{0};
   detail::fk_result_binder fk_result_binder_;
 };
@@ -126,7 +127,7 @@ namespace detail {
 template<typename ValueType>
 void fk_result_binder::on_primary_key(const char * /*id*/, ValueType &value, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>> *)
 {
-  object::data_type_traits<ValueType>::read_value(*binder_, id_, index_++, value);
+  utils::data_type_traits<ValueType>::read_value(*binder_, id_, index_++, value);
 }
 
 }

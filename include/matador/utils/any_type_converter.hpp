@@ -10,10 +10,10 @@ class date;
 class time;
 }
 
-namespace matador::sql {
+namespace matador::utils {
 
 template < typename Type >
-struct any_type_to_visitor
+struct any_type_converter
 {
   void operator()(char &x) { utils::convert(result, x); }
   void operator()(short &x) { utils::convert(result, x); }

@@ -3,6 +3,7 @@
 #include "matador/sql/backend_provider.hpp"
 #include "matador/sql/connection_impl.hpp"
 #include "matador/sql/schema.hpp"
+#include "matador/sql/query_compile_context.hpp"
 
 #include <algorithm>
 #include <stdexcept>
@@ -114,7 +115,7 @@ utils::result<void, sql_error> connection::rollback() const {
   return utils::ok<void>();
 }
 
-std::vector<sql::column_definition> connection::describe(const std::string &table_name) const
+utils::result<std::vector<column_definition>, sql_error> connection::describe(const std::string &table_name) const
 {
   return connection_->describe(table_name);
 }
@@ -177,12 +178,15 @@ utils::result<std::unique_ptr<query_result_impl>, sql_error> connection::fetch(c
 {
   const auto qry = dialect().compile(ctx, *connection_);
   if (qry.prototype.empty() || is_unknown(qry.prototype)) {
-    const auto table_prototype = describe(qry.table.name);
+    const auto result = describe(qry.table.name);
+    if (!result.is_ok()) {
+      return utils::error(result.err());
+    }
     for (auto &col : qry.prototype) {
-      const auto rit = std::find_if(std::begin(table_prototype), std::end(table_prototype), [&col](const auto &value) {
+      const auto rit = std::find_if(std::begin(*result), std::end(*result), [&col](const auto &value) {
         return value.name() == col.name();
       });
-      if (col.type() == data_type::type_unknown && rit != table_prototype.end()) {
+      if (col.type() == data_type::type_unknown && rit != (*result).end()) {
         const_cast<column_definition&>(col).type(rit->type());
       }
     }
@@ -197,9 +201,33 @@ utils::result<size_t, sql_error> connection::execute( const query_compile_contex
     return execute(dialect().compile(ctx, *connection_).sql);
 }
 
-statement connection::prepare(const query_compile_context &query) const
+statement connection::prepare(const query_compile_context &ctx) const
 {
-  return statement(connection_->prepare(dialect().compile(query, *connection_)));
+  const auto qry = dialect().compile(ctx, *connection_);
+  if (ctx.command != sql_command::SQL_CREATE && (qry.prototype.empty() || is_unknown(qry.prototype))) {
+    const auto result = describe(qry.table.name);
+    if (result.is_ok()) {
+      for (auto &col: qry.prototype) {
+        const auto rit = std::find_if(std::begin(*result), std::end(*result),
+                                      [&col](const auto &value) {
+                                        return value.name() == col.name();
+                                      });
+        if (col.type() == data_type::type_unknown && rit != (*result).end()) {
+          const_cast<column_definition &>(col).type(rit->type());
+        }
+      }
+    }
+  }
+
+//  return connection_->prepare(qry).and_then([](auto &&res) {
+//    return statement(std::forward<decltype(res)>(res));
+//  });
+  auto result = connection_->prepare(qry);
+  if (result.is_ok()) {
+    return statement(result.release());
+  }
+
+  return statement(std::unique_ptr<statement_impl>{});
 }
 
 std::string connection::str( const query_compile_context& ctx ) const

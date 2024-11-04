@@ -8,12 +8,12 @@ statement_impl::statement_impl(query_context query)
 
 void statement_impl::bind(size_t pos, const char *value, size_t size)
 {
-  object::data_type_traits<const char*>::bind_value(binder(), pos, value, size);
+  utils::data_type_traits<const char*>::bind_value(binder(), pos, value, size);
 }
 
 void statement_impl::bind(size_t pos, std::string &val, size_t size)
 {
-  object::data_type_traits<std::string>::bind_value(binder(), pos, val, size);
+  utils::data_type_traits<std::string>::bind_value(binder(), pos, val, size);
 }
 
 const std::vector<std::string> &statement_impl::bind_vars() const

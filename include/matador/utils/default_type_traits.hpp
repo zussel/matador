@@ -1,7 +1,7 @@
-#ifndef QUERY_DATA_TYPE_TRAITS_HPP
-#define QUERY_DATA_TYPE_TRAITS_HPP
+#ifndef MATADOR_DEFAULT_TYPE_TRAITS_HPP
+#define MATADOR_DEFAULT_TYPE_TRAITS_HPP
 
-#include "matador/utils/data_types.hpp"
+#include "matador/utils/data_type_traits.hpp"
 #include "matador/utils/types.hpp"
 #include "matador/utils/date.hpp"
 #include "matador/utils/time.hpp"
@@ -9,26 +9,7 @@
 #include <cstdint>
 #include <string>
 
-namespace matador::object {
-
-class attribute_reader;
-class attribute_writer;
-
-/**
- * @tparam T The type of the traits
- * @brief Type traits for database types
- *
- * This class is used to determine and
- * provide the correct size information
- * for a data type
- */
-template < class Type, class Enable = void >
-struct data_type_traits
-{
-   static data_type type(std::size_t /*size*/) { return data_type::type_unknown; }
-   static void read_value(attribute_reader &, const char *, size_t, Type &/*value*/) {}
-   static void bind_value(attribute_writer &, size_t, Type &/*value*/) {}
-};
+namespace matador::utils {
 
 /// @cond MATADOR_DEV
 template <> struct data_type_traits<nullptr_t, void>
@@ -200,4 +181,4 @@ struct data_type_traits<EnumType, std::enable_if_t<std::is_enum_v<EnumType>>>
 /// @endcond
 
 }
-#endif //QUERY_DATA_TYPE_TRAITS_HPP
+#endif //MATADOR_DEFAULT_TYPE_TRAITS_HPP

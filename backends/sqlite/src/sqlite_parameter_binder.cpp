@@ -14,87 +14,101 @@ sqlite_parameter_binder::sqlite_parameter_binder(sqlite3 *db, sqlite3_stmt *stmt
 
 void sqlite_parameter_binder::write_value(size_t pos, const char &x)
 {
-  const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const short &x)
 {
-  const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const int &x)
 {
-  const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const long &x)
 {
-  const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const long long int &x)
 {
-  const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const unsigned char &x)
 {
-  const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const unsigned short &x)
 {
-  const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const unsigned int &x)
 {
-  const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const unsigned long &x)
 {
-  const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int64");
+  if (const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const unsigned long long int &x)
 {
-  const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int64");
+  if (const int ret = sqlite3_bind_int64(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const bool &x)
 {
-  const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_int(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const float &x)
 {
-  const int ret = sqlite3_bind_double(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_double(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const double &x)
 {
-  const int ret = sqlite3_bind_double(stmt_, static_cast<int>(++pos), x);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_int");
+  if (const int ret = sqlite3_bind_double(stmt_, static_cast<int>(++pos), x); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const char *x)
 {
   host_strings_.emplace_back(x, strlen(x));
-  const int ret = sqlite3_bind_text(stmt_, static_cast<int>(++pos), host_strings_.back().c_str(), static_cast<int>(host_strings_.back().size()), nullptr);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_text");
+  if (const int ret = sqlite3_bind_text(stmt_, static_cast<int>(++pos), host_strings_.back().c_str(), static_cast<int>(host_strings_.back().size()), nullptr); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const char *x, size_t size)
@@ -102,15 +116,17 @@ void sqlite_parameter_binder::write_value(size_t pos, const char *x, size_t size
   const auto len = strlen(x);
   size = (len > size && size != 0) ? size : len;
   host_strings_.emplace_back(x, size);
-  const int ret = sqlite3_bind_text(stmt_, static_cast<int>(++pos), host_strings_.back().c_str(), static_cast<int>(host_strings_.back().size()), nullptr);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_text");
+  if (const int ret = sqlite3_bind_text(stmt_, static_cast<int>(++pos), host_strings_.back().c_str(), static_cast<int>(host_strings_.back().size()), nullptr); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const std::string &x)
 {
   host_strings_.push_back(x);
-  const int ret = sqlite3_bind_text(stmt_, static_cast<int>(++pos), host_strings_.back().c_str(), static_cast<int>(host_strings_.back().size()), nullptr);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_text");
+  if (const int ret = sqlite3_bind_text(stmt_, static_cast<int>(++pos), host_strings_.back().c_str(), static_cast<int>(host_strings_.back().size()), nullptr); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const std::string &x, size_t size)
@@ -121,8 +137,9 @@ void sqlite_parameter_binder::write_value(size_t pos, const std::string &x, size
   } else {
     size = (len > size) ? size : len;
   }
-  const int ret = sqlite3_bind_text(stmt_, static_cast<int>(++pos), x.data(), static_cast<int>(size), nullptr);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_text");
+  if (const int ret = sqlite3_bind_text(stmt_, static_cast<int>(++pos), x.c_str(), static_cast<int>(size), nullptr); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
 
 void sqlite_parameter_binder::write_value(size_t pos, const time &x)
@@ -139,8 +156,11 @@ void sqlite_parameter_binder::write_value(size_t pos, const date &x)
 
 void sqlite_parameter_binder::write_value(size_t pos, const utils::blob &x)
 {
-  const int ret = sqlite3_bind_blob(stmt_, static_cast<int>(++pos), x.data(), static_cast<int>(x.size()), SQLITE_STATIC);
-  throw_sqlite_error(ret, db_, "sqlite3_bind_blob");
+  if (const int ret = sqlite3_bind_blob(stmt_, static_cast<int>(++pos), x.data(), static_cast<int>(x.size()), SQLITE_STATIC); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::BIND_FAILED, ret, db_);
+  }
 }
+
+void sqlite_parameter_binder::write_value(size_t /*pos*/, const utils::value &/*x*/, size_t /*size*/) {}
 
 }

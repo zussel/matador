@@ -1,7 +1,7 @@
 #ifndef QUERY_SQLITE_PARAMETER_BINDER_H
 #define QUERY_SQLITE_PARAMETER_BINDER_H
 
-#include "matador/object/attribute_writer.hpp"
+#include "matador/utils/attribute_writer.hpp"
 
 #include <sql.h>
 

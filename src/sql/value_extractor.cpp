@@ -8,22 +8,22 @@ value_extractor::value_extractor(std::vector<utils::any_type> &values)
 
 void value_extractor::on_primary_key(const char *, std::string &pk, size_t s)
 {
-  object::data_type_traits<std::string>::bind_value(*this, 0, pk, s);
+  utils::data_type_traits<std::string>::bind_value(*this, 0, pk, s);
 }
 
 void value_extractor::on_revision(const char *, unsigned long long int &rev)
 {
-  object::data_type_traits<unsigned long long int>::bind_value(*this, 0, rev);
+  utils::data_type_traits<unsigned long long int>::bind_value(*this, 0, rev);
 }
 
 void value_extractor::on_attribute(const char *, char *x, const utils::field_attributes &attr)
 {
-  object::data_type_traits<char*>::bind_value(*this, 0, x, attr.size());
+  utils::data_type_traits<char*>::bind_value(*this, 0, x, attr.size());
 }
 
 void value_extractor::on_attribute(const char *, std::string &x, const utils::field_attributes &attr)
 {
-  object::data_type_traits<std::string>::bind_value(*this, 0, x, attr.size());
+  utils::data_type_traits<std::string>::bind_value(*this, 0, x, attr.size());
 }
 
 void value_extractor::write_value(size_t /*pos*/, const char &x)
@@ -124,6 +124,11 @@ void value_extractor::write_value(size_t /*pos*/, const std::string &x, size_t /
 void value_extractor::write_value(size_t /*pos*/, const utils::blob &x)
 {
   values_.emplace_back(x);
+}
+
+void value_extractor::write_value(size_t /*pos*/, const utils::value &/*x*/, size_t /*size*/)
+{
+//  values_.emplace_back(x);
 }
 
 }

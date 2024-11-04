@@ -152,6 +152,8 @@ void postgres_parameter_binder::write_value(const size_t pos, const utils::blob 
   bind_data_.formats[pos] = 1;
 }
 
+void postgres_parameter_binder::write_value(const size_t /*pos*/, const utils::value &/*x*/, size_t /*size*/) {}
+
 const postgres_parameter_binder::bind_data &postgres_parameter_binder::params() const {
   return bind_data_;
 }

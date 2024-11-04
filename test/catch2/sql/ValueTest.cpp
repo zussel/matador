@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/sql/value.hpp"
+#include "matador/utils/value.hpp"
 
 #include "matador/utils/data_types.hpp"
 #include "matador/utils/date.hpp"
@@ -10,7 +10,7 @@
 using namespace matador;
 
 TEST_CASE("Test value class", "[value]") {
-  sql::value v;
+  utils::value v;
 
   REQUIRE(v.is_null());
   REQUIRE(v.type() == data_type::type_null);

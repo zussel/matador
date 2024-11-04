@@ -4,17 +4,19 @@
 #include "matador/utils/access.hpp"
 #include "matador/utils/field_attributes.hpp"
 #include "matador/utils/foreign_attributes.hpp"
+#include "matador/utils/default_type_traits.hpp"
 
 #include "matador/sql/query_result_reader.hpp"
 #include "matador/sql/column_definition.hpp"
-#include "matador/object/data_type_traits.hpp"
 
 #include <memory>
 #include <string>
 
-namespace matador::sql {
-
+namespace matador::utils {
 class value;
+}
+
+namespace matador::sql {
 
 namespace detail {
 class pk_reader
@@ -64,7 +66,7 @@ public:
   template<typename ValueType>
   void on_primary_key(const char *id, ValueType &value, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>>* = nullptr)
   {
-    object::data_type_traits<ValueType>::read_value(*reader_, id, column_index_++, value);
+    utils::data_type_traits<ValueType>::read_value(*reader_, id, column_index_++, value);
   }
   void on_primary_key(const char *id, std::string &value, size_t size);
   void on_revision(const char *id, unsigned long long &rev);
@@ -72,11 +74,11 @@ public:
   template < class Type >
   void on_attribute(const char *id, Type &x, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
-    object::data_type_traits<Type>::read_value(*reader_, id, column_index_++, x);
+    utils::data_type_traits<Type>::read_value(*reader_, id, column_index_++, x);
   }
   void on_attribute(const char *id, char *value, const utils::field_attributes &attr = utils::null_attributes);
   void on_attribute(const char *id, std::string &value, const utils::field_attributes &attr = utils::null_attributes);
-  void on_attribute(const char *id, value &val, const utils::field_attributes &attr = utils::null_attributes);
+  void on_attribute(const char *id, utils::value &val, const utils::field_attributes &attr = utils::null_attributes);
 
   template < class Pointer >
   void on_belongs_to(const char * /*id*/, Pointer &x, const utils::foreign_attributes &attr)
@@ -135,7 +137,11 @@ public:
   bool fetch(Type &obj)
   {
     column_index_ = reader_->start_column_index();
-    if (!reader_->fetch()) {
+    auto fetched = reader_->fetch();
+    if (!fetched.is_ok()) {
+      return false;
+    }
+    if (!*fetched) {
       return false;
     }
     access::process(*this, obj);
@@ -156,7 +162,7 @@ namespace detail {
 template<typename ValueType>
 void detail::pk_reader::on_primary_key(const char *id, ValueType &value, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>> *)
 {
-  object::data_type_traits<ValueType>::read_value(reader_, id, column_index_++, value);
+  utils::data_type_traits<ValueType>::read_value(reader_, id, column_index_++, value);
 }
 
 }

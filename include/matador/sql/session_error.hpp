@@ -14,7 +14,8 @@ enum class session_error_code {
   NoConnectionAvailable,
   UnknownType,
   FailedToBuildQuery,
-  FailedToFindObject
+  FailedToFindObject,
+  FailedToDescribe
 };
 
 class session_error

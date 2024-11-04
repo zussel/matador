@@ -1,4 +1,4 @@
-#include "matador/utils/contraints.hpp"
+#include "matador/utils/constraints.hpp"
 
 namespace matador {
 

@@ -17,7 +17,7 @@ public:
   utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch() override;
   void reset() override;
 protected:
-  object::attribute_writer& binder() override;
+  utils::attribute_writer& binder() override;
 
 private:
   sqlite3 *db_{nullptr};

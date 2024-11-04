@@ -1,14 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "matador/utils/types.hpp"
+#include "matador/utils/any_type_converter.hpp"
 
-#include "matador/sql/any_type_to_visitor.hpp"
-
-using namespace matador::sql;
 using namespace matador::utils;
 
 TEST_CASE("Convert any type to string", "[any type visitor]") {
-  any_type_to_visitor<std::string> to_string_visitor;
+  any_type_converter<std::string> to_string_visitor;
 
   any_type value = 6;
   std::visit(to_string_visitor, value);
@@ -32,7 +30,7 @@ TEST_CASE("Convert any type to string", "[any type visitor]") {
 }
 
 TEST_CASE("Convert any type to integral", "[any type visitor]") {
-  any_type_to_visitor<long> to_long_visitor;
+  any_type_converter<long> to_long_visitor;
 
   any_type value = 6;
   std::visit(to_long_visitor, value);
@@ -56,7 +54,7 @@ TEST_CASE("Convert any type to integral", "[any type visitor]") {
 }
 
 TEST_CASE("Convert any type to floating point", "[any type visitor]") {
-  any_type_to_visitor<double> to_double_visitor;
+  any_type_converter<double> to_double_visitor;
 
   any_type value = 6;
   std::visit(to_double_visitor, value);

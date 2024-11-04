@@ -1,10 +1,7 @@
 #ifndef OOS_DATABASE_TYPES_HPP
 #define OOS_DATABASE_TYPES_HPP
 
-#include "matador/utils/date.hpp"
-#include "matador/utils/time.hpp"
-#include "matador/utils/types.hpp"
-
+#include <cstdint>
 #include <string>
 
 namespace matador {

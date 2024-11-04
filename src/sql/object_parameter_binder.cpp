@@ -7,7 +7,7 @@ namespace detail {
 
 void fk_binder::on_primary_key(const char * /*id*/, std::string &value, size_t /*size*/)
 {
-  object::data_type_traits<std::string>::bind_value(*binder_, index_++, value);
+  utils::data_type_traits<std::string>::bind_value(*binder_, index_++, value);
 }
 
 }
@@ -17,14 +17,14 @@ void object_parameter_binder::reset()
   index_ = 0;
 }
 
-void object_parameter_binder::on_primary_key(const char * /*id*/, std::string &val, size_t size)
+void object_parameter_binder::on_primary_key(const char * /*id*/, std::string &val, const size_t size)
 {
-  object::data_type_traits<std::string>::bind_value(*binder_, index_++, val, size);
+  utils::data_type_traits<std::string>::bind_value(*binder_, index_++, val, size);
 }
 
 void object_parameter_binder::on_revision(const char * /*id*/, unsigned long long int &rev)
 {
-  object::data_type_traits<unsigned long long>::bind_value(*binder_, index_++, rev);
+  utils::data_type_traits<unsigned long long>::bind_value(*binder_, index_++, rev);
 }
 
 }

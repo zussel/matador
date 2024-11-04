@@ -144,7 +144,7 @@ public:
   [[nodiscard]] size_t execute(const std::string &sql) const;
   // statement prepare(query_context q) const;
 
-  std::vector<sql::column_definition> describe_table(const std::string &table_name) const;
+  utils::result<std::vector<sql::column_definition>, session_error> describe_table(const std::string &table_name) const;
   bool table_exists(const std::string &table_name) const;
 
   const class dialect& dialect() const;

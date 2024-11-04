@@ -55,7 +55,7 @@ utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> postgres_
 
 void postgres_statement::reset() {}
 
-object::attribute_writer& postgres_statement::binder()
+utils::attribute_writer& postgres_statement::binder()
 {
   return binder_;
 }

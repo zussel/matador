@@ -1,28 +1,19 @@
 #include "sqlite_error.hpp"
 
 #include <stdexcept>
-#include <sstream>
 
 #include <sqlite3.h>
 
 namespace matador::backends::sqlite {
 
-void throw_sqlite_error(int ec, sqlite3 *db, const std::string &source)
+bool is_not_ok_or_done(const int ec)
 {
-  if (ec != SQLITE_OK && ec != SQLITE_DONE) {
-    std::stringstream msg;
-    msg << "sqlite error (" << source << "): " << sqlite3_errmsg(db);
-    throw std::logic_error(msg.str());
-  }
+  return ec != SQLITE_OK && ec != SQLITE_DONE;
 }
 
-void throw_sqlite_error(int ec, sqlite3 *db, const std::string &source, const std::string &sql)
+sql::sql_error make_error(const sql::sql_error_code ec, const int err, sqlite3 *db, const std::string &sql)
 {
-  if (ec != SQLITE_OK&& ec != SQLITE_DONE) {
-    std::stringstream msg;
-    msg << "sqlite error (" << source << ", sql: " << sql << "): " << sqlite3_errmsg(db);
-    throw std::logic_error(msg.str());
-  }
+  return sql::sql_error{ec, std::to_string(err), sqlite3_errmsg(db), "sqlite", sql};
 }
 
 }

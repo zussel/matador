@@ -20,17 +20,19 @@ void sqlite_connection::open() {
     return;
   }
 
-  const auto ret = sqlite3_open(info().database.c_str(), &db_);
-
-  if (ret != SQLITE_OK) {
-    throw_sqlite_error(ret, db_, "open");
+  if (const auto ret = sqlite3_open(info().database.c_str(), &db_); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::OPEN_ERROR, ret, db_);
   }
 }
 
 void sqlite_connection::close() {
-  int ret = sqlite3_close(db_);
+  if (!is_open()) {
+    return;
+  }
 
-  throw_sqlite_error(ret, db_, "close");
+  if (const auto ret = sqlite3_close(db_); ret != SQLITE_OK) {
+    make_error(sql::sql_error_code::CLOSE_ERROR, ret, db_);
+  }
 
   db_ = nullptr;
 }
@@ -119,12 +121,15 @@ utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> sqlite_co
   });
 }
 
-std::unique_ptr<sql::statement_impl> sqlite_connection::prepare(sql::query_context query) {
+utils::result<std::unique_ptr<sql::statement_impl>, sql::sql_error> sqlite_connection::prepare(sql::query_context query) {
   sqlite3_stmt *stmt{};
   const int ret = sqlite3_prepare_v2(db_, query.sql.c_str(), static_cast<int>(query.sql.size()), &stmt, nullptr);
-  throw_sqlite_error(ret, db_, "sqlite3_prepare_v2", query.sql);
+  if (is_not_ok_or_done(ret)) {
+    return utils::error(make_error(sql::sql_error_code::PREPARE_FAILED, ret, db_, query.sql));
+  }
 
-  return std::make_unique<sqlite_statement>(db_, stmt, query);
+  std::unique_ptr<sql::statement_impl> s(std::make_unique<sqlite_statement>(db_, stmt, query));
+  return utils::ok(std::move(s));
 }
 
 data_type string2type(const char *type) {
@@ -173,15 +178,22 @@ data_type string2type(const char *type) {
   return data_type::type_unknown;
 }
 
-std::vector<sql::column_definition> sqlite_connection::describe(const std::string &table) {
+utils::result<std::vector<sql::column_definition>, sql::sql_error> sqlite_connection::describe(const std::string &table) {
   const auto result = fetch_internal("PRAGMA table_info(" + table + ")");
   if (!result.is_ok()) {
-    return {};
+    return utils::error(result.err());
   }
 
   sqlite_result_reader reader(result->rows, result->prototype.size());
   std::vector<sql::column_definition> prototype;
-  while (reader.fetch()) {
+  while(auto fetched = reader.fetch()) {
+    if (!fetched.is_ok()) {
+      return utils::error(fetched.release_error());
+    }
+    if (!*fetched) {
+      break;
+    }
+
     char *end = nullptr;
     // Todo: add index to column
     auto index = strtoul(reader.column(0), &end, 10);
@@ -189,7 +201,7 @@ std::vector<sql::column_definition> sqlite_connection::describe(const std::strin
 
     auto type = (string2type(reader.column(2)));
     end = nullptr;
-    sql::null_option null_opt{sql::null_option::NULLABLE};
+    auto null_opt{sql::null_option::NULLABLE};
     if (strtoul(reader.column(3), &end, 10) == 0) {
       null_opt = sql::null_option::NOT_NULL;
     }
@@ -197,7 +209,7 @@ std::vector<sql::column_definition> sqlite_connection::describe(const std::strin
     prototype.emplace_back(name, type, utils::null_attributes, null_opt, index);
   }
 
-  return prototype;
+  return utils::ok(prototype);
 }
 
 utils::result<bool, sql::sql_error> sqlite_connection::exists(const std::string &/*schema_name*/, const std::string &table_name) {
@@ -209,8 +221,11 @@ utils::result<bool, sql::sql_error> sqlite_connection::exists(const std::string 
 
   sqlite_result_reader reader(result->rows, result->prototype.size());
 
-  if (!reader.fetch()) {
-    // Todo: throw an exception?
+  auto fetched = reader.fetch();
+  if (!fetched.is_ok()) {
+    return utils::error(fetched.release_error());
+  }
+  if (!*fetched) {
     return utils::error(sql::sql_error{sql::sql_error_code::INVALID_QUERY, "", "", ""});
   }
 

@@ -31,9 +31,9 @@ public:
 
   virtual utils::result<size_t, sql_error> execute(const std::string &stmt) = 0;
   virtual utils::result<std::unique_ptr<query_result_impl>, sql_error> fetch(const query_context& context) = 0;
-  virtual std::unique_ptr<statement_impl> prepare(query_context context) = 0;
+  virtual utils::result<std::unique_ptr<statement_impl>, sql_error> prepare(query_context context) = 0;
 
-  virtual std::vector<column_definition> describe(const std::string &table) = 0;
+  virtual utils::result<std::vector<column_definition>, sql_error> describe(const std::string &table) = 0;
   virtual utils::result<bool, sql_error> exists(const std::string &schema_name, const std::string &table_name) = 0;
 
   [[nodiscard]] const class dialect &dialect() const;

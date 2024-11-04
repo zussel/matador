@@ -10,7 +10,9 @@ namespace matador {
 class date;
 class time;
 }
-namespace matador::object {
+namespace matador::utils {
+
+class value;
 
 class attribute_reader
 {
@@ -35,7 +37,8 @@ public:
   virtual void read_value(const char *id, size_t index, char *value, size_t size) = 0;
   virtual void read_value(const char *id, size_t index, std::string &value) = 0;
   virtual void read_value(const char *id, size_t index, std::string &value, size_t size) = 0;
-  virtual void read_value(const char *id, size_t index, utils::blob &value) = 0;
+  virtual void read_value(const char *id, size_t index, blob &value) = 0;
+  virtual void read_value(const char *id, size_t index, value &value, size_t size) = 0;
 };
 
 }

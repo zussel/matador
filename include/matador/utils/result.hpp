@@ -120,7 +120,7 @@ public:
 //  }
 
   template<typename Func,
-           typename SecondErrorType = typename std::invoke_result_t<Func, ErrorType >::error_type>
+           typename SecondErrorType = typename std::invoke_result_t<Func, ErrorType >::value_type>
   result<ValueType, SecondErrorType> or_else(Func &&f) {
     if (is_error()) {
       return f(err());

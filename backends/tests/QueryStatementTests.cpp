@@ -29,8 +29,9 @@ TEST_CASE_METHOD(QueryFixture, "Test create statement", "[query][statement][crea
   check_table_exists("person");
   const std::vector<std::string> cols = {"id", "name", "age", "image"};
   const auto fields = db.describe("person");
+  REQUIRE(fields.is_ok());
 
-  for (const auto &fld : fields) {
+  for (const auto &fld : *fields) {
     REQUIRE(std::find(cols.begin(), cols.end(), fld.name()) != cols.end());
   }
 }

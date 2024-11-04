@@ -1,14 +1,14 @@
 #ifndef ATTRIBUTE_STRING_WRITER_HPP
 #define ATTRIBUTE_STRING_WRITER_HPP
 
-#include "matador/object/attribute_writer.hpp"
+#include "matador/utils/attribute_writer.hpp"
 
 namespace matador::sql {
 
 class connection_impl;
 class dialect;
 
-class attribute_string_writer : public object::attribute_writer
+class attribute_string_writer : public utils::attribute_writer
 {
 public:
     explicit attribute_string_writer(const connection_impl& conn);
@@ -43,6 +43,7 @@ public:
     void write_value(size_t pos, const std::string& x) override;
     void write_value(size_t pos, const std::string& x, size_t size) override;
     void write_value(size_t pos, const utils::blob& x) override;
+    void write_value(size_t pos, const utils::value& x, size_t size) override;
 
 private:
     std::string result_;

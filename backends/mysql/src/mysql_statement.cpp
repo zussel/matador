@@ -58,7 +58,7 @@ utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> mysql_sta
 
   return utils::ok(std::make_unique<sql::query_result_impl>(
     std::make_unique<mysql_prepared_result_reader>(stmt_, prepare_meta_result, std::move(result_binder)),
-    std::move(query_.prototype))
+    query_.prototype)
   );
 }
 
@@ -69,7 +69,7 @@ void mysql_statement::reset()
   }
 }
 
-object::attribute_writer& mysql_statement::binder()
+utils::attribute_writer& mysql_statement::binder()
 {
   return binder_;
 }

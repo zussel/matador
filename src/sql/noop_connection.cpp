@@ -49,14 +49,14 @@ utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> noop_conn
   return utils::ok(std::unique_ptr<sql::query_result_impl>{});
 }
 
-std::unique_ptr<statement_impl> noop_connection::prepare(query_context /*context*/)
+utils::result<std::unique_ptr<statement_impl>, sql_error> noop_connection::prepare(query_context /*context*/)
 {
-  return {};
+  return utils::ok(std::unique_ptr<statement_impl>{});
 }
 
-std::vector<sql::column_definition> noop_connection::describe(const std::string &/*table*/)
+utils::result<std::vector<sql::column_definition>, sql_error> noop_connection::describe(const std::string &/*table*/)
 {
-  return {};
+  return utils::ok(std::vector<sql::column_definition>{});
 }
 
 utils::result<bool, sql_error> noop_connection::exists(const std::string &/*schema_name*/, const std::string &/*table_name*/)

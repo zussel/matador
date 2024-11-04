@@ -24,10 +24,17 @@ SET(SOURCES
   thread_pool.cpp
   time.cpp
   url.cpp
+  value.cpp
   version.cpp
+  types.cpp
+  default_type_traits.cpp
+  value_type_traits.cpp
 )
 
 SET(HEADER
+  ../../include/matador/utils/any_type_converter.hpp
+  ../../include/matador/utils/attribute_reader.hpp
+  ../../include/matador/utils/attribute_writer.hpp
   ../../include/matador/utils/access.hpp
   ../../include/matador/utils/algorithm.hpp
   ../../include/matador/utils/base64.hpp
@@ -37,8 +44,9 @@ SET(HEADER
   ../../include/matador/utils/byte_buffer.hpp
   ../../include/matador/utils/calendar.h
   ../../include/matador/utils/cascade_type.hpp
-  ../../include/matador/utils/contraints.hpp
+  ../../include/matador/utils/constraints.hpp
   ../../include/matador/utils/convert.hpp
+  ../../include/matador/utils/data_type_traits.hpp
   ../../include/matador/utils/data_types.hpp
   ../../include/matador/utils/date.hpp
   ../../include/matador/utils/di.hpp
@@ -71,8 +79,11 @@ SET(HEADER
   ../../include/matador/utils/tree.hpp
   ../../include/matador/utils/types.hpp
   ../../include/matador/utils/url.hpp
+  ../../include/matador/utils/value.hpp
   ../../include/matador/utils/version.hpp
   ../../include/matador/utils/macro_map.hpp
+  ../../include/matador/utils/default_type_traits.hpp
+  ../../include/matador/utils/value_type_traits.hpp
 )
 
 ADD_LIBRARY(matador-utils STATIC ${SOURCES} ${HEADER})

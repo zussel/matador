@@ -1,7 +1,7 @@
 #ifndef MATADOR_MYSQL_RESULT_BINDER_HPP
 #define MATADOR_MYSQL_RESULT_BINDER_HPP
 
-#include "matador/object/attribute_reader.hpp"
+#include "matador/utils/attribute_reader.hpp"
 
 #include "mysql_result_info.hpp"
 
@@ -15,7 +15,7 @@
 
 namespace matador::backends::mysql {
 
-class mysql_result_binder final : public object::attribute_reader
+class mysql_result_binder final : public utils::attribute_reader
 {
 public:
   explicit mysql_result_binder(size_t size);
@@ -39,6 +39,7 @@ public:
   void read_value(const char *id, size_t pos, std::string &x) override;
   void read_value(const char *id, size_t pos, std::string &x, size_t size) override;
   void read_value(const char *id, size_t pos, utils::blob &x) override;
+  void read_value(const char *id, size_t pos, utils::value &x, size_t) override;
 
   [[nodiscard]] std::vector<MYSQL_BIND>& result_bindings();
   [[nodiscard]] std::vector<mysql_result_info>& result_infos();

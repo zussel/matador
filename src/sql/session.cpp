@@ -71,13 +71,15 @@ size_t session::execute(const std::string &sql) const {
 //   return c->prepare(std::move(q));
 // }
 
-std::vector<sql::column_definition> session::describe_table(const std::string &table_name) const
+utils::result<std::vector<sql::column_definition>, session_error> session::describe_table(const std::string &table_name) const
 {
   auto c = pool_.acquire();
   if (!c.valid()) {
     throw std::logic_error("no database connection available");
   }
-  return c->describe(table_name);
+  return c->describe(table_name).or_else([](const auto &err) {
+    return utils::error(session_error{session_error_code::FailedToDescribe, "", err});
+  });
 }
 
 bool session::table_exists(const std::string &table_name) const

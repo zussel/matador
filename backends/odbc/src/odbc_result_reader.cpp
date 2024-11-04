@@ -1,6 +1,6 @@
 #include "odbc_result_reader.hpp"
 
-#include "matador/sql/value.hpp"
+#include "matador/utils/value.hpp"
 
 #include "matador/utils/string.hpp"
 

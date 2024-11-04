@@ -1,7 +1,7 @@
 #ifndef QUERY_POSTGRES_PARAMETER_BINDER_H
 #define QUERY_POSTGRES_PARAMETER_BINDER_H
 
-#include "matador/object/attribute_writer.hpp"
+#include "matador/utils/attribute_writer.hpp"
 
 #include "mysql_result_info.hpp"
 
@@ -15,7 +15,7 @@
 
 namespace matador::backends::mysql {
 
-class mysql_parameter_binder final : public object::attribute_writer
+class mysql_parameter_binder final : public utils::attribute_writer
 {
 public:
   explicit mysql_parameter_binder(size_t size);
@@ -40,6 +40,7 @@ public:
   void write_value(size_t pos, const std::string &x) override;
   void write_value(size_t pos, const std::string &x, size_t size) override;
   void write_value(size_t pos, const utils::blob &x) override;
+  void write_value(size_t pos, const utils::value &x, size_t size) override;
 
   [[nodiscard]] std::vector<MYSQL_BIND>& bind_params();
 

@@ -5,7 +5,7 @@
 #include "matador/sql/condition.hpp"
 #include "matador/sql/query_context.hpp"
 #include "matador/sql/query_intermediates.hpp"
-#include "matador/sql/value.hpp"
+#include "matador/utils/value.hpp"
 
 #include "matador/utils/result.hpp"
 
@@ -315,7 +315,7 @@ private:
   void append_join(const column_key &left, const column_key &right);
 
 private:
-  value pk_;
+  utils::value pk_;
   std::stack<table_info> table_info_stack_;
   std::shared_ptr<table> current_table_;
   const schema &schema_;

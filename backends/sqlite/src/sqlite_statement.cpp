@@ -51,7 +51,7 @@ void sqlite_statement::reset()
   }
 }
 
-object::attribute_writer& sqlite_statement::binder()
+utils::attribute_writer& sqlite_statement::binder()
 {
   return binder_;
 }

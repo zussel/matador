@@ -99,4 +99,6 @@ void attribute_string_writer::write_value(size_t /*pos*/, const utils::blob& x )
     result_ = conn_->dialect().token_at(dialect_token::BEGIN_BINARY_DATA) + conn_->to_escaped_string(x) + conn_->dialect().token_at(dialect_token::END_BINARY_DATA);
 }
 
+void attribute_string_writer::write_value(size_t /*pos*/, const utils::value &/*x*/, size_t /*size*/) {}
+
 }

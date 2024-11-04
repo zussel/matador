@@ -3,8 +3,8 @@
 
 #include "matador/sql/fk_value_extractor.hpp"
 
-#include "matador/object/attribute_writer.hpp"
-#include "matador/object/data_type_traits.hpp"
+#include "matador/utils/attribute_writer.hpp"
+#include "matador/utils/default_type_traits.hpp"
 
 #include "matador/utils/foreign_attributes.hpp"
 
@@ -12,7 +12,7 @@
 
 namespace matador::sql {
 
-class value_extractor final : public object::attribute_writer
+class value_extractor final : public utils::attribute_writer
 {
 private:
   explicit value_extractor(std::vector<utils::any_type> &values);
@@ -30,14 +30,14 @@ public:
   template<typename ValueType>
   void on_primary_key(const char *, ValueType &x, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>>* = nullptr)
   {
-    object::data_type_traits<ValueType>::bind_value(*this, 0, x);
+    utils::data_type_traits<ValueType>::bind_value(*this, 0, x);
   }
   void on_primary_key(const char *id, std::string &pk, size_t size);
   void on_revision(const char *id, unsigned long long &rev);
   template < class Type >
   void on_attribute(const char *, Type &x, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
-    object::data_type_traits<Type>::bind_value(*this, 0, x);
+    utils::data_type_traits<Type>::bind_value(*this, 0, x);
   }
   void on_attribute(const char *id, char *x, const utils::field_attributes &/*attr*/ = utils::null_attributes);
   void on_attribute(const char *id, std::string &x, const utils::field_attributes &/*attr*/ = utils::null_attributes);
@@ -86,6 +86,7 @@ public:
   void write_value(size_t pos, const std::string &x) override;
   void write_value(size_t pos, const std::string &x, size_t size) override;
   void write_value(size_t pos, const utils::blob &x) override;
+  void write_value(size_t pos, const utils::value &x, size_t size) override;
 
 private:
   detail::fk_value_extractor fk_value_extractor_;

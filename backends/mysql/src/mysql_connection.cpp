@@ -4,7 +4,7 @@
 #include "mysql_statement.hpp"
 
 #include "matador/sql/record.hpp"
-#include "matador/object/data_type_traits.hpp"
+#include "matador/utils/default_type_traits.hpp"
 
 #include <memory>
 #include <regex>
@@ -229,17 +229,18 @@ utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> mysql_con
                                                             context.prototype));
 }
 
-std::unique_ptr<sql::statement_impl> mysql_connection::prepare(sql::query_context context) {
+utils::result<std::unique_ptr<sql::statement_impl>, sql::sql_error> mysql_connection::prepare(sql::query_context context) {
   MYSQL_STMT *stmt = mysql_stmt_init(mysql_.get());
   if (stmt == nullptr) {
-    throw_mysql_error(mysql_.get(), "mysql_stmt_init");
+    return utils::error(make_error(sql::sql_error_code::PREPARE_FAILED, mysql_.get(), context.sql));
   }
 
   if (mysql_stmt_prepare(stmt, context.sql.c_str(), static_cast<unsigned long>(context.sql.size())) != 0) {
-    throw_mysql_error(stmt, "mysql_stmt_prepare", context.sql);
+    return utils::error(make_error(sql::sql_error_code::PREPARE_FAILED, mysql_.get(), context.sql));
   }
 
-  return std::make_unique<mysql_statement>(stmt, std::move(context));
+  std::unique_ptr<sql::statement_impl> s = std::make_unique<mysql_statement>(stmt, std::move(context));
+  return utils::ok(std::move(s));
 }
 
 utils::result<size_t, sql::sql_error> mysql_connection::execute(const std::string &stmt) {
@@ -250,22 +251,29 @@ utils::result<size_t, sql::sql_error> mysql_connection::execute(const std::strin
   return utils::ok(static_cast<size_t>(mysql_affected_rows(mysql_.get())));
 }
 
-std::vector<sql::column_definition> mysql_connection::describe(const std::string &table) {
+utils::result<std::vector<sql::column_definition>, sql::sql_error> mysql_connection::describe(const std::string &table) {
   const std::string stmt("SHOW COLUMNS FROM " + table);
 
   if (mysql_query(mysql_.get(), stmt.c_str())) {
-    throw_mysql_error(mysql_.get(), stmt);
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, mysql_.get(), stmt));
   }
 
   const auto result = mysql_store_result(mysql_.get());
   if (result == nullptr) {
-    throw_mysql_error(mysql_.get(), stmt);
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, mysql_.get(), stmt));
   }
 
   mysql_result_reader reader(result, mysql_num_fields(result));
   std::vector<sql::column_definition> prototype;
-  while (reader.fetch()) {
+  while (auto fetched = reader.fetch()) {
+    if (!fetched.is_ok()) {
+      return utils::error(fetched.release_error());
+    }
+    if (!*fetched) {
+      break;
+    }
     char *end = nullptr;
+
     std::string name = reader.column(0);
 
     const auto [type, size] = determine_type_info(reader.column(1));
@@ -277,7 +285,7 @@ std::vector<sql::column_definition> mysql_connection::describe(const std::string
     prototype.push_back({name, type, {size}, null_opt, prototype.size()});
   }
 
-  return prototype;
+  return utils::ok(prototype);
 }
 
 utils::result<bool, sql::sql_error> mysql_connection::exists(const std::string &/*schema_name*/, const std::string &table_name) {

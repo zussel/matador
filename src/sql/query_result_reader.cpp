@@ -1,6 +1,6 @@
 #include "matador/sql/query_result_reader.hpp"
 #include "matador/sql/to_value.hpp"
-#include "matador/sql/value.hpp"
+#include "matador/utils/value.hpp"
 
 #include "matador/utils/string.hpp"
 
@@ -125,10 +125,10 @@ void query_result_reader::read_value(const char * /*id*/, const size_t index, ut
 }
 
 template < typename Type >
-void convert(const char *val_str, value &val)
+void convert(const char *val_str, utils::value &val)
 {
   if (val_str == nullptr) {
-      val = value(Type{});
+      val = utils::value(Type{});
       return;
   }
   Type local_val{};
@@ -136,7 +136,7 @@ void convert(const char *val_str, value &val)
   val = local_val;
 }
 
-void query_result_reader::read_value(const char * /*id*/, const size_t index, value &val, size_t /*size*/)
+void query_result_reader::read_value(const char * /*id*/, const size_t index, utils::value &val,size_t)
 {
   switch (val.type()) {
     case data_type::type_char:
@@ -225,7 +225,7 @@ utils::blob query_result_reader::read_blob(const size_t index)
   return utils::blob{bytes, bytes+len};
 }
 
-object::attribute_reader &query_result_reader::result_binder()
+utils::attribute_reader &query_result_reader::result_binder()
 {
   return empty_result_binder_;
 }

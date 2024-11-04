@@ -1,9 +1,9 @@
-#include "matador/object/data_type_traits.hpp"
+#include "matador/utils/default_type_traits.hpp"
 
-#include "matador/object/attribute_reader.hpp"
-#include "matador/object/attribute_writer.hpp"
+#include "matador/utils/attribute_reader.hpp"
+#include "matador/utils/attribute_writer.hpp"
 
-namespace matador::object {
+namespace matador::utils {
 
 void data_type_traits<nullptr_t>::read_value(attribute_reader &/*reader*/, const char * /*id*/, size_t /*index*/, nullptr_t &/*value*/)
 {}

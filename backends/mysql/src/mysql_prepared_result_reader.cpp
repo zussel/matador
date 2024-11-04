@@ -27,33 +27,30 @@ size_t mysql_prepared_result_reader::column_count() const
   return 0;
 }
 
-const char *mysql_prepared_result_reader::column(size_t index) const
+const char *mysql_prepared_result_reader::column(size_t /*index*/) const
 {
   return nullptr;
 }
 
-bool mysql_prepared_result_reader::fetch()
+utils::result<bool, sql::sql_error> mysql_prepared_result_reader::fetch()
 {
   if (mysql_stmt_bind_result(stmt_, result_binder_.result_bindings().data()) != 0) {
-    const auto err = make_error(sql::sql_error_code::BIND_FAILED, stmt_);
-    return false;
-//    return utils::error(make_error(sql::sql_error_code::BIND_FAILED, stmt_, query_.sql));
+    return utils::error(make_error(sql::sql_error_code::BIND_FAILED, stmt_));
   }
 
 
-  int ret = mysql_stmt_fetch(stmt_);
+  const int ret = mysql_stmt_fetch(stmt_);
   if (ret == MYSQL_DATA_TRUNCATED) {
     // Todo: handle truncated data
-//    return false;
   }
   if (ret == MYSQL_NO_DATA) {
-    return false;
+    return utils::ok(false);
   }
   if (ret == 1) {
-    return false;
+    return utils::error(make_error(sql::sql_error_code::FAILURE, stmt_));
   }
 
-  return true;
+  return utils::ok(true);
 }
 
 void mysql_prepared_result_reader::read_value(const char *, size_t index, time &value)
@@ -115,7 +112,7 @@ void on_truncated_data(MYSQL_BIND &result_binding, const mysql_result_info &resu
   result_binding.length = nullptr;
 }
 
-void mysql_prepared_result_reader::read_value(const char *, size_t index, std::string &value, size_t size)
+void mysql_prepared_result_reader::read_value(const char *, size_t index, std::string &value, size_t /*size*/)
 {
   auto &result_binding = result_binder_.result_bindings()[index];
   const auto &result_info = result_binder_.result_infos()[index];
@@ -147,12 +144,45 @@ void mysql_prepared_result_reader::read_value(const char *, size_t index, utils:
   }
 }
 
-void mysql_prepared_result_reader::read_value( const char* id, size_t index, sql::value& val, size_t size )
+void mysql_prepared_result_reader::read_value( const char* id, size_t index, utils::value& x, size_t size )
 {
-  query_result_reader::read_value( id, index, val, size );
+//  switch (x.type()) {
+//    case data_type::type_char:
+//      try_bind_value<char>(*this, id, pos, x);
+//      break;
+//    case data_type::type_short:
+//      try_bind_value<short>(*this, id, pos, x);
+//      break;
+//    case data_type::type_int:
+//      try_bind_value<int>(*this, id, pos, x);
+//      break;
+//    case data_type::type_long:
+//      try_bind_value<long>(*this, id, pos, x);
+//      break;
+//    case data_type::type_long_long:
+//      try_bind_value<long long>(*this, id, pos, x);
+//      break;
+//    case data_type::type_unsigned_char:
+//      try_bind_value<unsigned char>(*this, id, pos, x);
+//      break;
+//    case data_type::type_unsigned_short:
+//      try_bind_value<unsigned short>(*this, id, pos, x);
+//      break;
+//    case data_type::type_unsigned_int:
+//      try_bind_value<unsigned int>(*this, id, pos, x);
+//      break;
+//    case data_type::type_unsigned_long:
+//      try_bind_value<unsigned long>(*this, id, pos, x);
+//      break;
+//    case data_type::type_unsigned_long_long:
+//      try_bind_value<unsigned long long>(*this, id, pos, x);
+//      break;
+//    default:
+//      break;
+//  }
 }
 
-object::attribute_reader &mysql_prepared_result_reader::result_binder()
+utils::attribute_reader &mysql_prepared_result_reader::result_binder()
 {
   return result_binder_;
 }

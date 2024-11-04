@@ -20,7 +20,7 @@ public:
   [[nodiscard]] size_t column_count() const override;
 
   [[nodiscard]] const char* column(size_t index) const override;
-  [[nodiscard]] bool fetch() override;
+  [[nodiscard]] utils::result<bool, sql::sql_error> fetch() override;
 
 private:
   rows result_;

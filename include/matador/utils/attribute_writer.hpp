@@ -9,7 +9,9 @@ namespace matador {
 class date;
 class time;
 }
-namespace matador::object {
+namespace matador::utils {
+
+class value;
 
 class attribute_writer
 {
@@ -36,6 +38,7 @@ public:
   virtual void write_value(size_t pos, const std::string &x) = 0;
   virtual void write_value(size_t pos, const std::string &x, size_t size) = 0;
   virtual void write_value(size_t pos, const utils::blob &x) = 0;
+  virtual void write_value(size_t pos, const value &x, size_t size) = 0;
 };
 
 }

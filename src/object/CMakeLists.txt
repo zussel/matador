@@ -4,7 +4,6 @@ SET(SOURCES
   action_inserter.cpp
   action_remover.cpp
   basic_has_many_to_many_item.cpp
-  data_type_traits.cpp
   delete_action.cpp
   identifier.cpp
   insert_action.cpp
@@ -36,7 +35,6 @@ SET(HEADER
   ../../include/matador/object/action_vector.hpp
   ../../include/matador/object/action_visitor.hpp
   ../../include/matador/object/attribute_serializer.hpp
-  ../../include/matador/object/attribute_serializer.hpp
   ../../include/matador/object/basic_container_item_holder.hpp
   ../../include/matador/object/basic_has_many_to_many_item.hpp
   ../../include/matador/object/container.hpp
@@ -44,7 +42,6 @@ SET(HEADER
   ../../include/matador/object/container_iterator.hpp
   ../../include/matador/object/container_iterator_traits.hpp
   ../../include/matador/object/container_type_traits.hpp
-  ../../include/matador/object/data_type_traits.hpp
   ../../include/matador/object/delete_action.hpp
   ../../include/matador/object/export.hpp
   ../../include/matador/object/generic_access.hpp
@@ -94,8 +91,6 @@ SET(HEADER
   ../../include/matador/object/typed_object_store_observer.hpp
   ../../include/matador/object/update_action.hpp
   ../../include/matador/object/value_type_traits.hpp
-  ../../include/matador/object/attribute_reader.hpp
-  ../../include/matador/object/attribute_writer.hpp
 )
 
 ADD_LIBRARY(matador-object STATIC ${SOURCES} ${HEADER})

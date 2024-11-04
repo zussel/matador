@@ -14,7 +14,7 @@ public:
 
   [[nodiscard]] size_t column_count() const override;
   [[nodiscard]] const char *column(size_t index) const override;
-  bool fetch() override;
+  utils::result<bool, sql::sql_error> fetch() override;
 
   void read_value(const char *id, size_t index, char &value) override;
   void read_value(const char *id, size_t index, short &value) override;
@@ -32,10 +32,10 @@ public:
   void read_value(const char *id, size_t index, char *value, size_t s) override;
   void read_value(const char *id, size_t index, std::string &value) override;
   void read_value(const char *id, size_t index, std::string &value, size_t s) override;
-  void read_value(const char *id, size_t index, sql::value &val, size_t size) override;
   void read_value(const char *id, size_t index, time &value) override;
   void read_value(const char *id, size_t index, date &value) override;
   void read_value(const char *id, size_t index, utils::blob &value) override;
+  void read_value(const char *id, size_t index, utils::value &val, size_t size) override;
 
 private:
   sqlite3 *db_{nullptr};

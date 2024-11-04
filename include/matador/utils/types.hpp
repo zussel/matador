@@ -4,6 +4,7 @@
 #include "matador/utils/date.hpp"
 #include "matador/utils/placeholder.hpp"
 #include "matador/utils/time.hpp"
+#include "matador/utils/data_types.hpp"
 
 #include <variant>
 #include <vector>
@@ -40,6 +41,8 @@ using any_type = std::variant<
 >;
 
 struct null_type_t {};
+
+void initialize_by_data_type(data_type type, any_type &val);
 
 }
 

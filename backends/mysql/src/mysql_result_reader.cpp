@@ -25,11 +25,11 @@ const char *mysql_result_reader::column(size_t index) const
   return current_row_[index];
 }
 
-bool mysql_result_reader::fetch()
+utils::result<bool, sql::sql_error> mysql_result_reader::fetch()
 {
   current_row_ = mysql_fetch_row(result_);
 
-  return current_row_ != nullptr;
+  return utils::ok(current_row_ != nullptr);
 }
 
 }

@@ -1,9 +1,9 @@
 #ifndef QUERY_COLUMN_DEFINITION_HPP
 #define QUERY_COLUMN_DEFINITION_HPP
 
-#include "matador/sql/any_type_to_visitor.hpp"
+#include "matador/utils/any_type_converter.hpp"
 
-#include "matador/object/data_type_traits.hpp"
+#include "matador/utils/default_type_traits.hpp"
 
 #include "matador/utils/data_types.hpp"
 #include "matador/utils/field_attributes.hpp"
@@ -29,24 +29,24 @@ public:
 
   template<typename Type>
   explicit column_definition(std::string name, const utils::field_attributes& attr)
-  : column_definition(std::move(name), object::data_type_traits<Type>::type(attr.size()), attr)
+  : column_definition(std::move(name), utils::data_type_traits<Type>::type(attr.size()), attr)
   {}
 
   template<typename Type>
   column_definition(std::string name, const Type &, const utils::field_attributes& attr, null_option null_opt)
-  : column_definition(std::move(name), object::data_type_traits<Type>::type(attr.size()), attr, null_opt)
+  : column_definition(std::move(name), utils::data_type_traits<Type>::type(attr.size()), attr, null_opt)
   {}
 
   template<size_t SIZE>
   column_definition(std::string name, const char (&)[SIZE], const utils::field_attributes& attr, const null_option null_opt)
-  : column_definition(std::move(name), object::data_type_traits<const char*>::type(attr.size()), attr, null_opt)
+  : column_definition(std::move(name), utils::data_type_traits<const char*>::type(attr.size()), attr, null_opt)
   {}
 
   column_definition(std::string name, data_type type, const utils::field_attributes&, null_option null_opt, size_t index = 0);
 
   template<typename Type>
   column_definition(std::string name, std::string ref_table, std::string ref_column, const utils::field_attributes& attr, null_option null_opt)
-  : column_definition(std::move(name), object::data_type_traits<Type>::type(attr.size()), ref_table, ref_column, attr, null_opt)
+  : column_definition(std::move(name), utils::data_type_traits<Type>::type(attr.size()), ref_table, ref_column, attr, null_opt)
   {}
 
   column_definition(std::string name, data_type type, size_t index, std::string ref_table, std::string ref_column, const utils::field_attributes& attr, null_option null_opt);
@@ -83,21 +83,21 @@ public:
   template<typename Type>
   void set(const Type &value, const utils::field_attributes &attr = utils::null_attributes)
   {
-    type_ = object::data_type_traits<Type>::type(attr.size());
+    type_ = utils::data_type_traits<Type>::type(attr.size());
     attributes_ = attr;
     value_ = value;
   }
 
   void set(const std::string &value, const utils::field_attributes &attr)
   {
-    type_ = object::data_type_traits<std::string>::type(attr.size());
+    type_ = utils::data_type_traits<std::string>::type(attr.size());
     attributes_ = attr;
     value_ = value;
   }
 
   void set(const char *value, const utils::field_attributes &attr)
   {
-    type_ = object::data_type_traits<std::string>::type(attr.size());
+    type_ = utils::data_type_traits<std::string>::type(attr.size());
     attributes_ = attr;
     value_ = value;
   }
@@ -109,7 +109,7 @@ public:
     if (ptr) {
       return *ptr;
     }
-    any_type_to_visitor<Type> visitor;
+    utils::any_type_converter<Type> visitor;
     std::visit(visitor, const_cast<utils::any_type&>(value_));
     return visitor.result;
   }
@@ -149,7 +149,7 @@ column_definition make_column(const std::string &name, data_type type, utils::fi
 template < typename Type >
 column_definition make_column(const std::string &name, utils::field_attributes attr = utils::null_attributes, null_option null_opt = null_option::NOT_NULL)
 {
-    return make_column(name, object::data_type_traits<Type>::type(0), attr, null_opt);
+    return make_column(name, utils::data_type_traits<Type>::type(0), attr, null_opt);
 }
 template <>
 column_definition make_column<std::string>(const std::string &name, utils::field_attributes attr, null_option null_opt);
@@ -166,13 +166,13 @@ column_definition make_pk_column<std::string>(const std::string &name, size_t si
 template < typename Type >
 column_definition make_fk_column(const std::string &name, size_t size, const std::string &ref_table, const std::string &ref_column)
 {
-    return {name, object::data_type_traits<Type>::type(size), ref_table, ref_column, { size, utils::constraints::FOREIGN_KEY }};
+    return {name, utils::data_type_traits<Type>::type(size), ref_table, ref_column, { size, utils::constraints::FOREIGN_KEY }};
 }
 
 template < typename Type >
 [[maybe_unused]] column_definition make_fk_column(const std::string &name, const std::string &ref_table, const std::string &ref_column)
 {
-    return {name, object::data_type_traits<Type>::type(0), 0, ref_table, ref_column, { 0, utils::constraints::FOREIGN_KEY }, null_option::NOT_NULL};
+    return {name, utils::data_type_traits<Type>::type(0), 0, ref_table, ref_column, { 0, utils::constraints::FOREIGN_KEY }, null_option::NOT_NULL};
 }
 
 template <>

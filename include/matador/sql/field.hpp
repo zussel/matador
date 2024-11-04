@@ -1,7 +1,7 @@
 #ifndef QUERY_FIELD_HPP
 #define QUERY_FIELD_HPP
 
-#include "matador/sql/value.hpp"
+#include "matador/utils/value.hpp"
 
 #include "matador/utils/data_types.hpp"
 
@@ -68,7 +68,7 @@ private:
   std::string name_;
   int index_{-1};
 
-  value value_;
+  utils::value value_;
 };
 
 }

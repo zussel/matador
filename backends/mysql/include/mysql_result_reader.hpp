@@ -19,7 +19,7 @@ public:
 
   [[nodiscard]] size_t column_count() const override;
   [[nodiscard]] const char *column(size_t index) const override;
-  bool fetch() override;
+  utils::result<bool, sql::sql_error> fetch() override;
 
 private:
   MYSQL_RES *result_{};

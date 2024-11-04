@@ -1,8 +1,9 @@
 #ifndef QUERY_POSTGRES_RESULT_READER_HPP
 #define QUERY_POSTGRES_RESULT_READER_HPP
 
-#include <libpq-fe.h>
 #include "matador/sql/query_result_reader.hpp"
+
+#include <libpq-fe.h>
 
 namespace matador::backends::postgres {
 
@@ -14,7 +15,7 @@ public:
 
   [[nodiscard]] size_t column_count() const override;
   [[nodiscard]] const char *column(size_t index) const override;
-  bool fetch() override;
+  utils::result<bool, sql::sql_error> fetch() override;
 
   void read_value(const char *id, size_t index, utils::blob &value) override;
 

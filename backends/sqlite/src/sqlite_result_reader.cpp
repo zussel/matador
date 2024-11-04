@@ -27,9 +27,9 @@ const char* sqlite_result_reader::column(const size_t index) const
   return result_[row_index_][index];
 }
 
-bool sqlite_result_reader::fetch()
+utils::result<bool, sql::sql_error> sqlite_result_reader::fetch()
 {
-  return ++row_index_ < result_.size();
+  return utils::ok(++row_index_ < result_.size());
 }
 
 }

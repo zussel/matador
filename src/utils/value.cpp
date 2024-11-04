@@ -1,8 +1,8 @@
-#include "matador/sql/value.hpp"
+#include "matador/utils/value.hpp"
 
 #include <cstring>
 
-namespace matador::sql {
+namespace matador::utils {
 namespace detail {
 
 size_t determine_size(const std::string &val)
@@ -23,7 +23,10 @@ size_t determine_size(const utils::blob &val)
 }
 value::value(data_type data_type, size_t size)
 : size_(size)
-, type_(data_type) {}
+, type_(data_type)
+{
+  utils::initialize_by_data_type(type_, value_);
+}
 
 value::value(value &&x) noexcept
   : value_(std::move(x.value_))

@@ -1,8 +1,8 @@
 #ifndef QUERY_OBJECT_PARAMETER_BINDER_HPP
 #define QUERY_OBJECT_PARAMETER_BINDER_HPP
 
-#include "matador/object/attribute_writer.hpp"
-#include "matador/object/data_type_traits.hpp"
+#include "matador/utils/attribute_writer.hpp"
+#include "matador/utils/default_type_traits.hpp"
 
 #include "matador/utils/access.hpp"
 #include "matador/utils/field_attributes.hpp"
@@ -18,7 +18,7 @@ class fk_binder
 {
 public:
   template<class Type>
-  void bind(Type &obj, size_t column_index, object::attribute_writer &binder)
+  void bind(Type &obj, size_t column_index, utils::attribute_writer &binder)
   {
     binder_ = &binder;
     index_ = column_index;
@@ -55,7 +55,7 @@ public:
                            const utils::foreign_attributes &/*attr*/) {}
 
 private:
-  object::attribute_writer *binder_{};
+  utils::attribute_writer *binder_{};
   size_t index_{0};
 };
 
@@ -65,9 +65,9 @@ class object_parameter_binder
 {
 public:
   template<class Type>
-  void bind(Type &obj, object::attribute_writer &binder) {
+  void bind(Type &obj, utils::attribute_writer &binder) {
     binder_ = &binder;
-    matador::access::process(*this, obj);
+    access::process(*this, obj);
     binder_ = nullptr;
   }
 
@@ -76,7 +76,7 @@ public:
   template < class Type >
   void on_primary_key(const char * /*id*/, Type &val, std::enable_if_t<std::is_integral_v<Type> && !std::is_same_v<bool, Type>>* = nullptr)
   {
-    object::data_type_traits<Type>::bind_value(*binder_, index_++, val);
+    utils::data_type_traits<Type>::bind_value(*binder_, index_++, val);
   }
   void on_primary_key(const char *id, std::string &, size_t size);
   void on_revision(const char *id, unsigned long long &/*rev*/);
@@ -84,7 +84,7 @@ public:
   template<typename Type>
   void on_attribute(const char * /*id*/, Type &val, const utils::field_attributes &/*attr*/ = utils::null_attributes)
   {
-    object::data_type_traits<Type>::bind_value(*binder_, index_++, val);
+    utils::data_type_traits<Type>::bind_value(*binder_, index_++, val);
   }
 
   template<class Type, template < class ... > class Pointer>
@@ -114,7 +114,7 @@ public:
                            const utils::foreign_attributes &/*attr*/) {}
 
 private:
-  object::attribute_writer *binder_{};
+  utils::attribute_writer *binder_{};
   size_t index_{0};
   detail::fk_binder fk_binder_;
 };
@@ -124,7 +124,7 @@ namespace detail {
 template<typename ValueType>
 void fk_binder::on_primary_key(const char * /*id*/, ValueType &value, std::enable_if_t<std::is_integral_v<ValueType> && !std::is_same_v<bool, ValueType>> *)
 {
-  object::data_type_traits<ValueType>::bind_value(*binder_, index_++, value);
+  utils::data_type_traits<ValueType>::bind_value(*binder_, index_++, value);
 }
 
 }
