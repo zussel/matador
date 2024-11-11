@@ -201,18 +201,21 @@ utils::result<size_t, sql_error> connection::execute( const query_compile_contex
     return execute(dialect().compile(ctx, *connection_).sql);
 }
 
-statement connection::prepare(const query_compile_context &ctx) const
+statement connection::prepare(const query_compile_context &query) const
 {
-  const auto qry = dialect().compile(ctx, *connection_);
-  if (ctx.command != sql_command::SQL_CREATE && (qry.prototype.empty() || is_unknown(qry.prototype))) {
-    const auto result = describe(qry.table.name);
-    if (result.is_ok()) {
-      for (auto &col: qry.prototype) {
-        const auto rit = std::find_if(std::begin(*result), std::end(*result),
-                                      [&col](const auto &value) {
-                                        return value.name() == col.name();
-                                      });
-        if (col.type() == data_type::type_unknown && rit != (*result).end()) {
+    return prepare(dialect().compile(query, *connection_));
+}
+
+statement connection::prepare(const query_context &context) const
+{
+  if (context.command != sql_command::SQL_CMD_CREATE && (context.prototype.empty() || is_unknown(context.prototype))) {
+      if (const auto result = describe(context.table.name); result.is_ok()) {
+        for (auto &col: context.prototype) {
+          const auto rit = std::find_if(std::begin(*result), std::end(*result),
+                                        [&col](const auto &value) {
+                                          return value.name() == col.name();
+                                        });
+        if (col.type() == data_type::type_unknown && rit != result->end()) {
           const_cast<column_definition &>(col).type(rit->type());
         }
       }
@@ -222,8 +225,7 @@ statement connection::prepare(const query_compile_context &ctx) const
 //  return connection_->prepare(qry).and_then([](auto &&res) {
 //    return statement(std::forward<decltype(res)>(res));
 //  });
-  auto result = connection_->prepare(qry);
-  if (result.is_ok()) {
+  if (auto result = connection_->prepare(context); result.is_ok()) {
     return statement(result.release());
   }
 

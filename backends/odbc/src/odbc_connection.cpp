@@ -25,35 +25,29 @@ void odbc_connection::open() {
     return;
   }
 
-  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &odbc_);
-  if (ret != SQL_SUCCESS) {
-    SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
-    throw_odbc_error(ret, SQL_HANDLE_ENV, odbc_, "odbc");
-  }
+  auto res = odbc_.allocate().and_then([this]() {
+    return odbc_.set_attribute(SQL_ATTR_ODBC_VERSION, (SQLPOINTER) SQL_OV_ODBC3, 0);
+  }).and_then([this]() {
+    return connection_.allocate();
+  }).and_then([this]() {
+    return connection_.set_attribute(SQL_LOGIN_TIMEOUT, (SQLPOINTER *) 5, 0);
+  }).or_else([this](auto err) {
+    std::ignore = connection_.free();
+    std::ignore = odbc_.free();
+    return utils::error(err);
+  });
 
-  ret = SQLSetEnvAttr(odbc_, SQL_ATTR_ODBC_VERSION, (SQLPOINTER) SQL_OV_ODBC3, 0);
-  if (ret != SQL_SUCCESS) {
-    SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
-    throw_odbc_error(ret, SQL_HANDLE_ENV, odbc_, "odbc");
-  }
-
-  ret = SQLAllocHandle(SQL_HANDLE_DBC, odbc_, &connection_);
-  if (ret != SQL_SUCCESS) {
-    SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
-    throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc");
-  }
-
-  SQLSetConnectAttr(connection_, SQL_LOGIN_TIMEOUT, (SQLPOINTER *) 5, 0);
-
-  std::string dns(
+  const std::string dns(
     "DRIVER={" + info().driver + "};SERVER=" + info().hostname + ";Protocol=TCPIP;Port=" + std::to_string(info().port) +
     ";DATABASE=" + info().database + ";UID=" + info().user + ";PWD=" + info().password + ";");
 
   SQLCHAR retconstring[1024];
-  ret = SQLDriverConnect(connection_, nullptr, (SQLCHAR *) dns.c_str(), SQL_NTS, retconstring, 1024, nullptr,
+  auto ret = SQLDriverConnect(connection_.handle(), nullptr, (SQLCHAR *) dns.c_str(), SQL_NTS, retconstring, 1024, nullptr,
                          SQL_DRIVER_NOPROMPT);
 
-  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc");
+  if (ret != SQL_SUCCESS) {
+    make_error(sql::sql_error_code::OPEN_ERROR, ret, SQL_HANDLE_DBC, connection_.handle());
+  }
 }
 
 void odbc_connection::close() {
@@ -61,74 +55,92 @@ void odbc_connection::close() {
     return;
   }
 
-  SQLRETURN ret = SQLDisconnect(connection_);
-  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc");
+  SQLRETURN ret = SQLDisconnect(connection_.handle());
+  if (ret != SQL_SUCCESS) {
+    make_error(sql::sql_error_code::OPEN_ERROR, ret, SQL_HANDLE_DBC, connection_.handle());
+  }
 
-  ret = SQLFreeHandle(SQL_HANDLE_DBC, connection_);
-  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc");
-
-  connection_ = nullptr;
-
-  ret = SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
-  throw_odbc_error(ret, SQL_HANDLE_ENV, odbc_, "odbc");
-
-  odbc_ = nullptr;
+  auto res = connection_.free();
+  if (!res.is_ok()) {
+    return;
+  }
+  res = odbc_.free();
+  if (!res.is_ok()) {
+    return;
+  }
 }
 
 bool odbc_connection::is_open() const {
-  return connection_ != nullptr;
+  return connection_.is_valid();
 }
 
 bool odbc_connection::is_valid() const {
   SQLUINTEGER connectionDead;
-  const SQLRETURN ret = SQLGetConnectAttr(connection_, SQL_ATTR_CONNECTION_DEAD, &connectionDead, 0, nullptr);
+  const SQLRETURN ret = SQLGetConnectAttr(connection_.handle(), SQL_ATTR_CONNECTION_DEAD, &connectionDead, 0, nullptr);
   return (ret == SQL_SUCCESS && connectionDead == SQL_CD_FALSE);
 }
 
 
-size_t odbc_connection::execute(const std::string &sql) {
-  if (!connection_) {
-    throw std::logic_error("mssql no odbc connection established");
+utils::result<size_t, sql::sql_error> odbc_connection::execute(const std::string &sql) {
+  if (!connection_.is_valid()) {
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, "", "mssql no odbc connection established", "odbc"});
   }
   // create statement handle
-  const SQLHANDLE stmt = execute_statement(sql);
+  const auto stmt = execute_statement(sql);
+  if (!stmt.is_ok()) {
+    return utils::error(stmt.err());
+  }
 
   SQLLEN affected_rows{0};
-  const auto ret = SQLRowCount(stmt, &affected_rows);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc", sql);
+  if (const auto ret = SQLRowCount(*stmt, &affected_rows); !is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error( sql::sql_error_code::EXECUTE_FAILED, ret, SQL_HANDLE_STMT, *stmt, sql ));
+  }
 
-  return affected_rows;
+  return utils::ok(static_cast<size_t>(affected_rows));
 }
 
-std::unique_ptr<sql::query_result_impl> odbc_connection::fetch(const sql::query_context &context) {
-  if (!connection_) {
-    throw std::logic_error("mssql no odbc connection established");
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> odbc_connection::fetch(const sql::query_context &context) {
+  if (!connection_.is_valid()) {
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, "", "mssql no odbc connection established", "odbc"});
   }
   // create statement handle
-  SQLHANDLE stmt = execute_statement(context.sql);
+  const auto stmt = execute_statement(context.sql);
+  if (!stmt.is_ok()) {
+    return utils::error(stmt.err());
+  }
 
   SQLSMALLINT num_columns{};
-  const auto ret = SQLNumResultCols(stmt, &num_columns);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc", context.sql);
+  if (const auto ret = SQLNumResultCols(*stmt, &num_columns); !is_succeeded_or_no_data(ret)) {
+    utils::error(make_error(sql::sql_error_code::FETCH_FAILED, ret, SQL_HANDLE_STMT, *stmt, context.sql));
+  }
 
   std::vector<sql::column_definition> columns;
   for (SQLSMALLINT i = 1; i <= num_columns; i++) {
-    columns.push_back(describe_column(stmt, i));
+    auto column = describe_column(*stmt, i);
+    if (!column.is_ok()) {
+      return utils::error(column.err());
+    }
+    columns.push_back(*column);
   }
 
-  return std::make_unique<sql::query_result_impl>(std::make_unique<odbc_result_reader>(stmt), std::move(columns), 1);
+  return utils::ok(std::make_unique<sql::query_result_impl>(std::make_unique<odbc_result_reader>(*stmt), std::move(columns), 1));
 }
 
-std::unique_ptr<sql::statement_impl> odbc_connection::prepare(sql::query_context query) {
+utils::result<std::unique_ptr<sql::statement_impl>, sql::sql_error> odbc_connection::prepare(sql::query_context query) {
   // create statement handle
   SQLHANDLE stmt;
-  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
-  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc");
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_.handle(), &stmt);
+  if (!is_succeeded_or_no_data(ret)) {
+    utils::error(make_error(sql::sql_error_code::PREPARE_FAILED, ret, SQL_HANDLE_DBC, connection_.handle(), query.sql));
+  }
 
   ret = SQLPrepare(stmt, (SQLCHAR *) query.sql.c_str(), SQL_NTS);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc", query.sql);
+  if (!is_succeeded_or_no_data(ret)) {
+    utils::error(make_error(sql::sql_error_code::PREPARE_FAILED, ret, SQL_HANDLE_STMT, stmt, query.sql));
+  }
 
-  return std::make_unique<odbc_statement>(stmt, query);
+  std::unique_ptr<sql::statement_impl> impl(std::make_unique<odbc_statement>(stmt, query));
+  return utils::ok(std::move(impl));
 }
 
 data_type string2type(const char *type) {
@@ -165,19 +177,24 @@ data_type string2type(const char *type) {
 
 static data_type type2data_type(SQLSMALLINT type, size_t size);
 
-std::vector<sql::column_definition> odbc_connection::describe(const std::string &table) {
+utils::result<std::vector<sql::column_definition>, sql::sql_error> odbc_connection::describe(const std::string &table)
+{
   SQLHANDLE stmt;
-  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
-  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc");
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_.handle(), &stmt);
+  if (!is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_DBC, connection_.handle()));
+  }
 
   SQLCHAR buf[256];
 #ifdef _MSC_VER
-  strcpy_s((char*)buf, 256, table.c_str());
+  strcpy_s(reinterpret_cast<char*>(buf), 256, table.c_str());
 #else
   strcpy((char *) buf, table.c_str());
 #endif
   ret = SQLColumns(stmt, nullptr, 0, nullptr, 0, buf, SQL_NTS, nullptr, 0);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (!is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
+  }
 
   // bind to columns we need (column name, data type of column and index)
   size_t pos(0);
@@ -191,30 +208,43 @@ std::vector<sql::column_definition> odbc_connection::describe(const std::string 
   SQLSMALLINT sql_data_type{0};
   // column name
   ret = SQLBindCol(stmt, 4, SQL_C_CHAR, column, sizeof(column), &indicator[0]);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (!is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
+  }
   // data type
   ret = SQLBindCol(stmt, 5, SQL_C_SSHORT, &data_type, sizeof(data_type), &indicator[1]);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (!is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
+  }
   // type name
   ret = SQLBindCol(stmt, 6, SQL_C_CHAR, type, sizeof(type), &indicator[2]);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (!is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
+  }
   // size
   ret = SQLBindCol(stmt, 7, SQL_C_SLONG, &size, sizeof(size), &indicator[3]);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (!is_succeeded_or_no_data(ret)) {
+     return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
+  }
   // nullable
   ret = SQLBindCol(stmt, 11, SQL_C_SSHORT, &not_null, 0, &indicator[4]);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (!is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
+  }
   // sql data type
   ret = SQLBindCol(stmt, 14, SQL_C_SSHORT, &sql_data_type, 0, &indicator[5]);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (!is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
+  }
   // index (1 based)
   ret = SQLBindCol(stmt, 17, SQL_C_SLONG, &pos, 0, &indicator[6]);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (!is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
+  }
 
   std::vector<sql::column_definition> prototype;
   /* Fetch the data */
   while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-    // std::cout << "column name: " << std::string(reinterpret_cast<char*>(column)) << ", data type: " << data_type << " (size: " << size << "), type name: " << std::string(reinterpret_cast<char*>(type)) << "\n";
     prototype.emplace_back(std::string(reinterpret_cast<char*>(column)),
           type2data_type(data_type, size),
           size,
@@ -225,7 +255,7 @@ std::vector<sql::column_definition> odbc_connection::describe(const std::string 
 
   SQLFreeHandle(SQL_HANDLE_STMT, stmt);
 
-  return prototype;
+  return utils::ok(prototype);
 }
 
 data_type type2data_type(SQLSMALLINT type, size_t size) {
@@ -267,21 +297,24 @@ data_type type2data_type(SQLSMALLINT type, size_t size) {
   }
 }
 
-bool odbc_connection::exists(const std::string &schema_name, const std::string &table_name) {
+utils::result<bool, sql::sql_error> odbc_connection::exists(const std::string &schema_name, const std::string &table_name) {
   const std::string sql("SELECT TOP 1 COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='" + info().database + "' AND TABLE_NAME='" + table_name + "'");
 
   const auto stmt = execute_statement(sql);
-  odbc_result_reader reader(stmt);
+  if (!stmt.is_ok()) {
+    return utils::error(stmt.err());
+  }
 
-  if (!reader.fetch()) {
-    // Todo: throw an exception?
-    return false;
+  odbc_result_reader reader(*stmt);
+
+  if (const auto fetched = reader.fetch(); !fetched.is_ok() || !*fetched) {
+    return utils::ok(false);
   }
 
   int v{};
   reader.read_value("COUNT(*)", 1, v);
 
-  return v == 1;
+  return utils::ok(v == 1);
 }
 
 std::string odbc_connection::to_escaped_string( const utils::blob& value ) const
@@ -299,34 +332,38 @@ version odbc_connection::client_version() const {
 
 version odbc_connection::server_version() const {
   SQLCHAR dbms_ver[256];
-  auto ret = SQLGetInfo(connection_, SQL_DBMS_VER, (SQLPOINTER) dbms_ver, sizeof(dbms_ver), NULL);
+  const auto ret = SQLGetInfo(connection_.handle(), SQL_DBMS_VER, (SQLPOINTER) dbms_ver, sizeof(dbms_ver), nullptr);
 
   if (ret == SQL_INVALID_HANDLE) {
     throw std::logic_error("odbc error (odbc) not connected");
   }
 
-  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "mssql");
+  if (!is_succeeded_or_no_data(ret)) {
+    make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_DBC, connection_.handle());
+  }
 
   return version::from_string(reinterpret_cast<char const *>(dbms_ver));
 }
 
-SQLHANDLE odbc_connection::execute_statement(const std::string &sql) const {
-  if (!connection_) {
-    throw std::logic_error("mssql no odbc connection established");
+utils::result<SQLHANDLE, sql::sql_error> odbc_connection::execute_statement(const std::string &sql) const {
+  if (!connection_.is_valid()) {
+    return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, "", "mssql no odbc connection established", "odbc"});
   }
   // create statement handle
   SQLHANDLE handle;
 
-  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &handle);
-  throw_odbc_error(ret, SQL_HANDLE_DBC, connection_, "odbc", sql);
+  if (const auto ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_.handle(), &handle); !is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, ret, SQL_HANDLE_DBC, connection_.handle(), sql));
+  }
 
-  ret = SQLExecDirectA(handle, (SQLCHAR*) sql.c_str(), SQL_NTS);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, handle, "odbc", sql);
+  if (const auto ret = SQLExecDirectA(handle, (SQLCHAR*) sql.c_str(), SQL_NTS); !is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, ret, SQL_HANDLE_STMT, handle, sql));
+  }
 
-  return handle;
+  return utils::ok(handle);
 }
 
-sql::column_definition odbc_connection::describe_column(SQLHANDLE stmt, const SQLSMALLINT index) {
+utils::result<sql::column_definition, sql::sql_error> odbc_connection::describe_column(SQLHANDLE stmt, const SQLSMALLINT index) {
   SQLCHAR name[64];
   SQLSMALLINT name_length{};
   SQLSMALLINT data_type(0);
@@ -334,16 +371,17 @@ sql::column_definition odbc_connection::describe_column(SQLHANDLE stmt, const SQ
   SQLSMALLINT digits(0);
   SQLSMALLINT nullable(0);
 
-  const auto ret = SQLDescribeCol(stmt, index, name, 64, &name_length, &data_type, &data_size, &digits, &nullable);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (const auto ret = SQLDescribeCol(stmt, index, name, 64, &name_length, &data_type, &data_size, &digits, &nullable); !is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
+  }
 
-  return {
+  return utils::ok(sql::column_definition{
     std::string(reinterpret_cast<char *>(name)),
     type2data_type(data_type, data_size),
     data_size,
     nullable == SQL_NO_NULLS ? sql::null_option::NOT_NULL : sql::null_option::NULLABLE,
     static_cast<size_t>(index)
-  };
+  });
 }
 
 }

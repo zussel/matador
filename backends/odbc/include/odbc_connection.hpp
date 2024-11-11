@@ -14,13 +14,14 @@
 
 #include "matador/sql/connection_impl.hpp"
 
-#include "odbc_result_reader.hpp"
+#include "odbc_handle.hpp"
 
+#include <sql.h>
 #include <sqltypes.h>
 
 namespace matador::backends::odbc {
 
-class odbc_connection : public matador::sql::connection_impl
+class odbc_connection final : public matador::sql::connection_impl
 {
 public:
   explicit odbc_connection(const sql::connection_info &info);
@@ -29,27 +30,24 @@ public:
   [[nodiscard]] bool is_open() const override;
   [[nodiscard]] bool is_valid() const override;
 
-  std::unique_ptr<sql::query_result_impl> fetch(const sql::query_context &context) override;
-  std::unique_ptr<sql::statement_impl> prepare(sql::query_context query) override;
-
-  size_t execute(const std::string &sql) override;
-
-  std::vector<sql::column_definition> describe(const std::string& table) override;
-
-  bool exists(const std::string &schema_name, const std::string &table_name) override;
+  utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch(const sql::query_context &context) override;
+  utils::result<std::unique_ptr<sql::statement_impl>, sql::sql_error> prepare(sql::query_context query) override;
+  utils::result<size_t, sql::sql_error> execute(const std::string &sql) override;
+  utils::result<std::vector<sql::column_definition>, sql::sql_error> describe(const std::string& table) override;
+  utils::result<bool, sql::sql_error> exists(const std::string &schema_name, const std::string &table_name) override;
 
   [[nodiscard]] version client_version() const override;
   [[nodiscard]] version server_version() const override;
   [[nodiscard]] std::string to_escaped_string(const utils::blob& value) const override;
 
 private:
-  [[nodiscard]] SQLHANDLE execute_statement(const std::string &sql) const;
+  [[nodiscard]] utils::result<SQLHANDLE, sql::sql_error> execute_statement(const std::string &sql) const;
 
-  static sql::column_definition describe_column(SQLHANDLE stmt, SQLSMALLINT index);
+  static utils::result<sql::column_definition, sql::sql_error> describe_column(SQLHANDLE stmt, SQLSMALLINT index);
 
 private:
-  SQLHANDLE odbc_{};
-  SQLHANDLE connection_{};
+  odbc_handle odbc_{SQL_HANDLE_ENV};
+  odbc_handle connection_{SQL_HANDLE_DBC};
 };
 
 }

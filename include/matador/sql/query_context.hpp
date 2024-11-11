@@ -6,9 +6,21 @@
 
 namespace matador::sql {
 
+enum class sql_command {
+    SQL_CMD_UNKNOWN,
+    SQL_CMD_CREATE,
+    SQL_CMD_UPDATE,
+    SQL_CMD_INSERT,
+    SQL_CMD_DELETE,
+    SQL_CMD_SELECT,
+    SQL_CMD_DROP,
+    SQL_CMD_ALTER
+  };
+
 struct query_context
 {
   std::string sql;
+  sql_command command{};
   std::string command_name;
   sql::table table{""};
   std::vector<column_definition> prototype;

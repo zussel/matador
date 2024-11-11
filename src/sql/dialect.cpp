@@ -113,12 +113,17 @@ std::string dialect::next_placeholder(const std::vector<std::string> &bind_vars)
   return placeholder_func_(bind_vars.size());
 }
 
+std::string dialect::to_escaped_string(const utils::blob &value) const
+{
+  return to_escaped_string_func_(value);
+}
+
 std::string dialect::default_schema_name() const
 {
   return default_schema_name_;
 }
 
-query_context dialect::compile(const query_compile_context& data, const connection_impl &conn) const
+query_context dialect::compile(const query_compile_context& data, std::optional<std::reference_wrapper<const connection_impl>> conn) const
 {
     return compiler_->compile(data, conn);
 }
@@ -129,7 +134,7 @@ void dialect::compiler(std::unique_ptr<query_compiler> &&compiler)
 }
 
 dialect::dialect()
-: compiler_(std::make_unique<query_compiler>())
+: compiler_(std::make_unique<query_compiler>(*this))
 {}
 
 }

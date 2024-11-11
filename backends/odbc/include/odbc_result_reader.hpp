@@ -8,8 +8,6 @@
 #include <sqltypes.h>
 #include <sql.h>
 
-#include <vector>
-
 namespace matador::backends::odbc {
 
 class odbc_result_reader final : public sql::query_result_reader
@@ -25,7 +23,7 @@ public:
   [[nodiscard]] size_t column_count() const override;
 
   [[nodiscard]] const char* column(size_t index) const override;
-  [[nodiscard]] bool fetch() override;
+  [[nodiscard]] utils::result<bool, sql::sql_error> fetch() override;
   [[nodiscard]] size_t start_column_index() const override;
 
   void read_value(const char *id, size_t index, char &value) override;
@@ -47,18 +45,17 @@ public:
   void read_value(const char *id, size_t index, std::string &value) override;
   void read_value(const char *id, size_t index, std::string &value, size_t size) override;
   void read_value(const char *id, size_t index, utils::blob &value) override;
-  void read_value(const char *id, size_t index, sql::value &val, size_t size) override;
+  void read_value(const char *id, size_t index, utils::value &val, size_t size) override;
 
 private:
   template < class Type >
   void read_column(const char *id, size_t index, Type &val, size_t size = 0)
   {
     SQLLEN info = 0;
-    const auto type = static_cast<SQLSMALLINT>(type2int(object::data_type_traits<Type>::type(size)));
+    const auto type = static_cast<SQLSMALLINT>(type2int(utils::data_type_traits<Type>::type(size)));
     if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), type, &val, sizeof(Type), &info); !SQL_SUCCEEDED(ret)) {
-      std::string msg{"error on retrieving value for column "};
-      msg += std::string(id) + " (type " + typeid(Type).name() + ")";
-      throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc", msg);
+      // Todo:: handle odbc error
+      make_error(sql::sql_error_code::RETRIEVE_DATA_FAILED, ret, SQL_HANDLE_STMT, stmt_);
     }
   }
 

@@ -2,13 +2,10 @@
 #define QUERY_COLUMN_DEFINITION_HPP
 
 #include "matador/utils/any_type_converter.hpp"
-
 #include "matador/utils/default_type_traits.hpp"
-
 #include "matador/utils/data_types.hpp"
 #include "matador/utils/field_attributes.hpp"
 
-#include <optional>
 #include <vector>
 
 namespace matador::sql {

@@ -12,7 +12,7 @@
 
 namespace matador::backends::odbc {
 
-class odbc_parameter_binder final : public object::attribute_writer
+class odbc_parameter_binder final : public utils::attribute_writer
 {
 public:
   explicit odbc_parameter_binder(SQLHANDLE stmt);
@@ -37,6 +37,7 @@ public:
   void write_value(size_t pos, const std::string &x) override;
   void write_value(size_t pos, const std::string &x, size_t size) override;
   void write_value(size_t pos, const utils::blob &x) override;
+  void write_value(size_t pos, const utils::value &x, size_t size) override;
 
 public:
   struct bounded_value

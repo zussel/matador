@@ -1,5 +1,6 @@
 #include "odbc_result_reader.hpp"
 
+#include "matador/json/generic_json_parser.hpp"
 #include "matador/utils/value.hpp"
 
 #include "matador/utils/string.hpp"
@@ -14,7 +15,9 @@ odbc_result_reader::odbc_result_reader(SQLHANDLE stmt)
   // get row and column information
   SQLLEN r(0);
   SQLRETURN ret = SQLRowCount(stmt, &r);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (!is_succeeded_or_no_data(ret)) {
+    make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt);
+  }
 
   if (r != SQL_ERROR && r >= 0) {
     row_count_ = static_cast<size_t>(r);
@@ -22,7 +25,9 @@ odbc_result_reader::odbc_result_reader(SQLHANDLE stmt)
 
   SQLSMALLINT columns = 0;
   ret = SQLNumResultCols(stmt, &columns);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "mssql");
+  if (!is_succeeded_or_no_data(ret)) {
+    make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt);
+  }
 
   column_count_ = static_cast<size_t>(columns);
 }
@@ -47,14 +52,14 @@ size_t odbc_result_reader::start_column_index() const
   return 1;
 }
 
-bool odbc_result_reader::fetch()
+utils::result<bool, sql::sql_error> odbc_result_reader::fetch()
 {
-  if (const SQLRETURN ret = SQLFetch(stmt_); SQL_SUCCEEDED(ret)) {
-    return true;
-  } else {
-    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc");
-    return false;
+  const auto ret = SQLFetch(stmt_);
+  if (!is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::FETCH_FAILED, ret, SQL_HANDLE_STMT, stmt_));
   }
+
+  return utils::ok(SQL_SUCCEEDED(ret));
 }
 
 void odbc_result_reader::read_value(const char *id, size_t index, char &value)
@@ -126,7 +131,8 @@ void odbc_result_reader::read_value(const char *id, size_t index, char *value, s
 {
   SQLLEN info = 0;
   if (const SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_CHAR, value, static_cast<SQLLEN>(s), &info); ret != SQL_SUCCESS) {
-    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc");
+    // Todo:: handle odbc error
+    make_error(sql::sql_error_code::RETRIEVE_DATA_FAILED, ret, SQL_HANDLE_STMT, stmt_);
   }
 }
 
@@ -142,7 +148,8 @@ void odbc_result_reader::read_value(const char *id, size_t index, std::string &v
       value.append(std::begin(char_data), std::begin(char_data) + len);
       break;
     } if (ret == SQL_ERROR) {
-      throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc");
+      // Todo:: handle odbc error
+      make_error(sql::sql_error_code::RETRIEVE_DATA_FAILED, ret, SQL_HANDLE_STMT, stmt_);
     } else {
       const auto len = (info > 5000) || (info == SQL_NO_TOTAL) ? 5000 : info;
       value.append(std::begin(char_data), std::begin(char_data) + len);
@@ -164,7 +171,8 @@ void odbc_result_reader::read_value(const char *id, size_t index, std::string &v
       value.clear();
     }
   } else {
-    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
+    // Todo:: handle odbc error
+    make_error(sql::sql_error_code::RETRIEVE_DATA_FAILED, ret, SQL_HANDLE_STMT, stmt_);
   }
 }
 
@@ -181,7 +189,8 @@ void odbc_result_reader::read_value(const char *id, size_t index, time &value) {
         std::cout << "read time value: " << tstr << " (fraction: " << value.get_time_info().milliseconds << ", original: " << ts.fraction << ")\n";
     }
   } else {
-    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
+    // Todo:: handle odbc error
+    make_error(sql::sql_error_code::RETRIEVE_DATA_FAILED, ret, SQL_HANDLE_STMT, stmt_);
   }
 }
 
@@ -194,7 +203,8 @@ void odbc_result_reader::read_value(const char *id, size_t index, date &value) {
       value.set(ds.day, ds.month, ds.year);
     }
   } else {
-    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "mssql");
+    // Todo:: handle odbc error
+    make_error(sql::sql_error_code::RETRIEVE_DATA_FAILED, ret, SQL_HANDLE_STMT, stmt_);
   }
 }
 
@@ -209,7 +219,8 @@ void odbc_result_reader::read_value(const char *id, size_t index, utils::blob &v
       value.insert(value.begin(), std::begin(binary_data), std::begin(binary_data) + len);
       break;
     } if (ret == SQL_ERROR) {
-      throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc");
+      // Todo:: handle odbc error
+      make_error(sql::sql_error_code::RETRIEVE_DATA_FAILED, ret, SQL_HANDLE_STMT, stmt_);
     } else {
       const auto len = (info > 5000) || (info == SQL_NO_TOTAL) ? 5000 : info;
       value.insert(value.begin(), std::begin(binary_data), std::begin(binary_data) + len);
@@ -217,7 +228,7 @@ void odbc_result_reader::read_value(const char *id, size_t index, utils::blob &v
   }
 }
 
-void odbc_result_reader::read_value(const char *id, const size_t index, sql::value &val, size_t size)
+void odbc_result_reader::read_value(const char *id, const size_t index, utils::value &val, const size_t size)
 {
   switch (val.type()) {
     case data_type::type_char: {

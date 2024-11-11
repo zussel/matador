@@ -137,6 +137,7 @@ public:
   [[nodiscard]] utils::result<std::unique_ptr<query_result_impl>, sql_error> fetch(const query_compile_context &ctx) const override;
   [[nodiscard]] utils::result<size_t, sql_error> execute(const query_compile_context &ctx) const override;
   [[nodiscard]] statement prepare(const query_compile_context &query) const override;
+  [[nodiscard]] statement prepare(const query_context &context) const;
   [[nodiscard]] std::string str( const query_compile_context& ctx ) const override;
 
   [[nodiscard]] const class dialect &dialect() const;

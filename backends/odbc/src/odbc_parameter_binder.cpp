@@ -24,7 +24,7 @@ void bind_value(SQLHANDLE stmt, SQLUSMALLINT ctype, SQLUSMALLINT type, const Typ
 
 }
 
-odbc_parameter_binder::odbc_parameter_binder(SQLHANDLE stmt)
+odbc_parameter_binder::odbc_parameter_binder(const SQLHANDLE stmt)
 : stmt_(stmt)
 {}
 
@@ -137,11 +137,6 @@ void odbc_parameter_binder::write_value(size_t pos, const std::string &str, size
   detail::bind_value(stmt_, SQL_C_CHAR, SQL_VARCHAR, host_data_.back(), pos);
 }
 
-void odbc_parameter_binder::write_value(size_t pos, const utils::blob &data)
-{
-
-}
-
 void odbc_parameter_binder::write_value(size_t pos, const time &time)
 {
 
@@ -151,6 +146,18 @@ void odbc_parameter_binder::write_value(size_t pos, const date &date)
 {
 
 }
+
+void odbc_parameter_binder::write_value(size_t pos, const utils::blob &data)
+{
+
+}
+
+void odbc_parameter_binder::write_value( size_t pos, const utils::value& x, size_t size )
+{
+
+}
+
+// odbc_parameter_binder::bounded_value detail::create_bind_value( bool is_null_value ) {}
 
 std::optional<std::optional<std::reference_wrapper<odbc_parameter_binder::bounded_value>>> odbc_parameter_binder::get_data_to_put(const PTR ptr) {
   const auto it = data_to_put_map_.find(ptr);
@@ -264,7 +271,10 @@ void bind_value(SQLHANDLE stmt, SQLUSMALLINT ctype, SQLUSMALLINT type, const Typ
                                          static_cast<void *>(const_cast<Type*>(&v)),
                                          0,
                                          &value_len);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt, "odbc");
+  if (!is_succeeded_or_no_data(ret)) {
+    // Todo: handle odbc error
+    make_error(sql::sql_error_code::BIND_FAILED, ret, SQL_HANDLE_STMT, stmt);
+  }
 }
 
 // void bind_value(SQLHANDLE stmt, SQLUSMALLINT ctype, SQLUSMALLINT type, odbc_parameter_binder::bounded_value &v, unsigned short scale, size_t index)

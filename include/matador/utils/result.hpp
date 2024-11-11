@@ -155,8 +155,8 @@ public:
 
   ErrorType&& release_error() { return result_->release(); }
 
-  const ErrorType& err() const { return std::get<error_type>(result_).value(); }
-  ErrorType err() { return std::get<error_type>(result_).value(); }
+  const ErrorType& err() const { return result_.value().value(); }
+  ErrorType err() { return result_.value().value(); }
 
   template<typename Func, typename SecondValueType = typename std::invoke_result_t<Func>>
   result<SecondValueType, ErrorType> transform(Func &&f) {
@@ -167,16 +167,16 @@ public:
     return result<SecondValueType, ErrorType>(error(release_error()));
   }
 
-  template<typename Func, typename SecondValueType = typename std::invoke_result_t<Func>::value_type>
-  result<SecondValueType, ErrorType> and_then(Func &&f) {
+  template<typename Func>
+  result<void, ErrorType> and_then(Func &&f) {
     if (is_ok()) {
       return f();
     }
 
-    return result<SecondValueType, ErrorType>(error(release_error()));
+    return result<void, ErrorType>(error(release_error()));
   }
 
-  template<typename Func, typename SecondErrorType = typename std::invoke_result_t<Func, ErrorType >::error_type>
+  template<typename Func, typename SecondErrorType = typename std::invoke_result_t<Func, ErrorType >::value_type>
   result<void, SecondErrorType> or_else(Func &&f) {
     if (is_error()) {
       return f(err());

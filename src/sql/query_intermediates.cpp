@@ -154,7 +154,6 @@ query_from_intermediate query_from_intermediate::join_left(std::vector<join_data
 
 query_select_intermediate::query_select_intermediate(const std::vector<column>& columns)
 {
-  context_->command = sql_command::SQL_SELECT;
   context_->parts.push_back(std::make_unique<query_select_part>(columns));
 }
 
@@ -167,7 +166,6 @@ query_from_intermediate query_select_intermediate::from(const table& t)
 
 query_insert_intermediate::query_insert_intermediate()
 {
-  context_->command = sql_command::SQL_INSERT;
   context_->parts.push_back(std::make_unique<query_insert_part>());
 }
 
@@ -225,7 +223,6 @@ executable_query query_into_intermediate::values(std::vector<utils::any_type> &&
 
 query_create_intermediate::query_create_intermediate()
 {
-  context_->command = sql_command::SQL_CREATE;
   context_->parts.push_back(std::make_unique<query_create_part>());
 }
 
@@ -242,7 +239,6 @@ executable_query query_create_intermediate::table(const sql::table &table, const
 
 query_drop_intermediate::query_drop_intermediate()
 {
-  context_->command = sql_command::SQL_DROP;
   context_->parts.push_back(std::make_unique<query_drop_part>());
 }
 
@@ -272,7 +268,6 @@ query_execute_where_intermediate query_set_intermediate::where_clause(std::uniqu
 
 query_update_intermediate::query_update_intermediate(const sql::table& table)
 {
-  context_->command = sql_command::SQL_UPDATE;
   context_->parts.push_back(std::make_unique<query_update_part>(table));
 }
 
@@ -296,7 +291,6 @@ query_execute_where_intermediate query_delete_from_intermediate::where_clause(st
 
 query_delete_intermediate::query_delete_intermediate()
 {
-  context_->command = sql_command::SQL_DELETE;
   context_->parts.push_back(std::make_unique<query_delete_part>());
 }
 

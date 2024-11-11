@@ -2,7 +2,7 @@
 
 namespace matador::sql {
 
-sql_error::sql_error(sql_error_code ec,
+sql_error::sql_error(const sql_error_code ec,
                      std::string native_error,
                      std::string error_message,
                      std::string dbms,

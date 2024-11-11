@@ -30,6 +30,7 @@ public:
   using sql_func_to_string_map = std::unordered_map<sql_function_t, std::string>;
 
   using next_placeholder_func = std::function<std::string(size_t)>;
+  using to_escaped_string_func = std::function<std::string(const utils::blob &)>;
 
 public:
   [[nodiscard]] const std::string& token_at(dialect_token token) const;
@@ -95,6 +96,8 @@ public:
    */
   [[nodiscard]] std::string next_placeholder(const std::vector<std::string> &bind_vars) const;
 
+  [[nodiscard]] std::string to_escaped_string(const utils::blob &value) const;
+
   /**
    * Returns the default schema name.
    *
@@ -102,7 +105,7 @@ public:
    */
   [[nodiscard]] std::string default_schema_name() const;
 
-  [[nodiscard]] query_context compile(const query_compile_context &data, const connection_impl &conn) const;
+  [[nodiscard]] query_context compile(const query_compile_context &data, std::optional<std::reference_wrapper<const connection_impl>> conn) const;
 
   void compiler(std::unique_ptr<query_compiler> &&compiler);
 
@@ -113,6 +116,7 @@ private:
   friend class dialect_builder;
 
   next_placeholder_func placeholder_func_ = [](size_t) { return "?"; };
+  to_escaped_string_func to_escaped_string_func_;
 
   std::string default_schema_name_;
   std::unique_ptr<query_compiler> compiler_;

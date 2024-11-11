@@ -15,11 +15,11 @@ public:
   odbc_statement(SQLHANDLE stmt, const sql::query_context &query);
   ~odbc_statement() override;
 
-  size_t execute() override;
-  std::unique_ptr<sql::query_result_impl> fetch() override;
+  utils::result<size_t, sql::sql_error> execute() override;
+  utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch() override;
   void reset() override;
 protected:
-  object::attribute_writer& binder() override;
+  utils::attribute_writer& binder() override;
 
 private:
   SQLHANDLE stmt_ = nullptr;

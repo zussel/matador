@@ -6,11 +6,12 @@
 
 namespace matador::sql {
 
-attribute_string_writer::attribute_string_writer(const connection_impl& conn)
-: conn_(&conn) {}
+attribute_string_writer::attribute_string_writer(const class dialect &d, std::optional<std::reference_wrapper<const connection_impl>> conn)
+: dialect_(d)
+, conn_(conn) {}
 
 const sql::dialect& attribute_string_writer::dialect() const {
-    return conn_->dialect();
+    return dialect_;
 }
 
 void attribute_string_writer::write_value(size_t /*pos*/, const char& x ) {
@@ -55,7 +56,7 @@ void attribute_string_writer::write_value(size_t /*pos*/, const unsigned long lo
 
 void attribute_string_writer::write_value(size_t /*pos*/, const bool& x ) {
 //  result_ = "'" + conn_->dialect().prepare_literal(x ? "true" : "false") + "'";
-  result_ = conn_->dialect().to_string(x);
+  result_ = dialect_.to_string(x);
 }
 
 void attribute_string_writer::write_value(size_t /*pos*/, const float& x ) {
@@ -67,11 +68,11 @@ void attribute_string_writer::write_value(size_t /*pos*/, const double& x ) {
 }
 
 void attribute_string_writer::write_value(size_t /*pos*/, const time& x ) {
-    result_ = "'" + conn_->dialect().prepare_literal(utils::to_string(x, "%F %T.%f")) + "'";
+    result_ = "'" + dialect_.prepare_literal(utils::to_string(x, "%F %T.%f")) + "'";
 }
 
 void attribute_string_writer::write_value(size_t /*pos*/, const date& x ) {
-  result_ = "'" + conn_->dialect().prepare_literal(utils::to_string(x)) + "'";
+  result_ = "'" + dialect_.prepare_literal(utils::to_string(x)) + "'";
 }
 
 void attribute_string_writer::write_value(size_t pos, const char* x ) {
@@ -83,20 +84,24 @@ void attribute_string_writer::write_value(size_t pos, const char* x, size_t /*si
 }
 
 void attribute_string_writer::write_value(size_t /*pos*/, const std::string& x ) {
-  result_ = "'" + conn_->dialect().prepare_literal(x) + "'";
+  result_ = "'" + dialect_.prepare_literal(x) + "'";
 }
 
 void attribute_string_writer::write_value(size_t /*pos*/, const std::string& x, size_t /*size*/) {
-  result_ = "'" + conn_->dialect().prepare_literal(x) + "'";
+  result_ = "'" + dialect_.prepare_literal(x) + "'";
 }
 
 void attribute_string_writer::write_value(size_t /*pos*/, const utils::blob& x ) {
-    // "This is a binary Data string" as binary data:
-    // MySQL:    X'5468697320697320612062616E617279204461746120737472696E67'
-    // Postgres: '\\x5468697320697320612062616E617279204461746120737472696E67'
-    // MSSQL:    0x5468697320697320612062616E617279204461746120737472696E67
-    // Sqlite:   X'5468697320697320612062616E617279204461746120737472696E67'
-    result_ = conn_->dialect().token_at(dialect_token::BEGIN_BINARY_DATA) + conn_->to_escaped_string(x) + conn_->dialect().token_at(dialect_token::END_BINARY_DATA);
+  // "This is a binary Data string" as binary data:
+  // MySQL:    X'5468697320697320612062616E617279204461746120737472696E67'
+  // Postgres: '\\x5468697320697320612062616E617279204461746120737472696E67'
+  // MSSQL:    0x5468697320697320612062616E617279204461746120737472696E67
+  // Sqlite:   X'5468697320697320612062616E617279204461746120737472696E67'
+  if (conn_.has_value()) {
+    result_ = dialect_.token_at(dialect_token::BEGIN_BINARY_DATA) + conn_.value().get().to_escaped_string(x) + dialect_.token_at(dialect_token::END_BINARY_DATA);
+  } else {
+    result_ = dialect_.token_at(dialect_token::BEGIN_BINARY_DATA) + dialect_.to_escaped_string(x) + dialect_.token_at(dialect_token::END_BINARY_DATA);
+  }
 }
 
 void attribute_string_writer::write_value(size_t /*pos*/, const utils::value &/*x*/, size_t /*size*/) {}

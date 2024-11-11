@@ -5,6 +5,7 @@ set(HEADER
   include/odbc_result_reader.hpp
   include/odbc_statement.hpp
   include/odbc_parameter_binder.hpp
+  include/odbc_handle.hpp
 )
 
 set(SOURCES
@@ -14,6 +15,7 @@ set(SOURCES
   src/odbc_result_reader.cpp
   src/odbc_statement.cpp
   src/odbc_parameter_binder.cpp
+  src/odbc_handle.cpp
 )
 
 set(LIBRARY_TARGET matador-odbc)

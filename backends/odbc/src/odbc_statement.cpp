@@ -17,10 +17,12 @@ odbc_statement::~odbc_statement()
   SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 }
 
-size_t odbc_statement::execute()
+utils::result<size_t, sql::sql_error> odbc_statement::execute()
 {
   auto ret = SQLExecute(stmt_);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc", query_.sql);
+  if (!is_succeeded_or_no_data(ret)) {
+    make_error(sql::sql_error_code::EXECUTE_FAILED, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+  }
 
   // check if data is needed
   if (ret == SQL_NEED_DATA) {
@@ -61,37 +63,47 @@ size_t odbc_statement::execute()
 
   SQLLEN affected_rows{0};
   ret = SQLRowCount(stmt_, &affected_rows);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc", query_.sql);
+  if (!is_succeeded_or_no_data(ret)) {
+    make_error(sql::sql_error_code::EXECUTE_FAILED, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+  }
 
-  return affected_rows;
+  return utils::ok(static_cast<size_t>(affected_rows));
 }
 
-std::unique_ptr<sql::query_result_impl> odbc_statement::fetch()
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> odbc_statement::fetch()
 {
   const auto ret = SQLExecute(stmt_);
-  throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc", query_.sql);
+  if (!is_succeeded_or_no_data(ret)) {
+    make_error(sql::sql_error_code::FETCH_FAILED, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+  }
 
   // check if data is needed
   if (ret == SQL_NEED_DATA) {
   }
 
   auto reader = std::make_unique<odbc_result_reader>(stmt_);
-  return std::move(std::make_unique<sql::query_result_impl>(std::move(reader), query_.prototype));
+  return utils::ok(std::move(std::make_unique<sql::query_result_impl>(std::move(reader), query_.prototype)));
 }
 
 void odbc_statement::reset()
 {
   if (stmt_) {
     auto ret = SQLFreeStmt(stmt_, SQL_CLOSE);
-    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc", query_.sql);
+    if (!is_succeeded_or_no_data(ret)) {
+      make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+    }
     ret = SQLFreeStmt(stmt_, SQL_UNBIND);
-    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc", query_.sql);
+    if (!is_succeeded_or_no_data(ret)) {
+      make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+    }
     ret = SQLFreeStmt(stmt_, SQL_RESET_PARAMS);
-    throw_odbc_error(ret, SQL_HANDLE_STMT, stmt_, "odbc", query_.sql);
+    if (!is_succeeded_or_no_data(ret)) {
+      make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+    }
   }
 }
 
-object::attribute_writer& odbc_statement::binder()
+utils::attribute_writer& odbc_statement::binder()
 {
   return binder_;
 }
