@@ -2,6 +2,7 @@
 #define QUERY_STATEMENT_CACHE_HPP
 
 #include "matador/sql/statement.hpp"
+#include "matador/sql/connection_pool.hpp"
 
 #include <memory>
 #include <mutex>
@@ -22,7 +23,9 @@ struct cache_info
 class statement_cache
 {
 public:
-  statement& acquire(query_context &&context, const connection &conn);
+  statement_cache(connection_pool<connection> &pool, const dialect &d);
+
+  statement& prepare(query_compile_context &&context);
   void release(const statement &stmt);
 
 private:
@@ -31,6 +34,8 @@ private:
   std::hash<std::string> hash_;
   using statement_map = std::unordered_map<size_t, cache_info>;
   statement_map statement_map_;
+  connection_pool<connection> &pool_;
+  const dialect &dialect_;
 };
 
 }

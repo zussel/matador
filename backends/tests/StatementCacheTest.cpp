@@ -6,6 +6,7 @@
 #include "matador/sql/statement_cache.hpp"
 
 #include "connection.hpp"
+#include "matador/sql/dialect_builder.hpp"
 
 using namespace matador;
 
@@ -23,9 +24,10 @@ protected:
 };
 
 TEST_CASE_METHOD(StatementCacheFixture, "Acquire prepared statement", "[statement cache]") {
-  sql::statement_cache cache;
+  // const auto d = sql::dialect_builder::builder().create().build();
+  // sql::statement_cache cache(pool, d);
 
-  auto conn = pool.acquire();
+  // auto conn = pool.acquire();
 
   std::string sql = R"(SELECT * FROM person WHERE name = 'george')";
 //  auto &stmt = cache.acquire(sql, *conn);
