@@ -6,6 +6,7 @@
 #include "matador/sql/query_compiler.hpp"
 
 #include "matador/utils/data_types.hpp"
+#include "matador/utils/string.hpp"
 
 #include <functional>
 #include <string>
@@ -116,7 +117,7 @@ private:
   friend class dialect_builder;
 
   next_placeholder_func placeholder_func_ = [](size_t) { return "?"; };
-  to_escaped_string_func to_escaped_string_func_;
+  to_escaped_string_func to_escaped_string_func_ = [](const utils::blob &val) { return utils::to_string(val); };
 
   std::string default_schema_name_;
   std::unique_ptr<query_compiler> compiler_;

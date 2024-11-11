@@ -14,8 +14,8 @@ struct query_compile_context;
 class query_compiler : public query_part_visitor
 {
 public:
-  explicit query_compiler(const dialect &d);
   query_context compile(const query_compile_context &data,
+                        const dialect &d,
                         std::optional<std::reference_wrapper<const connection_impl>> conn);
 
 protected:
@@ -52,7 +52,7 @@ protected:
   const query_compile_context *data_{};
   query_context query_;
   size_t table_index{0};
-  const dialect &dialect_;
+  const dialect *dialect_{nullptr};
   std::optional<std::reference_wrapper<const connection_impl>> connection_{};
 };
 

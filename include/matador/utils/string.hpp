@@ -4,7 +4,6 @@
 #include "matador/utils/export.hpp"
 #include "matador/utils/types.hpp"
 
-#include <sstream>
 #include <vector>
 #include <list>
 #include <string>
@@ -39,7 +38,7 @@ OOS_UTILS_API size_t split(const std::string &str, char delim, std::vector<std::
  *
  * @param str The string to split.
  * @param delim The delimiter character.
- * @return The the vector with split strings.
+ * @return The vector with split strings.
  */
 OOS_UTILS_API std::vector<std::string> split(const std::string &str, char delim);
 
@@ -141,7 +140,7 @@ OOS_UTILS_API std::string to_string(const blob &data);
  * @return The floating point value as string
  */
 template < class T >
-std::string to_string(T x, size_t precision = 0, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
+std::string to_string(T x, size_t precision = 0, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr)
 {
   if (precision == 0) {
     return to_string(x);

@@ -123,9 +123,9 @@ std::string dialect::default_schema_name() const
   return default_schema_name_;
 }
 
-query_context dialect::compile(const query_compile_context& data, std::optional<std::reference_wrapper<const connection_impl>> conn) const
+query_context dialect::compile(const query_compile_context& data, const std::optional<std::reference_wrapper<const connection_impl>> conn) const
 {
-    return compiler_->compile(data, conn);
+    return compiler_->compile(data, *this, conn);
 }
 
 void dialect::compiler(std::unique_ptr<query_compiler> &&compiler)
@@ -134,7 +134,7 @@ void dialect::compiler(std::unique_ptr<query_compiler> &&compiler)
 }
 
 dialect::dialect()
-: compiler_(std::make_unique<query_compiler>(*this))
+: compiler_(std::make_unique<query_compiler>())
 {}
 
 }

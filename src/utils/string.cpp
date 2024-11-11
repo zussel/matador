@@ -1,6 +1,7 @@
 #include "matador/utils/string.hpp"
 #include "matador/utils/time.hpp"
 
+#include <sstream>
 #include <stdexcept>
 #include <cstring>
 
@@ -29,7 +30,7 @@ std::vector<std::string> split(const std::string &str, char delim)
   return result;
 }
 
-size_t split(const std::string &str, char delim, std::list<std::string> &values)
+size_t split(const std::string &str, const char delim, std::list<std::string> &values)
 {
   std::stringstream ss(str);
   std::string item;

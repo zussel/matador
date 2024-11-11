@@ -13,11 +13,11 @@ odbc_handle::~odbc_handle() {
 }
 
 utils::result<void, sql::sql_error> odbc_handle::allocate() {
-  if (const SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_ENV, nullptr, &handle_); ret != SQL_SUCCESS) {
-    std::ignore = free();
-    return utils::error(make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_ENV, handle_));
-  }
-  return utils::ok<void>();
+  return allocate(nullptr);
+}
+
+utils::result<void, sql::sql_error> odbc_handle::allocate(const odbc_handle& creator) {
+  return allocate(creator.handle());
 }
 
 utils::result<void, sql::sql_error> odbc_handle::free() {
@@ -64,7 +64,7 @@ utils::result<void, sql::sql_error> odbc_handle::set_attribute(const SQLINTEGER 
         if (const auto ret = SQLSetConnectAttr(handle_, attr, value, string_length); ret != SQL_SUCCESS) {
             return utils::error(make_error(sql::sql_error_code::FAILURE, ret, handle_type_, handle_));
         }
-    } else if (attr > 200 && attr < 300) {
+    } else if (attr >= 200 && attr < 300) {
         // env attribute
         if (handle_type_ != SQL_HANDLE_ENV) {
             return utils::error(make_error(sql::sql_error_code::FAILURE, "handle is not environment handle"));
@@ -77,6 +77,14 @@ utils::result<void, sql::sql_error> odbc_handle::set_attribute(const SQLINTEGER 
     }
 
     return utils::ok<void>();
+}
+
+utils::result<void, sql::sql_error> odbc_handle::allocate(SQLHANDLE creator) {
+  if (const SQLRETURN ret = SQLAllocHandle(handle_type_, creator, &handle_); ret != SQL_SUCCESS) {
+    std::ignore = free();
+    return utils::error(make_error(sql::sql_error_code::FAILURE, ret, handle_type_, handle_));
+  }
+  return utils::ok<void>();
 }
 
 }

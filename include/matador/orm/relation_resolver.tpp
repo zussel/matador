@@ -11,9 +11,9 @@ namespace matador::detail {
 
 template < class T >
 template < class V >
-void relation_resolver<T, typename std::enable_if<
+void relation_resolver<T, typename std::enable_if_t<
   !std::is_base_of<basic_has_many_to_many_item, T>::value
->::type>::on_belongs_to(const char *id, object_ptr<V> &x, const utils::foreign_attributes &attr)
+>>::on_belongs_to(const char *id, object_ptr<V> &x, const utils::foreign_attributes &attr)
 {
   const auto &pk = x.primary_key().share();
   if (pk.is_null()) {

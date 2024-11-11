@@ -216,6 +216,7 @@ void odbc_result_reader::read_value(const char *id, size_t index, utils::blob &v
   while ((ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(index), SQL_C_BINARY, binary_data, sizeof(binary_data), &info)) != SQL_NO_DATA) {
     if (SQL_SUCCEEDED(ret)) {
       const auto len = (info > 5000) || (info == SQL_NO_TOTAL) ? 5000 : info;
+      value.clear();
       value.insert(value.begin(), std::begin(binary_data), std::begin(binary_data) + len);
       break;
     } if (ret == SQL_ERROR) {
@@ -223,6 +224,7 @@ void odbc_result_reader::read_value(const char *id, size_t index, utils::blob &v
       make_error(sql::sql_error_code::RETRIEVE_DATA_FAILED, ret, SQL_HANDLE_STMT, stmt_);
     } else {
       const auto len = (info > 5000) || (info == SQL_NO_TOTAL) ? 5000 : info;
+      value.clear();
       value.insert(value.begin(), std::begin(binary_data), std::begin(binary_data) + len);
     }
   }

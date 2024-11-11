@@ -56,7 +56,6 @@ TEST_CASE_METHOD( QueryFixture, "Insert and select basic datatypes", "[query][da
     matador::date date_val(15, 3, 2015);
     auto time_val = matador::time(2015, 3, 15, 13, 56, 23, 123);
     matador::utils::blob blob_val {1,2,3,4,5,6,7,8};
-    //  matador::utils::blob blob_val {1,2,3,4,0,0,5,6,7,8};
 
     types t {
             1,

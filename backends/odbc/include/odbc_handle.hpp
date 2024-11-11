@@ -15,6 +15,7 @@ public:
   ~odbc_handle();
 
   utils::result<void, sql::sql_error> allocate();
+  utils::result<void, sql::sql_error> allocate(const odbc_handle& creator);
   [[nodiscard]] utils::result<void, sql::sql_error> free();
 
   [[nodiscard]] bool is_valid() const;
@@ -25,6 +26,9 @@ public:
   [[nodiscard]] SQLSMALLINT handle_type() const;
 
   utils::result<void, sql::sql_error> set_attribute(SQLINTEGER attr, SQLPOINTER value, SQLINTEGER string_length);
+
+private:
+  utils::result<void, sql::sql_error> allocate(SQLHANDLE creator);
 
 private:
   SQLHANDLE handle_{};

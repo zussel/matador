@@ -28,7 +28,7 @@ void odbc_connection::open() {
   auto res = odbc_.allocate().and_then([this]() {
     return odbc_.set_attribute(SQL_ATTR_ODBC_VERSION, (SQLPOINTER) SQL_OV_ODBC3, 0);
   }).and_then([this]() {
-    return connection_.allocate();
+    return connection_.allocate(odbc_);
   }).and_then([this]() {
     return connection_.set_attribute(SQL_LOGIN_TIMEOUT, (SQLPOINTER *) 5, 0);
   }).or_else([this](auto err) {
@@ -55,8 +55,7 @@ void odbc_connection::close() {
     return;
   }
 
-  SQLRETURN ret = SQLDisconnect(connection_.handle());
-  if (ret != SQL_SUCCESS) {
+  if (SQLRETURN ret = SQLDisconnect(connection_.handle()); ret != SQL_SUCCESS) {
     make_error(sql::sql_error_code::OPEN_ERROR, ret, SQL_HANDLE_DBC, connection_.handle());
   }
 
@@ -96,6 +95,9 @@ utils::result<size_t, sql::sql_error> odbc_connection::execute(const std::string
     return utils::error(make_error( sql::sql_error_code::EXECUTE_FAILED, ret, SQL_HANDLE_STMT, *stmt, sql ));
   }
 
+  if (affected_rows < 0) {
+    affected_rows = 0;
+  }
   return utils::ok(static_cast<size_t>(affected_rows));
 }
 
