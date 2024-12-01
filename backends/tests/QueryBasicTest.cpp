@@ -316,7 +316,8 @@ TEST_CASE_METHOD(QueryFixture, "Test describe table", "[query][describe][table]"
     [](const column_definition &cf) { return cf.is_blob(); }
   };
 
-  for (const auto &col : *columns) {
+  const auto &cols = columns.value();
+  for (const auto &col : cols) {
     REQUIRE(col.name() == column_names[col.index()]);
     REQUIRE(type_check[col.index()](col));
   }

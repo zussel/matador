@@ -28,14 +28,14 @@ public:
   template < class Type >
   void bind_object(Type &obj)
   {
-    object_binder_.reset();
+    object_binder_.reset(start_index());
     object_binder_.bind(obj, binder());
   }
 
   template < class Type >
-  void bind(size_t pos, Type &val)
+  void bind(const size_t pos, Type &val)
   {
-    utils::data_type_traits<Type>::bind_value(binder(), pos, val);
+    utils::data_type_traits<Type>::bind_value(binder(), adjust_index(pos), val);
   }
 
   void bind(size_t pos, const char *value, size_t size);
@@ -48,6 +48,8 @@ public:
 
 protected:
   virtual utils::attribute_writer& binder() = 0;
+  [[nodiscard]] virtual size_t start_index() const;
+  [[nodiscard]] virtual size_t adjust_index(size_t index) const;
 
 protected:
   friend class statement;

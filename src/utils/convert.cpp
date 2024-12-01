@@ -118,7 +118,7 @@ void convert(time &dest, const time &source)
 
 long long to_long_long(const char *source)
 {
-  if (strlen(source) == 0) {
+  if (source == nullptr || strlen(source) == 0) {
     return{};
   }
   char *end;
@@ -133,7 +133,7 @@ long long to_long_long(const char *source)
 
 unsigned long long to_unsigned_long_long(const char *source)
 {
-  if (strlen(source) == 0) {
+  if (source == nullptr || strlen(source) == 0) {
     return{};
   }
   char *end;
@@ -148,7 +148,7 @@ unsigned long long to_unsigned_long_long(const char *source)
 
 long double to_double(const char *source)
 {
-  if (strlen(source) == 0) {
+  if (source == nullptr || strlen(source) == 0) {
     return{};
   }
   char *end;

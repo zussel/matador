@@ -13,7 +13,7 @@ odbc_statement::odbc_statement(SQLHANDLE stmt, const sql::query_context &query)
 
 odbc_statement::~odbc_statement()
 {
-  reset();
+  cleanup();
   SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 }
 
@@ -21,11 +21,12 @@ utils::result<size_t, sql::sql_error> odbc_statement::execute()
 {
   auto ret = SQLExecute(stmt_);
   if (!is_succeeded_or_no_data(ret)) {
-    make_error(sql::sql_error_code::EXECUTE_FAILED, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+    return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, ret, SQL_HANDLE_STMT, stmt_, query_.sql));
   }
 
   // check if data is needed
   if (ret == SQL_NEED_DATA) {
+      int i = 9;
     // put needed data from host_data
 
     // // get first data to put
@@ -61,10 +62,16 @@ utils::result<size_t, sql::sql_error> odbc_statement::execute()
     // }
   }
 
+  binder_.reset();
+
   SQLLEN affected_rows{0};
-  ret = SQLRowCount(stmt_, &affected_rows);
-  if (!is_succeeded_or_no_data(ret)) {
-    make_error(sql::sql_error_code::EXECUTE_FAILED, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+  if (query_.command == sql::sql_command::SQL_CMD_INSERT ||
+    query_.command == sql::sql_command::SQL_CMD_UPDATE ||
+    query_.command == sql::sql_command::SQL_CMD_DELETE) {
+    ret = SQLRowCount(stmt_, &affected_rows);
+    if (!is_succeeded_or_no_data(ret)) {
+      return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, ret, SQL_HANDLE_STMT, stmt_, query_.sql));
+    }
   }
 
   return utils::ok(static_cast<size_t>(affected_rows));
@@ -79,6 +86,7 @@ utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> odbc_stat
 
   // check if data is needed
   if (ret == SQL_NEED_DATA) {
+      int i = 9;
   }
 
   auto reader = std::make_unique<odbc_result_reader>(stmt_);
@@ -87,25 +95,52 @@ utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> odbc_stat
 
 void odbc_statement::reset()
 {
-  if (stmt_) {
-    auto ret = SQLFreeStmt(stmt_, SQL_CLOSE);
-    if (!is_succeeded_or_no_data(ret)) {
-      make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+  if (!stmt_) {
+    return;
+  }
+  // SQLFreeStmt(stmt_, SQL_UNBIND);
+  // SQLFreeStmt(stmt_, SQL_RESET_PARAMS);
+  if (query_.command == sql::sql_command::SQL_CMD_SELECT) {
+    if (const auto ret = SQLCloseCursor(stmt_); !is_succeeded_or_no_data(ret)) {
+      make_error(sql::sql_error_code::RESET_FAILED, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
     }
-    ret = SQLFreeStmt(stmt_, SQL_UNBIND);
-    if (!is_succeeded_or_no_data(ret)) {
-      make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
-    }
-    ret = SQLFreeStmt(stmt_, SQL_RESET_PARAMS);
-    if (!is_succeeded_or_no_data(ret)) {
-      make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
-    }
+  } else {
+    cleanup();
   }
 }
 
 utils::attribute_writer& odbc_statement::binder()
 {
   return binder_;
+}
+
+size_t odbc_statement::start_index() const
+{
+    return 1;
+}
+
+size_t odbc_statement::adjust_index( size_t index ) const
+{
+    return ++index;
+}
+
+void odbc_statement::cleanup() const
+{
+  if (!stmt_) {
+    return;
+  }
+  auto ret = SQLFreeStmt(stmt_, SQL_CLOSE);
+  if (!is_succeeded_or_no_data(ret)) {
+    make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+  }
+  ret = SQLFreeStmt(stmt_, SQL_UNBIND);
+  if (!is_succeeded_or_no_data(ret)) {
+    make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+  }
+  ret = SQLFreeStmt(stmt_, SQL_RESET_PARAMS);
+  if (!is_succeeded_or_no_data(ret)) {
+    make_error(sql::sql_error_code::FAILURE, ret, SQL_HANDLE_STMT, stmt_, query_.sql);
+  }
 }
 
 }

@@ -14,7 +14,7 @@
 using namespace matador::sql;
 using namespace matador::test;
 
-TEST_CASE_METHOD(QueryFixture, "Create table with foreign key relation", "[query]")
+TEST_CASE_METHOD(QueryFixture, "Create table with foreign key relation", "[query][foreign][relation]")
 {
   schema.attach<airplane>("airplane");
   schema.attach<flight>("flight");
@@ -37,7 +37,7 @@ TEST_CASE_METHOD(QueryFixture, "Create table with foreign key relation", "[query
   tables_to_drop.emplace("flight");
 }
 
-TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[query]")
+TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[query][where]")
 {
   schema.attach<person>("person");
   auto res = query::create()
@@ -93,7 +93,7 @@ TEST_CASE_METHOD(QueryFixture, "Execute select statement with where clause", "[q
   }
 }
 
-TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query]")
+TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query][insert]")
 {
   auto res = query::create()
     .table("person", {
@@ -136,7 +136,7 @@ TEST_CASE_METHOD(QueryFixture, "Execute insert statement", "[query]")
   }
 }
 
-TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query]")
+TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query][foreign]")
 {
   schema.attach<airplane>("airplane");
   schema.attach<flight>("flight");
@@ -198,7 +198,7 @@ TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key", "[query]")
   REQUIRE(f.value()->at(2).as<std::string>() == "hans");
 }
 
-TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left", "[query][join_left]")
+TEST_CASE_METHOD(QueryFixture, "Select statement with foreign key and join_left", "[query][foreign][join_left]")
 {
   schema.attach<airplane>("airplane");
   schema.attach<flight>("flight");

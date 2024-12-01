@@ -7,7 +7,7 @@ namespace matador::sql {
 
 namespace detail {
 
-void fk_result_binder::on_primary_key(const char * /*id*/, std::string &value, size_t size)
+void fk_result_binder::on_primary_key(const char * /*id*/, std::string &value, const size_t size)
 {
   utils::data_type_traits<std::string>::read_value(*binder_, id_, index_++, value, size);
 }
@@ -19,7 +19,7 @@ void object_result_binder::reset()
   index_ = 0;
 }
 
-void object_result_binder::on_primary_key(const char *id, std::string &value, size_t size)
+void object_result_binder::on_primary_key(const char *id, std::string &value, const size_t size)
 {
   utils::data_type_traits<std::string>::read_value(*binder_, id, index_++, value, size);
 }

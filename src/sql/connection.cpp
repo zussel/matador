@@ -136,13 +136,8 @@ utils::result<size_t, sql_error> connection::execute(const std::string &sql) con
   return connection_->execute(sql);
 }
 
-// sql::query connection::query() const
-// {
-  // return {};
-// }
-
-bool is_unknown(const std::vector<sql::column_definition> &columns) {
-  return std::all_of(std::begin(columns), std::end(columns), [](const auto &col) {
+bool has_unknown_columns(const std::vector<sql::column_definition> &columns) {
+  return std::any_of(std::begin(columns), std::end(columns), [](const auto &col) {
     return col.type() == data_type::type_unknown;
   });
 }
@@ -176,24 +171,8 @@ bool is_unknown(const std::vector<sql::column_definition> &columns) {
 
 utils::result<std::unique_ptr<query_result_impl>, sql_error> connection::fetch(const query_compile_context &ctx) const
 {
-  const auto qry = dialect().compile(ctx, *connection_);
-  if (qry.prototype.empty() || is_unknown(qry.prototype)) {
-    const auto result = describe(qry.table.name);
-    if (!result.is_ok()) {
-      return utils::error(result.err());
-    }
-    for (auto &col : qry.prototype) {
-      const auto rit = std::find_if(std::begin(*result), std::end(*result), [&col](const auto &value) {
-        return value.name() == col.name();
-      });
-      if (col.type() == data_type::type_unknown && rit != (*result).end()) {
-        const_cast<column_definition&>(col).type(rit->type());
-      }
-    }
-  }
-
 //  logger_.debug(sql);
-  return connection_->fetch(qry);
+  return connection_->fetch(dialect().compile(ctx, *connection_));
 }
 
 utils::result<size_t, sql_error> connection::execute( const query_compile_context& ctx ) const
@@ -208,7 +187,7 @@ statement connection::prepare(const query_compile_context &query) const
 
 statement connection::prepare(const query_context &context) const
 {
-  if (context.command != sql_command::SQL_CMD_CREATE && (context.prototype.empty() || is_unknown(context.prototype))) {
+  if (context.command != sql_command::SQL_CMD_CREATE && (context.prototype.empty() || has_unknown_columns(context.prototype))) {
       if (const auto result = describe(context.table.name); result.is_ok()) {
         for (auto &col: context.prototype) {
           const auto rit = std::find_if(std::begin(*result), std::end(*result),

@@ -12,9 +12,9 @@ void fk_binder::on_primary_key(const char * /*id*/, std::string &value, size_t /
 
 }
 
-void object_parameter_binder::reset()
+void object_parameter_binder::reset(size_t start_index)
 {
-  index_ = 0;
+  index_ = start_index;
 }
 
 void object_parameter_binder::on_primary_key(const char * /*id*/, std::string &val, const size_t size)

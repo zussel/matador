@@ -17,6 +17,7 @@ enum class sql_error_code : uint8_t {
     PREPARE_FAILED,
     DESCRIBE_FAILED,
     RETRIEVE_DATA_FAILED,
+    RESET_FAILED,
     OPEN_ERROR,
     CLOSE_ERROR,
     FAILURE

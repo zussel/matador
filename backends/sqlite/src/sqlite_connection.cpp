@@ -111,7 +111,7 @@ utils::result<size_t, sql::sql_error> sqlite_connection::execute(const std::stri
   return utils::ok(static_cast<size_t>(sqlite3_changes(db_)));
 }
 
-utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> sqlite_connection::fetch(const sql::query_context& context)
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> sqlite_connection::fetch(sql::query_context &&context)
 {
   return fetch_internal(context.sql).and_then(
     [&context](const auto &ctx) {

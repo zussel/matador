@@ -39,6 +39,8 @@ public:
   void write_value(size_t pos, const utils::blob &x) override;
   void write_value(size_t pos, const utils::value &x, size_t size) override;
 
+  void reset();
+
 public:
   struct bounded_value
   {

@@ -18,8 +18,14 @@ public:
   utils::result<size_t, sql::sql_error> execute() override;
   utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> fetch() override;
   void reset() override;
+
 protected:
   utils::attribute_writer& binder() override;
+  size_t start_index() const override;
+  size_t adjust_index( size_t index ) const override;
+
+private:
+    void cleanup() const;
 
 private:
   SQLHANDLE stmt_ = nullptr;

@@ -218,7 +218,7 @@ TEST_CASE("Create, insert and select a blob column", "[query][blob]")
   REQUIRE(result == R"(SELECT "id", "name", "data" FROM "person")");
 }
 
-TEST_CASE("Select statement with join_left", "[query][join_left]")
+TEST_CASE("Select statement with join_left", "[query][statement][join_left]")
 {
   connection noop("noop://noop.db");
   schema scm("noop");

@@ -12,7 +12,7 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
 include(Catch)
 
-set(ODBC_CONNECTION_STRING "odbc://test:test123!@127.0.0.1:1433/testdb (SQL Server)")
+set(ODBC_CONNECTION_STRING "odbc://test:test123!@127.0.0.1:1433/matador_test (FreeTDS)")
 
 configure_file(Connection.hpp.in ${PROJECT_BINARY_DIR}/backends/odbc/test/connection.hpp @ONLY IMMEDIATE)
 
@@ -47,6 +47,8 @@ target_link_libraries(${LIBRARY_TEST_TARGET} PRIVATE
   matador-query
   ${CMAKE_DL_LIBS}
   ${ODBC_LIBRARIES})
+
+add_dependencies(${LIBRARY_TEST_TARGET} matador-odbc)
 
 target_include_directories(${LIBRARY_TEST_TARGET}
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include

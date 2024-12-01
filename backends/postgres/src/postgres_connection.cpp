@@ -70,7 +70,7 @@ version postgres_connection::server_version() const {
   };
 }
 
-utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> postgres_connection::fetch(const sql::query_context &context) {
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> postgres_connection::fetch(sql::query_context &&context) {
   PGresult *res = PQexec(conn_, context.sql.c_str());
 
   if (const auto status = PQresultStatus(res); status != PGRES_COMMAND_OK &&

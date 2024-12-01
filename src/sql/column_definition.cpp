@@ -39,6 +39,16 @@ const std::string &column_definition::name() const
   return name_;
 }
 
+std::string column_definition::full_name() const
+{
+  return table_ + "." + name_;
+}
+
+std::string column_definition::table_name() const
+{
+  return table_;
+}
+
 int column_definition::index() const
 {
   return index_;

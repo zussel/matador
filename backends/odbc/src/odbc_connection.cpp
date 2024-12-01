@@ -45,7 +45,7 @@ void odbc_connection::open() {
   auto ret = SQLDriverConnect(connection_.handle(), nullptr, (SQLCHAR *) dns.c_str(), SQL_NTS, retconstring, 1024, nullptr,
                          SQL_DRIVER_NOPROMPT);
 
-  if (ret != SQL_SUCCESS) {
+  if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
     make_error(sql::sql_error_code::OPEN_ERROR, ret, SQL_HANDLE_DBC, connection_.handle());
   }
 }
@@ -101,7 +101,7 @@ utils::result<size_t, sql::sql_error> odbc_connection::execute(const std::string
   return utils::ok(static_cast<size_t>(affected_rows));
 }
 
-utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> odbc_connection::fetch(const sql::query_context &context) {
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> odbc_connection::fetch(sql::query_context &&context) {
   if (!connection_.is_valid()) {
     return utils::error(sql::sql_error{sql::sql_error_code::FAILURE, "", "mssql no odbc connection established", "odbc"});
   }
@@ -116,16 +116,15 @@ utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> odbc_conn
     utils::error(make_error(sql::sql_error_code::FETCH_FAILED, ret, SQL_HANDLE_STMT, *stmt, context.sql));
   }
 
-  std::vector<sql::column_definition> columns;
-  for (SQLSMALLINT i = 1; i <= num_columns; i++) {
-    auto column = describe_column(*stmt, i);
+  for (SQLSMALLINT i = 0; i < num_columns; ++i) {
+    auto column = describe_column(*stmt, i+1);
     if (!column.is_ok()) {
       return utils::error(column.err());
     }
-    columns.push_back(*column);
+    context.prototype.at(i).type(column->type());
   }
 
-  return utils::ok(std::make_unique<sql::query_result_impl>(std::make_unique<odbc_result_reader>(*stmt), std::move(columns), 1));
+  return utils::ok(std::make_unique<sql::query_result_impl>(std::make_unique<odbc_result_reader>(*stmt), context.prototype, 1));
 }
 
 utils::result<std::unique_ptr<sql::statement_impl>, sql::sql_error> odbc_connection::prepare(sql::query_context query) {
@@ -135,6 +134,22 @@ utils::result<std::unique_ptr<sql::statement_impl>, sql::sql_error> odbc_connect
   if (!is_succeeded_or_no_data(ret)) {
     utils::error(make_error(sql::sql_error_code::PREPARE_FAILED, ret, SQL_HANDLE_DBC, connection_.handle(), query.sql));
   }
+
+  // handle columns with unknown type
+  SQLSMALLINT num_columns{};
+  if (ret = SQLNumResultCols(stmt, &num_columns); !is_succeeded_or_no_data(ret)) {
+    utils::error(make_error(sql::sql_error_code::FETCH_FAILED, ret, SQL_HANDLE_STMT, stmt, query.sql));
+  }
+
+  for (SQLSMALLINT i = 0; i < num_columns; ++i) {
+    auto column = describe_column(stmt, i+1);
+    if (!column.is_ok()) {
+      return utils::error(column.err());
+    }
+    query.prototype.at(i).type(column->type());
+  }
+
+  // build up bounded values from prototype columns
 
   ret = SQLPrepare(stmt, (SQLCHAR *) query.sql.c_str(), SQL_NTS);
   if (!is_succeeded_or_no_data(ret)) {
@@ -251,7 +266,7 @@ utils::result<std::vector<sql::column_definition>, sql::sql_error> odbc_connecti
           type2data_type(data_type, size),
           size,
           not_null == SQL_NO_NULLS ? sql::null_option::NOT_NULL : sql::null_option::NULLABLE,
-          reinterpret_cast<size_t>(indicator)
+          pos - 1
           );
   }
 
@@ -286,11 +301,13 @@ data_type type2data_type(SQLSMALLINT type, size_t size) {
     case SQL_REAL:
       return data_type::type_float;
     case SQL_FLOAT:
+    case SQL_DOUBLE:
       return data_type::type_double;
     case SQL_BIT:
       return data_type::type_bool;
     case SQL_LONGVARCHAR:
       return (size != 2147483647 ? data_type::type_varchar : data_type::type_text);
+    case SQL_VARBINARY:
     case SQL_LONGVARBINARY:
       return data_type::type_blob;
     case SQL_UNKNOWN_TYPE:

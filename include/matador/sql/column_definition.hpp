@@ -49,6 +49,8 @@ public:
   column_definition(std::string name, data_type type, size_t index, std::string ref_table, std::string ref_column, const utils::field_attributes& attr, null_option null_opt);
 
   [[nodiscard]] const std::string& name() const;
+  [[nodiscard]] std::string full_name() const;
+  [[nodiscard]] std::string table_name() const;
   [[nodiscard]] int index() const;
   [[nodiscard]] const utils::field_attributes& attributes() const;
   [[nodiscard]] bool is_nullable() const;
@@ -126,6 +128,7 @@ private:
   static const data_type_index data_type_index_;
 
   std::string name_;
+  std::string table_;
   int index_{-1};
   utils::field_attributes attributes_;
   null_option null_option_{null_option::NOT_NULL};

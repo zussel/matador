@@ -12,7 +12,7 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
 include(Catch)
 
-set(POSTGRES_CONNECTION_STRING "postgres://test:test123@127.0.0.1:5432/matador_test")
+set(POSTGRES_CONNECTION_STRING "postgres://test:test123@localhost:15432/testdb")
 
 configure_file(Connection.hpp.in ${PROJECT_BINARY_DIR}/backends/postgres/test/connection.hpp @ONLY IMMEDIATE)
 
@@ -47,6 +47,8 @@ target_link_libraries(${LIBRARY_TEST_TARGET} PRIVATE
   matador-query
   ${CMAKE_DL_LIBS}
   ${PostgreSQL_LIBRARY})
+
+add_dependencies(${LIBRARY_TEST_TARGET} matador-postgres)
 
 target_include_directories(${LIBRARY_TEST_TARGET}
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include

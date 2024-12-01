@@ -18,7 +18,7 @@ class fk_binder
 {
 public:
   template<class Type>
-  void bind(Type &obj, size_t column_index, utils::attribute_writer &binder)
+  void bind(Type &obj, const size_t column_index, utils::attribute_writer &binder)
   {
     binder_ = &binder;
     index_ = column_index;
@@ -71,7 +71,7 @@ public:
     binder_ = nullptr;
   }
 
-  void reset();
+  void reset(size_t start_index);
 
   template < class Type >
   void on_primary_key(const char * /*id*/, Type &val, std::enable_if_t<std::is_integral_v<Type> && !std::is_same_v<bool, Type>>* = nullptr)

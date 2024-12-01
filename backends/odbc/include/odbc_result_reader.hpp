@@ -49,7 +49,7 @@ public:
 
 private:
   template < class Type >
-  void read_column(const char *id, size_t index, Type &val, size_t size = 0)
+  void read_column(const char *id, const size_t index, Type &val, size_t size = 0)
   {
     SQLLEN info = 0;
     const auto type = static_cast<SQLSMALLINT>(type2int(utils::data_type_traits<Type>::type(size)));

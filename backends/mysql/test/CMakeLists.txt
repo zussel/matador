@@ -48,6 +48,8 @@ target_link_libraries(${LIBRARY_TEST_TARGET} PRIVATE
   ${CMAKE_DL_LIBS}
   ${MySQL_LIBRARY})
 
+add_dependencies(${LIBRARY_TEST_TARGET} matador-mysql)
+
 target_include_directories(${LIBRARY_TEST_TARGET}
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include
   PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/test/catch2

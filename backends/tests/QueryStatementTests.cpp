@@ -77,6 +77,7 @@ TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][inse
 
 TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][update]") {
   using namespace matador::test;
+  using namespace matador::utils;
 
   schema.attach<matador::test::person>("person");
   auto stmt = query::create()
@@ -111,13 +112,13 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
   REQUIRE((*row)->id == 1);
   REQUIRE((*row)->name == "george");
   REQUIRE((*row)->age == 45);
-  REQUIRE((*row)->image == matador::utils::blob{1,2,3,4});
+  REQUIRE((*row)->image == blob{1,2,3,4});
 
   george.age = 36;
   george.image = {5,6,7,8};
   stmt = query::update("person")
     .set<person>()
-    .where("id"_col == matador::utils::_)
+    .where("id"_col == _)
     .prepare(db);
 
   res = stmt.bind(george)
@@ -135,7 +136,7 @@ TEST_CASE_METHOD(QueryFixture, "Test update statement", "[query][statement][upda
   REQUIRE((*row)->id == 1);
   REQUIRE((*row)->name == "george");
   REQUIRE((*row)->age == 36);
-  REQUIRE((*row)->image == matador::utils::blob{5,6,7,8});
+  REQUIRE((*row)->image == blob{5,6,7,8});
 }
 
 TEST_CASE_METHOD(QueryFixture, "Test delete statement", "[query][statement][delete]") {

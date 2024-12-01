@@ -200,7 +200,7 @@ type_info determine_type_info(const std::string &type_string) {
   return result;
 }
 
-utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> mysql_connection::fetch(const sql::query_context &context) {
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> mysql_connection::fetch(sql::query_context &&context) {
   if (mysql_query(mysql_.get(), context.sql.c_str())) {
     return utils::error(make_error(sql::sql_error_code::EXECUTE_FAILED, mysql_.get(), context.sql));
   }

@@ -44,7 +44,7 @@ utils::result<size_t, sql_error> noop_connection::execute(const std::string &/*s
   return utils::ok(static_cast<size_t>(0));
 }
 
-utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> noop_connection::fetch(const query_context &/*context*/)
+utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> noop_connection::fetch(query_context &&/*context*/)
 {
   return utils::ok(std::unique_ptr<sql::query_result_impl>{});
 }

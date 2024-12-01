@@ -59,7 +59,7 @@ utils::result<bool, sql::sql_error> odbc_result_reader::fetch()
     return utils::error(make_error(sql::sql_error_code::FETCH_FAILED, ret, SQL_HANDLE_STMT, stmt_));
   }
 
-  return utils::ok(SQL_SUCCEEDED(ret));
+  return utils::ok(ret != SQL_NO_DATA);
 }
 
 void odbc_result_reader::read_value(const char *id, size_t index, char &value)
