@@ -26,6 +26,7 @@ struct query_context
   std::vector<column_definition> prototype;
   std::vector<std::string> result_vars;
   std::vector<std::string> bind_vars;
+  std::vector<utils::any_type> bind_types;
 
   std::unordered_map<std::string, std::string> column_aliases;
   std::unordered_map<std::string, std::string> table_aliases;

@@ -20,13 +20,13 @@ namespace matador::sql {
  * - driver
  */
 struct connection_info {
-  std::string type;         /**< Type of the database i.e. sqlite or mysql. */
-  std::string user;         /**< Username to login. */
-  std::string password;     /**< Password for login. */
-  std::string hostname;     /**< Hostname of the database. */
-  unsigned short port{};    /**< Port of the database server. */
-  std::string database;     /**< Name of the database to use */
-  std::string driver;       /**< Driver to use. This is used by th mssql/odbc backend. */
+  std::string type{};         /**< Type of the database i.e. sqlite or mysql. */
+  std::string user{};         /**< Username to login. */
+  std::string password{};     /**< Password for login. */
+  std::string hostname{};     /**< Hostname of the database. */
+  unsigned short port{};      /**< Port of the database server. */
+  std::string database{};     /**< Name of the database to use */
+  std::string driver{};       /**< Driver to use. This is used by th mssql/odbc backend. */
 
   template < class Operator >
   void process(Operator &op)

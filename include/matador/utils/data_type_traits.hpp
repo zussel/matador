@@ -3,13 +3,15 @@
 
 #include "matador/utils/data_types.hpp"
 
+#include <cstddef>
+
 namespace matador::utils {
 
 class attribute_reader;
 class attribute_writer;
 
 /**
- * @tparam T The type of the traits
+ * @tparam Type The type of the traits
  * @brief Type traits for database types
  *
  * This class is used to determine and

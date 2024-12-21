@@ -1,4 +1,5 @@
 #include "odbc_connection.hpp"
+#include "odbc_bound_value.hpp"
 #include "odbc_error.hpp"
 #include "odbc_result_reader.hpp"
 #include "odbc_statement.hpp"
@@ -121,10 +122,36 @@ utils::result<std::unique_ptr<sql::query_result_impl>, sql::sql_error> odbc_conn
     if (!column.is_ok()) {
       return utils::error(column.err());
     }
-    context.prototype.at(i).type(column->type());
+    context.prototype.at(i).type(column->type);
   }
 
   return utils::ok(std::make_unique<sql::query_result_impl>(std::make_unique<odbc_result_reader>(*stmt), context.prototype, 1));
+}
+
+bool is_scalar(const SQLSMALLINT sql_type) {
+    return sql_type == SQL_VARBINARY ||
+        sql_type == SQL_TIMESTAMP ||
+        sql_type == SQL_VARCHAR ||
+        sql_type == SQL_LONGVARCHAR ||
+        sql_type == SQL_LONGVARBINARY;
+
+}
+utils::result<void, sql::sql_error> prepare_bind_column(SQLHANDLE stmt, odbc_bound_value &bound_value, const odbc_bind_parameter &bind_param) {
+    const auto ret = SQLBindParameter(stmt,
+                                       static_cast<SQLUSMALLINT>(bind_param.index),
+                                       SQL_PARAM_INPUT,
+                                       bind_param.c_type,
+                                       bind_param.sql_type,
+                                       is_scalar(bind_param.sql_type) ? bound_value.data.size() : 0,
+                                       0,
+                                       bound_value.data.data(),
+                                       static_cast<SQLLEN>(is_scalar(bind_param.sql_type) ? bound_value.data.size() : 0),
+                                       nullptr);
+    if (!is_succeeded_or_no_data(ret)) {
+        return utils::error(make_error( sql::sql_error_code::BIND_FAILED, ret, SQL_HANDLE_STMT, stmt));
+    }
+
+    return utils::ok<void>();
 }
 
 utils::result<std::unique_ptr<sql::statement_impl>, sql::sql_error> odbc_connection::prepare(sql::query_context query) {
@@ -132,67 +159,40 @@ utils::result<std::unique_ptr<sql::statement_impl>, sql::sql_error> odbc_connect
   SQLHANDLE stmt;
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_.handle(), &stmt);
   if (!is_succeeded_or_no_data(ret)) {
-    utils::error(make_error(sql::sql_error_code::PREPARE_FAILED, ret, SQL_HANDLE_DBC, connection_.handle(), query.sql));
+    return utils::error(make_error(sql::sql_error_code::PREPARE_FAILED, ret, SQL_HANDLE_DBC, connection_.handle(), query.sql));
+  }
+
+  ret = SQLPrepare(stmt, (SQLCHAR *) query.sql.c_str(), SQL_NTS);
+  if (!is_succeeded_or_no_data(ret)) {
+    return utils::error(make_error(sql::sql_error_code::PREPARE_FAILED, ret, SQL_HANDLE_STMT, stmt, query.sql));
   }
 
   // handle columns with unknown type
-  SQLSMALLINT num_columns{};
-  if (ret = SQLNumResultCols(stmt, &num_columns); !is_succeeded_or_no_data(ret)) {
-    utils::error(make_error(sql::sql_error_code::FETCH_FAILED, ret, SQL_HANDLE_STMT, stmt, query.sql));
-  }
+  std::vector<odbc_bound_value> bound_values;
+  if (query.command == sql::sql_command::SQL_CMD_INSERT || query.command == sql::sql_command::SQL_CMD_UPDATE || query.command == sql::sql_command::SQL_CMD_DELETE) {
+    for (SQLSMALLINT i = 0; i < query.bind_vars.size(); ++i) {
 
-  for (SQLSMALLINT i = 0; i < num_columns; ++i) {
-    auto column = describe_column(stmt, i+1);
-    if (!column.is_ok()) {
-      return utils::error(column.err());
+      auto bind_param = describe_bind_parameter(stmt, i+1);
+      if (!bind_param.is_ok()) {
+          return utils::error(bind_param.err());
+      }
+      bound_values.emplace_back(bind_param->size);
+
+      if (const auto res = prepare_bind_column(stmt, bound_values.back(), *bind_param); res.is_error()) {
+        return utils::error(res.err());
+      }
     }
-    query.prototype.at(i).type(column->type());
   }
 
   // build up bounded values from prototype columns
 
-  ret = SQLPrepare(stmt, (SQLCHAR *) query.sql.c_str(), SQL_NTS);
-  if (!is_succeeded_or_no_data(ret)) {
-    utils::error(make_error(sql::sql_error_code::PREPARE_FAILED, ret, SQL_HANDLE_STMT, stmt, query.sql));
-  }
-
-  std::unique_ptr<sql::statement_impl> impl(std::make_unique<odbc_statement>(stmt, query));
+  std::unique_ptr<sql::statement_impl> impl(std::make_unique<odbc_statement>(stmt, std::move(bound_values), query));
   return utils::ok(std::move(impl));
 }
 
-data_type string2type(const char *type) {
-  if (strncmp(type, "INTEGER", 7) == 0) {
-    return data_type::type_int;
-  } else if (strncmp(type, "TINYINT", 7) == 0) {
-    return data_type::type_char;
-  } else if (strncmp(type, "SMALLINT", 8) == 0) {
-    return data_type::type_short;
-  } else if (strncmp(type, "BIGINT", 6) == 0) {
-    return data_type::type_long_long;
-  } else if (strcmp(type, "BOOLEAN") == 0) {
-    return data_type::type_bool;
-  } else if (strcmp(type, "REAL") == 0 || strcmp(type, "DOUBLE") == 0) {
-    return data_type::type_double;
-  } else if (strcmp(type, "FLOAT") == 0) {
-    return data_type::type_float;
-  } else if (strcmp(type, "BLOB") == 0) {
-    return data_type::type_blob;
-  } else if (strcmp(type, "NULL") == 0) {
-    return data_type::type_null;
-  } else if (strncmp(type, "VARCHAR", 7) == 0) {
-    return data_type::type_varchar;
-  } else if (strcmp(type, "DATE") == 0) {
-    return data_type::type_date;
-  } else if (strcmp(type, "DATETIME") == 0 || strcmp(type, "DATETIME2") == 0) {
-    return data_type::type_time;
-  } else if (strcmp(type, "TEXT") == 0) {
-    return data_type::type_text;
-  } else {
-    return data_type::type_unknown;
-  }
-}
-
+static size_t ctype2size(SQLSMALLINT ctype, size_t size);
 static data_type type2data_type(SQLSMALLINT type, size_t size);
+static SQLSMALLINT type2ctype(SQLSMALLINT type, size_t size);
 
 utils::result<std::vector<sql::column_definition>, sql::sql_error> odbc_connection::describe(const std::string &table)
 {
@@ -275,7 +275,39 @@ utils::result<std::vector<sql::column_definition>, sql::sql_error> odbc_connecti
   return utils::ok(prototype);
 }
 
-data_type type2data_type(SQLSMALLINT type, size_t size) {
+size_t ctype2size(const SQLSMALLINT ctype, const size_t size) {
+    switch (ctype) {
+        case SQL_C_CHAR:
+            return size;
+        case SQL_C_STINYINT:
+        case SQL_C_UTINYINT:
+            return 1;
+        case SQL_C_SSHORT:
+        case SQL_C_USHORT:
+            return 2;
+        case SQL_C_SLONG:
+        case SQL_C_ULONG:
+            return 4;
+        case SQL_C_SBIGINT:
+        case SQL_C_UBIGINT:
+            return 8;
+        case SQL_C_FLOAT:
+            return 4;
+        case SQL_C_DOUBLE:
+            return 8;
+        case SQL_C_BINARY:
+            return size;
+        case SQL_C_BIT:
+            return 1;
+        case SQL_C_TYPE_DATE:
+        case SQL_C_TYPE_TIME:
+        case SQL_C_TYPE_TIMESTAMP:
+            return 23;
+        default:
+            return 0;
+    }
+}
+data_type type2data_type(const SQLSMALLINT type, const size_t size) {
   switch (type) {
     case SQL_CHAR:
       return data_type::type_char;
@@ -314,6 +346,51 @@ data_type type2data_type(SQLSMALLINT type, size_t size) {
     default:
       return data_type::type_unknown;
   }
+}
+
+SQLSMALLINT type2ctype(const SQLSMALLINT type, const size_t size) {
+    switch (type) {
+        case SQL_CHAR:
+            return SQL_C_CHAR;
+        case SQL_TINYINT:
+            return SQL_C_TINYINT;
+        case SQL_SMALLINT:
+            return SQL_C_SSHORT;
+        case SQL_INTEGER:
+          return SQL_C_SLONG;
+        case SQL_BIGINT:
+          return SQL_C_SBIGINT;
+        case SQL_NUMERIC:
+            return SQL_C_CHAR;
+        case SQL_TYPE_DATE:
+        case -9:
+          if (size == 10) {
+              return SQL_C_TYPE_DATE;
+          }
+        if (size == 27) {
+            return SQL_C_TYPE_TIMESTAMP;
+        }
+        return SQL_C_TYPE_DATE;
+        case SQL_TYPE_TIMESTAMP:
+            return SQL_C_TYPE_TIMESTAMP;
+        case SQL_VARCHAR:
+            return SQL_C_CHAR;
+        case SQL_REAL:
+            return SQL_C_FLOAT;
+        case SQL_FLOAT:
+        case SQL_DOUBLE:
+          return SQL_C_DOUBLE;
+        case SQL_BIT:
+            return SQL_C_BIT;
+        case SQL_LONGVARCHAR:
+            return SQL_C_CHAR;
+        case SQL_VARBINARY:
+        case SQL_LONGVARBINARY:
+          return SQL_C_BINARY;
+        case SQL_UNKNOWN_TYPE:
+            default:
+              return SQL_C_DEFAULT;
+    }
 }
 
 utils::result<bool, sql::sql_error> odbc_connection::exists(const std::string &schema_name, const std::string &table_name) {
@@ -382,7 +459,7 @@ utils::result<SQLHANDLE, sql::sql_error> odbc_connection::execute_statement(cons
   return utils::ok(handle);
 }
 
-utils::result<sql::column_definition, sql::sql_error> odbc_connection::describe_column(SQLHANDLE stmt, const SQLSMALLINT index) {
+utils::result<odbc_column, sql::sql_error> odbc_connection::describe_column(SQLHANDLE stmt, const SQLSMALLINT index) {
   SQLCHAR name[64];
   SQLSMALLINT name_length{};
   SQLSMALLINT data_type(0);
@@ -394,13 +471,29 @@ utils::result<sql::column_definition, sql::sql_error> odbc_connection::describe_
     return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
   }
 
-  return utils::ok(sql::column_definition{
+  return utils::ok(odbc_column{
     std::string(reinterpret_cast<char *>(name)),
-    type2data_type(data_type, data_size),
+    static_cast<size_t>(index),
     data_size,
-    nullable == SQL_NO_NULLS ? sql::null_option::NOT_NULL : sql::null_option::NULLABLE,
-    static_cast<size_t>(index)
+   type2data_type(data_type, data_size),
+   data_type,
+   type2ctype(data_type, data_size),
+    nullable == SQL_NO_NULLS ? sql::null_option::NOT_NULL : sql::null_option::NULLABLE
   });
+}
+
+utils::result<odbc_bind_parameter, sql::sql_error> odbc_connection::describe_bind_parameter(SQLHANDLE stmt, const SQLSMALLINT index) {
+    odbc_bind_parameter bind_param{ index };
+
+    if (const auto ret = SQLDescribeParam(stmt, index, &bind_param.sql_type, &bind_param.size, &bind_param.digits, &bind_param.nullable); !is_succeeded_or_no_data(ret)) {
+        return utils::error(make_error(sql::sql_error_code::DESCRIBE_FAILED, ret, SQL_HANDLE_STMT, stmt));
+    }
+
+    bind_param.c_type = type2ctype(bind_param.sql_type, bind_param.size);
+    bind_param.type = type2data_type(bind_param.sql_type, bind_param.size);
+    bind_param.size = ctype2size(bind_param.c_type, bind_param.size);
+
+    return utils::ok(bind_param);
 }
 
 }

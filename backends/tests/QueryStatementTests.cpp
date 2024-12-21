@@ -39,9 +39,9 @@ TEST_CASE_METHOD(QueryFixture, "Test create statement", "[query][statement][crea
 TEST_CASE_METHOD(QueryFixture, "Test insert statement", "[query][statement][insert]") {
   using namespace matador::test;
 
-  schema.attach<matador::test::person>("person");
+  schema.attach<person>("person");
   auto stmt = query::create()
-    .table<matador::test::person>("person", schema)
+    .table<person>("person", schema)
     .prepare(db);
 
   auto res = stmt.execute();

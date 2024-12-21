@@ -17,20 +17,22 @@ TEST_CASE("Create table sql statement string", "[query]")
   connection noop("noop://noop.db");
   schema scm("noop");
   
-  auto result = query::create().table({"person"}, {
-  make_pk_column<unsigned long>("id"),
-  make_column<std::string>("name", 255),
-  make_column<unsigned short>("age")
-  }).str(noop);
+  auto result = query::create()
+    .table({"person"}, {
+      make_pk_column<unsigned long>("id"),
+      make_column<std::string>("name", 255),
+      make_column<unsigned short>("age")
+    }).str(noop);
 
   REQUIRE(result == R"##(CREATE TABLE "person" ("id" BIGINT NOT NULL, "name" VARCHAR(255) NOT NULL, "age" INTEGER NOT NULL, CONSTRAINT PK_person PRIMARY KEY (id)))##");
 
-  result = query::create().table("person", {
-  make_pk_column<unsigned long>("id"),
-  make_column<std::string>("name", {255, constraints::UNIQUE}, null_option::NOT_NULL),
-  make_column<unsigned short>("age"),
-  make_fk_column<unsigned long>("address", "address", "id")
-  }).str(noop);
+  result = query::create()
+    .table("person", {
+      make_pk_column<unsigned long>("id"),
+      make_column<std::string>("name", {255, constraints::UNIQUE}, null_option::NOT_NULL),
+      make_column<unsigned short>("age"),
+      make_fk_column<unsigned long>("address", "address", "id")
+    }).str(noop);
 
   REQUIRE(result == R"##(CREATE TABLE "person" ("id" BIGINT NOT NULL, "name" VARCHAR(255) NOT NULL UNIQUE, "age" INTEGER NOT NULL, "address" BIGINT NOT NULL, CONSTRAINT PK_person PRIMARY KEY (id), CONSTRAINT FK_person_address FOREIGN KEY (address) REFERENCES address(id)))##");
 }
@@ -40,7 +42,9 @@ TEST_CASE("Drop table sql statement string", "[query]")
   connection noop("noop://noop.db");
   schema scm("noop");
   
-  const auto result = query::drop().table("person").str(noop);
+  const auto result = query::drop()
+    .table("person")
+    .str(noop);
 
   REQUIRE(result == R"(DROP TABLE "person")");
 }
@@ -50,7 +54,9 @@ TEST_CASE("Select sql statement string", "[query]")
   connection noop("noop://noop.db");
   schema scm("noop");
   
-  const auto result = query::select({"id", "name", "age"}).from("person").str(noop);
+  const auto result = query::select({"id", "name", "age"})
+    .from("person")
+    .str(noop);
 
   REQUIRE(result == R"(SELECT "id", "name", "age" FROM "person")");
 }
@@ -60,9 +66,12 @@ TEST_CASE("Insert sql statement string", "[query]")
   connection noop("noop://noop.db");
   schema scm("noop");
   
-  const auto result = query::insert().into("person", {
-  "id", "name", "age"
-  }).values({7UL, "george", 65U}).str(noop);
+  const auto result = query::insert()
+    .into("person", {
+    "id", "name", "age"
+    })
+    .values({7UL, "george", 65U})
+    .str(noop);
 
   REQUIRE(result == R"(INSERT INTO "person" ("id", "name", "age") VALUES (7, 'george', 65))");
 }

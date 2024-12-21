@@ -23,6 +23,10 @@ sql::sql_error make_error(sql::sql_error_code ec, SQLRETURN ret, SQLSMALLINT hty
     SQLSMALLINT over_by;
 
     ret = SQL_ERROR;
+
+    SQLLEN numRecs = 0;
+    SQLGetDiagField(SQL_HANDLE_STMT, hndl, 0, SQL_DIAG_NUMBER, &numRecs, 0, 0);
+
     SQLSMALLINT i = 0;
     ret = SQLGetDiagRec(htype, hndl, ++i, state, &error, data, 511, &over_by);
     if (ret == SQL_SUCCESS) {

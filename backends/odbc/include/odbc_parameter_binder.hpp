@@ -1,6 +1,8 @@
 #ifndef QUERY_SQLITE_PARAMETER_BINDER_H
 #define QUERY_SQLITE_PARAMETER_BINDER_H
 
+#include "odbc_bound_value.hpp"
+
 #include "matador/utils/attribute_writer.hpp"
 
 #include <sql.h>
@@ -15,7 +17,7 @@ namespace matador::backends::odbc {
 class odbc_parameter_binder final : public utils::attribute_writer
 {
 public:
-  explicit odbc_parameter_binder(SQLHANDLE stmt);
+  explicit odbc_parameter_binder(SQLHANDLE stmt, std::vector<odbc_bound_value> &&bound_values);
 
   void write_value(size_t pos, const char &x) override;
   void write_value(size_t pos, const short &x) override;
@@ -57,6 +59,7 @@ public:
 private:
   SQLHANDLE stmt_{};
   bool bind_null_ = false;
+  std::vector<odbc_bound_value> bound_values_;
   std::vector<bounded_value> host_data_;
   std::unordered_map<PTR, std::reference_wrapper<bounded_value>> data_to_put_map_;
   std::vector<std::shared_ptr<std::string> > host_strings_;

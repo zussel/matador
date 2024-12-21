@@ -1,6 +1,7 @@
 #ifndef QUERY_ODBC_STATEMENT_HPP
 #define QUERY_ODBC_STATEMENT_HPP
 
+#include "odbc_bound_value.hpp"
 #include "odbc_parameter_binder.hpp"
 
 #include "matador/sql/statement_impl.hpp"
@@ -12,7 +13,7 @@ namespace matador::backends::odbc {
 class odbc_statement final : public sql::statement_impl
 {
 public:
-  odbc_statement(SQLHANDLE stmt, const sql::query_context &query);
+  odbc_statement(SQLHANDLE stmt, std::vector<odbc_bound_value> &&bound_values, const sql::query_context &query);
   ~odbc_statement() override;
 
   utils::result<size_t, sql::sql_error> execute() override;

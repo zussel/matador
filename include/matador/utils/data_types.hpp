@@ -2,7 +2,6 @@
 #define OOS_DATABASE_TYPES_HPP
 
 #include <cstdint>
-#include <string>
 
 namespace matador {
 
@@ -31,6 +30,24 @@ enum class data_type : uint8_t {
   type_blob,               /*!< Data type blob */
   type_null,               /*!< Data type null */
   type_unknown             /*!< Data type unknown */
+};
+
+enum class basic_type : uint8_t {
+  type_int8 = 0,
+  type_int16,
+  type_int32,
+  type_int64,
+  type_uint8,
+  type_uint16,
+  type_uint32,
+  type_uint64,
+  type_float,
+  type_double,
+  type_varchar,
+  type_text,
+  type_blob,
+  type_timestamp,
+  type_date
 };
 
 }

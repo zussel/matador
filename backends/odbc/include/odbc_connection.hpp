@@ -21,6 +21,26 @@
 
 namespace matador::backends::odbc {
 
+struct odbc_column {
+    std::string name;
+    size_t index{};
+    size_t size{};
+    data_type type{};
+    SQLSMALLINT sql_type{};
+    SQLSMALLINT c_type{};
+    sql::null_option nullable{};
+};
+
+struct odbc_bind_parameter {
+    SQLSMALLINT index{};
+    data_type type{};
+    SQLSMALLINT sql_type{};
+    SQLSMALLINT c_type{};
+    SQLULEN size{};
+    SQLSMALLINT digits{};
+    SQLSMALLINT nullable{};
+};
+
 class odbc_connection final : public matador::sql::connection_impl
 {
 public:
@@ -43,7 +63,8 @@ public:
 private:
   [[nodiscard]] utils::result<SQLHANDLE, sql::sql_error> execute_statement(const std::string &sql) const;
 
-  static utils::result<sql::column_definition, sql::sql_error> describe_column(SQLHANDLE stmt, SQLSMALLINT index);
+  static utils::result<odbc_column, sql::sql_error> describe_column(SQLHANDLE stmt, SQLSMALLINT index);
+  static utils::result<odbc_bind_parameter, sql::sql_error> describe_bind_parameter(SQLHANDLE stmt, SQLSMALLINT index);
 
 private:
   odbc_handle odbc_{SQL_HANDLE_ENV};

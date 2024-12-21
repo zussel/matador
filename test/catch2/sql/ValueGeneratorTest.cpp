@@ -16,8 +16,8 @@ TEST_CASE("Extract values object", "[value extractor]") {
   p.units_in_stock = 100;
   p.unit_price = 49;
   p.quantity_per_unit = "pcs";
-  p.category = matador::object_ptr<matador::test::category>(new matador::test::category{7, "Stuff"});
-  p.supplier = matador::object_ptr<matador::test::supplier>(new matador::test::supplier{13, "ACME"});
+  p.category = matador::object_ptr(new matador::test::category{7, "Stuff"});
+  p.supplier = matador::object_ptr(new matador::test::supplier{13, "ACME"});
   p.product_name = "candle";
 
   const std::vector<matador::utils::any_type> expected_values {

@@ -3,10 +3,10 @@
 #include "odbc_error.hpp"
 
 namespace matador::backends::odbc {
-odbc_statement::odbc_statement(SQLHANDLE stmt, const sql::query_context &query)
+odbc_statement::odbc_statement(SQLHANDLE stmt, std::vector<odbc_bound_value> &&bound_values, const sql::query_context &query)
 : statement_impl(query)
 , stmt_(stmt)
-, binder_(stmt)
+, binder_(stmt, std::move(bound_values))
 {
 
 }
