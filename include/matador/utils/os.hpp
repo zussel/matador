@@ -4,6 +4,7 @@
 #include "matador_export.h"
 
 #include <cstdio>
+#include <cstdint>
 #include <string>
 
 namespace matador::utils::os {

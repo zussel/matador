@@ -2,6 +2,8 @@
 
 #include <matador/utils/errors.hpp>
 
+#include <limits>
+
 namespace matador::utils {
 namespace {
 

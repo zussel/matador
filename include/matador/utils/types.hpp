@@ -4,6 +4,7 @@
 #include <chrono>
 #include <cstdint>
 #include <variant>
+#include <string>
 #include <vector>
 
 namespace matador::utils {
