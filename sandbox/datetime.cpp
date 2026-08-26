@@ -4,15 +4,14 @@
 #include <chrono>
 
 template < typename ValueType >
-struct implicit_value
-{
-  implicit_value(ValueType val) : value(val) {};
-  operator ValueType() { return value; }
-  ValueType value;
+struct implicit_value {
+  typedef ValueType value_type;
+  implicit_value(value_type val) : value(val) {};
+  operator value_type() const { return value; }
+  value_type value;
 };
 
-struct year
-{
+struct year {
   unsigned short value;
 };
 
@@ -143,8 +142,7 @@ private:
 
 namespace os {
 
-std::tm localtime(time_t *t)
-{
+std::tm localtime(time_t *t) {
   std::tm res{};
   auto err = localtime_s(&res, t);
   if (err) {
@@ -153,8 +151,7 @@ std::tm localtime(time_t *t)
   return res;
 }
 
-std::tm gmtime(time_t *t)
-{
+std::tm gmtime(time_t *t) {
   std::tm res{};
   auto err = gmtime_s(&res, t);
   if (err) {
@@ -166,12 +163,11 @@ std::tm gmtime(time_t *t)
 }
 
 timestamp::timestamp()
-: tz_(t_tz::LOCAL)
-{
+: tz_(t_tz::LOCAL) {
   auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   auto seconds_since_epoch = millis / 1000;
   tm_ = os::localtime(&seconds_since_epoch);
-  milliseconds_ = (millis%1000)*1000;
+  milliseconds_ = static_cast<unsigned int>(millis % 1000);
 }
 
 timestamp::timestamp(year y, month m, month_day md, hour hours, minute minutes, second seconds, milli_second milli_seconds)
@@ -207,12 +203,13 @@ timestamp::timestamp(const std::tm &tm, unsigned int millis, timestamp::t_tz tz)
 , milliseconds_(millis)
 {}
 
-timestamp timestamp::to_utc() const
-{
+timestamp timestamp::to_utc() const {
   if (tz_ == t_tz::UTC) {
     return *this;
   }
-  return {mktime(const_cast<std::tm*>(&tm_)), milliseconds_, t_tz::UTC};
+
+  std::tm tm_copy = tm_;
+  return {std::mktime(&tm_copy), milliseconds_, t_tz::UTC};
 }
 
 std::string timestamp::str(const char *format) const {
@@ -223,18 +220,23 @@ std::string timestamp::str(const char *format) const {
   return buffer;
 }
 
-timestamp timestamp::parse(const std::string &time_string, const char *format)
-{
+timestamp timestamp::parse(const std::string &time_string, const char *format) {
   struct tm tm{};
-  memset(&tm, 0, sizeof(struct tm));
   const char *endptr = matador::detail::strptime(time_string.c_str(), format, &tm);
 
-  return {tm, 0, t_tz::LOCAL};;
-}
+  if (endptr == nullptr || *endptr != '\0') {
+    throw std::logic_error("invalid timestamp string");
+  }
+
+  tm.tm_isdst = -1;
+  auto t = std::mktime(&tm);
+  tm = os::localtime(&t);
+
+  return {tm, 0, t_tz::LOCAL};}
 
 int main() {
 
-  timestamp ts(2023_year, august, 15_day, 12_h, 48_m, 17_s, 123_ms);
+  const timestamp ts(2023_year, august, 15_day, 12_h, 48_m, 17_s, 123_ms);
 
   std::cout << "current: " << ts << "\n";
   std::cout << "local? : " << std::boolalpha << ts.is_local() << "\n";
@@ -242,7 +244,7 @@ int main() {
   std::cout << "utc    : " << ts.to_utc() << "\n";
 
   std::cout << "\n";
-  timestamp ts2(2023_year, february, 15_day, 12_h, 48_m, 17_s, 123_ms);
+  const timestamp ts2(2023_year, february, 15_day, 12_h, 48_m, 17_s, 123_ms);
 
   std::cout << "current: " << ts2 << "\n";
   std::cout << "local? : " << std::boolalpha << ts2.is_local() << "\n";
@@ -250,16 +252,16 @@ int main() {
   std::cout << "utc    : " << ts2.to_utc() << "\n";
 
   std::cout << "\n";
-  auto tsutc = ts2.to_utc();
+  const auto tsutc = ts2.to_utc();
   std::cout << "current: " << tsutc << "\n";
   std::cout << "local? : " << std::boolalpha << tsutc.is_local() << "\n";
   std::cout << "utc?   : " << std::boolalpha << tsutc.is_utc() << "\n";
   std::cout << "utc    : " << tsutc.to_utc() << "\n";
 
   std::cout << "\n";
-  auto pt = timestamp::parse("2023-08-15T12:48:17");
+  const auto pt = timestamp::parse("2023-08-15T12:48:17");
   std::cout << "current: " << pt << "\n";
   std::cout << "local? : " << std::boolalpha << pt.is_local() << "\n";
   std::cout << "utc?   : " << std::boolalpha << pt.is_utc() << "\n";
   std::cout << "utc    : " << pt.to_utc() << "\n";
-};
+}

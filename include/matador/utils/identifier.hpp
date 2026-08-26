@@ -1,184 +1,119 @@
 #ifndef MATADOR_IDENTIFIER_HPP
 #define MATADOR_IDENTIFIER_HPP
 
-#include "matador/utils/field_attributes.hpp"
-#include "matador/utils/data_types.hpp"
+#include "matador_export.h"
+
+#include "matador/utils/types.hpp"
+#include "matador/utils/error.hpp"
+#include "matador/utils/result.hpp"
 
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <typeindex>
+#include <variant>
 
-namespace matador {
-
-struct null_type_t {};
-
-/// @cond MATADOR_DEV
-namespace detail {
-
-enum class identifier_type : unsigned int {
-  INTEGRAL_TYPE,
-  STRING_TYPE,
-  NULL_TYPE
-};
+namespace matador::utils {
+class value;
+class identifier_serializer;
 
 template<typename Type, class Enabled = void>
 struct identifier_type_traits;
 
 template<typename Type>
-struct identifier_type_traits<Type, typename std::enable_if<std::is_integral<Type>::value>::type> {
-  static identifier_type type() { return identifier_type::INTEGRAL_TYPE; }
-  static std::string type_string() { return "integral"; }
+struct identifier_type_traits<Type, std::enable_if_t<std::is_integral_v<Type> && std::is_signed_v<Type> > > {
+  static bool is_valid(Type value) { return value != 0; }
+  static std::string to_string(const Type value) { return std::to_string(value); }
+};
+
+template<typename Type>
+struct identifier_type_traits<Type, std::enable_if_t<std::is_integral_v<Type> && !std::is_signed_v<Type> > > {
   static bool is_valid(Type value) { return value > 0; }
-  static std::string to_string(Type value) { return std::to_string(value); }
+  static std::string to_string(const Type value) { return std::to_string(value); }
 };
 
 template<typename Type>
-struct identifier_type_traits<Type, typename std::enable_if<std::is_same<Type, std::string>::value>::type> {
-  static identifier_type type() { return identifier_type::STRING_TYPE; }
-  static std::string type_string() { return "string"; }
+struct identifier_type_traits<Type, std::enable_if_t<std::is_same_v<Type, std::string> > > {
   static bool is_valid(const Type &value) { return !value.empty(); }
-  static std::string to_string(Type value) { return value; }
+  static std::string to_string(const Type &value) { return value; }
 };
 
-template<typename Type>
-struct identifier_type_traits<Type, typename std::enable_if<std::is_same<Type, null_type_t>::value>::type> {
-  static identifier_type type() { return identifier_type::NULL_TYPE; }
-  static std::string type_string() { return "null"; }
+template<>
+struct identifier_type_traits<null_type_t, void> {
   static bool is_valid() { return false; }
-  static std::string to_string() { return "null_pk"; }
+  static std::string to_string() { return "null"; }
 };
 
+namespace detail {
+template<typename Type>
+size_t hash(const Type &value) {
+  return std::hash<Type>()(value);
 }
 
-class identifier_serializer
-{
+size_t hash(const std::string &value);
+}
+
+template <class T>
+struct is_identifier_supported : std::false_type {};
+
+template <> struct is_identifier_supported<int8_t> : std::true_type {};
+template <> struct is_identifier_supported<int16_t> : std::true_type {};
+template <> struct is_identifier_supported<int32_t> : std::true_type {};
+template <> struct is_identifier_supported<int64_t> : std::true_type {};
+template <> struct is_identifier_supported<uint8_t> : std::true_type {};
+template <> struct is_identifier_supported<uint16_t> : std::true_type {};
+template <> struct is_identifier_supported<uint32_t> : std::true_type {};
+template <> struct is_identifier_supported<uint64_t> : std::true_type {};
+template <> struct is_identifier_supported<std::string> : std::true_type {};
+
+template <class T>
+inline constexpr bool is_identifier_supported_v = is_identifier_supported<std::decay_t<T>>::value;
+
+class MATADOR_EXPORT identifier {
 public:
-  virtual ~identifier_serializer() = default;
+  using value_type = std::variant<
+    std::monostate,
+    int8_t, int16_t, int32_t, int64_t,
+    uint8_t, uint16_t, uint32_t, uint64_t,
+    std::string
+  >;
 
-  virtual void serialize(short &, const field_attributes &) = 0;
-  virtual void serialize(int &, const field_attributes &) = 0;
-  virtual void serialize(long &, const field_attributes &) = 0;
-  virtual void serialize(long long &, const field_attributes &) = 0;
-  virtual void serialize(unsigned short &, const field_attributes &) = 0;
-  virtual void serialize(unsigned int &, const field_attributes &) = 0;
-  virtual void serialize(unsigned long &, const field_attributes &) = 0;
-  virtual void serialize(unsigned long long &, const field_attributes &) = 0;
-  virtual void serialize(std::string &, const field_attributes &) = 0;
-  virtual void serialize(null_type_t &, const field_attributes &) = 0;
-};
-
-/// @endcond
-
-class identifier
-{
-private:
-  struct base
-  {
-    explicit base(const std::type_index &ti, detail::identifier_type id_type, data_type type);
-    base(const base &x) = delete;
-    base &operator=(const base &x) = delete;
-    base(base &&x) = delete;
-    base &operator=(base &&x) = delete;
-    virtual ~base() = default;
-
-    template<typename Type>
-    [[nodiscard]] bool is_similar_type() const
-    {
-      return identifier_type_ == detail::identifier_type_traits<Type>::type();
-    }
-
-    [[nodiscard]] bool is_similar_type(const base &x) const;
-    [[nodiscard]] detail::identifier_type type() const;
-
-    [[nodiscard]] virtual base *copy() const = 0;
-    [[nodiscard]] virtual bool equal_to(const base &x) const = 0;
-    [[nodiscard]] virtual bool less(const base &x) const = 0;
-    [[nodiscard]] virtual bool is_valid() const = 0;
-    virtual void serialize(identifier_serializer &s) = 0;
-    [[nodiscard]] virtual std::string str() const = 0;
-    [[nodiscard]] virtual size_t hash() const = 0;
-
-    std::type_index type_index_;
-    detail::identifier_type identifier_type_;
-    data_type type_{data_type::type_unknown};
-  };
-
-  template<class IdType>
-  struct pk : public base
-  {
-    using self = pk<IdType>;
-
-    explicit pk(const IdType &id, size_t size = 0)
-    : base(std::type_index(typeid(IdType)), detail::identifier_type_traits<IdType>::type(), data_type_traits<IdType>::builtin_type(size))
-    , id_(id)
-    , size_(size) {}
-
-    [[nodiscard]] base *copy() const final {
-      return new self(id_, size_);
-    }
-
-    [[nodiscard]] bool equal_to(const base &x) const final {
-      return static_cast<const pk<IdType> &>(x).id_ == id_;
-    }
-
-    [[nodiscard]] bool less(const base &x) const final {
-      return static_cast<const pk<IdType> &>(x).id_ < id_;
-    }
-
-    [[nodiscard]] bool is_valid() const final
-    {
-      return detail::identifier_type_traits<IdType>::is_valid(id_);
-    }
-
-    [[nodiscard]] std::string str() const final
-    {
-      return detail::identifier_type_traits<IdType>::to_string(id_);
-    }
-
-    void serialize(identifier_serializer &s) final {
-      s.serialize(id_, size_);
-    }
-
-    [[nodiscard]] size_t hash() const final {
-      std::hash<IdType> hash_func;
-      return hash_func(id_);
-    }
-
-    IdType id_;
-    size_t size_{};
-  };
-
-  struct null_pk : public base
-  {
-    null_pk();
-    [[nodiscard]] base *copy() const final;
-    [[nodiscard]] bool equal_to(const base &x) const final;
-    [[nodiscard]] bool less(const base &x) const final;
-    [[nodiscard]] bool is_valid() const final;
-    void serialize(identifier_serializer &s) final;
-    [[nodiscard]] std::string str() const final;
-    [[nodiscard]] size_t hash() const final;
-    null_type_t null_;
-  };
-
-public:
   identifier();
-  template<typename Type>
-  explicit identifier(const Type &id, long size = -1)
-    : id_(std::make_shared<pk<Type>>(id, size)) {}
-  identifier(const identifier &x);
-  identifier &operator=(const identifier &x);
-  identifier(identifier &&x) noexcept ;
-  identifier &operator=(identifier &&x) noexcept;
+  template<typename Type, std::enable_if_t<is_identifier_supported_v<Type>, int> = 0>
+  explicit identifier(Type &&id)
+  : value_(std::forward<Type>(id)) {
+  }
 
-  template<typename Type>
-  identifier &operator=(const Type &value)
-  {
-    id_ = std::make_shared<pk<Type>>(value);
+  identifier(const identifier &x) = default;
+  identifier &operator=(const identifier &x);
+  identifier(identifier &&x) noexcept = default;
+  identifier &operator=(identifier &&x) noexcept = default;
+
+  explicit identifier(std::nullptr_t);
+  explicit identifier(const char *value);
+
+  identifier& operator=(std::nullptr_t);
+
+  template<typename Type, std::enable_if_t<std::is_integral_v<std::decay_t<Type>> && !std::is_same_v<std::decay_t<Type>, bool>, int> = 0>
+  identifier& operator=(Type value) {
+    assign_integral(value);
+    return *this;
+  }
+
+  identifier& operator=(const std::string &value);
+  identifier& operator=(const char *value);
+  template<typename Type, std::enable_if_t<is_identifier_supported_v<Type>  && std::is_same_v<std::decay_t<Type>, bool>, int> = 0>
+  identifier& operator=(Type &&value) {
+    value_ = std::forward<Type>(value);
     return *this;
   }
 
   ~identifier() = default;
+
+  result<void, error> assign(const value &val);
+
+  static result<identifier, error> from_value(const value &val);
+  [[nodiscard]] database_type to_database_type() const;
 
   bool operator==(const identifier &x) const;
   bool operator!=(const identifier &x) const;
@@ -187,45 +122,127 @@ public:
   bool operator>(const identifier &x) const;
   bool operator>=(const identifier &x) const;
 
-  [[nodiscard]] bool is_similar_type(const identifier &x) const;
-  template<typename Type>
-  [[nodiscard]] bool is_similar_type() const
-  {
-    return id_->is_similar_type<Type>();
-  }
-
   [[nodiscard]] std::string str() const;
   [[nodiscard]] const std::type_index &type_index() const;
-  [[nodiscard]] data_type type() const;
+  [[nodiscard]] basic_type type() const;
 
-  [[nodiscard]] identifier share() const;
-  [[nodiscard]] size_t use_count() const;
-
+  [[nodiscard]] bool is_integer() const;
+  [[nodiscard]] bool is_varchar() const;
   [[nodiscard]] bool is_null() const;
+
   [[nodiscard]] bool is_valid() const;
   void clear();
 
-  void serialize(identifier_serializer &s);
+  void serialize(identifier_serializer &s) const;
 
   [[nodiscard]] size_t hash() const;
+
+  template <typename Type, std::enable_if_t<is_identifier_supported_v<Type>, int> = 0>
+  result<Type, error> as() const;
+
+  template <typename Type, std::enable_if_t<std::is_integral_v<Type> && !std::is_same_v<Type, bool>, int> = 0>
+  result<Type, error> convert() const;
 
   friend std::ostream &operator<<(std::ostream &out, const identifier &id);
 
 private:
-  explicit identifier(const std::shared_ptr<base>& id);
+  template<typename Type>
+  void assign_integral(Type value) {
+    if constexpr (std::is_signed_v<Type>) {
+      if (sizeof(Type) <= sizeof(int8_t)) {
+        value_ = static_cast<int8_t>(value);
+      } else if (sizeof(Type) <= sizeof(int16_t)) {
+        value_ = static_cast<int16_t>(value);
+      } else if (sizeof(Type) <= sizeof(int32_t)) {
+        value_ = static_cast<int32_t>(value);
+      } else {
+        value_ = static_cast<int64_t>(value);
+      }
+    } else {
+      if (sizeof(Type) <= sizeof(uint8_t)) {
+        value_ = static_cast<uint8_t>(value);
+      } else if (sizeof(Type) <= sizeof(uint16_t)) {
+        value_ = static_cast<uint16_t>(value);
+      } else if (sizeof(Type) <= sizeof(uint32_t)) {
+        value_ = static_cast<uint32_t>(value);
+      } else {
+        value_ = static_cast<uint64_t>(value);
+      }
+    }
+  }
+
+  static size_t type_rank(const value_type &value);
+  static std::type_index type_index_from_value(const value_type &value);
+  static basic_type type_from_value(const value_type &value);
 
 private:
-  std::shared_ptr<base> id_;
+  value_type value_{std::monostate{}};
 };
+
+template <typename Target, typename Source>
+bool in_range(Source value) {
+  if constexpr (std::is_signed_v<Source> == std::is_signed_v<Target>) {
+    return value >= static_cast<Target>((std::numeric_limits<Source>::min)()) &&
+           value <= static_cast<Target>((std::numeric_limits<Source>::max)());
+  } else if constexpr (std::is_signed_v<Source> && !std::is_signed_v<Target>) {
+    if (value < 0) {
+      return false;
+    }
+    using UnsignedSource = std::make_unsigned_t<Source>;
+    return static_cast<UnsignedSource>(value) <= (std::numeric_limits<Target>::max)();
+  } else {
+    return value <= static_cast<std::make_unsigned_t<Target>>((std::numeric_limits<Target>::max)());
+  }
+}
+
+template <typename Type, std::enable_if_t<is_identifier_supported_v<Type>, int>>
+result<Type, error> identifier::as() const {
+  return std::visit([](const auto &v) -> result<Type, error> {
+    using StoredType = std::decay_t<decltype(v)>;
+
+    if constexpr (std::is_same_v<StoredType, std::monostate>) {
+      return failure(error{});
+    } else if constexpr (std::is_same_v<StoredType, Type>) {
+      return ok<Type>(v);
+    } else {
+      return failure(error{});
+    }
+  }, value_);
+}
+
+template <typename Type, std::enable_if_t<std::is_integral_v<Type> && !std::is_same_v<Type, bool>, int>>
+result<Type, error> identifier::convert() const {
+  return std::visit([](const auto &v) -> result<Type, error> {
+    using Stored = std::decay_t<decltype(v)>;
+
+    if constexpr (std::is_same_v<Stored, std::monostate>) {
+      return failure(error{});
+    } else if constexpr (std::is_integral_v<Stored>) {
+      if (!in_range<Type>(v)) {
+        return failure(error{});
+      }
+      return ok<Type>(static_cast<Type>(v));
+    } else {
+      return failure(error{});
+    }
+  }, value_);
+}
 
 static identifier null_identifier{};
 
 /// @cond MATADOR_DEV
-struct id_pk_hash
-{
+struct id_pk_hash {
   size_t operator()(const identifier &id) const;
 };
+
 /// @endcond
 }
+
+template<>
+struct std::hash<matador::utils::identifier> {
+  size_t operator()(const matador::utils::identifier &id) const noexcept {
+    return id.hash();
+  }
+}; // namespace std
 
 #endif //MATADOR_IDENTIFIER_HPP

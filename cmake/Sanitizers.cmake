@@ -1,0 +1,22 @@
+function(add_sanitizer_flags TARGET_NAME)
+    if(MSVC)
+        if(ENABLE_SANITIZER_ADDRESS)
+            target_compile_options(${TARGET_NAME} PRIVATE /fsanitize=address)
+        endif()
+    else()
+        set(SANITIZER_FLAGS "")
+
+        if(ENABLE_SANITIZER_ADDRESS)
+            list(APPEND SANITIZER_FLAGS "-fsanitize=address" "-fno-omit-frame-pointer")
+        endif()
+
+        if(ENABLE_SANITIZER_UNDEFINED)
+            list(APPEND SANITIZER_FLAGS "-fsanitize=undefined")
+        endif()
+
+        if(SANITIZER_FLAGS)
+            target_compile_options(${TARGET_NAME} PRIVATE ${SANITIZER_FLAGS})
+            target_link_options(${TARGET_NAME} PRIVATE ${SANITIZER_FLAGS})
+        endif()
+    endif()
+endfunction()

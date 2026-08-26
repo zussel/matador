@@ -1,250 +1,34 @@
-SET (TEST_TOOLS_SOURCES
-  utils/TimeTestUnit.cpp
-  utils/TimeTestUnit.hpp
-  utils/DateTestUnit.cpp
-  utils/DateTestUnit.hpp
-        utils/FactoryTestUnit.hpp
-  utils/FactoryTestUnit.cpp
-  utils/StringTestUnit.cpp
-  utils/StringTestUnit.hpp
-  utils/SequencerTestUnit.cpp
-  utils/SequencerTestUnit.hpp
-  utils/OSTest.cpp
-  utils/OSTest.hpp
-  utils/FileTestUnit.cpp
-  utils/FileTestUnit.hpp
-  utils/TreeTest.cpp
-  utils/TreeTest.hpp
-  utils/StreamsTest.cpp
-  utils/StreamsTest.hpp
-  utils/OptionalTest.cpp
-  utils/OptionalTest.hpp
-  utils/ThreadPoolTest.cpp
-  utils/ThreadPoolTest.hpp
-  utils/Base64Test.cpp
-  utils/Base64Test.hpp
-  utils/BufferViewTest.cpp
-  utils/BufferViewTest.hpp
-  utils/EncryptionTest.cpp
-  utils/EncryptionTest.hpp
-  utils/UrlTest.cpp
-  utils/UrlTest.hpp
-  utils/HtmlTest.cpp
-  utils/HtmlTest.hpp
-  utils/IdentifierTest.cpp
-  utils/IdentifierTest.hpp
-  utils/DependencyInjectionTest.cpp
-  utils/DependencyInjectionTest.hpp
-  utils/VersionTest.cpp
-  utils/VersionTest.hpp)
-
-SET (TEST_JSON_SOURCES
-  json/JsonTestUnit.cpp
-  json/JsonTestUnit.hpp
-  json/JsonMapperTestUnit.cpp
-  json/JsonMapperTestUnit.hpp
-  json/JsonSerializerTest.cpp
-  json/JsonSerializerTest.hpp
-  )
-
-SET (TEST_LOGGER_SOURCES
-  logger/LoggerTest.cpp
-  logger/LoggerTest.hpp
-  logger/file.cpp
-  logger/file.hpp)
-
-SET (TEST_NET_SOURCES
-  net/IPTestUnit.cpp
-  net/IPTestUnit.hpp
-  net/AddressTest.cpp
-  net/AddressTest.hpp
-  net/SocketTest.cpp
-  net/SocketTest.hpp
-  net/FDSetTest.cpp
-  net/FDSetTest.hpp
-  net/AddressResolverTest.cpp
-  net/AddressResolverTest.hpp
-  net/SocketInterrupterTest.cpp
-  net/ReactorTest.cpp
-  net/ReactorTest.hpp
-  net/SocketInterrupterTest.hpp
-  net/EchoServer.cpp
-  net/EchoServer.hpp
-  net/IOServiceTest.cpp
-  net/IOServiceTest.hpp
-  net/IOEchoServerConnection.cpp
-  net/IOEchoServerConnection.hpp
-  net/IOEchoServer.cpp
-  net/IOEchoServer.hpp
-  net/LeaderFollowerThreadPoolTest.cpp
-  net/LeaderFollowerThreadPoolTest.hpp)
-
-SET (TEST_HTTP_SOURCES
-  http/RequestParserTest.cpp
-  http/RequestParserTest.hpp
-  http/RequestData.hpp
-  http/RouteEngineTest.cpp
-  http/RouteEngineTest.hpp
-  http/RouteEndpointTest.cpp
-  http/RouteEndpointTest.hpp
-  http/HttpServerTest.cpp
-  http/HttpServerTest.hpp
-  http/ResponseParserTest.cpp
-  http/ResponseParserTest.hpp
-  http/ResponseData.hpp
-  http/TemplateEngineTest.cpp
-  http/TemplateEngineTest.hpp
-  http/JwtTest.cpp
-  http/JwtTest.hpp
-  http/MiddlewareTest.cpp
-  http/MiddlewareTest.hpp
-  http/HttpClientTest.cpp
-  http/HttpClientTest.hpp
-  http/HttpTestServer.cpp
-  http/HttpTestServer.hpp)
-
-SET (TEST_HEADER
-  datatypes.hpp
-  entities.hpp
-  person.hpp
-  has_many_list.hpp
-  Blog.hpp)
-
-SET (TEST_OBJECT_SOURCES
-  object/ObjectPrototypeTestUnit.cpp
-  object/ObjectPrototypeTestUnit.hpp
-  object/ObjectStoreTestUnit.cpp
-  object/ObjectStoreTestUnit.hpp
-  object/PrototypeTreeTest.cpp
-  object/PrototypeTreeTest.hpp
-  object/PrimaryKeyUnitTest.cpp
-  object/PrimaryKeyUnitTest.hpp
-  object/HasManyVectorUnitTest.cpp
-  object/HasManyVectorUnitTest.hpp
-  object/HasManyListUnitTest.cpp
-  object/HasManyListUnitTest.hpp
-  object/ObjectTransactionTestUnit.cpp
-  object/ObjectTransactionTestUnit.hpp
-  object/RelationTestUnit.cpp
-  object/RelationTestUnit.hpp
-  object/HasManyUnitTest.cpp
-  object/HasManyUnitTest.hpp
-  object/JsonObjectMapperTest.cpp
-  object/JsonObjectMapperTest.hpp)
-
-SET (TEST_UNIT_SOURCES
-  unit/TestSuiteTestUnit.cpp
-  unit/TestSuiteTestUnit.hpp
+# Download Catch2 v3 via CPM
+CPMAddPackage(
+        NAME Catch2
+        GITHUB_REPOSITORY catchorg/Catch2
+        VERSION 3.16.0
 )
 
-SET (TEST_SQL_SOURCES
-  sql/ConnectionTestUnit.cpp
-  sql/ConnectionTestUnit.hpp
-  sql/QueryTestUnit.cpp
-  sql/QueryTestUnit.hpp
-  sql/ConditionUnitTest.cpp
-  sql/ConditionUnitTest.hpp
-  sql/DialectTestUnit.cpp
-  sql/DialectTestUnit.hpp
-  sql/TestDialect.cpp
-  sql/TestDialect.hpp
-  sql/MSSQLDialectTestUnit.cpp
-  sql/MSSQLDialectTestUnit.hpp
-  sql/SQLiteDialectTestUnit.cpp
-  sql/SQLiteDialectTestUnit.hpp
-  sql/ValueUnitTest.cpp
-  sql/ValueUnitTest.hpp
-  sql/PostgreSQLDialectTestUnit.cpp
-  sql/PostgreSQLDialectTestUnit.hpp
-  sql/SqlLoggerTest.cpp
-  sql/SqlLoggerTest.hpp
-  sql/IdentifierSerializerTest.cpp
-  sql/IdentifierSerializerTest.h
-  sql/ConnectionInfoTest.cpp
-  sql/ConnectionInfoTest.hpp)
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
-SET (TEST_ORM_SOURCES
-  orm/TransactionTestUnit.cpp
-  orm/TransactionTestUnit.hpp
-  orm/OrmTestUnit.cpp
-  orm/OrmTestUnit.hpp
-  orm/OrmReloadTestUnit.cpp
-  orm/OrmReloadTestUnit.hpp
-  orm/OrmRelationTestUnit.cpp
-  orm/OrmRelationTestUnit.hpp
-  orm/BlogUnitTest.cpp
-  orm/BlogUnitTest.hpp
-  orm/PrimaryKeyTestUnit.cpp
-  orm/PrimaryKeyTestUnit.hpp
-  orm/JsonOrmTest.cpp
-  orm/JsonOrmTest.hpp)
-
-SET (TEST_SOURCES test_matador.cpp dto.hpp NetUtils.hpp)
-
-ADD_EXECUTABLE(test_matador
-  EXCLUDE_FROM_ALL
-  ${TEST_SOURCES}
-  ${TEST_HEADER}
-  ${TEST_TOOLS_SOURCES}
-  ${TEST_OBJECT_SOURCES}
-  ${TEST_JSON_SOURCES}
-  ${TEST_UNIT_SOURCES}
-  ${TEST_ORM_SOURCES}
-  ${TEST_LOGGER_SOURCES}
-  ${TEST_HTTP_SOURCES}
-  ${TEST_NET_SOURCES}
-  ${TEST_SQL_SOURCES}
+add_executable(MatadorTests
+    utils/ConvertTest.cpp
+    utils/IdentifierTest.cpp
+    utils/ResultTest.cpp
+    utils/StringTest.cpp
+    utils/VersionTest.cpp
 )
 
-SET(MYSQL_CONNECTION_STRING "mysql://test:test123!@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
-IF (WIN32)
-  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\\\SQLEXPRESS/test_oos (SQL Server)" CACHE STRING "mssql connection string")
-ELSE()
-  SET(MSSQL_CONNECTION_STRING "mssql://test:test123!@localhost:1433/matador_test (FreeTDS)" CACHE STRING "mssql connection string")
-ENDIF()
-SET(SQLITE_CONNECTION_STRING "sqlite://test.sqlite" CACHE STRING "sqlite connection string")
-SET(POSTGRESQL_CONNECTION_STRING "postgresql://test:test123@127.0.0.1/matador_test" CACHE STRING "postgresql connection string")
-
-
-MESSAGE(STATUS "mysql connection string: ${MYSQL_CONNECTION_STRING}")
-MESSAGE(STATUS "mssql connection string: ${MSSQL_CONNECTION_STRING}")
-MESSAGE(STATUS "sqlite connection string: ${SQLITE_CONNECTION_STRING}")
-MESSAGE(STATUS "postgresql connection string: ${POSTGRESQL_CONNECTION_STRING}")
-
-CONFIGURE_FILE(connections.hpp.in ${PROJECT_BINARY_DIR}/connections.hpp @ONLY IMMEDIATE)
-
-MESSAGE(STATUS "Appending thread libs: ${CMAKE_THREAD_LIBS_INIT}")
-
-TARGET_LINK_LIBRARIES(test_matador
-  matador-unit
-  matador-utils
-  matador-json
-  matador-logger
-  matador-net
-  matador-http
-  matador-object
-  matador-sql
-  matador-orm
-  ${CMAKE_DL_LIBS}
-  ${MATADOR_DB_LIBRARIES}
-  ${CMAKE_THREAD_LIBS_INIT}
-  ${NET_LIBRARIES}
+target_include_directories(MatadorTests
+    PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>/../src
 )
 
-# Group source files for IDE source explorers (e.g. Visual Studio)
-SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
-SOURCE_GROUP("logger" FILES ${TEST_LOGGER_SOURCES})
-SOURCE_GROUP("json" FILES ${TEST_JSON_SOURCES})
-SOURCE_GROUP("net" FILES ${TEST_NET_SOURCES})
-SOURCE_GROUP("http" FILES ${TEST_HTTP_SOURCES})
-SOURCE_GROUP("utils" FILES ${TEST_TOOLS_SOURCES})
-SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
-SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})
-SOURCE_GROUP("sql" FILES ${TEST_SQL_SOURCES})
-SOURCE_GROUP("main" FILES ${TEST_SOURCES})
+set_target_properties(MatadorTests PROPERTIES
+        CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
 
-MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
+target_link_libraries(MatadorTests PRIVATE matador Catch2::Catch2WithMain)
 
-ADD_TEST(NAME test_matador_all COMMAND test_matador exec all WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
-add_subdirectory(catch2)
+if(ENABLE_CODE_COVERAGE)
+    setup_target_for_coverage_gcovr_xml(
+            NAME coverage
+            EXECUTABLE unit_tests
+            DEPENDENCIES unit_tests
+    )
+endif()

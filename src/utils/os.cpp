@@ -1,20 +1,78 @@
 #include "matador/utils/os.hpp"
 
 #include <sys/stat.h>
-#include <cstring>
-#include <vector>
-#include <stdexcept>
+#include <ctime>
+
 #include <algorithm>
+#include <cstring>
+#include <stdexcept>
+#include <vector>
 
 #ifdef _WIN32
 #include <io.h>
 #include <direct.h>
+#include <windows.h>
 #else
 #include <unistd.h>
 #endif
 
-namespace matador {
-namespace os {
+namespace matador::utils::os {
+
+void setenv(const char *name, const char *value, override_env_value override_value) {
+#ifdef _WIN32
+  _putenv_s(name, value);
+#else
+  ::setenv(name, value, static_cast<int>(override_value));
+#endif
+}
+
+#ifdef _WIN32
+std::string error_string(unsigned long error) {
+    char* lpMsgBuf;
+    auto bufLen = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                                nullptr,
+                                error,
+                                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                                (LPTSTR) &lpMsgBuf,
+                                0,
+                                nullptr);
+    std::string result;
+    if (bufLen) {
+        result.append(lpMsgBuf, lpMsgBuf+bufLen);
+        LocalFree(lpMsgBuf);
+    }
+    return result;
+}
+#endif
+
+std::string getenv(const char *name) {
+#ifdef _WIN32
+  char var[1024];
+  size_t len{};
+  const auto error = getenv_s(&len, var, 1024, name);
+  if (error > 0) {
+    throw std::logic_error(error_string(error));
+  };
+
+  return var;
+#else
+  const char *path = ::getenv(name);
+  return path == nullptr ? "" : path;
+#endif
+}
+
+void unsetenv(const char *name)
+{
+#ifdef _WIN32
+  _putenv_s(name, nullptr);
+#else
+    ::unsetenv(name);
+#endif
+}
+
+}
+
+namespace matador::os {
 FILE* fopen(const std::string &path, const char *modes)
 {
   return fopen(path.c_str(), modes);
@@ -34,8 +92,7 @@ FILE* freopen(const std::string &path, const char *modes, FILE *stream)
   return os::freopen(path.c_str(), modes, stream);
 }
 
-FILE* freopen(const char *path, const char *modes, FILE *stream)
-{
+FILE* freopen(const char *path, const char *modes, FILE *stream) {
 #ifdef _WIN32
   FILE* redirected_stream;
   freopen_s(&redirected_stream, path, "w+", stream);
@@ -300,5 +357,16 @@ char* strerror(int err, char* errbuf, size_t bufsize)
 #endif
 }
 
+void localtime(const time_t &in, struct tm &out) {
+#if defined(__unix__)
+  localtime_r(&in, &out);
+#elif defined(_MSC_VER)
+  errno_t err = localtime_s(&out, &in);
+#else
+  static std::mutex mtx;
+  std::lock_guard<std::mutex> lock(mtx);
+  out = *std::localtime(&in);
+#endif
 }
+
 }

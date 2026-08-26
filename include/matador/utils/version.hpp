@@ -1,15 +1,20 @@
 #ifndef MATADOR_VERSION_HPP
 #define MATADOR_VERSION_HPP
 
+#include "matador_export.h"
+
+#include "matador/utils/result.hpp"
+#include "matador/utils/error.hpp"
+
+
 #include <string>
-#include <ostream>
 
-namespace matador {
+namespace matador::utils {
 
-class version {
+class MATADOR_EXPORT version final {
 public:
   version() = default;
-  ~version() =default;
+  ~version() = default;
   version(unsigned int major, unsigned int minor, unsigned int patch);
   version(const version& x) = default;
   version& operator=(const version& x) = default;
@@ -23,14 +28,14 @@ public:
   bool operator<(const version &x) const;
   bool operator<=(const version &x) const;
 
-  std::string str() const;
+  [[nodiscard]] std::string str() const;
   friend std::ostream& operator<<(std::ostream &out, const version &v);
 
-  static version from_string(const std::string &version_string);
+  static result<version, error> from_string(const std::string &version_string);
 
-  unsigned int major() const;
-  unsigned int minor() const;
-  unsigned int patch() const;
+  [[nodiscard]] unsigned int major() const;
+  [[nodiscard]] unsigned int minor() const;
+  [[nodiscard]] unsigned int patch() const;
 
   void major(unsigned int m);
   void minor(unsigned int m);

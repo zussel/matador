@@ -1,12 +1,39 @@
 #include "matador/utils/string.hpp"
-#include "matador/utils/time.hpp"
 
-#include <stdexcept>
-#include <cstring>
+#include <sstream>
 
-#include <ctime>
+namespace matador::utils {
+std::string to_string(const blob_type_t& data) {
+  static constexpr char HEXITS[] = "0123456789ABCDEF";
 
-namespace matador {
+  std::string str(2 * data.size(), '\0');
+  auto item = str.begin();
+
+  for(const auto c : data) {
+    *item++ = HEXITS[c >> 4];
+    *item++ = HEXITS[c & 0x0F];
+  }
+
+  return str;
+}
+
+std::string to_string(const date_type_t &data) {
+  char buf[11]; // "YYYY-MM-DD" + '\0'
+
+  std::snprintf(buf, sizeof(buf), "%04d-%02u-%02u",
+    data.year, static_cast<unsigned>(data.month), static_cast<unsigned>(data.day));
+
+  return buf;
+}
+
+std::string to_string(const time_type_t &data) {
+  char buf[16]; // "HH:MM:SS.ffffff" + '\0'
+
+  std::snprintf(buf, sizeof(buf), "%02u:%02u:%02u.%06u",
+    static_cast<unsigned>(data.hour), static_cast<unsigned>(data.minute), static_cast<unsigned>(data.second), data.microsecond);
+
+  return buf;
+}
 
 size_t split(const std::string &str, char delim, std::vector<std::string> &values)
 {
@@ -18,7 +45,18 @@ size_t split(const std::string &str, char delim, std::vector<std::string> &value
   return values.size();
 }
 
-size_t split(const std::string &str, char delim, std::list<std::string> &values)
+std::vector<std::string> split(const std::string &str, char delim)
+{
+  std::stringstream ss(str);
+  std::string item;
+  std::vector<std::string> result;
+  while (std::getline(ss, item, delim)) {
+    result.push_back(item);
+  }
+  return result;
+}
+
+size_t split(const std::string &str, const char delim, std::list<std::string> &values)
 {
   std::stringstream ss(str);
   std::string item;
@@ -29,8 +67,8 @@ size_t split(const std::string &str, char delim, std::list<std::string> &values)
 }
 
 #ifdef _MSC_VER
-const char* date_format::ISO8601 = "%Y-%m-%d";
-const char* time_format::ISO8601 = "%Y-%m-%dT%H:%M:%S";
+// const char* date_format::ISO8601 = "%Y-%m-%d";
+// const char* time_format::ISO8601 = "%Y-%m-%dT%H:%M:%S";
 #endif
 
 std::string trim(const std::string& str, const std::string& whitespace)
@@ -57,89 +95,4 @@ void replace_all(std::string &in, const std::string &from, const std::string &to
   }
 }
 
-std::string to_string(const matador::time &x, const char *format)
-{
-  struct tm timeinfo = x.get_tm();
-#ifdef _MSC_VER
-  char buffer[255];
-  // try to find "%f" for milliseconds
-  const char *fpos = strstr(format, "%f");
-  if (fpos != nullptr) {
-    // split format string (exclude %f)
-    size_t len = fpos - format;
-    char *d = new char[len + 1];
-    strncpy_s(d, len + 1, format, len);
-    d[len] = '\0';
-    std::string fstr = to_string(x, d) + std::to_string(x.milli_second());
-    delete[] d;
-	if ((fpos + 2)[0] != '\0') {
-	  fstr += to_string(x, fpos + 2);
-	}
-    return fstr;
-    /*
-    len = strlen(format) - len - 2;
-    d = new char[len + 1];
-    strncpy_s(d, len + 1, fpos + 2, len);
-    d[len] = '\0';
-    fstr += to_string(x, d);
-    delete[] d;
-    return fstr;
-    */
-  } else {
-    if (strftime(buffer, 255, format, &timeinfo) == 0) {
-      throw std::logic_error("couldn't format time string");
-    }
-    return buffer;
-  }
-#else
-  char buffer[255];
-  if (strftime(buffer, 255, format, &timeinfo) == 0) {
-    throw std::logic_error("couldn't format date string");
-  }
-  std::string result(buffer);
-  // check for %f
-  auto pos = result.find("%f");
-  if (pos != std::string::npos) {
-    std::string millis = std::to_string(x.milli_second());
-    // replace %f with millis
-    result.replace(pos, 2, millis);
-  }
-  return result;
-#endif
-}
-
-std::string to_string(const matador::date &x, const char *format)
-{
-  time_t now = std::time(nullptr);
-  struct tm timeinfo{};
-
-#ifdef _MSC_VER
-  localtime_s(&timeinfo, &now);
-#else
-  localtime_r(&now, &timeinfo);
-#endif
-
-  timeinfo.tm_mon = x.month() - 1;
-  timeinfo.tm_year = x.year() - 1900;
-  timeinfo.tm_mday = x.day();
-
-  char buffer[80];
-  if (strftime(buffer, 80, format, &timeinfo) == 0) {
-    throw std::logic_error("couldn't format date string");
-  }
-  return buffer;
-}
-
-const char *skip_ws(const char *str)
-{
-  while(isspace(*str)) {
-    str++;
-  }
-  return str;
-}
-
-bool is_eos(char c)
-{
-  return c == '\0';
-}
 }

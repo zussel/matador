@@ -1,50 +1,60 @@
-CONFIGURE_FILE (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINARY_DIR}/version.hpp)
+configure_file (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINARY_DIR}/version.hpp)
 
-ADD_SUBDIRECTORY(object)
-ADD_SUBDIRECTORY(orm)
-ADD_SUBDIRECTORY(sql)
-ADD_SUBDIRECTORY(utils)
-ADD_SUBDIRECTORY(json)
-ADD_SUBDIRECTORY(logger)
-ADD_SUBDIRECTORY(net)
-ADD_SUBDIRECTORY(http)
-ADD_SUBDIRECTORY(unit)
+#ADD_SUBDIRECTORY(query)
+#ADD_SUBDIRECTORY(utils)
 
-ADD_SUBDIRECTORY(db)
-
-ADD_CUSTOM_TARGET(matador
-  ALL
-  COMMAND ${CMAKE_COMMAND} -E echo Building matador libs
-  DEPENDS
-  matador-unit
-  matador-utils
-  matador-json
-  matador-logger
-  matador-net
-  matador-http
-  matador-object
-  matador-sql
-  matador-orm
+add_library(matador
+    utils/default_type_traits.cpp
+    utils/error.cpp
+    utils/errors.cpp
+    utils/field_attributes.cpp
+    utils/identifier.cpp
+    utils/os.cpp
+    utils/string.cpp
+    utils/types.cpp
+    utils/value.cpp
+    utils/version.cpp
 )
 
-IF (SQLITE3_FOUND)
-  ADD_DEPENDENCIES(matador matador-sqlite)
-ENDIF(SQLITE3_FOUND)
+include(GenerateExportHeader)
 
-IF (MYSQL_FOUND)
-  ADD_DEPENDENCIES(matador matador-mysql)
-ENDIF(MYSQL_FOUND)
+generate_export_header(matador)
 
-IF (ODBC_FOUND)
-  ADD_DEPENDENCIES(matador matador-mssql)
-ENDIF(ODBC_FOUND)
+if(ENABLE_CLANG_TIDY AND CLANG_TIDY_EXE)
+    set_target_properties(matador PROPERTIES
+            CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+endif()
 
-IF (POSTGRESQL_FOUND)
-  ADD_DEPENDENCIES(matador matador-postgresql)
-ENDIF(POSTGRESQL_FOUND)
+target_include_directories(matador
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:include>
+)
 
-INSTALL(
-  FILES ${CMAKE_BINARY_DIR}/version.hpp
-  DESTINATION include/matador
-  COMPONENT headers
+# Compiler warnings based on target platform
+if(MSVC)
+    target_compile_options(matador PRIVATE /W4 /permissive-)
+else()
+    target_compile_options(matador PRIVATE -Wall -Wextra -Wpedantic -Wconversion)
+endif()
+
+# Install & Export Configuration
+include(GNUInstallDirs)
+
+install(TARGETS matador
+        EXPORT MatadorTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(EXPORT MatadorTargets
+        FILE MatadorTargets.cmake
+        NAMESPACE matador::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/matador
 )

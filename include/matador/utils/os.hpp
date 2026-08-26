@@ -1,70 +1,84 @@
 #ifndef MATADOR_OS_HPP
 #define MATADOR_OS_HPP
 
-#include "matador/utils/export.hpp"
+#include "matador_export.h"
 
 #include <cstdio>
 #include <string>
 
+namespace matador::utils::os {
+enum class override_env_value : uint8_t {
+  KeepValue,
+  OverrideValue
+};
+
+#ifdef _WIN32
+std::string error_string(unsigned long error);
+#endif
+
+void setenv(const char *name, const char *value, override_env_value override_value);
+std::string getenv(const char* name);
+void unsetenv(const char *name);
+}
 
 namespace matador::os {
 
 /// @cond MATADOR_DEV
 
 #ifdef _WIN32
-OOS_UTILS_API extern char DIR_SEPARATOR;
-OOS_UTILS_API extern const char* DIR_SEPARATOR_STRING;
+MATADOR_EXPORT extern char DIR_SEPARATOR;
+MATADOR_EXPORT extern const char* DIR_SEPARATOR_STRING;
 #else
-OOS_UTILS_API extern char DIR_SEPARATOR;
-OOS_UTILS_API extern const char* DIR_SEPARATOR_STRING;
+MATADOR_EXPORT extern char DIR_SEPARATOR;
+MATADOR_EXPORT extern const char* DIR_SEPARATOR_STRING;
 #endif
 
-OOS_UTILS_API FILE* fopen(const std::string &path, const char *modes);
-OOS_UTILS_API FILE* fopen(const char *path, const char *modes);
+MATADOR_EXPORT FILE* fopen(const std::string &path, const char *modes);
+MATADOR_EXPORT FILE* fopen(const char *path, const char *modes);
 
-OOS_UTILS_API FILE* freopen(const std::string &path, const char *modes, FILE *stream);
-OOS_UTILS_API FILE* freopen(const char *path, const char *modes, FILE *stream);
+MATADOR_EXPORT FILE* freopen(const std::string &path, const char *modes, FILE *stream);
+MATADOR_EXPORT FILE* freopen(const char *path, const char *modes, FILE *stream);
 
-OOS_UTILS_API bool fclose(FILE *f);
+MATADOR_EXPORT bool fclose(FILE *f);
 
-OOS_UTILS_API bool remove(const std::string &name);
-OOS_UTILS_API bool remove(const char *name);
+MATADOR_EXPORT bool remove(const std::string &name);
+MATADOR_EXPORT bool remove(const char *name);
 
-OOS_UTILS_API bool rename(const std::string &old_name, const std::string &new_name);
-OOS_UTILS_API bool rename(const char *old_name, const char *new_name);
+MATADOR_EXPORT bool rename(const std::string &old_name, const std::string &new_name);
+MATADOR_EXPORT bool rename(const char *old_name, const char *new_name);
 
-OOS_UTILS_API bool access(const std::string &path, int mode);
-OOS_UTILS_API bool access(const char *path, int mode);
+MATADOR_EXPORT bool access(const std::string &path, int mode);
+MATADOR_EXPORT bool access(const char *path, int mode);
 
-OOS_UTILS_API int dup(FILE *stream);
+MATADOR_EXPORT int dup(FILE *stream);
 
-OOS_UTILS_API bool mkdir(const std::string &dirname);
-OOS_UTILS_API bool mkdir(const char *dirname);
+MATADOR_EXPORT bool mkdir(const std::string &dirname);
+MATADOR_EXPORT bool mkdir(const char *dirname);
 
-OOS_UTILS_API bool chdir(const std::string &dirname);
-OOS_UTILS_API bool chdir(const char *dirname);
+MATADOR_EXPORT bool chdir(const std::string &dirname);
+MATADOR_EXPORT bool chdir(const char *dirname);
 
-OOS_UTILS_API bool rmdir(const std::string &dirname);
-OOS_UTILS_API bool rmdir(const char *dirname);
+MATADOR_EXPORT bool rmdir(const std::string &dirname);
+MATADOR_EXPORT bool rmdir(const char *dirname);
 
-OOS_UTILS_API std::string get_current_dir();
+MATADOR_EXPORT std::string get_current_dir();
 
-OOS_UTILS_API bool mkpath(const std::string &path);
-OOS_UTILS_API bool mkpath(const char *path);
+MATADOR_EXPORT bool mkpath(const std::string &path);
+MATADOR_EXPORT bool mkpath(const char *path);
 
-OOS_UTILS_API bool rmpath(const std::string &path);
-OOS_UTILS_API bool rmpath(const char *path);
+MATADOR_EXPORT bool rmpath(const std::string &path);
+MATADOR_EXPORT bool rmpath(const char *path);
 
-OOS_UTILS_API bool is_readable(const std::string &path);
-OOS_UTILS_API bool is_readable(const char *path);
-OOS_UTILS_API bool is_writable(const std::string &path);
-OOS_UTILS_API bool is_writable(const char *path);
-OOS_UTILS_API bool exists(const std::string &path);
-OOS_UTILS_API bool exists(const char *path);
+MATADOR_EXPORT bool is_readable(const std::string &path);
+MATADOR_EXPORT bool is_readable(const char *path);
+MATADOR_EXPORT bool is_writable(const std::string &path);
+MATADOR_EXPORT bool is_writable(const char *path);
+MATADOR_EXPORT bool exists(const std::string &path);
+MATADOR_EXPORT bool exists(const char *path);
 
-OOS_UTILS_API size_t file_size(FILE *stream);
+MATADOR_EXPORT size_t file_size(FILE *stream);
 
-OOS_UTILS_API std::string build_path(const std::string &a, const std::string &b);
+MATADOR_EXPORT std::string build_path(const std::string &a, const std::string &b);
 
 template <typename ...T>
 std::string build_path(const std::string &a, const std::string &b, T& ...arg)
@@ -82,7 +96,15 @@ int sprintf(char* str, size_t s, const char* format, ARGS const&... args)
 #endif
 }
 
-OOS_UTILS_API char* strerror(int err, char* errbuf, size_t bufsize);
+MATADOR_EXPORT char* strerror(int err, char* errbuf, size_t bufsize);
+
+/**
+ * Multi platform version of localtime
+ *
+ * @param in time_t value to be converted
+ * @param out converted value
+ */
+MATADOR_EXPORT void localtime(const time_t &in, struct tm &out);
 
 /// @endcond
 

@@ -1,18 +1,37 @@
 #ifndef STRING_HPP
 #define STRING_HPP
 
-#include "matador/utils/export.hpp"
+#include "matador_export.h"
 
-#include <sstream>
-#include <vector>
+#include "matador/utils/convert.hpp"
+#include "matador/utils/types.hpp"
+
 #include <list>
 #include <string>
-#include <type_traits>
 
-namespace matador {
+namespace matador::utils {
 
-class time;
-class date;
+/**
+ * Converts each byte of the given binary data
+ * into is hex string representation and return
+ * all bytes of blob as string.
+ *
+ * @param data Binary data to be converted
+ * @return Binary data as string
+ */
+MATADOR_EXPORT std::string to_string(const blob_type_t &data);
+MATADOR_EXPORT std::string to_string(const date_type_t &data);
+MATADOR_EXPORT std::string to_string(const time_type_t &data);
+
+template <typename IntegerType>
+std::string to_hex_string(IntegerType data, const size_t width = sizeof(IntegerType)<<1) {
+  static auto digits = "0123456789ABCDEF";
+  std::string result(width,'0');
+  for (size_t i=0, j=(width-1)*4 ; i<width; ++i,j-=4) {
+    result[i] = digits[(data>>j) & 0x0f];
+  }
+  return result;
+}
 
 /**
  * Splits a string by a delimiter and
@@ -24,7 +43,18 @@ class date;
  * @param values The result vector.
  * @return The size of the vector.
  */
-OOS_UTILS_API size_t split(const std::string &str, char delim, std::vector<std::string> &values);
+MATADOR_EXPORT size_t split(const std::string &str, char delim, std::vector<std::string> &values);
+
+/**
+ * Splits a string by a delimiter and
+ * add the string tokens to a vector. The
+ * size of the vector is returned.
+ *
+ * @param str The string to split.
+ * @param delim The delimiter character.
+ * @return The vector with split strings.
+ */
+MATADOR_EXPORT std::vector<std::string> split(const std::string &str, char delim);
 
 /**
  * Splits a string by a delimiter and
@@ -36,7 +66,7 @@ OOS_UTILS_API size_t split(const std::string &str, char delim, std::vector<std::
  * @param values The result list.
  * @return The size of the list.
  */
-OOS_UTILS_API size_t split(const std::string &str, char delim, std::list<std::string> &values);
+MATADOR_EXPORT size_t split(const std::string &str, char delim, std::list<std::string> &values);
 
 /**
  * @fn std::string trim(const std::string& str, const std::string&)
@@ -47,7 +77,7 @@ OOS_UTILS_API size_t split(const std::string &str, char delim, std::list<std::st
  * @param whitespace The trimming characters
  * @return the trimmed string
  */
-OOS_UTILS_API std::string trim(const std::string& str, const std::string& whitespace = " \t");
+MATADOR_EXPORT std::string trim(const std::string& str, const std::string& whitespace = " \t");
 
 /**
  * Replaces all occurrences of string from in given string
@@ -57,109 +87,43 @@ OOS_UTILS_API std::string trim(const std::string& str, const std::string& whites
  * @param from The string to be replaced
  * @param to The new string
  */
-OOS_UTILS_API void replace_all(std::string &in, const std::string &from, const std::string &to);
+MATADOR_EXPORT void replace_all(std::string &in, const std::string &from, const std::string &to);
+
+template <typename Type >
+std::string to_string(const Type &value) {
+   const auto res = to<std::string>(value);
+   if (res.is_ok()) {
+     return *res;
+   }
+   return "";
+}
 
 /**
- * The date_format struct represents
- * common date format string as ISO8601
- * and the likes.
- */
-struct OOS_UTILS_API date_format
-{
-#ifdef _MSC_VER
-	static const char* ISO8601;
-#else
-  /**
-   * date format string representing the ISO8601 format
-   */
-  static constexpr const char* ISO8601 = "%Y-%m-%d";
-#endif
-};
-
-/**
- * The time_format struct represents
- * common time format string as ISO8601
- * and the likes.
- */
-struct OOS_UTILS_API time_format
-{
-#ifdef _MSC_VER
-  static const char* ISO8601;
-#else
-  /**
-   * time format string representing the ISO8601 format
-   */
-  static constexpr const char* ISO8601 = "%FT%T";
-#endif
-};
-
-/**
- * Converts a time object with a given format
- * to a string
+ * Joins a range of elements as string within a list
+ * with a given delimiter and writes it to the
+ * given stream
  *
- * @param x Time object to convert.
- * @param format The format string
+ * @tparam Range Type og the range (e.g. map, list, vector, etc)
+ * @param range The range with the elements to join_left
+ * @param delim The delimiter for the elements
+ * @return The ostream reference
  */
-OOS_UTILS_API std::string to_string(const matador::time &x, const char *format = time_format::ISO8601);
-
-/**
- * Converts a date object with a given format
- * to a string
- *
- * @param x Date object to convert.
- * @param format The format string
- */
-OOS_UTILS_API std::string to_string(const matador::date &x, const char *format = date_format::ISO8601);
-
-/**
- * Convert any floating point values
- * into a string with a given precision.
- *
- * @tparam T The floating point type
- * @param x The value to be converted.
- * @param precision The precision to use for converting
- * @return The floating point value as string
- */
-template < class T >
-std::string to_string(T x, size_t precision = 0, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
-{
-  if (precision == 0) {
-    return to_string(x);
+template < class Range >
+std::string join(const Range &range, const std::string &delim) {
+  std::string result {};
+  if (range.size() < 2) {
+    for (const auto &i : range) {
+      result += to_string(i);
+    }
   } else {
-    char format[32];
-#ifdef _MSC_VER
-    sprintf_s(format, "%%.%df", (int)precision);
-#else
-    sprintf(format, "%%.%df", (int)precision);
-#endif
-    std::string s(32, '\0');
-#ifdef _MSC_VER
-    auto written = _snprintf_s(&s[0], s.size(), 32, format, x);
-#else
-    auto written = std::snprintf(&s[0], s.size(), format, x);
-#endif
-    s.resize(written);
-    return s;
+    auto it = range.begin();
+    result += to_string(*it++);
+    for (;it != range.end(); ++it) {
+      result += delim + to_string(*it);
+    }
   }
+  return result;
 }
 
-/**
- * Skip all whitespace characters (tab, spaces, etc.)
- * for the given string and return the new position
- *
- * @param str String to skip whitespace characters in
- * @return First non whitespace positon of string
- */
-OOS_UTILS_API const char* skip_ws(const char *str);
-
-/**
- * Checks if the given character is end of string.
- *
- * @param c Character to check
- * @return True if character is end of string
- */
-OOS_UTILS_API bool is_eos(char c);
-
 }
-
-#endif /* STRING_HPP */
+#endif //STRING_HPP
