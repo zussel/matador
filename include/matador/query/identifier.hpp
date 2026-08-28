@@ -13,8 +13,8 @@
 #include <typeindex>
 #include <variant>
 
-namespace matador::utils {
-class value;
+namespace matador::query {
+class column_value;
 class identifier_serializer;
 
 template<typename Type, class Enabled = void>
@@ -39,7 +39,7 @@ struct identifier_type_traits<Type, std::enable_if_t<std::is_same_v<Type, std::s
 };
 
 template<>
-struct identifier_type_traits<null_type_t, void> {
+struct identifier_type_traits<utils::null_type_t, void> {
   static bool is_valid() { return false; }
   static std::string to_string() { return "null"; }
 };
@@ -110,10 +110,10 @@ public:
 
   ~identifier() = default;
 
-  result<void, error> assign(const value &val);
+  result<void, error> assign(const column_value &val);
 
-  static result<identifier, error> from_value(const value &val);
-  [[nodiscard]] database_type to_database_type() const;
+  static result<identifier, error> from_value(const column_value &val);
+  [[nodiscard]] utils::database_type to_database_type() const;
 
   bool operator==(const identifier &x) const;
   bool operator!=(const identifier &x) const;
@@ -124,7 +124,7 @@ public:
 
   [[nodiscard]] std::string str() const;
   [[nodiscard]] const std::type_index &type_index() const;
-  [[nodiscard]] basic_type type() const;
+  [[nodiscard]] utils::basic_type type() const;
 
   [[nodiscard]] bool is_integer() const;
   [[nodiscard]] bool is_varchar() const;
@@ -173,7 +173,7 @@ private:
 
   static size_t type_rank(const value_type &value);
   static std::type_index type_index_from_value(const value_type &value);
-  static basic_type type_from_value(const value_type &value);
+  static utils::basic_type type_from_value(const value_type &value);
 
 private:
   value_type value_{std::monostate{}};
@@ -201,11 +201,11 @@ result<Type, error> identifier::as() const {
     using StoredType = std::decay_t<decltype(v)>;
 
     if constexpr (std::is_same_v<StoredType, std::monostate>) {
-      return failure(error{});
+      return failure<error>(error{});
     } else if constexpr (std::is_same_v<StoredType, Type>) {
       return ok<Type>(v);
     } else {
-      return failure(error{});
+      return failure<error>(error{});
     }
   }, value_);
 }
@@ -216,14 +216,14 @@ result<Type, error> identifier::convert() const {
     using Stored = std::decay_t<decltype(v)>;
 
     if constexpr (std::is_same_v<Stored, std::monostate>) {
-      return failure(error{});
+      return failure<error>(error{});
     } else if constexpr (std::is_integral_v<Stored>) {
       if (!in_range<Type>(v)) {
-        return failure(error{});
+        return failure<error>(error{});
       }
       return ok<Type>(static_cast<Type>(v));
     } else {
-      return failure(error{});
+      return failure<error>(error{});
     }
   }, value_);
 }
@@ -239,8 +239,8 @@ struct id_pk_hash {
 }
 
 template<>
-struct std::hash<matador::utils::identifier> {
-  size_t operator()(const matador::utils::identifier &id) const noexcept {
+struct std::hash<matador::query::identifier> {
+  size_t operator()(const matador::query::identifier &id) const noexcept {
     return id.hash();
   }
 }; // namespace std

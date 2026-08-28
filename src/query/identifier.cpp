@@ -1,17 +1,18 @@
-#include "matador/utils/identifier.hpp"
+#include "matador/query/identifier.hpp"
 
-#include "matador/utils/field_attributes.hpp"
-#include "matador/utils/identifier_serializer.hpp"
-#include "matador/utils/value.hpp"
-#include "matador/utils/errors.hpp"
+#include "matador/query/identifier_serializer.hpp"
+#include "matador/query/column_value.hpp"
+#include "matador/query/column_options.hpp"
+
+#include "matador/query/error_code.hpp"
 
 #include <utility>
 
-namespace matador::utils {
+namespace matador::query {
 
 namespace {
 inline const std::type_index& null_type_index() {
-  static const std::type_index value{typeid(null_type_t)};
+  static const std::type_index value{typeid(utils::null_type_t)};
   return value;
 }
 
@@ -100,13 +101,13 @@ const std::type_index &identifier::type_index() const {
   }
 }
 
-basic_type identifier::type_from_value(const value_type &value) {
-  return std::visit([](const auto &v) -> basic_type {
+utils::basic_type identifier::type_from_value(const value_type &value) {
+  return std::visit([](const auto &v) -> utils::basic_type {
     using T = std::decay_t<decltype(v)>;
     if constexpr (std::is_same_v<T, std::monostate>) {
-      return basic_type::Null;
+      return utils::basic_type::Null;
     } else {
-      return data_type_traits<T>::type(1);
+      return utils::data_type_traits<T>::type(1);
     }
   }, value);
 }
@@ -124,17 +125,17 @@ identifier & identifier::operator=(const char *value) {
   return *this;
 }
 
-result<identifier, error> identifier::from_value(const value &val) {
+result<identifier, error> identifier::from_value(const column_value &val) {
   identifier id;
   if (const auto result = id.assign(val); result.is_error()) {
-    return failure(result.err());
+    return failure<error>(result.err());
   }
 
-  return ok(id);
+  return ok<identifier>(id);
 }
 
-database_type identifier::to_database_type() const {
-  return std::visit([](const auto &v) -> database_type {
+utils::database_type identifier::to_database_type() const {
+  return std::visit([](const auto &v) -> utils::database_type {
           using T = std::decay_t<decltype(v)>;
 
           if constexpr (std::is_same_v<T, std::monostate>) {
@@ -147,40 +148,40 @@ database_type identifier::to_database_type() const {
         }, value_);
 }
 
-result<void, error> identifier::assign(const value &val) {
+result<void, error> identifier::assign(const column_value &val) {
   switch (val.type()) {
-    case basic_type::Null:
+    case utils::basic_type::Null:
       value_ = std::monostate{};
       return ok<void>{};
 
-    case basic_type::Int8:
+    case utils::basic_type::Int8:
       if (auto v = val.as<int8_t>()) { value_ = *v; return ok<void>{}; }
       break;
-    case basic_type::Int16:
+    case utils::basic_type::Int16:
       if (auto v = val.as<int16_t>()) { value_ = *v; return ok<void>{}; }
       break;
-    case basic_type::Int32:
+    case utils::basic_type::Int32:
       if (auto v = val.as<int32_t>()) { value_ = *v; return ok<void>{}; }
       break;
-    case basic_type::Int64:
+    case utils::basic_type::Int64:
       if (auto v = val.as<int64_t>()) { value_ = *v; return ok<void>{}; }
       break;
 
-    case basic_type::UInt8:
+    case utils::basic_type::UInt8:
       if (auto v = val.as<uint8_t>()) { value_ = *v; return ok<void>{}; }
       break;
-    case basic_type::UInt16:
+    case utils::basic_type::UInt16:
       if (auto v = val.as<uint16_t>()) { value_ = *v; return ok<void>{}; }
       break;
-    case basic_type::UInt32:
+    case utils::basic_type::UInt32:
       if (auto v = val.as<uint32_t>()) { value_ = *v; return ok<void>{}; }
       break;
-    case basic_type::UInt64:
+    case utils::basic_type::UInt64:
       if (auto v = val.as<uint64_t>()) { value_ = *v; return ok<void>{}; }
       break;
 
-    case basic_type::Text:
-    case basic_type::Varchar:
+    case utils::basic_type::Text:
+    case utils::basic_type::Varchar:
       if (auto v = val.as<std::string>()) { value_ = *v; return ok<void>{}; }
       break;
 
@@ -188,7 +189,7 @@ result<void, error> identifier::assign(const value &val) {
       break;
   }
 
-  return failure(error{utils_error::IdentifierTypeMismatch});
+  return failure<error>(error{error_code::IdentifierTypeMismatch});
 }
 
 bool identifier::operator==(const identifier &x) const {
@@ -248,7 +249,7 @@ std::string identifier::str() const {
   return std::visit([](const auto &v) -> std::string {
     using T = std::decay_t<decltype(v)>;
     if constexpr (std::is_same_v<T, std::monostate>) {
-      return identifier_type_traits<null_type_t>::to_string();
+      return identifier_type_traits<utils::null_type_t>::to_string();
     } else if constexpr (std::is_same_v<T, std::string>) {
       return identifier_type_traits<std::string>::to_string(v);
     } else {
@@ -257,7 +258,7 @@ std::string identifier::str() const {
   }, value_);
 }
 
-basic_type identifier::type() const {
+utils::basic_type identifier::type() const {
   return type_from_value(value_);
 }
 
@@ -284,7 +285,7 @@ bool identifier::is_valid() const {
   return std::visit([](const auto &v) -> bool {
     using T = std::decay_t<decltype(v)>;
     if constexpr (std::is_same_v<T, std::monostate>) {
-      return identifier_type_traits<null_type_t>::is_valid();
+      return identifier_type_traits<utils::null_type_t>::is_valid();
     } else {
       return identifier_type_traits<T>::is_valid(v);
     }
@@ -299,7 +300,7 @@ void identifier::serialize(identifier_serializer &s) const {
   std::visit([&s](const auto &v) {
     using T = std::decay_t<decltype(v)>;
     if constexpr (std::is_same_v<T, std::monostate>) {
-      null_type_t n{};
+      utils::null_type_t n{};
       s.serialize(n, {});
     } else {
       auto tmp = v;

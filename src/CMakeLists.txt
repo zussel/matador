@@ -4,15 +4,25 @@ configure_file (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINAR
 #ADD_SUBDIRECTORY(utils)
 
 add_library(matador
+    ../include/matador/utils/flags.hpp
+    query/column.cpp
+        query/table.cpp
+    query/column_options.cpp
+    query/column_value.cpp
+    query/error_code.cpp
+    query/expression/binary_column_expression.cpp
+    query/expression/column_expression.cpp
+    query/expression/expression_operators.cpp
+    query/expression/placeholder_expression.cpp
+    query/expression/table_column_expression.cpp
+    query/expression/value_expression.cpp
+    query/identifier.cpp
     utils/default_type_traits.cpp
     utils/error.cpp
     utils/errors.cpp
-    utils/field_attributes.cpp
-    utils/identifier.cpp
     utils/os.cpp
     utils/string.cpp
     utils/types.cpp
-    utils/value.cpp
     utils/version.cpp
 )
 

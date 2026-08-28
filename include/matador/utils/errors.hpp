@@ -8,7 +8,6 @@ namespace matador::utils {
 
 enum class utils_error : uint8_t {
   InvalidVersionString,
-  IdentifierTypeMismatch
 };
 
 class utils_category_impl final : public std::error_category

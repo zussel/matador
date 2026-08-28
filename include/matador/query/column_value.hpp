@@ -9,52 +9,51 @@
 
 #include <optional>
 
-namespace matador::utils {
-
+namespace matador::query {
 namespace detail {
 template<typename Type>
 size_t determine_size(const Type &/*val*/) { return 0; }
 size_t determine_size(const std::string &val);
 size_t determine_size(const char *val);
-size_t determine_size(const blob_type_t &val);
+size_t determine_size(const utils::blob_type_t &val);
 
 }
 
-class MATADOR_EXPORT value final {
+class MATADOR_EXPORT column_value final {
 public:
-  value() = default;
+  column_value() = default;
   template<typename Type, std::enable_if_t<!std::is_enum_v<Type>>* = nullptr>
-  explicit value(Type value, size_t size = 0)
+  explicit column_value(Type value, size_t size = 0)
   : value_(value)
   , size_(size)
-  , type_(data_type_traits<Type>::type(size)) {}
+  , type_(utils::data_type_traits<Type>::type(size)) {}
   template<typename Type, std::enable_if_t<std::is_enum_v<Type>>* = nullptr>
-  explicit value(Type value, size_t size = 0)
+  explicit column_value(Type value, size_t size = 0)
   : value_(static_cast<int>(value))
   , size_(size)
-  , type_(data_type_traits<Type>::type(size)) {}
-  explicit value(basic_type data_type, size_t size = 0);
-  value(const value &x) = default;
-  value& operator=(const value &x) = default;
+  , type_(utils::data_type_traits<Type>::type(size)) {}
+  explicit column_value(utils::basic_type data_type, size_t size = 0);
+  column_value(const column_value &x) = default;
+  column_value& operator=(const column_value &x) = default;
   template<typename Type>
-  value& operator=(Type val) {
+  column_value& operator=(Type val) {
     value_ = val;
     size_ = detail::determine_size(val);
-    type_ = data_type_traits<Type>::type(size_);
+    type_ = utils::data_type_traits<Type>::type(size_);
     return *this;
   }
-  value(value &&x) noexcept;
-  value& operator=(value &&x) noexcept;
+  column_value(column_value &&x) noexcept;
+  column_value& operator=(column_value &&x) noexcept;
 
-  bool operator==(const value& rhs) const;
-  bool operator!=(const value& rhs) const;
+  bool operator==(const column_value& rhs) const;
+  bool operator!=(const column_value& rhs) const;
 
   template<class Type>
   std::optional<Type> as() const {
     if (std::holds_alternative<Type>(value_)) {
       return std::get<Type>(value_);
     }
-    const auto res = basic_type_converter<Type>::convert_value(value_);
+    const auto res = utils::basic_type_converter<Type>::convert_value(value_);
     if (!res.is_ok()) {
       return std::nullopt;
     }
@@ -73,8 +72,8 @@ public:
   [[nodiscard]] std::string str() const;
 
   [[nodiscard]] size_t size() const;
-  [[nodiscard]] basic_type type() const;
-  void type(basic_type t);
+  [[nodiscard]] utils::basic_type type() const;
+  void type(utils::basic_type t);
 
   [[nodiscard]] bool is_integer() const;
   [[nodiscard]] bool is_floating_point() const;
@@ -87,12 +86,12 @@ public:
   [[nodiscard]] bool is_blob() const;
   [[nodiscard]] bool is_null() const;
 
-  const database_type& raw_value() const;
+  [[nodiscard]] const utils::database_type& raw_value() const;
 
 private:
-  database_type value_;
+  utils::database_type value_;
   size_t size_{};
-  basic_type type_{basic_type::Null};
+  utils::basic_type type_{utils::basic_type::Null};
 
 };
 

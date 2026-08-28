@@ -222,5 +222,12 @@ private:
   std::variant<ok<value_type>, failure<error_type>> result_;
 };
 }
-
+namespace matador {
+template < typename ValueType, typename ErrorType >
+using result = utils::result<ValueType, ErrorType>;
+template < typename ValueType >
+using ok = utils::ok<ValueType>;
+template < typename ErrorType >
+using failure = utils::failure<ErrorType>;
+}
 #endif //QUERY_RESULT_HPP

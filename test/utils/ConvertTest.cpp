@@ -487,6 +487,34 @@ TEST_CASE("Reject empty blob to trivial conversion", "[convert][blob][invalid]")
   require_missing_data<bool>(empty_blob);
 }
 
+TEST_CASE("Convert string literals to blob without terminating null byte", "[convert][blob][string_literal]")
+{
+  const auto res = to<blob_type_t>("abc");
+
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == blob_type_t{'a', 'b', 'c'});
+}
+
+TEST_CASE("Convert char arrays to blob without terminating null byte", "[convert][blob][char_array]")
+{
+  const char text[] = "abc";
+
+  const auto res = to<blob_type_t>(text);
+
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == blob_type_t{'a', 'b', 'c'});
+}
+
+TEST_CASE("Convert mutable char arrays to blob without terminating null byte", "[convert][blob][mutable_char_array]")
+{
+  char text[] = "abc";
+
+  const auto res = to<blob_type_t>(text);
+
+  REQUIRE(res.is_ok());
+  REQUIRE(*res == blob_type_t{'a', 'b', 'c'});
+}
+
 TEST_CASE("Reject unsupported conversions", "[convert][unsupported]")
 {
   require_failed_conversion<date_type_t>(true);

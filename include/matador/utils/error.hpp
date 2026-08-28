@@ -68,6 +68,8 @@ private:
   std::vector<error> error_trace_;
   std::unordered_map<std::string, std::string> error_infos_;
 };
-
+}
+namespace matador {
+using error = utils::error;
 }
 #endif //ERROR_HPP

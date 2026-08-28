@@ -7,12 +7,12 @@
 
 namespace matador::utils {
 
-class value;
+class column_value;
 
-class attribute_reader
+class value_reader
 {
 public:
-  virtual ~attribute_reader() = default;
+  virtual ~value_reader() = default;
 
   virtual void read_value(const char *id, size_t index, int8_t &value) = 0;
   virtual void read_value(const char *id, size_t index, int16_t &value) = 0;
@@ -32,7 +32,7 @@ public:
   virtual void read_value(const char *id, size_t index, std::string &value) = 0;
   virtual void read_value(const char *id, size_t index, std::string &value, size_t size) = 0;
   virtual void read_value(const char *id, size_t index, blob_type_t &value) = 0;
-  virtual void read_value(const char *id, size_t index, value &value, size_t size) = 0;
+  virtual void read_value(const char *id, size_t index, column_value &value, size_t size) = 0;
 };
 
 }

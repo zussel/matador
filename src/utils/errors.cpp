@@ -10,8 +10,6 @@ std::string utils_category_impl::message(const int ev) const {
   switch (static_cast<utils_error>(ev)) {
     case (utils_error::InvalidVersionString):
       return "Invalid version string";
-    case utils_error::IdentifierTypeMismatch:
-      return "Identifier type mismatch";
     default:
       return "Unknown error";
   }

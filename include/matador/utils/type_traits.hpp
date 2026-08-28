@@ -7,8 +7,8 @@
 
 namespace matador::utils {
 
-class attribute_reader;
-class attribute_writer;
+class value_reader;
+class value_writer;
 
 /**
  * @tparam Type The type of the traits
@@ -21,8 +21,8 @@ class attribute_writer;
 template < class Type, class Enable = void >
 struct data_type_traits {
   static basic_type type(std::size_t /*size*/) { return basic_type::Unknown; }
-  static void read_value(attribute_reader &/*reader*/, const char *id, size_t index, nullptr_t &/*value*/, size_t /*size*/ = 0) {}
-  static void bind_value(attribute_writer &/*binder*/, size_t index, nullptr_t &/*value*/, size_t /*size*/ = 0) {}
+  static void read_value(value_reader &/*reader*/, const char *id, size_t index, nullptr_t &/*value*/, size_t /*size*/ = 0) {}
+  static void bind_value(value_writer &/*binder*/, size_t index, nullptr_t &/*value*/, size_t /*size*/ = 0) {}
 };
 
 }

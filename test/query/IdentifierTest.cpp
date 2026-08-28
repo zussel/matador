@@ -1,9 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/utils/identifier.hpp"
+#include "matador/query/identifier.hpp"
 #include "matador/utils/default_type_traits.hpp"
-#include "matador/utils/value.hpp"
+#include "matador/query/column_value.hpp"
 
+using namespace matador::query;
 using namespace matador::utils;
 
 TEST_CASE("Identifier: Test create identifier", "[identifier][create]") {
@@ -284,19 +285,19 @@ TEST_CASE("Identifier: Identifier as() and convert() behave consistently", "[uti
 TEST_CASE("Identifier: Identifier assign from value", "[utils][identifier][assign]") {
   identifier id;
 
-  value v1{int32_t{17}};
+  column_value v1{int32_t{17}};
   const auto r1 = id.assign(v1);
   REQUIRE(r1.is_ok());
   REQUIRE(id.is_integer());
   REQUIRE(id.str() == "17");
 
-  value v2{std::string{"abc"}};
+  column_value v2{std::string{"abc"}};
   const auto r2 = id.assign(v2);
   REQUIRE(r2.is_ok());
   REQUIRE(id.is_varchar());
   REQUIRE(id.str() == "abc");
 
-  value v3{basic_type::Double, 0};
+  column_value v3{basic_type::Double, 0};
   const auto r3 = id.assign(v3);
   REQUIRE(r3.is_error());
 }
@@ -305,7 +306,7 @@ TEST_CASE("Identifier: Identifier assign from value with exact type mapping", "[
   identifier id;
 
   SECTION("integer types") {
-    value v{int16_t{12}};
+    column_value v{int16_t{12}};
     const auto r = id.assign(v);
     REQUIRE(r.is_ok());
     REQUIRE(id.is_integer());
@@ -313,7 +314,7 @@ TEST_CASE("Identifier: Identifier assign from value with exact type mapping", "[
   }
 
   SECTION("string types") {
-    value v{std::string{"abc"}};
+    column_value v{std::string{"abc"}};
     const auto r = id.assign(v);
     REQUIRE(r.is_ok());
     REQUIRE(id.is_varchar());
@@ -321,7 +322,7 @@ TEST_CASE("Identifier: Identifier assign from value with exact type mapping", "[
   }
 
   SECTION("null") {
-    value v{basic_type::Null, 0};
+    column_value v{basic_type::Null, 0};
     const auto r = id.assign(v);
     REQUIRE(r.is_ok());
     REQUIRE(id.is_null());

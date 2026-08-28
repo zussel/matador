@@ -6,7 +6,7 @@
 namespace matador::utils {
 class data_type {
 public:
-  constexpr explicit data_type(basic_type type, std::size_t size = 0) noexcept
+  constexpr explicit data_type(const basic_type type, const std::size_t size = 0) noexcept
   : type_(type)
   , size_(size) {
   }

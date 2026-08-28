@@ -7,12 +7,12 @@
 
 namespace matador::utils {
 
-class value;
+class column_value;
 
-class attribute_writer
+class value_writer
 {
 public:
-  virtual ~attribute_writer() = default;
+  virtual ~value_writer() = default;
 
   virtual void write_value(size_t pos, const int8_t &x) = 0;
   virtual void write_value(size_t pos, const int16_t &x) = 0;
@@ -33,7 +33,7 @@ public:
   virtual void write_value(size_t pos, const std::string &x) = 0;
   virtual void write_value(size_t pos, const std::string &x, size_t size) = 0;
   virtual void write_value(size_t pos, const blob_type_t &x) = 0;
-  virtual void write_value(size_t pos, const value &x, size_t size) = 0;
+  virtual void write_value(size_t pos, const column_value &x, size_t size) = 0;
 };
 
 }
