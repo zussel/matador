@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <string>
+#include <variant>
 
 namespace matador::query {
 
@@ -34,7 +35,7 @@ public:
                query_functions func,
                const std::shared_ptr<abstract_column_expression>& expression);
 
-  column& operator=(const column& other);
+  column& operator=(const column& other) = default;
   column(const column& other) = default;
   column(column&& other) noexcept = default;
   ~column() = default;
@@ -48,7 +49,7 @@ public:
    *
    * @return The canonical column name
    */
-  [[nodiscard]] const std::string& name() const;
+  [[nodiscard]] std::string name() const;
 
   /**
    * Returns the column name without prepending
@@ -65,7 +66,7 @@ public:
    *
    * @return Returns the canonical column name
    */
-  [[nodiscard]] const std::string& canonical_name() const;
+  [[nodiscard]] std::string canonical_name() const;
 
   /**
    * Returns the alias name for the column. If no alias
@@ -85,6 +86,7 @@ public:
 
   [[nodiscard]] utils::basic_type type() const;
 
+  [[nodiscard]] bool is_plain_column() const;
   [[nodiscard]] bool is_function() const;
   [[nodiscard]] bool is_expression() const;
   // [[nodiscard]] bool is_nullable() const;
@@ -97,27 +99,46 @@ public:
 
   [[nodiscard]] bool has_alias() const;
 
+  /**
+   * Returns the non-owning table associated with this column.
+   *
+   * The returned pointer must not outlive its table.
+   */
   [[nodiscard]] const class table* table() const;
   void table(const class table* tab);
 
   // ReSharper disable once CppNonExplicitConversionOperator
-  operator const std::string&() const; // NOLINT(*-explicit-constructor)
+  operator std::string() const; // NOLINT(*-explicit-constructor)
 
   [[nodiscard]] std::shared_ptr<abstract_column_expression> expression() const;
 
 private:
+  struct plain_column {
+    const class table* table{nullptr};
+    std::string name;
+    utils::basic_type type{utils::basic_type::Unknown};
+  };
+
+  struct query_function {
+    query_functions function{query_functions::None};
+    plain_column column;
+  };
+
+  using column_value = std::variant<
+    plain_column,
+    std::shared_ptr<abstract_column_expression>,
+    query_function
+  >;
+
   static std::string build_canonical_name(const class table *tab, const std::string& name);
+  [[nodiscard]] const plain_column* plain() const;
+  [[nodiscard]] plain_column* plain();
 
 private:
   friend class table;
 
-  const class table* table_{nullptr};
-  std::string column_name_;
-  std::string canonical_name_;
+  column_value value_{plain_column{}};
   std::string alias_;
-  utils::basic_type type_{utils::basic_type::Unknown};
-  query_functions function_;
-  std::shared_ptr<abstract_column_expression> expression_;
 };
 
 column operator ""_col(const char *name, size_t len);

@@ -11,16 +11,11 @@ namespace matador::query {
 
 column operator ""_col(const char *name, const size_t len) {
   const std::string str(name, len);
-  const auto pos = str.find('.');
-  if (pos == std::string::npos) {
-    return column{str};
+  if (str.find('.') != std::string::npos) {
+    throw std::invalid_argument("Qualified column literals are not supported");
   }
 
-  if (str.find('.', pos + 1) != std::string::npos) {
-    throw std::invalid_argument("Invalid column name: multiple dots found");
-  }
-
-  return column{str.substr(pos + 1)};
+  return column{str};
 }
 
 column::column(const char *name)
@@ -55,76 +50,90 @@ column::column(const std::shared_ptr<abstract_column_expression> &expression)
 {}
 
 column::column(const class table *tab,
-                           std::string name,
-                           std::string alias,
-                           const utils::basic_type type,
-                           const query_functions func,
-                           const std::shared_ptr<abstract_column_expression>& expression)
-: table_(tab)
-, column_name_(std::move(name))
-, canonical_name_(build_canonical_name(table_, name))
-, alias_(std::move(alias))
-, type_(type)
-, function_(func)
-, expression_(expression){}
+               std::string name,
+               std::string alias,
+               const utils::basic_type type,
+               const query_functions func,
+               const std::shared_ptr<abstract_column_expression>& expression)
+: alias_(std::move(alias)) {
+  plain_column plain{tab, std::move(name), type};
 
-column & column::operator=(const column &other) {
-  if (this == &other) {
-    return *this;
+  if (expression) {
+    value_ = expression;
+  } else if (func != query_functions::None) {
+    value_ = query_function{func, std::move(plain)};
+  } else {
+    value_ = std::move(plain);
   }
-  table_ = other.table_;
-  column_name_ = other.column_name_;
-  canonical_name_ = other.canonical_name_;
-  alias_ = other.alias_;
-  type_ = other.type_;
-  function_ = other.function_;
-  expression_ = other.expression_;
-  return *this;
 }
 
 bool column::equals(const column &x) const {
-  if (table_ != nullptr && x.table_ != nullptr) {
-    return *table_ == *x.table_ &&
-           column_name_ == x.column_name_ &&
-           canonical_name_ == x.canonical_name_ &&
-           alias_ == x.alias_;
+  if (alias_ != x.alias_ || value_.index() != x.value_.index()) {
+    return false;
   }
 
-  return alias_ == x.alias_;
+  if (const auto* expression = std::get_if<std::shared_ptr<abstract_column_expression>>(&value_)) {
+    return *expression == std::get<std::shared_ptr<abstract_column_expression>>(x.value_);
+  }
+
+  const auto* plain_column = plain();
+  const auto* other_plain_column = x.plain();
+  if ((plain_column->table == nullptr) != (other_plain_column->table == nullptr) ||
+      (plain_column->table != nullptr && !(*plain_column->table == *other_plain_column->table)) ||
+      plain_column->name != other_plain_column->name ||
+      plain_column->type != other_plain_column->type) {
+    return false;
+  }
+
+  const auto* function = std::get_if<query_function>(&value_);
+  return function == nullptr ||
+         function->function == std::get<query_function>(x.value_).function;
 }
 
 column column::as(const std::string& alias) const {
-  return {table_, column_name_, alias, type_, function_, expression_};
+  auto result = *this;
+  result.alias_ = alias;
+  return result;
 }
 
-const std::string& column::name() const {
-  return canonical_name_;
+std::string column::name() const {
+  return canonical_name();
 }
 
 const std::string& column::column_name() const {
-  return column_name_;
+  static const std::string empty;
+  const auto* plain_column = plain();
+  return plain_column == nullptr ? empty : plain_column->name;
 }
 
-const std::string& column::canonical_name() const {
-  return canonical_name_;
+std::string column::canonical_name() const {
+  const auto* plain_column = plain();
+  return plain_column == nullptr ? std::string{} :
+         build_canonical_name(plain_column->table, plain_column->name);
 }
 
 const std::string& column::alias() const {
   return alias_;
 }
 const std::string& column::result_name() const {
-  return alias_.empty() ? column_name_ : alias_;
+  return alias_.empty() ? column_name() : alias_;
 }
 utils::basic_type column::type() const {
-  return type_;
+  const auto* plain_column = plain();
+  return plain_column == nullptr ? utils::basic_type::Unknown : plain_column->type;
+}
+
+bool column::is_plain_column() const {
+  return std::holds_alternative<plain_column>(value_);
 }
 
 bool column::is_function() const {
-  return function_ != query_functions::None;
+  return std::holds_alternative<query_function>(value_);
 }
 
 bool column::is_expression() const {
-  return static_cast<bool>(expression_);
+  const auto* expression = std::get_if<std::shared_ptr<abstract_column_expression>>(&value_);
+  return expression != nullptr && static_cast<bool>(*expression);
 }
 
 // bool query_column::is_nullable() const {
@@ -148,7 +157,8 @@ bool column::is_expression() const {
 // }
 
 query_functions column::function() const {
-  return function_;
+  const auto* function = std::get_if<query_function>(&value_);
+  return function == nullptr ? query_functions::None : function->function;
 }
 
 bool column::has_alias() const {
@@ -156,23 +166,48 @@ bool column::has_alias() const {
 }
 
 const table* column::table() const {
-  return table_;
+  const auto* plain_column = plain();
+  return plain_column == nullptr ? nullptr : plain_column->table;
 }
 
 void column::table(const class table* tab) {
-  table_ = tab;
-  canonical_name_ = build_canonical_name(table_, column_name_);
+  auto* plain_column = plain();
+  if (plain_column == nullptr) {
+    throw std::logic_error("Cannot attach a table to an expression column");
+  }
+  plain_column->table = tab;
 }
 
-column::operator const std::string&() const {
+column::operator std::string() const {
   return name();
 }
 
 std::shared_ptr<abstract_column_expression> column::expression() const {
-  return expression_;
+  const auto* expression = std::get_if<std::shared_ptr<abstract_column_expression>>(&value_);
+  return expression == nullptr ? nullptr : *expression;
 }
 
 std::string column::build_canonical_name(const class table* tab, const std::string& name) {
   return tab != nullptr ? tab->name() + "." + name : name;
+}
+
+const column::plain_column* column::plain() const {
+  if (const auto* plain_value = std::get_if<plain_column>(&value_)) {
+    return plain_value;
+  }
+  if (const auto* function = std::get_if<query_function>(&value_)) {
+    return &function->column;
+  }
+  return nullptr;
+}
+
+column::plain_column* column::plain() {
+  if (auto* plain_value = std::get_if<plain_column>(&value_)) {
+    return plain_value;
+  }
+  if (auto* function = std::get_if<query_function>(&value_)) {
+    return &function->column;
+  }
+  return nullptr;
 }
 }  // namespace matador::query

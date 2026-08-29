@@ -8,6 +8,7 @@ CPMAddPackage(
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
 add_executable(MatadorTests
+    query/ColumnTest.cpp
     query/ColumnExpressionTest.cpp
     query/IdentifierTest.cpp
     utils/ConvertTest.cpp
