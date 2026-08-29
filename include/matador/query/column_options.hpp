@@ -28,7 +28,7 @@ public:
      *
      * @param size Size of the attribute
      */
-    column_options(size_t size); // NOLINT(*-explicit-constructor)
+    column_options(std::size_t size); // NOLINT(*-explicit-constructor)
     /**
      * Creates column_options instance
      * with size 0 (zero) and given constraints.
@@ -43,7 +43,7 @@ public:
      * @param size Size of the attribute
      * @param constraints Constraints to apply to field
      */
-    column_options(size_t size, column_constraints constraints);
+    column_options(std::size_t size, column_constraints constraints);
     ~column_options() = default;
 
     column_options(const column_options &) = default;
@@ -51,14 +51,14 @@ public:
     column_options &operator=(const column_options &) = default;
     column_options &operator=(column_options &&) = default;
 
-    column_options& operator=(size_t size);
+    column_options& operator=(std::size_t size);
     column_options& operator=(column_constraints constraints);
     /**
      * Returns the size of the field
      *
      * @return Size of the field
      */
-    [[nodiscard]] size_t size() const;
+    [[nodiscard]] std::size_t size() const;
 
     /**
      * Returns the constraints of the field
@@ -68,7 +68,7 @@ public:
     [[nodiscard]] column_constraints constraints() const;
 
 private:
-    size_t size_ = 0;
+    std::size_t size_ = 0;
     column_constraints constraints_ = column_constraint::None;
 };
 }

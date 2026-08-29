@@ -1,5 +1,6 @@
 #include "matador/query/table.hpp"
 
+#include <stdexcept>
 #include <utility>
 
 namespace matador::query {
@@ -18,7 +19,7 @@ table::table(std::string name, std::string alias, const std::vector<column> &col
 : name_(std::move(name))
 , alias_(std::move(alias))
 , columns_(columns) {
-  for (int i = 0; i < columns.size(); ++i) {
+  for (std::size_t i = 0; i < columns.size(); ++i) {
     columns_[i].table(this);
     // if (columns_[i].is_primary_key()) {
       // pk_column_index_ = i;

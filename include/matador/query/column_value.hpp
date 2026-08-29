@@ -3,8 +3,9 @@
 
 #include "matador_export.h"
 
-#include "matador/utils/basic_type_converter.hpp"
+#include "matador/utils/convert.hpp"
 #include "matador/utils/default_type_traits.hpp"
+#include "matador/utils/result.hpp"
 #include "matador/utils/types.hpp"
 
 #include <optional>
@@ -17,6 +18,42 @@ size_t determine_size(const std::string &val);
 size_t determine_size(const char *val);
 size_t determine_size(const utils::blob_type_t &val);
 
+template < typename Type >
+class basic_type_converter {
+public:
+  static result<Type, utils::conversion_error> convert_value(const utils::database_type& from) {
+    basic_type_converter converter;
+    std::visit(converter, const_cast<utils::database_type&>(from));
+
+    return converter.result_;
+  }
+
+  void operator()(int8_t &x) { this->convert(x); }
+  void operator()(int16_t &x) { this->convert(x); }
+  void operator()(int32_t &x) { this->convert(x); }
+  void operator()(int64_t &x) { this->convert(x); }
+  void operator()(uint8_t &x) { this->convert(x); }
+  void operator()(uint16_t &x) { this->convert(x); }
+  void operator()(uint32_t &x) { this->convert(x); }
+  void operator()(uint64_t &x) { this->convert(x); }
+  void operator()(bool &x) { this->convert(x); }
+  void operator()(float &x) { this->convert(x); }
+  void operator()(double &x) { this->convert(x); }
+  void operator()(const char *x) { this->convert(x); }
+  void operator()(std::string &x) { this->convert(x); }
+  void operator()(utils::date_type_t &x) { this->convert(x); }
+  void operator()(utils::time_type_t &x) { this->convert(x); }
+  void operator()(utils::timestamp_type_t &x) { this->convert(x); }
+  void operator()(utils::blob_type_t &x) { this->convert(x); }
+
+private:
+  result<Type, utils::conversion_error> result_{};
+
+  template< typename FromType >
+  void convert(FromType &from) {
+    result_ = utils::to<Type>(from);
+  }
+};
 }
 
 class MATADOR_EXPORT column_value final {
@@ -53,7 +90,7 @@ public:
     if (std::holds_alternative<Type>(value_)) {
       return std::get<Type>(value_);
     }
-    const auto res = utils::basic_type_converter<Type>::convert_value(value_);
+    const auto res = detail::basic_type_converter<Type>::convert_value(value_);
     if (!res.is_ok()) {
       return std::nullopt;
     }

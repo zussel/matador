@@ -97,7 +97,7 @@ public:
 
   [[nodiscard]] bool has_alias() const;
 
-  [[nodiscard]] const table* table() const;
+  [[nodiscard]] const class table* table() const;
   void table(const class table* tab);
 
   // ReSharper disable once CppNonExplicitConversionOperator
