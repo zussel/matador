@@ -94,6 +94,29 @@ const std::vector<column>& table::columns() const {
   return columns_;
 }
 
+std::vector<constraint> table::constraints() const {
+  constexpr column_constraint constraint_kinds[] = {
+    column_constraint::Index,
+    column_constraint::Unique,
+    column_constraint::PrimaryKey,
+    column_constraint::ForeignKey,
+    column_constraint::Identity,
+    column_constraint::Default,
+    column_constraint::NotNull
+  };
+
+  std::vector<constraint> result;
+  for (std::size_t column_index = 0; column_index < columns_.size(); ++column_index) {
+    const auto column_constraints = columns_[column_index].constraints();
+    for (const auto kind : constraint_kinds) {
+      if (column_constraints.has(kind)) {
+        result.emplace_back(*this, column_index, kind);
+      }
+    }
+  }
+  return result;
+}
+
 bool table::has_alias() const {
   return !alias_.empty();
 }

@@ -6,6 +6,7 @@ configure_file (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINAR
 add_library(matador
     ../include/matador/utils/flags.hpp
     query/column.cpp
+    query/constraint.cpp
     query/table.cpp
     query/column_options.cpp
     query/column_value.cpp

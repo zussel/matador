@@ -2,6 +2,7 @@
 #define QUERY_TABLE_HPP
 
 #include "matador/query/column.hpp"
+#include "matador/query/constraint.hpp"
 
 #include <optional>
 #include <string>
@@ -40,6 +41,7 @@ public:
   [[nodiscard]] const std::string& schema_name() const;
   [[nodiscard]] std::string qualified_name() const;
   [[nodiscard]] const std::vector<column>& columns() const;
+  [[nodiscard]] std::vector<constraint> constraints() const;
 
   [[nodiscard]] bool has_alias() const;
 
