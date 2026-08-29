@@ -2,8 +2,8 @@
 #define QUERY_COLUMN_HPP
 
 #include "matador/utils/types.hpp"
-// #include "matador/utils/field_attributes.hpp"
 
+#include "matador/query/column_constraint.hpp"
 #include "matador/query/expression/abstract_column_expression.hpp"
 #include "matador/query/query_functions.hpp"
 
@@ -19,13 +19,14 @@ class table;
 class column {
 public:
   column() = default;
-  column(const char *name); // NOLINT(*-explicit-constructor)
-  column(const std::string& name); // NOLINT(*-explicit-constructor)
+  explicit column(const char *name);
+  explicit column(const std::string& name);
   column(const std::string& name, const std::string& alias);
   column(query_functions func, const std::string& name);
   column(const table* tab, const std::string& name);
   column(const table* tab, const std::string& name, const std::string& alias);
-  column(const table* tab, const std::string& name, utils::basic_type type);
+  column(const table* tab, const std::string& name, utils::basic_type type, column_constraints constraints = {});
+  column(const std::string& name, utils::basic_type type, column_constraints constraints = {});
   column(const std::shared_ptr<abstract_column_expression>& expression);
 
   column(const table* tab,
@@ -33,7 +34,8 @@ public:
                std::string  alias,
                utils::basic_type type,
                query_functions func,
-               const std::shared_ptr<abstract_column_expression>& expression);
+               const std::shared_ptr<abstract_column_expression>& expression,
+               column_constraints constraints = {});
 
   column& operator=(const column& other) = default;
   column(const column& other) = default;
@@ -85,6 +87,11 @@ public:
   [[nodiscard]] const std::string& result_name() const;
 
   [[nodiscard]] utils::basic_type type() const;
+  /**
+   * Returns constraints declared for this schema column.
+   */
+  [[nodiscard]] column_constraints constraints() const;
+  [[nodiscard]] bool is_primary_key() const;
 
   [[nodiscard]] bool is_plain_column() const;
   [[nodiscard]] bool is_function() const;
@@ -139,6 +146,7 @@ private:
 
   column_value value_{plain_column{}};
   std::string alias_;
+  column_constraints constraints_;
 };
 
 column operator ""_col(const char *name, size_t len);

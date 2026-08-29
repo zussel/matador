@@ -3,7 +3,11 @@
 
 #include "matador/query/column.hpp"
 
+#include <optional>
 #include <string>
+#include <string_view>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace matador::query {
@@ -12,9 +16,10 @@ namespace matador::query {
 class table {
 public:
   table() = default;
-  table(const char *name); // NOLINT(*-explicit-constructor)
-  table(const std::string& name); // NOLINT(*-explicit-constructor)
-  table(const std::string& name, const std::vector<column>& columns);
+  explicit table(const char *name);
+  explicit table(std::string name);
+  table(std::string name, std::vector<column> columns);
+  table(std::string schema_name, std::string name, std::vector<column> columns);
   table(const table& other);
   table& operator=(const table& other);
   table(table&& other) noexcept;
@@ -23,11 +28,17 @@ public:
 
   [[nodiscard]] table as(const std::string &alias) const;
 
+  /**
+   * Compares relation identity (schema, base name, and alias), not schema columns.
+   */
   [[nodiscard]] bool operator==(const table &x) const;
 
+  /** Returns the unqualified base relation name. */
   [[nodiscard]] const std::string& table_name() const;
-  [[nodiscard]] const std::string& name() const;
-  [[nodiscard]] std::string schema_name() const;
+  /** Returns the SQL qualifier: alias when present, otherwise schema-qualified name. */
+  [[nodiscard]] std::string name() const;
+  [[nodiscard]] const std::string& schema_name() const;
+  [[nodiscard]] std::string qualified_name() const;
   [[nodiscard]] const std::vector<column>& columns() const;
 
   [[nodiscard]] bool has_alias() const;
@@ -35,7 +46,11 @@ public:
   // ReSharper disable once CppNonExplicitConversionOperator
   operator const std::vector<query::column>&() const; // NOLINT(*-explicit-constructor)
 
+  /** Finds a column by its unqualified schema name, or returns nullptr. */
   const column* operator[](const std::string& column_name) const;
+  [[nodiscard]] const column* find_column(std::string_view column_name) const;
+  /** Finds a column by its unqualified schema name or throws std::invalid_argument. */
+  [[nodiscard]] const column& at_column(std::string_view column_name) const;
   static const column* column_by_name(const table &tab, const std::string& column_name);
   static const column& column_ref_by_name(const table &tab, const std::string& column_name);
 
@@ -44,10 +59,14 @@ public:
   [[nodiscard]] const column* primary_key_column() const;
 
 protected:
-  table(std::string name, std::string  alias, const std::vector<column>& columns);
+  table(std::string schema_name, std::string name, std::string alias,
+        std::vector<column> columns);
 
 private:
   friend column;
+
+  static void validate_schema(const std::vector<column>& columns);
+  void rebind_columns();
 
   std::string name_;
   std::string alias_;
@@ -55,7 +74,7 @@ private:
   std::string schema_name_;
   std::vector<column> columns_;
 
-  int pk_column_index_{-1};
+  std::optional<std::size_t> pk_column_index_;
 };
 
 template<typename Type = table>
@@ -63,8 +82,14 @@ class typed_query_table : public table {
 public:
   using table::table;
 
-  // ReSharper disable once CppMemberFunctionMayBeStatic
-  Type as(std::string alias) const { return Type{std::move(alias)}; }
+  explicit typed_query_table(table source)
+  : table(std::move(source)) {}
+
+  [[nodiscard]] Type as(const std::string& alias) const {
+    static_assert(std::is_constructible_v<Type, table>,
+                  "Type must be constructible from matador::query::table");
+    return Type{table::as(alias)};
+  }
 };
 }
 

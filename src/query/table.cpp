@@ -1,30 +1,32 @@
 #include "matador/query/table.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 #include <utility>
 
 namespace matador::query {
 table::table(const char* name)
-: table(std::string(name))
+: table(name == nullptr ? throw std::invalid_argument("Table name must not be null") :
+                           std::string(name))
 {}
 
-table::table(const std::string& name)
-: table(name, name, {}) {}
+table::table(std::string name)
+: table("", std::move(name), "", {}) {}
 
-table::table(const std::string& name, const std::vector<column> &columns)
-: table(name, name, columns) {
+table::table(std::string name, std::vector<column> columns)
+: table("", std::move(name), "", std::move(columns)) {
 }
 
-table::table(std::string name, std::string alias, const std::vector<column> &columns)
+table::table(std::string schema_name, std::string name, std::vector<column> columns)
+: table(std::move(schema_name), std::move(name), "", std::move(columns)) {}
+
+table::table(std::string schema_name, std::string name, std::string alias,
+             std::vector<column> columns)
 : name_(std::move(name))
 , alias_(std::move(alias))
-, columns_(columns) {
-  for (std::size_t i = 0; i < columns.size(); ++i) {
-    columns_[i].table(this);
-    // if (columns_[i].is_primary_key()) {
-      // pk_column_index_ = i;
-    // }
-  }
+, schema_name_(std::move(schema_name))
+, columns_(std::move(columns)) {
+  rebind_columns();
 }
 
 table::table(const table &other)
@@ -54,6 +56,8 @@ table::table(table &&other) noexcept
   for (auto &col : columns_) {
     col.table(this);
   }
+  other.columns_.clear();
+  other.pk_column_index_.reset();
 }
 
 table & table::operator=(table &&other) noexcept {
@@ -65,23 +69,25 @@ table & table::operator=(table &&other) noexcept {
   for (auto &col : columns_) {
     col.table(this);
   }
+  other.columns_.clear();
+  other.pk_column_index_.reset();
   return *this;
 }
 
 bool table::operator==(const table& x) const {
-  return name_ == x.name_ && alias_ == x.alias_;
+  return schema_name_ == x.schema_name_ && name_ == x.name_ && alias_ == x.alias_;
 }
 
 table table::as(const std::string &alias) const {
-  return { name_, alias, columns_};
+  return {schema_name_, name_, alias, columns_};
 }
 
 const std::string & table::table_name() const {
   return name_;
 }
 
-const std::string& table::name() const {
-  return alias_;
+std::string table::name() const {
+  return has_alias() ? alias_ : qualified_name();
 }
 
 const std::vector<column>& table::columns() const {
@@ -89,7 +95,7 @@ const std::vector<column>& table::columns() const {
 }
 
 bool table::has_alias() const {
-  return name_ != alias_;
+  return !alias_.empty();
 }
 
 table::operator const std::vector<query::column>&() const {
@@ -97,40 +103,70 @@ table::operator const std::vector<query::column>&() const {
 }
 
 const column* table::operator[](const std::string &column_name) const {
-  for (const auto &col : columns_) {
-    if (col.column_name() == column_name) {
-      return &col;
-    }
-  }
-  return nullptr;
+  return find_column(column_name);
 }
 
-const column * table::column_by_name(const table &tab, const std::string &column_name) {
-  for (const auto &col : tab.columns_) {
-    if (col.column_name() == column_name) {
-      return &col;
-    }
-  }
-  return nullptr;
+const column* table::find_column(const std::string_view column_name) const {
+  const auto it = std::find_if(columns_.begin(), columns_.end(),
+                               [column_name](const column& col) {
+                                 return col.column_name().size() == column_name.size() &&
+                                        col.column_name().compare(
+                                          0, column_name.size(), column_name.data(),
+                                          column_name.size()) == 0;
+                               });
+  return it == columns_.end() ? nullptr : &*it;
 }
 
-const column &table::column_ref_by_name(const table &tab, const std::string &column_name) {
-  const auto *column = column_by_name(tab, column_name);
+const column& table::at_column(const std::string_view column_name) const {
+  const auto* column = find_column(column_name);
   if (column == nullptr) {
-    throw std::invalid_argument("Unknown column: " + column_name);
+    throw std::invalid_argument("Unknown column: " + std::string(column_name));
   }
   return *column;
 }
 
-std::string table::schema_name() const {
+const column * table::column_by_name(const table &tab, const std::string &column_name) {
+  return tab.find_column(column_name);
+}
+
+const column &table::column_ref_by_name(const table &tab, const std::string &column_name) {
+  return tab.at_column(column_name);
+}
+
+const std::string& table::schema_name() const {
   return schema_name_;
 }
 
+std::string table::qualified_name() const {
+  return schema_name_.empty() ? name_ : schema_name_ + "." + name_;
+}
+
 bool table::has_primary_key() const {
-  return pk_column_index_ > -1;
+  return pk_column_index_.has_value();
 }
 
 const column* table::primary_key_column() const {
-  return pk_column_index_ > -1 ? &columns_.at(pk_column_index_) : nullptr;
+  return pk_column_index_ ? &columns_.at(*pk_column_index_) : nullptr;
+}
+
+void table::validate_schema(const std::vector<column>& columns) {
+  if (std::any_of(columns.begin(), columns.end(),
+                  [](const column& col) { return col.is_expression(); })) {
+    throw std::invalid_argument("Table schemas cannot contain expression columns");
+  }
+}
+
+void table::rebind_columns() {
+  validate_schema(columns_);
+  pk_column_index_.reset();
+  for (std::size_t i = 0; i < columns_.size(); ++i) {
+    if (columns_[i].is_primary_key()) {
+      if (pk_column_index_) {
+        throw std::invalid_argument("Table schemas cannot contain multiple primary keys");
+      }
+      pk_column_index_ = i;
+    }
+    columns_[i].table(this);
+  }
 }
 }
