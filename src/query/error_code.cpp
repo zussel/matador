@@ -18,6 +18,8 @@ std::string query_category_impl::message(const int ev) const {
       return "No primary key";
     case error_code::IdentifierTypeMismatch:
       return "Identifier type mismatch";
+    case error_code::InvalidArgument:
+      return "Invalid argument";
     case error_code::Failure:
       return "Failure";
     default:

@@ -12,6 +12,7 @@ enum class error_code : uint8_t {
   NodeAlreadyExists,
   NoPrimaryKey,
   IdentifierTypeMismatch,
+  InvalidArgument,
   Failure,
 };
 
