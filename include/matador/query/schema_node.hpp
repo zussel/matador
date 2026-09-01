@@ -100,7 +100,7 @@ std::unique_ptr<schema_node> schema_node::make_node(basic_schema &repo,
   // auto obj = object_generator::generate<Type>(creator(), repo, name);
   node->info_ = std::make_unique<table_info<Type>>(
     *node,
-    {},
+    std::make_shared<table>(),
     std::move(observers),
     std::move(creator)
   );
@@ -123,7 +123,7 @@ std::unique_ptr<schema_node> schema_node::make_relation_node(basic_schema &repo,
   // auto obj = object_generator::generate<Type>(creator(), repo, name, join_column, inverse_join_column);
   node->info_ = std::make_unique<table_info<Type>>(
     *node,
-    {},
+    std::make_shared<table>(),
     std::move(observers),
     std::move(creator)
   );

@@ -15,7 +15,7 @@ namespace matador::query {
  * to a field of type string leading
  * to VARCHAR(size).
  */
-class MATADOR_EXPORT column_options {
+class MATADOR_EXPORT column_options final {
 public:
     /**
      * Creates column_options instance
@@ -72,4 +72,30 @@ private:
     column_constraints constraints_ = column_constraint::None;
 };
 }
+
+namespace matador {
+const query::column_options NullAttributes {};
+const query::column_options VarChar63 {63};
+const query::column_options VarChar127 {127};
+const query::column_options VarChar255 {255};
+const query::column_options VarChar511 {511};
+const query::column_options VarChar1023 {1023};
+const query::column_options VarChar2047 {2047};
+const query::column_options VarChar4095 {4095};
+const query::column_options UniqueVarChar63 {63, query::column_constraint::Unique};
+const query::column_options UniqueVarChar127 {127, query::column_constraint::Unique};
+const query::column_options UniqueVarChar255 {255, query::column_constraint::Unique};
+const query::column_options UniqueVarChar511 {511, query::column_constraint::Unique};
+const query::column_options UniqueVarChar1023 {1023, query::column_constraint::Unique};
+const query::column_options UniqueVarChar2047 {2047, query::column_constraint::Unique};
+const query::column_options UniqueVarChar4095 {4095, query::column_constraint::Unique};
+const query::column_options PrimaryKeyVarChar63 {63, query::column_constraint::PrimaryKey};
+const query::column_options PrimaryKeyVarChar127 {127, query::column_constraint::PrimaryKey};
+const query::column_options PrimaryKeyVarChar255 {255, query::column_constraint::PrimaryKey};
+const query::column_options PrimaryKeyVarChar511 {511, query::column_constraint::PrimaryKey};
+const query::column_options PrimaryKeyVarChar1023 {1023, query::column_constraint::PrimaryKey};
+const query::column_options PrimaryKeyVarChar2047 {2047, query::column_constraint::PrimaryKey};
+const query::column_options PrimaryKeyVarChar4095 {4095, query::column_constraint::PrimaryKey};
+}
+
 #endif //MATADOR_COLUMN_OPTIONS_HPP

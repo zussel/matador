@@ -187,9 +187,7 @@ basic_schema::iterator basic_schema::find_node(const schema_node *node) const {
     return iterator(root_->last_child_.get());
   }
 
-  if (const auto i = nodes_by_name_.find(node->name()); i == nodes_by_name_.end()) {
-    return iterator(root_->last_child_.get());
-  } else {
+  if (const auto i = nodes_by_name_.find(node->name()); i != nodes_by_name_.end()) {
     return iterator(i->second);
   }
 

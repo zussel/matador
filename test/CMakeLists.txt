@@ -11,6 +11,8 @@ add_executable(MatadorTests
     query/ColumnTest.cpp
     query/ColumnExpressionTest.cpp
     query/IdentifierTest.cpp
+    query/RelationCompleterTest.cpp
+    query/SchemaTest.cpp
     query/TableTest.cpp
     utils/ConvertTest.cpp
     utils/ResultTest.cpp

@@ -5,10 +5,13 @@ configure_file (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINAR
 
 add_library(matador
     ../include/matador/query/basic_schema.hpp
+    ../include/matador/query/basic_table_info.hpp
     ../include/matador/query/relation_endpoint.hpp
     ../include/matador/query/relation_type.hpp
+    ../include/matador/query/schema.hpp
     ../include/matador/utils/flags.hpp
     query/basic_schema.cpp
+    query/basic_table_info.cpp
     query/column.cpp
     query/column_options.cpp
     query/column_value.cpp
@@ -20,19 +23,21 @@ add_library(matador
     query/expression/placeholder_expression.cpp
     query/expression/table_column_expression.cpp
     query/expression/value_expression.cpp
+    query/foreign_options.cpp
     query/identifier.cpp
+    query/observer.cpp
+    query/primary_key_options.cpp
     query/relation_endpoint.cpp
     query/schema_node.cpp
     query/schema_node_iterator.cpp
     query/table.cpp
     utils/error.cpp
+    utils/error_exception.cpp
     utils/errors.cpp
     utils/os.cpp
     utils/string.cpp
     utils/types.cpp
     utils/version.cpp
-  ../include/matador/query/basic_table_info.hpp
-  query/basic_table_info.cpp
 )
 
 include(GenerateExportHeader)
