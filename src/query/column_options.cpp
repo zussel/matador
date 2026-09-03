@@ -28,7 +28,7 @@ std::size_t column_options::size() const {
     return size_;
 }
 
-column_constraints column_options::constraints() const {
+const column_constraints& column_options::constraints() const {
     return constraints_;
 }
 }

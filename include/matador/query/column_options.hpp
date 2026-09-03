@@ -65,7 +65,7 @@ public:
      *
      * @return Constraints of the field
      */
-    [[nodiscard]] column_constraints constraints() const;
+    [[nodiscard]] const column_constraints& constraints() const;
 
 private:
     std::size_t size_ = 0;

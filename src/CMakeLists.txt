@@ -31,6 +31,8 @@ add_library(matador
     query/schema_node.cpp
     query/schema_node_iterator.cpp
     query/table.cpp
+    query/table_generator.cpp
+    query/table.cpp
     utils/error.cpp
     utils/error_exception.cpp
     utils/errors.cpp

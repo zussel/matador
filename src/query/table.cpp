@@ -20,13 +20,13 @@ table::table(std::string name, std::vector<column> columns)
 table::table(std::string schema_name, std::string name, std::vector<column> columns)
 : table(std::move(schema_name), std::move(name), "", std::move(columns)) {}
 
-table::table(std::string schema_name, std::string name, std::string alias,
-             std::vector<column> columns)
+table::table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns)
 : name_(std::move(name))
 , alias_(std::move(alias))
 , schema_name_(std::move(schema_name))
 , columns_(std::move(columns)) {
   rebind_columns();
+  recreate_constraints();
 }
 
 table::table(const table &other)
@@ -38,6 +38,7 @@ table::table(const table &other)
   for (auto &col : columns_) {
     col.table(this);
   }
+  recreate_constraints();
 }
 
 table & table::operator=(const table &other) {
@@ -56,6 +57,8 @@ table::table(table &&other) noexcept
   for (auto &col : columns_) {
     col.table(this);
   }
+  recreate_constraints();
+  other.constraints_.clear();
   other.columns_.clear();
   other.pk_column_index_.reset();
 }
@@ -69,6 +72,8 @@ table & table::operator=(table &&other) noexcept {
   for (auto &col : columns_) {
     col.table(this);
   }
+  recreate_constraints();
+  other.constraints_.clear();
   other.columns_.clear();
   other.pk_column_index_.reset();
   return *this;
@@ -94,7 +99,12 @@ const std::vector<column>& table::columns() const {
   return columns_;
 }
 
-std::vector<constraint> table::constraints() const {
+void table::update_name(const std::string& name) {
+  name_ = name;
+}
+
+const std::vector<constraint>& table::constraints() const {
+  return constraints_;
   constexpr column_constraint constraint_kinds[] = {
     column_constraint::Index,
     column_constraint::Unique,
@@ -190,6 +200,29 @@ void table::rebind_columns() {
       pk_column_index_ = i;
     }
     columns_[i].table(this);
+  }
+
+}
+
+void table::recreate_constraints() {
+  constexpr column_constraint constraint_kinds[] = {
+    column_constraint::Index,
+    column_constraint::Unique,
+    column_constraint::PrimaryKey,
+    column_constraint::ForeignKey,
+    column_constraint::Identity,
+    column_constraint::Default,
+    column_constraint::NotNull
+  };
+
+  constraints_.clear();
+  for (std::size_t column_index = 0; column_index < columns_.size(); ++column_index) {
+    const auto column_constraints = columns_[column_index].constraints();
+    for (const auto kind : constraint_kinds) {
+      if (column_constraints.has(kind)) {
+        constraints_.emplace_back(*this, column_index, kind);
+      }
+    }
   }
 }
 }

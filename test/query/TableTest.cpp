@@ -27,9 +27,11 @@ public:
 } // namespace
 
 TEST_CASE("Table: schema, identity, and aliasing are distinct", "[query][table]") {
-  const table orders{"sales", "orders",
-                     {column{"id", basic_type::Int64, column_constraint::PrimaryKey},
-                      column{"total", basic_type::Double, column_constraint::NotNull}}};
+  const table orders{
+    "sales", "orders",
+    {column::make_plain("id", "", basic_type::Int64, {column_constraint::PrimaryKey}),
+     column::make_plain("total", "", basic_type::Double, {column_constraint::NotNull})}
+  };
 
   REQUIRE(orders.schema_name() == "sales");
   REQUIRE(orders.table_name() == "orders");
@@ -52,8 +54,8 @@ TEST_CASE("Table: schema, identity, and aliasing are distinct", "[query][table]"
 
 TEST_CASE("Table: primary-key metadata is validated and preserved", "[query][table]") {
   const table orders{"orders",
-                     {column{"id", basic_type::Int64, column_constraint::PrimaryKey},
-                      column{"total", basic_type::Double, column_constraint::NotNull}}};
+                     {column::make_plain("id", "", basic_type::Int64, {column_constraint::PrimaryKey}),
+                      column::make_plain("total", "", basic_type::Double, {column_constraint::NotNull})}};
 
   REQUIRE(orders.has_primary_key());
   REQUIRE(orders.primary_key_column() == &orders.columns().front());
@@ -75,13 +77,13 @@ TEST_CASE("Table: primary-key metadata is validated and preserved", "[query][tab
   REQUIRE_FALSE(move_source.has_primary_key());
   REQUIRE(move_source.primary_key_column() == nullptr);
 
-  REQUIRE_FALSE(table{"audit", {column{"event_id"}}}.has_primary_key());
-  REQUIRE(table{"audit", {column{"event_id"}}}.primary_key_column() == nullptr);
+  REQUIRE_FALSE(table{"audit", {column::make_plain("event_id")}}.has_primary_key());
+  REQUIRE(table{"audit", {column::make_plain("event_id")}}.primary_key_column() == nullptr);
 
   REQUIRE_THROWS_AS(
     (table{"invalid",
-           {column{"first", basic_type::Int32, column_constraint::PrimaryKey},
-            column{"second", basic_type::Int32, column_constraint::PrimaryKey}}}),
+           {column::make_plain("first", "", basic_type::Int32, {column_constraint::PrimaryKey}),
+            column::make_plain("second", "", basic_type::Int32, {column_constraint::PrimaryKey})}}),
     std::invalid_argument);
 }
 
@@ -90,12 +92,12 @@ TEST_CASE("Table: constraints retain their table and column identity", "[query][
   id_constraints.set(column_constraint::NotNull);
   const table orders{
     "orders",
-    {column{"id", basic_type::Int64, id_constraints},
-     column{"customer_id", basic_type::Int64, column_constraint::ForeignKey},
-     column{"reference", basic_type::Varchar, column_constraint::Unique},
-     column{"created_at", basic_type::DateTime, column_constraint::Index},
-     column{"sequence", basic_type::Int64, column_constraint::Identity},
-     column{"status", basic_type::Varchar, column_constraint::Default}}
+    {column::make_plain("id", "", basic_type::Int64, {id_constraints}),
+     column::make_plain("customer_id", "", basic_type::Int64, {column_constraint::ForeignKey}),
+     column::make_plain("reference", "", basic_type::Varchar, {column_constraint::Unique}),
+     column::make_plain("created_at", "", basic_type::DateTime, {column_constraint::Index}),
+     column::make_plain("sequence", "", basic_type::Int64, {column_constraint::Identity}),
+     column::make_plain("status", "", basic_type::Varchar, {column_constraint::Default})}
   };
 
   const auto constraints = orders.constraints();
@@ -153,7 +155,7 @@ TEST_CASE("Table: constraints retain their table and column identity", "[query][
 }
 
 TEST_CASE("Constraint: validates its referenced column and kind", "[query][constraint]") {
-  const table orders{"orders", {column{"id", basic_type::Int64}}};
+  const table orders{"orders", {column::make_plain("id", "", basic_type::Int64)}};
 
   REQUIRE_THROWS_AS((constraint{orders, 1, column_constraint::Unique}), std::out_of_range);
   REQUIRE_THROWS_AS((constraint{orders, 0, column_constraint::None}), std::invalid_argument);
@@ -166,7 +168,7 @@ TEST_CASE("Constraint: validates its referenced column and kind", "[query][const
 }
 
 TEST_CASE("Table: lookup has nullable and throwing forms", "[query][table]") {
-  const table orders{"orders", {column{"id"}, column{"total"}}};
+  const table orders{"orders", {column::make_plain("id"), column::make_plain("total")}};
 
   REQUIRE(orders["id"] == &orders.columns().front());
   REQUIRE(orders.find_column("total") == &orders.columns().back());
@@ -180,7 +182,7 @@ TEST_CASE("Table: lookup has nullable and throwing forms", "[query][table]") {
 }
 
 TEST_CASE("Table: copy and move rebind column owners", "[query][table]") {
-  const table original{"orders", {column{"id"}, column{"total"}}};
+  const table original{"orders", {column::make_plain("id"), column::make_plain("total")}};
   table copied{original};
   REQUIRE(copied.columns().front().table() == &copied);
   REQUIRE(copied.columns().back().table() == &copied);
@@ -201,14 +203,14 @@ TEST_CASE("Table: copy and move rebind column owners", "[query][table]") {
 }
 
 TEST_CASE("Table: schemas reject expression columns and null names", "[query][table]") {
-  const column expression{std::make_shared<placeholder_expression>()};
+  const column expression = column::make_expression(std::make_shared<placeholder_expression>());
   REQUIRE_THROWS_AS((table{"calculated", {expression}}), std::invalid_argument);
   REQUIRE_THROWS_AS(table{static_cast<const char*>(nullptr)}, std::invalid_argument);
-  REQUIRE_THROWS_AS(column{static_cast<const char*>(nullptr)}, std::invalid_argument);
+  // REQUIRE_THROWS_AS(column{static_cast<const char*>(nullptr)}, std::invalid_argument);
 }
 
 TEST_CASE("Table: typed aliases retain table state", "[query][table]") {
-  const typed_orders orders{"sales", "orders", {column{"id", basic_type::Int64}}};
+  const typed_orders orders{"sales", "orders", {column::make_plain("id", "", basic_type::Int64)}};
 
   const typed_orders alias = orders.as("o");
   REQUIRE(alias.schema_name() == "sales");

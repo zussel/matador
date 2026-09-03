@@ -15,46 +15,105 @@ column operator ""_col(const char *name, const size_t len) {
     throw std::invalid_argument("Qualified column literals are not supported");
   }
 
-  return column{str};
+  return column::make_plain(str);
 }
 
-column::column(const char *name)
-: column(name == nullptr ? throw std::invalid_argument("Column name must not be null") :
-                            std::string(name))
-{}
+column column::make_plain(
+  std::string name,
+  std::string alias,
+  const utils::basic_type type,
+  const column_options options
+) {
+  return column{
+    nullptr,
+    std::move(name),
+    std::move(alias),
+    type,
+    query_functions::None,
+    {},
+    options,
+    0
+  };
+}
 
-column::column(const std::string& name)
-: column(name, "") {}
+column column::make_plain(
+  const class table* tab,
+  std::string name,
+  std::string alias,
+  const utils::basic_type type,
+  const column_options options,
+  const size_t index
+) {
+  return column{
+    tab,
+    std::move(name),
+    std::move(alias),
+    type,
+    query_functions::None,
+    {},
+    options,
+    index
+  };
+}
 
-column::column(const std::string& name, const std::string& alias)
-: column(nullptr, name, alias, utils::basic_type::Unknown, query_functions::None, {})
-{}
+column column::make_query_function(
+  const query_functions func,
+  std::string name,
+  std::string alias,
+  const utils::basic_type type,
+  const column_options options
+) {
+  return column{
+    nullptr,
+    std::move(name),
+    std::move(alias),
+    type,
+    func,
+    {},
+    options,
+    0
+  };
+}
 
-column::column(const query_functions func, const std::string &name)
-: column(nullptr, name, "", utils::basic_type::Unknown, func, {})
-{}
+column column::make_query_function(
+  const query_functions func,
+  const class table* tab,
+  std::string name,
+  std::string alias,
+  const utils::basic_type type,
+  const column_options options
+) {
+  return column{
+    tab,
+    std::move(name),
+    std::move(alias),
+    type,
+    func,
+    {},
+    options,
+    0
+  };
+}
 
-column::column(const class table* tab, const std::string& name)
-: column(tab, name, "", utils::basic_type::Unknown, query_functions::None, {})
-{}
+column column::make_expression(
+  const std::shared_ptr<abstract_column_expression>& expression,
+  std::string alias
+) {
+  if (!expression) {
+    throw std::invalid_argument("Expression column must not be null");
+  }
 
-column::column(const class table* tab, const std::string& name, const std::string& alias)
-: column(tab, name, alias, utils::basic_type::Unknown, query_functions::None, {})
-{}
-
-column::column(const class table* tab, const std::string& name, const utils::basic_type type,
-               const column_constraints constraints)
-: column(tab, name, "", type, query_functions::None, {}, constraints)
-{}
-
-column::column(const std::string& name, const utils::basic_type type,
-               const column_constraints constraints)
-: column(nullptr, name, "", type, query_functions::None, {}, constraints)
-{}
-
-column::column(const std::shared_ptr<abstract_column_expression> &expression)
-: column(nullptr, "", "", utils::basic_type::Unknown, query_functions::None, expression)
-{}
+  return column{
+    nullptr,
+    "",
+    std::move(alias),
+    utils::basic_type::Unknown,
+    query_functions::None,
+    expression,
+    {},
+    0
+  };
+}
 
 column::column(const class table *tab,
                std::string name,
@@ -62,10 +121,11 @@ column::column(const class table *tab,
                const utils::basic_type type,
                const query_functions func,
                const std::shared_ptr<abstract_column_expression>& expression,
-               const column_constraints constraints)
+               const column_options& options,
+               const size_t index)
 : alias_(std::move(alias))
-, constraints_(constraints) {
-  plain_column plain{tab, std::move(name), type};
+, options_(options) {
+  plain_column plain{tab, std::move(name), index, type};
 
   if (expression) {
     value_ = expression;
@@ -124,20 +184,27 @@ std::string column::canonical_name() const {
 const std::string& column::alias() const {
   return alias_;
 }
+
+size_t column::index() const {
+  const auto* plain_column = plain();
+  return plain_column == nullptr ? 0 : plain_column->index;
+}
+
 const std::string& column::result_name() const {
   return alias_.empty() ? column_name() : alias_;
 }
+
 utils::basic_type column::type() const {
   const auto* plain_column = plain();
   return plain_column == nullptr ? utils::basic_type::Unknown : plain_column->type;
 }
 
 column_constraints column::constraints() const {
-  return constraints_;
+  return options_.constraints();
 }
 
 bool column::is_primary_key() const {
-  return constraints_.has(column_constraint::PrimaryKey);
+  return options_.constraints().has(column_constraint::PrimaryKey);
 }
 
 bool column::is_plain_column() const {
@@ -151,6 +218,22 @@ bool column::is_function() const {
 bool column::is_expression() const {
   const auto* expression = std::get_if<std::shared_ptr<abstract_column_expression>>(&value_);
   return expression != nullptr && static_cast<bool>(*expression);
+}
+
+bool column::is_nullable() const {
+  return !options_.constraints().has(column_constraint::NotNull);
+}
+
+bool column::is_foreign_key() const {
+  return options_.constraints().has(column_constraint::ForeignKey);
+}
+
+bool column::is_unique() const {
+  return options_.constraints().has(column_constraint::Unique);
+}
+
+bool column::is_identity() const {
+  return options_.constraints().has(column_constraint::Identity);
 }
 
 query_functions column::function() const {

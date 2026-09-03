@@ -29,7 +29,7 @@ column_expression::operator std::unique_ptr<abstract_column_expression>() && noe
 }
 
 column column_expression::as(const std::string& alias) && {
-    const column col{std::shared_ptr<abstract_column_expression>(expression_.release())};
+    const auto col = column::make_expression(std::shared_ptr<abstract_column_expression>(expression_.release()));
     return col.as(alias);
 }
 }

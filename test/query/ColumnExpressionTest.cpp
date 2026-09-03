@@ -117,14 +117,14 @@ TEST_CASE("ColumnExpression: accept dispatches to the correct visitor overload",
   }
 
   {
-    auto n = std::make_unique<table_column_expression>(column{"id"});
+    auto n = std::make_unique<table_column_expression>(column::make_plain("id"));
     n->accept(v);
     REQUIRE(v.hits.back() == "column");
   }
 
   {
     auto n = std::make_unique<binary_column_expression>(
-      std::make_unique<table_column_expression>(column{"x"}),
+      std::make_unique<table_column_expression>(column::make_plain("x")),
       binary_expression_operator::Plus,
       std::make_unique<value_expression>(int32_t{1})
     );
@@ -136,7 +136,7 @@ TEST_CASE("ColumnExpression: accept dispatches to the correct visitor overload",
 }
 
 TEST_CASE("ColumnExpression: accessors expose left/right and operand", "[query][expression]") {
-  auto left = std::make_unique<table_column_expression>(column{"x"});
+  auto left = std::make_unique<table_column_expression>(column::make_plain("x"));
   auto right = std::make_unique<value_expression>(int32_t{123});
 
   auto expr = binary_column_expression(std::move(left), binary_expression_operator::Minus, std::move(right));

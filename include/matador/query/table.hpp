@@ -41,7 +41,9 @@ public:
   [[nodiscard]] const std::string& schema_name() const;
   [[nodiscard]] std::string qualified_name() const;
   [[nodiscard]] const std::vector<column>& columns() const;
-  [[nodiscard]] std::vector<constraint> constraints() const;
+  [[nodiscard]] const std::vector<constraint>& constraints() const;
+
+  void update_name(const std::string& name);
 
   [[nodiscard]] bool has_alias() const;
 
@@ -65,18 +67,23 @@ protected:
         std::vector<column> columns);
 
 private:
-  friend column;
+  friend class table_generator;
+  friend class column;
 
   static void validate_schema(const std::vector<column>& columns);
   void rebind_columns();
+  void recreate_constraints();
 
   std::string name_;
   std::string alias_;
 
   std::string schema_name_;
   std::vector<column> columns_;
+  std::vector<constraint> constraints_;
 
   std::optional<std::size_t> pk_column_index_;
+  std::optional<std::size_t> join_column_index_;
+  std::optional<std::size_t> inverse_join_column_index_;
 };
 
 template<typename Type = table>

@@ -25,7 +25,7 @@ TEST_CASE("Column: plain columns expose names, aliases, and types", "[query][col
   REQUIRE(default_column.function() == query_functions::None);
   REQUIRE(default_column.expression() == nullptr);
 
-  const column id{"id", "customer_id"};
+  const auto id = column::make_plain("id", "customer_id");
   REQUIRE(id.name() == "id");
   REQUIRE(id.column_name() == "id");
   REQUIRE(id.canonical_name() == "id");
@@ -37,7 +37,7 @@ TEST_CASE("Column: plain columns expose names, aliases, and types", "[query][col
 
 TEST_CASE("Column: table ownership qualifies the name", "[query][column]") {
   const table customers{"customers"};
-  column id{&customers, "id", basic_type::Int32};
+  auto id = column::make_plain(&customers, "id", "", basic_type::Int32);
 
   REQUIRE(id.table() == &customers);
   REQUIRE(id.name() == "customers.id");
@@ -54,14 +54,14 @@ TEST_CASE("Column: table ownership qualifies the name", "[query][column]") {
   archived_customers = table{"former_customers"};
   REQUIRE(id.name() == "former_customers.id");
 
-  const table order{"order", {column{"number"}}};
+  const table order{"order", {column::make_plain("number")}};
   REQUIRE(order.columns().front().table() == &order);
   REQUIRE(order.columns().front().name() == "order.number");
 }
 
 TEST_CASE("Column: as preserves its value and replaces its alias", "[query][column]") {
   const table customers{"customers"};
-  const column original{&customers, "id", basic_type::Int64};
+  const auto original = column::make_plain(&customers, "id", "", basic_type::Int64);
   const column aliased = original.as("customer_id");
 
   REQUIRE(original.alias().empty());
@@ -77,36 +77,36 @@ TEST_CASE("Column: equality includes table-bound column identity and aliases", "
   const table customers{"customers"};
   const table orders{"orders"};
 
-  const column customer_id{&customers, "id"};
-  REQUIRE(customer_id.equals(column{&customers, "id"}));
-  REQUIRE_FALSE(customer_id.equals(column{&customers, "name"}));
-  REQUIRE_FALSE(customer_id.equals(column{&orders, "id"}));
+  const auto customer_id = column::make_plain(&customers, "id");
+  REQUIRE(customer_id.equals(column::make_plain(&customers, "id")));
+  REQUIRE_FALSE(customer_id.equals(column::make_plain(&customers, "name")));
+  REQUIRE_FALSE(customer_id.equals(column::make_plain(&orders, "id")));
   REQUIRE_FALSE(customer_id.equals(customer_id.as("customer_id")));
 }
 
 TEST_CASE("Column: equality distinguishes every active value", "[query][column]") {
-  const column id{"id"};
-  const column name{"name"};
-  REQUIRE(id.equals(column{"id"}));
+  const auto id = column::make_plain("id");
+  const auto name = column::make_plain("name");
+  REQUIRE(id.equals(column::make_plain("id")));
   REQUIRE_FALSE(id.equals(name));
 
-  const column count_id{query_functions::Count, "id"};
-  const column sum_id{query_functions::Sum, "id"};
-  REQUIRE(count_id.equals(column{query_functions::Count, "id"}));
+  const auto count_id = column::make_query_function(query_functions::Count, "id");
+  const auto sum_id = column::make_query_function(query_functions::Sum, "id");
+  REQUIRE(count_id.equals(column::make_query_function(query_functions::Count, "id")));
   REQUIRE_FALSE(count_id.equals(sum_id));
   REQUIRE_FALSE(id.equals(count_id));
 
   const auto expression = std::make_shared<placeholder_expression>();
-  const column first_expression{expression};
-  const column same_expression{expression};
-  const column other_expression{std::make_shared<placeholder_expression>()};
+  const auto first_expression= column::make_expression(expression);
+  const auto same_expression= column::make_expression(expression);
+  const auto other_expression= column::make_expression(std::make_shared<placeholder_expression>());
   REQUIRE(first_expression.equals(same_expression));
   REQUIRE_FALSE(first_expression.equals(other_expression));
   REQUIRE_FALSE(first_expression.equals(first_expression.as("placeholder")));
 }
 
 TEST_CASE("Column: function and expression columns retain their active value", "[query][column]") {
-  const column count{query_functions::Count, "id"};
+  const auto count = column::make_query_function(query_functions::Count, "id");
   REQUIRE(count.is_function());
   REQUIRE_FALSE(count.is_expression());
   REQUIRE(count.function() == query_functions::Count);
@@ -116,7 +116,7 @@ TEST_CASE("Column: function and expression columns retain their active value", "
   REQUIRE(count.expression() == nullptr);
 
   const auto expression = std::make_shared<placeholder_expression>();
-  const column calculated{expression};
+  const auto calculated= column::make_expression(expression);
   const column aliased = calculated.as("calculated_id");
   REQUIRE_FALSE(calculated.is_function());
   REQUIRE(calculated.is_expression());
@@ -128,7 +128,7 @@ TEST_CASE("Column: function and expression columns retain their active value", "
   REQUIRE(aliased.alias() == "calculated_id");
   REQUIRE(aliased.result_name() == "calculated_id");
 
-  column table_expression{expression};
+  auto table_expression= column::make_expression(expression);
   const table customers{"customers"};
   REQUIRE_THROWS_AS(table_expression.table(&customers), std::logic_error);
 

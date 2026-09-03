@@ -42,7 +42,7 @@ const column* basic_table_info::primary_key_attribute() const {
 }
 
 void basic_table_info::update_name(const std::string& name) const {
-  // table_->update_name(name);
+  table_->update_name(name);
 }
 
 basic_table_info::endpoint_iterator basic_table_info::register_relation_endpoint(const std::type_index &type, const std::shared_ptr<relation_endpoint> &endpoint) {

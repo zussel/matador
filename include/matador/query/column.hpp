@@ -3,7 +3,7 @@
 
 #include "matador/utils/types.hpp"
 
-#include "matador/query/column_constraint.hpp"
+#include "matador/query/column_options.hpp"
 #include "matador/query/expression/abstract_column_expression.hpp"
 #include "matador/query/query_functions.hpp"
 
@@ -19,23 +19,44 @@ class table;
 class column {
 public:
   column() = default;
-  explicit column(const char *name);
-  explicit column(const std::string& name);
-  column(const std::string& name, const std::string& alias);
-  column(query_functions func, const std::string& name);
-  column(const table* tab, const std::string& name);
-  column(const table* tab, const std::string& name, const std::string& alias);
-  column(const table* tab, const std::string& name, utils::basic_type type, column_constraints constraints = {});
-  column(const std::string& name, utils::basic_type type, column_constraints constraints = {});
-  column(const std::shared_ptr<abstract_column_expression>& expression);
 
-  column(const table* tab,
-               std::string  name,
-               std::string  alias,
-               utils::basic_type type,
-               query_functions func,
-               const std::shared_ptr<abstract_column_expression>& expression,
-               column_constraints constraints = {});
+  [[nodiscard]] static column make_plain(
+    std::string name,
+    std::string alias = "",
+    utils::basic_type type = utils::basic_type::Unknown,
+    column_options options = {}
+  );
+
+  [[nodiscard]] static column make_plain(
+    const table* tab,
+    std::string name,
+    std::string alias = "",
+    utils::basic_type type = utils::basic_type::Unknown,
+    column_options options = {},
+    size_t index = 0
+  );
+
+  [[nodiscard]] static column make_query_function(
+    query_functions func,
+    std::string name,
+    std::string alias = "",
+    utils::basic_type type = utils::basic_type::Unknown,
+    column_options options = {}
+  );
+
+  [[nodiscard]] static column make_query_function(
+    query_functions func,
+    const table* tab,
+    std::string name,
+    std::string alias = "",
+    utils::basic_type type = utils::basic_type::Unknown,
+    column_options options = {}
+  );
+
+  [[nodiscard]] static column make_expression(
+    const std::shared_ptr<abstract_column_expression>& expression,
+    std::string alias = ""
+  );
 
   column& operator=(const column& other) = default;
   column(const column& other) = default;
@@ -79,6 +100,14 @@ public:
   [[nodiscard]] const std::string& alias() const;
 
   /**
+   * Returns the current index of the column. If
+   * there is no referenced table the index is zero (0).
+   *
+   * @return The current index of the column.
+   */
+  [[nodiscard]] size_t index() const;
+
+  /**
    * Returns the result label name for this column in a SELECT list.
    * Semantics: alias if set, otherwise the raw column name (never table-qualified).
    *
@@ -91,16 +120,15 @@ public:
    * Returns constraints declared for this schema column.
    */
   [[nodiscard]] column_constraints constraints() const;
-  [[nodiscard]] bool is_primary_key() const;
 
   [[nodiscard]] bool is_plain_column() const;
   [[nodiscard]] bool is_function() const;
   [[nodiscard]] bool is_expression() const;
-  // [[nodiscard]] bool is_nullable() const;
-  // [[nodiscard]] bool is_primary_key() const;
-  // [[nodiscard]] bool is_foreign_key() const;
-  // [[nodiscard]] bool is_unique() const;
-  // [[nodiscard]] bool is_identity() const;
+  [[nodiscard]] bool is_nullable() const;
+  [[nodiscard]] bool is_primary_key() const;
+  [[nodiscard]] bool is_foreign_key() const;
+  [[nodiscard]] bool is_unique() const;
+  [[nodiscard]] bool is_identity() const;
 
   [[nodiscard]] query_functions function() const;
 
@@ -120,9 +148,20 @@ public:
   [[nodiscard]] std::shared_ptr<abstract_column_expression> expression() const;
 
 private:
+  column(const class table* tab,
+         std::string  name,
+         std::string  alias,
+         utils::basic_type type,
+         query_functions func,
+         const std::shared_ptr<abstract_column_expression>& expression,
+         const column_options& options,
+         size_t index);
+
+
   struct plain_column {
     const class table* table{nullptr};
     std::string name;
+    size_t index{};
     utils::basic_type type{utils::basic_type::Unknown};
   };
 
@@ -143,10 +182,11 @@ private:
 
 private:
   friend class table;
+  friend class table_generator;
 
   column_value value_{plain_column{}};
   std::string alias_;
-  column_constraints constraints_;
+  column_options options_;
 };
 
 column operator ""_col(const char *name, size_t len);

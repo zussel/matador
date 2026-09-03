@@ -132,7 +132,7 @@ protected:
   [[nodiscard]] std::unique_ptr<schema_node> pop_announce_node(const std::type_index &ti);
 
 protected:
-  friend class object_generator;
+  friend class table_generator;
   template < typename NodeType, template<typename> typename ...Observers >
   friend class relation_completer;
 
