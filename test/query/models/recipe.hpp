@@ -27,7 +27,7 @@ struct ingredient {
   void process(Operator &op) {
     query::field::primary_key(op, "id", id);
     query::field::attribute(op, "name", name, UniqueVarChar255);
-    query::field::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", query::CascadeAllFetchEager);
+    query::field::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", CascadeAllFetchEager);
   }
 };
 
@@ -50,7 +50,7 @@ struct recipe {
   void process(Operator &op) {
     query::field::primary_key(op, "id", id);
     query::field::attribute(op, "name", name, UniqueVarChar255);
-    query::field::has_many_to_many(op, "recipe_ingredients", ingredients, query::CascadeAllFetchLazy);
+    query::field::has_many_to_many(op, "recipe_ingredients", ingredients, CascadeAllFetchLazy);
   }
 };
 
@@ -77,7 +77,7 @@ struct ingredient_pk_generator {
   void process(Operator &op) {
     query::field::primary_key(op, "id", id, PkAttribute);
     query::field::attribute(op, "name", name, UniqueVarChar255);
-    query::field::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", query::CascadeAllFetchEager);
+    query::field::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", CascadeAllFetchEager);
   }
 };
 
@@ -99,7 +99,7 @@ struct recipe_pk_generator {
   void process(Operator &op) {
     query::field::primary_key(op, "id", id, PkAttribute);
     query::field::attribute(op, "name", name, UniqueVarChar255);
-    query::field::has_many_to_many(op, "recipe_ingredients", ingredients, query::CascadeAllFetchLazy);
+    query::field::has_many_to_many(op, "recipe_ingredients", ingredients, CascadeAllFetchLazy);
   }
 };
 

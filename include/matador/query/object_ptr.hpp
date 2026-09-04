@@ -178,4 +178,9 @@ object_ptr<Type> make_object(Args &&... args) {
 }
 }
 
+namespace matador {
+template <typename Type>
+using object_ptr = query::object_ptr<Type>;
+}
+
 #endif //OBJECT_PTR_HPP

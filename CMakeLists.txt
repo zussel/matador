@@ -68,7 +68,7 @@ endif()
 #ENDIF()
 
 #OPTION(ARCH "Compiler architecture for Clang/GCC" "")
-#OPTION(EXAMPLES "Build examples" true)
+OPTION(EXAMPLES "Build examples" true)
 
 FIND_PACKAGE( Threads REQUIRED )
 
@@ -186,13 +186,13 @@ endif()
 
 include(CTest)
 
-ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(doc)
-ADD_SUBDIRECTORY(test)
+add_subdirectory(src)
+add_subdirectory(doc)
+add_subdirectory(test)
 if (EXAMPLES)
-  ADD_SUBDIRECTORY(examples EXCLUDE_FROM_ALL)
-  ADD_SUBDIRECTORY(sandbox EXCLUDE_FROM_ALL)
-ENDIF()
+  add_subdirectory(examples EXCLUDE_FROM_ALL)
+#  ADD_SUBDIRECTORY(sandbox EXCLUDE_FROM_ALL)
+endif()
 
 #INSTALL(
 #  DIRECTORY ${PROJECT_BINARY_DIR}/doc/web/

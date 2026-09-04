@@ -1,36 +1,32 @@
-FIND_PACKAGE(Doxygen)
+find_package(Doxygen REQUIRED)
 
-IF(DOXYGEN_FOUND)
-    MESSAGE(STATUS "Doxygen detected - building documentation target")
-    # Configure the Template Doxyfile for our specific project
-    configure_file(doxygen/oos-api.dxy.in ${PROJECT_BINARY_DIR}/oos-api.dxy @ONLY IMMEDIATE)
-    configure_file(doxygen/oos.dxy.in ${PROJECT_BINARY_DIR}/oos.dxy @ONLY IMMEDIATE)
-    configure_file(${CMAKE_SOURCE_DIR}/scripts/sed4ghpages.sh.in ${CMAKE_BINARY_DIR}/sed4ghpages @ONLY IMMEDIATE)
+if(DOXYGEN_FOUND)
+    message(STATUS "Doxygen detected - building documentation target")
 
-    # Add a custom target to run Doxygen when ever the project is built
-    add_custom_target (doc
-                       COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos-api.dxy
-                       COMMENT "Generating API documentation with Doxygen" VERBATIM)
-    add_custom_target (web
-                       COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos.dxy
-                       COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/doc/web ${CMAKE_BINARY_DIR}/doc/web
-                       COMMENT "Generating WEB documentation with Doxygen" VERBATIM)
-
-    file(GLOB WebFiles
-      ${CMAKE_BINARY_DIR}/doc/api/*.css
-      ${CMAKE_BINARY_DIR}/doc/api/*.png
-      ${CMAKE_BINARY_DIR}/doc/api/*.js
+    include(FetchContent)
+    FetchContent_Declare(
+            doxygen-awesome-css
+            URL https://github.com/jothepro/doxygen-awesome-css/archive/refs/heads/main.zip
     )
+    FetchContent_MakeAvailable(doxygen-awesome-css)
 
-    add_custom_target (ghdoc
-                       COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos-api.dxy
-                       COMMAND ${CMAKE_BINARY_DIR}/sed4ghpages
-                       COMMENT "Generating API documentation with Doxygen" VERBATIM)
+    # Save the location the files were cloned into
+    # This allows us to get the path to doxygen-awesome.css
+    FetchContent_GetProperties(doxygen-awesome-css SOURCE_DIR AWESOME_CSS_DIR)
 
-    foreach(WebFile ${WebFiles})
-      add_custom_command(TARGET ghdoc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${WebFile} ${CMAKE_BINARY_DIR}/doc/gh-pages/)
-    endforeach()
+    # Generate the Doxyfile
+    set(DOXYGEN_IN_FILE  "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in")
+    set(DOXYGEN_OUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile")
 
-ELSE(DOXYGEN_FOUND)
-    MESSAGE(STATUS "Doxygen not detected - no documentation target")
-ENDIF(DOXYGEN_FOUND)
+    # Doxyfile.in einlesen und Platzhalter (wie @AWESOME_CSS_DIR@) ersetzen
+    configure_file(${DOXYGEN_IN_FILE} ${DOXYGEN_OUT_FILE} @ONLY)
+
+    add_custom_target(doc
+            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT_FILE}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Generiere HTML-Dokumentation mit Doxygen Awesome Theme..."
+            VERBATIM
+    )
+else(DOXYGEN_FOUND)
+    message(STATUS "Doxygen not detected - no documentation target")
+endif(DOXYGEN_FOUND)

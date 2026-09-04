@@ -25,12 +25,12 @@ private:
   cascade_type cascade_{cascade_type::None};
   fetch_type fetch_{fetch_type::Lazy};
 };
-
-const foreign_options CascadeNoneFetchLazy {};
-const foreign_options CascadeNoneFetchEager {fetch_type::Eager};
-const foreign_options CascadeAllFetchLazy {cascade_type::All, fetch_type::Lazy};
-const foreign_options CascadeAllFetchEager {cascade_type::All, fetch_type::Eager};
-
 }
 
+namespace matador {
+const query::foreign_options CascadeNoneFetchLazy {};
+const query::foreign_options CascadeNoneFetchEager {query::fetch_type::Eager};
+const query::foreign_options CascadeAllFetchLazy {query::cascade_type::All, query::fetch_type::Lazy};
+const query::foreign_options CascadeAllFetchEager {query::cascade_type::All, query::fetch_type::Eager};
+}
 #endif //MATADOR_FOREIGN_OPTIONS_HPP

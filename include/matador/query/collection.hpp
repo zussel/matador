@@ -61,4 +61,9 @@ private:
 };
 
 }
+
+namespace matador {
+template <typename Type>
+using collection = query::collection<Type>;
+}
 #endif //COLLECTION_HPP

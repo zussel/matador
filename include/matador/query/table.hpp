@@ -72,7 +72,8 @@ private:
 
   static void validate_schema(const std::vector<column>& columns);
   void rebind_columns();
-  void recreate_constraints();
+  void rebind_constraints();
+  void create_constraints();
 
   std::string name_;
   std::string alias_;

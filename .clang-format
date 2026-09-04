@@ -1,0 +1,7 @@
+BasedOnStyle: LLVM
+Language: Cpp
+ColumnLimit: 100
+IndentWidth: 2
+Standard: c++17
+AllowShortFunctionsOnASingleLine: Empty
+BreakBeforeBraces: Attach

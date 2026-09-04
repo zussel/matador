@@ -106,4 +106,7 @@ public:
 };
 }
 
+namespace matador {
+using schema = query::schema;
+}
 #endif //SCHEMA_HPP

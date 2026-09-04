@@ -1,0 +1,24 @@
+# Projektdaten
+PROJECT_NAME           = "@PROJECT_NAME@"
+PROJECT_NUMBER         = "@PROJECT_VERSION@"
+
+# Ein- und Ausgabepfade (Alles relativ zum Build-Ordner)
+OUTPUT_DIRECTORY       = .
+INPUT                  = "@CMAKE_SOURCE_DIR@/include" "@CMAKE_CURRENT_SOURCE_DIR@"
+RECURSIVE              = YES
+# HTML Optionen & Doxygen Awesome Theme Einbindung
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_EXTRA_STYLESHEET  = @AWESOME_CSS_DIR@/doxygen-awesome.css
+
+# Optionale Doxygen-Awesome Erweiterungen für eine schönere Navigation (empfohlen)
+HTML_EXTRA_FILES       = @AWESOME_CSS_DIR@/doxygen-awesome-darkmode-toggle.js \
+                         @AWESOME_CSS_DIR@/doxygen-awesome-fragment-copy-button.js \
+                         @AWESOME_CSS_DIR@/doxygen-awesome-paragraph-link.js \
+                         @AWESOME_CSS_DIR@/doxygen-awesome-interactive-toc.js
+
+# Für ein modernes Look&Feel mit Sidebar:
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_COLORSTYLE        = LIGHT # Wird durch das Theme überschrieben, zwingt aber moderne Struktur

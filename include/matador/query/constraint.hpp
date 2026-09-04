@@ -28,6 +28,8 @@ public:
   [[nodiscard]] bool is_not_null_constraint() const;
 
 private:
+  friend class table;
+
   const class table* table_;
   std::size_t column_index_;
   column_constraint kind_;

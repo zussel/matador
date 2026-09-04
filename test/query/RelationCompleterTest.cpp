@@ -68,7 +68,7 @@ struct department {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
-    field::has_many(op, "employees", employees, "department_id", matador::query::CascadeAllFetchLazy);
+    field::has_many(op, "employees", employees, "department_id", matador::CascadeAllFetchLazy);
   }
 };
 
@@ -82,7 +82,7 @@ struct employee {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
-    field::belongs_to(op, "department_id", department_, matador::query::CascadeAllFetchLazy);
+    field::belongs_to(op, "department_id", department_, matador::CascadeAllFetchLazy);
   }
 };
 
@@ -99,7 +99,7 @@ struct user {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
-    field::has_one(op, "session", session_, "user_id", matador::query::CascadeAllFetchLazy);
+    field::has_one(op, "session", session_, "user_id", matador::CascadeAllFetchLazy);
   }
 };
 
@@ -113,7 +113,7 @@ struct session {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
     field::attribute(op, "token", token, matador::VarChar255);
-    field::belongs_to(op, "user_id", user_, matador::query::CascadeAllFetchLazy);
+    field::belongs_to(op, "user_id", user_, matador::CascadeAllFetchLazy);
   }
 };
 
@@ -129,7 +129,7 @@ struct article {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
     field::attribute(op, "title", title, matador::VarChar255);
-    field::has_many(op, "article_tags", tags, "article_id", matador::query::CascadeAllFetchLazy);
+    field::has_many(op, "article_tags", tags, "article_id", matador::CascadeAllFetchLazy);
   }
 };
 
@@ -155,7 +155,7 @@ struct account {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
-    field::has_many(op, "roles", roles, "account_id", matador::query::CascadeAllFetchLazy);
+    field::has_many(op, "roles", roles, "account_id", matador::CascadeAllFetchLazy);
   }
 };
 
@@ -172,7 +172,7 @@ struct recipe {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar255);
-    field::has_many_to_many(op, "recipe_ingredients", ingredients, "recipe_id", "ingredient_id", matador::query::CascadeAllFetchLazy);
+    field::has_many_to_many(op, "recipe_ingredients", ingredients, "recipe_id", "ingredient_id", matador::CascadeAllFetchLazy);
   }
 };
 
@@ -186,7 +186,7 @@ struct ingredient {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar255);
-    field::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", matador::query::CascadeAllFetchLazy);
+    field::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", matador::CascadeAllFetchLazy);
   }
 };
 
@@ -201,7 +201,7 @@ struct invalid_has_many_side {
   void process(Operator &op) {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
-    field::has_many(op, "children", children, "parent_id", matador::query::CascadeAllFetchLazy);
+    field::has_many(op, "children", children, "parent_id", matador::CascadeAllFetchLazy);
   }
 };
 
@@ -213,7 +213,7 @@ struct invalid_has_one_side {
   void process(Operator &op) {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
-    field::has_one(op, "parent", parent, "parent_id", matador::query::CascadeAllFetchLazy);
+    field::has_one(op, "parent", parent, "parent_id", matador::CascadeAllFetchLazy);
   }
 };
 
@@ -229,7 +229,7 @@ struct multi_parent_a {
   void process(Operator &op) {
     namespace field = matador::query::field;
     field::primary_key(op, "id", id);
-    field::has_many(op, "children", children, "parent_a_id", matador::query::CascadeAllFetchLazy);
+    field::has_many(op, "children", children, "parent_a_id", matador::CascadeAllFetchLazy);
   }
 };
 
@@ -256,8 +256,8 @@ struct multi_child {
     // Absichtlich zuerst der nicht passende belongs_to-Endpunkt.
     // Das deckt die Regression ab, dass join_column_finder einen bereits
     // gefundenen Treffer nicht wieder auf false zurücksetzen darf.
-    field::belongs_to(op, "parent_b_id", parent_b, matador::query::CascadeAllFetchLazy);
-    field::belongs_to(op, "parent_a_id", parent_a, matador::query::CascadeAllFetchLazy);
+    field::belongs_to(op, "parent_b_id", parent_b, matador::CascadeAllFetchLazy);
+    field::belongs_to(op, "parent_a_id", parent_a, matador::CascadeAllFetchLazy);
   }
 };
 

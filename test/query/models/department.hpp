@@ -24,7 +24,7 @@ struct department {
     void process(Operator &op) {
         query::field::primary_key(op, "id", id);
         query::field::attribute(op, "name", name, UniqueVarChar63);
-        query::field::has_many(op, "employees", employees, "dep_id", query::CascadeAllFetchEager);
+        query::field::has_many(op, "employees", employees, "dep_id", CascadeAllFetchEager);
         // field::belongs_to(op, "manager_id", manager, utils::fetch_type::EAGER);
     }
 };
@@ -43,7 +43,7 @@ struct employee {
         query::field::primary_key(op, "id", id);
         query::field::attribute(op, "first_name", first_name, VarChar63);
         query::field::attribute(op, "last_name", last_name, VarChar63);
-        query::field::belongs_to(op, "dep_id", dep, query::CascadeAllFetchLazy);
+        query::field::belongs_to(op, "dep_id", dep, CascadeAllFetchLazy);
     }
 };
 

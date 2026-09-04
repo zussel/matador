@@ -26,7 +26,7 @@ table::table(std::string schema_name, std::string name, std::string alias, std::
 , schema_name_(std::move(schema_name))
 , columns_(std::move(columns)) {
   rebind_columns();
-  recreate_constraints();
+  create_constraints();
 }
 
 table::table(const table &other)
@@ -34,11 +34,12 @@ table::table(const table &other)
 , alias_(other.alias_)
 , schema_name_(other.schema_name_)
 , columns_(other.columns_)
+, constraints_(other.constraints_)
 , pk_column_index_(other.pk_column_index_) {
   for (auto &col : columns_) {
     col.table(this);
   }
-  recreate_constraints();
+  rebind_constraints();
 }
 
 table & table::operator=(const table &other) {
@@ -53,11 +54,12 @@ table::table(table &&other) noexcept
 , alias_(std::move(other.alias_))
 , schema_name_(std::move(other.schema_name_))
 , columns_(std::move(other.columns_))
+, constraints_(std::move(other.constraints_))
 , pk_column_index_(other.pk_column_index_) {
   for (auto &col : columns_) {
     col.table(this);
   }
-  recreate_constraints();
+  rebind_constraints();
   other.constraints_.clear();
   other.columns_.clear();
   other.pk_column_index_.reset();
@@ -68,11 +70,12 @@ table & table::operator=(table &&other) noexcept {
   alias_ = std::move(other.alias_);
   schema_name_ = std::move(other.schema_name_);
   columns_ = std::move(other.columns_);
+  constraints_ = std::move(other.constraints_);
   pk_column_index_ = other.pk_column_index_;
   for (auto &col : columns_) {
     col.table(this);
   }
-  recreate_constraints();
+  rebind_constraints();
   other.constraints_.clear();
   other.columns_.clear();
   other.pk_column_index_.reset();
@@ -105,26 +108,6 @@ void table::update_name(const std::string& name) {
 
 const std::vector<constraint>& table::constraints() const {
   return constraints_;
-  constexpr column_constraint constraint_kinds[] = {
-    column_constraint::Index,
-    column_constraint::Unique,
-    column_constraint::PrimaryKey,
-    column_constraint::ForeignKey,
-    column_constraint::Identity,
-    column_constraint::Default,
-    column_constraint::NotNull
-  };
-
-  std::vector<constraint> result;
-  for (std::size_t column_index = 0; column_index < columns_.size(); ++column_index) {
-    const auto column_constraints = columns_[column_index].constraints();
-    for (const auto kind : constraint_kinds) {
-      if (column_constraints.has(kind)) {
-        result.emplace_back(*this, column_index, kind);
-      }
-    }
-  }
-  return result;
 }
 
 bool table::has_alias() const {
@@ -201,10 +184,15 @@ void table::rebind_columns() {
     }
     columns_[i].table(this);
   }
-
 }
 
-void table::recreate_constraints() {
+void table::rebind_constraints() {
+  for (auto& c : constraints_) {
+    c.table_ = this;
+  }
+}
+
+void table::create_constraints() {
   constexpr column_constraint constraint_kinds[] = {
     column_constraint::Index,
     column_constraint::Unique,
