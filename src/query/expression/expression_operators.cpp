@@ -80,7 +80,7 @@ column_expression operator%(const column& col, placeholder /*placeholder*/) {
     )};
 }
 
-column_expression operator%(placeholder /*placeholder*/, const column& col) {
+column_expression operator%(placeholder /*val*/, const column& col) {
   return column_expression{std::make_unique<binary_column_expression>(
       std::make_unique<placeholder_expression>(),
       binary_expression_operator::Modulo,
