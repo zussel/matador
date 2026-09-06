@@ -38,7 +38,7 @@ add_library(matador
     query/foreign_options.cpp
     query/identifier.cpp
     query/intermediates/executable_query.cpp
-    query/intermediates/query_create_intermediate.cpp
+  query/intermediates/create_intermediate.cpp
     query/intermediates/intermediate.cpp
     query/internal/basic_type_to_string_visitor.cpp
     query/internal/attribute_string_writer.cpp
