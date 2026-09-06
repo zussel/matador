@@ -5,7 +5,6 @@
 
 namespace matador::query {
 class expression_visitor;
-class query_column;
 
 class abstract_column_expression {
 public:

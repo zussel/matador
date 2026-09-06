@@ -157,13 +157,13 @@ TEST_CASE("Table: constraints retain their table and column identity", "[query][
 TEST_CASE("Constraint: validates its referenced column and kind", "[query][constraint]") {
   const table orders{"orders", {column::make_plain("id", "", basic_type::Int64)}};
 
-  REQUIRE_THROWS_AS((constraint{orders, 1, column_constraint::Unique}), std::out_of_range);
-  REQUIRE_THROWS_AS((constraint{orders, 0, column_constraint::None}), std::invalid_argument);
-  REQUIRE_THROWS_AS((constraint{orders, 0, column_constraint::Unique}), std::invalid_argument);
-  REQUIRE_THROWS_AS((constraint{
+  REQUIRE_THROWS_AS(constraint::make_column_constraint(orders, 1, column_constraint::Unique), std::out_of_range);
+  REQUIRE_THROWS_AS(constraint::make_column_constraint(orders, 0, column_constraint::None), std::invalid_argument);
+  REQUIRE_THROWS_AS(constraint::make_column_constraint(orders, 0, column_constraint::Unique), std::invalid_argument);
+  REQUIRE_THROWS_AS(constraint::make_column_constraint(
                       orders, 0, static_cast<column_constraint>(
                         static_cast<uint8_t>(column_constraint::Unique) |
-                        static_cast<uint8_t>(column_constraint::NotNull))}),
+                        static_cast<uint8_t>(column_constraint::NotNull))),
                     std::invalid_argument);
 }
 

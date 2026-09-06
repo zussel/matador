@@ -181,8 +181,7 @@ void table_generator::create_fk_constraint(const std::string& name) const {
         return;
     }
     const auto obj = foreign_table<Type>();
-    constraint pk_constraint(*table_, pk_attr->index(), column_constraint::ForeignKey);
-    // pk_constraint.reference_ = obj;
+    constraint pk_constraint = constraint::make_fk_constraint(*table_, pk_attr->index(), obj.get());
     table_->constraints_.emplace_back(pk_constraint);
 }
 

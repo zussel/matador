@@ -208,7 +208,7 @@ void table::create_constraints() {
     const auto column_constraints = columns_[column_index].constraints();
     for (const auto kind : constraint_kinds) {
       if (column_constraints.has(kind)) {
-        constraints_.emplace_back(*this, column_index, kind);
+        constraints_.emplace_back(constraint::make_column_constraint(*this, column_index, kind));
       }
     }
   }

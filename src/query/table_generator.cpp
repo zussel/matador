@@ -31,7 +31,7 @@ void table_generator::create_pk_constraint(const std::string &name) const {
   if (pk_attr == std::end(table_->columns_)) {
     return;
   }
-  constraint pk_constraint(*table_, pk_attr->index(), column_constraint::PrimaryKey);
+  constraint pk_constraint = constraint::make_column_constraint(*table_, pk_attr->index(), column_constraint::PrimaryKey);
   table_->constraints_.emplace_back(pk_constraint);
 }
 
@@ -40,7 +40,7 @@ void table_generator::create_unique_constraint(const std::string &name) const {
   if (pk_attr == std::end(table_->columns_)) {
     return;
   }
-  constraint pk_constraint(*table_, pk_attr->index(), column_constraint::Unique);
+  constraint pk_constraint = constraint::make_column_constraint(*table_, pk_attr->index(), column_constraint::Unique);
   table_->constraints_.emplace_back(pk_constraint);
 }
 

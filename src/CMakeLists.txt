@@ -15,18 +15,40 @@ add_library(matador
     query/column.cpp
     query/column_options.cpp
     query/column_value.cpp
+    query/criteria/abstract_column_criteria.cpp
+    query/criteria/between_criteria.cpp
+    query/criteria/binary_criteria.cpp
+    query/criteria/check_null_criteria.cpp
+    query/criteria/collection_criteria.cpp
+    query/criteria/criteria_operators.cpp
+    query/criteria/like_criteria.cpp
+    query/criteria/logical_criteria.cpp
+    query/criteria/not_criteria.cpp
+    query/criteria_evaluator.cpp
     query/constraint.cpp
     query/error_code.cpp
+    query/dialect.cpp
     query/expression/binary_column_expression.cpp
     query/expression/column_expression.cpp
     query/expression/expression_operators.cpp
     query/expression/placeholder_expression.cpp
     query/expression/table_column_expression.cpp
     query/expression/value_expression.cpp
+    query/expression_evaluator.cpp
     query/foreign_options.cpp
     query/identifier.cpp
+    query/intermediates/executable_query.cpp
+    query/intermediates/query_create_intermediate.cpp
+    query/intermediates/intermediate.cpp
+    query/internal/basic_type_to_string_visitor.cpp
+    query/internal/attribute_string_writer.cpp
+    query/internal/column_value_pair.cpp
+    query/internal/query_parts.cpp
+    query/internal/string_builder_utils.cpp
     query/observer.cpp
     query/primary_key_options.cpp
+    query/query_builder.cpp
+    query/query_utils.cpp
     query/relation_endpoint.cpp
     query/schema_node.cpp
     query/schema_node_iterator.cpp
@@ -40,6 +62,7 @@ add_library(matador
     utils/string.cpp
     utils/types.cpp
     utils/version.cpp
+  ../include/matador/query/query_data.hpp
 )
 
 include(GenerateExportHeader)

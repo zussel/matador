@@ -26,9 +26,18 @@ bool is_valid_constraint_kind(const column_constraint kind) {
 
 } // namespace
 
-constraint::constraint(const class table& table, const std::size_t column_index, const column_constraint kind)
+constraint constraint::make_column_constraint(const query::table &table, const std::size_t column_index, const column_constraint kind) {
+  return constraint{table, column_index, kind, nullptr};
+}
+
+constraint constraint::make_fk_constraint(const query::table &table, const std::size_t column_index, const class table &ref_table) {
+  return constraint{table, column_index, column_constraint::ForeignKey, &ref_table};
+}
+
+constraint::constraint(const class table& table, const std::size_t column_index, const column_constraint kind, const class table* ref_table)
 : table_(&table)
 , column_index_(column_index)
+, ref_table_(ref_table)
 , kind_(kind) {
   if (column_index >= table.columns().size()) {
     throw std::out_of_range("Constraint column index is out of range");
@@ -85,4 +94,19 @@ bool constraint::is_not_null_constraint() const {
   return kind_ == column_constraint::NotNull;
 }
 
+bool constraint::has_ref_table() const {
+  return ref_table_ != nullptr;
+}
+
+const class table& constraint::ref_table() const {
+  return *ref_table_;
+}
+
+std::size_t constraint::ref_column_index() const {
+  return ref_column_index_;
+}
+
+const class column & constraint::ref_column() const {
+  return ref_table_->columns().at(ref_column_index_);
+}
 } // namespace matador::query

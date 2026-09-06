@@ -116,10 +116,16 @@ public:
   [[nodiscard]] const std::string& result_name() const;
 
   [[nodiscard]] utils::basic_type type() const;
+
   /**
    * Returns constraints declared for this schema column.
    */
   [[nodiscard]] column_constraints constraints() const;
+
+  /**
+   * Returns size declared for this schema column.
+   */
+  [[nodiscard]] size_t size() const;
 
   [[nodiscard]] bool is_plain_column() const;
   [[nodiscard]] bool is_function() const;

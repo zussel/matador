@@ -203,6 +203,10 @@ column_constraints column::constraints() const {
   return options_.constraints();
 }
 
+size_t column::size() const {
+  return options_.size();
+}
+
 bool column::is_primary_key() const {
   return options_.constraints().has(column_constraint::PrimaryKey);
 }

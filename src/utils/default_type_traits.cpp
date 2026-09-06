@@ -1,6 +1,6 @@
 #include "matador/utils/default_type_traits.hpp"
 
-#include "matador/utils/value_reader.hpp"
+#include "../../include/matador/query/value_reader.hpp"
 #include "matador/utils/value_writer.hpp"
 
 namespace matador::utils {
