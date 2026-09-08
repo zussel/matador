@@ -35,10 +35,13 @@ add_library(matador
     query/expression/table_column_expression.cpp
     query/expression/value_expression.cpp
     query/expression_evaluator.cpp
+    query/field.cpp
     query/foreign_options.cpp
     query/identifier.cpp
+    query/intermediates/alter_intermediate.cpp
+    query/intermediates/alter_table_intermediate.cpp
     query/intermediates/executable_query.cpp
-  query/intermediates/create_intermediate.cpp
+    query/intermediates/create_intermediate.cpp
     query/intermediates/intermediate.cpp
     query/internal/basic_type_to_string_visitor.cpp
     query/internal/attribute_string_writer.cpp
@@ -47,8 +50,10 @@ add_library(matador
     query/internal/string_builder_utils.cpp
     query/observer.cpp
     query/primary_key_options.cpp
+    query/query.cpp
     query/query_builder.cpp
     query/query_utils.cpp
+    query/record.cpp
     query/relation_endpoint.cpp
     query/schema_node.cpp
     query/schema_node_iterator.cpp

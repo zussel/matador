@@ -73,7 +73,7 @@ void query_builder::visit(internal::query_add_foreign_key_reference_part& part) 
   query_.sql += ')';
 }
 
-void query_builder::visit(internal::query_add_constraint_part_by_constraint& part) {
+void query_builder::visit(internal::add_constraint_part_by_constraint& part) {
   query_.sql += build_add_constraint_string(part.constraint());
 }
 

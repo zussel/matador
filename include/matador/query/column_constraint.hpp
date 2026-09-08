@@ -17,4 +17,9 @@ enum class column_constraint : uint8_t {
 
 using column_constraints = utils::flags<column_constraint>;
 }
+
+namespace matador {
+using column_constraint = query::column_constraint;
+using column_constraints = query::column_constraints;
+}
 #endif //MATADOR_COLUMN_CONSTRAINT_HPP

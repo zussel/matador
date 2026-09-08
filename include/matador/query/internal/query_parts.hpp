@@ -45,9 +45,9 @@ private:
   std::string name_;
 };
 
-class query_add_constraint_part_by_constraint final : public query_part {
+class add_constraint_part_by_constraint final : public query_part {
 public:
-  explicit query_add_constraint_part_by_constraint(const constraint &co);
+  explicit add_constraint_part_by_constraint(const constraint &co);
   void accept(query_part_visitor &visitor) override;
 
   [[nodiscard]] const class constraint &constraint() const;

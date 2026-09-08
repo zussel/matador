@@ -39,16 +39,16 @@ const std::string &query_add_key_constraint_part::name() const {
   return name_;
 }
 
-query_add_constraint_part_by_constraint::query_add_constraint_part_by_constraint(const class constraint &co)
+add_constraint_part_by_constraint::add_constraint_part_by_constraint(const class constraint &co)
 : query_part(dialect_token::AddConstraint)
 , constraint_(co) {
 }
 
-void query_add_constraint_part_by_constraint::accept(query_part_visitor &visitor) {
+void add_constraint_part_by_constraint::accept(query_part_visitor &visitor) {
   visitor.visit(*this);
 }
 
-const class constraint &query_add_constraint_part_by_constraint::constraint() const {
+const class constraint &add_constraint_part_by_constraint::constraint() const {
   return constraint_;
 }
 

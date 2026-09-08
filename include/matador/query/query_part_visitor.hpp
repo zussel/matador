@@ -11,7 +11,7 @@ class query_add_key_constraint_part;
 class query_drop_key_constraint_part_by_name;
 class query_drop_key_constraint_part_by_constraint;
 class query_add_foreign_key_constraint_part;
-class query_add_constraint_part_by_constraint;
+class add_constraint_part_by_constraint;
 class query_add_foreign_key_reference_part;
 class query_add_primary_key_constraint_part;
 // Select
@@ -68,7 +68,7 @@ public:
   virtual void visit(internal::query_alter_table_part &part) = 0;
   virtual void visit(internal::query_add_key_constraint_part &part) = 0;
   virtual void visit(internal::query_add_foreign_key_constraint_part &part) = 0;
-  virtual void visit(internal::query_add_constraint_part_by_constraint &part) = 0;
+  virtual void visit(internal::add_constraint_part_by_constraint &part) = 0;
   virtual void visit(internal::query_add_primary_key_constraint_part &part) = 0;
   virtual void visit(internal::query_add_foreign_key_reference_part &part) = 0;
   virtual void visit(internal::query_drop_key_constraint_part_by_name &part) = 0;

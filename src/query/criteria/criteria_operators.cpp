@@ -26,7 +26,7 @@ public:
   void serialize(uint32_t &x, const matador::query::column_options &) override { value_ = x; }
   void serialize(uint64_t &x, const matador::query::column_options &) override { value_ = x; }
   void serialize(std::string &x, const matador::query::column_options &) override { value_ = x; }
-  void serialize(matador::utils::null_type_t &x, const matador::query::column_options &) override { value_.type(matador::utils::basic_type::Null); }
+  void serialize(matador::utils::null_type_t &/*x*/, const matador::query::column_options &) override { value_.type(matador::utils::basic_type::Null); }
 
 private:
   matador::query::column_value value_;

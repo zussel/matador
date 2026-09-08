@@ -34,7 +34,7 @@ public:
   void visit(internal::query_add_foreign_key_constraint_part& part) override;
   void visit(internal::query_add_primary_key_constraint_part& part) override;
   void visit(internal::query_add_foreign_key_reference_part& part) override;
-  void visit(internal::query_add_constraint_part_by_constraint &part) override;
+  void visit(internal::add_constraint_part_by_constraint &part) override;
   void visit(internal::query_drop_key_constraint_part_by_name &part) override;
   void visit(internal::query_drop_key_constraint_part_by_constraint &part) override;
 
