@@ -73,15 +73,32 @@ public:
   }
 
 private:
+  class type_stack_guard {
+  public:
+    explicit type_stack_guard(std::stack<std::type_index> &stack, const std::type_index type)
+    : stack_(stack) {
+      stack_.push(type);
+    }
+
+    ~type_stack_guard() {
+      stack_.pop();
+    }
+
+    type_stack_guard(const type_stack_guard &) = delete;
+    type_stack_guard &operator=(const type_stack_guard &) = delete;
+
+  private:
+    std::stack<std::type_index> &stack_;
+  };
+
   template<class Type>
   void on_foreign_key(const fetch_type fetch) {
     if (fetch == fetch_type::Lazy) {
       ++column_index_;
     } else {
       const Type obj{};
-      type_stack_.emplace(typeid(Type));
+      type_stack_guard guard(type_stack_, typeid(Type));
       access::process(*this, obj);
-      type_stack_.pop();
     }
   }
 

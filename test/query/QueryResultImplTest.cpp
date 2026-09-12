@@ -2,7 +2,9 @@
 
 #include "matador/query/access.hpp"
 #include "matador/query/collection.hpp"
+#include "matador/query/intermediates/fetchable_query.hpp"
 #include "matador/query/internal/query_result_impl.hpp"
+#include "matador/query/query_result.hpp"
 
 #include <limits>
 #include <stdexcept>
@@ -183,14 +185,18 @@ TEST_CASE("query_result_impl resets and deduplicates eager collections per paren
   auto result = make_result<collection_parent>({
     {{uint64_t{1}, uint64_t{2}, std::string{"first"}}},
     {{uint64_t{1}, uint64_t{2}, std::string{"first"}}},
+    {{uint64_t{1}, uint64_t{3}, std::string{"second"}}},
     {{uint64_t{3}, uint64_t{4}, std::string{"second"}}}
   });
   collection_parent first;
   collection_parent second;
 
   REQUIRE(result.fetch(first));
-  REQUIRE(first.children.size() == 1);
-  REQUIRE(first.children.begin()->primary_key().as<uint64_t>().value() == 2);
+  REQUIRE(first.children.size() == 2);
+  auto child_it = first.children.begin();
+  REQUIRE(child_it->primary_key().as<uint64_t>().value() == 2);
+  ++child_it;
+  REQUIRE(child_it->primary_key().as<uint64_t>().value() == 3);
 
   REQUIRE(result.fetch(second));
   REQUIRE(second.children.size() == 1);
@@ -209,4 +215,78 @@ TEST_CASE("query_result_impl propagates reader failures", "[query_result_impl]")
   REQUIRE_THROWS_AS(result.fetch(model), matador::utils::error_exception);
 }
 
+TEST_CASE("query_result_impl propagates reader failures for records", "[query_result_impl]") {
+  matador::query::query_result_impl result(
+    std::make_unique<result_reader>(std::vector<std::vector<cell>>{}, 0),
+    {},
+    std::make_shared<matador::query::resolver_service>(),
+    typeid(matador::query::record)
+  );
+  matador::query::record record;
+
+  REQUIRE_THROWS_AS(result.fetch(record), matador::utils::error_exception);
 }
+
+TEST_CASE("query_result iterates typed results", "[query_result]") {
+  auto resolver_service = std::make_shared<matador::query::resolver_service>();
+  auto result = matador::query::query_result<revision_model>::make_query_result(
+    std::make_unique<matador::query::query_result_impl>(
+      std::make_unique<result_reader>(std::vector<std::vector<cell>>{
+        {{uint64_t{1}, uint64_t{7}, std::string{"first"}}},
+        {{uint64_t{2}, uint64_t{8}, std::string{"second"}}}
+      }),
+      std::vector<matador::query::column>{},
+      resolver_service,
+      typeid(revision_model)
+    ),
+    resolver_service->resolver<revision_model>(),
+    [] { return std::make_shared<revision_model>(); }
+  );
+
+  REQUIRE(result.is_ok());
+  auto query_result = result.release();
+  auto first = query_result.begin();
+  REQUIRE(first != query_result.end());
+  REQUIRE((*first)->id == 1);
+  REQUIRE((*first)->name == "first");
+
+  auto previous = first++;
+  REQUIRE((*previous)->id == 1);
+  REQUIRE((*first)->id == 2);
+  REQUIRE((*first)->name == "second");
+
+  ++first;
+  REQUIRE(first == query_result.end());
+}
+
+TEST_CASE("query_result rejects invalid construction dependencies", "[query_result]") {
+  auto resolver_service = std::make_shared<matador::query::resolver_service>();
+  auto missing_impl = matador::query::query_result<revision_model>::make_query_result(
+    std::unique_ptr<matador::query::query_result_impl>{},
+    resolver_service->resolver<revision_model>(),
+    [] { return std::make_shared<revision_model>(); }
+  );
+
+  REQUIRE(missing_impl.is_error());
+
+  auto missing_creator = matador::query::query_result<revision_model>::make_query_result(
+    std::make_unique<matador::query::query_result_impl>(
+      std::make_unique<result_reader>(std::vector<std::vector<cell>>{}),
+      std::vector<matador::query::column>{},
+      resolver_service,
+      typeid(revision_model)
+    ),
+    resolver_service->resolver<revision_model>(),
+    std::function<std::shared_ptr<revision_model>()>{}
+  );
+
+  REQUIRE(missing_creator.is_error());
+}
+
+}
+
+template matador::result<matador::query::query_result<revision_model>, matador::utils::error>
+matador::query::fetchable_query::fetch_all<revision_model>(matador::query::executor &);
+
+template matador::result<matador::query::object_ptr<revision_model>, matador::utils::error>
+matador::query::fetchable_query::fetch_one<revision_model>(matador::query::executor &);

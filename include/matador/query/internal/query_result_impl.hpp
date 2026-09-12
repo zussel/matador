@@ -254,6 +254,9 @@ void query_result_impl::on_has_many_to_many(const char *id, CollectionType &cont
 
 template<class Type>
 bool query_result_impl::fetch(Type &obj) {
+  initialized_collections_.clear();
+  eager_collection_ids_.clear();
+
   bool first = true;
   do {
     auto fetched = reader_->fetch();
@@ -272,8 +275,6 @@ bool query_result_impl::fetch(Type &obj) {
       break;
     }
     first = false;
-    initialized_collections_.clear();
-    eager_collection_ids_.clear();
     type_stack_guard guard(type_stack_, typeid(Type));
     column_index_ = reader_->start_column_index();
     access::process(*this, obj);

@@ -260,10 +260,6 @@ query_result_traits<Type>::make_query_result(
     return failure<error>(error{error_code::Failure, "query_result requires a valid query_result_impl"});
   }
 
-  if (!resolver) {
-    return failure<error>(error{error_code::Failure, "query_result requires a valid object resolver"});
-  }
-
   if (!creator) {
     return failure<error>(error{error_code::Failure, "query_result requires a valid creator function"});
   }

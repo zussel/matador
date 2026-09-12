@@ -22,12 +22,15 @@ public:
   result<query_result<Type>, error> fetch_all(executor &exec) {
     auto result = fetch(exec, typeid(Type));
     if (!result.is_ok()) {
-      return failure<error>(result.err());
+      return failure<error>(result.release_error());
     }
 
-    const auto prototype = result.value()->prototype();
     auto resolver = exec.resolver()->resolver<Type>();
-    return query_result<Type>::make_query_result(result, resolver);
+    return query_result<Type>::make_query_result(
+      result.release(),
+      std::move(resolver),
+      [] { return std::make_shared<Type>(); }
+    );
   }
   [[nodiscard]] result<query_result<record>, error>
   fetch_all(const executor &exec) const;
@@ -36,18 +39,21 @@ public:
   result<object_ptr<Type>, error> fetch_one(executor &exec) {
     auto result = fetch(exec, typeid(Type));
     if (!result.is_ok()) {
-      return failure<error>(result.err());
+      return failure<error>(result.release_error());
     }
 
-    const auto prototype = result.value()->prototype();
     auto resolver = exec.resolver()->resolver<Type>();
-    return query_result<Type>::make_query_result(result, resolver, prototype).and_then([](query_result<Type> &qr) {
+    return query_result<Type>::make_query_result(
+      result.release(),
+      std::move(resolver),
+      [] { return std::make_shared<Type>(); }
+    ).and_then([](query_result<Type> &&qr) -> matador::result<object_ptr<Type>, error> {
       auto first = qr.begin();
       if (first == qr.end()) {
-        return ok<query_result<Type>>(object_ptr<Type>{});
+        return ok<object_ptr<Type>>(object_ptr<Type>{});
       }
 
-      return ok<query_result<Type>>(first.optr());
+      return ok<object_ptr<Type>>(*first);
     });
   }
 
