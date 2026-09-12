@@ -5,6 +5,7 @@
 
 #include "matador/query/intermediates/alter_intermediate.hpp"
 #include "matador/query/intermediates/create_intermediate.hpp"
+#include "matador/query/intermediates/select_intermediate.hpp"
 
 // #include "matador/query/generator.hpp"
 
@@ -19,10 +20,10 @@ column minimum(const std::string &column);
 
 [[nodiscard]] create_intermediate create();
 // [[nodiscard]] query_drop_intermediate drop();
-// [[nodiscard]] query_select_intermediate select();
-// [[nodiscard]] query_select_intermediate select(std::initializer_list<table_column> columns);
-// [[nodiscard]] query_select_intermediate select(const std::vector<table_column>& columns);
-// [[nodiscard]] query_select_intermediate select(const std::vector<std::string> &column_names);
+[[nodiscard]] select_intermediate select();
+[[nodiscard]] select_intermediate select(std::initializer_list<column> columns);
+[[nodiscard]] select_intermediate select(const std::vector<column>& columns);
+[[nodiscard]] select_intermediate select(const std::vector<std::string> &column_names);
 //template<class Type>
 //[[nodiscard]] query_select_intermediate select(const schema &scm) {
 //  return select(generator::columns<Type>(scm));

@@ -35,26 +35,26 @@ create_intermediate create() {
 //   return {};
 // }
 //
-// query_select_intermediate select() {
-//   return query_select_intermediate{{}};
-// }
-//
-// query_select_intermediate select(const std::initializer_list<table_column> columns) {
-//   return select(std::vector<table_column>{columns});
-// }
-//
-// query_select_intermediate select(const std::vector<table_column>& columns) {
-//   return query_select_intermediate{columns};
-// }
-//
-// query_select_intermediate select(const std::vector<std::string>& column_names) {
-//   std::vector<table_column> columns;
-//   columns.reserve(column_names.size());
-//   for (const auto& col_name : column_names) {
-//     columns.emplace_back(col_name);
-//   }
-//   return select(columns);
-// }
+select_intermediate select() {
+  return select_intermediate{{}};
+}
+
+select_intermediate select(const std::initializer_list<column> columns) {
+  return select(std::vector<column>{columns});
+}
+
+select_intermediate select(const std::vector<column>& columns) {
+  return select_intermediate{columns};
+}
+
+select_intermediate select(const std::vector<std::string>& column_names) {
+  std::vector<column> columns;
+  columns.reserve(column_names.size());
+  for (const auto& col_name : column_names) {
+    columns.emplace_back(column::make_plain(col_name));
+  }
+  return select(columns);
+}
 //
 // query_insert_intermediate insert() {
 //   return {};
