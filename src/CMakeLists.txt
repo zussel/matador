@@ -70,6 +70,7 @@ add_library(matador
     utils/error.cpp
     utils/error_exception.cpp
     utils/errors.cpp
+    utils/default_type_traits.cpp
     utils/os.cpp
     utils/string.cpp
     utils/types.cpp

@@ -17,7 +17,6 @@ query_result_impl::query_result_impl(std::unique_ptr<query_result_reader> &&read
 
 void query_result_impl::on_revision(const char *id, uint64_t &rev) {
   data_type_traits<uint64_t>::read_value(*reader_, id, column_index_++, rev);
-  reader_->read_value(id, column_index_++, rev);
 }
 
 void query_result_impl::on_attribute(const char *id, char *value, const column_options &attr) {
@@ -34,7 +33,11 @@ query_result_impl::on_attribute(const char *id, column_value &val, const column_
 }
 
 bool query_result_impl::fetch(record &rec) {
-  if (auto fetched = reader_->fetch(); !fetched.is_ok() || !*fetched) {
+  auto fetched = reader_->fetch();
+  if (fetched.is_error()) {
+    throw error_exception(fetched.release_error());
+  }
+  if (!*fetched) {
     return false;
   }
 

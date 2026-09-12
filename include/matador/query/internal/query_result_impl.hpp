@@ -21,11 +21,13 @@
 #include "matador/query/object_ptr.hpp"
 #include "matador/query/collection_proxy.hpp"
 #include "matador/query/join_columns_collector.hpp"
+#include "matador/utils/error_exception.hpp"
 
 #include <memory>
 #include <stack>
 #include <string>
 #include <typeindex>
+#include <unordered_map>
 #include <unordered_set>
 
 namespace matador::query {
@@ -94,7 +96,33 @@ private:
     return resolver.discover(obj);
   }
 
-protected:
+  class type_stack_guard {
+  public:
+    type_stack_guard(std::stack<std::type_index> &stack, const std::type_index type)
+    : stack_(stack) {
+      stack_.push(type);
+    }
+
+    ~type_stack_guard() {
+      stack_.pop();
+    }
+
+    type_stack_guard(const type_stack_guard &) = delete;
+    type_stack_guard &operator=(const type_stack_guard &) = delete;
+
+  private:
+    std::stack<std::type_index> &stack_;
+  };
+
+  template<class Type>
+  std::shared_ptr<Type> read_eager_object() {
+    type_stack_guard guard(type_stack_, typeid(Type));
+    auto obj = std::make_shared<Type>();
+    access::process(*this, *obj);
+    return obj;
+  }
+
+private:
   size_t column_index_ = 0;
   std::vector<column> prototype_;
   std::unique_ptr<query_result_reader> reader_;
@@ -106,6 +134,8 @@ protected:
   identifier current_pk_{};
   identifier last_pk_{};
   std::unordered_set<collection_composite_key, collection_composite_key_hash> initialized_collections_;
+  std::unordered_map<collection_composite_key, std::unordered_set<identifier>,
+                     collection_composite_key_hash> eager_collection_ids_;
 };
 
 template <class PointerType>
@@ -114,14 +144,13 @@ void query_result_impl::on_belongs_to(const char*, PointerType& x, const foreign
   if (attr.fetch() == fetch_type::Lazy) {
     typename PointerType::value_type obj;
     auto pk = id_reader_.read(obj, column_index_++);
-    x = PointerType(std::make_shared<object_proxy<typename PointerType::value_type>>(resolver, pk));
+    x = pk.is_valid()
+      ? PointerType(std::make_shared<object_proxy<typename PointerType::value_type>>(resolver, pk))
+      : nullobj;
   } else {
-    auto obj = std::make_shared<typename PointerType::value_type>();
-    const auto ti = std::type_index(typeid(typename PointerType::value_type));
-    type_stack_.push(ti);
-    access::process(*this, *obj);
-    type_stack_.pop();
-    x = PointerType(std::make_shared<object_proxy<typename PointerType::value_type>>(resolver, obj));
+    auto obj = read_eager_object<typename PointerType::value_type>();
+    PointerType ptr(std::make_shared<object_proxy<typename PointerType::value_type>>(resolver, obj));
+    x = ptr.primary_key().is_valid() ? std::move(ptr) : nullobj;
   }
 }
 
@@ -131,12 +160,9 @@ void query_result_impl::on_has_one(const char*, object_ptr<PointerType>& x, cons
   if (attr.fetch() == fetch_type::Lazy) {
     x.reset(std::make_shared<object_proxy<PointerType>>(resolver, current_pk_));
   } else {
-    auto obj = std::make_shared<PointerType>();
-    const auto ti = std::type_index(typeid(typename PointerType::value_type));
-    type_stack_.push(ti);
-    access::process(*this, *obj);
-    type_stack_.pop();
-    x.reset(std::make_shared<object_proxy<PointerType>>(resolver, obj));
+    auto obj = read_eager_object<PointerType>();
+    object_ptr<PointerType> ptr(std::make_shared<object_proxy<PointerType>>(resolver, obj));
+    x = ptr.primary_key().is_valid() ? std::move(ptr) : nullobj;
   }
 }
 
@@ -149,17 +175,14 @@ void query_result_impl::on_has_many(const char *, CollectionType &cont, const ch
   if (attr.fetch() == fetch_type::Lazy) {
     cont.reset(std::make_shared<collection_proxy<typename CollectionType::value_type>>(resolver, current_pk_));
   } else {
-    if (initialized_collections_.insert({result_type_, typeid(typename CollectionType::value_type), std::string{join_column}}).second) {
+    const collection_composite_key key{result_type_, typeid(typename CollectionType::value_type), join_column};
+    if (initialized_collections_.insert(key).second) {
       cont.reset(std::make_shared<collection_proxy<typename CollectionType::value_type>>(resolver, std::vector<typename CollectionType::value_type>()));
     }
 
-    const auto ti = std::type_index(typeid(value_type));
-    type_stack_.push(ti);
-    auto obj = std::make_shared<typename CollectionType::value_type::value_type>();
-    access::process(*this, *obj);
-    type_stack_.pop();
+    auto obj = read_eager_object<value_type>();
     auto ptr = typename CollectionType::value_type(std::make_shared<object_proxy<value_type>>(object_resolver, obj));
-    if (ptr.primary_key().is_valid()) {
+    if (ptr.primary_key().is_valid() && eager_collection_ids_[key].insert(ptr.primary_key()).second) {
       cont.push_back(ptr);
     }
   }
@@ -173,7 +196,7 @@ void query_result_impl::on_has_many(const char *id, CollectionType &cont, const 
   if (attr.fetch() == fetch_type::Lazy) {
     cont.reset(std::make_shared<collection_proxy<value_type>>(resolver, current_pk_));
   } else {
-    if (initialized_collections_.insert({result_type_, typeid(value_type), std::string{join_column}}).second) {
+    if (initialized_collections_.insert({result_type_, typeid(value_type), std::string{id}}).second) {
       cont.reset(std::make_shared<collection_proxy<value_type>>(resolver, std::vector<value_type>()));
     }
 
@@ -192,17 +215,14 @@ void query_result_impl::on_has_many_to_many(const char *id, CollectionType &cont
   if (attr.fetch() == fetch_type::Lazy) {
     cont.reset(std::make_shared<collection_proxy<typename CollectionType::value_type>>(resolver, current_pk_));
   } else {
-    if (initialized_collections_.insert({result_type_, typeid(typename CollectionType::value_type), std::string{id}}).second) {
+    const collection_composite_key key{result_type_, typeid(typename CollectionType::value_type), id};
+    if (initialized_collections_.insert(key).second) {
       cont.reset(std::make_shared<collection_proxy<typename CollectionType::value_type>>(resolver, std::vector<typename CollectionType::value_type>()));
     }
 
-    const auto ti = std::type_index(typeid(value_type));
-    type_stack_.push(ti);
-    auto obj = std::make_shared<typename CollectionType::value_type::value_type>();
-    access::process(*this, *obj);
-    type_stack_.pop();
+    auto obj = read_eager_object<value_type>();
     auto ptr = typename CollectionType::value_type(std::make_shared<object_proxy<value_type>>(object_resolver, obj));
-    if (ptr.primary_key().is_valid()) {
+    if (ptr.primary_key().is_valid() && eager_collection_ids_[key].insert(ptr.primary_key()).second) {
       cont.push_back(ptr);
     }
   }
@@ -219,17 +239,14 @@ void query_result_impl::on_has_many_to_many(const char *id, CollectionType &cont
   if (attr.fetch() == fetch_type::Lazy) {
     cont.reset(std::make_shared<collection_proxy<typename CollectionType::value_type>>(resolver, current_pk_));
   } else {
-    if (initialized_collections_.insert({result_type_, typeid(typename CollectionType::value_type), std::string{id}}).second) {
+    const collection_composite_key key{result_type_, typeid(typename CollectionType::value_type), id};
+    if (initialized_collections_.insert(key).second) {
       cont.reset(std::make_shared<collection_proxy<typename CollectionType::value_type>>(resolver, std::vector<typename CollectionType::value_type>()));
     }
 
-    const auto ti = std::type_index(typeid(value_type));
-    type_stack_.push(ti);
-    auto obj = std::make_shared<typename CollectionType::value_type::value_type>();
-    access::process(*this, *obj);
-    type_stack_.pop();
+    auto obj = read_eager_object<value_type>();
     auto ptr = typename CollectionType::value_type(std::make_shared<object_proxy<value_type>>(object_resolver, obj));
-    if (ptr.primary_key().is_valid()) {
+    if (ptr.primary_key().is_valid() && eager_collection_ids_[key].insert(ptr.primary_key()).second) {
       cont.push_back(ptr);
     }
   }
@@ -239,7 +256,11 @@ template<class Type>
 bool query_result_impl::fetch(Type &obj) {
   bool first = true;
   do {
-    if (auto fetched = reader_->fetch(); !fetched.is_ok() || !*fetched) {
+    auto fetched = reader_->fetch();
+    if (fetched.is_error()) {
+      throw error_exception(fetched.release_error());
+    }
+    if (!*fetched) {
       return !first;
     }
     last_pk_ = current_pk_;
@@ -251,10 +272,11 @@ bool query_result_impl::fetch(Type &obj) {
       break;
     }
     first = false;
-    type_stack_.emplace(typeid(Type));
+    initialized_collections_.clear();
+    eager_collection_ids_.clear();
+    type_stack_guard guard(type_stack_, typeid(Type));
     column_index_ = reader_->start_column_index();
     access::process(*this, obj);
-    type_stack_.pop();
   } while (last_pk_ == current_pk_);
   return true;
 }

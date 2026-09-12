@@ -1,9 +1,14 @@
-#include "matador/utils/default_type_traits.hpp"
+#include "matador/query/default_type_traits.hpp"
 
-#include "../../include/matador/query/value_reader.hpp"
-#include "matador/utils/value_writer.hpp"
+#include "matador/query/value_reader.hpp"
+#include "matador/query/value_writer.hpp"
 
-namespace matador::utils {
+namespace matador::query {
+
+using utils::blob_type_t;
+using utils::date_type_t;
+using utils::time_type_t;
+using utils::timestamp_type_t;
 
 void data_type_traits<nullptr_t>::read_value(value_reader &/*reader*/, const char * /*id*/, size_t /*index*/, nullptr_t &/*value*/, const size_t /*size*/)
 {}
