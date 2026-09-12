@@ -9,6 +9,7 @@ add_library(matador
     ../include/matador/query/query_data.hpp
     ../include/matador/query/relation_endpoint.hpp
     ../include/matador/query/relation_type.hpp
+    ../include/matador/query/resolver_service.hpp
     ../include/matador/query/schema.hpp
     ../include/matador/utils/flags.hpp
     query/basic_schema.cpp
@@ -51,6 +52,7 @@ add_library(matador
     query/internal/column_value_pair.cpp
     query/internal/identifier_discover_service.cpp
     query/internal/query_parts.cpp
+    query/internal/query_result_impl.cpp
     query/internal/result_binder.cpp
     query/internal/string_builder_utils.cpp
     query/observer.cpp
@@ -72,7 +74,6 @@ add_library(matador
     utils/string.cpp
     utils/types.cpp
     utils/version.cpp
-  ../include/matador/query/resolver_service.hpp
 )
 
 include(GenerateExportHeader)
