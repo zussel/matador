@@ -23,7 +23,7 @@ std::shared_ptr<table> table_generator::acquire_object(basic_schema &repo, const
 }
 
 void table_generator::on_revision(const char *id, uint64_t &rev) {
-  field::attribute(*this, id, rev);
+  access::attribute(*this, id, rev);
 }
 
 void table_generator::create_pk_constraint(const std::string &name) const {

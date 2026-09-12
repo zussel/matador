@@ -16,7 +16,7 @@ struct department {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = query::field;
+    namespace field = query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, VarChar63);
     field::has_many(op, "employees", employees, "department_id", CascadeAllFetchLazy);
@@ -30,7 +30,7 @@ struct employee {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = query::field;
+    namespace field = query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
     field::belongs_to(op, "department_id", department_, CascadeAllFetchLazy);

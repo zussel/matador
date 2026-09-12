@@ -17,10 +17,10 @@ struct person {
 
   template<class Operator>
   void process(Operator &op) {
-    query::field::primary_key(op, "id", id);
-    query::field::attribute(op, "name", name, UniqueVarChar255);
-    query::field::attribute(op, "age", age);
-    query::field::attribute(op, "image", image);
+    query::access::primary_key(op, "id", id);
+    query::access::attribute(op, "name", name, UniqueVarChar255);
+    query::access::attribute(op, "age", age);
+    query::access::attribute(op, "image", image);
   }
 };
 }

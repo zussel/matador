@@ -6,7 +6,7 @@ field::field(std::string name)
   , value_(nullptr)
 {}
 
-field::field(std::string name, const utils::basic_type dt, const column_constraint type, const size_t size, const int index)
+field::field(std::string name, const utils::basic_type dt, const column_constraints type, const size_t size, const int index)
 : name_(std::move(name))
 , type_(type)
 , index_(index)
@@ -34,7 +34,7 @@ field &field::operator=(field &&x) noexcept {
 
 bool field::operator==(const field &rhs) const {
   return name_ == rhs.name_ &&
-    type_ == rhs.type_ &&
+    type_.value() == rhs.type_.value() &&
     index_ == rhs.index_ &&
     value_ == rhs.value_;
 }
@@ -47,7 +47,7 @@ const std::string &field::name() const {
   return name_;
 }
 
-column_constraint field::type() const {
+column_constraints field::type() const {
   return type_;
 }
 
@@ -101,11 +101,11 @@ bool field::is_null() const {
 }
 
 bool field::is_primary_key() const {
-  return type_ == column_constraint::PrimaryKey;
+  return type_.has(column_constraint::PrimaryKey);
 }
 
 bool field::is_foreign_key() const {
-  return type_ == column_constraint::ForeignKey;
+  return type_.has(column_constraint::ForeignKey);
 }
 
 bool field::is_attribute() const {

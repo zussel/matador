@@ -107,7 +107,7 @@ utils::basic_type identifier::type_from_value(const value_type &value) {
     if constexpr (std::is_same_v<T, std::monostate>) {
       return utils::basic_type::Null;
     } else {
-      return utils::data_type_traits<T>::type(1);
+      return data_type_traits<T>::type(1);
     }
   }, value);
 }

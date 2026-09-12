@@ -30,13 +30,13 @@ struct connection_info {
 
   template < class Operator >
   void process(Operator &op) {
-    field::attribute(op, "type", type);
-    field::attribute(op, "user", user);
-    field::attribute(op, "password", password);
-    field::attribute(op, "hostname", hostname);
-    field::attribute(op, "port", port);
-    field::attribute(op, "database", database);
-    field::attribute(op, "driver", driver);
+    access::attribute(op, "type", type);
+    access::attribute(op, "user", user);
+    access::attribute(op, "password", password);
+    access::attribute(op, "hostname", hostname);
+    access::attribute(op, "port", port);
+    access::attribute(op, "database", database);
+    access::attribute(op, "driver", driver);
   }
 
   /**

@@ -1,8 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/identifier.hpp"
-#include "matador/utils/default_type_traits.hpp"
+#include "../../include/matador/query/default_type_traits.hpp"
 #include "matador/query/column_value.hpp"
+#include "matador/query/identifier.hpp"
 
 using namespace matador::query;
 using namespace matador::utils;

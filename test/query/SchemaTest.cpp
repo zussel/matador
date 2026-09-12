@@ -29,8 +29,8 @@ struct names {
 
   template<typename Operator>
   void process(Operator &op) {
-    query::field::primary_key(op, "id", id);
-    query::field::has_many(op, "name_list", names_list, "names_id", query::fetch_type::Eager);
+    query::access::primary_key(op, "id", id);
+    query::access::has_many(op, "name_list", names_list, "names_id", query::fetch_type::Eager);
   }
 };
 

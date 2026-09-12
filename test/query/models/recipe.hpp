@@ -25,9 +25,9 @@ struct ingredient {
 
   template<class Operator>
   void process(Operator &op) {
-    query::field::primary_key(op, "id", id);
-    query::field::attribute(op, "name", name, UniqueVarChar255);
-    query::field::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", CascadeAllFetchEager);
+    query::access::primary_key(op, "id", id);
+    query::access::attribute(op, "name", name, UniqueVarChar255);
+    query::access::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", CascadeAllFetchEager);
   }
 };
 
@@ -48,9 +48,9 @@ struct recipe {
 
   template<class Operator>
   void process(Operator &op) {
-    query::field::primary_key(op, "id", id);
-    query::field::attribute(op, "name", name, UniqueVarChar255);
-    query::field::has_many_to_many(op, "recipe_ingredients", ingredients, CascadeAllFetchLazy);
+    query::access::primary_key(op, "id", id);
+    query::access::attribute(op, "name", name, UniqueVarChar255);
+    query::access::has_many_to_many(op, "recipe_ingredients", ingredients, CascadeAllFetchLazy);
   }
 };
 
@@ -75,9 +75,9 @@ struct ingredient_pk_generator {
 
   template<class Operator>
   void process(Operator &op) {
-    query::field::primary_key(op, "id", id, PkAttribute);
-    query::field::attribute(op, "name", name, UniqueVarChar255);
-    query::field::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", CascadeAllFetchEager);
+    query::access::primary_key(op, "id", id, PkAttribute);
+    query::access::attribute(op, "name", name, UniqueVarChar255);
+    query::access::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", CascadeAllFetchEager);
   }
 };
 
@@ -97,9 +97,9 @@ struct recipe_pk_generator {
 
   template<class Operator>
   void process(Operator &op) {
-    query::field::primary_key(op, "id", id, PkAttribute);
-    query::field::attribute(op, "name", name, UniqueVarChar255);
-    query::field::has_many_to_many(op, "recipe_ingredients", ingredients, CascadeAllFetchLazy);
+    query::access::primary_key(op, "id", id, PkAttribute);
+    query::access::attribute(op, "name", name, UniqueVarChar255);
+    query::access::has_many_to_many(op, "recipe_ingredients", ingredients, CascadeAllFetchLazy);
   }
 };
 

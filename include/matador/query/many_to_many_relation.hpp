@@ -24,7 +24,7 @@ public:
 
     template<class Operator>
     void process(Operator &op) {
-        field::belongs_to(op, local_name_.c_str(), local_, CascadeNoneFetchLazy);
+        access::belongs_to(op, local_name_.c_str(), local_, CascadeNoneFetchLazy);
         foreign_field(op);
     }
 
@@ -46,11 +46,11 @@ public:
 private:
   template<typename Operator, typename  RemoteType = ForeignType>
   void foreign_field(Operator &op, std::enable_if_t<!is_object_ptr<RemoteType>::value>* /*unused*/) {
-        field::attribute(op, remote_name_.c_str(), remote_);
+        access::attribute(op, remote_name_.c_str(), remote_);
   }
   template<typename Operator, class RemoteType = ForeignType>
   void foreign_field(Operator &op, std::enable_if_t<is_object_ptr<RemoteType>::value>* /*unused*/) {
-        field::belongs_to(op, remote_name_.c_str(), remote_, CascadeNoneFetchLazy);
+        access::belongs_to(op, remote_name_.c_str(), remote_, CascadeNoneFetchLazy);
   }
 private:
     std::string local_name_;
@@ -76,7 +76,7 @@ public:
 
     template<class Operator>
     void process(Operator &op) {
-        field::belongs_to(op, local_name_.c_str(), local_, CascadeNoneFetchLazy);
+        access::belongs_to(op, local_name_.c_str(), local_, CascadeNoneFetchLazy);
         foreign_field(op);
     }
 
@@ -91,11 +91,11 @@ public:
 private:
   template<typename Operator, class RemoteType = ForeignType>
   void foreign_field(Operator &op, std::enable_if_t<!is_object_ptr<RemoteType>::value>* /*unused*/) {
-        field::attribute(op, remote_name_.c_str(), remote_);
+        access::attribute(op, remote_name_.c_str(), remote_);
   }
   template<typename Operator, class RemoteType = ForeignType>
   void foreign_field(Operator &op, std::enable_if_t<is_object_ptr<RemoteType>::value>* /*unused*/) {
-        field::belongs_to(op, remote_name_.c_str(), remote_, CascadeNoneFetchLazy);
+        access::belongs_to(op, remote_name_.c_str(), remote_, CascadeNoneFetchLazy);
   }
 private:
     std::string local_name_;
@@ -120,8 +120,8 @@ public:
 
     template<class Operator>
     void process(Operator &op) {
-        field::belongs_to(op, local_name_.c_str(), local_, CascadeNoneFetchLazy);
-        field::belongs_to(op, remote_name_.c_str(), remote_, CascadeNoneFetchLazy);
+        access::belongs_to(op, local_name_.c_str(), local_, CascadeNoneFetchLazy);
+        access::belongs_to(op, remote_name_.c_str(), remote_, CascadeNoneFetchLazy);
     }
 
     object_ptr<LocalType> local() const { return local_; }
@@ -149,8 +149,8 @@ public:
 
     template<class Operator>
     void process(Operator &op) {
-        field::belongs_to(op, local_name_.c_str(), local_, CascadeNoneFetchLazy);
-        field::attribute(op, type_name_.c_str(), value_);
+        access::belongs_to(op, local_name_.c_str(), local_, CascadeNoneFetchLazy);
+        access::attribute(op, type_name_.c_str(), value_);
     }
 
     object_ptr<LocalType> local() const { return local_; }

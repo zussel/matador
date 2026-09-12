@@ -107,7 +107,7 @@ public:
   }
 
   template <typename T = ValueType>
-  std::enable_if_t<!std::is_void_v<T>, const T&&> release() {
+  std::enable_if_t<!std::is_void_v<T>, T&&> release() {
     return std::move(std::get<ok<value_type>>(result_).release());
   }
   ErrorType&& release_error() {

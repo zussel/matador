@@ -6,7 +6,7 @@
 #include "matador/query/identifier.hpp"
 #include "matador/query/primary_key_options.hpp"
 
-#include "matador/utils/default_type_traits.hpp"
+#include "default_type_traits.hpp"
 
 #include <cstdint>
 #include <string>
@@ -34,7 +34,7 @@ public:
 
   template <typename Type>
   primary_key_info resolve(const Type& obj) {
-    field::process(*this, obj);
+    access::process(*this, obj);
 
     return primary_key_info_;
   }
@@ -50,7 +50,7 @@ public:
   template < class Type >
   void on_primary_key(const char *id, Type &pk, const primary_key_options& attr) {
     primary_key_info_.pk_column_name = id;
-    primary_key_info_.type = utils::data_type_traits<Type>::type(attr.size());
+    primary_key_info_.type = data_type_traits<Type>::type(attr.size());
     primary_key_info_.pk = pk;
   }
 

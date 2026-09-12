@@ -7,7 +7,7 @@
 
 #include <optional>
 
-namespace matador::query::field {
+namespace matador::query::access {
 template<class Operator, class Type>
 void process(Operator &op, Type &object) {
   object.process(op);

@@ -3,7 +3,7 @@
 
 #include "matador/query/column.hpp"
 
-// #include "matador/sql/resolver_service.hpp"
+#include "matador/query/resolver_service.hpp"
 
 #include <typeindex>
 
@@ -38,7 +38,7 @@ struct query_context {
   std::vector<column> columns{};
   std::vector<std::string> bind_vars;
   // Data for resolving query result
-  // std::shared_ptr<resolver_service> resolver{};
+  std::shared_ptr<resolver_service> resolver{};
   std::type_index result_type = typeid(void);
 
   [[nodiscard]] bool is_ddl() const { return command == query_command::Create || command == query_command::Alter; }

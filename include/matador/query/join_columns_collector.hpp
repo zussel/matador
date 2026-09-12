@@ -20,7 +20,7 @@ public:
         join_columns_ = {};
         Type obj;
 
-        field::process(*this, obj);
+        access::process(*this, obj);
 
         return join_columns_;
     }

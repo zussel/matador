@@ -26,7 +26,7 @@ public:
         join_column_finder finder(join_column);
         Type obj;
         finder.found_ = false;
-        field::process(finder, obj);
+        access::process(finder, obj);
         return finder.found_;
     }
 
@@ -144,7 +144,7 @@ private:
       current_node_ = node;
 
       Type obj;
-      field::process(*this, obj);
+      access::process(*this, obj);
 
       for (auto &action : resolve_actions_) {
         action();

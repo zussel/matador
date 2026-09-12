@@ -5,7 +5,7 @@
 
 #include <cstddef>
 
-namespace matador::utils {
+namespace matador::query {
 
 class value_reader;
 class value_writer;
@@ -20,7 +20,7 @@ class value_writer;
  */
 template < class Type, class Enable = void >
 struct data_type_traits {
-  static basic_type type(std::size_t /*size*/) { return basic_type::Unknown; }
+  static utils::basic_type type(std::size_t /*size*/) { return utils::basic_type::Unknown; }
   static void read_value(value_reader &/*reader*/, const char *id, size_t index, nullptr_t &/*value*/, size_t /*size*/ = 0) {}
   static void bind_value(value_writer &/*binder*/, size_t index, nullptr_t &/*value*/, size_t /*size*/ = 0) {}
 };

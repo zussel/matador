@@ -6,7 +6,7 @@
 #include "matador/query/primary_key_options.hpp"
 #include "matador/query/table.hpp"
 
-#include "matador/utils/default_type_traits.hpp"
+#include "default_type_traits.hpp"
 
 #include <memory>
 
@@ -25,13 +25,13 @@ public:
         pk_type_determinator determinator;
         Type t;
 
-        field::process(determinator, t);
+        access::process(determinator, t);
         return determinator.type_;
     }
 
     template<typename ValueType>
     void on_primary_key(const char *, ValueType &/*pk*/, const primary_key_options& attr) {
-        type_ = utils::data_type_traits<ValueType>::type(attr.size());
+        type_ = data_type_traits<ValueType>::type(attr.size());
     }
     static void on_revision(const char * /*id*/, uint64_t &/*rev*/) {}
     template < class Type >
@@ -79,7 +79,7 @@ public:
         auto obj = std::make_shared<table>(name);
         std::ignore = repo.provide_table_in_advance(ti, obj);
         table_generator gen(repo, obj);
-        field::process(gen, *t);
+        access::process(gen, *t);
         if (!join_column.empty() && !inverse_join_column.empty()) {
             gen.prepare_relation_table(join_column, inverse_join_column);
         }
@@ -128,7 +128,7 @@ private:
             table_.get(),
             std::string(id),
             "",
-            utils::data_type_traits<ValueType>::type(attr.size()),
+            data_type_traits<ValueType>::type(attr.size()),
             attr,
             table_->columns_.size()));
         return ref;
@@ -198,7 +198,7 @@ std::shared_ptr<table> table_generator::foreign_table() const {
     const auto obj = repo_.provide_table_in_advance(ti, std::make_shared<table>(""));
     table_generator gen(repo_, obj);
     Type t;
-    field::process(gen, t);
+    access::process(gen, t);
     return obj;
 }
 

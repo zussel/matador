@@ -6,6 +6,7 @@ configure_file (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINAR
 add_library(matador
     ../include/matador/query/basic_schema.hpp
     ../include/matador/query/basic_table_info.hpp
+    ../include/matador/query/query_data.hpp
     ../include/matador/query/relation_endpoint.hpp
     ../include/matador/query/relation_type.hpp
     ../include/matador/query/schema.hpp
@@ -15,6 +16,7 @@ add_library(matador
     query/column.cpp
     query/column_options.cpp
     query/column_value.cpp
+    query/constraint.cpp
     query/criteria/abstract_column_criteria.cpp
     query/criteria/between_criteria.cpp
     query/criteria/binary_criteria.cpp
@@ -25,9 +27,8 @@ add_library(matador
     query/criteria/logical_criteria.cpp
     query/criteria/not_criteria.cpp
     query/criteria_evaluator.cpp
-    query/constraint.cpp
-    query/error_code.cpp
     query/dialect.cpp
+    query/error_code.cpp
     query/expression/binary_column_expression.cpp
     query/expression/column_expression.cpp
     query/expression/expression_operators.cpp
@@ -40,13 +41,17 @@ add_library(matador
     query/identifier.cpp
     query/intermediates/alter_intermediate.cpp
     query/intermediates/alter_table_intermediate.cpp
-    query/intermediates/executable_query.cpp
     query/intermediates/create_intermediate.cpp
+    query/intermediates/executable_query.cpp
+    query/intermediates/fetchable_query.cpp
     query/intermediates/intermediate.cpp
-    query/internal/basic_type_to_string_visitor.cpp
     query/internal/attribute_string_writer.cpp
+    query/internal/basic_type_to_string_visitor.cpp
+    query/internal/collection_utils.cpp
     query/internal/column_value_pair.cpp
+    query/internal/identifier_discover_service.cpp
     query/internal/query_parts.cpp
+    query/internal/result_binder.cpp
     query/internal/string_builder_utils.cpp
     query/observer.cpp
     query/primary_key_options.cpp
@@ -58,8 +63,8 @@ add_library(matador
     query/schema_node.cpp
     query/schema_node_iterator.cpp
     query/table.cpp
-    query/table_generator.cpp
     query/table.cpp
+    query/table_generator.cpp
     utils/error.cpp
     utils/error_exception.cpp
     utils/errors.cpp
@@ -67,7 +72,7 @@ add_library(matador
     utils/string.cpp
     utils/types.cpp
     utils/version.cpp
-  ../include/matador/query/query_data.hpp
+  ../include/matador/query/resolver_service.hpp
 )
 
 include(GenerateExportHeader)

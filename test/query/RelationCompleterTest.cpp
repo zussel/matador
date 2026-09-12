@@ -65,7 +65,7 @@ struct department {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
     field::has_many(op, "employees", employees, "department_id", matador::CascadeAllFetchLazy);
@@ -79,7 +79,7 @@ struct employee {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
     field::belongs_to(op, "department_id", department_, matador::CascadeAllFetchLazy);
@@ -96,7 +96,7 @@ struct user {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
     field::has_one(op, "session", session_, "user_id", matador::CascadeAllFetchLazy);
@@ -110,7 +110,7 @@ struct session {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "token", token, matador::VarChar255);
     field::belongs_to(op, "user_id", user_, matador::CascadeAllFetchLazy);
@@ -126,7 +126,7 @@ struct article {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "title", title, matador::VarChar255);
     field::has_many(op, "article_tags", tags, "article_id", matador::CascadeAllFetchLazy);
@@ -139,7 +139,7 @@ struct tag {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
   }
@@ -152,7 +152,7 @@ struct account {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar63);
     field::has_many(op, "roles", roles, "account_id", matador::CascadeAllFetchLazy);
@@ -169,7 +169,7 @@ struct recipe {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar255);
     field::has_many_to_many(op, "recipe_ingredients", ingredients, "recipe_id", "ingredient_id", matador::CascadeAllFetchLazy);
@@ -183,7 +183,7 @@ struct ingredient {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::attribute(op, "name", name, matador::VarChar255);
     field::has_many_to_many(op, "recipe_ingredients", recipes, "ingredient_id", "recipe_id", matador::CascadeAllFetchLazy);
@@ -199,7 +199,7 @@ struct invalid_has_many_side {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::has_many(op, "children", children, "parent_id", matador::CascadeAllFetchLazy);
   }
@@ -211,7 +211,7 @@ struct invalid_has_one_side {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::has_one(op, "parent", parent, "parent_id", matador::CascadeAllFetchLazy);
   }
@@ -227,7 +227,7 @@ struct multi_parent_a {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
     field::has_many(op, "children", children, "parent_a_id", matador::CascadeAllFetchLazy);
   }
@@ -238,7 +238,7 @@ struct multi_parent_b {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
   }
 };
@@ -250,7 +250,7 @@ struct multi_child {
 
   template<typename Operator>
   void process(Operator &op) {
-    namespace field = matador::query::field;
+    namespace field = matador::query::access;
     field::primary_key(op, "id", id);
 
     // Absichtlich zuerst der nicht passende belongs_to-Endpunkt.

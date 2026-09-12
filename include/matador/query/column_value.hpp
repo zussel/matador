@@ -3,8 +3,8 @@
 
 #include "matador_export.h"
 
+#include "default_type_traits.hpp"
 #include "matador/utils/convert.hpp"
-#include "matador/utils/default_type_traits.hpp"
 #include "matador/utils/result.hpp"
 #include "matador/utils/types.hpp"
 
@@ -63,12 +63,12 @@ public:
   explicit column_value(Type value, size_t size = 0)
   : value_(value)
   , size_(size)
-  , type_(utils::data_type_traits<Type>::type(size)) {}
+  , type_(data_type_traits<Type>::type(size)) {}
   template<typename Type, std::enable_if_t<std::is_enum_v<Type>>* = nullptr>
   explicit column_value(Type value, size_t size = 0)
   : value_(static_cast<int>(value))
   , size_(size)
-  , type_(utils::data_type_traits<Type>::type(size)) {}
+  , type_(data_type_traits<Type>::type(size)) {}
   explicit column_value(utils::basic_type data_type, size_t size = 0);
   column_value(const column_value &x) = default;
   column_value& operator=(const column_value &x) = default;
@@ -76,7 +76,7 @@ public:
   column_value& operator=(Type val) {
     value_ = val;
     size_ = detail::determine_size(val);
-    type_ = utils::data_type_traits<Type>::type(size_);
+    type_ = data_type_traits<Type>::type(size_);
     return *this;
   }
   column_value(column_value &&x) noexcept;

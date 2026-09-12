@@ -27,12 +27,12 @@ class field {
 public:
   explicit field(std::string name);
   template<typename Type>
-  field(std::string name, Type value, const column_constraint type = column_constraint::None, const size_t size = 0, const int index = -1)
+  field(std::string name, Type value, const column_constraints type = column_constraint::None, const size_t size = 0, const int index = -1)
   : name_(std::move(name))
   , type_(type)
   , index_(index)
   , value_(value, size) {}
-  field(std::string name, utils::basic_type dt, column_constraint type = column_constraint::None, size_t size = 0, int index = -1);
+  field(std::string name, utils::basic_type dt, column_constraints type = column_constraint::None, size_t size = 0, int index = -1);
   field(const field &x) = default;
   field& operator=(const field &x) = default;
   field(field &&x) noexcept;
@@ -49,7 +49,7 @@ public:
   }
 
   [[nodiscard]] const std::string& name() const;
-  [[nodiscard]] column_constraint type() const;
+  [[nodiscard]] column_constraints type() const;
   [[nodiscard]] size_t size() const;
   [[nodiscard]] int index() const;
   [[nodiscard]] column_value value() const;
@@ -84,7 +84,7 @@ private:
   friend class record;
 
   std::string name_;
-  column_constraint type_{column_constraint::None};
+  column_constraints type_{column_constraint::None};
   int index_{-1};
 
   column_value value_;

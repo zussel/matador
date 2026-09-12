@@ -22,9 +22,9 @@ struct department {
 
     template<typename Operator>
     void process(Operator &op) {
-        query::field::primary_key(op, "id", id);
-        query::field::attribute(op, "name", name, UniqueVarChar63);
-        query::field::has_many(op, "employees", employees, "dep_id", CascadeAllFetchEager);
+        query::access::primary_key(op, "id", id);
+        query::access::attribute(op, "name", name, UniqueVarChar63);
+        query::access::has_many(op, "employees", employees, "dep_id", CascadeAllFetchEager);
         // field::belongs_to(op, "manager_id", manager, utils::fetch_type::EAGER);
     }
 };
@@ -40,10 +40,10 @@ struct employee {
 
     template<typename Operator>
     void process(Operator &op) {
-        query::field::primary_key(op, "id", id);
-        query::field::attribute(op, "first_name", first_name, VarChar63);
-        query::field::attribute(op, "last_name", last_name, VarChar63);
-        query::field::belongs_to(op, "dep_id", dep, CascadeAllFetchLazy);
+        query::access::primary_key(op, "id", id);
+        query::access::attribute(op, "first_name", first_name, VarChar63);
+        query::access::attribute(op, "last_name", last_name, VarChar63);
+        query::access::belongs_to(op, "dep_id", dep, CascadeAllFetchLazy);
     }
 };
 
