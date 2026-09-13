@@ -16,12 +16,8 @@
 #include "matador/query/intermediates/order_direction_intermediate.hpp"
 #include "matador/query/intermediates/select_intermediate.hpp"
 #include "matador/query/intermediates/update_intermediate.hpp"
-#include "matador/query/intermediates/where_intermediate.hpp"
-
-// #include "matador/query/generator.hpp"
 
 namespace matador::query {
-//class schema;
 column count(const std::string &column);
 column count_all();
 column sum(const std::string &column);
@@ -65,10 +61,17 @@ column minimum(const std::string &column);
 [[nodiscard]] select_intermediate select(const std::vector<column>& columns);
 /** Starts a query by converting every column name into a plain column. */
 [[nodiscard]] select_intermediate select(const std::vector<std::string> &column_names);
-//template<class Type>
-//[[nodiscard]] query_select_intermediate select(const schema &scm) {
-//  return select(generator::columns<Type>(scm));
-//}
+/**
+ * Starts an INSERT query for a table.
+ *
+ * @return An insert state that accepts a table and columns.
+ *
+ * @code{.cpp}
+ * auto query = insert()
+ *   .into(users, {"name"_col, "age"_col})
+ *   .values({"james", 45});
+ * @endcode
+ */
 [[nodiscard]] insert_intermediate insert();
 /**
  * Starts an UPDATE query for a table.
