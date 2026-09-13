@@ -53,16 +53,16 @@ private:
 class collection_query_criteria final : public abstract_column_criteria {
 public:
     collection_query_criteria() = delete;
-    collection_query_criteria(const column& col, collection_operator operand_, const query_context& ctx);
+    collection_query_criteria(const column& col, collection_operator operand_, fetchable_query  q);
 
     void accept(criteria_visitor& visitor) const override;
 
     [[nodiscard]] collection_operator operand() const;
-    [[nodiscard]] const query_context& query() const;
+    [[nodiscard]] const fetchable_query& query() const;
 
 private:
     collection_operator operand_;
-    query_context query_context_;
+    fetchable_query query_context_;
 };
 }
 #endif //CRITERIA_COLLECTION_CRITERIA_NODE_HPP

@@ -5,6 +5,7 @@
 
 #include "matador/query/column_options.hpp"
 #include "matador/query/expression/abstract_column_expression.hpp"
+#include "matador/query/intermediates/fetchable_query.hpp"
 #include "matador/query/query_functions.hpp"
 
 #include <memory>
@@ -55,6 +56,11 @@ public:
 
   [[nodiscard]] static column make_expression(
     const std::shared_ptr<abstract_column_expression>& expression,
+    std::string alias = ""
+  );
+
+  [[nodiscard]] static column make_query(
+    fetchable_query&& query,
     std::string alias = ""
   );
 
@@ -130,6 +136,7 @@ public:
   [[nodiscard]] bool is_plain_column() const;
   [[nodiscard]] bool is_function() const;
   [[nodiscard]] bool is_expression() const;
+  [[nodiscard]] bool is_query() const;
   [[nodiscard]] bool is_nullable() const;
   [[nodiscard]] bool is_primary_key() const;
   [[nodiscard]] bool is_foreign_key() const;
@@ -153,6 +160,8 @@ public:
 
   [[nodiscard]] std::shared_ptr<abstract_column_expression> expression() const;
 
+  const fetchable_query& query() const;
+
 private:
   column(const class table* tab,
          std::string  name,
@@ -162,6 +171,7 @@ private:
          const std::shared_ptr<abstract_column_expression>& expression,
          const column_options& options,
          size_t index);
+  column(std::string alias, fetchable_query&& query);
 
 
   struct plain_column {
@@ -179,7 +189,8 @@ private:
   using column_value = std::variant<
     plain_column,
     std::shared_ptr<abstract_column_expression>,
-    query_function
+    query_function,
+    fetchable_query
   >;
 
   static std::string build_canonical_name(const class table *tab, const std::string& name);

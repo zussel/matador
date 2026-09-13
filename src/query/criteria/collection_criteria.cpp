@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "matador/query/criteria/collection_criteria.hpp"
 
 #include "matador/query/criteria/criteria_visitor.hpp"
@@ -28,10 +30,10 @@ const std::vector<criteria_value>& collection_criteria::values() const {
   return values_;
 }
 
-collection_query_criteria::collection_query_criteria(const column& col, const collection_operator operand_, const query_context& ctx)
+collection_query_criteria::collection_query_criteria(const column& col, const collection_operator operand_, fetchable_query  ctx)
 : abstract_column_criteria(col)
 , operand_(operand_)
-, query_context_(ctx){
+, query_context_(std::move(ctx)){
 }
 
 void collection_query_criteria::accept(criteria_visitor &visitor) const {
@@ -42,7 +44,7 @@ collection_operator collection_query_criteria::operand() const {
   return operand_;
 }
 
-const query_context& collection_query_criteria::query() const {
+const fetchable_query& collection_query_criteria::query() const {
   return query_context_;
 }
 }

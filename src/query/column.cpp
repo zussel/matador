@@ -115,6 +115,10 @@ column column::make_expression(
   };
 }
 
+column column::make_query(fetchable_query &&query, std::string alias) {
+  return column{std::move(alias), std::move(query)};
+}
+
 column::column(const class table *tab,
                std::string name,
                std::string alias,
@@ -134,6 +138,11 @@ column::column(const class table *tab,
   } else {
     value_ = std::move(plain);
   }
+}
+
+column::column(std::string alias, fetchable_query &&query)
+: value_(std::move(query))
+, alias_(std::move(alias)) {
 }
 
 bool column::equals(const column &x) const {
@@ -224,6 +233,10 @@ bool column::is_expression() const {
   return expression != nullptr && static_cast<bool>(*expression);
 }
 
+bool column::is_query() const {
+  return std::holds_alternative<fetchable_query>(value_);
+}
+
 bool column::is_nullable() const {
   return !options_.constraints().has(column_constraint::NotNull);
 }
@@ -264,6 +277,14 @@ void column::table(const class table* tab) {
 
 column::operator std::string() const {
   return name();
+}
+
+const fetchable_query& column::query() const {
+  if (const auto* query = std::get_if<fetchable_query>(&value_)) {
+    return *query;
+  }
+
+  throw std::logic_error("Column doesn't represent a query");
 }
 
 std::shared_ptr<abstract_column_expression> column::expression() const {

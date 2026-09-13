@@ -21,13 +21,13 @@ public:
    * auto query = select().from(customers).join_left(orders).on("customer_id"_col == "id"_col);
    * @endcode
    */
-  join_intermediate join_left(const table &t) const;
+  [[nodiscard]] join_intermediate join_left(const table &t) const;
   /** Appends a left join for a compiled subquery and transitions to the join state. */
-  join_intermediate join_left(const query_context &ctx) const;
+  [[nodiscard]] join_intermediate join_left(const query_context &ctx) const;
   /** Appends a table join and its ON condition, then remains in the from state. */
-  from_intermediate join_left(join_data &data) const;
+  [[nodiscard]] from_intermediate join_left(join_data &data) const;
   /** Appends every table join and ON condition, then remains in the from state. */
-  from_intermediate join_left(std::vector<join_data> &data_vector) const;
+  [[nodiscard]] from_intermediate join_left(std::vector<join_data> &data_vector) const;
 
   /**
    * Appends a WHERE clause.
@@ -39,7 +39,7 @@ public:
    * auto query = select().from(customers).where("id"_col == 42);
    * @endcode
    */
-  where_intermediate where(std::unique_ptr<abstract_criteria> &&cond) const;
+  [[nodiscard]] where_intermediate where(std::unique_ptr<abstract_criteria> &&cond) const;
   /**
    * Appends one GROUP BY column and transitions to the group-by state.
    *
@@ -47,9 +47,9 @@ public:
    * auto query = select({"country"_col}).from(customers).group_by("country"_col);
    * @endcode
    */
-  group_by_intermediate group_by(const column &column) const;
+  [[nodiscard]] group_by_intermediate group_by(const column &column) const;
   /** Appends GROUP BY columns and transitions to the group-by state. */
-  group_by_intermediate group_by(std::initializer_list<column> columns) const;
+  [[nodiscard]] group_by_intermediate group_by(std::initializer_list<column> columns) const;
   /**
    * Appends one ORDER BY column and transitions to the order-by state.
    *
@@ -57,9 +57,9 @@ public:
    * auto query = select().from(customers).order_by("id"_col).desc().limit(10).offset(20);
    * @endcode
    */
-  order_by_intermediate order_by(const column &col) const;
+  [[nodiscard]] order_by_intermediate order_by(const column &col) const;
   /** Appends ORDER BY columns and transitions to the order-by state. */
-  order_by_intermediate order_by(std::initializer_list<column> columns) const;
+  [[nodiscard]] order_by_intermediate order_by(std::initializer_list<column> columns) const;
 
 private:
   where_intermediate where_clause(std::unique_ptr<abstract_criteria> &&cond) const;

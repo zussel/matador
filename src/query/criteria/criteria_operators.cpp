@@ -115,7 +115,7 @@ criteria_ptr in(const column &col, const std::initializer_list<placeholder> args
   return std::make_unique<collection_criteria>(col, collection_operator::In, std::move(values));
 }
 
-criteria_ptr in(const column &col, query_context &&q) {
+criteria_ptr in(const column &col, fetchable_query &&q) {
   return std::make_unique<collection_query_criteria>(col, collection_operator::In, std::move(q));
 }
 
@@ -128,7 +128,7 @@ criteria_ptr out(const column &col, const std::initializer_list<placeholder> arg
   return std::make_unique<collection_criteria>(col, collection_operator::Out, values);
 }
 
-criteria_ptr out(const column &col, query_context &&q) {
+criteria_ptr out(const column &col, fetchable_query &&q) {
   return std::make_unique<collection_query_criteria>(col, collection_operator::In, std::move(q));
 }
 
