@@ -6,6 +6,7 @@
 #include "matador/query/intermediates/alter_intermediate.hpp"
 #include "matador/query/intermediates/create_intermediate.hpp"
 #include "matador/query/intermediates/group_by_intermediate.hpp"
+#include "matador/query/intermediates/insert_intermediate.hpp"
 #include "matador/query/intermediates/join_intermediate.hpp"
 #include "matador/query/intermediates/limit_intermediate.hpp"
 #include "matador/query/intermediates/offset_intermediate.hpp"
@@ -56,7 +57,7 @@ column minimum(const std::string &column);
 //[[nodiscard]] query_select_intermediate select(const schema &scm) {
 //  return select(generator::columns<Type>(scm));
 //}
-// [[nodiscard]] query_insert_intermediate insert();
+[[nodiscard]] insert_intermediate insert();
 // [[nodiscard]] query_update_intermediate update(const table &table);
 // [[nodiscard]] query_delete_intermediate remove();
 

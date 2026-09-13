@@ -47,13 +47,16 @@ add_library(matador
     query/intermediates/from_intermediate.cpp
     query/intermediates/group_by_intermediate.cpp
     query/intermediates/fetchable_query.cpp
+    query/intermediates/insert_intermediate.cpp
     query/intermediates/intermediate.cpp
+    query/intermediates/into_intermediate.cpp
     query/intermediates/join_intermediate.cpp
     query/intermediates/limit_intermediate.cpp
     query/intermediates/offset_intermediate.cpp
     query/intermediates/order_by_intermediate.cpp
     query/intermediates/order_direction_intermediate.cpp
     query/intermediates/select_intermediate.cpp
+    query/intermediates/values_intermediate.cpp
     query/intermediates/where_intermediate.cpp
     query/internal/attribute_string_writer.cpp
     query/internal/basic_type_to_string_visitor.cpp
@@ -64,6 +67,7 @@ add_library(matador
     query/internal/query_result_impl.cpp
     query/internal/result_binder.cpp
     query/internal/string_builder_utils.cpp
+    query/internal/value_extractor.cpp
     query/observer.cpp
     query/primary_key_options.cpp
     query/query.cpp

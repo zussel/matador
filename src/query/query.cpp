@@ -55,10 +55,10 @@ select_intermediate select(const std::vector<std::string>& column_names) {
   }
   return select(columns);
 }
-//
-// query_insert_intermediate insert() {
-//   return {};
-// }
+
+insert_intermediate insert() {
+   return {};
+}
 //
 // query_update_intermediate update(const table& table) {
 //   return query_update_intermediate{table};
