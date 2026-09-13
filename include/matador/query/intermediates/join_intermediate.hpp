@@ -16,10 +16,16 @@ public:
   // {
   //   return on_clause(std::make_unique<Condition>(std::move(cond)));
   // }
-  on_intermediate on(std::unique_ptr<abstract_criteria> &&cond);
+  /**
+   * Appends the ON condition for the preceding join.
+   *
+   * @param cond Condition ownership is transferred to the query.
+   * @return A from state that can add another join or continue the query.
+   */
+  on_intermediate on(std::unique_ptr<abstract_criteria> &&cond) const;
 
 private:
-  on_intermediate on_clause(std::unique_ptr<abstract_criteria> &&cond);
+  on_intermediate on_clause(std::unique_ptr<abstract_criteria> &&cond) const;
 };
 }
 

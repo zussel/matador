@@ -18,6 +18,12 @@ protected:
   using intermediate::intermediate;
 
 public:
+  /**
+   * Fetches every row and resolves it as an object of Type.
+   *
+   * @param exec Executor used to run the compiled query.
+   * @return Resolved rows or the database error returned by the executor.
+   */
   template <class Type>
   result<query_result<Type>, error> fetch_all(executor &exec) {
     auto result = fetch(exec, typeid(Type));
@@ -32,9 +38,21 @@ public:
       [] { return std::make_shared<Type>(); }
     );
   }
+  /**
+   * Fetches every row as a generic record.
+   *
+   * @param exec Executor used to run the compiled query.
+   * @return Records or the database error returned by the executor.
+   */
   [[nodiscard]] result<query_result<record>, error>
   fetch_all(const executor &exec) const;
 
+  /**
+   * Fetches the first row and resolves it as an object of Type.
+   *
+   * @param exec Executor used to run the compiled query.
+   * @return An empty object pointer when no row matches, or a database error.
+   */
   template <class Type>
   result<object_ptr<Type>, error> fetch_one(executor &exec) {
     auto result = fetch(exec, typeid(Type));
@@ -57,9 +75,21 @@ public:
     });
   }
 
+  /**
+   * Fetches the first row as a generic record.
+   *
+   * @param exec Executor used to run the compiled query.
+   * @return An empty optional when no row matches, or a database error.
+   */
   [[nodiscard]] result<std::optional<record>, error>
   fetch_one(const executor &exec) const;
 
+  /**
+   * Fetches the first column of the first row as Type.
+   *
+   * @param exec Executor used to run the compiled query.
+   * @return An empty optional when no row matches, or a conversion/database error.
+   */
   template <typename Type>
   result<std::optional<Type>, error> fetch_value(const executor &exec) {
     auto fetch_result = fetch_one(exec);
@@ -76,7 +106,19 @@ public:
 
   // [[nodiscard]] result<statement, error> prepare(executor &exec) const;
 
+  /**
+   * Compiles this query to SQL for a dialect.
+   *
+   * @param d Dialect used to serialize the query.
+   * @return The generated SQL string.
+   */
   [[nodiscard]] std::string str(const dialect &d) const;
+  /**
+   * Compiles this query to an executable query context.
+   *
+   * @param d Dialect used to serialize the query.
+   * @return SQL, command type, result prototype, and bind-variable metadata.
+   */
   [[nodiscard]] query_context compile(const dialect &d) const;
 
 private:

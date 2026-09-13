@@ -5,8 +5,9 @@
 #include "matador/query/query_data.hpp"
 
 namespace matador::query {
-limit_intermediate order_direction_intermediate::limit(size_t limit) {
-  context_->parts.push_back(std::make_unique<internal::query_limit_part>(limit));
-  return {context_};
+limit_intermediate order_direction_intermediate::limit(size_t limit) const {
+  auto context = clone_context();
+  context->parts.push_back(std::make_shared<internal::query_limit_part>(limit));
+  return {context};
 }
 }

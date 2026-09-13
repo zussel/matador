@@ -10,8 +10,10 @@ class order_by_intermediate : public intermediate {
 public:
   using intermediate::intermediate;
 
-  order_direction_intermediate asc();
-  order_direction_intermediate desc();
+  /** Appends ascending sort direction and transitions to a fetchable order state. */
+  order_direction_intermediate asc() const;
+  /** Appends descending sort direction and transitions to a fetchable order state. */
+  order_direction_intermediate desc() const;
 };
 }
 

@@ -99,12 +99,18 @@ void query_builder::visit(internal::query_select_part& part) {
 }
 
 void query_builder::visit(internal::query_select_nextval_part& part) {
-  query_.sql += dialect_->select() + " " + dialect_->nextval() + "('" + part.sequence_name() + "')";
+  query_.command = query_command::Select;
+  query_.sql = dialect_->select() + " " + dialect_->nextval() + "(" +
+    dialect_->begin_string_data() + prepare_literal(part.sequence_name(), *dialect_) +
+    dialect_->end_string_data() + ")";
   prepare_prototype(query_.columns, part.sequence_name());
 }
 
 void query_builder::visit(internal::query_select_currval_part& part) {
-  query_.sql += dialect_->select() + " " + dialect_->currval() + "('" + part.sequence_name() + "')";
+  query_.command = query_command::Select;
+  query_.sql = dialect_->select() + " " + dialect_->currval() + "(" +
+    dialect_->begin_string_data() + prepare_literal(part.sequence_name(), *dialect_) +
+    dialect_->end_string_data() + ")";
   prepare_prototype(query_.columns, part.sequence_name());
 }
 

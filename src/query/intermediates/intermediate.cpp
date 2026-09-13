@@ -10,4 +10,8 @@ intermediate::intermediate(const std::shared_ptr<query_data> &context)
 : context_(context)
 {}
 
+std::shared_ptr<query_data> intermediate::clone_context() const {
+  return std::make_shared<query_data>(*context_);
+}
+
 }

@@ -10,7 +10,8 @@ class limit_intermediate : public fetchable_query {
 public:
   using fetchable_query::fetchable_query;
 
-  offset_intermediate offset(size_t offset);
+  /** Appends an OFFSET clause and transitions to the fetchable offset state. */
+  offset_intermediate offset(size_t offset) const;
 };
 }
 

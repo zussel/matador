@@ -11,8 +11,10 @@ class group_by_intermediate : public fetchable_query {
 public:
   using fetchable_query::fetchable_query;
 
-  order_by_intermediate order_by(const column &col);
-  order_by_intermediate order_by(std::initializer_list<column> columns);
+  /** Appends one ORDER BY column and transitions to the order-by state. */
+  order_by_intermediate order_by(const column &col) const;
+  /** Appends ORDER BY columns and transitions to the order-by state. */
+  order_by_intermediate order_by(std::initializer_list<column> columns) const;
 };
 }
 

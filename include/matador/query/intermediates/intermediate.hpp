@@ -12,6 +12,8 @@ public:
   intermediate(const std::shared_ptr<query_data> &context); // NOLINT(*-explicit-constructor)
 
 protected:
+  [[nodiscard]] std::shared_ptr<query_data> clone_context() const;
+
   std::shared_ptr<query_data> context_;
 };
 

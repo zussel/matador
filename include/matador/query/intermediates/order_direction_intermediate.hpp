@@ -10,7 +10,8 @@ class order_direction_intermediate : public fetchable_query {
 public:
   using fetchable_query::fetchable_query;
 
-  limit_intermediate limit(size_t limit);
+  /** Appends a LIMIT clause and transitions to the fetchable limit state. */
+  limit_intermediate limit(size_t limit) const;
 };
 }
 

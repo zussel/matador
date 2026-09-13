@@ -1,87 +1,100 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "matador/query/intermediates/select_intermediate.hpp"
-#include "matador/query/internal/query_parts.hpp"
-#include "matador/query/query_data.hpp"
+#include "matador/query/criteria.hpp"
+#include "matador/query/dialect.hpp"
+#include "matador/query/query.hpp"
 #include "matador/query/table.hpp"
 
 #include <stdexcept>
-#include <string>
-#include <vector>
 
-using namespace matador::query;
-
-namespace {
-class inspectable_select_intermediate final : public select_intermediate {
+namespace matador::query {
+class dialect_builder {
 public:
-  using select_intermediate::select_intermediate;
-
-  [[nodiscard]] const query_data& data() const {
-    return *context_;
+  static dialect make_default() {
+    return {};
   }
 };
 }
 
-TEST_CASE("Select intermediate stores the requested columns", "[query][select]") {
-  const std::vector<column> columns{
-    column::make_plain("id"),
-    column::make_plain("name", "customer_name")
-  };
-  const inspectable_select_intermediate select{columns};
+using namespace matador::query;
 
-  REQUIRE(select.data().parts.size() == 1);
-  const auto* part = dynamic_cast<const internal::query_select_part*>(select.data().parts.front().get());
-  REQUIRE(part != nullptr);
-  REQUIRE(part->columns().size() == 2);
-  REQUIRE(part->columns().at(0).equals(columns.at(0)));
-  REQUIRE(part->columns().at(1).equals(columns.at(1)));
+TEST_CASE("Select factory compiles requested columns and FROM tables", "[query][select]") {
+  const dialect dialect = dialect_builder::make_default();
+  const table customers{"customers"};
+
+  const auto query = select({"id"_col, "name"_col}).from(customers);
+
+  REQUIRE(query.str(dialect) == R"(SELECT "id", "name" FROM "customers")");
+  REQUIRE(query.compile(dialect).command == query_command::Select);
 }
 
-TEST_CASE("Select intermediate replaces the projection with sequence expressions", "[query][select]") {
-  SECTION("nextval") {
-    inspectable_select_intermediate select{{column::make_plain("id")}};
-    [[maybe_unused]] const auto query = select.nextval("customer_id_seq");
+TEST_CASE("Select intermediate creates sequence queries", "[query][select]") {
+  const dialect dialect = dialect_builder::make_default();
 
-    REQUIRE(select.data().parts.size() == 1);
-    const auto* part = dynamic_cast<const internal::query_select_nextval_part*>(
-      select.data().parts.front().get()
-    );
-    REQUIRE(part != nullptr);
-    REQUIRE(part->sequence_name() == "customer_id_seq");
+  SECTION("nextval") {
+    const auto query = select().nextval("customer_id_seq");
+
+    REQUIRE(query.str(dialect) == "SELECT NEXTVAL('customer_id_seq')");
+    REQUIRE(query.compile(dialect).command == query_command::Select);
   }
 
   SECTION("currval") {
-    inspectable_select_intermediate select{{column::make_plain("id")}};
-    [[maybe_unused]] const auto query = select.currval("customer_id_seq");
+    const auto query = select().currval("customer_id_seq");
 
-    REQUIRE(select.data().parts.size() == 1);
-    const auto* part = dynamic_cast<const internal::query_select_currval_part*>(
-      select.data().parts.front().get()
-    );
-    REQUIRE(part != nullptr);
-    REQUIRE(part->sequence_name() == "customer_id_seq");
+    REQUIRE(query.str(dialect) == "SELECT CURRVAL('customer_id_seq')");
+    REQUIRE(query.compile(dialect).command == query_command::Select);
+  }
+
+  SECTION("sequence names escape string quotes") {
+    const auto query = select().nextval("customer's_id_seq");
+
+    REQUIRE(query.str(dialect) == "SELECT NEXTVAL('customer''s_id_seq')");
   }
 }
 
-TEST_CASE("Select intermediate appends FROM tables and records their query names", "[query][select]") {
-  inspectable_select_intermediate select{{column::make_plain("id")}};
+TEST_CASE("Select intermediate keeps earlier states reusable", "[query][select]") {
+  const dialect dialect = dialect_builder::make_default();
+  const table customers{"customers"};
+  const auto projection = select({"id"_col});
+  const auto from_query = projection.from(customers);
+  const auto sequence_query = projection.nextval("customer_id_seq");
+
+  REQUIRE(from_query.str(dialect) == R"(SELECT "id" FROM "customers")");
+  REQUIRE(sequence_query.str(dialect) == "SELECT NEXTVAL('customer_id_seq')");
+}
+
+TEST_CASE("Select fluent states preserve clauses across filtering and pagination", "[query][select]") {
+  const dialect dialect = dialect_builder::make_default();
+  const table customers{"customers"};
+  const auto from_query = select({"id"_col}).from(customers);
+  const auto filtered_query = from_query.where("id"_col == 42);
+  const auto paged_query = filtered_query.order_by("id"_col).desc().limit(10).offset(5);
+
+  REQUIRE(from_query.str(dialect) == R"(SELECT "id" FROM "customers")");
+  REQUIRE(filtered_query.str(dialect) == R"(SELECT "id" FROM "customers" WHERE "id" = 42)");
+  REQUIRE(paged_query.str(dialect) ==
+    R"(SELECT "id" FROM "customers" WHERE "id" = 42 ORDER BY "id" DESC LIMIT 10 OFFSET 5)");
+}
+
+TEST_CASE("Select fluent states support joins and grouping", "[query][select]") {
+  const dialect dialect = dialect_builder::make_default();
   const table customers{"customers"};
   const table orders{"orders"};
 
-  [[maybe_unused]] const auto query = select.from(customers, orders);
+  const auto query = select({"id"_col})
+    .from(customers)
+    .join_left(orders)
+    .on("customer_id"_col == "id"_col)
+    .group_by("id"_col)
+    .order_by("id"_col)
+    .asc();
 
-  REQUIRE(select.data().parts.size() == 2);
-  const auto* part = dynamic_cast<const internal::query_from_part*>(select.data().parts.back().get());
-  REQUIRE(part != nullptr);
-  REQUIRE(part->tables().size() == 2);
-  REQUIRE(part->tables().at(0) == customers);
-  REQUIRE(part->tables().at(1) == orders);
-  REQUIRE(select.data().tables.at("customers") == customers);
-  REQUIRE(select.data().tables.at("orders") == orders);
+  REQUIRE(query.str(dialect) ==
+    R"(SELECT "id" FROM "customers" LEFT JOIN "orders" ON "customer_id" = "id" GROUP BY "id" ORDER BY "id" ASC)");
 }
 
 TEST_CASE("Select intermediate rejects an empty FROM clause", "[query][select]") {
-  inspectable_select_intermediate select{{column::make_plain("id")}};
+  const auto query = select({"id"_col});
 
-  REQUIRE_THROWS_AS(select.from(), std::invalid_argument);
+  REQUIRE_THROWS_AS(query.from(), std::invalid_argument);
 }

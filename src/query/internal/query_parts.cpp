@@ -149,7 +149,7 @@ void query_select_nextval_part::accept(query_part_visitor& visitor) {
 }
 
 query_select_currval_part::query_select_currval_part(std::string sequence_name)
-: query_part(dialect_token::NextVal)
+: query_part(dialect_token::CurrVal)
 , sequence_name_(std::move(sequence_name)){
 }
 
