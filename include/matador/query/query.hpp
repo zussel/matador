@@ -5,6 +5,7 @@
 
 #include "matador/query/intermediates/alter_intermediate.hpp"
 #include "matador/query/intermediates/create_intermediate.hpp"
+// #include "matador/query/intermediates/delete_intermediate.hpp"
 #include "matador/query/intermediates/drop_intermediate.hpp"
 #include "matador/query/intermediates/group_by_intermediate.hpp"
 #include "matador/query/intermediates/insert_intermediate.hpp"
@@ -14,6 +15,7 @@
 #include "matador/query/intermediates/order_by_intermediate.hpp"
 #include "matador/query/intermediates/order_direction_intermediate.hpp"
 #include "matador/query/intermediates/select_intermediate.hpp"
+#include "matador/query/intermediates/update_intermediate.hpp"
 #include "matador/query/intermediates/where_intermediate.hpp"
 
 // #include "matador/query/generator.hpp"
@@ -68,8 +70,20 @@ column minimum(const std::string &column);
 //  return select(generator::columns<Type>(scm));
 //}
 [[nodiscard]] insert_intermediate insert();
-// [[nodiscard]] query_update_intermediate update(const table &table);
-// [[nodiscard]] query_delete_intermediate remove();
+/**
+ * Starts an UPDATE query for a table.
+ *
+ * @param table Target table.
+ * @return An update state that accepts assignments and filters.
+ *
+ * @code{.cpp}
+ * auto query = update(customers)
+ *   .set("status"_col, column_expression{"active"})
+ *   .where("id"_col == 42);
+ * @endcode
+ */
+[[nodiscard]] update_intermediate update(const table &table);
+// [[nodiscard]] delete_intermediate remove();
 
 [[nodiscard]] alter_intermediate alter();
 }

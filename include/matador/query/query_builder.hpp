@@ -91,6 +91,7 @@ protected:
   const query_data *data_{};
   query_context query_;
   size_t table_index{0};
+  bool has_set_clause_{false};
   const dialect *dialect_{nullptr};
   std::optional<std::reference_wrapper<const connection_impl>> connection_{};
 

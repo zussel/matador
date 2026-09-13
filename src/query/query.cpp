@@ -58,15 +58,15 @@ select_intermediate select(const std::vector<std::string>& column_names) {
 insert_intermediate insert() {
    return {};
 }
-//
-// query_update_intermediate update(const table& table) {
-//   return query_update_intermediate{table};
+
+update_intermediate update(const table& table) {
+   return update_intermediate{table};
+}
+
+// delete_intermediate remove() {
+   // return {};
 // }
-//
-// query_delete_intermediate remove() {
-//   return {};
-// }
-//
+
 alter_intermediate alter() {
   return {};
 }

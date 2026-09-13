@@ -46,9 +46,14 @@ add_library(matador
     query/intermediates/create_intermediate.cpp
     query/intermediates/drop_intermediate.cpp
     query/intermediates/executable_query.cpp
+    query/intermediates/execute_limit_intermediate.cpp
+    query/intermediates/execute_offset_intermediate.cpp
+    query/intermediates/execute_order_by_intermediate.cpp
+    query/intermediates/execute_order_direction_intermediate.cpp
+    query/intermediates/execute_where_intermediate.cpp
+    query/intermediates/fetchable_query.cpp
     query/intermediates/from_intermediate.cpp
     query/intermediates/group_by_intermediate.cpp
-    query/intermediates/fetchable_query.cpp
     query/intermediates/insert_intermediate.cpp
     query/intermediates/intermediate.cpp
     query/intermediates/into_intermediate.cpp
@@ -58,6 +63,8 @@ add_library(matador
     query/intermediates/order_by_intermediate.cpp
     query/intermediates/order_direction_intermediate.cpp
     query/intermediates/select_intermediate.cpp
+    query/intermediates/set_intermediate.cpp
+    query/intermediates/update_intermediate.cpp
     query/intermediates/values_intermediate.cpp
     query/intermediates/where_intermediate.cpp
     query/internal/attribute_string_writer.cpp

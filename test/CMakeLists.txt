@@ -19,6 +19,7 @@ add_executable(MatadorTests
     query/InsertIntermediateTest.cpp
     query/SelectIntermediateTest.cpp
     query/TableTest.cpp
+    query/UpdateIntermediateTest.cpp
     utils/ConvertTest.cpp
     utils/ResultTest.cpp
     utils/StringTest.cpp

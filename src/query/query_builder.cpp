@@ -23,6 +23,7 @@ query_context query_builder::build(const query_data& data,
   dialect_ = &d;
   connection_ = conn;
   query_ = {};
+  has_set_clause_ = false;
   for (const auto& part : data.parts) {
     part->accept(*this);
   }
@@ -350,7 +351,7 @@ void query_builder::visit(internal::query_drop_schema_part& part) {
 }
 
 void query_builder::visit(internal::query_set_part& part) {
-  query_.sql += " " + dialect_->set() + " ";
+  query_.sql += has_set_clause_ ? ", " : " " + dialect_->set() + " ";
 
   attribute_string_writer writer(*dialect_, connection_);
   // std::string result;
@@ -365,6 +366,7 @@ void query_builder::visit(internal::query_set_part& part) {
     query_.sql.append(determine_value(*dialect_, query_, column_value.expression()));
     first = false;
   }
+  has_set_clause_ = true;
 
   // if (part.column_values().size() < 2) {
   //   for (const auto &column_value: part.column_values()) {
