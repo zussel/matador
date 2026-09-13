@@ -44,6 +44,8 @@ add_library(matador
     query/intermediates/alter_intermediate.cpp
     query/intermediates/alter_table_intermediate.cpp
     query/intermediates/create_intermediate.cpp
+    query/intermediates/delete_from_intermediate.cpp
+    query/intermediates/delete_intermediate.cpp
     query/intermediates/drop_intermediate.cpp
     query/intermediates/executable_query.cpp
     query/intermediates/execute_limit_intermediate.cpp

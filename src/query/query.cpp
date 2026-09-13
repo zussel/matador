@@ -63,9 +63,9 @@ update_intermediate update(const table& table) {
    return update_intermediate{table};
 }
 
-// delete_intermediate remove() {
-   // return {};
-// }
+delete_intermediate remove() {
+   return {};
+}
 
 alter_intermediate alter() {
   return {};

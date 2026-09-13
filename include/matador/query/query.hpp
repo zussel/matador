@@ -5,7 +5,7 @@
 
 #include "matador/query/intermediates/alter_intermediate.hpp"
 #include "matador/query/intermediates/create_intermediate.hpp"
-// #include "matador/query/intermediates/delete_intermediate.hpp"
+#include "matador/query/intermediates/delete_intermediate.hpp"
 #include "matador/query/intermediates/drop_intermediate.hpp"
 #include "matador/query/intermediates/group_by_intermediate.hpp"
 #include "matador/query/intermediates/insert_intermediate.hpp"
@@ -83,7 +83,16 @@ column minimum(const std::string &column);
  * @endcode
  */
 [[nodiscard]] update_intermediate update(const table &table);
-// [[nodiscard]] delete_intermediate remove();
+/**
+ * Starts a DELETE query.
+ *
+ * @return A delete state that accepts a source table.
+ *
+ * @code{.cpp}
+ * auto query = remove().from(customers).where("id"_col == 42);
+ * @endcode
+ */
+[[nodiscard]] delete_intermediate remove();
 
 [[nodiscard]] alter_intermediate alter();
 }
