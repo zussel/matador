@@ -10,6 +10,7 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 add_executable(MatadorTests
     query/ColumnTest.cpp
     query/ColumnExpressionTest.cpp
+    query/DropIntermediateTest.cpp
     query/FieldTest.cpp
     query/IdentifierTest.cpp
     query/QueryResultImplTest.cpp

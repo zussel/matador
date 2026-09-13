@@ -30,11 +30,10 @@ create_intermediate create() {
   return {};
 }
 
-//
-// query_drop_intermediate drop() {
-//   return {};
-// }
-//
+drop_intermediate drop() {
+   return {};
+}
+
 select_intermediate select() {
   return select_intermediate{{}};
 }

@@ -345,8 +345,8 @@ void query_builder::visit(internal::query_drop_part& part) {
 }
 
 void query_builder::visit(internal::query_drop_schema_part& part) {
-  query_.sql += " " + dialect_->drop() + " " +
-    dialect_->schema() + " " + prepare_identifier_string(part.schema(), *dialect_);
+  query_.command = query_command::DropSchema;
+  query_.sql += " " + dialect_->schema() + " " + prepare_identifier_string(part.schema(), *dialect_);
 }
 
 void query_builder::visit(internal::query_set_part& part) {

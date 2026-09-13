@@ -493,7 +493,7 @@ void query_drop_table_part::accept(query_part_visitor &visitor) {
 }
 
 query_drop_sequence_part::query_drop_sequence_part(std::string sequence_name)
-: query_part(dialect_token::Table)
+: query_part(dialect_token::Sequence)
 , sequence_name_(std::move(sequence_name)) {
 }
 

@@ -29,6 +29,7 @@ add_library(matador
     query/criteria/not_criteria.cpp
     query/criteria_evaluator.cpp
     query/dialect.cpp
+    query/dialect_builder.cpp
     query/error_code.cpp
     query/expression/binary_column_expression.cpp
     query/expression/column_expression.cpp
@@ -43,6 +44,7 @@ add_library(matador
     query/intermediates/alter_intermediate.cpp
     query/intermediates/alter_table_intermediate.cpp
     query/intermediates/create_intermediate.cpp
+    query/intermediates/drop_intermediate.cpp
     query/intermediates/executable_query.cpp
     query/intermediates/from_intermediate.cpp
     query/intermediates/group_by_intermediate.cpp

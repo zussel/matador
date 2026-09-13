@@ -5,6 +5,7 @@
 
 #include "matador/query/intermediates/alter_intermediate.hpp"
 #include "matador/query/intermediates/create_intermediate.hpp"
+#include "matador/query/intermediates/drop_intermediate.hpp"
 #include "matador/query/intermediates/group_by_intermediate.hpp"
 #include "matador/query/intermediates/insert_intermediate.hpp"
 #include "matador/query/intermediates/join_intermediate.hpp"
@@ -27,7 +28,16 @@ column maximum(const std::string &column);
 column minimum(const std::string &column);
 
 [[nodiscard]] create_intermediate create();
-// [[nodiscard]] query_drop_intermediate drop();
+/**
+ * Starts a DROP query.
+ *
+ * @return A drop state that can drop a table, sequence, or schema.
+ *
+ * @code{.cpp}
+ * auto query = drop().table(customers);
+ * @endcode
+ */
+[[nodiscard]] drop_intermediate drop();
 /**
  * Starts a query that selects every column.
  *
