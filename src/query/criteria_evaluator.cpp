@@ -99,7 +99,7 @@ void criteria_evaluator::visit(const collection_criteria &node) {
 void criteria_evaluator::visit(const collection_query_criteria &node) {
   clause_ += prepare_identifier(dialect_, node.col()) +
       (node.operand() == collection_operator::Out ? " " + dialect_.not_() + " " : " ") +
-      dialect_.in() + " (" + node.query().sql + ")";
+      dialect_.in() + " (" + node.query().str(dialect_) + ")";
 }
 
 void criteria_evaluator::visit(const like_criteria &node) {

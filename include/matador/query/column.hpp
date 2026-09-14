@@ -5,7 +5,6 @@
 
 #include "matador/query/column_options.hpp"
 #include "matador/query/expression/abstract_column_expression.hpp"
-#include "matador/query/intermediates/fetchable_query.hpp"
 #include "matador/query/query_functions.hpp"
 
 #include <memory>
@@ -15,6 +14,7 @@
 namespace matador::query {
 
 class table;
+class fetchable_query;
 
 // ReSharper disable CppNonExplicitConvertingConstructor
 class column {
@@ -160,7 +160,7 @@ public:
 
   [[nodiscard]] std::shared_ptr<abstract_column_expression> expression() const;
 
-  const fetchable_query& query() const;
+  [[nodiscard]] const fetchable_query& query() const;
 
 private:
   column(const class table* tab,
@@ -190,7 +190,7 @@ private:
     plain_column,
     std::shared_ptr<abstract_column_expression>,
     query_function,
-    fetchable_query
+    std::shared_ptr<fetchable_query>
   >;
 
   static std::string build_canonical_name(const class table *tab, const std::string& name);

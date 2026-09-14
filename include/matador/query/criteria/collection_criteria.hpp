@@ -3,6 +3,7 @@
 
 #include "matador/query/criteria/abstract_column_criteria.hpp"
 #include "matador/query/criteria/criteria_utils.hpp"
+#include "matador/query/intermediates/fetchable_query.hpp"
 #include "matador/query/query_context.hpp"
 #include "matador/query/table.hpp"
 

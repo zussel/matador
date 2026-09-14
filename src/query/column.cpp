@@ -1,11 +1,10 @@
 #include "matador/query/column.hpp"
 
+#include "matador/query/intermediates/fetchable_query.hpp"
 #include "matador/query/table.hpp"
 
 #include <stdexcept>
 #include <utility>
-
-// #include "matador/query/expression/column_expression.hpp"
 
 namespace matador::query {
 
@@ -141,7 +140,7 @@ column::column(const class table *tab,
 }
 
 column::column(std::string alias, fetchable_query &&query)
-: value_(std::move(query))
+: value_(std::make_shared<fetchable_query>(std::move(query)))
 , alias_(std::move(alias)) {
 }
 
@@ -234,7 +233,7 @@ bool column::is_expression() const {
 }
 
 bool column::is_query() const {
-  return std::holds_alternative<fetchable_query>(value_);
+  return std::holds_alternative<std::shared_ptr<fetchable_query>>(value_);
 }
 
 bool column::is_nullable() const {
@@ -280,8 +279,8 @@ column::operator std::string() const {
 }
 
 const fetchable_query& column::query() const {
-  if (const auto* query = std::get_if<fetchable_query>(&value_)) {
-    return *query;
+  if (const auto* query = std::get_if<std::shared_ptr<fetchable_query>>(&value_)) {
+    return **query;
   }
 
   throw std::logic_error("Column doesn't represent a query");

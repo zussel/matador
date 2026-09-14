@@ -84,6 +84,7 @@ add_library(matador
     query/query.cpp
     query/query_builder.cpp
     query/query_part.cpp
+    query/query_result.cpp
     query/query_utils.cpp
     query/record.cpp
     query/relation_endpoint.cpp
