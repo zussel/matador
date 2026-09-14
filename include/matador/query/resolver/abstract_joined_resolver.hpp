@@ -1,7 +1,7 @@
 #ifndef MATADOR_ABSTRACT_COLLECTION_RESOLVER_HPP
 #define MATADOR_ABSTRACT_COLLECTION_RESOLVER_HPP
 
-#include "matador/query/abstract_type_resolver.hpp"
+#include "matador/query/resolver/abstract_type_resolver.hpp"
 
 #include <string>
 #include <typeindex>
