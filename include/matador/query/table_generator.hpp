@@ -38,15 +38,15 @@ public:
     static void on_column(const char * /*id*/, Type &/*x*/, const column_options& /*attr*/) {}
     static void on_column(const char * /*id*/, char * /*x*/, const column_options& /*attr*/) {}
     template<class Pointer>
-    static void on_belongs_to(const char * /*id*/, Pointer &/*x*/, const foreign_options& /*attr*/) {}
+    static void on_belongs_to(const char * /*id*/, Pointer &/*x*/, const foreign_key_options& /*attr*/) {}
     template<class Pointer>
-    static void on_has_one(const char * /*id*/, Pointer &/*x*/, const char * /*join_column*/, const foreign_options& /*attr*/) {}
+    static void on_has_one(const char * /*id*/, Pointer &/*x*/, const char * /*join_column*/, const foreign_key_options& /*attr*/) {}
     template<class ContainerType>
-    static void on_has_many(const char * /*id*/, ContainerType &, const char *, const foreign_options& /*attr*/) {}
+    static void on_has_many(const char * /*id*/, ContainerType &, const char *, const foreign_key_options& /*attr*/) {}
     template<class ContainerType>
-    static void on_has_many_to_many(const char * /*id*/, ContainerType & /*cont*/, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_options& /*attr*/) {}
+    static void on_has_many_to_many(const char * /*id*/, ContainerType & /*cont*/, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_key_options& /*attr*/) {}
     template<class ContainerType>
-    static void on_has_many_to_many(const char * /*id*/, ContainerType & /*cont*/, const foreign_options& /*attr*/) {}
+    static void on_has_many_to_many(const char * /*id*/, ContainerType & /*cont*/, const foreign_key_options& /*attr*/) {}
 
 private:
     utils::basic_type type_{};
@@ -99,12 +99,12 @@ public:
     void on_attribute(const char *id, std::optional<Type> &x, const column_options &attr);
 
     template<class Pointer>
-    void on_belongs_to(const char *id, Pointer &x, const foreign_options& /*attr*/) {
+    void on_belongs_to(const char *id, Pointer &x, const foreign_key_options& /*attr*/) {
       on_foreign_key(id, x);
       create_fk_constraint<typename Pointer::value_type>(id);
     }
     template<class Pointer>
-    static void on_has_one(const char * /*id*/, Pointer &/*x*/, const char * /*join_column*/, const foreign_options& /*attr*/) {}
+    static void on_has_one(const char * /*id*/, Pointer &/*x*/, const char * /*join_column*/, const foreign_key_options& /*attr*/) {}
 
     template <class Pointer>
     void on_foreign_key(const char *id, Pointer &/*x*/) {
@@ -115,11 +115,11 @@ public:
         ref.index_ = table_->columns_.size() - 1;
     }
     template<class ContainerType>
-    static void on_has_many(const char * /*id*/, ContainerType &, const char *, const foreign_options& /*attr*/) {}
+    static void on_has_many(const char * /*id*/, ContainerType &, const char *, const foreign_key_options& /*attr*/) {}
     template<class ContainerType>
-    static void on_has_many_to_many(const char * /*id*/, ContainerType & /*cont*/, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_options& /*attr*/) {}
+    static void on_has_many_to_many(const char * /*id*/, ContainerType & /*cont*/, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_key_options& /*attr*/) {}
     template<class ContainerType>
-    static void on_has_many_to_many(const char * /*id*/, ContainerType & /*cont*/, const foreign_options& /*attr*/) {}
+    static void on_has_many_to_many(const char * /*id*/, ContainerType & /*cont*/, const foreign_key_options& /*attr*/) {}
 
 private:
     template<typename ValueType>

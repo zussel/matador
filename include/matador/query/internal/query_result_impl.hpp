@@ -4,7 +4,7 @@
 #include "matador/query/default_type_traits.hpp"
 #include "matador/query/access.hpp"
 #include "matador/query/column_options.hpp"
-#include "matador/query/foreign_options.hpp"
+#include "matador/query/foreign_key_options.hpp"
 #include "matador/query/primary_key_options.hpp"
 #include "matador/query/identifier.hpp"
 
@@ -62,17 +62,17 @@ public:
   void on_attribute(const char *id, column_value &val, const column_options &attr);
 
   template<class Pointer>
-  void on_belongs_to(const char * /*id*/, Pointer &x, const foreign_options &attr);
+  void on_belongs_to(const char * /*id*/, Pointer &x, const foreign_key_options &attr);
   template<class PointerType>
-  void on_has_one(const char * /*id*/, object_ptr<PointerType> &x, const char * /*join_column*/, const foreign_options &attr);
+  void on_has_one(const char * /*id*/, object_ptr<PointerType> &x, const char * /*join_column*/, const foreign_key_options &attr);
   template<class CollectionType>
-  void on_has_many(const char * /*id*/, CollectionType &cont, const char *join_column, const foreign_options &attr, std::enable_if_t<is_object_ptr<typename CollectionType::value_type>::value> * = nullptr);
+  void on_has_many(const char * /*id*/, CollectionType &cont, const char *join_column, const foreign_key_options &attr, std::enable_if_t<is_object_ptr<typename CollectionType::value_type>::value> * = nullptr);
   template<class CollectionType>
-  void on_has_many(const char * /*id*/, CollectionType &, const char * /*join_column*/, const foreign_options &/*attr*/, std::enable_if_t<!is_object_ptr<typename CollectionType::value_type>::value> * = nullptr);
+  void on_has_many(const char * /*id*/, CollectionType &, const char * /*join_column*/, const foreign_key_options &/*attr*/, std::enable_if_t<!is_object_ptr<typename CollectionType::value_type>::value> * = nullptr);
   template <class CollectionType>
-  void on_has_many_to_many(const char *id, CollectionType &, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_options &attr);
+  void on_has_many_to_many(const char *id, CollectionType &, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_key_options &attr);
   template<class CollectionType>
-  void on_has_many_to_many(const char *, CollectionType &, const foreign_options &attr);
+  void on_has_many_to_many(const char *, CollectionType &, const foreign_key_options &attr);
 
   template<class Type>
   void bind(const Type &obj) {
@@ -139,7 +139,7 @@ private:
 };
 
 template <class PointerType>
-void query_result_impl::on_belongs_to(const char*, PointerType& x, const foreign_options& attr) {
+void query_result_impl::on_belongs_to(const char*, PointerType& x, const foreign_key_options& attr) {
   const auto resolver = resolver_->resolver<typename PointerType::value_type>();
   if (attr.fetch() == fetch_type::Lazy) {
     typename PointerType::value_type obj;
@@ -155,7 +155,7 @@ void query_result_impl::on_belongs_to(const char*, PointerType& x, const foreign
 }
 
 template <class PointerType>
-void query_result_impl::on_has_one(const char*, object_ptr<PointerType>& x, const char *join_column, const foreign_options& attr) {
+void query_result_impl::on_has_one(const char*, object_ptr<PointerType>& x, const char *join_column, const foreign_key_options& attr) {
   const auto resolver = resolver_->joined_object_resolver<PointerType>(result_type_, join_column);
   if (attr.fetch() == fetch_type::Lazy) {
     x.reset(std::make_shared<object_proxy<PointerType>>(resolver, current_pk_));
@@ -167,7 +167,7 @@ void query_result_impl::on_has_one(const char*, object_ptr<PointerType>& x, cons
 }
 
 template <class CollectionType>
-void query_result_impl::on_has_many(const char *, CollectionType &cont, const char *join_column, const foreign_options &attr, std::enable_if_t<is_object_ptr<typename CollectionType::value_type>::value> *) {
+void query_result_impl::on_has_many(const char *, CollectionType &cont, const char *join_column, const foreign_key_options &attr, std::enable_if_t<is_object_ptr<typename CollectionType::value_type>::value> *) {
   using value_type = typename CollectionType::value_type::value_type;
   auto object_resolver = resolver_->resolver<value_type>();
   auto resolver = resolver_->joined_collection_resolver<typename CollectionType::value_type>(result_type_, join_column);
@@ -188,7 +188,7 @@ void query_result_impl::on_has_many(const char *, CollectionType &cont, const ch
   }
 }
 template <class CollectionType>
-void query_result_impl::on_has_many(const char *id, CollectionType &cont, const char *join_column, const foreign_options &attr, std::enable_if_t<!is_object_ptr<typename CollectionType::value_type>::value> *) {
+void query_result_impl::on_has_many(const char *id, CollectionType &cont, const char *join_column, const foreign_key_options &attr, std::enable_if_t<!is_object_ptr<typename CollectionType::value_type>::value> *) {
   using value_type = typename CollectionType::value_type;
   auto object_resolver = resolver_->resolver<value_type>();
   auto resolver = resolver_->joined_collection_resolver<value_type>(result_type_, join_column);
@@ -208,7 +208,7 @@ void query_result_impl::on_has_many(const char *id, CollectionType &cont, const 
 }
 
 template <class CollectionType>
-void query_result_impl::on_has_many_to_many(const char *id, CollectionType &cont, const char *join_column, const char *, const foreign_options &attr) {
+void query_result_impl::on_has_many_to_many(const char *id, CollectionType &cont, const char *join_column, const char *, const foreign_key_options &attr) {
   using value_type = typename CollectionType::value_type::value_type;
   auto object_resolver = resolver_->resolver<value_type>();
   auto resolver = resolver_->joined_collection_resolver<typename CollectionType::value_type>(result_type_, join_column);
@@ -229,7 +229,7 @@ void query_result_impl::on_has_many_to_many(const char *id, CollectionType &cont
 }
 
 template <class CollectionType>
-void query_result_impl::on_has_many_to_many(const char *id, CollectionType &cont, const foreign_options &attr) {
+void query_result_impl::on_has_many_to_many(const char *id, CollectionType &cont, const foreign_key_options &attr) {
   using value_type = typename CollectionType::value_type::value_type;
   join_columns_collector collector;
   const auto jc = collector.collect<typename CollectionType::value_type::value_type>();

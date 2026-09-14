@@ -3,7 +3,7 @@
 
 #include "matador/query/primary_key_options.hpp"
 #include "matador/query/column_options.hpp"
-#include "matador/query/foreign_options.hpp"
+#include "matador/query/foreign_key_options.hpp"
 
 #include <optional>
 
@@ -53,32 +53,32 @@ void attribute(Operator &op, const char *id, std::optional<Type> &value, const c
 }
 
 template<class Operator, class Type>
-void belongs_to(Operator &op, const char *id, Type &value, const foreign_options &attr = CascadeNoneFetchLazy) {
+void belongs_to(Operator &op, const char *id, Type &value, const foreign_key_options &attr = CascadeNoneFetchLazy) {
   op.on_belongs_to(id, value, attr);
 }
 
 template<class Operator, class Type>
-void has_one(Operator &op, const char *id, Type &value, const char *join_column, const foreign_options &attr = CascadeNoneFetchLazy) {
+void has_one(Operator &op, const char *id, Type &value, const char *join_column, const foreign_key_options &attr = CascadeNoneFetchLazy) {
   op.on_has_one(id, value, join_column, attr);
 }
 
 template<class Operator, class Type, template<class ...> class ContainerType>
-void has_many(Operator &op, const char *id, ContainerType<Type> &c, const char *join_column, const foreign_options &attr = CascadeNoneFetchLazy) {
+void has_many(Operator &op, const char *id, ContainerType<Type> &c, const char *join_column, const foreign_key_options &attr = CascadeNoneFetchLazy) {
   op.on_has_many(id, c, join_column, attr);
 }
 
 template<class Operator, class Type, template<class ...> class ContainerType>
-void has_many(Operator &op, const char *id, ContainerType<Type> &c, const foreign_options &attr = CascadeNoneFetchLazy) {
+void has_many(Operator &op, const char *id, ContainerType<Type> &c, const foreign_key_options &attr = CascadeNoneFetchLazy) {
   op.on_has_many(id, c, attr);
 }
 
 template<class Operator, class ContainerType>
-void has_many_to_many(Operator &op, const char *id, ContainerType &c, const char *join_column, const char *inverse_join_column, const foreign_options &attr = CascadeNoneFetchLazy) {
+void has_many_to_many(Operator &op, const char *id, ContainerType &c, const char *join_column, const char *inverse_join_column, const foreign_key_options &attr = CascadeNoneFetchLazy) {
   op.on_has_many_to_many(id, c, join_column, inverse_join_column, attr);
 }
 
 template<class Operator, class ContainerType>
-void has_many_to_many(Operator &op, const char *id, ContainerType &c, const foreign_options &attr = CascadeNoneFetchLazy) {
+void has_many_to_many(Operator &op, const char *id, ContainerType &c, const foreign_key_options &attr = CascadeNoneFetchLazy) {
   op.on_has_many_to_many(id, c, attr);
 }
 }

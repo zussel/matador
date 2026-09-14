@@ -38,26 +38,26 @@ public:
   }
 
   template<class Pointer>
-  static void on_belongs_to(const char * /*id*/, Pointer &/*x*/, const foreign_options &/*attr*/) {
+  static void on_belongs_to(const char * /*id*/, Pointer &/*x*/, const foreign_key_options &/*attr*/) {
   }
 
   template<class Pointer>
   static void on_has_one(const char * /*id*/, Pointer &/*x*/, const char * /*join_column*/,
-                         const foreign_options &/*attr*/) {
+                         const foreign_key_options &/*attr*/) {
   }
 
   template<class ContainerType>
   static void on_has_many_to_many(const char *, ContainerType &, const char * /*join_column*/,
-                                  const char * /*inverse_join_column*/, const foreign_options &/*attr*/) {
+                                  const char * /*inverse_join_column*/, const foreign_key_options &/*attr*/) {
   }
 
   template<class ContainerType>
-  static void on_has_many_to_many(const char *, ContainerType &, const foreign_options &/*attr*/) {
+  static void on_has_many_to_many(const char *, ContainerType &, const foreign_key_options &/*attr*/) {
   }
 
   template<class ContainerType>
   static void on_has_many(const char *, ContainerType &, const char * /*join_column*/,
-                          const foreign_options &/*attr*/) {
+                          const foreign_key_options &/*attr*/) {
   }
 
 private:

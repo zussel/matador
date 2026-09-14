@@ -32,18 +32,18 @@ public:
     template<typename Type>
     static void on_attribute(const char * /*id*/, Type &, const column_options &/*attr*/) {}
     template<class Pointer>
-    static void on_belongs_to(const char * /*id*/, Pointer &/*obj*/, const foreign_options &/*attr*/) {}
+    static void on_belongs_to(const char * /*id*/, Pointer &/*obj*/, const foreign_key_options &/*attr*/) {}
     template<class Pointer>
-    static void on_has_one(const char * /*id*/, Pointer &/*obj*/, const char * /*join_column*/, const foreign_options &/*attr*/) {}
+    static void on_has_one(const char * /*id*/, Pointer &/*obj*/, const char * /*join_column*/, const foreign_key_options &/*attr*/) {}
     template<class ContainerType>
-    static void on_has_many(ContainerType &, const char */*join_column*/, const foreign_options &/*attr*/) {}
+    static void on_has_many(ContainerType &, const char */*join_column*/, const foreign_key_options &/*attr*/) {}
     template<class ContainerType>
-    void on_has_many_to_many(const char * /*id*/, ContainerType &/*c*/, const char *join_column, const char *inverse_join_column, const foreign_options &/*attr*/) {
+    void on_has_many_to_many(const char * /*id*/, ContainerType &/*c*/, const char *join_column, const char *inverse_join_column, const foreign_key_options &/*attr*/) {
         join_columns_.join_column = join_column;
         join_columns_.inverse_join_column = inverse_join_column;
     }
     template<class ContainerType>
-    static void on_has_many_to_many(const char * /*id*/, ContainerType &/*c*/, const foreign_options &/*attr*/) {}
+    static void on_has_many_to_many(const char * /*id*/, ContainerType &/*c*/, const foreign_key_options &/*attr*/) {}
 
 private:
     join_columns join_columns_;

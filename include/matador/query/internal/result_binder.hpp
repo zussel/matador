@@ -4,7 +4,7 @@
 #include "matador/query/default_type_traits.hpp"
 #include "matador/query/access.hpp"
 #include "matador/query/column_options.hpp"
-#include "matador/query/foreign_options.hpp"
+#include "matador/query/foreign_key_options.hpp"
 #include "matador/query/primary_key_options.hpp"
 #include "matador/query/value_reader.hpp"
 
@@ -31,19 +31,19 @@ public:
   template <class Type>
   static void on_attribute(const char * /*id*/, Type & /*x*/, const column_options & /*attr*/) {}
   template <class Pointer>
-  static void on_belongs_to(const char * /*id*/, Pointer & /*x*/, const foreign_options & /*attr*/) {}
+  static void on_belongs_to(const char * /*id*/, Pointer & /*x*/, const foreign_key_options & /*attr*/) {}
   template <class Pointer>
-  static void on_has_one(const char * /*id*/, Pointer & /*x*/, const char * /*join_column*/, const foreign_options & /*attr*/) {}
+  static void on_has_one(const char * /*id*/, Pointer & /*x*/, const char * /*join_column*/, const foreign_key_options & /*attr*/) {}
 
   template <class ContainerType>
-  static void on_has_many(const char * /*id*/, ContainerType & /*c*/, const char * /*join_column*/, const foreign_options & /*attr*/) {}
+  static void on_has_many(const char * /*id*/, ContainerType & /*c*/, const char * /*join_column*/, const foreign_key_options & /*attr*/) {}
   template <class ContainerType>
   static void on_has_many_to_many(const char * /*id*/, ContainerType & /*c*/,
                                   const char * /*join_column*/,
                                   const char * /*inverse_join_column*/,
-                                  const foreign_options & /*attr*/) {}
+                                  const foreign_key_options & /*attr*/) {}
   template <class ContainerType>
-  static void on_has_many_to_many(const char * /*id*/, ContainerType & /*c*/, const foreign_options & /*attr*/) {}
+  static void on_has_many_to_many(const char * /*id*/, ContainerType & /*c*/, const foreign_key_options & /*attr*/) {}
 
 private:
   value_reader *binder_{};
@@ -79,25 +79,25 @@ public:
   void on_attribute(const char *id, column_value &val, const column_options &attr);
 
   template <class Type, template <class...> class Pointer>
-  void on_belongs_to(const char *id, Pointer<Type> &x, const foreign_options & /*attr*/) {
+  void on_belongs_to(const char *id, Pointer<Type> &x, const foreign_key_options & /*attr*/) {
     fk_result_binder_.bind(*x, id, index_++, *binder_);
   }
   template <class Type, template <class...> class Pointer>
   void on_has_one(const char *id, Pointer<Type> &x, const char * /*join_column*/,
-                  const foreign_options & /*attr*/) {
+                  const foreign_key_options & /*attr*/) {
     fk_result_binder_.bind(*x, id, index_++, *binder_);
   }
   template <class ContainerType>
   static void on_has_many(const char * /*id*/, ContainerType & /*c*/, const char * /*join_column*/,
-                          const foreign_options & /*attr*/) {}
+                          const foreign_key_options & /*attr*/) {}
   template <class ContainerType>
   static void on_has_many_to_many(const char * /*id*/, ContainerType & /*c*/,
                                   const char * /*join_column*/,
                                   const char * /*inverse_join_column*/,
-                                  const foreign_options & /*attr*/) {}
+                                  const foreign_key_options & /*attr*/) {}
   template <class ContainerType>
   static void on_has_many_to_many(const char * /*id*/, ContainerType & /*c*/,
-                                  const foreign_options & /*attr*/) {}
+                                  const foreign_key_options & /*attr*/) {}
 
 private:
   value_reader *binder_{};

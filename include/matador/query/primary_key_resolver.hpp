@@ -58,15 +58,15 @@ public:
   template<typename Type>
   static void on_attribute(const char * /*id*/, Type &/*val*/, const column_options &/*attr*/) {}
   template<class Pointer>
-  static void on_belongs_to(const char * /*id*/, Pointer &/*val*/, const foreign_options &/*attr*/) {}
+  static void on_belongs_to(const char * /*id*/, Pointer &/*val*/, const foreign_key_options &/*attr*/) {}
   template<class Pointer>
-  static void on_has_one(const char * /*id*/, Pointer &/*val*/, const char * /*join_column*/, const foreign_options &/*attr*/) {}
+  static void on_has_one(const char * /*id*/, Pointer &/*val*/, const char * /*join_column*/, const foreign_key_options &/*attr*/) {}
   template<class ContainerType>
-  static void on_has_many(const char * /*id*/, ContainerType &/*col*/, const char *, const foreign_options &/*attr*/) {}
+  static void on_has_many(const char * /*id*/, ContainerType &/*col*/, const char *, const foreign_key_options &/*attr*/) {}
   template<class ContainerType>
-  static void on_has_many_to_many(const char * /*id*/, ContainerType &/*col*/, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_options &/*attr*/) {}
+  static void on_has_many_to_many(const char * /*id*/, ContainerType &/*col*/, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_key_options &/*attr*/) {}
   template<class ContainerType>
-  static void on_has_many_to_many(const char * /*id*/, ContainerType &/*col*/, const foreign_options &/*attr*/) {}
+  static void on_has_many_to_many(const char * /*id*/, ContainerType &/*col*/, const foreign_key_options &/*attr*/) {}
 
 private:
   primary_key_info primary_key_info_{};
