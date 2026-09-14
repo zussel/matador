@@ -4,6 +4,7 @@
 #include "matador/query/error_code.hpp"
 #include "matador/query/schema_node.hpp"
 #include "matador/query/schema_node_iterator.hpp"
+#include "matador/query/resolver/resolver_producer.hpp"
 
 #include "matador/utils/error.hpp"
 #include "matador/utils/result.hpp"
@@ -148,6 +149,9 @@ protected:
   std::unordered_map<std::type_index, column*> missing_references_{};
   std::unordered_map<std::string, std::type_index> expected_relation_nodes_;
   std::unordered_map<std::type_index, std::shared_ptr<table>> table_by_type_{};
+
+  std::unordered_map<std::type_index, std::unique_ptr<object_resolver_producer>> resolver_producers_;
+
 };
 }
 #endif //MATADOR_BASIC_SCHEMA_HPP
