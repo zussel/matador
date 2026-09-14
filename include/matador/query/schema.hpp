@@ -124,7 +124,7 @@ public:
    * @param name Name of the schema node/table.
    * @param observers Optional observer instances for `Type`.
    *
-   * @return `utils::ok<void>()` on success; otherwise a failure containing an
+   * @return `ok<void>()` on success; otherwise a failure containing an
    *         error that describes why the node could not be attached.
    *
    * @retval error_code::NodeAlreadyExists A node with the same name already
@@ -151,7 +151,7 @@ public:
    * @endcode
    */
   template<typename Type, template<typename> typename... Observers>
-  [[nodiscard]] utils::result<void, utils::error> attach(const std::string &name, Observers<Type>&&... observers) {
+  [[nodiscard]] result<void, error> attach(const std::string &name, Observers<Type>&&... observers) {
     return attach_type<Type, Observers...>(name, std::string{}, std::forward<Observers<Type>>(observers)...);
   }
 
@@ -172,7 +172,7 @@ public:
    * @param name Name of the schema node/table for `Type`.
    * @param observers Optional observer instances for `Type`.
    *
-   * @return `utils::ok<void>()` on success; otherwise a failure containing an
+   * @return `ok<void>()` on success; otherwise a failure containing an
    *         error that describes why the node could not be attached.
    *
    * @retval error_code::NodeNotFound The parent type `SuperType` is not
@@ -206,11 +206,11 @@ public:
    * @endcode
    */
   template<typename Type, typename SuperType, template<typename> typename... Observers>
-  [[nodiscard]] utils::result<void, utils::error> attach(const std::string &name, Observers<Type>&&... observers) {
+  [[nodiscard]] result<void, error> attach(const std::string &name, Observers<Type>&&... observers) {
     const auto ti = std::type_index(typeid(SuperType));
     const auto it = find_node(ti);
     if (it == end()) {
-      return utils::failure(make_error(error_code::NodeNotFound, "Parent node '" + std::string(ti.name()) + "' not found"));
+      return failure<error>(make_error(error_code::NodeNotFound, "Parent node '" + std::string(ti.name()) + "' not found"));
     }
 
     return attach_type<Type, Observers...>(name, it->name(), std::forward<Observers<Type>>(observers)...);
@@ -234,7 +234,7 @@ public:
    *        root node.
    * @param observers Optional observer instances for `Type`.
    *
-   * @return `utils::ok<void>()` on success; otherwise a failure containing an
+   * @return `ok<void>()` on success; otherwise a failure containing an
    *         error that describes why the node could not be attached.
    *
    * @retval error_code::NodeNotFound The named parent node does not exist.
@@ -251,7 +251,7 @@ public:
    * @endcode
    */
   template<typename Type, template<typename> typename... Observers>
-  [[nodiscard]] utils::result<void, utils::error> attach(const std::string &name, const std::string &parent, Observers<Type>&&... observers) {
+  [[nodiscard]] result<void, error> attach(const std::string &name, const std::string &parent, Observers<Type>&&... observers) {
     return attach_type<Type, Observers...>(name, parent, std::forward<Observers<Type>>(observers)...);
   }
 
@@ -278,7 +278,7 @@ public:
    *        root node.
    * @param observers Optional observer instances for `Type`.
    *
-   * @return `utils::ok<void>()` on success; otherwise a failure containing an
+   * @return `ok<void>()` on success; otherwise a failure containing an
    *         error from node attachment or relation completion.
    *
    * @retval error_code::NodeAlreadyExists A node with the same name already
@@ -293,7 +293,7 @@ public:
    * @endcode
    */
   template<typename Type, template<typename> typename... Observers>
-  [[nodiscard]] utils::result<void, utils::error> attach_type(const std::string &name, const std::string &parent, Observers<Type>&&... observers) {
+  [[nodiscard]] result<void, error> attach_type(const std::string &name, const std::string &parent, Observers<Type>&&... observers) {
     const std::type_index ti{typeid(Type)};
 
     if (const auto it = nodes_by_type_.find(ti); it == nodes_by_type_.end() ) {
@@ -312,20 +312,20 @@ public:
 
       auto result = attach_node(std::move(node), parent);
       if (!result) {
-        return utils::failure(result.err());
+        return failure<error>(result.err());
       }
 
       schema_node* attached_node = result.value();
       const auto info = attached_node->template info<Type>();
       auto completer_result = relation_completer<Type, Observers...>::complete(attached_node, info.get().observers());
       if (!completer_result) {
-        return utils::failure(completer_result.err());
+        return failure<error>(completer_result.err());
       }
     } else if (!has_node(name)) {
       const auto old_name = it->second->name();
 
       if (!old_name.empty()) {
-        return utils::failure(make_error(
+        return failure<error>(make_error(
           error_code::NodeAlreadyExists,
           "Type '" + std::string(ti.name()) + "' is already attached as node '" + old_name + "'"
         ));
@@ -338,14 +338,14 @@ public:
       const auto info = it->second->info<Type>();
       auto completer_result = relation_completer<Type, Observers...>::complete(it->second, info.get().observers());
       if (!completer_result) {
-        return utils::failure(completer_result.err());
+        return failure<error>(completer_result.err());
       }
       // log_.info("attach: update node name to '%s' (type: %s)", it->second->name().c_str(), it->second->type_index().name());
     } else {
-      return utils::failure(make_error(error_code::NodeAlreadyExists, "Node '" + name + "' already exists"));
+      return failure<error>(make_error(error_code::NodeAlreadyExists, "Node '" + name + "' already exists"));
     }
 
-    return utils::ok<void>();
+    return ok<void>();
   }
 
   /**
@@ -358,7 +358,7 @@ public:
    *
    * @tparam Type Object type whose metadata should be returned.
    *
-   * @return `utils::ok(object_info_ref<Type>)` when `Type` is attached;
+   * @return `ok(object_info_ref<Type>)` when `Type` is attached;
    *         otherwise a failure containing an error.
    *
    * @retval error_code::NodeNotFound `Type` is not attached to the schema.
@@ -380,13 +380,13 @@ public:
    * @endcode
    */
   template<typename Type>
-  [[nodiscard]] utils::result<object_info_ref<Type>, utils::error> info() const {
+  [[nodiscard]] result<object_info_ref<Type>, error> info() const {
     const auto it = find_node(std::type_index(typeid(Type)));
     if (it == end()) {
-      return utils::failure(make_error(error_code::NodeNotFound, "Parent node '" + std::string(typeid(Type).name()) + "' not found"));
+      return failure<error>(make_error(error_code::NodeNotFound, "Parent node '" + std::string(typeid(Type).name()) + "' not found"));
     }
 
-    return utils::ok(it->info<Type>());
+    return ok<object_info_ref<Type>>(it->info<Type>());
   }
 };
 }

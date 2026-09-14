@@ -9,8 +9,8 @@
 #include <algorithm>
 
 namespace matador::query {
-utils::error make_error(const error_code ec, const std::string &msg) {
-  return utils::error(ec, msg);
+error make_error(const error_code ec, const std::string &msg) {
+  return error(ec, msg);
 }
 
 basic_schema::basic_schema(std::string name)
@@ -30,7 +30,7 @@ basic_schema::~basic_schema() {
   }
 }
 
-utils::result<void, utils::error> basic_schema::detach(const schema_node *node) {
+result<void, error> basic_schema::detach(const schema_node *node) {
   if (!node) {
     return utils::failure(make_error(error_code::InvalidArgument, "Node is null."));
   }
@@ -75,7 +75,7 @@ bool basic_schema::contains( const std::type_index& index ) const {
   return nodes_by_type_.count(index) > 0;
 }
 
-utils::result<basic_table_info_ref, utils::error> basic_schema::basic_info(const std::type_index &ti) const {
+result<basic_table_info_ref, error> basic_schema::basic_info(const std::type_index &ti) const {
   const auto it = find_node(ti);
   if (it == end()) {
     return utils::failure(make_error(error_code::NodeNotFound, "Node '" + std::string(ti.name()) + "' not found."));
@@ -84,7 +84,7 @@ utils::result<basic_table_info_ref, utils::error> basic_schema::basic_info(const
   return utils::ok(basic_table_info_ref{it->info()});
 }
 
-utils::result<basic_table_info_ref, utils::error> basic_schema::basic_info(const std::string& name) const {
+result<basic_table_info_ref, error> basic_schema::basic_info(const std::string& name) const {
     const auto it = find_node(name);
     if (it == end()) {
       return utils::failure(make_error(error_code::NodeNotFound, "Node '" + name + "' not found."));
@@ -93,7 +93,7 @@ utils::result<basic_table_info_ref, utils::error> basic_schema::basic_info(const
     return utils::ok(basic_table_info_ref{it->info()});
 }
 
-utils::result<const column*, utils::error> basic_schema::primary_key_attribute(const std::type_index &ti) const {
+result<const column*, error> basic_schema::primary_key_attribute(const std::type_index &ti) const {
   const auto it = find_node(ti);
   if (it == end()) {
     return utils::failure(make_error(error_code::NodeNotFound, "Node '" + std::string(ti.name()) + "' not found."));
@@ -126,7 +126,7 @@ void basic_schema::dump( std::ostream& os, const schema_node& node ) {
   os << "\n";
 }
 
-utils::result<schema_node*, utils::error> basic_schema::attach_node(std::unique_ptr<schema_node> &&node, const std::string &parent) {
+result<schema_node*, error> basic_schema::attach_node(std::unique_ptr<schema_node> &&node, const std::string &parent) {
   if (!node) {
     return utils::failure(make_error(error_code::InvalidArgument, "Node is null."));
   }
