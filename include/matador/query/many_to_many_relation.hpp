@@ -3,7 +3,7 @@
 
 #include "matador/query/object_ptr.hpp"
 #include "matador/query/access.hpp"
-#include "matador/query/foreign_options.hpp"
+#include "matador/query/foreign_key_options.hpp"
 
 namespace matador::query {
 template < class ForeignType >

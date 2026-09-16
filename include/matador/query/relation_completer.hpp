@@ -41,19 +41,19 @@ public:
     static void on_attribute(const char * /*id*/, std::optional<AttributeType> &/*val*/, const column_options &/*attr*/) {}
 
     template<class ForeignPointerType>
-    void on_belongs_to(const char *id, ForeignPointerType &/*obj*/, const foreign_options &/*attr*/) {
+    void on_belongs_to(const char *id, ForeignPointerType &/*obj*/, const foreign_key_options &/*attr*/) {
       found_ = found_ || requested_join_column_ == id;
     }
     template<class ForeignPointerType>
-    static void on_has_one(const char * /*id*/, ForeignPointerType &/*obj*/, const char * /*join_column*/, const foreign_options &/*attr*/) {}
+    static void on_has_one(const char * /*id*/, ForeignPointerType &/*obj*/, const char * /*join_column*/, const foreign_key_options &/*attr*/) {}
 
     template<class CollectionType>
-    static void on_has_many(const char * /*id*/, CollectionType &, const char * /*join_column*/, const foreign_options &/*attr*/) {}
+    static void on_has_many(const char * /*id*/, CollectionType &, const char * /*join_column*/, const foreign_key_options &/*attr*/) {}
 
     template<class CollectionType>
-    static void on_has_many_to_many(const char * /*id*/, CollectionType &/*collection*/, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_options &/*attr*/) {}
+    static void on_has_many_to_many(const char * /*id*/, CollectionType &/*collection*/, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_key_options &/*attr*/) {}
     template<class CollectionType>
-    static void on_has_many_to_many(const char * /*id*/, CollectionType & /*collection*/, const foreign_options &/*attr*/) {}
+    static void on_has_many_to_many(const char * /*id*/, CollectionType & /*collection*/, const foreign_key_options &/*attr*/) {}
 
 private:
     explicit join_column_finder(std::string join_column)
@@ -117,19 +117,19 @@ public:
   static void on_attribute(const char * /*id*/, std::optional<AttributeType> &/*val*/, const column_options &/*attr*/) {}
 
   template<class ForeignPointerType>
-  void on_belongs_to(const char *id, ForeignPointerType &obj, const foreign_options &attr);
+  void on_belongs_to(const char *id, ForeignPointerType &obj, const foreign_key_options &attr);
   template<class ForeignPointerType>
-  void on_has_one(const char * /*id*/, ForeignPointerType &/*obj*/, const char * /*join_column*/, const foreign_options &/*attr*/);
+  void on_has_one(const char * /*id*/, ForeignPointerType &/*obj*/, const char * /*join_column*/, const foreign_key_options &/*attr*/);
 
   template<class CollectionType>
-  void on_has_many(const char *id, CollectionType &, const char *join_column, const foreign_options &attr, std::enable_if_t<is_object_ptr<typename CollectionType::value_type>::value> * = nullptr);
+  void on_has_many(const char *id, CollectionType &, const char *join_column, const foreign_key_options &attr, std::enable_if_t<is_object_ptr<typename CollectionType::value_type>::value> * = nullptr);
   template<class CollectionType>
-  void on_has_many(const char *id, CollectionType &, const char *join_column, const foreign_options &attr, std::enable_if_t<!is_object_ptr<typename CollectionType::value_type>::value> * = nullptr);
+  void on_has_many(const char *id, CollectionType &, const char *join_column, const foreign_key_options &attr, std::enable_if_t<!is_object_ptr<typename CollectionType::value_type>::value> * = nullptr);
 
   template<class CollectionType>
-  void on_has_many_to_many(const char *id, CollectionType &collection, const char *join_column, const char *inverse_join_column, const foreign_options &attr);
+  void on_has_many_to_many(const char *id, CollectionType &collection, const char *join_column, const char *inverse_join_column, const foreign_key_options &attr);
   template<class CollectionType>
-  void on_has_many_to_many(const char *id, CollectionType &collection, const foreign_options &attr);
+  void on_has_many_to_many(const char *id, CollectionType &collection, const foreign_key_options &attr);
 
 private:
   using resolve_action = std::function<void()>;
@@ -202,7 +202,7 @@ template<typename Type, template<typename> typename... Observers>
 template<class CollectionType>
 void relation_completer<Type, Observers...>::on_has_many(const char *id, CollectionType &,
                                            const char *join_column,
-                                           const foreign_options &,
+                                           const foreign_key_options &,
                                            std::enable_if_t<is_object_ptr<typename CollectionType::value_type>::value> * /*unused*/) {
   ensure_foreign_node_announced<typename CollectionType::value_type::value_type>();
 
@@ -214,7 +214,7 @@ void relation_completer<Type, Observers...>::on_has_many(const char *id, Collect
 template<typename Type, template<typename> typename... Observers>
 template<class CollectionType>
 void relation_completer<Type, Observers...>::on_has_many(const char *id, CollectionType &, const char *join_column,
-                                           const foreign_options &,
+                                           const foreign_key_options &,
                                            std::enable_if_t<!is_object_ptr<typename CollectionType::value_type>::value>* /*unused*/) {
   resolve_actions_.push_back([this, id = std::string(id), join_column = std::string(join_column)] {
     resolve_value_has_many<CollectionType>(id, join_column);
@@ -227,7 +227,7 @@ void relation_completer<Type, Observers...>::on_has_many_to_many(const char *id,
                                                    CollectionType &/*collection*/,
                                                    const char *join_column,
                                                    const char *inverse_join_column,
-                                                   const foreign_options &/*attr*/) {
+                                                   const foreign_key_options &/*attr*/) {
   ensure_foreign_node_announced<typename CollectionType::value_type::value_type>();
 
   resolve_actions_.push_back([
@@ -244,7 +244,7 @@ template<typename Type, template<typename> typename... Observers>
 template<class CollectionType>
 void relation_completer<Type, Observers...>::on_has_many_to_many(const char *id,
                                                    CollectionType &collection,
-                                                   const foreign_options &attr) {
+                                                   const foreign_key_options &attr) {
   const auto join_columns = join_columns_collector_.collect<typename CollectionType::value_type::value_type>();
   on_has_many_to_many(
     id,
@@ -259,7 +259,7 @@ template<class ForeignPointerType>
 void relation_completer<Type, Observers...>::on_has_one(const char *id,
                                           ForeignPointerType &/*obj*/,
                                           const char * /*join_column*/,
-                                          const foreign_options &/*attr*/) {
+                                          const foreign_key_options &/*attr*/) {
   ensure_foreign_node_announced<typename ForeignPointerType::value_type>();
 
   resolve_actions_.push_back([this, id = std::string(id)] {
@@ -271,7 +271,7 @@ template<typename Type, template<typename> typename... Observers>
 template<class ForeignPointerType>
 void relation_completer<Type, Observers...>::on_belongs_to(const char *id,
                                              ForeignPointerType & /*obj*/,
-                                             const foreign_options & /*attr*/) {
+                                             const foreign_key_options & /*attr*/) {
   ensure_foreign_node_announced<typename ForeignPointerType::value_type>();
 
   resolve_actions_.push_back([this, id = std::string(id)] {

@@ -40,7 +40,7 @@ add_library(matador
     query/expression/value_expression.cpp
     query/expression_evaluator.cpp
     query/field.cpp
-    query/foreign_options.cpp
+  query/foreign_key_options.cpp
     query/identifier.cpp
     query/identity_pk_generator.cpp
     query/intermediates/alter_intermediate.cpp

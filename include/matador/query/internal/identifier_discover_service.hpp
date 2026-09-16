@@ -3,7 +3,7 @@
 
 #include "matador/query/access.hpp"
 #include "matador/query/column_options.hpp"
-#include "matador/query/foreign_options.hpp"
+#include "matador/query/foreign_key_options.hpp"
 #include "matador/query/primary_key_options.hpp"
 #include "matador/query/identifier.hpp"
 #include "matador/query/interface/query_result_reader.hpp"
@@ -50,26 +50,26 @@ public:
   void on_attribute(const char *id, const column_value &x, const column_options &attr);
 
   template<class Pointer>
-  void on_belongs_to(const char * /*id*/, Pointer &/*x*/, const foreign_options &attr) {
+  void on_belongs_to(const char * /*id*/, Pointer &/*x*/, const foreign_key_options &attr) {
     on_foreign_key<typename Pointer::value_type>(attr.fetch());
   }
 
   template<class Pointer>
-  void on_has_one(const char * /*id*/, Pointer &/*x*/, const char * /*join_column*/, const foreign_options &attr) {
+  void on_has_one(const char * /*id*/, Pointer &/*x*/, const char * /*join_column*/, const foreign_key_options &attr) {
     on_foreign_key<typename Pointer::value_type>(attr.fetch());
   }
 
   template<class ContainerType>
-  static void on_has_many(const char * /*id*/, ContainerType &, const char *, const foreign_options &/*attr*/) {
+  static void on_has_many(const char * /*id*/, ContainerType &, const char *, const foreign_key_options &/*attr*/) {
   }
 
   template<class ContainerType>
   static void on_has_many_to_many(const char * /*id*/, ContainerType & /*c*/, const char * /*join_column*/,
-                                  const char * /*inverse_join_column*/, const foreign_options &/*attr*/) {
+                                  const char * /*inverse_join_column*/, const foreign_key_options &/*attr*/) {
   }
 
   template<class ContainerType>
-  static void on_has_many_to_many(const char * /*id*/, ContainerType & /*c*/, const foreign_options &/*attr*/) {
+  static void on_has_many_to_many(const char * /*id*/, ContainerType & /*c*/, const foreign_key_options &/*attr*/) {
   }
 
 private:

@@ -2,7 +2,7 @@
 #define QUERY_RECIPE_HPP
 
 #include "matador/query/access.hpp"
-#include "matador/query/foreign_options.hpp"
+#include "matador/query/foreign_key_options.hpp"
 #include "matador/query/object_ptr.hpp"
 #include "matador/query/collection.hpp"
 

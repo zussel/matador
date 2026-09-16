@@ -44,18 +44,18 @@ public:
   void on_attribute(const char *id, std::string &x, const column_options &/*attr*/);
 
   template<class Type, template < class... > class Pointer>
-  void on_belongs_to(const char * /*id*/, Pointer<Type> &x, const foreign_options &/*attr*/) {
+  void on_belongs_to(const char * /*id*/, Pointer<Type> &x, const foreign_key_options &/*attr*/) {
     values_.emplace_back(fk_value_extractor_.extract(*x));
   }
 
   template<class Type, template < class... > class Pointer>
   void on_has_one(const char * /*id*/, Pointer<Type> &x, const char * /*join_column*/,
-                  const foreign_options &/*attr*/) {
+                  const foreign_key_options &/*attr*/) {
     values_.emplace_back(fk_value_extractor_.extract(*x));
   }
 
   template<class ContainerType>
-  static void on_has_many(const char * /*id*/, ContainerType &, const char *, const foreign_options &/*attr*/) {
+  static void on_has_many(const char * /*id*/, ContainerType &, const char *, const foreign_key_options &/*attr*/) {
   }
 
   template<class ContainerType>
@@ -63,13 +63,13 @@ public:
                                   ContainerType &/*c*/,
                                   const char * /*join_column*/,
                                   const char * /*inverse_join_column*/,
-                                  const foreign_options &/*attr*/) {
+                                  const foreign_key_options &/*attr*/) {
   }
 
   template<class ContainerType>
   static void on_has_many_to_many(const char * /*id*/,
                                   ContainerType &/*c*/,
-                                  const foreign_options &/*attr*/) {
+                                  const foreign_key_options &/*attr*/) {
   }
 
 public:
