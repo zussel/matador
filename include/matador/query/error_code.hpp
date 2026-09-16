@@ -13,6 +13,7 @@ enum class error_code : uint8_t {
   NoPrimaryKey,
   IdentifierTypeMismatch,
   InvalidArgument,
+  RetrieveDataFailed,
   Failure,
 };
 

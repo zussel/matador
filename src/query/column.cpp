@@ -211,6 +211,10 @@ column_constraints column::constraints() const {
   return options_.constraints();
 }
 
+column_options column::options() const {
+  return options_;
+}
+
 size_t column::size() const {
   return options_.size();
 }

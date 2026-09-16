@@ -12,6 +12,7 @@ add_library(matador
     ../include/matador/query/resolver_service.hpp
     ../include/matador/query/schema.hpp
     ../include/matador/utils/flags.hpp
+    query/abstract_pk_generator.cpp
     query/basic_schema.cpp
     query/basic_table_info.cpp
     query/column.cpp
@@ -41,6 +42,7 @@ add_library(matador
     query/field.cpp
     query/foreign_options.cpp
     query/identifier.cpp
+    query/identity_pk_generator.cpp
     query/intermediates/alter_intermediate.cpp
     query/intermediates/alter_table_intermediate.cpp
     query/intermediates/create_intermediate.cpp
@@ -79,6 +81,7 @@ add_library(matador
     query/internal/result_binder.cpp
     query/internal/string_builder_utils.cpp
     query/internal/value_extractor.cpp
+    query/manual_pk_generator.cpp
     query/observer.cpp
     query/primary_key_options.cpp
     query/query.cpp
@@ -91,13 +94,15 @@ add_library(matador
     query/resolver/resolver_producer.cpp
     query/schema_node.cpp
     query/schema_node_iterator.cpp
+    query/sequence_pk_generator.cpp
     query/table.cpp
     query/table.cpp
     query/table_generator.cpp
+    query/table_pk_generator.cpp
+    utils/default_type_traits.cpp
     utils/error.cpp
     utils/error_exception.cpp
     utils/errors.cpp
-    utils/default_type_traits.cpp
     utils/os.cpp
     utils/string.cpp
     utils/types.cpp

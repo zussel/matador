@@ -128,6 +128,8 @@ public:
    */
   [[nodiscard]] column_constraints constraints() const;
 
+  [[nodiscard]] column_options options() const;
+
   /**
    * Returns size declared for this schema column.
    */

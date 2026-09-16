@@ -20,6 +20,8 @@ std::string query_category_impl::message(const int ev) const {
       return "Identifier type mismatch";
     case error_code::InvalidArgument:
       return "Invalid argument";
+    case error_code::RetrieveDataFailed:
+      return "Retrieve data failed";
     case error_code::Failure:
       return "Failure";
     default:
