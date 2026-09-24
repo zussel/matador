@@ -8,8 +8,7 @@
 #include "matador/utils/result.hpp"
 
 namespace matador::query {
-class query_result_reader : public value_reader
-{
+class query_result_reader : public value_reader {
 public:
   [[nodiscard]] virtual size_t column_count() const = 0;
   [[nodiscard]] virtual const char* column(size_t index) const = 0;
@@ -29,6 +28,5 @@ protected:
 private:
   object_result_binder object_binder_;
 };
-
 }
 #endif //QUERY_QUERY_RESULT_READER_HPP

@@ -13,6 +13,7 @@ add_library(matador
     ../include/matador/query/schema.hpp
     ../include/matador/utils/flags.hpp
     query/abstract_pk_generator.cpp
+    query/backend_provider.cpp
     query/basic_schema.cpp
     query/basic_table_info.cpp
     query/column.cpp
@@ -40,7 +41,7 @@ add_library(matador
     query/expression/value_expression.cpp
     query/expression_evaluator.cpp
     query/field.cpp
-  query/foreign_key_options.cpp
+    query/foreign_key_options.cpp
     query/identifier.cpp
     query/identity_pk_generator.cpp
     query/intermediates/alter_intermediate.cpp
@@ -71,11 +72,14 @@ add_library(matador
     query/intermediates/update_intermediate.cpp
     query/intermediates/values_intermediate.cpp
     query/intermediates/where_intermediate.cpp
+    query/interface/connection_impl.cpp
+    query/interface/statement_impl.cpp
     query/internal/attribute_string_writer.cpp
     query/internal/basic_type_to_string_visitor.cpp
     query/internal/collection_utils.cpp
     query/internal/column_value_pair.cpp
     query/internal/identifier_discover_service.cpp
+    query/internal/object_binder.cpp
     query/internal/query_parts.cpp
     query/internal/query_result_impl.cpp
     query/internal/result_binder.cpp
@@ -83,6 +87,7 @@ add_library(matador
     query/internal/value_extractor.cpp
     query/manual_pk_generator.cpp
     query/observer.cpp
+    query/internal/object_binder.cpp
     query/primary_key_options.cpp
     query/query.cpp
     query/query_builder.cpp
@@ -103,6 +108,7 @@ add_library(matador
     utils/error.cpp
     utils/error_exception.cpp
     utils/errors.cpp
+    utils/library.cpp
     utils/os.cpp
     utils/string.cpp
     utils/types.cpp

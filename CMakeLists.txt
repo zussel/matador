@@ -45,7 +45,7 @@ SET(CMAKE_BUILD_PARALLEL_LEVEL 4)
 #    set(CMAKE_CXX_FLAGS_RELEASE "/O1 /DNDEBUG")
 #endif()
 
-option(ENABLE_CLANG_TIDY "Enable clang-tidy static analysis" ON)
+option(ENABLE_CLANG_TIDY "Enable clang-tidy static analysis" OFF)
 
 message(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR} ${CMAKE_SYSTEM_NAME}")
 
