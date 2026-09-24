@@ -19,6 +19,7 @@ add_library(matador
     query/column.cpp
     query/column_options.cpp
     query/column_value.cpp
+    query/connection.cpp
     query/constraint.cpp
     query/criteria/abstract_column_criteria.cpp
     query/criteria/between_criteria.cpp
@@ -74,6 +75,7 @@ add_library(matador
     query/intermediates/where_intermediate.cpp
     query/interface/connection_impl.cpp
     query/interface/statement_impl.cpp
+    query/interface/statement_proxy.cpp
     query/internal/attribute_string_writer.cpp
     query/internal/basic_type_to_string_visitor.cpp
     query/internal/collection_utils.cpp
@@ -104,6 +106,7 @@ add_library(matador
     query/table.cpp
     query/table_generator.cpp
     query/table_pk_generator.cpp
+    query/statement.cpp
     utils/default_type_traits.cpp
     utils/error.cpp
     utils/error_exception.cpp

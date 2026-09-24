@@ -179,8 +179,8 @@ private:
   friend struct detail::query_result_traits<record>;
 
   query_result(std::unique_ptr<query_result_impl>&& impl, storage_type storage)
-: impl_(std::move(impl))
-, storage_(std::move(storage)) {}
+  : impl_(std::move(impl))
+  , storage_(std::move(storage)) {}
 
 
   auto create() {

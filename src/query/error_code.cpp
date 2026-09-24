@@ -24,6 +24,8 @@ std::string query_category_impl::message(const int ev) const {
       return "Retrieve data failed";
     case error_code::Failure:
       return "Failure";
+    case error_code::FetchFailed:
+      return "Fetch failed";
     default:
       return "Unknown error";
   }

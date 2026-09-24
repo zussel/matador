@@ -15,6 +15,7 @@ enum class error_code : uint8_t {
   InvalidArgument,
   RetrieveDataFailed,
   Failure,
+  FetchFailed
 };
 
 class query_category_impl final : public std::error_category {
