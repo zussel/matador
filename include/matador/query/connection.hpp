@@ -8,7 +8,9 @@
 #include "matador/query/resolver_service.hpp"
 #include "matador/query/statement.hpp"
 
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace matador::query {
 class connection_impl;
@@ -25,9 +27,8 @@ public:
    * @param info The database connection info data
    * @param sql_logger The logging handler
    */
-  explicit connection(const connection_info& info, logger_ptr sql_logger = null_logger);
-  explicit connection(const connection_info& info,
-                      const std::shared_ptr<resolver_service> &resolver, logger_ptr sql_logger = null_logger);
+  explicit connection(const connection_info& info, const logger_ptr& sql_logger = null_logger);
+  explicit connection(const connection_info& info, std::shared_ptr<resolver_service> resolver, const logger_ptr& sql_logger = null_logger);
   /**
    * @brief Creates a database connection from a connection string.
    *
@@ -41,27 +42,27 @@ public:
    *
    * @param x The connection to copy
    */
-  connection(const connection &x);
+  connection(const connection &x) = delete;
   /**
    * Assigns from the given connection
    *
    * @param x The connection to assign
    * @return The reference to the assigned connection
    */
-  connection &operator=(const connection &x);
+  connection &operator=(const connection &x) = delete;
   /**
    * Copy moves a given connection
    *
    * @param x The connection to copy move
    */
-  connection(connection &&x) noexcept;
+  connection(connection &&x) noexcept = default;
   /**
    * Assigns moves from the given connection
    *
    * @param x The connection to assign move
    * @return The reference to the assigned connection
    */
-  connection& operator=(connection &&x) noexcept;
+  connection& operator=(connection &&x) noexcept = default;
 
   ~connection() override;
 
@@ -138,7 +139,7 @@ public:
 
   [[nodiscard]] utils::result<std::unique_ptr<query_result_impl>, utils::error> fetch(const query_context &ctx) const override;
   [[nodiscard]] utils::result<execute_result, utils::error> execute(const query_context &ctx) const override;
-  [[nodiscard]] utils::result<statement, utils::error> prepare(const query_context &ctx) override;
+  [[nodiscard]] utils::result<statement, utils::error> prepare(const query_context &ctx) const override;
   [[nodiscard]] std::string str( const query_context& ctx ) const override;
 
   [[nodiscard]] const class dialect &dialect() const override;
@@ -147,13 +148,19 @@ public:
 private:
   [[nodiscard]] utils::result<std::unique_ptr<statement_impl>, utils::error> perform_prepare(const query_context &ctx) const;
 
+  struct connection_deleter {
+    void operator()(connection_impl *impl) const noexcept;
+  };
+
+  using connection_ptr = std::unique_ptr<connection_impl, connection_deleter>;
+
 private:
   friend class fetchable_query;
   friend class session;
   friend class statement_cache;
 
-  std::unique_ptr<connection_impl> connection_;
-  std::shared_ptr<abstract_sql_logger> logger_ = std::make_shared<null_sql_logger>();
+  connection_ptr connection_;
+  logger_ptr logger_ = null_logger;
   std::shared_ptr<resolver_service> resolver_service_ = std::make_shared<resolver_service>();
 };
 }

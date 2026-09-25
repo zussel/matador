@@ -4,8 +4,11 @@
 #include <memory>
 #include <string>
 
-namespace matador::query {
+namespace matador::utils {
+class error;
+}
 
+namespace matador::query {
 /**
  * @brief Base class for SQL logging
  *
@@ -21,7 +24,6 @@ namespace matador::query {
  */
 class abstract_sql_logger {
 public:
-
   virtual ~abstract_sql_logger() = default;
   /**
    * Is called when a connection to a database is
@@ -57,6 +59,13 @@ public:
    * @param stmt SQL statement to be prepared
    */
   virtual void on_prepare(const std::string &stmt) = 0;
+
+  /**
+   * Logs the given error.
+   *
+   * @param err Error to log
+   */
+virtual void on_error(const utils::error& err) = 0;
 };
 
 /**
@@ -65,8 +74,7 @@ public:
  * This is used as the default logger for all
  * connections and statements.
  */
-class null_sql_logger final : public abstract_sql_logger
-{
+class null_sql_logger final : public abstract_sql_logger {
 public:
   /**
    * No logging on establishing a connection.
@@ -92,9 +100,14 @@ public:
    * No logging on preparing a statement.
    */
   void on_prepare(const std::string &) override { }
+
+  /**
+   * No logging on error.
+   */
+  void on_error(const utils::error &/*err*/) override { }
 };
 
-const auto null_logger = std::make_shared<null_sql_logger>();
+inline const std::shared_ptr<abstract_sql_logger> null_logger = std::make_shared<null_sql_logger>();
 
 }
 

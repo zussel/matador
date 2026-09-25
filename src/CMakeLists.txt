@@ -20,6 +20,7 @@ add_library(matador
     query/column_options.cpp
     query/column_value.cpp
     query/connection.cpp
+    query/connection_info.cpp
     query/constraint.cpp
     query/criteria/abstract_column_criteria.cpp
     query/criteria/between_criteria.cpp
