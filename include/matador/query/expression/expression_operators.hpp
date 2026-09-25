@@ -2,9 +2,9 @@
 #define MATADOR_EXPRESSION_OPERATORS_HPP
 
 #include "matador/query/expression/binary_column_expression.hpp"
+#include "matador/query/expression/column_expression.hpp"
 #include "matador/query/expression/table_column_expression.hpp"
 #include "matador/query/expression/value_expression.hpp"
-#include "matador/query/expression/column_expression.hpp"
 #include "matador/query/placeholder.hpp"
 
 /**

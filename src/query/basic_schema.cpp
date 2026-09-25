@@ -67,6 +67,24 @@ std::string basic_schema::name() const {
   return name_;
 }
 
+basic_schema::const_iterator basic_schema::find(const std::type_index &ti) const {
+  const auto it = nodes_by_type_.find(ti);
+  if (it == nodes_by_type_.end()) {
+    return end();
+  }
+
+  return const_iterator(it->second);
+}
+
+basic_schema::const_iterator basic_schema::find(const std::string &name) const {
+  const auto it = nodes_by_name_.find(name);
+  if (it == nodes_by_name_.end()) {
+    return end();
+  }
+
+  return const_iterator(it->second);
+}
+
 bool basic_schema::contains( const std::string& name ) const {
   return nodes_by_name_.count(name) > 0;
 }

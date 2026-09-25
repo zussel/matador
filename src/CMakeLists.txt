@@ -16,11 +16,13 @@ add_library(matador
     query/backend_provider.cpp
     query/basic_schema.cpp
     query/basic_table_info.cpp
+    query/backend_provider.cpp
     query/column.cpp
     query/column_options.cpp
     query/column_value.cpp
     query/connection.cpp
     query/connection_info.cpp
+    query/connection_pool.cpp
     query/constraint.cpp
     query/criteria/abstract_column_criteria.cpp
     query/criteria/between_criteria.cpp
@@ -46,6 +48,9 @@ add_library(matador
     query/foreign_key_options.cpp
     query/identifier.cpp
     query/identity_pk_generator.cpp
+    query/interface/connection_impl.cpp
+    query/interface/statement_impl.cpp
+    query/interface/statement_proxy.cpp
     query/intermediates/alter_intermediate.cpp
     query/intermediates/alter_table_intermediate.cpp
     query/intermediates/create_intermediate.cpp
@@ -74,14 +79,12 @@ add_library(matador
     query/intermediates/update_intermediate.cpp
     query/intermediates/values_intermediate.cpp
     query/intermediates/where_intermediate.cpp
-    query/interface/connection_impl.cpp
-    query/interface/statement_impl.cpp
-    query/interface/statement_proxy.cpp
     query/internal/attribute_string_writer.cpp
     query/internal/basic_type_to_string_visitor.cpp
     query/internal/collection_utils.cpp
     query/internal/column_value_pair.cpp
     query/internal/identifier_discover_service.cpp
+    query/internal/object_binder.cpp
     query/internal/object_binder.cpp
     query/internal/query_parts.cpp
     query/internal/query_result_impl.cpp
@@ -90,7 +93,6 @@ add_library(matador
     query/internal/value_extractor.cpp
     query/manual_pk_generator.cpp
     query/observer.cpp
-    query/internal/object_binder.cpp
     query/primary_key_options.cpp
     query/query.cpp
     query/query_builder.cpp
@@ -103,16 +105,19 @@ add_library(matador
     query/schema_node.cpp
     query/schema_node_iterator.cpp
     query/sequence_pk_generator.cpp
+    query/session.cpp
+    query/statement.cpp
+    query/statement_cache.cpp
     query/table.cpp
     query/table.cpp
     query/table_generator.cpp
     query/table_pk_generator.cpp
-    query/statement.cpp
     utils/default_type_traits.cpp
     utils/error.cpp
     utils/error_exception.cpp
     utils/errors.cpp
     utils/library.cpp
+    utils/message_bus.cpp
     utils/os.cpp
     utils/string.cpp
     utils/types.cpp

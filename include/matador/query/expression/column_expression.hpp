@@ -1,9 +1,9 @@
 #ifndef MATADOR_COLUMN_EXPRESSION_HPP
 #define MATADOR_COLUMN_EXPRESSION_HPP
 
+#include "matador/query/expression/placeholder_expression.hpp"
 #include "matador/query/expression/table_column_expression.hpp"
 #include "matador/query/expression/value_expression.hpp"
-#include "matador/query/expression/placeholder_expression.hpp"
 #include "matador/query/placeholder.hpp"
 
 #include "matador/utils/types.hpp"

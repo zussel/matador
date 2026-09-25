@@ -1,8 +1,8 @@
 #include "matador/query/expression_evaluator.hpp"
 
 #include "matador/query/expression/binary_column_expression.hpp"
-#include "matador/query/expression/table_column_expression.hpp"
 #include "matador/query/expression/placeholder_expression.hpp"
+#include "matador/query/expression/table_column_expression.hpp"
 #include "matador/query/expression/value_expression.hpp"
 
 #include "matador/query/internal/basic_type_to_string_visitor.hpp"

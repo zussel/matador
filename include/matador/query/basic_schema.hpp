@@ -76,6 +76,9 @@ public:
    */
   [[nodiscard]] std::string name() const;
 
+  [[nodiscard]] const_iterator find(const std::type_index& ti) const;
+  [[nodiscard]] const_iterator find(const std::string& name) const;
+
   [[nodiscard]] bool contains(const std::string &name) const;
   [[nodiscard]] bool contains(const std::type_index &index) const;
   template < typename Type >

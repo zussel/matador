@@ -8,6 +8,18 @@ CPMAddPackage(
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
 add_executable(MatadorTests
+    query/backend/test_backend_service.cpp
+    query/backend/test_backend_service.hpp
+    query/backend/test_connection.cpp
+    query/backend/test_connection.hpp
+    query/backend/test_parameter_binder.cpp
+    query/backend/test_parameter_binder.hpp
+    query/backend/test_result_reader.cpp
+    query/backend/test_result_reader.hpp
+    query/backend/test_statement.cpp
+    query/backend/test_statement.hpp
+    query/utils/RecordingObserver.cpp
+    query/utils/RecordingObserver.hpp
     query/ColumnTest.cpp
     query/ColumnExpressionTest.cpp
     query/ConnectionTest.cpp
@@ -21,9 +33,11 @@ add_executable(MatadorTests
     query/SchemaTest.cpp
     query/InsertIntermediateTest.cpp
     query/SelectIntermediateTest.cpp
+    query/StatementCacheTest.cpp
     query/TableTest.cpp
     query/UpdateIntermediateTest.cpp
     utils/ConvertTest.cpp
+    utils/MessageBusTest.cpp
     utils/ResultTest.cpp
     utils/StringTest.cpp
     utils/VersionTest.cpp
