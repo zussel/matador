@@ -165,6 +165,14 @@ const column* table::primary_key_column() const {
   return pk_column_index_ ? &columns_.at(*pk_column_index_) : nullptr;
 }
 
+const column *table::join_column() const {
+  return join_column_index_ ? &columns_.at(*join_column_index_) : nullptr;
+}
+
+const column *table::inverse_join_column() const {
+  return inverse_join_column_index_ ? &columns_.at(*inverse_join_column_index_) : nullptr;
+}
+
 void table::validate_schema(const std::vector<column>& columns) {
   if (std::any_of(columns.begin(), columns.end(),
                   [](const column& col) { return col.is_expression(); })) {

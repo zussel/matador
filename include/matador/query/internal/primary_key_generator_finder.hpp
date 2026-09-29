@@ -8,16 +8,16 @@
 
 namespace matador::query {
 class column_options;
-class foreign_ley_options;
+class foreign_key_options;
 }
 namespace matador::query::internal {
 class primary_key_generator_finder final {
 public:
   template< typename Type >
-  generator_type find(const table_info<Type>& info) {
+  generator_type find(const Type& obj) {
     generator_type_ = generator_type::Manual;
 
-    access::process(*this, info.prototype());
+    access::process(*this, obj);
 
     return generator_type_;
   }
@@ -32,15 +32,15 @@ public:
   template<typename T>
   static void on_attribute(const char * /*id*/, T &, const column_options &/*attr*/) {}
   template<class P>
-  static void on_belongs_to(const char * /*id*/, P &, const foreign_ley_options & ) {}
+  static void on_belongs_to(const char * /*id*/, P &, const foreign_key_options & ) {}
   template<class P>
-  static void on_has_one(const char * /*id*/, P &, const char * /*join_column*/, const foreign_ley_options & ) {}
+  static void on_has_one(const char * /*id*/, P &, const char * /*join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many(const char * /*id*/, C &, const char * /*join_column*/, const foreign_ley_options & ) {}
+  static void on_has_many(const char * /*id*/, C &, const char * /*join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many_to_many(const char * /*id*/, C &, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_ley_options & ) {}
+  static void on_has_many_to_many(const char * /*id*/, C &, const char * /*join_column*/, const char * /*inverse_join_column*/, const foreign_key_options & ) {}
   template<class C>
-  static void on_has_many_to_many(const char * /*id*/, C &, const foreign_ley_options & ) {}
+  static void on_has_many_to_many(const char * /*id*/, C &, const foreign_key_options & ) {}
 
 private:
   generator_type generator_type_{};

@@ -35,29 +35,30 @@ template <typename Type>
 void schema_observer<Type>::on_attach(const schema_node &node, const Type &/*prototype*/) const {
   const std::type_index ti(typeid(Type));
   if (const auto &info = node.info<Type>().get(); info.has_primary_key()) {
-    internal::primary_key_generator_finder finder;
-    const auto generator_type = finder.find(info);
+    // internal::primary_key_generator_finder finder;
+    // const auto generator_type = finder.find(info);
     // const auto it = schema_.insert_table(typeid(Type), node, generator_type);
 
 
-    std::vector<column> columns;
-    for (const auto &col: node.info().columns()) {
-      columns.emplace_back(column::make_plain(nullptr, col.name(), "", col.type(), col.options()));
-    }
-    std::unique_ptr<abstract_pk_generator> pk_generator;
-    switch (generator_type) {
-    case generator_type::Identity:
-      pk_generator = std::make_unique<identity_pk_generator>();
-      break;
-    case generator_type::Sequence:
-      pk_generator = std::make_unique<sequence_pk_generator>(node.name() + "_pk_seq");
-      break;
-    case generator_type::Table:
-      pk_generator = std::make_unique<table_pk_generator>("sequence_table", node.name());
-      break;
-    default:
-      pk_generator = std::make_unique<manual_pk_generator>();
-    }
+    // std::vector<column> columns;
+    // for (const auto &col: node.info().columns()) {
+    //   columns.emplace_back(column::make_plain(nullptr, col.name(), "", col.type(), col.options()));
+    // }
+    // std::unique_ptr<abstract_pk_generator> pk_generator;
+    // switch (generator_type) {
+    // case generator_type::Identity:
+    //   pk_generator = std::make_unique<identity_pk_generator>();
+    //   break;
+    // case generator_type::Sequence:
+    //   pk_generator = std::make_unique<sequence_pk_generator>(node.name() + "_pk_seq");
+    //   break;
+    // case generator_type::Table:
+    //   pk_generator = std::make_unique<table_pk_generator>("sequence_table", node.name());
+    //   break;
+    // default:
+    //   pk_generator = std::make_unique<manual_pk_generator>();
+    // }
+
     // return schema_nodes_.insert({ti, schema_node{table(node.name(), columns), std::move(pk_generator), node}}).first;
 
 

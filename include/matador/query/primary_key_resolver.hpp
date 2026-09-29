@@ -12,7 +12,7 @@
 #include <string>
 
 namespace matador::query {
-class foreign_attributes;
+class foreign_kay_options;
 }
 
 namespace matador::query {

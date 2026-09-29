@@ -84,6 +84,8 @@ std::string query_category_impl::message(const int ev) const {
       return "Failed to insert object";
     case error_code::FailedToAcquirePool:
       return "Failed to acquire pool";
+    case error_code::UnexpectedError:
+     return "Unexpected error";
     default:
       return "Unknown error";
   }

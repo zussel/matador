@@ -4,6 +4,7 @@
 #include "matador/query/error_code.hpp"
 #include "matador/query/schema_node.hpp"
 #include "matador/query/schema_node_iterator.hpp"
+#include "matador/query/resolver/joined_collection_resolver_producer.hpp"
 #include "matador/query/resolver/resolver_producer.hpp"
 
 #include "matador/utils/error.hpp"
@@ -99,6 +100,10 @@ public:
   void dump(std::ostream &os) const;
   static void dump(std::ostream &os, const schema_node& node);
 
+  [[nodiscard]] const std::unordered_map<std::type_index, std::unique_ptr<object_resolver_producer>>& resolver_producers() const;
+  [[nodiscard]] const std::unordered_map<collection_composite_key, std::unique_ptr<joined_collection_resolver_producer>, collection_composite_key_hash>& collection_resolver_producers() const;
+  [[nodiscard]] const std::unordered_map<collection_composite_key, std::unique_ptr<joined_object_resolver_producer>, collection_composite_key_hash>& joined_object_resolver_producers() const;
+
 protected:
   using t_node_map = std::unordered_map<std::string, schema_node*>;
   using t_type_index_node_map = std::unordered_map<std::type_index, schema_node*>;
@@ -154,6 +159,8 @@ protected:
   std::unordered_map<std::type_index, std::shared_ptr<table>> table_by_type_{};
 
   std::unordered_map<std::type_index, std::unique_ptr<object_resolver_producer>> resolver_producers_;
+  std::unordered_map<collection_composite_key, std::unique_ptr<joined_collection_resolver_producer>, collection_composite_key_hash> collection_resolver_producers_;
+  std::unordered_map<collection_composite_key, std::unique_ptr<joined_object_resolver_producer>, collection_composite_key_hash> joined_object_resolver_producers_;
 
 };
 }

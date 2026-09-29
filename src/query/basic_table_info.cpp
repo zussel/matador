@@ -5,9 +5,10 @@
 #include <algorithm>
 
 namespace matador::query {
-basic_table_info::basic_table_info(const schema_node& node, const std::shared_ptr<class table>& t)
+basic_table_info::basic_table_info(const schema_node& node, const std::shared_ptr<class table>& t, std::unique_ptr<abstract_pk_generator> &&pk_generator)
 : table_(t)
-, node_(node) {}
+, node_(node)
+, pk_generator_(std::move(pk_generator)) {}
 
 std::type_index basic_table_info::type_index() const {
   return node_.type_index();
@@ -25,8 +26,12 @@ const std::vector<column>& basic_table_info::columns() const {
   return table_->columns();
 }
 
-const std::vector<constraint> basic_table_info::constraints() const {
+const std::vector<constraint>& basic_table_info::constraints() const {
   return table_->constraints();
+}
+
+abstract_pk_generator &basic_table_info::pk_generator() const {
+  return *pk_generator_;
 }
 
 bool basic_table_info::has_primary_key() const {

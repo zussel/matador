@@ -88,7 +88,7 @@ public:
 
     // 2) Build INSERT for this object
     const auto &info = it->info();
-    if (!info.has_primary_key() || it->second.pk_generator().type() == generator_type::None) {
+    if (!info.has_primary_key() || it->info().pk_generator().type() == generator_type::None) {
       return utils::failure(utils::error{error_code::MissingPrimaryKey, "Type " + info.name() + " has no primary key"});
     }
     const auto cit = ctx_.contexts_by_type_.find(it->info().type_index());
@@ -96,7 +96,7 @@ public:
       return utils::failure(utils::error{error_code::UnknownType, "Unknown type"});
     }
 
-    auto step = create_insert_step(cit->second.insert, it->second);
+    auto step = create_insert_step(cit->second.insert, *it);
     if (as_relation_step) {
       ctx_.relation_steps_.push_back(std::move(step));
     } else {
@@ -132,7 +132,7 @@ public:
     if (join_column == nullptr) {
       return;
     }
-    if (!utils::is_cascade_type_set(attr.cascade(), cascade_type::Insert)) {
+    if (!attr.cascade().has(cascade_type::Insert)) {
       return;
     }
 
@@ -162,7 +162,7 @@ public:
     if (id == nullptr || join_column == nullptr) {
       return;
     }
-    if (!utils::is_cascade_type_set(attr.cascade(), cascade_type::Insert)) {
+    if (!attr.cascade().has(cascade_type::Insert)) {
       return;
     }
 
@@ -243,7 +243,7 @@ public:
 private:
   template<class PointerType>
   void on_foreign_object(object_ptr<PointerType> &obj, const foreign_key_options &attr) {
-    if (!utils::is_cascade_type_set(attr.cascade(), cascade_type::Insert) || !obj || !obj.is_transient()) {
+    if (!attr.cascade().has(cascade_type::Insert) || !obj || !obj.is_transient()) {
       return;
     }
 
@@ -261,7 +261,7 @@ private:
                                      const foreign_key_options &attr,
                                      RelationKeyFactory make_relation_key,
                                      RelationFactory make_relation) {
-    if (!utils::is_cascade_type_set(attr.cascade(), cascade_type::Insert)) {
+    if (!attr.cascade().has(cascade_type::Insert)) {
       return;
     }
 
@@ -313,13 +313,13 @@ private:
   }
 
   std::unique_ptr<execute_step> create_insert_step(const query_context& query_ctx, const schema_node& node) {
-    if (node.pk_generator().type() == generator_type::Manual) {
+    if (node.info().pk_generator().type() == generator_type::Manual) {
       return std::make_unique<insert_step_pk_manual<ObjectType>>(query_ctx, ptr_);
     }
-    if (node.pk_generator().type() == generator_type::Identity) {
-      return std::make_unique<insert_step_pk_identity<ObjectType>>(query_ctx, ptr_, node.node().info().primary_key_attribute()->name());
+    if (node.info().pk_generator().type() == generator_type::Identity) {
+      return std::make_unique<insert_step_pk_identity<ObjectType>>(query_ctx, ptr_, node.info().primary_key_attribute()->name());
     }
-    return std::make_unique<insert_step_pk_generated<ObjectType>>(query_ctx, ptr_, node.pk_generator());
+    return std::make_unique<insert_step_pk_generated<ObjectType>>(query_ctx, ptr_, node.info().pk_generator());
   }
 
 private:

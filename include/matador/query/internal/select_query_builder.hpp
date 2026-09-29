@@ -60,9 +60,9 @@ public:
     if (it == schema_.end()) {
       return utils::failure{utils::error(error_code::UnknownType, "Entity type not found in schema")};
     }
-    table_info_stack_.push({it->info(), it->second.table().as(build_alias('t', ++table_index))});
+    table_info_stack_.push({it->info(), it->info().table()->as(build_alias('t', ++table_index))});
     entity_query_data_ = { &table_info_stack_.top().table };
-    processed_tables_.insert({it->second.name(), *entity_query_data_.root_table});
+    processed_tables_.insert({it->name(), *entity_query_data_.root_table});
     try {
       EntityType obj;
       access::process(*this, obj);
@@ -77,7 +77,7 @@ public:
         .from(*entity_query_data_.root_table)
         .join_left(entity_query_data_.joins)
         .where(std::move(entity_query_data_.where_clause))
-        .order_by({entity_query_data_.root_table, entity_query_data_.pk_column_name})
+        .order_by(column::make_plain(entity_query_data_.root_table, entity_query_data_.pk_column_name))
         .asc();
 
       return {utils::ok(std::move(q))};
@@ -119,7 +119,7 @@ public:
     }
 
     const auto& info = it->info();
-    auto foreign_table = it->second.table().as(build_alias('t', ++table_index));
+    auto foreign_table = it->info().table()->as(build_alias('t', ++table_index));
     if (attr.fetch() == fetch_type::Eager) {
 
       auto next = processed_tables_.find(info.name());
@@ -133,8 +133,8 @@ public:
       table_info_stack_.pop();
 
       append_join(
-        column{&table_info_stack_.top().table, id},
-        column{&next->second, info.primary_key_attribute()->name()}
+        column::make_plain(&table_info_stack_.top().table, id),
+        column::make_plain(&next->second, info.primary_key_attribute()->name())
       );
     } else {
       push(id);
@@ -152,7 +152,7 @@ public:
     }
 
     const auto& info = it->info();
-    auto foreign_table = it->second.table().as(build_alias('t', ++table_index));
+    auto foreign_table = it->info().table()->as(build_alias('t', ++table_index));
     if (attr.fetch() == fetch_type::Eager) {
 
       auto next = processed_tables_.find(info.name());
@@ -166,8 +166,8 @@ public:
       table_info_stack_.pop();
 
       append_join(
-        column{&table_info_stack_.top().table, it->info().primary_key_attribute()->name()},
-        column{&next->second, join_column}
+        column::make_plain(&table_info_stack_.top().table, it->info().primary_key_attribute()->name()),
+        column::make_plain(&next->second, join_column)
       );
     }
   }
@@ -188,14 +188,14 @@ public:
       throw error_exception{error_code::UnknownType, "Unknown type"};
     }
 
-    auto next = processed_tables_.find(it->second.name());
+    auto next = processed_tables_.find(it->name());
     if (next != processed_tables_.end()) {
       // node already processed
       return;
     }
 
-    table_info_stack_.push({it->info(), it->second.table().as(build_alias('t', ++table_index))});
-    next = processed_tables_.insert({it->second.name(), table_info_stack_.top().table}).first;
+    table_info_stack_.push({it->info(), it->info().table()->as(build_alias('t', ++table_index))});
+    next = processed_tables_.insert({it->name(), table_info_stack_.top().table}).first;
     typename CollectionType::value_type::value_type obj;
     access::process(*this , obj);
     table_info_stack_.pop();
@@ -205,8 +205,8 @@ public:
     }
 
     append_join(
-      column{&table_info_stack_.top().table, table_info_stack_.top().info.primary_key_attribute()->name()},
-      column{&next->second, join_column}
+      column::make_plain(&table_info_stack_.top().table, table_info_stack_.top().info.primary_key_attribute()->name()),
+      column::make_plain(&next->second, join_column)
     );
   }
 
@@ -224,7 +224,7 @@ public:
       throw error_exception{error_code::UnknownType, "Unknown type"};
     }
 
-    auto next = processed_tables_.find(result->second.name());
+    auto next = processed_tables_.find(result->name());
     if (next != processed_tables_.end()) {
       // attribute was already processed
       return;
@@ -236,10 +236,10 @@ public:
       if (it == schema_.end()) {
       throw error_exception{error_code::UnknownType, "Unknown type"};
       }
-      relation = processed_tables_.emplace(id, it->second.table().as(build_alias('t', ++table_index))).first;
+      relation = processed_tables_.emplace(id, it->info().table()->as(build_alias('t', ++table_index))).first;
     }
-    table_info_stack_.push({result->info(), result->second.table().as(build_alias('t', ++table_index))});
-    next = processed_tables_.insert({result->second.name(), table_info_stack_.top().table}).first;
+    table_info_stack_.push({result->info(), result->info().table()->as(build_alias('t', ++table_index))});
+    next = processed_tables_.insert({result->name(), table_info_stack_.top().table}).first;
     typename ContainerType::value_type::value_type obj;
     access::process(*this , obj);
     table_info_stack_.pop();
@@ -249,12 +249,12 @@ public:
     }
 
     append_join(
-      column{&table_info_stack_.top().table, table_info_stack_.top().info.primary_key_attribute()->name()},
-      column{&relation->second, join_column}
+      column::make_plain(&table_info_stack_.top().table, table_info_stack_.top().info.primary_key_attribute()->name()),
+      column::make_plain(&relation->second, join_column)
     );
     append_join(
-      column{&relation->second, inverse_join_column},
-      column{&next->second, result->info().primary_key_attribute()->name()}
+      column::make_plain(&relation->second, inverse_join_column),
+      column::make_plain(&next->second, result->info().primary_key_attribute()->name())
     );
   }
 
@@ -268,7 +268,7 @@ public:
       throw error_exception{error_code::UnknownType, "Unknown type"};
     }
 
-    auto next = processed_tables_.find(result->second.name());
+    auto next = processed_tables_.find(result->name());
     if (next != processed_tables_.end()) {
       // attribute was already processed
       return;
@@ -280,11 +280,11 @@ public:
       if (it == schema_.end()) {
       throw error_exception{error_code::UnknownType, "Unknown type"};
       }
-      const auto t = it->second.table().as(build_alias('t', ++table_index));
+      const auto t = it->info().table()->as(build_alias('t', ++table_index));
       relation = processed_tables_.insert({id, t}).first;
     }
-    table_info_stack_.push({result->info(), result->second.table().as(build_alias('t', ++table_index))});
-    next = processed_tables_.insert({result->second.name(), table_info_stack_.top().table}).first;
+    table_info_stack_.push({result->info(), result->info().table()->as(build_alias('t', ++table_index))});
+    next = processed_tables_.insert({result->name(), table_info_stack_.top().table}).first;
     typename ContainerType::value_type::value_type obj;
     access::process(*this , obj);
     table_info_stack_.pop();
@@ -296,12 +296,12 @@ public:
     const auto join_columns = join_columns_collector_.collect<typename ContainerType::value_type::value_type>();
 
     append_join(
-      column{&table_info_stack_.top().table, table_info_stack_.top().info.primary_key_attribute()->name()},
-      column{&relation->second, join_columns.inverse_join_column}
+      column::make_plain(&table_info_stack_.top().table, table_info_stack_.top().info.primary_key_attribute()->name()),
+      column::make_plain(&relation->second, join_columns.inverse_join_column)
     );
     append_join(
-      column{&relation->second, join_columns.join_column},
-      column{&next->second, result->info().primary_key_attribute()->name()}
+      column::make_plain(&relation->second, join_columns.join_column),
+      column::make_plain(&next->second, result->info().primary_key_attribute()->name())
     );
   }
 

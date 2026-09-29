@@ -9,20 +9,20 @@ namespace matador::query {
 class foreign_key_options {
 public:
   foreign_key_options() = default;
-  foreign_key_options(cascade_type cascade); // NOLINT(*-explicit-constructor)
+  foreign_key_options(const cascade_types& cascade); // NOLINT(*-explicit-constructor)
   foreign_key_options(fetch_type fetch); // NOLINT(*-explicit-constructor)
-  foreign_key_options(cascade_type cascade, fetch_type fetch);
+  foreign_key_options(const cascade_types& cascade, fetch_type fetch);
   foreign_key_options(const foreign_key_options &x) = default;
   foreign_key_options& operator=(const foreign_key_options &x) = default;
   foreign_key_options(foreign_key_options &&x) = default;
   foreign_key_options& operator=(foreign_key_options &&x) = default;
   ~foreign_key_options() = default;
 
-  [[nodiscard]] cascade_type cascade() const;
+  [[nodiscard]] const cascade_types& cascade() const;
   [[nodiscard]] fetch_type fetch() const;
 
 private:
-  cascade_type cascade_{cascade_type::None};
+  cascade_types cascade_{cascade_type::None};
   fetch_type fetch_{fetch_type::Lazy};
 };
 }

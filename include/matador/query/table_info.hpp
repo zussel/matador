@@ -16,14 +16,15 @@ public:
 
   table_info(const schema_node& node,
               const std::shared_ptr<class table> &t,
+              std::unique_ptr<abstract_pk_generator> &&pk_generator,
               std::vector<std::unique_ptr<observer<Type>>>&& observers,
               create_func&& creator)
-  : basic_table_info(node, t)
+  : basic_table_info(node, t, std::move(pk_generator))
   , creator_(std::move(creator))
   , observers_(std::move(observers)){}
 
   explicit table_info(const schema_node& node)
-  : basic_table_info(node, {}) {
+  : basic_table_info(node, {}, {}) {
   }
 
   const Type &prototype() const { return prototype_; }

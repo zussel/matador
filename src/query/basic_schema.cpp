@@ -324,4 +324,17 @@ std::unique_ptr<schema_node> basic_schema::pop_announce_node(const std::type_ind
   announced_node_.erase(it);
   return node;
 }
+
+const std::unordered_map<std::type_index, std::unique_ptr<object_resolver_producer>> & basic_schema::resolver_producers() const {
+  return resolver_producers_;
 }
+
+const std::unordered_map<collection_composite_key, std::unique_ptr<joined_collection_resolver_producer>, collection_composite_key_hash> & basic_schema::collection_resolver_producers() const {
+  return collection_resolver_producers_;
+}
+
+const std::unordered_map<collection_composite_key, std::unique_ptr<joined_object_resolver_producer>, collection_composite_key_hash>& basic_schema::joined_object_resolver_producers() const {
+  return joined_object_resolver_producers_;
+}
+
+} // namespace matador::query

@@ -44,7 +44,8 @@ enum class error_code : uint8_t {
   FailedToBuildQuery,
   FailedToFindObject,
   FailedToInsertObject,
-  FailedToAcquirePool
+  FailedToAcquirePool,
+  UnexpectedError
 };
 
 class query_category_impl final : public std::error_category {

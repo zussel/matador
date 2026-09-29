@@ -46,6 +46,7 @@ add_library(matador
     query/expression_evaluator.cpp
     query/field.cpp
     query/foreign_key_options.cpp
+    query/generators.cpp
     query/identifier.cpp
     query/identity_pk_generator.cpp
     query/interface/connection_impl.cpp
@@ -84,11 +85,13 @@ add_library(matador
     query/internal/collection_utils.cpp
     query/internal/column_value_pair.cpp
     query/internal/identifier_discover_service.cpp
+    query/internal/identifier_statement_binder.cpp
     query/internal/object_binder.cpp
     query/internal/object_binder.cpp
     query/internal/query_parts.cpp
     query/internal/query_result_impl.cpp
     query/internal/result_binder.cpp
+    query/internal/schema_utils.cpp
     query/internal/string_builder_utils.cpp
     query/internal/value_extractor.cpp
     query/manual_pk_generator.cpp
@@ -101,7 +104,11 @@ add_library(matador
     query/query_utils.cpp
     query/record.cpp
     query/relation_endpoint.cpp
+    query/resolver/abstract_joined_resolver.cpp
+    query/resolver/joined_collection_resolver_producer.cpp
+    query/resolver/producer_object_resolver_factory.cpp
     query/resolver/resolver_producer.cpp
+    query/resolver_service.cpp
     query/schema_node.cpp
     query/schema_node_iterator.cpp
     query/sequence_pk_generator.cpp

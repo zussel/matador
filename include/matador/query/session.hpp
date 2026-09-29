@@ -36,7 +36,7 @@ struct session_context {
   std::string dns;
   size_t connection_count{};
   size_t cache_size{500};
-  std::shared_ptr<resolver_service> resolver_service = std::make_shared<resolver_service>();
+  std::shared_ptr<resolver_service> resolver = std::make_shared<resolver_service>();
 };
 
 class session final /*: public executor*/ {
@@ -69,7 +69,7 @@ private:
   mutable statement_cache cache_;
   const dialect &dialect_;
 
-  object::object_cache object_cache_;
+  object_cache object_cache_;
 
   const basic_schema &schema_;
   mutable std::unordered_map<std::string, std::vector<column> > prototypes_;
@@ -175,7 +175,7 @@ public:
 private:
   statement &stmt_;
   size_t binding_position_{0};
-  object_pk_binder pk_binder_{};
+  primary_key_binder pk_binder_{};
 };
 
 template<typename Type>
@@ -187,13 +187,13 @@ utils::result<object_ptr<Type>, utils::error> session::update(const object_ptr<T
   using namespace matador::utils;
   using namespace matador::query;
 
-  const auto cit = contexts_by_type_.find(it->second.node().info().type_index());
+  const auto cit = contexts_by_type_.find(it->info().type_index());
   if (cit == contexts_by_type_.end()) {
-    return failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
+    return utils::failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
   }
   auto stmt = cache_.acquire(cit->second.update_one);
   if (!stmt.is_ok()) {
-    return failure(stmt.err());
+    return utils::failure(stmt.err());
   }
 
   stmt->bind(*obj);
@@ -276,7 +276,7 @@ utils::result<object_ptr<Type>, utils::error> session::find(const PrimaryKeyType
     return utils::failure(make_error(error_code::UnknownType, "Failed to determine requested type."));
   }
 
-  if (const auto &info = it->second.node().info(); !info.has_primary_key()) {
+  if (const auto &info = it->info(); !info.has_primary_key()) {
     return utils::failure(make_error(error_code::FailedToFindPrimaryKey, "Type hasn't primary key."));
   }
 
@@ -285,14 +285,14 @@ utils::result<object_ptr<Type>, utils::error> session::find(const PrimaryKeyType
     return utils::failure(utils::error(error_code::UnknownType, "Missing object resolver for inserted type."));
   }
 
-  if (object_cache_.is_loaded<Type>(utils::identifier{pk})) {
+  if (object_cache_.is_loaded<Type>(identifier{pk})) {
     return utils::ok(object_ptr(object_cache_.acquire_proxy<Type>(identifier{pk}, resolver)));
   }
 
   select_query_builder eqb(schema_);
-  auto data = eqb.build<Type>(*it->second.table().primary_key_column() == pk);
+  auto data = eqb.build<Type>(*it->info().table()->primary_key_column() == pk);
   if (!data.is_ok()) {
-    return utils::failure(make_error(error_code::FailedToBuildQuery, "Failed to build query for type " + it->second.name() + "."));
+    return utils::failure(make_error(error_code::FailedToBuildQuery, "Failed to build query for type " + it->name() + "."));
   }
 
   auto ctx = data->compile(dialect_);
@@ -316,7 +316,7 @@ utils::result<query_result<Type>, utils::error> session::find(criteria_ptr claus
   auto data = eqb.build<Type>(std::move(clause));
   if (!data.is_ok()) {
     return utils::failure(make_error(error_code::FailedToBuildQuery,
-                                     "Failed to build query for type " + it->second.name() + "."));
+                                     "Failed to build query for type " + it->name() + "."));
   }
 
   auto ctx = data->compile(dialect_);

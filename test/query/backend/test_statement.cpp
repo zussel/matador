@@ -2,6 +2,8 @@
 #include "test_result_reader.hpp"
 #include "test_parameter_binder.hpp"
 
+#include "matador/query/internal/query_result_impl.hpp"
+
 #include <chrono>
 #include <random>
 #include <thread>

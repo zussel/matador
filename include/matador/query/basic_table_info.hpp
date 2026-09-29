@@ -6,6 +6,7 @@
 #include "matador/query/identifier.hpp"
 #include "matador/query/relation_endpoint.hpp"
 #include "matador/query/table.hpp"
+#include "matador/query/abstract_pk_generator.hpp"
 
 namespace matador::query {
 class schema_node;
@@ -22,7 +23,9 @@ public:
   [[nodiscard]] std::string name() const;
   [[nodiscard]] std::shared_ptr<class table> table() const;
   [[nodiscard]] const std::vector<column>& columns() const;
-  [[nodiscard]] const std::vector<constraint> constraints() const;
+  [[nodiscard]] const std::vector<constraint>& constraints() const;
+
+  [[nodiscard]] abstract_pk_generator& pk_generator() const;
 
   [[nodiscard]] bool has_primary_key() const;
   // [[nodiscard]] const identifier& primary_key() const;
@@ -52,12 +55,13 @@ public:
   [[nodiscard]] bool endpoints_empty() const;
 
 protected:
-  basic_table_info(const schema_node& node, const std::shared_ptr<class table> &t);
+  basic_table_info(const schema_node& node, const std::shared_ptr<class table> &t, std::unique_ptr<abstract_pk_generator> &&pk_generator);
 
 protected:
   std::shared_ptr<class table> table_;
   const schema_node& node_;            /**< prototype node of the represented object type */
   t_endpoint_map relation_endpoints_;
+  std::unique_ptr<abstract_pk_generator> pk_generator_;
 };
 
 using basic_table_info_ref = std::reference_wrapper<const basic_table_info>;

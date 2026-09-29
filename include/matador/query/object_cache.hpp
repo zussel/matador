@@ -1,10 +1,10 @@
 #ifndef MATADOR_OBJECT_CACHE_HPP
 #define MATADOR_OBJECT_CACHE_HPP
 
-#include "matador/object/object_proxy.hpp"
-#include "matador/object/object_resolver.hpp"
+#include "matador/query/object_proxy.hpp"
+#include "matador/query/object_resolver.hpp"
+#include "matador/query/identifier.hpp"
 
-#include "matador/utils/identifier.hpp"
 #include "matador/utils/message_bus.hpp"
 
 #include <unordered_map>
@@ -14,7 +14,7 @@
 #include <utility>
 #include <cassert>
 
-namespace matador::object {
+namespace matador::query {
 struct cache_entry_base {
   virtual ~cache_entry_base() = default;
 
@@ -38,7 +38,7 @@ struct cache_entry : cache_entry_base {
 
 struct object_cache_event {
   std::type_index type{typeid(void)};
-  utils::identifier id{};
+  identifier id{};
   std::chrono::steady_clock::time_point timestamp{};
 };
 
@@ -92,7 +92,7 @@ public:
    * @note Diese Methode ist threadsafe.
    */
   template<typename Type, typename ResolverPointerType>
-  std::shared_ptr<object_proxy<Type>> acquire_proxy(utils::identifier id, ResolverPointerType &&resolver_ptr) {
+  std::shared_ptr<object_proxy<Type>> acquire_proxy(identifier id, ResolverPointerType &&resolver_ptr) {
     const auto k = make_key<Type>(id);
 
     std::unique_lock lock(mutex_);
@@ -146,7 +146,7 @@ public:
   }
 
   template<typename Type, typename ResolverPointerType>
-  bool import(const utils::identifier &id, const std::shared_ptr<object_proxy<Type>> &proxy, ResolverPointerType &&resolver_ptr) {
+  bool import(const identifier &id, const std::shared_ptr<object_proxy<Type>> &proxy, ResolverPointerType &&resolver_ptr) {
     if (!proxy) {
       return false;
     }
@@ -211,7 +211,7 @@ public:
    * @note Diese Methode ist threadsafe.
    */
   template<typename Type>
-  void attach_entity(const utils::identifier &id, std::shared_ptr<Type> obj) {
+  void attach_entity(const identifier &id, std::shared_ptr<Type> obj) {
     const auto k = make_key<Type>(id);
 
     std::unique_lock lock(mutex_);
@@ -248,7 +248,7 @@ public:
    * @note Diese Methode ist threadsafe.
    */
   template<typename Type>
-  std::shared_ptr<Type> get_entity(const utils::identifier &id) {
+  std::shared_ptr<Type> get_entity(const identifier &id) {
     const auto k = make_key<Type>(id);
 
     std::unique_lock lock(mutex_);
@@ -276,7 +276,7 @@ public:
    * @note Diese Methode ist threadsafe.
    */
   template<typename Type>
-  bool is_loaded(const utils::identifier &id) {
+  bool is_loaded(const identifier &id) {
     const auto k = make_key<Type>(id);
 
     std::unique_lock lock(mutex_);
@@ -295,7 +295,7 @@ public:
   }
 
   template<typename T>
-  void erase(utils::identifier id) {
+  void erase(identifier id) {
     const auto k = make_key<T>(id);
 
     std::unique_lock lock(mutex_);
@@ -343,7 +343,7 @@ public:
 private:
   struct key {
     std::type_index type;
-    utils::identifier id{};
+    identifier id{};
     bool operator==(key const &other) const {
       return type == other.type && id == other.id;
     }
@@ -353,14 +353,14 @@ private:
     size_t operator()(key const &k) const noexcept {
       // (3) robustere Hash-Kombination als XOR
       size_t seed = std::hash<std::type_index>()(k.type);
-      const size_t h2 = std::hash<utils::identifier>()(k.id);
+      const size_t h2 = std::hash<identifier>()(k.id);
       seed ^= h2 + 0x9e3779b97f4a7c15ULL + (seed << 6) + (seed >> 2);
       return seed;
     }
   };
 
   template<typename T>
-  static key make_key(const utils::identifier &id) {
+  static key make_key(const identifier &id) {
     return key{std::type_index(typeid(T)), id};
   }
 

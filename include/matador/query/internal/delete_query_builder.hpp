@@ -96,7 +96,7 @@ public:
       return;
     }
 
-    if (!utils::is_cascade_type_set(attr.cascade(), utils::cascade_type::Remove)) {
+    if (!attr.cascade().has(cascade_type::Remove)) {
       return;
     }
 
@@ -172,7 +172,7 @@ public:
 private:
   template<class PointerType>
   void on_foreign_object(object_ptr<PointerType> &obj, const foreign_key_options &attr) {
-    if (!utils::is_cascade_type_set(attr.cascade(), utils::cascade_type::Remove) || !obj) {
+    if (!attr.cascade().has(cascade_type::Remove) || !obj) {
       return;
     }
 
@@ -189,7 +189,7 @@ private:
                                collection<object_ptr<ForeignType>> &objects,
                                const foreign_key_options &attr,
                                RelationKeyFactory make_relation_key) {
-    if (!utils::is_cascade_type_set(attr.cascade(), utils::cascade_type::Remove)) {
+    if (!attr.cascade().has(cascade_type::Remove)) {
       return;
     }
 

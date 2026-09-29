@@ -3,6 +3,11 @@
 
 #include "matador/query/table_info.hpp"
 #include "matador/query/internal/observer_list_creator.hpp"
+#include "matador/query/internal/primary_key_generator_finder.hpp"
+#include "matador/query/identity_pk_generator.hpp"
+#include "matador/query/manual_pk_generator.hpp"
+#include "matador/query/sequence_pk_generator.hpp"
+#include "matador/query/table_pk_generator.hpp"
 
 #include <memory>
 
@@ -97,10 +102,28 @@ std::unique_ptr<schema_node> schema_node::make_node(basic_schema &repo,
 
   internal::observer_list_creator<Type, Observers...>::create_missing(observers);
 
-  // auto obj = object_generator::generate<Type>(creator(), repo, name);
+  internal::primary_key_generator_finder finder;
+  const Type obj;
+  const auto generator_type = finder.find(obj);
+  std::unique_ptr<abstract_pk_generator> pk_generator;
+  switch (generator_type) {
+  case generator_type::Identity:
+    pk_generator = std::make_unique<identity_pk_generator>();
+    break;
+  case generator_type::Sequence:
+    pk_generator = std::make_unique<sequence_pk_generator>(name + "_pk_seq");
+    break;
+  case generator_type::Table:
+    pk_generator = std::make_unique<table_pk_generator>("sequence_table", name);
+    break;
+  default:
+    pk_generator = std::make_unique<manual_pk_generator>();
+  }
+
   node->info_ = std::make_unique<table_info<Type>>(
     *node,
     std::make_shared<table>(),
+    std::move(pk_generator),
     std::move(observers),
     std::move(creator)
   );
@@ -124,6 +147,7 @@ std::unique_ptr<schema_node> schema_node::make_relation_node(basic_schema &repo,
   node->info_ = std::make_unique<table_info<Type>>(
     *node,
     std::make_shared<table>(),
+    nullptr,
     std::move(observers),
     std::move(creator)
   );

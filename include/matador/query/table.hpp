@@ -61,6 +61,8 @@ public:
   [[nodiscard]] bool has_primary_key() const;
 
   [[nodiscard]] const column* primary_key_column() const;
+  [[nodiscard]] const column* join_column() const;
+  [[nodiscard]] const column* inverse_join_column() const;
 
 protected:
   table(std::string schema_name, std::string name, std::string alias,
