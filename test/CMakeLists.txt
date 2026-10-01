@@ -37,6 +37,7 @@ add_executable(MatadorTests
     query/TableTest.cpp
     query/UpdateIntermediateTest.cpp
     utils/ConvertTest.cpp
+    utils/DependencyInjectionTest.cpp
     utils/MessageBusTest.cpp
     utils/ResultTest.cpp
     utils/StringTest.cpp
