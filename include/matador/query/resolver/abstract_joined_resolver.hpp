@@ -1,13 +1,13 @@
 #ifndef MATADOR_ABSTRACT_COLLECTION_RESOLVER_HPP
 #define MATADOR_ABSTRACT_COLLECTION_RESOLVER_HPP
 
-#include "matador/query/resolver/abstract_type_resolver.hpp"
+#include "matador/query/resolver/abstract_resolver.hpp"
 
 #include <string>
 #include <typeindex>
 
 namespace matador::query {
-class abstract_joined_resolver : public abstract_type_resolver {
+class abstract_joined_resolver : public abstract_resolver {
 public:
   [[nodiscard]] const std::type_index& root_type() const;
   [[nodiscard]] const std::string& collection_name() const;

@@ -10,7 +10,7 @@ const std::string& abstract_joined_resolver::collection_name() const {
 }
 
 abstract_joined_resolver::abstract_joined_resolver(const std::type_index& root_type, const std::type_index& type, std::string collection_name)
-: abstract_type_resolver(type)
+: abstract_resolver(type)
 , root_type_(root_type)
 , collection_name_(std::move(collection_name)) {}
 }

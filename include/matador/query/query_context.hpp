@@ -33,10 +33,10 @@ struct query_context {
   std::string sql;
   size_t sql_hash{};
   query_command command{};
-  std::string schema_name;
-  std::string table_name;
+  std::string schema_name{};
+  std::string table_name{};
   std::vector<column> columns{};
-  std::vector<std::string> bind_vars;
+  std::vector<std::string> bind_vars{};
   // Data for resolving query result
   std::shared_ptr<resolver_service> resolver{};
   std::type_index result_type = typeid(void);

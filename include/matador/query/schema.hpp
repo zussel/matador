@@ -4,6 +4,7 @@
 #include "matador/query/basic_schema.hpp"
 
 #include "matador/query/observer.hpp"
+#include "matador/query/resolver/producer_creator.hpp"
 #include "matador/query/relation_completer.hpp"
 
 #include "matador/utils/result.hpp"

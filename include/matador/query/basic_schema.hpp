@@ -100,9 +100,9 @@ public:
   void dump(std::ostream &os) const;
   static void dump(std::ostream &os, const schema_node& node);
 
-  [[nodiscard]] const std::unordered_map<std::type_index, std::unique_ptr<object_resolver_producer>>& resolver_producers() const;
+  [[nodiscard]] const std::unordered_map<std::type_index, std::unique_ptr<abstract_object_resolver_producer>>& resolver_producers() const;
   [[nodiscard]] const std::unordered_map<collection_composite_key, std::unique_ptr<joined_collection_resolver_producer>, collection_composite_key_hash>& collection_resolver_producers() const;
-  [[nodiscard]] const std::unordered_map<collection_composite_key, std::unique_ptr<joined_object_resolver_producer>, collection_composite_key_hash>& joined_object_resolver_producers() const;
+  [[nodiscard]] const std::unordered_map<collection_composite_key, std::unique_ptr<abstract_joined_object_resolver_producer>, collection_composite_key_hash>& joined_object_resolver_producers() const;
 
 protected:
   using t_node_map = std::unordered_map<std::string, schema_node*>;
@@ -144,6 +144,7 @@ protected:
   friend class table_generator;
   template < typename NodeType, template<typename> typename ...Observers >
   friend class relation_completer;
+  friend class producer_creator;
 
   std::string name_;
   std::unique_ptr<schema_node> root_;
@@ -158,9 +159,9 @@ protected:
   std::unordered_map<std::string, std::type_index> expected_relation_nodes_;
   std::unordered_map<std::type_index, std::shared_ptr<table>> table_by_type_{};
 
-  std::unordered_map<std::type_index, std::unique_ptr<object_resolver_producer>> resolver_producers_;
+  std::unordered_map<std::type_index, std::unique_ptr<abstract_object_resolver_producer>> resolver_producers_;
   std::unordered_map<collection_composite_key, std::unique_ptr<joined_collection_resolver_producer>, collection_composite_key_hash> collection_resolver_producers_;
-  std::unordered_map<collection_composite_key, std::unique_ptr<joined_object_resolver_producer>, collection_composite_key_hash> joined_object_resolver_producers_;
+  std::unordered_map<collection_composite_key, std::unique_ptr<abstract_joined_object_resolver_producer>, collection_composite_key_hash> joined_object_resolver_producers_;
 
 };
 }

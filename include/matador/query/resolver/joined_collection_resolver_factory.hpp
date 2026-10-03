@@ -31,8 +31,8 @@ class abstract_joined_object_resolver_factory {
 public:
   virtual ~abstract_joined_object_resolver_factory() = default;
 
-  [[nodiscard]] virtual std::shared_ptr<abstract_type_resolver> acquire_joined_object_resolver(const std::type_index &root_type, const std::type_index &element_type, const std::string &collection_name) const = 0;
-  virtual void register_joined_object_resolver(std::shared_ptr<abstract_type_resolver> &&resolver, const std::type_index& root_type, const std::string& join_column) = 0;
+  [[nodiscard]] virtual std::shared_ptr<abstract_resolver> acquire_joined_object_resolver(const std::type_index &root_type, const std::type_index &element_type, const std::string &collection_name) const = 0;
+  virtual void register_joined_object_resolver(std::shared_ptr<abstract_resolver> &&resolver, const std::type_index& root_type, const std::string& join_column) = 0;
 };
 
 class joined_object_resolver_factory : public abstract_joined_object_resolver_factory {
