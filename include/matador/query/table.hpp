@@ -9,6 +9,7 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 
 namespace matador::query {
@@ -19,8 +20,12 @@ public:
   table() = default;
   explicit table(const char *name);
   explicit table(std::string name);
-  table(std::string name, std::vector<column> columns);
-  table(std::string schema_name, std::string name, std::vector<column> columns);
+  // table(std::string name, std::vector<column> columns);
+
+  static table make_plain(std::string name, std::string schema_name = "");
+  static table make_primary_key_table(std::string name, std::vector<column> columns, std::string schema_name = "");
+  static table make_relation_table(std::string name, std::vector<column> columns, std::size_t join_column_index, std::size_t inverse_join_column_index, std::string schema_name = "");
+
   table(const table& other);
   table& operator=(const table& other);
   table(table&& other) noexcept;
@@ -58,24 +63,49 @@ public:
   static const column* column_by_name(const table &tab, const std::string& column_name);
   static const column& column_ref_by_name(const table &tab, const std::string& column_name);
 
+  [[nodiscard]] bool is_primary_key_table() const;
+  [[nodiscard]] bool is_relation_table() const;
+
   [[nodiscard]] bool has_primary_key() const;
 
   [[nodiscard]] const column* primary_key_column() const;
   [[nodiscard]] const column* join_column() const;
   [[nodiscard]] const column* inverse_join_column() const;
 
-protected:
-  table(std::string schema_name, std::string name, std::string alias,
-        std::vector<column> columns);
+private:
+  table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns);
 
 private:
   friend class table_generator;
   friend class column;
 
+  struct primary_key_table {
+    std::optional<std::size_t> pk_column_index;
+  };
+
+  struct relation_table {
+    std::size_t join_column_index{};
+    std::size_t inverse_join_column_index{};
+  };
+
+  using table_value = std::variant<
+    primary_key_table,
+    relation_table
+  >;
+
   static void validate_schema(const std::vector<column>& columns);
   void rebind_columns();
   void rebind_constraints();
   void create_constraints();
+
+  [[nodiscard]] const primary_key_table* primary_key_data() const;
+  [[nodiscard]] primary_key_table* primary_key_data();
+
+  [[nodiscard]] const relation_table* relation_data() const;
+  [[nodiscard]] relation_table* relation_data();
+
+  void make_primary_key_table(std::optional<std::size_t> pk_column_index);
+  void make_relation_table(std::size_t join_column_index, std::size_t inverse_join_column_index);
 
   std::string name_;
   std::string alias_;
@@ -84,9 +114,7 @@ private:
   std::vector<column> columns_;
   std::vector<constraint> constraints_;
 
-  std::optional<std::size_t> pk_column_index_;
-  std::optional<std::size_t> join_column_index_;
-  std::optional<std::size_t> inverse_join_column_index_;
+  table_value value_{primary_key_table{}};
 };
 
 template<typename Type = table>

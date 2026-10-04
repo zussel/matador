@@ -36,7 +36,7 @@ TEST_CASE("Column: plain columns expose names, aliases, and types", "[query][col
 }
 
 TEST_CASE("Column: table ownership qualifies the name", "[query][column]") {
-  const table customers{"customers"};
+  const table customers = table::make_plain("customers");
   auto id = column::make_plain(&customers, "id", "", basic_type::Int32);
 
   REQUIRE(id.table() == &customers);

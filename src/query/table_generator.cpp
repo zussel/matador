@@ -62,7 +62,7 @@ std::vector<column>::iterator table_generator::find_column_by_name(const std::st
 }
 
 void table_generator::prepare_primary_key(const column &ref, identifier &&pk) const {
-  table_->pk_column_index_ = static_cast<int>(ref.index());
+  table_->make_primary_key_table(ref.index());
   // table_->pk_identifier_ = std::move(pk);
 }
 
@@ -71,12 +71,16 @@ void table_generator::prepare_relation_table(const std::string &join_column, con
   if (it == std::end(table_->columns_)) {
     return;
   }
-  table_->join_column_index_ = it->index();
+
+  const auto join_column_index = it->index();
 
   it = find_column_by_name(inverse_join_column);
   if (it == std::end(table_->columns_)) {
     return;
   }
-  table_->inverse_join_column_index_ = it->index();
+
+  const auto inverse_join_column_index = it->index();
+
+  table_->make_relation_table(join_column_index, inverse_join_column_index);
 }
 }

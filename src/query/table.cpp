@@ -2,23 +2,36 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <unordered_set>
 #include <utility>
 
 namespace matador::query {
-table::table(const char* name)
-: table(name == nullptr ? throw std::invalid_argument("Table name must not be null") :
-                           std::string(name))
-{}
-
-table::table(std::string name)
-: table("", std::move(name), "", {}) {}
-
-table::table(std::string name, std::vector<column> columns)
-: table("", std::move(name), "", std::move(columns)) {
+table table::make_plain(std::string name, std::string schema_name) {
+  return {std::move(schema_name), std::move(name), "", {}};
 }
 
-table::table(std::string schema_name, std::string name, std::vector<column> columns)
-: table(std::move(schema_name), std::move(name), "", std::move(columns)) {}
+table table::make_primary_key_table(std::string name, std::vector<column> columns, std::string schema_name) {
+  return {std::move(schema_name), std::move(name), "", std::move(columns)};
+}
+
+table table::make_relation_table(std::string name, std::vector<column> columns, std::size_t join_column_index, std::size_t inverse_join_column_index, std::string schema_name) {
+  return {std::move(schema_name), std::move(name), "", std::move(columns)};
+}
+
+// table::table(const char* name)
+// : table(name == nullptr ? throw std::invalid_argument("Table name must not be null") :
+                           // std::string(name))
+// {}
+
+// table::table(std::string name)
+// : table("", std::move(name), "", {}) {}
+
+// table::table(std::string name, std::vector<column> columns)
+// : table("", std::move(name), "", std::move(columns)) {
+// }
+
+// table::table(std::string schema_name, std::string name, std::vector<column> columns)
+// : table(std::move(schema_name), std::move(name), "", std::move(columns)) {}
 
 table::table(std::string schema_name, std::string name, std::string alias, std::vector<column> columns)
 : name_(std::move(name))
@@ -27,6 +40,18 @@ table::table(std::string schema_name, std::string name, std::string alias, std::
 , columns_(std::move(columns)) {
   rebind_columns();
   create_constraints();
+
+  for (std::size_t index = 0; index < columns_.size(); ++index) {
+    if (!columns_[index].is_primary_key()) {
+      continue;
+    }
+
+    if (has_primary_key()) {
+      throw std::invalid_argument("Table schemas cannot contain multiple primary keys");
+    }
+
+    make_primary_key_table(index);
+  }
 }
 
 table::table(const table &other)
@@ -35,10 +60,8 @@ table::table(const table &other)
 , schema_name_(other.schema_name_)
 , columns_(other.columns_)
 , constraints_(other.constraints_)
-, pk_column_index_(other.pk_column_index_) {
-  for (auto &col : columns_) {
-    col.table(this);
-  }
+, value_(other.value_) {
+  rebind_columns();
   rebind_constraints();
 }
 
@@ -55,30 +78,40 @@ table::table(table &&other) noexcept
 , schema_name_(std::move(other.schema_name_))
 , columns_(std::move(other.columns_))
 , constraints_(std::move(other.constraints_))
-, pk_column_index_(other.pk_column_index_) {
-  for (auto &col : columns_) {
-    col.table(this);
+, value_(other.value_) {
+  for (std::size_t index = 0; index < columns_.size(); ++index) {
+    if (auto *plain = columns_[index].plain(); plain != nullptr) {
+      plain->table = this;
+      plain->index = index;
+    }
   }
   rebind_constraints();
   other.constraints_.clear();
   other.columns_.clear();
-  other.pk_column_index_.reset();
+  other.value_ = primary_key_table{};
 }
 
 table & table::operator=(table &&other) noexcept {
+  if (this == &other) {
+    return *this;
+  }
+
   name_ = std::move(other.name_);
   alias_ = std::move(other.alias_);
   schema_name_ = std::move(other.schema_name_);
   columns_ = std::move(other.columns_);
   constraints_ = std::move(other.constraints_);
-  pk_column_index_ = other.pk_column_index_;
-  for (auto &col : columns_) {
-    col.table(this);
+  value_ = other.value_;
+  for (std::size_t index = 0; index < columns_.size(); ++index) {
+    if (auto *plain = columns_[index].plain(); plain != nullptr) {
+      plain->table = this;
+      plain->index = index;
+    }
   }
   rebind_constraints();
   other.constraints_.clear();
   other.columns_.clear();
-  other.pk_column_index_.reset();
+  other.value_ = primary_key_table{};
   return *this;
 }
 
@@ -157,40 +190,81 @@ std::string table::qualified_name() const {
   return schema_name_.empty() ? name_ : schema_name_ + "." + name_;
 }
 
+bool table::is_primary_key_table() const {
+  return std::holds_alternative<primary_key_table>(value_);
+}
+
+bool table::is_relation_table() const {
+  return std::holds_alternative<relation_table>(value_);
+}
+
 bool table::has_primary_key() const {
-  return pk_column_index_.has_value();
+  const auto *data = primary_key_data();
+  return data && data->pk_column_index.has_value();
 }
 
 const column* table::primary_key_column() const {
-  return pk_column_index_ ? &columns_.at(*pk_column_index_) : nullptr;
+  const auto *data = primary_key_data();
+  if (!data || !data->pk_column_index.has_value()) {
+    return nullptr;
+  }
+
+  const auto index = *data->pk_column_index;
+  if (index >= columns_.size()) {
+    return nullptr;
+  }
+
+  return &columns_[index];
 }
 
-const column *table::join_column() const {
-  return join_column_index_ ? &columns_.at(*join_column_index_) : nullptr;
+const column* table::join_column() const {
+  const auto *data = relation_data();
+  if (!data || data->join_column_index >= columns_.size()) {
+    return nullptr;
+  }
+
+  return &columns_[data->join_column_index];
 }
 
-const column *table::inverse_join_column() const {
-  return inverse_join_column_index_ ? &columns_.at(*inverse_join_column_index_) : nullptr;
+const column* table::inverse_join_column() const {
+  const auto *data = relation_data();
+  if (!data || data->inverse_join_column_index >= columns_.size()) {
+    return nullptr;
+  }
+
+  return &columns_[data->inverse_join_column_index];
 }
 
 void table::validate_schema(const std::vector<column>& columns) {
-  if (std::any_of(columns.begin(), columns.end(),
-                  [](const column& col) { return col.is_expression(); })) {
-    throw std::invalid_argument("Table schemas cannot contain expression columns");
+  std::unordered_set<std::string> column_names;
+
+  for (const auto& col : columns) {
+    if (!col.is_plain_column()) {
+      throw std::invalid_argument("table schema must contain plain columns only");
+    }
+
+    if (col.column_name().empty()) {
+      throw std::invalid_argument("table schema contains a column with an empty name");
+    }
+
+    if (!column_names.insert(col.column_name()).second) {
+      throw std::invalid_argument("table schema contains duplicate column '" + col.column_name() + "'");
+    }
   }
 }
 
 void table::rebind_columns() {
   validate_schema(columns_);
-  pk_column_index_.reset();
-  for (std::size_t i = 0; i < columns_.size(); ++i) {
-    if (columns_[i].is_primary_key()) {
-      if (pk_column_index_) {
-        throw std::invalid_argument("Table schemas cannot contain multiple primary keys");
-      }
-      pk_column_index_ = i;
+  for (std::size_t index = 0; index < columns_.size(); ++index) {
+    auto& col = columns_[index];
+
+    auto* plain = col.plain();
+    if (plain == nullptr) {
+      throw std::invalid_argument("table schema must contain plain columns only");
     }
-    columns_[i].table(this);
+
+    plain->table = this;
+    plain->index = index;
   }
 }
 
@@ -220,5 +294,44 @@ void table::create_constraints() {
       }
     }
   }
+}
+
+const table::primary_key_table* table::primary_key_data() const {
+  return std::get_if<primary_key_table>(&value_);
+}
+
+table::primary_key_table* table::primary_key_data() {
+  return std::get_if<primary_key_table>(&value_);
+}
+
+const table::relation_table* table::relation_data() const {
+  return std::get_if<relation_table>(&value_);
+}
+
+table::relation_table* table::relation_data() {
+  return std::get_if<relation_table>(&value_);
+}
+
+void table::make_primary_key_table(const std::optional<std::size_t> pk_column_index) {
+  if (pk_column_index && *pk_column_index >= columns_.size()) {
+    throw std::out_of_range("primary key column index is out of range");
+  }
+
+  value_ = primary_key_table{pk_column_index};
+}
+
+void table::make_relation_table(const std::size_t join_column_index, const std::size_t inverse_join_column_index) {
+  if (join_column_index >= columns_.size()) {
+    throw std::out_of_range("join column index is out of range");
+  }
+
+  if (inverse_join_column_index >= columns_.size()) {
+    throw std::out_of_range("inverse join column index is out of range");
+  }
+
+  value_ = relation_table{
+    join_column_index,
+    inverse_join_column_index
+  };
 }
 }
